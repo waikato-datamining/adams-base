@@ -1,0 +1,154 @@
+# Project: adams
+# Date: 2017-07-21 15:45:11
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade using annotated background images \\nand annotated images with objects." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name Info -short-title true -writer adams.data.io.output.NullWriter
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name bg_dir -display \"Dir with annotated background images\" -type DIRECTORY_ABSOLUTE -default-value /home/fracpete/temp/zespri/input/bg/" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name img_dir -display \"Dir with annotated images\" -type DIRECTORY_ABSOLUTE -default-value /home/fracpete/temp/zespri/input/objects/" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name scale -display \"Scale factor for images\" -type DOUBLE -default-value 0.25" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name prefix -display \"Prefix of objects in reports\" -default-value Object." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name max_width -display \"Max width for objects (after scaling)\" -type INTEGER -default-value 100" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name max_height -display \"Max height for objects (after scaling)\" -type INTEGER -default-value 100" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name samples_exec -display \"Executable for creating samples\" -help \"OpenCV executable\" -type FILE_ABSOLUTE -default-value /usr/bin/opencv_createsamples" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name samples_options -display \"Additional options for creating samples\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name train_exec -display \"Executable for training haar classifier\" -help \"OpenCV executable\" -type FILE_ABSOLUTE -default-value /usr/bin/opencv_haartraining" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name train_options -display \"Additional options for training\" -default-value \"-nstages 5 -nneg 500\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name out_dir -display \"Output directory\" -help \"for images and cascade\" -type DIRECTORY_ABSOLUTE -default-value /home/fracpete/temp/zespri/output/" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name clean_out_dir -display \"Clean output dir?\" -type BOOLEAN -default-value true" -output-type MAP
+  adams.flow.control.Tee -name info
+   adams.flow.transformer.Convert -conversion adams.data.conversion.MapToYamlString
+   adams.flow.transformer.StringInsert -position first -value "--> parameters\\\\n"
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.transformer.MapToVariables
+  adams.flow.transformer.SetVariable -name "background sub-dir" -var-name background_sub_dir -var-value bg
+  adams.flow.transformer.SetVariable -name "background output dir" -var-name out_bg_dir -var-value @{out_dir}/@{background_sub_dir} -expand-value true
+  adams.flow.transformer.SetVariable -name "background file" -var-name background_file -var-value @{out_dir}/bg.txt -expand-value true
+  adams.flow.transformer.SetVariable -name "annotated sub-dir" -var-name annotated_sub_dir -var-value obj
+  adams.flow.transformer.SetVariable -name "annotated images dir" -var-name out_annotated_dir -var-value @{out_dir}/@{annotated_sub_dir} -expand-value true
+  adams.flow.transformer.SetVariable -name "classifier output dir" -var-name out_cls_dir -var-value @{out_dir}/cls -expand-value true
+  adams.flow.transformer.SetVariable -name "annotations file" -var-name annotations_file -var-value @{out_dir}/annotations.lst -expand-value true
+  adams.flow.transformer.SetVariable -name "positives vector file" -var-name pos_vector_file -var-value @{out_dir}/positives.vec -expand-value true
+  adams.flow.transformer.SetVariable -name "prefix regexp" -var-name prefix_regexp -var-value @{prefix}.*\\.x -expand-value true
+ adams.flow.control.Trigger -name "output dirs"
+  adams.flow.source.CombineVariables -expression "--> output dirs" -conversion adams.data.conversion.StringToString
+  adams.flow.control.Tee -name info
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.control.Trigger -name top-level
+   adams.flow.source.Variable -var-name out_dir -conversion adams.data.conversion.StringToString
+   adams.flow.control.ConditionalTee -condition "adams.flow.condition.bool.Expression -expression \"@{clean_out_dir} = true\""
+    adams.flow.transformer.DeleteFile
+   adams.flow.transformer.MakeDir
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.control.Trigger -name "other dirs"
+   adams.flow.source.VariablesArray -var-name out_bg_dir -var-name out_annotated_dir -var-name out_cls_dir -conversion adams.data.conversion.StringToString
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.transformer.MakeDir
+   adams.flow.sink.CallableSink -callable Info
+ adams.flow.control.Trigger -name "background images"
+  adams.flow.standalone.SetVariable -name "image dir" -var-name image_dir -var-value @{bg_dir}
+  adams.flow.standalone.SetVariable -name "output dir" -var-name output_dir -var-value @{out_bg_dir}
+  adams.flow.standalone.SetVariable -name "max width" -var-name max_obj_width -var-value -1
+  adams.flow.standalone.SetVariable -name "max height" -var-name max_obj_height -var-value -1
+  adams.flow.standalone.SetVariable -name "dialog title" -var-name dialog_title -var-value "Background images"
+  adams.flow.source.CombineVariables -expression "\\n--> background images" -conversion adams.data.conversion.StringToString
+  adams.flow.control.Tee -name info
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.transformer.ExternalTransformer -name "extract images" -file ${FLOWS}/adams-imaging-ext_extract_objects.flow
+ adams.flow.control.Trigger -name "background file"
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{out_bg_dir} -regexp .*\\\\.([jJ][gG][pP]|[jJ][gG][eE][pP]|[pP][nN][gG]) -sorting SORT_BY_NAME"
+  adams.flow.control.Trigger -name "remove old background file"
+   adams.flow.source.Variable -var-name background_file -conversion adams.data.conversion.StringToString
+   adams.flow.transformer.DeleteFile
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.transformer.BaseName
+  adams.flow.transformer.PrependDir -prefix @{background_sub_dir}
+  adams.flow.sink.DumpFile -output @{background_file} -append true
+ adams.flow.control.Trigger -name "annotated images"
+  adams.flow.standalone.SetVariable -name "reset total" -var-name total_annotations -var-value 0
+  adams.flow.source.SelectFile -output-array true -stop-if-canceled true -file-chooser-title "Annotated images" -initial-dir @{img_dir} -extension jpg,jpeg,png -absolute true
+  adams.flow.control.Trigger -name "remove old annotations file"
+   adams.flow.source.Variable -var-name annotations_file -conversion adams.data.conversion.StringToString
+   adams.flow.transformer.DeleteFile
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.control.Tee -name report
+   adams.flow.transformer.Convert -conversion "adams.data.conversion.ReplaceFileExtension -extension .report"
+   adams.flow.transformer.SetVariable -var-name report
+  adams.flow.control.Tee -name filename
+   adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name file_long
+   adams.flow.transformer.BaseName -name "BaseName (2)"
+   adams.flow.transformer.SetVariable -name "SetVariable (3)" -var-name file_rel
+   adams.flow.transformer.BaseName -remove-extensions true
+   adams.flow.transformer.SetVariable -var-name file
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.control.Continue -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.FileExists -file @{report} -generator adams.core.io.NullFilenameGenerator\""
+  adams.flow.control.ConditionalTee -name "copy image" -condition "adams.flow.condition.bool.Expression -expression \"@{scale} = 1.0\""
+   adams.flow.transformer.CopyFile -target-dir @{out_annotated_dir}
+  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+  adams.flow.control.Trigger -name "load report"
+   adams.flow.source.Variable -var-name report -conversion adams.data.conversion.StringToString
+   adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
+   adams.flow.transformer.SetStorageValue -storage-name report
+  adams.flow.transformer.MergeReport -type STORAGE -storage report -merge REPLACE
+  adams.flow.control.Cast -classname adams.data.image.AbstractImageContainer
+  adams.flow.control.ConditionalSubProcess -name scale? -condition "adams.flow.condition.bool.Expression -expression \"@{scale} != 1.0\""
+   adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Resize -width @{scale} -height @{scale}"
+   adams.flow.control.Tee -name "save scaled image"
+    adams.flow.control.Trigger -name filename
+     adams.flow.source.CombineVariables -expression @{out_annotated_dir}/@{file_rel} -conversion adams.data.conversion.StringToString
+     adams.flow.transformer.SetVariable -var-name outfile
+    adams.flow.sink.ImageWriter -output @{outfile} -writer adams.data.io.output.JAIImageWriter
+   adams.flow.transformer.ScaleReportObjects -scale-x @{scale} -scale-y @{scale} -round true
+   adams.flow.transformer.SetStorageValue -storage-name report
+  adams.flow.transformer.SetStorageValue -storage-name image
+  adams.flow.transformer.MatchReportFields -output-array true -regexp @{prefix_regexp}
+  adams.flow.control.Tee -name "process annotations"
+   adams.flow.transformer.SetVariable -var-name annotations -var-value " "
+   adams.flow.control.Tee -name "# annotations"
+    adams.flow.transformer.ArrayLength
+    adams.flow.transformer.SetVariable -var-name num_annotations
+    adams.flow.transformer.IncVariable -var-name total_annotations -inc-int @{num_annotations}
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.control.Tee -name "object variables"
+    adams.flow.transformer.Convert -conversion adams.data.conversion.FieldToString
+    adams.flow.transformer.StringReplace -find .*\\.([0-9]+)\\.x -replace $1
+    adams.flow.transformer.SetVariable -name index -var-name index
+    adams.flow.transformer.SetVariable -name x -var-name field_x -var-value @{prefix}@{index}.x[N] -expand-value true
+    adams.flow.transformer.SetVariable -name y -var-name field_y -var-value @{prefix}@{index}.y[N] -expand-value true
+    adams.flow.transformer.SetVariable -name width -var-name field_width -var-value @{prefix}@{index}.width[N] -expand-value true
+    adams.flow.transformer.SetVariable -name height -var-name field_height -var-value @{prefix}@{index}.height[N] -expand-value true
+    adams.flow.transformer.SetVariable -name "output file" -var-name outfile -var-value @{output_dir}/@{file}-@{index}.png -expand-value true
+   adams.flow.control.Trigger -name "object parameters"
+    adams.flow.source.StorageValue -storage-name report -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.control.Tee -name x
+     adams.flow.transformer.GetReportValue -field @{field_x}
+     adams.flow.transformer.Convert -conversion adams.data.conversion.DoubleToInt
+     adams.flow.transformer.SetVariable -var-name x
+    adams.flow.control.Tee -name y
+     adams.flow.transformer.GetReportValue -field @{field_y}
+     adams.flow.transformer.Convert -conversion adams.data.conversion.DoubleToInt
+     adams.flow.transformer.SetVariable -var-name y
+    adams.flow.control.Tee -name width
+     adams.flow.transformer.GetReportValue -field @{field_width}
+     adams.flow.transformer.Convert -conversion adams.data.conversion.DoubleToInt
+     adams.flow.transformer.SetVariable -var-name width
+    adams.flow.control.Tee -name height
+     adams.flow.transformer.GetReportValue -field @{field_height}
+     adams.flow.transformer.Convert -conversion adams.data.conversion.DoubleToInt
+     adams.flow.transformer.SetVariable -var-name height
+   adams.flow.control.Trigger -name "append annotation"
+    adams.flow.source.Variable -var-name annotations -conversion adams.data.conversion.StringToString
+    adams.flow.transformer.SetVariable -var-name annotations -var-value "  @{x} @{y} @{width} @{height}" -update-type APPEND -expand-value true
+  adams.flow.control.Trigger -name "output annotation"
+   adams.flow.source.CombineVariables -expression "@{annotated_sub_dir}/@{file_rel} @{num_annotations} @{annotations}" -conversion adams.data.conversion.StringToString
+   adams.flow.sink.DumpFile -output @{annotations_file} -append true
+ adams.flow.control.Trigger -name "create .vec file"
+  adams.flow.source.CombineVariables -expression "\\\"@{samples_exec}\\\" -info \\\"@{annotations_file}\\\" -vec \\\"@{pos_vector_file}\\\" -w @{max_width} -h @{max_height} -num @{total_annotations} @{samples_options}" -conversion adams.data.conversion.StringToString
+  adams.flow.transformer.SetVariable -var-name cmd
+  adams.flow.control.Tee -name info
+   adams.flow.transformer.StringInsert -position first -value "\\\\n--> create samples\\\\n"
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.control.Trigger -name run
+   adams.flow.source.Exec -cmd @{cmd} -working-directory @{out_dir} -conversion adams.data.conversion.StringToString
+   adams.flow.sink.CallableSink -callable Info
+ adams.flow.control.Trigger -name "train haar"
+  adams.flow.source.CombineVariables -expression "\\\"@{train_exec}\\\" -data \\\"@{out_cls_dir}\\\" -vec \\\"@{pos_vector_file}\\\" -bg @{background_file} -w @{max_width} -h @{max_height} -npos @{total_annotations} -nneg @{total_annotations} @{train_options}" -conversion adams.data.conversion.StringToString
+  adams.flow.transformer.SetVariable -var-name cmd
+  adams.flow.control.Tee -name info
+   adams.flow.transformer.StringInsert -position first -value "--> train classifier\\\\n"
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.control.Trigger -name run
+   adams.flow.source.Exec -cmd @{cmd} -working-directory @{out_dir} -conversion adams.data.conversion.StringToString
+   adams.flow.sink.CallableSink -callable Info
