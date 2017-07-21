@@ -163,6 +163,16 @@ public class ScaleReportObjectsTest
   }
 
   /**
+   * Returns the ignored line indices to use in the regression test.
+   *
+   * @return		the setups
+   */
+  @Override
+  protected int[] getRegressionIgnoredLineIndices() {
+    return new int[]{0};
+  }
+
+  /**
    * Runs the test from commandline.
    *
    * @param args	ignored

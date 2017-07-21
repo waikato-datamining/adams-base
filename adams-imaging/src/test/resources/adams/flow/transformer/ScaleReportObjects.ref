@@ -1,5 +1,4 @@
 --> dumpfile.txt
-#Fri Jul 21 10:47:54 NZST 2017
 #Simple report format (= Java properties file format)
 Height=4000.0
 Height\tDataType=N
