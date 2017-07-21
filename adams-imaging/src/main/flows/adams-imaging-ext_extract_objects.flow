@@ -1,0 +1,67 @@
+# Project: adams
+# Date: 2017-07-21 14:46:07
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Trigger -name "extract images" -annotation "Expects the following variabes:\\n- image_dir: the directory with the annotated images\\n- output_dir: directory for storing the extracted objects\\n- max_obj_width: the maximum width of objects to extract, -1 to ignore\\n- max_obj_height: the maximum height of objects to extract, -1 to ignore\\n- dialog_title: the title for the file chooser dialog\\n"
+ adams.flow.source.SelectFile -stop-if-canceled true -file-chooser-title @{dialog_title} -initial-dir @{image_dir} -extension jpg,jpeg,png -absolute true
+ adams.flow.control.Tee -name report
+  adams.flow.transformer.Convert -conversion "adams.data.conversion.ReplaceFileExtension -extension .report"
+  adams.flow.transformer.SetVariable -var-name report
+ adams.flow.control.Tee -name filename
+  adams.flow.transformer.BaseName -remove-extensions true
+  adams.flow.transformer.SetVariable -var-name file
+  adams.flow.sink.CallableSink -callable Info
+ adams.flow.control.Continue -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.FileExists -file @{report} -generator adams.core.io.NullFilenameGenerator\""
+ adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+ adams.flow.control.Trigger -name "load report"
+  adams.flow.source.Variable -var-name report -conversion adams.data.conversion.StringToString
+  adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
+  adams.flow.transformer.SetStorageValue -storage-name report
+ adams.flow.transformer.MergeReport -type STORAGE -storage report
+ adams.flow.control.Cast -classname adams.data.image.AbstractImageContainer
+ adams.flow.transformer.SetStorageValue -storage-name image
+ adams.flow.transformer.MatchReportFields -regexp @{prefix_regexp}
+ adams.flow.control.Tee -name "object variables"
+  adams.flow.transformer.Convert -conversion adams.data.conversion.FieldToString
+  adams.flow.transformer.StringReplace -find .*\\.([0-9]+)\\.x -replace $1
+  adams.flow.transformer.SetVariable -name index -var-name index
+  adams.flow.transformer.SetVariable -name x -var-name field_x -var-value @{prefix}@{index}.x[N] -expand-value true
+  adams.flow.transformer.SetVariable -name y -var-name field_y -var-value @{prefix}@{index}.y[N] -expand-value true
+  adams.flow.transformer.SetVariable -name width -var-name field_width -var-value @{prefix}@{index}.width[N] -expand-value true
+  adams.flow.transformer.SetVariable -name height -var-name field_height -var-value @{prefix}@{index}.height[N] -expand-value true
+  adams.flow.transformer.SetVariable -name "output file" -var-name outfile -var-value @{output_dir}/@{file}-@{index}.png -expand-value true
+ adams.flow.control.Trigger -name "object parameters"
+  adams.flow.source.StorageValue -storage-name report -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.control.Tee -name x
+   adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name x -var-value -1
+   adams.flow.transformer.GetReportValue -field @{field_x}
+   adams.flow.transformer.SetVariable -var-name x
+  adams.flow.control.Tee -name y
+   adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name y -var-value -1
+   adams.flow.transformer.GetReportValue -field @{field_y}
+   adams.flow.transformer.SetVariable -var-name y
+  adams.flow.control.Tee -name width
+   adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name width -var-value -1
+   adams.flow.transformer.GetReportValue -field @{field_width}
+   adams.flow.transformer.SetVariable -var-name width
+  adams.flow.control.Tee -name height
+   adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name height -var-value -1
+   adams.flow.transformer.GetReportValue -field @{field_height}
+   adams.flow.transformer.SetVariable -var-name height
+ adams.flow.control.Tee -name "skip object?"
+  adams.flow.transformer.SetVariable -var-name skip_object -var-value "ifelse(((@{x} < 1) or (@{y} < 1) or (@{width} < 1) or (@{height} < 1)), \\\"true\\\", \\\"false\\\")" -value-type STRING_EXPRESSION -expand-value true
+  adams.flow.control.ConditionalSubProcess -condition "adams.flow.condition.bool.Expression -expression \"((@{max_obj_width} > -1) or (@{max_obj_height} > -1)) and ((@{height} > (@{max_obj_height} / @{scale})) or (@{width} > (@{max_obj_width} / @{scale})))\""
+   adams.flow.transformer.SetVariable -var-name skip_object -var-value true
+ adams.flow.control.ConditionalTrigger -name crop -condition "adams.flow.condition.bool.Expression -expression \"@{skip_object} = false\""
+  adams.flow.source.StorageValue -storage-name image -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.Cropping -algorithm \"adams.data.image.transformer.crop.RelativeCrop -x @{x} -y @{y} -width @{width} -height @{height}\""
+  adams.flow.control.ConditionalSubProcess -condition "adams.flow.condition.bool.Expression -expression \"@{scale} != 1.0\""
+   adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Resize -width @{scale} -height @{scale}"
+  adams.flow.sink.ImageWriter -output @{outfile} -writer adams.data.io.output.JAIImageWriter
+ adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.Expression -expression \"(@{max_obj_width} > -1) or (@{max_obj_height} > -1)\"" -then "adams.flow.control.Sequence -name then" -else "adams.flow.control.Sequence -name else"
+  adams.flow.control.Trigger -name then
+   adams.flow.source.CombineVariables -expression "@{index}: too large = @{skip_object}" -conversion adams.data.conversion.StringToString
+   adams.flow.sink.CallableSink -callable Info -optional true
+  adams.flow.control.Sequence -name else
+   adams.flow.source.CombineVariables -expression @{index} -conversion adams.data.conversion.StringToString
+   adams.flow.sink.CallableSink -callable Info -optional true

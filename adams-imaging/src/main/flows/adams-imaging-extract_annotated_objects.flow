@@ -1,0 +1,20 @@
+# Project: adams
+# Date: 2017-07-21 14:42:43
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Extracts objects from annotated images \\nand saves them to an output directory." -error-handling ACTORS_DECIDE_TO_STOP_ON_ERROR -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name Info -short-title true -writer adams.data.io.output.NullWriter
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name image_dir -display \"Dir with annotated images\" -type DIRECTORY_ABSOLUTE -default-value ${CWD}" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name prefix -display \"Prefix in report for objects\" -default-value Object." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name output_dir -display \"Output dir for extracted bg images\" -type DIRECTORY_ABSOLUTE -default-value ${CWD}" -output-type MAP
+  adams.flow.transformer.MapToVariables
+  adams.flow.transformer.SetVariable -name "prefix regexp" -var-name prefix_regexp -var-value @{prefix}.*\\.x -expand-value true
+ adams.flow.control.Trigger -name "Select/process files"
+  adams.flow.standalone.SetVariable -name "max width" -var-name max_obj_width -var-value -1
+  adams.flow.standalone.SetVariable -name "max height" -var-name max_obj_height -var-value -1
+  adams.flow.standalone.SetVariable -name "dialog title" -var-name dialog_title -var-value "Annotated images"
+  adams.flow.source.CombineVariables -expression "--> annotated images" -conversion adams.data.conversion.StringToString
+  adams.flow.control.Tee -name info
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.transformer.ExternalTransformer -name "extract images" -file ${FLOWS}/adams-imaging-ext_extract_objects.flow
