@@ -39,12 +39,44 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
+ * An object detector based on a Haar cascade.<br>
+ * <br>
+ * For more information see:<br>
+ * Viola, P., Jones, M.: Rapid object detection using a boosted cascade of simple features. In: Computer Vision and Pattern Recognition, 2001. CVPR 2001. Proceedings of the 2001 IEEE Computer Society Conference on, I, 511, I, 518 vol.1, 2001.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;inproceedings{Viola2001,
+ *    author = {Viola, P. and Jones, M.},
+ *    booktitle = {Computer Vision and Pattern Recognition, 2001. CVPR 2001. Proceedings of the 2001 IEEE Computer Society Conference on},
+ *    pages = {I, 511, I, 518 vol.1},
+ *    title = {Rapid object detection using a boosted cascade of simple features},
+ *    volume = {1},
+ *    year = {2001}
+ * }
+ * </pre>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-cascade &lt;adams.core.io.PlaceholderFile&gt; (property: cascade)
+ * &nbsp;&nbsp;&nbsp;The cascade to use.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ * 
+ * <pre>-min-size &lt;int&gt; (property: minSize)
+ * &nbsp;&nbsp;&nbsp;The minimum search window size.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

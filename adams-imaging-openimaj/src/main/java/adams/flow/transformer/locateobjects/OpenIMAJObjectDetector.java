@@ -21,6 +21,7 @@
 package adams.flow.transformer.locateobjects;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.data.image.BufferedImageContainer;
 import adams.data.openimaj.objectdetector.AbstractObjectDetector;
 import adams.data.openimaj.objectdetector.HaarCascade;
@@ -31,9 +32,43 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
+ * Uses the specified OpenIMAJ object detector algorithm to locate objects.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ * 
+ * <pre>-center-on-canvas &lt;boolean&gt; (property: centerOnCanvas)
+ * &nbsp;&nbsp;&nbsp;If enabled, the located objects get centered on a canvas of fixed size.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ * 
+ * <pre>-canvas-width &lt;int&gt; (property: canvasWidth)
+ * &nbsp;&nbsp;&nbsp;The width of the canvas in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-canvas-height &lt;int&gt; (property: canvasHeight)
+ * &nbsp;&nbsp;&nbsp;The height of the canvas in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ * 
+ * <pre>-canvas-color &lt;java.awt.Color&gt; (property: canvasColor)
+ * &nbsp;&nbsp;&nbsp;The color to use for filling the canvas.
+ * &nbsp;&nbsp;&nbsp;default: #ffffff
+ * </pre>
+ * 
+ * <pre>-detector &lt;adams.data.openimaj.objectdetector.AbstractObjectDetector&gt; (property: detector)
+ * &nbsp;&nbsp;&nbsp;The detector algorithm to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.openimaj.objectdetector.HaarCascade
+ * </pre>
+ * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -140,6 +175,9 @@ public class OpenIMAJObjectDetector
 	  (int) rect.width,
 	  (int) rect.height);
 	result.add(obj);
+      }
+      else {
+	getLogger().warning("Unhandled detected object type: " + Utils.classToString(object.getClass()));
       }
     }
 
