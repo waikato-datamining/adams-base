@@ -15,7 +15,7 @@
 
 /**
  * ClusterAssignments.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.output;
@@ -91,6 +91,6 @@ public class ClusterAssignments
 
     table = new SpreadSheetTable(sheet);
 
-    return new TableContentPanel(table, true);
+    return new TableContentPanel(table, true, true);
   }
 }
