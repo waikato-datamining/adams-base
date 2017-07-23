@@ -15,7 +15,7 @@
 
 /**
  * TableContentPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.output;
@@ -28,6 +28,11 @@ import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.JTableHelper;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.core.SortableAndSearchableTableWithButtons;
+import adams.gui.event.SearchEvent;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
@@ -51,6 +56,9 @@ public class TableContentPanel
 
   /** the actual component. */
   protected JComponent m_Component;
+
+  /** the search panel. */
+  protected SearchPanel m_PanelSearch;
 
   /**
    * Initializes the panel with the specified textual component.
@@ -86,18 +94,65 @@ public class TableContentPanel
   }
 
   /**
+   * Initializes the panel with the specified textual component.
+   *
+   * @param comp		the component to embed
+   * @param useScrollPane	whether to use a scroll pane
+   * @param searchable		whether the table is searchable
+   */
+  public TableContentPanel(SortableAndSearchableTable comp, boolean useScrollPane, boolean searchable) {
+    super();
+    initGUI(comp, useScrollPane, searchable);
+  }
+
+  /**
+   * Initializes the panel with the specified textual component.
+   *
+   * @param comp		the component to embed
+   * @param useScrollPane	whether to use a scroll pane
+   * @param searchable		whether the table is searchable
+   */
+  public TableContentPanel(SortableAndSearchableTableWithButtons comp, boolean useScrollPane, boolean searchable) {
+    super();
+    initGUI(comp, useScrollPane, searchable);
+  }
+
+  /**
    * Initializes the panel with the specified component.
    *
    * @param comp		the component to embed
    * @param useScrollPane	whether to use a scroll pane
    */
   protected void initGUI(JComponent comp, boolean useScrollPane) {
+    initGUI(comp, useScrollPane, false);
+  }
+
+  /**
+   * Initializes the panel with the specified component.
+   *
+   * @param comp		the component to embed
+   * @param useScrollPane	whether to use a scroll pane
+   * @param searchable		whether the table is searchable
+   */
+  protected void initGUI(JComponent comp, boolean useScrollPane, boolean searchable) {
     m_Component = comp;
 
     if (useScrollPane)
       getContentPanel().add(new BaseScrollPane(m_Component), BorderLayout.CENTER);
     else
       getContentPanel().add(m_Component, BorderLayout.CENTER);
+
+    m_PanelSearch = null;
+    if (searchable) {
+      m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
+      m_PanelSearch.addSearchListener((SearchEvent e) -> {
+	if (m_Component instanceof SortableAndSearchableTable)
+	  ((SortableAndSearchableTable) m_Component).search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
+	else if (m_Component instanceof SortableAndSearchableTableWithButtons)
+	  ((SortableAndSearchableTableWithButtons) m_Component).search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
+      });
+      getContentPanel().add(m_PanelSearch, BorderLayout.SOUTH);
+    }
   }
 
   /**
