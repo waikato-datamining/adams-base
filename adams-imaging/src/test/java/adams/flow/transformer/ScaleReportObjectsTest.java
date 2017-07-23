@@ -169,7 +169,7 @@ public class ScaleReportObjectsTest
    */
   @Override
   protected int[] getRegressionIgnoredLineIndices() {
-    return new int[]{0};
+    return new int[]{0, 1};
   }
 
   /**

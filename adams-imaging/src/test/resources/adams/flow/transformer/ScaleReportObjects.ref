@@ -1,5 +1,4 @@
 --> dumpfile.txt
-#Simple report format (= Java properties file format)
 Height=4000.0
 Height\tDataType=N
 Object.0026.height=135.0
