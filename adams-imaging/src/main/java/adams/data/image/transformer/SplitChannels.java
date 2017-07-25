@@ -15,7 +15,7 @@
 
 /*
  * SplitChannels.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.transformer;
@@ -29,7 +29,7 @@ import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
- * Splits the image into the specified separate channels. With the output channels all converted to grayscale.
+ * Splits the image into the specified separate RGB channels. With the output channels all converted to grayscale.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -66,7 +66,7 @@ public class SplitChannels
   @Override
   public String globalInfo() {
     return
-      "Splits the image into the specified separate channels. "
+      "Splits the image into the specified separate RGB channels. "
       + "With the output channels all converted to grayscale.";
   }
 

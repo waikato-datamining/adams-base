@@ -21,7 +21,7 @@
 package adams.data.image;
 
 /**
- * The available channels.
+ * The available channels in ARGB.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision: 9695 $
