@@ -779,6 +779,7 @@ public class AttributeSelectionTab
 
     // status bar
     m_StatusBar = new BaseStatusBar();
+    m_StatusBar.setExpiryTime(true, 60);
     m_ContentPanel.add(m_StatusBar, BorderLayout.SOUTH);
   }
 

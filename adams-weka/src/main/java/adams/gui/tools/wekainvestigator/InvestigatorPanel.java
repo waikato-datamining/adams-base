@@ -234,6 +234,7 @@ public class InvestigatorPanel
 
     m_StatusBar = new BaseStatusBar();
     m_StatusBar.setMouseListenerActive(true);
+    m_StatusBar.setExpiryTime(true, 60);
     add(m_StatusBar, BorderLayout.SOUTH);
 
     initActions();
