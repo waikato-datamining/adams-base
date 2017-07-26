@@ -63,13 +63,6 @@ public class PackageManager
    */
   @Override
   public void launch() {
-    GUIHelper.showInformationMessage(
-      null,
-      "Sourceforge.net, which hosts the Weka packages, changed the way "
-	+ "downloads work in Dec 2016, breaking the package manager.\n"
-        + "Therefore you will have to download packages manually through a "
-        + "browser and install them as 'Unofficial' package via the 'File/URL' button.");
-
     WekaPackageManager.establishCacheIfNeeded(new PrintStream(new ConsolePanelOutputStream(LoggingLevel.INFO)));
     createChildFrame(new weka.gui.PackageManager(), GUIHelper.getDefaultDialogDimension());
   }
