@@ -15,7 +15,7 @@
 
 /**
  * BaseStatusBar.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -39,6 +39,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A bar for displaying status messages (left and right).
@@ -123,6 +125,24 @@ public class BaseStatusBar
   /** the label for the right status. */
   protected JLabel m_LabelStatusRight;
 
+  /** the expiry time in seconds for clearing the left status automatically. */
+  protected int m_ExpiryTimeLeft;
+
+  /** the expiry time in seconds for clearing the right status automatically. */
+  protected int m_ExpiryTimeRight;
+
+  /** the timer for the left message. */
+  protected Timer m_TimerLeft;
+
+  /** the timer for the right message. */
+  protected Timer m_TimerRight;
+
+  /** the current timer for the left message. */
+  protected TimerTask m_ClearTaskLeft;
+
+  /** the current timer for the right message. */
+  protected TimerTask m_ClearTaskRight;
+
   /**
    * Initializes the members.
    */
@@ -137,6 +157,12 @@ public class BaseStatusBar
     m_PopupMenuCustomizer = null;
     m_StatusLeft          = EMPTY_STATUS;
     m_StatusRight         = EMPTY_STATUS;
+    m_ExpiryTimeLeft      = 0;
+    m_ExpiryTimeRight     = 0;
+    m_TimerLeft           = null;
+    m_TimerRight          = null;
+    m_ClearTaskLeft       = null;
+    m_ClearTaskRight      = null;
   }
 
   /**
@@ -177,10 +203,18 @@ public class BaseStatusBar
     if (left) {
       m_StatusLeft = EMPTY_STATUS;
       m_LabelStatusLeft.setText(EMPTY_STATUS);
+      if (m_ClearTaskLeft != null) {
+	m_ClearTaskLeft.cancel();
+	m_ClearTaskLeft = null;
+      }
     }
     else {
       m_StatusRight = EMPTY_STATUS;
       m_LabelStatusRight.setText(EMPTY_STATUS);
+      if (m_ClearTaskRight != null) {
+	m_ClearTaskRight.cancel();
+	m_ClearTaskRight = null;
+      }
     }
   }
 
@@ -230,6 +264,18 @@ public class BaseStatusBar
 	else
 	  m_LabelStatusLeft.setText(msg.replace("\r\n", "|").replace("\n", "|"));
       });
+      if (m_TimerLeft != null) {
+	if (m_ClearTaskLeft != null)
+	  m_ClearTaskLeft.cancel();
+	m_ClearTaskLeft = new TimerTask() {
+	  @Override
+	  public void run() {
+	    clearStatus(true);
+	  }
+	};
+	m_TimerLeft.purge();
+	m_TimerLeft.schedule(m_ClearTaskLeft, m_ExpiryTimeLeft * 1000);
+      }
     }
     else {
       m_StatusRight = msg;
@@ -239,6 +285,26 @@ public class BaseStatusBar
 	else
 	  m_LabelStatusRight.setText(msg.replace("\r\n", "|").replace("\n", "|"));
       });
+      if (m_TimerRight != null) {
+	if (m_ClearTaskRight != null)
+	  m_ClearTaskRight.cancel();
+	m_ClearTaskRight = new TimerTask() {
+	  @Override
+	  public void run() {
+	    clearStatus(false);
+	  }
+	};
+	m_TimerRight.purge();
+	m_TimerRight.schedule(m_ClearTaskRight, m_ExpiryTimeRight * 1000);
+      }
+    }
+    if (m_ExpiryTimeLeft > 0) {
+      m_ClearTaskLeft = new TimerTask() {
+        @Override
+        public void run() {
+          clearStatus(left);
+        }
+      };
     }
   }
 
@@ -493,5 +559,48 @@ public class BaseStatusBar
    */
   public PopupMenuCustomizer getPopupMenuCustomizer() {
     return m_PopupMenuCustomizer;
+  }
+
+  /**
+   * Sets the expiry time in seconds.
+   *
+   * @param left	whether to set the time for the left or right message
+   * @param seconds	expiry time in seconds, 0 to turn off expiry
+   */
+  public void setExpiryTime(boolean left, int seconds) {
+    if (seconds < 0)
+      seconds = 0;
+
+    if (left) {
+      if (m_TimerLeft != null) {
+	m_TimerLeft.cancel();
+	m_TimerLeft = null;
+      }
+      m_ExpiryTimeLeft = seconds;
+      if (m_ExpiryTimeLeft > 0)
+	m_TimerLeft = new Timer();
+    }
+    else {
+      if (m_TimerRight != null) {
+	m_TimerRight.cancel();
+	m_TimerRight = null;
+      }
+      m_ExpiryTimeRight = seconds;
+      if (m_ExpiryTimeRight > 0)
+	m_TimerRight = new Timer();
+    }
+  }
+
+  /**
+   * Returns the expiry time in seconds.
+   *
+   * @param left	whether to return left or right expiry
+   * @return		the time in seconds, 0 for no expiry
+   */
+  public int getExpiryTime(boolean left) {
+    if (left)
+      return m_ExpiryTimeLeft;
+    else
+      return m_ExpiryTimeRight;
   }
 }
