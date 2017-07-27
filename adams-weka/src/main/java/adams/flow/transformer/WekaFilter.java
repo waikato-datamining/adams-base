@@ -575,7 +575,7 @@ public class WekaFilter
    * @param data	the data to output in the token
    * @return		the generated token
    */
-  protected Token createToken(Object data) {
+  protected Token createToken(Object input, Object data) {
     WekaFilterContainer		cont;
 
     if (m_OutputContainer) {
@@ -587,6 +587,7 @@ public class WekaFilter
 	cont = new WekaFilterContainer(m_ActualFilter, (adams.data.instance.Instance) data);
       else
 	throw new IllegalArgumentException("Unhandled data type: " + data.getClass().getName());
+      cont.setValue(WekaFilterContainer.VALUE_INPUT, input);
       return new Token(cont);
     }
     else {
@@ -761,15 +762,15 @@ public class WekaFilter
 	    else {
 	      instA = new adams.data.instance.Instance();
 	      instA.set(filteredInst);
-	      m_OutputToken = createToken(instA);
+	      m_OutputToken = createToken(m_InputToken.getPayload(), instA);
 	    }
 	  }
 	  else if ((filteredData != null) && (filteredData.numInstances() > 0)) {
-	    m_OutputToken = createToken(filteredData.instance(0));
+	    m_OutputToken = createToken(m_InputToken.getPayload(), filteredData.instance(0));
 	  }
 	}
 	else {
-	  m_OutputToken = createToken(filteredData);
+	  m_OutputToken = createToken(m_InputToken.getPayload(), filteredData);
 	}
       }
       catch (Exception e) {

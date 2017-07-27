@@ -47,6 +47,9 @@ public class WekaFilterContainer
   /** the identifier for the Data. */
   public final static String VALUE_DATA = "Data";
 
+  /** the identifier for the Input Data. */
+  public final static String VALUE_INPUT = "Input";
+
   /**
    * Initializes the container.
    * <br><br>
@@ -104,6 +107,8 @@ public class WekaFilterContainer
     addHelp(VALUE_FILTER, "filter object; " + Filter.class.getName());
     addHelp(VALUE_DATA, "data; " + Utils.classesToString(new Class[]{
       Instances.class, Instance.class, adams.data.instance.Instance.class}));
+    addHelp(VALUE_INPUT, "input data; " + Utils.classesToString(new Class[]{
+      Instances.class, Instance.class, adams.data.instance.Instance.class}));
   }
 
   /**
@@ -115,10 +120,11 @@ public class WekaFilterContainer
   public Iterator<String> names() {
     List<String>	result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     result.add(VALUE_FILTER);
     result.add(VALUE_DATA);
+    result.add(VALUE_INPUT);
 
     return result.iterator();
   }
