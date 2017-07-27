@@ -15,17 +15,17 @@
 
 /**
  * TableManager.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
-import java.io.Serializable;
-import java.util.Hashtable;
-import java.util.Iterator;
-
 import adams.event.DatabaseConnectionChangeEvent;
-import adams.event.DatabaseConnectionChangeListener;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
+import adams.event.DatabaseConnectionChangeListener;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Manages the database URL/table relations.
@@ -44,7 +44,7 @@ public class TableManager<T extends SQL>
   protected String m_TableName;
 
   /** for storing the table objects. */
-  protected Hashtable<String,T> m_Tables;
+  protected HashMap<String,T> m_Tables;
 
   /** the database manager to use for default connection. */
   protected DatabaseManager m_DatabaseManager;
@@ -60,7 +60,7 @@ public class TableManager<T extends SQL>
     super();
 
     m_TableName       = tableName;
-    m_Tables          = new Hashtable<String,T>();
+    m_Tables          = new HashMap<>();
     m_DatabaseManager = manager;
   }
 
