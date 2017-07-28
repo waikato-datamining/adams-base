@@ -255,7 +255,7 @@ public class BaseStatusBar
    * @param left	whether to update left or right status
    * @param msg		the message to display
    */
-  public void setStatus(final boolean left, final String msg) {
+  public synchronized void setStatus(final boolean left, final String msg) {
     if (left) {
       m_StatusLeft = msg;
       SwingUtilities.invokeLater(() -> {
