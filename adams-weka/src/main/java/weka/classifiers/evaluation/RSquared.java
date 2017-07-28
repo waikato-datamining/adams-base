@@ -14,7 +14,7 @@
  */
 
 /**
- * Bias.java
+ * RSquared.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
