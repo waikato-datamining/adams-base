@@ -15,18 +15,18 @@
 
 /*
  * ColumnMapping.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.db;
 
 
-import java.util.Enumeration;
-import java.util.Hashtable;
-
 import adams.db.types.AutoIncrementType;
 import adams.db.types.ColumnType;
+
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * Implements a set of table columns, mapping names to sql types
@@ -35,18 +35,21 @@ import adams.db.types.ColumnType;
  * @version $Revision$
  */
 public class ColumnMapping {
-  //primary key
-  protected String primary_key=null;
-  // name -> type mapping
-  private Hashtable<String,ColumnType> m_cm=new Hashtable<String,ColumnType>();
+
+  /** primary key */
+  protected String m_PrimaryKey;
+
+  /** name -> type mapping */
+  protected Hashtable<String,ColumnType> m_Mapping;
 
   /**
    * Constructor
-   *
    */
   public ColumnMapping() {
     super();
-    // TODO Auto-generated constructor stub
+
+    m_PrimaryKey = null;
+    m_Mapping    = new Hashtable<>();
   }
 
   /**
@@ -55,10 +58,9 @@ public class ColumnMapping {
    * @param typ		sql type
    */
   public void addMapping(String cname,ColumnType typ) {
-    m_cm.put(cname,typ);
-    if (typ instanceof AutoIncrementType) {
+    m_Mapping.put(cname,typ);
+    if (typ instanceof AutoIncrementType)
       setPrimaryKey(cname);
-    }
   }
 
   /**
@@ -67,7 +69,7 @@ public class ColumnMapping {
    * @return	sql type
    */
   public ColumnType getMapping(String cname) {
-    return(m_cm.get(cname));
+    return m_Mapping.get(cname);
   }
 
   /**
@@ -75,7 +77,7 @@ public class ColumnMapping {
    * @return	column names
    */
   public Enumeration<String> keys() {
-    return(m_cm.keys());
+    return m_Mapping.keys();
   }
 
   /**
@@ -83,7 +85,7 @@ public class ColumnMapping {
    * @return number of columns
    */
   public int size() {
-    return(m_cm.size());
+    return m_Mapping.size();
   }
 
   /**
@@ -91,7 +93,7 @@ public class ColumnMapping {
    * @param id column name
    */
   public void setPrimaryKey(String id) {
-    primary_key=id;
+    m_PrimaryKey = id;
   }
 
   /**
@@ -99,7 +101,7 @@ public class ColumnMapping {
    * @return has primary key?
    */
   public boolean hasPrimaryKey() {
-    return(primary_key != null);
+    return (m_PrimaryKey != null);
   }
 
   /**
@@ -107,7 +109,7 @@ public class ColumnMapping {
    * @return column name
    */
   public String getPrimaryKey() {
-    return(primary_key);
+    return m_PrimaryKey;
   }
 
   /**
@@ -116,6 +118,6 @@ public class ColumnMapping {
    * @return		the string representation
    */
   public String toString() {
-    return "prim key=" + getPrimaryKey() + ", columns=" + m_cm;
+    return "prim key=" + getPrimaryKey() + ", columns=" + m_Mapping;
   }
 }
