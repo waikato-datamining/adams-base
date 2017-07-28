@@ -273,7 +273,6 @@ public class BaseStatusBar
 	    clearStatus(true);
 	  }
 	};
-	m_TimerLeft.purge();
 	m_TimerLeft.schedule(m_ClearTaskLeft, m_ExpiryTimeLeft * 1000);
       }
     }
@@ -294,7 +293,6 @@ public class BaseStatusBar
 	    clearStatus(false);
 	  }
 	};
-	m_TimerRight.purge();
 	m_TimerRight.schedule(m_ClearTaskRight, m_ExpiryTimeRight * 1000);
       }
     }
