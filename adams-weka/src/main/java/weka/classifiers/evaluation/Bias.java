@@ -21,9 +21,6 @@
 package weka.classifiers.evaluation;
 
 import adams.data.statistics.StatUtils;
-import gnu.trove.list.TDoubleList;
-import gnu.trove.list.array.TDoubleArrayList;
-import weka.core.Instance;
 import weka.core.Utils;
 
 import java.util.Arrays;
@@ -36,42 +33,11 @@ import java.util.List;
  * @version $Revision$
  */
 public class Bias
-  extends AbstractEvaluationMetric
-  implements StandardEvaluationMetric {
+  extends AbstractSimpleRegressionMeasure {
 
   private static final long serialVersionUID = 6501729731780442367L;
 
   public static final String BIAS = "Bias";
-
-  /** the collected actual. */
-  protected TDoubleList m_Actual = new TDoubleArrayList();
-
-  /** the collected predicted. */
-  protected TDoubleList m_Predicted = new TDoubleArrayList();
-
-  /**
-   * Return true if this evaluation metric can be computed when the class is
-   * nominal
-   *
-   * @return true if this evaluation metric can be computed when the class is
-   *         nominal
-   */
-  @Override
-  public boolean appliesToNominalClass() {
-    return false;
-  }
-
-  /**
-   * Return true if this evaluation metric can be computed when the class is
-   * numeric
-   *
-   * @return true if this evaluation metric can be computed when the class is
-   *         numeric
-   */
-  @Override
-  public boolean appliesToNumericClass() {
-    return true;
-  }
 
   /**
    * Get the name of this metric
@@ -143,35 +109,5 @@ public class Bias
     if (bias >= 1.0)
       width -= Integer.toString((int) bias).length() + 1;
     return Utils.padRight(BIAS, width) + Utils.doubleToString(bias, 3) + "\n";
-  }
-
-  /**
-   * Ignored.
-   *
-   * @param predictedDistribution the probabilities assigned to each class
-   * @param instance the instance to be classified
-   * @throws Exception if the class of the instance is not set
-   */
-  @Override
-  public void updateStatsForClassifier(double[] predictedDistribution, Instance instance) throws Exception {
-    // ignored
-  }
-
-  /**
-   * Updates the statistics about a predictors performance for the current test
-   * instance. Gets called when the class is numeric. Implementers need only
-   * implement this method if it is not possible to compute their statistics
-   * from what is stored in the base Evaluation object.
-   *
-   * @param predictedValue the numeric value the classifier predicts
-   * @param instance the instance to be classified
-   * @throws Exception if the class of the instance is not set
-   */
-  @Override
-  public void updateStatsForPredictor(double predictedValue, Instance instance) throws Exception {
-    if (!instance.classIsMissing()) {
-      m_Actual.add(instance.classValue());
-      m_Predicted.add(predictedValue);
-    }
   }
 }
