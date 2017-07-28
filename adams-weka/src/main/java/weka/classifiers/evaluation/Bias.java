@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Computes the bias for regression models.
+ * Computes the bias (mean error) for regression models.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -56,7 +56,7 @@ public class Bias
    */
   @Override
   public String getMetricDescription() {
-    return BIAS;
+    return BIAS + ", also called Mean Error";
   }
 
   /**
