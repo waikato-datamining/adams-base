@@ -87,6 +87,26 @@ public abstract class AbstractIndexedTable
   abstract protected ColumnMapping getColumnMapping();
 
   /**
+   * Returns the SELECT part with all columns listed.
+   *
+   * @return	the SELECT part
+   */
+  public String getAllColumns() {
+    StringBuilder	result;
+    Enumeration<String>	enm;
+
+    result = new StringBuilder();
+    enm     = getColumnMapping().keys();
+    while (enm.hasMoreElements()) {
+      if (result.length() > 0)
+	result.append(", ");
+      result.append(enm.nextElement());
+    }
+
+    return result.toString();
+  }
+
+  /**
    * Determine if columns (name & datatype) of table match table specification.
    *
    * @param cm		the column mapping to use
