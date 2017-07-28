@@ -108,6 +108,6 @@ public class Bias
     width = 41;
     if (bias >= 1.0)
       width -= Integer.toString((int) bias).length() + 1;
-    return Utils.padRight(BIAS, width) + Utils.doubleToString(bias, 3) + "\n";
+    return Utils.padRight(BIAS, width) + Utils.doubleToString(bias, 4) + "\n";
   }
 }

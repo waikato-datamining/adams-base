@@ -116,6 +116,6 @@ public class RSquared
    */
   @Override
   public String toSummaryString() {
-    return Utils.padRight(RSQUARED, 41) + Utils.doubleToString(getStatistic(RSQUARED), 3) + "\n";
+    return Utils.padRight(RSQUARED, 41) + Utils.doubleToString(getStatistic(RSQUARED), 4) + "\n";
   }
 }
