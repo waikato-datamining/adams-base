@@ -98,8 +98,6 @@ public class SDR
 	values = new TDoubleArrayList();
 	meanC = StatUtils.mean(m_Predicted.toArray());
 	meanM = StatUtils.mean(m_Actual.toArray());
-	System.out.println("meanC: " + meanC);
-	System.out.println("meanM: " + meanM);
 	for (i = 0; i < m_Actual.size(); i++) {
 	  val = m_Predicted.get(i) - m_Actual.get(i) - (meanC - meanM);
 	  values.add(val * val);
