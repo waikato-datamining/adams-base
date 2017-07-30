@@ -232,7 +232,6 @@ public class CheckVariableUsage
 	handleArgumentOption(option, path);
       }
       public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
-        System.out.println(path + ": " + option);
 	// variable attached?
 	if (option.isVariableAttached()) {
           if (!m_Skip.contains(option.getVariableName()))
