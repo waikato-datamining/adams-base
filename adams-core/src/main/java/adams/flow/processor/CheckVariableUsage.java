@@ -232,6 +232,7 @@ public class CheckVariableUsage
 	handleArgumentOption(option, path);
       }
       public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
+        System.out.println(path + ": " + option);
 	// variable attached?
 	if (option.isVariableAttached()) {
           if (!m_Skip.contains(option.getVariableName()))
@@ -272,11 +273,11 @@ public class CheckVariableUsage
       }
     });
 
-    used = new HashSet<String>(m_UsageCount.nameSet());
+    used = new HashSet<>(m_UsageCount.nameSet());
     set  = m_SetCount.nameSet();
     used.removeAll(set);
     if (used.size() > 0) {
-      vars = new ArrayList<String>(used);
+      vars = new ArrayList<>(used);
       Collections.sort(vars);
       m_Warnings = Utils.flatten(vars, "\n");
     }
@@ -286,10 +287,10 @@ public class CheckVariableUsage
       else
 	m_Warnings += "\n\n";
       m_Warnings += "Name: #Set/#Use\n";
-      combined = new HashSet<String>();
+      combined = new HashSet<>();
       combined.addAll(m_UsageCount.nameSet());
       combined.addAll(m_SetCount.nameSet());
-      vars = new ArrayList<String>(combined);
+      vars = new ArrayList<>(combined);
       Collections.sort(vars);
       for (String var: vars)
 	m_Warnings += var + ": " + m_SetCount.current(var) + "/" + m_UsageCount.current(var) + "\n";

@@ -15,7 +15,7 @@
 
 /**
  * Variables.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -92,17 +92,17 @@ public class Variables
   public Variables() {
     super();
 
-    m_Variables               = new Hashtable<String,String>();
-    m_VariableChangeListeners = new WrapperHashSet<VariableChangeListener>();
+    m_Variables               = new Hashtable<>();
+    m_VariableChangeListeners = new WrapperHashSet<>();
 
     // environment variables
-    m_EnvironmentVariables = new Hashtable<String,String>();
+    m_EnvironmentVariables = new Hashtable<>();
     Map<String,String> env = System.getenv();
     for (String key: env.keySet())
       m_EnvironmentVariables.put(ENVIRONMENT_VARIABLE_PREFIX + key, env.get(key));
 
     // system properties
-    m_SystemProperties = new Hashtable<String,String>();
+    m_SystemProperties = new Hashtable<>();
     java.util.Properties props = System.getProperties();
     Enumeration enm = props.propertyNames();
     while (enm.hasMoreElements()) {
@@ -221,9 +221,7 @@ public class Variables
     boolean		result;
     List<String>	names;
 
-    result = false;
-
-    names = new ArrayList<String>();
+    names = new ArrayList<>();
     synchronized(m_Variables) {
       // find matches
       for (String name: m_Variables.keySet()) {
@@ -232,6 +230,7 @@ public class Variables
       }
 
       // remove variables
+      result = (names.size() > 0);
       for (String name: names)
 	remove(name);
     }
@@ -382,13 +381,16 @@ public class Variables
     int			start;
     int			end;
     
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     
     while ((start = expr.indexOf(START)) > -1) {
       end = expr.indexOf(END, start);
       if (end > -1) {
 	result.add(expr.substring(start + START.length(), end + END.length() - 1));
 	expr = expr.substring(end + END.length(), expr.length());
+      }
+      else {
+	expr = expr.substring(start + START.length(), expr.length());
       }
     }
     
@@ -544,7 +546,7 @@ public class Variables
    * @return		the processed string
    */
   public String expand(String s) {
-    return expand(s, (s.indexOf(START + START) > -1));
+    return expand(s, s.contains(START + START));
   }
 
   /**
@@ -561,9 +563,9 @@ public class Variables
 
     result = s;
     part   = START + ENVIRONMENT_VARIABLE_PREFIX;
-    if (result.indexOf(part) > -1) {
+    if (result.contains(part)) {
       enm = m_EnvironmentVariables.keys();
-      while (enm.hasMoreElements() && (result.indexOf(part) > -1)) {
+      while (enm.hasMoreElements() && result.contains(part)) {
 	name   = enm.nextElement();
 	result = result.replace(START + name + END, get(name));
       }
@@ -586,9 +588,9 @@ public class Variables
 
     result = s;
     part   = START + SYSTEM_PROPERTY_PREFIX;
-    if (result.indexOf(part) > -1) {
+    if (result.contains(part)) {
       enm = m_SystemProperties.keys();
-      while (enm.hasMoreElements() && (result.indexOf(part) > -1)) {
+      while (enm.hasMoreElements() && result.contains(part)) {
 	name   = enm.nextElement();
 	result = result.replace(START + name + END, get(name));
       }
@@ -611,9 +613,9 @@ public class Variables
 
     result = s;
     part   = START;
-    if (result.indexOf(part) > -1) {
+    if (result.contains(part)) {
       enm = names();
-      while (enm.hasMoreElements() && (result.indexOf(part) > -1)) {
+      while (enm.hasMoreElements() && result.contains(part)) {
 	name   = enm.nextElement();
 	result = result.replace(START + name + END, get(name));
       }
@@ -723,7 +725,7 @@ public class Variables
     names = other.names();
     while (names.hasMoreElements()) {
       name = names.nextElement();
-      if ((filter == null) || ((filter != null) && (filter.isMatch(name))))
+      if ((filter == null) || filter.isMatch(name))
 	set(name, other.get(name));
     }
   }
