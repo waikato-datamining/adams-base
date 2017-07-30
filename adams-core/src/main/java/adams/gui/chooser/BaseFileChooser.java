@@ -15,7 +15,7 @@
 
 /*
  * BaseFileChooser.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -684,6 +684,9 @@ public class BaseFileChooser
     String	filter;
 
     if (m_TextFilter == null)
+      return super.accept(f);
+
+    if (f.isDirectory())
       return super.accept(f);
 
     filter = m_TextFilter.getText().toLowerCase();
