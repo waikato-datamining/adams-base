@@ -15,7 +15,7 @@
 
 /**
  * PromptUser.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -32,7 +32,8 @@ import adams.gui.core.GUIHelper.DialogCommunication;
  * Prompts the user to click on 'positive' or 'negative' button.<br>
  * The actor's name can be used in the message using the following placeholders:<br>
  * {SHORT} - the short name<br>
- * {FULL} - the full name (incl path)
+ * {FULL} - the full name (incl path)<br>
+ * Variables get expanded as well.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -115,7 +116,8 @@ public class PromptUser
       "Prompts the user to click on 'positive' or 'negative' button.\n"
       + "The actor's name can be used in the message using the following placeholders:\n"
       + PLACEHOLDER_SHORT + " - the short name\n"
-      + PLACEHOLDER_FULL + " - the full name (incl path)";
+      + PLACEHOLDER_FULL + " - the full name (incl path)\n"
+      + "Variables get expanded as well.";
   }
 
   /**
@@ -327,8 +329,10 @@ public class PromptUser
     String      initial;
 
     message = m_Message;
-    if (owner != null)
+    if (owner != null) {
+      message = owner.getVariables().expand(message);
       message = message.replace(PLACEHOLDER_SHORT, owner.getName()).replace(PLACEHOLDER_FULL, owner.getFullName());
+    }
 
     initial = m_InitialSelection.isEmpty() ? m_CaptionPositive : m_InitialSelection;
     if (!m_NonInteractive) {
