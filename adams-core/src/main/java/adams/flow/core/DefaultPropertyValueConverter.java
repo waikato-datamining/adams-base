@@ -15,7 +15,7 @@
 
 /**
  * DefaultPropertyValueConverter.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -78,7 +78,7 @@ public class DefaultPropertyValueConverter
     if (cls == String.class)
       return true;
     // File (we assume that the string is a placeholder file)
-    if (cls == File.class)
+    if (ClassLocator.isSubclass(File.class, cls))
       return true;
     // BaseObject (or derived class)
     if (ClassLocator.isSubclass(BaseObject.class, cls))
@@ -137,7 +137,7 @@ public class DefaultPropertyValueConverter
     else if (cls == String.class)
       result = value;
     // File (we assume that the string is a placeholder file)
-    else if (cls == File.class)
+    else if (ClassLocator.isSubclass(File.class, cls))
       result = new PlaceholderFile(value).getAbsoluteFile();
     // BaseObject (or derived class)
     else if (ClassLocator.isSubclass(BaseObject.class, cls)) {
