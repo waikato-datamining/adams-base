@@ -15,7 +15,7 @@
 
 /*
  * ImageViewer.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -261,13 +261,16 @@ public class ImageViewer
       if (m_Owner.getShowProperties())
 	m_ImagePanel.getSplitPane().getRightComponent().setMinimumSize(new Dimension(m_Owner.getPropertiesWidth(), 0));
       m_ImagePanel.setBackgroundColor(m_Owner.getBackgroundColor());
+      m_ImagePanel.clearSelectionListeners();
       if (!(m_Owner.getSelectionProcessor() instanceof NullProcessor)) {
 	m_ImagePanel.addSelectionListener(m_Owner.getSelectionProcessor().shallowCopy(true));
 	m_ImagePanel.setSelectionEnabled(true);
 	m_ImagePanel.setSelectionBoxColor(m_Owner.getSelectionBoxColor());
       }
+      m_ImagePanel.clearLeftClickListeners();
       if (!(m_Owner.getLeftClickProcessor() instanceof adams.gui.visualization.image.leftclick.NullProcessor))
 	m_ImagePanel.addLeftClickListener(m_Owner.getLeftClickProcessor().shallowCopy(true));
+      m_ImagePanel.clearImageOverlays();
       if (!(m_Owner.getImageOverlay() instanceof NullOverlay)) {
 	if (m_Owner.getImageOverlay() instanceof ShallowCopySupporter)
 	  m_ImagePanel.addImageOverlay((ImageOverlay) ((ShallowCopySupporter) m_Owner.getImageOverlay()).shallowCopy(true));

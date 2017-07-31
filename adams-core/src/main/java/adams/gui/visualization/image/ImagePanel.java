@@ -15,7 +15,7 @@
 
 /**
  * ImagePanel.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -853,6 +853,15 @@ public class ImagePanel
     }
 
     /**
+     * Removes all selection listeners.
+     */
+    public void clearSelectionListeners() {
+      synchronized (m_SelectionListeners) {
+	m_SelectionListeners.clear();
+      }
+    }
+
+    /**
      * Adds the given listener to the internal list of selection listeners.
      *
      * @param l		the listener to add
@@ -891,6 +900,15 @@ public class ImagePanel
 	iter = m_SelectionListeners.iterator();
 	while (iter.hasNext())
 	  iter.next().selected(e);
+      }
+    }
+
+    /**
+     * Removes all left-click listeners.
+     */
+    public void clearLeftClickListeners() {
+      synchronized (m_LeftClickListeners) {
+	m_LeftClickListeners.clear();
       }
     }
 
@@ -1888,6 +1906,13 @@ public class ImagePanel
   }
 
   /**
+   * Removes all selection listeners.
+   */
+  public void clearSelectionListeners() {
+    m_PaintPanel.clearSelectionListeners();
+  }
+
+  /**
    * Adds the given listener to the internal list of selection listeners.
    *
    * @param l		the listener to add
@@ -1903,6 +1928,13 @@ public class ImagePanel
    */
   public void removeSelectionListener(ImagePanelSelectionListener l) {
     m_PaintPanel.removeSelectionListener(l);
+  }
+
+  /**
+   * Removes all left-click listeners.
+   */
+  public void clearLeftClickListeners() {
+    m_PaintPanel.clearLeftClickListeners();
   }
 
   /**
