@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2017-07-21 14:47:35
+# Date: 2017-08-01 14:32:21
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Trigger -name "extract images" -annotation "Expects the following variabes:\\n- image_dir: the directory with the annotated images\\n- output_dir: directory for storing the extracted objects\\n- max_obj_width: the maximum width of objects to extract, -1 to ignore\\n- max_obj_height: the maximum height of objects to extract, -1 to ignore\\n- scale: factor for scaling the images (0-1)\\n- dialog_title: the title for the file chooser dialog\\n"
@@ -29,7 +29,11 @@ adams.flow.control.Trigger -name "extract images" -annotation "Expects the follo
   adams.flow.transformer.SetVariable -name y -var-name field_y -var-value @{prefix}@{index}.y[N] -expand-value true
   adams.flow.transformer.SetVariable -name width -var-name field_width -var-value @{prefix}@{index}.width[N] -expand-value true
   adams.flow.transformer.SetVariable -name height -var-name field_height -var-value @{prefix}@{index}.height[N] -expand-value true
-  adams.flow.transformer.SetVariable -name "output file" -var-name outfile -var-value @{output_dir}/@{file}-@{index}.png -expand-value true
+  adams.flow.control.Trigger -name "output file"
+   adams.flow.source.CombineVariables -expression @{file}-@{index}.png -conversion adams.data.conversion.StringToString
+   adams.flow.transformer.StringReplace -find " " -replace _ -type ALL
+   adams.flow.transformer.PrependDir -prefix @{output_dir}
+   adams.flow.transformer.SetVariable -var-name outfile
  adams.flow.control.Trigger -name "object parameters"
   adams.flow.source.StorageValue -storage-name report -conversion adams.data.conversion.UnknownToUnknown
   adams.flow.control.Tee -name x

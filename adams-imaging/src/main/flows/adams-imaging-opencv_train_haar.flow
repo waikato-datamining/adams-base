@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2017-07-24 13:56:17
+# Date: 2017-08-01 14:32:23
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade using annotated background images \\nand annotated images with objects." -flow-execution-listener adams.flow.execution.NullListener
@@ -66,12 +66,14 @@ adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade us
    adams.flow.source.Variable -var-name annotations_file -conversion adams.data.conversion.StringToString
    adams.flow.transformer.DeleteFile
   adams.flow.transformer.ArrayToSequence
+  adams.flow.transformer.SetVariable -name "reset num annotations" -var-name num_annotations -var-value 0
   adams.flow.control.Tee -name report
    adams.flow.transformer.Convert -conversion "adams.data.conversion.ReplaceFileExtension -extension .report"
    adams.flow.transformer.SetVariable -var-name report
   adams.flow.control.Tee -name filename
    adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name file_long
    adams.flow.transformer.BaseName -name "BaseName (2)"
+   adams.flow.transformer.StringReplace -find " " -replace _ -type ALL
    adams.flow.transformer.SetVariable -name "SetVariable (3)" -var-name file_rel
    adams.flow.transformer.BaseName -remove-extensions true
    adams.flow.transformer.SetVariable -var-name file
