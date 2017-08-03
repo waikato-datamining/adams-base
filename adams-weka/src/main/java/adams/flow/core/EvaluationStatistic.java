@@ -80,7 +80,8 @@ public enum EvaluationStatistic
   UNWEIGHTED_MICRO_F_MEASURE("Unweighted Micro F measure", true),
   BIAS("Bias", false),
   RSQUARED("R^2", false),
-  SDR("Standard Deviation of Residuals", false);
+  SDR("Standard Deviation of Residuals", false),
+  RPD("Ratio of Performance to Deviation", false);
 
   /** the display value. */
   private String m_Display;

@@ -21,6 +21,7 @@ package adams.flow.core;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.Bias;
+import weka.classifiers.evaluation.RPD;
 import weka.classifiers.evaluation.RSquared;
 import weka.classifiers.evaluation.SDR;
 
@@ -143,6 +144,8 @@ public class EvaluationHelper {
         return eval.getPluginMetric(RSquared.class.getName()).getStatistic(RSquared.NAME);
       case SDR:
         return eval.getPluginMetric(SDR.class.getName()).getStatistic(SDR.NAME);
+      case RPD:
+        return eval.getPluginMetric(RPD.class.getName()).getStatistic(RPD.NAME);
       default:
 	throw new IllegalArgumentException("Unhandled statistic field: " + statistic);
     }
