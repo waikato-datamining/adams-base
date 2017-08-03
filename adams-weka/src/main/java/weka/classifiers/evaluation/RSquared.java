@@ -37,7 +37,7 @@ public class RSquared
 
   private static final long serialVersionUID = 6501729731780442367L;
 
-  public static final String RSQUARED = "R^2";
+  public static final String NAME = "R^2";
 
   /**
    * Get the name of this metric
@@ -46,7 +46,7 @@ public class RSquared
    */
   @Override
   public String getMetricName() {
-    return RSQUARED;
+    return NAME;
   }
 
   /**
@@ -56,7 +56,7 @@ public class RSquared
    */
   @Override
   public String getMetricDescription() {
-    return RSQUARED;
+    return NAME;
   }
 
   /**
@@ -68,7 +68,7 @@ public class RSquared
    */
   @Override
   public List<String> getStatisticNames() {
-    return Arrays.asList(RSQUARED);
+    return Arrays.asList(NAME);
   }
 
   /**
@@ -85,7 +85,7 @@ public class RSquared
     double 	sumSqTot;
     int		i;
 
-    if (statName.equals(RSQUARED)) {
+    if (statName.equals(NAME)) {
       if (m_Actual.size() == 0) {
 	return Utils.missingValue();
       }
@@ -116,6 +116,6 @@ public class RSquared
    */
   @Override
   public String toSummaryString() {
-    return Utils.padRight(RSQUARED, 41) + Utils.doubleToString(getStatistic(RSQUARED), 4) + "\n";
+    return Utils.padRight(NAME, 41) + Utils.doubleToString(getStatistic(NAME), 4) + "\n";
   }
 }

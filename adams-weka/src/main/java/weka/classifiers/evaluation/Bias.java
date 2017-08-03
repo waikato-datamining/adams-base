@@ -37,7 +37,7 @@ public class Bias
 
   private static final long serialVersionUID = 6501729731780442367L;
 
-  public static final String BIAS = "Bias";
+  public static final String NAME = "Bias";
 
   /**
    * Get the name of this metric
@@ -46,7 +46,7 @@ public class Bias
    */
   @Override
   public String getMetricName() {
-    return BIAS;
+    return NAME;
   }
 
   /**
@@ -56,7 +56,7 @@ public class Bias
    */
   @Override
   public String getMetricDescription() {
-    return BIAS + ", also called Mean Error";
+    return NAME + ", also called Mean Error";
   }
 
   /**
@@ -68,7 +68,7 @@ public class Bias
    */
   @Override
   public List<String> getStatisticNames() {
-    return Arrays.asList(BIAS);
+    return Arrays.asList(NAME);
   }
 
   /**
@@ -80,7 +80,7 @@ public class Bias
    */
   @Override
   public double getStatistic(String statName) {
-    if (statName.equals(BIAS)) {
+    if (statName.equals(NAME)) {
       if (m_Actual.size() == 0) {
 	return Utils.missingValue();
       }
@@ -104,10 +104,10 @@ public class Bias
     double	bias;
     int		width;
 
-    bias = getStatistic(BIAS);
+    bias = getStatistic(NAME);
     width = 41;
     if (bias >= 1.0)
       width -= Integer.toString((int) bias).length() + 1;
-    return Utils.padRight(BIAS, width) + Utils.doubleToString(bias, 4) + "\n";
+    return Utils.padRight(NAME, width) + Utils.doubleToString(bias, 4) + "\n";
   }
 }

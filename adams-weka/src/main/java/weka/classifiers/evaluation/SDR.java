@@ -41,7 +41,7 @@ public class SDR
 
   private static final long serialVersionUID = -2991979775999208848L;
 
-  public static final String SDR = "Standard Deviation of Residuals";
+  public static final String NAME = "Standard Deviation of Residuals";
 
   /**
    * Get the name of this metric
@@ -50,7 +50,7 @@ public class SDR
    */
   @Override
   public String getMetricName() {
-    return SDR;
+    return NAME;
   }
 
   /**
@@ -60,7 +60,7 @@ public class SDR
    */
   @Override
   public String getMetricDescription() {
-    return SDR + " = sqrt(mean((xc(:)-xm(:)-mean(xc(:))+mean(xm(:))).^2)); [m=measured, c=calculated]";
+    return NAME + " = sqrt(mean((xc(:)-xm(:)-mean(xc(:))+mean(xm(:))).^2)); [m=measured, c=calculated]";
   }
 
   /**
@@ -72,7 +72,7 @@ public class SDR
    */
   @Override
   public List<String> getStatisticNames() {
-    return Arrays.asList(SDR);
+    return Arrays.asList(NAME);
   }
 
   /**
@@ -90,7 +90,7 @@ public class SDR
     double	val;
     TDoubleList	values;
 
-    if (statName.equals(SDR)) {
+    if (statName.equals(NAME)) {
       if (m_Actual.size() == 0) {
 	return Utils.missingValue();
       }
@@ -118,6 +118,6 @@ public class SDR
    */
   @Override
   public String toSummaryString() {
-    return Utils.padRight(SDR, 41) + Utils.doubleToString(getStatistic(SDR), 4) + "\n";
+    return Utils.padRight(NAME, 41) + Utils.doubleToString(getStatistic(NAME), 4) + "\n";
   }
 }
