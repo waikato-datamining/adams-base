@@ -138,11 +138,11 @@ public class EvaluationHelper {
       case UNWEIGHTED_MICRO_F_MEASURE:
 	return eval.unweightedMicroFmeasure();
       case BIAS:
-        return eval.getPluginMetric(Bias.class.getName()).getStatistic(Bias.BIAS);
+        return eval.getPluginMetric(Bias.class.getName()).getStatistic(Bias.NAME);
       case RSQUARED:
-        return eval.getPluginMetric(RSquared.class.getName()).getStatistic(RSquared.RSQUARED);
+        return eval.getPluginMetric(RSquared.class.getName()).getStatistic(RSquared.NAME);
       case SDR:
-        return eval.getPluginMetric(SDR.class.getName()).getStatistic(SDR.SDR);
+        return eval.getPluginMetric(SDR.class.getName()).getStatistic(SDR.NAME);
       default:
 	throw new IllegalArgumentException("Unhandled statistic field: " + statistic);
     }
