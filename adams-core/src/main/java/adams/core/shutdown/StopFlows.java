@@ -120,6 +120,8 @@ public class StopFlows
           Utils.wait(this, 100, 100);
         if (!flow.isStopped())
           getLogger().warning("Flow did not finish within " + m_TimeOut + "msec: " + idStr);
+        else
+          getLogger().warning("Flow stopped: " + idStr);
       }
     };
   }
