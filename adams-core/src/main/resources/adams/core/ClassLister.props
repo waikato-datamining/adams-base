@@ -70,6 +70,10 @@ adams.core.optiontransfer.AbstractOptionTransfer=\
 adams.core.scripting.AbstractScriptingHandler=\
   adams.core.scripting
 
+# the JVM shutdown hooks
+adams.core.shutdown.AbstractShutdownHook=\
+  adams.core.shutdown
+
 # the object discovery handlers
 adams.core.discovery.AbstractDiscoveryHandler=\
   adams.core.discovery

@@ -34,6 +34,8 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.core.shutdown.AbstractShutdownHook;
+import adams.core.shutdown.Null;
 import adams.env.Environment;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
@@ -119,6 +121,11 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-shutdown-hook &lt;adams.core.shutdown.AbstractShutdownHook&gt; (property: shutdownHook)
+ * &nbsp;&nbsp;&nbsp;The shutdown hook to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.core.shutdown.Null
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -164,6 +171,9 @@ public class FlowRunner
 
   /** the remote command scripting engine. */
   protected RemoteScriptingEngine m_RemoteScriptingEngine;
+
+  /** the shutdown hook. */
+  protected AbstractShutdownHook m_ShutdownHook;
 
   /** the listeners for changes to the remote scripting engine. */
   protected Set<RemoteScriptingEngineUpdateListener> m_RemoteScriptingEngineUpdateListeners;
@@ -234,6 +244,10 @@ public class FlowRunner
     m_OptionManager.add(
       "remote-scripting-engine-cmdline", "remoteScriptingEngineCmdLine",
       "");
+
+    m_OptionManager.add(
+      "shutdown-hook", "shutdownHook",
+      new Null());
   }
 
   /**
@@ -530,6 +544,35 @@ public class FlowRunner
   }
 
   /**
+   * Sets the shutdown hook to install/use.
+   *
+   * @param value 	the hook
+   */
+  public void setShutdownHook(AbstractShutdownHook value) {
+    m_ShutdownHook = value;
+    reset();
+  }
+
+  /**
+   * Returns the shutdown hook to install/use.
+   *
+   * @return 		the hook
+   */
+  public AbstractShutdownHook getShutdownHook() {
+    return m_ShutdownHook;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shutdownHookTipText() {
+    return "The shutdown hook to use.";
+  }
+
+  /**
    * Adds the scripting engine to execute. Doesn't stop any running engines.
    *
    * @param value	the engine to add
@@ -655,7 +698,7 @@ public class FlowRunner
   public String execute() {
     String			result;
     List<String>		errors;
-    LocalDirectoryLister lister;
+    LocalDirectoryLister 	lister;
     String[]			flows;
     ManageInteractiveActors	procInteractive;
     RemoteScriptingEngine 	engine;
@@ -667,6 +710,12 @@ public class FlowRunner
       getLogger().info("PID: " + ProcessUtils.getVirtualMachinePID());
 
     AbstractInitialization.initAll();
+
+    if (!(m_ShutdownHook instanceof Null)) {
+      result = m_ShutdownHook.install();
+      if (result != null)
+        return result;
+    }
 
     // start scripting engine?
     if (!m_RemoteScriptingEngineCmdLine.isEmpty() && (getRemoteScriptingEngine() == null)) {
