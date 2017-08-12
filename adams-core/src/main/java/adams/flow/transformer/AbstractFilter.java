@@ -302,8 +302,6 @@ public abstract class AbstractFilter
     if (m_OutputToken != null)
       updateProvenance(m_OutputToken);
 
-    m_Filter.cleanUp();
-
     return result;
   }
 
