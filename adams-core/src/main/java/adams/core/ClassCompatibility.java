@@ -14,78 +14,41 @@
  */
 
 /*
- * Compatibility.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * ClassCompatibility.java
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.flow.core;
+package adams.core;
 
-import adams.core.ClassCompatibilityChecker;
+import adams.flow.core.Unknown;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.Serializable;
-import java.util.HashSet;
 
 /**
  * Class that determines compatibility between inputs and outputs.
  * <br><br>
  * An input and output are compatible, if...
  * <ul>
- *   <li>either output or input is Unknown.class</li>
  *   <li>input is Object.class</li>
  *   <li>output and input are the same class</li>
  * </ul>
- *
- * "Strict" mode does not perform any special treatment of Object/Unknown.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  * @see Unknown
  */
-public class Compatibility
+public class ClassCompatibility
   implements Serializable, ClassCompatibilityChecker {
 
   /** for serialization. */
   private static final long serialVersionUID = -8139225807701691972L;
 
-  /** whether to use strict compatibility, ie, no special handling for Unknown/Object. */
-  protected boolean m_Strict;
-
-  /**
-   * Initializes the checker with non-strict behavior.
-   */
-  public Compatibility() {
-    this(false);
-  }
-
   /**
    * Initializes the checker.
-   *
-   * @param strict	whether to perform strict checks or not
-   * @see		#setStrict(boolean)
    */
-  public Compatibility(boolean strict) {
+  public ClassCompatibility() {
     super();
-    setStrict(strict);
-  }
-
-  /**
-   * Sets whether to use strict or relaxed compatibility checks. "Strict" does
-   * not cater for Unknown/Object.
-   *
-   * @param value	if true strict mode is enabled
-   */
-  public void setStrict(boolean value) {
-    m_Strict = value;
-  }
-
-  /**
-   * Returns whether strict or relaxed compatibility checks are used.
-   *
-   * @return		true if strict mode is enabled
-   */
-  public boolean isStrict() {
-    return m_Strict;
   }
 
   /**
@@ -96,12 +59,6 @@ public class Compatibility
    * @return		true if compatible
    */
   public boolean isCompatible(Class output, Class input) {
-    // unknown matches always
-    if (!m_Strict) {
-      if ((input == Unknown.class) || (output == Unknown.class))
-	return true;
-    }
-
     // both arrays?
     if (output.isArray() && input.isArray())
       return isCompatible(output.getComponentType(), input.getComponentType());
@@ -109,7 +66,7 @@ public class Compatibility
     if (output.isArray() != input.isArray())
       return false;
 
-    if ((input == Object.class) && !m_Strict) {
+    if (input == Object.class) {
       return true;
     }
     else {
@@ -156,54 +113,11 @@ public class Compatibility
   }
 
   /**
-   * Checks whether the two actors are compatible.
-   *
-   * @param output	the generating actor
-   * @param input	the accepting actor
-   * @return		true if compatible
-   */
-  public boolean isCompatible(OutputProducer output, InputConsumer input) {
-    return isCompatible(output.generates(), input.accepts());
-  }
-
-  /**
-   * Returns all the classes that the two actors have in common, in producing
-   * and consuming.
-   *
-   * @param output	the generating actor
-   * @param input	the accepting actor
-   * @return		the classes that are in common
-   */
-  public HashSet<Class> getCompatibleClasses(OutputProducer output, InputConsumer input) {
-    HashSet<Class>	result;
-    Class[]		outCls;
-    Class[]		inCls;
-    int			i;
-    int			n;
-
-    result = new HashSet<Class>();
-
-    outCls = output.generates();
-    inCls  = input.accepts();
-
-    for (i = 0; i < outCls.length; i++) {
-      for (n = 0; n < inCls.length; n++) {
-	if (isCompatible(outCls[i], inCls[n])) {
-	  result.add(outCls[i]);
-	  break;
-	}
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Returns a short string representation of this object.
    *
    * @return		the string representation
    */
   public String toString() {
-    return getClass().getName() + ": strict=" + isStrict();
+    return getClass().getName();
   }
 }
