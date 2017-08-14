@@ -53,7 +53,7 @@ public class NamedCounter
     protected NamedCounter m_Counter;
     
     /**
-     * Initalizes the comparator.
+     * Initializes the comparator.
      */
     public CounterComparator(NamedCounter counter) {
       if (counter == null)
