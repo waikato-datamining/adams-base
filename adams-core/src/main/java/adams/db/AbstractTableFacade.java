@@ -107,4 +107,12 @@ public abstract class AbstractTableFacade
   public boolean getDebug() {
     return m_Debug;
   }
+
+  /**
+   * Reloads the data, if necessary.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void reload() {
+  }
 }
