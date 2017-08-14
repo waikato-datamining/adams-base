@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.AdditionalDataProvider;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.data.container.DataContainer;
@@ -28,6 +29,7 @@ import adams.data.filter.TrainableBatchFilter;
 import adams.db.DatabaseConnectionHandler;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
+import adams.flow.container.AbstractFilterContainer;
 import adams.flow.core.FlowContextHandler;
 import adams.flow.core.Token;
 import adams.flow.core.VariableMonitor;
@@ -41,6 +43,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ancestor for domain-specific filter transformers.
@@ -61,6 +64,9 @@ public abstract class AbstractFilter
   /** the variable to listen to. */
   protected VariableName m_VariableName;
 
+  /** whether to output a container. */
+  protected boolean m_OutputContainer;
+
   /** whether the database connection has been updated. */
   protected boolean m_DatabaseConnectionUpdated;
 
@@ -74,7 +80,10 @@ public abstract class AbstractFilter
    */
   @Override
   public String globalInfo() {
-    return "Filters data using the specified filter.";
+    return
+      "Filters data using the specified filter.\n"
+	+ "The internal filter can be output alongside the filtered data when "
+	+ "outputting a container.";
   }
 
   /**
@@ -91,6 +100,10 @@ public abstract class AbstractFilter
     m_OptionManager.add(
       "var-name", "variableName",
       new VariableName());
+
+    m_OptionManager.add(
+      "output-container", "outputContainer",
+      false);
   }
 
   /**
@@ -163,6 +176,39 @@ public abstract class AbstractFilter
   }
 
   /**
+   * Sets whether to output a container with the filter alongside the
+   * filtered data or just the filtered data.
+   *
+   * @param value 	true if to output the container
+   */
+  public void setOutputContainer(boolean value) {
+    m_OutputContainer = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output a container with the filter alongside the
+   * filtered data or just the filtered data.
+   *
+   * @return 		true if to output the container
+   */
+  public boolean getOutputContainer() {
+    return m_OutputContainer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputContainerTipText() {
+    return
+      "If enabled, outputs the filter along side the filtered data in a "
+	+ getOutputContainerClass().getName() + ".";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -173,6 +219,7 @@ public abstract class AbstractFilter
 
     result  = QuickInfoHelper.toString(this, "filter", m_Filter);
     result += QuickInfoHelper.toString(this, "variableName", m_VariableName.paddedValue(), ", monitor: ");
+    result += QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");
 
     return result;
   }
@@ -205,11 +252,17 @@ public abstract class AbstractFilter
     List<Class> 	result;
 
     result = new ArrayList<>();
-    result.addAll(Arrays.asList(super.generates()));
 
-    if (m_Filter instanceof BatchFilter) {
-      result.add(DataContainer[].class);
-      result.add(Array.newInstance(getDataContainerClass(), 0).getClass());
+    if (m_OutputContainer) {
+      result.add(getOutputContainerClass());
+    }
+    else {
+      result.addAll(Arrays.asList(super.generates()));
+
+      if (m_Filter instanceof BatchFilter) {
+	result.add(DataContainer[].class);
+	result.add(Array.newInstance(getDataContainerClass(), 0).getClass());
+      }
     }
 
     return result.toArray(new Class[result.size()]);
@@ -222,6 +275,13 @@ public abstract class AbstractFilter
    */
   @Override
   protected abstract Class getDataContainerClass();
+
+  /**
+   * Returns the container class in use for the output.
+   *
+   * @return		the container class
+   */
+  protected abstract Class getOutputContainerClass();
 
   /**
    * Determines the database connection in the flow.
@@ -242,9 +302,44 @@ public abstract class AbstractFilter
       if (e.getName().equals(m_VariableName.getValue())) {
 	if (m_Filter instanceof TrainableBatchFilter)
 	  ((TrainableBatchFilter) m_Filter).resetFilter();
-        if (isLoggingEnabled())
-          getLogger().info("Reset 'trainable filter'");
+	if (isLoggingEnabled())
+	  getLogger().info("Reset 'trainable filter'");
       }
+    }
+  }
+
+  /**
+   * Creates the output token.
+   *
+   * @param output	the generated output
+   * @return		the generated token
+   */
+  protected Token createToken(Object output) {
+    AbstractFilterContainer 	cont;
+    Map<String,Object> 		data;
+
+    if (m_OutputContainer) {
+      try {
+	cont = (AbstractFilterContainer) getOutputContainerClass().newInstance();
+	cont.setValue(AbstractFilterContainer.VALUE_FILTER, m_Filter);
+	cont.setValue(AbstractFilterContainer.VALUE_INPUT, m_InputToken.getPayload());
+	cont.setValue(AbstractFilterContainer.VALUE_DATA, output);
+	if (m_Filter instanceof AdditionalDataProvider) {
+	  data = ((AdditionalDataProvider) m_Filter).getAdditionalData();
+	  for (String name: data.keySet()) {
+	    cont.addAdditionalName(name);
+	    cont.setValue(name, data.get(name));
+	  }
+	}
+	return new Token(cont);
+      }
+      catch (Exception e) {
+        throw new IllegalStateException(
+          "Failed to generate output container: " + getOutputContainerClass().getName(), e);
+      }
+    }
+    else {
+      return new Token(output);
     }
   }
 
@@ -280,7 +375,7 @@ public abstract class AbstractFilter
       if (cont == null)
 	result = "No data obtained from filter: " + m_InputToken;
       else
-	m_OutputToken = new Token(cont);
+        m_OutputToken = createToken(cont);
     }
     else if ((m_Filter instanceof BatchFilter) && (m_InputToken.getPayload().getClass().isArray())) {
       bfilter = (BatchFilter) m_Filter;
@@ -296,7 +391,7 @@ public abstract class AbstractFilter
       if (conts == null)
 	result = "No data obtained from filter: " + m_InputToken;
       else
-	m_OutputToken = new Token(conts);
+	m_OutputToken = createToken(conts);
     }
 
     if (m_OutputToken != null)
