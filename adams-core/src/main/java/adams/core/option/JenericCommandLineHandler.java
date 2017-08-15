@@ -59,7 +59,7 @@ public class JenericCommandLineHandler
     specific    = new SpecificClasses();
     managed     = JenericCmdline.getSingleton().getManaged();
     specific.setAllowed(managed.toArray(new Class[managed.size()]));
-    m_Processor.setTraverser(new SpecificClasses());
+    m_Processor.setTraverser(specific);
   }
 
   /**
@@ -181,6 +181,15 @@ public class JenericCommandLineHandler
    */
   @Override
   public boolean setOptions(Object obj, String[] args) {
+    List<String>	newArgs;
+
+    // always expects pairs: flag/value
+    // can't handle leading empty strings in array
+    newArgs = new ArrayList<>(Arrays.asList(args));
+    while ((newArgs.size() > 0) && newArgs.get(0).isEmpty())
+      newArgs.remove(0);
+    args = newArgs.toArray(new String[newArgs.size()]);
+
     try {
       m_Processor.setOptions(obj, args);
       return true;
