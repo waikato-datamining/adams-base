@@ -60,6 +60,7 @@ public class JenericCommandLineHandler
     managed     = JenericCmdline.getSingleton().getManaged();
     specific.setAllowed(managed.toArray(new Class[managed.size()]));
     m_Processor.setTraverser(specific);
+    ((DefaultProcessor) m_Processor).setSkipDeprecated(true);
   }
 
   /**

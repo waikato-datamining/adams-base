@@ -29,6 +29,7 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.MethodDescriptor;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,6 +144,7 @@ public class IntrospectionHelper {
     PropertyDescriptor[] 	properties;
     List<PropertyDescriptor> 	propdesc;
     Class 			cl;
+    Method			method;
 
     bi         = Introspector.getBeanInfo(cls);
     properties = bi.getPropertyDescriptors();
@@ -150,6 +152,16 @@ public class IntrospectionHelper {
     for (PropertyDescriptor desc: properties) {
       if ((desc == null) || (desc.getReadMethod() == null) || (desc.getWriteMethod() == null))
         continue;
+
+      // deprecated?
+      method = desc.getReadMethod();
+      if (method.getAnnotation(Deprecated.class) != null)
+	continue;
+      method = desc.getWriteMethod();
+      if (method.getAnnotation(Deprecated.class) != null)
+	continue;
+
+      // blacklisted?
       cl = desc.getReadMethod().getReturnType();
       if (useBlacklist) {
         if (Editors.isBlacklisted(cl, cl.isArray()))
