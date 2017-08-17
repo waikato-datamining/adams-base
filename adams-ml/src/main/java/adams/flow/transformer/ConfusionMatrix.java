@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ConfusionMatrix.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -110,7 +110,7 @@ import java.util.Map;
  * @version $Revision$
  */
 public class ConfusionMatrix
-  extends AbstractTransformer {
+  extends AbstractSpreadSheetTransformer {
 
   private static final long serialVersionUID = 6499246835313298302L;
 
@@ -291,26 +291,6 @@ public class ConfusionMatrix
    */
   public String predictedPrefixTipText() {
     return "The prefix for the predicted labels.";
-  }
-
-  /**
-   * Returns the class that the consumer accepts.
-   *
-   * @return		the Class of objects that can be processed
-   */
-  @Override
-  public Class[] accepts() {
-    return new Class[]{SpreadSheet.class};
-  }
-
-  /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		the Class of the generated tokens
-   */
-  @Override
-  public Class[] generates() {
-    return new Class[]{SpreadSheet.class};
   }
 
   /**
