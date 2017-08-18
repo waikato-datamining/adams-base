@@ -52,7 +52,7 @@ public class WekaEvaluationContainer
   public final static String VALUE_ORIGINALINDICES = "Original indices";
 
   /** the identifier for the original data. */
-  public final static String VALUE_TESTDATA = "Original data";
+  public final static String VALUE_TESTDATA = "Test data";
 
   /**
    * Initializes the container.
@@ -138,6 +138,7 @@ public class WekaEvaluationContainer
     result.add(VALUE_MODEL);
     result.add(VALUE_PREDICTIONOUTPUT);
     result.add(VALUE_ORIGINALINDICES);
+    result.add(VALUE_TESTDATA);
 
     return result.iterator();
   }
