@@ -15,14 +15,11 @@
 
 /*
  * WekaTestSetEvaluator.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import weka.classifiers.Evaluation;
-import weka.classifiers.evaluation.output.prediction.Null;
-import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.container.WekaModelContainer;
@@ -34,6 +31,9 @@ import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.source.CallableSource;
+import weka.classifiers.Evaluation;
+import weka.classifiers.evaluation.output.prediction.Null;
+import weka.core.Instances;
 
 /**
  <!-- globalinfo-start -->
@@ -256,6 +256,7 @@ public class WekaTestSetEvaluator
     Token			output;
 
     result = null;
+    test   = null;
 
     try {
       // get test set
@@ -301,8 +302,13 @@ public class WekaTestSetEvaluator
       result = handleException("Failed to evaluate: ", e);
     }
 
-    if (m_OutputToken != null)
+    if (m_OutputToken != null) {
+      if (m_OutputToken.getPayload() instanceof WekaEvaluationContainer) {
+        if (test != null)
+          ((WekaEvaluationContainer) m_OutputToken.getPayload()).setValue(WekaEvaluationContainer.VALUE_TESTDATA, test);
+      }
       updateProvenance(m_OutputToken);
+    }
 
     return result;
   }

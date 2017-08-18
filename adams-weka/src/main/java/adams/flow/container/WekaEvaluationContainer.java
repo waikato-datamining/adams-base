@@ -15,12 +15,13 @@
 
 /*
  * WekaEvaluationContainer.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
 
 import weka.classifiers.Evaluation;
+import weka.core.Instances;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,6 +50,9 @@ public class WekaEvaluationContainer
 
   /** the identifier for the original indices. */
   public final static String VALUE_ORIGINALINDICES = "Original indices";
+
+  /** the identifier for the original data. */
+  public final static String VALUE_TESTDATA = "Original data";
 
   /**
    * Initializes the container.
@@ -116,6 +120,7 @@ public class WekaEvaluationContainer
     addHelp(VALUE_MODEL, "model object; " + Object.class.getName());
     addHelp(VALUE_PREDICTIONOUTPUT, "prediction output text; " + String.class.getName());
     addHelp(VALUE_ORIGINALINDICES, "original indices (0-based); array of " + Integer.TYPE.getName());
+    addHelp(VALUE_TESTDATA, "data used for testing; " + Instances.class.getName());
   }
 
   /**
@@ -127,7 +132,7 @@ public class WekaEvaluationContainer
   public Iterator<String> names() {
     List<String>	result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     result.add(VALUE_EVALUATION);
     result.add(VALUE_MODEL);
