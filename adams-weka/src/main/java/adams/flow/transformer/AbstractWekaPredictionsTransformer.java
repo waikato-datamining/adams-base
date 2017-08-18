@@ -15,17 +15,22 @@
 
 /*
  * AbstractWekaPredictionsTransformer.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import weka.classifiers.Evaluation;
+import adams.core.Range;
 import adams.flow.container.WekaEvaluationContainer;
+import weka.classifiers.Evaluation;
+import weka.core.Instances;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Ancestor for transformers that convert the predictions stored in an
@@ -61,6 +66,12 @@ public abstract class AbstractWekaPredictionsTransformer
   /** whether to align output with original dataset (if possible). */
   protected boolean m_UseOriginalIndices;
 
+  /** the additional attributes from the test data to add to the output. */
+  protected Range m_TestAttributes;
+
+  /** the optional prefix to disambiguate the measure attributes from the original ones. */
+  protected String m_MeasuresPrefix;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -95,6 +106,14 @@ public abstract class AbstractWekaPredictionsTransformer
     m_OptionManager.add(
 	    "use-original-indices", "useOriginalIndices",
 	    false);
+
+    m_OptionManager.add(
+	    "test-attributes", "testAttributes",
+	    new Range(""));
+
+    m_OptionManager.add(
+	    "measures-prefix", "measuresPrefix",
+	    "");
   }
 
   /**
@@ -334,11 +353,95 @@ public abstract class AbstractWekaPredictionsTransformer
   }
 
   /**
+   * Sets the range of attributes from the test to add to the output.
+   *
+   * @param value	the range
+   */
+  public void setTestAttributes(Range value) {
+    m_TestAttributes = value;
+    reset();
+  }
+
+  /**
+   * Returns the range of attributes from the test to add to the output.
+   *
+   * @return		the range
+   */
+  public Range getTestAttributes() {
+    return m_TestAttributes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String testAttributesTipText() {
+    return "The range of attributes from the test set to add to the output (if test data available).";
+  }
+
+  /**
+   * Sets the prefix for the measure attributes.
+   *
+   * @param value	the prefix
+   */
+  public void setMeasuresPrefix(String value) {
+    m_MeasuresPrefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix for the measure attributes.
+   *
+   * @return		the prefix
+   */
+  public String getMeasuresPrefix() {
+    return m_MeasuresPrefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String measuresPrefixTipText() {
+    return "The prefix to use for the measure attributes being output.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the accepted classes
    */
   public Class[] accepts() {
     return new Class[]{Evaluation.class, WekaEvaluationContainer.class};
+  }
+
+  /**
+   * Filters the data accordingly to the selected attribute range.
+   *
+   * @param data	the data to filter
+   * @return		the filtered data, null if filtering failed
+   */
+  protected Instances filterTestData(Instances data) {
+    int[]	indices;
+    Remove	remove;
+
+    try {
+      m_TestAttributes.setMax(data.numAttributes());
+      indices = m_TestAttributes.getIntIndices();
+      remove = new Remove();
+      remove.setAttributeIndicesArray(indices);
+      remove.setInvertSelection(true);
+      remove.setInputFormat(data);
+
+      return Filter.useFilter(data, remove);
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to filter test data using range: " + m_TestAttributes, e);
+      return null;
+    }
   }
 }

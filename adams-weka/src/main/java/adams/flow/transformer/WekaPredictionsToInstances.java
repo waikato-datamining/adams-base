@@ -15,7 +15,7 @@
 
 /*
  * WekaPredictionsToInstances.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -126,6 +126,18 @@ import java.util.ArrayList;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-test-attributes &lt;adams.core.Range&gt; (property: testAttributes)
+ * &nbsp;&nbsp;&nbsp;The range of attributes from the test set to add to the output (if test
+ * &nbsp;&nbsp;&nbsp;data available).
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ *
+ * <pre>-measures-prefix &lt;java.lang.String&gt; (property: measuresPrefix)
+ * &nbsp;&nbsp;&nbsp;The prefix to use for the measure attributes being output.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -170,17 +182,20 @@ public class WekaPredictionsToInstances
     Prediction			pred;
     double[]			vals;
     Instances			data;
+    Instances 			testData;
     int[]			indices;
 
     result = null;
 
     if (m_InputToken.getPayload() instanceof WekaEvaluationContainer) {
-      eval    = (Evaluation) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_EVALUATION);
-      indices = (int[]) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES);
+      eval     = (Evaluation) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_EVALUATION);
+      indices  = (int[]) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES);
+      testData = (Instances) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_TESTDATA);
     }
     else {
-      eval    = (Evaluation) m_InputToken.getPayload();
-      indices = null;
+      eval     = (Evaluation) m_InputToken.getPayload();
+      indices  = null;
+      testData = null;
     }
     header      = eval.getHeader();
     nominal     = header.classAttribute().isNominal();
@@ -194,20 +209,20 @@ public class WekaPredictionsToInstances
 	values = new ArrayList<>();
 	for (i = 0; i < header.classAttribute().numValues(); i++)
 	  values.add((i+1) + ":" + header.classAttribute().value(i));
-	atts.add(new Attribute("Actual", values));
+	atts.add(new Attribute(m_MeasuresPrefix + "Actual", values));
       }
       else {
-	atts.add(header.classAttribute().copy("Actual"));
+	atts.add(header.classAttribute().copy(m_MeasuresPrefix + "Actual"));
       }
       // predicted
       if (nominal && m_AddLabelIndex) {
 	values = new ArrayList<>();
 	for (i = 0; i < header.classAttribute().numValues(); i++)
 	  values.add((i+1) + ":" + header.classAttribute().value(i));
-	atts.add(new Attribute("Predicted", values));
+	atts.add(new Attribute(m_MeasuresPrefix + "Predicted", values));
       }
       else {
-	atts.add(header.classAttribute().copy("Predicted"));
+	atts.add(header.classAttribute().copy(m_MeasuresPrefix + "Predicted"));
       }
       // error
       indexErr = -1;
@@ -217,30 +232,30 @@ public class WekaPredictionsToInstances
 	  values = new ArrayList<>();
 	  values.add("n");
 	  values.add("y");
-	  atts.add(new Attribute("Error", values));
+	  atts.add(new Attribute(m_MeasuresPrefix + "Error", values));
 	}
 	else {
-	  atts.add(new Attribute("Error"));
+	  atts.add(new Attribute(m_MeasuresPrefix + "Error"));
 	}
       }
       // probability
       indexProb = -1;
       if (m_ShowProbability && nominal) {
 	indexProb = atts.size();
-	atts.add(new Attribute("Probability"));
+	atts.add(new Attribute(m_MeasuresPrefix + "Probability"));
       }
       // distribution
       indexDist = -1;
       if (m_ShowDistribution && nominal) {
 	indexDist = atts.size();
 	for (n = 0; n < header.classAttribute().numValues(); n++)
-	  atts.add(new Attribute("Distribution (" + header.classAttribute().value(n) + ")"));
+	  atts.add(new Attribute(m_MeasuresPrefix + "Distribution (" + header.classAttribute().value(n) + ")"));
       }
       // weight
       indexWeight = -1;
       if (m_ShowWeight) {
 	indexWeight = atts.size();
-	atts.add(new Attribute("Weight"));
+	atts.add(new Attribute(m_MeasuresPrefix + "Weight"));
       }
 
       data = new Instances("Predictions", atts, predictions.size());
@@ -283,6 +298,13 @@ public class WekaPredictionsToInstances
 	}
 	// add row
 	data.add(new DenseInstance(1.0, vals));
+      }
+
+      // add test data?
+      if ((testData != null) && !m_TestAttributes.isEmpty()) {
+	testData = filterTestData(testData);
+	if (testData != null)
+	  data = Instances.mergeInstances(data, testData);
       }
 
       // generate output token

@@ -27,6 +27,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.StatUtils;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
+import adams.ml.data.InstancesView;
 import weka.classifiers.CrossValidationHelper;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.NominalPrediction;
@@ -131,6 +132,18 @@ import java.util.ArrayList;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-test-attributes &lt;adams.core.Range&gt; (property: testAttributes)
+ * &nbsp;&nbsp;&nbsp;The range of attributes from the test set to add to the output (if test
+ * &nbsp;&nbsp;&nbsp;data available).
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ *
+ * <pre>-measures-prefix &lt;java.lang.String&gt; (property: measuresPrefix)
+ * &nbsp;&nbsp;&nbsp;The prefix to use for the measure attributes being output.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -182,18 +195,22 @@ public class WekaPredictionsToSpreadSheet
     ArrayList<Prediction>	predictions;
     Prediction			pred;
     SpreadSheet			data;
+    Instances 			testData;
+    InstancesView		testView;
     Row				row;
     int[]			indices;
 
     result = null;
 
     if (m_InputToken.getPayload() instanceof WekaEvaluationContainer) {
-      eval    = (Evaluation) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_EVALUATION);
-      indices = (int[]) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES);
+      eval     = (Evaluation) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_EVALUATION);
+      indices  = (int[]) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES);
+      testData = (Instances) ((WekaEvaluationContainer) m_InputToken.getPayload()).getValue(WekaEvaluationContainer.VALUE_TESTDATA);
     }
     else {
-      eval    = (Evaluation) m_InputToken.getPayload();
-      indices = null;
+      eval     = (Evaluation) m_InputToken.getPayload();
+      indices  = null;
+      testData = null;
     }
     header      = eval.getHeader();
     nominal     = header.classAttribute().isNominal();
@@ -205,31 +222,31 @@ public class WekaPredictionsToSpreadSheet
       
       // create header
       row = data.getHeaderRow();
-      row.addCell("A").setContent("Actual");
-      row.addCell("P").setContent("Predicted");
+      row.addCell("A").setContent(m_MeasuresPrefix + "Actual");
+      row.addCell("P").setContent(m_MeasuresPrefix + "Predicted");
       indexErr = -1;
       if (m_ShowError) {
 	indexErr = row.getCellCount();
-	row.addCell("E").setContent("Error");
+	row.addCell("E").setContent(m_MeasuresPrefix + "Error");
       }
       // probability
       indexProb = -1;
       if (m_ShowProbability && nominal) {
 	indexProb = row.getCellCount();
-	row.addCell("Pr").setContent("Probability");
+	row.addCell("Pr").setContent(m_MeasuresPrefix + "Probability");
       }
       // distribution
       indexDist = -1;
       if (m_ShowDistribution && nominal) {
 	indexDist = row.getCellCount();
 	for (n = 0; n < header.classAttribute().numValues(); n++)
-	  row.addCell("D" + n).setContent("Distribution (" + header.classAttribute().value(n) + ")");
+	  row.addCell("D" + n).setContent(m_MeasuresPrefix + "Distribution (" + header.classAttribute().value(n) + ")");
       }
       // weight
       indexWeight = -1;
       if (m_ShowWeight) {
 	indexWeight = row.getCellCount();
-	row.addCell("W").setContent("Weight");
+	row.addCell("W").setContent(m_MeasuresPrefix + "Weight");
       }
 
       // add data
@@ -272,6 +289,15 @@ public class WekaPredictionsToSpreadSheet
 	// weight
 	if (m_ShowWeight) {
 	  row.addCell(indexWeight).setContent(pred.weight());
+	}
+      }
+
+      // add test data?
+      if ((testData != null) && !m_TestAttributes.isEmpty()) {
+	testData = filterTestData(testData);
+	if (testData != null) {
+	  testView = new InstancesView(testData);
+	  data.mergeWith(testView);
 	}
       }
 
