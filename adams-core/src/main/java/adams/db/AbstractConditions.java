@@ -22,8 +22,8 @@ package adams.db;
 
 import adams.core.ClassLister;
 import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.ArrayConsumer;
 import adams.core.option.AbstractOptionHandler;
+import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.core.option.PreGetOptionslistHook;
 
@@ -53,7 +53,7 @@ public abstract class AbstractConditions
    * Automatically corrects values, but does not throw any exceptions.
    * Derived classes must override this method.
    */
-  protected abstract void update();
+  public abstract void update();
 
   /**
    * Checks the correctness of the provided values, may throw unchecked

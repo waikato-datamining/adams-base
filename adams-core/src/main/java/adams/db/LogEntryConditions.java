@@ -402,7 +402,7 @@ public class LogEntryConditions
   /**
    * Automatically corrects values.
    */
-  protected void update() {
+  public void update() {
     if (m_Host == null)
       m_Host = new BaseRegExp("");
 

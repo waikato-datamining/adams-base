@@ -252,7 +252,8 @@ adams.data.statistics.AbstractDataStatistic=\
 
 # the condition objects
 adams.db.AbstractConditions=\
-  adams.db
+  adams.db,\
+  adams.db.conditions
 
 # all tables
 adams.db.AbstractTable=\
