@@ -34,9 +34,21 @@ import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
+ * Sums up all numeric values in a row and replaces them with it.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * Valid options are: <p>
+ *
+ * <pre> -output-debug-info
+ *  If set, filter is run in debug mode and
+ *  may output additional info to the console</pre>
+ *
+ * <pre> -do-not-check-capabilities
+ *  If set, filter capabilities are not checked before filter is built
+ *  (use with caution).</pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
