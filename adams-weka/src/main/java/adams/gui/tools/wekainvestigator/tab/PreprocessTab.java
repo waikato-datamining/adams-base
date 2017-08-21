@@ -15,7 +15,7 @@
 
 /**
  * PreprocessTab.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -515,6 +515,10 @@ public class PreprocessTab
    */
   public void dataChanged(WekaInvestigatorDataEvent e) {
     super.dataChanged(e);
+    if (e.getType() == WekaInvestigatorDataEvent.ROWS_ADDED) {
+      if (e.getRows().length == 1)
+        m_Table.setSelectedRow(e.getRows()[0]);
+    }
     displayData();
   }
 
