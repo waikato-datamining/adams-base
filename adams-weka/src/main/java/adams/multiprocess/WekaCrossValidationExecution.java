@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaCrossValidation.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
@@ -217,16 +217,12 @@ public class WekaCrossValidationExecution
   /**
    * Sets the number of folds.
    *
-   * @param value	the folds, -1 for LOOCV
+   * @param value	the folds, <2 for LOOCV
    */
   public void setFolds(int value) {
-    if ((value == -1) || (value >= 2)) {
-      m_Folds = value;
-    }
-    else {
-      getLogger().severe(
-	"Number of folds must be >=2 or -1 for LOOCV, provided: " + value);
-    }
+    if (value < 2)
+      value = -1;
+    m_Folds = value;
   }
 
   /**
