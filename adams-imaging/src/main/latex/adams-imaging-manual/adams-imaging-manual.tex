@@ -48,7 +48,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2009-2016} &
+		\parbox[c][2cm]{2cm}{\copyright 2009-2017} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -289,6 +289,8 @@ The imaging module offers some more actors that have not been introduced yet.
 
 \noindent Available transformers:
 \begin{tight_itemize}
+	\item \textit{CountObjectInRegion} -- counts the objects that fall
+	within the defined region (partial counts possible, too).
 	\item \textit{DecodeBarcode} -- allows extracting of barcodes like
 	EAN and QRCode from images\footnote{adams-imaging-barcode.flow}.
 	\item \textit{Draw} -- Performs draw operations on images, like setting
