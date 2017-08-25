@@ -32,6 +32,7 @@ Definitions=\
   adams.env.ModuleDefinition,\
   adams.env.MemoryMonitorDefinition,\
   adams.env.NamedSetupsDefinition,\
+  adams.env.NewInstanceDefinition,\
   adams.env.OptionsDefinition,\
   adams.env.PerformanceDefinition,\
   adams.env.PlaceholdersDefinition,\

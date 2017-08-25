@@ -33,10 +33,6 @@ adams.core.io.fileuse.AbstractFileUseCheck=\
 adams.core.management.ClassPathAugmenter=\
   adams.core.management
 
-# handlers for object instantiations
-adams.core.objectinstance.AbstractObjectInstanceHandler=\
-  adams.core.objectinstance
-
 # the option producers
 adams.core.option.OptionProducer=\
   adams.core.option

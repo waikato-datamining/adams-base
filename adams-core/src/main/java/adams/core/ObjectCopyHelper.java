@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ObjectCopyHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
@@ -24,11 +24,9 @@ import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
-import adams.core.objectinstance.AbstractObjectInstanceHandler;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.logging.Level;
 
 /**
  * Helper class for copying objects.
@@ -131,14 +129,12 @@ public class ObjectCopyHelper {
    * @see		OptionUtils#shallowCopy
    * @see		CloneHandler#getClone()
    * @see		Utils#deepCopy(Object)
-   * @see		AbstractObjectInstanceHandler#getHandler(Class)
    * @see		CopyType
    */
   public static Object[] copyObjects(CopyType type, Object[] source) {
-    Object[] 				result;
-    int					i;
-    Class				cls;
-    AbstractObjectInstanceHandler 	instHandler;
+    Object[] 	result;
+    int		i;
+    Class	cls;
 
     if (source == null)
       return null;
@@ -162,24 +158,9 @@ public class ObjectCopyHelper {
 	result = (Object[]) Utils.deepCopy(source);
 	break;
       case NEWINSTANCE:
-	cls         = source[0].getClass();
-	instHandler = AbstractObjectInstanceHandler.getHandler(cls);
-	if (instHandler != null) {
-	  for (i = 0; i < source.length; i++)
-	    result[i] = instHandler.newInstance(cls);
-	}
-	else {
-	  for (i = 0; i < source.length; i++) {
-	    try {
-	      result[i] = cls.newInstance();
-	    }
-	    catch (Exception e) {
-	      if (i == 0) {
-		LOGGER.log(Level.SEVERE, "Failed to instantiate class: " + cls.getName(), e);
-	      }
-	    }
-	  }
-	}
+	cls = source[0].getClass();
+	for (i = 0; i < source.length; i++)
+	  result[i] = newInstance(cls);
 	break;
       default:
 	throw new IllegalStateException("Unhandled type of object copying: " + type);
@@ -204,15 +185,8 @@ public class ObjectCopyHelper {
    *
    * @param cls		the class to create an instance from
    * @return		the object, null if failed
-   * @throws Exception	if instantiation fails
    */
-  public static Object newInstance(Class cls) throws Exception {
-    AbstractObjectInstanceHandler	instHandler;
-
-    instHandler = AbstractObjectInstanceHandler.getHandler(cls);
-    if (instHandler != null)
-      return instHandler.newInstance(cls);
-    else
-      return cls.newInstance();
+  public static Object newInstance(Class cls) {
+    return NewInstance.newInstance(cls);
   }
 }

@@ -1,0 +1,18 @@
+# Defines how classes without default constructor can be instantiated with
+# some default values.
+#
+# Format (for each class):
+# <classname>=<number of arguments>
+# <classname>.<index>.type={boolean|Boolean|char|Character|String|byte|Byte|short|Short|int|Integer|long|Long|float|Float|double|Double|<classname>}
+# <classname>.<index>.value=<default value>
+#
+# Notes:
+# - types starting with an uppercase refer to the classes, ones with lower
+#   case to the primitives
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+
+# File
+java.io.File=1
+java.io.File.0.type=String
+java.io.File.0.value=.
