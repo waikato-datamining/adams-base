@@ -13,26 +13,31 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LocatedObjects.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
 import adams.core.Utils;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Container for located objects.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
@@ -41,7 +46,7 @@ public class LocatedObjects
 
   /** for serialization. */
   private static final long serialVersionUID = 7784285445489902957L;
-  
+
   /** the key for the X location. */
   public final static String KEY_X = ".x";
 
@@ -63,6 +68,9 @@ public class LocatedObjects
   /** the key for the index of a group. */
   public final static String KEY_INDEX = "index";
 
+  /** the logger in use. */
+  protected Logger m_Logger;
+
   /**
    * Initializes the list.
    */
@@ -80,8 +88,56 @@ public class LocatedObjects
   }
 
   /**
+   * Returns the logger instance.
+   *
+   * @return		the logger
+   */
+  public synchronized Logger getLogger() {
+    if (m_Logger == null)
+      m_Logger = LoggingHelper.getLogger(getClass());
+    return m_Logger;
+  }
+
+  /**
+   * Returns a new instance using the specified object indices.
+   *
+   * @param indices	the indices for the subset
+   * @return		the subset
+   */
+  public LocatedObjects subset(int[] indices) {
+    LocatedObjects 	result;
+    int			index;
+    TIntSet 		hash;
+
+    result = new LocatedObjects();
+    hash    = new TIntHashSet(indices);
+    for (LocatedObject obj: this) {
+      if (obj.getMetaData() != null) {
+	try {
+	  if (obj.getMetaData().containsKey(LocatedObjects.KEY_INDEX)) {
+	    index = Integer.parseInt("" + obj.getMetaData().get(LocatedObjects.KEY_INDEX));
+	    if (hash.contains(index))
+	      result.add(obj);
+	  }
+	  else {
+	    getLogger().warning("Object has no index in meta-data: " + obj);
+	  }
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to parse index: " + obj.getMetaData().get(LocatedObjects.KEY_INDEX), e);
+	}
+      }
+      else {
+	getLogger().warning("Object has no meta-data: " + obj);
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Turns the located objects into a report.
-   * Usinga prefix like "Object." will result in the following report entries
+   * Using a prefix like "Object." will result in the following report entries
    * for a single object:
    * <pre>
    * Object.1.x
@@ -89,7 +145,7 @@ public class LocatedObjects
    * Object.1.width
    * Object.1.height
    * </pre>
-   * 
+   *
    * @param prefix	the prefix to use
    * @return		the generated report
    */
@@ -101,9 +157,9 @@ public class LocatedObjects
     int			width;
     DataType		type;
     Object		value;
-    
+
     result = new Report();
-    
+
     count = 0;
     width = ("" + size()).length();
     for (LocatedObject obj: this) {
