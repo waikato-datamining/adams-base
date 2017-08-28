@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ObjectLocationsOverlayFromReport.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -74,6 +74,9 @@ public class ObjectLocationsOverlayFromReport
   /** for serialization. */
   private static final long serialVersionUID = 6356419097401574024L;
 
+  /** the default prefix. */
+  public final static String PREFIX_DEFAULT = "Object.";
+
   /** the prefix for the objects in the report. */
   protected String m_Prefix;
 
@@ -110,7 +113,7 @@ public class ObjectLocationsOverlayFromReport
 
     m_OptionManager.add(
 	"prefix", "prefix",
-	"Object.");
+	PREFIX_DEFAULT);
 
     m_OptionManager.add(
 	"color", "color",
