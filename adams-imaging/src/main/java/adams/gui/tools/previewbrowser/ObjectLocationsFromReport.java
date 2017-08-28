@@ -104,6 +104,9 @@ public class ObjectLocationsFromReport
       if (reports.size() > 0) {
         report  = reports.get(0);
 	overlay = new ObjectLocationsOverlayFromReport();
+	overlay.setUseColorsPerType(true);
+	overlay.setTypeSuffix(".type");
+	overlay.setLabelFormat("#. $");
 	overlay.setPrefix(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
       }
     }
