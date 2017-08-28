@@ -338,7 +338,12 @@ public class ConfusionMatrix
 	if (!predLabels.contains(label))
 	  predLabels.add(label);
       }
+      for (String label: predLabels) {
+	if (!actLabels.contains(label))
+	  actLabels.add(label);
+      }
       Collections.sort(predLabels);
+      Collections.sort(actLabels);
       matrix = new DefaultSpreadSheet();
       row = matrix.getHeaderRow();
       row.addCell("0").setContentAsString("x");
