@@ -15,28 +15,38 @@
 
 /*
  * ImageReader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseRegExp;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
 import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.AbstractReportReader;
+import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.JAIImageReader;
+import adams.data.report.Report;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import adams.flow.source.filesystemsearch.LocalFileSearch;
+
+import java.io.File;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Reads any file format that the specified image reader supports.
+ * Reads any file format that the specified image reader supports.<br>
+ * If meta-data is associated with the image, then this can be loaded as well.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -55,34 +65,56 @@ import adams.flow.provenance.ProvenanceSupporter;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ImageReader
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-reader &lt;adams.data.io.input.AbstractImageReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The image reader to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.JAIImageReader
  * </pre>
- * 
+ *
+ * <pre>-load-meta-data &lt;boolean&gt; (property: loadMetaData)
+ * &nbsp;&nbsp;&nbsp;If enabled, loading of meta-data is attempted.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-meta-data-location &lt;SAME_NAME|STARTING_WITH&gt; (property: metaDataLocation)
+ * &nbsp;&nbsp;&nbsp;The location of the meta-data.
+ * &nbsp;&nbsp;&nbsp;default: SAME_NAME
+ * </pre>
+ *
+ * <pre>-meta-data-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: metaDataReader)
+ * &nbsp;&nbsp;&nbsp;The reader to use for the meta-data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.DefaultSimpleReportReader
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -95,9 +127,26 @@ public class ImageReader
   /** for serialization. */
   private static final long serialVersionUID = 7466006970025235243L;
 
+  /**
+   * Enum for locating the meta-data.
+   */
+  public enum MetaDataLocation {
+    SAME_NAME,
+    STARTING_WITH,
+  }
+
   /** the image reader to use. */
   protected AbstractImageReader m_Reader;
-  
+
+  /** whether to load the meta-data as well (if present). */
+  protected boolean m_LoadMetaData;
+
+  /** how to locate the meta-data. */
+  protected MetaDataLocation m_MetaDataLocation;
+
+  /** for reading the meta-data. */
+  protected AbstractReportReader m_MetaDataReader;
+
   /**
    * Returns a string describing the object.
    *
@@ -105,7 +154,9 @@ public class ImageReader
    */
   @Override
   public String globalInfo() {
-    return "Reads any file format that the specified image reader supports.";
+    return
+      "Reads any file format that the specified image reader supports.\n"
+      + "If meta-data is associated with the image, then this can be loaded as well.";
   }
 
   /**
@@ -116,8 +167,20 @@ public class ImageReader
     super.defineOptions();
 
     m_OptionManager.add(
-	"reader", "reader",
-	new JAIImageReader());
+      "reader", "reader",
+      new JAIImageReader());
+
+    m_OptionManager.add(
+      "load-meta-data", "loadMetaData",
+      false);
+
+    m_OptionManager.add(
+      "meta-data-location", "metaDataLocation",
+      MetaDataLocation.SAME_NAME);
+
+    m_OptionManager.add(
+      "meta-data-reader", "metaDataReader",
+      new DefaultSimpleReportReader());
   }
 
   /**
@@ -150,6 +213,93 @@ public class ImageReader
   }
 
   /**
+   * Sets whether to load available meta-data.
+   *
+   * @param value 	true if to load meta-data
+   */
+  public void setLoadMetaData(boolean value) {
+    m_LoadMetaData = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to load available meta-data.
+   *
+   * @return 		true if to load meta-data
+   */
+  public boolean getLoadMetaData() {
+    return m_LoadMetaData;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String loadMetaDataTipText() {
+    return "If enabled, loading of meta-data is attempted.";
+  }
+
+  /**
+   * Sets where to find the meta-data.
+   *
+   * @param value 	the location
+   */
+  public void setMetaDataLocation(MetaDataLocation value) {
+    m_MetaDataLocation = value;
+    reset();
+  }
+
+  /**
+   * Returns where to find the meta-data.
+   *
+   * @return 		the location
+   */
+  public MetaDataLocation getMetaDataLocation() {
+    return m_MetaDataLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String metaDataLocationTipText() {
+    return "The location of the meta-data.";
+  }
+
+  /**
+   * Sets the reader to use for the meta-data.
+   *
+   * @param value 	the reader
+   */
+  public void setMetaDataReader(AbstractReportReader value) {
+    m_MetaDataReader = value;
+    reset();
+  }
+
+  /**
+   * Returns the reader to use for the meta-data.
+   *
+   * @return 		the reader
+   */
+  public AbstractReportReader getMetaDataReader() {
+    return m_MetaDataReader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String metaDataReaderTipText() {
+    return "The reader to use for the meta-data.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -174,9 +324,17 @@ public class ImageReader
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "reader", m_Reader);
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "reader", m_Reader);
+    if (m_LoadMetaData) {
+      result += QuickInfoHelper.toString(this, "metaDataLocation", m_MetaDataLocation, ", location: ");
+      result += QuickInfoHelper.toString(this, "metaDataReader", m_MetaDataReader, ", meta-data: ");
+    }
+
+    return result;
   }
-  
+
   /**
    * Initializes the item for flow execution.
    *
@@ -185,17 +343,61 @@ public class ImageReader
   @Override
   public String setUp() {
     String	result;
-    
+
     result = super.setUp();
-    
+
     if (result == null) {
       if (!m_Reader.isAvailable())
-	result = "Reader '" + m_Reader.getClass().getName() + "' is not available - check setup!";
+        result = "Reader '" + m_Reader.getClass().getName() + "' is not available - check setup!";
     }
-    
+
     return result;
   }
-  
+
+  /**
+   * Returns the list of meta-data files that were identified using the provided
+   * image file name.
+   *
+   * @param imageFile	the image to list the meta-data files for
+   * @return		the files
+   */
+  protected PlaceholderFile[] listMetaDataFiles(PlaceholderFile imageFile) {
+    PlaceholderFile[]	result;
+    PlaceholderFile	file;
+    LocalFileSearch	search;
+    List<String>	matches;
+    int			i;
+
+    result = new PlaceholderFile[0];
+
+    switch (m_MetaDataLocation) {
+      case SAME_NAME:
+        file = FileUtils.replaceExtension(imageFile, "." + m_MetaDataReader.getDefaultFormatExtension());
+        if (file.exists())
+          result = new PlaceholderFile[]{file};
+	break;
+      case STARTING_WITH:
+        search = new LocalFileSearch();
+        search.setDirectory(new PlaceholderDirectory(imageFile.getParentFile()));
+        search.setRecursive(false);
+        search.setRegExp(new BaseRegExp(FileUtils.replaceExtension(imageFile.getName(), "") + ".*\\." + m_MetaDataReader.getDefaultFormatExtension()));
+        try {
+	  matches = search.search();
+	  result  = new PlaceholderFile[matches.size()];
+	  for (i = 0; i < matches.size(); i++)
+	    result[i] = new PlaceholderFile(matches.get(i));
+	}
+	catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to locate meta-data files using: " + search.toCommandLine(), e);
+          result = new PlaceholderFile[0];
+	}
+	break;
+      default:
+	throw new IllegalStateException("Unhandled meta-data location: " + m_MetaDataLocation);
+    }
+    return result;
+  }
+
   /**
    * Executes the flow item.
    *
@@ -206,6 +408,10 @@ public class ImageReader
     String			result;
     PlaceholderFile		file;
     AbstractImageContainer	cont;
+    PlaceholderFile[]		metaFiles;
+    Report			metaData;
+    List	 		reports;
+    Report			report;
 
     result = null;
 
@@ -213,16 +419,36 @@ public class ImageReader
       file = new PlaceholderFile((String) m_InputToken.getPayload());
     else
       file = new PlaceholderFile((File) m_InputToken.getPayload());
-    
+
+    cont = null;
     try {
       cont = m_Reader.read(file);
       if (cont != null)
-	m_OutputToken = new Token(cont);
+        m_OutputToken = new Token(cont);
       else
-	result = "Failed to read image: " + file;
+        result = "Failed to read image: " + file;
     }
     catch (Exception e) {
       result = handleException("Failed to read image: " + file, e);
+    }
+
+    // meta-data?
+    if (m_LoadMetaData && (result == null)) {
+      metaFiles = listMetaDataFiles(file);
+      metaData  = null;
+      for (PlaceholderFile metaFile: metaFiles) {
+        m_MetaDataReader.setInput(metaFile);
+        reports = m_MetaDataReader.read();
+        for (Object obj: reports) {
+          report = (Report) obj;
+          if (metaData == null)
+            metaData = report;
+          else
+            metaData.mergeWith(report);
+	}
+      }
+      if ((cont != null) && (metaData != null))
+        cont.getReport().mergeWith(metaData);
     }
 
     if (m_OutputToken != null)
