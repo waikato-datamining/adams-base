@@ -21,6 +21,11 @@
 # hooks #
 #########
 
+# BaseRectangle objects
+adams.core.base.BaseRectangle=true
+adams.core.base.BaseRectangle#toString=adams.gui.goe.BaseObjectEditor#toString
+adams.core.base.BaseRectangle#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
 # QuadrilateralLocation objects
 adams.core.base.QuadrilateralLocation=true
 adams.core.base.QuadrilateralLocation#toString=adams.gui.goe.BaseObjectEditor#toString

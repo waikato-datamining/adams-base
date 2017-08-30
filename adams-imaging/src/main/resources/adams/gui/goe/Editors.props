@@ -17,3 +17,4 @@
 
 com.google.zxing.BarcodeFormat=adams.gui.goe.EnumEditor
 adams.core.base.QuadrilateralLocation=adams.gui.goe.BaseObjectEditor
+adams.core.base.BaseRectangle=adams.gui.goe.BaseObjectEditor
