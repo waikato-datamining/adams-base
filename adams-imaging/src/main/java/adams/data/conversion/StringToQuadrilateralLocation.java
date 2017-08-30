@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringToQuadrilateralLocation.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
@@ -24,9 +24,16 @@ import adams.core.base.QuadrilateralLocation;
 
 /**
  <!-- globalinfo-start -->
+ * Converts a string into a adams.core.base.QuadrilateralLocation object.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

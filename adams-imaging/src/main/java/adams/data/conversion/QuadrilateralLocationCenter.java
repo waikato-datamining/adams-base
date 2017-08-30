@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * QuadrilateralLocationCenter.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
@@ -26,9 +26,16 @@ import java.awt.geom.Point2D;
 
 /**
  <!-- globalinfo-start -->
+ * Determines the center of the quadrilateral object and returns them as a java.awt.geom.Point2D.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)

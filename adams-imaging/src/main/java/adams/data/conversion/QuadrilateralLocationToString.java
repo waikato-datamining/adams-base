@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * QuadrilateralLocationToString.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
@@ -24,9 +24,21 @@ import adams.core.base.QuadrilateralLocation;
 
 /**
  <!-- globalinfo-start -->
+ * Turns a quadrilateral object into a string of the format 'A.x A.y B.x B.y C.x C.y D.x D.y'.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-use-integers &lt;boolean&gt; (property: useIntegers)
+ * &nbsp;&nbsp;&nbsp;If enabled, rounded integers are output instead of doubles.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
