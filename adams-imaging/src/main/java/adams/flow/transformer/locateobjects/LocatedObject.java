@@ -135,6 +135,46 @@ public class LocatedObject
   }
 
   /**
+   * Returns the index string of the object.
+   *
+   * @return		the index, null if not available
+   */
+  public String getIndexString() {
+    String		result;
+
+    result = null;
+    if (getMetaData() != null) {
+      if (getMetaData().containsKey(LocatedObjects.KEY_INDEX))
+	result = "" + getMetaData().get(LocatedObjects.KEY_INDEX);
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the index of the object.
+   *
+   * @return		the index, -1 if not available
+   */
+  public int getIndex() {
+    String	index;
+    int		result;
+
+    result = -1;
+    index  = getIndexString();
+    if (index != null) {
+      try {
+	result = Integer.parseInt(index);
+      }
+      catch (Exception e) {
+	result = -1;
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Returns the meta-data of the object, if any.
    *
    * @return		the meta-data
