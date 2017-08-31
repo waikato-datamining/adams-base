@@ -135,7 +135,7 @@ public class FilenameProposer
       gzipped = basis.getName().toLowerCase().endsWith(".gz");
       dir     = basis.getParentFile().getAbsolutePath();
       prefix  = basis.getName().substring(0, basis.getName().replaceAll("\\.[gG][zZ]$", "").lastIndexOf('.'));
-      prefix  = prefix.replaceAll("[0-9][0-9]*$", "").replaceAll(" ([0-9]+)$", "");
+      prefix  = prefix.replaceAll("[0-9][0-9]*$", "").replaceAll(" \\([0-9]+\\)$", "");
     }
 
     if (dir.endsWith(File.separator + "."))
