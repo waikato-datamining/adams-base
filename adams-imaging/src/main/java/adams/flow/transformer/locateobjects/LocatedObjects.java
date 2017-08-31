@@ -136,6 +136,61 @@ public class LocatedObjects
   }
 
   /**
+   * Returns the object with the specified index.
+   *
+   * @param index	the index to look for
+   * @return		the object, null if none found
+   */
+  public LocatedObject find(int index) {
+    return find("" + index);
+  }
+
+  /**
+   * Returns the object with the specified index.
+   *
+   * @param index	the index to look for
+   * @return		the object, null if none found
+   */
+  public LocatedObject find(String index) {
+    LocatedObject	result;
+    Integer		intIndex;
+    String 		objIndexStr;
+    int 		objIndex;
+
+    result = null;
+
+    try {
+      intIndex = Integer.parseInt(index);
+    }
+    catch (Exception e) {
+      intIndex = null;
+    }
+
+    for (LocatedObject obj: this) {
+      // exact match
+      objIndexStr = obj.getIndexString();
+      if (objIndexStr != null) {
+	if (objIndexStr.equals(index)) {
+	  result = obj;
+	  break;
+	}
+      }
+      // numeric match
+      if (intIndex != null) {
+	objIndex = obj.getIndex();
+	if (objIndex != -1) {
+	  if (objIndex == intIndex) {
+	    result = obj;
+	    break;
+	  }
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Turns the located objects into a report.
    * Using a prefix like "Object." will result in the following report entries
    * for a single object:
