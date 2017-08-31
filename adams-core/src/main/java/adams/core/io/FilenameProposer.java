@@ -13,16 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FilenameProposer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
-import java.io.File;
-
 import adams.core.logging.LoggingObject;
 import adams.env.Environment;
+
+import java.io.File;
 
 /**
  * A helper class for proposing file names.
@@ -135,7 +135,7 @@ public class FilenameProposer
       gzipped = basis.getName().toLowerCase().endsWith(".gz");
       dir     = basis.getParentFile().getAbsolutePath();
       prefix  = basis.getName().substring(0, basis.getName().replaceAll("\\.[gG][zZ]$", "").lastIndexOf('.'));
-      prefix  = prefix.replaceAll("[0-9][0-9]*$", "");
+      prefix  = prefix.replaceAll("[0-9][0-9]*$", "").replaceAll(" ([0-9]+)$", "");
     }
 
     if (dir.endsWith(File.separator + "."))
@@ -145,7 +145,7 @@ public class FilenameProposer
     do {
       counter++;
       result = new PlaceholderFile(
-	  dir + File.separator + prefix + counter + "." + m_Suffix + (gzipped ? ".gz" : ""));
+	  dir + File.separator + prefix + " (" + counter + ")." + m_Suffix + (gzipped ? ".gz" : ""));
     }
     while (result.exists());
 
