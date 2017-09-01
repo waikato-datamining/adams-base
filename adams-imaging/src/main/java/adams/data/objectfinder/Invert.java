@@ -91,7 +91,7 @@ public class Invert
       if (obj.getMetaData() != null) {
 	try {
 	  if (obj.getMetaData().containsKey(LocatedObjects.KEY_INDEX)) {
-	    index = Integer.parseInt("" + obj.getMetaData().get(LocatedObjects.KEY_INDEX));
+	    index = obj.getIndex();
 	    if (!base.contains(index))
 	      result.add(index);
 	  }

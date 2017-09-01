@@ -172,7 +172,7 @@ public class ByMetaDataStringValue
       if (obj.getMetaData() != null) {
         if (obj.getMetaData().containsKey(m_Key)) {
           if (m_RegExp.isMatch("" + obj.getMetaData().get(m_Key)))
-            result.add(Integer.parseInt("" + obj.getMetaData().get(LocatedObjects.KEY_INDEX)));
+            result.add(obj.getIndex());
 	}
       }
     }
