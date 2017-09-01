@@ -514,6 +514,7 @@ public class Debug
     DebugNestedProducer			producer;
     NestedConsumer			consumer;
     ListStructureModifyingActors	proc;
+    Actor				flow;
     String				title;
     int					index;
 
@@ -530,29 +531,32 @@ public class Debug
     if ((m_Owner.getParentComponent() != null) && (m_Owner.getParentComponent() instanceof Container)) {
       panel = (FlowPanel) GUIHelper.getParent((Container) m_Owner.getParentComponent(), FlowPanel.class);
       if ((panel != null) && (panel.getOwner() != null)) {
-	proc = new ListStructureModifyingActors();
-	proc.process(panel.getCurrentFlow());
-	if (proc.getList().size() > 0) {
-	  consumer = new NestedConsumer();
-	  producer = new DebugNestedProducer();
-	  producer.setOutputVariableValues(false);
-	  consumer.setInput(producer.produce(getOwner()));
-	  expanded = (Actor) consumer.consume();
-	  title = "Debug: " + panel.getTitle();
-	  if (!panel.getOwner().hasPanel(title)) {
-	    panelCopy = panel.getOwner().newPanel();
+	flow = panel.getCurrentFlow();
+	if (flow != null) {
+	  proc = new ListStructureModifyingActors();
+	  proc.process(flow);
+	  if (proc.getList().size() > 0) {
+	    consumer = new NestedConsumer();
+	    producer = new DebugNestedProducer();
+	    producer.setOutputVariableValues(false);
+	    consumer.setInput(producer.produce(getOwner()));
+	    expanded = (Actor) consumer.consume();
+	    title = "Debug: " + panel.getTitle();
+	    if (!panel.getOwner().hasPanel(title)) {
+	      panelCopy = panel.getOwner().newPanel();
+	    }
+	    else {
+	      index = panel.getOwner().indexOfPanel(title);
+	      panelCopy = panel.getOwner().getPanelAt(index);
+	      panel.getOwner().setSelectedIndex(index);
+	    }
+	    panelCopy.setCurrentFlow(expanded);
+	    panelCopy.setTitle(title);
+	    panelCopy.setDebug(true);
+	    panelCopy.updateTitle();
+	    panelCopy.setDebugSourcePanel(panel);
+	    m_Owner.setParentComponent(panelCopy);
 	  }
-	  else {
-	    index     = panel.getOwner().indexOfPanel(title);
-	    panelCopy = panel.getOwner().getPanelAt(index);
-	    panel.getOwner().setSelectedIndex(index);
-	  }
-	  panelCopy.setCurrentFlow(expanded);
-	  panelCopy.setTitle(title);
-	  panelCopy.setDebug(true);
-	  panelCopy.updateTitle();
-          panelCopy.setDebugSourcePanel(panel);
-	  m_Owner.setParentComponent(panelCopy);
 	}
       }
     }
