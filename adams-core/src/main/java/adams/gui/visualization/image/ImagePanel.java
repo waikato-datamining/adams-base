@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImagePanel.java
  * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
 import adams.core.CleanUpHandler;
+import adams.core.ObjectCopyHelper;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
@@ -58,6 +59,7 @@ import adams.gui.event.ImagePanelSelectionListener;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.event.UndoEvent;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.image.paintlet.Paintlet;
 import adams.gui.visualization.report.ReportFactory;
@@ -75,6 +77,7 @@ import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -107,7 +110,7 @@ import java.util.Vector;
 public class ImagePanel
   extends UndoPanel
   implements StatusMessageHandler, TableModelListener, CleanUpHandler,
-             UndoHandlerWithQuickAccess {
+  UndoHandlerWithQuickAccess {
 
   /** for serialization. */
   private static final long serialVersionUID = -3102446345758890249L;
@@ -125,7 +128,8 @@ public class ImagePanel
    * @version $Revision$
    */
   public static class PaintPanel
-    extends BasePanel {
+    extends BasePanel
+    implements CleanUpHandler {
 
     /** for serialization. */
     private static final long serialVersionUID = 184259023085417961L;
@@ -174,6 +178,9 @@ public class ImagePanel
 
     /** additional paintlets to execute. */
     protected Set<Paintlet> m_Paintlets;
+
+    /** the GOE for adding an image overlay. */
+    protected GenericObjectEditorDialog m_GOEImageOverlay;
 
     /**
      * Initializes the panel.
@@ -380,7 +387,7 @@ public class ImagePanel
     }
 
     /**
-     * Turns the mouse position into pixel location. 
+     * Turns the mouse position into pixel location.
      * Limits the pixel position to the size of the image, i.e., no negative
      * pixel locations or ones that exceed the image size are generated.
      *
@@ -483,6 +490,20 @@ public class ImagePanel
 	menuitem = new JMenuItem("Save report...", GUIHelper.getEmptyIcon());
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener((ActionEvent ae) -> saveReport());
+	menu.add(menuitem);
+
+	menu.addSeparator();
+
+	// add overlay
+	menuitem = new JMenuItem("Add overlay...", GUIHelper.getIcon("add.gif"));
+	menuitem.setEnabled(getCurrentImage() != null);
+	menuitem.addActionListener((ActionEvent ae) -> selectImageOverlay());
+	menu.add(menuitem);
+
+	// remove overlays
+	menuitem = new JMenuItem("Remove overlays", GUIHelper.getIcon("remove.gif"));
+	menuitem.setEnabled(getCurrentImage() != null);
+	menuitem.addActionListener((ActionEvent ae) -> clearImageOverlays());
 	menu.add(menuitem);
 
 	menu.addSeparator();
@@ -669,6 +690,28 @@ public class ImagePanel
     }
 
     /**
+     * Lets the user select an overlay to add.
+     */
+    public void selectImageOverlay() {
+      if (m_GOEImageOverlay == null) {
+	if (getParentDialog() != null)
+	  m_GOEImageOverlay = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+	else
+	  m_GOEImageOverlay = new GenericObjectEditorDialog(getParentFrame(), true);
+	m_GOEImageOverlay.getGOEEditor().setClassType(ImageOverlay.class);
+	m_GOEImageOverlay.getGOEEditor().setCanChangeClassInDialog(true);
+	m_GOEImageOverlay.setCurrent(new NullOverlay());
+	m_GOEImageOverlay.setLocationRelativeTo(getParent());
+      }
+
+      m_GOEImageOverlay.setVisible(true);
+      if (m_GOEImageOverlay.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+	return;
+
+      addImageOverlay((ImageOverlay) ObjectCopyHelper.copyObject(m_GOEImageOverlay.getCurrent()));
+    }
+
+    /**
      * Adds the image overlay.
      *
      * @param io	the image overlay to add
@@ -693,7 +736,7 @@ public class ImagePanel
     }
 
     /**
-     * Removes all image overlay instances that are instances of the specified 
+     * Removes all image overlay instances that are instances of the specified
      * class.
      *
      * @param cls	the image overlay class to remove
@@ -950,6 +993,16 @@ public class ImagePanel
 	iter = m_LeftClickListeners.iterator();
 	while (iter.hasNext())
 	  iter.next().clicked(e);
+      }
+    }
+
+    /**
+     * Cleans up data structures, frees up memory.
+     */
+    public void cleanUp() {
+      if (m_GOEImageOverlay != null) {
+        m_GOEImageOverlay.dispose();
+        m_GOEImageOverlay = null;
       }
     }
   }
@@ -2026,5 +2079,6 @@ public class ImagePanel
     removeDependentFlows();
     if (m_Undo != null)
       m_Undo.cleanUp();
+    m_PaintPanel.cleanUp();
   }
 }
