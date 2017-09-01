@@ -14,7 +14,7 @@
  */
 
 /*
- * GetImageObjectIndices.java
+ * RemoveImageObject.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
@@ -22,20 +22,16 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
-import adams.core.base.BaseRectangle;
 import adams.data.image.AbstractImageContainer;
+import adams.data.report.AbstractField;
 import adams.data.report.Report;
-import adams.flow.core.DataInfoActor;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
-import java.awt.Rectangle;
-import java.util.Map;
-
 /**
  <!-- globalinfo-start -->
- * Outputs the requested type of information for the specified image object.
+ * Removes the specified image object.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -45,7 +41,8 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
  * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -57,7 +54,7 @@ import java.util.Map;
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: ImageObjectInfo
+ * &nbsp;&nbsp;&nbsp;default: RemoveImageObject
  * </pre>
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -90,46 +87,24 @@ import java.util.Map;
  * </pre>
  *
  * <pre>-index &lt;java.lang.String&gt; (property: index)
- * &nbsp;&nbsp;&nbsp;The index of the object to retrieve the information for.
+ * &nbsp;&nbsp;&nbsp;The index of the object to remove.
  * &nbsp;&nbsp;&nbsp;default:
- * </pre>
- *
- * <pre>-type &lt;X|Y|WIDTH|HEIGHT|META_DATA|RECTANGLE&gt; (property: type)
- * &nbsp;&nbsp;&nbsp;The type of information to generate.
- * &nbsp;&nbsp;&nbsp;default: X
  * </pre>
  *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class ImageObjectInfo
-  extends AbstractTransformer
-  implements DataInfoActor {
+public class RemoveImageObject
+  extends AbstractTransformer {
 
   private static final long serialVersionUID = -5644432725273726622L;
-
-  /**
-   * The type of info to provide.
-   */
-  public enum InfoType {
-    X,
-    Y,
-    WIDTH,
-    HEIGHT,
-    META_DATA,
-    RECTANGLE,
-    BASE_RECTANGLE,
-  }
 
   /** the prefix to use when generating a report. */
   protected String m_Prefix;
 
   /** the index to retrieve. */
   protected String m_Index;
-
-  /** the info to provide. */
-  protected InfoType m_Type;
 
   /**
    * Returns a string describing the object.
@@ -138,7 +113,7 @@ public class ImageObjectInfo
    */
   @Override
   public String globalInfo() {
-    return "Outputs the requested type of information for the specified image object.";
+    return "Removes the specified image object.";
   }
 
   /**
@@ -155,10 +130,6 @@ public class ImageObjectInfo
     m_OptionManager.add(
       "index", "index",
       "");
-
-    m_OptionManager.add(
-      "type", "type",
-      InfoType.X);
   }
 
   /**
@@ -216,36 +187,7 @@ public class ImageObjectInfo
    * 			displaying in the GUI or for listing the options.
    */
   public String indexTipText() {
-    return "The index of the object to retrieve the information for.";
-  }
-
-  /**
-   * Sets the type of information to generate.
-   *
-   * @param value	the type
-   */
-  public void setType(InfoType value) {
-    m_Type = value;
-    reset();
-  }
-
-  /**
-   * Returns the type of information to generate.
-   *
-   * @return		the type
-   */
-  public InfoType getType() {
-    return m_Type;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String typeTipText() {
-    return "The type of information to generate.";
+    return "The index of the object to remove.";
   }
 
   /**
@@ -265,25 +207,7 @@ public class ImageObjectInfo
    */
   @Override
   public Class[] generates() {
-    switch (m_Type) {
-      case X:
-      case Y:
-      case WIDTH:
-      case HEIGHT:
-	return new Class[]{Integer.class};
-
-      case META_DATA:
-	return new Class[]{Map.class};
-
-      case RECTANGLE:
-	return new Class[]{Rectangle.class};
-
-      case BASE_RECTANGLE:
-	return new Class[]{BaseRectangle.class};
-
-      default:
-	throw new IllegalStateException("Unhandled type: " + m_Type);
-    }
+    return new Class[]{AbstractImageContainer.class, Report.class};
   }
 
   /**
@@ -297,7 +221,6 @@ public class ImageObjectInfo
 
     result = QuickInfoHelper.toString(this, "prefix", m_Prefix, "prefix: ");
     result += QuickInfoHelper.toString(this, "index", (m_Index.isEmpty() ? "-none-" : m_Index), ", index: ");
-    result += QuickInfoHelper.toString(this, "type", m_Type, ", type: ");
 
     return result;
   }
@@ -313,6 +236,7 @@ public class ImageObjectInfo
     Report		report;
     LocatedObjects	objs;
     LocatedObject 	obj;
+    String		prefix;
 
     result = null;
 
@@ -328,35 +252,20 @@ public class ImageObjectInfo
       objs = LocatedObjects.fromReport(report, m_Prefix);
       obj  = objs.find(m_Index);
       if (obj != null) {
-	switch (m_Type) {
-	  case X:
-	    m_OutputToken = new Token(obj.getX());
-	    break;
-	  case Y:
-	    m_OutputToken = new Token(obj.getY());
-	    break;
-	  case WIDTH:
-	    m_OutputToken = new Token(obj.getWidth());
-	    break;
-	  case HEIGHT:
-	    m_OutputToken = new Token(obj.getHeight());
-	    break;
-	  case META_DATA:
-	    m_OutputToken = new Token(obj.getMetaData());
-	    break;
-	  case RECTANGLE:
-	    m_OutputToken = new Token(obj.getRectangle());
-	    break;
-	  case BASE_RECTANGLE:
-	    m_OutputToken = new Token(new BaseRectangle(obj.getRectangle()));
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled type: " + m_Type);
+        prefix = m_Prefix + obj.getIndexString() + ".";
+        for (AbstractField field: report.getFields()) {
+          if (field.getName().startsWith(prefix)) {
+	    report.removeValue(field);
+	    if (isLoggingEnabled())
+	      getLogger().info("Removed: " + field);
+	  }
 	}
       }
       else {
-        result = "Index not found: " + m_Index;
+        getLogger().warning("Index not found: " + m_Index);
       }
+
+      m_OutputToken = new Token(m_InputToken.getPayload());
     }
 
     return result;
