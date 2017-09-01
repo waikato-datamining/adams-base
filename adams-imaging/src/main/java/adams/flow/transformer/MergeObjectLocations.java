@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MergeObjectLocations.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -616,57 +616,62 @@ public class MergeObjectLocations
       thisObjs   = LocatedObjects.fromReport(thisReport,  m_Prefix);
       otherObjs  = LocatedObjects.fromReport(otherReport, m_Prefix);
       mergedObjs = new LocatedObjects();
-      for (LocatedObject thisObj: thisObjs) {
-	add      = true;
-	overlaps = 0;
-	for (LocatedObject otherObj: otherObjs) {
-	  if (thisObj.overlapRatio(otherObj) >= m_MinOverlapRatio) {
-	    overlaps++;
-	    switch (m_OverlapAction) {
-	      case SKIP:
-		add = false;
-		break;
-	      case KEEP:
-		if (m_CheckType) {
-		  if (thisObj.getMetaData().containsKey(m_TypeSuffix) && otherObj.getMetaData().containsKey(m_TypeSuffix))
-		    add = thisObj.getMetaData().get(m_TypeSuffix).equals(otherObj.getMetaData().get(m_TypeSuffix));
-		}
-		if (add) {
-		  for (String key: otherObj.getMetaData().keySet())
-		    thisObj.getMetaData().putIfAbsent(key, otherObj.getMetaData().get(key));
-		}
-		break;
-	      default:
-		throw new IllegalStateException("Unhandled overlap action: " + m_OverlapAction);
-	    }
-	  }
-	  if (!add)
-	    break;
-	}
-	// check for no overlaps
-	if (overlaps == 0) {
-	  switch (m_NoOverlapAction) {
-	    case SKIP:
-	      add = false;
-	      break;
-	    case KEEP:
-	      // nothing to do
-	      break;
-	    default:
-	      throw new IllegalStateException("Unhandled no-overlap action: " + m_NoOverlapAction);
-	  }
-	}
-	if (add) {
-	  // update type?
-	  if (!typeKey.isEmpty() && !m_TypeFind.isEmpty()) {
-	    if (thisObj.getMetaData().containsKey(typeKey)) {
-	      typeNew = thisObj.getMetaData().get(typeKey).toString();
-	      typeNew = typeNew.replaceFirst(m_TypeFind.getValue(), m_TypeReplace);
-	      thisObj.getMetaData().put(typeKey, typeNew);
-	    }
-	  }
-	  mergedObjs.add(thisObj);
-	}
+      if (thisObjs.size() == 0) {
+        mergedObjs = otherObjs;
+      }
+      else {
+        for (LocatedObject thisObj : thisObjs) {
+          add = true;
+          overlaps = 0;
+          for (LocatedObject otherObj : otherObjs) {
+            if (thisObj.overlapRatio(otherObj) >= m_MinOverlapRatio) {
+              overlaps++;
+              switch (m_OverlapAction) {
+                case SKIP:
+                  add = false;
+                  break;
+                case KEEP:
+                  if (m_CheckType) {
+                    if (thisObj.getMetaData().containsKey(m_TypeSuffix) && otherObj.getMetaData().containsKey(m_TypeSuffix))
+                      add = thisObj.getMetaData().get(m_TypeSuffix).equals(otherObj.getMetaData().get(m_TypeSuffix));
+                  }
+                  if (add) {
+                    for (String key : otherObj.getMetaData().keySet())
+                      thisObj.getMetaData().putIfAbsent(key, otherObj.getMetaData().get(key));
+                  }
+                  break;
+                default:
+                  throw new IllegalStateException("Unhandled overlap action: " + m_OverlapAction);
+              }
+            }
+            if (!add)
+              break;
+          }
+          // check for no overlaps
+          if (overlaps == 0) {
+            switch (m_NoOverlapAction) {
+              case SKIP:
+                add = false;
+                break;
+              case KEEP:
+                // nothing to do
+                break;
+              default:
+                throw new IllegalStateException("Unhandled no-overlap action: " + m_NoOverlapAction);
+            }
+          }
+          if (add) {
+            // update type?
+            if (!typeKey.isEmpty() && !m_TypeFind.isEmpty()) {
+              if (thisObj.getMetaData().containsKey(typeKey)) {
+                typeNew = thisObj.getMetaData().get(typeKey).toString();
+                typeNew = typeNew.replaceFirst(m_TypeFind.getValue(), m_TypeReplace);
+                thisObj.getMetaData().put(typeKey, typeNew);
+              }
+            }
+            mergedObjs.add(thisObj);
+          }
+        }
       }
 
       // assemble new report
