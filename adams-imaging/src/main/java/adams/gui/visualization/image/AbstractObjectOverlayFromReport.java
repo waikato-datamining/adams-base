@@ -392,6 +392,16 @@ public abstract class AbstractObjectOverlayFromReport
 	  m_Labels.put(rect, label);
 	}
       }
+      else {
+	// label?
+	if (!m_LabelFormat.isEmpty()) {
+	  label = m_LabelFormat
+	    .replace("#", "" + object.getMetaData().get(LocatedObjects.KEY_INDEX))
+	    .replace("@", "")
+	    .replace("$", "");
+	  m_Labels.put(rect, label);
+	}
+      }
 
       m_Colors.put(rect, color);
     }
