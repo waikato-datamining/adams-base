@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageRenderer.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
 
 import adams.data.image.BufferedImageSupporter;
+import adams.data.report.ReportHandler;
 import adams.gui.visualization.image.ImagePanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -64,10 +65,14 @@ public class ImageRenderer
     ImagePanel		imagePanel;
 
     imagePanel = new ImagePanel();
+    imagePanel.setShowProperties(true);
+    imagePanel.setShowLog(false);
     if (obj instanceof BufferedImageSupporter)
       imagePanel.setCurrentImage(((BufferedImageSupporter) obj).toBufferedImage());
     else
       imagePanel.setCurrentImage((BufferedImage) obj);
+    if (obj instanceof ReportHandler)
+      imagePanel.setAdditionalProperties(((ReportHandler) obj).getReport());
     panel.add(imagePanel, BorderLayout.CENTER);
 
     return null;
