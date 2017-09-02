@@ -18,32 +18,32 @@ The requirements are as follows:
 The following sections cover the various tools and environments that are
 used when developing for/with ADAMS.
 
-\section{Subversion}
-The revision control system that ADAMS uses as backend is Apache Subversion
-\cite{subversion}. The ADAMS repository is accessible via the
+\section{Git}
+The revision control system that ADAMS uses as backend is Git\cite{git},
+hosted on Github\cite{github}. The ADAMS repository is accessible via the
 following URL:
 
-\url{https://svn.cms.waikato.ac.nz/svn/adams/base/trunk/}{}
+\url{https://github.com/Waikato/adams-base}{}
 
-\noindent You can check out the code in the console using the following
-command, provided you have subversion command-line tools installed:
+\noindent You can clone the code in the console using the following
+command, provided you have the git command-line tools installed:
 \begin{verbatim}
-  svn checkout https://svn.cms.waikato.ac.nz/svn/adams/base/trunk adams
+  git clone https://github.com/Waikato/adams-base.git
 \end{verbatim}
 
 Further modules are available from these repositories:
 \begin{tight_itemize}
 	\item \textbf{addons} (less common used modules) \\
-	\url{https://svn.cms.waikato.ac.nz/svn/adams/addons/trunk/}{}
+	\url{https://github.com/Waikato/adams-addons}{}
 	\item \textbf{incubator} (experimental modules) \\
-	\url{https://svn.cms.waikato.ac.nz/svn/adams/incubator/trunk/}{}
+	\url{https://github.com/Waikato/adams-incubator}{}
+	\item \textbf{libraries} (modules with additional libraries, like CUDA) \\
+	\url{https://github.com/Waikato/adams-libraries}{}
+	\item \textbf{spectral-base} (modules for spectral data analysis) \\
+	\url{https://github.com/Waikato/adams-spectral-base}{}
+	\item \textbf{applications} (meta-modules that combine various modules into domain-specific applications) \\
+	\url{https://github.com/Waikato/adams-applications}{}
 \end{tight_itemize}
-
-\noindent There are lots of graphical clients for subversion available,
-open-source and closed-source ones alike. A good overview is accesible through
-WikiPedia, \textit{Comparison of Subversion clients}:
-
-\url{http://en.wikipedia.org/wiki/Comparison_of_Subversion_clients}{}
 
 \section{Maven}
 ADAMS was designed to be a modular framework, but not only \textit{multi-module}
