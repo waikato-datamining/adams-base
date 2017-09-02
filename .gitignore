@@ -1,0 +1,7 @@
+*~
+*.bak
+*.swp
+*.iml
+target/
+build/
+.idea/
