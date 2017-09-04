@@ -20,14 +20,18 @@
 package adams.gui.tools;
 
 import adams.core.CleanUpHandler;
+import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.FlowReader;
+import adams.data.io.output.FlowWriter;
 import adams.flow.control.SubProcess;
 import adams.flow.core.Actor;
 import adams.flow.core.Compatibility;
 import adams.flow.transformer.locateobjects.AbstractObjectLocator;
 import adams.flow.transformer.locateobjects.PassThrough;
+import adams.gui.chooser.FlowFileChooser;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
@@ -120,13 +124,25 @@ public class ImageProcessorPanel
   protected TitleGenerator m_TitleGenerator;
 
   /** the file chooser for the pictures. */
-  protected ImageFileChooser m_FileChooser;
+  protected ImageFileChooser m_FileChooserImage;
+
+  /** the file chooser for the flows. */
+  protected FlowFileChooser m_FileChooserFlow;
 
   /** the flow panel. */
   protected FlowPanel m_PanelFlow;
 
   /** the label for the progress. */
   protected JLabel m_LabelProgress;
+
+  /** the "new flow" button. */
+  protected JButton m_ButtonNew;
+
+  /** the "load flow" button. */
+  protected JButton m_ButtonLoad;
+
+  /** the "save flow" button. */
+  protected JButton m_ButtonSave;
 
   /** the "check flow" button. */
   protected JButton m_ButtonCheck;
@@ -149,10 +165,12 @@ public class ImageProcessorPanel
 
     m_RecentFilesHandler = null;
     m_TitleGenerator     = new TitleGenerator("Image processor", true);
-    m_FileChooser        = new ImageFileChooser();
-    m_FileChooser.setCurrentDirectory(new File(ImageViewerPanel.getProperties().getPath("InitialDir", "%h")));
-    m_FileChooser.setAutoAppendExtension(true);
-    m_FileChooser.setMultiSelectionEnabled(true);
+    m_FileChooserImage = new ImageFileChooser();
+    m_FileChooserImage.setCurrentDirectory(new File(ImageViewerPanel.getProperties().getPath("InitialDir", "%h")));
+    m_FileChooserImage.setAutoAppendExtension(true);
+    m_FileChooserImage.setMultiSelectionEnabled(true);
+    m_FileChooserFlow = new FlowFileChooser(FlowPanel.getProperties().getPath("InitialDir", "%h"));
+    m_FileChooserFlow.setMultiSelectionEnabled(false);
     m_LastObjectLocatorOriginal  = new PassThrough();
     m_LastObjectLocatorProcessed = new PassThrough();
   }
@@ -182,7 +200,7 @@ public class ImageProcessorPanel
 
     m_PanelFlow   = new FlowPanel();
     m_PanelFlow.getTitleGenerator().setEnabled(false);
-    m_PanelFlow.setMinimumSize(new Dimension(350, 0));
+    m_PanelFlow.setMinimumSize(new Dimension(400, 0));
     m_PanelFlow.getUndo().clear();
     m_PanelFlow.setCurrentFlow(new SubProcess());
     panel = new JPanel(new BorderLayout());
@@ -197,11 +215,23 @@ public class ImageProcessorPanel
     m_LabelProgress = new JLabel();
     panelStatus.add(m_LabelProgress);
 
-    m_ButtonCheck = new JButton("Check", GUIHelper.getIcon("validate.png"));
+    m_ButtonNew = new JButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonNew.addActionListener((ActionEvent e) -> newFlow());
+    panelButtons.add(m_ButtonNew);
+
+    m_ButtonLoad = new JButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad.addActionListener((ActionEvent e) -> loadFlow());
+    panelButtons.add(m_ButtonLoad);
+
+    m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave.addActionListener((ActionEvent e) -> saveFlow());
+    panelButtons.add(m_ButtonSave);
+
+    m_ButtonCheck = new JButton(GUIHelper.getIcon("validate.png"));
     m_ButtonCheck.addActionListener((ActionEvent e) -> checkFlow(false));
     panelButtons.add(m_ButtonCheck);
 
-    m_ButtonRun = new JButton("Run", GUIHelper.getIcon("run.gif"));
+    m_ButtonRun = new JButton(GUIHelper.getIcon("run.gif"));
     m_ButtonRun.addActionListener((ActionEvent e) -> runFlow());
     panelButtons.add(m_ButtonRun);
     m_SplitPane.setRightComponent(panel);
@@ -522,13 +552,13 @@ public class ImageProcessorPanel
     int		retVal;
     File[]	files;
 
-    retVal = m_FileChooser.showOpenDialog(this);
+    retVal = m_FileChooserImage.showOpenDialog(this);
     if (retVal != ImageFileChooser.APPROVE_OPTION)
       return;
 
-    files = m_FileChooser.getSelectedFiles();
+    files = m_FileChooserImage.getSelectedFiles();
     for (File file: files)
-      load(file, m_FileChooser.getImageReader());
+      load(file, m_FileChooserImage.getImageReader());
   }
 
   /**
@@ -537,7 +567,7 @@ public class ImageProcessorPanel
    * @param file	the file to load
    */
   public void load(File file) {
-    load(file, m_FileChooser.getReaderForFile(file));
+    load(file, m_FileChooserImage.getReaderForFile(file));
   }
 
   /**
@@ -630,6 +660,52 @@ public class ImageProcessorPanel
   }
 
   /**
+   * Replaces the current flow snippet with an empty one.
+   */
+  protected void newFlow() {
+    m_PanelFlow.setCurrentFlow(new SubProcess());
+  }
+
+  /**
+   * Allows the user to load a flow snippet.
+   */
+  protected void loadFlow() {
+    int		retVal;
+    FlowReader	reader;
+    Actor	actor;
+
+    retVal = m_FileChooserFlow.showOpenDialog(this);
+    if (retVal != FlowFileChooser.APPROVE_OPTION)
+      return;
+
+    reader = m_FileChooserFlow.getReader();
+    actor  = reader.readActor(m_FileChooserFlow.getSelectedFile());
+    if (actor instanceof SubProcess)
+      m_PanelFlow.setCurrentFlow(actor);
+    else
+      GUIHelper.showErrorMessage(
+        this, "The outermost actor in the flow must a " + SubProcess.class.getName()
+	  + ", encountered: " + actor.getClass().getName());
+  }
+
+  /**
+   * Allows the user to save the current flow snippet.
+   */
+  protected void saveFlow() {
+    int		retVal;
+    FlowWriter	writer;
+
+    retVal = m_FileChooserFlow.showSaveDialog(this);
+    if (retVal != FlowFileChooser.APPROVE_OPTION)
+      return;
+
+    writer = m_FileChooserFlow.getWriter();
+    if (!writer.write(m_PanelFlow.getCurrentFlow(), m_FileChooserFlow.getSelectedFile()))
+      GUIHelper.showErrorMessage(
+        this, "Failed to write flow snippet to: " + m_FileChooserFlow.getSelectedFile());
+  }
+
+  /**
    * Checks the flow.
    *
    * @param silent	only pops up a dialog if invalid flow
@@ -678,14 +754,21 @@ public class ImageProcessorPanel
       return;
 
     worker = new SwingWorker() {
+      protected MessageCollection m_Errors;
       @Override
       protected Object doInBackground() throws Exception {
+        m_Errors = new MessageCollection();
         m_ButtonCheck.setEnabled(false);
         m_ButtonRun.setEnabled(false);
         ImageProcessorSubPanel[] panels = getAllPanels();
 	for (int i = 0; i < panels.length; i++) {
 	  m_LabelProgress.setText((i+1) + "/" + panels.length + "...");
-	  panels[i].runFlow();
+	  String msg = panels[i].runFlow();
+	  if (msg != null) {
+	    m_Errors.add(
+	      "\nFile #" + (i + 1) + ": " + panels[i].getCurrentFile().getName()
+		+ " encountered the following error:\n" + msg);
+	  }
 	}
 	return null;
       }
@@ -695,6 +778,8 @@ public class ImageProcessorPanel
 	m_LabelProgress.setText("");
         m_ButtonCheck.setEnabled(true);
         m_ButtonRun.setEnabled(true);
+        if (!m_Errors.isEmpty())
+          GUIHelper.showErrorMessage(ImageProcessorPanel.this, m_Errors.toString().trim());
       }
     };
     worker.execute();

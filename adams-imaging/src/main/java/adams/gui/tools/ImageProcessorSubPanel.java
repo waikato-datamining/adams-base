@@ -356,12 +356,17 @@ public class ImageProcessorSubPanel
 
   /**
    * Runs the flow.
+   *
+   * @return		null if successful, otherwise error message
    */
-  protected void runFlow() {
+  public String runFlow() {
+    String			result;
     BufferedImageContainer	contIn;
     SubProcess			sub;
     String			msg;
     AbstractImageContainer	contOut;
+
+    result = null;
 
     contIn = new BufferedImageContainer();
     contIn.setImage(m_PanelOriginal.getCurrentImage());
@@ -387,8 +392,10 @@ public class ImageProcessorSubPanel
       m_PanelProcessed.setScale(-1.0);
     }
     else if (msg != null) {
-      GUIHelper.showErrorMessage(this, "Flow execution failed:\n" + msg);
+      result = "Flow execution failed:\n" + msg;
     }
+
+    return result;
   }
 
   /**
