@@ -15,7 +15,7 @@
 
 /*
  * ImageProcessor.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -70,7 +70,7 @@ public class ImageProcessor
    */
   @Override
   public void launch() {
-    createChildFrame(new ImageProcessorPanel(), GUIHelper.getDefaultLargeDialogDimension());
+    createChildFrame(new ImageProcessorPanel(), GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
   }
 
   /**

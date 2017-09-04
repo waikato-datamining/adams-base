@@ -13,52 +13,72 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageProcessorPanel.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
+import adams.core.CleanUpHandler;
+import adams.core.Utils;
+import adams.data.image.AbstractImageContainer;
 import adams.data.io.input.AbstractImageReader;
+import adams.flow.control.SubProcess;
+import adams.flow.core.Actor;
+import adams.flow.core.Compatibility;
+import adams.flow.transformer.locateobjects.AbstractObjectLocator;
+import adams.flow.transformer.locateobjects.PassThrough;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.TitleGenerator;
+import adams.gui.core.Undo;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
+import adams.gui.flow.FlowPanel;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.ImageProcessorSubPanel.LayoutType;
 import adams.gui.visualization.image.ImageViewerPanel;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
  * Interface for processing images using a flow snippet.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class ImageProcessorPanel
   extends BasePanel
-  implements MenuBarProvider {
+  implements MenuBarProvider, CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 5882173310359920644L;
 
   /** the file to store the recent files in. */
   public final static String SESSION_FILE = "ImageProcessorSession.props";
+
+  /** the split pane. */
+  protected BaseSplitPane m_SplitPane;
 
   /** the tabbed pane for the images. */
   protected ImageProcessorTabbedPane m_TabbedPane;
@@ -102,6 +122,24 @@ public class ImageProcessorPanel
   /** the file chooser for the pictures. */
   protected ImageFileChooser m_FileChooser;
 
+  /** the flow panel. */
+  protected FlowPanel m_PanelFlow;
+
+  /** the label for the progress. */
+  protected JLabel m_LabelProgress;
+
+  /** the "check flow" button. */
+  protected JButton m_ButtonCheck;
+
+  /** the "run flow" button. */
+  protected JButton m_ButtonRun;
+
+  /** the last object locator in use (original). */
+  protected AbstractObjectLocator m_LastObjectLocatorOriginal;
+
+  /** the last object locator in use (processed). */
+  protected AbstractObjectLocator m_LastObjectLocatorProcessed;
+
   /**
    * Initializes the members.
    */
@@ -115,25 +153,58 @@ public class ImageProcessorPanel
     m_FileChooser.setCurrentDirectory(new File(ImageViewerPanel.getProperties().getPath("InitialDir", "%h")));
     m_FileChooser.setAutoAppendExtension(true);
     m_FileChooser.setMultiSelectionEnabled(true);
+    m_LastObjectLocatorOriginal  = new PassThrough();
+    m_LastObjectLocatorProcessed = new PassThrough();
   }
-  
+
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
+    JPanel	panel;
+    JPanel	panelBottom;
+    JPanel	panelStatus;
+    JPanel	panelButtons;
+
     super.initGUI();
-    
+
     setLayout(new BorderLayout());
-    
+
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
+    m_SplitPane.setResizeWeight(1.0);
+    add(m_SplitPane, BorderLayout.CENTER);
+
     m_TabbedPane = new ImageProcessorTabbedPane(this);
     m_TabbedPane.setCloseTabsWithMiddleMouseButton(true);
-    m_TabbedPane.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	update();
-      }
-    });
-    add(m_TabbedPane, BorderLayout.CENTER);
+    m_TabbedPane.addChangeListener((ChangeEvent e) -> update());
+    m_SplitPane.setLeftComponent(m_TabbedPane);
+
+    m_PanelFlow   = new FlowPanel();
+    m_PanelFlow.getTitleGenerator().setEnabled(false);
+    m_PanelFlow.setMinimumSize(new Dimension(350, 0));
+    m_PanelFlow.getUndo().clear();
+    m_PanelFlow.setCurrentFlow(new SubProcess());
+    panel = new JPanel(new BorderLayout());
+    panel.add(m_PanelFlow, BorderLayout.CENTER);
+    panelBottom = new JPanel(new BorderLayout());
+    panel.add(panelBottom, BorderLayout.SOUTH);
+    panelStatus = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelBottom.add(panelStatus, BorderLayout.WEST);
+    panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    panelBottom.add(panelButtons, BorderLayout.EAST);
+
+    m_LabelProgress = new JLabel();
+    panelStatus.add(m_LabelProgress);
+
+    m_ButtonCheck = new JButton("Check", GUIHelper.getIcon("validate.png"));
+    m_ButtonCheck.addActionListener((ActionEvent e) -> checkFlow(false));
+    panelButtons.add(m_ButtonCheck);
+
+    m_ButtonRun = new JButton("Run", GUIHelper.getIcon("run.gif"));
+    m_ButtonRun.addActionListener((ActionEvent e) -> runFlow());
+    panelButtons.add(m_ButtonRun);
+    m_SplitPane.setRightComponent(panel);
   }
 
   /**
@@ -143,10 +214,10 @@ public class ImageProcessorPanel
     updateTitle();
     updateMenu();
   }
-  
+
   /**
    * Returns the title generator in use.
-   * 
+   *
    * @return		the generator
    */
   public TitleGenerator getTitleGenerator() {
@@ -187,35 +258,35 @@ public class ImageProcessorPanel
   protected void updateMenu() {
     ImageProcessorSubPanel	panel;
     boolean			hasPanel;
-    
+
     if (m_MenuBar == null)
       return;
 
     panel    = getCurrentPanel();
     hasPanel = (panel != null);
-    
+
     // File
     m_MenuItemFileLoadRecent.setEnabled(m_RecentFilesHandler.size() > 0);
     m_MenuItemFileClose.setEnabled(hasPanel);
-    
+
     // Edit
-    if (hasPanel && panel.getUndo().canUndo()) {
+    if (getUndo().canUndo()) {
       m_MenuItemEditUndo.setEnabled(true);
-      m_MenuItemEditUndo.setText("Undo - " + panel.getUndo().peekUndoComment());
+      m_MenuItemEditUndo.setText("Undo - " + getUndo().peekUndoComment());
     }
     else {
       m_MenuItemEditUndo.setEnabled(false);
       m_MenuItemEditUndo.setText("Undo");
     }
-    if (hasPanel && panel.getUndo().canRedo()) {
+    if (getUndo().canRedo()) {
       m_MenuItemEditRedo.setEnabled(true);
-      m_MenuItemEditRedo.setText("Redo - " + panel.getUndo().peekRedoComment());
+      m_MenuItemEditRedo.setText("Redo - " + getUndo().peekRedoComment());
     }
     else {
       m_MenuItemEditRedo.setEnabled(false);
       m_MenuItemEditRedo.setText("Redo");
     }
-    
+
     // View
     m_MenuItemViewHorizontal.setEnabled(hasPanel);
     m_MenuItemViewVertical.setEnabled(hasPanel);
@@ -225,7 +296,7 @@ public class ImageProcessorPanel
 
   /**
    * Creates a menu bar (singleton per panel object). Can be used in frames.
-   * 
+   *
    * @return		the menu bar
    */
   @Override
@@ -243,11 +314,7 @@ public class ImageProcessorPanel
       menu = new JMenu("File");
       result.add(menu);
       menu.setMnemonic('F');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // File/Open...
       menuitem = new JMenuItem("Open...");
@@ -255,17 +322,13 @@ public class ImageProcessorPanel
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
       menuitem.setIcon(GUIHelper.getIcon("open.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  open();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> open());
       m_MenuItemFileOpen = menuitem;
 
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<JMenu>(SESSION_FILE, 5, submenu);
+      m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<>(SESSION_FILE, 5, submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,Setup> e) {
 	  // ignored
@@ -282,11 +345,7 @@ public class ImageProcessorPanel
       menuitem.setMnemonic('t');
       menuitem.setIcon(GUIHelper.getIcon("close_tab_focused.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  close();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> close());
       m_MenuItemFileClose = menuitem;
 
       // File/Close
@@ -296,21 +355,13 @@ public class ImageProcessorPanel
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.setIcon(GUIHelper.getIcon("exit.png"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  exit();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> exit());
 
       // Edit
       menu = new JMenu("Edit");
       result.add(menu);
       menu.setMnemonic('E');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // Edit/Undo
       menuitem = new JMenuItem("Undo");
@@ -318,11 +369,7 @@ public class ImageProcessorPanel
       menuitem.setMnemonic('U');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
       menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  undo();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> undo());
       m_MenuItemEditUndo = menuitem;
 
       // Edit/Redo
@@ -331,22 +378,14 @@ public class ImageProcessorPanel
       menuitem.setMnemonic('R');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
       menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  redo();
-	}
-      });
+      menuitem.addActionListener((ActionEvent e) -> redo());
       m_MenuItemEditRedo = menuitem;
 
       // View
       menu = new JMenu("View");
       result.add(menu);
       menu.setMnemonic('V');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
       group = new ButtonGroup();
 
       // View/Horizontal
@@ -355,14 +394,10 @@ public class ImageProcessorPanel
       menuitem.setMnemonic('H');
       menuitem.setSelected(false);
       menuitem.setIcon(GUIHelper.getIcon("ip_layout_horizontal.png"));
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() == null)
-	    return;
-	  getCurrentPanel().setLayoutType(LayoutType.HORIZONTAL);
-	  updateMenu();
-        }
+      menuitem.addActionListener((ActionEvent e) -> {
+        for (ImageProcessorSubPanel panel: getAllPanels())
+	  panel.setLayoutType(LayoutType.HORIZONTAL);
+	updateMenu();
       });
       group.add(menuitem);
       m_MenuItemViewHorizontal = menuitem;
@@ -373,20 +408,16 @@ public class ImageProcessorPanel
       menuitem.setMnemonic('V');
       menuitem.setSelected(true);
       menuitem.setIcon(GUIHelper.getIcon("ip_layout_vertical.png"));
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() == null)
-	    return;
-	  getCurrentPanel().setLayoutType(LayoutType.VERTICAL);
-	  updateMenu();
-        }
+      menuitem.addActionListener((ActionEvent e) -> {
+        for (ImageProcessorSubPanel panel: getAllPanels())
+	  panel.setLayoutType(LayoutType.VERTICAL);
+	updateMenu();
       });
       group.add(menuitem);
       m_MenuItemViewVertical = menuitem;
 
       menu.addSeparator();
-      
+
       // View/Remove overlays
       submenu = new JMenu("Remove overlays");
       menu.add(submenu);
@@ -398,26 +429,18 @@ public class ImageProcessorPanel
       menuitem = new JMenuItem("Original");
       submenu.add(menuitem);
       menuitem.setMnemonic('O');
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() == null)
-	    return;
-	  getCurrentPanel().clearImageOverlays(true);
-        }
+      menuitem.addActionListener((ActionEvent e) -> {
+	for (ImageProcessorSubPanel panel: getAllPanels())
+	  panel.clearImageOverlays(true);
       });
 
       // View/Remove overlays/Processed
       menuitem = new JMenuItem("Processed");
       submenu.add(menuitem);
       menuitem.setMnemonic('P');
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() == null)
-	    return;
-	  getCurrentPanel().clearImageOverlays(false);
-        }
+      menuitem.addActionListener((ActionEvent e) -> {
+	for (ImageProcessorSubPanel panel: getAllPanels())
+	  panel.clearImageOverlays(false);
       });
 
       // View/Locate objects
@@ -431,26 +454,26 @@ public class ImageProcessorPanel
       menuitem = new JMenuItem("Original");
       submenu.add(menuitem);
       menuitem.setMnemonic('O');
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() == null)
-	    return;
-	  getCurrentPanel().locateObjects(true);
-        }
+      menuitem.addActionListener((ActionEvent e) -> {
+        AbstractObjectLocator loc = selectObjectLocator(m_LastObjectLocatorOriginal);
+        if (loc == null)
+          return;
+        m_LastObjectLocatorOriginal = loc;
+	for (ImageProcessorSubPanel panel: getAllPanels())
+	  panel.locateObjects(true, loc);
       });
 
       // View/Locate objects/Processed
       menuitem = new JMenuItem("Processed");
       submenu.add(menuitem);
       menuitem.setMnemonic('P');
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-	  if (getCurrentPanel() == null)
-	    return;
-	  getCurrentPanel().locateObjects(false);
-        }
+      menuitem.addActionListener((ActionEvent e) -> {
+        AbstractObjectLocator loc = selectObjectLocator(m_LastObjectLocatorOriginal);
+        if (loc == null)
+          return;
+        m_LastObjectLocatorOriginal = loc;
+	for (ImageProcessorSubPanel panel: getAllPanels())
+	  panel.locateObjects(false, loc);
       });
 
       // update menu
@@ -566,28 +589,149 @@ public class ImageProcessorPanel
   }
 
   /**
-   * peforms an undo if possible.
+   * Returns the current undo manager, can be null.
+   *
+   * @return		the undo manager, if any
    */
-  public void undo() {
-    ImageProcessorSubPanel	panel;
-
-    panel = getCurrentPanel();
-    if (panel == null)
-      return;
-
-    panel.undo();
+  public Undo getUndo() {
+    return getFlow().getUndo();
   }
 
   /**
-   * peforms a redo if possible.
+   * Returns whether an Undo manager is currently available.
+   *
+   * @return		true if an undo manager is set
+   */
+  public boolean isUndoSupported() {
+    return getFlow().isUndoSupported();
+  }
+
+  /**
+   * peforms an undo if possible.
+   */
+  public void undo() {
+    getFlow().undo();
+  }
+
+  /**
+   * peforms an redo if possible.
    */
   public void redo() {
-    ImageProcessorSubPanel	panel;
+    getFlow().redo();
+  }
 
-    panel = getCurrentPanel();
-    if (panel == null)
+  /**
+   * Returns the panel for the flow.
+   *
+   * @return		the panel
+   */
+  public FlowPanel getFlow() {
+    return m_PanelFlow;
+  }
+
+  /**
+   * Checks the flow.
+   *
+   * @param silent	only pops up a dialog if invalid flow
+   * @return		true if flow ok
+   */
+  protected boolean checkFlow(boolean silent) {
+    Actor actor;
+    SubProcess		sub;
+    String		msg;
+    Compatibility comp;
+
+    msg   = null;
+    actor = m_PanelFlow.getCurrentFlow();
+    sub   = null;
+
+    // subprocess?
+    if (!(actor instanceof SubProcess))
+      msg = "Outermost actor must be a " + SubProcess.class.getName() + ", found: " + actor.getClass().getName();
+    else
+      sub = (SubProcess) actor;
+
+    // check compatibility with images
+    if (msg == null) {
+      comp = new Compatibility();
+      if (!comp.isCompatible(new Class[]{AbstractImageContainer.class}, sub.accepts()))
+	msg = "Flow snippet does not accept " + AbstractImageContainer.class.getClass() + ", found: " + Utils.classesToString(sub.accepts());
+      else if (!comp.isCompatible(sub.generates(), new Class[]{AbstractImageContainer.class}))
+	msg = "Flow snippet does not generate " + AbstractImageContainer.class.getClass() + ", found: " + Utils.classesToString(sub.generates());
+    }
+
+    if (msg != null)
+      GUIHelper.showErrorMessage(this, "Flow failed test:\n" + msg);
+    else if (!silent)
+      GUIHelper.showInformationMessage(this,"Flow passed test!");
+
+    return (msg == null);
+  }
+
+  /**
+   * Runs the flow.
+   */
+  protected void runFlow() {
+    SwingWorker 	worker;
+
+    if (!checkFlow(true))
       return;
 
-    panel.redo();
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+        m_ButtonCheck.setEnabled(false);
+        m_ButtonRun.setEnabled(false);
+        ImageProcessorSubPanel[] panels = getAllPanels();
+	for (int i = 0; i < panels.length; i++) {
+	  m_LabelProgress.setText((i+1) + "/" + panels.length + "...");
+	  panels[i].runFlow();
+	}
+	return null;
+      }
+      @Override
+      protected void done() {
+	super.done();
+	m_LabelProgress.setText("");
+        m_ButtonCheck.setEnabled(true);
+        m_ButtonRun.setEnabled(true);
+      }
+    };
+    worker.execute();
+  }
+
+  /**
+   * Displays a dialog for the user to configure an object locator and then
+   * returns it.
+   *
+   * @return		the object locator, null if cancelled
+   */
+  public AbstractObjectLocator selectObjectLocator(AbstractObjectLocator last) {
+    GenericObjectEditorDialog		dialog;
+
+    // create dialog
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setTitle("Locate objects");
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(AbstractObjectLocator.class);
+    dialog.setCurrent(last);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return null;
+    else
+      return (AbstractObjectLocator) dialog.getCurrent();
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    m_TabbedPane.cleanUp();
+    m_PanelFlow.cleanUp();
   }
 }

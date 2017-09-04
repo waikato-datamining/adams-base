@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageProcessorTabbedPane.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
+import adams.core.CleanUpHandler;
 import adams.data.io.input.AbstractImageReader;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.DragAndDropTabbedPane;
@@ -33,7 +34,8 @@ import java.io.File;
  * @version $Revision$
  */
 public class ImageProcessorTabbedPane
-  extends DragAndDropTabbedPane {
+  extends DragAndDropTabbedPane
+  implements CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 4949565559707097445L;
@@ -146,7 +148,7 @@ public class ImageProcessorTabbedPane
   public boolean load(File file, AbstractImageReader reader) {
     ImageProcessorSubPanel	panel;
 
-    panel = new ImageProcessorSubPanel();
+    panel = new ImageProcessorSubPanel(this);
     if (!panel.load(file, reader)) {
       GUIHelper.showErrorMessage(
 	  this, "Failed to open image '" + file + "'!");
@@ -158,5 +160,13 @@ public class ImageProcessorTabbedPane
       setSelectedComponent(panel);
       return true;
     }
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    for (ImageProcessorSubPanel panel: getAllPanels())
+      panel.cleanUp();
   }
 }
