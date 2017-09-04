@@ -202,7 +202,6 @@ public class ImageProcessorPanel
     m_PanelFlow.getTitleGenerator().setEnabled(false);
     m_PanelFlow.setMinimumSize(new Dimension(400, 0));
     m_PanelFlow.getUndo().clear();
-    m_PanelFlow.setCurrentFlow(new SubProcess());
     panel = new JPanel(new BorderLayout());
     panel.add(m_PanelFlow, BorderLayout.CENTER);
     panelBottom = new JPanel(new BorderLayout());
@@ -235,6 +234,15 @@ public class ImageProcessorPanel
     m_ButtonRun.addActionListener((ActionEvent e) -> runFlow());
     panelButtons.add(m_ButtonRun);
     m_SplitPane.setRightComponent(panel);
+  }
+
+  /**
+   * finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    newFlow();
   }
 
   /**
@@ -334,8 +342,11 @@ public class ImageProcessorPanel
     JMenuBar		result;
     JMenu		menu;
     JMenu		submenu;
+    JMenu		subsubmenu;
     JMenuItem		menuitem;
     ButtonGroup		group;
+    int			i;
+    int[]		zooms;
 
     if (m_MenuBar == null) {
       result = new JMenuBar();
@@ -505,6 +516,63 @@ public class ImageProcessorPanel
 	for (ImageProcessorSubPanel panel: getAllPanels())
 	  panel.locateObjects(false, loc);
       });
+
+      // View/Zoom
+      submenu = new JMenu("Zoom");
+      menu.add(submenu);
+      submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
+
+      // View/Zoom/Original
+      subsubmenu = new JMenu("Original");
+      submenu.add(subsubmenu);
+
+      // zoom levels
+      zooms = new int[]{
+	  -100,
+	  25,
+	  50,
+	  66,
+	  75,
+	  100,
+	  150,
+	  200,
+	  400,
+	  800};
+      for (i = 0; i < zooms.length; i++) {
+	final int fZoom = zooms[i];
+	if (zooms[i] == -100)
+	  menuitem = new JMenuItem("Best fit");
+	else
+	  menuitem = new JMenuItem(zooms[i] + "%");
+	subsubmenu.add(menuitem);
+	menuitem.addActionListener((ActionEvent ae) -> setScale(fZoom / 100.0, true));
+      }
+
+      // View/Zoom/Processed
+      subsubmenu = new JMenu("Processed");
+      submenu.add(subsubmenu);
+
+      // zoom levels
+      zooms = new int[]{
+	  -100,
+	  25,
+	  50,
+	  66,
+	  75,
+	  100,
+	  150,
+	  200,
+	  400,
+	  800};
+      for (i = 0; i < zooms.length; i++) {
+	final int fZoom = zooms[i];
+	if (zooms[i] == -100)
+	  menuitem = new JMenuItem("Best fit");
+	else
+	  menuitem = new JMenuItem(zooms[i] + "%");
+	subsubmenu.add(menuitem);
+	menuitem.addActionListener((ActionEvent ae) -> setScale(fZoom / 100.0, false));
+      }
 
       // update menu
       m_MenuBar = result;
@@ -810,6 +878,18 @@ public class ImageProcessorPanel
       return null;
     else
       return (AbstractObjectLocator) dialog.getCurrent();
+  }
+
+  /**
+   * Sets the scaling factor (0-16). Use -1 to fit inside panel.
+   *
+   * @param value	the scaling factor
+   * @param original 	if true setting the scale for the original,
+   *                    otherwise for the processed image
+   */
+  public void setScale(double value, boolean original) {
+    for (ImageProcessorSubPanel panel: getAllPanels())
+      panel.setScale(value, original);
   }
 
   /**

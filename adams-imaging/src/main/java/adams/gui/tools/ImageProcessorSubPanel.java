@@ -387,13 +387,10 @@ public class ImageProcessorSubPanel
     sub.cleanUp();
     sub.destroy();
     
-    if (contOut != null) {
-      m_PanelProcessed.setCurrentImage(contOut.toBufferedImage());
-      m_PanelProcessed.setScale(-1.0);
-    }
-    else if (msg != null) {
+    if (contOut != null)
+      m_PanelProcessed.setCurrentImage(contOut.toBufferedImage(), m_PanelProcessed.getScale());
+    else if (msg != null)
       result = "Flow execution failed:\n" + msg;
-    }
 
     return result;
   }
@@ -448,7 +445,21 @@ public class ImageProcessorSubPanel
     }
     
   }
-  
+
+  /**
+   * Sets the scaling factor (0-16). Use -1 to fit inside panel.
+   *
+   * @param value	the scaling factor
+   * @param original 	if true setting the scale for the original,
+   *                    otherwise for the processed image
+   */
+  public void setScale(double value, boolean original) {
+    if (original)
+      m_PanelOriginal.setScale(value);
+    else
+      m_PanelProcessed.setScale(value);
+  }
+
   /**
    * Cleans up data structures, frees up memory.
    */
