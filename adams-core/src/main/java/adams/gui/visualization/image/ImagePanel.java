@@ -24,6 +24,7 @@ import adams.core.ObjectCopyHelper;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
@@ -843,8 +844,15 @@ public class ImagePanel
 	synchronized (m_ImageOverlays) {
 	  overlays = m_ImageOverlays.toArray(new ImageOverlay[m_ImageOverlays.size()]);
 	}
-	for (ImageOverlay overlay: overlays)
-	  overlay.paintOverlay(this, g);
+	for (ImageOverlay overlay: overlays) {
+	  try {
+	    overlay.paintOverlay(this, g);
+	  }
+	  catch (Exception e) {
+	    System.err.println("Failed to apply overlay: " + OptionUtils.getCommandLine(overlay));
+	    e.printStackTrace();
+	  }
+	}
 
 	// paintlets
 	synchronized (m_Paintlets) {
