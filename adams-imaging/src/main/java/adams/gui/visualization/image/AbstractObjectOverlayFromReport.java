@@ -350,6 +350,8 @@ public abstract class AbstractObjectOverlayFromReport
 
     if (m_Locations != null)
       return;
+    if (report == null)
+      return;
 
     // initialize colors
     if (m_UseColorsPerType) {
@@ -425,7 +427,7 @@ public abstract class AbstractObjectOverlayFromReport
   @Override
   protected synchronized void doPaintOverlay(PaintPanel panel, Graphics g) {
     determineLocations(panel.getOwner().getAdditionalProperties());
-    if (m_Locations.size() > 0)
+    if ((m_Locations != null) && (m_Locations.size() > 0))
       doPaintObjects(panel, g, m_Locations);
   }
 }

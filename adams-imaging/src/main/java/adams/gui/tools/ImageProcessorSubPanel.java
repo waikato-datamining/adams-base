@@ -396,9 +396,21 @@ public class ImageProcessorSubPanel
   }
 
   /**
+   * Adds the overlay.
+   *
+   * @param original	whether to add the overlay in the original image or the processed one
+   */
+  public void addImageOverlay(boolean original, ImageOverlay overlay) {
+    if (original)
+      m_PanelOriginal.addImageOverlay(overlay);
+    else
+      m_PanelProcessed.addImageOverlay(overlay);
+  }
+
+  /**
    * Removes all overlays.
    * 
-   * @param original	whether to locate objects in the original image or the processed one
+   * @param original	whether to clear the overlays in the original image or the processed one
    */
   public void clearImageOverlays(boolean original) {
     if (original)
@@ -449,11 +461,11 @@ public class ImageProcessorSubPanel
   /**
    * Sets the scaling factor (0-16). Use -1 to fit inside panel.
    *
-   * @param value	the scaling factor
-   * @param original 	if true setting the scale for the original,
+   * @param original	if true setting the scale for the original,
    *                    otherwise for the processed image
+   * @param value	the scaling factor
    */
-  public void setScale(double value, boolean original) {
+  public void setScale(boolean original, double value) {
     if (original)
       m_PanelOriginal.setScale(value);
     else

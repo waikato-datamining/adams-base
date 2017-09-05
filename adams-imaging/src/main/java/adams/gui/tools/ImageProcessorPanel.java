@@ -46,7 +46,9 @@ import adams.gui.event.RecentItemListener;
 import adams.gui.flow.FlowPanel;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.ImageProcessorSubPanel.LayoutType;
+import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImageViewerPanel;
+import adams.gui.visualization.image.NullOverlay;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -156,6 +158,12 @@ public class ImageProcessorPanel
   /** the last object locator in use (processed). */
   protected AbstractObjectLocator m_LastObjectLocatorProcessed;
 
+  /** the last image overlay in use (original). */
+  protected ImageOverlay m_LastImageOverlayOriginal;
+
+  /** the last image overlay in use (processed). */
+  protected ImageOverlay m_LastImageOverlayProcessed;
+
   /**
    * Initializes the members.
    */
@@ -173,6 +181,8 @@ public class ImageProcessorPanel
     m_FileChooserFlow.setMultiSelectionEnabled(false);
     m_LastObjectLocatorOriginal  = new PassThrough();
     m_LastObjectLocatorProcessed = new PassThrough();
+    m_LastImageOverlayOriginal   = new NullOverlay();
+    m_LastImageOverlayProcessed  = new NullOverlay();
   }
 
   /**
@@ -459,11 +469,38 @@ public class ImageProcessorPanel
 
       menu.addSeparator();
 
+      // View/Add overlay
+      submenu = new JMenu("Add overlay");
+      menu.add(submenu);
+      submenu.setMnemonic('A');
+      submenu.setIcon(GUIHelper.getIcon("add.gif"));
+      m_MenuViewRemoveOverlays = submenu;
+
+      // View/Add overlay/Original
+      menuitem = new JMenuItem("Original");
+      submenu.add(menuitem);
+      menuitem.setMnemonic('O');
+      menuitem.addActionListener((ActionEvent e) -> {
+        ImageOverlay overlay = selectImageOverlay(m_LastImageOverlayOriginal);
+	for (ImageProcessorSubPanel panel: getAllPanels())
+	  panel.addImageOverlay(true, overlay);
+      });
+
+      // View/Add overlay/Processed
+      menuitem = new JMenuItem("Processed");
+      submenu.add(menuitem);
+      menuitem.setMnemonic('P');
+      menuitem.addActionListener((ActionEvent e) -> {
+        ImageOverlay overlay = selectImageOverlay(m_LastImageOverlayOriginal);
+	for (ImageProcessorSubPanel panel: getAllPanels())
+	  panel.addImageOverlay(false, overlay);
+      });
+
       // View/Remove overlays
       submenu = new JMenu("Remove overlays");
       menu.add(submenu);
       submenu.setMnemonic('R');
-      submenu.setIcon(GUIHelper.getIcon("delete.gif"));
+      submenu.setIcon(GUIHelper.getIcon("remove.gif"));
       m_MenuViewRemoveOverlays = submenu;
 
       // View/Remove overlays/Original
@@ -854,13 +891,47 @@ public class ImageProcessorPanel
   }
 
   /**
+   * Displays a dialog for the user to configure an image overlay and then
+   * returns it.
+   *
+   * @return		the image overaly, null if cancelled
+   */
+  public ImageOverlay selectImageOverlay(ImageOverlay last) {
+    ImageOverlay		result;
+    GenericObjectEditorDialog	dialog;
+
+    result = null;
+
+    // create dialog
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setTitle("Image overlay");
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(ImageOverlay.class);
+    dialog.setCurrent(last);
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
+      result = (ImageOverlay) dialog.getCurrent();
+    dialog.dispose();
+
+    return result;
+  }
+
+  /**
    * Displays a dialog for the user to configure an object locator and then
    * returns it.
    *
    * @return		the object locator, null if cancelled
    */
   public AbstractObjectLocator selectObjectLocator(AbstractObjectLocator last) {
+    AbstractObjectLocator		result;
     GenericObjectEditorDialog		dialog;
+
+    result = null;
 
     // create dialog
     if (getParentDialog() != null)
@@ -874,10 +945,11 @@ public class ImageProcessorPanel
     dialog.pack();
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
-    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return null;
-    else
-      return (AbstractObjectLocator) dialog.getCurrent();
+    if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
+      result = (AbstractObjectLocator) dialog.getCurrent();
+    dialog.dispose();
+
+    return result;
   }
 
   /**
@@ -889,7 +961,7 @@ public class ImageProcessorPanel
    */
   public void setScale(double value, boolean original) {
     for (ImageProcessorSubPanel panel: getAllPanels())
-      panel.setScale(value, original);
+      panel.setScale(original, value);
   }
 
   /**
