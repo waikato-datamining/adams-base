@@ -20,8 +20,6 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BasePassword;
 import adams.core.base.BaseRegExp;
 import adams.env.Environment;
@@ -31,6 +29,8 @@ import adams.flow.core.Actor;
 import adams.flow.source.FTPLister;
 import adams.flow.standalone.FTPConnection;
 import adams.test.TmpDirectory;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test case for the FTPGet actor.
@@ -57,7 +57,7 @@ public class FTPGetTest
    */
   public Actor getActor() {
     FTPConnection fc = new FTPConnection();
-    fc.setHost("ftp.suse.com");
+    fc.setHost("ftp.debian.org");
     fc.setUser("anonymous");
     fc.setPassword(new BasePassword(""));
     fc.setUsePassiveMode(true);
@@ -68,7 +68,7 @@ public class FTPGetTest
     fl.setRegExp(new BaseRegExp("README.*"));
 
     FTPGet fg = new FTPGet();
-    fg.setRemoteDir("/pub");
+    fg.setRemoteDir("/debian");
     fg.setOutputDirectory(new TmpDirectory());
 
     Flow flow = new Flow();

@@ -20,14 +20,13 @@
 
 package adams.flow.standalone;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BasePassword;
 import adams.env.Environment;
 import adams.flow.AbstractOnlineFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
-import adams.flow.standalone.FTPConnection;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test case for the FTPConnection actor.
@@ -54,7 +53,7 @@ public class FTPConnectionTest
    */
   public Actor getActor() {
     FTPConnection fc = new FTPConnection();
-    fc.setHost("ftp.suse.com");
+    fc.setHost("ftp.debian.org");
     fc.setUser("anonymous");
     fc.setPassword(new BasePassword(""));
 
