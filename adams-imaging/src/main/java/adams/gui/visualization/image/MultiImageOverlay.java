@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiImageOverlay.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
-import java.awt.Graphics;
-
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
+
+import java.awt.Graphics;
 
 /**
  <!-- globalinfo-start -->
@@ -41,7 +41,7 @@ import adams.gui.visualization.image.ImagePanel.PaintPanel;
  * &nbsp;&nbsp;&nbsp;If enabled, this overlay is painted over the image.
  * </pre>
  * 
- * <pre>-overlays &lt;adams.gui.visualization.image.AbstractImageOverlay&gt; [-overlays ...] (property: overlays)
+ * <pre>-overlays &lt;adams.gui.visualization.image.ImageOverlay&gt; [-overlays ...] (property: overlays)
  * &nbsp;&nbsp;&nbsp;The overlays to apply sequentially to the image.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
@@ -58,7 +58,7 @@ public class MultiImageOverlay
   private static final long serialVersionUID = -5447561040236560001L;
   
   /** the overlays to use. */
-  protected AbstractImageOverlay[] m_Overlays;
+  protected ImageOverlay[] m_Overlays;
   
   /**
    * Returns a string describing the object.
@@ -79,7 +79,7 @@ public class MultiImageOverlay
 
     m_OptionManager.add(
 	"overlays", "overlays",
-	new AbstractImageOverlay[0]);
+	new ImageOverlay[0]);
   }
 
   /**
@@ -87,7 +87,7 @@ public class MultiImageOverlay
    *
    * @param value 	the overlays
    */
-  public void setOverlays(AbstractImageOverlay[] value) {
+  public void setOverlays(ImageOverlay[] value) {
     m_Overlays = value;
     reset();
   }
@@ -97,7 +97,7 @@ public class MultiImageOverlay
    *
    * @return 		the overlays
    */
-  public AbstractImageOverlay[] getOverlays() {
+  public ImageOverlay[] getOverlays() {
     return m_Overlays;
   }
 
@@ -118,7 +118,7 @@ public class MultiImageOverlay
    */
   @Override
   protected synchronized void doImageChanged(PaintPanel panel) {
-    for (AbstractImageOverlay overlay: m_Overlays)
+    for (ImageOverlay overlay: m_Overlays)
       overlay.imageChanged(panel);
   }
 
@@ -130,7 +130,7 @@ public class MultiImageOverlay
    */
   @Override
   protected synchronized void doPaintOverlay(PaintPanel panel, Graphics g) {
-    for (AbstractImageOverlay overlay: m_Overlays)
+    for (ImageOverlay overlay: m_Overlays)
       overlay.paintOverlay(panel, g);
   }
 }
