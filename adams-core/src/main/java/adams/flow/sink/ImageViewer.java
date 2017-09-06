@@ -733,13 +733,16 @@ public class ImageViewer
     m_ImagePanel.setShowProperties(m_ShowProperties);
     m_ImagePanel.setShowLog(false);
     m_ImagePanel.setBackgroundColor(m_BackgroundColor);
+    m_ImagePanel.clearSelectionListeners();
     if (!(m_SelectionProcessor instanceof NullProcessor)) {
       m_ImagePanel.addSelectionListener(m_SelectionProcessor.shallowCopy(true));
       m_ImagePanel.setSelectionEnabled(true);
       m_ImagePanel.setSelectionBoxColor(m_SelectionBoxColor);
     }
+    m_ImagePanel.clearLeftClickListeners();
     if (!(m_LeftClickProcessor instanceof adams.gui.visualization.image.leftclick.NullProcessor))
       m_ImagePanel.addLeftClickListener(m_LeftClickProcessor.shallowCopy(true));
+    m_ImagePanel.clearImageOverlays();
     if (!(m_ImageOverlay instanceof NullOverlay)) {
       if (m_ImageOverlay instanceof ShallowCopySupporter)
 	m_ImagePanel.addImageOverlay((ImageOverlay) ((ShallowCopySupporter) m_ImageOverlay).shallowCopy(true));
