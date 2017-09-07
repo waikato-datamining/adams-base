@@ -29,6 +29,10 @@ adams.core.io.AbstractFilenameGenerator=\
 adams.core.io.fileuse.AbstractFileUseCheck=\
   adams.core.io.fileuse
 
+# the file change monitors
+adams.core.io.filechanged.FileChangeMonitor=\
+  adams.core.io.filechanged
+
 # the classpath augmenters
 adams.core.management.ClassPathAugmenter=\
   adams.core.management
