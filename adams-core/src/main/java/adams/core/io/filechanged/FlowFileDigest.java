@@ -14,22 +14,27 @@
  */
 
 /*
- * MessageDigest.java
+ * FlowFileDigest.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.filechanged;
 
 import adams.core.MessageCollection;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.core.option.NestedProducer;
 
 import java.io.File;
+import java.util.List;
 
 /**
- * Generates a message digest and uses that for comparison.
+ * Generates a message digest for a flow file and uses that for comparison.
+ * Skips the comments at the start.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class MessageDigest
+public class FlowFileDigest
   extends AbstractMessageDigestBasedMonitor {
 
   private static final long serialVersionUID = 7861456311356953324L;
@@ -41,7 +46,9 @@ public class MessageDigest
    */
   @Override
   public String globalInfo() {
-    return "Generates a message digest and uses that for comparison.";
+    return
+      "Generates a message digest for a flow file and uses that for comparison.\n"
+      + "Skips the comments at the start.";
   }
 
   /**
@@ -53,6 +60,11 @@ public class MessageDigest
    */
   @Override
   protected String computeDigest(File file, MessageCollection errors) {
-    return m_Type.digest(file, errors);
+    List<String> 	lines;
+
+    lines = FileUtils.loadFromFile(file);
+    Utils.removeComments(lines, NestedProducer.COMMENT);
+
+    return m_Type.digest(lines.toArray(new String[lines.size()]), errors);
   }
 }
