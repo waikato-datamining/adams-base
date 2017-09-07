@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.EnumWithCustomDisplay;
+import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.option.AbstractOption;
@@ -55,41 +56,41 @@ import java.security.DigestInputStream;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: MessageDigest
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-type &lt;MD2|MD5|SHA1|SHA256|SHA384|SHA512&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of message digest (algorithm) to use.
  * &nbsp;&nbsp;&nbsp;default: SHA256
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -205,23 +206,96 @@ public class MessageDigest
 
       // default parsing
       try {
-	result = valueOf(str);
+        result = valueOf(str);
       }
       catch (Exception e) {
-	// ignored
+        // ignored
       }
 
       // try display
       if (result == null) {
-	for (MessageDigestType dt: values()) {
-	  if (dt.toDisplay().equals(str)) {
-	    result = dt;
-	    break;
-	  }
-	}
+        for (MessageDigestType dt: values()) {
+          if (dt.toDisplay().equals(str)) {
+            result = dt;
+            break;
+          }
+        }
       }
 
       return result;
+    }
+
+    /**
+     * Generates the digest.
+     *
+     * @param obj		the string, string array, file or file array
+     * @param errors		for collecting any errors
+     * @return			the digest if successful, otherwise null
+     */
+    public String digest(Object obj, MessageCollection errors) {
+      StringBuilder 			result;
+      String 				msg;
+      java.security.MessageDigest	md;
+      byte[]				digest;
+      DigestInputStream			stream;
+      FileInputStream             	fis;
+      File				file;
+      byte[]				buffer;
+
+      result = new StringBuilder();
+      msg    = null;
+      fis    = null;
+      stream = null;
+      try {
+        md = java.security.MessageDigest.getInstance(toDisplay());
+        if (obj instanceof String) {
+          md.update(((String) obj).getBytes());
+        }
+        else if (obj instanceof String[]) {
+          for (String input : (String[]) obj)
+            md.update(input.toString().getBytes());
+        }
+        else if (obj instanceof File) {
+          file   = (File) obj;
+          fis    = new FileInputStream(file.getAbsolutePath());
+          stream = new DigestInputStream(new BufferedInputStream(fis), md);
+          buffer = new byte[1024];
+          while (stream.read(buffer) != -1);
+        }
+        else if (obj instanceof File[]) {
+          for (File f: (File[]) obj) {
+            fis    = new FileInputStream(f.getAbsolutePath());
+            stream = new DigestInputStream(new BufferedInputStream(fis), md);
+            buffer = new byte[1024];
+            while (stream.read(buffer) != -1) ;
+            FileUtils.closeQuietly(stream);
+            FileUtils.closeQuietly(fis);
+          }
+        }
+        else {
+          msg = "Unhandled input: " + Utils.classToString(obj.getClass());
+        }
+        if (msg == null) {
+          digest = md.digest();
+          for (byte b : digest)
+            result.append(Utils.toHex(b));
+        }
+      }
+      catch (Exception e) {
+        msg = "Failed to generate digest:\n" + Utils.throwableToString(e);
+      }
+      finally {
+        FileUtils.closeQuietly(stream);
+        FileUtils.closeQuietly(fis);
+      }
+
+      if (msg != null) {
+        errors.add(msg);
+        return null;
+      }
+      else {
+        return result.toString();
+      }
     }
   }
 
@@ -236,11 +310,11 @@ public class MessageDigest
   @Override
   public String globalInfo() {
     return
-        "Generates a message digest and forwards that. The digest is either "
-      + "generated on the string being passed through or from the content of a "
-      + "file (if a File object is used as input).\n"
-      + "If arrays are being passed into the actor, then the digest is computed "
-      + "over all of them.";
+      "Generates a message digest and forwards that. The digest is either "
+        + "generated on the string being passed through or from the content of a "
+        + "file (if a File object is used as input).\n"
+        + "If arrays are being passed into the actor, then the digest is computed "
+        + "over all of them.";
   }
 
   /**
@@ -251,8 +325,8 @@ public class MessageDigest
     super.defineOptions();
 
     m_OptionManager.add(
-	    "type", "type",
-	    MessageDigestType.SHA256);
+      "type", "type",
+      MessageDigestType.SHA256);
   }
 
   /**
@@ -309,63 +383,22 @@ public class MessageDigest
    */
   @Override
   protected String doExecute() {
-    String result;
-    java.security.MessageDigest	md;
-    byte[]			digest;
-    StringBuilder		hex;
-    DigestInputStream		stream;
-    FileInputStream             fis;
-    File			file;
-    byte[]			buffer;
+    String 			result;
+    MessageCollection		errors;
+    String			digest;
 
     result = null;
 
-    fis    = null;
-    stream = null;
-    try {
-      md = java.security.MessageDigest.getInstance(m_Type.toDisplay());
-      if (m_InputToken.getPayload() instanceof String) {
-	md.update(((String) m_InputToken.getPayload()).getBytes());
-      }
-      else if (m_InputToken.getPayload() instanceof String[]) {
-	for (String input : (String[]) m_InputToken.getPayload())
-	  md.update(input.toString().getBytes());
-      }
-      else if (m_InputToken.getPayload() instanceof File) {
-	file   = (File) m_InputToken.getPayload();
-	fis    = new FileInputStream(file.getAbsolutePath());
-	stream = new DigestInputStream(new BufferedInputStream(fis), md);
-	buffer = new byte[1024];
-	while (stream.read(buffer) != -1);
-      }
-      else if (m_InputToken.getPayload() instanceof File[]) {
-	for (File f: (File[]) m_InputToken.getPayload()) {
-	  fis    = new FileInputStream(f.getAbsolutePath());
-	  stream = new DigestInputStream(new BufferedInputStream(fis), md);
-	  buffer = new byte[1024];
-	  while (stream.read(buffer) != -1) ;
-	  FileUtils.closeQuietly(stream);
-	  FileUtils.closeQuietly(fis);
-	}
-      }
-      else {
-	result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload().getClass());
-      }
-      if (result == null) {
-	digest = md.digest();
-	hex = new StringBuilder();
-	for (byte b : digest)
-	  hex.append(Utils.toHex(b));
-	m_OutputToken = new Token(hex.toString());
-      }
+    errors = new MessageCollection();
+    digest = m_Type.digest(m_InputToken.getPayload(), errors);
+    if (digest == null) {
+      if (errors.isEmpty())
+        result = "Unknown error occurred!";
+      else
+        result = errors.toString();
     }
-    catch (Exception e) {
-      m_OutputToken = null;
-      result = handleException("Failed to generate digest:", e);
-    }
-    finally {
-      FileUtils.closeQuietly(stream);
-      FileUtils.closeQuietly(fis);
+    else {
+      m_OutputToken = new Token(digest);
     }
 
     return result;
