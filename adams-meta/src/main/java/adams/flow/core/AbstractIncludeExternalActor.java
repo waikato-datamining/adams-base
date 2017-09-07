@@ -13,18 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractIncludeExternalActor.java
  * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
-import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.Variables;
-import adams.core.io.FlowFile;
 import adams.core.io.PlaceholderFile;
-import adams.flow.control.FlowStructureModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,68 +33,10 @@ import java.util.List;
  * @version $Revision: 9391 $
  */
 public abstract class AbstractIncludeExternalActor
-  extends AbstractActor
-  implements ExternalActorFileHandler, FlowStructureModifier {
+  extends AbstractBaseExternalActor {
 
   /** for serialization. */
   private static final long serialVersionUID = -7860206690560690212L;
-
-  /** the file the external actor is stored in. */
-  protected FlowFile m_ActorFile;
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	    "file", "actorFile",
-	    new FlowFile("."));
-  }
-
-  /**
-   * Returns a quick info about the actor, which will be displayed in the GUI.
-   *
-   * @return		null if no info available, otherwise short string
-   */
-  @Override
-  public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "actorFile", m_ActorFile);
-  }
-
-  /**
-   * Sets the file containing the external actor.
-   *
-   * @param value	the actor file
-   */
-  public void setActorFile(FlowFile value) {
-    m_ActorFile = value;
-    reset();
-  }
-
-  /**
-   * Returns the file containing the external actor.
-   *
-   * @return		the actor file
-   */
-  public FlowFile getActorFile() {
-    return m_ActorFile;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String actorFileTipText() {
-    return
-      "The file containing the external actor; programmatic variables "
-	+ "like '" + ActorUtils.FLOW_DIR + "' can be used as part of the file "
-	+ "name as they get expanded before attempting to load the file.";
-  }
 
   /**
    * Performs checks on the external actor.
@@ -179,15 +118,6 @@ public abstract class AbstractIncludeExternalActor
       result = setUpExternalActor();
 
     return result;
-  }
-
-  /**
-   * Returns whether the actor is modifying the structure.
-   *
-   * @return		true if the actor is modifying the structure
-   */
-  public boolean isModifyingStructure() {
-    return !getSkip();
   }
 
   /**

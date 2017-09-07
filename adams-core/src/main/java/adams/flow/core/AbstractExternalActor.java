@@ -20,14 +20,11 @@
 
 package adams.flow.core;
 
-import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.Variables;
-import adams.core.io.FlowFile;
 import adams.core.io.PlaceholderFile;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
-import adams.flow.control.FlowStructureModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +36,11 @@ import java.util.List;
  * @version $Revision$
  */
 public abstract class AbstractExternalActor
-  extends AbstractActor
-  implements ExternalActorHandler, FlowStructureModifier {
+  extends AbstractBaseExternalActor
+  implements ExternalActorHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 1024129351334661368L;
-
-  /** the file the external actor is stored in. */
-  protected FlowFile m_ActorFile;
 
   /** the external actor itself. */
   protected Actor m_ExternalActor;
@@ -59,60 +53,6 @@ public abstract class AbstractExternalActor
 
   /** whether the external actor file has changed. */
   protected boolean m_ActorFileChanged;
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-	    "file", "actorFile",
-	    new FlowFile("."));
-  }
-
-  /**
-   * Returns a quick info about the actor, which will be displayed in the GUI.
-   *
-   * @return		null if no info available, otherwise short string
-   */
-  @Override
-  public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "actorFile", m_ActorFile);
-  }
-
-  /**
-   * Sets the file containing the external actor.
-   *
-   * @param value	the actor file
-   */
-  public void setActorFile(FlowFile value) {
-    m_ActorFile = value;
-    reset();
-  }
-
-  /**
-   * Returns the file containing the external actor.
-   *
-   * @return		the actor file
-   */
-  public FlowFile getActorFile() {
-    return m_ActorFile;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String actorFileTipText() {
-    return
-      "The file containing the external actor; programmatic variables "
-	+ "like '" + ActorUtils.FLOW_DIR + "' can be used as part of the file "
-	+ "name as they get expanded before attempting to load the file.";
-  }
 
   /**
    * Sets the parent of this actor, e.g., the group it belongs to.
@@ -266,15 +206,6 @@ public abstract class AbstractExternalActor
     }
 
     return result;
-  }
-
-  /**
-   * Returns whether the actor is modifying the structure.
-   *
-   * @return		true if the actor is modifying the structure
-   */
-  public boolean isModifyingStructure() {
-    return !getSkip();
   }
 
   /**
