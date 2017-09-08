@@ -177,10 +177,10 @@ public class Tree
   /** the parent of the currently edited node or node to be added. */
   protected Node m_CurrentEditingParent;
 
-  /** the last template that was added via 'Add from template'. */
+  /** the last template that was added via 'Add template'. */
   protected AbstractActorTemplate m_LastTemplate;
 
-  /** the position of the last template that was added via 'Add from template'. */
+  /** the position of the last template that was added via 'Add template'. */
   protected TreeOperations.InsertPosition m_LastTemplateInsertPosition;
 
   /** whether to ignore name changes of actors (suppressing application of post-processors). */

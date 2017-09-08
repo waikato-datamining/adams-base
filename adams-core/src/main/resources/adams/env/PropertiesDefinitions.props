@@ -5,6 +5,7 @@
 
 Definitions=\
   adams.env.ActorSuggestionDefinition,\
+  adams.env.ActorTemplateSuggestionDefinition,\
   adams.env.AdvancedScriptEditorTemplatesDefinition,\
   adams.env.BrowserDefinition,\
   adams.env.CharsetDefinition,\

@@ -11,4 +11,12 @@
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 # Version: $Revision$
 
-Default=adams.flow.template.UpdateVariable
+Default=adams.flow.template.EndlessLoop
+
+adams-core-EndlessLoop1=\
+  IF AFTER adams.flow.source.Start \
+  THEN adams.flow.template.EndlessLoop
+
+adams-core-PromptUser1=\
+  IF AFTER adams.flow.source.Start \
+  THEN adams.flow.template.PromptUser

@@ -117,11 +117,11 @@ public abstract class AbstractFromTemplateAction
     m_TemplateDialog.setProposedClasses(templates);
     m_TemplateDialog.setCurrent(template);
     if (position == TreeOperations.InsertPosition.HERE)
-      m_TemplateDialog.setTitle("Add from template here...");
+      m_TemplateDialog.setTitle("Add template here...");
     else if (position == TreeOperations.InsertPosition.AFTER)
-      m_TemplateDialog.setTitle("Add from template after...");
+      m_TemplateDialog.setTitle("Add template after...");
     else if (position == TreeOperations.InsertPosition.BENEATH)
-      m_TemplateDialog.setTitle("Add from template beneath...");
+      m_TemplateDialog.setTitle("Add template beneath...");
     m_TemplateDialog.setLocationRelativeTo(GUIHelper.getParentComponent(m_State.tree));
     m_TemplateDialog.setVisible(true);
     if (m_TemplateDialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)

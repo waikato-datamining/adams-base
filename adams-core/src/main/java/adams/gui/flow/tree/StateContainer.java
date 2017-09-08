@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StateContainer.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
@@ -75,7 +75,7 @@ public class StateContainer {
   /** the last template that was used. */
   public AbstractActorTemplate lastTemplate;
 
-  /** the position of the last template that was added via 'Add from template'. */
+  /** the position of the last template that was added via 'Add template'. */
   public TreeOperations.InsertPosition lastTemplateInsertPosition;
   
   /** the currently running flow. */

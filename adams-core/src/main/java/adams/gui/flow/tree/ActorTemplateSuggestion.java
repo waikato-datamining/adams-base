@@ -27,9 +27,11 @@ import adams.env.ActorTemplateSuggestionDefinition;
 import adams.env.Environment;
 import adams.flow.core.Actor;
 import adams.flow.template.AbstractActorTemplate;
+import adams.flow.template.EndlessLoop;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -75,8 +77,8 @@ public class ActorTemplateSuggestion {
    */
   protected void initialize() {
     String[]					parts;
-    Vector<AbstractActorTemplate>		templates;
-    Vector<String>				rules;
+    List<AbstractActorTemplate>			templates;
+    List<String>				rules;
     int						i;
     Enumeration<String>				names;
     String					name;
@@ -86,8 +88,8 @@ public class ActorTemplateSuggestion {
     m_Properties = Environment.getInstance().read(ActorTemplateSuggestionDefinition.KEY);
 
     // get the default(s)
-    parts     = m_Properties.getProperty(KEY_DEFAULT, "adams.flow.template.UpdateVariable").split(",");
-    templates = new Vector<>();
+    parts     = m_Properties.getProperty(KEY_DEFAULT, EndlessLoop.class.getName()).split(",");
+    templates = new ArrayList<>();
     for (i = 0; i < parts.length; i++)  {
       try {
 	templates.add((AbstractActorTemplate) Class.forName(parts[i]).newInstance());
@@ -104,7 +106,7 @@ public class ActorTemplateSuggestion {
     LOGGER.info("Defaults: " + Utils.arrayToString(m_Defaults, true));
 
     // get the rules
-    rules      = new Vector<String>();
+    rules      = new ArrayList<>();
     names      = (Enumeration<String>) m_Properties.propertyNames();
     suggestion = new adams.parser.ActorTemplateSuggestion();
     suggestion.setParent(new adams.flow.control.Flow());
@@ -149,11 +151,11 @@ public class ActorTemplateSuggestion {
    */
   public AbstractActorTemplate[] suggest(Actor parent, int position, Actor[] actors) {
     AbstractActorTemplate[]		result;
-    Vector<AbstractActorTemplate>	suggestions;
+    List<AbstractActorTemplate> 	suggestions;
     AbstractActorTemplate[]		suggested;
     int					i;
 
-    suggestions = new Vector<>();
+    suggestions = new ArrayList<>();
 
     try {
       suggested = adams.parser.ActorTemplateSuggestion.evaluate(m_Rules, parent, position, actors);
