@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.flow.core.Token;
 
 import java.io.File;
 
@@ -215,6 +216,9 @@ public class Touch
 	}
       }
     }
+
+    if (result == null)
+      m_OutputToken = new Token(m_InputToken.getPayload());
 
     return result;
   }
