@@ -59,7 +59,7 @@ public abstract class AbstractBaseExternalActor
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "actorFile", m_ActorFile);
+    return QuickInfoHelper.toString(this, "actorFile", m_ActorFile, "file: ");
   }
 
   /**

@@ -20,9 +20,12 @@
 
 package adams.flow.core;
 
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.filechanged.FileChangeMonitor;
+import adams.core.io.filechanged.NoChange;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 
@@ -42,6 +45,9 @@ public abstract class AbstractExternalActor
   /** for serialization. */
   private static final long serialVersionUID = 1024129351334661368L;
 
+  /** the file monitor. */
+  protected FileChangeMonitor m_Monitor;
+
   /** the external actor itself. */
   protected Actor m_ExternalActor;
 
@@ -53,6 +59,62 @@ public abstract class AbstractExternalActor
 
   /** whether the external actor file has changed. */
   protected boolean m_ActorFileChanged;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "monitor", "monitor",
+      new NoChange());
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "monitor", m_Monitor, ", monitor: ");
+
+    return result;
+  }
+
+  /**
+   * Sets the file change monitor for the actor file.
+   *
+   * @param value	the monitor
+   */
+  public void setMonitor(FileChangeMonitor value) {
+    m_Monitor = value;
+    reset();
+  }
+
+  /**
+   * Returns the file change monitor for the actor file.
+   *
+   * @return		the monitor
+   */
+  public FileChangeMonitor getMonitor() {
+    return m_Monitor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String monitorTipText() {
+    return "The scheme to use for monitoring the actor file for changes.";
+  }
 
   /**
    * Sets the parent of this actor, e.g., the group it belongs to.
@@ -245,10 +307,23 @@ public abstract class AbstractExternalActor
 
     result = null;
 
+    // file changed?
+    if (!m_Monitor.isInitialized(m_ActorFile)) {
+      result = m_Monitor.initialize(m_ActorFile);
+    }
+    else if (m_Monitor.hasChanged(m_ActorFile)) {
+      if (isLoggingEnabled())
+        getLogger().info("Actor file has changed: " + m_ActorFile);
+      m_ActorFileChanged = true;
+      result = m_Monitor.update(m_ActorFile);
+    }
+
     // not setup yet due to variable?
-    cleanUpExternalActor();
-    if (m_ExternalActor == null)
-      result = setUpExternalActor();
+    if (result == null) {
+      cleanUpExternalActor();
+      if (m_ExternalActor == null)
+	result = setUpExternalActor();
+    }
 
     if (result == null)
       result = preExecuteExternalActorHook();

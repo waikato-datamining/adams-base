@@ -1,0 +1,8 @@
+# Project: adams
+# Date: 2017-09-08 12:20:47
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Tee -name "output lastmod timestamp in console"
+ adams.flow.transformer.FileInfo -type LAST_MODIFIED
+ adams.flow.transformer.Convert -conversion "adams.data.conversion.DateTimeTypeToString -datetime-type BASEDATETIME -format \"yyyy-MM-dd HH:mm:ss\""
+ adams.flow.sink.Console

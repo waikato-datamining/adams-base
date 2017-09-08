@@ -1,0 +1,12 @@
+# Project: adams
+# Date: 2017-09-08 12:20:27
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Uses the \\\"LastModified\\\" file monitor for the external flow,\\nwhich gets updated between the calls.\\nCheck console for output of timestamps." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.transformer.ExternalTransformer -logging-level INFO -file @{ext_flow} -monitor adams.core.io.filechanged.LastModified
+ adams.flow.standalone.SetVariable -var-name ext_flow -var-value ${FLOWS}/adams-core-monitored_external_actor-worker.flow
+ adams.flow.source.Variable -var-name ext_flow -conversion adams.data.conversion.StringToString
+ adams.flow.transformer.CallableTransformer -callable ExternalTransformer
+ adams.flow.transformer.Touch
+ adams.flow.transformer.CallableTransformer -name "CallableTransformer (2)" -callable ExternalTransformer
