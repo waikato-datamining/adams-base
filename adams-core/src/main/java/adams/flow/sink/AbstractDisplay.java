@@ -15,7 +15,7 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -78,7 +78,7 @@ public abstract class AbstractDisplay
     input  = m_InputToken;
     result = new Runnable() {
       public void run() {
-	if (getCreateFrame() && !m_Frame.isVisible())
+	if (getCreateFrame() && (m_Frame != null) && !m_Frame.isVisible())
 	  m_Frame.setVisible(true);
 	if (input != null) {
 	  try {
