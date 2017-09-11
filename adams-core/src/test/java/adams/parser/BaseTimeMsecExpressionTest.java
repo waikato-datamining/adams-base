@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseTimeMsecExpressionTest.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
+import adams.core.BusinessDays;
 import adams.core.base.BaseTimeMsec;
 import adams.env.Environment;
 import junit.framework.Test;
@@ -107,7 +108,7 @@ public class BaseTimeMsecExpressionTest
       fail("Failed to generate Date object from '" + startStr + "': " + e);
     }
     try {
-      parsed = BaseDateTimeExpression.evaluate(expr, start, null);
+      parsed = BaseDateTimeExpression.evaluate(expr, start, null, BusinessDays.MONDAY_TO_FRIDAY);
     }
     catch (Exception e) {
       fail("Failed to parse expression '" + expr + "': " + e);
@@ -132,7 +133,7 @@ public class BaseTimeMsecExpressionTest
       fail("Failed to generate Date object from '" + endStr + "': " + e);
     }
     try {
-      parsed = BaseDateTimeExpression.evaluate(expr, null, end);
+      parsed = BaseDateTimeExpression.evaluate(expr, null, end, BusinessDays.MONDAY_TO_FRIDAY);
     }
     catch (Exception e) {
       fail("Failed to parse expression '" + expr + "': " + e);

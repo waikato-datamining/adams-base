@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseDateTimeToString.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.core.BusinessDays;
 import adams.core.base.BaseDateTime;
 import adams.parser.GrammarSupplier;
 
@@ -28,7 +29,7 @@ import adams.parser.GrammarSupplier;
  * <br>
  * Example: 2015-12-01 07:13:12 +3 MINUTE<br>
  * <br>
- * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (SECOND|MINUTE|HOUR|DAY|WEEK|MONTH|YEAR)]*<br>
+ * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (SECOND|MINUTE|HOUR|DAY|BUSINESSDAY|WEEK|MONTH|YEAR)]*<br>
  * <br>
  * expr ::=   ( expr )<br>
  *          | - expr<br>
@@ -56,17 +57,22 @@ import adams.parser.GrammarSupplier;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-start &lt;adams.core.base.BaseDateTime&gt; (property: start)
  * &nbsp;&nbsp;&nbsp;The start date to use in the evaluation.
  * &nbsp;&nbsp;&nbsp;default: -INF
  * </pre>
- * 
+ *
  * <pre>-end &lt;adams.core.base.BaseDateTime&gt; (property: end)
  * &nbsp;&nbsp;&nbsp;The end date to use in the evaluation.
  * &nbsp;&nbsp;&nbsp;default: +INF
  * </pre>
- * 
+ *
+ * <pre>-business-days &lt;MONDAY_TO_FRIDAY&gt; (property: businessDays)
+ * &nbsp;&nbsp;&nbsp;How to interpret business days.
+ * &nbsp;&nbsp;&nbsp;default: MONDAY_TO_FRIDAY
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -85,6 +91,9 @@ public class BaseDateTimeToString
   /** the end date to use as basis for the evaluation. */
   protected BaseDateTime m_End;
 
+  /** how to interpret business days. */
+  protected BusinessDays m_BusinessDays;
+
   /**
    * Returns a string describing the object.
    *
@@ -92,10 +101,10 @@ public class BaseDateTimeToString
    */
   public String globalInfo() {
     return
-        "Turns a BaseDateTime format string into a String, evaluted using "
-      + "user-supplied start and end dates (ignored if future INF dates).\n\n"
-      + "Example: 2015-12-01 07:13:12 +3 MINUTE\n\n"
-      + getGrammar();
+      "Turns a BaseDateTime format string into a String, evaluted using "
+        + "user-supplied start and end dates (ignored if future INF dates).\n\n"
+        + "Example: 2015-12-01 07:13:12 +3 MINUTE\n\n"
+        + getGrammar();
   }
 
   /**
@@ -114,12 +123,16 @@ public class BaseDateTimeToString
     super.defineOptions();
 
     m_OptionManager.add(
-	    "start", "start",
-	    new BaseDateTime(BaseDateTime.INF_PAST));
+      "start", "start",
+      new BaseDateTime(BaseDateTime.INF_PAST));
 
     m_OptionManager.add(
-	    "end", "end",
-	    new BaseDateTime(BaseDateTime.INF_FUTURE));
+      "end", "end",
+      new BaseDateTime(BaseDateTime.INF_FUTURE));
+
+    m_OptionManager.add(
+      "business-days", "businessDays",
+      BusinessDays.MONDAY_TO_FRIDAY);
   }
 
   /**
@@ -181,6 +194,35 @@ public class BaseDateTimeToString
   }
 
   /**
+   * Sets what business days to use.
+   *
+   * @param value	the type
+   */
+  public void setBusinessDays(BusinessDays value) {
+    m_BusinessDays = value;
+    reset();
+  }
+
+  /**
+   * Returns what business days to use.
+   *
+   * @return		the type
+   */
+  public BusinessDays getBusinessDays() {
+    return m_BusinessDays;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String businessDaysTipText() {
+    return "How to interpret business days.";
+  }
+
+  /**
    * Returns the class that is accepted as input.
    *
    * @return		the class
@@ -203,6 +245,7 @@ public class BaseDateTimeToString
       result.setStart(m_Start.dateValue());
     if (!m_End.isInfinity())
       result.setEnd(m_End.dateValue());
+    result.setBusinessDays(m_BusinessDays);
 
     return result.stringValue();
   }

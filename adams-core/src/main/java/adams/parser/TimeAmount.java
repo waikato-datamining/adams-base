@@ -18,7 +18,7 @@
  * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.parser.basedate;
+package adams.parser;
 
 import java.util.Calendar;
 
@@ -30,7 +30,15 @@ import java.util.Calendar;
  * @version $Revision$
  * @see     Calendar#add(int, int)
  */
-public class Amount {
+public class TimeAmount {
+
+  /** enum of notes. */
+  public enum Note {
+    /** no notes. */
+    NONE,
+    /** the amount represents businessdays. */
+    BUSINESS_DAYS,
+  }
 
   /** the type. */
   protected int m_Type;
@@ -38,12 +46,15 @@ public class Amount {
   /** the amount. */
   protected int m_Amount;
 
+  /** the note. */
+  protected Note m_Note;
+
   /**
    * Initializes the object with amount 1 of the specified type.
    *
    * @param type	the type
    */
-  public Amount(int type) {
+  public TimeAmount(int type) {
     this(type, 1);
   }
 
@@ -53,9 +64,21 @@ public class Amount {
    * @param type	the type
    * @param amount	the amount
    */
-  public Amount(int type, int amount) {
+  public TimeAmount(int type, int amount) {
+    this(type, amount, Note.NONE);
+  }
+
+  /**
+   * Initializes the object with specified amount and type.
+   *
+   * @param type	the type
+   * @param amount	the amount
+   * @param note	the note
+   */
+  public TimeAmount(int type, int amount, Note note) {
     m_Type   = type;
     m_Amount = amount;
+    m_Note   = note;
   }
 
   /**
@@ -77,11 +100,20 @@ public class Amount {
   }
 
   /**
+   * Returns the note.
+   *
+   * @return		the note
+   */
+  public Note getNote() {
+    return m_Note;
+  }
+
+  /**
    * Returns a string representation of the amount.
    *
    * @return		the string representation
    */
   public String toString() {
-    return "Type=" + m_Type + ", Amount=" + m_Amount;
+    return "Type=" + m_Type + ", Amount=" + m_Amount + ", Note=" + m_Note;
   }
 }

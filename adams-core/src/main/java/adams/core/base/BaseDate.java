@@ -15,11 +15,12 @@
 
 /*
  * BaseDate.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
+import adams.core.BusinessDays;
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateValueSupporter;
@@ -32,7 +33,7 @@ import java.util.Date;
  * format "yyyy-MM-dd".
  * <pre>
  * parses expressions as follows:
- *   (&lt;date&gt;|NOW|-INF|+INF|START|END) [(+&lt;int&gt;|-&lt;int&gt;) (DAY|WEEK|MONTH|YEAR)]
+ *   (&lt;date&gt;|NOW|-INF|+INF|START|END) [(+&lt;int&gt;|-&lt;int&gt;) (DAY|BUSINESSDAY|WEEK|MONTH|YEAR)]
  * Examples:
  *   1999-12-31
  *   1999-12-31 +1 DAY
@@ -93,6 +94,9 @@ public class BaseDate
 
   /** the end date to use. */
   protected Date m_End = null;
+
+  /** how to interpret business days. */
+  protected BusinessDays m_BusinessDays = BusinessDays.MONDAY_TO_FRIDAY;
 
   /**
    * Initializes the date as NOW.
@@ -166,6 +170,24 @@ public class BaseDate
   }
 
   /**
+   * Sets what business days to use.
+   *
+   * @param value	the type
+   */
+  public void setBusinessDays(BusinessDays value) {
+    m_BusinessDays = value;
+  }
+
+  /**
+   * Returns what business days to use.
+   *
+   * @return		the type
+   */
+  public BusinessDays getBusinessDays() {
+    return m_BusinessDays;
+  }
+
+  /**
    * Parses the given date string.
    *
    * @param s		the date string to parse
@@ -174,7 +196,7 @@ public class BaseDate
    */
   protected Date parse(String s, boolean quiet) {
     try {
-      return BaseDateExpression.evaluate(s, m_Start, m_End);
+      return BaseDateExpression.evaluate(s, m_Start, m_End, m_BusinessDays);
     }
     catch (Exception e) {
       if (!quiet) {

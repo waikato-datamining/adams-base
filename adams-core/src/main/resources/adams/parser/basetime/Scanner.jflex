@@ -16,11 +16,12 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.basetime;
 
+import adams.parser.TimeAmount;
 import adams.core.DateFormat;
 import adams.core.base.BaseTime;
 
@@ -79,9 +80,9 @@ import java.util.*;
 "ceil" { return sf.newSymbol("Ceil", sym.CEIL); }
 
 // types
-"SECOND" { return sf.newSymbol("Second", sym.TYPE, new Amount(Calendar.SECOND,    1)); }
-"MINUTE" { return sf.newSymbol("Minute", sym.TYPE, new Amount(Calendar.MINUTE,    1)); }
-"HOUR"   { return sf.newSymbol("Hour",   sym.TYPE, new Amount(Calendar.HOUR,      1)); }
+"SECOND" { return sf.newSymbol("Second", sym.TIMEAMOUNT, new TimeAmount(Calendar.SECOND,    1)); }
+"MINUTE" { return sf.newSymbol("Minute", sym.TIMEAMOUNT, new TimeAmount(Calendar.MINUTE,    1)); }
+"HOUR"   { return sf.newSymbol("Hour",   sym.TIMEAMOUNT, new TimeAmount(Calendar.HOUR,      1)); }
 
 // numbers
 [0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }

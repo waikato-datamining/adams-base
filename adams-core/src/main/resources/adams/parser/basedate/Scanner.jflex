@@ -16,11 +16,12 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.basedate;
 
+import adams.parser.TimeAmount;
 import adams.core.DateFormat;
 import adams.core.base.BaseDate;
 
@@ -79,10 +80,11 @@ import java.util.*;
 "ceil" { return sf.newSymbol("Ceil", sym.CEIL); }
 
 // types
-"DAY"    { return sf.newSymbol("Day" ,   sym.TYPE, new Amount(Calendar.HOUR,     24)); }
-"WEEK"   { return sf.newSymbol("Week",   sym.TYPE, new Amount(Calendar.HOUR,   24*7)); }
-"MONTH"  { return sf.newSymbol("Month",  sym.TYPE, new Amount(Calendar.MONTH,     1)); }
-"YEAR"   { return sf.newSymbol("Year",   sym.TYPE, new Amount(Calendar.YEAR,      1)); }
+"DAY"    { return sf.newSymbol("Day" ,   sym.TIMEAMOUNT, new TimeAmount(Calendar.HOUR,     24)); }
+"BUSINESSDAY"    { return sf.newSymbol("BusinessDay" ,   sym.TIMEAMOUNT, new TimeAmount(Calendar.HOUR, 24, TimeAmount.Note.BUSINESS_DAYS)); }
+"WEEK"   { return sf.newSymbol("Week",   sym.TIMEAMOUNT, new TimeAmount(Calendar.HOUR,   24*7)); }
+"MONTH"  { return sf.newSymbol("Month",  sym.TIMEAMOUNT, new TimeAmount(Calendar.MONTH,     1)); }
+"YEAR"   { return sf.newSymbol("Year",   sym.TIMEAMOUNT, new TimeAmount(Calendar.YEAR,      1)); }
 
 // numbers
 [0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }

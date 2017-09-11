@@ -40,6 +40,7 @@ import java.util.*;
 
 import adams.core.DateUtils;
 import adams.parser.ParserHelper;
+import adams.parser.TimeAmount;
 
 /**
  * A parser for parsing date expressions.
@@ -170,7 +171,7 @@ parser code {:
   }
 :}
 
-terminal Amount TYPE;
+terminal TimeAmount TIMEAMOUNT;
 terminal Double NUMBER;
 terminal Date DATE_ACTUAL;
 terminal Date DATE_START;
@@ -222,11 +223,9 @@ expr_list ::=   expr_list expr
               | expr
               ;
 
-expr      ::=   calc:n TYPE:t
+expr      ::=   calc:n TIMEAMOUNT:t
                 {:
-                  parser.getCalendar().setTime(parser.getResult());
-                  parser.getCalendar().add(t.getType(), (int) (n*t.getAmount()));
-                  parser.setResult(parser.getCalendar().getTime());
+                  parser.setResult(parser.getHelper().add(parser.getResult(), n, t));
                 :}
               ;
 

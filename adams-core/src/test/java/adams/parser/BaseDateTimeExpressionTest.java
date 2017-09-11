@@ -13,19 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseDateTimeExpressionTest.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.BusinessDays;
 import adams.core.base.BaseDateTime;
 import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Tests the adams.parser.BaseDateTimeExpression class. Run from commandline with: <br><br>
@@ -83,6 +84,16 @@ public class BaseDateTimeExpressionTest
 	  "1999-12-31 01:02:03 rint(1.5) YEAR",
 	  "1999-12-31 01:02:03 floor(1.5) YEAR",
 	  "1999-12-31 01:02:03 ceil(1.5) YEAR",
+	  "1999-09-13 01:02:03 +5 BUSINESSDAY",  // Monday
+	  "1999-09-13 01:02:03 -5 BUSINESSDAY",  // Monday
+	  "1999-09-13 01:02:03 +1 BUSINESSDAY",  // Monday
+	  "1999-09-13 01:02:03 -1 BUSINESSDAY",  // Monday
+	  "1999-09-12 01:02:03 +1 BUSINESSDAY",  // Sunday
+	  "1999-09-12 01:02:03 -1 BUSINESSDAY",  // Sunday
+	  "1999-09-11 01:02:03 +1 BUSINESSDAY",  // Saturday
+	  "1999-09-11 01:02:03 -1 BUSINESSDAY",  // Saturday
+	  "1999-09-10 01:02:03 +1 BUSINESSDAY",  // Friday
+	  "1999-09-10 01:02:03 -1 BUSINESSDAY",  // Friday
 	}
     };
   }
@@ -113,7 +124,7 @@ public class BaseDateTimeExpressionTest
       fail("Failed to generate Date object from '" + startStr + "': " + e);
     }
     try {
-      parsed = BaseDateTimeExpression.evaluate(expr, start, null);
+      parsed = BaseDateTimeExpression.evaluate(expr, start, null, BusinessDays.MONDAY_TO_FRIDAY);
     }
     catch (Exception e) {
       fail("Failed to parse expression '" + expr + "': " + e);
@@ -138,7 +149,7 @@ public class BaseDateTimeExpressionTest
       fail("Failed to generate Date object from '" + endStr + "': " + e);
     }
     try {
-      parsed = BaseDateTimeExpression.evaluate(expr, null, end);
+      parsed = BaseDateTimeExpression.evaluate(expr, null, end, BusinessDays.MONDAY_TO_FRIDAY);
     }
     catch (Exception e) {
       fail("Failed to parse expression '" + expr + "': " + e);

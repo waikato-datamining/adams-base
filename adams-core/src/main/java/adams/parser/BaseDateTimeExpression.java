@@ -15,27 +15,28 @@
 
 /*
  * BaseDateTimeExpression.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
 
-import java.io.ByteArrayInputStream;
-import java.util.Date;
-import java.util.logging.Level;
-
-import java_cup.runtime.DefaultSymbolFactory;
-import java_cup.runtime.SymbolFactory;
+import adams.core.BusinessDays;
 import adams.core.base.BaseDateTime;
 import adams.parser.basedatetime.Parser;
 import adams.parser.basedatetime.Scanner;
+import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.SymbolFactory;
+
+import java.io.ByteArrayInputStream;
+import java.util.Date;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
  * Evaluates date&#47;time expressions.<br>
  * <br>
  * Format:<br>
- * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (SECOND|MINUTE|HOUR|DAY|WEEK|MONTH|YEAR)]*<br>
+ * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (SECOND|MINUTE|HOUR|DAY|BUSINESSDAY|WEEK|MONTH|YEAR)]*<br>
  * <br>
  * expr ::=   ( expr )<br>
  *          | - expr<br>
@@ -103,6 +104,9 @@ public class BaseDateTimeExpression
   /** for serialization. */
   private static final long serialVersionUID = -5923987640355752595L;
 
+  /** how to interpret business days. */
+  protected BusinessDays m_BusinessDays;
+
   /**
    * Returns a string describing the object.
    *
@@ -138,7 +142,7 @@ public class BaseDateTimeExpression
    */
   public String getGrammar() {
     return 
-	"(<date>|NOW|-INF|+INF|START|END) [expr (SECOND|MINUTE|HOUR|DAY|WEEK|MONTH|YEAR)]*\n"
+	"(<date>|NOW|-INF|+INF|START|END) [expr (SECOND|MINUTE|HOUR|DAY|BUSINESSDAY|WEEK|MONTH|YEAR)]*\n"
       + "\n"
       + "expr ::=   ( expr )\n"
       + "         | - expr\n"
@@ -162,6 +166,18 @@ public class BaseDateTimeExpression
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "business-days", "businessDays",
+      BusinessDays.MONDAY_TO_FRIDAY);
+  }
+
+  /**
    * Returns the default expression to use.
    *
    * @return		the default expression
@@ -180,6 +196,35 @@ public class BaseDateTimeExpression
   @Override
   public String expressionTipText() {
     return "The boolean expression to evaluate (must evaluate to a boolean).";
+  }
+
+  /**
+   * Sets what business days to use.
+   *
+   * @param value	the type
+   */
+  public void setBusinessDays(BusinessDays value) {
+    m_BusinessDays = value;
+    reset();
+  }
+
+  /**
+   * Returns what business days to use.
+   *
+   * @return		the type
+   */
+  public BusinessDays getBusinessDays() {
+    return m_BusinessDays;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String businessDaysTipText() {
+    return "How to interpret business days.";
   }
 
   /**
@@ -211,7 +256,7 @@ public class BaseDateTimeExpression
    */
   @Override
   public Date evaluate() throws Exception {
-    return evaluate(m_Expression);
+    return evaluate(m_Expression, null, null, m_BusinessDays);
   }
 
   /**
@@ -223,20 +268,7 @@ public class BaseDateTimeExpression
    * @throws Exception	if evaluation fails
    */
   public Date evaluate(Date start, Date end) throws Exception {
-    return evaluate(m_Expression, start, end);
-  }
-
-  /**
-   * Parses and evaluates the given expression.
-   * Returns the result of the boolean expression, based on the given
-   * values of the symbols.
-   *
-   * @param expr	the expression to evaluate
-   * @return		the evaluated result
-   * @throws Exception	if something goes wrong
-   */
-  public static Date evaluate(String expr) throws Exception {
-    return evaluate(expr, null, null);
+    return evaluate(m_Expression, start, end, m_BusinessDays);
   }
 
   /**
@@ -247,12 +279,13 @@ public class BaseDateTimeExpression
    * @param expr	the expression to evaluate
    * @param start	the start datetime, can be null
    * @param end		the end datetime, can be null
+   * @param bdays	how to interpret business days
    * @return		the evaluated result
    * @throws Exception	if something goes wrong
    * @see		BaseDateTime#START
    * @see		BaseDateTime#END
    */
-  public static Date evaluate(String expr, Date start, Date end) throws Exception {
+  public static Date evaluate(String expr, Date start, Date end, BusinessDays bdays) throws Exception {
     SymbolFactory 		sf;
     ByteArrayInputStream 	parserInput;
     Parser 			parser;
@@ -262,6 +295,7 @@ public class BaseDateTimeExpression
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setStart(start);
     parser.setEnd(end);
+    parser.getHelper().setBusinessDays(bdays);
     parser.parse();
 
     return parser.getResult();

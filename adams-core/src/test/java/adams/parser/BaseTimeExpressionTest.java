@@ -13,19 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseTimeExpressionTest.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.BusinessDays;
 import adams.core.base.BaseTime;
 import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Tests the adams.parser.BaseTimeExpression class. Run from commandline with: <br><br>
@@ -106,7 +107,7 @@ public class BaseTimeExpressionTest
       fail("Failed to generate Date object from '" + startStr + "': " + e);
     }
     try {
-      parsed = BaseDateTimeExpression.evaluate(expr, start, null);
+      parsed = BaseDateTimeExpression.evaluate(expr, start, null, BusinessDays.MONDAY_TO_FRIDAY);
     }
     catch (Exception e) {
       fail("Failed to parse expression '" + expr + "': " + e);
@@ -131,7 +132,7 @@ public class BaseTimeExpressionTest
       fail("Failed to generate Date object from '" + endStr + "': " + e);
     }
     try {
-      parsed = BaseDateTimeExpression.evaluate(expr, null, end);
+      parsed = BaseDateTimeExpression.evaluate(expr, null, end, BusinessDays.MONDAY_TO_FRIDAY);
     }
     catch (Exception e) {
       fail("Failed to parse expression '" + expr + "': " + e);

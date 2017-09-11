@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ParserHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
+import adams.core.BusinessDays;
 import adams.core.DateUtils;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,6 +57,9 @@ public class ParserHelper
   
   /** the calendar instance to use. */
   protected Calendar m_Calendar;
+
+  /** the business days to use. */
+  protected BusinessDays m_BusinessDays;
 
   /** the cache of functions. */
   protected static HashMap<String,ParserFunction> m_Functions;
@@ -103,8 +108,9 @@ public class ParserHelper
    * Initializes members.
    */
   protected void initialize() {
-    m_Calendar = DateUtils.getCalendar();
-    m_Symbols  = new HashMap();
+    m_Calendar     = DateUtils.getCalendar();
+    m_Symbols      = new HashMap();
+    m_BusinessDays = BusinessDays.MONDAY_TO_FRIDAY;
   }
   
   /**
@@ -146,6 +152,97 @@ public class ParserHelper
   }
 
   /**
+   * Sets the type of business days to use.
+   *
+   * @param value	the type
+   */
+  public void setBusinessDays(BusinessDays value) {
+    m_BusinessDays = value;
+  }
+
+  /**
+   * Returns the type of business days to use.
+   *
+   * @return		the type
+   */
+  public BusinessDays getBusinessDays() {
+    return m_BusinessDays;
+  }
+
+  /**
+   * Corrects the amount using the factor and the note in the amount.
+   *
+   * @param t 		the amount to correct
+   * @return		the (potentially) corrected amount
+   */
+  protected TimeAmount adjustAmount(Date d, Double n, TimeAmount t) {
+    double	days;
+    int		actualDays;
+    int		inc;
+    Calendar	cal;
+
+
+    switch (t.getNote()) {
+      case NONE:
+        return new TimeAmount(t.getType(), (int) (n * t.getAmount()));
+
+      case BUSINESS_DAYS:
+        days       = n.intValue();
+        actualDays = 0;
+        inc        = (days < 0) ? -1 : +1;
+        cal        = new GregorianCalendar();
+        cal.setTime(d);
+	if (days != 0) {
+	  // are we on a weekend? find next businessday
+	  while (!m_BusinessDays.isBusinessDay(cal.getTime())) {
+	    actualDays += inc;
+	    cal.add(Calendar.HOUR, 24 * inc);
+	  }
+
+	  // we moved 1 day to far, so decrement days to iterate
+	  if (actualDays != 0)
+	    days -= inc;
+
+	  // iterate
+	  if (days != 0) {
+	    do {
+	      if (m_BusinessDays.isBusinessDay(cal.getTime()))
+		  days -= inc;
+	      actualDays += inc;
+	      cal.add(Calendar.HOUR, 24 * inc);
+	    }
+	    while (days != 0);
+	  }
+
+	  // moved to last day, check whether businessday!
+	  while (!m_BusinessDays.isBusinessDay(cal.getTime())) {
+	    actualDays += inc;
+	    cal.add(Calendar.HOUR, 24 * inc);
+	  }
+	}
+        return new TimeAmount(Calendar.HOUR, actualDays * 24);
+
+      default:
+        throw new IllegalStateException("Unhandled note: " + t.getNote());
+    }
+  }
+
+  /**
+   * Adds the request amount of time.
+   *
+   * @param d		the current date
+   * @param n		the factor
+   * @param t 		the time amount to use
+   * @return		the new date
+   */
+  public Date add(Date d, Double n, TimeAmount t) {
+    t = adjustAmount(d, n, t);
+    getCalendar().setTime(d);
+    getCalendar().add(t.getType(), t.getAmount());
+    return getCalendar().getTime();
+  }
+
+  /**
    * Returns the specified date from the object (if it is a String or Date object).
    *
    * @param obj 	the object to extract the date field from
@@ -168,6 +265,25 @@ public class ParserHelper
       result = new Double(getCalendar(date).get(field));
       
     return result;
+  }
+
+  /**
+   * Checks whether the string/date represents a business day.
+   *
+   * @param obj		the string/date to check
+   * @return		true if business day
+   * @see		#getBusinessDays()
+   */
+  public boolean isBusinessDay(Object obj) {
+    Date	d;
+
+    d = null;
+    if(obj instanceof Date)
+      d = (Date) obj;
+    else if (obj instanceof String)
+      d = toDate("" + obj);
+
+    return (d != null) && m_BusinessDays.isBusinessDay(d);
   }
 
   /**

@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseDateToString.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.core.BusinessDays;
 import adams.core.base.BaseDate;
 import adams.parser.GrammarSupplier;
 
@@ -28,7 +29,7 @@ import adams.parser.GrammarSupplier;
  * <br>
  * Example: 2015-12-01 +3 DAY<br>
  * <br>
- * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (DAY|WEEK|MONTH|YEAR)]*<br>
+ * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (DAY|BUSINESSDAY|WEEK|MONTH|YEAR)]*<br>
  * expr ::=   ( expr )<br>
  *          | - expr<br>
  *          | + expr<br>
@@ -66,6 +67,11 @@ import adams.parser.GrammarSupplier;
  * &nbsp;&nbsp;&nbsp;default: +INF
  * </pre>
  * 
+ * <pre>-business-days &lt;MONDAY_TO_FRIDAY&gt; (property: businessDays)
+ * &nbsp;&nbsp;&nbsp;How to interpret business days.
+ * &nbsp;&nbsp;&nbsp;default: MONDAY_TO_FRIDAY
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -83,6 +89,9 @@ public class BaseDateToString
 
   /** the end date to use as basis for the evaluation. */
   protected BaseDate m_End;
+
+  /** how to interpret business days. */
+  protected BusinessDays m_BusinessDays;
 
   /**
    * Returns a string describing the object.
@@ -113,12 +122,16 @@ public class BaseDateToString
     super.defineOptions();
 
     m_OptionManager.add(
-	    "start", "start",
-	    new BaseDate(BaseDate.INF_PAST));
+      "start", "start",
+      new BaseDate(BaseDate.INF_PAST));
 
     m_OptionManager.add(
-	    "end", "end",
-	    new BaseDate(BaseDate.INF_FUTURE));
+      "end", "end",
+      new BaseDate(BaseDate.INF_FUTURE));
+
+    m_OptionManager.add(
+      "business-days", "businessDays",
+      BusinessDays.MONDAY_TO_FRIDAY);
   }
 
   /**
@@ -180,6 +193,35 @@ public class BaseDateToString
   }
 
   /**
+   * Sets what business days to use.
+   *
+   * @param value	the type
+   */
+  public void setBusinessDays(BusinessDays value) {
+    m_BusinessDays = value;
+    reset();
+  }
+
+  /**
+   * Returns what business days to use.
+   *
+   * @return		the type
+   */
+  public BusinessDays getBusinessDays() {
+    return m_BusinessDays;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String businessDaysTipText() {
+    return "How to interpret business days.";
+  }
+
+  /**
    * Returns the class that is accepted as input.
    *
    * @return		the class
@@ -202,6 +244,7 @@ public class BaseDateToString
       result.setStart(m_Start.dateValue());
     if (!m_End.isInfinity())
       result.setEnd(m_End.dateValue());
+    result.setBusinessDays(m_BusinessDays);
 
     return result.stringValue();
   }

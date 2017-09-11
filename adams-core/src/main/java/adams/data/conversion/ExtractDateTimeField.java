@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExtractDateTimeField.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.core.BusinessDays;
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTime;
@@ -51,24 +52,29 @@ import java.util.GregorianCalendar;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
- * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: dateTimeType)
+ *
+ * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|SERIAL_DATETIME&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type to extract the field from.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
- * 
- * <pre>-field &lt;YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|MSEC|DAY_OF_YEAR|DAY_OF_MONTH|DAY_OF_WEEK|DAY_OF_WEEK_STR_EN|DAY_OF_WEEK_STR_LOCALE|WEEK_OF_YEAR|WEEK_OF_MONTH|CUSTOM&gt; (property: field)
+ *
+ * <pre>-field &lt;YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|MSEC|DAY_OF_YEAR|DAY_OF_MONTH|DAY_OF_WEEK|DAY_OF_WEEK_STR_EN|DAY_OF_WEEK_STR_LOCALE|WEEK_OF_YEAR|WEEK_OF_MONTH|BUSINESSDAY_INDICATOR|CUSTOM&gt; (property: field)
  * &nbsp;&nbsp;&nbsp;The field to extract.
  * &nbsp;&nbsp;&nbsp;default: YEAR
  * </pre>
- * 
+ *
+ * <pre>-business-days &lt;MONDAY_TO_FRIDAY&gt; (property: businessDays)
+ * &nbsp;&nbsp;&nbsp;How to interpret business days.
+ * &nbsp;&nbsp;&nbsp;default: MONDAY_TO_FRIDAY
+ * </pre>
+ *
  * <pre>-format-custom &lt;adams.data.DateFormatString&gt; (property: formatCustom)
- * &nbsp;&nbsp;&nbsp;The format for turning the date&#47;time type into a string in case of field 
+ * &nbsp;&nbsp;&nbsp;The format for turning the date&#47;time type into a string in case of field
  * &nbsp;&nbsp;&nbsp;CUSTOM
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd
  * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -82,7 +88,7 @@ public class ExtractDateTimeField
 
   /**
    * The field to extract.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
@@ -115,6 +121,8 @@ public class ExtractDateTimeField
     WEEK_OF_YEAR,
     /** the week of the month. */
     WEEK_OF_MONTH,
+    /** whether it is a business day or not. */
+    BUSINESS_DAY_INDICATOR,
     /** other, defined via format string. */
     CUSTOM
   }
@@ -139,13 +147,16 @@ public class ExtractDateTimeField
 
   /** the saturday constant. */
   public final static String SATURDAY = "Saturday";
-  
+
   /** the datetime type to process. */
   protected DateTimeType m_DateTimeType;
 
   /** the field to extract. */
   protected DateTimeField m_Field;
-  
+
+  /** how to interpret business days. */
+  protected BusinessDays m_BusinessDays;
+
   /** the format string to use in case of {@link DateTimeField#CUSTOM}. */
   protected DateFormatString m_FormatCustom;
 
@@ -154,10 +165,10 @@ public class ExtractDateTimeField
 
   /** the formatter for the localized day of week. */
   protected transient DateFormat m_FormatterDayOfWeek;
-  
+
   /** the calendar for extracting the fields. */
   protected Calendar m_Calendar;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -165,8 +176,8 @@ public class ExtractDateTimeField
    */
   @Override
   public String globalInfo() {
-    return 
-	"Extracts the specified field from a date/time type.\n"
+    return
+      "Extracts the specified field from a date/time type.\n"
 	+ "A custom format string can be used with field " + DateTimeField.CUSTOM + ".";
   }
 
@@ -178,39 +189,43 @@ public class ExtractDateTimeField
     super.defineOptions();
 
     m_OptionManager.add(
-	    "datetime-type", "dateTimeType",
-	    DateTimeType.DATE);
+      "datetime-type", "dateTimeType",
+      DateTimeType.DATE);
 
     m_OptionManager.add(
-	    "field", "field",
-	    DateTimeField.YEAR);
+      "field", "field",
+      DateTimeField.YEAR);
 
     m_OptionManager.add(
-	    "format-custom", "formatCustom",
-	    new DateFormatString(Constants.DATE_FORMAT));
+      "business-days", "businessDays",
+      BusinessDays.MONDAY_TO_FRIDAY);
+
+    m_OptionManager.add(
+      "format-custom", "formatCustom",
+      new DateFormatString(Constants.DATE_FORMAT));
   }
-  
+
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_Calendar           = new GregorianCalendar();
     m_FormatterDayOfWeek = new DateFormat("E");
   }
-  
+
   /**
    * Resets the converter.
    */
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_FormatterCustom = null;
   }
-  
+
   /**
    * Sets the date/time type to convert.
    *
@@ -239,7 +254,7 @@ public class ExtractDateTimeField
   public String dateTimeTypeTipText() {
     return "The date/time type to extract the field from.";
   }
-  
+
   /**
    * Sets the field to extract.
    *
@@ -267,6 +282,35 @@ public class ExtractDateTimeField
    */
   public String fieldTipText() {
     return "The field to extract.";
+  }
+
+  /**
+   * Sets what business days to use.
+   *
+   * @param value	the type
+   */
+  public void setBusinessDays(BusinessDays value) {
+    m_BusinessDays = value;
+    reset();
+  }
+
+  /**
+   * Returns what business days to use.
+   *
+   * @return		the type
+   */
+  public BusinessDays getBusinessDays() {
+    return m_BusinessDays;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String businessDaysTipText() {
+    return "How to interpret business days.";
   }
 
   /**
@@ -364,6 +408,8 @@ public class ExtractDateTimeField
       case DAY_OF_WEEK_STR_LOCALE:
       case CUSTOM:
 	return String.class;
+      case BUSINESS_DAY_INDICATOR:
+        return Boolean.class;
       default:
 	throw new IllegalStateException("Unhandled field: " + m_Field);
     }
@@ -378,7 +424,7 @@ public class ExtractDateTimeField
   @Override
   protected Object doConvert() throws Exception {
     int		day;
-    
+
     // update the calendar
     switch (m_DateTimeType) {
       case MSECS:
@@ -424,7 +470,7 @@ public class ExtractDateTimeField
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }
-    
+
     // extract the field
     switch (m_Field) {
       case YEAR:
@@ -472,6 +518,8 @@ public class ExtractDateTimeField
 	return null;
       case DAY_OF_WEEK_STR_LOCALE:
 	return m_FormatterDayOfWeek.format(m_Calendar.getTime());
+      case BUSINESS_DAY_INDICATOR:
+        return m_BusinessDays.isBusinessDay(m_Calendar.getTime());
       case CUSTOM:
 	if (m_FormatterCustom == null)
 	  m_FormatterCustom = m_FormatCustom.toDateFormat();

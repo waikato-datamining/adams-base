@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseDateTimeMsecExpressionTest.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
+import adams.core.BusinessDays;
 import adams.core.base.BaseDateTimeMsec;
 import adams.env.Environment;
 import junit.framework.Test;
@@ -84,6 +85,16 @@ public class BaseDateTimeMsecExpressionTest
 	  "1999-12-31 01:02:03.123 rint(1.5) YEAR",
 	  "1999-12-31 01:02:03.123 floor(1.5) YEAR",
 	  "1999-12-31 01:02:03.123 ceil(1.5) YEAR",
+	  "1999-09-13 01:02:03.123 +5 BUSINESSDAY",  // Monday
+	  "1999-09-13 01:02:03.123 -5 BUSINESSDAY",  // Monday
+	  "1999-09-13 01:02:03.123 +1 BUSINESSDAY",  // Monday
+	  "1999-09-13 01:02:03.123 -1 BUSINESSDAY",  // Monday
+	  "1999-09-12 01:02:03.123 +1 BUSINESSDAY",  // Sunday
+	  "1999-09-12 01:02:03.123 -1 BUSINESSDAY",  // Sunday
+	  "1999-09-11 01:02:03.123 +1 BUSINESSDAY",  // Saturday
+	  "1999-09-11 01:02:03.123 -1 BUSINESSDAY",  // Saturday
+	  "1999-09-10 01:02:03.123 +1 BUSINESSDAY",  // Friday
+	  "1999-09-10 01:02:03.123 -1 BUSINESSDAY",  // Friday
 	}
     };
   }
@@ -114,7 +125,7 @@ public class BaseDateTimeMsecExpressionTest
       fail("Failed to generate Date object from '" + startStr + "': " + e);
     }
     try {
-      parsed = BaseDateTimeMsecExpression.evaluate(expr, start, null);
+      parsed = BaseDateTimeMsecExpression.evaluate(expr, start, null, BusinessDays.MONDAY_TO_FRIDAY);
     }
     catch (Exception e) {
       fail("Failed to parse expression '" + expr + "': " + e);
@@ -139,7 +150,7 @@ public class BaseDateTimeMsecExpressionTest
       fail("Failed to generate Date object from '" + endStr + "': " + e);
     }
     try {
-      parsed = BaseDateTimeMsecExpression.evaluate(expr, null, end);
+      parsed = BaseDateTimeMsecExpression.evaluate(expr, null, end, BusinessDays.MONDAY_TO_FRIDAY);
     }
     catch (Exception e) {
       fail("Failed to parse expression '" + expr + "': " + e);

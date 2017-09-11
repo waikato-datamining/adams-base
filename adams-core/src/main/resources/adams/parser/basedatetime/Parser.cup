@@ -28,7 +28,7 @@
 
 /*
  * Copyright 1996-1999 by Scott Hudson, Frank Flannery, C. Scott Ananian
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.basedatetime;
@@ -40,6 +40,7 @@ import java.util.*;
 
 import adams.core.DateUtils;
 import adams.parser.ParserHelper;
+import adams.parser.TimeAmount;
 
 /**
  * A parser for parsing date/time expressions.
@@ -170,7 +171,7 @@ parser code {:
   }
 :}
 
-terminal Amount TYPE;
+terminal TimeAmount TIMEAMOUNT;
 terminal Double NUMBER;
 terminal Date DATE_ACTUAL;
 terminal Date DATE_START;
@@ -222,11 +223,9 @@ expr_list ::=   expr_list expr
               | expr
               ;
 
-expr      ::=   calc:n TYPE:t
+expr      ::=   calc:n TIMEAMOUNT:t
                 {:
-                  parser.getCalendar().setTime(parser.getResult());
-                  parser.getCalendar().add(t.getType(), (int) (n*t.getAmount()));
-                  parser.setResult(parser.getCalendar().getTime());
+                  parser.setResult(parser.getHelper().add(parser.getResult(), n, t));
                 :}
               ;
 
