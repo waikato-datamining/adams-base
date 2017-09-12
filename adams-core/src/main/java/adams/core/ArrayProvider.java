@@ -15,28 +15,27 @@
 
 /*
  * ArrayProvider.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
  */
-package adams.flow.core;
+package adams.core;
 
 /**
- * For actors that can output the items either as an array or one-by-one.
+ * For classes that can generate data either as an array or one-by-one.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public interface ArrayProvider
-  extends Actor, adams.core.ArrayProvider {
+public interface ArrayProvider {
 
   /**
-   * Sets whether to output the items as array or as single strings.
+   * Sets whether to generate data as array or as single objects.
    *
    * @param value	true if output is an array
    */
   public void setOutputArray(boolean value);
 
   /**
-   * Returns whether to output the items as array or as single strings.
+   * Returns whether to generate the as array or as single objects.
    *
    * @return		true if output is an array
    */
