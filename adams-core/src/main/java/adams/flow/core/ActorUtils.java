@@ -370,7 +370,9 @@ public class ActorUtils {
     int			i;
 
     // create unique name
-    baseName = actor.getName().replaceAll(" \\([0-9]+\\)$", "");
+    // don't remove "tail" as it can change actor names in flow when loading/
+    // debugging, creating bizarre jumping around behaviour
+    baseName = actor.getName();
     i        = 1;
     do {
       if (i == 1)
