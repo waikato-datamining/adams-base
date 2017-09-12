@@ -48,6 +48,9 @@ public abstract class AbstractExternalActor
   /** the file monitor. */
   protected FileChangeMonitor m_Monitor;
 
+  /** whether the flow gets built on the fly and might not be present at the start. */
+  protected boolean m_OnTheFly;
+
   /** the external actor itself. */
   protected Actor m_ExternalActor;
 
@@ -70,6 +73,10 @@ public abstract class AbstractExternalActor
     m_OptionManager.add(
       "monitor", "monitor",
       new NoChange());
+
+    m_OptionManager.add(
+      "on-the-fly", "onTheFly",
+      false);
   }
 
   /**
@@ -83,6 +90,7 @@ public abstract class AbstractExternalActor
 
     result = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "monitor", m_Monitor, ", monitor: ");
+    result += QuickInfoHelper.toString(this, "onTheFly", m_OnTheFly, "on-the-fly", ", ");
 
     return result;
   }
@@ -114,6 +122,41 @@ public abstract class AbstractExternalActor
    */
   public String monitorTipText() {
     return "The scheme to use for monitoring the actor file for changes.";
+  }
+
+  /**
+   * Sets whether the flow file gets built on the fly and might not be present
+   * at start up time.
+   *
+   * @param value	if true then the flow does not have to be present at
+   * 			start up time
+   */
+  public void setOnTheFly(boolean value) {
+    m_OnTheFly = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the flow file gets built on the fly and might not be present
+   * at start up time.
+   *
+   * @return		true if the flow is not necessarily present at start
+   * 			up time
+   */
+  public boolean getOnTheFly() {
+    return m_OnTheFly;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String onTheFlyTipText() {
+    return
+        "If enabled, the external flow is not required to be present at "
+      + "set up time (eg if built on the fly), only at execution time.";
   }
 
   /**
@@ -261,7 +304,7 @@ public abstract class AbstractExternalActor
       // due to change in variable, we might need to clean up external actor
       cleanUpExternalActor();
 
-      if (getOptionManager().getVariableForProperty("actorFile") == null) {
+      if ((getOptionManager().getVariableForProperty("actorFile") == null) && !m_OnTheFly) {
 	if (m_ExternalActor == null)
 	  result = setUpExternalActor();
       }
@@ -318,7 +361,7 @@ public abstract class AbstractExternalActor
       result = m_Monitor.update(m_ActorFile);
     }
 
-    // not setup yet due to variable?
+    // not setup yet due to variable or on-the-fly?
     if (result == null) {
       cleanUpExternalActor();
       if (m_ExternalActor == null)
