@@ -225,7 +225,7 @@ public class Utils {
 
       return builder.toString().trim();
     }
-    return new String("" + value);
+    return "" + value;
   }
 
   /**
@@ -543,7 +543,7 @@ public class Utils {
    */
   public static String quote(String string, String quoteChar) {
       if (string == null)
-	return string;
+	return null;
     
       boolean quote = false;
 
@@ -557,11 +557,11 @@ public class Utils {
 
       // Enclose the string in quotes if the string contains a recently added
       // backquote or contains one of the following characters.
-      if((quote == true) ||
+      if (quote ||
 	 (string.indexOf('{') != -1) || (string.indexOf('}') != -1) ||
 	 (string.indexOf(',') != -1) || (string.equals("?")) ||
 	 (string.indexOf(' ') != -1) || (string.equals(""))) {
-	  string = (new String(quoteChar).concat(string)).concat(new String(quoteChar));
+	  string = quoteChar.concat(string).concat(quoteChar);
       }
 
       return string;
@@ -607,9 +607,9 @@ public class Utils {
     if (string.startsWith(quoteChar) && string.endsWith(quoteChar)) {
       string = string.substring(1, string.length() - 1);
 
-      if ((string.indexOf("\\n")  != -1) || (string.indexOf("\\r")  != -1) ||
-	  (string.indexOf("\\'")  != -1) || (string.indexOf("\\\"") != -1) ||
-	  (string.indexOf("\\\\") != -1) || (string.indexOf("\\t")  != -1)) {
+      if (string.contains("\\n")  || string.contains("\\r") ||
+	  string.contains("\\'")  || string.contains("\\\"") ||
+	  string.contains("\\\\") || string.contains("\\t")) {
 	string = unbackQuoteChars(string);
       }
     }
@@ -746,7 +746,7 @@ public class Utils {
    */
   public static String[] breakUp(String s, int columns) {
     List<String>	result;
-    String		line;
+    StringBuilder	line;
     BreakIterator	boundary;
     int			boundaryStart;
     int			boundaryEnd;
@@ -755,35 +755,36 @@ public class Utils {
     int			i;
     String[]		lines;
 
-    result      = new ArrayList<String>();
+    result      = new ArrayList<>();
     punctuation = " .,;:!?'\"";
     lines       = s.split("\n");
+    line        = new StringBuilder();
 
     for (i = 0; i < lines.length; i++) {
       boundary      = BreakIterator.getWordInstance();
       boundary.setText(lines[i]);
       boundaryStart = boundary.first();
       boundaryEnd   = boundary.next();
-      line          = "";
+      line.delete(0, line.length());
 
       while (boundaryEnd != BreakIterator.DONE) {
 	word = lines[i].substring(boundaryStart, boundaryEnd);
 	if (line.length() >= columns) {
 	  if (word.length() == 1) {
 	    if (punctuation.indexOf(word.charAt(0)) > -1) {
-	      line += word;
+	      line.append(word);
 	      word = "";
 	    }
 	  }
-	  result.add(line);
-	  line = "";
+	  result.add(line.toString());
+	  line.delete(0, line.length());
 	}
-	line          += word;
+	line.append(word);
 	boundaryStart  = boundaryEnd;
 	boundaryEnd    = boundary.next();
       }
       if (line.length() > 0)
-	result.add(line);
+	result.add(line.toString());
     }
 
     return result.toArray(new String[result.size()]);
@@ -1097,7 +1098,10 @@ public class Utils {
    * @return		the string
    */
   public static String classToString(Object o) {
-    return classToString(o.getClass());
+    if (o == null)
+      return "null";
+    else
+      return classToString(o.getClass());
   }
 
   /**
@@ -1107,21 +1111,22 @@ public class Utils {
    * @return		the string
    */
   public static String classToString(Class c) {
-    String	result;
-    int		dim;
-    int		i;
+    StringBuilder	result;
+    int			dim;
+    int			i;
 
+    result = new StringBuilder();
     if (c.isArray()) {
       dim    = getArrayDimensions(c);
-      result = getArrayClass(c).getName();
+      result.append(getArrayClass(c).getName());
       for (i = 0; i < dim; i++)
-	result += ARRAY_INDICATOR;
+	result.append(ARRAY_INDICATOR);
     }
     else {
-      result = c.getName();
+      result.append(c.getName());
     }
 
-    return result;
+    return result.toString();
   }
 
   /**
@@ -1154,6 +1159,9 @@ public class Utils {
   public static String classesToString(Object[] o, String separator) {
     Class[] 	c;
     int		i;
+
+    if (o == null)
+      return "null";
 
     c = new Class[o.length];
     for (i = 0; i < o.length; i++)
@@ -1385,7 +1393,7 @@ public class Utils {
     int			times;
     int			remainder;
 
-    result  = new ArrayList<Integer>();
+    result  = new ArrayList<>();
     current = n;
     do {
       times     = current / base;
@@ -1687,7 +1695,7 @@ public class Utils {
     int			lastPos;
     int			currPos;
 
-    result  = new ArrayList<String>();
+    result  = new ArrayList<>();
     lastPos = -1;
     while ((currPos = line.indexOf(delimiter, lastPos + 1)) > -1) {
       result.add(line.substring(lastPos + 1, currPos));
@@ -1782,7 +1790,7 @@ public class Utils {
   public static List<Byte> toList(byte[] array) {
     ArrayList<Byte>	result;
     
-    result = new ArrayList<Byte>();
+    result = new ArrayList<>();
     for (byte element: array)
       result.add(element);
     
@@ -1815,7 +1823,7 @@ public class Utils {
   public static List<Integer> toList(int[] array) {
     ArrayList<Integer>	result;
     
-    result = new ArrayList<Integer>();
+    result = new ArrayList<>();
     for (int element: array)
       result.add(element);
     
@@ -1848,7 +1856,7 @@ public class Utils {
   public static List<Long> toList(long[] array) {
     ArrayList<Long>	result;
     
-    result = new ArrayList<Long>();
+    result = new ArrayList<>();
     for (long element: array)
       result.add(element);
     
@@ -1881,7 +1889,7 @@ public class Utils {
   public static List<Double> toList(double[] array) {
     ArrayList<Double>	result;
     
-    result = new ArrayList<Double>();
+    result = new ArrayList<>();
     for (double element: array)
       result.add(element);
     
@@ -1914,7 +1922,7 @@ public class Utils {
   public static List<Float> toList(float[] array) {
     ArrayList<Float>	result;
     
-    result = new ArrayList<Float>();
+    result = new ArrayList<>();
     for (float element: array)
       result.add(element);
     
