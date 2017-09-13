@@ -13,16 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiPaintlet.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.sequence;
 
-import java.awt.Graphics;
-
 import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.visualization.core.AbstractPaintlet;
 import adams.gui.visualization.core.PaintablePanel;
+
+import java.awt.Graphics;
 
 /**
  * Paintlet that combines multiple XYSequence paintlets.
@@ -31,11 +32,15 @@ import adams.gui.visualization.core.PaintablePanel;
  * @version $Revision$
  */
 public class MultiPaintlet
-  extends AbstractXYSequencePaintlet {
+  extends AbstractPaintlet
+  implements XYSequencePaintletWithCustomerContainerManager {
 
   /** for serialization. */
   private static final long serialVersionUID = 159999248427405834L;
-  
+
+  /** a custom container manager to obtain the sequences from. */
+  protected XYSequenceContainerManager m_CustomerContainerManager;
+
   /** the paintlets to use. */
   protected XYSequencePaintlet[] m_SubPaintlets;
   
@@ -59,6 +64,15 @@ public class MultiPaintlet
     m_OptionManager.add(
 	    "paintlet", "subPaintlets",
 	    getDefaultSubPaintlets());
+  }
+
+  /**
+   * Initializes the scheme.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    m_CustomerContainerManager = null;
   }
 
   /**
@@ -133,6 +147,48 @@ public class MultiPaintlet
   }
 
   /**
+   * Returns the XY sequence panel currently in use.
+   *
+   * @return		the panel in use
+   */
+  @Override
+  public XYSequencePanel getSequencePanel() {
+    return (XYSequencePanel) m_Panel;
+  }
+
+  /**
+   * Sets the custom container manager to obtain the sequences from.
+   *
+   * @param value	the manager
+   */
+  public void setCustomContainerManager(XYSequenceContainerManager value) {
+    m_CustomerContainerManager = value;
+  }
+
+  /**
+   * Returns the current custom container manager to obtain the sequences from.
+   *
+   * @return		the manager, null if none set
+   */
+  public XYSequenceContainerManager getCustomerContainerManager() {
+    return m_CustomerContainerManager;
+  }
+
+  /**
+   * Returns the container manager in use. Custom manager overrides the sequence
+   * panel's one.
+   *
+   * @return		the container manager
+   * @see		#getCustomerContainerManager()
+   */
+  public XYSequenceContainerManager getActualContainerManager() {
+    if (m_CustomerContainerManager != null)
+      return m_CustomerContainerManager;
+    else
+      return getSequencePanel().getContainerManager();
+  }
+
+  /**
    * The paint routine of the paintlet.
    *
    * @param g		the graphics context to use for painting
@@ -142,7 +198,7 @@ public class MultiPaintlet
   public void performPaint(Graphics g, PaintMoment moment) {
     for (XYSequencePaintlet paintlet: m_SubPaintlets) {
       if (paintlet.canPaint(moment))
-	paintlet.performPaint(g, moment);
+	paintlet.paint(g);
     }
   }
 }
