@@ -115,7 +115,7 @@ public abstract class AbstractMultiObjectExportWithPreferredExtensions
 
     exporters = AbstractObjectExporter.getExporter(obj);
     if (exporters.size() == 0) {
-      errors.add("Failed to find object exporter for '" + name + "'/" + Utils.classToString(obj.getClass()));
+      errors.add("Failed to find object exporter for '" + name + "'/" + Utils.classToString(obj));
       return null;
     }
     result    = exporters.get(0);

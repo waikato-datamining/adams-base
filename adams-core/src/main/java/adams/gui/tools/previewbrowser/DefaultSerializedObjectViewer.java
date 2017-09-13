@@ -80,7 +80,7 @@ public class DefaultSerializedObjectViewer
     if (obj == null)
       textOptions.setText("");
     else if (obj.getClass().isArray())
-      textOptions.setText(Utils.classToString(obj.getClass()));
+      textOptions.setText(Utils.classToString(obj));
     else
       textOptions.setText(OptionUtils.getCommandLine(obj));
     textObject = new BaseTextArea();

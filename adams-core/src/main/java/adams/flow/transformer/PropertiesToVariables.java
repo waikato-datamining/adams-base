@@ -251,7 +251,7 @@ public class PropertiesToVariables
     else if (m_InputToken.getPayload() instanceof java.util.Properties)
       props = new Properties((java.util.Properties) m_InputToken.getPayload());
     else
-      result = "Unhandled input type: " + Utils.classToString(m_InputToken.getPayload().getClass());
+      result = "Unhandled input type: " + Utils.classToString(m_InputToken.getPayload());
 
     if (result == null) {
       for (String key : props.keySetAll()) {

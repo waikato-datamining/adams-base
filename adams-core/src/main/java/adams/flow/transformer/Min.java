@@ -271,7 +271,7 @@ public class Min
 	  m_OutputToken = new Token((Integer) StatUtils.min(integersP));
       }
       else {
-	result = "Unhandled class: " + Utils.classToString(m_InputToken.getPayload().getClass());
+	result = "Unhandled class: " + Utils.classToString(m_InputToken.getPayload());
       }
     }
     catch (Exception e) {

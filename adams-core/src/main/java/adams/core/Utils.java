@@ -1091,6 +1091,16 @@ public class Utils {
   }
 
   /**
+   * Turns the class of the object into a string.
+   *
+   * @param o		the object to turn into a class string
+   * @return		the string
+   */
+  public static String classToString(Object o) {
+    return classToString(o.getClass());
+  }
+
+  /**
    * Turns a class into a string.
    *
    * @param c		the class to turn into a string
@@ -1122,6 +1132,34 @@ public class Utils {
    */
   public static String classesToString(Class[] c) {
     return classesToString(c, ", ");
+  }
+
+  /**
+   * Turns the classes of an array into a string.
+   *
+   * @param o		the object array to turn into a string
+   * @return		the string
+   */
+  public static String classesToString(Object[] o) {
+    return classesToString(o, ", ");
+  }
+
+  /**
+   * Turns the classes of an array into a string.
+   *
+   * @param o		the object array to turn into a string
+   * @param separator	the separator between the classes
+   * @return		the string
+   */
+  public static String classesToString(Object[] o, String separator) {
+    Class[] 	c;
+    int		i;
+
+    c = new Class[o.length];
+    for (i = 0; i < o.length; i++)
+      c[i] = o.getClass();
+
+    return classesToString(c, separator);
   }
 
   /**

@@ -246,7 +246,7 @@ public class RemoveImageObject
     else if (m_InputToken.getPayload() instanceof Report)
       report = (Report) m_InputToken.getPayload();
     else
-      result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload().getClass());
+      result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload());
 
     if (result == null) {
       objs = LocatedObjects.fromReport(report, m_Prefix);

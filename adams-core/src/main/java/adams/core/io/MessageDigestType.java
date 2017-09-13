@@ -201,7 +201,7 @@ public enum MessageDigestType
 	}
       }
       else {
-	msg = "Unhandled input: " + Utils.classToString(obj.getClass());
+	msg = "Unhandled input: " + Utils.classToString(obj);
       }
       if (msg == null) {
 	digest = md.digest();

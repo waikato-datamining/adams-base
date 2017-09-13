@@ -309,7 +309,7 @@ public class PDFInfo
     else if (m_InputToken.getPayload() instanceof File)
       file = new PlaceholderFile((File) m_InputToken.getPayload());
     else
-      result = "Unhandled input type: " + Utils.classToString(m_InputToken.getPayload().getClass());
+      result = "Unhandled input type: " + Utils.classToString(m_InputToken.getPayload());
 
     reader = null;
     if (result == null) {

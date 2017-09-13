@@ -321,7 +321,7 @@ public class ContainerValuePicker
     else {
       getLogger().warning(
 	"Token did not contain a container, but: "
-	  + (token.getPayload() == null ? "null" : Utils.classToString(token.getPayload().getClass())));
+	  + (token.getPayload() == null ? "null" : Utils.classToString(token.getPayload())));
     }
 
     return result;

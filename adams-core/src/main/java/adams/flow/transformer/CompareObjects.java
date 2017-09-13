@@ -204,7 +204,7 @@ public class CompareObjects
 
     array  =  m_InputToken.getPayload();
     if (!array.getClass().isArray())
-      result = "Input is not an array: " + Utils.classToString(array.getClass());
+      result = "Input is not an array: " + Utils.classToString(array);
     else if (Array.getLength(array) != 2)
       result = "Input array must be of length two, provided: " + Array.getLength(array);
 

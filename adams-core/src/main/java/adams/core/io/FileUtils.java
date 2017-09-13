@@ -1050,7 +1050,7 @@ public class FileUtils {
       result = (PlaceholderFile[]) input;
     }
     else {
-      throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input.getClass()));
+      throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input));
     }
     
     return result;
@@ -1090,7 +1090,7 @@ public class FileUtils {
 	result[i] = files[i].getAbsoluteFile();
     }
     else {
-      throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input.getClass()));
+      throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input));
     }
     
     return result;
@@ -1129,7 +1129,7 @@ public class FileUtils {
 	result[i] = files[i].getAbsolutePath();
     }
     else {
-      throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input.getClass()));
+      throw new IllegalArgumentException("Unhandled class: " + Utils.classToString(input));
     }
     
     return result;

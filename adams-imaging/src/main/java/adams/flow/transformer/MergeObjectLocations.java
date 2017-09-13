@@ -596,7 +596,7 @@ public class MergeObjectLocations
     else if (m_InputToken.getPayload() instanceof ReportHandler)
       thisReport = ((ReportHandler) m_InputToken.getPayload()).getReport();
     else
-      result = "Unsupported input class: " + Utils.classToString(m_InputToken.getPayload().getClass());
+      result = "Unsupported input class: " + Utils.classToString(m_InputToken.getPayload());
 
     if (thisReport != null) {
       obj = getStorageHandler().getStorage().get(m_StorageName);
@@ -608,7 +608,7 @@ public class MergeObjectLocations
 	else if (obj instanceof ReportHandler)
 	  otherReport = ((ReportHandler) obj).getReport();
 	else
-	  result = "Unhandled type of storage item '" + m_StorageName + "': " + Utils.classToString(obj.getClass());
+	  result = "Unhandled type of storage item '" + m_StorageName + "': " + Utils.classToString(obj);
       }
     }
 

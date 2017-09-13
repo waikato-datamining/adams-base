@@ -244,7 +244,7 @@ public class ControlChart
 	else if (data instanceof int[])
 	  numberArray = StatUtils.toNumberArray((int[]) data);
 	else
-	  throw new IllegalStateException("Unhandled data type: " + Utils.classToString(data.getClass()));
+	  throw new IllegalStateException("Unhandled data type: " + Utils.classToString(data));
 	stats    = ((IndividualsControlChart) m_Chart).calculate(numberArray);
 	prepared = ((IndividualsControlChart) m_Chart).prepare(numberArray);
 	cont     = new ControlChartContainer(m_Chart, null, data, prepared, stats.toArray(new Limits[stats.size()]));
@@ -264,7 +264,7 @@ public class ControlChart
 	else if (data instanceof int[][])
 	  numberMatrix = StatUtils.toNumberMatrix((int[][]) data);
 	else
-	  throw new IllegalStateException("Unhandled data type: " + Utils.classToString(data.getClass()));
+	  throw new IllegalStateException("Unhandled data type: " + Utils.classToString(data));
 	stats    = ((MatrixControlChart) m_Chart).calculate(numberMatrix);
 	prepared = ((MatrixControlChart) m_Chart).prepare(numberMatrix);
 	cont     = new ControlChartContainer(m_Chart, null, data, prepared, stats.toArray(new Limits[stats.size()]));

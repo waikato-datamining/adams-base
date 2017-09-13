@@ -180,7 +180,7 @@ public class DirectoryExport
       file     = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + names[i] + "." + ext);
       msg      = exporter.export(objects[i], file);
       if (msg != null)
-	errors.add("Failed to find export '" + names[i] + "'/" + Utils.classToString(objects[i].getClass()) + "\n" + msg);
+	errors.add("Failed to find export '" + names[i] + "'/" + Utils.classToString(objects[i]) + "\n" + msg);
     }
 
     if (errors.isEmpty())

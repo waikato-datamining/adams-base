@@ -954,7 +954,7 @@ public class ControlChartPlot
 	m_PostProcessor.postProcess(manager, m_ChartName);
       }
       else {
-	throw new IllegalArgumentException(m_Chart.getName() + " cannot process class: " + Utils.classToString(token.getPayload().getClass()));
+	throw new IllegalArgumentException(m_Chart.getName() + " cannot process class: " + Utils.classToString(token.getPayload()));
       }
     }
     else if (m_Chart instanceof MatrixControlChart) {
@@ -976,7 +976,7 @@ public class ControlChartPlot
 	else if (token.getPayload() instanceof int[])
 	  numberArray = StatUtils.toNumberArray((int[]) token.getPayload());
 	else
-	  throw new IllegalStateException("Unhandled token.getPayload() type: " + Utils.classToString(token.getPayload().getClass()));
+	  throw new IllegalStateException("Unhandled token.getPayload() type: " + Utils.classToString(token.getPayload()));
 
 	// determine violations
 	limits = new Limits[numberArray.length];
@@ -1004,11 +1004,11 @@ public class ControlChartPlot
 	m_PostProcessor.postProcess(manager, m_ChartName);
       }
       else {
-	throw new IllegalArgumentException(m_Chart.getName() + " cannot process class: " + Utils.classToString(token.getPayload().getClass()));
+	throw new IllegalArgumentException(m_Chart.getName() + " cannot process class: " + Utils.classToString(token.getPayload()));
       }
     }
     else {
-      throw new IllegalArgumentException("Unhandled data: " + Utils.classToString(token.getPayload().getClass()));
+      throw new IllegalArgumentException("Unhandled data: " + Utils.classToString(token.getPayload()));
     }
 
     manager.finishUpdate();

@@ -416,7 +416,7 @@ public class ScaleReportObjects
     else if (m_InputToken.getPayload() instanceof ReportHandler)
       report = ((ReportHandler) m_InputToken.getPayload()).getReport();
     else
-      result = "Unhandled input type: " + Utils.classToString(m_InputToken.getPayload().getClass());
+      result = "Unhandled input type: " + Utils.classToString(m_InputToken.getPayload());
 
     if (result == null) {
       errors = new MessageCollection();

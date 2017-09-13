@@ -219,7 +219,7 @@ public class ObjectArrayToPrimitiveArray
     else if (m_Input instanceof Character[])
       return convert((Character[]) m_Input);
 
-    getLogger().warning("Failed to convert array: " + Utils.classToString(m_Input.getClass()));
+    getLogger().warning("Failed to convert array: " + Utils.classToString(m_Input));
     return m_Input;
   }
 }

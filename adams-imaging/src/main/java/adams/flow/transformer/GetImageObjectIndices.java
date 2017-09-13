@@ -257,7 +257,7 @@ public class GetImageObjectIndices
     else if (m_InputToken.getPayload() instanceof Report)
       report = (Report) m_InputToken.getPayload();
     else
-      result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload().getClass());
+      result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload());
 
     m_Queue.clear();
     if (result == null) {

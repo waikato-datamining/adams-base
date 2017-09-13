@@ -609,7 +609,7 @@ public class CountObjectsInRegion
     else if (m_InputToken.getPayload() instanceof ReportHandler)
       report = ((ReportHandler) m_InputToken.getPayload()).getReport();
     else
-      result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload().getClass());
+      result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload());
 
     if (report != null) {
       count  = 0;

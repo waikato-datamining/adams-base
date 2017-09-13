@@ -99,7 +99,7 @@ public class SerializedFileHandler
     for (Object obj: objects) {
       panel = new SerializedObjectPanel();
       panel.setCurrent(obj);
-      tabbedPane.addTab(Utils.classToString(obj.getClass()).replaceAll(".*\\.", ""), panel);
+      tabbedPane.addTab(Utils.classToString(obj).replaceAll(".*\\.", ""), panel);
     }
     
     return new PreviewPanel(tabbedPane);

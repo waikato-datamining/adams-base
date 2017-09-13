@@ -207,7 +207,7 @@ public class FilePreview
       else if (token.getPayload() instanceof File)
 	file = new PlaceholderFile((File) token.getPayload());
       else
-	throw new IllegalStateException("Unhandled data type: " + Utils.classToString(token.getPayload().getClass()));
+	throw new IllegalStateException("Unhandled data type: " + Utils.classToString(token.getPayload()));
 
       parent = (JPanel) m_PreviewPanel.getParent();
       parent.remove(m_PreviewPanel);
@@ -442,7 +442,7 @@ public class FilePreview
     else if (token.getPayload() instanceof File)
       file = new PlaceholderFile((File) token.getPayload());
     else
-      throw new IllegalStateException("Unhandled data type: " + Utils.classToString(token.getPayload().getClass()));
+      throw new IllegalStateException("Unhandled data type: " + Utils.classToString(token.getPayload()));
 
     parent = (JPanel) m_PreviewPanel.getParent();
     parent.remove(m_PreviewPanel);

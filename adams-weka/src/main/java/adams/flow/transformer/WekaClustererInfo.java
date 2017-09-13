@@ -224,7 +224,7 @@ public class WekaClustererInfo
     else if (m_InputToken.getPayload() instanceof  WekaModelContainer)
       cls = (Clusterer) ((WekaModelContainer) m_InputToken.getPayload()).getValue(WekaModelContainer.VALUE_MODEL);
     else
-      result = "Unhandled class: " + Utils.classToString(m_InputToken.getPayload().getClass());
+      result = "Unhandled class: " + Utils.classToString(m_InputToken.getPayload());
 
     if (result == null) {
       switch (m_Type) {

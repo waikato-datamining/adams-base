@@ -199,7 +199,7 @@ public class Touch
     else if (m_InputToken.getPayload() instanceof File)
       file = new PlaceholderFile((File) m_InputToken.getPayload());
     else
-      result = "Unhandled input type: " + Utils.classToString(m_InputToken.getPayload().getClass());
+      result = "Unhandled input type: " + Utils.classToString(m_InputToken.getPayload());
 
     if (result == null) {
       if (file.exists()) {

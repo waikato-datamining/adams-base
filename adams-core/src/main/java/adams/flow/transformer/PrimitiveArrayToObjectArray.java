@@ -20,10 +20,10 @@
 
 package adams.flow.transformer;
 
-import java.lang.reflect.Array;
-
 import adams.core.Utils;
 import adams.flow.core.Token;
+
+import java.lang.reflect.Array;
 
 /**
  <!-- globalinfo-start -->
@@ -166,7 +166,7 @@ public class PrimitiveArrayToObjectArray
 	  Array.setDouble(arrayOut, i, new Double(Array.getDouble(arrayIn, i)));
       }
       else {
-	result = "Unhandled class: " + Utils.classToString(m_InputToken.getPayload().getClass());
+	result = "Unhandled class: " + Utils.classToString(m_InputToken.getPayload());
       }
       if (arrayOut != null)
 	m_OutputToken = new Token(arrayOut);

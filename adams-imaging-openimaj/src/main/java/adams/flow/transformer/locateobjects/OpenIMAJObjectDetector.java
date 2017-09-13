@@ -177,7 +177,7 @@ public class OpenIMAJObjectDetector
 	result.add(obj);
       }
       else {
-	getLogger().warning("Unhandled detected object type: " + Utils.classToString(object.getClass()));
+	getLogger().warning("Unhandled detected object type: " + Utils.classToString(object));
       }
     }
 

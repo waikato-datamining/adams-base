@@ -400,7 +400,7 @@ public class PDFAppendDocument
       else if (m_InputToken.getPayload() instanceof PDFGenerator)
 	generator = (PDFGenerator) m_InputToken.getPayload();
       else
-        result = "Unhandled input type: " + Utils.classToString(m_InputToken.getPayload().getClass());
+        result = "Unhandled input type: " + Utils.classToString(m_InputToken.getPayload());
 
       if (file != null) {
 	try {
