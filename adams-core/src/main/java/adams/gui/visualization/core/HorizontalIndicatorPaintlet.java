@@ -19,11 +19,11 @@
  */
 package adams.gui.visualization.core;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  * Paintlet for painting a horizontal indicator line.
@@ -184,7 +184,7 @@ public class HorizontalIndicatorPaintlet
    * @param moment	what {@link PaintMoment} is currently being painted
    */
   @Override
-  public void performPaint(Graphics g, PaintMoment moment) {
+  protected void doPerformPaint(Graphics g, PaintMoment moment) {
     AxisPanel	axis;
     double	pos;
     

@@ -19,12 +19,12 @@
  */
 package adams.flow.sink.sequenceplotter;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
 import adams.data.sequence.XYSequence;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AbstractStrokePaintlet;
+
+import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  * Ancestor for error paintlets.
@@ -86,7 +86,7 @@ public abstract class AbstractErrorPaintlet
    * @param moment	what {@link PaintMoment} is currently being painted
    */
   @Override
-  public void performPaint(Graphics g, PaintMoment moment) {
+  protected void doPerformPaint(Graphics g, PaintMoment moment) {
     int		i;
     XYSequence 	data;
 

@@ -138,7 +138,7 @@ extends AbstractProbabilityPaintlet{
    * @param moment	what {@link PaintMoment} is currently being painted
    */
   @Override
-  public void performPaint(Graphics g, PaintMoment moment) {
+  protected void doPerformPaint(Graphics g, PaintMoment moment) {
     if ((m_Data != null) && (m_Sorted != null)) {
       GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
       

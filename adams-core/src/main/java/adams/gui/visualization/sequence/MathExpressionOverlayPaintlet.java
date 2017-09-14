@@ -19,10 +19,6 @@
  */
 package adams.gui.visualization.sequence;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.logging.Level;
-
 import adams.core.base.BaseString;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
@@ -31,6 +27,10 @@ import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.parser.MathematicalExpression;
 import adams.parser.MathematicalExpressionText;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -281,7 +281,7 @@ public class MathExpressionOverlayPaintlet
    * @param moment	what {@link PaintMoment} is currently being painted
    */
   @Override
-  public void performPaint(Graphics g, PaintMoment moment) {
+  protected void doPerformPaint(Graphics g, PaintMoment moment) {
     AxisPanel			xAxis;
     XYSequence			data;
     double			xMin;

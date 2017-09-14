@@ -286,7 +286,7 @@ public class OutlierPaintlet
    * @param moment	what {@link PaintMoment} is currently being painted
    */
   @Override
-  public void performPaint(Graphics g, PaintMoment moment) {
+  protected void doPerformPaint(Graphics g, PaintMoment moment) {
     int			i;
     XYSequence		data;
 

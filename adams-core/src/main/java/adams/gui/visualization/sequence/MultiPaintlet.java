@@ -198,7 +198,7 @@ public class MultiPaintlet
   public void performPaint(Graphics g, PaintMoment moment) {
     for (XYSequencePaintlet paintlet: m_SubPaintlets) {
       if (paintlet.canPaint(moment))
-	paintlet.paint(g);
+	paintlet.performPaint(g, moment);
     }
   }
 }

@@ -241,7 +241,7 @@ public class PeriodicityPaintlet
    * @param moment	what {@link PaintMoment} is currently being painted
    */
   @Override
-  public void performPaint(Graphics g, PaintMoment moment) {
+  protected void doPerformPaint(Graphics g, PaintMoment moment) {
     AxisPanel		axisX;
     TIntArrayList	pos;
     int			i;

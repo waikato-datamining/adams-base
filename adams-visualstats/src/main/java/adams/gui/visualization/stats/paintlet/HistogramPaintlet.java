@@ -20,13 +20,13 @@
 
 package adams.gui.visualization.stats.paintlet;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.histogram.Histogram;
+
+import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  <!-- globalinfo-start -->
@@ -156,7 +156,7 @@ extends AbstractColorPaintlet{
    * @param moment	what {@link PaintMoment} is currently being painted
    */
   @Override
-  public void performPaint(Graphics g, PaintMoment moment) {
+  protected void doPerformPaint(Graphics g, PaintMoment moment) {
     double[][] data = ((Histogram) getPanel()).getPlotdata();
     double binWidth = ((Histogram) getPanel()).getBinWidth();
     if ((data != null) && (data.length > 0)) {

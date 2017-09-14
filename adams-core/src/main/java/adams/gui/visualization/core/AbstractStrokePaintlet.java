@@ -15,10 +15,12 @@
 
 /*
  * AbstractStrokePaintlet.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
+
+import adams.gui.event.PaintEvent.PaintMoment;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics;
@@ -35,7 +37,7 @@ public abstract class AbstractStrokePaintlet
 
   /** for serialization. */
   private static final long serialVersionUID = 1704075176011969771L;
-  
+
   /** the thickness of the stroke. */
   protected float m_StrokeThickness;
 
@@ -46,8 +48,8 @@ public abstract class AbstractStrokePaintlet
     super.defineOptions();
 
     m_OptionManager.add(
-	    "stroke-thickness", "strokeThickness",
-	    1.0f, 0.01f, null);
+      "stroke-thickness", "strokeThickness",
+      1.0f, 0.01f, null);
   }
 
   /**
@@ -80,33 +82,58 @@ public abstract class AbstractStrokePaintlet
   }
 
   /**
+   * Returns the thickness of the stroke.
+   *
+   * @param g		graphics context to get the thickness from
+   * @param defValue	the default value to return in case of failure
+   * @return		the stroke, default value if failed to extract
+   */
+  protected float getStrokeWidth(Graphics g, float defValue) {
+    Graphics2D 	g2d;
+
+    if (g instanceof Graphics2D) {
+      g2d = (Graphics2D) g;
+      if (g2d.getStroke() instanceof BasicStroke)
+	return ((BasicStroke) g2d.getStroke()).getLineWidth();
+    }
+
+    return defValue;
+  }
+
+  /**
+   * Applies the stroke thickness.
+   *
+   * @param stroke	the thickness to apply
+   */
+  protected void applyStroke(Graphics g, float stroke) {
+    Graphics2D 	g2d;
+
+    if (g instanceof Graphics2D) {
+      g2d = (Graphics2D) g;
+      g2d.setStroke(new BasicStroke(stroke));
+    }
+  }
+
+  /**
+   * The actual paint routine of the paintlet.
+   *
+   * @param g		the graphics context to use for painting
+   * @param moment	what {@link PaintMoment} is currently being painted
+   */
+  protected abstract void doPerformPaint(Graphics g, PaintMoment moment);
+
+  /**
    * The paint routine of the paintlet.
    *
    * @param g		the graphics context to use for painting
-   * @see		#isEnabled()
+   * @param moment	what {@link PaintMoment} is currently being painted
    */
-  public void paint(Graphics g) {
-    Graphics2D 	g2d;
+  public void performPaint(Graphics g, PaintMoment moment) {
     float	width;
 
-    if (isEnabled() && hasPanel()) {
-      g2d   = null;
-      width = 1.0f;
-
-      // set width
-      if (g instanceof Graphics2D) {
-	g2d = (Graphics2D) g;
-	if (g2d.getStroke() instanceof BasicStroke)
-	  width = ((BasicStroke) g2d.getStroke()).getLineWidth();
-	g2d.setStroke(new BasicStroke(m_StrokeThickness));
-      }
-
-      // paint
-      performPaint(g, getPaintMoment());
-
-      // restore width
-      if (g2d != null)
-	g2d.setStroke(new BasicStroke(width));
-    }
+    width = getStrokeWidth(g, 1.0f);
+    applyStroke(g, m_StrokeThickness);
+    doPerformPaint(g, moment);
+    applyStroke(g, width);
   }
 }

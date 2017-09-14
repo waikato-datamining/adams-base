@@ -237,7 +237,7 @@ public class VsFitPaintlet
    * @param moment	what {@link PaintMoment} is currently being painted
    */
   @Override
-  public void performPaint(Graphics g, PaintMoment moment) {
+  protected void doPerformPaint(Graphics g, PaintMoment moment) {
     if(m_Data != null) {
       GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 

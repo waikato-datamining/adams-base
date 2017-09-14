@@ -19,14 +19,14 @@
  */
 package adams.gui.visualization.core;
 
+import adams.core.option.OptionHandler;
+import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.visualization.core.plot.ContentPanel;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-
-import adams.core.option.OptionHandler;
-import adams.gui.event.PaintEvent.PaintMoment;
-import adams.gui.visualization.core.plot.ContentPanel;
 
 /**
  <!-- globalinfo-start -->
@@ -133,7 +133,7 @@ public class CrossHairTracker
    * @param g		the graphics context to use for painting
    * @param moment	what {@link PaintMoment} is currently being painted
    */
-  public void performPaint(Graphics g, PaintMoment moment) {
+  protected void doPerformPaint(Graphics g, PaintMoment moment) {
     ContentPanel	panel;
     Point		point;
     int			x;
