@@ -15,7 +15,7 @@
 
 /*
  * PasteFromClipboard.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -239,7 +239,7 @@ public class PasteFromClipboard
   public boolean doInteract() {
     int		retVal;
 
-    retVal = JOptionPane.showConfirmDialog(getParentComponent(), m_Message, getName(), JOptionPane.OK_CANCEL_OPTION);
+    retVal = JOptionPane.showConfirmDialog(getActualParentComponent(), m_Message, getName(), JOptionPane.OK_CANCEL_OPTION);
     if ((retVal == JOptionPane.OK_OPTION) && (m_ClipboardData.canPaste()))
       m_OutputToken = m_ClipboardData.pasteAsToken();
 

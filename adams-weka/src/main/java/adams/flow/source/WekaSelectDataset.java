@@ -15,7 +15,7 @@
 
 /*
  * WekaSelectDataset.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -24,11 +24,17 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.flow.core.AbstractDisplay;
+import adams.flow.core.Actor;
 import adams.flow.core.AutomatableInteractiveActor;
-import adams.flow.core.InteractiveActor;
+import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
+import adams.flow.core.InteractiveActorWithCustomParentComponent;
 import adams.gui.chooser.WekaFileChooser;
+import adams.gui.core.GUIHelper;
 import weka.gui.ConverterFileChooser;
 
+import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,70 +57,70 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaSelectDataset
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-output-array &lt;boolean&gt; (property: outputArray)
  * &nbsp;&nbsp;&nbsp;Whether to output the files as array or one-by-one.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
  * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-file-chooser-title &lt;java.lang.String&gt; (property: fileChooserTitle)
  * &nbsp;&nbsp;&nbsp;The title for the file chooser dialog.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-initial-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: initialDirectory)
  * &nbsp;&nbsp;&nbsp;The initial directory for the file chooser.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-initial-file &lt;adams.core.io.PlaceholderFile&gt; [-initial-file ...] (property: initialFiles)
  * &nbsp;&nbsp;&nbsp;The initial files for the file chooser.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If enabled, the initial value is forwarded without user interaction.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -122,7 +128,7 @@ import java.util.List;
  */
 public class WekaSelectDataset
   extends AbstractArrayProvider
-  implements InteractiveActor, AutomatableInteractiveActor {
+  implements InteractiveActorWithCustomParentComponent, AutomatableInteractiveActor {
 
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
@@ -145,6 +151,21 @@ public class WekaSelectDataset
   /** whether to automate the actor. */
   protected boolean m_NonInteractive;
 
+  /** the (optional) parent component to use. */
+  protected CallableActorReference m_ParentComponentActor;
+
+  /** the callable actor. */
+  protected Actor m_CallableActor;
+
+  /** whether the callable actor has been configured. */
+  protected boolean m_ParentComponentActorConfigured;
+
+  /** the helper class. */
+  protected CallableActorHelper m_Helper;
+
+  /** whether to use the outer window as parent. */
+  protected boolean m_UseOuterWindow;
+
   /**
    * Returns a string describing the object.
    *
@@ -153,8 +174,8 @@ public class WekaSelectDataset
   @Override
   public String globalInfo() {
     return
-        "Pops up a file chooser dialog, prompting the user to select one or "
-      + "more datasets. The filenames of the datasets then get forwarded as strings.";
+      "Pops up a file chooser dialog, prompting the user to select one or "
+        + "more datasets. The filenames of the datasets then get forwarded as strings.";
   }
 
   /**
@@ -187,6 +208,35 @@ public class WekaSelectDataset
     m_OptionManager.add(
       "non-interactive", "nonInteractive",
       false);
+
+    m_OptionManager.add(
+      "parent-component-actor", "parentComponentActor",
+      new CallableActorReference("unknown"));
+
+    m_OptionManager.add(
+      "use-outer-window", "useOuterWindow",
+      false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_CallableActor                  = null;
+    m_ParentComponentActorConfigured = false;
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Helper = new CallableActorHelper();
   }
 
   /**
@@ -363,8 +413,8 @@ public class WekaSelectDataset
    */
   public String customStopMessageTipText() {
     return
-        "The custom stop message to use in case a user cancelation stops the "
-      + "flow (default is the full name of the actor)";
+      "The custom stop message to use in case a user cancelation stops the "
+        + "flow (default is the full name of the actor)";
   }
 
   /**
@@ -397,6 +447,110 @@ public class WekaSelectDataset
   }
 
   /**
+   * Sets the (optional) callable actor to use as parent component instead of
+   * the flow panel.
+   *
+   * @param value	the callable actor
+   */
+  public void setParentComponentActor(CallableActorReference value) {
+    m_ParentComponentActor = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) callable actor to use as parent component instead
+   * of the flow panel.
+   *
+   * @return 		the callable actor
+   */
+  public CallableActorReference getParentComponentActor() {
+    return m_ParentComponentActor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String parentComponentActorTipText() {
+    return "The (optional) callable actor to use as parent component instead of the flow panel.";
+  }
+
+  /**
+   * Sets whether to use the outer window as parent.
+   *
+   * @param value	true if to use outer window
+   */
+  public void setUseOuterWindow(boolean value) {
+    m_UseOuterWindow = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the outer window as parent.
+   *
+   * @return 		true if to use outer window
+   */
+  public boolean getUseOuterWindow() {
+    return m_UseOuterWindow;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String useOuterWindowTipText() {
+    return
+      "If enabled, the outer window (dialog/frame) is used instead of the "
+        + "component of the callable actor.";
+  }
+
+  /**
+   * Tries to find the callable actor referenced by its callable name.
+   *
+   * @return		the callable actor or null if not found
+   */
+  protected Actor findCallableActor() {
+    return m_Helper.findCallableActorRecursive(this, getParentComponentActor());
+  }
+
+  /**
+   * Returns the parent component to use.
+   *
+   * @return		the parent
+   */
+  public Component getActualParentComponent() {
+    Component	result;
+    Component	panel;
+
+    result = getParentComponent();
+
+    if (m_CallableActor == null) {
+      if (!m_ParentComponentActorConfigured) {
+        m_CallableActor                  = findCallableActor();
+        m_ParentComponentActorConfigured = true;
+      }
+    }
+
+    if (m_CallableActor != null) {
+      if (m_CallableActor instanceof AbstractDisplay) {
+        panel = ((AbstractDisplay) m_CallableActor).getPanel();
+        if (panel != null)
+          result = panel;
+      }
+    }
+
+    // component or window?
+    if (m_UseOuterWindow)
+      result = GUIHelper.getParentComponent(result);
+
+    return result;
+  }
+
+  /**
    * Returns the base class of the items.
    *
    * @return		the class
@@ -424,10 +578,10 @@ public class WekaSelectDataset
 
     if (m_NonInteractive) {
       for (File file: m_InitialFiles)
-	m_Queue.add(file.getAbsolutePath());
+        m_Queue.add(file.getAbsolutePath());
       return true;
     }
-    
+
     fileChooser = new WekaFileChooser();
     if (m_FileChooserTitle.length() > 0)
       fileChooser.setDialogTitle(m_FileChooserTitle);
@@ -441,12 +595,12 @@ public class WekaSelectDataset
     for (i = 0; i < m_InitialFiles.length; i++)
       files[i] = new File(m_InitialFiles[i].getAbsolutePath());
     fileChooser.setSelectedFiles(files);
-    retVal = fileChooser.showOpenDialog(getParentComponent());
+    retVal = fileChooser.showOpenDialog(getActualParentComponent());
     if (retVal == ConverterFileChooser.APPROVE_OPTION) {
       result = true;
       files  = fileChooser.getSelectedFiles();
       for (File file: files)
-	m_Queue.add(file.getAbsolutePath());
+        m_Queue.add(file.getAbsolutePath());
     }
 
     return result;
@@ -477,7 +631,7 @@ public class WekaSelectDataset
 
     if (m_NonInteractive) {
       for (File file: m_InitialFiles)
-	m_Queue.add(file.getAbsolutePath());
+        m_Queue.add(file.getAbsolutePath());
       return true;
     }
 
@@ -485,8 +639,8 @@ public class WekaSelectDataset
     if (files != null) {
       result = true;
       for (String fileStr : files) {
-	filePh = new PlaceholderFile(fileStr);
-	m_Queue.add(filePh.getAbsolutePath());
+        filePh = new PlaceholderFile(fileStr);
+        m_Queue.add(filePh.getAbsolutePath());
       }
     }
 
@@ -502,22 +656,22 @@ public class WekaSelectDataset
   protected String doExecute() {
     if (!isHeadless()) {
       if (!doInteract()) {
-	if (m_StopFlowIfCanceled) {
-	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	    getRoot().stopExecution("Flow canceled: " + getFullName());
-	  else
-	    getRoot().stopExecution(m_CustomStopMessage);
-	}
+        if (m_StopFlowIfCanceled) {
+          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+            getRoot().stopExecution("Flow canceled: " + getFullName());
+          else
+            getRoot().stopExecution(m_CustomStopMessage);
+        }
       }
     }
     else if (supportsHeadlessInteraction()) {
       if (!doInteractHeadless()) {
-	if (m_StopFlowIfCanceled) {
-	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	    getRoot().stopExecution("Flow canceled: " + getFullName());
-	  else
-	    getRoot().stopExecution(m_CustomStopMessage);
-	}
+        if (m_StopFlowIfCanceled) {
+          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+            getRoot().stopExecution("Flow canceled: " + getFullName());
+          else
+            getRoot().stopExecution(m_CustomStopMessage);
+        }
       }
     }
 

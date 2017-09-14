@@ -15,7 +15,7 @@
 
 /*
  * GUIHelper.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -1571,6 +1571,7 @@ public class GUIHelper {
         dialog = ApprovalDialog.getDialog((Frame) pparent, false);
     }
     dialog.setTitle(title);
+    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
     
     textValue = new BaseTextArea(1, 20);
     textValue.setToolTipText("Use <Ctrl-Enter> for adding a new line");
@@ -1641,6 +1642,9 @@ public class GUIHelper {
           // ignored
         }
       }
+
+      if (comm.isCloseRequested())
+        dialog.setVisible(false);
     }
 
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)

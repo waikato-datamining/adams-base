@@ -222,6 +222,16 @@ public class EnterValue
   }
 
   /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_OutputToken = null;
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -454,16 +464,6 @@ public class EnterValue
   }
 
   /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_OutputToken = null;
-  }
-
-  /**
    * Returns the class of objects that it generates.
    *
    * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
@@ -507,12 +507,12 @@ public class EnterValue
     
     if (m_SelectionValues.length > 0)
       value = GUIHelper.showInputDialog(
-        GUIHelper.getParentComponent(getParentComponent()),
+        getActualParentComponent(),
         msg, initial, BaseObject.toStringArray(m_SelectionValues),
         !m_UseButtons, getName(), m_Comm);
     else
       value = GUIHelper.showInputDialog(
-        GUIHelper.getParentComponent(getParentComponent()),
+        getActualParentComponent(),
         msg, initial, getName(), m_Comm);
 
     if ((value != null) && (value.length() > 0)) {

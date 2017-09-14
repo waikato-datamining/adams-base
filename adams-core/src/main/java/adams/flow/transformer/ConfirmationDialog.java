@@ -15,7 +15,7 @@
 
 /*
  * ConfirmationDialog.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,8 +24,9 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.ConsoleHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+import adams.gui.core.GUIHelper;
+import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -366,18 +367,18 @@ public class ConfirmationDialog
 
     m_OutputToken = null;
 
-    retVal   = JOptionPane.showConfirmDialog(getParentComponent(), m_Message);
-    canceled = (retVal == JOptionPane.CANCEL_OPTION) || (retVal == JOptionPane.CLOSED_OPTION);
+    retVal = GUIHelper.showConfirmMessage(getActualParentComponent(), m_Message);
+    canceled = (retVal == ApprovalDialog.CANCEL_OPTION);
 
     if (!canceled) {
       if (m_UseCustomTokens) {
-	if (retVal == JOptionPane.YES_OPTION)
+	if (retVal == ApprovalDialog.APPROVE_OPTION)
 	  m_OutputToken = new Token(m_YesToken);
-	else if (retVal == JOptionPane.NO_OPTION)
+	else if (retVal == ApprovalDialog.DISCARD_OPTION)
 	  m_OutputToken = new Token(m_NoToken);
       }
       else {
-	if (retVal == JOptionPane.YES_OPTION)
+	if (retVal == ApprovalDialog.APPROVE_OPTION)
 	  m_OutputToken = m_InputToken;
       }
     }

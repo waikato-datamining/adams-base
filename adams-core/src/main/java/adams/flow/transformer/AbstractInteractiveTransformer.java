@@ -15,12 +15,19 @@
 
 /*
  * AbstractInteractiveTransformer.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import adams.flow.core.InteractiveActor;
+import adams.flow.core.AbstractDisplay;
+import adams.flow.core.Actor;
+import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
+import adams.flow.core.InteractiveActorWithCustomParentComponent;
+import adams.gui.core.GUIHelper;
+
+import java.awt.Component;
 
 /**
  * Ancestor for transformers that interact with the user.
@@ -30,7 +37,7 @@ import adams.flow.core.InteractiveActor;
  */
 public abstract class AbstractInteractiveTransformer
   extends AbstractTransformer
-  implements InteractiveActor {
+  implements InteractiveActorWithCustomParentComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = 9035095174755816475L;
@@ -40,6 +47,21 @@ public abstract class AbstractInteractiveTransformer
 
   /** the custom stop message to use if flow gets stopped due to cancelation. */
   protected String m_CustomStopMessage;
+
+  /** the (optional) parent component to use. */
+  protected CallableActorReference m_ParentComponentActor;
+
+  /** the callable actor. */
+  protected Actor m_CallableActor;
+
+  /** whether the callable actor has been configured. */
+  protected boolean m_ParentComponentActorConfigured;
+
+  /** the helper class. */
+  protected CallableActorHelper m_Helper;
+
+  /** whether to use the outer window as parent. */
+  protected boolean m_UseOuterWindow;
 
   /**
    * Adds options to the internal list of options.
@@ -55,6 +77,35 @@ public abstract class AbstractInteractiveTransformer
     m_OptionManager.add(
 	    "custom-stop-message", "customStopMessage",
 	    "");
+
+    m_OptionManager.add(
+	    "parent-component-actor", "parentComponentActor",
+	    new CallableActorReference("unknown"));
+
+    m_OptionManager.add(
+	    "use-outer-window", "useOuterWindow",
+	    false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_CallableActor                  = null;
+    m_ParentComponentActorConfigured = false;
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Helper = new CallableActorHelper();
   }
 
   /**
@@ -115,6 +166,110 @@ public abstract class AbstractInteractiveTransformer
     return
         "The custom stop message to use in case a user cancelation stops the "
       + "flow (default is the full name of the actor)";
+  }
+
+  /**
+   * Sets the (optional) callable actor to use as parent component instead of
+   * the flow panel.
+   *
+   * @param value	the callable actor
+   */
+  public void setParentComponentActor(CallableActorReference value) {
+    m_ParentComponentActor = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) callable actor to use as parent component instead
+   * of the flow panel.
+   *
+   * @return 		the callable actor
+   */
+  public CallableActorReference getParentComponentActor() {
+    return m_ParentComponentActor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String parentComponentActorTipText() {
+    return "The (optional) callable actor to use as parent component instead of the flow panel.";
+  }
+
+  /**
+   * Sets whether to use the outer window as parent.
+   *
+   * @param value	true if to use outer window
+   */
+  public void setUseOuterWindow(boolean value) {
+    m_UseOuterWindow = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the outer window as parent.
+   *
+   * @return 		true if to use outer window
+   */
+  public boolean getUseOuterWindow() {
+    return m_UseOuterWindow;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String useOuterWindowTipText() {
+    return
+      "If enabled, the outer window (dialog/frame) is used instead of the "
+	+ "component of the callable actor.";
+  }
+
+  /**
+   * Tries to find the callable actor referenced by its callable name.
+   *
+   * @return		the callable actor or null if not found
+   */
+  protected Actor findCallableActor() {
+    return m_Helper.findCallableActorRecursive(this, getParentComponentActor());
+  }
+
+  /**
+   * Returns the parent component to use.
+   *
+   * @return		the parent
+   */
+  public Component getActualParentComponent() {
+    Component	result;
+    Component	panel;
+
+    result = getParentComponent();
+
+    if (m_CallableActor == null) {
+      if (!m_ParentComponentActorConfigured) {
+        m_CallableActor                  = findCallableActor();
+        m_ParentComponentActorConfigured = true;
+      }
+    }
+
+    if (m_CallableActor != null) {
+      if (m_CallableActor instanceof AbstractDisplay) {
+        panel = ((AbstractDisplay) m_CallableActor).getPanel();
+        if (panel != null)
+          result = panel;
+      }
+    }
+
+    // component or window?
+    if (m_UseOuterWindow)
+      result = GUIHelper.getParentComponent(result);
+
+    return result;
   }
 
   /**

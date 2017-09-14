@@ -258,7 +258,7 @@ public class SelectCharset
     
     result  = false;
     charset = GUIHelper.showInputDialog(
-      getParentComponent(),
+      getActualParentComponent(),
       "Please select character set",
       m_InitialCharset.getValue(),
       CharsetHelper.getIDs(),

@@ -15,7 +15,7 @@
 
 /*
  * SelectDateTime.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -387,9 +387,10 @@ public class SelectDateTime
     
     dialog = new ApprovalDialog(null, ModalityType.DOCUMENT_MODAL);
     dialog.setTitle(title);
+    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
     dialog.pack();
-    dialog.setLocationRelativeTo(getParentComponent());
+    dialog.setLocationRelativeTo(getActualParentComponent());
     dialog.setVisible(true);
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
       m_OutputToken = createToken(((DateProvider) panel).getDate());

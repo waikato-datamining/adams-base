@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaChooseAttributes.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -343,7 +343,7 @@ public class WekaChooseAttributes
     int			numAtts;
     String		msg;
     
-    result = new ArrayList<Integer>();
+    result = new ArrayList<>();
 
     msg     = getVariables().expand(m_Message);
     numAtts = inst.numAttributes();
@@ -385,7 +385,7 @@ public class WekaChooseAttributes
     dialog.setTitle("Choose attributes");
       dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
     dialog.pack();
-    dialog.setLocationRelativeTo(getParentComponent());
+    dialog.setLocationRelativeTo(getActualParentComponent());
     dialog.setVisible(true);
     
     if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
@@ -413,7 +413,7 @@ public class WekaChooseAttributes
     List<Integer>	result;
     int			i;
 
-    result = new ArrayList<Integer>();
+    result = new ArrayList<>();
     for (i = 0; i < inst.numAttributes(); i++) {
       if (inst.classIndex() == i)
 	continue;

@@ -29,13 +29,19 @@ import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
+import adams.flow.core.AbstractDisplay;
+import adams.flow.core.Actor;
 import adams.flow.core.AutomatableInteractiveActor;
-import adams.flow.core.InteractiveActor;
+import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
+import adams.flow.core.InteractiveActorWithCustomParentComponent;
 import adams.flow.core.RestorableActor;
 import adams.flow.core.RestorableActorHelper;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.GUIHelper;
 
+import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,100 +65,100 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SelectFile
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-output-array &lt;boolean&gt; (property: outputArray)
  * &nbsp;&nbsp;&nbsp;Whether to output the files as array or one-by-one.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
  * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-file-chooser-title &lt;java.lang.String&gt; (property: fileChooserTitle)
  * &nbsp;&nbsp;&nbsp;The title for the file chooser dialog.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-initial-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: initialDirectory)
  * &nbsp;&nbsp;&nbsp;The initial directory for the file chooser.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-extension &lt;adams.core.base.BaseString&gt; [-extension ...] (property: extensions)
  * &nbsp;&nbsp;&nbsp;The extensions available through the file chooser (no dot; use comma to 
  * &nbsp;&nbsp;&nbsp;use multiple extensions per file filter).
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-initial-file &lt;adams.core.io.PlaceholderFile&gt; [-initial-file ...] (property: initialFiles)
  * &nbsp;&nbsp;&nbsp;The initial files for the file chooser.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-absolute &lt;boolean&gt; (property: absoluteFileNames)
  * &nbsp;&nbsp;&nbsp;If enabled, absolute file names instead of relative ones are output.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
  * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix 
  * &nbsp;&nbsp;&nbsp;of UNC paths is not converted).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If enabled, the initial value is forwarded without user interaction.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
  * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
  * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-restoration-file &lt;adams.core.io.PlaceholderFile&gt; (property: restorationFile)
  * &nbsp;&nbsp;&nbsp;The file to store the restoration information in.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -160,8 +166,8 @@ import java.util.logging.Level;
  */
 public class SelectFile
   extends AbstractArrayProvider
-  implements InteractiveActor, AutomatableInteractiveActor, RestorableActor,
-             ForwardSlashSupporter {
+  implements InteractiveActorWithCustomParentComponent, AutomatableInteractiveActor,
+  RestorableActor, ForwardSlashSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
@@ -181,7 +187,7 @@ public class SelectFile
 
   /** the initial files to use. */
   protected PlaceholderFile[] m_InitialFiles;
-  
+
   /** whether to use absolute file/dir names. */
   protected boolean m_AbsoluteFileNames;
 
@@ -203,6 +209,21 @@ public class SelectFile
   /** the file to store the restoration state in. */
   protected PlaceholderFile m_RestorationFile;
 
+  /** the (optional) parent component to use. */
+  protected CallableActorReference m_ParentComponentActor;
+
+  /** the callable actor. */
+  protected Actor m_CallableActor;
+
+  /** whether the callable actor has been configured. */
+  protected boolean m_ParentComponentActorConfigured;
+
+  /** the helper class. */
+  protected CallableActorHelper m_Helper;
+
+  /** whether to use the outer window as parent. */
+  protected boolean m_UseOuterWindow;
+
   /**
    * Returns a string describing the object.
    *
@@ -211,8 +232,8 @@ public class SelectFile
   @Override
   public String globalInfo() {
     return
-        "Pops up a file chooser dialog, prompting the user to select one or "
-      + "more files. The files then get forwarded as strings.";
+      "Pops up a file chooser dialog, prompting the user to select one or "
+        + "more files. The files then get forwarded as strings.";
   }
 
   /**
@@ -223,48 +244,77 @@ public class SelectFile
     super.defineOptions();
 
     m_OptionManager.add(
-	    "stop-if-canceled", "stopFlowIfCanceled",
-	    false);
+      "stop-if-canceled", "stopFlowIfCanceled",
+      false);
 
     m_OptionManager.add(
-	    "custom-stop-message", "customStopMessage",
-	    "");
+      "custom-stop-message", "customStopMessage",
+      "");
 
     m_OptionManager.add(
-	    "file-chooser-title", "fileChooserTitle",
-	    "");
+      "file-chooser-title", "fileChooserTitle",
+      "");
 
     m_OptionManager.add(
-	    "initial-dir", "initialDirectory",
-	    new PlaceholderDirectory("."));
+      "initial-dir", "initialDirectory",
+      new PlaceholderDirectory("."));
 
     m_OptionManager.add(
-	    "extension", "extensions",
-	    new BaseString[0]);
+      "extension", "extensions",
+      new BaseString[0]);
 
     m_OptionManager.add(
-	    "initial-file", "initialFiles",
-	    new PlaceholderFile[0]);
+      "initial-file", "initialFiles",
+      new PlaceholderFile[0]);
 
     m_OptionManager.add(
-	    "absolute", "absoluteFileNames",
-	    false);
+      "absolute", "absoluteFileNames",
+      false);
 
     m_OptionManager.add(
-	    "use-forward-slashes", "useForwardSlashes",
-	    false);
+      "use-forward-slashes", "useForwardSlashes",
+      false);
 
     m_OptionManager.add(
-	    "non-interactive", "nonInteractive",
-	    false);
+      "non-interactive", "nonInteractive",
+      false);
 
     m_OptionManager.add(
-	    "restoration-enabled", "restorationEnabled",
-	    false);
+      "restoration-enabled", "restorationEnabled",
+      false);
 
     m_OptionManager.add(
-	    "restoration-file", "restorationFile",
-	    new PlaceholderFile());
+      "restoration-file", "restorationFile",
+      new PlaceholderFile());
+
+    m_OptionManager.add(
+      "parent-component-actor", "parentComponentActor",
+      new CallableActorReference("unknown"));
+
+    m_OptionManager.add(
+      "use-outer-window", "useOuterWindow",
+      false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_CallableActor                  = null;
+    m_ParentComponentActorConfigured = false;
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Helper = new CallableActorHelper();
   }
 
   /**
@@ -472,8 +522,8 @@ public class SelectFile
    */
   public String useForwardSlashesTipText() {
     return
-	"If enabled, forward slashes are used in the output (but "
-	+ "the '\\\\' prefix of UNC paths is not converted).";
+      "If enabled, forward slashes are used in the output (but "
+        + "the '\\\\' prefix of UNC paths is not converted).";
   }
 
   /**
@@ -532,8 +582,8 @@ public class SelectFile
    */
   public String customStopMessageTipText() {
     return
-        "The custom stop message to use in case a user cancelation stops the "
-      + "flow (default is the full name of the actor)";
+      "The custom stop message to use in case a user cancelation stops the "
+        + "flow (default is the full name of the actor)";
   }
 
   /**
@@ -630,6 +680,110 @@ public class SelectFile
   }
 
   /**
+   * Sets the (optional) callable actor to use as parent component instead of
+   * the flow panel.
+   *
+   * @param value	the callable actor
+   */
+  public void setParentComponentActor(CallableActorReference value) {
+    m_ParentComponentActor = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) callable actor to use as parent component instead
+   * of the flow panel.
+   *
+   * @return 		the callable actor
+   */
+  public CallableActorReference getParentComponentActor() {
+    return m_ParentComponentActor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String parentComponentActorTipText() {
+    return "The (optional) callable actor to use as parent component instead of the flow panel.";
+  }
+
+  /**
+   * Sets whether to use the outer window as parent.
+   *
+   * @param value	true if to use outer window
+   */
+  public void setUseOuterWindow(boolean value) {
+    m_UseOuterWindow = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the outer window as parent.
+   *
+   * @return 		true if to use outer window
+   */
+  public boolean getUseOuterWindow() {
+    return m_UseOuterWindow;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String useOuterWindowTipText() {
+    return
+      "If enabled, the outer window (dialog/frame) is used instead of the "
+        + "component of the callable actor.";
+  }
+
+  /**
+   * Tries to find the callable actor referenced by its callable name.
+   *
+   * @return		the callable actor or null if not found
+   */
+  protected Actor findCallableActor() {
+    return m_Helper.findCallableActorRecursive(this, getParentComponentActor());
+  }
+
+  /**
+   * Returns the parent component to use.
+   *
+   * @return		the parent
+   */
+  public Component getActualParentComponent() {
+    Component	result;
+    Component	panel;
+
+    result = getParentComponent();
+
+    if (m_CallableActor == null) {
+      if (!m_ParentComponentActorConfigured) {
+        m_CallableActor                  = findCallableActor();
+        m_ParentComponentActorConfigured = true;
+      }
+    }
+
+    if (m_CallableActor != null) {
+      if (m_CallableActor instanceof AbstractDisplay) {
+        panel = ((AbstractDisplay) m_CallableActor).getPanel();
+        if (panel != null)
+          result = panel;
+      }
+    }
+
+    // component or window?
+    if (m_UseOuterWindow)
+      result = GUIHelper.getParentComponent(result);
+
+    return result;
+  }
+
+  /**
    * Returns the base class of the items.
    *
    * @return		the class
@@ -701,22 +855,22 @@ public class SelectFile
       props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(initialFilesStr));
       msg = RestorableActorHelper.read(m_RestorationFile, props);
       if (msg != null)
-	getLogger().warning(msg);
+        getLogger().warning(msg);
       else {
-	if (props.hasKey(KEY_INITIAL_DIR)) {
-	  initialDir = new PlaceholderDirectory(props.getProperty(KEY_INITIAL_DIR));
-	}
-	if (props.hasKey(KEY_INITIAL_FILES)) {
-	  try {
-	    initialFilesStr = OptionUtils.splitOptions(props.getProperty(KEY_INITIAL_FILES));
-	    initialFiles    = new PlaceholderFile[initialFilesStr.length];
-	    for (i = 0; i < initialFilesStr.length; i++)
-	      initialFiles[i] = new PlaceholderFile(initialFilesStr[i]);
-	  }
-	  catch (Exception e) {
-	    getLogger().log(Level.WARNING, "Failed to process '" + KEY_INITIAL_FILES + "' from restoration data!", e);
-	  }
-	}
+        if (props.hasKey(KEY_INITIAL_DIR)) {
+          initialDir = new PlaceholderDirectory(props.getProperty(KEY_INITIAL_DIR));
+        }
+        if (props.hasKey(KEY_INITIAL_FILES)) {
+          try {
+            initialFilesStr = OptionUtils.splitOptions(props.getProperty(KEY_INITIAL_FILES));
+            initialFiles    = new PlaceholderFile[initialFilesStr.length];
+            for (i = 0; i < initialFilesStr.length; i++)
+              initialFiles[i] = new PlaceholderFile(initialFilesStr[i]);
+          }
+          catch (Exception e) {
+            getLogger().log(Level.WARNING, "Failed to process '" + KEY_INITIAL_FILES + "' from restoration data!", e);
+          }
+        }
       }
     }
 
@@ -727,7 +881,7 @@ public class SelectFile
       filter = new ExtensionFileFilter(ext.getValue().toUpperCase().replaceFirst("^\\.", "").replace(",", "/") + " files", ext.getValue().split(","));
       fileChooser.addChoosableFileFilter(filter);
       if (activeFilter == null)
-	activeFilter = filter;
+        activeFilter = filter;
     }
     if (m_FileChooserTitle.length() > 0)
       fileChooser.setDialogTitle(m_FileChooserTitle);
@@ -743,22 +897,22 @@ public class SelectFile
       fileChooser.setFileFilter(activeFilter);
     else
       fileChooser.setFileFilter(fileChooser.getAcceptAllFileFilter());
-    retVal = fileChooser.showOpenDialog(getParentComponent());
+    retVal = fileChooser.showOpenDialog(getActualParentComponent());
     if (retVal == BaseFileChooser.APPROVE_OPTION) {
       result = true;
       files  = fileChooser.getSelectedFiles();
       for (File file: files)
         m_Queue.add(convert(file));
       if (m_RestorationEnabled) {
-	initialFilesStr = new String[files.length];
-	for (i = 0; i < files.length; i++)
-	  initialFilesStr[i] = files[i].getAbsolutePath();
-	props = new Properties();
-	props.setProperty(KEY_INITIAL_DIR, fileChooser.getCurrentDirectory().getAbsolutePath());
-	props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(initialFilesStr));
-	msg = RestorableActorHelper.write(props, m_RestorationFile);
-	if (msg != null)
-	  getLogger().warning(msg);
+        initialFilesStr = new String[files.length];
+        for (i = 0; i < files.length; i++)
+          initialFilesStr[i] = files[i].getAbsolutePath();
+        props = new Properties();
+        props.setProperty(KEY_INITIAL_DIR, fileChooser.getCurrentDirectory().getAbsolutePath());
+        props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(initialFilesStr));
+        msg = RestorableActorHelper.write(props, m_RestorationFile);
+        if (msg != null)
+          getLogger().warning(msg);
       }
     }
 
@@ -793,7 +947,7 @@ public class SelectFile
 
     if (m_NonInteractive) {
       for (File file: m_InitialFiles)
-	m_Queue.add(convert(file));
+        m_Queue.add(convert(file));
       return true;
     }
 
@@ -802,16 +956,16 @@ public class SelectFile
       result   = true;
       filesStr = new String[files.length];
       for (i = 0; i < files.length; i++) {
-	filesStr[i] = convert(files[i]);
-	m_Queue.add(filesStr[i]);
+        filesStr[i] = convert(files[i]);
+        m_Queue.add(filesStr[i]);
       }
       if (m_RestorationEnabled) {
-	props = new Properties();
-	props.setProperty(KEY_INITIAL_DIR, m_InitialDirectory.getAbsolutePath());
-	props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(filesStr));
-	msg = RestorableActorHelper.write(props, m_RestorationFile);
-	if (msg != null)
-	  getLogger().warning(msg);
+        props = new Properties();
+        props.setProperty(KEY_INITIAL_DIR, m_InitialDirectory.getAbsolutePath());
+        props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(filesStr));
+        msg = RestorableActorHelper.write(props, m_RestorationFile);
+        if (msg != null)
+          getLogger().warning(msg);
       }
     }
 
@@ -827,22 +981,22 @@ public class SelectFile
   protected String doExecute() {
     if (!isHeadless()) {
       if (!doInteract()) {
-	if (m_StopFlowIfCanceled) {
-	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	    getRoot().stopExecution("Flow canceled: " + getFullName());
-	  else
-	    getRoot().stopExecution(m_CustomStopMessage);
-	}
+        if (m_StopFlowIfCanceled) {
+          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+            getRoot().stopExecution("Flow canceled: " + getFullName());
+          else
+            getRoot().stopExecution(m_CustomStopMessage);
+        }
       }
     }
     else if (supportsHeadlessInteraction()) {
       if (!doInteractHeadless()) {
-	if (m_StopFlowIfCanceled) {
-	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	    getRoot().stopExecution("Flow canceled: " + getFullName());
-	  else
-	    getRoot().stopExecution(m_CustomStopMessage);
-	}
+        if (m_StopFlowIfCanceled) {
+          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+            getRoot().stopExecution("Flow canceled: " + getFullName());
+          else
+            getRoot().stopExecution(m_CustomStopMessage);
+        }
       }
     }
 

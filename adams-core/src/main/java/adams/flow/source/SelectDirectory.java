@@ -530,7 +530,7 @@ public class SelectDirectory
       dirChooser.setDialogTitle(m_DirectoryChooserTitle);
     dirChooser.setCurrentDirectory(initial);
     dirChooser.setSelectedFile(initial);
-    retVal = dirChooser.showOpenDialog(getParentComponent());
+    retVal = dirChooser.showOpenDialog(getActualParentComponent());
     if (retVal == BaseDirectoryChooser.APPROVE_OPTION) {
       result = true;
       dir = dirChooser.getSelectedFile();

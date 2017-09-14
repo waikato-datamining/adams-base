@@ -661,10 +661,11 @@ public class EnterManyValues
     panelMsg.add(new JLabel(msg));
     dialog = new ApprovalDialog(null, ModalityType.MODELESS);
     dialog.setTitle(getName());
+    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
     dialog.getContentPane().add(panelMsg, BorderLayout.NORTH);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
     dialog.pack();
-    dialog.setLocationRelativeTo(null);
+    dialog.setLocationRelativeTo(getActualParentComponent());
     dialog.setVisible(true);
 
     sync = new Boolean(true);

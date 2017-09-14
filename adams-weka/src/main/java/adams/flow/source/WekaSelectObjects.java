@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaSelectObjects.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -207,7 +207,7 @@ public class WekaSelectObjects
       m_ArrayEditor = new GenericArrayEditor();
       m_Dialog.getContentPane().add(m_ArrayEditor.getCustomEditor(), BorderLayout.CENTER);
       m_Dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
-      m_Dialog.setLocationRelativeTo(null);
+      m_Dialog.setLocationRelativeTo(getActualParentComponent());
     }
 
     current = new ArrayList();

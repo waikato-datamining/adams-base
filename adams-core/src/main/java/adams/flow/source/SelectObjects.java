@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SelectObjects.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -219,7 +219,7 @@ public class SelectObjects
 	m_Dialog.setTitle(getName());
       else
 	m_Dialog.setTitle(getFullName());
-      m_Dialog.setLocationRelativeTo(null);
+      m_Dialog.setLocationRelativeTo(getActualParentComponent());
       m_Dialog.setOkAlwaysEnabled(true);
     }
 
