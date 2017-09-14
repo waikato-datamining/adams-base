@@ -106,6 +106,8 @@ public class Debug
   /** for serialization. */
   private static final long serialVersionUID = -7287036923779341439L;
 
+  public static final String PREFIX_DEBUG = "Debug: ";
+
   /** the width of the dialog. */
   protected int m_Width;
 
@@ -541,7 +543,7 @@ public class Debug
 	    producer.setOutputVariableValues(false);
 	    consumer.setInput(producer.produce(getOwner()));
 	    expanded = (Actor) consumer.consume();
-	    title = "Debug: " + panel.getTitle();
+	    title = PREFIX_DEBUG + panel.getTitle().replace(PREFIX_DEBUG, "");
 	    if (!panel.getOwner().hasPanel(title)) {
 	      panelCopy = panel.getOwner().newPanel();
 	    }
