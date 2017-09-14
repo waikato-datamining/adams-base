@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActualVsPredictedPlot.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -46,11 +46,11 @@ import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
-import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
 import adams.gui.visualization.sequence.CrossPaintlet;
 import adams.gui.visualization.sequence.MetaDataColorPaintlet;
 import adams.gui.visualization.sequence.PaintletWithFixedXYRange;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
+import adams.gui.visualization.sequence.XYSequencePaintlet;
 import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
 import adams.gui.visualization.sequence.metadatacolor.Dummy;
 
@@ -893,7 +893,7 @@ public class ActualVsPredictedPlot
   @Override
   protected BasePanel newPanel() {
     SequencePlotterPanel 	result;
-    AbstractXYSequencePaintlet 	paintlet;
+    XYSequencePaintlet 		paintlet;
     PaintletWithFixedXYRange 	fixedPaintlet;
 
     result = new SequencePlotterPanel("act vs pred");
@@ -1090,7 +1090,7 @@ public class ActualVsPredictedPlot
       protected void initGUI() {
 	super.initGUI();
 	m_Panel = new SequencePlotterPanel("act vs pred");
-	AbstractXYSequencePaintlet paintlet;
+	XYSequencePaintlet paintlet;
 	PaintletWithFixedXYRange fixedPaintlet;
 	if (m_Error.isEmpty()) {
 	  paintlet = new CrossPaintlet();

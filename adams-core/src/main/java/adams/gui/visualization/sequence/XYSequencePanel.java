@@ -269,7 +269,7 @@ public class XYSequencePanel
    */
   public void setDataPaintlet(Paintlet value) {
     removePaintlet(m_XYSequencePaintlet);
-    m_XYSequencePaintlet = (AbstractXYSequencePaintlet) value;
+    m_XYSequencePaintlet = (XYSequencePaintlet) value;
     m_XYSequencePaintlet.setPanel(this);
     addPaintlet(m_XYSequencePaintlet);
   }

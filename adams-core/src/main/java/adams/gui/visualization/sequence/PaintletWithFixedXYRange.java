@@ -88,7 +88,7 @@ public class PaintletWithFixedXYRange
    * @return		the default paintlet
    */
   @Override
-  protected AbstractXYSequencePaintlet getDefaultPaintlet() {
+  protected XYSequencePaintlet getDefaultPaintlet() {
     return new DotPaintlet();
   }
 

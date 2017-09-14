@@ -25,7 +25,8 @@ import adams.flow.control.Flow;
 import adams.flow.sink.SequencePlotter;
 import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.flow.transformer.SpreadSheetPlotGenerator;
-import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
+import adams.gui.visualization.core.plot.HitDetectorSupporter;
+import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
 import adams.gui.visualization.sequence.CirclePaintlet;
 import adams.gui.visualization.sequence.CrossPaintlet;
 import adams.gui.visualization.sequence.NullPaintlet;
@@ -277,7 +278,7 @@ public class ScatterPlot
     SpreadSheetPlotGenerator	pg;
     SequencePlotter		plotter;
     ViewDataClickAction		action;
-    AbstractXYSequencePaintlet	paintlet;
+    XYSequencePaintlet		paintlet;
 
     super.addChartGeneration(flow, name, sheet);
 
@@ -308,9 +309,11 @@ public class ScatterPlot
     }
     plotter.setPaintlet(paintlet);
 
-    action = new ViewDataClickAction();
-    action.setHitDetector(paintlet.getHitDetector());
-    plotter.setMouseClickAction(action);
+    if (((HitDetectorSupporter) paintlet).getHitDetector() instanceof AbstractXYSequencePointHitDetector) {
+      action = new ViewDataClickAction();
+      action.setHitDetector((AbstractXYSequencePointHitDetector) ((HitDetectorSupporter) paintlet).getHitDetector());
+      plotter.setMouseClickAction(action);
+    }
 
     flow.add(plotter);
   }

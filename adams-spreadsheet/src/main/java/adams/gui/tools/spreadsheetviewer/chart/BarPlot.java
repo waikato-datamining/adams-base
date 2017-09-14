@@ -25,7 +25,6 @@ import adams.flow.control.Flow;
 import adams.flow.sink.SequencePlotter;
 import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.flow.transformer.SpreadSheetPlotGenerator;
-import adams.gui.visualization.sequence.AbstractXYSequencePaintlet;
 import adams.gui.visualization.sequence.BarPaintlet;
 
 /**
@@ -244,7 +243,7 @@ public class BarPlot
     plotter.setPaintlet(paintlet);
 
     action = new ViewDataClickAction();
-    action.setHitDetector(((AbstractXYSequencePaintlet) paintlet).getHitDetector());
+    action.setHitDetector(paintlet.getHitDetector());
     plotter.setMouseClickAction(action);
 
     flow.add(plotter);
