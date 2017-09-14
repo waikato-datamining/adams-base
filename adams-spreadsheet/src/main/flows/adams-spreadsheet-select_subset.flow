@@ -1,0 +1,13 @@
+# Project: adams
+# Date: 2017-09-15 11:10:13
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to let the user select a subset from a spreadsheet." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.transformer.SetStorageValue -storage-name original
+ adams.flow.transformer.SpreadSheetSelectSubset -message "Please select the rows that you want" -allow-search true
+ adams.flow.control.Trigger -name original
+  adams.flow.source.StorageValue -storage-name original -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.sink.SpreadSheetDisplay -name Original -short-title true -writer adams.data.io.output.NullWriter
+ adams.flow.sink.SpreadSheetDisplay -name Subset -short-title true -x -3 -writer adams.data.io.output.NullWriter
