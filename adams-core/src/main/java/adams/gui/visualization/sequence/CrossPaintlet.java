@@ -189,7 +189,7 @@ public class CrossPaintlet
    * @param data	the data to draw
    * @param color	the color to draw in
    */
-  public void drawCustomData(Graphics g, PaintMoment moment, XYSequence data, Color color) {
+  protected void doDrawCustomData(Graphics g, PaintMoment moment, XYSequence data, Color color) {
     List<XYSequencePoint>	points;
     XYSequencePoint		curr;
     int				currX;
@@ -228,6 +228,23 @@ public class CrossPaintlet
       g.drawLine(currX - radius, currY - radius, currX + radius, currY + radius);
       g.drawLine(currX + radius, currY - radius, currX - radius, currY + radius);
     }
+  }
+
+  /**
+   * Draws the data with the given color.
+   *
+   * @param g		the graphics context
+   * @param moment	the paint moment
+   * @param data	the data to draw
+   * @param color	the color to draw in
+   */
+  public void drawCustomData(Graphics g, PaintMoment moment, XYSequence data, Color color) {
+    float	width;
+
+    width = getStrokeWidth(g, 1.0f);
+    applyStroke(g, m_StrokeThickness);
+    doDrawCustomData(g, moment, data, color);
+    applyStroke(g, width);
   }
 
   /**

@@ -287,8 +287,25 @@ public class LinePaintlet
    * @param data	the data to draw
    * @param color	the color to draw in
    */
-  public void drawCustomData(Graphics g, PaintMoment moment, XYSequence data, Color color) {
+  public void doDrawCustomData(Graphics g, PaintMoment moment, XYSequence data, Color color) {
     drawData(g, moment, data, color, MarkerShape.NONE);
+  }
+
+  /**
+   * Draws the data with the given color.
+   *
+   * @param g		the graphics context
+   * @param moment	the paint moment
+   * @param data	the data to draw
+   * @param color	the color to draw in
+   */
+  public void drawCustomData(Graphics g, PaintMoment moment, XYSequence data, Color color) {
+    float	width;
+
+    width = getStrokeWidth(g, 1.0f);
+    applyStroke(g, m_StrokeThickness);
+    doDrawCustomData(g, moment, data, color);
+    applyStroke(g, width);
   }
 
   /**

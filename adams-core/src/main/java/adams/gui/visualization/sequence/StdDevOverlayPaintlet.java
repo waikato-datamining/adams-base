@@ -187,7 +187,7 @@ public class StdDevOverlayPaintlet
    * @param data	the data to draw
    * @param color	the color to draw in
    */
-  public void drawCustomData(Graphics g, PaintMoment moment, XYSequence data, Color color) {
+  protected void doDrawCustomData(Graphics g, PaintMoment moment, XYSequence data, Color color) {
     AxisPanel		xAxis;
     AxisPanel		yAxis;
     TDoubleArrayList	stdevList;
@@ -208,6 +208,23 @@ public class StdDevOverlayPaintlet
 	yAxis.valueToPos(stdev), 
 	xAxis.valueToPos(xAxis.getActualMaximum()), 
 	yAxis.valueToPos(stdev));
+  }
+
+  /**
+   * Draws the data with the given color.
+   *
+   * @param g		the graphics context
+   * @param moment	the paint moment
+   * @param data	the data to draw
+   * @param color	the color to draw in
+   */
+  public void drawCustomData(Graphics g, PaintMoment moment, XYSequence data, Color color) {
+    float	width;
+
+    width = getStrokeWidth(g, 1.0f);
+    applyStroke(g, m_StrokeThickness);
+    doDrawCustomData(g, moment, data, color);
+    applyStroke(g, width);
   }
 
   /**
