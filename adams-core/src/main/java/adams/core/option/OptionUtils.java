@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * OptionUtils.java
  * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
@@ -61,7 +61,7 @@ public class OptionUtils {
   /** for caching the property descriptors. */
   protected static Hashtable<String,PropertyDescriptor> m_PropertyDescriptorCache;
   static {
-    m_PropertyDescriptorCache = new Hashtable<String,PropertyDescriptor>();
+    m_PropertyDescriptorCache = new Hashtable<>();
   }
 
   /** the hooks for "valueOf". A hook takes a class and a string as parameter. */
@@ -75,8 +75,8 @@ public class OptionUtils {
   protected static boolean m_HooksRegistered;
 
   static {
-    m_HooksValueOf    = new Hashtable<Class,Method>();
-    m_HooksToString   = new Hashtable<Class,Method>();
+    m_HooksValueOf    = new Hashtable<>();
+    m_HooksToString   = new Hashtable<>();
     m_HooksRegistered = false;
   }
 
@@ -114,13 +114,13 @@ public class OptionUtils {
       // base class
       addValueOfHook(
 	  key,
-	  hookCls.getMethod(hookMethod, new Class[]{AbstractOption.class, String.class}));
+	  hookCls.getMethod(hookMethod, AbstractOption.class, String.class));
 
       // add array class
       keyArray = Array.newInstance(key, 1).getClass();
       addValueOfHook(
 	  keyArray,
-	  hookCls.getMethod(hookMethod, new Class[]{AbstractOption.class, String.class}));
+	  hookCls.getMethod(hookMethod, AbstractOption.class, String.class));
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -161,13 +161,13 @@ public class OptionUtils {
       // base class
       addToStringHook(
 	  key,
-	  hookCls.getMethod(hookMethod, new Class[]{AbstractOption.class, Object.class}));
+	  hookCls.getMethod(hookMethod, AbstractOption.class, Object.class));
 
       // add array class
       keyArray = Array.newInstance(key, 1).getClass();
       addToStringHook(
 	  keyArray,
-	  hookCls.getMethod(hookMethod, new Class[]{AbstractOption.class, Object.class}));
+	  hookCls.getMethod(hookMethod, AbstractOption.class, Object.class));
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -241,7 +241,7 @@ public class OptionUtils {
     enm               = props.propertyNames();
     while (enm.hasMoreElements()) {
       classname = (String) enm.nextElement();
-      if (classname.indexOf("#") > -1)
+      if (classname.contains("#"))
 	continue;
       if (classname.startsWith(OPTION_PREFIX))
 	continue;
@@ -607,7 +607,7 @@ public class OptionUtils {
       result = "" + value;
     // string
     else if (cls == String.class)
-      result = new String(value);
+      result = value;
 
     // custom editor registered (string representation)?
     if (result == null) {
@@ -692,7 +692,7 @@ public class OptionUtils {
       }
     }
     catch (Exception e) {
-      System.err.println("Failed to create shallow copy for OptionHandler!");
+      System.err.println("Failed to create shallow copy for OptionHandler: " + Utils.classToString(o));
       e.printStackTrace();
       result = null;
     }
@@ -762,7 +762,7 @@ public class OptionUtils {
     }
     catch (Exception e) {
       result = null;
-      System.err.println("Failed to create shallow copy for object!");
+      System.err.println("Failed to create shallow copy for object: " + Utils.classToString(o));
       e.printStackTrace();
     }
 
@@ -853,7 +853,7 @@ public class OptionUtils {
    * @return		true if a help flag is among the options
    */
   public static boolean hasFlag(String[] options, String flag) {
-    return hasFlag(new ArrayList<String>(Arrays.asList(options)), flag);
+    return hasFlag(new ArrayList<>(Arrays.asList(options)), flag);
   }
 
   /**
@@ -937,7 +937,7 @@ public class OptionUtils {
    * @return		the argument of null if not found
    */
   public static String getOption(String[] options, String option) {
-    return getOption(new ArrayList<String>(Arrays.asList(options)), option);
+    return getOption(new ArrayList<>(Arrays.asList(options)), option);
   }
 
   /**
@@ -1115,7 +1115,7 @@ public class OptionUtils {
     }
     catch (Exception e) {
       // can only happen if property name is incorrect
-      System.err.println("Error obtaining the property descriptor (" + owner.getClass().getName() + "):");
+      System.err.println("Error obtaining the property descriptor (" + Utils.classToString(owner) + "):");
       e.printStackTrace();
       result = null;
 
@@ -1126,14 +1126,12 @@ public class OptionUtils {
 	  info = Introspector.getBeanInfo(owner.getClass());
 	  // property descriptors
 	  propDescs = info.getPropertyDescriptors();
-	  System.err.println(
-	      "Available bean properties for class '" + owner.getClass().getName() + "':");
+	  System.err.println("Available bean properties for class '" + Utils.classToString(owner) + "':");
 	  for (i = 0; i < propDescs.length; i++)
 	    System.err.println((i+1) + ". " + propDescs[i].getDisplayName());
 	  // method descriptors
 	  methDescs = info.getMethodDescriptors();
-	  System.err.println(
-	      "Available bean methods for class '" + owner.getClass().getName() + "':");
+	  System.err.println("Available bean methods for class '" + Utils.classToString(owner) + "':");
 	  for (i = 0; i < methDescs.length; i++) {
 	    System.err.println((i+1) + ". " + methDescs[i].getDisplayName());
 	    if (methDescs[i].getDisplayName().equals("_getPyInstance")) {
@@ -1145,15 +1143,14 @@ public class OptionUtils {
 	  }
 	  // methods
 	  meths = owner.getClass().getMethods();
-	  System.err.println(
-	      "Available methods for class '" + owner.getClass().getName() + "':");
+	  System.err.println("Available methods for class '" + Utils.classToString(owner) + "':");
 	  for (i = 0; i < meths.length; i++)
 	    System.err.println((i+1) + ". " + meths[i].getName());
 	}
 	catch (Exception ex) {
 	  System.err.println(
 	      "Failed to obtain bean info/property descriptors for class '"
-	      + owner.getClass().getName() + "'");
+	      + Utils.classToString(owner) + "'");
 	}
       }
     }
