@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MessageCollection.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -109,6 +110,15 @@ public class MessageCollection
    */
   public void add(int index, String msg, Throwable t) {
     m_Messages.add(index, msg + "\n" + Utils.throwableToString(t));
+  }
+
+  /**
+   * Adds all the messages.
+   *
+   * @param msgs		the messages to collect
+   */
+  public void addAll(Collection<String> msgs) {
+    m_Messages.addAll(msgs);
   }
 
   /**
