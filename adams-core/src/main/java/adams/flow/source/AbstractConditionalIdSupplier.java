@@ -15,7 +15,7 @@
 
 /*
  * AbstractConditionalIdSupplier.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -137,7 +137,7 @@ public abstract class AbstractConditionalIdSupplier
 	classesStr += classes[i].getName();
       }
       getLogger().severe(
-	  "Only the following container(s) are allowed: " + classesStr + "\n" + Utils.getStackTrace(20));
+	  "Provided " + Utils.classToString(value) + ", but only the following container(s) are allowed: " + classesStr + "\n" + Utils.getStackTrace(20));
     }
   }
 
