@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -26,6 +26,8 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
+import adams.core.io.filechanged.FileChangeMonitor;
+import adams.core.io.filechanged.LastModified;
 import adams.core.logging.LoggingLevel;
 import adams.core.management.FileBrowser;
 import adams.gui.application.ChildFrame;
@@ -74,6 +76,8 @@ import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -90,7 +94,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class PreviewBrowserPanel
-  extends BasePanel 
+  extends BasePanel
   implements MenuBarProvider, SendToActionSupporter {
 
   /** for serialization. */
@@ -99,11 +103,11 @@ public class PreviewBrowserPanel
   /**
    * {@link Comparator} for {@link File} objects. Only uses the file name, not
    * the path, for comparison. Also, ignores the case.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
-  public static class FileComparator 
+  public static class FileComparator
     implements Comparator<File> {
 
     /**
@@ -199,10 +203,10 @@ public class PreviewBrowserPanel
 
   /** the "load recent" submenu. */
   protected JMenu m_MenuFileLoadRecent;
-  
+
   /** the "show hidden files" menu item. */
   protected JMenuItem m_MenuItemShowHiddenFiles;
-  
+
   /** the "show temp files" menu item. */
   protected JMenuItem m_MenuItemShowTempFiles;
 
@@ -211,6 +215,9 @@ public class PreviewBrowserPanel
 
   /** the file chooser for opening files. */
   protected BaseFileChooser m_FileChooser;
+
+  /** the file change monitor. */
+  protected FileChangeMonitor m_ChangeMonitor;
 
   /**
    * Initializes the members.
@@ -225,6 +232,7 @@ public class PreviewBrowserPanel
     m_RecentFilesHandler          = null;
     m_TitleGenerator              = new TitleGenerator("Preview browser", false);
     m_FileChooser                 = new BaseFileChooser(PropertiesManager.getProperties().getPath("InitialDir", "%h"));
+    m_ChangeMonitor               = new LastModified();
   }
 
   /**
@@ -257,7 +265,7 @@ public class PreviewBrowserPanel
     m_PanelDir.addChangeListener((ChangeEvent e) -> {
       refreshLocalFiles();
       if (m_RecentFilesHandler != null)
-        m_RecentFilesHandler.addRecentItem(m_PanelDir.getCurrent());
+	m_RecentFilesHandler.addRecentItem(m_PanelDir.getCurrent());
     });
     m_PanelDir.setPopupMenuCustomizer(new PopupMenuCustomizer() {
       @Override
@@ -274,7 +282,7 @@ public class PreviewBrowserPanel
     m_ListLocalFiles  = new SearchableBaseList(m_ModelLocalFiles);
     m_ListLocalFiles.addListSelectionListener((ListSelectionEvent e) -> {
       if (e.getValueIsAdjusting())
-        return;
+	return;
       displayLocalFile();
     });
     m_ListLocalFiles.addMouseListener(new MouseAdapter() {
@@ -284,14 +292,21 @@ public class PreviewBrowserPanel
 	  e.consume();
 	  displayLocalFile();
 	}
-        else if (MouseUtils.isRightClick(e)) {
+	else if (MouseUtils.isRightClick(e)) {
 	  e.consume();
 	  JPopupMenu menu = getLocalFilesPopupMenu(e);
 	  menu.show(m_ListLocalFiles, e.getX(), e.getY());
-        }
+	}
 	else {
 	  super.mouseClicked(e);
 	}
+      }
+    });
+    m_ListLocalFiles.addFocusListener(new FocusAdapter() {
+      @Override
+      public void focusGained(FocusEvent e) {
+	super.focusGained(e);
+	monitorFile(true);
       }
     });
     m_PanelLocalFiles.add(new BaseScrollPane(m_ListLocalFiles), BorderLayout.CENTER);
@@ -309,7 +324,7 @@ public class PreviewBrowserPanel
     m_ListArchiveFiles  = new SearchableBaseList(m_ModelArchiveFiles);
     m_ListArchiveFiles.addListSelectionListener((ListSelectionEvent e) -> {
       if (e.getValueIsAdjusting())
-        return;
+	return;
       displayArchiveContent();
     });
     m_ListArchiveFiles.addMouseListener(new MouseAdapter() {
@@ -335,7 +350,7 @@ public class PreviewBrowserPanel
     m_ComboBoxArchiveHandlers = new JComboBox<>(m_ModelArchiveHandlers);
     m_ComboBoxArchiveHandlers.addActionListener((ActionEvent e) -> {
       if (m_IgnoreArchiveHandlerChanges)
-        return;
+	return;
       updatePreferredArchiveHandler();
       displayArchiveContent();
     });
@@ -358,8 +373,28 @@ public class PreviewBrowserPanel
   }
 
   /**
+   * Monitors the selected file and triggers an updated if necessary.
+   *
+   * @param display	whether to trigger a display update or not
+   */
+  protected void monitorFile(boolean display) {
+    if ((m_CurrentFiles != null) && (m_CurrentFiles.length == 1)) {
+      if (m_ChangeMonitor.isInitialized(m_CurrentFiles[0])) {
+	if (m_ChangeMonitor.hasChanged(m_CurrentFiles[0])) {
+	  if (display)
+	    displayLocalFile();
+	}
+	m_ChangeMonitor.update(m_CurrentFiles[0]);
+      }
+      else {
+	m_ChangeMonitor.initialize(m_CurrentFiles[0]);
+      }
+    }
+  }
+
+  /**
    * Filters the files. Hidden/temp files may get removed.
-   * 
+   *
    * @param files	the files to filter
    * @return		the filtered files
    */
@@ -401,7 +436,7 @@ public class PreviewBrowserPanel
 
     if (showHidden && showTemp)
       return files;
-    
+
     result = new ArrayList<>();
     for (File file: files) {
       if (!showTemp && regExp.isMatch(file.getName()))
@@ -410,10 +445,10 @@ public class PreviewBrowserPanel
 	continue;
       result.add(file);
     }
-    
+
     return result.toArray(new File[result.size()]);
   }
-  
+
   /**
    * Refreshes the local file list.
    */
@@ -455,7 +490,7 @@ public class PreviewBrowserPanel
       return;
     if (m_ListLocalFiles.getSelectedValues().length < 1)
       return;
-    
+
     localFiles = new PlaceholderFile[m_ListLocalFiles.getSelectedValues().length];
     for (n = 0; n < localFiles.length; n++)
       localFiles[n] = new PlaceholderFile(m_PanelDir.getCurrent().getAbsolutePath() + File.separator + m_ListLocalFiles.getSelectedValues()[n]);
@@ -502,6 +537,8 @@ public class PreviewBrowserPanel
     m_PanelContent.clear();
     if (m_ArchiveHandler == null) {
       m_PanelContent.display(localFiles, false);
+      m_CurrentFiles = localFiles;
+      monitorFile(false);
     }
     else {
       m_CurrentFiles = null;
@@ -587,10 +624,10 @@ public class PreviewBrowserPanel
     updateTitle();
     updateMenu();
   }
-  
+
   /**
    * Returns the title generator in use.
-   * 
+   *
    * @return		the generator
    */
   public TitleGenerator getTitleGenerator() {
@@ -610,7 +647,7 @@ public class PreviewBrowserPanel
     else
       setParentTitle(m_TitleGenerator.generate(m_CurrentFiles[0]) + " ...");
   }
-  
+
   /**
    * Updates the menu.
    */
@@ -650,7 +687,7 @@ public class PreviewBrowserPanel
       submenu = new JMenu("Open recent");
       menu.add(submenu);
       m_RecentFilesHandler = new RecentFilesHandler<>(
-	  SESSION_FILE, PropertiesManager.getProperties().getInteger("MaxRecentDirs", 5), submenu);
+	SESSION_FILE, PropertiesManager.getProperties().getInteger("MaxRecentDirs", 5), submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
 	  // ignored
@@ -770,7 +807,7 @@ public class PreviewBrowserPanel
 
   /**
    * Opens the specified directory.
-   * 
+   *
    * @param dir		the directory to display
    */
   public void open(final PlaceholderDirectory dir) {
@@ -795,7 +832,7 @@ public class PreviewBrowserPanel
 
   /**
    * Displays the specified file.
-   * 
+   *
    * @param file	the file to display
    */
   public void open(final PlaceholderFile file) {
@@ -806,19 +843,19 @@ public class PreviewBrowserPanel
     SwingUtilities.invokeLater(() -> m_ListLocalFiles.setSelectedValue(file.getName(), true));
     SwingUtilities.invokeLater(() -> m_PanelContent.display(new File[]{file}, true));
   }
-  
+
   /**
    * Reloads the directory and content.
    */
   public void reload() {
     Object[]	selected;
-    
+
     selected = m_ListLocalFiles.getSelectedValues();
     open(new PlaceholderDirectory(m_PanelDir.getCurrent()));
     if (selected.length > 0)
       m_ListLocalFiles.setSelectedValue(selected[0], true);
   }
-  
+
   /**
    * Clears the preview.
    */
@@ -861,7 +898,7 @@ public class PreviewBrowserPanel
 
     return result;
   }
-  
+
   /**
    * Returns the classes that the supporter generates.
    *
@@ -910,16 +947,16 @@ public class PreviewBrowserPanel
 
   /**
    * Sets whether the browsing panel is hidden or not.
-   * 
+   *
    * @param value	true to enabled browsing, false to hide panel
    */
   public void setBrowsingEnabled(boolean value) {
     m_SplitPane.setLeftComponentHidden(!value);
   }
-  
+
   /**
    * Returns whether the browsing panel is hidden or not.
-   * 
+   *
    * @return		true if browsing enabled
    */
   public boolean isBrowsingEnabled() {
