@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractStandaloneGroup.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -164,7 +164,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     }
 
     if (!found)
-      result = "Actor #" + (index+1) + " is not of type: " + Utils.classesToString(accepted);
+      result = "Actor #" + (index+1) + " (" + Utils.classToString(actor) + ") is not of type: " + Utils.classesToString(accepted);
 
     return result;
   }
