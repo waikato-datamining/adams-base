@@ -1,5 +1,4 @@
-% Copyright (c) 2009-2014 by the University of Waikato, Hamilton, NZ. 
-% This work is made available under the terms of the 
+% This work is made available under the terms of the
 % Creative Commons Attribution-ShareAlike 4.0 license,
 % http://creativecommons.org/licenses/by-sa/4.0/.
 %
@@ -46,7 +45,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2009-2014} &
+		\parbox[c][2cm]{2cm}{\copyright 2009-2017} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -113,6 +112,16 @@ dynamically with variables. Flexibility has been traded here for performance.
 	\item \textit{IncludeExternalSink} -- includes an external sink
 \end{tight_itemize}
 
+\newpage
+\chapter{Miscellaneous}
+Below are other actors that haven't been covered by the previous chapters:
+\begin{tight_itemize}
+  \item \textit{NewFlow} -- generates a new actor/flow using the specified
+  template.
+  \item \textit{FlowFileReader} -- reads a flow file from disk and forwards it.
+  \item \textit{FlowFileWriter} -- writes the incoming flow to disk.
+  \item \textit{FlowDisplay} -- displays an actor or flow.
+\end{tight_itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}

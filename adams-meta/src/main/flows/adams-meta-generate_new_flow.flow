@@ -1,0 +1,7 @@
+# Project: adams
+# Date: 2017-09-18 13:00:44
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Uses a template to generate a new (sub-) flow and displays it." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.NewFlow -template adams.flow.template.PromptUser
+ adams.flow.sink.FlowDisplay -writer adams.gui.print.NullWriter

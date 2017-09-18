@@ -1,0 +1,8 @@
+# Project: adams
+# Date: 2017-09-18 12:32:54
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Loads and displays a flow." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${FLOWS}/adams-meta-copy_transformer.flow
+ adams.flow.transformer.FlowFileReader -custom-reader adams.data.io.input.DefaultFlowReader
+ adams.flow.sink.FlowDisplay -writer adams.gui.print.NullWriter
