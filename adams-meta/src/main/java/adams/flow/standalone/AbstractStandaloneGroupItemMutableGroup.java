@@ -13,14 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractStandaloneGroupItemMutableGroup.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
 
+import adams.core.Utils;
 import adams.flow.core.Actor;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
  * Ancestor for group items that form a group themselves.
@@ -35,4 +37,38 @@ public abstract class AbstractStandaloneGroupItemMutableGroup<S extends Actor, E
   implements StandaloneGroupItem<E> {
 
   private static final long serialVersionUID = -7663947357164807918L;
+
+  /**
+   * Performs checks on the "sub-actors".
+   *
+   * @return		null if everything is fine, otherwise the error
+   */
+  @Override
+  public String check() {
+    String	result;
+    int		i;
+    Class[]	filter;
+    int		n;
+    boolean	match;
+
+    result = null;
+
+    filter = getActorFilter();
+    for (i = 0; i < size(); i++) {
+      if (get(i).getSkip())
+	continue;
+      match = false;
+      for (n = 0; n < filter.length; n++) {
+        if (ClassLocator.isSubclass(filter[n], get(i).getClass())) {
+          match = true;
+          break;
+	}
+      }
+      if (!match)
+	result = "Not allowed actor type: " + get(i).getClass().getName() + "\nAllowed: " + Utils.classesToString(filter);
+      break;
+    }
+
+    return result;
+  }
 }
