@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractJavaCodeProducer.java
  * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
@@ -577,6 +577,7 @@ public abstract class AbstractJavaCodeProducer
     AbstractCommandLineHandler	handler;
     String[]			array;
     String[]			newArray;
+    String			handlerVar;
 
     if (value instanceof Actor) {
       m_OutputBuffer.append("\n");
@@ -616,9 +617,20 @@ public abstract class AbstractJavaCodeProducer
       }
       options = OptionUtils.joinOptions(newArray).trim();
       if (options.length() > 0) {
+        handlerVar = getNextTmpVariable(handler.getClass());
 	m_OutputBuffer.append(getIndentation());
+	m_OutputBuffer.append(handler.getClass().getName());
+	m_OutputBuffer.append(" ");
+	m_OutputBuffer.append(handlerVar);
+	m_OutputBuffer.append(" = new ");
+	m_OutputBuffer.append(handler.getClass().getName());
+	m_OutputBuffer.append("();\n");
+
+	m_OutputBuffer.append(getIndentation());
+	m_OutputBuffer.append(handlerVar);
+	m_OutputBuffer.append(".setOptions(");
 	m_OutputBuffer.append(variable);
-	m_OutputBuffer.append(".setOptions(OptionUtils.splitOptions(\"");
+	m_OutputBuffer.append(", OptionUtils.splitOptions(\"");
 	m_OutputBuffer.append(Utils.backQuoteChars(options));
 	m_OutputBuffer.append("\"));\n");
       }
