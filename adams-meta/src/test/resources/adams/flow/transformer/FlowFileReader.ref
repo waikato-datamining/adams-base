@@ -1,0 +1,3 @@
+--> dumpfile.txt
+adams.flow.control.Flow -actor "adams.flow.source.FileSupplier -file ${CWD}/src/test/resources/adams/flow/data/external_transformer.flow" -actor "adams.flow.transformer.FlowFileReader -custom-reader adams.data.io.input.DefaultFlowReader" -actor "adams.flow.transformer.OptionProducer -producer \"adams.core.option.ArrayProducer -logging-level OFF -output-variable-values false\"" -actor "adams.flow.sink.DumpFile -output ${TMP}/dumpfile.txt" -flow-execution-listener adams.flow.execution.NullListener
+
