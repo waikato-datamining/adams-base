@@ -20,17 +20,14 @@
 
 package adams.flow.core;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.filechanged.FileChangeMonitor;
 import adams.core.io.filechanged.NoChange;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Ancestor of actors that load another actor from disk and execute it.
@@ -224,7 +221,7 @@ public abstract class AbstractExternalActor
    */
   public String setUpExternalActor() {
     String		result;
-    List<String>	errors;
+    MessageCollection 	errors;
     String		warning;
     PlaceholderFile 	file;
 
@@ -240,12 +237,12 @@ public abstract class AbstractExternalActor
       result = "'" + file.getAbsolutePath() + "' does not point to a file!";
     }
     else {
-      errors = new ArrayList<>();
+      errors = new MessageCollection();
       if (isLoggingEnabled())
 	getLogger().fine("Attempting to load actor file: " + file);
       m_ExternalActor = ActorUtils.read(file.getAbsolutePath(), errors);
       if (!errors.isEmpty()) {
-	result = "Error loading external actor '" + file.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
+	result = "Error loading external actor '" + file.getAbsolutePath() + "':\n" + errors;
       }
       else if (m_ExternalActor == null) {
 	result = "Error loading external actor '" + file.getAbsolutePath() + "'!";

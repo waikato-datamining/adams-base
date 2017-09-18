@@ -13,13 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFlowScriptlet.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
-import adams.core.Utils;
+import adams.core.MessageCollection;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
 import adams.flow.control.SubProcess;
@@ -71,7 +71,7 @@ public abstract class AbstractFlowScriptlet
     List<DataContainer> 	runInput;
     List<DataContainer>		runOutput;
     Class[]			flowClasses;
-    List<String>		errors;
+    MessageCollection 		errors;
 
     manager = getDataContainerPanel().getContainerManager();
 
@@ -82,10 +82,10 @@ public abstract class AbstractFlowScriptlet
     list    = OptionUtils.splitOptions(options);
     if (list.length != 1)
       return "Needs a single filename as parameter!";
-    errors = new ArrayList<>();
+    errors = new MessageCollection();
     actor  = (SubProcess) ActorUtils.read(list[0], errors);
     if (!errors.isEmpty())
-      return "Failed to load actor from '" + list[0] + "':\n" + Utils.flatten(errors, "\n");
+      return "Failed to load actor from '" + list[0] + "':\n" + errors;
     if (actor == null)
       return "Could not instantiate actor from '" + list[0] + "'!";
 

@@ -15,15 +15,15 @@
 
 /*
  * Flow.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 import adams.core.DateUtils;
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.io.ConsoleHelper;
@@ -916,7 +916,7 @@ public class Flow
   @Override
   public String setUp() {
     String		result;
-    List<String>	errors;
+    MessageCollection 	errors;
     Properties 		props;
 
     // variables
@@ -928,10 +928,10 @@ public class Flow
 
     if (result == null) {
       if (!m_ExecuteOnError.isDirectory() && m_ExecuteOnError.exists()) {
-	errors = new ArrayList<>();
+	errors = new MessageCollection();
 	m_ExecuteOnErrorActor = ActorUtils.read(m_ExecuteOnError.getAbsolutePath(), errors);
 	if (!errors.isEmpty())
-	  result = "Error loading execute-on-error actor '" + m_ExecuteOnError.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
+	  result = "Error loading execute-on-error actor '" + m_ExecuteOnError.getAbsolutePath() + "':\n" + errors;
 	else if (m_ExecuteOnErrorActor == null)
 	  result = "Error loading execute-on-error actor '" + m_ExecuteOnError.getAbsolutePath() + "'!";
 	else
@@ -941,10 +941,10 @@ public class Flow
 
     if (result == null) {
       if (!m_ExecuteOnFinish.isDirectory() && m_ExecuteOnFinish.exists()) {
-	errors = new ArrayList<>();
+	errors = new MessageCollection();
 	m_ExecuteOnFinishActor = ActorUtils.read(m_ExecuteOnFinish.getAbsolutePath(), errors);
 	if (!errors.isEmpty())
-	  result = "Finish loading execute-on-finish actor '" + m_ExecuteOnFinish.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
+	  result = "Finish loading execute-on-finish actor '" + m_ExecuteOnFinish.getAbsolutePath() + "':\n" + errors;
 	else if (m_ExecuteOnFinishActor == null)
 	  result = "Finish loading execute-on-finish actor '" + m_ExecuteOnFinish.getAbsolutePath() + "'!";
 	else

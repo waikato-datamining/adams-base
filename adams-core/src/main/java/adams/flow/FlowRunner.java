@@ -20,6 +20,7 @@
 
 package adams.flow;
 
+import adams.core.MessageCollection;
 import adams.core.Pausable;
 import adams.core.Stoppable;
 import adams.core.Utils;
@@ -50,9 +51,7 @@ import adams.scripting.engine.MultiScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -697,7 +696,7 @@ public class FlowRunner
    */
   public String execute() {
     String			result;
-    List<String>		errors;
+    MessageCollection 		errors;
     LocalDirectoryLister 	lister;
     String[]			flows;
     ManageInteractiveActors	procInteractive;
@@ -740,10 +739,10 @@ public class FlowRunner
 
     // file has precedence over directory
     if (!m_Input.isDirectory()) {
-      errors = new ArrayList<>();
+      errors = new MessageCollection();
       m_Actor = ActorUtils.read(m_Input.getAbsolutePath(), errors);
       if (!errors.isEmpty()) {
-	result = "Failed to load actor from '" + m_Input + "'!\n" + Utils.flatten(errors, "\n");
+	result = "Failed to load actor from '" + m_Input + "'!\n" + errors;
 	return result;
       }
       if (!(m_Actor instanceof Flow)) {

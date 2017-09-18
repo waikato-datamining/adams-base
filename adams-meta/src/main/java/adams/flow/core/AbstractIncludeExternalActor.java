@@ -19,12 +19,9 @@
  */
 package adams.flow.core;
 
-import adams.core.Utils;
+import adams.core.MessageCollection;
 import adams.core.Variables;
 import adams.core.io.PlaceholderFile;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Ancestor for actors that get replaced with the externally stored actor.
@@ -53,7 +50,7 @@ public abstract class AbstractIncludeExternalActor
    */
   public String setUpExternalActor() {
     String		result;
-    List<String>	errors;
+    MessageCollection 	errors;
     Actor		externalActor;
     PlaceholderFile	file;
 
@@ -69,12 +66,12 @@ public abstract class AbstractIncludeExternalActor
       result = "'" + file.getAbsolutePath() + "' does not point to a file!";
     }
     else {
-      errors = new ArrayList<>();
+      errors = new MessageCollection();
       if (isLoggingEnabled())
 	getLogger().fine("Attempting to load actor file: " + file);
       externalActor = ActorUtils.read(file.getAbsolutePath(), errors);
       if (!errors.isEmpty()) {
-	result = "Error loading external actor '" + file.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
+	result = "Error loading external actor '" + file.getAbsolutePath() + "':\n" + errors;
       }
       else if (externalActor == null) {
 	result = "Error loading external actor '" + file.getAbsolutePath() + "'!";

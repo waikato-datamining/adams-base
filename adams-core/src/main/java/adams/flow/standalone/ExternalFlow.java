@@ -13,14 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExternalFlow.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.io.FlowFile;
 import adams.event.VariableChangeEvent;
@@ -263,7 +263,7 @@ public class ExternalFlow
    */
   public String setUpExternalActor() {
     String		result;
-    List<String>	errors;
+    MessageCollection 	errors;
 
     result = null;
 
@@ -271,10 +271,10 @@ public class ExternalFlow
       result = "'" + m_FlowFile.getAbsolutePath() + "' does not point to a file!";
     }
     else {
-      errors = new ArrayList<String>();
+      errors = new MessageCollection();
       m_ExternalFlow = ActorUtils.read(m_FlowFile.getAbsolutePath(), errors);
       if (!errors.isEmpty()) {
-	result = "Error loading external flow '" + m_FlowFile.getAbsolutePath() + "':\n" + Utils.flatten(errors, "\n");
+	result = "Error loading external flow '" + m_FlowFile.getAbsolutePath() + "':\n" + errors;
       }
       else if (m_ExternalFlow == null) {
 	result = "Error loading external flow '" + m_FlowFile.getAbsolutePath() + "'!";

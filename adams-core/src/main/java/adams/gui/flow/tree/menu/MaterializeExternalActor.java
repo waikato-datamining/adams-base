@@ -13,13 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MaterializeExternalActor.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import adams.core.Utils;
+import adams.core.MessageCollection;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ExternalActorHandler;
@@ -31,8 +31,6 @@ import adams.gui.flow.tree.TreeHelper;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Materializes (= includes) an external actor.
@@ -77,7 +75,7 @@ public class MaterializeExternalActor
     ExternalActorHandler	handler;
     File			file;
     Actor 			actor;
-    List<String>		errors;
+    MessageCollection 		errors;
     Node			newNode;
     int				index;
     Node			parent;
@@ -88,7 +86,7 @@ public class MaterializeExternalActor
     handler  = (ExternalActorHandler) currNode.getActor();
     
     // read external actor
-    errors   = new ArrayList<String>();
+    errors   = new MessageCollection();
     file     = handler.getActorFile();
     actor    = ActorUtils.read(file.getAbsolutePath(), errors);
     if (actor == null) {
@@ -97,7 +95,7 @@ public class MaterializeExternalActor
 	    m_State.tree, "Failed to materialize external flow: " + file);
       else
 	GUIHelper.showErrorMessage(
-	    m_State.tree, "Failed to materialize external flow: " + file + "\n" + Utils.flatten(errors, "\n"));
+	    m_State.tree, "Failed to materialize external flow: " + file + "\n" + errors);
       return;
     }
 

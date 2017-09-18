@@ -13,14 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RunRemoteFlow.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.flow;
 
-import adams.core.Utils;
+import adams.core.MessageCollection;
 import adams.flow.control.Flow;
 import adams.flow.control.RunningFlowsRegistry;
 import adams.flow.core.Actor;
@@ -28,8 +28,6 @@ import adams.flow.core.ActorUtils;
 import adams.scripting.command.AbstractCommandWithResponse;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Loads and runs a flow on a remote server.
@@ -195,7 +193,7 @@ public class RunRemoteFlow
   protected void prepareResponsePayload() {
     Actor 		actor;
     final Flow		flow;
-    List<String> 	errors;
+    MessageCollection 	errors;
 
     if (!m_FlowFile.exists()) {
       m_ErrorMessage = "Flow does not exist: " + m_FlowFile;
@@ -209,12 +207,12 @@ public class RunRemoteFlow
     // load flow
     if (isLoggingEnabled())
       getLogger().info("Loading flow: " + m_FlowFile);
-    errors = new ArrayList<>();
+    errors = new MessageCollection();
     actor  = ActorUtils.read(m_FlowFile.getAbsolutePath(), errors);
     if (actor == null) {
       m_ErrorMessage = "Failed to read flow from: " + m_FlowFile;
       if (!errors.isEmpty())
-	m_ErrorMessage += "\n" + Utils.flatten(errors, "\n");
+	m_ErrorMessage += "\n" + errors;
       return;
     }
     if (!(actor instanceof Flow)) {

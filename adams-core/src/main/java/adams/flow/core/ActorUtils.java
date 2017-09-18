@@ -21,6 +21,7 @@
 package adams.flow.core;
 
 import adams.core.ClassLister;
+import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
@@ -623,7 +624,7 @@ public class ActorUtils {
    * @param errors	for storing (potential) errors, ignored if null
    * @return		the actor or null in case of an error
    */
-  public static Actor read(String filename, List<String> errors) {
+  public static Actor read(String filename, MessageCollection errors) {
     return read(filename, errors, null);
   }
 
@@ -635,7 +636,7 @@ public class ActorUtils {
    * @param warnings	for storing (potential) warnings, ignored if null
    * @return		the actor or null in case of an error
    */
-  public static Actor read(String filename, List<String> errors, List<String> warnings) {
+  public static Actor read(String filename, MessageCollection errors, MessageCollection warnings) {
     Actor		result;
     FlowReader 		reader;
 
