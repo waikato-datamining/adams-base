@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowHelper.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -258,46 +258,6 @@ public class FlowHelper {
   }
 
   /**
-   * Locates all nodes representing {@link CallableActorHandler} actors.
-   *
-   * @param cont	the container to start the search from
-   * @return		the nodes with {@link CallableActorHandler} found
-   */
-  public static List<Node> findCallableActorsHandler(Container cont) {
-    Node	current;
-    Node	parent;
-
-    current = getEditedNode(cont);
-    if (current != null)
-      parent = (Node) current.getParent();
-    else
-      parent = getEditedParent(cont);
-
-    return findCallableActorsHandler(parent);
-  }
-
-  /**
-   * Locates all nodes representing {@link CallableActorHandler} actors.
-   *
-   * @param parent	the parent node
-   * @return		the nodes with {@link CallableActorHandler} found
-   */
-  public static List<Node> findCallableActorsHandler(Node parent) {
-    return findCallableActorsHandler(parent, true, null);
-  }
-
-  /**
-   * Locates all nodes representing {@link CallableActorHandler} actors.
-   *
-   * @param parent	the parent node
-   * @param restrict	the classes to restrict the results to
-   * @return		the nodes with {@link CallableActorHandler} found
-   */
-  public static List<Node> findCallableActorsHandler(Node parent, Class[] restrict) {
-    return findCallableActorsHandler(parent, true, new HashSet<Class>(Arrays.asList(restrict)));
-  }
-
-  /**
    * Checks whether the actor is listed in the restricted classes (specific
    * class or superclass/interface).
    *
@@ -324,12 +284,105 @@ public class FlowHelper {
   /**
    * Locates all nodes representing {@link CallableActorHandler} actors.
    *
+   * @param cont	the container to start the search from
+   * @return		the nodes with {@link CallableActorHandler} found
+   */
+  public static List<Node> findCallableActorsHandler(Container cont) {
+    return findNodes(cont, CallableActorHandler.class);
+  }
+
+  /**
+   * Locates all nodes representing {@link CallableActorHandler} actors.
+   *
+   * @param parent	the parent node
+   * @return		the nodes with {@link CallableActorHandler} found
+   */
+  public static List<Node> findCallableActorsHandler(Node parent) {
+    return findNodes(parent, CallableActorHandler.class);
+  }
+
+  /**
+   * Locates all nodes representing {@link CallableActorHandler} actors.
+   *
+   * @param parent	the parent node
+   * @param restrict	the classes to restrict the results to
+   * @return		the nodes with {@link CallableActorHandler} found
+   */
+  public static List<Node> findCallableActorsHandler(Node parent, Class[] restrict) {
+    return findNodes(parent, restrict, CallableActorHandler.class);
+  }
+
+  /**
+   * Locates all top nodes representing CallableActors actors.
+   *
+   * @param cont	the container to get the root node from
+   * @return		the nodes with CallableActors found
+   */
+  public static List<Node> findTopCallableActors(Container cont) {
+    return findTopNodes(cont, CallableActorHandler.class);
+  }
+
+  /**
+   * Locates all top nodes representing CallableActors actors.
+   *
+   * @param parent	the parent node
+   * @return		the nodes with CallableActors found
+   */
+  public static List<Node> findTopCallableActors(Node parent) {
+    return findTopNodes(parent, CallableActorHandler.class);
+  }
+
+  /**
+   * Locates all nodes representing the specified type of actors.
+   *
+   * @param cont	the container to start the search from
+   * @param type	the type of actors to find
+   * @return		the nodes found
+   */
+  public static List<Node> findNodes(Container cont, Class type) {
+    Node	current;
+    Node	parent;
+
+    current = getEditedNode(cont);
+    if (current != null)
+      parent = (Node) current.getParent();
+    else
+      parent = getEditedParent(cont);
+
+    return findNodes(parent, type);
+  }
+
+  /**
+   * Locates all nodes representing the specified type of actors.
+   *
+   * @param parent	the parent node
+   * @param type	the type of actors to find
+   * @return		the nodes found
+   */
+  public static List<Node> findNodes(Node parent, Class type) {
+    return findNodes(parent, true, null, type);
+  }
+
+  /**
+   * Locates all nodes representing the specified type of actors.
+   *
+   * @param parent	the parent node
+   * @param restrict	the classes to restrict the results to
+   * @return		the nodes found
+   */
+  public static List<Node> findNodes(Node parent, Class[] restrict, Class type) {
+    return findNodes(parent, true, new HashSet<>(Arrays.asList(restrict)), type);
+  }
+
+  /**
+   * Locates all nodes representing the specified type of actors.
+   *
    * @param parent	the parent node
    * @param up		whether to go up in the actor tree
    * @param restrict	the classes to restrict the results to, null if no restrictions
-   * @return		the nodes with {@link CallableActorHandler} found
+   * @return		the nodes found
    */
-  protected static List<Node> findCallableActorsHandler(Node parent, boolean up, HashSet<Class> restrict) {
+  protected static List<Node> findNodes(Node parent, boolean up, HashSet<Class> restrict, Class type) {
     List<Node>		result;
     ActorHandler	handler;
     Actor		actor;
@@ -353,14 +406,14 @@ public class FlowHelper {
 	    actor   = current.getActor();
 
 	    if (ActorUtils.isStandalone(actor)) {
-	      if (!actor.getSkip() && (actor instanceof CallableActorHandler)) {
+	      if (!actor.getSkip() && ClassLocator.matches(type, actor.getClass())) {
 		if ((restrict == null) || isRestricted(actor.getClass(), restrict))
 		  result.add(current);
 	      }
 	      else if (actor instanceof Standalones) {
 		for (n = 0; n < current.getChildCount(); n++) {
 		  subactor = ((Node) current.getChildAt(n)).getActor();
-		  if (!subactor.getSkip() && (subactor instanceof CallableActorHandler)) {
+		  if (!subactor.getSkip() && ClassLocator.matches(type, subactor.getClass())) {
 		    if ((restrict == null) || isRestricted(subactor.getClass(), restrict))
 		      result.add((Node) current.getChildAt(n));
 		  }
@@ -370,7 +423,7 @@ public class FlowHelper {
 		// load in external actor
 		current.expand();
 		for (n = 0; n < current.getChildCount(); n++)
-		  result.addAll(findCallableActorsHandler((Node) current.getChildAt(n), false, restrict));
+		  result.addAll(findNodes((Node) current.getChildAt(n), false, restrict, type));
 	      }
 	    }
 	    else {
@@ -394,9 +447,10 @@ public class FlowHelper {
    * Locates all top nodes representing CallableActors actors.
    *
    * @param cont	the container to get the root node from
+   * @param type	the type of actor to locate
    * @return		the nodes with CallableActors found
    */
-  public static List<Node> findTopCallableActors(Container cont) {
+  public static List<Node> findTopNodes(Container cont, Class type) {
     Node	current;
     Node	parent;
 
@@ -410,16 +464,17 @@ public class FlowHelper {
     if (parent != null)
       parent = (Node) parent.getRoot();
 
-    return findTopCallableActors(parent);
+    return findTopNodes(parent, type);
   }
 
   /**
-   * Locates all top nodes representing CallableActors actors.
+   * Locates all top nodes representing the specified type.
    *
    * @param parent	the parent node
-   * @return		the nodes with CallableActors found
+   * @param type	the type of actor to locate
+   * @return		the nodes with actors found
    */
-  public static List<Node> findTopCallableActors(Node parent) {
+  public static List<Node> findTopNodes(Node parent, Class type) {
     List<Node>		result;
     ActorHandler	handler;
     Actor		actor;
@@ -442,13 +497,13 @@ public class FlowHelper {
 	  actor   = current.getActor();
 
 	  if (ActorUtils.isStandalone(actor)) {
-	    if (!actor.getSkip() && (actor instanceof CallableActorHandler)) {
+	    if (!actor.getSkip() && ClassLocator.matches(type, actor.getClass())) {
 	      result.add(current);
 	    }
 	    else if (actor instanceof Standalones) {
 	      for (n = 0; n < current.getChildCount(); n++) {
 		subactor = ((Node) current.getChildAt(n)).getActor();
-		if (!subactor.getSkip() && (subactor instanceof CallableActorHandler)) {
+		if (!subactor.getSkip() && ClassLocator.matches(type, subactor.getClass())) {
 		  result.add((Node) current.getChildAt(n));
 		}
 	      }
@@ -457,7 +512,7 @@ public class FlowHelper {
 	      // load in external actor
 	      current.expand();
 	      for (n = 0; n < current.getChildCount(); n++)
-		result.addAll(findTopCallableActors((Node) current.getChildAt(n)));
+		result.addAll(findTopNodes((Node) current.getChildAt(n), type));
 	    }
 	  }
 	  else {
