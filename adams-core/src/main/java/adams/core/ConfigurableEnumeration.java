@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ConfigurableEnumeration.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
@@ -413,9 +413,12 @@ public class ConfigurableEnumeration
     Item	result;
 
     result = null;
+    s      = s.toLowerCase();
 
     for (Item item: m_Items) {
-      if (item.getLabel().equals(s) || item.getID().equals(s)) {
+      if (item.getLabel().toLowerCase().equals(s)
+        || item.getID().toLowerCase().equals(s)
+        || item.getDisplay().toLowerCase().equals(s)) {
 	result = item;
 	break;
       }
