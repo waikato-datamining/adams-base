@@ -20,10 +20,12 @@
 
 package adams.flow.sink;
 
+import adams.core.Utils;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.flow.tree.Tree;
 
 import javax.swing.JComponent;
@@ -126,7 +128,7 @@ import java.awt.BorderLayout;
  */
 public class FlowDisplay
   extends AbstractGraphicalDisplay
-  implements DisplayPanelProvider {
+  implements DisplayPanelProvider, TextSupplier {
 
   private static final long serialVersionUID = -4848073007226064084L;
 
@@ -189,6 +191,36 @@ public class FlowDisplay
   }
 
   /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  @Override
+  public String getCustomSupplyTextMenuItemCaption() {
+    return "Save flow as...";
+  }
+
+  /**
+   * Returns a custom file filter for the file chooser.
+   *
+   * @return		the file filter, null if to use default one
+   */
+  @Override
+  public ExtensionFileFilter getCustomTextFileFilter() {
+    return new ExtensionFileFilter("Flow file", "flow");
+  }
+
+  /**
+   * Supplies the text. May get called even if actor hasn't been executed yet.
+   *
+   * @return		the text, null if none available
+   */
+  @Override
+  public String supplyText() {
+    return Utils.flatten(m_Tree.getCommandLines(), "\n");
+  }
+
+  /**
    * Creates a new display panel for the token.
    *
    * @param token	the token to display in a new panel, can be null
@@ -196,7 +228,7 @@ public class FlowDisplay
    */
   @Override
   public DisplayPanel createDisplayPanel(Token token) {
-    return new AbstractComponentDisplayPanel(getClass().getSimpleName()) {
+    return new AbstractTextAndComponentDisplayPanel(getClass().getSimpleName()) {
       private static final long serialVersionUID = -2507397847572050956L;
       protected Tree m_Tree;
       @Override
@@ -209,6 +241,14 @@ public class FlowDisplay
       @Override
       public JComponent supplyComponent() {
 	return m_Tree;
+      }
+      @Override
+      public ExtensionFileFilter getCustomTextFileFilter() {
+        return new ExtensionFileFilter("Flow file", "flow");
+      }
+      @Override
+      public String supplyText() {
+        return Utils.flatten(m_Tree.getCommandLines(), "\n");
       }
       @Override
       public void display(Token token) {
