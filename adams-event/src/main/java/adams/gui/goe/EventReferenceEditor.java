@@ -15,12 +15,32 @@
 
 /*
  * EventReferenceEditor.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
+import adams.core.Utils;
+import adams.core.option.AbstractOption;
+import adams.flow.core.EventReference;
+import adams.flow.standalone.Events;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTreeNode;
+import adams.gui.core.MouseUtils;
+import adams.gui.flow.tree.Node;
+import adams.gui.goe.actorpathtree.ActorPathNode;
+import adams.gui.goe.eventstree.EventsTree;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
@@ -34,26 +54,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-
-import adams.core.Utils;
-import adams.core.option.AbstractOption;
-import adams.flow.core.EventReference;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTreeNode;
-import adams.gui.core.MouseUtils;
-import adams.gui.flow.tree.Node;
-import adams.gui.goe.actorpathtree.ActorPathNode;
-import adams.gui.goe.eventstree.EventsTree;
 
 /**
  * A PropertyEditor for EventReference objects.
@@ -354,7 +354,6 @@ public class EventReferenceEditor
   /**
    * Locates all the events for the node.
    *
-   * @param node	the node to start the search from
    * @return		the located events (including Events nodes)
    */
   protected List<String> findEvents() {
@@ -363,9 +362,9 @@ public class EventReferenceEditor
     int			i;
     Node		child;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
-    events = EventFlowHelper.findEvents(m_CustomEditor);
+    events = FlowHelper.findNodes(m_CustomEditor, Events.class);
     for (Node event: events) {
       result.add(event.getFullName());
       for (i = 0; i < event.getChildCount(); i++) {
