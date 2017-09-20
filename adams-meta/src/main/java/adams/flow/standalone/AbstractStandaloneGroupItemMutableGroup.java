@@ -59,7 +59,7 @@ public abstract class AbstractStandaloneGroupItemMutableGroup<S extends Actor, E
 	continue;
       match = false;
       for (n = 0; n < filter.length; n++) {
-        if (ClassLocator.isSubclass(filter[n], get(i).getClass())) {
+        if (ClassLocator.matches(filter[n], get(i).getClass())) {
           match = true;
           break;
 	}

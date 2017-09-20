@@ -153,11 +153,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     found    = false;
 
     for (Class cls: accepted) {
-      if (ClassLocator.isSubclass(cls, actor.getClass())) {
-	found = true;
-	break;
-      }
-      else if (ClassLocator.hasInterface(cls, actor.getClass())) {
+      if (ClassLocator.matches(cls, actor.getClass())) {
 	found = true;
 	break;
       }
