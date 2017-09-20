@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractNameUpdater.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -156,7 +156,17 @@ public abstract class AbstractNameUpdater<T>
    * @return		the replacement object, null in case of error
    */
   protected abstract T getReplacement(T old, String newName);
-  
+
+  /**
+   * Generates a logging prefix based on the option.
+   *
+   * @param option	the option to generate the prefix for
+   * @return		the prefix
+   */
+  protected String createPrefix(AbstractOption option) {
+    return option.getOptionHandler().getClass().getName() + "/" + option.getProperty();
+  }
+
   /**
    * Processes the specified argument option.
    * 
@@ -168,8 +178,13 @@ public abstract class AbstractNameUpdater<T>
     Method 	method;
     int		i;
     boolean	update;
-    
+
+    if (isLoggingEnabled())
+      getLogger().info(createPrefix(option));
+
     if (isBaseClassMatch(option.getBaseClass())) {
+      if (isLoggingEnabled())
+        getLogger().info(createPrefix(option) + ": baseclass match");
       current = (T) option.getCurrentValue();
       method  = option.getDescriptor().getWriteMethod();
       update  = false;
@@ -177,6 +192,8 @@ public abstract class AbstractNameUpdater<T>
 	for (i = 0; i < Array.getLength(current); i++) {
 	  element = (T) Array.get(current, i);
 	  if (isNameMatch(element, m_OldName)) {
+	    if (isLoggingEnabled())
+	      getLogger().info(createPrefix(option) + ": name match");
 	    element = getReplacement(element, m_NewName);
 	    if (element != null) {
 	      Array.set(current, i, element);
@@ -187,6 +204,8 @@ public abstract class AbstractNameUpdater<T>
       }
       else {
 	if (isNameMatch(current, m_OldName)) {
+	  if (isLoggingEnabled())
+	    getLogger().info(createPrefix(option) + ": name match");
 	  current = getReplacement(current, m_NewName);
 	  update  = (current != null);
 	}
@@ -196,6 +215,8 @@ public abstract class AbstractNameUpdater<T>
 	try {
 	  method.invoke(option.getOptionHandler(), current);
 	  m_Modified = true;
+	  if (isLoggingEnabled())
+	    getLogger().info(createPrefix(option) + ": modified");
 	}
 	catch (Exception e) {
 	  getLogger().log(Level.SEVERE, "Failed to update property '" + option.getProperty() + "' of '" + option.getOptionHandler().getClass().getName() + "':", e);
@@ -215,7 +236,13 @@ public abstract class AbstractNameUpdater<T>
    * @return		true if to traverse the options recursively
    */
   public boolean canRecurse(Class cls) {
-    return !cls.equals(Flow.class);
+    boolean 	result;
+
+    result = !cls.equals(Flow.class);
+    if (isLoggingEnabled())
+      getLogger().info("canRecurse: " + cls.getName() + " -> " + result);
+
+    return result;
   }
 
   /**
