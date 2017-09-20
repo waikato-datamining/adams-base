@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CallableActorRenamed.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.postprocessor;
 
@@ -78,6 +78,7 @@ public class CallableActorRenamed
     result = false;
 
     updater = new UpdateCallableActorName();
+    updater.setLoggingLevel(getLoggingLevel());
     updater.setOldName(oldActor.getName());
     updater.setNewName(newActor.getName());
     updater.process(tree.getActor());

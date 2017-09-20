@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * VariableRenamed.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.postprocessor;
 
@@ -122,6 +122,7 @@ public class VariableRenamed
     result = false;
 
     updater = new UpdateVariableName();
+    updater.setLoggingLevel(getLoggingLevel());
     updater.setOldName(getVariableName(oldActor).getValue());
     updater.setNewName(getVariableName(newActor).getValue());
     updater.process(tree.getActor());

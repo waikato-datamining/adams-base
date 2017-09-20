@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StorageValueRenamed.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.postprocessor;
 
@@ -122,6 +122,7 @@ public class StorageValueRenamed
     result = false;
 
     updater = new UpdateStorageName();
+    updater.setLoggingLevel(getLoggingLevel());
     updater.setOldName(getStorageName(oldActor).getValue());
     updater.setNewName(getStorageName(newActor).getValue());
     updater.process(tree.getActor());
