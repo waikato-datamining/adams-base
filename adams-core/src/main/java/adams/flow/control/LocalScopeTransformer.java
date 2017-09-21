@@ -15,7 +15,7 @@
 
 /*
  * LocalScopeTransformer.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -856,7 +856,7 @@ public class LocalScopeTransformer
       if (!ActorUtils.isTransformer(first))
 	result = "First active actor (" + first.getName() + ") is not a transformer!";
       else if (!ActorUtils.isTransformer(last))
-	result = "Last active actor (" + first.getName() + ") is not a transformer!";
+	result = "Last active actor (" + last.getName() + ") is not a transformer!";
     }
     
     if (result == null)
