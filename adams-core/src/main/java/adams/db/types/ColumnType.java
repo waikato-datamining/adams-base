@@ -297,7 +297,7 @@ public class ColumnType {
     result = getCompareType(conn);
 
     if (m_type == java.sql.Types.TIMESTAMP)
-      result += " NOT NULL DEFAULT '0000-00-00 00:00:00'";
+      result += " NOT NULL DEFAULT '0000-00-00 00:00:00'";  // TODO switch to DATETIME? TIMESTAMP is restricted to 1970-2038!
 
     return result;
   }
