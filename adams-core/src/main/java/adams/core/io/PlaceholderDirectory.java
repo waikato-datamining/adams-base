@@ -15,15 +15,15 @@
 
 /*
  * PlaceholderDirectory.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
 
+import adams.core.Placeholders;
+
 import java.io.File;
 import java.net.URI;
-
-import adams.core.Placeholders;
 
 /**
  * A specialized File class used for selecting directories with the GOE.
@@ -146,5 +146,15 @@ public class PlaceholderDirectory
    */
   public PlaceholderDirectory(URI uri) {
     super(uri);
+  }
+
+  /**
+   * Creates a file object using this directory and the specified name.
+   *
+   * @param name	the filename (no path)
+   * @return		the combine dir/filename
+   */
+  public PlaceholderFile createFile(String name) {
+    return new PlaceholderFile(getAbsolutePath() + File.separator + name);
   }
 }
