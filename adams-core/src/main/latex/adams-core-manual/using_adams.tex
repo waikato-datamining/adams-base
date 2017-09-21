@@ -3052,4 +3052,12 @@ This override can be used on all platforms.
   \begin{verbatim}
   export JAVA_TOOL_OPTIONS="-Dsun.java2d.xrender=false"
   \end{verbatim}
+
+  \item MySQL fails to create a table using a timestamp with \texttt{DEFAULT '0000-00-00 00:00:00'}.
+  You can avoid this by changing the SQL mode, removing the \texttt{NO\_ZERO\_DATE} directuve.
+  Use the following in your \texttt{my.cnf} or \texttt{my.ini} config file instead:
+  {\scriptsize
+  \begin{verbatim}
+  sql_mode=IGNORE_SPACE,ERROR_FOR_DIVISION_BY_ZERO,NO_ZERO_IN_DATE,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+  \end{verbatim}}
 \end{tight_itemize}
