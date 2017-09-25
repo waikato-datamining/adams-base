@@ -71,6 +71,7 @@
     <class.adams.flowsetuprunner>adams.flow.FlowSetupRunner</class.adams.flowsetuprunner>
     <!-- module-dependent -->
     <cxf.version>3.1.9</cxf.version>
+    <xercesimpl.version>2.8.1</xercesimpl.version>
     <jetty.version>9.2.15.v20160210</jetty.version>
     <xjc.version>3.1.0</xjc.version>
     <moa.version>2014.04</moa.version>
