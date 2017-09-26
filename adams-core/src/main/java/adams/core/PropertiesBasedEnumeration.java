@@ -65,7 +65,7 @@ public abstract class PropertiesBasedEnumeration<T extends AbstractItem>
 	if (props.hasKey(key + SUFFIX_ID)) {
 	  String id = props.getProperty(key + SUFFIX_ID);
 	  String display = props.getProperty(key + SUFFIX_DISPLAY);
-	  T item = newItem(id, display);
+	  T item = postProcess(newItem(id, display), props, key);
 	  items.add(item);
 	}
       }
@@ -79,6 +79,18 @@ public abstract class PropertiesBasedEnumeration<T extends AbstractItem>
       Array.set(result, i, items.get(i));
 
     return (T[]) result;
+  }
+
+  /**
+   * For post-processing an item. E.g., adding additional information.
+   *
+   * @param item	the new item
+   * @param props	the underlying properties
+   * @param key		the current key in the properties
+   * @return		the updated item
+   */
+  protected T postProcess(T item, Properties props, String key) {
+    return item;
   }
 
   /**
