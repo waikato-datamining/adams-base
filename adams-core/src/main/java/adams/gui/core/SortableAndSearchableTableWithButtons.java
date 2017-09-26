@@ -15,25 +15,23 @@
 
 /*
  * SortableAndSearchableTableWithButtons.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-import java.awt.Point;
-import java.awt.event.MouseEvent;
+import adams.gui.event.PopupMenuListener;
+import adams.gui.event.RemoveItemsListener;
 
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-
-import adams.gui.event.PopupMenuListener;
-import adams.gui.event.RemoveItemsListener;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 
 /**
  * Graphical component that consists of a SortableAndSearchableTable with
@@ -216,10 +214,7 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
    * @return		true if the selected items can be moved
    */
   public boolean canMoveUp() {
-    if (supportsMovingRows())
-      return ((MoveableTableModel) getModel()).canMoveUp(m_Component.getSelectedRows());
-    else
-      return false;
+    return (supportsMovingRows()) && ((MoveableTableModel) getModel()).canMoveUp(m_Component.getSelectedRows());
   }
 
   /**
@@ -228,10 +223,7 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
    * @return		true if the selected items can be moved
    */
   public boolean canMoveDown() {
-    if (supportsMovingRows())
-      return ((MoveableTableModel) getModel()).canMoveDown(m_Component.getSelectedRows());
-    else
-      return false;
+    return (supportsMovingRows()) &&((MoveableTableModel) getModel()).canMoveDown(m_Component.getSelectedRows());
   }
 
   /**
@@ -359,7 +351,6 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
    * @return  the index of the row that <code>point</code> lies in,
    *          or -1 if the result is not in the range
    *          [0, <code>getRowCount()</code>-1]
-   * @see     #getRowModel()
    */
   public int rowAtPoint(Point point) {
     return m_Component.rowAtPoint(point);
@@ -494,7 +485,6 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
    *
    * @return  the number of columns in the table
    * @see #getRowCount
-   * @see #removeColumn
    */
   public int getColumnCount() {
     return m_Component.getColumnCount();
@@ -620,11 +610,7 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
     if (m_CountModelListener != null)
       getModel().removeTableModelListener(m_CountModelListener);
 
-    m_CountModelListener = new TableModelListener() {
-      public void tableChanged(TableModelEvent e) {
-	updateCounts();
-      }
-    };
+    m_CountModelListener = (TableModelEvent e) -> updateCounts();
     dataModel.addTableModelListener(m_CountModelListener);
   }
 
@@ -740,5 +726,23 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
    */
   public boolean isRegExpSearch() {
     return m_Component.isRegExpSearch();
+  }
+
+  /**
+   * Sets whether to show a simple cell popup menu.
+   *
+   * @param value	true if to show menu
+   */
+  public void setShowSimpleCellPopupMenu(boolean value) {
+    m_Component.setShowSimpleCellPopupMenu(value);
+  }
+
+  /**
+   * Returns whether to show a simple cell popup menu.
+   *
+   * @return		true if to show menu
+   */
+  public boolean getShowSimpleCellPopupMenu() {
+    return m_Component.getShowSimpleCellPopupMenu();
   }
 }
