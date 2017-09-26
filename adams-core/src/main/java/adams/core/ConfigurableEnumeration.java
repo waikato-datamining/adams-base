@@ -52,10 +52,7 @@ public abstract class ConfigurableEnumeration<T extends ConfigurableEnumeration.
     /** the enumeration this item belongs to. */
     protected E m_Enumeration;
 
-    /** the label. */
-    protected String m_Label;
-
-    /** the (optional) id. */
+    /** the id. */
     protected String m_ID;
 
     /** the (optional) display text. */
@@ -65,17 +62,15 @@ public abstract class ConfigurableEnumeration<T extends ConfigurableEnumeration.
      * Initializes the enum type.
      *
      * @param enumeration	the owning enumeration
-     * @param label		the label of the enum type
      * @param id		the ID of the enum type, can be null
      * @param display		the display text, can be null
      */
-    public AbstractItem(E enumeration, String label, String id, String display) {
+    public AbstractItem(E enumeration, String id, String display) {
       m_Enumeration = enumeration;
-      if (label == null)
-        throw new IllegalArgumentException("Item label cannot be null!");
-      m_Label       = label;
-      m_ID          = (id == null) ? label : id;
-      m_Display     = (display == null) ? label : display;
+      if (id == null)
+        throw new IllegalArgumentException("Item ID cannot be null!");
+      m_ID          = id;
+      m_Display     = (display == null) ? id : display;
     }
 
     /**
@@ -94,15 +89,6 @@ public abstract class ConfigurableEnumeration<T extends ConfigurableEnumeration.
      */
     public E getEnumeration() {
       return m_Enumeration;
-    }
-
-    /**
-     * Returns the label.
-     *
-     * @return		the label
-     */
-    public String getLabel() {
-      return m_Label;
     }
 
     /**
@@ -129,7 +115,7 @@ public abstract class ConfigurableEnumeration<T extends ConfigurableEnumeration.
      * @return		the clone
      */
     public AbstractItem getClone() {
-      return getEnumeration().newItem(getLabel(), getID(), getDisplay());
+      return getEnumeration().newItem(getID(), getDisplay());
     }
 
     /**
@@ -149,7 +135,7 @@ public abstract class ConfigurableEnumeration<T extends ConfigurableEnumeration.
         result = getEnumeration().toString().compareTo(o.getEnumeration().toString());
 
       if (result == 0)
-        result = getLabel().compareTo(o.getLabel());
+        result = getID().compareTo(o.getID());
 
       return result;
     }
@@ -206,12 +192,6 @@ public abstract class ConfigurableEnumeration<T extends ConfigurableEnumeration.
     if (items == null)
       throw new IllegalArgumentException("Items cannot be null!");
 
-    unique = new HashSet<>();
-    for (T item: items)
-      unique.add(item.getLabel());
-    if (unique.size() != items.length)
-      throw new IllegalArgumentException("Item labels not unique: " + Utils.flatten(items, ","));
-
     // check uniqueness: ID
     unique = new HashSet<>();
     for (T item: items)
@@ -252,8 +232,7 @@ public abstract class ConfigurableEnumeration<T extends ConfigurableEnumeration.
     s      = s.toLowerCase();
 
     for (T item: m_Items) {
-      if (item.getLabel().toLowerCase().equals(s)
-        || item.getID().toLowerCase().equals(s)
+      if (item.getID().toLowerCase().equals(s)
         || item.getDisplay().toLowerCase().equals(s)) {
         result = item;
         break;
@@ -266,11 +245,10 @@ public abstract class ConfigurableEnumeration<T extends ConfigurableEnumeration.
   /**
    * Initializes the enum type.
    *
-   * @param label		the label of the enum type
    * @param id		the ID of the enum type, can be null
-   * @param display		the display text, can be null
+   * @param display	the display text, can be null
    */
-  public abstract T newItem(String label, String id, String display);
+  public abstract T newItem(String id, String display);
 
   /**
    * Returns an iterator over the items.

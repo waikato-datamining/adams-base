@@ -39,9 +39,6 @@ public abstract class PropertiesBasedEnumeration<T extends AbstractItem>
   /** the key for listing all the items. */
   public final static String KEY_ITEMS = "items";
 
-  /** the key suffix for the label. */
-  public final static String SUFFIX_LABEL = ".label";
-
   /** the key suffix for the ID. */
   public final static String SUFFIX_ID = ".id";
 
@@ -65,11 +62,10 @@ public abstract class PropertiesBasedEnumeration<T extends AbstractItem>
     if (props.hasKey(KEY_ITEMS)) {
       String[] keys = props.getProperty(KEY_ITEMS).split(",");
       for (String key: keys) {
-	if (props.hasKey(key + SUFFIX_LABEL)) {
-	  String label = props.getProperty(key + SUFFIX_LABEL);
+	if (props.hasKey(key + SUFFIX_ID)) {
 	  String id = props.getProperty(key + SUFFIX_ID);
 	  String display = props.getProperty(key + SUFFIX_DISPLAY);
-	  T item = newItem(label, id, display);
+	  T item = newItem(id, display);
 	  items.add(item);
 	}
       }

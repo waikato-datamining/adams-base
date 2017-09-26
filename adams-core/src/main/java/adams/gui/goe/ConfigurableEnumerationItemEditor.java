@@ -56,7 +56,7 @@ public class ConfigurableEnumerationItemEditor
    * @return		the generated string
    */
   public static String toString(AbstractOption option, Object object) {
-    return ((AbstractItem) object).getLabel();
+    return ((AbstractItem) object).getID();
   }
 
   /**
