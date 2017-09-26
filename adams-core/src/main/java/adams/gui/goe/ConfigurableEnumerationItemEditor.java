@@ -21,7 +21,9 @@
 
 package adams.gui.goe;
 
-import adams.core.ConfigurableEnumeration.Item;
+import adams.core.ConfigurableEnumeration.AbstractItem;
+import adams.core.Utils;
+import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseList;
 import adams.gui.core.BaseScrollPane;
@@ -54,7 +56,7 @@ public class ConfigurableEnumerationItemEditor
    * @return		the generated string
    */
   public static String toString(AbstractOption option, Object object) {
-    return ((Item) object).getLabel();
+    return ((AbstractItem) object).getLabel();
   }
 
   /**
@@ -65,12 +67,27 @@ public class ConfigurableEnumerationItemEditor
    * @return		the generated Item, null if failed to parse
    */
   public static Object valueOf(AbstractOption option, String str) {
-    Item	defValue;
+    AbstractItem	defValue;
+    Object		defCurrent;
 
-    if (option.getDefaultValue().getClass().isArray())
-      defValue = (Item) Array.get(option.getDefaultValue(), 0);
-    else
-      defValue = (Item) option.getDefaultValue();
+    defCurrent = option.getDefaultValue();
+    if (defCurrent.getClass().isArray()) {
+      if (Array.getLength(defCurrent) == 0) {
+        try {
+	  defValue = (AbstractItem) ((AbstractArgumentOption) option).getBaseClass().newInstance();
+	}
+	catch (Exception e) {
+          System.err.println("Failed to instantiate " + Utils.classToString(((AbstractArgumentOption) option).getBaseClass()) + "!");
+          return null;
+	}
+      }
+      else {
+	defValue = (AbstractItem) Array.get(defCurrent, 0);
+      }
+    }
+    else {
+      defValue = (AbstractItem) defCurrent;
+    }
 
     return defValue.getEnumeration().parse(str);
   }
@@ -102,10 +119,10 @@ public class ConfigurableEnumerationItemEditor
    */
   @Override
   public void setAsText(String text) {
-    Item	current;
-    Item	value;
+    AbstractItem	current;
+    AbstractItem	value;
 
-    current = (Item) getValue();
+    current = (AbstractItem) getValue();
     value   = current.getEnumeration().parse(text);
     if (value != null)
       setValue(value);
@@ -120,12 +137,12 @@ public class ConfigurableEnumerationItemEditor
    */
   @Override
   public String[] getTags() {
-    Item	current;
-    String[]	result;
-    Item[]	items;
-    int		i;
+    AbstractItem	current;
+    String[]		result;
+    AbstractItem[]	items;
+    int			i;
 
-    current = (Item) getValue();
+    current = (AbstractItem) getValue();
     items   = current.getEnumeration().values();
     result  = new String[items.length];
     for (i = 0; i < items.length; i++)
@@ -143,11 +160,11 @@ public class ConfigurableEnumerationItemEditor
   @Override
   public Object[] getSelectedObjects(Container parent) {
     Object[]			result;
-    Item			current;
+    AbstractItem		current;
     ApprovalDialog		dialog;
     BaseList			list;
 
-    current = (Item) getValue();
+    current = (AbstractItem) getValue();
     list = new BaseList(current.getEnumeration().values());
     list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     dialog = new ApprovalDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
@@ -160,7 +177,7 @@ public class ConfigurableEnumerationItemEditor
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
       result = list.getSelectedValuesList().toArray();
     else
-      result = (Object[]) Array.newInstance(Item.class, 0);
+      result = (Object[]) Array.newInstance(current.getClass(), 0);
 
     return result;
   }
