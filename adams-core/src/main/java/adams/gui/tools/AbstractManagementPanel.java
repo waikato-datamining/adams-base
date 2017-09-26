@@ -15,7 +15,7 @@
 
 /*
  * AbstractManagementPanel.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -36,9 +36,7 @@ import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.dialog.ApprovalDialog;
-import adams.gui.event.PopupMenuListener;
 import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -46,21 +44,17 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Array;
@@ -136,22 +130,14 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     // buttons/clear
     m_ButtonClear = new JButton("Clear");
     m_ButtonClear.setMnemonic('C');
-    m_ButtonClear.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	clear();
-      }
-    });
+    m_ButtonClear.addActionListener((ActionEvent e) -> clear());
     m_PanelValues.addToButtonsPanel(m_ButtonClear);
 
     // buttons/add
     if (!isReadOnly()) {
       m_ButtonAdd = new JButton("Add");
       m_ButtonAdd.setMnemonic('A');
-      m_ButtonAdd.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  addObject();
-	}
-      });
+      m_ButtonAdd.addActionListener((ActionEvent e) -> addObject());
       m_PanelValues.addToButtonsPanel(m_ButtonAdd);
     }
 
@@ -159,11 +145,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     if (!isReadOnly()) {
       m_ButtonUpdate = new JButton("Update");
       m_ButtonUpdate.setMnemonic('U');
-      m_ButtonUpdate.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  updateObject();
-	}
-      });
+      m_ButtonUpdate.addActionListener((ActionEvent e) -> updateObject());
       m_PanelValues.addToButtonsPanel(m_ButtonUpdate);
     }
 
@@ -174,37 +156,24 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
     m_ModelValues = newTableModel();
     m_TableValues = new SortableAndSearchableTableWithButtons(m_ModelValues);
+    m_TableValues.setShowSimpleCellPopupMenu(true);
     m_TableValues.setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
-    m_TableValues.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        update();
-      }
-    });
-    m_TableValues.addCellPopupMenuListener(new PopupMenuListener() {
-      public void showPopupMenu(MouseEvent e) {
-	BasePopupMenu menu = createPopupMenu(e);
-	if (menu != null)
-	  menu.showAbsolute(m_TableValues.getComponent(), e);
-      }
+    m_TableValues.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> update());
+    m_TableValues.addCellPopupMenuListener((MouseEvent e) -> {
+      BasePopupMenu menu = createPopupMenu(e);
+      if (menu != null)
+	menu.showAbsolute(m_TableValues.getComponent(), e);
     });
     m_PanelTable.add(m_TableValues, BorderLayout.CENTER);
 
     m_ButtonRefresh = new JButton("Refresh");
     m_ButtonRefresh.setMnemonic('R');
-    m_ButtonRefresh.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        refresh();
-      }
-    });
+    m_ButtonRefresh.addActionListener((ActionEvent e) -> refresh());
     m_TableValues.addToButtonsPanel(m_ButtonRefresh);
 
     m_ButtonLoad = new JButton("Load");
     m_ButtonLoad.setMnemonic('L');
-    m_ButtonLoad.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        loadValue();
-      }
-    });
+    m_ButtonLoad.addActionListener((ActionEvent e) -> loadValue());
     m_TableValues.addToButtonsPanel(m_ButtonLoad);
     m_TableValues.setDoubleClickButton(m_ButtonLoad);
 
@@ -212,20 +181,12 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
     m_ButtonRemove = new JButton("Remove");
     m_ButtonRemove.setMnemonic('m');
-    m_ButtonRemove.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        removeObjects();
-      }
-    });
+    m_ButtonRemove.addActionListener((ActionEvent e) -> removeObjects());
     m_TableValues.addToButtonsPanel(m_ButtonRemove);
 
     // search panel
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
-    m_PanelSearch.addSearchListener(new SearchListener() {
-      public void searchInitiated(SearchEvent e) {
-	m_TableValues.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
-      }
-    });
+    m_PanelSearch.addSearchListener((SearchEvent e) -> m_TableValues.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
     add(m_PanelSearch, BorderLayout.SOUTH);
   }
 
@@ -269,29 +230,21 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     menuitem = new JMenuItem("Copy");
     menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
     menuitem.setEnabled(m_TableValues.getSelectedRowCount() > 0);
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_TableValues.getComponent().copyToClipboard();
-      }
-    });
+    menuitem.addActionListener((ActionEvent ae) -> m_TableValues.getComponent().copyToClipboard());
     result.add(menuitem);
 
     menuitem = new JMenuItem("Save as...");
     menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	int ret = getFileChooser().showSaveDialog(AbstractManagementPanel.this);
-	if (ret != SpreadSheetFileChooser.APPROVE_OPTION)
-	  return;
-	File file = getFileChooser().getSelectedFile();
-	SpreadSheetWriter writer = getFileChooser().getWriter();
-	if (!writer.write(m_ModelValues.toSpreadSheet(), file)) {
-	  GUIHelper.showErrorMessage(
-	      AbstractManagementPanel.this,
-	      "Failed to save spreadsheet to the following file:\n" + file);
-	}
+    menuitem.addActionListener((ActionEvent ae) -> {
+      int ret = getFileChooser().showSaveDialog(AbstractManagementPanel.this);
+      if (ret != SpreadSheetFileChooser.APPROVE_OPTION)
+	return;
+      File file = getFileChooser().getSelectedFile();
+      SpreadSheetWriter writer = getFileChooser().getWriter();
+      if (!writer.write(m_ModelValues.toSpreadSheet(), file)) {
+	GUIHelper.showErrorMessage(
+	  AbstractManagementPanel.this,
+	  "Failed to save spreadsheet to the following file:\n" + file);
       }
     });
     result.add(menuitem);
@@ -326,11 +279,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
    * @see		#addListener(Component)
    */
   protected void addActionListener(JComboBox combo) {
-    combo.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	update();
-      }
-    });
+    combo.addActionListener((ActionEvent e) -> update());
   }
   
   /**
@@ -340,11 +289,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
    * @see		#addListener(Component)
    */
   protected void addChangeListener(AbstractChooserPanel chooser) {
-    chooser.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	update();
-      }
-    });
+    chooser.addChangeListener((ChangeEvent e) -> update());
   }
 
   /**
