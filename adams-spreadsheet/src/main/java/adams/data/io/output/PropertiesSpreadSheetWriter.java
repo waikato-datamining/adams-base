@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PropertiesSpreadSheetWriter.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -223,6 +223,8 @@ public class PropertiesSpreadSheetWriter
     // generate props
     props = new Properties();
     for (Row row: content.rows()) {
+      if (m_Stopped)
+        return false;
       if (row.hasCell(keyCol) && !row.getCell(keyCol).isMissing()) {
 	key = row.getCell(keyCol).getContent();
 	value = "";

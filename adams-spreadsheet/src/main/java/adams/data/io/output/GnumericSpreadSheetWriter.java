@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GnumericSpreadSheetWriter.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -315,6 +315,9 @@ public class GnumericSpreadSheetWriter
       stream.println("  <gnm:Sheets>");
       count = 0;
       for (SpreadSheet cont: content) {
+        if (m_Stopped)
+          return false;
+
 	count++;
 	name = m_SheetPrefix + count;
 	stream.println("    <gnm:Sheet>");
@@ -336,6 +339,9 @@ public class GnumericSpreadSheetWriter
 
 	// write data rows
 	for (n = 0; n < cont.getRowCount();  n++) {
+	  if (m_Stopped)
+	    return false;
+
 	  row = cont.getRow(n);
 	  for (i = 0; i < cont.getColumnCount(); i++) {
 	    cell = row.getCell(i);

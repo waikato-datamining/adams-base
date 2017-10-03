@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ODFSpreadSheetWriter.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -209,8 +209,11 @@ public class ODFSpreadSheetWriter
       spreadsheet = org.jopendocument.dom.spreadsheet.SpreadSheet.createEmpty(new DefaultTableModel());
       dformat = DateUtils.getTimestampFormatter();
       count   = 0;
-      names   = new HashSet<String>();
+      names   = new HashSet<>();
       for (SpreadSheet cont: content) {
+        if (m_Stopped)
+          return false;
+
 	count++;
 	// header
 	colNames = new String[cont.getColumnCount()];
@@ -224,6 +227,9 @@ public class ODFSpreadSheetWriter
 	model = new DefaultTableModel(colNames, cont.getRowCount());
 	// data
 	for (n = 0; n < cont.getRowCount(); n++) {
+	  if (m_Stopped)
+	    return false;
+
 	  row = cont.getRow(n);
 	  for (i = 0; i < cont.getColumnCount(); i++) {
 	    cell = row.getCell(i);

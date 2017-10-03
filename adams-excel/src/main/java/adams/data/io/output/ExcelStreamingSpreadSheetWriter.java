@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExcelStreamingSpreadSheetWriter.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -262,8 +262,11 @@ public class ExcelStreamingSpreadSheetWriter
       styleTime     = ExcelHelper.getDateCellStyle(workbook, Constants.TIME_FORMAT);
       
       count = 0;
-      names = new HashSet<String>();
+      names = new HashSet<>();
       for (SpreadSheet cont: content) {
+        if (m_Stopped)
+          return false;
+
 	sheet = workbook.createSheet();
 	if (cont.getName() != null) {
 	  name = cont.getName().replace("'", "");
@@ -285,6 +288,9 @@ public class ExcelStreamingSpreadSheetWriter
 
 	// data
 	for (n = 0; n < cont.getRowCount(); n++) {
+	  if (m_Stopped)
+	    return false;
+
 	  row   = sheet.createRow(n + 1);
 	  spRow = cont.getRow(n);
 	  for (i = 0; i < cont.getColumnCount(); i++) {

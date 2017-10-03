@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSpreadSheetWriter.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -64,6 +64,9 @@ public abstract class AbstractSpreadSheetWriter
     /** write to a stream. */
     STREAM
   }
+
+  /** whether the read process was stopped through an external source. */
+  protected boolean m_Stopped;
 
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
@@ -376,6 +379,22 @@ public abstract class AbstractSpreadSheetWriter
    */
   protected boolean doWrite(SpreadSheet content, OutputStream out) {
     return false;
+  }
+
+  /**
+   * Stops the reading (might not be immediate, depending on reader).
+   */
+  public void stopExecution() {
+    m_Stopped = true;
+  }
+
+  /**
+   * Returns whether the reading was stopped.
+   *
+   * @return		true if stopped
+   */
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**

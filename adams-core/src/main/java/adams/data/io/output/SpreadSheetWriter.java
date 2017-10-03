@@ -13,19 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetWriter.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
+
+import adams.core.StoppableWithFeedback;
+import adams.core.option.OptionHandler;
+import adams.data.io.input.SpreadSheetReader;
+import adams.data.spreadsheet.SpreadSheet;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.io.Writer;
-
-import adams.core.option.OptionHandler;
-import adams.data.io.input.SpreadSheetReader;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * Interface for spreadsheet writers.
@@ -34,7 +35,7 @@ import adams.data.spreadsheet.SpreadSheet;
  * @version $Revision$
  */
 public interface SpreadSheetWriter
-  extends OptionHandler {
+  extends OptionHandler, StoppableWithFeedback {
 
   /**
    * Returns a string describing the format (used in the file chooser).

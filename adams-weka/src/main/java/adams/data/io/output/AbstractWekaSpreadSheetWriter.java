@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractWekaSpreadSheetWriter.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -119,6 +119,8 @@ public abstract class AbstractWekaSpreadSheetWriter
             data.setRelationName(content.getName());
         }
 	m_Saver.setInstances(data);
+        if (m_Stopped)
+          return false;
 	m_Saver.setDestination(out);
 	m_Saver.writeBatch();
 	result = true;

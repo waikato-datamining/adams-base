@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SqlDumpSpreadSheetWriter.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -661,6 +661,9 @@ public class SqlDumpSpreadSheetWriter
 
       // write data rows
       for (DataRow row: content.rows()) {
+        if (m_Stopped)
+          return false;
+
 	first = true;
 	writer.write("INSERT INTO " + m_Table + " VALUES(");
 	for (String keyd: content.getHeaderRow().cellKeys()) {

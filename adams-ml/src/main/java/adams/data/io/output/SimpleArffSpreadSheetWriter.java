@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleArffSpreadSheetWriter.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -410,6 +410,9 @@ public class SimpleArffSpreadSheetWriter
       bwriter.write(SimpleArffSpreadSheetReader.KEYWORD_DATA);
       bwriter.newLine();
       for (Row row: content.rows()) {
+        if (m_Stopped)
+          return false;
+
 	for (i = 0; i < content.getColumnCount(); i++) {
 	  cell = row.getCell(i);
 	  if (i > 0)

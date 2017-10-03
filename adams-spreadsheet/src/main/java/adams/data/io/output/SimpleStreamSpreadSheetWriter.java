@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleStreamSpreadSheetWriter.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -281,6 +281,8 @@ public class SimpleStreamSpreadSheetWriter
     // data
     if (result) {
       for (Row row : content.rows()) {
+        if (m_Stopped)
+          return false;
 	result = writeRow(bwriter, content, row);
 	if (!result)
 	  getLogger().severe("Failed to write row to writer: " + row);

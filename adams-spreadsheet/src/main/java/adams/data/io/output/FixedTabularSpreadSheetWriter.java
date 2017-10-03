@@ -658,6 +658,9 @@ public class FixedTabularSpreadSheetWriter
 
       // data
       for (Row drow: content.rows()) {
+        if (m_Stopped)
+          return false;
+
 	if (!m_NoBorder)
 	  writer.write("|");
 	for (i = 0; i < content.getColumnCount(); i++) {

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AccessSpreadSheetWriter.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -566,6 +566,8 @@ public class AccessSpreadSheetWriter
     m_Appending = true;
     result      = writeHeader(content.getHeaderRow(), filename);
     for (DataRow row: content.rows()) {
+      if (m_Stopped)
+        return false;
       result = doWrite(row, filename);
       if (!result)
 	break;

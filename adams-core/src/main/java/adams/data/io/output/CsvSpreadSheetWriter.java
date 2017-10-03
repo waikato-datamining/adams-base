@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CsvSpreadSheetWriter.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -1322,6 +1322,9 @@ public class CsvSpreadSheetWriter
     m_IsAppending = m_Appending;
     result        = writeHeader(content.getHeaderRow(), writer);
     for (DataRow row: content.rows()) {
+      if (m_Stopped)
+        return false;
+
       result = doWrite(row, writer);
       if (!result)
 	break;
