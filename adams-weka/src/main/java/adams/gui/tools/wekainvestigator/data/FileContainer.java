@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileContainer.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.data;
 import adams.core.io.PlaceholderFile;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
+import weka.core.converters.ConverterUtils.DataSource;
 
 import java.io.File;
 import java.io.Serializable;
@@ -85,7 +86,6 @@ public class FileContainer
   public FileContainer(AbstractFileLoader loader, File source, Instances data) {
     super();
     try {
-      loader.setFile(source.getAbsoluteFile());
       m_Data   = data;
       m_Source = source;
       m_Loader = loader;
@@ -125,9 +125,12 @@ public class FileContainer
    */
   @Override
   protected boolean doReload() {
+    DataSource 	source;
+
     try {
       m_Loader.setFile(m_Source.getAbsoluteFile());
-      m_Data = m_Loader.getDataSet();
+      source = new DataSource(m_Loader);
+      m_Data = source.getDataSet();
       return true;
     }
     catch (Exception e) {
