@@ -28,6 +28,8 @@ import adams.db.JdbcUrl;
 import adams.db.datatype.AbstractDataTypeSetup;
 import adams.db.datatype.DummySetup;
 import adams.flow.core.OptionalPasswordPrompt;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.gui.dialog.PasswordDialog;
 
 import java.awt.Dialog;
@@ -41,7 +43,7 @@ import java.awt.Dialog.ModalityType;
  * @version $Revision$
  */
 public abstract class AbstractDatabaseConnection
-  extends AbstractStandalone 
+  extends AbstractStandalone
   implements OptionalPasswordPrompt {
 
   /** for serialization. */
@@ -68,9 +70,12 @@ public abstract class AbstractDatabaseConnection
   /** the custom stop message to use if flow gets stopped due to cancelation. */
   protected String m_CustomStopMessage;
 
+  /** how to perform the stop. */
+  protected StopMode m_StopMode;
+
   /** the data type setup to apply. */
   protected AbstractDataTypeSetup m_DataTypeSetup;
-  
+
   /**
    * Adds options to the internal list of options.
    */
@@ -79,32 +84,36 @@ public abstract class AbstractDatabaseConnection
     super.defineOptions();
 
     m_OptionManager.add(
-	    "url", "URL",
-	    new JdbcUrl(JdbcUrl.DEFAULT_URL), false);
+      "url", "URL",
+      new JdbcUrl(JdbcUrl.DEFAULT_URL), false);
 
     m_OptionManager.add(
-	    "user", "user",
-	    "", false);
+      "user", "user",
+      "", false);
 
     m_OptionManager.add(
-	    "password", "password",
-	    new BasePassword(), false);
+      "password", "password",
+      new BasePassword(), false);
 
     m_OptionManager.add(
-	    "prompt-for-password", "promptForPassword",
-	    false);
+      "prompt-for-password", "promptForPassword",
+      false);
 
     m_OptionManager.add(
-	    "data-type-setup", "dataTypeSetup",
-	    new DummySetup());
+      "data-type-setup", "dataTypeSetup",
+      new DummySetup());
 
     m_OptionManager.add(
-	    "stop-if-canceled", "stopFlowIfCanceled",
-	    false);
+      "stop-if-canceled", "stopFlowIfCanceled",
+      false);
 
     m_OptionManager.add(
-	    "custom-stop-message", "customStopMessage",
-	    "");
+      "custom-stop-message", "customStopMessage",
+      "");
+
+    m_OptionManager.add(
+      "stop-mode", "stopMode",
+      StopMode.GLOBAL);
   }
 
   /**
@@ -154,19 +163,19 @@ public abstract class AbstractDatabaseConnection
   public String URLTipText() {
     return "The JDBC URL of the database to connect to, can contain variables or file placeholders.";
   }
-  
+
   /**
    * Expands variables and placeholders.
-   * 
+   *
    * @return		the fully resolved URL
    */
   public String getResolvedURL() {
     String	result;
-    
+
     result = m_URL.getValue();
     result = getVariables().expand(result);
     result = Placeholders.expandStr(result);
-    
+
     return result;
   }
 
@@ -230,17 +239,17 @@ public abstract class AbstractDatabaseConnection
 
   /**
    * Sets whether to prompt for a password if none currently provided.
-   * 
+   *
    * @param value	true if to prompt for a password
    */
   public void setPromptForPassword(boolean value) {
     m_PromptForPassword = value;
     reset();
   }
-  
+
   /**
    * Returns whether to prompt for a password if none currently provided.
-   * 
+   *
    * @return		true if to prompt for a password
    */
   public boolean getPromptForPassword() {
@@ -254,9 +263,9 @@ public abstract class AbstractDatabaseConnection
    * 			displaying in the GUI or for listing the options.
    */
   public String promptForPasswordTipText() {
-    return 
-	"If enabled and authentication is required, the user gets prompted "
-	+ "for enter a password if none has been provided in the setup.";
+    return
+      "If enabled and authentication is required, the user gets prompted "
+        + "for enter a password if none has been provided in the setup.";
   }
 
   /**
@@ -344,8 +353,40 @@ public abstract class AbstractDatabaseConnection
    */
   public String customStopMessageTipText() {
     return
-        "The custom stop message to use in case a user cancelation stops the "
-      + "flow (default is the full name of the actor)";
+      "The custom stop message to use in case a user cancelation stops the "
+        + "flow (default is the full name of the actor)";
+  }
+
+  /**
+   * Sets the stop mode.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setStopMode(StopMode value) {
+    m_StopMode = value;
+    reset();
+  }
+
+  /**
+   * Returns the stop mode.
+   *
+   * @return		the mode
+   */
+  @Override
+  public StopMode getStopMode() {
+    return m_StopMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String stopModeTipText() {
+    return "The stop mode to use.";
   }
 
   /**
@@ -356,15 +397,15 @@ public abstract class AbstractDatabaseConnection
   public boolean doInteract() {
     boolean		result;
     PasswordDialog	dlg;
-    
+
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
     dlg.setLocationRelativeTo(getParentComponent());
     dlg.setVisible(true);
     result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
-    
+
     if (result)
       m_ActualPassword = dlg.getPassword();
-    
+
     return result;
   }
 
@@ -408,32 +449,32 @@ public abstract class AbstractDatabaseConnection
     adams.db.AbstractDatabaseConnection	conn;
 
     result = null;
-    
+
     m_ActualPassword = m_Password;
     conn             = null;
-    
+
     if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
       if (!isHeadless()) {
-	if (!doInteract()) {
-	  if (m_StopFlowIfCanceled) {
-	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	      getRoot().stopExecution("Flow canceled: " + getFullName());
-	    else
-	      getRoot().stopExecution(m_CustomStopMessage);
-	    result = getStopMessage();
-	  }
-	}
+        if (!doInteract()) {
+          if (m_StopFlowIfCanceled) {
+            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+              StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+            else
+              StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+            result = getStopMessage();
+          }
+        }
       }
       else if (supportsHeadlessInteraction()) {
-	if (!doInteractHeadless()) {
-	  if (m_StopFlowIfCanceled) {
-	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	      getRoot().stopExecution("Flow canceled: " + getFullName());
-	    else
-	      getRoot().stopExecution(m_CustomStopMessage);
-	    result = getStopMessage();
-	  }
-	}
+        if (!doInteractHeadless()) {
+          if (m_StopFlowIfCanceled) {
+            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+              StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+            else
+              StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+            result = getStopMessage();
+          }
+        }
       }
     }
 
@@ -441,26 +482,26 @@ public abstract class AbstractDatabaseConnection
       conn = getConnection();
       msg  = null;
       if (!conn.isConnected() && !conn.getConnectOnStartUp()) {
-	try {
-	  conn.connect();
-	}
-	catch (Exception e) {
-	  msg = handleException("Failed to connect to database (" + getURL() + "):", e);
-	}
+        try {
+          conn.connect();
+        }
+        catch (Exception e) {
+          msg = handleException("Failed to connect to database (" + getURL() + "):", e);
+        }
       }
       if (!conn.isConnected()) {
-	result = "Failed to connect to database (" + getURL() + ")";
-	if (msg == null)
-	  result += "!";
-	else
-	  result += ": " + msg;
+        result = "Failed to connect to database (" + getURL() + ")";
+        if (msg == null)
+          result += "!";
+        else
+          result += ": " + msg;
       }
     }
-    
+
     if (result == null) {
       msg = m_DataTypeSetup.setupDataTypes(conn.getConnection(false));
       if (msg != null)
-	result = "Failed to setup data types: " + msg;
+        result = "Failed to setup data types: " + msg;
     }
 
     return result;

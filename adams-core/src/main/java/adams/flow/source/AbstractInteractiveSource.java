@@ -25,6 +25,8 @@ import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.InteractiveActorWithCustomParentComponent;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.gui.core.GUIHelper;
 
 import java.awt.Component;
@@ -47,6 +49,9 @@ public abstract class AbstractInteractiveSource
 
   /** the custom stop message to use if flow gets stopped due to cancelation. */
   protected String m_CustomStopMessage;
+
+  /** how to perform the stop. */
+  protected StopMode m_StopMode;
 
   /** the (optional) parent component to use. */
   protected CallableActorReference m_ParentComponentActor;
@@ -76,6 +81,10 @@ public abstract class AbstractInteractiveSource
     m_OptionManager.add(
       "custom-stop-message", "customStopMessage",
       "");
+
+    m_OptionManager.add(
+      "stop-mode", "stopMode",
+      StopMode.GLOBAL);
 
     m_OptionManager.add(
       "parent-component-actor", "parentComponentActor",
@@ -165,6 +174,38 @@ public abstract class AbstractInteractiveSource
     return
       "The custom stop message to use in case a user cancelation stops the "
         + "flow (default is the full name of the actor)";
+  }
+
+  /**
+   * Sets the stop mode.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setStopMode(StopMode value) {
+    m_StopMode = value;
+    reset();
+  }
+
+  /**
+   * Returns the stop mode.
+   *
+   * @return		the mode
+   */
+  @Override
+  public StopMode getStopMode() {
+    return m_StopMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String stopModeTipText() {
+    return "The stop mode to use.";
   }
 
   /**
@@ -306,9 +347,9 @@ public abstract class AbstractInteractiveSource
       if (!doInteract()) {
         if (m_StopFlowIfCanceled) {
           if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-            getRoot().stopExecution("Flow canceled: " + getFullName());
+            StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
           else
-            getRoot().stopExecution(m_CustomStopMessage);
+            StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
         }
       }
     }
@@ -316,9 +357,9 @@ public abstract class AbstractInteractiveSource
       if (!doInteractHeadless()) {
         if (m_StopFlowIfCanceled) {
           if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-            getRoot().stopExecution("Flow canceled: " + getFullName());
+            StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
           else
-            getRoot().stopExecution(m_CustomStopMessage);
+            StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
         }
       }
     }

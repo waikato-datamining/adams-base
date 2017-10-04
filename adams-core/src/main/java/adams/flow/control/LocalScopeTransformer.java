@@ -33,6 +33,7 @@ import adams.flow.core.FlowVariables;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
+import adams.flow.core.StopRestrictor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -134,7 +135,7 @@ import adams.flow.core.Unknown;
 public class LocalScopeTransformer
   extends AbstractControlActor
   implements InputConsumer, OutputProducer, MutableActorHandler, 
-             VariablesHandler, StorageHandler, LocalScopeHandler {
+             VariablesHandler, StorageHandler, LocalScopeHandler, StopRestrictor {
 
   /** for serialization. */
   private static final long serialVersionUID = -2837014912083918343L;
@@ -993,7 +994,7 @@ public class LocalScopeTransformer
     m_Actors.stopExecution();
     super.stopExecution();
   }
-  
+
   /**
    * Cleans up after the execution has finished. Also removes graphical
    * components.

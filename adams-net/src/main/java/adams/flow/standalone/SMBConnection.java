@@ -15,7 +15,7 @@
 
 /*
  * SMBConnection.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -25,6 +25,8 @@ import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
 import adams.core.net.SMBAuthenticationProvider;
 import adams.flow.core.OptionalPasswordPrompt;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.gui.dialog.PasswordDialog;
 import jcifs.smb.NtlmPasswordAuthentication;
 
@@ -74,6 +76,9 @@ public class SMBConnection
   /** the custom stop message to use if flow gets stopped due to cancelation. */
   protected String m_CustomStopMessage;
 
+  /** how to perform the stop. */
+  protected StopMode m_StopMode;
+
   /** the SMB authentication. */
   protected transient NtlmPasswordAuthentication m_Session;
 
@@ -117,6 +122,10 @@ public class SMBConnection
     m_OptionManager.add(
       "custom-stop-message", "customStopMessage",
       "");
+
+    m_OptionManager.add(
+      "stop-mode", "stopMode",
+      StopMode.GLOBAL);
   }
 
   /**
@@ -325,6 +334,38 @@ public class SMBConnection
   }
 
   /**
+   * Sets the stop mode.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setStopMode(StopMode value) {
+    m_StopMode = value;
+    reset();
+  }
+
+  /**
+   * Returns the stop mode.
+   *
+   * @return		the mode
+   */
+  @Override
+  public StopMode getStopMode() {
+    return m_StopMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String stopModeTipText() {
+    return "The stop mode to use.";
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		true if successfully interacted
@@ -415,9 +456,9 @@ public class SMBConnection
           if (!doInteract()) {
             if (m_StopFlowIfCanceled) {
               if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-                getRoot().stopExecution("Flow canceled: " + getFullName());
+                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
               else
-                getRoot().stopExecution(m_CustomStopMessage);
+                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
               result = getStopMessage();
             }
           }
@@ -426,9 +467,9 @@ public class SMBConnection
           if (!doInteractHeadless()) {
             if (m_StopFlowIfCanceled) {
               if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-                getRoot().stopExecution("Flow canceled: " + getFullName());
+                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
               else
-                getRoot().stopExecution(m_CustomStopMessage);
+                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
               result = getStopMessage();
             }
           }

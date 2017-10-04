@@ -15,15 +15,10 @@
 
 /*
  * SMTPConnection.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
-
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
@@ -31,7 +26,14 @@ import adams.core.io.ConsoleHelper;
 import adams.core.net.AbstractSendEmail;
 import adams.core.net.EmailHelper;
 import adams.flow.core.OptionalPasswordPrompt;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.gui.dialog.PasswordDialog;
+
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -47,94 +49,94 @@ import adams.gui.dialog.PasswordDialog;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SMTPConnection
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-server &lt;java.lang.String&gt; (property: server)
  * &nbsp;&nbsp;&nbsp;The SMTP server (name&#47;IP address) to use.
  * &nbsp;&nbsp;&nbsp;default: smtp.gmail.com
  * </pre>
- * 
+ *
  * <pre>-port &lt;int&gt; (property: port)
  * &nbsp;&nbsp;&nbsp;The SMTP port to use.
  * &nbsp;&nbsp;&nbsp;default: 587
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * &nbsp;&nbsp;&nbsp;maximum: 65536
  * </pre>
- * 
+ *
  * <pre>-use-tls &lt;boolean&gt; (property: useTLS)
  * &nbsp;&nbsp;&nbsp;If enabled, TLS (transport layer security) is used.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-use-ssl &lt;boolean&gt; (property: useSSL)
  * &nbsp;&nbsp;&nbsp;If enabled, SSL (secure sockets layer) is used for connecting.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-timeout &lt;int&gt; (property: timeout)
  * &nbsp;&nbsp;&nbsp;The timeout in msecs.
  * &nbsp;&nbsp;&nbsp;default: 30000
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
+ *
  * <pre>-requires-auth &lt;boolean&gt; (property: requiresAuthentication)
  * &nbsp;&nbsp;&nbsp;Enable this if SMTP server requires authentication using user&#47;pw.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-user &lt;java.lang.String&gt; (property: user)
  * &nbsp;&nbsp;&nbsp;The SMTP user to use.
  * </pre>
- * 
+ *
  * <pre>-password &lt;adams.core.base.BasePassword&gt; (property: password)
  * &nbsp;&nbsp;&nbsp;The password of the SMTP user.
  * </pre>
- * 
+ *
  * <pre>-prompt-for-password &lt;boolean&gt; (property: promptForPassword)
  * &nbsp;&nbsp;&nbsp;If enabled and authentication is required, the user gets prompted for enter 
  * &nbsp;&nbsp;&nbsp;a password if none has been provided in the setup.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
  * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class SMTPConnection
-  extends AbstractStandalone 
+  extends AbstractStandalone
   implements OptionalPasswordPrompt {
 
   /** for serialization. */
@@ -176,6 +178,9 @@ public class SMTPConnection
   /** the custom stop message to use if flow gets stopped due to cancelation. */
   protected String m_CustomStopMessage;
 
+  /** how to perform the stop. */
+  protected StopMode m_StopMode;
+
   /**
    * Returns a string describing the object.
    *
@@ -184,7 +189,7 @@ public class SMTPConnection
   @Override
   public String globalInfo() {
     return
-        "SMTP server setup for overriding default parameters.";
+      "SMTP server setup for overriding default parameters.";
   }
 
   /**
@@ -195,48 +200,52 @@ public class SMTPConnection
     super.defineOptions();
 
     m_OptionManager.add(
-	    "server", "server",
-	    EmailHelper.getSmtpServer());
+      "server", "server",
+      EmailHelper.getSmtpServer());
 
     m_OptionManager.add(
-	    "port", "port",
-	    EmailHelper.getSmtpPort(), 1, 65536);
+      "port", "port",
+      EmailHelper.getSmtpPort(), 1, 65536);
 
     m_OptionManager.add(
-	    "use-tls", "useTLS",
-	    EmailHelper.getSmtpStartTLS());
+      "use-tls", "useTLS",
+      EmailHelper.getSmtpStartTLS());
 
     m_OptionManager.add(
-	    "use-ssl", "useSSL",
-	    EmailHelper.getSmtpUseSSL());
+      "use-ssl", "useSSL",
+      EmailHelper.getSmtpUseSSL());
 
     m_OptionManager.add(
-	    "timeout", "timeout",
-	    EmailHelper.getSmtpTimeout(), 0, null);
+      "timeout", "timeout",
+      EmailHelper.getSmtpTimeout(), 0, null);
 
     m_OptionManager.add(
-	    "requires-auth", "requiresAuthentication",
-	    EmailHelper.getSmtpRequiresAuthentication());
+      "requires-auth", "requiresAuthentication",
+      EmailHelper.getSmtpRequiresAuthentication());
 
     m_OptionManager.add(
-	    "user", "user",
-	    EmailHelper.getSmtpUser(), false);
+      "user", "user",
+      EmailHelper.getSmtpUser(), false);
 
     m_OptionManager.add(
-	    "password", "password",
-	    EmailHelper.getSmtpPassword(), false);
+      "password", "password",
+      EmailHelper.getSmtpPassword(), false);
 
     m_OptionManager.add(
-	    "prompt-for-password", "promptForPassword",
-	    false);
+      "prompt-for-password", "promptForPassword",
+      false);
 
     m_OptionManager.add(
-	    "stop-if-canceled", "stopFlowIfCanceled",
-	    false);
+      "stop-if-canceled", "stopFlowIfCanceled",
+      false);
 
     m_OptionManager.add(
-	    "custom-stop-message", "customStopMessage",
-	    "");
+      "custom-stop-message", "customStopMessage",
+      "");
+
+    m_OptionManager.add(
+      "stop-mode", "stopMode",
+      StopMode.GLOBAL);
   }
 
   /**
@@ -251,23 +260,23 @@ public class SMTPConnection
     String		value;
 
     result = "";
-    
+
     if (QuickInfoHelper.hasVariable(this, "requiresAuthentication") || m_RequiresAuthentication) {
       result += QuickInfoHelper.toString(this, "user", m_User);
       value = QuickInfoHelper.toString(this, "password", m_Password.getValue().replaceAll(".", "*"));
       if (value != null)
-	result += ":" + value;
+        result += ":" + value;
       result += "@";
     }
-    
+
     result += QuickInfoHelper.toString(this, "server", m_Server);
     result += QuickInfoHelper.toString(this, "port", m_Port, ":");
-    
+
     options = new ArrayList<String>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useTLS", m_UseTLS, "TLS"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useSSL", m_UseSSL, "SSL"));
     if (   (QuickInfoHelper.hasVariable(this, "requiresAuthentication") || m_RequiresAuthentication)
-        && (QuickInfoHelper.hasVariable(this, "promptForPassword") || m_PromptForPassword) ) {
+      && (QuickInfoHelper.hasVariable(this, "promptForPassword") || m_PromptForPassword) ) {
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "promptForPassword", m_PromptForPassword, "prompt for password"));
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stop flow"));
     }
@@ -520,17 +529,17 @@ public class SMTPConnection
 
   /**
    * Sets whether to prompt for a password if none currently provided.
-   * 
+   *
    * @param value	true if to prompt for a password
    */
   public void setPromptForPassword(boolean value) {
     m_PromptForPassword = value;
     reset();
   }
-  
+
   /**
    * Returns whether to prompt for a password if none currently provided.
-   * 
+   *
    * @return		true if to prompt for a password
    */
   public boolean getPromptForPassword() {
@@ -544,9 +553,9 @@ public class SMTPConnection
    * 			displaying in the GUI or for listing the options.
    */
   public String promptForPasswordTipText() {
-    return 
-	"If enabled and authentication is required, the user gets prompted "
-	+ "for enter a password if none has been provided in the setup.";
+    return
+      "If enabled and authentication is required, the user gets prompted "
+        + "for enter a password if none has been provided in the setup.";
   }
 
   /**
@@ -605,8 +614,40 @@ public class SMTPConnection
    */
   public String customStopMessageTipText() {
     return
-        "The custom stop message to use in case a user cancelation stops the "
-      + "flow (default is the full name of the actor)";
+      "The custom stop message to use in case a user cancelation stops the "
+        + "flow (default is the full name of the actor)";
+  }
+
+  /**
+   * Sets the stop mode.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setStopMode(StopMode value) {
+    m_StopMode = value;
+    reset();
+  }
+
+  /**
+   * Returns the stop mode.
+   *
+   * @return		the mode
+   */
+  @Override
+  public StopMode getStopMode() {
+    return m_StopMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String stopModeTipText() {
+    return "The stop mode to use.";
   }
 
   /**
@@ -617,15 +658,15 @@ public class SMTPConnection
   public boolean doInteract() {
     boolean		result;
     PasswordDialog	dlg;
-    
+
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
     dlg.setLocationRelativeTo(getParentComponent());
     dlg.setVisible(true);
     result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
-    
+
     if (result)
       m_ActualPassword = dlg.getPassword();
-    
+
     return result;
   }
 
@@ -665,14 +706,14 @@ public class SMTPConnection
    */
   public void initializeSmtpSession(AbstractSendEmail sendEmail) throws Exception {
     sendEmail.initializeSmtpSession(
-	  m_Server, 
-	  m_Port, 
-	  m_UseTLS, 
-	  m_UseSSL,
-	  m_Timeout, 
-	  m_RequiresAuthentication, 
-	  m_User, 
-	  m_ActualPassword);
+      m_Server,
+      m_Port,
+      m_UseTLS,
+      m_UseSSL,
+      m_Timeout,
+      m_RequiresAuthentication,
+      m_User,
+      m_ActualPassword);
   }
 
   /**
@@ -683,36 +724,36 @@ public class SMTPConnection
   @Override
   protected String doExecute() {
     String	result;
-    
+
     result = null;
-    
+
     m_ActualPassword = m_Password;
-    
+
     if (m_RequiresAuthentication && m_PromptForPassword && (m_Password.getValue().length() == 0)) {
       if (!isHeadless()) {
-	if (!doInteract()) {
-	  if (m_StopFlowIfCanceled) {
-	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	      getRoot().stopExecution("Flow canceled: " + getFullName());
-	    else
-	      getRoot().stopExecution(m_CustomStopMessage);
-	    result = getStopMessage();
-	  }
-	}
+        if (!doInteract()) {
+          if (m_StopFlowIfCanceled) {
+            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+              StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+            else
+              StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+            result = getStopMessage();
+          }
+        }
       }
       else if (supportsHeadlessInteraction()) {
-	if (!doInteractHeadless()) {
-	  if (m_StopFlowIfCanceled) {
-	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	      getRoot().stopExecution("Flow canceled: " + getFullName());
-	    else
-	      getRoot().stopExecution(m_CustomStopMessage);
-	    result = getStopMessage();
-	  }
-	}
+        if (!doInteractHeadless()) {
+          if (m_StopFlowIfCanceled) {
+            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+              StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+            else
+              StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+            result = getStopMessage();
+          }
+        }
       }
     }
-    
+
     return result;
   }
 }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InteractiveActor.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -26,7 +26,7 @@ package adams.flow.core;
  * @version $Revision$
  */
 public interface InteractiveActor 
-  extends Actor {
+  extends Actor, StopModeSupporter {
 
   /**
    * Sets whether to stop the flow if dialog canceled.

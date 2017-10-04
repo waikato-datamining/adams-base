@@ -41,6 +41,7 @@ import adams.flow.core.CallableNamesRecorder;
 import adams.flow.core.FlowVariables;
 import adams.flow.core.PauseStateHandler;
 import adams.flow.core.PauseStateManager;
+import adams.flow.core.StopRestrictor;
 import adams.flow.core.TriggerableEvent;
 import adams.flow.execution.Debug;
 import adams.flow.execution.FlowExecutionListener;
@@ -158,7 +159,7 @@ public class Flow
   extends MutableConnectedControlActor
   implements MutableLogEntryHandler, StorageHandler,
   VariablesHandler, TriggerableEvent, PauseStateHandler,
-  FlowExecutionListeningSupporter, ScopeHandler {
+  FlowExecutionListeningSupporter, ScopeHandler, StopRestrictor {
 
   /** for serialization. */
   private static final long serialVersionUID = 723059748204261319L;
@@ -301,7 +302,7 @@ public class Flow
     m_ParentComponent          = null;
     m_DefaultCloseOperation    = BaseFrame.HIDE_ON_CLOSE;
     m_Headless                 = false;
-    m_FlowID = RuntimeIDGenerator.getSingleton().next();
+    m_FlowID                   = RuntimeIDGenerator.getSingleton().next();
   }
 
   /**

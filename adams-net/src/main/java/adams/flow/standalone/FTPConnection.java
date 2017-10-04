@@ -15,7 +15,7 @@
 
 /*
  * FTPConnection.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -24,6 +24,8 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
 import adams.flow.core.OptionalPasswordPrompt;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.gui.dialog.PasswordDialog;
 import org.apache.commons.net.ProtocolCommandEvent;
 import org.apache.commons.net.ProtocolCommandListener;
@@ -48,70 +50,70 @@ import java.util.logging.Level;
  *
  <!-- options-start -->
  * Valid options are: <br><br>
- * 
+ *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
  * &nbsp;&nbsp;&nbsp;the console (0 = off).
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: FTPConnection
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
- * 
+ *
  * <pre>-host &lt;java.lang.String&gt; (property: host)
  * &nbsp;&nbsp;&nbsp;The host (name&#47;IP address) to connect to.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-user &lt;java.lang.String&gt; (property: user)
  * &nbsp;&nbsp;&nbsp;The FTP user to use for connecting.
  * </pre>
- * 
+ *
  * <pre>-password &lt;adams.core.base.BasePassword&gt; (property: password)
  * &nbsp;&nbsp;&nbsp;The password of the FTP user to use for connecting.
  * </pre>
- * 
+ *
  * <pre>-passive (property: usePassiveMode)
  * &nbsp;&nbsp;&nbsp;If enabled, passive mode is used instead.
  * </pre>
- * 
+ *
  * <pre>-binary (property: useBinaryMode)
  * &nbsp;&nbsp;&nbsp;If enabled, binary mode is used instead of ASCII.
  * </pre>
- * 
+ *
  * <pre>-prompt-for-password (property: promptForPassword)
  * &nbsp;&nbsp;&nbsp;If enabled, the user gets prompted for enter a password if none has been 
  * &nbsp;&nbsp;&nbsp;provided in the setup.
  * </pre>
- * 
+ *
  * <pre>-stop-if-canceled (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
  * </pre>
- * 
+ *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
  * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -148,6 +150,9 @@ public class FTPConnection
   /** whether to stop the flow if canceled. */
   protected boolean m_StopFlowIfCanceled;
 
+  /** how to perform the stop. */
+  protected StopMode m_StopMode;
+
   /** the custom stop message to use if flow gets stopped due to cancelation. */
   protected String m_CustomStopMessage;
 
@@ -162,9 +167,9 @@ public class FTPConnection
   @Override
   public String globalInfo() {
     return
-        "Provides access to a FTP host.\n"
-      + "If debugging is enabled, the FTP commands issued by other actors will "
-      + "get printed as debug output of this actor.";
+      "Provides access to a FTP host.\n"
+        + "If debugging is enabled, the FTP commands issued by other actors will "
+        + "get printed as debug output of this actor.";
   }
 
   /**
@@ -175,36 +180,40 @@ public class FTPConnection
     super.defineOptions();
 
     m_OptionManager.add(
-	    "host", "host",
-	    "");
+      "host", "host",
+      "");
 
     m_OptionManager.add(
-	    "user", "user",
-	    "anonymous", false);
+      "user", "user",
+      "anonymous", false);
 
     m_OptionManager.add(
-	    "password", "password",
-	    new BasePassword(""), false);
+      "password", "password",
+      new BasePassword(""), false);
 
     m_OptionManager.add(
-	    "passive", "usePassiveMode",
-	    false);
+      "passive", "usePassiveMode",
+      false);
 
     m_OptionManager.add(
-	    "binary", "useBinaryMode",
-	    false);
+      "binary", "useBinaryMode",
+      false);
 
     m_OptionManager.add(
-	    "prompt-for-password", "promptForPassword",
-	    false);
+      "prompt-for-password", "promptForPassword",
+      false);
 
     m_OptionManager.add(
-	    "stop-if-canceled", "stopFlowIfCanceled",
-	    false);
+      "stop-if-canceled", "stopFlowIfCanceled",
+      false);
 
     m_OptionManager.add(
-	    "custom-stop-message", "customStopMessage",
-	    "");
+      "custom-stop-message", "customStopMessage",
+      "");
+
+    m_OptionManager.add(
+      "stop-mode", "stopMode",
+      StopMode.GLOBAL);
   }
 
   /**
@@ -395,17 +404,17 @@ public class FTPConnection
 
   /**
    * Sets whether to prompt for a password if none currently provided.
-   * 
+   *
    * @param value	true if to prompt for a password
    */
   public void setPromptForPassword(boolean value) {
     m_PromptForPassword = value;
     reset();
   }
-  
+
   /**
    * Returns whether to prompt for a password if none currently provided.
-   * 
+   *
    * @return		true if to prompt for a password
    */
   public boolean getPromptForPassword() {
@@ -419,9 +428,9 @@ public class FTPConnection
    * 			displaying in the GUI or for listing the options.
    */
   public String promptForPasswordTipText() {
-    return 
-	"If enabled, the user gets prompted "
-	+ "for enter a password if none has been provided in the setup.";
+    return
+      "If enabled, the user gets prompted "
+        + "for enter a password if none has been provided in the setup.";
   }
 
   /**
@@ -480,8 +489,40 @@ public class FTPConnection
    */
   public String customStopMessageTipText() {
     return
-        "The custom stop message to use in case a user cancelation stops the "
-      + "flow (default is the full name of the actor)";
+      "The custom stop message to use in case a user cancelation stops the "
+        + "flow (default is the full name of the actor)";
+  }
+
+  /**
+   * Sets the stop mode.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setStopMode(StopMode value) {
+    m_StopMode = value;
+    reset();
+  }
+
+  /**
+   * Returns the stop mode.
+   *
+   * @return		the mode
+   */
+  @Override
+  public StopMode getStopMode() {
+    return m_StopMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String stopModeTipText() {
+    return "The stop mode to use.";
   }
 
   /**
@@ -492,15 +533,15 @@ public class FTPConnection
   public boolean doInteract() {
     boolean		result;
     PasswordDialog	dlg;
-    
+
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
     dlg.setLocationRelativeTo(getParentComponent());
     dlg.setVisible(true);
     result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
-    
+
     if (result)
       m_ActualPassword = dlg.getPassword();
-    
+
     return result;
   }
 
@@ -540,7 +581,7 @@ public class FTPConnection
   public synchronized FTPClient getFTPClient() {
     if (m_Client == null)
       connect();
-    
+
     return m_Client;
   }
 
@@ -566,9 +607,9 @@ public class FTPConnection
           if (!doInteract()) {
             if (m_StopFlowIfCanceled) {
               if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-                getRoot().stopExecution("Flow canceled: " + getFullName());
+                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
               else
-                getRoot().stopExecution(m_CustomStopMessage);
+                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
               result = getStopMessage();
             }
           }
@@ -577,9 +618,9 @@ public class FTPConnection
           if (!doInteractHeadless()) {
             if (m_StopFlowIfCanceled) {
               if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-                getRoot().stopExecution("Flow canceled: " + getFullName());
+                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
               else
-                getRoot().stopExecution(m_CustomStopMessage);
+                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
               result = getStopMessage();
             }
           }
@@ -596,10 +637,10 @@ public class FTPConnection
 
     return result;
   }
-  
+
   /**
    * Starts up a FTP session.
-   * 
+   *
    * @return		null if OK, otherwise error message
    */
   protected String connect() {
@@ -607,25 +648,25 @@ public class FTPConnection
     int		reply;
 
     result = null;
-    
+
     try {
       m_Client = new FTPClient();
       m_Client.addProtocolCommandListener(this);
       m_Client.connect(m_Host);
       reply = m_Client.getReplyCode();
       if (!FTPReply.isPositiveCompletion(reply)) {
-	result = "FTP server refused connection: " + reply;
+        result = "FTP server refused connection: " + reply;
       }
       else {
-	if (!m_Client.login(m_User, m_ActualPassword.getValue())) {
-	  result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'";
-	}
-	else {
-	  if (m_UsePassiveMode)
-	    m_Client.enterLocalPassiveMode();
-	  if (m_UseBinaryMode)
-	    m_Client.setFileType(FTPClient.BINARY_FILE_TYPE);
-	}
+        if (!m_Client.login(m_User, m_ActualPassword.getValue())) {
+          result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'";
+        }
+        else {
+          if (m_UsePassiveMode)
+            m_Client.enterLocalPassiveMode();
+          if (m_UseBinaryMode)
+            m_Client.setFileType(FTPClient.BINARY_FILE_TYPE);
+        }
       }
     }
     catch (Exception e) {
@@ -642,13 +683,13 @@ public class FTPConnection
   public void disconnect() {
     if (m_Client != null) {
       if (m_Client.isConnected()) {
-	try {
-	  m_Client.disconnect();
-	}
-	catch (Exception e) {
-	  getLogger().log(Level.SEVERE, "Failed to disconnect from '" + m_Host + "':", e);
-	}
-	m_Client.removeProtocolCommandListener(this);
+        try {
+          m_Client.disconnect();
+        }
+        catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to disconnect from '" + m_Host + "':", e);
+        }
+        m_Client.removeProtocolCommandListener(this);
       }
     }
     m_Client = null;

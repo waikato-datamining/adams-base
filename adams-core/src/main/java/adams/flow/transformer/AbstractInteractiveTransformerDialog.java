@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractInteractiveTransformerDialog.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -23,6 +23,8 @@ import adams.core.CleanUpHandler;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InteractiveActor;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -37,7 +39,7 @@ import java.awt.GraphicsConfiguration;
 
 /**
  * Ancestor for graphical actors that are interactive.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
@@ -75,6 +77,9 @@ public abstract class AbstractInteractiveTransformerDialog
   /** the custom stop message to use if flow gets stopped due to cancelation. */
   protected String m_CustomStopMessage;
 
+  /** how to perform the stop. */
+  protected StopMode m_StopMode;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -83,32 +88,36 @@ public abstract class AbstractInteractiveTransformerDialog
     super.defineOptions();
 
     m_OptionManager.add(
-	    "short-title", "shortTitle",
-	    false);
+      "short-title", "shortTitle",
+      false);
 
     m_OptionManager.add(
-	    "width", "width",
-	    getDefaultWidth(), 1, null);
+      "width", "width",
+      getDefaultWidth(), 1, null);
 
     m_OptionManager.add(
-	    "height", "height",
-	    getDefaultHeight(), 1, null);
+      "height", "height",
+      getDefaultHeight(), 1, null);
 
     m_OptionManager.add(
-	    "x", "x",
-	    getDefaultX(), -3, null);
+      "x", "x",
+      getDefaultX(), -3, null);
 
     m_OptionManager.add(
-	    "y", "y",
-	    getDefaultY(), -3, null);
+      "y", "y",
+      getDefaultY(), -3, null);
 
     m_OptionManager.add(
-	    "stop-if-canceled", "stopFlowIfCanceled",
-	    false);
+      "stop-if-canceled", "stopFlowIfCanceled",
+      false);
 
     m_OptionManager.add(
-	    "custom-stop-message", "customStopMessage",
-	    "");
+      "custom-stop-message", "customStopMessage",
+      "");
+
+    m_OptionManager.add(
+      "stop-mode", "stopMode",
+      StopMode.GLOBAL);
   }
 
   /**
@@ -389,8 +398,40 @@ public abstract class AbstractInteractiveTransformerDialog
   @Override
   public String customStopMessageTipText() {
     return
-        "The custom stop message to use in case a user cancelation stops the "
-      + "flow (default is the full name of the actor)";
+      "The custom stop message to use in case a user cancelation stops the "
+        + "flow (default is the full name of the actor)";
+  }
+
+  /**
+   * Sets the stop mode.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setStopMode(StopMode value) {
+    m_StopMode = value;
+    reset();
+  }
+
+  /**
+   * Returns the stop mode.
+   *
+   * @return		the mode
+   */
+  @Override
+  public StopMode getStopMode() {
+    return m_StopMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String stopModeTipText() {
+    return "The stop mode to use.";
   }
 
   /**
@@ -428,13 +469,13 @@ public abstract class AbstractInteractiveTransformerDialog
 
   /**
    * Returns the panel.
-   * 
+   *
    * @return		the panel, null if not available
    */
   public BasePanel getPanel() {
     return m_Panel;
   }
-  
+
   /**
    * Creates a title for the dialog. Default implementation only returns
    * the full name of the actor.
@@ -528,7 +569,7 @@ public abstract class AbstractInteractiveTransformerDialog
 
   /**
    * Returns the dialog.
-   * 
+   *
    * @return		the dialog, null if not available
    */
   public BaseDialog getDialog() {
@@ -574,38 +615,38 @@ public abstract class AbstractInteractiveTransformerDialog
   @Override
   protected String doExecute() {
     String	result;
-    
+
     result = null;
-    
+
     if (!isHeadless()) {
       if (m_Panel == null) {
-	m_Panel = newPanel();
-	m_Dialog = createDialog(m_Panel);
+        m_Panel = newPanel();
+        m_Dialog = createDialog(m_Panel);
       }
-      
+
       if (!doInteract()) {
-	if (m_StopFlowIfCanceled) {
-	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	    getRoot().stopExecution("Flow canceled: " + getFullName());
-	  else
-	    getRoot().stopExecution(m_CustomStopMessage);
-	}
-	else {
-	  result = "User cancelled dialog!";
-	}
+        if (m_StopFlowIfCanceled) {
+          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+            StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+          else
+            StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+        }
+        else {
+          result = "User cancelled dialog!";
+        }
       }
     }
     else if (supportsHeadlessInteraction()) {
       if (!doInteractHeadless()) {
-	if (m_StopFlowIfCanceled) {
-	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	    getRoot().stopExecution("Flow canceled: " + getFullName());
-	  else
-	    getRoot().stopExecution(m_CustomStopMessage);
-	}
-	else {
-	  result = "User cancelled dialog!";
-	}
+        if (m_StopFlowIfCanceled) {
+          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+            StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+          else
+            StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+        }
+        else {
+          result = "User cancelled dialog!";
+        }
       }
     }
 
@@ -618,7 +659,7 @@ public abstract class AbstractInteractiveTransformerDialog
   protected void cleanUpGUI() {
     if (m_Dialog != null) {
       if (m_Panel instanceof CleanUpHandler)
-	((CleanUpHandler) m_Panel).cleanUp();
+        ((CleanUpHandler) m_Panel).cleanUp();
 
       m_Dialog.setVisible(false);
       m_Dialog.dispose();
@@ -635,7 +676,7 @@ public abstract class AbstractInteractiveTransformerDialog
   public void stopExecution() {
     if (m_Dialog != null) {
       if (m_Dialog.isVisible())
-	m_Dialog.setVisible(false);
+        m_Dialog.setVisible(false);
     }
 
     super.stopExecution();

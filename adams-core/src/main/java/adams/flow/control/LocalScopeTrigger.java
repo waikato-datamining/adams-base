@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LocalScopeTrigger.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -26,6 +26,7 @@ import adams.core.base.BaseRegExp;
 import adams.flow.core.Actor;
 import adams.flow.core.CallableNamesRecorder;
 import adams.flow.core.FlowVariables;
+import adams.flow.core.StopRestrictor;
 
 /**
  <!-- globalinfo-start -->
@@ -147,7 +148,7 @@ import adams.flow.core.FlowVariables;
  */
 public class LocalScopeTrigger
   extends Trigger 
-  implements VariablesHandler, StorageHandler, LocalScopeHandler {
+  implements VariablesHandler, StorageHandler, LocalScopeHandler, StopRestrictor {
 
   /** for serialization. */
   private static final long serialVersionUID = -8344934611549310497L;
@@ -187,7 +188,7 @@ public class LocalScopeTrigger
 
   /** the regular expression of the variables to propagate. */
   protected BaseRegExp m_StorageRegExp;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -719,7 +720,7 @@ public class LocalScopeTrigger
     
     return result;
   }
-  
+
   /**
    * Cleans up after the execution has finished. Also removes graphical
    * components.

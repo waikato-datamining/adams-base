@@ -13,16 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Stop.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.AbstractActor;
+import adams.flow.core.Actor;
 import adams.flow.core.ControlActor;
 import adams.flow.core.InputConsumer;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
+import adams.flow.core.StopModeSupporter;
+import adams.flow.core.StopRestrictor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -85,13 +90,16 @@ import adams.flow.core.Unknown;
  */
 public class Stop
   extends AbstractActor
-  implements ControlActor, InputConsumer {
+  implements ControlActor, InputConsumer, StopModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -6615127883045169960L;
 
   /** the stop message to fail with. */
   protected String m_StopMessage;
+
+  /** how to perform the stop. */
+  protected StopMode m_StopMode;
 
   /**
    * Returns a string describing the object.
@@ -100,7 +108,8 @@ public class Stop
    */
   @Override
   public String globalInfo() {
-    return "Stops the execution of the flow when triggered.";
+    return
+      "Stops the execution of the flow when triggered.";
   }
 
   /**
@@ -111,8 +120,12 @@ public class Stop
     super.defineOptions();
 
     m_OptionManager.add(
-	    "stop-msg", "stopMessage",
-	    "");
+      "stop-msg", "stopMessage",
+      "");
+
+    m_OptionManager.add(
+      "stop-mode", "stopMode",
+      StopMode.GLOBAL);
   }
 
   /**
@@ -122,7 +135,12 @@ public class Stop
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "stopMessage", (m_StopMessage.length() > 0 ? m_StopMessage : null));
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "stopMessage", (m_StopMessage.length() > 0 ? m_StopMessage : null));
+    result += QuickInfoHelper.toString(this, "stopMode", m_StopMode, ", mode: ");
+
+    return result;
   }
 
   /**
@@ -153,6 +171,38 @@ public class Stop
    */
   public String stopMessageTipText() {
     return "The optional stop message to send when stopping the flow; variables get automatically expanded.";
+  }
+
+  /**
+   * Sets the stop mode.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setStopMode(StopMode value) {
+    m_StopMode = value;
+    reset();
+  }
+
+  /**
+   * Returns the stop mode.
+   *
+   * @return		the mode
+   */
+  @Override
+  public StopMode getStopMode() {
+    return m_StopMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String stopModeTipText() {
+    return "The stop mode to use.";
   }
 
   /**
@@ -191,16 +241,35 @@ public class Stop
   }
 
   /**
+   * Returns the enclosing {@link StopRestrictor}.
+   *
+   * @return		the restrictor
+   */
+  protected Actor getStopRestrictor() {
+    Actor	result;
+    Actor	parent;
+
+    result = null;
+    parent = getParent();
+    do {
+      if (parent instanceof StopRestrictor)
+	result = parent;
+    }
+    while ((parent != null) && (result == null));
+
+    if (result == null)
+      result = getRoot();
+
+    return result;
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
   protected String doExecute() {
-    if (m_StopMessage.length() == 0)
-      getRoot().stopExecution();
-    else
-      getRoot().stopExecution(getVariables().expand(m_StopMessage));
-    return null;
+    return StopHelper.stop(this, m_StopMode, (m_StopMessage.length() == 0) ? null : m_StopMessage);
   }
 }

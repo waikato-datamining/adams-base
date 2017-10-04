@@ -15,13 +15,10 @@
 
 /*
  * SpreadSheetFileWriter.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
@@ -31,6 +28,9 @@ import adams.data.io.output.MultiSheetSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -202,7 +202,7 @@ public class SpreadSheetFileWriter
   public Class[] accepts() {
     List<Class>	result;
     
-    result = new ArrayList<Class>();
+    result = new ArrayList<>();
     result.add(SpreadSheet.class);
 
     if (m_Writer instanceof MultiSheetSpreadSheetWriter)
@@ -246,6 +246,20 @@ public class SpreadSheetFileWriter
 	result = "Problems writing spreadsheets to '" + m_OutputFile + "'!";
     }
 
+    // skip any error message
+    if (m_Writer.isStopped())
+      result = null;
+
     return result;
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_Writer != null)
+      m_Writer.stopExecution();
+    super.stopExecution();
   }
 }
