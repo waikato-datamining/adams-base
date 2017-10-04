@@ -15,28 +15,28 @@
 
 /*
  * SpreadSheetSaver.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package weka.core.converters;
+
+import adams.core.option.OptionUtils;
+import adams.data.conversion.WekaInstancesToSpreadSheet;
+import adams.data.io.output.CsvSpreadSheetWriter;
+import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.SpreadSheet;
+import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
+import weka.core.Option;
+import weka.core.RevisionUtils;
+import weka.core.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Vector;
-
-import weka.core.Capabilities;
-import weka.core.Capabilities.Capability;
-import weka.core.Option;
-import weka.core.RevisionUtils;
-import weka.core.Utils;
-import adams.core.option.OptionUtils;
-import adams.data.conversion.WekaInstancesToSpreadSheet;
-import adams.data.io.output.CsvSpreadSheetWriter;
-import adams.data.io.output.SpreadSheetWriter;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
@@ -175,13 +175,13 @@ public class SpreadSheetSaver
   public void setOptions(String[] options) throws Exception {
     String	tmpStr;
 
+    super.setOptions(options);
+
     tmpStr = Utils.getOption("writer", options);
     if (tmpStr.length() != 0)
       setSpreadSheetWriter((SpreadSheetWriter) OptionUtils.forAnyCommandLine(SpreadSheetWriter.class, tmpStr));
     else
       setSpreadSheetWriter(new CsvSpreadSheetWriter());
-    
-    super.setOptions(options);
   }
   
   /**
