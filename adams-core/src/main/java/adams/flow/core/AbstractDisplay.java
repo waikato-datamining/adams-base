@@ -15,7 +15,7 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -483,6 +483,15 @@ public abstract class AbstractDisplay
     m_Frame       = null;
     m_Updating    = false;
     m_CreateFrame = true;
+  }
+
+  /**
+   * Closes the frame.
+   */
+  public void closeFrame() {
+    if (m_Frame == null)
+      return;
+    cleanUpGUI();
   }
 
   /**
