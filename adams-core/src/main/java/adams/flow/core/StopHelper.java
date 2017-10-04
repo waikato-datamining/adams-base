@@ -108,7 +108,7 @@ public class StopHelper {
 
     actor = StopHelper.getStopActor(context, mode);
     if (actor != null) {
-      if (message.length() == 0)
+      if ((message == null) || (message.length() == 0))
 	actor.stopExecution();
       else
 	actor.stopExecution(context.getVariables().expand(message));
