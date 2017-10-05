@@ -18,7 +18,7 @@
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.source.command;
+package adams.core.io.streamingprocess;
 
 import adams.flow.source.Command;
 import com.github.fracpete.processoutput4j.reader.AbstractProcessReader;
@@ -33,7 +33,7 @@ public class StreamingProcessReader
   extends AbstractProcessReader {
 
   /** the owner. */
-  protected Command m_Owner;
+  protected StreamingProcessOwner m_Owner;
 
   /** whether to forward the output to the owner. */
   protected boolean m_Forward;
@@ -45,7 +45,7 @@ public class StreamingProcessReader
    * @param process the process to monitor
    * @param stdout  whether to read stdout or stderr
    */
-  public StreamingProcessReader(Command owner, Process process, boolean stdout) {
+  public StreamingProcessReader(StreamingProcessOwner owner, Process process, boolean stdout) {
     super(process, stdout);
     m_Owner = owner;
     m_Forward = (stdout && (m_Owner.getOutputType() == OutputType.STDOUT))

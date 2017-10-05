@@ -18,7 +18,7 @@
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.source.command;
+package adams.core.io.streamingprocess;
 
 import adams.flow.source.Command;
 import com.github.fracpete.processoutput4j.output.AbstractProcessOutput;
@@ -34,14 +34,14 @@ public class StreamingProcessOutput
   private static final long serialVersionUID = 3891848111786764283L;
 
   /** the owner. */
-  protected Command m_Owner;
+  protected StreamingProcessOwner m_Owner;
 
   /**
    * Initializes the process output with the specified owning actor.
    *
    * @param owner	the owning actor
    */
-  public StreamingProcessOutput(Command owner) {
+  public StreamingProcessOutput(StreamingProcessOwner owner) {
     super();
     m_Owner = owner;
   }

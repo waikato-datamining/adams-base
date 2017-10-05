@@ -18,7 +18,7 @@
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.source.command;
+package adams.core.io.streamingprocess;
 
 /**
  * What to output.

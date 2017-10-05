@@ -26,10 +26,11 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.streamingprocess.OutputType;
+import adams.core.io.streamingprocess.StreamingProcessOutput;
+import adams.core.io.streamingprocess.StreamingProcessOwner;
 import adams.flow.core.RunnableWithLogging;
 import adams.flow.core.Token;
-import adams.flow.source.command.OutputType;
-import adams.flow.source.command.StreamingProcessOutput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,7 +131,7 @@ import java.util.List;
  */
 public class Command
   extends AbstractSource
-  implements ClassCrossReference {
+  implements ClassCrossReference, StreamingProcessOwner {
 
   /** for serialization. */
   private static final long serialVersionUID = -132045002653940359L;
