@@ -182,6 +182,9 @@ public class Exec
   /** whether to fail on process error. */
   protected boolean m_FailOnProcessError;
 
+  /** for executing the command and collecting stdout/err output. */
+  protected CollectingProcessOutput m_ProcessOutput;
+
   /**
    * Returns a string describing the object.
    *
@@ -534,7 +537,6 @@ public class Exec
   protected String doExecute() {
     String		result;
     String		cmd;
-    CollectingProcessOutput proc;
     String[]		items;
     String		msg;
     String[]		output;
@@ -558,22 +560,22 @@ public class Exec
     
     try {
       if (m_WorkingDirectory.isEmpty())
-	proc = ProcessUtils.execute(OptionUtils.splitOptions(cmd));
+	m_ProcessOutput = ProcessUtils.execute(OptionUtils.splitOptions(cmd));
       else
-	proc = ProcessUtils.execute(OptionUtils.splitOptions(cmd), new PlaceholderDirectory(m_WorkingDirectory));
-      if (!proc.hasSucceeded() && m_FailOnProcessError) {
-	result = ProcessUtils.toErrorOutput(proc);
+	m_ProcessOutput = ProcessUtils.execute(OptionUtils.splitOptions(cmd), new PlaceholderDirectory(m_WorkingDirectory));
+      if (!m_ProcessOutput.hasSucceeded() && m_FailOnProcessError) {
+	result = ProcessUtils.toErrorOutput(m_ProcessOutput);
       }
       else {
 	switch (m_OutputType) {
 	  case STDOUT:
-	    output = new String[]{proc.getStdOut()};
+	    output = new String[]{m_ProcessOutput.getStdOut()};
 	    break;
 	  case STDERR:
-	    output = new String[]{proc.getStdErr()};
+	    output = new String[]{m_ProcessOutput.getStdErr()};
 	    break;
 	  case BOTH:
-	    output = new String[]{proc.getStdOut(), proc.getStdErr()};
+	    output = new String[]{m_ProcessOutput.getStdOut(), m_ProcessOutput.getStdErr()};
 	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled output type: " + m_OutputType);
@@ -607,6 +609,7 @@ public class Exec
     catch (Exception e) {
       result = handleException("Failed to execute command: " + cmd, e);
     }
+    m_ProcessOutput = null;
 
     return result;
   }
@@ -633,5 +636,15 @@ public class Exec
    */
   public boolean hasPendingOutput() {
     return (m_Output.size() > 0);
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_ProcessOutput != null)
+      m_ProcessOutput.destroy();
+    super.stopExecution();
   }
 }
