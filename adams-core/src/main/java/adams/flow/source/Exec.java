@@ -183,7 +183,7 @@ public class Exec
   protected boolean m_FailOnProcessError;
 
   /** for executing the command and collecting stdout/err output. */
-  protected CollectingProcessOutput m_ProcessOutput;
+  protected transient CollectingProcessOutput m_ProcessOutput;
 
   /**
    * Returns a string describing the object.

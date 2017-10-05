@@ -163,7 +163,7 @@ public class Command
   protected List m_Output;
 
   /** the process monitor. */
-  protected StreamingProcessOutput m_ProcessOutput;
+  protected transient StreamingProcessOutput m_ProcessOutput;
 
   /** the runnable executing the command. */
   protected RunnableWithLogging m_Monitor;
