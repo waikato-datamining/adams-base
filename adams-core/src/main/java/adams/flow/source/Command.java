@@ -554,7 +554,8 @@ public class Command
    * @return		the generated token
    */
   public Token output() {
-    Token	result;
+    Token			result;
+    IllegalStateException	exc;
 
     result = null;
 
@@ -562,10 +563,13 @@ public class Command
       Utils.wait(this, this, 1000, 100);
     }
 
-    if (m_ExecutionFailure != null)
-      throw m_ExecutionFailure;
+    if (m_ExecutionFailure != null) {
+      exc                = m_ExecutionFailure;
+      m_ExecutionFailure = null;
+      throw exc;
+    }
 
-    if (!isStopped() && (m_Monitor != null)) {
+    if (!isStopped() && (m_Output.size() > 0)) {
       result = new Token(m_Output.get(0));
       m_Output.remove(0);
     }
