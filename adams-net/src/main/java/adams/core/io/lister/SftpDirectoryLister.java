@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SftpDirectoryLister.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.lister;
@@ -400,7 +400,8 @@ public class SftpDirectoryLister
 
     currFiles = channel.ls(current);
     if (currFiles == null) {
-      getLogger().severe("No files listed!");
+      if (getDebug())
+	getLogger().info("No files listed!");
       return;
     }
 

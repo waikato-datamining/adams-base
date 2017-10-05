@@ -287,7 +287,8 @@ public class LocalDirectoryLister
 
     currFiles = current.listFiles();
     if (currFiles == null) {
-      getLogger().severe("No files listed!");
+      if (getDebug())
+	getLogger().info("No files listed!");
       return;
     }
 

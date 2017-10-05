@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FtpDirectoryLister.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.lister;
@@ -295,7 +295,8 @@ public class FtpDirectoryLister
     currFiles = new ArrayList<>();
     currFiles.addAll(Arrays.asList(client.listFiles()));
     if (currFiles.size() == 0) {
-      getLogger().severe("No files listed!");
+      if (getDebug())
+	getLogger().info("No files listed!");
       return;
     }
 

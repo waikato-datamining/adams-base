@@ -226,7 +226,8 @@ public class SmbDirectoryLister
 
     currFiles = context.listFiles();
     if (currFiles == null) {
-      getLogger().severe("No files listed!");
+      if (getDebug())
+	getLogger().info("No files listed!");
       return;
     }
 
