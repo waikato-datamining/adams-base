@@ -20,6 +20,7 @@
 
 package adams.flow.source;
 
+import adams.core.ClassCrossReference;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseText;
@@ -37,7 +38,10 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Runs an external system command and broadcasts the generated output (stdout or stderr).
+ * Runs an external system command and broadcasts the generated output (stdout or stderr).<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.source.Exec
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -134,7 +138,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class Exec
-  extends AbstractSource {
+  extends AbstractSource
+  implements ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = -132045002653940359L;
@@ -187,6 +192,15 @@ public class Exec
     return
         "Runs an external system command and broadcasts the generated output "
       + "(stdout or stderr).";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{Exec.class};
   }
 
   /**
