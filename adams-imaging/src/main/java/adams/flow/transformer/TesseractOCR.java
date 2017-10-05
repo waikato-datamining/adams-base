@@ -161,6 +161,9 @@ public class TesseractOCR
   /** the tesseract connection to use. */
   protected TesseractConfiguration m_Configuration;
 
+  /** for executing tesseract. */
+  protected transient CollectingProcessOutput m_ProcessOutput;
+
   /**
    * Returns a string describing the object.
    *
@@ -477,7 +480,6 @@ public class TesseractOCR
     String		fileStr;
     File		file;
     String[]		cmd;
-    CollectingProcessOutput proc;
     LocalDirectoryLister lister;
     String[]		files;
     StringBuilder	content;
@@ -520,12 +522,12 @@ public class TesseractOCR
 
       cmd = m_Configuration.getCommand(fileStr, m_OutputBase.getAbsolutePath(), m_Language, m_PageSegmentation, m_OutputHOCR);
       try {
-	proc = ProcessUtils.execute(cmd);
-	if (proc.getExitCode() != 0) {
+	m_ProcessOutput = ProcessUtils.execute(cmd);
+	if (m_ProcessOutput.getExitCode() != 0) {
 	  result = 
-	      "tesseract exited with " + proc.getExitCode() + "\n"
+	      "tesseract exited with " + m_ProcessOutput.getExitCode() + "\n"
 		  + "cmd: " + OptionUtils.joinOptions(cmd) + "\n"
-		  + "stderr:\n" + proc.getStdErr();
+		  + "stderr:\n" + m_ProcessOutput.getStdErr();
 	}
 	else {
 	  files = lister.list();
@@ -549,6 +551,7 @@ public class TesseractOCR
       catch (Exception e) {
 	result = handleException("Failed to execute tesseract: " + OptionUtils.joinOptions(cmd), e);
       }
+      m_ProcessOutput = null;
       
       lister = null;
     }
@@ -557,5 +560,15 @@ public class TesseractOCR
       file.delete();
 
     return result;
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_ProcessOutput != null)
+      m_ProcessOutput.destroy();
+    super.stopExecution();
   }
 }
