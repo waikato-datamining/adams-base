@@ -1905,13 +1905,15 @@ ADAMS allows you to start up external processes or call Java classes that
 are present in the classpath from within a flow. The following actors are 
 available:
 \begin{tight_itemize}
-	\item \textit{Java} -- standalone that calls the \textit{main} method of a 
+	\item \textit{Command} -- source that calls any external executable and
+	outputs stdout and/or stderr as continuous stream.
+	\item \textit{Java} -- standalone that calls the \textit{main} method of a
 	Java class, using the current JVM.
 	\item \textit{JavaExec} -- standalone that starts up a new JVM using
 	the current classpath and JRE. stdout and stderr can be further processed
 	in the flow.
 	\item \textit{Exec} -- source that calls any external executable and allows
-	to further process either stdout or stderr.
+	to further process either stdout or stderr, after the process has finished.
 \end{tight_itemize}
 
 
