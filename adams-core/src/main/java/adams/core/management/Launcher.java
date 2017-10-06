@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Launcher.java
  * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
@@ -529,7 +529,15 @@ public class Launcher {
   public OutputProcessStream getStdErr() {
     return m_StdErr;
   }
-  
+
+  /**
+   * Allows killing the process.
+   */
+  public void destroy() {
+    if (m_Process != null)
+      m_Process.destroy();
+  }
+
   /**
    * Launches the main class.
    * 
@@ -637,6 +645,8 @@ public class Launcher {
 	  // ignored
 	}
       }
+
+      m_Process = null;
 
       if (retVal == CODE_RESTART) {
 	return execute();
