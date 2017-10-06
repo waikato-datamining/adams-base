@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JavaExec.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -157,7 +157,10 @@ public class JavaExec
 
   /** the stderr actor. */
   protected Actor m_StdErr;
-  
+
+  /** the launched process. */
+  protected transient Launcher m_Launcher;
+
   /**
    * Returns a string describing the object.
    *
@@ -592,37 +595,36 @@ public class JavaExec
   @Override
   protected String doExecute() {
     String	result;
-    Launcher	launcher;
     String[]	options;
     int		i;
     Token	input;
     
-    launcher = new Launcher();
-    launcher.ignoreEnvironmentOptions();
-    launcher.suppressErrorDialog();
-    launcher.setMainClass(m_JavaClass);
-    launcher.setMemory(m_Memory);
+    m_Launcher = new Launcher();
+    m_Launcher.ignoreEnvironmentOptions();
+    m_Launcher.suppressErrorDialog();
+    m_Launcher.setMainClass(m_JavaClass);
+    m_Launcher.setMemory(m_Memory);
     for (BaseString opt: m_JVM)
-      launcher.addJVMOption(opt.getValue());
+      m_Launcher.addJVMOption(opt.getValue());
     for (ClassPathAugmenter cpa: m_ClassPathAugmenters)
-      launcher.addClassPathAugmentations(cpa);
+      m_Launcher.addClassPathAugmentations(cpa);
     options = new String[m_Options.length];
     for (i = 0; i < m_Options.length; i++)
       options[i] = m_Options[i].getValue();
-    launcher.setArguments(options);
-    launcher.setConsoleObject(this);
+    m_Launcher.setArguments(options);
+    m_Launcher.setConsoleObject(this);
     if (m_RecordOutput)
-      launcher.setOutputPrinter(RecordingOutputPrinter.class);
+      m_Launcher.setOutputPrinter(RecordingOutputPrinter.class);
     else
-      launcher.setOutputPrinter(LoggingObjectOutputPrinter.class);
-    result = launcher.execute();
+      m_Launcher.setOutputPrinter(LoggingObjectOutputPrinter.class);
+    result = m_Launcher.execute();
     
     // further process output?
     if (m_RecordOutput) {
       // stdout
       if (result == null) {
 	try {
-	  input = new Token(((RecordingOutputPrinter) launcher.getStdOut().getPrinter()).getRecording());
+	  input = new Token(((RecordingOutputPrinter) m_Launcher.getStdOut().getPrinter()).getRecording());
 	  ((InputConsumer) m_StdOut).input(input);
 	  result = m_StdOut.execute();
 	}
@@ -634,7 +636,7 @@ public class JavaExec
       // stderr
       if (result == null) {
 	try {
-	  input = new Token(((RecordingOutputPrinter) launcher.getStdErr().getPrinter()).getRecording());
+	  input = new Token(((RecordingOutputPrinter) m_Launcher.getStdErr().getPrinter()).getRecording());
 	  ((InputConsumer) m_StdErr).input(input);
 	  result = m_StdErr.execute();
 	}
@@ -643,6 +645,7 @@ public class JavaExec
 	}
       }
     }
+    m_Launcher = null;
 
     return result;
   }
@@ -655,5 +658,15 @@ public class JavaExec
       ((ActorHandler) m_StdOut).flushExecution();
     if (m_StdErr instanceof ActorHandler)
       ((ActorHandler) m_StdErr).flushExecution();
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_Launcher != null)
+      m_Launcher.destroy();
+    super.stopExecution();
   }
 }
