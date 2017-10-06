@@ -15,21 +15,21 @@
 
 /*
  * PasteFiles.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
+
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-
-import adams.core.QuickInfoHelper;
-import adams.core.Utils;
-import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderFile;
 
 /**
  <!-- globalinfo-start -->
@@ -177,7 +177,12 @@ public class PasteFiles
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "delimiter", Utils.backQuoteChars(m_Delimiter));
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "delimiter", Utils.backQuoteChars(m_Delimiter), "delimiter: ");
+    result += QuickInfoHelper.toString(this, "outputFile", m_OutputFile, ", output: ");
+
+    return result;
   }
 
   /**
