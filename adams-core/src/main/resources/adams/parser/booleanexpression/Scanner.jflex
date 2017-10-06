@@ -107,6 +107,7 @@ import java.io.*;
   "ceil" { return sf.newSymbol("Ceil", sym.CEIL); }
   "min" { return sf.newSymbol("Min", sym.MIN); }
   "max" { return sf.newSymbol("Max", sym.MAX); }
+  "has" { return sf.newSymbol("Has", sym.HAS); }
   "ifelse" { return sf.newSymbol("IfElse", sym.IFELSE); }
   "if" { return sf.newSymbol("IfElse", sym.IFELSE); }
   "ifmissing" { return sf.newSymbol("IfMissing", sym.IFMISSING); }

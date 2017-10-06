@@ -19,10 +19,10 @@
  */
 package adams.parser;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the adams.parser.MathematicalExpression class. Run from commandline with: <br><br>
@@ -136,6 +136,8 @@ public class MathematicalExpressionTest
 	  {/** no symbols necessary */},		// 82
 	  {/** no symbols necessary */},		// 83
 	  {/** no symbols necessary */},		// 84
+	  {new BaseString("X=9.0")},			// 85
+	  {new BaseString("X=9.0")},			// 86
 	}
     };
   }
@@ -233,6 +235,8 @@ public class MathematicalExpressionTest
 	  "hypot(4, 3)", 	// 82
 	  "signum(-3.7)", 	// 83
 	  "signum(2.1)", 	// 84
+	  "if(has(X), X, -1)", 	// 85
+	  "if(has(Y), X, -1)", 	// 86
 	}
     };
   }

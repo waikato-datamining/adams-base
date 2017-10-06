@@ -157,6 +157,8 @@ public class BooleanExpressionTest
 	  {/** no symbols necessary */},		// 103
 	  {/** no symbols necessary */},		// 104
 	  {/** no symbols necessary */},		// 105
+	  {new BaseString("X=9.0")},			// 106
+	  {new BaseString("X=9.0")},			// 107
 	}
     };
   }
@@ -275,6 +277,8 @@ public class BooleanExpressionTest
 	  "str(2.1, 0) = \"2\"", 	// 103
 	  "str(2.123, 2) = \"2.12\"", 	// 104
 	  "str(2234.1, \"#,###.000\") = \"2,234.100\"", 	// 105
+	  "has(X)", 	// 106
+	  "has(Y)", 	// 106
 	}
     };
   }

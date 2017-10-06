@@ -72,6 +72,7 @@ import java.util.logging.Level;
  *               | expr | expr (or: expr or expr)<br>
  *               | if[else] ( expr , expr (if true) , expr (if false) )<br>
  *               | ifmissing ( variable , expr (default value if variable is missing) )<br>
+ *               | has ( variable )<br>
  *               | isNaN ( expr )<br>
  * <br>
  * # arithmetics<br>
@@ -257,6 +258,7 @@ public class BooleanExpression
       + "              | expr | expr (or: expr or expr)\n"
       + "              | if[else] ( expr , expr (if true) , expr (if false) )\n"
       + "              | ifmissing ( variable , expr (default value if variable is missing) )\n"
+      + "              | has ( variable )\n"
       + "              | isNaN ( expr )\n"
       + "\n"
       + "# arithmetics\n"

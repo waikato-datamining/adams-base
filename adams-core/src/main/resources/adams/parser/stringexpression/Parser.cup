@@ -171,7 +171,7 @@ terminal COMMA, SEMICOLON, LPAREN, RPAREN;
 terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO;
 terminal ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, IFELSE, ISNAN;
 terminal CBRT, LOG10, COSH, SINH, TANH, ATAN, ATAN2, HYPOT, SIGNUM;
-terminal IFMISSING, LENGTH, GET, TRIM;
+terminal HAS, IFMISSING, LENGTH, GET, TRIM;
 terminal SUBSTR, LOWERCASE, UPPERCASE, MATCHES;
 terminal LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, STR;
 terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
@@ -194,7 +194,7 @@ precedence left PLUS, MINUS;
 precedence left TIMES, DIVISION, MODULO;
 precedence left EXPONENT;
 precedence left LPAREN, RPAREN;
-precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, IFELSE, IFMISSING, ISNAN, LENGTH, GET, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, STR, FUNCTION, PROCEDURE;
+precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, IFELSE, HAS, IFMISSING, ISNAN, LENGTH, GET, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, STR, FUNCTION, PROCEDURE;
 precedence left NOT, UMINUS;
 
 expr_list ::= expr_list expr_part | expr_part;
@@ -321,6 +321,8 @@ expr      ::=
                    else
                      RESULT = e_false;
                 :}
+              | HAS LPAREN VARIABLE:v RPAREN
+                {: RESULT = new Boolean(parser.getSymbols().containsKey(v)); :}
               | IFMISSING LPAREN VARIABLE:v semi_or_comma expr:missing RPAREN
                 {: if (!parser.getSymbols().containsKey(v))
                      RESULT = missing;

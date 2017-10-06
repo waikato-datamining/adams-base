@@ -104,4 +104,6 @@
 'str(2.1, 0) = "2": true
 'str(2.123, 2) = "2.12": true
 'str(2234.1, "#,###.000") = "2,234.100": true
+'has(X)' using X=9.0: true
+'has(Y)' using X=9.0: false
 
