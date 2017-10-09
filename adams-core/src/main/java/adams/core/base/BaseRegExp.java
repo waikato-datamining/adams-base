@@ -15,13 +15,14 @@
 
 /*
  * BaseRegExp.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
 import adams.core.Utils;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -165,5 +166,23 @@ public class BaseRegExp
       s,
       new char[]{'\\', '|', '.', '?', '(', ')', '[', ']'},
       new String[]{"\\\\", "\\|", "\\.", "\\?", "\\(", "\\)", "\\[", "\\]"});
+  }
+
+  /**
+   * Turns the list of values into a regular expression of the format:
+   * "^(value1|value2|...)$".
+   *
+   * @param values	the list to convert
+   * @return		the regular expression
+   */
+  public static BaseRegExp listToRegExp(List<String> values) {
+    BaseRegExp	result;
+
+    if (values.isEmpty())
+      result = new BaseRegExp(BaseRegExp.MATCH_ALL);
+    else
+      result = new BaseRegExp("^(" + Utils.flatten(values, "|") + ")$");
+
+    return result;
   }
 }
