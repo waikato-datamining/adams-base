@@ -26,6 +26,11 @@ import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.filechanged.FileChangeMonitor;
+import adams.core.io.filechanged.FlowFileDigest;
+import adams.core.io.filechanged.LastModified;
+import adams.core.io.filechanged.MultiMonitor;
+import adams.core.io.filechanged.MultiMonitor.CombinationType;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionConsumer;
 import adams.core.option.OptionProducer;
@@ -178,6 +183,9 @@ public class FlowPanel
   /** the source panel for the debug panel. */
   protected FlowPanel m_DebugSourcePanel;
 
+  /** for monitoring file changes. */
+  protected MultiMonitor m_FlowFileMonitor;
+
   /**
    * Initializes the panel with no owner.
    */
@@ -220,6 +228,12 @@ public class FlowPanel
     m_LastReader            = null;
     m_LastWriter            = null;
     m_DebugSourcePanel      = null;
+    m_FlowFileMonitor       = new MultiMonitor();
+    m_FlowFileMonitor.setCombinationType(CombinationType.AND);
+    m_FlowFileMonitor.setMonitors(new FileChangeMonitor[]{
+      new LastModified(),
+      new FlowFileDigest(),
+    });
   }
 
   /**
@@ -525,6 +539,8 @@ public class FlowPanel
     getTree().setFile(value);
     if (getOwner() != null)
       getOwner().updateCurrentDirectory();
+    if (value != null)
+      m_FlowFileMonitor.initialize(value);
   }
 
   /**
@@ -607,8 +623,10 @@ public class FlowPanel
 
         SwingUtilities.invokeLater(() -> setTabIcon(null));
 
-	if (m_Errors.isEmpty())
+	if (m_Errors.isEmpty()) {
 	  setCurrentFile(file);
+	  m_FlowFileMonitor.initialize(file);
+	}
 	if (m_RecentFilesHandler != null)
 	  m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
 	if (!m_Errors.isEmpty()) {
@@ -780,6 +798,25 @@ public class FlowPanel
   }
 
   /**
+   * Returns whether a revert action is possible.
+   *
+   * @return		true if possible
+   */
+  public boolean canRevert() {
+    boolean	result;
+
+    result = (getCurrentFile() != null);
+    if (result) {
+      if (!getTree().isModified())
+	result = false;
+      if (m_FlowFileMonitor.hasChanged(getCurrentFile()))
+        result = true;
+    }
+
+    return result;
+  }
+
+  /**
    * Reverts a flow.
    */
   public void revert() {
@@ -858,6 +895,7 @@ public class FlowPanel
 	  if (m_RecentFilesHandler != null)
 	    m_RecentFilesHandler.addRecentItem(new Setup(file, writer.getCorrespondingReader()));
 	  setCurrentFile(file);
+	  m_FlowFileMonitor.initialize(file);
 	}
 
 	update();

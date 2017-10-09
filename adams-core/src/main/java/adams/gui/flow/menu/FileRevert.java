@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileRevert.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -58,8 +58,7 @@ public class FileRevert
   protected void doUpdate() {
     setEnabled(
 	   m_State.hasCurrentPanel() 
-	&& isInputEnabled() 
-	&& (m_State.getCurrentFile() != null) 
-	&& m_State.getCurrentTree().isModified());
+	&& isInputEnabled()
+        && m_State.getCurrentPanel().canRevert());
   }
 }
