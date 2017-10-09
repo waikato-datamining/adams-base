@@ -144,6 +144,7 @@ Keywords=\
     matches,\
     len,\
     length,\
+    has,\
     if,\
     ifelse,\
     ifmissing,\
