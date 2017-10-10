@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ProgressBar.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -25,7 +25,12 @@ import adams.data.DecimalFormatString;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -70,103 +75,115 @@ import java.text.DecimalFormat;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
- * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
- * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
+ * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in
  * &nbsp;&nbsp;&nbsp;a separate frame.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 200
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 100
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -3
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
- * 
+ *
  * <pre>-min &lt;double&gt; (property: minimum)
  * &nbsp;&nbsp;&nbsp;The minimum to use.
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * </pre>
- * 
+ *
  * <pre>-max &lt;double&gt; (property: maximum)
  * &nbsp;&nbsp;&nbsp;The maximum to use.
  * &nbsp;&nbsp;&nbsp;default: 100.0
  * </pre>
- * 
+ *
  * <pre>-bar &lt;java.awt.Color&gt; (property: bar)
  * &nbsp;&nbsp;&nbsp;The bar color to use.
  * &nbsp;&nbsp;&nbsp;default: #0000ff
  * </pre>
- * 
+ *
  * <pre>-background &lt;java.awt.Color&gt; (property: background)
  * &nbsp;&nbsp;&nbsp;The background color to use.
  * &nbsp;&nbsp;&nbsp;default: #c0c0c0
  * </pre>
- * 
+ *
  * <pre>-foreground &lt;java.awt.Color&gt; (property: foreground)
  * &nbsp;&nbsp;&nbsp;The foreground color to use.
  * &nbsp;&nbsp;&nbsp;default: #ffffff
  * </pre>
- * 
+ *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
  * &nbsp;&nbsp;&nbsp;The prefix string to print before the percentage.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-format &lt;adams.data.DecimalFormatString&gt; (property: format)
- * &nbsp;&nbsp;&nbsp;The format string to use for outputting the current value, use empty string 
+ * &nbsp;&nbsp;&nbsp;The format string to use for outputting the current value, use empty string
  * &nbsp;&nbsp;&nbsp;to suppress output.
  * &nbsp;&nbsp;&nbsp;default: #.#%
  * </pre>
- * 
+ *
  * <pre>-suffix &lt;java.lang.String&gt; (property: suffix)
  * &nbsp;&nbsp;&nbsp;The suffix string to print before the percentage.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-font &lt;java.awt.Font&gt; (property: font)
  * &nbsp;&nbsp;&nbsp;The font to use for the current value.
  * &nbsp;&nbsp;&nbsp;default: helvetica-BOLD-16
+ * </pre>
+ *
+ * <pre>-title &lt;java.lang.String&gt; (property: title)
+ * &nbsp;&nbsp;&nbsp;The optional title for the progressbar.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-title-font &lt;java.awt.Font&gt; (property: titleFont)
+ * &nbsp;&nbsp;&nbsp;The font to use for the title.
+ * &nbsp;&nbsp;&nbsp;default: helvetica-PLAIN-12
  * </pre>
  * 
  <!-- options-end -->
@@ -295,6 +312,15 @@ public class ProgressBar
   /** the suffix. */
   protected String m_Suffix;
 
+  /** the title. */
+  protected String m_Title;
+
+  /** the font to use for the title. */
+  protected Font m_TitleFont;
+
+  /** the progress bar. */
+  protected ProgressBarPanel m_PanelProgress;
+
   /**
    * Returns a string describing the object.
    *
@@ -350,6 +376,14 @@ public class ProgressBar
     m_OptionManager.add(
       "font", "font",
       new Font("helvetica", Font.BOLD, 16));
+
+    m_OptionManager.add(
+      "title", "title",
+      "");
+
+    m_OptionManager.add(
+      "title-font", "titleFont",
+      new Font("helvetica", Font.PLAIN, 12));
   }
 
   /**
@@ -615,7 +649,7 @@ public class ProgressBar
   }
 
   /**
-   * Sets the font for the time display.
+   * Sets the font for the percentage display.
    *
    * @param value	the font
    */
@@ -625,7 +659,7 @@ public class ProgressBar
   }
 
   /**
-   * Returns the font for the time display.
+   * Returns the font for the percentage display.
    *
    * @return		the font
    */
@@ -641,6 +675,64 @@ public class ProgressBar
    */
   public String fontTipText() {
     return "The font to use for the current value.";
+  }
+
+  /**
+   * Sets the optional title string.
+   *
+   * @param value	the title
+   */
+  public void setTitle(String value) {
+    m_Title = value;
+    reset();
+  }
+
+  /**
+   * Returns the optional title string.
+   *
+   * @return		the title
+   */
+  public String getTitle() {
+    return m_Title;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String titleTipText() {
+    return "The optional title for the progressbar.";
+  }
+
+  /**
+   * Sets the font for the title.
+   *
+   * @param value	the font
+   */
+  public void setTitleFont(Font value) {
+    m_TitleFont = value;
+    reset();
+  }
+
+  /**
+   * Returns the font for the title.
+   *
+   * @return		the font
+   */
+  public Font getTitleFont() {
+    return m_TitleFont;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String titleFontTipText() {
+    return "The font to use for the title.";
   }
 
   /**
@@ -676,7 +768,27 @@ public class ProgressBar
    */
   @Override
   protected BasePanel newPanel() {
-    return new ProgressBarPanel(this);
+    BasePanel	result;
+    JLabel	label;
+    JPanel	panel;
+
+    m_PanelProgress = new ProgressBarPanel(this);
+    if (m_Title.isEmpty()) {
+      result = m_PanelProgress;
+    }
+    else {
+      result = new BasePanel();
+      result.setLayout(new BorderLayout());
+      result.add(m_PanelProgress, BorderLayout.CENTER);
+      label = new JLabel(m_Title);
+      label.setFont(m_TitleFont);
+      label.setVerticalAlignment(SwingConstants.CENTER);
+      panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      panel.add(label);
+      result.add(panel, BorderLayout.NORTH);
+    }
+
+    return result;
   }
 
   /**
@@ -684,7 +796,7 @@ public class ProgressBar
    */
   @Override
   public void clearPanel() {
-    ((ProgressBarPanel) m_Panel).reset();
+    m_PanelProgress.reset();
   }
 
   /**
@@ -696,8 +808,8 @@ public class ProgressBar
   @Override
   protected void display(Token token) {
     if (token.getPayload() instanceof String)
-      ((ProgressBarPanel) m_Panel).update(Double.parseDouble((String) token.getPayload()));
+      m_PanelProgress.update(Double.parseDouble((String) token.getPayload()));
     else
-      ((ProgressBarPanel) m_Panel).update(((Number) token.getPayload()).doubleValue());
+      m_PanelProgress.update(((Number) token.getPayload()).doubleValue());
   }
 }
