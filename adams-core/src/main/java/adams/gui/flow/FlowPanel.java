@@ -567,8 +567,8 @@ public class FlowPanel
    * @param reader	the reader to use
    * @param file	the flow to load
    */
-  public void load(final FlowReader reader, final File file) {
-    load(reader, file, false);
+  public void load(FlowReader reader, File file) {
+    load(reader, file, false, null);
   }
 
   /**
@@ -576,8 +576,21 @@ public class FlowPanel
    *
    * @param reader	the reader to use
    * @param file	the flow to load
+   * @param execute	whether to execute the flow once loaded
    */
-  public void load(final FlowReader reader, final File file, final boolean execute) {
+  public void load(FlowReader reader, File file, boolean execute) {
+    load(reader, file, execute, null);
+  }
+
+  /**
+   * Loads a flow and optionally executes it.
+   *
+   * @param reader	the reader to use
+   * @param file	the flow to load
+   * @param execute	whether to execute the flow once loaded
+   * @param action	the SwingWorker to execute once the flow has been loaded, can be null
+   */
+  public void load(final FlowReader reader, final File file, final boolean execute, final SwingWorker action) {
     SwingWorker		worker;
 
     m_RunningSwingWorker = true;
@@ -646,6 +659,9 @@ public class FlowPanel
 	update();
 
         super.done();
+
+        if (action != null)
+          action.execute();
 
         // execute flow?
         if (canExecute)
@@ -821,7 +837,11 @@ public class FlowPanel
    */
   public void revert() {
     FlowFileChooser	filechooser;
-    
+    final List<String>	expanded;
+    SwingWorker		worker;
+
+    expanded = getTree().getExpandedFullNames();
+
     cleanUp();
 
     filechooser = null;
@@ -829,8 +849,16 @@ public class FlowPanel
       filechooser = getOwner().getOwner().getFileChooser();
     if (filechooser == null)
       filechooser = new FlowFileChooser();
-    
-    load(filechooser.getReaderForFile(getCurrentFile()), getCurrentFile());
+
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+        getTree().setExpandedFullNames(expanded);
+	return null;
+      }
+    };
+
+    load(filechooser.getReaderForFile(getCurrentFile()), getCurrentFile(), false, worker);
   }
 
   /**
