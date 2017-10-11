@@ -26,6 +26,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.option.OptionUtils;
 import adams.flow.core.RunnableWithLogging;
 import adams.flow.core.Token;
 import com.github.fracpete.processoutput4j.core.StreamingProcessOutputType;
@@ -512,7 +513,7 @@ public class Command
       @Override
       protected void doRun() {
         try {
-          ProcessBuilder builder = new ProcessBuilder(fCmd);
+          ProcessBuilder builder = new ProcessBuilder(OptionUtils.splitOptions(fCmd));
           if (!m_WorkingDirectory.isEmpty())
             builder.directory(new PlaceholderDirectory(m_WorkingDirectory).getAbsoluteFile());
 	  m_ProcessOutput.monitor(builder);
