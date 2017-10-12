@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * OptionUtils.java
  * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
@@ -460,8 +460,50 @@ public class WekaOptionUtils {
     String value = Utils.getOption(option, options);
     if (value.isEmpty())
       return defValue;
-    else
-      return new Index(value);
+
+    Index result = defValue.getClass().newInstance();
+    result.setIndex(value);
+    return result;
+  }
+
+  /**
+   * Parses an Index option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static Index[] parse(String[] options, char option, Index[] defValue) throws Exception {
+    return parse(options, "" + option, defValue);
+  }
+
+  /**
+   * Parses a Index option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static Index[] parse(String[] options, String option, Index[] defValue) throws Exception {
+    List<Index> list = new ArrayList<>();
+    String value;
+    Class cls = defValue.getClass().getComponentType();
+    while (!(value = Utils.getOption(option, options)).isEmpty()) {
+      Index index = (Index) cls.newInstance();
+      index.setIndex(value);
+      list.add(index);
+    }
+    if (list.size() == 0)
+      return defValue;
+
+    Object result = Array.newInstance(cls, list.size());
+    for (int i = 0; i < list.size(); i++)
+      Array.set(result, i, list.get(i));
+    return (Index[]) result;
   }
 
   /**
@@ -490,8 +532,49 @@ public class WekaOptionUtils {
     String value = Utils.getOption(option, options);
     if (value.isEmpty())
       return defValue;
-    else
-      return new adams.core.Range(value);
+    adams.core.Range result = defValue.getClass().newInstance();
+    result.setRange(value);
+    return result;
+  }
+
+  /**
+   * Parses a Range option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static adams.core.Range[] parse(String[] options, char option, adams.core.Range[] defValue) throws Exception {
+    return parse(options, "" + option, defValue);
+  }
+
+  /**
+   * Parses a Range option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static adams.core.Range[] parse(String[] options, String option, adams.core.Range[] defValue) throws Exception {
+    List<adams.core.Range> list = new ArrayList<>();
+    String value;
+    Class cls = defValue.getClass().getComponentType();
+    while (!(value = Utils.getOption(option, options)).isEmpty()) {
+      adams.core.Range range = (adams.core.Range) cls.newInstance();
+      range.setRange(value);
+      list.add(range);
+    }
+    if (list.size() == 0)
+      return defValue;
+
+    Object result = Array.newInstance(cls, list.size());
+    for (int i = 0; i < list.size(); i++)
+      Array.set(result, i, list.get(i));
+    return (adams.core.Range[]) result;
   }
 
   /**
@@ -526,6 +609,46 @@ public class WekaOptionUtils {
       result.setValue(value);
       return result;
     }
+  }
+
+  /**
+   * Parses a BaseObject option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static BaseObject[] parse(String[] options, char option, BaseObject[] defValue) throws Exception {
+    return parse(options, "" + option, defValue);
+  }
+
+  /**
+   * Parses a BaseObject option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static BaseObject[] parse(String[] options, String option, BaseObject[] defValue) throws Exception {
+    List<BaseObject> list = new ArrayList<>();
+    String value;
+    Class cls = defValue.getClass().getComponentType();
+    while (!(value = Utils.getOption(option, options)).isEmpty()) {
+      BaseObject obj = (BaseObject) cls.newInstance();
+      obj.setValue(value);
+      list.add(obj);
+    }
+    if (list.size() == 0)
+      return defValue;
+
+    Object result = Array.newInstance(cls, list.size());
+    for (int i = 0; i < list.size(); i++)
+      Array.set(result, i, list.get(i));
+    return (BaseObject[]) result;
   }
 
   /**
@@ -843,6 +966,31 @@ public class WekaOptionUtils {
   }
 
   /**
+   * Adds the Index to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, char option, Index[] value) {
+    add(options, "" + option, value);
+  }
+
+  /**
+   * Adds the Index to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, String option, Index[] value) {
+    for (Index index: value) {
+      options.add("-" + option);
+      options.add(index.getIndex());
+    }
+  }
+
+  /**
    * Adds the adams.core.Range to the options.
    *
    * @param options   the current list of options to extend
@@ -866,6 +1014,31 @@ public class WekaOptionUtils {
   }
 
   /**
+   * Adds the adams.core.Range to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, char option, adams.core.Range[] value) {
+    add(options, "" + option, value);
+  }
+
+  /**
+   * Adds the adams.core.Range to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, String option, adams.core.Range[] value) {
+    for (adams.core.Range range: value) {
+      options.add("-" + option);
+      options.add(range.getRange());
+    }
+  }
+
+  /**
    * Adds the BaseObject to the options.
    *
    * @param options   the current list of options to extend
@@ -886,6 +1059,31 @@ public class WekaOptionUtils {
   public static void add(List<String> options, String option, BaseObject value) {
     options.add("-" + option);
     options.add(value.getValue());
+  }
+
+  /**
+   * Adds the BaseObject to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, char option, BaseObject[] value) {
+    add(options, "" + option, value);
+  }
+
+  /**
+   * Adds the BaseObject to the options.
+   *
+   * @param options   the current list of options to extend
+   * @param option    the option (without the leading dash)
+   * @param value     the current value
+   */
+  public static void add(List<String> options, String option, BaseObject[] value) {
+    for (BaseObject obj: value) {
+      options.add("-" + option);
+      options.add(obj.getValue());
+    }
   }
 
   /**
