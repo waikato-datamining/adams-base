@@ -183,7 +183,7 @@ public abstract class AbstractCommandWithResponse
     if (payload.length > 0)
       payload = GzipUtils.compress(payload);
 
-    return CommandUtils.commandToString(header, payload);
+    return CommandUtils.format(header, payload);
   }
 
   /**

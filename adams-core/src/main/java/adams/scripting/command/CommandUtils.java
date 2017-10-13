@@ -124,7 +124,7 @@ public class CommandUtils {
    * @param payload	the payload
    * @return		the assembled string
    */
-  public static String commandToString(Properties header, byte[] payload) {
+  public static String format(Properties header, byte[] payload) {
     StringBuilder	result;
     String		data;
 
