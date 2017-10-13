@@ -847,7 +847,10 @@ public class WekaOptionUtils {
    */
   public static void add(List<String> options, String option, String value) {
     options.add("-" + option);
-    options.add("" + value);
+    if (!value.isEmpty())
+      options.add("" + value);
+    else
+      options.add("\"\"");
   }
 
   /**
