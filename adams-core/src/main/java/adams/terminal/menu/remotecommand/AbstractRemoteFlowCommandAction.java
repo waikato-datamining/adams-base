@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractRemoteFlowCommand.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -251,7 +251,7 @@ public abstract class AbstractRemoteFlowCommandAction
    * @param cmd			the command to send
    */
   public void sendCommand(RemoteCommand cmd) {
-    sendCommand(cmd, new BaseHostname(m_TextRemote.getText()));
+    sendCommand(cmd, m_CommandProcessor, new BaseHostname(m_TextRemote.getText()));
   }
 
   /**
@@ -272,7 +272,7 @@ public abstract class AbstractRemoteFlowCommandAction
    * @param responseHandler 	the response handler for intercepting the result, can be null
    */
   public void sendCommandWithReponse(RemoteCommandWithResponse cmd, ResponseHandler responseHandler) {
-    sendCommandWithReponse(cmd, responseHandler, new BaseHostname(m_TextLocal.getText()), new BaseHostname(m_TextRemote.getText()), DEFAULT_PORT);
+    sendCommandWithReponse(cmd, m_CommandProcessor, responseHandler, new BaseHostname(m_TextLocal.getText()), new BaseHostname(m_TextRemote.getText()), DEFAULT_PORT);
   }
 
   /**

@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Multicast.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
 
 import adams.core.MessageCollection;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Sends the same command to all connections.
@@ -111,17 +112,18 @@ public class Multicast
    * Sends the request command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doSendRequest(RemoteCommand cmd) {
+  protected String doSendRequest(RemoteCommand cmd, RemoteCommandProcessor processor) {
     MessageCollection	result;
     int			i;
     String		msg;
 
     result = new MessageCollection();
     for (i = 0; i < m_Connections.length; i++) {
-      msg = m_Connections[i].sendRequest(cmd);
+      msg = m_Connections[i].sendRequest(cmd, processor);
       if (msg != null)
 	result.add("#" + (i+1) + ": " + msg);
     }
@@ -155,17 +157,18 @@ public class Multicast
    * Sends the response command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doSendResponse(RemoteCommand cmd) {
+  protected String doSendResponse(RemoteCommand cmd, RemoteCommandProcessor processor) {
     MessageCollection	result;
     int			i;
     String		msg;
 
     result = new MessageCollection();
     for (i = 0; i < m_Connections.length; i++) {
-      msg = m_Connections[i].sendResponse(cmd);
+      msg = m_Connections[i].sendResponse(cmd, processor);
       if (msg != null)
 	result.add("#" + (i+1) + ": " + msg);
     }

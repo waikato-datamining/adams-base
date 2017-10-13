@@ -32,6 +32,9 @@ import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 
 /**
  <!-- globalinfo-start -->
@@ -78,7 +81,8 @@ import adams.scripting.engine.RemoteScriptingEngine;
  * @version $Revision$
  */
 public class CommandRunner
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements RemoteCommandProcessorHandler {
 
   private static final long serialVersionUID = -347088462601591488L;
 
@@ -90,6 +94,9 @@ public class CommandRunner
 
   /** the connection to use. */
   protected Connection m_Connection;
+
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
 
   /** the commands to execute. */
   protected RemoteCommand[] m_Commands;
@@ -125,6 +132,10 @@ public class CommandRunner
     m_OptionManager.add(
       "connection", "connection",
       new DefaultConnection());
+
+    m_OptionManager.add(
+      "command-processor", "commandProcessor",
+      new DefaultRemoteCommandProcessor());
 
     m_OptionManager.add(
       "command", "commands",
@@ -223,6 +234,35 @@ public class CommandRunner
   }
 
   /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandProcessorTipText() {
+    return "The processor for formatting/parsing the commands.";
+  }
+
+  /**
    * Sets the commands to execute.
    *
    * @param value	the commands
@@ -307,7 +347,7 @@ public class CommandRunner
     for (i = 0; i < m_Commands.length; i++) {
       if (isLoggingEnabled())
 	getLogger().info("Command #" + (i+1) + ": " + m_Commands[i].toCommandLine());
-      result = m_Connection.sendRequest(m_Commands[i]);
+      result = m_Connection.sendRequest(m_Commands[i], m_CommandProcessor);
       if (result != null) {
 	getLogger().severe("Command #" + (i + 1) + " generated following error:\n" + result);
 	break;

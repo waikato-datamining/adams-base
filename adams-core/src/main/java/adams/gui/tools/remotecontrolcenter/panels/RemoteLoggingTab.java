@@ -34,6 +34,9 @@ import adams.gui.core.SimpleLogPanel;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.StartRemoteLogging;
 import adams.scripting.command.basic.StopRemoteLogging;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -51,7 +54,8 @@ import java.util.logging.LogRecord;
  * @version $Revision$
  */
 public class RemoteLoggingTab
-  extends AbstractRemoteControlCenterTab {
+  extends AbstractRemoteControlCenterTab
+  implements RemoteCommandProcessorHandler {
 
   private static final long serialVersionUID = 6645831134460386650L;
 
@@ -172,6 +176,9 @@ public class RemoteLoggingTab
   /** the runnable. */
   protected RemoteListenerRunnableWithLog m_Runnable;
 
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
+
   /**
    * Initializes the members.
    */
@@ -179,7 +186,8 @@ public class RemoteLoggingTab
   protected void initialize() {
     super.initialize();
 
-    m_Runnable  = null;
+    m_Runnable         = null;
+    m_CommandProcessor = new DefaultRemoteCommandProcessor();
   }
 
   /**
@@ -244,6 +252,24 @@ public class RemoteLoggingTab
   }
 
   /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
    * Starts/stops the logging.
    */
   protected void startStopLogging() {
@@ -256,7 +282,7 @@ public class RemoteLoggingTab
       m_Runnable.stopExecution();
       m_Runnable = null;
       updateButtons();
-      sendCommandWithReponse(stop, new LoggingResponseHandler(this), m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
+      sendCommandWithReponse(stop, m_CommandProcessor, new LoggingResponseHandler(this), m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
     }
     else {
       m_Runnable = new RemoteListenerRunnableWithLog(m_TextLocal.getObject().portValue(), RemoteListenerRunnableWithLog.DEFAULT_TIMEOUT, this);
@@ -266,7 +292,7 @@ public class RemoteLoggingTab
       start.setMaxFailures(m_TextMaxFailures.getValue().intValue());
       start.setLoggingHost(m_TextLocal.getObject());
       updateButtons();
-      sendCommandWithReponse(start, new LoggingResponseHandler(this), m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
+      sendCommandWithReponse(start, m_CommandProcessor, new LoggingResponseHandler(this), m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
     }
   }
 

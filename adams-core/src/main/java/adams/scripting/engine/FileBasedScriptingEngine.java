@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileBasedScriptingEngine.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -26,7 +26,6 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.lister.LocalDirectoryLister;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 
 import java.io.File;
@@ -288,7 +287,7 @@ public class FileBasedScriptingEngine
 
     result = true;
     errors = new MessageCollection();
-    cmd    = CommandUtils.read(file, errors);
+    cmd    = m_CommandProcessor.read(file, errors);
     if (cmd == null) {
       result = false;
       if (errors.isEmpty())
@@ -305,7 +304,7 @@ public class FileBasedScriptingEngine
 
       // handle command
       if (result) {
-        msg = m_CommandHandler.handle(cmd);
+        msg = m_CommandHandler.handle(cmd, m_CommandProcessor);
         if (msg != null)
           getLogger().severe("Failed to handle command:\n" + msg);
         result = (msg == null);

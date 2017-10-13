@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Logging.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -33,6 +33,9 @@ import adams.scripting.command.basic.StopEngine;
 import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 
 import java.util.logging.LogRecord;
 
@@ -44,7 +47,7 @@ import java.util.logging.LogRecord;
  */
 public class Logging
   extends AbstractConsoleApplication
-  implements StoppableWithFeedback {
+  implements StoppableWithFeedback, RemoteCommandProcessorHandler {
 
   private static final long serialVersionUID = 1373827735768376022L;
 
@@ -90,6 +93,9 @@ public class Logging
   /** the local host/port to use. */
   protected BaseHostname m_LocalHost;
 
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
+
   /** the maximum number of connection failures to handle (-1 for indefinite). */
   protected int m_MaxFailures;
 
@@ -114,6 +120,10 @@ public class Logging
     super.defineOptions();
 
     m_OptionManager.add(
+      "command-processor", "commandProcessor",
+      new DefaultRemoteCommandProcessor());
+
+    m_OptionManager.add(
       "remote-host", "remoteHost",
       new BaseHostname("127.0.0.1:" + DefaultScriptingEngine.DEFAULT_PORT));
 
@@ -124,6 +134,35 @@ public class Logging
     m_OptionManager.add(
       "max-failures", "maxFailures",
       5, -1, null);
+  }
+
+  /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandProcessorTipText() {
+    return "The processor for formatting/parsing the commands.";
   }
 
   /**
@@ -262,7 +301,7 @@ public class Logging
     conn = new DefaultConnection();
     conn.setHost(remote.hostnameValue());
     conn.setPort(remote.portValue());
-    result = conn.sendRequest(cmd);
+    result = conn.sendRequest(cmd, m_CommandProcessor);
     if (result != null) {
       engine.stopExecution();
       getLogger().severe("Failed to send command '" + cmd.toCommandLine() + "':\n" + result);
@@ -272,7 +311,7 @@ public class Logging
       stop = new StopEngine();
       stop.setType(EngineType.RESPONSE);
       stop.setResponseConnection(connResp);
-      conn.sendRequest(stop);
+      conn.sendRequest(stop, m_CommandProcessor);
     }
 
     return result;

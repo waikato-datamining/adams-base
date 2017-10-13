@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MasterScriptingEngine.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
@@ -28,6 +28,7 @@ import adams.scripting.command.distributed.KillSlaves;
 import adams.scripting.command.distributed.RegisterSlave;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.LoadBalancer;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Manages slave scripting engines and sends them jobs for execution.
@@ -107,10 +108,11 @@ public class DefaultMasterScriptingEngine
      * Handles the command.
      *
      * @param cmd	the command to handle
+     * @param processor the processor for formatting/parsing
      * @return		null if successful, otherwise error message
      */
     @Override
-    protected String doHandle(RemoteCommand cmd) {
+    protected String doHandle(RemoteCommand cmd, RemoteCommandProcessor processor) {
       String	result;
 
       result = null;
@@ -208,7 +210,7 @@ public class DefaultMasterScriptingEngine
 	getLogger().info("Sending kill to " + conn);
       m_Slaves.removeConnection(conn);
       kill = new Kill();
-      msg  = conn.sendRequest(kill);
+      msg  = conn.sendRequest(kill, m_CommandProcessor);
       if (msg != null)
 	getLogger().severe(msg);
     }
@@ -226,12 +228,12 @@ public class DefaultMasterScriptingEngine
     if (cmd.isRequest()) {
       if (isLoggingEnabled())
 	getLogger().info("Sending request to slave: " + cmd.getClass().getName());
-      result = m_Slaves.sendRequest(cmd);
+      result = m_Slaves.sendRequest(cmd, m_CommandProcessor);
     }
     else {
       if (isLoggingEnabled())
 	getLogger().info("Sending response to slave: " + cmd.getClass().getName());
-      result = m_Slaves.sendResponse(cmd);
+      result = m_Slaves.sendResponse(cmd, m_CommandProcessor);
     }
 
     return result;

@@ -26,8 +26,8 @@ import adams.core.base.BasePassword;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.TempUtils;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.RemoteCommandProcessor;
 import org.apache.commons.net.ProtocolCommandEvent;
 import org.apache.commons.net.ProtocolCommandListener;
 import org.apache.commons.net.ftp.FTPClient;
@@ -360,9 +360,10 @@ public class FTPConnection
    * Sends the command to the specified sscripting engine.
    *
    * @param cmd		the command to send
+   * @param processor 	for formatting/parsing
    * @return		null if successfully sent, otherwise error message
    */
-  protected String doSend(RemoteCommand cmd) {
+  protected String doSend(RemoteCommand cmd, RemoteCommandProcessor processor) {
     String		result;
     FTPClient		client;
     File 		tmpfile;
@@ -376,7 +377,7 @@ public class FTPConnection
     // save command to tmp file
     tmpfile = TempUtils.createTempFile("remote", ".rc");
     errors  = new MessageCollection();
-    if (!CommandUtils.write(cmd, tmpfile, errors))
+    if (!processor.write(cmd, tmpfile, errors))
       result = "Failed to write command to: " + tmpfile + "\n" + errors;
 
     // send tmp file via FTP
@@ -412,8 +413,8 @@ public class FTPConnection
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doSendRequest(RemoteCommand cmd) {
-    return doSend(cmd);
+  protected String doSendRequest(RemoteCommand cmd, RemoteCommandProcessor processor) {
+    return doSend(cmd, processor);
   }
 
   /**
@@ -423,8 +424,8 @@ public class FTPConnection
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doSendResponse(RemoteCommand cmd) {
-    return doSend(cmd);
+  protected String doSendResponse(RemoteCommand cmd, RemoteCommandProcessor processor) {
+    return doSend(cmd, processor);
   }
 
   /***

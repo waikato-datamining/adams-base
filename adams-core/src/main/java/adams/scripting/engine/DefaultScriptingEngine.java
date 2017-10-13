@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultScriptingEngine.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -24,7 +24,6 @@ import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.net.PortManager;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 import gnu.trove.list.array.TByteArrayList;
 
@@ -195,7 +194,7 @@ public class DefaultScriptingEngine
     // instantiate command
     data   = new String(bytes.toArray());
     errors = new MessageCollection();
-    cmd    = CommandUtils.parse(data, errors);
+    cmd    = m_CommandProcessor.parse(data, errors);
 
     if (cmd != null) {
       // permitted?
@@ -205,7 +204,7 @@ public class DefaultScriptingEngine
       }
 
       // handle command
-      msg = m_CommandHandler.handle(cmd);
+      msg = m_CommandHandler.handle(cmd, m_CommandProcessor);
       if (msg != null)
 	getLogger().severe("Failed to handle command:\n" + msg);
     }

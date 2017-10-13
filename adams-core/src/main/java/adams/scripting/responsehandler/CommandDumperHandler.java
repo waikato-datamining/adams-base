@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CommandDumperHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.responsehandler;
@@ -23,8 +23,10 @@ package adams.scripting.responsehandler;
 import adams.core.MessageCollection;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.TempUtils;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 
 import java.io.File;
 
@@ -35,7 +37,8 @@ import java.io.File;
  * @version $Revision$
  */
 public class CommandDumperHandler
-  extends AbstractResponseHandler {
+  extends AbstractResponseHandler
+  implements RemoteCommandProcessorHandler {
 
   private static final long serialVersionUID = 8309252227142210365L;
 
@@ -44,6 +47,9 @@ public class CommandDumperHandler
 
   /** the output directory for failed requests. */
   protected PlaceholderDirectory m_FailedDir;
+
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
 
   /**
    * Returns a string describing the object.
@@ -69,6 +75,10 @@ public class CommandDumperHandler
     m_OptionManager.add(
       "failed-dir", "failedDir",
       new PlaceholderDirectory());
+
+    m_OptionManager.add(
+      "command-processor", "commandProcessor",
+      new DefaultRemoteCommandProcessor());
   }
 
   /**
@@ -130,6 +140,35 @@ public class CommandDumperHandler
   }
 
   /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandProcessorTipText() {
+    return "The processor for formatting/parsing the commands.";
+  }
+
+  /**
    * Handles successful responses.
    *
    * @param cmd		the command with the response
@@ -144,7 +183,7 @@ public class CommandDumperHandler
 
     tmpFile = TempUtils.createTempFile(m_SuccessfulDir, "successful-", ".rc");
     errors  = new MessageCollection();
-    if (!CommandUtils.write(cmd, tmpFile, errors)) {
+    if (!m_CommandProcessor.write(cmd, tmpFile, errors)) {
       if (errors.isEmpty())
 	getLogger().severe("Failed to save successful command to: " + tmpFile);
       else
@@ -168,7 +207,7 @@ public class CommandDumperHandler
 
     tmpFile = TempUtils.createTempFile(m_FailedDir, "failed-", ".rc");
     errors  = new MessageCollection();
-    if (!CommandUtils.write(cmd, tmpFile, errors)) {
+    if (!m_CommandProcessor.write(cmd, tmpFile, errors)) {
       if (errors.isEmpty())
 	getLogger().severe("Failed to save failed command to: " + tmpFile);
       else

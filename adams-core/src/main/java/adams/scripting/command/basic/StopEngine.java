@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StopEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.basic;
 
 import adams.scripting.command.AbstractCommandWithResponse;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
@@ -137,16 +138,17 @@ public class StopEngine
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor	the processor for formatting/parsing
    * @param handler	for handling the request
    */
   @Override
-  public void handleRequest(RemoteScriptingEngine engine, RequestHandler handler) {
+  public void handleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor, RequestHandler handler) {
     if (m_Type == EngineType.REQUEST) {
       getLogger().info("Request/Stopping " + toCommandLine());
       engine.stopExecution();
     }
     else {
-      super.handleRequest(engine, handler);
+      super.handleRequest(engine, processor, handler);
     }
   }
 

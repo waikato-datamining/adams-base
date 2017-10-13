@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteFlowExecution.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.flow;
@@ -29,6 +29,7 @@ import adams.flow.core.ActorUtils;
 import adams.multiprocess.CallableWithResult;
 import adams.scripting.command.AbstractFlowAwareCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -292,9 +293,10 @@ public class RemoteFlowExecution
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor 	for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  protected String doHandleRequest(RemoteScriptingEngine engine) {
+  protected String doHandleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor) {
     String 	result;
 
     if (m_Actor != null) {

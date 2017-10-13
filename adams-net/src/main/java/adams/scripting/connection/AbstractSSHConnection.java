@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSSHConnection.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
@@ -27,6 +27,7 @@ import adams.core.net.JSchUtils;
 import adams.core.net.SSHAuthenticationType;
 import adams.core.net.SSHSessionProvider;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.RemoteCommandProcessor;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import org.apache.commons.vfs2.provider.sftp.TrustEveryoneUserInfo;
@@ -489,19 +490,21 @@ public abstract class AbstractSSHConnection
    * Sends the command to the specified sscripting engine.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @param request	whether Request or Response
    * @return		null if successfully sent, otherwise error message
    */
-  protected abstract String doSend(RemoteCommand cmd, boolean request);
+  protected abstract String doSend(RemoteCommand cmd, RemoteCommandProcessor processor, boolean request);
 
   /**
    * Sends the command to the specified sscripting engine.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @param request	whether Request or Response
    * @return		null if successfully sent, otherwise error message
    */
-  protected synchronized String send(RemoteCommand cmd, boolean request) {
+  protected synchronized String send(RemoteCommand cmd, RemoteCommandProcessor processor, boolean request) {
     String	result;
 
     result = null;
@@ -513,7 +516,7 @@ public abstract class AbstractSSHConnection
     }
 
     if (result == null)
-      result = doSend(cmd, request);
+      result = doSend(cmd, processor, request);
 
     return result;
   }
@@ -522,22 +525,24 @@ public abstract class AbstractSSHConnection
    * Sends the request command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doSendRequest(RemoteCommand cmd) {
-    return send(cmd, true);
+  protected String doSendRequest(RemoteCommand cmd, RemoteCommandProcessor processor) {
+    return send(cmd, processor, true);
   }
 
   /**
    * Sends the response command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doSendResponse(RemoteCommand cmd) {
-    return send(cmd, false);
+  protected String doSendResponse(RemoteCommand cmd, RemoteCommandProcessor processor) {
+    return send(cmd, processor, false);
   }
 
   /**

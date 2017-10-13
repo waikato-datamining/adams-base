@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteCommandHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
 
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Interface for classes that handle remote commands within a scripting engine.
@@ -48,7 +49,8 @@ public interface RemoteCommandHandler {
    * Handles the command.
    *
    * @param cmd		the command to handle
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  public String handle(RemoteCommand cmd);
+  public String handle(RemoteCommand cmd, RemoteCommandProcessor processor);
 }

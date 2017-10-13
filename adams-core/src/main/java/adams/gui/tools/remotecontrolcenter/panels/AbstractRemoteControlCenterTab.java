@@ -34,6 +34,7 @@ import adams.scripting.command.basic.StopEngine;
 import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.requesthandler.SimpleLogPanelRequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
@@ -164,7 +165,7 @@ public abstract class AbstractRemoteControlCenterTab
    * @param cmd			the command to send
    * @param remote 		the remote host
    */
-  public void sendCommand(RemoteCommand cmd, BaseHostname remote) {
+  public void sendCommand(RemoteCommand cmd, RemoteCommandProcessor processor, BaseHostname remote) {
     DefaultConnection 	conn;
     String		msg;
 
@@ -172,7 +173,7 @@ public abstract class AbstractRemoteControlCenterTab
     conn = new DefaultConnection();
     conn.setHost(remote.hostnameValue());
     conn.setPort(remote.portValue());
-    msg = conn.sendRequest(cmd);
+    msg = conn.sendRequest(cmd, processor);
     if (msg != null)
       getOwner().logError("Failed to send command '" + cmd.toCommandLine() + "':\n" + msg, "Scripting error");
   }
@@ -187,7 +188,7 @@ public abstract class AbstractRemoteControlCenterTab
    * @param remote 		the remote host
    * @param defPort		the default port to use
    */
-  public void sendCommandWithReponse(RemoteCommandWithResponse cmd, ResponseHandler responseHandler, BaseHostname local, BaseHostname remote, int defPort) {
+  public void sendCommandWithReponse(RemoteCommandWithResponse cmd, RemoteCommandProcessor processor, ResponseHandler responseHandler, BaseHostname local, BaseHostname remote, int defPort) {
     StopEngine stop;
     DefaultConnection conn;
     DefaultScriptingEngine	engine;
@@ -208,7 +209,7 @@ public abstract class AbstractRemoteControlCenterTab
     conn = new DefaultConnection();
     conn.setHost(remote.hostnameValue());
     conn.setPort(remote.portValue());
-    msg  = conn.sendRequest(cmd);
+    msg  = conn.sendRequest(cmd, processor);
     if (msg != null) {
       engine.stopExecution();
       getOwner().logError("Failed to send command '" + cmd.toCommandLine() + "':\n" + msg, "Scripting error");
@@ -218,7 +219,7 @@ public abstract class AbstractRemoteControlCenterTab
       stop = new StopEngine();
       stop.setType(EngineType.RESPONSE);
       stop.setResponseConnection(connResp);
-      conn.sendRequest(stop);
+      conn.sendRequest(stop, processor);
     }
   }
 }

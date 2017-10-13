@@ -24,8 +24,8 @@ import adams.core.MessageCollection;
 import adams.core.io.FileUtils;
 import adams.core.io.TempUtils;
 import adams.core.net.Scp;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 import java.io.File;
 
@@ -99,11 +99,12 @@ public class ScpConnection
    * Sends the command to the specified sscripting engine.
    *
    * @param cmd		the command to send
+   * @param processor 	for formatting/parsing
    * @param request	whether Request or Response
    * @return		null if successfully sent, otherwise error message
    */
   @Override
-  protected String doSend(RemoteCommand cmd, boolean request) {
+  protected String doSend(RemoteCommand cmd, RemoteCommandProcessor processor, boolean request) {
     String		result;
     File 		tmpFile;
     MessageCollection	errors;
@@ -113,7 +114,7 @@ public class ScpConnection
     // save command
     tmpFile = TempUtils.createTempFile("remote", ".rc");
     errors  = new MessageCollection();
-    if (!CommandUtils.write(cmd, tmpFile, errors))
+    if (!processor.write(cmd, tmpFile, errors))
       result = "Failed to write command to: " + tmpFile + "\n" + errors;
 
     // copy file

@@ -13,15 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringToRemoteCommand.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.MessageCollection;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 
 /**
  <!-- globalinfo-start -->
@@ -41,10 +43,14 @@ import adams.scripting.command.RemoteCommand;
  * @version $Revision$
  */
 public class StringToRemoteCommand
-  extends AbstractConversionFromString {
+  extends AbstractConversionFromString
+  implements RemoteCommandProcessorHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -1833682524381075026L;
+
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
 
   /**
    * Returns a string describing the object.
@@ -54,6 +60,47 @@ public class StringToRemoteCommand
   @Override
   public String globalInfo() {
     return "Parses the String and turns it into a RemoteCommand object.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "command-processor", "commandProcessor",
+      new DefaultRemoteCommandProcessor());
+  }
+
+  /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandProcessorTipText() {
+    return "The processor for formatting/parsing.";
   }
 
   /**
@@ -78,7 +125,7 @@ public class StringToRemoteCommand
     MessageCollection	errors;
 
     errors = new MessageCollection();
-    result = CommandUtils.parse((String) m_Input, errors);
+    result = m_CommandProcessor.parse((String) m_Input, errors);
 
     if (result == null) {
       if (errors.isEmpty())

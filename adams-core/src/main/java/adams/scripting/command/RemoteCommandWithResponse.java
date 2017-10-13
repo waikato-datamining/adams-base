@@ -22,6 +22,7 @@ package adams.scripting.command;
 
 import adams.scripting.connection.Connection;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.responsehandler.ResponseHandler;
 
 /**
@@ -79,9 +80,10 @@ public interface RemoteCommandWithResponse
   /**
    * Assembles the command into a string, including any payload.
    *
+   * @param processor 	for formatting/parsing
    * @return		the generated string, null if failed to assemble
    */
-  public String assembleResponse();
+  public String assembleResponse(RemoteCommandProcessor processor);
 
   /**
    * Handles the response.

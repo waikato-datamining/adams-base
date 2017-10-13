@@ -15,7 +15,7 @@
 
 /*
  * SendRemoteCommand.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -24,11 +24,13 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.TempUtils;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.FlowAwareRemoteCommand;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 
 import java.io.File;
 
@@ -101,13 +103,17 @@ import java.io.File;
  * @version $Revision$
  */
 public class SendRemoteCommand
-  extends AbstractSink {
+  extends AbstractSink
+   implements RemoteCommandProcessorHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -4210882711380055794L;
 
   /** the connection. */
   protected Connection m_Connection;
+
+  /** the processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
 
   /** whether to save unsuccessful remote commands to disk. */
   protected boolean m_StoreUnsuccessful;
@@ -137,6 +143,10 @@ public class SendRemoteCommand
     m_OptionManager.add(
       "connection", "connection",
       new DefaultConnection());
+
+    m_OptionManager.add(
+      "command-processor", "commandProcessor",
+      new DefaultRemoteCommandProcessor());
 
     m_OptionManager.add(
       "store-unsuccessful", "storeUnsuccessful",
@@ -174,6 +184,35 @@ public class SendRemoteCommand
    */
   public String connectionTipText() {
     return "The connection to send the command to.";
+  }
+
+  /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandProcessorTipText() {
+    return "The processor for formatting/parsing.";
   }
 
   /**
@@ -275,9 +314,9 @@ public class SendRemoteCommand
       ((FlowAwareRemoteCommand) cmd).setFlowContext(this);
 
     if (cmd.isRequest())
-      result = m_Connection.sendRequest(cmd);
+      result = m_Connection.sendRequest(cmd, m_CommandProcessor);
     else
-      result = m_Connection.sendResponse(cmd);
+      result = m_Connection.sendResponse(cmd, m_CommandProcessor);
 
     if ((result != null) && m_StoreUnsuccessful) {
       if (!m_UnsuccessfulDir.exists()) {
@@ -288,7 +327,7 @@ public class SendRemoteCommand
       }
       else {
 	tmp    = TempUtils.createTempFile(m_UnsuccessfulDir, "remote", ".rc");
-	result = FileUtils.writeToFileMsg(tmp.getAbsolutePath(), cmd.assembleRequest(), false, CommandUtils.MESSAGE_CHARSET);
+	result = FileUtils.writeToFileMsg(tmp.getAbsolutePath(), cmd.assembleRequest(m_CommandProcessor), false, DefaultRemoteCommandProcessor.MESSAGE_CHARSET);
       }
     }
 

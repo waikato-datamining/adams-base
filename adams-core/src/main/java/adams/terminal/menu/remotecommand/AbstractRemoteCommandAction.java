@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractRemoteCommandAction.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -28,6 +28,9 @@ import adams.scripting.command.basic.StopEngine;
 import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 import adams.scripting.requesthandler.LogTextBoxRequestHandler;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.LogTextBoxResponseHandler;
@@ -43,10 +46,13 @@ import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
  * @version $Revision$
  */
 public abstract class AbstractRemoteCommandAction
-  implements Comparable<AbstractRemoteCommandAction> {
+  implements Comparable<AbstractRemoteCommandAction>, RemoteCommandProcessorHandler {
 
   /** the owning application. */
   protected AbstractTerminalApplication m_Owner;
+
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
 
   /**
    * Initializes the action with no owner.
@@ -70,10 +76,9 @@ public abstract class AbstractRemoteCommandAction
 
   /**
    * Initializes members.
-   * <br><br>
-   * Default implementation does nothing.
    */
   protected void initialize() {
+    m_CommandProcessor = new DefaultRemoteCommandProcessor();
   }
 
   /**
@@ -92,6 +97,24 @@ public abstract class AbstractRemoteCommandAction
    */
   public AbstractTerminalApplication getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
   }
 
   /**
@@ -184,9 +207,10 @@ public abstract class AbstractRemoteCommandAction
    * Sends the specified command, not waiting for a response.
    *
    * @param cmd			the command to send
+   * @param processor 		the processor for formatting/parsing
    * @param remote 		the remote host
    */
-  public void sendCommand(RemoteCommand cmd, BaseHostname remote) {
+  public void sendCommand(RemoteCommand cmd, RemoteCommandProcessor processor, BaseHostname remote) {
     DefaultConnection 	conn;
     String		msg;
 
@@ -194,7 +218,7 @@ public abstract class AbstractRemoteCommandAction
     conn = new DefaultConnection();
     conn.setHost(remote.hostnameValue());
     conn.setPort(remote.portValue());
-    msg = conn.sendRequest(cmd);
+    msg = conn.sendRequest(cmd, processor);
     if (msg != null)
       logError("Failed to send command '" + cmd.toCommandLine() + "':\n" + msg);
   }
@@ -204,12 +228,13 @@ public abstract class AbstractRemoteCommandAction
    * the result.
    *
    * @param cmd			the command to send
+   * @param processor 		the processor for formatting/parsing
    * @param responseHandler 	the response handler for intercepting the result, can be null
    * @param local 		the local host
    * @param remote 		the remote host
    * @param defPort		the default port to use
    */
-  public void sendCommandWithReponse(RemoteCommandWithResponse cmd, ResponseHandler responseHandler, BaseHostname local, BaseHostname remote, int defPort) {
+  public void sendCommandWithReponse(RemoteCommandWithResponse cmd, RemoteCommandProcessor processor, ResponseHandler responseHandler, BaseHostname local, BaseHostname remote, int defPort) {
     StopEngine stop;
     DefaultConnection conn;
     DefaultScriptingEngine	engine;
@@ -230,7 +255,7 @@ public abstract class AbstractRemoteCommandAction
     conn = new DefaultConnection();
     conn.setHost(remote.hostnameValue());
     conn.setPort(remote.portValue());
-    msg  = conn.sendRequest(cmd);
+    msg  = conn.sendRequest(cmd, processor);
     if (msg != null) {
       engine.stopExecution();
       logError("Failed to send command '" + cmd.toCommandLine() + "':\n" + msg);
@@ -240,7 +265,7 @@ public abstract class AbstractRemoteCommandAction
       stop = new StopEngine();
       stop.setType(EngineType.RESPONSE);
       stop.setResponseConnection(connResp);
-      conn.sendRequest(stop);
+      conn.sendRequest(stop, processor);
     }
   }
 

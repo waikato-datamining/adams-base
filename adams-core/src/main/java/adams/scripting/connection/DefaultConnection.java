@@ -13,20 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultConnection.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
 
 import adams.core.Utils;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 import java.net.Socket;
-import java.nio.charset.Charset;
 
 /**
  * Sends the command to the specified host:port.
@@ -135,24 +134,25 @@ public class DefaultConnection
    * Sends the command to the specified sscripting engine.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @param host	the host to send the command to
    * @param port	the host port
    * @param request	whether Request or Response
    * @return		null if successfully sent, otherwise error message
    */
-  protected String send(RemoteCommand cmd, String host, int port, boolean request) {
+  protected String send(RemoteCommand cmd, RemoteCommandProcessor processor, String host, int port, boolean request) {
     String	result;
     String	data;
     Socket 	socket;
 
     result = null;
     if (request)
-      data = cmd.assembleRequest();
+      data = cmd.assembleRequest(processor);
     else
-      data = ((RemoteCommandWithResponse) cmd).assembleResponse();
+      data = ((RemoteCommandWithResponse) cmd).assembleResponse(processor);
     try {
       socket = new Socket(host, port);
-      socket.getOutputStream().write(data.getBytes(Charset.forName(CommandUtils.MESSAGE_CHARSET)));
+      socket.getOutputStream().write(data.getBytes());
       socket.getOutputStream().flush();
       socket.close();
     }
@@ -168,21 +168,23 @@ public class DefaultConnection
    * Sends the request command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doSendRequest(RemoteCommand cmd) {
-    return send(cmd, m_Host, m_Port, true);
+  protected String doSendRequest(RemoteCommand cmd, RemoteCommandProcessor processor) {
+    return send(cmd, processor, m_Host, m_Port, true);
   }
 
   /**
    * Sends the response command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doSendResponse(RemoteCommand cmd) {
-    return send(cmd, m_Host, m_Port, false);
+  protected String doSendResponse(RemoteCommand cmd, RemoteCommandProcessor processor) {
+    return send(cmd, processor, m_Host, m_Port, false);
   }
 }

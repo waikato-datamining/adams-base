@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractCommandWithResponse.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -27,6 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.responsehandler.ResponseHandler;
 
 /**
@@ -162,9 +163,10 @@ public abstract class AbstractCommandWithResponse
   /**
    * Assembles the command into a string, including any payload.
    *
+   * @param processor 	for formatting/parsing
    * @return		the generated string, null if failed to assemble
    */
-  public String assembleResponse() {
+  public String assembleResponse(RemoteCommandProcessor processor) {
     Properties		header;
     byte[]		payload;
 
@@ -183,7 +185,7 @@ public abstract class AbstractCommandWithResponse
     if (payload.length > 0)
       payload = GzipUtils.compress(payload);
 
-    return CommandUtils.format(header, payload);
+    return processor.format(header, payload);
   }
 
   /**
@@ -193,9 +195,9 @@ public abstract class AbstractCommandWithResponse
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doHandleRequest(RemoteScriptingEngine engine) {
+  protected String doHandleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor) {
     setRequest(false);  // to avoid checks to fail
-    return m_ResponseConnection.sendResponse(this);
+    return m_ResponseConnection.sendResponse(this, processor);
   }
 
   /**

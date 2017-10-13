@@ -13,12 +13,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * CommandUtils.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * DefaultRemoteCommandProcessor.java
+ * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
-package adams.scripting.command;
+package adams.scripting.processor;
 
 import adams.core.MessageCollection;
 import adams.core.Properties;
@@ -26,6 +26,8 @@ import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.GzipUtils;
 import adams.core.option.OptionUtils;
+import adams.scripting.command.RemoteCommand;
+import adams.scripting.command.RemoteCommandWithResponse;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.File;
@@ -33,17 +35,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Utility functions for remote commands.
+ * Processors for simple remote command format.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class CommandUtils {
+public class DefaultRemoteCommandProcessor
+  extends AbstractRemoteCommandProcessor {
+
+  private static final long serialVersionUID = -7804545376269832263L;
 
   /** the width in characters for the base64 encoded payload. */
   public static final int PAYLOAD_WIDTH = 72;
 
   public static final String MESSAGE_CHARSET = "US-ASCII";
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Uses the simple format for processing remote commands.";
+  }
 
   /**
    * Instantiates the command from the received data string.
@@ -52,7 +66,8 @@ public class CommandUtils {
    * @param errors	for collecting errors
    * @return		the instantiated command, null if failed to parse
    */
-  public static RemoteCommand parse(String data, MessageCollection errors) {
+  @Override
+  public RemoteCommand parse(String data, MessageCollection errors) {
     RemoteCommand	result;
     List<String> headerLines;
     Properties header;
@@ -124,7 +139,8 @@ public class CommandUtils {
    * @param payload	the payload
    * @return		the assembled string
    */
-  public static String format(Properties header, byte[] payload) {
+  @Override
+  public String format(Properties header, byte[] payload) {
     StringBuilder	result;
     String		data;
 
@@ -148,7 +164,8 @@ public class CommandUtils {
    * @param errors	for collecting errors
    * @return		the remote command, null if failed to load
    */
-  public static RemoteCommand read(File file, MessageCollection errors) {
+  @Override
+  public RemoteCommand read(File file, MessageCollection errors) {
     RemoteCommand	cmd;
     List<String>	lines;
     String		data;
@@ -177,17 +194,18 @@ public class CommandUtils {
    * @param errors	for collecting errors
    * @return		true if successful
    */
-  public static boolean write(RemoteCommand cmd, File file, MessageCollection errors) {
+  @Override
+  public boolean write(RemoteCommand cmd, File file, MessageCollection errors) {
     String	data;
     String	msg;
 
     data = null;
     if (cmd.isRequest()) {
-      data = cmd.assembleRequest();
+      data = cmd.assembleRequest(this);
     }
     else {
       if (cmd instanceof RemoteCommandWithResponse)
-	data = ((RemoteCommandWithResponse) cmd).assembleResponse();
+	data = ((RemoteCommandWithResponse) cmd).assembleResponse(this);
       else
 	errors.add("Remote command is not a response but flagged as such:\n" + cmd.toString());
     }

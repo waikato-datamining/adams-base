@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Stop.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -22,6 +22,7 @@ package adams.scripting.command.basic;
 
 import adams.core.ClassCrossReference;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Attempts to stop the remote ADAMS instance.
@@ -86,9 +87,10 @@ public class Stop
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  protected String doHandleRequest(RemoteScriptingEngine engine) {
+  protected String doHandleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor) {
     if (m_StopFlows)
       stopFlows();
 

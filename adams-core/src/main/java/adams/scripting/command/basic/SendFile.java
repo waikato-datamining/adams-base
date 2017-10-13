@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SendFile.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -26,6 +26,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 import java.io.File;
 
@@ -179,9 +180,10 @@ public class SendFile
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor 	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  protected String doHandleRequest(RemoteScriptingEngine engine) {
+  protected String doHandleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor) {
     String	result;
     File 	file;
 

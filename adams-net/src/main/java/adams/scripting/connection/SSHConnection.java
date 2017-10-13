@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SSHConnection.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
 
 import adams.core.Utils;
 import adams.core.net.JSchUtils;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
+import adams.scripting.processor.RemoteCommandProcessor;
 import com.jcraft.jsch.Session;
 
 import java.net.Socket;
-import java.nio.charset.Charset;
 
 /**
  * Uses an SSH tunnel to connect to the remote scripting engine.
@@ -230,10 +229,11 @@ public class SSHConnection
    * Sends the command to the specified sscripting engine.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @param request	whether Request or Response
    * @return		null if successfully sent, otherwise error message
    */
-  protected synchronized String doSend(RemoteCommand cmd, boolean request) {
+  protected synchronized String doSend(RemoteCommand cmd, RemoteCommandProcessor processor, boolean request) {
     String	result;
     String	data;
     Socket 	socket;
@@ -241,12 +241,12 @@ public class SSHConnection
     result = null;
 
     if (request)
-      data = cmd.assembleRequest();
+      data = cmd.assembleRequest(processor);
     else
-      data = ((RemoteCommandWithResponse) cmd).assembleResponse();
+      data = ((RemoteCommandWithResponse) cmd).assembleResponse(processor);
     try {
       socket = new Socket("127.0.0.1", m_AssignedPort);
-      socket.getOutputStream().write(data.getBytes(Charset.forName(CommandUtils.MESSAGE_CHARSET)));
+      socket.getOutputStream().write(data.getBytes());
       socket.getOutputStream().flush();
       socket.close();
     }

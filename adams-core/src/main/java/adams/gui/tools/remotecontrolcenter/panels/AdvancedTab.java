@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AdvancedTab.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -34,6 +34,8 @@ import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.command.basic.Ping;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.responsehandler.AbstractResponseHandler;
 import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 
@@ -165,6 +167,9 @@ public class AdvancedTab
   /** the panel for the connection. */
   protected GenericObjectEditorPanel m_GOEConnection;
 
+  /** the panel for the command processor. */
+  protected GenericObjectEditorPanel m_GOECommandProcessor;
+
   /** the button for sending the command. */
   protected JButton m_ButtonSend;
 
@@ -224,6 +229,9 @@ public class AdvancedTab
     m_GOEConnection = new GenericObjectEditorPanel(Connection.class, new DefaultConnection(), true);
     m_PanelParams.addParameter("Connection", m_GOEConnection);
 
+    m_GOECommandProcessor = new GenericObjectEditorPanel(RemoteCommandProcessor.class, new DefaultRemoteCommandProcessor(), true);
+    m_PanelParams.addParameter("Processor", m_GOECommandProcessor);
+
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(panelButtons, BorderLayout.SOUTH);
     m_ButtonSend = new JButton(GUIHelper.getIcon("run.gif"));
@@ -278,14 +286,16 @@ public class AdvancedTab
    * Sends the command.
    */
   protected void sendCommand() {
-    RemoteCommand	cmd;
-    Connection		conn;
-    String		msg;
+    RemoteCommand		cmd;
+    Connection			conn;
+    RemoteCommandProcessor  	proc;
+    String			msg;
 
     conn = (Connection) m_GOEConnection.getCurrent();
+    proc = (RemoteCommandProcessor) m_GOECommandProcessor.getCurrent();
     cmd  = (RemoteCommand) m_GOECommand.getCurrent();
 
-    msg = conn.sendRequest(cmd);
+    msg = conn.sendRequest(cmd, proc);
     if (msg != null)
       getOwner().logError(msg, "Failed to send command");
   }

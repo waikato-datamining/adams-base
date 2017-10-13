@@ -40,6 +40,8 @@ import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 import javax.swing.JMenuItem;
 import java.awt.BorderLayout;
@@ -61,6 +63,8 @@ public class RemoteCommands
 
   public static final String KEY_CONNECTION = "connection";
 
+  public static final String KEY_COMMANDPROCESSOR = "command processor";
+
   /** the control center menu item. */
   protected JMenuItem m_MenuItemCC;
 
@@ -79,6 +83,9 @@ public class RemoteCommands
   /** the last connection used. */
   protected Connection m_LastConnection;
 
+  /** the last command processor used. */
+  protected RemoteCommandProcessor m_LastCommandProcessor;
+
   /**
    * Initializes the menu item.
    *
@@ -95,8 +102,9 @@ public class RemoteCommands
   protected void initialize() {
     super.initialize();
 
-    m_LastCommand    = null;
-    m_LastConnection = null;
+    m_LastCommand          = null;
+    m_LastConnection       = null;
+    m_LastCommandProcessor = null;
   }
 
   /**
@@ -188,6 +196,8 @@ public class RemoteCommands
       m_LastCommand = new SystemInfo();
     if (m_LastConnection == null)
       m_LastConnection = new DefaultConnection();
+    if (m_LastCommandProcessor == null)
+      m_LastCommandProcessor = new DefaultRemoteCommandProcessor();
 
     params = new PropertiesParameterPanel();
     params.addPropertyType(KEY_COMMAND, PropertyType.OBJECT_EDITOR);
@@ -196,10 +206,14 @@ public class RemoteCommands
     params.addPropertyType(KEY_CONNECTION, PropertyType.OBJECT_EDITOR);
     params.setChooser(KEY_CONNECTION, new GenericObjectEditorPanel(Connection.class, m_LastConnection, true));
     params.setLabel(KEY_CONNECTION, "Connection");
+    params.addPropertyType(KEY_COMMANDPROCESSOR, PropertyType.OBJECT_EDITOR);
+    params.setChooser(KEY_COMMANDPROCESSOR, new GenericObjectEditorPanel(RemoteCommandProcessor.class, m_LastCommandProcessor, true));
+    params.setLabel(KEY_COMMANDPROCESSOR, "Processor");
 
     props = new Properties();
     props.setProperty(KEY_COMMAND, OptionUtils.getCommandLine(m_LastCommand));
     props.setProperty(KEY_CONNECTION, OptionUtils.getCommandLine(m_LastConnection));
+    props.setProperty(KEY_COMMANDPROCESSOR, OptionUtils.getCommandLine(m_LastCommandProcessor));
     params.setProperties(props);
 
     dialog = new ApprovalDialog(getOwner(), true);
@@ -240,10 +254,21 @@ public class RemoteCommands
 	  + Utils.throwableToString(e));
       return;
     }
+    try {
+      m_LastCommandProcessor = (RemoteCommandProcessor) OptionUtils.forCommandLine(
+	RemoteCommandProcessor.class, props.getProperty(KEY_COMMANDPROCESSOR));
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(
+	null,
+	"Failed to instantiate command processor: '" + props.getProperty(KEY_COMMANDPROCESSOR) + "'\n"
+	  + Utils.throwableToString(e));
+      return;
+    }
 
     // send command
     m_LastCommand.setRemoteScriptingEngineHandler(getOwner());
-    msg = m_LastConnection.sendRequest(m_LastCommand);
+    msg = m_LastConnection.sendRequest(m_LastCommand, m_LastCommandProcessor);
     if (msg != null)
       GUIHelper.showErrorMessage(null, "Failed to send command:\n" + msg);
 

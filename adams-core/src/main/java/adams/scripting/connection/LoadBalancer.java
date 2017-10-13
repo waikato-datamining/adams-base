@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LoadBalancer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
 
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Balances the handling of commands among several connections.
@@ -93,13 +94,14 @@ public class LoadBalancer
    * Sends the request command.
    *
    * @param cmd		the command to send
+   * @param processor 	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doSendRequest(RemoteCommand cmd) {
+  protected String doSendRequest(RemoteCommand cmd, RemoteCommandProcessor processor) {
     String	result;
 
-    result = m_Connections.get(m_CurrentRequest).sendRequest(cmd);
+    result = m_Connections.get(m_CurrentRequest).sendRequest(cmd, processor);
     m_CurrentRequest++;
     if (m_CurrentRequest >= m_Connections.size())
       m_CurrentRequest = 0;
@@ -130,13 +132,14 @@ public class LoadBalancer
    * Sends the response command.
    *
    * @param cmd		the command to send
+   * @param processor 	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doSendResponse(RemoteCommand cmd) {
+  protected String doSendResponse(RemoteCommand cmd, RemoteCommandProcessor processor) {
     String	result;
 
-    result = m_Connections.get(m_CurrentResponse).sendResponse(cmd);
+    result = m_Connections.get(m_CurrentResponse).sendResponse(cmd, processor);
     m_CurrentResponse++;
     if (m_CurrentResponse >= m_Connections.size())
       m_CurrentResponse = 0;

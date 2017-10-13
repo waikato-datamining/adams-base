@@ -736,6 +736,10 @@ adams.scripting.command.RemoteCommand=\
   adams.scripting.command.flow,\
   adams.scripting.command.gui
 
+# the processors for remote commands
+adams.scripting.processor.RemoteCommandProcessor=\
+  adams.scripting.processor
+
 # the remote scription commands that operate on specific flow
 adams.scripting.command.RemoteCommandOnFlow=\
   adams.scripting.command,\

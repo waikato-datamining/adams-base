@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractRemoteFlowTab.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -37,6 +37,9 @@ import adams.scripting.command.flow.SendFlowControlCommand;
 import adams.scripting.command.flow.SendFlowControlCommand.Command;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
 import javax.swing.JButton;
@@ -59,7 +62,7 @@ import java.awt.event.ActionEvent;
  */
 public abstract class AbstractRemoteFlowTab
   extends AbstractRemoteControlCenterTab
-  implements ListSelectionListener {
+  implements ListSelectionListener, RemoteCommandProcessorHandler {
 
   private static final long serialVersionUID = 321058606982723480L;
 
@@ -159,6 +162,19 @@ public abstract class AbstractRemoteFlowTab
   /** the button for killing the ADAMS isntance. */
   protected JButton m_ButtonKillAdams;
 
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
+
+  /**
+   * For initializing members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_CommandProcessor = new DefaultRemoteCommandProcessor();
+  }
+
   /**
    * Initializes the widgets.
    */
@@ -245,6 +261,24 @@ public abstract class AbstractRemoteFlowTab
   }
 
   /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
    * Returns the underlying table for the flows.
    *
    * @return		the table
@@ -269,7 +303,7 @@ public abstract class AbstractRemoteFlowTab
    * @param cmd			the command to send
    */
   public void sendCommand(RemoteCommand cmd) {
-    sendCommand(cmd, m_TextRemote.getObject());
+    sendCommand(cmd, m_CommandProcessor, m_TextRemote.getObject());
   }
 
   /**
@@ -290,7 +324,7 @@ public abstract class AbstractRemoteFlowTab
    * @param responseHandler 	the response handler for intercepting the result, can be null
    */
   public void sendCommandWithReponse(RemoteCommandWithResponse cmd, ResponseHandler responseHandler) {
-    sendCommandWithReponse(cmd, responseHandler, m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
+    sendCommandWithReponse(cmd, m_CommandProcessor, responseHandler, m_TextLocal.getObject(), m_TextRemote.getObject(), DEFAULT_PORT);
   }
 
   /**

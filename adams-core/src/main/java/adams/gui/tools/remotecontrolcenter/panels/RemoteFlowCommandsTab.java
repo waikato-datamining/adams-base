@@ -169,7 +169,7 @@ public class RemoteFlowCommandsTab
       cmd.setID(id);
       if (cmd instanceof RemoteCommandWithResponse)
 	((RemoteCommandWithResponse) cmd).setResponseConnection(connResp);
-      msg = conn.sendRequest(cmd);
+      msg = conn.sendRequest(cmd, m_CommandProcessor);
       if (msg != null)
 	errors.add(msg);
     }
@@ -178,7 +178,7 @@ public class RemoteFlowCommandsTab
     stop = new StopEngine();
     stop.setType(EngineType.RESPONSE);
     stop.setResponseConnection(connResp);
-    conn.sendRequest(stop);
+    conn.sendRequest(stop, m_CommandProcessor);
 
     if (!errors.isEmpty()) {
       getOwner().logError(

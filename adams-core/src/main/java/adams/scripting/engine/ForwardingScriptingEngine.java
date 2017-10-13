@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ForwardingScriptingEngine.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -23,6 +23,7 @@ package adams.scripting.engine;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Simply forwards incoming commands to the specified connection.
@@ -103,10 +104,11 @@ public class ForwardingScriptingEngine
      * Handles the command.
      *
      * @param cmd	the command to handle
+     * @param processor the processor for formatting/parsing
      * @return		null if successful, otherwise error message
      */
     @Override
-    protected String doHandle(RemoteCommand cmd) {
+    protected String doHandle(RemoteCommand cmd, RemoteCommandProcessor processor) {
       return m_Forwarder.forward(cmd);
     }
   }
@@ -177,12 +179,12 @@ public class ForwardingScriptingEngine
     if (cmd.isRequest()) {
       if (isLoggingEnabled())
 	getLogger().info("Forwarding request '" + cmd.getClass().getName() + "' to: " + m_Forward);
-      result = m_Forward.sendRequest(cmd);
+      result = m_Forward.sendRequest(cmd, m_CommandProcessor);
     }
     else {
       if (isLoggingEnabled())
 	getLogger().info("Forwarding response '" + cmd.getClass().getName() + "' to: " + m_Forward);
-      result = m_Forward.sendResponse(cmd);
+      result = m_Forward.sendResponse(cmd, m_CommandProcessor);
     }
 
     if (result != null) {

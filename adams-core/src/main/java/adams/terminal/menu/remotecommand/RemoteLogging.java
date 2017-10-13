@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteLogging.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -245,7 +245,7 @@ public class RemoteLogging
     start.setLoggingHost(new BaseHostname(m_TextLocal.getText()));
     m_TextLog.takeFocus();
     updateButtons();
-    sendCommandWithReponse(start, new LoggingResponseHandler(this), new BaseHostname(m_TextLocal.getText()), new BaseHostname(m_TextRemote.getText()), DEFAULT_PORT);
+    sendCommandWithReponse(start, m_CommandProcessor, new LoggingResponseHandler(this), new BaseHostname(m_TextLocal.getText()), new BaseHostname(m_TextRemote.getText()), DEFAULT_PORT);
   }
 
   /**
@@ -260,7 +260,7 @@ public class RemoteLogging
     m_Runnable = null;
     m_TextLog.takeFocus();
     updateButtons();
-    sendCommandWithReponse(stop, new LoggingResponseHandler(this), new BaseHostname(m_TextLocal.getText()), new BaseHostname(m_TextRemote.getText()), DEFAULT_PORT);
+    sendCommandWithReponse(stop, m_CommandProcessor, new LoggingResponseHandler(this), new BaseHostname(m_TextLocal.getText()), new BaseHostname(m_TextRemote.getText()), DEFAULT_PORT);
   }
 
   /**

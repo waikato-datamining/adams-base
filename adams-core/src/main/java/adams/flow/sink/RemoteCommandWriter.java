@@ -21,8 +21,10 @@
 package adams.flow.sink;
 
 import adams.core.MessageCollection;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 
 /**
  <!-- globalinfo-start -->
@@ -83,10 +85,14 @@ import adams.scripting.command.RemoteCommand;
  * @version $Revision$
  */
 public class RemoteCommandWriter
-  extends AbstractFileWriter {
+  extends AbstractFileWriter
+  implements RemoteCommandProcessorHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -4210882711380055794L;
+
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
 
   /**
    * Returns a string describing the object.
@@ -101,6 +107,18 @@ public class RemoteCommandWriter
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "command-processor", "commandProcessor",
+      new DefaultRemoteCommandProcessor());
+  }
+
+  /**
    * Returns the tip text for this property.
    *
    * @return 		tip text for this property suitable for
@@ -109,6 +127,35 @@ public class RemoteCommandWriter
   @Override
   public String outputFileTipText() {
     return "The file name to save the remote command under.";
+  }
+
+  /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandProcessorTipText() {
+    return "The processor for formatting/parsing the commands.";
   }
 
   /**
@@ -135,7 +182,7 @@ public class RemoteCommandWriter
     cmd    = (RemoteCommand) m_InputToken.getPayload();
     errors = new MessageCollection();
 
-    if (!CommandUtils.write(cmd, m_OutputFile, errors)) {
+    if (!m_CommandProcessor.write(cmd, m_OutputFile, errors)) {
       result = "Failed to write command to: " + m_OutputFile;
       if (!errors.isEmpty())
 	result += "\n" + errors;

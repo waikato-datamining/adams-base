@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteCommandReader.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -23,8 +23,10 @@ package adams.flow.transformer;
 import adams.core.MessageCollection;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 
 /**
  <!-- globalinfo-start -->
@@ -81,9 +83,13 @@ import adams.scripting.command.RemoteCommand;
  * @version $Revision$
  */
 public class RemoteCommandReader
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements RemoteCommandProcessorHandler {
 
   private static final long serialVersionUID = -3779099245506497154L;
+
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
 
   /**
    * Returns a string describing the object.
@@ -93,6 +99,47 @@ public class RemoteCommandReader
   @Override
   public String globalInfo() {
     return "Loads the remote command from the incoming file.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "command-processor", "commandProcessor",
+      new DefaultRemoteCommandProcessor());
+  }
+
+  /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandProcessorTipText() {
+    return "The processor for formatting/parsing the commands.";
   }
 
   /**
@@ -137,7 +184,7 @@ public class RemoteCommandReader
 
     if (result == null) {
       errors = new MessageCollection();
-      cmd    = CommandUtils.read(file, errors);
+      cmd    = m_CommandProcessor.read(file, errors);
       if (cmd == null) {
 	result = "Failed to parse remote command from data!";
 	if (!errors.isEmpty())

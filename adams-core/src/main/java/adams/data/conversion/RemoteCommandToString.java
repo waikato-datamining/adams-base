@@ -13,14 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteCommandToString.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 
 /**
  <!-- globalinfo-start -->
@@ -40,10 +43,14 @@ import adams.scripting.command.RemoteCommandWithResponse;
  * @version $Revision$
  */
 public class RemoteCommandToString
-  extends AbstractConversionToString {
+  extends AbstractConversionToString
+   implements RemoteCommandProcessorHandler {
   
   /** for serialization. */
   private static final long serialVersionUID = -3431292077368307264L;
+
+  /** the processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
 
   /**
    * Returns a string describing the object.
@@ -53,6 +60,47 @@ public class RemoteCommandToString
   @Override
   public String globalInfo() {
     return "Turns a remote command into a string.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "command-processor", "commandProcessor",
+      new DefaultRemoteCommandProcessor());
+  }
+
+  /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandProcessorTipText() {
+    return "The processor for formatting/parsing.";
   }
 
   /**
@@ -77,11 +125,11 @@ public class RemoteCommandToString
 
     cmd = (RemoteCommand) m_Input;
     if (cmd.isRequest()) {
-      return cmd.assembleRequest();
+      return cmd.assembleRequest(m_CommandProcessor);
     }
     else {
       if (cmd instanceof RemoteCommandWithResponse)
-	return ((RemoteCommandWithResponse) cmd).assembleResponse();
+	return ((RemoteCommandWithResponse) cmd).assembleResponse(m_CommandProcessor);
       else
 	throw new IllegalStateException("Remote command is not a response but flagged as such:\n" + cmd);
     }

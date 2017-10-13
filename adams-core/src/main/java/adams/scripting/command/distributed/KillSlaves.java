@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * KillSlaves.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.distributed;
@@ -23,6 +23,7 @@ package adams.scripting.command.distributed;
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.engine.SlaveScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Kills all {@link SlaveScriptingEngine} that are registered with the master
@@ -80,9 +81,10 @@ public class KillSlaves
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor 	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  protected String doHandleRequest(RemoteScriptingEngine engine) {
+  protected String doHandleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor) {
     return null;
   }
 }

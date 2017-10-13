@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JobRunner.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.distributed;
@@ -24,6 +24,7 @@ import adams.core.SerializationHelper;
 import adams.multiprocess.CallableWithResult;
 import adams.scripting.command.AbstractCommandWithResponse;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 import java.util.logging.Level;
 
@@ -199,10 +200,11 @@ public class JobRunner
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doHandleRequest(final RemoteScriptingEngine engine) {
+  protected String doHandleRequest(final RemoteScriptingEngine engine, final RemoteCommandProcessor processor) {
     CallableWithResult<String>  job;
 
     job = new CallableWithResult<String>() {
@@ -215,7 +217,7 @@ public class JobRunner
         JobRunner cmd = new JobRunner();
         cmd.setRequest(false);
         cmd.setJobRunner(m_JobRunner);
-        return m_ResponseConnection.sendResponse(cmd);
+        return m_ResponseConnection.sendResponse(cmd, processor);
       }
     };
 

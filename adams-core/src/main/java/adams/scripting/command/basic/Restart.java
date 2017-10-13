@@ -23,6 +23,7 @@ package adams.scripting.command.basic;
 import adams.core.ClassCrossReference;
 import adams.core.management.Launcher;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Attempts to restart the remote ADAMS instance.
@@ -133,9 +134,10 @@ public class Restart
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor 	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  protected String doHandleRequest(RemoteScriptingEngine engine) {
+  protected String doHandleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor) {
     if (m_StopFlows)
       stopFlows();
 

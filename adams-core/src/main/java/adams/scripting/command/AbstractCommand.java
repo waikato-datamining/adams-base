@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractCommand.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -27,6 +27,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.requesthandler.RequestHandler;
 
 /**
@@ -120,9 +121,10 @@ public abstract class AbstractCommand
   /**
    * Assembles the command into a string, including any payload.
    *
+   * @param processor	the processor for formatting/parsing
    * @return		the generated string, null if failed to assemble
    */
-  public String assembleRequest() {
+  public String assembleRequest(RemoteCommandProcessor processor) {
     Properties		header;
     byte[]		payload;
 
@@ -135,7 +137,7 @@ public abstract class AbstractCommand
     if (payload.length > 0)
       payload = GzipUtils.compress(payload);
 
-    return CommandUtils.format(header, payload);
+    return processor.format(header, payload);
   }
 
   /**
@@ -144,7 +146,7 @@ public abstract class AbstractCommand
    * @param engine	the remote engine handling the request
    * @return		null if successful, otherwise error message
    */
-  protected abstract String doHandleRequest(RemoteScriptingEngine engine);
+  protected abstract String doHandleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor);
 
   /**
    * Handles the request.
@@ -153,10 +155,10 @@ public abstract class AbstractCommand
    * @param handler	for handling the request
    */
   @Override
-  public void handleRequest(RemoteScriptingEngine engine, RequestHandler handler) {
+  public void handleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor, RequestHandler handler) {
     String	msg;
 
-    msg = doHandleRequest(engine);
+    msg = doHandleRequest(engine, processor);
     if (msg != null)
       handler.requestFailed(this, msg);
     else

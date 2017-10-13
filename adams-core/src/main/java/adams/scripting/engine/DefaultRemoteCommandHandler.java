@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultRemoteCommandHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
@@ -23,6 +23,7 @@ package adams.scripting.engine;
 import adams.scripting.command.FlowAwareRemoteCommand;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Default handler for remote commands.
@@ -49,10 +50,11 @@ public class DefaultRemoteCommandHandler
    * Handles the command.
    *
    * @param cmd		the command to handle
+   * @param processor 	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doHandle(RemoteCommand cmd) {
+  protected String doHandle(RemoteCommand cmd, RemoteCommandProcessor processor) {
     if (isLoggingEnabled())
       getLogger().info("Handling command: " + cmd.getClass().getName());
 
@@ -61,7 +63,7 @@ public class DefaultRemoteCommandHandler
       ((FlowAwareRemoteCommand) cmd).setFlowContext(m_Owner.getFlowContext());
 
     if (cmd.isRequest()) {
-      cmd.handleRequest(m_Owner, m_Owner.getRequestHandler());
+      cmd.handleRequest(m_Owner, processor, m_Owner.getRequestHandler());
     }
     else {
       if (cmd instanceof RemoteCommandWithResponse) {

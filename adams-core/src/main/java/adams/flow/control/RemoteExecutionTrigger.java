@@ -34,6 +34,9 @@ import adams.gui.core.GUIHelper;
 import adams.scripting.command.flow.RemoteFlowExecution;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 
 import java.awt.Container;
 
@@ -125,7 +128,7 @@ import java.awt.Container;
  */
 public class RemoteExecutionTrigger
   extends AbstractTee
-  implements RemoteExecutionHandler {
+  implements RemoteExecutionHandler, RemoteCommandProcessorHandler {
 
   private static final long serialVersionUID = 3640543579873695646L;
 
@@ -137,6 +140,9 @@ public class RemoteExecutionTrigger
 
   /** where to send the flow to. */
   protected Connection m_Connection;
+
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
 
   /**
    * Returns a string describing the object.
@@ -169,6 +175,10 @@ public class RemoteExecutionTrigger
     m_OptionManager.add(
       "connection", "connection",
       new DefaultConnection());
+
+    m_OptionManager.add(
+      "command-processor", "commandProcessor",
+      new DefaultRemoteCommandProcessor());
   }
 
   /**
@@ -270,6 +280,35 @@ public class RemoteExecutionTrigger
   }
 
   /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandProcessorTipText() {
+    return "The processor for formatting/parsing.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -365,7 +404,7 @@ public class RemoteExecutionTrigger
       remote.setStorageNames(m_StorageNames);
       remote.setVariableNames(m_VariableNames);
       remote.setActor(flow);
-      result = m_Connection.sendRequest(remote);
+      result = m_Connection.sendRequest(remote, m_CommandProcessor);
 
       if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	getFlowExecutionListeningSupporter().getFlowExecutionListener().postExecute(this);

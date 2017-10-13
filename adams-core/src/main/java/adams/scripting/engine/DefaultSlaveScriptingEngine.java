@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultSlaveScriptingEngine.java
  * Copyright (C) 2016 University of Waikato, Hamilton, NZ
  */
@@ -181,7 +181,7 @@ public class DefaultSlaveScriptingEngine
     if (result == null) {
       register = new RegisterSlave();
       register.setConnection(m_Slave);
-      result = m_Master.sendRequest(register);
+      result = m_Master.sendRequest(register, m_CommandProcessor);
     }
 
     return result;
@@ -197,7 +197,7 @@ public class DefaultSlaveScriptingEngine
 
     deregister = new DeregisterSlave();
     deregister.setConnection(m_Slave);
-    msg = m_Master.sendRequest(deregister);
+    msg = m_Master.sendRequest(deregister, m_CommandProcessor);
     if (msg != null)
       getLogger().severe("Failed to deregister: " + msg);
 

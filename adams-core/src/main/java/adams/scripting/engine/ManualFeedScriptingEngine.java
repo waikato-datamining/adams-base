@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ManualFeedScriptingEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
@@ -124,7 +124,7 @@ public class ManualFeedScriptingEngine
     }
 
     // handle command
-    msg = m_CommandHandler.handle(cmd);
+    msg = m_CommandHandler.handle(cmd, m_CommandProcessor);
     if (msg != null)
       getLogger().severe("Failed to handle command:\n" + msg);
   }

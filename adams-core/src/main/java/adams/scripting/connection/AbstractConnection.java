@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractConnection.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
@@ -24,6 +24,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Ancestor for connections.
@@ -56,23 +57,25 @@ public abstract class AbstractConnection
    * Sends the request command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  protected abstract String doSendRequest(RemoteCommand cmd);
+  protected abstract String doSendRequest(RemoteCommand cmd, RemoteCommandProcessor processor);
 
   /**
    * Sends the request command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  public String sendRequest(RemoteCommand cmd) {
+  public String sendRequest(RemoteCommand cmd, RemoteCommandProcessor processor) {
     String	result;
 
     result = checkRequest(cmd);
     if (result == null) {
       cmd.beforeSendRequest();
-      result = doSendRequest(cmd);
+      result = doSendRequest(cmd, processor);
       cmd.afterSendRequest(result);
     }
 
@@ -98,24 +101,26 @@ public abstract class AbstractConnection
    * Sends the response command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  protected abstract String doSendResponse(RemoteCommand cmd);
+  protected abstract String doSendResponse(RemoteCommand cmd, RemoteCommandProcessor processor);
 
   /**
    * Sends the response command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  public String sendResponse(RemoteCommand cmd) {
+  public String sendResponse(RemoteCommand cmd, RemoteCommandProcessor processor) {
     String	result;
 
     result = checkResponse(cmd);
     if (result == null) {
       if (cmd instanceof RemoteCommandWithResponse)
 	((RemoteCommandWithResponse) cmd).beforeSendResponse();
-      result = doSendResponse(cmd);
+      result = doSendResponse(cmd, processor);
       if (cmd instanceof RemoteCommandWithResponse)
 	((RemoteCommandWithResponse) cmd).afterSendResponse(result);
     }

@@ -13,17 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringToRemoteCommandTest.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
 import adams.core.MessageCollection;
 import adams.env.Environment;
-import adams.scripting.command.CommandUtils;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -36,6 +37,9 @@ import junit.framework.TestSuite;
  */
 public class StringToRemoteCommandTest
   extends AbstractConversionTestCase {
+
+  /** for formatting/parsing. */
+  protected RemoteCommandProcessor m_CommandProcessor;
 
   /**
    * Constructs the test case. Called by subclasses.
@@ -56,6 +60,7 @@ public class StringToRemoteCommandTest
     super.setUp();
 
     m_TestHelper.copyResourceToTmp("example.rc");
+    m_CommandProcessor = new DefaultRemoteCommandProcessor();
   }
 
   /**
@@ -78,7 +83,7 @@ public class StringToRemoteCommandTest
    */
   @Override
   protected String toString(Object data) {
-    return ((RemoteCommand) data).assembleRequest();
+    return ((RemoteCommand) data).assembleRequest(m_CommandProcessor);
   }
 
   /**
@@ -94,9 +99,9 @@ public class StringToRemoteCommandTest
 
     errors = new MessageCollection();
     file   = new TmpFile("example.rc");
-    cmd    = CommandUtils.read(file, errors);
+    cmd    = m_CommandProcessor.read(file, errors);
     if (cmd != null)
-      return new Object[]{cmd.assembleRequest()};
+      return new Object[]{cmd.assembleRequest(m_CommandProcessor)};
 
     if (errors.isEmpty())
       fail("Failed to read remote command from: " + file);

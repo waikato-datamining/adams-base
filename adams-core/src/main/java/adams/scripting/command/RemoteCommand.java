@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteCommand.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -25,6 +25,7 @@ import adams.core.logging.LoggingSupporter;
 import adams.core.option.OptionHandler;
 import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.requesthandler.RequestHandler;
 
 import java.io.Serializable;
@@ -113,17 +114,19 @@ public interface RemoteCommand
   /**
    * Assembles the command into a string, including any payload.
    *
+   * @param processor	the command processor to use for formatting
    * @return		the generated string, null if failed to assemble
    */
-  public String assembleRequest();
+  public String assembleRequest(RemoteCommandProcessor processor);
 
   /**
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor	the command processor to use for formatting
    * @param handler	for handling the request
    */
-  public void handleRequest(RemoteScriptingEngine engine, RequestHandler handler);
+  public void handleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor, RequestHandler handler);
 
   /**
    * Hook method before sending the request.

@@ -23,6 +23,7 @@ package adams.scripting.command.basic;
 import adams.core.ClassCrossReference;
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Kills the remote ADAMS instance.
@@ -87,10 +88,11 @@ public class Kill
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor 	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doHandleRequest(RemoteScriptingEngine engine) {
+  protected String doHandleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor) {
     getLogger().info("Exiting");
     System.exit(0);
     return null;

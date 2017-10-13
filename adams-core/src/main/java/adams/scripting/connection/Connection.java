@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Connection.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
@@ -23,6 +23,7 @@ package adams.scripting.connection;
 import adams.core.CleanUpHandler;
 import adams.core.option.OptionHandler;
 import adams.scripting.command.RemoteCommand;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Interface for class that handle connections for remote commands.
@@ -37,15 +38,17 @@ public interface Connection
    * Sends the request command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  public String sendRequest(RemoteCommand cmd);
+  public String sendRequest(RemoteCommand cmd, RemoteCommandProcessor processor);
 
   /**
    * Sends the response command.
    *
    * @param cmd		the command to send
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  public String sendResponse(RemoteCommand cmd);
+  public String sendResponse(RemoteCommand cmd, RemoteCommandProcessor processor);
 }

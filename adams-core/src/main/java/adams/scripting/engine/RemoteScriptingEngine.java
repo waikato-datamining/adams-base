@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteScriptingEngine.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -28,6 +28,7 @@ import adams.flow.core.FlowContextHandler;
 import adams.multiprocess.CallableWithResult;
 import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.permissionhandler.PermissionHandler;
+import adams.scripting.processor.RemoteCommandProcessorHandler;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
@@ -38,7 +39,8 @@ import adams.scripting.responsehandler.ResponseHandler;
  * @version $Revision$
  */
 public interface RemoteScriptingEngine
-  extends OptionHandler, Pausable, StoppableWithFeedback, FlowContextHandler {
+  extends OptionHandler, Pausable, StoppableWithFeedback, FlowContextHandler,
+          RemoteCommandProcessorHandler {
 
   /**
    * Sets the application context.

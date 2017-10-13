@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractScriptingEngine.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -35,6 +35,8 @@ import adams.multiprocess.CallableWithResult;
 import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.permissionhandler.AllowAll;
 import adams.scripting.permissionhandler.PermissionHandler;
+import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
@@ -61,7 +63,10 @@ public abstract class AbstractScriptingEngine
 
   /** the command handler. */
   protected RemoteCommandHandler m_CommandHandler;
-  
+
+  /** the command processor. */
+  protected RemoteCommandProcessor m_CommandProcessor;
+
   /** the request handler. */
   protected RequestHandler m_RequestHandler;
 
@@ -83,6 +88,10 @@ public abstract class AbstractScriptingEngine
   @Override
   public void defineOptions() {
     super.defineOptions();
+
+    m_OptionManager.add(
+      "command-processor", "commandProcessor",
+      getDefaultCommandProcessor());
 
     m_OptionManager.add(
       "permission-handler", "permissionHandler",
@@ -133,6 +142,44 @@ public abstract class AbstractScriptingEngine
    */
   public RemoteCommandHandler getCommandHandler() {
     return m_CommandHandler;
+  }
+
+  /**
+   * Returns the default command processor.
+   *
+   * @return		the processor
+   */
+  protected RemoteCommandProcessor getDefaultCommandProcessor() {
+    return new DefaultRemoteCommandProcessor();
+  }
+
+  /**
+   * Sets the command processor to use.
+   *
+   * @param value	the processor
+   */
+  public void setCommandProcessor(RemoteCommandProcessor value) {
+    m_CommandProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the command processor in use.
+   *
+   * @return		the processor
+   */
+  public RemoteCommandProcessor getCommandProcessor() {
+    return m_CommandProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String commandProcessorTipText() {
+    return "The processor for formatting/parsing the commands.";
   }
 
   /**

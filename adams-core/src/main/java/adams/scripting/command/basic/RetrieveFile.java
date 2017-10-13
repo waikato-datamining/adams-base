@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RetrieveFile.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.basic;
@@ -25,6 +25,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.scripting.command.AbstractCommandWithResponse;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.responsehandler.ResponseHandler;
 
 /**
@@ -164,9 +165,10 @@ public class RetrieveFile
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor 	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
-  protected String doHandleRequest(RemoteScriptingEngine engine) {
+  protected String doHandleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor) {
     String	result;
 
     result = null;
@@ -181,7 +183,7 @@ public class RetrieveFile
     }
 
     if (result == null)
-      return super.doHandleRequest(engine);
+      return super.doHandleRequest(engine, processor);
     else
       return result;
   }

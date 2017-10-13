@@ -27,6 +27,7 @@ import adams.scripting.engine.AbstractRemoteCommandHandler;
 import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.engine.MasterScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Utilizes the remote command framework for sending jobs to a remote machine.
@@ -105,10 +106,11 @@ public class RemoteCommandJobRunner
      * Handles the command.
      *
      * @param cmd	the command to handle
+     * @param processor the processor for formatting/parsing
      * @return		null if successful, otherwise error message
      */
     @Override
-    protected String doHandle(RemoteCommand cmd) {
+    protected String doHandle(RemoteCommand cmd, RemoteCommandProcessor processor) {
       String	result;
 
       result = null;
@@ -339,7 +341,7 @@ public class RemoteCommandJobRunner
     cmd = new adams.scripting.command.distributed.JobRunner();
     cmd.setJobRunner(getJobRunner());
     cmd.setRequest(true);
-    result = m_RequestConnection.sendRequest(cmd);
+    result = m_RequestConnection.sendRequest(cmd, m_ResponseScriptingEngine.getCommandProcessor());
 
     return result;
   }

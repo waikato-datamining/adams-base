@@ -29,6 +29,7 @@ import adams.gui.application.AdditionalParameterHandler;
 import adams.gui.menu.TextEditor;
 import adams.scripting.command.AbstractFlowAwareCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
+import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
  * Launches the specified menu item on the remote machine.
@@ -168,10 +169,11 @@ public class MenuItem
    * Handles the request.
    *
    * @param engine	the remote engine handling the request
+   * @param processor	the processor for formatting/parsing
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doHandleRequest(RemoteScriptingEngine engine) {
+  protected String doHandleRequest(RemoteScriptingEngine engine, RemoteCommandProcessor processor) {
     if (m_FlowContext != null) {
       if (m_FlowContext.getRoot() instanceof Flow)
 	m_MenuItem.setOwner(((Flow) m_FlowContext.getRoot()).getApplicationFrame());
