@@ -187,6 +187,8 @@ public class WekaOptionUtils {
    */
   public static String parse(String[] options, String option, String defValue) throws Exception {
     String value = Utils.getOption(option, options);
+    if (value.equals("\"\"") || value.equals("''"))
+      value = "";
     if (value.isEmpty())
       return defValue;
     else
