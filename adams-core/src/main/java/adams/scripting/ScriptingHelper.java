@@ -20,6 +20,8 @@
 
 package adams.scripting;
 
+import adams.core.Properties;
+import adams.core.option.OptionUtils;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
@@ -34,8 +36,20 @@ import adams.scripting.processor.RemoteCommandProcessor;
  */
 public class ScriptingHelper {
 
+  /** the filename of the props file. */
+  public final static String FILENAME = "adams/scripting/ScriptingHelper.props";
+
+  public static final String KEY_ENGINE = "Engine";
+
+  public static final String KEY_CONNECTION = "Connection";
+
+  public static final String KEY_PROCESSOR = "Processor";
+
   /** the singleton. */
   protected static ScriptingHelper m_Singleton;
+
+  /** the properties. */
+  protected Properties m_Properties;
 
   /**
    * Initializes the helper.
@@ -48,6 +62,12 @@ public class ScriptingHelper {
    * Initializes members.
    */
   protected void initialize() {
+    try {
+      m_Properties = Properties.read(FILENAME);
+    }
+    catch (Exception e) {
+      m_Properties = new Properties();
+    }
   }
 
   /**
@@ -56,7 +76,14 @@ public class ScriptingHelper {
    * @return		the default
    */
   public RemoteScriptingEngine getDefaultEngine() {
-    return new DefaultScriptingEngine();
+    try {
+      return (RemoteScriptingEngine) OptionUtils.forCommandLine(
+        RemoteScriptingEngine.class,
+	m_Properties.getProperty(KEY_ENGINE, new DefaultScriptingEngine().toCommandLine()));
+    }
+    catch (Exception e) {
+      return new DefaultScriptingEngine();
+    }
   }
 
   /**
@@ -65,7 +92,14 @@ public class ScriptingHelper {
    * @return		the default
    */
   public Connection getDefaultConnection() {
-    return new DefaultConnection();
+    try {
+      return (Connection) OptionUtils.forCommandLine(
+        Connection.class,
+	m_Properties.getProperty(KEY_CONNECTION, new DefaultConnection().toCommandLine()));
+    }
+    catch (Exception e) {
+      return new DefaultConnection();
+    }
   }
 
   /**
@@ -74,7 +108,14 @@ public class ScriptingHelper {
    * @return		the default
    */
   public RemoteCommandProcessor getDefaultProcessor() {
-    return new DefaultRemoteCommandProcessor();
+    try {
+      return (RemoteCommandProcessor) OptionUtils.forCommandLine(
+        RemoteCommandProcessor.class,
+	m_Properties.getProperty(KEY_PROCESSOR, new DefaultRemoteCommandProcessor().toCommandLine()));
+    }
+    catch (Exception e) {
+      return new DefaultRemoteCommandProcessor();
+    }
   }
 
   /**
