@@ -19,9 +19,9 @@
  */
 package adams.data.conversion;
 
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 
@@ -71,7 +71,7 @@ public class RemoteCommandToString
 
     m_OptionManager.add(
       "command-processor", "commandProcessor",
-      new DefaultRemoteCommandProcessor());
+      ScriptingHelper.getSingleton().getDefaultProcessor());
   }
 
   /**

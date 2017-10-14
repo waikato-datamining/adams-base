@@ -27,13 +27,13 @@ import adams.core.logging.LoggingHelper;
 import adams.core.logging.RemoteReceiveHandler.AbstractRemoteListenerRunnable;
 import adams.core.net.PortManager;
 import adams.env.Environment;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.command.basic.StartRemoteLogging;
 import adams.scripting.command.basic.StopEngine;
 import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 
@@ -121,7 +121,7 @@ public class Logging
 
     m_OptionManager.add(
       "command-processor", "commandProcessor",
-      new DefaultRemoteCommandProcessor());
+      ScriptingHelper.getSingleton().getDefaultProcessor());
 
     m_OptionManager.add(
       "remote-host", "remoteHost",

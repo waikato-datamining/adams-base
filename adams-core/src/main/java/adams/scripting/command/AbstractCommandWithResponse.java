@@ -24,8 +24,8 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.GzipUtils;
 import adams.core.option.OptionUtils;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.connection.Connection;
-import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.responsehandler.ResponseHandler;
@@ -69,7 +69,7 @@ public abstract class AbstractCommandWithResponse
    * @return		the connection
    */
   protected Connection getDefaultResponseConnection() {
-    return new DefaultConnection();
+    return ScriptingHelper.getSingleton().getDefaultConnection();
   }
 
   /**

@@ -21,8 +21,8 @@
 package adams.flow.sink;
 
 import adams.core.MessageCollection;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommand;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 
@@ -115,7 +115,7 @@ public class RemoteCommandWriter
 
     m_OptionManager.add(
       "command-processor", "commandProcessor",
-      new DefaultRemoteCommandProcessor());
+      ScriptingHelper.getSingleton().getDefaultProcessor());
   }
 
   /**

@@ -1,0 +1,10 @@
+# Defines default setups for scripting objects
+
+# The engine
+Engine=adams.scripting.engine.DefaultScriptingEngine
+
+# The connection
+Connection=adams.scripting.connection.DefaultConnection
+
+# The command processor
+Processor=adams.scripting.processor.DefaultRemoteCommandProcessor

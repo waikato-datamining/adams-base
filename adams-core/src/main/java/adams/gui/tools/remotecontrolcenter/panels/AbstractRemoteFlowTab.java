@@ -28,6 +28,7 @@ import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTableModel;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.command.basic.Kill;
@@ -37,7 +38,6 @@ import adams.scripting.command.flow.SendFlowControlCommand;
 import adams.scripting.command.flow.SendFlowControlCommand.Command;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 import adams.scripting.responsehandler.ResponseHandler;
@@ -172,7 +172,7 @@ public abstract class AbstractRemoteFlowTab
   protected void initialize() {
     super.initialize();
 
-    m_CommandProcessor = new DefaultRemoteCommandProcessor();
+    m_CommandProcessor = ScriptingHelper.getSingleton().getDefaultProcessor();
   }
 
   /**

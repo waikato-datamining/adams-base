@@ -31,10 +31,10 @@ import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.SimpleLogPanel;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.StartRemoteLogging;
 import adams.scripting.command.basic.StopRemoteLogging;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 
@@ -187,7 +187,7 @@ public class RemoteLoggingTab
     super.initialize();
 
     m_Runnable         = null;
-    m_CommandProcessor = new DefaultRemoteCommandProcessor();
+    m_CommandProcessor = ScriptingHelper.getSingleton().getDefaultProcessor();
   }
 
   /**

@@ -20,6 +20,8 @@
 
 package adams.scripting.connection;
 
+import adams.scripting.ScriptingHelper;
+
 /**
  * Ancestor connections that enhance a base connection.
  *
@@ -52,7 +54,7 @@ public abstract class AbstractConnectionEnhancer
    * @return		the default
    */
   protected Connection getDefaultConnection() {
-    return new DefaultConnection();
+    return ScriptingHelper.getSingleton().getDefaultConnection();
   }
 
   /**

@@ -20,9 +20,9 @@
 
 package adams.scripting.engine;
 
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.connection.Connection;
-import adams.scripting.connection.DefaultConnection;
 import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
@@ -135,7 +135,7 @@ public class ForwardingScriptingEngine
 
     m_OptionManager.add(
       "forward", "forward",
-      new DefaultConnection());
+      ScriptingHelper.getSingleton().getDefaultConnection());
   }
 
   /**

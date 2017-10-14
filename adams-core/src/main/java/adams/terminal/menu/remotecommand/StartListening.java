@@ -22,7 +22,7 @@ package adams.terminal.menu.remotecommand;
 
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
-import adams.scripting.engine.DefaultScriptingEngine;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.terminal.application.AbstractTerminalApplication;
 import adams.terminal.dialog.ComponentDialog;
@@ -90,7 +90,7 @@ public class StartListening
 
     result.addComponent(new Label("Engine"), Location.TOP);
     m_Engine = new TextBox(new TerminalSize(20, 3));
-    m_Engine.setText(new DefaultScriptingEngine().toCommandLine());
+    m_Engine.setText(ScriptingHelper.getSingleton().getDefaultEngine().toCommandLine());
     result.addComponent(m_Engine, Location.CENTER);
 
     return result;

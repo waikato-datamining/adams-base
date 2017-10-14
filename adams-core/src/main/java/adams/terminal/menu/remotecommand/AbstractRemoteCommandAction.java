@@ -22,13 +22,13 @@ package adams.terminal.menu.remotecommand;
 
 import adams.core.base.BaseHostname;
 import adams.core.net.PortManager;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.command.basic.StopEngine;
 import adams.scripting.command.basic.StopEngine.EngineType;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 import adams.scripting.requesthandler.LogTextBoxRequestHandler;
@@ -78,7 +78,7 @@ public abstract class AbstractRemoteCommandAction
    * Initializes members.
    */
   protected void initialize() {
-    m_CommandProcessor = new DefaultRemoteCommandProcessor();
+    m_CommandProcessor = ScriptingHelper.getSingleton().getDefaultProcessor();
   }
 
   /**

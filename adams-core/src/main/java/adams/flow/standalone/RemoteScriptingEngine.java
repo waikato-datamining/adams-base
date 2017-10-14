@@ -23,7 +23,7 @@ package adams.flow.standalone;
 import adams.core.QuickInfoHelper;
 import adams.flow.control.Flow;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.scripting.engine.DefaultScriptingEngine;
+import adams.scripting.ScriptingHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -106,7 +106,7 @@ public class RemoteScriptingEngine
 
     m_OptionManager.add(
 	    "engine", "engine",
-	    new DefaultScriptingEngine());
+	    ScriptingHelper.getSingleton().getDefaultEngine());
   }
 
   /**

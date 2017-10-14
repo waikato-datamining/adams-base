@@ -31,10 +31,9 @@ import adams.flow.core.RemoteExecutionHandler;
 import adams.flow.core.Token;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.GUIHelper;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.flow.RemoteFlowExecution;
 import adams.scripting.connection.Connection;
-import adams.scripting.connection.DefaultConnection;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 
@@ -174,11 +173,11 @@ public class RemoteExecutionTrigger
 
     m_OptionManager.add(
       "connection", "connection",
-      new DefaultConnection());
+      ScriptingHelper.getSingleton().getDefaultConnection());
 
     m_OptionManager.add(
       "command-processor", "commandProcessor",
-      new DefaultRemoteCommandProcessor());
+      ScriptingHelper.getSingleton().getDefaultProcessor());
   }
 
   /**

@@ -33,9 +33,9 @@ import adams.flow.core.Actor;
 import adams.gui.scripting.ScriptingEngine;
 import adams.multiprocess.CallableWithResult;
 import adams.scripting.RemoteScriptingEngineHandler;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.permissionhandler.AllowAll;
 import adams.scripting.permissionhandler.PermissionHandler;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.requesthandler.RequestHandler;
 import adams.scripting.responsehandler.ResponseHandler;
@@ -150,7 +150,7 @@ public abstract class AbstractScriptingEngine
    * @return		the processor
    */
   protected RemoteCommandProcessor getDefaultCommandProcessor() {
-    return new DefaultRemoteCommandProcessor();
+    return ScriptingHelper.getSingleton().getDefaultProcessor();
   }
 
   /**

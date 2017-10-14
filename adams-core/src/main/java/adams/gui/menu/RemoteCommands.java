@@ -34,13 +34,11 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.remotecontrolcenter.RemoteControlCenterManagerPanel;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.SystemInfo;
 import adams.scripting.connection.Connection;
-import adams.scripting.connection.DefaultConnection;
-import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 
 import javax.swing.JMenuItem;
@@ -170,7 +168,7 @@ public class RemoteCommands
     dialog.getGOEEditor().setClassType(RemoteScriptingEngine.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     if (getOwner().getRemoteScriptingEngine() == null)
-      dialog.setCurrent(new DefaultScriptingEngine());
+      dialog.setCurrent(ScriptingHelper.getSingleton().getDefaultEngine());
     else
       dialog.setCurrent(OptionUtils.shallowCopy(getOwner().getRemoteScriptingEngine()));
     dialog.setLocationRelativeTo(null);
@@ -195,9 +193,9 @@ public class RemoteCommands
     if (m_LastCommand == null)
       m_LastCommand = new SystemInfo();
     if (m_LastConnection == null)
-      m_LastConnection = new DefaultConnection();
+      m_LastConnection = ScriptingHelper.getSingleton().getDefaultConnection();
     if (m_LastCommandProcessor == null)
-      m_LastCommandProcessor = new DefaultRemoteCommandProcessor();
+      m_LastCommandProcessor = ScriptingHelper.getSingleton().getDefaultProcessor();
 
     params = new PropertiesParameterPanel();
     params.addPropertyType(KEY_COMMAND, PropertyType.OBJECT_EDITOR);

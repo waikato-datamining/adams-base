@@ -21,6 +21,7 @@
 package adams.scripting.engine;
 
 import adams.multiprocess.CallableWithResult;
+import adams.scripting.ScriptingHelper;
 
 /**
  * Ancestor for scripting engines that enhance a base one.
@@ -54,7 +55,7 @@ public abstract class AbstractScriptingEngineEnhancer
    * @return		the default
    */
   protected RemoteScriptingEngine getDefaultScriptingEngine() {
-    return new DefaultScriptingEngine();
+    return ScriptingHelper.getSingleton().getDefaultEngine();
   }
 
   /**

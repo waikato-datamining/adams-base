@@ -29,10 +29,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.connection.Connection;
-import adams.scripting.connection.DefaultConnection;
-import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 
@@ -127,15 +124,15 @@ public class CommandRunner
 
     m_OptionManager.add(
       "engine", "engine",
-      new DefaultScriptingEngine());
+      ScriptingHelper.getSingleton().getDefaultEngine());
 
     m_OptionManager.add(
       "connection", "connection",
-      new DefaultConnection());
+      ScriptingHelper.getSingleton().getDefaultConnection());
 
     m_OptionManager.add(
       "command-processor", "commandProcessor",
-      new DefaultRemoteCommandProcessor());
+      ScriptingHelper.getSingleton().getDefaultProcessor());
 
     m_OptionManager.add(
       "command", "commands",

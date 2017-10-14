@@ -23,8 +23,8 @@ package adams.scripting.responsehandler;
 import adams.core.MessageCollection;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.TempUtils;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommand;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 
@@ -78,7 +78,7 @@ public class CommandDumperHandler
 
     m_OptionManager.add(
       "command-processor", "commandProcessor",
-      new DefaultRemoteCommandProcessor());
+      ScriptingHelper.getSingleton().getDefaultProcessor());
   }
 
   /**

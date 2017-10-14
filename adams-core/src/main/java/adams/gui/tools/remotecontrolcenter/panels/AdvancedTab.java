@@ -29,12 +29,11 @@ import adams.gui.core.SimpleLogPanel;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.debug.InspectionPanel;
+import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.command.basic.Ping;
 import adams.scripting.connection.Connection;
-import adams.scripting.connection.DefaultConnection;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.responsehandler.AbstractResponseHandler;
 import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
@@ -226,10 +225,10 @@ public class AdvancedTab
     m_GOECommand.addChooseListener(this);
     m_PanelParams.addParameter("Command", m_GOECommand);
 
-    m_GOEConnection = new GenericObjectEditorPanel(Connection.class, new DefaultConnection(), true);
+    m_GOEConnection = new GenericObjectEditorPanel(Connection.class, ScriptingHelper.getSingleton().getDefaultConnection(), true);
     m_PanelParams.addParameter("Connection", m_GOEConnection);
 
-    m_GOECommandProcessor = new GenericObjectEditorPanel(RemoteCommandProcessor.class, new DefaultRemoteCommandProcessor(), true);
+    m_GOECommandProcessor = new GenericObjectEditorPanel(RemoteCommandProcessor.class, ScriptingHelper.getSingleton().getDefaultProcessor(), true);
     m_PanelParams.addParameter("Processor", m_GOECommandProcessor);
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
