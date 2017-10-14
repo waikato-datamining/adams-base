@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractEditPostProcessor.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree.postprocessor;
@@ -137,10 +137,13 @@ public abstract class AbstractEditPostProcessor
 	proc = (AbstractEditPostProcessor) processor.newInstance();
 	if (proc.applies(parent, oldActor, newActor)) {
 	  if (!confirmed) {
-	    if (JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(tree), "Propagate changes throughout the tree (if applicable)?") == JOptionPane.YES_OPTION)
+	    if (JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(tree), "Propagate changes throughout the tree (if applicable)?") == JOptionPane.YES_OPTION) {
 	      confirmed = true;
-	    else
+	      tree.addUndoPoint("Post-processing actor '" + newActor.getName() + "'");
+	    }
+	    else {
 	      break;
+	    }
 	  }
 	  modified = proc.postProcess(tree, parent, oldActor, newActor);
 	  result = result || modified;
