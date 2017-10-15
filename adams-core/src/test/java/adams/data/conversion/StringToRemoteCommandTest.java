@@ -23,7 +23,7 @@ package adams.data.conversion;
 import adams.core.MessageCollection;
 import adams.env.Environment;
 import adams.scripting.command.RemoteCommand;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.DefaultProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.test.TmpFile;
 import junit.framework.Test;
@@ -60,7 +60,7 @@ public class StringToRemoteCommandTest
     super.setUp();
 
     m_TestHelper.copyResourceToTmp("example.rc");
-    m_CommandProcessor = new DefaultRemoteCommandProcessor();
+    m_CommandProcessor = new DefaultProcessor();
   }
 
   /**

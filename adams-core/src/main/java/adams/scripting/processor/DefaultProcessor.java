@@ -14,7 +14,7 @@
  */
 
 /*
- * DefaultRemoteCommandProcessor.java
+ * DefaultProcessor.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class DefaultRemoteCommandProcessor
+public class DefaultProcessor
   extends AbstractRemoteCommandProcessor {
 
   private static final long serialVersionUID = -7804545376269832263L;

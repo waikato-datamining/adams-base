@@ -26,7 +26,7 @@ import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
-import adams.scripting.processor.DefaultRemoteCommandProcessor;
+import adams.scripting.processor.DefaultProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
@@ -111,10 +111,10 @@ public class ScriptingHelper {
     try {
       return (RemoteCommandProcessor) OptionUtils.forCommandLine(
         RemoteCommandProcessor.class,
-	m_Properties.getProperty(KEY_PROCESSOR, new DefaultRemoteCommandProcessor().toCommandLine()));
+	m_Properties.getProperty(KEY_PROCESSOR, new DefaultProcessor().toCommandLine()));
     }
     catch (Exception e) {
-      return new DefaultRemoteCommandProcessor();
+      return new DefaultProcessor();
     }
   }
 
