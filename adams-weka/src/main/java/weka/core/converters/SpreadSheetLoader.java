@@ -21,11 +21,12 @@
 
 package weka.core.converters;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Vector;
-
+import adams.core.option.OptionUtils;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.SpreadSheetToWekaInstances;
+import adams.data.io.input.CsvSpreadSheetReader;
+import adams.data.io.input.SpreadSheetReader;
+import adams.data.spreadsheet.SpreadSheet;
 import weka.core.Environment;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -33,12 +34,11 @@ import weka.core.Option;
 import weka.core.OptionHandler;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
-import adams.core.option.OptionUtils;
-import adams.data.conversion.Conversion;
-import adams.data.conversion.SpreadSheetToWekaInstances;
-import adams.data.io.input.CsvSpreadSheetReader;
-import adams.data.io.input.SpreadSheetReader;
-import adams.data.spreadsheet.SpreadSheet;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -436,7 +436,7 @@ public class SpreadSheetLoader
   }
   
   /**
-   * AdamsCsvLoader is unable to process a data set incrementally.
+   * SpreadSheetLoader is unable to process a data set incrementally.
    *
    * @param structure ignored
    * @return never returns without throwing an exception
