@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GUIHelpProducer.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -375,7 +375,7 @@ public class HtmlHelpProducer
     m_OutputBuffer = new StringBuilder();
     m_OutputBuffer.append("<html>" + "\n");
     m_OutputBuffer.append("<head>\n");
-    m_OutputBuffer.append("<title>" + getInput().getClass().getName() + "<title>\n");
+    m_OutputBuffer.append("<title>" + getInput().getClass().getName() + "</title>\n");
     m_OutputBuffer.append("</head>\n");
     m_OutputBuffer.append("\n");
     m_OutputBuffer.append("<body>\n");
