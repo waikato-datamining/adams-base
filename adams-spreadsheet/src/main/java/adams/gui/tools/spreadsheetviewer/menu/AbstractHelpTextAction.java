@@ -23,6 +23,7 @@ import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesMenuItemAction;
 import adams.gui.application.Child;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpFrame;
 import adams.gui.dialog.TextDialog;
 import adams.gui.tools.SpreadSheetViewerPanel;
 
@@ -94,21 +95,7 @@ public abstract class AbstractHelpTextAction
    */
   @Override
   protected TextDialog createDialog() {
-    TextDialog 	result;
-    
-    if (getParentDialog() != null)
-      result = new TextDialog(getParentDialog());
-    else
-      result = new TextDialog(getParentFrame());
-    result.setDialogTitle(getTitle().replaceAll("[.]*$", ""));
-    result.setContent(getHelpContent());
-    result.setEditable(false);
-    result.setDefaultCloseOperation(TextDialog.HIDE_ON_CLOSE);
-    result.setSize(GUIHelper.getDefaultDialogDimension());
-    GUIHelper.setSizeAndLocation(result);
-    result.setLocationRelativeTo(m_State);
-    
-    return result;
+    return null;
   }
   
   /**
@@ -118,7 +105,7 @@ public abstract class AbstractHelpTextAction
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    getDialog().setVisible(true);
+    HelpFrame.showHelp(getTitle().replaceAll("[.]*$", ""), getHelpContent(), false);
   }
   
   /**
