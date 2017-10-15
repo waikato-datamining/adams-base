@@ -24,7 +24,12 @@ import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -50,6 +55,15 @@ public class HelpFrame
 
   /** the editor pane. */
   protected JEditorPane m_Text;
+
+  /** the clear menu item. */
+  protected JMenuItem m_MenuItemClear;
+
+  /** the save as menu item. */
+  protected JMenuItem m_MenuItemSaveAs;
+
+  /** the close menu item. */
+  protected JMenuItem m_MenuItemClose;
 
   /**
    * Initializes the frame.
@@ -89,7 +103,58 @@ public class HelpFrame
     m_PanelHistory.setAllowSearch(true);
     m_SplitPane.setLeftComponent(m_PanelHistory);
 
-    // TODO clear all button?
+    // menu
+    setJMenuBar(createMenu());
+  }
+
+  /**
+   * Generates the menu.
+   */
+  protected JMenuBar createMenu() {
+    JMenuBar 	result;
+    JMenu	menu;
+    JMenuItem	item;
+    
+    result = new JMenuBar();
+    
+    menu = new JMenu("File");
+    menu.setMnemonic('F');
+    menu.addChangeListener((ChangeEvent e) -> updateMenu());
+    result.add(menu);
+    
+    item = new JMenuItem("Clear", GUIHelper.getIcon("new.gif"));
+    item.setMnemonic('l');
+    item.addActionListener((ActionEvent e) -> m_PanelHistory.clear());
+    menu.add(item);
+    m_MenuItemClear = item;
+    
+    item = new JMenuItem("Save as...", GUIHelper.getIcon("save.gif"));
+    item.setMnemonic('S');
+    item.addActionListener((ActionEvent e) -> {
+      if (m_PanelHistory.getSelectedEntry() == null)
+        return;
+      m_PanelHistory.saveEntry(m_PanelHistory.getSelectedEntry());
+    });
+    menu.add(item);
+    m_MenuItemSaveAs = item;
+    
+    menu.addSeparator();
+    
+    item = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
+    item.setMnemonic('C');
+    item.addActionListener((ActionEvent e) -> setVisible(false));
+    menu.add(item);
+    m_MenuItemClose = item;
+    
+    return result;
+  }
+
+  /**
+   * Updates the state of the menu items.
+   */
+  protected void updateMenu() {
+    m_MenuItemClear.setEnabled(m_PanelHistory.count() > 0);
+    m_MenuItemSaveAs.setEnabled(m_PanelHistory.getSelectedEntry() != null);
   }
 
   /**
