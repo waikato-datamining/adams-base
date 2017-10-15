@@ -32,10 +32,9 @@ import adams.env.ScriptingDialogDefinition;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseStatusBar;
-import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpFrame;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
 import adams.gui.event.RecentItemEvent;
@@ -43,14 +42,11 @@ import adams.gui.event.RecentItemListener;
 import adams.gui.event.ScriptingInfoEvent;
 import adams.gui.event.ScriptingInfoListener;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -61,7 +57,6 @@ import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -760,37 +755,7 @@ public abstract class AbstractScriptingDialog
    * Displays a help dialog.
    */
   protected void help() {
-    JTextArea	textHelp;
-    JPanel	panel;
-    JButton	buttonClose;
-
-    final JDialog dialog = new JDialog(this, "Help on scripting", false);
-    dialog.getContentPane().setLayout(new BorderLayout());
-    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-    textHelp = new JTextArea(30, 80);
-    textHelp.setText(getScriptingEngine().getProcessor().globalInfo());
-    textHelp.setFont(Fonts.getMonospacedFont());
-    textHelp.setCaretPosition(0);
-    textHelp.setEditable(false);
-    dialog.getContentPane().add(new BaseScrollPane(textHelp), BorderLayout.CENTER);
-
-    buttonClose = new JButton("Close", GUIHelper.getIcon("exit.png"));
-    buttonClose.setMnemonic('l');
-    buttonClose.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        dialog.setVisible(false);
-      }
-    });
-
-    panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    panel.add(buttonClose);
-    dialog.getContentPane().add(panel, BorderLayout.SOUTH);
-
-    dialog.pack();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
+    HelpFrame.showHelp(getScriptingEngine().getProcessor().getClass(), getScriptingEngine().getProcessor().globalInfo(), false);
   }
 
   /**

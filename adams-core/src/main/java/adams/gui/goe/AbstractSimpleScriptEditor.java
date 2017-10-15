@@ -27,8 +27,8 @@ import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.AbstractSimpleScript;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpFrame;
 import adams.gui.core.StyledTextEditorPanel;
-import adams.gui.dialog.TextDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -225,13 +225,7 @@ public class AbstractSimpleScriptEditor
       buttonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  String help = ((AdditionalInformationHandler) m_TextStatement).getAdditionalInformation();
-	  TextDialog dlg = new TextDialog();
-	  dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-	  dlg.setDialogTitle("Help");
-	  dlg.setContent(help);
-	  dlg.setLineWrap(true);
-	  dlg.setEditable(false);
-	  dlg.setVisible(true);
+          HelpFrame.showHelp(getValue().getClass(), help, false);
 	}
       });
       panelButtonsRight.add(buttonHelp);

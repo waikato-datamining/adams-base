@@ -21,8 +21,7 @@ package adams.gui.flow.tree.menu;
 
 import adams.core.option.HtmlHelpProducer;
 import adams.flow.core.Actor;
-import adams.gui.core.GUIHelper;
-import adams.gui.dialog.HelpDialog;
+import adams.gui.core.HelpFrame;
 import adams.gui.flow.tree.TreeHelper;
 
 import javax.swing.tree.TreePath;
@@ -64,23 +63,13 @@ public class Help
    * @param path	the path to the actor
    */
   protected void help(TreePath path) {
-    HelpDialog		dialog;
     HtmlHelpProducer 	producer;
     Actor 		actor;
 
     actor = TreeHelper.pathToActor(path);
-    if (getParentDialog() != null)
-      dialog = new HelpDialog(getParentDialog());
-    else
-      dialog = new HelpDialog(getParentFrame());
-    dialog.setDefaultCloseOperation(HelpDialog.DISPOSE_ON_CLOSE);
     producer = new HtmlHelpProducer();
     producer.produce(actor);
-    dialog.setHelp(producer.getOutput(), true);
-    dialog.setTitle("Help on " + actor.getClass().getName());
-    dialog.setSize(GUIHelper.getDefaultDialogDimension());
-    dialog.setLocationRelativeTo(dialog.getParent());
-    dialog.setVisible(true);
+    HelpFrame.showHelp(actor.getClass(), producer.getOutput(), true);
   }
 
   /**

@@ -26,8 +26,8 @@ import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.gui.chooser.DateProvider;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpFrame;
 import adams.gui.dialog.ApprovalDialog;
-import adams.gui.dialog.HelpDialog;
 import adams.parser.GrammarSupplier;
 
 import javax.swing.BorderFactory;
@@ -323,17 +323,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
    * Displays the help for the
    */
   protected void showHelp() {
-    HelpDialog	dialog;
-
-    if (getParentDialog() != null)
-      dialog = new HelpDialog(getParentDialog());
-    else
-      dialog = new HelpDialog(getParentFrame());
-    dialog.setDefaultCloseOperation(HelpDialog.DISPOSE_ON_CLOSE);
-    dialog.setHelp(m_Date.getGrammar(), false);
-    dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
-    dialog.setLocationRelativeTo(dialog.getParent());
-    dialog.setVisible(true);
+    HelpFrame.showHelp(m_Date.getClass(), m_Date.getGrammar(), false);
   }
 
   /**

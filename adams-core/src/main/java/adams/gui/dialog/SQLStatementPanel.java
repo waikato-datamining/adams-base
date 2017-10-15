@@ -19,25 +19,25 @@
  */
 package adams.gui.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import adams.core.AdditionalInformationHandler;
+import adams.db.SQLStatement;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpFrame;
+import adams.gui.core.RecentSQLStatementsHandler;
+import adams.gui.core.SQLSyntaxEditorPanel;
+import adams.gui.event.RecentItemEvent;
+import adams.gui.event.RecentItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-
-import adams.core.AdditionalInformationHandler;
-import adams.db.SQLStatement;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.RecentSQLStatementsHandler;
-import adams.gui.core.SQLSyntaxEditorPanel;
-import adams.gui.event.RecentItemEvent;
-import adams.gui.event.RecentItemListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Panel with SQL statement editor.
@@ -171,13 +171,7 @@ public class SQLStatementPanel
       m_ButtonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  String help = ((AdditionalInformationHandler) m_PanelStatement).getAdditionalInformation();
-	  TextDialog dlg = new TextDialog();
-	  dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-	  dlg.setDialogTitle("Help");
-	  dlg.setContent(help);
-	  dlg.setLineWrap(true);
-	  dlg.setEditable(false);
-	  dlg.setVisible(true);
+          HelpFrame.showHelp(SQLStatement.class, help, false);
 	}
       });
       m_PanelButtonsRight.add(m_ButtonHelp);

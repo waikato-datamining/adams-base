@@ -36,6 +36,7 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpFrame;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
 
@@ -43,7 +44,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -125,9 +125,6 @@ public class PropertySheetPanel extends BasePanel
 
   /** the text from the globalInfo method, if any. */
   protected String m_GlobalInfo;
-
-  /** Help frame. */
-  protected GenericObjectEditorHelpDialog m_DialogHelp;
 
   /** Button to pop up the full help text in a separate frame. */
   protected JButton m_ButtonHelp;
@@ -425,7 +422,6 @@ public class PropertySheetPanel extends BasePanel
 	@Override
 	public void actionPerformed(ActionEvent a) {
 	  openHelpDialog();
-	  m_ButtonHelp.setEnabled(false);
 	}
       });
 
@@ -657,22 +653,7 @@ public class PropertySheetPanel extends BasePanel
 
     initHelp();
     isHtml = (m_HelpTextHtml != null);
-    if (GUIHelper.getParentDialog(this) != null)
-      m_DialogHelp = new GenericObjectEditorHelpDialog(GUIHelper.getParentDialog(this), this);
-    else
-      m_DialogHelp = new GenericObjectEditorHelpDialog(GUIHelper.getParentFrame(this), this);
-    if (isHtml)
-      m_DialogHelp.setHelp(m_HelpTextHtml.toString(), true);
-    else
-      m_DialogHelp.setHelp(m_HelpText.toString(), false);
-    if (isHtml)
-      m_DialogHelp.setSize(GUIHelper.getDefaultDialogDimension());
-    else
-      m_DialogHelp.setSize(
-        GUIHelper.getInteger("DefaultTinyDialog.Width", 400),
-        GUIHelper.getInteger("DefaultTinyDialog.Width", 400));
-    m_DialogHelp.setLocationRelativeTo(m_DialogHelp.getParent());
-    m_DialogHelp.setVisible(true);
+    HelpFrame.showHelp(getTarget().getClass(), isHtml ? m_HelpTextHtml.toString() : m_HelpText.toString(), isHtml);
   }
 
   /**
@@ -883,14 +864,5 @@ public class PropertySheetPanel extends BasePanel
    */
   public JButton getHelpButton() {
     return m_ButtonHelp;
-  }
-
-  /**
-   * Returns the help dialog.
-   *
-   * @return		the help dialog, can be null
-   */
-  public JDialog getHelpDialog() {
-    return m_DialogHelp;
   }
 }

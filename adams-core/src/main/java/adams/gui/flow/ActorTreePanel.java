@@ -27,12 +27,12 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpFrame;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.dotnotationtree.AbstractInfoNode;
 import adams.gui.core.dotnotationtree.DotNotationNode;
 import adams.gui.core.dotnotationtree.PopupMenuHandler;
-import adams.gui.dialog.HelpDialog;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.flow.tree.ClipboardActorContainer;
@@ -203,7 +203,6 @@ public class ActorTreePanel
    * @param classname	the class name of the actor to show the help for
    */
   protected void showHelp(String classname) {
-    HelpDialog		dialog;
     HtmlHelpProducer 	producer;
     Actor		actor;
 
@@ -211,18 +210,9 @@ public class ActorTreePanel
     if (actor == null)
       return;
 
-    if (getParentDialog() != null)
-      dialog = new HelpDialog(getParentDialog());
-    else
-      dialog = new HelpDialog(getParentFrame());
-    dialog.setDefaultCloseOperation(HelpDialog.DISPOSE_ON_CLOSE);
     producer = new HtmlHelpProducer();
     producer.produce(actor);
-    dialog.setHelp(producer.getOutput(), true);
-    dialog.setTitle("Help on " + actor.getClass().getName());
-    dialog.setSize(GUIHelper.getDefaultDialogDimension());
-    dialog.setLocationRelativeTo(dialog.getParent());
-    dialog.setVisible(true);
+    HelpFrame.showHelp(actor.getClass(), producer.getOutput(), true);
   }
 
   /**

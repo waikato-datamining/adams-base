@@ -25,8 +25,8 @@ import adams.core.Range;
 import adams.core.Utils;
 import adams.core.option.AbstractOption;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpFrame;
 import adams.gui.dialog.ApprovalDialog;
-import adams.gui.dialog.TextDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -239,17 +239,7 @@ public class RangeEditor
     m_ButtonHelp.setToolTipText(createTipText(getHelpDescription()));
     m_ButtonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	TextDialog dlg = new TextDialog();
-	dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-	dlg.setDialogTitle("Help");
-	dlg.setContent(getHelpDescription());
-	dlg.setSize(
-          GUIHelper.getInteger("DefaultTinyDialog.Width", 400),
-          GUIHelper.getInteger("DefaultTinyDialog.Width", 400));
-	dlg.setLocationRelativeTo(m_ButtonHelp);
-	dlg.setLineWrap(true);
-	dlg.setEditable(false);
-	dlg.setVisible(true);
+        HelpFrame.showHelp(Range.class, getHelpDescription(), false);
       }
     });
     

@@ -29,10 +29,21 @@ import adams.gui.core.AbstractAdvancedScript;
 import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.DefaultTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.GUIHelper;
-import adams.gui.dialog.TextDialog;
+import adams.gui.core.HelpFrame;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -214,13 +225,7 @@ public class AbstractAdvancedScriptEditor
       buttonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  String help = ((AdditionalInformationHandler) m_TextStatement).getAdditionalInformation();
-	  TextDialog dlg = new TextDialog();
-	  dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-	  dlg.setDialogTitle("Help");
-	  dlg.setContent(help);
-	  dlg.setLineWrap(true);
-	  dlg.setEditable(false);
-	  dlg.setVisible(true);
+          HelpFrame.showHelp(getValue().getClass(), help, false);
 	}
       });
       panelButtonsRight.add(buttonHelp);

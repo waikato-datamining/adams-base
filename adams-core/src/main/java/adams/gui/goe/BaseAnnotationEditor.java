@@ -29,9 +29,9 @@ import adams.flow.processor.ListAnnotationTags;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpFrame;
 import adams.gui.core.MarkdownTextAreaWithPreview;
 import adams.gui.core.TextAreaComponent;
-import adams.gui.dialog.TextDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -201,14 +201,7 @@ public class BaseAnnotationEditor
     buttonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	String help = getHelpDescription();
-	TextDialog dlg = new TextDialog();
-	dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-	dlg.setSize(GUIHelper.getDefaultTinyDialogDimension());
-	dlg.setDialogTitle("Help");
-	dlg.setContent(help);
-	dlg.setLineWrap(true);
-	dlg.setEditable(false);
-	dlg.setVisible(true);
+        HelpFrame.showHelp(getValue().getClass(), help, false);
       }
     });
     panel.add(buttonHelp);

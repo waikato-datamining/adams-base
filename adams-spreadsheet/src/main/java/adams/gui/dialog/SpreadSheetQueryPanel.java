@@ -19,22 +19,23 @@
  */
 package adams.gui.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import adams.core.AdditionalInformationHandler;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpFrame;
+import adams.gui.core.SpreadSheetQueryEditorPanel;
+import adams.parser.SpreadSheetQuery;
+import adams.parser.SpreadSheetQueryText;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-
-import adams.core.AdditionalInformationHandler;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.SpreadSheetQueryEditorPanel;
-import adams.parser.SpreadSheetQueryText;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Panel with spreadsheet query editor.
@@ -146,13 +147,7 @@ public class SpreadSheetQueryPanel
       m_ButtonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  String help = ((AdditionalInformationHandler) m_PanelQuery).getAdditionalInformation();
-	  TextDialog dlg = new TextDialog();
-	  dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-	  dlg.setDialogTitle("Help");
-	  dlg.setContent(help);
-	  dlg.setLineWrap(true);
-	  dlg.setEditable(false);
-	  dlg.setVisible(true);
+	  HelpFrame.showHelp(SpreadSheetQuery.class, help, false);
 	}
       });
       m_PanelButtonsRight.add(m_ButtonHelp);
