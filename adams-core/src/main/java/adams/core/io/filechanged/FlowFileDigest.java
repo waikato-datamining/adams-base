@@ -63,6 +63,10 @@ public class FlowFileDigest
     List<String> 	lines;
 
     lines = FileUtils.loadFromFile(file);
+    if (lines == null) {
+      errors.add("Failed to load file: " + file);
+      return null;
+    }
     Utils.removeComments(lines, NestedProducer.COMMENT);
 
     return m_Type.digest(lines.toArray(new String[lines.size()]), errors);
