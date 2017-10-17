@@ -22,6 +22,7 @@ package weka.core;
 
 import adams.core.Index;
 import adams.core.base.BaseObject;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.OptionUtils;
@@ -240,6 +241,23 @@ public class WekaOptionUtils {
       return defValue;
     else
       return new PlaceholderFile(value);
+  }
+
+  /**
+   * Parses a PlaceholderDirectory option, uses default if option is missing.
+   *
+   * @param options       the option array to use
+   * @param option        the option to look for in the options array (no leading dash)
+   * @param defValue      the default value
+   * @return              the parsed value (or default value if option not present)
+   * @throws Exception    if parsing of value fails
+   */
+  public static PlaceholderDirectory parse(String[] options, String option, PlaceholderDirectory defValue) throws Exception {
+    String value = Utils.getOption(option, options);
+    if (value.isEmpty())
+      return defValue;
+    else
+      return new PlaceholderDirectory(value);
   }
 
   /**
