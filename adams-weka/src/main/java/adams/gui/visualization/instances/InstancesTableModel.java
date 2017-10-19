@@ -1052,4 +1052,22 @@ public class InstancesTableModel
   public boolean getShowAttributeIndex() {
     return m_ShowAttributeIndex;
   }
+
+  /**
+   * Returns a new model with the same setup.
+   *
+   * @param data	the data to display
+   * @return		the new model
+   */
+  public InstancesTableModel copy(Instances data) {
+    InstancesTableModel	result;
+
+    result = new InstancesTableModel(data);
+    result.setShowAttributeIndex(getShowAttributeIndex());
+    result.setReadOnly(isReadOnly());
+    result.setUndoEnabled(isUndoEnabled());
+    result.setNotificationEnabled(isNotificationEnabled());
+
+    return result;
+  }
 }
