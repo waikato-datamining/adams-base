@@ -15,7 +15,7 @@
 
 /*
  * WekaInstancesDisplay.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -171,11 +171,14 @@ public class WekaInstancesDisplay
    */
   @Override
   protected BasePanel newPanel() {
-    BasePanel	result;
-    SearchPanel	searchPanel;
+    BasePanel		result;
+    SearchPanel		searchPanel;
+    InstancesTableModel	model;
 
-    result      = new BasePanel(new BorderLayout());
-    m_Table = new InstancesTable(new InstancesTableModel());
+    result  = new BasePanel(new BorderLayout());
+    model   = new InstancesTableModel();
+    model.setShowAttributeIndex(true);
+    m_Table = new InstancesTable(model);
     result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
     searchPanel = new SearchPanel(LayoutType.HORIZONTAL, true);
     searchPanel.addSearchListener((SearchEvent e) ->
@@ -286,7 +289,9 @@ public class WekaInstancesDisplay
       protected void initGUI() {
 	super.initGUI();
 	setLayout(new BorderLayout());
-	m_Table = new InstancesTable(new InstancesTableModel());
+	InstancesTableModel model = new InstancesTableModel();
+	model.setShowAttributeIndex(true);
+	m_Table = new InstancesTable(model);
 	add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
 	SearchPanel searchPanel = new SearchPanel(LayoutType.HORIZONTAL, true);
 	searchPanel.addSearchListener((SearchEvent e) ->

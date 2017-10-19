@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaInstancesRenderer.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
@@ -25,6 +25,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.InstancesTableModel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 import weka.core.Attribute;
 import weka.core.Instance;
@@ -68,6 +69,7 @@ public class WekaInstancesRenderer
     Instance 		inst;
     Instances 		data;
     InstancesTable 	table;
+    InstancesTableModel	model;
     BaseScrollPane	scrollPane;
     PlainTextRenderer	plain;
     SpreadSheet 	sheet;
@@ -95,7 +97,9 @@ public class WekaInstancesRenderer
 	sprenderer.render(sheet, panel);
       }
       else {
-        table = new InstancesTable(data);
+        model = new InstancesTableModel(data);
+        model.setShowAttributeIndex(true);
+        table = new InstancesTable(model);
         scrollPane = new BaseScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
       }
