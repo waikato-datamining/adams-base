@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InstancesTable.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -232,7 +232,7 @@ public class InstancesTable
    * @param data the data to use
    */
   public void setInstances(Instances data) {
-    setModel(new InstancesTableModel(data));
+    setModel(((InstancesTableModel) getUnsortedModel()).copy(data));
   }
 
   /**
