@@ -15,14 +15,13 @@
 
 /*
  * WekaClassifierSetup.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
-import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Token;
 
@@ -40,33 +39,48 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaClassifierSetup
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-property &lt;adams.core.base.BaseString&gt; [-property ...] (property: properties)
+ * &nbsp;&nbsp;&nbsp;The properties to update with the values associated with the specified values.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-variable &lt;adams.core.VariableName&gt; [-variable ...] (property: variableNames)
+ * &nbsp;&nbsp;&nbsp;The names of the variables to update the properties with.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  * 
  * <pre>-classifier &lt;weka.classifiers.Classifier&gt; (property: classifier)
@@ -80,7 +94,7 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 public class WekaClassifierSetup
-  extends AbstractSimpleSource {
+  extends AbstractSimpleSourceWithPropertiesUpdating {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -146,7 +160,14 @@ public class WekaClassifierSetup
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "classifier", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Classifier), 40));
+    String	result;
+
+    result = super.getQuickInfo();
+    if (!result.isEmpty())
+      result += ", ";
+    result += QuickInfoHelper.toString(this, "classifier", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Classifier), 40));
+
+    return result;
   }
 
   /**
@@ -168,11 +189,13 @@ public class WekaClassifierSetup
     String			result;
     weka.classifiers.Classifier	cls;
 
-    result = null;
-
     try {
-      cls           = (weka.classifiers.Classifier) OptionUtils.shallowCopy(m_Classifier);
-      m_OutputToken = new Token(cls);
+      cls    = (weka.classifiers.Classifier) OptionUtils.shallowCopy(m_Classifier);
+      result = setUpContainersIfNecessary(cls);
+      if (result == null)
+        result = updateObject(cls);
+      if (result == null)
+	m_OutputToken = new Token(cls);
     }
     catch (Exception e) {
       m_OutputToken = null;

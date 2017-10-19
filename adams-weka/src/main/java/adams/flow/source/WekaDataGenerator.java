@@ -15,16 +15,13 @@
 
 /*
  * WekaDataGenerator.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import adams.core.Shortening;
-import weka.core.Instances;
-import weka.datagenerators.classifiers.classification.Agrawal;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.Shortening;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
@@ -32,6 +29,8 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import weka.core.Instances;
+import weka.datagenerators.classifiers.classification.Agrawal;
 
 /**
  <!-- globalinfo-start -->
@@ -40,49 +39,69 @@ import adams.flow.provenance.ProvenanceSupporter;
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - generates:<br>
- * <pre>   weka.core.Instances</pre>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D (property: debug)
- *         If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
- *         The name of the actor.
- *         default: DataGenerator
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: WekaDataGenerator
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseString&gt; [-annotation ...] (property: annotations)
- *         The annotations to attach to this actor.
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
- *         If set to true, transformation is skipped and the input token is just forwarded
- *          as it is.
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-generator &lt;weka.datagenerators.DataGenerator [options]&gt; (property: dataGenerator)
- *         The data generator to use for generating the weka.core.Instances object.
- *         default: weka.datagenerators.classifiers.classification.Agrawal -r weka.datagenerators.classifiers.classification.Agrawal-S_1_-n_100_-F_1_-P_0.05 -S 1 -n 100 -F 1 -P 0.05
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * Default options for weka.datagenerators.classifiers.classification.Agrawal (-generator/dataGenerator):
- *
- * <pre>See Weka Javadoc
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
+ *
+ * <pre>-property &lt;adams.core.base.BaseString&gt; [-property ...] (property: properties)
+ * &nbsp;&nbsp;&nbsp;The properties to update with the values associated with the specified values.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-variable &lt;adams.core.VariableName&gt; [-variable ...] (property: variableNames)
+ * &nbsp;&nbsp;&nbsp;The names of the variables to update the properties with.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-generator &lt;weka.datagenerators.DataGenerator&gt; (property: dataGenerator)
+ * &nbsp;&nbsp;&nbsp;The data generator to use for generating the weka.core.Instances object.
+ * &nbsp;&nbsp;&nbsp;default: weka.datagenerators.classifiers.classification.Agrawal -r weka.datagenerators.classifiers.classification.Agrawal-S_1_-n_100_-F_1_-P_0.05 -S 1 -n 100 -F 1 -P 0.05
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class WekaDataGenerator
-  extends AbstractSimpleSource
+  extends AbstractSimpleSourceWithPropertiesUpdating
   implements ProvenanceSupporter {
 
   /** for serialization. */
@@ -120,7 +139,14 @@ public class WekaDataGenerator
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "generator", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_DataGenerator), 40));
+    String	result;
+
+    result = super.getQuickInfo();
+    if (!result.isEmpty())
+      result += ", ";
+    result += QuickInfoHelper.toString(this, "generator", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_DataGenerator), 40));
+
+    return result;
   }
 
   /**
@@ -171,18 +197,22 @@ public class WekaDataGenerator
     String	result;
     Instances	data;
 
-    result        = null;
     m_OutputToken = null;
 
     try {
-      m_DataGenerator.setDatasetFormat(m_DataGenerator.defineDataFormat());
-      data = m_DataGenerator.generateExamples();
-      if (data == null)
-	result = "No data obtained from data generator!";
-      else
-	m_OutputToken = new Token(data);
+      result = setUpContainersIfNecessary(m_DataGenerator);
+      if (result == null)
+        result = updateObject(m_DataGenerator);
+      if (result == null) {
+	m_DataGenerator.setDatasetFormat(m_DataGenerator.defineDataFormat());
+	data = m_DataGenerator.generateExamples();
+	if (data == null)
+	  result = "No data obtained from data generator!";
+	else
+	  m_OutputToken = new Token(data);
 
-      updateProvenance(m_OutputToken);
+	updateProvenance(m_OutputToken);
+      }
     }
     catch (Exception e) {
       result = handleException("Failed to generate data: ", e);

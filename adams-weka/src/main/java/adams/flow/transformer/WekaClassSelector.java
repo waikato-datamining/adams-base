@@ -15,15 +15,11 @@
 
 /*
  * WekaClassSelector.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import weka.core.Attribute;
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
@@ -33,6 +29,10 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import weka.core.Attribute;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -107,7 +107,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @version $Revision$
  */
 public class WekaClassSelector
-  extends AbstractWekaInstanceAndWekaInstancesTransformer
+  extends AbstractTransformer
   implements ProvenanceSupporter {
 
   /** for serialization. */
@@ -312,6 +312,24 @@ public class WekaClassSelector
    */
   public String unsetTipText() {
     return "Unsets the class attribute.";
+  }
+
+  /**
+   * Returns the class that the consumer accepts.
+   *
+   * @return		weka.core.Instance, weka.core.Instances, adams.data.instance.Instance
+   */
+  public Class[] accepts() {
+    return new Class[]{weka.core.Instance.class, weka.core.Instances.class, adams.data.instance.Instance.class};
+  }
+
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		weka.core.Instance, weka.core.Instances, adams.data.instance.Instance
+   */
+  public Class[] generates() {
+    return new Class[]{weka.core.Instance.class, weka.core.Instances.class, adams.data.instance.Instance.class};
   }
 
   /**

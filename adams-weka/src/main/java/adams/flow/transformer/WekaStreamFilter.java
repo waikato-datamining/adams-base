@@ -15,7 +15,7 @@
 
 /*
  * WekaStreamFilter.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -52,43 +52,59 @@ import java.util.Hashtable;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaStreamFilter
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-property &lt;adams.core.base.BaseString&gt; [-property ...] (property: properties)
+ * &nbsp;&nbsp;&nbsp;The properties to update with the values associated with the specified values.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-variable &lt;adams.core.VariableName&gt; [-variable ...] (property: variableNames)
+ * &nbsp;&nbsp;&nbsp;The names of the variables to update the properties with.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-filter &lt;weka.filters.StreamableFilter&gt; (property: filter)
  * &nbsp;&nbsp;&nbsp;The stream filter to use for filtering the Instance objects.
  * &nbsp;&nbsp;&nbsp;default: weka.filters.unsupervised.attribute.Add -N unnamed -C last
  * </pre>
- * 
- * <pre>-keep (property: keepRelationName)
- * &nbsp;&nbsp;&nbsp;If set to true, then the filter won't change the relation name of the incoming 
+ *
+ * <pre>-keep &lt;boolean&gt; (property: keepRelationName)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the filter won't change the relation name of the incoming
  * &nbsp;&nbsp;&nbsp;dataset.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -97,7 +113,7 @@ import java.util.Hashtable;
  * @version $Revision$
  */
 public class WekaStreamFilter
-  extends AbstractWekaInstanceAndWekaInstancesTransformer
+  extends AbstractTransformerWithPropertiesUpdating
   implements ProvenanceSupporter {
 
   /** for serialization. */
@@ -209,10 +225,14 @@ public class WekaStreamFilter
   @Override
   public String getQuickInfo() {
     String	result;
+    String	info;
 
     result  = QuickInfoHelper.toString(this, "filter", m_Filter.getClass());
     result += QuickInfoHelper.toString(this, "keepRelationName", m_KeepRelationName, "keep relation name", ", ");
-    
+    info    = super.getQuickInfo();
+    if (!info.isEmpty())
+      result += ", " + info;
+
     return result;
   }
 
@@ -258,6 +278,24 @@ public class WekaStreamFilter
   }
 
   /**
+   * Returns the class that the consumer accepts.
+   *
+   * @return		weka.core.Instance, weka.core.Instances, adams.data.instance.Instance
+   */
+  public Class[] accepts() {
+    return new Class[]{weka.core.Instance.class, weka.core.Instances.class, adams.data.instance.Instance.class};
+  }
+
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		weka.core.Instance, weka.core.Instances, adams.data.instance.Instance
+   */
+  public Class[] generates() {
+    return new Class[]{weka.core.Instance.class, weka.core.Instances.class, adams.data.instance.Instance.class};
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -291,35 +329,41 @@ public class WekaStreamFilter
 
     try {
       // initialize filter?
-      if (!m_Initialized)
-	filter.setInputFormat(new weka.core.Instances(data, 0));
-
-      // filter data
-      relation = data.relationName();
-      if (inst == null) {
-	filteredData = Filter.useFilter(data, filter);
-	if (m_KeepRelationName)
-	  filteredData.setRelationName(relation);
-      }
-      else {
-	filter.input(inst);
-	filter.batchFinished();
-	filteredInst = filter.output();
-	if (m_KeepRelationName)
-	  filteredInst.dataset().setRelationName(relation);
+      if (!m_Initialized) {
+        result = setUpContainers(filter);
+        if (result == null)
+          result = updateObject(filter);
+        filter.setInputFormat(new weka.core.Instances(data, 0));
       }
 
-      // build output token
-      if (m_InputToken.getPayload() instanceof weka.core.Instance) {
-	m_OutputToken = new Token(filteredInst);
-      }
-      else if (m_InputToken.getPayload() instanceof weka.core.Instances) {
-	m_OutputToken = new Token(filteredData);
-      }
-      else {
-	instA = new adams.data.instance.Instance();
-	instA.set(filteredInst);
-	m_OutputToken = new Token(instA);
+      if (result == null) {
+        // filter data
+        relation = data.relationName();
+        if (inst == null) {
+          filteredData = Filter.useFilter(data, filter);
+          if (m_KeepRelationName)
+            filteredData.setRelationName(relation);
+        }
+        else {
+          filter.input(inst);
+          filter.batchFinished();
+          filteredInst = filter.output();
+          if (m_KeepRelationName)
+            filteredInst.dataset().setRelationName(relation);
+        }
+
+        // build output token
+        if (m_InputToken.getPayload() instanceof weka.core.Instance) {
+          m_OutputToken = new Token(filteredInst);
+        }
+        else if (m_InputToken.getPayload() instanceof weka.core.Instances) {
+          m_OutputToken = new Token(filteredData);
+        }
+        else {
+          instA = new adams.data.instance.Instance();
+          instA.set(filteredInst);
+          m_OutputToken = new Token(instA);
+        }
       }
     }
     catch (Exception e) {

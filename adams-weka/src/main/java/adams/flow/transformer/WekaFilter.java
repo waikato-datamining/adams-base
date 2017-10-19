@@ -80,84 +80,94 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaFilter
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-property &lt;adams.core.base.BaseString&gt; [-property ...] (property: properties)
+ * &nbsp;&nbsp;&nbsp;The properties to update with the values associated with the specified values.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-variable &lt;adams.core.VariableName&gt; [-variable ...] (property: variableNames)
+ * &nbsp;&nbsp;&nbsp;The names of the variables to update the properties with.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-filter &lt;weka.filters.Filter&gt; (property: filter)
  * &nbsp;&nbsp;&nbsp;The filter to use for filtering the Instances&#47;Instance objects.
  * &nbsp;&nbsp;&nbsp;default: weka.filters.AllFilter
  * </pre>
- * 
+ *
  * <pre>-model &lt;adams.core.io.PlaceholderFile&gt; (property: modelFile)
- * &nbsp;&nbsp;&nbsp;The file with the serialized filter to load and use instead (when not pointing 
+ * &nbsp;&nbsp;&nbsp;The file with the serialized filter to load and use instead (when not pointing
  * &nbsp;&nbsp;&nbsp;to a directory).
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-source &lt;adams.flow.core.CallableActorReference&gt; (property: source)
  * &nbsp;&nbsp;&nbsp;The source actor to obtain the filter from.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-storage &lt;adams.flow.control.StorageName&gt; (property: storage)
  * &nbsp;&nbsp;&nbsp;The storage item to obtain the filter from.
  * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
- * 
+ *
  * <pre>-init-once &lt;boolean&gt; (property: initializeOnce)
- * &nbsp;&nbsp;&nbsp;If set to true, then the filter will get initialized only with the first 
- * &nbsp;&nbsp;&nbsp;batch of data; otherwise every time data gets passed through; only applies 
+ * &nbsp;&nbsp;&nbsp;If set to true, then the filter will get initialized only with the first
+ * &nbsp;&nbsp;&nbsp;batch of data; otherwise every time data gets passed through; only applies
  * &nbsp;&nbsp;&nbsp;when using the filter definition, the others (model file, source, storage
  * &nbsp;&nbsp;&nbsp;) assume the filter to be built.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-keep &lt;boolean&gt; (property: keepRelationName)
- * &nbsp;&nbsp;&nbsp;If set to true, then the filter won't change the relation name of the incoming 
+ * &nbsp;&nbsp;&nbsp;If set to true, then the filter won't change the relation name of the incoming
  * &nbsp;&nbsp;&nbsp;dataset.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-output-container &lt;boolean&gt; (property: outputContainer)
- * &nbsp;&nbsp;&nbsp;If enabled, a adams.flow.container.WekaFilterContainer is output with the 
+ * &nbsp;&nbsp;&nbsp;If enabled, a adams.flow.container.WekaFilterContainer is output with the
  * &nbsp;&nbsp;&nbsp;filter and the filtered data (Instance or Instances).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class WekaFilter
-  extends AbstractWekaInstanceAndWekaInstancesTransformer
+  extends AbstractTransformerWithPropertiesUpdating
   implements ProvenanceSupporter, OptionalContainerOutput, ModelFileHandler,
   StorageUser {
 
@@ -209,11 +219,11 @@ public class WekaFilter
   public String globalInfo() {
     return
       "Filters Instances/Instance objects using the specified filter.\n\n"
-      + "The following order is used to obtain the actual filter:\n"
-      + "1. model file present?\n"
-      + "2. source actor present?\n"
-      + "3. storage item present?\n"
-      + "4. use specified filter definition";
+	+ "The following order is used to obtain the actual filter:\n"
+	+ "1. model file present?\n"
+	+ "2. source actor present?\n"
+	+ "3. storage item present?\n"
+	+ "4. use specified filter definition";
   }
 
   /**
@@ -494,7 +504,7 @@ public class WekaFilter
     if (m_OutputContainer)
       return new Class[]{WekaFilterContainer.class};
     else
-      return super.generates();
+      return new Class[]{weka.core.Instance.class, weka.core.Instances.class, adams.data.instance.Instance.class};
   }
 
   /**
@@ -505,6 +515,7 @@ public class WekaFilter
   @Override
   public String getQuickInfo() {
     String	result;
+    String	info;
 
     result  = QuickInfoHelper.toString(this, "filter", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Filter), 40));
     result += QuickInfoHelper.toString(this, "modelFile", m_ModelFile, ", model: ");
@@ -512,6 +523,9 @@ public class WekaFilter
     result += QuickInfoHelper.toString(this, "storage", m_Storage, ", storage: ");
     result += QuickInfoHelper.toString(this, "keepRelationName", m_KeepRelationName, "keep relation name", ", ");
     result += QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");
+    info    = super.getQuickInfo();
+    if (!info.isEmpty())
+      result += ", " + info;
 
     return result;
   }
@@ -566,6 +580,15 @@ public class WekaFilter
 
     m_Initialized        = false;
     m_FlowContextUpdated = false;
+  }
+
+  /**
+   * Returns the class that the consumer accepts.
+   *
+   * @return		weka.core.Instance, weka.core.Instances, adams.data.instance.Instance
+   */
+  public Class[] accepts() {
+    return new Class[]{weka.core.Instance.class, weka.core.Instances.class, adams.data.instance.Instance.class};
   }
 
   /**
@@ -674,9 +697,15 @@ public class WekaFilter
       getLogger().info("Creating copy of: " + OptionUtils.getCommandLine(m_Filter));
     m_ActualFilter = (Filter) OptionUtils.shallowCopy(m_Filter);
     Filter.makeCopy(m_Filter);
+
+    // configure containers
+    result = setUpContainers(m_ActualFilter);
+    if (result == null)
+      result = updateObject(m_ActualFilter);
+
     m_ActualFilter.setInputFormat(data);
 
-    return null;
+    return result;
   }
 
   /**
@@ -732,7 +761,7 @@ public class WekaFilter
 	filteredData = null;
 	filteredInst = null;
 	if (data != null) {
-	  relation     = data.relationName();
+	  relation = data.relationName();
 	  filteredData = weka.filters.Filter.useFilter(data, m_ActualFilter);
 	  if (m_KeepRelationName) {
 	    filteredData.setRelationName(relation);

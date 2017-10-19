@@ -15,7 +15,7 @@
 
 /*
  * WekaRenameRelation.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -83,7 +83,7 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 public class WekaRenameRelation
-  extends AbstractWekaInstanceAndWekaInstancesTransformer {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = 5071747277597147724L;
@@ -191,6 +191,24 @@ public class WekaRenameRelation
    */
   public String replaceTipText() {
     return "The replacement string.";
+  }
+
+  /**
+   * Returns the class that the consumer accepts.
+   *
+   * @return		weka.core.Instance, weka.core.Instances, adams.data.instance.Instance
+   */
+  public Class[] accepts() {
+    return new Class[]{weka.core.Instance.class, weka.core.Instances.class, adams.data.instance.Instance.class};
+  }
+
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		weka.core.Instance, weka.core.Instances, adams.data.instance.Instance
+   */
+  public Class[] generates() {
+    return new Class[]{weka.core.Instance.class, weka.core.Instances.class, adams.data.instance.Instance.class};
   }
 
   /**

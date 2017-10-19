@@ -73,6 +73,16 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-property &lt;adams.core.base.BaseString&gt; [-property ...] (property: properties)
+ * &nbsp;&nbsp;&nbsp;The properties to update with the values associated with the specified values.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-variable &lt;adams.core.VariableName&gt; [-variable ...] (property: variableNames)
+ * &nbsp;&nbsp;&nbsp;The names of the variables to update the properties with.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-associator &lt;weka.associations.Associator&gt; (property: associator)
  * &nbsp;&nbsp;&nbsp;The Weka associator to train on the input data.
  * &nbsp;&nbsp;&nbsp;default: weka.associations.Apriori -N 10 -T 0 -C 0.9 -D 0.05 -U 1.0 -M 0.1 -S -1.0 -c -1
@@ -84,7 +94,7 @@ import adams.flow.core.Token;
  * @version $Revision$
  */
 public class WekaAssociatorSetup
-  extends AbstractSimpleSource {
+  extends AbstractSimpleSourceWithPropertiesUpdating {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -150,7 +160,14 @@ public class WekaAssociatorSetup
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "associator", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Associator), 40));
+    String	result;
+
+    result = super.getQuickInfo();
+    if (!result.isEmpty())
+      result += ", ";
+    result += QuickInfoHelper.toString(this, "associator", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Associator), 40));
+
+    return result;
   }
 
   /**
@@ -175,8 +192,12 @@ public class WekaAssociatorSetup
     result = null;
 
     try {
-      cls           = (weka.associations.Associator) OptionUtils.shallowCopy(m_Associator);
-      m_OutputToken = new Token(cls);
+      cls    = (weka.associations.Associator) OptionUtils.shallowCopy(m_Associator);
+      result = setUpContainersIfNecessary(cls);
+      if (result == null)
+        result = updateObject(cls);
+      if (result == null)
+	m_OutputToken = new Token(cls);
     }
     catch (Exception e) {
       m_OutputToken = null;
