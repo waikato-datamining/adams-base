@@ -20,11 +20,11 @@
 
 package adams.flow.control;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.base.BaseString;
-import adams.core.discovery.PropertyPath;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
@@ -33,7 +33,8 @@ import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
-import adams.flow.core.PropertyHelper;
+import adams.flow.core.PropertiesUpdater;
+import adams.flow.core.PropertiesUpdaterHelper;
 import adams.flow.core.Token;
 import adams.flow.transformer.PassThrough;
 
@@ -106,7 +107,7 @@ import java.util.Hashtable;
  */
 public class UpdateProperties
   extends AbstractControlActor
-  implements InputConsumer, OutputProducer {
+  implements InputConsumer, OutputProducer, PropertiesUpdater {
 
   /** for serialization. */
   private static final long serialVersionUID = -2286932196386647785L;
@@ -469,26 +470,19 @@ public class UpdateProperties
    */
   @Override
   public String setUp() {
-    String	result;
-    Class	cls;
-    int		i;
+    String		result;
+    MessageCollection	errors;
 
     result = super.setUp();
 
     if (result == null) {
-      m_Containers = new PropertyContainer[m_Properties.length];
-      for (i = 0; i < m_Properties.length; i++) {
-	m_Containers[i] = PropertyPath.find(m_SubActor, m_Properties[i].getValue());
-	if (m_Containers[i] == null) {
-	  result = "Cannot find property '" + m_Properties[i] + "' in sub actor!";
-	}
-	else {
-	  cls = m_Containers[i].getReadMethod().getReturnType();
-	  if (cls.isArray())
-	    result = "Property '" + m_Properties[i] + "' is an array!";
-	}
-	if (result != null)
-	  break;
+      errors       = new MessageCollection();
+      m_Containers = PropertiesUpdaterHelper.configure(m_SubActor, m_Properties, errors);
+      if (m_Containers == null) {
+	if (!errors.isEmpty())
+	  result = errors.toString();
+	else
+	  result = "Failed to configure property containers!";
       }
     }
 
@@ -503,34 +497,14 @@ public class UpdateProperties
   @Override
   protected String doExecute() {
     String		result;
-    int			i;
-    Object		value;
+    MessageCollection	errors;
 
     result = null;
 
-    for (i = 0; i < m_Properties.length; i++) {
-      try {
-	value = PropertyHelper.convertValue(
-          m_Containers[i],
-          getVariables().get(m_VariableNames[i].getValue()));
-	if (isLoggingEnabled())
-	  getLogger().info("Updating #" + (i+1) + ": var=" + m_VariableNames[i] + ", value=" + getVariables().get(m_VariableNames[i].getValue()) + ", class=" + (value == null ? "null" : value.getClass().getName()));
-	if (!PropertyPath.setValue(
-	    m_SubActor,
-	    m_Properties[i].stringValue(),
-	    value)) {
-	  throw new IllegalStateException(
-	      "Property #" + (i+1) + " could not be updated: " + m_Properties[i].stringValue());
-	}
-      }
-      catch (Exception e) {
-	if (result == null)
-	  result = "";
-	else
-	  result += "\n";
-	result += handleException("Failed to set property '" + m_Properties[i] + "': ", e);
-      }
-    }
+    errors = new MessageCollection();
+    PropertiesUpdaterHelper.update(this, m_SubActor, m_Properties, m_VariableNames, m_Containers, errors);
+    if (!errors.isEmpty())
+      result = errors.toString();
 
     if (result == null) {
       if (getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
