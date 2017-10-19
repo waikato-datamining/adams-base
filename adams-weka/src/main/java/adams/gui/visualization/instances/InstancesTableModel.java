@@ -15,7 +15,7 @@
 
 /*
  * InstancesTableModel.java
- * Copyright (C) 2005-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2005-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -610,7 +610,7 @@ public class InstancesTableModel
 
 	    // index
 	    if (m_ShowAttributeIndex)
-	      result += columnIndex + ": ";
+	      result += columnIndex + ":";
 
 	    // name
 	    if (isClassIndex(columnIndex))
