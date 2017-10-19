@@ -27,6 +27,7 @@ import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -339,7 +340,51 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     
     return result;
   }
-  
+
+  /**
+   * Checks whether an actor of this type is present as a default (exact match).
+   *
+   * @param actor	the actor type to check
+   * @return		true if such an actor is present
+   */
+  public boolean hasActor(Class actor) {
+    boolean	result;
+    int		i;
+
+    result = false;
+    for (i = 0; i < size(); i++) {
+      if (get(i).getClass().equals(actor)) {
+        result = true;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns a list of actors comprising of the requested actor type
+   * (exact match).
+   *
+   * @param actor	the actor type too look here
+   * @param <A>		the type
+   * @return		the list of actors that were located
+   */
+  public <A extends Actor> List<A> getActors(Class<A> actor) {
+    List<A>	result;
+    int		i;
+
+    result = new ArrayList<>();
+    for (i = 0; i < size(); i++) {
+      if (get(i).getClass().equals(actor)) {
+        result.add((A) get(i));
+        break;
+      }
+    }
+
+    return result;
+  }
+
   /**
    * Updates the Variables instance in use.
    * <br><br>
