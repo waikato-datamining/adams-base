@@ -21,6 +21,7 @@
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.base.BaseString;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.StringToString;
@@ -166,6 +167,16 @@ public class StringConstants
   @Override
   public String outputArrayTipText() {
     return "Whether to output the strings as an array or one by one.";
+  }
+
+  /**
+   * Adds the string.
+   *
+   * @param value	the string to add
+   */
+  public void addString(BaseString value) {
+    if (value != null)
+      m_Strings = (BaseString[]) Utils.adjustArray(m_Strings, m_Strings.length + 1, value);
   }
 
   /**
