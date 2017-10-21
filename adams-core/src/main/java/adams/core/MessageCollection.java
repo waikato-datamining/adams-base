@@ -115,10 +115,19 @@ public class MessageCollection
   /**
    * Adds all the messages.
    *
-   * @param msgs		the messages to collect
+   * @param msgs		the messages to add
    */
   public void addAll(Collection<String> msgs) {
     m_Messages.addAll(msgs);
+  }
+
+  /**
+   * Adds all the messages.
+   *
+   * @param msgs		the messages to add
+   */
+  public void addAll(MessageCollection msgs) {
+    m_Messages.addAll(msgs.toList());
   }
 
   /**
