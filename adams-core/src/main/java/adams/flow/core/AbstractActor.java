@@ -172,8 +172,10 @@ public abstract class AbstractActor
 	if (i > 0)
 	  result.append(", ");
 	result.append(Utils.classToString(cls[i]));
-	if (ClassLocator.isSubclass(AbstractContainer.class, cls[i]) && !cls[i].equals(AbstractContainer.class))
-	  containers.add(cls[i]);
+	if (ClassLocator.isSubclass(AbstractContainer.class, cls[i]) && !cls[i].equals(AbstractContainer.class)) {
+	  if (!containers.contains(cls[i]))
+            containers.add(cls[i]);
+        }
       }
     }
 

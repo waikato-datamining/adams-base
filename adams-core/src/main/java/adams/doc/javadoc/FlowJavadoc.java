@@ -15,7 +15,7 @@
 
 /*
  * FlowJavadoc.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.doc.javadoc;
@@ -192,8 +192,10 @@ public class FlowJavadoc
 	result += "- generates:\n";
 	for (i = 0; i < classes.length; i++) {
 	  result += "\t" + Utils.classToString(classes[i]) + "\n";
-	  if (ClassLocator.isSubclass(AbstractContainer.class, classes[i]))
-	    containers.add(classes[i]);
+	  if (ClassLocator.isSubclass(AbstractContainer.class, classes[i])) {
+	    if (!containers.contains(classes[i]))
+	      containers.add(classes[i]);
+	  }
 	}
       }
       if (result.length() > 0) {
