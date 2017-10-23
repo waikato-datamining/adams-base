@@ -15,17 +15,19 @@
 
 /*
  * Serialize.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import adams.core.SerializationHelper;
+import adams.core.QuickInfoHelper;
+import adams.data.io.output.AbstractObjectWriter;
+import adams.data.io.output.SerializedObjectWriter;
 import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Saves any (serializable) Java object in a file via serialization.
+ * Saves a Java object to a file using the specified object writer.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -37,36 +39,48 @@ import adams.flow.core.Unknown;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Serialize
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The name of the output file.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
+ * <pre>-writer &lt;adams.data.io.output.AbstractObjectWriter&gt; (property: writer)
+ * &nbsp;&nbsp;&nbsp;The writer to use for outputting the object.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.output.SerializedObjectWriter
  * </pre>
  * 
  <!-- options-end -->
@@ -80,6 +94,9 @@ public class Serialize
   /** for serialization. */
   private static final long serialVersionUID = 3282341894400972003L;
 
+  /** the object writer to use. */
+  protected AbstractObjectWriter m_Writer;
+
   /**
    * Returns a string describing the object.
    *
@@ -87,7 +104,19 @@ public class Serialize
    */
   @Override
   public String globalInfo() {
-    return "Saves any (serializable) Java object in a file via serialization.";
+    return "Saves a Java object to a file using the specified object writer.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "writer", "writer",
+      new SerializedObjectWriter());
   }
 
   /**
@@ -99,6 +128,50 @@ public class Serialize
   @Override
   public String outputFileTipText() {
     return "The name of the output file.";
+  }
+
+  /**
+   * Sets the writer to use for saving the object.
+   *
+   * @param value	the writer
+   */
+  public void setWriter(AbstractObjectWriter value) {
+    m_Writer = value;
+    reset();
+  }
+
+  /**
+   * Returns the writer to use for saving the object.
+   *
+   * @return		the writer
+   */
+  public AbstractObjectWriter getWriter() {
+    return m_Writer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String writerTipText() {
+    return "The writer to use for outputting the object.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "writer", m_Writer, ", writer: ");
+
+    return result;
   }
 
   /**
@@ -120,19 +193,12 @@ public class Serialize
     String	result;
     Object	input;
 
-    result = null;
-
     input = m_InputToken.getPayload();
-    if (SerializationHelper.isSerializable(input.getClass())) {
-      try {
-	SerializationHelper.write(m_OutputFile.getAbsolutePath(), input);
-      }
-      catch (Exception e) {
-	result = handleException("Failed to serialize to: " + m_OutputFile, e);
-      }
+    try {
+      result = m_Writer.write(m_OutputFile, input);
     }
-    else {
-      result = "Not serializable: " + input.getClass();
+    catch (Exception e) {
+      result = handleException("Failed to serialize to: " + m_OutputFile, e);
     }
 
     return result;

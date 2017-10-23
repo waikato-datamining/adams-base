@@ -1004,7 +1004,8 @@ And transformers:
 	directory (if pattern matches).
 	\item \textit{DeleteFile} -- deletes the file passing through if the pattern
 	matches.
-	\item \textit{Deserialize} -- loads a serialized Java object from disk.
+	\item \textit{Deserialize} -- loads a serialized Java object from disk with
+	the specified object reader.
 	\item \textit{Diff} -- generates a diff\footnote{\url{http://en.wikipedia.org/wiki/Diff}{}} 
 	between two files.
 	\item \textit{DirName} -- extracts the directory part of the file (or parent
@@ -1044,7 +1045,7 @@ Sink actors:
 	a single file, joining them line by line. The user specifies what separator to
 	use for glueing the lines together. Works similar to the Unix \textit{paste}
 	command.
-	\item \textit{Serialize} -- saves any (serializable) Java object to a file.
+	\item \textit{Serialize} -- saves a Java object to a file using the specified object writer.
 	\item \textit{SideBySideDiff} -- displays a diff\footnote{\url{http://en.wikipedia.org/wiki/Diff}{}} 
 	between two files visually.
 \end{tight_itemize}
