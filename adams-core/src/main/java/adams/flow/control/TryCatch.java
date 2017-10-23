@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TryCatch.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -28,6 +28,7 @@ import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.ErrorScopeRestrictor;
 import adams.flow.core.FixedNameActorHandler;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.InternalActorHandler;
@@ -124,7 +125,8 @@ import java.util.Hashtable;
  */
 public class TryCatch
   extends AbstractControlActor
-  implements InputConsumer, OutputProducer, FixedNameActorHandler, ClassCrossReference {
+  implements InputConsumer, OutputProducer, FixedNameActorHandler,
+             ClassCrossReference, ErrorScopeRestrictor {
 
   /** for serialization. */
   private static final long serialVersionUID = -9029393233616734995L;

@@ -1525,7 +1525,8 @@ public class ActorUtils {
 
       @Override
       public boolean canRecurse(Class cls) {
-        return !ClassLocator.hasInterface(VariablesHandler.class, cls);
+        return !ClassLocator.hasInterface(VariablesHandler.class, cls)
+	  && !ClassLocator.hasInterface(ErrorScopeRestrictor.class, cls);
       }
 
       @Override
