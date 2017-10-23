@@ -21,13 +21,11 @@ package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.AbstractActor;
-import adams.flow.core.Actor;
 import adams.flow.core.ControlActor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
 import adams.flow.core.StopModeSupporter;
-import adams.flow.core.StopRestrictor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -238,29 +236,6 @@ public class Stop
    */
   public Token currentInput() {
     return null;
-  }
-
-  /**
-   * Returns the enclosing {@link StopRestrictor}.
-   *
-   * @return		the restrictor
-   */
-  protected Actor getStopRestrictor() {
-    Actor	result;
-    Actor	parent;
-
-    result = null;
-    parent = getParent();
-    do {
-      if (parent instanceof StopRestrictor)
-	result = parent;
-    }
-    while ((parent != null) && (result == null));
-
-    if (result == null)
-      result = getRoot();
-
-    return result;
   }
 
   /**
