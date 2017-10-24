@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Storage.java
  * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
@@ -358,7 +358,7 @@ public class Storage
   }
 
   /**
-   * Checks whether the string represents a valid name (without the "@{" and "}").
+   * Checks whether the string represents a valid name.
    *
    * @param s		the name to check
    * @return		true if valid
