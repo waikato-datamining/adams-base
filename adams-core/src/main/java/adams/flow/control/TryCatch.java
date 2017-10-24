@@ -765,4 +765,14 @@ public class TryCatch
 
     return result;
   }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    m_Try.stopExecution();
+    m_Catch.stopExecution();
+    super.stopExecution();
+  }
 }
