@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ArrayObjectRenderer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
@@ -55,11 +55,9 @@ public class ArrayObjectRenderer
     Object				element;
     
     result   = new StringBuilder();
-    renderer = null;
     for (i = 0; i < Array.getLength(obj); i++) {
-      element = Array.get(obj, i);
-      if (renderer == null)
-	renderer = AbstractObjectPlainTextRenderer.getRenderer(element).get(0);
+      element  = Array.get(obj, i);
+      renderer = AbstractObjectPlainTextRenderer.getRenderer(element).get(0);
       result.append((i+1) + ": ");
       result.append(renderer.render(element));
       result.append("\n");
