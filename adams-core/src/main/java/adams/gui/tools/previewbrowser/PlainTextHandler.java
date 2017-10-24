@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PlainTextHandler.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -86,16 +86,21 @@ public class PlainTextHandler
     JPanel 		panel;
     List<String> 	lines;
 
-    lines = FileUtils.loadFromFile(file);
-    if (lines == null) {
-      panel = new FailedToCreatePreviewPanel();
-      return new PreviewPanel(panel, panel);
+    try {
+      lines = FileUtils.loadFromFile(file);
+      if (lines == null) {
+        panel = new FailedToCreatePreviewPanel();
+        return new PreviewPanel(panel, panel);
+      }
+      else {
+        panel = new TextEditorPanel();
+        ((TextEditorPanel) panel).setContent(Utils.flatten(lines, "\n"));
+        ((TextEditorPanel) panel).setEditable(false);
+        return new PreviewPanel(panel, ((TextEditorPanel) panel).getTextArea());
+      }
     }
-    else {
-      panel = new TextEditorPanel();
-      ((TextEditorPanel) panel).setContent(Utils.flatten(lines, "\n"));
-      ((TextEditorPanel) panel).setEditable(false);
-      return new PreviewPanel(panel, ((TextEditorPanel) panel).getTextArea());
+    catch (Exception e) {
+      return new NoPreviewAvailablePanel();
     }
   }
 }
