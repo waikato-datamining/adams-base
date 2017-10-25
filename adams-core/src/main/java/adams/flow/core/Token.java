@@ -23,6 +23,7 @@ package adams.flow.core;
 
 import adams.core.CloneHandler;
 import adams.core.ObjectCopyHelper;
+import adams.core.Utils;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
@@ -215,6 +216,15 @@ public class Token
       return "".hashCode();
     else
       return m_Payload.hashCode();
+  }
+
+  /**
+   * Returns an error string with the class type of the payload.
+   *
+   * @return		the error message
+   */
+  public String unhandledData() {
+    return "Unhandled data: " + Utils.classToString(m_Payload);
   }
 
   /**
