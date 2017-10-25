@@ -319,16 +319,26 @@ public class StorageValue
     String	result;
     
     result = null;
-    
+
+    if (isLoggingEnabled())
+      getLogger().info("Retrieving: '" + m_StorageName.getValue() + "'");
+
     m_StoredValue = null;
     if (m_Cache.length() == 0) {
       if (getStorageHandler().getStorage().has(m_StorageName))
 	m_StoredValue = getStorageHandler().getStorage().get(m_StorageName);
+      else
+        getLogger().warning("Failed to retrieve: '" + m_StorageName.getValue() + "'");
     }
     else {
       if (getStorageHandler().getStorage().has(m_Cache, m_StorageName))
 	m_StoredValue = getStorageHandler().getStorage().get(m_Cache, m_StorageName);
+      else
+        getLogger().warning("Failed to retrieve: '" + m_Cache + "/" + m_StorageName.getValue() + "'");
     }
+
+    if (isLoggingEnabled())
+      getLogger().fine("Retrieved value: " + m_StoredValue);
     
     if (m_StoredValue != null) {
       m_Conversion.setInput(m_StoredValue);
@@ -338,6 +348,9 @@ public class StorageValue
       if ((result == null) && (m_Conversion.getOutput() != null))
 	m_OutputToken = new Token(m_Conversion.getOutput());
       m_Conversion.cleanUp();
+
+      if (isLoggingEnabled())
+	getLogger().fine("Converted value: " + m_StoredValue);
     }
 
     return result;
