@@ -15,18 +15,18 @@
 
 /*
  * SplitFile.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.io.File;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import adams.flow.transformer.splitfile.AbstractFileSplitter;
 import adams.flow.transformer.splitfile.SplitBySize;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -183,10 +183,10 @@ public class SplitFile
 
     result = null;
     
-    if (m_InputToken.getPayload() instanceof String)
-      file = new PlaceholderFile((String) m_InputToken.getPayload());
+    if (m_InputToken.hasPayload(String.class))
+      file = new PlaceholderFile(m_InputToken.getPayload(String.class));
     else
-      file = new PlaceholderFile((File) m_InputToken.getPayload());
+      file = new PlaceholderFile(m_InputToken.getPayload(File.class));
     
     files = m_Splitter.split(file);
     if (!isStopped())

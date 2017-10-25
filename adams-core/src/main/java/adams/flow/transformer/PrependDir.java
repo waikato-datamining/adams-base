@@ -15,7 +15,7 @@
 
 /*
  * PrependDir.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -320,9 +320,9 @@ public class PrependDir
 
     result = null;
 
-    array  = m_InputToken.getPayload().getClass().isArray();
-    string = (m_InputToken.getPayload() instanceof String) || (m_InputToken.getPayload() instanceof String[]);
-    strings  = FileUtils.toStringArray(m_InputToken.getPayload());
+    array   = m_InputToken.getPayload().getClass().isArray();
+    string  = m_InputToken.hasPayload(String.class) || m_InputToken.hasPayload(String[].class);
+    strings = FileUtils.toStringArray(m_InputToken.getPayload());
 
     files = new File[strings.length];
     for (i = 0; i < strings.length; i++) {

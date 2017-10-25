@@ -15,7 +15,7 @@
 
 /*
  * AbstractStringOperation.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -80,11 +80,11 @@ public abstract class AbstractStringOperation
     result = null;
 
     try {
-      isArray = (m_InputToken.getPayload() instanceof String[]);
+      isArray = m_InputToken.hasPayload(String[].class);
       if (isArray)
-	str = (String[]) m_InputToken.getPayload();
+	str = m_InputToken.getPayload(String[].class);
       else
-	str = new String[]{(String) m_InputToken.getPayload()};
+	str = new String[]{m_InputToken.getPayload(String.class)};
 
       strNew = new ArrayList<>();
       for (i = 0; i < str.length; i++) {

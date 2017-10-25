@@ -15,7 +15,7 @@
 
 /*
  * Token.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -28,6 +28,7 @@ import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
 import adams.gui.flow.provenance.ProvenanceNode;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.Serializable;
 
@@ -82,12 +83,33 @@ public class Token
   }
 
   /**
+   * Checks whether the payload is of the specified type (or a subclass;
+   * or implements this interface).
+   *
+   * @param cls		the super class to check
+   * @return		true if a match
+   * @see		ClassLocator#matches(Class, Class)
+   */
+  public boolean hasPayload(Class cls) {
+    return !isNull() && ClassLocator.matches(cls, m_Payload.getClass());
+  }
+
+  /**
    * Returns the payload.
    *
    * @return		the payload
    */
   public Object getPayload() {
     return m_Payload;
+  }
+
+  /**
+   * Returns the payload properly casted.
+   *
+   * @return		the payload
+   */
+  public <T> T getPayload(Class<T> cls) {
+    return (T) m_Payload;
   }
 
   /**
