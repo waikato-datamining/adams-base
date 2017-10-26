@@ -21,6 +21,7 @@ package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.io.ConsoleHelper;
 import adams.data.DecimalFormatString;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
@@ -811,5 +812,43 @@ public class ProgressBar
       m_PanelProgress.update(Double.parseDouble((String) token.getPayload()));
     else
       m_PanelProgress.update(((Number) token.getPayload()).doubleValue());
+  }
+
+  /**
+   * Executes the flow item.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String doExecute() {
+    String		result;
+    StringBuilder 	text;
+    String		curr;
+    double		perc;
+    double 		current;
+    DecimalFormat 	format;
+
+    result = null;
+
+    if (isHeadless()) {
+      format = getFormat().toDecimalFormat();
+      text   = new StringBuilder();
+      if (m_InputToken.hasPayload(String.class))
+	current = Double.parseDouble(m_InputToken.getPayload(String.class));
+      else
+	current = m_InputToken.getPayload(Number.class).doubleValue();
+      perc = (current - getMinimum()) / (getMaximum()- getMinimum());
+      curr = getPrefix() + format.format(perc) + getSuffix();
+      if (!m_Title.isEmpty())
+        text.append(m_Title).append(": ");
+      text.append(m_InputToken.getPayload().toString());
+      text.append(curr);
+      ConsoleHelper.printlnOut(text.toString());
+    }
+    else {
+      result = super.doExecute();
+    }
+
+    return result;
   }
 }
