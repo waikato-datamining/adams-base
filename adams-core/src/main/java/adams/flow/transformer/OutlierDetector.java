@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.data.outlier.AbstractOutlierDetector;
 import adams.data.outlier.PassThrough;
@@ -31,7 +32,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Applies the outlier detector and outputs a container with the data and the results.
+ * Applies the outlier detector and either outputs the updated data container or a flow container with the data and the detection results.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -40,10 +41,7 @@ import java.util.List;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.container.DataContainer<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.OutlierDetectorContainer<br>
- * <br><br>
- * Container information:<br>
- * - adams.flow.container.OutlierDetectorContainer: Detector, Detection, Input
+ * &nbsp;&nbsp;&nbsp;adams.data.container.DataContainer<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -82,9 +80,20 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-detector &lt;AbstractOutlierDetector&gt; (property: detector)
+ * <pre>-detector &lt;adams.data.outlier.AbstractOutlierDetector&gt; (property: detector)
  * &nbsp;&nbsp;&nbsp;The outlier detector to use for analyzing the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.outlier.PassThrough
+ * </pre>
+ *
+ * <pre>-only-warning &lt;boolean&gt; (property: onlyWarning)
+ * &nbsp;&nbsp;&nbsp;If enabled, the detections get added merely as warnings instead of as errors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-output-container &lt;boolean&gt; (property: outputContainer)
+ * &nbsp;&nbsp;&nbsp;If enabled, a flow container is output instead of just adding the detections
+ * &nbsp;&nbsp;&nbsp;to the data container.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  <!-- options-end -->
@@ -99,6 +108,12 @@ public class OutlierDetector
   /** the outlier detector to use. */
   protected AbstractOutlierDetector m_Detector;
 
+  /** whether the detection is only added as warning instead of error. */
+  protected boolean m_OnlyWarning;
+
+  /** whether to output a container. */
+  protected boolean m_OutputContainer;
+
   /**
    * Returns a string describing the object.
    *
@@ -106,7 +121,9 @@ public class OutlierDetector
    */
   @Override
   public String globalInfo() {
-    return "Applies the outlier detector and outputs a container with the data and the results.";
+    return
+      "Applies the outlier detector and either outputs the updated data "
+	+ "container or a flow container with the data and the detection results.";
   }
 
   /**
@@ -119,6 +136,14 @@ public class OutlierDetector
     m_OptionManager.add(
       "detector", "detector",
       new PassThrough());
+
+    m_OptionManager.add(
+      "only-warning", "onlyWarning",
+      false);
+
+    m_OptionManager.add(
+      "output-container", "outputContainer",
+      false);
   }
 
   /**
@@ -128,7 +153,13 @@ public class OutlierDetector
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "detector", m_Detector);
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "detector", m_Detector);
+    result += QuickInfoHelper.toString(this, "onlyWarning", m_OnlyWarning, "only warning", ", ");
+    result += QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");
+
+    return result;
   }
 
   /**
@@ -161,6 +192,68 @@ public class OutlierDetector
   }
 
   /**
+   * Sets whether the detections are added as error or warning.
+   *
+   * @param value	if true then the detections are added as warning
+   * 			instead of as error
+   */
+  public void setOnlyWarning(boolean value) {
+    m_OnlyWarning = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the detections are added as error or warning.
+   *
+   * @return 		true if the detections get added as warning instead
+   * 			of as error
+   */
+  public boolean getOnlyWarning() {
+    return m_OnlyWarning;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for displaying in
+   * 			the GUI or for listing the options.
+   */
+  public String onlyWarningTipText() {
+    return "If enabled, the detections get added merely as warnings instead of as errors.";
+  }
+
+  /**
+   * Sets whether a flow container is output instead of just adding the
+   * detections to the data container.
+   *
+   * @param value	true if a container is output
+   */
+  public void setOutputContainer(boolean value) {
+    m_OutputContainer = value;
+    reset();
+  }
+
+  /**
+   * Returns whether a flow container is output instead of just adding the
+   * detections to the data container.
+   *
+   * @return 		true if a container is output
+   */
+  public boolean getOutputContainer() {
+    return m_OutputContainer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String outputContainerTipText() {
+    return "If enabled, a flow container is output instead of just adding the detections to the data container.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -177,7 +270,10 @@ public class OutlierDetector
    */
   @Override
   public Class[] generates() {
-    return new Class[]{OutlierDetectorContainer.class};
+    if (m_OutputContainer)
+      return new Class[]{OutlierDetectorContainer.class};
+    else
+      return new Class[]{DataContainer.class};
   }
 
   /**
@@ -191,6 +287,8 @@ public class OutlierDetector
     DataContainer		input;
     List<String>		detections;
     OutlierDetectorContainer	cont;
+    NotesHandler 		handler;
+    int				i;
 
     result = null;
 
@@ -201,12 +299,26 @@ public class OutlierDetector
       result = m_InputToken.unhandledData();
 
     try {
-      detections    = m_Detector.detect(input);
-      cont          = new OutlierDetectorContainer(m_Detector, detections.toArray(new String[detections.size()]), input);
-      m_OutputToken = new Token(cont);
+      detections = m_Detector.detect(input);
+      if (m_OutputContainer) {
+	cont          = new OutlierDetectorContainer(m_Detector, detections.toArray(new String[detections.size()]), input);
+	m_OutputToken = new Token(cont);
+      }
+      else {
+	if (input instanceof NotesHandler) {
+	  handler = (NotesHandler) input.getClone();
+	  for (i = 0; i < detections.size(); i++) {
+	    if (m_OnlyWarning)
+	      handler.getNotes().addWarning(m_Detector.getClass(), detections.get(i));
+	    else
+	      handler.getNotes().addError(m_Detector.getClass(), detections.get(i));
+	    getLogger().info((i+1) + ". " + detections.get(i));
+	  }
+	}
+      }
     }
     catch (Exception e) {
-      result = handleException("Failed to filter data: " + input, e);
+      result = handleException("Failed to process data: " + input, e);
     }
 
     return result;
