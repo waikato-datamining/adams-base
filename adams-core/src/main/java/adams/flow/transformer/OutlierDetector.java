@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.data.container.DataContainer;
+import adams.data.outlier.AbstractOutlierDetector;
 import adams.data.outlier.PassThrough;
 import adams.flow.container.OutlierDetectorContainer;
 import adams.flow.core.Token;
@@ -81,7 +82,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-detector &lt;adams.data.outlier.OutlierDetector&gt; (property: detector)
+ * <pre>-detector &lt;AbstractOutlierDetector&gt; (property: detector)
  * &nbsp;&nbsp;&nbsp;The outlier detector to use for analyzing the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.outlier.PassThrough
  * </pre>
@@ -96,7 +97,7 @@ public class OutlierDetector
   private static final long serialVersionUID = 6697547899481901585L;
 
   /** the outlier detector to use. */
-  protected adams.data.outlier.OutlierDetector m_Detector;
+  protected AbstractOutlierDetector m_Detector;
 
   /**
    * Returns a string describing the object.
@@ -135,7 +136,7 @@ public class OutlierDetector
    *
    * @param value	the outlier detector
    */
-  public void setDetector(adams.data.outlier.OutlierDetector value) {
+  public void setDetector(AbstractOutlierDetector value) {
     m_Detector = value;
     reset();
   }
@@ -145,7 +146,7 @@ public class OutlierDetector
    *
    * @return 		the outlier detector
    */
-  public adams.data.outlier.OutlierDetector getDetector() {
+  public AbstractOutlierDetector getDetector() {
     return m_Detector;
   }
 
