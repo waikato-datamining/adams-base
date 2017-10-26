@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.data.outlier.AbstractOutlierDetector;
@@ -314,6 +315,11 @@ public class OutlierDetector
 	      handler.getNotes().addError(m_Detector.getClass(), detections.get(i));
 	    getLogger().info((i+1) + ". " + detections.get(i));
 	  }
+	  m_OutputToken = new Token(handler);
+	}
+	else {
+	  getLogger().warning("Failed to attach detections as notes, as not a " + Utils.classToString(NotesHandler.class) + ": " + Utils.classToString(input));
+	  m_OutputToken = new Token(input);
 	}
       }
     }
