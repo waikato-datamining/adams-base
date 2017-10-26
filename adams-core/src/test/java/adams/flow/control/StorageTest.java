@@ -15,17 +15,17 @@
 
 /*
  * StorageTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
-import java.util.Set;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.util.Set;
 
 /**
  * Tests the adams.flow.control.Storage class. Run from commandline with: <br><br>
@@ -171,6 +171,77 @@ public class StorageTest
     s.put(new StorageName("blah"), 1);
     s.put(new StorageName("bloerk"), "blah");
     assertEquals("expanded string differs", "value: 1", s.expand("value: %{%{bloerk}}"));
+  }
+
+  /**
+   * Tests {@link Storage#isValidName(String)}.
+   */
+  public void testIsValidName() {
+    String s;
+    s = "";
+    assertFalse("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "abc";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "ABC";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "abc123";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "ABC123";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "abc 123";
+    assertFalse("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "ABC 123";
+    assertFalse("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "abc-123";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "ABC-123";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "abc_123";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "ABC_123";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "abc:123";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "ABC:123";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "abc.123";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+    s = "ABC.123";
+    assertTrue("Testing: '" + s + "'", Storage.isValidName(s));
+  }
+
+  /**
+   * Tests {@link Storage#isValidName(String)}.
+   */
+  public void testToValidName() {
+    String s, e;
+    s = "";
+    e = "";
+    assertEquals("Testing: '" + s + "'", e, Storage.toValidName(s));
+    s = "abc";
+    e = "abc";
+    assertEquals("Testing: '" + s + "'", e, Storage.toValidName(s));
+    s = "ABC";
+    e = "ABC";
+    assertEquals("Testing: '" + s + "'", e, Storage.toValidName(s));
+    s = "abc123";
+    e = "abc123";
+    assertEquals("Testing: '" + s + "'", e, Storage.toValidName(s));
+    s = "abc 123";
+    e = "abc_123";
+    assertEquals("Testing: '" + s + "'", e, Storage.toValidName(s));
+    s = "abc:123";
+    e = "abc:123";
+    assertEquals("Testing: '" + s + "'", e, Storage.toValidName(s));
+    s = "abc.123";
+    e = "abc.123";
+    assertEquals("Testing: '" + s + "'", e, Storage.toValidName(s));
+    s = "!abc";
+    e = "_abc";
+    assertEquals("Testing: '" + s + "'", e, Storage.toValidName(s));
+    s = "!abc?*&";
+    e = "_abc___";
+    assertEquals("Testing: '" + s + "'", e, Storage.toValidName(s));
   }
 
   /**

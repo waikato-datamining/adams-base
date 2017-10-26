@@ -291,12 +291,12 @@ public class Storage
   /**
    * Returns a clone (deep copy) of the object.
    *
-   * @param filter	the regular expression that the storage item names 
+   * @param filter	the regular expression that the storage item names
    * 			must match (not applied to caches!), null to ignore
    * @return		the clone
    */
   public synchronized Storage getClone(BaseRegExp filter) {
-    Storage			result;
+    Storage 			result;
     LRUCache<String,Object>	cache;
 
     result = new Storage();
@@ -318,7 +318,7 @@ public class Storage
    * @return		the shallow copy
    */
   public synchronized Storage getShallowCopy() {
-    Storage			result;
+    Storage 			result;
     LRUCache<String,Object>	cache;
 
     result = new Storage();
@@ -364,13 +364,18 @@ public class Storage
    * @return		true if valid
    */
   public static boolean isValidName(String s) {
-    boolean	result;
-    String	name;
+    boolean		result;
+    StringBuilder	name;
+    int			i;
 
-    name   = s;
-    result = (name.length() > 0);
+    name   = new StringBuilder();
+    result = (s.length() > 0);
     if (result) {
-      name   = name.replaceAll("\\w", "").replace("-", "").replace(":", "").replace(".", "");
+      for (i = 0; i < s.length(); i++) {
+	if (CHARS.indexOf(s.charAt(i)) > -1)
+          continue;
+        name.append(s.charAt(i));
+      }
       result = (name.length() == 0);
     }
 
@@ -486,19 +491,7 @@ public class Storage
 
     for (i = 0; i < s.length(); i++) {
       chr = s.charAt(i);
-      if ((chr >= '0') && (chr <= '9'))
-        result.append(chr);
-      else if ((chr >= 'a') && (chr <= 'z'))
-        result.append(chr);
-      else if ((chr >= 'A') && (chr <= 'Z'))
-        result.append(chr);
-      else if (chr == '_')
-        result.append(chr);
-      else if (chr == '-')
-        result.append(chr);
-      else if (chr == ':')
-        result.append(chr);
-      else if (chr == '.')
+      if (CHARS.indexOf(s.charAt(i)) > -1)
         result.append(chr);
       else
         result.append(replace);
