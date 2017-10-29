@@ -1467,7 +1467,7 @@ public class RSync
 
     m_OptionManager.add(
       "max_time", "maxTime",
-      -1);
+      -1, -1, null);
   }
 
   /**
@@ -3104,8 +3104,10 @@ public class RSync
   }
 
   public void setMaxTime(int value) {
-    m_MaxTime = value;
-    reset();
+    if (getOptionManager().isValid("maxTime", value)) {
+      m_MaxTime = value;
+      reset();
+    }
   }
 
   public String maxTimeTipText() {
