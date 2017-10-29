@@ -236,6 +236,8 @@ public class SimpleRSync
 
   protected BaseString[] m_Filter;
 
+  protected int m_MaxTime;
+
   /**
    * Returns a string describing the object.
    *
@@ -336,6 +338,10 @@ public class SimpleRSync
     m_OptionManager.add(
       "filter", "filter",
       new BaseString[0]);
+
+    m_OptionManager.add(
+      "max_time", "maxTime",
+      -1);
   }
 
   /**
@@ -631,6 +637,19 @@ public class SimpleRSync
     return "add a file-filtering RULE";
   }
 
+  public int getMaxTime() {
+    return m_MaxTime;
+  }
+
+  public void setMaxTime(int value) {
+    m_MaxTime = value;
+    reset();
+  }
+
+  public String maxTimeTipText() {
+    return "time out in seconds, stopping rsync process once exceeded, ignored if less than 1";
+  }
+
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
@@ -695,6 +714,7 @@ public class SimpleRSync
       if (!m_FilesFrom.isDirectory())
         rsync.filesFrom(m_FilesFrom.getAbsolutePath());
       rsync.include(BaseObject.toStringArray(m_Filter));
+      rsync.maxTime(m_MaxTime);
 
       rsync.source(m_Source);
       rsync.destination(m_Destination);

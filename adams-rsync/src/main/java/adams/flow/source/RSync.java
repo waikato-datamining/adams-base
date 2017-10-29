@@ -952,6 +952,8 @@ public class RSync
 
   protected boolean m_Version;
 
+  protected int m_MaxTime;
+
   /**
    * Returns a string describing the object.
    *
@@ -1463,6 +1465,9 @@ public class RSync
       "version", "version",
       false);
 
+    m_OptionManager.add(
+      "max_time", "maxTime",
+      -1);
   }
 
   /**
@@ -3094,6 +3099,19 @@ public class RSync
     return "print version number";
   }
 
+  public int getMaxTime() {
+    return m_MaxTime;
+  }
+
+  public void setMaxTime(int value) {
+    m_MaxTime = value;
+    reset();
+  }
+
+  public String maxTimeTipText() {
+    return "time out in seconds, stopping rsync process once exceeded, ignored if less than 1";
+  }
+
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
@@ -3263,6 +3281,7 @@ public class RSync
       rsync.ipv4(m_Ipv4);
       rsync.ipv6(m_Ipv6);
       rsync.version(m_Version);
+      rsync.maxTime(m_MaxTime);
 
       rsync.outputCommandline(m_OutputCommandline);
       rsync.source(m_Source);
