@@ -351,7 +351,7 @@ public class LookUpAdd
       result = "Lookup table '" + m_StorageName + "' not available! Not initialized with " + LookUpInit.class.getName() + "?";
     }
     else {
-      lookup = (HashMap<String,Object>) getStorageHandler().getStorage().get(m_StorageName);
+      lookup = LookUpHelper.getTable(this, m_StorageName);
       if (m_InputToken.getPayload() instanceof SpreadSheet) {
 	sheet     = (SpreadSheet) m_InputToken.getPayload();
 	error     = new StringBuilder();

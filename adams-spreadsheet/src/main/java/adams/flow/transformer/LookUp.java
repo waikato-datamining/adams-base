@@ -19,14 +19,14 @@
  */
 package adams.flow.transformer;
 
-import java.util.HashMap;
-
 import adams.core.QuickInfoHelper;
-import adams.data.spreadsheet.rowfinder.MissingValue;
+import adams.data.spreadsheet.LookUpHelper;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUser;
 import adams.flow.core.MissingLookUpKey;
 import adams.flow.core.Token;
+
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -115,7 +115,7 @@ public class LookUp
   /** the behavior for missing keys. */
   protected MissingLookUpKey m_MissingKey;
 
-  /** the missing value (only used for {@link MissingValue#OUTPUT_MISSING_VALUE}). */
+  /** the missing value. */
   protected String m_MissingValue;
   
   /** whether to output native objects rather than strings. */
@@ -384,7 +384,7 @@ public class LookUp
       result = "Lookup table '" + m_StorageName + "' not available! Not initialized with " + LookUpInit.class.getName() + "?";
     }
     else {
-      lookup = (HashMap<String,Object>) getStorageHandler().getStorage().get(m_StorageName);
+      lookup = LookUpHelper.getTable(this, m_StorageName);
       key    = (String) m_InputToken.getPayload();
       if (lookup.containsKey(key)) {
 	value = lookup.get(key);

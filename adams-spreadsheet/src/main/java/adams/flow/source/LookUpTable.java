@@ -21,6 +21,7 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.LookUpHelper;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.StorageName;
@@ -238,12 +239,12 @@ public class LookUpTable
       result = "Lookup table '" + m_StorageName + "' not available! Not initialized with " + LookUpInit.class.getName() + "?";
     }
     else {
-      lookup = (HashMap<String,Object>) getStorageHandler().getStorage().get(m_StorageName);
+      lookup = LookUpHelper.getTable(this, m_StorageName);
       sheet  = new DefaultSpreadSheet();
       sheet.setName(m_StorageName.getValue());
       sheet.getHeaderRow().addCell("k").setContent(COLUMN_KEY);
       sheet.getHeaderRow().addCell("v").setContent(COLUMN_VALUE);
-      keys = new ArrayList<String>(lookup.keySet());
+      keys = new ArrayList<>(lookup.keySet());
       Collections.sort(keys);
       for (String key: keys) {
 	row = sheet.addRow();

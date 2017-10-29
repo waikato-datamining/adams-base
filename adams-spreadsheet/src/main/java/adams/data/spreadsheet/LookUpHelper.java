@@ -22,6 +22,8 @@ package adams.data.spreadsheet;
 import adams.core.base.BaseRegExp;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.CsvSpreadSheetReader;
+import adams.flow.control.StorageName;
+import adams.flow.core.Actor;
 
 import java.util.HashMap;
 
@@ -40,6 +42,15 @@ public class LookUpHelper {
    */
   public static HashMap<String,Object> newTable() {
     return new HashMap<>();
+  }
+
+  /**
+   * Returns the specified lookup table.
+   *
+   * @return		the table
+   */
+  public static HashMap<String,Object> getTable(Actor context, StorageName name) {
+    return (HashMap<String,Object>) context.getStorageHandler().getStorage().get(name);
   }
 
   /**

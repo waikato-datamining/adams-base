@@ -19,10 +19,11 @@
  */
 package adams.flow.transformer;
 
-import java.util.HashMap;
-
 import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.LookUpHelper;
 import adams.flow.control.StorageName;
+
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -179,7 +180,7 @@ public class LookUpRemove
   @Override
   protected String doExecute() {
     String			result;
-    HashMap<String,String>	lookup;
+    HashMap<String,Object>	lookup;
     String			key;
     
     result = null;
@@ -188,7 +189,7 @@ public class LookUpRemove
       result = "Lookup table '" + m_StorageName + "' not available! Not initialized with " + LookUpInit.class.getName() + "?";
     }
     else {
-      lookup = (HashMap<String,String>) getStorageHandler().getStorage().get(m_StorageName);
+      lookup = LookUpHelper.getTable(this, m_StorageName);
       key    = (String) m_InputToken.getPayload();
       if (lookup.containsKey(key)) {
 	lookup.remove(key);
