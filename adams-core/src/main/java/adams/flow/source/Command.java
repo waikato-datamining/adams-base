@@ -125,6 +125,13 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-time-out &lt;int&gt; (property: timeOut)
+ * &nbsp;&nbsp;&nbsp;The maximum time in seconds for the process to run before getting killed,
+ * &nbsp;&nbsp;&nbsp; ignored if less than 1.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -171,6 +178,9 @@ public class Command
 
   /** in case an exception occurred executing the command (gets rethrown). */
   protected IllegalStateException m_ExecutionFailure;
+
+  /** the time out in seconds. */
+  protected int m_TimeOut;
 
   /**
    * Returns a string describing the object.
@@ -228,6 +238,10 @@ public class Command
     m_OptionManager.add(
       "prefix-stderr", "prefixStdErr",
       "");
+
+    m_OptionManager.add(
+      "time-out", "timeOut",
+      -1, -1, null);
   }
 
   /**
@@ -471,6 +485,37 @@ public class Command
   }
 
   /**
+   * Sets the time out for the process.
+   *
+   * @param value	the time out in seconds
+   */
+  public void setTimeOut(int value) {
+    if (getOptionManager().isValid("timeOut", value)) {
+      m_TimeOut = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the time out for the process.
+   *
+   * @return 		the time out in seconds
+   */
+  public int getTimeOut() {
+    return m_TimeOut;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String timeOutTipText() {
+    return "The maximum time in seconds for the process to run before getting killed, ignored if less than 1.";
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
@@ -508,6 +553,7 @@ public class Command
     // setup thread
     m_ExecutionFailure = null;
     m_ProcessOutput = new StreamingProcessOutput(this);
+    m_ProcessOutput.setTimeOut(m_TimeOut);
     m_Monitor = new RunnableWithLogging() {
       private static final long serialVersionUID = -4475355379511760429L;
       @Override
