@@ -20,24 +20,22 @@
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
-import adams.core.SerializationHelper;
 import adams.core.Shortening;
 import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
-import adams.data.report.Report;
 import adams.flow.container.OptionalContainerOutput;
 import adams.flow.container.WekaFilterContainer;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUser;
-import adams.flow.core.Actor;
-import adams.flow.core.CallableActorHelper;
+import adams.flow.core.AbstractModelLoader.ModelLoadingType;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.Compatibility;
 import adams.flow.core.FlowContextHandler;
-import adams.flow.core.OutputProducer;
+import adams.flow.core.ModelLoaderSupporter;
 import adams.flow.core.Token;
+import adams.flow.core.WekaFilterModelLoader;
 import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
@@ -54,7 +52,7 @@ import java.util.Hashtable;
  <!-- globalinfo-start -->
  * Filters Instances&#47;Instance objects using the specified filter.<br>
  * <br>
- * The following order is used to obtain the actual filter:<br>
+ * The following order is used to obtain the model (when using AUTO):<br>
  * 1. model file present?<br>
  * 2. source actor present?<br>
  * 3. storage item present?<br>
@@ -125,19 +123,24 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: weka.filters.AllFilter
  * </pre>
  *
+ * <pre>-model-loading-type &lt;AUTO|FILE|SOURCE_ACTOR|STORAGE&gt; (property: modelLoadingType)
+ * &nbsp;&nbsp;&nbsp;Determines how to load the model, in case of AUTO, first the model file
+ * &nbsp;&nbsp;&nbsp;is checked, then the callable actor and then the storage.
+ * &nbsp;&nbsp;&nbsp;default: AUTO
+ * </pre>
+ *
  * <pre>-model &lt;adams.core.io.PlaceholderFile&gt; (property: modelFile)
- * &nbsp;&nbsp;&nbsp;The file with the serialized filter to load and use instead (when not pointing
- * &nbsp;&nbsp;&nbsp;to a directory).
+ * &nbsp;&nbsp;&nbsp;The file to load the model from, ignored if pointing to a directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
- * <pre>-source &lt;adams.flow.core.CallableActorReference&gt; (property: source)
- * &nbsp;&nbsp;&nbsp;The source actor to obtain the filter from.
+ * <pre>-source &lt;adams.flow.core.CallableActorReference&gt; (property: modelActor)
+ * &nbsp;&nbsp;&nbsp;The callable actor (source) to obtain the model from, ignored if not present.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-storage &lt;adams.flow.control.StorageName&gt; (property: storage)
- * &nbsp;&nbsp;&nbsp;The storage item to obtain the filter from.
+ * <pre>-storage &lt;adams.flow.control.StorageName&gt; (property: modelStorage)
+ * &nbsp;&nbsp;&nbsp;The storage item to obtain the model from, ignored if not present.
  * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
  *
@@ -169,7 +172,7 @@ import java.util.Hashtable;
 public class WekaFilter
   extends AbstractTransformerWithPropertiesUpdating
   implements ProvenanceSupporter, OptionalContainerOutput, ModelFileHandler,
-  StorageUser {
+             StorageUser, ModelLoaderSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 9078845385089445202L;
@@ -192,23 +195,14 @@ public class WekaFilter
   /** whether to output a container. */
   protected boolean m_OutputContainer;
 
-  /** the serialized filter to load. */
-  protected PlaceholderFile m_ModelFile;
-
-  /** the source actor. */
-  protected CallableActorReference m_Source;
-
-  /** the storage item. */
-  protected StorageName m_Storage;
-
   /** whether the filter has been initialized. */
   protected boolean m_Initialized;
 
   /** whether the flow context has been updated. */
   protected boolean m_FlowContextUpdated;
 
-  /** the helper class. */
-  protected CallableActorHelper m_Helper;
+  /** the model loader. */
+  protected WekaFilterModelLoader m_ModelLoader;
 
   /**
    * Returns a string describing the object.
@@ -219,11 +213,7 @@ public class WekaFilter
   public String globalInfo() {
     return
       "Filters Instances/Instance objects using the specified filter.\n\n"
-	+ "The following order is used to obtain the actual filter:\n"
-	+ "1. model file present?\n"
-	+ "2. source actor present?\n"
-	+ "3. storage item present?\n"
-	+ "4. use specified filter definition";
+	+ m_ModelLoader.automaticOrderInfo();
   }
 
   /**
@@ -238,15 +228,19 @@ public class WekaFilter
       new AllFilter());
 
     m_OptionManager.add(
+      "model-loading-type", "modelLoadingType",
+      ModelLoadingType.AUTO);
+
+    m_OptionManager.add(
       "model", "modelFile",
       new PlaceholderFile("."));
 
     m_OptionManager.add(
-      "source", "source",
+      "source", "modelActor",
       new CallableActorReference());
 
     m_OptionManager.add(
-      "storage", "storage",
+      "storage", "modelStorage",
       new StorageName());
 
     m_OptionManager.add(
@@ -269,7 +263,8 @@ public class WekaFilter
   protected void initialize() {
     super.initialize();
 
-    m_Helper = new CallableActorHelper();
+    m_ModelLoader = new WekaFilterModelLoader();
+    m_ModelLoader.setFlowContext(this);
   }
 
   /**
@@ -302,12 +297,43 @@ public class WekaFilter
   }
 
   /**
+   * Sets the loading type. In case of {@link ModelLoadingType#AUTO}, first
+   * file, then callable actor, then storage.
+   *
+   * @param value	the type
+   */
+  public void setModelLoadingType(ModelLoadingType value) {
+    m_ModelLoader.setModelLoadingType(value);
+    reset();
+  }
+
+  /**
+   * Returns the loading type. In case of {@link ModelLoadingType#AUTO}, first
+   * file, then callable actor, then storage.
+   *
+   * @return		the type
+   */
+  public ModelLoadingType getModelLoadingType() {
+    return m_ModelLoader.getModelLoadingType();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String modelLoadingTypeTipText() {
+    return m_ModelLoader.modelLoadingTypeTipText();
+  }
+
+  /**
    * Sets the file to load the model from.
    *
    * @param value	the model file
    */
   public void setModelFile(PlaceholderFile value) {
-    m_ModelFile = value;
+    m_ModelLoader.setModelFile(value);
     reset();
   }
 
@@ -317,7 +343,7 @@ public class WekaFilter
    * @return		the model file
    */
   public PlaceholderFile getModelFile() {
-    return m_ModelFile;
+    return m_ModelLoader.getModelFile();
   }
 
   /**
@@ -327,7 +353,7 @@ public class WekaFilter
    * 			displaying in the GUI or for listing the options.
    */
   public String modelFileTipText() {
-    return "The file with the serialized filter to load and use instead (when not pointing to a directory).";
+    return m_ModelLoader.modelFileTipText();
   }
 
   /**
@@ -335,8 +361,8 @@ public class WekaFilter
    *
    * @param value	the source
    */
-  public void setSource(CallableActorReference value) {
-    m_Source = value;
+  public void setModelActor(CallableActorReference value) {
+    m_ModelLoader.setModelActor(value);
     reset();
   }
 
@@ -345,8 +371,8 @@ public class WekaFilter
    *
    * @return		the source
    */
-  public CallableActorReference getSource() {
-    return m_Source;
+  public CallableActorReference getModelActor() {
+    return m_ModelLoader.getModelActor();
   }
 
   /**
@@ -355,8 +381,8 @@ public class WekaFilter
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String sourceTipText() {
-    return "The source actor to obtain the filter from.";
+  public String modelActorTipText() {
+    return m_ModelLoader.modelActorTipText();
   }
 
   /**
@@ -364,8 +390,8 @@ public class WekaFilter
    *
    * @param value	the storage item
    */
-  public void setStorage(StorageName value) {
-    m_Storage = value;
+  public void setModelStorage(StorageName value) {
+    m_ModelLoader.setModelStorage(value);
     reset();
   }
 
@@ -374,8 +400,8 @@ public class WekaFilter
    *
    * @return		the storage item
    */
-  public StorageName getStorage() {
-    return m_Storage;
+  public StorageName getModelStorage() {
+    return m_ModelLoader.getModelStorage();
   }
 
   /**
@@ -384,8 +410,8 @@ public class WekaFilter
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String storageTipText() {
-    return "The storage item to obtain the filter from.";
+  public String modelStorageTipText() {
+    return m_ModelLoader.modelStorageTipText();
   }
 
   /**
@@ -518,9 +544,10 @@ public class WekaFilter
     String	info;
 
     result  = QuickInfoHelper.toString(this, "filter", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Filter), 40));
-    result += QuickInfoHelper.toString(this, "modelFile", m_ModelFile, ", model: ");
-    result += QuickInfoHelper.toString(this, "source", m_Source, ", source: ");
-    result += QuickInfoHelper.toString(this, "storage", m_Storage, ", storage: ");
+    result += QuickInfoHelper.toString(this, "modelLoadingType", getModelLoadingType(), ", type: ");
+    result += QuickInfoHelper.toString(this, "modelFile", getModelFile(), ", model: ");
+    result += QuickInfoHelper.toString(this, "modelSource", getModelActor(), ", source: ");
+    result += QuickInfoHelper.toString(this, "modelStorage", getModelStorage(), ", storage: ");
     result += QuickInfoHelper.toString(this, "keepRelationName", m_KeepRelationName, "keep relation name", ", ");
     result += QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");
     info    = super.getQuickInfo();
@@ -619,15 +646,6 @@ public class WekaFilter
   }
 
   /**
-   * Tries to find the callable actor referenced by its callable name.
-   *
-   * @return		the callable actor or null if not found
-   */
-  protected Actor findCallableActor() {
-    return m_Helper.findCallableActorRecursive(this, getSource());
-  }
-
-  /**
    * Initializes the actual filter to use.
    *
    * @param data	the data to initialize the filter when using the filter definition
@@ -636,67 +654,16 @@ public class WekaFilter
    */
   protected String initActualFilter(Instances data) throws Exception {
     String		result;
-    Actor 		source;
-    Token 		token;
-    Compatibility	comp;
+    MessageCollection	errors;
 
-    result = null;
-
-    // serialized file
-    if (m_ModelFile.exists() && !m_ModelFile.isDirectory()) {
-      if (isLoggingEnabled())
-	getLogger().info("Loading serialized filter from: " + m_ModelFile);
-      m_ActualFilter = (Filter) SerializationHelper.read(m_ModelFile.getAbsolutePath());
-      return null;
+    errors         = new MessageCollection();
+    m_ActualFilter = m_ModelLoader.getModel(errors);
+    if (m_ActualFilter == null) {
+      if (getModelLoadingType() == ModelLoadingType.AUTO)
+	m_ActualFilter = (Filter) OptionUtils.shallowCopy(m_Filter);
+      else
+	return errors.toString();
     }
-
-    // source actor
-    source = findCallableActor();
-    if (source != null) {
-      if (source instanceof OutputProducer) {
-	comp = new Compatibility();
-	if (!comp.isCompatible(new Class[]{Report.class}, ((OutputProducer) source).generates()))
-	  result = "Callable actor '" + m_Source + "' does not produce output that is compatible with '" + Report.class.getName() + "'!";
-      }
-      else {
-	result = "Callable actor '" + m_Source + "' does not produce any output!";
-      }
-      token = null;
-      if (result == null) {
-	result = source.execute();
-	if (result != null) {
-	  result = "Callable actor '" + m_Source + "' execution failed:\n" + result;
-	}
-	else {
-	  if (((OutputProducer) source).hasPendingOutput())
-	    token = ((OutputProducer) source).output();
-	  else if (!m_Silent)
-	    result = "Callable actor '" + m_Source + "' did not generate any output!";
-	}
-      }
-      if (result != null)
-	return result;
-      if (token != null) {
-	m_ActualFilter = (Filter) token.getPayload();
-	if (isLoggingEnabled())
-	  getLogger().info("Using filter from source: " + m_Source);
-	return null;
-      }
-    }
-
-    // storage
-    if (getStorageHandler().getStorage().has(m_Storage)) {
-      m_ActualFilter = (Filter) getStorageHandler().getStorage().get(m_Storage);
-      if (isLoggingEnabled())
-	getLogger().info("Using filter from storage: " + m_Storage);
-      return null;
-    }
-
-    // filter definition
-    if (isLoggingEnabled())
-      getLogger().info("Creating copy of: " + OptionUtils.getCommandLine(m_Filter));
-    m_ActualFilter = (Filter) OptionUtils.shallowCopy(m_Filter);
-    Filter.makeCopy(m_Filter);
 
     // configure containers
     result = setUpContainers(m_ActualFilter);

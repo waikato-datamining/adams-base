@@ -21,15 +21,16 @@ package adams.flow.transformer;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
-import adams.core.SerializationHelper;
 import adams.core.VariableName;
-import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
 import adams.event.VariableChangeEvent;
 import adams.flow.container.AbstractContainer;
 import adams.flow.container.WekaModelContainer;
-import adams.flow.core.CallableActorHelper;
+import adams.flow.control.StorageName;
+import adams.flow.core.AbstractModelLoader;
+import adams.flow.core.AbstractModelLoader.ModelLoadingType;
 import adams.flow.core.CallableActorReference;
+import adams.flow.core.DynamicModelLoaderSupporter;
 import adams.flow.core.Token;
 import weka.core.Instance;
 
@@ -45,19 +46,13 @@ import java.util.Hashtable;
  */
 public abstract class AbstractProcessWekaInstanceWithModel<T>
   extends AbstractTransformer
-  implements ModelFileHandler {
+  implements DynamicModelLoaderSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -5275241130624220000L;
 
   /** the key for storing the current model in the backup. */
   public final static String BACKUP_MODEL = "model";
-
-  /** the serialized model to load. */
-  protected PlaceholderFile m_ModelFile;
-
-  /** the callable actor to get the model from. */
-  protected CallableActorReference m_ModelActor;
 
   /** the model that was loaded from the model file. */
   protected T m_Model;
@@ -74,6 +69,9 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   /** whether we need to reset the model. */
   protected boolean m_ResetModel;
 
+  /** the model loader. */
+  protected AbstractModelLoader m_ModelLoader;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -82,24 +80,40 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
     super.defineOptions();
 
     m_OptionManager.add(
-	    "model", "modelFile",
-	    new PlaceholderFile("."));
+      "model-loading-type", "modelLoadingType",
+      ModelLoadingType.AUTO);
 
     m_OptionManager.add(
-	    "model-actor", "modelActor",
-	    new CallableActorReference());
+      "model", "modelFile",
+      new PlaceholderFile("."));
 
     m_OptionManager.add(
-	    "on-the-fly", "onTheFly",
-	    false);
+      "model-actor", "modelActor",
+      new CallableActorReference());
 
     m_OptionManager.add(
-	    "use-model-reset-variable", "useModelResetVariable",
-	    false);
+      "model-storage", "modelStorage",
+      new StorageName());
 
     m_OptionManager.add(
-	    "model-reset-variable", "modelResetVariable",
-	    new VariableName());
+      "on-the-fly", "onTheFly",
+      false);
+
+    m_OptionManager.add(
+      "use-model-reset-variable", "useModelResetVariable",
+      false);
+
+    m_OptionManager.add(
+      "model-reset-variable", "modelResetVariable",
+      new VariableName());
+  }
+
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_ModelLoader = newModelLoader();
+    m_ModelLoader.setFlowContext(this);
   }
 
   /**
@@ -113,12 +127,50 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   }
 
   /**
+   * Instantiates the model loader to use.
+   *
+   * @return		the model loader to use
+   */
+  protected abstract AbstractModelLoader newModelLoader();
+
+  /**
+   * Sets the loading type. In case of {@link ModelLoadingType#AUTO}, first
+   * file, then callable actor, then storage.
+   *
+   * @param value	the type
+   */
+  public void setModelLoadingType(ModelLoadingType value) {
+    m_ModelLoader.setModelLoadingType(value);
+    reset();
+  }
+
+  /**
+   * Returns the loading type. In case of {@link ModelLoadingType#AUTO}, first
+   * file, then callable actor, then storage.
+   *
+   * @return		the type
+   */
+  public ModelLoadingType getModelLoadingType() {
+    return m_ModelLoader.getModelLoadingType();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String modelLoadingTypeTipText() {
+    return m_ModelLoader.modelLoadingTypeTipText();
+  }
+
+  /**
    * Sets the file to load the model from.
    *
    * @param value	the model file
    */
   public void setModelFile(PlaceholderFile value) {
-    m_ModelFile = value;
+    m_ModelLoader.setModelFile(value);
     reset();
   }
 
@@ -128,7 +180,7 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
    * @return		the model file
    */
   public PlaceholderFile getModelFile() {
-    return m_ModelFile;
+    return m_ModelLoader.getModelFile();
   }
 
   /**
@@ -138,28 +190,26 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
    * 			displaying in the GUI or for listing the options.
    */
   public String modelFileTipText() {
-    return "The model file to load (when not pointing to a directory).";
+    return m_ModelLoader.modelFileTipText();
   }
 
   /**
-   * Sets the callable actor to obtain the model from if model file is pointing
-   * to a directory.
+   * Sets the filter source actor.
    *
-   * @param value	the actor reference
+   * @param value	the source
    */
   public void setModelActor(CallableActorReference value) {
-    m_ModelActor = value;
+    m_ModelLoader.setModelActor(value);
     reset();
   }
 
   /**
-   * Returns the callable actor to obtain the model from if model file is pointing
-   * to a directory.
+   * Returns the filter source actor.
    *
-   * @return		the actor reference
+   * @return		the source
    */
   public CallableActorReference getModelActor() {
-    return m_ModelActor;
+    return m_ModelLoader.getModelActor();
   }
 
   /**
@@ -169,10 +219,36 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
    * 			displaying in the GUI or for listing the options.
    */
   public String modelActorTipText() {
-    return
-      "The callable actor to use for obtaining the model in case serialized "
-	+ "model file points to a directory (can be a "
-	+ getModelContainerClass().getName() + " as well).";
+    return m_ModelLoader.modelActorTipText();
+  }
+
+  /**
+   * Sets the filter storage item.
+   *
+   * @param value	the storage item
+   */
+  public void setModelStorage(StorageName value) {
+    m_ModelLoader.setModelStorage(value);
+    reset();
+  }
+
+  /**
+   * Returns the filter storage item.
+   *
+   * @return		the storage item
+   */
+  public StorageName getModelStorage() {
+    return m_ModelLoader.getModelStorage();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String modelStorageTipText() {
+    return m_ModelLoader.modelStorageTipText();
   }
 
   /**
@@ -284,14 +360,13 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
     String	result;
     String	value;
 
-    result = QuickInfoHelper.toString(this, "modelFile", (m_ModelFile.isDirectory() ? m_ModelActor : m_ModelFile));
+    result  = QuickInfoHelper.toString(this, "modelLoadingType", getModelLoadingType(), "type: ");
+    result += QuickInfoHelper.toString(this, "modelFile", getModelFile(), ", model: ");
+    result += QuickInfoHelper.toString(this, "modelSource", getModelActor(), ", source: ");
+    result += QuickInfoHelper.toString(this, "modelStorage", getModelStorage(), ", storage: ");
     value  = QuickInfoHelper.toString(this, "modelResetVariable", (m_UseModelResetVariable ? "reset: " + m_ModelResetVariable : ""));
-    if (value != null) {
-      if (result == null)
-	result = value;
-      else
-	result += ", " + value;
-    }
+    if (value != null)
+      result += ", " + value;
 
     return result;
   }
@@ -392,42 +467,17 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
    */
   protected String setUpModel() {
     String		result;
-    Object		obj;
-    MessageCollection errors;
+    MessageCollection 	errors;
 
     result = null;
 
-    if (m_ModelFile.isDirectory()) {
-      // obtain model from callable actor
-      try {
-	errors = new MessageCollection();
-	obj    = CallableActorHelper.getSetup(null, m_ModelActor, this, errors);
-	if (obj == null) {
-	  if (!errors.isEmpty())
-	    result = errors.toString();
-	}
-	else {
-	  if (obj instanceof AbstractContainer)
-	    m_Model = getModelFromContainer((AbstractContainer) obj);
-	  else
-	    m_Model = (T) obj;
-	}
-      }
-      catch (Exception e) {
-	m_Model = null;
-	result  = handleException("Failed to obtain model from callable actor '" + m_ModelActor + "': ", e);
-      }
-    }
-    else {
-      // load model
-      try {
-	m_Model = (T) SerializationHelper.read(m_ModelFile.getAbsolutePath());
-      }
-      catch (Exception e) {
-	m_Model = null;
-	result  = handleException("Failed to load model from '" + m_ModelFile + "': ", e);
-      }
-    }
+    if (m_ResetModel)
+      m_ModelLoader.reset();
+
+    errors  = new MessageCollection();
+    m_Model = (T) m_ModelLoader.getModel(errors);
+    if (m_Model == null)
+      result = errors.toString();
 
     m_ResetModel = false;
 
