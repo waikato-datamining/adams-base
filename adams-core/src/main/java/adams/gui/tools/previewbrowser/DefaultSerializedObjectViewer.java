@@ -13,19 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultSerializedObjectViewer.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
-
-import java.awt.BorderLayout;
 
 /**
  * Default viewer that just uses the Object's toString() method to
@@ -71,6 +70,7 @@ public class DefaultSerializedObjectViewer
     PreviewPanel	result;
     BaseTextArea	textOptions;
     BaseTextArea	textObject;
+    BaseSplitPane	splitPane;
     
     textOptions = new BaseTextArea(3, 80);
     textOptions.setEditable(false);
@@ -92,8 +92,13 @@ public class DefaultSerializedObjectViewer
       textObject.setText(Utils.arrayToString(obj));
     else
       textObject.setText(obj.toString());
-    result = new PreviewPanel(new BaseScrollPane(textObject), textObject);
-    result.add(new BaseScrollPane(textOptions), BorderLayout.NORTH);
+
+    splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    splitPane.setDividerLocation(100);
+    splitPane.setTopComponent(new BaseScrollPane(textOptions));
+    splitPane.setBottomComponent(new BaseScrollPane(textObject));
+
+    result = new PreviewPanel(splitPane, textObject);
 
     return result;
   }
