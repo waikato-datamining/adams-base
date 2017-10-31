@@ -13,19 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LogEntry.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 import adams.core.CloneHandler;
 import adams.core.Constants;
@@ -34,6 +26,14 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.net.InternetHelper;
 import adams.data.id.DatabaseIDHandler;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * A simple log entry container that can be stored and retrieve in a database.
@@ -114,8 +114,8 @@ public class LogEntry
     super();
 
     m_DatabaseID = Constants.NO_ID;
-    m_Host       = InternetHelper.getLocalHostName();
-    m_IP         = InternetHelper.getLocalHostIP();
+    m_Host       = InternetHelper.getHostnameFromNetworkInterface();
+    m_IP         = InternetHelper.getIPFromNetworkInterface();
     m_Type       = "";
     m_Message    = "";
     m_Generation = new Date();
