@@ -152,6 +152,16 @@ public class StorageValuesArray
   }
 
   /**
+   * Adds the storage name.
+   *
+   * @param value	the name
+   */
+  public void addStorageName(StorageName value) {
+    m_StorageNames = (StorageName[]) Utils.adjustArray(m_StorageNames, m_StorageNames.length + 1, value);
+    reset();
+  }
+
+  /**
    * Sets the names of the stored values.
    *
    * @param value	the names

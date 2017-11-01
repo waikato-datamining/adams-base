@@ -140,6 +140,16 @@ public class VariablesArray
   }
 
   /**
+   * Adds the variable.
+   *
+   * @param value	the names
+   */
+  public void addVariableName(VariableName value) {
+    m_VariableNames = (VariableName[]) Utils.adjustArray(m_VariableNames, m_VariableNames.length + 1, value);
+    reset();
+  }
+
+  /**
    * Sets the names of the variables.
    *
    * @param value	the names
