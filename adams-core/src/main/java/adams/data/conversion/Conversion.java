@@ -19,11 +19,11 @@
  */
 package adams.data.conversion;
 
-import java.io.Serializable;
-
 import adams.core.CleanUpHandler;
 import adams.core.QuickInfoSupporter;
 import adams.core.Stoppable;
+
+import java.io.Serializable;
 
 /**
  * Interface for conversion schemes.
@@ -64,6 +64,14 @@ public interface Conversion
   public Object getInput();
 
   /**
+   * The currently set input data to convert.
+   *
+   * @param cls		for casting
+   * @return		the data to convert, can be null if not yet set
+   */
+  public <T> T getInput(Class<T> cls);
+
+  /**
    * Returns the class that is accepted as input.
    *
    * @return		the class
@@ -90,4 +98,11 @@ public interface Conversion
    * @return		the output, null if none produced yet
    */
   public Object getOutput();
+
+  /**
+   * Returns the generated output.
+   *
+   * @return		the output, null if none produced yet
+   */
+  public <T> T getOutput(Class<T> cls);
 }

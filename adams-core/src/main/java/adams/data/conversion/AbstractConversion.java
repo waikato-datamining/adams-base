@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractConversion.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -134,6 +134,17 @@ public abstract class AbstractConversion
   }
 
   /**
+   * The currently set input data to convert.
+   *
+   * @param cls 	for casting
+   * @return		the data to convert, can be null if not yet set
+   */
+  @Override
+  public <T> T getInput(Class<T> cls) {
+    return (T) m_Input;
+  }
+
+  /**
    * Returns the class that is generated as output.
    *
    * @return		the class
@@ -148,6 +159,16 @@ public abstract class AbstractConversion
    */
   public Object getOutput() {
     return m_Output;
+  }
+
+  /**
+   * Returns the generated output.
+   *
+   * @param cls 	for casting
+   * @return		the output, null if none produced yet
+   */
+  public <T> T getOutput(Class<T> cls) {
+    return (T) m_Output;
   }
 
   /**
