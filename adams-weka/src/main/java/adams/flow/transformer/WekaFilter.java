@@ -720,7 +720,7 @@ public class WekaFilter
     if (result == null) {
       try {
 	// initialize filter?
-	if ((m_InitializeOnce && !m_Initialized) || (!m_InitializeOnce)) {
+	if (!m_Initialized || !m_InitializeOnce) {
 	  if (data == null) {
 	    data = new weka.core.Instances(inst.dataset(), 0);
 	    data.add(inst);
