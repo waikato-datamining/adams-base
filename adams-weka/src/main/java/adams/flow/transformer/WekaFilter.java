@@ -34,6 +34,7 @@ import adams.flow.core.AbstractModelLoader.ModelLoadingType;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.FlowContextHandler;
 import adams.flow.core.ModelLoaderSupporter;
+import adams.flow.core.OptionalOneTimeInitializer;
 import adams.flow.core.Token;
 import adams.flow.core.WekaFilterModelLoader;
 import adams.flow.provenance.ActorType;
@@ -172,7 +173,7 @@ import java.util.Hashtable;
 public class WekaFilter
   extends AbstractTransformerWithPropertiesUpdating
   implements ProvenanceSupporter, OptionalContainerOutput, ModelFileHandler,
-             StorageUser, ModelLoaderSupporter {
+             StorageUser, ModelLoaderSupporter, OptionalOneTimeInitializer {
 
   /** for serialization. */
   private static final long serialVersionUID = 9078845385089445202L;

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaReorderAttributesToReference.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
+import adams.flow.core.OptionalOneTimeInitializer;
 import adams.flow.core.Token;
 import weka.core.Attribute;
 import weka.core.Instance;
@@ -138,7 +139,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class WekaReorderAttributesToReference
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements OptionalOneTimeInitializer {
 
   /** for serialization. */
   private static final long serialVersionUID = 530323409335629567L;
