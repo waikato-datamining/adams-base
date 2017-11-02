@@ -25,6 +25,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.flow.container.OptionalContainerOutput;
 import adams.flow.container.WekaFilterContainer;
@@ -266,6 +267,17 @@ public class WekaFilter
 
     m_ModelLoader = new WekaFilterModelLoader();
     m_ModelLoader.setFlowContext(this);
+  }
+
+  /**
+   * Sets the logging level.
+   *
+   * @param value 	the level
+   */
+  @Override
+  public synchronized void setLoggingLevel(LoggingLevel value) {
+    super.setLoggingLevel(value);
+    m_ModelLoader.setLoggingLevel(value);
   }
 
   /**
@@ -608,6 +620,7 @@ public class WekaFilter
 
     m_Initialized        = false;
     m_FlowContextUpdated = false;
+    m_ModelLoader.reset();
   }
 
   /**
@@ -695,18 +708,14 @@ public class WekaFilter
 
     data = null;
     inst = null;
-    if (m_InputToken.getPayload() instanceof weka.core.Instance) {
-      inst = (weka.core.Instance) m_InputToken.getPayload();
-    }
-    else if (m_InputToken.getPayload() instanceof adams.data.instance.Instance) {
-      inst = ((adams.data.instance.Instance) m_InputToken.getPayload()).toInstance();
-    }
-    else if (m_InputToken.getPayload() instanceof weka.core.Instances) {
-      data = (weka.core.Instances) m_InputToken.getPayload();
-    }
-    else {
-      result = "Unhandled data type: " + m_InputToken.getPayload().getClass().getName();
-    }
+    if (m_InputToken.hasPayload(weka.core.Instance.class))
+      inst = m_InputToken.getPayload(weka.core.Instance.class);
+    else if (m_InputToken.hasPayload(adams.data.instance.Instance.class))
+      inst = m_InputToken.getPayload(adams.data.instance.Instance.class).toInstance();
+    else if (m_InputToken.hasPayload(weka.core.Instances.class))
+      data = m_InputToken.getPayload(weka.core.Instances.class);
+    else
+      result = m_InputToken.unhandledData();
 
     if (result == null) {
       try {

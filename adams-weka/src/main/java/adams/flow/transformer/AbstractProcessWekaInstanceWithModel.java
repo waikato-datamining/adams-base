@@ -23,6 +23,7 @@ import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingLevel;
 import adams.event.VariableChangeEvent;
 import adams.flow.container.AbstractContainer;
 import adams.flow.container.WekaModelContainer;
@@ -124,6 +125,18 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
     super.reset();
 
     m_Model = null;
+    m_ModelLoader.reset();
+  }
+
+  /**
+   * Sets the logging level.
+   *
+   * @param value 	the level
+   */
+  @Override
+  public synchronized void setLoggingLevel(LoggingLevel value) {
+    super.setLoggingLevel(value);
+    m_ModelLoader.setLoggingLevel(value);
   }
 
   /**

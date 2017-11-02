@@ -441,6 +441,8 @@ public abstract class AbstractModelLoader<T>
    */
   public T getModel(MessageCollection errors) {
     if (m_Model == null) {
+      if (isLoggingEnabled())
+        getLogger().info("Reloading model...");
       switch (m_ModelLoadingType) {
 	case AUTO:
 	  m_Model = loadAutomatically(errors);
@@ -457,6 +459,8 @@ public abstract class AbstractModelLoader<T>
 	default:
 	  throw new IllegalStateException("Unhandled loading type: " + m_ModelLoadingType);
       }
+      if (isLoggingEnabled())
+        getLogger().info("Reload of model: " + (errors.isEmpty() ? "successful" : errors.toString()));
     }
 
     return m_Model;
