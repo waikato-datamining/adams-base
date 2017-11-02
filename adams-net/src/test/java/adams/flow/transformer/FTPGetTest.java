@@ -15,7 +15,7 @@
 
 /*
  * FTPGetTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -57,18 +57,18 @@ public class FTPGetTest
    */
   public Actor getActor() {
     FTPConnection fc = new FTPConnection();
-    fc.setHost("ftp.debian.org");
+    fc.setHost("neoftp.sci.gsfc.nasa.gov");
     fc.setUser("anonymous");
     fc.setPassword(new BasePassword(""));
     fc.setUsePassiveMode(true);
 
     FTPLister fl = new FTPLister();
-    fl.setRemoteDir("/pub");
+    fl.setRemoteDir("/");
     fl.setListFiles(true);
     fl.setRegExp(new BaseRegExp("README.*"));
 
     FTPGet fg = new FTPGet();
-    fg.setRemoteDir("/debian");
+    fg.setRemoteDir("/");
     fg.setOutputDirectory(new TmpDirectory());
 
     Flow flow = new Flow();

@@ -15,7 +15,7 @@
 
 /*
  * FTPNoOpTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -56,7 +56,7 @@ public class FTPNoOpTest
   @Override
   public Actor getActor() {
     FTPConnection fc = new FTPConnection();
-    fc.setHost("ftp.debian.org");
+    fc.setHost("neoftp.sci.gsfc.nasa.gov");
     fc.setUser("anonymous");
     fc.setPassword(new BasePassword(""));
     fc.setUsePassiveMode(true);
