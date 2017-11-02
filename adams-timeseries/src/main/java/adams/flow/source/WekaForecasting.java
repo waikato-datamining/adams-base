@@ -15,7 +15,7 @@
 
 /*
  * WekaForecasting.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -29,6 +29,7 @@ import adams.flow.container.WekaForecastContainer;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
+import adams.flow.core.DynamicInitializer;
 import adams.flow.core.Token;
 import weka.classifiers.evaluation.NumericPrediction;
 import weka.classifiers.timeseries.AbstractForecaster;
@@ -111,7 +112,7 @@ import java.util.List;
  */
 public class WekaForecasting
   extends AbstractSimpleSource
-  implements ModelFileHandler {
+  implements ModelFileHandler, DynamicInitializer {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;

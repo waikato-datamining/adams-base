@@ -14,20 +14,42 @@
  */
 
 /*
- * ModelLoaderSupporter.java
+ * DynamicInitializer.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.core;
 
 /**
- * Interface for classes that support model loading.
- * Optionally, model gets generated on the fly.
+ * Interface for actors that can be initialized at runtime and files may not
+ * be present at startup time.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @see AbstractModelLoader
  */
-public interface DynamicModelLoaderSupporter
-  extends ModelLoaderSupporter, DynamicInitializer {
+public interface DynamicInitializer
+  extends Actor {
 
+  /**
+   * Sets whether the initialization happens at runtime and may not be present
+   * at startup time.
+   *
+   * @param value	true if initializing at runtime
+   */
+  public void setOnTheFly(boolean value);
+
+  /**
+   * Returns whether the initialization happens at runtime and may not be present
+   * at startup time.
+   *
+   * @return		true if initializing at runtime
+   */
+  public boolean getOnTheFly();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String onTheFlyTipText();
 }

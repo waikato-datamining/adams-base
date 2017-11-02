@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
+import adams.flow.core.DynamicInitializer;
 import adams.flow.core.OptionalOneTimeInitializer;
 import adams.flow.core.Token;
 import weka.core.Attribute;
@@ -140,7 +141,7 @@ import java.util.List;
  */
 public class WekaReorderAttributesToReference
   extends AbstractTransformer
-  implements OptionalOneTimeInitializer {
+  implements OptionalOneTimeInitializer, DynamicInitializer {
 
   /** for serialization. */
   private static final long serialVersionUID = 530323409335629567L;
