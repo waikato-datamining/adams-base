@@ -15,7 +15,7 @@
 
 /*
  * SetStorageValue.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -77,7 +77,7 @@ import adams.flow.core.Unknown;
  * </pre>
  *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
- * &nbsp;&nbsp;&nbsp;The name of the stored value to retrieve.
+ * &nbsp;&nbsp;&nbsp;The name to store the object under.
  * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
  *
@@ -182,7 +182,7 @@ public class SetStorageValue
    * 			displaying in the GUI or for listing the options.
    */
   public String storageNameTipText() {
-    return "The name of the stored value to retrieve.";
+    return "The name to store the object under.";
   }
 
   /**
