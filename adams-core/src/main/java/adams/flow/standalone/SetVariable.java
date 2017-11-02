@@ -36,7 +36,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Sets the value of a variable.<br>
- * Optionally, the specified value (or incoming value) can be expanded, in case it is made up of variables itself.<br>
+ * Optionally, the specified value can be expanded, in case it is made up of variables itself.<br>
  * It is also possible to override the variable value with the value obtained from an environment variable.<br>
  * <br>
  * Grammar for mathematical expressions (value type 'MATH_EXPRESSION'):<br>
@@ -535,7 +535,7 @@ public class SetVariable
   public String globalInfo() {
     return
       "Sets the value of a variable.\n"
-	+ "Optionally, the specified value (or incoming value) can be expanded, "
+	+ "Optionally, the specified value can be expanded, "
 	+ "in case it is made up of variables itself.\n"
 	+ "It is also possible to override the variable value with the value "
 	+ "obtained from an environment variable.\n"
