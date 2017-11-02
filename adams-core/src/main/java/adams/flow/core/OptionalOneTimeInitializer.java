@@ -21,7 +21,7 @@
 package adams.flow.core;
 
 /**
- * TODO: What class does.
+ * Interface for actors that can be fixed to be only initialized once.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
