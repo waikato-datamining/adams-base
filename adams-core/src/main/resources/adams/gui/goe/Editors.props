@@ -83,3 +83,4 @@ adams.parser.MathematicalExpressionText=adams.gui.goe.AbstractSimpleScriptEditor
 adams.parser.SpreadSheetFormulaText=adams.gui.goe.AbstractSimpleScriptEditor
 adams.parser.StringExpressionText=adams.gui.goe.AbstractSimpleScriptEditor
 adams.flow.control.StorageName=adams.gui.goe.BaseObjectEditor
+adams.core.VariableNameValuePair=adams.gui.goe.VariableNameValuePairEditor

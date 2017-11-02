@@ -375,3 +375,8 @@ adams.data.report.PrefixField#valueOf=adams.gui.goe.PrefixFieldEditor#valueOf
 adams.data.report.SuffixField=true
 adams.data.report.SuffixField#toString=adams.gui.goe.SuffixFieldEditor#toString
 adams.data.report.SuffixField#valueOf=adams.gui.goe.SuffixFieldEditor#valueOf
+
+# VariableNameValuePair objects
+adams.core.VariableNameValuePair=true
+adams.core.VariableNameValuePair#toString=adams.gui.goe.VariableNameValuePairEditor#toString
+adams.core.VariableNameValuePair#valueOf=adams.gui.goe.VariableNameValuePairEditor#valueOf
