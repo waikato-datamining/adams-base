@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CheckVariableUsage.java
  * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
@@ -22,6 +22,7 @@ package adams.flow.processor;
 import adams.core.NamedCounter;
 import adams.core.Utils;
 import adams.core.VariableName;
+import adams.core.VariableNameValuePair;
 import adams.core.VariableUpdater;
 import adams.core.VariableUser;
 import adams.core.Variables;
@@ -189,6 +190,11 @@ public class CheckVariableUsage
             if (!m_Skip.contains(var.getValue()))
               m_SetCount.next(var.getValue());
           }
+	  else if (obj instanceof VariableNameValuePair) {
+            VariableNameValuePair var = (VariableNameValuePair) obj;
+            if (!m_Skip.contains(var.varName().getValue()))
+              m_SetCount.next(var.varName().getValue());
+          }
 	}
       }
       protected void incrementUsageCount(Object obj) {
@@ -240,6 +246,11 @@ public class CheckVariableUsage
 	else {
 	  // updater
 	  if ((option.getOptionHandler() instanceof VariableUpdater) && (option.getBaseClass() == VariableName.class)) {
+	    if (((VariableUpdater) option.getOptionHandler()).isUpdatingVariables())
+              incrementSetCount(option.getCurrentValue());
+	    return;
+	  }
+	  else if ((option.getOptionHandler() instanceof VariableUpdater) && (option.getBaseClass() == VariableNameValuePair.class)) {
 	    if (((VariableUpdater) option.getOptionHandler()).isUpdatingVariables())
               incrementSetCount(option.getCurrentValue());
 	    return;
