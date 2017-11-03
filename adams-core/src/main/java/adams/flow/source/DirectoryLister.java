@@ -15,19 +15,20 @@
 
 /*
  * DirectoryLister.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.annotation.DeprecatedClass;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseRegExp;
-import adams.core.io.lister.LocalDirectoryLister;
-import adams.core.io.lister.Sorting;
 import adams.core.io.FileUtils;
 import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.io.lister.LocalDirectoryLister;
+import adams.core.io.lister.Sorting;
 import adams.core.logging.LoggingLevel;
 
 import java.util.ArrayList;
@@ -180,6 +181,9 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@DeprecatedClass(
+  useInstead = FileSystemSearch.class
+)
 public class DirectoryLister
   extends AbstractArrayProvider
   implements ForwardSlashSupporter {
