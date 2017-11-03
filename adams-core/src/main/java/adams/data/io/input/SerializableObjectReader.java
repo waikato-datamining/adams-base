@@ -22,6 +22,7 @@ package adams.data.io.input;
 
 import adams.core.SerializableObject;
 import adams.core.SerializationHelper;
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.data.io.output.SerializableObjectWriter;
@@ -88,24 +89,26 @@ public class SerializableObjectReader
    */
   @Override
   protected Object doRead(PlaceholderFile file) {
+    Object		obj;
     Object[]		all;
     String 		cname;
     Object[]		data;
     SerializableObject 	result;
 
     try {
-      all = SerializationHelper.readAll(file.getAbsolutePath());
-      if (all.length == 2) {
-        cname = (String) all[0];
-        data  = (Object[]) all[1];
-        result = (SerializableObject) Class.forName(cname).newInstance();
-        result.setSerializationSetup(data);
-        return result;
+      obj = SerializationHelper.read(file.getAbsolutePath());
+      if (obj instanceof Object[]) {
+	all = (Object[]) obj;
+	if (all.length == 2) {
+	  cname = (String) all[0];
+	  data  = (Object[]) all[1];
+	  result = (SerializableObject) Class.forName(cname).newInstance();
+	  result.setSerializationSetup(data);
+	  return result;
+	}
       }
-      else {
-        getLogger().severe("Expected to read array of length 2 (classname string and data Object array), instead found array of length: " + all.length);
-        return null;
-      }
+      getLogger().severe("Expected to read array of length 2 (classname string and data Object array), instead found: " + Utils.classToString(obj));
+      return null;
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to read object from: " + file, e);
