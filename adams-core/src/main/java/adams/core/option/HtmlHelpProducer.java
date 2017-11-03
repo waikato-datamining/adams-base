@@ -24,6 +24,7 @@ import adams.core.ClassCrossReference;
 import adams.core.ExampleProvider;
 import adams.core.HelpProvider;
 import adams.core.Utils;
+import adams.core.annotation.DeprecatedClass;
 import adams.core.io.FileFormatHandler;
 import adams.core.net.HtmlUtils;
 import adams.flow.core.ActorWithConditionalEquivalent;
@@ -113,13 +114,13 @@ public class HtmlHelpProducer
    */
   protected String toHTML(String s, boolean nbsp) {
     String	result;
-    
+
     if (s == null)
       return null;
-    
+
     result = HtmlUtils.markUpURLs(s, true);
     result = HtmlUtils.convertLines(result, nbsp);
-    
+
     return result;
   }
 
@@ -135,14 +136,14 @@ public class HtmlHelpProducer
     // obtain and add text
     if (option.getToolTipMethod() != null) {
       try {
-	text = (String) option.getToolTipMethod().invoke(option.getOptionHandler(), new Object[]{});
-	buffer.append("<p>");
-	buffer.append(toHTML(text));
-	buffer.append("</p>\n");
+        text = (String) option.getToolTipMethod().invoke(option.getOptionHandler(), new Object[]{});
+        buffer.append("<p>");
+        buffer.append(toHTML(text));
+        buffer.append("</p>\n");
       }
       catch (Exception e) {
-	// this should never happen!
-	e.printStackTrace();
+        // this should never happen!
+        e.printStackTrace();
       }
     }
   }
@@ -161,13 +162,13 @@ public class HtmlHelpProducer
     if (option instanceof EnumOption) {
       text = "";
       try {
-	method = option.getBaseClass().getMethod("values", new Class[0]);
-	vals   = (Object[]) method.invoke(null, new Object[0]);
-	text   = Utils.arrayToString(vals).replaceAll(",", "|");
+        method = option.getBaseClass().getMethod("values", new Class[0]);
+        vals   = (Object[]) method.invoke(null, new Object[0]);
+        text   = Utils.arrayToString(vals).replaceAll(",", "|");
       }
       catch (Exception e) {
-	e.printStackTrace();
-	text = "Error retrieving enum values";
+        e.printStackTrace();
+        text = "Error retrieving enum values";
       }
     }
     else {
@@ -267,18 +268,18 @@ public class HtmlHelpProducer
       text = null;
 
       if (defValue == null) {
-	text = "null";
+        text = "null";
       }
       else if (option.isMultiple()) {
-	text = "";
-	for (n = 0; n < Array.getLength(defValue); n++) {
-	  if (n > 0)
-	    text += ", ";
-	  text += option.toString(Array.get(defValue, n));
-	}
+        text = "";
+        for (n = 0; n < Array.getLength(defValue); n++) {
+          if (n > 0)
+            text += ", ";
+          text += option.toString(Array.get(defValue, n));
+        }
       }
       else {
-	text = option.toString(defValue);
+        text = option.toString(defValue);
       }
 
       result.append("<tr>\n");
@@ -290,44 +291,44 @@ public class HtmlHelpProducer
     if (option instanceof AbstractNumericOption) {
       numeric = (AbstractNumericOption) option;
       if (numeric.hasLowerBound()) {
-	result.append("<tr>\n");
-	result.append("<td>minimum</td>");
-	result.append("<td><code>" + numeric.getLowerBound() + "</code></td>\n");
-	result.append("</tr>\n");
+        result.append("<tr>\n");
+        result.append("<td>minimum</td>");
+        result.append("<td><code>" + numeric.getLowerBound() + "</code></td>\n");
+        result.append("</tr>\n");
       }
       if (numeric.hasUpperBound()) {
-	result.append("<tr>\n");
-	result.append("<td>maximum</td>");
-	result.append("<td><code>" + numeric.getUpperBound() + "</code></td>\n");
-	result.append("</tr>\n");
+        result.append("<tr>\n");
+        result.append("<td>maximum</td>");
+        result.append("<td><code>" + numeric.getUpperBound() + "</code></td>\n");
+        result.append("</tr>\n");
       }
     }
-    
+
     val = null;
     if (option.isMultiple()) {
       if (Array.getLength(defValue) > 0) {
-	val = Array.get(defValue, 0);
+        val = Array.get(defValue, 0);
       }
       else {
-	try {
-	  val = option.getBaseClass().newInstance();
-	}
-	catch (Exception e) {
-	  val = null;
-	}
+        try {
+          val = option.getBaseClass().newInstance();
+        }
+        catch (Exception e) {
+          val = null;
+        }
       }
     }
     else {
       val = defValue;
     }
-    
+
     if (val instanceof ExampleProvider) {
       result.append("<tr>\n");
       result.append("<td valign=\"top\">example</td>");
       result.append("<td>" + ((ExampleProvider) val).getExample() + "</td>\n");
       result.append("</tr>\n");
     }
-    
+
     if ((val instanceof HelpProvider) && ((HelpProvider) val).getHelpURL() != null) {
       result.append("<tr>\n");
       result.append("<td valign=\"top\">more</td>");
@@ -365,12 +366,13 @@ public class HtmlHelpProducer
    */
   @Override
   protected void preProduce() {
-    Method	method;
-    String	globalInfo;
-    Class[]	cross;
-    int		i;
-    String 	addInfo;
-    Class	condEquiv;
+    Method		method;
+    String		globalInfo;
+    Class[]		cross;
+    int			i;
+    String 		addInfo;
+    Class		condEquiv;
+    DeprecatedClass	dep;
 
     m_OutputBuffer = new StringBuilder();
     m_OutputBuffer.append("<html>" + "\n");
@@ -387,15 +389,29 @@ public class HtmlHelpProducer
     try {
       method = getInput().getClass().getMethod("globalInfo", new Class[0]);
       if (method != null) {
-	globalInfo = (String) method.invoke(getInput(), new Object[0]);
-	m_OutputBuffer.append("<h2>Synopsis</h2>\n");
-	m_OutputBuffer.append("<p>" + toHTML(globalInfo, true) + "</p>\n");
-	m_OutputBuffer.append("<br>\n");
-	m_OutputBuffer.append("\n");
+        globalInfo = (String) method.invoke(getInput(), new Object[0]);
+        m_OutputBuffer.append("<h2>Synopsis</h2>\n");
+        m_OutputBuffer.append("<p>" + toHTML(globalInfo, true) + "</p>\n");
+        m_OutputBuffer.append("<br>\n");
+        m_OutputBuffer.append("\n");
       }
     }
     catch (Exception e) {
       // ignored
+    }
+
+    if (getInput().getClass().isAnnotationPresent(DeprecatedClass.class)) {
+      dep = getInput().getClass().getAnnotation(DeprecatedClass.class);
+      m_OutputBuffer.append("<b>");
+      m_OutputBuffer.append(Utils.classToString(getInput()) + " is deprecated!<br>" + "Use instead: " + Utils.classesToString(dep.useInstead()));
+      m_OutputBuffer.append("<b><br>\n");
+      m_OutputBuffer.append("\n");
+    }
+    else if (getInput().getClass().isAnnotationPresent(Deprecated.class)) {
+      m_OutputBuffer.append("<b>");
+      m_OutputBuffer.append(Utils.classToString(getInput()) + " is deprecated!");
+      m_OutputBuffer.append("<b><br>\n");
+      m_OutputBuffer.append("\n");
     }
 
     if (getInput() instanceof ClassCrossReference) {
@@ -403,7 +419,7 @@ public class HtmlHelpProducer
       cross = ((ClassCrossReference) getInput()).getClassCrossReferences();
       m_OutputBuffer.append("<ul>\n");
       for (i = 0; i < cross.length; i++)
-	m_OutputBuffer.append("<li>" + cross[i].getName() + "</li>\n");  // TODO hyperlink to class reference?
+        m_OutputBuffer.append("<li>" + cross[i].getName() + "</li>\n");  // TODO hyperlink to class reference?
       m_OutputBuffer.append("</ul>\n");
       m_OutputBuffer.append("\n");
     }
@@ -411,20 +427,20 @@ public class HtmlHelpProducer
     if (getInput() instanceof AdditionalInformationHandler) {
       addInfo = ((AdditionalInformationHandler) getInput()).getAdditionalInformation();
       if ((addInfo != null) && (addInfo.length() > 0)) {
-	m_OutputBuffer.append("<h2>Additional information</h2>\n");
-	m_OutputBuffer.append("<p>" + toHTML(addInfo, true) + "</p>\n");
-	m_OutputBuffer.append("<br>\n");
-	m_OutputBuffer.append("\n");
+        m_OutputBuffer.append("<h2>Additional information</h2>\n");
+        m_OutputBuffer.append("<p>" + toHTML(addInfo, true) + "</p>\n");
+        m_OutputBuffer.append("<br>\n");
+        m_OutputBuffer.append("\n");
       }
     }
 
     if (getInput() instanceof ActorWithConditionalEquivalent) {
       condEquiv = ((ActorWithConditionalEquivalent) getInput()).getConditionalEquivalent();
       if (condEquiv != null) {
-	m_OutputBuffer.append("<h2>Conditional equivalent</h2>\n");
-	m_OutputBuffer.append("<p>" + toHTML(condEquiv.getName()) + "</p>\n");
-	m_OutputBuffer.append("<br>\n");
-	m_OutputBuffer.append("\n");
+        m_OutputBuffer.append("<h2>Conditional equivalent</h2>\n");
+        m_OutputBuffer.append("<p>" + toHTML(condEquiv.getName()) + "</p>\n");
+        m_OutputBuffer.append("<br>\n");
+        m_OutputBuffer.append("\n");
       }
     }
 
@@ -480,10 +496,10 @@ public class HtmlHelpProducer
   public String[] getFormatExtensions() {
     return new String[]{"html", "htm"};
   }
-  
+
   /**
    * Executes the producer from commandline.
-   * 
+   *
    * @param args	the commandline arguments, use -help for help
    */
   public static void main(String[] args) {

@@ -13,20 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CommandlineHelpProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 
 import adams.core.ClassCrossReference;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.ExampleProvider;
 import adams.core.HelpProvider;
 import adams.core.Utils;
+import adams.core.annotation.DeprecatedClass;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 
 /**
  * Generates the help for the command-line.
@@ -297,10 +298,11 @@ public class CommandlineHelpProducer
    */
   @Override
   protected void preProduce() {
-    Method	method;
-    String	globalInfo;
-    Class[]	cross;
-    int		i;
+    Method		method;
+    String		globalInfo;
+    Class[]		cross;
+    int			i;
+    DeprecatedClass 	dep;
 
     m_OutputBuffer = new StringBuilder();
     m_OutputBuffer.append("Command-line help" + "\n");
@@ -316,6 +318,17 @@ public class CommandlineHelpProducer
 	m_OutputBuffer.append(Utils.insertLineBreaks(globalInfo, MAX_WIDTH));
 	m_OutputBuffer.append("\n");
       }
+
+      if (getInput().getClass().isAnnotationPresent(DeprecatedClass.class)) {
+	dep = getInput().getClass().getAnnotation(DeprecatedClass.class);
+	m_OutputBuffer.append(Utils.classToString(getInput()) + " is deprecated!<br>" + "Use instead: " + Utils.classesToString(dep.useInstead()));
+	m_OutputBuffer.append("\n\n");
+      }
+      else if (getInput().getClass().isAnnotationPresent(Deprecated.class)) {
+	m_OutputBuffer.append(Utils.classToString(getInput()) + " is deprecated!");
+	m_OutputBuffer.append("\n\n");
+      }
+
       if (getInput() instanceof ClassCrossReference) {
 	m_OutputBuffer.append("See also:\n");
 	cross = ((ClassCrossReference) getInput()).getClassCrossReferences();
