@@ -62,6 +62,10 @@ adams.core.option.OptionTraverser=\
   adams.core.option,\
   adams.flow.core
 
+# the help generators
+adams.core.option.help.AbstractHelpGenerator=\
+  adams.core.option.help
+
 # for transferring options between objects
 adams.core.optiontransfer.AbstractOptionTransfer=\
   adams.core.optiontransfer

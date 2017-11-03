@@ -19,12 +19,12 @@
  */
 package adams.core.option;
 
-import adams.core.ClassCrossReference;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.ExampleProvider;
 import adams.core.HelpProvider;
 import adams.core.Utils;
-import adams.core.annotation.DeprecatedClass;
+import adams.core.option.help.AbstractHelpGenerator;
+import adams.core.option.help.HelpFormat;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -300,9 +300,6 @@ public class CommandlineHelpProducer
   protected void preProduce() {
     Method		method;
     String		globalInfo;
-    Class[]		cross;
-    int			i;
-    DeprecatedClass 	dep;
 
     m_OutputBuffer = new StringBuilder();
     m_OutputBuffer.append("Command-line help" + "\n");
@@ -319,23 +316,7 @@ public class CommandlineHelpProducer
 	m_OutputBuffer.append("\n");
       }
 
-      if (getInput().getClass().isAnnotationPresent(DeprecatedClass.class)) {
-	dep = getInput().getClass().getAnnotation(DeprecatedClass.class);
-	m_OutputBuffer.append(Utils.classToString(getInput()) + " is deprecated!<br>" + "Use instead: " + Utils.classesToString(dep.useInstead()));
-	m_OutputBuffer.append("\n\n");
-      }
-      else if (getInput().getClass().isAnnotationPresent(Deprecated.class)) {
-	m_OutputBuffer.append(Utils.classToString(getInput()) + " is deprecated!");
-	m_OutputBuffer.append("\n\n");
-      }
-
-      if (getInput() instanceof ClassCrossReference) {
-	m_OutputBuffer.append("See also:\n");
-	cross = ((ClassCrossReference) getInput()).getClassCrossReferences();
-	for (i = 0; i < cross.length; i++)
-	  m_OutputBuffer.append(cross[i].getName() + "\n");
-	m_OutputBuffer.append("\n");
-      }
+      m_OutputBuffer.append(AbstractHelpGenerator.generateAll(getInput(), HelpFormat.PLAIN_TEXT));
     }
     catch (Exception e) {
       // ignored

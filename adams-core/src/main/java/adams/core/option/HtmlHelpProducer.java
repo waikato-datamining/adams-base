@@ -19,15 +19,13 @@
  */
 package adams.core.option;
 
-import adams.core.AdditionalInformationHandler;
-import adams.core.ClassCrossReference;
 import adams.core.ExampleProvider;
 import adams.core.HelpProvider;
 import adams.core.Utils;
-import adams.core.annotation.DeprecatedClass;
 import adams.core.io.FileFormatHandler;
 import adams.core.net.HtmlUtils;
-import adams.flow.core.ActorWithConditionalEquivalent;
+import adams.core.option.help.AbstractHelpGenerator;
+import adams.core.option.help.HelpFormat;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -368,11 +366,6 @@ public class HtmlHelpProducer
   protected void preProduce() {
     Method		method;
     String		globalInfo;
-    Class[]		cross;
-    int			i;
-    String 		addInfo;
-    Class		condEquiv;
-    DeprecatedClass	dep;
 
     m_OutputBuffer = new StringBuilder();
     m_OutputBuffer.append("<html>" + "\n");
@@ -400,49 +393,7 @@ public class HtmlHelpProducer
       // ignored
     }
 
-    if (getInput().getClass().isAnnotationPresent(DeprecatedClass.class)) {
-      dep = getInput().getClass().getAnnotation(DeprecatedClass.class);
-      m_OutputBuffer.append("<b>");
-      m_OutputBuffer.append(Utils.classToString(getInput()) + " is deprecated!<br>" + "Use instead: " + Utils.classesToString(dep.useInstead()));
-      m_OutputBuffer.append("<b><br>\n");
-      m_OutputBuffer.append("\n");
-    }
-    else if (getInput().getClass().isAnnotationPresent(Deprecated.class)) {
-      m_OutputBuffer.append("<b>");
-      m_OutputBuffer.append(Utils.classToString(getInput()) + " is deprecated!");
-      m_OutputBuffer.append("<b><br>\n");
-      m_OutputBuffer.append("\n");
-    }
-
-    if (getInput() instanceof ClassCrossReference) {
-      m_OutputBuffer.append("<h2>See also</h2>\n");
-      cross = ((ClassCrossReference) getInput()).getClassCrossReferences();
-      m_OutputBuffer.append("<ul>\n");
-      for (i = 0; i < cross.length; i++)
-        m_OutputBuffer.append("<li>" + cross[i].getName() + "</li>\n");  // TODO hyperlink to class reference?
-      m_OutputBuffer.append("</ul>\n");
-      m_OutputBuffer.append("\n");
-    }
-
-    if (getInput() instanceof AdditionalInformationHandler) {
-      addInfo = ((AdditionalInformationHandler) getInput()).getAdditionalInformation();
-      if ((addInfo != null) && (addInfo.length() > 0)) {
-        m_OutputBuffer.append("<h2>Additional information</h2>\n");
-        m_OutputBuffer.append("<p>" + toHTML(addInfo, true) + "</p>\n");
-        m_OutputBuffer.append("<br>\n");
-        m_OutputBuffer.append("\n");
-      }
-    }
-
-    if (getInput() instanceof ActorWithConditionalEquivalent) {
-      condEquiv = ((ActorWithConditionalEquivalent) getInput()).getConditionalEquivalent();
-      if (condEquiv != null) {
-        m_OutputBuffer.append("<h2>Conditional equivalent</h2>\n");
-        m_OutputBuffer.append("<p>" + toHTML(condEquiv.getName()) + "</p>\n");
-        m_OutputBuffer.append("<br>\n");
-        m_OutputBuffer.append("\n");
-      }
-    }
+    m_OutputBuffer.append(AbstractHelpGenerator.generateAll(getInput(), HelpFormat.HTML));
 
     m_OutputBuffer.append("<h2>Options</h2>\n");
     m_OutputBuffer.append("<ul>\n");
