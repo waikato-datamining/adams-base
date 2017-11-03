@@ -281,7 +281,7 @@ public class DeserializeToStorage
     String	result;
     String	value;
 
-    result  = QuickInfoHelper.toString(this, "modeFile", m_ModelFile, "model: ");
+    result  = QuickInfoHelper.toString(this, "modelFile", m_ModelFile, "model: ");
     result += QuickInfoHelper.toString(this, "reader", m_Reader, ", reader: ");
     value = QuickInfoHelper.toString(this, "cache", m_Cache, ", cache: ");
     if (value != null)
