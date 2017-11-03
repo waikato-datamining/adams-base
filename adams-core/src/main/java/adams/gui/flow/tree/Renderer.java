@@ -20,6 +20,7 @@
 
 package adams.gui.flow.tree;
 
+import adams.core.annotation.DeprecatedClass;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -501,7 +502,7 @@ public class Renderer
 	ActorUtils.isSource(actor) || ActorUtils.isTransformer(actor),
 	ActorUtils.isActorHandler(actor),
 	ActorUtils.isActorHandler(actor) && ((ActorHandler) actor).getActorHandlerInfo().getForwardsInput(),
-	(actor.getClass().getAnnotation(Deprecated.class) != null));
+	(actor.getClass().getAnnotation(Deprecated.class) != null) || (actor.getClass().getAnnotation(DeprecatedClass.class) != null));
     }
 
     return result;
