@@ -191,6 +191,18 @@ public class LocatedObjects
   }
 
   /**
+   * Scales all objects with the provided scale factor.
+   *
+   * @param scale	the scale factor
+   */
+  public void scale(double scale) {
+    int		i;
+
+    for (i = 0; i < size(); i++)
+      get(i).scale(scale);
+  }
+
+  /**
    * Turns the located objects into a report.
    * Using a prefix like "Object." will result in the following report entries
    * for a single object:

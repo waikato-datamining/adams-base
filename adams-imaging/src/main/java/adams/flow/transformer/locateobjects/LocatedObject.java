@@ -54,6 +54,9 @@ public class LocatedObject
   /** the height of the actual object sub-image. */
   protected int m_Height;
 
+  /** the actual rectangle. */
+  protected Rectangle m_Actual;
+
   /** additional meta-data. */
   protected Map<String,Object> m_MetaData;
 
@@ -87,6 +90,7 @@ public class LocatedObject
     m_Width    = width;
     m_Height   = height;
     m_MetaData = (metaData == null) ? new HashMap<>() : metaData;
+    m_Actual   = null;
   }
   
   /**
@@ -181,6 +185,26 @@ public class LocatedObject
    */
   public Map<String,Object> getMetaData() {
     return m_MetaData;
+  }
+
+  /**
+   * Returns the actual size rectangle.
+   *
+   * @return		the actual size rectangle
+   */
+  public Rectangle getActual() {
+    if (m_Actual == null)
+      m_Actual = getRectangle();
+    return m_Actual;
+  }
+
+  /**
+   * Scales the actual size rectangle with the given factor.
+   *
+   * @param scale	the scale factor
+   */
+  public void scale(double scale) {
+    m_Actual = getRectangle(scale);
   }
 
   /**
