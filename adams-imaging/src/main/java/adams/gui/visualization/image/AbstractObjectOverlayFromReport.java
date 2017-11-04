@@ -19,6 +19,7 @@
  */
 package adams.gui.visualization.image;
 
+import adams.core.base.BaseString;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
@@ -85,6 +86,9 @@ public abstract class AbstractObjectOverlayFromReport
   /** the labels. */
   protected HashMap<Rectangle,String> m_Labels;
 
+  /** predefined labels. */
+  protected BaseString[] m_PredefinedLabels;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -119,6 +123,10 @@ public abstract class AbstractObjectOverlayFromReport
     m_OptionManager.add(
 	"label-font", "labelFont",
 	Fonts.getSansFont(14));
+
+    m_OptionManager.add(
+	"predefined-labels", "predefinedLabels",
+	new BaseString[0]);
   }
 
   /**
@@ -325,6 +333,35 @@ public abstract class AbstractObjectOverlayFromReport
   }
 
   /**
+   * Sets the predefined labels.
+   *
+   * @param value	the labels
+   */
+  public void setPredefinedLabels(BaseString[] value) {
+    m_PredefinedLabels = value;
+    reset();
+  }
+
+  /**
+   * Returns the predefined labels.
+   *
+   * @return		the labels
+   */
+  public BaseString[] getPredefinedLabels() {
+    return m_PredefinedLabels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String predefinedLabelsTipText() {
+    return "The predefined labels to use for setting up the colors; avoids constants changing in color pallet.";
+  }
+
+  /**
    * Notifies the overlay that the image has changed.
    *
    * @param panel	the panel this overlay belongs to
@@ -358,12 +395,16 @@ public abstract class AbstractObjectOverlayFromReport
       m_TypeColors = new HashMap<>();
       m_TypeColorProvider.resetColors();
       types = new HashSet<>();
+      for (BaseString predefined: m_PredefinedLabels)
+	m_TypeColors.put(predefined.getValue(), m_TypeColorProvider.next());
       for (AbstractField field: report.getFields()) {
 	if (field.getName().endsWith(m_TypeSuffix))
 	  types.add("" + report.getValue(field));
       }
-      for (String t: types)
-	m_TypeColors.put(t, m_TypeColorProvider.next());
+      for (String t: types) {
+        if (!m_TypeColors.containsKey(t))
+	  m_TypeColors.put(t, m_TypeColorProvider.next());
+      }
     }
 
     m_Locations = new ArrayList<>();
