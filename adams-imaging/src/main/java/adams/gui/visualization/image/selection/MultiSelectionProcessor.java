@@ -13,16 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiSelectionProcessor.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
-import java.awt.Point;
-
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
+
+import java.awt.Point;
 
 /**
  <!-- globalinfo-start -->
@@ -55,7 +55,7 @@ public class MultiSelectionProcessor
   private static final long serialVersionUID = 6323046923720400796L;
   
   /** the processors. */
-  protected AbstractSelectionProcessor[] m_Processors;
+  protected SelectionProcessor[] m_Processors;
   
   /**
    * Returns a string describing the object.
@@ -76,7 +76,7 @@ public class MultiSelectionProcessor
 
     m_OptionManager.add(
 	"processors", "processors",
-	new AbstractSelectionProcessor[0]);
+	new SelectionProcessor[0]);
   }
 
   /**
@@ -84,7 +84,7 @@ public class MultiSelectionProcessor
    *
    * @param value 	the processors
    */
-  public void setProcessors(AbstractSelectionProcessor[] value) {
+  public void setProcessors(SelectionProcessor[] value) {
     m_Processors = value;
     reset();
   }
@@ -94,7 +94,7 @@ public class MultiSelectionProcessor
    *
    * @return 		the processors
    */
-  public AbstractSelectionProcessor[] getProcessors() {
+  public SelectionProcessor[] getProcessors() {
     return m_Processors;
   }
 
@@ -116,7 +116,7 @@ public class MultiSelectionProcessor
   @Override
   protected void doImageChanged(PaintPanel panel) {
     super.doImageChanged(panel);
-    for (AbstractSelectionProcessor processor: m_Processors)
+    for (SelectionProcessor processor: m_Processors)
       processor.imageChanged(panel);
   }
 
@@ -130,7 +130,7 @@ public class MultiSelectionProcessor
    */
   @Override
   protected void doProcessSelection(ImagePanel panel, Point topLeft, Point bottomRight, int modifiersEx) {
-    for (AbstractSelectionProcessor processor: m_Processors)
+    for (SelectionProcessor processor: m_Processors)
       processor.processSelection(panel, topLeft, bottomRight, modifiersEx);
   }
 }

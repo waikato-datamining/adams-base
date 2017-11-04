@@ -679,7 +679,7 @@ adams.gui.visualization.image.leftclick.AbstractLeftClickProcessor=\
   adams.gui.visualization.image.leftclick
 
 # the selection processors for the image viewer
-adams.gui.visualization.image.selection.AbstractSelectionProcessor=\
+adams.gui.visualization.image.selection.SelectionProcessor=\
   adams.gui.visualization.image.selection
 
 # the schemes for exporting multiple objects

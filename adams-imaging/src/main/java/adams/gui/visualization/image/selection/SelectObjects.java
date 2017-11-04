@@ -74,10 +74,17 @@ import java.util.List;
  * @version $Revision: 364 $
  */
 public class SelectObjects
-  extends AbstractSelectionRectangleBasedSelectionProcessor {
+  extends AbstractSelectionRectangleBasedSelectionProcessor
+  implements SelectionProcessorWithLabelSupport {
 
   /** for serialization. */
   private static final long serialVersionUID = -5879410661391670242L;
+
+  /** the label to use. */
+  protected String m_Label;
+
+  /** the label suffix to use. */
+  protected String m_LabelSuffix;
 
   /**
    * Returns a string describing the object.
@@ -91,6 +98,98 @@ public class SelectObjects
 	+ "The locations get stored in the attached report.\n"
 	+ "If the <ctrl> key is pressed while drawing a selection rectangle, "
 	+ "all enclosed locations get removed.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "label", "label",
+      getDefaultLabel());
+
+    m_OptionManager.add(
+      "label-suffix", "labelSuffix",
+      getDefaultLabelSuffix());
+  }
+
+  /**
+   * Returns the default label to use for the objects.
+   *
+   * @return		the default
+   */
+  protected String getDefaultLabel() {
+    return "";
+  }
+
+  /**
+   * Sets the label to use for the objects.
+   *
+   * @param value 	the prefix
+   */
+  public void setLabel(String value) {
+    m_Label = value;
+    reset();
+  }
+
+  /**
+   * Returns the label to use for the objects.
+   *
+   * @return 		the label
+   */
+  public String getLabel() {
+    return m_Label;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelTipText() {
+    return "The label to use for the objects, not set if empty.";
+  }
+
+  /**
+   * Returns the default suffix to use for the label.
+   *
+   * @return		the default
+   */
+  protected String getDefaultLabelSuffix() {
+    return ".type";
+  }
+
+  /**
+   * Sets the suffix to use for the label.
+   *
+   * @param value 	the suffix
+   */
+  public void setLabelSuffix(String value) {
+    m_LabelSuffix = value;
+    reset();
+  }
+
+  /**
+   * Returns the suffix to use for the label.
+   *
+   * @return 		the suffix
+   */
+  public String getLabelSuffix() {
+    return m_LabelSuffix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelSuffixTipText() {
+    return "The suffix to use for storing the label in the report.";
   }
 
   /**
@@ -144,6 +243,7 @@ public class SelectObjects
 	  report.removeValue(new Field(current + KEY_Y, DataType.NUMERIC));
 	  report.removeValue(new Field(current + KEY_WIDTH, DataType.NUMERIC));
 	  report.removeValue(new Field(current + KEY_HEIGHT, DataType.NUMERIC));
+	  report.removeValue(new Field(current + m_LabelSuffix, DataType.STRING));
 	  queue.add(r);
 	}
       }
@@ -158,6 +258,8 @@ public class SelectObjects
 	report.setNumericValue(current + KEY_Y, y);
 	report.setNumericValue(current + KEY_WIDTH, w);
 	report.setNumericValue(current + KEY_HEIGHT, h);
+	if (!m_Label.isEmpty())
+	  report.setStringValue(current + m_LabelSuffix, m_Label);
 	m_Locations.add(rect);
       }
     }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageAnnotator.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -38,19 +38,19 @@ import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 import adams.gui.visualization.image.NullOverlay;
+import adams.gui.visualization.image.selection.NullProcessor;
+import adams.gui.visualization.image.selection.SelectionProcessor;
+import adams.gui.visualization.image.selection.SelectionProcessorWithLabelSupport;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -145,19 +145,34 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
  * &nbsp;&nbsp;&nbsp;The report field prefix to use for the located objects.
  * &nbsp;&nbsp;&nbsp;default: Object.
  * </pre>
- * 
+ *
  * <pre>-suffix &lt;java.lang.String&gt; (property: suffix)
  * &nbsp;&nbsp;&nbsp;The report field suffix to use for the labels.
  * &nbsp;&nbsp;&nbsp;default: .type
  * </pre>
- * 
+ *
  * <pre>-label &lt;adams.core.base.BaseString&gt; [-label ...] (property: labels)
  * &nbsp;&nbsp;&nbsp;The labels to use.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-selection-processor &lt;adams.gui.visualization.image.selection.AbstractSelectionProcessor&gt; (property: selectionProcessor)
+ * &nbsp;&nbsp;&nbsp;The selection processor to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.image.selection.NullProcessor
+ * </pre>
+ *
+ * <pre>-selection-box-color &lt;java.awt.Color&gt; (property: selectionBoxColor)
+ * &nbsp;&nbsp;&nbsp;The color of the selection box.
+ * &nbsp;&nbsp;&nbsp;default: #808080
  * </pre>
  * 
  * <pre>-overlay &lt;adams.gui.visualization.image.ImageOverlay&gt; (property: overlay)
@@ -181,24 +196,6 @@ public class ImageAnnotator
   extends AbstractInteractiveTransformerDialog {
 
   private static final long serialVersionUID = -3374468402777151698L;
-
-  /**
-   * Container class for storing rectangle of object and index in report.
-   *
-   * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public static class LocatedObjectContainer
-    implements Serializable {
-
-    private static final long serialVersionUID = 4190400826205764105L;
-
-    /** the index in the report. */
-    protected String index;
-
-    /** the object rectangle. */
-    protected Rectangle rectangle;
-  }
 
   /**
    * Panel for annotating an image.
@@ -237,10 +234,13 @@ public class ImageAnnotator
     protected Report m_ReportBackup;
 
     /** the rectangles of the located objects. */
-    protected List<LocatedObjectContainer> m_Objects;
+    protected LocatedObjects m_Objects;
 
     /** the current scale. */
     protected Double m_CurrentScale;
+
+    /** the actual selection processor. */
+    protected SelectionProcessor m_ActualSelectionProcessor;
 
     /**
      * Initializes the members.
@@ -254,8 +254,9 @@ public class ImageAnnotator
 	m_CurrentLabel = m_Labels[0].getValue();
       m_CurrentImage = null;
       m_ReportBackup = null;
-      m_Objects      = new ArrayList<>();
+      m_Objects      = new LocatedObjects();
       m_CurrentScale = null;
+      m_ActualSelectionProcessor = null;
     }
 
     /**
@@ -306,7 +307,21 @@ public class ImageAnnotator
       m_PanelImage.setScale(m_Zoom);
       m_PanelImage.addLeftClickListener(this);
       m_PanelImage.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(m_Overlay));
+      m_ActualSelectionProcessor = m_SelectionProcessor.shallowCopy();
+      m_PanelImage.addSelectionListener(m_ActualSelectionProcessor);
+      m_PanelImage.setSelectionBoxColor(m_SelectionBoxColor);
+      m_PanelImage.setSelectionEnabled(true);
       add(m_PanelImage, BorderLayout.CENTER);
+    }
+
+    /**
+     * finishes the initialization.
+     */
+    @Override
+    protected void finishInit() {
+      super.finishInit();
+      if (m_ButtonLabels.length > 0)
+	m_ButtonLabels[0].doClick();
     }
 
     /**
@@ -316,6 +331,8 @@ public class ImageAnnotator
      */
     protected void setCurrentLabel(String label) {
       m_CurrentLabel = label;
+      if (m_ActualSelectionProcessor instanceof SelectionProcessorWithLabelSupport)
+	((SelectionProcessorWithLabelSupport) m_ActualSelectionProcessor).setLabel(label == null ? "" : label);
     }
 
     /**
@@ -348,27 +365,32 @@ public class ImageAnnotator
     }
 
     /**
+     * Returns the current report.
+     *
+     * @return		the report
+     */
+    public Report getCurrentReport() {
+      return m_PanelImage.getAdditionalProperties();
+    }
+
+    /**
      * Reads the object locations from the report.
      */
     protected void updateObjects() {
       Report			report;
-      LocatedObjectContainer 	cont;
       double			actual;
       LocatedObjects		located;
 
-      m_Objects.clear();
-      if (m_CurrentImage == null)
+      if (m_CurrentImage == null) {
+        m_Objects = new LocatedObjects();
 	return;
-
-      report = m_CurrentImage.getReport();
-      located = LocatedObjects.fromReport(report, m_Prefix);
-      actual = m_PanelImage.calcActualScale(m_PanelImage.getScale());
-      for (LocatedObject obj: located) {
-	cont = new LocatedObjectContainer();
-	cont.rectangle = obj.getRectangle(actual);
-	cont.index     = "" + obj.getMetaData().get(LocatedObjects.KEY_INDEX);
-	m_Objects.add(cont);
       }
+
+      report  = m_PanelImage.getAdditionalProperties();
+      located = LocatedObjects.fromReport(report, m_Prefix);
+      actual  = m_PanelImage.calcActualScale(m_PanelImage.getScale());
+      located.scale(actual);
+      m_Objects = located;
     }
 
     /**
@@ -401,11 +423,11 @@ public class ImageAnnotator
       }
 
       hit    = false;
-      report = m_CurrentImage.getReport();
-      for (LocatedObjectContainer obj: m_Objects) {
-	if (obj.rectangle.contains(e.getPosition())) {
+      report = m_PanelImage.getAdditionalProperties();
+      for (LocatedObject obj: m_Objects) {
+	if (obj.getActual().contains(e.getPosition())) {
 	  hit   = true;
-	  field = new Field(m_Prefix + obj.index + m_Suffix, DataType.STRING);
+	  field = new Field(m_Prefix + obj.getIndexString() + m_Suffix, DataType.STRING);
 	  if (m_CurrentLabel == null)
 	    report.removeValue(field);
 	  else
@@ -414,8 +436,11 @@ public class ImageAnnotator
 	}
       }
 
-      if (hit)
+      if (hit) {
+        m_PanelImage.setAdditionalProperties(report);
 	m_PanelImage.displayProperties();
+	updateObjects();
+      }
     }
   }
 
@@ -427,6 +452,12 @@ public class ImageAnnotator
 
   /** the labels. */
   protected BaseString[] m_Labels;
+
+  /** the selection processor to apply. */
+  protected SelectionProcessor m_SelectionProcessor;
+
+  /** the color for the selection box. */
+  protected Color m_SelectionBoxColor;
 
   /** the overlay to use for highlighting the objects. */
   protected ImageOverlay m_Overlay;
@@ -467,6 +498,14 @@ public class ImageAnnotator
     m_OptionManager.add(
       "label", "labels",
       new BaseString[0]);
+
+    m_OptionManager.add(
+      "selection-processor", "selectionProcessor",
+      new NullProcessor());
+
+    m_OptionManager.add(
+      "selection-box-color", "selectionBoxColor",
+      Color.GRAY);
 
     m_OptionManager.add(
       "overlay", "overlay",
@@ -565,6 +604,64 @@ public class ImageAnnotator
   }
 
   /**
+   * Sets the selection processor to use.
+   *
+   * @param value 	the processor
+   */
+  public void setSelectionProcessor(SelectionProcessor value) {
+    m_SelectionProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the selection processor in use.
+   *
+   * @return 		the processor
+   */
+  public SelectionProcessor getSelectionProcessor() {
+    return m_SelectionProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String selectionProcessorTipText() {
+    return "The selection processor to use.";
+  }
+
+  /**
+   * Sets the color for the selection box.
+   *
+   * @param value 	the color
+   */
+  public void setSelectionBoxColor(Color value) {
+    m_SelectionBoxColor = value;
+    reset();
+  }
+
+  /**
+   * Returns the color of the selection box.
+   *
+   * @return 		the color
+   */
+  public Color getSelectionBoxColor() {
+    return m_SelectionBoxColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String selectionBoxColorTipText() {
+    return "The color of the selection box.";
+  }
+
+  /**
    * Sets the overlay to use for highlighting the objects.
    *
    * @param value 	the overlay
@@ -637,6 +734,7 @@ public class ImageAnnotator
     String	result;
 
     result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "selectionProcessor", m_SelectionProcessor, ", selection: ");
     result += QuickInfoHelper.toString(this, "overlay", m_Overlay, ", overlay: ");
     result += QuickInfoHelper.toString(this, "labels", m_Labels, ", labels: ");
 
@@ -726,8 +824,11 @@ public class ImageAnnotator
     ((AnnotatorPanel) m_Panel).setCurrentImage(cont);
     m_Dialog.setVisible(true);
 
-    if (m_Accepted)
-      m_OutputToken = new Token(((AnnotatorPanel) m_Panel).getCurrentImage());
+    if (m_Accepted) {
+      cont = ((AnnotatorPanel) m_Panel).getCurrentImage();
+      cont.setReport(((AnnotatorPanel) m_Panel).getCurrentReport());
+      m_OutputToken = new Token(cont);
+    }
 
     return m_Accepted;
   }

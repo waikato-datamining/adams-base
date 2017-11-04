@@ -32,8 +32,8 @@ import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.NullOverlay;
 import adams.gui.visualization.image.leftclick.AbstractLeftClickProcessor;
-import adams.gui.visualization.image.selection.AbstractSelectionProcessor;
 import adams.gui.visualization.image.selection.NullProcessor;
+import adams.gui.visualization.image.selection.SelectionProcessor;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -345,7 +345,7 @@ public class ImageViewer
   protected int m_PropertiesWidth;
 
   /** the selection processor to apply. */
-  protected AbstractSelectionProcessor m_SelectionProcessor;
+  protected SelectionProcessor m_SelectionProcessor;
 
   /** the click processor to apply. */
   protected AbstractLeftClickProcessor m_LeftClickProcessor;
@@ -561,7 +561,7 @@ public class ImageViewer
    *
    * @param value 	the processor
    */
-  public void setSelectionProcessor(AbstractSelectionProcessor value) {
+  public void setSelectionProcessor(SelectionProcessor value) {
     m_SelectionProcessor = value;
     reset();
   }
@@ -571,7 +571,7 @@ public class ImageViewer
    *
    * @return 		the processor
    */
-  public AbstractSelectionProcessor getSelectionProcessor() {
+  public SelectionProcessor getSelectionProcessor() {
     return m_SelectionProcessor;
   }
 

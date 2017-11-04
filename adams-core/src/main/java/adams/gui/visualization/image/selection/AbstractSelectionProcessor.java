@@ -13,21 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSelectionProcessor.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
-import java.awt.Point;
-
-import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.gui.event.ImagePanelSelectionEvent;
-import adams.gui.event.ImagePanelSelectionListener;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
+
+import java.awt.Point;
 
 /**
  * Ancestor for classes that react to selection in an image.
@@ -37,7 +35,7 @@ import adams.gui.visualization.image.ImagePanel.PaintPanel;
  */
 public abstract class AbstractSelectionProcessor
   extends AbstractOptionHandler
-  implements ImagePanelSelectionListener, ShallowCopySupporter<AbstractSelectionProcessor> {
+  implements SelectionProcessor {
 
   /** for serialization. */
   private static final long serialVersionUID = 3515366296579391750L;
@@ -120,7 +118,7 @@ public abstract class AbstractSelectionProcessor
    *
    * @return		the shallow copy
    */
-  public AbstractSelectionProcessor shallowCopy() {
+  public SelectionProcessor shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -130,7 +128,7 @@ public abstract class AbstractSelectionProcessor
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  public AbstractSelectionProcessor shallowCopy(boolean expand) {
-    return (AbstractSelectionProcessor) OptionUtils.shallowCopy(this, expand);
+  public SelectionProcessor shallowCopy(boolean expand) {
+    return (SelectionProcessor) OptionUtils.shallowCopy(this, expand);
   }
 }
