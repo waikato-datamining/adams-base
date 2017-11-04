@@ -386,7 +386,9 @@ public class ImageAnnotator
 	return;
       }
 
-      report  = m_PanelImage.getAdditionalProperties();
+      report = m_PanelImage.getAdditionalProperties();
+      if (report == null)
+        report = m_CurrentImage.getReport();
       located = LocatedObjects.fromReport(report, m_Prefix);
       actual  = m_PanelImage.calcActualScale(m_PanelImage.getScale());
       located.scale(actual);
