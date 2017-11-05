@@ -15,7 +15,7 @@
 
 /*
  * FileUtils.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -46,6 +46,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -158,6 +159,7 @@ public class FileUtils {
 
   /**
    * Returns the content of the given file, null in case of an error.
+   * Also handles gzip compressed files (uses newline to split into lines).
    *
    * @param file	the file to load
    * @return		the content/lines of the file
@@ -168,6 +170,7 @@ public class FileUtils {
 
   /**
    * Returns the content of the given file, null in case of an error.
+   * Also handles gzip compressed files (uses newline to split into lines).
    *
    * @param file	the file to load
    * @param encoding	the encoding to use, null to use default
@@ -175,16 +178,38 @@ public class FileUtils {
    */
   public static List<String> loadFromFile(File file, String encoding) {
     List<String>	result;
+    byte[]		data;
+    String		str;
 
     try {
-      if (encoding == null)
-	result = Files.readAllLines(file.toPath());
-      else
-	result = Files.readAllLines(file.toPath(), Charset.forName(encoding));
-      // remove byte order marks
-      if (result.size() > 0)
-	result.set(0, removeByteOrderMarks(result.get(0)));
-      return result;
+      if (file.getName().toLowerCase().endsWith(".gz")) {
+        data = FileUtils.loadFromBinaryFile(file);
+        if (data != null) {
+	  data = GzipUtils.decompress(data, 1024);
+	  if (encoding == null)
+	    str = new String(data);
+	  else
+	    str = new String(data, encoding);
+	  result = new ArrayList<>(Arrays.asList(Utils.split(str, "\n")));
+	  // remove byte order marks
+	  if (result.size() > 0)
+	    result.set(0, removeByteOrderMarks(result.get(0)));
+	}
+	else {
+          result = null;
+	}
+	return result;
+      }
+      else {
+        if (encoding == null)
+          result = Files.readAllLines(file.toPath());
+        else
+          result = Files.readAllLines(file.toPath(), Charset.forName(encoding));
+        // remove byte order marks
+        if (result.size() > 0)
+          result.set(0, removeByteOrderMarks(result.get(0)));
+        return result;
+      }
     }
     catch (Exception e) {
       System.err.println("Failed to read lines from '" + file + "':");
