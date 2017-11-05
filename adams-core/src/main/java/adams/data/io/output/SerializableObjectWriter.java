@@ -58,7 +58,7 @@ public class SerializableObjectWriter
    */
   @Override
   public String getFormatDescription() {
-    return new SerializableObjectWriter().getFormatDescription();
+    return new SerializableObjectReader().getFormatDescription();
   }
 
   /**
@@ -68,7 +68,7 @@ public class SerializableObjectWriter
    */
   @Override
   public String[] getFormatExtensions() {
-    return new SerializableObjectWriter().getFormatExtensions();
+    return new SerializableObjectReader().getFormatExtensions();
   }
 
   /**
