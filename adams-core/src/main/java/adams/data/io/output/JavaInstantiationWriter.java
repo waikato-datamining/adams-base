@@ -111,6 +111,9 @@ public class JavaInstantiationWriter
       if (!FileUtils.writeToFile(file.getAbsolutePath(), code, false))
 	result = "Failed to write Java code to: " + file;
     }
+    else {
+      result = "Failed to generate any code!";
+    }
 
     return result;
   }
