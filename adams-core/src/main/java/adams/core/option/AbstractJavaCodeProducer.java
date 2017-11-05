@@ -870,7 +870,6 @@ public abstract class AbstractJavaCodeProducer
     m_OutputBuffer.append(" *\n");
     m_OutputBuffer.append(" * @author " + System.getProperty("user.name") + "\n");
     m_OutputBuffer.append(" * @author " + getClass().getName() + " (code generator)" + "\n");
-    m_OutputBuffer.append(" * @version $Revision$\n");
     m_OutputBuffer.append(" */\n");
   }
 
