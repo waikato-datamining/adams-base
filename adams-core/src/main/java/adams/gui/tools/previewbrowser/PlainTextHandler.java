@@ -87,7 +87,7 @@ public class PlainTextHandler
     List<String> 	lines;
 
     try {
-      lines = FileUtils.loadFromFile(file);
+      lines = FileUtils.loadFromFile(file, null, true);
       if (lines == null) {
         panel = new FailedToCreatePreviewPanel();
         return new PreviewPanel(panel, panel);

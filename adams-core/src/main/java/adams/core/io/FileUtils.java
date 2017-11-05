@@ -177,12 +177,24 @@ public class FileUtils {
    * @return		the content/lines of the file, null in case of an error
    */
   public static List<String> loadFromFile(File file, String encoding) {
+    return loadFromFile(file, encoding, false);
+  }
+
+  /**
+   * Returns the content of the given file, null in case of an error.
+   * Also handles gzip compressed files (uses newline to split into lines).
+   *
+   * @param file	the file to load
+   * @param encoding	the encoding to use, null to use default
+   * @return		the content/lines of the file, null in case of an error
+   */
+  public static List<String> loadFromFile(File file, String encoding, boolean handleGzip) {
     List<String>	result;
     byte[]		data;
     String		str;
 
     try {
-      if (file.getName().toLowerCase().endsWith(".gz")) {
+      if (handleGzip && file.getName().toLowerCase().endsWith(".gz")) {
         data = FileUtils.loadFromBinaryFile(file);
         if (data != null) {
 	  data = GzipUtils.decompress(data, 1024);
