@@ -189,4 +189,13 @@ public abstract class AbstractValueDefinition
    * @return		the entered value, null if canceled
    */
   public abstract String headlessInteraction();
+
+  /**
+   * Returns whether this definition can be restored from a restoration file.
+   *
+   * @return		true if can be restored
+   */
+  public boolean canBeRestored() {
+    return true;
+  }
 }

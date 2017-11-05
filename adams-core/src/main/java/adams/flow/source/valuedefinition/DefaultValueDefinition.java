@@ -174,4 +174,21 @@ public class DefaultValueDefinition
 
     return ConsoleHelper.enterValue(msg, getDefaultValueAsString());
   }
+
+  /**
+   * Returns whether this definition can be restored from a restoration file.
+   *
+   * @return		true if can be restored
+   */
+  public boolean canBeRestored() {
+    switch (m_Type) {
+      case COMMA_SEPARATED_LIST:
+      case COMMA_SEPARATED_LIST_FIXED:
+      case BLANK_SEPARATED_LIST:
+      case BLANK_SEPARATED_LIST_FIXED:
+        return false;
+      default:
+        return true;
+    }
+  }
 }

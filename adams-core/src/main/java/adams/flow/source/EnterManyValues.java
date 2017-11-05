@@ -699,6 +699,11 @@ public class EnterManyValues
       props = panel.getProperties();
       m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
       if (m_RestorationEnabled) {
+        props = panel.getProperties();
+	for (AbstractValueDefinition val: m_Values) {
+	  if (!val.canBeRestored())
+	    props.removeKey(val.getName());
+	}
 	msg = RestorableActorHelper.write(props, m_RestorationFile);
 	if (msg != null)
 	  getLogger().warning(msg);
