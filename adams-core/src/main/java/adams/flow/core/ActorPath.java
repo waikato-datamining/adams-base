@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorPath.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -63,7 +63,7 @@ public class ActorPath
       // mask escaped "." in names
       path = path.replace("\\.", "\t");
       // remove surrounding "[]"
-      path = path.replaceFirst(".*\\[(.*)\\].*", "$1");
+      path = path.replaceFirst("^\\[(.*)\\].*", "$1");
       // remove the directors from the path
       if (path.matches(".*\\.[\\w]*Director$"))
 	path = path.replaceAll("\\.[\\w]*Director$", "");
