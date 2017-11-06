@@ -15,7 +15,7 @@
 
 /*
  * AbstractConnectedControlActor.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -107,9 +107,9 @@ public abstract class AbstractConnectedControlActor
 	if ((prev instanceof OutputProducer) && (curr instanceof InputConsumer)) {
 	  if (!m_Compatibility.isCompatible((OutputProducer) prev, (InputConsumer) curr)) {
 	    result =   "Actor '" + prev.getFullName() + "' "
-	             + "outputs '" + classesToString(((OutputProducer) prev).generates()) + "',\n"
+	             + "outputs\n  " + classesToString(((OutputProducer) prev).generates()) + "\n"
 	             + "but actor '" + curr.getFullName() + "' "
-	             + "only accepts '" + classesToString(((InputConsumer) curr).accepts()) + "'!";
+	             + "only accepts \n  " + classesToString(((InputConsumer) curr).accepts()) + "'!";
 	    break;
 	  }
 	}
