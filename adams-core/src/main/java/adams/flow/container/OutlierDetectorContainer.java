@@ -20,7 +20,6 @@
 
 package adams.flow.container;
 
-import adams.core.Utils;
 import adams.data.container.DataContainer;
 import adams.data.outlier.OutlierDetector;
 
@@ -75,9 +74,9 @@ public class OutlierDetectorContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_DETECTOR, "detection algorithm; " + OutlierDetector.class.getName());
-    addHelp(VALUE_DETECTION, "detection output; " + Utils.classToString(String[].class));
-    addHelp(VALUE_INPUT, "original input data; " + DataContainer.class.getName());
+    addHelp(VALUE_DETECTOR, "detection algorithm", OutlierDetector.class);
+    addHelp(VALUE_DETECTION, "detection output", String[].class);
+    addHelp(VALUE_INPUT, "original input data", DataContainer.class);
   }
 
   /**

@@ -87,9 +87,9 @@ public class WekaExperimentContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_EXPERIMENT, "experiment object " + AbstractExperiment.class.getName());
-    addHelp(VALUE_INSTANCES, "results (instances); " + Instances.class.getName());
-    addHelp(VALUE_SPREADSHEET, "result (spreadsheet); " + SpreadSheet.class.getName());
+    addHelp(VALUE_EXPERIMENT, "experiment object", AbstractExperiment.class);
+    addHelp(VALUE_INSTANCES, "results (instances)", Instances.class);
+    addHelp(VALUE_SPREADSHEET, "result (spreadsheet)", SpreadSheet.class);
   }
 
   /**

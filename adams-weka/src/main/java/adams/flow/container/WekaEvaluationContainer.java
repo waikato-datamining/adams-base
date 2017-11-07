@@ -116,11 +116,11 @@ public class WekaEvaluationContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_EVALUATION, "evaluation object " + Evaluation.class.getName());
-    addHelp(VALUE_MODEL, "model object; " + Object.class.getName());
-    addHelp(VALUE_PREDICTIONOUTPUT, "prediction output text; " + String.class.getName());
+    addHelp(VALUE_EVALUATION, "evaluation object", Evaluation.class);
+    addHelp(VALUE_MODEL, "model object", Object.class);
+    addHelp(VALUE_PREDICTIONOUTPUT, "prediction output text", String.class);
     addHelp(VALUE_ORIGINALINDICES, "original indices (0-based); array of " + Integer.TYPE.getName());
-    addHelp(VALUE_TESTDATA, "data used for testing; " + Instances.class.getName());
+    addHelp(VALUE_TESTDATA, "data used for testing", Instances.class);
   }
 
   /**

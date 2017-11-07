@@ -106,10 +106,10 @@ public class WekaClusteringContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_INSTANCE, "data row; " + Instance.class.getName());
-    addHelp(VALUE_CLUSTER, "cluster index (0-based); " + Integer.class.getName());
+    addHelp(VALUE_INSTANCE, "data row", Instance.class);
+    addHelp(VALUE_CLUSTER, "cluster index (0-based)", Integer.class);
     addHelp(VALUE_DISTRIBUTION, "cluster distribution; array of " + Double.TYPE.getName());
-    addHelp(VALUE_LOGDENSITY, "log density; " + Double.class.getName());
+    addHelp(VALUE_LOGDENSITY, "log density", Double.class);
     addHelp(VALUE_LOGDENSITYPERCLUSTER, "log density per cluster; array of " + Double.TYPE.getName());
     addHelp(VALUE_LOGJOINTDENSITIES, "log joint densities; array of " + Double.TYPE.getName());
   }

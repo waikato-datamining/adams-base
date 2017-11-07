@@ -86,7 +86,7 @@ public class WekaForecastModelContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_TRANSFORMED, "transformed data; " + Instances.class.getName());
+    addHelp(VALUE_TRANSFORMED, "transformed data", Instances.class);
   }
 
   /**
@@ -99,7 +99,7 @@ public class WekaForecastModelContainer
     List<String>	result;
     Iterator<String>	enm;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     enm    = super.names();
     while (enm.hasNext())
       result.add(enm.next());

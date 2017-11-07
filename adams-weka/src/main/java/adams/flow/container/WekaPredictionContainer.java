@@ -15,7 +15,7 @@
 
 /*
  * WekaPredictionContainer.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
@@ -110,13 +110,13 @@ public class WekaPredictionContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_INSTANCE, "data row used for prediction; " + Instance.class.getName());
-    addHelp(VALUE_CLASSIFICATION, "predicted value; " + Double.class.getName());
-    addHelp(VALUE_CLASSIFICATION_LABEL, "predicted label; " + String.class.getName());
+    addHelp(VALUE_INSTANCE, "data row used for prediction", Instance.class);
+    addHelp(VALUE_CLASSIFICATION, "predicted value", Double.class);
+    addHelp(VALUE_CLASSIFICATION_LABEL, "predicted label", String.class);
     addHelp(VALUE_DISTRIBUTION, "class distribution; array of " + Double.TYPE.getName());
-    addHelp(VALUE_RANGECHECK, "range check; " + String.class.getName());
-    addHelp(VALUE_ABSTENTION_CLASSIFICATION, "predicted value that made classifier abstain; " + Double.class.getName());
-    addHelp(VALUE_ABSTENTION_CLASSIFICATION_LABEL, "predicted label that made classifier abstain; " + String.class.getName());
+    addHelp(VALUE_RANGECHECK, "range check", String.class);
+    addHelp(VALUE_ABSTENTION_CLASSIFICATION, "predicted value that made classifier abstain", Double.class);
+    addHelp(VALUE_ABSTENTION_CLASSIFICATION_LABEL, "predicted label that made classifier abstain", String.class);
     addHelp(VALUE_ABSTENTION_DISTRIBUTION, "class distribution that made classifier abstain; array of " + Double.TYPE.getName());
   }
 

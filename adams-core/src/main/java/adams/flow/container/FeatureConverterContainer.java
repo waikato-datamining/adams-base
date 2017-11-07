@@ -72,8 +72,8 @@ public class FeatureConverterContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_HEADER, "header definition; " + HeaderDefinition.class.getName());
-    addHelp(VALUE_ROW, "data row; " + List.class.getName());
+    addHelp(VALUE_HEADER, "header definition", HeaderDefinition.class);
+    addHelp(VALUE_ROW, "data row", List.class);
   }
 
   /**

@@ -131,11 +131,11 @@ public class WekaTrainTestSetContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_TRAIN, "training set; " + Instances.class.getName());
-    addHelp(VALUE_TEST, "test set; " + Instances.class.getName());
-    addHelp(VALUE_SEED, "seed value; " + Long.class.getName());
-    addHelp(VALUE_FOLD_NUMBER, "current fold (1-based); " + Integer.class.getName());
-    addHelp(VALUE_FOLD_COUNT, "total number of folds; " + Integer.class.getName());
+    addHelp(VALUE_TRAIN, "training set", Instances.class);
+    addHelp(VALUE_TEST, "test set", Instances.class);
+    addHelp(VALUE_SEED, "seed value", Long.class);
+    addHelp(VALUE_FOLD_NUMBER, "current fold (1-based)", Integer.class);
+    addHelp(VALUE_FOLD_COUNT, "total number of folds", Integer.class);
     addHelp(VALUE_TRAIN_ORIGINALINDICES, "original indices (0-based, train); array of " + Integer.TYPE.getName());
     addHelp(VALUE_TEST_ORIGINALINDICES, "original indices (0-based, test); array of " + Integer.TYPE.getName());
   }

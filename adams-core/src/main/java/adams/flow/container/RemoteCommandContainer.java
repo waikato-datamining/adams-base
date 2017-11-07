@@ -107,9 +107,9 @@ public class RemoteCommandContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_EVENT,   "event type; " + String.class.getName());
-    addHelp(VALUE_COMMAND, "remote command; " + RemoteCommand.class.getName());
-    addHelp(VALUE_MESSAGE, "optional message; " + String.class.getName());
+    addHelp(VALUE_EVENT,   "event type", String.class);
+    addHelp(VALUE_COMMAND, "remote command", RemoteCommand.class);
+    addHelp(VALUE_MESSAGE, "optional message", String.class);
   }
 
   /**

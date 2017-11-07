@@ -93,11 +93,11 @@ public class ControlChartContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_ALGORITHM, "control chart algorithm; " + ControlChart.class.getName());
-    addHelp(VALUE_CHART, "name of the chart; " + String.class.getName());
-    addHelp(VALUE_DATA, "original data; " + Object.class.getName());
-    addHelp(VALUE_PREPARED, "prepared/processed data; " + Object.class.getName());
-    addHelp(VALUE_LIMITS, "limits; array of " + Limits.class.getName());
+    addHelp(VALUE_ALGORITHM, "control chart algorithm", ControlChart.class);
+    addHelp(VALUE_CHART, "name of the chart", String.class);
+    addHelp(VALUE_DATA, "original data", Object.class);
+    addHelp(VALUE_PREPARED, "prepared/processed data", Object.class);
+    addHelp(VALUE_LIMITS, "limits; ", Limits[].class);
   }
 
   /**

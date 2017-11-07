@@ -15,7 +15,7 @@
 
 /*
  * AbstractContainer.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
@@ -135,6 +135,32 @@ public abstract class AbstractContainer
   public void addHelp(String name, String desc) {
     if (isValidName(name))
       m_Help.put(name, desc);
+  }
+
+  /**
+   * Stores the help for the given name if valid name.
+   *
+   * @param name	the name to store the help under
+   * @param desc	the help description
+   * @param type	the type of the data
+   * @see		#isValidName(String)
+   */
+  public void addHelp(String name, String desc, Class type) {
+    if (isValidName(name))
+      m_Help.put(name, desc + "; " + Utils.classToString(type));
+  }
+
+  /**
+   * Stores the help for the given name if valid name.
+   *
+   * @param name	the name to store the help under
+   * @param desc	the help description
+   * @param types	the types of the data
+   * @see		#isValidName(String)
+   */
+  public void addHelp(String name, String desc, Class[] types) {
+    if (isValidName(name))
+      m_Help.put(name, desc + "; " + Utils.classesToString(types));
   }
 
   /**

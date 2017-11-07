@@ -97,9 +97,9 @@ public class WekaModelContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_MODEL, "model object; " + Object.class.getName());
-    addHelp(VALUE_HEADER, "dataset header; " + Instances.class.getName());
-    addHelp(VALUE_DATASET, "full dataset; " + Instances.class.getName());
+    addHelp(VALUE_MODEL, "model object", Object.class);
+    addHelp(VALUE_HEADER, "dataset header", Instances.class);
+    addHelp(VALUE_DATASET, "full dataset", Instances.class);
   }
 
   /**

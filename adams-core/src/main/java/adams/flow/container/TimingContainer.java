@@ -90,9 +90,9 @@ public class TimingContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_MSEC, "timing in milli-second; " + Integer.class.getName());
-    addHelp(VALUE_PREFIX, "optional prefix to use; " + String.class.getName());
-    addHelp(VALUE_ORIGIN, "optional origin of timing; " + String.class.getName());
+    addHelp(VALUE_MSEC, "timing in milli-second", Integer.class);
+    addHelp(VALUE_PREFIX, "optional prefix to use", String.class);
+    addHelp(VALUE_ORIGIN, "optional origin of timing", String.class);
   }
 
   /**

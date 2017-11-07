@@ -74,7 +74,7 @@ public class WekaForecastContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_MODEL, "forecaster model; " + AbstractForecaster.class.getName());
+    addHelp(VALUE_MODEL, "forecaster model", AbstractForecaster.class);
     addHelp(VALUE_FORECASTS, "forecasts made; list of list of " + NumericPrediction.class.getName());
   }
 

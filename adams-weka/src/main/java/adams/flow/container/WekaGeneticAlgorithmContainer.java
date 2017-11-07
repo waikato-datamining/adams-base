@@ -97,10 +97,10 @@ public class WekaGeneticAlgorithmContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_SETUP, "classifier object; " + Classifier.class.getName());
-    addHelp(VALUE_MEASURE, "measure used for fitness; " + Measure.class.getName());
-    addHelp(VALUE_FITNESS, "fitness score; " + Double.class.getName());
-    addHelp(VALUE_WEIGHTSSTR, "all the weights; " + String.class.getName());
+    addHelp(VALUE_SETUP, "classifier object", Classifier.class);
+    addHelp(VALUE_MEASURE, "measure used for fitness", Measure.class);
+    addHelp(VALUE_FITNESS, "fitness score", Double.class);
+    addHelp(VALUE_WEIGHTSSTR, "all the weights", String.class);
     addHelp(VALUE_WEIGHTS, "weights; array of " + Integer.TYPE.getName());
   }
 

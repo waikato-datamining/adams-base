@@ -20,8 +20,6 @@
 
 package adams.flow.container;
 
-import adams.core.Utils;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -84,8 +82,8 @@ public class AbstractFilterContainer<F extends adams.data.filter.Filter, D exten
    * Initializes help strings specific to the filter.
    */
   protected void initFilterHelp() {
-    addHelp(VALUE_FILTER, "filter object; " + adams.data.filter.Filter.class.getName());
-    addHelp(VALUE_DATA, "data object; " + Utils.classesToString(new Class[]{adams.data.container.DataContainer.class, adams.data.container.DataContainer[].class}));
+    addHelp(VALUE_FILTER, "filter object", adams.data.filter.Filter.class);
+    addHelp(VALUE_DATA, "data object", new Class[]{adams.data.container.DataContainer.class, adams.data.container.DataContainer[].class});
   }
 
   /**

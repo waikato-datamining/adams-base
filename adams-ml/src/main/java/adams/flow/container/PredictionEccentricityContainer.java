@@ -78,9 +78,9 @@ public class PredictionEccentricityContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_PREDICTIONS, "predictions; " + SpreadSheet.class.getName());
-    addHelp(VALUE_ECCENTRICITY, "eccentricity; " + Double.class.getName());
-    addHelp(VALUE_MATRIX, "matrix; " + BooleanArrayMatrixView.class.getName());
+    addHelp(VALUE_PREDICTIONS, "predictions", SpreadSheet.class);
+    addHelp(VALUE_ECCENTRICITY, "eccentricity", Double.class);
+    addHelp(VALUE_MATRIX, "matrix", BooleanArrayMatrixView.class);
   }
 
   /**

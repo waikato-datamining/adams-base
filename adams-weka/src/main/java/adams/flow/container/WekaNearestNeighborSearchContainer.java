@@ -88,9 +88,9 @@ public class WekaNearestNeighborSearchContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_INSTANCE, "Instance; " + Instance.class.getName());
-    addHelp(VALUE_NEIGHBORHOOD, "Neighborhood; " + Instances.class.getName());
-    addHelp(VALUE_DISTANCES, "Distances; " + double[].class.getName());
+    addHelp(VALUE_INSTANCE, "Instance", Instance.class);
+    addHelp(VALUE_NEIGHBORHOOD, "Neighborhood", Instances.class);
+    addHelp(VALUE_DISTANCES, "Distances", double[].class);
   }
 
   /**

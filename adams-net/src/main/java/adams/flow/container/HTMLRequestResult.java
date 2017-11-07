@@ -91,10 +91,10 @@ public class HTMLRequestResult
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_STATUSCODE, "HTTP status code; " + Integer.class.getName());
-    addHelp(VALUE_STATUSMESSAGE, "HTTP status message; " + String.class.getName());
-    addHelp(VALUE_BODY, "HTML of the request; " + String.class.getName());
-    addHelp(VALUE_COOKIES, "cookie mappings (String/String); " + Map.class.getName());
+    addHelp(VALUE_STATUSCODE, "HTTP status code", Integer.class);
+    addHelp(VALUE_STATUSMESSAGE, "HTTP status message", String.class);
+    addHelp(VALUE_BODY, "HTML of the request", String.class);
+    addHelp(VALUE_COOKIES, "cookie mappings (String/String)", Map.class);
   }
 
   /**

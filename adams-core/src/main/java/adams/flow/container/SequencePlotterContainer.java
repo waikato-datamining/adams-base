@@ -170,13 +170,13 @@ public class SequencePlotterContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_PLOTNAME, "name of the plot; " + String.class.getName());
-    addHelp(VALUE_X, "X value; " + Comparable.class.getName());
-    addHelp(VALUE_Y, "Y value; " + Comparable.class.getName());
-    addHelp(VALUE_CONTENTTYPE, "type of plot; " + ContentType.class.getName());
-    addHelp(VALUE_ERROR_X, "X error; array of " + Double.class.getName());
-    addHelp(VALUE_ERROR_Y, "Y error; aray of  " + Double.class.getName());
-    addHelp(VALUE_METADATA, "mapping of meta-data (String/Object); " + HashMap.class.getName());
+    addHelp(VALUE_PLOTNAME, "name of the plot", String.class);
+    addHelp(VALUE_X, "X value", Comparable.class);
+    addHelp(VALUE_Y, "Y value", Comparable.class);
+    addHelp(VALUE_CONTENTTYPE, "type of plot", ContentType.class);
+    addHelp(VALUE_ERROR_X, "X error", Double[].class);
+    addHelp(VALUE_ERROR_Y, "Y error", Double[].class);
+    addHelp(VALUE_METADATA, "mapping of meta-data (String/Object)", HashMap.class);
   }
 
   /**

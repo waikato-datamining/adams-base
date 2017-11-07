@@ -77,9 +77,9 @@ public class OutlierContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_ORIGINAL, "original data; " + SpreadSheet.class.getName());
-    addHelp(VALUE_CLEAN, "clean data; " + SpreadSheet.class.getName());
-    addHelp(VALUE_OUTLIERS, "outliers; " + SpreadSheet.class.getName());
+    addHelp(VALUE_ORIGINAL, "original data", SpreadSheet.class);
+    addHelp(VALUE_CLEAN, "clean data", SpreadSheet.class);
+    addHelp(VALUE_OUTLIERS, "outliers", SpreadSheet.class);
   }
 
   /**

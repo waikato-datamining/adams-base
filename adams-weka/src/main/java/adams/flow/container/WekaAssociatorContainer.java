@@ -104,7 +104,7 @@ public class WekaAssociatorContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_MODEL, "rules; " + List.class.getName());
+    addHelp(VALUE_MODEL, "rules", List.class);
   }
 
   /**

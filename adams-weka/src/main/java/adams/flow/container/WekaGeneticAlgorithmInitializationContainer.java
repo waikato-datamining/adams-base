@@ -73,8 +73,8 @@ public class WekaGeneticAlgorithmInitializationContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_ALGORITHM, "genetic algorithm object; " + AbstractClassifierBasedGeneticAlgorithm.class.getName());
-    addHelp(VALUE_DATA, "training data; " + Instances.class.getName());
+    addHelp(VALUE_ALGORITHM, "genetic algorithm object", AbstractClassifierBasedGeneticAlgorithm.class);
+    addHelp(VALUE_DATA, "training data", Instances.class);
   }
 
   /**

@@ -20,7 +20,6 @@
 
 package adams.flow.container;
 
-import adams.core.Utils;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
@@ -104,11 +103,9 @@ public class WekaFilterContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_FILTER, "filter object; " + Filter.class.getName());
-    addHelp(VALUE_DATA, "data; " + Utils.classesToString(new Class[]{
-      Instances.class, Instance.class, adams.data.instance.Instance.class}));
-    addHelp(VALUE_INPUT, "input data; " + Utils.classesToString(new Class[]{
-      Instances.class, Instance.class, adams.data.instance.Instance.class}));
+    addHelp(VALUE_FILTER, "filter object", Filter.class);
+    addHelp(VALUE_DATA, "data", new Class[]{Instances.class, Instance.class, adams.data.instance.Instance.class});
+    addHelp(VALUE_INPUT, "input data", new Class[]{Instances.class, Instance.class, adams.data.instance.Instance.class});
   }
 
   /**

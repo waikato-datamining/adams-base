@@ -95,9 +95,9 @@ public class WekaClusterEvaluationContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_EVALUATION, "cluster evaluation object; " + ClusterEvaluation.class.getName());
-    addHelp(VALUE_MODEL, "cluster model; " + Object.class.getName());
-    addHelp(VALUE_LOGLIKELIHOOD, "log likelihood of cross-validation; " + Double.class.getName());
+    addHelp(VALUE_EVALUATION, "cluster evaluation object", ClusterEvaluation.class);
+    addHelp(VALUE_MODEL, "cluster model", Object.class);
+    addHelp(VALUE_LOGLIKELIHOOD, "log likelihood of cross-validation", Double.class);
   }
 
   /**
