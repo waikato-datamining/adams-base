@@ -321,6 +321,27 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
   }
 
   /**
+   * Sets the optimal column width for all columns. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param max		the maximum width
+   */
+  public void setOptimalColumnWidthBounded(int max) {
+    m_Component.setOptimalColumnWidthBounded(max);
+  }
+
+  /**
+   * Sets the optimal column width for the specified column. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param column	the column to resize
+   * @param max		the maximum width
+   */
+  public void setOptimalColumnWidthBounded(int column, int max) {
+    m_Component.setOptimalColumnWidthBounded(column, max);
+  }
+
+  /**
    * Sets the height, in pixels, of all cells to <code>rowHeight</code>,
    * revalidates, and repaints.
    * The height of the cells will be equal to the row height minus
