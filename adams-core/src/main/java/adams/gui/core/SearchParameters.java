@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SearchParameters.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -135,10 +135,13 @@ public class SearchParameters {
    * Matches the search string against the provided string.
    * Empty search string matches everything.
    *
-   * @param s		the string to match
+   * @param s		the string to match, null is ignored
    * @return		true if a match
    */
   public boolean matches(String s) {
+    if (s == null)
+      return false;
+
     if (m_SearchString.length() == 0)
       return true;
 
