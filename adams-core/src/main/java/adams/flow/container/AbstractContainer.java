@@ -213,6 +213,17 @@ public abstract class AbstractContainer
   }
 
   /**
+   * Returns the value associated with the given name.
+   *
+   * @param name	the name of the value
+   * @param cls		for casting
+   * @return		the associated value or null if not available
+   */
+  public <T> T getValue(String name, Class<T> cls) {
+    return (T) m_Values.get(name);
+  }
+
+  /**
    * Checks whether a given help is non-null.
    *
    * @param name	the name of the help item to check
