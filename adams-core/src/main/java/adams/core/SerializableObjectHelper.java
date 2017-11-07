@@ -15,7 +15,7 @@
 
 /*
  * SerializableObjectHelper.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -248,6 +248,24 @@ public class SerializableObjectHelper
    */
   public void generateSetup() {
     m_Owner.initSerializationSetup();
+  }
+
+  /**
+   * Sets whether the setup was loaded/generated.
+   *
+   * @param value	true if loaded/generated
+   */
+  public void setSetupLoadedOrGenerated(boolean value) {
+    m_SetupLoadedOrGenerated = value;
+  }
+
+  /**
+   * Returns whether the setup was loaded/generated.
+   *
+   * @return		true if loaded/generated
+   */
+  public boolean isSetupLoadedOrGenerated() {
+    return m_SetupLoadedOrGenerated;
   }
 
   /**

@@ -15,14 +15,14 @@
 
 /*
  * SerializableObject.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
-import java.io.Serializable;
-
 import adams.core.io.PlaceholderFile;
+
+import java.io.Serializable;
 
 /**
  * Interface for classes that handle their own serialization/deserialization.
@@ -88,7 +88,7 @@ public interface SerializableObject
    * @return		the objects to serialize
    */
   public Object[] retrieveSerializationSetup();
-  
+
   /**
    * Updates the member variables with the provided objects obtained from
    * deserialization.
@@ -96,4 +96,18 @@ public interface SerializableObject
    * @param value	the deserialized objects
    */
   public void setSerializationSetup(Object[] value);
+
+  /**
+   * Sets whether the setup was loaded/generated.
+   *
+   * @param value	true if loaded/generated
+   */
+  public void setSetupLoadedOrGenerated(boolean value);
+
+  /**
+   * Returns whether the setup was loaded/generated.
+   *
+   * @return		true if loaded/generated
+   */
+  public boolean isSetupLoadedOrGenerated();
 }

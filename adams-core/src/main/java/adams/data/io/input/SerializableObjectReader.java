@@ -104,6 +104,7 @@ public class SerializableObjectReader
 	  data  = (Object[]) all[1];
 	  result = (SerializableObject) Class.forName(cname).newInstance();
 	  result.setSerializationSetup(data);
+	  result.setSetupLoadedOrGenerated(true);
 	  return result;
 	}
       }
