@@ -186,6 +186,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
     // search panel
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
+    m_PanelSearch.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
     m_PanelSearch.addSearchListener((SearchEvent e) -> m_TableValues.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
     add(m_PanelSearch, BorderLayout.SOUTH);
   }
@@ -520,8 +521,18 @@ public abstract class AbstractManagementPanel<T extends Comparable>
   protected void refresh() {
     m_ModelValues.clear();
     m_ModelValues.addAll(loadAll());
-    m_TableValues.setOptimalColumnWidth();
+    m_TableValues.setOptimalColumnWidthBounded(getMaximumColumnWidth());
     update();
+  }
+
+  /**
+   * Returns the maximum column width to use when determining the optimal
+   * column width.
+   *
+   * @return		the maximum
+   */
+  protected int getMaximumColumnWidth() {
+    return 150;
   }
 
   /**
