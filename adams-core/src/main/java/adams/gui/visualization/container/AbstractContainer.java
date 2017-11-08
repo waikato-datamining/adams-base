@@ -14,11 +14,13 @@
  */
 
 /*
- * Container.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * AbstractContainer.java
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
+
+import adams.core.UUIDHandler;
 
 import java.io.Serializable;
 
@@ -177,7 +179,10 @@ public abstract class AbstractContainer
 	return 1;
     }
     else {
-      return getPayload().compareTo(o.getPayload());
+      if ((getPayload() instanceof UUIDHandler) && (o.getPayload() instanceof UUIDHandler))
+        return Long.compare(((UUIDHandler) getPayload()).getUUID(), (((UUIDHandler) o.getPayload()).getUUID()));
+      else
+        return getPayload().compareTo(o.getPayload());
     }
   }
 
