@@ -22,6 +22,7 @@ package adams.data.container;
 
 import adams.core.CloneHandler;
 import adams.core.Mergeable;
+import adams.core.UUIDHandler;
 import adams.data.id.MutableIDHandler;
 
 import java.io.Serializable;
@@ -38,7 +39,7 @@ import java.util.TreeSet;
  */
 public interface DataContainer<T extends DataPoint>
   extends Serializable, Comparable, CloneHandler,
-          Collection<T>, Mergeable<DataContainer>, MutableIDHandler {
+          Collection<T>, Mergeable<DataContainer>, MutableIDHandler, UUIDHandler {
 
   /**
    * Returns a new instance of the default comparator.

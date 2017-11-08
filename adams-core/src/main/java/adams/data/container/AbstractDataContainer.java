@@ -20,15 +20,16 @@
 
 package adams.data.container;
 
+import adams.core.UniqueIDs;
+import adams.core.Utils;
+import adams.data.id.MutableIDHandler;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
-
-import adams.core.Utils;
-import adams.data.id.MutableIDHandler;
 
 /**
  * Superclass for all data structures.
@@ -49,6 +50,9 @@ public abstract class AbstractDataContainer<T extends DataPoint>
   /** the data points. */
   protected ArrayList<T> m_Points;
 
+  /** the unique ID. */
+  protected long m_UUID;
+
   /**
    * Initializes the container.
    */
@@ -57,6 +61,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
 
     m_ID     = "";
     m_Points = new ArrayList<T>();
+    m_UUID   = UniqueIDs.nextLong();
   }
 
   /**
@@ -75,6 +80,15 @@ public abstract class AbstractDataContainer<T extends DataPoint>
    */
   public String getID() {
     return m_ID;
+  }
+
+  /**
+   * Returns the unique ID.
+   *
+   * @return		the ID
+   */
+  public long getUUID() {
+    return m_UUID;
   }
 
   /**

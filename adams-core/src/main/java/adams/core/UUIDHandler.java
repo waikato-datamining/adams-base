@@ -14,46 +14,23 @@
  */
 
 /*
- * UniqueIDs.java
+ * UUIDHandler.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
 
-import adams.core.management.ProcessUtils;
-
 /**
- * Class for creating unique IDs.
+ * Interface for objects that support unique IDs.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class UniqueIDs {
-
-  /** the counter. */
-  protected static long m_Counter;
-  static {
-    m_Counter = 0;
-  }
+public interface UUIDHandler {
 
   /**
-   * Creates a new unique ID, using current nanotime, virtual machine PID,
-   * counter (within JVM session).
+   * Returns the unique ID.
    *
-   * @return		the generated ID
+   * @return		the ID
    */
-  public static synchronized String next() {
-    return Long.toHexString(System.nanoTime())
-	+ "-" + Long.toHexString(ProcessUtils.getVirtualMachinePID())
-	+ "-" + Long.toHexString(nextLong());
-  }
-
-  /**
-   * Returns the next ID from the counter.
-   *
-   * @return		the next ID
-   */
-  public static synchronized long nextLong() {
-    m_Counter++;
-    return m_Counter;
-  }
+  public long getUUID();
 }
