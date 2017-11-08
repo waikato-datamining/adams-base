@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSimpleContainer.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.container;
 
-import java.io.Serializable;
-
 import adams.core.CloneHandler;
+import adams.core.UUIDHandler;
+import adams.core.UniqueIDs;
 import adams.data.MutableNotesHandler;
 import adams.data.Notes;
 import adams.data.report.DataType;
@@ -29,17 +29,18 @@ import adams.data.report.Field;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 
+import java.io.Serializable;
+
 /**
  * Ancestor for simple containers for objects that also offers notes and a report
  * for storing meta-data.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 6656 $
  * @param <T> the type of content to handle
  */
 public abstract class AbstractSimpleContainer<T>
   implements Serializable, CloneHandler<AbstractSimpleContainer<T>>, 
-             MutableNotesHandler, MutableReportHandler<Report> {
+             MutableNotesHandler, MutableReportHandler<Report>, UUIDHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -7088299534737380639L;
@@ -56,6 +57,9 @@ public abstract class AbstractSimpleContainer<T>
   /** the notes. */
   protected Notes m_Notes;
 
+  /** the unique ID. */
+  protected long m_UUID;
+
   /**
    * Initializes the container.
    */
@@ -68,12 +72,22 @@ public abstract class AbstractSimpleContainer<T>
    * Initializes the members.
    */
   protected void initialize() {
-    m_Content  = null;
-    m_Notes  = new Notes();
-    m_Report = new Report();
+    m_Content = null;
+    m_Notes   = new Notes();
+    m_Report  = new Report();
     m_Report.addField(new Field(FIELD_FILENAME, DataType.STRING));
+    m_UUID    = UniqueIDs.nextLong();
   }
-  
+
+  /**
+   * Returns the unique ID.
+   *
+   * @return		the ID
+   */
+  public long getUUID() {
+    return m_UUID;
+  }
+
   /**
    * Returns a clone of the content.
    * 
