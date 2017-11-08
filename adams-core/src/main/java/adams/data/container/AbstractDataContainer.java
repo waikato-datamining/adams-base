@@ -87,7 +87,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
    *
    * @return		the ID
    */
-  public long getUUID() {
+  public long getUniqueID() {
     return m_UUID;
   }
 

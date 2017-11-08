@@ -20,7 +20,7 @@
 package adams.data.container;
 
 import adams.core.CloneHandler;
-import adams.core.UUIDHandler;
+import adams.core.UniqueIDHandler;
 import adams.core.UniqueIDs;
 import adams.data.MutableNotesHandler;
 import adams.data.Notes;
@@ -40,7 +40,7 @@ import java.io.Serializable;
  */
 public abstract class AbstractSimpleContainer<T>
   implements Serializable, CloneHandler<AbstractSimpleContainer<T>>, 
-             MutableNotesHandler, MutableReportHandler<Report>, UUIDHandler {
+             MutableNotesHandler, MutableReportHandler<Report>, UniqueIDHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -7088299534737380639L;
@@ -84,7 +84,7 @@ public abstract class AbstractSimpleContainer<T>
    *
    * @return		the ID
    */
-  public long getUUID() {
+  public long getUniqueID() {
     return m_UUID;
   }
 

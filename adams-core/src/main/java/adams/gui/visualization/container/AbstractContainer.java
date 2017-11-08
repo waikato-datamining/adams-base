@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.container;
 
-import adams.core.UUIDHandler;
+import adams.core.UniqueIDHandler;
 
 import java.io.Serializable;
 
@@ -179,8 +179,8 @@ public abstract class AbstractContainer
 	return 1;
     }
     else {
-      if ((getPayload() instanceof UUIDHandler) && (o.getPayload() instanceof UUIDHandler))
-        return Long.compare(((UUIDHandler) getPayload()).getUUID(), (((UUIDHandler) o.getPayload()).getUUID()));
+      if ((getPayload() instanceof UniqueIDHandler) && (o.getPayload() instanceof UniqueIDHandler))
+        return Long.compare(((UniqueIDHandler) getPayload()).getUniqueID(), (((UniqueIDHandler) o.getPayload()).getUniqueID()));
       else
         return getPayload().compareTo(o.getPayload());
     }

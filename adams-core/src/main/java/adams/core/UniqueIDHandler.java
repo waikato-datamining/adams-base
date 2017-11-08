@@ -14,7 +14,7 @@
  */
 
 /*
- * UUIDHandler.java
+ * UniqueIDHandler.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
@@ -25,12 +25,12 @@ package adams.core;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface UUIDHandler {
+public interface UniqueIDHandler {
 
   /**
    * Returns the unique ID.
    *
    * @return		the ID
    */
-  public long getUUID();
+  public long getUniqueID();
 }
