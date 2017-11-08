@@ -54,6 +54,7 @@ import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.PaintletWithFixedXRange;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 import adams.gui.visualization.report.ReportContainer;
 import adams.gui.visualization.report.ReportFactory;
@@ -82,7 +83,7 @@ import java.util.List;
  */
 public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainerManager<C>, C extends TimeseriesContainer>
   extends DataContainerPanelWithContainerList<T, M, C>
-  implements PaintListener, TipTextCustomizer, AntiAliasingSupporter {
+  implements PaintListener, TipTextCustomizer, AntiAliasingSupporter, HitDetectorSupporter<TimeseriesPointHitDetector> {
 
   /** for serialization. */
   private static final long serialVersionUID = -9059718549932104312L;
@@ -168,6 +169,15 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   @Override
   public AbstractTimeseriesPaintlet getContainerPaintlet() {
     return m_TimeseriesPaintlet;
+  }
+
+  /**
+   * Returns the hit detector.
+   *
+   * @return		the hit detector
+   */
+  public TimeseriesPointHitDetector getHitDetector() {
+    return m_TimeseriesPointHitDetector;
   }
 
   /**

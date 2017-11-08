@@ -48,6 +48,7 @@ import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 
 import javax.swing.JPanel;
@@ -73,7 +74,7 @@ import java.util.List;
  */
 public class SpreadSheetRowPanel
   extends DataContainerPanelWithContainerList<SpreadSheetRow, SpreadSheetRowContainerManager, SpreadSheetRowContainer>
-  implements PaintListener, TipTextCustomizer, AntiAliasingSupporter {
+  implements PaintListener, TipTextCustomizer, AntiAliasingSupporter, HitDetectorSupporter<SpreadSheetRowPointHitDetector> {
 
   /** for serialization. */
   private static final long serialVersionUID = 7985845939008731534L;
@@ -164,6 +165,15 @@ public class SpreadSheetRowPanel
   @Override
   public AbstractSpreadSheetRowPaintlet getContainerPaintlet() {
     return m_RowPaintlet;
+  }
+
+  /**
+   * Returns the hit detector.
+   *
+   * @return		the hit detector
+   */
+  public SpreadSheetRowPointHitDetector getHitDetector() {
+    return m_SpreadSheetRowPointHitDetector;
   }
 
   /**

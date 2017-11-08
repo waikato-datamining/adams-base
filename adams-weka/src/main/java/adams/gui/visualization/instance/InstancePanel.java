@@ -50,6 +50,7 @@ import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 import weka.core.Instances;
 
@@ -76,7 +77,7 @@ import java.util.List;
  */
 public class InstancePanel
   extends DataContainerPanelWithContainerList<Instance, InstanceContainerManager, InstanceContainer>
-  implements PaintListener, TipTextCustomizer, AntiAliasingSupporter {
+  implements PaintListener, TipTextCustomizer, AntiAliasingSupporter, HitDetectorSupporter<InstancePointHitDetector> {
 
   /** for serialization. */
   private static final long serialVersionUID = 7985845939008731534L;
@@ -167,6 +168,15 @@ public class InstancePanel
   @Override
   public AbstractInstancePaintlet getContainerPaintlet() {
     return m_InstancePaintlet;
+  }
+
+  /**
+   * Returns the hit detector.
+   *
+   * @return		the hit detector
+   */
+  public InstancePointHitDetector getHitDetector() {
+    return m_InstancePointHitDetector;
   }
 
   /**
