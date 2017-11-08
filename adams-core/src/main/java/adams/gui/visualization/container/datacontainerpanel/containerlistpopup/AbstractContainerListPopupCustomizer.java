@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractContainerListPopupCustomizer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.container.datacontainerpanel.containerlistpopup;
@@ -28,12 +28,12 @@ import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.AbstractPopupCustomizer;
 
 import javax.swing.JPopupMenu;
+import java.util.List;
 
 /**
  * Ancestor for actions for the container list popup menu.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractContainerListPopupCustomizer<T extends DataContainer, M extends AbstractContainerManager, C extends AbstractContainer>
   extends AbstractPopupCustomizer<T,M,C> {
@@ -41,12 +41,45 @@ public abstract class AbstractContainerListPopupCustomizer<T extends DataContain
   private static final long serialVersionUID = 6847657392180231208L;
 
   /**
+   * Container for the context.
+   *
+   * @param <T> the data container
+   * @param <M> the container manager
+   * @param <C> the container
+   */
+  public static class Context<T extends DataContainer, M extends AbstractContainerManager, C extends AbstractContainer> {
+    public DataContainerPanelWithContainerList<T,M,C> panel;
+    public ContainerTable<M,C> table;
+    public int row;
+    public int[] actualSelectedContainerIndices;
+    public List<C>  visibleConts;
+  }
+
+  /**
    * Returns a popup menu for the table of the container list.
    *
-   * @param panel	the affected panel
-   * @param table	the affected table
-   * @param row		the row the mouse is currently over
+   * @param context	the context
    * @param menu	the popup menu to customize
    */
-  public abstract void customize(final DataContainerPanelWithContainerList<T,M,C> panel, final ContainerTable<M,C> table, final int row, JPopupMenu menu);
+  public abstract void customize(final Context<T,M,C> context, JPopupMenu menu);
+
+  /**
+   * Generates the context container.
+   *
+   * @param panel	the panel
+   * @param table	the table
+   * @param row		the row
+   * @return		the context
+   */
+  public Context<T,M,C> createContext(final DataContainerPanelWithContainerList<T,M,C> panel, final ContainerTable<M,C> table, final int row) {
+    Context<T,M,C>	result;
+
+    result = new Context<>();
+    result.panel = panel;
+    result.table = table;
+    result.row   = row;
+    result.actualSelectedContainerIndices = panel.getActualSelectedContainerIndices(table, row);
+    result.visibleConts = panel.getTableModelContainers(true);
+    return result;
+  }
 }

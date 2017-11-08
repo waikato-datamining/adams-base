@@ -13,15 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Reports.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.timeseries.containerlistpopup;
 
 import adams.data.timeseries.Timeseries;
-import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer;
 import adams.gui.visualization.timeseries.TimeseriesContainer;
@@ -37,7 +36,6 @@ import java.util.List;
  * Views the reports of the timeseries containers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Reports
   extends AbstractContainerListPopupCustomizer<Timeseries, TimeseriesContainerManager, TimeseriesContainer>{
@@ -78,18 +76,16 @@ public class Reports
   /**
    * Returns a popup menu for the table of the container list.
    *
-   * @param panel	the affected panel
-   * @param table	the affected table
-   * @param row		the row the mouse is currently over
+   * @param context	the context
    * @param menu	the popup menu to customize
    */
   @Override
-  public void customize(DataContainerPanelWithContainerList<Timeseries, TimeseriesContainerManager, TimeseriesContainer> panel, ContainerTable<TimeseriesContainerManager, TimeseriesContainer> table, int row, JPopupMenu menu) {
+  public void customize(final Context<Timeseries,TimeseriesContainerManager,TimeseriesContainer> context, JPopupMenu menu) {
     JMenuItem				item;
     final List<TimeseriesContainer>	visibleConts;
 
-    visibleConts = panel.getTableModelContainers(true);
+    visibleConts = context.visibleConts;
     item = new JMenuItem("Reports");
-    item.addActionListener((ActionEvent e) -> ((TimeseriesPanel) panel).showReports(visibleConts));
+    item.addActionListener((ActionEvent e) -> ((TimeseriesPanel) context.panel).showReports(visibleConts));
   }
 }

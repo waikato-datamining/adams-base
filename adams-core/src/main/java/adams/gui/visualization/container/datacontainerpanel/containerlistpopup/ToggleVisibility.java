@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ToggleVisibility.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.container.datacontainerpanel.containerlistpopup;
@@ -26,7 +26,6 @@ import adams.gui.scripting.Invisible;
 import adams.gui.scripting.Visible;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
-import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.VisibilityContainer;
 import adams.gui.visualization.container.VisibilityContainerManager;
@@ -41,7 +40,6 @@ import java.awt.event.ActionEvent;
  * For toggling the visibility.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ToggleVisibility<T extends DataContainer, M extends AbstractContainerManager, C extends AbstractContainer>
   extends AbstractContainerListPopupCustomizer<T,M,C> {
@@ -82,40 +80,38 @@ public class ToggleVisibility<T extends DataContainer, M extends AbstractContain
   /**
    * Returns a popup menu for the table of the container list.
    *
-   * @param panel	the affected panel
-   * @param table	the affected table
-   * @param row		the row the mouse is currently over
+   * @param context	the context
    * @param menu	the popup menu to customize
    */
   @Override
-  public void customize(final DataContainerPanelWithContainerList<T,M,C> panel, final ContainerTable<M,C> table, final int row, JPopupMenu menu) {
+  public void customize(final Context<T,M,C> context, JPopupMenu menu) {
     JMenuItem	item;
     final int[] 	indices;
 
-    indices = panel.getActualSelectedContainerIndices(table, row);
+    indices = context.actualSelectedContainerIndices;
     item    = new JMenuItem("Toggle visibility");
     item.addActionListener((ActionEvent e) -> {
       TIntList visible = new TIntArrayList();
       TIntList invisible = new TIntArrayList();
       for (int index: indices) {
-	if (((VisibilityContainer) panel.getContainerManager().get(index)).isVisible())
+	if (((VisibilityContainer) context.panel.getContainerManager().get(index)).isVisible())
 	  invisible.add(index);
 	else
 	  visible.add(index);
       }
       Range range = new Range();
-      range.setMax(panel.getContainerManager().count());
+      range.setMax(context.panel.getContainerManager().count());
       if (invisible.size() > 0) {
 	range.setIndices(invisible.toArray());
-	panel.getScriptingEngine().add(
-	  panel,
-	  panel.processAction(Invisible.ACTION) + " " + range.getRange());
+	context.panel.getScriptingEngine().add(
+	  context.panel,
+	  context.panel.processAction(Invisible.ACTION) + " " + range.getRange());
       }
       if (visible.size() > 0) {
 	range.setIndices(visible.toArray());
-	panel.getScriptingEngine().add(
-	  panel,
-	  panel.processAction(Visible.ACTION) + " " + range.getRange());
+	context.panel.getScriptingEngine().add(
+	  context.panel,
+	  context.panel.processAction(Visible.ACTION) + " " + range.getRange());
       }
     });
     menu.add(item);

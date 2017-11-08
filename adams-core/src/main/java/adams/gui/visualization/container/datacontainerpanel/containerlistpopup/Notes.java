@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Notes.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.container.datacontainerpanel.containerlistpopup;
@@ -24,7 +24,6 @@ import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
-import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 
 import javax.swing.JMenuItem;
@@ -36,7 +35,6 @@ import java.util.List;
  * For displaying the notes of the selected containers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Notes<T extends DataContainer, M extends AbstractContainerManager, C extends AbstractContainer>
   extends AbstractContainerListPopupCustomizer<T,M,C> {
@@ -81,19 +79,17 @@ public class Notes<T extends DataContainer, M extends AbstractContainerManager, 
   /**
    * Returns a popup menu for the table of the container list.
    *
-   * @param panel	the affected panel
-   * @param table	the affected table
-   * @param row		the row the mouse is currently over
+   * @param context	the context
    * @param menu	the popup menu to customize
    */
   @Override
-  public void customize(final DataContainerPanelWithContainerList<T,M,C> panel, final ContainerTable<M,C> table, final int row, JPopupMenu menu) {
+  public void customize(final Context<T,M,C> context, JPopupMenu menu) {
     JMenuItem		item;
     final List<C> 	visibleConts;
 
-    visibleConts = panel.getTableModelContainers(true);
+    visibleConts = context.visibleConts;
     item = new JMenuItem("Notes");
-    item.addActionListener((ActionEvent e) -> panel.showNotes(visibleConts));
+    item.addActionListener((ActionEvent e) -> context.panel.showNotes(visibleConts));
     menu.add(item);
   }
 }

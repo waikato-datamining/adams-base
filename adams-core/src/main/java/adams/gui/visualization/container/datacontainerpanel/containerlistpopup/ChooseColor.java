@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ChooseColor.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.container.datacontainerpanel.containerlistpopup;
@@ -25,7 +25,6 @@ import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.ColorContainerManager;
-import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.NamedContainer;
 
@@ -39,7 +38,6 @@ import java.awt.event.ActionEvent;
  * For choosing color for containers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ChooseColor<T extends DataContainer, M extends AbstractContainerManager, C extends AbstractContainer>
   extends AbstractContainerListPopupCustomizer<T,M,C> {
@@ -80,36 +78,34 @@ public class ChooseColor<T extends DataContainer, M extends AbstractContainerMan
   /**
    * Returns a popup menu for the table of the container list.
    *
-   * @param panel	the affected panel
-   * @param table	the affected table
-   * @param row		the row the mouse is currently over
+   * @param context	the context
    * @param menu	the popup menu to customize
    */
   @Override
-  public void customize(final DataContainerPanelWithContainerList<T,M,C> panel, final ContainerTable<M,C> table, final int row, JPopupMenu menu) {
+  public void customize(final Context<T,M,C> context, JPopupMenu menu) {
     JMenuItem		item;
     final int[] 	indices;
 
-    indices = panel.getActualSelectedContainerIndices(table, row);
+    indices = context.actualSelectedContainerIndices;
     item    = new JMenuItem("Choose color...");
     item.addActionListener((ActionEvent e) -> {
       String msg = "Choose color";
       C cont;
       Color color = Color.BLUE;
       if (indices.length == 1) {
-        cont = (C) panel.getContainerManager().get(indices[0]);
+        cont = (C) context.panel.getContainerManager().get(indices[0]);
         if (cont instanceof NamedContainer)
           msg += " for " + ((NamedContainer) cont).getID();
         color = ((ColorContainer) cont).getColor();
       }
       Color c = JColorChooser.showDialog(
-        panel,
+        context.panel,
         msg,
         color);
       if (c == null)
         return;
       for (int index : indices)
-        ((ColorContainer) panel.getContainerManager().get(index)).setColor(c);
+        ((ColorContainer) context.panel.getContainerManager().get(index)).setColor(c);
     });
     menu.add(item);
   }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Remove.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.container.datacontainerpanel.containerlistpopup;
@@ -23,7 +23,6 @@ package adams.gui.visualization.container.datacontainerpanel.containerlistpopup;
 import adams.data.container.DataContainer;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
-import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 
 import javax.swing.JMenuItem;
@@ -34,7 +33,6 @@ import java.awt.event.ActionEvent;
  * For removing the selected containers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Remove<T extends DataContainer, M extends AbstractContainerManager, C extends AbstractContainer>
   extends AbstractContainerListPopupCustomizer<T,M,C> {
@@ -75,19 +73,17 @@ public class Remove<T extends DataContainer, M extends AbstractContainerManager,
   /**
    * Returns a popup menu for the table of the container list.
    *
-   * @param panel	the affected panel
-   * @param table	the affected table
-   * @param row		the row the mouse is currently over
+   * @param context	the context
    * @param menu	the popup menu to customize
    */
   @Override
-  public void customize(final DataContainerPanelWithContainerList<T,M,C> panel, final ContainerTable<M,C> table, final int row, JPopupMenu menu) {
+  public void customize(final Context<T,M,C> context, JPopupMenu menu) {
     JMenuItem		item;
     final int[] 	indices;
 
-    indices = panel.getActualSelectedContainerIndices(table, row);
+    indices = context.actualSelectedContainerIndices;
     item    = new JMenuItem("Remove");
-    item.addActionListener((ActionEvent e) -> panel.getContainerList().getTable().removeContainers(indices));
+    item.addActionListener((ActionEvent e) -> context.panel.getContainerList().getTable().removeContainers(indices));
     menu.add(item);
   }
 }

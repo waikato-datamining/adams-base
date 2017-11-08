@@ -13,15 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ViewAsTable.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.sequence.containerlistpopup;
 
 import adams.data.sequence.XYSequence;
-import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer;
 import adams.gui.visualization.sequence.XYSequenceContainer;
@@ -36,7 +35,6 @@ import java.awt.event.ActionEvent;
  * Views the selected sequence as table.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ViewAsTable
   extends AbstractContainerListPopupCustomizer<XYSequence, XYSequenceContainerManager, XYSequenceContainer>{
@@ -77,19 +75,17 @@ public class ViewAsTable
   /**
    * Returns a popup menu for the table of the container list.
    *
-   * @param panel	the affected panel
-   * @param table	the affected table
-   * @param row		the row the mouse is currently over
+   * @param context	the context
    * @param menu	the popup menu to customize
    */
   @Override
-  public void customize(DataContainerPanelWithContainerList<XYSequence, XYSequenceContainerManager, XYSequenceContainer> panel, ContainerTable<XYSequenceContainerManager, XYSequenceContainer> table, int row, JPopupMenu menu) {
+  public void customize(final Context<XYSequence,XYSequenceContainerManager,XYSequenceContainer> context, JPopupMenu menu) {
     JMenuItem		item;
     final int[]		indices;
 
-    indices = panel.getActualSelectedContainerIndices(table, row);
+    indices = context.actualSelectedContainerIndices;
     item = new JMenuItem("View as table");
     item.setEnabled(indices.length == 1);
-    item.addActionListener((ActionEvent e) -> ((XYSequencePanel) panel).viewSequence(panel.getContainerManager().get(indices[0])));
+    item.addActionListener((ActionEvent e) -> ((XYSequencePanel) context.panel).viewSequence(context.panel.getContainerManager().get(indices[0])));
   }
 }

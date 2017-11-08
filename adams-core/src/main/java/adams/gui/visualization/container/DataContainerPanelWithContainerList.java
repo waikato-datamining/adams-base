@@ -27,6 +27,7 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
 import adams.gui.visualization.container.datacontainerpanel.PopupCustomizerComparator;
 import adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer;
+import adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer.Context;
 import adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer;
 import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.PopupMenuCustomizer;
@@ -244,18 +245,22 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
   public BasePopupMenu getContainerListPopupMenu(final ContainerTable<M,C> table, final int row) {
     BasePopupMenu	result;
     String		group;
+    Context<T,M,C> 	context;
 
     result = new BasePopupMenu();
 
-    group = null;
+    group   = null;
+    context = null;
     for (AbstractContainerListPopupCustomizer customizer: m_ContainerListCustomizers) {
       if (!customizer.handles(this))
 	continue;
+      if (context == null)
+        context = customizer.createContext(this, table, row);
       if (group != null) {
 	if (!group.equals(customizer.getGroup()))
 	  result.addSeparator();
       }
-      customizer.customize(this, table, row, result);
+      customizer.customize(context, result);
       group = customizer.getGroup();
     }
 

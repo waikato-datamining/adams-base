@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StoreColorInReport.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.container.datacontainerpanel.containerlistpopup;
@@ -25,7 +25,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.ColorContainerManager;
-import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 
 import javax.swing.JMenuItem;
@@ -36,7 +35,6 @@ import java.awt.event.ActionEvent;
  * For storing the current color in the report.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StoreColorInReport<T extends DataContainer, M extends AbstractContainerManager, C extends AbstractContainer>
   extends AbstractContainerListPopupCustomizer<T,M,C> {
@@ -77,24 +75,22 @@ public class StoreColorInReport<T extends DataContainer, M extends AbstractConta
   /**
    * Returns a popup menu for the table of the container list.
    *
-   * @param panel	the affected panel
-   * @param table	the affected table
-   * @param row		the row the mouse is currently over
+   * @param context	the context
    * @param menu	the popup menu to customize
    */
   @Override
-  public void customize(final DataContainerPanelWithContainerList<T,M,C> panel, final ContainerTable<M,C> table, final int row, JPopupMenu menu) {
+  public void customize(final Context<T,M,C> context, JPopupMenu menu) {
     JMenuItem		item;
     final int[] 	indices;
 
-    indices = panel.getActualSelectedContainerIndices(table, row);
+    indices = context.actualSelectedContainerIndices;
     item    = new JMenuItem("Store color in report...");
     item.addActionListener((ActionEvent e) -> {
       String name = GUIHelper.showInputDialog(
-        panel, "Please enter the field name for storing the color");
+        context.panel, "Please enter the field name for storing the color");
       if (name == null)
         return;
-      panel.storeColorInReport(indices, name);
+      context.panel.storeColorInReport(indices, name);
     });
     menu.add(item);
   }

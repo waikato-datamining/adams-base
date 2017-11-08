@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HideAll.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.container.datacontainerpanel.containerlistpopup;
@@ -25,7 +25,6 @@ import adams.data.container.DataContainer;
 import adams.gui.scripting.Invisible;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
-import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.VisibilityContainerManager;
 
@@ -37,7 +36,6 @@ import java.awt.event.ActionEvent;
  * For hiding all containers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HideAll<T extends DataContainer, M extends AbstractContainerManager, C extends AbstractContainer>
   extends AbstractContainerListPopupCustomizer<T,M,C> {
@@ -78,25 +76,23 @@ public class HideAll<T extends DataContainer, M extends AbstractContainerManager
   /**
    * Returns a popup menu for the table of the container list.
    *
-   * @param panel	the affected panel
-   * @param table	the affected table
-   * @param row		the row the mouse is currently over
+   * @param context	the context
    * @param menu	the popup menu to customize
    */
   @Override
-  public void customize(final DataContainerPanelWithContainerList<T,M,C> panel, final ContainerTable<M,C> table, final int row, JPopupMenu menu) {
+  public void customize(final Context<T,M,C> context, JPopupMenu menu) {
     JMenuItem	item;
 
     item = new JMenuItem("Hide all");
     item.addActionListener((ActionEvent e) -> {
-      int[] list = panel.getTableModelIndices(true);
+      int[] list = context.panel.getTableModelIndices(true);
       if (list.length > 0) {
         Range range = new Range();
-        range.setMax(panel.getContainerManager().count());
+        range.setMax(context.panel.getContainerManager().count());
         range.setIndices(list);
-        panel.getScriptingEngine().add(
-          panel,
-          panel.processAction(Invisible.ACTION) + " " + range.getRange());
+        context.panel.getScriptingEngine().add(
+          context.panel,
+          context.panel.processAction(Invisible.ACTION) + " " + range.getRange());
       }
     });
     menu.add(item);

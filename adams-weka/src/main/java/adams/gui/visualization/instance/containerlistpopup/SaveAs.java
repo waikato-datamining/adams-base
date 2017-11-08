@@ -13,15 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SaveAs.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instance.containerlistpopup;
 
 import adams.data.instance.Instance;
-import adams.gui.visualization.container.ContainerTable;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.containerlistpopup.AbstractContainerListPopupCustomizer;
 import adams.gui.visualization.instance.InstanceContainer;
@@ -36,7 +35,6 @@ import java.awt.event.ActionEvent;
  * Allows the saving of an instance container.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SaveAs
   extends AbstractContainerListPopupCustomizer<Instance, InstanceContainerManager, InstanceContainer>{
@@ -77,20 +75,18 @@ public class SaveAs
   /**
    * Returns a popup menu for the table of the container list.
    *
-   * @param panel	the affected panel
-   * @param table	the affected table
-   * @param row		the row the mouse is currently over
+   * @param context	the context
    * @param menu	the popup menu to customize
    */
   @Override
-  public void customize(DataContainerPanelWithContainerList<Instance, InstanceContainerManager, InstanceContainer> panel, ContainerTable<InstanceContainerManager, InstanceContainer> table, int row, JPopupMenu menu) {
+  public void customize(final Context<Instance,InstanceContainerManager,InstanceContainer> context, JPopupMenu menu) {
     JMenuItem		item;
     final int[]		indices;
 
-    indices = panel.getActualSelectedContainerIndices(table, row);
+    indices = context.actualSelectedContainerIndices;
     item    = new JMenuItem("Save as...");
     item.setEnabled(indices.length == 1);
-    item.addActionListener((ActionEvent e) -> ((InstancePanel) panel).saveInstance(panel.getContainerManager().get(indices[0])));
+    item.addActionListener((ActionEvent e) -> ((InstancePanel) context.panel).saveInstance(context.panel.getContainerManager().get(indices[0])));
     menu.add(item);
   }
 }
