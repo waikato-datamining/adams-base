@@ -21,6 +21,21 @@
 
 package adams.gui.goe;
 
+import adams.core.Utils;
+import adams.core.base.BaseObject;
+import adams.core.base.CronSchedule;
+import adams.core.option.AbstractOption;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BrowserHelper;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.ParameterPanel;
+import org.quartz.CronExpression;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
@@ -28,21 +43,10 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import org.quartz.CronExpression;
-
-import adams.core.Utils;
-import adams.core.base.BaseObject;
-import adams.core.base.CronSchedule;
-import adams.core.option.AbstractOption;
-import adams.gui.core.BrowserHelper;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.ParameterPanel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A PropertyEditor for CronSchedule objects.
@@ -190,6 +194,7 @@ public class CronScheduleEditor
     JButton 	buttonClose;
     JButton 	buttonOK;
     JButton	buttonHelp;
+    JButton	buttonTemplates;
     JButton 	buttonValidate;
 
     panelAll    = new JPanel(new BorderLayout());
@@ -234,6 +239,24 @@ public class CronScheduleEditor
       }
     });
     panelButtons.add(buttonHelp);
+
+    buttonTemplates = new JButton("...");
+    buttonTemplates.setToolTipText(getHelpDescription());
+    buttonTemplates.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        BasePopupMenu menu = new BasePopupMenu();
+        Map<String,CronSchedule> templates = CronSchedule.getTemplates();
+        List<String> items = new ArrayList<>(templates.keySet());
+        Collections.sort(items);
+        for (String item: items) {
+          JMenuItem menuitem = new JMenuItem(item);
+          menuitem.addActionListener((ActionEvent ae) -> setValue(templates.get(item)));
+          menu.add(menuitem);
+        }
+	menu.show(buttonTemplates, 0, buttonTemplates.getHeight());
+      }
+    });
+    panelButtons.add(buttonTemplates);
 
     buttonValidate = new JButton(GUIHelper.getIcon("validate.png"));
     buttonValidate.setToolTipText("Checks the validity of the expressions");

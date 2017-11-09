@@ -1,0 +1,17 @@
+# Contains predefined templates for common cron schedules
+#
+# Format:
+# <ID>.display=<text to display in GUI>
+# <ID>.schedule=<cron schedule>
+
+# every hour, on the hour
+everyhour.display=Every hour, on the hour
+everyhour.schedule=0 0 * * * ?
+
+# every minute, on the minute
+everymin.display=Every minute, on the minute
+everymin.schedule=0 * * * * ?
+
+# every 15 minutes
+every15min.display=Every 15 minutes
+every15min.schedule=0 0/15 * * * ?
