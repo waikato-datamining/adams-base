@@ -15,7 +15,7 @@
 
 /*
  * BaseDirectoryChooser.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -50,7 +50,7 @@ public class BaseDirectoryChooser
 
   /** for serialization. */
   private static final long serialVersionUID = -7252242971482953986L;
-  
+
   /** the bookmarks. */
   protected FileChooserBookmarksPanel m_PanelBookmarks;
 
@@ -129,11 +129,12 @@ public class BaseDirectoryChooser
     int			height;
 
     setRecentListVisible(false);
-   
+    setNavigationFieldVisible(true);
+
     accessory = createAccessoryPanel();
     if (accessory != null)
       setAccessory(accessory);
-    
+
     showBookmarks(GUIHelper.getBoolean("BaseDirectoryChooser.ShowBookmarks", false));
 
     width  = GUIHelper.getInteger("BaseDirectoryChooser.Width", 400);
@@ -144,7 +145,7 @@ public class BaseDirectoryChooser
 
   /**
    * Creates an accessory panel displayed next to the files.
-   * 
+   *
    * @return		the panel or null if none available
    */
   protected JComponent createAccessoryPanel() {
@@ -162,13 +163,13 @@ public class BaseDirectoryChooser
 
   /**
    * Either displays or hides the bookmarks.
-   * 
+   *
    * @param value	true if to show bookmarks
    */
   protected void showBookmarks(boolean value) {
     m_OneTouchPanel.setContentVisible(value);
   }
-  
+
   /**
    * Does nothing.
    *
@@ -238,12 +239,12 @@ public class BaseDirectoryChooser
   public PlaceholderDirectory getSelectedDirectory() {
     PlaceholderDirectory	result;
     File			file;
-    
+
     result = null;
     file   = getSelectedFile();
     if (file != null)
       result = new PlaceholderDirectory(file);
-    
+
     return result;
   }
 
@@ -306,7 +307,7 @@ public class BaseDirectoryChooser
     PlaceholderDirectory[]	result;
     File[]			files;
     int				i;
-    
+
     result = new PlaceholderDirectory[0];
     files  = getSelectedFiles();
     if (files.length > 0) {
@@ -314,7 +315,7 @@ public class BaseDirectoryChooser
       for (i = 0; i < files.length; i++)
 	result[i] = new PlaceholderDirectory(files[i]);
     }
-    
+
     return result;
   }
 
@@ -328,7 +329,7 @@ public class BaseDirectoryChooser
   public File getCurrentDirectory() {
     File	current;
 
-    current = super.getCurrentDirectory();
+    current = super.getSelectedFolder();
     if (current == null)
       return null;
     else
