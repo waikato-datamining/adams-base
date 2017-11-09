@@ -20,8 +20,6 @@
 
 package adams.gui.visualization.timeseries;
 
-import java.awt.Color;
-
 import adams.core.Constants;
 import adams.data.timeseries.Timeseries;
 import adams.gui.event.DataChangeEvent;
@@ -31,6 +29,8 @@ import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.DatabaseContainer;
 import adams.gui.visualization.container.NamedContainer;
 import adams.gui.visualization.container.VisibilityContainer;
+
+import java.awt.Color;
 
 /**
  * A container class for a timeseries and additional information.
@@ -196,36 +196,13 @@ public class TimeseriesContainer
   }
 
   /**
-   * Compares this object with the specified object for order.  Returns a
-   * negative integer, zero, or a positive integer as this object is less
-   * than, equal to, or greater than the specified object.
-   *
-   * @param   o the object to be compared.
-   * @return  a negative integer, zero, or a positive integer as this object
-   *		is less than, equal to, or greater than the specified object.
-   * @throws ClassCastException if the specified object's type prevents it
-   *         from being compared to this object.
-   */
-  @Override
-  public int compareTo(AbstractContainer o) {
-    TimeseriesContainer	c;
-
-    if (o == null)
-      return 1;
-
-    c = (TimeseriesContainer) o;
-
-    return getData().compareToHeader(c.getData());
-  }
-
-  /**
    * Returns the hashcode of the ID string.
    *
    * @return		the hashcode
    */
   @Override
   public int hashCode() {
-    return getID().hashCode();
+    return Long.toString(getData().getUniqueID()).hashCode();
   }
 
   /**

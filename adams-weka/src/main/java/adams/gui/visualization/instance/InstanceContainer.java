@@ -20,19 +20,19 @@
 
 package adams.gui.visualization.instance;
 
-import java.awt.Color;
-
 import adams.core.Constants;
 import adams.data.instance.Instance;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeEvent.Type;
-import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.AbstractContainer;
+import adams.gui.visualization.container.ColorContainer;
 import adams.gui.visualization.container.DatabaseContainer;
 import adams.gui.visualization.container.NamedContainer;
 import adams.gui.visualization.container.VisibilityContainer;
+
+import java.awt.Color;
 
 /**
  * A container class for a weka.core.Instance wrapped in a
@@ -201,34 +201,12 @@ public class InstanceContainer
   }
 
   /**
-   * Compares this object with the specified object for order.  Returns a
-   * negative integer, zero, or a positive integer as this object is less
-   * than, equal to, or greater than the specified object.
-   *
-   * @param   o the object to be compared.
-   * @return  a negative integer, zero, or a positive integer as this object
-   *		is less than, equal to, or greater than the specified object.
-   * @throws ClassCastException if the specified object's type prevents it
-   *         from being compared to this object.
-   */
-  public int compareTo(AbstractContainer o) {
-    InstanceContainer		c;
-
-    if (o == null)
-      return 1;
-
-    c = (InstanceContainer) o;
-
-    return getData().compareTo(c.getData());
-  }
-
-  /**
    * Returns the hashcode of the instance.
    *
    * @return		the hashcode
    */
   public int hashCode() {
-    return getData().hashCode();
+    return Long.toString(getData().getUniqueID()).hashCode();
   }
 
   /**
