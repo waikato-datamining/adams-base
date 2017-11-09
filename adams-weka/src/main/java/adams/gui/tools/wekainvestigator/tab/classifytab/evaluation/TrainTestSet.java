@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TrainTestSet.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -33,6 +33,7 @@ import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
@@ -174,6 +175,7 @@ public class TrainTestSet
     }
 
     caps = classifier.getCapabilities();
+    caps.enable(Capability.MISSING_CLASS_VALUES);  // necessary when just wanting to make predictions
     test = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
     try {
       if (!caps.test(test)) {

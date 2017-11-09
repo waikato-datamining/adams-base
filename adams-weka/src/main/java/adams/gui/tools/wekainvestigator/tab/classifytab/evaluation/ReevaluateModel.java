@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ReevaluateModel.java
  * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
@@ -39,6 +39,7 @@ import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
@@ -244,6 +245,7 @@ public class ReevaluateModel
     }
 
     caps = m_Model.getCapabilities();
+    caps.enable(Capability.MISSING_CLASS_VALUES);  // necessary when just wanting to make predictions
     try {
       if (!caps.test(data)) {
         if (caps.getFailReason() != null)
