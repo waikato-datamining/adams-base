@@ -21,10 +21,13 @@
 package adams.core.base;
 
 import adams.core.CloneHandler;
+import adams.core.Properties;
 import adams.core.Utils;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Super class for wrappers around classes like String, Integer, etc.
@@ -37,6 +40,13 @@ public abstract class BaseObject
 
   /** for serialization. */
   private static final long serialVersionUID = 4619009495177712405L;
+
+  public static final String SUFFIX_DISPLAY = ".display";
+
+  public static final String SUFFIX_VALUE = ".value";
+
+  /** the properties with the templates. */
+  protected static Map<Class,Properties> m_Properties;
 
   /** the internal object. */
   protected Comparable m_Internal;
@@ -309,5 +319,64 @@ public abstract class BaseObject
     }
     
     return (BaseObject[]) result;
+  }
+
+  /**
+   * Returns the predefined templates.<br>
+   *
+   * Properties file in same location as class, e.g.:<br>
+   * adams.core.base.BaseObject -> adams/core/base/BaseObject.props
+   *
+   * <br>
+   * Format of props file:
+   * <pre>
+   * ID.display=text to display in GUI
+   * ID.value=value to set
+   * </pre>
+   *
+   * @return		the templates
+   */
+  public static synchronized <T extends BaseObject> Map<String,T> getTemplates(Class<T> cls) {
+    Map<String,T>	result;
+    String		prefix;
+    String value;
+    String		display;
+    T 			test;
+    T 			inst;
+    String		filename;
+
+    result = new HashMap<>();
+
+    if (m_Properties == null)
+      m_Properties = new HashMap<>();
+
+    if (!m_Properties.containsKey(cls)) {
+      filename = cls.getName().replace(".", "/") + ".props";
+      try {
+        m_Properties.put(cls, Properties.read(filename));
+      }
+      catch (Exception e) {
+        m_Properties.put(cls, new Properties());
+      }
+    }
+
+    try {
+      test = cls.newInstance();
+      for (String key : m_Properties.get(cls).keySetAll(new BaseRegExp(".*" + BaseObject.SUFFIX_DISPLAY))) {
+	display = m_Properties.get(cls).getProperty(key);
+	prefix = key.replaceAll("\\" + SUFFIX_DISPLAY + "$", "");
+	value = m_Properties.get(cls).getProperty(prefix + SUFFIX_VALUE, "");
+	if (test.isValid(value)) {
+	  inst = cls.newInstance();
+	  inst.setValue(value);
+	  result.put(display, inst);
+	}
+      }
+    }
+    catch (Exception e) {
+      // ignored
+    }
+
+    return result;
   }
 }

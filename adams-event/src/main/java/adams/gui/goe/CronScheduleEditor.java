@@ -15,7 +15,7 @@
 
 /*
  * CronScheduleEditor.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -245,7 +245,7 @@ public class CronScheduleEditor
     buttonTemplates.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         BasePopupMenu menu = new BasePopupMenu();
-        Map<String,CronSchedule> templates = CronSchedule.getTemplates();
+        Map<String,CronSchedule> templates = BaseObject.getTemplates(CronSchedule.class);
         List<String> items = new ArrayList<>(templates.keySet());
         Collections.sort(items);
         for (String item: items) {
