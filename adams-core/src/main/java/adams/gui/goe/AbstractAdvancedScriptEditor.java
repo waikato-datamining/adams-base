@@ -15,7 +15,7 @@
 
 /*
  * AbstractAdvancedScriptEditor.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -27,6 +27,7 @@ import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.AbstractAdvancedScript;
 import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
+import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.DefaultTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.HelpFrame;
@@ -180,14 +181,14 @@ public class AbstractAdvancedScriptEditor
    */
   @Override
   protected JComponent createCustomEditor() {
-    JPanel		panelAll;
-    JPanel		panelBottom;
-    JPanel 		panelButtonsRight;
-    JPanel		panelButtonsLeft;
-    final JButton	buttonOptions;
-    JButton		buttonHelp;
-    JButton 		buttonOK;
-    JButton 		buttonClose;
+    JPanel			panelAll;
+    JPanel			panelBottom;
+    JPanel 			panelButtonsRight;
+    JPanel			panelButtonsLeft;
+    BaseButtonWithDropDownMenu	buttonOptions;
+    JButton			buttonHelp;
+    JButton 			buttonOK;
+    JButton 			buttonClose;
 
     panelAll = new JPanel(new BorderLayout());
     panelAll.setSize(getDefaultSize());
@@ -207,13 +208,8 @@ public class AbstractAdvancedScriptEditor
     panelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelBottom.add(panelButtonsLeft, BorderLayout.WEST);
     
-    buttonOptions = new JButton("...");
-    buttonOptions.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	JPopupMenu menu = createPopupMenu();
-	menu.show(buttonOptions, 0, buttonOptions.getHeight());
-      }
-    });
+    buttonOptions = new BaseButtonWithDropDownMenu("...");
+    buttonOptions.setDropDownMenu(createPopupMenu());
     panelButtonsLeft.add(buttonOptions);
     
     panelButtonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
