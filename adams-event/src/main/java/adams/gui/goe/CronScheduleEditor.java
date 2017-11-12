@@ -25,7 +25,7 @@ import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.CronSchedule;
 import adams.core.option.AbstractOption;
-import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -194,7 +194,7 @@ public class CronScheduleEditor
     JButton 	buttonClose;
     JButton 	buttonOK;
     JButton	buttonHelp;
-    JButton	buttonTemplates;
+    BaseButtonWithDropDownMenu	buttonTemplates;
     JButton 	buttonValidate;
 
     panelAll    = new JPanel(new BorderLayout());
@@ -240,22 +240,16 @@ public class CronScheduleEditor
     });
     panelButtons.add(buttonHelp);
 
-    buttonTemplates = new JButton("...");
+    buttonTemplates = new BaseButtonWithDropDownMenu("...");
     buttonTemplates.setToolTipText(getHelpDescription());
-    buttonTemplates.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        BasePopupMenu menu = new BasePopupMenu();
-        Map<String,CronSchedule> templates = BaseObject.getTemplates(CronSchedule.class);
-        List<String> items = new ArrayList<>(templates.keySet());
-        Collections.sort(items);
-        for (String item: items) {
-          JMenuItem menuitem = new JMenuItem(item);
-          menuitem.addActionListener((ActionEvent ae) -> setValue(templates.get(item)));
-          menu.add(menuitem);
-        }
-	menu.show(buttonTemplates, 0, buttonTemplates.getHeight());
-      }
-    });
+    Map<String,CronSchedule> templates = BaseObject.getTemplates(CronSchedule.class);
+    List<String> items = new ArrayList<>(templates.keySet());
+    Collections.sort(items);
+    for (String item: items) {
+      JMenuItem menuitem = new JMenuItem(item);
+      menuitem.addActionListener((ActionEvent ae) -> setValue(templates.get(item)));
+      buttonTemplates.addToMenu(menuitem);
+    }
     panelButtons.add(buttonTemplates);
 
     buttonValidate = new JButton(GUIHelper.getIcon("validate.png"));
