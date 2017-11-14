@@ -147,8 +147,14 @@ public abstract class AbstractMessageDigestBasedMonitor
     MessageCollection	errors;
     String		digest;
 
+    digest = null;
     errors = new MessageCollection();
-    digest = computeDigest(file, errors);
+    if (!file.exists())
+      errors.add("File does not exist: " + file);
+    else if (file.isDirectory())
+      errors.add("File points to a directory: " + file);
+    else
+      digest = computeDigest(file, errors);
 
     return errors.isEmpty() && (digest != null) && !m_Digest.equals(digest);
   }
