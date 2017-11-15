@@ -20,7 +20,7 @@
 
 package adams.data.objectfinder;
 
-import adams.data.image.AbstractImageContainer;
+import adams.data.report.Report;
 
 /**
  <!-- globalinfo-start -->
@@ -61,11 +61,11 @@ public class NullFinder
   /**
    * Performs the actual filtering of the objects in the report.
    *
-   * @param img		the image to filter
+   * @param report	the report to process
    * @return		the filtered image
    */
   @Override
-  protected int[] doFind(AbstractImageContainer img) {
+  protected int[] doFind(Report report) {
     return new int[0];
   }
 }

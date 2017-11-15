@@ -21,7 +21,7 @@
 package adams.data.objectfinder;
 
 import adams.core.base.BaseRegExp;
-import adams.data.image.AbstractImageContainer;
+import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import gnu.trove.list.TIntList;
@@ -156,18 +156,18 @@ public class ByMetaDataStringValue
   }
 
   /**
-   * Performs the actual finding of the objects in the report.
+   * Performs the actual filtering of the objects in the report.
    *
-   * @param img		the image to process
-   * @return		the indices
+   * @param report	the report to process
+   * @return		the filtered image
    */
   @Override
-  protected int[] doFind(AbstractImageContainer img) {
+  protected int[] doFind(Report report) {
     TIntList 		result;
     LocatedObjects 	objects;
 
     result  = new TIntArrayList();
-    objects = LocatedObjects.fromReport(img.getReport(), m_Prefix);
+    objects = LocatedObjects.fromReport(report, m_Prefix);
     for (LocatedObject obj: objects) {
       if (obj.getMetaData() != null) {
         if (obj.getMetaData().containsKey(m_Key)) {

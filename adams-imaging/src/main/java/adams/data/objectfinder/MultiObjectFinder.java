@@ -20,7 +20,7 @@
 package adams.data.objectfinder;
 
 import adams.core.QuickInfoHelper;
-import adams.data.image.AbstractImageContainer;
+import adams.data.report.Report;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
@@ -181,13 +181,13 @@ public class MultiObjectFinder
   }
 
   /**
-   * Returns the rows of interest in the spreadsheet.
+   * Performs the actual filtering of the objects in the report.
    *
-   * @param data	the dataset to inspect
-   * @return		the rows of interest
+   * @param report	the report to process
+   * @return		the filtered image
    */
   @Override
-  protected int[] doFind(AbstractImageContainer data) {
+  protected int[] doFind(Report report) {
     int[]	result;
     int[]	indicesArray;
     TIntSet	all;
@@ -196,7 +196,7 @@ public class MultiObjectFinder
     all = new TIntHashSet();
 
     for (i = 0; i < m_Finders.length; i++) {
-      indicesArray = m_Finders[i].find(data);
+      indicesArray = m_Finders[i].find(report);
       if (i == 0) {
 	all.addAll(indicesArray);
       }

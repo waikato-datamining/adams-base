@@ -20,7 +20,7 @@
 
 package adams.data.objectfinder;
 
-import adams.data.image.AbstractImageContainer;
+import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import gnu.trove.list.TIntList;
@@ -65,15 +65,15 @@ public class AllFinder
   /**
    * Performs the actual filtering of the objects in the report.
    *
-   * @param img		the image to filter
+   * @param report	the report to process
    * @return		the filtered image
    */
   @Override
-  protected int[] doFind(AbstractImageContainer img) {
+  protected int[] doFind(Report report) {
     TIntList		result;
     LocatedObjects	objs;
 
-    objs   = LocatedObjects.fromReport(img.getReport(), m_Prefix);
+    objs   = LocatedObjects.fromReport(report, m_Prefix);
     result = new TIntArrayList();
     for (LocatedObject obj: objs)
       result.add(obj.getIndex());

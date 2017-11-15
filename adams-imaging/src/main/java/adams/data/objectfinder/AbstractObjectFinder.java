@@ -21,7 +21,7 @@ package adams.data.objectfinder;
 
 import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
-import adams.data.image.AbstractImageContainer;
+import adams.data.report.Report;
 
 /**
  * Ancestor for finders that locate objects in the report of an image.
@@ -29,9 +29,9 @@ import adams.data.image.AbstractImageContainer;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public abstract class AbstractObjectFinder<T extends AbstractImageContainer>
+public abstract class AbstractObjectFinder
   extends AbstractOptionHandler
-  implements ObjectFinder<T>, QuickInfoSupporter {
+  implements ObjectFinder, QuickInfoSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 2092237222859238898L;
@@ -97,34 +97,34 @@ public abstract class AbstractObjectFinder<T extends AbstractImageContainer>
    * <br><br>
    * Default implementation returns null.
    *
-   * @param img		the image to check
+   * @param report  	the report to check
    * @return		null if successful check, otherwise error message
    */
-  protected String check(T img) {
+  protected String check(Report report) {
     return null;
   }
   
   /**
    * Performs the actual finding of the objects in the report.
    * 
-   * @param img		the image to process
+   * @param report  	the report to process
    * @return		the indices
    */
-  protected abstract int[] doFind(T img);
+  protected abstract int[] doFind(Report report);
   
   /**
    * Finds the objects in the report.
    * 
-   * @param img		the image to process
+   * @param report  	the report to process
    * @return		the indices
    */
-  public int[] find(T img) {
+  public int[] find(Report report) {
     String	msg;
 
-    msg = check(img);
+    msg = check(report);
     if (msg != null)
       throw new IllegalStateException(msg);
 
-    return doFind(img);
+    return doFind(report);
   }
 }

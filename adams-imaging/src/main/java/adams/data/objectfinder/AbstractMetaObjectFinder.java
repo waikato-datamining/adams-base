@@ -21,15 +21,14 @@
 package adams.data.objectfinder;
 
 import adams.core.QuickInfoHelper;
-import adams.data.image.AbstractImageContainer;
 
 /**
  * Ancestor for object finders that use a base finder.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractMetaObjectFinder<T extends AbstractImageContainer>
-  extends AbstractObjectFinder<T>{
+public abstract class AbstractMetaObjectFinder
+  extends AbstractObjectFinder {
 
   private static final long serialVersionUID = -9221045219962890073L;
 
