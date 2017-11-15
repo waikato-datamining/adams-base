@@ -87,6 +87,10 @@ adams.data.barcode.decode.AbstractBarcodeDecoder=\
 adams.data.barcode.encode.AbstractBarcodeEncoder=\
   adams.data.barcode.encode
 
+# the object filters
+adams.data.objectfilter.ObjectFilter=\
+  adams.data.objectfilter
+
 # the object finders
 adams.data.objectfinder.ObjectFinder=\
   adams.data.objectfinder

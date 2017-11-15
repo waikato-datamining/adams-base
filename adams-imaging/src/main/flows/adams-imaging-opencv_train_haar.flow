@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2017-08-01 14:32:23
+# Date: 2017-11-16 10:29:18
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade using annotated background images \\nand annotated images with objects." -flow-execution-listener adams.flow.execution.NullListener
@@ -46,7 +46,7 @@ adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade us
   adams.flow.source.CombineVariables -expression "\\n--> background images" -conversion adams.data.conversion.StringToString
   adams.flow.control.Tee -name info
    adams.flow.sink.CallableSink -callable Info
-  adams.flow.transformer.ExternalTransformer -name "extract images" -file ${FLOWS}/adams-imaging-ext_extract_objects.flow
+  adams.flow.transformer.ExternalTransformer -name "extract images" -file ${FLOWS}/adams-imaging-ext_extract_objects.flow -monitor adams.core.io.filechanged.NoChange
  adams.flow.control.Trigger -name "background file"
   adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{out_bg_dir} -regexp .*\\\\.([jJ][gG][pP]|[jJ][gG][eE][pP]|[pP][nN][gG]) -sorting SORT_BY_NAME"
   adams.flow.control.Trigger -name "remove old background file"
@@ -81,7 +81,7 @@ adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade us
   adams.flow.control.Continue -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.FileExists -file @{report} -generator adams.core.io.NullFilenameGenerator\""
   adams.flow.control.ConditionalTee -name "copy image" -condition "adams.flow.condition.bool.Expression -expression \"@{scale} = 1.0\""
    adams.flow.transformer.CopyFile -target-dir @{out_annotated_dir}
-  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
   adams.flow.control.Trigger -name "load report"
    adams.flow.source.Variable -var-name report -conversion adams.data.conversion.StringToString
    adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
@@ -95,7 +95,7 @@ adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade us
      adams.flow.source.CombineVariables -expression @{out_annotated_dir}/@{file_rel} -conversion adams.data.conversion.StringToString
      adams.flow.transformer.SetVariable -var-name outfile
     adams.flow.sink.ImageWriter -output @{outfile} -writer adams.data.io.output.JAIImageWriter
-   adams.flow.transformer.ScaleReportObjects -scale-x @{scale} -scale-y @{scale} -round true
+   adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Scale -scale-x @{scale} -scale-y @{scale} -round true"
    adams.flow.transformer.SetStorageValue -storage-name report
   adams.flow.transformer.SetStorageValue -storage-name image
   adams.flow.transformer.MatchReportFields -output-array true -regexp @{prefix_regexp}
