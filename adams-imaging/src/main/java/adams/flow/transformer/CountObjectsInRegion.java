@@ -21,13 +21,15 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import adams.data.objectfinder.ObjectsInRegion;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -591,51 +593,56 @@ public class CountObjectsInRegion
     Report		report;
     LocatedObjects 	objs;
     LocatedObject 	region;
-    boolean		add;
     double		overlap;
     double		count;
-    String		typeKey;
+    ObjectsInRegion	finder;
+    TIntSet 		indices;
 
     result = null;
 
     report = null;
-    if (m_TypeSuffix.startsWith("."))
-      typeKey = m_TypeSuffix.substring(1);
+    if (m_InputToken.hasPayload(Report.class))
+      report = m_InputToken.getPayload(Report.class);
+    else if (m_InputToken.hasPayload(ReportHandler.class))
+      report = m_InputToken.getPayload(ReportHandler.class).getReport();
     else
-      typeKey = m_TypeSuffix;
-
-    if (m_InputToken.getPayload() instanceof Report)
-      report = (Report) m_InputToken.getPayload();
-    else if (m_InputToken.getPayload() instanceof ReportHandler)
-      report = ((ReportHandler) m_InputToken.getPayload()).getReport();
-    else
-      result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload());
+      result = m_InputToken.unhandledData();
 
     if (report != null) {
+      // locate objects
+      finder = new ObjectsInRegion();
+      finder.setTop(m_Top);
+      finder.setLeft(m_Left);
+      finder.setHeight(m_Height);
+      finder.setWidth(m_Width);
+      finder.setPartialCounts(m_PartialCounts);
+      finder.setOneBased(m_OneBased);
+      finder.setPrefix(m_Prefix);
+      finder.setCheckType(m_CheckType);
+      finder.setTypeSuffix(m_TypeSuffix);
+      finder.setTypeFind(m_TypeFind);
+      indices = new TIntHashSet(finder.find(report));
+
+      // generate count
       count  = 0;
+      objs   = LocatedObjects.fromReport(report, m_Prefix);
       region = new LocatedObject(null, m_Left - (m_OneBased ? 0 : 1), m_Top - (m_OneBased ? 0 : 1), m_Width, m_Height);
       if (isLoggingEnabled())
 	getLogger().info("Region: " + region);
-      objs   = LocatedObjects.fromReport(report, m_Prefix);
-
       for (LocatedObject obj : objs) {
+        if (!indices.contains(obj.getIndex()))
+          continue;
+
 	if (isLoggingEnabled())
 	  getLogger().info("Object: " + obj);
-	add = true;
-	if (m_CheckType) {
-	  add = obj.getMetaData().containsKey(m_TypeSuffix) && m_TypeFind.isMatch(obj.getMetaData().get(typeKey).toString());
-	  if (isLoggingEnabled())
-	    getLogger().info("Type check: " + add);
-	}
-	if (add) {
-	  overlap = obj.overlapRatio(region);
-	  if (isLoggingEnabled())
-	    getLogger().info("Overlap: " + overlap);
-	  if (overlap == 1)
-	    count++;
-	  else if ((overlap < 1.0) && m_PartialCounts)
-	    count += overlap;
-	}
+
+	overlap = obj.overlapRatio(region);
+	if (isLoggingEnabled())
+	  getLogger().info("Overlap: " + overlap);
+	if (overlap == 1)
+	  count++;
+	else if ((overlap < 1.0) && m_PartialCounts)
+	  count += overlap;
       }
 
       if (isLoggingEnabled())
