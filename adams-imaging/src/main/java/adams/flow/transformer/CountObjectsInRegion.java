@@ -615,7 +615,7 @@ public class CountObjectsInRegion
       finder.setLeft(m_Left);
       finder.setHeight(m_Height);
       finder.setWidth(m_Width);
-      finder.setPartialCounts(m_PartialCounts);
+      finder.setPartial(m_PartialCounts);
       finder.setOneBased(m_OneBased);
       finder.setPrefix(m_Prefix);
       finder.setCheckType(m_CheckType);

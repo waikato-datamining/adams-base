@@ -30,7 +30,7 @@ import gnu.trove.list.array.TIntArrayList;
 
 /**
  <!-- globalinfo-start -->
- * Counts the objects that fall into the defined region.<br>
+ * Locates the objects that fall into the defined region.<br>
  * Partial hits can be considered as well.
  * <br><br>
  <!-- globalinfo-end -->
@@ -70,9 +70,8 @@ import gnu.trove.list.array.TIntArrayList;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  *
- * <pre>-partial-counts &lt;boolean&gt; (property: partialCounts)
- * &nbsp;&nbsp;&nbsp;If enabled, partial hits are counted as well (using their fraction in overlap
- * &nbsp;&nbsp;&nbsp;as count).
+ * <pre>-partial &lt;boolean&gt; (property: partial)
+ * &nbsp;&nbsp;&nbsp;If enabled, partial hits are included as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
@@ -120,7 +119,7 @@ public class ObjectsInRegion
   protected int m_Width;
 
   /** whether to include partial counts. */
-  protected boolean m_PartialCounts;
+  protected boolean m_Partial;
 
   /** whether report contains one-based coordinates. */
   protected boolean m_OneBased;
@@ -142,7 +141,7 @@ public class ObjectsInRegion
   @Override
   public String globalInfo() {
     return
-      "Counts the objects that fall into the defined region.\n"
+      "Locates the objects that fall into the defined region.\n"
 	+ "Partial hits can be considered as well.";
   }
 
@@ -170,7 +169,7 @@ public class ObjectsInRegion
       1, 1, null);
 
     m_OptionManager.add(
-      "partial-counts", "partialCounts",
+      "partial", "partial",
       false);
 
     m_OptionManager.add(
@@ -319,8 +318,8 @@ public class ObjectsInRegion
    *
    * @param value 	true if to include partial hits
    */
-  public void setPartialCounts(boolean value) {
-    m_PartialCounts = value;
+  public void setPartial(boolean value) {
+    m_Partial = value;
     reset();
   }
 
@@ -329,8 +328,8 @@ public class ObjectsInRegion
    *
    * @return 		true if to count partial hits
    */
-  public boolean getPartialCounts() {
-    return m_PartialCounts;
+  public boolean getPartial() {
+    return m_Partial;
   }
 
   /**
@@ -339,8 +338,8 @@ public class ObjectsInRegion
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String partialCountsTipText() {
-    return "If enabled, partial hits are counted as well (using their fraction in overlap as count).";
+  public String partialTipText() {
+    return "If enabled, partial hits are included as well.";
   }
 
   /**
@@ -473,7 +472,7 @@ public class ObjectsInRegion
     result += QuickInfoHelper.toString(this, "top", m_Top, ", t: ");
     result += QuickInfoHelper.toString(this, "width", m_Width, ", w: ");
     result += QuickInfoHelper.toString(this, "height", m_Height, ", h: ");
-    result += QuickInfoHelper.toString(this, "partialCounts", m_PartialCounts, "partial", ", ");
+    result += QuickInfoHelper.toString(this, "partialCounts", m_Partial, "partial", ", ");
     if (m_CheckType) {
       result += QuickInfoHelper.toString(this, "typeSuffix", m_TypeSuffix.isEmpty() ? "-missing-" : m_TypeSuffix, ", type suffix: ");
       result += QuickInfoHelper.toString(this, "typeFind", m_TypeFind.isEmpty() ? "-missing-" : m_TypeFind, ", type find: ");
@@ -523,7 +522,7 @@ public class ObjectsInRegion
 	  getLogger().info("Overlap: " + overlap);
 	if (overlap == 1)
 	  result.add(obj.getIndex());
-	else if ((overlap < 1.0) && m_PartialCounts)
+	else if ((overlap < 1.0) && m_Partial)
 	  result.add(obj.getIndex());
       }
     }
