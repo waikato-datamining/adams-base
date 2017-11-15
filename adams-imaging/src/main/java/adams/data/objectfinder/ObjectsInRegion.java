@@ -118,7 +118,7 @@ public class ObjectsInRegion
   /** the width of the window. */
   protected int m_Width;
 
-  /** whether to include partial counts. */
+  /** whether to include partial hits. */
   protected boolean m_Partial;
 
   /** whether report contains one-based coordinates. */
