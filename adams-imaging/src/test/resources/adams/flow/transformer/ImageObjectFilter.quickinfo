@@ -1,1 +1,1 @@
-finder: ByMetaDataStringValue
+finder: AllFinder, filter: PassThrough
