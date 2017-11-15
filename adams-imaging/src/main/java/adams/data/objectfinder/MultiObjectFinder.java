@@ -20,7 +20,7 @@
 package adams.data.objectfinder;
 
 import adams.core.QuickInfoHelper;
-import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
@@ -186,13 +186,13 @@ public class MultiObjectFinder
   }
 
   /**
-   * Performs the actual filtering of the objects in the report.
+   * Performs the actual finding of the objects in the list.
    *
-   * @param report	the report to process
-   * @return		the filtered image
+   * @param objects  	the list of objects to process
+   * @return		the indices
    */
   @Override
-  protected int[] doFind(Report report) {
+  protected int[] doFind(LocatedObjects objects) {
     int[]	result;
     int[]	indicesArray;
     TIntSet	all;
@@ -201,7 +201,7 @@ public class MultiObjectFinder
     all = new TIntHashSet();
 
     for (i = 0; i < m_Finders.length; i++) {
-      indicesArray = m_Finders[i].find(report);
+      indicesArray = m_Finders[i].find(objects);
       if (i == 0) {
 	all.addAll(indicesArray);
       }

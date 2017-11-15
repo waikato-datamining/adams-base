@@ -22,7 +22,6 @@ package adams.data.objectfinder;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
-import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import gnu.trove.list.TIntList;
@@ -482,15 +481,14 @@ public class ObjectsInRegion
   }
 
   /**
-   * Performs the actual finding of the objects in the report.
+   * Performs the actual finding of the objects in the list.
    *
-   * @param report  	the report to process
+   * @param objects  	the list of objects to process
    * @return		the indices
    */
   @Override
-  protected int[] doFind(Report report) {
+  protected int[] doFind(LocatedObjects objects) {
     TIntList		result;
-    LocatedObjects 	objs;
     LocatedObject 	region;
     boolean		add;
     double		overlap;
@@ -505,9 +503,8 @@ public class ObjectsInRegion
     region = new LocatedObject(null, m_Left - (m_OneBased ? 0 : 1), m_Top - (m_OneBased ? 0 : 1), m_Width, m_Height);
     if (isLoggingEnabled())
       getLogger().info("Region: " + region);
-    objs = LocatedObjects.fromReport(report, m_Prefix);
 
-    for (LocatedObject obj : objs) {
+    for (LocatedObject obj : objects) {
       if (isLoggingEnabled())
 	getLogger().info("Object: " + obj);
       add = true;

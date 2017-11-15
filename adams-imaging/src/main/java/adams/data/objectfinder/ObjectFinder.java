@@ -22,6 +22,7 @@ package adams.data.objectfinder;
 import adams.core.QuickInfoSupporter;
 import adams.core.option.OptionHandler;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
  * Interface for finders that locate objects in the report of an image.
@@ -55,8 +56,16 @@ public interface ObjectFinder
   public String prefixTipText();
 
   /**
+   * Finds the objects in the list of objects.
+   *
+   * @param objects	the list of objects to process
+   * @return		the indices
+   */
+  public int[] find(LocatedObjects objects);
+
+  /**
    * Finds the objects in the report.
-   * 
+   *
    * @param report	the report to process
    * @return		the indices
    */

@@ -20,7 +20,7 @@
 
 package adams.data.objectfinder;
 
-import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
  <!-- globalinfo-start -->
@@ -59,13 +59,13 @@ public class NullFinder
   }
 
   /**
-   * Performs the actual filtering of the objects in the report.
+   * Performs the actual finding of the objects in the list.
    *
-   * @param report	the report to process
-   * @return		the filtered image
+   * @param objects  	the list of objects to process
+   * @return		the indices
    */
   @Override
-  protected int[] doFind(Report report) {
+  protected int[] doFind(LocatedObjects objects) {
     return new int[0];
   }
 }

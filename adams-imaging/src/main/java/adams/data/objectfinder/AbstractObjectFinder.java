@@ -23,6 +23,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
  * Ancestor for finders that locate objects in the report of an image.
@@ -96,21 +97,37 @@ public abstract class AbstractObjectFinder
    * <br><br>
    * Default implementation returns null.
    *
-   * @param report  	the report to check
+   * @param objects  	the list of objects to check
    * @return		null if successful check, otherwise error message
    */
-  protected String check(Report report) {
+  protected String check(LocatedObjects objects) {
     return null;
   }
-  
+
   /**
-   * Performs the actual finding of the objects in the report.
+   * Performs the actual finding of the objects in the list.
    * 
-   * @param report  	the report to process
+   * @param objects  	the list of objects to process
    * @return		the indices
    */
-  protected abstract int[] doFind(Report report);
-  
+  protected abstract int[] doFind(LocatedObjects objects);
+
+  /**
+   * Finds the objects in the list of objects.
+   *
+   * @param objects	the list of objects to process
+   * @return		the indices
+   */
+  public int[] find(LocatedObjects objects) {
+    String	msg;
+
+    msg = check(objects);
+    if (msg != null)
+      throw new IllegalStateException(msg);
+
+    return doFind(objects);
+  }
+
   /**
    * Finds the objects in the report.
    * 
@@ -118,12 +135,9 @@ public abstract class AbstractObjectFinder
    * @return		the indices
    */
   public int[] find(Report report) {
-    String	msg;
+    if (report == null)
+      throw new IllegalStateException("No report provided!");
 
-    msg = check(report);
-    if (msg != null)
-      throw new IllegalStateException(msg);
-
-    return doFind(report);
+    return find(LocatedObjects.fromReport(report, m_Prefix));
   }
 }

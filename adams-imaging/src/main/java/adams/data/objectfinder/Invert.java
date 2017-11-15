@@ -20,7 +20,6 @@
 
 package adams.data.objectfinder;
 
-import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import gnu.trove.list.TIntList;
@@ -72,21 +71,19 @@ public class Invert
   }
 
   /**
-   * Performs the actual filtering of the objects in the report.
+   * Performs the actual finding of the objects in the list.
    *
-   * @param report	the report to process
-   * @return		the filtered image
+   * @param objects  	the list of objects to process
+   * @return		the indices
    */
   @Override
-  protected int[] doFind(Report report) {
+  protected int[] doFind(LocatedObjects objects) {
     TIntList		result;
     TIntSet 		base;
-    LocatedObjects	objects;
     int			index;
 
     result  = new TIntArrayList();
-    base    = new TIntHashSet(m_ObjectFinder.find(report));
-    objects = LocatedObjects.fromReport(report, m_Prefix);
+    base    = new TIntHashSet(m_ObjectFinder.find(objects));
     for (LocatedObject obj: objects) {
       if (obj.getMetaData() != null) {
 	try {
