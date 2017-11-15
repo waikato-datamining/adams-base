@@ -23,7 +23,9 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.data.InPlaceProcessing;
 import adams.data.image.AbstractImageContainer;
-import adams.data.objectfinder.ByMetaDataStringValue;
+import adams.data.objectfilter.ObjectFilter;
+import adams.data.objectfilter.PassThrough;
+import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
@@ -32,7 +34,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
  <!-- globalinfo-start -->
- * Filters the objects in the attached report using the specified object finder.
+ * Uses the specified object finder to locate objects and then applies the the object filter to the located objects.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -87,11 +89,22 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  *
  * <pre>-finder &lt;adams.data.objectfinder.ObjectFinder&gt; (property: finder)
  * &nbsp;&nbsp;&nbsp;The object finder to use.
- * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.ByMetaDataStringValue
+ * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
+ * </pre>
+ *
+ * <pre>-filter &lt;adams.data.objectfilter.ObjectFilter&gt; (property: filter)
+ * &nbsp;&nbsp;&nbsp;The object filter to apply to the located objects.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.objectfilter.PassThrough
+ * </pre>
+ *
+ * <pre>-keep-all-objects &lt;boolean&gt; (property: keepAllObjects)
+ * &nbsp;&nbsp;&nbsp;If enabled, all objects are kept, ie the ones that weren't located by the
+ * &nbsp;&nbsp;&nbsp;object finder and the filtered ones.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
- * &nbsp;&nbsp;&nbsp;If enabled, no copy of the image/report is created before returning it.
+ * &nbsp;&nbsp;&nbsp;If enabled, no copy of the image&#47;report is created before returning it.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
@@ -111,6 +124,12 @@ public class ImageObjectFilter
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
 
+  /** the object filter to apply to the located objects. */
+  protected ObjectFilter m_Filter;
+
+  /** whether to keep all objects. */
+  protected boolean m_KeepAllObjects;
+
   /** whether to skip creating a copy of the image. */
   protected boolean m_NoCopy;
 
@@ -121,7 +140,7 @@ public class ImageObjectFilter
    */
   @Override
   public String globalInfo() {
-    return "Filters the objects in the attached report using the specified object finder.";
+    return "Uses the specified object finder to locate objects and then applies the the object filter to the located objects.";
   }
 
   /**
@@ -137,7 +156,15 @@ public class ImageObjectFilter
 
     m_OptionManager.add(
       "finder", "finder",
-      new ByMetaDataStringValue());
+      new AllFinder());
+
+    m_OptionManager.add(
+      "filter", "filter",
+      new PassThrough());
+
+    m_OptionManager.add(
+      "keep-all-objects", "keepAllObjects",
+      false);
 
     m_OptionManager.add(
       "no-copy", "noCopy",
@@ -203,6 +230,68 @@ public class ImageObjectFilter
   }
 
   /**
+   * Sets the filter to apply to the located objects.
+   *
+   * @param value	the filter
+   */
+  public void setFilter(ObjectFilter value) {
+    m_Filter = value;
+    reset();
+  }
+
+  /**
+   * Returns the filter to apply to the located objects.
+   *
+   * @return		the filter
+   */
+  public ObjectFilter getFilter() {
+    return m_Filter;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String filterTipText() {
+    return "The object filter to apply to the located objects.";
+  }
+
+  /**
+   * Sets whether to keep all objects, i.e., the ones that weren't
+   * located by the object finder and the filtered ones.
+   *
+   * @param value	true if to keep all objects
+   */
+  public void setKeepAllObjects(boolean value) {
+    m_KeepAllObjects = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to keep all objects, i.e., the ones that weren't
+   * located by the object finder and the filtered ones.
+   *
+   * @return		true if to keep all objects
+   */
+  public boolean getKeepAllObjects() {
+    return m_KeepAllObjects;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String keepAllObjectsTipText() {
+    return
+      "If enabled, all objects are kept, ie the ones that weren't "
+	+ "located by the object finder and the filtered ones.";
+  }
+
+  /**
    * Sets whether to skip creating a copy of the spreadsheet before setting value.
    *
    * @param value	true if to skip creating copy
@@ -261,6 +350,8 @@ public class ImageObjectFilter
     String	result;
 
     result  = QuickInfoHelper.toString(this, "finder", m_Finder, "finder: ");
+    result += QuickInfoHelper.toString(this, "filter", m_Filter, ", filter: ");
+    result += QuickInfoHelper.toString(this, "keepAllObjects", m_KeepAllObjects, "keep all", ", ");
     result += QuickInfoHelper.toString(this, "noCopy", m_NoCopy, "no copy", ", ");
 
     return result;
@@ -276,6 +367,7 @@ public class ImageObjectFilter
     String			result;
     int[]			indices;
     Report			report;
+    Report			newReport;
     AbstractImageContainer	img;
     AbstractImageContainer	output;
     LocatedObjects		objs;
@@ -283,7 +375,7 @@ public class ImageObjectFilter
 
     result  = null;
     try {
-      img  = (AbstractImageContainer) m_InputToken.getPayload();
+      img  = m_InputToken.getPayload(AbstractImageContainer.class);
       objs = LocatedObjects.fromReport(img.getReport(), m_Prefix);
       if (m_NoCopy)
         output = img;
@@ -291,24 +383,35 @@ public class ImageObjectFilter
         output = (AbstractImageContainer) img.getClone();
 
       // find objects of interest
-      indices = m_Finder.find(output);
+      indices = m_Finder.find(output.getReport());
 
-      // remove all old objects
+      // remove all old objects?
       report = output.getReport();
-      for (AbstractField field: report.getFields()) {
-        if (field.getName().startsWith(m_Prefix))
-          report.removeValue(field);
+      if (!m_KeepAllObjects) {
+	for (AbstractField field : report.getFields()) {
+	  if (field.getName().startsWith(m_Prefix))
+	    report.removeValue(field);
+	}
       }
 
-      // add new objects
+      // compile new objects
       newObjs = objs.subset(indices);
-      report.mergeWith(newObjs.toReport(m_Prefix));
+
+      // filter objects
+      newObjs = m_Filter.filter(newObjs);
+
+      // add objects to report
+      newReport = newObjs.toReport(m_Prefix);
+      for (AbstractField field: newReport.getFields()) {
+        report.addField(field);
+        report.setValue(field, newReport.getValue(field));
+      }
       output.setReport(report);
 
       m_OutputToken = new Token(output);
     }
     catch (Exception e) {
-      result = handleException("Failed to locate objects!", e);
+      result = handleException("Failed to filter objects!", e);
     }
 
     return result;
