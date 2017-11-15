@@ -13,17 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Grid.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.subimages;
+
+import adams.core.QuickInfoHelper;
+import adams.data.image.BufferedImageContainer;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.data.image.BufferedImageContainer;
 
 /**
  <!-- globalinfo-start -->
@@ -36,23 +37,22 @@ import adams.data.image.BufferedImageContainer;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-num-cols &lt;int&gt; (property: numCols)
  * &nbsp;&nbsp;&nbsp;The number of columns.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-num-rows &lt;int&gt; (property: numRows)
  * &nbsp;&nbsp;&nbsp;The number of rows.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Grid
   extends AbstractSubImagesGenerator {
@@ -65,13 +65,13 @@ public class Grid
 
   /** the key for the row. */
   public final static String KEY_ROW = "Row";
-  
+
   /** the number of columns to use. */
   protected int m_NumCols;
-  
+
   /** the number of rows to use. */
   protected int m_NumRows;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -90,12 +90,12 @@ public class Grid
     super.defineOptions();
 
     m_OptionManager.add(
-	    "num-cols", "numCols",
-	    1, 1, null);
+      "num-cols", "numCols",
+      1, 1, null);
 
     m_OptionManager.add(
-	    "num-rows", "numRows",
-	    1, 1, null);
+      "num-rows", "numRows",
+      1, 1, null);
   }
 
   /**
@@ -104,12 +104,9 @@ public class Grid
    * @param value	the number of columns
    */
   public void setNumCols(int value) {
-    if (value >= 1) {
+    if (getOptionManager().isValid("numCols", value)) {
       m_NumCols = value;
       reset();
-    }
-    else {
-      getLogger().warning("Number of columns must be >= 1, provided: " + value);
     }
   }
 
@@ -138,12 +135,9 @@ public class Grid
    * @param value	the number of rows
    */
   public void setNumRows(int value) {
-    if (value >= 1) {
+    if (getOptionManager().isValid("numRows", value)) {
       m_NumRows = value;
       reset();
-    }
-    else {
-      getLogger().warning("Number of rows must be >= 1, provided: " + value);
     }
   }
 
@@ -167,8 +161,24 @@ public class Grid
   }
 
   /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "numCols", m_NumCols, ", cols: ");
+    result += QuickInfoHelper.toString(this, "numRows", m_NumRows, ", rows: ");
+
+    return result;
+  }
+
+  /**
    * Performs the actual generation of the subimages.
-   * 
+   *
    * @param image	the image to process
    * @return		the list of subimages generated
    */
@@ -185,9 +195,9 @@ public class Grid
     int					y;
     int					width;
     int					height;
-    
-    result = new ArrayList<BufferedImageContainer>();
-    
+
+    result = new ArrayList<>();
+
     bimage = image.getImage();
     dw     = bimage.getWidth() / m_NumCols;
     dh     = bimage.getHeight() / m_NumRows;
@@ -201,25 +211,26 @@ public class Grid
 	width = bimage.getWidth() - x;
       else
 	width = dw;
-      
+
       for (h = 0; h < m_NumRows; h++) {
 	y = h * dh;
 	if (h == m_NumRows - 1)
 	  height = bimage.getHeight() - y;
 	else
 	  height = dh;
-	
+
 	if (isLoggingEnabled())
 	  getLogger().info("row=" + h + ", col=" + w + ", x=" + x + ", y=" + y + ", width=" + width + ", height=" + height);
-	
+
 	cont = (BufferedImageContainer) image.getHeader();
+	cont.setReport(transferObjects(cont.getReport(), x, y, width, height));
 	cont.setImage(bimage.getSubimage(x, y, width, height));
 	cont.getReport().setNumericValue(KEY_COLUMN, w);
 	cont.getReport().setNumericValue(KEY_ROW,    h);
 	result.add(cont);
       }
     }
-    
+
     return result;
   }
 }
