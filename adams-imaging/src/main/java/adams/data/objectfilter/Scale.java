@@ -41,14 +41,12 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;The factor for scaling x&#47;width.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
- * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
  *
  * <pre>-scale-y &lt;double&gt; (property: scaleY)
  * &nbsp;&nbsp;&nbsp;The factor for scaling y&#47;width.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
- * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
  *
  * <pre>-round &lt;boolean&gt; (property: round)
@@ -101,11 +99,11 @@ public class Scale
 
     m_OptionManager.add(
       "scale-x", "scaleX",
-      1.0, 0.0, 1.0);
+      1.0, 0.0, null);
 
     m_OptionManager.add(
       "scale-y", "scaleY",
-      1.0, 0.0, 1.0);
+      1.0, 0.0, null);
 
     m_OptionManager.add(
       "round", "round",
@@ -292,8 +290,8 @@ public class Scale
     for (LocatedObject obj: objects) {
       newObj = new LocatedObject(
         obj.getImage(),
-	obj.getX(),
-	obj.getY(),
+	(int) round(obj.getX() * m_ScaleX),
+	(int) round(obj.getY() * m_ScaleY),
 	(int) round(obj.getWidth() * m_ScaleX),
 	(int) round(obj.getHeight() * m_ScaleY),
 	obj.getMetaData());
