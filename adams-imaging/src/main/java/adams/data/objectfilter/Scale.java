@@ -27,9 +27,40 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
  <!-- globalinfo-start -->
+ * Scales the objects.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-scale-x &lt;double&gt; (property: scaleX)
+ * &nbsp;&nbsp;&nbsp;The factor for scaling x&#47;width.
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * &nbsp;&nbsp;&nbsp;maximum: 1.0
+ * </pre>
+ *
+ * <pre>-scale-y &lt;double&gt; (property: scaleY)
+ * &nbsp;&nbsp;&nbsp;The factor for scaling y&#47;width.
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * &nbsp;&nbsp;&nbsp;maximum: 1.0
+ * </pre>
+ *
+ * <pre>-round &lt;boolean&gt; (property: round)
+ * &nbsp;&nbsp;&nbsp;If enabled, the scaled values get round.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-rounding-type &lt;ROUND|CEILING|FLOOR&gt; (property: roundingType)
+ * &nbsp;&nbsp;&nbsp;The type of rounding to perform.
+ * &nbsp;&nbsp;&nbsp;default: ROUND
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
