@@ -19,6 +19,7 @@
  */
 package adams.data.objectfinder;
 
+import adams.core.QuickInfoHelper;
 import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.report.Report;
@@ -82,14 +83,12 @@ public abstract class AbstractObjectFinder
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <br>
-   * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return null;
+    return QuickInfoHelper.toString(this, "prefix", m_Prefix, "prefix: ");
   }
 
   /**

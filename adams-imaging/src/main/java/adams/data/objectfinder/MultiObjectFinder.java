@@ -177,7 +177,12 @@ public class MultiObjectFinder
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "combination", m_Combination, "combination: ");
+    String  	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "combination", m_Combination, ", combination: ");
+
+    return result;
   }
 
   /**

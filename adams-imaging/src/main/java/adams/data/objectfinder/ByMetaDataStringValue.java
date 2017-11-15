@@ -20,6 +20,7 @@
 
 package adams.data.objectfinder;
 
+import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
@@ -153,6 +154,22 @@ public class ByMetaDataStringValue
    */
   public String regExpTipText() {
     return "The regular expression that the meta-data value must match.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String  	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "key", m_Key, ", key: ");
+    result += QuickInfoHelper.toString(this, "regExp", m_RegExp, ", regexp: ");
+
+    return result;
   }
 
   /**
