@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ScaleReportObjects.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -23,7 +23,9 @@ package adams.flow.transformer;
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.annotation.DeprecatedClass;
 import adams.data.RoundingType;
+import adams.data.objectfilter.Scale;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
@@ -121,6 +123,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@DeprecatedClass(useInstead = {ImageObjectFilter.class, Scale.class})
 public class ScaleReportObjects
   extends AbstractTransformer {
 
