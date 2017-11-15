@@ -522,7 +522,7 @@ public class ObjectsInRegion
 	  getLogger().info("Overlap: " + overlap);
 	if (overlap == 1)
 	  result.add(obj.getIndex());
-	else if ((overlap < 1.0) && m_Partial)
+	else if ((overlap > 0.0) && (overlap < 1.0) && m_Partial)
 	  result.add(obj.getIndex());
       }
     }

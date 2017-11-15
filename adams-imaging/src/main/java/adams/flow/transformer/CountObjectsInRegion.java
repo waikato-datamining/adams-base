@@ -641,7 +641,7 @@ public class CountObjectsInRegion
 	  getLogger().info("Overlap: " + overlap);
 	if (overlap == 1)
 	  count++;
-	else if ((overlap < 1.0) && m_PartialCounts)
+	else if ((overlap > 0.0) && (overlap < 1.0) && m_PartialCounts)
 	  count += overlap;
       }
 
