@@ -23,6 +23,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.image.BufferedImageContainer;
+import adams.data.objectfilter.Translate;
 import adams.data.objectfinder.ObjectsInRegion;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
@@ -179,6 +180,7 @@ public abstract class AbstractSubImagesGenerator
     ObjectsInRegion	finder;
     LocatedObjects	objects;
     LocatedObjects	newObjects;
+    Translate		trans;
     TIntSet		indices;
     boolean		anyObjects;
 
@@ -201,7 +203,9 @@ public abstract class AbstractSubImagesGenerator
     }
 
     if (anyObjects) {
-      // locate objects
+      objects = LocatedObjects.fromReport(oldReport, m_Prefix);
+
+      // locate objects in rectangle
       finder = new ObjectsInRegion();
       finder.setPrefix(m_Prefix);
       finder.setPartial(m_Partial);
@@ -209,9 +213,14 @@ public abstract class AbstractSubImagesGenerator
       finder.setTop((int) region.getY() + 1);
       finder.setWidth((int) region.getWidth());
       finder.setHeight((int) region.getHeight());
-      indices = new TIntHashSet(finder.find(oldReport));
+      indices = new TIntHashSet(finder.find(objects));
 
-      objects    = LocatedObjects.fromReport(oldReport, m_Prefix);
+      // translate objects
+      trans = new Translate();
+      trans.setX((int) -region.getX());
+      trans.setY((int) -region.getY());
+      objects = trans.filter(objects);
+
       newObjects = new LocatedObjects();
       for (LocatedObject obj: objects) {
         if (indices.contains(obj.getIndex()))
