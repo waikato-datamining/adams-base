@@ -205,8 +205,8 @@ public abstract class AbstractSubImagesGenerator
       finder = new ObjectsInRegion();
       finder.setPrefix(m_Prefix);
       finder.setPartial(m_Partial);
-      finder.setLeft((int) region.getX());
-      finder.setTop((int) region.getY());
+      finder.setLeft((int) region.getX() + 1);
+      finder.setTop((int) region.getY() + 1);
       finder.setWidth((int) region.getWidth());
       finder.setHeight((int) region.getHeight());
       indices = new TIntHashSet(finder.find(oldReport));
