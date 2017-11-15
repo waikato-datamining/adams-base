@@ -28,7 +28,10 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Splits the image using a grid of specified number of columns and rows.
+ * Splits the image using a grid of specified number of columns and rows.<br>
+ * Additional report values:<br>
+ * - Row for the row<br>
+ * - Column for the column
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -36,6 +39,16 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The report field prefix used in the report.
+ * &nbsp;&nbsp;&nbsp;default: Object.
+ * </pre>
+ *
+ * <pre>-partial &lt;boolean&gt; (property: partial)
+ * &nbsp;&nbsp;&nbsp;If enabled, partial hits are included as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-num-cols &lt;int&gt; (property: numCols)
@@ -79,7 +92,11 @@ public class Grid
    */
   @Override
   public String globalInfo() {
-    return "Splits the image using a grid of specified number of columns and rows.";
+    return
+      "Splits the image using a grid of specified number of columns and rows.\n"
+      + "Additional report values:\n"
+      + "- " + KEY_ROW + " for the row\n"
+      + "- " + KEY_COLUMN + " for the column";
   }
 
   /**
