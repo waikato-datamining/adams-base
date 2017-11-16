@@ -2372,6 +2372,37 @@ public class GUIHelper {
   }
 
   /**
+   * Narrows the rectangle by 20%.
+   *
+   * @param size  	the current size
+   * @return		the narrowed rectangle
+   */
+  public static Dimension makeNarrower(Dimension size) {
+    return makeWider(size, 0.2);
+  }
+
+  /**
+   * Narrows the rectangle by the specified percentage.
+   *
+   * @param size  	the current size
+   * @param percent 	the percentage to make it narrower (0-1)
+   * @return		the narrowed rectangle
+   */
+  public static Dimension makeNarrower(Dimension size, double percent) {
+    return new Dimension((int) (size.width * (1 - percent)), size.height);
+  }
+
+  /**
+   * Rotates the rectangle by 90 degrees.
+   *
+   * @param rect  	the rectangle
+   * @return		the rotated rectangle
+   */
+  public static Dimension rotate(Dimension rect) {
+    return new Dimension(rect.height, rect.width);
+  }
+
+  /**
    * Returns the scale factor for the display.
    *
    * @return		the scale factor
