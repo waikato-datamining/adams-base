@@ -13,19 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ViewStatistics.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import adams.data.statistics.InformativeStatistic;
 import adams.flow.core.ActorStatistic;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Displays statistics about the flow.
@@ -56,14 +58,14 @@ public class ViewStatistics
   protected void doActionPerformed(ActionEvent e) {
     ActorStatistic			stats;
     InformativeStatisticFactory.Dialog	dialog;
-    Vector<InformativeStatistic>	statsList;
+    List<InformativeStatistic> 		statsList;
 
     stats = null;
     if (m_State.getCurrentTree().getSelectedNode() != null)
       stats = new ActorStatistic(m_State.getCurrentTree().getSelectedNode().getFullActor());
     else if (m_State.getCurrentRoot() != null)
       stats = new ActorStatistic(m_State.getCurrentFlow());
-    statsList = new Vector<InformativeStatistic>();
+    statsList = new ArrayList<>();
     statsList.add(stats);
 
     if (m_State.getParentDialog() != null)
@@ -72,7 +74,7 @@ public class ViewStatistics
       dialog = InformativeStatisticFactory.getDialog(getParentFrame(), true);
     dialog.setStatistics(statsList);
     dialog.setTitle("Actor statistics");
-    dialog.setSize(650, 500);
+    dialog.setSize(GUIHelper.makeWider(GUIHelper.rotate(GUIHelper.getDefaultSmallDialogDimension())));
     dialog.setLocationRelativeTo(m_State);
     dialog.setVisible(true);
   }
