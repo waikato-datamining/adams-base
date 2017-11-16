@@ -15,7 +15,7 @@
 
 /*
  * Node.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -24,6 +24,7 @@ import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.base.BaseAnnotation.Tag;
 import adams.core.net.HtmlUtils;
+import adams.core.option.ArrayProducer;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
 import adams.flow.core.AbstractActor;
@@ -48,7 +49,6 @@ import java.util.List;
  * A custom tree node for actors.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Node
   extends LazyExpansionTreeNode
@@ -180,7 +180,7 @@ public class Node
       oldActor.destroy();
 
     // cache commandline for undo/redo
-    m_CommandLine = stripped.toCommandLine();
+    m_CommandLine = strippedCommandLine(stripped);
   }
 
   /**
@@ -727,6 +727,33 @@ public class Node
     }
 
     result.setParent(actor.getParent());
+
+    return result;
+  }
+
+  /**
+   * Returns the commandline of the stripped down version of the actor, i.e., for ActorHandlers,
+   * without any sub-actors.
+   *
+   * @param actor	the actor to strip down
+   * @return		the stripped down actor
+   * @see		ActorHandler
+   */
+  public static String strippedCommandLine(Actor actor) {
+    String		result;
+    ArrayProducer	producer;
+
+    // create command-line with no sub-actors
+    if (actor instanceof ActorHandler) {
+      producer = new ArrayProducer();
+      producer.setBlacklisted(new Class[]{AbstractActor[].class, AbstractActor.class, Actor[].class, Actor.class});
+      producer.produce(actor);
+      result = producer.toString();
+    }
+    // just generated commandline
+    else {
+      result = actor.toCommandLine();
+    }
 
     return result;
   }
