@@ -15,7 +15,7 @@
 
 /*
  * InformativeStatisticFactory.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.statistics;
@@ -38,7 +38,6 @@ import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -91,7 +90,7 @@ public class InformativeStatisticFactory {
       Iterator<String>	enm;
       int		i;
 
-      names = new ArrayList<String>();
+      names = new ArrayList<>();
       enm   = m_Statistic.statisticNames();
       while (enm.hasNext())
         names.add(enm.next());
@@ -290,10 +289,12 @@ public class InformativeStatisticFactory {
      * @param value	the underlying statistics
      */
     public synchronized void setStatistics(List<InformativeStatistic> value) {
-      m_Statistics = new ArrayList<InformativeStatistic>();
+      m_Statistics = new ArrayList<>();
 
-      if (value != null)
-        m_Statistics.addAll(value);
+      if (value != null) {
+	m_Statistics.addAll(value);
+        m_SplitPane.setLeftComponentHidden(true);
+      }
 
       update();
     }
@@ -392,11 +393,7 @@ public class InformativeStatisticFactory {
 
       buttonOK = new JButton("OK");
       buttonOK.setMnemonic('O');
-      buttonOK.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          m_Self.setVisible(false);
-        }
-      });
+      buttonOK.addActionListener((ActionEvent e) -> m_Self.setVisible(false));
       panel.add(buttonOK);
 
       pack();
