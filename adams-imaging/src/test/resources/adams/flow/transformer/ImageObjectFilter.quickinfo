@@ -1,1 +1,1 @@
-finder: AllFinder, filter: PassThrough
+finder: AllFinder (prefix: Object.), filter: PassThrough
