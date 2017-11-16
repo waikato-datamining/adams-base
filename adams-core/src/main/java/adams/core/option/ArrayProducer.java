@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ArrayProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -27,17 +27,19 @@ import java.util.Arrays;
  * Generates the string array format that is used on the command-line.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ArrayProducer
   extends AbstractRecursiveOptionProducer<String[],ArrayList<String>>
-  implements RecursiveOptionProducer {
+  implements RecursiveOptionProducer, BlacklistedOptionProducer {
 
   /** for serialization. */
   private static final long serialVersionUID = 2014571979604068762L;
 
   /** the output vector. */
   protected ArrayList<String> m_OutputList;
+
+  /** blacklisted classes. */
+  protected Class[] m_Blacklisted;
 
   /**
    * Returns a string describing the object.
@@ -56,7 +58,30 @@ public class ArrayProducer
   protected void initialize() {
     super.initialize();
 
-    m_OutputList = new ArrayList<String>();
+    m_OutputList  = new ArrayList<>();
+    m_Blacklisted = new Class[0];
+  }
+
+  /**
+   * Sets the classes to avoid.
+   *
+   * @param value	the classes
+   */
+  @Override
+  public void setBlacklisted(Class[] value) {
+    if (value == null)
+      value = new Class[0];
+    m_Blacklisted = value;
+  }
+
+  /**
+   * Returns the blacklisted classes.
+   *
+   * @return		the classes
+   */
+  @Override
+  public Class[] getBlacklisted() {
+    return m_Blacklisted;
   }
 
   /**
@@ -93,7 +118,7 @@ public class ArrayProducer
     Object		currValues;
     int			i;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     if (option.isVariableAttached() && !m_OutputVariableValues) {
       result.add(getOptionIdentifier(option));
@@ -103,8 +128,6 @@ public class ArrayProducer
       currValue = getCurrentValue(option);
 
       if (!isDefaultValue(option, currValue)) {
-	currValues = null;
-
 	if (currValue != null) {
 	  if (!option.isMultiple()) {
 	    currValues = Array.newInstance(option.getBaseClass(), 1);
@@ -146,7 +169,7 @@ public class ArrayProducer
     ArrayList<String>		nested;
     AbstractCommandLineHandler	handler;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     if (option.isVariableAttached() && !m_OutputVariableValues) {
       result.add(getOptionIdentifier(option));
@@ -156,8 +179,6 @@ public class ArrayProducer
       currValue = getCurrentValue(option);
 
       if (!isDefaultValue(option, currValue)) {
-	currValues = null;
-
 	if (currValue != null) {
 	  if (!option.isMultiple()) {
 	    currValues = Array.newInstance(option.getBaseClass(), 1);
@@ -170,7 +191,7 @@ public class ArrayProducer
 	  for (i = 0; i < Array.getLength(currValues); i++) {
 	    value = Array.get(currValues, i);
 	    result.add(getOptionIdentifier(option));
-	    nested = new ArrayList<String>();
+	    nested = new ArrayList<>();
 	    nested.add(value.getClass().getName());
 	    if (value instanceof OptionHandler) {
 	      m_Nesting.push(nested);
@@ -208,6 +229,24 @@ public class ArrayProducer
 
     m_OutputList.clear();
     m_OutputList.add(m_Input.getClass().getName());
+  }
+
+  /**
+   * Visits the option and obtains information from it.
+   *
+   * @param option	the current option
+   * @return		the last internal data structure that was generated
+   */
+  @Override
+  public ArrayList<String> doProduce(AbstractOption option) {
+    int		i;
+
+    for (i = 0; i < m_Blacklisted.length; i++) {
+      if (option.getReadMethod().getReturnType() == m_Blacklisted[i])
+	return null;
+    }
+
+    return super.doProduce(option);
   }
 
   /**
