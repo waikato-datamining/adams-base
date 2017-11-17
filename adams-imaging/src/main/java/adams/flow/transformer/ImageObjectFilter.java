@@ -21,13 +21,13 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.data.InPlaceProcessing;
 import adams.data.image.AbstractImageContainer;
 import adams.data.objectfilter.ObjectFilter;
 import adams.data.objectfilter.PassThrough;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
 import adams.data.report.AbstractField;
+import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -41,9 +41,11 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.MutableReportHandler<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -103,18 +105,12 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
- * &nbsp;&nbsp;&nbsp;If enabled, no copy of the image&#47;report is created before returning it.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageObjectFilter
-  extends AbstractTransformer
-  implements InPlaceProcessing {
+  extends AbstractTransformer {
 
   private static final long serialVersionUID = -3992867498417362738L;
 
@@ -129,9 +125,6 @@ public class ImageObjectFilter
 
   /** whether to keep all objects. */
   protected boolean m_KeepAllObjects;
-
-  /** whether to skip creating a copy of the image. */
-  protected boolean m_NoCopy;
 
   /**
    * Returns a string describing the object.
@@ -164,10 +157,6 @@ public class ImageObjectFilter
 
     m_OptionManager.add(
       "keep-all-objects", "keepAllObjects",
-      false);
-
-    m_OptionManager.add(
-      "no-copy", "noCopy",
       false);
   }
 
@@ -292,42 +281,13 @@ public class ImageObjectFilter
   }
 
   /**
-   * Sets whether to skip creating a copy of the spreadsheet before setting value.
-   *
-   * @param value	true if to skip creating copy
-   */
-  public void setNoCopy(boolean value) {
-    m_NoCopy = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to skip creating a copy of the spreadsheet before setting value.
-   *
-   * @return		true if copying is skipped
-   */
-  public boolean getNoCopy() {
-    return m_NoCopy;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String noCopyTipText() {
-    return "If enabled, no copy of the image/report is created before returning it.";
-  }
-
-  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{AbstractImageContainer.class};
+    return new Class[]{Report.class, MutableReportHandler.class};
   }
 
   /**
@@ -337,7 +297,7 @@ public class ImageObjectFilter
    */
   @Override
   public Class[] generates() {
-    return new Class[]{AbstractImageContainer.class};
+    return new Class[]{Report.class, MutableReportHandler.class};
   }
 
   /**
@@ -352,7 +312,6 @@ public class ImageObjectFilter
     result  = QuickInfoHelper.toString(this, "finder", m_Finder, "finder: ");
     result += QuickInfoHelper.toString(this, "filter", m_Filter, ", filter: ");
     result += QuickInfoHelper.toString(this, "keepAllObjects", m_KeepAllObjects, "keep all", ", ");
-    result += QuickInfoHelper.toString(this, "noCopy", m_NoCopy, "no copy", ", ");
 
     return result;
   }
@@ -365,6 +324,7 @@ public class ImageObjectFilter
   @Override
   protected String doExecute() {
     String			result;
+    MutableReportHandler	handler;
     int[]			indices;
     Report			report;
     Report			newReport;
@@ -374,44 +334,58 @@ public class ImageObjectFilter
     LocatedObjects		newObjs;
 
     result  = null;
-    try {
-      img  = m_InputToken.getPayload(AbstractImageContainer.class);
-      objs = LocatedObjects.fromReport(img.getReport(), m_Prefix);
-      if (m_NoCopy)
-        output = img;
-      else
-        output = (AbstractImageContainer) img.getClone();
+    report  = null;
+    handler = null;
+    if (m_InputToken.hasPayload(MutableReportHandler.class)) {
+      handler = m_InputToken.getPayload(MutableReportHandler.class);
+      report  = handler.getReport();
+    }
+    else if (m_InputToken.hasPayload(Report.class)) {
+      report = m_InputToken.getPayload(Report.class);
+    }
+    else {
+      result = m_InputToken.unhandledData();
+    }
 
-      // find objects of interest
-      indices = m_Finder.find(output.getReport());
+    if (result == null) {
+      try {
+	objs = LocatedObjects.fromReport(report, m_Prefix);
 
-      // remove all old objects?
-      report = output.getReport();
-      if (!m_KeepAllObjects) {
-	for (AbstractField field : report.getFields()) {
-	  if (field.getName().startsWith(m_Prefix))
-	    report.removeValue(field);
+	// find objects of interest
+	indices = m_Finder.find(report);
+
+	// remove all old objects?
+	if (!m_KeepAllObjects) {
+	  for (AbstractField field : report.getFields()) {
+	    if (field.getName().startsWith(m_Prefix))
+	      report.removeValue(field);
+	  }
+	}
+
+	// compile new objects
+	newObjs = objs.subset(indices);
+
+	// filter objects
+	newObjs = m_Filter.filter(newObjs);
+
+	// add objects to report
+	newReport = newObjs.toReport(m_Prefix);
+	for (AbstractField field : newReport.getFields()) {
+	  report.addField(field);
+	  report.setValue(field, newReport.getValue(field));
+	}
+
+	if (handler != null) {
+	  handler.setReport(report);
+	  m_OutputToken = new Token(handler);
+	}
+	else {
+	  m_OutputToken = new Token(report);
 	}
       }
-
-      // compile new objects
-      newObjs = objs.subset(indices);
-
-      // filter objects
-      newObjs = m_Filter.filter(newObjs);
-
-      // add objects to report
-      newReport = newObjs.toReport(m_Prefix);
-      for (AbstractField field: newReport.getFields()) {
-        report.addField(field);
-        report.setValue(field, newReport.getValue(field));
+      catch (Exception e) {
+	result = handleException("Failed to filter objects!", e);
       }
-      output.setReport(report);
-
-      m_OutputToken = new Token(output);
-    }
-    catch (Exception e) {
-      result = handleException("Failed to filter objects!", e);
     }
 
     return result;
