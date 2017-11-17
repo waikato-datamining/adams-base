@@ -136,6 +136,25 @@ public class LocatedObjects
   }
 
   /**
+   * Removes the objects with the specified indices.
+   *
+   * @param indices	the indices to remove (ie the indices stored with the object!)
+   */
+  public void remove(int[] indices) {
+    int		i;
+    TIntSet	set;
+
+    set = new TIntHashSet(indices);
+    i   = 0;
+    while (i < size()) {
+      if (set.contains(get(i).getIndex()))
+        remove(i);
+      else
+        i++;
+    }
+  }
+
+  /**
    * Returns the object with the specified index.
    *
    * @param index	the index to look for
