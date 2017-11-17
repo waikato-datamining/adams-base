@@ -13,18 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractImageOverlay.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
-
-import java.awt.Graphics;
 
 import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
+
+import java.awt.Graphics;
 
 /**
  * Abstract ancestor for image overlays.
@@ -115,7 +115,7 @@ public abstract class AbstractImageOverlay
    * @param g		the graphics context
    */
   public void paintOverlay(PaintPanel panel, Graphics g) {
-    if (m_Enabled)
+    if (m_Enabled && (panel != null))
       doPaintOverlay(panel, g);
   }
 
