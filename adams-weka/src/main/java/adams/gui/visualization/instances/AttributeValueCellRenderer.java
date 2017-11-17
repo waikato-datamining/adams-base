@@ -15,7 +15,7 @@
 
 /*
  * AttributeValueCellRenderer.java
- * Copyright (C) 2005-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2005-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -90,7 +90,9 @@ public class AttributeValueCellRenderer
         table, value, isSelected, hasFocus, row, column);
 
     InstancesTableModel model = null;
+    SortableAndSearchableTable  stable = null;
     if (table instanceof SortableAndSearchableTable) {
+      stable = (SortableAndSearchableTable) table;
       if (((SortableAndSearchableTable) table).getUnsortedModel() instanceof InstancesTableModel)
         model = (InstancesTableModel) ((SortableAndSearchableTable) table).getUnsortedModel();
     }
@@ -98,7 +100,7 @@ public class AttributeValueCellRenderer
     if (model != null) {
       // normal cell
       if (row >= 0) {
-        if (model.isMissingAt(row, column)) {
+        if (model.isMissingAt(stable.getActualRow(row), column)) {
 	  setToolTipText("missing");
 	  if (isSelected)
 	    result.setBackground(m_MissingColorSelected);
@@ -112,9 +114,9 @@ public class AttributeValueCellRenderer
 	  else
 	    result.setBackground(Color.WHITE);
         }
-        
+
         // alignment
-        if (model.getType(row, column) == Attribute.NUMERIC)
+        if (model.getType(stable.getActualRow(row), column) == Attribute.NUMERIC)
           setHorizontalAlignment(SwingConstants.RIGHT);
         else
           setHorizontalAlignment(SwingConstants.LEFT);
@@ -133,4 +135,3 @@ public class AttributeValueCellRenderer
     return result;
   }
 }
-
