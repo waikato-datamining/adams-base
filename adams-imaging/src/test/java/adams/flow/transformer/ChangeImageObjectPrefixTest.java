@@ -94,6 +94,16 @@ public class ChangeImageObjectPrefixTest
   }
 
   /**
+   * Returns the ignored line indices to use in the regression test.
+   *
+   * @return		the setups
+   */
+  @Override
+  protected int[] getRegressionIgnoredLineIndices() {
+    return new int[]{1};
+  }
+
+  /**
    * 
    * Returns a test suite.
    *
