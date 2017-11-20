@@ -1,5 +1,4 @@
 --> dumpfile.txt
-#Simple report format (= Java properties file format)
 Filename=C\:\\Users\\ZespriUser\\Desktop\\CET images to analyse\\Bay 1 19 May\\10. 2017_05_19_12_25_22_917_S_12_F_ON_L_OFF.jpg
 Filename\tDataType=S
 Height=4000.0

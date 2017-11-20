@@ -100,7 +100,7 @@ public class ChangeImageObjectPrefixTest
    */
   @Override
   protected int[] getRegressionIgnoredLineIndices() {
-    return new int[]{1};
+    return new int[]{0, 1};
   }
 
   /**
