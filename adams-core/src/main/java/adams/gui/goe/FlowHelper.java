@@ -24,7 +24,6 @@ import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableActorHandler;
 import adams.flow.core.ExternalActorHandler;
-import adams.flow.standalone.Standalones;
 import adams.gui.application.Child;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
@@ -217,7 +216,7 @@ public class FlowHelper {
 		result = ((adams.flow.standalone.AbstractDatabaseConnection) actor).getConnection();
 		break;
 	      }
-	      else if (actor instanceof ActorHandler) {
+	      if (actor instanceof ActorHandler) {
 		for (n = 0; n < current.getChildCount(); n++) {
 		  subactor = ((Node) current.getChildAt(n)).getActor();
 		  if (!subactor.getSkip() && (subactor.getClass().isAssignableFrom(actorCls))) {
@@ -410,7 +409,7 @@ public class FlowHelper {
 		if ((restrict == null) || isRestricted(actor.getClass(), restrict))
 		  result.add(current);
 	      }
-	      else if (actor instanceof ActorHandler) {
+	      if (actor instanceof ActorHandler) {
 		for (n = 0; n < current.getChildCount(); n++) {
 		  subactor = ((Node) current.getChildAt(n)).getActor();
 		  if (!subactor.getSkip() && ClassLocator.matches(type, subactor.getClass())) {
@@ -500,7 +499,7 @@ public class FlowHelper {
 	    if (!actor.getSkip() && ClassLocator.matches(type, actor.getClass())) {
 	      result.add(current);
 	    }
-	    else if (actor instanceof Standalones) {
+	    if (actor instanceof ActorHandler) {
 	      for (n = 0; n < current.getChildCount(); n++) {
 		subactor = ((Node) current.getChildAt(n)).getActor();
 		if (!subactor.getSkip() && ClassLocator.matches(type, subactor.getClass())) {
