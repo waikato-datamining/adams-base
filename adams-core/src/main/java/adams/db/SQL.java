@@ -15,7 +15,7 @@
 
 /*
  * SQL.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,6 +26,12 @@ import adams.core.base.BaseRegExp;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
+import gnu.trove.list.TDoubleList;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.TLongList;
+import gnu.trove.list.array.TDoubleArrayList;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.list.array.TLongArrayList;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -35,6 +41,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -626,6 +634,138 @@ public class SQL
       getLogger().log(Level.SEVERE, "Error executing 'doSelect': " + query, e);
       throw e;
     }
+  }
+
+  /**
+   * Selects all strings from the specified column. Can be distinct.
+   *
+   * @param distinct	whether values in column have to be distinct
+   * @param column	the string column to select
+   * @param tables	the tables to select from, ignored if null
+   * @param where	condition, can be null
+   * @return		resultset of data
+   * @throws Exception 	if something goes wrong
+   */
+  public List<String> selectString(boolean distinct, String column, String tables, String where) throws Exception {
+    List<String>	result;
+    ResultSet		rs;
+
+    result = new ArrayList<>();
+
+    rs = null;
+    try {
+      rs = doSelect(distinct, column, tables, where);
+      while (rs.next())
+	result.add(rs.getString(1));
+    }
+    catch (SQLException e) {
+      getLogger().log(Level.SEVERE, "Error executing 'selectString'!", e);
+      throw e;
+    }
+    finally {
+      closeAll(rs);
+    }
+
+    return result;
+  }
+
+  /**
+   * Selects all integers from the specified column. Can be distinct.
+   *
+   * @param distinct	whether values in column have to be distinct
+   * @param column	the int column to select
+   * @param tables	the tables to select from, ignored if null
+   * @param where	condition, can be null
+   * @return		resultset of data
+   * @throws Exception 	if something goes wrong
+   */
+  public TIntList selectInt(boolean distinct, String column, String tables, String where) throws Exception {
+    TIntList	result;
+    ResultSet	rs;
+
+    result = new TIntArrayList();
+
+    rs = null;
+    try {
+      rs = doSelect(distinct, column, tables, where);
+      while (rs.next())
+	result.add(rs.getInt(1));
+    }
+    catch (SQLException e) {
+      getLogger().log(Level.SEVERE, "Error executing 'selectInt'!", e);
+      throw e;
+    }
+    finally {
+      closeAll(rs);
+    }
+
+    return result;
+  }
+
+  /**
+   * Selects all longs from the specified column. Can be distinct.
+   *
+   * @param distinct	whether values in column have to be distinct
+   * @param column	the long column to select
+   * @param tables	the tables to select from, ignored if null
+   * @param where	condition, can be null
+   * @return		resultset of data
+   * @throws Exception 	if something goes wrong
+   */
+  public TLongList selectLong(boolean distinct, String column, String tables, String where) throws Exception {
+    TLongList	result;
+    ResultSet	rs;
+
+    result = new TLongArrayList();
+
+    rs = null;
+    try {
+      rs = doSelect(distinct, column, tables, where);
+      while (rs.next())
+	result.add(rs.getLong(1));
+    }
+    catch (SQLException e) {
+      getLogger().log(Level.SEVERE, "Error executing 'selectInt'!", e);
+      throw e;
+    }
+    finally {
+      closeAll(rs);
+    }
+
+    return result;
+  }
+
+  /**
+   * Selects all doubles from the specified column. Can be distinct.
+   *
+   * @param distinct	whether values in column have to be distinct
+   * @param column	the long column to select
+   * @param tables	the tables to select from, ignored if null
+   * @param where	condition, can be null
+   * @return		resultset of data
+   * @throws Exception 	if something goes wrong
+   */
+  public TDoubleList selectDouble(boolean distinct, String column, String tables, String where) throws Exception {
+    TDoubleList result;
+    ResultSet	rs;
+
+    result = new TDoubleArrayList();
+
+    rs = null;
+    try {
+      rs = doSelect(distinct, column, tables, where);
+      while (rs.next())
+	result.add(rs.getDouble(1));
+    }
+    catch (SQLException e) {
+      getLogger().log(Level.SEVERE, "Error executing 'selectInt'!", e);
+      throw e;
+    }
+    finally {
+      closeAll(rs);
+    }
+
+    return result;
   }
 
   /**
