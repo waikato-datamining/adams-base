@@ -14,7 +14,7 @@
  */
 
 /*
- * GetImageObjectIndices.java
+ * ImageObjectInfo.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
@@ -23,8 +23,8 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseRectangle;
-import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
+import adams.data.report.ReportHandler;
 import adams.flow.core.DataInfoActor;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
@@ -35,15 +35,16 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
- * Outputs the requested type of information for the specified image object.
+ * Outputs the requested type of information for either the incoming adams.flow.transformer.locateobjects.LocatedObject or the specified image object in the report.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br>
  * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.transformer.locateobjects.LocatedObject<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
  * <br><br>
@@ -94,7 +95,7 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-type &lt;X|Y|WIDTH|HEIGHT|META_DATA|RECTANGLE&gt; (property: type)
+ * <pre>-type &lt;X|Y|WIDTH|HEIGHT|META_DATA|RECTANGLE|BASE_RECTANGLE&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate.
  * &nbsp;&nbsp;&nbsp;default: X
  * </pre>
@@ -138,7 +139,10 @@ public class ImageObjectInfo
    */
   @Override
   public String globalInfo() {
-    return "Outputs the requested type of information for the specified image object.";
+    return
+      "Outputs the requested type of information for either the incoming "
+	+ Utils.classToString(LocatedObject.class) + " or the specified image "
+	+ "object in the report.";
   }
 
   /**
@@ -255,7 +259,7 @@ public class ImageObjectInfo
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{AbstractImageContainer.class, Report.class};
+    return new Class[]{ReportHandler.class, Report.class, LocatedObject.class};
   }
 
   /**
@@ -317,16 +321,21 @@ public class ImageObjectInfo
     result = null;
 
     report = null;
-    if (m_InputToken.getPayload() instanceof AbstractImageContainer)
-      report = ((AbstractImageContainer) m_InputToken.getPayload()).getReport();
-    else if (m_InputToken.getPayload() instanceof Report)
-      report = (Report) m_InputToken.getPayload();
+    obj    = null;
+    if (m_InputToken.hasPayload(ReportHandler.class))
+      report = m_InputToken.getPayload(ReportHandler.class).getReport();
+    else if (m_InputToken.hasPayload(Report.class))
+      report = m_InputToken.getPayload(Report.class);
+    else if (m_InputToken.hasPayload(LocatedObject.class))
+      obj = m_InputToken.getPayload(LocatedObject.class);
     else
-      result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload());
+      result = m_InputToken.unhandledData();
 
     if (result == null) {
-      objs = LocatedObjects.fromReport(report, m_Prefix);
-      obj  = objs.find(m_Index);
+      if (report != null) {
+        objs = LocatedObjects.fromReport(report, m_Prefix);
+        obj = objs.find(m_Index);
+      }
       if (obj != null) {
 	switch (m_Type) {
 	  case X:
