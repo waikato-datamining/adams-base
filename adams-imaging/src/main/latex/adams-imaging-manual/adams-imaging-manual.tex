@@ -299,7 +299,9 @@ The imaging module offers some more actors that have not been introduced yet.
 	pixels, drawing lines, rectangles, ovals, text, images\footnote{adams-imaging-draw.flow}
 	and even barcodes (e.g., EAN and QRCode)\footnote{adams-imaging-barcode.flow}.
 	\item \texttt{GetImageObjectIndices} -- lists all the indices of the objects
-	stored in the report.
+	stored in the report, as located by the specified finder.
+	\item \texttt{GetImageObjects} -- lists all the objects stored in the
+	report, as located by the specified finder.
 	\item \texttt{ImageAnnotator} -- allows the user to interactively
 	 annotate objects (i.e., attach labels) that were located in an image.
 	\item \textit{ImageInfo} -- Allows you to obtain \textit{width} and
@@ -313,6 +315,8 @@ The imaging module offers some more actors that have not been introduced yet.
 	using the specified object finder and filter.
 	\item \texttt{ImageObjectInfo} -- extracts information from a image object
 	stored in a report.
+	\item \texttt{ImageObjectOverlap} -- computes the number of overlaps
+	and highest overlap percentage between objects from two reports.
 	\item \textit{ImageSharpness} -- determines whether image is in focus or not.
 	\item \textit{LocateObjects} -- provides a framework for algorithms that
 	locate objects in images.
