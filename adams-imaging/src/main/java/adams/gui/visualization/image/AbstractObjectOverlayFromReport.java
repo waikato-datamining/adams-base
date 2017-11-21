@@ -20,10 +20,6 @@
 package adams.gui.visualization.image;
 
 import adams.core.base.BaseString;
-import adams.data.report.AbstractField;
-import adams.data.report.Report;
-import adams.flow.transformer.locateobjects.LocatedObject;
-import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.Fonts;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -33,16 +29,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 /**
  * Ancestor for overlays that use object locations from a report.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 198 $
  */
 public abstract class AbstractObjectOverlayFromReport
   extends AbstractImageOverlay {
@@ -51,43 +43,10 @@ public abstract class AbstractObjectOverlayFromReport
   private static final long serialVersionUID = 6356419097401574024L;
 
   /** the default prefix. */
-  public final static String PREFIX_DEFAULT = "Object.";
+  public final static String PREFIX_DEFAULT = ReportObjectOverlay.PREFIX_DEFAULT;
 
-  /** the prefix for the objects in the report. */
-  protected String m_Prefix;
-
-  /** the color for the objects. */
-  protected Color m_Color;
-
-  /** whether to use colors per type. */
-  protected boolean m_UseColorsPerType;
-
-  /** the color provider to use. */
-  protected ColorProvider m_TypeColorProvider;
-
-  /** the suffix for the type. */
-  protected String m_TypeSuffix;
-
-  /** the label for the rectangles. */
-  protected String m_LabelFormat;
-
-  /** the label font. */
-  protected Font m_LabelFont;
-
-  /** the cached locations. */
-  protected List<Rectangle> m_Locations;
-
-  /** the type/color mapping. */
-  protected HashMap<String,Color> m_TypeColors;
-
-  /** the cached colors. */
-  protected HashMap<Rectangle,Color> m_Colors;
-
-  /** the labels. */
-  protected HashMap<Rectangle,String> m_Labels;
-
-  /** predefined labels. */
-  protected BaseString[] m_PredefinedLabels;
+  /** the overlay handler. */
+  protected ReportObjectOverlay m_Overlays;
 
   /**
    * Adds options to the internal list of options.
@@ -130,12 +89,22 @@ public abstract class AbstractObjectOverlayFromReport
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Overlays = new ReportObjectOverlay();
+  }
+
+  /**
    * Sets the prefix to use for the objects in the report.
    *
    * @param value 	the prefix
    */
   public void setPrefix(String value) {
-    m_Prefix = value;
+    m_Overlays.setPrefix(value);
     reset();
   }
 
@@ -145,7 +114,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @return 		the prefix
    */
   public String getPrefix() {
-    return m_Prefix;
+    return m_Overlays.getPrefix();
   }
 
   /**
@@ -155,7 +124,7 @@ public abstract class AbstractObjectOverlayFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String prefixTipText() {
-    return "The prefix of fields in the report to identify as object location, eg 'Object.'.";
+    return m_Overlays.prefixTipText();
   }
 
   /**
@@ -164,7 +133,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @param value 	the color
    */
   public void setColor(Color value) {
-    m_Color = value;
+    m_Overlays.setColor(value);
     reset();
   }
 
@@ -174,7 +143,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @return 		the color
    */
   public Color getColor() {
-    return m_Color;
+    return m_Overlays.getColor();
   }
 
   /**
@@ -184,7 +153,7 @@ public abstract class AbstractObjectOverlayFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String colorTipText() {
-    return "The color to use for the objects.";
+    return m_Overlays.colorTipText();
   }
 
   /**
@@ -193,7 +162,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @param value 	true if to use colors per type
    */
   public void setUseColorsPerType(boolean value) {
-    m_UseColorsPerType = value;
+    m_Overlays.setUseColorsPerType(value);
     reset();
   }
 
@@ -203,7 +172,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @return 		true if to use colors per type
    */
   public boolean getUseColorsPerType() {
-    return m_UseColorsPerType;
+    return m_Overlays.getUseColorsPerType();
   }
 
   /**
@@ -213,7 +182,7 @@ public abstract class AbstractObjectOverlayFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String useColorsPerTypeTipText() {
-    return "If enabled, individual colors per type are used.";
+    return m_Overlays.useColorsPerTypeTipText();
   }
 
   /**
@@ -222,7 +191,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @param value 	the provider
    */
   public void setTypeColorProvider(ColorProvider value) {
-    m_TypeColorProvider = value;
+    m_Overlays.setTypeColorProvider(value);
     reset();
   }
 
@@ -232,7 +201,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @return 		the provider
    */
   public ColorProvider getTypeColorProvider() {
-    return m_TypeColorProvider;
+    return m_Overlays.getTypeColorProvider();
   }
 
   /**
@@ -242,7 +211,7 @@ public abstract class AbstractObjectOverlayFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String typeColorProviderTipText() {
-    return "The color provider to use for the various types.";
+    return m_Overlays.typeColorProviderTipText();
   }
 
   /**
@@ -251,7 +220,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @param value 	the suffix
    */
   public void setTypeSuffix(String value) {
-    m_TypeSuffix = value;
+    m_Overlays.setTypeSuffix(value);
     reset();
   }
 
@@ -261,7 +230,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @return 		the suffix
    */
   public String getTypeSuffix() {
-    return m_TypeSuffix;
+    return m_Overlays.getTypeSuffix();
   }
 
   /**
@@ -271,7 +240,7 @@ public abstract class AbstractObjectOverlayFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String typeSuffixTipText() {
-    return "The suffix of fields in the report to identify the type.";
+    return m_Overlays.typeSuffixTipText();
   }
 
   /**
@@ -280,7 +249,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @param value 	the label format
    */
   public void setLabelFormat(String value) {
-    m_LabelFormat = value;
+    m_Overlays.setLabelFormat(value);
     reset();
   }
 
@@ -290,7 +259,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @return 		the label format
    */
   public String getLabelFormat() {
-    return m_LabelFormat;
+    return m_Overlays.getLabelFormat();
   }
 
   /**
@@ -300,7 +269,7 @@ public abstract class AbstractObjectOverlayFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String labelFormatTipText() {
-    return "The label format string to use for the rectangles; '#' for index, '@' for type and '$' for short type (type suffix must be defined for '@' and '$'); for instance: '# @'.";
+    return m_Overlays.labelFormatTipText();
   }
 
   /**
@@ -309,7 +278,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @param value 	the label font
    */
   public void setLabelFont(Font value) {
-    m_LabelFont = value;
+    m_Overlays.setLabelFont(value);
     reset();
   }
 
@@ -319,7 +288,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @return 		the label font
    */
   public Font getLabelFont() {
-    return m_LabelFont;
+    return m_Overlays.getLabelFont();
   }
 
   /**
@@ -329,7 +298,7 @@ public abstract class AbstractObjectOverlayFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String labelFontTipText() {
-    return "The font to use for the labels.";
+    return m_Overlays.labelFontTipText();
   }
 
   /**
@@ -338,7 +307,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @param value	the labels
    */
   public void setPredefinedLabels(BaseString[] value) {
-    m_PredefinedLabels = value;
+    m_Overlays.setPredefinedLabels(value);
     reset();
   }
 
@@ -348,7 +317,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @return		the labels
    */
   public BaseString[] getPredefinedLabels() {
-    return m_PredefinedLabels;
+    return m_Overlays.getPredefinedLabels();
   }
 
   /**
@@ -358,7 +327,7 @@ public abstract class AbstractObjectOverlayFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String predefinedLabelsTipText() {
-    return "The predefined labels to use for setting up the colors; avoids constants changing in color pallet.";
+    return m_Overlays.predefinedLabelsTipText();
   }
 
   /**
@@ -368,86 +337,7 @@ public abstract class AbstractObjectOverlayFromReport
    */
   @Override
   protected synchronized void doImageChanged(PaintPanel panel) {
-    m_Locations = null;
-  }
-  
-  /**
-   * Determines the locations of the objects.
-   * 
-   * @param report	the report to inspect
-   */
-  protected void determineLocations(Report report) {
-    LocatedObjects	located;
-    HashSet<String>	types;
-    Rectangle		rect;
-    String		suffix;
-    String		type;
-    Color		color;
-    String		label;
-
-    if (m_Locations != null)
-      return;
-    if (report == null)
-      return;
-
-    // initialize colors
-    if (m_UseColorsPerType) {
-      m_TypeColors = new HashMap<>();
-      m_TypeColorProvider.resetColors();
-      types = new HashSet<>();
-      for (BaseString predefined: m_PredefinedLabels)
-	m_TypeColors.put(predefined.getValue(), m_TypeColorProvider.next());
-      for (AbstractField field: report.getFields()) {
-	if (field.getName().endsWith(m_TypeSuffix))
-	  types.add("" + report.getValue(field));
-      }
-      for (String t: types) {
-        if (!m_TypeColors.containsKey(t))
-	  m_TypeColors.put(t, m_TypeColorProvider.next());
-      }
-    }
-
-    m_Locations = new ArrayList<>();
-    m_Colors    = new HashMap<>();
-    m_Labels    = new HashMap<>();
-    suffix      = m_TypeSuffix.isEmpty() ? "" : m_TypeSuffix.substring(1);
-    located     = LocatedObjects.fromReport(report, m_Prefix);
-    for (LocatedObject object: located) {
-      m_Locations.add(object.getRectangle());
-
-      color = m_Color;
-      rect  = object.getRectangle();
-
-      if (!suffix.isEmpty() && (object.getMetaData() != null) && (object.getMetaData().containsKey(suffix))) {
-	type  = "" + object.getMetaData().get(suffix);
-	// color per type?
-	if (m_UseColorsPerType) {
-	  if (m_TypeColors.containsKey(type))
-	    color = m_TypeColors.get(type);
-	}
-
-	// label?
-	if (!m_LabelFormat.isEmpty()) {
-	  label = m_LabelFormat
-	    .replace("#", "" + object.getMetaData().get(LocatedObjects.KEY_INDEX))
-	    .replace("@", type)
-	    .replace("$", type.replaceAll(".*\\.", ""));
-	  m_Labels.put(rect, label);
-	}
-      }
-      else {
-	// label?
-	if (!m_LabelFormat.isEmpty()) {
-	  label = m_LabelFormat
-	    .replace("#", "" + object.getMetaData().get(LocatedObjects.KEY_INDEX))
-	    .replace("@", "")
-	    .replace("$", "");
-	  m_Labels.put(rect, label);
-	}
-      }
-
-      m_Colors.put(rect, color);
-    }
+    m_Overlays.reset();
   }
 
   /**
@@ -467,8 +357,8 @@ public abstract class AbstractObjectOverlayFromReport
    */
   @Override
   protected synchronized void doPaintOverlay(PaintPanel panel, Graphics g) {
-    determineLocations(panel.getOwner().getAdditionalProperties());
-    if ((m_Locations != null) && (m_Locations.size() > 0))
-      doPaintObjects(panel, g, m_Locations);
+    m_Overlays.determineLocations(panel.getOwner().getAdditionalProperties());
+    if (m_Overlays.hasLocations())
+      doPaintObjects(panel, g, m_Overlays.getLocations());
   }
 }

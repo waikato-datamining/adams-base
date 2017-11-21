@@ -182,11 +182,11 @@ public class ObjectCentersOverlayFromReport
   protected void doPaintObjects(PaintPanel panel, Graphics g, List<Rectangle> locations) {
     String	label;
 
-    g.setColor(m_Color);
+    g.setColor(getColor());
     for (Rectangle rect: locations) {
-      if (m_UseColorsPerType) {
-        if (m_Colors.containsKey(rect))
-          g.setColor(m_Colors.get(rect));
+      if (getUseColorsPerType()) {
+        if (m_Overlays.hasColor(rect))
+          g.setColor(m_Overlays.getColor(rect));
       }
 
       if (m_Diameter < 1)
@@ -194,8 +194,8 @@ public class ObjectCentersOverlayFromReport
       else
         g.fillOval((int) (rect.getCenterX() - m_Diameter), (int) (rect.getCenterY() - m_Diameter), m_Diameter*2, m_Diameter*2);
 
-      if (!m_LabelFormat.isEmpty()) {
-        label = m_Labels.get(rect);
+      if (m_Overlays.hasLabel(rect)) {
+        label = m_Overlays.getLabel(rect);
         if (label != null)
           g.drawString(label, (int) (rect.getX() + rect.getWidth()), (int) rect.getY());
       }

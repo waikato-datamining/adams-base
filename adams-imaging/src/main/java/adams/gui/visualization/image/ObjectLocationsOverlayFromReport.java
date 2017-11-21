@@ -128,15 +128,15 @@ public class ObjectLocationsOverlayFromReport
   protected void doPaintObjects(PaintPanel panel, Graphics g, List<Rectangle> locations) {
     String	label;
 
-    g.setColor(m_Color);
+    g.setColor(getColor());
     for (Rectangle rect: locations) {
-      if (m_UseColorsPerType) {
-        if (m_Colors.containsKey(rect))
-          g.setColor(m_Colors.get(rect));
+      if (getUseColorsPerType()) {
+        if (m_Overlays.hasColor(rect))
+          g.setColor(m_Overlays.getColor(rect));
       }
       g.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
-      if (!m_LabelFormat.isEmpty()) {
-        label = m_Labels.get(rect);
+      if (m_Overlays.hasLabel(rect)) {
+        label = m_Overlays.getLabel(rect);
         if (label != null)
           g.drawString(label, (int) (rect.getX() + rect.getWidth()), (int) rect.getY());
       }
