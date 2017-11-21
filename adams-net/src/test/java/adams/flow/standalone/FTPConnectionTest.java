@@ -20,7 +20,6 @@
 
 package adams.flow.standalone;
 
-import adams.core.base.BasePassword;
 import adams.env.Environment;
 import adams.flow.AbstractOnlineFlowTest;
 import adams.flow.control.Flow;
@@ -30,9 +29,10 @@ import junit.framework.TestSuite;
 
 /**
  * Test case for the FTPConnection actor.
+ * <br>
+ * NB: Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FTPConnectionTest
   extends AbstractOnlineFlowTest {
@@ -52,17 +52,7 @@ public class FTPConnectionTest
    * @return a suitably configured <code>Actor</code> value
    */
   public Actor getActor() {
-    FTPConnection fc = new FTPConnection();
-    fc.setHost("neoftp.sci.gsfc.nasa.gov");
-    fc.setUser("anonymous");
-    fc.setPassword(new BasePassword(""));
-
-    Flow flow = new Flow();
-    flow.setActors(new Actor[]{
-	fc
-    });
-
-    return flow;
+    return new Flow();
   }
 
   /**

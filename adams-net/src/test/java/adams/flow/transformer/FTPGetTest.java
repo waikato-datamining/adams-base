@@ -20,23 +20,19 @@
 
 package adams.flow.transformer;
 
-import adams.core.base.BasePassword;
-import adams.core.base.BaseRegExp;
 import adams.env.Environment;
 import adams.flow.AbstractOnlineFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
-import adams.flow.source.FTPLister;
-import adams.flow.standalone.FTPConnection;
-import adams.test.TmpDirectory;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * Test case for the FTPGet actor.
+ * <br>
+ * NB: Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FTPGetTest
   extends AbstractOnlineFlowTest {
@@ -56,29 +52,7 @@ public class FTPGetTest
    * @return a suitably configured <code>Actor</code> value
    */
   public Actor getActor() {
-    FTPConnection fc = new FTPConnection();
-    fc.setHost("neoftp.sci.gsfc.nasa.gov");
-    fc.setUser("anonymous");
-    fc.setPassword(new BasePassword(""));
-    fc.setUsePassiveMode(true);
-
-    FTPLister fl = new FTPLister();
-    fl.setRemoteDir("/");
-    fl.setListFiles(true);
-    fl.setRegExp(new BaseRegExp("README.*"));
-
-    FTPGet fg = new FTPGet();
-    fg.setRemoteDir("/");
-    fg.setOutputDirectory(new TmpDirectory());
-
-    Flow flow = new Flow();
-    flow.setActors(new Actor[]{
-	fc,
-	fl,
-	fg
-    });
-
-    return flow;
+    return new Flow();
   }
 
   /**

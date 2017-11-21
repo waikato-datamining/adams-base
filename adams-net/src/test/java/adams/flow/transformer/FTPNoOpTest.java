@@ -20,21 +20,19 @@
 
 package adams.flow.transformer;
 
-import adams.core.base.BasePassword;
 import adams.env.Environment;
 import adams.flow.AbstractOnlineFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
-import adams.flow.source.Start;
-import adams.flow.standalone.FTPConnection;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * Test case for the FTPNoOp actor.
+ * <br>
+ * NB: Dummy test.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FTPNoOpTest
   extends AbstractOnlineFlowTest {
@@ -55,24 +53,7 @@ public class FTPNoOpTest
    */
   @Override
   public Actor getActor() {
-    FTPConnection fc = new FTPConnection();
-    fc.setHost("neoftp.sci.gsfc.nasa.gov");
-    fc.setUser("anonymous");
-    fc.setPassword(new BasePassword(""));
-    fc.setUsePassiveMode(true);
-
-    Start st = new Start();
-
-    FTPNoOp no = new FTPNoOp();
-
-    Flow flow = new Flow();
-    flow.setActors(new Actor[]{
-	fc,
-	st,
-	no
-    });
-
-    return flow;
+    return new Flow();
   }
 
   /**
