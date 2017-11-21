@@ -22,6 +22,7 @@ package adams.flow.source;
 
 import adams.core.Properties;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
@@ -250,8 +251,14 @@ public class EnterManyValues
   public String getQuickInfo() {
     String		result;
     List<String>	options;
+    List<String>	names;
 
     result = QuickInfoHelper.toString(this, "message", m_Message);
+
+    names = new ArrayList<>();
+    for (AbstractValueDefinition def: m_Values)
+      names.add(def.getName());
+    result += QuickInfoHelper.toString(this, "values", (names.size() > 0 ? Utils.flatten(names, "|") : "-none-"), ", ");
 
     options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
