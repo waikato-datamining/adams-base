@@ -13,18 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Rectangle.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
 import adams.core.QuickInfoHelper;
+import adams.data.image.BufferedImageContainer;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.GUIHelper;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.BasicStroke;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 /**
  <!-- globalinfo-start -->
@@ -100,7 +102,6 @@ import java.awt.image.BufferedImage;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Rectangle
   extends AbstractColorStrokeDrawOperation {
@@ -439,7 +440,7 @@ public class Rectangle
    * @param image	the image to check
    * @return		null if OK, otherwise error message
    */
-  protected String check(BufferedImage image) {
+  protected String check(BufferedImageContainer image) {
     String        result;
 
     result = super.check(image);
@@ -464,10 +465,10 @@ public class Rectangle
    * @param image	the image to draw on
    */
   @Override
-  protected String doDraw(BufferedImage image) {
+  protected String doDraw(BufferedImageContainer image) {
     Graphics	g;
 
-    g = image.getGraphics();
+    g = image.getImage().getGraphics();
     g.setColor(m_Color);
     GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
     ((Graphics2D) g).setStroke(new BasicStroke(m_StrokeThickness));

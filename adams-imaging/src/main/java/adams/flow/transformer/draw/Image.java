@@ -13,19 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Image.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
+import adams.data.image.BufferedImageContainer;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 /**
@@ -60,7 +61,6 @@ import java.awt.image.BufferedImage;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Image
   extends AbstractDrawOperation {
@@ -226,7 +226,7 @@ public class Image
    * @param image	the image to check
    * @return		null if OK, otherwise error message
    */
-  protected String check(BufferedImage image) {
+  protected String check(BufferedImageContainer image) {
     String        result;
 
     result = super.check(image);
@@ -247,7 +247,7 @@ public class Image
    * @param image	the image to draw on
    */
   @Override
-  protected String doDraw(BufferedImage image) {
+  protected String doDraw(BufferedImageContainer image) {
     String		result;
     Graphics		g;
     Object		obj;
@@ -273,7 +273,7 @@ public class Image
     }
     
     if ((result == null) && (todraw != null)) {
-      g = image.getGraphics();
+      g = image.getImage().getGraphics();
       g.drawImage(todraw, m_X, m_Y, null);
     }
     

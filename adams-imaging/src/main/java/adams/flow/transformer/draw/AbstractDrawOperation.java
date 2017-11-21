@@ -13,23 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDrawOperation.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
 import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
+import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Actor;
-
-import java.awt.image.BufferedImage;
 
 /**
  * Ancestor to all draw operations.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDrawOperation
   extends AbstractOptionHandler 
@@ -78,10 +76,10 @@ public abstract class AbstractDrawOperation
    * @param image	the image to check
    * @return		null if OK, otherwise error message
    */
-  protected String check(BufferedImage image) {
+  protected String check(BufferedImageContainer image) {
     if (m_Owner == null)
       return "No owner set!";
-    if (image == null)
+    if ((image == null) || (image.getImage() == null))
       return "No image supplied!";
     return null;
   }
@@ -92,7 +90,7 @@ public abstract class AbstractDrawOperation
    * @param image	the image to draw on
    * @return		null if OK, otherwise error message
    */
-  protected abstract String doDraw(BufferedImage image);
+  protected abstract String doDraw(BufferedImageContainer image);
   
   /**
    * Performs the draw operation on the image.
@@ -100,7 +98,7 @@ public abstract class AbstractDrawOperation
    * @param image	the image to draw on
    * @return		null if OK, otherwise error message
    */
-  public String draw(BufferedImage image) {
+  public String draw(BufferedImageContainer image) {
     String	result;
     
     result = check(image);

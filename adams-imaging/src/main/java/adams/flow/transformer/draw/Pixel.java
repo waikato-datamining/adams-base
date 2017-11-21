@@ -13,16 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Pixel.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
 import adams.core.QuickInfoHelper;
+import adams.data.image.BufferedImageContainer;
 import adams.gui.core.ColorHelper;
-
-import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -71,7 +70,6 @@ import java.awt.image.BufferedImage;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Pixel
   extends AbstractColorDrawOperation {
@@ -304,7 +302,7 @@ public class Pixel
    * @param image	the image to check
    * @return		null if OK, otherwise error message
    */
-  protected String check(BufferedImage image) {
+  protected String check(BufferedImageContainer image) {
     String        result;
 
     result = super.check(image);
@@ -325,17 +323,17 @@ public class Pixel
    * @param image	the image to draw on
    */
   @Override
-  protected String doDraw(BufferedImage image) {
+  protected String doDraw(BufferedImageContainer image) {
     String	result;
 
     result = null;
 
     switch (m_Type) {
       case RGBA:
-        image.setRGB(m_X - 1, m_Y - 1, m_RGBA);
+        image.getImage().setRGB(m_X - 1, m_Y - 1, m_RGBA);
         break;
       case COLOR:
-        image.setRGB(m_X - 1, m_Y - 1, m_Color.getRGB());
+        image.getImage().setRGB(m_X - 1, m_Y - 1, m_Color.getRGB());
         break;
       default:
         throw new IllegalStateException("Unhandled pixel value type: " + m_Type);

@@ -13,17 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FloodFill.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
 import adams.core.QuickInfoHelper;
+import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  <!-- globalinfo-start -->
@@ -57,7 +58,6 @@ import java.awt.image.BufferedImage;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FloodFill
   extends AbstractColorDrawOperation {
@@ -187,7 +187,7 @@ public class FloodFill
    * @param image	the image to check
    * @return		null if OK, otherwise error message
    */
-  protected String check(BufferedImage image) {
+  protected String check(BufferedImageContainer image) {
     String        result;
 
     result = super.check(image);
@@ -208,12 +208,12 @@ public class FloodFill
    * @param image	the image to draw on
    */
   @Override
-  protected String doDraw(BufferedImage image) {
+  protected String doDraw(BufferedImageContainer image) {
     Graphics	g;
 
-    g = image.getGraphics();
+    g = image.getImage().getGraphics();
     g.setColor(m_Color);
-    BufferedImageHelper.floodFill(image, m_X - 1, m_Y, new Color(image.getRGB(m_X, m_Y)), m_Color);
+    BufferedImageHelper.floodFill(image.getImage(), m_X - 1, m_Y, new Color(image.getImage().getRGB(m_X, m_Y)), m_Color);
 
     return null;
   }

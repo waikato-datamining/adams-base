@@ -15,15 +15,14 @@
 
 /*
  * Barcode.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer.draw;
 
 import adams.data.barcode.encode.AbstractBarcodeEncoder;
 import adams.data.barcode.encode.PassThrough;
-
-import java.awt.image.BufferedImage;
+import adams.data.image.BufferedImageContainer;
 
 /**
  * <!-- globalinfo-start -->
@@ -45,7 +44,6 @@ import java.awt.image.BufferedImage;
  * <!-- options-end -->
  *
  * @author lx51 (lx51 at students dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Barcode extends AbstractDrawOperation {
 
@@ -113,7 +111,7 @@ public class Barcode extends AbstractDrawOperation {
    * @param image the image to draw on
    */
   @Override
-  protected String doDraw(BufferedImage image) {
+  protected String doDraw(BufferedImageContainer image) {
     return m_Encoder.doDraw(image);
   }
 }

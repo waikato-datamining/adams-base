@@ -20,9 +20,8 @@
 
 package adams.data.barcode.encode;
 
+import adams.data.image.BufferedImageContainer;
 import adams.flow.transformer.draw.AbstractDrawOperation;
-
-import java.awt.image.BufferedImage;
 
 /**
  * Ancestor for barcode encoders, i.e., classes that generated barcode images.
@@ -80,7 +79,7 @@ public abstract class AbstractBarcodeEncoder extends AbstractDrawOperation {
    * @return null if OK, otherwise error message
    */
   @Override
-  protected String check(BufferedImage image) {
+  protected String check(BufferedImageContainer image) {
     String result = super.check(image);
 
     if (result == null) {

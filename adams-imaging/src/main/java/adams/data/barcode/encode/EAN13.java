@@ -20,13 +20,13 @@
 
 package adams.data.barcode.encode;
 
+import adams.data.image.BufferedImageContainer;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.EAN13Writer;
 
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -196,7 +196,7 @@ public class EAN13 extends AbstractBarcodeEncoder {
    * @param image the image to draw on
    */
   @Override
-  protected String doDraw(BufferedImage image) {
+  protected String doDraw(BufferedImageContainer image) {
     String result = null;
 
     try {
@@ -207,7 +207,7 @@ public class EAN13 extends AbstractBarcodeEncoder {
 
       for (int y = m_Y; y < m_Height; y++) {
         for (int x = m_X; x < m_Width; x++)
-          image.setRGB(x, y, matrix.get(x, y) ? 0 : 0xFFFFFF);
+          image.getImage().setRGB(x, y, matrix.get(x, y) ? 0 : 0xFFFFFF);
       }
     }
     catch (WriterException e) {

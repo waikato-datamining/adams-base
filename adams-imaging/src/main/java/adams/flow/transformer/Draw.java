@@ -24,12 +24,9 @@ import adams.core.QuickInfoHelper;
 import adams.data.InPlaceProcessing;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
-import adams.data.image.BufferedImageHelper;
 import adams.flow.core.Token;
 import adams.flow.transformer.draw.AbstractDrawOperation;
 import adams.flow.transformer.draw.Pixel;
-
-import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
@@ -214,7 +211,7 @@ public class Draw
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->adams.data.jai.BufferedImageContainer.class<!-- flow-generates-end -->
+   * @return		the class of objects that get generated
    */
   public Class[] generates() {
     return new Class[]{BufferedImageContainer.class};
@@ -228,20 +225,24 @@ public class Draw
   @Override
   protected String doExecute() {
     String			result;
-    BufferedImage		image;
-    BufferedImageContainer	cont;
+    AbstractImageContainer  	contIn;
+    BufferedImageContainer 	contBuff;
+    BufferedImageContainer 	contOut;
 
-    image = ((AbstractImageContainer) m_InputToken.getPayload()).toBufferedImage();;
+    contIn = m_InputToken.getPayload(AbstractImageContainer.class);
     if (!m_NoCopy)
-      image = BufferedImageHelper.deepCopy(image);
+      contIn = (AbstractImageContainer) contIn.getClone();
+    contBuff = new BufferedImageContainer();
+    contBuff.setReport(contIn.getReport().getClone());
+    contBuff.setImage(contIn.toBufferedImage());
     m_Operation.setOwner(this);
-    result = m_Operation.draw(image);
+    result = m_Operation.draw(contBuff);
     
     if (result == null) {
-      cont = new BufferedImageContainer();
-      cont.setReport(((AbstractImageContainer) m_InputToken.getPayload()).getReport().getClone());
-      cont.setImage(image);
-      m_OutputToken = new Token(cont);
+      contOut = (BufferedImageContainer) contBuff.getHeader();
+      contOut.setReport(contIn.getReport().getClone());
+      contOut.setImage(contBuff.getImage());
+      m_OutputToken = new Token(contOut);
     }
 
     return result;

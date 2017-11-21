@@ -20,7 +20,7 @@
 
 package adams.data.barcode.encode;
 
-import java.awt.image.BufferedImage;
+import adams.data.image.BufferedImageContainer;
 
 /**
  * <!-- globalinfo-start -->
@@ -93,7 +93,7 @@ public class PassThrough extends AbstractBarcodeEncoder {
    * @return the image to draw on
    */
   @Override
-  protected String doDraw(BufferedImage image) {
+  protected String doDraw(BufferedImageContainer image) {
     return null;
   }
 }
