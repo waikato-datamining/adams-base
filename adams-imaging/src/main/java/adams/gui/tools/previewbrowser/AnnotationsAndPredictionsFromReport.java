@@ -31,6 +31,7 @@ import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.MultiImageOverlay;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+import adams.gui.visualization.image.ReportObjectOverlay;
 
 import java.awt.Color;
 import java.io.File;
@@ -61,7 +62,7 @@ public class AnnotationsAndPredictionsFromReport
   private static final long serialVersionUID = -3962259305718630395L;
 
   /** the prefix for the annoations. */
-  public final static String PREFIX_ANNOTATIONS = ObjectLocationsOverlayFromReport.PREFIX_DEFAULT;
+  public final static String PREFIX_ANNOTATIONS = ReportObjectOverlay.PREFIX_DEFAULT;
 
   /** the prefix for the predictions. */
   public final static String PREFIX_PREDICTIONS = "Prediction.";
