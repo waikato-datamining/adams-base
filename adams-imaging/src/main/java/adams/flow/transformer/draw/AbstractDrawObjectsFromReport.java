@@ -344,6 +344,7 @@ public abstract class AbstractDrawObjectsFromReport
    */
   @Override
   protected String doDraw(BufferedImageContainer image) {
+    m_Overlays.reset();
     m_Overlays.determineLocations(image.getReport());
     if (m_Overlays.hasLocations())
       return doDraw(image, m_Overlays.getLocations());
