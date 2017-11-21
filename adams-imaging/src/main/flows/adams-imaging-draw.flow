@@ -1,12 +1,12 @@
 # Project: adams
-# Date: 2016-03-03 15:39:27
+# Date: 2017-11-22 12:05:07
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Drawing on images is easy using the Draw transformer and its\\nvarious draw operations." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name image
    adams.flow.source.FileSupplier -file ${FLOWS}/data/3666455665_18795f0741.jpg
-   adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+   adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
    adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Resize -width 100.0 -height 100.0"
  adams.flow.source.NewImage -width 600 -height 400 -conversion adams.data.conversion.BufferedImageToBufferedImage
  adams.flow.transformer.Draw -name Line -operation "adams.flow.transformer.draw.Line -x1 10 -y1 40 -x2 400 -y2 45"
@@ -19,4 +19,16 @@ adams.flow.control.Flow -annotation "Drawing on images is easy using the Draw tr
  adams.flow.transformer.Draw -name Text -operation "adams.flow.transformer.draw.Text -color #006666 -x 50 -y 300 -font Monospaced-PLAIN-16"
  adams.flow.transformer.Draw -name "Text (multiple lines)" -operation "adams.flow.transformer.draw.Text -color #ff0000 -x 50 -y 350 -font Monospaced-PLAIN-14 -text \"The quick brown fox\\\\njumps over the lazy dog\\\\n-- an English-language pangram\""
  adams.flow.transformer.Draw -operation "adams.flow.transformer.draw.Image -x 10 -y 100 -image-actor image"
- adams.flow.sink.ImageViewer -height 550 -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay
+ adams.flow.control.SubProcess -name "location overlay"
+  adams.flow.transformer.SetReportValue -name x -field Object.1.x[N] -value 200
+  adams.flow.transformer.SetReportValue -name y -field Object.1.y[N] -value 60
+  adams.flow.transformer.SetReportValue -name width -field Object.1.width[N] -value 40
+  adams.flow.transformer.SetReportValue -name height -field Object.1.height[N] -value 25
+  adams.flow.transformer.Draw -operation "adams.flow.transformer.draw.ObjectLocationsFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider"
+ adams.flow.control.SubProcess -name "center overlay"
+  adams.flow.transformer.SetReportValue -name x -field Other.2.x[N] -value 300
+  adams.flow.transformer.SetReportValue -name y -field Other.2.y[N] -value 60
+  adams.flow.transformer.SetReportValue -name width -field Other.2.width[N] -value 20
+  adams.flow.transformer.SetReportValue -name height -field Other.2.height[N] -value 25
+  adams.flow.transformer.Draw -operation "adams.flow.transformer.draw.ObjectCentersFromReport -prefix Other. -color #40cc00ff -type-color-provider adams.gui.visualization.core.DefaultColorProvider"
+ adams.flow.sink.ImageViewer -height 550 -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay
