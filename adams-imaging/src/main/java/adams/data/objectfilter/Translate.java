@@ -183,7 +183,7 @@ public class Translate
 	obj.getY() + m_Y,
 	obj.getWidth(),
 	obj.getHeight(),
-	obj.getMetaData());
+	obj.getMetaData(true));
       result.add(newObj);
     }
 

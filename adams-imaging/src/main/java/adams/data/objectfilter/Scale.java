@@ -294,7 +294,7 @@ public class Scale
 	(int) round(obj.getY() * m_ScaleY),
 	(int) round(obj.getWidth() * m_ScaleX),
 	(int) round(obj.getHeight() * m_ScaleY),
-	obj.getMetaData());
+	obj.getMetaData(true));
       result.add(newObj);
     }
 
