@@ -236,6 +236,25 @@ public class LocatedObjects
    * @return		the generated report
    */
   public Report toReport(String prefix) {
+    return toReport(prefix, 0);
+  }
+
+  /**
+   * Turns the located objects into a report.
+   * Using a prefix like "Object." will result in the following report entries
+   * for a single object:
+   * <pre>
+   * Object.1.x
+   * Object.1.y
+   * Object.1.width
+   * Object.1.height
+   * </pre>
+   *
+   * @param prefix	the prefix to use
+   * @param offset	the offset for the index to use
+   * @return		the generated report
+   */
+  public Report toReport(String prefix, int offset) {
     Report		result;
     int			count;
     String		countStr;
@@ -250,7 +269,7 @@ public class LocatedObjects
     width = ("" + size()).length();
     for (LocatedObject obj: this) {
       count++;
-      countStr = Utils.padLeft("" + count, '0', width);
+      countStr = Utils.padLeft("" + (count + offset), '0', width);
       // meta-data
       for (String key: obj.getMetaData().keySet()) {
 	value = obj.getMetaData().get(key);
