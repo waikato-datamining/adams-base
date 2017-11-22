@@ -129,12 +129,9 @@ public class Image
    * @param value	the position, 1-based
    */
   public void setX(int value) {
-    if (value > 0) {
+    if (getOptionManager().isValid("X", value)) {
       m_X = value;
       reset();
-    }
-    else {
-      getLogger().severe("X must be >0, provided: " + value);
     }
   }
 
@@ -163,12 +160,9 @@ public class Image
    * @param value	the position, 1-based
    */
   public void setY(int value) {
-    if (value > 0) {
+    if (getOptionManager().isValid("Y", value)) {
       m_Y = value;
       reset();
-    }
-    else {
-      getLogger().severe("Y must be >0, provided: " + value);
     }
   }
 
@@ -274,7 +268,7 @@ public class Image
     
     if ((result == null) && (todraw != null)) {
       g = image.getImage().getGraphics();
-      g.drawImage(todraw, m_X, m_Y, null);
+      g.drawImage(todraw, m_X - 1, m_Y - 1, null);
     }
     
     return result;
