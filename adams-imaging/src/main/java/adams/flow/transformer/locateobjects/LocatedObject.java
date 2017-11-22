@@ -19,7 +19,9 @@
  */
 package adams.flow.transformer.locateobjects;
 
+import adams.core.CloneHandler;
 import adams.core.base.QuadrilateralLocation;
+import adams.data.image.BufferedImageHelper;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -34,7 +36,7 @@ import java.util.Map;
  * @version $Revision: 78 $
  */
 public class LocatedObject
-  implements Serializable {
+  implements Serializable, CloneHandler<LocatedObject> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8662599273386642371L;
@@ -92,7 +94,22 @@ public class LocatedObject
     m_MetaData = (metaData == null) ? new HashMap<>() : metaData;
     m_Actual   = null;
   }
-  
+
+  /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  public LocatedObject getClone() {
+    return new LocatedObject(
+      BufferedImageHelper.deepCopy(m_Image),
+      m_X,
+      m_Y,
+      m_Width,
+      m_Height,
+      getMetaData(true));
+  }
+
   /**
    * Returns the image.
    * 
@@ -184,7 +201,25 @@ public class LocatedObject
    * @return		the meta-data
    */
   public Map<String,Object> getMetaData() {
-    return m_MetaData;
+    return getMetaData(false);
+  }
+
+  /**
+   * Returns the meta-data of the object, if any.
+   *
+   * @param copy	whether to return a copy
+   * @return		the meta-data
+   */
+  public Map<String,Object> getMetaData(boolean copy) {
+    Map<String,Object>	result;
+
+    if (!copy)
+      return m_MetaData;
+
+    result = new HashMap<>();
+    result.putAll(m_MetaData);
+
+    return result;
   }
 
   /**
