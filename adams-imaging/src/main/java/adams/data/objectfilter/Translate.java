@@ -38,12 +38,12 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  *
  * <pre>-x &lt;int&gt; (property: X)
  * &nbsp;&nbsp;&nbsp;The translation on the X axis.
- * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;default: 0
  * </pre>
  *
  * <pre>-y &lt;int&gt; (property: Y)
  * &nbsp;&nbsp;&nbsp;The translation on the Y axis.
- * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;default: 0
  * </pre>
  *
  <!-- options-end -->
@@ -80,11 +80,11 @@ public class Translate
 
     m_OptionManager.add(
       "x", "X",
-      1);
+      0);
 
     m_OptionManager.add(
       "y", "Y",
-      1);
+      0);
   }
 
   /**
