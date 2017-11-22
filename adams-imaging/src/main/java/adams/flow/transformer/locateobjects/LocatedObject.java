@@ -102,7 +102,7 @@ public class LocatedObject
    */
   public LocatedObject getClone() {
     return new LocatedObject(
-      BufferedImageHelper.deepCopy(m_Image),
+      (m_Image != null ? BufferedImageHelper.deepCopy(m_Image) : null),
       m_X,
       m_Y,
       m_Width,
