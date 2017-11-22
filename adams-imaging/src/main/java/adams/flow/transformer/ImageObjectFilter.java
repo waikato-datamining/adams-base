@@ -21,7 +21,6 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.data.image.AbstractImageContainer;
 import adams.data.objectfilter.ObjectFilter;
 import adams.data.objectfilter.PassThrough;
 import adams.data.objectfinder.AllFinder;
@@ -84,11 +83,6 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
- * &nbsp;&nbsp;&nbsp;The report field prefix used in the report.
- * &nbsp;&nbsp;&nbsp;default: Object.
- * </pre>
- *
  * <pre>-finder &lt;adams.data.objectfinder.ObjectFinder&gt; (property: finder)
  * &nbsp;&nbsp;&nbsp;The object finder to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
@@ -113,9 +107,6 @@ public class ImageObjectFilter
   extends AbstractTransformer {
 
   private static final long serialVersionUID = -3992867498417362738L;
-
-  /** the prefix of the objects in the report. */
-  protected String m_Prefix;
 
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
@@ -144,10 +135,6 @@ public class ImageObjectFilter
     super.defineOptions();
 
     m_OptionManager.add(
-      "prefix", "prefix",
-      "Object.");
-
-    m_OptionManager.add(
       "finder", "finder",
       new AllFinder());
 
@@ -158,35 +145,6 @@ public class ImageObjectFilter
     m_OptionManager.add(
       "keep-all-objects", "keepAllObjects",
       false);
-  }
-
-  /**
-   * Sets the field prefix used in the report.
-   *
-   * @param value 	the field prefix
-   */
-  public void setPrefix(String value) {
-    m_Prefix = value;
-    reset();
-  }
-
-  /**
-   * Returns the field prefix used in the report.
-   *
-   * @return 		the field prefix
-   */
-  public String getPrefix() {
-    return m_Prefix;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String prefixTipText() {
-    return "The report field prefix used in the report.";
   }
 
   /**
@@ -328,8 +286,6 @@ public class ImageObjectFilter
     int[]			indices;
     Report			report;
     Report			newReport;
-    AbstractImageContainer	img;
-    AbstractImageContainer	output;
     LocatedObjects		objs;
     LocatedObjects		newObjs;
 
@@ -349,7 +305,7 @@ public class ImageObjectFilter
 
     if (result == null) {
       try {
-	objs = LocatedObjects.fromReport(report, m_Prefix);
+	objs = LocatedObjects.fromReport(report, m_Finder.getPrefix());
 
 	// find objects of interest
 	indices = m_Finder.find(report);
@@ -357,7 +313,7 @@ public class ImageObjectFilter
 	// remove all old objects?
 	if (!m_KeepAllObjects) {
 	  for (AbstractField field : report.getFields()) {
-	    if (field.getName().startsWith(m_Prefix))
+	    if (field.getName().startsWith(m_Finder.getPrefix()))
 	      report.removeValue(field);
 	  }
 	}
@@ -369,7 +325,7 @@ public class ImageObjectFilter
 	newObjs = m_Filter.filter(newObjs);
 
 	// add objects to report
-	newReport = newObjs.toReport(m_Prefix);
+	newReport = newObjs.toReport(m_Finder.getPrefix());
 	for (AbstractField field : newReport.getFields()) {
 	  report.addField(field);
 	  report.setValue(field, newReport.getValue(field));
