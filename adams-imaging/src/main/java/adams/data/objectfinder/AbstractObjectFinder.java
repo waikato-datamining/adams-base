@@ -140,4 +140,27 @@ public abstract class AbstractObjectFinder
 
     return find(LocatedObjects.fromReport(report, m_Prefix));
   }
+
+  /**
+   * Finds the objects in the list of objects.
+   *
+   * @param objects	the list of objects to process
+   * @return		the indices
+   */
+  public LocatedObjects findObjects(LocatedObjects objects) {
+    int[]		indices;
+
+    indices = find(objects);
+    return objects.subset(indices);
+  }
+
+  /**
+   * Finds the objects in the report.
+   *
+   * @param report	the report to process
+   * @return		the indices
+   */
+  public LocatedObjects findObjects(Report report) {
+    return findObjects(LocatedObjects.fromReport(report, m_Prefix));
+  }
 }

@@ -27,10 +27,8 @@ import adams.data.objectfilter.Translate;
 import adams.data.objectfinder.ObjectsInRegion;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
-import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
 
 import java.awt.Rectangle;
 import java.util.List;
@@ -213,19 +211,13 @@ public abstract class AbstractSubImagesGenerator
       finder.setTop((int) region.getY() + 1);
       finder.setWidth((int) region.getWidth());
       finder.setHeight((int) region.getHeight());
-      indices = new TIntHashSet(finder.find(objects));
+      newObjects = finder.findObjects(objects);
 
       // translate objects
       trans = new Translate();
       trans.setX((int) -region.getX());
       trans.setY((int) -region.getY());
-      objects = trans.filter(objects);
-
-      newObjects = new LocatedObjects();
-      for (LocatedObject obj: objects) {
-        if (indices.contains(obj.getIndex()))
-          newObjects.add(obj);
-      }
+      newObjects = trans.filter(newObjects);
 
       // transfer objects
       result.mergeWith(newObjects.toReport(m_Prefix));

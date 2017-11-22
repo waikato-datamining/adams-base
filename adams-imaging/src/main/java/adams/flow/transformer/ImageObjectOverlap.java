@@ -303,7 +303,7 @@ public class ImageObjectOverlap
     Report 			otherReport;
     LocatedObjects		thisObjs;
     LocatedObjects		otherObjs;
-    LocatedObjects newObjs;
+    LocatedObjects 		newObjs;
     int 			count;
     double			highest;
     double			ratio;
@@ -339,10 +339,8 @@ public class ImageObjectOverlap
     }
 
     if (otherReport != null) {
-      thisObjs  = LocatedObjects.fromReport(thisReport,  m_Finder.getPrefix());
-      thisObjs  = thisObjs.subset(m_Finder.find(thisObjs));
-      otherObjs = LocatedObjects.fromReport(otherReport, m_Finder.getPrefix());
-      otherObjs = otherObjs.subset(m_Finder.find(otherObjs));
+      thisObjs  = m_Finder.findObjects(LocatedObjects.fromReport(thisReport,  m_Finder.getPrefix()));
+      otherObjs = m_Finder.findObjects(LocatedObjects.fromReport(otherReport, m_Finder.getPrefix()));
       newObjs   = new LocatedObjects();
       if (thisObjs.size() == 0) {
         newObjs = otherObjs;

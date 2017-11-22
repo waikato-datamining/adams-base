@@ -70,4 +70,20 @@ public interface ObjectFinder
    * @return		the indices
    */
   public int[] find(Report report);
+
+  /**
+   * Finds the objects in the list of objects.
+   *
+   * @param objects	the list of objects to process
+   * @return		the indices
+   */
+  public LocatedObjects findObjects(LocatedObjects objects);
+
+  /**
+   * Finds the objects in the report.
+   *
+   * @param report	the report to process
+   * @return		the indices
+   */
+  public LocatedObjects findObjects(Report report);
 }
