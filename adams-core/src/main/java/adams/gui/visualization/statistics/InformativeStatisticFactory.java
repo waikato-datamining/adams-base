@@ -293,7 +293,7 @@ public class InformativeStatisticFactory {
 
       if (value != null) {
 	m_Statistics.addAll(value);
-        m_SplitPane.setLeftComponentHidden(true);
+        m_SplitPane.setLeftComponentHidden(value.size() < 2);
       }
 
       update();
