@@ -892,9 +892,13 @@ public class PreviewBrowserPanel
       }
     }
 
-    // use same directory
-    if (result != null)
+    if (result != null) {
+      // use same directory
       result.open(new PlaceholderDirectory(m_PanelDir.getCurrent()));
+      // search
+      result.setLocalSearch(getLocalSearch());
+      result.setArchiveSearch(getArchiveSearch());
+    }
 
     return result;
   }
@@ -961,5 +965,43 @@ public class PreviewBrowserPanel
    */
   public boolean isBrowsingEnabled() {
     return !m_SplitPane.isLeftComponentHidden();
+  }
+
+  /**
+   * Returns the search term of the local file search.
+   *
+   * @return		the search term
+   */
+  public String getLocalSearch() {
+    return m_SearchLocalFiles.getSearchText();
+  }
+
+  /**
+   * Sets the search term for the local file search.
+   *
+   * @param search	the search term
+   */
+  public void setLocalSearch(String search) {
+    m_SearchLocalFiles.setSearchText(search);
+    m_SearchLocalFiles.search();
+  }
+
+  /**
+   * Sets the text for the archive file search.
+   * 
+   * @param search	the search term
+   */
+  public void setArchiveSearch(String search) {
+    m_SearchArchiveFiles.setSearchText(search);
+    m_SearchArchiveFiles.search();
+  }
+
+  /**
+   * Returns the search term of the archive file search.
+   * 
+   * @return		the search term
+   */
+  public String getArchiveSearch() {
+    return m_SearchArchiveFiles.getSearchText();
   }
 }
