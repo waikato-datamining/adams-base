@@ -1,0 +1,25 @@
+# Contains predefined templates for common times
+#
+# Format:
+# <ID>.display=<text to display in GUI>
+# <ID>.value=<cron schedule>
+
+# -infinity
+neg_infinity.display=Start of day
+neg_infinity.value=-INF
+
+# +infinity
+pos_infinity.display=End of day
+pos_infinity.value=+INF
+
+# now
+now.display=Now
+now.value=NOW
+
+# an hour ago
+one_hour_ago.display=1 hour ago
+one_hour_ago.value=NOW -1 HOUR
+
+# in one hour
+in_one_hour.display=In 1 hour
+in_one_hour.value=NOW +1 HOUR

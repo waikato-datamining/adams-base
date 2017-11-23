@@ -15,7 +15,7 @@
 
 /*
  * AbstractBaseDateTypeEditor.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -25,6 +25,7 @@ import adams.core.DateValueSupporter;
 import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.gui.chooser.DateProvider;
+import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.HelpFrame;
 import adams.gui.dialog.ApprovalDialog;
@@ -35,6 +36,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -47,8 +49,12 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -77,7 +83,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 
   /** The calendar component for editing the date. */
   protected P m_Calendar;
-  
+
   /** For specific date placeholders. */
   protected JComboBox<String> m_ComboBoxPlaceholders;
 
@@ -89,6 +95,9 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 
   /** The NOW button. */
   protected JButton m_ButtonNow;
+
+  /** the template button. */
+  protected BaseButtonWithDropDownMenu m_ButtonTemplates;
 
   /** The OK button. */
   protected JButton m_ButtonOK;
@@ -218,7 +227,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     JPanel	panelValues;
     JPanel	panelCustom;
     JPanel 	panelButtons;
-    JButton 	buttonClose;
+    JButton buttonCancel;
 
     panelAll = new JPanel(new BorderLayout());
     panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -230,12 +239,12 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     m_Calendar  = newPanel();
     panelValues.add((JPanel) m_Calendar, BorderLayout.CENTER);
 
-    m_ComboBoxPlaceholders = new JComboBox<String>(new String[]{
-	"Custom",
-	"Selected",
-	getPlaceholder(Placeholder.INF_PAST),
-	getPlaceholder(Placeholder.NOW),
-	getPlaceholder(Placeholder.INF_FUTURE)
+    m_ComboBoxPlaceholders = new JComboBox<>(new String[]{
+      "Custom",
+      "Selected",
+      getPlaceholder(Placeholder.INF_PAST),
+      getPlaceholder(Placeholder.NOW),
+      getPlaceholder(Placeholder.INF_FUTURE)
     });
     m_ComboBoxPlaceholders.addActionListener((ActionEvent e) -> {
       int index = m_ComboBoxPlaceholders.getSelectedIndex();
@@ -283,6 +292,21 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
 
+    m_ButtonTemplates = null;
+    if (BaseObject.getTemplates(newDateType().getClass()).size() > 0) {
+      m_ButtonTemplates = new BaseButtonWithDropDownMenu(GUIHelper.getIcon("template.gif"));
+      m_ButtonTemplates.setToolTipText("Templates");
+      Map<String,B> templates = (Map<String,B>) BaseObject.getTemplates(newDateType().getClass());
+      List<String> items = new ArrayList<>(templates.keySet());
+      Collections.sort(items);
+      for (String item: items) {
+	JMenuItem menuitem = new JMenuItem(item);
+	menuitem.addActionListener((ActionEvent ae) -> setValue(templates.get(item)));
+	m_ButtonTemplates.addToMenu(menuitem);
+      }
+      panelButtons.add(m_ButtonTemplates);
+    }
+
     m_ButtonOK = new JButton("OK");
     m_ButtonOK.setMnemonic('O');
     m_ButtonOK.addActionListener((ActionEvent e) -> {
@@ -297,10 +321,10 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     });
     panelButtons.add(m_ButtonOK);
 
-    buttonClose = new JButton("Cancel");
-    buttonClose.setMnemonic('C');
-    buttonClose.addActionListener((ActionEvent e) -> closeDialog(CANCEL_OPTION));
-    panelButtons.add(buttonClose);
+    buttonCancel = new JButton("Cancel");
+    buttonCancel.setMnemonic('C');
+    buttonCancel.addActionListener((ActionEvent e) -> closeDialog(CANCEL_OPTION));
+    panelButtons.add(buttonCancel);
 
     return panelAll;
   }
@@ -371,10 +395,10 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 
     return (B[]) result;
   }
-  
+
   /**
    * Checks whether inline editing is available.
-   * 
+   *
    * @return		true if editing available
    */
   public boolean isInlineEditingAvailable() {
@@ -383,7 +407,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 
   /**
    * Sets the value to use.
-   * 
+   *
    * @param value	the value to use
    */
   public void setInlineValue(String value) {
@@ -393,7 +417,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 
   /**
    * Returns the current value.
-   * 
+   *
    * @return		the current value
    */
   public String getInlineValue() {
@@ -402,7 +426,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 
   /**
    * Checks whether the value id valid.
-   * 
+   *
    * @param value	the value to check
    * @return		true if valid
    */

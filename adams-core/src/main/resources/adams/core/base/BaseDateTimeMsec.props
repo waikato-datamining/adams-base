@@ -1,0 +1,17 @@
+# Contains predefined templates for common date/times (with msec)
+#
+# Format:
+# <ID>.display=<text to display in GUI>
+# <ID>.value=<cron schedule>
+
+# -infinity
+neg_infinity.display=-Infinity
+neg_infinity.value=-INF
+
+# +infinity
+pos_infinity.display=+Infinity
+pos_infinity.value=+INF
+
+# now
+now.display=Now
+now.value=NOW

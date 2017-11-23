@@ -1,0 +1,33 @@
+# Contains predefined templates for common dates
+#
+# Format:
+# <ID>.display=<text to display in GUI>
+# <ID>.value=<cron schedule>
+
+# -infinity
+neg_infinity.display=-Infinity
+neg_infinity.value=-INF
+
+# +infinity
+pos_infinity.display=+Infinity
+pos_infinity.value=+INF
+
+# now
+now.display=Now
+now.value=NOW
+
+# yesterday
+yesterday.display=Yesterday
+yesterday.value=NOW -1 DAY
+
+# tomorrow
+tomorrow.display=Tomorrow
+tomorrow.value=NOW +1 DAY
+
+# last week
+last_week.display=Last week
+last_week.value=NOW -7 DAY
+
+# next week
+next_week.display=Next week
+next_week.value=NOW +7 DAY
