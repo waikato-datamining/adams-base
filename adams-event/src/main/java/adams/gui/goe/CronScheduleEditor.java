@@ -240,7 +240,7 @@ public class CronScheduleEditor
     });
     panelButtons.add(buttonHelp);
 
-    buttonTemplates = new BaseButtonWithDropDownMenu("...");
+    buttonTemplates = new BaseButtonWithDropDownMenu(GUIHelper.getIcon("template.gif"));
     buttonTemplates.setToolTipText(getHelpDescription());
     Map<String,CronSchedule> templates = BaseObject.getTemplates(CronSchedule.class);
     List<String> items = new ArrayList<>(templates.keySet());
