@@ -22,6 +22,7 @@ package adams.gui.core;
 
 import adams.core.Utils;
 import adams.data.spreadsheet.RowComparator;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 
 import javax.swing.event.ListSelectionEvent;
@@ -329,5 +330,36 @@ public class SpreadSheetTableWithButtons
    */
   public synchronized boolean isRegExpSearch() {
     return ((SpreadSheetTable) m_Component).isRegExpSearch();
+  }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @return		the spread sheet
+   */
+  @Override
+  public SpreadSheet toSpreadSheet() {
+    return ((SpreadSheetTable) m_Component).toSpreadSheet();
+  }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @param range	the type of rows to return
+   * @return		the spread sheet
+   */
+  public SpreadSheet toSpreadSheet(TableRowRange range) {
+    return ((SpreadSheetTable) m_Component).toSpreadSheet(range);
+  }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @param range	the type of rows to return
+   * @param view	whether to return only a view (ignored if {@link TableRowRange#ALL})
+   * @return		the spread sheet
+   */
+  public SpreadSheet toSpreadSheet(TableRowRange range, boolean view) {
+    return ((SpreadSheetTable) m_Component).toSpreadSheet(range, view);
   }
 }
