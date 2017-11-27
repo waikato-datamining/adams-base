@@ -15,7 +15,7 @@
 
 /*
  * BaseTable.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -26,6 +26,7 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
+import adams.data.spreadsheet.SpreadSheetView;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.event.PopupMenuListener;
 import adams.gui.event.RemoveItemsEvent;
@@ -35,6 +36,7 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.Action;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -46,6 +48,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -80,6 +83,9 @@ public class BaseTable
 
   /** the simple cell popup menu listener. */
   protected PopupMenuListener m_SimpleCellPopupMenuListener;
+
+  /** the file chooser for saving the spreadsheet. */
+  protected SpreadSheetFileChooser m_FileChooser;
 
   /**
    * Constructs a default <code>BaseTable</code> that is initialized with a default
@@ -507,6 +513,7 @@ public class BaseTable
    */
   protected BasePopupMenu createSimpleCellPopupMenu(MouseEvent e) {
     BasePopupMenu	menu;
+    JMenu		submenu;
     JMenuItem		menuitem;
     final int		row;
     final int		col;
@@ -515,29 +522,47 @@ public class BaseTable
     row  = rowAtPoint(e.getPoint());
     col  = columnAtPoint(e.getPoint());
 
-    menuitem = new JMenuItem("Copy cell", GUIHelper.getIcon("copy_cell.gif"));
+    menuitem = new JMenuItem("Select all");
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
-      if ((row == -1) || (col == -1))
-        return;
-      Object value = getValueAt(row, col);
-      if (value != null)
-        ClipboardHelper.copyToClipboard("" + value);
+      selectAll();
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Copy row", GUIHelper.getIcon("copy_row.gif"));
+    menuitem = new JMenuItem("Select none");
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> {
+      clearSelection();
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Invert selection");
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> {
+      invertRowSelection();
+    });
+    menu.add(menuitem);
+
+    menu.addSeparator();
+
+    if (getSelectedRowCount() > 1)
+      menuitem = new JMenuItem("Copy rows");
+    else
+      menuitem = new JMenuItem("Copy row");
+    menuitem.setIcon(GUIHelper.getIcon("copy_row.gif"));
+    menuitem.setEnabled(getSelectedRowCount() > 0);
+    menuitem.addActionListener((ActionEvent ae) -> copyToClipboard());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Copy cell");
+    menuitem.setIcon(GUIHelper.getIcon("copy_cell.gif"));
+    menuitem.setEnabled(getSelectedRowCount() == 1);
     menuitem.addActionListener((ActionEvent ae) -> {
       if (row == -1)
-        return;
-      StringBuilder content = new StringBuilder();
-      for (int i = 0; i < getColumnCount(); i++) {
-        Object value = getValueAt(row, i);
-        if (i > 0)
-          content.append("\t");
-        if (value != null)
-          content.append(value.toString());
-      }
-      ClipboardHelper.copyToClipboard(content.toString());
+	return;
+      if (col == -1)
+	return;
+      ClipboardHelper.copyToClipboard("" + getValueAt(row, col));
     });
     menu.add(menuitem);
 
@@ -565,17 +590,21 @@ public class BaseTable
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Save table as...", GUIHelper.getIcon("save.gif"));
-    menuitem.addActionListener((ActionEvent ae) -> {
-      SpreadSheetFileChooser chooser = new SpreadSheetFileChooser();
-      int retVal = chooser.showSaveDialog(BaseTable.this);
-      if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
-        return;
-      SpreadSheetWriter writer = chooser.getWriter();
-      if (!writer.write(toSpreadSheet(), chooser.getSelectedFile()))
-        GUIHelper.showErrorMessage(BaseTable.this, "Failed to save table to '" + chooser.getSelectedFile() + "'!");
-    });
-    menu.add(menuitem);
+    submenu = new JMenu("Save");
+    submenu.setIcon(GUIHelper.getIcon("save.gif"));
+    menu.add(submenu);
+
+    menuitem = new JMenuItem("Save all...");
+    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.ALL));
+    submenu.add(menuitem);
+
+    menuitem = new JMenuItem("Save selected...");
+    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.SELECTED));
+    submenu.add(menuitem);
+
+    menuitem = new JMenuItem("Save visible...");
+    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.VISIBLE));
+    submenu.add(menuitem);
 
     return menu;
   }
@@ -585,8 +614,7 @@ public class BaseTable
    *
    * @return		the spread sheet
    */
-  @Override
-  public SpreadSheet toSpreadSheet() {
+  protected SpreadSheet modelToSpreadSheet() {
     SpreadSheet		result;
     Row			row;
     int			i;
@@ -607,12 +635,91 @@ public class BaseTable
     for (n = 0; n < getRowCount(); n++) {
       row = result.addRow();
       for (i = 0; i < getColumnCount(); i++) {
-	value = getValueAt(n, i);
-	if (value == null)
-	  row.addCell("" + i).setMissing();
-	else
-	  row.addCell("" + i).setContent("" + value);
+        value = getValueAt(n, i);
+        if (value == null)
+          row.addCell("" + i).setMissing();
+        else
+          row.addCell("" + i).setContent("" + value);
       }
+    }
+
+    return result;
+  }
+
+  /**
+   * Determines the actual row index.
+   *
+   * @param index	the selected row
+   * @return		the actual model row
+   */
+  protected int selectionRowToModelRow(int index) {
+    return index;
+  }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @return		the spread sheet
+   */
+  @Override
+  public SpreadSheet toSpreadSheet() {
+    return toSpreadSheet(TableRowRange.ALL);
+  }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @param range	the type of rows to return
+   * @return		the spread sheet
+   */
+  public SpreadSheet toSpreadSheet(TableRowRange range) {
+    return toSpreadSheet(range, false);
+  }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @param range	the type of rows to return
+   * @param view	whether to return only a view (ignored if {@link TableRowRange#ALL})
+   * @return		the spread sheet
+   */
+  public SpreadSheet toSpreadSheet(TableRowRange range, boolean view) {
+    SpreadSheet	result;
+    SpreadSheet	full;
+    int[] 	indices;
+    int		i;
+
+    full = modelToSpreadSheet();
+    switch (range) {
+      case ALL:
+	result = full;
+	break;
+      case SELECTED:
+	indices = getSelectedRows();
+	if (view) {
+	  result = new SpreadSheetView(full, indices, null);
+	}
+	else {
+	  result = full.getHeader();
+	  for (i = 0; i < indices.length; i++)
+	    result.addRow().assign(full.getRow(selectionRowToModelRow(indices[i])));
+	}
+	break;
+      case VISIBLE:
+	if (view) {
+	  indices = new int[getRowCount()];
+	  for (i = 0; i < getRowCount(); i++)
+	    indices[i] = selectionRowToModelRow(i);
+	  result = new SpreadSheetView(full, indices, null);
+	}
+	else {
+	  result = full.getHeader();
+	  for (i = 0; i < getRowCount(); i++)
+	    result.addRow().assign(full.getRow(selectionRowToModelRow(i)));
+	}
+	break;
+      default:
+	throw new IllegalStateException("Unhandled row range: " + range);
     }
 
     return result;
@@ -705,6 +812,42 @@ public class BaseTable
     for (i = 0; i < value.length && i < getColumnModel().getColumnCount(); i++) {
       getColumnModel().getColumn(i).setWidth(value[i]);
       getColumnModel().getColumn(i).setPreferredWidth(value[i]);
+    }
+  }
+
+  /**
+   * Returns the filechooser for saving the table as spreadsheet.
+   *
+   * @return		the filechooser
+   */
+  protected synchronized SpreadSheetFileChooser getFileChooser() {
+    if (m_FileChooser == null) {
+      m_FileChooser = new SpreadSheetFileChooser();
+      m_FileChooser.setMultiSelectionEnabled(false);
+    }
+
+    return m_FileChooser;
+  }
+
+  /**
+   * Pops up a save dialog for saving the data to a file.
+   *
+   * @param range	the type of data to save
+   */
+  protected void saveAs(TableRowRange range) {
+    int 		retVal;
+    File file;
+    SpreadSheetWriter 	writer;
+
+    retVal = getFileChooser().showSaveDialog(GUIHelper.getParentComponent(this));
+    if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
+      return;
+    file = getFileChooser().getSelectedFile();
+    writer = getFileChooser().getWriter();
+    if (!writer.write(toSpreadSheet(range), file)) {
+      GUIHelper.showErrorMessage(
+	  GUIHelper.getParentComponent(this),
+	  "Failed to save spreadsheet to the following file:\n" + file);
     }
   }
 }

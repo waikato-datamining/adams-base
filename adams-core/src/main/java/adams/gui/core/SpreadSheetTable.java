@@ -13,18 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetTable.java
  * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetView;
-import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
 import adams.gui.event.PopupMenuListener;
 import adams.gui.visualization.core.PopupMenuCustomizer;
@@ -40,7 +37,6 @@ import javax.swing.table.TableModel;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -60,9 +56,6 @@ public class SpreadSheetTable
 
   /** the customizer for the table cells popup menu. */
   protected PopupMenuCustomizer m_CellPopupMenuCustomizer;
-
-  /** the file chooser for saving the spreadsheet. */
-  protected SpreadSheetFileChooser m_FileChooser;
 
   /** for keeping track of the setups being used (classname-{plot|process}-{column|row} - setup). */
   protected HashMap<String,Object> m_LastSetup;
@@ -226,88 +219,15 @@ public class SpreadSheetTable
   public int getNumDecimals() {
     return ((SpreadSheetTableModel) getUnsortedModel()).getNumDecimals();
   }
- 
-  /**
-   * Returns the underlying sheet.
-   *
-   * @return		the spread sheet
-   */
-  @Override
-  public SpreadSheet toSpreadSheet() {
-    return toSpreadSheet(TableRowRange.ALL);
-  }
 
   /**
-   * Returns the underlying sheet.
+   * Determines the actual row index.
    *
-   * @param range	the type of rows to return
-   * @return		the spread sheet
+   * @param index	the selected row
+   * @return		the actual model row
    */
-  public SpreadSheet toSpreadSheet(TableRowRange range) {
-    return toSpreadSheet(range, false);
-  }
-
-  /**
-   * Returns the underlying sheet.
-   *
-   * @param range	the type of rows to return
-   * @param view	whether to return only a view (ignored if {@link TableRowRange#ALL})
-   * @return		the spread sheet
-   */
-  public SpreadSheet toSpreadSheet(TableRowRange range, boolean view) {
-    SpreadSheet	result;
-    SpreadSheet	full;
-    int[] 	indices;
-    int		i;
-    
-    full = ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
-    switch (range) {
-      case ALL:
-	result = full;
-	break;
-      case SELECTED:
-	indices = getSelectedRows();
-	if (view) {
-	  result = new SpreadSheetView(full, indices, null);
-	}
-	else {
-	  result = full.getHeader();
-	  for (i = 0; i < indices.length; i++)
-	    result.addRow().assign(full.getRow(getActualRow(indices[i])));
-	}
-	break;
-      case VISIBLE:
-	if (view) {
-	  indices = new int[getRowCount()];
-	  for (i = 0; i < getRowCount(); i++)
-	    indices[i] = getActualRow(i);
-	  result = new SpreadSheetView(full, indices, null);
-	}
-	else {
-	  result = full.getHeader();
-	  for (i = 0; i < getRowCount(); i++)
-	    result.addRow().assign(full.getRow(getActualRow(i)));
-	}
-	break;
-      default:
-	throw new IllegalStateException("Unhandled row range: " + range);
-    }
-    
-    return result;
-  }
-
-  /**
-   * Returns the filechooser for saving the table as spreadsheet.
-   *
-   * @return		the filechooser
-   */
-  protected synchronized SpreadSheetFileChooser getFileChooser() {
-    if (m_FileChooser == null) {
-      m_FileChooser = new SpreadSheetFileChooser();
-      m_FileChooser.setMultiSelectionEnabled(false);
-    }
-
-    return m_FileChooser;
+  protected int selectionRowToModelRow(int index) {
+    return getActualRow(index);
   }
 
   /**
@@ -813,28 +733,6 @@ public class SpreadSheetTable
   public void sort(RowComparator comparator) {
     toSpreadSheet().sort(comparator);
     ((SpreadSheetTableModel) getUnsortedModel()).fireTableDataChanged();
-  }
-
-  /**
-   * Pops up a save dialog for saving the data to a file.
-   * 
-   * @param range	the type of data to save
-   */
-  protected void saveAs(TableRowRange range) {
-    int 		retVal;
-    File 		file;
-    SpreadSheetWriter 	writer;
-    
-    retVal = getFileChooser().showSaveDialog(GUIHelper.getParentComponent(this));
-    if (retVal != SpreadSheetFileChooser.APPROVE_OPTION)
-      return;
-    file = getFileChooser().getSelectedFile();
-    writer = getFileChooser().getWriter();
-    if (!writer.write(toSpreadSheet(range), file)) {
-      GUIHelper.showErrorMessage(
-	  GUIHelper.getParentComponent(this),
-	  "Failed to save spreadsheet to the following file:\n" + file);
-    }
   }
 
   /**

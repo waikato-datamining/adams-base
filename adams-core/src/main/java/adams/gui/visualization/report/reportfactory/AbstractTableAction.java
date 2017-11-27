@@ -213,7 +213,7 @@ public abstract class AbstractTableAction
    */
   protected AbstractReportFileChooser getFileChooser() {
     if (getTable() != null)
-      return getTable().getFileChooser();
+      return getTable().getReportFileChooser();
     else
       return null;
   }

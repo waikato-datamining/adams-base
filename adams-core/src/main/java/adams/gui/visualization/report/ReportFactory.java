@@ -517,7 +517,7 @@ public class ReportFactory {
      * 
      * @return		the file chooser
      */
-    public AbstractReportFileChooser getFileChooser() {
+    public AbstractReportFileChooser getReportFileChooser() {
       return m_FileChooser;
     }
 
