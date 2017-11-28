@@ -110,6 +110,7 @@ import java.util.logging.Level;
  *   apart from "'" enclosed by "'" and "'" (e.g., "'Hello World'").<br>
  * - The 'all' method applies the value to all the values in the lookup table<br>
  *   that match the regular expression.<br>
+ * - Variables starting with '_' are considered local and don't get transferred back out.<br>
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -316,6 +317,7 @@ public class LookUpUpdate
 	+ "  apart from \"'\" enclosed by \"'\" and \"'\" (e.g., \"'Hello World'\").\n"
 	+ "- The 'all' method applies the value to all the values in the lookup table\n"
         + "  that match the regular expression.\n"
+	+ "- Variables starting with '_' are considered local and don't get transferred back out.\n"
       ;
   }
 
@@ -610,6 +612,9 @@ public class LookUpUpdate
     for (Object key: updated.keySet()) {
       found  = false;
       keyStr = key.toString();
+      // ignore local variables
+      if (keyStr.startsWith("_"))
+        continue;
       for (Row row: result.rows()) {
 	if (row.hasCell(keyCol) && row.hasCell(valueCol)) {
 	  if (row.getCell(keyCol).getContent().equals(keyStr)) {

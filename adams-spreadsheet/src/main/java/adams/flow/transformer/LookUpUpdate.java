@@ -103,6 +103,7 @@ import java.util.HashMap;
  *   apart from "'" enclosed by "'" and "'" (e.g., "'Hello World'").<br>
  * - The 'all' method applies the value to all the values in the lookup table<br>
  *   that match the regular expression.<br>
+ * - Variables starting with '_' are considered local and don't get transferred back out.<br>
  * <br><br>
  <!-- globalinfo-end -->
  *
