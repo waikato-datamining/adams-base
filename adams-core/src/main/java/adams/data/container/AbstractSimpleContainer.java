@@ -105,7 +105,8 @@ public abstract class AbstractSimpleContainer<T>
     AbstractSimpleContainer<T>	result;
     
     result = getHeader();
-    result.setContent(cloneContent());
+    if (m_Content != null)
+      result.setContent(cloneContent());
     
     return result;
   }
