@@ -256,14 +256,14 @@ public class LocalScopeTrigger
 
     result  = "variables [";
     result += QuickInfoHelper.toString(this, "scopeHandlingVariables", m_ScopeHandlingVariables, "scope: ");
-    result += QuickInfoHelper.toString(this, "variablesFilter", m_VariablesFilter, "filter: ");
+    result += QuickInfoHelper.toString(this, "variablesFilter", m_VariablesFilter, ", filter: ");
     result += QuickInfoHelper.toString(this, "propagateVariables", (m_PropagateVariables ? "propagate" : "no propagation"), ", ");
     result += QuickInfoHelper.toString(this, "variablesRegExp", m_VariablesRegExp, ", regexp: ");
     result += "]";
     
     result += ", storage [";
     result += QuickInfoHelper.toString(this, "scopeHandlingStorage", m_ScopeHandlingStorage, "scope: ");
-    result += QuickInfoHelper.toString(this, "storageFilter", m_StorageFilter, "filter: ");
+    result += QuickInfoHelper.toString(this, "storageFilter", m_StorageFilter, ", filter: ");
     result += QuickInfoHelper.toString(this, "propagateStorage", (m_PropagateStorage ? "propagate" : "no propagation"), ", ");
     result += QuickInfoHelper.toString(this, "storageRegExp", m_StorageRegExp, ", regexp: ");
     result += "]";
