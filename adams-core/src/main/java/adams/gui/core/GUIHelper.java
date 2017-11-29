@@ -2378,7 +2378,7 @@ public class GUIHelper {
    * @return		the narrowed rectangle
    */
   public static Dimension makeNarrower(Dimension size) {
-    return makeWider(size, 0.2);
+    return makeNarrower(size, 0.2);
   }
 
   /**
@@ -2390,6 +2390,48 @@ public class GUIHelper {
    */
   public static Dimension makeNarrower(Dimension size, double percent) {
     return new Dimension((int) (size.width * (1 - percent)), size.height);
+  }
+
+  /**
+   * Males the rectangle taller by 20%.
+   *
+   * @param size  	the current size
+   * @return		the taller rectangle
+   */
+  public static Dimension makeTaller(Dimension size) {
+    return makeTaller(size, 0.2);
+  }
+
+  /**
+   * Makes the rectangle taller by the specified percentage.
+   *
+   * @param size  	the current size
+   * @param percent 	the percentage to make it taller (0-1)
+   * @return		the taller rectangle
+   */
+  public static Dimension makeTaller(Dimension size, double percent) {
+    return new Dimension(size.width, (int) (size.height * (1 + percent)));
+  }
+
+  /**
+   * Makes the rectangle smaller by 20%.
+   *
+   * @param size  	the current size
+   * @return		the smaller rectangle
+   */
+  public static Dimension makeSmaller(Dimension size) {
+    return makeSmaller(size, 0.2);
+  }
+
+  /**
+   * Makes the rectangle smaller by the specified percentage.
+   *
+   * @param size  	the current size
+   * @param percent 	the percentage to make it smaller (0-1)
+   * @return		the smaller rectangle
+   */
+  public static Dimension makeSmaller(Dimension size, double percent) {
+    return new Dimension(size.width, (int) (size.height * (1 - percent)));
   }
 
   /**
