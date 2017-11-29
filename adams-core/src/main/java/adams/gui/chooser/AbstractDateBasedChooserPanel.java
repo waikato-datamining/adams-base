@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDateBasedChooserPanel.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
@@ -135,8 +135,10 @@ public abstract class AbstractDateBasedChooserPanel<T extends Date>
       dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
       dialog = new ApprovalDialog(getParentFrame(), true);
+    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
     dialog.setTitle(getDialogTitle());
     panel = createPanel();
+    ((DateProvider) panel).setDate(getCurrent());
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
     dialog.pack();
     dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
