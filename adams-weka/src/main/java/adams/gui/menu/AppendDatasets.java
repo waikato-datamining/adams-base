@@ -15,7 +15,7 @@
 
 /*
  * AppendDatasets.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -45,7 +45,6 @@ import weka.core.converters.ConverterUtils.DataSink;
 import weka.core.converters.ConverterUtils.DataSource;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.logging.Level;
 
@@ -127,30 +126,27 @@ public class AppendDatasets
     finalpage.setDescription("<html><h2>Ready</h2>Please click on <b>Append</b> to start the process.</html>");
     wizard.addPage(finalpage);
     frame = createChildFrame(wizard, GUIHelper.getDefaultDialogDimension());
-    wizard.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (!e.getActionCommand().equals(WizardPane.ACTION_FINISH)) {
-          frame.dispose();
-          return;
-        }
-        Properties props = wizard.getProperties(false);
-        File[] input = null;
-        File output = null;
-        try {
-          String[] files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
-          input = new File[files.length];
-          for (int i = 0; i < files.length; i++)
-            input[i] = new File(files[i]);
-          output = new File(props.getProperty(WekaSelectDatasetPage.KEY_FILE));
-        }
-        catch (Exception ex) {
-          GUIHelper.showErrorMessage(
-            getOwner(), "Failed to get setup from wizard!\n" + Utils.throwableToString(ex));
-          return;
-        }
-        doAppend(frame, input, output);
+    wizard.addActionListener((ActionEvent e) -> {
+      if (!e.getActionCommand().equals(WizardPane.ACTION_FINISH)) {
+        frame.dispose();
+        return;
       }
+      Properties props = wizard.getProperties(false);
+      File[] input = null;
+      File output = null;
+      try {
+        String[] files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
+        input = new File[files.length];
+        for (int i = 0; i < files.length; i++)
+          input[i] = new File(files[i]);
+        output = new File(props.getProperty(WekaSelectDatasetPage.KEY_FILE));
+      }
+      catch (Exception ex) {
+        GUIHelper.showErrorMessage(
+          getOwner(), "Failed to get setup from wizard!\n" + Utils.throwableToString(ex));
+        return;
+      }
+      doAppend(frame, input, output);
     });
   }
 
@@ -194,12 +190,12 @@ public class AppendDatasets
             return;
           }
         }
-	else {
-	  for (n = 0; n < data[0].numAttributes(); n++) {
-	    if (data[0].attribute(n).isString() || data[0].attribute(n).isRelationValued())
-	      transferAtt.add(n);
-	  }
-	}
+        else {
+          for (n = 0; n < data[0].numAttributes(); n++) {
+            if (data[0].attribute(n).isString() || data[0].attribute(n).isRelationValued())
+              transferAtt.add(n);
+          }
+        }
         count += data[i].numInstances();
       }
       catch (Exception e) {
@@ -213,19 +209,19 @@ public class AppendDatasets
     full = new Instances(data[0], count);
     for (i = 0; i < data.length; i++) {
       for (Instance inst: data[i]) {
-	if (transferAtt.size() > 0) {
-	  for (n = 0; n < transferAtt.size(); n++) {
-	    index = transferAtt.get(n);
-	    if (inst.attribute(index).isString())
-	      full.attribute(index).addStringValue(inst.stringValue(index));
-	    else if (inst.attribute(n).isRelationValued())
-	      full.attribute(index).addRelation(inst.relationalValue(index));
-	    else
-	      throw new IllegalStateException(
-		"Unhandled attribute type: " + Attribute.typeToString(inst.attribute(index)));
-	  }
-	}
-	full.add(inst);
+        if (transferAtt.size() > 0) {
+          for (n = 0; n < transferAtt.size(); n++) {
+            index = transferAtt.get(n);
+            if (inst.attribute(index).isString())
+              full.attribute(index).addStringValue(inst.stringValue(index));
+            else if (inst.attribute(n).isRelationValued())
+              full.attribute(index).addRelation(inst.relationalValue(index));
+            else
+              throw new IllegalStateException(
+                "Unhandled attribute type: " + Attribute.typeToString(inst.attribute(index)));
+          }
+        }
+        full.add(inst);
       }
     }
 
@@ -235,12 +231,12 @@ public class AppendDatasets
       sink.write(full);
     }
     catch (Exception e) {
-        GUIHelper.showErrorMessage(
-          getOwner(), "Failed to save data to '" + output + "'!\n" + Utils.throwableToString(e));
-        return;
+      GUIHelper.showErrorMessage(
+        getOwner(), "Failed to save data to '" + output + "'!\n" + Utils.throwableToString(e));
+      return;
     }
 
-    GUIHelper.showInformationMessage(null, "Successfully apended!\n" + output);
+    GUIHelper.showInformationMessage(null, "Successfully appended!\n" + output);
     frame.dispose();
   }
 
