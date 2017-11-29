@@ -86,7 +86,6 @@ import java.util.logging.Level;
  * Abstract frame class for applications.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractApplicationFrame
   extends AbstractFrameWithOptionHandling
@@ -683,7 +682,7 @@ public abstract class AbstractApplicationFrame
    *
    * @return		the menu generator
    */
-  protected synchronized ApplicationMenu getAppMenu() {
+  public synchronized ApplicationMenu getAppMenu() {
     if (m_AppMenu == null) {
       m_AppMenu = new ApplicationMenu(this);
       m_AppMenu.setSetup(getMenuLayoutFile());

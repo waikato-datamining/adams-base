@@ -174,14 +174,14 @@ public abstract class AbstractMenuItemDefinition
    * @return		less than zero, zero, or greater than zero if this
    * 			menuitem is less than, equal to or greater than the
    * 			other definition
-   * @see 		#getCategory()
+   * @see 		#getActualCategory()
    * @see		#getTitle()
    */
   @Override
   public int compareTo(AbstractMenuItemDefinition o) {
     int		result;
 
-    result = getCategory().compareTo(o.getCategory());
+    result = getActualCategory().compareTo(o.getActualCategory());
     if (result == 0)
       result = getTitle().compareTo(o.getTitle());
 
@@ -222,6 +222,24 @@ public abstract class AbstractMenuItemDefinition
    * @return		the category/menu name
    */
   public abstract String getCategory();
+
+  /**
+   * Returns the actual category of the menu item in which it should appear, i.e.,
+   * the name of the menu.
+   *
+   * @return		the category/menu name
+   */
+  public String getActualCategory() {
+    String	result;
+
+    result = getCategory();
+    if (getOwner() != null) {
+      if (getOwner().getAppMenu().hasCategory(getClass()))
+        result = getOwner().getAppMenu().getCategory(getClass());
+    }
+
+    return result;
+  }
 
   /**
    * Returns whether the menu item requires a restartable application.

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ApplicationMenu.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -41,7 +41,6 @@ import java.util.logging.Level;
  * Generates the menu for the application frame.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ApplicationMenu
   extends LoggingObject
@@ -64,6 +63,9 @@ public class ApplicationMenu
 
   /** the props file key prefix for the blacklisted menu items. */
   public final static String LAYOUT_BLACKLISTED_PREFIX = "Blacklisted-";
+
+  /** the props file key prefix for the menu items with a new category. */
+  public final static String LAYOUT_CATEGORY_PREFIX = "Category-";
 
   /** the props file key for the windows menu. */
   public final static String LAYOUT_MENU_WINDOWS = "Windows";
@@ -397,7 +399,7 @@ public class ApplicationMenu
 	added = false;
 	for (i = 0; i < menus.length; i++) {
           try {
-            if (menus[i].getText().equals(def.getCategory())) {
+            if (menus[i].getText().equals(def.getActualCategory())) {
               added = true;
               menus[i].setVisible(true);
               // check for "Exit", "Restart" or "Close" (these are always last!)
@@ -424,14 +426,14 @@ public class ApplicationMenu
 	// add new menu
 	if (!added) {
 	  for (i = 0; i < result.getMenuCount(); i++) {
-	    if (result.getMenu(i).getText().equals(def.getCategory())) {
+	    if (result.getMenu(i).getText().equals(def.getActualCategory())) {
 	      added = true;
 	      result.getMenu(i).add(menuitem);
 	    }
 	  }
 	  // no menu/category added yet?
 	  if (!added) {
-	    menu = new JMenu(def.getCategory());
+	    menu = new JMenu(def.getActualCategory());
 	    menu.add(menuitem);
 	    if (indexToolsMenu == -1) {
 	      result.add(menu);
@@ -498,6 +500,62 @@ public class ApplicationMenu
     props  = getProperties();
     key    = LAYOUT_BLACKLISTED_PREFIX + classname;
     result = props.getBoolean(key, false);
+
+    return result;
+  }
+
+  /**
+   * Checks whether the class has a different category assigned.
+   *
+   * @param cls		the class to check
+   * @return		true if a different category assigned
+   */
+  public boolean hasCategory(Class cls) {
+    return hasCategory(cls.getName());
+  }
+
+  /**
+   * Checks whether the class has a different category assigned.
+   *
+   * @param classname	the class to check
+   * @return		true if a different category assigned
+   */
+  public boolean hasCategory(String classname) {
+    boolean	result;
+    String	key;
+    Properties	props;
+
+    props  = getProperties();
+    key    = LAYOUT_CATEGORY_PREFIX + classname;
+    result = (props.getProperty(key, null) != null);
+
+    return result;
+  }
+
+  /**
+   * Returns the different category assigned for the class (if any).
+   *
+   * @param cls		the class to get the category for
+   * @return		the category, null if no alternative assigned
+   */
+  public String getCategory(Class cls) {
+    return getCategory(cls.getName());
+  }
+
+  /**
+   * Returns the different category assigned for the class (if any).
+   *
+   * @param classname	the class to get the category for
+   * @return		the category, null if no alternative assigned
+   */
+  public String getCategory(String classname) {
+    String	result;
+    String	key;
+    Properties	props;
+
+    props  = getProperties();
+    key    = LAYOUT_CATEGORY_PREFIX + classname;
+    result = props.getProperty(key, null);
 
     return result;
   }

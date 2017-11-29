@@ -121,3 +121,14 @@ Shortcut-adams.gui.menu.Experimenter=ctrl pressed P
 Blacklisted-adams.gui.menu.SequenceViewer=true
 Blacklisted-adams.gui.menu.FlowControlCenter=true
 Blacklisted-adams.gui.menu.JobCompleteViewer=true
+
+#######################
+# Changing categories #
+#######################
+
+# Menu items can have their category (ie menu item) changed as follows:
+# Format
+#   Category-<classname>=<new category>
+#
+# Example:
+#   Category-adams.gui.menu.FunkyItem=Visualization
