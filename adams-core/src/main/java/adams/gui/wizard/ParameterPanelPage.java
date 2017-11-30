@@ -22,6 +22,7 @@ package adams.gui.wizard;
 import adams.core.Properties;
 import adams.gui.core.PropertiesParameterPanel;
 
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 
 /**
@@ -65,6 +66,7 @@ public class ParameterPanelPage
     super.initGUI();
     
     m_PanelParameter = new PropertiesParameterPanel();
+    m_PanelParameter.addChangeListener((ChangeEvent e) -> updateButtons());
     add(m_PanelParameter, BorderLayout.CENTER);
   }
   
