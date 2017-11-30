@@ -15,12 +15,23 @@
 
 /*
  *    PropertyPanel.java
- *    Copyright (C) 1999-2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.goe.Favorites.FavoriteSelectionEvent;
+import adams.gui.goe.Favorites.FavoriteSelectionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -33,18 +44,6 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
-import adams.gui.goe.Favorites.FavoriteSelectionEvent;
-import adams.gui.goe.Favorites.FavoriteSelectionListener;
 
 /**
  * Support for drawing a property value in a component.
@@ -334,5 +333,14 @@ public class PropertyPanel
 
     if (panel != null)
       panel.setToolTipText(text);
+  }
+
+  /**
+   * Returns the property editor.
+   *
+   * @return		the editor
+   */
+  public PropertyEditor getPropertyEditor() {
+    return m_Editor;
   }
 }
