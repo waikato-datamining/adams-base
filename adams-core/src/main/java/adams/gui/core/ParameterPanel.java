@@ -21,6 +21,7 @@ package adams.gui.core;
 
 import adams.core.Utils;
 import adams.gui.chooser.AbstractChooserPanel;
+import adams.gui.goe.PropertyPanel;
 
 import javax.swing.AbstractButton;
 import javax.swing.JCheckBox;
@@ -44,6 +45,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -96,6 +100,9 @@ public class ParameterPanel
 
   /** the action listener. */
   protected ActionListener m_ActionListener;
+
+  /** the property change listener. */
+  protected PropertyChangeListener m_PropertyChangeListener;
 
   /**
    * Initializes the panel.
@@ -170,6 +177,12 @@ public class ParameterPanel
     m_ActionListener = new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+	stateChanged(new ChangeEvent(this));
+      }
+    };
+    m_PropertyChangeListener = new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
 	stateChanged(new ChangeEvent(this));
       }
     };
@@ -720,6 +733,10 @@ public class ParameterPanel
       ((JComboBox) comp).addActionListener(m_ActionListener);
     else if (comp instanceof JSpinner)
       ((JSpinner) comp).addChangeListener(this);
+    else if (comp instanceof PropertyEditor)
+      ((PropertyEditor) comp).addPropertyChangeListener(m_PropertyChangeListener);
+    else if (comp instanceof PropertyPanel)
+      ((PropertyPanel) comp).getPropertyEditor().addPropertyChangeListener(m_PropertyChangeListener);
     else
       System.err.println("Failed to add change listener to component type: " + Utils.classToString(comp));
   }
@@ -740,6 +757,10 @@ public class ParameterPanel
       ((JComboBox) comp).removeActionListener(m_ActionListener);
     else if (comp instanceof JSpinner)
       ((JSpinner) comp).removeChangeListener(this);
+    else if (comp instanceof PropertyEditor)
+      ((PropertyEditor) comp).removePropertyChangeListener(m_PropertyChangeListener);
+    else if (comp instanceof PropertyPanel)
+      ((PropertyPanel) comp).getPropertyEditor().removePropertyChangeListener(m_PropertyChangeListener);
     else
       System.err.println("Failed to remove change listener from component type: " + Utils.classToString(comp));
   }
