@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PropertiesParameterPanel.java
  * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
@@ -56,6 +56,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
@@ -1389,5 +1390,23 @@ public class PropertiesParameterPanel
    */
   public boolean isButtonPanelVisible() {
     return m_PanelButtons.isVisible();
+  }
+
+  /**
+   * Adds the change listener.
+   *
+   * @param l		the change listener
+   */
+  public void addChangeListener(ChangeListener l) {
+    m_PanelProperties.addChangeListener(l);
+  }
+
+  /**
+   * Removes the change listener.
+   *
+   * @param l		the change listener
+   */
+  public void removeChangeListener(ChangeListener l) {
+    m_PanelProperties.removeChangeListener(l);
   }
 }

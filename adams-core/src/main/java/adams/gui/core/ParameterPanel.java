@@ -13,14 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ParameterPanel.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.core.Utils;
 import adams.gui.chooser.AbstractChooserPanel;
 
+import javax.swing.AbstractButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -29,14 +31,23 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A panel that lists one parameter (label and component or just
@@ -47,7 +58,8 @@ import java.util.List;
  * @version $Revision$
  */
 public class ParameterPanel
-  extends BasePanel {
+  extends BasePanel
+  implements ChangeListener {
 
   /** for serialization. */
   private static final long serialVersionUID = 7164103981772081436L;
@@ -66,7 +78,7 @@ public class ParameterPanel
 
   /** the vertical gap. */
   protected int m_GapVertical;
-  
+
   /** whether to use checkboxes. */
   protected boolean m_UseCheckBoxes;
 
@@ -75,6 +87,15 @@ public class ParameterPanel
 
   /** the minimum dimensions for JComboBox components. */
   protected Dimension m_MinDimensionJComboBox;
+
+  /** the change listeners. */
+  protected Set<ChangeListener> m_ChangeListeners;
+
+  /** the document listener. */
+  protected DocumentListener m_DocumentListener;
+
+  /** the action listener. */
+  protected ActionListener m_ActionListener;
 
   /**
    * Initializes the panel.
@@ -85,7 +106,7 @@ public class ParameterPanel
 
   /**
    * Initializes the panel.
-   * 
+   *
    * @param useCheckBoxes	whether to use checkboxes
    */
   public ParameterPanel(boolean useCheckBoxes) {
@@ -131,6 +152,27 @@ public class ParameterPanel
     m_Parameters                 = new ArrayList<>();
     m_PreferredDimensionJSpinner = new Dimension(100, 20);
     m_MinDimensionJComboBox      = new Dimension(50, 20);
+    m_ChangeListeners            = new HashSet<>();
+    m_DocumentListener = new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	stateChanged(new ChangeEvent(e));
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	stateChanged(new ChangeEvent(e));
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	stateChanged(new ChangeEvent(e));
+      }
+    };
+    m_ActionListener = new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	stateChanged(new ChangeEvent(this));
+      }
+    };
   }
 
   /**
@@ -154,13 +196,13 @@ public class ParameterPanel
 
   /**
    * Returns whether checkboxes are used.
-   * 
+   *
    * @return		true if checkboxes are used
    */
   public boolean useCheckBoxes() {
     return m_UseCheckBoxes;
   }
-  
+
   /**
    * Sets the preferred dimension for JSpinner and derived classes.
    *
@@ -179,7 +221,7 @@ public class ParameterPanel
   public Dimension getPreferredDimensionJSpinner() {
     return m_PreferredDimensionJSpinner;
   }
-  
+
   /**
    * Sets the minimum dimension for JComboBox and derived classes.
    *
@@ -282,12 +324,12 @@ public class ParameterPanel
       check = new JCheckBox("", checked);
     else
       check = null;
-    
+
     if (comp instanceof JTextArea)
       comp = new BaseScrollPane(comp);
     else if (comp instanceof JTextPane)
       comp = new BaseScrollPane(comp);
-    
+
     layout = new GridBagLayout();
     panel  = new JPanel(layout);
 
@@ -300,7 +342,7 @@ public class ParameterPanel
       layout.setConstraints(check, con);
       panel.add(check);
     }
-    
+
     con        = new GridBagConstraints();
     con.anchor = GridBagConstraints.WEST;
     con.gridy  = 0;
@@ -311,7 +353,7 @@ public class ParameterPanel
     con.insets = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
     layout.setConstraints(lbl, con);
     panel.add(lbl);
-    
+
     con = new GridBagConstraints();
     con.anchor = GridBagConstraints.WEST;
     con.fill   = GridBagConstraints.HORIZONTAL;
@@ -339,8 +381,10 @@ public class ParameterPanel
       m_Parameters.add(index, comp);
     }
 
+    addChangeListenerTo(comp);
+
     update();
-    
+
     return index;
   }
 
@@ -369,7 +413,7 @@ public class ParameterPanel
     JCheckBox		check;
     GridBagConstraints	con;
     GridBagLayout	layout;
-    
+
     layout = new GridBagLayout();
     panel  = new JPanel(layout);
 
@@ -416,8 +460,10 @@ public class ParameterPanel
       m_Parameters.add(index, chooser);
     }
 
+    addChangeListenerTo(chooser);
+
     update();
-    
+
     return index;
   }
 
@@ -427,8 +473,11 @@ public class ParameterPanel
    * @param index	the row index
    */
   public void removeParameter(int index) {
+    Component	comp;
+
     m_Labels.remove(index);
-    m_Parameters.remove(index);
+    comp = m_Parameters.remove(index);
+    removeChangeListenerFrom(comp);
     update();
   }
 
@@ -484,10 +533,10 @@ public class ParameterPanel
   public boolean isChecked(int index) {
     return m_UseCheckBoxes && m_CheckBoxes.get(index).isSelected();
   }
-  
+
   /**
    * Sets the tiptext to display.
-   * 
+   *
    * @param index	the index of the component
    * @param text	the tiptext to use, null to turn off
    * @param label	whether to set the tiptext for the label
@@ -496,10 +545,10 @@ public class ParameterPanel
   public void setToolTipText(int index, String text, boolean label, boolean comp) {
     setToolTipText(index, text, false, label, comp);
   }
-  
+
   /**
    * Sets the tiptext to display.
-   * 
+   *
    * @param index	the index of the component
    * @param text	the tiptext to use, null to turn off
    * @param check	whether to set the tiptext for the checkbox
@@ -540,9 +589,9 @@ public class ParameterPanel
     GridBagLayout	layout;
     GridBagConstraints	con;
     JPanel		panel;
-    
+
     removeAll();
-    
+
     layout = new GridBagLayout();
     setLayout(layout);
 
@@ -559,7 +608,7 @@ public class ParameterPanel
 	layout.setConstraints(m_CheckBoxes.get(i), con);
 	add(m_CheckBoxes.get(i));
       }
-      
+
       con        = new GridBagConstraints();
       con.anchor = GridBagConstraints.WEST;
       con.gridy  = i;
@@ -615,5 +664,83 @@ public class ParameterPanel
     }
 
     super.setEnabled(enabled);
+  }
+
+  /**
+   * Adds the change listener.
+   *
+   * @param l		the change listener
+   */
+  public void addChangeListener(ChangeListener l) {
+    m_ChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the change listener.
+   *
+   * @param l		the change listener
+   */
+  public void removeChangeListener(ChangeListener l) {
+    m_ChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all the change listeners.
+   */
+  protected void notifyChangeListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_ChangeListeners)
+      l.stateChanged(e);
+  }
+
+  /**
+   * Invoked when the target of the listener has changed its state.
+   *
+   * @param e  a ChangeEvent object
+   */
+  public void stateChanged(ChangeEvent e) {
+    notifyChangeListeners();
+  }
+
+  /**
+   * Adds a change listener to the specified component.
+   *
+   * @param comp	the component to add the listener to
+   */
+  protected void addChangeListenerTo(Component comp) {
+    if (comp instanceof AbstractChooserPanel)
+      ((AbstractChooserPanel) comp).addChangeListener(this);
+    else if (comp instanceof JTextComponent)
+      ((JTextComponent) comp).getDocument().addDocumentListener(m_DocumentListener);
+    else if (comp instanceof AbstractButton)
+      ((AbstractButton) comp).addActionListener(m_ActionListener);
+    else if (comp instanceof JComboBox)
+      ((JComboBox) comp).addActionListener(m_ActionListener);
+    else if (comp instanceof JSpinner)
+      ((JSpinner) comp).addChangeListener(this);
+    else
+      System.err.println("Failed to add change listener to component type: " + Utils.classToString(comp));
+  }
+
+  /**
+   * Removes a change listener from the specified component.
+   *
+   * @param comp	the component to remove the listener from
+   */
+  protected void removeChangeListenerFrom(Component comp) {
+    if (comp instanceof AbstractChooserPanel)
+      ((AbstractChooserPanel) comp).removeChangeListener(this);
+    else if (comp instanceof JTextComponent)
+      ((JTextComponent) comp).getDocument().removeDocumentListener(m_DocumentListener);
+    else if (comp instanceof AbstractButton)
+      ((AbstractButton) comp).removeActionListener(m_ActionListener);
+    else if (comp instanceof JComboBox)
+      ((JComboBox) comp).removeActionListener(m_ActionListener);
+    else if (comp instanceof JSpinner)
+      ((JSpinner) comp).removeChangeListener(this);
+    else
+      System.err.println("Failed to remove change listener from component type: " + Utils.classToString(comp));
   }
 }
