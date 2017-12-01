@@ -19,7 +19,6 @@
  */
 package adams.gui.core;
 
-import adams.core.Utils;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.goe.PropertyPanel;
 
@@ -737,8 +736,8 @@ public class ParameterPanel
       ((PropertyEditor) comp).addPropertyChangeListener(m_PropertyChangeListener);
     else if (comp instanceof PropertyPanel)
       ((PropertyPanel) comp).getPropertyEditor().addPropertyChangeListener(m_PropertyChangeListener);
-    else
-      System.err.println("Failed to add change listener to component type: " + Utils.classToString(comp));
+    //else
+    //  System.err.println("Failed to add change listener to component type: " + Utils.classToString(comp));
   }
 
   /**
@@ -761,7 +760,7 @@ public class ParameterPanel
       ((PropertyEditor) comp).removePropertyChangeListener(m_PropertyChangeListener);
     else if (comp instanceof PropertyPanel)
       ((PropertyPanel) comp).getPropertyEditor().removePropertyChangeListener(m_PropertyChangeListener);
-    else
-      System.err.println("Failed to remove change listener from component type: " + Utils.classToString(comp));
+    //else
+    //  System.err.println("Failed to remove change listener from component type: " + Utils.classToString(comp));
   }
 }
