@@ -331,14 +331,17 @@ public class SubProcess
   @Override
   public String execute() {
     String	result;
+    Token	current;
+
+    current = m_CurrentToken;
 
     if (m_OutputTokens != null)
       m_OutputTokens.clear();
 
     result = super.execute();
     
-    if (m_Skip)
-      getOutputTokens().add(m_CurrentToken);
+    if (m_Skip || (size() == 0))
+      getOutputTokens().add(current);
     
     return result;
   }
