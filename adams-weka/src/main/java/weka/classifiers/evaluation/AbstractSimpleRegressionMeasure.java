@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSimpleRegressionMeasure.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -23,12 +23,12 @@ package weka.classifiers.evaluation;
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.array.TDoubleArrayList;
 import weka.core.Instance;
+import weka.core.Utils;
 
 /**
  * Computes the mean error.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSimpleRegressionMeasure
   extends AbstractEvaluationMetric
@@ -90,7 +90,7 @@ public abstract class AbstractSimpleRegressionMeasure
    */
   @Override
   public void updateStatsForPredictor(double predictedValue, Instance instance) throws Exception {
-    if (!instance.classIsMissing()) {
+    if (!instance.classIsMissing() && !Utils.isMissingValue(predictedValue)) {
       m_Actual.add(instance.classValue());
       m_Predicted.add(predictedValue);
     }
