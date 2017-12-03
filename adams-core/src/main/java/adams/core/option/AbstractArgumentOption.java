@@ -15,7 +15,7 @@
 
 /*
  * AbstractArgumentOption.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -382,6 +382,15 @@ public abstract class AbstractArgumentOption
    * @return		true if both are equal
    */
   protected abstract boolean compareValues(Object value, Object defValue);
+
+  /**
+   * Compares the current value against the default value.
+   *
+   * @return		true if the value is the same as the default value
+   */
+  public boolean isDefaultValue() {
+    return isDefaultValue(getCurrentValue());
+  }
 
   /**
    * Compares the given value against the default value.
