@@ -642,6 +642,44 @@ public class OptionManager
   }
 
   /**
+   * Checks whether the current value associated with the flag is the
+   * default value.
+   *
+   * @param flag	the commandline to look for (no leading dash)
+   * @return		true if option located, has an argument and is the default value
+   */
+  public boolean isDefaultValueByFlag(String flag) {
+    AbstractOption 	option;
+
+    option = findOption(flag, true);
+    if (option != null) {
+      if (option instanceof AbstractArgumentOption)
+        return ((AbstractArgumentOption) option).isDefaultValue();
+    }
+
+    return false;
+  }
+
+  /**
+   * Checks whether the current value associated with the property is the
+   * default value.
+   *
+   * @param property	the property name to look for
+   * @return		true if option located, has an argument and is the default value
+   */
+  public boolean isDefaultValueByProperty(String property) {
+    AbstractOption 	option;
+
+    option = findOption(property, false);
+    if (option != null) {
+      if (option instanceof AbstractArgumentOption)
+        return ((AbstractArgumentOption) option).isDefaultValue();
+    }
+
+    return false;
+  }
+
+  /**
    * Sets the default values.
    */
   public void setDefaults() {
