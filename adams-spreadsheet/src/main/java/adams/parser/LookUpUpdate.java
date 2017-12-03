@@ -15,7 +15,7 @@
 
 /*
  * LookUpUpdate.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -119,33 +119,33 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  * &nbsp;&nbsp;&nbsp;The class to use for determining the environment.
  * &nbsp;&nbsp;&nbsp;default: adams.env.Environment
  * </pre>
- * 
+ *
  * <pre>-expression &lt;java.lang.String&gt; (property: expression)
  * &nbsp;&nbsp;&nbsp;The lookup update rules to evaluate.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-symbol &lt;adams.core.base.BaseString&gt; [-symbol ...] (property: symbols)
  * &nbsp;&nbsp;&nbsp;The symbols to initialize the parser with, key-value pairs: name=value.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-reader &lt;adams.data.io.input.SpreadSheetReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The spreadsheet reader for loading the spreadsheet to work on.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
- * 
+ *
  * <pre>-input &lt;adams.core.io.PlaceholderFile&gt; (property: input)
  * &nbsp;&nbsp;&nbsp;The input file to load with the specified reader; ignored if pointing to 
  * &nbsp;&nbsp;&nbsp;directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-key-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: keyColumn)
  * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as key; An index is a 
  * &nbsp;&nbsp;&nbsp;number starting with 1; column names (case-sensitive) as well as the following 
@@ -155,7 +155,7 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-value-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: valueColumn)
  * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as value; An index is 
  * &nbsp;&nbsp;&nbsp;a number starting with 1; column names (case-sensitive) as well as the following 
@@ -165,12 +165,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 2
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-use-native &lt;boolean&gt; (property: useNative)
  * &nbsp;&nbsp;&nbsp;If enabled, native objects are used as value rather than strings.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -316,7 +316,7 @@ public class LookUpUpdate
 	+ "- Variables are either all alphanumeric and -/_ (e.g., \"ABc_1-2\") or any character\n"
 	+ "  apart from \"'\" enclosed by \"'\" and \"'\" (e.g., \"'Hello World'\").\n"
 	+ "- The 'all' method applies the value to all the values in the lookup table\n"
-        + "  that match the regular expression.\n"
+	+ "  that match the regular expression.\n"
 	+ "- Variables starting with '_' are considered local and don't get transferred back out.\n"
       ;
   }
@@ -560,28 +560,17 @@ public class LookUpUpdate
   }
 
   /**
-   * Parses and evaluates the given expression.
-   * Returns the result of the mathematical expression, based on the given
-   * values of the symbols.
+   * Turns the values from the spreadsheet into symbols for the parser.
    *
-   * @param expr	the expression to evaluate
-   * @param symbols	the symbol/value mapping
-   * @param sheet	the spreadsheet to update
-   * @param keyCol 	the key column (0-based)
-   * @param valueCol	the value column (0-based)
-   * @return		the evaluated result
-   * @throws Exception	if something goes wrong
+   * @param sheet	the spreadsheet to convert
+   * @param keyCol	the column with the symbol names
+   * @param valueCol	the column with the symbol values
+   * @return		the generated symbols
    */
-  public static SpreadSheet evaluate(String expr, HashMap symbols, SpreadSheet sheet, int keyCol, int valueCol) throws Exception {
-    SymbolFactory 		sf;
-    ByteArrayInputStream 	parserInput;
-    Parser 			parser;
-    HashMap			updated;
-    SpreadSheet			result;
-    String			keyStr;
-    boolean			found;
-    Row				added;
+  public static HashMap spreadsheetToSymbols(SpreadSheet sheet, int keyCol, int valueCol) {
+    HashMap	symbols;
 
+    symbols = new HashMap();
     if (keyCol < 0)
       throw new IllegalArgumentException("No key column specified!");
     if (valueCol < 0)
@@ -593,28 +582,37 @@ public class LookUpUpdate
     if (valueCol >= sheet.getColumnCount())
       throw new IllegalArgumentException("Value column out of range: " + (valueCol+1) + " > " + sheet.getColumnCount());
 
-    expr = expr.trim();
-    if (expr.isEmpty())
-      return sheet;
-
     for (Row row: sheet.rows()) {
       if (row.hasCell(keyCol) && row.hasCell(valueCol))
 	symbols.put(row.getCell(keyCol).getContent(), row.getCell(valueCol).getNative());
     }
 
-    sf          = new DefaultSymbolFactory();
-    parserInput = new ByteArrayInputStream(expr.getBytes());
-    parser      = new Parser(new Scanner(parserInput, sf), sf);
-    parser.setSymbols(symbols);
-    parser.parse();
-    updated = parser.getSymbols();
+    return symbols;
+  }
+
+  /**
+   * Creates a copy of the spreadsheet and updates its values with the ones
+   * from updated symbols map.
+   *
+   * @param sheet	the spreadsheet to copy/update
+   * @param keyCol	the column with with the symbol names
+   * @param valueCol	the column with the values
+   * @param updated	the updated symbols
+   * @return		the updated copy of the spreadsheet
+   */
+  public static SpreadSheet updateSpreadSheet(SpreadSheet sheet, int keyCol, int valueCol, HashMap updated) {
+    SpreadSheet		result;
+    String		keyStr;
+    boolean		found;
+    Row			added;
+
     result  = sheet.getClone();
     for (Object key: updated.keySet()) {
       found  = false;
       keyStr = key.toString();
       // ignore local variables
       if (keyStr.startsWith("_"))
-        continue;
+	continue;
       for (Row row: result.rows()) {
 	if (row.hasCell(keyCol) && row.hasCell(valueCol)) {
 	  if (row.getCell(keyCol).getContent().equals(keyStr)) {
@@ -630,6 +628,65 @@ public class LookUpUpdate
 	added.addCell(valueCol).setNative(updated.get(key));
       }
     }
+
+    return result;
+  }
+
+  /**
+   * Parses and evaluates the given expression.
+   * Returns the result of the mathematical expression, based on the given
+   * values of the symbols.
+   *
+   * @param expr	the expression to evaluate
+   * @param symbols	the symbol/value mapping
+   * @return		the updated symbols
+   * @throws Exception	if something goes wrong
+   */
+  public static HashMap evaluate(String expr, HashMap symbols) throws Exception {
+    SymbolFactory 		sf;
+    ByteArrayInputStream 	parserInput;
+    Parser 			parser;
+    HashMap			result;
+
+    expr = expr.trim();
+    if (expr.isEmpty())
+      return symbols;
+
+    sf          = new DefaultSymbolFactory();
+    parserInput = new ByteArrayInputStream(expr.getBytes());
+    parser      = new Parser(new Scanner(parserInput, sf), sf);
+    parser.setSymbols(symbols);
+    parser.parse();
+    result  = parser.getSymbols();
+
+    return result;
+  }
+
+  /**
+   * Parses and evaluates the given expression.
+   * Returns the result of the mathematical expression, based on the given
+   * values of the symbols.
+   *
+   * @param expr	the expression to evaluate
+   * @param symbols	the symbol/value mapping
+   * @param sheet	the spreadsheet to update
+   * @param keyCol 	the key column (0-based)
+   * @param valueCol	the value column (0-based)
+   * @return		the evaluated result
+   * @throws Exception	if something goes wrong
+   */
+  public static SpreadSheet evaluate(String expr, HashMap symbols, SpreadSheet sheet, int keyCol, int valueCol) throws Exception {
+    SpreadSheet		result;
+    HashMap		updated;
+
+    expr = expr.trim();
+    if (expr.isEmpty())
+      return sheet;
+
+    symbols.putAll(spreadsheetToSymbols(sheet, keyCol, valueCol));
+    updated = evaluate(expr, symbols);
+    result  = updateSpreadSheet(sheet, keyCol, valueCol, updated);
+
     return result;
   }
 

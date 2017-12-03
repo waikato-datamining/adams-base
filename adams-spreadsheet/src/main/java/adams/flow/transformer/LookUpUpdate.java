@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LookUpUpdate.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -343,6 +343,8 @@ public class LookUpUpdate
     String		result;
     SpreadSheet		sheet;
     String		rules;
+    HashMap		symbols;
+    HashMap		updated;
 
     result = null;
 
@@ -351,12 +353,16 @@ public class LookUpUpdate
     sheet  = (SpreadSheet) m_InputToken.getPayload();
     m_KeyColumn.setData(sheet);
     m_ValueColumn.setData(sheet);
+    symbols = adams.parser.LookUpUpdate.spreadsheetToSymbols(sheet, m_KeyColumn.getIntIndex(), m_ValueColumn.getIntIndex());
     try {
-      sheet = adams.parser.LookUpUpdate.evaluate(
-	rules, new HashMap(), sheet, m_KeyColumn.getIntIndex(), m_ValueColumn.getIntIndex());
+      updated = adams.parser.LookUpUpdate.evaluate(rules, symbols);
+      sheet   = adams.parser.LookUpUpdate.updateSpreadSheet(sheet, m_KeyColumn.getIntIndex(), m_ValueColumn.getIntIndex(), updated);
     }
     catch (Exception e) {
-      result = handleException("Failed to update lookup table!", e);
+      result = handleException(
+        "Failed to update lookup table!\n"
+	+ "Rules:\n" + rules + "\n"
+	+ "Symbols:\n" + symbols, e);
     }
 
     if (result == null)
