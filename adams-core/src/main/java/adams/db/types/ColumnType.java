@@ -33,96 +33,42 @@ import java.sql.Types;
  */
 public class ColumnType {
 
-  /** max size of varchar. */
-  static public final int MAX_VARCHAR = 255;
-
-  /** max size of TEXT. */
-  static public final int MAX_TEXT = 65535;
-
-  /** max size of MEDIUMTEXT. */
-  static public final int MAX_MEDIUMTEXT = 16777215;
-
   /** java sql type. */
-  protected int m_type = Types.NULL;
+  protected int m_type;
 
   /** size of type. */
-  protected int m_size = -1; // unset
+  protected int m_size;
 
   /**
    * Constructor.
    *
-   * @param sqlt	java sql type
+   * @param type	java sql type
    */
-  public ColumnType(int sqlt) {
-    m_type = sqlt;
+  public ColumnType(int type) {
+    m_type = type;
+    m_size = -1;
   }
 
   /**
    * Constructor.
    *
-   * @param sqlt	java sql type
+   * @param type	java sql type
    * @param size	size  e.g for varchar
    */
-  public ColumnType(int sqlt, int size) {
-    m_type = sqlt;
+  public ColumnType(int type, int size) {
+    this(type);
 
-    switch (sqlt) {
+    switch (type) {
       case Types.VARCHAR:
       case Types.LONGVARCHAR:
+        m_size = size;
+        break;
+
       case Types.TIME:
       case Types.TIMESTAMP:
+        if ((size == 3) || (size == 6) || (size == 9))
         m_size = size;
-    }
-  }
-
-  /**
-   * Get the size of type (bytes).
-   *
-   * @return		size
-   */
-  public int getSize() {
-    //return m_size, or default
-    if (m_size != -1) {
-      return m_size;
-    }
-
-    switch (m_type) {
-      case Types.BIGINT :
-        return 20;
-
-      case Types.SMALLINT:
-        return 6;
-
-      case Types.VARCHAR:
-        if (m_size== -1) {
-          return 255;
-        }
-        if (m_size <= MAX_VARCHAR) {
-          return m_size; //VARCHAR(m_size)
-        } else if (m_size <= MAX_TEXT) {
-          return MAX_TEXT;
-        } else if (m_size <= MAX_MEDIUMTEXT) {
-          return MAX_MEDIUMTEXT;//MEDIUMTEXT
-        } else {
-          return MAX_MEDIUMTEXT+1;
-        }
-
-      case Types.LONGVARCHAR:
-        if (m_size == -1) {
-          return(MAX_MEDIUMTEXT); // MEDIUM
-        }
-        if (m_size <= MAX_VARCHAR) {
-          return m_size; //VARCHAR(m_size)
-        } else if (m_size <= MAX_TEXT) {
-          return MAX_TEXT;
-        } else if (m_size <= MAX_MEDIUMTEXT) {
-          return MAX_MEDIUMTEXT; //MEDIUMTEXT
-        } else {
-          return MAX_MEDIUMTEXT+1;
-        }
-
-      default:
-        return -1;
+        break;
     }
   }
 
@@ -132,171 +78,17 @@ public class ColumnType {
    * @return 		string representation of this type
    */
   public String getCompareType(AbstractDatabaseConnection conn) {
-    if (JDBC.isMySQL(conn)) {
-      switch (m_type) {
-        case Types.BIGINT:
-          return "BIGINT";
-
-        case Types.BLOB:
-          return "BLOB";
-
-        case Types.BIT:
-        case Types.BOOLEAN:
-        case Types.TINYINT:
-          return "TINYINT";
-
-        case Types.DOUBLE:
-          return "DOUBLE";
-
-        case Types.FLOAT:
-        case Types.REAL:
-          return "FLOAT";
-
-        case Types.SMALLINT:
-          return "SMALLINT(" + getSize() + ")";
-
-        case Types.INTEGER:
-          return "INTEGER";
-
-        case Types.LONGVARCHAR:
-        case Types.VARCHAR:
-          int s = getSize();
-          if (s <= MAX_VARCHAR) {
-            return "VARCHAR(" + s + ")";
-          }
-          else if (s <= MAX_TEXT) {
-            return "TEXT";
-          }
-          else if (s <= MAX_MEDIUMTEXT) {
-            return "MEDIUMTEXT";
-          }
-          else {
-            return "LONGTEXT";
-          }
-
-        case Types.TIMESTAMP:
-          if (getSize() == -1)
-            return "TIMESTAMP";
-          else
-            return "TIMESTAMP(" + getSize() + ")";
-
-        case Types.DATE:
-          return "DATE";
-
-        case Types.TIME:
-          if (getSize() == -1)
-            return "TIME";
-          else
-            return "TIME(" + getSize() + ")";
-
-        case Types.LONGVARBINARY:
-          return "LONG VARBINARY";
-
-        default:
-          throw new IllegalStateException("No TYPE for " + m_type);
-      }
-    }
-    else if (JDBC.isPostgreSQL(conn)) {
-      switch (m_type) {
-        case Types.BIT:
-        case Types.BOOLEAN:
-        case Types.TINYINT:
-          return "BOOLEAN";
-
-        case Types.BIGINT:
-          return "BIGINT";
-
-        case Types.SMALLINT:
-          return "SMALLINT";
-
-        case Types.INTEGER:
-          return "INTEGER";
-
-        case Types.FLOAT:
-        case Types.REAL:
-          return "REAL";
-
-        case Types.DOUBLE:
-          return "DOUBLE PRECISION";
-
-        case Types.LONGVARCHAR:
-        case Types.VARCHAR:
-          int s = getSize();
-          if (s <= MAX_VARCHAR) {
-            return "VARCHAR(" + s + ")";
-          }
-          else{
-            return "TEXT";
-          }
-
-        case Types.TIMESTAMP:
-          if (getSize() == -1)
-            return "TIMESTAMP";
-          else
-            return "TIMESTAMP(" + getSize() + ")";
-
-        case Types.DATE:
-          return "DATE";
-
-        case Types.TIME:
-          if (getSize() == -1)
-            return "TIME";
-          else
-            return "TIME(" + getSize() + ")";
-
-        case Types.BLOB:
-        case Types.LONGVARBINARY:
-          return "BYTEA";
-
-        default:
-          throw new IllegalStateException("No TYPE for " + m_type);
-      }
-    }
-    else if (JDBC.isSQLite(conn)) {
-      switch (m_type) {
-        case Types.BIT:
-        case Types.TINYINT:
-        case Types.SMALLINT:
-        case Types.INTEGER:
-        case Types.BIGINT:
-          return "INTEGER";
-
-        case Types.BOOLEAN:
-        case Types.TIMESTAMP:
-        case Types.DATE:
-        case Types.TIME:
-	  return "NUMERIC";
-
-        case Types.DOUBLE:
-        case Types.FLOAT:
-        case Types.REAL:
-          return "REAL";
-
-        case Types.LONGVARCHAR:
-        case Types.VARCHAR:
-	  return "TEXT";
-
-        case Types.LONGVARBINARY:
-        case Types.BLOB:
-          return "BLOB";
-
-        default:
-          throw new IllegalStateException("No TYPE for " + m_type);
-      }
-    }
-    else {
-      throw new IllegalArgumentException("Unrecognized JDBC URL: " + conn.getURL());
-    }
+    return JDBC.getTypes(conn).toTypeString(m_type, m_size, true);
   }
 
   /**
    * True if given type if equivalent to this object.
    *
-   * @param sqt		sql type
+   * @param type		sql type
    * @return		equivalent?
    */
-  public boolean equivalentTo(AbstractDatabaseConnection conn, ColumnType sqt) {
-    return getCompareType(conn).equals(sqt.getCompareType(conn));
+  public boolean equivalentTo(AbstractDatabaseConnection conn, ColumnType type) {
+    return getCompareType(conn).equals(type.getCompareType(conn));
   }
 
   /**
@@ -305,14 +97,7 @@ public class ColumnType {
    * @return		creation string
    */
   public String getCreateType(AbstractDatabaseConnection conn) {
-    String	result;
-
-    result = getCompareType(conn);
-
-    if (m_type == java.sql.Types.TIMESTAMP)
-      result += " NOT NULL DEFAULT '0000-00-00 00:00:00'";  // TODO switch to DATETIME? TIMESTAMP is restricted to 1970-2038!
-
-    return result;
+    return JDBC.getTypes(conn).toTypeString(m_type, m_size, false);
   }
 
   /**
@@ -321,6 +106,6 @@ public class ColumnType {
    * @return 		string representation
    */
   public String toString() {
-    return m_type + ": " + getCreateType(null);
+    return m_type + ": " + JDBC.TYPES_MYSQL.toTypeString(m_type, m_size, false);
   }
 }

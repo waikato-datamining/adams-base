@@ -20,6 +20,11 @@
 
 package adams.db;
 
+import adams.db.types.AbstractTypes;
+import adams.db.types.TypesMySQL;
+import adams.db.types.TypesPostgreSQL;
+import adams.db.types.TypesSQLite;
+
 /**
  * Utility class for JDBC.
  *
@@ -36,6 +41,15 @@ public class JDBC {
 
   /** the expression to match a SQLite JDBC URL. */
   public final static String URL_SQLITE = "jdbc:sqlite:.*";
+
+  /** the types for MySQL. */
+  public static TypesMySQL TYPES_MYSQL = new TypesMySQL();
+
+  /** the types for PostgreSQL. */
+  public static TypesPostgreSQL TYPES_POSTGRESQL = new TypesPostgreSQL();
+
+  /** the types for SQLite. */
+  public static TypesSQLite TYPES_SQLITE = new TypesSQLite();
 
   /**
    * Checks whether this JDBC url represents a MySQL URL.
@@ -130,5 +144,33 @@ public class JDBC {
       return "REGEXP";
     else
       throw new IllegalArgumentException("Unsupported connection type: " + url);
+  }
+
+  /**
+   * Returns the appropriate types.
+   *
+   * @param conn	the connection to use for identification
+   * @return		the types
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static AbstractTypes getTypes(AbstractDatabaseConnection conn) {
+    return getTypes(conn.getURL());
+  }
+
+  /**
+   * Returns the appropriate types.
+   *
+   * @param url		the URL to use for identification
+   * @return		the types
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static AbstractTypes getTypes(String url) {
+    if (isMySQL(url))
+      return TYPES_MYSQL;
+    else if (isPostgreSQL(url))
+      return TYPES_POSTGRESQL;
+    else if (isSQLite(url))
+      return TYPES_SQLITE;
+    else throw new IllegalArgumentException("Unsupported connection type: " + url);
   }
 }
