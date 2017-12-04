@@ -15,7 +15,7 @@
 
 /*
  * ColumnType.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -30,7 +30,6 @@ import java.sql.Types;
  * SQL column type.
  *
  * @author dale
- * @version $Revision$
  */
 public class ColumnType {
 
@@ -67,8 +66,13 @@ public class ColumnType {
   public ColumnType(int sqlt, int size) {
     m_type = sqlt;
 
-    if (sqlt == Types.VARCHAR || sqlt == Types.LONGVARCHAR)
-      m_size = size;
+    switch (sqlt) {
+      case Types.VARCHAR:
+      case Types.LONGVARCHAR:
+      case Types.TIME:
+      case Types.TIMESTAMP:
+        m_size = size;
+    }
   }
 
   /**
@@ -88,9 +92,6 @@ public class ColumnType {
 
       case Types.SMALLINT:
         return 6;
-
-      case Types.TIMESTAMP:
-        return 14;
 
       case Types.VARCHAR:
         if (m_size== -1) {
@@ -174,13 +175,19 @@ public class ColumnType {
           }
 
         case Types.TIMESTAMP:
-          return "TIMESTAMP";
+          if (getSize() == -1)
+            return "TIMESTAMP";
+          else
+            return "TIMESTAMP(" + getSize() + ")";
 
         case Types.DATE:
           return "DATE";
 
         case Types.TIME:
-          return "TIME";
+          if (getSize() == -1)
+            return "TIME";
+          else
+            return "TIME(" + getSize() + ")";
 
         case Types.LONGVARBINARY:
           return "LONG VARBINARY";
@@ -223,13 +230,19 @@ public class ColumnType {
           }
 
         case Types.TIMESTAMP:
-          return "TIMESTAMP";
+          if (getSize() == -1)
+            return "TIMESTAMP";
+          else
+            return "TIMESTAMP(" + getSize() + ")";
 
         case Types.DATE:
           return "DATE";
 
         case Types.TIME:
-          return "TIME";
+          if (getSize() == -1)
+            return "TIME";
+          else
+            return "TIME(" + getSize() + ")";
 
         case Types.BLOB:
         case Types.LONGVARBINARY:
