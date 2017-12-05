@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseMetaData.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -29,6 +29,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.sql.AbstractTypeMapper;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
+import adams.db.DatabaseConnectionUser;
 import adams.flow.core.Token;
 
 import java.lang.reflect.Method;
@@ -40,10 +41,10 @@ import java.util.logging.Level;
  * Ancestor for sources that output the database meta-data.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 6790 $
  */
 public abstract class AbstractDatabaseMetaData
-  extends AbstractSimpleSource {
+  extends AbstractSimpleSource
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -8462709950859959951L;

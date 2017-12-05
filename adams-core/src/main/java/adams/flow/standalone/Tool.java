@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
+import adams.db.DatabaseConnectionUser;
 import adams.flow.core.ActorUtils;
 import adams.tools.InitializeTables;
 
@@ -74,10 +75,10 @@ import adams.tools.InitializeTables;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Tool
-  extends AbstractStandalone {
+  extends AbstractStandalone
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -295054877801672294L;

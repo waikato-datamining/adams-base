@@ -15,21 +15,22 @@
 
 /*
  * AbstractDbTransformer.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.db.AbstractDatabaseConnection;
+import adams.db.DatabaseConnectionUser;
 
 /**
  * Abstract ancestor for transformers that query a database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDbTransformer
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = 2514053117324145611L;

@@ -14,60 +14,45 @@
  */
 
 /*
- * AbstractInstrumentSupplier.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * AbstractDbArrayProvider.java
+ * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.source;
+package adams.flow.transformer;
 
+import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnectionUser;
-import adams.db.InstrumentProvider;
-
-import java.util.ArrayList;
 
 /**
- * Abstract ancestor for instrument suppliers.
+ * Ancestor for array providers that use the database.
  *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractInstrumentSupplier
+public abstract class AbstractDbArrayProvider
   extends AbstractArrayProvider
   implements DatabaseConnectionUser {
 
-  /** for serialization. */
-  private static final long serialVersionUID = -8159720259695436880L;
+  private static final long serialVersionUID = -6679028039242451878L;
 
   /** the database connection. */
   protected adams.db.AbstractDatabaseConnection m_DatabaseConnection;
 
   /**
-   * Returns the based class of the items.
-   *
-   * @return		the class
+   * Initializes the members.
    */
   @Override
-  protected Class getItemClass() {
-    return String.class;
+  protected void initialize() {
+    super.initialize();
+
+    m_DatabaseConnection = null;
   }
 
   /**
-   * Returns the tip text for this property.
+   * Returns the default database connection.
    *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
+   * @return 		the default database connection
    */
-  @Override
-  public String outputArrayTipText() {
-    return "Whether to return the instruments as array or one by one.";
-  }
-
-  /**
-   * Returns the instrument provider to use for retrieving the instruments.
-   *
-   * @return		the instrument provider
-   */
-  protected abstract InstrumentProvider getProvider();
+  protected abstract AbstractDatabaseConnection getDefaultDatabaseConnection();
 
   /**
    * Determines the database connection in the flow.
@@ -96,23 +81,25 @@ public abstract class AbstractInstrumentSupplier
   }
 
   /**
+   * Performs the actual database query.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  protected abstract String queryDatabase();
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
   protected String doExecute() {
-    String		result;
-    InstrumentProvider	provider;
+    String	result;
 
     result = setUpDatabaseConnection();
 
-    if (result == null) {
-      provider = getProvider();
-      m_Queue  = new ArrayList(provider.getInstruments());
-      if (m_Queue.size() == 0)
-	result = "No instruments found!";
-    }
+    if (result == null)
+      result = queryDatabase();
 
     return result;
   }

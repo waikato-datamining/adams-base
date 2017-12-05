@@ -22,6 +22,7 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
+import adams.db.DatabaseConnectionUser;
 import adams.db.SQL;
 
 import java.sql.ResultSet;
@@ -36,7 +37,8 @@ import java.util.List;
  * @version $Revision$
  */
 public abstract class AbstractListTables
-  extends AbstractArrayProvider {
+  extends AbstractArrayProvider
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -8462709950859959951L;

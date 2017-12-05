@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TimeseriesDbReader.java
  * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
@@ -23,6 +23,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
+import adams.db.DatabaseConnectionUser;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
@@ -104,10 +105,10 @@ import java.util.Date;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TimeseriesDbReader
-  extends AbstractSource {
+  extends AbstractSource
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -1030024345072684197L;

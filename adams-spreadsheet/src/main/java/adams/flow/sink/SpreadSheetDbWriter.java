@@ -29,6 +29,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.sql.AbstractTypeMapper;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Writer;
+import adams.db.DatabaseConnectionUser;
 import adams.db.SQL;
 import adams.flow.core.ActorUtils;
 
@@ -114,11 +115,10 @@ import adams.flow.core.ActorUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetDbWriter
   extends AbstractSink
-  implements BatchSizeSupporter {
+  implements BatchSizeSupporter, DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = 393925191813730213L;

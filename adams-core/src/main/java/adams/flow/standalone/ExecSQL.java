@@ -22,6 +22,7 @@ package adams.flow.standalone;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
+import adams.db.DatabaseConnectionUser;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
@@ -75,10 +76,10 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExecSQL
-  extends AbstractStandalone {
+  extends AbstractStandalone
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -2766505525494708760L;

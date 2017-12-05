@@ -29,6 +29,7 @@ import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
+import adams.db.DatabaseConnectionUser;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
@@ -45,7 +46,8 @@ import java.sql.ResultSetMetaData;
  * @version $Revision: 8087 $
  */
 public abstract class AbstractReportDbUpdater
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = 1429977151568224156L;

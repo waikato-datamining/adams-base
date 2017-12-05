@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerDbWriter.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,17 +24,17 @@ import adams.core.Constants;
 import adams.data.container.DataContainer;
 import adams.data.id.DatabaseIDHandler;
 import adams.db.DataProvider;
+import adams.db.DatabaseConnectionUser;
 import adams.flow.core.Actor;
 
 /**
  * Interface for actors that import data containers into the database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to write to the database
  */
 public interface DataContainerDbWriter<T extends DataContainer & DatabaseIDHandler>
-  extends Actor {
+  extends Actor, DatabaseConnectionUser {
 
   /**
    * Returns the data provider to use for storing the container in the database.

@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractTableCleanUp;
 import adams.db.DatabaseConnection;
+import adams.db.DatabaseConnectionUser;
 import adams.db.SQLTableCleanUp;
 import adams.flow.core.ActorUtils;
 
@@ -74,10 +75,10 @@ import adams.flow.core.ActorUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TableCleanUp
-  extends AbstractStandalone {
+  extends AbstractStandalone
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -295054877801672294L;

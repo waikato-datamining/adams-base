@@ -15,24 +15,24 @@
 
 /*
  * DataContainerDbReader.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.data.container.DataContainer;
 import adams.db.DataProvider;
+import adams.db.DatabaseConnectionUser;
 import adams.flow.core.Actor;
 
 /**
  * Interface for actors that read containers from the database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to load from the database
  */
 public interface DataContainerDbReader<T extends DataContainer>
-  extends Actor {
+  extends Actor, DatabaseConnectionUser {
 
   /**
    * Returns the data provider to use for storing the container in the database.

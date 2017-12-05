@@ -20,6 +20,7 @@
 
 package adams.flow.sink;
 
+import adams.db.DatabaseConnectionUser;
 import adams.db.LogEntry;
 import adams.db.LogT;
 import adams.flow.core.ActorUtils;
@@ -65,10 +66,10 @@ import adams.flow.core.ActorUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Logger
-  extends AbstractSink {
+  extends AbstractSink
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = 1862024453539320530L;

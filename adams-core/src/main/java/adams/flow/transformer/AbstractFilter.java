@@ -27,6 +27,7 @@ import adams.data.container.DataContainer;
 import adams.data.filter.BatchFilter;
 import adams.data.filter.TrainableBatchFilter;
 import adams.db.DatabaseConnectionHandler;
+import adams.db.DatabaseConnectionUser;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.flow.container.AbstractFilterContainer;
@@ -53,7 +54,7 @@ import java.util.Map;
  */
 public abstract class AbstractFilter
   extends AbstractDataContainerTransformer
-  implements ProvenanceSupporter, VariableMonitor {
+  implements ProvenanceSupporter, VariableMonitor, DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = 4527040722924866539L;

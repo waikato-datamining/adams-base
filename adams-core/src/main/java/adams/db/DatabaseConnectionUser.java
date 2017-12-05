@@ -14,24 +14,17 @@
  */
 
 /*
- * DatabaseConnectionProvider.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * DatabaseConnectionUser.java
+ * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
 
 /**
- * An interface for classes that use a database connection.
+ * Interface for classes that make use of a database.
  *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface DatabaseConnectionProvider
-  extends DatabaseConnectionUser {
+public interface DatabaseConnectionUser {
 
-  /**
-   * Returns the currently used database connection object, can be null.
-   *
-   * @return		the current object
-   */
-  public AbstractDatabaseConnection getDatabaseConnection();
 }

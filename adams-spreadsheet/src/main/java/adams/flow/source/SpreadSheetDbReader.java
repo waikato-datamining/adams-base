@@ -85,7 +85,6 @@ import adams.flow.core.ActorUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetDbReader
   extends AbstractSpreadSheetDbReader {

@@ -15,19 +15,21 @@
 
 /*
  * AbstractDatabaseIdSupplier.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
+
+import adams.db.DatabaseConnectionUser;
 
 /**
  * Abstract ancestor for ID suppliers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDatabaseIdSupplier
-  extends AbstractIdSupplier {
+  extends AbstractIdSupplier
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -8462709950859959951L;

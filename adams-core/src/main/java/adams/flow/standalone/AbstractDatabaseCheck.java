@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseCheck.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -23,16 +23,17 @@ package adams.flow.standalone;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.db.AbstractDatabaseConnection;
+import adams.db.DatabaseConnectionUser;
 
 /**
  * Ancestor for standalone actors that check project-specific database
  * connections.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDatabaseCheck
-  extends AbstractStandalone {
+  extends AbstractStandalone
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -1726172998200420556L;

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetDbReader.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -28,6 +28,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.sql.AbstractTypeMapper;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
+import adams.db.DatabaseConnectionUser;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.Token;
@@ -38,11 +39,10 @@ import java.sql.ResultSet;
  * Ancestor for spreadsheet database readers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSpreadSheetDbReader
   extends AbstractSource
-  implements DataRowTypeHandler {
+  implements DataRowTypeHandler, DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = 494594301273926225L;

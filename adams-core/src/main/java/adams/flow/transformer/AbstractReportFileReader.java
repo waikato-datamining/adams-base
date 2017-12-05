@@ -27,6 +27,7 @@ import adams.data.report.Report;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
+import adams.db.DatabaseConnectionUser;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
@@ -43,12 +44,11 @@ import java.util.List;
  * Abstract ancestor for report file reader transformers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of report to handle
  */
 public abstract class AbstractReportFileReader<T extends Report>
   extends AbstractTransformer
-  implements ProvenanceSupporter {
+  implements ProvenanceSupporter, DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -207124154855872209L;
