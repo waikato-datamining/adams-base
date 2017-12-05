@@ -22,7 +22,6 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
-import adams.db.AbstractDatabaseConnection;
 import adams.db.SQL;
 
 import java.sql.ResultSet;
@@ -171,20 +170,6 @@ public abstract class AbstractListTables
   public String invertTipText() {
     return "If set to true, then the matching sense is inverted.";
   }
-
-  /**
-   * Returns the default database connection.
-   *
-   * @return 		the default database connection
-   */
-  protected abstract AbstractDatabaseConnection getDefaultDatabaseConnection();
-
-  /**
-   * Determines the database connection in the flow.
-   *
-   * @return		the database connection to use
-   */
-  protected abstract adams.db.AbstractDatabaseConnection getDatabaseConnection();
 
   /**
    * Performs the actual database query.
