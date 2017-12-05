@@ -23,7 +23,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
-import adams.db.DatabaseConnectionUser;
+import adams.db.AbstractDatabaseConnection;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
@@ -107,8 +107,7 @@ import java.util.Date;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class TimeseriesDbReader
-  extends AbstractSource
-  implements DatabaseConnectionUser {
+  extends AbstractDbSource {
 
   /** for serialization. */
   private static final long serialVersionUID = -1030024345072684197L;
@@ -143,9 +142,6 @@ public class TimeseriesDbReader
   /** the value column index. */
   protected int m_ColumnValueIndex;
   
-  /** the database connection. */
-  protected adams.db.AbstractDatabaseConnection m_DatabaseConnection;
-
   /** the current container. */
   protected Timeseries m_Timeseries;
   
@@ -204,8 +200,6 @@ public class TimeseriesDbReader
     m_ColumnValueType      = Types.OTHER;
     m_ColumnValueIndex     = -1;
     SQL.closeAll(m_ResultSet);
-
-    m_DatabaseConnection   = null;
   }
 
   /**
@@ -344,6 +338,15 @@ public class TimeseriesDbReader
   }
 
   /**
+   * Returns the default database connection.
+   *
+   * @return 		the default database connection
+   */
+  protected AbstractDatabaseConnection getDefaultDatabaseConnection() {
+    return adams.db.DatabaseConnection.getSingleton();
+  }
+
+  /**
    * Determines the database connection in the flow.
    *
    * @return		the database connection to use
@@ -352,7 +355,7 @@ public class TimeseriesDbReader
     return ActorUtils.getDatabaseConnection(
 	  this,
 	  adams.flow.standalone.DatabaseConnectionProvider.class,
-	  adams.db.DatabaseConnection.getSingleton());
+	  getDefaultDatabaseConnection());
   }
 
   /**
@@ -541,39 +544,31 @@ public class TimeseriesDbReader
 
   
   /**
-   * Executes the flow item.
+   * Performs the actual database query.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
+  protected String queryDatabase() {
     String	result;
     String	query;
     
     result = null;
 
-    if (m_DatabaseConnection == null) {
-      m_DatabaseConnection = getDatabaseConnection();
-      if (m_DatabaseConnection == null)
-        result = "No database connection available!";
+    query = null;
+    try {
+      query = m_SQL.getValue();
+      query = getVariables().expand(query);
+      m_ResultSet = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
+      if (isLoggingEnabled())
+	getLogger().fine("SQL: " + query);
+      analyzeColumns();
+      read();
+    }
+    catch (Exception e) {
+      result = handleException("Failed to execute statement: " + ((query == null) ? m_SQL : query), e);
     }
 
-    if (result == null) {
-      query = null;
-      try {
-        query = m_SQL.getValue();
-        query = getVariables().expand(query);
-        m_ResultSet = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
-        if (isLoggingEnabled())
-          getLogger().fine("SQL: " + query);
-        analyzeColumns();
-        read();
-      }
-      catch (Exception e) {
-        result = handleException("Failed to execute statement: " + ((query == null) ? m_SQL : query), e);
-      }
-    }
-    
     return result;
   }
 
@@ -620,8 +615,7 @@ public class TimeseriesDbReader
   @Override
   public void wrapUp() {
     SQL.closeAll(m_ResultSet);
-    m_Timeseries         = null;
-    m_DatabaseConnection = null;
+    m_Timeseries = null;
 
     super.wrapUp();
   }
