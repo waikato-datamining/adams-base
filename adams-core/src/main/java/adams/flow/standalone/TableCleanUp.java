@@ -24,7 +24,6 @@ import adams.core.QuickInfoHelper;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractTableCleanUp;
 import adams.db.DatabaseConnection;
-import adams.db.DatabaseConnectionUser;
 import adams.db.SQLTableCleanUp;
 import adams.flow.core.ActorUtils;
 
@@ -77,8 +76,7 @@ import adams.flow.core.ActorUtils;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class TableCleanUp
-  extends AbstractStandalone
-  implements DatabaseConnectionUser {
+  extends AbstractDbStandalone {
 
   /** for serialization. */
   private static final long serialVersionUID = -295054877801672294L;
@@ -169,16 +167,16 @@ public class TableCleanUp
   }
 
   /**
-   * Executes the actor.
+   * Performs the actual database query.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
+  protected String queryDatabase() {
     String	result;
 
     try {
-      m_Cleaner.setDatabaseConnection(getDatabaseConnection());
+      m_Cleaner.setDatabaseConnection(m_DatabaseConnection);
       result = m_Cleaner.cleanUpTable();
     }
     catch (Exception e) {
