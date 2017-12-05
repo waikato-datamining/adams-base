@@ -24,7 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
-import adams.db.DatabaseConnectionUser;
+import adams.db.AbstractDatabaseConnection;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
@@ -54,93 +54,89 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: TimeseriesDbReader
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-sql &lt;adams.db.SQLStatement&gt; (property: SQL)
  * &nbsp;&nbsp;&nbsp;The SQL statement that selects the timeseries data.
  * &nbsp;&nbsp;&nbsp;default: select id,timestamp,value from table order by id
  * </pre>
- * 
+ *
  * <pre>-column-id &lt;java.lang.String&gt; (property: columnID)
  * &nbsp;&nbsp;&nbsp;The name of the column containing the ID that distinguishes the timeseries 
  * &nbsp;&nbsp;&nbsp;(accepted types: numeric, string); if left empty, the first string column 
  * &nbsp;&nbsp;&nbsp;from the SQL statement is used.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-column-timestamp &lt;java.lang.String&gt; (property: columnTimestamp)
  * &nbsp;&nbsp;&nbsp;The name of the column containing the timestamp for a data point (accepted 
  * &nbsp;&nbsp;&nbsp;types: integer, date, time, datetime, timestamp); if left empty, the first 
  * &nbsp;&nbsp;&nbsp;date-like column from the SQL statement is used.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-column-value &lt;java.lang.String&gt; (property: columnValue)
  * &nbsp;&nbsp;&nbsp;The name of the column containing the value for a data point (accepted types:
  * &nbsp;&nbsp;&nbsp; numeric); if left empty, the first numeric column from the SQL statement 
  * &nbsp;&nbsp;&nbsp;is used.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class TimeseriesDbReader
-  extends AbstractTransformer
-  implements DatabaseConnectionUser {
+  extends AbstractDbTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -1030024345072684197L;
-  
+
   /** the placeholder for the ID. */
   public final static String PLACEHOLDER_ID = Constants.PLACEHOLDER_ID;
 
   /** the SQL statement to execute. */
   protected SQLStatement m_SQL;
-  
+
   /** the timestamp column. */
   protected String m_ColumnTimestamp;
-  
+
   /** the timestamp column index. */
   protected int m_ColumnTimestampType;
-  
+
   /** the timestamp column type. */
   protected int m_ColumnTimestampIndex;
-  
+
   /** the value column. */
   protected String m_ColumnValue;
-  
+
   /** the value column type. */
   protected int m_ColumnValueType;
-  
+
   /** the value column index. */
   protected int m_ColumnValueIndex;
-  
-  /** the database connection. */
-  protected adams.db.AbstractDatabaseConnection m_DatabaseConnection;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -148,11 +144,11 @@ public class TimeseriesDbReader
    */
   @Override
   public String globalInfo() {
-    return 
-	"Outputs timeseries containers generated from an SQL SELECT statement.\n"
-	+ "The input is interpreted as the ID of the timeseries to load.\n"
-	+ "This ID can be used in the SQL statement using the " 
-	+ PLACEHOLDER_ID + " placeholder.";
+    return
+      "Outputs timeseries containers generated from an SQL SELECT statement.\n"
+        + "The input is interpreted as the ID of the timeseries to load.\n"
+        + "This ID can be used in the SQL statement using the "
+        + PLACEHOLDER_ID + " placeholder.";
   }
 
   /**
@@ -163,35 +159,25 @@ public class TimeseriesDbReader
     super.defineOptions();
 
     m_OptionManager.add(
-	    "sql", "SQL",
-	    new SQLStatement("select timestamp,value from table where id = " + PLACEHOLDER_ID + " order by timestamp"));
+      "sql", "SQL",
+      new SQLStatement("select timestamp,value from table where id = " + PLACEHOLDER_ID + " order by timestamp"));
 
     m_OptionManager.add(
-	    "column-timestamp", "columnTimestamp",
-	    "");
+      "column-timestamp", "columnTimestamp",
+      "");
 
     m_OptionManager.add(
-	    "column-value", "columnValue",
-	    "");
+      "column-value", "columnValue",
+      "");
   }
 
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_DatabaseConnection = null;
-  }
-  
   /**
    * Resets the scheme.
    */
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_ColumnTimestampType  = Types.OTHER;
     m_ColumnTimestampIndex = -1;
     m_ColumnValueType      = Types.OTHER;
@@ -226,10 +212,10 @@ public class TimeseriesDbReader
    *             	displaying in the GUI or for listing the options.
    */
   public String SQLTipText() {
-    return 
-	"The SQL statement that selects the timeseries data; use "
-	+ "the " + PLACEHOLDER_ID + " placeholder in the statement to "
-	+ "specify the ID of the timeseries to load.";
+    return
+      "The SQL statement that selects the timeseries data; use "
+        + "the " + PLACEHOLDER_ID + " placeholder in the statement to "
+        + "specify the ID of the timeseries to load.";
   }
 
   /**
@@ -258,10 +244,10 @@ public class TimeseriesDbReader
    *             	displaying in the GUI or for listing the options.
    */
   public String columnTimestampTipText() {
-    return 
-	"The name of the column containing the timestamp for a data point "
-	+ "(accepted types: integer, date, time, datetime, timestamp); if "
-	+ "left empty, the first date-like column from the SQL statement is used.";
+    return
+      "The name of the column containing the timestamp for a data point "
+        + "(accepted types: integer, date, time, datetime, timestamp); if "
+        + "left empty, the first date-like column from the SQL statement is used.";
   }
 
   /**
@@ -290,10 +276,10 @@ public class TimeseriesDbReader
    *             	displaying in the GUI or for listing the options.
    */
   public String columnValueTipText() {
-    return 
-	"The name of the column containing the value for a data point "
-	+ "(accepted types: numeric); if left empty, the first numeric "
-	+ "column from the SQL statement is used.";
+    return
+      "The name of the column containing the value for a data point "
+        + "(accepted types: numeric); if left empty, the first numeric "
+        + "column from the SQL statement is used.";
   }
 
   /**
@@ -317,15 +303,24 @@ public class TimeseriesDbReader
   }
 
   /**
+   * Returns the default database connection.
+   *
+   * @return 		the default database connection
+   */
+  protected AbstractDatabaseConnection getDefaultDatabaseConnection() {
+    return adams.db.DatabaseConnection.getSingleton();
+  }
+
+  /**
    * Determines the database connection in the flow.
    *
    * @return		the database connection to use
    */
   protected adams.db.AbstractDatabaseConnection getDatabaseConnection() {
     return ActorUtils.getDatabaseConnection(
-	  this,
-	  adams.flow.standalone.DatabaseConnectionProvider.class,
-	  adams.db.DatabaseConnection.getSingleton());
+      this,
+      adams.flow.standalone.DatabaseConnectionProvider.class,
+      getDefaultDatabaseConnection());
   }
 
   /**
@@ -339,28 +334,8 @@ public class TimeseriesDbReader
   }
 
   /**
-   * Configures the database connection if necessary.
-   *
-   * @return		null if successful, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null) {
-      m_DatabaseConnection = getDatabaseConnection();
-      if (m_DatabaseConnection == null)
-	result = "No database connection available!";
-    }
-
-    return result;
-  }
-
-  /**
    * Reads the next timeseries data point.
-   * 
+   *
    * @param rs		the resultset to read from
    * @return		the next data point
    * @throws Exception	if reading of timeseries data fails
@@ -369,7 +344,7 @@ public class TimeseriesDbReader
     TimeseriesPoint	result;
     Date		timestamp;
     double		val;
-    
+
     if (SQL.isInteger(m_ColumnTimestampIndex))
       timestamp = new Date(rs.getInt(m_ColumnTimestampIndex));
     else if (m_ColumnTimestampType == Types.DATE)
@@ -381,15 +356,15 @@ public class TimeseriesDbReader
     else
       throw new IllegalStateException("Unhandled column type: " + m_ColumnTimestampType);
     val = rs.getDouble(m_ColumnValueIndex);
-    
+
     result = new TimeseriesPoint(timestamp, val);
-    
+
     return result;
   }
-  
+
   /**
    * Completes and returns the last timeseries that was started.
-   * 
+   *
    * @param rs		the resultset to read from
    * @return		the last timeseries, null if none previously started
    * @throws Exception	if reading of timeseries data fails
@@ -397,20 +372,20 @@ public class TimeseriesDbReader
   protected Timeseries read(ResultSet rs) throws Exception {
     Timeseries		result;
     TimeseriesPoint	point;
-    
+
     result = new Timeseries();
-    
+
     while (rs.next()) {
       point = readDataPoint(rs);
       result.add(point);
     }
-    
+
     return result;
   }
-  
+
   /**
    * Analyzes the columns.
-   * 
+   *
    * @param rs		the resultset to obtain the meta-data from
    * @throws Exception	if columns not present or of wrong type
    */
@@ -425,100 +400,91 @@ public class TimeseriesDbReader
     m_ColumnTimestampIndex = -1;
     m_ColumnValueType      = Types.OTHER;
     m_ColumnValueIndex     = -1;
-    
+
     for (i = 1; i <= meta.getColumnCount(); i++) {
       col  = meta.getColumnName(i);
       type = meta.getColumnType(i);
 
       // timestamp
       if (m_ColumnTimestampIndex == -1) {
-	if (   (m_ColumnTimestamp.isEmpty() && SQL.isDate(type)) 
-	     || col.toLowerCase().equals(m_ColumnTimestamp.toLowerCase()) ) {
-	  m_ColumnTimestampIndex = i;
-	  m_ColumnTimestampType  = type;
-	  continue;
-	}
+        if (   (m_ColumnTimestamp.isEmpty() && SQL.isDate(type))
+          || col.toLowerCase().equals(m_ColumnTimestamp.toLowerCase()) ) {
+          m_ColumnTimestampIndex = i;
+          m_ColumnTimestampType  = type;
+          continue;
+        }
       }
-      
+
       // value
       if (m_ColumnValueIndex == -1) {
-	if (    (m_ColumnValue.isEmpty() && SQL.isNumeric(type)) 
-	     || col.toLowerCase().equals(m_ColumnValue.toLowerCase()) ) {
-	  m_ColumnValueIndex = i;
-	  m_ColumnValueType  = type;
-	  continue;
-	}
+        if (    (m_ColumnValue.isEmpty() && SQL.isNumeric(type))
+          || col.toLowerCase().equals(m_ColumnValue.toLowerCase()) ) {
+          m_ColumnValueIndex = i;
+          m_ColumnValueType  = type;
+          continue;
+        }
       }
     }
-    
+
     // timestamp
     if (m_ColumnTimestampIndex == -1) {
       if (m_ColumnTimestamp.isEmpty())
-	throw new IllegalStateException("No suitable 'timestamp' column found in result set!");
+        throw new IllegalStateException("No suitable 'timestamp' column found in result set!");
       else
-	throw new IllegalStateException("Timestamp column '" + m_ColumnTimestamp + "' not found in result set!");
+        throw new IllegalStateException("Timestamp column '" + m_ColumnTimestamp + "' not found in result set!");
     }
     if (!(SQL.isInteger(m_ColumnTimestampType) || (m_ColumnTimestampType == Types.DATE) || (m_ColumnTimestampType == Types.TIME) || (m_ColumnTimestampType == Types.TIMESTAMP)))
       throw new IllegalStateException("Timestamp column '" + m_ColumnTimestamp + "' must be a integer or date-related type: " + m_ColumnTimestampType);
-    
+
     // value
     if (m_ColumnValueIndex == -1) {
       if (m_ColumnValue.isEmpty())
-	throw new IllegalStateException("No suitable 'value' column found in result set!");
+        throw new IllegalStateException("No suitable 'value' column found in result set!");
       else
-	throw new IllegalStateException("Value column '" + m_ColumnValue + "' not found in result set!");
+        throw new IllegalStateException("Value column '" + m_ColumnValue + "' not found in result set!");
     }
     if (!SQL.isNumeric(m_ColumnValueType))
       throw new IllegalStateException("Value column '" + m_ColumnValue + "' must be a numeric type: " + m_ColumnValueType);
   }
 
-  
   /**
-   * Executes the flow item.
+   * Performs the actual database query.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
+  protected String queryDatabase() {
     String	result;
     String	id;
     String	query;
     ResultSet	rs;
     Timeseries	ts;
-    
+
     result = null;
 
-    if (m_DatabaseConnection == null) {
-      m_DatabaseConnection = getDatabaseConnection();
-      if (m_DatabaseConnection == null)
-	result = "No database connection available!";
+    query = null;
+    id = m_InputToken.getPayload().toString();
+    rs = null;
+    try {
+      query = m_SQL.getValue().replace(PLACEHOLDER_ID, id);
+      query = getVariables().expand(query);
+      rs = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
+      if (isLoggingEnabled())
+        getLogger().fine("SQL: " + query);
+      if (m_ColumnTimestampIndex == -1)
+        analyzeColumns(rs);
+      ts = read(rs);
+      ts.setID(id);
+      m_OutputToken = new Token(ts);
+    }
+    catch (Exception e) {
+      result = handleException("Failed to execute statement: " + ((query == null) ? m_SQL : query), e);
+    }
+    finally {
+      if (rs != null)
+        SQL.closeAll(rs);
     }
 
-    if (result == null) {
-      query = null;
-      id = m_InputToken.getPayload().toString();
-      rs = null;
-      try {
-        query = m_SQL.getValue().replace(PLACEHOLDER_ID, id);
-        query = getVariables().expand(query);
-        rs = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
-        if (isLoggingEnabled())
-          getLogger().fine("SQL: " + query);
-        if (m_ColumnTimestampIndex == -1)
-          analyzeColumns(rs);
-        ts = read(rs);
-        ts.setID(id);
-        m_OutputToken = new Token(ts);
-      }
-      catch (Exception e) {
-        result = handleException("Failed to execute statement: " + ((query == null) ? m_SQL : query), e);
-      }
-      finally {
-        if (rs != null)
-          SQL.closeAll(rs);
-      }
-    }
-    
     return result;
   }
 }
