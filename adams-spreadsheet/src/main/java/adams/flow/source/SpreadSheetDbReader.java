@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetDbReader.java
  * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
+import adams.db.AbstractDatabaseConnection;
 import adams.flow.core.ActorUtils;
 
 /**
@@ -93,6 +94,15 @@ public class SpreadSheetDbReader
   private static final long serialVersionUID = 494594301273926225L;
 
   /**
+   * Returns the default database connection.
+   *
+   * @return 		the default database connection
+   */
+  protected AbstractDatabaseConnection getDefaultDatabaseConnection() {
+    return adams.db.DatabaseConnection.getSingleton();
+  }
+
+  /**
    * Determines the database connection in the flow.
    *
    * @return		the database connection to use
@@ -101,6 +111,6 @@ public class SpreadSheetDbReader
     return ActorUtils.getDatabaseConnection(
 	  this,
 	  adams.flow.standalone.DatabaseConnectionProvider.class,
-	  adams.db.DatabaseConnection.getSingleton());
+	  getDefaultDatabaseConnection());
   }
 }

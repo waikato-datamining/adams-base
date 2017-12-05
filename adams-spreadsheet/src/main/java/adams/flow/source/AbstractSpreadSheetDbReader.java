@@ -28,7 +28,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.sql.AbstractTypeMapper;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
-import adams.db.DatabaseConnectionUser;
+import adams.db.AbstractDatabaseConnection;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.Token;
@@ -41,8 +41,8 @@ import java.sql.ResultSet;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractSpreadSheetDbReader
-  extends AbstractSource
-  implements DataRowTypeHandler, DatabaseConnectionUser {
+  extends AbstractDbSource
+  implements DataRowTypeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 494594301273926225L;
@@ -62,9 +62,6 @@ public abstract class AbstractSpreadSheetDbReader
   /** the generated output token. */
   protected Token m_OutputToken;
 
-  /** the database connection. */
-  protected adams.db.AbstractDatabaseConnection m_DatabaseConnection;
-  
   /** for reading the data. */
   protected Reader m_Reader;
   
@@ -115,8 +112,7 @@ public abstract class AbstractSpreadSheetDbReader
   protected void reset() {
     super.reset();
     
-    m_OutputToken        = null;
-    m_DatabaseConnection = null;
+    m_OutputToken = null;
   }
 
   /**
@@ -257,6 +253,13 @@ public abstract class AbstractSpreadSheetDbReader
   }
 
   /**
+   * Returns the default database connection.
+   *
+   * @return 		the default database connection
+   */
+  protected abstract AbstractDatabaseConnection getDefaultDatabaseConnection();
+
+  /**
    * Determines the database connection in the flow.
    *
    * @return		the database connection to use
@@ -274,21 +277,18 @@ public abstract class AbstractSpreadSheetDbReader
   }
 
   /**
-   * Executes the flow item.
+   * Performs the actual database query.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
+  protected String queryDatabase() {
     String		result;
     SpreadSheet		sheet;
     SQL			sql;
     String		query;
     
     result = null;
-
-    if (m_DatabaseConnection == null)
-      m_DatabaseConnection = getDatabaseConnection();
 
     sheet = null;
     query = m_Query.getValue();
