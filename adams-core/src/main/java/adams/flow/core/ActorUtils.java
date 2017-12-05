@@ -39,6 +39,7 @@ import adams.data.io.input.FlowReader;
 import adams.data.io.output.DefaultFlowWriter;
 import adams.data.io.output.FlowWriter;
 import adams.env.Environment;
+import adams.env.Modules;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
 import adams.flow.control.SubProcess;
@@ -104,6 +105,15 @@ public class ActorUtils {
   /** the variable for the gui flag. */
   public final static String HAS_GUI = "has_gui";
 
+  /** the variable for the project name. */
+  public final static String PROJECT_NAME = "project_name";
+
+  /** the variable for the project home. */
+  public final static String PROJECT_HOME = "project_home";
+
+  /** the variable for the project modules (comma-separated list). */
+  public final static String PROJECT_MODULES = "project_modules";
+
   /** programmatically set variables. */
   public final static String[] PROGRAMMATIC_VARIABLES = {
     FLOW_FILENAME_LONG,
@@ -112,6 +122,9 @@ public class ActorUtils {
     FLOW_ID,
     IS_HEADLESS,
     HAS_GUI,
+    PROJECT_NAME,
+    PROJECT_HOME,
+    PROJECT_MODULES,
   };
 
   /** functional type: primitive. */
@@ -1380,9 +1393,17 @@ public class ActorUtils {
    * @see		#FLOW_ID
    * @see		#HAS_GUI
    * @see		#IS_HEADLESS
+   * @see		#PROJECT_NAME
+   * @see		#PROJECT_HOME
+   * @see		#PROJECT_MODULES
    * @see		#PROGRAMMATIC_VARIABLES
    */
   public static <T extends Actor & VariablesHandler> void updateProgrammaticVariables(T context, File flow) {
+    if (context != null) {
+      context.getLocalVariables().set(PROJECT_NAME, Environment.getInstance().getProject());
+      context.getLocalVariables().set(PROJECT_HOME, Environment.getInstance().getHome());
+      context.getLocalVariables().set(PROJECT_MODULES, Utils.flatten(Modules.getSingleton().getModules(), ","));
+    }
     if (flow != null) {
       context.getLocalVariables().set(FLOW_DIR, flow.getParentFile().getAbsolutePath());
       context.getLocalVariables().set(FLOW_FILENAME_LONG, flow.getAbsolutePath());
@@ -1406,9 +1427,17 @@ public class ActorUtils {
    * @see		#FLOW_ID
    * @see		#HAS_GUI
    * @see		#IS_HEADLESS
+   * @see		#PROJECT_NAME
+   * @see		#PROJECT_HOME
+   * @see		#PROJECT_MODULES
    * @see		#PROGRAMMATIC_VARIABLES
    */
   public static void updateProgrammaticVariables(VariablesHandler handler, Actor context, File flow) {
+    if (context != null) {
+      handler.getLocalVariables().set(PROJECT_NAME, Environment.getInstance().getProject());
+      handler.getLocalVariables().set(PROJECT_HOME, Environment.getInstance().getHome());
+      handler.getLocalVariables().set(PROJECT_MODULES, Utils.flatten(Modules.getSingleton().getModules(), ","));
+    }
     if (flow != null) {
       handler.getLocalVariables().set(FLOW_DIR, flow.getParentFile().getAbsolutePath());
       handler.getLocalVariables().set(FLOW_FILENAME_LONG, flow.getAbsolutePath());
