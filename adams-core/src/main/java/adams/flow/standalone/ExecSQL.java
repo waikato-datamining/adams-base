@@ -22,7 +22,7 @@ package adams.flow.standalone;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
-import adams.db.DatabaseConnectionUser;
+import adams.db.AbstractDatabaseConnection;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
@@ -78,8 +78,7 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ExecSQL
-  extends AbstractStandalone
-  implements DatabaseConnectionUser {
+  extends AbstractDbStandalone {
 
   /** for serialization. */
   private static final long serialVersionUID = -2766505525494708760L;
@@ -90,9 +89,6 @@ public class ExecSQL
   /** whether to simulate the SQL statement. */
   protected boolean m_DryRun;
   
-  /** the database connection. */
-  protected adams.db.AbstractDatabaseConnection m_DatabaseConnection;
-
   /**
    * Returns a string describing the object.
    *
@@ -119,16 +115,6 @@ public class ExecSQL
     m_OptionManager.add(
 	    "dry-run", "dryRun",
 	    false);
-  }
-
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_DatabaseConnection = null;
   }
 
   /**
@@ -212,6 +198,15 @@ public class ExecSQL
   }
 
   /**
+   * Returns the default database connection.
+   *
+   * @return 		the default database connection
+   */
+  protected AbstractDatabaseConnection getDefaultDatabaseConnection() {
+    return adams.db.DatabaseConnection.getSingleton();
+  }
+
+  /**
    * Determines the database connection in the flow.
    *
    * @return		the database connection to use
@@ -220,31 +215,28 @@ public class ExecSQL
     return ActorUtils.getDatabaseConnection(
 	  this,
 	  adams.flow.standalone.DatabaseConnectionProvider.class,
-	  adams.db.DatabaseConnection.getSingleton());
+	  getDefaultDatabaseConnection());
   }
 
   /**
-   * Executes the flow item.
+   * Performs the actual database query.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
+  protected String queryDatabase() {
     String	result;
     SQL		sql;
     String	query;
 
     result = null;
 
-    if (m_DatabaseConnection == null)
-      m_DatabaseConnection = getDatabaseConnection();
-
     query  = m_SQL.getValue();
     // replace variables
     query  = getVariables().expand(query);
 
     try {
-      sql = new SQL(getDatabaseConnection());
+      sql = new SQL(m_DatabaseConnection);
       if (isLoggingEnabled() || m_DryRun) {
 	if (m_DryRun)
 	  getLogger().setLevel(Level.INFO);
