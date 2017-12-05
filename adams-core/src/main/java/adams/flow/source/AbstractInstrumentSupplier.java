@@ -20,7 +20,6 @@
 
 package adams.flow.source;
 
-import adams.db.DatabaseConnectionUser;
 import adams.db.InstrumentProvider;
 
 import java.util.ArrayList;
@@ -29,17 +28,12 @@ import java.util.ArrayList;
  * Abstract ancestor for instrument suppliers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractInstrumentSupplier
-  extends AbstractArrayProvider
-  implements DatabaseConnectionUser {
+  extends AbstractDbArrayProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -8159720259695436880L;
-
-  /** the database connection. */
-  protected adams.db.AbstractDatabaseConnection m_DatabaseConnection;
 
   /**
    * Returns the based class of the items.
@@ -70,61 +64,22 @@ public abstract class AbstractInstrumentSupplier
   protected abstract InstrumentProvider getProvider();
 
   /**
-   * Determines the database connection in the flow.
-   *
-   * @return		the database connection to use
-   */
-  protected abstract adams.db.AbstractDatabaseConnection getDatabaseConnection();
-
-  /**
-   * Configures the database connection if necessary.
-   *
-   * @return		null if successful, otherwise error message
-   */
-  protected String setUpDatabaseConnection() {
-    String	result;
-
-    result = null;
-
-    if (m_DatabaseConnection == null) {
-      m_DatabaseConnection = getDatabaseConnection();
-      if (m_DatabaseConnection == null)
-	result = "No database connection available!";
-    }
-
-    return result;
-  }
-
-  /**
-   * Executes the flow item.
+   * Performs the actual database query.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
+  protected String queryDatabase() {
     String		result;
     InstrumentProvider	provider;
 
-    result = setUpDatabaseConnection();
+    result = null;
 
-    if (result == null) {
-      provider = getProvider();
-      m_Queue  = new ArrayList(provider.getInstruments());
-      if (m_Queue.size() == 0)
-	result = "No instruments found!";
-    }
+    provider = getProvider();
+    m_Queue  = new ArrayList(provider.getInstruments());
+    if (m_Queue.size() == 0)
+      result = "No instruments found!";
 
     return result;
-  }
-
-  /**
-   * Cleans up after the execution has finished. Graphical output is left
-   * untouched.
-   */
-  @Override
-  public void wrapUp() {
-    m_DatabaseConnection = null;
-
-    super.wrapUp();
   }
 }
