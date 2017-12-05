@@ -15,14 +15,14 @@
 
 /*
  * AbstractListTables.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
-import adams.db.DatabaseConnectionUser;
+import adams.db.AbstractDatabaseConnection;
 import adams.db.SQL;
 
 import java.sql.ResultSet;
@@ -34,11 +34,9 @@ import java.util.List;
  * Ancestor for sources that list tables from a database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractListTables
-  extends AbstractArrayProvider
-  implements DatabaseConnectionUser {
+  extends AbstractDbArrayProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -8462709950859959951L;
@@ -49,9 +47,6 @@ public abstract class AbstractListTables
   /** whether to invert the matching sense. */
   protected boolean m_Invert;
 
-  /** the database connection. */
-  protected adams.db.AbstractDatabaseConnection m_DatabaseConnection;
-
   /**
    * Returns a string describing the object.
    *
@@ -60,16 +55,6 @@ public abstract class AbstractListTables
   @Override
   public String globalInfo() {
     return "Lists tables of the current database connection.";
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_DatabaseConnection = null;
   }
 
   /**
@@ -101,7 +86,7 @@ public abstract class AbstractListTables
     result = QuickInfoHelper.toString(this, "regExp", m_RegExp, (m_Invert ? "! " : ""));
 
     // further options
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputArray", getOutputArray(), "array"));
     result += QuickInfoHelper.flatten(options);
 
@@ -188,6 +173,13 @@ public abstract class AbstractListTables
   }
 
   /**
+   * Returns the default database connection.
+   *
+   * @return 		the default database connection
+   */
+  protected abstract AbstractDatabaseConnection getDefaultDatabaseConnection();
+
+  /**
    * Determines the database connection in the flow.
    *
    * @return		the database connection to use
@@ -195,51 +187,30 @@ public abstract class AbstractListTables
   protected abstract adams.db.AbstractDatabaseConnection getDatabaseConnection();
 
   /**
-   * Configures the database connection if necessary.
-   *
-   * @return		null if successful, otherwise error message
-   */
-  protected String setUpDatabaseConnection() {
-    String	result;
-
-    result = null;
-
-    if (m_DatabaseConnection == null) {
-      m_DatabaseConnection = getDatabaseConnection();
-      if (m_DatabaseConnection == null)
-	result = "No database connection available!";
-    }
-
-    return result;
-  }
-
-  /**
-   * Executes the flow item.
+   * Performs the actual database query.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
+  protected String queryDatabase() {
     String		result;
     ResultSet		rs;
     List<String>	tables;
 
-    result = setUpDatabaseConnection();
+    result = null;
     tables = new ArrayList<>();
 
-    if (result == null) {
-      rs = null;
-      try {
-	rs = m_DatabaseConnection.getConnection(false).getMetaData().getTables(null, null, "%", null);
-	while (rs.next())
-	  tables.add(rs.getString(3));
-      }
-      catch (Exception e) {
-	result = handleException("Failed to obtain list of tables!", e);
-      }
-      finally {
-	SQL.closeAll(rs);
-      }
+    rs = null;
+    try {
+      rs = m_DatabaseConnection.getConnection(false).getMetaData().getTables(null, null, "%", null);
+      while (rs.next())
+	tables.add(rs.getString(3));
+    }
+    catch (Exception e) {
+      result = handleException("Failed to obtain list of tables!", e);
+    }
+    finally {
+      SQL.closeAll(rs);
     }
 
     if (result == null) {
@@ -260,16 +231,5 @@ public abstract class AbstractListTables
     }
 
     return result;
-  }
-
-  /**
-   * Cleans up after the execution has finished. Graphical output is left
-   * untouched.
-   */
-  @Override
-  public void wrapUp() {
-    m_DatabaseConnection = null;
-
-    super.wrapUp();
   }
 }

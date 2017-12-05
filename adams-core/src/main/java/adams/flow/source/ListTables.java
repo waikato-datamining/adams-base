@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ListTables.java
  * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
@@ -87,12 +87,20 @@ import adams.flow.core.ActorUtils;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ListTables
   extends AbstractListTables {
 
   private static final long serialVersionUID = -4323845180416902734L;
+
+  /**
+   * Returns the default database connection.
+   *
+   * @return 		the default database connection
+   */
+  protected AbstractDatabaseConnection getDefaultDatabaseConnection() {
+    return adams.db.DatabaseConnection.getSingleton();
+  }
 
   /**
    * Determines the database connection in the flow.
@@ -104,6 +112,6 @@ public class ListTables
     return ActorUtils.getDatabaseConnection(
       this,
       adams.flow.standalone.DatabaseConnectionProvider.class,
-      adams.db.DatabaseConnection.getSingleton());
+      getDefaultDatabaseConnection());
   }
 }
