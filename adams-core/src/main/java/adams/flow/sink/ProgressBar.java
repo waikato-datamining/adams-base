@@ -797,7 +797,8 @@ public class ProgressBar
    */
   @Override
   public void clearPanel() {
-    m_PanelProgress.reset();
+    if (m_PanelProgress != null)
+      m_PanelProgress.reset();
   }
 
   /**
