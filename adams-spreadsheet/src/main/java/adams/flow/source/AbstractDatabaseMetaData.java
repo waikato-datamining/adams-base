@@ -29,7 +29,6 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.sql.AbstractTypeMapper;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
-import adams.db.DatabaseConnectionUser;
 import adams.flow.core.Token;
 
 import java.lang.reflect.Method;
@@ -43,8 +42,7 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractDatabaseMetaData
-  extends AbstractSimpleSource
-  implements DatabaseConnectionUser {
+  extends AbstractSimpleDbSource {
 
   /** for serialization. */
   private static final long serialVersionUID = -8462709950859959951L;
@@ -225,9 +223,6 @@ public abstract class AbstractDatabaseMetaData
   /** the table to retrieve the information for. */
   protected String m_Table;
 
-  /** the database connection. */
-  protected adams.db.AbstractDatabaseConnection m_DatabaseConnection;
-
   /**
    * Returns a string describing the object.
    *
@@ -369,16 +364,6 @@ public abstract class AbstractDatabaseMetaData
   }
 
   /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_DatabaseConnection = null;
-  }
-
-  /**
    * Returns the class of objects that it generates.
    *
    * @return		the Class of the generated tokens
@@ -394,25 +379,6 @@ public abstract class AbstractDatabaseMetaData
    * @return		the database connection to use
    */
   protected abstract adams.db.AbstractDatabaseConnection getDatabaseConnection();
-
-  /**
-   * Configures the database connection if necessary.
-   *
-   * @return		null if successful, otherwise error message
-   */
-  protected String setUpDatabaseConnection() {
-    String	result;
-
-    result = null;
-
-    if (m_DatabaseConnection == null) {
-      m_DatabaseConnection = getDatabaseConnection();
-      if (m_DatabaseConnection == null)
-	result = "No database connection available!";
-    }
-
-    return result;
-  }
 
   /**
    * Adds a row to the sheet with the given key and value.
@@ -453,12 +419,12 @@ public abstract class AbstractDatabaseMetaData
   }
 
   /**
-   * Executes the flow item.
+   * Performs the actual database query.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
+  protected String queryDatabase() {
     String		result;
     ResultSet		rs;
     SpreadSheet		sheet;
@@ -466,134 +432,121 @@ public abstract class AbstractDatabaseMetaData
     Row			row;
     Reader		reader;
 
-    result = setUpDatabaseConnection();
+    result = null;
 
-    if (result == null) {
-      rs    = null;
-      sheet = null;
-      try {
-	metadata = m_DatabaseConnection.getConnection(false).getMetaData();
-	reader   = new Reader(m_TypeMapper, DenseDataRow.class);
-	switch (m_MetaDataType) {
-	  case BASIC:
-	    sheet = new DefaultSpreadSheet();
-	    row = sheet.getHeaderRow();
-	    row.addCell("K").setContentAsString("Key");
-	    row.addCell("V").setContentAsString("Value");
-	    for (String value: JDBC_VALUES)
-	      addRow(metadata, sheet, value);
-	    break;
-	  case ATTRIBUTES:
-	    rs    = metadata.getAttributes(null, null, "%", null);
-	    sheet = reader.read(rs);
-	    break;
-	  case CATALOGS:
-	    rs    = metadata.getCatalogs();
-	    sheet = reader.read(rs);
-	    break;
-	  case CLIENT_INFO_PROPERTIES:
-	    rs    = metadata.getClientInfoProperties();
-	    sheet = reader.read(rs);
-	    break;
-	  case COLUMN_PRIVILEGES:
-	    rs    = metadata.getColumnPrivileges(null, null, m_Table, "%");
-	    sheet = reader.read(rs);
-	    break;
-	  case COLUMNS:
-	    rs    = metadata.getColumns(null, null, "%", "%");
-	    sheet = reader.read(rs);
-	    break;
-	  case EXPORTED_KEYS:
-	    rs    = metadata.getExportedKeys(null, null, m_Table);
-	    sheet = reader.read(rs);
-	    break;
-	  case FUNCTION_COLUMNS:
-	    rs    = metadata.getFunctionColumns(null, null, "%", "%");
-	    sheet = reader.read(rs);
-	    break;
-	  case FUNCTIONS:
-	    rs    = metadata.getFunctions(null, null, "%");
-	    sheet = reader.read(rs);
-	    break;
-	  case IMPORTED_KEYS:
-	    rs    = metadata.getImportedKeys(null, null, m_Table);
-	    sheet = reader.read(rs);
-	    break;
-	  case INDEX_INFO:
-	    rs    = metadata.getIndexInfo(null, null, m_Table, false, false);
-	    sheet = reader.read(rs);
-	    break;
-	  case PRIMARY_KEYS:
-	    rs    = metadata.getPrimaryKeys(null, null, m_Table);
-	    sheet = reader.read(rs);
-	    break;
-	  case PROCEDURE_COLUMNS:
-	    rs    = metadata.getProcedureColumns(null, null, "%", "%");
-	    sheet = reader.read(rs);
-	    break;
-	  case PROCEDURES:
-	    rs    = metadata.getProcedures(null, null, "%");
-	    sheet = reader.read(rs);
-	    break;
-	  case PSEUDO_COLUMNS:
-	    rs    = metadata.getPseudoColumns(null, null, "%", "%");
-	    sheet = reader.read(rs);
-	    break;
-	  case SCHEMAS:
-	    rs    = metadata.getSchemas();
-	    sheet = reader.read(rs);
-	    break;
-	  case SUPER_TABLES:
-	    rs    = metadata.getSuperTables(null, null, "%");
-	    sheet = reader.read(rs);
-	    break;
-	  case SUPER_TYPES:
-	    rs    = metadata.getSuperTypes(null, null, "%");
-	    sheet = reader.read(rs);
-	    break;
-	  case TABLE_TYPES:
-	    rs    = metadata.getTableTypes();
-	    sheet = reader.read(rs);
-	    break;
-	  case TABLES:
-	    rs    = metadata.getTables(null, null, "%", null);
-	    sheet = reader.read(rs);
-	    break;
-	  case TYPE_INFO:
-	    rs    = metadata.getTypeInfo();
-	    sheet = reader.read(rs);
-	    break;
-	  case USER_DEFINED_TYPES:
-	    rs    = metadata.getUDTs(null, null, "%", null);
-	    sheet = reader.read(rs);
-	    break;
-	  case VERSION_COLUMNS:
-	    rs    = metadata.getVersionColumns(null, null, m_Table);
-	    sheet = reader.read(rs);
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled meta-data type: " + m_MetaDataType);
-	}
+    rs    = null;
+    sheet = null;
+    try {
+      metadata = m_DatabaseConnection.getConnection(false).getMetaData();
+      reader   = new Reader(m_TypeMapper, DenseDataRow.class);
+      switch (m_MetaDataType) {
+	case BASIC:
+	  sheet = new DefaultSpreadSheet();
+	  row = sheet.getHeaderRow();
+	  row.addCell("K").setContentAsString("Key");
+	  row.addCell("V").setContentAsString("Value");
+	  for (String value: JDBC_VALUES)
+	    addRow(metadata, sheet, value);
+	  break;
+	case ATTRIBUTES:
+	  rs    = metadata.getAttributes(null, null, "%", null);
+	  sheet = reader.read(rs);
+	  break;
+	case CATALOGS:
+	  rs    = metadata.getCatalogs();
+	  sheet = reader.read(rs);
+	  break;
+	case CLIENT_INFO_PROPERTIES:
+	  rs    = metadata.getClientInfoProperties();
+	  sheet = reader.read(rs);
+	  break;
+	case COLUMN_PRIVILEGES:
+	  rs    = metadata.getColumnPrivileges(null, null, m_Table, "%");
+	  sheet = reader.read(rs);
+	  break;
+	case COLUMNS:
+	  rs    = metadata.getColumns(null, null, "%", "%");
+	  sheet = reader.read(rs);
+	  break;
+	case EXPORTED_KEYS:
+	  rs    = metadata.getExportedKeys(null, null, m_Table);
+	  sheet = reader.read(rs);
+	  break;
+	case FUNCTION_COLUMNS:
+	  rs    = metadata.getFunctionColumns(null, null, "%", "%");
+	  sheet = reader.read(rs);
+	  break;
+	case FUNCTIONS:
+	  rs    = metadata.getFunctions(null, null, "%");
+	  sheet = reader.read(rs);
+	  break;
+	case IMPORTED_KEYS:
+	  rs    = metadata.getImportedKeys(null, null, m_Table);
+	  sheet = reader.read(rs);
+	  break;
+	case INDEX_INFO:
+	  rs    = metadata.getIndexInfo(null, null, m_Table, false, false);
+	  sheet = reader.read(rs);
+	  break;
+	case PRIMARY_KEYS:
+	  rs    = metadata.getPrimaryKeys(null, null, m_Table);
+	  sheet = reader.read(rs);
+	  break;
+	case PROCEDURE_COLUMNS:
+	  rs    = metadata.getProcedureColumns(null, null, "%", "%");
+	  sheet = reader.read(rs);
+	  break;
+	case PROCEDURES:
+	  rs    = metadata.getProcedures(null, null, "%");
+	  sheet = reader.read(rs);
+	  break;
+	case PSEUDO_COLUMNS:
+	  rs    = metadata.getPseudoColumns(null, null, "%", "%");
+	  sheet = reader.read(rs);
+	  break;
+	case SCHEMAS:
+	  rs    = metadata.getSchemas();
+	  sheet = reader.read(rs);
+	  break;
+	case SUPER_TABLES:
+	  rs    = metadata.getSuperTables(null, null, "%");
+	  sheet = reader.read(rs);
+	  break;
+	case SUPER_TYPES:
+	  rs    = metadata.getSuperTypes(null, null, "%");
+	  sheet = reader.read(rs);
+	  break;
+	case TABLE_TYPES:
+	  rs    = metadata.getTableTypes();
+	  sheet = reader.read(rs);
+	  break;
+	case TABLES:
+	  rs    = metadata.getTables(null, null, "%", null);
+	  sheet = reader.read(rs);
+	  break;
+	case TYPE_INFO:
+	  rs    = metadata.getTypeInfo();
+	  sheet = reader.read(rs);
+	  break;
+	case USER_DEFINED_TYPES:
+	  rs    = metadata.getUDTs(null, null, "%", null);
+	  sheet = reader.read(rs);
+	  break;
+	case VERSION_COLUMNS:
+	  rs    = metadata.getVersionColumns(null, null, m_Table);
+	  sheet = reader.read(rs);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled meta-data type: " + m_MetaDataType);
       }
-      catch (Exception e) {
-	result = handleException("Failed to obtain database meta-data!", e);
-      }
-
-      if (sheet != null)
-	m_OutputToken = new Token(sheet);
+    }
+    catch (Exception e) {
+      result = handleException("Failed to obtain database meta-data!", e);
     }
 
+    if (sheet != null)
+      m_OutputToken = new Token(sheet);
+
     return result;
-  }
-
-  /**
-   * Cleans up after the execution has finished. Graphical output is left
-   * untouched.
-   */
-  @Override
-  public void wrapUp() {
-    m_DatabaseConnection = null;
-
-    super.wrapUp();
   }
 }

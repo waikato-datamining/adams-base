@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DatabaseMetaData.java
  * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
@@ -83,12 +83,20 @@ import adams.flow.core.ActorUtils;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatabaseMetaData
   extends AbstractDatabaseMetaData {
 
   private static final long serialVersionUID = -6184309574477452862L;
+
+  /**
+   * Returns the default database connection.
+   *
+   * @return 		the default database connection
+   */
+  protected AbstractDatabaseConnection getDefaultDatabaseConnection() {
+    return adams.db.DatabaseConnection.getSingleton();
+  }
 
   /**
    * Determines the database connection in the flow.
@@ -100,6 +108,6 @@ public class DatabaseMetaData
     return ActorUtils.getDatabaseConnection(
       this,
       adams.flow.standalone.DatabaseConnectionProvider.class,
-      adams.db.DatabaseConnection.getSingleton());
+      getDefaultDatabaseConnection());
   }
 }
