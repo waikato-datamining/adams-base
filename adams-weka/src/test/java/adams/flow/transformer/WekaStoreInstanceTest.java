@@ -20,14 +20,15 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
+import adams.flow.control.Block;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for WekaStoreInstance actor.
@@ -122,7 +123,7 @@ public class WekaStoreInstanceTest
       tmp4.setOutputType((adams.flow.transformer.WekaFileReader.OutputType) argOption.valueOf("INCREMENTAL"));
 
       tmp1[1] = tmp4;
-      adams.flow.control.Continue tmp8 = new adams.flow.control.Continue();
+      Block tmp8 = new Block();
       argOption = (AbstractArgumentOption) tmp8.getOptionManager().findByProperty("condition");
       adams.flow.condition.bool.Not tmp10 = new adams.flow.condition.bool.Not();
       argOption = (AbstractArgumentOption) tmp10.getOptionManager().findByProperty("condition");

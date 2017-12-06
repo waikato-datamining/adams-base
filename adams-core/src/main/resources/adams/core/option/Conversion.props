@@ -21,7 +21,8 @@ Rename=\
   Rename-valuedefinition,\
   Rename-defaultvaluedefinition,\
   Rename-classcompare,\
-  Rename-stringcompare
+  Rename-stringcompare,\
+  Rename-continue
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
@@ -41,6 +42,7 @@ Rename-valuedefinition=adams.flow.source.ValueDefinition-adams.flow.source.value
 Rename-defaultvaluedefinition=adams.flow.source.valuedefinition.ValueDefinition-adams.flow.source.valuedefinition.DefaultValueDefinition
 Rename-classcompare=adams.core.ClassCompare-nz.ac.waikato.cms.locator.ClassCompare
 Rename-stringcompare=adams.core.StringCompare-nz.ac.waikato.cms.locator.StringCompare
+Rename-continue=adams.flow.control.Continue-adams.flow.control.Block
 
 # Lists the keys that contain partial classname renaming.
 PartialRename=\

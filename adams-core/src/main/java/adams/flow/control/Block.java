@@ -14,8 +14,8 @@
  */
 
 /*
- * Continue.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Block.java
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -187,9 +187,8 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class Continue
+public class Block
   extends AbstractTransformer
   implements ControlActor, GrammarSupplier, BooleanConditionSupporter {
 

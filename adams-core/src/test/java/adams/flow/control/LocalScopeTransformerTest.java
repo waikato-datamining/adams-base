@@ -190,7 +190,7 @@ public class LocalScopeTransformerTest
       // continue if variable starts with "flow_"
       Expression expr = new Expression();
       expr.setExpression(new BooleanExpressionText("matches(\"@{v}\", \"flow_.*\")"));
-      Continue cont = new Continue();
+      Block cont = new Block();
       cont.setCondition(expr);
       actors26[1] = cont;
 

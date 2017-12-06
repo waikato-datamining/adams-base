@@ -14,14 +14,12 @@
  */
 
 /*
- * ContinueTest.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * BlockTest.java
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.data.random.JavaRandomInt;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -31,14 +29,15 @@ import adams.flow.sink.DumpFile;
 import adams.flow.source.RandomNumberGenerator;
 import adams.parser.BooleanExpressionText;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
- * Tests the Continue actor.
+ * Tests the Block actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class ContinueTest
+public class BlockTest
   extends AbstractFlowTest {
 
   /**
@@ -46,7 +45,7 @@ public class ContinueTest
    *
    * @param name	the name of the test
    */
-  public ContinueTest(String name) {
+  public BlockTest(String name) {
     super(name);
   }
 
@@ -86,15 +85,15 @@ public class ContinueTest
 
     Expression cond = new Expression();
     cond.setExpression(new BooleanExpressionText("(X > 500)"));
-    Continue sh = new Continue();
-    sh.setCondition(cond);
+    Block block = new Block();
+    block.setCondition(cond);
 
     DumpFile df = new DumpFile();
     df.setAppend(true);
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
     Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{rng, sh, df});
+    flow.setActors(new AbstractActor[]{rng, block, df});
 
     return flow;
   }
@@ -113,7 +112,7 @@ public class ContinueTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(ContinueTest.class);
+    return new TestSuite(BlockTest.class);
   }
 
   /**

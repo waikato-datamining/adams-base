@@ -577,6 +577,9 @@ control actors. In the following a short introduction to the others:
 	\textit{ArrayToSequence} and then packaging again with
 	\textit{SequenceToArray}, this actor allows to perform an arbitrary number of
 	sub-steps on an incoming array.
+	\item \textit{Block} -- Does not pass on tokens if the specified boolean
+	expression evaluates to \textit{true}, i.e., acts like the ``continue''
+	control statement.
 	\item \textit{Breakpoint} -- Used for debugging a flow. See
 	\ref{debugging_flow} for more details.
 	\item \textit{ClearCallableDisplay} -- Can be used to clear callable
@@ -591,9 +594,6 @@ control actors. In the following a short introduction to the others:
 	\textit{containers}. The values in the container can be accessed by their name
 	(check the specific actor's documentation on what the names are) using this
 	actor.
-	\item \textit{Continue} -- Does not pass on tokens if the specified boolean
-	expression evaluates to \textit{true}, i.e., acts like the ``continue'' 
-	control statement.
 	\item \textit{Count} -- In contrast to \textit{ConditionalTee}, this actor tees
 	off the number of tokens it has encountered so far. Useful for lengthy
 	processes, if you want to keep track of how many tokens you have processed so
