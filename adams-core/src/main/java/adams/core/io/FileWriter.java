@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileWriter.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -23,21 +23,20 @@ package adams.core.io;
  * Interface for classes that write data to a file.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface FileWriter {
 
   /**
-   * Set output file.
+   * Sets the output file.
    *
-   * @param value	file
+   * @param value	the file
    */
   public void setOutputFile(PlaceholderFile value);
 
   /**
-   * Get output file.
+   * Returns the output file.
    *
-   * @return	file
+   * @return		the file
    */
   public PlaceholderFile getOutputFile();
 
