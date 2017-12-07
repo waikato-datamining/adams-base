@@ -445,7 +445,7 @@ public class DateUtils {
   }
 
   /**
-   * Returns a new Date object with the current date.
+   * Returns a Date object of today, at the start of the day (00:00:00.000).
    *
    * @return		the current date
    */
@@ -458,6 +458,36 @@ public class DateUtils {
     cal.set(Calendar.MINUTE, 0);
     cal.set(Calendar.SECOND, 0);
     cal.set(Calendar.MILLISECOND, 0);
+
+    return cal.getTime();
+  }
+
+  /**
+   * Returns a Date object of tomorrow, at the start of the day (00:00:00.000).
+   *
+   * @return		the date
+   */
+  public static Date tomorrow() {
+    Calendar	cal;
+
+    cal = new GregorianCalendar(getLocale());
+    cal.setTime(today());
+    cal.add(Calendar.HOUR, 24);
+
+    return cal.getTime();
+  }
+
+  /**
+   * Returns a Date object of yesterday, at the start of the day (00:00:00.000).
+   *
+   * @return		the date
+   */
+  public static Date yesterday() {
+    Calendar	cal;
+
+    cal = new GregorianCalendar(getLocale());
+    cal.setTime(today());
+    cal.add(Calendar.HOUR, -24);
 
     return cal.getTime();
   }
