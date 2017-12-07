@@ -13,27 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleApacheSendEmail.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Software Foundation (original SMTPMail example)
  */
 package adams.core.net;
 
-import java.util.logging.Level;
-
-import org.apache.commons.mail.MultiPartEmail;
-import org.apache.commons.mail.SimpleEmail;
-
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BasePassword;
+import org.apache.commons.mail.EmailAttachment;
+import org.apache.commons.mail.MultiPartEmail;
+import org.apache.commons.mail.SimpleEmail;
+
+import java.io.File;
+import java.util.logging.Level;
 
 /**
  * Uses Apache commons-email for sending emails.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7482 $
  */
 @MixedCopyright(
     copyright ="Apache Software Foundation",
@@ -101,7 +101,6 @@ public class SimpleApacheSendEmail
    * @param requiresAuth	whether authentication is required
    * @param user		the SMTP user
    * @param pw			the SMTP password
-   * @return			the session
    * @throws Exception		if initialization fails
    */
   @Override
@@ -127,11 +126,23 @@ public class SimpleApacheSendEmail
   public boolean sendMail(Email email) throws Exception {
     org.apache.commons.mail.Email	mail;
     String				id;
-    
-    if (email.getAttachments().length > 0)
+    MultiPartEmail			mpemail;
+    EmailAttachment 			attachment;
+
+    if (email.getAttachments().length > 0) {
       mail = new MultiPartEmail();
-    else
+      mpemail = (MultiPartEmail) mail;
+      for (File file: email.getAttachments()) {
+	attachment = new EmailAttachment();
+	attachment.setPath(file.getAbsolutePath());
+	attachment.setDisposition(EmailAttachment.ATTACHMENT);
+	attachment.setName(file.getName());
+	mpemail.attach(attachment);
+      }
+    }
+    else {
       mail = new SimpleEmail();
+    }
     mail.setFrom(email.getFrom().getValue());
     for (EmailAddress address: email.getTo())
       mail.addTo(address.getValue());
