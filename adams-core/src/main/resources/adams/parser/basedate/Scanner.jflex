@@ -23,6 +23,7 @@ package adams.parser.basedate;
 
 import adams.parser.TimeAmount;
 import adams.core.DateFormat;
+import adams.core.DateUtils;
 import adams.core.base.BaseDate;
 
 import java_cup.runtime.SymbolFactory;
@@ -33,7 +34,6 @@ import java.util.*;
  * A scanner for date expressions.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 %%
 %caseless
@@ -42,7 +42,6 @@ import java.util.*;
 %class Scanner
 %{
   // Author: FracPete (fracpete at waikato dot ac dot nz)
-  // Version: $Revision$
   protected SymbolFactory sf;
 
   protected static DateFormat m_Format;
@@ -91,11 +90,14 @@ import java.util.*;
 
 // date/time
 [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] { return sf.newSymbol("Date", sym.DATE_ACTUAL, m_Format.parse(yytext())); }
-"-INF"  { return sf.newSymbol("-INF",  sym.DATE_ACTUAL, m_Format.parse(BaseDate.INF_PAST_DATE)); }
-"+INF"  { return sf.newSymbol("+INF",  sym.DATE_ACTUAL, m_Format.parse(BaseDate.INF_FUTURE_DATE)); }
-"NOW"   { return sf.newSymbol("Now",   sym.DATE_ACTUAL, new Date()); }
-"START" { return sf.newSymbol("Start", sym.DATE_START,  m_Format.parse(BaseDate.INF_PAST_DATE)); }
-"END"   { return sf.newSymbol("End",   sym.DATE_END,    m_Format.parse(BaseDate.INF_FUTURE_DATE)); }
+"-INF"      { return sf.newSymbol("-INF",  sym.DATE_ACTUAL, m_Format.parse(BaseDate.INF_PAST_DATE)); }
+"+INF"      { return sf.newSymbol("+INF",  sym.DATE_ACTUAL, m_Format.parse(BaseDate.INF_FUTURE_DATE)); }
+"NOW"       { return sf.newSymbol("Now",   sym.DATE_ACTUAL, new Date()); }
+"TODAY"     { return sf.newSymbol("Now",   sym.DATE_ACTUAL, DateUtils.today()); }
+"TOMORROW"  { return sf.newSymbol("Now",   sym.DATE_ACTUAL, DateUtils.tomorrow()); }
+"YESTERDAY" { return sf.newSymbol("Now",   sym.DATE_ACTUAL, DateUtils.yesterday()); }
+"START"     { return sf.newSymbol("Start", sym.DATE_START,  m_Format.parse(BaseDate.INF_PAST_DATE)); }
+"END"       { return sf.newSymbol("End",   sym.DATE_END,    m_Format.parse(BaseDate.INF_FUTURE_DATE)); }
 
 // various
 "(" { return sf.newSymbol("Left Bracket", sym.LPAREN); }

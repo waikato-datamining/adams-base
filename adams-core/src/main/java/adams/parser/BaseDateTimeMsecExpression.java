@@ -36,7 +36,7 @@ import java.util.logging.Level;
  * Evaluates date&#47;time (with msec) expressions.<br>
  * <br>
  * Format:<br>
- * (&lt;date&gt;|NOW|-INF|+INF|START|END) [expr (MILLISECOND|SECOND|MINUTE|HOUR|DAY|BUSINESSDAY|WEEK|MONTH|YEAR)]*<br>
+ * (&lt;date&gt;|NOW|TODAY|TOMORROW|YESTERDAY|-INF|+INF|START|END) [expr (MILLISECOND|SECOND|MINUTE|HOUR|DAY|BUSINESSDAY|WEEK|MONTH|YEAR)]*<br>
  * <br>
  * expr ::=   ( expr )<br>
  *          | - expr<br>
@@ -57,6 +57,9 @@ import java.util.logging.Level;
  *          | ceil ( expr )<br>
  *          | NUMBER<br>
  * <br>
+ * Note:<br>
+ * TODAY&#47;TOMORROW&#47;YESTERDAY generate a date at the start of the day.<br>
+ * <br>
  * <br>
  * Examples:<br>
  * 1999-12-31 01:02:03.123<br>
@@ -75,27 +78,29 @@ import java.util.logging.Level;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  * &nbsp;&nbsp;&nbsp;The class to use for determining the environment.
  * &nbsp;&nbsp;&nbsp;default: adams.env.Environment
  * </pre>
- * 
+ *
  * <pre>-expression &lt;java.lang.String&gt; (property: expression)
  * &nbsp;&nbsp;&nbsp;The boolean expression to evaluate (must evaluate to a boolean).
  * &nbsp;&nbsp;&nbsp;default: NOW
+ * </pre>
+ *
+ * <pre>-business-days &lt;MONDAY_TO_FRIDAY|MONDAY_TO_SATURDAY|SATURDAY_TO_THURSDAY|SUNDAY_TO_THURSDAY|SUNDAY_TO_FRIDAY&gt; (property: businessDays)
+ * &nbsp;&nbsp;&nbsp;How to interpret business days.
+ * &nbsp;&nbsp;&nbsp;default: MONDAY_TO_FRIDAY
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseDateTimeMsecExpression
   extends AbstractExpressionEvaluator<Date>
@@ -142,7 +147,7 @@ public class BaseDateTimeMsecExpression
    */
   public String getGrammar() {
     return 
-	"(<date>|NOW|-INF|+INF|START|END) [expr (MILLISECOND|SECOND|MINUTE|HOUR|DAY|BUSINESSDAY|WEEK|MONTH|YEAR)]*\n"
+	"(<date>|NOW|TODAY|TOMORROW|YESTERDAY|-INF|+INF|START|END) [expr (MILLISECOND|SECOND|MINUTE|HOUR|DAY|BUSINESSDAY|WEEK|MONTH|YEAR)]*\n"
       + "\n"
       + "expr ::=   ( expr )\n"
       + "         | - expr\n"
@@ -162,6 +167,9 @@ public class BaseDateTimeMsecExpression
       + "         | pow[er] ( expr , expr )\n"
       + "         | ceil ( expr )\n"
       + "         | NUMBER\n"
+      + "\n"
+      + "Note:\n"
+      + "TODAY/TOMORROW/YESTERDAY generate a date at the start of the day.\n"
       ;
   }
 
