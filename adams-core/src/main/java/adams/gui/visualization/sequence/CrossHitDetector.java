@@ -15,7 +15,7 @@
 
 /*
  * CrossHitDetector.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -27,14 +27,13 @@ import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Detects selections of crosses.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8896 $
  */
 public class CrossHitDetector
   extends AbstractXYSequencePointHitDetector {
@@ -128,7 +127,8 @@ public class CrossHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected Object isHit(MouseEvent e) {
+  protected List<XYSequencePoint> isHit(MouseEvent e) {
+    List<XYSequencePoint>	result;
     double			y;
     double			x;
     double			diffY;
@@ -137,7 +137,6 @@ public class CrossHitDetector
     int				i;
     XYSequence			s;
     XYSequencePoint		sp;
-    Vector<XYSequencePoint>	result;
     AxisPanel			axisBottom;
     AxisPanel			axisLeft;
     int				index;
@@ -151,7 +150,7 @@ public class CrossHitDetector
     if (m_Owner == null)
       return null;
 
-    result     = new Vector<>();
+    result     = new ArrayList<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     y          = axisLeft.posToValue(e.getY());

@@ -15,7 +15,7 @@
 
 /*
  * ScatterPlotCircleHitDetector.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
@@ -34,7 +34,6 @@ import java.awt.event.MouseEvent;
  * Detects selections of sequence points in the sequence panel.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ScatterPlotCircleHitDetector
   extends AbstractScatterPlotHitDetector {
@@ -84,7 +83,7 @@ public class ScatterPlotCircleHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected Object isHit(MouseEvent e) {
+  protected int[] isHit(MouseEvent e) {
     TIntList		result;
     double		y;
     double		x;

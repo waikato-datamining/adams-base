@@ -15,7 +15,7 @@
 
 /*
  * LineHitDetector.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -28,14 +28,13 @@ import adams.gui.visualization.core.plot.Axis;
 
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Detects selections of lines.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LineHitDetector
   extends AbstractXYSequencePointHitDetector {
@@ -78,7 +77,8 @@ public class LineHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected Object isHit(MouseEvent e) {
+  protected List<XYSequencePoint> isHit(MouseEvent e) {
+    List<XYSequencePoint>	result;
     double			y;
     double			x;
     double			diffY;
@@ -88,7 +88,6 @@ public class LineHitDetector
     XYSequence			s;
     XYSequencePoint		sp;
     XYSequencePoint		sp2;
-    Vector<XYSequencePoint>	result;
     AxisPanel			axisBottom;
     AxisPanel			axisLeft;
     int[]			indices;
@@ -97,7 +96,7 @@ public class LineHitDetector
     List<XYSequencePoint>	points;
     boolean			logging;
 
-    result     = new Vector<XYSequencePoint>();
+    result     = new ArrayList<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     y          = axisLeft.posToValue(e.getY());

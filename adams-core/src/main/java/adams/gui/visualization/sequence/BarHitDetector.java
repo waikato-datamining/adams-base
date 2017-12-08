@@ -15,7 +15,7 @@
 
 /*
  * BarHitDetector.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -29,14 +29,13 @@ import adams.gui.visualization.core.plot.Axis;
 
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Detects selections of sequence points in the sequence panel.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BarHitDetector
   extends AbstractXYSequencePointHitDetector {
@@ -98,14 +97,14 @@ public class BarHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected Object isHit(MouseEvent e) {
+  protected List<XYSequencePoint> isHit(MouseEvent e) {
+    List<XYSequencePoint>	result;
     double			x;
     int				y;
     int				i;
     int				height;
     XYSequence			s;
     XYSequencePoint		sp;
-    Vector<XYSequencePoint>	result;
     AxisPanel			axisBottom;
     AxisPanel			axisLeft;
     int				index;
@@ -113,7 +112,7 @@ public class BarHitDetector
     boolean			logging;
     Rectangle			rect;
 
-    result     = new Vector<XYSequencePoint>();
+    result     = new ArrayList<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     x          = axisBottom.posToValue((int) e.getX());

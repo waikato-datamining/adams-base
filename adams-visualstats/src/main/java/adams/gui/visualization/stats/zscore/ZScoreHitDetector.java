@@ -15,7 +15,7 @@
 
 /*
  * ZScoreHitDetector.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.zscore;
@@ -32,10 +32,9 @@ import java.text.DecimalFormat;
  * Hit detector for the zscore visualisation.
  *
  * @author msf8
- * @version $Revision$
  */
 public class ZScoreHitDetector
-extends AbstractDistanceBasedHitDetector {
+extends AbstractDistanceBasedHitDetector<double[], String> {
 
   /** for serialization */
   private static final long serialVersionUID = -5768575571226254067L;
@@ -70,7 +69,7 @@ extends AbstractDistanceBasedHitDetector {
     return m_Owner;
   }
 
-  protected Object isHit(MouseEvent e) {
+  protected double[] isHit(MouseEvent e) {
     double distance = 1000;
     int val = 0;
     //All calculated using pixel distances rather than differences in data
@@ -99,15 +98,14 @@ extends AbstractDistanceBasedHitDetector {
       return null;
   }
 
-  protected Object processHit(MouseEvent e, Object hit) {
+  protected String processHit(MouseEvent e, double[] hit) {
     if(hit == null){
       return null;
     }
     else {
-      double[] temp = (double[])hit;
       DecimalFormat df = new DecimalFormat("#");
       //Returns data position and data value
-      return "data point:" + df.format(temp[0]) + ", value:" + temp[1];
+      return "data point:" + df.format(hit[0]) + ", value:" + hit[1];
     }
   }
 }

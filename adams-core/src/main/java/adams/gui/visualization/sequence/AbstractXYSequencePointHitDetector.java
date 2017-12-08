@@ -15,26 +15,25 @@
 
 /*
  * AbstractXYSequencePointHitDetector.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
-
-import java.awt.event.MouseEvent;
-import java.util.Vector;
 
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.gui.visualization.core.plot.AbstractDistanceBasedHitDetector;
 
+import java.awt.event.MouseEvent;
+import java.util.List;
+
 /**
  * Ancestor for XY sequence point hit detectors.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractXYSequencePointHitDetector
-  extends AbstractDistanceBasedHitDetector {
+  extends AbstractDistanceBasedHitDetector<List<XYSequencePoint>, String> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8048373104725687691L;
@@ -84,7 +83,7 @@ public abstract class AbstractXYSequencePointHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected abstract Object isHit(MouseEvent e);
+  protected abstract List<XYSequencePoint> isHit(MouseEvent e);
 
   /**
    * Performs the action when a hit is detected.
@@ -94,20 +93,17 @@ public abstract class AbstractXYSequencePointHitDetector
    * @return		the generated appendix for the tiptext
    */
   @Override
-  protected Object processHit(MouseEvent e, Object hit) {
+  protected String processHit(MouseEvent e, List<XYSequencePoint> hit) {
     String			result;
-    Vector<XYSequencePoint>	hits;
     int				i;
     XYSequence			sp;
     XYSequenceContainer 	cont;
 
-    hits = (Vector<XYSequencePoint>) hit;
-
     result = " (";
-    for (i = 0; i < hits.size(); i++) {
+    for (i = 0; i < hit.size(); i++) {
       if (i > 0)
 	result += ", ";
-      sp  = (XYSequence) hits.get(i).getParent();
+      sp  = (XYSequence) hit.get(i).getParent();
       cont = m_Owner.getSequencePanel().getContainerManager().newContainer(sp);
       result += cont.getDisplayID();
     }

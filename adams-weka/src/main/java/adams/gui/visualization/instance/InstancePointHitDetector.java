@@ -15,7 +15,7 @@
 
 /*
  * InstancePointHitDetector.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
@@ -35,10 +35,9 @@ import java.util.List;
  * Detects selections of instance points in the instance panel.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InstancePointHitDetector
-  extends AbstractDistanceBasedHitDetector {
+  extends AbstractDistanceBasedHitDetector<List<InstancePoint>, String> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3397379783536355060L;
@@ -161,7 +160,8 @@ public class InstancePointHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected Object isHit(MouseEvent e) {
+  protected List<InstancePoint> isHit(MouseEvent e) {
+    List<InstancePoint>		result;
     double			y;
     double			x;
     double			diffY;
@@ -171,7 +171,6 @@ public class InstancePointHitDetector
     Instance			inst;
     InstancePoint		ip;
     InstancePoint		ip2;
-    List<InstancePoint>		result;
     AxisPanel			axisBottom;
     AxisPanel			axisLeft;
     int[]			indices;
@@ -258,22 +257,19 @@ public class InstancePointHitDetector
    * @return		the generated appendix for the tiptext
    */
   @Override
-  protected Object processHit(MouseEvent e, Object hit) {
-    String			result;
-    List<InstancePoint>		hits;
-    int				i;
-    Instance 			inst;
-    InstanceContainer 		cont;
-
-    hits = (List<InstancePoint>) hit;
+  protected String processHit(MouseEvent e, List<InstancePoint> hit) {
+    String		result;
+    int			i;
+    Instance 		inst;
+    InstanceContainer 	cont;
 
     result = "";
-    for (i = 0; i < hits.size(); i++) {
+    for (i = 0; i < hit.size(); i++) {
       if (i > 0)
 	result += ", ";
-      inst = (Instance) hits.get(i).getParent();
+      inst = (Instance) hit.get(i).getParent();
       cont = m_Owner.getContainerManager().newContainer(inst);
-      result += hits.get(i) + " (" + cont.getDisplayID() + ")";
+      result += hit.get(i) + " (" + cont.getDisplayID() + ")";
     }
 
     return result;

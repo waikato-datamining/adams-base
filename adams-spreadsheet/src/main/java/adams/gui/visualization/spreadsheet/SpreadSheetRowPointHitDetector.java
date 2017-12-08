@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetRowPointHitDetector.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.spreadsheet;
@@ -33,10 +33,9 @@ import java.util.List;
  * Detects selections of row points in the row panel.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 11622 $
  */
 public class SpreadSheetRowPointHitDetector
-  extends AbstractDistanceBasedHitDetector {
+  extends AbstractDistanceBasedHitDetector<List<SpreadSheetRowPoint>, String> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3397379783536355060L;
@@ -159,7 +158,8 @@ public class SpreadSheetRowPointHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected Object isHit(MouseEvent e) {
+  protected List<SpreadSheetRowPoint> isHit(MouseEvent e) {
+    List<SpreadSheetRowPoint>		result;
     double				y;
     double				x;
     double				diffY;
@@ -169,7 +169,6 @@ public class SpreadSheetRowPointHitDetector
     SpreadSheetRow 			row;
     SpreadSheetRowPoint 		rp;
     SpreadSheetRowPoint 		rp2;
-    List<SpreadSheetRowPoint>		result;
     AxisPanel				axisBottom;
     AxisPanel				axisLeft;
     int[]				indices;
@@ -256,22 +255,19 @@ public class SpreadSheetRowPointHitDetector
    * @return		the generated appendix for the tiptext
    */
   @Override
-  protected Object processHit(MouseEvent e, Object hit) {
+  protected String processHit(MouseEvent e, List<SpreadSheetRowPoint> hit) {
     String			result;
-    List<SpreadSheetRowPoint>	hits;
     int				i;
     SpreadSheetRow 		row;
     SpreadSheetRowContainer 	cont;
 
-    hits = (List<SpreadSheetRowPoint>) hit;
-
     result = "";
-    for (i = 0; i < hits.size(); i++) {
+    for (i = 0; i < hit.size(); i++) {
       if (i > 0)
 	result += ", ";
-      row = (SpreadSheetRow) hits.get(i).getParent();
+      row = (SpreadSheetRow) hit.get(i).getParent();
       cont = m_Owner.getContainerManager().newContainer(row);
-      result += hits.get(i) + " (" + cont.getDisplayID() + ")";
+      result += hit.get(i) + " (" + cont.getDisplayID() + ")";
     }
 
     return result;

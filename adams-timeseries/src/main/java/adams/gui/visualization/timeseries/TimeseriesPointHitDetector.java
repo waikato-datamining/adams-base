@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesPointHitDetector.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -39,10 +39,9 @@ import java.util.List;
  * Detects selections of timeseries points in the timeseries panel.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TimeseriesPointHitDetector
-  extends AbstractDistanceBasedHitDetector {
+  extends AbstractDistanceBasedHitDetector<List<TimeseriesPoint>, String> {
 
   /** for serialization. */
   private static final long serialVersionUID = 7459498872766468963L;
@@ -89,7 +88,8 @@ public class TimeseriesPointHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected Object isHit(MouseEvent e) {
+  protected List<TimeseriesPoint> isHit(MouseEvent e) {
+    List<TimeseriesPoint>	result;
     double			val;
     long			time;
     double			diffTemp;
@@ -99,7 +99,6 @@ public class TimeseriesPointHitDetector
     Timeseries			s;
     TimeseriesPoint		tp;
     TimeseriesPoint		tp2;
-    List<TimeseriesPoint>	result;
     AxisPanel			axisBottom;
     AxisPanel			axisLeft;
     int[]			indices;
@@ -181,20 +180,17 @@ public class TimeseriesPointHitDetector
    * @return		the generated appendix for the tiptext
    */
   @Override
-  protected Object processHit(MouseEvent e, Object hit) {
+  protected String processHit(MouseEvent e, List<TimeseriesPoint> hit) {
     String			result;
-    List<TimeseriesPoint>	hits;
     int				i;
     Timeseries			tp;
     AbstractContainer 		cont;
 
-    hits = (List<TimeseriesPoint>) hit;
-
     result = " (";
-    for (i = 0; i < hits.size(); i++) {
+    for (i = 0; i < hit.size(); i++) {
       if (i > 0)
 	result += ", ";
-      tp  = (Timeseries) hits.get(i).getParent();
+      tp  = (Timeseries) hit.get(i).getParent();
       cont = m_Owner.getContainerManager().newContainer(tp);
       if (cont instanceof NamedContainer)
 	result += ((NamedContainer) cont).getDisplayID();

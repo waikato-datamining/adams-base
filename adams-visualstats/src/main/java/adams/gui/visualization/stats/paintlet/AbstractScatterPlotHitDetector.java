@@ -15,7 +15,7 @@
 
 /*
  * AbstractScatterPlotHitDetector.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
@@ -32,10 +32,9 @@ import java.awt.event.MouseEvent;
  * Ancestor for scatter plot hit detectors.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractScatterPlotHitDetector
-  extends AbstractDistanceBasedHitDetector {
+  extends AbstractDistanceBasedHitDetector<int[], String> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8048373104725687691L;
@@ -117,7 +116,7 @@ public abstract class AbstractScatterPlotHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected abstract Object isHit(MouseEvent e);
+  protected abstract int[] isHit(MouseEvent e);
 
   /**
    * Performs the action when a hit is detected.
@@ -127,18 +126,15 @@ public abstract class AbstractScatterPlotHitDetector
    * @return		the generated appendix for the tiptext
    */
   @Override
-  protected Object processHit(MouseEvent e, Object hit) {
+  protected String processHit(MouseEvent e, int[] hit) {
     String		result;
-    int[] 		rows;
     int			i;
 
-    rows = (int[]) hit;
-
     result = "";
-    for (i = 0; i < rows.length; i++) {
+    for (i = 0; i < hit.length; i++) {
       if (i > 0)
 	result += ", ";
-      result += "" + (rows[i]+1);
+      result += "" + (hit[i]+1);
     }
 
     return result;

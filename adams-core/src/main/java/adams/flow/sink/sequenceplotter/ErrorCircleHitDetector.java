@@ -15,7 +15,7 @@
 
 /*
  * ErrorCircleHitDetector.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.sequenceplotter;
@@ -30,14 +30,13 @@ import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Detects selections of error circles.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8896 $
  */
 public class ErrorCircleHitDetector
   extends AbstractXYSequencePointHitDetector {
@@ -87,7 +86,8 @@ public class ErrorCircleHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected Object isHit(MouseEvent e) {
+  protected List<XYSequencePoint> isHit(MouseEvent e) {
+    List<XYSequencePoint>	result;
     double			y;
     double			x;
     double			diffY;
@@ -96,7 +96,6 @@ public class ErrorCircleHitDetector
     int				i;
     XYSequence			s;
     XYSequencePoint		sp;
-    Vector<XYSequencePoint>	result;
     AxisPanel			axisBottom;
     AxisPanel			axisLeft;
     int				index;
@@ -108,7 +107,7 @@ public class ErrorCircleHitDetector
     if (m_Owner == null)
       return null;
 
-    result     = new Vector<XYSequencePoint>();
+    result     = new ArrayList<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     y          = axisLeft.posToValue((int) e.getY());

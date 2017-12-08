@@ -29,14 +29,13 @@ import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Detects selections of error crosses.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8896 $
  */
 public class ErrorCrossHitDetector
   extends AbstractXYSequencePointHitDetector {
@@ -86,7 +85,8 @@ public class ErrorCrossHitDetector
    * @return		the associated object with the hit, otherwise null
    */
   @Override
-  protected Object isHit(MouseEvent e) {
+  protected List<XYSequencePoint> isHit(MouseEvent e) {
+    List<XYSequencePoint>	result;
     double			y;
     double			x;
     double			diffY;
@@ -95,7 +95,6 @@ public class ErrorCrossHitDetector
     int				i;
     XYSequence			s;
     XYSequencePoint		sp;
-    Vector<XYSequencePoint>	result;
     AxisPanel			axisBottom;
     AxisPanel			axisLeft;
     int				index;
@@ -107,7 +106,7 @@ public class ErrorCrossHitDetector
     if (m_Owner == null)
       return null;
 
-    result     = new Vector<>();
+    result     = new ArrayList<>();
     axisBottom = m_Owner.getPlot().getAxis(Axis.BOTTOM);
     axisLeft   = m_Owner.getPlot().getAxis(Axis.LEFT);
     y          = axisLeft.posToValue(e.getY());

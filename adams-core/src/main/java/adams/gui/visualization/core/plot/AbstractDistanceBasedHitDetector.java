@@ -15,7 +15,7 @@
 
 /*
  * AbstractDistanceBasedHitDetector.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2008 Pieter Iserbyt <pieter.iserbyt@gmail.com> (distance calculation between point and line)
  */
 
@@ -35,7 +35,6 @@ import java.awt.geom.Point2D;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @author  Pieter Iserbyt (distance calculation between point and line)
- * @version $Revision$
  */
 @MixedCopyright(
     copyright = "2008 Pieter Iserbyt <pieter.iserbyt@gmail.com>",
@@ -43,8 +42,8 @@ import java.awt.geom.Point2D;
     url = "http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/DistancePoint.java",
     note = "Distance calcuation between point and line"
 )
-public abstract class AbstractDistanceBasedHitDetector
-  extends AbstractHitDetector {
+public abstract class AbstractDistanceBasedHitDetector<H, P>
+  extends AbstractHitDetector<H, P> {
 
   /** for serialization. */
   private static final long serialVersionUID = -5861816297859396332L;

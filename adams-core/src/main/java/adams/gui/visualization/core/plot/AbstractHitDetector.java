@@ -15,7 +15,7 @@
 
 /*
  * AbstractHitDetector.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.plot;
@@ -30,9 +30,10 @@ import java.util.logging.Level;
  * Abstract ancestor for classes that detect hits in in the plot panel.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @param <H> type of hit results
+ * @param <P> type of processed hits
  */
-public abstract class AbstractHitDetector
+public abstract class AbstractHitDetector<H, P>
   extends AbstractOptionHandler
   implements CleanUpHandler {
 
@@ -98,7 +99,7 @@ public abstract class AbstractHitDetector
    * @param e		the MouseEvent (for coordinates)
    * @return		the associated object with the hit, otherwise null
    */
-  protected abstract Object isHit(MouseEvent e);
+  protected abstract H isHit(MouseEvent e);
 
   /**
    * Performs the action when a hit is detected.
@@ -107,7 +108,7 @@ public abstract class AbstractHitDetector
    * @param hit	the object that got determined by the hit
    * @return		optional result of processing the event
    */
-  protected abstract Object processHit(MouseEvent e, Object hit);
+  protected abstract P processHit(MouseEvent e, H hit);
 
   /**
    * Detects hits and processes them.
@@ -115,9 +116,9 @@ public abstract class AbstractHitDetector
    * @param e		the mouse event to analyze for a hit
    * @return		optional result of processing the event
    */
-  public Object detect(MouseEvent e) {
-    Object	result;
-    Object	hit;
+  public P detect(MouseEvent e) {
+    P	result;
+    H	hit;
 
     result = null;
     hit    = isHit(e);
