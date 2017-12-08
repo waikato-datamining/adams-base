@@ -35,7 +35,7 @@ import java.util.logging.Level;
  */
 public abstract class AbstractHitDetector<H, P>
   extends AbstractOptionHandler
-  implements CleanUpHandler {
+  implements HitDetector<H, P>, CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 7654372428971254128L;
@@ -139,7 +139,7 @@ public abstract class AbstractHitDetector<H, P>
    * @param e		the mouse event to analyze for a hit
    * @return		the hits if any, null otherwise
    */
-  public Object locate(MouseEvent e) {
+  public H locate(MouseEvent e) {
     return isHit(e);
   }
 
