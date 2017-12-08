@@ -30,9 +30,9 @@ import adams.gui.visualization.core.axis.Direction;
 import adams.gui.visualization.core.axis.Orientation;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.axis.Visibility;
-import adams.gui.visualization.core.plot.AbstractHitDetector;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.ContentPanel;
+import adams.gui.visualization.core.plot.HitDetector;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 
 import javax.swing.JComponent;
@@ -873,7 +873,7 @@ public class PlotPanel
    *
    * @param detector		the detector to add
    */
-  public void addHitDetector(AbstractHitDetector detector) {
+  public void addHitDetector(HitDetector detector) {
     m_PanelContent.addHitDetector(detector);
   }
 
@@ -882,7 +882,7 @@ public class PlotPanel
    *
    * @param detector		the detector to remover
    */
-  public void removeHitDetector(AbstractHitDetector detector) {
+  public void removeHitDetector(HitDetector detector) {
     m_PanelContent.removeHitDetector(detector);
   }
 

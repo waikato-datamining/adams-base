@@ -637,7 +637,7 @@ adams.gui.visualization.core.axis.TickGenerator=\
   adams.gui.visualization.core.axis
 
 # hit detectors for plots
-adams.gui.visualization.core.plot.AbstractHitDetector=\
+adams.gui.visualization.core.plot.HitDetector=\
   adams.gui.visualization.core.plot,\
   adams.gui.visualization.sequence,\
   adams.flow.sink.sequenceplotter

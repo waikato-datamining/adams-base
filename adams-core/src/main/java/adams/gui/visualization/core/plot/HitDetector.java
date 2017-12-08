@@ -32,6 +32,34 @@ import java.awt.event.MouseEvent;
 public interface HitDetector<H, P> {
 
   /**
+   * Turns the debug mode on or off.
+   *
+   * @param value	if true then the debug mode is turned on
+   */
+  public void setDebug(boolean value);
+
+  /**
+   * Returns whether debug mode is on or not.
+   *
+   * @return		true if debug mode is on
+   */
+  public boolean getDebug();
+
+  /**
+   * Sets whether the detector is enabled or not.
+   *
+   * @param value	if true then the detector is enabled
+   */
+  public void setEnabled(boolean value);
+
+  /**
+   * Returns whether the detector is currently enabled.
+   *
+   * @return		true if the detector is enabled.
+   */
+  public boolean isEnabled();
+
+  /**
    * Detects hits and processes them.
    *
    * @param e		the mouse event to analyze for a hit

@@ -23,7 +23,7 @@ package adams.gui.visualization.stats.scatterplot;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
-import adams.gui.visualization.core.plot.AbstractHitDetector;
+import adams.gui.visualization.core.plot.HitDetector;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
@@ -170,10 +170,10 @@ public abstract class AbstractScatterPlot
    * @return		the processed tiptext
    */
   public String processTipText(PlotPanel panel, Point mouse, String tiptext) {
-    String			result;
-    MouseEvent 			event;
-    String			hit;
-    AbstractHitDetector 	detector;
+    String		result;
+    MouseEvent 		event;
+    String		hit;
+    HitDetector 	detector;
 
     result = tiptext;
     event  = new MouseEvent(

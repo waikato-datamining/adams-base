@@ -26,7 +26,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
-import adams.gui.visualization.core.plot.AbstractHitDetector;
+import adams.gui.visualization.core.plot.HitDetector;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -94,7 +94,7 @@ public class CopyHits<T extends DataContainer, M extends AbstractContainerManage
     item.setIcon(GUIHelper.getEmptyIcon());
     item.setText(getName());
     item.addActionListener((ActionEvent ae) -> {
-      AbstractHitDetector detector;
+      HitDetector detector;
       if (panel instanceof HitDetectorSupporter)
         detector = ((HitDetectorSupporter) panel).getHitDetector();
       else

@@ -134,7 +134,7 @@ public class ContentPanel
   protected TipTextCustomizer m_TipTextCustomizer;
 
   /** the hit detectors. */
-  protected HashSet<AbstractHitDetector> m_HitDetectors;
+  protected HashSet<HitDetector> m_HitDetectors;
 
   /** the zoom listeners. */
   protected HashSet<PlotPanelZoomListener> m_ZoomListeners;
@@ -907,7 +907,7 @@ public class ContentPanel
    *
    * @param detector		the detector to add
    */
-  public void addHitDetector(AbstractHitDetector detector) {
+  public void addHitDetector(HitDetector detector) {
     m_HitDetectors.add(detector);
   }
 
@@ -916,7 +916,7 @@ public class ContentPanel
    *
    * @param detector		the detector to remover
    */
-  public void removeHitDetector(AbstractHitDetector detector) {
+  public void removeHitDetector(HitDetector detector) {
     m_HitDetectors.remove(detector);
   }
 
@@ -926,8 +926,8 @@ public class ContentPanel
    * @param e		the mouse event for the detectors to analyze
    */
   protected void detectHits(MouseEvent e) {
-    Iterator<AbstractHitDetector>	iter;
-    AbstractHitDetector		detector;
+    Iterator<HitDetector>	iter;
+    HitDetector			detector;
 
     iter = m_HitDetectors.iterator();
     while (iter.hasNext()) {

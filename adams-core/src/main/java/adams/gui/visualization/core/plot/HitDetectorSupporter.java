@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HitDetectorSupporter.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core.plot;
 
@@ -24,9 +24,9 @@ package adams.gui.visualization.core.plot;
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @param<T> the type of hit detector to use
+ * @param <T> the type of hit detector to use
  */
-public interface HitDetectorSupporter<T extends AbstractHitDetector> {
+public interface HitDetectorSupporter<T extends HitDetector> {
 
   /**
    * Returns the hit detector to use for this paintlet.

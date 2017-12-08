@@ -57,8 +57,8 @@ import adams.gui.visualization.core.PaintletWithFixedXRange;
 import adams.gui.visualization.core.PaintletWithFixedYRange;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.axis.FixedLabelTickGenerator;
-import adams.gui.visualization.core.plot.AbstractHitDetector;
 import adams.gui.visualization.core.plot.Axis;
+import adams.gui.visualization.core.plot.HitDetector;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
 
@@ -646,10 +646,10 @@ public class XYSequencePanel
    */
   @Override
   public String processTipText(PlotPanel panel, Point mouse, String tiptext) {
-    String			result;
-    MouseEvent			event;
-    String			hit;
-    AbstractHitDetector		detector;
+    String		result;
+    MouseEvent		event;
+    String		hit;
+    HitDetector 	detector;
 
     result = tiptext;
     event  = new MouseEvent(
