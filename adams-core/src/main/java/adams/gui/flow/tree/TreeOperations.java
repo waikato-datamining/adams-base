@@ -36,10 +36,10 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
+import adams.flow.core.ActorReferenceHandler;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ActorWithConditionalEquivalent;
 import adams.flow.core.ActorWithTimedEquivalent;
-import adams.flow.core.CallableActorHandler;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.ExternalActorFileHandler;
 import adams.flow.core.InputConsumer;
@@ -659,7 +659,7 @@ public class TreeOperations
 
     // enter new name
     newName = handler.getName();
-    if ((parent.getActor() instanceof CallableActorHandler) && (currActor.length == 1))
+    if ((parent.getActor() instanceof ActorReferenceHandler) && (currActor.length == 1))
       newName = currActor[0].getName();
     newName = GUIHelper.showInputDialog(GUIHelper.getParentComponent(getOwner()), "Please enter name for enclosing actor (leave empty for default):", newName);
     if (newName == null)
@@ -1049,7 +1049,7 @@ public class TreeOperations
     Node			root;
     List<Node>			callable;
     List<Node>			multiview;
-    CallableActorHandler 	callableActors;
+    ActorReferenceHandler callableActors;
     final Node			moved;
     AbstractCallableActor 	replacement;
     List<TreePath>		exp;
@@ -1091,7 +1091,7 @@ public class TreeOperations
 	return;
       }
       try {
-	callableActors = (CallableActorHandler) handler.newInstance();
+	callableActors = (ActorReferenceHandler) handler.newInstance();
       }
       catch (Exception e) {
 	GUIHelper.showErrorMessage(

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FindUsages.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -24,8 +24,8 @@ import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
-import adams.flow.core.CallableActorHandler;
-import adams.flow.processor.ListCallableActorUsage;
+import adams.flow.core.ActorReferenceHandler;
+import adams.flow.processor.ListActorReferenceUsage;
 import adams.flow.processor.ListStorageUsage;
 import adams.flow.processor.ListVariableUsage;
 import adams.gui.action.AbstractPropertiesAction;
@@ -35,7 +35,6 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +44,6 @@ import java.util.List;
  * Finds usages of callable actors, variables and storage items.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class FindUsages
   extends AbstractTreePopupSubMenuAction {
@@ -64,14 +62,14 @@ public class FindUsages
   }
 
   /**
-   * Returns the callable actor name, if applicable.
+   * Returns the actor reference, if applicable.
    *
    * @param actor	the current actor
    * @param parent	the parent of the actor, can be null
-   * @return		the callable actor name, null if not applicable
+   * @return		the actor reference, null if not applicable
    */
-  protected String getCallableActorName(Actor actor, Actor parent) {
-    if (((parent != null) && (parent instanceof CallableActorHandler)))
+  protected String getActorReference(Actor actor, Actor parent) {
+    if (((parent != null) && (parent instanceof ActorReferenceHandler)))
       return actor.getName();
     else
       return null;
@@ -177,22 +175,19 @@ public class FindUsages
   }
 
   /**
-   * Creates a menu item for a callable actor.
+   * Creates a menu item for a actor reference.
    *
-   * @param callable	the name of the callable actor
+   * @param reference	the name of the referenced actor
    * @return		the menu item
    */
-  protected JMenuItem createCallableActorMenuItem(final String callable) {
+  protected JMenuItem createActorReferenceMenuItem(final String reference) {
     JMenuItem 	result;
 
-    result = new JMenuItem(callable);
-    result.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	ListCallableActorUsage processor = new ListCallableActorUsage();
-	processor.setName(callable);
-	m_State.tree.getOwner().processActors(processor);
-      }
+    result = new JMenuItem(reference);
+    result.addActionListener((ActionEvent e) -> {
+      ListActorReferenceUsage processor = new ListActorReferenceUsage();
+      processor.setName(reference);
+      m_State.tree.getOwner().processActors(processor);
     });
 
     return result;
@@ -208,13 +203,10 @@ public class FindUsages
     JMenuItem 	result;
 
     result = new JMenuItem(variable);
-    result.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	ListVariableUsage processor = new ListVariableUsage();
-	processor.setName(variable);
-	m_State.tree.getOwner().processActors(processor);
-      }
+    result.addActionListener((ActionEvent e) -> {
+      ListVariableUsage processor = new ListVariableUsage();
+      processor.setName(variable);
+      m_State.tree.getOwner().processActors(processor);
     });
 
     return result;
@@ -230,13 +222,10 @@ public class FindUsages
     JMenuItem 	result;
 
     result = new JMenuItem(storage);
-    result.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	ListStorageUsage processor = new ListStorageUsage();
-	processor.setName(storage);
-	m_State.tree.getOwner().processActors(processor);
-      }
+    result.addActionListener((ActionEvent e) -> {
+      ListStorageUsage processor = new ListStorageUsage();
+      processor.setName(storage);
+      m_State.tree.getOwner().processActors(processor);
     });
 
     return result;
@@ -251,7 +240,7 @@ public class FindUsages
     JMenu		submenu;
     Actor		parent;
     Actor 		actor;
-    String		callable;
+    String 		reference;
     List<String>	vars;
     List<String>	items;
     int			count;
@@ -267,13 +256,13 @@ public class FindUsages
     actor  = m_State.selNode.getActor();
     parent = (m_State.parent != null) ? m_State.parent.getActor() : null;
 
-    callable = getCallableActorName(actor, parent);
-    vars     = findVariableNames(actor);
-    items    = findStorageNames(actor);
+    reference = getActorReference(actor, parent);
+    vars      = findVariableNames(actor);
+    items     = findStorageNames(actor);
 
     // do we need a submenu?
     count = 0;
-    if (callable != null)
+    if (reference != null)
       count++;
     if (vars.size() > 0)
       count++;
@@ -281,10 +270,10 @@ public class FindUsages
       count++;
 
     if (count > 1) {
-      if (callable != null) {
-	submenu = new JMenu("Callable actor");
+      if (reference != null) {
+	submenu = new JMenu("Actor reference");
 	result.add(submenu);
-	submenu.add(createCallableActorMenuItem(callable));
+	submenu.add(createActorReferenceMenuItem(reference));
       }
       if (items.size() > 0) {
 	submenu = new JMenu("Storage item");
@@ -300,8 +289,8 @@ public class FindUsages
       }
     }
     else {
-      if (callable != null) {
-	result.add(createCallableActorMenuItem(callable));
+      if (reference != null) {
+	result.add(createActorReferenceMenuItem(reference));
       }
       if (items.size() > 0) {
 	for (String item: items)
@@ -329,7 +318,7 @@ public class FindUsages
     if (m_State.isSingleSel) {
       actor   = m_State.selNode.getActor();
       parent  = (m_State.parent != null) ? m_State.parent.getActor() : null;
-      enabled = (getCallableActorName(actor, parent) != null)
+      enabled = (getActorReference(actor, parent) != null)
 	|| (findVariableNames(actor).size() > 0)
 	|| (findStorageNames(actor).size() > 0);
     }

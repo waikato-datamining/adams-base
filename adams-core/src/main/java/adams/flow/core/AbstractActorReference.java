@@ -14,26 +14,28 @@
  */
 
 /*
- * EventReference.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * AbstractActorReference.java
+ * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
+
 package adams.flow.core;
 
-/**
- * Wrapper around the name of an event (= string).
- *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
- */
-public class EventReference
-  extends AbstractActorReference {
+import adams.core.base.AbstractBaseString;
 
-  /** for serialization. */
-  private static final long serialVersionUID = 7037481336505908036L;
+/**
+ * Ancestor for actor references.
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
+ */
+public abstract class AbstractActorReference
+  extends AbstractBaseString {
+
+  private static final long serialVersionUID = -8799715468190941509L;
 
   /**
    * Initializes the string with length 0.
    */
-  public EventReference() {
+  public AbstractActorReference() {
     this("");
   }
 
@@ -42,17 +44,7 @@ public class EventReference
    *
    * @param s		the string to parse
    */
-  public EventReference(String s) {
+  public AbstractActorReference(String s) {
     super(s);
-  }
-
-  /**
-   * Returns a tool tip for the GUI editor (ignored if null is returned).
-   *
-   * @return		the tool tip
-   */
-  @Override
-  public String getTipText() {
-    return "The name of an event.";
   }
 }

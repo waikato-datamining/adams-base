@@ -20,7 +20,7 @@
 package adams.gui.flow.tree.menu;
 
 import adams.core.ClassLister;
-import adams.flow.core.CallableActorHandler;
+import adams.flow.core.ActorReferenceHandler;
 import adams.gui.action.AbstractPropertiesAction;
 import adams.gui.core.GUIHelper;
 
@@ -65,7 +65,7 @@ public class CreateCallableActor
     ImageIcon				icon;
 
     result   = new ArrayList<>();
-    clsnames = ClassLister.getSingleton().getClassnames(CallableActorHandler.class);
+    clsnames = ClassLister.getSingleton().getClassnames(ActorReferenceHandler.class);
     for (String clsname: clsnames) {
       try {
 	final Class cls = Class.forName(clsname);

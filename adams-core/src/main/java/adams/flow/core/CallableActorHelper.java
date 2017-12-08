@@ -54,15 +54,15 @@ public class CallableActorHelper
   public Actor findCallableActor(ActorHandler handler, CallableActorReference name) {
     Actor			result;
     int				i;
-    CallableActorHandler	callable;
+    ActorReferenceHandler callable;
     int				index;
     ExternalActorHandler	external;
 
     result = null;
 
     for (i = 0; i < handler.size(); i++) {
-      if (handler.get(i) instanceof CallableActorHandler) {
-	callable = (CallableActorHandler) handler.get(i);
+      if (handler.get(i) instanceof ActorReferenceHandler) {
+	callable = (ActorReferenceHandler) handler.get(i);
 	index  = callable.indexOf(name.toString());
 	if (index > -1) {
 	  result = callable.get(index);
@@ -145,12 +145,12 @@ public class CallableActorHelper
   protected void findCallableActors(ActorHandler handler, List<Actor> collected) {
     int				i;
     int				n;
-    CallableActorHandler	callable;
+    ActorReferenceHandler callable;
     ExternalActorHandler	external;
 
     for (i = 0; i < handler.size(); i++) {
-      if (handler.get(i) instanceof CallableActorHandler) {
-	callable = (CallableActorHandler) handler.get(i);
+      if (handler.get(i) instanceof ActorReferenceHandler) {
+	callable = (ActorReferenceHandler) handler.get(i);
 	for (n = 0; n < callable.size(); n++)
 	  collected.add(callable.get(n));
       }

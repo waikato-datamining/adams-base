@@ -15,20 +15,17 @@
 
 /**
  * CallableActorReference.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
-
-import adams.core.base.AbstractBaseString;
 
 /**
  * Wrapper around the name of a callable classifier (= string).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CallableActorReference
-  extends AbstractBaseString {
+  extends AbstractActorReference {
 
   /** for serialization. */
   private static final long serialVersionUID = 5082359039831645068L;

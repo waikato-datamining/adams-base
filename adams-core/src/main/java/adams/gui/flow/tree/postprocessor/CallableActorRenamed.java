@@ -20,7 +20,7 @@
 package adams.gui.flow.tree.postprocessor;
 
 import adams.flow.core.Actor;
-import adams.flow.core.CallableActorHandler;
+import adams.flow.core.ActorReferenceHandler;
 import adams.flow.processor.UpdateCallableActorName;
 import adams.gui.flow.tree.Tree;
 
@@ -58,7 +58,7 @@ public class CallableActorRenamed
    */
   @Override
   public boolean applies(Actor parent, Actor oldActor, Actor newActor) {
-    return (parent instanceof CallableActorHandler) && !oldActor.getName().equals(newActor.getName());
+    return (parent instanceof ActorReferenceHandler) && !oldActor.getName().equals(newActor.getName());
   }
 
   /**

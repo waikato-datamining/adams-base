@@ -15,7 +15,7 @@
 
 /*
  * CallableActors.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -26,7 +26,7 @@ import adams.flow.control.MutableControlActor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
-import adams.flow.core.CallableActorHandler;
+import adams.flow.core.ActorReferenceHandler;
 
 import java.util.HashSet;
 
@@ -80,11 +80,10 @@ import java.util.HashSet;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CallableActors
   extends MutableControlActor 
-  implements CallableActorHandler {
+  implements ActorReferenceHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -5282103315016094476L;
@@ -93,7 +92,6 @@ public class CallableActors
    * Dummy director.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class CallableActorsDirector
     extends AbstractDirector {
@@ -166,7 +164,7 @@ public class CallableActors
 
     result = null;
 
-    names = new HashSet<String>();
+    names = new HashSet<>();
     for (i = 0; i < size(); i++) {
       if (names.contains(get(i).getName())) {
 	result = "Actor '" + get(i).getFullName() + "' has duplicate name '" + get(i).getName() + "'!";
@@ -186,11 +184,11 @@ public class CallableActors
 
   /**
    * Checks whether there are any other actors preceding this actor that
-   * implement the {@link CallableActorHandler} interface.
+   * implement the {@link ActorReferenceHandler} interface.
    * 
    * @return		null if OK, otherwise error message
    */
-  protected String checkCallableActorHandlers() {
+  protected String checkActorReferenceHandlers() {
     String		result;
     ActorHandler	parent;
     int			index;
@@ -203,10 +201,10 @@ public class CallableActors
       if (parent != null) {
 	index = index();
 	for (i = index + 1; i < parent.size(); i++) {
-	  if (parent.get(i) instanceof CallableActorHandler) {
+	  if (parent.get(i) instanceof ActorReferenceHandler) {
 	    result = 
 		getClass().getSimpleName() + " cannot be followed by another " 
-		    + CallableActorHandler.class.getSimpleName() + " actor: "
+		    + ActorReferenceHandler.class.getSimpleName() + " actor: "
 		    + "#" + (i+1) + " " + parent.get(i).getName() + "/" + parent.get(i).getClass().getName();
 	    break;
 	  }
@@ -229,7 +227,7 @@ public class CallableActors
     
     result = checkNames();
     if (result == null)
-      result = checkCallableActorHandlers();
+      result = checkActorReferenceHandlers();
     
     return result;
   }

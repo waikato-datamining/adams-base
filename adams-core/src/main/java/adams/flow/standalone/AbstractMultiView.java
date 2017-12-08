@@ -29,8 +29,8 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
+import adams.flow.core.ActorReferenceHandler;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.CallableActorHandler;
 import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.core.Flushable;
 import adams.flow.core.InputConsumer;
@@ -65,7 +65,7 @@ import java.util.List;
  */
 public abstract class AbstractMultiView
   extends AbstractDisplay
-  implements CallableActorHandler, MenuBarProvider, SendToActionSupporter {
+  implements ActorReferenceHandler, MenuBarProvider, SendToActionSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4454052058077687116L;

@@ -21,8 +21,8 @@ package adams.gui.goe;
 
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
+import adams.flow.core.ActorReferenceHandler;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.CallableActorHandler;
 import adams.flow.core.ExternalActorHandler;
 import adams.gui.application.Child;
 import adams.gui.application.ChildFrame;
@@ -281,34 +281,34 @@ public class FlowHelper {
   }
 
   /**
-   * Locates all nodes representing {@link CallableActorHandler} actors.
+   * Locates all nodes representing {@link ActorReferenceHandler} actors.
    *
    * @param cont	the container to start the search from
-   * @return		the nodes with {@link CallableActorHandler} found
+   * @return		the nodes with {@link ActorReferenceHandler} found
    */
   public static List<Node> findCallableActorsHandler(Container cont) {
-    return findNodes(cont, CallableActorHandler.class);
+    return findNodes(cont, ActorReferenceHandler.class);
   }
 
   /**
-   * Locates all nodes representing {@link CallableActorHandler} actors.
+   * Locates all nodes representing {@link ActorReferenceHandler} actors.
    *
    * @param parent	the parent node
-   * @return		the nodes with {@link CallableActorHandler} found
+   * @return		the nodes with {@link ActorReferenceHandler} found
    */
   public static List<Node> findCallableActorsHandler(Node parent) {
-    return findNodes(parent, CallableActorHandler.class);
+    return findNodes(parent, ActorReferenceHandler.class);
   }
 
   /**
-   * Locates all nodes representing {@link CallableActorHandler} actors.
+   * Locates all nodes representing {@link ActorReferenceHandler} actors.
    *
    * @param parent	the parent node
    * @param restrict	the classes to restrict the results to
-   * @return		the nodes with {@link CallableActorHandler} found
+   * @return		the nodes with {@link ActorReferenceHandler} found
    */
   public static List<Node> findCallableActorsHandler(Node parent, Class[] restrict) {
-    return findNodes(parent, restrict, CallableActorHandler.class);
+    return findNodes(parent, restrict, ActorReferenceHandler.class);
   }
 
   /**
@@ -318,7 +318,7 @@ public class FlowHelper {
    * @return		the nodes with CallableActors found
    */
   public static List<Node> findTopCallableActors(Container cont) {
-    return findTopNodes(cont, CallableActorHandler.class);
+    return findTopNodes(cont, ActorReferenceHandler.class);
   }
 
   /**
@@ -328,7 +328,7 @@ public class FlowHelper {
    * @return		the nodes with CallableActors found
    */
   public static List<Node> findTopCallableActors(Node parent) {
-    return findTopNodes(parent, CallableActorHandler.class);
+    return findTopNodes(parent, ActorReferenceHandler.class);
   }
 
   /**

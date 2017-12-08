@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * CallableActorHandler.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+/*
+ * ActorReferenceHandler.java
+ * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -23,9 +23,8 @@ package adams.flow.core;
  * Interface for actors that manage callable actors.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface CallableActorHandler
+public interface ActorReferenceHandler
   extends MutableActorHandler {
 
 }

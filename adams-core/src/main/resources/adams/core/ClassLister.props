@@ -307,8 +307,8 @@ adams.flow.core.ControlActor=\
   adams.flow.transformer,\
   adams.flow.sink
 
-# the callable actor handlers
-adams.flow.core.CallableActorHandler=\
+# the actor reference handlers
+adams.flow.core.ActorReferenceHandler=\
   adams.flow.control,\
   adams.flow.standalone,\
   adams.flow.source,\
