@@ -23,8 +23,10 @@ package adams.gui.visualization.sequence;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.gui.visualization.core.plot.AbstractDistanceBasedHitDetector;
+import adams.gui.visualization.core.plot.ContainerHitDetector;
 
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +35,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractXYSequencePointHitDetector
-  extends AbstractDistanceBasedHitDetector<List<XYSequencePoint>, String> {
+  extends AbstractDistanceBasedHitDetector<List<XYSequencePoint>, String>
+  implements ContainerHitDetector<List<XYSequencePoint>, String, XYSequenceContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8048373104725687691L;
@@ -110,6 +113,30 @@ public abstract class AbstractXYSequencePointHitDetector
     result += ")";
 
     return result;
+  }
+
+  /**
+   * Detects hits and associates them with the containers.
+   *
+   * @param e		the mouse event to analyze for a hit
+   * @return		optional result of processing the event
+   */
+  public XYSequenceContainer[] containers(MouseEvent e) {
+    List<XYSequenceContainer>	result;
+    List<XYSequencePoint> 	hit;
+    XYSequenceContainerManager	manager;
+    int				index;
+
+    result  = new ArrayList<>();
+    hit     = isHit(e);
+    manager = m_Owner.getSequencePanel().getContainerManager();
+    for (XYSequencePoint point: hit) {
+      index = manager.indexOf(point.getID());
+      if (index > -1)
+        result.add(manager.get(index));
+    }
+
+    return result.toArray(new XYSequenceContainer[result.size()]);
   }
 
   /**
