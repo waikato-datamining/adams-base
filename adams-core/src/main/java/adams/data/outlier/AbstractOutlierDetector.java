@@ -21,7 +21,6 @@
 package adams.data.outlier;
 
 import adams.core.ClassLister;
-import adams.core.Performance;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -30,11 +29,7 @@ import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.data.id.DatabaseIDHandler;
 import adams.multiprocess.AbstractJob;
-import adams.multiprocess.JobList;
-import adams.multiprocess.JobRunner;
-import adams.multiprocess.LocalJobRunner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -358,154 +353,5 @@ public abstract class AbstractOutlierDetector<T extends DataContainer>
    */
   public static AbstractOutlierDetector forCommandLine(String cmdline) {
     return (AbstractOutlierDetector) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
-  }
-
-  /**
-   * Passes the data through the given detector and returns the result.
-   *
-   * @param detector	the detector to use
-   * @param data	the data to pass through the detector
-   * @return		the result
-   */
-  public static List<String> detect(AbstractOutlierDetector detector, DataContainer data) {
-    List<String>			result;
-    List<List<List<String>>>		detected;
-    List<DataContainer>			dataList;
-    List<AbstractOutlierDetector>	detectorList;
-
-    dataList     = new ArrayList<>();
-    dataList.add(data);
-    detectorList = new ArrayList<>();
-    detectorList.add(detector);
-    detected     = detect(detectorList, dataList);
-    result       = detected.get(0).get(0);
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given detector and returns the result. Makes use of
-   * multiple cores, i.e., for each dataset a new thread will be run with a
-   * copy of the detector.
-   *
-   * @param detector	the detector to use (a new detector with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the detector
-   * @return		the result, the index corresponds to the
-   * 			data index
-   */
-  public static List<List<String>> detect(AbstractOutlierDetector detector, List<DataContainer> data) {
-    List<List<String>>			result;
-    List<List<List<String>>>		detected;
-    List<DataContainer>			dataList;
-    List<AbstractOutlierDetector>	detectorList;
-
-    dataList     = new ArrayList<>();
-    dataList.addAll(data);
-    detectorList = new ArrayList<>();
-    detectorList.add(detector);
-    detected     = detect(detectorList, dataList);
-    result       = detected.get(0);
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given detectors and returns it. Makes use of
-   * multiple cores, i.e., for each dataset a new thread will be run with a
-   * copy of the detector.
-   *
-   * @param detector	the detectors to use (a new detector with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the detector
-   * @return		the result, the index corresponds to the detector
-   * 			index
-   */
-  public static List<List<String>> detect(List<AbstractOutlierDetector> detector, DataContainer data) {
-    List<List<String>>			result;
-    List<List<List<String>>>		detected;
-    List<DataContainer>			dataList;
-    List<AbstractOutlierDetector>	detectorList;
-    int					i;
-
-    dataList     = new ArrayList<>();
-    dataList.add(data);
-    detectorList = new ArrayList<>();
-    detectorList.addAll(detector);
-    detected     = detect(detectorList, dataList);
-    result       = new ArrayList<>();
-    for (i = 0; i < detected.size(); i++)
-      result.add(detected.get(i).get(0));
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given detectors and returns it. Makes use of
-   * multiple cores, i.e., for each dataset a new thread will be run with a
-   * copy of the detector.
-   *
-   * @param detector	the detectors to use (a new detector with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the detector
-   * @return		the result, the indices in the outer Vector
-   * 			correspond to the detector index, the inner Vector to
-   * 			the index of the data
-   */
-  public static List<List<List<String>>> detect(List<AbstractOutlierDetector> detector, List<DataContainer> data) {
-    List<List<List<String>>>	result;
-    List<List<String>>		subresult;
-    AbstractOutlierDetector	threadDetector;
-    JobRunner<DetectorJob> 	runner;
-    JobList<DetectorJob>	jobs;
-    DetectorJob			job;
-    int				i;
-    int				n;
-
-    result = new ArrayList<>();
-
-    if (Performance.getMultiProcessingEnabled()) {
-      runner = new LocalJobRunner<>();
-      jobs   = new JobList<>();
-
-      // fill job list
-      for (n = 0; n < detector.size(); n++) {
-	for (i = 0; i < data.size(); i++) {
-	  threadDetector = detector.get(n).shallowCopy(true);
-	  jobs.add(new DetectorJob(threadDetector, data.get(i)));
-	}
-      }
-      runner.add(jobs);
-      runner.start();
-      runner.stop();
-
-      // gather results
-      subresult = null;
-      for (i = 0; i < jobs.size(); i++) {
-	if (i % data.size() == 0) {
-	  subresult = new ArrayList<>();
-	  result.add(subresult);
-	}
-	job = jobs.get(i);
-	// success? If not, just add the header of the original data
-	if (job.getResult() != null)
-	  subresult.add(job.getResult());
-	else
-	  subresult.add(new ArrayList<>());
-	job.cleanUp();
-      }
-    }
-    else {
-      for (n = 0; n < detector.size(); n++) {
-	subresult = new ArrayList<>();
-	result.add(subresult);
-	for (i = 0; i < data.size(); i++) {
-	  threadDetector = detector.get(n).shallowCopy(true);
-	  subresult.add(threadDetector.detect(data.get(i)));
-	}
-      }
-    }
-
-    return result;
   }
 }

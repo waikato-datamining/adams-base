@@ -15,18 +15,18 @@
 
 /*
  * MultiOutlierDetector.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.outlier;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.data.container.DataContainer;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -53,7 +53,6 @@ import adams.db.DatabaseConnectionHandler;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to pass through the detector
  */
 public class MultiOutlierDetector<T extends DataContainer>
@@ -197,10 +196,10 @@ public class MultiOutlierDetector<T extends DataContainer>
     int			i;
     List<String>	detection;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     for (i = 0; i < m_Detectors.length; i++) {
-      detection = AbstractOutlierDetector.detect(m_Detectors[i].shallowCopy(true), data);
+      detection = m_Detectors[i].detect(data);
       if (detection.size() > 0) {
 	result.addAll(detection);
 	if (m_StopOnFirstDetection)
