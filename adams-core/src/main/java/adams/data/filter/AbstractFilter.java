@@ -15,12 +15,11 @@
 
 /*
  * AbstractFilter.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
-import adams.core.Performance;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -30,12 +29,6 @@ import adams.data.container.DataContainer;
 import adams.data.id.DatabaseIDHandler;
 import adams.data.id.IDHandler;
 import adams.multiprocess.AbstractJob;
-import adams.multiprocess.JobList;
-import adams.multiprocess.JobRunner;
-import adams.multiprocess.LocalJobRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Abstract base class for filters.
@@ -380,104 +373,5 @@ public abstract class AbstractFilter<T extends DataContainer>
    */
   public static Filter forCommandLine(String cmdline) {
     return (Filter) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
-  }
-
-  /**
-   * Passes the data through the given filters and returns it. Makes use of
-   * multiple cores, i.e., for each dataset a new thread will be run with a
-   * copy of the filter.
-   *
-   * @param filter	the filters to use for filtering (a new filter with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the filter
-   * @return		the filtered data, the index corresponds to the filter
-   * 			index
-   */
-  public static List<DataContainer> filter(List<Filter> filter, DataContainer data) {
-    List<DataContainer>		result;
-    List<List<DataContainer>>	filtered;
-    List<DataContainer>		dataList;
-    List<Filter>		filterList;
-    int				i;
-
-    dataList   = new ArrayList<>();
-    dataList.add(data);
-    filterList = new ArrayList<>();
-    filterList.addAll(filter);
-    filtered   = filter(filterList, dataList);
-    result     = new ArrayList<>();
-    for (i = 0; i < filtered.size(); i++)
-      result.add(filtered.get(i).get(0));
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given filters and returns it. Makes use of
-   * multiple cores, i.e., for each dataset a new thread will be run with a
-   * copy of the filter.
-   *
-   * @param filter	the filters to use for filtering (a new filter with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the filter
-   * @return		the filtered data, the indices in the outer Vector
-   * 			correspond to the filter index, the inner Vector to
-   * 			the index of the data
-   */
-  public static List<List<DataContainer>> filter(List<Filter> filter, List<DataContainer> data) {
-    List<List<DataContainer>>	result;
-    List<DataContainer>		subresult;
-    Filter			threadFilter;
-    JobRunner<FilterJob> 	runner;
-    JobList<FilterJob>		jobs;
-    FilterJob			job;
-    int				i;
-    int				n;
-
-    result = new ArrayList<>();
-
-    if (Performance.getMultiProcessingEnabled()) {
-      runner = new LocalJobRunner<>();
-      jobs   = new JobList<>();
-
-      // fill job list
-      for (n = 0; n < filter.size(); n++) {
-	for (i = 0; i < data.size(); i++) {
-	  threadFilter = filter.get(n).shallowCopy(true);
-	  jobs.add(new FilterJob(threadFilter, data.get(i)));
-	}
-      }
-      runner.add(jobs);
-      runner.start();
-      runner.stop();
-
-      // gather results
-      subresult = null;
-      for (i = 0; i < jobs.size(); i++) {
-	if (i % data.size() == 0) {
-	  subresult = new ArrayList<>();
-	  result.add(subresult);
-	}
-	job = jobs.get(i);
-	// success? If not, just add the header of the original data
-	if (job.getFilteredData() != null)
-	  subresult.add(job.getFilteredData());
-	else
-	  subresult.add(job.getData().getHeader());
-	job.cleanUp();
-      }
-    }
-    else {
-      for (n = 0; n < filter.size(); n++) {
-	subresult = new ArrayList<>();
-	result.add(subresult);
-	for (i = 0; i < data.size(); i++) {
-	  threadFilter = filter.get(n).shallowCopy(true);
-	  subresult.add(threadFilter.filter(data.get(i)));
-	}
-      }
-    }
-
-    return result;
   }
 }
