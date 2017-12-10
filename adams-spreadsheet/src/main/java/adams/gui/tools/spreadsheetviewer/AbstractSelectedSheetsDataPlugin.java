@@ -19,24 +19,23 @@
  */
 package adams.gui.tools.spreadsheetviewer;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.GUIHelper;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.tools.SpreadSheetViewerPanel;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.GUIHelper;
-import adams.gui.dialog.ApprovalDialog;
-import adams.gui.tools.SpreadSheetViewerPanel;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Ancestor for plugins that operate on multiple panels.
@@ -127,7 +126,7 @@ public abstract class AbstractSelectedSheetsDataPlugin
    * @return		the size
    */
   protected Dimension getDialogSize() {
-    return new Dimension(600, 400);
+    return GUIHelper.getDefaultSmallDialogDimension();
   }
   
   /**

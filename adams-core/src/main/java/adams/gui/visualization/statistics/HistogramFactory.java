@@ -32,6 +32,7 @@ import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.core.TranslucentColorProvider;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
@@ -43,7 +44,6 @@ import adams.gui.visualization.sequence.XYSequenceContainerManager;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
 
 /**
  * A factory for histogram related objects.
@@ -245,7 +245,7 @@ public class HistogramFactory {
       m_TabbedPane = new BaseTabbedPane();
       getContentPane().add(m_TabbedPane, BorderLayout.CENTER);
 
-      setSize(new Dimension(800, 600));
+      setSize(GUIHelper.getDefaultDialogDimension());
     }
 
     /**

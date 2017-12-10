@@ -1026,7 +1026,7 @@ public class FlowRunnerPanel
     panel.display(handler.getLogEntries());
     dialog.getContentPane().setLayout(new BorderLayout());
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.setSize(new Dimension(800, 600));
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
   }

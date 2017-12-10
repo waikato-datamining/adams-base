@@ -21,11 +21,11 @@ package adams.gui.flow.menu;
 
 import adams.db.LogEntryHandler;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.GUIHelper;
 import adams.gui.tools.LogEntryViewerPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 /**
@@ -76,7 +76,7 @@ public class RunDisplayErrors
     panel.display(handler.getLogEntries());
     dialog.getContentPane().setLayout(new BorderLayout());
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.setSize(new Dimension(800, 600));
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(m_State);
     dialog.setVisible(true);
   }

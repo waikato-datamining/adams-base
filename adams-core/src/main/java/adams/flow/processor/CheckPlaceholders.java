@@ -29,11 +29,11 @@ import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.Actor;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextPanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -185,7 +185,7 @@ public class CheckPlaceholders
     
     result = new TextPanel();
     result.setTitle("Placeholder check");
-    result.setPreferredSize(new Dimension(400, 300));
+    result.setPreferredSize(GUIHelper.getDefaultTinyDialogDimension());
     result.setEditable(false);
     result.setContent(Utils.flatten(m_Warnings, "\n"));
     result.setInfoText(getWarningHeader());

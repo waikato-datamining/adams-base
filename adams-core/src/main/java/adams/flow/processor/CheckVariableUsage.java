@@ -35,11 +35,11 @@ import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextPanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -353,7 +353,7 @@ public class CheckVariableUsage
     
     result = new TextPanel();
     result.setTitle("Variable check");
-    result.setPreferredSize(new Dimension(400, 300));
+    result.setPreferredSize(GUIHelper.getDefaultTinyDialogDimension());
     result.setEditable(false);
     if (m_Warnings != null)
       result.setContent(m_Warnings);

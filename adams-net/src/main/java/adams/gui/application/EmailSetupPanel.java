@@ -30,6 +30,7 @@ import adams.env.EmailDefinition;
 import adams.env.Environment;
 import adams.gui.chooser.BaseTextChooserPanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 
 import javax.swing.JCheckBox;
@@ -38,7 +39,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 /**
@@ -166,7 +166,7 @@ public class EmailSetupPanel
 
     m_TextDefaultSignature = new BaseTextChooserPanel();
     m_TextDefaultSignature.setDialogTitle("Enter signature");
-    m_TextDefaultSignature.setDialogSize(new Dimension(600, 400));
+    m_TextDefaultSignature.setDialogSize(GUIHelper.getDefaultSmallDialogDimension());
     m_TextDefaultSignature.setTextColumns(16);  // TODO longer
     m_TextDefaultSignature.setCurrent(new BaseText(Utils.unbackQuoteChars(EmailHelper.getDefaultSignature())));
     m_PanelParameters.addParameter("Default signature", new BaseScrollPane(m_TextDefaultSignature));

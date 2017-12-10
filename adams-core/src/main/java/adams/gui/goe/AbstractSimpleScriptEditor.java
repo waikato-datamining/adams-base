@@ -169,7 +169,7 @@ public class AbstractSimpleScriptEditor
    * @return		the size
    */
   protected Dimension getDefaultSize() {
-    return new Dimension(600, 500);
+    return GUIHelper.makeTaller(GUIHelper.getDefaultSmallDialogDimension());
   }
   
   /**

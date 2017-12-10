@@ -20,6 +20,7 @@
 package adams.flow.execution;
 
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 
 import java.awt.Dimension;
 
@@ -49,7 +50,7 @@ public abstract class AbstractGraphicalFlowExecutionListener
    * @return		the frame size
    */
   public Dimension getDefaultFrameSize() {
-    return new Dimension(800, 600);
+    return GUIHelper.getDefaultDialogDimension();
   }
 
   /**

@@ -97,7 +97,7 @@ public abstract class AbstractSelectedImagesFeatureGenerator
    */
   @Override
   protected Dimension getDialogSize() {
-    return new Dimension(800, 600);
+    return GUIHelper.getDefaultDialogDimension();
   }
 
   /**

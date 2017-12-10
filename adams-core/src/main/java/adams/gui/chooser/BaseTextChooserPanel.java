@@ -74,7 +74,7 @@ public class BaseTextChooserPanel
     super.initialize();
 
     m_DialogTitle = "Enter text";
-    m_DialogSize  = new Dimension(400, 300);
+    m_DialogSize  = GUIHelper.getDefaultTinyDialogDimension();
   }
 
   /**

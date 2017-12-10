@@ -30,10 +30,10 @@ import adams.flow.control.StorageName;
 import adams.flow.control.StorageUpdater;
 import adams.flow.control.StorageUser;
 import adams.flow.core.Actor;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextPanel;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -191,7 +191,7 @@ public class ListAllStorageNames
     
     result = new TextPanel();
     result.setTitle("Storage names");
-    result.setPreferredSize(new Dimension(400, 300));
+    result.setPreferredSize(GUIHelper.getDefaultTinyDialogDimension());
     result.setEditable(false);
     result.setContent(Utils.flatten(m_StorageNames, "\n"));
     

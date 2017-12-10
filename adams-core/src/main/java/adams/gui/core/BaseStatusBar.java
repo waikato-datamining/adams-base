@@ -153,7 +153,7 @@ public class BaseStatusBar
     m_MouseListener       = null;
     m_StatusDialogTitle   = DEFAULT_TITLE;
     m_StatusProcessor     = null;
-    m_DialogSize          = new Dimension(400, 300);
+    m_DialogSize          = GUIHelper.getDefaultTinyDialogDimension();
     m_PopupMenuCustomizer = null;
     m_StatusLeft          = EMPTY_STATUS;
     m_StatusRight         = EMPTY_STATUS;

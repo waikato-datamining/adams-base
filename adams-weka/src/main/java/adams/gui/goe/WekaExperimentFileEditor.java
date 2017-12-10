@@ -21,17 +21,18 @@
 
 package adams.gui.goe;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import adams.core.Utils;
+import adams.core.io.PlaceholderFile;
+import adams.core.option.AbstractOption;
+import adams.data.WekaExperimentFile;
+import adams.gui.chooser.FileChooserPanel;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import weka.classifiers.Classifier;
+import weka.experiment.ClassifierSplitEvaluator;
+import weka.experiment.CrossValidationResultProducer;
+import weka.experiment.Experiment;
+import weka.gui.experiment.SimpleSetupPanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -40,19 +41,16 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import weka.classifiers.Classifier;
-import weka.experiment.ClassifierSplitEvaluator;
-import weka.experiment.CrossValidationResultProducer;
-import weka.experiment.Experiment;
-import weka.gui.experiment.SimpleSetupPanel;
-import adams.core.Utils;
-import adams.core.io.PlaceholderFile;
-import adams.core.option.AbstractOption;
-import adams.data.WekaExperimentFile;
-import adams.gui.chooser.FileChooserPanel;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * A PropertyEditor for WekaExperimentFile objects that lets the user select a file.
@@ -154,7 +152,7 @@ public class WekaExperimentFileEditor
       panel.add(m_ButtonCancel);
 
       pack();
-      setSize(new Dimension(800, 600));
+      setSize(GUIHelper.getDefaultDialogDimension());
     }
 
     /**

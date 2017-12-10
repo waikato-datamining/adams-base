@@ -27,6 +27,7 @@ import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.Actor;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextPanel;
 
 import java.awt.Component;
@@ -227,7 +228,7 @@ public abstract class AbstractListingProcessor
    * @return		the size
    */
   protected Dimension getDefaultSize() {
-    return new Dimension(400, 300);
+    return GUIHelper.getDefaultTinyDialogDimension();
   }
   
   /**

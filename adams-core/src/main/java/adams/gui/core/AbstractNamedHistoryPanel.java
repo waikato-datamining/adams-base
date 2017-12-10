@@ -256,7 +256,7 @@ public abstract class AbstractNamedHistoryPanel<T>
      * @return		the default size
      */
     protected Dimension getDefaultSize() {
-      return new Dimension(640, 480);
+      return GUIHelper.getDefaultSmallDialogDimension();
     }
 
     /**
@@ -1121,7 +1121,7 @@ public abstract class AbstractNamedHistoryPanel<T>
   /**
    * Sets the tool tip provider.
    *
-   * @param l		the provider, null to turn tool tips off
+   * @param value	the provider, null to turn tool tips off
    */
   public void setHistoryEntryToolTipProvider(HistoryEntryToolTipProvider<T> value) {
     m_HistoryEntryToolTipProvider = value;

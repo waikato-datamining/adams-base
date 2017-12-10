@@ -20,19 +20,6 @@
 
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.text.Document;
-
 import adams.core.Properties;
 import adams.data.sequence.XYSequence;
 import adams.db.SequenceProvider;
@@ -42,9 +29,21 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
+import adams.gui.core.GUIHelper;
 import adams.gui.scripting.SyntaxDocument;
 import adams.gui.visualization.sequence.XYSequencePanel;
 import adams.gui.visualization.sequence.XYSequenceTable;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import javax.swing.text.Document;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
 
 /**
  * A panel for viewing sequences obtained from SQL statements.
@@ -96,7 +95,7 @@ public abstract class AbstractSequenceViewerPanel
 
     m_TextSQL = new JTextPane();
     m_TextSQL.setDocument(createDocument());
-    m_TextSQL.setPreferredSize(new Dimension(400, 300));
+    m_TextSQL.setPreferredSize(GUIHelper.getDefaultTinyDialogDimension());
     m_PanelSQL.add(new BaseScrollPane(m_TextSQL), BorderLayout.CENTER);
 
     panel2 = new JPanel(new BorderLayout());
