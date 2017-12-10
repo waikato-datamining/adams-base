@@ -70,7 +70,7 @@ public class CheckActorReferenceUsage
   
   /** the warnings that were produced. */
   protected StringBuilder m_Warnings;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -215,8 +215,11 @@ public class CheckActorReferenceUsage
           continue;
         names.add(undef);
       }
-      Collections.sort(names);
-      m_Warnings = new StringBuilder(Utils.flatten(names, "\n"));
+      if (names.size() > 0) {
+        Collections.sort(names);
+        m_Warnings = new StringBuilder("The following actor references were never defined:\n");
+        m_Warnings.append(Utils.flatten(names, "\n"));
+      }
     }
 
     // unused
@@ -260,7 +263,7 @@ public class CheckActorReferenceUsage
    * @return		the heading for the warnings, null if not available
    */
   public String getWarningHeader() {
-    return "The following actor references were never defined:";
+    return null;
   }
 
   /**
