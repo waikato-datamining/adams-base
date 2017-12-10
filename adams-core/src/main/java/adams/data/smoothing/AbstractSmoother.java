@@ -15,14 +15,13 @@
 
 /*
  * AbstractSmoother.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.smoothing;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
-import adams.core.Performance;
 import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
@@ -32,12 +31,6 @@ import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.data.id.DatabaseIDHandler;
 import adams.multiprocess.AbstractJob;
-import adams.multiprocess.JobList;
-import adams.multiprocess.JobRunner;
-import adams.multiprocess.LocalJobRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Abstract base class for smoothing schemes.
@@ -364,154 +357,5 @@ public abstract class AbstractSmoother<T extends DataContainer>
    */
   public static AbstractSmoother forCommandLine(String cmdline) {
     return (AbstractSmoother) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
-  }
-
-  /**
-   * Passes the data through the given smoothing scheme and returns it.
-   *
-   * @param smoother	the smoothing scheme to use for smoothing
-   * @param data	the data to pass through the smoothing scheme
-   * @return		the smoothed data
-   */
-  public static DataContainer smooth(AbstractSmoother smoother, DataContainer data) {
-    DataContainer		result;
-    List<List<DataContainer>>	smoothed;
-    List<DataContainer>		dataList;
-    List<AbstractSmoother>	smootherList;
-
-    dataList     = new ArrayList<DataContainer>();
-    dataList.add(data);
-    smootherList = new ArrayList<AbstractSmoother>();
-    smootherList.add(smoother);
-    smoothed     = smooth(smootherList, dataList);
-    result       = smoothed.get(0).get(0);
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given smoothing scheme and returns it. Makes use of
-   * multiple cores, i.e., for each dataset a new thread will be run with a
-   * copy of the smoothing scheme.
-   *
-   * @param smoother	the smoothing scheme to use for smoothing (a new smoothing scheme with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the smoothing scheme
-   * @return		the smoothed data, the index corresponds to the
-   * 			data index
-   */
-  public static List<DataContainer> smooth(AbstractSmoother smoother, List<DataContainer> data) {
-    List<DataContainer>		result;
-    List<List<DataContainer>>	smoothed;
-    List<DataContainer>		dataList;
-    List<AbstractSmoother>		smootherList;
-
-    dataList     = new ArrayList<DataContainer>();
-    dataList.addAll(data);
-    smootherList = new ArrayList<AbstractSmoother>();
-    smootherList.add(smoother);
-    smoothed     = smooth(smootherList, dataList);
-    result       = smoothed.get(0);
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given smoothing schemes and returns it. Makes use of
-   * multiple cores, i.e., for each dataset a new thread will be run with a
-   * copy of the smoothing scheme.
-   *
-   * @param smoother	the smoothing schemes to use for smoothing (a new smoothing scheme with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the smoothing scheme
-   * @return		the smoothed data, the index corresponds to the smoothing scheme
-   * 			index
-   */
-  public static List<DataContainer> smooth(List<AbstractSmoother> smoother, DataContainer data) {
-    List<DataContainer>		result;
-    List<List<DataContainer>>	smoothed;
-    List<DataContainer>		dataList;
-    List<AbstractSmoother>	smootherList;
-    int				i;
-
-    dataList     = new ArrayList<DataContainer>();
-    dataList.add(data);
-    smootherList = new ArrayList<AbstractSmoother>();
-    smootherList.addAll(smoother);
-    smoothed     = smooth(smootherList, dataList);
-    result       = new ArrayList<DataContainer>();
-    for (i = 0; i < smoothed.size(); i++)
-      result.add(smoothed.get(i).get(0));
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given smoothing schemes and returns it. Makes use of
-   * multiple cores, i.e., for each dataset a new thread will be run with a
-   * copy of the smoothing scheme.
-   *
-   * @param smoother	the smoothing schemes to use for smoothing (a new smoothing scheme with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the smoothing scheme
-   * @return		the smoothed data, the indices in the outer Vector
-   * 			correspond to the smoothing scheme index, the inner Vector to
-   * 			the index of the data
-   */
-  public static List<List<DataContainer>> smooth(List<AbstractSmoother> smoother, List<DataContainer> data) {
-    List<List<DataContainer>>	result;
-    List<DataContainer>		subresult;
-    AbstractSmoother		threadSmoother;
-    JobRunner<SmootherJob> 	runner;
-    JobList<SmootherJob>	jobs;
-    SmootherJob			job;
-    int				i;
-    int				n;
-
-    result = new ArrayList<List<DataContainer>>();
-
-    if (Performance.getMultiProcessingEnabled()) {
-      runner = new LocalJobRunner<SmootherJob>();
-      jobs   = new JobList<SmootherJob>();
-
-      // fill job list
-      for (n = 0; n < smoother.size(); n++) {
-	for (i = 0; i < data.size(); i++) {
-	  threadSmoother = smoother.get(n).shallowCopy(true);
-	  jobs.add(new SmootherJob(threadSmoother, data.get(i)));
-	}
-      }
-      runner.add(jobs);
-      runner.start();
-      runner.stop();
-
-      // gather results
-      subresult = null;
-      for (i = 0; i < jobs.size(); i++) {
-	if (i % data.size() == 0) {
-	  subresult = new ArrayList<DataContainer>();
-	  result.add(subresult);
-	}
-	job = jobs.get(i);
-	// success? If not, just add the header of the original data
-	if (job.getSmoothedData() != null)
-	  subresult.add(job.getSmoothedData());
-	else
-	  subresult.add(job.getData().getHeader());
-	job.cleanUp();
-      }
-    }
-    else {
-      for (n = 0; n < smoother.size(); n++) {
-	subresult = new ArrayList<DataContainer>();
-	result.add(subresult);
-	for (i = 0; i < data.size(); i++) {
-	  threadSmoother = smoother.get(n).shallowCopy(true);
-	  subresult.add(threadSmoother.smooth(data.get(i)));
-	}
-      }
-    }
-
-    return result;
   }
 }
