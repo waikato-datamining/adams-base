@@ -15,13 +15,12 @@
 
 /*
  * AbstractBaselineCorrection.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.baseline;
 
 import adams.core.CleanUpHandler;
-import adams.core.Performance;
 import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
@@ -31,12 +30,6 @@ import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.data.id.DatabaseIDHandler;
 import adams.multiprocess.AbstractJob;
-import adams.multiprocess.JobList;
-import adams.multiprocess.JobRunner;
-import adams.multiprocess.LocalJobRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Abstract base class for baseline correction schemes.
@@ -335,157 +328,5 @@ public abstract class AbstractBaselineCorrection<T extends DataContainer>
    */
   public static AbstractBaselineCorrection forCommandLine(String cmdline) {
     return (AbstractBaselineCorrection) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
-  }
-
-  /**
-   * Passes the data through the given baseline correction scheme and returns it.
-   *
-   * @param baseline	the baseline correction scheme to use for correcting
-   * @param data	the data to pass through the baseline correction scheme
-   * @return		the corrected data
-   */
-  public static DataContainer correct(AbstractBaselineCorrection baseline, DataContainer data) {
-    DataContainer			result;
-    List<List<DataContainer>>	corrected;
-    List<DataContainer>		dataList;
-    List<AbstractBaselineCorrection>	baselineList;
-
-    dataList   = new ArrayList<DataContainer>();
-    dataList.add(data);
-    baselineList = new ArrayList<AbstractBaselineCorrection>();
-    baselineList.add(baseline);
-    corrected  = correct(baselineList, dataList);
-    result     = corrected.get(0).get(0);
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given baseline correction scheme and returns it.
-   * Makes use of multiple cores, i.e., for each dataset a new thread will be run
-   * with a copy of the baseline correction scheme.
-   *
-   * @param baseline	the baseline correction scheme to use for correcting
-   * 			(a new baseline correction scheme with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the baseline correction scheme
-   * @return		the corrected data, the index corresponds to the
-   * 			data index
-   */
-  public static List<DataContainer> correct(AbstractBaselineCorrection baseline, List<DataContainer> data) {
-    List<DataContainer>			result;
-    List<List<DataContainer>>		corrected;
-    List<DataContainer>			dataList;
-    List<AbstractBaselineCorrection>	baselineList;
-
-    dataList   = new ArrayList<DataContainer>();
-    dataList.addAll(data);
-    baselineList = new ArrayList<AbstractBaselineCorrection>();
-    baselineList.add(baseline);
-    corrected  = correct(baselineList, dataList);
-    result     = corrected.get(0);
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given baseline correction schemes and returns it.
-   * Makes use of multiple cores, i.e., for each dataset a new thread will be run with a
-   * copy of the baseline correction scheme.
-   *
-   * @param baseline	the baseline correction schemes to use for correcting
-   * 			(a new baseline correction scheme with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the baseline correction scheme
-   * @return		the corrected data, the index corresponds to the
-   * 			baseline correction scheme index
-   */
-  public static List<DataContainer> correct(List<AbstractBaselineCorrection> baseline, DataContainer data) {
-    List<DataContainer>		result;
-    List<List<DataContainer>>		corrected;
-    List<DataContainer>			dataList;
-    List<AbstractBaselineCorrection>	baselineList;
-    int					i;
-
-    dataList   = new ArrayList<DataContainer>();
-    dataList.add(data);
-    baselineList = new ArrayList<AbstractBaselineCorrection>();
-    baselineList.addAll(baseline);
-    corrected = correct(baselineList, dataList);
-    result    = new ArrayList<DataContainer>();
-    for (i = 0; i < corrected.size(); i++)
-      result.add(corrected.get(i).get(0));
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given baseline correction schemes and returns it.
-   * Makes use of multiple cores, i.e., for each dataset a new thread will be run
-   * with a copy of the baseline correction scheme.
-   *
-   * @param baseline	the baseline correction scheme to use for correcting
-   * 			(a new baseline correction scheme with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the baseline correction scheme
-   * @return		the corrected data, the indices in the outer Vector
-   * 			correspond to the baseline correction scheme index,
-   * 			the inner Vector to the index of the data
-   */
-  public static List<List<DataContainer>> correct(List<AbstractBaselineCorrection> baseline, List<DataContainer> data) {
-    List<List<DataContainer>>		result;
-    List<DataContainer>			subresult;
-    AbstractBaselineCorrection		threadBaseline;
-    JobRunner<BaselineCorrectionJob> 	runner;
-    JobList<BaselineCorrectionJob>	jobs;
-    BaselineCorrectionJob		job;
-    int					i;
-    int					n;
-
-    result = new ArrayList<List<DataContainer>>();
-
-    if (Performance.getMultiProcessingEnabled()) {
-      runner = new LocalJobRunner<BaselineCorrectionJob>();
-      jobs   = new JobList<BaselineCorrectionJob>();
-
-      // fill job list
-      for (n = 0; n < baseline.size(); n++) {
-	for (i = 0; i < data.size(); i++) {
-	  threadBaseline = baseline.get(n).shallowCopy(true);
-	  jobs.add(new BaselineCorrectionJob(threadBaseline, data.get(i)));
-	}
-      }
-      runner.add(jobs);
-      runner.start();
-      runner.stop();
-
-      // gather results
-      subresult = null;
-      for (i = 0; i < jobs.size(); i++) {
-	if (i % data.size() == 0) {
-	  subresult = new ArrayList<DataContainer>();
-	  result.add(subresult);
-	}
-	job = jobs.get(i);
-	// success? If not, just add the header of the original data
-	if (job.getCorrectedData() != null)
-	  subresult.add(job.getCorrectedData());
-	else
-	  subresult.add((DataContainer) job.getData().getHeader());
-	job.cleanUp();
-      }
-    }
-    else {
-      for (n = 0; n < baseline.size(); n++) {
-	subresult = new ArrayList<DataContainer>();
-	result.add(subresult);
-	for (i = 0; i < data.size(); i++) {
-	  threadBaseline = baseline.get(n).shallowCopy(true);
-	  subresult.add(threadBaseline.correct(data.get(i)));
-	}
-      }
-    }
-
-    return result;
   }
 }
