@@ -15,14 +15,13 @@
 
 /*
  * AbstractDenoiser.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.noise;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
-import adams.core.Performance;
 import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
@@ -33,9 +32,6 @@ import adams.data.RegionRecorder;
 import adams.data.container.DataContainer;
 import adams.data.id.DatabaseIDHandler;
 import adams.multiprocess.AbstractJob;
-import adams.multiprocess.JobList;
-import adams.multiprocess.JobRunner;
-import adams.multiprocess.LocalJobRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -461,77 +457,5 @@ public abstract class AbstractDenoiser<T extends DataContainer>
    */
   public static AbstractDenoiser forCommandLine(String cmdline) {
     return (AbstractDenoiser) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
-  }
-
-  /**
-   * Uses the (initialized) denoiser algorithm to remove the noise from the
-   * data.
-   *
-   * @param denoiser	the denoiser algorithm to use
-   * @param data	the data to cleanse
-   * @return		the noise-free data
-   */
-  public static DataContainer denoise(AbstractDenoiser denoiser, DataContainer data) {
-    List<DataContainer>	dataList;
-    List<DataContainer>	denoisedList;
-    DataContainer	result;
-
-    dataList     = new ArrayList<DataContainer>();
-    dataList.add(data);
-    denoisedList = denoise(denoiser, dataList);
-    result       = denoisedList.get(0);
-
-    return result;
-  }
-
-  /**
-   * Uses the (initialized) denoiser algorithm to remove the noise from the
-   * data vector.
-   *
-   * @param denoiser	the denoiser algorithm to use
-   * @param data	the data to cleanse
-   * @return		the noise-free data
-   */
-  public static List<DataContainer> denoise(AbstractDenoiser denoiser, List<DataContainer> data) {
-    List<DataContainer>		result;
-    AbstractDenoiser		threadDenoiser;
-    JobRunner<DenoiserJob> 	runner;
-    JobList<DenoiserJob>	jobs;
-    DenoiserJob			job;
-    int				i;
-
-    result = new ArrayList<DataContainer>();
-
-    if (Performance.getMultiProcessingEnabled()) {
-      runner = new LocalJobRunner<DenoiserJob>();
-      jobs   = new JobList<DenoiserJob>();
-
-      // fill job list
-      for (i = 0; i < data.size(); i++) {
-	threadDenoiser = denoiser.shallowCopy(true);
-	jobs.add(new DenoiserJob(threadDenoiser, data.get(i)));
-      }
-      runner.add(jobs);
-      runner.start();
-      runner.stop();
-
-      // gather results
-      for (i = 0; i < jobs.size(); i++) {
-	job = jobs.get(i);
-	// success? If not, just add the header of the original data
-	if (job.getDenoisedData() != null)
-	  result.add(job.getDenoisedData());
-	else
-	  result.add(job.getData().getHeader());
-      }
-    }
-    else {
-      for (i = 0; i < data.size(); i++) {
-	threadDenoiser = denoiser.shallowCopy(true);
-	result.add(threadDenoiser.denoise(data.get(i)));
-      }
-    }
-
-    return result;
   }
 }
