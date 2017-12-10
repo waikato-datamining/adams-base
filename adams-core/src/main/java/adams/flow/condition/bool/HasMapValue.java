@@ -87,7 +87,7 @@ public class HasMapValue
 
     m_OptionManager.add(
       "storage-name", "storageName",
-      new StorageName("storage"));
+      new StorageName(StorageName.DEFAULT));
 
     m_OptionManager.add(
       "key", "key",

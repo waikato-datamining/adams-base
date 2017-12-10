@@ -213,7 +213,7 @@ public class MergeReportTest
       // Flow.storage
       Trigger trigger3 = new Trigger();
       argOption = (AbstractArgumentOption) trigger3.getOptionManager().findByProperty("name");
-      trigger3.setName((String) argOption.valueOf("storage"));
+      trigger3.setName((String) argOption.valueOf(StorageName.DEFAULT));
       List<Actor> actors5 = new ArrayList<>();
 
       // Flow.storage.FileSupplier

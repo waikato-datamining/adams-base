@@ -76,7 +76,7 @@ public class HasQueue
 
     m_OptionManager.add(
 	    "storage-name", "storageName",
-	    new StorageName("storage"));
+	    new StorageName(StorageName.DEFAULT));
     
   }
   /**
