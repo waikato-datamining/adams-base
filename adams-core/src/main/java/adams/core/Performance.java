@@ -15,7 +15,7 @@
 
 /*
  * Performance.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -29,7 +29,6 @@ import adams.env.PerformanceDefinition;
  * A convenience class for accessing the performance tuning parameters.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Performance {
 
@@ -93,39 +92,6 @@ public class Performance {
     initialize();
 
     return m_Properties.getInteger("maxNumProcessors", -1);
-  }
-
-  /**
-   * Returns the minimum number of JobComplete events in the JobCompleteManager.
-   *
-   * @return		the minimum number
-   */
-  public static int getMinKeepJobComplete() {
-    initialize();
-
-    return m_Properties.getInteger("minKeepJobComplete", 50);
-  }
-
-  /**
-   * Returns the maximum number of JobComplete events in the JobCompleteManager.
-   *
-   * @return		the maximum number
-   */
-  public static int getMaxKeepJobComplete() {
-    initialize();
-
-    return m_Properties.getInteger("maxKeepJobComplete", 100);
-  }
-
-  /**
-   * Returns whether only events of failed jobs are kept or all.
-   *
-   * @return		true if only events of failed jobs are kept
-   */
-  public static boolean getKeepOnlyFailedJobComplete() {
-    initialize();
-
-    return m_Properties.getBoolean("keepOnlyFailedJobComplete", true);
   }
 
   /**

@@ -120,7 +120,6 @@ Shortcut-adams.gui.menu.Experimenter=ctrl pressed P
 
 Blacklisted-adams.gui.menu.SequenceViewer=true
 Blacklisted-adams.gui.menu.FlowControlCenter=true
-Blacklisted-adams.gui.menu.JobCompleteViewer=true
 
 #######################
 # Changing categories #

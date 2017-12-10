@@ -88,7 +88,6 @@ public class LocalJobRunner<T extends Job>
     m_Jobs                 = new ArrayList<>();
     m_Queue                = new ArrayList<>();
     m_JobCompleteListeners = new HashSet<>();
-    addJobCompleteListener(JobCompleteManager.getSingleton());
   }
 
   /**
