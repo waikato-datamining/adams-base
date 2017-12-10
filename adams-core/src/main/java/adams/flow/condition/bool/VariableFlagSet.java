@@ -77,7 +77,7 @@ public class VariableFlagSet
 
     m_OptionManager.add(
 	    "variable-name", "variableName",
-	    new VariableName("variable"));
+	    new VariableName(VariableName.DEFAULT));
     
   }
   /**

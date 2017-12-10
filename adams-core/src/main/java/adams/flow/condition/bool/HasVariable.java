@@ -75,7 +75,7 @@ public class HasVariable
 
     m_OptionManager.add(
 	    "variable-name", "variableName",
-	    new VariableName("variable"));
+	    new VariableName(VariableName.DEFAULT));
     
   }
   /**
