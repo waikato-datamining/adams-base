@@ -95,7 +95,7 @@ public class OutOfMemory
 
     m_OptionManager.add(
       "log", "log",
-      new CallableActorReference("unknown"));
+      new CallableActorReference(CallableActorReference.UNKNOWN));
   }
 
   /**

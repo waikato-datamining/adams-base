@@ -217,7 +217,7 @@ public class WekaReorderAttributesToReference
 
     m_OptionManager.add(
 	    "reference-actor", "referenceActor",
-	    new CallableActorReference("unknown"));
+	    new CallableActorReference(CallableActorReference.UNKNOWN));
 
     m_OptionManager.add(
 	    "on-the-fly", "onTheFly",

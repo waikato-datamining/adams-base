@@ -150,7 +150,7 @@ public class SetMapValue
 
     m_OptionManager.add(
       "source", "source",
-      new CallableActorReference("unknown"));
+      new CallableActorReference(CallableActorReference.UNKNOWN));
   }
 
   /**

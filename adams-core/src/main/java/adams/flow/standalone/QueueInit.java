@@ -176,11 +176,11 @@ public class QueueInit
 
     m_OptionManager.add(
 	    "log", "log",
-	    new CallableActorReference("unknown"));
+	    new CallableActorReference(CallableActorReference.UNKNOWN));
 
     m_OptionManager.add(
 	    "monitor", "monitor",
-	    new CallableActorReference("unknown"));
+	    new CallableActorReference(CallableActorReference.UNKNOWN));
   }
 
   /**

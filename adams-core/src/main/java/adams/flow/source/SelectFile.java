@@ -298,7 +298,7 @@ public class SelectFile
 
     m_OptionManager.add(
       "parent-component-actor", "parentComponentActor",
-      new CallableActorReference("unknown"));
+      new CallableActorReference(CallableActorReference.UNKNOWN));
 
     m_OptionManager.add(
       "use-outer-window", "useOuterWindow",

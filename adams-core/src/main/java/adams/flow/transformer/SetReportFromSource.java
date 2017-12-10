@@ -133,7 +133,7 @@ public class SetReportFromSource
 
     m_OptionManager.add(
 	    "report", "report",
-	    new CallableActorReference("unknown"));
+	    new CallableActorReference(CallableActorReference.UNKNOWN));
 
     m_OptionManager.add(
 	    "update-type", "updateType",

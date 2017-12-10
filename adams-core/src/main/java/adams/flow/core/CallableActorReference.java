@@ -30,6 +30,9 @@ public class CallableActorReference
   /** for serialization. */
   private static final long serialVersionUID = 5082359039831645068L;
 
+  /** the "unknown" reference. */
+  public final static String UNKNOWN = "unknown";
+
   /**
    * Initializes the string with length 0.
    */

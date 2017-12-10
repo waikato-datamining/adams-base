@@ -312,7 +312,7 @@ public class MakeContainer
    */
   public void setValueNames(BaseString[] value) {
     m_ValueNames     = value;
-    m_CallableActors = (CallableActorReference[]) Utils.adjustArray(m_CallableActors, m_ValueNames.length, new CallableActorReference("unknown"));
+    m_CallableActors = (CallableActorReference[]) Utils.adjustArray(m_CallableActors, m_ValueNames.length, new CallableActorReference(CallableActorReference.UNKNOWN));
     m_StorageNames   = (StorageName[]) Utils.adjustArray(m_StorageNames, m_ValueNames.length, new StorageName());
     reset();
   }

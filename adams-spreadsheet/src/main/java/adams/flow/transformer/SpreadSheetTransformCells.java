@@ -237,7 +237,7 @@ public class SpreadSheetTransformCells
 
     m_OptionManager.add(
 	    "transformer", "transformer",
-	    new CallableActorReference("unknown"));
+	    new CallableActorReference(CallableActorReference.UNKNOWN));
   }
 
   /**

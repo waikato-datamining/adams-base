@@ -73,7 +73,7 @@ public class CallableActorsHandler
 
     m_OptionManager.add(
 	    "callable", "callableName",
-	    new CallableActorReference("unknown"));
+	    new CallableActorReference(CallableActorReference.UNKNOWN));
   }
 
   /**

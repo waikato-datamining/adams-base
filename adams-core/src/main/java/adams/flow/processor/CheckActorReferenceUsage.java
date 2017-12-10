@@ -30,6 +30,7 @@ import adams.core.option.OptionTraverser;
 import adams.flow.core.AbstractActorReference;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorReferenceHandler;
+import adams.flow.core.CallableActorReference;
 import adams.gui.dialog.TextPanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -209,6 +210,8 @@ public class CheckActorReferenceUsage
       names = new ArrayList<>();
       for (String undef: undefined) {
         if (undef.isEmpty())
+          continue;
+        if (undef.equals(CallableActorReference.UNKNOWN))
           continue;
         names.add(undef);
       }

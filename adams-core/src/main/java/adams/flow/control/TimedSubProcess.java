@@ -200,7 +200,7 @@ public class TimedSubProcess
 
     m_OptionManager.add(
       "callable", "callableName",
-      new CallableActorReference("unknown"));
+      new CallableActorReference(CallableActorReference.UNKNOWN));
 
     m_OptionManager.add(
       "optional", "optional",

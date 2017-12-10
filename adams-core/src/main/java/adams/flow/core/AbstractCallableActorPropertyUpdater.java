@@ -55,7 +55,7 @@ public abstract class AbstractCallableActorPropertyUpdater
 
     m_OptionManager.add(
 	    "actor-name", "actorName",
-	    new CallableActorReference("unknown"));
+	    new CallableActorReference(CallableActorReference.UNKNOWN));
   }
 
   /**
