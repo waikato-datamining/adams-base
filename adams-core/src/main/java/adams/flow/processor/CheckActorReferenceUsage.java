@@ -31,11 +31,11 @@ import adams.flow.core.AbstractActorReference;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorReferenceHandler;
 import adams.flow.core.CallableActorReference;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextPanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,9 +45,21 @@ import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
+ * Performs a 'soft' check on the usage of actor references, like callable actors.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-output-counts &lt;boolean&gt; (property: outputCounts)
+ * &nbsp;&nbsp;&nbsp;If enabled, the counts get output regardless of warnings.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -303,7 +315,7 @@ public class CheckActorReferenceUsage
     
     result = new TextPanel();
     result.setTitle(getTitle());
-    result.setPreferredSize(new Dimension(400, 300));
+    result.setPreferredSize(GUIHelper.getDefaultTinyDialogDimension());
     result.setEditable(false);
     if (m_Warnings != null)
       result.setContent(m_Warnings.toString());
