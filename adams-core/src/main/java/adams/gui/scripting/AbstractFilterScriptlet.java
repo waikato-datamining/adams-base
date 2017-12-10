@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFilterScriptlet.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -38,7 +38,6 @@ import java.util.List;
  * Abstract filter scriptlet.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFilterScriptlet
   extends AbstractDataContainerUpdatingScriptlet {
@@ -115,7 +114,9 @@ public abstract class AbstractFilterScriptlet
       colors.clear();
     }
     else {
-      runOutput = AbstractFilter.filter(actualScheme, runInput);
+      runOutput = new ArrayList<>();
+      for (DataContainer cont: runInput)
+        runOutput.add(actualScheme.filter(cont));
       // transfer color
       if (overlay || (runOutput.size() != runInput.size()))
 	colors.clear();

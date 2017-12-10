@@ -383,56 +383,6 @@ public abstract class AbstractFilter<T extends DataContainer>
   }
 
   /**
-   * Passes the data through the given filter and returns it.
-   *
-   * @param filter	the filter to use for filtering
-   * @param data	the data to pass through the filter
-   * @return		the filtered data
-   */
-  public static DataContainer filter(Filter filter, DataContainer data) {
-    DataContainer		result;
-    List<List<DataContainer>>	filtered;
-    List<DataContainer>		dataList;
-    List<Filter>		filterList;
-
-    dataList   = new ArrayList<>();
-    dataList.add(data);
-    filterList = new ArrayList<>();
-    filterList.add(filter);
-    filtered   = filter(filterList, dataList);
-    result     = filtered.get(0).get(0);
-
-    return result;
-  }
-
-  /**
-   * Passes the data through the given filter and returns it. Makes use of
-   * multiple cores, i.e., for each dataset a new thread will be run with a
-   * copy of the filter.
-   *
-   * @param filter	the filter to use for filtering (a new filter with the
-   * 			same options will be created and used in each thread)
-   * @param data	the data to pass through the filter
-   * @return		the filtered data, the index corresponds to the
-   * 			data index
-   */
-  public static List<DataContainer> filter(Filter filter, List<DataContainer> data) {
-    List<DataContainer>		result;
-    List<List<DataContainer>>	filtered;
-    List<DataContainer>		dataList;
-    List<Filter>		filterList;
-
-    dataList   = new ArrayList<>();
-    dataList.addAll(data);
-    filterList = new ArrayList<>();
-    filterList.add(filter);
-    filtered   = filter(filterList, dataList);
-    result     = filtered.get(0);
-
-    return result;
-  }
-
-  /**
    * Passes the data through the given filters and returns it. Makes use of
    * multiple cores, i.e., for each dataset a new thread will be run with a
    * copy of the filter.
