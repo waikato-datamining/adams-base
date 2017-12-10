@@ -95,17 +95,6 @@ public class Performance {
   }
 
   /**
-   * Returns whether multiprocessing is enabled.
-   *
-   * @return		true if multiprocessing enabled
-   */
-  public static boolean getMultiProcessingEnabled() {
-    initialize();
-
-    return m_Properties.getBoolean("multiProcessingEnabled", true);
-  }
-
-  /**
    * Detetermines the actual number of threads to use:
    * <ul>
    *   <li>&gt; 0: specific number of threads to use</li>
