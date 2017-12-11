@@ -67,75 +67,86 @@ import adams.flow.core.Unknown;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-actor &lt;adams.flow.core.AbstractActor&gt; [-actor ...] (property: actors)
- * &nbsp;&nbsp;&nbsp;The actors to execute in the loop.
- * &nbsp;&nbsp;&nbsp;default: 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
+ * &nbsp;&nbsp;&nbsp;The actors to execute in the loop.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-scope-handling-variables &lt;EMPTY|COPY|SHARE&gt; (property: scopeHandlingVariables)
- * &nbsp;&nbsp;&nbsp;Defines how variables are handled in the local scope; whether to start with 
- * &nbsp;&nbsp;&nbsp;empty set, a copy of the outer scope variables or share variables with the 
+ * &nbsp;&nbsp;&nbsp;Defines how variables are handled in the local scope; whether to start with
+ * &nbsp;&nbsp;&nbsp;empty set, a copy of the outer scope variables or share variables with the
  * &nbsp;&nbsp;&nbsp;outer scope.
  * &nbsp;&nbsp;&nbsp;default: EMPTY
  * </pre>
- * 
+ *
  * <pre>-variables-filter &lt;adams.core.base.BaseRegExp&gt; (property: variablesFilter)
- * &nbsp;&nbsp;&nbsp;The regular expression that variable names must match in order to get into 
+ * &nbsp;&nbsp;&nbsp;The regular expression that variable names must match in order to get into
  * &nbsp;&nbsp;&nbsp;the local scope (when using COPY).
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
- * 
+ *
  * <pre>-propagate-variables &lt;boolean&gt; (property: propagateVariables)
- * &nbsp;&nbsp;&nbsp;If enabled and variables are not shared with outer scope, variables that 
+ * &nbsp;&nbsp;&nbsp;If enabled and variables are not shared with outer scope, variables that
  * &nbsp;&nbsp;&nbsp;match the specified regular expression get propagated to the outer scope.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-variables-regexp &lt;adams.core.base.BaseRegExp&gt; (property: variablesRegExp)
  * &nbsp;&nbsp;&nbsp;The regular expression that variable names must match in order to get propagated.
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
- * 
+ *
  * <pre>-scope-handling-storage &lt;EMPTY|COPY|SHARE&gt; (property: scopeHandlingStorage)
- * &nbsp;&nbsp;&nbsp;Defines how storage is handled in the local scope; whether to start with 
- * &nbsp;&nbsp;&nbsp;empty set, a (deep) copy of the outer scope storage or share the storage 
+ * &nbsp;&nbsp;&nbsp;Defines how storage is handled in the local scope; whether to start with
+ * &nbsp;&nbsp;&nbsp;empty set, a (deep) copy of the outer scope storage or share the storage
  * &nbsp;&nbsp;&nbsp;with the outer scope.
  * &nbsp;&nbsp;&nbsp;default: EMPTY
  * </pre>
- * 
+ *
  * <pre>-storage-filter &lt;adams.core.base.BaseRegExp&gt; (property: storageFilter)
- * &nbsp;&nbsp;&nbsp;The regular expression that storage item names must match in order to get 
+ * &nbsp;&nbsp;&nbsp;The regular expression that storage item names must match in order to get
  * &nbsp;&nbsp;&nbsp;into the local scope (when using COPY).
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
- * 
+ *
  * <pre>-propagate-storage &lt;boolean&gt; (property: propagateStorage)
- * &nbsp;&nbsp;&nbsp;If enabled and storage is not shared with outer scope, storage items which 
- * &nbsp;&nbsp;&nbsp;names match the specified regular expression get propagated to the outer 
+ * &nbsp;&nbsp;&nbsp;If enabled and storage is not shared with outer scope, storage items which
+ * &nbsp;&nbsp;&nbsp;names match the specified regular expression get propagated to the outer
  * &nbsp;&nbsp;&nbsp;scope.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-storage-regexp &lt;adams.core.base.BaseRegExp&gt; (property: storageRegExp)
- * &nbsp;&nbsp;&nbsp;The regular expression that the names of storage items must match in order 
+ * &nbsp;&nbsp;&nbsp;The regular expression that the names of storage items must match in order
  * &nbsp;&nbsp;&nbsp;to get propagated.
  * &nbsp;&nbsp;&nbsp;default: .*
+ * </pre>
+ *
+ * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
+ * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7648 $
  */
 public class LocalScopeTransformer
   extends AbstractControlActor
   implements InputConsumer, OutputProducer, MutableActorHandler, 
-             VariablesHandler, StorageHandler, LocalScopeHandler, StopRestrictor {
+             VariablesHandler, StorageHandler, LocalScopeHandler, StopRestrictor, AtomicExecution {
 
   /** for serialization. */
   private static final long serialVersionUID = -2837014912083918343L;
@@ -235,6 +246,10 @@ public class LocalScopeTransformer
     m_OptionManager.add(
 	    "storage-regexp", "storageRegExp",
 	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
+	    "finish-before-stopping", "finishBeforeStopping",
+	    false);
   }
 
   /**
@@ -583,6 +598,35 @@ public class LocalScopeTransformer
    */
   public String storageRegExpTipText() {
     return "The regular expression that the names of storage items must match in order to get propagated.";
+  }
+
+  /**
+   * Sets whether to finish processing before stopping execution.
+   *
+   * @param value	if true then actor finishes processing first
+   */
+  public void setFinishBeforeStopping(boolean value) {
+    m_Actors.setFinishBeforeStopping(value);
+    reset();
+  }
+
+  /**
+   * Returns whether to finish processing before stopping execution.
+   *
+   * @return		true if actor finishes processing first
+   */
+  public boolean getFinishBeforeStopping() {
+    return m_Actors.getFinishBeforeStopping();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String finishBeforeStoppingTipText() {
+    return m_Actors.finishBeforeStoppingTipText();
   }
 
   /**
