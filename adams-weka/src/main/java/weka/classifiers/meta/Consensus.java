@@ -36,9 +36,57 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Outputs predictions only if the ensemble agrees. In case of agreement,
- * the classifier identified by the 'predictor' index is used for
- * making the actual prediction.
+ <!-- globalinfo-start -->
+ * Outputs predictions only if the ensemble agrees. In case of agreement, the classifier identified by the 'predictor' index is used for making the actual prediction.
+ * <br><br>
+ <!-- globalinfo-end -->
+ *
+ <!-- options-start -->
+ * Valid options are: <p>
+ *
+ * <pre> -B &lt;classifier specification&gt;
+ *  Full class name of classifier to include, followed
+ *  by scheme options. May be specified multiple times.
+ *  (default: "weka.classifiers.rules.ZeroR")</pre>
+ *
+ * <pre> -output-debug-info
+ *  If set, classifier is run in debug mode and
+ *  may output additional info to the console</pre>
+ *
+ * <pre> -do-not-check-capabilities
+ *  If set, classifier capabilities are not checked before classifier is built
+ *  (use with caution).</pre>
+ *
+ * <pre> -num-decimal-places
+ *  The number of decimal places for the output of numbers in the model (default 2).</pre>
+ *
+ * <pre> -batch-size
+ *  The desired batch size for batch prediction  (default 100).</pre>
+ *
+ * <pre>
+ * Options specific to classifier weka.classifiers.rules.ZeroR:
+ * </pre>
+ *
+ * <pre> -output-debug-info
+ *  If set, classifier is run in debug mode and
+ *  may output additional info to the console</pre>
+ *
+ * <pre> -do-not-check-capabilities
+ *  If set, classifier capabilities are not checked before classifier is built
+ *  (use with caution).</pre>
+ *
+ * <pre> -num-decimal-places
+ *  The number of decimal places for the output of numbers in the model (default 2).</pre>
+ *
+ * <pre> -batch-size
+ *  The desired batch size for batch prediction  (default 100).</pre>
+ *
+ * <pre> -predictor &lt;1-based index&gt;
+ *  The index of the classifier for making the actual predictions.
+ *  (default: 1)
+ * </pre>
+ *
+ <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
@@ -172,6 +220,33 @@ public class Consensus
   }
 
   /**
+   * Checks whether there is consensus between the classifiers.
+   *
+   * @param instance	the instance to check
+   * @return		true if consensus
+   * @throws Exception	if classification fails
+   */
+  protected boolean consensus(Instance instance) throws Exception {
+    double 	first;
+    double 	next;
+    int		i;
+
+    first = Utils.missingValue();
+    for (i = 0; i < m_Classifiers.length; i++) {
+      if (i == 0) {
+	first = m_Classifiers[i].classifyInstance(instance);
+      }
+      else {
+	next = m_Classifiers[i].classifyInstance(instance);
+	if (next != first)
+	  return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Classifies the given test instance. The instance has to belong to a
    * dataset when it's being classified.
    *
@@ -182,25 +257,11 @@ public class Consensus
    */
   public double classifyInstance(Instance instance) throws Exception {
     double	result;
-    double 	current;
-    int		i;
 
-    result = Utils.missingValue();
-    for (i = 0; i < m_Classifiers.length; i++) {
-      if (i == 0) {
-	result = m_Classifiers[i].classifyInstance(instance);
-      }
-      else {
-	current = m_Classifiers[i].classifyInstance(instance);
-	if (current != result) {
-	  result = Utils.missingValue();
-	  break;
-	}
-      }
-    }
-
-    if (!Utils.isMissingValue(result))
+    if (consensus(instance))
       result = m_Classifiers[m_Predictor.getIntIndex()].classifyInstance(instance);
+    else
+      result = Utils.missingValue();
 
     return result;
   }
@@ -221,12 +282,11 @@ public class Consensus
    */
   public double[] distributionForInstance(Instance instance) throws Exception {
     double[]	result;
-    double	pred;
 
-    result = new double[instance.numClasses()];
-    pred   = classifyInstance(instance);
-    if (!Utils.isMissingValue(pred))
+    if (consensus(instance))
       result = m_Classifiers[m_Predictor.getIntIndex()].distributionForInstance(instance);
+    else
+      result = new double[instance.numClasses()];
 
     return result;
   }
