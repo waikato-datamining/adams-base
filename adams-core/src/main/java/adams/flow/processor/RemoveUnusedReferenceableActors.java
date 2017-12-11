@@ -138,8 +138,11 @@ public class RemoveUnusedReferenceableActors
       }
       public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
         // definition
-        if ((ClassLocator.isSubclass(Actor.class, option.getBaseClass())) && (option.getOptionHandler() instanceof ActorReferenceHandler))
-          incrementDefinitionCount(option.getCurrentValue());
+        if ((ClassLocator.isSubclass(Actor.class, option.getBaseClass())) && (option.getOptionHandler() instanceof ActorReferenceHandler)) {
+          ActorReferenceHandler handler = (ActorReferenceHandler) option.getOptionHandler();
+          if (handler.isReferencingRequired())
+	    incrementDefinitionCount(option.getCurrentValue());
+	}
         // reference
 	if (ClassLocator.isSubclass(AbstractActorReference.class, option.getBaseClass())) {
 	  incrementReferenceCount(option.getCurrentValue());

@@ -529,6 +529,16 @@ public abstract class AbstractMultiView
   }
 
   /**
+   * Returns whether actors have to be referenced elsewhere in the flow
+   * or whether it is optional.
+   *
+   * @return		true if required, false if optional
+   */
+  public boolean isReferencingRequired() {
+    return true;
+  }
+
+  /**
    * Performs checks on the "sub-actors".
    *
    * @return		null if everything is fine, otherwise the error
@@ -545,6 +555,9 @@ public abstract class AbstractMultiView
       if (result != null)
         break;
     }
+
+    if (result == null)
+      result = checkActorReferenceHandlers();
 
     return result;
   }

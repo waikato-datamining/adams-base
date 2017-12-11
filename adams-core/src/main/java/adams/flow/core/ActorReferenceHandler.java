@@ -42,4 +42,12 @@ public interface ActorReferenceHandler
    * @see		#getProhibitedPrecedingActorReferenceHandlers()
    */
   public String checkActorReferenceHandlers();
+
+  /**
+   * Returns whether actors have to be referenced elsewhere in the flow
+   * or whether it is optional.
+   *
+   * @return		true if required, false if optional
+   */
+  public boolean isReferencingRequired();
 }

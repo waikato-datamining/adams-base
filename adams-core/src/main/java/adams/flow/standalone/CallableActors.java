@@ -192,7 +192,17 @@ public class CallableActors
   public String checkActorReferenceHandlers() {
     return ActorReferenceHandlerHelper.checkActorReferenceHandlers(this);
   }
-  
+
+  /**
+   * Returns whether actors have to be referenced elsewhere in the flow
+   * or whether it is optional.
+   *
+   * @return		true if required, false if optional
+   */
+  public boolean isReferencingRequired() {
+    return true;
+  }
+
   /**
    * Checks the names for uniqueness.
    *

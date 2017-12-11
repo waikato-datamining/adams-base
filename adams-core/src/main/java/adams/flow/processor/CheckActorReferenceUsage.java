@@ -193,8 +193,15 @@ public class CheckActorReferenceUsage
       }
       public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
         // definition
-        if ((ClassLocator.isSubclass(Actor.class, option.getBaseClass())) && (option.getOptionHandler() instanceof ActorReferenceHandler))
-          incrementDefinitionCount(option.getCurrentValue());
+        if ((ClassLocator.isSubclass(Actor.class, option.getBaseClass())) && (option.getOptionHandler() instanceof ActorReferenceHandler)) {
+	  incrementDefinitionCount(option.getCurrentValue());
+	  // fake referencing if not required
+          ActorReferenceHandler handler = (ActorReferenceHandler) option.getOptionHandler();
+          if (!handler.isReferencingRequired()) {
+            for (int i = 0; i < handler.size(); i++)
+	      m_ReferenceCount.next(handler.get(i).getName());
+	  }
+        }
         // reference
 	if (ClassLocator.isSubclass(AbstractActorReference.class, option.getBaseClass())) {
 	  incrementReferenceCount(option.getCurrentValue());
