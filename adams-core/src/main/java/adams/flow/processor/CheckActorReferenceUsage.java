@@ -284,7 +284,10 @@ public class CheckActorReferenceUsage
    * @return		the warnings
    */
   public String getWarnings() {
-    return m_Warnings.toString();
+    if (m_Warnings != null)
+      return m_Warnings.toString();
+    else
+      return null;
   }
   
   /**
