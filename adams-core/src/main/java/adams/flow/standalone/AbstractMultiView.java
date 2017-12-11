@@ -30,6 +30,7 @@ import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorReferenceHandler;
+import adams.flow.core.ActorReferenceHandlerHelper;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.core.Flushable;
@@ -504,6 +505,27 @@ public abstract class AbstractMultiView
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
     return new ActorHandlerInfo(true, false, ActorExecution.PARALLEL, false, new Class[]{adams.flow.sink.AbstractDisplay.class});
+  }
+
+  /**
+   * Returns the classes that are prohibited to appear before this reference
+   * handler.
+   *
+   * @return		the classes
+   */
+  public Class[] getProhibitedPrecedingActorReferenceHandlers() {
+    return new Class[]{CallableActors.class};
+  }
+
+  /**
+   * Ensures that the handlers appear in the correct order.
+   *
+   * @return		null if OK, otherwise error message
+   * @see		#getProhibitedPrecedingActorReferenceHandlers()
+   */
+  @Override
+  public String checkActorReferenceHandlers() {
+    return ActorReferenceHandlerHelper.checkActorReferenceHandlers(this);
   }
 
   /**

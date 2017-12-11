@@ -27,4 +27,19 @@ package adams.flow.core;
 public interface ActorReferenceHandler
   extends MutableActorHandler {
 
+  /**
+   * Returns the classes that are prohibited to appear before this reference
+   * handler.
+   *
+   * @return		the classes
+   */
+  public Class[] getProhibitedPrecedingActorReferenceHandlers();
+
+  /**
+   * Ensures that the handlers appear in the correct order.
+   *
+   * @return		null if OK, otherwise error message
+   * @see		#getProhibitedPrecedingActorReferenceHandlers()
+   */
+  public String checkActorReferenceHandlers();
 }

@@ -24,9 +24,9 @@ package adams.flow.standalone;
 import adams.flow.control.AbstractDirector;
 import adams.flow.control.MutableControlActor;
 import adams.flow.core.ActorExecution;
-import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorReferenceHandler;
+import adams.flow.core.ActorReferenceHandlerHelper;
 
 import java.util.HashSet;
 
@@ -183,36 +183,14 @@ public class CallableActors
   }
 
   /**
-   * Checks whether there are any other actors preceding this actor that
-   * implement the {@link ActorReferenceHandler} interface.
-   * 
+   * Ensures that the handlers appear in the correct order.
+   *
    * @return		null if OK, otherwise error message
+   * @see		#getProhibitedPrecedingActorReferenceHandlers()
    */
-  protected String checkActorReferenceHandlers() {
-    String		result;
-    ActorHandler	parent;
-    int			index;
-    int			i;
-    
-    result = null;
-    
-    if (getParent() instanceof ActorHandler) {
-      parent = (ActorHandler) getParent();
-      if (parent != null) {
-	index = index();
-	for (i = index + 1; i < parent.size(); i++) {
-	  if (parent.get(i) instanceof ActorReferenceHandler) {
-	    result = 
-		getClass().getSimpleName() + " cannot be followed by another " 
-		    + ActorReferenceHandler.class.getSimpleName() + " actor: "
-		    + "#" + (i+1) + " " + parent.get(i).getName() + "/" + parent.get(i).getClass().getName();
-	    break;
-	  }
-	}
-      }
-    }
-    
-    return result;
+  @Override
+  public String checkActorReferenceHandlers() {
+    return ActorReferenceHandlerHelper.checkActorReferenceHandlers(this);
   }
   
   /**
@@ -230,6 +208,16 @@ public class CallableActors
       result = checkActorReferenceHandlers();
     
     return result;
+  }
+
+  /**
+   * Returns the classes that are prohibited to appear before this reference
+   * handler.
+   *
+   * @return		the classes
+   */
+  public Class[] getProhibitedPrecedingActorReferenceHandlers() {
+    return new Class[]{};
   }
 
   /**
