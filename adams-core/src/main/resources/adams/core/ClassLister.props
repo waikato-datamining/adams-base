@@ -194,6 +194,14 @@ adams.data.io.output.AbstractImageWriter=\
 adams.data.io.output.AbstractObjectWriter=\
   adams.data.io.output
 
+# the schemes for extracting the ID from spectra/sample data
+adams.data.idextraction.IDExtractor=\
+  adams.data.idextraction
+
+# the schemes for updating the ID of spectra/sample data
+adams.data.idupdate.IDUpdater=\
+  adams.data.idupdate
+
 # the outlier detector schemes
 adams.data.outlier.AbstractOutlierDetector=\
   adams.data.outlier
