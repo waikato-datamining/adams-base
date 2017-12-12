@@ -22,11 +22,9 @@ package adams.gui.tools;
 
 import adams.core.CleanUpHandler;
 import adams.data.id.IDHandler;
-import adams.data.io.output.SpreadSheetWriter;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.BaseTextPaneWithWordWrap;
 import adams.gui.core.GUIHelper;
@@ -42,7 +40,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -55,8 +52,6 @@ import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.io.File;
 import java.lang.reflect.Array;
 import java.util.List;
 
@@ -64,8 +59,7 @@ import java.util.List;
  * A panel for managing objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
- * @param <T> the type 
+ * @param <T> the type of the objects in the table model
  */
 public abstract class AbstractManagementPanel<T extends Comparable>
   extends BasePanel
@@ -159,11 +153,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     m_TableValues.setShowSimpleCellPopupMenu(true);
     m_TableValues.setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
     m_TableValues.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> update());
-    m_TableValues.addCellPopupMenuListener((MouseEvent e) -> {
-      BasePopupMenu menu = createPopupMenu(e);
-      if (menu != null)
-	menu.showAbsolute(m_TableValues.getComponent(), e);
-    });
+    m_TableValues.setShowSimpleCellPopupMenu(true);
     m_PanelTable.add(m_TableValues, BorderLayout.CENTER);
 
     m_ButtonRefresh = new JButton("Refresh");
@@ -216,43 +206,6 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     return m_FileChooser;
   }
 
-  /**
-   * Creates the popup menu for the table.
-   * 
-   * @param e		the mouse event that triggered the popup
-   * @return		the popup menu, null if to suppress menu
-   */
-  protected BasePopupMenu createPopupMenu(MouseEvent e) {
-    BasePopupMenu	result;
-    JMenuItem		menuitem;
-    
-    result = new BasePopupMenu();
-
-    menuitem = new JMenuItem("Copy");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
-    menuitem.setEnabled(m_TableValues.getSelectedRowCount() > 0);
-    menuitem.addActionListener((ActionEvent ae) -> m_TableValues.getComponent().copyToClipboard());
-    result.add(menuitem);
-
-    menuitem = new JMenuItem("Save as...");
-    menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-    menuitem.addActionListener((ActionEvent ae) -> {
-      int ret = getFileChooser().showSaveDialog(AbstractManagementPanel.this);
-      if (ret != SpreadSheetFileChooser.APPROVE_OPTION)
-	return;
-      File file = getFileChooser().getSelectedFile();
-      SpreadSheetWriter writer = getFileChooser().getWriter();
-      if (!writer.write(m_ModelValues.toSpreadSheet(), file)) {
-	GUIHelper.showErrorMessage(
-	  AbstractManagementPanel.this,
-	  "Failed to save spreadsheet to the following file:\n" + file);
-      }
-    });
-    result.add(menuitem);
-    
-    return result;
-  }
-  
   /**
    * Adds the appropriate document listener to the document.
    * 
