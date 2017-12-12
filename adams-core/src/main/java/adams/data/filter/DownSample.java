@@ -15,15 +15,15 @@
 
 /*
  * DownSample.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
-import java.util.List;
-
 import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -50,7 +50,6 @@ import adams.data.container.DataPoint;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 1286 $
  */
 public class DownSample<T extends DataContainer>
   extends AbstractFilter<T> {
@@ -80,7 +79,7 @@ public class DownSample<T extends DataContainer>
 
     m_OptionManager.add(
 	    "nth", "nthPoint",
-	    1);
+	    1, 1, null);
   }
 
   /**
@@ -89,8 +88,10 @@ public class DownSample<T extends DataContainer>
    * @param value 	the nth point to use
    */
   public void setNthPoint(int value) {
-    m_NthPoint = value;
-    reset();
+    if (getOptionManager().isValid("nthPoint", value)) {
+      m_NthPoint = value;
+      reset();
+    }
   }
 
   /**
