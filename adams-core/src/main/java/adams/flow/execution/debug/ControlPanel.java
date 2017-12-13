@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ControlPanel.java
  * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
@@ -616,10 +616,19 @@ public class ControlPanel
    * Disable/enable the breakpoint.
    */
   protected void disableEnableBreakpoint() {
-    if (getCurrentBreakpoint() == null)
+    if (getCurrentBreakpoint() == null) {
+      if (getOwner().isLoggingEnabled())
+        getOwner().getLogger().warning("No breakpoint to disable!");
       return;
+    }
 
+    if (getCurrentBreakpoint().isLoggingEnabled()) {
+      getCurrentBreakpoint().getLogger().info("Setup: " + getCurrentBreakpoint().toCommandLine());
+      getCurrentBreakpoint().getLogger().info("State (current): " + (getCurrentBreakpoint().getDisabled() ? "disabled" : "enabled"));
+    }
     getCurrentBreakpoint().setDisabled(!getCurrentBreakpoint().getDisabled());
+    if (getCurrentBreakpoint().isLoggingEnabled())
+      getCurrentBreakpoint().getLogger().info("State (new): " + (getCurrentBreakpoint().getDisabled() ? "disabled" : "enabled"));
 
     queueUpdate();
   }

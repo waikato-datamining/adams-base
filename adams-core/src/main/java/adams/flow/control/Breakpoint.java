@@ -15,7 +15,7 @@
 
 /*
  * Breakpoint.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -606,6 +606,7 @@ public class Breakpoint
 	flow = (Flow) getRoot();
 
 	breakpoint = new PathBreakpoint();
+	breakpoint.setLoggingLevel(getLoggingLevel());
 	breakpoint.setOnPreInput(m_OnPreInput);
 	breakpoint.setOnPostInput(m_OnPostInput);
 	breakpoint.setOnPreExecute(m_OnPreExecute);
