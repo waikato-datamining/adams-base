@@ -134,7 +134,7 @@ public abstract class AbstractXYSequencePointHitDetector
 
     manager = m_Owner.getSequencePanel().getContainerManager();
     for (XYSequencePoint point: hit) {
-      index = manager.indexOf(point.getID());
+      index = manager.indexOf(point.getParent().getID());
       if (index > -1)
         result.add(manager.get(index));
     }
