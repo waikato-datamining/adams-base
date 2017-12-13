@@ -129,6 +129,9 @@ public abstract class AbstractXYSequencePointHitDetector
 
     result  = new ArrayList<>();
     hit     = isHit(e);
+    if (hit == null)
+      return new XYSequenceContainer[0];
+
     manager = m_Owner.getSequencePanel().getContainerManager();
     for (XYSequencePoint point: hit) {
       index = manager.indexOf(point.getID());
