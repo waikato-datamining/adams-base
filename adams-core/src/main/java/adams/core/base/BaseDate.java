@@ -74,6 +74,15 @@ public class BaseDate
   /** the placeholder for "now". */
   public final static String NOW = "NOW";
 
+  /** the placeholder for "today". */
+  public final static String TODAY = "TODAY";
+
+  /** the placeholder for "tomorrow". */
+  public final static String TOMORROW = "TOMORROW";
+
+  /** the placeholder for "yesterday". */
+  public final static String YESTERDAY = "YESTERDAY";
+
   /** the placeholder for "start". */
   public final static String START = "START";
 
