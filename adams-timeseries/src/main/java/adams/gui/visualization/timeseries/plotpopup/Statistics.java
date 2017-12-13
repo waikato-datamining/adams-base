@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Statistics.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.timeseries.plotpopup;
@@ -40,7 +40,6 @@ import java.util.List;
  * Generates statistics from the visible containers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Statistics
   extends AbstractPlotPopupCustomizer<Timeseries, TimeseriesContainerManager, TimeseriesContainer> {
