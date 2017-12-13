@@ -70,6 +70,7 @@ adams.gui.flow.menu.ViewZoom-Shortcut=
 
 # Window
 adams.gui.flow.menu.WindowNew-Shortcut=
+adams.gui.flow.menu.WindowMoveToNewWindow-Shortcut=
 adams.gui.flow.menu.WindowDuplicateInWindow-Shortcut=
 adams.gui.flow.menu.WindowDuplicateInTab-Shortcut=
 

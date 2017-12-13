@@ -107,6 +107,7 @@ import adams.gui.flow.menu.ViewStatistics;
 import adams.gui.flow.menu.ViewZoom;
 import adams.gui.flow.menu.WindowDuplicateInTab;
 import adams.gui.flow.menu.WindowDuplicateInWindow;
+import adams.gui.flow.menu.WindowMoveToNewWindow;
 import adams.gui.flow.menu.WindowNew;
 import adams.gui.flow.tab.FlowTabManager;
 import adams.gui.flow.tree.Tree;
@@ -356,6 +357,9 @@ public class FlowEditorPanel
 
   /** the "new window" action. */
   protected FlowEditorAction m_ActionNewWindow;
+
+  /** the "move to new window" action. */
+  protected FlowEditorAction m_ActionMoveToNewWindow;
 
   /** the "duplicate tab in new window" action. */
   protected FlowEditorAction m_ActionDuplicateTabInNewWindow;
@@ -745,6 +749,11 @@ public class FlowEditorPanel
     m_ActionNewWindow = action;
     m_MenuItems.add(action);
 
+    // Window/Move To New Window
+    action = new WindowMoveToNewWindow();
+    m_ActionMoveToNewWindow = action;
+    m_MenuItems.add(action);
+
     // Window/Duplicate in new window
     action = new WindowDuplicateInWindow();
     m_ActionDuplicateTabInNewWindow = action;
@@ -1045,6 +1054,7 @@ public class FlowEditorPanel
 	menu.addChangeListener((ChangeEvent e) -> updateActions());
 
 	menu.add(m_ActionNewWindow);
+	menu.add(m_ActionMoveToNewWindow);
 	menu.add(m_ActionDuplicateTabInNewWindow);
 	menu.add(m_ActionDuplicateTab);
       }
