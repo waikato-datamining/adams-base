@@ -174,6 +174,16 @@ public class StringConstants
    *
    * @param value	the string to add
    */
+  public void addString(String value) {
+    if (value != null)
+      addString(new BaseString(value));
+  }
+
+  /**
+   * Adds the string.
+   *
+   * @param value	the string to add
+   */
   public void addString(BaseString value) {
     if (value != null)
       m_Strings = (BaseString[]) Utils.adjustArray(m_Strings, m_Strings.length + 1, value);
