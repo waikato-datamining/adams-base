@@ -21,6 +21,7 @@ package adams.core;
 
 import adams.core.annotation.MixedCopyright;
 import adams.core.management.LocaleHelper;
+import adams.core.management.TimeZoneHelper;
 import adams.data.DateFormatString;
 
 import java.text.SimpleDateFormat;
@@ -435,7 +436,7 @@ public class DateUtils {
   public static Time nowTime() {
     Calendar	cal;
 
-    cal = new GregorianCalendar(getLocale());
+    cal = getCalendar();
     cal.setTime(new Date());
     cal.set(Calendar.YEAR, 0);
     cal.set(Calendar.MONTH, 0);
@@ -452,8 +453,10 @@ public class DateUtils {
   public static Date today() {
     Calendar	cal;
 
-    cal = new GregorianCalendar(getLocale());
+    cal = getCalendar();
     cal.setTime(new Date());
+    cal.setTimeZone(TimeZoneHelper.valueOf(TimeZoneHelper.getSingleton().getTimezone()));
+    cal.add(Calendar.MILLISECOND, -cal.getTimeZone().getRawOffset());
     cal.set(Calendar.HOUR, 0);
     cal.set(Calendar.MINUTE, 0);
     cal.set(Calendar.SECOND, 0);
@@ -470,7 +473,7 @@ public class DateUtils {
   public static Date tomorrow() {
     Calendar	cal;
 
-    cal = new GregorianCalendar(getLocale());
+    cal = getCalendar();
     cal.setTime(today());
     cal.add(Calendar.HOUR, 24);
 
@@ -485,7 +488,7 @@ public class DateUtils {
   public static Date yesterday() {
     Calendar	cal;
 
-    cal = new GregorianCalendar(getLocale());
+    cal = getCalendar();
     cal.setTime(today());
     cal.add(Calendar.HOUR, -24);
 
@@ -587,7 +590,7 @@ public class DateUtils {
    * @return          the serial date
    */
   public static double msecToSerialDate(Date date) {
-    Calendar calStart = new GregorianCalendar();
+    Calendar calStart = getCalendar();
     calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
     return internalGetExcelDate(calStart, false);
   }
