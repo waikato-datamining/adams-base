@@ -527,7 +527,7 @@ public class SetManyVariables
 	+ "Optionally, the specified values can be expanded, "
 	+ "in case it is made up of variables itself.\n"
 	+ "\n"
-	+ "Grammar for mathematical expressions (value type '" + VariableValueType.MATH_EXPRESSION + "'):\n\n"
+	+ "Grammar for mathematical expressions (value type '" + VariableValueType.MATH_EXPRESSION + ", " + VariableValueType.MATH_EXPRESSION_ROUND + "'):\n\n"
 	+ new MathematicalExpression().getGrammar()
 	+ "\n\n"
 	+ "Grammar for boolean expressions (value type '" + VariableValueType.BOOL_EXPRESSION + "'):\n\n"
@@ -715,6 +715,14 @@ public class SetManyVariables
 	case MATH_EXPRESSION:
 	  try {
 	    value = "" + MathematicalExpression.evaluate(value, new HashMap());
+	  }
+	  catch (Exception e) {
+	    errors.add("Failed to parse mathematical expression (" + pair.varValue() + "): " + value, e);
+	  }
+	  break;
+        case MATH_EXPRESSION_ROUND:
+	  try {
+	    value = "" + Math.round(MathematicalExpression.evaluate(value, new HashMap()));
 	  }
 	  catch (Exception e) {
 	    errors.add("Failed to parse mathematical expression (" + pair.varValue() + "): " + value, e);

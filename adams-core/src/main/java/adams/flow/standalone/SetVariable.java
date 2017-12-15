@@ -540,7 +540,7 @@ public class SetVariable
 	+ "It is also possible to override the variable value with the value "
 	+ "obtained from an environment variable.\n"
 	+ "\n"
-	+ "Grammar for mathematical expressions (value type '" + VariableValueType.MATH_EXPRESSION + "'):\n\n"
+	+ "Grammar for mathematical expressions (value type '" + VariableValueType.MATH_EXPRESSION + ", " + VariableValueType.MATH_EXPRESSION_ROUND + "'):\n\n"
 	+ new MathematicalExpression().getGrammar()
 	+ "\n\n"
 	+ "Grammar for boolean expressions (value type '" + VariableValueType.BOOL_EXPRESSION + "'):\n\n"
@@ -844,6 +844,14 @@ public class SetVariable
       case MATH_EXPRESSION:
 	try {
 	  value = "" + MathematicalExpression.evaluate(value, new HashMap());
+	}
+	catch (Exception e) {
+	  result = handleException("Failed to parse mathematical expression: " + value, e);
+	}
+	break;
+      case MATH_EXPRESSION_ROUND:
+	try {
+	  value = "" + Math.round(MathematicalExpression.evaluate(value, new HashMap()));
 	}
 	catch (Exception e) {
 	  result = handleException("Failed to parse mathematical expression: " + value, e);

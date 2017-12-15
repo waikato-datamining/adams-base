@@ -553,7 +553,7 @@ public class SetVariable
 	+ "The transformer just forwards tokens that it receives after the "
 	+ "variable has been set.\n"
 	+ "\n"
-	+ "Grammar for mathematical expressions (value type '" + VariableValueType.MATH_EXPRESSION + "'):\n\n"
+	+ "Grammar for mathematical expressions (value type '" + VariableValueType.MATH_EXPRESSION + ", " + VariableValueType.MATH_EXPRESSION_ROUND + "'):\n\n"
         + new MathematicalExpression().getGrammar()
 	+ "\n\n"
 	+ "Grammar for boolean expressions (value type '" + VariableValueType.BOOL_EXPRESSION + "'):\n\n"
@@ -847,6 +847,14 @@ public class SetVariable
 	  case MATH_EXPRESSION:
 	    try {
 	      newValue = "" + MathematicalExpression.evaluate(newValue, new HashMap());
+	    }
+	    catch (Exception e) {
+	      result = handleException("Failed to parse mathematical expression: " + newValue, e);
+	    }
+	    break;
+          case MATH_EXPRESSION_ROUND:
+	    try {
+	      newValue = "" + Math.round(MathematicalExpression.evaluate(newValue, new HashMap()));
 	    }
 	    catch (Exception e) {
 	      result = handleException("Failed to parse mathematical expression: " + newValue, e);

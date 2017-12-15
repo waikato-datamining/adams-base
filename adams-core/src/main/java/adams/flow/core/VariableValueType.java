@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * VariableValueType.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
@@ -34,6 +34,8 @@ public enum VariableValueType {
   STRING,
   /** mathematical expression. */
   MATH_EXPRESSION,
+  /** mathematical expression (rounded). */
+  MATH_EXPRESSION_ROUND,
   /** boolean expression. */
   BOOL_EXPRESSION,
   /** string expression. */
