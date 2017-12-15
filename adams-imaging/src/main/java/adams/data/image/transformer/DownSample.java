@@ -139,8 +139,8 @@ public class DownSample
     large     = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_INT_ARGB);
     small     = new BufferedImage(large.getWidth() / m_NthPixel, large.getHeight() / m_NthPixel, BufferedImage.TYPE_INT_ARGB);
     result[0].setImage(small);
-    for (x = 0; x < large.getWidth(); x = x + m_NthPixel) {
-      for (y = 0; y < large.getHeight(); y = y + m_NthPixel)
+    for (x = 0; x <= large.getWidth() - m_NthPixel; x = x + m_NthPixel) {
+      for (y = 0; y <= large.getHeight() - m_NthPixel; y = y + m_NthPixel)
         small.setRGB(x / m_NthPixel, y / m_NthPixel, large.getRGB(x, y));
     }
 
