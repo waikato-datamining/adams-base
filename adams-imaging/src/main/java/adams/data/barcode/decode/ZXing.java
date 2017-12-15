@@ -227,6 +227,7 @@ public class ZXing
 
       Reader reader = new MultiFormatReader();
       Map<DecodeHintType, Object> hints = new HashMap<>();
+      hints.put(DecodeHintType.TRY_HARDER, null);
       if (!m_AutoDetect)
         hints.put(DecodeHintType.POSSIBLE_FORMATS, Arrays.asList(m_Format));
       Result data = reader.decode(bitmap, hints);

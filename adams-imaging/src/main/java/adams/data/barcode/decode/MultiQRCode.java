@@ -25,6 +25,7 @@ import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
 import adams.data.text.TextContainer;
 import com.google.zxing.BinaryBitmap;
+import com.google.zxing.DecodeHintType;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.Result;
@@ -36,6 +37,7 @@ import com.google.zxing.multi.qrcode.QRCodeMultiReader;
 
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -136,7 +138,9 @@ public class MultiQRCode
       BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
       MultipleBarcodeReader reader = new QRCodeMultiReader();
-      Result[] data = reader.decodeMultiple(bitmap);
+      Map<DecodeHintType, ?> hints = new HashMap<>();
+      hints.put(DecodeHintType.TRY_HARDER, null);
+      Result[] data = reader.decodeMultiple(bitmap, hints);
 
       result = new TextContainer();
       Report report = result.getReport();
