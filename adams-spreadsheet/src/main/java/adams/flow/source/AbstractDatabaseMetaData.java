@@ -52,6 +52,7 @@ public abstract class AbstractDatabaseMetaData
    */
   public enum MetaDataType {
     BASIC,
+    CONNECTION,
     ATTRIBUTES,
     CATALOGS,
     CLIENT_INFO_PROPERTIES,
@@ -431,6 +432,7 @@ public abstract class AbstractDatabaseMetaData
     DatabaseMetaData	metadata;
     Row			row;
     Reader		reader;
+    String		db;
 
     result = null;
 
@@ -440,6 +442,19 @@ public abstract class AbstractDatabaseMetaData
       metadata = m_DatabaseConnection.getConnection(false).getMetaData();
       reader   = new Reader(m_TypeMapper, DenseDataRow.class);
       switch (m_MetaDataType) {
+	case CONNECTION:
+	  sheet = new DefaultSpreadSheet();
+	  row = sheet.getHeaderRow();
+	  row.addCell("K").setContentAsString("Key");
+	  row.addCell("V").setContentAsString("Value");
+	  db = m_DatabaseConnection.getURL().replaceAll(".*\\/", "");
+	  if (db.contains("?"))
+	    db = db.substring(0, db.indexOf("?"));
+	  addRow(sheet, "URL", m_DatabaseConnection.getURL());
+	  addRow(sheet, "Database", db);
+	  addRow(sheet, "User", m_DatabaseConnection.getUser());
+	  addRow(sheet, "Password", m_DatabaseConnection.getPassword().getValue());
+	  break;
 	case BASIC:
 	  sheet = new DefaultSpreadSheet();
 	  row = sheet.getHeaderRow();
