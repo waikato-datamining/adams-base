@@ -21,6 +21,7 @@
 package adams.gui.visualization.core;
 
 import adams.core.Utils;
+import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
@@ -37,10 +38,12 @@ import adams.gui.visualization.core.axis.Tick;
 import adams.gui.visualization.core.axis.TickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.axis.Visibility;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -50,6 +53,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -811,12 +815,15 @@ public class AxisPanel
    * axis.
    */
   public void selectRange() {
-    ApprovalDialog	dialog;
-    ParameterPanel	panel;
-    final JTextField	textMin;
-    final JTextField	textMax;
-    double		min;
-    double		max;
+    ApprovalDialog		dialog;
+    ParameterPanel		panel;
+    JPanel actionspanel;
+    final JTextField		textMin;
+    final JTextField		textMax;
+    double			min;
+    double			max;
+    BaseButtonWithDropDownMenu	buttonActions;
+    JMenuItem			menuitem;
 
     panel = new ParameterPanel();
     textMin = new JTextField(10);
@@ -825,13 +832,39 @@ public class AxisPanel
     textMax = new JTextField(10);
     textMax.setText(Utils.doubleToString(getManualMinimum() == null ? getMaximum() : getManualMaximum(), 8));
     panel.addParameter("Maximum", textMax);
-    
+
+    actionspanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    buttonActions = new BaseButtonWithDropDownMenu("...");
+    actionspanel.add(buttonActions);
+    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem.addActionListener((ActionEvent e) -> {
+      String range = Utils.doubleToString(getManualMinimum() == null ? getMinimum() : getManualMinimum(), 8)
+	+ ";" + Utils.doubleToString(getManualMinimum() == null ? getMaximum() : getManualMaximum(), 8);
+      ClipboardHelper.copyToClipboard(range);
+    });
+    buttonActions.addToMenu(menuitem);
+    menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
+    menuitem.addActionListener((ActionEvent e) -> {
+      if (!ClipboardHelper.canPasteStringFromClipboard())
+	return;
+      String range = ClipboardHelper.pasteStringFromClipboard();
+      if (range.contains(";")) {
+        String[] parts = range.split(";");
+        if ((parts.length == 2) && (Utils.isDouble(parts[0])) && (Utils.isDouble(parts[1]))) {
+          textMin.setText(parts[0]);
+          textMax.setText(parts[1]);
+	}
+      }
+    });
+    buttonActions.addToMenu(menuitem);
+
     if (getParentDialog() != null)
       dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
       dialog = new ApprovalDialog(getParentFrame(), true);
     dialog.setTitle("Select range for " + getAxisName());
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.getButtonsPanel().add(actionspanel);
     dialog.setCancelVisible(true);
     dialog.setApproveVisible(true);
     dialog.setDiscardVisible(false);
