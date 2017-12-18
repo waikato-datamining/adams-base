@@ -31,11 +31,10 @@ import java.util.Vector;
  * optimal width, as well as being searchable and sortable.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SortableAndSearchableTable
   extends BaseTable
-  implements SortableTable, SearchableTable {
+  implements SortableTable, SearchableTable, TableWithColumnFilters {
 
   /** for serialization. */
   private static final long serialVersionUID = -3176811618121454828L;
@@ -504,5 +503,71 @@ public class SortableAndSearchableTable
    */
   public synchronized boolean isRegExpSearch() {
     return m_Model.isRegExpSearch();
+  }
+
+  /**
+   * Sets the filter for the column.
+   *
+   * @param column	the column to filter
+   * @param filter	the filter string
+   * @param isRegExp	whether the filter is a regular expression
+   */
+  public void setColumnFilter(int column, String filter, boolean isRegExp) {
+    m_Model.setColumnFilter(column, filter, isRegExp);
+  }
+
+  /**
+   * Returns the filter for the column.
+   *
+   * @param column	the column to query
+   * @return		the filter, null if none present
+   */
+  public String getColumnFilter(int column) {
+    return m_Model.getColumnFilter(column);
+  }
+
+  /**
+   * Returns the whether the filter for the column is a regular expression.
+   *
+   * @param column	the column to query
+   * @return		true if filter set and regular expression
+   */
+  public boolean isColumnFilterRegExp(int column) {
+    return m_Model.isColumnFilterRegExp(column);
+  }
+
+  /**
+   * Returns the whether there is a filter active for the column.
+   *
+   * @param column	the column to query
+   * @return		true if a filter is active
+   */
+  public boolean isColumnFiltered(int column) {
+    return m_Model.isColumnFiltered(column);
+  }
+
+  /**
+   * Returns whether there is at least one filter active.
+   *
+   * @return		true if at least one filter is active
+   */
+  public boolean isAnyColumnFiltered() {
+    return m_Model.isAnyColumnFiltered();
+  }
+
+  /**
+   * Removes any filter for the column.
+   *
+   * @param column	the column to update
+   */
+  public void removeColumnFilter(int column) {
+    m_Model.removeColumnFilter(column);
+  }
+
+  /**
+   * Removes all column filters
+   */
+  public void removeAllColumnFilters() {
+    m_Model.removeAllColumnFilters();
   }
 }

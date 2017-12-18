@@ -20,7 +20,10 @@
 
 package adams.gui.core;
 
+import adams.core.base.BaseRegExp;
+import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JTable;
@@ -46,7 +49,7 @@ import java.util.Collections;
 public class SortableAndSearchableWrapperTableModel
   extends AbstractTableModel
   implements TableModelListener, SortableTableModel, SearchableTableModel,
-             CustomSearchTableModel {
+             CustomSearchTableModel, TableModelWithColumnFilters {
 
   /** for serialization. */
   private static final long serialVersionUID = 1379439060928152100L;
@@ -178,6 +181,12 @@ public class SortableAndSearchableWrapperTableModel
   /** whether a column is numeric. */
   protected boolean[] m_ColumnIsNumeric;
 
+  /** the filter strings per column. */
+  protected TIntObjectHashMap<String> m_ColumnFilters;
+
+  /** the filter regexps per column. */
+  protected TIntObjectHashMap<BaseRegExp> m_ColumnFiltersRegExp;
+
   /**
    * initializes with no model.
    */
@@ -193,10 +202,12 @@ public class SortableAndSearchableWrapperTableModel
   public SortableAndSearchableWrapperTableModel(TableModel model) {
     super();
 
-    m_MouseListener   = null;
-    m_SortedIndices   = null;
-    m_DisplayIndices  = null;
-    m_ColumnIsNumeric = null;
+    m_MouseListener       = null;
+    m_SortedIndices       = null;
+    m_DisplayIndices      = null;
+    m_ColumnIsNumeric     = null;
+    m_ColumnFilters       = new TIntObjectHashMap<>();
+    m_ColumnFiltersRegExp = new TIntObjectHashMap<>();
 
     setUnsortedModel(model);
   }
@@ -264,8 +275,7 @@ public class SortableAndSearchableWrapperTableModel
       m_SortColumn     = -1;
       m_SortAscending  = true;
       getUnsortedModel().addTableModelListener(this);
-      if (m_SearchString != null)
-	search(m_SearchString, m_RegExpSearch);
+      doSearchAndFilter();
     }
   }
 
@@ -366,8 +376,8 @@ public class SortableAndSearchableWrapperTableModel
 
     result = -1;
 
-    if (isInitialized()) {
-      if (m_DisplayIndices != null)
+    if (isInitialized() && (visibleRow >= 0)) {
+      if ((m_DisplayIndices != null) && (visibleRow < m_DisplayIndices.size()))
 	result = m_SortedIndices[m_DisplayIndices.get(visibleRow)];
       else if (visibleRow < m_SortedIndices.length)
 	result = m_SortedIndices[visibleRow];
@@ -621,8 +631,7 @@ public class SortableAndSearchableWrapperTableModel
     sorted.clear();
     sorted = null;
 
-    if (m_SearchString != null)
-      search(m_SearchString, m_RegExpSearch);
+    doSearchAndFilter();
   }
 
   /**
@@ -757,31 +766,75 @@ public class SortableAndSearchableWrapperTableModel
    * 				or just plain string comparison
    */
   public synchronized void search(String searchString, boolean regexp) {
-    int			i;
-    boolean		customSearch;
-    SearchParameters	params;
-
-    customSearch   = (getUnsortedModel() instanceof CustomSearchTableModel);
     m_RegExpSearch = regexp;
     m_SearchString = searchString;
-    params         = new SearchParameters(m_SearchString, m_RegExpSearch);
+    doSearchAndFilter();
+  }
 
-    // no search -> display everything
-    if (m_SearchString == null) {
+  /**
+   * Performs a search with the current search settings and applies column
+   * filters.
+   */
+  protected synchronized void doSearchAndFilter() {
+    int				i;
+    boolean			customSearch;
+    TableModel			unsorted;
+    CustomSearchTableModel 	customModel;
+    SearchParameters		params;
+    boolean			show;
+    TIntList			filterCols;
+    int				c;
+    int				col;
+    Object			value;
+    String			valueStr;
+
+    params       = new SearchParameters(m_SearchString, m_RegExpSearch);
+    unsorted     = getUnsortedModel();
+    customSearch = (unsorted instanceof CustomSearchTableModel);
+    customModel = null;
+    if (customSearch)
+      customModel = (CustomSearchTableModel) unsorted;
+
+    // no search or filters -> display everything
+    if ((m_SearchString == null) && m_ColumnFilters.isEmpty() && m_ColumnFiltersRegExp.isEmpty()) {
       m_DisplayIndices = null;
     }
     // perform search
     else {
+      filterCols = new TIntArrayList();
+      filterCols.addAll(m_ColumnFilters.keys());
+      filterCols.addAll(m_ColumnFiltersRegExp.keys());
       m_DisplayIndices = new TIntArrayList();
       for (i = 0; i < getActualRowCount(); i++) {
+        show = true;
+
+        // search
 	if (customSearch) {
-	  if (((CustomSearchTableModel) getUnsortedModel()).isSearchMatch(params, m_SortedIndices[i]))
-	    m_DisplayIndices.add(i);
+	  if (!customModel.isSearchMatch(params, m_SortedIndices[i]))
+	    show = false;
 	}
-	else {
-	  if (isSearchMatch(params, m_SortedIndices[i]))
-	    m_DisplayIndices.add(i);
+	else if (m_SearchString != null) {
+	  if (!isSearchMatch(params, m_SortedIndices[i]))
+	    show = false;
 	}
+
+	// filter
+	if (show) {
+	  for (c = 0; c < filterCols.size(); c++) {
+	    col = filterCols.get(c);
+	    value = unsorted.getValueAt(m_SortedIndices[i], col);
+	    if (value != null) {
+	      valueStr = "" + value;
+	      if (m_ColumnFilters.containsKey(col))
+		show = valueStr.toLowerCase().contains(m_ColumnFilters.get(col));
+	      else if (m_ColumnFiltersRegExp.containsKey(col))
+		show = m_ColumnFiltersRegExp.get(col).isMatch(valueStr);
+	    }
+	  }
+	}
+
+	if (show)
+	  m_DisplayIndices.add(i);
       }
     }
 
@@ -804,5 +857,88 @@ public class SortableAndSearchableWrapperTableModel
    */
   public boolean isRegExpSearch() {
     return m_RegExpSearch;
+  }
+
+  /**
+   * Sets the filter for the column.
+   *
+   * @param column	the column to filter
+   * @param filter	the filter string
+   * @param isRegExp	whether the filter is a regular expression
+   */
+  public void setColumnFilter(int column, String filter, boolean isRegExp) {
+    if ((filter == null) || filter.isEmpty())
+      return;
+    if (isRegExp) {
+      m_ColumnFiltersRegExp.put(column, new BaseRegExp(filter));
+      m_ColumnFilters.remove(column);
+    }
+    else {
+      m_ColumnFilters.put(column, filter.toLowerCase());
+      m_ColumnFiltersRegExp.remove(column);
+    }
+    doSearchAndFilter();
+  }
+
+  /**
+   * Returns the filter for the column.
+   *
+   * @param column	the column to query
+   * @return		the filter, null if none present
+   */
+  public String getColumnFilter(int column) {
+    if (m_ColumnFiltersRegExp.containsKey(column))
+      return m_ColumnFiltersRegExp.get(column).getValue();
+    else
+      return m_ColumnFilters.get(column);
+  }
+
+  /**
+   * Returns the whether the filter for the column is a regular expression.
+   *
+   * @param column	the column to query
+   * @return		true if filter set and regular expression
+   */
+  public boolean isColumnFilterRegExp(int column) {
+    return m_ColumnFiltersRegExp.containsKey(column);
+  }
+
+  /**
+   * Returns the whether there is a filter active for the column.
+   *
+   * @param column	the column to query
+   * @return		true if a filter is active
+   */
+  public boolean isColumnFiltered(int column) {
+    return m_ColumnFilters.containsKey(column) || m_ColumnFiltersRegExp.containsKey(column);
+  }
+
+  /**
+   * Returns whether there is at least one filter active.
+   *
+   * @return		true if at least one filter is active
+   */
+  public boolean isAnyColumnFiltered() {
+    return !(m_ColumnFilters.isEmpty() && m_ColumnFilters.isEmpty());
+  }
+
+  /**
+   * Removes any filter for the column.
+   *
+   * @param column	the column to update
+   */
+  public void removeColumnFilter(int column) {
+    m_ColumnFilters.remove(column);
+    m_ColumnFiltersRegExp.remove(column);
+    doSearchAndFilter();
+  }
+
+  /**
+   * Removes all column filters
+   */
+  public void removeAllColumnFilters() {
+    m_ColumnFilters.clear();
+    m_ColumnFiltersRegExp.clear();
+    doSearchAndFilter();
   }
 }

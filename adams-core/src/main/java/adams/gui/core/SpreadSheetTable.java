@@ -312,6 +312,44 @@ public class SpreadSheetTable
 
     menu.addSeparator();
 
+    menuitem = new JMenuItem("Filter", GUIHelper.getIcon("filter.png"));
+    menuitem.setEnabled(col > 0);
+    menuitem.addActionListener((ActionEvent ae) -> {
+      String filter = "";
+      if (getColumnFilter(col) != null)
+        filter = getColumnFilter(col);
+      filter = GUIHelper.showInputDialog(getParent(), "Please enter filter string", filter);
+      if ((filter == null) || filter.isEmpty())
+        return;
+      setColumnFilter(col, filter, false);
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Filter (RegExp)", GUIHelper.getEmptyIcon());
+    menuitem.setEnabled(col > 0);
+    menuitem.addActionListener((ActionEvent ae) -> {
+      String filter = "";
+      if (getColumnFilter(col) != null)
+        filter = getColumnFilter(col);
+      filter = GUIHelper.showInputDialog(getParent(), "Please enter regular expression filter", filter);
+      if ((filter == null) || filter.isEmpty())
+        return;
+      setColumnFilter(col, filter, true);
+    });
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Remove filter", GUIHelper.getIcon("delete.gif"));
+    menuitem.setEnabled(isColumnFiltered(col));
+    menuitem.addActionListener((ActionEvent ae) -> removeColumnFilter(col));
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Remove all filters", GUIHelper.getIcon("delete_all.gif"));
+    menuitem.setEnabled(isAnyColumnFiltered());
+    menuitem.addActionListener((ActionEvent ae) -> removeAllColumnFilters());
+    menu.add(menuitem);
+
+    menu.addSeparator();
+
     menuitem = new JMenuItem("Insert column", GUIHelper.getIcon("insert-column.png"));
     menuitem.setEnabled(!isReadOnly());
     menuitem.addActionListener((ActionEvent ae) -> {
