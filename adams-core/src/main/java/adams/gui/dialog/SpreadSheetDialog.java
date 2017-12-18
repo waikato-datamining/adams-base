@@ -13,19 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetDialog.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
-
-import java.awt.Color;
-import java.awt.Dialog;
-import java.awt.Frame;
 
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.visualization.core.PopupMenuCustomizer;
+
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Frame;
 
 /**
  * Dialog for displaying a spreadsheet.
@@ -297,5 +297,23 @@ public class SpreadSheetDialog
    */
   public boolean getShowSearch() {
     return m_Panel.getShowSearch();
+  }
+
+  /**
+   * Sets whether the column combobox is visible.
+   *
+   * @param value	true if to show column combobox
+   */
+  public void setShowColumnComboBox(boolean value) {
+    m_Panel.setShowColumnComboBox(value);
+  }
+
+  /**
+   * Returns whether the column combobox is visible.
+   *
+   * @return 		true if column combobox is shown
+   */
+  public boolean getShowColumnComboBox() {
+    return m_Panel.getShowColumnComboBox();
   }
 }

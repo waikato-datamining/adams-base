@@ -13,28 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetPanel.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JColorChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import adams.core.io.PlaceholderFile;
 import adams.data.io.output.CsvSpreadSheetWriter;
@@ -56,6 +39,22 @@ import adams.gui.event.SearchListener;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.core.PopupMenuCustomizer;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JColorChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Displays a spreadsheet in a table.
@@ -103,6 +102,9 @@ public class SpreadSheetPanel
   /** the search panel. */
   protected SearchPanel m_PanelSearch;
 
+  /** the panel for the column combobox. */
+  protected JPanel m_PanelColumnComboBox;
+
   /** the combobox for jumping to columns. */
   protected SpreadSheetColumnComboBox m_ColumnComboBox;
 
@@ -121,7 +123,6 @@ public class SpreadSheetPanel
    */
   @Override
   protected void initGUI() {
-    JPanel	panel;
 
     super.initGUI();
     
@@ -131,10 +132,10 @@ public class SpreadSheetPanel
     m_Table      = new SpreadSheetTable(m_TableModel);
     add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
     
-    panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    m_ColumnComboBox = new SpreadSheetColumnComboBox(m_Table);
-    panel.add(m_ColumnComboBox);
-    add(panel, BorderLayout.NORTH);
+    m_PanelColumnComboBox = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    m_ColumnComboBox      = new SpreadSheetColumnComboBox(m_Table);
+    m_PanelColumnComboBox.add(m_ColumnComboBox);
+    add(m_PanelColumnComboBox, BorderLayout.NORTH);
 
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
     m_PanelSearch.setVisible(false);
@@ -583,5 +584,23 @@ public class SpreadSheetPanel
    */
   public boolean getShowSearch() {
     return m_PanelSearch.isVisible();
+  }
+
+  /**
+   * Sets whether the column combobox is visible.
+   *
+   * @param value	true if to show column combobox
+   */
+  public void setShowColumnComboBox(boolean value) {
+    m_PanelColumnComboBox.setVisible(value);
+  }
+
+  /**
+   * Returns whether the column combobox is visible.
+   *
+   * @return 		true if column combobox is shown
+   */
+  public boolean getShowColumnComboBox() {
+    return m_PanelColumnComboBox.isVisible();
   }
 }
