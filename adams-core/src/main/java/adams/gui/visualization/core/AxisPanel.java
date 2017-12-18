@@ -21,7 +21,7 @@
 package adams.gui.visualization.core;
 
 import adams.core.Utils;
-import adams.gui.core.BaseButtonWithDropDownMenu;
+import adams.core.base.BaseInterval;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
@@ -42,8 +42,8 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -53,7 +53,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -192,7 +191,7 @@ public class AxisPanel
   /**
    * Obtains all the settings from the other panel.
    * Does not re-use the {@link PopupMenuCustomizer}.
-   * 
+   *
    * @param other	the panel to get the settings from
    */
   public void assign(AxisPanel other) {
@@ -222,11 +221,11 @@ public class AxisPanel
     setType(other.getType());
     setMinimum(other.getMinimum());
     setMaximum(other.getMaximum());
-    
+
     calculateDimensions();
     repaint();
   }
-  
+
   /**
    * Transforms the given value into the display (absolute, percentage, log,
    * etc.) format.
@@ -349,10 +348,10 @@ public class AxisPanel
   public void setTickGenerator(TickGenerator value) {
     m_Model.setTickGenerator(value);
   }
-  
+
   /**
    * Returns the current tick generator in use.
-   * 
+   *
    * @return		the tick generator
    */
   public TickGenerator getTickGenerator() {
@@ -391,7 +390,7 @@ public class AxisPanel
     }
     else {
       System.err.println(
-	  "Ticks must be at least 4 pixels long (provided: " + value + ")!");
+	"Ticks must be at least 4 pixels long (provided: " + value + ")!");
     }
   }
 
@@ -417,7 +416,7 @@ public class AxisPanel
     }
     else {
       System.err.println(
-	  "Axis width must be at least 5 pixels (provided: " + value + ")!");
+	"Axis width must be at least 5 pixels (provided: " + value + ")!");
     }
   }
 
@@ -763,7 +762,7 @@ public class AxisPanel
   public boolean canZoom(double min, double max) {
     return m_Model.canZoom(min, max);
   }
-  
+
   /**
    * Adds the zoom to its internal list and updates the axis.
    *
@@ -817,46 +816,18 @@ public class AxisPanel
   public void selectRange() {
     ApprovalDialog		dialog;
     ParameterPanel		panel;
-    JPanel actionspanel;
     final JTextField		textMin;
     final JTextField		textMax;
     double			min;
     double			max;
-    BaseButtonWithDropDownMenu	buttonActions;
-    JMenuItem			menuitem;
 
     panel = new ParameterPanel();
     textMin = new JTextField(10);
     textMin.setText(Utils.doubleToString(getManualMinimum() == null ? getMinimum() : getManualMinimum(), 8));
     panel.addParameter("Minimum", textMin);
     textMax = new JTextField(10);
-    textMax.setText(Utils.doubleToString(getManualMinimum() == null ? getMaximum() : getManualMaximum(), 8));
+    textMax.setText(Utils.doubleToString(getManualMaximum() == null ? getMaximum() : getManualMaximum(), 8));
     panel.addParameter("Maximum", textMax);
-
-    actionspanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    buttonActions = new BaseButtonWithDropDownMenu("...");
-    actionspanel.add(buttonActions);
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
-    menuitem.addActionListener((ActionEvent e) -> {
-      String range = Utils.doubleToString(getManualMinimum() == null ? getMinimum() : getManualMinimum(), 8)
-	+ ";" + Utils.doubleToString(getManualMinimum() == null ? getMaximum() : getManualMaximum(), 8);
-      ClipboardHelper.copyToClipboard(range);
-    });
-    buttonActions.addToMenu(menuitem);
-    menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
-    menuitem.addActionListener((ActionEvent e) -> {
-      if (!ClipboardHelper.canPasteStringFromClipboard())
-	return;
-      String range = ClipboardHelper.pasteStringFromClipboard();
-      if (range.contains(";")) {
-        String[] parts = range.split(";");
-        if ((parts.length == 2) && (Utils.isDouble(parts[0])) && (Utils.isDouble(parts[1]))) {
-          textMin.setText(parts[0]);
-          textMax.setText(parts[1]);
-	}
-      }
-    });
-    buttonActions.addToMenu(menuitem);
 
     if (getParentDialog() != null)
       dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
@@ -864,7 +835,6 @@ public class AxisPanel
       dialog = new ApprovalDialog(getParentFrame(), true);
     dialog.setTitle("Select range for " + getAxisName());
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.getButtonsPanel().add(actionspanel);
     dialog.setCancelVisible(true);
     dialog.setApproveVisible(true);
     dialog.setDiscardVisible(false);
@@ -873,7 +843,7 @@ public class AxisPanel
     dialog.setVisible(true);
     if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
       return;
-    
+
     try {
       min = Double.parseDouble(textMin.getText());
       max = Double.parseDouble(textMax.getText());
@@ -886,11 +856,53 @@ public class AxisPanel
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	  getParent(), 
-	  "Failed to parse/set range parameters:\n"
-	  + textMin.getText() + "\n" 
-	  + textMax.getText() + "\n" 
+	getParent(),
+	"Failed to parse/set range parameters:\n"
+	  + textMin.getText() + "\n"
+	  + textMax.getText() + "\n"
 	  + Utils.throwableToString(e));
+    }
+  }
+
+  /**
+   * Copies the range to the clipboard.
+   */
+  protected void copyRange() {
+    BaseInterval 	range;
+
+    range = new BaseInterval(
+      getManualMinimum() == null ? getMinimum() : getManualMinimum(),
+      getManualMaximum() == null ? getMaximum() : getManualMaximum());
+    ClipboardHelper.copyToClipboard(range.getValue());
+  }
+
+  /**
+   * Pastes the range from the clipboard, if possible.
+   */
+  protected void pasteRange() {
+    BaseInterval 	range;
+    double		min;
+    double		max;
+
+    if (!ClipboardHelper.canPasteStringFromClipboard())
+      return;
+
+    range = new BaseInterval();
+    if (range.isValid(ClipboardHelper.pasteStringFromClipboard())) {
+      range.setValue(ClipboardHelper.pasteStringFromClipboard());
+      min = range.getLower();
+      max = range.getUpper();
+      if (!getAxisModel().canHandle(min, max)) {
+	GUIHelper.showErrorMessage(
+	  getParent(),
+	  "Failed to parse/set range parameters:\n" + range);
+      }
+      else {
+	setManualMinimum(min);
+	setManualMaximum(max);
+	clearZoom();
+	clearPanning();
+      }
     }
   }
 
@@ -949,11 +961,50 @@ public class AxisPanel
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	  getParent(),
-	  "Failed to parse/set margins:\n"
+	getParent(),
+	"Failed to parse/set margins:\n"
 	  + textTop.getText() + "\n"
 	  + textBottom.getText() + "\n"
 	  + Utils.throwableToString(e));
+    }
+  }
+
+  /**
+   * Copies the margins to the clipboard.
+   */
+  protected void copyMargins() {
+    String	range;
+
+    range =
+      Utils.doubleToString(getManualTopMargin() == null ? getTopMargin() : getManualTopMargin(), 8)
+	+ ";"
+	+ Utils.doubleToString(getManualBottomMargin() == null ? getBottomMargin() : getManualBottomMargin(), 8);
+    ClipboardHelper.copyToClipboard(range);
+  }
+
+  /**
+   * Pastes the margins from the clipboard, if possible.
+   */
+  protected void pasteMargins() {
+    String 	range;
+    String[]	parts;
+    double 	top;
+    double 	bottom;
+
+    if (!ClipboardHelper.canPasteStringFromClipboard())
+      return;
+
+    range = ClipboardHelper.pasteStringFromClipboard();
+    if (range.contains(";") && (range.split(";").length == 2)) {
+      parts  = range.split(";");
+      if (Utils.isDouble(parts[0]) && Utils.isDouble(parts[1])) {
+	top    = Double.parseDouble(parts[0]);
+	bottom = Double.parseDouble(parts[1]);
+	setManualTopMargin(top);
+	setManualBottomMargin(bottom);
+	clearZoom();
+	clearPanning();
+      }
     }
   }
 
@@ -995,6 +1046,7 @@ public class AxisPanel
   public BasePopupMenu getPopupMenu(MouseEvent e) {
     BasePopupMenu	result;
     JMenuItem		item;
+    JMenu		submenu;
     ButtonGroup 	group;
 
     result = new BasePopupMenu();
@@ -1051,26 +1103,54 @@ public class AxisPanel
 	((FlippableAxisModel) m_Model).setFlipped(!((FlippableAxisModel) m_Model).isFlipped()));
       result.add(item);
     }
-    
-    // range
-    item = new JMenuItem("Range...");
+
+    // range menu
+    submenu = new JMenu("Range");
+    result.add(submenu);
+
+    // edit range
+    item = new JMenuItem("Edit...");
     item.addActionListener((ActionEvent ae) -> selectRange());
-    result.add(item);
-    
+    submenu.add(item);
+
+    // copy range
+    item = new JMenuItem("Copy");
+    item.addActionListener((ActionEvent ae) -> copyRange());
+    submenu.add(item);
+
+    // paste range
+    item = new JMenuItem("Paste");
+    item.addActionListener((ActionEvent ae) -> pasteRange());
+    submenu.add(item);
+
     // reset range
-    item = new JMenuItem("Reset range");
+    item = new JMenuItem("Reset");
     item.addActionListener((ActionEvent ae) -> resetRange());
-    result.add(item);
+    submenu.add(item);
 
     // margins
-    item = new JMenuItem("Margins...");
+    submenu = new JMenu("Margins");
+    result.add(submenu);
+
+    // edit margins
+    item = new JMenuItem("Edit...");
     item.addActionListener((ActionEvent ae) -> selectMargins());
-    result.add(item);
+    submenu.add(item);
+
+    // copy margins
+    item = new JMenuItem("Copy");
+    item.addActionListener((ActionEvent ae) -> copyMargins());
+    submenu.add(item);
+
+    // paste margins
+    item = new JMenuItem("Paste");
+    item.addActionListener((ActionEvent ae) -> pasteMargins());
+    submenu.add(item);
 
     // reset margins
-    item = new JMenuItem("Reset margins");
+    item = new JMenuItem("Reset");
     item.addActionListener((ActionEvent ae) -> resetMargins());
-    result.add(item);
+    submenu.add(item);
 
     // customize it?
     if (m_PopupMenuCustomizer != null)
@@ -1305,7 +1385,7 @@ public class AxisPanel
 
   /**
    * Checks whether the tick is the first one.
-   * 
+   *
    * @param ticks	all the ticks
    * @param i		the current tick's index
    * @param flipped	whether the axis is flipped
@@ -1318,7 +1398,7 @@ public class AxisPanel
 
   /**
    * Checks whether the tick is the last one.
-   * 
+   *
    * @param ticks	all the ticks
    * @param i		the current tick's index
    * @param flipped	whether the axis is flipped
@@ -1328,10 +1408,10 @@ public class AxisPanel
   protected boolean isLast(List<Tick> ticks, int i, boolean flipped, int max) {
     return (ticks.get(i).getPosition() == max - 1);
   }
-  
+
   /**
    * Checks whether the tick is to be skipped.
-   * 
+   *
    * @param ticks	all the ticks
    * @param i		the current tick's index
    * @return		true if skip
@@ -1339,23 +1419,23 @@ public class AxisPanel
   protected boolean skipLabel(List<Tick> ticks, int i) {
     return !ticks.get(i).hasLabel() || (m_Model.getNthValueToShow() == 0) || (i % m_Model.getNthValueToShow() != 0);
   }
-  
+
   /**
    * Checks whether there is an overlap between the labels of the two Ticks.
-   * 
+   *
    * @param tick1	the first tick
    * @param tick2	the second tick
    * @return		true if overlapping
    */
   protected boolean hasOverlap(Tick tick1, Tick tick2) {
-    return 
-           (tick1 != null) 
-	&& (tick2 != null) 
-	&& tick1.hasBounds() 
-	&& tick2.hasBounds() 
+    return
+      (tick1 != null)
+	&& (tick2 != null)
+	&& tick1.hasBounds()
+	&& tick2.hasBounds()
 	&& tick1.getBounds().intersects(tick2.getBounds());
   }
-  
+
   /**
    * draws the ticks.
    *
@@ -1403,7 +1483,7 @@ public class AxisPanel
 	for (i = 0; i < ticks.size(); i++) {
 	  tick    = ticks.get(i);
 	  tickPos = correctPosition(tick.getPosition());
-	  
+
 	  // the value
 	  skipped = !tick.hasLabel() || skipLabel(ticks, i);
 	  if (!skipped) {
@@ -1563,7 +1643,7 @@ public class AxisPanel
 
     if (m_AxisName.trim().length() == 0)
       return;
-    
+
     g2d         = (Graphics2D) g;
     height      = getSize().height;
     width       = getSize().width;
@@ -1598,10 +1678,10 @@ public class AxisPanel
 	g.setColor(getBackground());
 	g.setFont(m_AxisNameFont);
 	g.fillRect(
-	    (int) Math.round(textBoundsName.getX() + x) - 2,
-	    (int) Math.round(textBoundsName.getY() + y) - 2,
-	    (int) Math.round(textBoundsName.getWidth()) + 4,
-	    (int) Math.round(textBoundsName.getHeight()) + 4);
+	  (int) Math.round(textBoundsName.getX() + x) - 2,
+	  (int) Math.round(textBoundsName.getY() + y) - 2,
+	  (int) Math.round(textBoundsName.getWidth()) + 4,
+	  (int) Math.round(textBoundsName.getHeight()) + 4);
 	g.setColor(m_AxisColor);
 	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	g.drawString(m_AxisName, x, y);
@@ -1628,10 +1708,10 @@ public class AxisPanel
 	g.setColor(getBackground());
 	g.setFont(m_AxisNameFont);
 	g.fillRect(
-	    (int) Math.round(textBoundsName.getX() + x) - 2,
-	    (int) Math.round(textBoundsName.getY() + y) - 2,
-	    (int) Math.round(textBoundsName.getWidth()) + 4,
-	    (int) Math.round(textBoundsName.getHeight()) + 4);
+	  (int) Math.round(textBoundsName.getX() + x) - 2,
+	  (int) Math.round(textBoundsName.getY() + y) - 2,
+	  (int) Math.round(textBoundsName.getWidth()) + 4,
+	  (int) Math.round(textBoundsName.getHeight()) + 4);
 	g.setColor(m_AxisColor);
 	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	g.drawString(m_AxisName, x, y);
@@ -1657,10 +1737,10 @@ public class AxisPanel
 	g.setColor(getBackground());
 	g.setFont(m_AxisNameFont);
 	g.fillRect(
-	    (int) Math.round(textBoundsName.getX() + x) - 2,
-	    (int) Math.round(textBoundsName.getY() + y) - 2,
-	    (int) Math.round(textBoundsName.getWidth()) + 4,
-	    (int) Math.round(textBoundsName.getHeight()) + 4);
+	  (int) Math.round(textBoundsName.getX() + x) - 2,
+	  (int) Math.round(textBoundsName.getY() + y) - 2,
+	  (int) Math.round(textBoundsName.getWidth()) + 4,
+	  (int) Math.round(textBoundsName.getHeight()) + 4);
 	g.setColor(m_AxisColor);
 	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	g.drawString(m_AxisName, x, y);
@@ -1683,10 +1763,10 @@ public class AxisPanel
 	g.setColor(getBackground());
 	g.setFont(m_AxisNameFont);
 	g.fillRect(
-	    (int) Math.round(textBoundsName.getX() + x) - 2,
-	    (int) Math.round(textBoundsName.getY() + y) - 2,
-	    (int) Math.round(textBoundsName.getWidth()) + 4,
-	    (int) Math.round(textBoundsName.getHeight()) + 4);
+	  (int) Math.round(textBoundsName.getX() + x) - 2,
+	  (int) Math.round(textBoundsName.getY() + y) - 2,
+	  (int) Math.round(textBoundsName.getWidth()) + 4,
+	  (int) Math.round(textBoundsName.getHeight()) + 4);
 	g.setColor(m_AxisColor);
 	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	g.drawString(m_AxisName, x, y);
