@@ -224,6 +224,15 @@ public class ResultItem
   }
 
   /**
+   * Sets the additional attributes data.
+   *
+   * @param value	the data, null if not present
+   */
+  public void setAdditionalAttributes(SpreadSheet value) {
+    m_AdditionalAttributes = value;
+  }
+
+  /**
    * Returns the stored additional attributes data.
    *
    * @return		the data, null if not present

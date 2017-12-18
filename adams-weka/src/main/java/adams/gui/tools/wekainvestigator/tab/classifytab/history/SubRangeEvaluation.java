@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.history;
 
 import adams.core.logging.LoggingLevel;
 import adams.data.spreadsheet.MetaData;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
@@ -30,6 +31,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.tools.wekainvestigator.tab.ClassifyTab.HistoryPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import weka.classifiers.CrossValidationHelper;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.Prediction;
 import weka.core.Attribute;
@@ -179,6 +181,9 @@ public class SubRangeEvaluation
   protected void createSubEvaluation(HistoryPanel history, ResultItem item, double[] range) {
     Evaluation			evalFull;
     Evaluation			evalSub;
+    ArrayList<Prediction> 	predsFull;
+    SpreadSheet			additionalFull;
+    SpreadSheet			additionalSub;
     Instances			data;
     Instance			inst;
     ArrayList<Attribute> 	atts;
@@ -196,19 +201,29 @@ public class SubRangeEvaluation
         "[" + range[0] + ";" + range[1] + "]-" + evalFull.getHeader().relationName(),
         atts, evalFull.predictions().size());
       data.setClassIndex(0);
-      for (Prediction pred: evalFull.predictions()) {
+      predsFull = evalFull.predictions();
+      if (item.hasOriginalIndices())
+        predsFull = CrossValidationHelper.alignPredictions(predsFull, item.getOriginalIndices());
+      for (Prediction pred: predsFull) {
         inst = new DenseInstance(1.0, new double[]{pred.actual()});
         data.add(inst);
       }
+      additionalFull = null;
+      if (item.hasAdditionalAttributes())
+        additionalFull = item.getAdditionalAttributes();
 
       // evaluate subset
-      evalSub = new Evaluation(data);
-      for (i = 0; i < evalFull.predictions().size(); i++) {
-        prd = evalFull.predictions().get(i);
+      evalSub       = new Evaluation(data);
+      additionalSub = null;
+      if (additionalFull != null)
+        additionalSub = additionalFull.getHeader();
+      for (i = 0; i < predsFull.size(); i++) {
+        prd = predsFull.get(i);
         if ((prd.actual() >= range[0]) && (prd.actual() <= range[1])) {
           evalSub.evaluateModelOnceAndRecordPrediction(
             new double[]{prd.predicted()},
             data.instance(i));
+          additionalSub.addRow().assign(additionalFull.getRow(i));
         }
       }
 
@@ -216,6 +231,8 @@ public class SubRangeEvaluation
       runInfoSub = addSubRangeInfo(item.getRunInformation(), range);
       itemSub    = new ResultItem(item.getTemplate(), new Instances(data, 0));
       itemSub.update(evalSub, null, runInfoSub);
+      if (additionalSub != null)
+        itemSub.setAdditionalAttributes(additionalSub);
       history.addEntry(itemSub.getName(), itemSub);
       history.setSelectedIndex(history.count() - 1);
 
