@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ViewDataClickAction.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
@@ -35,13 +35,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Displays the data that the user clicked on in a table.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ViewDataClickAction
   extends AbstractMouseClickAction {
@@ -112,7 +110,7 @@ public class ViewDataClickAction
   @Override
   protected void processLeftClick(SequencePlotterPanel panel, MouseEvent e) {
     Object			located;
-    Vector<XYSequencePoint> 	hits;
+    List<XYSequencePoint> 	hits;
     SpreadSheet			sheet;
     Row				header;
     Row				row;
@@ -125,8 +123,8 @@ public class ViewDataClickAction
       m_HitDetector.setOwner(panel.getDataPaintlet());
     located = m_HitDetector.locate(e);
     cols    = null;
-    if (located instanceof Vector) {
-      hits   = (Vector<XYSequencePoint>) located;
+    if (located instanceof List) {
+      hits   = (List<XYSequencePoint>) located;
       sheet  = new DefaultSpreadSheet();
       sheet.setDataRowClass(SparseDataRow.class);
       header = sheet.getHeaderRow();

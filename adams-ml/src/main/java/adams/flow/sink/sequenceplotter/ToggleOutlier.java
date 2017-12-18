@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ToggleOutlier.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink.sequenceplotter;
@@ -27,13 +27,13 @@ import adams.gui.visualization.sequence.CrossHitDetector;
 
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 /**
  * Toggles the outlier state of data points.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ToggleOutlier
   extends AbstractMouseClickAction {
@@ -103,14 +103,14 @@ public class ToggleOutlier
   @Override
   protected void processLeftClick(SequencePlotterPanel panel, MouseEvent e) {
     Object			located;
-    Vector<XYSequencePoint> 	hits;
+    List<XYSequencePoint> 	hits;
     SequencePlotPoint		point;
 
     if (m_HitDetector.getOwner() != panel.getDataPaintlet())
       m_HitDetector.setOwner(panel.getDataPaintlet());
     located = m_HitDetector.locate(e);
     if (located instanceof Vector) {
-      hits = (Vector<XYSequencePoint>) located;
+      hits = (List<XYSequencePoint>) located;
       for (XYSequencePoint hit: hits) {
 	if (hit instanceof SequencePlotPoint) {
 	  point = (SequencePlotPoint) hit;
