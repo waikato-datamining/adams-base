@@ -28,7 +28,6 @@ import adams.gui.visualization.sequence.CrossHitDetector;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Toggles the outlier state of data points.
@@ -109,7 +108,7 @@ public class ToggleOutlier
     if (m_HitDetector.getOwner() != panel.getDataPaintlet())
       m_HitDetector.setOwner(panel.getDataPaintlet());
     located = m_HitDetector.locate(e);
-    if (located instanceof Vector) {
+    if (located instanceof List) {
       hits = (List<XYSequencePoint>) located;
       for (XYSequencePoint hit: hits) {
 	if (hit instanceof SequencePlotPoint) {
