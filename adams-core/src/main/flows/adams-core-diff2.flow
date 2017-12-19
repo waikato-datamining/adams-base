@@ -37,16 +37,16 @@ adams.flow.control.Flow -annotation "Compares two files (order irrelevant) and o
   adams.flow.standalone.HashSetInit -storage-name common_hashset
   adams.flow.source.StorageValue -storage-name second_file -conversion adams.data.conversion.UnknownToUnknown
   adams.flow.transformer.ArrayToSequence
-  adams.flow.control.Continue -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.HashSet -storage-name first_hashset\""
+  adams.flow.control.Block -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.HashSet -storage-name first_hashset\""
   adams.flow.transformer.HashSetAdd -storage-name common_hashset
   adams.flow.sink.CallableSink -callable Common
  adams.flow.control.Trigger -name "additional in 1st"
   adams.flow.source.StorageValue -storage-name first_file -conversion adams.data.conversion.UnknownToUnknown
   adams.flow.transformer.ArrayToSequence
-  adams.flow.control.Continue -condition "adams.flow.condition.bool.HashSet -storage-name common_hashset"
+  adams.flow.control.Block -condition "adams.flow.condition.bool.HashSet -storage-name common_hashset"
   adams.flow.sink.CallableSink -callable "Additional in 1st"
  adams.flow.control.Trigger -name "additional in 2nd"
   adams.flow.source.StorageValue -storage-name second_file -conversion adams.data.conversion.UnknownToUnknown
   adams.flow.transformer.ArrayToSequence
-  adams.flow.control.Continue -condition "adams.flow.condition.bool.HashSet -storage-name common_hashset"
+  adams.flow.control.Block -condition "adams.flow.condition.bool.HashSet -storage-name common_hashset"
   adams.flow.sink.CallableSink -callable "Additional in 2nd"

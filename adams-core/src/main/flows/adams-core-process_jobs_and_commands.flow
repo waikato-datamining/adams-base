@@ -18,7 +18,7 @@ adams.flow.control.Flow -annotation "Flow that processes jobrunner or remote com
   adams.flow.control.Trigger -name "process files"
    adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.FileSearch -directory @{dir_incoming} -sorting SORT_BY_LAST_MODIFIED"
    adams.flow.transformer.ArrayToSequence
-   adams.flow.control.Continue -condition "adams.flow.condition.bool.FileInUse -generator adams.core.io.NullFilenameGenerator"
+   adams.flow.control.Block -condition "adams.flow.condition.bool.FileInUse -generator adams.core.io.NullFilenameGenerator"
    adams.flow.control.FileProcessor -processing @{dir_processing} -processed @{dir_processed} -failed @{dir_failed} -atomic-move true
     adams.flow.transformer.Deserialize
     adams.flow.control.Switch -condition "adams.flow.condition.bool.HasInterface -interface adams.multiprocess.JobRunner" -condition "adams.flow.condition.bool.HasInterface -interface adams.scripting.command.RemoteCommand" -case adams.flow.sink.Null
