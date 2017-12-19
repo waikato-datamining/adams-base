@@ -21,6 +21,7 @@
 package adams.gui.visualization.instances;
 
 import adams.core.Range;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
@@ -642,5 +643,15 @@ public class InstancesTable
     e = new ChangeEvent(this);
     for (ChangeListener l: m_ChangeListeners)
       l.stateChanged(e);
+  }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @return		the spread sheet
+   */
+  @Override
+  protected SpreadSheet modelToSpreadSheet() {
+    return ((InstancesTableModel) getUnsortedModel()).toSpreadSheet();
   }
 }
