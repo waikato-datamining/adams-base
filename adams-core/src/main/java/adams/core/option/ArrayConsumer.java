@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ArrayConsumer.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -65,7 +65,8 @@ public class ArrayConsumer
     String		msg;
 
     try {
-      result     = (OptionHandler) Class.forName(Conversion.getSingleton().rename(m_Input[0])).newInstance();
+      result = (OptionHandler) Class.forName(Conversion.getSingleton().rename(m_Input[0])).newInstance();
+      checkDeprecation(result);
       m_Input[0] = "";
     }
     catch (Exception e) {
