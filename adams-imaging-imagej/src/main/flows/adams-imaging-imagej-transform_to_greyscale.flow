@@ -1,9 +1,9 @@
 # Project: adams
-# Date: 2016-02-15 14:29:59
+# Date: 2017-12-20 10:55:42
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Loads images from disk and displays the originals\\nand ones turned into greyscale ones." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.DirectoryLister -dir ${FLOWS}/data -list-files true -regexp .*.jpg
+ adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory ${FLOWS}/data -regexp .*.jpg"
  adams.flow.control.Tee -name "extract name"
   adams.flow.transformer.BaseName
   adams.flow.transformer.SetVariable -var-name name
@@ -11,6 +11,6 @@ adams.flow.control.Flow -annotation "Loads images from disk and displays the ori
  adams.flow.control.Branch
   adams.flow.control.Sequence -name grey
    adams.flow.transformer.ImageJTransformer -transformer adams.data.imagej.transformer.Gray8
-   adams.flow.sink.DisplayPanelManager -name Grey -short-title true -width 700 -height 550 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
+   adams.flow.sink.DisplayPanelManager -name Grey -short-title true -width 700 -height 550 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
   adams.flow.control.Sequence -name color
-   adams.flow.sink.DisplayPanelManager -name Color -short-title true -width 700 -height 550 -x -3 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
+   adams.flow.sink.DisplayPanelManager -name Color -short-title true -width 700 -height 550 -x -3 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
