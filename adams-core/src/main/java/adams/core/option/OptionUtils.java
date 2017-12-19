@@ -19,9 +19,12 @@
  */
 package adams.core.option;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import adams.db.DatabaseConnectionEstablisher;
 import adams.db.DatabaseConnectionHandler;
 import adams.env.Environment;
@@ -48,7 +51,6 @@ import java.util.List;
  * A helper class for option-related things.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class OptionUtils {
 
@@ -57,6 +59,9 @@ public class OptionUtils {
 
   /** the prefix for a regular option, instead of a hook. */
   public final static String OPTION_PREFIX = "option.";
+
+  /** the logger to use. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(OptionUtils.class);
 
   /** for caching the property descriptors. */
   protected static Hashtable<String,PropertyDescriptor> m_PropertyDescriptorCache;
@@ -506,12 +511,48 @@ public class OptionUtils {
    * @see		#forAnyCommandLine(Class, String)
    */
   public static OptionHandler forCommandLine(Class classType, String cmdline) throws Exception {
+    return forCommandLine(classType, cmdline, null, null);
+  }
+
+  /**
+   * Creates a new instance of an option handler given its command-line, including
+   * class name and (optional) arguments to pass to its setOptions method.
+   * NB: works only with ADAMS option handlers.
+   *
+   * @param classType 	the class that the instantiated object should
+   * 			be assignable to -- an exception is thrown if this
+   * 			is not the case
+   * @param cmdline 	the fully qualified class name and the (optional)
+   * 			options of the object
+   * @param warnings 	for collecting warnings, can be null
+   * @param errors 	for collecting errors, can be null
+   * @return 		the newly created object, ready for use.
+   * @throws Exception 	if the class name is invalid, or if the
+   * 			class is not assignable to the desired class type, or
+   * 			the options supplied are not acceptable to the object
+   * @see		#forAnyCommandLine(Class, String)
+   */
+  public static OptionHandler forCommandLine(Class classType, String cmdline, MessageCollection warnings, MessageCollection errors) throws Exception {
     OptionHandler	result;
+    ArrayConsumer 	consumer;
 
     if (cmdline.trim().length() == 0)
       throw new IllegalArgumentException("Empty commandline supplied!");
 
-    result = AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+    consumer = new ArrayConsumer();
+    result = consumer.fromString(cmdline);
+    if (consumer.hasErrors()) {
+      if (errors != null)
+	errors.addAll(consumer.getErrors());
+      else
+        LOGGER.severe("Error(s) parsing commandline: " + cmdline + "\n" + Utils.flatten(consumer.getErrors(), "\n"));
+    }
+    if (consumer.hasWarnings()) {
+      if (warnings != null)
+        warnings.addAll(consumer.getWarnings());
+      else
+        LOGGER.warning("Warning(s) parsing commandline: " + cmdline + "\n" + Utils.flatten(consumer.getWarnings(), "\n"));
+    }
     if (result == null)
       throw new Exception("Failed to instantiate object of type '" + classType.getName() + "' from '" + cmdline + "! Class not present?");
 

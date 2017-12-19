@@ -221,12 +221,16 @@ public class DefaultFlowReader
    */
   protected Node readNode(List<String> lines) {
     Node		result;
-    MessageCollection errors;
+    MessageCollection   errors;
+    MessageCollection   warnings;
 
     if (isCompact(lines)) {
       Utils.removeComments(lines, NestedProducer.COMMENT);
-      errors = new MessageCollection();
-      result = TreeHelper.buildTree(lines, errors);
+      errors   = new MessageCollection();
+      warnings = new MessageCollection();
+      result = TreeHelper.buildTree(lines, warnings, errors);
+      if (!warnings.isEmpty())
+	m_Warnings.addAll(warnings.toList());
       if (!errors.isEmpty())
 	m_Errors.addAll(errors.toList());
     }
@@ -307,13 +311,17 @@ public class DefaultFlowReader
   protected Actor readActor(List<String> lines) {
     Actor		result;
     Node		node;
+    MessageCollection	warnings;
     MessageCollection	errors;
 
     result = null;
     if (isCompact(lines)) {
       Utils.removeComments(lines, NestedProducer.COMMENT);
-      errors = new MessageCollection();
-      node   = TreeHelper.buildTree(lines, errors);
+      warnings = new MessageCollection();
+      errors   = new MessageCollection();
+      node     = TreeHelper.buildTree(lines, warnings, errors);
+      if (!warnings.isEmpty())
+	m_Warnings.addAll(warnings.toList());
       if (!errors.isEmpty())
 	m_Errors.addAll(errors.toList());
       if (node != null)

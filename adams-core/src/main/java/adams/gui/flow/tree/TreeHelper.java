@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TreeHelper.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
@@ -169,9 +169,10 @@ public class TreeHelper {
    *
    * @param actors	the commandlines with indentation
    * @param root	the root node
+   * @param warnings	for storing any warnings
    * @param errors	for storing any errors
    */
-  protected static void buildTree(List<String> actors, Node root, MessageCollection errors) {
+  protected static void buildTree(List<String> actors, Node root, MessageCollection warnings, MessageCollection errors) {
     int		level;
     int		index;
     String	cmdline;
@@ -191,7 +192,7 @@ public class TreeHelper {
 	level++;
 
       try {
-	actor = (Actor) OptionUtils.forCommandLine(Actor.class, actors.get(index).trim());
+	actor = (Actor) OptionUtils.forCommandLine(Actor.class, actors.get(index).trim(), warnings, errors);
 	node = new Node(previous.getOwner(), actor);
       }
       catch (Exception e) {
@@ -226,17 +227,18 @@ public class TreeHelper {
    * @return		the root node, null if failed to build
    */
   public static Node buildTree(List<String> actors) {
-    return buildTree(actors, new MessageCollection());
+    return buildTree(actors, new MessageCollection(), new MessageCollection());
   }
 
   /**
    * Builds the tree from the nested commandlines.
    *
    * @param actors	the nested commandlines
+   * @param warnings	for storing any warnings
    * @param errors	for storing any errors
    * @return		the root node, null if failed to build
    */
-  public static Node buildTree(List<String> actors, MessageCollection errors) {
+  public static Node buildTree(List<String> actors, MessageCollection warnings, MessageCollection errors) {
     Actor	actor;
     Node	root;
 
@@ -244,9 +246,9 @@ public class TreeHelper {
       return null;
 
     try {
-      actor = (Actor) OptionUtils.forCommandLine(Actor.class, actors.get(0).trim());
+      actor = (Actor) OptionUtils.forCommandLine(Actor.class, actors.get(0).trim(), warnings, errors);
       root  = new Node(null, actor);
-      buildTree(actors, root, errors);
+      buildTree(actors, root, warnings, errors);
       return root;
     }
     catch (Exception e) {
