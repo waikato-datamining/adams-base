@@ -1,8 +1,9 @@
 # Project: adams
-# Date: 2016-05-04 16:34:13
+# Date: 2017-12-20 12:03:24
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "The flow loads the UCI dataset \\\"iris\\\" and displays \\nthe data in a matrix plot." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.FileSupplier -file ${FLOWS}/data/iris.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
- adams.flow.sink.MatrixPlot -writer adams.gui.print.NullWriter -plot-size 150 -overlay "adams.gui.visualization.stats.scatterplot.Lowess -line-thickness 1.0" -paintlet "adams.gui.visualization.stats.paintlet.ScatterPaintletCircle -stroke-thickness 0.7"
+ adams.flow.transformer.SpreadSheetColumnFilter -finder "adams.data.spreadsheet.columnfinder.ByContentType -content-type LONG -content-type DOUBLE"
+ adams.flow.sink.MatrixPlot -writer adams.gui.print.NullWriter -plot-size 150 -overlay "adams.gui.visualization.stats.scatterplot.Lowess -line-thickness 1.0" -paintlet "adams.gui.visualization.stats.paintlet.ScatterPaintletCircle -stroke-thickness 0.7 -color-provider adams.gui.visualization.core.DefaultColorProvider"
