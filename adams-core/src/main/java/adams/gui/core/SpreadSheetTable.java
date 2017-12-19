@@ -832,4 +832,14 @@ public class SpreadSheetTable
   public Object getLastSetup(Class cls, boolean plot, boolean row) {
     return m_LastSetup.get(createLastSetupKey(cls, plot, row));
   }
+
+  /**
+   * Returns the underlying sheet.
+   *
+   * @return		the spread sheet
+   */
+  @Override
+  protected SpreadSheet modelToSpreadSheet() {
+    return ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
+  }
 }
