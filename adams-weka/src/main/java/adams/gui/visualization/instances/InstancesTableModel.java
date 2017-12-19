@@ -22,8 +22,11 @@
 package adams.gui.visualization.instances;
 
 import adams.core.SerializationHelper;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.UndoHandlerWithQuickAccess;
+import adams.ml.data.InstancesView;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -55,7 +58,7 @@ import java.util.logging.Level;
  */
 public class InstancesTableModel
   extends DefaultTableModel
-  implements Undoable {
+  implements Undoable, SpreadSheetSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3411795562305994946L;
@@ -1069,5 +1072,14 @@ public class InstancesTableModel
     result.setNotificationEnabled(isNotificationEnabled());
 
     return result;
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  public SpreadSheet toSpreadSheet() {
+    return new InstancesView(m_Data);
   }
 }
