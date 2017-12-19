@@ -10,6 +10,9 @@
 adams.flow.source.FileSupplier=adams.flow.source.SelectFile
 adams.flow.source.SelectFile=adams.flow.source.FileSupplier
 
+# DirectoryLister - FileSystemSearch
+adams.flow.source.DirectoryLister=adams.flow.source.FileSystemSearch
+
 # Display - DumpFile
 adams.flow.sink.Display=adams.flow.sink.DumpFile
 adams.flow.sink.DumpFile=adams.flow.sink.Display

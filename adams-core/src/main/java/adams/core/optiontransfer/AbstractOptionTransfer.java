@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractOptionTransfer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.optiontransfer;
@@ -32,7 +32,6 @@ import java.util.List;
  * Ancestor for transferring options between option handlers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractOptionTransfer {
 
@@ -77,6 +76,26 @@ public abstract class AbstractOptionTransfer {
     if (source.getOptionManager().hasVariableForProperty(property)) {
       var    = source.getOptionManager().getVariableForProperty(property);
       option = target.getOptionManager().findByProperty(property);
+      if ((option != null) && (option instanceof AbstractArgumentOption))
+	((AbstractArgumentOption) option).setVariable(var);
+    }
+  }
+
+  /**
+   * Transfers the variable (if any attached) form one property to another.
+   *
+   * @param source		the source from which to transfer the variable
+   * @param sourceProperty	the source property for which to transfer the variable
+   * @param target		the target to receive the variable
+   * @param targetProperty	the target property to receive the variable
+   */
+  protected void transferVariable(OptionHandler source, String sourceProperty, OptionHandler target, String targetProperty) {
+    String		var;
+    AbstractOption	option;
+
+    if (source.getOptionManager().hasVariableForProperty(sourceProperty)) {
+      var    = source.getOptionManager().getVariableForProperty(sourceProperty);
+      option = target.getOptionManager().findByProperty(targetProperty);
       if ((option != null) && (option instanceof AbstractArgumentOption))
 	((AbstractArgumentOption) option).setVariable(var);
     }
