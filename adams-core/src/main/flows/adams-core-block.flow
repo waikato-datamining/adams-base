@@ -1,0 +1,9 @@
+# Project: adams
+# Date: 2017-12-20 10:28:24
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "This flow demonstrates how to restrict the flow of tokens\\nusing the Block control actor. The boolean expression\\nof the Blockactor checks whether the variable \\n\\\"random_number\\\" is >700 or the incoming number token\\nis <400. If the expression evaluates to \\\"true\\\" the token\\nis discarded and the flow continues with the execution \\nprior to the Block actor." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.RandomNumberGenerator -generator adams.data.random.JavaRandomInt
+ adams.flow.transformer.SetVariable -var-name random_number
+ adams.flow.control.Block -condition "adams.flow.condition.bool.Expression -expression \"(@{random_number} > 700) | (X < 400)\""
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter
