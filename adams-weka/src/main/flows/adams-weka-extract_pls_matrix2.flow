@@ -1,10 +1,10 @@
 # Project: adams
-# Date: 2016-11-15 14:34:14
+# Date: 2017-12-20 13:38:43
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Trains a PLS classifier (PLS1) on a numeric dataset\\nand displays the content of the P matrix.\\nUses the PLSWeighted classifier, which makes use of\\nthe PLS algorithm class hierarchy." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
-  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.PLSWeighted -algorithm \"weka.filters.supervised.attribute.pls.PLS1 -preprocessing CENTER -C 3 -prediction ALL\""
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.PLSWeighted -algorithm \"adams.data.instancesanalysis.pls.PLS1 -num-components 3\""
  adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaClassSelector
