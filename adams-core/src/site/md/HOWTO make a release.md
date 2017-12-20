@@ -49,6 +49,12 @@ See next section for detailed command sequences.
 Order
 -----
 
+* adams-applications
+
+  * build all (`mvn clean install -DskipTests=true`)
+  * fix all missing licenses in `src/license/THIRD-PARTY.properties`
+  * commit/push changes
+
 * adams-base
 
   * `mvn --batch-mode release:prepare release:perform`
