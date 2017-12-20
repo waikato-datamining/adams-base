@@ -127,8 +127,10 @@ Uploads/updates
 
   * adams-base-all
   * adams-addons-all
+  * adams-basic-app
   * adams-annotator
   * adams-ml-app
+  * adams-deeplearning-spectral-app
   * adams-spectral-app
 
 * create a README.md (markdown style) and upload this to the sf.net directory
