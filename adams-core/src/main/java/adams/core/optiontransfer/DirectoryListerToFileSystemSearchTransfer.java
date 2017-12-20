@@ -67,22 +67,22 @@ public class DirectoryListerToFileSystemSearchTransfer
 
     if (dl.getListDirs() && dl.getListFiles()) {
       LocalDirectorySearch dirs = new LocalDirectorySearch();
-      dirs.setDirectory(dl.getWatchDir()); transferVariable(dl, "watchDir", fs, "directory");
-      dirs.setSorting(dl.getSorting()); transferVariable(dl, fs, "sorting");
-      dirs.setSortDescending(dl.getSortDescending()); transferVariable(dl, fs, "sortDescending");
-      dirs.setRegExp(dl.getRegExp()); transferVariable(dl, fs, "regExp");
-      dirs.setMaxDepth(dl.getMaxDepth()); transferVariable(dl, fs, "maxDepth");
-      dirs.setMaxItems(dl.getMaxItems()); transferVariable(dl, fs, "maxItems");
-      dirs.setRecursive(dl.getRecursive()); transferVariable(dl, fs, "recursive");
+      dirs.setDirectory(dl.getWatchDir()); transferVariable(dl, "watchDir", dirs, "directory");
+      dirs.setSorting(dl.getSorting()); transferVariable(dl, dirs, "sorting");
+      dirs.setSortDescending(dl.getSortDescending()); transferVariable(dl, dirs, "sortDescending");
+      dirs.setRegExp(dl.getRegExp()); transferVariable(dl, dirs, "regExp");
+      dirs.setMaxDepth(dl.getMaxDepth()); transferVariable(dl, dirs, "maxDepth");
+      dirs.setMaxItems(dl.getMaxItems()); transferVariable(dl, dirs, "maxItems");
+      dirs.setRecursive(dl.getRecursive()); transferVariable(dl, dirs, "recursive");
 
       LocalFileSearch files = new LocalFileSearch();
-      files.setDirectory(dl.getWatchDir()); transferVariable(dl, "watchDir", fs, "directory");
-      files.setSorting(dl.getSorting()); transferVariable(dl, fs, "sorting");
-      files.setSortDescending(dl.getSortDescending()); transferVariable(dl, fs, "sortDescending");
-      files.setRegExp(dl.getRegExp()); transferVariable(dl, fs, "regExp");
-      files.setMaxDepth(dl.getMaxDepth()); transferVariable(dl, fs, "maxDepth");
-      files.setMaxItems(dl.getMaxItems()); transferVariable(dl, fs, "maxItems");
-      files.setRecursive(dl.getRecursive()); transferVariable(dl, fs, "recursive");
+      files.setDirectory(dl.getWatchDir()); transferVariable(dl, "watchDir", files, "directory");
+      files.setSorting(dl.getSorting()); transferVariable(dl, files, "sorting");
+      files.setSortDescending(dl.getSortDescending()); transferVariable(dl, files, "sortDescending");
+      files.setRegExp(dl.getRegExp()); transferVariable(dl, files, "regExp");
+      files.setMaxDepth(dl.getMaxDepth()); transferVariable(dl, files, "maxDepth");
+      files.setMaxItems(dl.getMaxItems()); transferVariable(dl, files, "maxItems");
+      files.setRecursive(dl.getRecursive()); transferVariable(dl, files, "recursive");
 
       MultiSearch multi = new MultiSearch();
       multi.setSearches(new AbstractFileSystemSearchlet[]{dirs, files});
@@ -90,24 +90,24 @@ public class DirectoryListerToFileSystemSearchTransfer
     }
     else if (dl.getListDirs()) {
       LocalDirectorySearch dirs = new LocalDirectorySearch();
-      dirs.setDirectory(dl.getWatchDir()); transferVariable(dl, "watchDir", fs, "directory");
-      dirs.setSorting(dl.getSorting()); transferVariable(dl, fs, "sorting");
-      dirs.setSortDescending(dl.getSortDescending()); transferVariable(dl, fs, "sortDescending");
-      dirs.setRegExp(dl.getRegExp()); transferVariable(dl, fs, "regExp");
-      dirs.setMaxDepth(dl.getMaxDepth()); transferVariable(dl, fs, "maxDepth");
-      dirs.setMaxItems(dl.getMaxItems()); transferVariable(dl, fs, "maxItems");
-      dirs.setRecursive(dl.getRecursive()); transferVariable(dl, fs, "recursive");
+      dirs.setDirectory(dl.getWatchDir()); transferVariable(dl, "watchDir", dirs, "directory");
+      dirs.setSorting(dl.getSorting()); transferVariable(dl, dirs, "sorting");
+      dirs.setSortDescending(dl.getSortDescending()); transferVariable(dl, dirs, "sortDescending");
+      dirs.setRegExp(dl.getRegExp()); transferVariable(dl, dirs, "regExp");
+      dirs.setMaxDepth(dl.getMaxDepth()); transferVariable(dl, dirs, "maxDepth");
+      dirs.setMaxItems(dl.getMaxItems()); transferVariable(dl, dirs, "maxItems");
+      dirs.setRecursive(dl.getRecursive()); transferVariable(dl, dirs, "recursive");
       fs.setSearch(dirs);
     }
     else {
       LocalFileSearch files = new LocalFileSearch();
-      files.setDirectory(dl.getWatchDir()); transferVariable(dl, "watchDir", fs, "directory");
-      files.setSorting(dl.getSorting()); transferVariable(dl, fs, "sorting");
-      files.setSortDescending(dl.getSortDescending()); transferVariable(dl, fs, "sortDescending");
-      files.setRegExp(dl.getRegExp()); transferVariable(dl, fs, "regExp");
-      files.setMaxDepth(dl.getMaxDepth()); transferVariable(dl, fs, "maxDepth");
-      files.setMaxItems(dl.getMaxItems()); transferVariable(dl, fs, "maxItems");
-      files.setRecursive(dl.getRecursive()); transferVariable(dl, fs, "recursive");
+      files.setDirectory(dl.getWatchDir()); transferVariable(dl, "watchDir", files, "directory");
+      files.setSorting(dl.getSorting()); transferVariable(dl, files, "sorting");
+      files.setSortDescending(dl.getSortDescending()); transferVariable(dl, files, "sortDescending");
+      files.setRegExp(dl.getRegExp()); transferVariable(dl, files, "regExp");
+      files.setMaxDepth(dl.getMaxDepth()); transferVariable(dl, files, "maxDepth");
+      files.setMaxItems(dl.getMaxItems()); transferVariable(dl, files, "maxItems");
+      files.setRecursive(dl.getRecursive()); transferVariable(dl, files, "recursive");
       fs.setSearch(files);
     }
     if (dl.getOptionManager().hasVariableForProperty("files"))
