@@ -202,7 +202,8 @@ public abstract class AbstractOptionConsumer<C,V>
    * @param object	the object to check
    */
   protected void checkDeprecation(Object object) {
-    checkDeprecation(object.getClass());
+    if (object != null)
+      checkDeprecation(object.getClass());
   }
 
   /**
