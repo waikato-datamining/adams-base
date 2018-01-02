@@ -14,8 +14,8 @@
  */
 
 /*
- * DecodeBarcode.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * ZXing.java
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.barcode.decode;
@@ -65,6 +65,11 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  * 
+ * <pre>-try-harder &lt;boolean&gt; (property: tryHarder)
+ * &nbsp;&nbsp;&nbsp;If enabled, the detection tries harder to locate barcodes (slower).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-format &lt;AZTEC|CODABAR|CODE_39|CODE_93|CODE_128|DATA_MATRIX|EAN_8|EAN_13|ITF|MAXICODE|PDF_417|QR_CODE|RSS_14|RSS_EXPANDED|UPC_A|UPC_E|UPC_EAN_EXTENSION&gt; [-format ...] (property: format)
  * &nbsp;&nbsp;&nbsp;Barcode format type to expect.
  * &nbsp;&nbsp;&nbsp;default: 
@@ -73,7 +78,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author lx51 (lx51 at students dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ZXing
   extends AbstractBarcodeDecoder {
