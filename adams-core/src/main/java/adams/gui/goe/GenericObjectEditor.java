@@ -15,7 +15,7 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2017 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -36,7 +36,6 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
-import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import adams.gui.goe.classtree.ClassTree;
 import adams.gui.goe.classtree.StrictClassTreeFilter;
 
@@ -46,7 +45,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
@@ -469,13 +467,6 @@ public class GenericObjectEditor
       m_ButtonCopyPaste.setToolTipText("Displays copy/paste/favorites action menu");
       m_ButtonCopyPaste.addActionListener((ActionEvent e) -> {
 	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_ButtonCopyPaste);
-	// favorites
-	menu.addSeparator();
-	Favorites.getSingleton().customizePopupMenu(
-	  menu,
-	  getClassType(),
-	  getValue(),
-	  (FavoriteSelectionEvent fe) -> setValue(fe.getFavorite().getObject()));
 	menu.show(m_ButtonCopyPaste, 0, m_ButtonCopyPaste.getHeight());
       });
       m_TopPanel = new JPanel(new BorderLayout());
@@ -488,30 +479,12 @@ public class GenericObjectEditor
       add(m_TopPanel, BorderLayout.NORTH);
 
       // popup menu
-      final JButton chooseButtonFinal = m_ButtonChoose;
       m_ComboBoxClassname.addMouseListener(new MouseAdapter() {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	  if (MouseUtils.isRightClick(e)) {
 	    e.consume();
-
 	    GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_Self);
-
-	    if (chooseButtonFinal.isVisible()) {
-	      JMenuItem item = new JMenuItem("Choose...", GUIHelper.getIcon("tree.gif"));
-	      item.addActionListener((ActionEvent ae) -> chooseButtonFinal.doClick());
-	      menu.insert(new JPopupMenu.Separator(), 0);
-	      menu.insert(item, 0);
-	    }
-
-	    // favorites
-	    menu.addSeparator();
-	    Favorites.getSingleton().customizePopupMenu(
-		menu,
-		getClassType(),
-		getValue(),
-		(FavoriteSelectionEvent fe) -> setValue(fe.getFavorite().getObject()));
-
 	    menu.show(m_Self, e.getX(), e.getY());
 	  }
 	  else {
@@ -751,6 +724,15 @@ public class GenericObjectEditor
      */
     public boolean getCanChangeClassInDialog() {
       return m_ButtonChoose.isVisible();
+    }
+
+    /**
+     * Returns the choose button.
+     *
+     * @return		the button
+     */
+    public JButton getChooseButton() {
+      return m_ButtonChoose;
     }
 
     /**

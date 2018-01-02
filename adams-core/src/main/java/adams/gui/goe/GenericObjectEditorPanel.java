@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorPanel.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -25,13 +25,9 @@ import adams.core.option.OptionUtils;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
-import adams.gui.event.HistorySelectionEvent;
-import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import adams.gui.goe.GenericObjectEditor.GOEPanel;
 import adams.gui.goe.GenericObjectEditor.PostProcessObjectHandler;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionEvent;
 
@@ -147,6 +143,15 @@ public class GenericObjectEditorPanel
   }
 
   /**
+   * Returns the history.
+   *
+   * @return		the underlying history
+   */
+  public PersistentObjectHistory getHistory() {
+    return m_History;
+  }
+
+  /**
    * Returns the current value.
    *
    * @return		the current value
@@ -196,41 +201,12 @@ public class GenericObjectEditorPanel
   @Override
   protected BasePopupMenu getPopupMenu() {
     GenericObjectEditorPopupMenu 	menu;
-    JMenuItem				item;
 
     menu = new GenericObjectEditorPopupMenu(m_Editor, m_Self);
     menu.addChangeListener((ChangeEvent e) -> {
       setCurrent(m_Editor.getValue());
       notifyChangeListeners(new ChangeEvent(m_Self));
     });
-
-    if (isEditable())
-      item = new JMenuItem("Edit...", GUIHelper.getIcon("properties.gif"));
-    else
-      item = new JMenuItem("Show...", GUIHelper.getIcon("properties.gif"));
-    item.addActionListener((ActionEvent e) -> choose());
-    menu.insert(new JPopupMenu.Separator(), 0);
-    menu.insert(item, 0);
-
-    if (isEditable()) {
-      menu.addSeparator();
-      Favorites.getSingleton().customizePopupMenu(
-        menu,
-        m_Editor.getClassType(),
-        getCurrent(),
-        (FavoriteSelectionEvent e) -> {
-          setCurrent(e.getFavorite().getObject());
-          notifyChangeListeners(new ChangeEvent(m_Self));
-        });
-
-      m_History.customizePopupMenu(
-        menu,
-        getCurrent(),
-        (HistorySelectionEvent e) -> {
-          setCurrent(e.getHistoryItem());
-          notifyChangeListeners(new ChangeEvent(m_Self));
-        });
-    }
 
     // customized menu?
     if (m_PopupMenuCustomizer != null)

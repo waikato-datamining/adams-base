@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GenericObjectEditorPopupMenu.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
+import adams.core.ClassLister;
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
 import adams.core.option.OptionHandler;
@@ -27,6 +28,8 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
+import adams.gui.goe.popupmenu.CustomizerComparator;
+import adams.gui.goe.popupmenu.GenericObjectEditorPopupMenuCustomizer;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
@@ -39,10 +42,12 @@ import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Generic GOE popup menu, for copy/paste, etc.
@@ -55,6 +60,9 @@ public class GenericObjectEditorPopupMenu
 
   /** for serialization. */
   private static final long serialVersionUID = -5216584001020734521L;
+
+  /** the customizers. */
+  protected static List<GenericObjectEditorPopupMenuCustomizer> m_Customizers;
 
   /** listeners that get notified when the user changes the setup. */
   protected HashSet<ChangeListener> m_ChangeListeners;
@@ -82,16 +90,15 @@ public class GenericObjectEditorPopupMenu
     final boolean 	customStringRepresentation;
     final String 	itemText;
     final boolean	canChangeClass;
-    
-    m_ChangeListeners = new HashSet<ChangeListener>();
-    item              = null;
+
+    m_ChangeListeners = new HashSet<>();
     hasNested         = (editor.getValue() instanceof OptionHandler);
 
     if (editor instanceof GenericArrayEditor)
       customStringRepresentation = (((GenericArrayEditor) editor).getElementEditor() instanceof CustomStringRepresentationHandler);
     else
       customStringRepresentation = (editor instanceof CustomStringRepresentationHandler);
-    
+
     itemText = getMenuItemText(customStringRepresentation);
 
     if (editor instanceof GenericArrayEditor)
@@ -102,11 +109,8 @@ public class GenericObjectEditorPopupMenu
     // copy nested
     if (hasNested) {
       item = new JMenuItem("Copy nested setup", GUIHelper.getIcon("copy.gif"));
-      item.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  ClipboardHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, (OptionHandler) editor.getValue()));
-	}
-      });
+      item.addActionListener((ActionEvent e) ->
+	ClipboardHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, (OptionHandler) editor.getValue())));
       add(item);
     }
 
@@ -115,95 +119,116 @@ public class GenericObjectEditorPopupMenu
       item = new JMenuItem("Copy " + itemText, GUIHelper.getEmptyIcon());
     else
       item = new JMenuItem("Copy command-line setup", GUIHelper.getEmptyIcon());
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	StringBuilder content = new StringBuilder();
-	Object current = editor.getValue();
-	boolean isArray = current.getClass().isArray();
-	PropertyEditor actualEditor = editor;
-	if (isArray)
-	  actualEditor = ((GenericArrayEditor) editor).getElementEditor();
-	if (isArray) {
-	  for (int i = 0; i < Array.getLength(current); i++) {
-	    if (i > 0)
-	      content.append("\n");
-	    if (customStringRepresentation)
-	      content.append(((CustomStringRepresentationHandler) actualEditor).toCustomStringRepresentation(Array.get(current, i)));
-	    else
-	      content.append(OptionUtils.getCommandLine(Array.get(current, i)));
-	  }
-	}
-	else {
+    item.addActionListener((ActionEvent e) -> {
+      StringBuilder content = new StringBuilder();
+      Object current = editor.getValue();
+      boolean isArray = current.getClass().isArray();
+      PropertyEditor actualEditor = editor;
+      if (isArray)
+	actualEditor = ((GenericArrayEditor) editor).getElementEditor();
+      if (isArray) {
+	for (int i = 0; i < Array.getLength(current); i++) {
+	  if (i > 0)
+	    content.append("\n");
 	  if (customStringRepresentation)
-	    content.append(((CustomStringRepresentationHandler) actualEditor).toCustomStringRepresentation(current));
+	    content.append(((CustomStringRepresentationHandler) actualEditor).toCustomStringRepresentation(Array.get(current, i)));
 	  else
-	    content.append(OptionUtils.getCommandLine(current));
+	    content.append(OptionUtils.getCommandLine(Array.get(current, i)));
 	}
-	if (content.length() > 0)
-	  ClipboardHelper.copyToClipboard(content.toString());
       }
+      else {
+	if (customStringRepresentation)
+	  content.append(((CustomStringRepresentationHandler) actualEditor).toCustomStringRepresentation(current));
+	else
+	  content.append(OptionUtils.getCommandLine(current));
+      }
+      if (content.length() > 0)
+	ClipboardHelper.copyToClipboard(content.toString());
     });
     add(item);
 
     // paste
     item = new JMenuItem("Paste " + itemText, GUIHelper.getIcon("paste.gif"));
     item.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	updateEditor(editor, comp, canChangeClass, customStringRepresentation, OptionUtils.pasteSetupFromClipboard());
-      }
-    });
+    item.addActionListener((ActionEvent e) ->
+      updateEditor(editor, comp, canChangeClass, customStringRepresentation, OptionUtils.pasteSetupFromClipboard()));
     add(item);
 
     // enter setup
     item = new JMenuItem("Enter " + itemText + "...", GUIHelper.getIcon("input.png"));
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	final BaseDialog dlg;
-	if (GUIHelper.getParentDialog(comp) != null)
-	  dlg = new BaseDialog(GUIHelper.getParentDialog(comp), ModalityType.DOCUMENT_MODAL);
-	else
-	  dlg = new BaseDialog(GUIHelper.getParentFrame(comp), true);
-	dlg.setTitle("Enter " + itemText);
-	dlg.getContentPane().setLayout(new BorderLayout());
+    item.addActionListener((ActionEvent e) -> {
+      final BaseDialog dlg;
+      if (GUIHelper.getParentDialog(comp) != null)
+	dlg = new BaseDialog(GUIHelper.getParentDialog(comp), ModalityType.DOCUMENT_MODAL);
+      else
+	dlg = new BaseDialog(GUIHelper.getParentFrame(comp), true);
+      dlg.setTitle("Enter " + itemText);
+      dlg.getContentPane().setLayout(new BorderLayout());
 
-	// text editor
-	final TextEditorPanel textpanel = new TextEditorPanel();
-	dlg.getContentPane().add(textpanel, BorderLayout.CENTER);
+      // text editor
+      final TextEditorPanel textpanel = new TextEditorPanel();
+      dlg.getContentPane().add(textpanel, BorderLayout.CENTER);
 
-	// buttons
-	JButton buttonOK = new JButton("OK");
-	buttonOK.setMnemonic('O');
-	buttonOK.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    dlg.setVisible(false);
-	    updateEditor(editor, comp, canChangeClass, customStringRepresentation, textpanel.getContent());
-	  }
-	});
-	JButton buttonCancel = new JButton("Cancel");
-	buttonCancel.setMnemonic('C');
-	buttonCancel.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    dlg.setVisible(false);
-	  }
-	});
-	JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-	panel.add(buttonOK);
-	panel.add(buttonCancel);
-	dlg.getContentPane().add(panel, BorderLayout.SOUTH);
+      // buttons
+      JButton buttonOK = new JButton("OK");
+      buttonOK.setMnemonic('O');
+      buttonOK.addActionListener((ActionEvent ae) -> {
+	dlg.setVisible(false);
+	updateEditor(editor, comp, canChangeClass, customStringRepresentation, textpanel.getContent());
+      });
+      JButton buttonCancel = new JButton("Cancel");
+      buttonCancel.setMnemonic('C');
+      buttonCancel.addActionListener((ActionEvent ae) -> dlg.setVisible(false));
+      JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+      panel.add(buttonOK);
+      panel.add(buttonCancel);
+      dlg.getContentPane().add(panel, BorderLayout.SOUTH);
 
-	dlg.pack();
-	dlg.setSize(GUIHelper.getDefaultTinyDialogDimension());
-	dlg.setLocationRelativeTo(comp);
-	dlg.setVisible(true);
-      }
+      dlg.pack();
+      dlg.setSize(GUIHelper.getDefaultTinyDialogDimension());
+      dlg.setLocationRelativeTo(comp);
+      dlg.setVisible(true);
     });
     add(item);
+
+    initializeCustomizers();
+    applyCustomizers(editor, comp);
+  }
+
+  /**
+   * Initializes the menu customizers if necessary.
+   */
+  protected void initializeCustomizers() {
+    Class[]					classes;
+    GenericObjectEditorPopupMenuCustomizer	customizer;
+
+    if (m_Customizers == null) {
+      m_Customizers = new ArrayList<>();
+      classes = ClassLister.getSingleton().getClasses(GenericObjectEditorPopupMenuCustomizer.class);
+      for (Class cls: classes) {
+	try {
+	  customizer = (GenericObjectEditorPopupMenuCustomizer) cls.newInstance();
+	  m_Customizers.add(customizer);
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+      }
+      Collections.sort(m_Customizers, new CustomizerComparator());
+    }
+  }
+
+  /**
+   * Applies the customizers.
+   */
+  protected void applyCustomizers(PropertyEditor editor, JComponent comp) {
+    for (GenericObjectEditorPopupMenuCustomizer customizer: m_Customizers)
+      customizer.customize(this, editor, comp);
   }
 
   /**
    * Returnsa the text to use in menu items and error messages.
-   * 
+   *
    * @param customStringRepresentation	whether editor/element editor supports custom string representation
    * @return				the text
    */
@@ -213,10 +238,10 @@ public class GenericObjectEditorPopupMenu
     else
       return "setup";
   }
-  
+
   /**
    * Updates the editor using the string.
-   * 
+   *
    * @param editor			the editor to update
    * @param canChangeClass		whether the user can change the class
    * @param customStringRepresentation	whether editor/element editor supports custom string representation
@@ -228,9 +253,9 @@ public class GenericObjectEditorPopupMenu
     GenericArrayEditor 	gae;
     String[] 		parts;
     Object		obj;
-    
+
     result = true;
-    
+
     actualEditor = editor;
     gae          = null;
     parts        = new String[0];
@@ -276,8 +301,8 @@ public class GenericObjectEditorPopupMenu
 		actualEditor.setValue(obj);
 	      else
 		throw new IllegalArgumentException(
-		    "Incorrect class: " + obj.getClass().getName() + "\n"
-			+ "Expected: " + actualEditor.getValue().getClass().getName());
+		  "Incorrect class: " + obj.getClass().getName() + "\n"
+		    + "Expected: " + actualEditor.getValue().getClass().getName());
 	    }
 	    else {
 	      actualEditor.setValue(obj);
@@ -293,9 +318,9 @@ public class GenericObjectEditorPopupMenu
       result = false;
       e.printStackTrace();
       GUIHelper.showErrorMessage(
-	  comp, "Error processing " + getMenuItemText(customStringRepresentation) + " from clipboard:\n" + e);
+	comp, "Error processing " + getMenuItemText(customStringRepresentation) + " from clipboard:\n" + e);
     }
-    
+
     return result;
   }
 

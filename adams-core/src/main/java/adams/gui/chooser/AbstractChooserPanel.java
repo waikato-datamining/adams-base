@@ -15,7 +15,7 @@
 
 /*
  * AbstractSelectorPanel.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -512,7 +512,7 @@ public abstract class AbstractChooserPanel<T>
    *
    * @param e		the event to send to the listeners
    */
-  protected void notifyChangeListeners(ChangeEvent e) {
+  public void notifyChangeListeners(ChangeEvent e) {
     Iterator<ChangeListener>	iter;
 
     iter = m_ChangeListeners.iterator();

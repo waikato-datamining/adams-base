@@ -15,7 +15,7 @@
 
 /*
  *    PropertyPanel.java
- *    Copyright (C) 1999-2017 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,12 +24,9 @@ package adams.gui.goe;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
-import adams.gui.goe.Favorites.FavoriteSelectionEvent;
-import adams.gui.goe.Favorites.FavoriteSelectionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
@@ -38,11 +35,9 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 
 /**
@@ -76,9 +71,6 @@ public class PropertyPanel
      */
     public void customizePopupMenu(BasePanel owner, JPopupMenu menu);
   }
-
-  /** the method name for custom panel suppliers. */
-  public final static String METHOD_CUSTOMPANEL = "getCustomPanel";
 
   /** The property editor. */
   protected PropertyEditor m_Editor;
@@ -203,34 +195,6 @@ public class PropertyPanel
 
           GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(m_Editor, m_Self);
 
-          JMenuItem item = new JMenuItem("Edit...", GUIHelper.getIcon("properties.gif"));
-          item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              showPropertyDialog();
-            }
-          });
-          menu.insert(new JPopupMenu.Separator(), 0);
-          menu.insert(item, 0);
-
-          // Variables
-          PropertySheetPanel parent = VariableSupport.findParent(PropertyPanel.this);
-          if (parent != null)
-            VariableSupport.updatePopup(parent, m_Editor, menu);
-
-          // Favorites
-          if (m_Editor instanceof GenericObjectEditor) {
-            menu.addSeparator();
-            Favorites.getSingleton().customizePopupMenu(
-        	menu,
-        	((GenericObjectEditor) m_Editor).getClassType(),
-        	m_Editor.getValue(),
-        	new FavoriteSelectionListener() {
-        	  public void favoriteSelected(FavoriteSelectionEvent e) {
-        	    m_Editor.setValue(e.getFavorite().getObject());
-        	  }
-        	});
-          }
-
           // customized popup?
           if (m_Editor instanceof PopupMenuCustomizer)
             ((PopupMenuCustomizer) m_Editor).customizePopupMenu(PropertyPanel.this, menu);
@@ -245,19 +209,11 @@ public class PropertyPanel
     newPref.width = newPref.height * 5;
     setPreferredSize(newPref);
 
-    m_Editor.addPropertyChangeListener(new PropertyChangeListener () {
-      public void propertyChange(PropertyChangeEvent evt) {
-	repaint();
-      }
-    });
+    m_Editor.addPropertyChangeListener((PropertyChangeEvent evt) -> repaint());
 
     m_ButtonProperties = new JButton("...");
     m_ButtonProperties.setToolTipText("Click to edit properties");
-    m_ButtonProperties.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	showPropertyDialog();
-      }
-    });
+    m_ButtonProperties.addActionListener((ActionEvent e) -> showPropertyDialog());
     add(m_ButtonProperties, BorderLayout.EAST);
   }
 

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorQuickEditTab.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -30,9 +30,6 @@ import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
-import adams.gui.goe.Favorites;
-import adams.gui.goe.Favorites.FavoriteSelectionEvent;
-import adams.gui.goe.Favorites.FavoriteSelectionListener;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorPopupMenu;
 import adams.gui.goe.PropertySheetPanel;
@@ -46,9 +43,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  * Tab for displaying the GOE for the currently selected actor for quickly
@@ -126,13 +121,10 @@ public class ActorQuickEditTab
     public OptionsPanel(ActorQuickEditTab owner, GenericObjectEditor editor) {
       m_Owner  = owner;
       m_Editor = editor;
-      m_Editor.addPropertyChangeListener(new PropertyChangeListener() {
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-	  m_Object = m_Editor.getValue();
-	  m_Backup = copyObject(m_Object);
-	  updateProperties();
-	}
+      m_Editor.addPropertyChangeListener((PropertyChangeEvent evt) -> {
+	m_Object = m_Editor.getValue();
+	m_Backup = copyObject(m_Object);
+	updateProperties();
       });
 
       m_Object = m_Editor.getValue();
@@ -146,36 +138,32 @@ public class ActorQuickEditTab
       m_ButtonApply.setEnabled(true);
       m_ButtonApply.setToolTipText("Apply changes");
       m_ButtonApply.setMnemonic('A');
-      m_ButtonApply.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  m_Object = m_PanelProperties.getTarget();
-	  if (m_TreePath == null) {
-	    System.err.println("No path linking back to actor tree, cannot apply settings!");
-	    return;
-	  }
-	  Tree tree = m_Owner.getCurrentPanel().getTree();
-	  Node node = (Node) m_TreePath.getLastPathComponent();
-	  Node parent = (Node) node.getParent();
-	  node.setActor((Actor) m_Object);
-	  tree.updateActorName(node);
-	  tree.setModified(true);
-	  tree.nodeStructureChanged(node);
-	  tree.notifyActorChangeListeners(new ActorChangeEvent(tree, node, Type.MODIFY));
-	  if (!tree.getIgnoreNameChanges())
-	    AbstractEditPostProcessor.apply(tree, ((parent != null) ? parent.getActor() : null), (Actor) m_Backup, node.getActor());
-	  m_Backup = copyObject(m_Object);
+      m_ButtonApply.addActionListener((ActionEvent e) -> {
+	m_Object = m_PanelProperties.getTarget();
+	if (m_TreePath == null) {
+	  System.err.println("No path linking back to actor tree, cannot apply settings!");
+	  return;
 	}
+	Tree tree = m_Owner.getCurrentPanel().getTree();
+	Node node = (Node) m_TreePath.getLastPathComponent();
+	Node parent = (Node) node.getParent();
+	node.setActor((Actor) m_Object);
+	tree.updateActorName(node);
+	tree.setModified(true);
+	tree.nodeStructureChanged(node);
+	tree.notifyActorChangeListeners(new ActorChangeEvent(tree, node, Type.MODIFY));
+	if (!tree.getIgnoreNameChanges())
+	  AbstractEditPostProcessor.apply(tree, ((parent != null) ? parent.getActor() : null), (Actor) m_Backup, node.getActor());
+	m_Backup = copyObject(m_Object);
       });
 
       m_ButtonRevert = new JButton(GUIHelper.getIcon("undo.gif"));
       m_ButtonRevert.setEnabled(true);
       m_ButtonRevert.setToolTipText("Revert changes");
-      m_ButtonRevert.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  if (m_Backup != null) {
-	    m_Editor.setValue(copyObject(m_Backup));
-	    m_Editor.firePropertyChange();
-	  }
+      m_ButtonRevert.addActionListener((ActionEvent e) -> {
+	if (m_Backup != null) {
+	  m_Editor.setValue(copyObject(m_Backup));
+	  m_Editor.firePropertyChange();
 	}
       });
 
@@ -183,22 +171,9 @@ public class ActorQuickEditTab
 
       m_ButtonCopyPaste = new JButton("...");
       m_ButtonCopyPaste.setToolTipText("Displays copy/paste/favorites action menu");
-      m_ButtonCopyPaste.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(m_Editor, m_ButtonCopyPaste);
-	  // favorites
-	  menu.addSeparator();
-	  Favorites.getSingleton().customizePopupMenu(
-	    menu,
-	    m_Editor.getClassType(),
-	    m_Editor.getValue(),
-	    new FavoriteSelectionListener() {
-	      public void favoriteSelected(FavoriteSelectionEvent e) {
-		m_Editor.setValue(e.getFavorite().getObject());
-	      }
-	    });
-	  menu.show(m_ButtonCopyPaste, 0, m_ButtonCopyPaste.getHeight());
-	}
+      m_ButtonCopyPaste.addActionListener((ActionEvent e) -> {
+	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(m_Editor, m_ButtonCopyPaste);
+	menu.show(m_ButtonCopyPaste, 0, m_ButtonCopyPaste.getHeight());
       });
       m_TopPanel = new JPanel(new BorderLayout());
       m_TopPanel.add(m_LabelClassname, BorderLayout.CENTER);
@@ -238,11 +213,11 @@ public class ActorQuickEditTab
       Object 	result;
 
       if (source instanceof OptionHandler)
-        result = OptionUtils.shallowCopy(source);
+	result = OptionUtils.shallowCopy(source);
       else if (source instanceof CloneHandler)
-        result = ((CloneHandler) source).getClone();
+	result = ((CloneHandler) source).getClone();
       else
-        result = Utils.deepCopy(source);
+	result = Utils.deepCopy(source);
 
       return result;
     }

@@ -563,6 +563,10 @@ adams.gui.goe.AbstractEditorRegistration=\
 adams.gui.application.AbstractMenuItemDefinition=\
   adams.gui.menu
 
+# the GOE popup menu customizers
+adams.gui.goe.popupmenu.GenericObjectEditorPopupMenuCustomizer=\
+  adams.gui.goe.popupmenu
+
 # the menu items for the application menu that can be launched
 adams.gui.application.AbstractBasicMenuItemDefinition=\
   adams.gui.menu
