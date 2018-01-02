@@ -119,6 +119,11 @@ public class ZXing
   protected boolean m_AutoDetect;
 
   /**
+   * Whether to try harder detecting a barcode.
+   */
+  protected boolean m_TryHarder;
+
+  /**
    * Expected barcode format.
    */
   protected BarcodeFormat[] m_Format;
@@ -146,6 +151,10 @@ public class ZXing
     m_OptionManager.add(
       "autoDetect", "autoDetect",
       true);
+
+    m_OptionManager.add(
+      "try-harder", "tryHarder",
+      false);
 
     m_OptionManager.add(
       "format", "format",
@@ -178,6 +187,34 @@ public class ZXing
    */
   public String autoDetectTipText() {
     return "Enable or disable barcode format auto-detection; if disabled, it will attempt to decode using the specified format.";
+  }
+
+  /**
+   * Sets whether to try harder to detect barcodes.
+   *
+   * @param value 	true if to try harder
+   */
+  public void setTryHarder(boolean value) {
+    m_TryHarder = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to try harder to find barcodes.
+   *
+   * @return 		true if trying harder
+   */
+  public boolean getTryHarder() {
+    return m_TryHarder;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return tip text for this property suitable for displaying in the GUI or for listing the options.
+   */
+  public String tryHarderTipText() {
+    return "If enabled, the detection tries harder to locate barcodes (slower).";
   }
 
   /**
@@ -227,7 +264,8 @@ public class ZXing
 
       Reader reader = new MultiFormatReader();
       Map<DecodeHintType, Object> hints = new HashMap<>();
-      hints.put(DecodeHintType.TRY_HARDER, null);
+      if (m_TryHarder)
+	hints.put(DecodeHintType.TRY_HARDER, null);
       if (!m_AutoDetect)
         hints.put(DecodeHintType.POSSIBLE_FORMATS, Arrays.asList(m_Format));
       Result data = reader.decode(bitmap, hints);
