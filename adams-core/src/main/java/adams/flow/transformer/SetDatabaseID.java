@@ -15,13 +15,14 @@
 
 /*
  * SetDatabaseID.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.data.id.MutableDatabaseIDHandler;
+import adams.data.id.MutableLargeDatabaseIDHandler;
 import adams.flow.core.Token;
 
 /**
@@ -34,46 +35,53 @@ import adams.flow.core.Token;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.id.MutableDatabaseIDHandler<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.id.MutableLargeDatabaseIDHandler<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.id.MutableDatabaseIDHandler<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.id.MutableLargeDatabaseIDHandler<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SetDatabaseID
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-id &lt;java.lang.Integer&gt; (property: ID)
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-id &lt;java.lang.Long&gt; (property: ID)
  * &nbsp;&nbsp;&nbsp;The new database ID to use.
  * &nbsp;&nbsp;&nbsp;default: -1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -86,7 +94,7 @@ public class SetDatabaseID
   private static final long serialVersionUID = 7195919809805609634L;
 
   /** the database ID to set. */
-  protected Integer m_ID;
+  protected Long m_ID;
 
   /**
    * Returns a string describing the object.
@@ -110,7 +118,7 @@ public class SetDatabaseID
 
     m_OptionManager.add(
 	    "id", "ID",
-	    -1);
+	    -1L);
   }
 
   /**
@@ -118,7 +126,7 @@ public class SetDatabaseID
    *
    * @param value	the ID
    */
-  public void setID(Integer value) {
+  public void setID(Long value) {
     m_ID = value;
     reset();
   }
@@ -128,7 +136,7 @@ public class SetDatabaseID
    *
    * @return		the ID
    */
-  public Integer getID() {
+  public Long getID() {
     return m_ID;
   }
 
@@ -151,23 +159,23 @@ public class SetDatabaseID
   public String getQuickInfo() {
     return QuickInfoHelper.toString(this, "ID", m_ID);
   }
-  
+
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->adams.data.id.MutableDatabaseIDHandler.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->adams.data.id.MutableDatabaseIDHandler.class, adams.data.id.MutableLargeDatabaseIDHandler.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{MutableDatabaseIDHandler.class};
+    return new Class[]{MutableDatabaseIDHandler.class, MutableLargeDatabaseIDHandler.class};
   }
 
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->adams.data.id.MutableDatabaseIDHandler.class<!-- flow-generates-end -->
+   * @return		<!-- flow-generates-start -->adams.data.id.MutableDatabaseIDHandler.class, adams.data.id.MutableLargeDatabaseIDHandler.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{MutableDatabaseIDHandler.class};
+    return new Class[]{MutableDatabaseIDHandler.class, MutableLargeDatabaseIDHandler.class};
   }
 
   /**
@@ -177,15 +185,26 @@ public class SetDatabaseID
    */
   @Override
   protected String doExecute() {
-    String			result;
-    MutableDatabaseIDHandler	handler;
+    String				result;
+    MutableDatabaseIDHandler		handler;
+    MutableLargeDatabaseIDHandler	lhandler;
 
     result = null;
 
     try {
-      handler       = (MutableDatabaseIDHandler) m_InputToken.getPayload();
-      handler.setDatabaseID(m_ID);
-      m_OutputToken = new Token(handler);
+      if (m_InputToken.hasPayload(MutableDatabaseIDHandler.class)) {
+	handler = m_InputToken.getPayload(MutableDatabaseIDHandler.class);
+	handler.setDatabaseID(m_ID.intValue());
+	m_OutputToken = new Token(handler);
+      }
+      else if (m_InputToken.hasPayload(MutableLargeDatabaseIDHandler.class)) {
+	lhandler = m_InputToken.getPayload(MutableLargeDatabaseIDHandler.class);
+	lhandler.setLargeDatabaseID(m_ID);
+	m_OutputToken = new Token(lhandler);
+      }
+      else {
+        result = m_InputToken.unhandledData();
+      }
     }
     catch (Exception e) {
       m_OutputToken = null;
