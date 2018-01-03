@@ -15,7 +15,7 @@
 
 /*
  * LogEntry.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -25,7 +25,7 @@ import adams.core.DateFormat;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.net.InternetHelper;
-import adams.data.id.DatabaseIDHandler;
+import adams.data.id.MutableLargeDatabaseIDHandler;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -39,10 +39,9 @@ import java.util.List;
  * A simple log entry container that can be stored and retrieve in a database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LogEntry
-  implements Serializable, DatabaseIDHandler, CloneHandler<LogEntry>, Comparable<LogEntry> {
+  implements Serializable, MutableLargeDatabaseIDHandler, CloneHandler<LogEntry>, Comparable<LogEntry> {
 
   /** for serialization. */
   private static final long serialVersionUID = 565425043739971996L;
@@ -78,7 +77,7 @@ public class LogEntry
   public final static String STATUS_RESOLVED = "Resolved";
 
   /** the database ID of the entry. */
-  protected int m_DatabaseID;
+  protected long m_DatabaseID;
 
   /** the computer name. */
   protected String m_Host;
@@ -128,7 +127,7 @@ public class LogEntry
    *
    * @param value	the database ID
    */
-  public void setDatabaseID(int value) {
+  public void setLargeDatabaseID(long value) {
     m_DatabaseID = value;
   }
 
@@ -137,7 +136,7 @@ public class LogEntry
    *
    * @return		the database ID
    */
-  public int getDatabaseID() {
+  public long getLargeDatabaseID() {
     return m_DatabaseID;
   }
 
@@ -348,14 +347,14 @@ public class LogEntry
     LogEntry	result;
 
     result = new LogEntry();
-    result.setDatabaseID(m_DatabaseID);
-    result.setHost(new String(getHost()));
-    result.setIP(new String(getIP()));
-    result.setType(new String(m_Type));
-    result.setMessage(new String(m_Message));
+    result.setLargeDatabaseID(m_DatabaseID);
+    result.setHost(getHost());
+    result.setIP(getIP());
+    result.setType(m_Type);
+    result.setMessage(m_Message);
     result.setGeneration((Date) m_Generation.clone());
-    result.setSource(new String(m_Source));
-    result.setStatus(new String(m_Status));
+    result.setSource(m_Source);
+    result.setStatus(m_Status);
 
     return result;
   }
@@ -372,7 +371,7 @@ public class LogEntry
   public int compareTo(LogEntry o) {
     int		result;
 
-    result = new Integer(getDatabaseID()).compareTo(new Integer(o.getDatabaseID()));
+    result = Long.compare(getLargeDatabaseID(), o.getLargeDatabaseID());
     if (result == 0)
       result = getGeneration().compareTo(o.getGeneration());
 

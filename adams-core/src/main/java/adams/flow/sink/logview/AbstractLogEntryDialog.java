@@ -13,15 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractLogEntryDialog.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.logview;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import adams.core.Constants;
 import adams.core.Properties;
@@ -33,11 +29,14 @@ import adams.db.LogEntry;
 import adams.flow.sink.LogViewer;
 import adams.gui.core.BaseDialog;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Ancestor for dialogs that view a {@link LogEntry}.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractLogEntryDialog
   extends AbstractOptionHandler
@@ -190,8 +189,8 @@ public abstract class AbstractLogEntryDialog
     
     result = getDefaultTitle() + " - ";
     
-    if (entry.getDatabaseID() != Constants.NO_ID)
-      result += "DB #" + entry.getDatabaseID();
+    if (entry.getLargeDatabaseID() != Constants.NO_ID)
+      result += "DB #" + entry.getLargeDatabaseID();
     else
       result += "Time " + entry.getGenerationAsString();
     

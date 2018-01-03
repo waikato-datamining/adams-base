@@ -15,7 +15,7 @@
 
 /*
  * Rejector.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -251,7 +251,7 @@ public class Rejector
     props   = new Properties();
     if (handler instanceof DatabaseIDHandler) {
       props.setInteger(LogEntry.KEY_DBID, ((DatabaseIDHandler) handler).getDatabaseID());
-      log.setDatabaseID(((DatabaseIDHandler) handler).getDatabaseID());
+      log.setLargeDatabaseID(((DatabaseIDHandler) handler).getDatabaseID());
     }
     if (handler instanceof IDHandler)
       props.setProperty(LogEntry.KEY_ID, ((IDHandler) handler).getID());

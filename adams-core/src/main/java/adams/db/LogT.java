@@ -15,7 +15,7 @@
 
 /*
  * LogT.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -42,7 +42,6 @@ import java.util.logging.Level;
  * Table for storing log messages.
  *
  * @author Fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class LogT
   extends AbstractIndexedTable {
@@ -137,7 +136,7 @@ public abstract class LogT
    * 			and field from
    * @return		the log entry, null if not found
    */
-  public LogEntry load(int auto_id) {
+  public LogEntry load(long auto_id) {
     LogEntry	result;
     ResultSet 	rs;
 
@@ -243,7 +242,7 @@ public abstract class LogT
     try {
       if (rs.next()) {
 	result = new LogEntry();
-	result.setDatabaseID(rs.getInt("AUTO_ID"));
+	result.setLargeDatabaseID(rs.getLong("AUTO_ID"));
 	result.setHost(rs.getString("HOST"));
 	result.setIP(rs.getString("IP"));
 	result.setType(rs.getString("TYPE"));
@@ -267,10 +266,10 @@ public abstract class LogT
    * @return		true if a log entry already exists
    */
   public boolean exists(LogEntry log) {
-    if (log.getDatabaseID() == Constants.NO_ID)
+    if (log.getLargeDatabaseID() == Constants.NO_ID)
       return false;
     else
-      return (load(log.getDatabaseID()) != null);
+      return (load(log.getLargeDatabaseID()) != null);
   }
 
   /**
@@ -305,7 +304,7 @@ public abstract class LogT
 	stmt.setTimestamp(5, new Timestamp(log.getGeneration().getTime()));
 	stmt.setString(6, log.getSource());
 	stmt.setString(7, log.getStatus());
-	stmt.setInt(8, log.getDatabaseID());
+	stmt.setLong(8, log.getLargeDatabaseID());
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to prepare update statement: " + sql, e);
@@ -383,7 +382,7 @@ public abstract class LogT
     String	sql;
 
     sql = "DELETE FROM " + getTableName() + " "
-       	+ "WHERE AUTO_ID = " + log.getDatabaseID() + "";
+       	+ "WHERE AUTO_ID = " + log.getLargeDatabaseID() + "";
 
     getLogger().info("Removing: " + sql);
     try {

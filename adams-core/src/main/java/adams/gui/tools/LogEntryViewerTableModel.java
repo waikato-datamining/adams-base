@@ -13,26 +13,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LogEntryViewerModel.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Vector;
 
 import adams.db.LogEntry;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.CustomSearchTableModel;
 import adams.gui.core.SearchParameters;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Vector;
+
 /**
  * The table model for displaying LogEntry objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LogEntryViewerTableModel
   extends AbstractBaseTableModel
@@ -48,7 +47,7 @@ public class LogEntryViewerTableModel
    * Initializes the model with no data.
    */
   public LogEntryViewerTableModel() {
-    this(new Vector<LogEntry>());
+    this(new Vector<>());
   }
 
   /**
@@ -153,7 +152,7 @@ public class LogEntryViewerTableModel
     else if (column == 1)
       return entry.getIP();
     else if (column == 2)
-      return entry.getDatabaseID();
+      return entry.getLargeDatabaseID();
     else if (column == 3)
       return entry.getGenerationAsString();
     else if (column == 4)
@@ -174,7 +173,7 @@ public class LogEntryViewerTableModel
    */
   public Class getColumnClass(int column) {
     if (column == 2)
-      return Integer.class;
+      return Long.class;
     else
       return String.class;
   }
@@ -199,7 +198,7 @@ public class LogEntryViewerTableModel
 	entry.getStatus(),
 	entry.getSource()};
 
-    if (params.isInteger() && (params.matches(entry.getDatabaseID()))) {
+    if (params.getLong() && (params.matches(entry.getLargeDatabaseID()))) {
       return true;
     }
     else {

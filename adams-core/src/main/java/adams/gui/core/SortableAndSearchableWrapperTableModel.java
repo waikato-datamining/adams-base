@@ -742,7 +742,7 @@ public class SortableAndSearchableWrapperTableModel
 
       if (isColumnNumeric(i)) {
 	number = (Number) value;
-        if (params.isInteger())
+        if (params.getLong())
 	  result = params.matches(number.intValue());
         else
 	  result = params.matches(number.doubleValue());

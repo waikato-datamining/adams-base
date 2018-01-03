@@ -26,7 +26,6 @@ import adams.db.LogEntry;
  * Helper class for writing log entries to a file (in CSV format).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LogEntryWriter {
 
@@ -63,7 +62,7 @@ public class LogEntryWriter {
 
     entry =   "\"" + log.getHost() + "\","
             + "\"" + log.getIP() + "\","
-            + log.getDatabaseID() + ","
+            + log.getLargeDatabaseID() + ","
             + "\"" + log.getGenerationAsString() + "\","
             + "\"" + log.getType() + "\","
             + "\"" + log.getStatus() + "\","

@@ -15,12 +15,13 @@
 
 /*
  * GetDatabaseID.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.data.id.DatabaseIDHandler;
+import adams.data.id.LargeDatabaseIDHandler;
 import adams.flow.core.Token;
 
 /**
@@ -71,7 +72,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GetDatabaseID
   extends AbstractTransformer {
@@ -95,7 +95,7 @@ public class GetDatabaseID
    * @return		<!-- flow-accepts-start -->adams.data.id.DatabaseIDHandler.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{DatabaseIDHandler.class};
+    return new Class[]{DatabaseIDHandler.class, LargeDatabaseIDHandler.class};
   }
 
   /**
@@ -104,7 +104,7 @@ public class GetDatabaseID
    * @return		<!-- flow-generates-start -->java.lang.Integer.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{Integer.class};
+    return new Class[]{Integer.class, Long.class};
   }
 
   /**
@@ -114,14 +114,24 @@ public class GetDatabaseID
    */
   @Override
   protected String doExecute() {
-    String		result;
-    DatabaseIDHandler	handler;
+    String			result;
+    DatabaseIDHandler		handler;
+    LargeDatabaseIDHandler	lhandler;
 
     result = null;
 
     try {
-      handler       = (DatabaseIDHandler) m_InputToken.getPayload();
-      m_OutputToken = new Token(new Integer(handler.getDatabaseID()));
+      if (m_InputToken.hasPayload(DatabaseIDHandler.class)) {
+	handler = m_InputToken.getPayload(DatabaseIDHandler.class);
+	m_OutputToken = new Token(handler.getDatabaseID());
+      }
+      else if (m_InputToken.hasPayload(LargeDatabaseIDHandler.class)) {
+	lhandler = m_InputToken.getPayload(LargeDatabaseIDHandler.class);
+	m_OutputToken = new Token(lhandler.getLargeDatabaseID());
+      }
+      else {
+        result = m_InputToken.unhandledData();
+      }
     }
     catch (Exception e) {
       m_OutputToken = null;

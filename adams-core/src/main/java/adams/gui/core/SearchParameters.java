@@ -15,7 +15,7 @@
 
 /*
  * SearchParameters.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -37,8 +37,8 @@ public class SearchParameters {
   /** the search string. */
   protected String m_SearchString;
 
-  /** not null if the search string is an integer. */
-  protected Integer m_Integer;
+  /** not null if the search string is a long. */
+  protected Long m_Long;
 
   /** not null if the search string is a double. */
   protected Double m_Double;
@@ -80,10 +80,10 @@ public class SearchParameters {
     }
 
     try {
-      m_Integer = Integer.parseInt(m_SearchString);
+      m_Long = Long.parseLong(m_SearchString);
     }
     catch (Exception e) {
-      m_Integer = null;
+      m_Long = null;
     }
 
     try {
@@ -118,8 +118,8 @@ public class SearchParameters {
    *
    * @return		true if an integer
    */
-  public boolean isInteger() {
-    return (m_Integer != null);
+  public boolean getLong() {
+    return (m_Long != null);
   }
 
   /**
@@ -159,7 +159,29 @@ public class SearchParameters {
    * @return		true if the search is the same integer
    */
   public boolean matches(Integer i) {
-    return (m_Integer != null) && (i != null) && (m_Integer.equals(i));
+    return (m_Long != null) && (i != null) && (m_Long.equals(i.longValue()));
+  }
+
+  /**
+   * Matches the long against the search string if it represents a
+   * long.
+   *
+   * @param l		the long to check
+   * @return		true if the search is the same long
+   */
+  public boolean matches(Long l) {
+    return (m_Long != null) && (l != null) && (m_Long.equals(l));
+  }
+
+  /**
+   * Matches the float against the search string if it represents a
+   * float.
+   *
+   * @param f		the float to check
+   * @return		true if the search is the same float
+   */
+  public boolean matches(Float f) {
+    return (m_Double != null) && (f != null) && (m_Double.equals(f.doubleValue()));
   }
 
   /**
@@ -183,7 +205,7 @@ public class SearchParameters {
     return
         "search='" + getSearchString() + "', "
       + "regexp=" + isRegExp() + ", "
-      + "integer=" + isInteger() + ", "
+      + "integer=" + getLong() + ", "
       + "double=" + isDouble();
   }
 }
