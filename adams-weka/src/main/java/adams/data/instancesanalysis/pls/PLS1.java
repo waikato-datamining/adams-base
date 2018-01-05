@@ -55,14 +55,14 @@ import java.util.Map;
  *    year = {2002},
  *    ISBN = {0-9528666-2-5}
  * }
- * 
+ *
  * &#64;misc{missing_id,
  *    author = {StatSoft, Inc.},
  *    booktitle = {Electronic Textbook StatSoft},
  *    title = {Partial Least Squares (PLS)},
  *    HTTP = {http://www.statsoft.com/textbook/stpls.html}
  * }
- * 
+ *
  * &#64;misc{missing_id,
  *    author = {Bent Jorgensen and Yuri Goegebeur},
  *    booktitle = {ST02: Multivariate Data Analysis and Chemometrics},
@@ -75,23 +75,23 @@ import java.util.Map;
  *
  <!-- options-start -->
  * Valid options are: <p>
- * 
+ *
  * <pre> -debug &lt;value&gt;
  *  If enabled, additional info may be output to the console.
  *  (default: false)</pre>
- * 
+ *
  * <pre> -preprocessing &lt;value&gt;
  *  The type of preprocessing to perform.
  *  (default: CENTER)</pre>
- * 
+ *
  * <pre> -C &lt;value&gt;
  *  The number of components to compute.
  *  (default: 20)</pre>
- * 
+ *
  * <pre> -prediction &lt;value&gt;
  *  The type of prediction to perform.
  *  (default: NONE)</pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -232,24 +232,75 @@ public class PLS1
   }
 
   /**
+   * Performs predictions on the data.
+   *
+   * @param data	the input data
+   * @return		the predicted data
+   */
+  protected Instances predict(Instances data) {
+    Instances result;
+    Instances tmpInst;
+    int i;
+    int j;
+    Matrix x;
+    Matrix X;
+    Matrix T;
+    Matrix t;
+
+    result = new Instances(getOutputFormat());
+
+    for (i = 0; i < data.numInstances(); i++) {
+      // work on each instance
+      tmpInst = new Instances(data, 0);
+      tmpInst.add((Instance) data.instance(i).copy());
+      x = MatrixHelper.getX(tmpInst);
+      X = new Matrix(1, getNumComponents());
+      T = new Matrix(1, getNumComponents());
+
+      for (j = 0; j < getNumComponents(); j++) {
+	MatrixHelper.setVector(x, X, j);
+	// 1. step: tj = xj * wj
+	t = x.times(MatrixHelper.getVector(m_W, j));
+	MatrixHelper.setVector(t, T, j);
+	// 2. step: xj+1 = xj - tj*pj^T (tj is 1x1 matrix!)
+	x = x.minus(MatrixHelper.getVector(m_P, j).transpose().times(t.get(0, 0)));
+      }
+
+      switch (m_PredictionType) {
+	case ALL:
+	  tmpInst = MatrixHelper.toInstances(getOutputFormat(), T, T.times(m_b_hat));
+	  break;
+	case NONE:
+	case EXCEPT_CLASS:
+	  tmpInst = MatrixHelper.toInstances(getOutputFormat(), T, MatrixHelper.getY(tmpInst));
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled prediction type: " + m_PredictionType);
+      }
+
+      result.add(tmpInst.instance(0));
+
+    }
+
+    return result;
+  }
+
+  /**
    * Transforms the data, initializes if necessary.
    *
    * @param data	the data to use
    */
   protected Instances doTransform(Instances data, Map<String,Object> params) throws Exception {
-    Matrix X, X_trans, x;
+    Matrix X, X_trans;
     Matrix y;
     Matrix W, w;
     Matrix T, t, t_trans;
     Matrix P, p, p_trans;
     double b;
     Matrix b_hat;
-    int i;
     int j;
-    Matrix X_new;
     Matrix tmp;
     Instances result;
-    Instances tmpInst;
 
     // initialization
     if (!isInitialized()) {
@@ -292,9 +343,6 @@ public class PLS1
       // W*(P^T*W)^-1
       tmp = W.times(((P.transpose()).times(W)).inverse());
 
-      // X_new = X*W*(P^T*W)^-1
-      X_new = MatrixHelper.getX(data).times(tmp);
-
       // factor = W*(P^T*W)^-1 * b_hat
       m_r_hat = tmp.times(b_hat);
 
@@ -303,53 +351,11 @@ public class PLS1
       m_W = W;
       m_b_hat = b_hat;
 
-      switch (m_PredictionType) {
-	case ALL:
-	  result = MatrixHelper.toInstances(getOutputFormat(), X_new, y);
-	  break;
-	case NONE:
-	case EXCEPT_CLASS:
-	  result = MatrixHelper.toInstances(getOutputFormat(), X_new, MatrixHelper.getY(data));
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled prediction type: " + m_PredictionType);
-      }
+      result = predict(data);
     }
     // prediction
     else {
-      result = new Instances(getOutputFormat());
-
-      for (i = 0; i < data.numInstances(); i++) {
-	// work on each instance
-	tmpInst = new Instances(data, 0);
-	tmpInst.add((Instance) data.instance(i).copy());
-	x = MatrixHelper.getX(tmpInst);
-	X = new Matrix(1, getNumComponents());
-	T = new Matrix(1, getNumComponents());
-
-	for (j = 0; j < getNumComponents(); j++) {
-	  MatrixHelper.setVector(x, X, j);
-	  // 1. step: tj = xj * wj
-	  t = x.times(MatrixHelper.getVector(m_W, j));
-	  MatrixHelper.setVector(t, T, j);
-	  // 2. step: xj+1 = xj - tj*pj^T (tj is 1x1 matrix!)
-	  x = x.minus(MatrixHelper.getVector(m_P, j).transpose().times(t.get(0, 0)));
-	}
-
-	switch (m_PredictionType) {
-	  case ALL:
-	    tmpInst = MatrixHelper.toInstances(getOutputFormat(), T, T.times(m_b_hat));
-	    break;
-	  case NONE:
-	  case EXCEPT_CLASS:
-	    tmpInst = MatrixHelper.toInstances(getOutputFormat(), T, MatrixHelper.getY(tmpInst));
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled prediction type: " + m_PredictionType);
-	}
-
-	result.add(tmpInst.instance(0));
-      }
+      result = predict(data);
     }
 
     return result;
