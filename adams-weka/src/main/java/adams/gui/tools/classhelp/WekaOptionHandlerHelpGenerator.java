@@ -22,6 +22,7 @@ package adams.gui.tools.classhelp;
 
 import adams.gui.core.ConsolePanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
+import weka.core.Capabilities;
 import weka.core.CapabilitiesHandler;
 import weka.core.MultiInstanceCapabilitiesHandler;
 import weka.core.OptionMetadata;
@@ -31,6 +32,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.MethodDescriptor;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 /**
@@ -62,6 +64,73 @@ public class WekaOptionHandlerHelpGenerator
   @Override
   public boolean isHtml(Class cls) {
     return false;
+  }
+
+  /**
+   * returns a comma-separated list of all the capabilities.
+   *
+   * @param c		the capabilities to get a string representation from
+   * @return		the string describing the capabilities
+   */
+  protected String listCapabilities(Capabilities c) {
+    String	result;
+    Iterator iter;
+
+    result = "";
+    iter   = c.capabilities();
+    while (iter.hasNext()) {
+      if (result.length() != 0)
+	result += ", ";
+      result += iter.next().toString();
+    }
+
+    return result;
+  }
+
+  /**
+   * generates a string from the capapbilities, suitable to add to the help
+   * text.
+   *
+   * @param title	the title for the capabilities
+   * @param c		the capabilities
+   * @return		a string describing the capabilities
+   */
+  protected String addCapabilities(String title, Capabilities c) {
+    String		result;
+    String		caps;
+
+    result = title + "\n";
+
+    // class
+    caps = listCapabilities(c.getClassCapabilities());
+    if (caps.length() != 0) {
+      result += "Class -- ";
+      result += caps;
+      result += "\n\n";
+    }
+
+    // attribute
+    caps = listCapabilities(c.getAttributeCapabilities());
+    if (caps.length() != 0) {
+      result += "Attributes -- ";
+      result += caps;
+      result += "\n\n";
+    }
+
+    // other capabilities
+    caps = listCapabilities(c.getOtherCapabilities());
+    if (caps.length() != 0) {
+      result += "Other -- ";
+      result += caps;
+      result += "\n\n";
+    }
+
+    // additional stuff
+    result += "Additional\n";
+    result += "min # of instances: " + c.getMinimumNumberInstances() + "\n";
+    result += "\n";
+
+    return result;
   }
 
   /**
@@ -147,11 +216,11 @@ public class WekaOptionHandlerHelpGenerator
 	    result.append("SYNOPSIS\n").append(globalInfo).append("\n\n");
 
 	    if (obj instanceof CapabilitiesHandler) {
-	      result.append(weka.gui.PropertySheetPanel.addCapabilities(
+	      result.append(addCapabilities(
 		"CAPABILITIES",
 		((CapabilitiesHandler) obj).getCapabilities()));
 	      if (obj instanceof MultiInstanceCapabilitiesHandler) {
-		result.append(weka.gui.PropertySheetPanel.addCapabilities(
+		result.append(addCapabilities(
 		  "MI CAPABILITIES",
 		  ((MultiInstanceCapabilitiesHandler) obj).getMultiInstanceCapabilities()));
 	      }

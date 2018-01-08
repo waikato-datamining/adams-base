@@ -22,9 +22,9 @@ package adams.gui.chooser;
 
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
+import weka.core.converters.ConverterUtils;
 import weka.core.converters.SimpleArffLoader;
 import weka.core.converters.SimpleArffSaver;
-import weka.gui.GenericObjectEditor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -93,8 +93,8 @@ public class WekaFileChooser
   @Override
   protected void doInitializeFilters() {
     try {
-      initFilters(true, GenericObjectEditor.getClassnames(AbstractFileLoader.class.getName()));
-      initFilters(false, GenericObjectEditor.getClassnames(AbstractFileSaver.class.getName()));
+      initFilters(true, ConverterUtils.getFileLoaders());
+      initFilters(false, ConverterUtils.getFileSavers());
     }
     catch (Exception e) {
       handleException("Failed to initialize Weka loader/saver filters!", e);
@@ -262,7 +262,7 @@ public class WekaFileChooser
     result = null;
 
     try {
-      initFilters(true, GenericObjectEditor.getClassnames(AbstractFileLoader.class.getName()));
+      initFilters(true, ConverterUtils.getFileLoaders());
     }
     catch (Exception e) {
       handleException("Failed to initialize Weka loader/saver filters!", e);
@@ -294,7 +294,7 @@ public class WekaFileChooser
     result = null;
 
     try {
-      initFilters(false, GenericObjectEditor.getClassnames(AbstractFileSaver.class.getName()));
+      initFilters(false, ConverterUtils.getFileSavers());
     }
     catch (Exception e) {
       handleException("Failed to initialize Weka loader/saver filters!", e);

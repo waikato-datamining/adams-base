@@ -69,8 +69,8 @@ surface-quality = ?
 surface-quality = D : 3 (32/0) [23/0]
 surface-quality = E
 |   condition = ?
-|   |   hardness < 67.5 : 3 (11/2) [9/0]
-|   |   hardness >= 67.5 : U (5/0) [8/2]
+|   |   hardness < 68 : 3 (11/2) [9/0]
+|   |   hardness >= 68 : U (5/0) [8/2]
 |   condition = S : 3 (184/0) [93/0]
 |   condition = A : 3 (0/0) [0/0]
 |   condition = X : 3 (0/0) [0/0]

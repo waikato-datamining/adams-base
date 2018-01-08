@@ -19,8 +19,8 @@
  */
 package weka.filters;
 
-import weka.test.AdamsTestHelper;
 import adams.env.Environment;
+import weka.test.AdamsTestHelper;
 
 /**
  * Abstract test for filters within the ADAMS framework.
@@ -56,7 +56,7 @@ public abstract class AbstractAdamsFilterTest
     super.setUp();
 
     if (m_FilteredClassifier != null)
-      m_FilteredClassifier.setDoNotCheckForModifiedClassAttribute(true);
+      m_FilteredClassifier.setCheckForModifiedClassAttribute(false);
   }
 
   /**

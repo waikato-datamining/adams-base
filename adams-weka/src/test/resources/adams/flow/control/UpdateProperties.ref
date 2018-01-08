@@ -1,5 +1,5 @@
 --> dumpfile.txt
-@relation bolts-weka.filters.unsupervised.attribute.Add-Natt-1-C1
+@relation bolts-weka.filters.unsupervised.attribute.Add-Natt-1-C1-W1.0
 
 @attribute att-1 numeric
 @attribute RUN numeric
@@ -52,7 +52,7 @@
 ?,18,4,20,2,1,8,7.32,7.32
 ?,29,4,20,2,1,8,7.91,7.91
 ?,36,4,20,2,1,8,15.58,15.58
-@relation bolts-weka.filters.unsupervised.attribute.Add-Natt-2-C2
+@relation bolts-weka.filters.unsupervised.attribute.Add-Natt-2-C2-W1.0
 
 @attribute RUN numeric
 @attribute att-2 numeric
@@ -105,7 +105,7 @@
 18,?,4,20,2,1,8,7.32,7.32
 29,?,4,20,2,1,8,7.91,7.91
 36,?,4,20,2,1,8,15.58,15.58
-@relation bolts-weka.filters.unsupervised.attribute.Add-Natt-3-C3
+@relation bolts-weka.filters.unsupervised.attribute.Add-Natt-3-C3-W1.0
 
 @attribute RUN numeric
 @attribute SPEED1 numeric
@@ -158,7 +158,7 @@
 18,4,?,20,2,1,8,7.32,7.32
 29,4,?,20,2,1,8,7.91,7.91
 36,4,?,20,2,1,8,15.58,15.58
-@relation bolts-weka.filters.unsupervised.attribute.Add-Natt-4-C4
+@relation bolts-weka.filters.unsupervised.attribute.Add-Natt-4-C4-W1.0
 
 @attribute RUN numeric
 @attribute SPEED1 numeric
@@ -211,7 +211,7 @@
 18,4,20,?,2,1,8,7.32,7.32
 29,4,20,?,2,1,8,7.91,7.91
 36,4,20,?,2,1,8,15.58,15.58
-@relation bolts-weka.filters.unsupervised.attribute.Add-Natt-5-C5
+@relation bolts-weka.filters.unsupervised.attribute.Add-Natt-5-C5-W1.0
 
 @attribute RUN numeric
 @attribute SPEED1 numeric
