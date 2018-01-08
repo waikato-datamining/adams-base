@@ -15,7 +15,7 @@
 
 /*
  * IncStorageValue.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -108,7 +108,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IncStorageValue
   extends AbstractTransformer 
@@ -126,6 +125,8 @@ public class IncStorageValue
   public enum IncrementType {
     /** integer increment. */
     INTEGER,
+    /** long increment. */
+    LONG,
     /** floating point increment. */
     DOUBLE
   }
@@ -153,7 +154,7 @@ public class IncStorageValue
   @Override
   public String globalInfo() {
     return
-        "Increments the value of a storage value by either an integer or double "
+        "Increments the value of a storage value by either an integer/long or double "
       + "increment.\n"
       + "If the storage value has not been set yet, it will get set to 0.\n"
       + "If the storage value contains a non-numerical value, no increment will be "
@@ -217,6 +218,7 @@ public class IncStorageValue
       result += ", inc: ";
       switch (m_IncrementType) {
 	case INTEGER:
+	case LONG:
 	  result += QuickInfoHelper.toString(this, "integerIncrement", m_IntegerIncrement);
 	  break;
 	case DOUBLE:
@@ -290,7 +292,7 @@ public class IncStorageValue
   }
 
   /**
-   * Sets the increment value for integer increments.
+   * Sets the increment value for integer/long increments.
    *
    * @param value	the increment
    */
@@ -300,7 +302,7 @@ public class IncStorageValue
   }
 
   /**
-   * Returns the increment value for integer increments.
+   * Returns the increment value for integer/long increments.
    *
    * @return		the increment
    */
@@ -315,7 +317,7 @@ public class IncStorageValue
    * 			displaying in the GUI or for listing the options.
    */
   public String integerIncrementTipText() {
-    return "The increment in case of " + IncrementType.INTEGER + " increments.";
+    return "The increment in case of " + IncrementType.INTEGER + " or " + IncrementType.LONG + " increments.";
   }
 
   /**
@@ -403,6 +405,9 @@ public class IncStorageValue
 	  case INTEGER:
 	    value = (Integer) getStorageHandler().getStorage().get(m_StorageName);
 	    break;
+	  case LONG:
+	    value = (Long) getStorageHandler().getStorage().get(m_StorageName);
+	    break;
 	  case DOUBLE:
 	    value = (Double) getStorageHandler().getStorage().get(m_StorageName);
 	    break;
@@ -414,6 +419,9 @@ public class IncStorageValue
 	switch (m_IncrementType) {
 	  case INTEGER:
 	    value = new Integer(0);
+	    break;
+	  case LONG:
+	    value = new Long(0L);
 	    break;
 	  case DOUBLE:
 	    value = new Double(0.0);
@@ -431,6 +439,9 @@ public class IncStorageValue
       switch (m_IncrementType) {
 	case INTEGER:
 	  value = new Integer(value.intValue() + m_IntegerIncrement);
+	  break;
+	case LONG:
+	  value = new Long(value.longValue() + m_IntegerIncrement);
 	  break;
 	case DOUBLE:
 	  value = new Double(value.doubleValue() + m_DoubleIncrement);
@@ -460,6 +471,8 @@ public class IncStorageValue
       switch (m_IncrementType) {
 	case INTEGER:
 	  return new Class[]{Integer.class};
+	case LONG:
+	  return new Class[]{Long.class};
 	case DOUBLE:
 	  return new Class[]{Double.class};
 	default:

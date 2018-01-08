@@ -15,7 +15,7 @@
 
 /*
  * IncVariable.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -108,7 +108,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IncVariable
   extends AbstractTransformer
@@ -126,6 +125,8 @@ public class IncVariable
   public enum IncrementType {
     /** integer increment. */
     INTEGER,
+    /** long increment. */
+    LONG,
     /** floating point increment. */
     DOUBLE
   }
@@ -136,7 +137,7 @@ public class IncVariable
   /** the type of increment to perform. */
   protected IncrementType m_IncrementType;
 
-  /** the integer increment. */
+  /** the integer/long increment. */
   protected int m_IntegerIncrement;
 
   /** the double increment. */
@@ -153,7 +154,7 @@ public class IncVariable
   @Override
   public String globalInfo() {
     return
-        "Increments the value of a variable by either an integer or double "
+        "Increments the value of a variable by either an integer/long or double "
       + "increment.\n"
       + "If the variable has not been set yet, it will get set to 0.\n"
       + "If the variable contains a non-numerical value, no increment will be "
@@ -217,6 +218,7 @@ public class IncVariable
       result += ", inc: ";
       switch (m_IncrementType) {
 	case INTEGER:
+	case LONG:
 	  result += QuickInfoHelper.toString(this, "integerIncrement", m_IntegerIncrement);
 	  break;
 	case DOUBLE:
@@ -290,7 +292,7 @@ public class IncVariable
   }
 
   /**
-   * Sets the increment value for integer increments.
+   * Sets the increment value for integer/long increments.
    *
    * @param value	the increment
    */
@@ -300,7 +302,7 @@ public class IncVariable
   }
 
   /**
-   * Returns the increment value for integer increments.
+   * Returns the increment value for integer/long increments.
    *
    * @return		the increment
    */
@@ -315,7 +317,7 @@ public class IncVariable
    * 			displaying in the GUI or for listing the options.
    */
   public String integerIncrementTipText() {
-    return "The increment in case of " + IncrementType.INTEGER + " increments.";
+    return "The increment in case of " + IncrementType.INTEGER + " or " + IncrementType.LONG + " increments.";
   }
 
   /**
@@ -412,6 +414,9 @@ public class IncVariable
 	case INTEGER:
 	  value = new Integer(value.intValue() + m_IntegerIncrement);
 	  break;
+	case LONG:
+	  value = new Long(value.longValue() + m_IntegerIncrement);
+	  break;
 	case DOUBLE:
 	  value = new Double(value.doubleValue() + m_DoubleIncrement);
 	  break;
@@ -440,6 +445,8 @@ public class IncVariable
       switch (m_IncrementType) {
 	case INTEGER:
 	  return new Class[]{Integer.class};
+	case LONG:
+	  return new Class[]{Long.class};
 	case DOUBLE:
 	  return new Class[]{Double.class};
 	default:
