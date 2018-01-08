@@ -15,7 +15,7 @@
 
 /*
  * EnterManyValues.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -39,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,42 +106,64 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
+ * <pre>-parent-component-actor &lt;adams.flow.core.CallableActorReference&gt; (property: parentComponentActor)
+ * &nbsp;&nbsp;&nbsp;The (optional) callable actor to use as parent component instead of the
+ * &nbsp;&nbsp;&nbsp;flow panel.
+ * &nbsp;&nbsp;&nbsp;default: unknown
+ * </pre>
+ *
+ * <pre>-use-outer-window &lt;boolean&gt; (property: useOuterWindow)
+ * &nbsp;&nbsp;&nbsp;If enabled, the outer window (dialog&#47;frame) is used instead of the component
+ * &nbsp;&nbsp;&nbsp;of the callable actor.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-message &lt;java.lang.String&gt; (property: message)
  * &nbsp;&nbsp;&nbsp;The message to prompt the user with.
  * &nbsp;&nbsp;&nbsp;default: Please enter values
  * </pre>
- * 
+ *
  * <pre>-value &lt;adams.flow.source.valuedefinition.AbstractValueDefinition&gt; [-value ...] (property: values)
- * &nbsp;&nbsp;&nbsp;The value definitions that define the dialog prompting the user to enter 
+ * &nbsp;&nbsp;&nbsp;The value definitions that define the dialog prompting the user to enter
  * &nbsp;&nbsp;&nbsp;the values.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-output-type &lt;SPREADSHEET|KEY_VALUE_PAIRS|KEY_VALUE_PAIRS_ARRAY|MAP&gt; (property: outputType)
  * &nbsp;&nbsp;&nbsp;How to output the entered data.
  * &nbsp;&nbsp;&nbsp;default: SPREADSHEET
  * </pre>
- * 
+ *
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If enabled, the initial value is forwarded without user interaction.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
- * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
+ * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read
  * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-restoration-file &lt;adams.core.io.PlaceholderFile&gt; (property: restorationFile)
  * &nbsp;&nbsp;&nbsp;The file to store the restoration information in.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
+ * <pre>-width &lt;int&gt; (property: width)
+ * &nbsp;&nbsp;&nbsp;The width for the dialog, -1 for default.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EnterManyValues
   extends AbstractInteractiveSource
@@ -176,6 +199,9 @@ public class EnterManyValues
 
   /** the file to store the restoration state in. */
   protected PlaceholderFile m_RestorationFile;
+
+  /** the width of the dialog. */
+  protected int m_Width;
 
   /** the list of tokens to output. */
   protected List m_Queue;
@@ -220,6 +246,10 @@ public class EnterManyValues
     m_OptionManager.add(
 	    "restoration-file", "restorationFile",
 	    new PlaceholderFile());
+
+    m_OptionManager.add(
+	    "width", "width",
+	    -1, -1, null);
   }
 
   /**
@@ -450,6 +480,35 @@ public class EnterManyValues
   }
 
   /**
+   * Sets the width for the dialog.
+   *
+   * @param value	the width
+   */
+  public void setWidth(int value) {
+    m_Width = value;
+    reset();
+  }
+
+  /**
+   * Returns the width for the dialog.
+   *
+   * @return		the width
+   */
+  public int getWidth() {
+    return m_Width;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String widthTipText() {
+    return "The width for the dialog, -1 for default.";
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		the classes
@@ -672,6 +731,8 @@ public class EnterManyValues
     dialog.getContentPane().add(panelMsg, BorderLayout.NORTH);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
     dialog.pack();
+    if (m_Width != -1)
+      dialog.setSize(new Dimension(m_Width, dialog.getPreferredSize().height));
     dialog.setLocationRelativeTo(getActualParentComponent());
     dialog.setVisible(true);
 
