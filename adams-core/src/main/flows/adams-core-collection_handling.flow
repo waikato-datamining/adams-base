@@ -1,0 +1,21 @@
+# Project: adams
+# Date: 2018-01-09 10:20:09
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Demonstrates how to create and update a list." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "create list"
+  adams.flow.source.NewCollection
+  adams.flow.transformer.SetStorageValue -storage-name list
+ adams.flow.control.Trigger -name "fill in storage / update list"
+  adams.flow.source.ForLoop
+  adams.flow.transformer.SetVariable -var-name name
+  adams.flow.transformer.SetStorageValue -storage-name @{name}
+  adams.flow.control.Trigger -name "add to list"
+   adams.flow.source.StorageValue -storage-name list -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.transformer.CollectionInsert -retrieval-type STORAGE -object-storage @{name} -after true
+   adams.flow.transformer.SetStorageValue -storage-name list
+ adams.flow.control.Trigger -name output
+  adams.flow.source.StorageValue -storage-name list -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.CollectionToSequence
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
