@@ -118,6 +118,7 @@ public class WekaClassifierRankerTest
     param.setMin(0.1);
     param.setMax(0.5);
     param.setStep(0.1);
+    param.setExpression("I");
     cg.setParameters(new AbstractParameter[]{
 	param
     });
@@ -126,7 +127,7 @@ public class WekaClassifierRankerTest
     cr.setNumThreads(1);
     cr.setMax(3);
     cr.setFolds(10);
-    cr.setMeasure(Measure.ACC);
+    cr.setMeasure(Measure.RMSE);
     cr.setTrain(new CallableActorReference("dataset"));
 
     ArrayToSequence a2s = new ArrayToSequence();
