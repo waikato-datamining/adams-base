@@ -1,5 +1,5 @@
 --> dumpfile.arff
-@relation bolts-weka.filters.unsupervised.attribute.Add-Nevaluation-C8-W1.0
+@relation bolts-weka.filters.unsupervised.attribute.Add-Nevaluation-C8
 
 @attribute RUN numeric
 @attribute SPEED1 numeric

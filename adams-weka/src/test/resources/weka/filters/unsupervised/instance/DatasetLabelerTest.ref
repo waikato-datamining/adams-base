@@ -1,4 +1,4 @@
-@relation 'FilterTest-weka.filters.unsupervised.attribute.Add-TNOM-NLabel-Lyes,no-Clast-W1.0-weka.filters.unsupervised.instance.DatasetLabeler-Wadams.data.weka.rowfinder.NullFinder-nameLabel-matchyes-non-matchno'
+@relation 'FilterTest-weka.filters.unsupervised.attribute.Add-TNOM-NLabel-Lyes,no-Clast-weka.filters.unsupervised.instance.DatasetLabeler-Wadams.data.weka.rowfinder.NullFinder-nameLabel-matchyes-non-matchno'
 
 @attribute StringAtt1 string
 @attribute NominalAtt1 {r,g,b}

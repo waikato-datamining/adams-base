@@ -56,7 +56,7 @@ public abstract class AbstractAdamsFilterTest
     super.setUp();
 
     if (m_FilteredClassifier != null)
-      m_FilteredClassifier.setCheckForModifiedClassAttribute(false);
+      m_FilteredClassifier.setDoNotCheckForModifiedClassAttribute(true);
   }
 
   /**

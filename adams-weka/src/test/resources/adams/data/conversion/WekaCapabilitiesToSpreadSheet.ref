@@ -87,7 +87,7 @@ Capability,Supported,Dependency
 "Date class",false,true
 "String class",false,true
 "Relational class",false,true
-"Missing class values",true,true
+"Missing class values",false,true
 "Only multi-Instance data",false,true
 "Minimum # Instances ",0,""
 

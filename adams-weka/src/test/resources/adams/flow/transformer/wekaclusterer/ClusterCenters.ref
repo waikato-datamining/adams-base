@@ -1,5 +1,5 @@
 --> dumpfile.txt
-@relation 'bolts-weka.filters.unsupervised.attribute.Remove-weka.filters.unsupervised.attribute.Add-NCluster index-C1-W1.0'
+@relation 'bolts-weka.filters.unsupervised.attribute.Remove-weka.filters.unsupervised.attribute.Add-NCluster index-C1'
 
 @attribute 'Cluster index' numeric
 @attribute RUN numeric
