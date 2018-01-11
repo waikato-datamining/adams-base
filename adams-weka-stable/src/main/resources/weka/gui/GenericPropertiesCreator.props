@@ -1,0 +1,7 @@
+# Extensions for weka.classifiers.meta.MultiSearch
+weka.core.setupgenerator.AbstractParameter=\
+  weka.core.setupgenerator
+
+# abstaining classifiers
+weka.classifiers.AbstainingClassifier=\
+  weka.classifiers.meta

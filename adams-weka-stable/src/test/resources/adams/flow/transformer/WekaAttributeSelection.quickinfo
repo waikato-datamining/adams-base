@@ -1,0 +1,1 @@
+eval: CfsSubsetEval, search: BestFirst, folds: 10, seed: 1

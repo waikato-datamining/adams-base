@@ -1,0 +1,13 @@
+--> dumpfile.txt
+=== Summary ===
+
+Correctly Classified Instances         144               97.2973 %
+Incorrectly Classified Instances         4                2.7027 %
+Kappa statistic                          0.9447
+Mean absolute error                      0.0608
+Root mean squared error                  0.1539
+Relative absolute error                 12.6846 %
+Root relative squared error             31.0328 %
+Total Number of Instances              148     
+
+

@@ -1,0 +1,12 @@
+--> dumpfile.txt
+Statistic,Value
+"Area under ROC (democrat)",0.971453094346
+"Percent correct",96.32183908046
+"False positive rate (democrat)",0.047619047619
+
+Statistic,Value
+"Area under ROC (bad)",0.694594594595
+"Percent correct",73.684210526316
+"False positive rate (bad)",0.243243243243
+
+

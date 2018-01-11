@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2017-12-20 13:50:35
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "The LoadBalancer actor allows the parallel execution of the \\nbalancer\\\'s sub-flow. Using \\\"-1\\\" as number of slots (ie threads)\\nall available CPUs/cores will be used to process the incoming\\ndata.\\nThis example cross-validates all available datasets with J48\\nand outputs the evaluation summary in the console." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory ${FLOWS}/data -regexp .*\\\\.arff"
+ adams.flow.transformer.SetVariable -var-name dataset
+ adams.flow.control.Tee
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.control.LoadBalancer
+  adams.flow.control.Trigger -name evaluate
+   adams.flow.standalone.CallableActors
+    adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+   adams.flow.source.Variable -var-name dataset -conversion adams.data.conversion.StringToString
+   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+   adams.flow.control.Block -condition "adams.flow.condition.bool.WekaCapabilities -capability NOMINAL_CLASS -invert true"
+   adams.flow.control.Tee -name "relation name"
+    adams.flow.transformer.WekaInstancesInfo -type RELATION_NAME
+    adams.flow.transformer.SetVariable -var-name relation
+   adams.flow.transformer.WekaClassSelector
+   adams.flow.control.TryCatch -store-error true -error-post-processors adams.flow.control.errorpostprocessor.Null
+    adams.flow.control.SubProcess -name try
+     adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier
+     adams.flow.transformer.WekaEvaluationSummary -relation true -complexity-stats true -class-details true
+    adams.flow.source.CombineVariables -name catch -expression "Relation: @{relation} - failed" -conversion adams.data.conversion.StringToString
+   adams.flow.sink.Console

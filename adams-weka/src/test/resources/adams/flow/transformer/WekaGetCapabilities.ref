@@ -1,6 +1,7 @@
 --> dumpfile.txt
 Capabilities: [Nominal attributes, Binary attributes, Unary attributes, Empty nominal attributes, Numeric attributes, Date attributes, Missing values, Nominal class, Binary class, Numeric class, Missing class values]
 Dependencies: []
-min # Instance: 1
+Interfaces: [Drawable, PartitionGenerator, Randomizable, WeightedInstancesHandler]
+Minimum number of instances: 1
 
 

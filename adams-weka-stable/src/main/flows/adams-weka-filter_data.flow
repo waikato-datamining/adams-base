@@ -1,0 +1,27 @@
+# Project: adams
+# Date: 2016-12-21 12:28:17
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Here we compare the impact of preprocessing on a dataset.\\nThe \\\"slug\\\" dataset contains length and weight of slugs, with\\nthe weight being the class attribute.\\nLinearRegression is used as regression scheme, once on the\\noriginal data and once on log-transformed data.\\nBoth results (evaluation summary and classifier errors) are\\ndisplayed for comparison." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.LinearRegression -S 1 -C -R 1.0E-8 -num-decimal-places 4"
+  adams.flow.control.Sequence -name evaluate
+   adams.flow.transformer.WekaClassSelector
+   adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null
+   adams.flow.control.Branch
+    adams.flow.control.Sequence -name summary
+     adams.flow.transformer.WekaEvaluationSummary
+     adams.flow.sink.HistoryDisplay -short-title true -entry-name-variable filter
+    adams.flow.sink.DisplayPanelManager -short-title true -x -3 -provider "adams.flow.sink.WekaClassifierErrors -writer adams.gui.print.NullWriter -scaler \"adams.data.weka.predictions.AutoScaler -scaler adams.data.weka.predictions.RelativeNumericErrorScaler\"" -entry-name-variable filter
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/slug-original.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.control.Branch -num-threads 1
+  adams.flow.control.Sequence -name "no preprocessing"
+   adams.flow.transformer.SetVariable -var-name filter -var-value "original data"
+   adams.flow.sink.CallableSink -callable evaluate
+  adams.flow.control.Sequence -name "log transform"
+   adams.flow.transformer.WekaFilter -name "WekaFilter (log length)" -filter "weka.filters.unsupervised.attribute.AddExpression -E log(a1) -N ln_length"
+   adams.flow.transformer.WekaFilter -name "WekaFilter (log weight)" -filter "weka.filters.unsupervised.attribute.AddExpression -E log(a2) -N ln_weight"
+   adams.flow.transformer.WekaFilter -name "WekaFilter (remove old atts)" -filter "weka.filters.unsupervised.attribute.Remove -R 1-2"
+   adams.flow.transformer.SetVariable -var-name filter -var-value log-transformed
+   adams.flow.sink.CallableSink -callable evaluate

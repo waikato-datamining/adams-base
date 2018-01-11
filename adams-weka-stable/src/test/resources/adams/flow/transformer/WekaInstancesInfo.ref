@@ -1,0 +1,25 @@
+--> dumpfile.txt
+Relation Name:  vote
+Num Instances:  435
+Num Attributes: 17
+
+     Name                      Type  Nom  Int Real     Missing      Unique  Dist
+ 1 handicapped-infants        Nom  97%   0%   0%    12 /  3%     0 /  0%     2 
+ 2 water-project-cost-sharin  Nom  89%   0%   0%    48 / 11%     0 /  0%     2 
+ 3 adoption-of-the-budget-re  Nom  97%   0%   0%    11 /  3%     0 /  0%     2 
+ 4 physician-fee-freeze       Nom  97%   0%   0%    11 /  3%     0 /  0%     2 
+ 5 el-salvador-aid            Nom  97%   0%   0%    15 /  3%     0 /  0%     2 
+ 6 religious-groups-in-schoo  Nom  97%   0%   0%    11 /  3%     0 /  0%     2 
+ 7 anti-satellite-test-ban    Nom  97%   0%   0%    14 /  3%     0 /  0%     2 
+ 8 aid-to-nicaraguan-contras  Nom  97%   0%   0%    15 /  3%     0 /  0%     2 
+ 9 mx-missile                 Nom  95%   0%   0%    22 /  5%     0 /  0%     2 
+10 immigration                Nom  98%   0%   0%     7 /  2%     0 /  0%     2 
+11 synfuels-corporation-cutb  Nom  95%   0%   0%    21 /  5%     0 /  0%     2 
+12 education-spending         Nom  93%   0%   0%    31 /  7%     0 /  0%     2 
+13 superfund-right-to-sue     Nom  94%   0%   0%    25 /  6%     0 /  0%     2 
+14 crime                      Nom  96%   0%   0%    17 /  4%     0 /  0%     2 
+15 duty-free-exports          Nom  94%   0%   0%    28 /  6%     0 /  0%     2 
+16 export-administration-act  Nom  76%   0%   0%   104 / 24%     0 /  0%     2 
+17 Class                      Nom 100%   0%   0%     0 /  0%     0 /  0%     2 
+
+

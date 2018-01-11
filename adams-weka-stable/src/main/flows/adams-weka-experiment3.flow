@@ -1,0 +1,20 @@
+# Project: adams
+# Date: 2017-03-07 16:07:34
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Generates an experiment setup, saves it, loads it again, \\nexecutes it and finally displays the results.\\nThe datasets get attached via a variable.\\nUses the ADAMS experiment framework for Weka experiments\\nrather than the native Weka experiment framework, which\\nenables faster execution through parallelization." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "datasets in variable"
+  adams.flow.source.StringConstants -output-array true -string ${HOME}/development/datasets/uci/nominal/anneal.arff -string ${HOME}/development/datasets/uci/nominal/iris.arff
+  adams.flow.transformer.Convert -conversion adams.data.conversion.JoinOptions
+  adams.flow.transformer.SetVariable -var-name datasets
+ adams.flow.control.Trigger -name create/save
+  adams.flow.source.WekaNewExperiment -experiment "adams.gui.tools.wekamultiexperimenter.experiment.CrossValidationExperiment -results-handler \"adams.gui.tools.wekamultiexperimenter.experiment.FileResultsHandler -reader \\\"adams.data.io.input.ArffSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\\\" -writer adams.data.io.output.ArffSpreadSheetWriter\" -classifier \"weka.classifiers.trees.J48 -C 0.25 -M 2\" -classifier weka.classifiers.rules.ZeroR -dataset @{datasets} -class-attribute adams.data.weka.classattribute.LastAttribute -jobrunner adams.multiprocess.LocalJobRunner"
+  adams.flow.sink.WekaExperimentFileWriter -output ${HOME}/temp/blah.expser -handler adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO
+ adams.flow.control.Trigger -name load/run
+  adams.flow.source.FileSupplier -file ${HOME}/temp/blah.expser
+  adams.flow.transformer.WekaExperimentFileReader -handler adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO
+  adams.flow.transformer.WekaExperimentExecution -jobrunner adams.multiprocess.LocalJobRunner
+  adams.flow.control.ContainerValuePicker -value Instances -switch-outputs true
+  adams.flow.transformer.WekaExperimentEvaluation -tester "weka.experiment.PairedCorrectedTTester -R 0 -S 0.05 -result-matrix \"weka.experiment.ResultMatrixPlainText -mean-prec 2 -stddev-prec 5 -col-name-width 0 -row-name-width 25 -mean-width 0 -stddev-width 0 -sig-width 0 -count-width 5 -print-col-names -print-row-names -enum-col-names\"" -format "weka.experiment.ResultMatrixPlainText -mean-prec 2 -stddev-prec 5 -col-name-width 0 -row-name-width 25 -mean-width 0 -stddev-width 0 -sig-width 0 -count-width 5 -print-col-names -print-row-names -enum-col-names"
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

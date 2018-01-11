@@ -1,0 +1,12 @@
+# Configuration file listing the regular expressions to match classes that
+# should be excluded from the class listing.
+#
+# Format:
+# class.name=regexp1,regexp2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision: 12532 $
+
+weka.classifiers.Classifier=\
+  hr.irb.fastRandomForest.FastRfBagging,\
+  hr.irb.fastRandomForest.FastRandomTree

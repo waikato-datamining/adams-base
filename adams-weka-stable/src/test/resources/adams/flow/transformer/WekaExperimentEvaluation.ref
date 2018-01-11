@@ -1,0 +1,23 @@
+--> dumpfile.txt
+Tester:     weka.experiment.PairedCorrectedTTester -G 4,5,6 -D 1 -R 2 -S 0.05 -result-matrix "weka.experiment.ResultMatrixPlainText -mean-prec 2 -stddev-prec 2 -col-name-width 0 -row-name-width 25 -mean-width 0 -stddev-width 0 -sig-width 0 -count-width 5 -print-col-names -print-row-names -enum-col-names"
+Analysing:  Percent_correct
+Datasets:   2
+Resultsets: 2
+Confidence: 0.05 (two tailed)
+Sorted by:  -
+
+
+Dataset                   (1) rules.Ze | (2) trees
+--------------------------------------------------
+vote                     (100)   61.38 |   96.57 v
+labor                    (100)   64.67 |   78.60 v
+--------------------------------------------------
+                               (v/ /*) |   (2/0/0)
+
+
+Key:
+(1) rules.ZeroR '' 48055541465867954
+(2) trees.J48 '-C 0.25 -M 2' -217733168393644444
+
+
+

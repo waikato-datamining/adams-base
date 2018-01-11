@@ -1,0 +1,9 @@
+# Stores the classnames of the available commandline handlers.
+# This list is used if the dynamic class discovery cannot be used, e.g.,
+# when running the JUnit tests.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+Handlers=\
+  adams.core.option.WekaCommandLineHandler

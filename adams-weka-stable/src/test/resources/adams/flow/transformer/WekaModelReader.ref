@@ -1,0 +1,85 @@
+--> dumpfile.txt
+Header=@relation anneal
+
+@attribute family {'?',GB,GK,GS,TN,ZA,ZF,ZH,ZM,ZS}
+@attribute product-type {C,H,G}
+@attribute steel {'?',R,A,U,K,M,S,W,V}
+@attribute carbon numeric
+@attribute hardness numeric
+@attribute temper_rolling {'?',T}
+@attribute condition {'?',S,A,X}
+@attribute formability {'?',1,2,3,4,5}
+@attribute strength numeric
+@attribute non-ageing {'?',N}
+@attribute surface-finish {'?',P,M}
+@attribute surface-quality {'?',D,E,F,G}
+@attribute enamelability {'?',1,2,3,4,5}
+@attribute bc {'?',Y}
+@attribute bf {'?',Y}
+@attribute bt {'?',Y}
+@attribute bw/me {'?',B,M}
+@attribute bl {'?',Y}
+@attribute m {'?',Y}
+@attribute chrom {'?',C}
+@attribute phos {'?',P}
+@attribute cbond {'?',Y}
+@attribute marvi {'?',Y}
+@attribute exptl {'?',Y}
+@attribute ferro {'?',Y}
+@attribute corr {'?',Y}
+@attribute blue/bright/varn/clean {'?',B,R,V,C}
+@attribute lustre {'?',Y}
+@attribute jurofm {'?',Y}
+@attribute s {'?',Y}
+@attribute p {'?',Y}
+@attribute shape {COIL,SHEET}
+@attribute thick numeric
+@attribute width numeric
+@attribute len numeric
+@attribute oil {'?',Y,N}
+@attribute bore {0,500,600,760}
+@attribute packing {'?',1,2,3}
+@attribute class {1,2,3,4,5,U}
+
+@data
+, Model=
+REPTree
+============
+
+surface-quality = ?
+|   steel = ?
+|   |   condition = ? : 2 (4/0) [4/0]
+|   |   condition = S : 3 (2/0) [0/0]
+|   |   condition = A : 5 (15/0) [4/0]
+|   |   condition = X : 5 (0/0) [0/0]
+|   steel = R
+|   |   condition = ? : 3 (14/1) [4/1]
+|   |   condition = S : 2 (46/0) [24/0]
+|   |   condition = A : 2 (0/0) [0/0]
+|   |   condition = X : 2 (0/0) [0/0]
+|   steel = A : 5 (31/1) [18/0]
+|   steel = U : 2 (0/0) [0/0]
+|   steel = K : 3 (34/0) [17/0]
+|   steel = M : 2 (1/0) [0/0]
+|   steel = S
+|   |   carbon < 35 : 1 (3/0) [2/0]
+|   |   carbon >= 35 : 3 (3/0) [2/0]
+|   steel = W : 2 (0/0) [0/0]
+|   steel = V : 2 (12/6) [4/0]
+surface-quality = D : 3 (32/0) [23/0]
+surface-quality = E
+|   condition = ?
+|   |   hardness < 67.5 : 3 (11/2) [9/0]
+|   |   hardness >= 67.5 : U (5/0) [8/2]
+|   condition = S : 3 (184/0) [93/0]
+|   condition = A : 3 (0/0) [0/0]
+|   condition = X : 3 (0/0) [0/0]
+surface-quality = F : 3 (43/0) [17/0]
+surface-quality = G
+|   hardness < 75
+|   |   strength < 550 : 3 (129/0) [61/0]
+|   |   strength >= 550 : 2 (9/0) [1/0]
+|   hardness >= 75 : U (20/1) [9/1]
+
+Size of the tree : 35
+

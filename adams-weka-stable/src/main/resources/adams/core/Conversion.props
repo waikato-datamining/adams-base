@@ -1,0 +1,36 @@
+# Contains the setup for conversion operations.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+# Version: $Revision$
+
+# Lists the keys that contain classname mappings.
+# This is used to ensure a minimal backwards compatibility, in case classes
+# get renamed.
+Rename=\
+  Rename-wekagoevaluedefinition
+
+# general format for classname mappings ("rename"):
+# <key>=<old classname>-<new classname>
+#Rename-transformer_reportvalue=adams.flow.transformer.ReportValue-adams.flow.transformer.GetReportValue
+Rename-wekagoevaluedefinition=adams.flow.source.WekaGOEValueDefinition-adams.flow.source.valuedefinition.WekaGOEValueDefinition
+
+# Lists the keys that contain partial classname renaming.
+PartialRename=
+
+# general format for partial classname renaming (no regular expression, but case-sensitive):
+# <key>=<find>\t<replace>
+#Rename-singleton=.singleton.\t.standalone.
+
+# List the keys that contain renaming of options (ie "-blah" into "-bloerk")
+RenameOption=
+  
+# general format for renaming options
+# <key>=<classname>#<old>#<new>
+#RenameOption-source_callablesource_global=adams.flow.source.CallableSource#global#callable
+
+# List the keys that contain renaming of properties (ie "blahProp" into "bloerkProp")
+RenameProperty=
+  
+# general format for renaming options
+# <key>=<classname>#<oldProp>#<newProp>
+#RenameProperty-source_callablesource_global=adams.flow.source.CallableSource#globalName#callableName

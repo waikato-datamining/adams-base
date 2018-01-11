@@ -1,0 +1,17 @@
+--> dumpfile.txt
+@relation 'bolts-weka.filters.unsupervised.attribute.Remove-weka.filters.unsupervised.attribute.Add-NCluster index-C1'
+
+@attribute 'Cluster index' numeric
+@attribute RUN numeric
+@attribute SPEED1 numeric
+@attribute TOTAL numeric
+@attribute SPEED2 numeric
+@attribute NUMBER2 numeric
+@attribute SENS numeric
+@attribute TIME numeric
+@attribute T20BOLT numeric
+
+@data
+0,19.833333,4.4,22,1.9,0.8,6.666667,43.759,38.396667
+1,22.5,2.8,14,2.3,1.6,8,13.871,20.546
+

@@ -1,0 +1,17 @@
+# Project: adams
+# Date: 2016-02-15 15:18:54
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Since only classes implementing the ADAMS OptionHandler can \\nhandle variables, the SetProperty transformer can be used to \\nupdate an arbitrary property in a callable actor.\\nThe SetProperty actor just uses tokens passing through it to update \\nthe property with (just uses the string representation of that token).\\nNB: No re-initializations are taking place, just simple setting of a value.\\n\\nThis example cross-validates J48 on a dataset with three different\\nconfidence factors: 0.2, 0.3 and 0.4. Each time outputting the result\\nof the cross-validation." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+ adams.flow.source.StringConstants -string 0.2 -string 0.3 -string 0.4
+ adams.flow.transformer.SetVariable -var-name confidence
+ adams.flow.transformer.SetProperty -property classifier.confidenceFactor -actor-name WekaClassifier
+ adams.flow.control.Trigger
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/labor.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -num-threads -1
+  adams.flow.transformer.WekaEvaluationSummary -comment @{confidence}
+  adams.flow.sink.HistoryDisplay -entry-name-variable confidence

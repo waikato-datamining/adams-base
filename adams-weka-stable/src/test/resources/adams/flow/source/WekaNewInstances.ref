@@ -1,0 +1,11 @@
+--> dumpfile.txt
+@relation hello
+
+@attribute blah1 numeric
+@attribute blah2 {}
+@attribute att-3 string
+@attribute class date 'yyyy-MM-dd\'T\'HH:mm:ss'
+
+@data
+
+

@@ -1,0 +1,11 @@
+--> dumpfile.txt
+=== Summary ===
+
+Correlation coefficient                  0.8126
+Mean absolute error                      0.5901
+Root mean squared error                  1.9269
+Relative absolute error                 23.6619 %
+Root relative squared error             67.2757 %
+Total Number of Instances               93     
+
+

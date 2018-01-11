@@ -1,0 +1,44 @@
+--> dumpfile.txt
+@relation bolts
+
+@attribute RUN numeric
+@attribute SPEED1 numeric
+@attribute TOTAL numeric
+@attribute SPEED2 numeric
+@attribute NUMBER2 numeric
+@attribute SENS numeric
+@attribute TIME numeric
+@attribute T20BOLT numeric
+
+@data
+25,2,10,1.5,0,6,5.7,11.4
+@relation bolts
+
+@attribute RUN numeric
+@attribute SPEED1 numeric
+@attribute TOTAL numeric
+@attribute SPEED2 numeric
+@attribute NUMBER2 numeric
+@attribute SENS numeric
+@attribute TIME numeric
+@attribute T20BOLT numeric
+
+@data
+25,2,10,1.5,0,6,5.7,11.4
+24,2,10,1.5,0,10,17.56,35.12
+@relation bolts
+
+@attribute RUN numeric
+@attribute SPEED1 numeric
+@attribute TOTAL numeric
+@attribute SPEED2 numeric
+@attribute NUMBER2 numeric
+@attribute SENS numeric
+@attribute TIME numeric
+@attribute T20BOLT numeric
+
+@data
+25,2,10,1.5,0,6,5.7,11.4
+24,2,10,1.5,0,10,17.56,35.12
+30,2,10,1.5,2,6,11.28,22.56
+

@@ -1,0 +1,14 @@
+@relation nominal
+
+@attribute att1 numeric
+@attribute att2 numeric
+@attribute att3 numeric
+@attribute class {a,b,c}
+
+@data
+1.0,1.0,1.0,a
+1.0,4.0,1.0,a
+1.0,?,1.0,b
+?,2.0,1.0,c
+?,?,?,c
+

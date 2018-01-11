@@ -1,0 +1,9 @@
+# Project: adams
+# Date: 2016-04-12 09:16:17
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Turns a Weka classifier into a Java code snippet." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.meta.Vote -S 1 -B \"weka.classifiers.rules.ZeroR \" -B \"weka.classifiers.trees.J48 -C 0.25 -M 2\" -B \"weka.classifiers.functions.SMO -C 1.0 -L 0.001 -P 1.0E-12 -N 0 -V -1 -W 1 -K \\\"weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007\\\" -calibrator \\\"weka.classifiers.functions.Logistic -R 1.0E-8 -M -1\\\"\" -R AVG"
+ adams.flow.transformer.Convert -annotation "create command-line" -conversion adams.data.conversion.AnyToCommandline
+ adams.flow.transformer.Convert -name Convert-1 -annotation "create Java code" -conversion "adams.data.conversion.WekaCommandToCode -converter weka.core.code.StringArray"
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter
