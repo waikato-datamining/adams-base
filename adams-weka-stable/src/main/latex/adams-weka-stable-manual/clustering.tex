@@ -20,7 +20,7 @@ source instead of the \textit{WekaClassifierSetup} one to define (and output)
 a clusterer setup, placed inside a \textit{CallableActors} standalone.
 
 Figures \ref{build_clusterer-flow} and \ref{build_clusterer-output} show a flow
-\footnote{adams-weka-build\_clusterer.flow} that builds a \textit{SimpleKMeans}
+\footnote{adams-weka-stable-build\_clusterer.flow} that builds a \textit{SimpleKMeans}
 clusterer on a dataset (the class attribute gets removed using a
 \textit{WekaFilter} actor) and the generated model gets displayed.
 
@@ -43,7 +43,7 @@ clusterer on a dataset (the class attribute gets removed using a
 If the base cluster algorithm is an incremental one, i.e., one that implements
 the \textit{weka.clusterers.UpdateableClusterer} interface, you can build your
 clustering model incrementally as well. The flow
-\footnote{adams-weka-build\_clusterer\_incrementally.flow} in Figure
+\footnote{adams-weka-stable-build\_clusterer\_incrementally.flow} in Figure
 \ref{build_clusterer_incrementally-flow} builds the CobWeb cluster algorithm
 incrementally and outputs the generated models every 25 instances (see Figure
 \ref{build_clusterer_incrementally-output}).
@@ -85,7 +85,7 @@ Clustering new data is done using the \textit{WekaClustering} transformer, which
 takes a single instance as input and outputs the generated clustering
 information in form of a container (\textit{WekaClusteringContainer}). You can
 either specify a serialized clusterer model to use or a callable actor to obtain
-the clusterer from. The flow \footnote{adams-weka-clustering\_data.flow} in
+the clusterer from. The flow \footnote{adams-weka-stable-clustering\_data.flow} in
 Figure \ref{clustering-flow} shows how to build a clusterer and use it to
 cluster new data, outputting the cluster distributions (see Figure
 \ref{clustering-output} for the generated output).
