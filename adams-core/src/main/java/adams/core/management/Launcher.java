@@ -15,7 +15,7 @@
 
 /*
  * Launcher.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -89,6 +89,9 @@ public class Launcher {
   /** optional classpath augmentations. */
   protected List<String> m_ClassPathAugmentations;
 
+  /** optional environment modifiers. */
+  protected List<EnvironmentModifier> m_EnvironmentModifiers;
+
   /** optional priority jars. */
   protected List<String> m_PriorityJars;
 
@@ -141,6 +144,7 @@ public class Launcher {
     m_Arguments                = new String[0];
     m_Runtime                  = Runtime.getRuntime();
     m_ClassPathAugmentations   = new ArrayList<>();
+    m_EnvironmentModifiers     = new ArrayList<>();
     m_PriorityJars             = new ArrayList<>();
     m_EnvVars                  = new ArrayList<>();
     for (String key: System.getenv().keySet())
@@ -299,6 +303,25 @@ public class Launcher {
     }
     catch (Exception e) {
       System.err.println("Error using classpath augmenter '" + cmdline + "':");
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Adds the augmentations that the classpath augmenter returns.
+   *
+   * @param cmdline	the classname+options of the augmenter
+   * @see		ClassPathAugmenter
+   */
+  public void addEnvironmentModifier(String cmdline) {
+    EnvironmentModifier	modifier;
+
+    try {
+      modifier = (EnvironmentModifier) OptionUtils.forCommandLine(EnvironmentModifier.class, cmdline);
+      m_EnvironmentModifiers.add(modifier);
+    }
+    catch (Exception e) {
+      System.err.println("Error instantiating environment modifier '" + cmdline + "':");
       e.printStackTrace();
     }
   }
@@ -595,6 +618,10 @@ public class Launcher {
       }
     }
 
+    // update env variables
+    for (EnvironmentModifier mod: m_EnvironmentModifiers)
+      mod.updateEnvironment(m_EnvVars);
+
     try {
       if (m_DebugLevel > 1) {
 	System.out.println("\nGenerated command-line:\n" + Utils.flatten(cmd, "\n"));
@@ -743,6 +770,12 @@ public class Launcher {
 	launcher.addEnvVar(value);
     }
 
+    // environment modifiers
+    if (result == null) {
+      while ((value = OptionUtils.removeOption(options, "-env-modifier")) != null)
+	launcher.addEnvironmentModifier(value);
+    }
+
     if (result == null)
       result = launcher.setArguments(options.toArray(new String[options.size()]));
 
@@ -806,10 +839,14 @@ public class Launcher {
       System.out.println("\tOptional jar (with path) that should be added at start of classpath.");
       System.out.println("\tCan be supplied multiple times.");
       System.out.println("\tExample: -priority ./lib/activation-1.1.jar");
-      System.out.println("[-env <jar>]");
+      System.out.println("[-env <key=value>]");
       System.out.println("\tOptional environment variable key-value pair.");
       System.out.println("\tCan be supplied multiple times.");
-      System.out.println("\tExample: -key weka.packageManager.loadPackages=false");
+      System.out.println("\tExample: -env weka.packageManager.loadPackages=false");
+      System.out.println("[-env-modifier <classname+options>]");
+      System.out.println("\tOptional environment variable modifier.");
+      System.out.println("\tCan be supplied multiple times.");
+      System.out.println("\tExample: -env-modifier adams.core.management.WekaHomeEnvironmentModifier");
       System.out.println("[-collapse");
       System.out.println("\tOptional directive to collapse the classpath, using '*' below a directory.");
       System.out.println("-...");
