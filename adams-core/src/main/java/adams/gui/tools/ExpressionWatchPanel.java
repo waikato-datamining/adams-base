@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExpressionWatchPanel.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -29,6 +29,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.parser.BooleanExpression;
 import adams.parser.MathematicalExpression;
+import adams.parser.StringExpression;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -43,8 +44,9 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Panel that allows the definition of variable, boolean and numerical
@@ -52,7 +54,6 @@ import java.util.Vector;
  * a flow.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExpressionWatchPanel
   extends BasePanel {
@@ -74,13 +75,13 @@ public class ExpressionWatchPanel
     private static final long serialVersionUID = -7414970810033285323L;
 
     /** the expressions. */
-    protected Vector<String> m_Expressions;
+    protected List<String> m_Expressions;
 
     /** the types of expressions. */
-    protected Vector<ExpressionType> m_Types;
+    protected List<ExpressionType> m_Types;
 
     /** values of the expressions. */
-    protected Vector<Object> m_Values;
+    protected List<Object> m_Values;
 
     /** the Variables instance to use. */
     protected Variables m_Variables;
@@ -93,9 +94,9 @@ public class ExpressionWatchPanel
     public TableModel(Variables variables) {
       super();
 
-      m_Expressions = new Vector<String>();
-      m_Types       = new Vector<ExpressionType>();
-      m_Values      = new Vector<Object>();
+      m_Expressions = new ArrayList<>();
+      m_Types       = new ArrayList<>();
+      m_Values      = new ArrayList<>();
       m_Variables   = variables;
     }
 
@@ -147,8 +148,13 @@ public class ExpressionWatchPanel
       ExpressionType	type;
       boolean		boolValue;
       double		numValue;
+      String		strValue;
 
       expr = getExpressionAt(rowIndex);
+      expr = getVariables().expand(expr);
+      // failed to fully expand?
+      if (expr.contains(Variables.START))
+        return;
       type = getTypeAt(rowIndex);
 
       switch(type) {
@@ -156,9 +162,12 @@ public class ExpressionWatchPanel
 	  m_Values.set(rowIndex, getVariables().get(expr));
 	  break;
 
-	case BOOLEAN:
+	case STRING:
+	  m_Values.set(rowIndex, expr);
+	  break;
+
+	case BOOLEAN_EXPRESSION:
 	  try {
-	    expr      = getVariables().expand(expr);
 	    boolValue = BooleanExpression.evaluate(expr, new HashMap());
 	    m_Values.set(rowIndex, boolValue);
 	  }
@@ -168,20 +177,26 @@ public class ExpressionWatchPanel
 	  }
 	  break;
 
-	case NUMERIC:
+	case MATH_EXPRESSION:
 	  try {
-	    expr     = getVariables().expand(expr);
 	    numValue = MathematicalExpression.evaluate(expr, new HashMap());
 	    m_Values.set(rowIndex, numValue);
 	  }
 	  catch (Exception e) {
-	    System.err.println("Error evaluating numeric expression: " + expr);
+	    System.err.println("Error evaluating math expression: " + expr);
 	    e.printStackTrace();
 	  }
 	  break;
 
-	case STRING:
-	  m_Values.set(rowIndex, getVariables().expand(expr));
+	case STRING_EXPRESSION:
+	  try {
+	    strValue = StringExpression.evaluate(expr, new HashMap());
+	    m_Values.set(rowIndex, strValue);
+	  }
+	  catch (Exception e) {
+	    System.err.println("Error evaluating string expression: " + expr);
+	    e.printStackTrace();
+	  }
 	  break;
 
 	default:
@@ -511,12 +526,14 @@ public class ExpressionWatchPanel
   public enum ExpressionType {
     /** variable. */
     VARIABLE,
-    /** boolean exression. */
-    BOOLEAN,
-    /** numeric expression. */
-    NUMERIC,
     /** string (may consist of multiple variables). */
-    STRING
+    STRING,
+    /** boolean exression. */
+    BOOLEAN_EXPRESSION,
+    /** math expression. */
+    MATH_EXPRESSION,
+    /** string expression. */
+    STRING_EXPRESSION,
   }
 
   /** the table model. */
