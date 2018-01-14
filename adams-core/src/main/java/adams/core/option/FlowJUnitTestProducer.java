@@ -13,25 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowJUnitTestProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
+
+import adams.core.base.BaseString;
+import adams.env.Environment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import adams.core.base.BaseString;
-import adams.env.Environment;
-
 /**
  * Generates a JUnit test case for flows.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowJUnitTestProducer
   extends AbstractFlowJavaCodeProducer {
@@ -242,7 +241,6 @@ public class FlowJUnitTestProducer
     m_OutputBuffer.append(" *\n");
     m_OutputBuffer.append(" * @author " + System.getProperty("user.name") + "\n");
     m_OutputBuffer.append(" * @author " + getClass().getName() + " (code generator)" + "\n");
-    m_OutputBuffer.append(" * @version $" + "Revision" + "$\n");
     m_OutputBuffer.append(" */\n");
   }
 
