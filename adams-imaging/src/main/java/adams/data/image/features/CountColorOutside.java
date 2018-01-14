@@ -14,14 +14,15 @@
  */
 
 /*
- * CountColor.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
+ * CountColorOutside.java
+ * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.features;
 
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.image.IntArrayMatrixView;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -29,48 +30,15 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Counts the occurrences of a specific color (alpha channel gets ignored).
- * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
- * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
- * &nbsp;&nbsp;&nbsp;default: WARNING
- * </pre>
- * 
- * <pre>-converter &lt;adams.data.featureconverter.AbstractFeatureConverter&gt; (property: converter)
- * &nbsp;&nbsp;&nbsp;The feature converter to use to produce the output data.
- * &nbsp;&nbsp;&nbsp;default: adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet
- * </pre>
- * 
- * <pre>-field &lt;adams.data.report.Field&gt; [-field ...] (property: fields)
- * &nbsp;&nbsp;&nbsp;The fields to add to the output.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-notes &lt;adams.core.base.BaseString&gt; [-notes ...] (property: notes)
- * &nbsp;&nbsp;&nbsp;The notes to add as attributes to the generated data, eg 'PROCESS INFORMATION'
- * &nbsp;&nbsp;&nbsp;.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-color &lt;java.awt.Color&gt; (property: color)
- * &nbsp;&nbsp;&nbsp;The color to count.
- * &nbsp;&nbsp;&nbsp;default: #ffffff
- * </pre>
- * 
- * <pre>-use-percentage &lt;boolean&gt; (property: usePercentage)
- * &nbsp;&nbsp;&nbsp;If enabled, a percentage is output (0-1) rather than an absolute count.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @author  Dale (dale at cs dot waikato dot ac dot nz)
  */
-public class CountColor
+public class CountColorOutside
   extends AbstractCountColor {
 
   /** for serialization. */
@@ -83,7 +51,7 @@ public class CountColor
    */
   @Override
   public String globalInfo() {
-    return "Counts the occurrences of a specific color (alpha channel gets ignored).";
+    return "Counts the occurrences of a specific color from the outside, going through the image line by line (alpha channel gets ignored).";
   }
 
   /**
@@ -96,25 +64,46 @@ public class CountColor
   public List<Object>[] generateRows(BufferedImageContainer img) {
     List<Object>[]		result;
     BufferedImage		image;
-    int[]			pixels;
-    int				i;
+    IntArrayMatrixView		view;
+    int				x;
+    int				y;
+    int				lastX;
     int				count;
     int				color;
 
     image     = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_4BYTE_ABGR);
     count     = 0;
     color     = m_Color.getRGB() & 0x00FFFFFF;
-    pixels    = BufferedImageHelper.getPixels(image);
-    // remove alpha channel
-    for (i = 0; i < pixels.length; i++) {
-      if ((pixels[i] & 0x00FFFFFF) == color)
-	count++;
+    view      = new IntArrayMatrixView(BufferedImageHelper.getPixels(image), image.getWidth(), image.getHeight());
+    for (y = 0; y < view.getHeight(); y++) {
+      lastX = -1;
+      // from left
+      if ((view.get(0, y) & 0x00FFFFFF) == color) {
+	for (x = 0; x < view.getWidth(); x++) {
+	  if ((view.get(x, y) & 0x00FFFFFF) == color) {
+	    lastX = x;
+	    count++;
+	  }
+	  else {
+	    break;
+	  }
+	}
+      }
+      // from right
+      if ((lastX < view.getWidth() - 1) && (view.get(view.getWidth() - 1, y) & 0x00FFFFFF) == color) {
+	for (x = view.getWidth() - 1; x >= 0 && x > lastX; x--) {
+	  if ((view.get(x, y) & 0x00FFFFFF) == color)
+	    count++;
+	  else
+	    break;
+	}
+      }
     }
 
     result    = new List[1];
     result[0] = new ArrayList<>();
     if (m_UsePercentage)
-      result[0].add((double) count / (double) pixels.length);
+      result[0].add((double) count / (double) view.size());
     else
       result[0].add(count);
 
