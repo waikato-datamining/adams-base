@@ -15,7 +15,7 @@
 
 /*
  * Storage.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -199,6 +199,29 @@ public class Storage
   }
 
   /**
+   * Removes the object(s) which name(s) match the regular expression.
+   *
+   * @param regexp	the regular expression to match against
+   * @return		true if at least one removed
+   */
+  public synchronized boolean remove(BaseRegExp regexp) {
+    boolean		result;
+    List<StorageName>	keys;
+
+    result = false;
+    keys   = new ArrayList<>(keySet());
+    for (StorageName key: keys) {
+      if (regexp.isMatch(key.getValue())) {
+        result = true;
+        if (remove(key) != null)
+	  notifyChangeListeners(new StorageChangeEvent(this, Type.REMOVED, key.getValue()));
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Removes the object associated with the name using the named LRU cache.
    *
    * @param cache	the LRU cache to use
@@ -215,6 +238,30 @@ public class Storage
 
     if (result != null)
       notifyChangeListeners(new StorageChangeEvent(this, Type.REMOVED, name.getValue(), cache));
+
+    return result;
+  }
+
+  /**
+   * Removes the object(s) which name(s) match the regular expression using the named LRU cache.
+   *
+   * @param cache	the LRU cache to use
+   * @param regexp	the regular expression to match against
+   * @return		true if at least one removed
+   */
+  public synchronized boolean remove(String cache, BaseRegExp regexp) {
+    boolean		result;
+    List<StorageName>	keys;
+
+    result = false;
+    keys   = new ArrayList<>(keySet(cache));
+    for (StorageName key: keys) {
+      if (regexp.isMatch(key.getValue())) {
+        result = true;
+        if (remove(cache, key) != null)
+	  notifyChangeListeners(new StorageChangeEvent(this, Type.REMOVED, key.getValue(), cache));
+      }
+    }
 
     return result;
   }
