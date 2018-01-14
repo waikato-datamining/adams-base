@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * IntArrayMatrixView.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
@@ -26,7 +26,6 @@ import java.io.Serializable;
  * Allows a matrix view (2-dim) of an array (1-dim).
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IntArrayMatrixView
   implements Serializable, BufferedImageSupporter {
@@ -94,6 +93,15 @@ public class IntArrayMatrixView
    */
   public int getHeight() {
     return m_Height;
+  }
+
+  /**
+   * Returns the number of data points (height * width).
+   *
+   * @return		the number of data points
+   */
+  public int size() {
+    return m_Width * m_Height;
   }
   
   /**
