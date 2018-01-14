@@ -15,7 +15,7 @@
 
 /*
  * DeleteVariable.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,17 +23,18 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.VariableUpdater;
+import adams.core.base.BaseRegExp;
 import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Removes a global variable. Each time a token passes through, the variable will get deleted.<br>
- * The transformer just forwards tokens that it receives after the variable has been deleted.
+ * Removes a variable by name or the variables that match the regular expression. Each time a token passes through, the deletion process occurs.<br>
+ * The transformer just forwards tokens that it receives after the deletion process.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * - generates:<br>
@@ -42,13 +43,9 @@ import adams.flow.core.Unknown;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -56,18 +53,42 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: DeleteVariable
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-var-name &lt;java.lang.String&gt; (property: variableName)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-type &lt;NAME|REGEXP&gt; (property: type)
+ * &nbsp;&nbsp;&nbsp;How to determine the variable(s) to delete.
+ * &nbsp;&nbsp;&nbsp;default: NAME
+ * </pre>
+ *
+ * <pre>-var-name &lt;adams.core.VariableName&gt; (property: variableName)
  * &nbsp;&nbsp;&nbsp;The name of the variable to update.
+ * &nbsp;&nbsp;&nbsp;default: variable
+ * </pre>
+ *
+ * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
+ * &nbsp;&nbsp;&nbsp;The regular expression used for matching the variable names to delete.
  * &nbsp;&nbsp;&nbsp;default: variable
  * </pre>
  *
@@ -83,8 +104,22 @@ public class DeleteVariable
   /** for serialization. */
   private static final long serialVersionUID = -3383735680425581504L;
 
+  /**
+   * Determines how to locate the variable.
+   */
+  public enum MatchingType {
+    NAME,
+    REGEXP,
+  }
+
+  /** how to determine variables to delete. */
+  protected MatchingType m_Type;
+
   /** the name of the variable. */
   protected VariableName m_VariableName;
+
+  /** the regexp to match against variable names. */
+  protected BaseRegExp m_RegExp;
 
   /**
    * Returns a string describing the object.
@@ -94,10 +129,10 @@ public class DeleteVariable
   @Override
   public String globalInfo() {
     return
-        "Removes a global variable. Each time a token passes "
-      + "through, the variable will get deleted.\n"
-      + "The transformer just forwards tokens that it receives after the "
-      + "variable has been deleted.";
+      "Removes a variable by name or the variables that match the regular "
+	+ "expression. Each time a token passes through, the deletion process occurs.\n"
+	+ "The transformer just forwards tokens that it receives after the "
+	+ "deletion process.";
   }
 
   /**
@@ -108,8 +143,45 @@ public class DeleteVariable
     super.defineOptions();
 
     m_OptionManager.add(
-	    "var-name", "variableName",
-	    new VariableName());
+      "type", "type",
+      MatchingType.NAME);
+
+    m_OptionManager.add(
+      "var-name", "variableName",
+      new VariableName());
+
+    m_OptionManager.add(
+      "regexp", "regExp",
+      new BaseRegExp(VariableName.DEFAULT));
+  }
+
+  /**
+   * Sets how to determine variables to delete.
+   *
+   * @param value	the matching type
+   */
+  public void setType(MatchingType value) {
+    m_Type = value;
+    reset();
+  }
+
+  /**
+   * Returns how to determine variables to delete.
+   *
+   * @return		the matching type
+   */
+  public MatchingType getType() {
+    return m_Type;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeTipText() {
+    return "How to determine the variable(s) to delete.";
   }
 
   /**
@@ -142,8 +214,37 @@ public class DeleteVariable
   }
 
   /**
+   * Sets the regular expression to match the variable names against.
+   *
+   * @param value	the regular expression
+   */
+  public void setRegExp(BaseRegExp value) {
+    m_RegExp = value;
+    reset();
+  }
+
+  /**
+   * Returns the regular expression to match the variable names against.
+   *
+   * @return		the regular expression
+   */
+  public BaseRegExp getRegExp() {
+    return m_RegExp;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String regExpTipText() {
+    return "The regular expression used for matching the variable names to delete.";
+  }
+
+  /**
    * Returns whether variables are being updated.
-   * 
+   *
    * @return		true if variables are updated
    */
   public boolean isUpdatingVariables() {
@@ -157,7 +258,14 @@ public class DeleteVariable
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "variableName", m_VariableName.paddedValue());
+    switch (m_Type) {
+      case NAME:
+	return QuickInfoHelper.toString(this, "variableName", m_VariableName.paddedValue());
+      case REGEXP:
+	return QuickInfoHelper.toString(this, "regExp", m_RegExp);
+      default:
+        throw new IllegalStateException("Unhandled matching type: " + m_Type);
+    }
   }
 
   /**
@@ -178,19 +286,26 @@ public class DeleteVariable
   protected String doExecute() {
     String	result;
     String	oldValue;
+    boolean	removed;
 
     result = null;
 
     try {
       if (m_InputToken.getPayload() != null) {
-	if (getVariables().has(m_VariableName.getValue())) {
-	  oldValue = getVariables().remove(m_VariableName.getValue());
-	  if (isLoggingEnabled())
-	    getLogger().info("Removed scoped variable '" + m_VariableName.getValue() + "' (" + getVariables().hashCode() + "), value:" + oldValue);
+	switch (m_Type) {
+	  case NAME:
+	    oldValue = getVariables().remove(m_VariableName.getValue());
+	    if (isLoggingEnabled())
+	      getLogger().info("Removed variable '" + m_VariableName.getValue() + "' (" + getVariables().hashCode() + "), value:" + oldValue);
+	    break;
+	  case REGEXP:
+	    removed = getVariables().remove(m_RegExp);
+	    if (isLoggingEnabled())
+	      getLogger().info("Removed any variable(s) with '" + m_RegExp + "' (" + getVariables().hashCode() + "):" + removed);
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled matching type: " + m_Type);
 	}
-	oldValue = getVariables().remove(m_VariableName.getValue());
-	if (isLoggingEnabled())
-	  getLogger().info("Removed variable '" + m_VariableName.getValue() + "' (" + getVariables().hashCode() + "), value:" + oldValue);
       }
     }
     catch (Exception e) {
