@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Debug.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -41,6 +41,8 @@ import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -628,6 +630,33 @@ public class Debug
   }
 
   /**
+   * Removes all one-off breakpoints apart from the specified one.
+   *
+   * @param toKeep	the breakpoint to keep
+   */
+  public void removeOneOffBreakpoints(AbstractBreakpoint toKeep) {
+    int				i;
+    List<AbstractBreakpoint> 	list;
+    boolean			add;
+
+    list = new ArrayList<>();
+    for (i = 0; i < m_Breakpoints.length; i++) {
+      add = true;
+      if (m_Breakpoints[i].getOneOff()) {
+        add = false;
+        if (toKeep != null) {
+          if (toKeep.toCommandLine().equals(m_Breakpoints[i].toCommandLine()))
+            add = true;
+	}
+      }
+      if (add)
+	list.add(m_Breakpoints[i]);
+    }
+    m_Breakpoints = list.toArray(new AbstractBreakpoint[list.size()]);
+    refreshGUI();
+  }
+
+  /**
    * Unblocks the flow execution.
    */
   public void unblockExecution() {
@@ -663,6 +692,9 @@ public class Debug
     m_ControlPanel.showFrame();
     m_ControlPanel.breakpointReached(blocked);
 
+    if (point != null)
+      point.triggered();
+
     if (blocked)
       blockExecution();
   }
@@ -696,6 +728,11 @@ public class Debug
       m_ControlPanel.setCurrentCondition(null);
     m_ControlPanel.showFrame();
     m_ControlPanel.breakpointReached(blocked);
+
+    if (point != null) {
+      removeOneOffBreakpoints(point);
+      point.triggered();
+    }
 
     if (blocked)
       blockExecution();

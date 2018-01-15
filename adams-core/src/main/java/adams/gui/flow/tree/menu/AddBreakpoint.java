@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AddBreakpoint.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -26,7 +26,6 @@ import adams.gui.action.AbstractPropertiesAction;
  * Menu for adding breakpoints.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class AddBreakpoint
   extends AbstractTreePopupSubMenuAction {
@@ -60,6 +59,7 @@ public class AddBreakpoint
 	new AddBreakpointAfter(),
 	null,
 	new AttachBreakpointHere(),
+	new RunToHere(),
     };
     
     return result;

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractBreakpoint.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution.debug;
 
@@ -30,7 +30,6 @@ import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
  * Ancestor for breakpoints for execution listeners.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractBreakpoint
   extends AbstractOptionHandler {
@@ -67,6 +66,12 @@ public abstract class AbstractBreakpoint
 
   /** the watch expression types. */
   protected ExpressionType[] m_WatchTypes;
+
+  /** whether this is a one-off. */
+  protected boolean m_OneOff;
+
+  /** the trigger counter. */
+  protected int m_TriggerCount;
 
   /**
    * Adds options to the internal list of options.
@@ -114,8 +119,22 @@ public abstract class AbstractBreakpoint
     m_OptionManager.add(
 	    "view", "views",
 	    new View[0]);
+
+    m_OptionManager.add(
+	    "one-off", "oneOff",
+	    false);
   }
-  
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_TriggerCount = 0;
+  }
+
   /**
    * Sets whether to disable this breakpoint.
    *
@@ -418,6 +437,35 @@ public abstract class AbstractBreakpoint
   }
 
   /**
+   * Sets whether the breakpoint is just a one-off one (gets removed once reached).
+   *
+   * @param value	true if a one-off breakpoint
+   */
+  public void setOneOff(boolean value) {
+    m_OneOff = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the breakpoint is just a one-off one (gets removed once reached).
+   *
+   * @return		true if a one-off breakpoint
+   */
+  public boolean getOneOff() {
+    return m_OneOff;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String oneOffTipText() {
+    return "If set to true, the breakpoint is a one-off and gets removed once reached.";
+  }
+
+  /**
    * Evaluates the breakpoint at pre-input.
    * 
    * @param actor	the current actor
@@ -527,5 +575,21 @@ public abstract class AbstractBreakpoint
    */
   public boolean triggersPostOutput(Actor actor, Token token) {
     return m_OnPostOutput && evaluatePostOutput(actor, token);
+  }
+
+  /**
+   * To be called when triggered (increments counter).
+   */
+  public void triggered() {
+    m_TriggerCount++;
+  }
+
+  /**
+   * Returns the number of times this breakpoint has been triggered.
+   *
+   * @return		the count
+   */
+  public int getTriggerCount() {
+    return m_TriggerCount;
   }
 }

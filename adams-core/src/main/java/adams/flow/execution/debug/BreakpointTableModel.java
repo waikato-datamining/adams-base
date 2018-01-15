@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BreakpointTableModel.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
@@ -68,7 +68,7 @@ public class BreakpointTableModel
    */
   @Override
   public int getColumnCount() {
-    return 11;
+    return 13;
   }
 
   /**
@@ -85,22 +85,26 @@ public class BreakpointTableModel
       case 1:
 	return "Enabled";
       case 2:
-	return "PreIn";
+	return "Count";
       case 3:
-	return "PostIn";
+	return "PreIn";
       case 4:
-	return "PreEx";
+	return "PostIn";
       case 5:
-	return "PostEx";
+	return "PreEx";
       case 6:
-	return "PreOut";
+	return "PostEx";
       case 7:
-	return "PostOut";
+	return "PreOut";
       case 8:
-	return "Type";
+	return "PostOut";
       case 9:
-	return "Quickinfo";
+	return "One-Off";
       case 10:
+	return "Type";
+      case 11:
+	return "Quickinfo";
+      case 12:
 	return "Condition";
       default:
 	throw new IllegalArgumentException("Illegal column index: " + column);
@@ -118,16 +122,20 @@ public class BreakpointTableModel
     switch (columnIndex) {
       case 0:
       case 1:
+        return Boolean.class;
       case 2:
+        return Integer.class;
       case 3:
       case 4:
       case 5:
       case 6:
       case 7:
-	return Boolean.class;
       case 8:
       case 9:
+	return Boolean.class;
       case 10:
+      case 11:
+      case 12:
 	return String.class;
       default:
 	throw new IllegalArgumentException("Illegal column index: " + columnIndex);
@@ -163,22 +171,22 @@ public class BreakpointTableModel
       case 1:
 	breakpoint.setDisabled(!((Boolean) aValue));
 	break;
-      case 2:
+      case 3:
 	breakpoint.setOnPreInput((Boolean) aValue);
 	break;
-      case 3:
+      case 4:
 	breakpoint.setOnPostInput((Boolean) aValue);
 	break;
-      case 4:
+      case 5:
 	breakpoint.setOnPreExecute((Boolean) aValue);
 	break;
-      case 5:
+      case 6:
 	breakpoint.setOnPostExecute((Boolean) aValue);
 	break;
-      case 6:
+      case 7:
 	breakpoint.setOnPreOutput((Boolean) aValue);
 	break;
-      case 7:
+      case 8:
 	breakpoint.setOnPostOutput((Boolean) aValue);
 	break;
     }
@@ -203,25 +211,29 @@ public class BreakpointTableModel
       case 1:
 	return !breakpoint.getDisabled();
       case 2:
-	return breakpoint.getOnPreInput();
+	return breakpoint.getTriggerCount();
       case 3:
-	return breakpoint.getOnPostInput();
+	return breakpoint.getOnPreInput();
       case 4:
-	return breakpoint.getOnPreExecute();
+	return breakpoint.getOnPostInput();
       case 5:
-	return breakpoint.getOnPostExecute();
+	return breakpoint.getOnPreExecute();
       case 6:
-	return breakpoint.getOnPreOutput();
+	return breakpoint.getOnPostExecute();
       case 7:
-	return breakpoint.getOnPostOutput();
+	return breakpoint.getOnPreOutput();
       case 8:
-	return breakpoint.getClass().getSimpleName();
+	return breakpoint.getOnPostOutput();
       case 9:
+	return breakpoint.getOneOff();
+      case 10:
+	return breakpoint.getClass().getSimpleName();
+      case 11:
 	if (breakpoint instanceof BooleanConditionSupporter)
 	  return ((BooleanConditionSupporter) breakpoint).getCondition().getQuickInfo();
 	else
 	  return null;
-      case 10:
+      case 12:
 	if (breakpoint instanceof BooleanConditionSupporter)
 	  return OptionUtils.getCommandLine(((BooleanConditionSupporter) breakpoint).getCondition());
 	else

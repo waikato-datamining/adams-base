@@ -574,6 +574,7 @@ public class ControlPanel
    * Continues the flow execution.
    */
   protected void continueFlowExecution() {
+    getOwner().removeOneOffBreakpoints(null);
     getOwner().unblockExecution();
     queueUpdate();
   }
