@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AttachBreakpointHere.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
  * a {@link PathBreakpoint}.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class AttachBreakpointHere
   extends AbstractAddBreakpointAction {
@@ -47,7 +46,7 @@ public class AttachBreakpointHere
    */
   @Override
   protected String getTitle() {
-    return "Attach here...";
+    return "Attach here";
   }
 
   /**
