@@ -7,4 +7,4 @@ Engine=adams.scripting.engine.DefaultScriptingEngine
 Connection=adams.scripting.connection.DefaultConnection
 
 # The command processor
-Processor=adams.scripting.processor.JsonProcessor
+Processor=adams.scripting.processor.DefaultProcessor

@@ -28,7 +28,7 @@ import adams.scripting.ScriptingHelper;
 import adams.scripting.command.FlowAwareRemoteCommand;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.connection.Connection;
-import adams.scripting.processor.JsonProcessor;
+import adams.scripting.processor.DefaultProcessor;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 
@@ -327,7 +327,7 @@ public class SendRemoteCommand
       }
       else {
 	tmp    = TempUtils.createTempFile(m_UnsuccessfulDir, "remote", ".rc");
-	result = FileUtils.writeToFileMsg(tmp.getAbsolutePath(), cmd.assembleRequest(m_CommandProcessor), false, JsonProcessor.MESSAGE_CHARSET);
+	result = FileUtils.writeToFileMsg(tmp.getAbsolutePath(), cmd.assembleRequest(m_CommandProcessor), false, DefaultProcessor.MESSAGE_CHARSET);
       }
     }
 
