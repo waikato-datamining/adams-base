@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.Pausable;
 import adams.core.QuickInfoHelper;
+import adams.core.option.OptionUtils;
 import adams.event.FlowPauseStateEvent;
 import adams.event.FlowPauseStateListener;
 import adams.event.GeneticFitnessChangeEvent;
@@ -582,7 +583,7 @@ public class WekaGeneticAlgorithm
       if (m_ActualAlgorithm.isStopped())
 	result = "Genetic algorithm stopped!";
       else if (m_ActualAlgorithm.getCurrentWeights() == null)
-        result = "Not results (measure, fitness, weights) from run available!";
+        result = "Not results (measure, fitness, weights) from run available: " + OptionUtils.getCommandLine(m_ActualAlgorithm.getCurrentSetup());
       else
 	cont = new WekaGeneticAlgorithmContainer(
 	  (Classifier) m_ActualAlgorithm.getCurrentSetup(),
