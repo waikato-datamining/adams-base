@@ -37,12 +37,12 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.event.GeneticFitnessChangeEvent;
 import adams.event.GeneticFitnessChangeListener;
+import adams.multiprocess.AbstractJob;
+import adams.multiprocess.JobWithOwner;
 import adams.opt.genetic.initialsetups.AbstractInitialSetupsProvider;
 import adams.opt.genetic.initialsetups.EmptyInitialSetupsProvider;
 import adams.opt.genetic.stopping.AbstractStoppingCriterion;
 import adams.opt.genetic.stopping.MaxIterations;
-import adams.multiprocess.AbstractJob;
-import adams.multiprocess.JobWithOwner;
 
 import java.util.BitSet;
 import java.util.HashSet;
@@ -161,11 +161,16 @@ public abstract class AbstractGeneticAlgorithm
       StringBuilder 	result;
 
       result = new StringBuilder();
-      for (int weight: weights) {
-	if (weight == 0)
-	  result.append("0");
-	else
-	  result.append("1");
+      if (weights == null) {
+        result.append("no weights available");
+      }
+      else {
+        for (int weight : weights) {
+          if (weight == 0)
+            result.append("0");
+          else
+            result.append("1");
+        }
       }
 
       return result.toString();

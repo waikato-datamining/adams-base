@@ -15,7 +15,7 @@
 
 /*
  * WekaGeneticAlgorithm.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -581,6 +581,8 @@ public class WekaGeneticAlgorithm
       m_ActualAlgorithm.run();
       if (m_ActualAlgorithm.isStopped())
 	result = "Genetic algorithm stopped!";
+      else if (m_ActualAlgorithm.getCurrentWeights() == null)
+        result = "Not results (measure, fitness, weights) from run available!";
       else
 	cont = new WekaGeneticAlgorithmContainer(
 	  (Classifier) m_ActualAlgorithm.getCurrentSetup(),
