@@ -583,7 +583,7 @@ public class WekaGeneticAlgorithm
       if (m_ActualAlgorithm.isStopped())
 	result = "Genetic algorithm stopped!";
       else if (m_ActualAlgorithm.getCurrentWeights() == null)
-        result = "Not results (measure, fitness, weights) from run available: " + OptionUtils.getCommandLine(m_ActualAlgorithm.getCurrentSetup());
+        result = "No results (measure, fitness, weights) from run available: " + OptionUtils.getCommandLine(m_ActualAlgorithm.getCurrentSetup());
       else
 	cont = new WekaGeneticAlgorithmContainer(
 	  (Classifier) m_ActualAlgorithm.getCurrentSetup(),
