@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HttpRequest.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -23,14 +23,10 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
+import adams.core.net.HttpRequestHelper;
 import adams.flow.container.HTMLRequestResult;
 import adams.flow.core.Token;
-import gnu.trove.list.array.TByteArrayList;
 import org.jsoup.Connection.Method;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 
 /**
  <!-- globalinfo-start -->
@@ -275,37 +271,14 @@ public class HttpRequest
    */
   @Override
   protected String doExecute() {
-    String			result;
-    String			payload;
-    HttpURLConnection		conn;
-    OutputStream		out;
-    InputStream			in;
-    HTMLRequestResult		cont;
-    int				read;
-    TByteArrayList		response;
+    String		result;
+    HTMLRequestResult	cont;
 
     result = null;
 
-    payload = (String) m_InputToken.getPayload();
-
     try {
-      conn = (HttpURLConnection) m_URL.urlValue().openConnection();
-      conn.setDoOutput(true);
-      conn.setDoInput(true);
-      conn.setRequestMethod(m_Method.toString());
-      for (BaseKeyValuePair header: m_Headers)
-	conn.setRequestProperty(header.getPairKey(), header.getPairValue());
-      // write payload
-      out = conn.getOutputStream();
-      out.write(payload.getBytes());
-      out.flush();
-      out.close();
-      // read response
-      response = new TByteArrayList();
-      in = conn.getInputStream();
-      while ((read = in.read()) != -1)
-	response.add((byte) read);
-      cont          = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
+      cont = HttpRequestHelper.send(
+        m_URL, m_Method, m_Headers, ((String) m_InputToken.getPayload()).getBytes());
       m_OutputToken = new Token(cont);
     }
     catch (Exception e) {

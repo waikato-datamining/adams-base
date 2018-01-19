@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HttpRequest.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -23,13 +23,11 @@ package adams.flow.source;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
+import adams.core.net.HttpRequestHelper;
 import adams.flow.container.HTMLRequestResult;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
-import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
-import org.jsoup.Connection.Response;
-import org.jsoup.Jsoup;
 
 import java.util.Map;
 
@@ -351,8 +349,6 @@ public class HttpRequest
   @Override
   protected String doExecute() {
     String		result;
-    Connection		conn;
-    Response 		res;
     HTMLRequestResult	cont;
     Map<String,String>  cookies;
 
@@ -363,15 +359,7 @@ public class HttpRequest
       cookies = (Map<String,String>) getStorageHandler().getStorage().get(m_Cookies);
 
     try {
-      conn = Jsoup.connect(m_URL.getValue());
-      for (BaseKeyValuePair header: m_Headers)
-	conn.header(header.getPairKey(), header.getPairValue());
-      conn.data(BaseKeyValuePair.toMap(m_Parameters));
-      conn.method(m_Method);
-      if (cookies != null)
-	conn.cookies(cookies);
-      res           = conn.execute();
-      cont          = new HTMLRequestResult(res.statusCode(), res.statusMessage(), res.body(), res.cookies());
+      cont = HttpRequestHelper.send(m_URL, m_Method, m_Headers, m_Parameters, (cookies == null) ? null : BaseKeyValuePair.fromMap(cookies));
       m_OutputToken = new Token(cont);
     }
     catch (Exception e) {
