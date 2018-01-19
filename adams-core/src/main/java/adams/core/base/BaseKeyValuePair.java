@@ -15,7 +15,7 @@
 
 /*
  * BaseKeyValuePair.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -132,6 +132,26 @@ public class BaseKeyValuePair
     result = new HashMap<>();
     for (BaseKeyValuePair pair: pairs)
       result.put(pair.getPairKey(), pair.getPairValue());
+
+    return result;
+  }
+
+  /**
+   * Turns the string map into pairs.
+   *
+   * @param map		the map
+   * @return		the generated pairs
+   */
+  public static BaseKeyValuePair[] fromMap(Map<String,String> map) {
+    BaseKeyValuePair[]	result;
+    int			i;
+
+    result = new BaseKeyValuePair[map.size()];
+    i      = 0;
+    for (String key: map.keySet()) {
+      result[i] = new BaseKeyValuePair(key, map.get(key));
+      i++;
+    }
 
     return result;
   }
