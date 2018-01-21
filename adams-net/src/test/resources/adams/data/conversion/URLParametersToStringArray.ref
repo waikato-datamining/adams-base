@@ -1,0 +1,5 @@
+--> out-0.txt
+k1=v1
+k1=v1,k2=v2
+hello=world,link=http://www.waikato.ac.nz/,value=A & B
+
