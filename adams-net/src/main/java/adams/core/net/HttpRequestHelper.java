@@ -27,6 +27,7 @@ import gnu.trove.list.array.TByteArrayList;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 
 import java.io.InputStream;
@@ -160,8 +161,13 @@ public class HttpRequestHelper {
     conn.method(method);
     if (cookies != null)
       conn.cookies(BaseKeyValuePair.toMap(cookies));
-    res = conn.execute();
-    result = new HTMLRequestResult(res.statusCode(), res.statusMessage(), res.body(), res.cookies());
+    try {
+      res = conn.execute();
+      result = new HTMLRequestResult(res.statusCode(), res.statusMessage(), res.body(), res.cookies());
+    }
+    catch (HttpStatusException e) {
+      result = new HTMLRequestResult(e.getStatusCode(), e.getMessage(), null);
+    }
     return result;
   }
 }
