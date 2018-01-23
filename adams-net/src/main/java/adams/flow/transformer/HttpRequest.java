@@ -21,8 +21,10 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseCharset;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
+import adams.core.io.EncodingSupporter;
 import adams.core.net.HttpRequestHelper;
 import adams.flow.container.HTMLRequestResult;
 import adams.flow.core.Token;
@@ -30,19 +32,20 @@ import org.jsoup.Connection.Method;
 
 /**
  <!-- globalinfo-start -->
- * Sends the incoming text payload to the specified URL (with optional HTTP headers) and forwards the retrieved HTML as text.
+ * Sends the incoming text/bytes payload to the specified URL (with optional HTTP headers) and forwards the retrieved HTML as text.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;byte[]<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.container.HTMLRequestResult<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.HTMLRequestResult: Status code, Body, Cookies
+ * - adams.flow.container.HTMLRequestResult: Status code, Status message, Body, Cookies
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -51,58 +54,63 @@ import org.jsoup.Connection.Method;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: HttpRequest
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-url &lt;adams.core.base.BaseURL&gt; (property: URL)
  * &nbsp;&nbsp;&nbsp;The URL for the request.
  * &nbsp;&nbsp;&nbsp;default: http:&#47;&#47;localhost
  * </pre>
- * 
+ *
  * <pre>-method &lt;GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS|TRACE&gt; (property: method)
  * &nbsp;&nbsp;&nbsp;The method to use for the request.
  * &nbsp;&nbsp;&nbsp;default: POST
  * </pre>
- * 
+ *
  * <pre>-header &lt;adams.core.base.BaseKeyValuePair&gt; [-header ...] (property: headers)
  * &nbsp;&nbsp;&nbsp;The (optional) request headers to send.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
+ * &nbsp;&nbsp;&nbsp;The type of encoding to use for incoming strings.
+ * &nbsp;&nbsp;&nbsp;default: UTF-8
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HttpRequest
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements EncodingSupporter {
 
   private static final long serialVersionUID = 3114594997972970790L;
 
@@ -115,10 +123,18 @@ public class HttpRequest
   /** the (optional) request headers. */
   protected BaseKeyValuePair[] m_Headers;
 
+  /** the encoding to use. */
+  protected BaseCharset m_Encoding;
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
   @Override
   public String globalInfo() {
     return
-      "Sends the incoming text payload to the specified URL (with optional "
+      "Sends the incoming text/bytes payload to the specified URL (with optional "
 	+ "HTTP headers) and forwards the retrieved HTML as text.";
   }
 
@@ -140,6 +156,10 @@ public class HttpRequest
     m_OptionManager.add(
       "header", "headers",
       new BaseKeyValuePair[0]);
+
+    m_OptionManager.add(
+      "encoding", "encoding",
+      new BaseCharset("UTF-8"));
   }
 
   /**
@@ -245,13 +265,42 @@ public class HttpRequest
   }
 
   /**
+   * Sets the encoding to use.
+   *
+   * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public void setEncoding(BaseCharset value) {
+    m_Encoding = value;
+    reset();
+  }
+
+  /**
+   * Returns the encoding to use.
+   *
+   * @return		the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public BaseCharset getEncoding() {
+    return m_Encoding;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String encodingTipText() {
+    return "The type of encoding to use for incoming strings.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{String.class};
+    return new Class[]{byte[].class, String.class};
   }
 
   /**
@@ -277,8 +326,12 @@ public class HttpRequest
     result = null;
 
     try {
-      cont = HttpRequestHelper.send(
-        m_URL, m_Method, m_Headers, ((String) m_InputToken.getPayload()).getBytes());
+      if (m_InputToken.hasPayload(String.class))
+        cont = HttpRequestHelper.send(
+          m_URL, m_Method, m_Headers, (String) m_InputToken.getPayload(), m_Encoding.stringValue());
+      else
+        cont = HttpRequestHelper.send(
+          m_URL, m_Method, m_Headers, (byte[]) m_InputToken.getPayload());
       m_OutputToken = new Token(cont);
     }
     catch (Exception e) {
