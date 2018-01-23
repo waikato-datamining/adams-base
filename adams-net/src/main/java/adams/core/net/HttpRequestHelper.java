@@ -30,6 +30,7 @@ import org.jsoup.Connection.Response;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -78,11 +79,16 @@ public class HttpRequestHelper {
     }
 
     // read response
-    response = new TByteArrayList();
-    in = conn.getInputStream();
-    while ((read = in.read()) != -1)
-      response.add((byte) read);
-    result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
+    try {
+      response = new TByteArrayList();
+      in = conn.getInputStream();
+      while ((read = in.read()) != -1)
+	response.add((byte) read);
+      result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
+    }
+    catch (IOException e) {
+      result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), null);
+    }
     return result;
   }
 
@@ -130,11 +136,16 @@ public class HttpRequestHelper {
     }
 
     // read response
-    response = new TByteArrayList();
-    in = conn.getInputStream();
-    while ((read = in.read()) != -1)
-      response.add((byte) read);
-    result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
+    try {
+      response = new TByteArrayList();
+      in = conn.getInputStream();
+      while ((read = in.read()) != -1)
+	response.add((byte) read);
+      result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
+    }
+    catch (IOException e) {
+      result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), null);
+    }
     return result;
   }
 
