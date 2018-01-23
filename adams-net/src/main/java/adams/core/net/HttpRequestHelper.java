@@ -31,6 +31,7 @@ import org.jsoup.Jsoup;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 
 /**
@@ -71,6 +72,58 @@ public class HttpRequestHelper {
     if (payload != null) {
       out = conn.getOutputStream();
       out.write(payload);
+      out.flush();
+      out.close();
+    }
+
+    // read response
+    response = new TByteArrayList();
+    in = conn.getInputStream();
+    while ((read = in.read()) != -1)
+      response.add((byte) read);
+    result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
+    return result;
+  }
+
+  /**
+   * Sends an HTTP request with optional payload and headers.
+   *
+   * @param url		the URL to connect to
+   * @param method	get/post/...
+   * @param headers	the optional headers, can be null
+   * @param payload	the optional payload, can be null
+   * @param encoding 	the encoding (eg UTF-8), can be null
+   * @return		the result from the request
+   * @throws Exception	if request failed
+   */
+  public static HTMLRequestResult send(BaseURL url, Method method, BaseKeyValuePair[] headers, String payload, String encoding) throws Exception {
+    HTMLRequestResult 	result;
+    HttpURLConnection	conn;
+    OutputStream 	out;
+    OutputStreamWriter  writer;
+    InputStream 	in;
+    int			read;
+    TByteArrayList	response;
+
+    conn = (HttpURLConnection) url.urlValue().openConnection();
+    conn.setDoOutput(payload != null);
+    conn.setDoInput(true);
+    conn.setRequestMethod(method.toString());
+    if (headers != null) {
+      for (BaseKeyValuePair header : headers)
+	conn.setRequestProperty(header.getPairKey(), header.getPairValue());
+    }
+
+    // write payload
+    if (payload != null) {
+      out = conn.getOutputStream();
+      if (encoding == null)
+        writer = new OutputStreamWriter(out);
+      else
+        writer = new OutputStreamWriter(out, "UTF-8");
+      writer.write(payload);
+      writer.flush();
+      writer.close();
       out.flush();
       out.close();
     }
