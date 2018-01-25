@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DataProvider.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -26,7 +26,6 @@ import adams.data.container.DataContainer;
  * project.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data
  * @see AbstractIndexedTable
  */
@@ -79,16 +78,18 @@ public interface DataProvider<T extends DataContainer>
    * if any).
    *
    * @param id		the database ID of the container to remove from the database
+   * @param keepReport	if true does not delete associated report
    * @return		true if no error
    */
-  public boolean remove(int id);
+  public boolean remove(int id, boolean keepReport);
 
   /**
    * Removes the data container from the database (and the associated report,
    * if any).
    *
    * @param id		the ID of the container to remove from the database
+   * @param keepReport	if true does not delete associated report
    * @return		true if no error
    */
-  public boolean remove(String id);
+  public boolean remove(String id, boolean keepReport);
 }

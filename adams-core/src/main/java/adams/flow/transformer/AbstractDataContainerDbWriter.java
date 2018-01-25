@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerDbWriter.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -34,7 +34,6 @@ import adams.flow.transformer.datacontainer.NoPreProcessing;
  * Abstract ancestor for actors that import data containers into the database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to write to the database
  */
 public abstract class AbstractDataContainerDbWriter<T extends DataContainer & DatabaseIDHandler>
@@ -46,31 +45,38 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
 
   /** the pre-processor to apply to the data. */
   protected AbstractDataContainerPreProcessor m_PreProcessor;
-  
+
   /** whether to replace existing containers with the new one (otherwise, nothing happens). */
   protected boolean m_OverwriteExisting;
-  
+
+  /** whether to keep any existing report. */
+  protected boolean m_KeepReport;
+
   /** whether to output the container rather then the ID. */
   protected boolean m_OutputContainer;
-  
+
   /**
    * Adds options to the internal list of options.
    */
   @Override
   public void defineOptions() {
     super.defineOptions();
-    
+
     m_OptionManager.add(
-	"pre-processor", "preProcessor",
-	new NoPreProcessing());
-    
+      "pre-processor", "preProcessor",
+      new NoPreProcessing());
+
     m_OptionManager.add(
-	"overwrite-existing", "overwriteExisting",
-	false);
-    
+      "overwrite-existing", "overwriteExisting",
+      false);
+
     m_OptionManager.add(
-	"output-container", "outputContainer",
-	false);
+      "keep-report", "keepReport",
+      false);
+
+    m_OptionManager.add(
+      "output-container", "outputContainer",
+      false);
   }
 
   /**
@@ -131,6 +137,35 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
   public abstract String overwriteExistingTipText();
 
   /**
+   * Sets whether to keep an existing report in the database.
+   *
+   * @param value	true if to keep
+   */
+  public void setKeepReport(boolean value) {
+    m_KeepReport = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to keep an existing report in the database.
+   *
+   * @return		true if keep
+   */
+  public boolean getKeepReport() {
+    return m_KeepReport;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String keepReportTipText() {
+    return "If enabled, any existing report is kept in the database.";
+  }
+
+  /**
    * Sets whether to output the container rather than the ID.
    *
    * @param value 	true if to output the container
@@ -182,15 +217,15 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
   public String getQuickInfo() {
     String	result;
     String	value;
-    
+
     result = QuickInfoHelper.toString(this, "preProcessor", m_PreProcessor);
     value  = QuickInfoHelper.toString(this, "overwriteExisting", m_OverwriteExisting, "overwrite", ", ");
-    if (value != null)    
+    if (value != null)
       result += value;
     value  = QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");
-    if (value != null)    
+    if (value != null)
       result += value;
-    
+
     return result;
   }
 
@@ -204,7 +239,7 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
 
   /**
    * Returns whether the container already exists in the database.
-   * 
+   *
    * @param provider	the provider to use for checking
    * @param cont	the container to look for
    * @return		true if already stored in database
@@ -215,18 +250,18 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
 
   /**
    * Removes the container from the database.
-   * 
+   *
    * @param provider	the provider to use for removing
    * @param cont	the container to remove
    * @return		true if successfully removed
    */
   public boolean remove(DataProvider provider, T cont) {
-    return provider.remove(cont.getID());
+    return provider.remove(cont.getID(), m_KeepReport);
   }
 
   /**
    * Adds the container to the database.
-   * 
+   *
    * @param provider	the provider to use
    * @param cont	the container to store
    * @return		the database ID, {@link Constants#NO_ID} if failed
@@ -237,7 +272,7 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
 
   /**
    * Loads the container from the database.
-   * 
+   *
    * @param provider	the provider to use
    * @param cont	the container to store
    * @return		the container, null if failed to load
@@ -245,7 +280,7 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
   public T load(DataProvider provider, T cont) {
     return (T) provider.load(cont.getID());
   }
-  
+
   /**
    * Stores the data container.
    *
@@ -265,16 +300,16 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
       getLogger().info("Container '" + cont + "' exists in database: " + exists);
     if (exists) {
       if (m_OverwriteExisting) {
-	ok = remove(provider, cont);
-	if (isLoggingEnabled())
-	  getLogger().info("Existing container '" + cont + "' removed from database: " + ok);
-	if (ok)
-	  result = add(provider, cont);
-	else
-	  getLogger().severe("Failed to remove container from database: " + cont);
+        ok = remove(provider, cont);
+        if (isLoggingEnabled())
+          getLogger().info("Existing container '" + cont + "' removed from database: " + ok);
+        if (ok)
+          result = add(provider, cont);
+        else
+          getLogger().severe("Failed to remove container from database: " + cont);
       }
       else {
-	getLogger().severe("Container '" + cont + "' already exists in database, but no overwrite allowed, skipping!");
+        getLogger().severe("Container '" + cont + "' already exists in database, but no overwrite allowed, skipping!");
       }
     }
     else {
@@ -286,14 +321,14 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
 
   /**
    * Performs preprocessing on the container.
-   * 
+   *
    * @param cont	the container to preprocess
    * @return		the processed container
    */
   protected T preProcess(T cont) {
     return (T) m_PreProcessor.preProcess(cont);
   }
-  
+
   /**
    * Executes the flow item.
    *
@@ -314,18 +349,18 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
     }
     else {
       if (m_OutputContainer) {
-	if ((id != Constants.NO_ID) && (cont instanceof MutableDatabaseIDHandler))
-	  ((MutableDatabaseIDHandler) cont).setDatabaseID(id);
-	m_OutputToken = new Token(cont);
+        if ((id != Constants.NO_ID) && (cont instanceof MutableDatabaseIDHandler))
+          ((MutableDatabaseIDHandler) cont).setDatabaseID(id);
+        m_OutputToken = new Token(cont);
       }
       else {
-	m_OutputToken = new Token(id);
+        m_OutputToken = new Token(id);
       }
     }
 
     return result;
   }
-  
+
   /**
    * Cleans up after the execution has finished. Also removes graphical
    * components.
@@ -334,7 +369,7 @@ public abstract class AbstractDataContainerDbWriter<T extends DataContainer & Da
   public void cleanUp() {
     if (m_PreProcessor != null)
       m_PreProcessor.setOwner(null);
-    
+
     super.cleanUp();
   }
 }

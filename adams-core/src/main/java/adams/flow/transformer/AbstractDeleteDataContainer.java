@@ -15,7 +15,7 @@
 
 /*
  * AbstractDeleteDataContainer.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -28,7 +28,6 @@ import adams.flow.core.Token;
  * Ancestor for transformers that delete containers from the database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to remove from the database
  */
 public abstract class AbstractDeleteDataContainer<T extends DataContainer>
@@ -36,6 +35,50 @@ public abstract class AbstractDeleteDataContainer<T extends DataContainer>
 
   /** for serialization. */
   private static final long serialVersionUID = -4736058667429890220L;
+
+  /** whether to keep any existing report. */
+  protected boolean m_KeepReport;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "keep-report", "keepReport",
+      false);
+  }
+
+  /**
+   * Sets whether to keep an existing report in the database.
+   *
+   * @param value	true if to keep
+   */
+  public void setKeepReport(boolean value) {
+    m_KeepReport = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to keep an existing report in the database.
+   *
+   * @return		true if keep
+   */
+  public boolean getKeepReport() {
+    return m_KeepReport;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String keepReportTipText() {
+    return "If enabled, any existing report is kept in the database.";
+  }
 
   /**
    * Returns the class that the consumer accepts.
@@ -77,7 +120,7 @@ public abstract class AbstractDeleteDataContainer<T extends DataContainer>
     provider = getDataProvider();
     id       = (Integer) m_InputToken.getPayload();
 
-    return provider.remove(id);
+    return provider.remove(id, m_KeepReport);
   }
 
   /**
