@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * QuickInfoHelper.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -37,7 +37,6 @@ import java.util.List;
  * implementing {@link QuickInfoSupporter}.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class QuickInfoHelper {
 
@@ -188,6 +187,9 @@ public class QuickInfoHelper {
 	else {
 	  if (Array.getLength(current) == 0) {
 	    result = EMPTY_ARRAY_STRING;
+	  }
+	  else if (Array.getLength(current) == 1) {
+	    result = toString(handler, property, Array.get(current, 0), prefix);
 	  }
 	  else {
 	    result = "";
