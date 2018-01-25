@@ -189,7 +189,7 @@ public class QuickInfoHelper {
 	    result = EMPTY_ARRAY_STRING;
 	  }
 	  else if (Array.getLength(current) == 1) {
-	    result = toString(handler, property, Array.get(current, 0), prefix);
+	    result = toString(handler, property, Array.get(current, 0), "");
 	  }
 	  else {
 	    result = "";
