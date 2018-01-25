@@ -13,25 +13,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaselineAdjustedForecaster.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers.timeseries;
 
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-
-import weka.classifiers.evaluation.NumericPrediction;
-import weka.core.Attribute;
-import weka.core.Instances;
-import weka.core.Option;
-import weka.core.OptionHandler;
-import weka.core.Utils;
 import adams.core.Constants;
 import adams.core.option.OptionUtils;
 import adams.data.DateFormatString;
@@ -43,6 +30,21 @@ import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
 import adams.data.timeseries.TimeseriesUtils;
 import adams.data.weka.WekaAttributeIndex;
+import weka.classifiers.evaluation.NumericPrediction;
+import weka.classifiers.timeseries.core.BaseModelSerializer;
+import weka.classifiers.timeseries.core.StateDependentPredictor;
+import weka.core.Attribute;
+import weka.core.Instances;
+import weka.core.Option;
+import weka.core.OptionHandler;
+import weka.core.Utils;
+
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -68,7 +70,6 @@ import adams.data.weka.WekaAttributeIndex;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaselineAdjustedForecaster
   extends AbstractForecaster
@@ -110,7 +111,7 @@ public class BaselineAdjustedForecaster
 	+ "At forecast time, the two predictions are super-imposed to generate "
         + "the original signal again.";
   }
-  
+
   /**
    * Provides a short name that describes the underlying algorithm
    * in some way.
@@ -320,7 +321,7 @@ public class BaselineAdjustedForecaster
    * 
    * @param insts	the instances to convert
    * @return		the timeseries
-   * @throws Execption	if conversion fails
+   * @throws Exception	if conversion fails
    */
   protected Timeseries instancesToTimeseries(Instances insts) throws Exception {
     Timeseries			result;
@@ -564,5 +565,96 @@ public class BaselineAdjustedForecaster
   @Override
   public void postExecution() throws Exception {
 
+  }
+
+    /**
+     * Check whether the base learner requires special serialization
+     *
+     * @return true if base learner requires special serialization, false otherwise
+     */
+    public boolean baseModelHasSerializer() {
+        return m_Baseline instanceof BaseModelSerializer;
+    }
+
+  /**
+   * Save underlying classifier
+   *
+   * @param filepath the path of the file to save the base model to
+   * @throws Exception
+   */
+  public void saveBaseModel(String filepath) throws Exception {
+    if (baseModelHasSerializer())
+      ((BaseModelSerializer) m_Baseline).serializeModel(filepath + ".base");
+  }
+
+  /**
+   * Load serialized classifier
+   *
+   * @param filepath the path of the file to load the base model from
+   * @throws Exception
+   */
+  public void loadBaseModel(String filepath) throws Exception {
+    if (baseModelHasSerializer())
+      ((BaseModelSerializer) m_Baseline).loadSerializedModel(filepath + ".base");
+  }
+
+  /**
+   * Serialize model state
+   *
+   * @param filepath the path of the file to save the model state to
+   * @throws Exception
+   */
+  public void serializeState(String filepath) throws Exception {
+    if (usesState())
+        ((StateDependentPredictor) m_Baseline).serializeState(filepath + ".state");
+  }
+
+  /**
+   * Load serialized model state
+   *
+   * @param filepath the path of the file to save the model state from
+   * @throws Exception
+   */
+  public void loadSerializedState(String filepath) throws Exception {
+    if (usesState())
+      ((StateDependentPredictor) m_Baseline).loadSerializedState(filepath + ".state");
+  }
+
+  /**
+   * Check whether the base learner requires operations regarding state
+   *
+   * @return true if base learner uses state-based predictions, false otherwise
+   */
+  public boolean usesState() {
+    return m_Baseline instanceof StateDependentPredictor;
+  }
+
+  /**
+   * Reset model state.
+   */
+  public void clearPreviousState() {
+    if (usesState())
+      ((StateDependentPredictor) m_Baseline).clearPreviousState();
+  }
+
+  /**
+   * Load state into model.
+   */
+  public void setPreviousState(List<Object> previousState) {
+    if (usesState())
+      ((StateDependentPredictor) m_Baseline).setPreviousState(previousState.get(0));
+  }
+
+  /**
+   * Get the last set state of the model.
+   *
+   * @return the state of the model to be used in next prediction
+   */
+  public List<Object> getPreviousState() {
+    List<Object> state = new ArrayList<>();
+
+    if (usesState())
+      state.add(((StateDependentPredictor) m_Baseline).getPreviousState());
+    return state;
   }
 }

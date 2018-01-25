@@ -13,20 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LagMakerOptions.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
-import weka.classifiers.timeseries.core.TSLagMaker;
 import adams.core.option.AbstractOptionGroup;
+import weka.filters.supervised.attribute.TSLagMaker;
 
 /**
  * Option group for {@link TSLagMaker} objects.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LagMakerOptions
   extends AbstractOptionGroup {

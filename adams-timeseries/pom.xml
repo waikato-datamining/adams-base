@@ -92,9 +92,9 @@
     </dependency>
 
     <dependency>
-      <groupId>pentaho.weka</groupId>
-      <artifactId>pdm-timeseriesforecasting-ce</artifactId>
-      <version>2015.05.19</version>
+      <groupId>nz.ac.waikato.cms.weka</groupId>
+      <artifactId>timeseriesForecasting</artifactId>
+      <version>1.0.25</version>
       <exclusions>
         <exclusion>
           <groupId>gnujaxp</groupId>
