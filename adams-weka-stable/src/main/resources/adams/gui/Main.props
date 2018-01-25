@@ -1,0 +1,12 @@
+##########################
+# Blacklisted menu items #
+##########################
+
+# Menu items that can be found by the dynamic class discovery but aren't
+# supposed to show up in the menu, can be "blacklisted".
+# Format:
+#   Blacklisted-<classname>=true|false
+# Example:
+#   Blacklisted-adams.gui.menu.FunkyItem=true
+
+Blacklisted-adams.gui.menu.PackageManager=true
