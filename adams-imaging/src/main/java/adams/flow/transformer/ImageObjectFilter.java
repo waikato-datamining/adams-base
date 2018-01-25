@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectFilter.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -33,7 +33,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
  <!-- globalinfo-start -->
- * Uses the specified object finder to locate objects and then applies the the object filter to the located objects.
+ * Uses the specified object finder to locate objects and then applies the object filter to the located objects.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -124,7 +124,7 @@ public class ImageObjectFilter
    */
   @Override
   public String globalInfo() {
-    return "Uses the specified object finder to locate objects and then applies the the object filter to the located objects.";
+    return "Uses the specified object finder to locate objects and then applies the object filter to the located objects.";
   }
 
   /**

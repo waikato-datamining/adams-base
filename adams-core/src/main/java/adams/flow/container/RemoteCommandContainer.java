@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteCommandContainer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.container;
@@ -32,14 +32,13 @@ import java.util.List;
  * intercepted by logging handlers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RemoteCommandContainer
   extends AbstractContainer {
 
   private static final long serialVersionUID = 1960872156580346093L;
 
-  /** the identifier for the the event. */
+  /** the identifier for the event. */
   public final static String VALUE_EVENT = "Event";
 
   /** the identifier for the command. */

@@ -15,7 +15,7 @@
 
 /*
  * AbstractRemoteFlowCommand.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.terminal.menu.remotecommand;
@@ -51,7 +51,6 @@ import com.googlecode.lanterna.gui2.table.TableModel;
  * Ancestor for actions that work on remote flows.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractRemoteFlowCommandAction
   extends AbstractRemoteCommandActionWithGUI {
@@ -283,7 +282,7 @@ public abstract class AbstractRemoteFlowCommandAction
   }
 
   /**
-   * Returns an ID array of the the currently selected flows.
+   * Returns an ID array of the currently selected flows.
    *
    * @return		the flow IDs
    */
@@ -298,7 +297,7 @@ public abstract class AbstractRemoteFlowCommandAction
   }
 
   /**
-   * Returns an ID array of the the currently selected flows.
+   * Returns an ID array of the currently selected flows.
    *
    * @return		the flow IDs
    */

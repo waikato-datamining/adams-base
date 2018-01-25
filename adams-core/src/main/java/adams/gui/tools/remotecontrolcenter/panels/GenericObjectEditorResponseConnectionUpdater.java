@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GenericObjectEditorResponseConnectionUpdater.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.remotecontrolcenter.panels;
@@ -28,10 +28,9 @@ import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
 
 /**
- * Updates the the response connection.
+ * Updates the response connection.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GenericObjectEditorResponseConnectionUpdater
   implements PostProcessObjectHandler {

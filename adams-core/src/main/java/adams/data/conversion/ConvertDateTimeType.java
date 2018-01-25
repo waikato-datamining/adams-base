@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ConvertDateTimeType.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -37,7 +37,7 @@ import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
- * Turns instances of the the specified input date&#47;time type into instances of the specified output date&#47;time type.
+ * Turns instances of the specified input date&#47;time type into instances of the specified output date&#47;time type.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -81,7 +81,7 @@ public class ConvertDateTimeType
    */
   @Override
   public String globalInfo() {
-    return "Turns instances of the the specified input date/time type into instances of the specified output date/time type.";
+    return "Turns instances of the specified input date/time type into instances of the specified output date/time type.";
   }
 
   /**

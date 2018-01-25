@@ -13,21 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Email.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.tika.mime.MediaType;
 
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingObject;
+import org.apache.tika.mime.MediaType;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Container object for an email.
@@ -71,7 +70,7 @@ public class Email
    * @param from	the sender
    * @param to		the recipient
    * @param subject	the subject
-   * @param body	the the content
+   * @param body	the content
    */
   public Email(EmailAddress from, EmailAddress to, String subject, String body) {
     this(from, new EmailAddress[]{to}, subject, body, new File[]{});
@@ -83,7 +82,7 @@ public class Email
    * @param from	the sender
    * @param to		the recipient
    * @param subject	the subject
-   * @param body	the the content
+   * @param body	the content
    * @param attachments	the attachments
    */
   public Email(EmailAddress from, EmailAddress to, String subject, String body, File[] attachments) {
@@ -96,7 +95,7 @@ public class Email
    * @param from	the sender
    * @param to		the recipients
    * @param subject	the subject
-   * @param body	the the content
+   * @param body	the content
    * @param attachments	the attachments
    */
   public Email(EmailAddress from, EmailAddress[] to, String subject, String body, File[] attachments) {
@@ -111,7 +110,7 @@ public class Email
    * @param cc		the CC recipients
    * @param bcc		the BCC recipients
    * @param subject	the subject
-   * @param body	the the content
+   * @param body	the content
    * @param attachments	the attachments
    */
   public Email(EmailAddress from, EmailAddress[] to, EmailAddress[] cc, EmailAddress[] bcc, String subject, String body, File[] attachments) {

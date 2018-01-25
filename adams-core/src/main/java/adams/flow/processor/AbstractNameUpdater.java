@@ -15,7 +15,7 @@
 
 /*
  * AbstractNameUpdater.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -86,7 +86,7 @@ public abstract class AbstractNameUpdater<T>
   }
 
   /**
-   * Returns the the old name to replace.
+   * Returns the old name to replace.
    *
    * @return 		the old name
    */
@@ -113,7 +113,7 @@ public abstract class AbstractNameUpdater<T>
   }
 
   /**
-   * Returns the the new name that replaces the old one.
+   * Returns the new name that replaces the old one.
    *
    * @return 		the new name
    */

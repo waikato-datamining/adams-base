@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractPlotProcessor.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control.plotprocessor;
 
@@ -33,12 +33,11 @@ import java.util.List;
 
 /**
  * Ancestor for processors of plot containers. A processor produces "additional"
- * containers using the the input provided by the {@link PlotProcessor} actor.
+ * containers using the input provided by the {@link PlotProcessor} actor.
  * This allows, for instance, for applying smoothing algorithms to the stream
  * of plot containers passing through.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractPlotProcessor
   extends AbstractOptionHandler

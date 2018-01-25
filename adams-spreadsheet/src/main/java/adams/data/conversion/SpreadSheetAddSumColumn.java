@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetAddSumColumn.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -55,7 +55,6 @@ import adams.data.spreadsheet.SpreadSheetUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetAddSumColumn
   extends AbstractInPlaceSpreadSheetConversion {
@@ -63,7 +62,7 @@ public class SpreadSheetAddSumColumn
   /** for serialization. */
   private static final long serialVersionUID = 1320593539567099350L;
 
-  /** the the column header. */
+  /** the column header. */
   protected String m_Header;
   
   /** the rows to add the sum to. */

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SharedStringsTable.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
@@ -28,7 +28,6 @@ import java.util.ArrayList;
  * Common strings are represented by integers, conserving memory.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SharedStringsTable
   implements Serializable, Cloneable {
@@ -77,7 +76,7 @@ public class SharedStringsTable
    * add the string to its internal
    * 
    * @param s		the string to get the index for
-   * @return		the the index
+   * @return		the index
    */
   public synchronized int getIndex(String s) {
     int		result;

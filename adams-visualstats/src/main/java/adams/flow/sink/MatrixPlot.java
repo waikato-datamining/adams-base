@@ -15,7 +15,7 @@
 
 /*
  * MatrixPlot.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -123,7 +123,6 @@ import java.awt.BorderLayout;
  <!-- options-end -->
  *
  * @author msf8
- * @version $Revision$
  */
 public class MatrixPlot
   extends AbstractGraphicalDisplay
@@ -299,7 +298,7 @@ public class MatrixPlot
   }
 
   /**
-   * Get the percent of the the instances in each attribute to work with
+   * Get the percent of the instances in each attribute to work with
    * @return			int percent of instances
    */
   public int getPercent() {

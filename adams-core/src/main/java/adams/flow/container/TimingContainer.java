@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TimingContainer.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.container;
@@ -28,14 +28,13 @@ import java.util.List;
  * Container to store timing information from actor execution.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TimingContainer
   extends AbstractContainer {
 
   private static final long serialVersionUID = 1960872156580346093L;
 
-  /** the identifier for the the msec. */
+  /** the identifier for the msec. */
   public final static String VALUE_MSEC = "msec";
 
   /** the identifier for the optional prefix. */

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SelectOptionPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.chooser;
@@ -77,7 +77,7 @@ public class SelectOptionPanel
   }
 
   /**
-   * Returns the index of the the option in the provided array.
+   * Returns the index of the option in the provided array.
    *
    * @param options	the options to locate the search string
    * @param option	the option to search for

@@ -15,18 +15,18 @@
 
 /*
  * WekaNewInstance.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.lang.reflect.Constructor;
-
+import adams.core.QuickInfoHelper;
+import adams.flow.core.Token;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
-import adams.core.QuickInfoHelper;
-import adams.flow.core.Token;
+
+import java.lang.reflect.Constructor;
 
 /**
  <!-- globalinfo-start -->
@@ -82,7 +82,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaNewInstance
   extends AbstractTransformer {
@@ -137,7 +136,7 @@ public class WekaNewInstance
   }
 
   /**
-   * Returns the the class name of the Instance object to create.
+   * Returns the class name of the Instance object to create.
    *
    * @return		the class
    */

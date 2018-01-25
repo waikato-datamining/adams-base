@@ -15,7 +15,7 @@
 
 /*
  * TechnicalInformation.java
- * Copyright (C) 2006-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -35,7 +35,6 @@ import java.util.List;
  * <a href="http://bib2web.djvuzone.org/bibtex.html" target="_blank">http://bib2web.djvuzone.org/bibtex.html</a>
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see TechnicalInformationHandler
  * @see weka.core.TechnicalInformation
  */
@@ -158,8 +157,8 @@ public class TechnicalInformation {
     PUBLISHER("publisher", "The publisher's name."),
     /** The name of the school where a thesis was written. */
     SCHOOL("school", "The name of the school where a thesis was written."),
-    /** The name of a series or set of books. When citing an entire book, the the title field gives its title and an optional series field gives the name of a series or multi-volume set in which the book is published. */
-    SERIES("series", "The name of a series or set of books. When citing an entire book, the the title field gives its title and an optional series field gives the name of a series or multi-volume set in which the book is published."),
+    /** The name of a series or set of books. When citing an entire book, the title field gives its title and an optional series field gives the name of a series or multi-volume set in which the book is published. */
+    SERIES("series", "The name of a series or set of books. When citing an entire book, the title field gives its title and an optional series field gives the name of a series or multi-volume set in which the book is published."),
     /** The work's title, typed as explained in the LaTeX book. */
     TITLE("title", "The work's title, typed as explained in the LaTeX book."),
     /** The type of a technical report---for example, ``Research Note''. */

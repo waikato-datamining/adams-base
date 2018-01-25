@@ -13,20 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ErrorBandPaintlet.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
+import adams.gui.visualization.core.AxisPanel;
+import adams.gui.visualization.core.plot.Axis;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.HashMap;
-
-import adams.gui.visualization.core.AxisPanel;
-import adams.gui.visualization.core.plot.Axis;
 
 /**
  * Plots a band around the values, using the Y errors to define the width of
@@ -105,7 +104,7 @@ public class ErrorBandPaintlet
   }
 
   /**
-   * Returns the the alpha value for the band (0-255).
+   * Returns the alpha value for the band (0-255).
    *
    * @return 		the alpha value
    */

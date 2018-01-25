@@ -15,7 +15,7 @@
 
 /*
  * AbstractTee.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -39,7 +39,6 @@ import java.util.Hashtable;
  * Abstract ancestor for actors that tee-off tokens.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractTee
   extends AbstractControlActor
@@ -49,7 +48,7 @@ public abstract class AbstractTee
   private static final long serialVersionUID = 7132280825125548047L;
 
   /**
-   * SwingWorker for asynchronous execution of the the tee's sub-actors.
+   * SwingWorker for asynchronous execution of the tee's sub-actors.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$

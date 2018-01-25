@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SAXKMeans.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package weka.clusterers;
 
@@ -2161,7 +2161,7 @@ public class SAXKMeans
   }
 
   /**
-   * Gets the the cluster centroids.
+   * Gets the cluster centroids.
    * 
    * @return the cluster centroids
    */

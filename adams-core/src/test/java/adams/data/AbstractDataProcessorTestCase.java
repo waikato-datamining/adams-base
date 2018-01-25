@@ -118,7 +118,7 @@ public abstract class AbstractDataProcessorTestCase<A, I extends DataContainer, 
    * <br><br>
    * The default returns null.
    *
-   * @return		the props files, null if to use the the default one
+   * @return		the props files, null if to use the default one
    * @see		#getDatabasePropertiesFile()
    */
   protected String[] getRegressionConnections() {

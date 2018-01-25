@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetAddFormulaColumn.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -66,7 +66,6 @@ import adams.parser.SpreadSheetFormulaText;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetAddFormulaColumn
   extends AbstractInPlaceSpreadSheetConversion {
@@ -80,7 +79,7 @@ public class SpreadSheetAddFormulaColumn
   /** the placeholder for the last column. */
   public final static String PLACEHOLDER_LAST_COL = "#";
 
-  /** the the column header. */
+  /** the column header. */
   protected String m_Header;
 
   /** the formula to add. */

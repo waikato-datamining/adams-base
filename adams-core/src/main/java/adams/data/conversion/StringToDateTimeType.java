@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringToDateTimeType.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -39,7 +39,7 @@ import java.util.Date;
 
 /**
  <!-- globalinfo-start -->
- * Parses a string and turns it into an instance of the the specified date&#47;time type. The string may contain variables, which get expanded at conversion time.
+ * Parses a string and turns it into an instance of the specified date&#47;time type. The string may contain variables, which get expanded at conversion time.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -70,7 +70,6 @@ import java.util.Date;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringToDateTimeType
   extends AbstractConversionFromString {
@@ -98,7 +97,7 @@ public class StringToDateTimeType
   @Override
   public String globalInfo() {
     return 
-	"Parses a string and turns it into an instance of the the specified "
+	"Parses a string and turns it into an instance of the specified "
 	+ "date/time type. The string may contain variables, which get expanded "
 	+ "at conversion time.";
   }

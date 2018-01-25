@@ -15,7 +15,7 @@
 
 /*
  * AbstractRemoteFlowTab.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.remotecontrolcenter.panels;
@@ -335,7 +335,7 @@ public abstract class AbstractRemoteFlowTab
   }
 
   /**
-   * Returns an ID array of the the currently selected flows.
+   * Returns an ID array of the currently selected flows.
    *
    * @return		the flow IDs
    */

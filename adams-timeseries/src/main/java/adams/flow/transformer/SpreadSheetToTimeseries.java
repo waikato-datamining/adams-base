@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetToTimeseries.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -103,7 +103,6 @@ import java.util.HashSet;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetToTimeseries
   extends AbstractArrayProvider {
@@ -200,7 +199,7 @@ public class SpreadSheetToTimeseries
   }
 
   /**
-   * Sets the the index/name of the column that contains the timestamp of the
+   * Sets the index/name of the column that contains the timestamp of the
    * data points.
    *
    * @param value	the index/name

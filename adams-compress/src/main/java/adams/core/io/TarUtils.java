@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TarUtils.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2010 jcscoobyrs
  */
 package adams.core.io;
@@ -43,7 +43,6 @@ import java.util.List;
  * A helper class for Tar-file related tasks.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TarUtils {
 
@@ -65,7 +64,7 @@ public class TarUtils {
   }
 
   /**
-   * Determines the compression based on the the file extension.
+   * Determines the compression based on the file extension.
    *
    * @param archive	the archive to determine the compression for
    * @return		the compression
@@ -75,7 +74,7 @@ public class TarUtils {
   }
 
   /**
-   * Determines the compression based on the the file extension.
+   * Determines the compression based on the file extension.
    *
    * @param archive	the archive to determine the compression for
    * @return		the compression

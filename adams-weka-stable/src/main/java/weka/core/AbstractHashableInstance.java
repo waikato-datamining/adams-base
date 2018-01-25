@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractHashableInstance.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package weka.core;
 
@@ -29,7 +29,6 @@ import java.util.Enumeration;
  * hash, like maps or hashtables.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractHashableInstance
   implements Serializable, Instance {
@@ -592,7 +591,7 @@ public abstract class AbstractHashableInstance
    * @param value the new attribute value (If the attribute is a string
    *          attribute and the value can't be found, the value is added to the
    *          attribute).
-   * @throws IllegalArgumentException if the the attribute is not nominal or a
+   * @throws IllegalArgumentException if the attribute is not nominal or a
    *           string, or the value couldn't be found for a nominal attribute
    */
   @Override

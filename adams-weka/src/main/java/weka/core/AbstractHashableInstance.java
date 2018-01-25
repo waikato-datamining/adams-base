@@ -592,7 +592,7 @@ public abstract class AbstractHashableInstance
    * @param value the new attribute value (If the attribute is a string
    *          attribute and the value can't be found, the value is added to the
    *          attribute).
-   * @throws IllegalArgumentException if the the attribute is not nominal or a
+   * @throws IllegalArgumentException if the attribute is not nominal or a
    *           string, or the value couldn't be found for a nominal attribute
    */
   @Override

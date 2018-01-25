@@ -13,24 +13,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HeaderDefinition.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.featureconverter;
+
+import adams.core.CloneHandler;
+import adams.data.report.DataType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import adams.core.CloneHandler;
-import adams.data.report.DataType;
-
 /**
  * Container for storing header information.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HeaderDefinition
   implements Serializable, Comparable<HeaderDefinition>, CloneHandler<HeaderDefinition> {
@@ -268,7 +267,7 @@ public class HeaderDefinition
   }
   
   /**
-   * Returns whether this object is the same as the the speficied one.
+   * Returns whether this object is the same as the specified one.
    * 
    * @param obj		the object to compare with
    * @return		true if the same

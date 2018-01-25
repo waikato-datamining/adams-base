@@ -37,7 +37,7 @@ public class OutlierDetectorContainer
 
   private static final long serialVersionUID = 1960872156580346093L;
 
-  /** the identifier for the the detection output (if any). */
+  /** the identifier for the detection output (if any). */
   public final static String VALUE_DETECTION = "Detection";
 
   /** the identifier for the input data. */

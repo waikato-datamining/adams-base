@@ -15,7 +15,7 @@
 
 /*
  * OptionUtils.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -109,7 +109,7 @@ public class OptionUtils {
    * adds the handling of arrays.
    *
    * @param key			the superclass to store the hook method under
-   * @param hookCls		the class containing the the hook method
+   * @param hookCls		the class containing the hook method
    * @param hookMethod		the name of the hook method
    */
   public static void addValueOfHook(Class key, Class hookCls, String hookMethod) {
@@ -156,7 +156,7 @@ public class OptionUtils {
    * Adds the given hook for converting objects into strings (low-level).
    *
    * @param key			the superclass to store the hook method under
-   * @param hookCls		the class containing the the hook method
+   * @param hookCls		the class containing the hook method
    * @param hookMethod		the name of the hook method
    */
   public static void addToStringHook(Class key, Class hookCls, String hookMethod) {

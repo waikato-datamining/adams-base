@@ -19,9 +19,6 @@
  */
 package adams.data.io.input;
 
-import java.util.Arrays;
-import java.util.List;
-
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.io.FileUtils;
@@ -33,6 +30,9 @@ import adams.test.AbstractTestHelper;
 import adams.test.Regression;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Ancestor for report reader test cases.
@@ -114,7 +114,7 @@ public abstract class AbstractReportReaderTestCase<A extends AbstractReportReade
    * <br><br>
    * The default returns null.
    *
-   * @return		the props files, null if to use the the default one
+   * @return		the props files, null if to use the default one
    * @see		#getDatabasePropertiesFile()
    */
   protected String[] getRegressionConnections() {

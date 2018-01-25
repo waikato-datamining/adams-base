@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractHostnameVerifier.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.net.hostnameverifier;
@@ -30,7 +30,6 @@ import javax.net.ssl.SSLSession;
  * Ancestor for hostname verifiers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractHostnameVerifier
   extends AbstractOptionHandler
@@ -50,7 +49,7 @@ public abstract class AbstractHostnameVerifier
   }
 
   /**
-   * Performs the actual verification of the the host.
+   * Performs the actual verification of the host.
    *
    * @param hostname	the hostname to check
    * @param session	the current session
