@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Reader.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.spreadsheet.sql;
@@ -37,7 +37,6 @@ import java.sql.SQLException;
  * For reading data from a database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 13404 $
  */
 public class Reader
   extends LoggingObject
@@ -168,6 +167,7 @@ public class Reader
     Row		row;
     int		i;
     ContentType type;
+    Object	tmp;
 
     m_Stopped = false;
     m_Finished  = false;
@@ -182,36 +182,41 @@ public class Reader
       row = result.addRow();
       for (i = 1; i <= result.getColumnCount(); i++) {
 	type = m_TypeMapper.sqlTypeToContentType(m_Type[i - 1]);
-	switch (type) {
-	  case TIME:
-	    row.addCell(i - 1).setContentAs(rs.getTime(i).toString(), type);
-	    break;
-	  case TIMEMSEC:
-	    row.addCell(i - 1).setContentAs(rs.getTime(i).toString(), type);
-	    break;
-	  case DATE:
-	    row.addCell(i - 1).setContentAs(rs.getDate(i).toString(), type);
-	    break;
-	  case DATETIME:
-	    row.addCell(i - 1).setContentAs(rs.getTimestamp(i).toString(), type);
-	    break;
-	  case DATETIMEMSEC:
-	    row.addCell(i - 1).setContentAs(rs.getTimestamp(i).toString(), type);
-	    break;
-	  case LONG:
-	    row.addCell(i - 1).setContent(rs.getLong(i));
-	    break;
-	  case DOUBLE:
-	    row.addCell(i - 1).setContent(rs.getDouble(i));
-	    break;
-	  case STRING:
-	    row.addCell(i - 1).setContentAsString(rs.getString(i));
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled content type: " + type);
-	}
-	if (rs.wasNull())
+	// null?
+	rs.getObject(i);
+	if (rs.wasNull()) {
 	  row.getCell(i - 1).setMissing();
+	}
+	else {
+	  switch (type) {
+	    case TIME:
+	      row.addCell(i - 1).setContentAs("" + rs.getTime(i), type);
+	      break;
+	    case TIMEMSEC:
+	      row.addCell(i - 1).setContentAs("" + rs.getTime(i), type);
+	      break;
+	    case DATE:
+	      row.addCell(i - 1).setContentAs("" + rs.getDate(i), type);
+	      break;
+	    case DATETIME:
+	      row.addCell(i - 1).setContentAs("" + rs.getTimestamp(i), type);
+	      break;
+	    case DATETIMEMSEC:
+	      row.addCell(i - 1).setContentAs("" + rs.getTimestamp(i), type);
+	      break;
+	    case LONG:
+	      row.addCell(i - 1).setContent(rs.getLong(i));
+	      break;
+	    case DOUBLE:
+	      row.addCell(i - 1).setContent(rs.getDouble(i));
+	      break;
+	    case STRING:
+	      row.addCell(i - 1).setContentAsString(rs.getString(i));
+	      break;
+	    default:
+	      throw new IllegalStateException("Unhandled content type: " + type);
+	  }
+	}
       }
 
       m_Finished = !rs.next();
