@@ -1,0 +1,15 @@
+--> adams.flow.condition.bool.IsByte-out0.txt
+false
+
+--> adams.flow.condition.bool.IsByte-out1.txt
+false
+
+--> adams.flow.condition.bool.IsByte-out2.txt
+true
+
+--> adams.flow.condition.bool.IsByte-out3.txt
+false
+
+--> adams.flow.condition.bool.IsByte-out4.txt
+false
+

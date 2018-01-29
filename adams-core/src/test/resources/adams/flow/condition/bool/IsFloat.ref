@@ -1,0 +1,15 @@
+--> adams.flow.condition.bool.IsFloat-out0.txt
+false
+
+--> adams.flow.condition.bool.IsFloat-out1.txt
+false
+
+--> adams.flow.condition.bool.IsFloat-out2.txt
+true
+
+--> adams.flow.condition.bool.IsFloat-out3.txt
+true
+
+--> adams.flow.condition.bool.IsFloat-out4.txt
+false
+

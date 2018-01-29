@@ -1,0 +1,15 @@
+--> adams.flow.condition.bool.IsShort-out0.txt
+false
+
+--> adams.flow.condition.bool.IsShort-out1.txt
+false
+
+--> adams.flow.condition.bool.IsShort-out2.txt
+true
+
+--> adams.flow.condition.bool.IsShort-out3.txt
+false
+
+--> adams.flow.condition.bool.IsShort-out4.txt
+false
+

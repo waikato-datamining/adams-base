@@ -1,0 +1,21 @@
+--> adams.flow.condition.bool.IsBoolean-out0.txt
+false
+
+--> adams.flow.condition.bool.IsBoolean-out1.txt
+false
+
+--> adams.flow.condition.bool.IsBoolean-out2.txt
+true
+
+--> adams.flow.condition.bool.IsBoolean-out3.txt
+true
+
+--> adams.flow.condition.bool.IsBoolean-out4.txt
+true
+
+--> adams.flow.condition.bool.IsBoolean-out5.txt
+true
+
+--> adams.flow.condition.bool.IsBoolean-out6.txt
+true
+
