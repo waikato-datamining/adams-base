@@ -15,7 +15,7 @@
 
 /*
  * Utils.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2006 Dr. Herong Yang, http://www.herongyang.com/
  * Copyright (C) 2008 Dave L., stackoverflow
  */
@@ -1556,6 +1556,8 @@ public class Utils {
 
   /**
    * Tries to parse the given string as float.
+   * Fails if number is too large/small to be represented by a float
+   * (ie infinity, but the string does not contain infinity itself).
    * Uses the default locale.
    *
    * @param s		the string to check
@@ -1567,13 +1569,21 @@ public class Utils {
 
   /**
    * Tries to parse the given string as float.
+   * Fails if number is too large/small to be represented by a float
+   * (ie infinity, but the string does not contain infinity itself).
    *
    * @param s		the string to check
    * @param locale	the locale to use
    * @return		true if it represents a valid float
    */
   public static boolean isFloat(String s, Locale locale) {
-    return (toFloat(s, locale) != null);
+    Float	f;
+
+    f = toFloat(s, locale);
+    if ((f != null) && f.isInfinite() && !s.toLowerCase().contains("infinity"))
+      f = null;
+
+    return (f != null);
   }
 
   /**
@@ -1614,6 +1624,8 @@ public class Utils {
 
   /**
    * Tries to parse the given string as double.
+   * Fails if number is too large/small to be represented by a double
+   * (ie infinity, but the string does not contain infinity itself).
    * Uses the default locale.
    *
    * @param s		the string to check
@@ -1625,13 +1637,21 @@ public class Utils {
 
   /**
    * Tries to parse the given string as double.
+   * Fails if number is too large/small to be represented by a double
+   * (ie infinity, but the string does not contain infinity itself).
    *
    * @param s		the string to check
    * @param locale	the locale to use
    * @return		true if it represents a valid double
    */
   public static boolean isDouble(String s, Locale locale) {
-    return (toDouble(s, locale) != null);
+    Double d;
+
+    d = toDouble(s, locale);
+    if ((d != null) && d.isInfinite() && !s.toLowerCase().contains("infinity"))
+      d = null;
+
+    return (d != null);
   }
 
   /**

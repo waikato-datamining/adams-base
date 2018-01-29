@@ -15,7 +15,7 @@
 
 /*
  * UtilsTest.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -185,6 +185,32 @@ public class UtilsTest
   }
 
   /**
+   * Tests the {@link Utils#isFloat(String)} method.
+   */
+  public void testIsFloat() {
+    String s;
+    
+    s = "1";
+    assertTrue("failed to parse: " + s, Utils.isFloat(s));
+    s = "1.0";
+    assertTrue("failed to parse: " + s, Utils.isFloat(s));
+    s = "A";
+    assertFalse("failed to parse: " + s, Utils.isFloat(s));
+    s = "1E10";
+    assertTrue("failed to parse: " + s, Utils.isFloat(s));
+    s = "1,230";
+    assertTrue("failed to parse: " + s, Utils.isFloat(s));
+    s = "1.anneal";
+    assertFalse("failed to parse: " + s, Utils.isFloat(s));
+    s = "1,234.78";
+    assertTrue("failed to parse: " + s, Utils.isFloat(s));
+    s = "Infinity";
+    assertTrue("failed to parse: " + s, Utils.isFloat(s));
+    s = "" + Double.MAX_VALUE;
+    assertFalse("failed to parse: " + s, Utils.isFloat(s));
+  }
+  
+  /**
    * Tests the {@link Utils#toFloat(String)} method.
    */
   public void testToFloat() {
@@ -204,6 +230,34 @@ public class UtilsTest
     assertEquals("failed to parse: " + s, null, Utils.toFloat(s));
     s = "1,234.78";
     assertEquals("failed to parse: " + s, 1234.78f, Utils.toFloat(s));
+    s = "Infinity";
+    assertEquals("failed to parse: " + s, Float.POSITIVE_INFINITY, Utils.toFloat(s));
+  }
+
+  /**
+   * Tests the {@link Utils#isDouble(String)} method.
+   */
+  public void testIsDouble() {
+    String s;
+    
+    s = "1";
+    assertTrue("failed to parse: " + s, Utils.isDouble(s));
+    s = "1.0";
+    assertTrue("failed to parse: " + s, Utils.isDouble(s));
+    s = "A";
+    assertFalse("failed to parse: " + s, Utils.isDouble(s));
+    s = "1E10";
+    assertTrue("failed to parse: " + s, Utils.isDouble(s));
+    s = "1,230";
+    assertTrue("failed to parse: " + s, Utils.isDouble(s));
+    s = "1.anneal";
+    assertFalse("failed to parse: " + s, Utils.isDouble(s));
+    s = "1,234.78";
+    assertTrue("failed to parse: " + s, Utils.isDouble(s));
+    s = "Infinity";
+    assertTrue("failed to parse: " + s, Utils.isDouble(s));
+    s = "" + Double.MAX_VALUE + "1";
+    assertFalse("failed to parse: " + s, Utils.isDouble(s));
   }
 
   /**
@@ -226,6 +280,8 @@ public class UtilsTest
     assertEquals("failed to parse: " + s, null, Utils.toDouble(s));
     s = "1,234.78";
     assertEquals("failed to parse: " + s, 1234.78, Utils.toDouble(s));
+    s = "Infinity";
+    assertEquals("failed to parse: " + s, Double.POSITIVE_INFINITY, Utils.toDouble(s));
   }
   
   /**
