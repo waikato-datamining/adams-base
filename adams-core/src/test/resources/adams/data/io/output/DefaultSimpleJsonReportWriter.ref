@@ -1,0 +1,14 @@
+--> simple-out0.report
+{"A2":2.728273,"A1":266.226623,"B2":61.166117,"Dummy report":false,"C2":5.97,"Parent ID":"1","D2":100.110011}
+
+--> simple-out1.report
+{
+  "A2": 2.728273,
+  "A1": 266.226623,
+  "B2": 61.166117,
+  "Dummy report": false,
+  "C2": 5.97,
+  "Parent ID": "1",
+  "D2": 100.110011
+}
+
