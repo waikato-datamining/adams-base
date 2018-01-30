@@ -15,7 +15,7 @@
 
 /*
  * GUIHelper.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -66,6 +66,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Window;
@@ -621,6 +622,42 @@ public class GUIHelper {
 
     window.setSize(width, height);
     window.validate();
+  }
+
+  /**
+   * Adjusts the position of the window, that it fits onto the screen.
+   *
+   * @param window	the window to adjust
+   * @see		#getScreenBounds(Component)
+   */
+  public static void fixPosition(Component window) {
+    Point	location;
+    Rectangle	bounds;
+    double	newLeft;
+    double	newTop;
+
+    bounds   = getScreenBounds(window);
+    location = window.getLocation();
+
+    // X
+    newLeft = (int) location.getX();
+    if (location.getX() < bounds.getX())
+      newLeft = bounds.getX();
+    else if (location.getX() + window.getWidth() > bounds.getX() + bounds.getWidth())
+      newLeft = (location.getX() - ((location.getX() + window.getWidth()) - (bounds.getX() + bounds.getWidth())));
+    if (newLeft < 0)
+      newLeft = 0;
+
+    // Y
+    newTop = (int) location.getY();
+    if (location.getY() < bounds.getY())
+      newTop = bounds.getY();
+    else if (location.getY() + window.getHeight() > bounds.getY() + bounds.getHeight())
+      newTop = (int) (location.getY() - ((location.getY() + window.getHeight()) - (bounds.getY() + bounds.getHeight())));
+    if (newTop < 0)
+      newTop = 0;
+
+    window.setLocation((int) newLeft, (int) newTop);
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * BaseFrame.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -29,6 +29,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 
 import javax.swing.JFrame;
+import java.awt.Component;
 import java.awt.GraphicsConfiguration;
 import java.util.logging.Level;
 
@@ -232,6 +233,19 @@ public class BaseFrame
       afterShow();
     else
       afterHide();
+  }
+
+  /**
+   * Sets the location relative to this component, but adjust window size
+   * and position if necessary.
+   *
+   * @param c		the component to position the window relative to
+   */
+  @Override
+  public void setLocationRelativeTo(Component c) {
+    super.setLocationRelativeTo(c);
+    GUIHelper.adjustSize(this);
+    GUIHelper.fixPosition(this);
   }
 
   /**
