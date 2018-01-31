@@ -45,7 +45,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2017} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2018} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -197,7 +197,9 @@ The following transformers are available:
 	spreadsheet object (subset of columns and/or rows).
 	\item \textit{SpreadSheetSubsetByValue} -- splits a spreadsheet into 
 	subsets using the unique (string) values in a column for grouping.
-	\item \textit{SpreadSheetStorageRowIterator} -- iterates over a range of 
+	\item \textit{SpreadSheetSubsetFromGroup} -- retrieves the specified
+	rows from groups within a spreadsheet (group as determined by a sorted column).
+	\item \textit{SpreadSheetStorageRowIterator} -- iterates over a range of
 	rows/columns and stores the cell values in internal storage.
 	\item \textit{SpreadSheetTransformCells} -- applies an arbitrary callable
 	transformer to individual cells.
