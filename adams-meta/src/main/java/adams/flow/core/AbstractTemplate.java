@@ -23,6 +23,7 @@ package adams.flow.core;
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.flow.template.AbstractActorTemplate;
+import adams.flow.template.ActorTemplateUser;
 
 import java.util.Hashtable;
 
@@ -35,7 +36,7 @@ import java.util.Hashtable;
  */
 public abstract class AbstractTemplate
   extends AbstractActor
-  implements InternalActorHandler {
+  implements ActorTemplateUser {
 
   /** for serialization. */
   private static final long serialVersionUID = 7246162048306571873L;

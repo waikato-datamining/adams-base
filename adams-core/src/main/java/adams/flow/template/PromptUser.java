@@ -15,7 +15,7 @@
 
 /*
  * PromptUser.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -57,7 +57,6 @@ import adams.flow.transformer.MapToVariables;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PromptUser
   extends AbstractActorTemplate {
@@ -155,6 +154,16 @@ public class PromptUser
    */
   public String valuesTipText() {
     return "The value definitions that define the dialog prompting the user to enter the values.";
+  }
+
+  /**
+   * Whether the flow generated is an interactive one.
+   *
+   * @return		true if interactive
+   */
+  @Override
+  public boolean isInteractive() {
+    return true;
   }
 
   /**

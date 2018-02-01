@@ -2,11 +2,7 @@
  * Template of a Groovy sink.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-
-import adams.flow.core.Token
-import adams.flow.core.Unknown
 import adams.flow.sink.AbstractScript
 
 class TemplateSink

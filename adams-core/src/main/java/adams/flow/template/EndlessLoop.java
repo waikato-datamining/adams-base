@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EndlessLoop.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -49,7 +49,6 @@ import adams.flow.source.Start;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EndlessLoop
   extends AbstractActorTemplate {
@@ -65,6 +64,16 @@ public class EndlessLoop
   public String globalInfo() {
     return
         "Generates a simple while-loop that goes on forever.";
+  }
+
+  /**
+   * Whether the flow generated is an interactive one.
+   *
+   * @return		true if interactive
+   */
+  @Override
+  public boolean isInteractive() {
+    return false;
   }
 
   /**

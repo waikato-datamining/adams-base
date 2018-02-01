@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StoreReportValueInVariable.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -61,7 +61,6 @@ import adams.flow.transformer.SetVariable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StoreReportValueInVariable
   extends AbstractActorTemplate {
@@ -159,6 +158,16 @@ public class StoreReportValueInVariable
    */
   public String variableNameTipText() {
     return "The variable to store the report value in.";
+  }
+
+  /**
+   * Whether the flow generated is an interactive one.
+   *
+   * @return		true if interactive
+   */
+  @Override
+  public boolean isInteractive() {
+    return false;
   }
 
   /**

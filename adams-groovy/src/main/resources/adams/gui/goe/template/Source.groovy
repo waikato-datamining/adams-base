@@ -2,15 +2,11 @@
  * Template of a Groovy source.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
-import adams.flow.core.Token
-import adams.flow.core.Unknown
-import adams.flow.source.AbstractScript
 
-import java.util.Random
-import java.util.Vector
+import adams.flow.core.Token
+import adams.flow.source.AbstractScript
 
 class TemplateSource
   extends AbstractScript {

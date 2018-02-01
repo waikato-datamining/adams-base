@@ -2,7 +2,6 @@
  * Template of a Groovy conversion scheme.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 import adams.data.conversion.AbstractScript

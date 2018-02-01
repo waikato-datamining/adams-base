@@ -7,7 +7,6 @@ class Template(AbstractScript):
     A simple Jython template that just generates a subflow with a StringConstants actor.
 
     @author: FracPete (fracpete at waikato dot ac dot nz)
-    @version: $Revision$
     """
 
     def __init__(self):
@@ -26,6 +25,16 @@ class Template(AbstractScript):
         """
 
         return "Just generates a subflow consisting of a StringConstants actor."
+
+    def isInteractive(self):
+        """
+        Whether the flow generated is an interactive one.
+
+        @return: true if interactive
+        @rtype: bool
+        """
+
+        return false
 
     def doGenerate(self):
         """

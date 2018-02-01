@@ -2,15 +2,8 @@
  * Template of a Groovy standalone.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-
-import adams.flow.core.Token
-import adams.flow.core.Unknown
 import adams.flow.standalone.AbstractScript
-
-import java.util.Random
-import java.util.Vector
 
 class TemplateStandalone
   extends AbstractScript {

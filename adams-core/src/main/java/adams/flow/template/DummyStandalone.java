@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DummyStandalone.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -42,7 +42,6 @@ import adams.flow.standalone.CallableActors;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DummyStandalone
   extends AbstractActorTemplate {
@@ -58,6 +57,16 @@ public class DummyStandalone
   @Override
   public String globalInfo() {
     return "A dummy standalone template, used as default by the TemplateStandalone actor.";
+  }
+
+  /**
+   * Whether the flow generated is an interactive one.
+   *
+   * @return		true if interactive
+   */
+  @Override
+  public boolean isInteractive() {
+    return false;
   }
 
   /**

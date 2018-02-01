@@ -15,7 +15,7 @@
 
 /*
  * ActorUtils.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -52,6 +52,7 @@ import adams.flow.processor.MultiProcessor;
 import adams.flow.processor.RemoveDisabledActors;
 import adams.flow.source.SequenceSource;
 import adams.flow.standalone.Standalones;
+import adams.flow.template.ActorTemplateUser;
 import adams.flow.transformer.CallableTransformer;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.chooser.FlowFileChooser;
@@ -83,7 +84,6 @@ import java.util.logging.Level;
  * Helper class for actors.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorUtils {
 
@@ -599,6 +599,68 @@ public class ActorUtils {
    */
   public static boolean isActorHandler(Actor actor) {
     return (actor instanceof ActorHandler);
+  }
+
+  /**
+   * Checks whether the actor or its sub-actors are interactive ones.
+   * Does not check any callable actors. Cannot check any internally used actors
+   * if they are either not exposed (like ExternalActorHandler) or not yet
+   * executed/generated, so no guaranteed outcome.
+   *
+   * @param actor	the actor to check
+   * @return		true if at least one (active) interactive actor detected
+   */
+  public static boolean isInteractive(Actor actor) {
+    boolean		result;
+    ActorHandler	handler;
+    int			i;
+
+    if (actor == null)
+      return false;
+
+    result = false;
+
+    if (!actor.getSkip()) {
+      // interactive actors
+      if (actor instanceof AutomatableInteractiveActor) {
+	result = !((AutomatableInteractiveActor) actor).isNonInteractive();
+      }
+      else if (actor instanceof OptionalPasswordPrompt) {
+	result = ((OptionalPasswordPrompt) actor).getPromptForPassword();
+      }
+      else if (actor instanceof InteractiveActor) {
+	result = true;
+      }
+
+      // uses flows internally?
+      if (!result) {
+        if (actor instanceof ActorTemplateUser) {
+          result = ((ActorTemplateUser) actor).getTemplate().isInteractive();
+	}
+	else if (actor instanceof ExternalActorHandler) {
+	  result = isInteractive(((ExternalActorHandler) actor).getExternalActor());
+	}
+	else if (actor instanceof InternalActorHandler) {
+	  result = isInteractive(((InternalActorHandler) actor).getInternalActor());
+	}
+      }
+
+      // handles other actors?
+      if (!result) {
+	if (actor instanceof ActorHandler) {
+	  handler = (ActorHandler) actor;
+	  for (i = 0; i < handler.size(); i++) {
+	    if (handler.get(i).getSkip())
+	      continue;
+	    result = isInteractive(handler.get(i));
+	    if (result)
+	      break;
+	  }
+	}
+      }
+    }
+
+    return result;
   }
 
   /**

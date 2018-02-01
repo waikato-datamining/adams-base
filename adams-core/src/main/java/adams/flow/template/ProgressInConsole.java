@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ProgressInConsole.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -157,6 +157,16 @@ public class ProgressInConsole
    */
   public String prefixTipText() {
     return "The prefix to use in the console.";
+  }
+
+  /**
+   * Whether the flow generated is an interactive one.
+   *
+   * @return		true if interactive
+   */
+  @Override
+  public boolean isInteractive() {
+    return false;
   }
 
   /**

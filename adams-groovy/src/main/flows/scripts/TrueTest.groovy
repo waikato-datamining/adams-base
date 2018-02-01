@@ -2,7 +2,6 @@
  * Dummy condition that always succeeds.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 import adams.flow.condition.test.AbstractScript

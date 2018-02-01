@@ -11,7 +11,6 @@ class SimpleSource(AbstractScript):
     tokens (0-99).
 
     @author: FracPete (fracpete at waikato dot ac dot nz)
-    @version: $Revision$
     """
 
     def __init__(self):

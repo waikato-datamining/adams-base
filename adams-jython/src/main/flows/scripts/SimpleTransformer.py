@@ -13,7 +13,6 @@ class SimpleTransformer(AbstractScript):
     Expects an additional option called "add" with the number to add.
 
     @author FracPete (fracpete at waikato dot ac dot nz)
-    @version $Revision$
     """
 
     def __init__(self):

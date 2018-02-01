@@ -15,7 +15,7 @@
 
 /*
  *    Groovy.java
- *    Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,7 +23,6 @@ package adams.flow.template;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
-import adams.core.Utils;
 import adams.core.scripting.GroovyScript;
 import adams.flow.core.Actor;
 
@@ -68,7 +67,6 @@ import adams.flow.core.Actor;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see Groovy
  */
 public class Groovy
@@ -205,5 +203,15 @@ public class Groovy
   @Override
   protected Actor executeScript() {
     return ((AbstractActorTemplate) m_ScriptObject).generate();
+  }
+
+  /**
+   * Whether the flow generated is an interactive one.
+   *
+   * @return		true if interactive
+   */
+  @Override
+  public boolean isInteractive() {
+    return (m_ScriptObject != null) && ((AbstractActorTemplate) m_ScriptObject).isInteractive();
   }
 }

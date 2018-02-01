@@ -7,7 +7,6 @@ import adams.flow.source.StringConstants
  * actor.
  * 
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 class DummySource
   extends AbstractScript {
@@ -18,6 +17,16 @@ class DummySource
 
   protected Actor doGenerate() {
     return new StringConstants();
+  }
+
+  /**
+   * Whether the flow generated is an interactive one.
+   *
+   * @return		true if interactive
+   */
+  @Override
+  public boolean isInteractive() {
+    return false;
   }
 }
 

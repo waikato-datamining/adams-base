@@ -10,7 +10,6 @@ class TemplateSource(AbstractScript):
     Template of a Jython source.
 
     @author: FracPete (fracpete at waikato dot ac dot nz)
-    @version: $Revision$
     """
 
     def __init__(self):

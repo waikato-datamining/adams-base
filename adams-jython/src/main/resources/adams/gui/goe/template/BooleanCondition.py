@@ -7,7 +7,6 @@ class BooleanCondition(AbstractScript):
     Template of a boolean condition.
 
     @author: fracpete (fracpete at waikato dot ac dot nz)
-    @version: $Revision$
     """
 
     def __init__(self):

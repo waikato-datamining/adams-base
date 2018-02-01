@@ -8,7 +8,6 @@ import adams.flow.core.Unknown
  * Always evaluates to true.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 5084 $
  */
 public class True
   extends AbstractScript {

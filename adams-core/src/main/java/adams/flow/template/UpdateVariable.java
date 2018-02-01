@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * UpdateVariable.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -54,7 +54,6 @@ import adams.flow.transformer.SetVariable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class UpdateVariable
   extends AbstractActorTemplate {
@@ -115,6 +114,16 @@ public class UpdateVariable
    */
   public String variableNameTipText() {
     return "The variable to generate the sub-flow for.";
+  }
+
+  /**
+   * Whether the flow generated is an interactive one.
+   *
+   * @return		true if interactive
+   */
+  @Override
+  public boolean isInteractive() {
+    return false;
   }
 
   /**

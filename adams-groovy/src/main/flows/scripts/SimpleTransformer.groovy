@@ -3,11 +3,10 @@
  * integers that pass through.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
+
 import adams.flow.core.Token
-import adams.flow.core.Unknown
 import adams.flow.transformer.AbstractScript
 
 class SimpleTransformer

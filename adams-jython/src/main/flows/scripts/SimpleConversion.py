@@ -7,7 +7,6 @@ class SimpleConversion(AbstractScript):
     A simple Jython conversion that just divides the incoming doubles by 100.
 
     @author: FracPete (fracpete at waikato dot ac dot nz)
-    @version: $Revision$
     """
 
     def globalInfo(self):

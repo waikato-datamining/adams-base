@@ -8,7 +8,6 @@ import adams.flow.core.Unknown
  * Template boolean condition.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TemplateBooleanCondition
   extends AbstractScript {

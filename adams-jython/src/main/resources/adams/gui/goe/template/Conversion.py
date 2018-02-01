@@ -7,7 +7,6 @@ class TemplateConversion(AbstractScript):
     Template of a Jython Conversion scheme.
 
     @author: FracPete (fracpete at waikato dot ac dot nz)
-    @version: $Revision$
     """
 
     def globalInfo(self):
