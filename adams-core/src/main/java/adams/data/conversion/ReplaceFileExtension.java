@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ReplaceFileExtension.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.ForwardSlashSupporter;
 
@@ -49,7 +50,6 @@ import adams.core.io.ForwardSlashSupporter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReplaceFileExtension
   extends AbstractStringConversion
@@ -150,6 +150,16 @@ public class ReplaceFileExtension
     return
 	"If enabled, forward slashes are used in the output (but "
 	+ "the '\\\\' prefix of UNC paths is not converted).";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "extension", (m_Extension.isEmpty() ? "-remove-" : m_Extension), "ext: ");
   }
 
   /**
