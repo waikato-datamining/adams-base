@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Point2DToString.java
  * Copyright (C) 2015 University of Waikato, Hamilton, NZ
  */
@@ -24,13 +24,24 @@ import java.awt.geom.Point2D;
 
 /**
  <!-- globalinfo-start -->
+ * Turns a java.awt.geom.Point2D into a string of the format 'x y'.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-use-integers &lt;boolean&gt; (property: useIntegers)
+ * &nbsp;&nbsp;&nbsp;If enabled, rounded integers are output instead of doubles.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Point2DToString
   extends AbstractConversionToString {
