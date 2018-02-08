@@ -1,0 +1,10 @@
+--> out-0.txt
+hello.txt
+hello_world.txt
+some,path,hello,world.txt
+C:,some,path,hello,world.txt
+C:,hello_world.txt
+C:,some,path,hello,world.txt
+C:,hello_world.txt
+\\server,share,hello_world.txt
+
