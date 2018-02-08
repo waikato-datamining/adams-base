@@ -15,7 +15,7 @@
 
 /*
  *    PropertySheet.java
- *    Copyright (C) 1999-2015 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -615,6 +615,8 @@ public class PropertySheetPanel extends BasePanel
     dim.width  += 5;
     scrollPane.setPreferredSize(dim);
     validate();
+    if (getParentDialog() != null)
+      GUIHelper.fixPosition(getParentDialog());
 
     setVisible(true);
   }
