@@ -48,7 +48,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2009-2017} &
+		\parbox[c][2cm]{2cm}{\copyright 2009-2018} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -159,13 +159,25 @@ generators that work on \textit{BufferedImageContainer} objects:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Object conversion}
-The following conversions are available to convert from one
-format into another:
+The following conversions are available:
 \begin{tight_itemize}
-	\item \textit{ColorToHex} -- turns a Color into its hexa-decimal
-	notation.
-	\item \textit{HexToColor} -- turns a color in hexa-decimal notation back
-	into a Color object.
+  \item \textit{ColorToHex} -- turns a Color into its hexa-decimal
+  notation.
+  \item \textit{HexToColor} -- turns a color in hexa-decimal notation back
+  into a Color object.
+  \item \textit{LocatedObjectToRectangle} -- extracts the location of the
+  object and stores it in a rectangle object.
+  \item \textit{QuadrilateralLocationCenter} -- outputs the center of the
+  QuadrilateralLocation object.
+  \item \textit{QuadrilateralLocationToString} -- turns the
+  QuadrilateralLocation object into its string representation.
+  \item \textit{RectangleCenter} -- outputs the center of the rectangle object.
+  \item \textit{RectangleToString} -- converts the rectangle object into its
+  string representation.
+  \item \textit{StringToQuadrilateralLocation} -- creates a QuadrilateralLocation
+  object from this string representation.
+  \item \textit{StringToRectangle} -- creates a rectangle object from the string
+  representation.
 \end{tight_itemize}
 
 
