@@ -15,16 +15,17 @@
 
 /*
  * StringToRectangle.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
 
+import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRectangle;
 
 /**
  <!-- globalinfo-start -->
- * Converts a string into a adams.core.base.BaseRectangle object.
+ * Converts a string into a adams.core.base.BaseRectangle object, using 'x y w h' or 'x0 y0 x1 y1'.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -34,15 +35,22 @@ import adams.core.base.BaseRectangle;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
+ * <pre>-use-xy &lt;boolean&gt; (property: useXY)
+ * &nbsp;&nbsp;&nbsp;If enabled, then the format 'x0 y0 x1 y1' is used instead of 'x y w h'.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringToRectangle
   extends AbstractConversionFromString {
 
   private static final long serialVersionUID = -5567881103146881202L;
+
+  /** whether to use a second XY instead of width and height. */
+  protected boolean m_UseXY;
 
   /**
    * Returns a string describing the object.
@@ -51,7 +59,57 @@ public class StringToRectangle
    */
   @Override
   public String globalInfo() {
-    return "Converts a string into a " + BaseRectangle.class.getName() + " object.";
+    return "Converts a string into a " + BaseRectangle.class.getName() + " object, using 'x y w h' or 'x0 y0 x1 y1'.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "use-xy", "useXY",
+      false);
+  }
+
+  /**
+   * Sets whether the format 'x0 y0 x1 y1' is used instead of 'x y w h'.
+   *
+   * @param value	true if XY based
+   */
+  public void setUseXY(boolean value) {
+    m_UseXY = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the format 'x0 y0 x1 y1' is used instead of 'x y w h'.
+   *
+   * @return		true if XY based
+   */
+  public boolean getUseXY() {
+    return m_UseXY;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useXYTipText() {
+    return "If enabled, then the format 'x0 y0 x1 y1' is used instead of 'x y w h'.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "useXY", (m_UseXY ? "x0 y0 x1 y1" : "x y w h"), "format: ");
   }
 
   /**
@@ -72,6 +130,6 @@ public class StringToRectangle
    */
   @Override
   protected Object doConvert() throws Exception {
-    return new BaseRectangle((String) m_Input);
+    return new BaseRectangle((String) m_Input, m_UseXY);
   }
 }
