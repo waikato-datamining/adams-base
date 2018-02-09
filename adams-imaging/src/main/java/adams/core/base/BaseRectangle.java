@@ -15,7 +15,7 @@
 
 /*
  * BaseRectangle.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -27,7 +27,6 @@ import java.awt.geom.Point2D;
  * Wrapper for a rectangle object to be editable in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseRectangle
   extends AbstractBaseString {
@@ -39,7 +38,7 @@ public class BaseRectangle
    * Initializes the string with length 0.
    */
   public BaseRectangle() {
-    this("0 0 0 0");
+    this("0 0 0 0", false);
   }
 
   /**
@@ -48,7 +47,17 @@ public class BaseRectangle
    * @param s		the string to parse
    */
   public BaseRectangle(String s) {
-    super(s);
+    this(s, false);
+  }
+
+  /**
+   * Initializes the object with the string to parse.
+   *
+   * @param s		the string to parse
+   * @param useXY	whether in format 'x y w h' (false) or 'x0 y0 x1 y1' (true)
+   */
+  public BaseRectangle(String s, boolean useXY) {
+    super(useXY ? fromXY(s) : s);
   }
 
   /**
@@ -59,7 +68,7 @@ public class BaseRectangle
   public BaseRectangle(Rectangle location) {
     this(
       location.x, location.y,
-      location.width, location.height);
+      location.width, location.height, false);
   }
 
   /**
@@ -71,7 +80,59 @@ public class BaseRectangle
    * @param h		the height
    */
   public BaseRectangle(int x, int y, int w, int h) {
-    this(x + " " + y + " " + w + " " + h);
+    this(x, y, w, h, false);
+  }
+
+  /**
+   * Initializes the object with the string to parse.
+   *
+   * @param x		the x of the top-left corner
+   * @param y		the y of the top-left corner
+   * @param w_or_x	the width or x of bottom-right corner
+   * @param h_or_y	the height or y of bottom-right corner
+   * @param useXY	whether in format 'x y w h' (false) or 'x0 y0 x1 y1' (true)
+   */
+  public BaseRectangle(int x, int y, int w_or_x, int h_or_y, boolean useXY) {
+    this(
+      x
+	+ " "
+	+ y
+	+ " "
+	+ (useXY ? x+w_or_x : w_or_x)
+	+ " "
+	+ (useXY ? y+h_or_y : h_or_y));
+  }
+
+  /**
+   * Initializes the object with the string to parse.
+   *
+   * @param x		the x of the top-left corner
+   * @param y		the y of the top-left corner
+   * @param w		the width
+   * @param h		the height
+   */
+  public BaseRectangle(double x, double y, double w, double h) {
+    this(x, y, w, h, false);
+  }
+
+  /**
+   * Initializes the object with the string to parse.
+   *
+   * @param x		the x of the top-left corner
+   * @param y		the y of the top-left corner
+   * @param w_or_x	the width or x of bottom-right corner
+   * @param h_or_y	the height or y of bottom-right corner
+   * @param useXY	whether in format 'x y w h' (false) or 'x0 y0 x1 y1' (true)
+   */
+  public BaseRectangle(double x, double y, double w_or_x, double h_or_y, boolean useXY) {
+    this(
+      x
+	+ " "
+	+ y
+	+ " "
+	+ (useXY ? x+w_or_x : w_or_x)
+	+ " "
+	+ (useXY ? y+h_or_y : h_or_y));
   }
 
   /**
@@ -82,22 +143,7 @@ public class BaseRectangle
    */
   @Override
   public boolean isValid(String value) {
-    String[]  parts;
-
-    value = value.replaceAll("  ", " ");
-    parts = value.split(" ");
-    if (parts.length != 4)
-      return false;
-
-    try {
-      for (String part: parts)
-        Double.parseDouble(part);
-    }
-    catch (Exception e) {
-      return false;
-    }
-
-    return true;
+    return isValidFormat(value);
   }
 
   /**
@@ -160,6 +206,41 @@ public class BaseRectangle
   }
 
   /**
+   * Returns the rectangle in 'x0 y0 x1 y1' format.
+   *
+   * @return		the string value
+   */
+  public String xyValue() {
+    String 	result;
+    Rectangle 	rect;
+    boolean	allInt;
+
+    rect = rectangleValue();
+    allInt = (rect.getX() == (int) rect.getX())
+      && (rect.getY() == (int) rect.getY())
+      && (rect.getWidth() == (int) rect.getWidth())
+      && (rect.getHeight() == (int) rect.getHeight());
+    if (allInt)
+      result = ((int) rect.getX())
+	+ " "
+	+ ((int) rect.getY())
+	+ " "
+	+ ((int) (rect.getX() + rect.getWidth()))
+	+ " "
+	+ ((int) (rect.getY() + rect.getHeight()));
+    else
+      result = rect.getX()
+	+ " "
+	+ rect.getY()
+	+ " "
+	+ (rect.getX() + rect.getWidth())
+	+ " "
+	+ (rect.getY() + rect.getHeight());
+
+    return result;
+  }
+
+  /**
    * Returns the center of the quadrilateral.
    *
    * @return		the center
@@ -179,5 +260,55 @@ public class BaseRectangle
   @Override
   public String getTipText() {
     return "Rectangle location string.";
+  }
+
+  /**
+   * Checks whether the string value is a valid presentation for this class.
+   *
+   * @param value	the string value to check
+   * @return		true if non-null
+   */
+  public static boolean isValidFormat(String value) {
+    String[]  parts;
+
+    value = value.replaceAll("  ", " ");
+    parts = value.split(" ");
+    if (parts.length != 4)
+      return false;
+
+    try {
+      for (String part: parts)
+        Double.parseDouble(part);
+    }
+    catch (Exception e) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Parses the string in XY format and returns it in xywh format.
+   * Assumes there are 4 numbers present.
+   *
+   * @param x0y0x1y1	the string to parse
+   * @return		the converted string
+   * @see		#isValidFormat(String)
+   */
+  public static String fromXY(String x0y0x1y1) {
+    String[]  	parts;
+    double[]	values;
+    int		i;
+
+    x0y0x1y1 = x0y0x1y1.replaceAll("  ", " ");
+    parts = x0y0x1y1.split(" ");
+    if (parts.length != 4)
+      throw new IllegalArgumentException("Expected four numbers in string: " + x0y0x1y1);
+    values = new double[4];
+    for (i = 0; i < parts.length; i++)
+      values[i] = Double.parseDouble(parts[i]);
+    values[2] = values[2] - values[0];  // width
+    values[3] = values[3] - values[1];  // height
+    return values[0] + " " + values[1] + " " + values[2] + " " + values[3];
   }
 }
