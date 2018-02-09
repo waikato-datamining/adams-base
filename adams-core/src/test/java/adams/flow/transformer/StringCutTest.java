@@ -15,13 +15,11 @@
 
 /*
  * StringCutTest.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.Index;
 import adams.core.base.BaseString;
 import adams.env.Environment;
@@ -32,6 +30,8 @@ import adams.flow.core.Token;
 import adams.flow.sink.Null;
 import adams.flow.source.StringConstants;
 import adams.flow.transformer.StringCut.CutType;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the StringCut actor.
@@ -91,8 +91,8 @@ public class StringCutTest
   protected void performTest(String[] strIn, String[] strOut, int start, int end, String delim, int field) {
     StringCut actor = new StringCut();
     if ((start > -1) && (end > -1)) {
-      actor.setCharacterStartPos(start);
-      actor.setCharacterEndPos(end);
+      actor.setCharacterStartPos(new Index("" + start));
+      actor.setCharacterEndPos(new Index("" + end));
       actor.setType(CutType.CHARACTER_POSITIONS);
     }
     else {

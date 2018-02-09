@@ -15,7 +15,7 @@
 
 /*
  * StringCut.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -64,49 +64,52 @@ import adams.core.Utils;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-type &lt;FIELD_DELIMITED|CHARACTER_POSITIONS&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;Determines what type of cut to perform.
  * &nbsp;&nbsp;&nbsp;default: FIELD_DELIMITED
  * </pre>
- * 
+ *
  * <pre>-field-delimiter &lt;java.lang.String&gt; (property: fieldDelimiter)
- * &nbsp;&nbsp;&nbsp;The field delimiter to use; \t gets automatically converted into its character 
+ * &nbsp;&nbsp;&nbsp;The field delimiter to use; \t gets automatically converted into its character
  * &nbsp;&nbsp;&nbsp;counterpart.
  * &nbsp;&nbsp;&nbsp;default: \\t
  * </pre>
- * 
+ *
  * <pre>-field-index &lt;adams.core.Index&gt; (property: fieldIndex)
  * &nbsp;&nbsp;&nbsp;The 1-based index of the field to cut from the string(s).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
- * <pre>-char-start-pos &lt;int&gt; (property: characterStartPos)
- * &nbsp;&nbsp;&nbsp;The position of the first character to include in case fixed character positions 
- * &nbsp;&nbsp;&nbsp;are used (1-based).
- * &nbsp;&nbsp;&nbsp;default: 1
+ *
+ * <pre>-char-start-pos &lt;adams.core.Index&gt; (property: characterStartPos)
+ * &nbsp;&nbsp;&nbsp;The position of the first character to include in case fixed character positions
+ * &nbsp;&nbsp;&nbsp;are used.
+ * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
- * <pre>-char-end-pos &lt;int&gt; (property: characterEndPos)
- * &nbsp;&nbsp;&nbsp;The position of the last character to include in case fixed character positions 
- * &nbsp;&nbsp;&nbsp;are used (1-based).
- * &nbsp;&nbsp;&nbsp;default: 10
+ *
+ * <pre>-char-end-pos &lt;adams.core.Index&gt; (property: characterEndPos)
+ * &nbsp;&nbsp;&nbsp;The position of the last character to include in case fixed character positions
+ * &nbsp;&nbsp;&nbsp;are used.
+ * &nbsp;&nbsp;&nbsp;default: last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringCut
   extends AbstractStringOperation {
@@ -126,10 +129,10 @@ public class StringCut
   protected CutType m_Type;
   
   /** the character starting position. */
-  protected int m_CharacterStartPos;
+  protected Index m_CharacterStartPos;
 
   /** the character end position. */
-  protected int m_CharacterEndPos;
+  protected Index m_CharacterEndPos;
 
   /** the field delimiter. */
   protected String m_FieldDelimiter;
@@ -170,11 +173,11 @@ public class StringCut
 
     m_OptionManager.add(
 	    "char-start-pos", "characterStartPos",
-	    1);
+	    new Index(Index.FIRST));
 
     m_OptionManager.add(
 	    "char-end-pos", "characterEndPos",
-	    10);
+	    new Index(Index.LAST));
   }
 
   /**
@@ -221,7 +224,7 @@ public class StringCut
    *
    * @param value	the starting position
    */
-  public void setCharacterStartPos(int value) {
+  public void setCharacterStartPos(Index value) {
     m_CharacterStartPos = value;
     reset();
   }
@@ -231,7 +234,7 @@ public class StringCut
    *
    * @return		the starting position
    */
-  public int getCharacterStartPos() {
+  public Index getCharacterStartPos() {
     return m_CharacterStartPos;
   }
 
@@ -244,7 +247,7 @@ public class StringCut
   public String characterStartPosTipText() {
     return
         "The position of the first character to include in case fixed "
-      + "character positions are used (1-based).";
+      + "character positions are used.";
   }
 
   /**
@@ -252,7 +255,7 @@ public class StringCut
    *
    * @param value	the end position
    */
-  public void setCharacterEndPos(int value) {
+  public void setCharacterEndPos(Index value) {
     m_CharacterEndPos = value;
     reset();
   }
@@ -262,7 +265,7 @@ public class StringCut
    *
    * @return		the end position
    */
-  public int getCharacterEndPos() {
+  public Index getCharacterEndPos() {
     return m_CharacterEndPos;
   }
 
@@ -275,7 +278,7 @@ public class StringCut
   public String characterEndPosTipText() {
     return
         "The position of the last character to include in case fixed "
-      + "character positions are used (1-based).";
+      + "character positions are used.";
   }
 
   /**
@@ -373,8 +376,10 @@ public class StringCut
     String[]	parts;
 
     if (m_Type == CutType.CHARACTER_POSITIONS) {
-      from = m_CharacterStartPos - 1;
-      to   = m_CharacterEndPos;
+      m_CharacterStartPos.setMax(s.length());
+      m_CharacterEndPos.setMax(s.length());
+      from = m_CharacterStartPos.getIntIndex();
+      to   = m_CharacterEndPos.getIntIndex() + 1;
       if (to > s.length())
 	to = s.length();
       if (from < s.length())
