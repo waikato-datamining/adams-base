@@ -32,35 +32,37 @@ import adams.parser.SpreadSheetFormulaText;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
- * <pre>-no-copy (property: noCopy)
+ *
+ * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
  * &nbsp;&nbsp;&nbsp;If enabled, no copy of the spreadsheet is created before processing it.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-header &lt;java.lang.String&gt; (property: header)
  * &nbsp;&nbsp;&nbsp;The title of the formula column.
  * &nbsp;&nbsp;&nbsp;default: Sum
  * </pre>
- * 
- * <pre>-formula &lt;java.lang.String&gt; (property: formula)
- * &nbsp;&nbsp;&nbsp;The formula to add (incl '='); use '&#64;' as placeholder for the current row.
- * &nbsp;&nbsp;&nbsp;default: =sum(A&#64;:C&#64;)
+ *
+ * <pre>-formula &lt;adams.parser.SpreadSheetFormulaText&gt; (property: formula)
+ * &nbsp;&nbsp;&nbsp;The formula to add (incl '='); use '&#64;' as placeholder for the current row
+ * &nbsp;&nbsp;&nbsp;and '#' for the last column.
+ * &nbsp;&nbsp;&nbsp;default: =sum(A&#64;:#&#64;)
  * </pre>
- * 
+ *
  * <pre>-rows &lt;adams.core.Range&gt; (property: rows)
- * &nbsp;&nbsp;&nbsp;The range of rows to add the 'sum' formula for; A range is a comma-separated 
- * &nbsp;&nbsp;&nbsp;list of single 1-based indices or sub-ranges of indices ('start-end'); '
- * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; the following placeholders can be used 
- * &nbsp;&nbsp;&nbsp;as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;The range of rows to add the formula for.
  * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ *
+ * <pre>-expand-variables &lt;boolean&gt; (property: expandVariables)
+ * &nbsp;&nbsp;&nbsp;If enabled, any variables in the formula get expanded first before adding
+ * &nbsp;&nbsp;&nbsp;it to the spreadsheet.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -87,7 +89,10 @@ public class SpreadSheetAddFormulaColumn
   
   /** the rows to add the formula to. */
   protected Range m_Rows;
-  
+
+  /** whether to expand variables. */
+  protected boolean m_ExpandVariables;
+
   /**
    * Returns a string describing the object.
    *
@@ -106,16 +111,20 @@ public class SpreadSheetAddFormulaColumn
     super.defineOptions();
 
     m_OptionManager.add(
-	    "header", "header",
-	    "Sum");
+      "header", "header",
+      "Sum");
 
     m_OptionManager.add(
-	    "formula", "formula",
-	    new SpreadSheetFormulaText("=sum(A@:#@)"));
+      "formula", "formula",
+      new SpreadSheetFormulaText("=sum(A@:#@)"));
 
     m_OptionManager.add(
-	    "rows", "rows",
-	    new Range(Range.ALL));
+      "rows", "rows",
+      new Range(Range.ALL));
+
+    m_OptionManager.add(
+      "expand-variables", "expandVariables",
+      false);
   }
 
   /**
@@ -206,6 +215,37 @@ public class SpreadSheetAddFormulaColumn
   }
 
   /**
+   * Sets whether to expand any variable first before adding the formula
+   * to the spreadsheet.
+   *
+   * @param value	true if to expand first
+   */
+  public void setExpandVariables(boolean value) {
+    m_ExpandVariables = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to expand any variable first before adding the formula
+   * to the spreadsheet.
+   *
+   * @return		true if to expand first
+   */
+  public boolean getExpandVariables() {
+    return m_ExpandVariables;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String expandVariablesTipText() {
+    return "If enabled, any variables in the formula get expanded first before adding it to the spreadsheet.";
+  }
+
+  /**
    * Generates the new spreadsheet from the input.
    * 
    * @param input	the incoming spreadsheet
@@ -231,6 +271,8 @@ public class SpreadSheetAddFormulaColumn
     
     for (i = 0; i < rows.length; i++) {
       formula = m_Formula.getValue();
+      if (m_ExpandVariables)
+        formula = getOptionManager().getVariables().expand(formula);
       formula = formula.replace(PLACEHOLDER_ROW, Integer.toString(rows[i] + 2));
       formula = formula.replace(PLACEHOLDER_LAST_COL, SpreadSheetUtils.getColumnPosition(result.getColumnCount() - 2));
       row     = result.getRow(rows[i]);
