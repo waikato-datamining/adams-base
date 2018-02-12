@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CrossValidationExperiment.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
@@ -33,7 +33,6 @@ import weka.core.Instances;
  * multi-threaded (in case experiment is multi-threaded).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CrossValidationExperiment
   extends AbstractExperiment {
@@ -84,7 +83,7 @@ public class CrossValidationExperiment
       m_CrossValidation.setData(m_Data);
       m_CrossValidation.setFolds(m_Owner.getFolds());
       m_CrossValidation.setSeed(m_Run);
-      m_CrossValidation.setDiscardPredictions(true);
+      m_CrossValidation.setDiscardPredictions(false);
       m_CrossValidation.setNumThreads(1);
       if (simple && (m_Owner.getJobRunner() instanceof ThreadLimiter))
 	m_CrossValidation.setNumThreads(((ThreadLimiter) m_Owner.getJobRunner()).getNumThreads());

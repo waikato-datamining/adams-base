@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoveOutliers.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package weka.filters.supervised.instance;
@@ -31,7 +31,7 @@ import adams.flow.transformer.WekaPredictionsToSpreadSheet;
 import adams.multiprocess.JobList;
 import adams.multiprocess.LocalJobRunner;
 import adams.multiprocess.WekaCrossValidationJob;
-import weka.classifiers.AggregateableEvaluationExt;
+import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
 import weka.classifiers.CrossValidationHelper;
@@ -415,10 +415,11 @@ public class RemoveOutliers
    * @throws Exception	if cross-validation fails
    */
   protected Evaluation crossValidate(Instances data, int folds) throws Exception {
+    Evaluation 				result;
     String 				msg;
     int 				numThreads;
     Evaluation				eval;
-    AggregateableEvaluationExt 		evalAgg;
+    AggregateEvaluations 		evalAgg;
     CrossValidationFoldGenerator 	generator;
     JobList<WekaCrossValidationJob> 	list;
     WekaCrossValidationJob 		job;
@@ -454,7 +455,7 @@ public class RemoveOutliers
       jobRunner.stop();
       // aggregate data
       msg     = null;
-      evalAgg = new AggregateableEvaluationExt(data);
+      evalAgg = new AggregateEvaluations();
       for (i = 0; i < jobRunner.getJobs().size(); i++) {
 	job = (WekaCrossValidationJob) jobRunner.getJobs().get(i);
 	if (job.getEvaluation() == null) {
@@ -465,14 +466,18 @@ public class RemoveOutliers
 	    msg += ":\n" + job.getExecutionError();
 	  break;
 	}
-	evalAgg.aggregate(job.getEvaluation());
+	evalAgg.add(job.getEvaluation());
 	job.cleanUp();
       }
       if (msg != null)
 	throw new Exception(msg);
       list.cleanUp();
       jobRunner.cleanUp();
-      return evalAgg;
+      result = evalAgg.aggregated();
+      if (result != null)
+        throw new IllegalStateException(
+          evalAgg.hasLastError() ? evalAgg.getLastError() : "Failed to aggregate evaluations!");
+      return result;
     }
   }
 

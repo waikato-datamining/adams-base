@@ -15,13 +15,11 @@
 
 /*
  * WekaAggregateEvaluationsTest.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
@@ -30,13 +28,14 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for WekaAggregateEvaluations actor.
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision$
  */
 public class WekaAggregateEvaluationsTest
   extends AbstractFlowTest {
@@ -161,8 +160,7 @@ public class WekaAggregateEvaluationsTest
       argOption = (AbstractArgumentOption) tmp17.getOptionManager().findByProperty("output");
       weka.classifiers.evaluation.output.prediction.Null tmp19 = new weka.classifiers.evaluation.output.prediction.Null();
       tmp17.setOutput(tmp19);
-
-      tmp17.setDiscardPredictions(true);
+      tmp17.setDiscardPredictions(false);
 
       tmp1[6] = tmp17;
       // Flow.WekaAggregateEvaluations

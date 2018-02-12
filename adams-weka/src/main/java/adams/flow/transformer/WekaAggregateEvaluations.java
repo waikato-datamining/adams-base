@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaAggregateEvaluations.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
-import weka.classifiers.AggregateableEvaluationExt;
+import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Evaluation;
 
 import java.util.Hashtable;
@@ -29,6 +29,8 @@ import java.util.Hashtable;
 /**
  <!-- globalinfo-start -->
  * Aggregates incoming weka.classifiers.Evaluation objects and forwards the current aggregated state.
+ * Only works with the predictions stored in the evaluation object.
+ * NB: Relative absolute error and Root relative squared error will differ a bit.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -74,7 +76,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaAggregateEvaluations
   extends AbstractTransformer {
@@ -86,7 +87,7 @@ public class WekaAggregateEvaluations
   public final static String BACKUP_EVALUATION = "evaluation";
 
   /** the current evaluation state. */
-  protected AggregateableEvaluationExt m_Evaluation;
+  protected AggregateEvaluations m_Evaluation;
   
   /**
    * Returns a string describing the object.
@@ -95,9 +96,11 @@ public class WekaAggregateEvaluations
    */
   @Override
   public String globalInfo() {
-    return 
-	"Aggregates incoming " + Evaluation.class.getName() + " objects "
-	+ "and forwards the current aggregated state.";
+    return
+      "Aggregates incoming " + Evaluation.class.getName() + " objects "
+	+ "and forwards the current aggregated state.\n"
+	+ "Only works with the predictions stored in the evaluation object.\n"
+	+ "NB: Relative absolute error and Root relative squared error will differ a bit.";
   }
   
   /**
@@ -144,7 +147,7 @@ public class WekaAggregateEvaluations
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_EVALUATION)) {
-      m_Evaluation = (AggregateableEvaluationExt) state.get(BACKUP_EVALUATION);
+      m_Evaluation = (AggregateEvaluations) state.get(BACKUP_EVALUATION);
       state.remove(BACKUP_EVALUATION);
     }
 
@@ -180,6 +183,7 @@ public class WekaAggregateEvaluations
   protected String doExecute() {
     String	result;
     Evaluation	input;
+    Evaluation  agg;
     
     result = null;
     if (m_InputToken.getPayload() instanceof WekaEvaluationContainer)
@@ -189,9 +193,17 @@ public class WekaAggregateEvaluations
     
     try {
       if (m_Evaluation == null)
-	m_Evaluation = new AggregateableEvaluationExt(input);
-      m_Evaluation.aggregate(input);
-      m_OutputToken = new Token(m_Evaluation);
+	m_Evaluation = new AggregateEvaluations();
+      m_Evaluation.add(input);
+      agg = m_Evaluation.aggregated();
+      if (agg == null) {
+        if (m_Evaluation.hasLastError())
+          result = m_Evaluation.getLastError();
+        else
+          result = "Failed to aggregate predictions!";
+      }
+      if (agg != null)
+        m_OutputToken = new Token(agg);
     }
     catch (Exception e) {
       result = handleException("Failed to aggregate evaluation!", e);

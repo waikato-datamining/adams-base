@@ -15,11 +15,12 @@
 
 /*
  * WekaCrossValidation.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
 
+import adams.core.MessageCollection;
 import adams.core.Performance;
 import adams.core.StatusMessageHandler;
 import adams.core.Stoppable;
@@ -30,7 +31,7 @@ import adams.core.option.OptionUtils;
 import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.standalone.JobRunnerSetup;
-import weka.classifiers.AggregateableEvaluationExt;
+import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
 import weka.classifiers.CrossValidationHelper;
@@ -44,7 +45,6 @@ import java.util.Random;
  * Performs cross-validation, either single or multi-threaded.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaCrossValidationExecution
   extends CustomLoggingLevelObject
@@ -293,6 +293,8 @@ public class WekaCrossValidationExecution
   /**
    * Sets whether to discard the predictions instead of collecting them
    * for future use, in order to conserve memory.
+   * NB: Must be false in case of parallel execution to allow for aggregation
+   * of statistics;
    *
    * @param value	true if to discard predictions
    */
@@ -302,6 +304,8 @@ public class WekaCrossValidationExecution
 
   /**
    * Returns whether to discard the predictions in order to preserve memory.
+   * NB: Must be false in case of parallel execution to allow for aggregation
+   * of statistics;
    *
    * @return		true if predictions discarded
    */
@@ -413,9 +417,9 @@ public class WekaCrossValidationExecution
    * @return		null if everything is fine, otherwise error message
    */
   public String execute() {
-    String				result;
+    MessageCollection 			result;
     Evaluation 				eval;
-    AggregateableEvaluationExt 		evalAgg;
+    AggregateEvaluations 		evalAgg;
     int					folds;
     CrossValidationFoldGenerator 	generator;
     JobList<WekaCrossValidationJob>	list;
@@ -428,7 +432,7 @@ public class WekaCrossValidationExecution
     Instances				test;
     Classifier				cls;
 
-    result        = null;
+    result        = new MessageCollection();
     indices       = null;
     m_Evaluation  = null;
     m_Evaluations = null;
@@ -480,6 +484,9 @@ public class WekaCrossValidationExecution
 	  m_Evaluation = eval;
       }
       else {
+        if (m_DiscardPredictions)
+          throw new IllegalStateException(
+            "Cannot discard predictions in parallel mode, as they are used for aggregating the statistics!");
 	if (m_JobRunnerSetup == null)
 	  m_JobRunner = new LocalJobRunner<WekaCrossValidationJob>();
 	else
@@ -503,24 +510,25 @@ public class WekaCrossValidationExecution
 	m_JobRunner.stop();
 	// aggregate data
 	if (!isStopped()) {
-	  evalAgg = new AggregateableEvaluationExt(m_Data);
-	  evalAgg.setDiscardPredictions(m_DiscardPredictions);
+	  evalAgg = new AggregateEvaluations();
 	  m_Evaluations = new Evaluation[m_JobRunner.getJobs().size()];
 	  for (i = 0; i < m_JobRunner.getJobs().size(); i++) {
 	    job = (WekaCrossValidationJob) m_JobRunner.getJobs().get(i);
 	    if (job.getEvaluation() == null) {
-	      result = "Fold #" + (i + 1) + " failed to evaluate";
-	      if (!job.hasExecutionError())
-		result += "?";
-	      else
-		result += ":\n" + job.getExecutionError();
+	      result.add("Fold #" + (i + 1) + " failed to evaluate" + (job.hasExecutionError() ? job.getExecutionError() : "?"));
 	      break;
 	    }
-	    evalAgg.aggregate(job.getEvaluation());
+	    evalAgg.add(job.getEvaluation());
 	    m_Evaluations[i] = job.getEvaluation();
 	    job.cleanUp();
 	  }
-	  m_Evaluation = evalAgg;
+	  m_Evaluation = evalAgg.aggregated();
+	  if (m_Evaluation == null) {
+	    if (evalAgg.hasLastError())
+	      result.add(evalAgg.getLastError());
+	    else
+	      result.add("Failed to aggregate evaluations!");
+	  }
 	}
 	list.cleanUp();
 	m_JobRunner.cleanUp();
@@ -529,12 +537,15 @@ public class WekaCrossValidationExecution
 
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed to cross-validate classifier: ", e);
+      result.add(Utils.handleException(this, "Failed to cross-validate classifier: ", e));
     }
 
     m_OriginalIndices = indices;
 
-    return result;
+    if (result.isEmpty())
+      return null;
+    else
+      return result.toString();
   }
 
   /**

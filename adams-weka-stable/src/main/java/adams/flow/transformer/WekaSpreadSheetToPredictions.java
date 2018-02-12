@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaSpreadSheetToPredictions.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -25,17 +25,9 @@ import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
-import adams.data.spreadsheet.SpreadSheetUtils;
-import adams.env.Environment;
 import adams.flow.core.Token;
+import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Evaluation;
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -126,7 +118,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaSpreadSheetToPredictions
   extends AbstractTransformer
@@ -396,24 +387,11 @@ public class WekaSpreadSheetToPredictions
   protected String doExecute() {
     String			result;
     SpreadSheet			sheet;
-    double[]			actual;
-    double[]			predicted;
-    double[][]			dist;
-    double[]			weight;
-    Instances			data;
-    ArrayList<Attribute>	atts;
-    List<String> 		labels;
-    int				i;
-    int				n;
-    Instance			inst;
-    Evaluation 			eval;
-    int[]			cols;
-    double[]			clsDist;
-    String			name;
+    AggregateEvaluations 	aggregate;
+    Evaluation 			agg;
 
     result = null;
-
-    sheet = (SpreadSheet) m_InputToken.getPayload();
+    sheet  = (SpreadSheet) m_InputToken.getPayload();
     m_Actual.setData(sheet);
     m_Predicted.setData(sheet);
     m_ClassDistribution.setData(sheet);
@@ -423,84 +401,26 @@ public class WekaSpreadSheetToPredictions
     else if (m_Predicted.getIntIndex() == -1)
       result = "'Predicted' column not found: " + m_Predicted;
 
-    actual    = null;
-    predicted = null;
-    dist      = null;
-    weight    = null;
     if (result == null) {
-      actual = SpreadSheetUtils.getNumericColumn(sheet, m_Actual.getIntIndex());
-      predicted = SpreadSheetUtils.getNumericColumn(sheet, m_Predicted.getIntIndex());
-      if (actual.length != predicted.length)
-	result = "Number of actual and predicted values differ: " + actual.length + " != " + predicted.length;
-      else if (actual.length == 0)
-	result = "No numeric values?";
-      // weights?
-      if (m_Weight.getIntIndex() != -1) {
-	weight = SpreadSheetUtils.getNumericColumn(sheet, m_Weight.getIntIndex());
-	if (actual.length != weight.length)
-	  result = "Number of actual and weight values differ: " + actual.length + " != " + weight.length;
-      }
-      // class distribution?
-      cols = m_ClassDistribution.getIntIndices();
-      if (cols.length > 0) {
-	dist = new double[cols.length][];
-	for (i = 0; i < cols.length; i++) {
-	  dist[i] = SpreadSheetUtils.getNumericColumn(sheet, cols[i]);
-	  if (actual.length != dist[i].length) {
-	    result = "Number of actual and class distribution (col #" + (cols[i] + 1) + ") values differ: " + actual.length + " != " + dist[i].length;
-	    break;
-	  }
-	}
-      }
-    }
+      aggregate = new AggregateEvaluations();
+      result    = aggregate.add(
+	sheet,
+	m_Actual.getIntIndex(),
+	m_Predicted.getIntIndex(),
+	m_Weight.getIntIndex(),
+	m_ClassDistribution.getIntIndices(),
+	m_UseColumnNamesAsClassLabels);
 
-    if (result == null) {
-      // create dataset from predictions
-      atts = new ArrayList<>();
-      if (dist == null) {
-	atts.add(new Attribute("Actual"));
-      }
-      else {
-	labels = new ArrayList<>();
-	cols   = m_ClassDistribution.getIntIndices();
-	for (i = 0; i < dist.length; i++) {
-	  if (m_UseColumnNamesAsClassLabels) {
-	    name = sheet.getColumnName(cols[i]);
-	    if (name.startsWith("Distribution (") && name.endsWith(")"))
-	      name = name.substring("Distribution (".length(), name.length() - 1);
-	    labels.add(name);
-	  }
-	  else {
-	    labels.add("" + (i + 1));
-	  }
+      if (result == null) {
+        agg = aggregate.aggregated();
+        if (agg == null) {
+          if (aggregate.hasLastError())
+	    result = aggregate.getLastError();
+          else
+            result = "Failed to aggregate predictions!";
 	}
-	atts.add(new Attribute("Actual", labels));
-      }
-      data = new Instances((sheet.hasName() ? sheet.getName() : Environment.getInstance().getProject()), atts, actual.length);
-      data.setClassIndex(0);
-      for (i = 0; i < actual.length; i++) {
-	inst = new DenseInstance((weight == null) ? 1.0 : weight[i], new double[]{actual[i]});
-	data.add(inst);
-      }
-
-      // perform "fake" evaluation
-      try {
-	eval = new Evaluation(data);
-	for (i = 0; i < actual.length; i++) {
-	  if (dist != null) {
-	    clsDist = new double[dist.length];
-	    for (n = 0; n < clsDist.length; n++)
-	      clsDist[n] = dist[n][i];
-	    eval.evaluateModelOnceAndRecordPrediction(clsDist, data.instance(i));
-	  }
-	  else {
-	    eval.evaluateModelOnceAndRecordPrediction(new double[]{predicted[i]}, data.instance(i));
-	  }
-	}
-	m_OutputToken = new Token(eval);
-      }
-      catch (Exception e) {
-	result = handleException("Failed to create 'fake' Evaluation object!", e);
+	if (agg != null)
+	  m_OutputToken = new Token(agg);
       }
     }
 
