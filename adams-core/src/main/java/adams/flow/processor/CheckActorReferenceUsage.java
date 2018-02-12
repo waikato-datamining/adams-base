@@ -15,7 +15,7 @@
 
 /*
  * CheckActorReferenceUsage.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -171,8 +171,10 @@ public class CheckActorReferenceUsage
 	    incrementDefinitionCount(Array.get(obj, i));
 	}
 	else {
-	  if (obj instanceof Actor)
-	    m_DefinitionCount.next(((Actor) obj).getName());
+	  if (obj instanceof Actor) {
+	    if (!((Actor) obj).getSkip())
+              m_DefinitionCount.next(((Actor) obj).getName());
+          }
 	}
       }
       protected void incrementReferenceCount(Object obj) {
