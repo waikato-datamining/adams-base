@@ -35,10 +35,10 @@ public class BaseRectangle
   private static final long serialVersionUID = -5853830144343397434L;
 
   /**
-   * Initializes the string with length 0.
+   * Initializes the string with "0 0 0 0".
    */
   public BaseRectangle() {
-    this("0 0 0 0", false);
+    this("0 0 1 1", false);
   }
 
   /**
@@ -54,10 +54,10 @@ public class BaseRectangle
    * Initializes the object with the string to parse.
    *
    * @param s		the string to parse
-   * @param useXY	whether in format 'x y w h' (false) or 'x0 y0 x1 y1' (true)
+   * @param isXY	whether in format 'x0 y0 x1 y1' (true) or 'x y w h' (false)
    */
-  public BaseRectangle(String s, boolean useXY) {
-    super(useXY ? fromXY(s) : s);
+  public BaseRectangle(String s, boolean isXY) {
+    super(isXY ? fromXY(s) : s);
   }
 
   /**
@@ -90,17 +90,17 @@ public class BaseRectangle
    * @param y		the y of the top-left corner
    * @param w_or_x	the width or x of bottom-right corner
    * @param h_or_y	the height or y of bottom-right corner
-   * @param useXY	whether in format 'x y w h' (false) or 'x0 y0 x1 y1' (true)
+   * @param isXY	whether in format 'x0 y0 x1 y1' (true) or 'x y w h' (false)
    */
-  public BaseRectangle(int x, int y, int w_or_x, int h_or_y, boolean useXY) {
+  public BaseRectangle(int x, int y, int w_or_x, int h_or_y, boolean isXY) {
     this(
       x
 	+ " "
 	+ y
 	+ " "
-	+ (useXY ? x+w_or_x : w_or_x)
+	+ (isXY ? w_or_x-x+1 : w_or_x)
 	+ " "
-	+ (useXY ? y+h_or_y : h_or_y));
+	+ (isXY ? h_or_y-y+1 : h_or_y));
   }
 
   /**
@@ -122,17 +122,17 @@ public class BaseRectangle
    * @param y		the y of the top-left corner
    * @param w_or_x	the width or x of bottom-right corner
    * @param h_or_y	the height or y of bottom-right corner
-   * @param useXY	whether in format 'x y w h' (false) or 'x0 y0 x1 y1' (true)
+   * @param isXY	whether in format 'x0 y0 x1 y1' (true) or 'x y w h' (false)
    */
-  public BaseRectangle(double x, double y, double w_or_x, double h_or_y, boolean useXY) {
+  public BaseRectangle(double x, double y, double w_or_x, double h_or_y, boolean isXY) {
     this(
       x
 	+ " "
 	+ y
 	+ " "
-	+ (useXY ? x+w_or_x : w_or_x)
+	+ (isXY ? w_or_x-x+1 : w_or_x)
 	+ " "
-	+ (useXY ? y+h_or_y : h_or_y));
+	+ (isXY ? h_or_y-y+1 : h_or_y));
   }
 
   /**
@@ -225,17 +225,17 @@ public class BaseRectangle
 	+ " "
 	+ ((int) rect.getY())
 	+ " "
-	+ ((int) (rect.getX() + rect.getWidth()))
+	+ ((int) (rect.getX() + rect.getWidth() - 1))
 	+ " "
-	+ ((int) (rect.getY() + rect.getHeight()));
+	+ ((int) (rect.getY() + rect.getHeight() - 1));
     else
       result = rect.getX()
 	+ " "
 	+ rect.getY()
 	+ " "
-	+ (rect.getX() + rect.getWidth())
+	+ (rect.getX() + rect.getWidth() - 1)
 	+ " "
-	+ (rect.getY() + rect.getHeight());
+	+ (rect.getY() + rect.getHeight() - 1);
 
     return result;
   }
@@ -307,8 +307,8 @@ public class BaseRectangle
     values = new double[4];
     for (i = 0; i < parts.length; i++)
       values[i] = Double.parseDouble(parts[i]);
-    values[2] = values[2] - values[0];  // width
-    values[3] = values[3] - values[1];  // height
+    values[2] = values[2] - values[0] + 1;  // width
+    values[3] = values[3] - values[1] + 1;  // height
     return values[0] + " " + values[1] + " " + values[2] + " " + values[3];
   }
 }
