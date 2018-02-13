@@ -28,6 +28,7 @@ set JCMD=java
 if not "%JAVA_HOME%"=="" set JCMD="%JAVA_HOME%\bin\java"
 if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
 
+set BASEDIR=%~dp0\..
 set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
 set CLASSPATH="%RESOURCES%";"%REPO%\java-cup-11b-2015.03.26.jar";"%REPO%\*"
