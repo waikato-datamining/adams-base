@@ -2237,23 +2237,10 @@ Ubuntu, is fairly easy:
   \item Make sure that all files and directories are owned by the \texttt{adams}
   user (using \texttt{chown}) and that the permissions for the \texttt{adams}
   group are set correctly as well (using \texttt{chmod}).
-  \item Create the script that will execute your flow, e.g.,
-  \texttt{/usr/local/bin/myflow.sh} which executes the flow called
-  \texttt{myflow.flow}:
-    {\scriptsize
-    \begin{verbatim}
-unset DISPLAY
-cd /opt/adams
-/opt/jdk/bin/java -cp "./lib/*" adams.flow.FlowRunner -headless -input ./flows/myflow.flow &
-    \end{verbatim}}
-  \item Assume the identity of the \texttt{adams} user, e.g., by using
-  \texttt{sudo su - adams} and add the following cronjob, using \texttt{crontab -e},
-  which will execute your flow at startup time:
-    \begin{verbatim}
-    @reboot /usr/local/bin/myflow.sh
-    \end{verbatim}
-  \item Instead of a cronjob, you can also use a systemd startup script
-  \textit{adams.service} (using user/group adams/adams in this example):
+  \item Create a systemd startup script \textit{adams.service}
+  (using user/group adams/adams in this example) as follows for flow
+  \textit{myflow.flow} (residing in \textit{/opt/adams/flows}) with 1GB of
+  heap and running the remote command scripting engine on port 12345:
     {\scriptsize \begin{verbatim}
 # cat adams.service
 [Unit]
@@ -2264,8 +2251,12 @@ After=syslog.target network.target
 Type=simple
 User=adams
 Group=adams
+Environment="JAVA_HOME=/opt/jdk"
+Environment="PATH=/opt/jdk/bin:/usr/local/bin:/usr/bin"
+
 WorkingDirectory=/opt/adams
-ExecStart=/opt/jdk/bin/java -cp "./lib/*:./lib/linux64/*" adams.flow.FlowRunner -input "./flows/myflow.flow" -headless true -register true -non-interactive true
+ExecStart=/opt/adams/bin/daemon.sh start 1g myflow.flow 12345
+ExecStop=/opt/adams/bin/daemon.sh stop 12345
 
 [Install]
 WantedBy=multi-user.target
@@ -2286,65 +2277,13 @@ WantedBy=multi-user.target
   \label{example_linux_dir_layout_data_processing}
 \end{figure}
 
-\subsection{Starting a daemon}
-Below is a slightly more elaborate script for starting a daemon. It tells the
-\textit{FlowRunner} to launch a scripting engine that listens on port 12345.
-This allows you to remotely log in to a server, launch the ADAMS user interface
-using an X session and communicate with the daemon flow using the Remote control
-center.
-{\scriptsize
-\begin{verbatim}
-BASEDIR=`dirname $0`/..
-BASEDIR=`(cd "$BASEDIR"; pwd)`
-. "$BASEDIR"/bin/env.sh
-CLASSPATH="$RESOURCES":"$PRIORITY":"$REPO/*"
-"$JCMD" \
-  -classpath "$CLASSPATH" \
-  -Xmx1g \
-  adams.flow.FlowRunner \
-  -input "$BASEDIR/flows/myflow.flow" \
-  -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port 12345" \
-  -headless true \
-  -non-interactive true \
-  -register true \
-  -clean-up true \
-  &
-\end{verbatim}}
-
-\subsection{Stopping a daemon}
-For stopping a daemon flow properly instead of killing the process, you can
-send the \textit{Stop} command using the following script:
-{\scriptsize
-\begin{verbatim}
-BASEDIR=`dirname $0`/..
-BASEDIR=`(cd "$BASEDIR"; pwd)`
-. "$BASEDIR"/bin/env.sh
-CLASSPATH="$RESOURCES":"$PRIORITY":"$REPO/*"
-"$JCMD" \
-  -classpath "$CLASSPATH" \
-  adams.scripting.CommandRunner \
-  -start-local-engine false \
-  -connection "adams.scripting.connection.DefaultConnection -host 127.0.0.1 -port 12345" \
-  -command adams.scripting.command.basic.Stop
-\end{verbatim}}
-
 \section{Windows servers}
 ADAMS can be run as background process on Windows as well. Using the NSSM\cite{nssm}
-tool, you can install the following batch file called \textit{myflow.bat} (e.g., in
-directory \textit{C:\textbackslash adams\_services}) which executes the flow
-\textit{myflow.flow} (ADAMS is installed in directory \textit{C:\textbackslash adams}):
+tool, you can a Windows service that executes the flow \textit{myflow.flow}.
+ADAMS is assumed for be installed in \textit{C:\textbackslash adams} for this
+example and \textit{myflow.flow} needs to reside in the \textit{flows} directory.
 
-{\scriptsize \begin{verbatim}
-REM starts myflow
-cd C:\\adams
-javaw -cp ".\\lib\\*;.\\lib\\windows64\\*" adams.flow.FlowRunner^
- -input ".\\flows\\myflow.flow"^
- -headless true^
- -register true^
- -non-interactive true
-\end{verbatim}}
-
-\noindent Use the following steps to install the batch file as service:
+\noindent Use the following steps to set up the service:
 \begin{tight_itemize}
   \item Set up a new, non-privileged user called \textit{adams}, since we
   don't want to run ADAMS with admin rights in order to avoid potential attacks.
@@ -2353,13 +2292,40 @@ javaw -cp ".\\lib\\*;.\\lib\\windows64\\*" adams.flow.FlowRunner^
     \begin{verbatim}
     nssm install adams
     \end{verbatim}
-  \item On the \textit{Application} tab, select \textit{myflow.bat} as the \textit{Path}.
+  \item On the \textit{Application} tab, select the batch file \textit{daemon.bat}
+  from the ADAMS \textit{bin} directory as the \textit{Path}.
+  \item Use the following \textit{Arguments} to execute the flow with 1GB of
+  heap and the remote command scripting engine on port 12345:
+    \begin{verbatim}
+    start myflow.flow 1g 12345
+    \end{verbatim}
   \item On the \textit{Log on} tab, select \textit{This account} and supply user
   and password to run ADAMS under.
+  \item On the \textit{Shutdown} tab, tick \textit{Generate Control-C} and use
+  \textit{10000 msec}, to give the flow time to properly shut down.
+  \item On the \textit{Exit actions} tab, you can enable the restarting of the
+  service, but maybe avoid this if the application has been running for less
+  than 20,000 msec (an early crash of ADAMS is more likely caused by some
+  misconfiguration and we don't want the server to just try an reboot ADAMS all
+  the time).
+  \item On the \textit{I/O} tab, you can redirect the output from stdout and
+  stderr into files. Not necessary, but very useful when trying to determine
+  the cause of problems during execution and your flow isn't generating log
+  files itself. If using log files, it is best to set up file rotation on the
+  \textit{File rotation} tab to not lose output from previous runs.
+  \item On the \textit{Environment} tab, you can set any environment variables
+  that your flow might need.
   \item Click on \textit{Install service}
 \end{tight_itemize}
 You can now start and stop the service \textit{adams} from the computer's
 control panel.
+
+\noindent If you should need to update the service, you execute \textit{nssm}
+as follows:
+\begin{verbatim}
+nssm install adams
+\end{verbatim}
+
 
 \begin{figure}[htb]
 \dirtree{%
@@ -2373,47 +2339,6 @@ control panel.
   \caption{Example Windows directory layout for data processing.}
   \label{example_windows_dir_layout_data_processing}
 \end{figure}
-
-\subsection{Starting a service}
-Below is a slightly more elaborate batch file for starting a server. It tells the
-\textit{FlowRunner} to launch a scripting engine that listens on port 12345.
-This allows you to remotely log in to a server, launch the ADAMS user interface
-via RDP and communicate with the service flow using the Remote control center.
-{\scriptsize
-\begin{verbatim}
-@echo off
-set JCMD=java
-if not "%JAVA_HOME%"=="" set JCMD="%JAVA_HOME%\bin\java"
-if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
-set REPO=%BASEDIR%\lib
-set RESOURCES=%BASEDIR%\resources
-set CLASSPATH="%RESOURCES%";"%REPO%\java-cup-11b-2015.03.26.jar";"%REPO%\*"
-%JCMD% -classpath %CLASSPATH% -Xmx1g adams.flow.FlowRunner^
- -input "%BASEDIR%\flows\myflow.flow"^
- -remote-scripting-engine-cmdline^ "adams.scripting.engine.DefaultScriptingEngine -port 12345"^
- -headless true^
- -non-interactive true^
- -register true^
- -clean-up true
-\end{verbatim}}
-
-\subsection{Stopping a service}
-For stopping a daemon flow properly instead of killing the process, you can
-send the \textit{Stop} command using the following batch file (the last command
-is spread over three lines to fit on the page):
-{\scriptsize
-\begin{verbatim}
-@echo off
-set JCMD=java
-if not "%JAVA_HOME%"=="" set JCMD="%JAVA_HOME%\bin\java"
-if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
-set REPO=%BASEDIR%\lib
-set RESOURCES=%BASEDIR%\resources
-set CLASSPATH="%RESOURCES%";"%REPO%\java-cup-11b-2015.03.26.jar";"%REPO%\*"
-%JCMD% -classpath %CLASSPATH% adams.scripting.CommandRunner -start-local-engine false^
- -connection "adams.scripting.connection.DefaultConnection -host 127.0.0.1 -port 12345"^
- -command adams.scripting.command.basic.Stop
-\end{verbatim}}
 
 
 \section{Executing commands}
