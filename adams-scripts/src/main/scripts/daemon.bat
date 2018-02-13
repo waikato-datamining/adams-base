@@ -16,7 +16,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Copyright (C) 2011-2017 University of Waikato, Hamilton, NZ
+@REM Copyright (C) 2011-2018 University of Waikato, Hamilton, NZ
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -45,6 +45,7 @@ goto wrongcmd
 %JCMD% -classpath %CLASSPATH% -Xmx%2 adams.flow.FlowRunner^
  -input "%BASEDIR%\flows\%3"^
  -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port %4"^
+ -shutdown-hook "adams.core.shutdown.StopFlows -time-out 5000"^
  -headless true^
  -non-interactive true^
  -register true^
