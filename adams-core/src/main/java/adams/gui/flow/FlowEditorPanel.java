@@ -81,6 +81,10 @@ import adams.gui.flow.menu.FileRevert;
 import adams.gui.flow.menu.FileSave;
 import adams.gui.flow.menu.FileSaveAs;
 import adams.gui.flow.menu.FlowEditorAction;
+import adams.gui.flow.menu.HelpBooleanExpression;
+import adams.gui.flow.menu.HelpMathematicalExpression;
+import adams.gui.flow.menu.HelpStringExpression;
+import adams.gui.flow.menu.HelpVariables;
 import adams.gui.flow.menu.RunClearGraphicalOutput;
 import adams.gui.flow.menu.RunDebug;
 import adams.gui.flow.menu.RunDisableAllBreakpoints;
@@ -162,6 +166,9 @@ public class FlowEditorPanel
 
   /** the Window menu text. */
   public static final String MENU_WINDOW = "Window";
+
+  /** the Help menu text. */
+  public static final String MENU_HELP = "Help";
 
   /** the name of the props file with the general properties. */
   public final static String FILENAME = "FlowEditor.props";
@@ -366,6 +373,18 @@ public class FlowEditorPanel
 
   /** the "duplicate tab" action. */
   protected FlowEditorAction m_ActionDuplicateTab;
+
+  /** the "help variables" action. */
+  protected FlowEditorAction m_ActionHelpVariables;
+
+  /** the "help boolean expression" action. */
+  protected FlowEditorAction m_ActionHelpBooleanExpression;
+
+  /** the "help math expression" action. */
+  protected FlowEditorAction m_ActionHelpMathematicalExpression;
+
+  /** the "help string expression" action. */
+  protected FlowEditorAction m_ActionHelpStringExpression;
 
   /** menu items. */
   protected List<FlowEditorAction> m_MenuItems;
@@ -763,6 +782,26 @@ public class FlowEditorPanel
     action = new WindowDuplicateInTab();
     m_ActionDuplicateTab = action;
     m_MenuItems.add(action);
+
+    // Help/Variables
+    action = new HelpVariables();
+    m_ActionHelpVariables = action;
+    m_MenuItems.add(action);
+
+    // Help/Boolean expression
+    action = new HelpBooleanExpression();
+    m_ActionHelpBooleanExpression = action;
+    m_MenuItems.add(action);
+
+    // Help/Mathematical expression
+    action = new HelpMathematicalExpression();
+    m_ActionHelpMathematicalExpression = action;
+    m_MenuItems.add(action);
+
+    // Help/String expression
+    action = new HelpStringExpression();
+    m_ActionHelpStringExpression = action;
+    m_MenuItems.add(action);
   }
 
   /**
@@ -1058,6 +1097,17 @@ public class FlowEditorPanel
 	menu.add(m_ActionDuplicateTabInNewWindow);
 	menu.add(m_ActionDuplicateTab);
       }
+
+      // Help
+      menu = new BaseMenu(MENU_HELP);
+      result.add(menu);
+      menu.setMnemonic('H');
+      menu.addChangeListener((ChangeEvent e) -> updateActions());
+
+      menu.add(m_ActionHelpVariables);
+      menu.add(m_ActionHelpBooleanExpression);
+      menu.add(m_ActionHelpMathematicalExpression);
+      menu.add(m_ActionHelpStringExpression);
 
       m_MenuBar = result;
 

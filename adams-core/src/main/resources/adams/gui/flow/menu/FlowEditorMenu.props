@@ -176,3 +176,17 @@ adams.gui.flow.menu.WindowDuplicateInWindow-Shortcut=
 adams.gui.flow.menu.WindowDuplicateInTab-Icon=copy.gif
 adams.gui.flow.menu.WindowDuplicateInTab-Mnemonic=T
 adams.gui.flow.menu.WindowDuplicateInTab-Shortcut=
+
+# Help
+adams.gui.flow.menu.HelpVariables-Icon=variable.gif
+adams.gui.flow.menu.HelpVariables-Mnemonic=
+adams.gui.flow.menu.HelpVariables-Shortcut=
+adams.gui.flow.menu.HelpBooleanExpression-Icon=
+adams.gui.flow.menu.HelpBooleanExpression-Mnemonic=
+adams.gui.flow.menu.HelpBooleanExpression-Shortcut=
+adams.gui.flow.menu.HelpMathematicalExpression-Icon=
+adams.gui.flow.menu.HelpMathematicalExpression-Mnemonic=
+adams.gui.flow.menu.HelpMathematicalExpression-Shortcut=
+adams.gui.flow.menu.HelpStringExpression-Icon=
+adams.gui.flow.menu.HelpStringExpression-Mnemonic=
+adams.gui.flow.menu.HelpStringExpression-Shortcut=

@@ -74,3 +74,8 @@ adams.gui.flow.menu.WindowMoveToNewWindow-Shortcut=
 adams.gui.flow.menu.WindowDuplicateInWindow-Shortcut=
 adams.gui.flow.menu.WindowDuplicateInTab-Shortcut=
 
+# Help
+adams.gui.flow.menu.HelpVariables-Shortcut=
+adams.gui.flow.menu.HelpBooleanExpression-Shortcut=
+adams.gui.flow.menu.HelpMathematicalExpression-Shortcut=
+adams.gui.flow.menu.HelpStringExpression-Shortcut=
