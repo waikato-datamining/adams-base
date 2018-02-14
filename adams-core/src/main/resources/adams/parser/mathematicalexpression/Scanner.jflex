@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.mathematicalexpression;
@@ -28,7 +28,6 @@ import java.io.*;
  * A scanner for mathematical expressions.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 %%
 %caseless
@@ -130,6 +129,8 @@ import java.io.*;
   "concatenate" { return sf.newSymbol("Concantenate", sym.CONCATENATE); }
   "rept" { return sf.newSymbol("repeat", sym.REPEAT); }
   "str" { return sf.newSymbol("str", sym.STR); }
+  "replaceext" { return sf.newSymbol("replaceext", sym.REPLACEEXT); }
+  "ext" { return sf.newSymbol("ext", sym.EXT); }
   "now" { return sf.newSymbol("Now", sym.NOW); }
   "today" { return sf.newSymbol("Today", sym.TODAY); }
   "year" { return sf.newSymbol("Year", sym.YEAR); }

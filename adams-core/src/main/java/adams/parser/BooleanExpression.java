@@ -15,7 +15,7 @@
 
 /*
  * BooleanExpression.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -129,12 +129,14 @@ import java.util.logging.Level;
  *               | matches ( expr , regexp )<br>
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
- *               | find ( search , expr [, pos] )<br>
+ *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
  *               | replace ( str , pos , len , newstr )<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
  *               | str ( expr )<br>
- *               | str ( expr , numdecimals )<br>
- *               | str ( expr , decimalformat )<br>
+ *               | str ( expr  , numdecimals )<br>
+ *               | str ( expr  , decimalformat )<br>
+ *               | ext ( file_str )  (extracts extension from file)<br>
+ *               | replaceext ( file_str, ext_str )  (replaces the extension of the file with the new one)<br>
  * <br>
  * # array functions<br>
  *               | len[gth] ( array )<br>
@@ -315,12 +317,14 @@ public class BooleanExpression
       + "              | matches ( expr , regexp )\n"
       + "              | trim ( expr )\n"
       + "              | len[gth] ( str )\n"
-      + "              | find ( search , expr [, pos] )\n"
+      + "              | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)\n"
       + "              | replace ( str , pos , len , newstr )\n"
       + "              | substitute ( str , find , replace [, occurrences] )\n"
       + "              | str ( expr )\n"
       + "              | str ( expr  , numdecimals )\n"
       + "              | str ( expr  , decimalformat )\n"
+      + "              | ext ( file_str )  (extracts extension from file)\n"
+      + "              | replaceext ( file_str, ext_str )  (replaces the extension of the file with the new one)\n"
       + "\n"
       + "# array functions\n"
       + "              | len[gth] ( array )\n"

@@ -106,4 +106,7 @@
 'str(2234.1, "#,###.000") = "2,234.100": true
 'has(X)' using X=9.0: true
 'has(Y)' using X=9.0: false
+'ext("hello_world.txt") = "txt": true
+'replaceext("hello_world.txt", ".doc") = "hello_world.doc": true
+'replaceext("hello_world.txt", "") = "hello_world": true
 

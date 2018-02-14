@@ -1,0 +1,27 @@
+--> out-0
+'ifelse(true; "a"; "b"): a
+'trim("blah"): blah
+'trim(" blah"): blah
+'trim("blah "): blah
+'trim(" blah "): blah
+'left("abcdef"; 3): abc
+'mid("abcdef"; 2; 3): bcd
+'right("abcdef"; 2): ef
+'rept("abc"; 3): abcabcabc
+'concatenate("ab"; "cd"): abcd
+'concatenate("ab"; "cd"; "ef"): abcdef
+'concatenate("ab"; "cd"; "ef"; "gh"): abcdefgh
+'concatenate("ab"; "cd"; "ef"; "gh"; "ij"): abcdefghij
+'str(find("76"; "998877665544")): 6.0
+'str(find("76"; "998877665544"; 7)): 0.0
+'replace("1234567"; 1; 1; "444"): 444234567
+'SUBSTITUTE("123123123";"3";"abc"): 12abc12abc12abc
+'SUBSTITUTE("123123123";"3";"abc";2): 12abc12abc123
+'str(2.1): 2.1
+'str(2.1, 0): 2
+'str(2.123, 2): 2.12
+'str(2234.1, "#,###.000"): 2,234.100
+'ext("hello_world.txt"): txt
+'replaceext("hello_world.txt", ".doc"): hello_world.doc
+'replaceext("hello_world.txt", ""): hello_world
+

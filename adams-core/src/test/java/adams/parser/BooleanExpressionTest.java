@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BooleanExpressionTest.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -29,7 +29,6 @@ import junit.framework.TestSuite;
  * java adams.parser.BooleanExpressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BooleanExpressionTest
   extends AbstractSymbolEvaluatorTestCase<Boolean, BooleanExpression> {
@@ -159,6 +158,9 @@ public class BooleanExpressionTest
 	  {/** no symbols necessary */},		// 105
 	  {new BaseString("X=9.0")},			// 106
 	  {new BaseString("X=9.0")},			// 107
+	  {/** no symbols necessary */},		// 108
+	  {/** no symbols necessary */},		// 109
+	  {/** no symbols necessary */},		// 110
 	}
     };
   }
@@ -278,7 +280,10 @@ public class BooleanExpressionTest
 	  "str(2.123, 2) = \"2.12\"", 	// 104
 	  "str(2234.1, \"#,###.000\") = \"2,234.100\"", 	// 105
 	  "has(X)", 	// 106
-	  "has(Y)", 	// 106
+	  "has(Y)", 	// 107
+	  "ext(\"hello_world.txt\") = \"txt\"", 	// 108
+	  "replaceext(\"hello_world.txt\", \".doc\") = \"hello_world.doc\"", 	// 109
+	  "replaceext(\"hello_world.txt\", \"\") = \"hello_world\"", 	// 110
 	}
     };
   }
