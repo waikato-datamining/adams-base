@@ -43,12 +43,12 @@
     <snapshotRepository>
       <id>adams-snapshots</id>
       <name>ADAMS Snapshot Repository</name>
-      <url>https://adams.cms.waikato.ac.nz/nexus3/content/repositories/adams-snapshots</url>
+      <url>https://adams.cms.waikato.ac.nz/nexus/content/repositories/adams-snapshots</url>
     </snapshotRepository>
     <repository>
       <id>adams-releases</id>
       <name>ADAMS Release Repository</name>
-      <url>https://adams.cms.waikato.ac.nz/nexus3/content/repositories/adams-releases</url>
+      <url>https://adams.cms.waikato.ac.nz/nexus/content/repositories/adams-releases</url>
     </repository>
   </distributionManagement>
 
