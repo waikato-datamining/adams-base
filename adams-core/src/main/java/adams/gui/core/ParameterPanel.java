@@ -15,7 +15,7 @@
 
 /*
  * ParameterPanel.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -84,6 +84,9 @@ public class ParameterPanel
 
   /** whether to use checkboxes. */
   protected boolean m_UseCheckBoxes;
+
+  /** whether to use mnemonic indicators (_ precedes the mnemonic letter). */
+  protected boolean m_UseMnemonicIndicators;
 
   /** the preferred dimensions for JSpinner components. */
   protected Dimension m_PreferredDimensionJSpinner;
@@ -159,6 +162,7 @@ public class ParameterPanel
     m_PreferredDimensionJSpinner = new Dimension(100, 20);
     m_MinDimensionJComboBox      = new Dimension(50, 20);
     m_ChangeListeners            = new HashSet<>();
+    m_UseMnemonicIndicators      = true;
     m_DocumentListener = new DocumentListener() {
       @Override
       public void insertUpdate(DocumentEvent e) {
@@ -213,6 +217,27 @@ public class ParameterPanel
    */
   public boolean useCheckBoxes() {
     return m_UseCheckBoxes;
+  }
+
+  /**
+   * Sets whether to interpret "_" in the name as a mnemonic indicator
+   * (the next letter is to be used as mnemonic indicator).
+   *
+   * @param value	true if to use mnemonic indicators
+   */
+  public void setUseMnemonicIndicators(boolean value) {
+    m_UseMnemonicIndicators = value;
+    update();
+  }
+
+  /**
+   * Returns whether to interpret "_" in the name as a mnemonic indicator
+   * (the next letter is to be used as mnemonic indicator).
+   *
+   * @return		true if to use mnemonic indicators
+   */
+  public boolean getUseMnemonicIndicators() {
+    return m_UseMnemonicIndicators;
   }
 
   /**
@@ -328,9 +353,15 @@ public class ParameterPanel
     GridBagConstraints	con;
     GridBagLayout	layout;
 
-    lbl = new JLabel(label.replace("" + GUIHelper.MNEMONIC_INDICATOR, ""));
-    lbl.setDisplayedMnemonic(GUIHelper.getMnemonic(label));
-    lbl.setLabelFor(comp);
+    if (m_UseMnemonicIndicators) {
+      lbl = new JLabel(label.replace("" + GUIHelper.MNEMONIC_INDICATOR, ""));
+      lbl.setDisplayedMnemonic(GUIHelper.getMnemonic(label));
+      lbl.setLabelFor(comp);
+    }
+    else {
+      lbl = new JLabel(label);
+      lbl.setLabelFor(comp);
+    }
 
     if (m_UseCheckBoxes)
       check = new JCheckBox("", checked);
