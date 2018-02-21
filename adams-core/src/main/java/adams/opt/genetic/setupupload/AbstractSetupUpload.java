@@ -24,6 +24,7 @@ import adams.core.Properties;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.core.Actor;
 import adams.flow.core.FlowContextHandler;
+import adams.opt.genetic.AbstractGeneticAlgorithm;
 
 import java.util.Map;
 
@@ -117,6 +118,24 @@ public abstract class AbstractSetupUpload
   public abstract boolean requiresFlowContext();
 
   /**
+   * Before Starting the uploads, ie the genetic algorithm run.
+   *
+   * @param algorithm	the algorithm initiating the run
+   */
+  protected abstract void doStart(AbstractGeneticAlgorithm algorithm);
+
+  /**
+   * Before Starting the uploads, ie the genetic algorithm run.
+   *
+   * @param algorithm	the algorithm initiating the run
+   */
+  public void start(AbstractGeneticAlgorithm algorithm) {
+    if (isLoggingEnabled())
+      getLogger().info("start");
+    doStart(algorithm);
+  }
+
+  /**
    * Uploads the setup.
    *
    * @param setup	the setup data to upload
@@ -134,6 +153,28 @@ public abstract class AbstractSetupUpload
     if (requiresFlowContext() && (m_FlowContext == null))
       return "No flow context set, upload failed!";
     return doUpload(setup);
+  }
+
+  /**
+   * Finishing up the genetic algorithm run.
+   *
+   * @param algorithm		the algorithm that initiated the run
+   * @param successfulRun 	whether the run was successful
+   * @param params              the parameters to store
+   */
+  protected abstract void doFinish(AbstractGeneticAlgorithm algorithm, boolean successfulRun, Map<String,Object> params);
+
+  /**
+   * Finishing up the genetic algorithm run.
+   *
+   * @param algorithm		the algorithm that initiated the run
+   * @param successfulRun 	whether the run was successful
+   * @param params              the parameters to store
+   */
+  public void finish(AbstractGeneticAlgorithm algorithm, boolean successfulRun, Map<String,Object> params) {
+    if (isLoggingEnabled())
+      getLogger().info("finish: successfulRun=" + successfulRun);
+    doFinish(algorithm, successfulRun, params);
   }
 
   /**

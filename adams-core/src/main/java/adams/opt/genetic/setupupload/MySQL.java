@@ -28,8 +28,10 @@ import adams.db.DatabaseConnection;
 import adams.db.JDBC;
 import adams.db.SQL;
 import adams.flow.core.ActorUtils;
+import adams.opt.genetic.AbstractGeneticAlgorithm;
 
 import java.sql.PreparedStatement;
+import java.sql.Types;
 import java.util.Map;
 
 /**
@@ -41,6 +43,8 @@ public class MySQL
   extends AbstractSetupUpload {
 
   private static final long serialVersionUID = 1825847990988418348L;
+
+  public static final String KEY_SUCCESSFUL = "successful";
 
   /** the table to store the setups in. */
   protected String m_Table;
@@ -58,7 +62,10 @@ public class MySQL
     return
       "Stores the setup information in the specified MySQL table.\n"
 	+ "Uses the database available through the current flow context.\n"
-	+ "If the table is not present, it gets automatically created.";
+	+ "If the table is not present, it gets automatically created.\n"
+	+ "On completion of the algorithm run, a row with the key '" + KEY_SUCCESSFUL + "' "
+	+ "gets inserted with an associated value of 'true' or 'false' depending on "
+	+ "whether the algorithm run was successful. The fitness value is 'null' in this case.";
   }
 
   /**
@@ -123,6 +130,14 @@ public class MySQL
   }
 
   /**
+   * Before Starting the uploads, ie the genetic algorithm run.
+   *
+   * @param algorithm	the algorithm initiating the run
+   */
+  protected void doStart(AbstractGeneticAlgorithm algorithm) {
+  }
+
+  /**
    * Initializes the database connection, if necessary.
    *
    * @return		null if successful or already initialized, otherwise error message
@@ -157,7 +172,7 @@ public class MySQL
       .append("CREATE TABLE ").append(m_Table).append(" (\n")
       .append("  ").append("experiment VARCHAR(255) NOT NULL").append(",\n")
       .append("  ").append("measure VARCHAR(255) NOT NULL").append(",\n")
-      .append("  ").append("fitness DOUBLE NOT NULL").append(",\n")
+      .append("  ").append("fitness DOUBLE").append(",\n")
       .append("  ").append("name VARCHAR(255) NOT NULL").append(",\n")
       .append("  ").append("value LONGTEXT").append(",\n")
       .append("  ").append("INDEX idx_experiment(experiment)").append(",\n")
@@ -170,7 +185,7 @@ public class MySQL
     try {
       resultSet = sql.execute(create.toString());
       if ((resultSet == null) || resultSet)
-        return "Failed to create table: " + create;
+	return "Failed to create table: " + create;
     }
     catch (Exception e) {
       return Utils.handleException(this, "Failed execute statement: " + create, e);
@@ -207,7 +222,7 @@ public class MySQL
 	stmt = m_DatabaseConnection.getConnection(true).prepareStatement(sql);
       }
       catch (Exception e) {
-        result = Utils.handleException(this, "Failed to prepare statement: " + sql, e);
+	result = Utils.handleException(this, "Failed to prepare statement: " + sql, e);
       }
     }
 
@@ -215,25 +230,41 @@ public class MySQL
     if (stmt != null) {
       errors = new MessageCollection();
       for (String key: setup.keySet()) {
-        if (key.equals(KEY_MEASURE) || key.equals(KEY_FITNESS))
-          continue;
-        value = "" + setup.get(key);
-        if (isLoggingEnabled())
-          getLogger().info("Inserting name=" + key + ", value=" + Shortening.shortenEnd(value, 30));
-        try {
-          stmt.setString(1, m_Experiment);
-          stmt.setString(2, "" + setup.get(KEY_MEASURE));
-          stmt.setDouble(3, (Double) setup.get(KEY_FITNESS));
-          stmt.setString(4, key);
-          stmt.setString(5, value);
-          stmt.execute();
+	if (key.equals(KEY_MEASURE) || key.equals(KEY_FITNESS))
+	  continue;
+	value = "" + setup.get(key);
+	if (isLoggingEnabled())
+	  getLogger().info("Inserting name=" + key + ", value=" + Shortening.shortenEnd(value, 30));
+	try {
+	  stmt.setString(1, m_Experiment);
+	  stmt.setString(2, "" + setup.get(KEY_MEASURE));
+	  if (setup.get(KEY_FITNESS) == null)
+	    stmt.setNull(3, Types.DOUBLE);
+	  else
+	    stmt.setDouble(3, (Double) setup.get(KEY_FITNESS));
+	  stmt.setString(4, key);
+	  stmt.setString(5, value);
+	  stmt.execute();
 	}
 	catch (Exception e) {
-          errors.add(Utils.handleException(this, "Failed to insert setup key/value:\n- key: " + key + "\n- value: " + value, e));
+	  errors.add(Utils.handleException(this, "Failed to insert setup key/value:\n- key: " + key + "\n- value: " + value, e));
 	}
       }
     }
 
     return result;
+  }
+
+  /**
+   * Finishing up the genetic algorithm run.
+   *
+   * @param algorithm		the algorithm that initiated the run
+   * @param successfulRun 	whether the run was successful
+   * @param params              the parameters to store
+   */
+  @Override
+  protected void doFinish(AbstractGeneticAlgorithm algorithm, boolean successfulRun, Map<String,Object> params) {
+    params.put(KEY_SUCCESSFUL, successfulRun);
+    upload(params);
   }
 }

@@ -20,6 +20,8 @@
 
 package adams.opt.genetic.setupupload;
 
+import adams.opt.genetic.AbstractGeneticAlgorithm;
+
 import java.util.Map;
 
 /**
@@ -52,6 +54,15 @@ public class Null
   }
 
   /**
+   * Before Starting the uploads, ie the genetic algorithm run.
+   *
+   * @param algorithm	the algorithm initiating the run
+   */
+  @Override
+  protected void doStart(AbstractGeneticAlgorithm algorithm) {
+  }
+
+  /**
    * Uploads the setup.
    *
    * @param setup	the setup data to upload
@@ -62,5 +73,16 @@ public class Null
     if (isLoggingEnabled())
       getLogger().info(setup.toString());
     return null;
+  }
+
+  /**
+   * Finishing up the genetic algorithm run.
+   *
+   * @param algorithm		the algorithm that initiated the run
+   * @param successfulRun 	whether the run was successful
+   * @param params              the parameters to store
+   */
+  @Override
+  protected void doFinish(AbstractGeneticAlgorithm algorithm, boolean successfulRun, Map<String,Object> params) {
   }
 }

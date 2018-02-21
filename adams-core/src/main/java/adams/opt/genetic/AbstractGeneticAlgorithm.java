@@ -55,7 +55,6 @@ import java.util.logging.Level;
  * Base class for genetic algorithms.
  *
  * @author Dale (dale at cs dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractGeneticAlgorithm
   extends AbstractOptionHandler
@@ -1147,7 +1146,7 @@ public abstract class AbstractGeneticAlgorithm
     }
 
     try {
-      postRun();
+      postRun(result);
     }
     catch (Exception e) {
       result = false;
@@ -1160,9 +1159,10 @@ public abstract class AbstractGeneticAlgorithm
   /**
    * Further clean-ups in derived classes.
    *
-   * @throws Exception	if something goes wrong
+   * @param successfulRun  	whether the run was successful
+   * @throws Exception		if something goes wrong
    */
-  protected void postRun() throws Exception {
+  protected void postRun(boolean successfulRun) throws Exception {
     m_Running = false;
   }
 

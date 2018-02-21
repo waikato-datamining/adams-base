@@ -306,9 +306,6 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       props = AbstractSetupUpload.toProperties(setup);
       if (!props.save(file.getAbsolutePath()))
 	getLogger().warning("Failed to write setup to '" + file + "'!");
-      msg = getOwner().getSetupUpload().upload(setup);
-      if (msg != null)
-        getLogger().warning("Failed to upload setup:\n" + msg);
     }
 
     /**
@@ -322,6 +319,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @throws Exception	if output fails
      */
     protected void generateOutput(double fitness, Instances data, Classifier cls, int chromosome, int[] weights) throws Exception {
+      String	msg;
+
       switch (getOwner().getOutputType()) {
 	case NONE:
 	  break;
@@ -338,6 +337,11 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
 	default:
 	  throw new IllegalStateException("Unhandled output type: " + getOwner().getOutputType());
       }
+
+      // upload setup
+      msg = getOwner().getSetupUpload().upload(assembleSetup(fitness, cls, chromosome, weights));
+      if (msg != null)
+        getLogger().warning("Failed to upload setup:\n" + msg);
     }
   }
 
@@ -1032,9 +1036,26 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
           + m_Instances.classAttribute().type() + "'!");
 
     m_SetupUpload.setFlowContext(getFlowContext());
+    m_SetupUpload.start(this);
 
     // clear cache
     clearResults();
+  }
+
+  /**
+   * Further clean-ups in derived classes.
+   *
+   * @param successfulRun  	whether the run was successful
+   * @throws Exception		if something goes wrong
+   */
+  protected void postRun(boolean successfulRun) throws Exception {
+    Map<String,Object>	params;
+
+    super.postRun(successfulRun);
+
+    params = new HashMap<>();
+    params.put(AbstractSetupUpload.KEY_MEASURE, "" + getMeasure());
+    m_SetupUpload.finish(this, successfulRun, params);
   }
 
   /**
