@@ -27,6 +27,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.Remove;
 
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -189,11 +190,11 @@ public class DarkLord
      * @param weights		the current weights
      * @return			the data
      */
-    protected Properties assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
-      Properties	result;
+    protected Map<String,Object> assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
+      Map<String,Object>	result;
 
       result = super.assembleSetup(fitness, cls, chromosome, weights);
-      result.setProperty("Mask", getMaskAsString());
+      result.put("Mask", getMaskAsString());
 
       return result;
     }

@@ -475,6 +475,10 @@ adams.opt.genetic.initialsetups.AbstractInitialSetupsProvider=\
 adams.opt.genetic.stopping.AbstractStoppingCriterion=\
   adams.opt.genetic.stopping
 
+# for uploading the genetic setups
+adams.opt.genetic.setupupload.AbstractSetupUpload=\
+  adams.opt.genetic.setupupload
+
 # the flow tabs
 adams.gui.flow.tab.AbstractEditorTab=\
   adams.gui.flow.tab

@@ -32,6 +32,8 @@ import adams.flow.standalone.JobRunnerSetup;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
+import adams.opt.genetic.setupupload.AbstractSetupUpload;
+import adams.opt.genetic.setupupload.Null;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.rules.ZeroR;
@@ -41,7 +43,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -267,16 +271,16 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @param weights		the weights
      * @return			the data
      */
-    protected Properties assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
-      Properties result;
+    protected Map<String,Object> assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
+      Map<String,Object> result;
 
-      result = new Properties();
-      result.setProperty("Commandline", OptionUtils.getCommandLine(getOwner()));
-      result.setProperty("Measure", "" + getMeasure());
-      result.setDouble("Fitness", fitness);
-      result.setProperty("Setup", OptionUtils.getCommandLine(cls));
-      result.setInteger("Chromosome", chromosome);
-      result.setProperty("Weights", weightsToString(weights));
+      result = new HashMap<>();
+      result.put("Commandline", OptionUtils.getCommandLine(getOwner()));
+      result.put(AbstractSetupUpload.KEY_MEASURE, "" + getMeasure());
+      result.put(AbstractSetupUpload.KEY_FITNESS, fitness);
+      result.put("Setup", OptionUtils.getCommandLine(cls));
+      result.put("Chromosome", chromosome);
+      result.put("Weights", weightsToString(weights));
 
       return result;
     }
@@ -292,13 +296,19 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @throws Exception	if saving the file fails
      */
     protected void outputSetup(double fitness, Instances data, Classifier cls, int chromosome, int[] weights) throws Exception {
-      File 		file;
-      Properties 	props;
+      File 			file;
+      Map<String,Object>	setup;
+      Properties 		props;
+      String			msg;
 
       file  = createFileName(fitness, data, "props.gz");
-      props = assembleSetup(fitness, cls, chromosome, weights);
+      setup = assembleSetup(fitness, cls, chromosome, weights);
+      props = AbstractSetupUpload.toProperties(setup);
       if (!props.save(file.getAbsolutePath()))
 	getLogger().warning("Failed to write setup to '" + file + "'!");
+      msg = getOwner().getSetupUpload().upload(setup);
+      if (msg != null)
+        getLogger().warning("Failed to upload setup:\n" + msg);
     }
 
     /**
@@ -377,6 +387,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   /** the supplied prefix. */
   protected String m_SuppliedPrefix;
 
+  /** for uploading the setups. */
+  protected AbstractSetupUpload m_SetupUpload;
+
   /** the cache for results. */
   public Hashtable<String,Double> m_StoredResults = new Hashtable<String,Double>();
 
@@ -435,6 +448,10 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     m_OptionManager.add(
       "supplied-prefix", "suppliedPrefix",
       "");
+
+    m_OptionManager.add(
+      "setup-upload", "setupUpload",
+      new Null());
   }
 
   /**
@@ -780,6 +797,35 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   }
 
   /**
+   * Sets the scheme for uploading the currently best job setup.
+   *
+   * @param value	the upload scheme
+   */
+  public void setSetupUpload(AbstractSetupUpload value){
+    m_SetupUpload = value;
+    reset();
+  }
+
+  /**
+   * Returns the scheme for uploading the currently best job setup.
+   *
+   * @return		the upload scheme
+   */
+  public AbstractSetupUpload getSetupUpload() {
+    return m_SetupUpload;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String setupUploadTipText() {
+    return "The scheme for uploading the currently best job setup.";
+  }
+
+  /**
    * Sets the jobrunner setup to use.
    *
    * @param value	the setup, can be null to use default
@@ -984,6 +1030,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       throw new IllegalArgumentException(
         "Measure '" + m_Measure + "' cannot process class of type '"
           + m_Instances.classAttribute().type() + "'!");
+
+    m_SetupUpload.setFlowContext(getFlowContext());
 
     // clear cache
     clearResults();

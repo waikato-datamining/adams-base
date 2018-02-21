@@ -20,7 +20,6 @@
 
 package adams.opt.genetic;
 
-import adams.core.Properties;
 import adams.core.discovery.DefaultPropertyDiscovery;
 import adams.core.discovery.PropertyPath;
 import adams.core.discovery.PropertyPath.PropertyContainer;
@@ -32,6 +31,7 @@ import weka.core.Instances;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -223,8 +223,8 @@ public class Hermione
      * @param weights		the weights
      * @return			the data
      */
-    protected Properties assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
-      Properties 				result;
+    protected Map<String,Object> assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
+      Map<String,Object> 			result;
       int 					pos;
       List<Integer> 				numbits;
       List<Integer> 				start;
@@ -249,7 +249,7 @@ public class Hermione
 	conts = handler.getContainers();
 	for (PropertyPath.PropertyContainer cont : conts) {
 	  strArray = getOwner().intArrayToString(getOwner().getBitsForPosition(weights, start, numbits, pos));
-	  result.setProperty("Weights." + pos, strArray);
+	  result.put("Weights." + pos, strArray);
 	  pos++;
 	}
       }
