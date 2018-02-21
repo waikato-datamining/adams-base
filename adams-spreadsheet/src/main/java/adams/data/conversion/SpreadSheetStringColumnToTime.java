@@ -94,7 +94,7 @@ public class SpreadSheetStringColumnToTime
 	"Converts the specified spreadsheet column from string to time, "
 	+ "according to the provided format.\n"
 	+ "For more information on the format, see Javadoc of 'java.text.SimpleTimeFormat' class:\n"
-	+ "http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html";
+	+ "https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html";
   }
 
   /**

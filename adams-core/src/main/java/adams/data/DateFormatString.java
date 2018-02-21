@@ -121,7 +121,7 @@ public class DateFormatString
    * @return		the URL, null if not available
    */
   public String getHelpURL() {
-    return "http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html";
+    return "https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html";
   }
   
   /**

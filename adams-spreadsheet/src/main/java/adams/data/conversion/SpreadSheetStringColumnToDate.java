@@ -82,7 +82,7 @@ public class SpreadSheetStringColumnToDate
 	"Converts the specified spreadsheet column from string to date, "
 	+ "according to the provided format.\n"
 	+ "For more information on the format, see Javadoc of 'java.text.SimpleDateFormat' class:\n"
-	+ "http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html";
+	+ "https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html";
   }
 
   /**

@@ -19,11 +19,11 @@
  */
 package adams.data.conversion;
 
-import java.text.DecimalFormat;
-
 import adams.data.DecimalFormatString;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.text.DecimalFormat;
 
 /**
  <!-- globalinfo-start -->
@@ -83,7 +83,7 @@ public class SpreadSheetStringColumnToLong
 	"Converts the specified spreadsheet column from string to long, "
 	+ "according to the provided format.\n"
 	+ "For more information on the format, see Javadoc of 'java.text.DecimalFormat' class:\n"
-	+ "http://docs.oracle.com/javase/6/docs/api/java/text/DecimalFormat.html";
+	+ "https://docs.oracle.com/javase/8/docs/api/java/text/DecimalFormat.html";
   }
 
   /**

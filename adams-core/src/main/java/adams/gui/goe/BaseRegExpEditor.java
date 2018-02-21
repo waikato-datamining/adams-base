@@ -19,6 +19,21 @@
  */
 package adams.gui.goe;
 
+import adams.core.Utils;
+import adams.core.base.BaseObject;
+import adams.core.base.BaseRegExp;
+import adams.core.option.AbstractOption;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextArea;
+import adams.gui.core.BrowserHelper;
+import adams.gui.core.GUIHelper;
+import adams.gui.dialog.ApprovalDialog;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -30,22 +45,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import adams.core.Utils;
-import adams.core.base.BaseObject;
-import adams.core.base.BaseRegExp;
-import adams.core.option.AbstractOption;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextArea;
-import adams.gui.core.BrowserHelper;
-import adams.gui.core.GUIHelper;
-import adams.gui.dialog.ApprovalDialog;
 
 /**
  * Editor specifically designed for entering regular expression. In order to
@@ -323,7 +322,7 @@ public class BaseRegExpEditor
    */
   @Override
   public String getHelpURL() {
-    return "http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html";
+    return "https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html";
   }
   
   /**
