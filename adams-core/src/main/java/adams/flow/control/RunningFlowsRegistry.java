@@ -21,7 +21,9 @@ package adams.flow.control;
 
 import adams.core.logging.LoggingObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Used for registering running flows.
@@ -38,9 +40,6 @@ public class RunningFlowsRegistry
   /** the registered flows. */
   protected HashMap<Integer,Flow> m_Flows;
 
-  /** the counter. */
-  protected int m_Counter;
-  
   /** the singleton. */
   protected static RunningFlowsRegistry m_Singleton;
   
@@ -57,8 +56,7 @@ public class RunningFlowsRegistry
    * Initializes the members.
    */
   protected void initialize() {
-    m_Flows   = new HashMap<>();
-    m_Counter = 0;
+    m_Flows = new HashMap<>();
   }
 
   /**
@@ -82,9 +80,8 @@ public class RunningFlowsRegistry
    * @param flow	the flow to add
    */
   public synchronized void addFlow(Flow flow) {
-    m_Counter++;
-    removeFlow(flow);
-    m_Flows.put(m_Counter, flow);
+    removeFlow(flow.getFlowID());
+    m_Flows.put(flow.getFlowID(), flow);
   }
 
   /**
@@ -104,6 +101,7 @@ public class RunningFlowsRegistry
    */
   public synchronized void removeFlow(int id) {
     m_Flows.remove(id);
+    purge();
   }
 
   /**
@@ -112,12 +110,8 @@ public class RunningFlowsRegistry
    * @param flow	the flow to remove
    */
   public synchronized void removeFlow(Flow flow) {
-    for (Integer id: m_Flows.keySet()) {
-      if (getFlow(id) == flow) {
-	m_Flows.remove(id);
-	return;
-      }
-    }
+    m_Flows.remove(flow.getFlowID());
+    purge();
   }
   
   /**
@@ -126,6 +120,7 @@ public class RunningFlowsRegistry
    * @return		the current flows
    */
   public synchronized Flow[] flows() {
+    purge();
     return m_Flows.values().toArray(new Flow[m_Flows.size()]);
   }
 
@@ -135,7 +130,23 @@ public class RunningFlowsRegistry
    * @return		the IDs of the current flows
    */
   public synchronized Integer[] ids() {
+    purge();
     return m_Flows.keySet().toArray(new Integer[m_Flows.size()]);
+  }
+
+  /**
+   * Removes all stopped flows.
+   */
+  public synchronized void purge() {
+    List<Integer> ids;
+
+    ids = new ArrayList<>();
+    for (Integer id: m_Flows.keySet()) {
+      if (m_Flows.get(id).isStopped())
+        ids.add(id);
+    }
+    for (Integer id: ids)
+      m_Flows.remove(id);
   }
 
   /**
