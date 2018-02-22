@@ -302,7 +302,6 @@ public class Flow
     m_ParentComponent          = null;
     m_DefaultCloseOperation    = BaseFrame.HIDE_ON_CLOSE;
     m_Headless                 = false;
-    m_FlowID                   = RuntimeIDGenerator.getSingleton().next();
   }
 
   /**
@@ -1125,8 +1124,9 @@ public class Flow
     Date		start;
     Date		finish;
 
-    start  = null;
-    finish = null;
+    start    = null;
+    finish   = null;
+    m_FlowID = RuntimeIDGenerator.getSingleton().next();
 
     if (m_FlowExecutionListenerFrame == null) {
       if (m_FlowExecutionListeningEnabled) {
