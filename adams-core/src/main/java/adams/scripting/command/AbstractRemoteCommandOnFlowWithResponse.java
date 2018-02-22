@@ -13,14 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractRemoteCommandOnFlowWithResponse.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command;
 
+import adams.core.VariablesHandler;
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.flow.control.RunningFlowsRegistry;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
@@ -117,6 +119,8 @@ public abstract class AbstractRemoteCommandOnFlowWithResponse
 	  result = ActorUtils.read(flowFile);
 	  if (result == null)
 	    m_ErrorMessage = "Failed to load flow from  '" + flowFile + "'!";
+	  else
+	    ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) result, new PlaceholderFile(flowFile));
 	}
 	else {
 	  m_ErrorMessage = "Flow '" + flowFile + "' does not exist!";
