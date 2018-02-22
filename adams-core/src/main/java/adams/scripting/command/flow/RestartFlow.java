@@ -167,7 +167,7 @@ public class RestartFlow
 
     flow  = retrieveFlow(false);
     fflow = retrieveFlow(true);
-    if (flow != null) {
+    if ((flow != null) && (fflow != null)) {
       flow.stopExecution();
       flow.cleanUp();
       if (m_Interval > 0)
