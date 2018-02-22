@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SIMPLS.java
- * Copyright (C) 2006-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2006-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.instancesanalysis.pls;
@@ -34,6 +34,8 @@ import java.util.Map;
  <!-- globalinfo-start -->
  * Implementation of SIMPLS algorithm.<br>
  * <br>
+ * Available matrices: W, B<br>
+ * <br>
  * For more information see:<br>
  * <br>
  * Tormod Naes, Tomas Isaksson, Tom Fearn, Tony Davies (2002). A User Friendly Guide to Multivariate Calibration and Classification. NIR Publications.<br>
@@ -43,7 +45,6 @@ import java.util.Map;
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
- * BibTeX:
  * <pre>
  * &#64;book{Naes2002,
  *    author = {Tormod Naes and Tomas Isaksson and Tom Fearn and Tony Davies},
@@ -52,7 +53,7 @@ import java.util.Map;
  *    year = {2002},
  *    ISBN = {0-9528666-2-5}
  * }
- * 
+ *
  * &#64;article{Jong1993,
  *    author = {S. de Jong},
  *    journal = {Chemometrics and Intelligent Laboratory Systems},
@@ -66,33 +67,50 @@ import java.util.Map;
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <p>
- * 
- * <pre> -debug &lt;value&gt;
- *  If enabled, additional info may be output to the console.
- *  (default: false)</pre>
- * 
- * <pre> -preprocessing &lt;value&gt;
- *  The type of preprocessing to perform.
- *  (default: CENTER)</pre>
- * 
- * <pre> -C &lt;value&gt;
- *  The number of components to compute.
- *  (default: 20)</pre>
- * 
- * <pre> -prediction &lt;value&gt;
- *  The type of prediction to perform.
- *  (default: NONE)</pre>
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-preprocessing-type &lt;NONE|CENTER|STANDARDIZE&gt; (property: preprocessingType)
+ * &nbsp;&nbsp;&nbsp;The type of preprocessing to perform.
+ * &nbsp;&nbsp;&nbsp;default: CENTER
+ * </pre>
+ *
+ * <pre>-replace-missing &lt;boolean&gt; (property: replaceMissing)
+ * &nbsp;&nbsp;&nbsp;Whether to replace missing values.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-num-components &lt;int&gt; (property: numComponents)
+ * &nbsp;&nbsp;&nbsp;The number of components to compute.
+ * &nbsp;&nbsp;&nbsp;default: 20
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-prediction-type &lt;NONE|ALL|EXCEPT_CLASS&gt; (property: predictionType)
+ * &nbsp;&nbsp;&nbsp;The type of prediction to perform.
+ * &nbsp;&nbsp;&nbsp;default: NONE
+ * </pre>
+ *
+ * <pre>-num-coefficients &lt;int&gt; (property: numCoefficients)
+ * &nbsp;&nbsp;&nbsp;The number of coefficients of W matrix to keep (rest gets zeroed); use 0
+ * &nbsp;&nbsp;&nbsp;to keep all.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
  * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SIMPLS
   extends AbstractSingleClassPLS {
 
   private static final long serialVersionUID = -2148100447010845646L;
+
+  /** the number of coefficients in W to keep (0 keep all). */
+  protected int m_NumCoefficients;
 
   /** the W matrix */
   protected Matrix m_W;
@@ -145,6 +163,18 @@ public class SIMPLS
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "num-coefficients", "numCoefficients",
+      0, 0, null);
+  }
+
+  /**
    * Resets the scheme.
    */
   @Override
@@ -153,6 +183,35 @@ public class SIMPLS
 
     m_B = null;
     m_W = null;
+  }
+
+  /**
+   * Sets the number of coefficients of W matrix to keep (rest gets zeroed).
+   *
+   * @param value 	the number of coefficients, 0 to keep all
+   */
+  public void setNumCoefficients(int value) {
+    m_NumCoefficients = value;
+    reset();
+  }
+
+  /**
+   * returns the number of coefficients of W matrix to keep (rest gets zeroed).
+   *
+   * @return 		the maximum number of attributes, 0 to keep all
+   */
+  public int getNumCoefficients() {
+    return m_NumCoefficients;
+  }
+
+  /**
+   * Returns the tip text for this property
+   *
+   * @return 		tip text for this property suitable for displaying in the
+   *         		explorer/experimenter gui
+   */
+  public String numCoefficientsTipText() {
+    return "The number of coefficients of W matrix to keep (rest gets zeroed); use 0 to keep all.";
   }
 
   /**
@@ -203,6 +262,34 @@ public class SIMPLS
    */
   public Matrix getLoadings() {
     return getMatrix("W");
+  }
+
+  /**
+   * Zeroes the coefficients of the W matrix beyond the specified number of
+   * coefficients.
+   *
+   * @param in		the matrix to process in-place
+   */
+  protected void slim(Matrix in) {
+    double[][] B = in.getArray();
+
+    for (int i = 0; i < in.getColumnDimension(); i++) {
+      Matrix l = in.getMatrix(0, in.getRowDimension() - 1, i, i);
+      double[] ld = l.getRowPackedCopy();
+      for (int t = 0; t < ld.length; t++) {
+	ld[t] = Math.abs(ld[t]);
+      }
+      int[] srt = weka.core.Utils.sort(ld);
+      //int index = srt.length - 1 - srt[Math.min(getNumCoefficients(),srt.length-1)]; //nonono
+      int index = srt[Math.max(srt.length - 1 - getNumCoefficients(), 0)];
+
+      double val = ld[index];
+      for (int c = 0; c < in.getRowDimension(); c++) {
+	if (Math.abs(B[c][i]) < val) {
+	  B[c][i] = 0;
+	}
+      }
+    }
   }
 
   /**
@@ -272,6 +359,8 @@ public class SIMPLS
       }
 
       // finish
+      if (getNumCoefficients() > 0)
+        slim(W);
       m_W   = W;
       T     = X.times(m_W);
       X_new = T;
