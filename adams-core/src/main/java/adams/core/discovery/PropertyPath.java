@@ -15,12 +15,13 @@
 
 /*
  * PropertyPath.java
- * Copyright (C) 2006-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.discovery;
 
 import adams.core.CloneHandler;
+import adams.core.Utils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
@@ -47,7 +48,6 @@ import java.util.StringTokenizer;
  * {@link List} objects, with "X" being the index for the "get(index)" method.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PropertyPath {
 
@@ -574,6 +574,7 @@ public class PropertyPath {
 	}
 	catch (Exception e) {
 	  result = null;
+	  System.err.println("Failed to recurse into list " + Utils.classToString(src));
 	  e.printStackTrace();
 	}
       }
@@ -584,6 +585,7 @@ public class PropertyPath {
       }
       catch (Exception e) {
 	desc = null;
+	System.err.println("Failed to get property descriptor for " + Utils.classToString(src) + "/" + part.getName());
 	e.printStackTrace();
       }
 
@@ -608,6 +610,7 @@ public class PropertyPath {
 	}
 	catch (Exception e) {
 	  result = null;
+	  System.err.println("Failed to recurse into " + Utils.classToString(src));
 	  e.printStackTrace();
 	}
       }
@@ -652,6 +655,7 @@ public class PropertyPath {
     }
     catch (Exception e) {
       result = null;
+      System.err.println("Failed to get value from path: " + path);
       e.printStackTrace();
     }
 
@@ -709,6 +713,7 @@ public class PropertyPath {
     }
     catch (Exception e) {
       result = false;
+      System.err.println("Failed to set value for path '" + path + "': " + value);
       e.printStackTrace();
     }
 
