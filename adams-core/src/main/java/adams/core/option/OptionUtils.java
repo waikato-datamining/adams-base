@@ -337,6 +337,9 @@ public class OptionUtils {
     String			result;
     AbstractCommandLineHandler	handler;
 
+    if (obj == null)
+      return null;
+
     handler = AbstractCommandLineHandler.getHandler(obj);
     result  = handler.toCommandLine(obj);
     result  = result.trim();
@@ -355,6 +358,9 @@ public class OptionUtils {
   public static String getShortCommandLine(Object obj) {
     String			result;
     AbstractCommandLineHandler	handler;
+
+    if (obj == null)
+      return null;
 
     handler = AbstractCommandLineHandler.getHandler(obj);
     result  = handler.toShortCommandLine(obj);
