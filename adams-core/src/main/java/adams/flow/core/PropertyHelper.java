@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PropertyHelper.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
+import adams.core.MessageCollection;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import java.util.List;
  * Helper class for updating properties of objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PropertyHelper {
 
@@ -75,12 +75,15 @@ public class PropertyHelper {
    * @param value	the string to convert
    * @return		the converted value or null if it cannot be converted
    */
-  public static Object convertValue(PropertyContainer cont, String value) {
+  public static Object convertValue(PropertyContainer cont, String value, MessageCollection errors) {
     Object	result;
     Class	cls;
 
     result = null;
     cls    = cont.getReadMethod().getReturnType();
+    // are we setting an array?
+    if (cont.getPath().get(cont.getPath().size() - 1).getIndex() > -1)
+      cls = cls.getComponentType();
     if (value == null)
       return result;
 
@@ -92,8 +95,7 @@ public class PropertyHelper {
 	result = m_DefaultConverter.convert(cls, value);
       }
       catch (Exception e) {
-	System.err.println("Failed to convert '" + value + "' with " + m_DefaultConverter.getClass().getName() + "!");
-	e.printStackTrace();
+	errors.add("Failed to convert '" + value + "' with " + m_DefaultConverter.getClass().getName() + "!", e);
       }
     }
 
@@ -105,8 +107,7 @@ public class PropertyHelper {
 	    result = converter.convert(cls, value);
 	  }
 	  catch (Exception e) {
-	    System.err.println("Failed to convert '" + value + "' with " + converter.getClass().getName() + "!");
-	    e.printStackTrace();
+	    errors.add("Failed to convert '" + value + "' with " + converter.getClass().getName() + "!", e);
 	  }
 	  if (result != null)
 	    break;
@@ -115,8 +116,7 @@ public class PropertyHelper {
     }
 
     if (result == null)
-      System.err.println(
-	  "Class " + cls.getName() + " not (yet) supported for setting property!");
+      errors.add("Class " + cls.getName() + " not (yet) supported for setting property!");
 
     return result;
   }

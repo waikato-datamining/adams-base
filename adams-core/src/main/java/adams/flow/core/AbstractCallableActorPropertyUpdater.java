@@ -111,17 +111,18 @@ public abstract class AbstractCallableActorPropertyUpdater
     Object		value;
     MessageCollection 	errors;
 
-    value = PropertyHelper.convertValue(m_Container, s);
+    errors = new MessageCollection();
+    value  = PropertyHelper.convertValue(m_Container, s, errors);
 
     // could we convert the value?
     if (value != null) {
-      errors = new MessageCollection();
       PropertyPath.setValue(m_CallableActor, m_Property, value, errors);
       if (isLoggingEnabled())
 	getLogger().info("Property '" + m_Property + "' of '" + m_ActorName + "' changed to: " + value);
-      if (!errors.isEmpty())
-	getLogger().severe(errors.toString());
     }
+
+    if (!errors.isEmpty())
+      getLogger().severe(errors.toString());
   }
 
   /**

@@ -82,7 +82,7 @@ public class PropertiesUpdaterHelper {
 
     for (i = 0; i < props.length; i++) {
       try {
-	value = PropertyHelper.convertValue(conts[i], context.getVariables().get(vars[i].getValue()));
+	value = PropertyHelper.convertValue(conts[i], context.getVariables().get(vars[i].getValue()), errors);
 
 	if (context.isLoggingEnabled())
 	  context.getLogger().info(
