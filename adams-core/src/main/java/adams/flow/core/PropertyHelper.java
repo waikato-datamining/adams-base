@@ -21,7 +21,9 @@ package adams.flow.core;
 
 import adams.core.MessageCollection;
 import adams.core.discovery.PropertyPath.PropertyContainer;
+import adams.core.option.OptionUtils;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class PropertyHelper {
     
     if (m_Converters == null) {
       m_DefaultConverter = new DefaultPropertyValueConverter();
-      converters = new ArrayList<AbstractPropertyValueConverter>();
+      converters = new ArrayList<>();
       classnames = AbstractPropertyValueConverter.getConverters();
       for (String classname: classnames) {
 	if (classname.equals(m_DefaultConverter.getClass().getName()))
@@ -67,25 +69,19 @@ public class PropertyHelper {
       m_Converters = converters;
     }
   }
-  
+
   /**
-   * Converts the value into the appropriate object, if possible.
+   * Converts the string value into an object.
    *
-   * @param cont	the property container to use
-   * @param value	the string to convert
-   * @return		the converted value or null if it cannot be converted
+   * @param cls		the requested class
+   * @param value	the string representation
+   * @param errors	for collecting errors
+   * @return		the object or null if failed to convert
    */
-  public static Object convertValue(PropertyContainer cont, String value, MessageCollection errors) {
+  protected static Object convertValue(Class cls, String value, MessageCollection errors) {
     Object	result;
-    Class	cls;
 
     result = null;
-    cls    = cont.getReadMethod().getReturnType();
-    // are we setting an array?
-    if (cont.getPath().get(cont.getPath().size() - 1).getIndex() > -1)
-      cls = cls.getComponentType();
-    if (value == null)
-      return result;
 
     initialize();
 
@@ -119,6 +115,47 @@ public class PropertyHelper {
       errors.add("Class " + cls.getName() + " not (yet) supported for setting property!");
 
     return result;
+  }
+  
+  /**
+   * Converts the value into the appropriate object, if possible.
+   *
+   * @param cont	the property container to use
+   * @param value	the string to convert
+   * @return		the converted value or null if it cannot be converted
+   */
+  public static Object convertValue(PropertyContainer cont, String value, MessageCollection errors) {
+    Object	result;
+    Class	cls;
+    String[]	parts;
+    int		i;
+
+    if (value == null)
+      return null;
+
+    cls = cont.getReadMethod().getReturnType();
+    // are we setting an element of an array?
+    if (cont.getPath().get(cont.getPath().size() - 1).getIndex() > -1)
+      cls = cls.getComponentType();
+
+    // setting an array? split and assemble elements
+    if (cls.isArray()) {
+      try {
+	parts  = OptionUtils.splitOptions(value);
+	result = Array.newInstance(cls.getComponentType(), parts.length);
+	for (i = 0; i < parts.length; i++)
+	  Array.set(result, i, convertValue(cls.getComponentType(), parts[i], errors));
+	return result;
+      }
+      catch (Exception e) {
+        errors.add("Failed to split value for array: " + value, e);
+        return null;
+      }
+    }
+    // non-array
+    else {
+      return convertValue(cls, value, errors);
+    }
   }
 
 }
