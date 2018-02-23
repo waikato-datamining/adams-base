@@ -15,11 +15,12 @@
 
 /*
  * AbstractPropertyUpdater.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.discovery.PropertyPath;
 import adams.core.discovery.PropertyPath.PropertyContainer;
@@ -29,7 +30,6 @@ import adams.core.discovery.PropertyPath.PropertyContainer;
  * e.g., WEKA classes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractCallableActorPropertyUpdater
   extends AbstractPropertyUpdater {
@@ -108,15 +108,19 @@ public abstract class AbstractCallableActorPropertyUpdater
    * @param s		the string to set
    */
   protected void updateProperty(String s) {
-    Object	value;
+    Object		value;
+    MessageCollection 	errors;
 
     value = PropertyHelper.convertValue(m_Container, s);
 
     // could we convert the value?
     if (value != null) {
-      PropertyPath.setValue(m_CallableActor, m_Property, value);
+      errors = new MessageCollection();
+      PropertyPath.setValue(m_CallableActor, m_Property, value, errors);
       if (isLoggingEnabled())
 	getLogger().info("Property '" + m_Property + "' of '" + m_ActorName + "' changed to: " + value);
+      if (!errors.isEmpty())
+	getLogger().severe(errors.toString());
     }
   }
 
@@ -129,7 +133,7 @@ public abstract class AbstractCallableActorPropertyUpdater
   public String setUp() {
     String		result;
     CallableActorHelper	helper;
-    Class		cls;
+    MessageCollection	errors;
 
     result = super.setUp();
 
@@ -140,9 +144,13 @@ public abstract class AbstractCallableActorPropertyUpdater
 	result = "Cannot find callable actor '" + m_ActorName + "'!";
       }
       else {
-	m_Container = PropertyPath.find(m_CallableActor, m_Property);
-	if (m_Container == null)
+        errors      = new MessageCollection();
+	m_Container = PropertyPath.find(m_CallableActor, m_Property, errors);
+	if (m_Container == null) {
 	  result = "Cannot find property '" + m_Property + "' in callable actor '" + m_ActorName + "'!";
+	  if (!errors.isEmpty())
+	    result += "\n" + errors;
+	}
       }
     }
 

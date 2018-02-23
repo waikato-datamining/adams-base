@@ -15,11 +15,12 @@
 
 /*
  * GetObjectProperty.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.discovery.PropertyPath;
 import adams.flow.core.Token;
@@ -81,7 +82,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9850 $
  */
 public class GetObjectProperty
   extends AbstractTransformer {
@@ -187,18 +187,24 @@ public class GetObjectProperty
    */
   @Override
   protected String doExecute() {
-    String	result;	
-    Object	obj;
-    Object	value;
+    String		result;
+    Object		obj;
+    Object		value;
+    MessageCollection 	errors;
     
     result = null;
     obj    = m_InputToken.getPayload();
-    
-    value = PropertyPath.getValue(obj, m_Path);
-    if (value == null)
+
+    errors = new MessageCollection();
+    value  = PropertyPath.getValue(obj, m_Path, errors);
+    if (value == null) {
       result = "Failed to find property: " + m_Path;
-    else
+      if (!errors.isEmpty())
+        result += "\n" + errors;
+    }
+    else {
       m_OutputToken = new Token(value);
+    }
     
     return result;
   }

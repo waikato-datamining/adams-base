@@ -21,6 +21,7 @@
 package adams.core.discovery;
 
 import adams.core.CloneHandler;
+import adams.core.MessageCollection;
 import adams.core.Utils;
 
 import java.beans.PropertyDescriptor;
@@ -504,8 +505,8 @@ public class PropertyPath {
    * @param path	the path to follow
    * @return		not null, if the property could be found
    */
-  public static PropertyContainer find(Object src, String path) {
-    return find(src, new Path(path));
+  public static PropertyContainer find(Object src, String path, MessageCollection errors) {
+    return find(src, new Path(path), errors);
   }
 
   /**
@@ -516,8 +517,8 @@ public class PropertyPath {
    * @param path	the path to follow
    * @return		not null, if the property could be found
    */
-  public static PropertyContainer find(Object src, Path path) {
-    return find(src, path, path);
+  public static PropertyContainer find(Object src, Path path, MessageCollection errors) {
+    return find(src, path, path, errors);
   }
 
   /**
@@ -529,7 +530,7 @@ public class PropertyPath {
    * @param full	the full path
    * @return		not null, if the property could be found
    */
-  protected static PropertyContainer find(Object src, Path current, Path full) {
+  protected static PropertyContainer find(Object src, Path current, Path full, MessageCollection errors) {
     PropertyContainer	result;
     PropertyDescriptor	desc;
     Object		newSrc;
@@ -570,12 +571,11 @@ public class PropertyPath {
 	    newSrc = Array.get(methodResult, part.getIndex());
 	  else
 	    newSrc = methodResult;
-	  result = find(newSrc, current.subpath(1));
+	  result = find(newSrc, current.subpath(1), errors);
 	}
 	catch (Exception e) {
 	  result = null;
-	  System.err.println("Failed to recurse into list " + Utils.classToString(src));
-	  e.printStackTrace();
+	  errors.add("Failed to recurse into list " + Utils.classToString(src), e);
 	}
       }
     }
@@ -585,8 +585,7 @@ public class PropertyPath {
       }
       catch (Exception e) {
 	desc = null;
-	System.err.println("Failed to get property descriptor for " + Utils.classToString(src) + "/" + part.getName());
-	e.printStackTrace();
+	errors.add("Failed to get property descriptor for " + Utils.classToString(src) + "/" + part.getName());
       }
 
       // problem occurred? -> stop
@@ -606,12 +605,11 @@ public class PropertyPath {
 	    newSrc = Array.get(methodResult, part.getIndex());
 	  else
 	    newSrc = methodResult;
-	  result = find(newSrc, current.subpath(1));
+	  result = find(newSrc, current.subpath(1), errors);
 	}
 	catch (Exception e) {
 	  result = null;
-	  System.err.println("Failed to recurse into " + Utils.classToString(src));
-	  e.printStackTrace();
+	  errors.add("Failed to recurse into " + Utils.classToString(src), e);
 	}
       }
     }
@@ -626,7 +624,7 @@ public class PropertyPath {
    * @param path	the retrieval path
    * @return		the value, null if an error occurred
    */
-  public static Object getValue(Object src, Path path) {
+  public static Object getValue(Object src, Path path, MessageCollection errors) {
     Object		result;
     PropertyContainer	cont;
     Method		method;
@@ -635,7 +633,7 @@ public class PropertyPath {
 
     result = null;
 
-    cont = find(src, path);
+    cont = find(src, path, errors);
     // problem?
     if (cont == null)
       return null;
@@ -655,8 +653,7 @@ public class PropertyPath {
     }
     catch (Exception e) {
       result = null;
-      System.err.println("Failed to get value from path: " + path);
-      e.printStackTrace();
+      errors.add("Failed to get value from path: " + path, e);
     }
 
     return result;
@@ -669,8 +666,8 @@ public class PropertyPath {
    * @param path	the retrieval path
    * @return		the value, null if an error occurred
    */
-  public static Object getValue(Object src, String path) {
-    return getValue(src, new Path(path));
+  public static Object getValue(Object src, String path, MessageCollection errors) {
+    return getValue(src, new Path(path), errors);
   }
 
   /**
@@ -681,7 +678,7 @@ public class PropertyPath {
    * @param value	the value to set
    * @return		true if the value could be set
    */
-  public static boolean setValue(Object src, Path path, Object value) {
+  public static boolean setValue(Object src, Path path, Object value, MessageCollection errors) {
     boolean		result;
     PropertyContainer	cont;
     Method		methodRead;
@@ -691,7 +688,7 @@ public class PropertyPath {
 
     result = false;
 
-    cont = find(src, path);
+    cont = find(src, path, errors);
     // problem?
     if (cont == null)
       return result;
@@ -713,8 +710,7 @@ public class PropertyPath {
     }
     catch (Exception e) {
       result = false;
-      System.err.println("Failed to set value for path '" + path + "': " + value);
-      e.printStackTrace();
+      errors.add("Failed to set value for path '" + path + "': " + value, e);
     }
 
     return result;
@@ -728,8 +724,8 @@ public class PropertyPath {
    * @param value	the value to set
    * @return		true if succesfully set
    */
-  public static boolean setValue(Object src, String path, Object value) {
-    return setValue(src, new Path(path), value);
+  public static boolean setValue(Object src, String path, Object value, MessageCollection errors) {
+    return setValue(src, new Path(path), value, errors);
   }
 
   /**

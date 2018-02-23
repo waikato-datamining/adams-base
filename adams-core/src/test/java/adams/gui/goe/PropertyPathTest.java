@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PropertyPathTest.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
+import adams.core.MessageCollection;
 import adams.core.discovery.PropertyPath;
 import adams.core.discovery.PropertyPath.Path;
 import adams.core.logging.LoggingLevel;
@@ -36,7 +37,6 @@ import java.util.ArrayList;
  * Tests the {@link PropertyPath} class.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PropertyPathTest
   extends AdamsTestCase {
@@ -98,13 +98,13 @@ public class PropertyPathTest
     
     Path path;
     Object obj;
-    
+
     path = new Path("subFilters[1]");
-    obj = PropertyPath.getValue(multi, path);
+    obj = PropertyPath.getValue(multi, path, new MessageCollection());
     assertEquals("objects differ: " + path, noise, obj);
     
     path = new Path("subFilters[0].baselineCorrection.loggingLevel");
-    obj = PropertyPath.getValue(multi, path);
+    obj = PropertyPath.getValue(multi, path, new MessageCollection());
     assertEquals("objects differ: " + path, base.getBaselineCorrection().getLoggingLevel(), obj);
     
     // TODO access list item via [index]
@@ -133,19 +133,19 @@ public class PropertyPathTest
     Object obj;
     
     path = new Path("get(0)");
-    obj = PropertyPath.getValue(list, path);
+    obj = PropertyPath.getValue(list, path, new MessageCollection());
     assertEquals("element differs", "0", obj);
     
     path = new Path("get(3)");
-    obj = PropertyPath.getValue(list, path);
+    obj = PropertyPath.getValue(list, path, new MessageCollection());
     assertEquals("element differs", nested1, obj);
     
     path = new Path("get(3).get(2)");
-    obj = PropertyPath.getValue(list, path);
+    obj = PropertyPath.getValue(list, path, new MessageCollection());
     assertEquals("element differs", nested2, obj);
     
     path = new Path("get(3).get(2).get(1)");
-    obj = PropertyPath.getValue(list, path);
+    obj = PropertyPath.getValue(list, path, new MessageCollection());
     assertEquals("element differs", "3.2.1", obj);
   }
   
@@ -170,18 +170,18 @@ public class PropertyPathTest
     
     // old debug level
     path = new Path("subFilters[1].loggingLevel");
-    obj = PropertyPath.getValue(multi, path);
+    obj = PropertyPath.getValue(multi, path, new MessageCollection());
     assertEquals("objects differ: " + path, base.getLoggingLevel(), obj);
     
     // set new filter at index 1
     path = new Path("subFilters[1]");
-    PropertyPath.setValue(multi, path, named);
-    obj = PropertyPath.getValue(multi, path);
+    PropertyPath.setValue(multi, path, named, new MessageCollection());
+    obj = PropertyPath.getValue(multi, path, new MessageCollection());
     assertEquals("objects differ: " + path, named, obj);
     
     // new debug level
     path = new Path("subFilters[1].loggingLevel");
-    obj = PropertyPath.getValue(multi, path);
+    obj = PropertyPath.getValue(multi, path, new MessageCollection());
     assertEquals("objects differ: " + path, named.getLoggingLevel(), obj);
   }
 }

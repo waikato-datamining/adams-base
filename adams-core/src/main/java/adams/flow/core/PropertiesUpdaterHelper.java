@@ -15,7 +15,7 @@
 
 /*
  * PropertiesUpdaterHelper.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.core;
@@ -49,7 +49,7 @@ public class PropertiesUpdaterHelper {
 
     result = new PropertyContainer[props.length];
     for (i = 0; i < props.length; i++) {
-      result[i] = PropertyPath.find(obj, props[i].getValue());
+      result[i] = PropertyPath.find(obj, props[i].getValue(), errors);
       if (result[i] == null) {
 	errors.add("Cannot find property '" + props[i] + "'!");
       }
@@ -91,7 +91,7 @@ public class PropertiesUpdaterHelper {
 	      + "value=" + context.getVariables().get(vars[i].getValue()) + ", "
 	      + "class=" + Utils.classToString(value));
 
-	if (!PropertyPath.setValue(obj, props[i].stringValue(), value)) {
+	if (!PropertyPath.setValue(obj, props[i].stringValue(), value, errors)) {
 	  throw new IllegalStateException(
 	      "Property #" + (i+1) + " could not be updated: " + props[i].stringValue());
 	}

@@ -15,20 +15,21 @@
 
 /*
  * SetProperty.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
+import adams.core.discovery.PropertyPath;
+import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.flow.core.AbstractPropertyUpdater;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.PropertyHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
-import adams.core.discovery.PropertyPath;
-import adams.core.discovery.PropertyPath.PropertyContainer;
 
 import java.util.Hashtable;
 
@@ -93,7 +94,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class UpdateProperty
   extends AbstractPropertyUpdater
@@ -292,15 +292,19 @@ public class UpdateProperty
    */
   @Override
   protected void updateProperty(String s) {
-    Object	value;
+    Object		value;
+    MessageCollection	errors;
 
     value = PropertyHelper.convertValue(m_Container, s);
 
     // could we convert the value?
     if (value != null) {
-      PropertyPath.setValue(m_InputToken.getPayload(), m_Property, value);
+      errors = new MessageCollection();
+      PropertyPath.setValue(m_InputToken.getPayload(), m_Property, value, errors);
       if (isLoggingEnabled())
 	getLogger().info("Property '" + m_Property + "' changed to: " + value);
+      if (!errors.isEmpty())
+        getLogger().severe(errors.toString());
     }
   }
 
@@ -311,16 +315,21 @@ public class UpdateProperty
    */
   @Override
   protected String doExecute() {
-    String	result;
-    Object      obj;
+    String		result;
+    Object      	obj;
+    MessageCollection	errors;
 
     result = null;
 
     try {
-      obj = m_InputToken.getPayload();
-      m_Container = PropertyPath.find(obj, m_Property);
-      if (m_Container == null)
-        result = "Cannot find property '" + m_Property + "' in class '" + obj.getClass().getName() + "'!";
+      obj         = m_InputToken.getPayload();
+      errors      = new MessageCollection();
+      m_Container = PropertyPath.find(obj, m_Property, errors);
+      if (m_Container == null) {
+	result = "Cannot find property '" + m_Property + "' in class '" + obj.getClass().getName() + "'!";
+	if (!errors.isEmpty())
+	  result += "\n" + errors;
+      }
       if (result == null)
         updateProperty(m_Value);
     }

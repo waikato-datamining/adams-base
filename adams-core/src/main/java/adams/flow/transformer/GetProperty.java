@@ -15,15 +15,16 @@
 
 /*
  * GetProperty.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
+import adams.core.discovery.PropertyPath;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
-import adams.core.discovery.PropertyPath;
 
 /**
  <!-- globalinfo-start -->
@@ -81,7 +82,6 @@ import adams.core.discovery.PropertyPath;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GetProperty
   extends AbstractTransformer {
@@ -179,17 +179,21 @@ public class GetProperty
    */
   @Override
   protected String doExecute() {
-    String	result;
-    Object      obj;
-    Object	value;
+    String		result;
+    Object      	obj;
+    Object		value;
+    MessageCollection	errors;
 
     result = null;
 
     try {
       obj           = m_InputToken.getPayload();
-      value         = PropertyPath.getValue(obj, m_Property);
+      errors        = new MessageCollection();
+      value         = PropertyPath.getValue(obj, m_Property, errors);
       if (value != null)
         m_OutputToken = new Token(value);
+      else if (!errors.isEmpty())
+        result = errors.toString();
     }
     catch (Exception e) {
       result = handleException("Failed to get property: " + m_Property, e);
