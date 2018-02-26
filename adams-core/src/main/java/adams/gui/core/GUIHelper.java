@@ -1586,6 +1586,9 @@ public class GUIHelper {
     final ApprovalDialog	dialog;
     Component			pparent;
     Boolean                     sync;
+    int				rows;
+    int				cols;
+    String[]			lines;
 
     if (initial == null)
       initial = "";
@@ -1609,8 +1612,25 @@ public class GUIHelper {
     }
     dialog.setTitle(title);
     dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
-    
-    textValue = new BaseTextArea(1, 20);
+
+    rows = 1;
+    cols = 20;
+    if (!initial.isEmpty()) {
+      lines = initial.split("\n");
+      // rows
+      if (lines.length > 1)
+        rows = lines.length;
+      if (rows > 5)
+        rows = 5;
+      // cols
+      for (String line: lines) {
+        if (line.length() > cols)
+          cols = line.length();
+      }
+      if (cols > 40)
+        cols = 40;
+    }
+    textValue = new BaseTextArea(rows, cols);
     textValue.setToolTipText("Use <Ctrl-Enter> for adding a new line");
     textValue.setText(initial);
     if (!initial.isEmpty()) {
