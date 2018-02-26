@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ClassHelpPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
@@ -24,11 +24,10 @@ import adams.core.ClassLister;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
-import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.SearchableBaseList;
-import adams.gui.tools.classhelp.AbstractHelpGenerator;
-import adams.gui.tools.classhelp.DefaultHelpGenerator;
+import adams.gui.help.AbstractHelpGenerator;
+import adams.gui.help.HelpContainer;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -44,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Simple panel for lookup of help information on classes (if available).
@@ -65,36 +63,6 @@ public class ClassHelpPanel
 
   /** for displaying the help. */
   protected JEditorPane m_TextPaneHelp;
-
-  /** the generators. */
-  protected List<AbstractHelpGenerator> m_Generators;
-
-  /**
-   * For initializing members.
-   */
-  @Override
-  protected void initialize() {
-    Class[]			classes;
-    AbstractHelpGenerator	generator;
-
-    super.initialize();
-
-    classes      = ClassLister.getSingleton().getClasses(AbstractHelpGenerator.class);
-    m_Generators = new ArrayList<>();
-    for (Class cls: classes) {
-      try {
-	generator = (AbstractHelpGenerator) cls.newInstance();
-	if (generator instanceof DefaultHelpGenerator)
-	  continue;
-	m_Generators.add(generator);
-      }
-      catch (Exception e) {
-	ConsolePanel.getSingleton().append(
-	  Level.SEVERE, "Failed to instantiate class: " + cls.getName(), e);
-      }
-    }
-    m_Generators.add(new DefaultHelpGenerator());
-  }
 
   /**
    * For initializing the GUI.
@@ -208,32 +176,16 @@ public class ClassHelpPanel
    * @param clsName	the class to display the help for
    */
   protected void displayHelp(String clsName) {
-    Class 			cls;
-    String 			help;
-    boolean 			html;
-    AbstractHelpGenerator	generator;
+    HelpContainer	cont;
 
-    try {
-      cls       = Class.forName(clsName);
-      generator = new DefaultHelpGenerator();
-      for (AbstractHelpGenerator gen: m_Generators) {
-	if (gen.handles(cls)) {
-	  generator = gen;
-	  break;
-	}
-      }
-      help = generator.generateHelp(cls);
-      html = generator.isHtml(cls);
-      if (html)
+    cont = AbstractHelpGenerator.generateHelp(clsName);
+    if (cont != null) {
+      if (cont.isHtml())
 	m_TextPaneHelp.setContentType("text/html");
       else
 	m_TextPaneHelp.setContentType("text/plain");
-      m_TextPaneHelp.setText(help);
+      m_TextPaneHelp.setText(cont.getHelp());
       m_TextPaneHelp.setCaretPosition(0);
-    }
-    catch (Exception ex) {
-      ConsolePanel.getSingleton().append(
-	Level.SEVERE, "Failed to instantiate class: " + clsName, ex);
     }
   }
 }

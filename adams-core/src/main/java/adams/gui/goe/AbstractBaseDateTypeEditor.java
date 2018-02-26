@@ -27,8 +27,8 @@ import adams.core.base.BaseObject;
 import adams.gui.chooser.DateProvider;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.HelpFrame;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.help.HelpFrame;
 import adams.parser.GrammarSupplier;
 
 import javax.swing.BorderFactory;

@@ -27,7 +27,6 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.HelpFrame;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.dotnotationtree.AbstractInfoNode;
@@ -39,6 +38,7 @@ import adams.gui.flow.tree.ClipboardActorContainer;
 import adams.gui.goe.classtree.ClassNode;
 import adams.gui.goe.classtree.ClassTree;
 import adams.gui.goe.classtree.GlobalInfoNodeGenerator;
+import adams.gui.help.HelpFrame;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JMenuItem;

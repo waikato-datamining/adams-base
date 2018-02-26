@@ -13,20 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * AbstractHelpGenerator.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * AdamsOptionHandlerHelpGenerator.java
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.classhelp;
+package adams.gui.help;
+
+import adams.core.option.HtmlHelpProducer;
+import adams.core.option.OptionHandler;
+import adams.gui.core.ConsolePanel;
+import nz.ac.waikato.cms.locator.ClassLocator;
+
+import java.util.logging.Level;
 
 /**
- * Ancestor for help generator classes.
+ * For ADAMS {@link OptionHandler}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public abstract class AbstractHelpGenerator {
+public class AdamsOptionHandlerHelpGenerator
+  extends AbstractHelpGenerator {
 
   /**
    * Returns whether this class is handled by this generator.
@@ -34,7 +41,10 @@ public abstract class AbstractHelpGenerator {
    * @param cls		the class to check
    * @return		true if handled
    */
-  public abstract boolean handles(Class cls);
+  @Override
+  public boolean handles(Class cls) {
+    return ClassLocator.hasInterface(OptionHandler.class, cls);
+  }
 
   /**
    * Returns whether the generated help is HTML or plain text.
@@ -42,7 +52,10 @@ public abstract class AbstractHelpGenerator {
    * @param cls		the class to generate the help for
    * @return		true if HTML
    */
-  public abstract boolean isHtml(Class cls);
+  @Override
+  public boolean isHtml(Class cls) {
+    return true;
+  }
 
   /**
    * Generates and returns the help for the specified class.
@@ -50,5 +63,22 @@ public abstract class AbstractHelpGenerator {
    * @param cls		the class to generate the help for
    * @return		the help, null if failed to produce
    */
-  public abstract String generateHelp(Class cls);
+  @Override
+  public String generate(Class cls) {
+    HtmlHelpProducer 	producer;
+    Object		obj;
+
+    producer = new HtmlHelpProducer();
+    try {
+      obj = cls.newInstance();
+      producer.produce((OptionHandler) obj);
+      return producer.toString();
+    }
+    catch (Exception ex) {
+      ConsolePanel.getSingleton().append(
+	Level.SEVERE, getClass().getName() + ": Failed to instantiate class: " + cls.getName(), ex);
+    }
+
+    return null;
+  }
 }

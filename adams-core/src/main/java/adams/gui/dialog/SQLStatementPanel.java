@@ -23,11 +23,11 @@ import adams.core.AdditionalInformationHandler;
 import adams.db.SQLStatement;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.HelpFrame;
 import adams.gui.core.RecentSQLStatementsHandler;
 import adams.gui.core.SQLSyntaxEditorPanel;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
+import adams.gui.help.HelpFrame;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;

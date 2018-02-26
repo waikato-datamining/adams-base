@@ -21,7 +21,6 @@
 
 package adams.gui.goe;
 
-import adams.core.AdditionalInformationHandler;
 import adams.core.ExampleProvider;
 import adams.core.Utils;
 import adams.core.discovery.IntrospectionHelper;
@@ -29,16 +28,15 @@ import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractNumericOption;
 import adams.core.option.AbstractOption;
-import adams.core.option.HtmlHelpProducer;
 import adams.core.option.OptionHandler;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.HelpFrame;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
+import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -116,12 +114,6 @@ public class PropertySheetPanel extends BasePanel
 
   /** The tool tip text for each property. */
   protected String[] m_TipTexts;
-
-  /** StringBuilder containing help text for the object being edited. */
-  protected StringBuilder m_HelpText;
-
-  /** StringBuilder containing help text for the object being edited in HTML format. */
-  protected StringBuilder m_HelpTextHtml;
 
   /** the text from the globalInfo method, if any. */
   protected String m_GlobalInfo;
@@ -279,74 +271,39 @@ public class PropertySheetPanel extends BasePanel
   /**
    * Initializes the help text for the object.
    *
-   * @see		#m_HelpText
-   * @see		#m_HelpTextHtml
    * @see		#m_GlobalInfo
    * @see		#m_TipTexts
    */
   protected void initHelp() {
     Method 	method;
-    boolean 	firstTip;
-    String 	className;
-    String 	addInfo;
     int		i;
     int		j;
     String 	name;
     String 	tipName;
     String 	mname;
-    String 	commandline;
     String 	example;
 
-    m_HelpText     = null;
-    m_HelpTextHtml = null;
     m_GlobalInfo   = null;
-    if (m_Target instanceof OptionHandler) {
-      m_HelpTextHtml = new StringBuilder();
-      HtmlHelpProducer producer = new HtmlHelpProducer();
-      producer.produce((OptionHandler) m_Target);
-      m_HelpTextHtml.append(producer.toString());
-    }
-    else {
-      m_HelpText = new StringBuilder();
-    }
 
     // Look for a globalInfo method that returns a string
     // describing the target
     try {
       method = m_Target.getClass().getMethod("globalInfo");
-      if (method != null) {
+      if (method != null)
 	m_GlobalInfo = (String) method.invoke(m_Target);
-	className    = m_Target.getClass().getName();
-
-	m_HelpText.append("NAME\n");
-	m_HelpText.append(className).append("\n\n");
-	m_HelpText.append("SYNOPSIS\n").append(m_GlobalInfo).append("\n\n");
-
-	if (m_Target instanceof AdditionalInformationHandler) {
-	  addInfo = ((AdditionalInformationHandler) m_Target).getAdditionalInformation();
-	  if ((addInfo != null) && (addInfo.length() > 0)) {
-	    m_HelpText.append("ADDITIONAL INFORMATION\n");
-	    m_HelpText.append(addInfo + "\n\n");
-	  }
-	}
-      }
     }
     catch (Exception e) {
       // ignored
     }
 
-    firstTip = true;
     for (i = 0; i < m_Editors.length; i++) {
       name    = m_Properties[i].getDisplayName();
       tipName = name + "TipText";
       for (j = 0; j < m_Methods.length; j++) {
 	mname       = m_Methods[j].getDisplayName();
 	method      = m_Methods[j].getMethod();
-	commandline = null;
 	if (mname.equals(tipName)) {
 	  if (method.getReturnType().equals(String.class)) {
-	    if (m_Options != null)
-	      commandline = m_Options.get(i).getCommandline();
 	    try {
 	      m_TipTexts[i] = ((String) (method.invoke(m_Target))).trim();
               if (m_Options.get(i).getCurrentValue() instanceof ExampleProvider) {
@@ -357,17 +314,6 @@ public class PropertySheetPanel extends BasePanel
                   m_TipTexts[i] += " " + example;
                 }
               }
-	      if (m_HelpText != null) {
-		if (firstTip) {
-		  m_HelpText.append("OPTIONS\n");
-		  firstTip = false;
-		}
-		m_HelpText.append(name);
-		if (commandline != null)
-		  m_HelpText.append("/-" + commandline);
-		m_HelpText.append(":\n");
-		m_HelpText.append(m_TipTexts[i]).append("\n\n");
-	      }
 	    }
 	    catch (Exception ex) {
 	      // ignored
@@ -651,11 +597,8 @@ public class PropertySheetPanel extends BasePanel
    * opens the help frame.
    */
   protected void openHelpDialog() {
-    boolean 	isHtml;
-
     initHelp();
-    isHtml = (m_HelpTextHtml != null);
-    HelpFrame.showHelp(getTarget().getClass(), isHtml ? m_HelpTextHtml.toString() : m_HelpText.toString(), isHtml);
+    HelpFrame.showHelp(getTarget().getClass());
   }
 
   /**

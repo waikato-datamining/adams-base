@@ -19,7 +19,7 @@
  */
 package adams.gui.flow.menu;
 
-import adams.gui.core.HelpFrame;
+import adams.gui.help.HelpFrame;
 import adams.parser.MathematicalExpression;
 
 import java.awt.event.ActionEvent;

@@ -17,12 +17,18 @@
  * HelpHistoryPanel.java
  * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.core;
+package adams.gui.help;
 
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.AbstractNamedHistoryPanel.FrameDisplaySupporter;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.Fonts;
 
 import javax.swing.JEditorPane;
 import javax.swing.JMenuItem;

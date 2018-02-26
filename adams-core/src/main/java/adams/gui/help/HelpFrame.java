@@ -18,9 +18,14 @@
  * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.core;
+package adams.gui.help;
 
+import adams.gui.core.BaseFrame;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
+import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
@@ -200,6 +205,18 @@ public class HelpFrame
       m_Singleton.setLocationRelativeTo(null);
     }
     return m_Singleton;
+  }
+
+  /**
+   * Shows the help in the frame.
+   *
+   * @param cls		the class to generate the help for
+   */
+  public static void showHelp(Class cls) {
+    HelpContainer	cont;
+
+    cont = AbstractHelpGenerator.generateHelp(cls);
+    showHelp(cls.getName(), cont.getHelp(), cont.isHtml());
   }
 
   /**

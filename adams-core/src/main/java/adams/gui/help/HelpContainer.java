@@ -18,7 +18,7 @@
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.core;
+package adams.gui.help;
 
 import adams.core.Shortening;
 import adams.core.ShorteningType;

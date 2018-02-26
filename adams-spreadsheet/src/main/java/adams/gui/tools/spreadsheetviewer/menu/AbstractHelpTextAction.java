@@ -23,8 +23,8 @@ import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesMenuItemAction;
 import adams.gui.application.Child;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.HelpFrame;
 import adams.gui.dialog.TextDialog;
+import adams.gui.help.HelpFrame;
 import adams.gui.tools.SpreadSheetViewerPanel;
 
 import java.awt.Dialog;

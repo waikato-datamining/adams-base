@@ -22,8 +22,8 @@ package adams.gui.dialog;
 import adams.core.AdditionalInformationHandler;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.HelpFrame;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
+import adams.gui.help.HelpFrame;
 import adams.parser.SpreadSheetQuery;
 import adams.parser.SpreadSheetQueryText;
 

@@ -30,7 +30,7 @@ import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.DefaultTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.HelpFrame;
+import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;

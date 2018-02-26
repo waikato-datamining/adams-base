@@ -29,9 +29,9 @@ import adams.flow.processor.ListAnnotationTags;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.HelpFrame;
 import adams.gui.core.MarkdownTextAreaWithPreview;
 import adams.gui.core.TextAreaComponent;
+import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;

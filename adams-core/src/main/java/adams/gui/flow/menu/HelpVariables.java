@@ -27,7 +27,7 @@ import adams.flow.transformer.GetPropertyValue;
 import adams.flow.transformer.SetProperty;
 import adams.flow.transformer.SetPropertyValue;
 import adams.flow.transformer.UpdateProperty;
-import adams.gui.core.HelpFrame;
+import adams.gui.help.HelpFrame;
 
 import java.awt.event.ActionEvent;
 import java.util.Arrays;

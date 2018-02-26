@@ -592,8 +592,8 @@ adams.gui.sendto.AbstractSendToAction=\
   adams.gui.sendto
 
 # help generators for classes
-adams.gui.tools.classhelp.AbstractHelpGenerator=\
-  adams.gui.tools.classhelp
+adams.gui.help.AbstractHelpGenerator=\
+  adams.gui.help
 
 # the action plugins for the FileCommander
 adams.gui.tools.filecommander.AbstractFileCommanderAction=\

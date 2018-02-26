@@ -13,12 +13,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaOptionHandlerHelpGenerator.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.classhelp;
+package adams.gui.help;
 
 import adams.gui.core.ConsolePanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
@@ -39,7 +39,6 @@ import java.util.logging.Level;
  * Help generator for {@link weka.core.OptionHandler}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaOptionHandlerHelpGenerator
   extends AbstractHelpGenerator {
@@ -140,7 +139,7 @@ public class WekaOptionHandlerHelpGenerator
    * @return		the help, null if failed to produce
    */
   @Override
-  public String generateHelp(Class cls) {
+  public String generate(Class cls) {
     StringBuilder 	result;
     Object		obj;
     BeanInfo 		bi;

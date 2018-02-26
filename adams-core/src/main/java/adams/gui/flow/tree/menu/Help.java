@@ -21,8 +21,8 @@ package adams.gui.flow.tree.menu;
 
 import adams.core.option.HtmlHelpProducer;
 import adams.flow.core.Actor;
-import adams.gui.core.HelpFrame;
 import adams.gui.flow.tree.TreeHelper;
+import adams.gui.help.HelpFrame;
 
 import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;

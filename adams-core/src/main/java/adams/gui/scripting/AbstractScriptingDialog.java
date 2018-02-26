@@ -34,13 +34,13 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.HelpFrame;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.event.ScriptingInfoEvent;
 import adams.gui.event.ScriptingInfoListener;
+import adams.gui.help.HelpFrame;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
