@@ -15,7 +15,7 @@
 
 /*
  * HelpPanel.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -80,7 +80,7 @@ public class HelpFrame
     super.initGUI();
 
     setTitle("Help");
-    setDefaultCloseOperation(BaseFrame.HIDE_ON_CLOSE); // TODO does this prevent application from closing?
+    setDefaultCloseOperation(BaseFrame.HIDE_ON_CLOSE);
     setLayout(new BorderLayout());
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
