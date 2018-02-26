@@ -62,7 +62,7 @@ public class WekaOptionHandlerHelpGenerator
    */
   @Override
   public boolean isHtml(Class cls) {
-    return false;
+    return true;
   }
 
   /**
@@ -98,36 +98,36 @@ public class WekaOptionHandlerHelpGenerator
     String		result;
     String		caps;
 
-    result = title + "\n";
+    result = title + "<br>";
 
     // class
     caps = listCapabilities(c.getClassCapabilities());
     if (caps.length() != 0) {
-      result += "Class -- ";
+      result += "<i>Class</i> - ";
       result += caps;
-      result += "\n\n";
+      result += "<br><br>";
     }
 
     // attribute
     caps = listCapabilities(c.getAttributeCapabilities());
     if (caps.length() != 0) {
-      result += "Attributes -- ";
+      result += "<i>Attributes</i> - ";
       result += caps;
-      result += "\n\n";
+      result += "<br><br>";
     }
 
     // other capabilities
     caps = listCapabilities(c.getOtherCapabilities());
     if (caps.length() != 0) {
-      result += "Other -- ";
+      result += "<i>Other</i> - ";
       result += caps;
-      result += "\n\n";
+      result += "<br><br>";
     }
 
     // additional stuff
-    result += "Additional\n";
-    result += "min # of instances: " + c.getMinimumNumberInstances() + "\n";
-    result += "\n";
+    result += "<i>Additional</i><br>";
+    result += "min # of instances: " + c.getMinimumNumberInstances() + "<br>";
+    result += "<br>";
 
     return result;
   }
@@ -192,12 +192,12 @@ public class WekaOptionHandlerHelpGenerator
 	    name = meta != null ? meta.displayName() : name;
 
 	    if (firstTip) {
-	      options.append("OPTIONS\n");
+	      options.append("<b>Options</b><br>");
 	      firstTip = false;
 	    }
-	    tempTip = tempTip.replace("<html>", "").replace("</html>", "").replace("<br>", "\n").replace("<p>", "\n\n");
-	    options.append(name.replace("TipText", "")).append(" -- ");
-	    options.append(tempTip).append("\n\n");
+	    tempTip = tempTip.replace("<html>", "").replace("</html>", "").replace("<p>", "<br><br>");
+	    options.append("<i>").append(name.replace("TipText", "")).append("</i> - ");
+	    options.append(tempTip).append("<br><br>");
 
 	  }
 	  catch (Exception ex) {
@@ -210,17 +210,17 @@ public class WekaOptionHandlerHelpGenerator
 	if (meth.getReturnType().equals(String.class)) {
 	  try {
 	    globalInfo = (String) (meth.invoke(obj, args));
-	    result = new StringBuilder("NAME\n");
-	    result.append(cls.getName()).append("\n\n");
-	    result.append("SYNOPSIS\n").append(globalInfo).append("\n\n");
+	    result = new StringBuilder("<b>Name</b><br>");
+	    result.append(cls.getName()).append("<br><br>");
+	    result.append("<b>Synopsis</b><br>").append(globalInfo).append("<br><br>");
 
 	    if (obj instanceof CapabilitiesHandler) {
 	      result.append(addCapabilities(
-		"CAPABILITIES",
+		"<b>Capabilities</b>",
 		((CapabilitiesHandler) obj).getCapabilities()));
 	      if (obj instanceof MultiInstanceCapabilitiesHandler) {
 		result.append(addCapabilities(
-		  "MI CAPABILITIES",
+		  "<b>Multi-instance Capabilities</b>",
 		  ((MultiInstanceCapabilitiesHandler) obj).getMultiInstanceCapabilities()));
 	      }
 	    }
