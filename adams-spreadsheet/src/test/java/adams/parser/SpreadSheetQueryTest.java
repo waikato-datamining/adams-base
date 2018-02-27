@@ -19,13 +19,13 @@
  */
 package adams.parser;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the adams.parser.SpreadSheetQuery class. Run from commandline with: <br><br>
@@ -94,6 +94,7 @@ public class SpreadSheetQueryTest
 	  {/** no symbols. */},	// 17
 	  {/** no symbols. */},	// 18
 	  {/** no symbols. */},	// 19
+	  {/** no symbols. */},	// 20
 	}
     };
   }
@@ -126,6 +127,7 @@ public class SpreadSheetQueryTest
 	  "SELECT MIN(duration), MAX(duration), MEAN(duration), STDEV(duration) HAVING duration >= 0",	//  17
 	  "SELECT MIN(duration) AS dur_min, MAX(duration) AS dur_max, MEAN(duration) AS dur_mean, STDEV(duration) AS dur_stdev HAVING duration >= 0",	//  18
 	  "SELECT MIN(duration), MAX(duration), RANGE(duration) HAVING duration >= 0",	//  19
+	  "SELECT duration WHERE (duration >= -2)",			//  20
 	}
     };
   }
