@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TreeOperations.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree;
@@ -758,7 +758,7 @@ public class TreeOperations
    *
    * @param path	the path where to insert the actors
    * @param position	how the actors are to be inserted
-   * @return		the actors
+   * @return		the context
    */
   public SuggestionData configureSuggestionContext(TreePath path, InsertPosition position) {
     SuggestionData	result;
@@ -838,6 +838,70 @@ public class TreeOperations
     // TODO
     //if (result == null)
     //  result = ActorSuggestion.getSingleton().getDefaults();
+
+    return result;
+  }
+
+  /**
+   * Returns the context for making external actor suggestions.
+   *
+   * @param paths	the paths of the actors to externalize
+   * @return		the context
+   */
+  public SuggestionData configureSuggestionContext(TreePath[] paths) {
+    SuggestionData	result;
+    Node		parentNode;
+    Node		node;
+    int			pos;
+    int			i;
+
+    result = new SuggestionData();
+
+    node       = TreeHelper.pathToNode(paths[0]);
+    parentNode = (Node) node.getParent();
+
+    if (paths.length == 1)
+      pos = 0;
+    else
+      pos = -1;
+
+    result.parent     = parentNode.getActor();
+    result.parentNode = parentNode;
+    result.position   = pos;
+    result.actors     = new Actor[paths.length];
+    result.actorNodes = new Node[paths.length];
+    for (i = 0; i < result.actors.length; i++) {
+      result.actorNodes[i] = TreeHelper.pathToNode(paths[i]);
+      result.actors[i]     = result.actorNodes[i].getActor();
+    }
+
+    // don't restrict actor types
+    result.allowStandalones  = true;
+    result.allowSources      = true;
+    result.allowTransformers = true;
+    result.allowSinks        = true;
+
+    return result;
+  }
+
+  /**
+   * Tries to figure what external actors fit best using the given selection of
+   * actors.
+   *
+   * @param paths	the paths of the actors to externalize
+   * @return		the actors
+   */
+  public Actor[] suggestExternalActors(TreePath[] paths) {
+    Actor[]		result;
+    SuggestionData	context;
+    Actor[]		suggestions;
+
+    result = null;
+
+    context     = configureSuggestionContext(paths);
+    suggestions = ExternalActorSuggestion.getSingleton().suggest(context);
+    if (suggestions.length > 0)
+      result = suggestions;
 
     return result;
   }
@@ -1194,8 +1258,9 @@ public class TreeOperations
    * Checks for callable actors and diplays confirmation dialog if so.
    *
    * @param paths	the (paths to the) actors to externalize
+   * @param suggestion	the suggested actor to replace with
    */
-  public void externalizeActor(TreePath[] paths) {
+  public void externalizeActor(TreePath[] paths, Actor suggestion) {
     Actor		handler;
     Actor[]		actors;
     Node		newNode;
@@ -1208,7 +1273,7 @@ public class TreeOperations
     if (paths.length == 0)
       return;
     if (paths.length == 1) {
-      externalizeActor(paths[0]);
+      externalizeActor(paths[0], suggestion);
       return;
     }
 
@@ -1222,7 +1287,7 @@ public class TreeOperations
 	parent = (Node) currNode.getParent();
     }
     try {
-      handler = ActorUtils.createExternalActor(actors);
+      handler = ActorUtils.createExternalActor(actors, null);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
@@ -1261,7 +1326,7 @@ public class TreeOperations
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), fParent, Type.MODIFY));
     });
 
-    externalizeActor(new TreePath(newNode.getPath()), false);
+    externalizeActor(new TreePath(newNode.getPath()), false, suggestion);
   }
 
   /**
@@ -1269,9 +1334,10 @@ public class TreeOperations
    * Checks for callable actors and diplays confirmation dialog if so.
    *
    * @param path	the (path to the) actor to externalize
+   * @param suggestion	the suggested actor to replace with
    */
-  public void externalizeActor(TreePath path) {
-    externalizeActor(path, true);
+  public void externalizeActor(TreePath path, Actor suggestion) {
+    externalizeActor(path, true, null);
   }
 
   /**
@@ -1279,8 +1345,9 @@ public class TreeOperations
    *
    * @param path		the (path to the) actor to externalize
    * @param checkCallActors	whether to check for callable actors
+   * @param suggestion		the suggested actor to replace with
    */
-  protected void externalizeActor(TreePath path, boolean checkCallActors) {
+  protected void externalizeActor(TreePath path, boolean checkCallActors, Actor suggestion) {
     Actor			currActor;
     Node 			currNode;
     AbstractExternalActor 	extActor;
@@ -1311,13 +1378,13 @@ public class TreeOperations
     getOwner().addUndoPoint("Externalizing node '" + currNode.getFullName() + "'");
 
     extActor = null;
-    if (ActorUtils.isStandalone(currActor))
+    if (ActorUtils.isStandalone(currActor) && ((suggestion == null) || !ActorUtils.isStandalone(suggestion)))
       extActor = new ExternalStandalone();
-    else if (ActorUtils.isSource(currActor))
+    else if (ActorUtils.isSource(currActor) && ((suggestion == null) || !ActorUtils.isSource(suggestion)))
       extActor = new ExternalSource();
-    else if (ActorUtils.isTransformer(currActor))
+    else if (ActorUtils.isTransformer(currActor) && ((suggestion == null) || !ActorUtils.isTransformer(suggestion)))
       extActor = new ExternalTransformer();
-    else if (ActorUtils.isSink(currActor))
+    else if (ActorUtils.isSink(currActor) && ((suggestion == null) || !ActorUtils.isSink(suggestion)))
       extActor = new ExternalSink();
     extActor.setActorFile(new FlowFile(dialog.getFlowEditorPanel().getCurrentFile()));
 

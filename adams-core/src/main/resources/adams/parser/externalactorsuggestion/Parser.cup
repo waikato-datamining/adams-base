@@ -30,7 +30,7 @@
  * Copyright 1996-1999 by Scott Hudson, Frank Flannery, C. Scott Ananian
  */
 
-package adams.parser.actorsuggestion;
+package adams.parser.externalactorsuggestion;
 
 import nz.ac.waikato.cms.locator.ClassLocator;
 import adams.flow.core.AbstractActor;
@@ -50,10 +50,9 @@ import java.util.*;
 import java.util.logging.Level;
 
 /**
- * A parser for parsing a rule file for suggesting an actor.
+ * A parser for parsing a rule file for suggesting an external actor.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 parser code {:
@@ -251,6 +250,22 @@ parser code {:
   }
 
   /**
+   * Checks whether the current actor is a standalone actor.
+   * Returns false for current actor (= 0) if more than one actor selected.
+   *
+   * @param index 0 for current, -1 for first, +1 for last
+   * @return true if a standalone
+   */
+  public Boolean isStandalone(int index) {
+    if (index == 0)
+      return (m_Actors.length == 1) && (ActorUtils.isStandalone(m_Actors[m_Position]));
+    else if (index == -1)
+      return (ActorUtils.isStandalone(m_Actors[0]));
+    else
+      return (ActorUtils.isStandalone(m_Actors[m_Actors.length - 1]));
+  }
+
+  /**
    * Checks whether the actor will get added before or after a source
    * actor.
    *
@@ -274,6 +289,22 @@ parser code {:
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether the current actor is a source actor.
+   * Returns false for current actor (= 0) if more than one actor selected.
+   *
+   * @param index 0 for current, -1 for first, +1 for last
+   * @return true if a source
+   */
+  public Boolean isSource(int index) {
+    if (index == 0)
+      return (m_Actors.length == 1) && (ActorUtils.isSource(m_Actors[m_Position]));
+    else if (index == -1)
+      return (ActorUtils.isSource(m_Actors[0]));
+    else
+      return (ActorUtils.isSource(m_Actors[m_Actors.length - 1]));
   }
 
   /**
@@ -303,6 +334,22 @@ parser code {:
   }
 
   /**
+   * Checks whether the current actor is a transformer actor.
+   * Returns false for current actor (= 0) if more than one actor selected.
+   *
+   * @param index 0 for current, -1 for first, +1 for last
+   * @return true if a transformer
+   */
+  public Boolean isTransformer(int index) {
+    if (index == 0)
+      return (m_Actors.length == 1) && (ActorUtils.isTransformer(m_Actors[m_Position]));
+    else if (index == -1)
+      return (ActorUtils.isTransformer(m_Actors[0]));
+    else
+      return (ActorUtils.isTransformer(m_Actors[m_Actors.length - 1]));
+  }
+
+  /**
    * Checks whether the actor will get added before or after a sink
    * actor.
    *
@@ -326,6 +373,22 @@ parser code {:
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether the current actor is a sink actor.
+   * Returns false for current actor (= 0) if more than one actor selected.
+   *
+   * @param index 0 for current, -1 for first, +1 for last
+   * @return true if a sink
+   */
+  public Boolean isSink(int index) {
+    if (index == 0)
+      return (m_Actors.length == 1) && (ActorUtils.isSink(m_Actors[m_Position]));
+    else if (index == -1)
+      return (ActorUtils.isSink(m_Actors[0]));
+    else
+      return (ActorUtils.isSink(m_Actors[m_Actors.length - 1]));
   }
 
   /**
@@ -355,6 +418,24 @@ parser code {:
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether the current actor (single selection) is of the superclass
+   * or interface.
+   * Returns false for current actor (= 0) if more than one actor selected.
+   *
+   * @param index 0 for current, -1 for first, +1 for last
+   * @param classname the name of the actor (or interface) to check against
+   * @return true if the actor gets added before/after a specific one
+   */
+  public Boolean isClassname(int index, String classname) {
+    if (index == 0)
+      return (m_Actors.length == 1) && ClassLocator.matches(classname, m_Actors[m_Position].getClass().getName());
+    else if (index == -1)
+      return ClassLocator.matches(classname, m_Actors[0].getClass().getName());
+    else
+      return ClassLocator.matches(classname, m_Actors[m_Actors.length - 1].getClass().getName());
   }
 
   /**
@@ -514,7 +595,7 @@ parser code {:
 :}
 
 terminal String CLASSNAME, CMDLINE;
-terminal String PARENT, ANYPARENT, PRECEDING, FOLLOWING;
+terminal String PARENT, ANYPARENT, PRECEDING, FOLLOWING, THIS, FIRST, LAST;
 terminal Boolean ISFIRST, ISLAST, ALLOWS, GENERATES, ACCEPTS;
 terminal Boolean STANDALONE, SOURCE, TRANSFORMER, SINK;
 terminal Boolean BOOLEAN, TRUE, FALSE;
@@ -564,6 +645,7 @@ boolexpr ::=    LPAREN boolexpr:b RPAREN
                 {: RESULT = parser.isFirst(); :}
               | ISLAST
                 {: RESULT = parser.isLast(); :}
+
               | PARENT IS classexpr:c
                 {: RESULT = new Boolean(parser.checkParent(c, true, false)); :}
               | PARENT LIKE classexpr:c
@@ -572,34 +654,71 @@ boolexpr ::=    LPAREN boolexpr:b RPAREN
                 {: RESULT = ((ActorHandler) parser.getParent()).getActorHandlerInfo().canContainStandalones(); :}
               | PARENT ALLOWS SOURCE
                 {: RESULT = ((ActorHandler) parser.getParent()).getActorHandlerInfo().canContainSource(); :}
+
               | ANYPARENT IS classexpr:c
                 {: RESULT = new Boolean(parser.checkParent(c, true, true)); :}
               | ANYPARENT LIKE classexpr:c
                 {: RESULT = new Boolean(parser.checkParent(c, false, true)); :}
+
               | PRECEDING GENERATES classexpr:c
                 {: RESULT = parser.precedingGenerates(c); :}
               | FOLLOWING ACCEPTS classexpr:c
                 {: RESULT = parser.followingAccepts(c); :}
+
               | BEFORE STANDALONE
                 {: RESULT = parser.isStandalone(true); :}
-              | AFTER STANDALONE
-                {: RESULT = parser.isStandalone(false); :}
               | BEFORE SOURCE
                 {: RESULT = parser.isSource(true); :}
-              | AFTER SOURCE
-                {: RESULT = parser.isSource(false); :}
               | BEFORE TRANSFORMER
                 {: RESULT = parser.isTransformer(true); :}
-              | AFTER TRANSFORMER
-                {: RESULT = parser.isTransformer(false); :}
               | BEFORE SINK
                 {: RESULT = parser.isSink(true); :}
-              | AFTER SINK
-                {: RESULT = parser.isSink(false); :}
               | BEFORE classexpr:c
                 {: RESULT = parser.isClassname(true, c); :}
+
+              | AFTER STANDALONE
+                {: RESULT = parser.isStandalone(false); :}
+              | AFTER SOURCE
+                {: RESULT = parser.isSource(false); :}
+              | AFTER TRANSFORMER
+                {: RESULT = parser.isTransformer(false); :}
+              | AFTER SINK
+                {: RESULT = parser.isSink(false); :}
               | AFTER classexpr:c
                 {: RESULT = parser.isClassname(false, c); :}
+
+              | THIS IS classexpr:c
+                {: RESULT = parser.isClassname(0, c); :}
+              | THIS IS STANDALONE
+                {: RESULT = parser.isStandalone(0); :}
+              | THIS IS SOURCE
+                {: RESULT = parser.isSource(0); :}
+              | THIS IS TRANSFORMER
+                {: RESULT = parser.isTransformer(0); :}
+              | THIS IS SINK
+                {: RESULT = parser.isSink(0); :}
+
+              | FIRST IS classexpr:c
+                {: RESULT = parser.isClassname(-1, c); :}
+              | FIRST IS STANDALONE
+                {: RESULT = parser.isStandalone(-1); :}
+              | FIRST IS SOURCE
+                {: RESULT = parser.isSource(-1); :}
+              | FIRST IS TRANSFORMER
+                {: RESULT = parser.isTransformer(-1); :}
+              | FIRST IS SINK
+                {: RESULT = parser.isSink(-1); :}
+
+              | LAST IS classexpr:c
+                {: RESULT = parser.isClassname(1, c); :}
+              | LAST IS STANDALONE
+                {: RESULT = parser.isStandalone(1); :}
+              | LAST IS SOURCE
+                {: RESULT = parser.isSource(1); :}
+              | LAST IS TRANSFORMER
+                {: RESULT = parser.isTransformer(1); :}
+              | LAST IS SINK
+                {: RESULT = parser.isSink(1); :}
               ;
 
 classexpr ::=   CLASSNAME:c

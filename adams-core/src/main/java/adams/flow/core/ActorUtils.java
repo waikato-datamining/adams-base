@@ -1083,25 +1083,54 @@ public class ActorUtils {
   }
 
   /**
+   * Sets the actors in the handler.
+   *
+   * @param handler	the handler to update
+   * @param actors	the actors to set
+   * @return		null if successful, otherwise error message
+   */
+  protected static String setActors(ActorHandler handler, Actor[] actors) {
+    MutableActorHandler	mutable;
+    int			i;
+
+    if (handler instanceof MutableActorHandler) {
+      mutable = (MutableActorHandler) handler;
+      mutable.removeAll();
+      for (Actor actor: actors)
+        mutable.add(actor);
+      return null;
+    }
+    else {
+      if (handler.size() != actors.length)
+        return "Actor handler '" + Utils.classToString(handler) + "' expects " + handler.size() + " actors, but provided: " + actors.length;
+      for (i = 0; i < actors.length; i++)
+        handler.set(i, actors[i]);
+      return null;
+    }
+  }
+
+  /**
    * Ensures that the actors are enclosed in an "instantiable" wrapper.
    *
    * @param actors	the actors to enclose
+   * @param suggestion 	the suggested actor handler, can be null
    * @return		the processed actor
    */
-  public static Actor createExternalActor(Actor[] actors) {
+  public static Actor createExternalActor(Actor[] actors, ActorHandler suggestion) {
     int			first;
     int			last;
     int			i;
     ActorHandler	handler;
     HashSet<String>	paths;
     ActorPath		path;
+    String		msg;
 
     if (actors.length == 0)
       throw new IllegalArgumentException(
 	  "At least one actor must be provided for externalizing!");
 
     // ensure that all actors have same prefix, i.e., on same level in tree
-    paths = new HashSet<String>();
+    paths = new HashSet<>();
     for (Actor actor: actors) {
       path = new ActorPath(actor.getFullName());
       paths.add(path.getParentPath().toString());
@@ -1129,31 +1158,49 @@ public class ActorUtils {
       }
     }
 
+    handler = suggestion;
+
     // appears as standalone
     if (isStandalone(actors[first]) && isStandalone(actors[last])) {
-      handler = new Standalones();
-      ((Standalones) handler).setActors(actors);
+      if ((handler == null) || !isStandalone(handler))
+	handler = new Standalones();
+      msg = setActors(handler, actors);
+      if (msg != null)
+	throw new IllegalStateException(
+	  "Failed to set actors in handler '" + Utils.classToString(handler) + "': " + msg);
       return handler;
     }
 
     // appears as transformer
     if (isTransformer(actors[first]) && isTransformer(actors[last])) {
-      handler = new SubProcess();
-      ((SubProcess) handler).setActors(actors);
+      if ((handler == null) || !isTransformer(suggestion))
+	handler = new SubProcess();
+      msg = setActors(handler, actors);
+      if (msg != null)
+	throw new IllegalStateException(
+	  "Failed to set actors in handler '" + Utils.classToString(handler) + "': " + msg);
       return handler;
     }
 
     // appears as source
     if (isSource(actors[first]) && (actors[last] instanceof OutputProducer)) {
-      handler = new SequenceSource();
-      ((SequenceSource) handler).setActors(actors);
+      if ((handler == null) || !isSource(suggestion))
+	handler = new SequenceSource();
+      msg = setActors(handler, actors);
+      if (msg != null)
+	throw new IllegalStateException(
+	  "Failed to set actors in handler '" + Utils.classToString(handler) + "': " + msg);
       return handler;
     }
 
     // appears as sink
     if ((actors[first] instanceof InputConsumer) && (isSink(actors[last]))) {
-      handler = new Sequence();
-      ((Sequence) handler).setActors(actors);
+      if ((handler == null) || !isSink(handler))
+	handler = new Sequence();
+      msg = setActors(handler, actors);
+      if (msg != null)
+	throw new IllegalStateException(
+	  "Failed to set actors in handler '" + Utils.classToString(handler) + "': " + msg);
       return handler;
     }
 

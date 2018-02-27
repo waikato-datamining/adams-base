@@ -15,6 +15,7 @@ Definitions=\
   adams.env.ConversionDefinition,\
   adams.env.DatabaseConnectionDefinition,\
   adams.env.DriversDefinition,\
+  adams.env.ExternalActorSuggestionDefinition,\
   adams.env.FlowControlCenterPanelDefinition,\
   adams.env.FlowDefinition,\
   adams.env.FlowEditorPanelDefinition,\

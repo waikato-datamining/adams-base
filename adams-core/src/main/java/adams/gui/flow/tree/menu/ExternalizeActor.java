@@ -13,19 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExternalizeActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
+import adams.flow.core.Actor;
+import adams.gui.core.BaseMenu;
+
+import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
 
 /**
  * For turning an actor into an external one.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class ExternalizeActor
   extends AbstractTreePopupMenuItemAction {
@@ -40,7 +43,44 @@ public class ExternalizeActor
    */
   @Override
   protected String getTitle() {
-    return "Externalize...";
+    return "Externalize";
+  }
+
+  /**
+   * Creates a new menuitem using itself.
+   */
+  @Override
+  public JMenuItem getMenuItem() {
+    BaseMenu 		result;
+    JMenuItem 		menuitem;
+    Actor[] 		suggestions;
+
+    if (m_State.selPaths == null)
+      return null;
+
+    result = new BaseMenu(getName());
+    result.setEnabled(isEnabled());
+    result.setIcon(getIcon());
+    suggestions = m_State.tree.getOperations().suggestExternalActors(m_State.selPaths);
+    if (suggestions == null) {
+      menuitem = new JMenuItem("Automatic");
+      menuitem.addActionListener((ActionEvent e) ->
+	m_State.tree.getOperations().externalizeActor(m_State.selPaths, null)
+      );
+      result.add(menuitem);
+    }
+    else {
+      for (Actor s : suggestions) {
+	final Actor suggestion = s;
+	menuitem = new JMenuItem(suggestion.getName());
+	menuitem.addActionListener((ActionEvent e) ->
+	  m_State.tree.getOperations().externalizeActor(m_State.selPaths, suggestion)
+	);
+	result.add(menuitem);
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -58,6 +98,6 @@ public class ExternalizeActor
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.getOperations().externalizeActor(m_State.selPaths);
+    // obsolete
   }
 }

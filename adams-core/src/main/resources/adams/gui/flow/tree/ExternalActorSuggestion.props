@@ -1,0 +1,31 @@
+# File for listing rules for suggesting actors in the flow editor.
+#
+# Format:
+#   rulename = rule
+#
+# Rules adhere to the syntax described in adams.parser.ActorSuggestion.
+# As "rulename" anything apart from "Default" can be used. In order to avoid
+# name clashes with other modules, it is recommended to prefix the rules
+# with the module name, e.g. "adams-core.rule1=...".
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+
+adams-core.ExternalStandalone=\
+  IF FIRST IS STANDALONE \
+  AND LAST IS STANDALONE \
+  THEN adams.flow.standalone.ExternalStandalone
+
+adams-core.ExternalSource=\
+  IF FIRST IS SOURCE \
+  AND LAST IS SOURCE \
+  THEN adams.flow.source.ExternalSource
+
+adams-core.ExternalTransformer=\
+  IF FIRST IS TRANSFORMER \
+  AND LAST IS TRANSFORMER \
+  THEN adams.flow.transformer.ExternalTransformer
+
+adams-core.ExternalSink=\
+  IF FIRST IS SINK \
+  AND LAST IS SINK \
+  THEN adams.flow.sink.ExternalSink
