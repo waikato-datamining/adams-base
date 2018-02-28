@@ -2365,7 +2365,7 @@ adams.scripting.CommandRunner \
 %%%%%%%%%
 
 \chapter{Tools}
-Among the items in the \textit{Tools} menu are the most important tools of 
+Among the items in the \textit{Tools} menu are the most important tools of
 ADAMS, the interfaces for editing and running flows.
 
 \section{File commander}
@@ -2381,6 +2381,9 @@ Figure \ref{filecommander} shows a screenshot.
   \label{filecommander}
 \end{figure}
 
+\section{File monitor}
+.
+
 \section{Flow editor}
 The Flow editor is the central tool in ADAMS, allowing you the definition of
 powerful workflows for a multitude of purposes. See chapter \ref{flows} for a
@@ -2389,37 +2392,6 @@ comprehensive introduction.
 \section{Flow runner}
 The \textit{Flow runner} is an interface to execute flows without the user
 being able to modify them. See chapter \ref{running_flows} for more information.
-
-\section{Actor usage}
-The class \textit{adams.flow.core.ActorUsage} allows you to generate a spreadsheet 
-that generates an overview of which actors are used in what flows. Here is an example 
-command-line for Linux:
-\begin{verbatim}
-  adams.flow.core.ActorUsage \
-    -dir ./flows \
-    -recursive \
-    -no-path \
-    -output $HOME/actors.csv \
-    -logging-level INFO
-\end{verbatim}
-The command looks recursively for flows, starting in the \textit{./flows}
-directory. The generated output, omitting the path from the flow files, is 
-written to \textit{actors.csv} in the user's home directory.
-
-Rather than using a static spreadsheet, you can also use this tool from the 
-main menu: \textit{Help -> Actor usage}. After selecting a directory containing
-flows (which will get searched recursively), you will be presented with a dialog
-that displays the generated spreadsheet (see Figure \ref{actor_usage}). This
-dialog also allows you to select one or more flow files and then edit them,
-by clicking on the \textit{Edit} button. You can directly edit a single flow
-by double-clicking on it in the table as well.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/actor_usage.png}
-  \caption{Overview of actor usage in flow files.}
-  \label{actor_usage}
-\end{figure}
 
 \section{Text editor}
 The \textit{Text editor} is a very simply editor for plain text files. It 
@@ -2742,6 +2714,131 @@ menu as shown in Figure \ref{favoritesmanagement-save}.
   \caption{Saving the modified favorites.}
   \label{favoritesmanagement-save}
 \end{figure}
+
+%%%%%%%%
+% Help %
+%%%%%%%%
+
+\chapter{Help}
+The following sections discuss some of the tools available from the \textit{Help}
+menu.
+
+\section{Actor usage}
+The class \textit{adams.flow.core.ActorUsage} allows you to generate a spreadsheet
+that generates an overview of which actors are used in what flows. Here is an example
+command-line for Linux:
+\begin{verbatim}
+  adams.flow.core.ActorUsage \
+    -dir ./flows \
+    -recursive \
+    -no-path \
+    -output $HOME/actors.csv \
+    -logging-level INFO
+\end{verbatim}
+The command looks recursively for flows, starting in the \textit{./flows}
+directory. The generated output, omitting the path from the flow files, is
+written to \textit{actors.csv} in the user's home directory.
+
+Rather than using a static spreadsheet, you can also use this tool from the
+main menu: \textit{Help -> Actor usage}. After selecting a directory containing
+flows (which will get searched recursively), you will be presented with a dialog
+that displays the generated spreadsheet (see Figure \ref{actor_usage}). This
+dialog also allows you to select one or more flow files and then edit them,
+by clicking on the \textit{Edit} button. You can directly edit a single flow
+by double-clicking on it in the table as well.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/actor_usage.png}
+  \caption{Overview of actor usage in flow files.}
+  \label{actor_usage}
+\end{figure}
+
+\newpage
+\section{Class help}
+With the \textit{Class help} interface, you can look up information about
+any class available in ADAMS' classpath. Depending on whether ADAMS has a
+built-in class help generator, the display may only consist of the available
+methods and fields. Figure \ref{classhelp} shows the help dialog for the
+\textit{SelectFile} source actor.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/classhelp.png}
+  \caption{Class help.}
+  \label{classhelp}
+\end{figure}
+
+\newpage
+\section{System info}
+The \textit{System info} gives you an overview of the following items:
+\begin{tight_itemize}
+  \item Environment variables
+  \item Java properties (from \texttt{java.lang.System.getProperty(\ldots)})
+  \item Memory information
+  \item Currently defined placeholders (used in filenames)
+  \item Project information (e.g., home directory, classpath)
+\end{tight_itemize}
+Figure \ref{systeminfo} shows an example dialog. The displayed data can
+be searched and exported.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/systeminfo.png}
+  \caption{System info.}
+  \label{systeminfo}
+\end{figure}
+
+\newpage
+\section{System performance}
+With \textit{System performance} you can test how fast your system is. After
+submitting a range of parameters, several flows are used to monitor the time
+it takes to perform mathematical calculations and disk I/O (see
+Figure\ref{systemperformance} for an example).
+
+Please be aware that this takes some time and will put a heavy load on your
+machine.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/systemperformance.png}
+  \caption{System systemperformance.}
+  \label{systemperformance}
+\end{figure}
+
+\newpage
+\section{Memory}
+If you are concerned about memory usage in your flows, you use the \textit{Memory}
+dialog for monitoring the memory consumption over time (see Figure \ref{memory}).
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=8.0cm]{images/memory.png}
+  \caption{Memory monitoring.}
+  \label{memory}
+\end{figure}
+
+\newpage
+\section{Miscellaneous}
+\begin{tight_itemize}
+  \item \textit{Take screenshot} -- allows you to take a screenshot and save it
+  to a file.
+  \item \textit{Homepage} -- opens the default browser with the ADAMS homepage
+  \item \textit{About} -- the infamous about box, with information about the
+  modules that your ADAMS instance was built with.
+\end{tight_itemize}
+
+The following menu items are only available if you switch to user mode
+\textit{Developer} in the \textit{Program} menu:
+\begin{tight_itemize}
+  \item \textit{JDeps} -- for calculating class dependencies
+  \item \textit{JMap} -- outputs information about currently load classes and
+  objects and how much memory they takeup
+  \item \textit{JConsole} -- for monitoring a Java application
+  \item \textit{JVisualVM} -- another monitoring tool for Java applications
+  \item \textit{Garbage collector} -- let the system reclaim unused objects
+  and free up memory
+\end{tight_itemize}
 
 %%%%%%%%%%%%%%%%%%%%%
 % Customizing ADAMS %
