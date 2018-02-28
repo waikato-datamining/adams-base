@@ -15,11 +15,12 @@
 
 /*
  * WekaCrossValidationEvaluator.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Performance;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
@@ -53,7 +54,7 @@ import weka.core.Instances;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output, Original indices
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output, Original indices, Test data
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -62,88 +63,92 @@ import weka.core.Instances;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaCrossValidationEvaluator
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-output &lt;weka.classifiers.evaluation.output.prediction.AbstractOutput&gt; (property: output)
- * &nbsp;&nbsp;&nbsp;The class for generating prediction output; if 'Null' is used, then an Evaluation 
+ * &nbsp;&nbsp;&nbsp;The class for generating prediction output; if 'Null' is used, then an Evaluation
  * &nbsp;&nbsp;&nbsp;object is forwarded instead of a String; not used when using parallel execution.
  * &nbsp;&nbsp;&nbsp;default: weka.classifiers.evaluation.output.prediction.Null
  * </pre>
- * 
+ *
  * <pre>-always-use-container &lt;boolean&gt; (property: alwaysUseContainer)
  * &nbsp;&nbsp;&nbsp;If enabled, always outputs an evaluation container.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-classifier &lt;adams.flow.core.CallableActorReference&gt; (property: classifier)
  * &nbsp;&nbsp;&nbsp;The callable classifier actor to cross-validate on the input data.
  * &nbsp;&nbsp;&nbsp;default: WekaClassifierSetup
  * </pre>
- * 
+ *
  * <pre>-no-predictions &lt;boolean&gt; (property: discardPredictions)
  * &nbsp;&nbsp;&nbsp;If enabled, the collection of predictions during evaluation is suppressed,
  * &nbsp;&nbsp;&nbsp; wich will conserve memory.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-seed &lt;long&gt; (property: seed)
  * &nbsp;&nbsp;&nbsp;The seed value for the cross-validation (used for randomization).
  * &nbsp;&nbsp;&nbsp;default: 1
  * </pre>
- * 
+ *
  * <pre>-folds &lt;int&gt; (property: folds)
- * &nbsp;&nbsp;&nbsp;The number of folds to use in the cross-validation; use -1 for leave-one-out 
+ * &nbsp;&nbsp;&nbsp;The number of folds to use in the cross-validation; use -1 for leave-one-out
  * &nbsp;&nbsp;&nbsp;cross-validation (LOOCV).
  * &nbsp;&nbsp;&nbsp;default: 10
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-num-threads &lt;int&gt; (property: numThreads)
- * &nbsp;&nbsp;&nbsp;The number of threads to use for parallel execution; &gt; 0: specific number 
- * &nbsp;&nbsp;&nbsp;of cores to use (capped by actual number of cores available, 1 = sequential 
- * &nbsp;&nbsp;&nbsp;execution); = 0: number of cores; &lt; 0: number of free cores (eg -2 means 
+ * &nbsp;&nbsp;&nbsp;The number of threads to use for parallel execution; &gt; 0: specific number
+ * &nbsp;&nbsp;&nbsp;of cores to use (capped by actual number of cores available, 1 = sequential
+ * &nbsp;&nbsp;&nbsp;execution); = 0: number of cores; &lt; 0: number of free cores (eg -2 means
  * &nbsp;&nbsp;&nbsp;2 free cores; minimum of one core is used)
  * &nbsp;&nbsp;&nbsp;default: 1
  * </pre>
- * 
+ *
  * <pre>-use-views &lt;boolean&gt; (property: useViews)
  * &nbsp;&nbsp;&nbsp;If enabled, views of the dataset are being used instead of actual copies,
  * &nbsp;&nbsp;&nbsp; to conserve memory.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-final-model &lt;boolean&gt; (property: finalModel)
+ * &nbsp;&nbsp;&nbsp;If enabled, a final model is built on the full dataset.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaCrossValidationEvaluator
   extends AbstractCallableWekaClassifierEvaluator
@@ -163,6 +168,9 @@ public class WekaCrossValidationEvaluator
 
   /** whether to use views. */
   protected boolean m_UseViews;
+
+  /** whether to create a final model. */
+  protected boolean m_FinalModel;
 
   /** for performing cross-validation. */
   protected WekaCrossValidationExecution m_CrossValidation;
@@ -204,6 +212,10 @@ public class WekaCrossValidationEvaluator
     m_OptionManager.add(
       "use-views", "useViews",
       false);
+
+    m_OptionManager.add(
+      "final-model", "finalModel",
+      false);
   }
 
   /**
@@ -222,6 +234,9 @@ public class WekaCrossValidationEvaluator
     result += QuickInfoHelper.toString(this, "seed", m_Seed, ", seed: ");
     result += QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads), ", ");
     value  = QuickInfoHelper.toString(this, "useViews", m_UseViews, ", using views");
+    if (value != null)
+      result += value;
+    value  = QuickInfoHelper.toString(this, "finalModel", m_FinalModel, ", final model");
     if (value != null)
       result += value;
 
@@ -378,6 +393,35 @@ public class WekaCrossValidationEvaluator
   }
 
   /**
+   * Sets whether to build a final model on the full dataset.
+   *
+   * @param value	true if to build final model
+   */
+  public void setFinalModel(boolean value) {
+    m_FinalModel = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to build a final model on the full dataset.
+   *
+   * @return		true if to build final model
+   */
+  public boolean getFinalModel() {
+    return m_FinalModel;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String finalModelTipText() {
+    return "If enabled, a final model is built on the full dataset.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->weka.core.Instances.class<!-- flow-accepts-end -->
@@ -408,6 +452,7 @@ public class WekaCrossValidationEvaluator
     String				result;
     Instances				data;
     weka.classifiers.Classifier		cls;
+    weka.classifiers.Classifier		model;
     int[]				indices;
 
     indices = null;
@@ -453,6 +498,14 @@ public class WekaCrossValidationEvaluator
 	else {
 	  m_OutputToken = new Token(new WekaEvaluationContainer(m_CrossValidation.getEvaluation()));
 	}
+	// build model
+	if (m_OutputToken.hasPayload(WekaEvaluationContainer.class)) {
+	  if (m_FinalModel) {
+	    model = ObjectCopyHelper.copyObject(cls);
+	    model.buildClassifier(data);
+	    m_OutputToken.getPayload(WekaEvaluationContainer.class).setValue(WekaEvaluationContainer.VALUE_MODEL, model);
+	  }
+	}
       }
     }
     catch (Exception e) {
@@ -461,10 +514,10 @@ public class WekaCrossValidationEvaluator
     }
 
     if (m_OutputToken != null) {
-      if ((m_OutputToken.getPayload() instanceof WekaEvaluationContainer)) {
-        ((WekaEvaluationContainer) m_OutputToken.getPayload()).setValue(WekaEvaluationContainer.VALUE_TESTDATA, data);
+      if (m_OutputToken.hasPayload(WekaEvaluationContainer.class)) {
+        m_OutputToken.getPayload(WekaEvaluationContainer.class).setValue(WekaEvaluationContainer.VALUE_TESTDATA, data);
         if (indices != null)
-          ((WekaEvaluationContainer) m_OutputToken.getPayload()).setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, indices);
+          m_OutputToken.getPayload(WekaEvaluationContainer.class).setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, indices);
       }
       updateProvenance(m_OutputToken);
     }
