@@ -15,29 +15,95 @@
 
 /*
  * SystemPerformance.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
+import adams.core.Index;
 import adams.core.Utils;
+import adams.core.VariableName;
+import adams.core.base.BaseAnnotation;
+import adams.core.base.BaseText;
+import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractArgumentOption;
+import adams.data.DecimalFormatString;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.DoubleToString;
+import adams.data.conversion.MultiConversion;
+import adams.data.conversion.NumberToDouble;
+import adams.data.conversion.StringToString;
+import adams.data.random.JavaRandomDouble;
+import adams.data.random.JavaRandomInt;
+import adams.flow.condition.bool.Expression;
+import adams.flow.control.ArrayProcess;
+import adams.flow.control.ContainerValuePicker;
 import adams.flow.control.Flow;
 import adams.flow.control.Flow.ErrorHandling;
+import adams.flow.control.IfThenElse;
+import adams.flow.control.Sequence;
+import adams.flow.control.Tee;
+import adams.flow.control.TimedTee;
+import adams.flow.control.TimedTrigger;
+import adams.flow.control.Trigger;
 import adams.flow.core.Actor;
+import adams.flow.core.CallableActorReference;
+import adams.flow.execution.NullListener;
+import adams.flow.sink.CallableSink;
+import adams.flow.sink.Display;
+import adams.flow.sink.DumpFile;
+import adams.flow.sink.SequencePlotter;
+import adams.flow.sink.sequenceplotter.NoErrorPaintlet;
+import adams.flow.sink.sequenceplotter.NoMarkers;
+import adams.flow.sink.sequenceplotter.NullClickAction;
+import adams.flow.sink.sequenceplotter.PassThrough;
+import adams.flow.sink.sequenceplotter.SimplePlotUpdater;
+import adams.flow.source.CombineVariables;
+import adams.flow.source.EnterManyValues;
+import adams.flow.source.EnterManyValues.OutputType;
+import adams.flow.source.ForLoop;
+import adams.flow.source.RandomNumberGenerator;
+import adams.flow.source.Start;
+import adams.flow.source.Variable;
+import adams.flow.source.valuedefinition.AbstractValueDefinition;
 import adams.flow.source.valuedefinition.DefaultValueDefinition;
+import adams.flow.standalone.CallableActors;
+import adams.flow.standalone.GridView;
+import adams.flow.standalone.Standalones;
+import adams.flow.transformer.ArrayToSequence;
+import adams.flow.transformer.Convert;
+import adams.flow.transformer.DeleteFile;
+import adams.flow.transformer.GetArrayElement;
+import adams.flow.transformer.MakePlotContainer;
+import adams.flow.transformer.MathExpression;
+import adams.flow.transformer.SequenceToArray;
+import adams.flow.transformer.SetVariable;
+import adams.flow.transformer.StringJoin;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import adams.gui.print.NullWriter;
+import adams.gui.visualization.core.AxisPanelOptions;
+import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.axis.FancyTickGenerator;
+import adams.gui.visualization.sequence.CirclePaintlet;
+import adams.gui.visualization.sequence.LOWESSOverlayPaintlet;
+import adams.gui.visualization.sequence.metadatacolor.Dummy;
+import adams.parser.BooleanExpressionText;
+import adams.parser.MathematicalExpressionText;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tests the System performance.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SystemPerformance
   extends AbstractBasicMenuItemDefinition {
@@ -156,1003 +222,1014 @@ public class SystemPerformance
     AbstractArgumentOption    argOption;
 
     adams.flow.control.Flow actor = new adams.flow.control.Flow();
-    actor.setErrorHandling(ErrorHandling.ACTORS_DECIDE_TO_STOP_ON_ERROR);
 
     argOption = (AbstractArgumentOption) actor.getOptionManager().findByProperty("annotations");
-    actor.setAnnotations((adams.core.base.BaseAnnotation) argOption.valueOf("Uses flow components to give an overview of the system\'s performance."));
-    argOption = (AbstractArgumentOption) actor.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors2 = new adams.flow.core.Actor[8];
+    actor.setAnnotations((BaseAnnotation) argOption.valueOf("Uses flow components to give an overview of the system\'s performance."));
+    List<Actor> actors = new ArrayList<>();
 
     // Flow.System performance
-    adams.flow.standalone.GridView gridview3 = new adams.flow.standalone.GridView();
-    argOption = (AbstractArgumentOption) gridview3.getOptionManager().findByProperty("name");
-    gridview3.setName((java.lang.String) argOption.valueOf("System performance"));
-    gridview3.setShortTitle(true);
+    GridView gridview = new GridView();
+    {
+      argOption = (AbstractArgumentOption) gridview.getOptionManager().findByProperty("name");
+      gridview.setName((String) argOption.valueOf("System performance"));
+      gridview.setShortTitle(true);
 
-    argOption = (AbstractArgumentOption) gridview3.getOptionManager().findByProperty("x");
-    gridview3.setX((Integer) argOption.valueOf("-2"));
-    argOption = (AbstractArgumentOption) gridview3.getOptionManager().findByProperty("y");
-    gridview3.setY((Integer) argOption.valueOf("-2"));
-    argOption = (AbstractArgumentOption) gridview3.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors7 = new adams.flow.core.Actor[3];
+      argOption = (AbstractArgumentOption) gridview.getOptionManager().findByProperty("x");
+      gridview.setX((Integer) argOption.valueOf("-2"));
+      argOption = (AbstractArgumentOption) gridview.getOptionManager().findByProperty("y");
+      gridview.setY((Integer) argOption.valueOf("-2"));
+      List<Actor> actors2 = new ArrayList<>();
 
-    //
-    adams.flow.sink.SequencePlotter sequenceplotter8 = new adams.flow.sink.SequencePlotter();
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("name");
-    sequenceplotter8.setName((java.lang.String) argOption.valueOf("CPU"));
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("writer");
-    adams.gui.print.NullWriter nullwriter11 = new adams.gui.print.NullWriter();
-    sequenceplotter8.setWriter(nullwriter11);
+      //
+      SequencePlotter sequenceplotter = new SequencePlotter();
+      argOption = (AbstractArgumentOption) sequenceplotter.getOptionManager().findByProperty("name");
+      sequenceplotter.setName((String) argOption.valueOf("CPU"));
+      NullWriter nullwriter = new NullWriter();
+      sequenceplotter.setWriter(nullwriter);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("paintlet");
-    adams.gui.visualization.sequence.CirclePaintlet circlepaintlet13 = new adams.gui.visualization.sequence.CirclePaintlet();
-    sequenceplotter8.setPaintlet(circlepaintlet13);
+      CirclePaintlet circlepaintlet = new CirclePaintlet();
+      Dummy dummy = new Dummy();
+      circlepaintlet.setMetaDataColor(dummy);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("overlayPaintlet");
-    adams.gui.visualization.sequence.LOWESSOverlayPaintlet lowessoverlaypaintlet15 = new adams.gui.visualization.sequence.LOWESSOverlayPaintlet();
-    argOption = (AbstractArgumentOption) lowessoverlaypaintlet15.getOptionManager().findByProperty("color");
-    lowessoverlaypaintlet15.setColor((java.awt.Color) argOption.valueOf("#ff0000"));
-    argOption = (AbstractArgumentOption) lowessoverlaypaintlet15.getOptionManager().findByProperty("window");
-    lowessoverlaypaintlet15.setWindow((Integer) argOption.valueOf("50"));
-    sequenceplotter8.setOverlayPaintlet(lowessoverlaypaintlet15);
+      sequenceplotter.setPaintlet(circlepaintlet);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("markerPaintlet");
-    adams.flow.sink.sequenceplotter.NoMarkers nomarkers19 = new adams.flow.sink.sequenceplotter.NoMarkers();
-    sequenceplotter8.setMarkerPaintlet(nomarkers19);
+      LOWESSOverlayPaintlet lowessoverlaypaintlet = new LOWESSOverlayPaintlet();
+      argOption = (AbstractArgumentOption) lowessoverlaypaintlet.getOptionManager().findByProperty("color");
+      lowessoverlaypaintlet.setColor((Color) argOption.valueOf("#ff0000"));
+      argOption = (AbstractArgumentOption) lowessoverlaypaintlet.getOptionManager().findByProperty("window");
+      lowessoverlaypaintlet.setWindow((Integer) argOption.valueOf("50"));
+      sequenceplotter.setOverlayPaintlet(lowessoverlaypaintlet);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("errorPaintlet");
-    adams.flow.sink.sequenceplotter.NoErrorPaintlet noerrorpaintlet21 = new adams.flow.sink.sequenceplotter.NoErrorPaintlet();
-    sequenceplotter8.setErrorPaintlet(noerrorpaintlet21);
+      NoMarkers nomarkers = new NoMarkers();
+      sequenceplotter.setMarkerPaintlet(nomarkers);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("mouseClickAction");
-    adams.flow.sink.sequenceplotter.NullClickAction nullclickaction23 = new adams.flow.sink.sequenceplotter.NullClickAction();
-    sequenceplotter8.setMouseClickAction(nullclickaction23);
+      NoErrorPaintlet noerrorpaintlet = new NoErrorPaintlet();
+      sequenceplotter.setErrorPaintlet(noerrorpaintlet);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("colorProvider");
-    adams.gui.visualization.core.DefaultColorProvider defaultcolorprovider25 = new adams.gui.visualization.core.DefaultColorProvider();
-    sequenceplotter8.setColorProvider(defaultcolorprovider25);
+      NullClickAction nullclickaction = new NullClickAction();
+      sequenceplotter.setMouseClickAction(nullclickaction);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("overlayColorProvider");
-    adams.gui.visualization.core.DefaultColorProvider defaultcolorprovider27 = new adams.gui.visualization.core.DefaultColorProvider();
-    sequenceplotter8.setOverlayColorProvider(defaultcolorprovider27);
+      DefaultColorProvider defaultcolorprovider = new DefaultColorProvider();
+      sequenceplotter.setColorProvider(defaultcolorprovider);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("title");
-    sequenceplotter8.setTitle((java.lang.String) argOption.valueOf("CPU"));
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("axisX");
-    adams.gui.visualization.core.AxisPanelOptions axispaneloptions30 = new adams.gui.visualization.core.AxisPanelOptions();
-    argOption = (AbstractArgumentOption) axispaneloptions30.getOptionManager().findByProperty("label");
-    axispaneloptions30.setLabel((java.lang.String) argOption.valueOf("evaluations"));
-    argOption = (AbstractArgumentOption) axispaneloptions30.getOptionManager().findByProperty("tickGenerator");
-    adams.gui.visualization.core.axis.FancyTickGenerator fancytickgenerator33 = new adams.gui.visualization.core.axis.FancyTickGenerator();
-    axispaneloptions30.setTickGenerator(fancytickgenerator33);
+      DefaultColorProvider defaultcolorprovider2 = new DefaultColorProvider();
+      sequenceplotter.setOverlayColorProvider(defaultcolorprovider2);
 
-    argOption = (AbstractArgumentOption) axispaneloptions30.getOptionManager().findByProperty("nthValueToShow");
-    axispaneloptions30.setNthValueToShow((Integer) argOption.valueOf("2"));
-    argOption = (AbstractArgumentOption) axispaneloptions30.getOptionManager().findByProperty("width");
-    axispaneloptions30.setWidth((Integer) argOption.valueOf("40"));
-    argOption = (AbstractArgumentOption) axispaneloptions30.getOptionManager().findByProperty("customFormat");
-    axispaneloptions30.setCustomFormat((adams.data.DecimalFormatString) argOption.valueOf("0"));
-    sequenceplotter8.setAxisX(axispaneloptions30);
+      argOption = (AbstractArgumentOption) sequenceplotter.getOptionManager().findByProperty("title");
+      sequenceplotter.setTitle((String) argOption.valueOf("CPU"));
+      AxisPanelOptions axispaneloptions = new AxisPanelOptions();
+      argOption = (AbstractArgumentOption) axispaneloptions.getOptionManager().findByProperty("label");
+      axispaneloptions.setLabel((String) argOption.valueOf("evaluations"));
+      FancyTickGenerator fancytickgenerator = new FancyTickGenerator();
+      axispaneloptions.setTickGenerator(fancytickgenerator);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("axisY");
-    adams.gui.visualization.core.AxisPanelOptions axispaneloptions38 = new adams.gui.visualization.core.AxisPanelOptions();
-    argOption = (AbstractArgumentOption) axispaneloptions38.getOptionManager().findByProperty("label");
-    axispaneloptions38.setLabel((java.lang.String) argOption.valueOf("msec"));
-    argOption = (AbstractArgumentOption) axispaneloptions38.getOptionManager().findByProperty("tickGenerator");
-    adams.gui.visualization.core.axis.FancyTickGenerator fancytickgenerator41 = new adams.gui.visualization.core.axis.FancyTickGenerator();
-    axispaneloptions38.setTickGenerator(fancytickgenerator41);
+      argOption = (AbstractArgumentOption) axispaneloptions.getOptionManager().findByProperty("nthValueToShow");
+      axispaneloptions.setNthValueToShow((Integer) argOption.valueOf("2"));
+      argOption = (AbstractArgumentOption) axispaneloptions.getOptionManager().findByProperty("width");
+      axispaneloptions.setWidth((Integer) argOption.valueOf("40"));
+      argOption = (AbstractArgumentOption) axispaneloptions.getOptionManager().findByProperty("customFormat");
+      axispaneloptions.setCustomFormat((DecimalFormatString) argOption.valueOf("0"));
+      sequenceplotter.setAxisX(axispaneloptions);
 
-    argOption = (AbstractArgumentOption) axispaneloptions38.getOptionManager().findByProperty("nthValueToShow");
-    axispaneloptions38.setNthValueToShow((Integer) argOption.valueOf("2"));
-    argOption = (AbstractArgumentOption) axispaneloptions38.getOptionManager().findByProperty("width");
-    axispaneloptions38.setWidth((Integer) argOption.valueOf("60"));
-    argOption = (AbstractArgumentOption) axispaneloptions38.getOptionManager().findByProperty("topMargin");
-    axispaneloptions38.setTopMargin((Double) argOption.valueOf("0.05"));
-    argOption = (AbstractArgumentOption) axispaneloptions38.getOptionManager().findByProperty("bottomMargin");
-    axispaneloptions38.setBottomMargin((Double) argOption.valueOf("0.05"));
-    argOption = (AbstractArgumentOption) axispaneloptions38.getOptionManager().findByProperty("customFormat");
-    axispaneloptions38.setCustomFormat((adams.data.DecimalFormatString) argOption.valueOf("0"));
-    sequenceplotter8.setAxisY(axispaneloptions38);
+      AxisPanelOptions axispaneloptions2 = new AxisPanelOptions();
+      argOption = (AbstractArgumentOption) axispaneloptions2.getOptionManager().findByProperty("label");
+      axispaneloptions2.setLabel((String) argOption.valueOf("msec"));
+      FancyTickGenerator fancytickgenerator2 = new FancyTickGenerator();
+      axispaneloptions2.setTickGenerator(fancytickgenerator2);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("plotUpdater");
-    adams.flow.sink.sequenceplotter.SimplePlotUpdater simpleplotupdater48 = new adams.flow.sink.sequenceplotter.SimplePlotUpdater();
-    argOption = (AbstractArgumentOption) simpleplotupdater48.getOptionManager().findByProperty("updateInterval");
-    argOption.setVariable("@{cpu_plot_update}");
-    sequenceplotter8.setPlotUpdater(simpleplotupdater48);
+      argOption = (AbstractArgumentOption) axispaneloptions2.getOptionManager().findByProperty("nthValueToShow");
+      axispaneloptions2.setNthValueToShow((Integer) argOption.valueOf("2"));
+      argOption = (AbstractArgumentOption) axispaneloptions2.getOptionManager().findByProperty("width");
+      axispaneloptions2.setWidth((Integer) argOption.valueOf("60"));
+      argOption = (AbstractArgumentOption) axispaneloptions2.getOptionManager().findByProperty("topMargin");
+      axispaneloptions2.setTopMargin((Double) argOption.valueOf("0.05"));
+      argOption = (AbstractArgumentOption) axispaneloptions2.getOptionManager().findByProperty("bottomMargin");
+      axispaneloptions2.setBottomMargin((Double) argOption.valueOf("0.05"));
+      argOption = (AbstractArgumentOption) axispaneloptions2.getOptionManager().findByProperty("customFormat");
+      axispaneloptions2.setCustomFormat((DecimalFormatString) argOption.valueOf("0"));
+      sequenceplotter.setAxisY(axispaneloptions2);
 
-    argOption = (AbstractArgumentOption) sequenceplotter8.getOptionManager().findByProperty("postProcessor");
-    adams.flow.sink.sequenceplotter.PassThrough passthrough50 = new adams.flow.sink.sequenceplotter.PassThrough();
-    sequenceplotter8.setPostProcessor(passthrough50);
+      SimplePlotUpdater simpleplotupdater = new SimplePlotUpdater();
+      argOption = (AbstractArgumentOption) simpleplotupdater.getOptionManager().findByProperty("updateInterval");
+      argOption.setVariable("@{cpu_plot_update}");
+      sequenceplotter.setPlotUpdater(simpleplotupdater);
 
-    actors7[0] = sequenceplotter8;
+      PassThrough passthrough = new PassThrough();
+      sequenceplotter.setPostProcessor(passthrough);
 
-    //
-    adams.flow.sink.SequencePlotter sequenceplotter51 = new adams.flow.sink.SequencePlotter();
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("name");
-    sequenceplotter51.setName((java.lang.String) argOption.valueOf("Write"));
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("writer");
-    adams.gui.print.NullWriter nullwriter54 = new adams.gui.print.NullWriter();
-    sequenceplotter51.setWriter(nullwriter54);
+      actors2.add(sequenceplotter);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("paintlet");
-    adams.gui.visualization.sequence.CirclePaintlet circlepaintlet56 = new adams.gui.visualization.sequence.CirclePaintlet();
-    sequenceplotter51.setPaintlet(circlepaintlet56);
+      //
+      SequencePlotter sequenceplotter2 = new SequencePlotter();
+      argOption = (AbstractArgumentOption) sequenceplotter2.getOptionManager().findByProperty("name");
+      sequenceplotter2.setName((String) argOption.valueOf("Write"));
+      NullWriter nullwriter2 = new NullWriter();
+      sequenceplotter2.setWriter(nullwriter2);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("overlayPaintlet");
-    adams.gui.visualization.sequence.LOWESSOverlayPaintlet lowessoverlaypaintlet58 = new adams.gui.visualization.sequence.LOWESSOverlayPaintlet();
-    argOption = (AbstractArgumentOption) lowessoverlaypaintlet58.getOptionManager().findByProperty("color");
-    lowessoverlaypaintlet58.setColor((java.awt.Color) argOption.valueOf("#ff0000"));
-    argOption = (AbstractArgumentOption) lowessoverlaypaintlet58.getOptionManager().findByProperty("window");
-    lowessoverlaypaintlet58.setWindow((Integer) argOption.valueOf("50"));
-    sequenceplotter51.setOverlayPaintlet(lowessoverlaypaintlet58);
+      CirclePaintlet circlepaintlet2 = new CirclePaintlet();
+      Dummy dummy2 = new Dummy();
+      circlepaintlet2.setMetaDataColor(dummy2);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("markerPaintlet");
-    adams.flow.sink.sequenceplotter.NoMarkers nomarkers62 = new adams.flow.sink.sequenceplotter.NoMarkers();
-    sequenceplotter51.setMarkerPaintlet(nomarkers62);
+      sequenceplotter2.setPaintlet(circlepaintlet2);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("errorPaintlet");
-    adams.flow.sink.sequenceplotter.NoErrorPaintlet noerrorpaintlet64 = new adams.flow.sink.sequenceplotter.NoErrorPaintlet();
-    sequenceplotter51.setErrorPaintlet(noerrorpaintlet64);
+      LOWESSOverlayPaintlet lowessoverlaypaintlet2 = new LOWESSOverlayPaintlet();
+      argOption = (AbstractArgumentOption) lowessoverlaypaintlet2.getOptionManager().findByProperty("color");
+      lowessoverlaypaintlet2.setColor((Color) argOption.valueOf("#ff0000"));
+      argOption = (AbstractArgumentOption) lowessoverlaypaintlet2.getOptionManager().findByProperty("window");
+      lowessoverlaypaintlet2.setWindow((Integer) argOption.valueOf("50"));
+      sequenceplotter2.setOverlayPaintlet(lowessoverlaypaintlet2);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("mouseClickAction");
-    adams.flow.sink.sequenceplotter.NullClickAction nullclickaction66 = new adams.flow.sink.sequenceplotter.NullClickAction();
-    sequenceplotter51.setMouseClickAction(nullclickaction66);
+      NoMarkers nomarkers2 = new NoMarkers();
+      sequenceplotter2.setMarkerPaintlet(nomarkers2);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("colorProvider");
-    adams.gui.visualization.core.DefaultColorProvider defaultcolorprovider68 = new adams.gui.visualization.core.DefaultColorProvider();
-    sequenceplotter51.setColorProvider(defaultcolorprovider68);
+      NoErrorPaintlet noerrorpaintlet2 = new NoErrorPaintlet();
+      sequenceplotter2.setErrorPaintlet(noerrorpaintlet2);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("overlayColorProvider");
-    adams.gui.visualization.core.DefaultColorProvider defaultcolorprovider70 = new adams.gui.visualization.core.DefaultColorProvider();
-    sequenceplotter51.setOverlayColorProvider(defaultcolorprovider70);
+      NullClickAction nullclickaction2 = new NullClickAction();
+      sequenceplotter2.setMouseClickAction(nullclickaction2);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("title");
-    sequenceplotter51.setTitle((java.lang.String) argOption.valueOf("Write"));
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("axisX");
-    adams.gui.visualization.core.AxisPanelOptions axispaneloptions73 = new adams.gui.visualization.core.AxisPanelOptions();
-    argOption = (AbstractArgumentOption) axispaneloptions73.getOptionManager().findByProperty("label");
-    axispaneloptions73.setLabel((java.lang.String) argOption.valueOf("evaluations"));
-    argOption = (AbstractArgumentOption) axispaneloptions73.getOptionManager().findByProperty("tickGenerator");
-    adams.gui.visualization.core.axis.FancyTickGenerator fancytickgenerator76 = new adams.gui.visualization.core.axis.FancyTickGenerator();
-    axispaneloptions73.setTickGenerator(fancytickgenerator76);
+      DefaultColorProvider defaultcolorprovider3 = new DefaultColorProvider();
+      sequenceplotter2.setColorProvider(defaultcolorprovider3);
 
-    argOption = (AbstractArgumentOption) axispaneloptions73.getOptionManager().findByProperty("nthValueToShow");
-    axispaneloptions73.setNthValueToShow((Integer) argOption.valueOf("2"));
-    argOption = (AbstractArgumentOption) axispaneloptions73.getOptionManager().findByProperty("width");
-    axispaneloptions73.setWidth((Integer) argOption.valueOf("40"));
-    argOption = (AbstractArgumentOption) axispaneloptions73.getOptionManager().findByProperty("customFormat");
-    axispaneloptions73.setCustomFormat((adams.data.DecimalFormatString) argOption.valueOf("0"));
-    sequenceplotter51.setAxisX(axispaneloptions73);
+      DefaultColorProvider defaultcolorprovider4 = new DefaultColorProvider();
+      sequenceplotter2.setOverlayColorProvider(defaultcolorprovider4);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("axisY");
-    adams.gui.visualization.core.AxisPanelOptions axispaneloptions81 = new adams.gui.visualization.core.AxisPanelOptions();
-    argOption = (AbstractArgumentOption) axispaneloptions81.getOptionManager().findByProperty("label");
-    axispaneloptions81.setLabel((java.lang.String) argOption.valueOf("msec"));
-    argOption = (AbstractArgumentOption) axispaneloptions81.getOptionManager().findByProperty("tickGenerator");
-    adams.gui.visualization.core.axis.FancyTickGenerator fancytickgenerator84 = new adams.gui.visualization.core.axis.FancyTickGenerator();
-    axispaneloptions81.setTickGenerator(fancytickgenerator84);
+      argOption = (AbstractArgumentOption) sequenceplotter2.getOptionManager().findByProperty("title");
+      sequenceplotter2.setTitle((String) argOption.valueOf("Write"));
+      AxisPanelOptions axispaneloptions3 = new AxisPanelOptions();
+      argOption = (AbstractArgumentOption) axispaneloptions3.getOptionManager().findByProperty("label");
+      axispaneloptions3.setLabel((String) argOption.valueOf("evaluations"));
+      FancyTickGenerator fancytickgenerator3 = new FancyTickGenerator();
+      axispaneloptions3.setTickGenerator(fancytickgenerator3);
 
-    argOption = (AbstractArgumentOption) axispaneloptions81.getOptionManager().findByProperty("nthValueToShow");
-    axispaneloptions81.setNthValueToShow((Integer) argOption.valueOf("2"));
-    argOption = (AbstractArgumentOption) axispaneloptions81.getOptionManager().findByProperty("width");
-    axispaneloptions81.setWidth((Integer) argOption.valueOf("60"));
-    argOption = (AbstractArgumentOption) axispaneloptions81.getOptionManager().findByProperty("topMargin");
-    axispaneloptions81.setTopMargin((Double) argOption.valueOf("0.05"));
-    argOption = (AbstractArgumentOption) axispaneloptions81.getOptionManager().findByProperty("bottomMargin");
-    axispaneloptions81.setBottomMargin((Double) argOption.valueOf("0.05"));
-    argOption = (AbstractArgumentOption) axispaneloptions81.getOptionManager().findByProperty("customFormat");
-    axispaneloptions81.setCustomFormat((adams.data.DecimalFormatString) argOption.valueOf("0"));
-    sequenceplotter51.setAxisY(axispaneloptions81);
+      argOption = (AbstractArgumentOption) axispaneloptions3.getOptionManager().findByProperty("nthValueToShow");
+      axispaneloptions3.setNthValueToShow((Integer) argOption.valueOf("2"));
+      argOption = (AbstractArgumentOption) axispaneloptions3.getOptionManager().findByProperty("width");
+      axispaneloptions3.setWidth((Integer) argOption.valueOf("40"));
+      argOption = (AbstractArgumentOption) axispaneloptions3.getOptionManager().findByProperty("customFormat");
+      axispaneloptions3.setCustomFormat((DecimalFormatString) argOption.valueOf("0"));
+      sequenceplotter2.setAxisX(axispaneloptions3);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("plotUpdater");
-    adams.flow.sink.sequenceplotter.SimplePlotUpdater simpleplotupdater91 = new adams.flow.sink.sequenceplotter.SimplePlotUpdater();
-    argOption = (AbstractArgumentOption) simpleplotupdater91.getOptionManager().findByProperty("updateInterval");
-    argOption.setVariable("@{write_plot_update}");
-    sequenceplotter51.setPlotUpdater(simpleplotupdater91);
+      AxisPanelOptions axispaneloptions4 = new AxisPanelOptions();
+      argOption = (AbstractArgumentOption) axispaneloptions4.getOptionManager().findByProperty("label");
+      axispaneloptions4.setLabel((String) argOption.valueOf("msec"));
+      FancyTickGenerator fancytickgenerator4 = new FancyTickGenerator();
+      axispaneloptions4.setTickGenerator(fancytickgenerator4);
 
-    argOption = (AbstractArgumentOption) sequenceplotter51.getOptionManager().findByProperty("postProcessor");
-    adams.flow.sink.sequenceplotter.PassThrough passthrough93 = new adams.flow.sink.sequenceplotter.PassThrough();
-    sequenceplotter51.setPostProcessor(passthrough93);
+      argOption = (AbstractArgumentOption) axispaneloptions4.getOptionManager().findByProperty("nthValueToShow");
+      axispaneloptions4.setNthValueToShow((Integer) argOption.valueOf("2"));
+      argOption = (AbstractArgumentOption) axispaneloptions4.getOptionManager().findByProperty("width");
+      axispaneloptions4.setWidth((Integer) argOption.valueOf("60"));
+      argOption = (AbstractArgumentOption) axispaneloptions4.getOptionManager().findByProperty("topMargin");
+      axispaneloptions4.setTopMargin((Double) argOption.valueOf("0.05"));
+      argOption = (AbstractArgumentOption) axispaneloptions4.getOptionManager().findByProperty("bottomMargin");
+      axispaneloptions4.setBottomMargin((Double) argOption.valueOf("0.05"));
+      argOption = (AbstractArgumentOption) axispaneloptions4.getOptionManager().findByProperty("customFormat");
+      axispaneloptions4.setCustomFormat((DecimalFormatString) argOption.valueOf("0"));
+      sequenceplotter2.setAxisY(axispaneloptions4);
 
-    actors7[1] = sequenceplotter51;
+      SimplePlotUpdater simpleplotupdater2 = new SimplePlotUpdater();
+      argOption = (AbstractArgumentOption) simpleplotupdater2.getOptionManager().findByProperty("updateInterval");
+      argOption.setVariable("@{write_plot_update}");
+      sequenceplotter2.setPlotUpdater(simpleplotupdater2);
 
-    //
-    adams.flow.sink.Display display94 = new adams.flow.sink.Display();
-    argOption = (AbstractArgumentOption) display94.getOptionManager().findByProperty("name");
-    display94.setName((java.lang.String) argOption.valueOf("Overall"));
-    argOption = (AbstractArgumentOption) display94.getOptionManager().findByProperty("writer");
-    adams.data.io.output.NullWriter nullwriter97 = new adams.data.io.output.NullWriter();
-    display94.setWriter(nullwriter97);
+      PassThrough passthrough2 = new PassThrough();
+      sequenceplotter2.setPostProcessor(passthrough2);
 
-    actors7[2] = display94;
-    gridview3.setActors(actors7);
+      actors2.add(sequenceplotter2);
 
-    argOption = (AbstractArgumentOption) gridview3.getOptionManager().findByProperty("numRows");
-    gridview3.setNumRows((Integer) argOption.valueOf("3"));
-    argOption = (AbstractArgumentOption) gridview3.getOptionManager().findByProperty("writer");
-    adams.gui.print.NullWriter nullwriter100 = new adams.gui.print.NullWriter();
-    gridview3.setWriter(nullwriter100);
+      //
+      Display display = new Display();
+      argOption = (AbstractArgumentOption) display.getOptionManager().findByProperty("name");
+      display.setName((String) argOption.valueOf("Overall"));
+      adams.data.io.output.NullWriter nullwriter3 = new adams.data.io.output.NullWriter();
+      display.setWriter(nullwriter3);
 
-    actors2[0] = gridview3;
+      actors2.add(display);
+      gridview.setActors(actors2.toArray(new Actor[0]));
+
+      argOption = (AbstractArgumentOption) gridview.getOptionManager().findByProperty("numRows");
+      gridview.setNumRows((Integer) argOption.valueOf("3"));
+      NullWriter nullwriter4 = new NullWriter();
+      gridview.setWriter(nullwriter4);
+
+    }
+    actors.add(gridview);
 
     // Flow.CallableActors
-    adams.flow.standalone.CallableActors callableactors101 = new adams.flow.standalone.CallableActors();
-    argOption = (AbstractArgumentOption) callableactors101.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors102 = new adams.flow.core.Actor[3];
+    CallableActors callableactors = new CallableActors();
+    {
+      List<Actor> actors3 = new ArrayList<>();
 
-    // Flow.CallableActors.timing_write
-    adams.flow.control.Sequence sequence103 = new adams.flow.control.Sequence();
-    argOption = (AbstractArgumentOption) sequence103.getOptionManager().findByProperty("name");
-    sequence103.setName((java.lang.String) argOption.valueOf("timing_write"));
-    argOption = (AbstractArgumentOption) sequence103.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors105 = new adams.flow.core.Actor[3];
+      // Flow.CallableActors.timing_write
+      Sequence sequence = new Sequence();
+      {
+        argOption = (AbstractArgumentOption) sequence.getOptionManager().findByProperty("name");
+        sequence.setName((String) argOption.valueOf("timing_write"));
+        List<Actor> actors4 = new ArrayList<>();
 
-    // Flow.CallableActors.timing_write.ContainerValuePicker
-    adams.flow.control.ContainerValuePicker containervaluepicker106 = new adams.flow.control.ContainerValuePicker();
-    argOption = (AbstractArgumentOption) containervaluepicker106.getOptionManager().findByProperty("valueName");
-    containervaluepicker106.setValueName((java.lang.String) argOption.valueOf("msec"));
-    containervaluepicker106.setSwitchOutputs(true);
+        // Flow.CallableActors.timing_write.ContainerValuePicker
+        ContainerValuePicker containervaluepicker = new ContainerValuePicker();
+        {
+          argOption = (AbstractArgumentOption) containervaluepicker.getOptionManager().findByProperty("valueName");
+          containervaluepicker.setValueName((String) argOption.valueOf("msec"));
+          containervaluepicker.setSwitchOutputs(true);
 
-    actors105[0] = containervaluepicker106;
+        }
+        actors4.add(containervaluepicker);
 
-    // Flow.CallableActors.timing_write.MakePlotContainer
-    adams.flow.transformer.MakePlotContainer makeplotcontainer108 = new adams.flow.transformer.MakePlotContainer();
-    argOption = (AbstractArgumentOption) makeplotcontainer108.getOptionManager().findByProperty("plotName");
-    makeplotcontainer108.setPlotName((java.lang.String) argOption.valueOf("Write speed"));
-    actors105[1] = makeplotcontainer108;
+        // Flow.CallableActors.timing_write.MakePlotContainer
+        MakePlotContainer makeplotcontainer = new MakePlotContainer();
+        argOption = (AbstractArgumentOption) makeplotcontainer.getOptionManager().findByProperty("plotName");
+        makeplotcontainer.setPlotName((String) argOption.valueOf("Write speed"));
+        actors4.add(makeplotcontainer);
 
-    // Flow.CallableActors.timing_write.CallableSink
-    adams.flow.sink.CallableSink callablesink110 = new adams.flow.sink.CallableSink();
-    argOption = (AbstractArgumentOption) callablesink110.getOptionManager().findByProperty("callableName");
-    callablesink110.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("Write"));
-    actors105[2] = callablesink110;
-    sequence103.setActors(actors105);
+        // Flow.CallableActors.timing_write.CallableSink
+        CallableSink callablesink = new CallableSink();
+        argOption = (AbstractArgumentOption) callablesink.getOptionManager().findByProperty("callableName");
+        callablesink.setCallableName((CallableActorReference) argOption.valueOf("Write"));
+        actors4.add(callablesink);
+        sequence.setActors(actors4.toArray(new Actor[0]));
 
-    actors102[0] = sequence103;
+      }
+      actors3.add(sequence);
 
-    // Flow.CallableActors.timing_cpuspeed
-    adams.flow.control.Sequence sequence112 = new adams.flow.control.Sequence();
-    argOption = (AbstractArgumentOption) sequence112.getOptionManager().findByProperty("name");
-    sequence112.setName((java.lang.String) argOption.valueOf("timing_cpuspeed"));
-    argOption = (AbstractArgumentOption) sequence112.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors114 = new adams.flow.core.Actor[3];
+      // Flow.CallableActors.timing_cpuspeed
+      Sequence sequence2 = new Sequence();
+      {
+        argOption = (AbstractArgumentOption) sequence2.getOptionManager().findByProperty("name");
+        sequence2.setName((String) argOption.valueOf("timing_cpuspeed"));
+        List<Actor> actors5 = new ArrayList<>();
 
-    // Flow.CallableActors.timing_cpuspeed.ContainerValuePicker
-    adams.flow.control.ContainerValuePicker containervaluepicker115 = new adams.flow.control.ContainerValuePicker();
-    argOption = (AbstractArgumentOption) containervaluepicker115.getOptionManager().findByProperty("valueName");
-    containervaluepicker115.setValueName((java.lang.String) argOption.valueOf("msec"));
-    containervaluepicker115.setSwitchOutputs(true);
+        // Flow.CallableActors.timing_cpuspeed.ContainerValuePicker
+        ContainerValuePicker containervaluepicker2 = new ContainerValuePicker();
+        {
+          argOption = (AbstractArgumentOption) containervaluepicker2.getOptionManager().findByProperty("valueName");
+          containervaluepicker2.setValueName((String) argOption.valueOf("msec"));
+          containervaluepicker2.setSwitchOutputs(true);
 
-    actors114[0] = containervaluepicker115;
+        }
+        actors5.add(containervaluepicker2);
 
-    // Flow.CallableActors.timing_cpuspeed.MakePlotContainer
-    adams.flow.transformer.MakePlotContainer makeplotcontainer117 = new adams.flow.transformer.MakePlotContainer();
-    argOption = (AbstractArgumentOption) makeplotcontainer117.getOptionManager().findByProperty("plotName");
-    makeplotcontainer117.setPlotName((java.lang.String) argOption.valueOf("CPU Speed"));
-    actors114[1] = makeplotcontainer117;
+        // Flow.CallableActors.timing_cpuspeed.MakePlotContainer
+        MakePlotContainer makeplotcontainer2 = new MakePlotContainer();
+        argOption = (AbstractArgumentOption) makeplotcontainer2.getOptionManager().findByProperty("plotName");
+        makeplotcontainer2.setPlotName((String) argOption.valueOf("CPU Speed"));
+        actors5.add(makeplotcontainer2);
 
-    // Flow.CallableActors.timing_cpuspeed.CallableSink
-    adams.flow.sink.CallableSink callablesink119 = new adams.flow.sink.CallableSink();
-    argOption = (AbstractArgumentOption) callablesink119.getOptionManager().findByProperty("callableName");
-    callablesink119.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("CPU"));
-    actors114[2] = callablesink119;
-    sequence112.setActors(actors114);
+        // Flow.CallableActors.timing_cpuspeed.CallableSink
+        CallableSink callablesink2 = new CallableSink();
+        argOption = (AbstractArgumentOption) callablesink2.getOptionManager().findByProperty("callableName");
+        callablesink2.setCallableName((CallableActorReference) argOption.valueOf("CPU"));
+        actors5.add(callablesink2);
+        sequence2.setActors(actors5.toArray(new Actor[0]));
 
-    actors102[1] = sequence112;
+      }
+      actors3.add(sequence2);
 
-    // Flow.CallableActors.timing_overall
-    adams.flow.control.Sequence sequence121 = new adams.flow.control.Sequence();
-    argOption = (AbstractArgumentOption) sequence121.getOptionManager().findByProperty("name");
-    sequence121.setName((java.lang.String) argOption.valueOf("timing_overall"));
-    argOption = (AbstractArgumentOption) sequence121.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors123 = new adams.flow.core.Actor[3];
+      // Flow.CallableActors.timing_overall
+      Sequence sequence3 = new Sequence();
+      {
+        argOption = (AbstractArgumentOption) sequence3.getOptionManager().findByProperty("name");
+        sequence3.setName((String) argOption.valueOf("timing_overall"));
+        List<Actor> actors6 = new ArrayList<>();
 
-    // Flow.CallableActors.timing_overall.ContainerValuePicker
-    adams.flow.control.ContainerValuePicker containervaluepicker124 = new adams.flow.control.ContainerValuePicker();
-    argOption = (AbstractArgumentOption) containervaluepicker124.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors125 = new adams.flow.core.Actor[1];
+        // Flow.CallableActors.timing_overall.ContainerValuePicker
+        ContainerValuePicker containervaluepicker3 = new ContainerValuePicker();
+        {
+          List<Actor> actors7 = new ArrayList<>();
 
-    // Flow.CallableActors.timing_overall.ContainerValuePicker.SetVariable
-    adams.flow.transformer.SetVariable setvariable126 = new adams.flow.transformer.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable126.getOptionManager().findByProperty("variableName");
-    setvariable126.setVariableName((adams.core.VariableName) argOption.valueOf("msec"));
-    actors125[0] = setvariable126;
-    containervaluepicker124.setActors(actors125);
+          // Flow.CallableActors.timing_overall.ContainerValuePicker.SetVariable
+          SetVariable setvariable = new SetVariable();
+          argOption = (AbstractArgumentOption) setvariable.getOptionManager().findByProperty("variableName");
+          setvariable.setVariableName((VariableName) argOption.valueOf("msec"));
+          actors7.add(setvariable);
+          containervaluepicker3.setActors(actors7.toArray(new Actor[0]));
 
-    argOption = (AbstractArgumentOption) containervaluepicker124.getOptionManager().findByProperty("valueName");
-    containervaluepicker124.setValueName((java.lang.String) argOption.valueOf("msec"));
-    actors123[0] = containervaluepicker124;
+          argOption = (AbstractArgumentOption) containervaluepicker3.getOptionManager().findByProperty("valueName");
+          containervaluepicker3.setValueName((String) argOption.valueOf("msec"));
+        }
+        actors6.add(containervaluepicker3);
 
-    // Flow.CallableActors.timing_overall.ContainerValuePicker-1
-    adams.flow.control.ContainerValuePicker containervaluepicker129 = new adams.flow.control.ContainerValuePicker();
-    argOption = (AbstractArgumentOption) containervaluepicker129.getOptionManager().findByProperty("name");
-    containervaluepicker129.setName((java.lang.String) argOption.valueOf("ContainerValuePicker-1"));
-    argOption = (AbstractArgumentOption) containervaluepicker129.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors131 = new adams.flow.core.Actor[1];
+        // Flow.CallableActors.timing_overall.ContainerValuePicker-1
+        ContainerValuePicker containervaluepicker4 = new ContainerValuePicker();
+        {
+          argOption = (AbstractArgumentOption) containervaluepicker4.getOptionManager().findByProperty("name");
+          containervaluepicker4.setName((String) argOption.valueOf("ContainerValuePicker-1"));
+          List<Actor> actors8 = new ArrayList<>();
 
-    // Flow.CallableActors.timing_overall.ContainerValuePicker-1.SetVariable
-    adams.flow.transformer.SetVariable setvariable132 = new adams.flow.transformer.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable132.getOptionManager().findByProperty("variableName");
-    setvariable132.setVariableName((adams.core.VariableName) argOption.valueOf("prefix"));
-    actors131[0] = setvariable132;
-    containervaluepicker129.setActors(actors131);
+          // Flow.CallableActors.timing_overall.ContainerValuePicker-1.SetVariable
+          SetVariable setvariable2 = new SetVariable();
+          argOption = (AbstractArgumentOption) setvariable2.getOptionManager().findByProperty("variableName");
+          setvariable2.setVariableName((VariableName) argOption.valueOf("prefix"));
+          actors8.add(setvariable2);
+          containervaluepicker4.setActors(actors8.toArray(new Actor[0]));
 
-    argOption = (AbstractArgumentOption) containervaluepicker129.getOptionManager().findByProperty("valueName");
-    containervaluepicker129.setValueName((java.lang.String) argOption.valueOf("Prefix"));
-    actors123[1] = containervaluepicker129;
+          argOption = (AbstractArgumentOption) containervaluepicker4.getOptionManager().findByProperty("valueName");
+          containervaluepicker4.setValueName((String) argOption.valueOf("Prefix"));
+        }
+        actors6.add(containervaluepicker4);
 
-    // Flow.CallableActors.timing_overall.generate output
-    adams.flow.control.Trigger trigger135 = new adams.flow.control.Trigger();
-    argOption = (AbstractArgumentOption) trigger135.getOptionManager().findByProperty("name");
-    trigger135.setName((java.lang.String) argOption.valueOf("generate output"));
-    argOption = (AbstractArgumentOption) trigger135.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors137 = new adams.flow.core.Actor[2];
+        // Flow.CallableActors.timing_overall.generate output
+        Trigger trigger = new Trigger();
+        {
+          argOption = (AbstractArgumentOption) trigger.getOptionManager().findByProperty("name");
+          trigger.setName((String) argOption.valueOf("generate output"));
+          List<Actor> actors9 = new ArrayList<>();
 
-    // Flow.CallableActors.timing_overall.generate output.CombineVariables
-    adams.flow.source.CombineVariables combinevariables138 = new adams.flow.source.CombineVariables();
-    argOption = (AbstractArgumentOption) combinevariables138.getOptionManager().findByProperty("expression");
-    combinevariables138.setExpression((adams.core.base.BaseText) argOption.valueOf("Overall @{prefix}: @{msec} msec"));
-    actors137[0] = combinevariables138;
+          // Flow.CallableActors.timing_overall.generate output.CombineVariables
+          CombineVariables combinevariables = new CombineVariables();
+          argOption = (AbstractArgumentOption) combinevariables.getOptionManager().findByProperty("expression");
+          combinevariables.setExpression((BaseText) argOption.valueOf("Overall @{prefix}: @{msec} msec"));
+          StringToString stringtostring = new StringToString();
+          combinevariables.setConversion(stringtostring);
 
-    // Flow.CallableActors.timing_overall.generate output.CallableSink
-    adams.flow.sink.CallableSink callablesink140 = new adams.flow.sink.CallableSink();
-    argOption = (AbstractArgumentOption) callablesink140.getOptionManager().findByProperty("callableName");
-    callablesink140.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("Overall"));
-    actors137[1] = callablesink140;
-    trigger135.setActors(actors137);
+          actors9.add(combinevariables);
 
-    actors123[2] = trigger135;
-    sequence121.setActors(actors123);
+          // Flow.CallableActors.timing_overall.generate output.CallableSink
+          CallableSink callablesink3 = new CallableSink();
+          argOption = (AbstractArgumentOption) callablesink3.getOptionManager().findByProperty("callableName");
+          callablesink3.setCallableName((CallableActorReference) argOption.valueOf("Overall"));
+          actors9.add(callablesink3);
+          trigger.setActors(actors9.toArray(new Actor[0]));
 
-    actors102[2] = sequence121;
-    callableactors101.setActors(actors102);
+        }
+        actors6.add(trigger);
+        sequence3.setActors(actors6.toArray(new Actor[0]));
 
-    actors2[1] = callableactors101;
+      }
+      actors3.add(sequence3);
+      callableactors.setActors(actors3.toArray(new Actor[0]));
+
+    }
+    actors.add(callableactors);
 
     // Flow.speed variables
-    adams.flow.standalone.Standalones standalones142 = new adams.flow.standalone.Standalones();
-    argOption = (AbstractArgumentOption) standalones142.getOptionManager().findByProperty("name");
-    standalones142.setName((java.lang.String) argOption.valueOf("speed variables"));
-    argOption = (AbstractArgumentOption) standalones142.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors144 = new adams.flow.core.Actor[5];
+    Standalones standalones = new Standalones();
+    {
+      argOption = (AbstractArgumentOption) standalones.getOptionManager().findByProperty("name");
+      standalones.setName((String) argOption.valueOf("speed variables"));
+      List<Actor> actors10 = new ArrayList<>();
 
-    // Flow.speed variables.# curves
-    adams.flow.standalone.SetVariable setvariable145 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable145.getOptionManager().findByProperty("name");
-    setvariable145.setName((java.lang.String) argOption.valueOf("# curves"));
-    argOption = (AbstractArgumentOption) setvariable145.getOptionManager().findByProperty("variableName");
-    setvariable145.setVariableName((adams.core.VariableName) argOption.valueOf("num_curves"));
-    argOption = (AbstractArgumentOption) setvariable145.getOptionManager().findByProperty("variableValue");
-    setvariable145.setVariableValue((adams.core.base.BaseText) argOption.valueOf("500"));
-    actors144[0] = setvariable145;
+      // Flow.speed variables.# curves
+      adams.flow.standalone.SetVariable setvariable3 = new adams.flow.standalone.SetVariable();
+      argOption = (AbstractArgumentOption) setvariable3.getOptionManager().findByProperty("name");
+      setvariable3.setName((String) argOption.valueOf("# curves"));
+      argOption = (AbstractArgumentOption) setvariable3.getOptionManager().findByProperty("variableName");
+      setvariable3.setVariableName((VariableName) argOption.valueOf("num_curves"));
+      argOption = (AbstractArgumentOption) setvariable3.getOptionManager().findByProperty("variableValue");
+      setvariable3.setVariableValue((BaseText) argOption.valueOf("500"));
+      actors10.add(setvariable3);
 
-    // Flow.speed variables.# means
-    adams.flow.standalone.SetVariable setvariable149 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable149.getOptionManager().findByProperty("name");
-    setvariable149.setName((java.lang.String) argOption.valueOf("# means"));
-    argOption = (AbstractArgumentOption) setvariable149.getOptionManager().findByProperty("variableName");
-    setvariable149.setVariableName((adams.core.VariableName) argOption.valueOf("num_means"));
-    argOption = (AbstractArgumentOption) setvariable149.getOptionManager().findByProperty("variableValue");
-    setvariable149.setVariableValue((adams.core.base.BaseText) argOption.valueOf("5"));
-    actors144[1] = setvariable149;
+      // Flow.speed variables.# means
+      adams.flow.standalone.SetVariable setvariable4 = new adams.flow.standalone.SetVariable();
+      argOption = (AbstractArgumentOption) setvariable4.getOptionManager().findByProperty("name");
+      setvariable4.setName((String) argOption.valueOf("# means"));
+      argOption = (AbstractArgumentOption) setvariable4.getOptionManager().findByProperty("variableName");
+      setvariable4.setVariableName((VariableName) argOption.valueOf("num_means"));
+      argOption = (AbstractArgumentOption) setvariable4.getOptionManager().findByProperty("variableValue");
+      setvariable4.setVariableValue((BaseText) argOption.valueOf("5"));
+      actors10.add(setvariable4);
 
-    // Flow.speed variables.# stdevs
-    adams.flow.standalone.SetVariable setvariable153 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable153.getOptionManager().findByProperty("name");
-    setvariable153.setName((java.lang.String) argOption.valueOf("# stdevs"));
-    argOption = (AbstractArgumentOption) setvariable153.getOptionManager().findByProperty("variableName");
-    setvariable153.setVariableName((adams.core.VariableName) argOption.valueOf("num_stdevs"));
-    argOption = (AbstractArgumentOption) setvariable153.getOptionManager().findByProperty("variableValue");
-    setvariable153.setVariableValue((adams.core.base.BaseText) argOption.valueOf("5"));
-    actors144[2] = setvariable153;
+      // Flow.speed variables.# stdevs
+      adams.flow.standalone.SetVariable setvariable5 = new adams.flow.standalone.SetVariable();
+      argOption = (AbstractArgumentOption) setvariable5.getOptionManager().findByProperty("name");
+      setvariable5.setName((String) argOption.valueOf("# stdevs"));
+      argOption = (AbstractArgumentOption) setvariable5.getOptionManager().findByProperty("variableName");
+      setvariable5.setVariableName((VariableName) argOption.valueOf("num_stdevs"));
+      argOption = (AbstractArgumentOption) setvariable5.getOptionManager().findByProperty("variableValue");
+      setvariable5.setVariableValue((BaseText) argOption.valueOf("5"));
+      actors10.add(setvariable5);
 
-    // Flow.speed variables.# data points
-    adams.flow.standalone.SetVariable setvariable157 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable157.getOptionManager().findByProperty("name");
-    setvariable157.setName((java.lang.String) argOption.valueOf("# data points"));
-    argOption = (AbstractArgumentOption) setvariable157.getOptionManager().findByProperty("variableName");
-    setvariable157.setVariableName((adams.core.VariableName) argOption.valueOf("num_points"));
-    argOption = (AbstractArgumentOption) setvariable157.getOptionManager().findByProperty("variableValue");
-    setvariable157.setVariableValue((adams.core.base.BaseText) argOption.valueOf("200"));
-    actors144[3] = setvariable157;
+      // Flow.speed variables.# data points
+      adams.flow.standalone.SetVariable setvariable6 = new adams.flow.standalone.SetVariable();
+      argOption = (AbstractArgumentOption) setvariable6.getOptionManager().findByProperty("name");
+      setvariable6.setName((String) argOption.valueOf("# data points"));
+      argOption = (AbstractArgumentOption) setvariable6.getOptionManager().findByProperty("variableName");
+      setvariable6.setVariableName((VariableName) argOption.valueOf("num_points"));
+      argOption = (AbstractArgumentOption) setvariable6.getOptionManager().findByProperty("variableValue");
+      setvariable6.setVariableValue((BaseText) argOption.valueOf("200"));
+      actors10.add(setvariable6);
 
-    // Flow.speed variables.cpu plot update interval
-    adams.flow.standalone.SetVariable setvariable161 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable161.getOptionManager().findByProperty("name");
-    setvariable161.setName((java.lang.String) argOption.valueOf("cpu plot update interval"));
-    argOption = (AbstractArgumentOption) setvariable161.getOptionManager().findByProperty("variableName");
-    setvariable161.setVariableName((adams.core.VariableName) argOption.valueOf("cpu_plot_update"));
-    argOption = (AbstractArgumentOption) setvariable161.getOptionManager().findByProperty("variableValue");
-    setvariable161.setVariableValue((adams.core.base.BaseText) argOption.valueOf("100"));
-    actors144[4] = setvariable161;
-    standalones142.setActors(actors144);
+      // Flow.speed variables.cpu plot update interval
+      adams.flow.standalone.SetVariable setvariable7 = new adams.flow.standalone.SetVariable();
+      argOption = (AbstractArgumentOption) setvariable7.getOptionManager().findByProperty("name");
+      setvariable7.setName((String) argOption.valueOf("cpu plot update interval"));
+      argOption = (AbstractArgumentOption) setvariable7.getOptionManager().findByProperty("variableName");
+      setvariable7.setVariableName((VariableName) argOption.valueOf("cpu_plot_update"));
+      argOption = (AbstractArgumentOption) setvariable7.getOptionManager().findByProperty("variableValue");
+      setvariable7.setVariableValue((BaseText) argOption.valueOf("100"));
+      actors10.add(setvariable7);
+      standalones.setActors(actors10.toArray(new Actor[0]));
 
-    actors2[2] = standalones142;
+    }
+    actors.add(standalones);
 
     // Flow.write variables
-    adams.flow.standalone.Standalones standalones165 = new adams.flow.standalone.Standalones();
-    argOption = (AbstractArgumentOption) standalones165.getOptionManager().findByProperty("name");
-    standalones165.setName((java.lang.String) argOption.valueOf("write variables"));
-    argOption = (AbstractArgumentOption) standalones165.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors167 = new adams.flow.core.Actor[5];
+    Standalones standalones2 = new Standalones();
+    {
+      argOption = (AbstractArgumentOption) standalones2.getOptionManager().findByProperty("name");
+      standalones2.setName((String) argOption.valueOf("write variables"));
+      List<Actor> actors11 = new ArrayList<>();
 
-    // Flow.write variables.number of files
-    adams.flow.standalone.SetVariable setvariable168 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable168.getOptionManager().findByProperty("name");
-    setvariable168.setName((java.lang.String) argOption.valueOf("number of files"));
-    argOption = (AbstractArgumentOption) setvariable168.getOptionManager().findByProperty("variableName");
-    setvariable168.setVariableName((adams.core.VariableName) argOption.valueOf("num_files"));
-    argOption = (AbstractArgumentOption) setvariable168.getOptionManager().findByProperty("variableValue");
-    setvariable168.setVariableValue((adams.core.base.BaseText) argOption.valueOf("500"));
-    actors167[0] = setvariable168;
+      // Flow.write variables.number of files
+      adams.flow.standalone.SetVariable setvariable8 = new adams.flow.standalone.SetVariable();
+      argOption = (AbstractArgumentOption) setvariable8.getOptionManager().findByProperty("name");
+      setvariable8.setName((String) argOption.valueOf("number of files"));
+      argOption = (AbstractArgumentOption) setvariable8.getOptionManager().findByProperty("variableName");
+      setvariable8.setVariableName((VariableName) argOption.valueOf("num_files"));
+      argOption = (AbstractArgumentOption) setvariable8.getOptionManager().findByProperty("variableValue");
+      setvariable8.setVariableValue((BaseText) argOption.valueOf("500"));
+      actors11.add(setvariable8);
 
-    // Flow.write variables.number of numbers per file
-    adams.flow.standalone.SetVariable setvariable172 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable172.getOptionManager().findByProperty("name");
-    setvariable172.setName((java.lang.String) argOption.valueOf("number of numbers per file"));
-    argOption = (AbstractArgumentOption) setvariable172.getOptionManager().findByProperty("variableName");
-    setvariable172.setVariableName((adams.core.VariableName) argOption.valueOf("num_rand"));
-    argOption = (AbstractArgumentOption) setvariable172.getOptionManager().findByProperty("variableValue");
-    setvariable172.setVariableValue((adams.core.base.BaseText) argOption.valueOf("1000"));
-    actors167[1] = setvariable172;
+      // Flow.write variables.number of numbers per file
+      adams.flow.standalone.SetVariable setvariable9 = new adams.flow.standalone.SetVariable();
+      argOption = (AbstractArgumentOption) setvariable9.getOptionManager().findByProperty("name");
+      setvariable9.setName((String) argOption.valueOf("number of numbers per file"));
+      argOption = (AbstractArgumentOption) setvariable9.getOptionManager().findByProperty("variableName");
+      setvariable9.setVariableName((VariableName) argOption.valueOf("num_rand"));
+      argOption = (AbstractArgumentOption) setvariable9.getOptionManager().findByProperty("variableValue");
+      setvariable9.setVariableValue((BaseText) argOption.valueOf("1000"));
+      actors11.add(setvariable9);
 
-    // Flow.write variables.combine numbers
-    adams.flow.standalone.SetVariable setvariable176 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable176.getOptionManager().findByProperty("name");
-    setvariable176.setName((java.lang.String) argOption.valueOf("combine numbers"));
-    argOption = (AbstractArgumentOption) setvariable176.getOptionManager().findByProperty("variableName");
-    setvariable176.setVariableName((adams.core.VariableName) argOption.valueOf("combine_numbers"));
-    argOption = (AbstractArgumentOption) setvariable176.getOptionManager().findByProperty("variableValue");
-    setvariable176.setVariableValue((adams.core.base.BaseText) argOption.valueOf("true"));
-    actors167[2] = setvariable176;
+      // Flow.write variables.combine numbers
+      adams.flow.standalone.SetVariable setvariable10 = new adams.flow.standalone.SetVariable();
+      argOption = (AbstractArgumentOption) setvariable10.getOptionManager().findByProperty("name");
+      setvariable10.setName((String) argOption.valueOf("combine numbers"));
+      argOption = (AbstractArgumentOption) setvariable10.getOptionManager().findByProperty("variableName");
+      setvariable10.setVariableName((VariableName) argOption.valueOf("combine_numbers"));
+      argOption = (AbstractArgumentOption) setvariable10.getOptionManager().findByProperty("variableValue");
+      setvariable10.setVariableValue((BaseText) argOption.valueOf("true"));
+      actors11.add(setvariable10);
 
-    // Flow.write variables.output file
-    adams.flow.standalone.SetVariable setvariable180 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable180.getOptionManager().findByProperty("name");
-    setvariable180.setName((java.lang.String) argOption.valueOf("output file"));
-    argOption = (AbstractArgumentOption) setvariable180.getOptionManager().findByProperty("variableName");
-    setvariable180.setVariableName((adams.core.VariableName) argOption.valueOf("outfile"));
-    argOption = (AbstractArgumentOption) setvariable180.getOptionManager().findByProperty("variableValue");
-    setvariable180.setVariableValue((adams.core.base.BaseText) argOption.valueOf("${TMP}/rand.txt"));
-    actors167[3] = setvariable180;
+      // Flow.write variables.output file
+      adams.flow.standalone.SetVariable setvariable11 = new adams.flow.standalone.SetVariable();
+      argOption = (AbstractArgumentOption) setvariable11.getOptionManager().findByProperty("name");
+      setvariable11.setName((String) argOption.valueOf("output file"));
+      argOption = (AbstractArgumentOption) setvariable11.getOptionManager().findByProperty("variableName");
+      setvariable11.setVariableName((VariableName) argOption.valueOf("outfile"));
+      argOption = (AbstractArgumentOption) setvariable11.getOptionManager().findByProperty("variableValue");
+      setvariable11.setVariableValue((BaseText) argOption.valueOf("${TMP}/rand.txt"));
+      actors11.add(setvariable11);
 
-    // Flow.write variables.write plot update interval
-    adams.flow.standalone.SetVariable setvariable184 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable184.getOptionManager().findByProperty("name");
-    setvariable184.setName((java.lang.String) argOption.valueOf("write plot update interval"));
-    argOption = (AbstractArgumentOption) setvariable184.getOptionManager().findByProperty("variableName");
-    setvariable184.setVariableName((adams.core.VariableName) argOption.valueOf("write_plot_update"));
-    argOption = (AbstractArgumentOption) setvariable184.getOptionManager().findByProperty("variableValue");
-    setvariable184.setVariableValue((adams.core.base.BaseText) argOption.valueOf("100"));
-    actors167[4] = setvariable184;
-    standalones165.setActors(actors167);
+      // Flow.write variables.write plot update interval
+      adams.flow.standalone.SetVariable setvariable12 = new adams.flow.standalone.SetVariable();
+      argOption = (AbstractArgumentOption) setvariable12.getOptionManager().findByProperty("name");
+      setvariable12.setName((String) argOption.valueOf("write plot update interval"));
+      argOption = (AbstractArgumentOption) setvariable12.getOptionManager().findByProperty("variableName");
+      setvariable12.setVariableName((VariableName) argOption.valueOf("write_plot_update"));
+      argOption = (AbstractArgumentOption) setvariable12.getOptionManager().findByProperty("variableValue");
+      setvariable12.setVariableValue((BaseText) argOption.valueOf("100"));
+      actors11.add(setvariable12);
+      standalones2.setActors(actors11.toArray(new Actor[0]));
 
-    actors2[3] = standalones165;
+    }
+    actors.add(standalones2);
 
     // Flow.Start
-    adams.flow.source.Start start188 = new adams.flow.source.Start();
-    actors2[4] = start188;
+    Start start = new Start();
+    actors.add(start);
 
     // Flow.prompt user
-    adams.flow.control.Trigger trigger189 = new adams.flow.control.Trigger();
-    argOption = (AbstractArgumentOption) trigger189.getOptionManager().findByProperty("name");
-    trigger189.setName((java.lang.String) argOption.valueOf("prompt user"));
-    argOption = (AbstractArgumentOption) trigger189.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors191 = new adams.flow.core.Actor[4];
+    Trigger trigger2 = new Trigger();
+    {
+      argOption = (AbstractArgumentOption) trigger2.getOptionManager().findByProperty("name");
+      trigger2.setName((String) argOption.valueOf("prompt user"));
+      List<Actor> actors12 = new ArrayList<>();
 
-    // Flow.prompt user.Enter parameters
-    adams.flow.source.EnterManyValues entermanyvalues192 = new adams.flow.source.EnterManyValues();
-    argOption = (AbstractArgumentOption) entermanyvalues192.getOptionManager().findByProperty("name");
-    entermanyvalues192.setName((java.lang.String) argOption.valueOf("Enter parameters"));
-    entermanyvalues192.setStopFlowIfCanceled(true);
+      // Flow.prompt user.Enter parameters
+      EnterManyValues entermanyvalues = new EnterManyValues();
+      argOption = (AbstractArgumentOption) entermanyvalues.getOptionManager().findByProperty("name");
+      entermanyvalues.setName((String) argOption.valueOf("Enter parameters"));
+      entermanyvalues.setStopFlowIfCanceled(true);
 
-    argOption = (AbstractArgumentOption) entermanyvalues192.getOptionManager().findByProperty("message");
-    entermanyvalues192.setMessage((java.lang.String) argOption.valueOf("Please enter the performance test parameters"));
-    argOption = (AbstractArgumentOption) entermanyvalues192.getOptionManager().findByProperty("values");
-    DefaultValueDefinition[] values195 = new DefaultValueDefinition[10];
-    DefaultValueDefinition valuedefinition196 = new DefaultValueDefinition();
-    argOption = (AbstractArgumentOption) valuedefinition196.getOptionManager().findByProperty("name");
-    valuedefinition196.setName((java.lang.String) argOption.valueOf("num_curves"));
-    argOption = (AbstractArgumentOption) valuedefinition196.getOptionManager().findByProperty("display");
-    valuedefinition196.setDisplay((java.lang.String) argOption.valueOf("CPU: # curves"));
-    argOption = (AbstractArgumentOption) valuedefinition196.getOptionManager().findByProperty("help");
-    valuedefinition196.setHelp((java.lang.String) argOption.valueOf("The number of bell curves to calculate"));
-    argOption = (AbstractArgumentOption) valuedefinition196.getOptionManager().findByProperty("type");
-    valuedefinition196.setType((adams.gui.core.PropertiesParameterPanel.PropertyType) argOption.valueOf("INTEGER"));
-    argOption = (AbstractArgumentOption) valuedefinition196.getOptionManager().findByProperty("defaultValue");
-    argOption.setVariable("@{num_curves}");
-    values195[0] = valuedefinition196;
-    DefaultValueDefinition valuedefinition201 = new DefaultValueDefinition();
-    argOption = (AbstractArgumentOption) valuedefinition201.getOptionManager().findByProperty("name");
-    valuedefinition201.setName((java.lang.String) argOption.valueOf("num_means"));
-    argOption = (AbstractArgumentOption) valuedefinition201.getOptionManager().findByProperty("display");
-    valuedefinition201.setDisplay((java.lang.String) argOption.valueOf("CPU: # means"));
-    argOption = (AbstractArgumentOption) valuedefinition201.getOptionManager().findByProperty("help");
-    valuedefinition201.setHelp((java.lang.String) argOption.valueOf("The number of different bell curve means to use in each iteration"));
-    argOption = (AbstractArgumentOption) valuedefinition201.getOptionManager().findByProperty("type");
-    valuedefinition201.setType((adams.gui.core.PropertiesParameterPanel.PropertyType) argOption.valueOf("INTEGER"));
-    argOption = (AbstractArgumentOption) valuedefinition201.getOptionManager().findByProperty("defaultValue");
-    argOption.setVariable("@{num_means}");
-    values195[1] = valuedefinition201;
-    DefaultValueDefinition valuedefinition206 = new DefaultValueDefinition();
-    argOption = (AbstractArgumentOption) valuedefinition206.getOptionManager().findByProperty("name");
-    valuedefinition206.setName((java.lang.String) argOption.valueOf("num_stdevs"));
-    argOption = (AbstractArgumentOption) valuedefinition206.getOptionManager().findByProperty("display");
-    valuedefinition206.setDisplay((java.lang.String) argOption.valueOf("CPU: # standard deviations"));
-    argOption = (AbstractArgumentOption) valuedefinition206.getOptionManager().findByProperty("help");
-    valuedefinition206.setHelp((java.lang.String) argOption.valueOf("The number of different bell curve standard deviations to use in each iteration"));
-    argOption = (AbstractArgumentOption) valuedefinition206.getOptionManager().findByProperty("type");
-    valuedefinition206.setType((adams.gui.core.PropertiesParameterPanel.PropertyType) argOption.valueOf("INTEGER"));
-    argOption = (AbstractArgumentOption) valuedefinition206.getOptionManager().findByProperty("defaultValue");
-    argOption.setVariable("@{num_stdevs}");
-    values195[2] = valuedefinition206;
-    DefaultValueDefinition valuedefinition211 = new DefaultValueDefinition();
-    argOption = (AbstractArgumentOption) valuedefinition211.getOptionManager().findByProperty("name");
-    valuedefinition211.setName((java.lang.String) argOption.valueOf("num_points"));
-    argOption = (AbstractArgumentOption) valuedefinition211.getOptionManager().findByProperty("display");
-    valuedefinition211.setDisplay((java.lang.String) argOption.valueOf("CPU: # data points"));
-    argOption = (AbstractArgumentOption) valuedefinition211.getOptionManager().findByProperty("help");
-    valuedefinition211.setHelp((java.lang.String) argOption.valueOf("The number of data points to calculate per bell curve"));
-    argOption = (AbstractArgumentOption) valuedefinition211.getOptionManager().findByProperty("type");
-    valuedefinition211.setType((adams.gui.core.PropertiesParameterPanel.PropertyType) argOption.valueOf("INTEGER"));
-    argOption = (AbstractArgumentOption) valuedefinition211.getOptionManager().findByProperty("defaultValue");
-    argOption.setVariable("@{num_points}");
-    values195[3] = valuedefinition211;
-    DefaultValueDefinition valuedefinition216 = new DefaultValueDefinition();
-    argOption = (AbstractArgumentOption) valuedefinition216.getOptionManager().findByProperty("name");
-    valuedefinition216.setName((java.lang.String) argOption.valueOf("cpu_plot_update"));
-    argOption = (AbstractArgumentOption) valuedefinition216.getOptionManager().findByProperty("display");
-    valuedefinition216.setDisplay((java.lang.String) argOption.valueOf("CPU: plot update interval"));
-    argOption = (AbstractArgumentOption) valuedefinition216.getOptionManager().findByProperty("help");
-    valuedefinition216.setHelp((java.lang.String) argOption.valueOf("After how many iterations to refresh the plot"));
-    argOption = (AbstractArgumentOption) valuedefinition216.getOptionManager().findByProperty("type");
-    valuedefinition216.setType((adams.gui.core.PropertiesParameterPanel.PropertyType) argOption.valueOf("INTEGER"));
-    argOption = (AbstractArgumentOption) valuedefinition216.getOptionManager().findByProperty("defaultValue");
-    argOption.setVariable("@{cpu_plot_update}");
-    values195[4] = valuedefinition216;
-    DefaultValueDefinition valuedefinition221 = new DefaultValueDefinition();
-    argOption = (AbstractArgumentOption) valuedefinition221.getOptionManager().findByProperty("name");
-    valuedefinition221.setName((java.lang.String) argOption.valueOf("num_files"));
-    argOption = (AbstractArgumentOption) valuedefinition221.getOptionManager().findByProperty("display");
-    valuedefinition221.setDisplay((java.lang.String) argOption.valueOf("Write: # files"));
-    argOption = (AbstractArgumentOption) valuedefinition221.getOptionManager().findByProperty("help");
-    valuedefinition221.setHelp((java.lang.String) argOption.valueOf("The number of files to generate"));
-    argOption = (AbstractArgumentOption) valuedefinition221.getOptionManager().findByProperty("type");
-    valuedefinition221.setType((adams.gui.core.PropertiesParameterPanel.PropertyType) argOption.valueOf("INTEGER"));
-    argOption = (AbstractArgumentOption) valuedefinition221.getOptionManager().findByProperty("defaultValue");
-    argOption.setVariable("@{num_files}");
-    values195[5] = valuedefinition221;
-    DefaultValueDefinition valuedefinition226 = new DefaultValueDefinition();
-    argOption = (AbstractArgumentOption) valuedefinition226.getOptionManager().findByProperty("name");
-    valuedefinition226.setName((java.lang.String) argOption.valueOf("num_rand"));
-    argOption = (AbstractArgumentOption) valuedefinition226.getOptionManager().findByProperty("display");
-    valuedefinition226.setDisplay((java.lang.String) argOption.valueOf("Write: # random numbers per file"));
-    argOption = (AbstractArgumentOption) valuedefinition226.getOptionManager().findByProperty("help");
-    valuedefinition226.setHelp((java.lang.String) argOption.valueOf("How many random numbers to store in a single file"));
-    argOption = (AbstractArgumentOption) valuedefinition226.getOptionManager().findByProperty("type");
-    valuedefinition226.setType((adams.gui.core.PropertiesParameterPanel.PropertyType) argOption.valueOf("INTEGER"));
-    argOption = (AbstractArgumentOption) valuedefinition226.getOptionManager().findByProperty("defaultValue");
-    argOption.setVariable("@{num_rand}");
-    values195[6] = valuedefinition226;
-    DefaultValueDefinition valuedefinition231 = new DefaultValueDefinition();
-    argOption = (AbstractArgumentOption) valuedefinition231.getOptionManager().findByProperty("name");
-    valuedefinition231.setName((java.lang.String) argOption.valueOf("combine_numbers"));
-    argOption = (AbstractArgumentOption) valuedefinition231.getOptionManager().findByProperty("display");
-    valuedefinition231.setDisplay((java.lang.String) argOption.valueOf("Write: single write operation per file"));
-    argOption = (AbstractArgumentOption) valuedefinition231.getOptionManager().findByProperty("help");
-    valuedefinition231.setHelp((java.lang.String) argOption.valueOf("Whether to save one number at a time or all at once"));
-    argOption = (AbstractArgumentOption) valuedefinition231.getOptionManager().findByProperty("type");
-    valuedefinition231.setType((adams.gui.core.PropertiesParameterPanel.PropertyType) argOption.valueOf("BOOLEAN"));
-    argOption = (AbstractArgumentOption) valuedefinition231.getOptionManager().findByProperty("defaultValue");
-    argOption.setVariable("@{combine_numbers}");
-    values195[7] = valuedefinition231;
-    DefaultValueDefinition valuedefinition236 = new DefaultValueDefinition();
-    argOption = (AbstractArgumentOption) valuedefinition236.getOptionManager().findByProperty("name");
-    valuedefinition236.setName((java.lang.String) argOption.valueOf("outfile"));
-    argOption = (AbstractArgumentOption) valuedefinition236.getOptionManager().findByProperty("display");
-    valuedefinition236.setDisplay((java.lang.String) argOption.valueOf("Write: temporary file"));
-    argOption = (AbstractArgumentOption) valuedefinition236.getOptionManager().findByProperty("help");
-    valuedefinition236.setHelp((java.lang.String) argOption.valueOf("The temporary to use for saving the random numbers"));
-    argOption = (AbstractArgumentOption) valuedefinition236.getOptionManager().findByProperty("type");
-    valuedefinition236.setType((adams.gui.core.PropertiesParameterPanel.PropertyType) argOption.valueOf("FILE_ABSOLUTE"));
-    argOption = (AbstractArgumentOption) valuedefinition236.getOptionManager().findByProperty("defaultValue");
-    argOption.setVariable("@{outfile}");
-    values195[8] = valuedefinition236;
-    DefaultValueDefinition valuedefinition241 = new DefaultValueDefinition();
-    argOption = (AbstractArgumentOption) valuedefinition241.getOptionManager().findByProperty("name");
-    valuedefinition241.setName((java.lang.String) argOption.valueOf("write_plot_update"));
-    argOption = (AbstractArgumentOption) valuedefinition241.getOptionManager().findByProperty("display");
-    valuedefinition241.setDisplay((java.lang.String) argOption.valueOf("Write: plot update interval"));
-    argOption = (AbstractArgumentOption) valuedefinition241.getOptionManager().findByProperty("help");
-    valuedefinition241.setHelp((java.lang.String) argOption.valueOf("After how many iterations to refresh the plot"));
-    argOption = (AbstractArgumentOption) valuedefinition241.getOptionManager().findByProperty("type");
-    valuedefinition241.setType((adams.gui.core.PropertiesParameterPanel.PropertyType) argOption.valueOf("INTEGER"));
-    argOption = (AbstractArgumentOption) valuedefinition241.getOptionManager().findByProperty("defaultValue");
-    argOption.setVariable("@{write_plot_update}");
-    values195[9] = valuedefinition241;
-    entermanyvalues192.setValues(values195);
+      argOption = (AbstractArgumentOption) entermanyvalues.getOptionManager().findByProperty("message");
+      entermanyvalues.setMessage((String) argOption.valueOf("Please enter the performance test parameters"));
+      List<AbstractValueDefinition> values = new ArrayList<>();
+      DefaultValueDefinition defaultvaluedefinition = new DefaultValueDefinition();
+      argOption = (AbstractArgumentOption) defaultvaluedefinition.getOptionManager().findByProperty("name");
+      defaultvaluedefinition.setName((String) argOption.valueOf("num_curves"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition.getOptionManager().findByProperty("display");
+      defaultvaluedefinition.setDisplay((String) argOption.valueOf("CPU: # curves"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition.getOptionManager().findByProperty("help");
+      defaultvaluedefinition.setHelp((String) argOption.valueOf("The number of bell curves to calculate"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition.getOptionManager().findByProperty("type");
+      defaultvaluedefinition.setType((PropertyType) argOption.valueOf("INTEGER"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition.getOptionManager().findByProperty("defaultValue");
+      argOption.setVariable("@{num_curves}");
+      values.add(defaultvaluedefinition);
+      DefaultValueDefinition defaultvaluedefinition2 = new DefaultValueDefinition();
+      argOption = (AbstractArgumentOption) defaultvaluedefinition2.getOptionManager().findByProperty("name");
+      defaultvaluedefinition2.setName((String) argOption.valueOf("num_means"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition2.getOptionManager().findByProperty("display");
+      defaultvaluedefinition2.setDisplay((String) argOption.valueOf("CPU: # means"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition2.getOptionManager().findByProperty("help");
+      defaultvaluedefinition2.setHelp((String) argOption.valueOf("The number of different bell curve means to use in each iteration"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition2.getOptionManager().findByProperty("type");
+      defaultvaluedefinition2.setType((PropertyType) argOption.valueOf("INTEGER"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition2.getOptionManager().findByProperty("defaultValue");
+      argOption.setVariable("@{num_means}");
+      values.add(defaultvaluedefinition2);
+      DefaultValueDefinition defaultvaluedefinition3 = new DefaultValueDefinition();
+      argOption = (AbstractArgumentOption) defaultvaluedefinition3.getOptionManager().findByProperty("name");
+      defaultvaluedefinition3.setName((String) argOption.valueOf("num_stdevs"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition3.getOptionManager().findByProperty("display");
+      defaultvaluedefinition3.setDisplay((String) argOption.valueOf("CPU: # standard deviations"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition3.getOptionManager().findByProperty("help");
+      defaultvaluedefinition3.setHelp((String) argOption.valueOf("The number of different bell curve standard deviations to use in each iteration"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition3.getOptionManager().findByProperty("type");
+      defaultvaluedefinition3.setType((PropertyType) argOption.valueOf("INTEGER"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition3.getOptionManager().findByProperty("defaultValue");
+      argOption.setVariable("@{num_stdevs}");
+      values.add(defaultvaluedefinition3);
+      DefaultValueDefinition defaultvaluedefinition4 = new DefaultValueDefinition();
+      argOption = (AbstractArgumentOption) defaultvaluedefinition4.getOptionManager().findByProperty("name");
+      defaultvaluedefinition4.setName((String) argOption.valueOf("num_points"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition4.getOptionManager().findByProperty("display");
+      defaultvaluedefinition4.setDisplay((String) argOption.valueOf("CPU: # data points"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition4.getOptionManager().findByProperty("help");
+      defaultvaluedefinition4.setHelp((String) argOption.valueOf("The number of data points to calculate per bell curve"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition4.getOptionManager().findByProperty("type");
+      defaultvaluedefinition4.setType((PropertyType) argOption.valueOf("INTEGER"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition4.getOptionManager().findByProperty("defaultValue");
+      argOption.setVariable("@{num_points}");
+      values.add(defaultvaluedefinition4);
+      DefaultValueDefinition defaultvaluedefinition5 = new DefaultValueDefinition();
+      argOption = (AbstractArgumentOption) defaultvaluedefinition5.getOptionManager().findByProperty("name");
+      defaultvaluedefinition5.setName((String) argOption.valueOf("cpu_plot_update"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition5.getOptionManager().findByProperty("display");
+      defaultvaluedefinition5.setDisplay((String) argOption.valueOf("CPU: plot update interval"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition5.getOptionManager().findByProperty("help");
+      defaultvaluedefinition5.setHelp((String) argOption.valueOf("After how many iterations to refresh the plot"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition5.getOptionManager().findByProperty("type");
+      defaultvaluedefinition5.setType((PropertyType) argOption.valueOf("INTEGER"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition5.getOptionManager().findByProperty("defaultValue");
+      argOption.setVariable("@{cpu_plot_update}");
+      values.add(defaultvaluedefinition5);
+      DefaultValueDefinition defaultvaluedefinition6 = new DefaultValueDefinition();
+      argOption = (AbstractArgumentOption) defaultvaluedefinition6.getOptionManager().findByProperty("name");
+      defaultvaluedefinition6.setName((String) argOption.valueOf("num_files"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition6.getOptionManager().findByProperty("display");
+      defaultvaluedefinition6.setDisplay((String) argOption.valueOf("Write: # files"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition6.getOptionManager().findByProperty("help");
+      defaultvaluedefinition6.setHelp((String) argOption.valueOf("The number of files to generate"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition6.getOptionManager().findByProperty("type");
+      defaultvaluedefinition6.setType((PropertyType) argOption.valueOf("INTEGER"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition6.getOptionManager().findByProperty("defaultValue");
+      argOption.setVariable("@{num_files}");
+      values.add(defaultvaluedefinition6);
+      DefaultValueDefinition defaultvaluedefinition7 = new DefaultValueDefinition();
+      argOption = (AbstractArgumentOption) defaultvaluedefinition7.getOptionManager().findByProperty("name");
+      defaultvaluedefinition7.setName((String) argOption.valueOf("num_rand"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition7.getOptionManager().findByProperty("display");
+      defaultvaluedefinition7.setDisplay((String) argOption.valueOf("Write: # random numbers per file"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition7.getOptionManager().findByProperty("help");
+      defaultvaluedefinition7.setHelp((String) argOption.valueOf("How many random numbers to store in a single file"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition7.getOptionManager().findByProperty("type");
+      defaultvaluedefinition7.setType((PropertyType) argOption.valueOf("INTEGER"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition7.getOptionManager().findByProperty("defaultValue");
+      argOption.setVariable("@{num_rand}");
+      values.add(defaultvaluedefinition7);
+      DefaultValueDefinition defaultvaluedefinition8 = new DefaultValueDefinition();
+      argOption = (AbstractArgumentOption) defaultvaluedefinition8.getOptionManager().findByProperty("name");
+      defaultvaluedefinition8.setName((String) argOption.valueOf("combine_numbers"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition8.getOptionManager().findByProperty("display");
+      defaultvaluedefinition8.setDisplay((String) argOption.valueOf("Write: single write operation per file"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition8.getOptionManager().findByProperty("help");
+      defaultvaluedefinition8.setHelp((String) argOption.valueOf("Whether to save one number at a time or all at once"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition8.getOptionManager().findByProperty("type");
+      defaultvaluedefinition8.setType((PropertyType) argOption.valueOf("BOOLEAN"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition8.getOptionManager().findByProperty("defaultValue");
+      argOption.setVariable("@{combine_numbers}");
+      values.add(defaultvaluedefinition8);
+      DefaultValueDefinition defaultvaluedefinition9 = new DefaultValueDefinition();
+      argOption = (AbstractArgumentOption) defaultvaluedefinition9.getOptionManager().findByProperty("name");
+      defaultvaluedefinition9.setName((String) argOption.valueOf("outfile"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition9.getOptionManager().findByProperty("display");
+      defaultvaluedefinition9.setDisplay((String) argOption.valueOf("Write: temporary file"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition9.getOptionManager().findByProperty("help");
+      defaultvaluedefinition9.setHelp((String) argOption.valueOf("The temporary to use for saving the random numbers"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition9.getOptionManager().findByProperty("type");
+      defaultvaluedefinition9.setType((PropertyType) argOption.valueOf("FILE_ABSOLUTE"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition9.getOptionManager().findByProperty("defaultValue");
+      argOption.setVariable("@{outfile}");
+      values.add(defaultvaluedefinition9);
+      DefaultValueDefinition defaultvaluedefinition10 = new DefaultValueDefinition();
+      argOption = (AbstractArgumentOption) defaultvaluedefinition10.getOptionManager().findByProperty("name");
+      defaultvaluedefinition10.setName((String) argOption.valueOf("write_plot_update"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition10.getOptionManager().findByProperty("display");
+      defaultvaluedefinition10.setDisplay((String) argOption.valueOf("Write: plot update interval"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition10.getOptionManager().findByProperty("help");
+      defaultvaluedefinition10.setHelp((String) argOption.valueOf("After how many iterations to refresh the plot"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition10.getOptionManager().findByProperty("type");
+      defaultvaluedefinition10.setType((PropertyType) argOption.valueOf("INTEGER"));
+      argOption = (AbstractArgumentOption) defaultvaluedefinition10.getOptionManager().findByProperty("defaultValue");
+      argOption.setVariable("@{write_plot_update}");
+      values.add(defaultvaluedefinition10);
+      entermanyvalues.setValues(values.toArray(new AbstractValueDefinition[0]));
 
-    argOption = (AbstractArgumentOption) entermanyvalues192.getOptionManager().findByProperty("outputType");
-    entermanyvalues192.setOutputType((adams.flow.source.EnterManyValues.OutputType) argOption.valueOf("KEY_VALUE_PAIRS"));
-    actors191[0] = entermanyvalues192;
+      argOption = (AbstractArgumentOption) entermanyvalues.getOptionManager().findByProperty("outputType");
+      entermanyvalues.setOutputType((OutputType) argOption.valueOf("KEY_VALUE_PAIRS"));
+      actors12.add(entermanyvalues);
 
-    // Flow.prompt user.output param
-    adams.flow.control.Tee tee247 = new adams.flow.control.Tee();
-    argOption = (AbstractArgumentOption) tee247.getOptionManager().findByProperty("name");
-    tee247.setName((java.lang.String) argOption.valueOf("output param"));
-    argOption = (AbstractArgumentOption) tee247.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors249 = new adams.flow.core.Actor[2];
+      // Flow.prompt user.output param
+      Tee tee = new Tee();
+      {
+        argOption = (AbstractArgumentOption) tee.getOptionManager().findByProperty("name");
+        tee.setName((String) argOption.valueOf("output param"));
+        List<Actor> actors13 = new ArrayList<>();
 
-    // Flow.prompt user.output param.StringJoin
-    adams.flow.transformer.StringJoin stringjoin250 = new adams.flow.transformer.StringJoin();
-    argOption = (AbstractArgumentOption) stringjoin250.getOptionManager().findByProperty("glue");
-    stringjoin250.setGlue((java.lang.String) argOption.valueOf(": "));
-    actors249[0] = stringjoin250;
+        // Flow.prompt user.output param.StringJoin
+        StringJoin stringjoin = new StringJoin();
+        argOption = (AbstractArgumentOption) stringjoin.getOptionManager().findByProperty("glue");
+        stringjoin.setGlue((String) argOption.valueOf(": "));
+        actors13.add(stringjoin);
 
-    // Flow.prompt user.output param.CallableSink
-    adams.flow.sink.CallableSink callablesink252 = new adams.flow.sink.CallableSink();
-    argOption = (AbstractArgumentOption) callablesink252.getOptionManager().findByProperty("callableName");
-    callablesink252.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("Overall"));
-    actors249[1] = callablesink252;
-    tee247.setActors(actors249);
+        // Flow.prompt user.output param.CallableSink
+        CallableSink callablesink4 = new CallableSink();
+        argOption = (AbstractArgumentOption) callablesink4.getOptionManager().findByProperty("callableName");
+        callablesink4.setCallableName((CallableActorReference) argOption.valueOf("Overall"));
+        actors13.add(callablesink4);
+        tee.setActors(actors13.toArray(new Actor[0]));
 
-    actors191[1] = tee247;
+      }
+      actors12.add(tee);
 
-    // Flow.prompt user.var name
-    adams.flow.control.Tee tee254 = new adams.flow.control.Tee();
-    argOption = (AbstractArgumentOption) tee254.getOptionManager().findByProperty("name");
-    tee254.setName((java.lang.String) argOption.valueOf("var name"));
-    argOption = (AbstractArgumentOption) tee254.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors256 = new adams.flow.core.Actor[2];
+      // Flow.prompt user.var name
+      Tee tee2 = new Tee();
+      {
+        argOption = (AbstractArgumentOption) tee2.getOptionManager().findByProperty("name");
+        tee2.setName((String) argOption.valueOf("var name"));
+        List<Actor> actors14 = new ArrayList<>();
 
-    // Flow.prompt user.var name.GetArrayElement
-    adams.flow.transformer.GetArrayElement getarrayelement257 = new adams.flow.transformer.GetArrayElement();
-    actors256[0] = getarrayelement257;
+        // Flow.prompt user.var name.GetArrayElement
+        GetArrayElement getarrayelement = new GetArrayElement();
+        actors14.add(getarrayelement);
 
-    // Flow.prompt user.var name.SetVariable
-    adams.flow.transformer.SetVariable setvariable258 = new adams.flow.transformer.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable258.getOptionManager().findByProperty("variableName");
-    setvariable258.setVariableName((adams.core.VariableName) argOption.valueOf("name"));
-    actors256[1] = setvariable258;
-    tee254.setActors(actors256);
+        // Flow.prompt user.var name.SetVariable
+        SetVariable setvariable13 = new SetVariable();
+        argOption = (AbstractArgumentOption) setvariable13.getOptionManager().findByProperty("variableName");
+        setvariable13.setVariableName((VariableName) argOption.valueOf("name"));
+        actors14.add(setvariable13);
+        tee2.setActors(actors14.toArray(new Actor[0]));
 
-    actors191[2] = tee254;
+      }
+      actors12.add(tee2);
 
-    // Flow.prompt user.var value
-    adams.flow.control.Tee tee260 = new adams.flow.control.Tee();
-    argOption = (AbstractArgumentOption) tee260.getOptionManager().findByProperty("name");
-    tee260.setName((java.lang.String) argOption.valueOf("var value"));
-    argOption = (AbstractArgumentOption) tee260.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors262 = new adams.flow.core.Actor[2];
+      // Flow.prompt user.var value
+      Tee tee3 = new Tee();
+      {
+        argOption = (AbstractArgumentOption) tee3.getOptionManager().findByProperty("name");
+        tee3.setName((String) argOption.valueOf("var value"));
+        List<Actor> actors15 = new ArrayList<>();
 
-    // Flow.prompt user.var value.GetArrayElement
-    adams.flow.transformer.GetArrayElement getarrayelement263 = new adams.flow.transformer.GetArrayElement();
-    argOption = (AbstractArgumentOption) getarrayelement263.getOptionManager().findByProperty("index");
-    getarrayelement263.setIndex((adams.core.Index) argOption.valueOf("2"));
-    actors262[0] = getarrayelement263;
+        // Flow.prompt user.var value.GetArrayElement
+        GetArrayElement getarrayelement2 = new GetArrayElement();
+        argOption = (AbstractArgumentOption) getarrayelement2.getOptionManager().findByProperty("index");
+        getarrayelement2.setIndex((Index) argOption.valueOf("2"));
+        actors15.add(getarrayelement2);
 
-    // Flow.prompt user.var value.SetVariable
-    adams.flow.transformer.SetVariable setvariable265 = new adams.flow.transformer.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable265.getOptionManager().findByProperty("variableName");
-    argOption.setVariable("@{name}");
-    actors262[1] = setvariable265;
-    tee260.setActors(actors262);
+        // Flow.prompt user.var value.SetVariable
+        SetVariable setvariable14 = new SetVariable();
+        argOption = (AbstractArgumentOption) setvariable14.getOptionManager().findByProperty("variableName");
+        argOption.setVariable("@{name}");
+        actors15.add(setvariable14);
+        tee3.setActors(actors15.toArray(new Actor[0]));
 
-    actors191[3] = tee260;
-    trigger189.setActors(actors191);
+      }
+      actors12.add(tee3);
+      trigger2.setActors(actors12.toArray(new Actor[0]));
 
-    actors2[5] = trigger189;
+    }
+    actors.add(trigger2);
 
     // Flow.speed
-    adams.flow.control.TimedTrigger timedtrigger266 = new adams.flow.control.TimedTrigger();
-    argOption = (AbstractArgumentOption) timedtrigger266.getOptionManager().findByProperty("name");
-    timedtrigger266.setName((java.lang.String) argOption.valueOf("speed"));
-    argOption = (AbstractArgumentOption) timedtrigger266.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors268 = new adams.flow.core.Actor[2];
+    TimedTrigger timedtrigger = new TimedTrigger();
+    {
+      argOption = (AbstractArgumentOption) timedtrigger.getOptionManager().findByProperty("name");
+      timedtrigger.setName((String) argOption.valueOf("speed"));
+      List<Actor> actors16 = new ArrayList<>();
 
-    // Flow.speed.ForLoop
-    adams.flow.source.ForLoop forloop269 = new adams.flow.source.ForLoop();
-    argOption = (AbstractArgumentOption) forloop269.getOptionManager().findByProperty("loopUpper");
-    argOption.setVariable("@{num_curves}");
-    actors268[0] = forloop269;
+      // Flow.speed.ForLoop
+      ForLoop forloop = new ForLoop();
+      argOption = (AbstractArgumentOption) forloop.getOptionManager().findByProperty("loopUpper");
+      argOption.setVariable("@{num_curves}");
+      actors16.add(forloop);
 
-    // Flow.speed.calc curves
-    adams.flow.control.TimedTrigger timedtrigger270 = new adams.flow.control.TimedTrigger();
-    argOption = (AbstractArgumentOption) timedtrigger270.getOptionManager().findByProperty("name");
-    timedtrigger270.setName((java.lang.String) argOption.valueOf("calc curves"));
-    argOption = (AbstractArgumentOption) timedtrigger270.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors272 = new adams.flow.core.Actor[4];
+      // Flow.speed.calc curves
+      TimedTrigger timedtrigger2 = new TimedTrigger();
+      {
+        argOption = (AbstractArgumentOption) timedtrigger2.getOptionManager().findByProperty("name");
+        timedtrigger2.setName((String) argOption.valueOf("calc curves"));
+        List<Actor> actors17 = new ArrayList<>();
 
-    // Flow.speed.calc curves.ForLoop
-    adams.flow.source.ForLoop forloop273 = new adams.flow.source.ForLoop();
-    argOption = (AbstractArgumentOption) forloop273.getOptionManager().findByProperty("loopUpper");
-    argOption.setVariable("@{num_means}");
-    actors272[0] = forloop273;
+        // Flow.speed.calc curves.ForLoop
+        ForLoop forloop2 = new ForLoop();
+        argOption = (AbstractArgumentOption) forloop2.getOptionManager().findByProperty("loopUpper");
+        argOption.setVariable("@{num_means}");
+        actors17.add(forloop2);
 
-    // Flow.speed.calc curves.MathExpression
-    adams.flow.transformer.MathExpression mathexpression274 = new adams.flow.transformer.MathExpression();
-    argOption = (AbstractArgumentOption) mathexpression274.getOptionManager().findByProperty("expression");
-    mathexpression274.setExpression((adams.parser.MathematicalExpressionText) argOption.valueOf("X / @{num_means}"));
-    actors272[1] = mathexpression274;
+        // Flow.speed.calc curves.MathExpression
+        MathExpression mathexpression = new MathExpression();
+        argOption = (AbstractArgumentOption) mathexpression.getOptionManager().findByProperty("expression");
+        mathexpression.setExpression((MathematicalExpressionText) argOption.valueOf("X / @{num_means}"));
+        actors17.add(mathexpression);
 
-    // Flow.speed.calc curves.SetVariable
-    adams.flow.transformer.SetVariable setvariable276 = new adams.flow.transformer.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable276.getOptionManager().findByProperty("variableName");
-    setvariable276.setVariableName((adams.core.VariableName) argOption.valueOf("mean"));
-    actors272[2] = setvariable276;
+        // Flow.speed.calc curves.SetVariable
+        SetVariable setvariable15 = new SetVariable();
+        argOption = (AbstractArgumentOption) setvariable15.getOptionManager().findByProperty("variableName");
+        setvariable15.setVariableName((VariableName) argOption.valueOf("mean"));
+        actors17.add(setvariable15);
 
-    // Flow.speed.calc curves.mean
-    adams.flow.control.Trigger trigger278 = new adams.flow.control.Trigger();
-    argOption = (AbstractArgumentOption) trigger278.getOptionManager().findByProperty("name");
-    trigger278.setName((java.lang.String) argOption.valueOf("mean"));
-    argOption = (AbstractArgumentOption) trigger278.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors280 = new adams.flow.core.Actor[4];
+        // Flow.speed.calc curves.mean
+        Trigger trigger3 = new Trigger();
+        {
+          argOption = (AbstractArgumentOption) trigger3.getOptionManager().findByProperty("name");
+          trigger3.setName((String) argOption.valueOf("mean"));
+          List<Actor> actors18 = new ArrayList<>();
 
-    // Flow.speed.calc curves.mean.ForLoop
-    adams.flow.source.ForLoop forloop281 = new adams.flow.source.ForLoop();
-    argOption = (AbstractArgumentOption) forloop281.getOptionManager().findByProperty("loopUpper");
-    argOption.setVariable("@{num_stdevs}");
-    actors280[0] = forloop281;
+          // Flow.speed.calc curves.mean.ForLoop
+          ForLoop forloop3 = new ForLoop();
+          argOption = (AbstractArgumentOption) forloop3.getOptionManager().findByProperty("loopUpper");
+          argOption.setVariable("@{num_stdevs}");
+          actors18.add(forloop3);
 
-    // Flow.speed.calc curves.mean.MathExpression
-    adams.flow.transformer.MathExpression mathexpression282 = new adams.flow.transformer.MathExpression();
-    argOption = (AbstractArgumentOption) mathexpression282.getOptionManager().findByProperty("expression");
-    mathexpression282.setExpression((adams.parser.MathematicalExpressionText) argOption.valueOf("X / @{num_stdevs}"));
-    actors280[1] = mathexpression282;
+          // Flow.speed.calc curves.mean.MathExpression
+          MathExpression mathexpression2 = new MathExpression();
+          argOption = (AbstractArgumentOption) mathexpression2.getOptionManager().findByProperty("expression");
+          mathexpression2.setExpression((MathematicalExpressionText) argOption.valueOf("X / @{num_stdevs}"));
+          actors18.add(mathexpression2);
 
-    // Flow.speed.calc curves.mean.SetVariable
-    adams.flow.transformer.SetVariable setvariable284 = new adams.flow.transformer.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable284.getOptionManager().findByProperty("variableName");
-    setvariable284.setVariableName((adams.core.VariableName) argOption.valueOf("stdev"));
-    actors280[2] = setvariable284;
+          // Flow.speed.calc curves.mean.SetVariable
+          SetVariable setvariable16 = new SetVariable();
+          argOption = (AbstractArgumentOption) setvariable16.getOptionManager().findByProperty("variableName");
+          setvariable16.setVariableName((VariableName) argOption.valueOf("stdev"));
+          actors18.add(setvariable16);
 
-    // Flow.speed.calc curves.mean.stdev
-    adams.flow.control.Trigger trigger286 = new adams.flow.control.Trigger();
-    argOption = (AbstractArgumentOption) trigger286.getOptionManager().findByProperty("name");
-    trigger286.setName((java.lang.String) argOption.valueOf("stdev"));
-    argOption = (AbstractArgumentOption) trigger286.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors288 = new adams.flow.core.Actor[4];
+          // Flow.speed.calc curves.mean.stdev
+          Trigger trigger4 = new Trigger();
+          {
+            argOption = (AbstractArgumentOption) trigger4.getOptionManager().findByProperty("name");
+            trigger4.setName((String) argOption.valueOf("stdev"));
+            List<Actor> actors19 = new ArrayList<>();
 
-    // Flow.speed.calc curves.mean.stdev.plot name
-    adams.flow.standalone.SetVariable setvariable289 = new adams.flow.standalone.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable289.getOptionManager().findByProperty("name");
-    setvariable289.setName((java.lang.String) argOption.valueOf("plot name"));
-    argOption = (AbstractArgumentOption) setvariable289.getOptionManager().findByProperty("variableName");
-    setvariable289.setVariableName((adams.core.VariableName) argOption.valueOf("plot_name"));
-    argOption = (AbstractArgumentOption) setvariable289.getOptionManager().findByProperty("variableValue");
-    setvariable289.setVariableValue((adams.core.base.BaseText) argOption.valueOf("@{mean}/@{stdev}"));
-    setvariable289.setExpandValue(true);
+            // Flow.speed.calc curves.mean.stdev.plot name
+            adams.flow.standalone.SetVariable setvariable17 = new adams.flow.standalone.SetVariable();
+            argOption = (AbstractArgumentOption) setvariable17.getOptionManager().findByProperty("name");
+            setvariable17.setName((String) argOption.valueOf("plot name"));
+            argOption = (AbstractArgumentOption) setvariable17.getOptionManager().findByProperty("variableName");
+            setvariable17.setVariableName((VariableName) argOption.valueOf("plot_name"));
+            argOption = (AbstractArgumentOption) setvariable17.getOptionManager().findByProperty("variableValue");
+            setvariable17.setVariableValue((BaseText) argOption.valueOf("@{mean}/@{stdev}"));
+            setvariable17.setExpandValue(true);
 
-    actors288[0] = setvariable289;
+            actors19.add(setvariable17);
 
-    // Flow.speed.calc curves.mean.stdev.ForLoop
-    adams.flow.source.ForLoop forloop293 = new adams.flow.source.ForLoop();
-    argOption = (AbstractArgumentOption) forloop293.getOptionManager().findByProperty("loopLower");
-    forloop293.setLoopLower((Integer) argOption.valueOf("0"));
-    argOption = (AbstractArgumentOption) forloop293.getOptionManager().findByProperty("loopUpper");
-    argOption.setVariable("@{num_points}");
-    actors288[1] = forloop293;
+            // Flow.speed.calc curves.mean.stdev.ForLoop
+            ForLoop forloop4 = new ForLoop();
+            argOption = (AbstractArgumentOption) forloop4.getOptionManager().findByProperty("loopLower");
+            forloop4.setLoopLower((Integer) argOption.valueOf("0"));
+            argOption = (AbstractArgumentOption) forloop4.getOptionManager().findByProperty("loopUpper");
+            argOption.setVariable("@{num_points}");
+            actors19.add(forloop4);
 
-    // Flow.speed.calc curves.mean.stdev.MathExpression
-    adams.flow.transformer.MathExpression mathexpression295 = new adams.flow.transformer.MathExpression();
-    argOption = (AbstractArgumentOption) mathexpression295.getOptionManager().findByProperty("expression");
-    mathexpression295.setExpression((adams.parser.MathematicalExpressionText) argOption.valueOf("(X - (@{num_points} / 2)) / 33"));
-    actors288[2] = mathexpression295;
+            // Flow.speed.calc curves.mean.stdev.MathExpression
+            MathExpression mathexpression3 = new MathExpression();
+            argOption = (AbstractArgumentOption) mathexpression3.getOptionManager().findByProperty("expression");
+            mathexpression3.setExpression((MathematicalExpressionText) argOption.valueOf("(X - (@{num_points} / 2)) / 33"));
+            actors19.add(mathexpression3);
 
-    // Flow.speed.calc curves.mean.stdev.MathExpression-1
-    adams.flow.transformer.MathExpression mathexpression297 = new adams.flow.transformer.MathExpression();
-    argOption = (AbstractArgumentOption) mathexpression297.getOptionManager().findByProperty("name");
-    mathexpression297.setName((java.lang.String) argOption.valueOf("MathExpression-1"));
-    argOption = (AbstractArgumentOption) mathexpression297.getOptionManager().findByProperty("expression");
-    mathexpression297.setExpression((adams.parser.MathematicalExpressionText) argOption.valueOf("1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))"));
-    mathexpression297.setOutputValuePair(true);
+            // Flow.speed.calc curves.mean.stdev.MathExpression-1
+            MathExpression mathexpression4 = new MathExpression();
+            argOption = (AbstractArgumentOption) mathexpression4.getOptionManager().findByProperty("name");
+            mathexpression4.setName((String) argOption.valueOf("MathExpression-1"));
+            argOption = (AbstractArgumentOption) mathexpression4.getOptionManager().findByProperty("expression");
+            mathexpression4.setExpression((MathematicalExpressionText) argOption.valueOf("1/sqrt(2*PI*pow(@{stdev},2))*exp(-1*pow(X-@{mean},2)/(2*@{stdev}))"));
+            mathexpression4.setOutputValuePair(true);
 
-    actors288[3] = mathexpression297;
-    trigger286.setActors(actors288);
+            actors19.add(mathexpression4);
+            trigger4.setActors(actors19.toArray(new Actor[0]));
 
-    actors280[3] = trigger286;
-    trigger278.setActors(actors280);
+          }
+          actors18.add(trigger4);
+          trigger3.setActors(actors18.toArray(new Actor[0]));
 
-    actors272[3] = trigger278;
-    timedtrigger270.setActors(actors272);
+        }
+        actors17.add(trigger3);
+        timedtrigger2.setActors(actors17.toArray(new Actor[0]));
 
-    argOption = (AbstractArgumentOption) timedtrigger270.getOptionManager().findByProperty("callableName");
-    timedtrigger270.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("timing_cpuspeed"));
-    actors268[1] = timedtrigger270;
-    timedtrigger266.setActors(actors268);
+        argOption = (AbstractArgumentOption) timedtrigger2.getOptionManager().findByProperty("callableName");
+        timedtrigger2.setCallableName((CallableActorReference) argOption.valueOf("timing_cpuspeed"));
+      }
+      actors16.add(timedtrigger2);
+      timedtrigger.setActors(actors16.toArray(new Actor[0]));
 
-    argOption = (AbstractArgumentOption) timedtrigger266.getOptionManager().findByProperty("prefix");
-    timedtrigger266.setPrefix((java.lang.String) argOption.valueOf("CPU"));
-    argOption = (AbstractArgumentOption) timedtrigger266.getOptionManager().findByProperty("callableName");
-    timedtrigger266.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("timing_overall"));
-    actors2[6] = timedtrigger266;
+      argOption = (AbstractArgumentOption) timedtrigger.getOptionManager().findByProperty("prefix");
+      timedtrigger.setPrefix((String) argOption.valueOf("CPU"));
+      argOption = (AbstractArgumentOption) timedtrigger.getOptionManager().findByProperty("callableName");
+      timedtrigger.setCallableName((CallableActorReference) argOption.valueOf("timing_overall"));
+    }
+    actors.add(timedtrigger);
 
     // Flow.write
-    adams.flow.control.TimedTrigger timedtrigger303 = new adams.flow.control.TimedTrigger();
-    argOption = (AbstractArgumentOption) timedtrigger303.getOptionManager().findByProperty("name");
-    timedtrigger303.setName((java.lang.String) argOption.valueOf("write"));
-    argOption = (AbstractArgumentOption) timedtrigger303.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors305 = new adams.flow.core.Actor[5];
+    TimedTrigger timedtrigger3 = new TimedTrigger();
+    {
+      argOption = (AbstractArgumentOption) timedtrigger3.getOptionManager().findByProperty("name");
+      timedtrigger3.setName((String) argOption.valueOf("write"));
+      List<Actor> actors20 = new ArrayList<>();
 
-    // Flow.write.RandomNumberGenerator
-    adams.flow.source.RandomNumberGenerator randomnumbergenerator306 = new adams.flow.source.RandomNumberGenerator();
-    argOption = (AbstractArgumentOption) randomnumbergenerator306.getOptionManager().findByProperty("generator");
-    adams.data.random.JavaRandomInt javarandomint308 = new adams.data.random.JavaRandomInt();
-    randomnumbergenerator306.setGenerator(javarandomint308);
+      // Flow.write.RandomNumberGenerator
+      RandomNumberGenerator randomnumbergenerator = new RandomNumberGenerator();
+      JavaRandomInt javarandomint = new JavaRandomInt();
+      randomnumbergenerator.setGenerator(javarandomint);
 
-    argOption = (AbstractArgumentOption) randomnumbergenerator306.getOptionManager().findByProperty("maxNum");
-    argOption.setVariable("@{num_files}");
-    actors305[0] = randomnumbergenerator306;
+      argOption = (AbstractArgumentOption) randomnumbergenerator.getOptionManager().findByProperty("maxNum");
+      argOption.setVariable("@{num_files}");
+      actors20.add(randomnumbergenerator);
 
-    // Flow.write.Convert
-    adams.flow.transformer.Convert convert309 = new adams.flow.transformer.Convert();
-    argOption = (AbstractArgumentOption) convert309.getOptionManager().findByProperty("conversion");
-    adams.data.conversion.DoubleToString doubletostring311 = new adams.data.conversion.DoubleToString();
-    argOption = (AbstractArgumentOption) doubletostring311.getOptionManager().findByProperty("numDecimals");
-    doubletostring311.setNumDecimals((Integer) argOption.valueOf("0"));
-    doubletostring311.setFixedDecimals(true);
+      // Flow.write.Convert
+      Convert convert = new Convert();
+      MultiConversion multiconversion = new MultiConversion();
+      List<Conversion> subconversions = new ArrayList<>();
+      NumberToDouble numbertodouble = new NumberToDouble();
+      subconversions.add(numbertodouble);
+      DoubleToString doubletostring = new DoubleToString();
+      argOption = (AbstractArgumentOption) doubletostring.getOptionManager().findByProperty("numDecimals");
+      doubletostring.setNumDecimals((Integer) argOption.valueOf("0"));
+      doubletostring.setFixedDecimals(true);
 
-    convert309.setConversion(doubletostring311);
+      subconversions.add(doubletostring);
+      multiconversion.setSubConversions(subconversions.toArray(new Conversion[0]));
 
-    actors305[1] = convert309;
+      convert.setConversion(multiconversion);
 
-    // Flow.write.set seed
-    adams.flow.transformer.SetVariable setvariable313 = new adams.flow.transformer.SetVariable();
-    argOption = (AbstractArgumentOption) setvariable313.getOptionManager().findByProperty("name");
-    setvariable313.setName((java.lang.String) argOption.valueOf("set seed"));
-    argOption = (AbstractArgumentOption) setvariable313.getOptionManager().findByProperty("variableName");
-    setvariable313.setVariableName((adams.core.VariableName) argOption.valueOf("seed"));
-    actors305[2] = setvariable313;
+      actors20.add(convert);
 
-    // Flow.write.delete file
-    adams.flow.control.Trigger trigger316 = new adams.flow.control.Trigger();
-    argOption = (AbstractArgumentOption) trigger316.getOptionManager().findByProperty("name");
-    trigger316.setName((java.lang.String) argOption.valueOf("delete file"));
-    argOption = (AbstractArgumentOption) trigger316.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors318 = new adams.flow.core.Actor[2];
+      // Flow.write.set seed
+      SetVariable setvariable18 = new SetVariable();
+      argOption = (AbstractArgumentOption) setvariable18.getOptionManager().findByProperty("name");
+      setvariable18.setName((String) argOption.valueOf("set seed"));
+      argOption = (AbstractArgumentOption) setvariable18.getOptionManager().findByProperty("variableName");
+      setvariable18.setVariableName((VariableName) argOption.valueOf("seed"));
+      actors20.add(setvariable18);
 
-    // Flow.write.delete file.Variable
-    adams.flow.source.Variable variable319 = new adams.flow.source.Variable();
-    argOption = (AbstractArgumentOption) variable319.getOptionManager().findByProperty("variableName");
-    variable319.setVariableName((adams.core.VariableName) argOption.valueOf("outfile"));
-    actors318[0] = variable319;
+      // Flow.write.delete file
+      Trigger trigger5 = new Trigger();
+      {
+        argOption = (AbstractArgumentOption) trigger5.getOptionManager().findByProperty("name");
+        trigger5.setName((String) argOption.valueOf("delete file"));
+        List<Actor> actors21 = new ArrayList<>();
 
-    // Flow.write.delete file.DeleteFile
-    adams.flow.transformer.DeleteFile deletefile321 = new adams.flow.transformer.DeleteFile();
-    actors318[1] = deletefile321;
-    trigger316.setActors(actors318);
+        // Flow.write.delete file.Variable
+        Variable variable = new Variable();
+        argOption = (AbstractArgumentOption) variable.getOptionManager().findByProperty("variableName");
+        variable.setVariableName((VariableName) argOption.valueOf("outfile"));
+        StringToString stringtostring2 = new StringToString();
+        variable.setConversion(stringtostring2);
 
-    actors305[3] = trigger316;
+        actors21.add(variable);
 
-    // Flow.write.generate random array
-    adams.flow.control.Trigger trigger322 = new adams.flow.control.Trigger();
-    argOption = (AbstractArgumentOption) trigger322.getOptionManager().findByProperty("name");
-    trigger322.setName((java.lang.String) argOption.valueOf("generate random array"));
-    argOption = (AbstractArgumentOption) trigger322.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors324 = new adams.flow.core.Actor[4];
+        // Flow.write.delete file.DeleteFile
+        DeleteFile deletefile = new DeleteFile();
+        actors21.add(deletefile);
+        trigger5.setActors(actors21.toArray(new Actor[0]));
 
-    // Flow.write.generate random array.RandomNumberGenerator
-    adams.flow.source.RandomNumberGenerator randomnumbergenerator325 = new adams.flow.source.RandomNumberGenerator();
-    argOption = (AbstractArgumentOption) randomnumbergenerator325.getOptionManager().findByProperty("generator");
-    adams.data.random.JavaRandomDouble javarandomdouble327 = new adams.data.random.JavaRandomDouble();
-    argOption = (AbstractArgumentOption) javarandomdouble327.getOptionManager().findByProperty("seed");
-    argOption.setVariable("@{seed}");
-    randomnumbergenerator325.setGenerator(javarandomdouble327);
+      }
+      actors20.add(trigger5);
 
-    argOption = (AbstractArgumentOption) randomnumbergenerator325.getOptionManager().findByProperty("maxNum");
-    argOption.setVariable("@{num_rand}");
-    actors324[0] = randomnumbergenerator325;
+      // Flow.write.generate random array
+      Trigger trigger6 = new Trigger();
+      {
+        argOption = (AbstractArgumentOption) trigger6.getOptionManager().findByProperty("name");
+        trigger6.setName((String) argOption.valueOf("generate random array"));
+        List<Actor> actors22 = new ArrayList<>();
 
-    // Flow.write.generate random array.SequenceToArray
-    adams.flow.transformer.SequenceToArray sequencetoarray328 = new adams.flow.transformer.SequenceToArray();
-    argOption = (AbstractArgumentOption) sequencetoarray328.getOptionManager().findByProperty("arrayLength");
-    argOption.setVariable("@{num_rand}");
-    actors324[1] = sequencetoarray328;
+        // Flow.write.generate random array.RandomNumberGenerator
+        RandomNumberGenerator randomnumbergenerator2 = new RandomNumberGenerator();
+        JavaRandomDouble javarandomdouble = new JavaRandomDouble();
+        argOption = (AbstractArgumentOption) javarandomdouble.getOptionManager().findByProperty("seed");
+        argOption.setVariable("@{seed}");
+        randomnumbergenerator2.setGenerator(javarandomdouble);
 
-    // Flow.write.generate random array.ArrayProcess
-    adams.flow.control.ArrayProcess arrayprocess329 = new adams.flow.control.ArrayProcess();
-    argOption = (AbstractArgumentOption) arrayprocess329.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors330 = new adams.flow.core.Actor[1];
+        argOption = (AbstractArgumentOption) randomnumbergenerator2.getOptionManager().findByProperty("maxNum");
+        argOption.setVariable("@{num_rand}");
+        actors22.add(randomnumbergenerator2);
 
-    // Flow.write.generate random array.ArrayProcess.Convert
-    adams.flow.transformer.Convert convert331 = new adams.flow.transformer.Convert();
-    argOption = (AbstractArgumentOption) convert331.getOptionManager().findByProperty("conversion");
-    adams.data.conversion.DoubleToString doubletostring333 = new adams.data.conversion.DoubleToString();
-    argOption = (AbstractArgumentOption) doubletostring333.getOptionManager().findByProperty("numDecimals");
-    doubletostring333.setNumDecimals((Integer) argOption.valueOf("6"));
-    doubletostring333.setFixedDecimals(true);
+        // Flow.write.generate random array.SequenceToArray
+        SequenceToArray sequencetoarray = new SequenceToArray();
+        argOption = (AbstractArgumentOption) sequencetoarray.getOptionManager().findByProperty("arrayLength");
+        argOption.setVariable("@{num_rand}");
+        actors22.add(sequencetoarray);
 
-    convert331.setConversion(doubletostring333);
+        // Flow.write.generate random array.ArrayProcess
+        ArrayProcess arrayprocess = new ArrayProcess();
+        {
+          List<Actor> actors23 = new ArrayList<>();
 
-    actors330[0] = convert331;
-    arrayprocess329.setActors(actors330);
+          // Flow.write.generate random array.ArrayProcess.Convert
+          Convert convert2 = new Convert();
+          DoubleToString doubletostring2 = new DoubleToString();
+          argOption = (AbstractArgumentOption) doubletostring2.getOptionManager().findByProperty("numDecimals");
+          doubletostring2.setNumDecimals((Integer) argOption.valueOf("6"));
+          doubletostring2.setFixedDecimals(true);
 
-    actors324[2] = arrayprocess329;
+          convert2.setConversion(doubletostring2);
 
-    // Flow.write.generate random array.TimedTee
-    adams.flow.control.TimedTee timedtee335 = new adams.flow.control.TimedTee();
-    argOption = (AbstractArgumentOption) timedtee335.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors336 = new adams.flow.core.Actor[1];
+          actors23.add(convert2);
+          arrayprocess.setActors(actors23.toArray(new Actor[0]));
 
-    // Flow.write.generate random array.TimedTee.IfThenElse
-    adams.flow.control.IfThenElse ifthenelse337 = new adams.flow.control.IfThenElse();
-    argOption = (AbstractArgumentOption) ifthenelse337.getOptionManager().findByProperty("condition");
-    adams.flow.condition.bool.Expression expression339 = new adams.flow.condition.bool.Expression();
-    argOption = (AbstractArgumentOption) expression339.getOptionManager().findByProperty("expression");
-    expression339.setExpression((adams.parser.BooleanExpressionText) argOption.valueOf("(@{combine_numbers})"));
-    ifthenelse337.setCondition(expression339);
+        }
+        actors22.add(arrayprocess);
 
-    argOption = (AbstractArgumentOption) ifthenelse337.getOptionManager().findByProperty("thenActor");
+        // Flow.write.generate random array.TimedTee
+        TimedTee timedtee = new TimedTee();
+        {
+          List<Actor> actors24 = new ArrayList<>();
 
-    // Flow.write.generate random array.TimedTee.IfThenElse.then
-    adams.flow.control.Sequence sequence342 = new adams.flow.control.Sequence();
-    argOption = (AbstractArgumentOption) sequence342.getOptionManager().findByProperty("name");
-    sequence342.setName((java.lang.String) argOption.valueOf("then"));
-    argOption = (AbstractArgumentOption) sequence342.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors344 = new adams.flow.core.Actor[2];
+          // Flow.write.generate random array.TimedTee.IfThenElse
+          IfThenElse ifthenelse = new IfThenElse();
+          {
+            Expression expression6 = new Expression();
+            argOption = (AbstractArgumentOption) expression6.getOptionManager().findByProperty("expression");
+            expression6.setExpression((BooleanExpressionText) argOption.valueOf("(@{combine_numbers})"));
+            ifthenelse.setCondition(expression6);
 
-    // Flow.write.generate random array.TimedTee.IfThenElse.then.StringJoin
-    adams.flow.transformer.StringJoin stringjoin345 = new adams.flow.transformer.StringJoin();
-    argOption = (AbstractArgumentOption) stringjoin345.getOptionManager().findByProperty("glue");
-    stringjoin345.setGlue((java.lang.String) argOption.valueOf("\n"));
-    actors344[0] = stringjoin345;
 
-    // Flow.write.generate random array.TimedTee.IfThenElse.then.DumpFile
-    adams.flow.sink.DumpFile dumpfile347 = new adams.flow.sink.DumpFile();
-    argOption = (AbstractArgumentOption) dumpfile347.getOptionManager().findByProperty("outputFile");
-    dumpfile347.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${HOME}/temp/rand.txt"));
-    dumpfile347.setAppend(true);
+            // Flow.write.generate random array.TimedTee.IfThenElse.then
+            Sequence sequence4 = new Sequence();
+            {
+              argOption = (AbstractArgumentOption) sequence4.getOptionManager().findByProperty("name");
+              sequence4.setName((String) argOption.valueOf("then"));
+              List<Actor> actors25 = new ArrayList<>();
 
-    actors344[1] = dumpfile347;
-    sequence342.setActors(actors344);
+              // Flow.write.generate random array.TimedTee.IfThenElse.then.StringJoin
+              StringJoin stringjoin2 = new StringJoin();
+              argOption = (AbstractArgumentOption) stringjoin2.getOptionManager().findByProperty("glue");
+              stringjoin2.setGlue((String) argOption.valueOf("\n"));
+              actors25.add(stringjoin2);
 
-    ifthenelse337.setThenActor(sequence342);
+              // Flow.write.generate random array.TimedTee.IfThenElse.then.DumpFile
+              DumpFile dumpfile = new DumpFile();
+              argOption = (AbstractArgumentOption) dumpfile.getOptionManager().findByProperty("outputFile");
+              dumpfile.setOutputFile((PlaceholderFile) argOption.valueOf("${HOME}/temp/rand.txt"));
+              dumpfile.setAppend(true);
 
-    argOption = (AbstractArgumentOption) ifthenelse337.getOptionManager().findByProperty("elseActor");
+              actors25.add(dumpfile);
+              sequence4.setActors(actors25.toArray(new Actor[0]));
 
-    // Flow.write.generate random array.TimedTee.IfThenElse.else
-    adams.flow.control.Sequence sequence350 = new adams.flow.control.Sequence();
-    argOption = (AbstractArgumentOption) sequence350.getOptionManager().findByProperty("name");
-    sequence350.setName((java.lang.String) argOption.valueOf("else"));
-    argOption = (AbstractArgumentOption) sequence350.getOptionManager().findByProperty("actors");
-    adams.flow.core.Actor[] actors352 = new adams.flow.core.Actor[2];
+            }
+            ifthenelse.setThenActor(sequence4);
 
-    // Flow.write.generate random array.TimedTee.IfThenElse.else.ArrayToSequence
-    adams.flow.transformer.ArrayToSequence arraytosequence353 = new adams.flow.transformer.ArrayToSequence();
-    actors352[0] = arraytosequence353;
 
-    // Flow.write.generate random array.TimedTee.IfThenElse.else.DumpFile
-    adams.flow.sink.DumpFile dumpfile354 = new adams.flow.sink.DumpFile();
-    argOption = (AbstractArgumentOption) dumpfile354.getOptionManager().findByProperty("outputFile");
-    dumpfile354.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${HOME}/temp/rand.txt"));
-    dumpfile354.setAppend(true);
+            // Flow.write.generate random array.TimedTee.IfThenElse.else
+            Sequence sequence5 = new Sequence();
+            {
+              argOption = (AbstractArgumentOption) sequence5.getOptionManager().findByProperty("name");
+              sequence5.setName((String) argOption.valueOf("else"));
+              List<Actor> actors26 = new ArrayList<>();
 
-    actors352[1] = dumpfile354;
-    sequence350.setActors(actors352);
+              // Flow.write.generate random array.TimedTee.IfThenElse.else.ArrayToSequence
+              ArrayToSequence arraytosequence = new ArrayToSequence();
+              actors26.add(arraytosequence);
 
-    ifthenelse337.setElseActor(sequence350);
+              // Flow.write.generate random array.TimedTee.IfThenElse.else.DumpFile
+              DumpFile dumpfile2 = new DumpFile();
+              argOption = (AbstractArgumentOption) dumpfile2.getOptionManager().findByProperty("outputFile");
+              dumpfile2.setOutputFile((PlaceholderFile) argOption.valueOf("${HOME}/temp/rand.txt"));
+              dumpfile2.setAppend(true);
 
-    actors336[0] = ifthenelse337;
-    timedtee335.setActors(actors336);
+              actors26.add(dumpfile2);
+              sequence5.setActors(actors26.toArray(new Actor[0]));
 
-    argOption = (AbstractArgumentOption) timedtee335.getOptionManager().findByProperty("callableName");
-    timedtee335.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("timing_write"));
-    actors324[3] = timedtee335;
-    trigger322.setActors(actors324);
+            }
+            ifthenelse.setElseActor(sequence5);
 
-    actors305[4] = trigger322;
-    timedtrigger303.setActors(actors305);
+          }
+          actors24.add(ifthenelse);
+          timedtee.setActors(actors24.toArray(new Actor[0]));
 
-    argOption = (AbstractArgumentOption) timedtrigger303.getOptionManager().findByProperty("prefix");
-    timedtrigger303.setPrefix((java.lang.String) argOption.valueOf("Write"));
-    argOption = (AbstractArgumentOption) timedtrigger303.getOptionManager().findByProperty("callableName");
-    timedtrigger303.setCallableName((adams.flow.core.CallableActorReference) argOption.valueOf("timing_overall"));
-    actors2[7] = timedtrigger303;
-    actor.setActors(actors2);
+          argOption = (AbstractArgumentOption) timedtee.getOptionManager().findByProperty("callableName");
+          timedtee.setCallableName((CallableActorReference) argOption.valueOf("timing_write"));
+        }
+        actors22.add(timedtee);
+        trigger6.setActors(actors22.toArray(new Actor[0]));
 
-    argOption = (AbstractArgumentOption) actor.getOptionManager().findByProperty("flowExecutionListener");
-    adams.flow.execution.NullListener nulllistener360 = new adams.flow.execution.NullListener();
-    actor.setFlowExecutionListener(nulllistener360);
+      }
+      actors20.add(trigger6);
+      timedtrigger3.setActors(actors20.toArray(new Actor[0]));
+
+      argOption = (AbstractArgumentOption) timedtrigger3.getOptionManager().findByProperty("prefix");
+      timedtrigger3.setPrefix((String) argOption.valueOf("Write"));
+      argOption = (AbstractArgumentOption) timedtrigger3.getOptionManager().findByProperty("callableName");
+      timedtrigger3.setCallableName((CallableActorReference) argOption.valueOf("timing_overall"));
+    }
+    actors.add(timedtrigger3);
+    actor.setActors(actors.toArray(new Actor[0]));
+
+    argOption = (AbstractArgumentOption) actor.getOptionManager().findByProperty("errorHandling");
+    actor.setErrorHandling((ErrorHandling) argOption.valueOf("ACTORS_DECIDE_TO_STOP_ON_ERROR"));
+    NullListener nulllistener = new NullListener();
+    actor.setFlowExecutionListener(nulllistener);
 
     return actor;
   }
