@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileTailer.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -98,7 +98,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileTailer
   extends AbstractTransformer {
@@ -308,7 +307,6 @@ public class FileTailer
     if (file != null) {
       listener = new Listener(this, file.getAbsolutePath());
       m_Tailer = Tailer.create(file.getAbsoluteFile(), listener, m_Delay, m_End);
-      new Thread(m_Tailer).start();
     }
 
     return result;
