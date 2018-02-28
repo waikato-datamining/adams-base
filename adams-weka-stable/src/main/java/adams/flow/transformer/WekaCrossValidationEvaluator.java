@@ -489,7 +489,7 @@ public class WekaCrossValidationEvaluator
 	  else {
 	    if (m_CrossValidation.getOutputBuffer() != null)
 	      m_OutputBuffer.append(m_CrossValidation.getOutputBuffer().toString());
-	    if (m_AlwaysUseContainer)
+	    if (m_AlwaysUseContainer || m_FinalModel)
 	      m_OutputToken = new Token(new WekaEvaluationContainer(m_CrossValidation.getEvaluation(), null, m_Output.getBuffer().toString()));
 	    else
 	      m_OutputToken = new Token(m_Output.getBuffer().toString());
