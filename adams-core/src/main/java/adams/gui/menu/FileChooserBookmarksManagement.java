@@ -100,7 +100,7 @@ public class FileChooserBookmarksManagement
    */
   @Override
   public UserMode getUserMode() {
-    return UserMode.BASIC;
+    return UserMode.EXPERT;
   }
 
   /**
