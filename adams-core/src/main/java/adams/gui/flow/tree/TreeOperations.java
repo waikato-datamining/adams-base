@@ -31,7 +31,6 @@ import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractCallableActor;
-import adams.flow.core.AbstractExternalActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -42,6 +41,7 @@ import adams.flow.core.ActorWithConditionalEquivalent;
 import adams.flow.core.ActorWithTimedEquivalent;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.ExternalActorFileHandler;
+import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
@@ -92,7 +92,6 @@ import java.util.List;
  * actors.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TreeOperations
   implements Serializable, CleanUpHandler {
@@ -1337,7 +1336,7 @@ public class TreeOperations
    * @param suggestion	the suggested actor to replace with
    */
   public void externalizeActor(TreePath path, Actor suggestion) {
-    externalizeActor(path, true, null);
+    externalizeActor(path, true, suggestion);
   }
 
   /**
@@ -1350,9 +1349,24 @@ public class TreeOperations
   protected void externalizeActor(TreePath path, boolean checkCallActors, Actor suggestion) {
     Actor			currActor;
     Node 			currNode;
-    AbstractExternalActor 	extActor;
+    ExternalActorHandler 	extActor;
     FlowEditorDialog		dialog;
     int				retVal;
+
+    if (suggestion == null) {
+      GUIHelper.showErrorMessage(
+        getOwner(),
+	"No external actor suggested, cannot proceed in externalizing actor!");
+      return;
+    }
+
+    if (!(suggestion instanceof ExternalActorHandler)) {
+      GUIHelper.showErrorMessage(
+        getOwner(),
+	"Suggested external actor does not implement the following interface:\n"
+	  + Utils.classToString(ExternalActorHandler.class));
+      return;
+    }
 
     currNode  = TreeHelper.pathToNode(path);
     currActor = currNode.getFullActor().shallowCopy();
@@ -1377,19 +1391,19 @@ public class TreeOperations
 
     getOwner().addUndoPoint("Externalizing node '" + currNode.getFullName() + "'");
 
-    extActor = null;
-    if (ActorUtils.isStandalone(currActor) && ((suggestion == null) || !ActorUtils.isStandalone(suggestion)))
+    extActor = (ExternalActorHandler) suggestion;
+    if (ActorUtils.isStandalone(currActor) && !ActorUtils.isStandalone(suggestion))
       extActor = new ExternalStandalone();
-    else if (ActorUtils.isSource(currActor) && ((suggestion == null) || !ActorUtils.isSource(suggestion)))
+    else if (ActorUtils.isSource(currActor) && !ActorUtils.isSource(suggestion))
       extActor = new ExternalSource();
-    else if (ActorUtils.isTransformer(currActor) && ((suggestion == null) || !ActorUtils.isTransformer(suggestion)))
+    else if (ActorUtils.isTransformer(currActor) && !ActorUtils.isTransformer(suggestion))
       extActor = new ExternalTransformer();
-    else if (ActorUtils.isSink(currActor) && ((suggestion == null) || !ActorUtils.isSink(suggestion)))
+    else if (ActorUtils.isSink(currActor) && !ActorUtils.isSink(suggestion))
       extActor = new ExternalSink();
     extActor.setActorFile(new FlowFile(dialog.getFlowEditorPanel().getCurrentFile()));
 
     getOwner().setModified(true);
-    currNode.setActor(extActor);
+    currNode.setActor((Actor) extActor);
     currNode.removeAllChildren();
     getOwner().nodeStructureChanged(currNode);
     getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), currNode, Type.MODIFY));
