@@ -858,6 +858,8 @@ public class TreeOperations
 
     node       = TreeHelper.pathToNode(paths[0]);
     parentNode = (Node) node.getParent();
+    if (parentNode == null)
+      return null;
 
     if (paths.length == 1)
       pos = 0;
@@ -897,7 +899,9 @@ public class TreeOperations
 
     result = null;
 
-    context     = configureSuggestionContext(paths);
+    context = configureSuggestionContext(paths);
+    if (context == null)
+      return null;
     suggestions = ExternalActorSuggestion.getSingleton().suggest(context);
     if (suggestions.length > 0)
       result = suggestions;
