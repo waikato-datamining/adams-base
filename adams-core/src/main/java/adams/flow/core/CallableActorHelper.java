@@ -15,7 +15,7 @@
 
 /*
  * CallableActorHelper.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -35,13 +35,32 @@ import java.util.List;
  * Helper class for callable actors.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CallableActorHelper
   extends LoggingObject {
 
   /** for serialization. */
   private static final long serialVersionUID = -763479272812116920L;
+
+  /**
+   * Checks a reference handler's children whether they contain the callable actor
+   * that we're looking for.
+   *
+   * @param handler	the reference handler to check
+   * @param name	the name of the callable actor
+   * @return		the callable actor or null if not found
+   */
+  public Actor findCallableActor(ActorReferenceHandler handler, CallableActorReference name) {
+    Actor	result;
+    int		index;
+
+    result = null;
+    index  = handler.indexOf(name.toString());
+    if (index > -1)
+      result = handler.get(index);
+
+    return result;
+  }
 
   /**
    * Checks a control actor's children whether they contain the callable actor
@@ -54,25 +73,25 @@ public class CallableActorHelper
   public Actor findCallableActor(ActorHandler handler, CallableActorReference name) {
     Actor			result;
     int				i;
-    ActorReferenceHandler callable;
-    int				index;
-    ExternalActorHandler	external;
+    Actor			extActor;
+    ExternalActorHandler 	extHandler;
 
     result = null;
 
     for (i = 0; i < handler.size(); i++) {
       if (handler.get(i) instanceof ActorReferenceHandler) {
-	callable = (ActorReferenceHandler) handler.get(i);
-	index  = callable.indexOf(name.toString());
-	if (index > -1) {
-	  result = callable.get(index);
+        result = findCallableActor((ActorReferenceHandler) handler.get(i), name);
+        if (result != null)
 	  break;
-	}
       }
       else if (handler.get(i) instanceof ExternalActorHandler) {
-	external = (ExternalActorHandler) handler.get(i);
-	if (external.getExternalActor() instanceof ActorHandler) {
-	  result = findCallableActor((ActorHandler) external.getExternalActor(), name);
+	extHandler = (ExternalActorHandler) handler.get(i);
+	if (extHandler.getExternalActor() instanceof ActorHandler) {
+	  extActor = extHandler.getExternalActor();
+	  if (extActor instanceof ActorReferenceHandler)
+	    result = findCallableActor((ActorReferenceHandler) extActor, name);
+	  else
+	    result = findCallableActor((ActorHandler) extActor, name);
 	  if (result != null)
 	    break;
 	}
@@ -142,45 +161,39 @@ public class CallableActorHelper
    * @param handler	the handler to check
    * @param collected	the actors collected so far
    */
-  protected void findCallableActors(ActorHandler handler, List<Actor> collected) {
-    int				i;
-    int				n;
-    ActorReferenceHandler callable;
-    ExternalActorHandler	external;
+  protected void findCallableActors(ActorReferenceHandler handler, List<Actor> collected) {
+    int 	i;
 
-    for (i = 0; i < handler.size(); i++) {
-      if (handler.get(i) instanceof ActorReferenceHandler) {
-	callable = (ActorReferenceHandler) handler.get(i);
-	for (n = 0; n < callable.size(); n++)
-	  collected.add(callable.get(n));
-      }
-      else if (handler.get(i) instanceof ExternalActorHandler) {
-	external = (ExternalActorHandler) handler.get(i);
-	if (external.getExternalActor() instanceof ActorHandler)
-	  findCallableActors((ActorHandler) external.getExternalActor(), collected);
-      }
-    }
+    for (i = 0; i < handler.size(); i++)
+      collected.add(handler.get(i));
   }
 
   /**
    * Locates callable actors.
    *
-   * @param root	the root to search in
+   * @param handler	the handler to check
    * @param collected	the actors collected so far
    */
-  protected void findCallableActors(Actor root, List<Actor> collected) {
-    if (root == null) {
-      getLogger().severe("No root container found!");
-    }
-    else if (!(root instanceof AbstractDirectedControlActor)) {
-      getLogger().severe(
-	  "Root is not a container ('" + root.getFullName() + "'/"
-	  + root.getClass().getName() + ")!");
-      root = null;
-    }
+  protected void findCallableActors(ActorHandler handler, List<Actor> collected) {
+    int				i;
+    ExternalActorHandler 	extHandler;
+    Actor			extActor;
 
-    if (root != null)
-      findCallableActors((ActorHandler) root, collected);
+    for (i = 0; i < handler.size(); i++) {
+      if (handler.get(i) instanceof ActorReferenceHandler) {
+        findCallableActors((ActorReferenceHandler) handler.get(i), collected);
+      }
+      else if (handler.get(i) instanceof ExternalActorHandler) {
+	extHandler = (ExternalActorHandler) handler.get(i);
+	if (extHandler.getExternalActor() instanceof ActorHandler) {
+	  extActor = extHandler.getExternalActor();
+	  if (extActor instanceof ActorReferenceHandler)
+	    findCallableActors((ActorReferenceHandler) extActor, collected);
+	  else
+	    findCallableActors((ActorHandler) extActor, collected);
+	}
+      }
+    }
   }
 
   /**
