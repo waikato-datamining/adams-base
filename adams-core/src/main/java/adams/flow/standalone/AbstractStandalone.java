@@ -15,7 +15,7 @@
 
 /*
  * AbstractStandalone.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -26,7 +26,6 @@ import adams.flow.core.AbstractActor;
  * Ancestor for all flow items that neither generate nor process tokens.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractStandalone
   extends AbstractActor {
@@ -49,8 +48,10 @@ public abstract class AbstractStandalone
     result = super.preExecute();
 
     if (result == null) {
-      if ((m_DetectedVariables.size() > 0) || (m_DetectedObjectVariables.size() > 0))
-	getOptionManager().updateVariableValues(true);
+      if (m_DetectedVariables != null) {
+        if ((m_DetectedVariables.size() > 0) || (m_DetectedObjectVariables.size() > 0))
+          getOptionManager().updateVariableValues(true);
+      }
     }
 
     return result;
