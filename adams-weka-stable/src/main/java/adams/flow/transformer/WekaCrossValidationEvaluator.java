@@ -430,6 +430,23 @@ public class WekaCrossValidationEvaluator
     return new Class[]{Instances.class};
   }
 
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		the output that it generates
+   */
+  public Class[] generates() {
+    if (m_FinalModel)
+      return new Class[]{WekaEvaluationContainer.class};
+    else
+      return super.generates();
+  }
+
+  /**
+   * Initializes the item for flow execution.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
   @Override
   public String setUp() {
     String	result;
