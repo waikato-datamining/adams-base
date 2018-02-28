@@ -15,7 +15,7 @@
 
 /*
  * ObjectCopyHelper.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
@@ -32,7 +32,6 @@ import java.lang.reflect.Array;
  * Helper class for copying objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ObjectCopyHelper {
 
@@ -90,7 +89,7 @@ public class ObjectCopyHelper {
    * @return 		a copy of the source object
    * @see		#copyObjects(CopyType, Object[])
    */
-  public static Object copyObject(Object source) {
+  public static <T> T copyObject(T source) {
     return copyObject(null, source);
   }
 
@@ -102,11 +101,8 @@ public class ObjectCopyHelper {
    * @return 		a copy of the source object
    * @see		#copyObjects(CopyType, Object[])
    */
-  public static Object copyObject(CopyType type, Object source) {
-    if (source == null)
-      return null;
-
-    return copyObjects(type, new Object[]{source})[0];
+  public static <T> T copyObject(CopyType type, T source) {
+    return createCopy(type, source);
   }
 
   /**
@@ -116,7 +112,7 @@ public class ObjectCopyHelper {
    * @return 		a copy of the source objects
    * @see		#copyObjects(CopyType, Object[])
    */
-  public static Object[] copyObjects(Object[] source) {
+  public static <T> T[] copyObjects(T[] source) {
     return copyObjects(null, source);
   }
 
@@ -131,42 +127,55 @@ public class ObjectCopyHelper {
    * @see		Utils#deepCopy(Object)
    * @see		CopyType
    */
-  public static Object[] copyObjects(CopyType type, Object[] source) {
-    Object[] 	result;
-    int		i;
-    Class	cls;
+  public static <T> T[] copyObjects(CopyType type, T[] source) {
+    T[] 	result;
+    int 	i;
 
     if (source == null)
       return null;
     if (source.length == 0)
-      return new Object[0];
+      return (T[]) Array.newInstance(source.getClass().getComponentType(), 0);
 
     if (type == null)
       type = copyType(source[0]);
 
-    result = (Object[]) Array.newInstance(source[0].getClass(), source.length);
+    result = (T[]) Array.newInstance(source[0].getClass(), source.length);
+    for (i = 0; i < source.length; i++)
+      result[i] = createCopy(type, source[i]);
+
+    return result;
+  }
+
+  /**
+   * Makes a copy of the object.
+   *
+   * @param type	the copy type to use, null to automatically determine
+   * @param source 	the object to copy
+   * @return 		a copy of the source object
+   * @see		OptionUtils#shallowCopy
+   * @see		CloneHandler#getClone()
+   * @see		Utils#deepCopy(Object)
+   * @see		CopyType
+   */
+  protected static <T> T createCopy(CopyType type, T source) {
+    if (source == null)
+      return null;
+
+    if (type == null)
+      type = copyType(source);
+
     switch (type) {
       case OPTIONHANDLER:
-	for (i = 0; i < source.length; i++)
-	  result[i] = OptionUtils.shallowCopy(source[i]);
-	break;
+        return (T) OptionUtils.shallowCopy(source);
       case CLONEHANDLER:
-	for (i = 0; i < source.length; i++)
-	  result[i] = ((CloneHandler) source[i]).getClone();
-	break;
+        return (T) ((CloneHandler) source).getClone();
       case SERIALIZABLE:
-	result = (Object[]) Utils.deepCopy(source);
-	break;
+	return (T) Utils.deepCopy(source);
       case NEWINSTANCE:
-	cls = source[0].getClass();
-	for (i = 0; i < source.length; i++)
-	  result[i] = newInstance(cls);
-	break;
+        return (T) newInstance(source.getClass());
       default:
 	throw new IllegalStateException("Unhandled type of object copying: " + type);
     }
-
-    return result;
   }
 
   /**
