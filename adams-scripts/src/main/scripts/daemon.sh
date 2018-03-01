@@ -60,7 +60,7 @@ else
   echo
   echo "- starting a daemon:"
   echo "    start <memory> <flow> <port>"
-  echo "  <flow> -- below the ${FLOWS} directory"
+  echo "  <flow> -- absolute path to the flow"
   echo "  <memory> -- eg 1024m or 2g"
   echo
   echo "- stopping a daemon:"
