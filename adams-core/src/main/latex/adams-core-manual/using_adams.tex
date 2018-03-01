@@ -2257,7 +2257,7 @@ Environment="JAVA_HOME=/opt/jdk"
 Environment="PATH=/opt/jdk/bin:/usr/local/bin:/usr/bin"
 
 WorkingDirectory=/opt/adams
-ExecStart=/opt/adams/bin/daemon.sh start 1g myflow.flow 12345
+ExecStart=/opt/adams/bin/daemon.sh start 1g /opt/adams/flows/myflow.flow 12345
 ExecStop=/opt/adams/bin/daemon.sh stop 12345
 
 [Install]
@@ -2283,7 +2283,8 @@ WantedBy=multi-user.target
 ADAMS can be run as background process on Windows as well. Using the NSSM\cite{nssm}
 tool, you can a Windows service that executes the flow \textit{myflow.flow}.
 ADAMS is assumed for be installed in \textit{C:\textbackslash adams} for this
-example and \textit{myflow.flow} needs to reside in the \textit{flows} directory.
+example and \textit{myflow.flow} resides in the \textit{C:\textbackslash flows}
+directory.
 
 \noindent Use the following steps to set up the service:
 \begin{tight_itemize}
@@ -2299,7 +2300,7 @@ example and \textit{myflow.flow} needs to reside in the \textit{flows} directory
   \item Use the following \textit{Arguments} to execute the flow with 1GB of
   heap and the remote command scripting engine on port 12345:
     \begin{verbatim}
-    start myflow.flow 1g 12345
+    start C:\textbackslash myflow.flow 1g 12345
     \end{verbatim}
   \item On the \textit{Log on} tab, select \textit{This account} and supply user
   and password to run ADAMS under.
