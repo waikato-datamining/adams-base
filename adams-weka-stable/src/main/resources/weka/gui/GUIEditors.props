@@ -1,5 +1,0 @@
-# Extensions for weka.classifiers.meta.MultiSearch
-weka.core.setupgenerator.AbstractParameter=weka.gui.GenericObjectEditor
-weka.core.setupgenerator.AbstractParameter[]=weka.gui.GenericArrayEditor
-weka.classifiers.AbstainingClassifier=weka.gui.GenericObjectEditor
-weka.classifiers.AbstainingClassifier[]=weka.gui.GenericArrayEditor

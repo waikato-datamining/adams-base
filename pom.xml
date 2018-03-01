@@ -52,7 +52,6 @@
     <module>adams-timeseries</module>
     <module>adams-visualstats</module>
     <module>adams-weka</module>
-    <module>adams-weka-stable</module>
   </modules>
 
   <properties>

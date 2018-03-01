@@ -1,8 +1,0 @@
-# Project: adams
-# Date: 2016-02-15 15:16:19
-# User: fracpete
-# Charset: UTF-8
-adams.flow.control.Flow -annotation "This flow simply generates one large dataset from\\nall the incoming ones, by appending one after the other." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -output-array true -file ${FLOWS}/data/anneal_train.arff -file ${FLOWS}/data/anneal_test.arff
- adams.flow.transformer.WekaInstancesAppend
- adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter
