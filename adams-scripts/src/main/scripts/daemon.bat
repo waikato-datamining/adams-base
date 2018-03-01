@@ -44,7 +44,7 @@ goto wrongcmd
 @REM Start the daemon
 :startdaemon
 %JCMD% -classpath %CLASSPATH% -Xmx%2 adams.flow.FlowRunner^
- -input "%BASEDIR%\flows\%3"^
+ -input "%3"^
  -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port %4"^
  -shutdown-hook "adams.core.shutdown.StopFlows -time-out 5000"^
  -headless true^

@@ -18,7 +18,7 @@
 #   Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
 #   reserved.
 
-#   Copyright (C) 2011-2017 University of Waikato, Hamilton, NZ
+#   Copyright (C) 2011-2018 University of Waikato, Hamilton, NZ
 
 BASEDIR=`dirname $0`/..
 BASEDIR=`(cd "$BASEDIR"; pwd)`
@@ -39,7 +39,7 @@ then
     -classpath "$CLASSPATH" \
     -Xmx$2 \
     adams.flow.FlowRunner \
-    -input "$BASEDIR/$3" \
+    -input "$3" \
     -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port $4" \
     -headless true \
     -non-interactive true \
