@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StopFlows.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-018 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.shutdown;
@@ -23,13 +23,11 @@ package adams.core.shutdown;
 import adams.core.Utils;
 import adams.flow.control.Flow;
 import adams.flow.control.RunningFlowsRegistry;
-import adams.flow.core.ActorUtils;
 
 /**
  * Stops registered flows.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StopFlows
   extends AbstractShutdownHook {
@@ -98,7 +96,7 @@ public class StopFlows
    * @return		the ID string
    */
   protected String createFlowID(int id, Flow flow) {
-    return "ID=" + id + ", path="  + flow.getVariables().get(ActorUtils.FLOW_FILENAME_LONG);
+    return "ID=" + id;
   }
 
   /**
