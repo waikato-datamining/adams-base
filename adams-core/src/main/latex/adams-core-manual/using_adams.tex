@@ -1264,7 +1264,7 @@ The following conversion are available:
 Any database that has a JDBC driver can be used within ADAMS. By default,
 ADAMS comes with support for MySQL and SQLite. See section \ref{databaseaccess} 
 for how to add more databases. The following actors allow you to perform
-some basic operations::
+some basic operations:
 \begin{tight_itemize}
 	\item \textit{ExecSQL} -- standalone for executing any SQL query.
 	\item \textit{ListTables} -- source actor that iterates through tables
@@ -1274,6 +1274,13 @@ some basic operations::
 \end{tight_itemize}
 For more functionality, see the documentation on the \textit{adams-spreadsheet} 
 module.
+
+\noindent \textbf{NB:} Later versions of MySQL automatically want to secure
+the connection with SSL. If that is not desired or necessary, you can use
+a JDBC URL like this to connect to database \textit{mydb} on host \textit{somehost}:
+\begin{verbatim}
+jdbc:mysql://somehost:3306/mydb?useSSL=false
+\end{verbatim}
 
 
 \newpage
