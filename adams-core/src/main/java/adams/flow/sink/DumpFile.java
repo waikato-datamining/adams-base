@@ -15,7 +15,7 @@
 
 /*
  * DumpFile.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -117,7 +117,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DumpFile
   extends AbstractAppendableFileWriter 
@@ -463,9 +462,15 @@ public class DumpFile
     String    result;
 
     result = null;
-    m_Buffer.add("" + m_InputToken.getPayload());
-    if ((m_Buffer.size() >= m_BufferSize) || !m_Append)
-      result = writeToDisk();
+
+    if (m_OutputFile.isDirectory())
+      result = "Output file points to a directory: " + m_OutputFile;
+
+    if (result == null) {
+      m_Buffer.add("" + m_InputToken.getPayload());
+      if ((m_Buffer.size() >= m_BufferSize) || !m_Append)
+        result = writeToDisk();
+    }
 
     return result;
   }
