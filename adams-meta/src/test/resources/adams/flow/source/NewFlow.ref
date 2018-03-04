@@ -14,8 +14,6 @@ adams.flow.control.Flow
 					false
 					-output-line-numbers
 					false
-					-output-modules
-					false
 					-output-prolog
 					true
 					-output-variable-values
