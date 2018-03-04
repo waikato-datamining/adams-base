@@ -15,7 +15,7 @@
 
 /*
  * AbstractActorProcessorTest.java
- * Copyright (C) 2011-2013 University of Waikato
+ * Copyright (C) 2011-2018 University of Waikato
  */
 
 package adams.flow.processor;
@@ -149,7 +149,7 @@ public abstract class AbstractActorProcessorTestCase
    * @return		the setups
    */
   protected int[] getRegressionIgnoredLineIndices() {
-    return new int[]{0,1,2,3,4};
+    return new int[]{0,1,2,3,4,5};
   }
 
   /**
