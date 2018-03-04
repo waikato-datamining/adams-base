@@ -15,25 +15,29 @@
 
 /*
  * BaseClassname.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
 import adams.core.Utils;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 
 /**
  * Wrapper for a class name object to be editable in the GOE. Basically the same
  * as BaseString, but used for class names.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseClassname
   extends AbstractBaseString {
 
   /** for serialization. */
   private static final long serialVersionUID = -7223597009565454854L;
+
+  /** for logging. */
+  private static Logger LOGGER = LoggingHelper.getLogger(BaseClassname.class);
 
   /**
    * Initializes the string with length 0.
@@ -68,7 +72,13 @@ public class BaseClassname
    */
   @Override
   public boolean isValid(String value) {
-    return (Utils.stringToClass(value) != null);
+    if ((Utils.stringToClass(value) != null)) {
+      return true;
+    }
+    else {
+      LOGGER.warning("Invalid classname: " + value);
+      return false;
+    }
   }
 
   /**
