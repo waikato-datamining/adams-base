@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NestedProducer.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -82,9 +82,6 @@ public class NestedProducer
   /** whether to print the classpath. */
   protected boolean m_OutputClasspath;
 
-  /** whether to print the modules. */
-  protected boolean m_OutputModules;
-
   /** whether to print line numbers. */
   protected boolean m_OutputLineNumbers;
 
@@ -117,7 +114,6 @@ public class NestedProducer
     m_Blacklisted       = new Class[0];
     m_OutputProlog      = true;
     m_OutputClasspath   = false;
-    m_OutputModules     = false;
     m_OutputLineNumbers = false;
     m_Encoding          = new BaseCharset();
   }
@@ -198,34 +194,6 @@ public class NestedProducer
    */
   public String outputClasspathTipText() {
     return "Whether to output the classpath in the comments as well.";
-  }
-
-  /**
-   * Sets whether to output the modules in the comments.
-   *
-   * @param value	if true then the modules are output
-   */
-  public void setOutputModules(boolean value) {
-    m_OutputModules = value;
-  }
-
-  /**
-   * Returns whether the modules are output in comments.
-   *
-   * @return		true if the modules are output
-   */
-  public boolean getOutputModules() {
-    return m_OutputModules;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String outputModulesTipText() {
-    return "Whether to output the modules in the comments as well.";
   }
 
   /**
@@ -456,8 +424,7 @@ public class NestedProducer
 	result.append(COMMENT + " " + DATE + ": " + m_DateFormat.format(new Date()) + "\n");
 	result.append(COMMENT + " " + USER + ": " + System.getProperty("user.name") + "\n");
         result.append(COMMENT + " " + CHARSET + ": " + m_Encoding.charsetValue().name() + "\n");
-	if (m_OutputModules)
-	  result.append(COMMENT + " " + MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ",") + "\n");
+        result.append(COMMENT + " " + MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ",") + "\n");
         if (m_OutputClasspath)
           result.append(COMMENT + " " + CLASS_PATH + ": " + Java.getClassPath(true) + "\n");
 	result.append(COMMENT + "\n");
