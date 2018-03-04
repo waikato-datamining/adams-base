@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CheckStorageUsage.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -223,11 +223,11 @@ public class CheckStorageUsage
       }
     });
 
-    used = new HashSet<String>(m_UsageCount.nameSet());
+    used = new HashSet<>(m_UsageCount.nameSet());
     set  = m_SetCount.nameSet();
     used.removeAll(set);
     if (used.size() > 0) {
-      vars = new ArrayList<String>(used);
+      vars = new ArrayList<>(used);
       Collections.sort(vars);
       m_Warnings = Utils.flatten(vars, "\n");
     }
@@ -237,10 +237,10 @@ public class CheckStorageUsage
       else
 	m_Warnings += "\n\n";
       m_Warnings += "Name: #Set/#Use\n";
-      combined = new HashSet<String>();
+      combined = new HashSet<>();
       combined.addAll(m_UsageCount.nameSet());
       combined.addAll(m_SetCount.nameSet());
-      vars = new ArrayList<String>(combined);
+      vars = new ArrayList<>(combined);
       Collections.sort(vars);
       for (String var: vars)
 	m_Warnings += var + ": " + m_SetCount.current(var) + "/" + m_UsageCount.current(var) + "\n";
@@ -253,7 +253,10 @@ public class CheckStorageUsage
    * @return		the heading for the warnings, null if not available
    */
   public String getWarningHeader() {
-    return "The following storage names were never set:";
+    if (m_OutputCounts)
+      return "Overview of storage items being set and used:";
+    else
+      return "The following storage items were never set:";
   }
 
   /**

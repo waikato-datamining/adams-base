@@ -15,7 +15,7 @@
 
 /*
  * CheckVariableUsage.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -313,7 +313,10 @@ public class CheckVariableUsage
    * @return		the heading for the warnings, null if not available
    */
   public String getWarningHeader() {
-    return "The following variables were never set:";
+    if (m_OutputCounts)
+      return "Overview of variables being set and used:";
+    else
+      return "The following variables were never set:";
   }
 
   /**
