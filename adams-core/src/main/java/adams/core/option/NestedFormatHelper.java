@@ -15,20 +15,24 @@
 
 /*
  * NestedFormatHelper.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
 
+import adams.core.Utils;
+import adams.env.Modules;
+import adams.env.Modules.Module;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * A helper class for the nested option format.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NestedFormatHelper {
   
@@ -286,7 +290,7 @@ public class NestedFormatHelper {
   /**
    * Updates the line numbering.
    *
-   * @param lines	the nested lines to updated
+   * @param nested	the nested lines to updated
    * @param offset	the current offset
    * @return		the last line number updated
    */
@@ -313,9 +317,50 @@ public class NestedFormatHelper {
   /**
    * Updates the line numbering.
    *
-   * @param lines	the nested lines to updated
+   * @param nested	the nested lines to updated
    */
   public static void renumber(List nested) {
     renumber(nested, 0);
+  }
+
+  /**
+   * Extracts the modules from the comments, if available.
+   *
+   * @param lines	the raw lines of the flow
+   * @return		the modules, if any
+   */
+  public static List<String> getModules(List<String> lines) {
+    List<String>	result;
+
+    result = new ArrayList<>();
+    for (String line: lines) {
+      if (!line.startsWith(NestedProducer.COMMENT))
+        break;
+      line = line.substring(1).trim();
+      if (line.startsWith(NestedProducer.MODULES)) {
+        line = line.substring(line.indexOf(':') + 1).replace(" ", "");
+        result.addAll(Arrays.asList(line.split(",")));
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether there are any modules missing in the current environment
+   * compared to the provided list of module names.
+   *
+   * @param modules	the list of modules to check
+   * @return		null if everything OK, otherwise error message
+   */
+  public static String checkModules(List<String> modules) {
+    if (modules.size() > 0) {
+      for (Module module: Modules.getSingleton().getModules())
+	modules.remove(module.getName());
+      if (modules.size() > 0)
+	return "Flow was saved with additional modules: " + Utils.flatten(modules, ",");
+    }
+    return null;
   }
 }

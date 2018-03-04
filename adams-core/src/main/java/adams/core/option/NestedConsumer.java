@@ -182,8 +182,12 @@ public class NestedConsumer
 
     try {
       // split into separate lines
-      lines  = new ArrayList<String>(Arrays.asList(s.split("\n")));
-      offset = NestedFormatHelper.removeComments(lines);
+      lines   = new ArrayList<>(Arrays.asList(s.split("\n")));
+      // check modules
+      msg = NestedFormatHelper.checkModules(NestedFormatHelper.getModules(lines));
+      if (msg != null)
+        logWarning(msg);
+      offset  = NestedFormatHelper.removeComments(lines);
       // convert into nested format
       return NestedFormatHelper.linesToNested(lines, offset);
     }

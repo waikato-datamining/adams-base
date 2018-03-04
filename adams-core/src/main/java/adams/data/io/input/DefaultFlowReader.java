@@ -25,6 +25,7 @@ import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.option.NestedConsumer;
+import adams.core.option.NestedFormatHelper;
 import adams.core.option.NestedProducer;
 import adams.data.io.output.DefaultFlowWriter;
 import adams.data.io.output.FlowWriter;
@@ -223,8 +224,12 @@ public class DefaultFlowReader
     Node		result;
     MessageCollection   errors;
     MessageCollection   warnings;
+    String		msg;
 
     if (isCompact(lines)) {
+      msg = NestedFormatHelper.checkModules(NestedFormatHelper.getModules(lines));
+      if (msg != null)
+        addWarning(msg);
       Utils.removeComments(lines, NestedProducer.COMMENT);
       errors   = new MessageCollection();
       warnings = new MessageCollection();
@@ -313,9 +318,13 @@ public class DefaultFlowReader
     Node		node;
     MessageCollection	warnings;
     MessageCollection	errors;
+    String		msg;
 
     result = null;
     if (isCompact(lines)) {
+      msg = NestedFormatHelper.checkModules(NestedFormatHelper.getModules(lines));
+      if (msg != null)
+        addWarning(msg);
       Utils.removeComments(lines, NestedProducer.COMMENT);
       warnings = new MessageCollection();
       errors   = new MessageCollection();
