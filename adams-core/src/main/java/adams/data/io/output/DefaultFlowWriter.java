@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultFlowWriter.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -28,6 +28,7 @@ import adams.core.option.NestedProducer;
 import adams.data.io.input.DefaultFlowReader;
 import adams.data.io.input.FlowReader;
 import adams.env.Environment;
+import adams.env.Modules;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
@@ -204,6 +205,7 @@ public class DefaultFlowWriter
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.CHARSET + ": " + m_Encoding.charsetValue().name());
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.USER + ": " + System.getProperty("user.name"));
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.DATE + ": " + m_DateFormat.format(new Date()));
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ","));
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.PROJECT + ": " + Environment.getInstance().getProject());
       return FileUtils.writeToFile(file.getAbsolutePath(), Utils.flatten(lines, "\n"), false, m_Encoding.getValue());
     }
@@ -228,6 +230,7 @@ public class DefaultFlowWriter
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.CHARSET + ": " + m_Encoding.charsetValue().name());
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.USER + ": " + System.getProperty("user.name"));
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.DATE + ": " + m_DateFormat.format(new Date()));
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ","));
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.PROJECT + ": " + Environment.getInstance().getProject());
       try {
 	writer.write(Utils.flatten(lines, "\n"));
@@ -260,6 +263,7 @@ public class DefaultFlowWriter
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.CHARSET + ": " + m_Encoding.charsetValue().name());
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.USER + ": " + System.getProperty("user.name"));
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.DATE + ": " + m_DateFormat.format(new Date()));
+      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ","));
       lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.PROJECT + ": " + Environment.getInstance().getProject());
       try {
 	out.write(Utils.flatten(lines, "\n").getBytes());
