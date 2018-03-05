@@ -76,7 +76,8 @@ public class BaseClassname
       return true;
     }
     else {
-      LOGGER.warning("Invalid classname: " + value);
+       if (!value.isEmpty())
+	 LOGGER.warning("Invalid classname: " + value);
       return false;
     }
   }
