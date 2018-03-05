@@ -1603,6 +1603,14 @@ The following actors are available to handle variables:
 	around.
 \end{tight_itemize}
 
+\noindent \textbf{Note:} If you should attach a variable to the\textit{value}
+option of the \textit{SetVariable} standalone or transformer, be aware that
+the string will undergo command-line parsing and therefore getting un-backquoted
+(escaped quotes, n's, r's and t's get turned back into quotes, new-lines,
+carriage-returns and tabs). If this should pose a problem, you can always
+escape the string using the \textit{Convert} transformer in conjunction with
+the \textit{Backquote} conversion (basically adding a layer of escaping).
+
 \heading{Using callable actor as variables}
 One drawback of ADAMS is the absence of multiple inputs, only a single input is
 supported and containers can mitigate that only to a certain degree. Instead of
