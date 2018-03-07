@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ChangePath.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
 import adams.core.Utils;
 import adams.core.base.BaseString;
+import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.BooleanOption;
@@ -36,22 +37,21 @@ import java.lang.reflect.Constructor;
 
 /**
  * Processor that updates paths of classes that are derived from {@link File}.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ChangePath
   extends AbstractModifyingProcessor {
 
   /** for serialization. */
   private static final long serialVersionUID = -3031404150902143297L;
-  
+
   /** the old path(s). */
   protected BaseString[] m_OldPath;
-  
+
   /** the old path (with forward slashes). */
   protected BaseString[] m_OldPathLinux;
-  
+
   /** whether the old path is a regular expression. */
   protected boolean m_OldPathIsRegExp;
 
@@ -61,6 +61,9 @@ public class ChangePath
   /** the new path(s). */
   protected BaseString[] m_NewPath;
 
+  /** the actual new path(s). */
+  protected String[] m_ActualNewPath;
+
   /**
    * Returns a string describing the object.
    *
@@ -68,13 +71,15 @@ public class ChangePath
    */
   @Override
   public String globalInfo() {
-    return 
-	"Updates all paths that match the provided old path.\n"
+    return
+      "Updates all paths that match the provided old path.\n"
 	+ "If no regular expression matching is enabled, then the paths must "
 	+ "start with the provided old path in order to trigger the replacement.\n"
 	+ "If regular expression matching is enabled, the old paths must match "
 	+ "the provided regexp. The replacement string can then also contain "
-	+ "group references (eg $1).";
+	+ "group references (eg $1).\n"
+	+ "The new path is turned into an absolute path first, to avoid clashes "
+	+ "of the $ of the placeholder with group references.";
   }
 
   /**
@@ -251,7 +256,10 @@ public class ChangePath
       else
 	m_OldPathLinux[i] = new BaseString(m_OldPath[i].getValue());
     }
-    
+    m_ActualNewPath = new String[m_NewPath.length];
+    for(i = 0; i < m_NewPath.length; i++)
+      m_ActualNewPath[i] = new PlaceholderFile(m_NewPath[i].getValue()).getAbsolutePath();
+
     actor.getOptionManager().traverse(new OptionTraverser() {
       protected boolean isMatch(String path) {
 	boolean result = false;
@@ -279,16 +287,17 @@ public class ChangePath
 	for (int i = 0; i < m_OldPath.length; i++) {
 	  if (m_OldPathIsRegExp) {
 	    if (newStr.matches(m_OldPath[i].getValue()))
-	      newStr = newStr.replaceFirst(m_OldPath[i].getValue(), m_NewPath[i].getValue());
+	      newStr = newStr.replaceFirst(m_OldPath[i].getValue(), m_ActualNewPath[i]);
 	    else
-	      newStr = newStr.replaceFirst(m_OldPathLinux[i].getValue(), m_NewPath[i].getValue());
+	      newStr = newStr.replaceFirst(m_OldPathLinux[i].getValue(), m_ActualNewPath[i]);
 	  }
 	  else {
 	    if (newStr.startsWith(m_OldPath[i].getValue()))
-	      newStr = newStr.replace(m_OldPath[i].getValue(), m_NewPath[i].getValue());
+	      newStr = newStr.replace(m_OldPath[i].getValue(), m_ActualNewPath[i]);
 	    else
-	      newStr = newStr.replace(m_OldPathLinux[i].getValue(), m_NewPath[i].getValue());
+	      newStr = newStr.replace(m_OldPathLinux[i].getValue(), m_ActualNewPath[i]);
 	  }
+	  newStr = new PlaceholderFile(newStr).toString();
 	}
 
 	try {
