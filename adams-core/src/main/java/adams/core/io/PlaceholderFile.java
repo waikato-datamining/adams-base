@@ -15,10 +15,13 @@
 
 /*
  * PlaceholderFile.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
+
+import adams.core.Placeholders;
+import adams.core.management.OS;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -29,9 +32,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.core.Placeholders;
-import adams.core.management.OS;
 
 /**
  * A specialized File class makes use of system-wide defined placeholders.
@@ -870,7 +870,10 @@ public class PlaceholderFile
     File	file;
 
     file   = new File(expand(getPath()));
-    result = file.getAbsolutePath();
+    if (file.getPath().matches("^[a-zA-Z]:.*"))
+      result = file.getPath();
+    else
+      result = file.getAbsolutePath();
 
     return result;
   }
