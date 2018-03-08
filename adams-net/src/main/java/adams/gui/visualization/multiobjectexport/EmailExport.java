@@ -290,15 +290,15 @@ public class EmailExport
    */
   @Override
   protected String doExport(String[] names, Object[] objects) {
-    MessageCollection 		errors;
-    AbstractObjectExporter 	exporter;
-    int				i;
-    String			ext;
-    PlaceholderFile 		file;
-    List<File> 			files;
-    String			msg;
-    File			outputDir;
-    Email			email;
+    MessageCollection 			errors;
+    List<AbstractObjectExporter> 	exporters;
+    int					i;
+    String				ext;
+    PlaceholderFile 			file;
+    List<File> 				files;
+    String				msg;
+    File				outputDir;
+    Email				email;
 
     for (i = 0; i < names.length; i++)
       names[i] = FileUtils.createFilename(m_Prefix + names[i], "");
@@ -313,14 +313,16 @@ public class EmailExport
     files = new ArrayList<>();
     if (errors.isEmpty()) {
       for (i = 0; i < names.length; i++) {
-	exporter = determineExporter(names[i], objects[i], errors);
-	ext = determineExtension(exporter);
-	file = new PlaceholderFile(outputDir.getAbsolutePath() + File.separator + names[i] + "." + ext);
-	msg = exporter.export(objects[i], file);
-	if (msg != null)
-	  errors.add("Failed to find export '" + names[i] + "'/" + Utils.classToString(objects[i]) + "\n" + msg);
-	else
-	  files.add(file);
+	exporters = determineExporters(names[i], objects[i], errors);
+	for (AbstractObjectExporter exporter: exporters) {
+	  ext  = determineExtension(exporter);
+	  file = new PlaceholderFile(outputDir.getAbsolutePath() + File.separator + names[i] + "." + ext);
+	  msg  = exporter.export(objects[i], file);
+	  if (msg != null)
+	    errors.add("Failed to find export '" + names[i] + "'/" + Utils.classToString(objects[i]) + "\n" + msg);
+	  else
+	    files.add(file);
+	}
       }
     }
     

@@ -89,15 +89,15 @@ public abstract class AbstractMultiObjectExport
   }
 
   /**
-   * Determines the exporter to use for the object.
+   * Determines the exporters to use for the object.
    *
    * @param name	the name of the object
    * @param obj		the object to determine the exporter for
    * @param errors 	for storing errors
-   * @return		the exporter
+   * @return		the exporters
    */
-  protected AbstractObjectExporter determineExporter(String name, Object obj, MessageCollection errors) {
-    AbstractObjectExporter		result;
+  protected List<AbstractObjectExporter> determineExporters(String name, Object obj, MessageCollection errors) {
+    List<AbstractObjectExporter>	result;
     List<AbstractObjectExporter> 	exporters;
 
     exporters = AbstractObjectExporter.getExporters(obj);
@@ -105,7 +105,7 @@ public abstract class AbstractMultiObjectExport
       errors.add("Failed to find object exporter for '" + name + "'/" + Utils.classToString(obj));
       return null;
     }
-    result = exporters.get(0);
+    result = exporters;
 
     return result;
   }

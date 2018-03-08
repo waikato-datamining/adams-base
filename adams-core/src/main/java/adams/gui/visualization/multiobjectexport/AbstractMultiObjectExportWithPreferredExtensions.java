@@ -26,6 +26,7 @@ import adams.core.base.BaseString;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objectexport.SerializableObjectExporter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -100,16 +101,16 @@ public abstract class AbstractMultiObjectExportWithPreferredExtensions
   }
 
   /**
-   * Determines the exporter to use for the object.
+   * Determines the exporters to use for the object.
    *
    * @param name	the name of the object
    * @param obj		the object to determine the exporter for
    * @param errors 	for storing errors
-   * @return		the exporter
+   * @return		the exporters
    */
   @Override
-  protected AbstractObjectExporter determineExporter(String name, Object obj, MessageCollection errors) {
-    AbstractObjectExporter		result;
+  protected List<AbstractObjectExporter> determineExporters(String name, Object obj, MessageCollection errors) {
+    List<AbstractObjectExporter>	result;
     List<AbstractObjectExporter> 	exporters;
     Set<String> 			preferred;
     String[]				extensions;
@@ -122,7 +123,7 @@ public abstract class AbstractMultiObjectExportWithPreferredExtensions
         return null;
       }
     }
-    result    = exporters.get(0);
+    result = new ArrayList<>();
     preferred = new HashSet<>();
     for (BaseString pref: m_PreferredExtensions)
       preferred.add(pref.getValue());
@@ -130,7 +131,7 @@ public abstract class AbstractMultiObjectExportWithPreferredExtensions
       extensions = exporter.getFormatExtensions();
       for (String extension: extensions) {
         if (preferred.contains(extension)) {
-          result = exporter;
+          result.add(exporter);
           break;
         }
       }

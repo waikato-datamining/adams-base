@@ -28,6 +28,7 @@ import adams.core.io.PlaceholderFile;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Exports the objects to a directory.
@@ -162,12 +163,12 @@ public class DirectoryExport
    */
   @Override
   protected String doExport(String[] names, Object[] objects) {
-    MessageCollection		errors;
-    AbstractObjectExporter 	exporter;
-    int				i;
-    String			ext;
-    PlaceholderFile		file;
-    String			msg;
+    MessageCollection			errors;
+    List<AbstractObjectExporter> 	exporters;
+    int					i;
+    String				ext;
+    PlaceholderFile			file;
+    String				msg;
 
     for (i = 0; i < names.length; i++)
       names[i] = FileUtils.createFilename(m_Prefix + names[i], "");
@@ -175,12 +176,14 @@ public class DirectoryExport
     errors = new MessageCollection();
 
     for (i = 0; i < names.length; i++) {
-      exporter = determineExporter(names[i], objects[i], errors);
-      ext      = determineExtension(exporter);
-      file     = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + names[i] + "." + ext);
-      msg      = exporter.export(objects[i], file);
-      if (msg != null)
-	errors.add("Failed to find export '" + names[i] + "'/" + Utils.classToString(objects[i]) + "\n" + msg);
+      exporters = determineExporters(names[i], objects[i], errors);
+      for (AbstractObjectExporter exporter: exporters) {
+	ext  = determineExtension(exporter);
+	file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + names[i] + "." + ext);
+	msg  = exporter.export(objects[i], file);
+	if (msg != null)
+	  errors.add("Failed to find export '" + names[i] + "'/" + Utils.classToString(objects[i]) + "\n" + msg);
+      }
     }
 
     if (errors.isEmpty())
