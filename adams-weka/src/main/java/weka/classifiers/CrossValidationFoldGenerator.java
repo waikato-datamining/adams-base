@@ -40,6 +40,13 @@ public interface CrossValidationFoldGenerator
   public final static String PLACEHOLDER_CURRENTFOLD = "$N";
 
   /**
+   * Sets the number of folds to use.
+   *
+   * @param value	the number of folds, less than 2 for LOO
+   */
+  public void setNumFolds(int value);
+
+  /**
    * Returns the number of folds.
    * 
    * @return		the number of folds
@@ -47,11 +54,39 @@ public interface CrossValidationFoldGenerator
   public int getNumFolds();
 
   /**
+   * Sets whether to randomize the data.
+   *
+   * @param value	true if to randomize the data
+   */
+  public void setRandomize(boolean value);
+
+  /**
+   * Returns whether to randomize the data.
+   *
+   * @return		true if to randomize the data
+   */
+  public boolean getRandomize();
+
+  /**
+   * Sets whether to stratify the data (nominal class).
+   *
+   * @param value	whether to stratify the data (nominal class)
+   */
+  public void setStratify(boolean value);
+
+  /**
    * Returns whether to stratify the data (in case of nominal class).
    * 
    * @return		true if to stratify
    */
   public boolean getStratify();
+
+  /**
+   * Sets the template for the relation name.
+   *
+   * @param value	the template
+   */
+  public void setRelationName(String value);
 
   /**
    * Returns the relation name template.

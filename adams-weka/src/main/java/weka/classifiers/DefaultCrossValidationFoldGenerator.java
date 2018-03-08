@@ -45,7 +45,10 @@ public class DefaultCrossValidationFoldGenerator
 
   /** the number of folds. */
   protected int m_NumFolds;
-  
+
+  /** the actual number of folds. */
+  protected int m_ActualNumFolds;
+
   /** whether to stratify the data (in case of nominal class). */
   protected boolean m_Stratify;
   
@@ -60,6 +63,13 @@ public class DefaultCrossValidationFoldGenerator
 
   /** the random number generator for the indices. */
   protected Random m_RandomIndices;
+
+  /**
+   * Initializes the generator.
+   */
+  public DefaultCrossValidationFoldGenerator() {
+    super();
+  }
 
   /**
    * Initializes the generator.
@@ -84,30 +94,81 @@ public class DefaultCrossValidationFoldGenerator
    * @param relName	the relation name template, use null to ignore
    */
   public DefaultCrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean randomize, boolean stratify, String relName) {
-    super(data, seed);
-
-    if (data.classIndex() == -1)
-      throw new IllegalArgumentException("No class attribute set!");
-
-    if (numFolds < 2)
-      m_NumFolds = data.numInstances();
-    else
-      m_NumFolds = numFolds;
-    
-    if (data.numInstances() < m_NumFolds)
-      throw new IllegalArgumentException(
-	  "Cannot have less data than folds: "
-	      + "required=" + m_NumFolds + ", provided=" + data.numInstances());
-    
-    if ((relName == null) || (relName.length() == 0))
-      relName = PLACEHOLDER_ORIGINAL;
-
-    m_Randomize    = randomize;
-    m_RelationName = relName;
-    m_CurrentFold  = 1;
-    m_Stratify     = stratify;
+    super();
+    setData(data);
+    setSeed(seed);
+    setNumFolds(numFolds);
+    setRelationName(relName);
+    setStratify(stratify);
+    setRandomize(randomize);
   }
-  
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Generates cross-validation fold pairs. Leave-one-out is performed when specified folds <2.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "num-folds", "numFolds",
+      10);
+
+    m_OptionManager.add(
+      "relation-name", "relationName",
+      PLACEHOLDER_ORIGINAL);
+
+    m_OptionManager.add(
+      "randomize", "randomize",
+      true);
+
+    m_OptionManager.add(
+      "stratify", "stratify",
+      true);
+  }
+
+  /**
+   * Resets the generator.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+    m_CurrentFold = 1;
+  }
+
+  /**
+   * Sets the original data.
+   *
+   * @param value	the data
+   */
+  public void setData(Instances value) {
+    super.setData(value);
+    if (m_Data != null) {
+      if (m_Data.classIndex() == -1)
+        throw new IllegalArgumentException("No class attribute set!");
+    }
+  }
+
+  /**
+   * Sets the number of folds to use.
+   *
+   * @param value	the number of folds, less than 2 for LOO
+   */
+  public void setNumFolds(int value) {
+    m_NumFolds = value;
+    reset();
+  }
+
   /**
    * Returns the number of folds.
    * 
@@ -116,7 +177,56 @@ public class DefaultCrossValidationFoldGenerator
   public int getNumFolds() {
     return m_NumFolds;
   }
-  
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numFoldsTipText() {
+    return "The number of folds; use <2 for leave one out (LOO).";
+  }
+
+  /**
+   * Sets whether to randomize the data.
+   *
+   * @param value	true if to randomize the data
+   */
+  public void setRandomize(boolean value) {
+    m_Randomize = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to randomize the data.
+   *
+   * @return		true if to randomize the data
+   */
+  public boolean getRandomize() {
+    return m_Randomize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String randomizeTipText() {
+    return "If enabled, the data is randomized first.";
+  }
+
+  /**
+   * Sets whether to stratify the data (nominal class).
+   *
+   * @param value	whether to stratify the data (nominal class)
+   */
+  public void setStratify(boolean value) {
+    m_Stratify = value;
+    reset();
+  }
+
   /**
    * Returns whether to stratify the data (in case of nominal class).
    * 
@@ -125,7 +235,27 @@ public class DefaultCrossValidationFoldGenerator
   public boolean getStratify() {
     return m_Stratify;
   }
-  
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stratifyTipText() {
+    return "If enabled, the folds get stratified in case of a nominal class attribute.";
+  }
+
+  /**
+   * Sets the template for the relation name.
+   *
+   * @param value	the template
+   */
+  public void setRelationName(String value) {
+    m_RelationName = value;
+    reset();
+  }
+
   /**
    * Returns the relation name template.
    * 
@@ -133,6 +263,16 @@ public class DefaultCrossValidationFoldGenerator
    */
   public String getRelationName() {
     return m_RelationName;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String relationNameTipText() {
+    return "The template for the relation name.";
   }
 
   /**
@@ -154,7 +294,7 @@ public class DefaultCrossValidationFoldGenerator
    */
   @Override
   protected boolean checkNext() {
-    return (m_CurrentFold <= m_NumFolds);
+    return (m_CurrentFold <= m_ActualNumFolds);
   }
 
   /**
@@ -210,8 +350,8 @@ public class DefaultCrossValidationFoldGenerator
     result = new TIntArrayList();
     result.add(
       CrossValidationHelper.crossValidationIndices(
-	m_Data, m_NumFolds, new Random(m_Seed),
-	m_Stratify && (m_NumFolds < m_Data.numInstances())));
+	m_Data, m_ActualNumFolds, new Random(m_Seed),
+	m_Stratify && (m_ActualNumFolds < m_Data.numInstances())));
 
     // need to simulate initial randomization to get the right state
     // of the RNG for the trainCV/testCV calls
@@ -225,17 +365,33 @@ public class DefaultCrossValidationFoldGenerator
    * Initializes the iterator, randomizes the data if required.
    */
   @Override
-  protected void initialize() {
+  protected void doInitializeIterator() {
     m_RandomIndices = new Random(m_Seed);
 
-    super.initialize();
+    if (m_Data == null)
+      throw new IllegalStateException("No data provided!");
+
+    if (m_NumFolds < 2)
+      m_ActualNumFolds = m_Data.numInstances();
+    else
+      m_ActualNumFolds = m_NumFolds;
+
+    super.doInitializeIterator();
+
+    if ((m_RelationName == null) || m_RelationName.isEmpty())
+      m_RelationName = PLACEHOLDER_ORIGINAL;
+
+    if (m_Data.numInstances() < m_ActualNumFolds)
+      throw new IllegalArgumentException(
+	  "Cannot have less data than folds: "
+	      + "required=" + m_ActualNumFolds + ", provided=" + m_Data.numInstances());
 
     if (m_Random == null)
       m_Random = new Random(m_Seed);
 
     if (!m_UseViews) {
-      if (m_Stratify && m_Data.classAttribute().isNominal() && (m_NumFolds < m_Data.numInstances()))
-	m_Data.stratify(m_NumFolds);
+      if (m_Stratify && m_Data.classAttribute().isNominal() && (m_ActualNumFolds < m_Data.numInstances()))
+	m_Data.stratify(m_ActualNumFolds);
     }
   }
 
@@ -338,11 +494,11 @@ public class DefaultCrossValidationFoldGenerator
     int[]			trainRows;
     int[]			testRows;
 
-    if (m_CurrentFold > m_NumFolds)
+    if (m_CurrentFold > m_ActualNumFolds)
       throw new NoSuchElementException("No more folds available!");
 
-    trainRows = trainCV(m_NumFolds, m_CurrentFold - 1, m_RandomIndices).toArray();
-    testRows  = testCV(m_NumFolds, m_CurrentFold - 1).toArray();
+    trainRows = trainCV(m_ActualNumFolds, m_CurrentFold - 1, m_RandomIndices).toArray();
+    testRows  = testCV(m_ActualNumFolds, m_CurrentFold - 1).toArray();
 
     // generate fold pair
     if (m_UseViews) {
@@ -350,8 +506,8 @@ public class DefaultCrossValidationFoldGenerator
       test = new InstancesView(m_Data, testRows);
     }
     else {
-      train = m_Data.trainCV(m_NumFolds, m_CurrentFold - 1, m_Random);
-      test  = m_Data.testCV(m_NumFolds, m_CurrentFold - 1);
+      train = m_Data.trainCV(m_ActualNumFolds, m_CurrentFold - 1, m_Random);
+      test  = m_Data.testCV(m_ActualNumFolds, m_CurrentFold - 1);
     }
 
     // rename datasets
@@ -359,7 +515,7 @@ public class DefaultCrossValidationFoldGenerator
     test.setRelationName(createRelationName(false));
 
     result = new WekaTrainTestSetContainer(
-      train, test, m_Seed, m_CurrentFold, m_NumFolds, trainRows, testRows);
+      train, test, m_Seed, m_CurrentFold, m_ActualNumFolds, trainRows, testRows);
     m_CurrentFold++;
 
     return result;
@@ -372,6 +528,6 @@ public class DefaultCrossValidationFoldGenerator
    */
   @Override
   public String toString() {
-    return super.toString() + ", numFolds=" + m_NumFolds + ", relName=" + m_RelationName;
+    return super.toString() + ", numFolds=" + m_NumFolds + ", stratify=" + m_Stratify + ", relName=" + m_RelationName;
   }
 }

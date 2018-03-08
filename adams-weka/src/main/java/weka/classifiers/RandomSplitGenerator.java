@@ -43,38 +43,127 @@ public class RandomSplitGenerator
   
   /** whether the split was generated. */
   protected boolean m_Generated;
-  
+
+  /**
+   * Initializes the generator.
+   */
+  public RandomSplitGenerator() {
+    super();
+  }
+
   /**
    * Initializes the generator. Does not preserve the order.
-   * 
+   *
    * @param data	the dataset to split
    * @param seed	the seed value to use for randomization
    * @param percentage	the percentage of the training set (0-1)
    */
   public RandomSplitGenerator(Instances data, long seed, double percentage) {
-    super(data, seed);
-
-    if ((percentage <= 0) || (percentage >= 1))
-      throw new IllegalArgumentException("Percentage must satisfy 0 < x < 1, provided: " + percentage);
-
-    m_Percentage    = percentage;
-    m_PreserveOrder = false;
+    super();
+    setData(data);
+    setSeed(seed);
+    setPercentage(percentage);
+    setPreserveOrder(false);
   }
-  
+
   /**
    * Initializes the generator. Preserves the order.
-   * 
+   *
    * @param data	the dataset to split
    * @param percentage	the percentage of the training set (0-1)
    */
   public RandomSplitGenerator(Instances data, double percentage) {
-    super(data, -1L);
-    
-    if ((percentage <= 0) || (percentage >= 1))
-      throw new IllegalArgumentException("Percentage must satisfy 0 < x < 1, provided: " + percentage);
+    super();
+    setData(data);
+    setSeed(-1L);
+    setPercentage(percentage);
+    setPreserveOrder(true);
+  }
 
-    m_Percentage    = percentage;
-    m_PreserveOrder = true;
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Performs a percentage split, either randomized or with the order preserved.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "percentage", "percentage",
+      0.66, 0.0, 1.0);
+
+    m_OptionManager.add(
+      "preserve-order", "preserveOrder",
+      false);
+  }
+
+  /**
+   * Sets the split percentage.
+   *
+   * @param value	the percentage (0-1)
+   */
+  public void setPercentage(double value) {
+    if (getOptionManager().isValid("percentage", value)) {
+      m_Percentage = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the split percentage.
+   *
+   * @return		the percentage (0-1)
+   */
+  public double getPercentage() {
+    return m_Percentage;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String percentageTipText() {
+    return "The percentage to use for training (0-1).";
+  }
+
+  /**
+   * Sets whether to preserve the order.
+   *
+   * @param value	true if to preserve order
+   */
+  public void setPreserveOrder(boolean value) {
+    m_PreserveOrder = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to preserve the order.
+   *
+   * @return		true if to preserve order
+   */
+  public boolean getPreserveOrder() {
+    return m_PreserveOrder;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String preserveOrderTipText() {
+    return "If enabled, the order in the data is preserved in the split.";
   }
 
   /**
@@ -91,8 +180,8 @@ public class RandomSplitGenerator
    * Initializes the iterator, randomizes the data if required.
    */
   @Override
-  protected void initialize() {
-    super.initialize();
+  protected void doInitializeIterator() {
+    super.doInitializeIterator();
     
     m_Generated = false;
   }

@@ -33,6 +33,7 @@ import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.standalone.JobRunnerSetup;
 import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Classifier;
+import weka.classifiers.CrossValidationFoldGenerator;
 import weka.classifiers.CrossValidationHelper;
 import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.classifiers.Evaluation;
@@ -75,6 +76,9 @@ public class WekaCrossValidationExecution
 
   /** whether to use views. */
   protected boolean m_UseViews;
+
+  /** the cross-validation fold generator. */
+  protected CrossValidationFoldGenerator m_Generator;
 
   /** whether to discard predictions. */
   protected boolean m_DiscardPredictions;
@@ -122,6 +126,7 @@ public class WekaCrossValidationExecution
     m_JobRunnerSetup       = null;
     m_StatusMessageHandler = null;
     m_WaitForJobs          = true;
+    m_Generator            = new DefaultCrossValidationFoldGenerator();
   }
 
   /**
@@ -291,6 +296,24 @@ public class WekaCrossValidationExecution
   }
 
   /**
+   * Sets the generator to use for generating the folds.
+   *
+   * @param value	the generator
+   */
+  public void setGenerator(CrossValidationFoldGenerator value) {
+    m_Generator = value;
+  }
+
+  /**
+   * Returns the generator to use for generating the folds.
+   *
+   * @return		the generator
+   */
+  public CrossValidationFoldGenerator getGenerator() {
+    return m_Generator;
+  }
+
+  /**
    * Sets whether to discard the predictions instead of collecting them
    * for future use, in order to conserve memory.
    * NB: Must be false in case of parallel execution to allow for aggregation
@@ -421,7 +444,7 @@ public class WekaCrossValidationExecution
     Evaluation 				eval;
     AggregateEvaluations 		evalAgg;
     int					folds;
-    DefaultCrossValidationFoldGenerator generator;
+    CrossValidationFoldGenerator 	generator;
     JobList<WekaCrossValidationJob>	list;
     WekaCrossValidationJob 		job;
     WekaTrainTestSetContainer 		cont;
@@ -453,7 +476,11 @@ public class WekaCrossValidationExecution
       if (!m_DiscardPredictions)
 	indices = CrossValidationHelper.crossValidationIndices(m_Data, folds, new Random(m_Seed));
 
-      generator = new DefaultCrossValidationFoldGenerator(m_Data, folds, m_Seed, true);
+      generator = (CrossValidationFoldGenerator) OptionUtils.shallowCopy(m_Generator);
+      generator.setData(m_Data);
+      generator.setNumFolds(folds);
+      generator.setSeed(m_Seed);
+      generator.setStratify(true);
       generator.setUseViews(m_UseViews);
       if ((m_ActualNumThreads == 1) && !m_SeparateFolds) {
 	initOutputBuffer();

@@ -64,12 +64,6 @@ public abstract class AbstractSplitGeneratorTestCase
   }
 
   /**
-   * Does nothing, since classes don't have default constructor.
-   */
-  public void testSerializable() {
-  }
-
-  /**
    * Loads the data to process.
    *
    * @param filename	the filename to load (without path)

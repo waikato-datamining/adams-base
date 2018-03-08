@@ -18,6 +18,8 @@
  * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
+
+import adams.core.option.AbstractOptionHandler;
 import adams.flow.container.WekaTrainTestSetContainer;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -32,6 +34,7 @@ import java.util.Random;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractSplitGenerator
+  extends AbstractOptionHandler
   implements SplitGenerator {
 
   /** for serialization. */
@@ -57,17 +60,51 @@ public abstract class AbstractSplitGenerator
 
   /**
    * Initializes the generator.
-   *
-   * @param data	the full dataset
    */
-  public AbstractSplitGenerator(Instances data, long seed) {
-    if (data == null)
-      throw new IllegalArgumentException("No data provided!");
+  protected AbstractSplitGenerator() {
+    super();
+  }
 
-    m_Data            = new Instances(data);
-    m_Seed            = seed;
-    m_Initialized     = false;
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "seed", "seed",
+      1L);
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
     m_OriginalIndices = new TIntArrayList();
+  }
+
+  /**
+   * Resets the generator.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_Initialized = false;
+    m_OriginalIndices.clear();
+  }
+
+  /**
+   * Sets the original data.
+   *
+   * @param value	the data
+   */
+  public void setData(Instances value) {
+    m_Data = (value != null) ? new Instances(value) : null;
+    reset();
   }
 
   /**
@@ -80,6 +117,16 @@ public abstract class AbstractSplitGenerator
   }
 
   /**
+   * Sets the seed value.
+   *
+   * @param value	the seed
+   */
+  public void setSeed(long value) {
+    m_Seed = value;
+    reset();
+  }
+
+  /**
    * Returns the seed value.
    *
    * @return		the seed
@@ -89,13 +136,23 @@ public abstract class AbstractSplitGenerator
   }
 
   /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String seedTipText() {
+    return "The seed value for the random number generator.";
+  }
+
+  /**
    * Sets whether to uses views only.
    *
    * @param value	true if to uses views
    */
   public void setUseViews(boolean value) {
     m_UseViews = value;
-    m_Initialized = false;
+    reset();
   }
 
   /**
@@ -105,6 +162,16 @@ public abstract class AbstractSplitGenerator
    */
   public boolean getUseViews() {
     return m_UseViews;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useViewsTipText() {
+    return "If enabled, views are used instead of copies of the data.";
   }
 
   /**
@@ -132,6 +199,8 @@ public abstract class AbstractSplitGenerator
    */
   @Override
   public synchronized boolean hasNext() {
+    if (!m_Initialized)
+      initializeIterator();
     return checkNext();
   }
 
@@ -178,10 +247,10 @@ public abstract class AbstractSplitGenerator
    *
    * @see		#canRandomize()
    */
-  protected void initialize() {
-    int		i;
+  protected void doInitializeIterator() {
+    if (m_Data == null)
+      throw new IllegalStateException("No data available!");
 
-    m_Initialized     = true;
     m_OriginalIndices = originalIndices();
 
     if (canRandomize()) {
@@ -189,6 +258,16 @@ public abstract class AbstractSplitGenerator
       if (!m_UseViews)
 	m_Data.randomize(m_Random);
     }
+  }
+
+  /**
+   * Initializes the iterator, randomizes the data if required.
+   *
+   * @see		#canRandomize()
+   */
+  protected void initializeIterator() {
+    doInitializeIterator();
+    m_Initialized = true;
   }
 
   /**
@@ -207,7 +286,7 @@ public abstract class AbstractSplitGenerator
   @Override
   public synchronized WekaTrainTestSetContainer next() {
     if (!m_Initialized)
-      initialize();
+      initializeIterator();
     return createNext();
   }
 

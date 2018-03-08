@@ -18,6 +18,9 @@
  * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
+
+import adams.core.Randomizable;
+import adams.core.option.OptionHandler;
 import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaTrainTestSetContainer;
 import weka.core.Instances;
@@ -32,7 +35,14 @@ import java.util.NoSuchElementException;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public interface SplitGenerator
-  extends Serializable, Iterator<WekaTrainTestSetContainer>, InstancesViewSupporter {
+  extends Serializable, OptionHandler, Iterator<WekaTrainTestSetContainer>, InstancesViewSupporter, Randomizable {
+
+  /**
+   * Sets the original data.
+   *
+   * @param value	the data
+   */
+  public void setData(Instances value);
 
   /**
    * Returns the original data.
@@ -40,27 +50,6 @@ public interface SplitGenerator
    * @return		the data
    */
   public Instances getData();
-
-  /**
-   * Returns the seed value.
-   *
-   * @return		the seed
-   */
-  public long getSeed();
-
-  /**
-   * Sets whether to uses views only.
-   *
-   * @param value	true if to uses views
-   */
-  public void setUseViews(boolean value);
-
-  /**
-   * Returns whether to use views.
-   *
-   * @return		true if to uses views
-   */
-  public boolean getUseViews();
 
   /**
    * Returns <tt>true</tt> if the iteration has more elements. (In other
