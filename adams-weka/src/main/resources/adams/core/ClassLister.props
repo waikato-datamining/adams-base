@@ -223,6 +223,10 @@ weka.gui.explorer.panels.AdditionalExplorerPanel=\
 weka.core.code.Converter=\
   weka.core.code
 
+# the split generators
+weka.classifiers.SplitGenerator=\
+  weka.classifiers
+
 # The imputation algorithms
 weka.filters.unsupervised.attribute.missingvaluesimputation.Imputation=\
   weka.filters.unsupervised.attribute.missingvaluesimputation

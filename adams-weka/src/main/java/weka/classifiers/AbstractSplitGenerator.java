@@ -13,19 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSplitGenerator.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
-import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaTrainTestSetContainer;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instances;
 
-import java.io.Serializable;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
@@ -33,10 +30,9 @@ import java.util.Random;
  * Ancestor for helper classes that generates dataset splits.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSplitGenerator
-  implements Serializable, Iterator<WekaTrainTestSetContainer>, InstancesViewSupporter {
+  implements SplitGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;
