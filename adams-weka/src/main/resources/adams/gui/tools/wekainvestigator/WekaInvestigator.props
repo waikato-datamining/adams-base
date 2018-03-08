@@ -118,6 +118,10 @@ Classify.UseViews=false
 # (true|false)
 Classify.DiscardPredictions=false
 
+# the fold generator to use for cross-validation
+# (classname and options)
+Classify.CrossValidationFoldGenerator=weka.classifiers.DefaultCrossValidationFoldGenerator
+
 # whether to produce a final model for cross-validation
 # (true|false)
 Classify.CrossValidationFinalModel=true
@@ -133,6 +137,10 @@ Classify.TrainPercentage=66
 # whether to preserve order (for random split)
 # (true|false)
 Classify.PreserveOrder=false
+
+# the split generator to use for train/test splits
+# (classname and options)
+Classify.TrainTestSplitGenerator=weka.classifiers.DefaultRandomSplitGenerator
 
 # The default output directory for models
 # (directory; %c=current, %h=user home, %t=temp directory)

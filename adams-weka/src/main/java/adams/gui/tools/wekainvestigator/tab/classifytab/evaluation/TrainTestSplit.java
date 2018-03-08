@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TrainTestSplit.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -30,19 +30,22 @@ import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
 import weka.classifiers.DefaultRandomSplitGenerator;
+import weka.classifiers.Evaluation;
+import weka.classifiers.RandomSplitGenerator;
 import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
@@ -54,7 +57,6 @@ import java.util.Map;
  * Uses a (random) percentage split to generate train/test.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TrainTestSplit
   extends AbstractClassifierEvaluation {
@@ -72,6 +74,8 @@ public class TrainTestSplit
   public static final String KEY_ADDITIONAL = "additional";
 
   public static final String KEY_USEVIEWS = "useviews";
+
+  public static final String KEY_GENERATOR = "generator";
 
   public static final String KEY_DISCARDPREDICTIONS = "discardpredictions";
 
@@ -99,6 +103,9 @@ public class TrainTestSplit
   /** whether to use views. */
   protected JCheckBox m_CheckBoxUseViews;
 
+  /** the split generator. */
+  protected GenericObjectEditorPanel m_GOEGenerator;
+
   /** whether to discard the predictions. */
   protected JCheckBox m_CheckBoxDiscardPredictions;
 
@@ -118,7 +125,8 @@ public class TrainTestSplit
    */
   @Override
   protected void initGUI() {
-    Properties	props;
+    Properties			props;
+    RandomSplitGenerator	generator;
 
     super.initGUI();
 
@@ -193,6 +201,20 @@ public class TrainTestSplit
     m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
     m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Use views", m_CheckBoxUseViews);
+
+    // generator
+    try {
+      generator = (RandomSplitGenerator) OptionUtils.forCommandLine(
+        RandomSplitGenerator.class,
+	props.getProperty("Classify.TrainTestSplitGenerator",
+	  new DefaultRandomSplitGenerator().toCommandLine()));
+    }
+    catch (Exception e) {
+      generator = new DefaultRandomSplitGenerator();
+    }
+    m_GOEGenerator = new GenericObjectEditorPanel(RandomSplitGenerator.class, generator, true);
+    m_GOEGenerator.addChangeListener((ChangeEvent e) -> update());
+    m_PanelParameters.addParameter("Generator", m_GOEGenerator);
 
     // discard predictions?
     m_CheckBoxDiscardPredictions = new JCheckBox();
@@ -288,7 +310,7 @@ public class TrainTestSplit
     Instances			data;
     Instances			train;
     Instances			test;
-    DefaultRandomSplitGenerator generator;
+    RandomSplitGenerator 	generator;
     WekaTrainTestSetContainer	cont;
     String			msg;
     MetaData 			runInfo;
@@ -304,10 +326,11 @@ public class TrainTestSplit
     seed     = m_TextSeed.getValue().intValue();
     views    = m_CheckBoxUseViews.isSelected();
     discard  = m_CheckBoxDiscardPredictions.isSelected();
-    if (m_CheckBoxPreserveOrder.isSelected())
-      generator = new DefaultRandomSplitGenerator(data, perc);
-    else
-      generator = new DefaultRandomSplitGenerator(data, seed, perc);
+    generator = (RandomSplitGenerator) m_GOEGenerator.getCurrent();
+    generator.setData(data);
+    generator.setSeed(seed);
+    generator.setPercentage(perc);
+    generator.setPreserveOrder(m_CheckBoxPreserveOrder.isSelected());
     generator.setUseViews(views);
     cont      = generator.next();
     train     = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
@@ -325,6 +348,7 @@ public class TrainTestSplit
     runInfo.add("Class attribute", data.classAttribute().name());
     runInfo.add("Discard predictions", discard);
     runInfo.add("Use views", views);
+    runInfo.add("Generator", generator.toCommandLine());
     if (m_SelectAdditionalAttributes.getCurrent().length > 0)
       runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
 
@@ -404,6 +428,7 @@ public class TrainTestSplit
     result.put(KEY_PRESERVEORDER, m_CheckBoxPreserveOrder.isSelected());
     result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
     result.put(KEY_USEVIEWS, m_CheckBoxUseViews.isSelected());
+    result.put(KEY_GENERATOR, OptionUtils.getCommandLine(m_GOEGenerator.getCurrent()));
     result.put(KEY_DISCARDPREDICTIONS, m_CheckBoxDiscardPredictions.isSelected());
 
     return result;
@@ -429,6 +454,14 @@ public class TrainTestSplit
       m_SelectAdditionalAttributes.setCurrent((String[]) data.get(KEY_ADDITIONAL));
     if (data.containsKey(KEY_USEVIEWS))
       m_CheckBoxUseViews.setSelected((Boolean) data.get(KEY_USEVIEWS));
+    if (data.containsKey(KEY_GENERATOR)) {
+      try {
+	m_GOEGenerator.setCurrent(OptionUtils.forCommandLine(RandomSplitGenerator.class, (String) data.get(KEY_GENERATOR)));
+      }
+      catch (Exception e) {
+        errors.add("Failed to parse generator commandline: " + data.get(KEY_GENERATOR), e);
+      }
+    }
     if (data.containsKey(KEY_DISCARDPREDICTIONS))
       m_CheckBoxDiscardPredictions.setSelected((Boolean) data.get(KEY_DISCARDPREDICTIONS));
   }

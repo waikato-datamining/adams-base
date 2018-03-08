@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CrossValidation.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -31,11 +31,14 @@ import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.Classifier;
+import weka.classifiers.CrossValidationFoldGenerator;
+import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.core.Capabilities;
 import weka.core.Instances;
 
@@ -56,7 +59,6 @@ import java.util.Map;
  * Performs cross-validation.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CrossValidation
   extends AbstractClassifierEvaluation
@@ -75,6 +77,8 @@ public class CrossValidation
   public static final String KEY_ADDITIONAL = "additional";
 
   public static final String KEY_USEVIEWS = "useviews";
+
+  public static final String KEY_GENERATOR = "generator";
 
   public static final String KEY_DISCARDPREDICTIONS = "discardpredictions";
 
@@ -103,6 +107,9 @@ public class CrossValidation
 
   /** whether to use views. */
   protected JCheckBox m_CheckBoxUseViews;
+
+  /** the fold generator. */
+  protected GenericObjectEditorPanel m_GOEGenerator;
 
   /** whether to discard the predictions. */
   protected JCheckBox m_CheckBoxDiscardPredictions;
@@ -137,7 +144,8 @@ public class CrossValidation
    */
   @Override
   protected void initGUI() {
-    Properties 		props;
+    Properties 				props;
+    CrossValidationFoldGenerator	generator;
 
     super.initGUI();
 
@@ -194,6 +202,20 @@ public class CrossValidation
     m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
     m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Use views", m_CheckBoxUseViews);
+
+    // generator
+    try {
+      generator = (CrossValidationFoldGenerator) OptionUtils.forCommandLine(
+        CrossValidationFoldGenerator.class,
+	props.getProperty("Classify.CrossValidationFoldGenerator",
+	  new DefaultCrossValidationFoldGenerator().toCommandLine()));
+    }
+    catch (Exception e) {
+      generator = new DefaultCrossValidationFoldGenerator();
+    }
+    m_GOEGenerator = new GenericObjectEditorPanel(CrossValidationFoldGenerator.class, generator, true);
+    m_GOEGenerator.addChangeListener((ChangeEvent e) -> update());
+    m_PanelParameters.addParameter("Generator", m_GOEGenerator);
 
     // discard predictions?
     m_CheckBoxDiscardPredictions = new JCheckBox();
@@ -288,17 +310,18 @@ public class CrossValidation
    */
   @Override
   protected void doEvaluate(Classifier classifier, ResultItem item) throws Exception {
-    String		msg;
-    DataContainer	dataCont;
-    Instances		data;
-    boolean		finalModel;
-    boolean		views;
-    boolean		discard;
-    Classifier		model;
-    int			seed;
-    int			folds;
-    int			threads;
-    MetaData 		runInfo;
+    String				msg;
+    DataContainer			dataCont;
+    Instances				data;
+    boolean				finalModel;
+    boolean				views;
+    boolean				discard;
+    Classifier				model;
+    int					seed;
+    int					folds;
+    int					threads;
+    CrossValidationFoldGenerator	generator;
+    MetaData 				runInfo;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
@@ -311,6 +334,7 @@ public class CrossValidation
     seed       = m_TextSeed.getValue().intValue();
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
     threads    = ((Number) m_SpinnerThreads.getValue()).intValue();
+    generator  = (CrossValidationFoldGenerator) m_GOEGenerator.getCurrent();
     runInfo    = new MetaData();
     runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Seed", seed);
@@ -322,6 +346,7 @@ public class CrossValidation
     runInfo.add("# Instances", data.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());
     runInfo.add("Use views", views);
+    runInfo.add("Fold generator", generator.toCommandLine());
     runInfo.add("Discard predictions", discard);
     if (m_SelectAdditionalAttributes.getCurrent().length > 0)
       runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
@@ -332,6 +357,7 @@ public class CrossValidation
     m_CrossValidation.setSeed(seed);
     m_CrossValidation.setNumThreads(threads);
     m_CrossValidation.setUseViews(views);
+    m_CrossValidation.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(generator));
     m_CrossValidation.setDiscardPredictions(discard);
     m_CrossValidation.setStatusMessageHandler(this);
     msg = m_CrossValidation.execute();
@@ -427,6 +453,7 @@ public class CrossValidation
     result.put(KEY_THREADS, m_SpinnerThreads.getValue());
     result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
     result.put(KEY_USEVIEWS, m_CheckBoxUseViews.isSelected());
+    result.put(KEY_GENERATOR, OptionUtils.getCommandLine(m_GOEGenerator.getCurrent()));
     result.put(KEY_DISCARDPREDICTIONS, m_CheckBoxDiscardPredictions.isSelected());
     result.put(KEY_FINALMODEL, m_CheckBoxFinalModel.isSelected());
 
@@ -453,6 +480,14 @@ public class CrossValidation
       m_SelectAdditionalAttributes.setCurrent((String[]) data.get(KEY_ADDITIONAL));
     if (data.containsKey(KEY_USEVIEWS))
       m_CheckBoxUseViews.setSelected((Boolean) data.get(KEY_USEVIEWS));
+    if (data.containsKey(KEY_GENERATOR)) {
+      try {
+	m_GOEGenerator.setCurrent(OptionUtils.forCommandLine(CrossValidationFoldGenerator.class, (String) data.get(KEY_GENERATOR)));
+      }
+      catch (Exception e) {
+        errors.add("Failed to parse generator commandline: " + data.get(KEY_GENERATOR), e);
+      }
+    }
     if (data.containsKey(KEY_DISCARDPREDICTIONS))
       m_CheckBoxDiscardPredictions.setSelected((Boolean) data.get(KEY_DISCARDPREDICTIONS));
     if (data.containsKey(KEY_FINALMODEL))

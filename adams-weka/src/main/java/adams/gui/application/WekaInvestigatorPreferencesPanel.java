@@ -100,11 +100,17 @@ public class WekaInvestigatorPreferencesPanel
       new adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.CrossValidation(), true));
     addPropertyType("Classify.LeftPanelWidth", PropertyType.INTEGER);
     addPropertyType("Classify.NumFolds", PropertyType.INTEGER);
+    addPropertyType("Classify.CrossValidationFoldGenerator", PropertyType.OBJECT_EDITOR);
+    setChooser("Classify.CrossValidationFoldGenerator", new GenericObjectEditorPanel(
+      weka.classifiers.CrossValidationFoldGenerator.class, new weka.classifiers.DefaultCrossValidationFoldGenerator(), true));
     addPropertyType("Classify.NumThreads", PropertyType.INTEGER);
     addPropertyType("Classify.UseViews", PropertyType.BOOLEAN);
     addPropertyType("Classify.CrossValidationFinalModel", PropertyType.BOOLEAN);
     addPropertyType("Classify.Seed", PropertyType.INTEGER);
     addPropertyType("Classify.TrainPercentage", PropertyType.DOUBLE);
+    addPropertyType("Classify.TrainTestSplitGenerator", PropertyType.OBJECT_EDITOR);
+    setChooser("Classify.TrainTestSplitGenerator", new GenericObjectEditorPanel(
+      weka.classifiers.RandomSplitGenerator.class, new weka.classifiers.DefaultRandomSplitGenerator(), true));
     addPropertyType("Classify.PreserveOrder", PropertyType.BOOLEAN);
     addPropertyType("Classify.DiscardPredictions", PropertyType.BOOLEAN);
     addPropertyType("Classify.ModelDirectory", PropertyType.DIRECTORY_ABSOLUTE);
