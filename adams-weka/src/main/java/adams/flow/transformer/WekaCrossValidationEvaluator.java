@@ -37,6 +37,8 @@ import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.standalone.JobRunnerSetup;
 import adams.multiprocess.WekaCrossValidationExecution;
+import weka.classifiers.CrossValidationFoldGenerator;
+import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.classifiers.evaluation.output.prediction.Null;
 import weka.core.Instances;
 
@@ -141,6 +143,12 @@ import weka.core.Instances;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-generator &lt;weka.classifiers.CrossValidationFoldGenerator&gt; (property: generator)
+ * &nbsp;&nbsp;&nbsp;The scheme to use for generating the folds; the actor options take precedence
+ * &nbsp;&nbsp;&nbsp;over the scheme's ones.
+ * &nbsp;&nbsp;&nbsp;default: weka.classifiers.DefaultCrossValidationFoldGenerator
+ * </pre>
+ *
  * <pre>-final-model &lt;boolean&gt; (property: finalModel)
  * &nbsp;&nbsp;&nbsp;If enabled, a final model is built on the full dataset.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -168,6 +176,9 @@ public class WekaCrossValidationEvaluator
 
   /** whether to use views. */
   protected boolean m_UseViews;
+
+  /** the fold generator. */
+  protected CrossValidationFoldGenerator m_Generator;
 
   /** whether to create a final model. */
   protected boolean m_FinalModel;
@@ -212,6 +223,10 @@ public class WekaCrossValidationEvaluator
     m_OptionManager.add(
       "use-views", "useViews",
       false);
+
+    m_OptionManager.add(
+      "generator", "generator",
+      new DefaultCrossValidationFoldGenerator());
 
     m_OptionManager.add(
       "final-model", "finalModel",
@@ -393,6 +408,35 @@ public class WekaCrossValidationEvaluator
   }
 
   /**
+   * Sets the scheme for generating the folds.
+   *
+   * @param value	the generator
+   */
+  public void setGenerator(CrossValidationFoldGenerator value) {
+    m_Generator = value;
+    reset();
+  }
+
+  /**
+   * Returns the scheme for generating the folds.
+   *
+   * @return		the generator
+   */
+  public CrossValidationFoldGenerator getGenerator() {
+    return m_Generator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String generatorTipText() {
+    return "The scheme to use for generating the folds; the actor options take precedence over the scheme's ones.";
+  }
+
+  /**
    * Sets whether to build a final model on the full dataset.
    *
    * @param value	true if to build final model
@@ -495,6 +539,7 @@ public class WekaCrossValidationEvaluator
       m_CrossValidation.setDiscardPredictions(m_DiscardPredictions);
       m_CrossValidation.setNumThreads(m_NumThreads);
       m_CrossValidation.setOutput(m_Output);
+      m_CrossValidation.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(m_Generator));
       result = m_CrossValidation.execute();
 
       if (!m_CrossValidation.isStopped()) {
