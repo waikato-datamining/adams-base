@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TrainTestSplitExperiment.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
@@ -26,8 +26,9 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaTrainTestSetContainer;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
 import weka.classifiers.DefaultRandomSplitGenerator;
+import weka.classifiers.Evaluation;
+import weka.classifiers.RandomSplitGenerator;
 import weka.core.Instances;
 
 /**
@@ -63,7 +64,7 @@ public class TrainTestSplitExperiment
      */
     @Override
     protected void evaluate() {
-      DefaultRandomSplitGenerator generator;
+      RandomSplitGenerator 	generator;
       WekaTrainTestSetContainer	cont;
       Instances			train;
       Instances			test;
@@ -73,10 +74,11 @@ public class TrainTestSplitExperiment
 
       m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + shortenCommandLine(m_Classifier));
 
-      if (!m_Owner.getPreserveOrder())
-	generator = new DefaultRandomSplitGenerator(m_Data, m_Run, m_Owner.getPercentage() / 100.0);
-      else
-	generator = new DefaultRandomSplitGenerator(m_Data, m_Owner.getPercentage());
+      generator = (RandomSplitGenerator) OptionUtils.shallowCopy(m_Owner.getGenerator());
+      generator.setData(m_Data);
+      generator.setSeed(m_Run);
+      generator.setPercentage(m_Owner.getPercentage() / 100.0);
+      generator.setPreserveOrder(m_Owner.getPreserveOrder());
       cont  = generator.next();
       train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
       test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
@@ -101,6 +103,9 @@ public class TrainTestSplitExperiment
 
   /** whether to preserve the order. */
   protected boolean m_PreserveOrder;
+
+  /** the split generator to use. */
+  protected RandomSplitGenerator m_Generator;
 
   /**
    * Returns a string describing the object.
@@ -128,6 +133,10 @@ public class TrainTestSplitExperiment
     m_OptionManager.add(
       "preserve-order", "preserveOrder",
       false);
+
+    m_OptionManager.add(
+      "generator", "generator",
+      new DefaultRandomSplitGenerator());
   }
 
   /**
@@ -186,6 +195,35 @@ public class TrainTestSplitExperiment
    */
   public String preserveOrderTipText() {
     return "If enabled, no data randomization is occurring before splitting the data into train and test set.";
+  }
+
+  /**
+   * Sets the scheme for generating the split.
+   *
+   * @param value	the generator
+   */
+  public void setGenerator(RandomSplitGenerator value) {
+    m_Generator = value;
+    reset();
+  }
+
+  /**
+   * Returns the scheme for generating the split.
+   *
+   * @return		the generator
+   */
+  public RandomSplitGenerator getGenerator() {
+    return m_Generator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String generatorTipText() {
+    return "The scheme to use for generating the split; the actor options take precedence over the scheme's ones.";
   }
 
   /**

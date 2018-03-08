@@ -21,10 +21,13 @@
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
 import adams.core.ThreadLimiter;
+import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.Classifier;
+import weka.classifiers.CrossValidationFoldGenerator;
+import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.core.Instances;
 
 /**
@@ -82,6 +85,7 @@ public class CrossValidationExperiment
       m_CrossValidation.setClassifier(m_Classifier);
       m_CrossValidation.setData(m_Data);
       m_CrossValidation.setFolds(m_Owner.getFolds());
+      m_CrossValidation.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(m_Owner.getGenerator()));
       m_CrossValidation.setSeed(m_Run);
       m_CrossValidation.setDiscardPredictions(false);
       m_CrossValidation.setNumThreads(1);
@@ -118,6 +122,9 @@ public class CrossValidationExperiment
   /** the number of folds. */
   protected int m_Folds;
 
+  /** the fold generator. */
+  protected CrossValidationFoldGenerator m_Generator;
+
   /**
    * Returns a string describing the object.
    *
@@ -138,6 +145,10 @@ public class CrossValidationExperiment
     m_OptionManager.add(
       "folds", "folds",
       10, -1, null);
+
+    m_OptionManager.add(
+      "generator", "generator",
+      new DefaultCrossValidationFoldGenerator());
   }
 
   /**
@@ -167,6 +178,35 @@ public class CrossValidationExperiment
    */
   public String foldsTipText() {
     return "The number of folds to perform.";
+  }
+
+  /**
+   * Sets the scheme for generating the folds.
+   *
+   * @param value	the generator
+   */
+  public void setGenerator(CrossValidationFoldGenerator value) {
+    m_Generator = value;
+    reset();
+  }
+
+  /**
+   * Returns the scheme for generating the folds.
+   *
+   * @return		the generator
+   */
+  public CrossValidationFoldGenerator getGenerator() {
+    return m_Generator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String generatorTipText() {
+    return "The scheme to use for generating the folds; the actor options take precedence over the scheme's ones.";
   }
 
   /**
