@@ -15,16 +15,15 @@
 
 /*
  * WekaRandomSplit.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import adams.data.weka.InstancesViewCreator;
-import weka.classifiers.DefaultRandomSplitGenerator;
-import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
+import adams.core.option.OptionUtils;
+import adams.data.weka.InstancesViewCreator;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.Token;
 import adams.flow.provenance.ActorType;
@@ -32,6 +31,9 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import weka.classifiers.DefaultRandomSplitGenerator;
+import weka.classifiers.RandomSplitGenerator;
+import weka.core.Instances;
 
 /**
  <!-- globalinfo-start -->
@@ -109,10 +111,15 @@ import adams.flow.provenance.ProvenanceSupporter;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-generator &lt;weka.classifiers.RandomSplitGenerator&gt; (property: generator)
+ * &nbsp;&nbsp;&nbsp;The scheme to use for generating the split; the actor options take precedence
+ * &nbsp;&nbsp;&nbsp;over the scheme's ones.
+ * &nbsp;&nbsp;&nbsp;default: weka.classifiers.DefaultRandomSplitGenerator
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaRandomSplit
   extends AbstractTransformer
@@ -133,6 +140,9 @@ public class WekaRandomSplit
   /** whether to create a view only. */
   protected boolean m_CreateView;
 
+  /** the split generator to use. */
+  protected RandomSplitGenerator m_Generator;
+  
   /**
    * Returns a string describing the object.
    *
@@ -170,6 +180,10 @@ public class WekaRandomSplit
     m_OptionManager.add(
       "create-view", "createView",
       false);
+
+    m_OptionManager.add(
+      "generator", "generator",
+      new DefaultRandomSplitGenerator());
   }
 
   /**
@@ -333,6 +347,35 @@ public class WekaRandomSplit
   }
 
   /**
+   * Sets the scheme for generating the split.
+   *
+   * @param value	the generator
+   */
+  public void setGenerator(RandomSplitGenerator value) {
+    m_Generator = value;
+    reset();
+  }
+
+  /**
+   * Returns the scheme for generating the split.
+   *
+   * @return		the generator
+   */
+  public RandomSplitGenerator getGenerator() {
+    return m_Generator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String generatorTipText() {
+    return "The scheme to use for generating the split; the actor options take precedence over the scheme's ones.";
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -341,16 +384,17 @@ public class WekaRandomSplit
   protected String doExecute() {
     String			result;
     Instances			inst;
-    DefaultRandomSplitGenerator generator;
+    RandomSplitGenerator 	generator;
 
     result = null;
     inst   = new Instances((Instances) m_InputToken.getPayload());
 
     try {
-      if (m_PreserveOrder)
-        generator = new DefaultRandomSplitGenerator(inst, m_Percentage);
-      else
-        generator = new DefaultRandomSplitGenerator(inst, m_Seed, m_Percentage);
+      generator = (RandomSplitGenerator) OptionUtils.shallowCopy(m_Generator);
+      generator.setData(inst);
+      generator.setSeed(m_Seed);
+      generator.setPercentage(m_Percentage);
+      generator.setPreserveOrder(m_PreserveOrder);
       generator.setUseViews(m_CreateView);
     }
     catch (Exception e) {

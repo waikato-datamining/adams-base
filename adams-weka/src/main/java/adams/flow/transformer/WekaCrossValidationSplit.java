@@ -15,13 +15,14 @@
 
 /*
  * WekaCrossValidationSplit.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
+import adams.core.option.OptionUtils;
 import adams.data.weka.InstancesViewCreator;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.Token;
@@ -30,6 +31,7 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import weka.classifiers.CrossValidationFoldGenerator;
 import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.core.Instances;
 
@@ -112,10 +114,15 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
+ * <pre>-generator &lt;weka.classifiers.CrossValidationFoldGenerator&gt; (property: generator)
+ * &nbsp;&nbsp;&nbsp;The scheme to use for generating the folds; the actor options take precedence
+ * &nbsp;&nbsp;&nbsp;over the scheme's ones.
+ * &nbsp;&nbsp;&nbsp;default: weka.classifiers.DefaultCrossValidationFoldGenerator
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaCrossValidationSplit
   extends AbstractTransformer
@@ -140,7 +147,10 @@ public class WekaCrossValidationSplit
   protected boolean m_CreateView;
 
   /** the fold generator. */
-  protected DefaultCrossValidationFoldGenerator m_Generator;
+  protected CrossValidationFoldGenerator m_Generator;
+
+  /** the actual fold generator. */
+  protected CrossValidationFoldGenerator m_ActualGenerator;
 
   /**
    * Returns a string describing the object.
@@ -182,6 +192,10 @@ public class WekaCrossValidationSplit
     m_OptionManager.add(
       "create-view", "createView",
       false);
+
+    m_OptionManager.add(
+      "generator", "generator",
+      new DefaultCrossValidationFoldGenerator());
   }
 
   /**
@@ -344,6 +358,35 @@ public class WekaCrossValidationSplit
   }
 
   /**
+   * Sets the scheme for generating the folds.
+   *
+   * @param value	the generator
+   */
+  public void setGenerator(CrossValidationFoldGenerator value) {
+    m_Generator = value;
+    reset();
+  }
+
+  /**
+   * Returns the scheme for generating the folds.
+   *
+   * @return		the generator
+   */
+  public CrossValidationFoldGenerator getGenerator() {
+    return m_Generator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String generatorTipText() {
+    return "The scheme to use for generating the folds; the actor options take precedence over the scheme's ones.";
+  }
+
+  /**
    * Removes entries from the backup.
    */
   @Override
@@ -364,8 +407,8 @@ public class WekaCrossValidationSplit
 
     result = super.backupState();
 
-    if (m_Generator != null)
-      result.put(BACKUP_GENERATOR, m_Generator);
+    if (m_ActualGenerator != null)
+      result.put(BACKUP_GENERATOR, m_ActualGenerator);
 
     return result;
   }
@@ -378,7 +421,7 @@ public class WekaCrossValidationSplit
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_GENERATOR)) {
-      m_Generator = (DefaultCrossValidationFoldGenerator) state.get(BACKUP_GENERATOR);
+      m_ActualGenerator = (CrossValidationFoldGenerator) state.get(BACKUP_GENERATOR);
       state.remove(BACKUP_GENERATOR);
     }
 
@@ -392,7 +435,7 @@ public class WekaCrossValidationSplit
   protected void reset() {
     super.reset();
 
-    m_Generator = null;
+    m_ActualGenerator = null;
   }
 
   /**
@@ -406,8 +449,14 @@ public class WekaCrossValidationSplit
 
     result = null;
     try {
-      m_Generator = new DefaultCrossValidationFoldGenerator((Instances) m_InputToken.getPayload(), m_Folds, m_Seed, true, true, m_RelationName);
-      m_Generator.setUseViews(m_CreateView);
+      m_ActualGenerator = (CrossValidationFoldGenerator) OptionUtils.shallowCopy(m_Generator);
+      m_ActualGenerator.setData((Instances) m_InputToken.getPayload());
+      m_ActualGenerator.setNumFolds(m_Folds);
+      m_ActualGenerator.setSeed(m_Seed);
+      m_ActualGenerator.setStratify(true);
+      m_ActualGenerator.setRandomize(true);
+      m_ActualGenerator.setRelationName(m_RelationName);
+      m_ActualGenerator.setUseViews(m_CreateView);
     }
     catch (Exception e) {
       result = handleException("Failed to initialize fold generator!", e);
@@ -424,7 +473,7 @@ public class WekaCrossValidationSplit
    */
   @Override
   public boolean hasPendingOutput() {
-    return (m_Generator != null) && m_Generator.hasNext();
+    return (m_ActualGenerator != null) && m_ActualGenerator.hasNext();
   }
 
   /**
@@ -436,7 +485,7 @@ public class WekaCrossValidationSplit
   public Token output() {
     Token	result;
 
-    result = new Token(m_Generator.next());
+    result = new Token(m_ActualGenerator.next());
 
     updateProvenance(result);
 
@@ -461,7 +510,7 @@ public class WekaCrossValidationSplit
    */
   @Override
   public void wrapUp() {
-    m_Generator = null;
+    m_ActualGenerator = null;
 
     super.wrapUp();
   }
