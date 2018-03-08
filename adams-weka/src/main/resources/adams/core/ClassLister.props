@@ -223,8 +223,8 @@ weka.gui.explorer.panels.AdditionalExplorerPanel=\
 weka.core.code.Converter=\
   weka.core.code
 
-# the split generators
-weka.classifiers.SplitGenerator=\
+# the random split generators
+weka.classifiers.RandomSplitGenerator=\
   weka.classifiers
 
 # the cross-validation fold generators

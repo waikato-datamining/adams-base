@@ -29,7 +29,7 @@ import adams.flow.core.EvaluationStatistic;
 import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.RandomSplitGenerator;
+import weka.classifiers.DefaultRandomSplitGenerator;
 import weka.classifiers.RandomizableMultipleClassifiersCombiner;
 import weka.classifiers.evaluation.NominalPrediction;
 import weka.classifiers.evaluation.Prediction;
@@ -741,7 +741,7 @@ public class ClassifierCascade
     Instances 				priorTest;
     Instances 				metaTrain;
     Instances 				metaTest;
-    RandomSplitGenerator		rand;
+    DefaultRandomSplitGenerator rand;
     WekaTrainTestSetContainer		cont;
     int					level;
     Evaluation				eval;
@@ -770,7 +770,7 @@ public class ClassifierCascade
     m_MetaLevelHeader = null;
 
     // train/test
-    rand      = new RandomSplitGenerator(data, m_Seed, (100.0 - m_HoldOutPercentage) / 100.0);
+    rand      = new DefaultRandomSplitGenerator(data, m_Seed, (100.0 - m_HoldOutPercentage) / 100.0);
     cont      = rand.next();
     train     = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
     test      = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);

@@ -27,7 +27,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaTrainTestSetContainer;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.RandomSplitGenerator;
+import weka.classifiers.DefaultRandomSplitGenerator;
 import weka.core.Instances;
 
 /**
@@ -63,7 +63,7 @@ public class TrainTestSplitExperiment
      */
     @Override
     protected void evaluate() {
-      RandomSplitGenerator	generator;
+      DefaultRandomSplitGenerator generator;
       WekaTrainTestSetContainer	cont;
       Instances			train;
       Instances			test;
@@ -74,9 +74,9 @@ public class TrainTestSplitExperiment
       m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + shortenCommandLine(m_Classifier));
 
       if (!m_Owner.getPreserveOrder())
-	generator = new RandomSplitGenerator(m_Data, m_Run, m_Owner.getPercentage() / 100.0);
+	generator = new DefaultRandomSplitGenerator(m_Data, m_Run, m_Owner.getPercentage() / 100.0);
       else
-	generator = new RandomSplitGenerator(m_Data, m_Owner.getPercentage());
+	generator = new DefaultRandomSplitGenerator(m_Data, m_Owner.getPercentage());
       cont  = generator.next();
       train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
       test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);

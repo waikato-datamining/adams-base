@@ -36,7 +36,7 @@ import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.RandomSplitGenerator;
+import weka.classifiers.DefaultRandomSplitGenerator;
 import weka.core.Capabilities;
 import weka.core.Instances;
 
@@ -288,7 +288,7 @@ public class TrainTestSplit
     Instances			data;
     Instances			train;
     Instances			test;
-    RandomSplitGenerator	generator;
+    DefaultRandomSplitGenerator generator;
     WekaTrainTestSetContainer	cont;
     String			msg;
     MetaData 			runInfo;
@@ -305,9 +305,9 @@ public class TrainTestSplit
     views    = m_CheckBoxUseViews.isSelected();
     discard  = m_CheckBoxDiscardPredictions.isSelected();
     if (m_CheckBoxPreserveOrder.isSelected())
-      generator = new RandomSplitGenerator(data, perc);
+      generator = new DefaultRandomSplitGenerator(data, perc);
     else
-      generator = new RandomSplitGenerator(data, seed, perc);
+      generator = new DefaultRandomSplitGenerator(data, seed, perc);
     generator.setUseViews(views);
     cont      = generator.next();
     train     = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);

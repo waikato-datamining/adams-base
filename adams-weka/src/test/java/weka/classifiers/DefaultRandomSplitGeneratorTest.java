@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * RandomSplitGeneratorTest.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * DefaultRandomSplitGeneratorTest.java
+ * Copyright (C) 2016-018 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -26,12 +26,11 @@ import junit.framework.TestSuite;
 import weka.core.Instances;
 
 /**
- * Tests weka.classifiers.RandomSplitGenerator.
+ * Tests weka.classifiers.DefaultRandomSplitGenerator.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class RandomSplitGeneratorTest
+public class DefaultRandomSplitGeneratorTest
   extends AbstractSplitGeneratorTestCase {
 
   /**
@@ -39,7 +38,7 @@ public class RandomSplitGeneratorTest
    *
    * @param name 	the name of the test
    */
-  public RandomSplitGeneratorTest(String name) {
+  public DefaultRandomSplitGeneratorTest(String name) {
     super(name);
   }
 
@@ -50,16 +49,16 @@ public class RandomSplitGeneratorTest
    */
   @Override
   protected AbstractSplitGenerator[] getRegressionSetups() {
-    RandomSplitGenerator[]	result;
+    DefaultRandomSplitGenerator[]	result;
     Instances			anneal;
     Instances			bodyfat;
 
     anneal  = load("anneal.arff");
     bodyfat = load("bodyfat.arff");
 
-    result    = new RandomSplitGenerator[2];
-    result[0] = new RandomSplitGenerator(anneal, 42, 0.66);
-    result[1] = new RandomSplitGenerator(bodyfat, 0.33);
+    result    = new DefaultRandomSplitGenerator[2];
+    result[0] = new DefaultRandomSplitGenerator(anneal, 42, 0.66);
+    result[1] = new DefaultRandomSplitGenerator(bodyfat, 0.33);
 
     return result;
   }
@@ -70,7 +69,7 @@ public class RandomSplitGeneratorTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(RandomSplitGeneratorTest.class);
+    return new TestSuite(DefaultRandomSplitGeneratorTest.class);
   }
 
   /**

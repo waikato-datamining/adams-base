@@ -21,7 +21,7 @@
 package adams.flow.transformer;
 
 import adams.data.weka.InstancesViewCreator;
-import weka.classifiers.RandomSplitGenerator;
+import weka.classifiers.DefaultRandomSplitGenerator;
 import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
@@ -341,16 +341,16 @@ public class WekaRandomSplit
   protected String doExecute() {
     String			result;
     Instances			inst;
-    RandomSplitGenerator	generator;
+    DefaultRandomSplitGenerator generator;
 
     result = null;
     inst   = new Instances((Instances) m_InputToken.getPayload());
 
     try {
       if (m_PreserveOrder)
-        generator = new RandomSplitGenerator(inst, m_Percentage);
+        generator = new DefaultRandomSplitGenerator(inst, m_Percentage);
       else
-        generator = new RandomSplitGenerator(inst, m_Seed, m_Percentage);
+        generator = new DefaultRandomSplitGenerator(inst, m_Seed, m_Percentage);
       generator.setUseViews(m_CreateView);
     }
     catch (Exception e) {

@@ -29,7 +29,7 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
-import weka.classifiers.RandomSplitGenerator;
+import weka.classifiers.DefaultRandomSplitGenerator;
 import weka.core.Instances;
 
 import javax.swing.JCheckBox;
@@ -73,7 +73,7 @@ public class Split
     ApprovalDialog		dialog;
     int				seed;
     double			percentage;
-    RandomSplitGenerator	generator;
+    DefaultRandomSplitGenerator generator;
     WekaTrainTestSetContainer	ttcont;
     DataContainer 		cont;
     MemoryContainer 		trainCont;
@@ -113,9 +113,9 @@ public class Split
     cont = getSelectedData()[0];
     logMessage("Splitting dataset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
     if (checkboxPreserveOrder.isSelected())
-      generator = new RandomSplitGenerator(cont.getData(), percentage / 100.0);
+      generator = new DefaultRandomSplitGenerator(cont.getData(), percentage / 100.0);
     else
-      generator = new RandomSplitGenerator(cont.getData(), seed, percentage / 100.0);
+      generator = new DefaultRandomSplitGenerator(cont.getData(), seed, percentage / 100.0);
     ttcont = generator.next();
     trainCont = new MemoryContainer((Instances) ttcont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN));
     trainCont.getData().setRelationName(cont.getData().relationName() + "-train");

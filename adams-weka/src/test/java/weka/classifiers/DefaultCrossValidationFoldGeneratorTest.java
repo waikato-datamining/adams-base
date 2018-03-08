@@ -15,7 +15,7 @@
 
 /*
  * DefaultCrossValidationFoldGeneratorTest.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
 import weka.core.Instances;
 
 /**
- * Tests weka.classifiers.CrossValidationFoldGenerator.
+ * Tests weka.classifiers.DefaultCrossValidationFoldGenerator.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
