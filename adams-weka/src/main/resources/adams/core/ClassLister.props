@@ -227,6 +227,10 @@ weka.core.code.Converter=\
 weka.classifiers.SplitGenerator=\
   weka.classifiers
 
+# the cross-validation fold generators
+weka.classifiers.CrossValiationFoldGenerator=\
+  weka.classifiers
+
 # The imputation algorithms
 weka.filters.unsupervised.attribute.missingvaluesimputation.Imputation=\
   weka.filters.unsupervised.attribute.missingvaluesimputation

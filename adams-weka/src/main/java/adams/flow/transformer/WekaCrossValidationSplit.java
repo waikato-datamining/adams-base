@@ -30,7 +30,7 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
-import weka.classifiers.CrossValidationFoldGenerator;
+import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.core.Instances;
 
 import java.util.Hashtable;
@@ -140,7 +140,7 @@ public class WekaCrossValidationSplit
   protected boolean m_CreateView;
 
   /** the fold generator. */
-  protected CrossValidationFoldGenerator m_Generator;
+  protected DefaultCrossValidationFoldGenerator m_Generator;
 
   /**
    * Returns a string describing the object.
@@ -378,7 +378,7 @@ public class WekaCrossValidationSplit
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
     if (state.containsKey(BACKUP_GENERATOR)) {
-      m_Generator = (CrossValidationFoldGenerator) state.get(BACKUP_GENERATOR);
+      m_Generator = (DefaultCrossValidationFoldGenerator) state.get(BACKUP_GENERATOR);
       state.remove(BACKUP_GENERATOR);
     }
 
@@ -406,7 +406,7 @@ public class WekaCrossValidationSplit
 
     result = null;
     try {
-      m_Generator = new CrossValidationFoldGenerator((Instances) m_InputToken.getPayload(), m_Folds, m_Seed, true, true, m_RelationName);
+      m_Generator = new DefaultCrossValidationFoldGenerator((Instances) m_InputToken.getPayload(), m_Folds, m_Seed, true, true, m_RelationName);
       m_Generator.setUseViews(m_CreateView);
     }
     catch (Exception e) {

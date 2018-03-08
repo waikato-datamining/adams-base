@@ -35,7 +35,7 @@ import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.AttributeSelection;
-import weka.classifiers.CrossValidationFoldGenerator;
+import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.core.Capabilities;
 import weka.core.Instances;
 
@@ -219,7 +219,7 @@ public class CrossValidation
     ASEvaluation			eval;
     ASSearch				srch;
     AttributeSelection			attsel;
-    CrossValidationFoldGenerator	generator;
+    DefaultCrossValidationFoldGenerator generator;
     WekaTrainTestSetContainer 		cont;
     int					current;
     Instances				train;
@@ -252,7 +252,7 @@ public class CrossValidation
     attsel.setSeed(seed);
     attsel.setFolds(folds);
 
-    generator  = new CrossValidationFoldGenerator(data, folds, seed, true);
+    generator  = new DefaultCrossValidationFoldGenerator(data, folds, seed, true);
     current    = 0;
     while (generator.hasNext()) {
       current++;

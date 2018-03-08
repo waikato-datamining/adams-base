@@ -33,8 +33,8 @@ import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.standalone.JobRunnerSetup;
 import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Classifier;
-import weka.classifiers.CrossValidationFoldGenerator;
 import weka.classifiers.CrossValidationHelper;
+import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.output.prediction.AbstractOutput;
 import weka.core.Instances;
@@ -421,7 +421,7 @@ public class WekaCrossValidationExecution
     Evaluation 				eval;
     AggregateEvaluations 		evalAgg;
     int					folds;
-    CrossValidationFoldGenerator 	generator;
+    DefaultCrossValidationFoldGenerator generator;
     JobList<WekaCrossValidationJob>	list;
     WekaCrossValidationJob 		job;
     WekaTrainTestSetContainer 		cont;
@@ -453,7 +453,7 @@ public class WekaCrossValidationExecution
       if (!m_DiscardPredictions)
 	indices = CrossValidationHelper.crossValidationIndices(m_Data, folds, new Random(m_Seed));
 
-      generator = new CrossValidationFoldGenerator(m_Data, folds, m_Seed, true);
+      generator = new DefaultCrossValidationFoldGenerator(m_Data, folds, m_Seed, true);
       generator.setUseViews(m_UseViews);
       if ((m_ActualNumThreads == 1) && !m_SeparateFolds) {
 	initOutputBuffer();

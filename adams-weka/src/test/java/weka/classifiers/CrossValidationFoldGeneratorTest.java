@@ -50,17 +50,17 @@ public class CrossValidationFoldGeneratorTest
    */
   @Override
   protected AbstractSplitGenerator[] getRegressionSetups() {
-    CrossValidationFoldGenerator[]	result;
+    DefaultCrossValidationFoldGenerator[]	result;
     Instances			anneal;
     Instances			bodyfat;
 
     anneal  = load("anneal.arff");
     bodyfat = load("bodyfat.arff");
 
-    result    = new CrossValidationFoldGenerator[3];
-    result[0] = new CrossValidationFoldGenerator(anneal, 10, 42, true);
-    result[1] = new CrossValidationFoldGenerator(bodyfat, 3, 42, false);
-    result[2] = new CrossValidationFoldGenerator(bodyfat, 3, 42, false, false, null);
+    result    = new DefaultCrossValidationFoldGenerator[3];
+    result[0] = new DefaultCrossValidationFoldGenerator(anneal, 10, 42, true);
+    result[1] = new DefaultCrossValidationFoldGenerator(bodyfat, 3, 42, false);
+    result[2] = new DefaultCrossValidationFoldGenerator(bodyfat, 3, 42, false, false, null);
 
     return result;
   }
