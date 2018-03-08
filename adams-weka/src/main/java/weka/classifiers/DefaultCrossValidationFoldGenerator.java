@@ -43,15 +43,6 @@ public class DefaultCrossValidationFoldGenerator
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;
 
-  /** the placeholder for the (original) relation name. */
-  public final static String PLACEHOLDER_ORIGINAL = "@";
-
-  /** the placeholder for "train" or "test" type. */
-  public final static String PLACEHOLDER_TYPE = "$T";
-
-  /** the placeholder for the current fold number. */
-  public final static String PLACEHOLDER_CURRENTFOLD = "$N";
-  
   /** the number of folds. */
   protected int m_NumFolds;
   
