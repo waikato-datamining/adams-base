@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.base.BaseString;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
+import adams.gui.visualization.debug.objectexport.SerializableObjectExporter;
 
 import java.util.HashSet;
 import java.util.List;
@@ -113,10 +114,13 @@ public abstract class AbstractMultiObjectExportWithPreferredExtensions
     Set<String> 			preferred;
     String[]				extensions;
 
-    exporters = AbstractObjectExporter.getExporter(obj);
+    exporters = AbstractObjectExporter.getExporter(obj, new Class[]{SerializableObjectExporter.class});
     if (exporters.size() == 0) {
-      errors.add("Failed to find object exporter for '" + name + "'/" + Utils.classToString(obj));
-      return null;
+      exporters = AbstractObjectExporter.getExporter(obj);
+      if (exporters.size() == 0) {
+        errors.add("Failed to find object exporter for '" + name + "'/" + Utils.classToString(obj));
+        return null;
+      }
     }
     result    = exporters.get(0);
     preferred = new HashSet<>();
@@ -125,10 +129,10 @@ public abstract class AbstractMultiObjectExportWithPreferredExtensions
     for (AbstractObjectExporter exporter: exporters) {
       extensions = exporter.getFormatExtensions();
       for (String extension: extensions) {
-	if (preferred.contains(extension)) {
-	  result = exporter;
-	  break;
-	}
+        if (preferred.contains(extension)) {
+          result = exporter;
+          break;
+        }
       }
     }
 

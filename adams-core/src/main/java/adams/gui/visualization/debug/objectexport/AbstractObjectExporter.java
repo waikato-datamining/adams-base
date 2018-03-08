@@ -26,8 +26,10 @@ import adams.core.option.AbstractOptionHandler;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Ancestor for classes that can export certain objects to files.
@@ -41,9 +43,6 @@ public abstract class AbstractObjectExporter
 
   private static final long serialVersionUID = -7742758428210374232L;
 
-  /** the cache for object class / exporter relation. */
-  protected static Hashtable<Class,List<Class>> m_Cache;
-
   /** the exporters (classnames) currently available. */
   protected static String[] m_Exporters;
 
@@ -51,7 +50,6 @@ public abstract class AbstractObjectExporter
   protected static Class[] m_ExporterClasses;
 
   static {
-    m_Cache          = new Hashtable<>();
     m_Exporters       = null;
     m_ExporterClasses = null;
   }
@@ -85,36 +83,23 @@ public abstract class AbstractObjectExporter
    * @return		the exporter
    */
   public static synchronized List<AbstractObjectExporter> getExporter(Object obj) {
-    if (obj != null)
-      return getExporter(obj.getClass());
-    else
-      return getExporter(Object.class);
+    return getExporter(obj, null);
   }
 
   /**
-   * Instantiates the exporters.
-   * 
-   * @param exporters	the exporters to instantiate
-   * @return		the instances
+   * Returns a exporter for the specified object.
+   *
+   * @param obj		the object to get a commandline exporter for
+   * @param excluded	the exporters to exclude, ignored if null
+   * @return		the exporter
    */
-  protected static List<AbstractObjectExporter> instantiate(List<Class> exporters) {
-    List<AbstractObjectExporter>	result;
-    int					i;
-    
-    result = new ArrayList<>();
-    for (i = 0; i < exporters.size(); i++) {
-      try {
-	result.add((AbstractObjectExporter) exporters.get(i).newInstance());
-      }
-      catch (Exception e) {
-	System.err.println("Failed to instantiate object exporter '" + exporters.get(i).getName() + "':");
-	e.printStackTrace();
-      }
-    }
-    
-    return result;
+  public static synchronized List<AbstractObjectExporter> getExporter(Object obj, Class[] excluded) {
+    if (obj != null)
+      return getExporter(obj.getClass(), excluded);
+    else
+      return getExporter(Object.class, excluded);
   }
-  
+
   /**
    * Returns a exporter for the specified class.
    *
@@ -122,29 +107,40 @@ public abstract class AbstractObjectExporter
    * @return		the exporter
    */
   public static synchronized List<AbstractObjectExporter> getExporter(Class cls) {
-    AbstractObjectExporter exporter;
+    return getExporter(cls, null);
+  }
+
+  /**
+   * Returns a exporter for the specified class.
+   *
+   * @param cls		the class to get a commandline exporter for
+   * @param excluded	the exporters to exclude, ignored if null
+   * @return		the exporter
+   */
+  public static synchronized List<AbstractObjectExporter> getExporter(Class cls, Class[] excluded) {
+    AbstractObjectExporter 		exporter;
     List<Class>				exporters;
     int					i;
+    Set<Class>				excl;
 
     initExporters();
 
-    // already cached?
-    if (m_Cache.containsKey(cls))
-      return instantiate(m_Cache.get(cls));
-
     // find suitable exporter
+    excl = new HashSet<>();
+    if (excluded != null)
+      excl.addAll(Arrays.asList(excluded));
     exporters = new ArrayList<>();
     for (i = 0; i < m_ExporterClasses.length; i++) {
       if (m_ExporterClasses[i] == PlainTextExporter.class)
 	continue;
       if (m_ExporterClasses[i] == RenderedPlainTextExporter.class)
 	continue;
+      if (excl.contains(m_ExporterClasses[i]))
+        continue;
       try {
 	exporter = (AbstractObjectExporter) m_ExporterClasses[i].newInstance();
-	if (exporter.handles(cls)) {
+	if (exporter.handles(cls))
 	  exporters.add(m_ExporterClasses[i]);
-	  break;
-	}
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate object exporter '" + m_ExporterClasses[i].getName() + "':");
@@ -157,10 +153,31 @@ public abstract class AbstractObjectExporter
       exporters.add(RenderedPlainTextExporter.class);
     }
 
-    // store in cache
-    m_Cache.put(cls, exporters);
-
     return instantiate(exporters);
+  }
+
+  /**
+   * Instantiates the exporters.
+   *
+   * @param exporters	the exporters to instantiate
+   * @return		the instances
+   */
+  protected static List<AbstractObjectExporter> instantiate(List<Class> exporters) {
+    List<AbstractObjectExporter>	result;
+    int					i;
+
+    result = new ArrayList<>();
+    for (i = 0; i < exporters.size(); i++) {
+      try {
+	result.add((AbstractObjectExporter) exporters.get(i).newInstance());
+      }
+      catch (Exception e) {
+	System.err.println("Failed to instantiate object exporter '" + exporters.get(i).getName() + "':");
+	e.printStackTrace();
+      }
+    }
+
+    return result;
   }
 
   /**
