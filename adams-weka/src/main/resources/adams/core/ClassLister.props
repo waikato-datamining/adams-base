@@ -228,7 +228,7 @@ weka.classifiers.SplitGenerator=\
   weka.classifiers
 
 # the cross-validation fold generators
-weka.classifiers.CrossValiationFoldGenerator=\
+weka.classifiers.CrossValidationFoldGenerator=\
   weka.classifiers
 
 # The imputation algorithms
