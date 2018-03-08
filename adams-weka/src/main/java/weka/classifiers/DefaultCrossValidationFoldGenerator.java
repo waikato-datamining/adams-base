@@ -272,7 +272,10 @@ public class DefaultCrossValidationFoldGenerator
    * 			displaying in the GUI or for listing the options.
    */
   public String relationNameTipText() {
-    return "The template for the relation name.";
+    return "The template for the relation name; available placeholders: "
+      + PLACEHOLDER_ORIGINAL + " for original, "
+      + PLACEHOLDER_TYPE + " for type (train/test), "
+      + PLACEHOLDER_CURRENTFOLD + " for current fold";
   }
 
   /**
