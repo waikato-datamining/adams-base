@@ -100,7 +100,7 @@ public abstract class AbstractMultiObjectExport
     AbstractObjectExporter		result;
     List<AbstractObjectExporter> 	exporters;
 
-    exporters = AbstractObjectExporter.getExporter(obj);
+    exporters = AbstractObjectExporter.getExporters(obj);
     if (exporters.size() == 0) {
       errors.add("Failed to find object exporter for '" + name + "'/" + Utils.classToString(obj));
       return null;

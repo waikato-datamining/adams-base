@@ -77,47 +77,47 @@ public abstract class AbstractObjectExporter
   }
 
   /**
-   * Returns a exporter for the specified object.
+   * Returns a exporters for the specified object.
    *
    * @param obj		the object to get a commandline exporter for
-   * @return		the exporter
+   * @return		the exporters
    */
-  public static synchronized List<AbstractObjectExporter> getExporter(Object obj) {
-    return getExporter(obj, null);
+  public static synchronized List<AbstractObjectExporter> getExporters(Object obj) {
+    return getExporters(obj, null);
   }
 
   /**
-   * Returns a exporter for the specified object.
+   * Returns a exporters for the specified object.
    *
    * @param obj		the object to get a commandline exporter for
    * @param excluded	the exporters to exclude, ignored if null
-   * @return		the exporter
+   * @return		the exporters
    */
-  public static synchronized List<AbstractObjectExporter> getExporter(Object obj, Class[] excluded) {
+  public static synchronized List<AbstractObjectExporter> getExporters(Object obj, Class[] excluded) {
     if (obj != null)
-      return getExporter(obj.getClass(), excluded);
+      return getExporters(obj.getClass(), excluded);
     else
-      return getExporter(Object.class, excluded);
+      return getExporters(Object.class, excluded);
   }
 
   /**
-   * Returns a exporter for the specified class.
+   * Returns a exporters for the specified class.
    *
    * @param cls		the class to get a commandline exporter for
-   * @return		the exporter
+   * @return		the exporters
    */
-  public static synchronized List<AbstractObjectExporter> getExporter(Class cls) {
-    return getExporter(cls, null);
+  public static synchronized List<AbstractObjectExporter> getExporters(Class cls) {
+    return getExporters(cls, null);
   }
 
   /**
-   * Returns a exporter for the specified class.
+   * Returns a exporters for the specified class.
    *
    * @param cls		the class to get a commandline exporter for
    * @param excluded	the exporters to exclude, ignored if null
-   * @return		the exporter
+   * @return		the exporters
    */
-  public static synchronized List<AbstractObjectExporter> getExporter(Class cls, Class[] excluded) {
+  public static synchronized List<AbstractObjectExporter> getExporters(Class cls, Class[] excluded) {
     AbstractObjectExporter 		exporter;
     List<Class>				exporters;
     int					i;

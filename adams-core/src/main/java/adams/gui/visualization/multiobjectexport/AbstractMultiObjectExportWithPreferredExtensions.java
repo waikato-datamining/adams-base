@@ -114,9 +114,9 @@ public abstract class AbstractMultiObjectExportWithPreferredExtensions
     Set<String> 			preferred;
     String[]				extensions;
 
-    exporters = AbstractObjectExporter.getExporter(obj, new Class[]{SerializableObjectExporter.class});
+    exporters = AbstractObjectExporter.getExporters(obj, new Class[]{SerializableObjectExporter.class});
     if (exporters.size() == 0) {
-      exporters = AbstractObjectExporter.getExporter(obj);
+      exporters = AbstractObjectExporter.getExporters(obj);
       if (exporters.size() == 0) {
         errors.add("Failed to find object exporter for '" + name + "'/" + Utils.classToString(obj));
         return null;
