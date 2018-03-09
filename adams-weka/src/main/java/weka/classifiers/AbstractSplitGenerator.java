@@ -305,6 +305,6 @@ public abstract class AbstractSplitGenerator
    */
   @Override
   public String toString() {
-    return "data=" + m_Data.relationName() + (canRandomize() ? ", seed=" + m_Seed : "");
+    return (canRandomize() ? ", seed=" + m_Seed : "");
   }
 }
