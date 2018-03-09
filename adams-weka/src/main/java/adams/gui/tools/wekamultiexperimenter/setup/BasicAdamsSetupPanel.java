@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BasicAdamsSetupPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.setup;
 
@@ -40,8 +40,14 @@ import adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
+import weka.classifiers.CrossValidationFoldGenerator;
+import weka.classifiers.DefaultCrossValidationFoldGenerator;
+import weka.classifiers.DefaultRandomSplitGenerator;
+import weka.classifiers.RandomSplitGenerator;
+import weka.classifiers.SplitGenerator;
 import weka.gui.experiment.ExperimenterDefaults;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -78,6 +84,12 @@ public class BasicAdamsSetupPanel
   
   /** the evaluation parameter. */
   protected NumberTextField m_TextEvaluation;
+
+  /** whether to use a custom split generator. */
+  protected JCheckBox m_CheckBoxCustomSplitGenerator;
+
+  /** the fold generator. */
+  protected GenericObjectEditorPanel m_PanelGenerator;
 
   /** the JobRunner setup. */
   protected GenericObjectEditorPanel m_PanelJobRunner;
@@ -152,6 +164,14 @@ public class BasicAdamsSetupPanel
     m_TextEvaluation.getDocument().addDocumentListener(new ModificationDocumentListener());
     m_PanelParameters.addParameter("", m_TextEvaluation);
 
+    m_CheckBoxCustomSplitGenerator = new JCheckBox();
+    m_CheckBoxCustomSplitGenerator.addChangeListener(new ModificationChangeListener());
+    m_PanelParameters.addParameter("Use custom split generator", m_CheckBoxCustomSplitGenerator);
+
+    m_PanelGenerator = new GenericObjectEditorPanel(SplitGenerator.class, new DefaultCrossValidationFoldGenerator(), true);
+    m_PanelGenerator.addChangeListener(new ModificationChangeListener());
+    m_PanelParameters.addParameter("Split generator", m_PanelGenerator);
+
     m_PanelJobRunner = new GenericObjectEditorPanel(JobRunner.class, new LocalJobRunner(), true);
     m_PanelJobRunner.addChangeListener(new ModificationChangeListener());
     m_PanelParameters.addParameter("Job runner", m_PanelJobRunner);
@@ -216,6 +236,7 @@ public class BasicAdamsSetupPanel
   @Override
   public AbstractExperiment getExperiment() {
     AbstractExperiment		result;
+    SplitGenerator		generator;
 
     result = getExperimentIO().create();
 
@@ -223,16 +244,22 @@ public class BasicAdamsSetupPanel
       case 0:
 	result = new CrossValidationExperiment();
 	((CrossValidationExperiment) result).setFolds(m_TextEvaluation.getValue(10).intValue());
+	if (m_CheckBoxCustomSplitGenerator.isSelected())
+	  ((CrossValidationExperiment) result).setGenerator((CrossValidationFoldGenerator) m_PanelGenerator.getCurrent());
 	break;
       case 1:
 	result = new TrainTestSplitExperiment();
 	((TrainTestSplitExperiment) result).setPercentage(m_TextEvaluation.getValue(66.0).doubleValue());
 	((TrainTestSplitExperiment) result).setPreserveOrder(false);
+	if (m_CheckBoxCustomSplitGenerator.isSelected())
+	  ((TrainTestSplitExperiment) result).setGenerator((RandomSplitGenerator) m_PanelGenerator.getCurrent());
 	break;
       case 2:
 	result = new TrainTestSplitExperiment();
 	((TrainTestSplitExperiment) result).setPercentage(m_TextEvaluation.getValue(66.0).doubleValue());
 	((TrainTestSplitExperiment) result).setPreserveOrder(true);
+	if (m_CheckBoxCustomSplitGenerator.isSelected())
+	  ((TrainTestSplitExperiment) result).setGenerator((RandomSplitGenerator) m_PanelGenerator.getCurrent());
 	break;
       default:
 	logMessage("Unhandled evaluation type: " + m_ComboBoxEvaluation.getSelectedItem());
@@ -258,10 +285,21 @@ public class BasicAdamsSetupPanel
    */
   @Override
   public void setExperiment(AbstractExperiment value) {
+    SplitGenerator	generator;
+
     if (handlesExperiment(value) == null) {
       if (value instanceof CrossValidationExperiment) {
 	m_ComboBoxEvaluation.setSelectedIndex(0);
 	m_TextEvaluation.setValue(((CrossValidationExperiment) value).getFolds());
+	generator = ((CrossValidationExperiment) value).getGenerator();
+	if (!generator.toCommandLine().equals(new DefaultCrossValidationFoldGenerator().toCommandLine())) {
+	  m_CheckBoxCustomSplitGenerator.setSelected(true);
+	  m_PanelGenerator.setCurrent(generator);
+	}
+	else {
+	  m_CheckBoxCustomSplitGenerator.setSelected(false);
+	  m_PanelGenerator.setCurrent(new DefaultCrossValidationFoldGenerator());
+	}
       }
       else if (value instanceof TrainTestSplitExperiment) {
 	if (((TrainTestSplitExperiment) value).getPreserveOrder())
@@ -269,6 +307,15 @@ public class BasicAdamsSetupPanel
 	else
 	  m_ComboBoxEvaluation.setSelectedIndex(1);
 	m_TextEvaluation.setValue(((TrainTestSplitExperiment) value).getPercentage());
+	generator = ((TrainTestSplitExperiment) value).getGenerator();
+	if (!generator.toCommandLine().equals(new DefaultRandomSplitGenerator().toCommandLine())) {
+	  m_CheckBoxCustomSplitGenerator.setSelected(true);
+	  m_PanelGenerator.setCurrent(generator);
+	}
+	else {
+	  m_CheckBoxCustomSplitGenerator.setSelected(false);
+	  m_PanelGenerator.setCurrent(new DefaultRandomSplitGenerator());
+	}
       }
       else {
 	logMessage("Unhandled experiment type: " + value.getClass().getName());
