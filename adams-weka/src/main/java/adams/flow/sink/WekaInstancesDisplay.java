@@ -15,7 +15,7 @@
 
 /*
  * WekaInstancesDisplay.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -113,7 +113,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaInstancesDisplay
   extends AbstractGraphicalDisplay
@@ -296,6 +295,7 @@ public class WekaInstancesDisplay
 	SearchPanel searchPanel = new SearchPanel(LayoutType.HORIZONTAL, true);
 	searchPanel.addSearchListener((SearchEvent e) ->
 	  m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+	add(searchPanel, BorderLayout.SOUTH);
       }
       @Override
       public void display(Token token) {
