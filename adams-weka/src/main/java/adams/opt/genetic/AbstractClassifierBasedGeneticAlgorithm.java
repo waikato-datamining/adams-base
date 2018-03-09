@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractClassifierBasedGeneticAlgorithm.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.opt.genetic;
@@ -32,9 +32,12 @@ import adams.flow.standalone.JobRunnerSetup;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
+import adams.multiprocess.WekaCrossValidationExecution;
 import adams.opt.genetic.setupupload.AbstractSetupUpload;
 import adams.opt.genetic.setupupload.Null;
 import weka.classifiers.Classifier;
+import weka.classifiers.CrossValidationFoldGenerator;
+import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.classifiers.Evaluation;
 import weka.classifiers.rules.ZeroR;
 import weka.core.Instances;
@@ -46,7 +49,6 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Random;
 import java.util.logging.Level;
 
 /**
@@ -182,12 +184,21 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @throws Exception	if the evaluation fails
      */
     protected double evaluateClassifier(Classifier cls, Instances data, int folds, int seed) throws Exception {
-      Evaluation 	evaluation;
+      WekaCrossValidationExecution	eval;
+      String				msg;
 
-      evaluation = new Evaluation(data);
-      evaluation.crossValidateModel(cls, data, folds, new Random(seed));
+      eval = new WekaCrossValidationExecution();
+      eval.setData(data);
+      eval.setClassifier(cls);
+      eval.setNumThreads(1);
+      eval.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(getOwner().getGenerator()));
+      eval.setFolds(folds);
+      eval.setSeed(seed);
+      msg = eval.execute();
+      if (msg != null)
+        throw new IllegalStateException(msg);
 
-      return getMeasure().extract(evaluation, true);
+      return getMeasure().extract(eval.getEvaluation(), true);
     }
 
     /**
@@ -376,6 +387,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   /** the cross-validation seed. */
   protected int m_CrossValidationSeed;
 
+  /** the fold generator. */
+  protected CrossValidationFoldGenerator m_Generator;
+
   /** the measure to use for evaluating the fitness. */
   protected Measure m_Measure;
 
@@ -395,7 +409,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   protected AbstractSetupUpload m_SetupUpload;
 
   /** the cache for results. */
-  public Hashtable<String,Double> m_StoredResults = new Hashtable<String,Double>();
+  public Hashtable<String,Double> m_StoredResults = new Hashtable<>();
 
   /** the jobrunner setup. */
   protected transient JobRunnerSetup m_JobRunnerSetup;
@@ -428,6 +442,10 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     m_OptionManager.add(
       "cv-seed", "crossValidationSeed",
       55);
+
+    m_OptionManager.add(
+      "generator", "generator",
+      new DefaultCrossValidationFoldGenerator());
 
     m_OptionManager.add(
       "classifier", "classifier",
@@ -579,6 +597,35 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    */
   public String crossValidationSeedTipText() {
     return "The seed value for cross-validation.";
+  }
+
+  /**
+   * Sets the scheme for generating the folds.
+   *
+   * @param value	the generator
+   */
+  public void setGenerator(CrossValidationFoldGenerator value) {
+    m_Generator = value;
+    reset();
+  }
+
+  /**
+   * Returns the scheme for generating the folds.
+   *
+   * @return		the generator
+   */
+  public CrossValidationFoldGenerator getGenerator() {
+    return m_Generator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String generatorTipText() {
+    return "The scheme to use for generating the folds; the actor options take precedence over the scheme's ones.";
   }
 
   /**
