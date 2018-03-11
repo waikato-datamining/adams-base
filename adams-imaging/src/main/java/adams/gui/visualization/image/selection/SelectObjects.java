@@ -13,15 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SelectObjects.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
 import adams.core.Utils;
-import adams.data.report.DataType;
-import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.SelectionRectangle;
@@ -237,14 +235,10 @@ public class SelectObjects
     if ((modifiersEx & MouseEvent.CTRL_DOWN_MASK) != 0) {
       for (SelectionRectangle r: m_Locations) {
 	if (rect.contains(r)) {
-	  modified  = true;
-	  current   = m_Prefix + (Utils.padLeft("" + r.getIndex(), '0', m_NumDigits));
-	  report.removeValue(new Field(current + KEY_X, DataType.NUMERIC));
-	  report.removeValue(new Field(current + KEY_Y, DataType.NUMERIC));
-	  report.removeValue(new Field(current + KEY_WIDTH, DataType.NUMERIC));
-	  report.removeValue(new Field(current + KEY_HEIGHT, DataType.NUMERIC));
-	  report.removeValue(new Field(current + m_LabelSuffix, DataType.STRING));
-	  queue.add(r);
+	  if (removeIndex(report, r.getIndex())) {
+	    modified = true;
+	    queue.add(r);
+	  }
 	}
       }
       m_Locations.removeAll(queue);
