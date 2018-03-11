@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSelectionRectangleBasedSelectionProcessor.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
+import adams.core.base.BaseRegExp;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -162,6 +163,32 @@ public abstract class AbstractSelectionRectangleBasedSelectionProcessor
    */
   public String numDigitsTipText() {
     return "The number of digits to use for left-padding the index with zeroes.";
+  }
+
+  /**
+   * Removes the specified index from the report.
+   *
+   * @return		true if successfully removed
+   */
+  protected boolean removeIndex(Report report, int index) {
+    boolean		result;
+    BaseRegExp		regexp;
+    List<AbstractField>	remove;
+
+    result = false;
+    regexp = new BaseRegExp(m_Prefix + "[0]*" + index + "\\..*");
+    remove = new ArrayList<>();
+    for (AbstractField field: report.getFields()) {
+      if (regexp.isMatch(field.getName()))
+        remove.add(field);
+    }
+    if (remove.size() > 0) {
+      result = true;
+      for (AbstractField field: remove)
+        report.removeValue(field);
+    }
+
+    return result;
   }
 
   /**
