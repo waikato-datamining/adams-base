@@ -156,6 +156,7 @@ public class InstanceGrouping
       atts.add(new Attribute(att.name(), (ArrayList<String>) null));
     atts.add((Attribute) m_Data.classAttribute().copy());
     result = new Instances(m_Data.relationName(), atts, size());
+    result.setClassIndex(result.numAttributes() - 1);
 
     return result;
   }
