@@ -477,7 +477,8 @@ public class TreeOperations
     ActorHandler		handlerOld;
     int				i;
     boolean			editable;
-    final boolean[]		expanded;
+    boolean[]			expanded;
+    boolean			keepChildren;
 
     if (path == null)
       return;
@@ -518,8 +519,14 @@ public class TreeOperations
       getOwner().addUndoPoint("Updating node '" + currNode.getFullName() + "'");
 
       // check whether actor class or actor structure (for ActorHandlers) has changed
+      keepChildren = false;
       changed = (actor.getClass() != actorOld.getClass());
-      if (!changed && (actor instanceof ActorHandler)) {
+      if (changed) {
+        if ((actor instanceof MutableActorHandler) && (actorOld instanceof MutableActorHandler)) {
+          keepChildren = true;
+	}
+      }
+      else if (actor instanceof ActorHandler) {
 	handler    = (ActorHandler) actor;
 	handlerOld = (ActorHandler) actorOld;
 	changed    = (handler.size() != handlerOld.size());
@@ -536,16 +543,28 @@ public class TreeOperations
       if (changed) {
 	expanded = null;
 	if (parent == null) {
-          getOwner().buildTree(actor);
-	  currNode = (Node) getOwner().getModel().getRoot();
+	  if (keepChildren) {
+	    currNode.setActor(actor);
+	    expanded = getOwner().getExpandedState();
+	  }
+	  else {
+	    getOwner().buildTree(actor);
+	    currNode = (Node) getOwner().getModel().getRoot();
+	  }
 	}
 	else {
-	  newNode = TreeHelper.buildTree(null, actor, false);
-	  newNode.setOwner(parent.getOwner());
-	  index   = parent.getIndex(currNode);
-	  parent.remove(index);
-	  parent.insert(newNode, index);
-	  currNode = newNode;
+	  if (keepChildren) {
+	    currNode.setActor(actor);
+	    expanded = getOwner().getExpandedState();
+	  }
+	  else {
+	    newNode = TreeHelper.buildTree(null, actor, false);
+	    newNode.setOwner(parent.getOwner());
+	    index = parent.getIndex(currNode);
+	    parent.remove(index);
+	    parent.insert(newNode, index);
+	    currNode = newNode;
+	  }
 	}
       }
       else {
