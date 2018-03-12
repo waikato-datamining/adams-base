@@ -1,0 +1,20 @@
+# Project: adams
+# Modules: adams-core
+# Date: 2018-03-12 17:25:08
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to split a log file into chunks using the StringArraySplit transformer." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name "Full log" -short-title true -x -3 -writer adams.data.io.output.NullWriter
+  adams.flow.sink.HistoryDisplay -name "Log entries" -short-title true -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/small.log
+ adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineArrayTextReader
+ adams.flow.control.Tee -name "full log"
+  adams.flow.transformer.StringJoin -glue \n
+  adams.flow.sink.CallableSink -callable "Full log"
+ adams.flow.transformer.StringArraySplit -regexp ^[0-9][0-9][0-9][0-9]-[0-9][0-9]-.* -split-handling AT_START
+ adams.flow.control.Tee -name entry
+  adams.flow.transformer.GetArrayElement
+  adams.flow.transformer.SetVariable -var-name entry
+ adams.flow.transformer.StringJoin -glue \n
+ adams.flow.sink.CallableSink -callable "Log entries"
