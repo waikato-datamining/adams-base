@@ -14,14 +14,18 @@
  */
 
 /*
- * DefaultCrossValidationFoldGenerator.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * GroupedCrossValidationFoldGenerator.java
+ * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
+
 package weka.classifiers;
 
+import adams.core.base.BaseRegExp;
+import adams.data.weka.WekaAttributeIndex;
 import adams.flow.container.WekaTrainTestSetContainer;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
+import weka.core.InstanceGrouping;
 import weka.core.Instances;
 import weka.core.InstancesView;
 
@@ -33,15 +37,14 @@ import java.util.Random;
  * <br><br>
  * The template for the relation name accepts the following placeholders:
  * @ = original relation name, $T = type (train/test), $N = current fold number
- * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class DefaultCrossValidationFoldGenerator
+public class GroupedCrossValidationFoldGenerator
   extends AbstractSplitGenerator
   implements CrossValidationFoldGenerator {
-  
-  /** for serialization. */
-  private static final long serialVersionUID = -8387205583429213079L;
+
+  private static final long serialVersionUID = -6949071991599401776L;
 
   /** the number of folds. */
   protected int m_NumFolds;
@@ -51,10 +54,10 @@ public class DefaultCrossValidationFoldGenerator
 
   /** whether to stratify the data (in case of nominal class). */
   protected boolean m_Stratify;
-  
+
   /** the current fold. */
   protected int m_CurrentFold;
-  
+
   /** the template for the relation name. */
   protected String m_RelationName;
 
@@ -64,43 +67,29 @@ public class DefaultCrossValidationFoldGenerator
   /** the random number generator for the indices. */
   protected Random m_RandomIndices;
 
-  /**
-   * Initializes the generator.
-   */
-  public DefaultCrossValidationFoldGenerator() {
-    super();
-  }
+  /** the index to use for grouping. */
+  protected WekaAttributeIndex m_Index;
+
+  /** the regular expression for the nominal/string attribute. */
+  protected BaseRegExp m_RegExp;
+
+  /** the group expression. */
+  protected String m_Group;
+
+  /** generates the groups. */
+  protected InstanceGrouping m_Grouping;
+
+  /** the collapsed dataset. */
+  protected Instances m_Collapsed;
+
+  /** the random number generator for the collapsed data. */
+  protected Random m_RandomCollapsed;
 
   /**
    * Initializes the generator.
-   * 
-   * @param data	the full dataset
-   * @param numFolds	the number of folds, leave-one-out if less than 2
-   * @param seed	the seed for randomization
-   * @param stratify	whether to perform stratified CV
    */
-  public DefaultCrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean stratify) {
-    this(data, numFolds, seed, true, stratify, null);
-  }
-
-  /**
-   * Initializes the generator.
-   * 
-   * @param data	the full dataset
-   * @param numFolds	the number of folds, leave-one-out if less than 2
-   * @param seed	the seed value
-   * @param randomize 	whether to randomize the data
-   * @param stratify	whether to perform stratified CV
-   * @param relName	the relation name template, use null to ignore
-   */
-  public DefaultCrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean randomize, boolean stratify, String relName) {
+  public GroupedCrossValidationFoldGenerator() {
     super();
-    setData(data);
-    setSeed(seed);
-    setNumFolds(numFolds);
-    setRelationName(relName);
-    setStratify(stratify);
-    setRandomize(randomize);
   }
 
   /**
@@ -110,7 +99,9 @@ public class DefaultCrossValidationFoldGenerator
    */
   @Override
   public String globalInfo() {
-    return "Generates cross-validation fold pairs. Leave-one-out is performed when specified folds <2.";
+    return "Generates cross-validation fold pairs. Leave-one-out is performed when specified folds <2.\n"
+      + "Ensures that groups of instances stay together, determined via a regular "
+      + "expression (eg '^(.*)-([0-9]+)-(.*)$') and a group replacement string (eg '$2').";
   }
 
   /**
@@ -135,6 +126,18 @@ public class DefaultCrossValidationFoldGenerator
     m_OptionManager.add(
       "stratify", "stratify",
       true);
+
+    m_OptionManager.add(
+      "index", "index",
+      new WekaAttributeIndex(WekaAttributeIndex.FIRST));
+
+    m_OptionManager.add(
+      "regexp", "regExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
+      "group", "group",
+      "$0");
   }
 
   /**
@@ -144,6 +147,93 @@ public class DefaultCrossValidationFoldGenerator
   protected void reset() {
     super.reset();
     m_CurrentFold = 1;
+  }
+
+  /**
+   * Sets the attribute index to use for grouping.
+   *
+   * @param value	the index
+   */
+  public void setIndex(WekaAttributeIndex value) {
+    m_Index = value;
+    reset();
+  }
+
+  /**
+   * Returns the attribute index to use for grouping.
+   *
+   * @return		the index
+   */
+  public WekaAttributeIndex getIndex() {
+    return m_Index;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String indexTipText() {
+    return "The percentage to use for training (0-1).";
+  }
+
+  /**
+   * Sets the regular expression for identifying the group (eg '^(.*)-([0-9]+)-(.*)$').
+   *
+   * @param value	the expression
+   */
+  public void setRegExp(BaseRegExp value) {
+    m_RegExp = value;
+    reset();
+  }
+
+  /**
+   * Returns the regular expression for identifying the group (eg '^(.*)-([0-9]+)-(.*)$').
+   *
+   * @return		the expression
+   */
+  public BaseRegExp getRegExp() {
+    return m_RegExp;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String regExpTipText() {
+    return "The regular expression for identifying the group (eg '^(.*)-([0-9]+)-(.*)$').";
+  }
+
+  /**
+   * Sets the replacement string to use as group (eg '$2').
+   *
+   * @param value	the group
+   */
+  public void setGroup(String value) {
+    m_Group = value;
+    reset();
+  }
+
+  /**
+   * Returns the replacement string to use as group (eg '$2').
+   *
+   * @return		the group
+   */
+  public String getGroup() {
+    return m_Group;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String groupTipText() {
+    return "The replacement string to use as group (eg '$2').";
   }
 
   /**
@@ -171,7 +261,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Returns the number of folds.
-   * 
+   *
    * @return		the number of folds
    */
   public int getNumFolds() {
@@ -229,7 +319,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Returns whether to stratify the data (in case of nominal class).
-   * 
+   *
    * @return		true if to stratify
    */
   public boolean getStratify() {
@@ -258,7 +348,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Returns the relation name template.
-   * 
+   *
    * @return		the template
    */
   public String getRelationName() {
@@ -280,7 +370,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Returns whether randomization is enabled.
-   * 
+   *
    * @return		true if to randomize
    */
   @Override
@@ -353,8 +443,8 @@ public class DefaultCrossValidationFoldGenerator
     result = new TIntArrayList();
     result.add(
       CrossValidationHelper.crossValidationIndices(
-	m_Data, m_ActualNumFolds, new Random(m_Seed),
-	m_Stratify && (m_ActualNumFolds < m_Data.numInstances())));
+	m_Collapsed, m_ActualNumFolds, new Random(m_Seed),
+	m_Stratify && (m_ActualNumFolds < m_Collapsed.numInstances())));
 
     // need to simulate initial randomization to get the right state
     // of the RNG for the trainCV/testCV calls
@@ -374,8 +464,11 @@ public class DefaultCrossValidationFoldGenerator
     if (m_Data == null)
       throw new IllegalStateException("No data provided!");
 
+    m_Grouping  = new InstanceGrouping(m_Data, m_Index, m_RegExp, m_Group);
+    m_Collapsed = m_Grouping.collapse(m_Data);
+
     if (m_NumFolds < 2)
-      m_ActualNumFolds = m_Data.numInstances();
+      m_ActualNumFolds = m_Collapsed.numInstances();
     else
       m_ActualNumFolds = m_NumFolds;
 
@@ -384,23 +477,23 @@ public class DefaultCrossValidationFoldGenerator
     if (canRandomize()) {
       m_Random = new Random(m_Seed);
       if (!m_UseViews)
-	m_Data.randomize(m_Random);
+	m_Collapsed.randomize(m_Random);
     }
 
     if ((m_RelationName == null) || m_RelationName.isEmpty())
       m_RelationName = PLACEHOLDER_ORIGINAL;
 
-    if (m_Data.numInstances() < m_ActualNumFolds)
+    if (m_Collapsed.numInstances() < m_ActualNumFolds)
       throw new IllegalArgumentException(
 	  "Cannot have less data than folds: "
-	      + "required=" + m_ActualNumFolds + ", provided=" + m_Data.numInstances());
+	      + "required=" + m_ActualNumFolds + ", provided=" + m_Collapsed.numInstances());
 
     if (m_Random == null)
       m_Random = new Random(m_Seed);
 
     if (!m_UseViews) {
-      if (m_Stratify && m_Data.classAttribute().isNominal() && (m_ActualNumFolds < m_Data.numInstances()))
-	m_Data.stratify(m_ActualNumFolds);
+      if (m_Stratify && m_Collapsed.classAttribute().isNominal() && (m_ActualNumFolds < m_Collapsed.numInstances()))
+	m_Collapsed.stratify(m_ActualNumFolds);
     }
   }
 
@@ -420,21 +513,21 @@ public class DefaultCrossValidationFoldGenerator
 
     if (numFolds < 2)
       throw new IllegalArgumentException("Number of folds must be at least 2!");
-    if (numFolds > m_Data.numInstances())
+    if (numFolds > m_Collapsed.numInstances())
       throw new IllegalArgumentException("Can't have more folds than instances!");
 
-    numInstForFold = m_Data.numInstances() / numFolds;
-    if (numFold < m_Data.numInstances() % numFolds) {
+    numInstForFold = m_Collapsed.numInstances() / numFolds;
+    if (numFold < m_Collapsed.numInstances() % numFolds) {
       numInstForFold++;
       offset = numFold;
     } else {
-      offset = m_Data.numInstances() % numFolds;
+      offset = m_Collapsed.numInstances() % numFolds;
     }
-    first = numFold * (m_Data.numInstances() / numFolds) + offset;
+    first = numFold * (m_Collapsed.numInstances() / numFolds) + offset;
     train = m_OriginalIndices.subList(0, first);
     train.add(m_OriginalIndices.subList(
       first + numInstForFold,
-      first + numInstForFold + m_Data.numInstances() - first - numInstForFold).toArray());
+      first + numInstForFold + m_Collapsed.numInstances() - first - numInstForFold).toArray());
 
     return train;
   }
@@ -474,17 +567,17 @@ public class DefaultCrossValidationFoldGenerator
 
     if (numFolds < 2)
       throw new IllegalArgumentException("Number of folds must be at least 2!");
-    if (numFolds > m_Data.numInstances())
+    if (numFolds > m_Collapsed.numInstances())
       throw new IllegalArgumentException("Can't have more folds than instances!");
 
-    numInstForFold = m_Data.numInstances() / numFolds;
-    if (numFold < m_Data.numInstances() % numFolds) {
+    numInstForFold = m_Collapsed.numInstances() / numFolds;
+    if (numFold < m_Collapsed.numInstances() % numFolds) {
       numInstForFold++;
       offset = numFold;
     } else {
-      offset = m_Data.numInstances() % numFolds;
+      offset = m_Collapsed.numInstances() % numFolds;
     }
-    first = numFold * (m_Data.numInstances() / numFolds) + offset;
+    first = numFold * (m_Collapsed.numInstances() / numFolds) + offset;
     test = m_OriginalIndices.subList(first, first + numInstForFold);
     return test;
   }
@@ -495,36 +588,53 @@ public class DefaultCrossValidationFoldGenerator
    * @return 				the next element in the iteration.
    * @throws NoSuchElementException 	iteration has no more elements.
    */
+  // TODO
   @Override
   protected WekaTrainTestSetContainer createNext() {
     WekaTrainTestSetContainer	result;
-    Instances 			train;
-    Instances 			test;
-    int[]			trainRows;
-    int[]			testRows;
+    Instances 			trainSet;
+    Instances 			testSet;
+    Instances			trainSetExp;
+    Instances			testSetExp;
+    TIntList			trainRows;
+    TIntList			testRows;
+    TIntList			trainRowsExp;
+    TIntList			testRowsExp;
 
     if (m_CurrentFold > m_ActualNumFolds)
       throw new NoSuchElementException("No more folds available!");
 
-    trainRows = trainCV(m_ActualNumFolds, m_CurrentFold - 1, m_RandomIndices).toArray();
-    testRows  = testCV(m_ActualNumFolds, m_CurrentFold - 1).toArray();
+    trainRows = trainCV(m_ActualNumFolds, m_CurrentFold - 1, m_RandomIndices);
+    testRows  = testCV(m_ActualNumFolds, m_CurrentFold - 1);
 
     // generate fold pair
     if (m_UseViews) {
-      train = new InstancesView(m_Data, trainRows);
-      test = new InstancesView(m_Data, testRows);
+      trainSet = new InstancesView(m_Collapsed, trainRows.toArray());
+      testSet = new InstancesView(m_Collapsed, testRows.toArray());
     }
     else {
-      train = m_Data.trainCV(m_ActualNumFolds, m_CurrentFold - 1, m_Random);
-      test  = m_Data.testCV(m_ActualNumFolds, m_CurrentFold - 1);
+      trainSet = m_Collapsed.trainCV(m_ActualNumFolds, m_CurrentFold - 1, m_Random);
+      testSet = m_Collapsed.testCV(m_ActualNumFolds, m_CurrentFold - 1);
+    }
+
+    // expand
+    trainRowsExp = m_Grouping.expand(m_Collapsed, trainRows);
+    testRowsExp  = m_Grouping.expand(m_Collapsed, testRows);
+    if (m_UseViews) {
+      trainSetExp = new InstancesView(m_Data, trainRowsExp.toArray());
+      testSetExp  = new InstancesView(m_Data, testRowsExp.toArray());
+    }
+    else {
+      trainSetExp = m_Grouping.expand(trainSet, false);
+      testSetExp  = m_Grouping.expand(testSet, false);
     }
 
     // rename datasets
-    train.setRelationName(createRelationName(true));
-    test.setRelationName(createRelationName(false));
+    trainSetExp.setRelationName(createRelationName(true));
+    testSetExp.setRelationName(createRelationName(false));
 
     result = new WekaTrainTestSetContainer(
-      train, test, m_Seed, m_CurrentFold, m_ActualNumFolds, trainRows, testRows);
+      trainSetExp, testSetExp, m_Seed, m_CurrentFold, m_ActualNumFolds, trainRowsExp.toArray(), testRowsExp.toArray());
     m_CurrentFold++;
 
     return result;
@@ -537,6 +647,8 @@ public class DefaultCrossValidationFoldGenerator
    */
   @Override
   public String toString() {
-    return super.toString() + ", numFolds=" + m_NumFolds + ", stratify=" + m_Stratify + ", relName=" + m_RelationName;
+    return super.toString() + ", numFolds=" + m_NumFolds + ", stratify=" + m_Stratify
+      + ", relName=" + m_RelationName + ", index=" + m_Index + ", regexp=" + m_RegExp
+      + ", group=" + m_Group;
   }
 }

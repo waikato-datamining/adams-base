@@ -224,41 +224,11 @@ public abstract class AbstractSplitGenerator
   }
 
   /**
-   * Generates the original indices.
-   *
-   * @return	the original indices
-   */
-  protected TIntList originalIndices() {
-    TIntList 	result;
-    int		i;
-
-    result = new TIntArrayList();
-    for (i = 0; i < m_Data.numInstances(); i++)
-      result.add(i);
-
-    if (canRandomize())
-      randomize(result, new Random(m_Seed));
-
-    return result;
-  }
-
-  /**
    * Initializes the iterator, randomizes the data if required.
    *
    * @see		#canRandomize()
    */
-  protected void doInitializeIterator() {
-    if (m_Data == null)
-      throw new IllegalStateException("No data available!");
-
-    m_OriginalIndices = originalIndices();
-
-    if (canRandomize()) {
-      m_Random = new Random(m_Seed);
-      if (!m_UseViews)
-	m_Data.randomize(m_Random);
-    }
-  }
+  protected abstract void doInitializeIterator();
 
   /**
    * Initializes the iterator, randomizes the data if required.

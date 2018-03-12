@@ -19,9 +19,13 @@
  */
 package weka.classifiers;
 
-import weka.core.Instances;
 import adams.flow.container.WekaTrainTestSetContainer;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+import weka.core.Instances;
 import weka.core.InstancesView;
+
+import java.util.Random;
 
 /**
  * Generates random splits of datasets.
@@ -177,12 +181,41 @@ public class DefaultRandomSplitGenerator
   }
 
   /**
-   * Initializes the iterator, randomizes the data if required.
+   * Generates the original indices.
+   *
+   * @return	the original indices
    */
-  @Override
+  protected TIntList originalIndices() {
+    TIntList 	result;
+    int		i;
+
+    result = new TIntArrayList();
+    for (i = 0; i < m_Data.numInstances(); i++)
+      result.add(i);
+
+    if (canRandomize())
+      randomize(result, new Random(m_Seed));
+
+    return result;
+  }
+
+  /**
+   * Initializes the iterator, randomizes the data if required.
+   *
+   * @see		#canRandomize()
+   */
   protected void doInitializeIterator() {
-    super.doInitializeIterator();
-    
+    if (m_Data == null)
+      throw new IllegalStateException("No data available!");
+
+    m_OriginalIndices = originalIndices();
+
+    if (canRandomize()) {
+      m_Random = new Random(m_Seed);
+      if (!m_UseViews)
+	m_Data.randomize(m_Random);
+    }
+
     m_Generated = false;
   }
   

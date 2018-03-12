@@ -37,10 +37,20 @@ import java.util.Random;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class GroupedRandomSplitGenerator
-  extends DefaultRandomSplitGenerator {
+  extends AbstractSplitGenerator
+  implements RandomSplitGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -4813006743965500489L;
+
+  /** the percentage. */
+  protected double m_Percentage;
+
+  /** whether to preserve the order. */
+  protected boolean m_PreserveOrder;
+
+  /** whether the split was generated. */
+  protected boolean m_Generated;
 
   /** the index to use for grouping. */
   protected WekaAttributeIndex m_Index;
@@ -87,6 +97,14 @@ public class GroupedRandomSplitGenerator
     super.defineOptions();
 
     m_OptionManager.add(
+      "percentage", "percentage",
+      0.66, 0.0, 1.0);
+
+    m_OptionManager.add(
+      "preserve-order", "preserveOrder",
+      false);
+
+    m_OptionManager.add(
       "index", "index",
       new WekaAttributeIndex(WekaAttributeIndex.FIRST));
 
@@ -97,6 +115,66 @@ public class GroupedRandomSplitGenerator
     m_OptionManager.add(
       "group", "group",
       "$0");
+  }
+
+  /**
+   * Sets the split percentage.
+   *
+   * @param value	the percentage (0-1)
+   */
+  public void setPercentage(double value) {
+    if (getOptionManager().isValid("percentage", value)) {
+      m_Percentage = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the split percentage.
+   *
+   * @return		the percentage (0-1)
+   */
+  public double getPercentage() {
+    return m_Percentage;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String percentageTipText() {
+    return "The percentage to use for training (0-1).";
+  }
+
+  /**
+   * Sets whether to preserve the order.
+   *
+   * @param value	true if to preserve order
+   */
+  public void setPreserveOrder(boolean value) {
+    m_PreserveOrder = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to preserve the order.
+   *
+   * @return		true if to preserve order
+   */
+  public boolean getPreserveOrder() {
+    return m_PreserveOrder;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String preserveOrderTipText() {
+    return "If enabled, the order in the data is preserved in the split.";
   }
 
   /**
@@ -187,6 +265,16 @@ public class GroupedRandomSplitGenerator
   }
 
   /**
+   * Returns whether randomization is enabled.
+   *
+   * @return		true if to randomize
+   */
+  @Override
+  protected boolean canRandomize() {
+    return !m_PreserveOrder;
+  }
+
+  /**
    * Generates the original indices.
    *
    * @return	the original indices
@@ -219,7 +307,18 @@ public class GroupedRandomSplitGenerator
 	m_Collapsed.randomize(m_RandomCollapsed);
     }
 
-    super.doInitializeIterator();
+    if (m_Data == null)
+      throw new IllegalStateException("No data available!");
+
+    m_OriginalIndices = originalIndices();
+
+    if (canRandomize()) {
+      m_Random = new Random(m_Seed);
+      if (!m_UseViews)
+	m_Data.randomize(m_Random);
+    }
+
+    m_Generated = false;
   }
   
   /**
