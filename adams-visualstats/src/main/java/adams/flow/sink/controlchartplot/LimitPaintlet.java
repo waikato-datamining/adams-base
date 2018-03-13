@@ -15,7 +15,7 @@
 
 /*
  * LimitPaintlet.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.controlchartplot;
@@ -31,6 +31,7 @@ import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
+import adams.gui.visualization.sequence.XYSequenceContainerManager;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -41,7 +42,6 @@ import java.util.List;
  * A paintlet for painting a line plot of a sequence.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9308 $
  */
 public class LimitPaintlet
   extends AbstractControlChartPaintlet
@@ -329,17 +329,19 @@ public class LimitPaintlet
    */
   @Override
   protected void doPerformPaint(Graphics g, PaintMoment moment) {
-    int		i;
-    XYSequence 	data;
+    int				i;
+    XYSequence 			data;
+    XYSequenceContainerManager 	manager;
 
     // paint all points
-    synchronized(getActualContainerManager()) {
-      for (i = 0; i < getActualContainerManager().count(); i++) {
-	if (!getActualContainerManager().isVisible(i))
+    manager = getSequencePanel().getContainerManager();
+    synchronized(manager) {
+      for (i = 0; i < manager.count(); i++) {
+	if (!manager.isVisible(i))
 	  continue;
-        if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
+        if (manager.isFiltered() && !manager.isFiltered(i))
           continue;
-	data = getActualContainerManager().get(i).getData();
+	data = manager.get(i).getData();
 	if (data.size() == 0)
 	  continue;
 	synchronized(data) {

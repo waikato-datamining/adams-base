@@ -15,7 +15,7 @@
 
 /*
  * MeanOverlayPaintlet.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.sequence;
 
@@ -51,7 +51,6 @@ import java.awt.Graphics;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MeanOverlayPaintlet
   extends AbstractXYSequencePaintlet
@@ -145,21 +144,23 @@ public class MeanOverlayPaintlet
    */
   @Override
   protected void doPerformPaint(Graphics g, PaintMoment moment) {
-    int			i;
-    XYSequence		data;
+    int				i;
+    XYSequence			data;
+    XYSequenceContainerManager	manager;
 
     // paint all points
-    synchronized(getActualContainerManager()) {
-      for (i = 0; i < getActualContainerManager().count(); i++) {
-	if (!getActualContainerManager().isVisible(i))
+    manager = getSequencePanel().getContainerManager();
+    synchronized(manager) {
+      for (i = 0; i < manager.count(); i++) {
+	if (!manager.isVisible(i))
 	  continue;
-        if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
+        if (manager.isFiltered() && !manager.isFiltered(i))
           continue;
-	data = getActualContainerManager().get(i).getData();
+	data = manager.get(i).getData();
 	if (data.size() == 0)
 	  continue;
 	synchronized(data) {
-	  drawCustomData(g, moment, data, getColor(i));
+	  drawCustomData(g, moment, data, manager.get(i).getColor());
 	}
       }
     }
