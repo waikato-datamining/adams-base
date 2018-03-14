@@ -48,7 +48,7 @@ import adams.flow.core.OutputProducer;
 import adams.flow.processor.AbstractActorProcessor;
 import adams.flow.processor.GraphicalOutputProducingProcessor;
 import adams.flow.processor.ModifyingProcessor;
-import adams.flow.processor.RemoveDisabledActors;
+import adams.flow.processor.MultiProcessor;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.ExternalSink;
 import adams.flow.source.CallableSource;
@@ -943,7 +943,7 @@ public class TreeOperations
       m_DialogProcessActors.setModalityType(ModalityType.DOCUMENT_MODAL);
       m_DialogProcessActors.getGOEEditor().setCanChangeClassInDialog(true);
       m_DialogProcessActors.getGOEEditor().setClassType(AbstractActorProcessor.class);
-      m_DialogProcessActors.setCurrent(new RemoveDisabledActors());
+      m_DialogProcessActors.setCurrent(new MultiProcessor());
     }
     if (title == null)
       title = "Process actors";
