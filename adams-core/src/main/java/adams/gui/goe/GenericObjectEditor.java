@@ -54,6 +54,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -1118,6 +1119,7 @@ public class GenericObjectEditor
     String 			rep;
     int 			dotPos;
     Font 			originalFont;
+    Color			originalColor;
     FontMetrics			fm;
     int 			vpad;
     String			optionStr;
@@ -1145,13 +1147,16 @@ public class GenericObjectEditor
 	rep = "None";
       }
       originalFont = gfx.getFont();
-      gfx.setFont(originalFont.deriveFont(Font.PLAIN));
+      originalColor = gfx.getColor();
 
-      fm = gfx.getFontMetrics();
+      gfx.setFont(originalFont.deriveFont(Font.PLAIN));
+      gfx.setColor(Color.BLACK);
+      fm   = gfx.getFontMetrics();
       vpad = (box.height - fm.getHeight());
       gfx.drawString(rep, 2, fm.getAscent() + vpad);
 
       gfx.setFont(originalFont);
+      gfx.setColor(originalColor);
     }
   }
 
