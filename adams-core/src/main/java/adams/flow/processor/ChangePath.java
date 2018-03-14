@@ -270,6 +270,8 @@ public class ChangePath
 	    result = path.matches(m_OldPath[i].getValue()) || path.matches(m_OldPathLinux[i].getValue());
 	  else
 	    result = path.startsWith(m_OldPath[i].getValue()) || path.startsWith(m_OldPathLinux[i].getValue());
+	  if (isLoggingEnabled())
+	    getLogger().info(path + " -> " + result);
 	  if (result)
 	    break;
 	}
