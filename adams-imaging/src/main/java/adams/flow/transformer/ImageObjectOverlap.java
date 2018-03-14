@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectOverlap.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -37,7 +37,8 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 /**
  <!-- globalinfo-start -->
  * Computes the overlap of objects with the specified report from storage.<br>
- * It stores the overlap percentage of the highest overlap found (overlap_highest) and the total number of overlaps greater than the specified minimum (overlap_count).
+ * It stores the overlap percentage of the highest overlap found (overlap_highest) and the total number of overlaps greater than the specified minimum (overlap_count).<br>
+ * If a label key (located object meta-data) has been supplied, then the label of the object with the highest overlap gets stored as well (overlap_label_highest).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -107,6 +108,13 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
  *
+ * <pre>-label-key &lt;java.lang.String&gt; (property: labelKey)
+ * &nbsp;&nbsp;&nbsp;The (optional) key for a string label in the meta-data; if supplied the
+ * &nbsp;&nbsp;&nbsp;value of the object with the highest overlap gets stored in the report using
+ * &nbsp;&nbsp;&nbsp;overlap_label_highest.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -117,10 +125,15 @@ public class ImageObjectOverlap
   private static final long serialVersionUID = 8175397929496972306L;
 
   /** the highest overlap percentage. */
-  public final static String OVERLAP_HIGHEST = "overlap_highest";
+  public final static String OVERLAP_PERCENTAGE_HIGHEST = "overlap_highest";
+
+  /** the label of the highest overlap. */
+  public final static String OVERLAP_LABEL_HIGHEST = "overlap_label_highest";
 
   /** the overlap count. */
   public final static String OVERLAP_COUNT = "overlap_count";
+
+  public static final String UNKNOWN_LABEL = "???";
 
   /** the storage item. */
   protected StorageName m_StorageName;
@@ -131,6 +144,9 @@ public class ImageObjectOverlap
   /** the minimum overlap ratio to use. */
   protected double m_MinOverlapRatio;
 
+  /** the label meta-data key - ignored if empty. */
+  protected String m_LabelKey;
+
   /**
    * Returns a string describing the object.
    *
@@ -140,8 +156,10 @@ public class ImageObjectOverlap
   public String globalInfo() {
     return
       "Computes the overlap of objects with the specified report from storage.\n"
-      + "It stores the overlap percentage of the highest overlap found (" + OVERLAP_HIGHEST + ") and the "
-      + "total number of overlaps greater than the specified minimum (" + OVERLAP_COUNT + ").";
+        + "It stores the overlap percentage of the highest overlap found (" + OVERLAP_PERCENTAGE_HIGHEST + ") and the "
+        + "total number of overlaps greater than the specified minimum (" + OVERLAP_COUNT + ").\n"
+        + "If a label key (located object meta-data) has been supplied, then the label of the object with "
+        + "the highest overlap gets stored as well (" + OVERLAP_LABEL_HIGHEST + ").";
   }
 
   /**
@@ -162,6 +180,10 @@ public class ImageObjectOverlap
     m_OptionManager.add(
       "min-overlap-ratio", "minOverlapRatio",
       0.0, 0.0, 1.0);
+
+    m_OptionManager.add(
+      "label-key", "labelKey",
+      "");
   }
 
   /**
@@ -254,6 +276,41 @@ public class ImageObjectOverlap
   }
 
   /**
+   * Sets the (optional) key for a string label in the meta-data; if supplied
+   * the value of the object with the highest overlap gets stored in the
+   * report using {@link #OVERLAP_LABEL_HIGHEST}.
+   *
+   * @param value	the key, ignored if empty
+   */
+  public void setLabelKey(String value) {
+    m_LabelKey = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) key for a string label in the meta-data; if supplied
+   * the value of the object with the highest overlap gets stored in the
+   * report using {@link #OVERLAP_LABEL_HIGHEST}.
+   *
+   * @return		the key, ignored if empty
+   */
+  public String getLabelKey() {
+    return m_LabelKey;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelKeyTipText() {
+    return "The (optional) key for a string label in the meta-data; if supplied "
+      + "the value of the object with the highest overlap gets stored in the "
+      + "report using " + OVERLAP_LABEL_HIGHEST + ".";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -265,6 +322,7 @@ public class ImageObjectOverlap
     result  = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
     result += QuickInfoHelper.toString(this, "finder", m_Finder, ", finder: ");
     result += QuickInfoHelper.toString(this, "minOverlapRatio", m_MinOverlapRatio, ", overlap ratio: ");
+    result += QuickInfoHelper.toString(this, "labelKey", (m_LabelKey.isEmpty() ? "-none-" : m_LabelKey), ", label key: ");
 
     return result;
   }
@@ -305,7 +363,8 @@ public class ImageObjectOverlap
     LocatedObjects		otherObjs;
     LocatedObjects 		newObjs;
     int 			count;
-    double			highest;
+    double overlapHighest;
+    String			labelHighest;
     double			ratio;
     Object			output;
 
@@ -327,14 +386,14 @@ public class ImageObjectOverlap
     if (thisReport != null) {
       obj = getStorageHandler().getStorage().get(m_StorageName);
       if (obj == null)
-	result = "Failed to retrieve storage item: " + m_StorageName;
+        result = "Failed to retrieve storage item: " + m_StorageName;
       else {
-	if (obj instanceof Report)
-	  otherReport = (Report) obj;
-	else if (obj instanceof ReportHandler)
-	  otherReport = ((ReportHandler) obj).getReport();
-	else
-	  result = "Unhandled type of storage item '" + m_StorageName + "': " + Utils.classToString(obj);
+        if (obj instanceof Report)
+          otherReport = (Report) obj;
+        else if (obj instanceof ReportHandler)
+          otherReport = ((ReportHandler) obj).getReport();
+        else
+          result = "Unhandled type of storage item '" + m_StorageName + "': " + Utils.classToString(obj);
       }
     }
 
@@ -347,49 +406,60 @@ public class ImageObjectOverlap
       }
       else {
         for (LocatedObject thisObj : thisObjs) {
-          count   = 0;
-          highest = 0.0;
+          count          = 0;
+          overlapHighest = 0.0;
+          labelHighest   = UNKNOWN_LABEL;
           for (LocatedObject otherObj : otherObjs) {
             ratio = thisObj.overlapRatio(otherObj);
             if (ratio >= m_MinOverlapRatio) {
               count++;
-              highest = Math.max(highest, ratio);
+              if (ratio > overlapHighest) {
+		overlapHighest = ratio;
+		if (!m_LabelKey.isEmpty()) {
+		  if (otherObj.getMetaData().containsKey(m_LabelKey))
+		    labelHighest = "" + otherObj.getMetaData().get(m_LabelKey);
+		  else
+		    labelHighest = UNKNOWN_LABEL;
+		}
+	      }
             }
           }
-          thisObj.getMetaData().put(OVERLAP_HIGHEST, highest);
-          thisObj.getMetaData().put(OVERLAP_COUNT, count);
-	  newObjs.add(thisObj);
+	  thisObj.getMetaData().put(OVERLAP_COUNT, count);
+	  thisObj.getMetaData().put(OVERLAP_PERCENTAGE_HIGHEST, overlapHighest);
+          if (!m_LabelKey.isEmpty())
+	    thisObj.getMetaData().put(OVERLAP_LABEL_HIGHEST, labelHighest);
+          newObjs.add(thisObj);
         }
       }
 
       // assemble new report
       try {
-	newReport = thisReport.getClass().newInstance();
-	// transfer non-object fields
-	for (AbstractField field: thisReport.getFields()) {
-	  if (!field.getName().startsWith(m_Finder.getPrefix())) {
-	    newReport.addField(field);
-	    newReport.setValue(field, thisReport.getValue(field));
-	  }
-	}
-	// store objects
-	newReport.mergeWith(newObjs.toReport(m_Finder.getPrefix()));
-	// update report
-	if (m_InputToken.getPayload() instanceof AbstractImageContainer) {
-	  output = m_InputToken.getPayload();
-	  ((AbstractImageContainer) output).setReport(newReport);
-	}
-	else if (m_InputToken.getPayload() instanceof MutableReportHandler) {
-	  output = m_InputToken.getPayload();
-	  ((MutableReportHandler) output).setReport(newReport);
-	}
-	else {
-	  output = newReport;
-	}
+        newReport = thisReport.getClass().newInstance();
+        // transfer non-object fields
+        for (AbstractField field: thisReport.getFields()) {
+          if (!field.getName().startsWith(m_Finder.getPrefix())) {
+            newReport.addField(field);
+            newReport.setValue(field, thisReport.getValue(field));
+          }
+        }
+        // store objects
+        newReport.mergeWith(newObjs.toReport(m_Finder.getPrefix()));
+        // update report
+        if (m_InputToken.getPayload() instanceof AbstractImageContainer) {
+          output = m_InputToken.getPayload();
+          ((AbstractImageContainer) output).setReport(newReport);
+        }
+        else if (m_InputToken.getPayload() instanceof MutableReportHandler) {
+          output = m_InputToken.getPayload();
+          ((MutableReportHandler) output).setReport(newReport);
+        }
+        else {
+          output = newReport;
+        }
       }
       catch (Exception e) {
-	result = handleException("Failed to create new report with updated objects!", e);
-	output = null;
+        result = handleException("Failed to create new report with updated objects!", e);
+        output = null;
       }
     }
 
