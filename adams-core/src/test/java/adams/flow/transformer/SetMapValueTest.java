@@ -15,7 +15,7 @@
 
 /*
  * SetMapValueTest.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -36,6 +36,7 @@ import adams.flow.source.NewMap;
 import adams.flow.source.SequenceSource;
 import adams.flow.source.StringConstants;
 import adams.flow.standalone.CallableActors;
+import adams.flow.transformer.SetMapValue.SourceType;
 import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -48,7 +49,6 @@ import java.util.List;
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision$
  */
 public class SetMapValueTest
   extends AbstractFlowTest {
@@ -156,6 +156,7 @@ public class SetMapValueTest
       setmapvalue.setKey((String) argOption.valueOf("hello"));
       argOption = (AbstractArgumentOption) setmapvalue.getOptionManager().findByProperty("value");
       setmapvalue.setValue((String) argOption.valueOf("world"));
+      setmapvalue.setType(SourceType.VALUE);
       actors.add(setmapvalue);
 
       // Flow.SetMapValue-1
@@ -166,6 +167,7 @@ public class SetMapValueTest
       setmapvalue2.setKey((String) argOption.valueOf("number"));
       argOption = (AbstractArgumentOption) setmapvalue2.getOptionManager().findByProperty("source");
       setmapvalue2.setSource((CallableActorReference) argOption.valueOf("SequenceSource"));
+      setmapvalue2.setType(SourceType.SOURCE);
       actors.add(setmapvalue2);
 
       // Flow.GetMapValue
