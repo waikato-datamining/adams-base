@@ -15,7 +15,7 @@
 
 /*
  * FlowFileWriter.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -205,10 +205,14 @@ public class FlowFileWriter
    */
   @Override
   public String getQuickInfo() {
+    String	result;
+
+    result = super.getQuickInfo();
+
     if (m_UseCustomWriter)
-      return QuickInfoHelper.toString(this, "customWriter", m_CustomWriter, "custom writer: ");
-    else
-      return null;
+      result += QuickInfoHelper.toString(this, "customWriter", m_CustomWriter, ", writer: ");
+
+    return result;
   }
 
   /**
