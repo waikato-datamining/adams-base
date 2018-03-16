@@ -20,9 +20,13 @@
 
 package adams.gui.core;
 
+import adams.core.HelpProvider;
 import adams.core.base.BaseObject;
 import adams.gui.goe.Favorites;
 import adams.gui.goe.Favorites.FavoriteSelectionEvent;
+
+import javax.swing.JMenuItem;
+import java.awt.event.ActionEvent;
 
 /**
  * Text field designed for entering a strings checked by a BaseObject derived
@@ -141,9 +145,21 @@ public class BaseObjectTextField<T extends BaseObject>
    */
   protected BasePopupMenu getPopupMenu() {
     BasePopupMenu 	result;
+    HelpProvider	help;
+    JMenuItem		menuitem;
     T			check;
 
     result = super.getPopupMenu();
+
+    if (getObject() instanceof HelpProvider) {
+      help = (HelpProvider) getObject();
+      if (help.getHelpURL() != null) {
+	menuitem = new JMenuItem("Help");
+	menuitem.setIcon(GUIHelper.getIcon(help.getHelpIcon()));
+	menuitem.addActionListener((ActionEvent e) -> BrowserHelper.openURL(help.getHelpURL()));
+	result.add(menuitem);
+      }
+    }
 
     check = ((BaseObjectCheckModel<T>) m_CheckModel).getCheck();
     if (check.hasFavoritesSupport()) {
