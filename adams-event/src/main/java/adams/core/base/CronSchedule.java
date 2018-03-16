@@ -15,10 +15,11 @@
 
 /*
  * CronSchedule.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.base;
 
+import adams.core.HelpProvider;
 import adams.core.Properties;
 import org.quartz.CronExpression;
 
@@ -29,7 +30,8 @@ import org.quartz.CronExpression;
  * @see org.quartz.CronExpression
  */
 public class CronSchedule
-  extends AbstractBaseString {
+  extends AbstractBaseString
+  implements HelpProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -8650732173194720137L;
@@ -85,5 +87,45 @@ public class CronSchedule
   @Override
   public String getTipText() {
     return "An cron schedule.";
+  }
+
+  /**
+   * Returns a URL with additional information.
+   *
+   * @return		the URL, null if not available
+   */
+  @Override
+  public String getHelpURL() {
+    return "http://www.docjar.com/docs/api/org/quartz/CronExpression.html";
+  }
+
+  /**
+   * Returns a long help description, e.g., used in tiptexts.
+   *
+   * @return		the help text, null if not available
+   */
+  @Override
+  public String getHelpDescription() {
+    return "Information regarding the cron schedule expressions";
+  }
+
+  /**
+   * Returns a short title for the help, e.g., used for buttons.
+   *
+   * @return		the short title, null if not available
+   */
+  @Override
+  public String getHelpTitle() {
+    return null;
+  }
+
+  /**
+   * Returns the name of a help icon, e.g., used for buttons.
+   *
+   * @return		the icon name, null if not available
+   */
+  @Override
+  public String getHelpIcon() {
+    return "help2.png";
   }
 }

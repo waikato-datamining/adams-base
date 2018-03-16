@@ -15,7 +15,7 @@
 
 /*
  * CronScheduleEditor.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -370,45 +370,5 @@ public class CronScheduleEditor
       if (parts.length > 6)
 	m_TextYear.setText(parts[6]);
     }
-  }
-  
-  /**
-   * Returns a URL with additional information.
-   * 
-   * @return		the URL, null if not available
-   */
-  @Override
-  public String getHelpURL() {
-    return "http://www.docjar.com/docs/api/org/quartz/CronExpression.html";
-  }
-  
-  /**
-   * Returns a long help description, e.g., used in tiptexts.
-   * 
-   * @return		the help text, null if not available
-   */
-  @Override
-  public String getHelpDescription() {
-    return "Information regarding the cron schedule expressions";
-  }
-  
-  /**
-   * Returns a short title for the help, e.g., used for buttons.
-   * 
-   * @return		the short title, null if not available
-   */
-  @Override
-  public String getHelpTitle() {
-    return null;
-  }
-  
-  /**
-   * Returns the name of a help icon, e.g., used for buttons.
-   * 
-   * @return		the icon name, null if not available
-   */
-  @Override
-  public String getHelpIcon() {
-    return "help2.png";
   }
 }
