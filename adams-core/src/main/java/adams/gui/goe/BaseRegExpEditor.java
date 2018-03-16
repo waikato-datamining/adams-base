@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseRegExpEditor.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -51,7 +51,6 @@ import java.util.Vector;
  * enter line feeds, tabs, etc. the user can enable "escaped input".
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseRegExpEditor
   extends BaseObjectEditor
@@ -313,45 +312,5 @@ public class BaseRegExpEditor
     }
 
     return result;
-  }
-  
-  /**
-   * Returns a URL with additional information.
-   * 
-   * @return		the URL, null if not available
-   */
-  @Override
-  public String getHelpURL() {
-    return "https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html";
-  }
-  
-  /**
-   * Returns a long help description, e.g., used in tiptexts.
-   * 
-   * @return		the help text, null if not available
-   */
-  @Override
-  public String getHelpDescription() {
-    return "More info on regular expressions";
-  }
-  
-  /**
-   * Returns a short title for the help, e.g., used for buttons.
-   * 
-   * @return		the short title, null if not available
-   */
-  @Override
-  public String getHelpTitle() {
-    return null;
-  }
-  
-  /**
-   * Returns the name of a help icon, e.g., used for buttons.
-   * 
-   * @return		the icon name, null if not available
-   */
-  @Override
-  public String getHelpIcon() {
-    return "help2.png";
   }
 }

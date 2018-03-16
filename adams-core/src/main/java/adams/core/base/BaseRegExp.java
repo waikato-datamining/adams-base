@@ -15,11 +15,12 @@
 
 /*
  * BaseRegExp.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
+import adams.core.HelpProvider;
 import adams.core.Utils;
 
 import java.util.List;
@@ -34,7 +35,8 @@ import java.util.regex.Pattern;
  * @version $Revision$
  */
 public class BaseRegExp
-  extends AbstractBaseString {
+  extends AbstractBaseString
+  implements HelpProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -8687858764646783666L;
@@ -184,5 +186,45 @@ public class BaseRegExp
       result = new BaseRegExp("^(" + Utils.flatten(values, "|") + ")$");
 
     return result;
+  }
+
+  /**
+   * Returns a URL with additional information.
+   *
+   * @return		the URL, null if not available
+   */
+  @Override
+  public String getHelpURL() {
+    return "https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html";
+  }
+
+  /**
+   * Returns a long help description, e.g., used in tiptexts.
+   *
+   * @return		the help text, null if not available
+   */
+  @Override
+  public String getHelpDescription() {
+    return "More info on regular expressions";
+  }
+
+  /**
+   * Returns a short title for the help, e.g., used for buttons.
+   *
+   * @return		the short title, null if not available
+   */
+  @Override
+  public String getHelpTitle() {
+    return null;
+  }
+
+  /**
+   * Returns the name of a help icon, e.g., used for buttons.
+   *
+   * @return		the icon name, null if not available
+   */
+  @Override
+  public String getHelpIcon() {
+    return "help2.png";
   }
 }
