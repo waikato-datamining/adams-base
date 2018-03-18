@@ -24,6 +24,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.Cell;
 import adams.gui.core.SpreadSheetTable;
 
+import javax.swing.SwingConstants;
 import java.awt.Color;
 
 /**
@@ -110,6 +111,8 @@ public abstract class AbstractCellRenderingCustomizer
    */
   @Override
   public int getHorizontalAlignment(SpreadSheetTable table, boolean isSelected, boolean hasFocus, int row, int column, Cell cell, int defAlign) {
+    if ((column == 0) && table.getShowRowColumn())
+      return SwingConstants.CENTER;
     return defAlign;
   }
 }
