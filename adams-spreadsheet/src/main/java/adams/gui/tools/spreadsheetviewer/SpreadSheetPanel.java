@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetPanel.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
@@ -36,6 +36,7 @@ import adams.gui.core.SpreadSheetColumnComboBox;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.core.TableRowRange;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.tools.SpreadSheetViewerPanel;
@@ -49,7 +50,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.util.ArrayList;
@@ -226,57 +226,21 @@ public class SpreadSheetPanel
   }
 
   /**
-   * Checks whether a custom background color for negative values has been set.
+   * Sets the cell rendering customizer.
    *
-   * @return		true if custom color set
+   * @param value	the customizer
    */
-  public boolean hasNegativeBackground() {
-    return m_Table.hasNegativeBackground();
+  public void setCellRenderingCustomizer(CellRenderingCustomizer value) {
+    m_Table.setCellRenderingCustomizer(value);
   }
 
   /**
-   * Sets the custom background color for negative values.
+   * Returns the cell rendering customizer.
    *
-   * @param value	the color, null to unset it
+   * @return		the customizer
    */
-  public void setNegativeBackground(Color value) {
-    m_Table.setNegativeBackground(value);
-  }
-
-  /**
-   * Returns the custom background color for negative values, if any.
-   *
-   * @return		the color, null if none set
-   */
-  public Color getNegativeBackground() {
-    return m_Table.getNegativeBackground();
-  }
-
-  /**
-   * Checks whether a custom background color for positive values has been set.
-   *
-   * @return		true if custom color set
-   */
-  public boolean hasPositiveBackground() {
-    return m_Table.hasPositiveBackground();
-  }
-
-  /**
-   * Sets the custom background color for positive values.
-   *
-   * @param value	the color, null to unset it
-   */
-  public void setPositiveBackground(Color value) {
-    m_Table.setPositiveBackground(value);
-  }
-
-  /**
-   * Returns the custom background color for positive values, if any.
-   *
-   * @return		the color, null if none set
-   */
-  public Color getPositiveBackground() {
-    return m_Table.getPositiveBackground();
+  public CellRenderingCustomizer getCellRenderingCustomizer() {
+    return m_Table.getCellRenderingCustomizer();
   }
 
   /**

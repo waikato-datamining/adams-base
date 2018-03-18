@@ -539,6 +539,10 @@ adams.gui.core.spreadsheettable.ProcessCell=\
 adams.gui.core.spreadsheettable.ProcessSelectedRows=\
   adams.gui.core.spreadsheettable
 
+# the customizers for cell rendering
+adams.gui.core.spreadsheettable.CellRenderingCustomizer=\
+  adams.gui.core.spreadsheettable
+
 # the menu actions in the flow editor
 adams.gui.flow.menu.FlowEditorAction=\
   adams.gui.flow.tree.menu

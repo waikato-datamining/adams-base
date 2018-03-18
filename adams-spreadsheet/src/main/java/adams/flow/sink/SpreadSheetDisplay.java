@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetDisplay.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -23,6 +23,7 @@ package adams.flow.sink;
 import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
 import adams.core.io.ConsoleHelper;
+import adams.core.option.OptionUtils;
 import adams.data.io.output.NullWriter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
@@ -30,7 +31,6 @@ import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.ColorHelper;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -38,6 +38,8 @@ import adams.gui.core.SpreadSheetColumnComboBox;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.core.TableRowRange;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
+import adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.ProcessSelectedRows;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
 import adams.gui.event.SearchEvent;
@@ -49,7 +51,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -181,7 +182,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetDisplay
   extends AbstractTextualDisplay
@@ -285,14 +285,7 @@ public class SpreadSheetDisplay
       m_TableModel.setReadOnly(m_Owner.getReadOnly());
       m_Table.setModel(m_TableModel);
       m_Table.setNumDecimals(m_Owner.getNumDecimals());
-      if (m_Owner.getUseCustomNegativeBackground())
-	m_Table.setNegativeBackground(m_Owner.getNegativeBackground());
-      else
-	m_Table.setNegativeBackground(null);
-      if (m_Owner.getUseCustomPositiveBackground())
-	m_Table.setPositiveBackground(m_Owner.getPositiveBackground());
-      else
-	m_Table.setPositiveBackground(null);
+      m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_Owner.getCellRenderingCustomizer()));
       m_Table.setShowFormulas(m_Owner.getShowFormulas());
     }
 
@@ -359,17 +352,8 @@ public class SpreadSheetDisplay
   /** the number of decimals for numeric values. */
   protected int m_NumDecimals;
 
-  /** whether to use custom background color for negative values. */
-  protected boolean m_UseCustomNegativeBackground;
-
-  /** the custom background color for negative values. */
-  protected Color m_NegativeBackground;
-
-  /** whether to use custom background color for positive values. */
-  protected boolean m_UseCustomPositiveBackground;
-
-  /** the custom background color for positive values. */
-  protected Color m_PositiveBackground;
+  /** the custom cell renderer. */
+  protected CellRenderingCustomizer m_CellRenderingCustomizer;
 
   /** whether to show the formulas instead of the calculated values. */
   protected boolean m_ShowFormulas;
@@ -410,20 +394,8 @@ public class SpreadSheetDisplay
       3, -1, null);
 
     m_OptionManager.add(
-      "use-custom-negative-background", "useCustomNegativeBackground",
-      false);
-
-    m_OptionManager.add(
-      "negative-background", "negativeBackground",
-      Color.WHITE);
-
-    m_OptionManager.add(
-      "use-custom-positive-background", "useCustomPositiveBackground",
-      false);
-
-    m_OptionManager.add(
-      "positive-background", "positiveBackground",
-      Color.WHITE);
+      "cell-rendering-customizer", "cellRenderingCustomizer",
+      new DefaultCellRenderingCustomizer());
 
     m_OptionManager.add(
       "show-formulas", "showFormulas",
@@ -462,13 +434,7 @@ public class SpreadSheetDisplay
     result = super.getQuickInfo();
 
     result += QuickInfoHelper.toString(this, "numDecimals", m_NumDecimals, ", decimals: ");
-
-    if (QuickInfoHelper.hasVariable(this, "useCustomNegativeBackground") || m_UseCustomNegativeBackground)
-      result += QuickInfoHelper.toString(this, "negativeBackground", ColorHelper.toHex(m_NegativeBackground), ", negative: ");
-
-    if (QuickInfoHelper.hasVariable(this, "useCustomPositiveBackground") || m_UseCustomPositiveBackground)
-      result += QuickInfoHelper.toString(this, "positiveBackground", ColorHelper.toHex(m_PositiveBackground), ", positive: ");
-
+    result += QuickInfoHelper.toString(this, "cellRenderingCustomizer", m_CellRenderingCustomizer, ", rendering: ");
     result += QuickInfoHelper.toString(this, "showFormulas", m_ShowFormulas, "formulas", ", ");
     result += QuickInfoHelper.toString(this, "allowSearch", m_AllowSearch, "searchable", ", ");
     result += QuickInfoHelper.toString(this, "optimalColumnWidth", m_OptimalColumnWidth, "optimal", ", ");
@@ -507,22 +473,22 @@ public class SpreadSheetDisplay
   }
 
   /**
-   * Sets whether to use a custom background for negative values.
+   * Sets the cell rendering customizer.
    *
-   * @param value 	true if to use custom color
+   * @param value 	the customizer
    */
-  public void setUseCustomNegativeBackground(boolean value) {
-    m_UseCustomNegativeBackground = value;
+  public void setCellRenderingCustomizer(CellRenderingCustomizer value) {
+    m_CellRenderingCustomizer = value;
     reset();
   }
 
   /**
-   * Returns whether to use a custom background for negative values.
+   * Returns the cell rendering customizer.
    *
-   * @return 		true if custom color
+   * @return 		the customizer
    */
-  public boolean getUseCustomNegativeBackground() {
-    return m_UseCustomNegativeBackground;
+  public CellRenderingCustomizer getCellRenderingCustomizer() {
+    return m_CellRenderingCustomizer;
   }
 
   /**
@@ -531,95 +497,8 @@ public class SpreadSheetDisplay
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String useCustomNegativeBackgroundTipText() {
-    return "Whether to use a custom background color for negative values.";
-  }
-
-  /**
-   * Sets the custom background color for negative values.
-   *
-   * @param value 	the color
-   */
-  public void setNegativeBackground(Color value) {
-    m_NegativeBackground = value;
-    reset();
-  }
-
-  /**
-   * Returns the custom background color for negative values.
-   *
-   * @return 		the number of decimals
-   */
-  public Color getNegativeBackground() {
-    return m_NegativeBackground;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String negativeBackgroundTipText() {
-    return "The custom background for negative values (must be enabled).";
-  }
-
-  /**
-   * Sets whether to use a custom background for positive values.
-   *
-   * @param value 	true if to use custom color
-   */
-  public void setUseCustomPositiveBackground(boolean value) {
-    m_UseCustomPositiveBackground = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to use a custom background for positive values.
-   *
-   * @return 		true if custom color
-   */
-  public boolean getUseCustomPositiveBackground() {
-    return m_UseCustomPositiveBackground;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String useCustomPositiveBackgroundTipText() {
-    return "Whether to use a custom background color for positive values.";
-  }
-
-  /**
-   * Sets the custom background color for positive values.
-   *
-   * @param value 	the color
-   */
-  public void setPositiveBackground(Color value) {
-    m_PositiveBackground = value;
-    reset();
-  }
-
-  /**
-   * Returns the custom background color for positive values.
-   *
-   * @return 		the number of decimals
-   */
-  public Color getPositiveBackground() {
-    return m_PositiveBackground;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String positiveBackgroundTipText() {
-    return "The custom background for positive values (must be enabled).";
+  public String cellRenderingCustomizerTipText() {
+    return "The customizer for the cell rendering.";
   }
 
   /**
@@ -877,14 +756,7 @@ public class SpreadSheetDisplay
     m_TableModel.setReadOnly(m_ReadOnly);
     m_Table.setModel(m_TableModel);
     m_Table.setNumDecimals(m_NumDecimals);
-    if (m_UseCustomNegativeBackground)
-      m_Table.setNegativeBackground(m_NegativeBackground);
-    else
-      m_Table.setNegativeBackground(null);
-    if (m_UseCustomPositiveBackground)
-      m_Table.setPositiveBackground(m_PositiveBackground);
-    else
-      m_Table.setPositiveBackground(null);
+    m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_CellRenderingCustomizer));
     m_Table.setShowFormulas(m_ShowFormulas);
   }
 

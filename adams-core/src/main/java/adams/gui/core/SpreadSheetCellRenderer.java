@@ -13,26 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetCellRenderer.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
 import adams.data.spreadsheet.Cell;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.Color;
 import java.awt.Component;
 
 /**
  * Custom cell renderer for displaying spreadsheets.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetCellRenderer
   extends DefaultTableCellRenderer {
@@ -56,79 +54,21 @@ public class SpreadSheetCellRenderer
       JTable table, Object value, boolean isSelected,
       boolean hasFocus, int row, int column ) {
 
-    Component 		result;
-    Cell		cell;
-    SpreadSheetTable	spTable;
-    boolean		numeric;
-    Double		numericVal;
+    Component 			result;
+    Cell			cell;
+    SpreadSheetTable		spTable;
+    CellRenderingCustomizer	rend;
 
     result = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     
     spTable    = (SpreadSheetTable) table;
+    rend       = spTable.getCellRenderingCustomizer();
     cell       = spTable.getCellAt(row, column);
-    numeric    = false;
-    numericVal = null;
 
-    // row index
-    if ((column == 0) && spTable.getShowRowColumn()) {
-      ((JLabel) result).setHorizontalAlignment(SwingConstants.CENTER);
-      ((JLabel) result).setToolTipText(null);
-      if (isSelected)
-	((JLabel) result).setBackground(spTable.getSelectionBackground());
-      else
-        ((JLabel) result).setBackground(spTable.getBackground());
-      return result;
-    }
-    
-    if (cell != null) {
-      if (!(cell.isFormula() && spTable.getShowFormulas())) {
-	numeric = cell.isNumeric();
-	if (numeric && (spTable.hasNegativeBackground() || spTable.hasPositiveBackground()))
-	  numericVal = cell.toDouble();
-      }
-      
-      // background and hint
-      if (cell.isMissing()) {
-        ((JLabel) result).setToolTipText("missing");
-        if (isSelected)
-          ((JLabel) result).setBackground(Color.GRAY);
-        else
-          ((JLabel) result).setBackground(Color.LIGHT_GRAY);
-      }
-      else {
-        ((JLabel) result).setToolTipText(null);
-        if (isSelected) {
-          if ((numericVal != null) && (numericVal >= 0) && (spTable.hasPositiveBackground()))
-            ((JLabel) result).setBackground(spTable.getPositiveBackground().darker());
-          else if ((numericVal != null) && (numericVal < 0) && (spTable.hasNegativeBackground()))
-            ((JLabel) result).setBackground(spTable.getNegativeBackground().darker());
-          else
-            ((JLabel) result).setBackground(spTable.getSelectionBackground());
-        }
-        else {
-          if ((numericVal != null) && (numericVal >= 0) && (spTable.hasPositiveBackground()))
-            ((JLabel) result).setBackground(spTable.getPositiveBackground());
-          else if ((numericVal != null) && (numericVal < 0) && (spTable.hasNegativeBackground()))
-            ((JLabel) result).setBackground(spTable.getNegativeBackground());
-          else
-            ((JLabel) result).setBackground(spTable.getBackground());
-        }
-      }
-
-      // alignment
-      if (numeric)
-        ((JLabel) result).setHorizontalAlignment(SwingConstants.RIGHT);
-      else
-        ((JLabel) result).setHorizontalAlignment(SwingConstants.LEFT);
-    }
-    else {
-      // alignment
-      ((JLabel) result).setToolTipText("missing");
-      if (isSelected)
-	((JLabel) result).setBackground(Color.GRAY);
-      else
-	((JLabel) result).setBackground(Color.LIGHT_GRAY);
-    }
+    ((JLabel) result).setHorizontalAlignment(rend.getHorizontalAlignment(spTable, isSelected, hasFocus, row, column, cell, ((JLabel) result).getHorizontalAlignment()));
+    ((JLabel) result).setToolTipText(rend.getToolTipText(spTable, isSelected, hasFocus, row, column, cell, null));
+    result.setForeground(rend.getForegroundColor(spTable, isSelected, hasFocus, row, column, cell, (isSelected ? table.getSelectionForeground() : table.getForeground())));
+    result.setBackground(rend.getBackgroundColor(spTable, isSelected, hasFocus, row, column, cell, (isSelected ? table.getSelectionBackground() : table.getBackground())));
 
     return result;
   }

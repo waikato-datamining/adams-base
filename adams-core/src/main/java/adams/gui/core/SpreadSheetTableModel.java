@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTableModel.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -25,14 +25,16 @@ import adams.core.DateTimeMsec;
 import adams.core.Time;
 import adams.core.TimeMsec;
 import adams.core.Utils;
+import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
+import adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer;
 
-import java.awt.Color;
 import java.util.Date;
 
 /**
@@ -53,13 +55,10 @@ public class SpreadSheetTableModel
 
   /** the number of decimals to display. */
   protected int m_NumDecimals;
-  
-  /** the custom background color for negative values (null if none set). */
-  protected Color m_BackgroundNegative;
-  
-  /** the custom background color for positive values (null if none set). */
-  protected Color m_BackgroundPositive;
-  
+
+  /** for customizing the cell rendering. */
+  protected CellRenderingCustomizer m_CellRenderingCustomizer;
+
   /** whether to show formulas rather than the result. */
   protected boolean m_ShowFormulas;
   
@@ -107,17 +106,16 @@ public class SpreadSheetTableModel
   public SpreadSheetTableModel(SpreadSheet sheet, int numDec) {
     super();
 
-    m_Sheet              = sheet;
-    m_NumDecimals        = numDec;
-    m_BackgroundNegative = null;
-    m_BackgroundPositive = null;
-    m_ShowFormulas       = false;
-    m_ShowRowColumn      = true;
-    m_UseSimpleHeader    = false;
-    m_ReadOnly           = true;
-    m_Modified           = false;
-    m_ShowCellTypes      = false;
-    m_ColumnType         = new ContentType[sheet.getColumnCount()];
+    m_Sheet                   = sheet;
+    m_NumDecimals             = numDec;
+    m_CellRenderingCustomizer = new DefaultCellRenderingCustomizer();
+    m_ShowFormulas            = false;
+    m_ShowRowColumn           = true;
+    m_UseSimpleHeader         = false;
+    m_ReadOnly                = true;
+    m_Modified                = false;
+    m_ShowCellTypes           = false;
+    m_ColumnType              = new ContentType[sheet.getColumnCount()];
   }
 
   /**
@@ -468,59 +466,22 @@ public class SpreadSheetTableModel
   }
 
   /**
-   * Checks whether a custom background color for negative values has been set.
+   * Sets the customizer for cell rendering.
    * 
-   * @return		true if custom color set
+   * @param value	the customizer
    */
-  public boolean hasNegativeBackground() {
-    return (m_BackgroundNegative != null);
-  }
-  
-  /**
-   * Sets the custom background color for negative values.
-   * 
-   * @param value	the color, null to unset it
-   */
-  public void setNegativeBackground(Color value) {
-    m_BackgroundNegative = value;
+  public void setCellRenderingCustomizer(CellRenderingCustomizer value) {
+    m_CellRenderingCustomizer = value;
     fireTableDataChanged();
   }
   
   /**
-   * Returns the custom background color for negative values, if any.
+   * Returns the customizer for cell rendering.
    * 
-   * @return		the color, null if none set
+   * @return		the customizer
    */
-  public Color getNegativeBackground() {
-    return m_BackgroundNegative;
-  }
-
-  /**
-   * Checks whether a custom background color for positive values has been set.
-   * 
-   * @return		true if custom color set
-   */
-  public boolean hasPositiveBackground() {
-    return (m_BackgroundPositive != null);
-  }
-  
-  /**
-   * Sets the custom background color for positive values.
-   * 
-   * @param value	the color, null to unset it
-   */
-  public void setPositiveBackground(Color value) {
-    m_BackgroundPositive = value;
-    fireTableDataChanged();
-  }
-  
-  /**
-   * Returns the custom background color for positive values, if any.
-   * 
-   * @return		the color, null if none set
-   */
-  public Color getPositiveBackground() {
-    return m_BackgroundPositive;
+  public CellRenderingCustomizer getCellRenderingCustomizer() {
+    return m_CellRenderingCustomizer;
   }
 
   /**
@@ -631,10 +592,7 @@ public class SpreadSheetTableModel
     
     result = new SpreadSheetTableModel(sheet);
     result.setNumDecimals(getNumDecimals());
-    if (hasPositiveBackground())
-      result.setPositiveBackground(getPositiveBackground());
-    if (hasNegativeBackground())
-      result.setNegativeBackground(getNegativeBackground());
+    result.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(getCellRenderingCustomizer()));
     result.setShowFormulas(getShowFormulas());
     result.setShowRowColumn(getShowRowColumn());
     result.setUseSimpleHeader(getUseSimpleHeader());

@@ -15,13 +15,14 @@
 
 /*
  * SpreadSheetTable.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
 import adams.gui.event.PopupMenuListener;
 import adams.gui.visualization.core.PopupMenuCustomizer;
@@ -34,7 +35,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -602,57 +602,21 @@ public class SpreadSheetTable
   }
 
   /**
-   * Checks whether a custom background color for negative values has been set.
+   * Sets the cell rendering customizer.
    *
-   * @return		true if custom color set
+   * @param value	the customizer
    */
-  public boolean hasNegativeBackground() {
-    return ((SpreadSheetTableModel) getUnsortedModel()).hasNegativeBackground();
+  public void setCellRenderingCustomizer(CellRenderingCustomizer value) {
+    ((SpreadSheetTableModel) getUnsortedModel()).setCellRenderingCustomizer(value);
   }
 
   /**
-   * Sets the custom background color for negative values.
+   * Returns the cell rendering customizer.
    *
-   * @param value	the color, null to unset it
+   * @return		the customizer
    */
-  public void setNegativeBackground(Color value) {
-    ((SpreadSheetTableModel) getUnsortedModel()).setNegativeBackground(value);
-  }
-
-  /**
-   * Returns the custom background color for negative values, if any.
-   *
-   * @return		the color, null if none set
-   */
-  public Color getNegativeBackground() {
-    return ((SpreadSheetTableModel) getUnsortedModel()).getNegativeBackground();
-  }
-
-  /**
-   * Checks whether a custom background color for positive values has been set.
-   *
-   * @return		true if custom color set
-   */
-  public boolean hasPositiveBackground() {
-    return ((SpreadSheetTableModel) getUnsortedModel()).hasPositiveBackground();
-  }
-
-  /**
-   * Sets the custom background color for positive values.
-   *
-   * @param value	the color, null to unset it
-   */
-  public void setPositiveBackground(Color value) {
-    ((SpreadSheetTableModel) getUnsortedModel()).setPositiveBackground(value);
-  }
-
-  /**
-   * Returns the custom background color for positive values, if any.
-   *
-   * @return		the color, null if none set
-   */
-  public Color getPositiveBackground() {
-    return ((SpreadSheetTableModel) getUnsortedModel()).getPositiveBackground();
+  public CellRenderingCustomizer getCellRenderingCustomizer() {
+    return ((SpreadSheetTableModel) getUnsortedModel()).getCellRenderingCustomizer();
   }
 
   /**

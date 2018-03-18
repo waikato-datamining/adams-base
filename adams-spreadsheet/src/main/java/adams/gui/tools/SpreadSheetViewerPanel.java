@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetViewerPanel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -42,10 +42,12 @@ import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.core.ToolBarPanel;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.event.TabVisibilityChangeEvent;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.spreadsheetviewer.AbstractDataPlugin;
@@ -69,14 +71,12 @@ import adams.gui.tools.spreadsheetviewer.menu.HelpFormulas;
 import adams.gui.tools.spreadsheetviewer.menu.HelpQuery;
 import adams.gui.tools.spreadsheetviewer.menu.SpreadSheetViewerAction;
 import adams.gui.tools.spreadsheetviewer.menu.ViewApplyToAll;
+import adams.gui.tools.spreadsheetviewer.menu.ViewCellRenderingCustomizer;
 import adams.gui.tools.spreadsheetviewer.menu.ViewDecimals;
-import adams.gui.tools.spreadsheetviewer.menu.ViewNegativeBackground;
-import adams.gui.tools.spreadsheetviewer.menu.ViewPositiveBackground;
 import adams.gui.tools.spreadsheetviewer.menu.ViewShowCellTypes;
 import adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas;
 import adams.gui.tools.spreadsheetviewer.tab.ViewerTabManager;
 
-import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -85,7 +85,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -181,11 +180,8 @@ public class SpreadSheetViewerPanel
   /** the "displayed decimals" menu item. */
   protected SpreadSheetViewerAction m_ActionViewDisplayedDecimals;
 
-  /** the "negative background" menu item. */
-  protected SpreadSheetViewerAction m_ActionViewNegativeBackground;
-
-  /** the "positive background" menu item. */
-  protected SpreadSheetViewerAction m_ActionViewPositiveBackground;
+  /** the "rendering" menu item. */
+  protected SpreadSheetViewerAction m_ActionViewCellRenderingCustomizer;
 
   /** the "show formulas" menu item. */
   protected SpreadSheetViewerAction m_ActionViewShowFormulas;
@@ -348,14 +344,9 @@ public class SpreadSheetViewerPanel
     m_ActionViewDisplayedDecimals = action;
     m_Actions.add(action);
 
-    // View/Negative background
-    action = new ViewNegativeBackground();
-    m_ActionViewNegativeBackground = action;
-    m_Actions.add(action);
-
-    // View/Positive background
-    action = new ViewPositiveBackground();
-    m_ActionViewPositiveBackground = action;
+    // View/Rendering
+    action = new ViewCellRenderingCustomizer();
+    m_ActionViewCellRenderingCustomizer = action;
     m_Actions.add(action);
 
     // View/Show formulas
@@ -529,8 +520,7 @@ public class SpreadSheetViewerPanel
 
       menu.add(m_ActionViewApplyToAll.getMenuItem());
       menu.add(m_ActionViewDisplayedDecimals);
-      menu.add(m_ActionViewNegativeBackground);
-      menu.add(m_ActionViewPositiveBackground);
+      menu.add(m_ActionViewCellRenderingCustomizer);
       menu.add(m_ActionViewShowFormulas.getMenuItem());
       menu.add(m_ActionViewShowCellTypes.getMenuItem());
 
@@ -626,44 +616,39 @@ public class SpreadSheetViewerPanel
   }
 
   /**
-   * Allows the user to select a background color for negative/positive values.
+   * Allows the user to select a different cell rendering customizer.
    *
-   * @param negative	whether to select negative or positive background
    * @param applyAll	whether to apply background to all open tabs
    */
-  public void selectBackground(boolean negative, boolean applyAll) {
-    Color	color;
+  public void selectRendering(boolean applyAll) {
+    CellRenderingCustomizer 	renderer;
+    GenericObjectEditorDialog 	dialog;
 
     if (applyAll)
-      color = Color.WHITE;
-    else {
-      if (negative)
-	color = m_TabbedPane.getNegativeBackgroundAt(m_TabbedPane.getSelectedIndex());
-      else
-	color = m_TabbedPane.getPositiveBackgroundAt(m_TabbedPane.getSelectedIndex());
-    }
-
-    if (negative)
-      color = JColorChooser.showDialog(this, "Background for negative values", color);
+      renderer = m_TabbedPane.getCellRenderingCustomizer();
     else
-      color = JColorChooser.showDialog(this, "Background for positive values", color);
-    if (color == null)
+      renderer = m_TabbedPane.getCellRenderingCustomizerAt(m_TabbedPane.getSelectedIndex());
+
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setTitle("Cell rendering customizer");
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(CellRenderingCustomizer.class);
+    dialog.setCurrent(renderer);
+    dialog.setLocationRelativeTo(dialog.getParent());
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;
 
-    if (negative) {
-      if (applyAll)
-	m_TabbedPane.setNegativeBackground(color);
-      else
-	m_TabbedPane.setNegativeBackgroundAt(m_TabbedPane.getSelectedIndex(), color);
-    }
-    else {
-      if (applyAll)
-	m_TabbedPane.setPositiveBackground(color);
-      else
-	m_TabbedPane.setPositiveBackgroundAt(m_TabbedPane.getSelectedIndex(), color);
-    }
+    renderer = (CellRenderingCustomizer) dialog.getCurrent();
+    if (applyAll)
+      m_TabbedPane.setCellRenderingCustomizer(renderer);
+    else
+      m_TabbedPane.setCellRenderingCustomizerAt(m_TabbedPane.getSelectedIndex(), renderer);
   }
-  
+
   /**
    * Updates the enabled state of the actions.
    */

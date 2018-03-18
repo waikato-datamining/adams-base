@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TabbedPane.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
@@ -25,10 +25,11 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
+import adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer;
 import adams.gui.tools.SpreadSheetViewerPanel;
 
 import javax.swing.event.ChangeEvent;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -40,7 +41,6 @@ import java.util.List;
  * A specialized tabbed pane with a few methods for easier access.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TabbedPane
   extends DragAndDropTabbedPane {
@@ -61,10 +61,7 @@ public class TabbedPane
   protected int m_NumDecimals;
 
   /** the custom background color for negative values (null if none set). */
-  protected Color m_BackgroundNegative;
-
-  /** the custom background color for positive values (null if none set). */
-  protected Color m_BackgroundPositive;
+  protected CellRenderingCustomizer m_CellRenderingCustomizer;
 
   /**
    * Initializes the tabbed pane.
@@ -95,9 +92,8 @@ public class TabbedPane
   protected void initialize() {
     super.initialize();
 
-    m_NumDecimals        = -1;
-    m_BackgroundNegative = null;
-    m_BackgroundPositive = null;
+    m_NumDecimals             = -1;
+    m_CellRenderingCustomizer = new DefaultCellRenderingCustomizer();
   }
   
   /**
@@ -258,87 +254,45 @@ public class TabbedPane
   }
 
   /**
-   * Sets the background color to use negative values.
+   * Sets the cell rendering customizer at the index.
    *
    * @param index	the tab index
-   * @param color	the color to use
+   * @param cust	the customizer
    */
-  public void setNegativeBackgroundAt(int index, Color color) {
-    getTableAt(index).setNegativeBackground(color);
+  public void setCellRenderingCustomizerAt(int index, CellRenderingCustomizer cust) {
+    getTableAt(index).setCellRenderingCustomizer(cust);
   }
 
   /**
-   * Returns the background color in use for negative values.
+   * Returns the cell rendering customizer at the index.
    *
    * @param index	the tab index
-   * @return		the color to use, null if none set
+   * @return		the customizer
    */
-  public Color getNegativeBackgroundAt(int index) {
-    return getTableAt(index).getNegativeBackground();
+  public CellRenderingCustomizer getCellRenderingCustomizerAt(int index) {
+    return getTableAt(index).getCellRenderingCustomizer();
   }
 
   /**
-   * Sets the background color to use for negative values.
+   * Sets the cell rendering customizer to use.
    *
-   * @param color	the color to use, null to unset
+   * @param cust	the customizer
    */
-  public void setNegativeBackground(Color color) {
+  public void setCellRenderingCustomizer(CellRenderingCustomizer cust) {
     int	i;
 
-    m_BackgroundNegative = color;
+    m_CellRenderingCustomizer = cust;
     for (i = 0; i < getTabCount(); i++)
-      setNegativeBackgroundAt(i, color);
-  }
-  
-  /**
-   * Returns the current background color used for negative values.
-   * 
-   * @return		the color to use, null if not set
-   */
-  public Color getNegativeBackground() {
-    return m_BackgroundNegative;
+      setCellRenderingCustomizerAt(i, cust);
   }
 
   /**
-   * Sets the background color to use positive values.
+   * Returns the current cell rendering customizer.
    *
-   * @param index	the tab index
-   * @param color	the color to use
+   * @return		the customizer
    */
-  public void setPositiveBackgroundAt(int index, Color color) {
-    getTableAt(index).setPositiveBackground(color);
-  }
-
-  /**
-   * Returns the background color in use for positive values.
-   *
-   * @param index	the tab index
-   * @return		the color to use, null if none set
-   */
-  public Color getPositiveBackgroundAt(int index) {
-    return getTableAt(index).getPositiveBackground();
-  }
-
-  /**
-   * Sets the background color to use for positive values.
-   *
-   * @param color	the color to use, null to unset
-   */
-  public void setPositiveBackground(Color color) {
-    int	i;
-
-    m_BackgroundPositive = color;
-    for (i = 0; i < getTabCount(); i++)
-      setPositiveBackgroundAt(i, color);
-  }
-  
-  /**
-   * Returns the current background color used for positive values.
-   * 
-   * @return		the color to use, null if not set
-   */
-  public Color getPositiveBackground() {
-    return m_BackgroundPositive;
+  public CellRenderingCustomizer getCellRenderingCustomizer() {
+    return m_CellRenderingCustomizer;
   }
 
   /**
@@ -548,8 +502,7 @@ public class TabbedPane
     
     result = new SpreadSheetPanel(this);
     result.setNumDecimals(m_NumDecimals);
-    result.setNegativeBackground(m_BackgroundNegative);
-    result.setPositiveBackground(m_BackgroundPositive);
+    result.setCellRenderingCustomizer(m_CellRenderingCustomizer);
     result.setSheet(sheet);
     result.setReadOnly(false);
     addTab(title, result);

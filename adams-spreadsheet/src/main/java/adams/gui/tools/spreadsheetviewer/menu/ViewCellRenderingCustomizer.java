@@ -13,21 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * ViewPositiveBackground.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+/*
+ * ViewCellRenderingCustomizer.java
+ * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Allows the user to change the background of positive values.
+ * Allows the user to change the cell rendering customizer.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class ViewPositiveBackground
+public class ViewCellRenderingCustomizer
   extends AbstractSpreadSheetViewerMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +39,7 @@ public class ViewPositiveBackground
    */
   @Override
   protected String getTitle() {
-    return "Positive background...";
+    return "Rendering...";
   }
 
   /**
@@ -48,7 +47,7 @@ public class ViewPositiveBackground
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.selectBackground(false, m_State.getApplyToAll());
+    m_State.selectRendering(m_State.getApplyToAll());
   }
 
   /**

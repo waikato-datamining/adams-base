@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTableWithButtons.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -23,11 +23,11 @@ package adams.gui.core;
 import adams.core.Utils;
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableModel;
-import java.awt.Color;
 
 /**
  * Graphical component that consists of a SpreadSheetTable with buttons on the
@@ -132,57 +132,21 @@ public class SpreadSheetTableWithButtons
   }
 
   /**
-   * Checks whether a custom background color for negative values has been set.
+   * Sets the renderer.
    *
-   * @return		true if custom color set
+   * @param value	the renderer
    */
-  public boolean hasNegativeBackground() {
-    return ((SpreadSheetTable) m_Component).hasNegativeBackground();
+  public void setCellRenderingCustomizer(CellRenderingCustomizer value) {
+    ((SpreadSheetTable) m_Component).setCellRenderingCustomizer(value);
   }
 
   /**
-   * Sets the custom background color for negative values.
+   * Returns the renderer.
    *
-   * @param value	the color, null to unset it
+   * @return		the renderer
    */
-  public void setNegativeBackground(Color value) {
-    ((SpreadSheetTable) m_Component).setNegativeBackground(value);
-  }
-
-  /**
-   * Returns the custom background color for negative values, if any.
-   *
-   * @return		the color, null if none set
-   */
-  public Color getNegativeBackground() {
-    return ((SpreadSheetTable) m_Component).getNegativeBackground();
-  }
-
-  /**
-   * Checks whether a custom background color for positive values has been set.
-   *
-   * @return		true if custom color set
-   */
-  public boolean hasPositiveBackground() {
-    return ((SpreadSheetTable) m_Component).hasPositiveBackground();
-  }
-
-  /**
-   * Sets the custom background color for positive values.
-   *
-   * @param value	the color, null to unset it
-   */
-  public void setPositiveBackground(Color value) {
-    ((SpreadSheetTable) m_Component).setPositiveBackground(value);
-  }
-
-  /**
-   * Returns the custom background color for positive values, if any.
-   *
-   * @return		the color, null if none set
-   */
-  public Color getPositiveBackground() {
-    return ((SpreadSheetTable) m_Component).getPositiveBackground();
+  public CellRenderingCustomizer getCellRenderingCustomizer() {
+    return ((SpreadSheetTable) m_Component).getCellRenderingCustomizer();
   }
 
   /**

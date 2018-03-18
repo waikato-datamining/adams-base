@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetPanel.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -34,14 +34,15 @@ import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SpreadSheetColumnComboBox;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
+import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JColorChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -50,7 +51,7 @@ import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,7 +61,6 @@ import java.io.File;
  * Displays a spreadsheet in a table.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetPanel
   extends BasePanel 
@@ -91,7 +91,7 @@ public class SpreadSheetPanel
   protected JMenuItem m_MenuItemViewDisplayedDecimals;
 
   /** the "negative background" menu item. */
-  protected JMenuItem m_MenuItemViewNegativeBackground;
+  protected JMenuItem m_MenuItemViewRendering;
 
   /** the "positive background" menu item. */
   protected JMenuItem m_MenuItemViewPositiveBackground;
@@ -251,30 +251,17 @@ public class SpreadSheetPanel
       m_MenuItemViewDisplayedDecimals = menuitem;
 
       // View/Negative background
-      menuitem = new JMenuItem("Negative background...");
+      menuitem = new JMenuItem("Rendering...");
       menu.add(menuitem);
-      menuitem.setMnemonic('n');
+      menuitem.setMnemonic('R');
       menuitem.setIcon(GUIHelper.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	  selectBackground(true);
+	  selectRendering();
 	}
       });
-      m_MenuItemViewNegativeBackground = menuitem;
-
-      // View/Positive background
-      menuitem = new JMenuItem("Positive background...");
-      menu.add(menuitem);
-      menuitem.setMnemonic('p');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  selectBackground(false);
-	}
-      });
-      m_MenuItemViewPositiveBackground = menuitem;
+      m_MenuItemViewRendering = menuitem;
 
       // View/Show formulas
       menuitem = new JCheckBoxMenuItem("Show formulas");
@@ -359,29 +346,29 @@ public class SpreadSheetPanel
   }
 
   /**
-   * Allows the user to select a background color for negative/positive values.
-   *
-   * @param negative	whether to select negative or positive background
+   * Allows the user to select a different cell rendering customizer.
    */
-  protected void selectBackground(boolean negative) {
-    Color	color;
+  protected void selectRendering() {
+    CellRenderingCustomizer 	renderer;
+    GenericObjectEditorDialog	dialog;
 
-    if (negative)
-      color = m_Table.getNegativeBackground();
-    else
-      color = m_Table.getPositiveBackground();
+    renderer = m_Table.getCellRenderingCustomizer();
 
-    if (negative)
-      color = JColorChooser.showDialog(this, "Background for negative values", color);
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
-      color = JColorChooser.showDialog(this, "Background for positive values", color);
-    if (color == null)
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setTitle("Cell rendering customizer");
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(CellRenderingCustomizer.class);
+    dialog.setCurrent(renderer);
+    dialog.setLocationRelativeTo(dialog.getParent());
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;
 
-    if (negative)
-      m_Table.setNegativeBackground(color);
-    else
-      m_Table.setPositiveBackground(color);
+    renderer = (CellRenderingCustomizer) dialog.getCurrent();
+    m_Table.setCellRenderingCustomizer(renderer);
   }
 
   /**
@@ -470,57 +457,21 @@ public class SpreadSheetPanel
   }
 
   /**
-   * Checks whether a custom background color for negative values has been set.
+   * Sets the renderer.
    *
-   * @return		true if custom color set
+   * @param value	the renderer
    */
-  public boolean hasNegativeBackground() {
-    return m_Table.hasNegativeBackground();
+  public void setCellRenderingCustomizer(CellRenderingCustomizer value) {
+    m_Table.setCellRenderingCustomizer(value);
   }
 
   /**
-   * Sets the custom background color for negative values.
+   * Returns the renderer.
    *
-   * @param value	the color, null to unset it
+   * @return		the renderer
    */
-  public void setNegativeBackground(Color value) {
-    m_Table.setNegativeBackground(value);
-  }
-
-  /**
-   * Returns the custom background color for negative values, if any.
-   *
-   * @return		the color, null if none set
-   */
-  public Color getNegativeBackground() {
-    return m_Table.getNegativeBackground();
-  }
-
-  /**
-   * Checks whether a custom background color for positive values has been set.
-   *
-   * @return		true if custom color set
-   */
-  public boolean hasPositiveBackground() {
-    return m_Table.hasPositiveBackground();
-  }
-
-  /**
-   * Sets the custom background color for positive values.
-   *
-   * @param value	the color, null to unset it
-   */
-  public void setPositiveBackground(Color value) {
-    m_Table.setPositiveBackground(value);
-  }
-
-  /**
-   * Returns the custom background color for positive values, if any.
-   *
-   * @return		the color, null if none set
-   */
-  public Color getPositiveBackground() {
-    return m_Table.getPositiveBackground();
+  public CellRenderingCustomizer getCellRenderingCustomizer() {
+    return m_Table.getCellRenderingCustomizer();
   }
 
   /**

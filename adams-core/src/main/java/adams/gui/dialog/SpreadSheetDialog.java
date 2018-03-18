@@ -15,15 +15,15 @@
 
 /*
  * SpreadSheetDialog.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 
-import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Frame;
 
@@ -183,57 +183,21 @@ public class SpreadSheetDialog
   }
 
   /**
-   * Checks whether a custom background color for negative values has been set.
+   * Sets the renderer.
    *
-   * @return		true if custom color set
+   * @param value	the renderer
    */
-  public boolean hasNegativeBackground() {
-    return m_Panel.hasNegativeBackground();
+  public void setCellRenderingCustomizer(CellRenderingCustomizer value) {
+    m_Panel.setCellRenderingCustomizer(value);
   }
 
   /**
-   * Sets the custom background color for negative values.
+   * Returns the renderer.
    *
-   * @param value	the color, null to unset it
+   * @return		the renderer
    */
-  public void setNegativeBackground(Color value) {
-    m_Panel.setNegativeBackground(value);
-  }
-
-  /**
-   * Returns the custom background color for negative values, if any.
-   *
-   * @return		the color, null if none set
-   */
-  public Color getNegativeBackground() {
-    return m_Panel.getNegativeBackground();
-  }
-
-  /**
-   * Checks whether a custom background color for positive values has been set.
-   *
-   * @return		true if custom color set
-   */
-  public boolean hasPositiveBackground() {
-    return m_Panel.hasPositiveBackground();
-  }
-
-  /**
-   * Sets the custom background color for positive values.
-   *
-   * @param value	the color, null to unset it
-   */
-  public void setPositiveBackground(Color value) {
-    m_Panel.setPositiveBackground(value);
-  }
-
-  /**
-   * Returns the custom background color for positive values, if any.
-   *
-   * @return		the color, null if none set
-   */
-  public Color getPositiveBackground() {
-    return m_Panel.getPositiveBackground();
+  public CellRenderingCustomizer getCellRenderingCustomizer() {
+    return m_Panel.getCellRenderingCustomizer();
   }
 
   /**
