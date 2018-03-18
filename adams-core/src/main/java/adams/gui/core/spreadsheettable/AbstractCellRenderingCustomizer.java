@@ -21,6 +21,10 @@
 package adams.gui.core.spreadsheettable;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.data.spreadsheet.Cell;
+import adams.gui.core.SpreadSheetTable;
+
+import java.awt.Color;
 
 /**
  * Ancestor for cell rendering customizers.
@@ -32,4 +36,80 @@ public abstract class AbstractCellRenderingCustomizer
   implements CellRenderingCustomizer {
 
   private static final long serialVersionUID = -4927739958774377498L;
+
+  /**
+   * For customizing the foreground color of a cell.
+   * <br>
+   * Default implementation just returns the default.
+   *
+   * @param table	the table
+   * @param isSelected	whether the cell is selected
+   * @param hasFocus	whether the cell is focused
+   * @param row		the current row
+   * @param column	the current column
+   * @param cell	the actual cell
+   * @param defColor 	the default color
+   * @return		the color
+   */
+  @Override
+  public Color getForegroundColor(SpreadSheetTable table, boolean isSelected, boolean hasFocus, int row, int column, Cell cell, Color defColor) {
+    return defColor;
+  }
+
+  /**
+   * For customizing the background color of a cell.
+   * <br>
+   * Default implementation just returns the default.
+   *
+   * @param table	the table
+   * @param isSelected	whether the cell is selected
+   * @param hasFocus	whether the cell is focused
+   * @param row		the current row
+   * @param column	the current column
+   * @param cell	the actual cell
+   * @param defColor 	the default color
+   * @return		the color
+   */
+  @Override
+  public Color getBackgroundColor(SpreadSheetTable table, boolean isSelected, boolean hasFocus, int row, int column, Cell cell, Color defColor) {
+    return defColor;
+  }
+
+  /**
+   * For customizing the tooltip text.
+   * <br>
+   * Default implementation just returns the default.
+   *
+   * @param table	the table
+   * @param isSelected	whether the cell is selected
+   * @param hasFocus	whether the cell is focused
+   * @param row		the current row
+   * @param column	the current column
+   * @param cell	the actual cell
+   * @param defTip 	the default tip text
+   * @return		the tip text
+   */
+  @Override
+  public String getToolTipText(SpreadSheetTable table, boolean isSelected, boolean hasFocus, int row, int column, Cell cell, String defTip) {
+    return defTip;
+  }
+
+  /**
+   * For customizing the horizontal alignment of a cell.
+   * <br>
+   * Default implementation just returns the default.
+   *
+   * @param table	the table
+   * @param isSelected	whether the cell is selected
+   * @param hasFocus	whether the cell is focused
+   * @param row		the current row
+   * @param column	the current column
+   * @param cell	the actual cell
+   * @param defAlign 	the default alignment
+   * @return		the alignment
+   */
+  @Override
+  public int getHorizontalAlignment(SpreadSheetTable table, boolean isSelected, boolean hasFocus, int row, int column, Cell cell, int defAlign) {
+    return defAlign;
+  }
 }

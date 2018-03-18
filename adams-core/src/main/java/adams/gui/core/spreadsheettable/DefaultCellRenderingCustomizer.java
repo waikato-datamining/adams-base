@@ -47,23 +47,6 @@ public class DefaultCellRenderingCustomizer
   }
 
   /**
-   * For customizing the foreground color of a cell.
-   *
-   * @param table	the table
-   * @param isSelected	whether the cell is selected
-   * @param hasFocus	whether the cell is focused
-   * @param row		the current row
-   * @param column	the current column
-   * @param cell	the actual cell
-   * @param defColor 	the default color
-   * @return		the color
-   */
-  @Override
-  public Color getForegroundColor(SpreadSheetTable table, boolean isSelected, boolean hasFocus, int row, int column, Cell cell, Color defColor) {
-    return defColor;
-  }
-
-  /**
    * For customizing the background color of a cell.
    *
    * @param table	the table
