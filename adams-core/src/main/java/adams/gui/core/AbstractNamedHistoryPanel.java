@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractHistoryPanel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -23,6 +23,7 @@ import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.DefaultListModel;
@@ -53,7 +54,6 @@ import java.util.Set;
  * of experiment runs.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of objects that the history stores
  */
 public abstract class AbstractNamedHistoryPanel<T>
@@ -524,6 +524,17 @@ public abstract class AbstractNamedHistoryPanel<T>
       result.addSeparator();
     }
 
+    // copy entry name
+    menuitem = new JMenuItem();
+    if (indices.length > 1)
+      menuitem.setText("Copy " + indices.length + " entry names");
+    else
+      menuitem.setText("Copy entry name");
+    menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
+    menuitem.setEnabled(indices.length >= 1);
+    menuitem.addActionListener((ActionEvent ae) -> copyEntryNames(indices));
+    result.add(menuitem);
+
     // remove
     menuitem = new JMenuItem();
     if (indices.length > 1)
@@ -913,6 +924,23 @@ public abstract class AbstractNamedHistoryPanel<T>
    */
   public void setSelectedIndex(int value) {
     m_List.setSelectedIndex(value);
+  }
+
+  /**
+   * Copies the entry names of the specified indices to the clipboard.
+   *
+   * @param indices	the entries to remove
+   */
+  public void copyEntryNames(int[] indices) {
+    StringBuilder	entries;
+
+    entries = new StringBuilder();
+    for (int i = 0; i < indices.length; i++) {
+      if (i > 0)
+        entries.append("\n");
+      entries.append(getEntryName(indices[i]));
+    }
+    ClipboardHelper.copyToClipboard(entries.toString());
   }
 
   /**
