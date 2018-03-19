@@ -1,0 +1,9 @@
+# Project: adams
+# Modules: adams-core,adams-python
+# Date: 2018-03-19 16:25:49
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Executes a Python script and displays the output." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.PythonEnvironment
+ adams.flow.source.PythonExec -script ${FLOWS}/data/hello_world.py
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

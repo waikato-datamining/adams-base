@@ -1,0 +1,9 @@
+# Project: adams
+# Modules: adams-core,adams-python
+# Date: 2018-03-19 16:26:34
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Displays the output of \\\"pip freeze\\\"." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.PythonEnvironment
+ adams.flow.source.PipExec -options freeze
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter
