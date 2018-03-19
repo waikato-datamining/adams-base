@@ -1,0 +1,10 @@
+# Project: adams
+# Modules: adams-core,adams-ml,adams-spreadsheet,adams-visualstats
+# Date: 2018-03-19 13:34:16
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Displays the generated confusion matrix spreadsheet with a custom renderer." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/nominal_predictions.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.transformer.ConfusionMatrix -actual-column Actual -predicted-column Predicted
+ adams.flow.sink.SpreadSheetDisplay -cell-rendering-customizer adams.gui.core.spreadsheettable.ConfusionMatrixCellRenderingCustomizer -writer adams.data.io.output.NullWriter
