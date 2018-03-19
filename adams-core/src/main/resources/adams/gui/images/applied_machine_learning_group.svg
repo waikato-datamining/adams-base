@@ -50,48 +50,44 @@
      transform="translate(0,-308.26772)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:'Bitstream Vera Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="488.28571"
-       y="488.42044"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:112.5px;line-height:104.99999523%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans, Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="468.28571"
+       y="534.16388"
        id="text3336"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="105%"><tspan
          sodipodi:role="line"
          id="tspan3338"
-         x="488.28571"
-         y="488.42044"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:120px;line-height:125%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start">Applied</tspan><tspan
+         x="468.28571"
+         y="534.16388"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:112.5px;line-height:104.99999523%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start">Applied</tspan><tspan
          sodipodi:role="line"
-         x="488.28571"
-         y="638.42041"
+         x="468.28571"
+         y="652.28888"
          id="tspan3340"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:120px;line-height:125%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start">Machine</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:112.5px;line-height:104.99999523%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start">Machine</tspan><tspan
          sodipodi:role="line"
-         x="488.28571"
-         y="788.42041"
+         x="468.28571"
+         y="770.41388"
          id="tspan3342"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:120px;line-height:125%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start">Learning</tspan><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:112.5px;line-height:104.99999523%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start">Learning</tspan><tspan
          sodipodi:role="line"
-         x="488.28571"
-         y="938.42041"
+         x="468.28571"
+         y="888.53888"
          id="tspan3344"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:120px;line-height:125%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start">Group</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:112.5px;line-height:104.99999523%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start">Group</tspan></text>
     <image
-       y="463.26138"
-       x="25.750008"
-       id="image3628"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEoAAABJCAYAAACaRLDfAAAABmJLR0QA/wD/AP+gvaeTAAAACXBI
-WXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4gMTFS0onSYBBgAAAB10RVh0Q29tbWVudABDcmVhdGVk
-IHdpdGggVGhlIEdJTVDvZCVuAAABgElEQVR42u2aMU4DMRBFv5cIESFRpEIIiSqn4DacgBtxH0p6
-REFPSwVDkS2Qsygb7+zaE96TXGQSbSZ/x99jZyUAAAAAKCHV+2qzwpSr5NzFu7fWD4RqEoRCKF9W
-hSZBRQFCIVSrHuXVtBoVxdRj6tXiO8qNHSGUHbCkTtK5pM8S65rxh5daYCoRamiHb2MySrvwX2LZ
-RrOdXNitpHfvhalSKaePGS++PjGPqngU5p+tTZzotcSYkneiPYjcHoTp1qkohEIoPMqxhzAqiqmH
-UAj1nxhhlnvHLFngJUl3kq6OvPyc2yNzl8Shoh4lPVFRY0ps+Y3r8htuPAqh2uvMjYoChEKoRtqD
-S0kbB297i9YeBHwqmD4Kj0KoJrGLU/Oo7PWXpFUWfE7StaQbSWdHpO7/B6jqCvV7vA4E7yU99O/l
-nz+0UBSNJqdINrYDwa7vRLbVhUoNqueQH88ehD49WLLCaA/ooxAKj4p0mrGYt1FRCIVQCIWZx10U
-AAAAAGAiPy0gie6bdcoiAAAAAElFTkSuQmCC
+       y="464.14316"
+       x="-0.428545"
+       id="image3355"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEoAAABJCAYAAACaRLDfAAAABHNCSVQICAgIfAhkiAAAAQxJREFU
+eJzt2jsOwkAMANEEUSBx/+uylEhLwcRsZDuaV/PTYEwI2TZJkiRF7HlPPUbsfnvKa75lPGlHhoIM
+BRkKugfuE1zCvTlRkKEgQ0GRHTWLHgC22nVOFGQoaMVH7x+vg7dPe2OzQ7WZ6B+LuNcv/I/1r7vN
+O5rNUJChIENB2d96s7JH604UZCjIUFC1HTUrc2bCiYIMBRkKMhQUWZbzogwu3F5nJpwoyFCQoSBD
+QSuOzMv+4l/JiYIMBRkKOrqjntu6C2Rb7TavCob86EGGgi4YajzOeNTkawS+lD0zccGJOoehIENB
+hoKq/69X5ujdiYIMBRkKqrajyp6ZcKIgQ0GGggwlSZIkVfAGA3wYkMZxI4kAAAAASUVORK5CYII=
 "
        preserveAspectRatio="none"
-       height="434.10715"
-       width="440.0538" />
+       height="432.34363"
+       width="438.26614" />
   </g>
 </svg>
