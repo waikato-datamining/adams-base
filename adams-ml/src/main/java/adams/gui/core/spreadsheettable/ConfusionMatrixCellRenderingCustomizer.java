@@ -146,6 +146,7 @@ public class ConfusionMatrixCellRenderingCustomizer
       return table.getTableHeader().getBackground();
     column--;
 
+    row = table.getActualRow(row);
     if (column == row) {
       if (isSelected)
 	result = m_Highlight.darker();
