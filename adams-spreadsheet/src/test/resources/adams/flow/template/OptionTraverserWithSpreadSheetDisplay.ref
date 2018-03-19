@@ -18,6 +18,8 @@ adams.flow.control.Trigger
 		adams.flow.sink.DisplayPanelManager
 			-provider
 				adams.flow.sink.SpreadSheetDisplay
+					-cell-rendering-customizer
+						adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer
 					-writer
 						adams.data.io.output.NullWriter
 
@@ -42,6 +44,8 @@ adams.flow.control.Once
 										adams.data.spreadsheet.DefaultSpreadSheet
 			-tee
 				adams.flow.sink.SpreadSheetDisplay
+					-cell-rendering-customizer
+						adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer
 					-writer
 						adams.data.io.output.NullWriter
 
