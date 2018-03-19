@@ -26,6 +26,7 @@ import adams.gui.core.SpreadSheetTable;
 
 import javax.swing.SwingConstants;
 import java.awt.Color;
+import java.awt.Font;
 
 /**
  * Ancestor for cell rendering customizers.
@@ -37,6 +38,25 @@ public abstract class AbstractCellRenderingCustomizer
   implements CellRenderingCustomizer {
 
   private static final long serialVersionUID = -4927739958774377498L;
+
+  /**
+   * For customizing the font of a cell.
+   * <br>
+   * Default implementation just returns the default.
+   *
+   * @param table	the table
+   * @param isSelected	whether the cell is selected
+   * @param hasFocus	whether the cell is focused
+   * @param row		the current row
+   * @param column	the current column
+   * @param cell	the actual cell
+   * @param defFont 	the default font
+   * @return		the font
+   */
+  public Font getFont(SpreadSheetTable table, boolean isSelected, boolean hasFocus, int row, int column, Cell cell, Font defFont) {
+    return defFont;
+  }
+
 
   /**
    * For customizing the foreground color of a cell.

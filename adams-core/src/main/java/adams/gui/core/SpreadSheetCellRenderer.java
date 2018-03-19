@@ -69,6 +69,7 @@ public class SpreadSheetCellRenderer
     ((JLabel) result).setToolTipText(rend.getToolTipText(spTable, isSelected, hasFocus, row, column, cell, null));
     result.setForeground(rend.getForegroundColor(spTable, isSelected, hasFocus, row, column, cell, (isSelected ? table.getSelectionForeground() : table.getForeground())));
     result.setBackground(rend.getBackgroundColor(spTable, isSelected, hasFocus, row, column, cell, (isSelected ? table.getSelectionBackground() : table.getBackground())));
+    result.setFont(rend.getFont(spTable, isSelected, hasFocus, row, column, cell, result.getFont()));
 
     return result;
   }

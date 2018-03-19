@@ -25,6 +25,7 @@ import adams.data.spreadsheet.Cell;
 import adams.gui.core.SpreadSheetTable;
 
 import java.awt.Color;
+import java.awt.Font;
 
 /**
  * Interface for classes that customize the rendering of a cell.
@@ -33,6 +34,20 @@ import java.awt.Color;
  */
 public interface CellRenderingCustomizer
   extends OptionHandler {
+
+  /**
+   * For customizing the font of a cell.
+   *
+   * @param table	the table
+   * @param isSelected	whether the cell is selected
+   * @param hasFocus	whether the cell is focused
+   * @param row		the current row
+   * @param column	the current column
+   * @param cell	the actual cell
+   * @param defFont 	the default font
+   * @return		the font
+   */
+  public Font getFont(SpreadSheetTable table, boolean isSelected, boolean hasFocus, int row, int column, Cell cell, Font defFont);
 
   /**
    * For customizing the foreground color of a cell.
