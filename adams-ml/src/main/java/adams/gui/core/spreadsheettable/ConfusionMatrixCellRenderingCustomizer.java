@@ -23,6 +23,7 @@ package adams.gui.core.spreadsheettable;
 import adams.data.spreadsheet.Cell;
 import adams.gui.core.SpreadSheetTable;
 
+import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -151,6 +152,34 @@ public class ConfusionMatrixCellRenderingCustomizer
       else
 	result = m_Highlight;
     }
+
+    return result;
+  }
+
+  /**
+   * For customizing the horizontal alignment of a cell.
+   *
+   * @param table	the table
+   * @param isSelected	whether the cell is selected
+   * @param hasFocus	whether the cell is focused
+   * @param row		the current row
+   * @param column	the current column
+   * @param cell	the actual cell
+   * @param defAlign 	the default alignment
+   * @return		the alignment
+   */
+  @Override
+  public int getHorizontalAlignment(SpreadSheetTable table, boolean isSelected, boolean hasFocus, int row, int column, Cell cell, int defAlign) {
+    int		result;
+
+    result = super.getHorizontalAlignment(table, isSelected, hasFocus, row, column, cell, defAlign);
+    if ((column == 0) && table.getShowRowColumn())
+      return result;
+
+    if (table.getShowRowColumn())
+      column--;
+    if (column == 0)
+      return SwingConstants.LEFT;
 
     return result;
   }
