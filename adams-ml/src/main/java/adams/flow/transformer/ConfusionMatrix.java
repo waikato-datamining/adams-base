@@ -104,6 +104,11 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: p: 
  * </pre>
  * 
+ * <pre>-matrix-values &lt;COUNTS|PERCENTAGES|PERCENTAGES_PER_ROW&gt; (property: matrixValues)
+ * &nbsp;&nbsp;&nbsp;The type of values to generate.
+ * &nbsp;&nbsp;&nbsp;default: COUNTS
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -113,6 +118,15 @@ public class ConfusionMatrix
   extends AbstractSpreadSheetTransformer {
 
   private static final long serialVersionUID = 6499246835313298302L;
+
+  /**
+   * Defines what values to show.
+   */
+  public enum MatrixValues {
+    COUNTS,
+    PERCENTAGES,
+    PERCENTAGES_PER_ROW,
+  }
 
   /** the column with the actual labels. */
   protected SpreadSheetColumnIndex m_ActualColumn;
@@ -125,7 +139,10 @@ public class ConfusionMatrix
   
   /** the optional prefix for the predicted labels. */
   protected String m_PredictedPrefix;
-  
+
+  /** what values to generate. */
+  protected MatrixValues m_MatrixValues;
+
   /**
    * Returns a string describing the object.
    *
@@ -160,6 +177,10 @@ public class ConfusionMatrix
     m_OptionManager.add(
       "predicted-prefix", "predictedPrefix",
       "p: ");
+
+    m_OptionManager.add(
+      "matrix-values", "matrixValues",
+      MatrixValues.COUNTS);
   }
 
   /**
@@ -173,6 +194,7 @@ public class ConfusionMatrix
 
     result  = QuickInfoHelper.toString(this, "actualColumn", m_ActualColumn, "actual: ");
     result += QuickInfoHelper.toString(this, "predictedColumn", m_PredictedColumn, ", predicted: ");
+    result += QuickInfoHelper.toString(this, "matrixValues", m_MatrixValues, ", values: ");
 
     return result;
   }
@@ -294,6 +316,35 @@ public class ConfusionMatrix
   }
 
   /**
+   * Sets the type of values to generate.
+   *
+   * @param value	the type of values
+   */
+  public void setMatrixValues(MatrixValues value) {
+    m_MatrixValues = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of values to generate.
+   *
+   * @return		the type of values
+   */
+  public MatrixValues getMatrixValues() {
+    return m_MatrixValues;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String matrixValuesTipText() {
+    return "The type of values to generate.";
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -316,6 +367,7 @@ public class ConfusionMatrix
     int			predIndex;
     int			i;
     int			n;
+    int			sum;
 
     result = null;
     sheet  = (SpreadSheet) m_InputToken.getPayload();
@@ -371,6 +423,42 @@ public class ConfusionMatrix
 	actIndex  = actIndices.get(actLabel);
 	predIndex = predIndices.get(predLabel);
 	matrix.getCell(actIndex, predIndex).setContent(matrix.getCell(actIndex, predIndex).toLong() + 1);
+      }
+
+      // post-process matrix
+      switch (m_MatrixValues) {
+	case COUNTS:
+	  // do nothing
+	  break;
+
+	case PERCENTAGES:
+	  sum = 0;
+	  for (i = 0; i < matrix.getRowCount(); i++) {
+	    for (n = 1; n < matrix.getColumnCount(); n++) {
+	      sum += matrix.getCell(i, n).toLong();
+	    }
+	  }
+	  for (i = 0; i < matrix.getRowCount(); i++) {
+	    for (n = 1; n < matrix.getColumnCount(); n++) {
+	      matrix.getCell(i, n).setContent(matrix.getCell(i, n).toDouble() / sum);
+	    }
+	  }
+	  break;
+
+	case PERCENTAGES_PER_ROW:
+	  for (i = 0; i < matrix.getRowCount(); i++) {
+	    sum = 0;
+	    for (n = 1; n < matrix.getColumnCount(); n++) {
+	      sum += matrix.getCell(i, n).toLong();
+	    }
+	    for (n = 1; n < matrix.getColumnCount(); n++) {
+	      matrix.getCell(i, n).setContent(matrix.getCell(i, n).toDouble() / sum);
+	    }
+	  }
+	  break;
+
+	default:
+	  throw new IllegalStateException("Unhandled matrix values: " + m_MatrixValues);
       }
 
       m_OutputToken = new Token(matrix);
