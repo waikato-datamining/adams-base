@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiColorGenerator.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core;
 
@@ -28,13 +28,9 @@ import java.awt.Color;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-num-colors &lt;int&gt; (property: numColors)
@@ -48,10 +44,16 @@ import java.awt.Color;
  * &nbsp;&nbsp;&nbsp;default: #0000b2, #00b200, #b20000, #ffff00
  * </pre>
  *
+ * <pre>-alpha &lt;int&gt; (property: alpha)
+ * &nbsp;&nbsp;&nbsp;The alpha value to use (0=transparent, 255=opaque); ignored if 255.
+ * &nbsp;&nbsp;&nbsp;default: 255
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * &nbsp;&nbsp;&nbsp;maximum: 255
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MultiColorGenerator
   extends AbstractColorGradientGenerator {
@@ -64,6 +66,9 @@ public class MultiColorGenerator
 
   /** the colors to create the gradient with. */
   protected Color[] m_Colors;
+
+  /** the alpha value to use (ignored if 255). */
+  protected int m_Alpha;
 
   /**
    * Returns a string describing the object.
@@ -81,17 +86,21 @@ public class MultiColorGenerator
     super.defineOptions();
 
     m_OptionManager.add(
-	    "num-colors", "numColors",
-	    255, 1, null);
+      "num-colors", "numColors",
+      255, 1, null);
 
     m_OptionManager.add(
-	    "color", "colors",
-	    new Color[]{
-		Color.BLUE.darker(),
-		Color.GREEN.darker(),
-		Color.RED.darker(),
-		Color.YELLOW
-	    });
+      "color", "colors",
+      new Color[]{
+	Color.BLUE.darker(),
+	Color.GREEN.darker(),
+	Color.RED.darker(),
+	Color.YELLOW
+      });
+
+    m_OptionManager.add(
+      "alpha", "alpha",
+      255, 0, 255);
   }
 
   /**
@@ -100,8 +109,10 @@ public class MultiColorGenerator
    * @param value	the number of colors
    */
   public void setNumColors(int value) {
-    m_NumColors = value;
-    reset();
+    if (getOptionManager().isValid("numColors", value)) {
+      m_NumColors = value;
+      reset();
+    }
   }
 
   /**
@@ -150,6 +161,37 @@ public class MultiColorGenerator
    */
   public String colorsTipText() {
     return "The colors to use for the gradient.";
+  }
+
+  /**
+   * Sets the alpha value to use (0=transparent, 255=opaque); ignored if 255.
+   *
+   * @param value	the alpha value
+   */
+  public void setAlpha(int value) {
+    if (getOptionManager().isValid("alpha", value)) {
+      m_Alpha = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the alpha value to use (0=transparent, 255=opaque); ignored if 255.
+   *
+   * @return		the alpha value
+   */
+  public int getAlpha() {
+    return m_Alpha;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alphaTipText() {
+    return "The alpha value to use (0=transparent, 255=opaque); ignored if 255.";
   }
 
   /**
@@ -212,7 +254,10 @@ public class MultiColorGenerator
 	greenNew = (int) (green1 + ((green2 < green1) ? -n : n) * step * Math.abs(green2 - green1));
 	blueNew  = (int) (blue1  + ((blue2  < blue1)  ? -n : n) * step * Math.abs(blue2  - blue1));
 
-	result[count] = new Color(redNew, greenNew, blueNew);
+	if (m_Alpha == 255)
+	  result[count] = new Color(redNew, greenNew, blueNew);
+	else
+	  result[count] = new Color(redNew, greenNew, blueNew, m_Alpha);
 
 	next =    ((red1 < red2) && (redNew >= red2))
 	       || ((red1 > red2) && (redNew <= red2))
