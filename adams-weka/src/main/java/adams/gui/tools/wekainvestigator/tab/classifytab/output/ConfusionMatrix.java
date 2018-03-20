@@ -232,7 +232,6 @@ public class ConfusionMatrix
     }
     sheet = matrix.output().getPayload(SpreadSheet.class);
     table = new SpreadSheetTable(sheet);
-    table.setUseSimpleHeader(true);
     table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_CellRenderingCustomizer));
 
     return new TableContentPanel(table, true, true);
