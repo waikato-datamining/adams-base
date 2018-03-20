@@ -21,11 +21,16 @@
 package adams.gui.core.spreadsheettable;
 
 import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.visualization.core.AbstractColorGradientGenerator;
+import adams.gui.visualization.core.BiColorGenerator;
 
 import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Uses the specified color to highlight the cells on the diagonal.
@@ -40,6 +45,15 @@ public class ConfusionMatrixCellRenderingCustomizer
   /** the color to use for highlighting. */
   protected Color m_Highlight;
 
+  /** whether to color background based on value. */
+  protected boolean m_ValueBasedBackground;
+
+  /** the color provider to use for the background. */
+  protected AbstractColorGradientGenerator m_BackgroundColorGenerator;
+
+  /** the color values (starting at 0). */
+  protected transient Map<Integer,Color> m_Colors;
+
   /**
    * Returns a string describing the object.
    *
@@ -47,7 +61,8 @@ public class ConfusionMatrixCellRenderingCustomizer
    */
   @Override
   public String globalInfo() {
-    return "Uses the specified color to highlight the cells on the diagonal.";
+    return "Uses the specified color to highlight the cells on the diagonal.\n"
+      + "It also possible to color in the backgrounds of the non-diagonal cells based on their value.";
   }
 
   /**
@@ -59,7 +74,25 @@ public class ConfusionMatrixCellRenderingCustomizer
 
     m_OptionManager.add(
       "highlight", "highlight",
-      Color.LIGHT_GRAY);
+      new Color(192, 192, 192, 64));
+
+    m_OptionManager.add(
+      "value-based-background", "valueBasedBackground",
+      false);
+
+    m_OptionManager.add(
+      "background-color-generator", "backgroundColorGenerator",
+      new BiColorGenerator());
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_Colors = null;
   }
 
   /**
@@ -92,6 +125,66 @@ public class ConfusionMatrixCellRenderingCustomizer
   }
 
   /**
+   * Sets whether to color in backgrounds based on their values.
+   *
+   * @param value	true if to color in background
+   */
+  public void setValueBasedBackground(boolean value) {
+    m_ValueBasedBackground = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to color in backgrounds based on their values.
+   *
+   * @return		true if to color in background
+   */
+  public boolean getValueBasedBackground() {
+    return m_ValueBasedBackground;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String valueBasedBackgroundTipText() {
+    return "If enabled, the background of the cells gets colored in based on their value.";
+  }
+
+  /**
+   * Sets the color generator for obtaining the colors used for coloring in
+   * the background.
+   *
+   * @param value	the generator
+   */
+  public void setBackgroundColorGenerator(AbstractColorGradientGenerator value) {
+    m_BackgroundColorGenerator = value;
+    reset();
+  }
+
+  /**
+   * Returns the color generator for obtaining the colors used for coloring
+   * in the background.
+   *
+   * @return		the generator
+   */
+  public AbstractColorGradientGenerator getBackgroundColorGenerator() {
+    return m_BackgroundColorGenerator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String backgroundColorGeneratorTipText() {
+    return "The color generator to use for obtaining the colors for coloring in the backgrounds.";
+  }
+
+  /**
    * For customizing the font of a cell.
    *
    * @param table	the table
@@ -119,6 +212,48 @@ public class ConfusionMatrixCellRenderingCustomizer
   }
 
   /**
+   * Initializes the color lookup table.
+   */
+  protected synchronized void initColors() {
+    Color[]	colors;
+    int		i;
+
+    if (m_Colors != null)
+      return;
+
+    m_Colors = new HashMap<>();
+    colors = m_BackgroundColorGenerator.generate();
+    for (i = 0; i < colors.length; i++)
+      m_Colors.put(i, colors[i]);
+  }
+
+  /**
+   * Determines min/max values in the table.
+   *
+   * @param table	the table to analyze
+   * @return		the min and max
+   */
+  protected double[] getMinMax(SpreadSheetTable table) {
+    double[]	result;
+    SpreadSheet	sheet;
+    int		r;
+    int		c;
+    double	value;
+
+    result  = new double[]{Double.MAX_VALUE, Double.MIN_VALUE};
+    sheet   = table.toSpreadSheet();
+    for (r = 0; r < sheet.getRowCount(); r++) {
+      for (c = 1; c < sheet.getColumnCount(); c++) {
+        value     = sheet.getCell(r, c).toDouble();
+        result[0] = Math.min(result[0], value);
+        result[1] = Math.max(result[1], value);
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * For customizing the background color of a cell.
    *
    * @param table	the table
@@ -133,25 +268,40 @@ public class ConfusionMatrixCellRenderingCustomizer
   @Override
   public Color getBackgroundColor(SpreadSheetTable table, boolean isSelected, boolean hasFocus, int row, int column, Cell cell, Color defColor) {
     Color	result;
+    int		actCol;
+    int		actRow;
+    double[]	minMax;
+    double	value;
+    int		index;
+
+    initColors();
 
     result = super.getBackgroundColor(table, isSelected, hasFocus, row, column, cell, defColor);
-    if ((column == 0) && table.getShowRowColumn())
+    actCol = column;
+    actRow = row;
+    if ((actCol == 0) && table.getShowRowColumn())
       return result;
 
     if (table.getShowRowColumn())
-      column--;
+      actCol--;
 
     // first column is the actual label
-    if (column == 0)
+    if (actCol == 0)
       return table.getTableHeader().getBackground();
-    column--;
+    actCol--;
 
-    row = table.getActualRow(row);
-    if (column == row) {
+    actRow = table.getActualRow(actRow);
+    if (actCol == actRow) {
       if (isSelected)
 	result = m_Highlight.darker();
       else
 	result = m_Highlight;
+    }
+    else if (m_ValueBasedBackground) {
+      minMax = getMinMax(table);
+      value  = table.getCellAt(row, column).toDouble();
+      index  = (int) ((value - minMax[0]) / (minMax[1] - minMax[0]) * (m_Colors.size() - 1));
+      result = m_Colors.get(index);
     }
 
     return result;
