@@ -24,6 +24,7 @@ import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
 
@@ -58,14 +59,18 @@ public class SpreadSheetCellRenderer
     Cell			cell;
     SpreadSheetTable		spTable;
     CellRenderingCustomizer	rend;
+    int				align;
 
     result = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     
-    spTable    = (SpreadSheetTable) table;
-    rend       = spTable.getCellRenderingCustomizer();
-    cell       = spTable.getCellAt(row, column);
+    spTable = (SpreadSheetTable) table;
+    rend    = spTable.getCellRenderingCustomizer();
+    cell    = spTable.getCellAt(row, column);
+    align   = SwingConstants.LEFT;
+    if ((cell != null) && cell.isNumeric())
+      align = SwingConstants.RIGHT;
 
-    ((JLabel) result).setHorizontalAlignment(rend.getHorizontalAlignment(spTable, isSelected, hasFocus, row, column, cell, ((JLabel) result).getHorizontalAlignment()));
+    ((JLabel) result).setHorizontalAlignment(rend.getHorizontalAlignment(spTable, isSelected, hasFocus, row, column, cell, align));
     ((JLabel) result).setToolTipText(rend.getToolTipText(spTable, isSelected, hasFocus, row, column, cell, null));
     result.setForeground(rend.getForegroundColor(spTable, isSelected, hasFocus, row, column, cell, (isSelected ? table.getSelectionForeground() : table.getForeground())));
     result.setBackground(rend.getBackgroundColor(spTable, isSelected, hasFocus, row, column, cell, (isSelected ? table.getSelectionBackground() : table.getBackground())));
