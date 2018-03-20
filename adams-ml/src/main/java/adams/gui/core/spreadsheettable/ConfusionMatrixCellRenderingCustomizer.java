@@ -74,7 +74,7 @@ public class ConfusionMatrixCellRenderingCustomizer
 
     m_OptionManager.add(
       "highlight", "highlight",
-      new Color(192, 192, 192, 64));
+      new Color(192, 192, 192, 128));
 
     m_OptionManager.add(
       "value-based-background", "valueBasedBackground",
