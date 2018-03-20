@@ -138,13 +138,13 @@ public class ConfusionMatrix
 
   /** the column with the actual labels. */
   protected SpreadSheetColumnIndex m_ActualColumn;
-  
+
   /** the optional prefix for the actual labels. */
   protected String m_ActualPrefix;
 
   /** the column with the predicted labels. */
   protected SpreadSheetColumnIndex m_PredictedColumn;
-  
+
   /** the optional prefix for the predicted labels. */
   protected String m_PredictedPrefix;
 
@@ -492,9 +492,11 @@ public class ConfusionMatrix
 	      sum += matrix.getCell(i, n).toLong();
 	    }
 	  }
-	  for (i = 0; i < matrix.getRowCount(); i++) {
-	    for (n = 1; n < matrix.getColumnCount(); n++) {
-	      matrix.getCell(i, n).setContent(matrix.getCell(i, n).toDouble() / sum);
+	  if (sum > 0) {
+	    for (i = 0; i < matrix.getRowCount(); i++) {
+	      for (n = 1; n < matrix.getColumnCount(); n++) {
+		matrix.getCell(i, n).setContent(matrix.getCell(i, n).toDouble() / sum);
+	      }
 	    }
 	  }
 	  break;
@@ -505,8 +507,10 @@ public class ConfusionMatrix
 	    for (n = 1; n < matrix.getColumnCount(); n++) {
 	      sum += matrix.getCell(i, n).toLong();
 	    }
-	    for (n = 1; n < matrix.getColumnCount(); n++) {
-	      matrix.getCell(i, n).setContent(matrix.getCell(i, n).toDouble() / sum);
+	    if (sum > 0) {
+	      for (n = 1; n < matrix.getColumnCount(); n++) {
+		matrix.getCell(i, n).setContent(matrix.getCell(i, n).toDouble() / sum);
+	      }
 	    }
 	  }
 	  break;
