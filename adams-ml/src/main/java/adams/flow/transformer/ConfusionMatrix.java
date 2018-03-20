@@ -34,7 +34,8 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
- * Generates a confusion matrix from the specified actual and predicted columns containing class labels.
+ * Generates a confusion matrix from the specified actual and predicted columns containing class labels.<br>
+ * Can take a probability column (of prediction) into account for generating weighted counts.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -52,58 +53,65 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ConfusionMatrix
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-actual-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: actualColumn)
  * &nbsp;&nbsp;&nbsp;The column with the actual labels.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-actual-prefix &lt;java.lang.String&gt; (property: actualPrefix)
  * &nbsp;&nbsp;&nbsp;The prefix for the actual labels.
- * &nbsp;&nbsp;&nbsp;default: a: 
+ * &nbsp;&nbsp;&nbsp;default: a:
  * </pre>
- * 
+ *
  * <pre>-predicted-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: predictedColumn)
  * &nbsp;&nbsp;&nbsp;The column with the predicted labels.
  * &nbsp;&nbsp;&nbsp;default: 2
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-predicted-prefix &lt;java.lang.String&gt; (property: predictedPrefix)
  * &nbsp;&nbsp;&nbsp;The prefix for the predicted labels.
- * &nbsp;&nbsp;&nbsp;default: p: 
+ * &nbsp;&nbsp;&nbsp;default: p:
  * </pre>
- * 
+ *
+ * <pre>-probability-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: probabilityColumn)
+ * &nbsp;&nbsp;&nbsp;The (optional) column with the probabilities; if not available probability
+ * &nbsp;&nbsp;&nbsp;of 1 is assumed.
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ *
  * <pre>-matrix-values &lt;COUNTS|PERCENTAGES|PERCENTAGES_PER_ROW&gt; (property: matrixValues)
  * &nbsp;&nbsp;&nbsp;The type of values to generate.
  * &nbsp;&nbsp;&nbsp;default: COUNTS
@@ -140,6 +148,9 @@ public class ConfusionMatrix
   /** the optional prefix for the predicted labels. */
   protected String m_PredictedPrefix;
 
+  /** the column with the probabilities. */
+  protected SpreadSheetColumnIndex m_ProbabilityColumn;
+
   /** what values to generate. */
   protected MatrixValues m_MatrixValues;
 
@@ -152,7 +163,9 @@ public class ConfusionMatrix
   public String globalInfo() {
     return
       "Generates a confusion matrix from the specified actual and predicted "
-	+ "columns containing class labels.";
+	+ "columns containing class labels.\n"
+	+ "Can take a probability column (of prediction) into account for "
+	+ "generating weighted counts.";
   }
 
   /**
@@ -179,6 +192,10 @@ public class ConfusionMatrix
       "p: ");
 
     m_OptionManager.add(
+      "probability-column", "probabilityColumn",
+      new SpreadSheetColumnIndex(""));
+
+    m_OptionManager.add(
       "matrix-values", "matrixValues",
       MatrixValues.COUNTS);
   }
@@ -194,6 +211,7 @@ public class ConfusionMatrix
 
     result  = QuickInfoHelper.toString(this, "actualColumn", m_ActualColumn, "actual: ");
     result += QuickInfoHelper.toString(this, "predictedColumn", m_PredictedColumn, ", predicted: ");
+    result += QuickInfoHelper.toString(this, "probabilityColumn", (m_ProbabilityColumn.isEmpty() ? "-none-" : m_ProbabilityColumn.getIndex()), ", probability: ");
     result += QuickInfoHelper.toString(this, "matrixValues", m_MatrixValues, ", values: ");
 
     return result;
@@ -316,6 +334,35 @@ public class ConfusionMatrix
   }
 
   /**
+   * Sets the column with the probabilities (optional).
+   *
+   * @param value	the index
+   */
+  public void setProbabilityColumn(SpreadSheetColumnIndex value) {
+    m_ProbabilityColumn = value;
+    reset();
+  }
+
+  /**
+   * Returns the column with the probabilities (optional).
+   *
+   * @return		the index
+   */
+  public SpreadSheetColumnIndex getProbabilityColumn() {
+    return m_ProbabilityColumn;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String probabilityColumnTipText() {
+    return "The (optional) column with the probabilities; if not available probability of 1 is assumed.";
+  }
+
+  /**
    * Sets the type of values to generate.
    *
    * @param value	the type of values
@@ -355,6 +402,7 @@ public class ConfusionMatrix
     SpreadSheet		sheet;
     int			actCol;
     int			predCol;
+    int			probCol;
     SpreadSheet		matrix;
     Row			row;
     List<String> 	actLabels;
@@ -368,13 +416,16 @@ public class ConfusionMatrix
     int			i;
     int			n;
     int			sum;
+    double		val;
 
     result = null;
     sheet  = (SpreadSheet) m_InputToken.getPayload();
     m_ActualColumn.setData(sheet);
     m_PredictedColumn.setData(sheet);
+    m_ProbabilityColumn.setData(sheet);
     actCol  = m_ActualColumn.getIntIndex();
     predCol = m_PredictedColumn.getIntIndex();
+    probCol = m_ProbabilityColumn.getIntIndex();
     if (actCol == -1)
       result = "Actual column not found: " + m_ActualColumn;
     else if (predCol == -1)
@@ -422,7 +473,10 @@ public class ConfusionMatrix
 	predLabel = row.getCell(predCol).getContent();
 	actIndex  = actIndices.get(actLabel);
 	predIndex = predIndices.get(predLabel);
-	matrix.getCell(actIndex, predIndex).setContent(matrix.getCell(actIndex, predIndex).toLong() + 1);
+	if (probCol == -1)
+	  matrix.getCell(actIndex, predIndex).setContent(matrix.getCell(actIndex, predIndex).toLong() + 1);
+	else
+	  matrix.getCell(actIndex, predIndex).setContent(matrix.getCell(actIndex, predIndex).toDouble() + row.getCell(probCol).toDouble());
       }
 
       // post-process matrix

@@ -1,0 +1,19 @@
+# Project: adams
+# Modules: adams-core,adams-ml,adams-spreadsheet,adams-visualstats
+# Date: 2018-03-20 15:46:22
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Displays the generated confusion matrix spreadsheet with a custom renderer.\\nUses the specified probability column to generate weighted counts." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -name Matrix -short-title true -width 740 -provider "adams.flow.sink.SpreadSheetDisplay -cell-rendering-customizer adams.gui.core.spreadsheettable.ConfusionMatrixCellRenderingCustomizer -writer adams.data.io.output.NullWriter" -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/nominal_predictions_w_prob.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.control.Branch -num-threads 1
+  adams.flow.control.Sequence -name default
+   adams.flow.transformer.SetVariable -var-name entry -var-value default
+   adams.flow.transformer.ConfusionMatrix -actual-column Actual -predicted-column Predicted
+   adams.flow.sink.CallableSink -callable Matrix
+  adams.flow.control.Sequence -name weighted
+   adams.flow.transformer.SetVariable -var-name entry -var-value weighted
+   adams.flow.transformer.ConfusionMatrix -actual-column Actual -predicted-column Predicted -probability-column Probability
+   adams.flow.sink.CallableSink -callable Matrix
