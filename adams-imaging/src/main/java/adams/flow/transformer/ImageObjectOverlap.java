@@ -38,7 +38,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  <!-- globalinfo-start -->
  * Computes the overlap of objects with the specified report from storage.<br>
  * It stores the overlap percentage of the highest overlap found (overlap_highest) and the total number of overlaps greater than the specified minimum (overlap_count).<br>
- * If a label key (located object meta-data) has been supplied, then the label of the object with the highest overlap gets stored as well (overlap_label_highest).
+ * If a label key (located object meta-data) has been supplied, then the label of the object with the highest overlap gets stored as well (overlap_label_highest) and whether the labels match (overlap_label_highest_match)
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -111,7 +111,8 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * <pre>-label-key &lt;java.lang.String&gt; (property: labelKey)
  * &nbsp;&nbsp;&nbsp;The (optional) key for a string label in the meta-data; if supplied the
  * &nbsp;&nbsp;&nbsp;value of the object with the highest overlap gets stored in the report using
- * &nbsp;&nbsp;&nbsp;overlap_label_highest.
+ * &nbsp;&nbsp;&nbsp;overlap_label_highest, overlap_label_highest_match stores whether the labels
+ * &nbsp;&nbsp;&nbsp;match.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
@@ -129,6 +130,9 @@ public class ImageObjectOverlap
 
   /** the label of the highest overlap. */
   public final static String OVERLAP_LABEL_HIGHEST = "overlap_label_highest";
+
+  /** whether the labels of the highest overlap match. */
+  public final static String OVERLAP_LABEL_HIGHEST_MATCH = "overlap_label_highest_match";
 
   /** the overlap count. */
   public final static String OVERLAP_COUNT = "overlap_count";
@@ -159,7 +163,8 @@ public class ImageObjectOverlap
         + "It stores the overlap percentage of the highest overlap found (" + OVERLAP_PERCENTAGE_HIGHEST + ") and the "
         + "total number of overlaps greater than the specified minimum (" + OVERLAP_COUNT + ").\n"
         + "If a label key (located object meta-data) has been supplied, then the label of the object with "
-        + "the highest overlap gets stored as well (" + OVERLAP_LABEL_HIGHEST + ").";
+        + "the highest overlap gets stored as well (" + OVERLAP_LABEL_HIGHEST + ") and whether the "
+        + "labels match (" + OVERLAP_LABEL_HIGHEST_MATCH + ")";
   }
 
   /**
@@ -278,7 +283,8 @@ public class ImageObjectOverlap
   /**
    * Sets the (optional) key for a string label in the meta-data; if supplied
    * the value of the object with the highest overlap gets stored in the
-   * report using {@link #OVERLAP_LABEL_HIGHEST}.
+   * report using {@link #OVERLAP_LABEL_HIGHEST}, {@link #OVERLAP_LABEL_HIGHEST_MATCH}
+   * stores whether the labels match.
    *
    * @param value	the key, ignored if empty
    */
@@ -290,7 +296,8 @@ public class ImageObjectOverlap
   /**
    * Returns the (optional) key for a string label in the meta-data; if supplied
    * the value of the object with the highest overlap gets stored in the
-   * report using {@link #OVERLAP_LABEL_HIGHEST}.
+   * report using {@link #OVERLAP_LABEL_HIGHEST}, {@link #OVERLAP_LABEL_HIGHEST_MATCH}
+   * stores whether the labels match.
    *
    * @return		the key, ignored if empty
    */
@@ -307,7 +314,8 @@ public class ImageObjectOverlap
   public String labelKeyTipText() {
     return "The (optional) key for a string label in the meta-data; if supplied "
       + "the value of the object with the highest overlap gets stored in the "
-      + "report using " + OVERLAP_LABEL_HIGHEST + ".";
+      + "report using " + OVERLAP_LABEL_HIGHEST + ", "
+      + OVERLAP_LABEL_HIGHEST_MATCH + " stores whether the labels match.";
   }
 
   /**
@@ -363,7 +371,8 @@ public class ImageObjectOverlap
     LocatedObjects		otherObjs;
     LocatedObjects 		newObjs;
     int 			count;
-    double overlapHighest;
+    double 			overlapHighest;
+    String			thisLabel;
     String			labelHighest;
     double			ratio;
     Object			output;
@@ -409,6 +418,9 @@ public class ImageObjectOverlap
           count          = 0;
           overlapHighest = 0.0;
           labelHighest   = UNKNOWN_LABEL;
+          thisLabel      = UNKNOWN_LABEL;
+          if (!m_LabelKey.isEmpty() && thisObj.getMetaData().containsKey(m_LabelKey))
+            thisLabel = "" + thisObj.getMetaData().get(m_LabelKey);
           for (LocatedObject otherObj : otherObjs) {
             ratio = thisObj.overlapRatio(otherObj);
             if (ratio >= m_MinOverlapRatio) {
@@ -426,8 +438,10 @@ public class ImageObjectOverlap
           }
 	  thisObj.getMetaData().put(OVERLAP_COUNT, count);
 	  thisObj.getMetaData().put(OVERLAP_PERCENTAGE_HIGHEST, overlapHighest);
-          if (!m_LabelKey.isEmpty())
+          if (!m_LabelKey.isEmpty()) {
 	    thisObj.getMetaData().put(OVERLAP_LABEL_HIGHEST, labelHighest);
+	    thisObj.getMetaData().put(OVERLAP_LABEL_HIGHEST_MATCH, thisLabel.equals(labelHighest));
+	  }
           newObjs.add(thisObj);
         }
       }
