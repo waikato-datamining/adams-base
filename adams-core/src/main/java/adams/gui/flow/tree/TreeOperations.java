@@ -655,6 +655,7 @@ public class TreeOperations
     MutableActorHandler mutable;
     int			i;
     String		newName;
+    boolean 		referenced;
 
     parent    = null;
     currActor = new Actor[paths.length];
@@ -674,6 +675,9 @@ public class TreeOperations
 	}
       }
     }
+
+    // do we need to propagate name changes (eg actor is below CallableActors)?
+    referenced = (paths.length == 1) && (parent.getActor() instanceof ActorReferenceHandler);
 
     // enter new name
     newName = handler.getName();
@@ -716,8 +720,12 @@ public class TreeOperations
 	current = newNode;
       else
 	current = parent;
+      getOwner().updateActorName(newNode);
+      if (referenced) {
+	if (!getOwner().getIgnoreNameChanges())
+	  AbstractEditPostProcessor.apply(getOwner(), parent.getActor(), TreeHelper.pathToNode(paths[0]).getActor(), newNode.getActor());
+      }
       SwingUtilities.invokeLater(() -> {
-	getOwner().updateActorName(newNode);
 	getOwner().setModified(true);
 	getOwner().nodeStructureChanged(current);
 	getOwner().expand(newNode);
