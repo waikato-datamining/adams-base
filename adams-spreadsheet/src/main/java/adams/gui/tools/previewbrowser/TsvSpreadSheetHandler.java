@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TsvSpreadSheetHandler.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -43,7 +43,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TsvSpreadSheetHandler
   extends AbstractSpreadSheetHandler {
@@ -63,7 +62,7 @@ public class TsvSpreadSheetHandler
   }
 
   /**
-   * Reads all the invidivual spreadsheets from the file.
+   * Reads all the individual spreadsheets from the file.
    *
    * @param file	the file to read
    * @return		the spreadsheet objects that were read from the file

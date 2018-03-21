@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ODFSpreadSheetHandler.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -51,7 +51,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ODFSpreadSheetHandler
   extends AbstractSpreadSheetHandler {
@@ -103,7 +102,7 @@ public class ODFSpreadSheetHandler
   }
 
   /**
-   * Reads all the invidivual spreadsheets from the file.
+   * Reads all the individual spreadsheets from the file.
    *
    * @param file	the file to read
    * @return		the spreadsheet objects that were read from the file
@@ -113,10 +112,11 @@ public class ODFSpreadSheetHandler
     List<SpreadSheet>		result;
     ODFSpreadSheetReader	reader;
 
-    result = new ArrayList<SpreadSheet>();
     reader = new ODFSpreadSheetReader();
     reader.setSheetRange(new Range(Range.ALL));
     result = reader.readRange(file);
+    if (result == null)
+      result = new ArrayList<>();
 
     return result.toArray(new SpreadSheet[result.size()]);
   }

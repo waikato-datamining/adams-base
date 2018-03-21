@@ -13,29 +13,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSpreadSheetHandler.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import java.awt.BorderLayout;
-import java.io.File;
-
 import adams.core.Utils;
-import adams.data.report.Report;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.SpreadSheetTable;
 
+import java.awt.BorderLayout;
+import java.io.File;
+
 /**
  * Ancestor for handlers that display spreadsheets.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
- * @see Report
  */
 public abstract class AbstractSpreadSheetHandler
   extends AbstractContentHandler {
@@ -57,7 +54,7 @@ public abstract class AbstractSpreadSheetHandler
   }
 
   /**
-   * Reads all the invidivual spreadsheets from the file.
+   * Reads all the individual spreadsheets from the file.
    *
    * @param file	the file to read
    * @return		the spreadsheet objects that were read from the file

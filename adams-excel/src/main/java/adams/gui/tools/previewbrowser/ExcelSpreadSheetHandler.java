@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExcelSpreadSheetHandler.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -52,7 +52,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExcelSpreadSheetHandler
   extends AbstractSpreadSheetHandler {
@@ -104,7 +103,7 @@ public class ExcelSpreadSheetHandler
   }
 
   /**
-   * Reads all the invidivual spreadsheets from the file.
+   * Reads all the individual spreadsheets from the file.
    *
    * @param file	the file to read
    * @return		the spreadsheet objects that were read from the file
@@ -114,10 +113,11 @@ public class ExcelSpreadSheetHandler
     List<SpreadSheet>		result;
     ExcelSpreadSheetReader	reader;
 
-    result = new ArrayList<SpreadSheet>();
     reader = new ExcelSpreadSheetReader();
     reader.setSheetRange(new Range(Range.ALL));
     result = reader.readRange(file);
+    if (result == null)
+      result = new ArrayList<>();
 
     return result.toArray(new SpreadSheet[result.size()]);
   }
