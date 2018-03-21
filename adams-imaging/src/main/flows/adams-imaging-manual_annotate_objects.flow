@@ -1,5 +1,6 @@
 # Project: adams
-# Date: 2017-07-02 11:52:41
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+# Date: 2018-03-21 12:59:17
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Allows the user to manually annotate objects in images.\\n\\\".report\\\" files get stored alongside the images, containing the\\nobjects\\\' positions and type.\\nCan be run multiple times, as it loads the annotations from \\nexisting report files.\\nHolding down <ctrl> allows you to remove a selection, by \\neither clicking in the box (\\\"fixed_width_box\\\") or drawing a\\nlarger box around the existing one (\\\"user_drawn_box\\\")." -error-handling ACTORS_DECIDE_TO_STOP_ON_ERROR -flow-execution-listener adams.flow.execution.NullListener
@@ -25,11 +26,12 @@ adams.flow.control.Flow -annotation "Allows the user to manually annotate object
   adams.flow.control.Tee -name "report file"
    adams.flow.transformer.Convert -conversion "adams.data.conversion.ReplaceFileExtension -extension .report"
    adams.flow.transformer.SetVariable -var-name reportfile
-  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
   adams.flow.control.ConditionalSubProcess -name "existing report?" -condition "adams.flow.condition.bool.FileExists -file @{reportfile} -generator adams.core.io.NullFilenameGenerator"
    adams.flow.transformer.MergeReport -source "load report" -merge MERGE_OTHER_WITH_CURRENT
-  adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{selection_type}\\\\\\\" = \\\\\\\"user_drawn_box\\\\\\\"\"" -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{selection_type}\\\\\\\" = \\\\\\\"fixed_bounding_box\\\\\\\"\"" -condition adams.flow.condition.bool.True -case adams.flow.sink.Null
-   adams.flow.control.Inspect -name "manual box" -width 1200 -height 800 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -show-properties true -properties-width 250 -selection-processor adams.gui.visualization.image.selection.SelectObjects -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-box-color #ff9900 -image-overlay adams.gui.visualization.image.ObjectLocationsOverlayFromReport"
-   adams.flow.control.Inspect -name "fixed box" -width 1200 -height 800 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -show-properties true -properties-width 250 -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor \"adams.gui.visualization.image.leftclick.FixedBoundingBox -width @{fixed_width} -height @{fixed_height}\" -image-overlay adams.gui.visualization.image.ObjectLocationsOverlayFromReport"
+  adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{selection_type}\\\\\\\" = \\\\\\\"user_drawn_box\\\\\\\"\"" -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{selection_type}\\\\\\\" = \\\\\\\"fixed_bounding_box\\\\\\\"\"" -condition adams.flow.condition.bool.True
+   adams.flow.control.Inspect -name "manual box" -width 1200 -height 800 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -show-properties true -properties-width 250 -selection-processor adams.gui.visualization.image.selection.SelectObjects -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-box-color #ff9900 -image-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\""
+   adams.flow.control.Inspect -name "fixed box" -width 1200 -height 800 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -show-properties true -properties-width 250 -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor \"adams.gui.visualization.image.leftclick.FixedBoundingBox -width @{fixed_width} -height @{fixed_height}\" -image-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\""
    adams.flow.control.Stop -stop-msg "Unknonwn selection type: @{selection_type}"
   adams.flow.transformer.ReportFileWriter -writer adams.data.io.output.DefaultSimpleReportWriter -generator "adams.core.io.SimpleFixedFilenameGenerator -name @{reportfile}"
+ adams.flow.control.CloseCallableDisplay -callable ProgressBar
