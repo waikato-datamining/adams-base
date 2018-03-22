@@ -300,8 +300,12 @@ public class ConfusionMatrixCellRenderingCustomizer
       actCol--;
 
     // first column is the actual label
-    if (actCol == 0)
-      return table.getTableHeader().getBackground();
+    if (actCol == 0) {
+      result = table.getTableHeader().getBackground();
+      if (isSelected)
+        result = result.darker();
+      return result;
+    }
     actCol--;
 
     actRow = table.getActualRow(actRow);
@@ -319,6 +323,8 @@ public class ConfusionMatrixCellRenderingCustomizer
 	value = table.getCellAt(row, column).toDouble();
 	index = (int) ((value - min) / (max - min) * (m_Colors.size() - 1));
 	result = m_Colors.get(index);
+	if (isSelected)
+	  result = result.darker();
       }
     }
 
