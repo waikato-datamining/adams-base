@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MemoryMonitorPanel.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -54,7 +54,6 @@ import java.lang.management.MemoryUsage;
  * Displays the memory consumption.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MemoryMonitorPanel
   extends BasePanel {
@@ -115,9 +114,9 @@ public class MemoryMonitorPanel
    */
   @Override
   protected void initGUI() {
-    Properties				props;
+    Properties			props;
     PaintletWithFixedYRange	paintlet;
-    AxisPanelOptions			options;
+    AxisPanelOptions		options;
   
     super.initGUI();
     
@@ -221,7 +220,7 @@ public class MemoryMonitorPanel
     }
 
     // create and add new point
-    point = new XYSequencePoint("" + System.currentTimeMillis(), new Double(System.currentTimeMillis()), new Double(scale(value)));
+    point = new XYSequencePoint("" + System.currentTimeMillis(), System.currentTimeMillis(), scale(value));
     seq.add(point);
 
     if (manager.indexOf(name) > -1)
@@ -235,14 +234,18 @@ public class MemoryMonitorPanel
     MemoryUsage			usage;
     XYSequenceContainerManager	manager;
     
-    usage   = m_Memory.getHeapMemoryUsage();
     manager = m_PlotPanel.getContainerManager();
     
     manager.startUpdate();
     
-    add(manager, "Used",      usage.getUsed());
-    add(manager, "Committed", usage.getCommitted());
-    
+    usage = m_Memory.getHeapMemoryUsage();
+    add(manager, "Used (heap)",      usage.getUsed());
+    add(manager, "Committed (heap)", usage.getCommitted());
+
+    usage = m_Memory.getNonHeapMemoryUsage();
+    add(manager, "Used (non-heap)",      usage.getUsed());
+    add(manager, "Committed (non-heap)", usage.getCommitted());
+
     manager.finishUpdate();
   }
   

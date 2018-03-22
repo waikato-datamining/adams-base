@@ -13,7 +13,7 @@ Max=200
 Divisor=1048576
 
 # Color provider for plots
-ColorProvider=adams.gui.visualization.core.CustomColorProvider -color #0000ff -color #ff0000
+ColorProvider=adams.gui.visualization.core.CustomColorProvider -color #0000ff -color #ff0000 -color #006633 -color #cc00cc
 
 # Available values for an axis (suffixes listed):
 # - .Visibility=VISIBLE|INVISIBLE|HIDDEN
