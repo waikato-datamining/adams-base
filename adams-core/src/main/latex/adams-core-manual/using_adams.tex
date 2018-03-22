@@ -3145,6 +3145,18 @@ This override can be used on all platforms.
   export JAVA_TOOL_OPTIONS="-Dsun.java2d.xrender=false"
   \end{verbatim}
 
+  \item Rendering images on screen, e.g., in the image viewer, is blocking the
+  Linux system. You may be able to resolve this by tuning on OpenGL rendering
+  by supplying the following option to the JVM\footnote{Found here: \url{http://www.oracle.com/technetwork/java/javase/java2d-142140.html\#gdpji}{}}:
+  \begin{verbatim}
+  -Dsun.java2d.opengl=true
+  \end{verbatim}
+  On Linux or Mac OSX, you would place the following command in your
+  \texttt{\$HOME/.profile} file (effective after logging out and back in again):
+  \begin{verbatim}
+  export JAVA_TOOL_OPTIONS="-Dsun.java2d.opengl=true"
+  \end{verbatim}
+
   \item MySQL fails to create a table using a timestamp with \texttt{DEFAULT '0000-00-00 00:00:00'}.
   You can avoid this by changing the SQL mode, removing the \texttt{NO\_ZERO\_DATE} directuve.
   Use the following in your \texttt{my.cnf} or \texttt{my.ini} config file instead:
