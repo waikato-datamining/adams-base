@@ -1,5 +1,6 @@
 # Project: adams
-# Date: 2016-02-15 15:22:32
+# Modules: adams-core,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+# Date: 2018-03-26 14:26:02
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Generates cross-validation splits and evaluates the classifier separately \\non each of them, aggregating the results and displaying them.\\n" -flow-execution-listener adams.flow.execution.NullListener
@@ -9,8 +10,8 @@ adams.flow.control.Flow -annotation "Generates cross-validation splits and evalu
  adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaClassSelector
- adams.flow.transformer.WekaCrossValidationSplit -folds @{folds}
- adams.flow.transformer.WekaTrainTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -no-predictions true
+ adams.flow.transformer.WekaCrossValidationSplit -folds @{folds} -generator weka.classifiers.DefaultCrossValidationFoldGenerator
+ adams.flow.transformer.WekaTrainTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier
  adams.flow.transformer.WekaAggregateEvaluations
  adams.flow.control.ConditionalTee -condition "adams.flow.condition.bool.Counting -min @{folds}"
   adams.flow.transformer.WekaEvaluationSummary -relation true -class-details true
