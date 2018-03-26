@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Java.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -32,7 +32,6 @@ import java.util.List;
  * A helper class for Java (JRE/JDK) related things.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Java {
 
@@ -143,7 +142,7 @@ public class Java {
     String	result;
     File	file;
 
-    file   = new File(getHome());
+    file   = new File(path);
     result = file.getAbsolutePath() + File.separator + BIN_DIR;
 
     if (OS.isMac()) {
@@ -151,7 +150,7 @@ public class Java {
 	result = file.getParentFile().getAbsolutePath() + File.separator + BIN_DIR;
     }
     else {
-      if (isJDK())
+      if (isJRE(path) && isJDK(path))
 	result = file.getParentFile().getAbsolutePath() + File.separator + BIN_DIR;
     }
 
