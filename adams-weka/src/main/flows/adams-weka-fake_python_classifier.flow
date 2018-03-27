@@ -1,0 +1,22 @@
+# Project: adams
+# Modules: adams-core,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+# Date: 2018-03-28 12:52:49
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Communicates with a prediction algorithm via sockets:\\nsends data to localhost:8000 and receives results on port 8001\\nYou can use the following \\\"fake\\\" Python 3 algorithm for testing:\\n  adams-weka-fake_python_classifier.py" -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.meta.SocketFacade -remote 127.0.0.1:8000 -local 127.0.0.1:8001 -timeout 3000 -preparation weka.classifiers.meta.socketfacade.Simple"
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+  adams.flow.sink.ActualVsPredictedPlot -x -3 -writer adams.gui.print.NullWriter -limit ACTUAL -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.SimpleArffLoader
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaRandomSplit -generator weka.classifiers.DefaultRandomSplitGenerator
+ adams.flow.transformer.WekaTrainTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name summary
+   adams.flow.transformer.WekaEvaluationSummary
+   adams.flow.sink.CallableSink -callable Display
+  adams.flow.control.Sequence -name errors
+   adams.flow.transformer.WekaPredictionsToSpreadSheet
+   adams.flow.sink.CallableSink -callable ActualVsPredictedPlot
