@@ -112,7 +112,7 @@ if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
 set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
 set CLASSPATH="%RESOURCES%";"%REPO%\*"
-set AGENT=%REPO%\sizeofag-1.0.0.jar
+set AGENT=%REPO%\sizeofag-1.0.2.jar
 goto endInit
 
 @REM Reaching here means variables are defined and arguments have been captured
