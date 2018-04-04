@@ -151,6 +151,9 @@ public class ImageObjectOverlap
   /** the label meta-data key - ignored if empty. */
   protected String m_LabelKey;
 
+  /** whether to use the other object in the output in case of an overlap. */
+  protected boolean m_UseOtherObject;
+
   /**
    * Returns a string describing the object.
    *
@@ -189,6 +192,10 @@ public class ImageObjectOverlap
     m_OptionManager.add(
       "label-key", "labelKey",
       "");
+
+    m_OptionManager.add(
+      "use-other-object", "useOtherObject",
+      false);
   }
 
   /**
@@ -319,6 +326,35 @@ public class ImageObjectOverlap
   }
 
   /**
+   * Sets whether to use/forward other object data.
+   *
+   * @param value	true if to use other object
+   */
+  public void setUseOtherObject(boolean value) {
+    m_UseOtherObject = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use/forward other object data.
+   *
+   * @return		true if to use other object
+   */
+  public boolean getUseOtherObject() {
+    return m_UseOtherObject;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useOtherObjectTipText() {
+    return "If enabled, the object data from the other report is used/forwarded in case of an overlap.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -331,6 +367,7 @@ public class ImageObjectOverlap
     result += QuickInfoHelper.toString(this, "finder", m_Finder, ", finder: ");
     result += QuickInfoHelper.toString(this, "minOverlapRatio", m_MinOverlapRatio, ", overlap ratio: ");
     result += QuickInfoHelper.toString(this, "labelKey", (m_LabelKey.isEmpty() ? "-none-" : m_LabelKey), ", label key: ");
+    result += QuickInfoHelper.toString(this, "useOtherObject", m_UseOtherObject, "use other obj", ", ");
 
     return result;
   }
@@ -367,6 +404,7 @@ public class ImageObjectOverlap
     Report			newReport;
     Report			thisReport;
     Report 			otherReport;
+    LocatedObject		actObj;
     LocatedObjects		thisObjs;
     LocatedObjects		otherObjs;
     LocatedObjects 		newObjs;
@@ -421,11 +459,14 @@ public class ImageObjectOverlap
           thisLabel      = UNKNOWN_LABEL;
           if (!m_LabelKey.isEmpty() && thisObj.getMetaData().containsKey(m_LabelKey))
             thisLabel = "" + thisObj.getMetaData().get(m_LabelKey);
+          actObj = thisObj;
           for (LocatedObject otherObj : otherObjs) {
             ratio = thisObj.overlapRatio(otherObj);
             if (ratio >= m_MinOverlapRatio) {
               count++;
               if (ratio > overlapHighest) {
+		if (m_UseOtherObject)
+		  actObj = otherObj;
 		overlapHighest = ratio;
 		if (!m_LabelKey.isEmpty()) {
 		  if (otherObj.getMetaData().containsKey(m_LabelKey))
@@ -436,13 +477,14 @@ public class ImageObjectOverlap
 	      }
             }
           }
-	  thisObj.getMetaData().put(OVERLAP_COUNT, count);
-	  thisObj.getMetaData().put(OVERLAP_PERCENTAGE_HIGHEST, overlapHighest);
+          actObj = actObj.getClone();
+	  actObj.getMetaData().put(OVERLAP_COUNT, count);
+	  actObj.getMetaData().put(OVERLAP_PERCENTAGE_HIGHEST, overlapHighest);
           if (!m_LabelKey.isEmpty()) {
-	    thisObj.getMetaData().put(OVERLAP_LABEL_HIGHEST, labelHighest);
-	    thisObj.getMetaData().put(OVERLAP_LABEL_HIGHEST_MATCH, thisLabel.equals(labelHighest));
+	    actObj.getMetaData().put(OVERLAP_LABEL_HIGHEST, labelHighest);
+	    actObj.getMetaData().put(OVERLAP_LABEL_HIGHEST_MATCH, thisLabel.equals(labelHighest));
 	  }
-          newObjs.add(thisObj);
+          newObjs.add(actObj);
         }
       }
 
