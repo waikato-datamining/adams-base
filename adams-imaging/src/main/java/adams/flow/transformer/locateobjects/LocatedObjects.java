@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * Container for located objects.
@@ -113,19 +112,9 @@ public class LocatedObjects
     hash    = new TIntHashSet(indices);
     for (LocatedObject obj: this) {
       if (obj.getMetaData() != null) {
-	try {
-	  if (obj.getMetaData().containsKey(LocatedObjects.KEY_INDEX)) {
-	    index = Integer.parseInt("" + obj.getMetaData().get(LocatedObjects.KEY_INDEX));
-	    if (hash.contains(index))
-	      result.add(obj);
-	  }
-	  else {
-	    getLogger().warning("Object has no index in meta-data: " + obj);
-	  }
-	}
-	catch (Exception e) {
-	  getLogger().log(Level.SEVERE, "Failed to parse index: " + obj.getMetaData().get(LocatedObjects.KEY_INDEX), e);
-	}
+	index = obj.getIndex();
+	if (hash.contains(index))
+	  result.add(obj);
       }
       else {
 	getLogger().warning("Object has no meta-data: " + obj);
@@ -240,7 +229,7 @@ public class LocatedObjects
   }
 
   /**
-   * Turns the located objects into a report.
+   * Turns the located objects into a report. Does not update the index in the meta-data.
    * Using a prefix like "Object." will result in the following report entries
    * for a single object:
    * <pre>
@@ -255,6 +244,26 @@ public class LocatedObjects
    * @return		the generated report
    */
   public Report toReport(String prefix, int offset) {
+    return toReport(prefix, offset, false);
+  }
+
+  /**
+   * Turns the located objects into a report.
+   * Using a prefix like "Object." will result in the following report entries
+   * for a single object:
+   * <pre>
+   * Object.1.x
+   * Object.1.y
+   * Object.1.width
+   * Object.1.height
+   * </pre>
+   *
+   * @param prefix	the prefix to use
+   * @param offset	the offset for the index to use
+   * @param updateIndex	whether to update the index in the meta-data
+   * @return		the generated report
+   */
+  public Report toReport(String prefix, int offset, boolean updateIndex) {
     Report		result;
     int			count;
     String		countStr;
@@ -284,6 +293,12 @@ public class LocatedObjects
 	field = new Field(prefix + countStr + "." + key, type);
 	result.addField(field);
 	result.setValue(field, value);
+      }
+      // index
+      if (updateIndex) {
+	field = new Field(prefix + countStr + "." + KEY_INDEX, DataType.STRING);
+	result.addField(field);
+	result.setValue(field, countStr);
       }
       // x
       field = new Field(prefix + countStr + KEY_X, DataType.NUMERIC);
