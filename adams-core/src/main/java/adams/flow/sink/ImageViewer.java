@@ -15,7 +15,7 @@
 
 /*
  * ImageViewer.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -183,7 +183,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageViewer
   extends AbstractGraphicalDisplay
@@ -277,6 +276,7 @@ public class ImageViewer
 	else
 	  m_ImagePanel.addImageOverlay(m_Owner.getImageOverlay());
       }
+      m_ImagePanel.setScale(zoom);
     }
     
     /**
@@ -749,6 +749,7 @@ public class ImageViewer
       else
 	m_ImagePanel.addImageOverlay(m_ImageOverlay);
     }
+    m_ImagePanel.setScale(zoom);
   }
 
   /**
