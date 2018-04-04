@@ -308,7 +308,7 @@ public class ImageObjectFilter
 	objs = LocatedObjects.fromReport(report, m_Finder.getPrefix());
 
 	// find objects of interest
-	indices = m_Finder.find(report);
+	indices = m_Finder.find(objs);
 
 	// remove all old objects?
 	if (!m_KeepAllObjects) {
