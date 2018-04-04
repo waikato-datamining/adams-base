@@ -198,7 +198,7 @@ public class ObjectCentersOverlayFromReport
       if (m_Overlays.hasLabel(rect)) {
         label = m_Overlays.getLabel(rect);
         if (label != null)
-          g.drawString(label, (int) (rect.getX() + rect.getWidth()), (int) rect.getY());
+          g.drawString(label, (int) (rect.getX() + rect.getWidth() + getLabelOffsetX()), (int) (rect.getY() + getLabelOffsetY()));
       }
     }
   }

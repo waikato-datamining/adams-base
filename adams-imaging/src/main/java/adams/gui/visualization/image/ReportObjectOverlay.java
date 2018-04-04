@@ -14,8 +14,8 @@
  */
 
 /*
- * ObjectCentersOverlayFromReport.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * ReportObjectOverlay.java
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -41,7 +41,6 @@ import java.util.List;
  * Ancestor for overlays that use object locations from a report.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 198 $
  */
 public class ReportObjectOverlay
   extends AbstractOptionHandler {
@@ -72,6 +71,12 @@ public class ReportObjectOverlay
 
   /** the label font. */
   protected Font m_LabelFont;
+
+  /** the x offset for the label. */
+  protected int m_LabelOffsetX;
+
+  /** the y offset for the label. */
+  protected int m_LabelOffsetY;
 
   /** the cached locations. */
   protected List<Rectangle> m_Locations;
@@ -132,6 +137,14 @@ public class ReportObjectOverlay
     m_OptionManager.add(
 	"label-font", "labelFont",
 	Fonts.getSansFont(14));
+
+    m_OptionManager.add(
+	"label-offset-x", "labelOffsetX",
+	0);
+
+    m_OptionManager.add(
+	"label-offset-y", "labelOffsetY",
+	0);
 
     m_OptionManager.add(
 	"predefined-labels", "predefinedLabels",
@@ -352,6 +365,64 @@ public class ReportObjectOverlay
    */
   public String labelFontTipText() {
     return "The font to use for the labels.";
+  }
+
+  /**
+   * Sets the X offset for the label.
+   *
+   * @param value 	the X offset
+   */
+  public void setLabelOffsetX(int value) {
+    m_LabelOffsetX = value;
+    reset();
+  }
+
+  /**
+   * Returns the X offset for the label.
+   *
+   * @return 		the X offset
+   */
+  public int getLabelOffsetX() {
+    return m_LabelOffsetX;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelOffsetXTipText() {
+    return "The X offset for the label.";
+  }
+
+  /**
+   * Sets the Y offset for the label.
+   *
+   * @param value 	the Y offset
+   */
+  public void setLabelOffsetY(int value) {
+    m_LabelOffsetY = value;
+    reset();
+  }
+
+  /**
+   * Returns the Y offset for the label.
+   *
+   * @return 		the Y offset
+   */
+  public int getLabelOffsetY() {
+    return m_LabelOffsetY;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelOffsetYTipText() {
+    return "The Y offset for the label.";
   }
 
   /**
