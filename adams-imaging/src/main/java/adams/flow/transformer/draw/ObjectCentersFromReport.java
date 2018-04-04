@@ -187,6 +187,7 @@ public class ObjectCentersFromReport
 
     g = image.getImage().getGraphics();
     g.setColor(getColor());
+    g.setFont(getLabelFont());
     for (Rectangle rect: locations) {
       if (getUseColorsPerType()) {
         if (m_Overlays.hasColor(rect))
