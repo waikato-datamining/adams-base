@@ -180,12 +180,18 @@ public class ByMetaDataStringValue
   @Override
   protected int[] doFind(LocatedObjects objects) {
     TIntList 		result;
+    String		value;
+    boolean		match;
 
     result = new TIntArrayList();
     for (LocatedObject obj: objects) {
       if (obj.getMetaData() != null) {
         if (obj.getMetaData().containsKey(m_Key)) {
-          if (m_RegExp.isMatch("" + obj.getMetaData().get(m_Key)))
+          value = "" + obj.getMetaData().get(m_Key);
+          match = m_RegExp.isMatch(value);
+          if (isLoggingEnabled())
+            getLogger().info(obj.getIndex() + ". '" + value + "' matches '" + m_RegExp.getValue() + "': " + match);
+          if (match)
             result.add(obj.getIndex());
 	}
       }
