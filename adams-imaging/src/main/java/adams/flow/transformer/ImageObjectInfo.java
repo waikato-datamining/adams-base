@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectInfo.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -95,7 +95,7 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-type &lt;X|Y|WIDTH|HEIGHT|META_DATA|RECTANGLE|BASE_RECTANGLE&gt; (property: type)
+ * <pre>-type &lt;X|Y|WIDTH|HEIGHT|META_DATA|RECTANGLE|BASE_RECTANGLE|INDEX_STRING|INDEX_INT&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate.
  * &nbsp;&nbsp;&nbsp;default: X
  * </pre>
@@ -121,6 +121,8 @@ public class ImageObjectInfo
     META_DATA,
     RECTANGLE,
     BASE_RECTANGLE,
+    INDEX_STRING,
+    INDEX_INT,
   }
 
   /** the prefix to use when generating a report. */
@@ -285,6 +287,12 @@ public class ImageObjectInfo
       case BASE_RECTANGLE:
 	return new Class[]{BaseRectangle.class};
 
+      case INDEX_STRING:
+        return new Class[]{String.class};
+
+      case INDEX_INT:
+        return new Class[]{Integer.class};
+
       default:
 	throw new IllegalStateException("Unhandled type: " + m_Type);
     }
@@ -358,6 +366,12 @@ public class ImageObjectInfo
 	    break;
 	  case BASE_RECTANGLE:
 	    m_OutputToken = new Token(new BaseRectangle(obj.getRectangle()));
+	    break;
+	  case INDEX_STRING:
+	    m_OutputToken = new Token(obj.getIndexString());
+	    break;
+	  case INDEX_INT:
+	    m_OutputToken = new Token(obj.getIndex());
 	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled type: " + m_Type);
