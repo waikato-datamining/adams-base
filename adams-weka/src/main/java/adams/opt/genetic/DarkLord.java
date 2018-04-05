@@ -326,6 +326,6 @@ public class DarkLord
     super.preRun();
 
     // setup structures
-    init(20, m_Instances.numAttributes() * m_BitsPerGene);
+    init(m_NumChrom, m_Instances.numAttributes() * m_BitsPerGene);
   }
 }
