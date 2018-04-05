@@ -20,9 +20,12 @@
 
 package adams.gui.flow.tree;
 
+import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
+import adams.core.NewInstance;
 import adams.core.Utils;
 import adams.core.io.FlowFile;
+import adams.core.logging.LoggingLevel;
 import adams.core.option.NestedConsumer;
 import adams.core.option.OptionUtils;
 import adams.core.optiontransfer.AbstractOptionTransfer;
@@ -72,19 +75,26 @@ import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.FlowEditorDialog;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
 import adams.gui.goe.FlowHelper;
+import adams.gui.goe.GenericObjectEditor.GOETreePopupMenu;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
+import adams.gui.goe.classtree.ClassTree;
 import adams.parser.ActorSuggestion.SuggestionData;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
+import java.awt.Point;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -111,6 +121,16 @@ public class TreeOperations
     HERE,
     /** after this position. */
     AFTER
+  }
+
+  /**
+   * Enumeration for actor dialogs.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   */
+  public enum ActorDialog {
+    GOE,
+    TREE,
   }
 
   /** the tree to operate on. */
@@ -318,6 +338,35 @@ public class TreeOperations
    * @param record	whether to record the addition
    */
   public void addActor(TreePath path, Actor actor, InsertPosition position, boolean record) {
+    addActor(path, actor, position, record, ActorDialog.GOE);
+  }
+
+  /**
+   * Brings up the GOE actor tree for adding an actor if no actor supplied,
+   * otherwise just adds the given actor at the position specified
+   * by the path.
+   *
+   * @param path	the path to the actor to add the new actor sibling
+   * @param actor	the actor to add, if null a GOE dialog is presented
+   * @param position	where to insert the actor
+   * @param record	whether to record the addition
+   */
+  public void searchActor(TreePath path, InsertPosition position, boolean record) {
+    addActor(path, null, position, record, ActorDialog.TREE);
+  }
+
+  /**
+   * Brings up the GOE dialog for adding an actor if no actor supplied,
+   * otherwise just adds the given actor at the position specified
+   * by the path.
+   *
+   * @param path	the path to the actor to add the new actor sibling
+   * @param actor	the actor to add, if null a GOE dialog is presented
+   * @param position	where to insert the actor
+   * @param record	whether to record the addition
+   * @param dialogType	the dialog type to use
+   */
+  protected void addActor(TreePath path, Actor actor, InsertPosition position, boolean record, ActorDialog dialogType) {
     GenericObjectEditorDialog 	dialog;
     final Node			node;
     final Node			parent;
@@ -325,7 +374,11 @@ public class TreeOperations
     Node[]			children;
     Actor[]			actors;
     String			txt;
-    final List<String> exp;
+    final List<String> 		exp;
+    final ClassTree 		tree;
+    final GOETreePopupMenu 	goePopup;
+    Component 			comp;
+    Point			point;
 
     if (actor == null) {
       node = TreeHelper.pathToNode(path);
@@ -333,27 +386,79 @@ public class TreeOperations
 	getOwner().updateCurrentEditing(node, null);
       else
 	getOwner().updateCurrentEditing((Node) node.getParent(), null);
-      dialog = GenericObjectEditorDialog.createDialog(getOwner());
-      if (position == InsertPosition.HERE)
-	dialog.setTitle("Add here...");
-      else if (position == InsertPosition.AFTER)
-	dialog.setTitle("Add after...");
-      else if (position == InsertPosition.BENEATH)
-	dialog.setTitle("Add beneath...");
-      actors = suggestActors(path, position);
-      dialog.getGOEEditor().setCanChangeClassInDialog(true);
-      dialog.getGOEEditor().setClassType(Actor.class);
-      dialog.getGOEEditor().setFilter(configureFilter(path, position));
-      dialog.setProposedClasses(actors);
-      if (actors != null)
-	dialog.setCurrent(actors[0]);
-      else
-	dialog.setCurrent(null);
-      dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
-      dialog.setVisible(true);
-      getOwner().updateCurrentEditing(null, null);
-      if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
-        addActor(path, (Actor) dialog.getEditor().getValue(), position, record);
+
+      switch (dialogType) {
+	case GOE:
+	  dialog = GenericObjectEditorDialog.createDialog(getOwner());
+	  if (position == InsertPosition.HERE)
+	    dialog.setTitle("Add here...");
+	  else if (position == InsertPosition.AFTER)
+	    dialog.setTitle("Add after...");
+	  else if (position == InsertPosition.BENEATH)
+	    dialog.setTitle("Add beneath...");
+	  actors = suggestActors(path, position);
+	  dialog.getGOEEditor().setCanChangeClassInDialog(true);
+	  dialog.getGOEEditor().setClassType(Actor.class);
+	  dialog.getGOEEditor().setFilter(configureFilter(path, position));
+	  dialog.setProposedClasses(actors);
+	  if (actors != null)
+	    dialog.setCurrent(actors[0]);
+	  else
+	    dialog.setCurrent(null);
+	  dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
+	  dialog.setVisible(true);
+	  getOwner().updateCurrentEditing(null, null);
+	  if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
+	    addActor(path, (Actor) dialog.getEditor().getValue(), position, record);
+	  break;
+
+	case TREE:
+	  tree = new ClassTree();
+	  tree.setFilter(configureFilter(path, position));
+	  tree.setItems(new ArrayList<>(Arrays.asList(ClassLister.getSingleton().getClassnames(Actor.class))));
+	  tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+	  tree.expandAll();
+	  goePopup = new GOETreePopupMenu(tree);
+	  switch (position) {
+	    case BENEATH:
+	      goePopup.setInfoText("Insert actor beneath");
+	      break;
+	    case HERE:
+	      goePopup.setInfoText("Insert actor here");
+	      break;
+	    case AFTER:
+	      goePopup.setInfoText("Insert actor after");
+	      break;
+	    default:
+	      ConsolePanel.getSingleton().append(
+		LoggingLevel.WARNING, "Unhandled position for search tree info text: " + position);
+	  }
+	  goePopup.pack();
+	  tree.addTreeSelectionListener((TreeSelectionEvent e) -> {
+	    String classname = tree.getSelectedItem();
+	    if (classname == null)
+	      return;
+	    goePopup.setVisible(false);
+	    addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record);
+	  });
+	  comp = GUIHelper.getParentComponent(getOwner());
+	  if (comp != null) {
+	    goePopup.show(
+	      comp,
+	      (int) (comp.getWidth() - goePopup.getPreferredSize().getWidth()) / 2,
+	      (int) (comp.getHeight() - goePopup.getPreferredSize().getHeight())/ 2);
+	  }
+	  else {
+	    ConsolePanel.getSingleton().append(
+	      LoggingLevel.WARNING, "Failed to obtain parent component of owner for showing actor search tree in Flow editor!");
+	  }
+	  break;
+
+	default:
+	  GUIHelper.showErrorMessage(
+	    GUIHelper.getParentComponent(getOwner()),
+	    "Unhandled actor dialog for adding actor: " + dialogType);
+      }
     }
     else {
       if (position == InsertPosition.BENEATH) {

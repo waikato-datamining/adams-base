@@ -109,7 +109,11 @@ Tree.ScaleFactor=1.0
 #   "adams.gui.flow.tree.keyboardaction.AddActorAfter -actor adams.flow.control.Trigger -shortcut \\"alt F3\\"" \
 #   "adams.gui.flow.tree.keyboardaction.AddActorBeneath -actor adams.flow.control.Trigger -shortcut \\"shift F3\\"" \
 #   "adams.gui.flow.tree.keyboardaction.EncloseActor -actor adams.flow.control.Sequence -shortcut \\"F4\\""
-Tree.KeyboardActions=
+Tree.KeyboardActions=\
+   "adams.gui.flow.tree.keyboardaction.SearchActorHere" \
+   "adams.gui.flow.tree.keyboardaction.SearchActorAfter" \
+   "adams.gui.flow.tree.keyboardaction.SearchActorBeneath" \
+   "adams.gui.flow.tree.keyboardaction.EncloseActor"
 
 # Whether to show the global info in the class tree as child node of the
 # actor class (true|false)
