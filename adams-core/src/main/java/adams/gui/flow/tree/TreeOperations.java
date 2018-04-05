@@ -91,7 +91,6 @@ import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
-import java.awt.Point;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,6 +129,7 @@ public class TreeOperations
    */
   public enum ActorDialog {
     GOE,
+    GOE_FORCED,
     TREE,
   }
 
@@ -347,7 +347,6 @@ public class TreeOperations
    * by the path.
    *
    * @param path	the path to the actor to add the new actor sibling
-   * @param actor	the actor to add, if null a GOE dialog is presented
    * @param position	where to insert the actor
    * @param record	whether to record the addition
    */
@@ -378,9 +377,8 @@ public class TreeOperations
     final ClassTree 		tree;
     final GOETreePopupMenu 	goePopup;
     Component 			comp;
-    Point			point;
 
-    if (actor == null) {
+    if ((actor == null) || (dialogType == ActorDialog.GOE_FORCED)) {
       node = TreeHelper.pathToNode(path);
       if (position == InsertPosition.BENEATH)
 	getOwner().updateCurrentEditing(node, null);
@@ -389,6 +387,7 @@ public class TreeOperations
 
       switch (dialogType) {
 	case GOE:
+	case GOE_FORCED:
 	  dialog = GenericObjectEditorDialog.createDialog(getOwner());
 	  if (position == InsertPosition.HERE)
 	    dialog.setTitle("Add here...");
@@ -401,10 +400,15 @@ public class TreeOperations
 	  dialog.getGOEEditor().setClassType(Actor.class);
 	  dialog.getGOEEditor().setFilter(configureFilter(path, position));
 	  dialog.setProposedClasses(actors);
-	  if (actors != null)
-	    dialog.setCurrent(actors[0]);
-	  else
-	    dialog.setCurrent(null);
+	  if (actor != null) {
+	    dialog.setCurrent(actor);
+	  }
+	  else {
+	    if (actors != null)
+	      dialog.setCurrent(actors[0]);
+	    else
+	      dialog.setCurrent(null);
+	  }
 	  dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
 	  dialog.setVisible(true);
 	  getOwner().updateCurrentEditing(null, null);
@@ -439,7 +443,7 @@ public class TreeOperations
 	    if (classname == null)
 	      return;
 	    goePopup.setVisible(false);
-	    addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record);
+	    addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record, ActorDialog.GOE_FORCED);
 	  });
 	  comp = GUIHelper.getParentComponent(getOwner());
 	  if (comp != null) {
