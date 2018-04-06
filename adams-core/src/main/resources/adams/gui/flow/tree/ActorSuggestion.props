@@ -9,7 +9,6 @@
 # with the module name, e.g. "adams-core.rule1=...".
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 Default=adams.flow.transformer.PassThrough
 
@@ -40,6 +39,10 @@ adams-core.SequencePlotterCallable=\
 adams-core.SimplePlotCallable=\
   IF PARENT IS adams.flow.standalone.CallableActors \
   THEN adams.flow.sink.SimplePlot
+
+adams-core.ProgressBar=\
+  IF PARENT IS adams.flow.standalone.CallableActors \
+  THEN adams.flow.sink.ProgressBar
 
 adams-core.Standalones=\
   IF PARENT IS adams.flow.standalone.Standalones \

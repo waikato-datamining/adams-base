@@ -54,7 +54,7 @@ public class AddActorAfter
    */
   @Override
   protected BaseShortcut getDefaultShortcut() {
-    return new BaseShortcut("F3");
+    return new BaseShortcut("alt F3");
   }
 
   /**

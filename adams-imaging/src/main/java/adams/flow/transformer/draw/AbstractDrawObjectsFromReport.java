@@ -81,6 +81,14 @@ public abstract class AbstractDrawObjectsFromReport
 	Fonts.getSansFont(14));
 
     m_OptionManager.add(
+	"label-offset-x", "labelOffsetX",
+	0);
+
+    m_OptionManager.add(
+	"label-offset-y", "labelOffsetY",
+	0);
+
+    m_OptionManager.add(
 	"predefined-labels", "predefinedLabels",
 	new BaseString[0]);
   }
@@ -296,6 +304,64 @@ public abstract class AbstractDrawObjectsFromReport
    */
   public String labelFontTipText() {
     return m_Overlays.labelFontTipText();
+  }
+
+  /**
+   * Sets the X offset for the label.
+   *
+   * @param value 	the X offset
+   */
+  public void setLabelOffsetX(int value) {
+    m_Overlays.setLabelOffsetX(value);
+    reset();
+  }
+
+  /**
+   * Returns the X offset for the label.
+   *
+   * @return 		the X offset
+   */
+  public int getLabelOffsetX() {
+    return m_Overlays.getLabelOffsetX();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelOffsetXTipText() {
+    return m_Overlays.labelOffsetXTipText();
+  }
+
+  /**
+   * Sets the Y offset for the label.
+   *
+   * @param value 	the Y offset
+   */
+  public void setLabelOffsetY(int value) {
+    m_Overlays.setLabelOffsetY(value);
+    reset();
+  }
+
+  /**
+   * Returns the Y offset for the label.
+   *
+   * @return 		the Y offset
+   */
+  public int getLabelOffsetY() {
+    return m_Overlays.getLabelOffsetY();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelOffsetYTipText() {
+    return m_Overlays.labelOffsetYTipText();
   }
 
   /**

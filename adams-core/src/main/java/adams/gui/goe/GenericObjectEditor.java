@@ -169,7 +169,7 @@ public class GenericObjectEditor
    *
    * @version $Revision$
    */
-  public class GOETreePopupMenu
+  public static class GOETreePopupMenu
     extends BasePopupMenu {
 
     /** for serialization. */
@@ -177,6 +177,12 @@ public class GenericObjectEditor
 
     /** the popup itself. */
     protected JPopupMenu m_Self;
+
+    /** the info panel at the top. */
+    protected JPanel m_PanelInfo;
+
+    /** the info text at the top. */
+    protected JLabel m_LabelInfo;
 
     /** The tree. */
     protected ClassTree m_Tree;
@@ -196,6 +202,9 @@ public class GenericObjectEditor
     /** The checkbox for enabling/disabling strict filtering. */
     protected JCheckBox m_CheckBoxStrict;
 
+    /** the minimum number of characters before triggering search events. */
+    protected int m_MinimumChars;
+
     /**
      * Constructs a new popup menu.
      *
@@ -210,6 +219,13 @@ public class GenericObjectEditor
       m_Tree = tree;
 
       setLayout(new BorderLayout());
+
+      m_LabelInfo = new JLabel("");
+      m_PanelInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      m_PanelInfo.setVisible(false);
+      m_PanelInfo.add(m_LabelInfo);
+      add(m_PanelInfo, BorderLayout.NORTH);
+
       bottomPanel = new JPanel(new BorderLayout());
       add(bottomPanel, BorderLayout.SOUTH);
 
@@ -294,7 +310,49 @@ public class GenericObjectEditor
       treeView.setBackground(m_Tree.getBackground());
       m_Scroller = new BaseScrollPane(treeView);
       m_Scroller.setPreferredSize(new Dimension(300, 400));
-      add(m_Scroller);
+      add(m_Scroller, BorderLayout.CENTER);
+    }
+
+    /**
+     * Sets the minimum number of characters that the user needs to enter
+     * before triggering a search event.
+     *
+     * @param value	the minimum number of characters (>= 1)
+     */
+    public void setMinimumChars(int value) {
+      if (value >= 1)
+	m_MinimumChars = value;
+    }
+
+    /**
+     * Returns the minimum number of characters that the user needs to enter
+     * before triggering a search event.
+     *
+     * @return		the minimum number of characters (>= 1)
+     */
+    public int getMinimumChars() {
+      return m_MinimumChars;
+    }
+
+    /**
+     * Sets the info text to display at the top.
+     *
+     * @param value	the info text, null or empty to remove
+     */
+    public void setInfoText(String value) {
+      if (value == null)
+        value = "";
+      m_LabelInfo.setText(value);
+      m_PanelInfo.setVisible(!value.isEmpty());
+    }
+
+    /**
+     * Returns the current info text, if any.
+     *
+     * @return		the text, empty if none displayed
+     */
+    public String getInfoText() {
+      return m_LabelInfo.getText();
     }
 
     /**
@@ -1329,7 +1387,8 @@ public class GenericObjectEditor
       tree.expandAll();
 
     // create the popup
-    final BasePopupMenu popup = new GOETreePopupMenu(tree);
+    final GOETreePopupMenu popup = new GOETreePopupMenu(tree);
+    popup.setMinimumChars(getMinimumChars());
 
     // respond when the user chooses a class
     tree.addTreeSelectionListener((TreeSelectionEvent e) -> {

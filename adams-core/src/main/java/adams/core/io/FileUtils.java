@@ -15,7 +15,7 @@
 
 /*
  * FileUtils.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -1288,54 +1288,78 @@ public class FileUtils {
    * @param file	the file to check
    * @return		true if still open/accessed by another process
    */
+  public static boolean isOpen(File file) {
+    if (OS.isWindows())
+      return isOpenWindows(file);
+    else
+      return isOpenNonWindows(file);
+  }
+
+  /**
+   * Checks whether the file is open/accessed by another process (Windows/*nix).
+   *
+   * @param file	the file to check
+   * @return		true if still open/accessed by another process
+   */
   @MixedCopyright(
     copyright = "Hans Frankenstein - http://stackoverflow.com/users/2406808/hans-frankenstein",
     license = License.CC_BY_SA_3,
     url = "http://stackoverflow.com/a/16686031/4698227"
   )
-  public static boolean isOpen(File file) {
+  public static boolean isOpenNonWindows(File file) {
     boolean		result;
-    FileOutputStream 	fos;
     Process 		plsof;
     BufferedReader 	reader;
     String 		line;
 
     result = false;
 
-    if (OS.isWindows()) {
-      fos = null;
-      try {
-	fos = new FileOutputStream(file.getAbsolutePath(), true);
-      }
-      catch (Exception e) {
-	result = true;
-      }
-      finally {
-	FileUtils.closeQuietly(fos);
+    plsof     = null;
+    reader    = null;
+    try {
+      plsof  = new ProcessBuilder(new String[]{"lsof", "|", "grep", file.getAbsolutePath()}).start();
+      reader = new BufferedReader(new InputStreamReader(plsof.getInputStream()));
+      while ((line = reader.readLine()) != null) {
+        if (line.contains(file.getAbsolutePath())) {
+          result = true;
+          break;
+        }
       }
     }
-    else {
-      plsof     = null;
-      reader    = null;
-      try {
-	plsof  = new ProcessBuilder(new String[]{"lsof", "|", "grep", file.getAbsolutePath()}).start();
-	reader = new BufferedReader(new InputStreamReader(plsof.getInputStream()));
-	while ((line = reader.readLine()) != null) {
-	  if (line.contains(file.getAbsolutePath())) {
-	    result = true;
-	    break;
-	  }
-	}
-      }
-      catch (Exception ex) {
-	System.err.println("Failed to check file open status of: " + file);
-	ex.printStackTrace();
-      }
-      finally {
-	FileUtils.closeQuietly(reader);
-	if (plsof != null)
-	  plsof.destroy();
-      }
+    catch (Exception ex) {
+      System.err.println("Failed to check file open status of: " + file);
+      ex.printStackTrace();
+    }
+    finally {
+      FileUtils.closeQuietly(reader);
+      if (plsof != null)
+        plsof.destroy();
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether the file is open/accessed by another process.
+   *
+   * @param file	the file to check
+   * @return		true if still open/accessed by another process
+   */
+  public static boolean isOpenWindows(File file) {
+    boolean		result;
+    FileOutputStream 	fos;
+
+    result = false;
+
+    fos = null;
+    try {
+      fos = new FileOutputStream(file.getAbsolutePath(), true);
+    }
+    catch (Exception e) {
+      result = true;
+    }
+    finally {
+      FileUtils.closeQuietly(fos);
     }
 
     return result;

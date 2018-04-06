@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LookUpTable.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -86,7 +86,6 @@ import java.util.HashMap;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LookUpTable
   extends AbstractSimpleSource {
@@ -242,17 +241,17 @@ public class LookUpTable
       lookup = LookUpHelper.getTable(this, m_StorageName);
       sheet  = new DefaultSpreadSheet();
       sheet.setName(m_StorageName.getValue());
-      sheet.getHeaderRow().addCell("k").setContent(COLUMN_KEY);
-      sheet.getHeaderRow().addCell("v").setContent(COLUMN_VALUE);
+      sheet.getHeaderRow().addCell("k").setContentAsString(COLUMN_KEY);
+      sheet.getHeaderRow().addCell("v").setContentAsString(COLUMN_VALUE);
       keys = new ArrayList<>(lookup.keySet());
       Collections.sort(keys);
       for (String key: keys) {
 	row = sheet.addRow();
-	row.addCell("k").setContent(key);
+	row.addCell("k").setContentAsString(key);
 	if (m_UseNative)
 	  row.addCell("v").setNative(lookup.get(key));
 	else
-	  row.addCell("v").setContent(lookup.get(key).toString());
+	  row.addCell("v").setContentAsString(lookup.get(key).toString());
       }
       m_OutputToken = new Token(sheet);
     }

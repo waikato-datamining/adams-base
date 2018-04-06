@@ -255,7 +255,7 @@ public class ImageObjectIndexOffset
     if (result == null) {
       try {
 	objs      = LocatedObjects.fromReport(report, m_Prefix);
-	newReport = objs.toReport(m_Prefix, m_Offset);
+	newReport = objs.toReport(m_Prefix, m_Offset, true);
 	for (AbstractField field : report.getFields()) {
 	  if (field.getName().startsWith(m_Prefix))
 	    report.removeValue(field);

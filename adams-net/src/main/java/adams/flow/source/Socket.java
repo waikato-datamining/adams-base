@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Socket.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -114,7 +114,6 @@ import java.net.SocketTimeoutException;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Socket
   extends AbstractSimpleSource
@@ -135,7 +134,10 @@ public class Socket
   protected boolean m_OutputString;
 
   /** the socket in use. */
-  protected transient ServerSocket m_ServerSocket;
+  protected transient ServerSocket m_Server;
+
+  /** the current client socket. */
+  protected transient java.net.Socket m_Client;
 
   /**
    * Returns a string describing the object.
@@ -348,42 +350,43 @@ public class Socket
   @Override
   protected String doExecute() {
     String		result;
-    java.net.Socket	client;
     TByteArrayList 	bytes;
     InputStream 	in;
     int			b;
 
     result = null;
 
-    if (m_ServerSocket == null) {
+    if (m_Server == null) {
       try {
-	m_ServerSocket = new ServerSocket(m_Port);
-	m_ServerSocket.setSoTimeout(m_Timeout);
+	m_Server = new ServerSocket(m_Port);
+	m_Server.setSoTimeout(m_Timeout);
 	PortManager.getSingleton().bind(this, m_Port);
       }
       catch (Exception e) {
 	result   = handleException("Failed to listen on port: " + m_Port, e);
-	m_ServerSocket = null;
+	m_Server = null;
       }
     }
 
-    if (m_ServerSocket != null) {
+    if (m_Server != null) {
       while (!isStopped() && (m_OutputToken == null)) {
 	while (isPaused() && !isStopped())
 	  Utils.wait(this, this, 1000, 50);
-	if (m_ServerSocket.isClosed())
+	if (m_Server.isClosed())
 	  break;
 	try {
-	  client = m_ServerSocket.accept();
-	  in     = client.getInputStream();
+	  m_Client = m_Server.accept();
+	  in     = m_Client.getInputStream();
 	  bytes  = new TByteArrayList();
 	  while ((b = in.read()) != -1)
 	    bytes.add((byte) b);
-	  client.close();
+	  if (m_Client != null)
+	    m_Client.close();
 	  if (m_OutputString)
 	    m_OutputToken = new Token(new String(bytes.toArray(), m_Encoding.charsetValue()));
 	  else
 	    m_OutputToken = new Token(bytes.toArray());
+	  m_Client = null;
 	}
 	catch (SocketTimeoutException stoe) {
 	  // ignored
@@ -406,18 +409,26 @@ public class Socket
    */
   @Override
   public void stopExecution() {
-    if (m_ServerSocket != null) {
+    super.stopExecution();
+    if (m_Server != null) {
       try {
-	if (!m_ServerSocket.isClosed())
-	  m_ServerSocket.close();
+	if (!m_Server.isClosed())
+	  m_Server.close();
       }
       catch (Exception e) {
 	// ignored
       }
-      m_ServerSocket = null;
+      m_Server = null;
     }
-
-    super.stopExecution();
+    if (m_Client != null) {
+      try {
+	m_Client.close();
+      }
+      catch (Exception e) {
+        // ignored
+      }
+      m_Client = null;
+    }
   }
 
   /**
@@ -426,15 +437,15 @@ public class Socket
    */
   @Override
   public void wrapUp() {
-    if (m_ServerSocket != null) {
+    if (m_Server != null) {
       try {
-	if (!m_ServerSocket.isClosed())
-	  m_ServerSocket.close();
+	if (!m_Server.isClosed())
+	  m_Server.close();
       }
       catch (Exception e) {
 	// ignored
       }
-      m_ServerSocket = null;
+      m_Server = null;
     }
 
     super.wrapUp();
@@ -450,6 +461,6 @@ public class Socket
    */
   @Override
   public boolean isFinished() {
-    return (m_ServerSocket == null);
+    return (m_Server == null);
   }
 }

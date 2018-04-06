@@ -54,7 +54,7 @@ public class AddActorBeneath
    */
   @Override
   protected BaseShortcut getDefaultShortcut() {
-    return new BaseShortcut("F3");
+    return new BaseShortcut("shift F3");
   }
 
   /**

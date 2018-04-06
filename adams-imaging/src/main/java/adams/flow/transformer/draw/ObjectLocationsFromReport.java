@@ -129,6 +129,7 @@ public class ObjectLocationsFromReport
 
     g = image.getImage().getGraphics();
     g.setColor(getColor());
+    g.setFont(getLabelFont());
     for (Rectangle rect: locations) {
       if (getUseColorsPerType()) {
         if (m_Overlays.hasColor(rect))
@@ -138,7 +139,7 @@ public class ObjectLocationsFromReport
       if (m_Overlays.hasLabel(rect)) {
         label = m_Overlays.getLabel(rect);
         if (label != null)
-          g.drawString(label, (int) (rect.getX() + rect.getWidth()), (int) rect.getY());
+          g.drawString(label, (int) (rect.getX() + rect.getWidth() + getLabelOffsetX()), (int) (rect.getY() + getLabelOffsetY()));
       }
     }
 

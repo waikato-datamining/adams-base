@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Socket.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -51,50 +51,54 @@ import adams.data.statistics.StatUtils;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Socket
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-address &lt;adams.core.base.BaseHostname&gt; (property: address)
  * &nbsp;&nbsp;&nbsp;The address to connect to.
  * &nbsp;&nbsp;&nbsp;default: 127.0.0.1:8000
  * </pre>
- * 
+ *
  * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
  * &nbsp;&nbsp;&nbsp;The type of encoding for sending the data.
  * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
- * 
+ *
+ * <pre>-close-after-send &lt;boolean&gt; (property: closeAfterSend)
+ * &nbsp;&nbsp;&nbsp;If enabled, the socket will get closed after sending the data.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Socket
   extends AbstractSink
@@ -107,6 +111,9 @@ public class Socket
 
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
+
+  /** whether to close the socket after sending data. */
+  protected boolean m_CloseAfterSend;
 
   /** the socket to use. */
   protected transient java.net.Socket m_Socket;
@@ -138,6 +145,10 @@ public class Socket
     m_OptionManager.add(
       "encoding", "encoding",
       new BaseCharset());
+
+    m_OptionManager.add(
+      "close-after-send", "closeAfterSend",
+      true);
   }
 
   /**
@@ -199,6 +210,35 @@ public class Socket
   }
 
   /**
+   * Sets whether to close the socket after sending the data.
+   *
+   * @param value	true if to close socket
+   */
+  public void setCloseAfterSend(boolean value) {
+    m_CloseAfterSend = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to close the socket after sending the data.
+   *
+   * @return		true if to close socket
+   */
+  public boolean getCloseAfterSend() {
+    return m_CloseAfterSend;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String closeAfterSendTipText() {
+    return "If enabled, the socket will get closed after sending the data.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -209,6 +249,7 @@ public class Socket
 
     result  = QuickInfoHelper.toString(this, "address", m_Address);
     result += QuickInfoHelper.toString(this, "encoding", m_Encoding, ", encoding: ");
+    result += QuickInfoHelper.toString(this, "closeAfterSend", (m_CloseAfterSend ? "close after send" : "keep open"), ", ");
 
     return result;
   }
@@ -264,6 +305,10 @@ public class Socket
 	  bytes = ("" + m_InputToken.getPayload()).getBytes(m_Encoding.charsetValue());
 	m_Socket.getOutputStream().write(bytes);
 	m_Socket.getOutputStream().flush();
+	if (m_CloseAfterSend) {
+	  m_Socket.close();
+	  m_Socket = null;
+	}
       }
       catch (Exception e) {
 	result = handleException("Failed to send data!", e);
