@@ -23,6 +23,7 @@ package adams.opt.genetic;
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import weka.classifiers.Classifier;
+import weka.classifiers.meta.FilteredClassifier;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.Remove;
@@ -191,9 +192,30 @@ public class DarkLord
      */
     protected Map<String,Object> assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
       Map<String,Object>	result;
+      String			mask;
+      FilteredClassifier	fc;
+      Remove			remove;
+      StringBuilder		range;
+      int			i;
+
+      mask = getMaskAsString();
+      range = new StringBuilder();
+      for (i = 0; i < mask.length(); i++) {
+        if (mask.charAt(i) == '0')
+          continue;
+        if (range.length() > 0)
+          range.append(",");
+	range.append("" + (i+1));
+      }
+      remove = new Remove();
+      remove.setAttributeIndices(range.toString());
+      fc = new FilteredClassifier();
+      fc.setFilter(remove);
+      fc.setClassifier((Classifier) OptionUtils.shallowCopy(getOwner().getClassifier()));
 
       result = super.assembleSetup(fitness, cls, chromosome, weights);
-      result.put("Mask", getMaskAsString());
+      result.put("Mask", mask);
+      result.put("FilteredSetup", OptionUtils.getCommandLine(fc));
 
       return result;
     }
