@@ -917,7 +917,6 @@ public class Flow
   public String setUp() {
     String		result;
     MessageCollection 	errors;
-    Properties 		props;
 
     // variables
     forceVariables(getVariables());
@@ -954,14 +953,6 @@ public class Flow
 
     if (result != null)
       getLogger().severe(result);
-
-    // properties
-    if (result == null) {
-      props = Environment.getInstance().read(FlowDefinition.KEY);
-      // register?
-      if (m_Register || props.getBoolean("AutoRegister", false))
-	RunningFlowsRegistry.getSingleton().addFlow(this);
-    }
 
     return result;
   }
@@ -1123,10 +1114,17 @@ public class Flow
     String		result;
     Date		start;
     Date		finish;
+    Properties		props;
 
     start    = null;
     finish   = null;
     m_FlowID = RuntimeIDGenerator.getSingleton().next();
+
+    // properties
+    props = Environment.getInstance().read(FlowDefinition.KEY);
+    // register?
+    if (m_Register || props.getBoolean("AutoRegister", false))
+      RunningFlowsRegistry.getSingleton().addFlow(this);
 
     if (m_FlowExecutionListenerFrame == null) {
       if (m_FlowExecutionListeningEnabled) {
