@@ -192,16 +192,14 @@ public class DarkLord
      */
     protected Map<String,Object> assembleSetup(double fitness, Classifier cls, int chromosome, int[] weights) {
       Map<String,Object>	result;
-      String			mask;
       FilteredClassifier	fc;
       Remove			remove;
       StringBuilder		range;
       int			i;
 
-      mask = getMaskAsString();
       range = new StringBuilder();
-      for (i = 0; i < mask.length(); i++) {
-        if (mask.charAt(i) == '0')
+      for (i = 0; i < weights.length; i++) {
+        if (weights[1] == 1)
           continue;
         if (range.length() > 0)
           range.append(",");
@@ -214,7 +212,7 @@ public class DarkLord
       fc.setClassifier((Classifier) OptionUtils.shallowCopy(getOwner().getClassifier()));
 
       result = super.assembleSetup(fitness, cls, chromosome, weights);
-      result.put("Mask", mask);
+      result.put("Mask", getMaskAsString());
       result.put("FilteredSetup", OptionUtils.getCommandLine(fc));
 
       return result;
