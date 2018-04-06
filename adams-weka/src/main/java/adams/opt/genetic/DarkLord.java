@@ -199,7 +199,7 @@ public class DarkLord
 
       range = new StringBuilder();
       for (i = 0; i < weights.length; i++) {
-        if (weights[1] == 1)
+        if (weights[i] == 1)
           continue;
         if (range.length() > 0)
           range.append(",");
