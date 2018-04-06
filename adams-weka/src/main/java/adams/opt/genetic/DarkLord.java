@@ -15,7 +15,7 @@
 
 /*
  * DarkLord.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.opt.genetic;
@@ -39,10 +39,9 @@ import java.util.logging.Level;
  *
  * @author Dale (dale at cs dot waikato dot ac dot nz)
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 4322 $
  */
 public class DarkLord
-  extends AbstractClassifierBasedGeneticAlgorithm {
+  extends AbstractClassifierBasedGeneticAlgorithmWithSecondEvaluation {
 
   /** for serialization. */
   private static final long serialVersionUID = 4822397823362084867L;
@@ -54,7 +53,7 @@ public class DarkLord
    * @version $Revision: 4322 $
    */
   public static class DarkLordJob
-    extends ClassifierBasedGeneticAlgorithmJob<DarkLord> {
+    extends ClassifierBasedGeneticAlgorithmWithSecondEvaluationJob<DarkLord> {
 
     /** for serialization. */
     private static final long serialVersionUID = 8259167463381721274L;
@@ -205,17 +204,22 @@ public class DarkLord
     @Override
     public void calcNewFitness(){
       try {
-        getLogger().fine((new StringBuilder("calc for:")).append(weightsToString()).toString());
+	String weightsStr = weightsToString();
+        getLogger().fine((new StringBuilder("calc for:")).append(weightsStr).toString());
 
         // was measure already calculated for this attribute setup?
-        Double cc = getOwner().getResult(weightsToString());
+        Double cc = getOwner().getResult(weightsStr);
         if (cc != null){
           getLogger().info((new StringBuilder("Already present: ")).append(Double.toString(cc.doubleValue())).toString());
           m_Fitness = cc;
           return;
         }
-        // set the weights
+
         Instances newInstances = new Instances(getInstances());
+	Instances newTest = null;
+	if (getTestInstances() != null)
+	  newTest = new Instances(getTestInstances());
+
         for (int i = 0; i < getInstances().numInstances(); i++) {
           Instance in = newInstances.instance(i);
           int cnt = 0;
@@ -232,23 +236,48 @@ public class DarkLord
 
 	// evaluate classifier
 	Classifier newClassifier = (Classifier) OptionUtils.shallowCopy(getOwner().getClassifier());
-	m_Fitness = evaluateClassifier(newClassifier, newInstances, getFolds(), getSeed());
+	if (newTest == null)
+	  m_Fitness = evaluateClassifier(newClassifier, newInstances, getFolds(), getSeed());
+	else
+	  m_Fitness = evaluateClassifier(newClassifier, newInstances, newTest);
 
         // process fitness
         if (getOwner().setNewFitness(m_Fitness, newClassifier, m_Chromosome, m_Weights)) {
-	  generateOutput(m_Fitness, newInstances, newClassifier, m_Chromosome, m_Weights);
-          // notify the listeners
-          getOwner().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier, m_Weights);
+	  boolean canAdd = true;
+
+	  // second evaluation?
+	  if (getUseSecondEvaluation() && (newTest == null)) {
+	    Classifier newSecondClassifier = (Classifier) OptionUtils.shallowCopy(getOwner().getClassifier());
+	    m_SecondFitness = evaluateClassifier(newSecondClassifier , newInstances, getSecondFolds(), getSecondSeed());
+	    canAdd = getOwner().isSecondBetterFitness(m_SecondFitness);
+	    if (getOwner().setSecondNewFitness(m_SecondFitness, newSecondClassifier, m_Chromosome, m_Weights)) {
+	      if (isLoggingEnabled())
+		getLogger().info("Second evaluation is also better: " + m_SecondFitness);
+	    }
+	    else {
+	      if (isLoggingEnabled())
+		getLogger().info("Second evaluation is not better: " + m_SecondFitness);
+	    }
+	    getOwner().addSecondResult(weightsStr, m_SecondFitness);
+	  }
+
+	  if (canAdd && getOwner().setNewFitness(m_Fitness, newClassifier, m_Chromosome, m_Weights)) {
+	    generateOutput(m_Fitness, newInstances, newClassifier, m_Chromosome, m_Weights);
+	    // notify the listeners
+	    getOwner().notifyFitnessChangeListeners(getMeasure().adjust(m_Fitness), newClassifier, m_Weights);
+	  }
 	}
         else {
           getLogger().fine(getMaskAsString());
         }
 
-        getOwner().addResult(weightsToString(), m_Fitness);
+        getOwner().addResult(weightsStr, m_Fitness);
       }
       catch(Exception e){
         getLogger().log(Level.SEVERE, "Error: ", e);
         m_Fitness = null;
+	if (getUseSecondEvaluation())
+	  m_SecondFitness = null;
       }
     }
   }
