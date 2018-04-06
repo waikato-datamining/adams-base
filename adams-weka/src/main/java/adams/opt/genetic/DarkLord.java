@@ -242,7 +242,7 @@ public class DarkLord
 	  m_Fitness = evaluateClassifier(newClassifier, newInstances, newTest);
 
         // process fitness
-        if (getOwner().setNewFitness(m_Fitness, newClassifier, m_Chromosome, m_Weights)) {
+	if (getOwner().isBetterFitness(m_Fitness)) {
 	  boolean canAdd = true;
 
 	  // second evaluation?
