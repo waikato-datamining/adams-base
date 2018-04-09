@@ -250,7 +250,7 @@ public class WekaRandomSplit
    * 			displaying in the GUI or for listing the options.
    */
   public String preserveOrderTipText() {
-    return "If set to true, then the order is preserved by suppressing randomization.";
+    return "If set to true, then the order is preserved by suppressing randomization; overrides the value defined by the split generator scheme.";
   }
 
   /**
@@ -279,7 +279,7 @@ public class WekaRandomSplit
    * 			displaying in the GUI or for listing the options.
    */
   public String seedTipText() {
-    return "The seed value for the randomization.";
+    return "The seed value for the randomization; overrides the value defined by the split generator scheme.";
   }
 
   /**
@@ -314,7 +314,7 @@ public class WekaRandomSplit
    * 			displaying in the GUI or for listing the options.
    */
   public String percentageTipText() {
-    return "The percentage for the split (between 0 and 1).";
+    return "The percentage for the split (between 0 and 1); overrides the value defined by the split generator scheme.";
   }
 
   /**
@@ -343,7 +343,7 @@ public class WekaRandomSplit
    * 			displaying in the GUI or for listing the options.
    */
   public String createViewTipText() {
-    return "If enabled, views of the dataset are created instead of actual copies.";
+    return "If enabled, views of the dataset are created instead of actual copies; overrides the value defined by the split generator scheme.";
   }
 
   /**
