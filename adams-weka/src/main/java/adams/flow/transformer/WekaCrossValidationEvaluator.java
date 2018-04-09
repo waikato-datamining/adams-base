@@ -315,7 +315,8 @@ public class WekaCrossValidationEvaluator
    * 			displaying in the GUI or for listing the options.
    */
   public String foldsTipText() {
-    return "The number of folds to use in the cross-validation; use -1 for leave-one-out cross-validation (LOOCV).";
+    return "The number of folds to use in the cross-validation; use -1 for "
+      + "leave-one-out cross-validation (LOOCV); overrides the value defined by the fold generator scheme.";
   }
 
   /**
@@ -344,7 +345,7 @@ public class WekaCrossValidationEvaluator
    * 			displaying in the GUI or for listing the options.
    */
   public String seedTipText() {
-    return "The seed value for the cross-validation (used for randomization).";
+    return "The seed value for the cross-validation (used for randomization); overrides the value defined by the fold generator scheme.";
   }
 
   /**
@@ -373,7 +374,7 @@ public class WekaCrossValidationEvaluator
    * 			displaying in the GUI or for listing the options.
    */
   public String numThreadsTipText() {
-    return Performance.getNumThreadsHelp();
+    return Performance.getNumThreadsHelp() + "; overrides the value defined by the fold generator scheme.";
   }
 
   /**
@@ -404,7 +405,7 @@ public class WekaCrossValidationEvaluator
    * 			displaying in the GUI or for listing the options.
    */
   public String useViewsTipText() {
-    return "If enabled, views of the dataset are being used instead of actual copies, to conserve memory.";
+    return "If enabled, views of the dataset are being used instead of actual copies, to conserve memory; overrides the value defined by the fold generator scheme.";
   }
 
   /**

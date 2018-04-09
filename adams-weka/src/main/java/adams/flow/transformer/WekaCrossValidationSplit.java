@@ -262,7 +262,7 @@ public class WekaCrossValidationSplit
    * 			displaying in the GUI or for listing the options.
    */
   public String seedTipText() {
-    return "The seed value for the randomization.";
+    return "The seed value for the randomization; overrides the value defined by the fold generator scheme.";
   }
 
   /**
@@ -297,7 +297,8 @@ public class WekaCrossValidationSplit
    * 			displaying in the GUI or for listing the options.
    */
   public String foldsTipText() {
-    return "The folds to use; using '-1' will generate folds for leave-one-out cross-validation (LOOCV).";
+    return "The number of folds to use in the cross-validation; use -1 for "
+      + "leave-one-out cross-validation (LOOCV); overrides the value defined by the fold generator scheme.";
   }
 
   /**
@@ -325,7 +326,7 @@ public class WekaCrossValidationSplit
    * 			displaying in the GUI or for listing the options.
    */
   public String relationNameTipText() {
-    return "The placeholders for creating the relation name: @ = original relation name, $T = type (train/test), $N = current fold number.";
+    return "The placeholders for creating the relation name: @ = original relation name, $T = type (train/test), $N = current fold number; overrides the value defined by the fold generator scheme.";
   }
 
   /**
@@ -354,7 +355,7 @@ public class WekaCrossValidationSplit
    * 			displaying in the GUI or for listing the options.
    */
   public String createViewTipText() {
-    return "If enabled, views of the dataset are created instead of actual copies.";
+    return "If enabled, views of the dataset are created instead of actual copies; overrides the value defined by the fold generator scheme.";
   }
 
   /**
