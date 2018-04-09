@@ -13,23 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GetJsonValue.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONAware;
-import net.minidev.json.JSONObject;
 import adams.core.JsonDataType;
 import adams.core.QuickInfoHelper;
 import adams.core.base.JsonPathExpression;
-
 import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONAware;
+import net.minidev.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -101,7 +100,6 @@ import com.jayway.jsonpath.JsonPath;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GetJsonValue
   extends AbstractArrayProvider {
@@ -117,7 +115,13 @@ public class GetJsonValue
   
   /** whether to forward null values. */
   protected boolean m_ForwardNull;
-  
+
+  /** the compiled path. */
+  protected transient JsonPath m_ActualPath;
+
+  /** whether path has been compiled. */
+  protected transient boolean m_PathCompiled;
+
   /**
    * Returns a string describing the object.
    *
@@ -149,6 +153,17 @@ public class GetJsonValue
     m_OptionManager.add(
 	    "forward-null", "forwardNull",
 	    false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_ActualPath   = null;
+    m_PathCompiled = false;
   }
 
   /**
@@ -316,8 +331,7 @@ public class GetJsonValue
     String	result;
     JSONObject	json;
     Object	val;
-    JsonPath	path;
-    
+
     result = null;
     
     json = null;
@@ -327,13 +341,18 @@ public class GetJsonValue
       json = (JSONObject) m_InputToken.getPayload();
     
     if (result == null) {
-      if (m_Path.isSimpleKey() || (m_Path.toJsonPath() == null)) {
+      if (!m_PathCompiled) {
+        m_ActualPath   = m_Path.toJsonPath();
+        m_PathCompiled = true;
+      }
+
+      if (m_Path.isSimpleKey() || (m_ActualPath == null)) {
 	if (json.containsKey(m_Path.getValue())) {
 	  val = json.get(m_Path.getValue());
 	  if (isLoggingEnabled())
 	    getLogger().info("Found value for '" + m_Path.getValue() + "': " + val);
 	  if (val instanceof Number)
-	    val = new Double(((Number) val).doubleValue());
+	    val = ((Number) val).doubleValue();
 	  if ((val != null) || m_ForwardNull)
 	    m_Queue.add(val);
 	}
@@ -343,8 +362,7 @@ public class GetJsonValue
 	}
       }
       else {
-	path = m_Path.toJsonPath();
-	val  = path.read(json);
+	val  = m_ActualPath.read(json);
 	if (val instanceof List)
 	  m_Queue.addAll((List) val);
 	else
