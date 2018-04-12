@@ -15,6 +15,10 @@ adams.data.spreadsheet.SpreadSheet=\
 adams.flow.control.removeoutliers.AbstractOutlierDetector=\
   adams.flow.control.removeoutliers
 
+# the summary statistics
+adams.flow.transformer.summarystatistics.SummaryStatistic=\
+  adams.flow.transformer.summarystatistics
+
 # the classifiers
 adams.ml.model.classification.Classifier=\
   adams.ml.model.classification

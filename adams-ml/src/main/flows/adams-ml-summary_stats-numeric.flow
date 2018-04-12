@@ -1,0 +1,10 @@
+# Project: adams
+# Modules: adams-core,adams-ml,adams-spreadsheet,adams-visualstats
+# Date: 2018-04-12 14:09:42
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Computes summary statistics from the actual/predicted columns." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat_predictions.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.transformer.SummaryStatistics -statistic "adams.flow.transformer.summarystatistics.CorrelationCoefficient -logging-level INFO" -statistic adams.flow.transformer.summarystatistics.RootMeanSquaredError -statistic adams.flow.transformer.summarystatistics.NoPrediction
+ adams.flow.sink.SpreadSheetDisplay -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
