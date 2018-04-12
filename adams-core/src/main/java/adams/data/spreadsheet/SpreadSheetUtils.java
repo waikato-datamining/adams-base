@@ -338,6 +338,20 @@ public class SpreadSheetUtils {
    * @return		the data, elements are NaN if missing (if not looking for unique values)
    */
   public static String[] getColumn(SpreadSheet sheet, int col, boolean unique, boolean sort) {
+    return getColumn(sheet, col, unique, sort, "" + Double.NaN);
+  }
+
+  /**
+   * Returns the content of a column as array.
+   *
+   * @param sheet	the sheet to use
+   * @param col		the index of the column
+   * @param unique	whether to return only unique values
+   * @param sort	whether to sort the values
+   * @param missing	the string to use for missing values
+   * @return		the data, elements are NaN if missing (if not looking for unique values)
+   */
+  public static String[] getColumn(SpreadSheet sheet, int col, boolean unique, boolean sort, String missing) {
     List<String> 	result;
     Set<String> 	uniqueItems;
 
@@ -356,7 +370,7 @@ public class SpreadSheetUtils {
 	if (row.hasCell(col) && !row.getCell(col).isMissing())
 	  result.add(row.getCell(col).getContent());
 	else
-	  result.add("" + Double.NaN);
+	  result.add(missing);
       }
     }
 
