@@ -154,9 +154,11 @@ public class InstanceGrouping
       atts.add(new Attribute(att.name(), groups));
     else
       atts.add(new Attribute(att.name(), (ArrayList<String>) null));
-    atts.add((Attribute) m_Data.classAttribute().copy());
+    if (m_Data.classIndex() != -1)
+      atts.add((Attribute) m_Data.classAttribute().copy());
     result = new Instances(m_Data.relationName(), atts, size());
-    result.setClassIndex(result.numAttributes() - 1);
+    if (m_Data.classIndex() != -1)
+      result.setClassIndex(result.numAttributes() - 1);
 
     return result;
   }
@@ -194,12 +196,13 @@ public class InstanceGrouping
         throw new IllegalStateException("Unknown group generated from instance #" + (i+1) + " using '" + id + "': " + group);
       if (added.contains(group))
         continue;
-      values = new double[2];
+      values = new double[(result.classIndex() != -1) ? 2 : 1];
       if (nominal)
 	values[0] = result.attribute(0).indexOfValue(group);
       else
 	values[0] = result.attribute(0).addStringValue(group);
-      values[1] = inst.classValue();
+      if (result.classIndex() != -1)
+	values[1] = inst.classValue();
       result.add(new DenseInstance(inst.weight(), values));
       added.add(group);
     }
@@ -217,9 +220,16 @@ public class InstanceGrouping
    * @throws IllegalArgumentException	if checks fail
    */
   protected void expandCheck(Instances data) {
-    if (data.numAttributes() != 2)
-      throw new IllegalArgumentException(
-        "Expected dataset with two attributes, but got: " + data.numAttributes());
+    if (m_Data.classIndex() != -1) {
+      if (data.numAttributes() != 2)
+	throw new IllegalArgumentException(
+	  "Expected dataset with two attributes, but got: " + data.numAttributes());
+    }
+    else {
+      if (data.numAttributes() != 1)
+	throw new IllegalArgumentException(
+	  "Expected dataset with one attribute, but got: " + data.numAttributes());
+    }
     if (!(data.attribute(0).isNominal() || data.attribute(0).isString()))
       throw new IllegalArgumentException(
         "First attribute is neither nominal nor string: " + Attribute.typeToString(data.attribute(0).type()));

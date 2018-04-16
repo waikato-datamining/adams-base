@@ -76,13 +76,16 @@ public class CrossValidationHelper {
     // build fake dataset with indices
     atts = new ArrayList<>();
     atts.add(new Attribute("Index"));
-    atts.add((Attribute) data.classAttribute().copy());
+    if (data.classIndex() != -1)
+      atts.add((Attribute) data.classAttribute().copy());
     dataWithIndices = new Instances("data with indices", atts, data.numInstances());
-    dataWithIndices.setClassIndex(1);
+    if (data.classIndex() != -1)
+      dataWithIndices.setClassIndex(1);
     for (i = 0; i < data.numInstances(); i++) {
-      values    = new double[2];
+      values    = new double[(data.classIndex() != -1) ? 2 : 1];
       values[0] = i;
-      values[1] = data.instance(i).classValue();
+      if (data.classIndex() != -1)
+        values[1] = data.instance(i).classValue();
       inst = new DenseInstance(1.0, values);
       dataWithIndices.add(inst);
     }
@@ -90,7 +93,7 @@ public class CrossValidationHelper {
     // simulate cross-validation and record indices
     dataWithIndices = new Instances(dataWithIndices);
     dataWithIndices.randomize(random);
-    if (stratify && dataWithIndices.classAttribute().isNominal()) {
+    if (stratify && (dataWithIndices.classIndex() != -1) && dataWithIndices.classAttribute().isNominal()) {
       dataWithIndices.stratify(folds);
     }
     for (i = 0; i < folds; i++) {
