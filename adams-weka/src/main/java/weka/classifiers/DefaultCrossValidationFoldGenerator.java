@@ -154,7 +154,7 @@ public class DefaultCrossValidationFoldGenerator
   public void setData(Instances value) {
     super.setData(value);
     if (m_Data != null) {
-      if (m_Data.classIndex() == -1)
+      if (getStratify() && (m_Data.classIndex() == -1))
         throw new IllegalArgumentException("No class attribute set!");
     }
   }
