@@ -4,26 +4,6 @@ HOWTO make a release
 Requirements
 ------------
   
-* update the versions in archetype HOWTO:
-
-  ```
-  adams-archetype-module/src/site/apt/HOWTO create a new sub-module.apt
-  ```
-
-* update the versions in the pom.xml of the archetype:
-
-  ```
-  adams-archetype-module/src/main/resources/archetype-resources/pom.xml
-  ```
-
-* update the versions in the manual for making a release:
-
-  ```
-  file......: adams-core/src/main/latex/adams-core-manual/developing_with_adams.tex
-  section...: Creating a new module or project
-  subsection: Module
-  ```
-
 * has the java-cup dependency changed? If so, change launcher.sh and
   launcher.bat files
 

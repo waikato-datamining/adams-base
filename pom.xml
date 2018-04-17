@@ -23,15 +23,9 @@
   </licenses>
 
   <modules>
-    <!-- archetypes -->
-    <module>adams-archetype-module</module>
-
-    <!-- core module -->
-    <module>adams-core</module>
-
-    <!-- dependent modules -->
     <module>adams-access</module>
     <module>adams-compress</module>
+    <module>adams-core</module>
     <module>adams-event</module>
     <module>adams-excel</module>
     <module>adams-groovy</module>
