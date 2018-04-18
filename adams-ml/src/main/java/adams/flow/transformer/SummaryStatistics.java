@@ -26,6 +26,7 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.flow.core.Token;
 import adams.flow.transformer.summarystatistics.CategoricalSummaryStatistic;
@@ -111,6 +112,13 @@ import adams.flow.transformer.summarystatistics.SummaryStatistic;
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  *
+ * <pre>-class-distribution-range &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: classDistributionRange)
+ * &nbsp;&nbsp;&nbsp;The (optional) columns with the class distributions; if not available probability
+ * &nbsp;&nbsp;&nbsp;of 1 is assumed for predicted label.
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ *
  * <pre>-statistic &lt;adams.flow.transformer.summarystatistics.SummaryStatistic&gt; [-statistic ...] (property: statistics)
  * &nbsp;&nbsp;&nbsp;The statistics to compute.
  * &nbsp;&nbsp;&nbsp;default:
@@ -140,7 +148,8 @@ public class SummaryStatistics
   /** the column with the probabilities. */
   protected SpreadSheetColumnIndex m_ProbabilityColumn;
 
-  // TODO class distributions
+  /** the column with the class distribution. */
+  protected SpreadSheetColumnRange m_ClassDistributionRange;
 
   /** the statistics. */
   protected SummaryStatistic[] m_Statistics;
@@ -183,6 +192,10 @@ public class SummaryStatistics
       new SpreadSheetColumnIndex(""));
 
     m_OptionManager.add(
+      "class-distribution-range", "classDistributionRange",
+      new SpreadSheetColumnRange(""));
+
+    m_OptionManager.add(
       "statistic", "statistics",
       new SummaryStatistic[0]);
   }
@@ -199,6 +212,7 @@ public class SummaryStatistics
     result  = QuickInfoHelper.toString(this, "actualColumn", m_ActualColumn, "actual: ");
     result += QuickInfoHelper.toString(this, "predictedColumn", m_PredictedColumn, ", predicted: ");
     result += QuickInfoHelper.toString(this, "probabilityColumn", (m_ProbabilityColumn.isEmpty() ? "-none-" : m_ProbabilityColumn.getIndex()), ", probability: ");
+    result += QuickInfoHelper.toString(this, "classDistributionRange", (m_ClassDistributionRange.isEmpty() ? "-none-" : m_ClassDistributionRange.getRange()), ", class dist: ");
 
     return result;
   }
@@ -349,6 +363,35 @@ public class SummaryStatistics
   }
 
   /**
+   * Sets the columns with the class distributions (optional).
+   *
+   * @param value	the range
+   */
+  public void setClassDistributionRange(SpreadSheetColumnRange value) {
+    m_ClassDistributionRange = value;
+    reset();
+  }
+
+  /**
+   * Returns the columns with the class distributions (optional).
+   *
+   * @return		the range
+   */
+  public SpreadSheetColumnRange getClassDistributionRange() {
+    return m_ClassDistributionRange;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classDistributionRangeTipText() {
+    return "The (optional) columns with the class distributions; if not available probability of 1 is assumed for predicted label.";
+  }
+
+  /**
    * Sets the statistics to calculate.
    *
    * @param value	the statistics
@@ -389,10 +432,12 @@ public class SummaryStatistics
     int				actCol;
     int				predCol;
     int				probCol;
+    int[]			distCols;
     boolean			numeric;
     double[]			actNum;
     double[]			predNum;
     double[]			prob;
+    double[][]			dist;
     String[]			actCat;
     String[]			predCat;
     SpreadSheet			stats;
@@ -408,9 +453,11 @@ public class SummaryStatistics
     m_ActualColumn.setData(sheet);
     m_PredictedColumn.setData(sheet);
     m_ProbabilityColumn.setData(sheet);
-    actCol  = m_ActualColumn.getIntIndex();
-    predCol = m_PredictedColumn.getIntIndex();
-    probCol = m_ProbabilityColumn.getIntIndex();
+    m_ClassDistributionRange.setData(sheet);
+    actCol   = m_ActualColumn.getIntIndex();
+    predCol  = m_PredictedColumn.getIntIndex();
+    probCol  = m_ProbabilityColumn.getIntIndex();
+    distCols = m_ClassDistributionRange.getIntIndices();
     if (actCol == -1)
       result = "Actual column not found: " + m_ActualColumn;
     else if (predCol == -1)
@@ -428,6 +475,16 @@ public class SummaryStatistics
         prob = SpreadSheetUtils.getNumericColumn(sheet, probCol);
       else
         prob = null;
+
+      // get class distributions
+      if (distCols.length == 0) {
+        dist = null;
+      }
+      else {
+        dist = new double[distCols.length][];
+        for (i = 0; i < distCols.length; i++)
+          dist[i] = SpreadSheetUtils.getNumericColumn(sheet, distCols[i]);
+      }
 
       if (numeric) {
         actNum  = SpreadSheetUtils.getNumericColumn(sheet, actCol);
@@ -459,6 +516,7 @@ public class SummaryStatistics
             catStat.setCategoricalActual(actCat);
             catStat.setCategoricalPredicted(predCat);
             catStat.setCategoricalProbabilities(prob);
+            catStat.setCategoricalClassDistributions(dist);
             names  = catStat.getNames();
             values = catStat.calculate();
             for (i = 0; i < names.length; i++) {

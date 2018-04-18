@@ -47,16 +47,20 @@ public abstract class AbstractGeneralSummaryStatistic
   /** the probabilities (optional). */
   protected double[] m_CategoricalProbabilities;
 
+  /** the class distributions (optional). */
+  protected double[][] m_CategoricalClassDistributions;
+
   /**
    * Clears all input.
    */
   public void clear() {
     super.clear();
-    m_NumericActual            = null;
-    m_NumericPredicted         = null;
-    m_CategoricalActual        = null;
-    m_CategoricalPredicted     = null;
-    m_CategoricalProbabilities = null;
+    m_NumericActual                 = null;
+    m_NumericPredicted              = null;
+    m_CategoricalActual             = null;
+    m_CategoricalPredicted          = null;
+    m_CategoricalProbabilities      = null;
+    m_CategoricalClassDistributions = null;
   }
 
   /**
@@ -150,6 +154,24 @@ public abstract class AbstractGeneralSummaryStatistic
   }
 
   /**
+   * Sets the class distributions.
+   *
+   * @param value	the class distributions
+   */
+  public void setCategoricalClassDistributions(double[][] value) {
+    m_CategoricalClassDistributions = value;
+  }
+
+  /**
+   * Returns the class distributions values.
+   *
+   * @return		the class distributions
+   */
+  public double[][] getCategoricalClassDistributions() {
+    return m_CategoricalClassDistributions;
+  }
+
+  /**
    * Hook method for performing checks before calculating statistic.
    *
    * @return		null if successful, otherwise error message
@@ -182,6 +204,10 @@ public abstract class AbstractGeneralSummaryStatistic
 	if ((result == null) && (m_CategoricalProbabilities != null)) {
 	  if (m_CategoricalPredicted.length != m_CategoricalProbabilities.length)
 	    result = "Differing number of predicted values and probabilities: " + m_CategoricalPredicted.length + " != " + m_CategoricalProbabilities.length;
+	}
+	if ((result == null) && (m_CategoricalClassDistributions != null)) {
+	  if (m_CategoricalPredicted.length != m_CategoricalClassDistributions.length)
+	    result = "Differing number of predicted values and class distributions: " + m_CategoricalPredicted.length + " != " + m_CategoricalClassDistributions.length;
 	}
       }
     }

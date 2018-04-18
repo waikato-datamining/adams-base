@@ -73,5 +73,17 @@ public interface CategoricalSummaryStatistic
    */
   public double[] getCategoricalProbabilities();
 
-  // TODO class distributions
+  /**
+   * Sets the class distributions.
+   *
+   * @param value	the class distributions
+   */
+  public void setCategoricalClassDistributions(double[][] value);
+
+  /**
+   * Returns the class distributions values.
+   *
+   * @return		the class distributions
+   */
+  public double[][] getCategoricalClassDistributions();
 }
