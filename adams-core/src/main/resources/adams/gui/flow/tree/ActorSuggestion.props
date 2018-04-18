@@ -130,12 +130,20 @@ adams-core.Tee2=\
   IF AFTER TRANSFORMER \
   THEN adams.flow.control.Tee
 
+adams-core.Tee4=\
+  IF PARENT LIKE adams.flow.control.AbstractTee \
+  THEN adams.flow.control.Tee
+
 adams-core.Trigger1=\
   IF AFTER SOURCE \
   THEN adams.flow.control.Trigger
 
 adams-core.Trigger2=\
   IF AFTER TRANSFORMER \
+  THEN adams.flow.control.Trigger
+
+adams-core.Trigger4=\
+  IF PARENT LIKE adams.flow.control.AbstractTee \
   THEN adams.flow.control.Trigger
 
 adams-core.Branch=\
@@ -155,7 +163,7 @@ adams-core.Display1=\
   THEN adams.flow.sink.Display
 
 adams-core.Display2=\
-  IF PARENT IS adams.flow.control.Tee \
+  IF PARENT LIKE adams.flow.control.AbstractTee \
   THEN adams.flow.sink.Display
 
 adams-core.Display3=\
@@ -167,7 +175,7 @@ adams-core.Display4=\
   THEN adams.flow.sink.Display
 
 adams-core.Console1=\
-  IF PARENT IS adams.flow.control.Tee \
+  IF PARENT LIKE adams.flow.control.AbstractTee \
   THEN adams.flow.sink.Console
 
 adams-core.Console2=\
@@ -181,6 +189,11 @@ adams-core.IfThenElse=\
 adams-core.Switch=\
   IF AFTER adams.flow.source.EnterValue \
   THEN adams.flow.control.Switch
+
+adams-core.MapToVariables=\
+  IF AFTER adams.flow.source.EnterManyValues \
+  AND PRECEDING GENERATES java.util.Map \
+  THEN adams.flow.transformer.MapToVariables
 
 adams-core.SetVariable1=\
   IF AFTER adams.flow.core.DataInfoActor \

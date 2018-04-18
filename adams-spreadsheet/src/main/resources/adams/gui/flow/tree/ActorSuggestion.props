@@ -50,3 +50,8 @@ adams-spreadsheet.SpreadSheetRowFilter1=\
 adams-spreadsheet.SpreadSheetColumnFilter1=\
   IF PRECEDING GENERATES adams.data.spreadsheet.SpreadSheet \
   THEN adams.flow.transformer.SpreadSheetColumnFilter
+
+adams-spreadsheet.SpreadSheetVariableRowIterator1=\
+  IF AFTER adams.flow.source.EnterManyValues \
+  AND PRECEDING GENERATES adams.data.spreadsheet.SpreadSheet \
+  THEN adams.flow.transformer.SpreadSheetVariableRowIterator
