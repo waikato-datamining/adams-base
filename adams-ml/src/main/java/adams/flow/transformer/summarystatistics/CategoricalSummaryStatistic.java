@@ -86,4 +86,18 @@ public interface CategoricalSummaryStatistic
    * @return		the class distributions
    */
   public double[][] getCategoricalClassDistributions();
+
+  /**
+   * Sets the class labels (order in the class distributions).
+   *
+   * @param value	the class distribution labels
+   */
+  public void setCategoricalClassDistributionLabels(String[] value);
+
+  /**
+   * Returns the class distributions values.
+   *
+   * @return		the class distribution labels
+   */
+  public String[] getCategoricalClassDistributionLabels();
 }

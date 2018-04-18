@@ -446,6 +446,7 @@ public class SummaryStatistics
     CategoricalSummaryStatistic	catStat;
     String[]			names;
     double[]			values;
+    String[]			labels;
     int				i;
 
     result = null;
@@ -478,12 +479,16 @@ public class SummaryStatistics
 
       // get class distributions
       if (distCols.length == 0) {
-        dist = null;
+        dist   = null;
+        labels = null;
       }
       else {
-        dist = new double[distCols.length][];
-        for (i = 0; i < distCols.length; i++)
-          dist[i] = SpreadSheetUtils.getNumericColumn(sheet, distCols[i]);
+        dist   = new double[distCols.length][];
+        labels = new String[distCols.length];
+        for (i = 0; i < distCols.length; i++) {
+	  dist[i]   = SpreadSheetUtils.getNumericColumn(sheet, distCols[i]);
+	  labels[i] = sheet.getColumnName(distCols[i]);
+	}
       }
 
       if (numeric) {
@@ -517,6 +522,7 @@ public class SummaryStatistics
             catStat.setCategoricalPredicted(predCat);
             catStat.setCategoricalProbabilities(prob);
             catStat.setCategoricalClassDistributions(dist);
+            catStat.setCategoricalClassDistributionLabels(labels);
             names  = catStat.getNames();
             values = catStat.calculate();
             for (i = 0; i < names.length; i++) {

@@ -43,15 +43,19 @@ public abstract class AbstractCategoricalSummaryStatistic
   /** the class distributions (optional). */
   protected double[][] m_CategoricalClassDistributions;
 
+  /** the class distribution labels (required if distributions provided). */
+  protected String[] m_CategoricalClassDistributionLabels;
+
   /**
    * Clears all input.
    */
   public void clear() {
     super.clear();
-    m_CategoricalActual             = null;
-    m_CategoricalPredicted          = null;
-    m_CategoricalProbabilities      = null;
-    m_CategoricalClassDistributions = null;
+    m_CategoricalActual                  = null;
+    m_CategoricalPredicted               = null;
+    m_CategoricalProbabilities           = null;
+    m_CategoricalClassDistributions      = null;
+    m_CategoricalClassDistributionLabels = null;
   }
 
   /**
@@ -127,6 +131,24 @@ public abstract class AbstractCategoricalSummaryStatistic
   }
 
   /**
+   * Sets the class labels (order in the class distributions).
+   *
+   * @param value	the class distribution labels
+   */
+  public void setCategoricalClassDistributionLabels(String[] value) {
+    m_CategoricalClassDistributionLabels = value;
+  }
+
+  /**
+   * Returns the class distributions values.
+   *
+   * @return		the class distribution labels
+   */
+  public String[] getCategoricalClassDistributionLabels() {
+    return m_CategoricalClassDistributionLabels;
+  }
+
+  /**
    * Hook method for performing checks before calculating statistic.
    *
    * @return		null if successful, otherwise error message
@@ -150,6 +172,10 @@ public abstract class AbstractCategoricalSummaryStatistic
       }
       if ((result == null) && (m_CategoricalClassDistributions != null)) {
         if (m_CategoricalPredicted.length != m_CategoricalClassDistributions.length)
+          result = "Differing number of predicted values and class distributions: " + m_CategoricalPredicted.length + " != " + m_CategoricalClassDistributions.length;
+        else if (m_CategoricalClassDistributionLabels == null)
+          result = "No class distribution labels provided!";
+        else if (m_CategoricalClassDistributionLabels.length != m_CategoricalClassDistributions[0].length)
           result = "Differing number of predicted values and class distributions: " + m_CategoricalPredicted.length + " != " + m_CategoricalClassDistributions.length;
       }
     }
