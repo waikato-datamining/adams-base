@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ClassifyTab.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -43,6 +43,8 @@ import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
+import adams.gui.sendto.SendToActionSupporter;
+import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.history.AbstractHistoryPopupMenuItem;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
@@ -61,6 +63,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
@@ -80,7 +84,6 @@ import java.util.logging.Level;
  * Tab for classification.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClassifyTab
   extends AbstractInvestigatorTab {
@@ -356,7 +359,7 @@ public class ClassifyTab
 	      labels.add(getEntryName(index));
 	    }
 	  }
-	  AdjustableGridPanel panel = null;
+	  final AdjustableGridPanel panel;
 	  if (comps.size() > 0) {
 	    panel = new AdjustableGridPanel();
 	    for (int i = 0; i < comps.size(); i++) {
@@ -368,12 +371,15 @@ public class ClassifyTab
 	    }
             panel.updateLayout();
 	  }
+	  else {
+	    panel = null;
+	  }
 	  if (!errors.isEmpty())
 	    m_Owner.logError(
 	      "Failed to generate output using: " + current.toCommandLine() + "\n" + errors,
 	      "Error generating output");
 	  if (panel != null) {
-	    ApprovalDialog dialog;
+	    final ApprovalDialog dialog;
 	    if (m_Owner.getParentDialog() != null)
 	      dialog = new ApprovalDialog(m_Owner.getParentDialog(), ModalityType.MODELESS);
 	    else
@@ -383,6 +389,38 @@ public class ClassifyTab
 	    dialog.getContentPane().add(new BaseScrollPane(panel), BorderLayout.CENTER);
 	    dialog.setSize(GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension()));
 	    dialog.setLocationRelativeTo(dialog.getParent());
+	    dialog.setCancelVisible(false);
+	    dialog.setApproveCaption("Close");
+
+	    // menu
+	    SendToActionSupporter sendTo = new SendToActionSupporter() {
+	      @Override
+	      public Class[] getSendToClasses() {
+		return new Class[]{JComponent.class};
+	      }
+	      @Override
+	      public boolean hasSendToItem(Class[] cls) {
+		return (SendToActionUtils.isAvailable(JComponent.class, cls));
+	      }
+	      @Override
+	      public Object getSendToItem(Class[] cls) {
+		if (SendToActionUtils.isAvailable(JComponent.class, cls))
+		  return panel;
+		return null;
+	      }
+	    };
+	    JMenuBar menubar = new JMenuBar();
+	    JMenu menu = new JMenu("File");
+	    menubar.add(menu);
+	    SendToActionUtils.addSendToSubmenu(sendTo, menu);
+	    menu.addSeparator();
+	    JMenuItem item = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
+	    item.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
+	    item.addActionListener((ActionEvent e) -> dialog.setVisible(false));
+	    menu.add(item);
+	    dialog.setJMenuBar(menubar);
+
+	    // show
 	    dialog.setVisible(true);
 	  }
 	  return null;
