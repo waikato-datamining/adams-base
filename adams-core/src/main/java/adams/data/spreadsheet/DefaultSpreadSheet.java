@@ -790,6 +790,11 @@ public class DefaultSpreadSheet
 
     result = null;
 
+    if ((rowIndex < 0) || (rowIndex >= getRowCount()))
+      return null;
+    if ((columnIndex < 0) || (columnIndex >= getColumnCount()))
+      return null;
+
     row    = getRow(rowIndex);
     if (row != null)
       result = row.getCell(columnIndex);

@@ -651,11 +651,16 @@ public class DatasetView
    */
   @Override
   public DataRow getRow(String rowKey) {
+    DataRow 	row;
+
     rowKey = getActualRow(rowKey);
-    if (rowKey != null)
-      return wrap(m_Dataset.getRow(rowKey));
-    else
-      return null;
+    if (rowKey != null) {
+      row = m_Dataset.getRow(rowKey);
+      if (row != null)
+	return wrap(row);
+    }
+
+    return null;
   }
 
   /**
