@@ -21,7 +21,9 @@
 package adams.flow.core;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Variables;
 import adams.core.io.FlowFile;
+import adams.core.io.PlaceholderFile;
 import adams.flow.control.FlowStructureModifier;
 
 /**
@@ -92,6 +94,23 @@ public abstract class AbstractBaseExternalActor
       "The file containing the external actor; programmatic variables "
 	+ "like '" + ActorUtils.FLOW_DIR + "' can be used as part of the file "
 	+ "name as they get expanded before attempting to load the file.";
+  }
+
+  /**
+   * Expands the filename, applying any variables if necessary.
+   *
+   * @return		the expanded file
+   */
+  protected PlaceholderFile getActualActorFile() {
+    PlaceholderFile result;
+
+    result = m_ActorFile;
+
+    // programmatic variable maybe?
+    if (result.toString().contains(Variables.START))
+      result = new PlaceholderFile(getVariables().expand(result.toString()));
+
+    return result;
   }
 
   /**
