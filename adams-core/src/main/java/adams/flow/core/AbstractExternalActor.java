@@ -15,7 +15,7 @@
 
 /*
  * AbstractExternalActor.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -33,7 +33,6 @@ import adams.event.VariableChangeEvent.Type;
  * Ancestor of actors that load another actor from disk and execute it.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractExternalActor
   extends AbstractBaseExternalActor
@@ -227,12 +226,7 @@ public abstract class AbstractExternalActor
 
     result = null;
 
-    file = m_ActorFile;
-
-    // programmatic variable maybe?
-    if (file.toString().startsWith(Variables.START))
-      file = new PlaceholderFile(getVariables().expand(file.toString()));
-
+    file = getActualActorFile();
     if (!file.isFile()) {
       result = "'" + file.getAbsolutePath() + "' does not point to a file!";
     }
@@ -344,18 +338,20 @@ public abstract class AbstractExternalActor
   @Override
   protected String doExecute() {
     String		result;
+    PlaceholderFile	file;
 
     result = null;
 
     // file changed?
-    if (!m_Monitor.isInitialized(m_ActorFile)) {
-      result = m_Monitor.initialize(m_ActorFile);
+    file = getActualActorFile();
+    if (!m_Monitor.isInitialized(file)) {
+      result = m_Monitor.initialize(file);
     }
-    else if (m_Monitor.hasChanged(m_ActorFile)) {
+    else if (m_Monitor.hasChanged(file)) {
       if (isLoggingEnabled())
-        getLogger().info("Actor file has changed: " + m_ActorFile);
+        getLogger().info("Actor file has changed: " + file);
       m_ActorFileChanged = true;
-      result = m_Monitor.update(m_ActorFile);
+      result = m_Monitor.update(file);
     }
 
     // not setup yet due to variable or on-the-fly?
