@@ -68,6 +68,7 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.ErrorMessagePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
+import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.ActorChangeEvent;
@@ -84,13 +85,16 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -425,25 +429,48 @@ public class TreeOperations
 	  goePopup = new GOETreePopupMenu(tree);
 	  switch (position) {
 	    case BENEATH:
-	      goePopup.setInfoText("Insert actor beneath");
+	      goePopup.setInfoText("Insert _actor beneath");
 	      break;
 	    case HERE:
-	      goePopup.setInfoText("Insert actor here");
+	      goePopup.setInfoText("Insert _actor here");
 	      break;
 	    case AFTER:
-	      goePopup.setInfoText("Insert actor after");
+	      goePopup.setInfoText("Insert _actor after");
 	      break;
 	    default:
 	      ConsolePanel.getSingleton().append(
 		LoggingLevel.WARNING, "Unhandled position for search tree info text: " + position);
 	  }
 	  goePopup.pack();
-	  tree.addTreeSelectionListener((TreeSelectionEvent e) -> {
-	    String classname = tree.getSelectedItem();
-	    if (classname == null)
-	      return;
-	    goePopup.setVisible(false);
-	    addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record, ActorDialog.GOE_FORCED);
+	  tree.addKeyListener(new KeyAdapter() {
+	    @Override
+	    public void keyPressed(KeyEvent e) {
+	      if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		String classname = tree.getSelectedItem();
+		if (classname == null)
+		  return;
+		goePopup.setVisible(false);
+		addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record, ActorDialog.GOE_FORCED);
+	      }
+	      else {
+		super.keyPressed(e);
+	      }
+	    }
+	  });
+	  tree.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+	      if (MouseUtils.isDoubleClick(e)) {
+		String classname = tree.getSelectedItem();
+		if (classname == null)
+		  return;
+		goePopup.setVisible(false);
+		addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record, ActorDialog.GOE_FORCED);
+	      }
+	      else {
+		super.mouseClicked(e);
+	      }
+	    }
 	  });
 	  comp = GUIHelper.getParentComponent(getOwner());
 	  if (comp != null) {
