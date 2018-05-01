@@ -67,6 +67,7 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -221,6 +222,7 @@ public class GenericObjectEditor
       setLayout(new BorderLayout());
 
       m_LabelInfo = new JLabel("");
+      m_LabelInfo.setLabelFor(m_Tree);
       m_PanelInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
       m_PanelInfo.setVisible(false);
       m_PanelInfo.add(m_LabelInfo);
@@ -336,12 +338,21 @@ public class GenericObjectEditor
 
     /**
      * Sets the info text to display at the top.
+     * Use "_" before the character to use as the mnemonic for jumping into the
+     * tree via the keyboard.
      *
      * @param value	the info text, null or empty to remove
      */
     public void setInfoText(String value) {
       if (value == null)
         value = "";
+      if (GUIHelper.hasMnemonic(value)) {
+	m_LabelInfo.setDisplayedMnemonic(GUIHelper.getMnemonic(value));
+	value = GUIHelper.stripMnemonic(value);
+      }
+      else {
+	m_LabelInfo.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
+      }
       m_LabelInfo.setText(value);
       m_PanelInfo.setVisible(!value.isEmpty());
     }
