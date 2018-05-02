@@ -15,7 +15,7 @@
 
 /*
  * DownSample.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
@@ -114,6 +114,17 @@ public class DownSample<T extends DataContainer>
   }
 
   /**
+   * Creates a copy of the data point.
+   *
+   * @param index	the index in the data point list to copy
+   * @param points	the list of data points
+   * @return		the copy of the specified data point
+   */
+  protected DataPoint copy(int index, List<DataPoint> points) {
+    return (DataPoint) points.get(index).getClone();
+  }
+
+  /**
    * Performs the actual filtering.
    *
    * @param data	the data to filter
@@ -121,7 +132,7 @@ public class DownSample<T extends DataContainer>
    */
   @Override
   protected T processData(T data) {
-    T		result;
+    T			result;
     int			i;
     List<DataPoint>	points;
 
@@ -130,7 +141,7 @@ public class DownSample<T extends DataContainer>
     points = data.toList();
     for (i = 0; i < points.size(); i++) {
       if ((i+1) % m_NthPoint == 0)
-	result.add((DataPoint) points.get(i).getClone());
+	result.add(copy(i, points));
     }
 
     return result;
