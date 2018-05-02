@@ -15,7 +15,7 @@
 
 /*
  * CsvSpreadSheetWriter.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -627,12 +627,12 @@ public class CsvSpreadSheetWriter
    * @param value	the quote character
    */
   public void setQuoteCharacter(String value) {
-    if (value.length() == 1) {
+    if (value.length() <= 1) {
       m_QuoteCharacter = value;
       reset();
     }
     else {
-      getLogger().severe("Only one character allowed for quote character, provided: " + value);
+      getLogger().severe("Empty string or only one character allowed for quote character, provided: " + value);
     }
   }
 
@@ -652,7 +652,7 @@ public class CsvSpreadSheetWriter
    * 			displaying in the GUI or for listing the options.
    */
   public String quoteCharacterTipText() {
-    return "The character to use for surrounding text cells.";
+    return "The character to use for surrounding text cells; leave empty for not quote character.";
   }
 
   /**
@@ -1099,6 +1099,9 @@ public class CsvSpreadSheetWriter
     String	result;
     boolean	required;
 
+    if (m_QuoteCharacter.length() == 0)
+      return s;
+
     required =    m_AlwaysQuoteText
 	       || s.contains(m_Separator)
 	       || s.contains(" ")
@@ -1126,6 +1129,9 @@ public class CsvSpreadSheetWriter
   protected String quoteNumber(String s) {
     String	result;
     boolean	required;
+
+    if (m_QuoteCharacter.length() == 0)
+      return s;
 
     required =    s.contains(m_Separator)
 	       || (s.length() == 0);
