@@ -15,7 +15,7 @@
 
 /*
  * ImageAnnotator.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -32,6 +32,7 @@ import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
 import adams.gui.event.ImagePanelLeftClickEvent;
 import adams.gui.event.ImagePanelLeftClickListener;
 import adams.gui.visualization.image.ImageOverlay;
@@ -48,9 +49,14 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -264,9 +270,15 @@ public class ImageAnnotator
      */
     @Override
     protected void initGUI() {
-      int	i;
-      JPanel	panelButtons;
-      JPanel	panelLeft;
+      int			i;
+      JPanel			panelButtons;
+      JPanel			panelLeft;
+      GridBagLayout 		layout;
+      GridBagConstraints 	con;
+      int 			gapVertical;
+      int 			gapHorizontal;
+      List<Component> 		comps;
+      JPanel			panel;
 
       super.initGUI();
 
@@ -276,11 +288,14 @@ public class ImageAnnotator
       panelLeft = new JPanel(new BorderLayout(5, 5));
       add(panelLeft, BorderLayout.WEST);
 
-      panelButtons = new JPanel(new GridLayout(0, 1, 5, 5));
-      panelLeft.add(panelButtons, BorderLayout.NORTH);
+      gapHorizontal = 5;
+      gapVertical   = 2;
+      layout = new GridBagLayout();
+      panelButtons = new JPanel(layout);
+      panelLeft.add(new BaseScrollPane(panelButtons), BorderLayout.CENTER);
 
       m_ButtonGroup = new ButtonGroup();
-
+      comps         = new ArrayList<>();
       m_ButtonLabels = new JToggleButton[m_Labels.length];
       for (i = 0; i < m_Labels.length; i++) {
         final String label = m_Labels[i].getValue();
@@ -288,18 +303,43 @@ public class ImageAnnotator
         m_ButtonLabels[i].addActionListener((ActionEvent e) -> setCurrentLabel(label));
         if (i == 0)
           m_ButtonLabels[i].setSelected(true);
-        panelButtons.add(m_ButtonLabels[i]);
         m_ButtonGroup.add(m_ButtonLabels[i]);
+	comps.add(m_ButtonLabels[i]);
       }
 
       m_ButtonUnset = new JToggleButton("Unset");
       m_ButtonUnset.addActionListener((ActionEvent e) -> setCurrentLabel(null));
-      panelButtons.add(m_ButtonUnset);
+      comps.add(m_ButtonUnset);
       m_ButtonGroup.add(m_ButtonUnset);
 
       m_ButtonReset = new JButton("Reset");
       m_ButtonReset.addActionListener((ActionEvent e) -> resetLabels());
-      panelButtons.add(m_ButtonReset);
+      comps.add(m_ButtonReset);
+
+      for (i = 0; i < comps.size(); i++) {
+	con = new GridBagConstraints();
+	con.anchor  = GridBagConstraints.WEST;
+	con.fill    = GridBagConstraints.HORIZONTAL;
+	con.gridy   = i;
+	con.gridx   = 0;
+	con.weightx = 100;
+	con.ipadx   = 20;
+	con.insets  = new Insets(gapVertical, gapHorizontal, gapVertical, gapHorizontal);
+	layout.setConstraints(comps.get(i), con);
+	panelButtons.add(comps.get(i));
+      }
+
+      // filler at bottom
+      panel         = new JPanel();
+      con           = new GridBagConstraints();
+      con.anchor    = GridBagConstraints.WEST;
+      con.fill      = GridBagConstraints.BOTH;
+      con.gridy     = comps.size();
+      con.gridx     = 0;
+      con.weighty   = 100;
+      con.gridwidth = GridBagConstraints.REMAINDER;
+      layout.setConstraints(panel, con);
+      panelButtons.add(panel);
 
       // image
       m_PanelImage = new ImagePanel();
