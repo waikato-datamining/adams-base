@@ -1,0 +1,21 @@
+#Simple report format (= Java properties file format)
+#Wed May 09 17:07:06 NZST 2018
+Filename=/home/fracpete/development/projects/adamsfamily/adams/adams-imaging/src/main/flows/data/circle.png
+Filename\tDataType=S
+Height=600.0
+Height\tDataType=N
+Name=circle.png
+Name\tDataType=S
+Object.0001.height=103.0
+Object.0001.height\tDataType=N
+Object.0001.width=250.0
+Object.0001.width\tDataType=N
+Object.0001.x=82.0
+Object.0001.x\tDataType=N
+Object.0001.y=80.0
+Object.0001.y\tDataType=N
+Parent\ ID=-1
+Path=/home/fracpete/development/projects/adamsfamily/adams/adams-imaging/src/main/flows/data
+Path\tDataType=S
+Width=800.0
+Width\tDataType=N

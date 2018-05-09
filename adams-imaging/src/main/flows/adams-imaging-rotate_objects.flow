@@ -1,0 +1,35 @@
+# Project: adams
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+# Date: 2018-05-09 20:59:17
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Shows how to rotate object annotations." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -zoom -1 -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\"" -entry-name-variable degrees
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/circle.png
+ adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.control.Tee -name "image dimensions"
+  adams.flow.control.Tee -name width
+   adams.flow.transformer.ImageInfo
+   adams.flow.transformer.SetVariable -var-name width
+  adams.flow.control.Tee -name height
+   adams.flow.transformer.ImageInfo -type HEIGHT
+   adams.flow.transformer.SetVariable -var-name height
+ adams.flow.control.Tee -name original
+  adams.flow.transformer.SetVariable -var-name degrees -var-value 0
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name 90
+  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Rotate -angle 90.0"
+  adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Rotate -rotation _90 -image-width @{width} -image-height @{height}"
+  adams.flow.transformer.SetVariable -var-name degrees -var-value 90
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name 180
+  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Rotate -angle 180.0"
+  adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Rotate -rotation _180 -image-width @{width} -image-height @{height}"
+  adams.flow.transformer.SetVariable -var-name degrees -var-value 180
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name 270
+  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Rotate -angle 270.0"
+  adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Rotate -rotation _270 -image-width @{width} -image-height @{height}"
+  adams.flow.transformer.SetVariable -var-name degrees -var-value 270
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
