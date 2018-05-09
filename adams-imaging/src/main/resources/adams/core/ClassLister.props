@@ -15,6 +15,10 @@ adams.data.conversion.BufferedImageToOtherFormatConversion=\
 adams.data.conversion.OtherFormatToBufferedImageConversion=\
   adams.data.conversion
 
+# the luminance parameters
+adams.data.image.luminance.AbstractLuminanceParameters=\
+  adams.data.image.luminance
+
 # the BufferedImage feature generators
 adams.data.image.features.AbstractBufferedImageFeatureGenerator=\
   adams.data.image.features,\
