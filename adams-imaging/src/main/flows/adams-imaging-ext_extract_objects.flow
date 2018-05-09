@@ -1,6 +1,6 @@
 # Project: adams
 # Modules: adams-core,adams-imaging,adams-spreadsheet
-# Date: 2018-05-09 13:14:46
+# Date: 2018-05-09 13:17:18
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Trigger -name "extract images" -annotation "Expects the following variabes:\\n- image_dir: the directory with the annotated images\\n- output_dir: directory for storing the extracted objects\\n- max_obj_width: the maximum width of objects to extract, -1 to ignore\\n- max_obj_height: the maximum height of objects to extract, -1 to ignore\\n- scale: factor for scaling the images (0-1)\\n- dialog_title: the title for the file chooser dialog\\n- prefix: the prefix of the object fields in the report\\noptional:\\n- limit_type: true if to limit objects to a specific type\\n- type_key: the meta-data key to look for (eg \\\'type\\\')\\n- type_regexp: the regular expression to match against the type values"
@@ -59,7 +59,8 @@ adams.flow.control.Trigger -name "extract images" -annotation "Expects the follo
    adams.flow.transformer.SetVariable -var-name skip_object -var-value "@{skip_object} or (not matches(\\\"@{type}\\\", \\\"@{type_regexp}\\\"))" -value-type BOOL_EXPRESSION -expand-value true
   adams.flow.control.ConditionalSubProcess -condition "adams.flow.condition.bool.Expression -expression \"((@{max_obj_width} > -1) or (@{max_obj_height} > -1)) and ((@{height} > (@{max_obj_height} / @{scale})) or (@{width} > (@{max_obj_width} / @{scale})))\""
    adams.flow.transformer.SetVariable -var-name skip_object -var-value true
- adams.flow.control.ConditionalTrigger -name crop -condition "adams.flow.condition.bool.Expression -expression \"@{skip_object} = false\""
+ adams.flow.control.Block -name "Block (2)" -condition "adams.flow.condition.bool.VariableFlagSet -variable-name skip_object"
+ adams.flow.control.Trigger -name crop
   adams.flow.source.StorageValue -storage-name image -conversion adams.data.conversion.UnknownToUnknown
   adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.Cropping -algorithm \"adams.data.image.transformer.crop.RelativeCrop -x @{x} -y @{y} -width @{width} -height @{height}\""
   adams.flow.control.ConditionalSubProcess -condition "adams.flow.condition.bool.Expression -expression \"@{scale} != 1.0\""
