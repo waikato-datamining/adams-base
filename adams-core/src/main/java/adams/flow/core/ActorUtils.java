@@ -25,6 +25,7 @@ import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
+import adams.core.io.FileUtils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
@@ -74,10 +75,12 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -92,6 +95,9 @@ public class ActorUtils {
 
   /** the variable for the short flow filename. */
   public final static String FLOW_FILENAME_SHORT = "flow_filename_short";
+
+  /** the variable for the flow restoration filename (long filename, but with .props extension). */
+  public final static String FLOW_FILENAME_RESTORE = "flow_filename_restore";
 
   /** the variable for the directory the flow is located in. */
   public final static String FLOW_DIR = "flow_dir";
@@ -118,6 +124,7 @@ public class ActorUtils {
   public final static String[] PROGRAMMATIC_VARIABLES = {
     FLOW_FILENAME_LONG,
     FLOW_FILENAME_SHORT,
+    FLOW_FILENAME_RESTORE,
     FLOW_DIR,
     FLOW_ID,
     IS_HEADLESS,
@@ -126,6 +133,21 @@ public class ActorUtils {
     PROJECT_HOME,
     PROJECT_MODULES,
   };
+
+  /** programmatically set variables. */
+  public final static Map<String,String> PROGRAMMATIC_VARIABLES_HELP = new HashMap<>();
+  static {
+    PROGRAMMATIC_VARIABLES_HELP.put(FLOW_FILENAME_LONG, "The absolute file name of the flow (flow must be saved)");
+    PROGRAMMATIC_VARIABLES_HELP.put(FLOW_FILENAME_SHORT, "The file name of the flow without path (flow must be saved)");
+    PROGRAMMATIC_VARIABLES_HELP.put(FLOW_FILENAME_RESTORE, "The absolute file name of the flow restoration file (like " + FLOW_FILENAME_LONG + " but with .props extension; flow must be saved)");
+    PROGRAMMATIC_VARIABLES_HELP.put(FLOW_DIR, "The absolute directory the flow is stored in (flow must be saved)");
+    PROGRAMMATIC_VARIABLES_HELP.put(FLOW_ID, "The flow's unique ID");
+    PROGRAMMATIC_VARIABLES_HELP.put(IS_HEADLESS, "Whether the environment is headless (eg server process)");
+    PROGRAMMATIC_VARIABLES_HELP.put(HAS_GUI, "Whether the flow can use a GUI");
+    PROGRAMMATIC_VARIABLES_HELP.put(PROJECT_NAME, "The name of the project (usually ADAMS)");
+    PROGRAMMATIC_VARIABLES_HELP.put(PROJECT_HOME, "The absolute directory name of the project home directory (eg $HOME/.adams)");
+    PROGRAMMATIC_VARIABLES_HELP.put(PROJECT_MODULES, "Comma-separated list of modules that this application consists of");
+  }
 
   /** functional type: primitive. */
   public final static String FUNCTIONAL_PRIMITIVE = "primitive";
@@ -1512,15 +1534,16 @@ public class ActorUtils {
       context.getLocalVariables().set(PROJECT_NAME, Environment.getInstance().getProject());
       context.getLocalVariables().set(PROJECT_HOME, Environment.getInstance().getHome());
       context.getLocalVariables().set(PROJECT_MODULES, Utils.flatten(Modules.getSingleton().getModules(), ","));
+      context.getLocalVariables().set(ActorUtils.IS_HEADLESS, "" + GUIHelper.isHeadless());
     }
     if (flow != null) {
       context.getLocalVariables().set(FLOW_DIR, flow.getParentFile().getAbsolutePath());
       context.getLocalVariables().set(FLOW_FILENAME_LONG, flow.getAbsolutePath());
       context.getLocalVariables().set(FLOW_FILENAME_SHORT, flow.getName());
+      context.getLocalVariables().set(FLOW_FILENAME_RESTORE, FileUtils.replaceExtension(flow.getAbsolutePath(), ".props"));
     }
     if ((context != null) && (context.getRoot() != null)) {
       context.getLocalVariables().set(ActorUtils.FLOW_ID, (context.getRoot() instanceof Flow) ? "" + ((Flow) context.getRoot()).getFlowID() : "-1");
-      context.getLocalVariables().set(ActorUtils.IS_HEADLESS, "" + context.getRoot().isHeadless());
       context.getLocalVariables().set(ActorUtils.HAS_GUI, "" + !context.getRoot().isHeadless());
     }
   }
@@ -1532,6 +1555,7 @@ public class ActorUtils {
    * @param flow	the flow file name
    * @see		#FLOW_FILENAME_LONG
    * @see		#FLOW_FILENAME_SHORT
+   * @see		#FLOW_FILENAME_RESTORE
    * @see		#FLOW_DIR
    * @see		#FLOW_ID
    * @see		#HAS_GUI
@@ -1542,19 +1566,20 @@ public class ActorUtils {
    * @see		#PROGRAMMATIC_VARIABLES
    */
   public static void updateProgrammaticVariables(VariablesHandler handler, Actor context, File flow) {
-    if (context != null) {
+    if (handler != null) {
       handler.getLocalVariables().set(PROJECT_NAME, Environment.getInstance().getProject());
       handler.getLocalVariables().set(PROJECT_HOME, Environment.getInstance().getHome());
       handler.getLocalVariables().set(PROJECT_MODULES, Utils.flatten(Modules.getSingleton().getModules(), ","));
+      handler.getLocalVariables().set(ActorUtils.IS_HEADLESS, "" + GUIHelper.isHeadless());
     }
     if (flow != null) {
       handler.getLocalVariables().set(FLOW_DIR, flow.getParentFile().getAbsolutePath());
       handler.getLocalVariables().set(FLOW_FILENAME_LONG, flow.getAbsolutePath());
       handler.getLocalVariables().set(FLOW_FILENAME_SHORT, flow.getName());
+      handler.getLocalVariables().set(FLOW_FILENAME_RESTORE, FileUtils.replaceExtension(flow.getAbsolutePath(), ".props"));
     }
-    if ((context != null) && (context.getRoot() != null)) {
+    if ((handler != null) && (context != null) && (context.getRoot() != null)) {
       handler.getLocalVariables().set(ActorUtils.FLOW_ID, (context.getRoot() instanceof Flow) ? "" + ((Flow) context.getRoot()).getFlowID() : "-1");
-      handler.getLocalVariables().set(ActorUtils.IS_HEADLESS, "" + context.getRoot().isHeadless());
       handler.getLocalVariables().set(ActorUtils.HAS_GUI, "" + !context.getRoot().isHeadless());
     }
   }

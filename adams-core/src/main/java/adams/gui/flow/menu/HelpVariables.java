@@ -94,8 +94,10 @@ public class HelpVariables
     help.append("======================\n");
     help.append("\n");
     help.append("The following variables are reserved and get filled in at runtime:\n");
-    for (String v: ActorUtils.PROGRAMMATIC_VARIABLES)
+    for (String v: ActorUtils.PROGRAMMATIC_VARIABLES) {
       help.append("- ").append(v).append("\n");
+      help.append("  ").append(ActorUtils.PROGRAMMATIC_VARIABLES_HELP.get(v)).append("\n");
+    }
 
     HelpFrame.showHelp(
       "Flow editor - Variables",

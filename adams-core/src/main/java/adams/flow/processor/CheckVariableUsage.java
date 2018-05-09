@@ -175,6 +175,7 @@ public class CheckVariableUsage
     m_Skip.add(ActorUtils.FLOW_DIR);
     m_Skip.add(ActorUtils.FLOW_FILENAME_LONG);
     m_Skip.add(ActorUtils.FLOW_FILENAME_SHORT);
+    m_Skip.add(ActorUtils.FLOW_FILENAME_RESTORE);
     m_Skip.add(ActorUtils.FLOW_ID);
     m_Warnings = null;
     
