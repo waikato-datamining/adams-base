@@ -52,8 +52,8 @@ import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.spreadsheetviewer.AbstractDataPlugin;
 import adams.gui.tools.spreadsheetviewer.AbstractViewPlugin;
+import adams.gui.tools.spreadsheetviewer.MultiPagePane;
 import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
-import adams.gui.tools.spreadsheetviewer.TabbedPane;
 import adams.gui.tools.spreadsheetviewer.menu.DataChart;
 import adams.gui.tools.spreadsheetviewer.menu.DataComputeDifference;
 import adams.gui.tools.spreadsheetviewer.menu.DataConvert;
@@ -96,7 +96,6 @@ import java.util.List;
  * A panel for viewing SpreadSheet files.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetViewerPanel
   extends ToolBarPanel
@@ -123,8 +122,8 @@ public class SpreadSheetViewerPanel
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
   
-  /** the tabbed pane for displaying the CSV files. */
-  protected TabbedPane m_TabbedPane;
+  /** the multi-page pane for displaying the spreadsheets. */
+  protected MultiPagePane m_MultiPagePane;
   
   /** the viewer tabs. */
   protected ViewerTabManager m_ViewerTabs;
@@ -145,7 +144,7 @@ public class SpreadSheetViewerPanel
   protected SpreadSheetViewerAction m_ActionFileSaveAs;
 
   /** the "close" menu item. */
-  protected SpreadSheetViewerAction m_ActionFileCloseTab;
+  protected SpreadSheetViewerAction m_ActionFileClosePage;
 
   /** the "exit" menu item. */
   protected SpreadSheetViewerAction m_ActionFileExit;
@@ -231,7 +230,7 @@ public class SpreadSheetViewerPanel
 
     m_RecentFilesHandler = null;
     m_ApplyToAll         = false;
-    m_Actions          = new ArrayList<>();
+    m_Actions            = new ArrayList<>();
   }
 
   /**
@@ -250,9 +249,8 @@ public class SpreadSheetViewerPanel
     m_SplitPane.setResizeWeight(1.0);
     add(m_SplitPane, BorderLayout.CENTER);
     
-    m_TabbedPane = new TabbedPane(this);
-    m_TabbedPane.setCloseTabsWithMiddleMouseButton(true);
-    m_SplitPane.setLeftComponent(m_TabbedPane);
+    m_MultiPagePane = new MultiPagePane(this);
+    m_SplitPane.setLeftComponent(m_MultiPagePane);
     
     m_ViewerTabs = new ViewerTabManager(this);
     m_ViewerTabs.addTabVisibilityChangeListener((TabVisibilityChangeEvent e) ->
@@ -284,9 +282,9 @@ public class SpreadSheetViewerPanel
     m_ActionFileSaveAs = action;
     m_Actions.add(action);
 
-    // File/Close tab
+    // File/Close page
     action = new FileCloseTab();
-    m_ActionFileCloseTab = action;
+    m_ActionFileClosePage = action;
     m_Actions.add(action);
 
     // File/Exit
@@ -456,7 +454,7 @@ public class SpreadSheetViewerPanel
 
       menu.add(m_ActionFileSave);
       menu.add(m_ActionFileSaveAs);
-      menu.add(m_ActionFileCloseTab);
+      menu.add(m_ActionFileClosePage);
 
       // File/Send to
       menu.addSeparator();
@@ -577,8 +575,8 @@ public class SpreadSheetViewerPanel
    * 
    * @return		the tabbed pane
    */
-  public TabbedPane getTabbedPane() {
-    return m_TabbedPane;
+  public MultiPagePane getMultiPagePane() {
+    return m_MultiPagePane;
   }
   
   /**
@@ -602,7 +600,7 @@ public class SpreadSheetViewerPanel
     if (applyAll)
       decimals = -1;
     else
-      decimals = m_TabbedPane.getNumDecimalsAt(m_TabbedPane.getSelectedIndex());
+      decimals = m_MultiPagePane.getNumDecimalsAt(m_MultiPagePane.getSelectedIndex());
     valueStr = GUIHelper.showInputDialog(
 	this, "Please enter the number of decimals to display (-1 to display all):", "" + decimals);
     if (valueStr == null)
@@ -610,9 +608,9 @@ public class SpreadSheetViewerPanel
 
     decimals = Integer.parseInt(valueStr);
     if (applyAll)
-      m_TabbedPane.setNumDecimals(decimals);
+      m_MultiPagePane.setNumDecimals(decimals);
     else
-      m_TabbedPane.setNumDecimalsAt(m_TabbedPane.getSelectedIndex(), decimals);
+      m_MultiPagePane.setNumDecimalsAt(m_MultiPagePane.getSelectedIndex(), decimals);
   }
 
   /**
@@ -625,9 +623,9 @@ public class SpreadSheetViewerPanel
     GenericObjectEditorDialog 	dialog;
 
     if (applyAll)
-      renderer = m_TabbedPane.getCellRenderingCustomizer();
+      renderer = m_MultiPagePane.getCellRenderingCustomizer();
     else
-      renderer = m_TabbedPane.getCellRenderingCustomizerAt(m_TabbedPane.getSelectedIndex());
+      renderer = m_MultiPagePane.getCellRenderingCustomizerAt(m_MultiPagePane.getSelectedIndex());
 
     if (getParentDialog() != null)
       dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
@@ -644,16 +642,16 @@ public class SpreadSheetViewerPanel
 
     renderer = (CellRenderingCustomizer) dialog.getCurrent();
     if (applyAll)
-      m_TabbedPane.setCellRenderingCustomizer(renderer);
+      m_MultiPagePane.setCellRenderingCustomizer(renderer);
     else
-      m_TabbedPane.setCellRenderingCustomizerAt(m_TabbedPane.getSelectedIndex(), renderer);
+      m_MultiPagePane.setCellRenderingCustomizerAt(m_MultiPagePane.getSelectedIndex(), renderer);
   }
 
   /**
    * Updates the enabled state of the actions.
    */
   @Override
-  protected void updateActions() {
+  public void updateActions() {
     for (SpreadSheetViewerAction action: m_Actions)
       action.update(this);
   }
@@ -669,8 +667,8 @@ public class SpreadSheetViewerPanel
     if (m_MenuBar == null)
       return;
 
-    sheetSelected = (m_TabbedPane.getTabCount() > 0) && (m_TabbedPane.getSelectedIndex() != -1);
-    panel         = m_TabbedPane.getCurrentPanel();
+    sheetSelected = (m_MultiPagePane.getPageCount() > 0) && (m_MultiPagePane.getSelectedIndex() != -1);
+    panel         = m_MultiPagePane.getCurrentPanel();
 
     updateActions();
     
@@ -808,12 +806,12 @@ public class SpreadSheetViewerPanel
 	else {
 	  SpreadSheetPanel panel;
 	  if (sheet != null) {
-	    panel = m_TabbedPane.addTab(file, sheet);
+	    panel = m_MultiPagePane.addPage(file, sheet);
 	    panel.setReader(sreader);
 	  }
 	  else {
 	    for (SpreadSheet sh: sheets) {
-	      panel = m_TabbedPane.addTab(file, sh);
+	      panel = m_MultiPagePane.addPage(file, sh);
 	      panel.setReader(sreader);
 	    }
 	  }
@@ -846,10 +844,10 @@ public class SpreadSheetViewerPanel
     int			index;
     SpreadSheet		sheet;
 
-    index = m_TabbedPane.getSelectedIndex();
+    index = m_MultiPagePane.getSelectedIndex();
     if (index == -1)
       return;
-    panel = m_TabbedPane.getPanelAt(index);
+    panel = m_MultiPagePane.getPanelAt(index);
     if (panel == null)
       return;
     table = panel.getTable();
@@ -865,7 +863,7 @@ public class SpreadSheetViewerPanel
       panel.setFilename(file);
       panel.setWriter(writer);
       panel.setModified(false);
-      m_TabbedPane.setTitleAt(index, m_TabbedPane.createTabTitle(file, sheet));
+      m_MultiPagePane.setTitleAt(index, m_MultiPagePane.createPageTitle(file, sheet));
       updateMenu();
     }
   }
@@ -952,13 +950,13 @@ public class SpreadSheetViewerPanel
   public void closeFile() {
     int		index;
 
-    index = m_TabbedPane.getSelectedIndex();
+    index = m_MultiPagePane.getSelectedIndex();
     if (index == -1)
       return;
     if (!checkForModified())
       return;
 
-    m_TabbedPane.remove(index);
+    m_MultiPagePane.removePageAt(index);
   }
 
   /**
@@ -982,7 +980,7 @@ public class SpreadSheetViewerPanel
    * @return		the image panels
    */
   public SpreadSheetPanel[] getAllPanels() {
-    return m_TabbedPane.getAllPanels();
+    return m_MultiPagePane.getAllPanels();
   }
 
   /**
@@ -991,7 +989,7 @@ public class SpreadSheetViewerPanel
    * @return		the current panel, null if not available
    */
   public SpreadSheetPanel getCurrentPanel() {
-    return m_TabbedPane.getCurrentPanel();
+    return m_MultiPagePane.getCurrentPanel();
   }
 
   /**
@@ -1013,7 +1011,7 @@ public class SpreadSheetViewerPanel
   @Override
   public boolean hasSendToItem(Class[] cls) {
     return    (SendToActionUtils.isAvailable(new Class[]{PlaceholderFile.class, JTable.class}, cls))
-           && (m_TabbedPane.getSelectedIndex() != -1);
+           && (m_MultiPagePane.getSelectedIndex() != -1);
   }
 
   /**
@@ -1029,21 +1027,21 @@ public class SpreadSheetViewerPanel
     SpreadSheet			sheet;
     int				index;
 
-    index = m_TabbedPane.getSelectedIndex();
+    index = m_MultiPagePane.getSelectedIndex();
     if (index == -1)
       return null;
 
     result = null;
 
     if (SendToActionUtils.isAvailable(PlaceholderFile.class, cls)) {
-      sheet  = m_TabbedPane.getTableAt(index).toSpreadSheet();
+      sheet  = m_MultiPagePane.getTableAt(index).toSpreadSheet();
       result = SendToActionUtils.nextTmpFile("spreadsheetviewer", "csv");
       writer = new CsvSpreadSheetWriter();
       if (!writer.write(sheet, (PlaceholderFile) result))
 	result = null;
     }
     else if (SendToActionUtils.isAvailable(JTable.class, cls)) {
-      result = m_TabbedPane.getTableAt(index);
+      result = m_MultiPagePane.getTableAt(index);
     }
 
     return result;
@@ -1071,7 +1069,7 @@ public class SpreadSheetViewerPanel
 	      GUIHelper.showErrorMessage(SpreadSheetViewerPanel.this, "Generated non-spreadsheet object??\n" + obj.getClass().getName());
 	      return null;
 	    }
-	    m_TabbedPane.addTab(oldTitle + "'", (SpreadSheet) obj);
+	    m_MultiPagePane.addPage(oldTitle + "'", (SpreadSheet) obj);
 	  }
 	}
 	catch (Exception e) {
@@ -1102,7 +1100,7 @@ public class SpreadSheetViewerPanel
       @Override
       protected Object doInBackground() throws Exception {
 	MouseUtils.setWaitCursor(SpreadSheetViewerPanel.this);
-	SpreadSheetPanel panel = m_TabbedPane.getCurrentPanel();
+	SpreadSheetPanel panel = m_MultiPagePane.getCurrentPanel();
 	if (panel == null)
 	  return null;
 	SpreadSheet input = panel.getSheet();
@@ -1113,9 +1111,9 @@ public class SpreadSheetViewerPanel
 	if (plugin.getCanceledByUser() || (output == null))
 	  return null;
 	if (plugin.isInPlace())
-	  m_TabbedPane.getCurrentTable().setModel(new SpreadSheetTableModel(output));
+	  m_MultiPagePane.getCurrentTable().setModel(new SpreadSheetTableModel(output));
 	else
-	  m_TabbedPane.addTab(m_TabbedPane.newTitle(), output);
+	  m_MultiPagePane.addPage(m_MultiPagePane.newTitle(), output);
 	plugin.setCurrentPanel(null);
 	return null;
       }
@@ -1142,7 +1140,7 @@ public class SpreadSheetViewerPanel
     String		title;
     SpreadSheetPanel	current;
 
-    current = m_TabbedPane.getCurrentPanel();
+    current = m_MultiPagePane.getCurrentPanel();
     if ((current == null) || (current.getSheet() == null))
       return;
     sheet = current.getSheet();

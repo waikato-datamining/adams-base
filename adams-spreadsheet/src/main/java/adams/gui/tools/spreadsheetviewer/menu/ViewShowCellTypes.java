@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ViewShowCellTypes.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
  * Allows the user to display the cell types or values.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ViewShowCellTypes
   extends AbstractSpreadSheetViewerCheckBoxMenuItemAction {
@@ -69,8 +68,8 @@ public class ViewShowCellTypes
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.getTabbedPane().getTabCount() > 0);
+    setEnabled(m_State.getMultiPagePane().getPageCount() > 0);
     if (isEnabled() && (getTabbedPane().getSelectedIndex() > -1))
-      setSelected(m_State.getTabbedPane().getShowCellTypes(getTabbedPane().getSelectedIndex()));
+      setSelected(m_State.getMultiPagePane().getShowCellTypes(getTabbedPane().getSelectedIndex()));
   }
 }

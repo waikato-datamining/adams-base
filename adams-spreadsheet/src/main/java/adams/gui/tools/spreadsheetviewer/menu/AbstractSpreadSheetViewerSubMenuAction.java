@@ -13,15 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSpreadSheetViewerSubMenuAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
-
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
 
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesSubMenuAction;
@@ -29,13 +25,16 @@ import adams.gui.application.Child;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.SpreadSheetViewerPanel;
-import adams.gui.tools.spreadsheetviewer.TabbedPane;
+import adams.gui.tools.spreadsheetviewer.MultiPagePane;
+
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
 
 /**
  * Ancestor for actions in the spreadsheet viewer that generate a submenu.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSpreadSheetViewerSubMenuAction
   extends AbstractPropertiesSubMenuAction<SpreadSheetViewerPanel, GenericObjectEditorDialog>
@@ -86,8 +85,8 @@ public abstract class AbstractSpreadSheetViewerSubMenuAction
    * 
    * @return		the tabbed pane
    */
-  protected TabbedPane getTabbedPane() {
-    return m_State.getTabbedPane();
+  protected MultiPagePane getTabbedPane() {
+    return m_State.getMultiPagePane();
   }
 
   /**
@@ -96,7 +95,7 @@ public abstract class AbstractSpreadSheetViewerSubMenuAction
    * @return		true if selected
    */
   protected boolean isSheetSelected() {
-    return (getTabbedPane().getTabCount() > 0) && (getTabbedPane().getSelectedIndex() != -1);
+    return (getTabbedPane().getPageCount() > 0) && (getTabbedPane().getSelectedIndex() != -1);
   }
   
   /**

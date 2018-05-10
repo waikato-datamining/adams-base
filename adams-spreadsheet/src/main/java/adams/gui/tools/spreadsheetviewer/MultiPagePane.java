@@ -14,24 +14,18 @@
  */
 
 /*
- * TabbedPane.java
+ * MultiPagePane.java
  * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
-import adams.core.CleanUpHandler;
-import adams.core.Shortening;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer;
 import adams.gui.tools.SpreadSheetViewerPanel;
 
 import javax.swing.event.ChangeEvent;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,8 +36,8 @@ import java.util.List;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class TabbedPane
-  extends DragAndDropTabbedPane {
+public class MultiPagePane
+  extends adams.gui.core.MultiPagePane {
 
   /** for serialization. */
   private static final long serialVersionUID = -2048229771213837710L;
@@ -68,14 +62,12 @@ public class TabbedPane
    * 
    * @param owner	the owning viewer
    */
-  public TabbedPane(SpreadSheetViewerPanel owner) {
+  public MultiPagePane(SpreadSheetViewerPanel owner) {
     super();
     setOwner(owner);
 
-    setShowCloseTabButton(true);
-    getModel().addChangeListener((ChangeEvent e) -> tabSelected(e));
-    setMiddleMouseButtonCloseApprover((BaseTabbedPane source, MouseEvent e) -> {
-      int index = indexAtLocation(e.getX(), e.getY());
+    addChangeListener((ChangeEvent e) -> pageSelected(e));
+    setPageCloseApprover((adams.gui.core.MultiPagePane source, int index) -> {
       SpreadSheetPanel panel = getPanelAt(index);
       boolean result = checkForModified(panel);
       // to avoid second popup from checkModified() in removeTab method
@@ -115,29 +107,12 @@ public class TabbedPane
   }
 
   /**
-   * Hook method that gets executed after a tab was successfully removed with
-   * a middle mouse button click.
-   * <br><br>
-   * Default implementation calls cleanUp() method of {@link CleanUpHandler} 
-   * instances.
-   * 
-   * @param index	the original index
-   * @param comp	the component that was removed
-   */
-  @Override
-  protected void afterTabClosedWithMiddleMouseButton(int index, Component comp) {
-    super.afterTabClosedWithMiddleMouseButton(index, comp);
-    if (getOwner() != null)
-      getOwner().updateMenu();
-  }
-
-  /**
    * Returns the number of panels in the tabbed pane.
    *
    * @return		the number of panels
    */
   public int getPanelCount() {
-    return getTabCount();
+    return getPageCount();
   }
 
   /**
@@ -149,8 +124,8 @@ public class TabbedPane
     SpreadSheetPanel[]	result;
     int			i;
     
-    result = new SpreadSheetPanel[getTabCount()];
-    for (i = 0; i < getTabCount(); i++)
+    result = new SpreadSheetPanel[getPageCount()];
+    for (i = 0; i < getPageCount(); i++)
       result[i] = getPanelAt(i);
     
     return result;
@@ -159,16 +134,16 @@ public class TabbedPane
   /**
    * Returns the panel at the specified position.
    *
-   * @param index	the tab index of the table
+   * @param index	the page index of the table
    * @return		the panel, null if not available or invalid index
    */
   public SpreadSheetPanel getPanelAt(int index) {
     SpreadSheetPanel	result;
 
-    if ((index < 0) || (index >= getTabCount()))
+    if ((index < 0) || (index >= getPageCount()))
       return null;
     
-    result = (SpreadSheetPanel) getComponentAt(index);
+    result = (SpreadSheetPanel) getPageAt(index);
 
     return result;
   }
@@ -176,7 +151,7 @@ public class TabbedPane
   /**
    * Returns the table at the specified position.
    *
-   * @param index	the tab index of the table
+   * @param index	the page index of the table
    * @return		the table, null if not available or invalid index
    */
   public SpreadSheetTable getTableAt(int index) {
@@ -194,7 +169,7 @@ public class TabbedPane
   /**
    * Returns the table at the specified position.
    *
-   * @param index	the tab index of the table
+   * @param index	the page index of the table
    * @return		the table
    */
   public SpreadSheet getSheetAt(int index) {
@@ -214,7 +189,7 @@ public class TabbedPane
   /**
    * Sets the number of decimals to use.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @param numDec	the number of decimals to use
    */
   public void setNumDecimalsAt(int index, int numDec) {
@@ -224,7 +199,7 @@ public class TabbedPane
   /**
    * returns the number of decimals in use.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @return		the number of decimals in use
    */
   public int getNumDecimalsAt(int index) {
@@ -240,7 +215,7 @@ public class TabbedPane
     int	i;
 
     m_NumDecimals = numDec;
-    for (i = 0; i < getTabCount(); i++)
+    for (i = 0; i < getPageCount(); i++)
       setNumDecimalsAt(i, numDec);
   }
   
@@ -256,7 +231,7 @@ public class TabbedPane
   /**
    * Sets the cell rendering customizer at the index.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @param cust	the customizer
    */
   public void setCellRenderingCustomizerAt(int index, CellRenderingCustomizer cust) {
@@ -266,7 +241,7 @@ public class TabbedPane
   /**
    * Returns the cell rendering customizer at the index.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @return		the customizer
    */
   public CellRenderingCustomizer getCellRenderingCustomizerAt(int index) {
@@ -282,7 +257,7 @@ public class TabbedPane
     int	i;
 
     m_CellRenderingCustomizer = cust;
-    for (i = 0; i < getTabCount(); i++)
+    for (i = 0; i < getPageCount(); i++)
       setCellRenderingCustomizerAt(i, cust);
   }
 
@@ -298,7 +273,7 @@ public class TabbedPane
   /**
    * Sets whether to show the formulas.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @param value	whether to show the formulas
    */
   public void setShowFormulasAt(int index, boolean value) {
@@ -308,7 +283,7 @@ public class TabbedPane
   /**
    * Returns whether to show the formulas.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @return		whether to show the formulas
    */
   public boolean getShowFormulas(int index) {
@@ -323,14 +298,14 @@ public class TabbedPane
   public void setShowFormulas(boolean value) {
     int	i;
 
-    for (i = 0; i < getTabCount(); i++)
+    for (i = 0; i < getPageCount(); i++)
       setShowFormulasAt(i, value);
   }
 
   /**
    * Sets whether to show the cell types rather than values.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @param value	whether to show the cell types
    */
   public void setShowCellTypesAt(int index, boolean value) {
@@ -340,7 +315,7 @@ public class TabbedPane
   /**
    * Returns whether to show the cell types.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @return		whether to show the cell types
    */
   public boolean getShowCellTypes(int index) {
@@ -355,14 +330,14 @@ public class TabbedPane
   public void setShowCellTypes(boolean value) {
     int	i;
 
-    for (i = 0; i < getTabCount(); i++)
+    for (i = 0; i < getPageCount(); i++)
       setShowCellTypesAt(i, value);
   }
 
   /**
    * Sets the readonly state.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @param value	whether to show the formulas
    */
   public void setReadOnlyAt(int index, boolean value) {
@@ -372,7 +347,7 @@ public class TabbedPane
   /**
    * Returns whether to show the formulas.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @return		whether to show the formulas
    */
   public boolean getReadOnlyAt(int index) {
@@ -387,14 +362,14 @@ public class TabbedPane
   public void setReadOnly(boolean value) {
     int	i;
 
-    for (i = 0; i < getTabCount(); i++)
+    for (i = 0; i < getPageCount(); i++)
       setReadOnlyAt(i, value);
   }
 
   /**
    * Sets the modified state.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @param value	true if modified
    */
   public void setModifiedAt(int index, boolean value) {
@@ -404,7 +379,7 @@ public class TabbedPane
   /**
    * Returns the modified state.
    *
-   * @param index	the tab index
+   * @param index	the page index
    * @return		true if modified
    */
   public boolean isModifiedAt(int index) {
@@ -419,7 +394,7 @@ public class TabbedPane
   public void setModified(boolean value) {
     int	i;
 
-    for (i = 0; i < getTabCount(); i++)
+    for (i = 0; i < getPageCount(); i++)
       setModifiedAt(i, value);
   }
 
@@ -479,12 +454,12 @@ public class TabbedPane
    * 
    * @param file	the file this sheet is from
    * @param sheet	the sheet to add
-   * @return		the create panel
+   * @return		the created panel
    */
-  public SpreadSheetPanel addTab(File file, SpreadSheet sheet) {
+  public SpreadSheetPanel addPage(File file, SpreadSheet sheet) {
     SpreadSheetPanel	result;
 
-    result = addTab(createTabTitle(file, sheet), sheet);
+    result = addPage(createPageTitle(file, sheet), sheet);
     result.setFilename(file);
 
     return result;
@@ -495,9 +470,9 @@ public class TabbedPane
    * 
    * @param title	the title for the tab
    * @param sheet	the sheet to add
-   * @return		the create panel
+   * @return		the created panel
    */
-  public SpreadSheetPanel addTab(String title, SpreadSheet sheet) {
+  public SpreadSheetPanel addPage(String title, SpreadSheet sheet) {
     SpreadSheetPanel	result;
     
     result = new SpreadSheetPanel(this);
@@ -505,35 +480,35 @@ public class TabbedPane
     result.setCellRenderingCustomizer(m_CellRenderingCustomizer);
     result.setSheet(sheet);
     result.setReadOnly(false);
-    addTab(title, result);
-    setSelectedIndex(getTabCount() - 1);
+    addPage(title, result);
+    setSelectedIndex(getPageCount() - 1);
     
     return result;
   }
 
   /**
-   * Creates a tab title.
+   * Creates a page title.
    * 
    * @param file	the file name to use
    * @param sheet	the sheet loaded from the file
-   * @return		the generated filename
+   * @return		the generated title
    */
-  public String createTabTitle(File file, SpreadSheet sheet) {
-    return file.getName() + (sheet.getName() != null ? "/" + Shortening.shortenEnd(sheet.getName(), 20) : "");
+  public String createPageTitle(File file, SpreadSheet sheet) {
+    return file.getName() + (sheet.getName() != null ? "/" + sheet.getName() : "");
   }
   
   /**
-   * Returns all the tab titles.
+   * Returns all the page titles.
    * 
    * @return		the titles
    */
-  public List<String> getTabTitles() {
+  public List<String> getPageTitles() {
     ArrayList<String>	result;
     int			i;
     
     result = new ArrayList<>();
     
-    for (i = 0; i < getTabCount(); i++)
+    for (i = 0; i < getPageCount(); i++)
       result.add(getTitleAt(i));
     
     return result;
@@ -547,7 +522,7 @@ public class TabbedPane
     int			i;
     HashSet<String>	titles;
     
-    titles = new HashSet<>(getTabTitles());
+    titles = new HashSet<>(getPageTitles());
     i      = 0;
     do {
       i++;
@@ -559,60 +534,65 @@ public class TabbedPane
   }
 
   /**
-   * Gets called when a tab gets selected.
+   * Gets called when a page gets selected.
    * 
    * @param e		the event that triggered the action
    */
-  protected void tabSelected(ChangeEvent e) {
+  protected void pageSelected(ChangeEvent e) {
     // actor tabs
-    if (getPanelCount() == 0)
+    if ((getPanelCount() == 0) || (getSelectedIndex() == -1)) {
       m_Owner.getViewerTabs().notifyTabs(
-	  null,
-	  new int[0]);
-    else
+	null,
+	new int[0]);
+    }
+    else {
       m_Owner.getViewerTabs().notifyTabs(
-	  m_Owner.getCurrentPanel(),
-	  m_Owner.getCurrentPanel().getTable().getSelectedRows());
+	m_Owner.getCurrentPanel(),
+	m_Owner.getCurrentPanel().getTable().getSelectedRows());
+    }
+
+    m_Owner.updateMenu();
+    m_Owner.updateActions();
   }
 
   /**
-   * Removes the tab at <code>index</code>.
+   * Removes the page at <code>index</code>.
    * After the component associated with <code>index</code> is removed,
    * its visibility is reset to true to ensure it will be visible
    * if added to other containers.
    *
-   * @param index the index of the tab to be removed
+   * @param index the index of the page to be removed
    */
   @Override
-  public void removeTabAt(int index) {
+  public PageContainer removePageAt(int index) {
     SpreadSheetPanel panel;
 
     if (index < 0)
-      return;
+      return null;
     if (!checkForModified(getPanelAt(index)))
-      return;
+      return null;
 
     panel = getPanelAt(index);
     panel.cleanUp();
 
-    super.removeTabAt(index);
+    return super.removePageAt(index);
   }
 
   /**
-   * Updates the title of the currently selected tab, taking the modified
+   * Updates the title of the currently selected page, taking the modified
    * state into account.
    */
-  public void updateCurrentTab() {
-    updateTab(getSelectedIndex());
+  public void updateCurrentPage() {
+    updatePage(getSelectedIndex());
   }
 
   /**
-   * Updates the tab title at the specified index, taking the modified
+   * Updates the page title at the specified index, taking the modified
    * state into account.
    *
    * @param index	the index of the tab
    */
-  public void updateTab(int index) {
+  public void updatePage(int index) {
     String	title;
 
     if (getPanelAt(index) == null)

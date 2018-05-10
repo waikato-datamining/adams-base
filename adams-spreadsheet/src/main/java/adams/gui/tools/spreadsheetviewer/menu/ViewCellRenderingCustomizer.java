@@ -55,6 +55,6 @@ public class ViewCellRenderingCustomizer
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.getTabbedPane().getTabCount() > 0);
+    setEnabled(m_State.getMultiPagePane().getPageCount() > 0);
   }
 }

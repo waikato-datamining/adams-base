@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ViewDecimals.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
  * Allows the user to enter the number of displayed decimals.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ViewDecimals
   extends AbstractSpreadSheetViewerMenuItemAction {
@@ -56,6 +55,6 @@ public class ViewDecimals
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.getTabbedPane().getTabCount() > 0);
+    setEnabled(m_State.getMultiPagePane().getPageCount() > 0);
   }
 }

@@ -13,23 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Append.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
-
-import javax.swing.JPanel;
 
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetHelper;
 import adams.gui.dialog.ApprovalDialog;
 
+import javax.swing.JPanel;
+
 /**
  * Appends all the selected spreadsheets.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Append
   extends AbstractSelectedSheetsDataPlugin {
@@ -86,7 +85,7 @@ public class Append
    */
   @Override
   public boolean canProcess(SpreadSheetPanel panel) {
-    return super.canProcess(panel) && (panel.getOwner().getTabCount() > 1);
+    return super.canProcess(panel) && (panel.getOwner().getPageCount() > 1);
   }
   
   /**

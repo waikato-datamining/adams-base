@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Merge.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
@@ -28,7 +28,6 @@ import adams.flow.transformer.SpreadSheetMerge;
  * Merges multiple spreadsheets into a single one.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Merge
   extends AbstractSelectedSheetsDataPluginWithGOE {
@@ -74,7 +73,7 @@ public class Merge
    */
   @Override
   public boolean canProcess(SpreadSheetPanel panel) {
-    return super.canProcess(panel) && (panel.getOwner().getTabCount() > 1);
+    return super.canProcess(panel) && (panel.getOwner().getPageCount() > 1);
   }
   
   /**

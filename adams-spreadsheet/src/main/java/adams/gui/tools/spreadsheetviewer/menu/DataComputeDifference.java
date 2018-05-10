@@ -13,20 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DataComputeDifference.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.util.List;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
@@ -35,11 +26,18 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.util.List;
+
 /**
  * Computes the difference between two spreadsheets.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DataComputeDifference
   extends AbstractSpreadSheetViewerMenuItemAction {
@@ -90,7 +88,7 @@ public class DataComputeDifference
     dialog.setTitle("Compute difference");
     params = new ParameterPanel();
     dialog.getContentPane().add(params, BorderLayout.CENTER);
-    titles = getTabbedPane().getTabTitles();
+    titles = getTabbedPane().getPageTitles();
     sheet1 = new JComboBox(titles.toArray(new String[titles.size()]));
     params.addParameter("First sheet", sheet1);
     params.addParameter("", new JLabel("minus"));
@@ -124,6 +122,6 @@ public class DataComputeDifference
    */
   @Override
   protected void doUpdate() {
-    setEnabled(getTabbedPane().getTabCount() >= 2);
+    setEnabled(getTabbedPane().getPageCount() >= 2);
   }
 }

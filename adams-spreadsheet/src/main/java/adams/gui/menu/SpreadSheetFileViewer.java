@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetFileViewer.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -31,7 +31,6 @@ import adams.gui.tools.SpreadSheetViewerPanel;
  * Opens the SpreadSheet file viewer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetFileViewer
   extends AbstractParameterHandlingMenuItemDefinition {
@@ -69,7 +68,7 @@ public class SpreadSheetFileViewer
    */
   public void launch() {
     SpreadSheetViewerPanel panel = new SpreadSheetViewerPanel();
-    createChildFrame(panel, GUIHelper.getDefaultLargeDialogDimension());
+    createChildFrame(panel, GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
     for (int i = 0; i < m_Parameters.length; i++)
       panel.load(new PlaceholderFile(m_Parameters[i]));
   }

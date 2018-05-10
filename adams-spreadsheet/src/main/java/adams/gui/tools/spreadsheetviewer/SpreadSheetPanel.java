@@ -59,7 +59,6 @@ import java.util.List;
  * Encapsulates a panel for the spreadsheet viewer tool.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetPanel
   extends BasePanel
@@ -69,7 +68,7 @@ public class SpreadSheetPanel
   private static final long serialVersionUID = -4251007424174062651L;
 
   /** the owning tabbed pane. */
-  protected TabbedPane m_Owner;
+  protected MultiPagePane m_Owner;
   
   /** the underlying table. */
   protected SpreadSheetTable m_Table;
@@ -97,7 +96,7 @@ public class SpreadSheetPanel
    * 
    * @param owner	the owning tabbed pane
    */
-  public SpreadSheetPanel(TabbedPane owner) {
+  public SpreadSheetPanel(MultiPagePane owner) {
     super();
     setOwner(owner);
   }
@@ -109,7 +108,7 @@ public class SpreadSheetPanel
   protected void initialize() {
     super.initialize();
     
-    m_GeneratedFlows = new ArrayList<Flow>();
+    m_GeneratedFlows = new ArrayList<>();
     m_Filename       = null;
     m_Reader         = null;
     m_Writer         = null;
@@ -162,7 +161,7 @@ public class SpreadSheetPanel
    * 
    * @param value	the owner
    */
-  public void setOwner(TabbedPane value) {
+  public void setOwner(MultiPagePane value) {
     m_Owner = value;
   }
   
@@ -171,7 +170,7 @@ public class SpreadSheetPanel
    * 
    * @return		the owner, null if none set
    */
-  public TabbedPane getOwner() {
+  public MultiPagePane getOwner() {
     return m_Owner;
   }
   
@@ -187,7 +186,7 @@ public class SpreadSheetPanel
     result = null;
     
     if (getOwner() != null) {
-      index = getOwner().indexOfComponent(this);
+      index = getOwner().indexOfPage(this);
       if (index > -1)
 	result = getOwner().getTitleAt(index);
     }
@@ -491,7 +490,7 @@ public class SpreadSheetPanel
     if (getViewer() != null)
       getViewer().updateMenu();
     if (getOwner() != null)
-      getOwner().updateCurrentTab();
+      getOwner().updateCurrentPage();
   }
 
   /**

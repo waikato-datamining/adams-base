@@ -13,21 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Query.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.tab;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
@@ -35,14 +25,22 @@ import adams.flow.transformer.SpreadSheetQuery;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
 import adams.gui.dialog.TextDialog;
-import adams.gui.tools.spreadsheetviewer.TabbedPane;
+import adams.gui.tools.spreadsheetviewer.MultiPagePane;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Allows the user to run a query on a spreadsheet and create a new transformed
  * sheet using the {@link SpreadSheetQuery} transformer.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see SpreadSheetQuery
  */
 public class Query
@@ -141,7 +139,7 @@ public class Query
     SpreadSheetQuery 	query;
     String		msg;
     Token		output;
-    TabbedPane		tabbedPane;
+    MultiPagePane tabbedPane;
     
     sheet = getCurrentPanel().getSheet();
     query = new SpreadSheetQuery();
@@ -164,8 +162,8 @@ public class Query
       output = query.output();
     if (output != null) {
       sheet      = (SpreadSheet) output.getPayload();
-      tabbedPane = getOwner().getOwner().getTabbedPane();
-      tabbedPane.addTab(tabbedPane.newTitle(), sheet);
+      tabbedPane = getOwner().getOwner().getMultiPagePane();
+      tabbedPane.addPage(tabbedPane.newTitle(), sheet);
     }
     query.cleanUp();
   }

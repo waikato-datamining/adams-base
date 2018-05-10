@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EditPasteAsNew.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
@@ -101,7 +101,7 @@ public class EditPasteAsNew
     conv.setInput(ClipboardHelper.pasteStringFromClipboard());
     msg = conv.convert();
     if (msg == null)
-      m_State.getTabbedPane().addTab("clipboard", (SpreadSheet) conv.getOutput());
+      m_State.getMultiPagePane().addPage("clipboard", (SpreadSheet) conv.getOutput());
     else
       GUIHelper.showErrorMessage(m_State, "Failed to parse clipboard content!\n" + msg);
     conv.cleanUp();

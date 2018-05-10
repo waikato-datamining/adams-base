@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSpreadSheetViewerMenuItemAction.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
@@ -26,8 +26,8 @@ import adams.gui.application.Child;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.SpreadSheetViewerPanel;
+import adams.gui.tools.spreadsheetviewer.MultiPagePane;
 import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
-import adams.gui.tools.spreadsheetviewer.TabbedPane;
 
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -37,7 +37,6 @@ import java.awt.event.ActionEvent;
  * Ancestor for simple menu item actions in the spreadsheet viewer.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSpreadSheetViewerMenuItemAction
   extends AbstractPropertiesMenuItemAction<SpreadSheetViewerPanel, GenericObjectEditorDialog>
@@ -88,8 +87,8 @@ public abstract class AbstractSpreadSheetViewerMenuItemAction
    * 
    * @return		the tabbed pane
    */
-  protected TabbedPane getTabbedPane() {
-    return m_State.getTabbedPane();
+  protected MultiPagePane getTabbedPane() {
+    return m_State.getMultiPagePane();
   }
 
   /**
@@ -98,7 +97,7 @@ public abstract class AbstractSpreadSheetViewerMenuItemAction
    * @return		true if selected
    */
   protected boolean isSheetSelected() {
-    return (getTabbedPane().getTabCount() > 0) && (getTabbedPane().getSelectedIndex() != -1);
+    return (getTabbedPane().getPageCount() > 0) && (getTabbedPane().getSelectedIndex() != -1);
   }
 
   /**
