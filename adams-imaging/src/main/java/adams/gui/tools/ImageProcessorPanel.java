@@ -86,7 +86,7 @@ public class ImageProcessorPanel
   protected BaseSplitPane m_SplitPane;
 
   /** the tabbed pane for the images. */
-  protected ImageProcessorMultiPagePane m_TabbedPane;
+  protected ImageProcessorMultiPagePane m_MultiPagePane;
 
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
@@ -99,6 +99,9 @@ public class ImageProcessorPanel
 
   /** the menu item "close". */
   protected JMenuItem m_MenuItemFileClose;
+
+  /** the menu item "close all". */
+  protected JMenuItem m_MenuItemFileCloseAll;
 
   /** the menu item "horizontal". */
   protected JMenuItem m_MenuItemViewHorizontal;
@@ -202,9 +205,9 @@ public class ImageProcessorPanel
     m_SplitPane.setResizeWeight(1.0);
     add(m_SplitPane, BorderLayout.CENTER);
 
-    m_TabbedPane = new ImageProcessorMultiPagePane(this);
-    m_TabbedPane.addChangeListener((ChangeEvent e) -> update());
-    m_SplitPane.setLeftComponent(m_TabbedPane);
+    m_MultiPagePane = new ImageProcessorMultiPagePane(this);
+    m_MultiPagePane.addChangeListener((ChangeEvent e) -> update());
+    m_SplitPane.setLeftComponent(m_MultiPagePane);
 
     m_PanelFlow   = new FlowPanel();
     m_PanelFlow.getTitleGenerator().setEnabled(false);
@@ -285,7 +288,7 @@ public class ImageProcessorPanel
    * @return		the current filename, can be null
    */
   public File getCurrentFile() {
-    return m_TabbedPane.getCurrentFile();
+    return m_MultiPagePane.getCurrentFile();
   }
 
   /**
@@ -295,7 +298,7 @@ public class ImageProcessorPanel
    * @return		the current filename, can be null
    */
   public File getFileAt(int index) {
-    return m_TabbedPane.getFileAt(index);
+    return m_MultiPagePane.getFileAt(index);
   }
 
   /**
@@ -388,14 +391,23 @@ public class ImageProcessorPanel
       });
       m_MenuItemFileLoadRecent = submenu;
 
-      // File/Close tab
-      menuitem = new JMenuItem("Close tab");
+      // File/Close page
+      menuitem = new JMenuItem("Close page");
       menu.add(menuitem);
       menuitem.setMnemonic('t');
       menuitem.setIcon(GUIHelper.getIcon("close_tab_focused.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
       menuitem.addActionListener((ActionEvent e) -> close());
       m_MenuItemFileClose = menuitem;
+
+      // File/Close all pages
+      menuitem = new JMenuItem("Close all pages");
+      menu.add(menuitem);
+      menuitem.setMnemonic('a');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
+      menuitem.setIcon(GUIHelper.getIcon("delete_all.gif"));
+      menuitem.addActionListener((ActionEvent e) -> closeAll());
+      m_MenuItemFileCloseAll = menuitem;
 
       // File/Close
       menuitem = new JMenuItem("Close");
@@ -626,7 +638,7 @@ public class ImageProcessorPanel
    * @return		the image panel, null if none available
    */
   public ImageProcessorSubPanel getCurrentPanel() {
-    return m_TabbedPane.getCurrentPanel();
+    return m_MultiPagePane.getCurrentPanel();
   }
 
   /**
@@ -636,7 +648,7 @@ public class ImageProcessorPanel
    * @return		the image panel, null if none available
    */
   public ImageProcessorSubPanel getPanelAt(int index) {
-    return m_TabbedPane.getPanelAt(index);
+    return m_MultiPagePane.getPanelAt(index);
   }
 
   /**
@@ -645,7 +657,7 @@ public class ImageProcessorPanel
    * @return		the image panels
    */
   public ImageProcessorSubPanel[] getAllPanels() {
-    return m_TabbedPane.getAllPanels();
+    return m_MultiPagePane.getAllPanels();
   }
 
   /**
@@ -680,7 +692,7 @@ public class ImageProcessorPanel
    * @param reader      the reader to use
    */
   public void load(File file, AbstractImageReader reader) {
-    if (m_TabbedPane.load(file, reader)) {
+    if (m_MultiPagePane.load(file, reader)) {
       if (m_RecentFilesHandler != null)
 	m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
     }
@@ -694,10 +706,18 @@ public class ImageProcessorPanel
     int				index;
     ImageProcessorSubPanel	panel;
 
-    index = m_TabbedPane.getSelectedIndex();
+    index = m_MultiPagePane.getSelectedIndex();
     panel = getPanelAt(index);
     panel.cleanUp();
-    m_TabbedPane.remove(index);
+    m_MultiPagePane.remove(index);
+    update();
+  }
+
+  /**
+   * Closes all images.
+   */
+  protected void closeAll() {
+    m_MultiPagePane.removeAllPages();
     update();
   }
 
@@ -708,8 +728,8 @@ public class ImageProcessorPanel
     int		i;
 
     i = 0;
-    while (i < m_TabbedPane.getPageCount())
-      m_TabbedPane.remove(i);
+    while (i < m_MultiPagePane.getPageCount())
+      m_MultiPagePane.remove(i);
 
     if (getParentFrame() != null) {
       getParentFrame().setVisible(false);
@@ -966,7 +986,7 @@ public class ImageProcessorPanel
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    m_TabbedPane.cleanUp();
+    m_MultiPagePane.cleanUp();
     m_PanelFlow.cleanUp();
   }
 }
