@@ -177,7 +177,7 @@ public class MultiPagePane
     setLayout(new BorderLayout());
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-    m_SplitPane.setDividerLocation(150);
+    m_SplitPane.setDividerLocation(250);
     m_SplitPane.setResizeWeight(0.0);
     add(m_SplitPane, BorderLayout.CENTER);
 
