@@ -56,8 +56,8 @@ public class WindowMoveToNewWindow
     panel  = m_State.getCurrentPanel();
     editor = m_State.newWindow();
     m_State.getFlowPanels().remove(panel);
-    editor.getFlowPanels().addTab(panel.getTitle(), panel);
-    editor.getFlowPanels().setSelectedComponent(panel);
+    editor.getFlowPanels().addPage(panel.getTitle(), panel);
+    editor.getFlowPanels().setSelectedPage(panel);
   }
 
   /**

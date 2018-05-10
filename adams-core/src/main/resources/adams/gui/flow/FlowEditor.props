@@ -139,9 +139,6 @@ Toolbar.Actions=\
   adams.gui.flow.menu.RunPauseResume,\
   adams.gui.flow.menu.RunStop
 
-# Whether to scroll through the tabs (true|false)
-Tabs.ScrollLayout=false
-
 # The dimensions for the dialog of the status bar
 StatusBar.Width=600
 StatusBar.Height=400

@@ -15,7 +15,7 @@
 
 /*
  * FlowEditorPanel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -408,7 +408,7 @@ public class FlowEditorPanel
   protected BaseSplitPane m_SplitPane;
 
   /** the tabbedpane for the flow panels. */
-  protected FlowTabbedPane m_FlowPanels;
+  protected FlowMultiPagePane m_FlowPanels;
 
   /** the tabbedpane for the tabs. */
   protected FlowTabManager m_Tabs;
@@ -475,11 +475,7 @@ public class FlowEditorPanel
     getContentPanel().add(m_SplitPane, BorderLayout.CENTER);
 
     // the flows
-    m_FlowPanels = new FlowTabbedPane(this);
-    if (props.getBoolean("Tabs.ScrollLayout", true))
-      m_FlowPanels.setTabLayoutPolicy(FlowTabbedPane.SCROLL_TAB_LAYOUT);
-    else
-      m_FlowPanels.setTabLayoutPolicy(FlowTabbedPane.WRAP_TAB_LAYOUT);
+    m_FlowPanels = new FlowMultiPagePane(this);
     m_SplitPane.setLeftComponent(m_FlowPanels);
 
     // the tabs
@@ -1138,7 +1134,7 @@ public class FlowEditorPanel
    *
    * @return		the flow panels
    */
-  public FlowTabbedPane getFlowPanels() {
+  public FlowMultiPagePane getFlowPanels() {
     return m_FlowPanels;
   }
 
@@ -1174,8 +1170,6 @@ public class FlowEditorPanel
   public void update() {
     updateActions();
     updateWidgets();
-    if (hasCurrentPanel())
-      getCurrentPanel().updateTitle();
   }
 
   /**
@@ -1514,19 +1508,11 @@ public class FlowEditorPanel
     if (panel == null)
       return;
 
-    // TODO remove System.out calls again
-    //System.out.println("--> SaveAs start: " + panel.getTitle());
-
     file = panel.getCurrentFile();
-    //System.out.println("File from current panel: " + file);
-    if (file == null) {
+    if (file == null)
       file = new PlaceholderFile(getCurrentDirectory() + File.separator + panel.getTitle() + "." + Actor.FILE_EXTENSION);
-      //System.out.println("Generated file name: " + file);
-    }
-    if (file.exists()) {
+    if (file.exists())
       file = m_FilenameProposer.propose(file);
-      //System.out.println("File existed, new proposed name: " + file);
-    }
     m_FileChooser.setSelectedFile(file);
     retVal = m_FileChooser.showSaveDialog(this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
@@ -1535,7 +1521,6 @@ public class FlowEditorPanel
     file = m_FileChooser.getSelectedPlaceholderFile();
     panel.addUndoPoint("Saving undo data...", "Saving as '" + file.getName() + "'");
     showStatus("Saving as '" + file + "'...");
-    //System.out.println("Saved as: " + file);
 
     panel.save(m_FileChooser.getWriter(), m_FileChooser.getSelectedPlaceholderFile());
   }

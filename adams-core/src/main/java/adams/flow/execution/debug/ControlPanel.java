@@ -36,8 +36,8 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
+import adams.gui.flow.FlowMultiPagePane;
 import adams.gui.flow.FlowPanel;
-import adams.gui.flow.FlowTabbedPane;
 import adams.gui.flow.FlowTreeHandler;
 import adams.gui.flow.tree.Tree;
 import adams.gui.goe.FlowHelper;
@@ -739,7 +739,7 @@ public class ControlPanel
       buttonPasteAsNew.setEnabled(getFlow().getParentComponent() instanceof Container);
       buttonPasteAsNew.addActionListener((ActionEvent e) -> {
 	if (getFlow().getParentComponent() instanceof Container) {
-	  FlowTabbedPane tabs = (FlowTabbedPane) GUIHelper.getParent((Container) getFlow().getParentComponent(), FlowTabbedPane.class);
+	  FlowMultiPagePane tabs = (FlowMultiPagePane) GUIHelper.getParent((Container) getFlow().getParentComponent(), FlowMultiPagePane.class);
 	  if (tabs != null) {
 	    FlowPanel panel = tabs.newPanel();
 	    NestedConsumer consumer;

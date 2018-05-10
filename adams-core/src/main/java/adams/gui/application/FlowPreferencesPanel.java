@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowPreferencesPanel.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -32,7 +32,6 @@ import adams.gui.goe.GenericArrayEditorPanel;
  * Preferences for the flow editor.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowPreferencesPanel
   extends AbstractPropertiesPreferencesPanel {
@@ -79,7 +78,6 @@ public class FlowPreferencesPanel
     addPropertyType("ToolBar.Location", PropertyType.ENUM);
     addPropertyType("Toolbar.Actions", PropertyType.COMMA_SEPARATED_LIST);
     setEnum("ToolBar.Location", ToolBarLocation.class);
-    addPropertyType("Tabs.ScrollLayout", PropertyType.BOOLEAN);
     addPropertyType("Tree.PopupMenu", PropertyType.COMMA_SEPARATED_LIST);
     addPropertyType("Tree.KeyboardActions", PropertyType.BLANK_SEPARATED_LIST);
     addPropertyType("Tree.InputOutput.Prefixes", PropertyType.COMMA_SEPARATED_LIST);

@@ -13,25 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowTabbedPane.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.flow.core.Actor;
-import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.DragAndDropTabbedPane;
+import adams.gui.core.MultiPagePane;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Tree;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.TreePath;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Constructor;
 
@@ -39,10 +36,9 @@ import java.lang.reflect.Constructor;
  * Specialized tabbed pane for Flow panels.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class FlowTabbedPane
-  extends DragAndDropTabbedPane
+public class FlowMultiPagePane
+  extends MultiPagePane
   implements CleanUpHandler {
 
   /** for serialization. */
@@ -59,15 +55,12 @@ public class FlowTabbedPane
    *
    * @param owner	the owning editor
    */
-  public FlowTabbedPane(FlowEditorPanel owner) {
+  public FlowMultiPagePane(FlowEditorPanel owner) {
     super();
 
     m_Owner = owner;
 
-    setCloseTabsWithMiddleMouseButton(true);
-    setShowCloseTabButton(true);
-    setMiddleMouseButtonCloseApprover((BaseTabbedPane source, MouseEvent e) -> {
-      int index = indexAtLocation(e.getX(), e.getY());
+    setPageCloseApprover((MultiPagePane source, int index) -> {
       FlowPanel panel = getPanelAt(index);
       boolean result = checkForModified(panel);
       // to avoid second popup from checkModified() in removeTab method
@@ -76,7 +69,7 @@ public class FlowTabbedPane
       return result;
     });
 
-    addChangeListener((ChangeEvent e) -> tabSelected(e));
+    addChangeListener((ChangeEvent e) -> pageSelected(e));
   }
 
   /**
@@ -112,7 +105,7 @@ public class FlowTabbedPane
     }
 
     try {
-      constr = m_FlowPanelClass.getConstructor(FlowTabbedPane.class);
+      constr = m_FlowPanelClass.getConstructor(FlowMultiPagePane.class);
       result = (FlowPanel) constr.newInstance(this);
     }
     catch (Exception e) {
@@ -120,8 +113,8 @@ public class FlowTabbedPane
       result = new FlowPanel(this);
     }
 
-    addTab(result.getTitle(), result);
-    setSelectedComponent(result);
+    addPage(result.getTitle(), result);
+    setSelectedPage(result);
 
     return result;
   }
@@ -132,7 +125,7 @@ public class FlowTabbedPane
    * @return		the number of panels
    */
   public int getPanelCount() {
-    return getTabCount();
+    return getPageCount();
   }
 
   /**
@@ -142,7 +135,7 @@ public class FlowTabbedPane
    * @return		the requested panel
    */
   public FlowPanel getPanelAt(int index) {
-    return (FlowPanel) getComponentAt(index);
+    return (FlowPanel) getPageAt(index);
   }
 
   /**
@@ -195,7 +188,7 @@ public class FlowTabbedPane
    */
   public FlowPanel getCurrentPanel() {
     if (getSelectedIndex() != -1)
-      return (FlowPanel) getComponentAt(getSelectedIndex());
+      return (FlowPanel) getPageAt(getSelectedIndex());
     else
       return null;
   }
@@ -267,29 +260,13 @@ public class FlowTabbedPane
   }
 
   /**
-   * Hook method that gets executed after a tab was successfully removed with
-   * a middle mouse button click.
-   * 
-   * @param index	the original index
-   * @param comp	the component that was removed
-   */
-  @Override
-  protected void afterTabClosedWithMiddleMouseButton(int index, Component comp) {
-    if (((FlowPanel) comp).isRunning())
-      ((FlowPanel) comp).stop(true);
-    else
-      ((FlowPanel) comp).cleanUp();
-    updateOwnerTitle();
-  }
-
-  /**
    * Gets called when a tab gets selected.
    * 
    * @param e		the event that triggered the action
    */
-  protected void tabSelected(ChangeEvent e) {
+  protected void pageSelected(ChangeEvent e) {
     // actor tabs
-    if (getPanelCount() == 0)
+    if ((getPanelCount() == 0) || (getSelectedIndex() == -1))
       m_Owner.getTabs().notifyTabs(
 	  new TreePath[0],
 	  new Actor[0]);
@@ -332,9 +309,27 @@ public class FlowTabbedPane
       title = FlowEditorPanel.DEFAULT_TITLE;
       m_Owner.setParentTitle(title);
     }
-    else {
-      getCurrentPanel().updateTitle();
+    else if (getCurrentPanel() != null) {
+      title = getCurrentPanel().generateTitle();
+      m_Owner.setParentTitle(title);
     }
+  }
+
+  /**
+   * Updates the title.
+   *
+   * @param panel	the panel to update the title for
+   * @param title	the new title
+   */
+  public void updateTitle(FlowPanel panel, String title) {
+    int		index;
+
+    index = indexOfPage(panel);
+    if (index == -1)
+      return;
+
+    setTitleAt(index, title);
+    updateOwnerTitle();
   }
 
   /**
@@ -363,19 +358,23 @@ public class FlowTabbedPane
    * @param index the index of the tab to be removed
    */
   @Override
-  public void removeTabAt(int index) {
-    FlowPanel	panel;
+  public PageContainer removePageAt(int index) {
+    PageContainer	result;
+    FlowPanel		panel;
 
     if (index < 0)
-      return;
-    if (!checkForModified(getPanelAt(index)))
-      return;
+      return null;
 
     panel = getPanelAt(index);
-    panel.cleanUp();
+    if (panel.isRunning())
+      panel.stop(true);
+    else
+      panel.cleanUp();
 
-    super.removeTabAt(index);
+    result = super.removePageAt(index);
 
     updateOwnerTitle();
+
+    return result;
   }
 }

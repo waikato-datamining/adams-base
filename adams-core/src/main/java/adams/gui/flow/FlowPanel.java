@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -89,7 +89,6 @@ import java.util.List;
  * A panel for setting up, modifying, saving and loading "simple" flows.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowPanel
   extends UndoPanel
@@ -115,7 +114,7 @@ public class FlowPanel
   protected static Properties m_Properties;
 
   /** the owner. */
-  protected FlowTabbedPane m_Owner;
+  protected FlowMultiPagePane m_Owner;
 
   /** the last flow that was run. */
   protected Actor m_LastFlow;
@@ -198,7 +197,7 @@ public class FlowPanel
    *
    * @param owner	the owning tabbed pane
    */
-  public FlowPanel(FlowTabbedPane owner) {
+  public FlowPanel(FlowMultiPagePane owner) {
     super();
 
     m_Owner = owner;
@@ -334,7 +333,7 @@ public class FlowPanel
    *
    * @return		the editor, null if none set
    */
-  public FlowTabbedPane getOwner() {
+  public FlowMultiPagePane getOwner() {
     return m_Owner;
   }
 
@@ -348,10 +347,11 @@ public class FlowPanel
     ButtonTabComponent  button;
     
     if (getOwner() != null) {
-      index = getOwner().indexOfComponent(this);
+      index = getOwner().indexOfPage(this);
       if (index != -1) {
-        button = (ButtonTabComponent) getOwner().getTabComponentAt(index);
-	button.setIcon((icon == null) ? null : GUIHelper.getIcon(icon));
+        // TODO
+        // button = (ButtonTabComponent) getOwner().getTabComponentAt(index);
+	// button.setIcon((icon == null) ? null : GUIHelper.getIcon(icon));
       }
     }
   }
@@ -465,7 +465,7 @@ public class FlowPanel
   }
 
   /**
-   * Returns the current title of the flow.
+   * Returns the base title of the flow.
    *
    * @return		the title
    */
@@ -474,23 +474,26 @@ public class FlowPanel
   }
 
   /**
+   * Generates the title to use.
+   *
+   * @return		the title
+   */
+  public String generateTitle() {
+    if (!m_TitleGenerator.isEnabled())
+      return getTitle();
+
+    return m_TitleGenerator.generate(getCurrentFile(), getTree().isModified());
+  }
+
+  /**
    * Updates the title of the dialog/frame if the title generator is enabled.
    * 
    * @see		#getTitleGenerator()
    */
   public void updateTitle() {
-    int		index;
-
-    if (!m_TitleGenerator.isEnabled())
-      return;
-    
-    setParentTitle(m_TitleGenerator.generate(getCurrentFile(), getTree().isModified()));
-
-    if (getOwner() != null) {
-      index = getOwner().indexOfComponent(this);
-      if (index != -1)
-        getOwner().setShortenedTitleAt(index, (isModified() ? "*" : "") + getTitle());
-    }
+    setParentTitle(generateTitle());
+    if (getOwner() != null)
+      getOwner().updateTitle(this, (isModified() ? "*" : "") + getTitle());
   }
 
   /**
@@ -1187,13 +1190,15 @@ public class FlowPanel
 	m_CurrentFile = getTree().getFile();
 
 	return "Done!";
-      };
+      }
 
       @Override
       protected void done() {
         super.done();
-	update();
-	showStatus("");
+        SwingUtilities.invokeLater(() ->  {
+	  update();
+	  showStatus("");
+	});
       }
     };
     worker.execute();
