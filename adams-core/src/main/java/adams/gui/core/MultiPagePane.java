@@ -308,11 +308,11 @@ public class MultiPagePane
   }
 
   /**
-   * Selects the specified page component.
+   * Selects the specified page component as active page.
    *
    * @param page	the component to select
    */
-  public void setSelectedIndex(Component page) {
+  public void setSelectedPage(Component page) {
     int		i;
 
     for (i = 0; i < m_PageListModel.getSize(); i++) {

@@ -155,7 +155,7 @@ public class ImageProcessorMultiPagePane
     }
     else {
       addPage(file.getName(), panel);
-      setSelectedIndex(panel);
+      setSelectedPage(panel);
       return true;
     }
   }
