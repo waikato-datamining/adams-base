@@ -156,6 +156,9 @@ public class MultiPagePane
   /** the listeners when pages get selected. */
   protected HashSet<ChangeListener> m_ChangeListeners;
 
+  /** whether to ignore updates. */
+  protected boolean m_IgnoreUpdates;
+
   /**
    * For initializing members.
    */
@@ -165,6 +168,7 @@ public class MultiPagePane
 
     m_PageListModel   = new DefaultListModel<>();
     m_ChangeListeners = new HashSet<>();
+    m_IgnoreUpdates   = false;
   }
 
   /**
@@ -208,7 +212,7 @@ public class MultiPagePane
     m_PanelListButtons.add(m_ButtonDown);
 
     m_ButtonRemove = new JButton(GUIHelper.getIcon("delete.gif"));
-    m_ButtonRemove.addActionListener((ActionEvent e) -> removeSelectedPageContainer());
+    m_ButtonRemove.addActionListener((ActionEvent e) -> removeSelectedPage());
     m_PanelListButtons.add(m_ButtonRemove);
 
     m_ButtonAction = new BaseButtonWithDropDownMenu("...");
@@ -305,7 +309,7 @@ public class MultiPagePane
    * @param index	the page index
    * @param cont	the new container
    */
-  public void setPageContainerAt(int index, PageContainer cont) {
+  public void setPageAt(int index, PageContainer cont) {
     m_PageListModel.set(index, cont);
     update();
   }
@@ -402,9 +406,9 @@ public class MultiPagePane
    *
    * @return		the removed container
    */
-  public PageContainer removeSelectedPageContainer() {
+  public PageContainer removeSelectedPage() {
     if (getSelectedIndex() > -1)
-      return removePageContainerAt(getSelectedIndex());
+      return removePageAt(getSelectedIndex());
     else
       return null;
   }
@@ -415,7 +419,7 @@ public class MultiPagePane
    * @param index	the page index
    * @return		the removed container
    */
-  public PageContainer removePageContainerAt(int index) {
+  public PageContainer removePageAt(int index) {
     PageContainer	result;
 
     result = m_PageListModel.remove(index);
@@ -425,6 +429,19 @@ public class MultiPagePane
       setSelectedIndex(index - 1);
 
     return result;
+  }
+
+  /**
+   * Removes all pages.
+   */
+  public void removeAllPages() {
+    m_IgnoreUpdates = true;
+
+    while (getPageCount() > 0)
+      removePageAt(0);
+
+    m_IgnoreUpdates = false;
+    update();
   }
 
   /**
@@ -568,6 +585,9 @@ public class MultiPagePane
   protected void update() {
     Component	comp;
 
+    if (m_IgnoreUpdates)
+      return;
+
     m_PanelContent.removeAll();
 
     comp = getSelectedPage();
@@ -624,7 +644,7 @@ public class MultiPagePane
   protected boolean processListKey(KeyEvent e) {
     if (e.getKeyCode() == KeyEvent.VK_DELETE) {
       if (getSelectedIndex() > -1) {
-        removeSelectedPageContainer();
+        removeSelectedPage();
         return true;
       }
     }
