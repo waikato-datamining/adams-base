@@ -358,6 +358,48 @@ public class MultiPagePane
   }
 
   /**
+   * Returns the page index for the page component.
+   *
+   * @param page	the page component to look up
+   * @return		the associated page index, -1 if not found
+   */
+  public int indexOfPage(Component page) {
+    int		result;
+    int		i;
+
+    result = -1;
+    for (i = 0; i < getPageCount(); i++) {
+      if (getPageAt(i) == page) {
+        result = i;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the page index for the page container.
+   *
+   * @param cont	the page component to look up
+   * @return		the associated page index, -1 if not found
+   */
+  public int indexOfPage(PageContainer cont) {
+    int		result;
+    int		i;
+
+    result = -1;
+    for (i = 0; i < getPageCount(); i++) {
+      if (getPageContainerAt(i) == cont) {
+        result = i;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Returns the currently selected page.
    *
    * @return		the page, null if none selected
