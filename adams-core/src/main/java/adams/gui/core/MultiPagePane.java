@@ -37,6 +37,8 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.Serializable;
 import java.util.HashSet;
 
@@ -203,6 +205,7 @@ public class MultiPagePane
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPane.setDividerLocation(250);
     m_SplitPane.setResizeWeight(0.0);
+    m_SplitPane.setOneTouchExpandable(true);
     add(m_SplitPane, BorderLayout.CENTER);
 
     m_LeftPanel = new BasePanel(new BorderLayout());
@@ -214,8 +217,16 @@ public class MultiPagePane
     m_PageList.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
-        if (!processListKey(e))
+	if (!processListKey(e))
 	  super.keyPressed(e);
+      }
+    });
+    m_PageList.addMouseMotionListener(new MouseMotionAdapter() {
+      @Override
+      public void mouseMoved(MouseEvent e) {
+	int index = m_PageList.locationToIndex(e.getPoint());
+	if (index >-1)
+	  m_PageList.setToolTipText(m_PageListModel.getElementAt(index).toString());
       }
     });
     m_LeftPanel.add(new BaseScrollPane(m_PageList), BorderLayout.CENTER);
@@ -390,8 +401,8 @@ public class MultiPagePane
     result = -1;
     for (i = 0; i < getPageCount(); i++) {
       if (getPageAt(i) == page) {
-        result = i;
-        break;
+	result = i;
+	break;
       }
     }
 
@@ -411,8 +422,8 @@ public class MultiPagePane
     result = -1;
     for (i = 0; i < getPageCount(); i++) {
       if (getPageContainerAt(i) == cont) {
-        result = i;
-        break;
+	result = i;
+	break;
       }
     }
 
@@ -737,8 +748,8 @@ public class MultiPagePane
   protected boolean processListKey(KeyEvent e) {
     if (e.getKeyCode() == KeyEvent.VK_DELETE) {
       if (getSelectedIndex() > -1) {
-        checkedRemoveSelectedPage();
-        return true;
+	checkedRemoveSelectedPage();
+	return true;
       }
     }
     return false;
