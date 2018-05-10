@@ -123,6 +123,22 @@ public class MultiPagePane
     }
   }
 
+  /**
+   * Interface for classes that can hook into the closing of tabs and stop it.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   */
+  public interface PageCloseApprover {
+
+    /**
+     * Method gets called when having to approve a close operation.
+     *
+     * @param source 	the origin of the closing operation
+     * @param index	the page that is to be closed
+     */
+    public boolean approvePageClosing(MultiPagePane source, int index);
+  }
+
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
@@ -159,6 +175,9 @@ public class MultiPagePane
   /** whether to ignore updates. */
   protected boolean m_IgnoreUpdates;
 
+  /** for approving page closing. */
+  protected PageCloseApprover m_PageCloseApprover;
+
   /**
    * For initializing members.
    */
@@ -166,9 +185,10 @@ public class MultiPagePane
   protected void initialize() {
     super.initialize();
 
-    m_PageListModel   = new DefaultListModel<>();
-    m_ChangeListeners = new HashSet<>();
-    m_IgnoreUpdates   = false;
+    m_PageListModel     = new DefaultListModel<>();
+    m_ChangeListeners   = new HashSet<>();
+    m_IgnoreUpdates     = false;
+    m_PageCloseApprover = null;
   }
 
   /**
@@ -212,7 +232,7 @@ public class MultiPagePane
     m_PanelListButtons.add(m_ButtonDown);
 
     m_ButtonRemove = new JButton(GUIHelper.getIcon("delete.gif"));
-    m_ButtonRemove.addActionListener((ActionEvent e) -> removeSelectedPage());
+    m_ButtonRemove.addActionListener((ActionEvent e) -> checkedRemoveSelectedPage());
     m_PanelListButtons.add(m_ButtonRemove);
 
     m_ButtonAction = new BaseButtonWithDropDownMenu("...");
@@ -419,6 +439,7 @@ public class MultiPagePane
    */
   public void setTitleAt(int index, String title) {
     getPageContainerAt(index).setTitle(title);
+    update();
   }
 
   /**
@@ -444,6 +465,20 @@ public class MultiPagePane
   }
 
   /**
+   * Removes the currently selected page container, if approved.
+   *
+   * @return		the removed container, if any
+   */
+  public PageContainer checkedRemoveSelectedPage() {
+    if (getSelectedIndex() == -1)
+      return null;
+    if ((m_PageCloseApprover == null) || (m_PageCloseApprover.approvePageClosing(this, getSelectedIndex())))
+      return removeSelectedPage();
+    else
+      return null;
+  }
+
+  /**
    * Removes the currently selected page container.
    *
    * @return		the removed container
@@ -451,6 +486,20 @@ public class MultiPagePane
   public PageContainer removeSelectedPage() {
     if (getSelectedIndex() > -1)
       return removePageAt(getSelectedIndex());
+    else
+      return null;
+  }
+
+  /**
+   * Removes the page container at the specified index, if approved.
+   *
+   * @param index	the page index
+   * @return		the removed container, null if not removed
+   * @see		#m_PageCloseApprover
+   */
+  public PageContainer checkedRemovePageAt(int index) {
+    if ((m_PageCloseApprover == null) || (m_PageCloseApprover.approvePageClosing(this, index)))
+      return removePageAt(index);
     else
       return null;
   }
@@ -640,6 +689,8 @@ public class MultiPagePane
     m_PanelContent.revalidate();
     m_PanelContent.repaint();
 
+    m_PageList.repaint();
+
     updateButtons();
     notifyChangeListeners();
   }
@@ -686,10 +737,28 @@ public class MultiPagePane
   protected boolean processListKey(KeyEvent e) {
     if (e.getKeyCode() == KeyEvent.VK_DELETE) {
       if (getSelectedIndex() > -1) {
-        removeSelectedPage();
+        checkedRemoveSelectedPage();
         return true;
       }
     }
     return false;
+  }
+
+  /**
+   * Sets the approver for closing pages.
+   *
+   * @param value	the approver, null to remove
+   */
+  public void setPageCloseApprover(PageCloseApprover value) {
+    m_PageCloseApprover = value;
+  }
+
+  /**
+   * Returns the approver for closing pages.
+   *
+   * @return		the approver, null if none set
+   */
+  public PageCloseApprover getPageCloseApprover() {
+    return m_PageCloseApprover;
   }
 }
