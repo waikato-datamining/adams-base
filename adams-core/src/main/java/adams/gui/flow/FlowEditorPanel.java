@@ -70,7 +70,7 @@ import adams.gui.flow.menu.EditTimedActors;
 import adams.gui.flow.menu.EditUndo;
 import adams.gui.flow.menu.FileCheckOnSave;
 import adams.gui.flow.menu.FileClose;
-import adams.gui.flow.menu.FileCloseTab;
+import adams.gui.flow.menu.FileClosePage;
 import adams.gui.flow.menu.FileExport;
 import adams.gui.flow.menu.FileImport;
 import adams.gui.flow.menu.FileNewFlow;
@@ -236,8 +236,8 @@ public class FlowEditorPanel
   /** the "properties" action. */
   protected FlowEditorAction m_ActionFileProperties;
 
-  /** the "close tab" action. */
-  protected FlowEditorAction m_ActionFileCloseTab;
+  /** the "close page" action. */
+  protected FlowEditorAction m_ActionFileClosePage;
 
   /** the "close" action. */
   protected FlowEditorAction m_ActionFileClose;
@@ -540,9 +540,9 @@ public class FlowEditorPanel
     m_ActionFileRevert = action;
     m_MenuItems.add(action);
 
-    // File/Close tab
-    action = new FileCloseTab();
-    m_ActionFileCloseTab = action;
+    // File/Close page
+    action = new FileClosePage();
+    m_ActionFileClosePage = action;
     m_MenuItems.add(action);
 
     // File/Import
@@ -1003,7 +1003,7 @@ public class FlowEditorPanel
       menu.add(m_ActionFileSaveAs);
       menu.add(m_ActionFileCheckOnSave);
       menu.add(m_ActionFileRevert);
-      menu.add(m_ActionFileCloseTab);
+      menu.add(m_ActionFileClosePage);
       menu.addSeparator();
       menu.add(m_ActionFileImport);
       menu.add(m_ActionFileExport);

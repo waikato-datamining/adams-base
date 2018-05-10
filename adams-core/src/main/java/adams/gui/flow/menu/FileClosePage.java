@@ -13,21 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * FileCloseTab.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+/*
+ * FileClosePage.java
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Lets user close a tab.
+ * Lets user close a page.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class FileCloseTab
+public class FileClosePage
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -40,7 +39,7 @@ public class FileCloseTab
    */
   @Override
   protected String getTitle() {
-    return "Close tab";
+    return "Close page";
   }
 
   /**
