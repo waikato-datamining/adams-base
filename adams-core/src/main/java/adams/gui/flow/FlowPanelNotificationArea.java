@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowPanelNotificationArea.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -26,6 +26,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.PanelType;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MultiPageIconSupporter;
 import adams.gui.core.PopupMenuCustomizer;
 import adams.gui.core.TabIconSupporter;
 import adams.gui.core.TextEditorPanel;
@@ -246,13 +247,17 @@ public class FlowPanelNotificationArea
 
       if (getOwner() != null) {
         if (m_Notification == null) {
+          if (getOwner() instanceof MultiPageIconSupporter)
+	    ((MultiPageIconSupporter) getOwner()).setPageIcon(null);
           if (getOwner() instanceof TabIconSupporter)
-            ((TabIconSupporter) getOwner()).setTabIcon(null);
+	    ((TabIconSupporter) getOwner()).setTabIcon(null);
           getOwner().getSplitPane().setBottomComponentHidden(true);
         }
         else {
           if (getOwner() instanceof TabIconSupporter)
             ((TabIconSupporter) getOwner()).setTabIcon(m_IsError ? "stop_blue.gif" : "validate_blue.png");
+          if (getOwner() instanceof MultiPageIconSupporter)
+            ((MultiPageIconSupporter) getOwner()).setPageIcon(m_IsError ? "stop_blue.gif" : "validate_blue.png");
           getOwner().getSplitPane().setBottomComponentHidden(false);
         }
       }

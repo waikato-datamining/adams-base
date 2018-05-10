@@ -1,5 +1,6 @@
 # Project: adams
-# Date: 2016-12-21 12:22:32
+# Modules: adams-core,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+# Date: 2018-05-11 10:04:11
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "The flow loads classifier setups from a text file\\n(one setup per line), updates them via the SetVariable\\nactor in the CallableActors\\\' \\\"Classifier\\\" actor and then\\ncross-validates them on multiple datasets, outputting \\nthe results of the CV.\\nIn order to distinguish the results better from each other,\\nthe classifier setup is output as comment (attaching the \\n@{classifier} to the \\\"comment\\\" option in the EvaluationSummary\\nactor)." -flow-execution-listener adams.flow.execution.NullListener
@@ -9,16 +10,16 @@ adams.flow.control.Flow -annotation "The flow loads classifier setups from a tex
  adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineByLineTextReader
  adams.flow.transformer.SetVariable -var-name classifier
  adams.flow.control.Trigger -name "evaluate classifier"
-  adams.flow.source.DirectoryLister -dir ${FLOWS}/data -list-files true -regexp [a-zA-Z]*\\.arff
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory ${FLOWS}/data -regexp [a-zA-Z]*\\\\.arff"
   adams.flow.control.Tee -name "get dataset name"
    adams.flow.transformer.BaseName -remove-extensions true
    adams.flow.transformer.SetVariable -var-name dataset
   adams.flow.control.Trigger -name "generate entry string"
-   adams.flow.source.CombineVariables -expression "@{classifier} - @{dataset}"
+   adams.flow.source.CombineVariables -expression "@{classifier} - @{dataset}" -conversion adams.data.conversion.StringToString
    adams.flow.transformer.SetVariable -var-name entry
   adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
   adams.flow.transformer.WekaClassSelector
-  adams.flow.control.Continue -condition "adams.flow.condition.bool.WekaCapabilities -capability NUMERIC_ATTRIBUTES -capability STRING_ATTRIBUTES -capability RELATIONAL_ATTRIBUTES -capability NUMERIC_CLASS -capability DATE_CLASS -capability STRING_CLASS -capability RELATIONAL_CLASS"
-  adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -num-threads -1
+  adams.flow.control.Block -condition "adams.flow.condition.bool.WekaCapabilities -capability NUMERIC_ATTRIBUTES -capability STRING_ATTRIBUTES -capability RELATIONAL_ATTRIBUTES -capability NUMERIC_CLASS -capability DATE_CLASS -capability STRING_CLASS -capability RELATIONAL_CLASS"
+  adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -num-threads -1 -generator weka.classifiers.DefaultCrossValidationFoldGenerator
   adams.flow.transformer.WekaEvaluationSummary -relation true -class-details true -comment @{classifier}
   adams.flow.sink.HistoryDisplay -width 800 -caret-at-start true -entry-name-variable entry

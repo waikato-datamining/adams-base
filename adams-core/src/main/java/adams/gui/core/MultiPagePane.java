@@ -23,8 +23,12 @@ package adams.gui.core;
 import adams.gui.event.RemoveItemsListener;
 
 import javax.swing.Action;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
@@ -70,16 +74,31 @@ public class MultiPagePane
     /** the page. */
     protected Component m_Page;
 
+    /** the current icon (can be null). */
+    protected ImageIcon m_Icon;
+
     /**
-     * Initializes the container.
+     * Initializes the container with no icon.
      *
      * @param title	the title
      * @param page	the page
      */
     public PageContainer(String title, Component page) {
+      this(title, page, null);
+    }
+
+    /**
+     * Initializes the container.
+     *
+     * @param title	the title
+     * @param page	the page
+     * @param icon	the icon
+     */
+    public PageContainer(String title, Component page, ImageIcon icon) {
       super();
       m_Title = title;
       m_Page  = page;
+      m_Icon  = icon;
     }
 
     /**
@@ -126,6 +145,24 @@ public class MultiPagePane
     public String toString() {
       return m_Title;
     }
+
+    /**
+     * Returns the icon.
+     *
+     * @return		the icon
+     */
+    public ImageIcon getIcon() {
+      return m_Icon;
+    }
+
+    /**
+     * Sets the icon.
+     *
+     * @param value	the icon
+     */
+    public void setIcon(ImageIcon value) {
+      m_Icon = value;
+    }
   }
 
   /**
@@ -158,6 +195,39 @@ public class MultiPagePane
      * @param menu	the menu so far
      */
     public void customizePopup(int index, JPopupMenu menu);
+  }
+
+  /**
+   * The cell renderer.
+   */
+  public static class TitleRenderer
+    extends DefaultListCellRenderer {
+
+    private static final long serialVersionUID = 662711521384106051L;
+
+    /**
+     * Returns the rendering component.
+     *
+     * @param list		the list this renderer is for
+     * @param value		the current list value
+     * @param index		the index of the value
+     * @param isSelected	whether the item is selected
+     * @param cellHasFocus	whether the cell has the focus
+     * @return			the rendering component
+     */
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      Component		result;
+      JLabel 		label;
+      PageContainer	cont;
+
+      result = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+      label  = (JLabel) result;
+      cont   = (PageContainer) list.getModel().getElementAt(index);
+      label.setIcon(cont.getIcon());
+
+      return result;
+    }
   }
 
   /** the split pane. */
@@ -288,6 +358,15 @@ public class MultiPagePane
 
     m_PanelContent = new BasePanel(new BorderLayout());
     m_SplitPane.setRightComponent(m_PanelContent);
+  }
+
+  /**
+   * finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    setTitleRenderer(new TitleRenderer());
   }
 
   /**
@@ -509,6 +588,39 @@ public class MultiPagePane
       return null;
     else
       return getTitleAt(getSelectedIndex());
+  }
+
+  /**
+   * Sets the icon at the specified index.
+   *
+   * @param index	the page index
+   * @param icon	the new icon
+   */
+  public void setIconAt(int index, ImageIcon icon) {
+    getPageContainerAt(index).setIcon(icon);
+    update();
+  }
+
+  /**
+   * Returns the icon at the specified index.
+   *
+   * @param index	the page index
+   * @return		the associated icon
+   */
+  public ImageIcon getIconAt(int index) {
+    return getPageContainerAt(index).getIcon();
+  }
+
+  /**
+   * Returns the icon of the currently selected page.
+   *
+   * @return		the icon, null if none selected
+   */
+  public ImageIcon getSelectedIcon() {
+    if (getSelectedIndex() == -1)
+      return null;
+    else
+      return getIconAt(getSelectedIndex());
   }
 
   /**

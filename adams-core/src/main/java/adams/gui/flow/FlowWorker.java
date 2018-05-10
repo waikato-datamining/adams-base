@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowWorker.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow;
@@ -31,6 +31,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.execution.debug.AnyActorBreakpoint;
 import adams.flow.execution.debug.NoScopeRestriction;
+import adams.gui.core.MultiPageIconSupporter;
 import adams.gui.core.TabIconSupporter;
 
 import javax.swing.SwingUtilities;
@@ -322,10 +323,12 @@ public class FlowWorker
   /**
    * Updates the tab icon, if possible.
    *
-   * @param icon
+   * @param icon  	the icon name, can be null
    */
   protected void updateTabIcon(String icon) {
     SwingUtilities.invokeLater(() -> {
+      if (m_Owner instanceof MultiPageIconSupporter)
+        ((MultiPageIconSupporter) m_Owner).setPageIcon(icon);
       if (m_Owner instanceof TabIconSupporter)
         ((TabIconSupporter) m_Owner).setTabIcon(icon);
     });

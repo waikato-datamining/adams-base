@@ -68,6 +68,7 @@ public class FlowMultiPagePane
 	panel.setModified(false);
       return result;
     });
+    setTitleRenderer(new TitleRenderer());
 
     addChangeListener((ChangeEvent e) -> pageSelected(e));
   }

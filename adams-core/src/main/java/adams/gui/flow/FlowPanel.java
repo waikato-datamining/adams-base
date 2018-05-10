@@ -49,12 +49,11 @@ import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
-import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MultiPageIconSupporter;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
-import adams.gui.core.TabIconSupporter;
 import adams.gui.core.TitleGenerator;
 import adams.gui.core.Undo.UndoPoint;
 import adams.gui.core.UndoHandlerWithQuickAccess;
@@ -93,7 +92,7 @@ import java.util.List;
 public class FlowPanel
   extends UndoPanel
   implements StatusMessageHandler, SendToActionSupporter, FlowTreeHandler,
-             TabIconSupporter, FlowWorkerHandler, UndoHandlerWithQuickAccess {
+  MultiPageIconSupporter, FlowWorkerHandler, UndoHandlerWithQuickAccess {
 
   /** for serialization. */
   private static final long serialVersionUID = -3579084888256133873L;
@@ -338,21 +337,18 @@ public class FlowPanel
   }
 
   /**
-   * Sets the tab icon.
+   * Sets the page icon.
    * 
    * @param icon	the name of the icon, null to unset it
    */
-  public void setTabIcon(String icon) {
-    int		    	index;
-    ButtonTabComponent  button;
-    
+  @Override
+  public void setPageIcon(String icon) {
+    int		    index;
+
     if (getOwner() != null) {
       index = getOwner().indexOfPage(this);
-      if (index != -1) {
-        // TODO
-        // button = (ButtonTabComponent) getOwner().getTabComponentAt(index);
-	// button.setIcon((icon == null) ? null : GUIHelper.getIcon(icon));
-      }
+      if (index != -1)
+        getOwner().setIconAt(index, (icon == null) ? null : GUIHelper.getIcon(icon));
     }
   }
 
@@ -614,7 +610,7 @@ public class FlowPanel
 
 	addUndoPoint("Saving undo data...", "Loading '" + file.getName() + "'");
 	SwingUtilities.invokeLater(() -> showStatus("Loading '" + file + "'..."));
-        SwingUtilities.invokeLater(() -> setTabIcon("hourglass.png"));
+        SwingUtilities.invokeLater(() -> setPageIcon("hourglass.png"));
 	setTitle(FileUtils.replaceExtension(file.getName(), ""));
 	updateTitle();
 
@@ -637,7 +633,7 @@ public class FlowPanel
 	m_RunningSwingWorker = false;
         canExecute           = execute && m_Errors.isEmpty();
 
-        SwingUtilities.invokeLater(() -> setTabIcon(null));
+        SwingUtilities.invokeLater(() -> setPageIcon(null));
 
 	if (m_Errors.isEmpty()) {
 	  setCurrentFile(file);
@@ -886,7 +882,7 @@ public class FlowPanel
 	m_Cancelled = false;
 
 	if (getCheckOnSave()) {
-	  SwingUtilities.invokeLater(() -> setTabIcon("hourglass.png"));
+	  SwingUtilities.invokeLater(() -> setPageIcon("hourglass.png"));
 	  String check = ActorUtils.checkFlow(flow.getFullActor(), false, false, file);
 	  if (check != null) {
 	    String msg = "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check;
@@ -896,7 +892,7 @@ public class FlowPanel
 	    if (retVal != ApprovalDialog.APPROVE_OPTION) {
 	      showStatus("Cancelled saving!");
 	      m_Cancelled = true;
-	      SwingUtilities.invokeLater(() -> setTabIcon("error_blue.png"));
+	      SwingUtilities.invokeLater(() -> setPageIcon("error_blue.png"));
 	      return null;
 	    }
 	  }
@@ -905,7 +901,7 @@ public class FlowPanel
           }
 	}
 
-	SwingUtilities.invokeLater(() -> setTabIcon("save.gif"));
+	SwingUtilities.invokeLater(() -> setPageIcon("save.gif"));
 	showStatus("Saving '" + file + "'...");
 	m_Result = writer.write(flow, file);
 	showStatus("");
@@ -915,12 +911,12 @@ public class FlowPanel
       @Override
       protected void done() {
 	if (!m_Result) {
-	  SwingUtilities.invokeLater(() -> setTabIcon("error_blue.png"));
+	  SwingUtilities.invokeLater(() -> setPageIcon("error_blue.png"));
           GUIHelper.showErrorMessage(
             m_Owner, "Error saving flow to '" + file.getAbsolutePath() + "'!");
         }
 	else {
-	  SwingUtilities.invokeLater(() -> setTabIcon("validate_blue.gif"));
+	  SwingUtilities.invokeLater(() -> setPageIcon("validate_blue.gif"));
 	  showStatus("");
 	  getTree().setModified(false);
 	  if (m_RecentFilesHandler != null)
@@ -1108,7 +1104,7 @@ public class FlowPanel
 	m_CurrentThread.stop();
       }
       finally {
-	setTabIcon(null);
+	setPageIcon(null);
 	finishedExecution();
       }
     }
@@ -1672,9 +1668,9 @@ public class FlowPanel
   public void setDebug(boolean value) {
     m_Tree.setDebug(value);
     if (isDebug())
-      setTabIcon("run_debug.png");
+      setPageIcon("run_debug.png");
     else
-      setTabIcon(null);
+      setPageIcon(null);
   }
 
   /**
