@@ -68,7 +68,17 @@ public class FlowMultiPagePane
 	panel.setModified(false);
       return result;
     });
-    setTitleRenderer(new TitleRenderer());
+    setToolTipCustomizer(new ToolTipCustomizer() {
+      @Override
+      public String customizeToolTip(int index, String toolTip) {
+	if ((index >= 0) && (index < m_PageListModel.getSize())) {
+	  FlowPanel panel = (FlowPanel) m_PageListModel.get(index).getPage();
+	  if (panel.getCurrentFile() != null)
+	    toolTip = "<html>" + toolTip + "<br>" + panel.getCurrentFile() + "</html>";
+	}
+	return toolTip;
+      }
+    });
 
     addChangeListener((ChangeEvent e) -> pageSelected(e));
   }

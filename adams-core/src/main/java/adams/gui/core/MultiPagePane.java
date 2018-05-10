@@ -187,7 +187,7 @@ public class MultiPagePane
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
-  public static interface PopupCustomizer {
+  public interface PopupCustomizer {
 
     /**
      * Gets called before the popup for the entry is displayed.
@@ -196,6 +196,23 @@ public class MultiPagePane
      * @param menu	the menu so far
      */
     public void customizePopup(int index, JPopupMenu menu);
+  }
+
+  /**
+   * Interface for classes that want to customize the tool tip of an entry.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   */
+  public interface ToolTipCustomizer {
+
+    /**
+     * Gets called before the tool tip is set.
+     *
+     * @param index	the index this menu is for
+     * @param toolTip	the tool tip at the moment, can be null
+     * @return		the updated tool tip
+     */
+    public String customizeToolTip(int index, String toolTip);
   }
 
   /**
@@ -274,6 +291,9 @@ public class MultiPagePane
   /** an optional customizer for the popup on the JList. */
   protected PopupCustomizer m_PopupCustomizer;
 
+  /** an optional customizer for the tooltips of the JList. */
+  protected ToolTipCustomizer m_ToolTipCustomizer;
+  
   /**
    * For initializing members.
    */
@@ -285,6 +305,8 @@ public class MultiPagePane
     m_ChangeListeners   = new HashSet<>();
     m_IgnoreUpdates     = false;
     m_PageCloseApprover = null;
+    m_PopupCustomizer   = null;
+    m_ToolTipCustomizer = null;
   }
 
   /**
@@ -319,10 +341,7 @@ public class MultiPagePane
       @Override
       public void mouseMoved(MouseEvent e) {
 	int index = m_PageList.locationToIndex(e.getPoint());
-	String tooltip = null;
-	if (index >-1)
-	  tooltip = m_PageListModel.getElementAt(index).toString();
-	m_PageList.setToolTipText(tooltip);
+	m_PageList.setToolTipText(generateToolTip(index));
       }
     });
     m_PageList.addMouseListener(new MouseAdapter() {
@@ -991,5 +1010,42 @@ public class MultiPagePane
    */
   public PopupCustomizer getPopupCustomizer() {
     return m_PopupCustomizer;
+  }
+
+  /**
+   * Sets the tool tip customizer to use.
+   *
+   * @param value	the customizer, use null to turn off
+   */
+  public void setToolTipCustomizer(ToolTipCustomizer value) {
+    m_ToolTipCustomizer = value;
+  }
+
+  /**
+   * Returns the currently set tool tip customizer.
+   *
+   * @return		the customizer, can be null if none set
+   */
+  public ToolTipCustomizer getToolTipCustomizer() {
+    return m_ToolTipCustomizer;
+  }
+
+  /**
+   * Generates the tool tip for the index.
+   *
+   * @param index	the index, can be outside range
+   * @return		the tool tip, null if none available
+   */
+  protected String generateToolTip(int index) {
+    String result;
+
+    result = null;
+    if ((index >= 0) && (index < m_PageListModel.getSize()))
+      result = m_PageListModel.getElementAt(index).toString();
+
+    if (m_ToolTipCustomizer != null)
+      result = m_ToolTipCustomizer.customizeToolTip(index, result);
+
+    return result;
   }
 }
