@@ -26,6 +26,8 @@ import javax.swing.Action;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
@@ -37,6 +39,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.Serializable;
@@ -141,6 +144,22 @@ public class MultiPagePane
     public boolean approvePageClosing(MultiPagePane source, int index);
   }
 
+  /**
+   * Interface for classes that want to customize the popup menu for entry.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   */
+  public static interface PopupCustomizer {
+
+    /**
+     * Gets called before the popup for the entry is displayed.
+     *
+     * @param index	the index this menu is for
+     * @param menu	the menu so far
+     */
+    public void customizePopup(int index, JPopupMenu menu);
+  }
+
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
@@ -179,6 +198,9 @@ public class MultiPagePane
 
   /** for approving page closing. */
   protected PageCloseApprover m_PageCloseApprover;
+
+  /** an optional customizer for the popup on the JList. */
+  protected PopupCustomizer m_PopupCustomizer;
 
   /**
    * For initializing members.
@@ -225,8 +247,22 @@ public class MultiPagePane
       @Override
       public void mouseMoved(MouseEvent e) {
 	int index = m_PageList.locationToIndex(e.getPoint());
+	String tooltip = null;
 	if (index >-1)
-	  m_PageList.setToolTipText(m_PageListModel.getElementAt(index).toString());
+	  tooltip = m_PageListModel.getElementAt(index).toString();
+	m_PageList.setToolTipText(tooltip);
+      }
+    });
+    m_PageList.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isRightClick(e)) {
+          showPopup(e);
+          e.consume();
+        }
+        else {
+          super.mouseClicked(e);
+        }
       }
     });
     m_LeftPanel.add(new BaseScrollPane(m_PageList), BorderLayout.CENTER);
@@ -771,5 +807,75 @@ public class MultiPagePane
    */
   public PageCloseApprover getPageCloseApprover() {
     return m_PageCloseApprover;
+  }
+
+  /**
+   * Generates the right-click menu for the JList.
+   * <br><br>
+   * Derived classes should override this method instead of making use
+   * of the PopupCustomizer.
+   *
+   * @param e		the event that triggered the popup
+   * @return		the generated menu
+   * @see		#showPopup(MouseEvent)
+   */
+  protected BasePopupMenu createPopup(MouseEvent e) {
+    BasePopupMenu	result;
+    JMenuItem	  	menuitem;
+    final int		index;
+
+    result = new BasePopupMenu();
+    index  = getSelectedIndex();
+
+    // remove
+    menuitem = new JMenuItem("Remove");
+    menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+    menuitem.setEnabled(index > -1);
+    menuitem.addActionListener((ActionEvent ae) -> removePageAt(index));
+    result.add(menuitem);
+
+    // remove all
+    menuitem = new JMenuItem("Remove all");
+    menuitem.setEnabled(m_PageListModel.getSize() > 0);
+    menuitem.addActionListener((ActionEvent ae) -> removeAllPages());
+    result.add(menuitem);
+
+    return result;
+  }
+
+  /**
+   * Generates and pops up the right-click menu on the JList.
+   *
+   * @param e		the event that triggered the popup
+   * @see		#createPopup(MouseEvent)
+   */
+  protected void showPopup(MouseEvent e) {
+    BasePopupMenu	menu;
+
+    menu = createPopup(e);
+
+    // customizer available?
+    if (m_PopupCustomizer != null)
+      m_PopupCustomizer.customizePopup(getSelectedIndex(), menu);
+
+    menu.showAbsolute(this, e);
+  }
+
+  /**
+   * Sets the popup customizer to use.
+   *
+   * @param value	the customizer, use null to turn off
+   */
+  public void setPopupCustomizer(PopupCustomizer value) {
+    m_PopupCustomizer = value;
+  }
+
+  /**
+   * Returns the currently set popup customizer.
+   *
+   * @return		the customizer, can be null if none set
+   */
+  public PopupCustomizer getPopupCustomizer() {
+    return m_PopupCustomizer;
   }
 }
