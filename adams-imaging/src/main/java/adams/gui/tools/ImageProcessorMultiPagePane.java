@@ -14,16 +14,16 @@
  */
 
 /*
- * ImageProcessorTabbedPane.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * ImageProcessorMultiPagePane.java
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
 import adams.core.CleanUpHandler;
 import adams.data.io.input.AbstractImageReader;
 import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MultiPagePane;
 
 import java.io.File;
 
@@ -31,10 +31,9 @@ import java.io.File;
  * Specialized {@link BaseTabbedPane} for managing images.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class ImageProcessorTabbedPane
-  extends DragAndDropTabbedPane
+public class ImageProcessorMultiPagePane
+  extends MultiPagePane
   implements CleanUpHandler {
 
   /** for serialization. */
@@ -48,10 +47,10 @@ public class ImageProcessorTabbedPane
    * 
    * @param owner	the viewer this pane belongs to
    */
-  public ImageProcessorTabbedPane(ImageProcessorPanel owner) {
+  public ImageProcessorMultiPagePane(ImageProcessorPanel owner) {
     super();
     m_Owner = owner;
-    setShowCloseTabButton(true);
+    setDividerLocation(250);
   }
   
   /**
@@ -79,10 +78,10 @@ public class ImageProcessorTabbedPane
    * @return		the image panel, null if none available
    */
   public ImageProcessorSubPanel getPanelAt(int index) {
-    if ((index < 0) || (index >= getTabCount()))
+    if ((index < 0) || (index >= getPageCount()))
       return null;
     else
-      return (ImageProcessorSubPanel) getComponentAt(index);
+      return (ImageProcessorSubPanel) getPageAt(index);
   }
 
   /**
@@ -94,9 +93,9 @@ public class ImageProcessorTabbedPane
     ImageProcessorSubPanel[]	result;
     int				i;
     
-    result = new ImageProcessorSubPanel[getTabCount()];
-    for (i = 0; i < getTabCount(); i++)
-      result[i] = (ImageProcessorSubPanel) getComponentAt(i);
+    result = new ImageProcessorSubPanel[getPageCount()];
+    for (i = 0; i < getPageCount(); i++)
+      result[i] = (ImageProcessorSubPanel) getPageAt(i);
     
     return result;
   }
@@ -155,9 +154,8 @@ public class ImageProcessorTabbedPane
       return false;
     }
     else {
-      addTab(file.getName(), panel);
-      setShortenedTitleAt(getTabCount() - 1, file.getName());
-      setSelectedComponent(panel);
+      addPage(file.getName(), panel);
+      setSelectedIndex(panel);
       return true;
     }
   }

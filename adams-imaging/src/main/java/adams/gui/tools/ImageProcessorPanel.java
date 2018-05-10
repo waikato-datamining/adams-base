@@ -15,7 +15,7 @@
 
 /*
  * ImageProcessorPanel.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -71,7 +71,6 @@ import java.io.File;
  * Interface for processing images using a flow snippet.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageProcessorPanel
   extends BasePanel
@@ -87,7 +86,7 @@ public class ImageProcessorPanel
   protected BaseSplitPane m_SplitPane;
 
   /** the tabbed pane for the images. */
-  protected ImageProcessorTabbedPane m_TabbedPane;
+  protected ImageProcessorMultiPagePane m_TabbedPane;
 
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
@@ -203,8 +202,7 @@ public class ImageProcessorPanel
     m_SplitPane.setResizeWeight(1.0);
     add(m_SplitPane, BorderLayout.CENTER);
 
-    m_TabbedPane = new ImageProcessorTabbedPane(this);
-    m_TabbedPane.setCloseTabsWithMiddleMouseButton(true);
+    m_TabbedPane = new ImageProcessorMultiPagePane(this);
     m_TabbedPane.addChangeListener((ChangeEvent e) -> update());
     m_SplitPane.setLeftComponent(m_TabbedPane);
 
@@ -710,7 +708,7 @@ public class ImageProcessorPanel
     int		i;
 
     i = 0;
-    while (i < m_TabbedPane.getTabCount())
+    while (i < m_TabbedPane.getPageCount())
       m_TabbedPane.remove(i);
 
     if (getParentFrame() != null) {

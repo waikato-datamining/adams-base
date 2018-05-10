@@ -15,7 +15,7 @@
 
 /*
  * ImageProcessorSubPanel.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -51,7 +51,6 @@ import java.util.Iterator;
  * processing.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageProcessorSubPanel
   extends BasePanel
@@ -180,7 +179,7 @@ public class ImageProcessorSubPanel
   }
 
   /** the owner. */
-  protected ImageProcessorTabbedPane m_Owner;
+  protected ImageProcessorMultiPagePane m_Owner;
   
   /** the layout. */
   protected LayoutType m_LayoutType;
@@ -199,7 +198,7 @@ public class ImageProcessorSubPanel
    *
    * @param owner	the owner
    */
-  public ImageProcessorSubPanel(ImageProcessorTabbedPane owner) {
+  public ImageProcessorSubPanel(ImageProcessorMultiPagePane owner) {
     this(owner, LayoutType.VERTICAL);
   }
   
@@ -209,7 +208,7 @@ public class ImageProcessorSubPanel
    * @param owner	the owner
    * @param layout	the layout to use
    */
-  public ImageProcessorSubPanel(ImageProcessorTabbedPane owner, LayoutType layout) {
+  public ImageProcessorSubPanel(ImageProcessorMultiPagePane owner, LayoutType layout) {
     super();
     m_Owner = owner;
     setLayoutType(layout);
