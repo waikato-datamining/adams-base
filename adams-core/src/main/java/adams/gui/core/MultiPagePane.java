@@ -23,6 +23,7 @@ package adams.gui.core;
 import adams.gui.event.RemoveItemsListener;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -223,6 +224,7 @@ public class MultiPagePane
 
       result = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
       label  = (JLabel) result;
+      label.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
       cont   = (PageContainer) list.getModel().getElementAt(index);
       label.setIcon(cont.getIcon());
 
