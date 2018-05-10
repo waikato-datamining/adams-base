@@ -62,7 +62,7 @@ import adams.gui.tools.spreadsheetviewer.menu.DataFilterRows;
 import adams.gui.tools.spreadsheetviewer.menu.DataSort;
 import adams.gui.tools.spreadsheetviewer.menu.DataTransform;
 import adams.gui.tools.spreadsheetviewer.menu.EditPasteAsNew;
-import adams.gui.tools.spreadsheetviewer.menu.FileCloseTab;
+import adams.gui.tools.spreadsheetviewer.menu.FileClosePage;
 import adams.gui.tools.spreadsheetviewer.menu.FileExit;
 import adams.gui.tools.spreadsheetviewer.menu.FileOpen;
 import adams.gui.tools.spreadsheetviewer.menu.FileSave;
@@ -283,7 +283,7 @@ public class SpreadSheetViewerPanel
     m_Actions.add(action);
 
     // File/Close page
-    action = new FileCloseTab();
+    action = new FileClosePage();
     m_ActionFileClosePage = action;
     m_Actions.add(action);
 
