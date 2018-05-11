@@ -126,6 +126,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
+import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -1442,17 +1443,26 @@ public class FlowEditorPanel
    * Opens a flow.
    */
   public void open() {
-    int			retVal;
-    FlowPanel		panel;
+    int				retVal;
+    final PlaceholderFile[]	files;
+    SwingWorker			worker;
 
     retVal = m_FileChooser.showOpenDialog(this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
-    for (PlaceholderFile file: m_FileChooser.getSelectedPlaceholderFiles()) {
-      panel = m_FlowPanels.newPanel();
-      panel.load(m_FileChooser.getReader(), file);
-    }
+    files  = m_FileChooser.getSelectedPlaceholderFiles();
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	for (PlaceholderFile file: files) {
+	  FlowPanel panel = m_FlowPanels.newPanel();
+	  panel.load(m_FileChooser.getReader(), file);
+	}
+	return null;
+      }
+    };
+    worker.execute();
   }
 
   /**

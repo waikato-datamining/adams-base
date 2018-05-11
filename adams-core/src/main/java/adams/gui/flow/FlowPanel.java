@@ -605,12 +605,13 @@ public class FlowPanel
 	m_Errors   = new ArrayList<>();
 	m_Warnings = new ArrayList<>();
 
+	showStatus("Loading '" + file + "'...");
+        setPageIcon("hourglass.png");
+
 	cleanUp();
 	update();
 
 	addUndoPoint("Saving undo data...", "Loading '" + file.getName() + "'");
-	SwingUtilities.invokeLater(() -> showStatus("Loading '" + file + "'..."));
-        SwingUtilities.invokeLater(() -> setPageIcon("hourglass.png"));
 	setTitle(FileUtils.replaceExtension(file.getName(), ""));
 	updateTitle();
 
