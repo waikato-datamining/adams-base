@@ -1,0 +1,16 @@
+# Project: adams
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+# Date: 2018-05-14 14:54:11
+# User: fracpete
+# Charset: UTF-8
+adams.flow.control.Flow -annotation "Converts object annotations from reports into VIA (VGG Image Annotator) JSON format." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.FileSupplier -output-array true -file ${FLOWS}/data/annotated_objects.report -file ${FLOWS}/data/circle.report
+ adams.flow.control.ArrayProcess
+  adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.transformer.ViaAnnotations -finder adams.data.objectfinder.AllFinder
+ adams.flow.control.Branch
+  adams.flow.sink.JsonDisplay -writer adams.gui.print.NullWriter -preview true
+  adams.flow.sink.JsonFileWriter -output ${FLOWS}/output/via.json -pretty-printing true
+  adams.flow.control.Sequence -name "plain text"
+   adams.flow.transformer.Convert -conversion "adams.data.conversion.JsonToString -pretty-printing true"
+   adams.flow.sink.Display -x -3 -writer adams.data.io.output.NullWriter
