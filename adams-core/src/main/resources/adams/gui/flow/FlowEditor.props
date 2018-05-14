@@ -31,7 +31,7 @@ ShowAnnotations=true
 ShowInputOutput=false
 
 # Divider location (= size of the flow panel)
-DividerLocation=700
+DividerLocation=850
 
 # The divider location for the flow list of the multi-page (= size of the list of flow names)
 FlowList.DividerLocation=250

@@ -470,7 +470,7 @@ public class FlowEditorPanel
     setToolBarLocation(ToolBarLocation.valueOf(props.getProperty("ToolBar.Location", "NORTH")));
 
     m_SplitPane = new BaseSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
-    m_SplitPane.setDividerLocation(props.getInteger("DividerLocation", 500));
+    m_SplitPane.setDividerLocation(props.getInteger("DividerLocation", 850));
     m_SplitPane.setOneTouchExpandable(true);
     m_SplitPane.setResizeWeight(0.5);
     getContentPanel().add(m_SplitPane, BorderLayout.CENTER);
