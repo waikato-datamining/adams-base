@@ -116,6 +116,9 @@ Tree.KeyboardActions=\
    "adams.gui.flow.tree.keyboardaction.SearchActorHere" \
    "adams.gui.flow.tree.keyboardaction.SearchActorAfter" \
    "adams.gui.flow.tree.keyboardaction.SearchActorBeneath" \
+   "adams.gui.flow.tree.keyboardaction.FavoriteActorHere" \
+   "adams.gui.flow.tree.keyboardaction.FavoriteActorAfter" \
+   "adams.gui.flow.tree.keyboardaction.FavoriteActorBeneath" \
    "adams.gui.flow.tree.keyboardaction.EncloseActor"
 
 # Whether to show the global info in the class tree as child node of the

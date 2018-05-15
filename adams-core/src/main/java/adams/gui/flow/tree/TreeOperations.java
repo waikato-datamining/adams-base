@@ -62,6 +62,7 @@ import adams.flow.standalone.ExternalStandalone;
 import adams.flow.transformer.CallableTransformer;
 import adams.flow.transformer.ExternalTransformer;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.ConsolePanel;
@@ -69,12 +70,18 @@ import adams.gui.core.ErrorMessagePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.core.SearchableBaseList;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
+import adams.gui.event.SearchEvent;
 import adams.gui.flow.FlowEditorDialog;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
+import adams.gui.goe.Favorites;
+import adams.gui.goe.Favorites.Favorite;
 import adams.gui.goe.FlowHelper;
 import adams.gui.goe.GenericObjectEditor.GOETreePopupMenu;
 import adams.gui.goe.GenericObjectEditorDialog;
@@ -83,6 +90,8 @@ import adams.gui.goe.classtree.ClassTree;
 import adams.parser.ActorSuggestion.SuggestionData;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.DefaultTreeModel;
@@ -593,6 +602,61 @@ public class TreeOperations
 	getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), node, Type.MODIFY));
       });
     }
+  }
+
+  /**
+   * Lets the user select an actor from a dialog of favorites.
+   *
+   * @param path	the path to the actor to add the new actor sibling
+   * @param position	where to insert the actor
+   * @param record	whether to record the addition
+   */
+  public void favoriteActor(TreePath path, InsertPosition position, boolean record) {
+    List<Favorite>		favs;
+    final SearchableBaseList	list;
+    SearchPanel			search;
+    ApprovalDialog		dialog;
+    JPanel			panel;
+    Favorite			favorite;
+
+    favs = Favorites.getSingleton().getFavorites(Actor.class);
+    if (favs.size() == 0) {
+      GUIHelper.showErrorMessage(m_Owner, "No favorite actors available!\nSee Maintenance -> Favorites management");
+      return;
+    }
+
+    // TODO take context into account?
+
+    list   = new SearchableBaseList(favs.toArray(new Favorite[favs.size()]));
+    search = new SearchPanel(LayoutType.HORIZONTAL, false);
+    search.addSearchListener((SearchEvent e) -> list.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+    panel = new JPanel(new BorderLayout(5, 5));
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    panel.add(new BaseScrollPane(list), BorderLayout.CENTER);
+    panel.add(search, BorderLayout.SOUTH);
+    if (GUIHelper.getParentDialog(m_Owner) != null)
+      dialog = new ApprovalDialog(GUIHelper.getParentDialog(m_Owner), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new ApprovalDialog(GUIHelper.getParentFrame(m_Owner), true);
+    dialog.setTitle("Select favorite");
+    dialog.setApproveCaption("Select");
+    dialog.setApproveMnemonic(KeyEvent.VK_L);
+    dialog.setCancelCaption("Cancel");
+    dialog.setCancelMnemonic(KeyEvent.VK_C);
+    dialog.setDiscardVisible(false);
+    dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.pack();
+    dialog.setLocationRelativeTo(m_Owner);
+    list.setSelectedIndex(0);
+    list.requestFocusInWindow();
+    dialog.setVisible(true);
+    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
+      return;
+    if (list.getSelectedIndices().length != 1)
+      return;
+
+    favorite = (Favorite) list.getSelectedValue();
+    addActor(path, (Actor) favorite.getObject(), position, record, ActorDialog.GOE_FORCED);
   }
 
   /**
