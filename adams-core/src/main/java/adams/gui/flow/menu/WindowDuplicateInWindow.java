@@ -84,6 +84,7 @@ public class WindowDuplicateInWindow
       panel.getCurrentPanel().setTitle("Copy of " + m_State.getCurrentPanel().getTitle());
       panel.setModified(m_State.isModified());
       panel.update();
+      panel.requestFocus();
     }
   }
 

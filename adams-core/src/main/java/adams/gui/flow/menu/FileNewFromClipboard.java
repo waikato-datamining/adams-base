@@ -56,6 +56,7 @@ public class FileNewFromClipboard
     panel = m_State.getFlowPanels().newPanel();
     panel.setCurrentFlow(TreeOperations.getActorFromClipboard());
     panel.setModified(true);
+    panel.requestFocus();
   }
 
   /**

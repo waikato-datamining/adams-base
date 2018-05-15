@@ -126,6 +126,7 @@ public class FlowMultiPagePane
 
     addPage(result.getTitle(), result);
     setSelectedPage(result);
+    result.requestFocus();
 
     return result;
   }

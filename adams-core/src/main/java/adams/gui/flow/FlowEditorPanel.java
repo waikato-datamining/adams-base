@@ -1791,6 +1791,7 @@ public class FlowEditorPanel
       if (actor != null) {
 	result.setCurrentFlow(actor);
 	result.getCurrentPanel().getTree().setModified(true);
+	result.getCurrentPanel().requestFocus();
       }
       result.update();
     }

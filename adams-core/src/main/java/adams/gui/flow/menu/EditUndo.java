@@ -49,6 +49,7 @@ public class EditUndo
   @Override
   protected void doActionPerformed(ActionEvent e) {
     m_State.getCurrentPanel().undo();
+    m_State.getCurrentPanel().requestFocus();
   }
 
   /**

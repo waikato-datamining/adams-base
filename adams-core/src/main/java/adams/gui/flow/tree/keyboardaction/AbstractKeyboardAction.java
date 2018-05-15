@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractKeyboardAction.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.keyboardaction;
@@ -146,12 +146,24 @@ public abstract class AbstractKeyboardAction
   }
 
   /**
-   * Performs the actual execution of the aciton.
+   * Performs the actual execution of the action.
    *
    * @param state	the current state
    * @return		null if OK, otherwise error message
    */
   protected abstract String doExecute(StateContainer state);
+
+  /**
+   * Performs post-execution operations.
+   * <br>
+   * Default implementation returns the focus to the flow tree.
+   *
+   * @param state	the current state
+   * @param success	whether the execution was successful
+   */
+  protected void postExecute(StateContainer state, boolean success) {
+    state.tree.requestFocus();
+  }
 
   /**
    * Executes the action.
@@ -165,6 +177,7 @@ public abstract class AbstractKeyboardAction
     result = check(state);
     if (result == null)
       result = doExecute(state);
+    postExecute(state, (result != null));
 
     return result;
   }

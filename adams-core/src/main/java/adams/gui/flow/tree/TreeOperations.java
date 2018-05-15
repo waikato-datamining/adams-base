@@ -532,6 +532,7 @@ public class TreeOperations
 	});
 	SwingUtilities.invokeLater(() -> {
 	  getOwner().setSelectedFullName(children[children.length - 1].getFullName());
+	  getOwner().requestFocus();
 	});
 
 	// record
@@ -585,6 +586,7 @@ public class TreeOperations
 	});
 	SwingUtilities.invokeLater(() -> {
 	  getOwner().setSelectedFullName(children[children.length - 1].getFullName());
+	  getOwner().requestFocus();
 	});
 
 	// record

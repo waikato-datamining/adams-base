@@ -49,6 +49,7 @@ public class EditRedo
   @Override
   protected void doActionPerformed(ActionEvent e) {
     m_State.getCurrentPanel().redo();
+    m_State.getCurrentPanel().requestFocus();
   }
 
   /**

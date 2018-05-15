@@ -620,6 +620,7 @@ public class FlowPanel
 	m_Warnings.addAll(reader.getWarnings());
 	setCurrentFlow(m_Flow);
 	redraw();
+	requestFocus();
 
 	showStatus("");
 
@@ -924,6 +925,7 @@ public class FlowPanel
 	    m_RecentFilesHandler.addRecentItem(new Setup(file, writer.getCorrespondingReader()));
 	  setCurrentFile(file);
 	  m_FlowFileMonitor.initialize(file);
+	  requestFocus();
 	}
 
 	update();

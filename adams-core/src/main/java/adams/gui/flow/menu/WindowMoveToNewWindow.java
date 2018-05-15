@@ -58,6 +58,7 @@ public class WindowMoveToNewWindow
     m_State.getFlowPanels().remove(panel);
     editor.getFlowPanels().addPage(panel.getTitle(), panel);
     editor.getFlowPanels().setSelectedPage(panel);
+    panel.requestFocus();
   }
 
   /**

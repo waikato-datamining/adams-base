@@ -63,6 +63,7 @@ public class WindowDuplicateInTab
       result.setModified(current.isModified());
       result.setTitle("Copy of " + current.getTitle());
       result.update();
+      result.requestFocus();
     }
   }
 
