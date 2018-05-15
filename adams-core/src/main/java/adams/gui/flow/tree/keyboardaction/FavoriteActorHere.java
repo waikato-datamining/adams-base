@@ -30,7 +30,7 @@ import adams.gui.flow.tree.TreeOperations;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class FavoriteActorHere
-  extends AbstractSearchActor {
+  extends AbstractFavoriteActor {
 
   private static final long serialVersionUID = 5437085259210069183L;
 
