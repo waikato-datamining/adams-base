@@ -50,7 +50,6 @@ import java.beans.PropertyChangeEvent;
  * editing options.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorQuickEditTab
   extends AbstractEditorTab
@@ -293,6 +292,15 @@ public class ActorQuickEditTab
    */
   public String getTitle() {
     return "Quick Edit";
+  }
+
+  /**
+   * Returns whether the tab is enabled by default.
+   *
+   * @return		true if enabled by default
+   */
+  public boolean enabledByDefault() {
+    return false;
   }
 
   /**

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFlowEditorTab.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -27,7 +27,6 @@ import adams.gui.flow.FlowPanel;
  * Ancestor for tabs that show up in the flow editor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractEditorTab
   extends BasePanel
@@ -76,6 +75,15 @@ public abstract class AbstractEditorTab
    * @return		the title
    */
   public abstract String getTitle();
+
+  /**
+   * Returns whether the tab is enabled by default.
+   *
+   * @return		true if enabled by default
+   */
+  public boolean enabledByDefault() {
+    return true;
+  }
 
   /**
    * Compares this object with the specified object for order.  Returns a
