@@ -617,7 +617,7 @@ public class TreeOperations
     List<Favorite>		favs;
     final SearchableBaseList	list;
     SearchPanel			search;
-    ApprovalDialog		dialog;
+    final ApprovalDialog	dialog;
     JPanel			panel;
     Favorite			favorite;
 
@@ -651,6 +651,17 @@ public class TreeOperations
     dialog.setLocationRelativeTo(m_Owner);
     list.setSelectedIndex(0);
     list.requestFocusInWindow();
+    list.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isDoubleClick(e) && (list.getSelectedIndices().length == 1)) {
+          dialog.getApproveButton().doClick();
+	}
+	else {
+	  super.mouseClicked(e);
+	}
+      }
+    });
     dialog.setVisible(true);
     if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
       return;
