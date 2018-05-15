@@ -33,16 +33,6 @@ public abstract class AbstractSearchActor
   private static final long serialVersionUID = 9158512844896786075L;
 
   /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String actorTipText() {
-    return "The actor to add.";
-  }
-
-  /**
    * Checks whether the current state is suitable.
    *
    * @param state	the current state
