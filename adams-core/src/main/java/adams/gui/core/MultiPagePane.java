@@ -20,6 +20,7 @@
 
 package adams.gui.core;
 
+import adams.core.CleanUpHandler;
 import adams.gui.event.RemoveItemsListener;
 
 import javax.swing.Action;
@@ -763,6 +764,15 @@ public class MultiPagePane
     PageContainer	result;
 
     result = m_PageListModel.remove(index);
+
+    // detached?
+    if (result.getDetachablePage().isDetached())
+      result.getDetachablePage().reattach();
+
+    // clean up?
+    if (result.getPage() instanceof CleanUpHandler)
+      ((CleanUpHandler) result.getPage()).cleanUp();
+
     if (index < getPageCount())
       setSelectedIndex(index);
     else if (index > 0)
