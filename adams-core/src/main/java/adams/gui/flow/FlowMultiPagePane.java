@@ -21,13 +21,17 @@ package adams.gui.flow;
 
 import adams.core.Properties;
 import adams.flow.core.Actor;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.MultiPagePane;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Tree;
 
+import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Constructor;
 
@@ -374,6 +378,35 @@ public class FlowMultiPagePane
     result = super.removePageAt(index);
 
     updateOwnerTitle();
+
+    return result;
+  }
+
+  /**
+   * Generates the right-click menu for the JList.
+   *
+   * @param e		the event that triggered the popup
+   * @return		the generated menu
+   * @see		#showPopup(MouseEvent)
+   */
+  @Override
+  protected BasePopupMenu createPopup(MouseEvent e) {
+    BasePopupMenu	result;
+    JMenuItem 		menuitem;
+
+    result = super.createPopup(e);
+
+    result.addSeparator();
+
+    menuitem = new JMenuItem("Clear graphical output");
+    menuitem.setEnabled(
+      hasCurrentPanel()
+	&& !getCurrentPanel().isRunning()
+	&& !getCurrentPanel().isStopping()
+	&& !getCurrentPanel().isSwingWorkerRunning()
+	&& (getCurrentPanel().getLastFlow() != null));
+    menuitem.addActionListener((ActionEvent ae) -> getCurrentPanel().cleanUp());
+    result.add(menuitem);
 
     return result;
   }
