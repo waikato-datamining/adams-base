@@ -571,8 +571,10 @@ public class RemoveOutliers
     }
     manager.finishUpdate();
 
+    registerWindow(m_Dialog, m_Dialog.getTitle());
     m_Accepted = false;
     m_Dialog.setVisible(true);
+    deregisterWindow(m_Dialog);
 
     if (m_Accepted) {
       clean    = original.getHeader();

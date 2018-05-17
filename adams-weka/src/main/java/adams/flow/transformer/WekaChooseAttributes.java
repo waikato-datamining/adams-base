@@ -15,7 +15,7 @@
 
 /*
  * WekaChooseAttributes.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -128,7 +128,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaChooseAttributes
   extends AbstractInteractiveTransformer
@@ -384,10 +383,12 @@ public class WekaChooseAttributes
     dialog = new ApprovalDialog(null, ModalityType.DOCUMENT_MODAL);
     dialog.setTitle("Choose attributes");
       dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
+    registerWindow(dialog, dialog.getTitle());
     dialog.pack();
     dialog.setLocationRelativeTo(getActualParentComponent());
     dialog.setVisible(true);
-    
+    deregisterWindow(dialog);
+
     if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
       return null;
     

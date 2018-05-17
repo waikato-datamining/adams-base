@@ -196,7 +196,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageAnnotator
   extends AbstractInteractiveTransformerDialog {
@@ -863,8 +862,10 @@ public class ImageAnnotator
     cont = (AbstractImageContainer) m_InputToken.getPayload();
 
     // annotate
+    registerWindow(m_Dialog, m_Dialog.getTitle());
     ((AnnotatorPanel) m_Panel).setCurrentImage(cont);
     m_Dialog.setVisible(true);
+    deregisterWindow(m_Dialog);
 
     if (m_Accepted) {
       cont = ((AnnotatorPanel) m_Panel).getCurrentImage();

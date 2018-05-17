@@ -61,10 +61,13 @@ import adams.gui.core.GUIHelper;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -243,6 +246,9 @@ public class Flow
   /** whether to register the flow. */
   protected boolean m_Register;
 
+  /** the register for windows. */
+  protected Map<Window,String> m_WindowRegister;
+
   /**
    * Returns a string describing the object.
    *
@@ -302,6 +308,7 @@ public class Flow
     m_ParentComponent          = null;
     m_DefaultCloseOperation    = BaseFrame.HIDE_ON_CLOSE;
     m_Headless                 = false;
+    m_WindowRegister           = new HashMap<>();
   }
 
   /**
@@ -615,6 +622,34 @@ public class Flow
       m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
 
     return result;
+  }
+
+  /**
+   * Adds the window to the register.
+   *
+   * @param window	the window to register
+   * @param title	the title to use
+   */
+  public void registerWindow(Window window, String title) {
+    m_WindowRegister.put(window, title);
+  }
+
+  /**
+   * Removes the window from the register.
+   *
+   * @param window	the window to register
+   */
+  public void deregisterWindow(Window window) {
+    m_WindowRegister.remove(window);
+  }
+
+  /**
+   * Returns the current register.
+   *
+   * @return		the register
+   */
+  public Map<Window,String> getWindowRegister() {
+    return m_WindowRegister;
   }
 
   /**
@@ -1217,6 +1252,7 @@ public class Flow
   public void cleanUp() {
     m_LogEntries.clear();
     m_CallableNames.clear();
+    m_WindowRegister.clear();
 
     if (m_Storage != null) {
       m_Storage.clear();

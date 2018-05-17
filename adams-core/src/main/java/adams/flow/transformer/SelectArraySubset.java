@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SelectArraySubset.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -136,7 +136,6 @@ import java.lang.reflect.Array;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SelectArraySubset
   extends AbstractInteractiveTransformerDialog {
@@ -394,8 +393,10 @@ public class SelectArraySubset
     for (i = 0; i < Array.getLength(array); i++)
       m_ListModel.addElement(Array.get(array, i));
 
+    registerWindow(m_Dialog, m_Dialog.getTitle());
     m_Accepted = false;
     m_Dialog.setVisible(true);
+    deregisterWindow(m_Dialog);
 
     if (m_Accepted) {
       indices = m_List.getSelectedIndices();

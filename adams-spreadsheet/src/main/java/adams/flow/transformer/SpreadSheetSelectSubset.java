@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetSelectSubset.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -146,7 +146,6 @@ import java.awt.event.ActionEvent;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetSelectSubset
   extends AbstractInteractiveTransformerDialog {
@@ -407,8 +406,10 @@ public class SpreadSheetSelectSubset
     m_LabelMessage.setText(getVariables().expand(m_Message));
     m_Table.setModel(new SpreadSheetTableModel((SpreadSheet) m_InputToken.getPayload()));
 
+    registerWindow(m_Dialog, m_Dialog.getTitle());
     m_Accepted = false;
     m_Dialog.setVisible(true);
+    deregisterWindow(m_Dialog);
 
     if (m_Accepted) {
       selected = m_Table.toSpreadSheet(TableRowRange.SELECTED);

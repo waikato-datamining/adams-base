@@ -15,7 +15,7 @@
 
 /*
  * SSHConnection.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JSch
  */
 
@@ -34,6 +34,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.net.JSchUtils;
 import adams.core.net.SSHAuthenticationType;
 import adams.core.net.SSHSessionProvider;
+import adams.flow.control.Flow;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
@@ -176,7 +177,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
   copyright = "JCraft",
@@ -891,7 +891,9 @@ public class SSHConnection
 
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
     dlg.setLocationRelativeTo(getParentComponent());
+    ((Flow) getRoot()).registerWindow(dlg, dlg.getTitle());
     dlg.setVisible(true);
+    ((Flow) getRoot()).deregisterWindow(dlg);
     result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
 
     if (result)

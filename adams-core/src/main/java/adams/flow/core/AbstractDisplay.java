@@ -684,6 +684,28 @@ public abstract class AbstractDisplay
   protected abstract Runnable newDisplayRunnable();
 
   /**
+   * Registers the window with the flow root actor.
+   */
+  protected void registerWindow() {
+    if (m_Frame == null)
+      return;
+    if (getRoot() instanceof Flow) {
+      ((Flow) getRoot()).registerWindow(m_Frame, m_Frame.getTitle());
+    }
+  }
+
+  /**
+   * Deregisters the window with the flow root actor.
+   */
+  protected void deregisterWindow() {
+    if (m_Frame == null)
+      return;
+    if (getRoot() instanceof Flow) {
+      ((Flow) getRoot()).deregisterWindow(m_Frame);
+    }
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -699,6 +721,7 @@ public abstract class AbstractDisplay
 	  m_Frame = createFrame(m_Panel);
 	else if (m_DisplayInEditor)
 	  registerWithEditor();
+	registerWindow();
       }
 
       m_Updating = true;
@@ -732,6 +755,7 @@ public abstract class AbstractDisplay
       deregisterWithEditor();
     
     if (m_Frame != null) {
+      deregisterWindow();
       m_Frame.setVisible(false);
       m_Frame.dispose();
       m_Frame = null;

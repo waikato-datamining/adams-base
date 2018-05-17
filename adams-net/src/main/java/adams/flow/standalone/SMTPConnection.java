@@ -15,7 +15,7 @@
 
 /*
  * SMTPConnection.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -25,6 +25,7 @@ import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
 import adams.core.net.AbstractSendEmail;
 import adams.core.net.EmailHelper;
+import adams.flow.control.Flow;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
@@ -133,7 +134,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SMTPConnection
   extends AbstractStandalone
@@ -661,7 +661,9 @@ public class SMTPConnection
 
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
     dlg.setLocationRelativeTo(getParentComponent());
+    ((Flow) getRoot()).registerWindow(dlg, dlg.getTitle());
     dlg.setVisible(true);
+    ((Flow) getRoot()).deregisterWindow(dlg);
     result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
 
     if (result)

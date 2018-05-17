@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnection.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -27,6 +27,7 @@ import adams.core.io.ConsoleHelper;
 import adams.db.JdbcUrl;
 import adams.db.datatype.AbstractDataTypeSetup;
 import adams.db.datatype.DummySetup;
+import adams.flow.control.Flow;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
@@ -40,7 +41,6 @@ import java.awt.Dialog.ModalityType;
  * from the system-wide one.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDatabaseConnection
   extends AbstractStandalone
@@ -400,7 +400,9 @@ public abstract class AbstractDatabaseConnection
 
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
     dlg.setLocationRelativeTo(getParentComponent());
+    ((Flow) getRoot()).registerWindow(dlg, dlg.getTitle());
     dlg.setVisible(true);
+    ((Flow) getRoot()).deregisterWindow(dlg);
     result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
 
     if (result)

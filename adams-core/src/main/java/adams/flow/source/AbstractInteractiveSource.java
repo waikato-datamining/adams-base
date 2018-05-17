@@ -15,11 +15,12 @@
 
 /*
  * AbstractInteractiveSource.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
+import adams.flow.control.Flow;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
@@ -30,12 +31,12 @@ import adams.flow.core.StopMode;
 import adams.gui.core.GUIHelper;
 
 import java.awt.Component;
+import java.awt.Window;
 
 /**
  * Ancestor for source actors that interact with the user.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractInteractiveSource
   extends AbstractSource
@@ -310,6 +311,27 @@ public abstract class AbstractInteractiveSource
       result = GUIHelper.getParentComponent(result);
 
     return result;
+  }
+
+  /**
+   * Registers the window with the flow.
+   *
+   * @param window	the window
+   * @param title	the title
+   */
+  protected void registerWindow(Window window, String title) {
+    if (getRoot() instanceof Flow)
+      ((Flow) getRoot()).registerWindow(window, title);
+  }
+
+  /**
+   * Deregisters the window with the flow.
+   *
+   * @param window	the window
+   */
+  protected void deregisterWindow(Window window) {
+    if (getRoot() instanceof Flow)
+      ((Flow) getRoot()).deregisterWindow(window);
   }
 
   /**

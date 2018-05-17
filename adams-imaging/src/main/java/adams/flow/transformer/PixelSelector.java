@@ -13,14 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PixelSelector.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import adams.data.image.AbstractImageContainer;
 import adams.flow.core.Token;
@@ -33,6 +30,9 @@ import adams.flow.transformer.pixelselector.AbstractPixelSelectorOverlay;
 import adams.flow.transformer.pixelselector.PixelSelectorPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.image.ImageOverlay;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  <!-- globalinfo-start -->
@@ -135,7 +135,6 @@ import adams.gui.visualization.image.ImageOverlay;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PixelSelector
   extends AbstractInteractiveTransformerDialog {
@@ -376,8 +375,10 @@ public class PixelSelector
     for (ImageOverlay overlay: m_Overlays)
       panel.addImageOverlay(overlay);
     
+    registerWindow(m_Dialog, m_Dialog.getTitle());
     m_Dialog.setVisible(true);
-    
+    deregisterWindow(m_Dialog);
+
     if ((m_Approved != null) && m_Approved) {
       result = true;
       m_OutputToken = new Token(panel.getImage());

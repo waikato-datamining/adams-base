@@ -727,6 +727,7 @@ public class EnterManyValues
     panelMsg.add(new JLabel(msg));
     dialog = new ApprovalDialog(null, ModalityType.MODELESS);
     dialog.setTitle(getName());
+    registerWindow(dialog, dialog.getTitle());
     dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
     dialog.getContentPane().add(panelMsg, BorderLayout.NORTH);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
@@ -762,6 +763,7 @@ public class EnterManyValues
 
     if (isStopped())
       dialog.setVisible(false);
+    deregisterWindow(dialog);
 
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
       props = panel.getProperties();

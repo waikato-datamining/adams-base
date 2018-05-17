@@ -20,7 +20,9 @@
 package adams.gui.flow;
 
 import adams.core.Properties;
+import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.MultiPagePane;
@@ -30,10 +32,12 @@ import adams.gui.flow.tree.Tree;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.TreePath;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
 /**
  * Specialized tabbed pane for Flow panels.
@@ -393,10 +397,27 @@ public class FlowMultiPagePane
   protected BasePopupMenu createPopup(MouseEvent e) {
     BasePopupMenu	result;
     JMenuItem 		menuitem;
+    BaseMenu 		submenu;
+    Map<Window,String> 	windows;
 
     result = super.createPopup(e);
 
     result.addSeparator();
+
+    windows = null;
+    if (hasCurrentPanel() && (getCurrentPanel().getRunningFlow() != null))
+      windows = ((Flow) getCurrentPanel().getRunningFlow().getRoot()).getWindowRegister();
+    submenu = new BaseMenu("Windows");
+    submenu.setEnabled((windows != null) && windows.size() > 0);
+    if (windows != null) {
+      for (final Window window: windows.keySet()) {
+	menuitem = new JMenuItem(windows.get(window));
+	menuitem.addActionListener((ActionEvent ae) -> window.toFront());
+	submenu.add(menuitem);
+      }
+      submenu.sort();
+    }
+    result.add(submenu);
 
     menuitem = new JMenuItem("Clear graphical output");
     menuitem.setEnabled(

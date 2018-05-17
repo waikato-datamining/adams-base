@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Inspect.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -159,7 +159,6 @@ import java.awt.event.WindowEvent;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Inspect
   extends AbstractInteractiveTransformerDialog {
@@ -561,8 +560,9 @@ public class Inspect
 
     if (!m_Dialog.isVisible())
       updateButtons(false);
+    registerWindow(m_Dialog, m_Dialog.getTitle());
     m_Dialog.setVisible(true);
-    
+
     updateButtons(true);
     ((DisplayPanel) m_Panel).display(m_InputToken);
     
@@ -580,6 +580,8 @@ public class Inspect
       }
     }
     
+    deregisterWindow(m_Dialog);
+
     if (m_Accepted || !m_Interactive) {
       if (m_Panel instanceof UpdateableDisplayPanel)
 	m_OutputToken = ((UpdateableDisplayPanel) m_Panel).getUpdatedToken();

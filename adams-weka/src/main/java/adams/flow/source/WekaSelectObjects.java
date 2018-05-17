@@ -15,7 +15,7 @@
 
 /*
  * WekaSelectObjects.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -119,7 +119,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaSelectObjects
   extends AbstractSelectObjects {
@@ -234,7 +233,9 @@ public class WekaSelectObjects
     Object	array;
     int		i;
     
+    registerWindow(m_Dialog, m_Dialog.getTitle());
     m_Dialog.setVisible(true);
+    deregisterWindow(m_Dialog);
     if (m_Dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
       return null;
     

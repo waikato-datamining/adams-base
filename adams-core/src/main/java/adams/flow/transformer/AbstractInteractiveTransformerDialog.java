@@ -21,6 +21,7 @@ package adams.flow.transformer;
 
 import adams.core.CleanUpHandler;
 import adams.core.QuickInfoHelper;
+import adams.flow.control.Flow;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InteractiveActor;
 import adams.flow.core.StopHelper;
@@ -36,6 +37,7 @@ import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
+import java.awt.Window;
 
 /**
  * Ancestor for graphical actors that are interactive.
@@ -574,6 +576,27 @@ public abstract class AbstractInteractiveTransformerDialog
    */
   public BaseDialog getDialog() {
     return m_Dialog;
+  }
+
+  /**
+   * Registers the window with the flow.
+   *
+   * @param window	the window
+   * @param title	the title
+   */
+  protected void registerWindow(Window window, String title) {
+    if (getRoot() instanceof Flow)
+      ((Flow) getRoot()).registerWindow(window, title);
+  }
+
+  /**
+   * Deregisters the window with the flow.
+   *
+   * @param window	the window
+   */
+  protected void deregisterWindow(Window window) {
+    if (getRoot() instanceof Flow)
+      ((Flow) getRoot()).deregisterWindow(window);
   }
 
   /**
