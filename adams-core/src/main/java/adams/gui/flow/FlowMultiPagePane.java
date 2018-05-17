@@ -19,7 +19,6 @@
  */
 package adams.gui.flow;
 
-import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.flow.core.Actor;
 import adams.gui.core.ConsolePanel;
@@ -38,8 +37,7 @@ import java.lang.reflect.Constructor;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class FlowMultiPagePane
-  extends MultiPagePane
-  implements CleanUpHandler {
+  extends MultiPagePane {
 
   /** for serialization. */
   private static final long serialVersionUID = -1675887825433207074L;
@@ -234,16 +232,6 @@ public class FlowMultiPagePane
       return getPanelAt(getSelectedIndex()).getTree();
     else
       return null;
-  }
-
-  /**
-   * Cleans up data structures, frees up memory.
-   */
-  public void cleanUp() {
-    int		i;
-
-    for (i = 0; i < getPanelCount(); i++)
-      getPanelAt(i).cleanUp();
   }
 
   /**

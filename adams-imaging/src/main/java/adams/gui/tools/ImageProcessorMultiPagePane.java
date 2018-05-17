@@ -19,7 +19,6 @@
  */
 package adams.gui.tools;
 
-import adams.core.CleanUpHandler;
 import adams.data.io.input.AbstractImageReader;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
@@ -33,8 +32,7 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ImageProcessorMultiPagePane
-  extends MultiPagePane
-  implements CleanUpHandler {
+  extends MultiPagePane {
 
   /** for serialization. */
   private static final long serialVersionUID = 4949565559707097445L;
@@ -158,13 +156,5 @@ public class ImageProcessorMultiPagePane
       setSelectedPage(panel);
       return true;
     }
-  }
-
-  /**
-   * Cleans up data structures, frees up memory.
-   */
-  public void cleanUp() {
-    for (ImageProcessorSubPanel panel: getAllPanels())
-      panel.cleanUp();
   }
 }

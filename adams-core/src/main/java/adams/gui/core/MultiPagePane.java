@@ -58,7 +58,8 @@ import java.util.HashSet;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class MultiPagePane
-  extends BasePanel {
+  extends BasePanel
+  implements CleanUpHandler {
 
   private static final long serialVersionUID = -2108092957035381345L;
 
@@ -1158,5 +1159,12 @@ public class MultiPagePane
       result = m_ToolTipCustomizer.customizeToolTip(index, result);
 
     return result;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    removeAllPages();
   }
 }
