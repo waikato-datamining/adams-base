@@ -580,8 +580,10 @@ public class Flow
       if (m_FlowExecutionListeningEnabled) {
 	m_FlowExecutionListener.finishListening();
 	m_FlowExecutionListeningEnabled = false;
-	if (m_FlowExecutionListenerFrame != null)
-	  m_FlowExecutionListenerFrame.dispose();
+	if (m_FlowExecutionListenerFrame != null) {
+          deregisterWindow(m_FlowExecutionListenerFrame);
+          m_FlowExecutionListenerFrame.dispose();
+        }
       }
       m_FlowExecutionListener = l;
       m_FlowExecutionListener.setOwner(this);
@@ -616,10 +618,14 @@ public class Flow
       l.startListening();
     }
 
-    if (m_FlowExecutionListenerFrame != null)
+    if (m_FlowExecutionListenerFrame != null) {
+      deregisterWindow(m_FlowExecutionListenerFrame);
       m_FlowExecutionListenerFrame.dispose();
+    }
     if (!isHeadless())
       m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
+
+    registerWindow(m_FlowExecutionListenerFrame, m_FlowExecutionListenerFrame.getTitle());
 
     return result;
   }
@@ -757,8 +763,10 @@ public class Flow
       setFlowExecutionListener(multiListen);
     }
 
-    if (!isHeadless() && (m_FlowExecutionListenerFrame == null) && showFrame)
+    if (!isHeadless() && (m_FlowExecutionListenerFrame == null) && showFrame) {
       m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
+      registerWindow(m_FlowExecutionListenerFrame, m_FlowExecutionListenerFrame.getTitle());
+    }
   }
 
   /**
@@ -1165,8 +1173,10 @@ public class Flow
       if (m_FlowExecutionListeningEnabled) {
 	m_FlowExecutionListener.setOwner(this);
 	m_FlowExecutionListener.startListening();
-	if (!isHeadless())
-	  m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
+	if (!isHeadless()) {
+          m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
+          registerWindow(m_FlowExecutionListenerFrame, m_FlowExecutionListenerFrame.getTitle());
+        }
       }
     }
 
@@ -1233,6 +1243,7 @@ public class Flow
     if (m_FlowExecutionListenerFrame != null) {
       if (m_FlowExecutionListener instanceof GraphicalFlowExecutionListener) {
 	if (((GraphicalFlowExecutionListener) m_FlowExecutionListener).getDisposeOnFinish()) {
+	  deregisterWindow(m_FlowExecutionListenerFrame);
 	  m_FlowExecutionListenerFrame.dispose();
 	  m_FlowExecutionListenerFrame = null;
 	}
@@ -1265,6 +1276,7 @@ public class Flow
     }
 
     if (m_FlowExecutionListenerFrame != null) {
+      deregisterWindow(m_FlowExecutionListenerFrame);
       m_FlowExecutionListenerFrame.dispose();
       m_FlowExecutionListenerFrame = null;
     }
