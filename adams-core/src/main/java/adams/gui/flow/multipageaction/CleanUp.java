@@ -14,7 +14,7 @@
  */
 
 /*
- * ClearGraphicalOutput.java
+ * CleanUp.java
  * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 
@@ -26,11 +26,11 @@ import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
 
 /**
- * Clear graphical output.
+ * Cleans up.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class ClearGraphicalOutput
+public class CleanUp
   extends AbstractMultiPageMenuItem {
 
   private static final long serialVersionUID = 1297273340581059101L;
@@ -41,7 +41,7 @@ public class ClearGraphicalOutput
    * @return		the name
    */
   public String getName() {
-    return "Clear graphical output";
+    return "Clean up";
   }
 
   /**
@@ -57,7 +57,10 @@ public class ClearGraphicalOutput
 	&& !multi.getCurrentPanel().isStopping()
 	&& !multi.getCurrentPanel().isSwingWorkerRunning()
 	&& (multi.getCurrentPanel().getLastFlow() != null));
-    result.addActionListener((ActionEvent ae) -> multi.getCurrentPanel().cleanUp());
+    result.addActionListener((ActionEvent ae) -> {
+      multi.getCurrentPanel().clearNotification();
+      multi.getCurrentPanel().cleanUp();
+    });
 
     return result;
   }
