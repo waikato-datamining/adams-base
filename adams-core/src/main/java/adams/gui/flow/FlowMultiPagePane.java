@@ -32,6 +32,7 @@ import adams.gui.flow.tree.Tree;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.TreePath;
+import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -405,14 +406,22 @@ public class FlowMultiPagePane
     result.addSeparator();
 
     windows = null;
-    if (hasCurrentPanel() && (getCurrentPanel().getRunningFlow() != null))
-      windows = ((Flow) getCurrentPanel().getRunningFlow().getRoot()).getWindowRegister();
+    if (hasCurrentPanel()) {
+      if (getCurrentPanel().getRunningFlow() != null)
+        windows = ((Flow) getCurrentPanel().getRunningFlow().getRoot()).getWindowRegister();
+      else if (getCurrentPanel().getLastFlow() != null)
+        windows = ((Flow) getCurrentPanel().getLastFlow().getRoot()).getWindowRegister();
+    }
     submenu = new BaseMenu("Windows");
     submenu.setEnabled((windows != null) && windows.size() > 0);
     if (windows != null) {
       for (final Window window: windows.keySet()) {
 	menuitem = new JMenuItem(windows.get(window));
-	menuitem.addActionListener((ActionEvent ae) -> window.toFront());
+	menuitem.addActionListener((ActionEvent ae) -> {
+	  if (window instanceof Frame)
+	    ((Frame) window).setExtendedState(Frame.NORMAL);
+	  window.toFront();
+	});
 	submenu.add(menuitem);
       }
       submenu.sort();
