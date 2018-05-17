@@ -61,6 +61,35 @@ public class MultiPagePane
 
   private static final long serialVersionUID = -2108092957035381345L;
 
+  public static class DetachablePage
+    extends DetachablePanel {
+
+    private static final long serialVersionUID = 1968992223273451733L;
+
+    /** the component to wrap. */
+    protected Component m_Component;
+
+    /**
+     * Initializes the detachable panel with the component.
+     *
+     * @param comp	the component to allow to detach
+     */
+    public DetachablePage(Component comp) {
+      super();
+      m_Component = comp;
+      getContentPanel().add(m_Component, BorderLayout.CENTER);
+    }
+
+    /**
+     * Returns the wrapped component.
+     *
+     * @return		the actual component
+     */
+    public Component getComponent() {
+      return m_Component;
+    }
+  }
+
   /**
    * Container for page component and title.
    */
@@ -74,6 +103,9 @@ public class MultiPagePane
 
     /** the page. */
     protected Component m_Page;
+
+    /** the detachable panel. */
+    protected DetachablePage m_DetachablePage;
 
     /** the current icon (can be null). */
     protected ImageIcon m_Icon;
@@ -100,6 +132,7 @@ public class MultiPagePane
       m_Title = title;
       m_Page  = page;
       m_Icon  = icon;
+      m_DetachablePage = new DetachablePage(page);
     }
 
     /**
@@ -136,6 +169,20 @@ public class MultiPagePane
      */
     public void setPage(Component value) {
       m_Page = value;
+      m_DetachablePage.getContentPanel().removeAll();
+      m_DetachablePage.getContentPanel().add(value, BorderLayout.CENTER);
+      m_DetachablePage.getContentPanel().invalidate();
+      m_DetachablePage.getContentPanel().revalidate();
+      m_DetachablePage.getContentPanel().repaint();
+    }
+
+    /**
+     * Returns the detachable page.
+     *
+     * @return		the page
+     */
+    public DetachablePage getDetachablePage() {
+      return m_DetachablePage;
     }
 
     /**
@@ -525,6 +572,16 @@ public class MultiPagePane
   }
 
   /**
+   * Returns the detachable page component at the specified index.
+   *
+   * @param index	the page index
+   * @return		the associated detachable page component
+   */
+  public DetachablePage getDetachablePageAt(int index) {
+    return getPageContainerAt(index).getDetachablePage();
+  }
+
+  /**
    * Returns the page index for the page component.
    *
    * @param page	the page component to look up
@@ -576,6 +633,18 @@ public class MultiPagePane
       return null;
     else
       return getPageAt(getSelectedIndex());
+  }
+
+  /**
+   * Returns the currently selected detachable page.
+   *
+   * @return		the detachable page, null if none selected
+   */
+  public DetachablePage getSelectedDetachablePage() {
+    if (getSelectedIndex() == -1)
+      return null;
+    else
+      return getDetachablePageAt(getSelectedIndex());
   }
 
   /**
@@ -861,7 +930,7 @@ public class MultiPagePane
 
     m_PanelContent.removeAll();
 
-    comp = getSelectedPage();
+    comp = getSelectedDetachablePage();
     if (comp != null)
       m_PanelContent.add(comp, BorderLayout.CENTER);
 
@@ -953,9 +1022,11 @@ public class MultiPagePane
    * @see		#showPopup(MouseEvent)
    */
   protected BasePopupMenu createPopup(MouseEvent e) {
-    BasePopupMenu	result;
-    JMenuItem	  	menuitem;
-    final int		index;
+    BasePopupMenu		result;
+    JMenuItem	  		menuitem;
+    final int			index;
+    final DetachablePage	detach;
+    final String		title;
 
     result = new BasePopupMenu();
     index  = getSelectedIndex();
@@ -973,7 +1044,37 @@ public class MultiPagePane
     menuitem.addActionListener((ActionEvent ae) -> removeAllPages());
     result.add(menuitem);
 
+    // detach/reattach
+    detach = getSelectedDetachablePage();
+    if (detach != null) {
+      title = getSelectedTitle();
+      result.addSeparator();
+      if (detach.isDetached()) {
+	menuitem = new JMenuItem("Reattach");
+	menuitem.addActionListener((ActionEvent ae) -> detach.reattach());
+	result.add(menuitem);
+      }
+      else {
+	menuitem = new JMenuItem("Detach");
+	menuitem.addActionListener((ActionEvent ae) -> {
+	  updateTitle(title, detach);
+	  detach.detach();
+	});
+	result.add(menuitem);
+      }
+    }
+
     return result;
+  }
+
+  /**
+   * Hook method for updating the title.
+   *
+   * @param title	the entry title
+   * @param detach	the detachable page
+   */
+  protected void updateTitle(String title, DetachablePage detach) {
+    detach.setFrameTitle(title);
   }
 
   /**
