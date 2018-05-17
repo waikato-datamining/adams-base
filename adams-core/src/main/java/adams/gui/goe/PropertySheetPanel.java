@@ -69,9 +69,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Displays a property sheet where (supported) properties of the target
@@ -88,12 +86,6 @@ public class PropertySheetPanel extends BasePanel
 
   /** the maximum characters per line for a tool tip. */
   public final static int MAX_TOOLTIP_WIDTH = 40;
-
-  /** cache for editors. */
-  protected static Map<Class,PropertyEditor> m_EditorCache;
-  static {
-    m_EditorCache = new HashMap<>();
-  }
 
   /** The target object being edited. */
   protected Object m_Target;
@@ -425,11 +417,8 @@ public class PropertySheetPanel extends BasePanel
 	    // Drop through.
 	  }
 	}
-	if (m_Editors[i] == null) {
-	  if (!m_EditorCache.containsKey(type))
-	    m_EditorCache.put(type, PropertyEditorManager.findEditor(type));
-	  m_Editors[i] = m_EditorCache.get(type);
-	}
+	if (m_Editors[i] == null)
+	  m_Editors[i] = PropertyEditorManager.findEditor(type);
 
 	// for classes implementing OptionHandler, we can always display
 	// the GenericObjectEditor
