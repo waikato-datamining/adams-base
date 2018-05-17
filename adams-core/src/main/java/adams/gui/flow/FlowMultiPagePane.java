@@ -19,26 +19,25 @@
  */
 package adams.gui.flow;
 
+import adams.core.ClassLister;
 import adams.core.Properties;
-import adams.flow.control.Flow;
 import adams.flow.core.Actor;
-import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.MultiPagePane;
+import adams.gui.flow.multipageaction.AbstractMultiPageMenuItem;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Tree;
 
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.TreePath;
-import java.awt.Frame;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Specialized tabbed pane for Flow panels.
@@ -56,6 +55,9 @@ public class FlowMultiPagePane
 
   /** the flowpanel class to use. */
   protected Class m_FlowPanelClass;
+
+  /** the menu items. */
+  protected List<AbstractMultiPageMenuItem> m_MenuItems;
 
   /**
    * Initializes the tabbed pane.
@@ -88,6 +90,29 @@ public class FlowMultiPagePane
     });
 
     addChangeListener((ChangeEvent e) -> pageSelected(e));
+  }
+
+  /**
+   * For initializing members.
+   */
+  @Override
+  protected void initialize() {
+    Class[]	classes;
+
+    super.initialize();
+
+    m_MenuItems = new ArrayList<>();
+    classes     = ClassLister.getSingleton().getClasses(AbstractMultiPageMenuItem.class);
+    for (Class cls: classes) {
+      try {
+        m_MenuItems.add((AbstractMultiPageMenuItem) cls.newInstance());
+      }
+      catch (Exception e) {
+        ConsolePanel.getSingleton().append(
+          "Failed to instantiate multi-page pane menu item for flow: " + cls.getName(), e);
+      }
+    }
+    Collections.sort(m_MenuItems);
   }
 
   /**
@@ -398,45 +423,16 @@ public class FlowMultiPagePane
   protected BasePopupMenu createPopup(MouseEvent e) {
     BasePopupMenu	result;
     JMenuItem 		menuitem;
-    BaseMenu 		submenu;
-    Map<Window,String> 	windows;
 
     result = super.createPopup(e);
 
     result.addSeparator();
 
-    windows = null;
-    if (hasCurrentPanel()) {
-      if (getCurrentPanel().getRunningFlow() != null)
-        windows = ((Flow) getCurrentPanel().getRunningFlow().getRoot()).getWindowRegister();
-      else if (getCurrentPanel().getLastFlow() != null)
-        windows = ((Flow) getCurrentPanel().getLastFlow().getRoot()).getWindowRegister();
+    for (AbstractMultiPageMenuItem item: m_MenuItems) {
+      menuitem = item.getMenuItem(this);
+      if (menuitem != null)
+	result.add(menuitem);
     }
-    submenu = new BaseMenu("Windows");
-    submenu.setEnabled((windows != null) && windows.size() > 0);
-    if (windows != null) {
-      for (final Window window: windows.keySet()) {
-	menuitem = new JMenuItem(windows.get(window));
-	menuitem.addActionListener((ActionEvent ae) -> {
-	  if (window instanceof Frame)
-	    ((Frame) window).setExtendedState(Frame.NORMAL);
-	  window.toFront();
-	});
-	submenu.add(menuitem);
-      }
-      submenu.sort();
-    }
-    result.add(submenu);
-
-    menuitem = new JMenuItem("Clear graphical output");
-    menuitem.setEnabled(
-      hasCurrentPanel()
-	&& !getCurrentPanel().isRunning()
-	&& !getCurrentPanel().isStopping()
-	&& !getCurrentPanel().isSwingWorkerRunning()
-	&& (getCurrentPanel().getLastFlow() != null));
-    menuitem.addActionListener((ActionEvent ae) -> getCurrentPanel().cleanUp());
-    result.add(menuitem);
 
     return result;
   }
