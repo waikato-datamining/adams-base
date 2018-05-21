@@ -6,14 +6,31 @@
 # based on code taken from here:
 # https://stackoverflow.com/a/18297623
 
-import sys
 import argparse
-import socket
 import json
-import datetime
-from time import sleep
 import random
+import socket
 import traceback
+from io import BytesIO
+
+import datetime
+import numpy as np
+from time import sleep
+
+
+def parse_csv(s, delimiter=','):
+    """
+    Parses the CSV string (skips header row) and returns a Numpy array.
+    Only works on numeric data.
+
+    :param s: the CSV string to parse
+    :type s: str
+    :param delimiter: the cell delimiter to use
+    :type delimiter: str
+    :return:
+    """
+    f = BytesIO(s.encode("UTF-8"))
+    return np.genfromtxt(f, delimiter=delimiter, skip_header=1)
 
 
 def run(port=8000, max_conn=5, buf_size=4096, logging_level=0, seed=1, wait_time=0.01, max_wait=5):
@@ -68,7 +85,7 @@ def run(port=8000, max_conn=5, buf_size=4096, logging_level=0, seed=1, wait_time
                                 wait_count += 1
                                 sleep(wait_time)
                 except Exception as e:
-                    print("Failed to read data from socket:", str(e))
+                    print("Failed to read data from socket:", traceback.format_exc())
                     continue
 
                 if logging_level >= 3:
@@ -104,13 +121,22 @@ def run(port=8000, max_conn=5, buf_size=4096, logging_level=0, seed=1, wait_time
                             print("class labels:", classes)
 
                     if j['type'] == 'train':
+                        d = parse_csv(j['data'])
+                        if logging_level >= 3:
+                            print("ndarray train:", d)
                         result = {'message': None}
                     elif j['type'] == 'classify':
+                        d = parse_csv(j['data'])
+                        if logging_level >= 3:
+                            print("ndarray classify:", d)
                         if j['class_type'] == 'numeric':
                             result = {'classification': rand.random()}
                         else:
                             result = {'classification': float(rand.randint(0, num_classes))}
                     elif j['type'] == 'distribution':
+                        d = parse_csv(j['data'])
+                        if logging_level >= 3:
+                            print("ndarray distribution:", d)
                         if j['class_type'] == 'numeric':
                             result = {'distribution': [rand.random()]}
                         else:
@@ -120,7 +146,7 @@ def run(port=8000, max_conn=5, buf_size=4096, logging_level=0, seed=1, wait_time
                             result = {'distribution': [float(i)/sum(dist) for i in dist]}
 
                 except Exception as e:
-                    result = {'distribution': [float('NaN')], 'classification': float('NaN'), 'error': str(e)}
+                    result = {'distribution': [float('NaN')], 'classification': float('NaN'), 'error': traceback.format_exc()}
                     print("raw:", data)
                     print("generated error:", str(e))
 
