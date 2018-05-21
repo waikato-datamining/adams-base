@@ -40,6 +40,7 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -370,7 +371,7 @@ public class ImageProcessorSubPanel
     contIn = new BufferedImageContainer();
     contIn.setImage(m_PanelOriginal.getCurrentImage());
     contOut = null;
-    
+
     sub = (SubProcess) getFlowPanel().getCurrentFlow();
     msg = sub.setUp();
     if (msg == null) {
@@ -386,8 +387,10 @@ public class ImageProcessorSubPanel
     sub.cleanUp();
     sub.destroy();
     
-    if (contOut != null)
+    if (contOut != null) {
       m_PanelProcessed.setCurrentImage(contOut.toBufferedImage(), m_PanelProcessed.getScale());
+      SwingUtilities.invokeLater(() -> m_PanelProcessed.repaint());
+    }
     else if (msg != null)
       result = "Flow execution failed:\n" + msg;
 
