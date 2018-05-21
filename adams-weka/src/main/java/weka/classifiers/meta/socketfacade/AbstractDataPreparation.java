@@ -85,7 +85,8 @@ public abstract class AbstractDataPreparation
    * {@link weka.classifiers.Classifier#distributionForInstance(Instance)} method.
    *
    * @param data	the data to parse
+   * @param numClasses  the number of classes
    * @return 		the class distribution
    */
-  public abstract double[] parseDistribution(byte[] data);
+  public abstract double[] parseDistribution(byte[] data, int numClasses);
 }

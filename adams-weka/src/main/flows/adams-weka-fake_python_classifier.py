@@ -11,13 +11,15 @@ import argparse
 import socket
 import json
 import datetime
+from time import sleep
 import random
 import traceback
 
 
-def run(port=8000, max_conn=5, buf_size=1024, logging_level=0, seed=1):
+def run(port=8000, max_conn=5, buf_size=4096, logging_level=0, seed=1, wait_time=0.01, max_wait=5):
     """
-    Starts the
+    Starts the fake classifier, listening on a socket for data to make fake
+    predictions on.
 
     :param port: the port to listen on
     :type port: int
@@ -29,6 +31,10 @@ def run(port=8000, max_conn=5, buf_size=1024, logging_level=0, seed=1):
     :type logging_level: int
     :param seed: the seed value for the random number generator
     :type seed: int
+    :param wait_time: the number of seconds to wait before attempting to read from the socket again
+    :type wait_time: float
+    :param max_wait: the number of times to perform a wait
+    :type max_wait: int
     """
 
     rand = random.Random()
@@ -46,15 +52,30 @@ def run(port=8000, max_conn=5, buf_size=1024, logging_level=0, seed=1):
                 print("------", datetime.datetime.now(), "------")
             data = bytearray()
             while True:
-                buf = connection.recv(buf_size)
-                if len(buf) > 0:
-                    data.extend(buf)
+                try:
+                    wait_count = 0
+                    while (wait_count < max_wait):
+                        buf = connection.recv(buf_size)
+                        if len(buf) > 0:
+                            data.extend(buf)
+                        else:
+                            try:
+                                s = data.decode("UTF-8")
+                                j = json.loads(s)
+                                wait_count = max_wait
+                            except:
+                                # if string cannot be parsed, maybe there's more data coming
+                                wait_count += 1
+                                sleep(wait_time)
+                except Exception as e:
+                    print("Failed to read data from socket:", str(e))
+                    continue
 
-                if len(buf) < buf_size:
-                    if logging_level >= 3:
-                        print("raw:", data)
+                if logging_level >= 3:
+                    print("raw:", data)
 
-                    # turn into json
+                # turn into json
+                try:
                     s = data.decode("UTF-8")
                     j = json.loads(s)
                     if logging_level >= 2:
@@ -98,15 +119,20 @@ def run(port=8000, max_conn=5, buf_size=1024, logging_level=0, seed=1):
                                 dist.append(rand.random())
                             result = {'distribution': [float(i)/sum(dist) for i in dist]}
 
-                    if logging_level >= 1:
-                        print("generated results:", result)
+                except Exception as e:
+                    result = {'distribution': [float('NaN')], 'classification': float('NaN'), 'error': str(e)}
+                    print("raw:", data)
+                    print("generated error:", str(e))
 
-                    # send result back
-                    clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    clientsocket.connect((return_host, return_port))
-                    clientsocket.sendall(bytearray(json.dumps(result), "UTF-8"))
-                    clientsocket.close()
-                    break
+                if logging_level >= 1:
+                    print("generated results:", result)
+
+                # send result back
+                clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                clientsocket.connect((return_host, return_port))
+                clientsocket.sendall(bytearray(json.dumps(result), "UTF-8"))
+                clientsocket.close()
+                break
         except Exception:
             traceback.print_exc()
 
@@ -123,10 +149,13 @@ def main():
     parser.add_argument("--buf_size", dest="buf_size", help="size of buffer to use (in bytes)", default=1024)
     parser.add_argument("--logging_level", dest="logging_level", help="whether to output some logging information (0 is off)", default=0)
     parser.add_argument("--seed", dest="seed", help="seed for the random number generator", default=1)
+    parser.add_argument("--wait_time", dest="wait_time", help="the number of seconds to wait before attempting to read from the socket again", default=0.01)
+    parser.add_argument("--max_wait", dest="max_wait", help="the number of times to perform a wait", default=5)
     parsed = parser.parse_args()
     run(port=int(parsed.port), max_conn=int(parsed.max_conn),
         buf_size=int(parsed.buf_size), logging_level=int(parsed.logging_level),
-        seed=int(parsed.seed))
+        seed=int(parsed.seed), wait_time=parsed.wait_time,
+        max_wait=parsed.max_wait)
 
 if __name__ == '__main__':
     main()

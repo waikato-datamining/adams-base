@@ -224,6 +224,10 @@ public class Simple
 
     element = fromBytes(data);
     json    = element.getAsJsonObject();
+    if (json.has("error")) {
+      getLogger().severe(json.get("error").getAsString());
+      return Double.NaN;
+    }
 
     return json.getAsJsonPrimitive("classification").getAsDouble();
   }
@@ -233,10 +237,11 @@ public class Simple
    * {@link weka.classifiers.Classifier#distributionForInstance(Instance)} method.
    *
    * @param data	the data to parse
+   * @param numClasses  the number of classes
    * @return 		the class distribution
    */
   @Override
-  public double[] parseDistribution(byte[] data) {
+  public double[] parseDistribution(byte[] data, int numClasses) {
     double[]		result;
     JsonElement		element;
     JsonObject		json;
@@ -245,6 +250,11 @@ public class Simple
 
     element = fromBytes(data);
     json    = element.getAsJsonObject();
+    if (json.has("error")) {
+      getLogger().severe(json.get("error").getAsString());
+      return new double[numClasses];
+    }
+
     array   = json.getAsJsonArray("distribution");
     result  = new double[array.size()];
     for (i = 0; i < array.size(); i++)

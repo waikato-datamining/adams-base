@@ -472,7 +472,7 @@ public class SocketFacade
   @Override
   public double[] distributionForInstance(Instance instance) throws Exception {
     try {
-      return m_Preparation.parseDistribution(send(m_Preparation.prepareDistribution(instance, this)));
+      return m_Preparation.parseDistribution(send(m_Preparation.prepareDistribution(instance, this)), instance.numClasses());
     }
     finally {
       closeServer();
