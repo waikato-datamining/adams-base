@@ -329,6 +329,15 @@ public class EnterManyValues
   }
 
   /**
+   * Adds a single value definition at the end.
+   *
+   * @param value 	the definition to add
+   */
+  public void addValue(AbstractValueDefinition value) {
+    setValues((AbstractValueDefinition[]) Utils.adjustArray(m_Values, m_Values.length + 1, value));
+  }
+
+  /**
    * Sets the value definitions.
    *
    * @param value	the definitions
