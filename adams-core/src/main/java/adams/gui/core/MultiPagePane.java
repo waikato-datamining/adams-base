@@ -785,6 +785,24 @@ public class MultiPagePane
   /**
    * Removes all pages.
    */
+  public void checkedRemoveAllPages() {
+    PageContainer	removed;
+
+    m_IgnoreUpdates = true;
+
+    while (getPageCount() > 0) {
+      removed = checkedRemovePageAt(0);
+      if (removed == null)
+        break;
+    }
+
+    m_IgnoreUpdates = false;
+    update();
+  }
+
+  /**
+   * Removes all pages.
+   */
   public void removeAllPages() {
     m_IgnoreUpdates = true;
 
@@ -1046,13 +1064,13 @@ public class MultiPagePane
     menuitem = new JMenuItem("Remove");
     menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
     menuitem.setEnabled(index > -1);
-    menuitem.addActionListener((ActionEvent ae) -> removePageAt(index));
+    menuitem.addActionListener((ActionEvent ae) -> checkedRemovePageAt(index));
     result.add(menuitem);
 
     // remove all
     menuitem = new JMenuItem("Remove all");
     menuitem.setEnabled(m_PageListModel.getSize() > 0);
-    menuitem.addActionListener((ActionEvent ae) -> removeAllPages());
+    menuitem.addActionListener((ActionEvent ae) -> checkedRemoveAllPages());
     result.add(menuitem);
 
     // detach/reattach
