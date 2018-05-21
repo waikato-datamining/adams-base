@@ -154,7 +154,7 @@ public class GoTo
     for (i = 0; i < refs.length; i++) {
       final String path = paths[i];
       item = new JMenuItem(refs[i].getValue());
-      item.addActionListener((ActionEvent e) -> m_State.tree.locateAndDisplay(path));
+      item.addActionListener((ActionEvent e) -> m_State.tree.locateAndDisplay(path, true));
       result.add(item);
     }
 

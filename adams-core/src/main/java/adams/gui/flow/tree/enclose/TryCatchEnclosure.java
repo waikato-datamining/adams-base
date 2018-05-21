@@ -106,7 +106,7 @@ public class TryCatchEnclosure
 	state.tree.expand(newNode);
       });
       SwingUtilities.invokeLater(() -> {
-	state.tree.locateAndDisplay(newNode.getFullName());
+	state.tree.locateAndDisplay(newNode.getFullName(), true);
 	state.tree.notifyActorChangeListeners(new ActorChangeEvent(state.tree, state.parent, Type.MODIFY));
 	state.tree.redraw();
       });

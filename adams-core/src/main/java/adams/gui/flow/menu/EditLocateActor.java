@@ -19,9 +19,9 @@
  */
 package adams.gui.flow.menu;
 
-import java.awt.event.ActionEvent;
-
 import adams.gui.core.GUIHelper;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Opens dialog for locating actor.
@@ -56,7 +56,7 @@ public class EditLocateActor
     if (path == null)
       return;
 
-    m_State.getCurrentPanel().getTree().locateAndDisplay(path);
+    m_State.getCurrentPanel().getTree().locateAndDisplay(path, true);
   }
 
   /**

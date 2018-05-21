@@ -310,7 +310,7 @@ public class FlowPanelNotificationArea
         menu.add(submenu);
         for (final String path : paths) {
           menuitem = new JMenuItem(path);
-          menuitem.addActionListener((ActionEvent e) -> flowpanel.getTree().locateAndDisplay(path));
+          menuitem.addActionListener((ActionEvent e) -> flowpanel.getTree().locateAndDisplay(path, true));
           submenu.add(menuitem);
         }
 

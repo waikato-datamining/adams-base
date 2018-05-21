@@ -113,7 +113,7 @@ public class MaterializeExternalActor
     m_State.tree.setModified(true);
     m_State.tree.nodeStructureChanged(currNode);
     m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));
-    m_State.tree.locateAndDisplay(currNode.getFullName());
+    m_State.tree.locateAndDisplay(currNode.getFullName(), true);
     m_State.tree.refreshTabs();
   }
 }

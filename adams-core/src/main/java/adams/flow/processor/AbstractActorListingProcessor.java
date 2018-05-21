@@ -187,11 +187,11 @@ public abstract class AbstractActorListingProcessor
         if (result.getSelectedIndex() > -1) {
           if (flow.getParentComponent() instanceof FlowPanel) {
             ((FlowPanel) flow.getParentComponent()).getTree().locateAndDisplay(
-              "" + result.getSelectedValue());
+              "" + result.getSelectedValue(), true);
           }
           else if (flow.getParentComponent() instanceof Tree) {
             ((Tree) flow.getParentComponent()).locateAndDisplay(
-              "" + result.getSelectedValue());
+              "" + result.getSelectedValue(), true);
           }
         }
       });

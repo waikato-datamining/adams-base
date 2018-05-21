@@ -101,7 +101,7 @@ public class DisplayPanelManagerEnclosure
       state.tree.notifyActorChangeListeners(new ActorChangeEvent(state.tree, currNode, Type.MODIFY));
       state.tree.setExpandedFullNames(exp);
       state.tree.expand(currNode);
-      state.tree.locateAndDisplay(currNode.getFullName());
+      state.tree.locateAndDisplay(currNode.getFullName(), true);
     });
   }
 

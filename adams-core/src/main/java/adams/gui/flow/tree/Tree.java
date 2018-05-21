@@ -1140,6 +1140,7 @@ public class Tree
 	actor.setSkip(!actor.getSkip());
 	fNode.setActor(actor);
 	((DefaultTreeModel) getModel()).nodeChanged(fNode);
+	requestFocus();
       });
     }
 
@@ -1597,11 +1598,22 @@ public class Tree
   }
 
   /**
-   * Locates and selectes the node in the tree based on the specified path.
+   * Locates and selects the node in the tree based on the specified path.
+   * Does not focus the tree.
    *
    * @param path	the path of the node to locate
    */
   public void locateAndDisplay(String path) {
+    locateAndDisplay(path, false);
+  }
+
+  /**
+   * Locates and selects the node in the tree based on the specified path.
+   *
+   * @param path	the path of the node to locate
+   * @param focus	whether to focus the tree
+   */
+  public void locateAndDisplay(String path, boolean focus) {
     Node	node;
     TreePath	tpath;
 
@@ -1611,6 +1623,8 @@ public class Tree
       tpath = getPath(node);
       setSelectionPath(tpath);
       scrollPathToVisible(tpath);
+      if (focus)
+	requestFocus();
     }
   }
 

@@ -115,7 +115,7 @@ public class RemoveActor
     SwingUtilities.invokeLater(() -> {
       m_State.tree.setExpandedStateList(state);
       if (fSelNode != null)
-        m_State.tree.locateAndDisplay(fSelNode.getFullName());
+        m_State.tree.locateAndDisplay(fSelNode.getFullName(), true);
     });
 
     m_State.tree.setModified(true);

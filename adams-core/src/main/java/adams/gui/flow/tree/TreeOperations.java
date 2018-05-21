@@ -798,7 +798,7 @@ public class TreeOperations
 	AbstractEditPostProcessor.apply(getOwner(), ((parent != null) ? parent.getActor() : null), actorOld, currNode.getActor());
       final Node fCurrNode = currNode;
       SwingUtilities.invokeLater(() -> {
-	getOwner().locateAndDisplay(fCurrNode.getFullName());
+	getOwner().locateAndDisplay(fCurrNode.getFullName(), true);
 	getOwner().refreshTabs();
       });
     }
@@ -846,7 +846,7 @@ public class TreeOperations
       if (!getOwner().getIgnoreNameChanges())
 	AbstractEditPostProcessor.apply(getOwner(), ((parent != null) ? parent.getActor() : null), actorOld, actorNew);
       SwingUtilities.invokeLater(() -> {
-	getOwner().locateAndDisplay(node.getFullName());
+	getOwner().locateAndDisplay(node.getFullName(), true);
 	getOwner().refreshTabs();
       });
     }
@@ -944,7 +944,7 @@ public class TreeOperations
 	getOwner().expand(newNode);
       });
       SwingUtilities.invokeLater(() -> {
-	getOwner().locateAndDisplay(newNode.getFullName());
+	getOwner().locateAndDisplay(newNode.getFullName(), true);
 	getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), current, Type.MODIFY));
 	getOwner().redraw();
       });
@@ -1464,7 +1464,7 @@ public class TreeOperations
     });
     SwingUtilities.invokeLater(() -> getOwner().redraw());
     SwingUtilities.invokeLater(() -> {
-      getOwner().locateAndDisplay(currNode.getFullName());
+      getOwner().locateAndDisplay(currNode.getFullName(), true);
     });
   }
 
@@ -1565,7 +1565,7 @@ public class TreeOperations
     final Node fParent = parent;
     SwingUtilities.invokeLater(() -> {
       getOwner().nodeStructureChanged(fParent);
-      getOwner().locateAndDisplay(fParent.getFullName());
+      getOwner().locateAndDisplay(fParent.getFullName(), true);
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), fParent, Type.MODIFY));
     });
 
@@ -1754,7 +1754,7 @@ public class TreeOperations
     getOwner().nodeStructureChanged(parentNode);
     getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), parentNode, Type.MODIFY));
     getOwner().nodeStructureChanged(parentNode);
-    getOwner().locateAndDisplay(newNode.getFullName());
+    getOwner().locateAndDisplay(newNode.getFullName(), true);
     getOwner().redraw();
   }
 
@@ -1842,7 +1842,7 @@ public class TreeOperations
     getOwner().nodeStructureChanged(parentNode);
     getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), parentNode, Type.MODIFY));
     getOwner().nodeStructureChanged(parentNode);
-    getOwner().locateAndDisplay(newNode.getFullName());
+    getOwner().locateAndDisplay(newNode.getFullName(), true);
     getOwner().redraw();
   }
 
