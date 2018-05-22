@@ -20,8 +20,10 @@
 package adams.flow.transformer.locateobjects;
 
 import adams.core.CloneHandler;
+import adams.core.Utils;
 import adams.core.base.QuadrilateralLocation;
 import adams.data.image.BufferedImageHelper;
+import adams.data.statistics.StatUtils;
 
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -357,6 +359,16 @@ public class LocatedObject
       return null;
     else
       return new Polygon(x, y, x.length);
+  }
+
+  /**
+   * Stores the polygon in the meta-data.
+   *
+   * @param value	the polygon
+   */
+  public void setPolygon(Polygon value) {
+    getMetaData().put(KEY_POLY_X, Utils.flatten(StatUtils.toNumberArray(value.xpoints), ","));
+    getMetaData().put(KEY_POLY_Y, Utils.flatten(StatUtils.toNumberArray(value.ypoints), ","));
   }
 
   /**
