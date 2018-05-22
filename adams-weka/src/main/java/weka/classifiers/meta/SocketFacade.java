@@ -65,6 +65,9 @@ public class SocketFacade
   /** the data preparation to use. */
   protected AbstractDataPreparation m_Preparation = getDefaultPreparation();
 
+  /** whether to skip training. */
+  protected boolean m_SkipTrain;
+
   /** the server socket for receiving the replies. */
   protected transient ServerSocket m_Server;
 
@@ -112,6 +115,11 @@ public class SocketFacade
 	+ "\t(default: " + Utils.classToString(getDefaultPreparation()) + ")",
       "preparation", 1, "-preparation <classname + options>"));
 
+    result.addElement(new Option(
+      "\tWhether to skip the training process (eg pre-built model).\n"
+	+ "\t(default: train not skipped)",
+      "skip-train", 0, "-skip-train"));
+
     return result.elements();
   }
 
@@ -148,6 +156,8 @@ public class SocketFacade
     else
       setPreparation(getDefaultPreparation());
 
+    setSkipTrain(weka.core.Utils.getFlag("skip-train", options));
+
     super.setOptions(options);
   }
 
@@ -172,6 +182,9 @@ public class SocketFacade
 
     result.add("-preparation");
     result.add(OptionUtils.getCommandLine(getPreparation()));
+
+    if (getSkipTrain())
+      result.add("-skip-train");
 
     result.addAll(Arrays.asList(super.getOptions()));
 
@@ -327,6 +340,34 @@ public class SocketFacade
   }
 
   /**
+   * Sets whether to skip training, eg when using a pre-built model.
+   *
+   * @param value 	true if to skip training
+   */
+  public void setSkipTrain(boolean value) {
+    m_SkipTrain = value;
+  }
+
+  /**
+   * Returns whether to skip training, eg when using a pre-built model.
+   *
+   * @return 		true if to skip training
+   */
+  public boolean getSkipTrain() {
+    return m_SkipTrain;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String skipTrainTipText() {
+    return "If enabled, the training is skipped; useful when using a pre-built model.";
+  }
+
+  /**
    * Initializes the server socket if necessary.
    *
    * @throws Exception		if initialization fails
@@ -434,6 +475,9 @@ public class SocketFacade
   @Override
   public void buildClassifier(Instances data) throws Exception {
     String	response;
+
+    if (m_SkipTrain)
+      return;
 
     try {
       response = m_Preparation.parseTrain(send(m_Preparation.prepareTrain(data, this)));
