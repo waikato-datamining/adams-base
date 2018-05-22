@@ -21,11 +21,14 @@ package adams.gui.visualization.image.selection;
 
 import adams.core.Utils;
 import adams.data.report.Report;
+import adams.data.statistics.StatUtils;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.SelectionRectangle;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -206,10 +209,11 @@ public class SelectObjects
    * @param panel	the origin
    * @param topLeft	the top-left position of the selection
    * @param bottomRight	the bottom-right position of the selection
+   * @param trace	the trace from the selection
    * @param modifiersEx	the associated modifiers
    */
   @Override
-  protected void doProcessSelection(ImagePanel panel, Point topLeft, Point bottomRight, int modifiersEx) {
+  protected void doProcessSelection(ImagePanel panel, Point topLeft, Point bottomRight, List<Point> trace, int modifiersEx) {
     int				lastIndex;
     Report			report;
     String			current;
@@ -217,21 +221,36 @@ public class SelectObjects
     int				y;
     int				w;
     int				h;
-    SelectionRectangle rect;
+    Polygon			poly;
+    int[]			poly_x;
+    int[]			poly_y;
+    int				i;
+    SelectionRectangle 		rect;
     boolean			modified;
     List<SelectionRectangle>	queue;
+    Rectangle			bounds;
 
     report = panel.getAdditionalProperties().getClone();
     if (m_Locations == null)
       m_Locations = getLocations(report);
-    
-    x         = panel.mouseToPixelLocation(topLeft).x;
-    y         = panel.mouseToPixelLocation(topLeft).y;
-    w         = panel.mouseToPixelLocation(bottomRight).x - panel.mouseToPixelLocation(topLeft).x + 1;
-    h         = panel.mouseToPixelLocation(bottomRight).y - panel.mouseToPixelLocation(topLeft).y + 1;
-    rect      = new SelectionRectangle(x, y, w, h, -1);
-    queue     = new ArrayList<>();
-    modified  = false;
+
+    // polygon overrides topleft/bottomright
+    poly = null;
+    if (trace.size() > 0) {
+      poly        = panel.traceToPolygon(trace);
+      bounds      = poly.getBounds();
+      topLeft     = new Point((int) bounds.getX(), (int) bounds.getY());
+      bottomRight = new Point((int) (bounds.getX() + bounds.getWidth() - 1), (int) (bounds.getY() + bounds.getHeight() - 1));
+    }
+
+    x    = panel.mouseToPixelLocation(topLeft).x;
+    y    = panel.mouseToPixelLocation(topLeft).y;
+    w    = panel.mouseToPixelLocation(bottomRight).x - panel.mouseToPixelLocation(topLeft).x + 1;
+    h    = panel.mouseToPixelLocation(bottomRight).y - panel.mouseToPixelLocation(topLeft).y + 1;
+    rect = new SelectionRectangle(x, y, w, h, -1);
+
+    queue    = new ArrayList<>();
+    modified = false;
     if ((modifiersEx & MouseEvent.CTRL_DOWN_MASK) != 0) {
       for (SelectionRectangle r: m_Locations) {
 	if (rect.contains(r)) {
@@ -252,6 +271,17 @@ public class SelectObjects
 	report.setNumericValue(current + KEY_Y, y);
 	report.setNumericValue(current + KEY_WIDTH, w);
 	report.setNumericValue(current + KEY_HEIGHT, h);
+	// polygon
+	if (poly != null) {
+	  poly_x = new int[trace.size()];
+	  poly_y = new int[trace.size()];
+	  for (i = 0; i < trace.size(); i++) {
+	    poly_x[i] = (int) panel.mouseToPixelLocation(trace.get(i)).getX();
+	    poly_y[i] = (int) panel.mouseToPixelLocation(trace.get(i)).getY();
+	  }
+	  report.setStringValue(current + KEY_POLY_X, Utils.flatten(StatUtils.toNumberArray(poly_x), ","));
+	  report.setStringValue(current + KEY_POLY_Y, Utils.flatten(StatUtils.toNumberArray(poly_y), ","));
+        }
 	if (!m_Label.isEmpty())
 	  report.setStringValue(current + m_LabelSuffix, m_Label);
 	m_Locations.add(rect);
