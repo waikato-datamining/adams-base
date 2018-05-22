@@ -15,7 +15,7 @@
 
 /*
  * Scale.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectfilter;
@@ -24,6 +24,8 @@ import adams.core.QuickInfoHelper;
 import adams.data.RoundingType;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+
+import java.awt.Polygon;
 
 /**
  <!-- globalinfo-start -->
@@ -285,9 +287,24 @@ public class Scale
   protected LocatedObjects doFilter(LocatedObjects objects) {
     LocatedObjects	result;
     LocatedObject	newObj;
+    boolean		hasPoly;
+    int[]		xpoints;
+    int[]		ypoints;
+    int			i;
 
     result = new LocatedObjects();
     for (LocatedObject obj: objects) {
+      hasPoly = obj.hasPolygon();
+      xpoints = new int[0];
+      ypoints = new int[0];
+      if (hasPoly) {
+        xpoints = obj.getPolygon().xpoints.clone();
+        ypoints = obj.getPolygon().ypoints.clone();
+        for (i = 0; i < xpoints.length; i++) {
+          xpoints[i] *= m_ScaleX;
+          ypoints[i] *= m_ScaleY;
+	}
+      }
       newObj = new LocatedObject(
         obj.getImage(),
 	(int) round(obj.getX() * m_ScaleX),
@@ -295,6 +312,8 @@ public class Scale
 	(int) round(obj.getWidth() * m_ScaleX),
 	(int) round(obj.getHeight() * m_ScaleY),
 	obj.getMetaData(true));
+      if (hasPoly)
+        newObj.setPolygon(new Polygon(xpoints, ypoints, xpoints.length));
       result.add(newObj);
     }
 
