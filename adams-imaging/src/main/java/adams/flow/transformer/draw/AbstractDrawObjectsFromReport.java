@@ -28,7 +28,7 @@ import adams.gui.visualization.image.ReportObjectOverlay;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.Polygon;
 import java.util.List;
 
 /**
@@ -400,7 +400,7 @@ public abstract class AbstractDrawObjectsFromReport
    * @param locations	the locations to paint
    * @return		null if OK, otherwise error message
    */
-  protected abstract String doDraw(BufferedImageContainer image, List<Rectangle> locations);
+  protected abstract String doDraw(BufferedImageContainer image, List<Polygon> locations);
 
   /**
    * Performs the actual draw operation.

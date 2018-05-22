@@ -15,22 +15,23 @@
 
 /*
  * ImagePanelSelectionEvent.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.event;
 
+import adams.gui.visualization.image.ImagePanel;
+
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.EventObject;
-
-import adams.gui.visualization.image.ImagePanel;
+import java.util.List;
 
 /**
  * Event that gets sent in case of a box selection event in the {@link ImagePanel}.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImagePanelSelectionEvent
   extends EventObject {
@@ -43,7 +44,10 @@ public class ImagePanelSelectionEvent
 
   /** the bottom-right of the selection. */
   protected Point m_BottomRight;
-  
+
+  /** the trace. */
+  protected List<Point> m_Trace;
+
   /** the associated modifiers. */
   protected int m_ModifiersEx;
   
@@ -53,13 +57,15 @@ public class ImagePanelSelectionEvent
    * @param source		the source of the event
    * @param topLeft		the top-left of the selection
    * @param bottomRight		the bottom-right of the selection
+   * @param trace		the trace of points
    * @param modifiersEx	the extended modifiers associated with the event when releasing the mouse
    */
-  public ImagePanelSelectionEvent(ImagePanel source, Point topLeft, Point bottomRight, int modifiersEx) {
+  public ImagePanelSelectionEvent(ImagePanel source, Point topLeft, Point bottomRight, List<Point> trace, int modifiersEx) {
     super(source);
     
     m_TopLeft     = topLeft;
     m_BottomRight = bottomRight;
+    m_Trace       = new ArrayList<>(trace);
     m_ModifiersEx = modifiersEx;
   }
   
@@ -89,7 +95,16 @@ public class ImagePanelSelectionEvent
   public Point getBottomRight() {
     return m_BottomRight;
   }
-  
+
+  /**
+   * Returns the trace.
+   *
+   * @return		the traced points from the selection
+   */
+  public List<Point> getTrace() {
+    return m_Trace;
+  }
+
   /**
    * Returns the associated modifiers.
    * 

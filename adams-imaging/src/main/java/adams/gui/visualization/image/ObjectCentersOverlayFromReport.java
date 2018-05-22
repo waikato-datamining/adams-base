@@ -15,7 +15,7 @@
 
 /*
  * ObjectCentersOverlayFromReport.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -23,6 +23,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import java.awt.Graphics;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.List;
 
@@ -179,24 +180,26 @@ public class ObjectCentersOverlayFromReport
    * @param g		the graphics context
    * @param locations	the locations to paint
    */
-  protected void doPaintObjects(PaintPanel panel, Graphics g, List<Rectangle> locations) {
+  protected void doPaintObjects(PaintPanel panel, Graphics g, List<Polygon> locations) {
     String	label;
+    Rectangle	rect;
 
     g.setColor(getColor());
     g.setFont(getLabelFont());
-    for (Rectangle rect: locations) {
+    for (Polygon poly : locations) {
       if (getUseColorsPerType()) {
-        if (m_Overlays.hasColor(rect))
-          g.setColor(m_Overlays.getColor(rect));
+        if (m_Overlays.hasColor(poly))
+          g.setColor(m_Overlays.getColor(poly));
       }
 
+      rect = poly.getBounds();
       if (m_Diameter < 1)
 	g.fillOval((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
       else
         g.fillOval((int) (rect.getCenterX() - m_Diameter), (int) (rect.getCenterY() - m_Diameter), m_Diameter*2, m_Diameter*2);
 
-      if (m_Overlays.hasLabel(rect)) {
-        label = m_Overlays.getLabel(rect);
+      if (m_Overlays.hasLabel(poly)) {
+        label = m_Overlays.getLabel(poly);
         if (label != null)
           g.drawString(label, (int) (rect.getX() + rect.getWidth() + getLabelOffsetX()), (int) (rect.getY() + getLabelOffsetY()));
       }

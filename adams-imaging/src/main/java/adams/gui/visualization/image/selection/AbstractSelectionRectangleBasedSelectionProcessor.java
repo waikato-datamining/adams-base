@@ -54,6 +54,12 @@ public abstract class AbstractSelectionRectangleBasedSelectionProcessor
   /** the key for the height. */
   public final static String KEY_HEIGHT = LocatedObjects.KEY_HEIGHT;
 
+  /** the key for the Xs of the polygon. */
+  public final static String KEY_POLY_X = LocatedObjects.KEY_POLY_X;
+
+  /** the key for the Ys of the polygon. */
+  public final static String KEY_POLY_Y = LocatedObjects.KEY_POLY_Y;
+
   /** the prefix for the objects. */
   protected String m_Prefix;
 

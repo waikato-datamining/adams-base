@@ -15,7 +15,7 @@
 
 /*
  * ImagePanel.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -63,6 +63,8 @@ import adams.gui.event.UndoEvent;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.image.paintlet.Paintlet;
+import adams.gui.visualization.image.selectionshape.RectanglePainter;
+import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
 import adams.gui.visualization.report.ReportFactory;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import nz.ac.waikato.cms.locator.ClassLocator;
@@ -84,6 +86,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -106,7 +109,6 @@ import java.util.Vector;
  * back to 100%.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImagePanel
   extends UndoPanel
@@ -157,7 +159,7 @@ public class ImagePanel
     protected boolean m_SelectionEnabled;
 
     /** the color of the selection box. */
-    protected Color m_SelectionBoxColor;
+    protected SelectionShapePainter m_SelectionShapePainter;
 
     /** whether the selection box is currently been drawn. */
     protected boolean m_Selecting;
@@ -170,6 +172,9 @@ public class ImagePanel
 
     /** the bottom right corner of the selection box. */
     protected Point m_SelectionBottomRight;
+
+    /** the selection trace. */
+    protected List<Point> m_SelectionTrace;
 
     /** the selection listeners. */
     protected Set<ImagePanelSelectionListener> m_SelectionListeners;
@@ -201,17 +206,18 @@ public class ImagePanel
     protected void initialize() {
       super.initialize();
 
-      m_CurrentImage            = null;
-      m_Scale                   = 1.0;
-      m_ImageOverlays           = new HashSet<>();
-      m_CustomPopupMenuProvider = null;
-      m_Selecting               = false;
-      m_Dragged                 = false;
-      m_SelectionBoxColor       = Color.GRAY;
-      m_SelectionEnabled        = false;
-      m_SelectionListeners      = new HashSet<>();
-      m_LeftClickListeners      = new HashSet<>();
-      m_Paintlets = new HashSet<>();
+      m_CurrentImage              = null;
+      m_Scale                     = 1.0;
+      m_ImageOverlays             = new HashSet<>();
+      m_CustomPopupMenuProvider   = null;
+      m_Selecting                 = false;
+      m_Dragged                   = false;
+      m_SelectionShapePainter     = new RectanglePainter();
+      m_SelectionEnabled          = false;
+      m_SelectionListeners        = new HashSet<>();
+      m_LeftClickListeners        = new HashSet<>();
+      m_SelectionTrace            = new ArrayList<>();
+      m_Paintlets                 = new HashSet<>();
     }
 
     /**
@@ -231,6 +237,8 @@ public class ImagePanel
 	  if (m_Selecting && !e.isShiftDown()) {
 	    m_Dragged              = true;
 	    m_SelectionBottomRight = e.getPoint();
+	    if (m_SelectionShapePainter.canAddTracePoint(PaintPanel.this, m_SelectionTrace, e.getPoint()))
+	      m_SelectionTrace.add(e.getPoint());
 
 	    repaint();
 	  }
@@ -265,6 +273,8 @@ public class ImagePanel
 		m_Selecting        = true;
 		m_Dragged          = false;
 		m_SelectionTopLeft = e.getPoint();
+	        m_SelectionTrace.clear();
+	        m_SelectionTrace.add(e.getPoint());
 	      }
 	    }
 	  }
@@ -414,6 +424,24 @@ public class ImagePanel
       }
 
       return new Point(x, y);
+    }
+
+    /**
+     * Whether selection is currently active.
+     *
+     * @return		true if active
+     */
+    public boolean isSelecting() {
+      return m_Selecting;
+    }
+
+    /**
+     * Whether dragging is selection is currently active.
+     *
+     * @return		true if active
+     */
+    public boolean isDragged() {
+      return m_Dragged;
     }
 
     /**
@@ -788,39 +816,8 @@ public class ImagePanel
      *
      * @param g		the graphics context
      */
-    protected void paintSelectionBox(Graphics g) {
-      int	topX;
-      int	bottomX;
-      int	topY;
-      int	bottomY;
-      int	tmp;
-
-      if (m_Selecting && m_Dragged) {
-	g.setColor(m_SelectionBoxColor);
-
-	topX    = (int) mouseToPixelLocation(m_SelectionTopLeft).getX();
-	topY    = (int) mouseToPixelLocation(m_SelectionTopLeft).getY();
-	bottomX = (int) mouseToPixelLocation(m_SelectionBottomRight).getX();
-	bottomY = (int) mouseToPixelLocation(m_SelectionBottomRight).getY();
-
-	// swap necessary?
-	if (topX > bottomX) {
-	  tmp     = topX;
-	  topX    = bottomX;
-	  bottomX = tmp;
-	}
-	if (topY > bottomY) {
-	  tmp     = topY;
-	  topY    = bottomY;
-	  bottomY = tmp;
-	}
-
-	g.drawRect(
-	  topX,
-	  topY,
-	  (bottomX - topX + 1),
-	  (bottomY - topY + 1));
-      }
+    protected void paintSelectionShape(Graphics g) {
+      m_SelectionShapePainter.paintSelectionShape(this, g, m_SelectionTopLeft, m_SelectionBottomRight, m_SelectionTrace);
     }
 
     /**
@@ -861,28 +858,28 @@ public class ImagePanel
 	for (Paintlet p: paintlets)
 	  p.paint(g);
 
-	paintSelectionBox(g);
+	paintSelectionShape(g);
       }
     }
 
     /**
-     * Sets the color for the selection box.
+     * Sets the painter for the selection shape.
      *
-     * @param value	the color to use
+     * @param value	the painter
      */
-    public void setSelectionBoxColor(Color value) {
-      m_SelectionBoxColor = value;
+    public void setSelectionShapePainter(SelectionShapePainter value) {
+      m_SelectionShapePainter = value;
       if (m_Selecting)
 	repaint();
     }
 
     /**
-     * Returns the color for the selection box currently in use.
+     * Returns the painter to use for the selection shape.
      *
-     * @return		the color in use
+     * @return		the painter
      */
-    public Color getSelectionBoxColor() {
-      return m_SelectionBoxColor;
+    public SelectionShapePainter getSelectionShapePainter() {
+      return m_SelectionShapePainter;
     }
 
     /**
@@ -947,7 +944,7 @@ public class ImagePanel
       ImagePanelSelectionEvent			e;
 
       synchronized(m_SelectionListeners) {
-	e    = new ImagePanelSelectionEvent(getOwner(), topLeft, bottomRight, modifiersEx);
+	e    = new ImagePanelSelectionEvent(getOwner(), topLeft, bottomRight, m_SelectionTrace, modifiersEx);
 	iter = m_SelectionListeners.iterator();
 	while (iter.hasNext())
 	  iter.next().selected(e);
@@ -1967,6 +1964,35 @@ public class ImagePanel
   }
 
   /**
+   * Turns the trace into a polygon.
+   *
+   * @param trace	the trace to convert
+   * @return		the polygon, null if unable to convert (eg empty trace)
+   */
+  public Polygon traceToPolygon(List<Point> trace) {
+    Polygon	result;
+    int[]	poly_x;
+    int[]	poly_y;
+    int		i;
+    Point	p;
+
+    result = null;
+
+    if (trace.size() > 0) {
+      poly_x = new int[trace.size()];
+      poly_y = new int[trace.size()];
+      for (i = 0; i < trace.size(); i++) {
+        p         = mouseToPixelLocation(trace.get(i));
+	poly_x[i] = (int) p.getX();
+	poly_y[i] = (int) p.getY();
+      }
+      result = new Polygon(poly_x, poly_y, poly_x.length);
+    }
+
+    return result;
+  }
+
+  /**
    * Removes all selection listeners.
    */
   public void clearSelectionListeners() {
@@ -2017,21 +2043,21 @@ public class ImagePanel
   }
 
   /**
-   * Sets the color for the selection box.
+   * Sets the painter to use for the selection shape.
    *
    * @param value	the color to use
    */
-  public void setSelectionBoxColor(Color value) {
-    m_PaintPanel.setSelectionBoxColor(value);
+  public void setSelectionShapePainter(SelectionShapePainter value) {
+    m_PaintPanel.setSelectionShapePainter(value);
   }
 
   /**
-   * Returns the color for the selection box currently in use.
+   * Returns the painter to use for the selection shape.
    *
-   * @return		the color in use
+   * @return		the painter in use
    */
-  public Color getSelectionBoxColor() {
-    return m_PaintPanel.getSelectionBoxColor();
+  public SelectionShapePainter getSelectionShapePainter() {
+    return m_PaintPanel.getSelectionShapePainter();
   }
 
   /**

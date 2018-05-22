@@ -706,6 +706,10 @@ adams.gui.visualization.image.leftclick.AbstractLeftClickProcessor=\
 adams.gui.visualization.image.selection.SelectionProcessor=\
   adams.gui.visualization.image.selection
 
+# the selection shape painters for the image viewer
+adams.gui.visualization.image.selectionshape.SelectionShapePainter=\
+  adams.gui.visualization.image.selectionshape
+
 # the schemes for exporting multiple objects
 adams.gui.visualization.multiobjectexport.AbstractMultiObjectExport=\
   adams.gui.visualization.multiobjectexport

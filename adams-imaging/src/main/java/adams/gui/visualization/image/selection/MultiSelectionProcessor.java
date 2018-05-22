@@ -23,6 +23,7 @@ import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import java.awt.Point;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -126,11 +127,12 @@ public class MultiSelectionProcessor
    * @param panel	the origin
    * @param topLeft	the top-left position of the selection
    * @param bottomRight	the bottom-right position of the selection
+   * @param trace	the trace from the selection
    * @param modifiersEx	the associated modifiers
    */
   @Override
-  protected void doProcessSelection(ImagePanel panel, Point topLeft, Point bottomRight, int modifiersEx) {
+  protected void doProcessSelection(ImagePanel panel, Point topLeft, Point bottomRight, List<Point> trace, int modifiersEx) {
     for (SelectionProcessor processor: m_Processors)
-      processor.processSelection(panel, topLeft, bottomRight, modifiersEx);
+      processor.processSelection(panel, topLeft, bottomRight, null, modifiersEx);
   }
 }

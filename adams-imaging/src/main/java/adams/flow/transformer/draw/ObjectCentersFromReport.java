@@ -23,7 +23,7 @@ import adams.data.image.BufferedImageContainer;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.Polygon;
 import java.util.List;
 
 /**
@@ -181,26 +181,28 @@ public class ObjectCentersFromReport
    * @param locations	the locations to paint
    * @return		null if OK, otherwise error message
    */
-  protected String doDraw(BufferedImageContainer image, List<Rectangle> locations) {
-    Graphics 	g;
-    String	label;
+  protected String doDraw(BufferedImageContainer image, List<Polygon> locations) {
+    Graphics 		g;
+    String		label;
+    java.awt.Rectangle   rect;
 
     g = image.getImage().getGraphics();
     g.setColor(getColor());
     g.setFont(getLabelFont());
-    for (Rectangle rect: locations) {
+    for (Polygon poly : locations) {
       if (getUseColorsPerType()) {
-        if (m_Overlays.hasColor(rect))
-          g.setColor(m_Overlays.getColor(rect));
+        if (m_Overlays.hasColor(poly))
+          g.setColor(m_Overlays.getColor(poly));
       }
 
+      rect = poly.getBounds();
       if (m_Diameter < 1)
 	g.fillOval((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
       else
         g.fillOval((int) (rect.getCenterX() - m_Diameter), (int) (rect.getCenterY() - m_Diameter), m_Diameter*2, m_Diameter*2);
 
-      if (m_Overlays.hasLabel(rect)) {
-        label = m_Overlays.getLabel(rect);
+      if (m_Overlays.hasLabel(poly)) {
+        label = m_Overlays.getLabel(poly);
         if (label != null)
           g.drawString(label, (int) (rect.getX() + rect.getWidth() + getLabelOffsetX()), (int) (rect.getY() + getLabelOffsetY()));
       }

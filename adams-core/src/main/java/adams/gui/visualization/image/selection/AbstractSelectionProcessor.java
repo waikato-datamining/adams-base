@@ -15,7 +15,7 @@
 
 /*
  * AbstractSelectionProcessor.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
@@ -26,12 +26,12 @@ import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import java.awt.Point;
+import java.util.List;
 
 /**
  * Ancestor for classes that react to selection in an image.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSelectionProcessor
   extends AbstractOptionHandler
@@ -64,9 +64,10 @@ public abstract class AbstractSelectionProcessor
    * @param panel	the origin
    * @param topLeft	the top-left position of the selection
    * @param bottomRight	the bottom-right position of the selection
+   * @param trace	the trace from the selection
    * @param modifiersEx	the associated modifiers
    */
-  protected abstract void doProcessSelection(ImagePanel panel, Point topLeft, Point bottomRight, int modifiersEx);
+  protected abstract void doProcessSelection(ImagePanel panel, Point topLeft, Point bottomRight, List<Point> trace, int modifiersEx);
 
   /**
    * Process the selection that occurred in the image panel.
@@ -74,10 +75,11 @@ public abstract class AbstractSelectionProcessor
    * @param panel	the origin
    * @param topLeft	the top-left position of the selection
    * @param bottomRight	the bottom-right position of the selection
+   * @param trace	the trace from the selection
    * @param modifiersEx	the associated modifiers
    */
-  public void processSelection(ImagePanel panel, Point topLeft, Point bottomRight, int modifiersEx) {
-    doProcessSelection(panel, topLeft, bottomRight, modifiersEx);
+  public void processSelection(ImagePanel panel, Point topLeft, Point bottomRight, List<Point> trace, int modifiersEx) {
+    doProcessSelection(panel, topLeft, bottomRight, trace, modifiersEx);
     panel.repaint();
   }
   
@@ -105,10 +107,10 @@ public abstract class AbstractSelectionProcessor
   @Override
   public void selected(ImagePanelSelectionEvent e) {
     String	msg;
-    
+
     msg = check(e);
     if (msg == null)
-      processSelection(e.getImagePanel(), e.getTopLeft(), e.getBottomRight(), e.getModifiersEx());
+      processSelection(e.getImagePanel(), e.getTopLeft(), e.getBottomRight(), e.getTrace(), e.getModifiersEx());
     else
       getLogger().severe(msg);
   }

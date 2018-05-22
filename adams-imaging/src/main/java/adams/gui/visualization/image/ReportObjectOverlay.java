@@ -31,7 +31,7 @@ import adams.gui.visualization.core.DefaultColorProvider;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Rectangle;
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,16 +79,16 @@ public class ReportObjectOverlay
   protected int m_LabelOffsetY;
 
   /** the cached locations. */
-  protected List<Rectangle> m_Locations;
+  protected List<Polygon> m_Locations;
 
   /** the type/color mapping. */
   protected HashMap<String,Color> m_TypeColors;
 
   /** the cached colors. */
-  protected HashMap<Rectangle,Color> m_Colors;
+  protected HashMap<Polygon,Color> m_Colors;
 
   /** the labels. */
-  protected HashMap<Rectangle,String> m_Labels;
+  protected HashMap<Polygon,String> m_Labels;
 
   /** predefined labels. */
   protected BaseString[] m_PredefinedLabels;
@@ -462,11 +462,13 @@ public class ReportObjectOverlay
   public void determineLocations(Report report) {
     LocatedObjects	located;
     HashSet<String>	types;
-    Rectangle		rect;
     String		suffix;
     String		type;
     Color		color;
     String		label;
+    Polygon		poly;
+    int[]		poly_x;
+    int[]		poly_y;
 
     if (m_Locations != null)
       return;
@@ -491,15 +493,23 @@ public class ReportObjectOverlay
     }
 
     m_Locations = new ArrayList<>();
-    m_Colors    = new HashMap<>();
+    m_Colors = new HashMap<>();
     m_Labels    = new HashMap<>();
     suffix      = m_TypeSuffix.isEmpty() ? "" : m_TypeSuffix.substring(1);
     located     = LocatedObjects.fromReport(report, m_Prefix);
     for (LocatedObject object: located) {
-      m_Locations.add(object.getRectangle());
+      if (object.hasPolygon()) {
+        poly = object.getPolygon();
+        m_Locations.add(poly);
+      }
+      else {
+	poly_x = new int[]{object.getX(), object.getX() + object.getWidth() - 1, object.getX() + object.getWidth() - 1, object.getX()};
+	poly_y = new int[]{object.getY(), object.getY(), object.getY() + object.getHeight() - 1, object.getY() + object.getHeight() - 1};
+	poly   = new Polygon(poly_x, poly_y, poly_x.length);
+	m_Locations.add(poly);
+      }
 
       color = m_Color;
-      rect  = object.getRectangle();
 
       if (!suffix.isEmpty() && (object.getMetaData() != null) && (object.getMetaData().containsKey(suffix))) {
 	type  = "" + object.getMetaData().get(suffix);
@@ -515,7 +525,7 @@ public class ReportObjectOverlay
 	    .replace("#", "" + object.getMetaData().get(LocatedObjects.KEY_INDEX))
 	    .replace("@", type)
 	    .replace("$", type.replaceAll(".*\\.", ""));
-	  m_Labels.put(rect, label);
+	  m_Labels.put(poly, label);
 	}
       }
       else {
@@ -525,32 +535,32 @@ public class ReportObjectOverlay
 	    .replace("#", "" + object.getMetaData().get(LocatedObjects.KEY_INDEX))
 	    .replace("@", "")
 	    .replace("$", "");
-	  m_Labels.put(rect, label);
+	  m_Labels.put(poly, label);
 	}
       }
 
-      m_Colors.put(rect, color);
+      m_Colors.put(poly, color);
     }
   }
 
   /**
    * Checks whether a color has been stored for the given object.
    *
-   * @param rect	the object to check
+   * @param poly	the object to check
    * @return		true if custom color available
    */
-  public boolean hasColor(Rectangle rect) {
-    return m_Colors.containsKey(rect);
+  public boolean hasColor(Polygon poly) {
+    return m_Colors.containsKey(poly);
   }
 
   /**
    * Returns the color for the object.
    *
-   * @param rect	the object to get the color for
+   * @param poly	the object to get the color for
    * @return		the color, null if none available
    */
-  public Color getColor(Rectangle rect) {
-    return m_Colors.get(rect);
+  public Color getColor(Polygon poly) {
+    return m_Colors.get(poly);
   }
 
   /**
@@ -576,21 +586,21 @@ public class ReportObjectOverlay
   /**
    * Checks whether a label has been stored for the given object.
    *
-   * @param rect	the object to check
+   * @param poly	the object to check
    * @return		true if custom label available
    */
-  public boolean hasLabel(Rectangle rect) {
-    return !m_LabelFormat.isEmpty() && m_Labels.containsKey(rect);
+  public boolean hasLabel(Polygon poly) {
+    return !m_LabelFormat.isEmpty() && m_Labels.containsKey(poly);
   }
 
   /**
    * Returns the label for the object.
    *
-   * @param rect	the object to get the label for
+   * @param poly	the object to get the label for
    * @return		the label, null if none available
    */
-  public String getLabel(Rectangle rect) {
-    return m_Labels.get(rect);
+  public String getLabel(Polygon poly) {
+    return m_Labels.get(poly);
   }
 
   /**
@@ -608,7 +618,7 @@ public class ReportObjectOverlay
    * @return		the locations, null if not initialized
    * @see		#determineLocations(Report)
    */
-  public List<Rectangle> getLocations() {
+  public List<Polygon> getLocations() {
     return m_Locations;
   }
 }

@@ -42,13 +42,14 @@ import adams.gui.visualization.image.NullOverlay;
 import adams.gui.visualization.image.selection.NullProcessor;
 import adams.gui.visualization.image.selection.SelectionProcessor;
 import adams.gui.visualization.image.selection.SelectionProcessorWithLabelSupport;
+import adams.gui.visualization.image.selectionshape.RectanglePainter;
+import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -348,7 +349,7 @@ public class ImageAnnotator
       m_PanelImage.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(m_Overlay));
       m_ActualSelectionProcessor = m_SelectionProcessor.shallowCopy();
       m_PanelImage.addSelectionListener(m_ActualSelectionProcessor);
-      m_PanelImage.setSelectionBoxColor(m_SelectionBoxColor);
+      m_PanelImage.setSelectionShapePainter((SelectionShapePainter) OptionUtils.shallowCopy(m_SelectionShapePainter));
       m_PanelImage.setSelectionEnabled(true);
       add(m_PanelImage, BorderLayout.CENTER);
     }
@@ -497,8 +498,8 @@ public class ImageAnnotator
   /** the selection processor to apply. */
   protected SelectionProcessor m_SelectionProcessor;
 
-  /** the color for the selection box. */
-  protected Color m_SelectionBoxColor;
+  /** the painter for the selection shape. */
+  protected SelectionShapePainter m_SelectionShapePainter;
 
   /** the overlay to use for highlighting the objects. */
   protected ImageOverlay m_Overlay;
@@ -545,8 +546,8 @@ public class ImageAnnotator
       new NullProcessor());
 
     m_OptionManager.add(
-      "selection-box-color", "selectionBoxColor",
-      Color.GRAY);
+      "selection-shape-painter", "selectionShapePainter",
+      new RectanglePainter());
 
     m_OptionManager.add(
       "overlay", "overlay",
@@ -674,22 +675,22 @@ public class ImageAnnotator
   }
 
   /**
-   * Sets the color for the selection box.
+   * Sets the painter for the selection shape.
    *
-   * @param value 	the color
+   * @param value 	the painter
    */
-  public void setSelectionBoxColor(Color value) {
-    m_SelectionBoxColor = value;
+  public void setSelectionShapePainter(SelectionShapePainter value) {
+    m_SelectionShapePainter = value;
     reset();
   }
 
   /**
-   * Returns the color of the selection box.
+   * Returns the painter for the selection shape.
    *
-   * @return 		the color
+   * @return 		the painter
    */
-  public Color getSelectionBoxColor() {
-    return m_SelectionBoxColor;
+  public SelectionShapePainter getSelectionShapePainter() {
+    return m_SelectionShapePainter;
   }
 
   /**
@@ -698,8 +699,8 @@ public class ImageAnnotator
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String selectionBoxColorTipText() {
-    return "The color of the selection box.";
+  public String selectionShapePainterTipText() {
+    return "The painter to use for the selection shape.";
   }
 
   /**

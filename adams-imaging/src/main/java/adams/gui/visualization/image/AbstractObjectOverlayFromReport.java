@@ -15,7 +15,7 @@
 
 /*
  * ObjectCentersOverlayFromReport.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -28,7 +28,7 @@ import adams.gui.visualization.image.ImagePanel.PaintPanel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.Polygon;
 import java.util.List;
 
 /**
@@ -413,7 +413,7 @@ public abstract class AbstractObjectOverlayFromReport
    * @param g		the graphics context
    * @param locations	the locations to paint
    */
-  protected abstract void doPaintObjects(PaintPanel panel, Graphics g, List<Rectangle> locations);
+  protected abstract void doPaintObjects(PaintPanel panel, Graphics g, List<Polygon> locations);
 
   /**
    * Performs the actual painting of the overlay.

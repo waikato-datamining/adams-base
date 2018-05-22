@@ -23,6 +23,7 @@ import adams.core.CloneHandler;
 import adams.core.base.QuadrilateralLocation;
 import adams.data.image.BufferedImageHelper;
 
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
@@ -40,6 +41,12 @@ public class LocatedObject
 
   /** for serialization. */
   private static final long serialVersionUID = 8662599273386642371L;
+
+  /** the key for the Xs of the polygon in the meta-data (comma-separated list). */
+  public final static String KEY_POLY_X = "poly_x";
+
+  /** the key for the Ys of the polygon in the meta-data (comma-separated list). */
+  public final static String KEY_POLY_Y = "poly_y";
 
   /** the cut-out object, if available. */
   protected BufferedImage m_Image;
@@ -257,6 +264,15 @@ public class LocatedObject
   }
 
   /**
+   * Checks whether polygon meta-data is present.
+   *
+   * @return		true if present
+   */
+  public boolean hasPolygon() {
+    return m_MetaData.containsKey(KEY_POLY_X) && m_MetaData.containsKey(KEY_POLY_Y);
+  }
+
+  /**
    * Returns the object as rectangle.
    *
    * @return		the rectangle
@@ -277,6 +293,70 @@ public class LocatedObject
       (int) (getY() * scale),
       (int) (getWidth() * scale),
       (int) (getHeight() * scale));
+  }
+
+  /**
+   * Returns the specified polygon coordinates.
+   *
+   * @param key		{@link #KEY_POLY_X} or {@link #KEY_POLY_Y}
+   * @return		the coordinates, 0-length if none available or failed to parse
+   */
+  protected int[] getPolyCoords(String key) {
+    int[]	result;
+    String[]	parts;
+    int		i;
+
+    if (!hasPolygon()) {
+      result = new int[0];
+    }
+    else {
+      parts = m_MetaData.get(key).toString().split(",");
+      result = new int[parts.length];
+      try {
+	for (i = 0; i < parts.length; i++)
+	  result[i] = (int) Double.parseDouble(parts[i]);
+      }
+      catch (Exception e) {
+        result = new int[0];
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the X coordinates of the polygon (if any).
+   *
+   * @return		the X coordinates
+   */
+  public int[] getPolygonX() {
+    return getPolyCoords(KEY_POLY_X);
+  }
+
+  /**
+   * Returns the Y coordinates of the polygon (if any).
+   *
+   * @return		the Y coordinates
+   */
+  public int[] getPolygonY() {
+    return getPolyCoords(KEY_POLY_Y);
+  }
+
+  /**
+   * Returns the polygon, if possible.
+   *
+   * @return		the polygon, null if no/incorrect data stored
+   */
+  public Polygon getPolygon() {
+    int[]	x;
+    int[]	y;
+
+    x = getPolygonX();
+    y = getPolygonY();
+    if ((x.length == 0) || (x.length != y.length))
+      return null;
+    else
+      return new Polygon(x, y, x.length);
   }
 
   /**

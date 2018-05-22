@@ -15,7 +15,7 @@
 
 /*
  * SelectionProcessor.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.image.selection;
@@ -26,6 +26,7 @@ import adams.gui.event.ImagePanelSelectionListener;
 import adams.gui.visualization.image.ImagePanel;
 
 import java.awt.Point;
+import java.util.List;
 
 /**
  * Interface for selection processors.
@@ -43,5 +44,5 @@ public interface SelectionProcessor
    * @param bottomRight	the bottom-right position of the selection
    * @param modifiersEx	the associated modifiers
    */
-  public void processSelection(ImagePanel panel, Point topLeft, Point bottomRight, int modifiersEx);
+  public void processSelection(ImagePanel panel, Point topLeft, Point bottomRight, List<Point> trace, int modifiersEx);
 }

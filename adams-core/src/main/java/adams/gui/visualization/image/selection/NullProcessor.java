@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NullProcessor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
-import java.awt.Point;
-
 import adams.gui.visualization.image.ImagePanel;
+
+import java.awt.Point;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -40,7 +41,6 @@ import adams.gui.visualization.image.ImagePanel;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NullProcessor
   extends AbstractSelectionProcessor {
@@ -60,13 +60,14 @@ public class NullProcessor
 
   /**
    * Does nothing.
-   * 
+   *
    * @param panel	the origin
    * @param topLeft	the top-left position of the selection
    * @param bottomRight	the bottom-right position of the selection
+   * @param trace	the trace from the selection
    * @param modifiersEx	the associated modifiers
    */
   @Override
-  protected void doProcessSelection(ImagePanel panel, Point topLeft, Point bottomRight, int modifiersEx) {
+  protected void doProcessSelection(ImagePanel panel, Point topLeft, Point bottomRight, List<Point> trace, int modifiersEx) {
   }
 }

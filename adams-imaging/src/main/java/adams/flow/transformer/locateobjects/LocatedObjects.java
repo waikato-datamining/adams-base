@@ -26,6 +26,7 @@ import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+import adams.data.statistics.StatUtils;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
@@ -60,6 +61,12 @@ public class LocatedObjects
 
   /** the key for the location. */
   public final static String KEY_LOCATION = ".location";
+
+  /** the key for the Xs of the polygon. */
+  public final static String KEY_POLY_X = "." + LocatedObject.KEY_POLY_X;
+
+  /** the key for the Ys of the polygon. */
+  public final static String KEY_POLY_Y = "." + LocatedObject.KEY_POLY_Y;
 
   /** the key for the overall count. */
   public final static String KEY_COUNT = "count";
@@ -237,6 +244,8 @@ public class LocatedObjects
    * Object.1.y
    * Object.1.width
    * Object.1.height
+   * Object.1.poly_x -- if polygon data present
+   * Object.1.poly_y -- if polygon data present
    * </pre>
    *
    * @param prefix	the prefix to use
@@ -256,6 +265,8 @@ public class LocatedObjects
    * Object.1.y
    * Object.1.width
    * Object.1.height
+   * Object.1.poly_x -- if polygon data present
+   * Object.1.poly_y -- if polygon data present
    * </pre>
    *
    * @param prefix	the prefix to use
@@ -320,6 +331,17 @@ public class LocatedObjects
       field = new Field(prefix + countStr + KEY_LOCATION, DataType.STRING);
       result.addField(field);
       result.setValue(field, obj.getLocation().getValue());
+      // polygon
+      if (obj.hasPolygon()) {
+        // poly_x
+	field = new Field(prefix + countStr + KEY_POLY_X, DataType.STRING);
+	result.addField(field);
+	result.setValue(field, Utils.flatten(StatUtils.toNumberArray(obj.getPolygonX()), ","));
+	// poly_y
+	field = new Field(prefix + countStr + KEY_POLY_Y, DataType.STRING);
+	result.addField(field);
+	result.setValue(field, Utils.flatten(StatUtils.toNumberArray(obj.getPolygonY()), ","));
+      }
     }
     // count
     field = new Field(prefix + KEY_COUNT, DataType.NUMERIC);
@@ -394,6 +416,12 @@ public class LocatedObjects
 	  height = report.getDoubleValue(group + KEY_HEIGHT).intValue();
 	  obj    = new LocatedObject(null, x, y, width, height, (meta.size() > 0) ? meta : null);
 	  result.add(obj);
+	  // polygon
+	  if ( report.hasValue(group + KEY_POLY_X)
+	    && report.hasValue(group + KEY_POLY_Y)) {
+	    obj.getMetaData().put(LocatedObject.KEY_POLY_X, report.getStringValue(group + KEY_POLY_X));
+	    obj.getMetaData().put(LocatedObject.KEY_POLY_Y, report.getStringValue(group + KEY_POLY_Y));
+	  }
 	}
       }
       catch (Exception e) {

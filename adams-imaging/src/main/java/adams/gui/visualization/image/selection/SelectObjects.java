@@ -234,7 +234,7 @@ public class SelectObjects
     if (m_Locations == null)
       m_Locations = getLocations(report);
 
-    // polygon overrides topleft/bottomright
+    // polygon overrides rectangle corners
     poly = null;
     if (trace.size() > 0) {
       poly        = panel.traceToPolygon(trace);

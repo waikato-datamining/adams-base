@@ -22,6 +22,7 @@ package adams.flow.sink;
 
 import adams.core.ShallowCopySupporter;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageSupporter;
@@ -34,6 +35,8 @@ import adams.gui.visualization.image.NullOverlay;
 import adams.gui.visualization.image.leftclick.AbstractLeftClickProcessor;
 import adams.gui.visualization.image.selection.NullProcessor;
 import adams.gui.visualization.image.selection.SelectionProcessor;
+import adams.gui.visualization.image.selectionshape.RectanglePainter;
+import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -264,7 +267,7 @@ public class ImageViewer
       if (!(m_Owner.getSelectionProcessor() instanceof NullProcessor)) {
 	m_ImagePanel.addSelectionListener(m_Owner.getSelectionProcessor().shallowCopy(true));
 	m_ImagePanel.setSelectionEnabled(true);
-	m_ImagePanel.setSelectionBoxColor(m_Owner.getSelectionBoxColor());
+	m_ImagePanel.setSelectionShapePainter((SelectionShapePainter) OptionUtils.shallowCopy(m_Owner.getSelectionShapePainter()));
       }
       m_ImagePanel.clearLeftClickListeners();
       if (!(m_Owner.getLeftClickProcessor() instanceof adams.gui.visualization.image.leftclick.NullProcessor))
@@ -350,8 +353,8 @@ public class ImageViewer
   /** the click processor to apply. */
   protected AbstractLeftClickProcessor m_LeftClickProcessor;
 
-  /** the color for the selection box. */
-  protected Color m_SelectionBoxColor;
+  /** the painter for the selection shape. */
+  protected SelectionShapePainter m_SelectionShapePainter;
 
   /** the image overlay to use. */
   protected ImageOverlay m_ImageOverlay;
@@ -398,8 +401,8 @@ public class ImageViewer
 	    new adams.gui.visualization.image.leftclick.NullProcessor());
 
     m_OptionManager.add(
-	    "selection-box-color", "selectionBoxColor",
-	    Color.GRAY);
+	    "selection-shape-painter", "selectionShapePainter",
+	    new RectanglePainter());
 
     m_OptionManager.add(
 	    "image-overlay", "imageOverlay",
@@ -615,22 +618,22 @@ public class ImageViewer
   }
 
   /**
-   * Sets the color for the selection box.
+   * Sets the painter for the selection shape.
    *
-   * @param value 	the color
+   * @param value 	the painter
    */
-  public void setSelectionBoxColor(Color value) {
-    m_SelectionBoxColor = value;
+  public void setSelectionShapePainter(SelectionShapePainter value) {
+    m_SelectionShapePainter = value;
     reset();
   }
 
   /**
-   * Returns the color of the selection box.
+   * Returns the painter for the selection shape.
    *
-   * @return 		the color
+   * @return 		the painter
    */
-  public Color getSelectionBoxColor() {
-    return m_SelectionBoxColor;
+  public SelectionShapePainter getSelectionShapePainter() {
+    return m_SelectionShapePainter;
   }
 
   /**
@@ -639,8 +642,8 @@ public class ImageViewer
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String selectionBoxColorTipText() {
-    return "The color of the selection box.";
+  public String selectionShapePainterTipText() {
+    return "The painter to use for the selection shape.";
   }
 
   /**
@@ -737,7 +740,7 @@ public class ImageViewer
     if (!(m_SelectionProcessor instanceof NullProcessor)) {
       m_ImagePanel.addSelectionListener(m_SelectionProcessor.shallowCopy(true));
       m_ImagePanel.setSelectionEnabled(true);
-      m_ImagePanel.setSelectionBoxColor(m_SelectionBoxColor);
+      m_ImagePanel.setSelectionShapePainter(m_SelectionShapePainter);
     }
     m_ImagePanel.clearLeftClickListeners();
     if (!(m_LeftClickProcessor instanceof adams.gui.visualization.image.leftclick.NullProcessor))

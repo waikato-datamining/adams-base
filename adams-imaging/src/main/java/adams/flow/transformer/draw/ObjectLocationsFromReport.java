@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsFromReport.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -23,6 +23,7 @@ import adams.data.image.BufferedImageContainer;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 import java.awt.Graphics;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.List;
 
@@ -114,8 +115,12 @@ public class ObjectLocationsFromReport
         + LocatedObjects.KEY_HEIGHT + "\n"
         + "Optionally, if type information is available per object, the locations "
         + "can be displayed in distinct colors per type. The type itself can be "
-        + "displayed as well.";
+        + "displayed as well.\n"
+        + "If polygon data should be available (" + LocatedObjects.KEY_POLY_X
+        + " and " + LocatedObjects.KEY_POLY_Y + "), then this takes precedence "
+        + "over the rectangle coordinates.";
   }
+
   /**
    * Performs the actual drawing of the objects.
    *
@@ -123,23 +128,26 @@ public class ObjectLocationsFromReport
    * @param locations	the locations to paint
    * @return		null if OK, otherwise error message
    */
-  protected String doDraw(BufferedImageContainer image, List<Rectangle> locations) {
+  protected String doDraw(BufferedImageContainer image, List<Polygon> locations) {
     Graphics 	g;
     String	label;
+    Rectangle	rect;
 
     g = image.getImage().getGraphics();
     g.setColor(getColor());
     g.setFont(getLabelFont());
-    for (Rectangle rect: locations) {
+    for (Polygon poly : locations) {
       if (getUseColorsPerType()) {
-        if (m_Overlays.hasColor(rect))
-          g.setColor(m_Overlays.getColor(rect));
+        if (m_Overlays.hasColor(poly))
+          g.setColor(m_Overlays.getColor(poly));
       }
-      g.drawRect((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
-      if (m_Overlays.hasLabel(rect)) {
-        label = m_Overlays.getLabel(rect);
-        if (label != null)
-          g.drawString(label, (int) (rect.getX() + rect.getWidth() + getLabelOffsetX()), (int) (rect.getY() + getLabelOffsetY()));
+      g.drawPolygon(poly);
+      if (m_Overlays.hasLabel(poly)) {
+        label = m_Overlays.getLabel(poly);
+        if (label != null) {
+          rect = poly.getBounds();
+	  g.drawString(label, (int) (rect.getX() + rect.getWidth() + getLabelOffsetX()), (int) (rect.getY() + getLabelOffsetY()));
+	}
       }
     }
 
