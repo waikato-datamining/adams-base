@@ -24,6 +24,10 @@ import adams.core.QuickInfoHelper;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
+import java.awt.Polygon;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+
 /**
  <!-- globalinfo-start -->
  * Rotates the objects using the specified degrees.<br>
@@ -37,9 +41,9 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
- * <pre>-rotation &lt;_0|_90|_180|_270&gt; (property: rotation)
- * &nbsp;&nbsp;&nbsp;The rotation in degrees.
- * &nbsp;&nbsp;&nbsp;default: _0
+ * <pre>-angle &lt;double&gt; (property: angle)
+ * &nbsp;&nbsp;&nbsp;The rotation angle in degrees.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
  * </pre>
  *
  * <pre>-image-width &lt;int&gt; (property: imageWidth)
@@ -63,25 +67,15 @@ public class Rotate
 
   private static final long serialVersionUID = -2181381799680316619L;
 
-  /**
-   * The Rotation in degrees.
-   */
-  public enum Rotation {
-    _0,
-    _90,
-    _180,
-    _270,
-  }
-
-  /** the rotation. */
-  protected Rotation m_Rotation;
+  /** the rotation in degrees. */
+  protected double m_Angle;
 
   /** the original image width. */
   protected int m_ImageWidth;
 
   /** the original image height. */
   protected int m_ImageHeight;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -101,8 +95,8 @@ public class Rotate
     super.defineOptions();
 
     m_OptionManager.add(
-      "rotation", "rotation",
-      Rotation._0);
+      "angle", "angle",
+      0.0);
 
     m_OptionManager.add(
       "image-width", "imageWidth",
@@ -114,22 +108,22 @@ public class Rotate
   }
 
   /**
-   * Sets the rotation in degrees.
+   * Sets the rotation angle in degrees.
    *
-   * @param value	the rotation
+   * @param value	the angle
    */
-  public void setRotation(Rotation value) {
-    m_Rotation = value;
+  public void setAngle(double value) {
+    m_Angle = value;
     reset();
   }
 
   /**
-   * Returns the rotation in degrees.
+   * Returns the rotation angle in degrees.
    *
-   * @return		the rotation
+   * @return		the angle
    */
-  public Rotation getRotation() {
-    return m_Rotation;
+  public double getAngle() {
+    return m_Angle;
   }
 
   /**
@@ -138,8 +132,8 @@ public class Rotate
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String rotationTipText() {
-    return "The rotation in degrees.";
+  public String angleTipText() {
+    return "The rotation angle in degrees.";
   }
 
   /**
@@ -213,7 +207,7 @@ public class Rotate
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "rotation", m_Rotation, "degrees: ");
+    result  = QuickInfoHelper.toString(this, "angle", m_Angle, "angle: ");
 
     return result;
   }
@@ -236,57 +230,69 @@ public class Rotate
     int			yN;
     int			wN;
     int			hN;
-    int			wI;
-    int			hI;
+    double		theta;
+    boolean		hasPoly;
+    Polygon poly;
+    Point2D tl;
+    Point2D		br;
+    Point2D		tlN;
+    Point2D 		brN;
+    AffineTransform trans;
+    int[]		xpoints;
+    int[]		ypoints;
+    Point2D[]		polyP;
+    Point2D[]		polyPN;
+    int			i;
 
     result = new LocatedObjects();
-    wI     = m_ImageWidth;
-    hI     = m_ImageHeight;
+    theta  = m_Angle / 180 * Math.PI;
+    trans  = AffineTransform.getRotateInstance(theta, m_ImageWidth / 2, m_ImageHeight / 2);
+
     for (LocatedObject obj: objects) {
-      x = obj.getX();
-      y = obj.getY();
-      w = obj.getWidth();
-      h = obj.getHeight();
-
-      // x/y
-      switch (m_Rotation) {
-	case _0:
-	  xN = x;
-	  yN = y;
-	  break;
-	case _90:
-	  xN = hI - (y + h);
-	  yN = x;
-	  break;
-	case _180:
-	  xN = wI - x - w;
-	  yN = hI - y - h;
-	  break;
-	case _270:
-	  xN = y;
-	  yN = wI - x - w;
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled rotation: " + m_Rotation);
+      x       = obj.getX();
+      y       = obj.getY();
+      w       = obj.getWidth();
+      h       = obj.getHeight();
+      tl      = new Point2D.Double(x, y);
+      br      = new Point2D.Double(x + w - 1, y + h - 1);
+      tlN     = new Point2D.Double();
+      brN     = new Point2D.Double();
+      polyP   = new Point2D[0];
+      polyPN  = new Point2D[0];
+      hasPoly = obj.hasPolygon();
+      if (hasPoly) {
+	poly    = obj.getPolygon();
+	xpoints = poly.xpoints;
+	ypoints = poly.ypoints;
+	polyP   = new Point2D[xpoints.length];
+	polyPN  = new Point2D[xpoints.length];
+	for (i = 0; i < xpoints.length; i++) {
+	  polyP[i]  = new Point2D.Double(xpoints[i], ypoints[i]);
+	  polyPN[i] = new Point2D.Double();
+	}
       }
 
-      // width/height
-      switch (m_Rotation) {
-	case _0:
-	case _180:
-	  wN = w;
-	  hN = h;
-	  break;
-	case _90:
-	case _270:
-	  wN = h;
-	  hN = w;
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled rotation: " + m_Rotation);
-      }
+      trans.transform(tl, tlN);
+      trans.transform(br, brN);
+      if (hasPoly)
+	trans.transform(polyP, 0, polyPN, 0, polyP.length);
+
+      xN = (int) tlN.getX();
+      yN = (int) tlN.getY();
+      wN = (int) (brN.getX() - tlN.getX() + 1);
+      hN = (int) (brN.getY() - tlN.getY() + 1);
 
       newObj = new LocatedObject(obj.getImage(), xN, yN, wN, hN, obj.getMetaData(true));
+
+      if (hasPoly) {
+        xpoints = new int[polyPN.length];
+        ypoints = new int[polyPN.length];
+        for (i = 0; i < polyPN.length; i++) {
+          xpoints[i] = (int) polyPN[i].getX();
+          ypoints[i] = (int) polyPN[i].getY();
+	}
+	newObj.setPolygon(new Polygon(xpoints, ypoints, xpoints.length));
+      }
       result.add(newObj);
     }
 

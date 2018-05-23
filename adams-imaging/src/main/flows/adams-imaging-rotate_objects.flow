@@ -20,16 +20,16 @@ adams.flow.control.Flow -annotation "Shows how to rotate object annotations." -f
   adams.flow.sink.CallableSink -callable DisplayPanelManager
  adams.flow.control.Tee -name 90
   adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Rotate -angle 90.0"
-  adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Rotate -rotation _90 -image-width @{width} -image-height @{height}"
+  adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Rotate -angle 90 -image-width @{width} -image-height @{height}"
   adams.flow.transformer.SetVariable -var-name degrees -var-value 90
   adams.flow.sink.CallableSink -callable DisplayPanelManager
  adams.flow.control.Tee -name 180
   adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Rotate -angle 180.0"
-  adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Rotate -rotation _180 -image-width @{width} -image-height @{height}"
+  adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Rotate -angle 180 -image-width @{width} -image-height @{height}"
   adams.flow.transformer.SetVariable -var-name degrees -var-value 180
   adams.flow.sink.CallableSink -callable DisplayPanelManager
  adams.flow.control.Tee -name 270
   adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Rotate -angle 270.0"
-  adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Rotate -rotation _270 -image-width @{width} -image-height @{height}"
+  adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Rotate -angle 270 -image-width @{width} -image-height @{height}"
   adams.flow.transformer.SetVariable -var-name degrees -var-value 270
   adams.flow.sink.CallableSink -callable DisplayPanelManager
