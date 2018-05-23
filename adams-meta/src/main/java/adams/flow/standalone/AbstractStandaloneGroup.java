@@ -15,7 +15,7 @@
 
 /*
  * AbstractStandaloneGroup.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -34,7 +34,6 @@ import java.util.List;
  * Ancestor for fixed-sized groups.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of sub-actor
  */
 public abstract class AbstractStandaloneGroup<T extends Actor>
@@ -353,7 +352,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
 
     result = false;
     for (i = 0; i < size(); i++) {
-      if (get(i).getClass().equals(actor)) {
+      if (get(i).getClass().equals(actor) && !get(i).getSkip()) {
         result = true;
         break;
       }
@@ -376,7 +375,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
 
     result = new ArrayList<>();
     for (i = 0; i < size(); i++) {
-      if (get(i).getClass().equals(actor)) {
+      if (get(i).getClass().equals(actor) && !get(i).getSkip()) {
         result.add((A) get(i));
         break;
       }
@@ -398,8 +397,10 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     
     super.forceVariables(value);
     
-    for (i = 0; i < size(); i++)
-      get(i).setVariables(value);
+    for (i = 0; i < size(); i++) {
+      if (!get(i).getSkip())
+        get(i).setVariables(value);
+    }
   }
 
   /**
