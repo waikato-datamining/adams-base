@@ -620,7 +620,7 @@ public class FlowPanel
 	m_Warnings.addAll(reader.getWarnings());
 	setCurrentFlow(m_Flow);
 	redraw();
-	requestFocus();
+	getTree().requestFocus();
 
 	showStatus("");
 
@@ -855,6 +855,7 @@ public class FlowPanel
       @Override
       protected Object doInBackground() throws Exception {
         getTree().setExpandedFullNames(expanded);
+        getTree().requestFocus();
 	return null;
       }
     };
@@ -925,7 +926,7 @@ public class FlowPanel
 	    m_RecentFilesHandler.addRecentItem(new Setup(file, writer.getCorrespondingReader()));
 	  setCurrentFile(file);
 	  m_FlowFileMonitor.initialize(file);
-	  requestFocus();
+	  getTree().requestFocus();
 	}
 
 	update();
@@ -1195,6 +1196,7 @@ public class FlowPanel
       protected void done() {
         super.done();
         SwingUtilities.invokeLater(() ->  {
+          getTree().requestFocus();
 	  update();
 	  showStatus("");
 	});
@@ -1228,6 +1230,7 @@ public class FlowPanel
       @Override
       protected void done() {
         super.done();
+	getTree().requestFocus();
 	update();
 	showStatus("");
       }

@@ -49,7 +49,6 @@ public class FileRevert
   @Override
   protected void doActionPerformed(ActionEvent e) {
     m_State.getCurrentPanel().revert();
-    m_State.getCurrentPanel().requestFocus();
   }
 
   /**
