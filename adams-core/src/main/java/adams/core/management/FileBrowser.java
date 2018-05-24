@@ -15,21 +15,26 @@
 
 /**
  * FileBrowser.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.management;
 
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
+
 import java.awt.Desktop;
 import java.io.File;
+import java.util.logging.Level;
 
 /**
  * Allows to launch the OS-specific file browser.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileBrowser {
+
+  protected static Logger LOGGER = LoggingHelper.getLogger(FileBrowser.class);
 
   /**
    * Launches the file browser with the user's home directory.
@@ -57,8 +62,7 @@ public class FileBrowser {
       return true;
     }
     catch (Exception e) {
-      System.err.println("Failed to launch file browser:");
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to launch file browser:", e);
       return false;
     }
   }

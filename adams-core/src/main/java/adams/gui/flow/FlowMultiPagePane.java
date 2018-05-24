@@ -423,15 +423,20 @@ public class FlowMultiPagePane
   protected BasePopupMenu createPopup(MouseEvent e) {
     BasePopupMenu	result;
     JMenuItem 		menuitem;
+    String		group;
 
     result = super.createPopup(e);
 
-    result.addSeparator();
-
+    group = "";
     for (AbstractMultiPageMenuItem item: m_MenuItems) {
       menuitem = item.getMenuItem(this);
-      if (menuitem != null)
+      if (menuitem != null) {
+	if (!item.getGroup().equals(group)) {
+	  result.addSeparator();
+	  group = item.getGroup();
+	}
 	result.add(menuitem);
+      }
     }
 
     return result;

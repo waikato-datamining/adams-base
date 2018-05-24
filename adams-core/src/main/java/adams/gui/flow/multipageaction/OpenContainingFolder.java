@@ -14,23 +14,24 @@
  */
 
 /*
- * CleanUp.java
+ * OpenContainingFolder.java
  * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.multipageaction;
 
+import adams.core.management.FileBrowser;
 import adams.gui.flow.FlowMultiPagePane;
 
 import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
 
 /**
- * Cleans up.
+ * Opens the folder in the system's file browser that this flow is stored in.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class CleanUp
+public class OpenContainingFolder
   extends AbstractMultiPageMenuItem {
 
   private static final long serialVersionUID = 1297273340581059101L;
@@ -41,7 +42,7 @@ public class CleanUp
    * @return		the name
    */
   public String getName() {
-    return "Clean up";
+    return "Open containing folder";
   }
 
   /**
@@ -59,7 +60,7 @@ public class CleanUp
    * @return		the name
    */
   public String getIconName() {
-    return "close_window.png";
+    return "filebrowser.png";
   }
 
   /**
@@ -71,15 +72,11 @@ public class CleanUp
     result = new JMenuItem(getName());
     result.setIcon(getIcon());
     result.setEnabled(
-      multi.hasCurrentPanel()
-	&& !multi.getCurrentPanel().isRunning()
-	&& !multi.getCurrentPanel().isStopping()
-	&& !multi.getCurrentPanel().isSwingWorkerRunning()
-	&& (multi.getCurrentPanel().getLastFlow() != null));
-    result.addActionListener((ActionEvent ae) -> {
-      multi.getCurrentPanel().clearNotification();
-      multi.getCurrentPanel().cleanUp();
-    });
+      multi.hasCurrentPanel() && (multi.getCurrentPanel().getCurrentFile() != null));
+    if (result.isEnabled()) {
+      result.addActionListener((ActionEvent ae) ->
+	FileBrowser.launch(multi.getCurrentPanel().getCurrentFile()));
+    }
 
     return result;
   }

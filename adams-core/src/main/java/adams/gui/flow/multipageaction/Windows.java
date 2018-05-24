@@ -50,6 +50,24 @@ public class Windows
   }
 
   /**
+   * The name of the group this item belongs to.
+   *
+   * @return		the name
+   */
+  public String getGroup() {
+    return "Admin";
+  }
+
+  /**
+   * The name of the icon to use.
+   *
+   * @return		the name
+   */
+  public String getIconName() {
+    return "windows.png";
+  }
+
+  /**
    * Creates the menu item.
    */
   public JMenuItem getMenuItem(FlowMultiPagePane multi) {
@@ -65,6 +83,7 @@ public class Windows
         windows = ((Flow) multi.getCurrentPanel().getLastFlow().getRoot()).getWindowRegister();
     }
     result = new BaseMenu(getName());
+    result.setIcon(getIcon());
     result.setEnabled((windows != null) && windows.size() > 0);
     if (windows != null) {
       for (final Window window: windows.keySet()) {

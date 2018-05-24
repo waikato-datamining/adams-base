@@ -21,8 +21,10 @@
 package adams.gui.flow.multipageaction;
 
 import adams.core.logging.LoggingObject;
+import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowMultiPagePane;
 
+import javax.swing.Icon;
 import javax.swing.JMenuItem;
 
 /**
@@ -44,6 +46,32 @@ public abstract class AbstractMultiPageMenuItem
   public abstract String getName();
 
   /**
+   * The name of the group this item belongs to.
+   *
+   * @return		the name
+   */
+  public abstract String getGroup();
+
+  /**
+   * The name of the icon to use.
+   *
+   * @return		the name
+   */
+  public abstract String getIconName();
+
+  /**
+   * Returns the icon to use.
+   *
+   * @return		the icon
+   */
+  protected Icon getIcon() {
+    if (getIconName() == null)
+      return GUIHelper.getEmptyIcon();
+    else
+      return GUIHelper.getIcon(getIconName());
+  }
+
+  /**
    * Creates the menu item.
    */
   public abstract JMenuItem getMenuItem(FlowMultiPagePane multi);
@@ -56,7 +84,13 @@ public abstract class AbstractMultiPageMenuItem
    */
   @Override
   public int compareTo(AbstractMultiPageMenuItem o) {
-    return getName().compareTo(o.getName());
+    int		result;
+
+    result = getGroup().compareTo(o.getGroup());
+    if (result == 0)
+      result = getName().compareTo(o.getName());
+
+    return result;
   }
 
   /**

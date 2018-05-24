@@ -1062,6 +1062,7 @@ public class MultiPagePane
 
     // remove
     menuitem = new JMenuItem("Remove");
+    menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
     menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
     menuitem.setEnabled(index > -1);
     menuitem.addActionListener((ActionEvent ae) -> checkedRemovePageAt(index));
@@ -1069,6 +1070,7 @@ public class MultiPagePane
 
     // remove all
     menuitem = new JMenuItem("Remove all");
+    menuitem.setIcon(GUIHelper.getIcon("delete_all.gif"));
     menuitem.setEnabled(m_PageListModel.getSize() > 0);
     menuitem.addActionListener((ActionEvent ae) -> checkedRemoveAllPages());
     result.add(menuitem);
@@ -1080,11 +1082,13 @@ public class MultiPagePane
       result.addSeparator();
       if (detach.isDetached()) {
 	menuitem = new JMenuItem("Reattach");
+	menuitem.setIcon(GUIHelper.getIcon("minimize.png"));
 	menuitem.addActionListener((ActionEvent ae) -> detach.reattach());
 	result.add(menuitem);
       }
       else {
 	menuitem = new JMenuItem("Detach");
+	menuitem.setIcon(GUIHelper.getIcon("maximize.png"));
 	menuitem.addActionListener((ActionEvent ae) -> {
 	  updateTitle(title, detach);
 	  detach.detach();
