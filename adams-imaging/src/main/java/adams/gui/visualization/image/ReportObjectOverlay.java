@@ -19,6 +19,7 @@
  */
 package adams.gui.visualization.image;
 
+import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.report.AbstractField;
@@ -65,6 +66,9 @@ public class ReportObjectOverlay
 
   /** the suffix for the type. */
   protected String m_TypeSuffix;
+
+  /** the regular expression for the types to draw. */
+  protected BaseRegExp m_TypeRegExp;
 
   /** the label for the rectangles. */
   protected String m_LabelFormat;
@@ -129,6 +133,10 @@ public class ReportObjectOverlay
     m_OptionManager.add(
 	"type-suffix", "typeSuffix",
 	".type");
+
+    m_OptionManager.add(
+	"type-regexp", "typeRegExp",
+	new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
 	"label-format", "labelFormat",
@@ -307,6 +315,37 @@ public class ReportObjectOverlay
    */
   public String typeSuffixTipText() {
     return "The suffix of fields in the report to identify the type.";
+  }
+
+  /**
+   * Sets the regular expression that the types must match in order to get
+   * drawn.
+   *
+   * @param value 	the expression
+   */
+  public void setTypeRegExp(BaseRegExp value) {
+    m_TypeRegExp = value;
+    reset();
+  }
+
+  /**
+   * Returns the regular expression that the types must match in order to get
+   * drawn.
+   *
+   * @return 		the expression
+   */
+  public BaseRegExp getTypeRegExp() {
+    return m_TypeRegExp;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeRegExpTipText() {
+    return "The regular expression that the types must match in order to get drawn (eg only plotting a subset).";
   }
 
   /**
@@ -500,19 +539,24 @@ public class ReportObjectOverlay
     for (LocatedObject object: located) {
       if (object.hasPolygon()) {
         poly = object.getPolygon();
-        m_Locations.add(poly);
       }
       else {
 	poly_x = new int[]{object.getX(), object.getX() + object.getWidth() - 1, object.getX() + object.getWidth() - 1, object.getX()};
 	poly_y = new int[]{object.getY(), object.getY(), object.getY() + object.getHeight() - 1, object.getY() + object.getHeight() - 1};
 	poly   = new Polygon(poly_x, poly_y, poly_x.length);
-	m_Locations.add(poly);
       }
 
       color = m_Color;
 
       if (!suffix.isEmpty() && (object.getMetaData() != null) && (object.getMetaData().containsKey(suffix))) {
 	type  = "" + object.getMetaData().get(suffix);
+
+	// draw type?
+	if (!m_TypeRegExp.isMatchAll()) {
+	  if (!m_TypeRegExp.isMatch(type))
+	    continue;
+	}
+
 	// color per type?
 	if (m_UseColorsPerType) {
 	  if (m_TypeColors.containsKey(type))
@@ -540,6 +584,7 @@ public class ReportObjectOverlay
       }
 
       m_Colors.put(poly, color);
+      m_Locations.add(poly);
     }
   }
 

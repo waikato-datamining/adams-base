@@ -91,13 +91,18 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 198 $
  */
 public class ObjectLocationsOverlayFromReport
   extends AbstractObjectOverlayFromReport {
 
   /** for serialization. */
   private static final long serialVersionUID = 6356419097401574024L;
+
+  /** whether to draw the shape filled. */
+  protected boolean m_Filled;
+
+  /** whether to draw the bounds of the polygon as well. */
+  protected boolean m_PolygonBounds;
 
   /**
    * Returns a string describing the object.
@@ -116,7 +121,84 @@ public class ObjectLocationsOverlayFromReport
         + LocatedObjects.KEY_HEIGHT + "\n"
         + "Optionally, if type information is available per object, the locations "
         + "can be displayed in distinct colors per type. The type itself can be "
-        + "displayed as well.";
+        + "displayed as well.\n"
+        + "If polygon data should be available (" + LocatedObjects.KEY_POLY_X
+        + " and " + LocatedObjects.KEY_POLY_Y + "), then this takes precedence "
+        + "over the rectangle coordinates.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "filled", "filled",
+      false);
+
+    m_OptionManager.add(
+      "polygon-bounds", "polygonBounds",
+      false);
+  }
+
+  /**
+   * Sets whether to draw the shape filled.
+   *
+   * @param value 	true if to fill
+   */
+  public void setFilled(boolean value) {
+    m_Filled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to draw the shape filled.
+   *
+   * @return 		true if to fill
+   */
+  public boolean getFilled() {
+    return m_Filled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String filledTipText() {
+    return "If enabled, the shape is drawn filled.";
+  }
+
+  /**
+   * Sets whether to draw the polygon bounds.
+   *
+   * @param value 	true if to draw bounds
+   */
+  public void setPolygonBounds(boolean value) {
+    m_PolygonBounds = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to draw the polygon bounds.
+   *
+   * @return 		true if to draw bounds
+   */
+  public boolean getPolygonBounds() {
+    return m_PolygonBounds;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String polygonBoundsTipText() {
+    return "If enabled, the polygon bounds are drawn as well.";
   }
 
   /**
@@ -137,11 +219,20 @@ public class ObjectLocationsOverlayFromReport
         if (m_Overlays.hasColor(poly))
           g.setColor(m_Overlays.getColor(poly));
       }
-      g.drawPolygon(poly);
+      if (m_Filled)
+        g.fillPolygon(poly);
+      else
+	g.drawPolygon(poly);
+      rect = null;
+      if (m_PolygonBounds) {
+	rect = poly.getBounds();
+	g.drawRect(rect.x, rect.y, rect.width, rect.height);
+      }
       if (m_Overlays.hasLabel(poly)) {
         label = m_Overlays.getLabel(poly);
         if (label != null) {
-          rect = poly.getBounds();
+          if (rect == null)
+	    rect = poly.getBounds();
 	  g.drawString(label, (int) (rect.getX() + rect.getWidth() + getLabelOffsetX()), (int) (rect.getY() + getLabelOffsetY()));
 	}
       }

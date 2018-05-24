@@ -19,6 +19,7 @@
  */
 package adams.flow.transformer.draw;
 
+import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.data.image.BufferedImageContainer;
 import adams.gui.core.Fonts;
@@ -71,6 +72,10 @@ public abstract class AbstractDrawObjectsFromReport
     m_OptionManager.add(
 	"type-suffix", "typeSuffix",
 	".type");
+
+    m_OptionManager.add(
+	"type-regexp", "typeRegExp",
+	new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
 	"label-format", "labelFormat",
@@ -246,6 +251,37 @@ public abstract class AbstractDrawObjectsFromReport
    */
   public String typeSuffixTipText() {
     return m_Overlays.typeSuffixTipText();
+  }
+
+  /**
+   * Sets the regular expression that the types must match in order to get
+   * drawn.
+   *
+   * @param value 	the expression
+   */
+  public void setTypeRegExp(BaseRegExp value) {
+    m_Overlays.setTypeRegExp(value);
+    reset();
+  }
+
+  /**
+   * Returns the regular expression that the types must match in order to get
+   * drawn.
+   *
+   * @return 		the expression
+   */
+  public BaseRegExp getTypeRegExp() {
+    return m_Overlays.getTypeRegExp();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeRegExpTipText() {
+    return m_Overlays.typeRegExpTipText();
   }
 
   /**
