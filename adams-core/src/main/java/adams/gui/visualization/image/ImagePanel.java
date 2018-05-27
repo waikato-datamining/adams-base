@@ -48,6 +48,7 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.CustomPopupMenuProvider;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
+import adams.gui.core.PopupMenuCustomizer;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.Undo;
@@ -478,6 +479,7 @@ public class ImagePanel
       int[]		zooms;
       int		i;
       Undo		undo;
+      boolean		first;
 
       menu = null;
       if (m_CustomPopupMenuProvider != null)
@@ -573,6 +575,18 @@ public class ImagePanel
 	    else
 	      setScale((double) fZoom / 100);
 	  });
+	}
+      }
+
+      // do overlays customize the popup?
+      first = true;
+      for (ImageOverlay overlay: m_ImageOverlays) {
+        if (overlay instanceof PopupMenuCustomizer) {
+          if (first) {
+            menu.addSeparator();
+            first = false;
+	  }
+	  ((PopupMenuCustomizer) overlay).customizePopupMenu(this, menu);
 	}
       }
 

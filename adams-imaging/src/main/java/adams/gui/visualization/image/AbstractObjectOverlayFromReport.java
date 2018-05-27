@@ -22,14 +22,19 @@ package adams.gui.visualization.image;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Polygon;
+import java.awt.event.ActionEvent;
 import java.util.List;
 
 /**
@@ -38,7 +43,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractObjectOverlayFromReport
-  extends AbstractImageOverlay {
+  extends AbstractImageOverlay
+  implements PopupMenuCustomizer<PaintPanel> {
 
   /** for serialization. */
   private static final long serialVersionUID = 6356419097401574024L;
@@ -462,5 +468,31 @@ public abstract class AbstractObjectOverlayFromReport
     m_Overlays.determineLocations(panel.getOwner().getAdditionalProperties());
     if (m_Overlays.hasLocations())
       doPaintObjects(panel, g, m_Overlays.getLocations());
+  }
+
+  /**
+   * For customizing the popup menu.
+   *
+   * @param source	the source, e.g., event
+   * @param menu	the menu to customize
+   */
+  public void customizePopupMenu(PaintPanel source, JPopupMenu menu) {
+    JMenuItem		menuitem;
+
+    if (!getTypeSuffix().isEmpty()) {
+      menuitem = new JMenuItem("Displayed types", GUIHelper.getIcon("objecttypes.gif"));
+      menuitem.addActionListener((ActionEvent e) -> {
+        String type = GUIHelper.showInputDialog(source, "Regular expression for type", getTypeRegExp().getValue());
+        if (type == null)
+          return;
+        if (!getTypeRegExp().isValid(type)) {
+          GUIHelper.showErrorMessage(source, "Invalid regular expression: " + type);
+          return;
+	}
+	setTypeRegExp(new BaseRegExp(type));
+        source.update();
+      });
+      menu.add(menuitem);
+    }
   }
 }
