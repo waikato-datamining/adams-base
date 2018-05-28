@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DatasetCompatibilityPanel.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
 import adams.core.Utils;
+import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
@@ -48,7 +49,6 @@ import java.io.File;
  * Compares the headers of a number of datasets and outputs the results.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatasetCompatibilityPanel
   extends BasePanel 
@@ -58,7 +58,7 @@ public class DatasetCompatibilityPanel
   private static final long serialVersionUID = -5581002075106885237L;
 
   /** the filechooser for selecting the datasets. */
-  protected ConverterFileChooser m_FileChooser;
+  protected WekaFileChooser m_FileChooser;
   
   /** the text area to output the results in. */
   protected BaseTextArea m_TextArea;
@@ -82,7 +82,7 @@ public class DatasetCompatibilityPanel
   protected void initialize() {
     super.initialize();
     
-    m_FileChooser = new ConverterFileChooser(".");
+    m_FileChooser = new WekaFileChooser(".");
     m_FileChooser.setMultiSelectionEnabled(true);
     m_FileChooser.setFileMustExist(true);
     
@@ -207,7 +207,7 @@ public class DatasetCompatibilityPanel
       return;
     }
     
-    open(m_FileChooser.getSelectedFiles(), m_FileChooser.getLoader());
+    open(m_FileChooser.getSelectedFiles(), m_FileChooser.getReader());
   }
 
   /**
