@@ -1,7 +1,6 @@
 # Configuration file for the Image viewer.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # The initial directory for loading setups.
 # the following placeholders are recognized
@@ -22,10 +21,10 @@ ZoomLevel=-100
 ShowProperties=True
 
 # The preferred width of the properties
-PropertiesWidth=400
+PropertiesWidth=300
 
 # The width of the image (the rest is for the properties)
-DividerLocation=800
+DividerLocation=600
 
 # Whether to show the log
 ShowLog=True

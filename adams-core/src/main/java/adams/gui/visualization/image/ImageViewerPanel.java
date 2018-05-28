@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageViewerPanel.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -71,7 +71,6 @@ import java.io.File;
  * A simple image viewer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageViewerPanel
   extends BasePanel
@@ -162,7 +161,7 @@ public class ImageViewerPanel
   protected ImageViewerPluginManager m_PluginManager;
 
   /** the tabbed pane with the images. */
-  protected ImageTabbedPane m_TabbedPane;
+  protected ImageMultiPagePane m_MultiPagePane;
 
   /** the recent files handler. */
   protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
@@ -210,16 +209,15 @@ public class ImageViewerPanel
     
     setLayout(new BorderLayout());
 
-    m_TabbedPane = new ImageTabbedPane(this);
-    m_TabbedPane.setCloseTabsWithMiddleMouseButton(true);
-    m_TabbedPane.addChangeListener(new ChangeListener() {
+    m_MultiPagePane = new ImageMultiPagePane(this);
+    m_MultiPagePane.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
 	if (getCurrentPanel() != null)
 	  getCurrentPanel().showStatus("");
 	update();
       }
     });
-    add(m_TabbedPane, BorderLayout.CENTER);
+    add(m_MultiPagePane, BorderLayout.CENTER);
 
     addMouseListener(new MouseAdapter() {
       @Override
@@ -239,7 +237,7 @@ public class ImageViewerPanel
    */
   protected void update() {
     updateTitle();
-    m_TabbedPane.updateTabTitles();
+    m_MultiPagePane.updateTabTitles();
     updateMenu();
   }
   
@@ -336,7 +334,7 @@ public class ImageViewerPanel
    * @return		the image panel, null if none available
    */
   public ImagePanel getCurrentPanel() {
-    return m_TabbedPane.getCurrentPanel();
+    return m_MultiPagePane.getCurrentPanel();
   }
 
   /**
@@ -346,7 +344,7 @@ public class ImageViewerPanel
    * @return		the image panel, null if none available
    */
   public ImagePanel getPanelAt(int index) {
-    return m_TabbedPane.getPanelAt(index);
+    return m_MultiPagePane.getPanelAt(index);
   }
 
   /**
@@ -355,7 +353,7 @@ public class ImageViewerPanel
    * @return		the image panels
    */
   public ImagePanel[] getAllPanels() {
-    return m_TabbedPane.getAllPanels();
+    return m_MultiPagePane.getAllPanels();
   }
 
   /**
@@ -364,7 +362,7 @@ public class ImageViewerPanel
    * @return		the current image, can be null
    */
   public BufferedImage getCurrentImage() {
-    return m_TabbedPane.getCurrentImage();
+    return m_MultiPagePane.getCurrentImage();
   }
 
   /**
@@ -374,7 +372,7 @@ public class ImageViewerPanel
    * @return		the current image, can be null
    */
   public BufferedImage getImageAt(int index) {
-    return m_TabbedPane.getImageAt(index);
+    return m_MultiPagePane.getImageAt(index);
   }
 
   /**
@@ -383,7 +381,7 @@ public class ImageViewerPanel
    * @return		the current filename, can be null
    */
   public File getCurrentFile() {
-    return m_TabbedPane.getCurrentFile();
+    return m_MultiPagePane.getCurrentFile();
   }
 
   /**
@@ -393,7 +391,7 @@ public class ImageViewerPanel
    * @return		the current filename, can be null
    */
   public File getFileAt(int index) {
-    return m_TabbedPane.getFileAt(index);
+    return m_MultiPagePane.getFileAt(index);
   }
 
   /**
@@ -806,7 +804,7 @@ public class ImageViewerPanel
    * @param reader	the reader to use, null for auto-detection
    */
   public void load(File file, AbstractImageReader reader) {
-    if (m_TabbedPane.load(file, reader)) {
+    if (m_MultiPagePane.load(file, reader)) {
       if (m_RecentFilesHandler != null)
 	m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
     }
@@ -822,7 +820,7 @@ public class ImageViewerPanel
     ImagePanel		panel;
     int			index;
 
-    index = m_TabbedPane.getSelectedIndex();
+    index = m_MultiPagePane.getSelectedIndex();
     if (index == -1)
       return;
     panel = getPanelAt(index);
@@ -840,7 +838,7 @@ public class ImageViewerPanel
 	  this, "Failed to write image to '" + file + "'!");
     }
     else {
-      m_TabbedPane.setTitleAt(index, file.getName());
+      m_MultiPagePane.setTitleAt(index, file.getName());
       if (m_RecentFilesHandler != null)
 	m_RecentFilesHandler.addRecentItem(
 	    new Setup(file, m_FileChooser.getImageWriter().getCorrespondingReader()));
@@ -858,14 +856,14 @@ public class ImageViewerPanel
     boolean	canClose;
 
     canClose = false;
-    index    = m_TabbedPane.getSelectedIndex();
+    index    = m_MultiPagePane.getSelectedIndex();
     panel    = getPanelAt(index);
     if (panel != null)
-      canClose = m_TabbedPane.checkForModified(panel);
+      canClose = m_MultiPagePane.checkForModified(panel);
 
     if (canClose) {
       panel.cleanUp();
-      m_TabbedPane.remove(index);
+      m_MultiPagePane.remove(index);
       update();
     }
   }
@@ -877,11 +875,11 @@ public class ImageViewerPanel
     int		i;
 
     i = 0;
-    while (i < m_TabbedPane.getTabCount()) {
-      if (!m_TabbedPane.checkForModified(m_TabbedPane.getPanelAt(i)))
+    while (i < m_MultiPagePane.getPageCount()) {
+      if (!m_MultiPagePane.checkForModified(m_MultiPagePane.getPanelAt(i)))
 	return;
       else
-	m_TabbedPane.remove(i);
+	m_MultiPagePane.removePageAt(i);
     }
 
     if (getParentFrame() != null) {

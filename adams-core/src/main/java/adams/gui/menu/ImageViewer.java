@@ -15,7 +15,7 @@
 
 /*
  * ImageViewer.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -30,7 +30,6 @@ import adams.gui.core.GUIHelper;
  * For displaying images.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageViewer
   extends AbstractParameterHandlingMenuItemDefinition {
@@ -70,7 +69,7 @@ public class ImageViewer
   @Override
   public void launch() {
     adams.gui.visualization.image.ImageViewerPanel panel = new adams.gui.visualization.image.ImageViewerPanel();
-    createChildFrame(panel, GUIHelper.getDefaultLargeDialogDimension());
+    createChildFrame(panel, GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
     for (int i = 0; i < m_Parameters.length; i++)
       panel.load(new PlaceholderFile(m_Parameters[i]));
   }

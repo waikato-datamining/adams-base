@@ -13,30 +13,28 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * ImageTabbedPane.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+/*
+ * ImageMultiPagePane.java
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
 import adams.core.Properties;
 import adams.data.io.input.AbstractImageReader;
-import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MultiPagePane;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**
- * Specialized {@link BaseTabbedPane} for managing images.
+ * Specialized {@link MultiPagePane} for managing images.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class ImageTabbedPane
-  extends DragAndDropTabbedPane {
+public class ImageMultiPagePane
+  extends MultiPagePane {
 
   /** for serialization. */
   private static final long serialVersionUID = 4949565559707097445L;
@@ -49,10 +47,15 @@ public class ImageTabbedPane
    * 
    * @param owner	the viewer this pane belongs to
    */
-  public ImageTabbedPane(ImageViewerPanel owner) {
+  public ImageMultiPagePane(ImageViewerPanel owner) {
     super();
     m_Owner = owner;
-    setShowCloseTabButton(true);
+    setPageCloseApprover(new PageCloseApprover() {
+      @Override
+      public boolean approvePageClosing(MultiPagePane source, int index) {
+        return checkForModified((ImagePanel) source.getPageAt(index));
+      }
+    });
   }
   
   /**
@@ -80,10 +83,10 @@ public class ImageTabbedPane
    * @return		the image panel, null if none available
    */
   public ImagePanel getPanelAt(int index) {
-    if ((index < 0) || (index >= getTabCount()))
+    if ((index < 0) || (index >= getPageCount()))
       return null;
     else
-      return (ImagePanel) getComponentAt(index);
+      return (ImagePanel) getPageAt(index);
   }
 
   /**
@@ -95,9 +98,9 @@ public class ImageTabbedPane
     ImagePanel[]	result;
     int			i;
     
-    result = new ImagePanel[getTabCount()];
-    for (i = 0; i < getTabCount(); i++)
-      result[i] = (ImagePanel) getComponentAt(i);
+    result = new ImagePanel[getPageCount()];
+    for (i = 0; i < getPageCount(); i++)
+      result[i] = (ImagePanel) getPageAt(i);
     
     return result;
   }
@@ -197,27 +200,12 @@ public class ImageTabbedPane
   }
 
   /**
-   * Hook method that checks whether the specified tab can really be closed
-   * with a click of the middle mouse button.
-   * <br><br>
-   * Checks modified state.
-   *
-   * @param index	the tab index
-   * @return		true if tab can be closed
-   * @see		#getCloseTabsWithMiddelMouseButton()
-   */
-  @Override
-  protected boolean canCloseTabWithMiddleMouseButton(int index) {
-    return checkForModified((ImagePanel) getComponentAt(index));
-  }
-
-  /**
    * Updates the title of all tabs, takes modified state into account.
    */
   public void updateTabTitles() {
     int		i;
     
-    for (i = 0; i < getTabCount(); i++)
+    for (i = 0; i < getPageCount(); i++)
       updateTabTitle(i);
   }
 
@@ -287,10 +275,10 @@ public class ImageTabbedPane
     else {
       panel.setShowProperties(props.getBoolean("ShowProperties", true));
       panel.setShowLog(props.getBoolean("ShowLog", true));
-      panel.getSplitPane().setDividerLocation(props.getInteger("DividerLocation", 500));
+      panel.getSplitPane().setDividerLocation(props.getInteger("DividerLocation", 600));
       panel.getPropertiesScrollPane().setPreferredSize(new Dimension(props.getInteger("PropertiesWidth", 300), 100));
-      addTab(file.getName(), panel);
-      setSelectedComponent(panel);
+      addPage(file.getName(), panel);
+      setSelectedPage(panel);
       return true;
     }
   }
