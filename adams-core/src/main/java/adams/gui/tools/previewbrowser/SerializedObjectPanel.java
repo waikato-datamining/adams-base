@@ -13,28 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SerializedObjectPanel.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
+import adams.core.Properties;
+import adams.core.option.OptionUtils;
+import adams.env.Environment;
+import adams.gui.core.BasePanel;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import adams.core.Properties;
-import adams.core.option.OptionUtils;
-import adams.env.Environment;
-import adams.gui.core.BasePanel;
 
 /**
  * Panel for displaying a serialized object.
@@ -172,6 +171,9 @@ public class SerializedObjectPanel
   protected void updateView(SerializedObjectViewer viewer) {
     m_PanelView.removeAll();
     m_PanelView.add(viewer.getPreview(m_Current), BorderLayout.CENTER);
+    m_PanelView.invalidate();
+    m_PanelView.revalidate();
+    m_PanelView.repaint();
   }
   
   /**
