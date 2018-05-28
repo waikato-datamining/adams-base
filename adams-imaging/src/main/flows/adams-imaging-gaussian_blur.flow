@@ -1,5 +1,6 @@
 # Project: adams
-# Date: 2017-12-20 10:49:10
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+# Date: 2018-05-29 11:21:12
 # User: fracpete
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "Loads images from disk and displays the originals\\nand the blurred ones side by side." -flow-execution-listener adams.flow.execution.NullListener
@@ -9,8 +10,8 @@ adams.flow.control.Flow -annotation "Loads images from disk and displays the ori
   adams.flow.transformer.SetVariable -var-name name
  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
  adams.flow.control.Branch
-  adams.flow.control.Sequence -name grey
+  adams.flow.control.Sequence -name blurred
    adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.GaussianBlur -radius 10.0"
-   adams.flow.sink.DisplayPanelManager -name Blurred -short-title true -width 700 -height 550 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
-  adams.flow.control.Sequence -name color
-   adams.flow.sink.DisplayPanelManager -name Original -short-title true -width 700 -height 550 -x -3 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
+   adams.flow.sink.DisplayPanelManager -name Blurred -short-title true -width 700 -height 550 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
+  adams.flow.control.Sequence -name original
+   adams.flow.sink.DisplayPanelManager -name Original -short-title true -width 700 -height 550 -x -3 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
