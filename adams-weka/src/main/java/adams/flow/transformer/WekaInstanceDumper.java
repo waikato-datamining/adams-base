@@ -15,7 +15,7 @@
 
 /*
  * WekaInstanceDumper.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -25,6 +25,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.flow.core.FlushSupporter;
 import adams.flow.core.Token;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -127,11 +128,10 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaInstanceDumper
   extends AbstractTransformer
-  implements BufferSupporter {
+  implements BufferSupporter, FlushSupporter  {
 
   /** for serialization. */
   private static final long serialVersionUID = 5071747277597147724L;
@@ -766,8 +766,7 @@ public class WekaInstanceDumper
    * @return		null if everything is fine, otherwise error message
    */
   protected String updateVariables() {
-    if (m_Buffer.size() > 0)
-      writeToDisk(true);
+    performFlush();
     return super.updateVariables();
   }
 
@@ -842,11 +841,18 @@ public class WekaInstanceDumper
   @Override
   public void wrapUp() {
     // write any left over data to disk
-    if (m_Buffer.size() > 0)
-      writeToDisk(true);
+    performFlush();
     
     super.wrapUp();
 
     m_Header = null;
+  }
+
+  /**
+   * Performs the flush.
+   */
+  public void performFlush() {
+    if (m_Buffer.size() > 0)
+      writeToDisk(true);
   }
 }

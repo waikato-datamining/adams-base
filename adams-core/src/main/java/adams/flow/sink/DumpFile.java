@@ -27,6 +27,7 @@ import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
+import adams.flow.core.FlushSupporter;
 import adams.flow.core.Unknown;
 
 import java.util.ArrayList;
@@ -120,7 +121,8 @@ import java.util.List;
  */
 public class DumpFile
   extends AbstractAppendableFileWriter 
-  implements EncodingSupporter, MultiAttemptWithWaitSupporter, BufferSupporter {
+  implements EncodingSupporter, MultiAttemptWithWaitSupporter, BufferSupporter,
+             FlushSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -366362262032858011L;
@@ -447,8 +449,7 @@ public class DumpFile
    * @return		null if everything is fine, otherwise error message
    */
   protected String updateVariables() {
-    if (m_Buffer.size() > 0)
-      writeToDisk();
+    performFlush();
     return super.updateVariables();
   }
 
@@ -481,9 +482,16 @@ public class DumpFile
   @Override
   public void wrapUp() {
     // write any left over data to disk
-    if (m_Buffer.size() > 0)
-      writeToDisk();
+    performFlush();
 
     super.wrapUp();
+  }
+
+  /**
+   * Performs the flush.
+   */
+  public void performFlush() {
+    if (m_Buffer.size() > 0)
+      writeToDisk();
   }
 }
