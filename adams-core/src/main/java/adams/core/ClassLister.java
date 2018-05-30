@@ -15,7 +15,7 @@
 
 /*
  * ClassLister.java
- * Copyright (C) 2007-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -25,6 +25,10 @@ import adams.core.option.OptionUtils;
 import adams.env.ClassListerBlacklistDefinition;
 import adams.env.ClassListerDefinition;
 import adams.env.Environment;
+import adams.flow.core.Compatibility;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Determines the classnames of superclasses that are to be displayed in
@@ -80,11 +84,47 @@ public class ClassLister
   }
 
   /**
+   * Returns all the classes of the specified superclass (abstract class or
+   * interface), but restricts it further to the specified class.
+   *
+   * @param superclass	abstract class or interface to get classes for
+   * @param restriction	the interface that the classes must implement
+   * @return		the class subset
+   */
+  public Class[] getClasses(Class superclass, Class restriction) {
+    return getClasses(superclass, new Class[]{restriction});
+  }
+
+  /**
+   * Returns all the classes of the specified superclass (abstract class or
+   * interface), but restricts it further to the specified classes.
+   *
+   * @param superclass	abstract class or interface to get classes for
+   * @param restriction	the interfaces that the classes must implement
+   * @return		the class subset
+   */
+  public Class[] getClasses(Class superclass, Class[] restriction) {
+    List<Class> 	result;
+    Class[]		classes;
+    Compatibility	comp;
+
+    result  = new ArrayList<>();
+    classes = getClasses(superclass);
+    comp    = new Compatibility();
+    for (Class cls: classes) {
+      if (comp.isCompatible(new Class[]{cls}, restriction))
+        result.add(cls);
+    }
+
+    return result.toArray(new Class[0]);
+  }
+
+  /**
    * Returns the singleton instance of the class lister.
    *
    * @return		the singleton
    */
-  public static synchronized nz.ac.waikato.cms.locator.ClassLister getSingleton() {
+  public static synchronized ClassLister getSingleton() {
     if (m_Singleton == null)
       m_Singleton = new ClassLister();
 
