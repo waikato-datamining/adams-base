@@ -44,6 +44,9 @@ import adams.env.Modules;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
 import adams.flow.control.SubProcess;
+import adams.flow.core.actorfilter.AcceptAll;
+import adams.flow.core.actorfilter.ActorFilter;
+import adams.flow.core.actorfilter.ExactMatch;
 import adams.flow.processor.AbstractActorProcessor;
 import adams.flow.processor.CheckProcessor;
 import adams.flow.processor.CheckStorageUsage;
@@ -73,7 +76,6 @@ import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -175,13 +177,12 @@ public class ActorUtils {
    *
    * @param actor	the actor to obtain all children from
    * @param children	for collecting the children
-   * @param filter	the accepted classes, null if no filtering
+   * @param filter	for filtering the classes
    */
-  protected static void enumerate(Actor actor, List<Actor> children, HashSet<Class> filter) {
+  protected static void enumerate(Actor actor, List<Actor> children, ActorFilter filter) {
     int			i;
     ActorHandler	handler;
     Actor		other;
-    boolean		add;
 
     if (actor == null)
       return;
@@ -189,10 +190,7 @@ public class ActorUtils {
     if (actor instanceof ActorHandler) {
       handler = (ActorHandler) actor;
       for (i = 0; i < handler.size(); i++) {
-	add = true;
-	if ((filter != null) && !filter.contains(handler.get(i).getClass()))
-	  add = false;
-	if (add)
+	if (filter.accept(handler.get(i)))
 	  children.add(handler.get(i));
 	enumerate(handler.get(i), children, filter);
       }
@@ -218,7 +216,7 @@ public class ActorUtils {
    * @return		all the children (if any)
    */
   public static List<Actor> enumerate(Actor actor) {
-    return enumerate(actor, null);
+    return enumerate(actor, (Class[]) null);
   }
 
   /**
@@ -230,14 +228,31 @@ public class ActorUtils {
    */
   public static List<Actor> enumerate(Actor actor, Class[] filter) {
     ArrayList<Actor>	result;
-    HashSet<Class>	filterSet;
+    ActorFilter		actorFilter;
 
     result    = new ArrayList<>();
-    filterSet = null;
     if (filter != null)
-      filterSet = new HashSet<>(Arrays.asList(filter));
+      actorFilter = new ExactMatch(filter);
+    else
+      actorFilter = new AcceptAll();
 
-    enumerate(actor, result, filterSet);
+    enumerate(actor, result, actorFilter);
+
+    return result;
+  }
+
+  /**
+   * Enumerates all children of the given actor (depth-first search).
+   *
+   * @param actor	the actor to obtain all children from
+   * @param filter	the filter to use
+   * @return		all the children (if any)
+   */
+  public static List<Actor> enumerate(Actor actor, ActorFilter filter) {
+    ArrayList<Actor>	result;
+
+    result = new ArrayList<>();
+    enumerate(actor, result, filter);
 
     return result;
   }
