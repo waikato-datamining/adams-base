@@ -13,18 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Tree.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
+import adams.core.Utils;
 import adams.core.option.OptionHandler;
 import adams.gui.chooser.ObjectExporterFileChooser;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTree;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.visualization.debug.InspectionPanel;
 import adams.gui.visualization.debug.inspectionhandler.AbstractInspectionHandler;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objecttree.Node.NodeType;
@@ -34,6 +37,8 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import javax.swing.JMenuItem;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -56,7 +61,6 @@ import java.util.regex.Pattern;
  * interfere with this mechanism.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Tree
   extends BaseTree {
@@ -71,7 +75,7 @@ public class Tree
   public final static int MAX_ITEMS = 100;
 
   /** the maximum depth of the tree. */
-  public final static int MAX_DEPTH = 20;
+  public final static int MAX_DEPTH = 10;
 
   /** the current object. */
   protected transient Object m_Object;
@@ -510,6 +514,16 @@ public class Tree
     });
     menu.add(menuitem);
 
+    menuitem = new JMenuItem("Inspect...", GUIHelper.getIcon("object.gif"));
+    menuitem.setEnabled(obj != null);
+    menuitem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+	inspect(node.getPropertyPath(), obj);
+      }
+    });
+    menu.add(menuitem);
+
     menu.showAbsolute(this, e);
   }
 
@@ -550,5 +564,34 @@ public class Tree
     if (msg != null)
       GUIHelper.showErrorMessage(
 	Tree.this, "Failed to export object to '" + file + "'!\n" + msg);
+  }
+
+  /**
+   * Inspects the object in a separate dialog.
+   *
+   * @param path 	the property path
+   * @param obj		the object to inspect
+   */
+  protected void inspect(String[] path, Object obj) {
+    ApprovalDialog	dialog;
+    InspectionPanel	panel;
+
+    panel = new InspectionPanel();
+    panel.setCurrent(obj);
+
+    if (getParentDialog() != null)
+      dialog = new ApprovalDialog(getParentDialog(), ModalityType.MODELESS);
+    else
+      dialog = new ApprovalDialog(getParentFrame(), false);
+    dialog.setTitle("Inspecting: " + Utils.flatten(path, "."));
+    dialog.setDiscardVisible(false);
+    dialog.setCancelVisible(false);
+    dialog.setApproveVisible(true);
+    dialog.setApproveCaption("Close");
+    dialog.setApproveMnemonic('l');
+    dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.setSize(GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension()));
+    dialog.setLocationRelativeTo(dialog.getParent());
+    dialog.setVisible(true);
   }
 }
