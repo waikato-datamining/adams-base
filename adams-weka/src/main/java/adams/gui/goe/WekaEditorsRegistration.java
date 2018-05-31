@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaEditorsRegistration.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -151,8 +151,13 @@ public class WekaEditorsRegistration
 	}
       }
       if (packages.size() > 0) {
-	ClassLister.getSingleton().addHierarchy(superclass, packages.toArray(new String[packages.size()]));
-	getLogger().info("Registering class hierarchy: " + key);
+        try {
+	  ClassLister.getSingleton().addHierarchy(superclass, packages.toArray(new String[packages.size()]));
+	  getLogger().info("Registering class hierarchy: " + key);
+	}
+	catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to register class hierarchy: " + key, e);
+	}
       }
     }
   }
