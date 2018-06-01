@@ -249,6 +249,13 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>matrix-algorithms</artifactId>
+      <version>0.0.2</version>
+      <type>jar</type>
+    </dependency>
   </dependencies>
 
   <build>

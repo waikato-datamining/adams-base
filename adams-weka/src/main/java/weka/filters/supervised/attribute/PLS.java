@@ -15,12 +15,14 @@
 
 /*
  * PLS.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package weka.filters.supervised.attribute;
 
+import adams.data.instancesanalysis.pls.AbstractPLS;
+import adams.data.instancesanalysis.pls.PLS1;
 import weka.core.Capabilities;
 import weka.core.GenericPLSMatrixAccess;
 import weka.core.Instances;
@@ -35,8 +37,6 @@ import weka.core.WekaOptionUtils;
 import weka.core.matrix.Matrix;
 import weka.filters.SimpleBatchFilter;
 import weka.filters.SupervisedFilter;
-import adams.data.instancesanalysis.pls.AbstractPLS;
-import adams.data.instancesanalysis.pls.PLS1;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -220,6 +220,7 @@ public class PLS
    */
   @Override
   protected Instances determineOutputFormat(Instances inputFormat) throws Exception {
+    m_Algorithm.reset();
     return m_Algorithm.determineOutputFormat(inputFormat);
   }
 

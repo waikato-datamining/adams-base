@@ -1,0 +1,11 @@
+# Configuration file listing the superclasses/interfaces to be handled by
+# the jeneric-cmdline library to add command-line functionality..
+#
+# Format:
+# class.name=true|false
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+
+# PLS algorithms from the matrix-algorithms library
+com.github.waikatodatamining.matrix.algorithm.AbstractPLS=true
+com.github.waikatodatamining.matrix.transformation.kernel.AbstractKernel=true
