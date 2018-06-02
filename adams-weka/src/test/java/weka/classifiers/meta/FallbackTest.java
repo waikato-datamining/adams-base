@@ -61,6 +61,13 @@ public class FallbackTest
   }
 
   /**
+   * Disabled.
+   */
+  @Override
+  public void testRegression() throws Exception {
+  }
+
+  /**
    * Returns the test suite.
    *
    * @return		the suite
