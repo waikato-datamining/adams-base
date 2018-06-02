@@ -583,6 +583,7 @@ public class Tree
       dialog = new ApprovalDialog(getParentDialog(), ModalityType.MODELESS);
     else
       dialog = new ApprovalDialog(getParentFrame(), false);
+    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
     dialog.setTitle("Inspecting: " + Utils.flatten(path, "."));
     dialog.setDiscardVisible(false);
     dialog.setCancelVisible(false);
