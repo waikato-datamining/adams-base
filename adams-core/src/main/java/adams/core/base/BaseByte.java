@@ -15,7 +15,7 @@
 
 /*
  * BaseByte.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -24,7 +24,6 @@ package adams.core.base;
  * Wrapper for a Byte object to be editable in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseByte
   extends BaseObject {
@@ -133,5 +132,73 @@ public class BaseByte
   @Override
   public String getTipText() {
     return "A byte (from " + Byte.MIN_VALUE + " to " + Byte.MAX_VALUE + ").";
+  }
+
+  /**
+   * Turns the BaseByte array into a primitive array.
+   *
+   * @param values	the array to convert
+   * @return		the primitive array
+   */
+  public static byte[] toPrimitive(BaseByte[] values) {
+    byte[]	result;
+    int		i;
+
+    result = new byte[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].byteValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseByte one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseByte[] toBaseByte(byte[] values) {
+    BaseByte[]	result;
+    int			i;
+
+    result = new BaseByte[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseByte(values[i]);
+
+    return result;
+  }
+
+  /**
+   * Turns the BaseByte array into a number array.
+   *
+   * @param values	the array to convert
+   * @return		the number array
+   */
+  public static Byte[] toNumber(BaseByte[] values) {
+    Byte[]	result;
+    int		i;
+
+    result = new Byte[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].byteValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseByte one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseByte[] toBaseByte(Byte[] values) {
+    BaseByte[]	result;
+    int			i;
+
+    result = new BaseByte[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseByte(values[i]);
+
+    return result;
   }
 }

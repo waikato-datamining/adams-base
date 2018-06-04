@@ -15,7 +15,7 @@
 
 /*
  * BaseDouble.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -26,7 +26,6 @@ import adams.core.Utils;
  * Wrapper for a Double object to be editable in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseDouble
   extends BaseObject {
@@ -135,5 +134,73 @@ public class BaseDouble
   @Override
   public String getTipText() {
     return "A floating point number (from " + -Double.MAX_VALUE + " to " + Double.MAX_VALUE + ").";
+  }
+
+  /**
+   * Turns the BaseDouble array into a primitive array.
+   *
+   * @param values	the array to convert
+   * @return		the primitive array
+   */
+  public static double[] toPrimitive(BaseDouble[] values) {
+    double[]	result;
+    int		i;
+
+    result = new double[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].doubleValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseDouble one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseDouble[] toBaseDouble(double[] values) {
+    BaseDouble[]	result;
+    int			i;
+
+    result = new BaseDouble[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseDouble(values[i]);
+
+    return result;
+  }
+
+  /**
+   * Turns the BaseDouble array into a number array.
+   *
+   * @param values	the array to convert
+   * @return		the number array
+   */
+  public static Double[] toNumber(BaseDouble[] values) {
+    Double[]	result;
+    int		i;
+
+    result = new Double[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].doubleValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseDouble one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseDouble[] toBaseDouble(Double[] values) {
+    BaseDouble[]	result;
+    int			i;
+
+    result = new BaseDouble[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseDouble(values[i]);
+
+    return result;
   }
 }

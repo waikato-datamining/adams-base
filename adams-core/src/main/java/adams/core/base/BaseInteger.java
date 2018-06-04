@@ -15,7 +15,7 @@
 
 /*
  * BaseInteger.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -24,7 +24,6 @@ package adams.core.base;
  * Wrapper for an Integer object to be editable in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseInteger
   extends BaseObject {
@@ -133,5 +132,73 @@ public class BaseInteger
   @Override
   public String getTipText() {
     return "An integer (from " + Integer.MIN_VALUE + " to " + Integer.MAX_VALUE + ").";
+  }
+
+  /**
+   * Turns the BaseInteger array into a primitive array.
+   *
+   * @param values	the array to convert
+   * @return		the primitive array
+   */
+  public static int[] toPrimitive(BaseInteger[] values) {
+    int[]	result;
+    int		i;
+
+    result = new int[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].intValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseInteger one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseInteger[] toBaseInteger(int[] values) {
+    BaseInteger[]	result;
+    int			i;
+
+    result = new BaseInteger[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseInteger(values[i]);
+
+    return result;
+  }
+
+  /**
+   * Turns the BaseInteger array into a number array.
+   *
+   * @param values	the array to convert
+   * @return		the number array
+   */
+  public static Integer[] toNumber(BaseInteger[] values) {
+    Integer[]	result;
+    int		i;
+
+    result = new Integer[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].intValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseInteger one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseInteger[] toBaseInteger(Integer[] values) {
+    BaseInteger[]	result;
+    int			i;
+
+    result = new BaseInteger[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseInteger(values[i]);
+
+    return result;
   }
 }

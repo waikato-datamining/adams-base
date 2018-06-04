@@ -15,7 +15,7 @@
 
 /*
  * BaseShort.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -24,7 +24,6 @@ package adams.core.base;
  * Wrapper for a Short object to be editable in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseShort
   extends BaseObject {
@@ -133,5 +132,73 @@ public class BaseShort
   @Override
   public String getTipText() {
     return "A short (from " + Short.MIN_VALUE + " to " + Short.MAX_VALUE + ").";
+  }
+
+  /**
+   * Turns the BaseShort array into a primitive array.
+   *
+   * @param values	the array to convert
+   * @return		the primitive array
+   */
+  public static short[] toPrimitive(BaseShort[] values) {
+    short[]	result;
+    int		i;
+
+    result = new short[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].shortValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseShort one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseShort[] toBaseShort(short[] values) {
+    BaseShort[]	result;
+    int			i;
+
+    result = new BaseShort[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseShort(values[i]);
+
+    return result;
+  }
+
+  /**
+   * Turns the BaseShort array into a number array.
+   *
+   * @param values	the array to convert
+   * @return		the number array
+   */
+  public static Short[] toNumber(BaseShort[] values) {
+    Short[]	result;
+    int		i;
+
+    result = new Short[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].shortValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseShort one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseShort[] toBaseShort(Short[] values) {
+    BaseShort[]	result;
+    int			i;
+
+    result = new BaseShort[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseShort(values[i]);
+
+    return result;
   }
 }

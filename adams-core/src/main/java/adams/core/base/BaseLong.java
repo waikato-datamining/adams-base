@@ -15,7 +15,7 @@
 
 /*
  * BaseLong.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -24,7 +24,6 @@ package adams.core.base;
  * Wrapper for a Long object to be editable in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseLong
   extends BaseObject {
@@ -133,5 +132,73 @@ public class BaseLong
   @Override
   public String getTipText() {
     return "A long (from " + Long.MIN_VALUE + " to " + Long.MAX_VALUE + ").";
+  }
+
+  /**
+   * Turns the BaseLong array into a primitive array.
+   *
+   * @param values	the array to convert
+   * @return		the primitive array
+   */
+  public static long[] toPrimitive(BaseLong[] values) {
+    long[]	result;
+    int		i;
+
+    result = new long[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].longValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseLong one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseLong[] toBaseLong(long[] values) {
+    BaseLong[]	result;
+    int			i;
+
+    result = new BaseLong[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseLong(values[i]);
+
+    return result;
+  }
+
+  /**
+   * Turns the BaseLong array into a number array.
+   *
+   * @param values	the array to convert
+   * @return		the number array
+   */
+  public static Long[] toNumber(BaseLong[] values) {
+    Long[]	result;
+    int		i;
+
+    result = new Long[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].longValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseLong one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseLong[] toBaseLong(Long[] values) {
+    BaseLong[]	result;
+    int			i;
+
+    result = new BaseLong[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseLong(values[i]);
+
+    return result;
   }
 }

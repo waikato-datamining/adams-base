@@ -15,7 +15,7 @@
 
 /*
  * BaseFloat.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -24,7 +24,6 @@ package adams.core.base;
  * Wrapper for a Float object to be editable in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseFloat
   extends BaseObject {
@@ -133,5 +132,73 @@ public class BaseFloat
   @Override
   public String getTipText() {
     return "A floating point number (from " + Float.MIN_VALUE + " to " + Float.MAX_VALUE + ").";
+  }
+
+  /**
+   * Turns the BaseFloat array into a primitive array.
+   *
+   * @param values	the array to convert
+   * @return		the primitive array
+   */
+  public static float[] toPrimitive(BaseFloat[] values) {
+    float[]	result;
+    int		i;
+
+    result = new float[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].floatValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseFloat one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseFloat[] toBaseFloat(float[] values) {
+    BaseFloat[]	result;
+    int			i;
+
+    result = new BaseFloat[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseFloat(values[i]);
+
+    return result;
+  }
+
+  /**
+   * Turns the BaseFloat array into a number array.
+   *
+   * @param values	the array to convert
+   * @return		the number array
+   */
+  public static Float[] toNumber(BaseFloat[] values) {
+    Float[]	result;
+    int		i;
+
+    result = new Float[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = values[i].floatValue();
+
+    return result;
+  }
+
+  /**
+   * Turns the primitive array into a BaseFloat one.
+   *
+   * @param values	the array to convert
+   * @return		the BaseObject array
+   */
+  public static BaseFloat[] toBaseFloat(Float[] values) {
+    BaseFloat[]	result;
+    int			i;
+
+    result = new BaseFloat[values.length];
+    for (i = 0; i < values.length; i++)
+      result[i] = new BaseFloat(values[i]);
+
+    return result;
   }
 }
