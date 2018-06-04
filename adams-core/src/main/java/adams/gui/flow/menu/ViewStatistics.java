@@ -15,7 +15,7 @@
 
 /*
  * ViewStatistics.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -24,6 +24,7 @@ import adams.flow.core.ActorStatistic;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
+import javax.swing.SwingWorker;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ import java.util.List;
  * Displays statistics about the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ViewStatistics
   extends AbstractFlowEditorMenuItemAction {
@@ -56,27 +56,33 @@ public class ViewStatistics
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    ActorStatistic			stats;
-    InformativeStatisticFactory.Dialog	dialog;
-    List<InformativeStatistic> 		statsList;
+    SwingWorker 	worker;
 
-    stats = null;
-    if (m_State.getCurrentTree().getSelectedNode() != null)
-      stats = new ActorStatistic(m_State.getCurrentTree().getSelectedNode().getFullActor());
-    else if (m_State.getCurrentRoot() != null)
-      stats = new ActorStatistic(m_State.getCurrentFlow());
-    statsList = new ArrayList<>();
-    statsList.add(stats);
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	ActorStatistic stats = null;
+	if (m_State.getCurrentTree().getSelectedNode() != null)
+	  stats = new ActorStatistic(m_State.getCurrentTree().getSelectedNode().getFullActor());
+	else if (m_State.getCurrentRoot() != null)
+	  stats = new ActorStatistic(m_State.getCurrentFlow());
+	List<InformativeStatistic> statsList = new ArrayList<>();
+	statsList.add(stats);
 
-    if (m_State.getParentDialog() != null)
-      dialog = InformativeStatisticFactory.getDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-    else
-      dialog = InformativeStatisticFactory.getDialog(getParentFrame(), true);
-    dialog.setStatistics(statsList);
-    dialog.setTitle("Actor statistics");
-    dialog.setSize(GUIHelper.makeWider(GUIHelper.rotate(GUIHelper.getDefaultSmallDialogDimension())));
-    dialog.setLocationRelativeTo(m_State);
-    dialog.setVisible(true);
+	InformativeStatisticFactory.Dialog dialog;
+	if (m_State.getParentDialog() != null)
+	  dialog = InformativeStatisticFactory.getDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+	else
+	  dialog = InformativeStatisticFactory.getDialog(getParentFrame(), true);
+	dialog.setStatistics(statsList);
+	dialog.setTitle("Actor statistics");
+	dialog.setSize(GUIHelper.makeWider(GUIHelper.rotate(GUIHelper.getDefaultSmallDialogDimension())));
+	dialog.setLocationRelativeTo(m_State);
+	dialog.setVisible(true);
+	return null;
+      }
+    };
+    worker.execute();
   }
 
   /**
