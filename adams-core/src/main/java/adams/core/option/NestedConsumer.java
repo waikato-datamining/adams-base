@@ -15,7 +15,7 @@
 
 /*
  * NestedConsumer.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -37,7 +37,6 @@ import java.util.logging.Level;
  * Parses a nested ArrayList of options.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NestedConsumer
   extends AbstractRecursiveOptionConsumer<List,List>
@@ -145,7 +144,7 @@ public class NestedConsumer
 
     try {
       line   = (Line) m_Input.get(0);
-      result = (OptionHandler) Class.forName(Conversion.getSingleton().rename(line.getContent())).newInstance();
+      result = (OptionHandler) forName(line.getContent()).newInstance();
       checkDeprecation(result);
       m_Input.remove(0);
       if (m_Input.size() > 0) {

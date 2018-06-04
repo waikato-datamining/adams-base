@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonConsumer.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -37,7 +37,6 @@ import java.util.logging.Level;
  * Recreates objects from a JSON representation.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonConsumer
   extends AbstractRecursiveOptionConsumer<JSONObject,Object>
@@ -89,7 +88,7 @@ public class JsonConsumer
 
     if (m_Input.containsKey(KEY_CLASS)) {
       try {
-	result = (OptionHandler) Class.forName(Conversion.getSingleton().rename((String) m_Input.get(KEY_CLASS))).newInstance();
+	result = (OptionHandler) forName((String) m_Input.get(KEY_CLASS)).newInstance();
       }
       catch (Exception e) {
 	msg = "Failed to instantiate class: ";

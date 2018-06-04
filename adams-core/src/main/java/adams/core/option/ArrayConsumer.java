@@ -15,7 +15,7 @@
 
 /*
  * ArrayConsumer.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -35,7 +35,6 @@ import java.util.logging.Level;
  * options.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ArrayConsumer
   extends AbstractRecursiveOptionConsumer<String[],String[]> {
@@ -65,7 +64,7 @@ public class ArrayConsumer
     String		msg;
 
     try {
-      result = (OptionHandler) Class.forName(Conversion.getSingleton().rename(m_Input[0])).newInstance();
+      result = (OptionHandler) forName(m_Input[0]).newInstance();
       checkDeprecation(result);
       m_Input[0] = "";
     }

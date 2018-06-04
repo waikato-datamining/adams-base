@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractOptionConsumer.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -35,8 +35,10 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
@@ -44,7 +46,6 @@ import java.util.zip.GZIPInputStream;
  * Sets the option values based on the input data.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <C> the type of data to consume
  * @param <V> the type of data used for values
  */
@@ -73,6 +74,9 @@ public abstract class AbstractOptionConsumer<C,V>
   /** top-level properties to skip. */
   protected HashSet<String> m_SkippedProperties;
 
+  /** for caching classname and class. */
+  protected Map<String,Class> m_ClassnameCache;
+
   /**
    * Initializes the visitor.
    */
@@ -95,9 +99,10 @@ public abstract class AbstractOptionConsumer<C,V>
     m_LoggingLevel      = LoggingLevel.OFF;
     m_Input             = null;
     m_UsePropertyNames  = false;
-    m_Errors            = new ArrayList<String>();
-    m_Warnings          = new ArrayList<String>();
-    m_SkippedProperties = new HashSet<String>();
+    m_Errors            = new ArrayList<>();
+    m_Warnings          = new ArrayList<>();
+    m_SkippedProperties = new HashSet<>();
+    m_ClassnameCache    = new HashMap<>();
   }
 
   /**
@@ -317,6 +322,26 @@ public abstract class AbstractOptionConsumer<C,V>
      * @return		the internal format, null in case of an error
    */
   protected abstract C convertToInput(String s);
+
+  /**
+   * Turns the classname into a string.
+   *
+   * @param classname	the classname
+   * @return		the class
+   */
+  protected Class forName(String classname) throws Exception {
+    Class	result;
+
+    if (m_ClassnameCache.containsKey(classname)) {
+      result = m_ClassnameCache.get(classname);
+    }
+    else {
+      result = Class.forName(Conversion.getSingleton().rename(classname));
+      m_ClassnameCache.put(classname, result);
+    }
+
+    return result;
+  }
 
   /**
    * Creates the empty option handler from the internal data structure and
