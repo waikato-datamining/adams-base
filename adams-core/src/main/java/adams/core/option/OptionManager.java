@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * OptionManager.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -42,13 +42,15 @@ import java.util.List;
  * Class for managing option definitions.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class OptionManager
   implements Serializable, CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 2383307592894383257L;
+
+  /** default instance (gets replaced at runtime). */
+  protected static Variables m_DefaultVariablesInstance;
 
   /** the owner. */
   protected OptionHandler m_Owner;
@@ -70,7 +72,7 @@ public class OptionManager
   
   /** whether to suppress error messages. */
   protected boolean m_Quiet;
-  
+
   /**
    * Initializes the manager.
    *
@@ -80,9 +82,9 @@ public class OptionManager
     super();
 
     m_Owner            = owner;
-    m_Options          = new ArrayList<AbstractOption>();
-    m_CommandlineIndex = new HashMap<String,Integer>();
-    m_PropertyIndex    = new HashMap<String,Integer>();
+    m_Options          = new ArrayList<>();
+    m_CommandlineIndex = new HashMap<>();
+    m_PropertyIndex    = new HashMap<>();
     m_ThrowExceptions  = false;
     m_Variables        = null;
     m_Quiet            = false;
@@ -113,8 +115,11 @@ public class OptionManager
    * @return		the instance in use
    */
   public synchronized Variables getVariables() {
-    if (m_Variables == null)
-      m_Variables = new Variables();
+    if (m_Variables == null) {
+      if (m_DefaultVariablesInstance == null)
+        m_DefaultVariablesInstance = new Variables();
+      m_Variables = m_DefaultVariablesInstance;
+    }
     return m_Variables;
   }
 
