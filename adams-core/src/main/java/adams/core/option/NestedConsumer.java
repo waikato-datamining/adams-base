@@ -250,7 +250,7 @@ public class NestedConsumer
       line   = (Line) subset.get(0);
       line   = new Line(line.getNumber(), Conversion.getSingleton().rename(line.getContent()));  // fix classname, if necessary
       subset.set(0, line);
-      object = Class.forName(((Line) subset.get(0)).getContent()).newInstance();  // we need to check actual instance of class, base class could be interface
+      object = forName(((Line) subset.get(0)).getContent()).newInstance();  // we need to check actual instance of class, base class could be interface
       if (object instanceof OptionHandler) {
 	consumer = new NestedConsumer();
 	consumer.setLoggingLevel(getLoggingLevel());

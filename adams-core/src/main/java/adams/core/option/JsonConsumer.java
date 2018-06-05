@@ -176,7 +176,7 @@ public class JsonConsumer
     if (value instanceof JSONObject) {
       object  = (JSONObject) value;
       objects = Array.newInstance(option.getBaseClass(), 1);
-      obj     = Class.forName((String) object.get(KEY_CLASS)).newInstance();
+      obj     = forName((String) object.get(KEY_CLASS)).newInstance();
       if (obj instanceof OptionHandler) {
 	handler = (OptionHandler) obj;
 	Array.set(objects, 0, handler);
@@ -194,7 +194,7 @@ public class JsonConsumer
       objects = Array.newInstance(option.getBaseClass(), array.size());
       for (i = 0; i < array.size(); i++) {
 	object = (JSONObject) array.get(i);
-	obj    = Class.forName((String) object.get(KEY_CLASS)).newInstance();
+	obj    = forName((String) object.get(KEY_CLASS)).newInstance();
 	if (obj instanceof OptionHandler) {
 	  handler = (OptionHandler) obj;
 	  Array.set(objects, i, handler);

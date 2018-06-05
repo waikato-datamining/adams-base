@@ -161,7 +161,7 @@ public class ArrayConsumer
 	return;
       }
 
-      object = Class.forName(extractClassname(values[i])).newInstance();  // we need to check actual instance of class, base class could be interface
+      object = forName(extractClassname(values[i])).newInstance();  // we need to check actual instance of class, base class could be interface
       if (object instanceof OptionHandler) {
 	consumer = new ArrayConsumer();
 	consumer.setLoggingLevel(getLoggingLevel());
