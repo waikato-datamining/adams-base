@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -72,6 +73,8 @@ public abstract class AbstractDatabaseConnection
   static {
     m_Environments = new HashMap<>();
   }
+
+  protected static Map<Class,Properties> m_PropertiesCache;
 
   /** for managing the available options. */
   protected OptionManager m_OptionManager;
@@ -175,6 +178,8 @@ public abstract class AbstractDatabaseConnection
     m_LastConnectionError   = "";
     m_Owner                 = null;
     m_AutoCommit            = true;
+    if (m_PropertiesCache == null)
+      m_PropertiesCache = new HashMap<>();
   }
 
   /**
@@ -350,8 +355,15 @@ public abstract class AbstractDatabaseConnection
    * @return		the properties
    */
   public synchronized Properties getProperties() {
-    if (m_Properties == null)
-      m_Properties = readProperties();
+    if (m_Properties == null) {
+      if (m_PropertiesCache.containsKey(getClass())) {
+	m_Properties = m_PropertiesCache.get(getClass());
+      }
+      else {
+	m_Properties = readProperties();
+	m_PropertiesCache.put(getClass(), m_Properties);
+      }
+    }
 
     return m_Properties;
   }

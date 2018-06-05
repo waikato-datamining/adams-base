@@ -32,6 +32,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -74,8 +75,8 @@ public abstract class AbstractOptionConsumer<C,V>
   /** top-level properties to skip. */
   protected HashSet<String> m_SkippedProperties;
 
-  /** for caching classname and class. */
-  protected Map<String,Class> m_ClassnameCache;
+  /** for caching classname and constructor. */
+  protected static Map<String,Constructor> m_ClassnameCache;
 
   /**
    * Initializes the visitor.
@@ -102,7 +103,8 @@ public abstract class AbstractOptionConsumer<C,V>
     m_Errors            = new ArrayList<>();
     m_Warnings          = new ArrayList<>();
     m_SkippedProperties = new HashSet<>();
-    m_ClassnameCache    = new HashMap<>();
+    if (m_ClassnameCache == null)
+      m_ClassnameCache = new HashMap<>();
   }
 
   /**
@@ -329,14 +331,14 @@ public abstract class AbstractOptionConsumer<C,V>
    * @param classname	the classname
    * @return		the class
    */
-  protected Class forName(String classname) throws Exception {
-    Class	result;
+  protected Constructor forName(String classname) throws Exception {
+    Constructor	result;
 
     if (m_ClassnameCache.containsKey(classname)) {
       result = m_ClassnameCache.get(classname);
     }
     else {
-      result = Class.forName(Conversion.getSingleton().rename(classname));
+      result = Class.forName(Conversion.getSingleton().rename(classname)).getConstructor();
       m_ClassnameCache.put(classname, result);
     }
 
