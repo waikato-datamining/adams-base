@@ -53,8 +53,14 @@ public class Fallback
   /** the base classifier. */
   protected Classifier m_Base = getDefaultBase();
 
+  /** the actual base classifier. */
+  protected Classifier m_ActualBase;
+
   /** the fallback classifier. */
   protected Classifier m_Fallback = getDefaultFallback();
+
+  /** the actual fallback classifier. */
+  protected Classifier m_ActualFallback;
 
   /**
    * Returns a string describing classifier.
@@ -250,13 +256,25 @@ public class Fallback
     data = new Instances(data);
     data.deleteWithMissingClass();
 
-    if (getDebug())
-      System.out.println("Training base classifier");
-    m_Base.buildClassifier(data);
+    m_ActualBase     = null;
+    m_ActualFallback = null;
+
+    try {
+      if (getDebug())
+        System.out.println("Training base classifier");
+      m_ActualBase = (Classifier) OptionUtils.shallowCopy(m_Base);
+      m_ActualBase.buildClassifier(data);
+    }
+    catch (Exception e) {
+      System.err.println("Failed to build base classifier: " + OptionUtils.getCommandLine(m_Base));
+      e.printStackTrace();
+      m_ActualBase = null;
+    }
 
     if (getDebug())
       System.out.println("Training fallback classifier");
-    m_Fallback.buildClassifier(data);
+    m_ActualFallback = (Classifier) OptionUtils.shallowCopy(m_Fallback);
+    m_ActualFallback.buildClassifier(data);
   }
 
   /**
@@ -269,13 +287,16 @@ public class Fallback
    */
   @Override
   public double classifyInstance(Instance instance) throws Exception {
+    if (m_ActualBase == null)
+      return m_ActualFallback.classifyInstance(instance);
+
     try {
-      return m_Base.classifyInstance(instance);
+      return m_ActualBase.classifyInstance(instance);
     }
     catch (Exception e) {
       if (getDebug())
         System.err.println("Falling back, classifyInstance failed on: " + instance);
-      return m_Fallback.classifyInstance(instance);
+      return m_ActualFallback.classifyInstance(instance);
     }
   }
 
@@ -292,13 +313,16 @@ public class Fallback
    */
   @Override
   public double[] distributionForInstance(Instance instance) throws Exception {
+    if (m_ActualBase == null)
+      return m_ActualFallback.distributionForInstance(instance);
+
     try {
-      return m_Base.distributionForInstance(instance);
+      return m_ActualBase.distributionForInstance(instance);
     }
     catch (Exception e) {
       if (getDebug())
         System.err.println("Falling back, distributionForInstance failed on: " + instance);
-      return m_Fallback.distributionForInstance(instance);
+      return m_ActualFallback.distributionForInstance(instance);
     }
   }
 
@@ -312,9 +336,9 @@ public class Fallback
     StringBuilder	result;
 
     result = new StringBuilder();
-    result.append("Base\n").append("====\n\n").append(m_Base.toString());
+    result.append("Base\n").append("====\n\n").append("" + m_ActualBase);
     result.append("\n");
-    result.append("Fallback\n").append("========\n\n").append(m_Fallback.toString());
+    result.append("Fallback\n").append("========\n\n").append(""  +m_ActualFallback);
 
     return result.toString();
   }
