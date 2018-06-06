@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ViewFullExpansion.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -31,7 +31,6 @@ import java.awt.event.ActionEvent;
  * Fully expands the flow and displays it in a new tab.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ViewFullExpansion
   extends AbstractFlowEditorMenuItemAction {
@@ -59,35 +58,27 @@ public class ViewFullExpansion
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    DebugNestedProducer		producer;
-    NestedConsumer 		consumer;
-    Actor			actor;
-    Actor			expanded;
-    FlowPanel			panel;
-    String			title;
-    FlowPanel			panelCopy;
+    Runnable 	runnable;
 
-
-    panel = m_State.getCurrentPanel();
-    m_State.showStatus("Expanding: " + panel.getTitle() + "...");
-
-    title    = "Expanded: " + panel.getTitle();
-    consumer = new NestedConsumer();
-    producer = new DebugNestedProducer();
-    producer.setOutputVariableValues(false);
-    actor = m_State.getCurrentFlow();
-    actor.setUp();
-    consumer.setInput(producer.produce(actor));
-    expanded = (Actor) consumer.consume();
-    panelCopy = m_State.getFlowPanels().newPanel();
-    panelCopy.setCurrentFlow(expanded);
-    panelCopy.setTitle(title);
-    panelCopy.updateTitle();
-    panelCopy.setDebugSourcePanel(panel);
-    if (expanded instanceof Flow)
-      ((Flow) expanded).setParentComponent(panelCopy);
-
-    m_State.showStatus("");
+    runnable = () -> {
+      FlowPanel panel = m_State.getCurrentPanel();
+      String title    = "Expanded: " + panel.getTitle();
+      NestedConsumer consumer = new NestedConsumer();
+      DebugNestedProducer producer = new DebugNestedProducer();
+      producer.setOutputVariableValues(false);
+      Actor actor = m_State.getCurrentFlow();
+      actor.setUp();
+      consumer.setInput(producer.produce(actor));
+      Actor expanded = (Actor) consumer.consume();
+      FlowPanel panelCopy = m_State.getFlowPanels().newPanel();
+      panelCopy.setCurrentFlow(expanded);
+      panelCopy.setTitle(title);
+      panelCopy.updateTitle();
+      panelCopy.setDebugSourcePanel(panel);
+      if (expanded instanceof Flow)
+	((Flow) expanded).setParentComponent(panelCopy);
+    };
+    m_State.getCurrentPanel().startBackgroundTask(runnable, "Expanding: " + m_State.getCurrentPanel().getTitle() + "...", true);
   }
 
   /**

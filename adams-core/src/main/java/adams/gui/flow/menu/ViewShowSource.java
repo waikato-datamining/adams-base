@@ -13,23 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ViewShowSource.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
-
-import java.awt.event.ActionEvent;
 
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
 import adams.gui.dialog.TextDialog;
 
+import java.awt.event.ActionEvent;
+
 /**
  * Displays the source of the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ViewShowSource
   extends AbstractFlowEditorMenuItemAction {
@@ -52,22 +51,24 @@ public class ViewShowSource
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    TextDialog 	dialog;
-    String 	buffer;
+    Runnable	runnable;
 
-    buffer = AbstractOptionProducer.toString(NestedProducer.class, m_State.getCurrentFlow());
-
-    if (getParentDialog() != null)
-      dialog = new TextDialog(getParentDialog());
-    else
-      dialog = new TextDialog(getParentFrame());
-    dialog.setDialogTitle(
+    runnable = () -> {
+      String buffer = AbstractOptionProducer.toString(NestedProducer.class, m_State.getCurrentFlow());
+      TextDialog dialog;
+      if (getParentDialog() != null)
+	dialog = new TextDialog(getParentDialog());
+      else
+	dialog = new TextDialog(getParentFrame());
+      dialog.setDialogTitle(
 	m_State.getCurrentPanel().getTitleGenerator().generate(
-	    m_State.getCurrentFile(), m_State.getCurrentTree().isModified()) + " [Source]");
-    dialog.setTabSize(2);
-    dialog.setContent(buffer);
-    dialog.setLocationRelativeTo(m_State);
-    dialog.setVisible(true);
+	  m_State.getCurrentFile(), m_State.getCurrentTree().isModified()) + " [Source]");
+      dialog.setTabSize(2);
+      dialog.setContent(buffer);
+      dialog.setLocationRelativeTo(m_State);
+      dialog.setVisible(true);
+    };
+    m_State.getCurrentPanel().startBackgroundTask(runnable, "Generating source...", true);
   }
 
   /**

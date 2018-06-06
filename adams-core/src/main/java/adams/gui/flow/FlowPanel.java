@@ -1295,8 +1295,7 @@ public class FlowPanel
    * @param processor	the processor to use, null if to prompt user
    */
   public void processActors(AbstractActorProcessor processor) {
-    if (getTree().getOperations().processActor(null, processor))
-      showNotification("Actors processed!", false);
+    getTree().getOperations().processActor(null, processor, () -> showNotification("Actors processed!", false));
   }
 
   /**
@@ -1313,8 +1312,7 @@ public class FlowPanel
       return;
     path = getTree().getSelectionPath();
     node = (Node) path.getLastPathComponent();
-    if (getTree().getOperations().processActor(path, processor))
-      showNotification("Actor " + node.getActor().getName() + " processed!", false);
+    getTree().getOperations().processActor(path, processor, () -> showNotification("Actor " + node.getActor().getName() + " processed!", false));
   }
 
   /**

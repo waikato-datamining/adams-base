@@ -1173,19 +1173,14 @@ public class TreeOperations
   }
 
   /**
-   * Processes the specified actor with a user-specified actor processor
-   * (prompts user with GOE dialog).
+   * Processes the specified actor with the specified actor processor.
    * NB: The options of the specified actor will get processed.
    *
    * @param path	the path of the actor, if null the root actor is used
-   * @return		true if actors processed
+   * @param processor	the processor to use, null if to prompt user
    */
-  public boolean processActor(TreePath path) {
-    return processActor(path, null);
-  }
-
-  protected void finishProcessingActor() {
-
+  public void processActor(TreePath path, AbstractActorProcessor processor) {
+    processActor(path, processor, null);
   }
 
   /**
@@ -1194,25 +1189,28 @@ public class TreeOperations
    *
    * @param path	the path of the actor, if null the root actor is used
    * @param processor	the processor to use, null if to prompt user
-   * @return		true if actors processed
+   * @param after 	runnable to execute after actors have been processed, null for none
    */
-  public boolean processActor(TreePath path, AbstractActorProcessor processor) {
-    ModifyingProcessor 			modifying;
-    GraphicalOutputProducingProcessor 	graphical;
-    BaseDialog 				dialog;
-    final BaseDialog			fDialog;
+  public void processActor(TreePath path, AbstractActorProcessor processor, final Runnable after) {
+    Runnable				runnable;
+    final AbstractActorProcessor 	fProcessor;
+    final TreePath			fPath;
     Node				node;
     Actor				flow;
     Actor				selected;
-    final Node				newNode;
-    final Node				parent;
-    final int				index;
-    final Component 			comp;
-    ErrorMessagePanel 			errorPanel;
-    final ErrorMessagePanel		fErrorPanel;
-    final BaseTabbedPane 		tabbedPane;
-    List<String>			exp;
     GenericObjectEditorDialog		procDialog;
+
+    // prompt for processor?
+    if (processor == null) {
+      procDialog = getProcessActorsDialog(null);
+      procDialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
+      procDialog.setVisible(true);
+
+      if (procDialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+	return;
+
+      processor = (AbstractActorProcessor) procDialog.getCurrent();
+    }
 
     // selected actor or full flow?
     flow = getOwner().getActor();
@@ -1229,121 +1227,119 @@ public class TreeOperations
       node     = TreeHelper.pathToNode(path);
     }
 
-    // prompt for processor?
-    if (processor == null) {
-      procDialog = getProcessActorsDialog(null);
-      procDialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
-      procDialog.setVisible(true);
-
-      if (procDialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-	return false;
-
-      processor = (AbstractActorProcessor) procDialog.getCurrent();
-    }
-
     // process
-    if (processor instanceof ModifyingProcessor)
-      ((ModifyingProcessor) processor).setNoCopy(true);
-    processor.process(selected);
+    fProcessor = processor;
+    fPath      = path;
+    runnable = () -> {
+      if (fProcessor instanceof ModifyingProcessor)
+	((ModifyingProcessor) fProcessor).setNoCopy(true);
+      fProcessor.process(selected);
 
-    // modified?
-    if (processor instanceof ModifyingProcessor) {
-      modifying = (ModifyingProcessor) processor;
-      if (modifying.isModified()) {
-	getOwner().addUndoPoint("Processing actors with " + processor.toString());
-	exp = getOwner().getExpandedFullNames();
-	if (path == null) {
-	  getOwner().buildTree(modifying.getModifiedActor());
-	  newNode = node;
-	}
-	else {
-	  newNode = TreeHelper.buildTree((Node) node.getParent(), modifying.getModifiedActor(), false);
-	  parent  = (Node) node.getParent();
-	  index   = parent.getIndex(node);
+      // modified?
+      if (fProcessor instanceof ModifyingProcessor) {
+	ModifyingProcessor modifying = (ModifyingProcessor) fProcessor;
+	if (modifying.isModified()) {
+	  getOwner().addUndoPoint("Processing actors with " + fProcessor.toString());
+	  List<String> exp = getOwner().getExpandedFullNames();
+	  final Node newNode;
+	  if (fPath == null) {
+	    getOwner().buildTree(modifying.getModifiedActor());
+	    newNode = node;
+	  }
+	  else {
+	    newNode = TreeHelper.buildTree((Node) node.getParent(), modifying.getModifiedActor(), false);
+	    final Node parent = (Node) node.getParent();
+	    final int index = parent.getIndex(node);
+	    SwingUtilities.invokeLater(() -> {
+	      parent.remove(index);
+	      parent.insert(newNode, index);
+	    });
+	  }
 	  SwingUtilities.invokeLater(() -> {
-	    parent.remove(index);
-	    parent.insert(newNode, index);
+	    getOwner().setModified(true);
+	    getOwner().nodeStructureChanged(newNode);
+	    getOwner().setExpandedFullNames(exp);
+	    getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), newNode, Type.MODIFY));
 	  });
 	}
-	SwingUtilities.invokeLater(() -> {
-	  getOwner().setModified(true);
-	  getOwner().nodeStructureChanged(newNode);
-	  getOwner().setExpandedFullNames(exp);
-	  getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), newNode, Type.MODIFY));
-	});
       }
-    }
 
-    // any errors?
-    if (processor.hasErrors()) {
-      errorPanel = new ErrorMessagePanel();
-      errorPanel.setErrorMessage(Utils.flatten(processor.getErrors(), "\n"));
-    }
-    else {
-      errorPanel = null;
-    }
+      // any errors?
+      ErrorMessagePanel errorPanel;
+      if (fProcessor.hasErrors()) {
+	errorPanel = new ErrorMessagePanel();
+	errorPanel.setErrorMessage(Utils.flatten(fProcessor.getErrors(), "\n"));
+      }
+      else {
+	errorPanel = null;
+      }
 
-    // graphical output?
-    if (processor instanceof GraphicalOutputProducingProcessor) {
-      graphical = (GraphicalOutputProducingProcessor) processor;
-      if (graphical.hasGraphicalOutput()) {
+      // graphical output?
+      if (fProcessor instanceof GraphicalOutputProducingProcessor) {
+	GraphicalOutputProducingProcessor graphical = (GraphicalOutputProducingProcessor) fProcessor;
+	if (graphical.hasGraphicalOutput()) {
+	  BaseDialog dialog;
+	  if (getOwner().getParentDialog() != null)
+	    dialog = new BaseDialog(getOwner().getParentDialog());
+	  else
+	    dialog = new BaseDialog(getOwner().getParentFrame());
+	  dialog.setTitle(graphical.getTitle());
+	  dialog.getContentPane().setLayout(new BorderLayout());
+	  final Component comp = graphical.getGraphicalOutput();
+	  if (errorPanel == null) {
+	    dialog.getContentPane().add(comp, BorderLayout.CENTER);
+	    if (comp instanceof MenuBarProvider)
+	      dialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
+	  }
+	  else {
+	    final BaseDialog fDialog = dialog;
+	    final ErrorMessagePanel fErrorPanel = errorPanel;
+	    final BaseTabbedPane fTabbedPane = new BaseTabbedPane();
+	    fTabbedPane.addChangeListener((ChangeEvent e) -> {
+	      if (fTabbedPane.getSelectedIndex() == 0) {
+		if (comp instanceof MenuBarProvider)
+		  fDialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
+		else
+		  fDialog.setJMenuBar(null);
+	      }
+	      else {
+		fDialog.setJMenuBar(fErrorPanel.getMenuBar());
+	      }
+	    });
+	    dialog.getContentPane().add(fTabbedPane, BorderLayout.CENTER);
+	    fTabbedPane.addTab("Output", comp);
+	    fTabbedPane.addTab("Errors", errorPanel);
+	  }
+	  if (comp instanceof MenuBarProvider)
+	    dialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
+	  dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
+	  dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
+	  dialog.setVisible(true);
+	  errorPanel = null;
+	}
+      }
+
+      // errors still to display?
+      if (errorPanel != null) {
+	BaseDialog dialog;
 	if (getOwner().getParentDialog() != null)
 	  dialog = new BaseDialog(getOwner().getParentDialog());
 	else
 	  dialog = new BaseDialog(getOwner().getParentFrame());
-	dialog.setTitle(graphical.getTitle());
+	dialog.setTitle(fProcessor.getClass().getSimpleName());
 	dialog.getContentPane().setLayout(new BorderLayout());
-	comp = graphical.getGraphicalOutput();
-	if (errorPanel == null) {
-	  dialog.getContentPane().add(comp, BorderLayout.CENTER);
-	  if (comp instanceof MenuBarProvider)
-	    dialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
-	}
-	else {
-	  fDialog     = dialog;
-	  fErrorPanel = errorPanel;
-	  tabbedPane  = new BaseTabbedPane();
-	  tabbedPane.addChangeListener((ChangeEvent e) -> {
-	    if (tabbedPane.getSelectedIndex() == 0) {
-	      if (comp instanceof MenuBarProvider)
-		fDialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
-	      else
-		fDialog.setJMenuBar(null);
-	    }
-	    else {
-	      fDialog.setJMenuBar(fErrorPanel.getMenuBar());
-	    }
-	  });
-	  dialog.getContentPane().add(tabbedPane, BorderLayout.CENTER);
-	  tabbedPane.addTab("Output", comp);
-	  tabbedPane.addTab("Errors", errorPanel);
-	}
-	if (comp instanceof MenuBarProvider)
-	  dialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
-	dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
+	dialog.getContentPane().add(errorPanel, BorderLayout.CENTER);
+	dialog.setJMenuBar(errorPanel.getMenuBar());
+	dialog.pack();
+	dialog.setSize(Math.max(600, dialog.getWidth()), Math.max(400, dialog.getHeight()));
 	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
 	dialog.setVisible(true);
-	errorPanel = null;
       }
-    }
 
-    // errors still to display?
-    if (errorPanel != null) {
-      if (getOwner().getParentDialog() != null)
-	dialog = new BaseDialog(getOwner().getParentDialog());
-      else
-	dialog = new BaseDialog(getOwner().getParentFrame());
-      dialog.setTitle(processor.getClass().getSimpleName());
-      dialog.getContentPane().setLayout(new BorderLayout());
-      dialog.getContentPane().add(errorPanel, BorderLayout.CENTER);
-      dialog.setJMenuBar(errorPanel.getMenuBar());
-      dialog.pack();
-      dialog.setSize(Math.max(600, dialog.getWidth()), Math.max(400, dialog.getHeight()));
-      dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
-      dialog.setVisible(true);
-    }
-
-    return true;
+      if (after != null)
+	SwingUtilities.invokeLater(after);
+    };
+    getOwner().getOwner().startBackgroundTask(runnable, "Processing...", (after != null));
   }
 
   /**
