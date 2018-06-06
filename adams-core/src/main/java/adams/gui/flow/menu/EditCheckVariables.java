@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EditCheckVariables.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -28,11 +28,10 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Checks the variable usage.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
@@ -44,7 +43,7 @@ public class EditCheckVariables
 
   /**
    * Returns the caption of this action.
-   * 
+   *
    * @return		the caption, null if not applicable
    */
   @Override
@@ -57,39 +56,35 @@ public class EditCheckVariables
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    CheckVariableUsage	processor;
-    final BaseDialog	dialog;
-    JPanel		panel;
-    JButton		button;
+    Runnable  	runnable;
 
-    processor = new CheckVariableUsage();
-    processor.process(m_State.getCurrentFlow());
-    if (processor.hasGraphicalOutput()) {
-      if (getParentDialog() != null)
-	dialog = new BaseDialog(getParentDialog());
-      else
-	dialog = new BaseDialog(getParentFrame());
-      dialog.setTitle(processor.getClass().getSimpleName());
-      dialog.getContentPane().setLayout(new BorderLayout());
-      dialog.getContentPane().add(processor.getGraphicalOutput(), BorderLayout.CENTER);
-      button = new JButton("Close");
-      button.setMnemonic('C');
-      button.addActionListener(new ActionListener() {
-        @Override
-	public void actionPerformed(ActionEvent e) {
-          dialog.setVisible(false);
-        }
-      });
-      panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-      panel.add(button);
-      dialog.getContentPane().add(panel, BorderLayout.SOUTH);
-      dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
-      dialog.setLocationRelativeTo(m_State);
-      dialog.setVisible(true);
-    }
-    else {
-      m_State.getCurrentPanel().showNotification("Basic check passed!\nAll variables get at least set once in the flow.", false);
-    }
+    runnable = () -> {
+      CheckVariableUsage processor = new CheckVariableUsage();
+      processor.process(m_State.getCurrentFlow());
+      if (processor.hasGraphicalOutput()) {
+	final BaseDialog dialog;
+	if (getParentDialog() != null)
+	  dialog = new BaseDialog(getParentDialog());
+	else
+	  dialog = new BaseDialog(getParentFrame());
+	dialog.setTitle(processor.getClass().getSimpleName());
+	dialog.getContentPane().setLayout(new BorderLayout());
+	dialog.getContentPane().add(processor.getGraphicalOutput(), BorderLayout.CENTER);
+	JButton button = new JButton("Close");
+	button.setMnemonic('C');
+	button.addActionListener((ActionEvent ae) -> dialog.setVisible(false));
+	JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+	panel.add(button);
+	dialog.getContentPane().add(panel, BorderLayout.SOUTH);
+	dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
+	dialog.setLocationRelativeTo(m_State);
+	dialog.setVisible(true);
+      }
+      else {
+	m_State.getCurrentPanel().showNotification("Basic check passed!\nAll variables get at least set once in the flow.", false);
+      }
+    };
+    m_State.getCurrentPanel().startBackgroundTask(runnable, "Checking variables...", false);
   }
 
   /**
@@ -98,7 +93,7 @@ public class EditCheckVariables
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasCurrentPanel() 
+      m_State.hasCurrentPanel()
 	&& isInputEnabled());
   }
 }
