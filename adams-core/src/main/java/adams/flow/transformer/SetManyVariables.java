@@ -22,7 +22,6 @@ package adams.flow.transformer;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.VariableNameValuePair;
 import adams.core.VariableUpdater;
 import adams.flow.core.Unknown;
@@ -32,6 +31,7 @@ import adams.parser.MathematicalExpression;
 import adams.parser.StringExpression;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -514,7 +514,7 @@ public class SetManyVariables
   private static final long serialVersionUID = -3383735680425581504L;
 
   /** the variables. */
-  protected VariableNameValuePair[] m_VariablePairs;
+  protected List<VariableNameValuePair> m_VariablePairs;
 
   /** how to interpret the value. */
   protected VariableValueType m_ValueType;
@@ -565,12 +565,22 @@ public class SetManyVariables
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_VariablePairs = new ArrayList<>();
+  }
+
+  /**
    * Adds the variable name/value pair.
    *
    * @param value	the pair to add
    */
   public void addVariablePair(VariableNameValuePair value) {
-    m_VariablePairs = (VariableNameValuePair[]) Utils.adjustArray(m_VariablePairs, m_VariablePairs.length + 1, value);
+    m_VariablePairs.add(value);
     reset();
   }
 
@@ -580,7 +590,8 @@ public class SetManyVariables
    * @param value	the pairs
    */
   public void setVariablePairs(VariableNameValuePair[] value) {
-    m_VariablePairs = value;
+    m_VariablePairs.clear();
+    m_VariablePairs.addAll(Arrays.asList(value));
     reset();
   }
 
@@ -590,7 +601,7 @@ public class SetManyVariables
    * @return		the pairs
    */
   public VariableNameValuePair[] getVariablePairs() {
-    return m_VariablePairs;
+    return m_VariablePairs.toArray(new VariableNameValuePair[0]);
   }
 
   /**
@@ -682,7 +693,7 @@ public class SetManyVariables
     String		result;
     List<String>	options;
 
-    result = QuickInfoHelper.toString(this, "variablePairs", m_VariablePairs.length + " variable" + (m_VariablePairs.length == 1 ? "" : "s"));
+    result = QuickInfoHelper.toString(this, "variablePairs", m_VariablePairs.size() + " variable" + (m_VariablePairs.size() == 1 ? "" : "s"));
 
     // further options
     options = new ArrayList<>();
