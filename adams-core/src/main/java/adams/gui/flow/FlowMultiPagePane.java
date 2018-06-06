@@ -316,7 +316,7 @@ public class FlowMultiPagePane
     if (hasCurrentPanel() && getCurrentPanel().isRunning())
       getOwner().showStatus("Running");
     else
-      getOwner().showStatus("");
+      getOwner().showStatus(hasCurrentPanel() ? getCurrentPanel().getStatus() : "");
 
     // ensure that tabs are visible
     if (hasCurrentPanel()) {

@@ -1184,6 +1184,10 @@ public class TreeOperations
     return processActor(path, null);
   }
 
+  protected void finishProcessingActor() {
+
+  }
+
   /**
    * Processes the specified actor with the specified actor processor.
    * NB: The options of the specified actor will get processed.

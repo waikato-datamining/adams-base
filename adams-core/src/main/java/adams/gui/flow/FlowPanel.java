@@ -157,6 +157,9 @@ public class FlowPanel
   /** the current title. */
   protected String m_Title;
 
+  /** the current status. */
+  protected String m_Status;
+
   /** whether to execute the flow in headless mode. */
   protected boolean m_Headless;
 
@@ -221,6 +224,7 @@ public class FlowPanel
     m_TitleGenerator        = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true);
     m_FilenameProposer      = new FilenameProposer(PREFIX_NEW, Actor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
     m_Title                 = "";
+    m_Status                = "";
     m_RegisteredDisplays    = new HashMap<>();
     m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);
     m_LastReader            = null;
@@ -605,15 +609,12 @@ public class FlowPanel
 	m_Errors   = new ArrayList<>();
 	m_Warnings = new ArrayList<>();
 
+	cleanUp();
+	addUndoPoint("Saving undo data...", "Loading '" + file.getName() + "'");
 	showStatus("Loading '" + file + "'...");
         setPageIcon("hourglass.png");
-
-	cleanUp();
-	update();
-
-	addUndoPoint("Saving undo data...", "Loading '" + file.getName() + "'");
 	setTitle(FileUtils.replaceExtension(file.getName(), ""));
-	updateTitle();
+	update();
 
 	m_Flow = reader.readNode(file);
 	m_Errors.addAll(reader.getErrors());
@@ -1417,12 +1418,22 @@ public class FlowPanel
   }
 
   /**
+   * Returns the current status.
+   *
+   * @return		the status, if any
+   */
+  public String getStatus() {
+    return m_Status;
+  }
+
+  /**
    * Displays a message.
    *
    * @param msg		the message to display
    */
   @Override
   public void showStatus(String msg) {
+    m_Status = msg;
     if (getEditor() != null)
       getEditor().showStatus(msg);
   }
@@ -1713,6 +1724,51 @@ public class FlowPanel
    */
   public boolean isUndoSupported() {
     return super.isUndoSupported() && !isDebug();
+  }
+
+  /**
+   * For starting background tasks. Block user from running other background
+   * tasks till finished.
+   *
+   * @param runnable	the task to execute
+   * @param statusMsg	the status message to display
+   * @param clearMsg	whether to clear the message at the end; use false if
+   *                    your task displays a message in the status bar
+   * @return		true if successfully started, false if another task is
+   * 			currently running
+   */
+  public boolean startBackgroundTask(final Runnable runnable, final String statusMsg, final boolean clearMsg) {
+    SwingWorker		worker;
+
+    if (isSwingWorkerRunning())
+      return false;
+
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+        m_RunningSwingWorker = true;
+        SwingUtilities.invokeLater(() -> {
+	  showStatus(statusMsg);
+	  update();
+	});
+        runnable.run();
+	return null;
+      }
+
+      @Override
+      protected void done() {
+        m_RunningSwingWorker = false;
+        SwingUtilities.invokeLater(() -> {
+	  if (clearMsg)
+	    showStatus("");
+	  update();
+	});
+	super.done();
+      }
+    };
+    worker.execute();
+
+    return true;
   }
 
   /**
