@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RunDisableAllBreakpoints.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
  * Disables all breakpoints.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RunDisableAllBreakpoints
   extends AbstractFlowEditorMenuItemAction {
@@ -48,7 +47,8 @@ public class RunDisableAllBreakpoints
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().enableBreakpoints(false);
+    m_State.getCurrentPanel().startBackgroundTask(() ->
+      m_State.getCurrentPanel().enableBreakpoints(false), "Disabling all breakpoints...", true);
   }
 
   /**
