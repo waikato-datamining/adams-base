@@ -1281,11 +1281,20 @@ actors allow you to perform some basic operations:
 For more functionality, see the documentation on the \textit{adams-spreadsheet} 
 module.
 
+\noindent Here are JDBC URL templates for accessing the various types of databases:
+\begin{tight_itemize}
+  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>}
+  \item \textit{PostgreSQL} -- \texttt{jdbc:postgresql://<HOST>:5432/<DATABASE>}
+  \item \textit{HSQLDB} -- \texttt{jdbc:hsqldb:hsql://<HOST>:9001}
+  \item \textit{SQLite} -- \texttt{jdbc:sqlite:<PATH\_TO\_FILE>}
+  \item \textit{MS SQL Server} -- \texttt{jdbc:jtds:sqlserver://<HOST>:1433/<DATABASE>}
+\end{tight_itemize}
+
 \noindent \textbf{NB:} Later versions of MySQL automatically want to secure
 the connection with SSL. If that is not desired or necessary, you can use
-a JDBC URL like this to connect to database \textit{mydb} on host \textit{somehost}:
+a JDBC URL like this to connect to database \textit{DATABASE} on host \textit{HOST}:
 \begin{verbatim}
-jdbc:mysql://somehost:3306/mydb?useSSL=false
+jdbc:mysql://<HOST>:3306/<DATABASE>?useSSL=false
 \end{verbatim}
 
 
