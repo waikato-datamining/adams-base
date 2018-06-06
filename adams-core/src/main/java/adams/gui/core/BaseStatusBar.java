@@ -296,14 +296,6 @@ public class BaseStatusBar
 	m_TimerRight.schedule(m_ClearTaskRight, m_ExpiryTimeRight * 1000);
       }
     }
-    if (m_ExpiryTimeLeft > 0) {
-      m_ClearTaskLeft = new TimerTask() {
-        @Override
-        public void run() {
-          clearStatus(left);
-        }
-      };
-    }
   }
 
   /**
