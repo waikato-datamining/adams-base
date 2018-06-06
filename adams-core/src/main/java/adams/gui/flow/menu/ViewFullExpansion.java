@@ -62,7 +62,7 @@ public class ViewFullExpansion
 
     runnable = () -> {
       FlowPanel panel = m_State.getCurrentPanel();
-      String title    = "Expanded: " + panel.getTitle();
+      String title = "Expanded: " + panel.getTitle();
       NestedConsumer consumer = new NestedConsumer();
       DebugNestedProducer producer = new DebugNestedProducer();
       producer.setOutputVariableValues(false);
@@ -71,10 +71,13 @@ public class ViewFullExpansion
       consumer.setInput(producer.produce(actor));
       Actor expanded = (Actor) consumer.consume();
       FlowPanel panelCopy = m_State.getFlowPanels().newPanel();
-      panelCopy.setCurrentFlow(expanded);
+      int index = m_State.getFlowPanels().indexOfPage(panelCopy);
+      m_State.getFlowPanels().setTitleAt(index, title);
       panelCopy.setTitle(title);
-      panelCopy.updateTitle();
+      panelCopy.setPageIcon("hourglass.png");
+      panelCopy.setCurrentFlow(expanded);
       panelCopy.setDebugSourcePanel(panel);
+      panelCopy.setPageIcon(null);
       if (expanded instanceof Flow)
 	((Flow) expanded).setParentComponent(panelCopy);
     };
