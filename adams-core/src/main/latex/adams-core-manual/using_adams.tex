@@ -2898,6 +2898,7 @@ The following variables are recognized:
 \end{tight_itemize}
 
 \section{Properties files}
+\label(propsfiles)
 A properties file is a plain text file that ends with the extension
 \texttt{.props}. Each properties file contains key-value pairs that are
 separated by an equals sign (``=``). A backslash at the end of a line can be
@@ -3091,21 +3092,25 @@ default locale. See Figure \ref{locale_setup} for an example setup.
 
 \section{Database access}
 \label{databaseaccess}
-In order to add support in ADAMS for a database, in addition to MySQL\footnote{\url{http://www.mysql.com/}{}} 
-and sqlite\footnote{\url{http://www.sqlite.org/}{}}, the following steps
+In order to add support in ADAMS for other databases, the following steps
 are required:
 \begin{itemize}
 	\item Place the jar archive of the JDBC driver in the \textit{lib} directory.
-	\item Update the \textit{Drivers.props} properties file, adding
-	the classname of the JDBC driver to the \textit{Drivers} key. For instance,
+	\item Either update the \textit{Drivers.props} properties file in the source
+	tree, adding the classname of the JDBC driver to the \textit{Drivers} key. For instance,
 	use \textit{oracle.jdbc.OracleDriver} for the Oracle driver: \\
 \begin{verbatim}
 Drivers=\
   com.mysql.jdbc.Driver,\
   org.sqlite.JDBC,\
+  org.hsqldb.jdbcDriver,\
+  org.postgresql.Driver,\
+  net.sourceforge.jtds.jdbc.Driver,\
   oracle.jdbc.OracleDriver
 \end{verbatim}
-	This is a comma-separated list, so just append your JDBC driver(s).
+	This is a comma-separated list, so just append your JDBC driver(s). \\
+	Alternatively, just place a new properties files \textit{Driver.props}
+	in one of the locations that ADAMS is looking for them (see \ref{propsfiles}).
 \end{itemize}
 
 \section{Browser}
