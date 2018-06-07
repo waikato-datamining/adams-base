@@ -585,8 +585,7 @@ public class ActorUtils {
    * @return		true if standalone
    */
   public static boolean isStandalone(Actor actor) {
-    return !ClassLocator.hasInterface(InputConsumer.class, actor.getClass())
-      && !ClassLocator.hasInterface(OutputProducer.class, actor.getClass());
+    return (!(actor instanceof InputConsumer)) && (!(actor instanceof OutputProducer));
   }
 
   /**
@@ -596,8 +595,7 @@ public class ActorUtils {
    * @return		true if source
    */
   public static boolean isSource(Actor actor) {
-    return !ClassLocator.hasInterface(InputConsumer.class, actor.getClass())
-      && ClassLocator.hasInterface(OutputProducer.class, actor.getClass());
+    return (!(actor instanceof InputConsumer)) && (actor instanceof OutputProducer);
   }
 
   /**
@@ -607,8 +605,7 @@ public class ActorUtils {
    * @return		true if sink
    */
   public static boolean isSink(Actor actor) {
-    return ClassLocator.hasInterface(InputConsumer.class, actor.getClass())
-      && !ClassLocator.hasInterface(OutputProducer.class, actor.getClass());
+    return (actor instanceof InputConsumer) && (!(actor instanceof OutputProducer));
   }
 
   /**
@@ -618,8 +615,7 @@ public class ActorUtils {
    * @return		true if transformer
    */
   public static boolean isTransformer(Actor actor) {
-    return ClassLocator.hasInterface(InputConsumer.class, actor.getClass())
-      && ClassLocator.hasInterface(OutputProducer.class, actor.getClass());
+    return (actor instanceof InputConsumer) && (actor instanceof OutputProducer);
   }
 
   /**
@@ -629,7 +625,7 @@ public class ActorUtils {
    * @return		true if control actor
    */
   public static boolean isControlActor(Actor actor) {
-    return ClassLocator.hasInterface(ControlActor.class, actor.getClass());
+    return (actor instanceof ControlActor);
   }
 
   /**
@@ -639,7 +635,7 @@ public class ActorUtils {
    * @return		true if actor handler
    */
   public static boolean isActorHandler(Actor actor) {
-    return ClassLocator.hasInterface(ActorHandler.class, actor.getClass());
+    return (actor instanceof ActorHandler);
   }
 
   /**
