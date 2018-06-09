@@ -22,11 +22,14 @@ package adams.gui.flow.menu;
 import adams.data.statistics.InformativeStatistic;
 import adams.flow.core.ActorStatistic;
 import adams.gui.core.GUIHelper;
+import adams.gui.flow.tree.Node;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
 
+import javax.swing.tree.TreeNode;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -58,11 +61,19 @@ public class ViewStatistics
     Runnable	runnable;
 
     runnable = () -> {
-      ActorStatistic stats = null;
+      Node node = null;
       if (m_State.getCurrentTree().getSelectedNode() != null)
-	stats = new ActorStatistic(m_State.getCurrentTree().getSelectedNode().getFullActor());
+	node = m_State.getCurrentTree().getSelectedNode();
       else if (m_State.getCurrentRoot() != null)
-	stats = new ActorStatistic(m_State.getCurrentFlow());
+	node = m_State.getCurrentTree().getRootNode();
+      ActorStatistic stats = new ActorStatistic();
+      if (node != null) {
+        Enumeration<TreeNode> all = node.breadthFirstEnumeration();
+        while (all.hasMoreElements()) {
+          Node child = (Node) all.nextElement();
+          stats.update(child.getActor());
+        }
+      }
       List<InformativeStatistic> statsList = new ArrayList<>();
       statsList.add(stats);
 

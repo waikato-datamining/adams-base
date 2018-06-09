@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorStatistic.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -34,7 +34,6 @@ import java.util.List;
  * Generates some statistics for an actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorStatistic
   implements InformativeStatistic {
@@ -75,6 +74,7 @@ public class ActorStatistic
     m_TypeStatistics  = new NamedCounter();
     m_ClassStatistics = new NamedCounter();
     m_Actor           = null;
+    calculate();
   }
 
   /**
@@ -111,7 +111,7 @@ public class ActorStatistic
    *
    * @param actor	the actor to use
    */
-  protected void update(Actor actor) {
+  public void update(Actor actor) {
     m_TypeStatistics.next(COUNT_ACTORS);
     if (ActorUtils.isControlActor(actor))
       m_TypeStatistics.next(COUNT_CONTROLACTORS);
