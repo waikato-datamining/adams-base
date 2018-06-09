@@ -19,11 +19,11 @@
  */
 package adams.gui.flow.menu;
 
-import adams.core.option.AbstractOptionProducer;
-import adams.core.option.NestedProducer;
+import adams.data.io.output.DefaultFlowWriter;
 import adams.gui.dialog.TextDialog;
 
 import java.awt.event.ActionEvent;
+import java.io.StringWriter;
 
 /**
  * Displays the source of the flow.
@@ -54,7 +54,11 @@ public class ViewShowSource
     Runnable	runnable;
 
     runnable = () -> {
-      String buffer = AbstractOptionProducer.toString(NestedProducer.class, m_State.getCurrentFlow());
+      StringWriter swriter = new StringWriter();
+      DefaultFlowWriter writer = new DefaultFlowWriter();
+      writer.setUseCompact(true);
+      writer.write(m_State.getCurrentTree().getRootNode(), swriter);
+      String buffer = swriter.toString();
       TextDialog dialog;
       if (getParentDialog() != null)
 	dialog = new TextDialog(getParentDialog());
