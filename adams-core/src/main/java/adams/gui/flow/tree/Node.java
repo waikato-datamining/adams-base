@@ -58,7 +58,7 @@ public class Node
   private static final long serialVersionUID = 8994468228049539761L;
 
   /** the owning tree. */
-  protected Tree m_Owner;
+  protected transient Tree m_Owner;
 
   /** the variables. */
   protected HashSet<String> m_Variables;
