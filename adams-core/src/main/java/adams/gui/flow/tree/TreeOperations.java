@@ -1873,6 +1873,27 @@ public class TreeOperations
   }
 
   /**
+   * Returns the nodes stored on the clipboard.
+   *
+   * @return		the nodes or null if none available
+   */
+  public static Node[] getNodeFromClipboard() {
+    Node[]		result;
+
+    result = null;
+
+    try {
+      if (ClipboardHelper.canPasteFromClipboard(TransferableNode.FlowNodeFlavour))
+        result = ((TransferableNode) ClipboardHelper.pasteFromClipboard(TransferableNode.FlowNodeFlavour)).getData();
+    }
+    catch (Exception ex) {
+      result = null;
+    }
+
+    return result;
+  }
+
+  /**
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
