@@ -1877,7 +1877,7 @@ public class TreeOperations
    *
    * @return		the nodes or null if none available
    */
-  public static Node[] getNodeFromClipboard() {
+  public static Node[] getNodesFromClipboard() {
     Node[]		result;
 
     result = null;
