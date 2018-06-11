@@ -151,8 +151,6 @@ StatusBar.Height=400
 
 # The flow editor tree popup menu
 Tree.PopupMenu=\
-  adams.gui.flow.tree.menu.MenuHeader,\
-  -,\
   adams.gui.flow.tree.menu.EditActor,\
   adams.gui.flow.tree.menu.ExternalFlow,\
   -,\
