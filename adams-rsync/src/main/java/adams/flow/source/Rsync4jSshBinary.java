@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Rsync4jSshBinary.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
 
 import adams.flow.core.Token;
-import com.github.fracpete.rsync4j.Binaries;
+import com.github.fracpete.rsync4j.core.Binaries;
 
 /**
  <!-- globalinfo-start -->
