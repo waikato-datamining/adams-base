@@ -15,7 +15,7 @@
 
 /*
  * Node.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -42,6 +42,8 @@ import com.github.fracpete.jclipboardhelper.TransferableString;
 import org.markdownj.MarkdownProcessor;
 
 import java.awt.datatransfer.Transferable;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -921,5 +923,44 @@ public class Node
    */
   public String getCommandLine() {
     return m_CommandLine;
+  }
+
+  /**
+   * Sorts the children using the supplied comparator.
+   *
+   * @param comp	the comparator to use
+   */
+  public void sortChildren(Comparator<Node> comp) {
+    List<Node>	children;
+    int		i;
+    int		n;
+    boolean 	modified;
+    int		comparison;
+    Node	backup;
+
+    children = new ArrayList<>();
+    for (i = 0; i < getChildCount(); i++)
+      children.add((Node) getChildAt(i));
+
+    modified = false;
+    for (i = 0; i < children.size() - 1; i++) {
+      for (n = i + 1; n < children.size(); n++) {
+	comparison = comp.compare(children.get(i), children.get(n));
+	if (comparison > 0) {
+	  modified = true;
+	  backup = children.get(i);
+	  children.set(i, children.get(n));
+	  children.set(n, backup);
+	}
+      }
+    }
+
+    if (modified) {
+      removeAllChildren();
+      for (Node child: children)
+        add(child);
+      if (getOwner() != null)
+        getOwner().nodeStructureChanged(this);
+    }
   }
 }
