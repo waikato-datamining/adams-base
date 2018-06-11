@@ -15,7 +15,7 @@
 
 /*
  * Tree.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -50,6 +50,7 @@ import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction;
 import adams.gui.flow.tree.menu.EditActor;
+import adams.gui.flow.tree.menu.MenuHeader;
 import adams.gui.flow.tree.menu.Separator;
 import adams.gui.flow.tree.menu.TreePopupAction;
 import adams.gui.goe.FlowHelper;
@@ -77,7 +78,6 @@ import java.util.List;
  * A custom tree for displaying the structure of a flow.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Tree
   extends DragAndDropTree
@@ -90,7 +90,6 @@ public class Tree
    * Container object for the tree state.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class TreeState {
     /** the nested commandlines. */
@@ -1059,13 +1058,21 @@ public class Tree
     BasePopupMenu	menu;
     StateContainer	state;
     String[]		items;
+    MenuHeader		header;
     TreePopupAction	action;
+    boolean		first;
 
     state = getTreeState(e);
     if (state == null)
       return null;
 
     menu  = new BasePopupMenu();
+
+    // header
+    header = new MenuHeader();
+    header.update(state);
+    menu.add(header.getMenuItem());
+    menu.addSeparator();
 
     // cache classes?
     if (m_NodePopupClasses == null) {
@@ -1088,15 +1095,20 @@ public class Tree
       }
     }
 
+    first = true;
     for (Class cls : m_NodePopupClasses) {
+      if (cls == MenuHeader.class)
+        continue;
       if (cls == Separator.class) {
-	menu.addSeparator();
+        if (!first)
+	  menu.addSeparator();
       }
       else {
 	try {
 	  action = (TreePopupAction) cls.newInstance();
 	  action.update(state);
 	  menu.add(action.getMenuItem());
+	  first = false;
 	}
 	catch (Exception ex) {
 	  ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu item '" + cls.getName() + "':", ex);
