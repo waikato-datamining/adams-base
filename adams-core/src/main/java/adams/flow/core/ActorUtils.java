@@ -1842,4 +1842,49 @@ public class ActorUtils {
 
     return result;
   }
+
+  /**
+   * Sorts the child-actors using the supplied comparator.
+   *
+   * @param handler 	the handler to sort the children for
+   * @param comp	the comparator to use
+   * @return		if the order was modified
+   */
+  public static boolean sort(SortableActorHandler handler, ActorComparator comp) {
+    List<Actor>	children;
+    int		i;
+    int		n;
+    boolean result;
+    int		comparison;
+    Actor	backup;
+
+    if (handler.size() < 2)
+      return false;
+
+    result = false;
+
+    children = new ArrayList<>();
+    for (i = 0; i < handler.size(); i++)
+      children.add(handler.get(i));
+
+    for (i = 0; i < children.size() - 1; i++) {
+      for (n = i + 1; n < children.size(); n++) {
+	comparison = comp.compare(children.get(i), children.get(n));
+	if (comparison > 0) {
+	  result = true;
+	  backup = children.get(i);
+	  children.set(i, children.get(n));
+	  children.set(n, backup);
+	}
+      }
+    }
+
+    if (result) {
+      handler.removeAll();
+      for (Actor child: children)
+        handler.add(child);
+    }
+
+    return result;
+  }
 }
