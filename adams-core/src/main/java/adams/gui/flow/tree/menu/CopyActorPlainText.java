@@ -14,12 +14,15 @@
  */
 
 /*
- * CopyActor.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, NZ
+ * CopyActorPlainText.java
+ * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import adams.gui.flow.tree.TransferableNode;
+import adams.core.option.AbstractOptionProducer;
+import adams.core.option.NestedProducer;
+import adams.flow.core.Actor;
+import adams.gui.flow.tree.ClipboardActorContainer;
 import adams.gui.flow.tree.TreeHelper;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -31,7 +34,7 @@ import java.awt.event.ActionEvent;
  * 
  * @author fracpete
  */
-public class CopyActor
+public class CopyActorPlainText
   extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
@@ -44,7 +47,7 @@ public class CopyActor
    */
   @Override
   protected String getTitle() {
-    return "Copy";
+    return "Copy (plain text)";
   }
 
   /**
@@ -56,12 +59,30 @@ public class CopyActor
   }
 
   /**
+   * Puts the actors in nested form on the clipboard.
+   *
+   * @param actors	the actors to put on the clipboard
+   */
+  protected void putActorOnClipboard(Actor[] actors) {
+    ClipboardActorContainer	cont;
+
+    if (actors.length == 1) {
+      ClipboardHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, actors[0]));
+    }
+    else if (actors.length > 1) {
+      cont = new ClipboardActorContainer();
+      cont.setActors(actors);
+      ClipboardHelper.copyToClipboard(cont.toNestedString());
+    }
+  }
+
+  /**
    * The action to execute.
    *
    * @param e		the event
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    ClipboardHelper.copyToClipboard(new TransferableNode(TreeHelper.pathsToNodes(m_State.selPaths)));
+    putActorOnClipboard(TreeHelper.pathsToActors(m_State.selPaths, true));
   }
 }

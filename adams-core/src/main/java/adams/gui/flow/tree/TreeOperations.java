@@ -607,6 +607,105 @@ public class TreeOperations
   }
 
   /**
+   * For pasting nodes.
+   *
+   * @param path	the path to the actor to add the new actor sibling
+   * @param nodes	the nodes to paste
+   * @param position	how to insert the nodes
+   */
+  public void pasteNodes(final TreePath path, final Node[] nodes, InsertPosition position) {
+    Actor 		currentActor;
+    final Node 		currentNode;
+    Actor 		parentActor;
+    Node 		parentNode;
+    int			index;
+    final List<String>	exp;
+
+    currentActor = TreeHelper.pathToActor(path);
+    if (currentActor == null) {
+      GUIHelper.showErrorMessage(getOwner(), "Failed to determine actor from tree path!");
+      return;
+    }
+    currentNode = TreeHelper.pathToNode(path);
+    if (currentNode == null) {
+      GUIHelper.showErrorMessage(getOwner(), "Failed to determine node from tree path!");
+      return;
+    }
+    parentNode  = (Node) currentNode.getParent();
+    parentActor = (parentNode != null) ? parentNode.getActor() : null;
+    exp         = getOwner().getExpandedFullNames();
+
+    switch (position) {
+      case BENEATH:
+        if (!(currentActor instanceof MutableActorHandler)) {
+          GUIHelper.showErrorMessage(getOwner(), "Actor is not a " + Utils.classToString(MutableActorHandler.class) + ", cannot paste beneath!");
+          return;
+	}
+	for (Node node: nodes) {
+          node.setOwner(getOwner());
+          currentNode.add(node);
+	}
+	SwingUtilities.invokeLater(() -> {
+	  getOwner().nodeStructureChanged(currentNode);
+	  getOwner().setExpandedFullNames(exp);
+	  getOwner().expand(currentNode);
+	});
+	SwingUtilities.invokeLater(() -> {
+	  getOwner().setSelectedFullName(currentNode.getFullName());
+	  getOwner().requestFocus();
+	});
+        break;
+
+      case HERE:
+        if (!(parentActor instanceof MutableActorHandler)) {
+          GUIHelper.showErrorMessage(getOwner(), "Parent actor is not a " + Utils.classToString(MutableActorHandler.class) + ", cannot paste here!");
+          return;
+	}
+	index = parentNode.getIndex(currentNode);
+	for (Node node: nodes) {
+          node.setOwner(getOwner());
+          parentNode.insert(node, index);
+          index++;
+	}
+	SwingUtilities.invokeLater(() -> {
+	  getOwner().nodeStructureChanged(parentNode);
+	  getOwner().setExpandedFullNames(exp);
+	  getOwner().expand(parentNode);
+	});
+	SwingUtilities.invokeLater(() -> {
+	  getOwner().setSelectedFullName(nodes[nodes.length - 1].getFullName());
+	  getOwner().requestFocus();
+	});
+        break;
+
+      case AFTER:
+        if (!(parentActor instanceof MutableActorHandler)) {
+          GUIHelper.showErrorMessage(getOwner(), "Parent actor is not a " + Utils.classToString(MutableActorHandler.class) + ", cannot paste after!");
+          return;
+	}
+	index = parentNode.getIndex(currentNode) + 1;
+	for (Node node: nodes) {
+          node.setOwner(getOwner());
+          parentNode.insert(node, index);
+          index++;
+	}
+	SwingUtilities.invokeLater(() -> {
+	  getOwner().nodeStructureChanged(parentNode);
+	  getOwner().setExpandedFullNames(exp);
+	  getOwner().expand(parentNode);
+	});
+	SwingUtilities.invokeLater(() -> {
+	  getOwner().setSelectedFullName(nodes[nodes.length - 1].getFullName());
+	  getOwner().requestFocus();
+	});
+        break;
+
+      default:
+        throw new IllegalStateException("Unhandled insert position: " + position);
+    }
+  }
+
+  /**
    * Lets the user select an actor from a dialog of favorites.
    *
    * @param path	the path to the actor to add the new actor sibling
@@ -1883,8 +1982,8 @@ public class TreeOperations
     result = null;
 
     try {
-      if (ClipboardHelper.canPasteFromClipboard(TransferableNode.FlowNodeFlavour))
-        result = ((TransferableNode) ClipboardHelper.pasteFromClipboard(TransferableNode.FlowNodeFlavour)).getData();
+      if (ClipboardHelper.canPasteFromClipboard(TransferableNode.Flavour))
+        result = (Node[]) ClipboardHelper.pasteFromClipboard(TransferableNode.Flavour);
     }
     catch (Exception ex) {
       result = null;

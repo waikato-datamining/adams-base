@@ -36,7 +36,7 @@ public class TransferableNode
   /** for serialization. */
   private static final long serialVersionUID = -4291529156857201031L;
 
-  public static DataFlavor FlowNodeFlavour = new DataFlavor(Node.class, "Flow node");
+  public static DataFlavor Flavour = new DataFlavor(Node.class, "Flow node");
 
   /** the nodes to transfer. */
   protected Node[] m_Data;
@@ -71,7 +71,7 @@ public class TransferableNode
    * @return 		an array of data flavors in which this data can be transferred
    */
   public DataFlavor[] getTransferDataFlavors() {
-    return new DataFlavor[]{FlowNodeFlavour};
+    return new DataFlavor[]{Flavour};
   }
 
   /**
@@ -82,7 +82,7 @@ public class TransferableNode
    * @return 		boolean indicating whether or not the data flavor is supported
    */
   public boolean isDataFlavorSupported(DataFlavor flavor) {
-    return (flavor.equals(FlowNodeFlavour));
+    return (flavor.equals(Flavour));
   }
 
   /**
@@ -98,7 +98,7 @@ public class TransferableNode
    * @see DataFlavor#getRepresentationClass
    */
   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-    if (flavor.equals(FlowNodeFlavour))
+    if (flavor.equals(Flavour))
       return m_Data;
     else
       throw new UnsupportedFlavorException(flavor);

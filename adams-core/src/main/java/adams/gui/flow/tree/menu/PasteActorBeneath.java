@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PasteActorBeneath.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
  * For pasting the actor(s) from the clipboard beneath the current actor.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class PasteActorBeneath
   extends AbstractTreePopupMenuItemAction {
@@ -60,6 +59,9 @@ public class PasteActorBeneath
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.tree.getOperations().addActor(m_State.selPath, TreeOperations.getActorFromClipboard(), TreeOperations.InsertPosition.BENEATH);
+    if (TreeOperations.getNodesFromClipboard() != null)
+      m_State.tree.getOperations().pasteNodes(m_State.selPath, TreeOperations.getNodesFromClipboard(), TreeOperations.InsertPosition.BENEATH);
+    else
+      m_State.tree.getOperations().addActor(m_State.selPath, TreeOperations.getActorFromClipboard(), TreeOperations.InsertPosition.BENEATH);
   }
 }
