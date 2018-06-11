@@ -645,6 +645,7 @@ public class TreeOperations
           node.setOwner(getOwner());
           currentNode.add(node);
 	}
+	getOwner().setModified(true);
 	SwingUtilities.invokeLater(() -> {
 	  getOwner().nodeStructureChanged(currentNode);
 	  getOwner().setExpandedFullNames(exp);
@@ -667,6 +668,7 @@ public class TreeOperations
           parentNode.insert(node, index);
           index++;
 	}
+	getOwner().setModified(true);
 	SwingUtilities.invokeLater(() -> {
 	  getOwner().nodeStructureChanged(parentNode);
 	  getOwner().setExpandedFullNames(exp);
@@ -689,6 +691,7 @@ public class TreeOperations
           parentNode.insert(node, index);
           index++;
 	}
+	getOwner().setModified(true);
 	SwingUtilities.invokeLater(() -> {
 	  getOwner().nodeStructureChanged(parentNode);
 	  getOwner().setExpandedFullNames(exp);
