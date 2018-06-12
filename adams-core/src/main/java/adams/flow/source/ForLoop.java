@@ -15,11 +15,12 @@
 
 /*
  * ForLoop.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
+import adams.core.QuickInfoHelper;
 import adams.flow.core.ArrayProvider;
 import adams.flow.core.Token;
 
@@ -50,58 +51,57 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ForLoop
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-lower &lt;int&gt; (property: loopLower)
  * &nbsp;&nbsp;&nbsp;The lower bound of the loop (= the first value).
  * &nbsp;&nbsp;&nbsp;default: 1
  * </pre>
- * 
+ *
  * <pre>-upper &lt;int&gt; (property: loopUpper)
  * &nbsp;&nbsp;&nbsp;The upper bound of the loop.
  * &nbsp;&nbsp;&nbsp;default: 10
  * </pre>
- * 
+ *
  * <pre>-step &lt;int&gt; (property: loopStep)
  * &nbsp;&nbsp;&nbsp;The step size of the loop.
  * &nbsp;&nbsp;&nbsp;default: 1
  * </pre>
- * 
+ *
  * <pre>-output-array &lt;boolean&gt; (property: outputArray)
  * &nbsp;&nbsp;&nbsp;Whether to output the integers one-by-one or as array.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ForLoop
   extends AbstractForLoop
@@ -124,13 +124,13 @@ public class ForLoop
   @Override
   public String globalInfo() {
     return
-        "Emulates the following for-loop for integer IDs:\n"
-      + "- positive step size:\n"
-      + "  for (int i = lower; i <= upper; i += step)\n"
-      + "- negative step size:\n"
-      + "  for (int i = upper; i >= lower; i += step)\n"
-      + "\n"
-      + "The integers can be output as a single array as well.";
+      "Emulates the following for-loop for integer IDs:\n"
+	+ "- positive step size:\n"
+	+ "  for (int i = lower; i <= upper; i += step)\n"
+	+ "- negative step size:\n"
+	+ "  for (int i = upper; i >= lower; i += step)\n"
+	+ "\n"
+	+ "The integers can be output as a single array as well.";
   }
 
   /**
@@ -141,8 +141,8 @@ public class ForLoop
     super.defineOptions();
 
     m_OptionManager.add(
-	    "output-array", "outputArray",
-	    false);
+      "output-array", "outputArray",
+      false);
   }
 
   /**
@@ -175,6 +175,21 @@ public class ForLoop
   }
 
   /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "as array", " ");
+
+    return result;
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		<!-- flow-generates-start -->java.lang.Integer.class<!-- flow-generates-end -->
@@ -200,7 +215,7 @@ public class ForLoop
     if (m_OutputArray) {
       array = new ArrayList<>();
       for (i = m_LoopLower; i <= m_LoopUpper; i += m_LoopStep)
-        array.add(i);
+	array.add(i);
       m_Array = array.toArray(new Integer[array.size()]);
     }
     else {
@@ -239,7 +254,7 @@ public class ForLoop
     }
     else {
       if (isLoggingEnabled())
-        getLogger().info("i=" + m_Current);
+	getLogger().info("i=" + m_Current);
 
       result = new Token(new Integer(m_Current));
       m_Current += m_LoopStep;
