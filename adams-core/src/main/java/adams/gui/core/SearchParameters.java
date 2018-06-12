@@ -30,12 +30,14 @@ import java.util.regex.Pattern;
  * being searched are both used in lower case.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SearchParameters {
 
   /** the search string. */
   protected String m_SearchString;
+
+  /** the parts of the search string (split on blanks). */
+  protected String[] m_SearchParts;
 
   /** not null if the search string is a long. */
   protected Long m_Long;
@@ -66,13 +68,16 @@ public class SearchParameters {
    * 			substring matching
    */
   public SearchParameters(String search, boolean regExp) {
-    m_RegExp = regExp;
+    m_RegExp      = regExp;
+    m_SearchParts = null;
 
     if (search == null)
       search = "";
     if (!m_RegExp) {
       m_SearchString = search.toLowerCase();
       m_Pattern      = null;
+      if (m_SearchString.contains(" "))
+        m_SearchParts = m_SearchString.split(" ");
     }
     else {
       m_SearchString = search;
@@ -139,16 +144,32 @@ public class SearchParameters {
    * @return		true if a match
    */
   public boolean matches(String s) {
+    boolean	match;
+
     if (s == null)
       return false;
 
     if (m_SearchString.length() == 0)
       return true;
 
-    if (m_RegExp)
+    if (m_RegExp) {
       return m_Pattern.matcher(s).matches();
-    else
-      return s.toLowerCase().contains(m_SearchString);
+    }
+    else {
+      s = s.toLowerCase();
+      if (m_SearchParts != null) {
+        match = true;
+        for (String part: m_SearchParts) {
+          match = s.contains(part);
+          if (!match)
+            break;
+	}
+	return match;
+      }
+      else {
+	return s.contains(m_SearchString);
+      }
+    }
   }
 
   /**
