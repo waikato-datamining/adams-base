@@ -15,7 +15,7 @@
 
 /*
  * AxisPanel.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
@@ -72,7 +72,6 @@ import java.util.List;
  * Specialized panel for displaying an axis.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AxisPanel
   extends BasePanel {
@@ -542,6 +541,15 @@ public class AxisPanel
   }
 
   /**
+   * Returns the actual minimum on the axis (excl margins).
+   *
+   * @return		the actual minimum value
+   */
+  public double getActualMinimumNoMargin() {
+    return m_Model.getActualMinimumNoMargin();
+  }
+
+  /**
    * Sets the maximum to display on the axis.
    *
    * @param value	the maximum value
@@ -584,6 +592,15 @@ public class AxisPanel
    */
   public double getActualMaximum() {
     return m_Model.getActualMaximum();
+  }
+
+  /**
+   * Returns the actual maximum on the axis (excl margins).
+   *
+   * @return		the actual maximum value
+   */
+  public double getActualMaximumNoMargin() {
+    return m_Model.getActualMaximumNoMargin();
   }
 
   /**
@@ -823,10 +840,10 @@ public class AxisPanel
 
     panel = new ParameterPanel();
     textMin = new JTextField(10);
-    textMin.setText(Utils.doubleToString(getManualMinimum() == null ? getMinimum() : getManualMinimum(), 8));
+    textMin.setText(Utils.doubleToString(getActualMinimumNoMargin(), 8));
     panel.addParameter("Minimum", textMin);
     textMax = new JTextField(10);
-    textMax.setText(Utils.doubleToString(getManualMaximum() == null ? getMaximum() : getManualMaximum(), 8));
+    textMax.setText(Utils.doubleToString(getActualMaximumNoMargin(), 8));
     panel.addParameter("Maximum", textMax);
 
     if (getParentDialog() != null)
@@ -871,8 +888,8 @@ public class AxisPanel
     BaseInterval 	range;
 
     range = new BaseInterval(
-      getManualMinimum() == null ? getMinimum() : getManualMinimum(),
-      getManualMaximum() == null ? getMaximum() : getManualMaximum());
+      getActualMinimumNoMargin(),
+      getActualMaximumNoMargin());
     ClipboardHelper.copyToClipboard(range.getValue());
   }
 

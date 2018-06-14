@@ -15,7 +15,7 @@
 
 /*
  * AbstractAxisModel.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.axis;
@@ -30,7 +30,6 @@ import java.util.Stack;
  * An abstract class of an axis model.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractAxisModel
   extends LoggingObject {
@@ -52,6 +51,12 @@ public abstract class AbstractAxisModel
 
   /** the actual maximum to display (including the top margin). */
   protected double m_ActualMaximum;
+
+  /** the actual minimum to display (excluding the bottom margin). */
+  protected double m_ActualMinimumNoMargin;
+
+  /** the actual maximum to display (excluding the top margin). */
+  protected double m_ActualMaximumNoMargin;
 
   /** the top margin. */
   protected double m_MarginTop;
@@ -211,6 +216,16 @@ public abstract class AbstractAxisModel
   }
 
   /**
+   * Returns the actual minimum on the axis (no margin).
+   *
+   * @return		the actual minimum
+   */
+  public double getActualMinimumNoMargin() {
+    validate();
+    return m_ActualMinimumNoMargin;
+  }
+
+  /**
    * Sets the maximum to display on the axis.
    *
    * @param value	the maximum value
@@ -251,13 +266,23 @@ public abstract class AbstractAxisModel
   }
 
   /**
-   * Returns the actual maximum on the axis.
+   * Returns the actual maximum on the axis (with margins).
    *
    * @return		the actual maximum
    */
   public double getActualMaximum() {
     validate();
     return m_ActualMaximum;
+  }
+
+  /**
+   * Returns the maximum in use on the axis (without margins).
+   *
+   * @return		the maximum in used
+   */
+  public double getActualMaximumNoMargin() {
+    validate();
+    return m_ActualMaximumNoMargin;
   }
 
   /**
@@ -652,6 +677,8 @@ public abstract class AbstractAxisModel
       else
 	max = m_Maximum;
     }
+    m_ActualMinimumNoMargin = min;
+    m_ActualMaximumNoMargin = max;
 
     // margins
     if (m_ManualMarginTop != null)
