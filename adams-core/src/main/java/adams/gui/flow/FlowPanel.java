@@ -845,6 +845,7 @@ public class FlowPanel
     expanded = getTree().getExpandedFullNames();
 
     cleanUp();
+    clearNotification();
 
     filechooser = null;
     if ((getOwner() != null) && (getOwner().getOwner() != null))
