@@ -20,6 +20,7 @@
 package adams.flow.standalone;
 
 import adams.flow.core.Actor;
+import adams.flow.core.ActorUtils;
 
 /**
  * Ancestor for mutable groups of standalones.
@@ -46,6 +47,7 @@ public abstract class AbstractStandaloneMutableGroup<T extends Actor>
     msg = checkActor(actor);
     if (msg == null) {
       m_Actors.add((T) actor);
+      ActorUtils.uniqueName(actor, this, m_Actors.size() - 1);
       reset();
       updateParent();
     }
@@ -67,6 +69,7 @@ public abstract class AbstractStandaloneMutableGroup<T extends Actor>
     msg = checkActor(actor, index);
     if (msg == null) {
       m_Actors.add(index, (T) actor);
+      ActorUtils.uniqueName(actor, this, index);
       reset();
       updateParent();
     }

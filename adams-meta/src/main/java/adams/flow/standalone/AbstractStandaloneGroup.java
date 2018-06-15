@@ -25,6 +25,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
+import adams.flow.core.ActorUtils;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.ArrayList;
@@ -190,8 +191,10 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     }
     
     m_Actors.clear();
-    for (Actor actor: value)
+    for (Actor actor: value) {
       m_Actors.add((T) actor);
+      ActorUtils.uniqueName(actor, this, m_Actors.size() - 1);
+    }
     reset();
     updateParent();
   }
@@ -228,6 +231,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
     
     msg = checkActor(actor, index);
     if (msg == null) {
+      ActorUtils.uniqueName(actor, this, index);
       m_Actors.set(index, (T) actor);
       reset();
       updateParent();
