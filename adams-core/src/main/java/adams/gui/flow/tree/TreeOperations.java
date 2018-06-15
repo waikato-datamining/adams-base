@@ -641,9 +641,11 @@ public class TreeOperations
           GUIHelper.showErrorMessage(getOwner(), "Actor is not a " + Utils.classToString(MutableActorHandler.class) + ", cannot paste beneath!");
           return;
 	}
+	getOwner().addUndoPoint("Pasting node" + ((nodes.length > 1) ? "s" : "") + " beneath '" + currentNode.getActor().getName() + "'");
 	for (Node node: nodes) {
           node.setOwner(getOwner());
           currentNode.add(node);
+          getOwner().updateActorName(node);
 	}
 	getOwner().setModified(true);
 	SwingUtilities.invokeLater(() -> {
@@ -662,10 +664,12 @@ public class TreeOperations
           GUIHelper.showErrorMessage(getOwner(), "Parent actor is not a " + Utils.classToString(MutableActorHandler.class) + ", cannot paste here!");
           return;
 	}
+	getOwner().addUndoPoint("Pasting node" + ((nodes.length > 1) ? "s" : "") + " before '" + currentNode.getActor().getName() + "'");
 	index = parentNode.getIndex(currentNode);
 	for (Node node: nodes) {
           node.setOwner(getOwner());
           parentNode.insert(node, index);
+          getOwner().updateActorName(node);
           index++;
 	}
 	getOwner().setModified(true);
@@ -685,10 +689,12 @@ public class TreeOperations
           GUIHelper.showErrorMessage(getOwner(), "Parent actor is not a " + Utils.classToString(MutableActorHandler.class) + ", cannot paste after!");
           return;
 	}
+	getOwner().addUndoPoint("Pasting node" + ((nodes.length > 1) ? "s" : "") + " after '" + currentNode.getActor().getName() + "'");
 	index = parentNode.getIndex(currentNode) + 1;
 	for (Node node: nodes) {
           node.setOwner(getOwner());
           parentNode.insert(node, index);
+          getOwner().updateActorName(node);
           index++;
 	}
 	getOwner().setModified(true);
