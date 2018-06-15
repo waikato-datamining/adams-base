@@ -322,6 +322,9 @@ public class MultiPagePane
   /** the remove button. */
   protected JButton m_ButtonRemove;
 
+  /** the remove all button. */
+  protected JButton m_ButtonRemoveAll;
+
   /** the action button. */
   protected BaseButtonWithDropDownMenu m_ButtonAction;
 
@@ -421,6 +424,10 @@ public class MultiPagePane
     m_ButtonRemove = new JButton(GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.addActionListener((ActionEvent e) -> checkedRemoveSelectedPage());
     m_PanelListButtons.add(m_ButtonRemove);
+
+    m_ButtonRemoveAll = new JButton(GUIHelper.getIcon("delete_all.gif"));
+    m_ButtonRemoveAll.addActionListener((ActionEvent e) -> checkedRemoveAllPages());
+    m_PanelListButtons.add(m_ButtonRemoveAll);
 
     m_ButtonAction = new BaseButtonWithDropDownMenu("...");
     m_ButtonAction.setVisible(false);
