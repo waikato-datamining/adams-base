@@ -111,9 +111,6 @@ public class WekaTrainClassifier
   /** the name of the callable weka classifier. */
   protected CallableActorReference m_Classifier;
 
-  /** the actual weka classifier. */
-  protected weka.classifiers.Classifier m_ActualClassifier;
-
   /** the classifier to use when training incrementally. */
   protected weka.classifiers.Classifier m_IncrementalClassifier;
 
