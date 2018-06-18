@@ -15,7 +15,7 @@
 
 /*
  * IfThenElse.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -204,6 +204,8 @@ public class IfThenElse
 
       if (result != null)
 	result = branch.getErrorHandler().handleError(branch, "execute", result);
+
+      m_BranchToken = null;
 
       return result;
     }
@@ -616,14 +618,13 @@ public class IfThenElse
   }
 
   /**
-   * Cleans up after the execution has finished. Also removes graphical
-   * components.
+   * Cleans up after the execution has finished. Graphical output is left
+   * untouched.
    */
   @Override
-  public void cleanUp() {
+  public void wrapUp() {
     m_InputToken = null;
-
-    super.cleanUp();
+    super.wrapUp();
   }
 
   /**

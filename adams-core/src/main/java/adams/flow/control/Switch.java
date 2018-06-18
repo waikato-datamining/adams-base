@@ -262,6 +262,8 @@ public class Switch
 	  result = caseActor.getErrorHandler().handleError(caseActor, "execute", result);
       }
 
+      m_CaseToken = null;
+
       return result;
     }
 
