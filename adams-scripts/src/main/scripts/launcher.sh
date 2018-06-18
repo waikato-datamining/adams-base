@@ -26,7 +26,7 @@ BASEDIR=`(cd "$BASEDIR"; pwd)`
 . "$BASEDIR"/bin/env.sh
 
 CLASSPATH="$RESOURCES":"$REPO/*"
-AGENT="$REPO/sizeofag-1.0.2.jar"
+AGENT="$REPO/sizeofag-1.0.3.jar"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then

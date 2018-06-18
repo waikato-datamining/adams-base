@@ -15,12 +15,16 @@
 
 /*
  * SizeOf.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
+import sizeof.agent.SizeOfAgent.Statistics;
+
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Helper class for measuring the size of objects using 
@@ -37,7 +41,10 @@ public class SizeOf {
 
   /** the method to use. */
   public final static String METHOD_FULLSIZEOF = "fullSizeOf";
-  
+
+  /** the method to use (per class). */
+  public final static String METHOD_FULLSIZEPERCLASS = "fullSizePerClass";
+
   /** whether the SizeOf agent is available. */
   protected static Boolean m_Available;
 
@@ -45,8 +52,11 @@ public class SizeOf {
   protected static Class m_Class;
 
   /** the SizeOf agent method to use. */
-  protected static Method m_Method;
-  
+  protected static Method m_FullSizeOf;
+
+  /** the SizeOf agent method to use (per class). */
+  protected static Method m_FullSizePerClass;
+
   /**
    * Returns whether the SizeOf agent is available or not.
    *
@@ -57,19 +67,21 @@ public class SizeOf {
     
     if (m_Available == null) {
       try {
-	m_Class  = Class.forName(CLASS_SIZEOF);
-	m_Method = m_Class.getMethod(METHOD_FULLSIZEOF, new Class[]{Object.class});
+	m_Class            = Class.forName(CLASS_SIZEOF);
+	m_FullSizeOf       = m_Class.getMethod(METHOD_FULLSIZEOF, Object.class);
+	m_FullSizePerClass = m_Class.getMethod(METHOD_FULLSIZEPERCLASS, Object.class);
       }
       catch (Exception e) {
-	m_Class     = null;
-	m_Method    = null;
-	m_Available = false;
+	m_Class            = null;
+	m_FullSizeOf       = null;
+	m_FullSizePerClass = null;
+	m_Available        = false;
 	System.err.println("SizeOf agent not on classpath available!");
       }
       
       if (m_Class != null) {
 	try {
-	  size        = (Long) m_Method.invoke(null, new Object[]{new Integer(1)});
+	  size        = (Long) m_FullSizeOf.invoke(null, new Object[]{1});
 	  m_Available = (size > 0);
 	}
 	catch (Exception e) {
@@ -113,7 +125,7 @@ public class SizeOf {
     result = -1L;
     if (isSizeOfAgentAvailable()) {
       try {
-	result = (Long) m_Method.invoke(null, new Object[]{obj});
+	result = (Long) m_FullSizeOf.invoke(null, new Object[]{obj});
       }
       catch (Exception e) {
 	result = -1L;
@@ -121,6 +133,29 @@ public class SizeOf {
     }
     
     return result.intValue();
+  }
+
+  /**
+   * Returns the size and number of instances broken down by class for the
+   * given object.
+   *
+   * @param obj		the object to inspect
+   * @return		empty map if not available, otherwise the statistics per class
+   */
+  public static Map<Class,Statistics> sizeOfAgentPerClass(Object obj) {
+    Map<Class,Statistics>	result;
+
+    result = new HashMap<>();
+    if (isSizeOfAgentAvailable()) {
+      try {
+	result = (Map<Class,Statistics>) m_FullSizePerClass.invoke(null, new Object[]{obj});
+      }
+      catch (Exception e) {
+	result = new HashMap<>();
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -149,12 +184,12 @@ public class SizeOf {
    */
   public static void main(String[] args) {
     System.out.println(sizeOfAgent(args));
-    System.out.println(sizeOfAgent(new Integer(1)));
-    System.out.println(sizeOfAgent(new Double(1.0)));
+    System.out.println(sizeOfAgent(1));
+    System.out.println(sizeOfAgent(1.0));
     System.out.println(sizeOfAgent(new DateFormat("yyyy-MM-dd")));
     System.out.println(sizeOf(args));
-    System.out.println(sizeOf(new Integer(1)));
-    System.out.println(sizeOf(new Double(1.0)));
+    System.out.println(sizeOf(1));
+    System.out.println(sizeOf(1.0));
     System.out.println(sizeOf(new DateFormat("yyyy-MM-dd")));
   }
 }
