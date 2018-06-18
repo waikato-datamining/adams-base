@@ -40,6 +40,7 @@ adams.gui.flow.tree.menu.ExternalizeActor-Shortcut=
 adams.gui.flow.tree.menu.FindUsages-Shortcut=
 adams.gui.flow.tree.menu.MaterializeExternalActor-Shortcut=
 adams.gui.flow.tree.menu.Help-Shortcut=F1
+adams.gui.flow.tree.menu.InspectMemory-Shortcut=
 adams.gui.flow.tree.menu.LastTemplate-Shortcut=
 adams.gui.flow.tree.menu.MakeConditional-Shortcut=
 adams.gui.flow.tree.menu.MakeTimed-Shortcut=

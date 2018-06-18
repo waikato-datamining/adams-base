@@ -23,12 +23,16 @@ package adams.gui.flow.tree;
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.NewInstance;
+import adams.core.SizeOf;
 import adams.core.Utils;
 import adams.core.io.FlowFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.NestedConsumer;
 import adams.core.option.OptionUtils;
 import adams.core.optiontransfer.AbstractOptionTransfer;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
@@ -38,6 +42,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorHandlerInfo;
+import adams.flow.core.ActorPath;
 import adams.flow.core.ActorReferenceHandler;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ActorWithConditionalEquivalent;
@@ -75,6 +80,7 @@ import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SearchableBaseList;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.event.SearchEvent;
@@ -89,6 +95,9 @@ import adams.gui.goe.classtree.ActorClassTreeFilter;
 import adams.gui.goe.classtree.ClassTree;
 import adams.parser.ActorSuggestion.SuggestionData;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+import nz.ac.waikato.cms.locator.ClassLocator;
+import sizeof.agent.Filter;
+import sizeof.agent.Statistics;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -105,9 +114,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Performs complex operations on the tree, like adding, removing, enclosing
@@ -1952,6 +1963,84 @@ public class TreeOperations
     getOwner().nodeStructureChanged(parentNode);
     getOwner().locateAndDisplay(newNode.getFullName(), true);
     getOwner().redraw();
+  }
+
+  /**
+   * Displays the memory consumption of the selected actor, broken by class.
+   *
+   * @param path	the path of the actor
+   * @param flow	the running flow
+   */
+  public void inspectMemory(TreePath path, Flow flow) {
+    ActorPath 			actorPath;
+    Actor			actor;
+    Map<Class,Statistics>	stats;
+    SpreadSheet			sheet;
+    Row				row;
+    Statistics			clsStats;
+    SpreadSheetDialog 		dialog;
+
+    if (!SizeOf.isSizeOfAgentAvailable()) {
+      GUIHelper.showErrorMessage(m_Owner, "The SizeOf agent is not present, cannot inspect memory!");
+      return;
+    }
+
+    actorPath = TreeHelper.treePathToActorPath(path);
+    actor     = ActorUtils.locate(actorPath, flow, true, false);
+    if (actor == null) {
+      GUIHelper.showErrorMessage(m_Owner, "Failed to locate actor in flow:\n" + actorPath);
+      return;
+    }
+
+    stats = SizeOf.sizeOfAgentPerClass(actor, new Filter() {
+      @Override
+      public boolean skipSuperClass(Class superclass) {
+        return false;
+      }
+      @Override
+      public boolean skipObject(Object obj) {
+        boolean result;
+        if (obj.getClass().isArray())
+	  result = (ClassLocator.matches(Actor.class, obj.getClass().getComponentType()));
+        else
+	  result = (ClassLocator.matches(Actor.class, obj.getClass()));
+        return result;
+      }
+      @Override
+      public boolean skipField(Field field) {
+        boolean result;
+        if (field.getType().isArray())
+	  result = (ClassLocator.matches(Actor.class, field.getType().getComponentType()));
+        else
+	  result = (ClassLocator.matches(Actor.class, field.getType()));
+        return result;
+      }
+    });
+    sheet = new DefaultSpreadSheet();
+    row   = sheet.getHeaderRow();
+    row.addCell("CL").setContentAsString("Class");
+    row.addCell("C").setContentAsString("Instances");
+    row.addCell("T").setContentAsString("Size");
+    for (Class cls: stats.keySet()) {
+      clsStats = stats.get(cls);
+      row      = sheet.addRow();
+      row.addCell("CL").setContentAsString(cls.getName());
+      row.addCell("C").setContent(clsStats.count);
+      row.addCell("T").setContent(clsStats.total);
+    }
+    sheet.sort(2, false);  // sort desc by size
+
+    if (getOwner().getParentDialog() != null)
+      dialog = new SpreadSheetDialog(getOwner().getParentDialog(), ModalityType.MODELESS);
+    else
+      dialog = new SpreadSheetDialog(getOwner().getParentFrame(), false);
+    dialog.setTitle("Inspect memory: " + actorPath);
+    dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
+    dialog.setSpreadSheet(sheet);
+    dialog.setShowSearch(true);
+    dialog.setSize(GUIHelper.makeWider(GUIHelper.rotate(GUIHelper.getDefaultDialogDimension())));
+    dialog.setLocationRelativeTo(getOwner());
+    dialog.setVisible(true);
   }
 
   /**
