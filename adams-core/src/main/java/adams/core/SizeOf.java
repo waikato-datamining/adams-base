@@ -124,6 +124,25 @@ public class SizeOf {
   }
 
   /**
+   * Returns the size of an object.
+   *
+   * @param obj		the object to measure
+   * @param filter 	for filtering objects/fields
+   * @return		the size or -1 if failed to determine
+   * @see		#sizeOfAgent(Object, Filter)
+   * @see		#sizeOfSerialization(Object)
+   */
+  public static int sizeOf(Object obj, Filter filter) {
+    int		result;
+
+    result = sizeOfAgent(obj, filter);
+    if (result == -1)
+      result = sizeOfSerialization(obj);
+
+    return result;
+  }
+
+  /**
    * Returns the size of an object using the agent.
    *
    * @param obj		the object to measure

@@ -30,6 +30,7 @@ import adams.core.logging.LoggingLevel;
 import adams.core.option.NestedConsumer;
 import adams.core.option.OptionUtils;
 import adams.core.optiontransfer.AbstractOptionTransfer;
+import adams.core.sizeof.ActorFilter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -95,8 +96,6 @@ import adams.gui.goe.classtree.ActorClassTreeFilter;
 import adams.gui.goe.classtree.ClassTree;
 import adams.parser.ActorSuggestion.SuggestionData;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
-import nz.ac.waikato.cms.locator.ClassLocator;
-import sizeof.agent.Filter;
 import sizeof.agent.Statistics;
 
 import javax.swing.BorderFactory;
@@ -114,7 +113,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -1992,30 +1990,7 @@ public class TreeOperations
       return;
     }
 
-    stats = SizeOf.sizeOfAgentPerClass(actor, new Filter() {
-      @Override
-      public boolean skipSuperClass(Class superclass) {
-        return false;
-      }
-      @Override
-      public boolean skipObject(Object obj) {
-        boolean result;
-        if (obj.getClass().isArray())
-	  result = (ClassLocator.matches(Actor.class, obj.getClass().getComponentType()));
-        else
-	  result = (ClassLocator.matches(Actor.class, obj.getClass()));
-        return result;
-      }
-      @Override
-      public boolean skipField(Field field) {
-        boolean result;
-        if (field.getType().isArray())
-	  result = (ClassLocator.matches(Actor.class, field.getType().getComponentType()));
-        else
-	  result = (ClassLocator.matches(Actor.class, field.getType()));
-        return result;
-      }
-    });
+    stats = SizeOf.sizeOfAgentPerClass(actor, new ActorFilter());
     sheet = new DefaultSpreadSheet();
     row   = sheet.getHeaderRow();
     row.addCell("CL").setContentAsString("Class");
