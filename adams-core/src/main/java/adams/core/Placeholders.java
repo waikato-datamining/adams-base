@@ -15,7 +15,7 @@
 
 /*
  * Placeholders.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -166,8 +166,11 @@ public class Placeholders {
    */
   public String expand(String s) {
     String	result;
-    
-    result = doExpand(s);
+
+    if (s.equals("${CWD}/${CWD}"))  // not sure where this gets generated...
+      result = "./.";
+    else
+      result = doExpand(s);
     if (result.contains(PLACEHOLDER_START))
       System.err.println("Failed to fully expand '" + s + "': " + result);
     
