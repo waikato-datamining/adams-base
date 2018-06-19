@@ -64,6 +64,12 @@ public abstract class AbstractArrayStatistic<T extends Serializable>
     /** for serialization. */
     private static final long serialVersionUID = 4477965744045104127L;
 
+    /** the number of rows. */
+    protected int m_Rows;
+
+    /** the number of columns. */
+    protected int m_Cols;
+
     /** for the header row. */
     protected String[] m_Header;
 
@@ -82,9 +88,29 @@ public abstract class AbstractArrayStatistic<T extends Serializable>
     public StatisticContainer(int rows, int cols) {
       super();
 
+      m_Rows     = rows;
+      m_Cols     = cols;
       m_Header   = new String[cols];
       m_Data     = new Object[rows][cols];
-      m_MetaData = new Hashtable<String,Object>();
+      m_MetaData = new Hashtable<>();
+    }
+
+    /**
+     * Returns the number of rows.
+     *
+     * @return		the rows
+     */
+    public int getRows() {
+      return m_Rows;
+    }
+
+    /**
+     * Returns the number of cols.
+     *
+     * @return		the cols
+     */
+    public int getCols() {
+      return m_Cols;
     }
 
     /**
