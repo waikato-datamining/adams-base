@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseInterval.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.base;
@@ -26,7 +26,6 @@ import adams.core.Utils;
  * For specifying mathematical intervals like (1;1.2] or [-3.1;7.8].
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseInterval
   extends AbstractBaseString {
@@ -47,6 +46,9 @@ public class BaseInterval
 
   /** the default number of decimals to use. */
   public final static int DEFAULT_NUM_DECIMALS = 6;
+
+  /** from negative to positive infinity. */
+  protected boolean m_Infinite;
 
   /** the lower bound of the interval. */
   protected double m_Lower;
@@ -246,10 +248,10 @@ public class BaseInterval
     lowerIncl = !parts[0].startsWith("(");
     upperIncl = !parts[1].endsWith(")");
 
-    if (Double.isInfinite(m_Lower))
-      m_LowerInclusive = false;
-    if (Double.isInfinite(m_Upper))
-      m_UpperInclusive = false;
+    if (Double.isInfinite(lower))
+      lowerIncl = false;
+    if (Double.isInfinite(upper))
+      upperIncl = false;
 
     return new Object[]{lowerIncl, lower, upper, upperIncl};
   }
@@ -298,6 +300,8 @@ public class BaseInterval
 	  + ((m_NumDecimals == DOUBLE_TOSTRING) ? ("" + m_Upper) : Utils.doubleToString(m_Upper, m_NumDecimals))
 	  + (m_UpperInclusive ? "]" : ")");
     }
+
+    m_Infinite = Double.isInfinite(m_Lower) && Double.isInfinite(m_Upper);
 
     return result;
   }
@@ -361,6 +365,16 @@ public class BaseInterval
     }
 
     return result;
+  }
+
+  /**
+   * Returns whether the range is from negative to positive infinity.
+   *
+   * @return		true if no bounds
+   * @see		#ALL
+   */
+  public boolean isInfinite() {
+    return m_Infinite;
   }
 
   /**
