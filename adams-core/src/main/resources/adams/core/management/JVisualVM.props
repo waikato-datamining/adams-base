@@ -1,0 +1,9 @@
+# Allows the user to specify a different executable for VisualVM
+# Later versions of Java no longer include JVisualVM, instead it can
+# be downloaded from here:
+# https://visualvm.github.io/
+
+# the alternative executable to use (ignore if empty)
+# (full path to executable; on Windows, use forward slashes or double up the
+# backslashes)
+Executable=

@@ -13,27 +13,47 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JVisualVM.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
-import java.io.File;
-
+import adams.core.Properties;
 import adams.core.io.FileUtils;
+import adams.env.Environment;
+import adams.env.JVisualVMDefinition;
+
+import java.io.File;
 
 /**
  * A helper class for the jvisualvm utility.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JVisualVM
   extends Java {
 
-  /** the jvisualvm executable. */
+  /** the props file. */
+  public final static String FILENAME = "JVisualVM.props";
+
+  /** the jvisualvm executable when distributed with a JDK. */
   public final static String EXECUTABLE = "jvisualvm";
+
+  /** the key in the properties file. */
+  public static final String KEY_EXECUTABLE = "Executable";
+
+  /** the properties. */
+  protected static Properties m_Properties;
+
+  /**
+   * Checks whether the user defined a custom binary.
+   *
+   * @return		true if custom binary
+   */
+  public static boolean hasCustomBinary() {
+    return !getProperties().getProperty(KEY_EXECUTABLE, "").isEmpty();
+  }
 
   /**
    * Checks whether jvisualvm is available at all.
@@ -43,9 +63,14 @@ public class JVisualVM
   public static boolean isAvailable() {
     boolean	result;
 
-    result = isJDK();
-    if (result)
-      result = new File(getBinDir() + File.separator + FileUtils.fixExecutable(EXECUTABLE)).exists();
+    if (hasCustomBinary()) {
+      result = new File(getProperties().getProperty(KEY_EXECUTABLE, "")).exists();
+    }
+    else{
+      result = isJDK();
+      if (result)
+	result = new File(getBinDir() + File.separator + FileUtils.fixExecutable(EXECUTABLE)).exists();
+    }
 
     return result;
   }
@@ -59,7 +84,10 @@ public class JVisualVM
   public static String getExecutablePath() {
     String	result;
 
-    result = getBinDir() + File.separator + FileUtils.fixExecutable(EXECUTABLE);
+    if (hasCustomBinary())
+      result = FileUtils.fixExecutable(getProperties().getProperty(KEY_EXECUTABLE, ""));
+    else
+      result = getBinDir() + File.separator + FileUtils.fixExecutable(EXECUTABLE);
     result = FileUtils.quoteExecutable(result);
 
     return result;
@@ -81,7 +109,6 @@ public class JVisualVM
    * 			gets determined automatically if AUTO_PID
    * @return		the output
    * @see		#getDefaultOptions()
-   * @see		Java#AUTO_PID
    */
   public static String execute(long pid) {
     return execute(getExecutablePath(), pid);
@@ -95,7 +122,6 @@ public class JVisualVM
    * 			gets determined automatically if AUTO_PID
    * @return		the output
    * @see		#getDefaultOptions()
-   * @see		Java#AUTO_PID
    */
   public static String execute(String options, long pid) {
     return execute(getExecutablePath(), options, pid);
@@ -109,7 +135,6 @@ public class JVisualVM
    * @param pid		the process ID of the JVM to connect to,
    * 			gets determined automatically if AUTO_PID
    * @return		the output, if any
-   * @see		Java#AUTO_PID
    */
   public static String execute(String executable, String options, long pid) {
     // add pid to options
@@ -118,5 +143,23 @@ public class JVisualVM
     options = options + " --openpid " + pid;
 
     return execute(executable, options);
+  }
+
+  /**
+   * Returns the properties.
+   *
+   * @return		the properties
+   */
+  public static synchronized Properties getProperties() {
+    if (m_Properties == null) {
+      try {
+        m_Properties = Environment.getInstance().read(JVisualVMDefinition.KEY);
+      }
+      catch (Exception e) {
+        m_Properties = new Properties();
+      }
+    }
+
+    return m_Properties;
   }
 }

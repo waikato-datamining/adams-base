@@ -27,6 +27,7 @@ Definitions=\
   adams.env.GUIHelperDefinition,\
   adams.env.ImageViewerPanelDefinition,\
   adams.env.JenericCmdlineDefinition,\
+  adams.env.JVisualVMDefinition,\
   adams.env.LocaleDefinition,\
   adams.env.LogEntryDBViewerPanelDefinition,\
   adams.env.LogEntryDefinition,\
