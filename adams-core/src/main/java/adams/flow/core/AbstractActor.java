@@ -32,6 +32,7 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.core.sizeof.ActorFilter;
 import adams.db.LogEntry;
 import adams.db.MutableLogEntryHandler;
 import adams.event.VariableChangeEvent;
@@ -1375,7 +1376,7 @@ public abstract class AbstractActor
 
     parent   = m_Parent;
     m_Parent = null;
-    result   = SizeOf.sizeOf(this);
+    result   = SizeOf.sizeOf(this, new ActorFilter());
     m_Parent = parent;
 
     return result;
