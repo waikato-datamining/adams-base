@@ -44,8 +44,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * A helper class for option-related things.
@@ -64,24 +66,24 @@ public class OptionUtils {
   protected static Logger LOGGER = LoggingHelper.getLogger(OptionUtils.class);
 
   /** for caching the property descriptors. */
-  protected static Hashtable<String,PropertyDescriptor> m_PropertyDescriptorCache;
+  protected static Map<String,PropertyDescriptor> m_PropertyDescriptorCache;
   static {
-    m_PropertyDescriptorCache = new Hashtable<>();
+    m_PropertyDescriptorCache = new HashMap<>();
   }
 
   /** the hooks for "valueOf". A hook takes a class and a string as parameter. */
-  protected static Hashtable<Class,Method> m_HooksValueOf;
+  protected static Map<Class,Method> m_HooksValueOf;
 
   /** the hooks for "toString". A hook takes a class and the object as
    * parameter. */
-  protected static Hashtable<Class,Method> m_HooksToString;
+  protected static Map<Class,Method> m_HooksToString;
 
   /** whether the hooks got already registered. */
   protected static boolean m_HooksRegistered;
 
   static {
-    m_HooksValueOf    = new Hashtable<>();
-    m_HooksToString   = new Hashtable<>();
+    m_HooksValueOf    = new HashMap<>();
+    m_HooksToString   = new HashMap<>();
     m_HooksRegistered = false;
   }
 
@@ -260,21 +262,20 @@ public class OptionUtils {
 	cls = Class.forName(classname);
       }
       catch (Exception e) {
-	e.printStackTrace();
-	System.err.println("Cannot get class for '" + classname + "' - skipped!");
+        LOGGER.log(Level.SEVERE, "Cannot get class for '" + classname + "' - skipped!", e);
 	continue;
       }
 
       // get hook methods
       hookToString = props.getProperty(classname + "#toString");
       if (hookToString == null) {
-	System.err.println("No 'toString' hook method for '" + classname + "' - skipped!");
+	LOGGER.log(Level.WARNING, "No 'toString' hook method for '" + classname + "' - skipped!");
 	continue;
       }
 
       hookValueOf = props.getProperty(classname + "#valueOf");
       if (hookValueOf == null) {
-	System.err.println("No 'valueOf' hook method for '" + classname + "' - skipped!");
+	LOGGER.log(Level.WARNING, "No 'valueOf' hook method for '" + classname + "' - skipped!");
 	continue;
       }
 
@@ -284,8 +285,7 @@ public class OptionUtils {
 	addToStringHook(cls, clsHook, hookToString.replaceAll(".*#", ""));
       }
       catch (Exception e) {
-	e.printStackTrace();
-	System.err.println("Error registering hook '" + hookToString + "'!");
+	LOGGER.log(Level.SEVERE, "Error registering hook '" + hookToString + "'!", e);
 	continue;
       }
 
@@ -294,8 +294,7 @@ public class OptionUtils {
 	addValueOfHook(cls, clsHook, hookValueOf.replaceAll(".*#", ""));
       }
       catch (Exception e) {
-	e.printStackTrace();
-	System.err.println("Error registering hook '" + hookValueOf + "'!");
+	LOGGER.log(Level.SEVERE, "Error registering hook '" + hookValueOf + "'!", e);
 	continue;
       }
     }
@@ -739,8 +738,7 @@ public class OptionUtils {
       }
     }
     catch (Exception e) {
-      System.err.println("Failed to create shallow copy for OptionHandler: " + Utils.classToString(o));
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to create shallow copy for OptionHandler: " + Utils.classToString(o), e);
       result = null;
     }
 
@@ -809,8 +807,7 @@ public class OptionUtils {
     }
     catch (Exception e) {
       result = null;
-      System.err.println("Failed to create shallow copy for object: " + Utils.classToString(o));
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to create shallow copy for object: " + Utils.classToString(o), e);
     }
 
     return result;
@@ -1094,8 +1091,7 @@ public class OptionUtils {
       result = true;
     }
     catch (Exception e) {
-      System.err.println("Failed to transfer options from '" + source + "' to '" + dest + "':");
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to transfer options from '" + source + "' to '" + dest + "':", e);
       result = false;
     }
 
@@ -1162,8 +1158,7 @@ public class OptionUtils {
     }
     catch (Exception e) {
       // can only happen if property name is incorrect
-      System.err.println("Error obtaining the property descriptor (" + Utils.classToString(owner) + "):");
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Error obtaining the property descriptor (" + Utils.classToString(owner) + "):", e);
       result = null;
 
       // some debugging output
@@ -1173,31 +1168,31 @@ public class OptionUtils {
 	  info = Introspector.getBeanInfo(owner.getClass());
 	  // property descriptors
 	  propDescs = info.getPropertyDescriptors();
-	  System.err.println("Available bean properties for class '" + Utils.classToString(owner) + "':");
+	  LOGGER.log(Level.INFO, "Available bean properties for class '" + Utils.classToString(owner) + "':");
 	  for (i = 0; i < propDescs.length; i++)
-	    System.err.println((i+1) + ". " + propDescs[i].getDisplayName());
+	    LOGGER.log(Level.INFO, (i+1) + ". " + propDescs[i].getDisplayName());
 	  // method descriptors
 	  methDescs = info.getMethodDescriptors();
-	  System.err.println("Available bean methods for class '" + Utils.classToString(owner) + "':");
+	  LOGGER.log(Level.INFO, "Available bean methods for class '" + Utils.classToString(owner) + "':");
 	  for (i = 0; i < methDescs.length; i++) {
-	    System.err.println((i+1) + ". " + methDescs[i].getDisplayName());
+	    LOGGER.log(Level.INFO, (i+1) + ". " + methDescs[i].getDisplayName());
 	    if (methDescs[i].getDisplayName().equals("_getPyInstance")) {
 	      Class cls = methDescs[i].getMethod().getReturnType();
 	      Method[] methods = cls.getMethods();
 	      for (int n = 0; n < methods.length; n++)
-		System.err.println("    " + (n+1) + ". " + methods[n].getName());
+		LOGGER.log(Level.INFO, "    " + (n+1) + ". " + methods[n].getName());
 	    }
 	  }
 	  // methods
 	  meths = owner.getClass().getMethods();
-	  System.err.println("Available methods for class '" + Utils.classToString(owner) + "':");
+	  LOGGER.log(Level.INFO, "Available methods for class '" + Utils.classToString(owner) + "':");
 	  for (i = 0; i < meths.length; i++)
-	    System.err.println((i+1) + ". " + meths[i].getName());
+	    LOGGER.log(Level.INFO, (i+1) + ". " + meths[i].getName());
 	}
 	catch (Exception ex) {
-	  System.err.println(
+	  LOGGER.log(Level.SEVERE,
 	      "Failed to obtain bean info/property descriptors for class '"
-	      + Utils.classToString(owner) + "'");
+	      + Utils.classToString(owner) + "'", e);
 	}
       }
     }
