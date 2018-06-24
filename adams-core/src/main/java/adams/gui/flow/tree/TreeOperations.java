@@ -20,6 +20,7 @@
 
 package adams.gui.flow.tree;
 
+import adams.core.ByteFormat;
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.NewInstance;
@@ -34,6 +35,7 @@ import adams.core.sizeof.ActorFilter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
@@ -1969,7 +1971,7 @@ public class TreeOperations
    * @param path	the path of the actor
    * @param flow	the running flow
    */
-  public void inspectMemory(TreePath path, Flow flow) {
+  public void inspectMemoryDetails(TreePath path, Flow flow) {
     ActorPath 			actorPath;
     Actor			actor;
     Map<Class,Statistics>	stats;
@@ -1977,6 +1979,9 @@ public class TreeOperations
     Row				row;
     Statistics			clsStats;
     SpreadSheetDialog 		dialog;
+    int				i;
+    String			from;
+    String			to;
 
     if (!SizeOf.isSizeOfAgentAvailable()) {
       GUIHelper.showErrorMessage(m_Owner, "The SizeOf agent is not present, cannot inspect memory!");
@@ -2003,7 +2008,18 @@ public class TreeOperations
       row.addCell("C").setContent(clsStats.count);
       row.addCell("T").setContent(clsStats.total);
     }
-    sheet.sort(2, false);  // sort desc by size
+
+    // sort desc by size
+    sheet.sort(2, false);
+
+    // add row with sums
+    row = sheet.addRow();
+    row.getCell(0).setContentAsString("Sum");
+    for (i = 1; i <= 2; i++) {
+      from = SpreadSheetUtils.getCellPosition(0, i);
+      to   = SpreadSheetUtils.getCellPosition(sheet.getRowCount() - 2, i);
+      row.addCell(i).setContent("=SUM(" + from +  ":" + to + ")");
+    }
 
     if (getOwner().getParentDialog() != null)
       dialog = new SpreadSheetDialog(getOwner().getParentDialog(), ModalityType.MODELESS);
@@ -2016,6 +2032,40 @@ public class TreeOperations
     dialog.setSize(GUIHelper.makeWider(GUIHelper.rotate(GUIHelper.getDefaultDialogDimension())));
     dialog.setLocationRelativeTo(getOwner());
     dialog.setVisible(true);
+  }
+
+  /**
+   * Displays the memory consumption of the selected subtree (just the size).
+   *
+   * @param path	the path of the actor
+   * @param flow	the running flow
+   */
+  public void inspectMemorySize(TreePath path, Flow flow) {
+    ActorPath 			actorPath;
+    Actor			actor;
+    long			size;
+    String			sizeStr;
+    String			msg;
+
+    if (!SizeOf.isSizeOfAgentAvailable()) {
+      GUIHelper.showErrorMessage(m_Owner, "The SizeOf agent is not present, cannot inspect memory!");
+      return;
+    }
+
+    actorPath = TreeHelper.treePathToActorPath(path);
+    actor     = ActorUtils.locate(actorPath, flow, true, false);
+    if (actor == null) {
+      GUIHelper.showErrorMessage(m_Owner, "Failed to locate actor in flow:\n" + actorPath);
+      return;
+    }
+
+    size    = SizeOf.sizeOfAgent(actor, new ActorFilter());
+    sizeStr = ByteFormat.toBestFitBytes(size, 3);
+    msg     = "Sub-tree size of " + TreeHelper.treePathToActorPath(path) + ": " + sizeStr;
+    if (getOwner().getParentDialog() != null)
+      GUIHelper.showInformationMessage(getOwner().getParentDialog(), msg);
+    else
+      GUIHelper.showInformationMessage(getOwner().getParentFrame(), msg);
   }
 
   /**

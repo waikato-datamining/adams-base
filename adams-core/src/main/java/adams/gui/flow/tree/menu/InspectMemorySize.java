@@ -14,20 +14,23 @@
  */
 
 /*
- * InspectMemory.java
+ * InspectMemorySubtreeSize.java
  * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import adams.gui.action.AbstractPropertiesAction;
+import adams.core.SizeOf;
+import adams.flow.control.Flow;
+
+import java.awt.event.ActionEvent;
 
 /**
- * Memory inspection sub-menu.
+ * For analyzing the memory consumption of a sub-tree.
  * 
  * @author fracpete
  */
-public class InspectMemory
-  extends AbstractTreePopupSubMenuAction {
+public class InspectMemorySize
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 3991575839421394939L;
@@ -39,23 +42,24 @@ public class InspectMemory
    */
   @Override
   protected String getTitle() {
-    return "Inspect memory";
+    return "Size";
   }
-  
+
   /**
-   * Returns the sub menu actions.
-   * 
-   * @return		the submenu items
+   * Updates the action using the current state information.
    */
   @Override
-  protected AbstractPropertiesAction[] getSubMenuActions() {
-    AbstractPropertiesAction[]	result;
-    
-    result = new AbstractPropertiesAction[]{
-	new InspectMemoryDetails(),
-	new InspectMemorySize(),
-    };
-    
-    return result;
+  protected void doUpdate() {
+    setEnabled(m_State.isSingleSel && (m_State.runningFlow instanceof Flow) && SizeOf.isSizeOfAgentAvailable());
+  }
+
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
+    m_State.tree.getOperations().inspectMemorySize(m_State.selPath, (Flow) m_State.runningFlow);
   }
 }
