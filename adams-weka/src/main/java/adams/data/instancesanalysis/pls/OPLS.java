@@ -149,7 +149,7 @@ public class OPLS
    */
   @Override
   public Matrix getMatrix(String name) {
-    return MatrixHelper.jamaToWeka(m_OPLS.getMatrix(name));
+    return MatrixHelper.matrixAlgoToWeka(m_OPLS.getMatrix(name));
   }
 
   /**
@@ -170,7 +170,7 @@ public class OPLS
    */
   @Override
   public Matrix getLoadings() {
-    return MatrixHelper.jamaToWeka(m_OPLS.getLoadings());
+    return MatrixHelper.matrixAlgoToWeka(m_OPLS.getLoadings());
   }
 
   /**
@@ -195,13 +195,13 @@ public class OPLS
    */
   @Override
   protected Instances doTransform(Instances data, Map<String, Object> params) throws Exception {
-    Jama.Matrix		X;
-    Jama.Matrix		y;
-    Jama.Matrix		X_new;
-    String 		error;
+    com.github.waikatodatamining.matrix.core.Matrix	X;
+    com.github.waikatodatamining.matrix.core.Matrix	y;
+    com.github.waikatodatamining.matrix.core.Matrix	X_new;
+    String 						error;
 
-    X = MatrixHelper.wekaToJama(MatrixHelper.getX(data));
-    y = MatrixHelper.wekaToJama(MatrixHelper.getY(data));
+    X = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
+    y = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getY(data));
     if (!isInitialized()) {
       m_OPLS = new com.github.waikatodatamining.matrix.algorithm.OPLS();
       m_OPLS.setNumComponents(m_NumComponents);
@@ -213,6 +213,6 @@ public class OPLS
     }
     X_new = m_OPLS.transform(X);
 
-    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.jamaToWeka(X_new), MatrixHelper.jamaToWeka(y));
+    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(y));
   }
 }

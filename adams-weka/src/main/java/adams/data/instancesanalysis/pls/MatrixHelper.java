@@ -31,7 +31,7 @@ public class MatrixHelper
   /**
    * Turns a Jama matrix into a Weka one.
    *
-   * @param jama	the jama matix to convert
+   * @param jama	the jama matrix to convert
    * @return		the converted matrix
    */
   public static weka.core.matrix.Matrix jamaToWeka(Jama.Matrix jama) {
@@ -39,12 +39,32 @@ public class MatrixHelper
   }
 
   /**
-   * Turns a Weka matrix into a Java one.
+   * Turns a Weka matrix into a Jama one.
    *
-   * @param weka	the Weka matix to convert
+   * @param weka	the Weka matrix to convert
    * @return		the converted matrix
    */
   public static Jama.Matrix wekaToJama(weka.core.matrix.Matrix weka) {
     return new Jama.Matrix(weka.getArray());
+  }
+
+  /**
+   * Turns a matrix-algorithm matrix into a Weka one.
+   *
+   * @param matrixalgo	the jama matrix to convert
+   * @return		the converted matrix
+   */
+  public static weka.core.matrix.Matrix matrixAlgoToWeka(com.github.waikatodatamining.matrix.core.Matrix matrixalgo) {
+    return new weka.core.matrix.Matrix(matrixalgo.toRawCopy2D());
+  }
+
+  /**
+   * Turns a Weka matrix into a matrix-algorithm one.
+   *
+   * @param weka	the Weka matrix to convert
+   * @return		the converted matrix
+   */
+  public static com.github.waikatodatamining.matrix.core.Matrix wekaToMatrixAlgo(weka.core.matrix.Matrix weka) {
+    return new com.github.waikatodatamining.matrix.core.Matrix(weka.getArray());
   }
 }

@@ -221,7 +221,7 @@ public class KernelPLS
    */
   @Override
   public Matrix getMatrix(String name) {
-    return MatrixHelper.jamaToWeka(m_KernelPLS.getMatrix(name));
+    return MatrixHelper.matrixAlgoToWeka(m_KernelPLS.getMatrix(name));
   }
 
   /**
@@ -242,7 +242,7 @@ public class KernelPLS
    */
   @Override
   public Matrix getLoadings() {
-    return MatrixHelper.jamaToWeka(m_KernelPLS.getLoadings());
+    return MatrixHelper.matrixAlgoToWeka(m_KernelPLS.getLoadings());
   }
 
   /**
@@ -254,15 +254,15 @@ public class KernelPLS
    */
   @Override
   protected Instances doTransform(Instances data, Map<String, Object> params) throws Exception {
-    Jama.Matrix		X;
-    Jama.Matrix		Y;
-    Jama.Matrix		X_new;
-    int[]		cols;
-    String 		error;
+    com.github.waikatodatamining.matrix.core.Matrix	X;
+    com.github.waikatodatamining.matrix.core.Matrix	Y;
+    com.github.waikatodatamining.matrix.core.Matrix	X_new;
+    int[]						cols;
+    String 						error;
 
     cols = m_ClassAttributeIndices.toArray();
-    X    = MatrixHelper.wekaToJama(MatrixHelper.getX(data));
-    Y    = MatrixHelper.wekaToJama(MatrixHelper.getY(data, cols));
+    X    = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
+    Y    = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getY(data, cols));
     if (!isInitialized()) {
       m_KernelPLS = new com.github.waikatodatamining.matrix.algorithm.KernelPLS();
       m_KernelPLS.setKernel((AbstractKernel) OptionUtils.shallowCopy(m_Kernel));
@@ -276,6 +276,6 @@ public class KernelPLS
     }
     X_new = m_KernelPLS.transform(X);
 
-    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.jamaToWeka(X_new), MatrixHelper.jamaToWeka(Y));
+    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(Y));
   }
 }
