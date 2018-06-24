@@ -73,10 +73,18 @@ public class ActorFilter
   @Override
   public boolean skipField(Field field) {
     boolean result;
-    if (field.getType().isArray())
-      result = (ClassLocator.matches(Actor.class, field.getType().getComponentType()));
-    else
-      result = (ClassLocator.matches(Actor.class, field.getType()));
+    String name = field.getName();
+
+    result = name.equals("m_Self") || name.equals("m_Parent") || name.equals("m_Owner");
+
+    if (!result) {
+      Class type = field.getType();
+      if (type.isArray())
+        result = (ClassLocator.matches(Actor.class, type.getComponentType()));
+      else
+        result = (ClassLocator.matches(Actor.class, type));
+    }
+
     return result;
   }
 }
