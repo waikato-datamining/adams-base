@@ -902,7 +902,18 @@ public class Utils {
    * @return		the generated string
    */
   public static String flatten(List lines, String sep) {
-    return flatten(lines.toArray(new Object[lines.size()]), sep);
+    StringBuilder	result;
+    int			i;
+
+    result = new StringBuilder();
+
+    for (i = 0; i < lines.size(); i++) {
+      if (i > 0)
+	result.append(sep);
+      result.append(lines.get(i).toString());
+    }
+
+    return result.toString();
   }
 
   /**
