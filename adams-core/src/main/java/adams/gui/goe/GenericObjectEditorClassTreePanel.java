@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -196,8 +197,10 @@ public class GenericObjectEditorClassTreePanel
     m_CloseButton.setMnemonic('C');
     m_CloseButton.setVisible(false);
     m_CloseButton.addActionListener((ActionEvent e) -> {
-      if (e.getSource() == m_CloseButton)
-	m_Self.setVisible(false);
+      if (e.getSource() == m_CloseButton) {
+        JPopupMenu menu = (JPopupMenu) GUIHelper.getParent(GenericObjectEditorClassTreePanel.this, JPopupMenu.class);
+	menu.setVisible(false);
+      }
     });
     panel.add(m_CloseButton);
 

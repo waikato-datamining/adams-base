@@ -79,7 +79,6 @@ import java.util.logging.Level;
  * @author Xin Xu (xx5@cs.waikato.ac.nz)
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @see weka.gui.GenericObjectEditor
  */
 public class GenericObjectEditor
   implements PropertyEditor, CustomPanelSupplier {
@@ -168,7 +167,13 @@ public class GenericObjectEditor
     /** the panel itself. */
     protected GOEPanel m_Self;
 
-    /** The component that performs classifier customization. */
+    /** the tree to use. */
+    protected ClassTree m_Tree;
+
+    /** the class tree. */
+    protected GenericObjectEditorClassTreePanel m_PanelTree;
+
+    /** The component that performs object customization. */
     protected PropertySheetPanel m_PropertySheetChild;
 
     /** The names of the proposed classes. */
@@ -195,9 +200,6 @@ public class GenericObjectEditor
     /** The filechooser for opening and saving object files. */
     protected transient ObjectFileChooser m_FileChooser;
 
-    /** the button for choosing the class. */
-    protected JButton m_ButtonChoose;
-
     /** the button for copy/paste menu. */
     protected JButton m_ButtonCopyPaste;
 
@@ -211,8 +213,30 @@ public class GenericObjectEditor
      * Creates the GUI editor component.
      */
     public GOEPanel() {
+      super();
+
       m_Self   = this;
       m_Backup = copyObject(m_Object);
+
+      setLayout(new BorderLayout());
+
+      m_Tree = new ClassTree();
+      m_Tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+      m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
+	if (m_IgnoreChanges || isReadOnly())
+	  return;
+	String clsname = m_Tree.getSelectedItem();
+	try {
+	  Class cls = Class.forName(clsname);
+	  setValue(cls.newInstance());
+	}
+	catch (Exception ex) {
+	  // ignored
+	}
+      });
+      m_PanelTree = new GenericObjectEditorClassTreePanel(m_Tree);
+      m_PanelTree.setVisible(m_canChangeClassInDialog);
+      add(m_PanelTree, BorderLayout.WEST);
 
       m_LabelClassname = new JLabel("None");
       m_ComboBoxClassname = new JComboBox<>(new String[]{"None"});
@@ -283,20 +307,16 @@ public class GenericObjectEditor
 	}
       });
 
-      setLayout(new BorderLayout());
-
-      m_ButtonChoose = createChooseClassButton();
-      m_ButtonChoose.setVisible(m_canChangeClassInDialog);
       m_ButtonCopyPaste = new JButton("...");
       m_ButtonCopyPaste.setToolTipText("Displays copy/paste/favorites action menu");
       m_ButtonCopyPaste.addActionListener((ActionEvent e) -> {
 	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_ButtonCopyPaste);
 	menu.show(m_ButtonCopyPaste, 0, m_ButtonCopyPaste.getHeight());
       });
+
       m_TopPanel = new JPanel(new BorderLayout());
       JPanel chooseButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       chooseButtonPanel.add(m_ButtonCopyPaste);
-      chooseButtonPanel.add(m_ButtonChoose);
       m_TopPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       m_TopPanel.add(chooseButtonPanel, BorderLayout.EAST);
       m_TopPanel.add(m_ComboBoxClassname, BorderLayout.CENTER);
@@ -343,6 +363,8 @@ public class GenericObjectEditor
 	  updateChildPropertySheet();
 	}
       }
+
+      m_PanelTree.focusSearch();
     }
 
     /**
@@ -525,6 +547,15 @@ public class GenericObjectEditor
       // Set the object as the target of the propertysheet
       m_PropertySheetChild.setTarget(m_Object);
 
+      // update tree
+      if (getCanChangeClassInDialog()) {
+	m_Tree.setFilter(m_Filter);
+	m_Tree.setItems(m_ObjectNames);
+	m_Tree.setSelectedItem(m_Object.getClass().getName());
+	if (m_Tree.getSelectedItem() == null)
+	  m_Tree.expandAll();
+      }
+
       // Adjust size of containing window if possible
       if ((getTopLevelAncestor() != null) && (getTopLevelAncestor() instanceof Window))
 	((Window) getTopLevelAncestor()).pack();
@@ -538,7 +569,7 @@ public class GenericObjectEditor
      * @param value	if true then the user can change the class
      */
     public void setCanChangeClassInDialog(boolean value) {
-      m_ButtonChoose.setVisible(value);
+      m_PanelTree.setVisible(value);
     }
 
     /**
@@ -547,16 +578,7 @@ public class GenericObjectEditor
      * @return		true if the user can change the class
      */
     public boolean getCanChangeClassInDialog() {
-      return m_ButtonChoose.isVisible();
-    }
-
-    /**
-     * Returns the choose button.
-     *
-     * @return		the button
-     */
-    public JButton getChooseButton() {
-      return m_ButtonChoose;
+      return m_PanelTree.isVisible();
     }
 
     /**
@@ -566,7 +588,7 @@ public class GenericObjectEditor
      */
     public void setReadOnly(boolean value) {
       m_ButtonOK.setEnabled(!value);
-      m_ButtonChoose.setEnabled(!value);
+      m_Tree.setEnabled(!value);
     }
 
     /**
