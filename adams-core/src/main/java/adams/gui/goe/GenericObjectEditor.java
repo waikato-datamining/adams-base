@@ -32,31 +32,23 @@ import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.ObjectFileChooser;
 import adams.gui.core.BasePopupMenu;
-import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.goe.classtree.ClassTree;
-import adams.gui.goe.classtree.StrictClassTreeFilter;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -67,7 +59,6 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -88,7 +79,6 @@ import java.util.logging.Level;
  * @author Xin Xu (xx5@cs.waikato.ac.nz)
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see weka.gui.GenericObjectEditor
  */
 public class GenericObjectEditor
@@ -163,242 +153,6 @@ public class GenericObjectEditor
 
   /** for post-processing objects. */
   protected PostProcessObjectHandler m_PostProcessObjectHandler;
-
-  /**
-   * Creates a popup menu containing a tree that is aware
-   * of the screen dimensions.
-   *
-   * @version $Revision$
-   */
-  public static class GOETreePopupMenu
-    extends BasePopupMenu {
-
-    /** for serialization. */
-    static final long serialVersionUID = -3404546329655057387L;
-
-    /** the popup itself. */
-    protected JPopupMenu m_Self;
-
-    /** the info panel at the top. */
-    protected JPanel m_PanelInfo;
-
-    /** the info text at the top. */
-    protected JLabel m_LabelInfo;
-
-    /** The tree. */
-    protected ClassTree m_Tree;
-
-    /** The scroller. */
-    protected BaseScrollPane m_Scroller;
-
-    /** The search field. */
-    protected JTextField m_TextSearch;
-
-    /** The button for closing the popup again. */
-    protected JButton m_CloseButton;
-
-    /** The checkbox for enabling/disabling the class tree filter. */
-    protected JCheckBox m_CheckBoxFilter;
-
-    /** The checkbox for enabling/disabling strict filtering. */
-    protected JCheckBox m_CheckBoxStrict;
-
-    /** the minimum number of characters before triggering search events. */
-    protected int m_MinimumChars;
-
-    /**
-     * Constructs a new popup menu.
-     *
-     * @param tree 	the tree to put in the menu
-     */
-    public GOETreePopupMenu(ClassTree tree) {
-      JPanel	bottomPanel;
-      JPanel	panel;
-      JPanel 	treeView;
-
-      m_Self = this;
-      m_Tree = tree;
-
-      setLayout(new BorderLayout());
-
-      m_LabelInfo = new JLabel("");
-      m_LabelInfo.setLabelFor(m_Tree);
-      m_PanelInfo = new JPanel(new FlowLayout(FlowLayout.LEFT));
-      m_PanelInfo.setVisible(false);
-      m_PanelInfo.add(m_LabelInfo);
-      add(m_PanelInfo, BorderLayout.NORTH);
-
-      bottomPanel = new JPanel(new BorderLayout());
-      add(bottomPanel, BorderLayout.SOUTH);
-
-      // search
-      panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-      bottomPanel.add(panel, BorderLayout.WEST);
-      m_TextSearch = new JTextField(20);
-      m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
-	public void changedUpdate(DocumentEvent e) {
-	  update();
-	}
-	public void insertUpdate(DocumentEvent e) {
-	  update();
-	}
-	public void removeUpdate(DocumentEvent e) {
-	  update();
-	}
-	protected void update() {
-	  if (m_TextSearch.getText().length() >= getMinimumChars())
-	    m_Tree.setSearch(m_TextSearch.getText());
-	  else
-	    m_Tree.setSearch("");
-	}
-      });
-      JLabel labelSearch = new JLabel("Search");
-      labelSearch.setDisplayedMnemonic('S');
-      labelSearch.setLabelFor(m_TextSearch);
-      panel.add(labelSearch);
-      panel.add(m_TextSearch);
-
-      // filter
-      if (m_Tree.getFilter() != null) {
-	panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	bottomPanel.add(panel, BorderLayout.SOUTH);
-
-	m_CheckBoxFilter = new JCheckBox("Filtering");
-	m_CheckBoxFilter.setMnemonic('F');
-	m_CheckBoxFilter.setSelected(m_Tree.getFilter().isEnabled());
-	m_CheckBoxFilter.addActionListener((ActionEvent e) -> {
-          AbstractItemFilter filter = m_Tree.getFilter();
-          filter.setEnabled(m_CheckBoxFilter.isSelected());
-          m_Tree.setFilter(filter);
-          m_CheckBoxStrict.setEnabled(
-            m_CheckBoxFilter.isEnabled()
-              && m_CheckBoxFilter.isSelected()
-              && (m_Tree.getFilter() instanceof StrictClassTreeFilter));
-	});
-	panel.add(m_CheckBoxFilter);
-
-	m_CheckBoxStrict = new JCheckBox("Strict mode");
-	m_CheckBoxStrict.setMnemonic('m');
-	m_CheckBoxStrict.setEnabled(
-	       m_CheckBoxFilter.isEnabled()
-	    && m_CheckBoxFilter.isSelected()
-	    && (m_Tree.getFilter() instanceof StrictClassTreeFilter));
-	m_CheckBoxStrict.setSelected(
-	       m_CheckBoxStrict.isEnabled()
-	    && ((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
-	m_CheckBoxStrict.addActionListener((ActionEvent e) -> {
-          ((StrictClassTreeFilter) m_Tree.getFilter()).setStrict(
-            !((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
-          m_Tree.setFilter(m_Tree.getFilter());
-	});
-	panel.add(m_CheckBoxStrict);
-      }
-
-      // close
-      panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-      bottomPanel.add(panel, BorderLayout.EAST);
-      m_CloseButton = new JButton("Close");
-      m_CloseButton.setMnemonic('C');
-      m_CloseButton.addActionListener((ActionEvent e) -> {
-        if (e.getSource() == m_CloseButton)
-          m_Self.setVisible(false);
-      });
-      panel.add(m_CloseButton);
-
-      // tree
-      treeView = new JPanel();
-      treeView.setLayout(new BorderLayout());
-      treeView.add(m_Tree, BorderLayout.NORTH);
-      treeView.setBackground(m_Tree.getBackground());
-      m_Scroller = new BaseScrollPane(treeView);
-      m_Scroller.setPreferredSize(new Dimension(300, 400));
-      add(m_Scroller, BorderLayout.CENTER);
-    }
-
-    /**
-     * Sets the minimum number of characters that the user needs to enter
-     * before triggering a search event.
-     *
-     * @param value	the minimum number of characters (>= 1)
-     */
-    public void setMinimumChars(int value) {
-      if (value >= 1)
-	m_MinimumChars = value;
-    }
-
-    /**
-     * Returns the minimum number of characters that the user needs to enter
-     * before triggering a search event.
-     *
-     * @return		the minimum number of characters (>= 1)
-     */
-    public int getMinimumChars() {
-      return m_MinimumChars;
-    }
-
-    /**
-     * Sets the info text to display at the top.
-     * Use "_" before the character to use as the mnemonic for jumping into the
-     * tree via the keyboard.
-     *
-     * @param value	the info text, null or empty to remove
-     */
-    public void setInfoText(String value) {
-      if (value == null)
-        value = "";
-      if (GUIHelper.hasMnemonic(value)) {
-	m_LabelInfo.setDisplayedMnemonic(GUIHelper.getMnemonic(value));
-	value = GUIHelper.stripMnemonic(value);
-      }
-      else {
-	m_LabelInfo.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
-      }
-      m_LabelInfo.setText(value);
-      m_PanelInfo.setVisible(!value.isEmpty());
-    }
-
-    /**
-     * Returns the current info text, if any.
-     *
-     * @return		the text, empty if none displayed
-     */
-    public String getInfoText() {
-      return m_LabelInfo.getText();
-    }
-
-    /**
-     * Displays the menu, making sure it will fit on the screen.
-     *
-     * @param invoker 	the component thast invoked the menu
-     * @param x 	the x location of the popup
-     * @param y 	the y location of the popup
-     */
-    @Override
-    public void show(Component invoker, int x, int y) {
-      super.show(invoker, x, y);
-
-      // calculate available screen area for popup
-      Point location = getLocationOnScreen();
-      Dimension screenSize = getToolkit().getScreenSize();
-      int maxWidth = (int) (screenSize.getWidth() - location.getX());
-      int maxHeight = (int) (screenSize.getHeight() - location.getY());
-
-      // if the part of the popup goes off the screen then resize it
-      Dimension scrollerSize = m_Scroller.getPreferredSize();
-      int height = (int) scrollerSize.getHeight();
-      int width = (int) scrollerSize.getWidth();
-      if (width > maxWidth) width = maxWidth;
-      if (height > maxHeight) height = maxHeight;
-
-      // commit any size changes
-      m_Scroller.setPreferredSize(new Dimension(width, height));
-      revalidate();
-      pack();
-
-      // request focus
-      SwingUtilities.invokeLater(() -> m_TextSearch.requestFocus());
-    }
-  }
 
   /**
    * Handles the GUI side of editing values.
@@ -1398,7 +1152,7 @@ public class GenericObjectEditor
       tree.expandAll();
 
     // create the popup
-    final GOETreePopupMenu popup = new GOETreePopupMenu(tree);
+    final GenericObjectEditorClassTreePopupMenu popup = new GenericObjectEditorClassTreePopupMenu(tree);
     popup.setMinimumChars(getMinimumChars());
 
     // respond when the user chooses a class

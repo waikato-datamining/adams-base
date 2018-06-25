@@ -92,7 +92,7 @@ import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
 import adams.gui.goe.Favorites;
 import adams.gui.goe.Favorites.Favorite;
 import adams.gui.goe.FlowHelper;
-import adams.gui.goe.GenericObjectEditor.GOETreePopupMenu;
+import adams.gui.goe.GenericObjectEditorClassTreePopupMenu;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.classtree.ActorClassTreeFilter;
 import adams.gui.goe.classtree.ClassTree;
@@ -399,7 +399,7 @@ public class TreeOperations
     String			txt;
     final List<String> 		exp;
     final ClassTree 		tree;
-    final GOETreePopupMenu 	goePopup;
+    final GenericObjectEditorClassTreePopupMenu goePopup;
     Component 			comp;
 
     if ((actor == null) || (dialogType == ActorDialog.GOE_FORCED)) {
@@ -446,7 +446,7 @@ public class TreeOperations
 	  tree.setItems(new ArrayList<>(Arrays.asList(ClassLister.getSingleton().getClassnames(Actor.class))));
 	  tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 	  tree.expandAll();
-	  goePopup = new GOETreePopupMenu(tree);
+	  goePopup = new GenericObjectEditorClassTreePopupMenu(tree);
 	  switch (position) {
 	    case BENEATH:
 	      goePopup.setInfoText("Insert _actor beneath");
