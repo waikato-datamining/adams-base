@@ -389,8 +389,9 @@ public class Branch
     if ((index > -1) && (index < m_Branches.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Branches.set(index, actor);
+      m_Branches.get(index).setParent(null);
+      m_Branches.get(index).setParent(this);
       reset();
-      updateParent();
     }
     else {
       getLogger().severe("Index out of range (0-" + (m_Branches.size() - 1) + "): " + index);
@@ -414,8 +415,9 @@ public class Branch
    */
   public void add(int index, Actor actor) {
     m_Branches.add(index, actor);
+    m_Branches.get(index).setParent(null);
+    m_Branches.get(index).setParent(this);
     reset();
-    updateParent();
   }
 
   /**

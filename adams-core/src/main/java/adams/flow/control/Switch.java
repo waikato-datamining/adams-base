@@ -15,7 +15,7 @@
 
 /*
  * Switch.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -107,7 +107,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Switch
   extends AbstractDirectedControlActor
@@ -491,8 +490,9 @@ public class Switch
     if ((index > -1) && (index < m_Cases.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Cases.set(index, actor);
+      m_Cases.get(index).setParent(null);
+      m_Cases.get(index).setParent(this);
       reset();
-      updateParent();
     }
     else {
       getLogger().severe("Index out of range (0-" + (m_Cases.size() - 1) + "): " + index);
@@ -516,8 +516,9 @@ public class Switch
    */
   public void add(int index, Actor actor) {
     m_Cases.add(index, actor);
+    m_Cases.get(index).setParent(null);
+    m_Cases.get(index).setParent(this);
     reset();
-    updateParent();
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * MutableConnectedControlActor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -33,7 +33,6 @@ import java.util.List;
  * (adding, removing, editing). The sub-actors are also connected.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class MutableConnectedControlActor
   extends AbstractConnectedControlActor
@@ -134,8 +133,9 @@ public abstract class MutableConnectedControlActor
     if ((index > -1) && (index < m_Actors.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Actors.set(index, actor);
+      m_Actors.get(index).setParent(null);
+      m_Actors.get(index).setParent(this);
       reset();
-      updateParent();
     }
     else {
       getLogger().severe("Index out of range (0-" + (m_Actors.size() - 1) + "): " + index);
@@ -159,8 +159,9 @@ public abstract class MutableConnectedControlActor
    */
   public void add(int index, Actor actor) {
     m_Actors.add(index, actor);
+    m_Actors.get(index).setParent(null);
+    m_Actors.get(index).setParent(this);
     reset();
-    updateParent();
   }
 
   /**
