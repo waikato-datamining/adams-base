@@ -134,16 +134,17 @@ public class NestedFormatHelper {
    * Determines the indentation level of the given string.
    *
    * @param s		the string to analyze
+   * @param indentChar	the character used for indentation
    * @return		the level
    */
-  protected static int getIndentation(String s) {
+  protected static int getIndentationLevel(String s, char indentChar) {
     int		result;
     int		i;
 
     result = 0;
 
     for (i = 0; i < s.length(); i++) {
-      if (s.charAt(i) != '\t')
+      if (s.charAt(i) != indentChar)
         break;
       else
         result++;
@@ -193,10 +194,11 @@ public class NestedFormatHelper {
    * handlers.
    *
    * @param lines	the lines to turn into a nested structure
+   * @param indentChar	the character used for indentation
    * @return		the nested structure
    */
-  public static ArrayList linesToNested(List<String> lines) {
-    return linesToNested(lines, 0);
+  public static ArrayList linesToNested(List<String> lines, char indentChar) {
+    return linesToNested(lines, 0, indentChar);
   }
 
   /**
@@ -205,9 +207,10 @@ public class NestedFormatHelper {
    *
    * @param lines	the lines to turn into a nested structure
    * @param offset	the offset in lines, i.e., the number of comments removed
+   * @param indentChar	the character used for indentation
    * @return		the nested structure
    */
-  public static ArrayList linesToNested(List<String> lines, int offset) {
+  public static ArrayList linesToNested(List<String> lines, int offset, char indentChar) {
     ArrayList	result;
     int[]	levels;
     int		i;
@@ -215,7 +218,7 @@ public class NestedFormatHelper {
 
     levels = new int[lines.size()];
     for (i = 0; i < lines.size(); i++)
-      levels[i] = getIndentation(lines.get(i));
+      levels[i] = getIndentationLevel(lines.get(i), indentChar);
     result = linesToNested(lines, new int[]{0}, levels, offset);
 
     return result;

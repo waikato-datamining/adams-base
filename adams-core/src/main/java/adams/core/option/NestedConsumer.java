@@ -59,6 +59,16 @@ public class NestedConsumer
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Encoding = new BaseCharset();
+  }
+
+  /**
    * Sets the encoding to use.
    *
    * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
@@ -188,7 +198,7 @@ public class NestedConsumer
         logWarning(msg);
       offset  = NestedFormatHelper.removeComments(lines);
       // convert into nested format
-      return NestedFormatHelper.linesToNested(lines, offset);
+      return NestedFormatHelper.linesToNested(lines, offset, '\t');
     }
     catch (Exception e) {
       msg = "Failed to convert to input:";

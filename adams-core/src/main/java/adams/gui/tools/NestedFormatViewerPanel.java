@@ -15,7 +15,7 @@
 
 /*
  * NestedFormatViewerPanel.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -64,7 +64,6 @@ import java.util.List;
  * uses.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NestedFormatViewerPanel
   extends BasePanel 
@@ -77,7 +76,6 @@ public class NestedFormatViewerPanel
    * A specialized renderer for the tree elements.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public class Renderer
     extends DefaultTreeCellRenderer {
@@ -370,7 +368,7 @@ public class NestedFormatViewerPanel
     lines  = FileUtils.loadFromFile(file);
     Utils.removeComments(lines, NestedProducer.COMMENT);
     Utils.removeEmptyLines(lines);
-    nested = NestedFormatHelper.linesToNested(lines);
+    nested = NestedFormatHelper.linesToNested(lines, '\t');
 
     root = new BaseTreeNode("<html><b>" + file.getName() + "</b></html>");
     buildTree(root, nested);
