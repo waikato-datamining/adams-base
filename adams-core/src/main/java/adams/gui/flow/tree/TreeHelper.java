@@ -197,6 +197,7 @@ public class TreeHelper {
    * @return		the root node, null if failed to build
    */
   protected static Node buildTree(Node root, List nested, MessageCollection warnings, MessageCollection errors, ArrayConsumer consumer) {
+    String		cmdline;
     Actor		actor;
     Node 		node;
     int			i;
@@ -207,7 +208,8 @@ public class TreeHelper {
     i = 0;
     while (i < nested.size()) {
       try {
-	actor = (Actor) consumer.fromString(((Line) nested.get(i)).getContent());
+        cmdline = ((Line) nested.get(i)).getContent();
+	actor   = (Actor) consumer.fromString(cmdline);
 	if (consumer.hasErrors()) {
 	  errors.addAll(consumer.getErrors());
 	  return null;
@@ -217,7 +219,7 @@ public class TreeHelper {
 	errors.add("Failed to parse actor: " + nested.get(0), e);
 	return null;
       }
-      node = new Node(null, actor);
+      node = new Node(null, actor, cmdline);
       if (root != null)
 	root.add(node);
       else

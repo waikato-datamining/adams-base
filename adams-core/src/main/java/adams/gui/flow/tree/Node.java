@@ -77,6 +77,9 @@ public class Node
   /** the markdown processor. */
   protected static MarkdownProcessor m_MarkdownProcessor;
 
+  /** whether the processor has been initialized. */
+  protected static Boolean m_MarkdownProcessorInitialized;
+
   /** the commandline (cache for undo/redo). */
   protected String m_CommandLine;
 
@@ -86,18 +89,44 @@ public class Node
    * @param owner	the owning tree, can be null
    * @param actor	the underlying actor
    */
-  public Node(Tree owner, Actor actor) {
+  protected Node(Tree owner) {
     super();
 
     m_Owner        = owner;
     m_RenderString = null;
     m_Editable     = true;
     m_Bookmarked   = false;
+    m_Variables    = null;
     m_CommandLine  = null;
-    if ((m_MarkdownProcessor == null) && GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"))
-      m_MarkdownProcessor = new MarkdownProcessor();
+    if (m_MarkdownProcessorInitialized == null) {
+      m_MarkdownProcessorInitialized = true;
+      if (GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"))
+	m_MarkdownProcessor = new MarkdownProcessor();
+    }
+  }
 
+  /**
+   * Initializes the node.
+   *
+   * @param owner	the owning tree, can be null
+   * @param actor	the underlying actor
+   */
+  public Node(Tree owner, Actor actor) {
+    this(owner);
     setActor(actor);
+  }
+
+  /**
+   * Initializes the node.
+   *
+   * @param owner	the owning tree, can be null
+   * @param actor	the stripped actor
+   * @param commandline	the commandline of the actor
+   */
+  public Node(Tree owner, Actor actor, String commandline) {
+    this(owner);
+    setUserObject(actor);
+    m_CommandLine = commandline;
   }
 
   /**
@@ -108,9 +137,9 @@ public class Node
    */
   @Override
   public void setUserObject(Object userObject) {
-    m_Variables     = null;
-    m_RenderString  = null;
-    m_CommandLine   = null;
+    m_Variables    = null;
+    m_RenderString = null;
+    m_CommandLine  = null;
     super.setUserObject(userObject);
   }
 
