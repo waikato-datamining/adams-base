@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.management.Java;
+import adams.core.option.NestedFormatHelper.Line;
 import adams.env.Environment;
 import adams.env.Modules;
 import adams.flow.core.AbstractActor;
@@ -329,12 +330,14 @@ public class CompactFlowProducer
     ActorHandler	handler;
     int			i;
     ArrayList		list;
+    Line		line;
 
     stripped = strip(actor);
+    line     = new Line(stripped.toCommandLine());
     if (m_Nesting.empty())
-      m_Output.add(stripped);
+      m_Output.add(line);
     else
-      m_Nesting.peek().add(stripped);
+      m_Nesting.peek().add(line);
 
     if (actor instanceof ActorHandler) {
       handler = (ActorHandler) actor;
