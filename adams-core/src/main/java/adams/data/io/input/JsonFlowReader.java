@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonFlowReader.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -23,8 +23,6 @@ import adams.core.option.JsonConsumer;
 import adams.data.io.output.FlowWriter;
 import adams.data.io.output.JsonFlowWriter;
 import adams.flow.core.Actor;
-import adams.gui.flow.tree.Node;
-import adams.gui.flow.tree.TreeHelper;
 
 import java.io.File;
 
@@ -32,7 +30,6 @@ import java.io.File;
  * Reads flows in JSON format.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonFlowReader
   extends AbstractFlowReader {
@@ -79,17 +76,6 @@ public class JsonFlowReader
   @Override
   protected InputType getInputType() {
     return InputType.FILE;
-  }
-  
-  /**
-   * Performs the actual reading.
-   *
-   * @param file	the file to read from
-   * @return		the flow or null in case of an error
-   */
-  @Override
-  protected Node doReadNode(File file) {
-    return TreeHelper.buildTree(readActor(file));
   }
 
   /**

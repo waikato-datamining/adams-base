@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowReader.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -23,7 +23,6 @@ import adams.core.io.FileFormatHandler;
 import adams.core.option.OptionHandler;
 import adams.data.io.output.FlowWriter;
 import adams.flow.core.Actor;
-import adams.gui.flow.tree.Node;
 
 import java.io.File;
 import java.io.InputStream;
@@ -34,45 +33,10 @@ import java.util.List;
  * Interface for flow readers.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface FlowReader
   extends OptionHandler, FileFormatHandler {
-  
-  /**
-   * Reads the flow from the specified file.
-   *
-   * @param file	the file to read from
-   * @return		null in case of an error, otherwise the flow
-   */
-  public Node readNode(File file);
 
-  /**
-   * Reads the flow from the given file.
-   *
-   * @param filename	the file to read from
-   * @return		the flow or null in case of an error
-   */
-  public Node readNode(String filename);
-
-  /**
-   * Reads the flow from the stream. The caller must ensure to
-   * close the stream.
-   *
-   * @param stream	the stream to read from
-   * @return		the flow or null in case of an error
-   */
-  public Node readNode(InputStream stream);
-
-  /**
-   * Reads the flow from the given reader. The caller must ensure to
-   * close the reader.
-   *
-   * @param r		the reader to read from
-   * @return		the flow or null in case of an error
-   */
-  public Node readNode(Reader r);
-  
   /**
    * Reads the flow from the specified file.
    *

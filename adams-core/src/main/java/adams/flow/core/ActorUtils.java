@@ -61,7 +61,6 @@ import adams.flow.transformer.CallableTransformer;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.GUIHelper;
-import adams.gui.flow.tree.TreeHelper;
 import adams.gui.visualization.core.FlowAwarePaintlet;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.Paintlet;
@@ -714,7 +713,7 @@ public class ActorUtils {
     writer = FlowFileChooser.writerForFile(new File(filename));
     if (writer == null)
       writer = new DefaultFlowWriter();
-    result = writer.write(TreeHelper.buildTree(actor), filename);
+    result = writer.write(actor, filename);
 
     return result;
   }

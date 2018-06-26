@@ -13,16 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * AbstractFlowWriter.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+/*
+ * AbstractListFlowWriter.java
+ * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
+
 package adams.data.io.output;
 
-import adams.core.ClassLister;
 import adams.core.io.FileUtils;
-import adams.core.option.AbstractOptionHandler;
-import adams.flow.core.Actor;
 import org.apache.commons.io.output.WriterOutputStream;
 
 import java.io.BufferedWriter;
@@ -32,88 +30,41 @@ import java.io.FileWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.List;
 
 /**
- * Ancestor for classes that can write flow objects.
+ * Ancestor for flow writers that support the nested format.
  *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractFlowWriter
-  extends AbstractOptionHandler
-  implements FlowWriter {
+public abstract class AbstractNestedFlowWriter
+  extends AbstractFlowWriter
+  implements NestedFlowWriter {
 
-  /** for serialization. */
-  private static final long serialVersionUID = -3547064795252689769L;
-
-  /**
-   * How to read the data.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum OutputType {
-    /** write to a file. */
-    FILE,
-    /** write using a writer. */
-    WRITER,
-    /** write to a stream. */
-    STREAM
-  }
+  private static final long serialVersionUID = -5346130766533981323L;
 
   /**
-   * Returns a string describing the format (used in the file chooser).
-   *
-   * @return 			a description suitable for displaying in the
-   * 				file chooser
-   */
-  public abstract String getFormatDescription();
-
-  /**
-   * Returns the extension(s) of the format.
-   *
-   * @return 			the extension (without the dot!)
-   */
-  public abstract String[] getFormatExtensions();
-
-  /**
-   * Returns the default extension of the format.
-   *
-   * @return 			the default extension (without the dot!)
-   */
-  public String getDefaultFormatExtension() {
-    return getFormatExtensions()[0];
-  }
-
-  /**
-   * Returns how to write the data, from a file, stream or writer.
-   *
-   * @return		how to write the data
-   */
-  protected abstract OutputType getOutputType();
-
-  /**
-   * Writes the given content to the specified file.
+   * Writes the given nested format to the specified file.
    *
    * @param content	the content to write
    * @param file	the file to write to
    * @return		true if successfully written
    */
-  public boolean write(Actor content, File file) {
+  public boolean write(List content, File file) {
     return write(content, file.getAbsolutePath());
   }
 
   /**
-   * Writes the content to the given file.
+   * Writes the nested format to the given file.
    *
    * @param content	the content to write
    * @param filename	the file to write the content to
    * @return		true if successfully written
    */
-  public boolean write(Actor content, String filename) {
+  public boolean write(List content, String filename) {
     boolean			result;
-    BufferedWriter		writer;
-    OutputStream		output;
+    BufferedWriter writer;
+    OutputStream output;
 
     result = true;
 
@@ -149,14 +100,14 @@ public abstract class AbstractFlowWriter
   }
 
   /**
-   * Writes the content to the given output stream. The caller
+   * Writes the nested format to the given output stream. The caller
    * must ensure that the stream gets closed.
    *
    * @param content	the content to write
    * @param stream	the output stream to write the content to
    * @return		true if successfully written
    */
-  public boolean write(Actor content, OutputStream stream) {
+  public boolean write(List content, OutputStream stream) {
     switch (getOutputType()) {
       case FILE:
 	throw new IllegalStateException("Only supports writing to files, not output streams!");
@@ -170,14 +121,14 @@ public abstract class AbstractFlowWriter
   }
 
   /**
-   * Writes the content to the given writer. The caller
+   * Writes the nested format to the given writer. The caller
    * must ensure that the writer gets closed.
    *
    * @param content	the content to write
    * @param writer	the writer to write the content to
    * @return		true if successfully written
    */
-  public boolean write(Actor content, Writer writer) {
+  public boolean write(List content, Writer writer) {
     switch (getOutputType()) {
       case FILE:
 	throw new IllegalStateException("Only supports writing to files, not output streams!");
@@ -200,7 +151,7 @@ public abstract class AbstractFlowWriter
    * @param file	the file to write the content to
    * @return		true if successfully written
    */
-  protected boolean doWrite(Actor content, File file) {
+  protected boolean doWrite(List content, File file) {
     return false;
   }
 
@@ -214,7 +165,7 @@ public abstract class AbstractFlowWriter
    * @param writer	the writer to write the content to
    * @return		true if successfully written
    */
-  protected boolean doWrite(Actor content, Writer writer) {
+  protected boolean doWrite(List content, Writer writer) {
     return false;
   }
 
@@ -228,16 +179,7 @@ public abstract class AbstractFlowWriter
    * @param out		the output stream to write the content to
    * @return		true if successfully written
    */
-  protected boolean doWrite(Actor content, OutputStream out) {
+  protected boolean doWrite(List content, OutputStream out) {
     return false;
-  }
-
-  /**
-   * Returns a list with classnames of writers.
-   *
-   * @return		the writer classnames
-   */
-  public static String[] getWriters() {
-    return ClassLister.getSingleton().getClassnames(FlowWriter.class);
   }
 }

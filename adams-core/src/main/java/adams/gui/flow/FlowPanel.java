@@ -20,6 +20,7 @@
 
 package adams.gui.flow;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
@@ -36,8 +37,10 @@ import adams.core.option.OptionConsumer;
 import adams.core.option.OptionProducer;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.FlowReader;
+import adams.data.io.input.NestedFlowReader;
 import adams.data.io.output.DefaultFlowWriter;
 import adams.data.io.output.FlowWriter;
+import adams.data.io.output.NestedFlowWriter;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
 import adams.flow.control.Flow;
@@ -65,6 +68,7 @@ import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
 import adams.gui.flow.tree.Tree.TreeState;
+import adams.gui.flow.tree.TreeHelper;
 import adams.gui.flow.tree.keyboardaction.AbstractKeyboardAction;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
@@ -601,13 +605,13 @@ public class FlowPanel
 
     worker = new SwingWorker() {
       protected Node m_Flow = null;
-      protected List<String> m_Errors;
-      protected List<String> m_Warnings;
+      protected MessageCollection m_Errors;
+      protected MessageCollection m_Warnings;
 
       @Override
       protected Object doInBackground() throws Exception {
-	m_Errors   = new ArrayList<>();
-	m_Warnings = new ArrayList<>();
+	m_Errors   = new MessageCollection();
+	m_Warnings = new MessageCollection();
 
 	cleanUp();
 	addUndoPoint("Saving undo data...", "Loading '" + file.getName() + "'");
@@ -616,7 +620,14 @@ public class FlowPanel
 	setTitle(FileUtils.replaceExtension(file.getName(), ""));
 	update();
 
-	m_Flow = reader.readNode(file);
+	if (reader instanceof NestedFlowReader) {
+	  List nested = ((NestedFlowReader) reader).readNested(file);
+          m_Flow = TreeHelper.buildTree(nested, m_Warnings, m_Errors);
+        }
+        else {
+	  Actor actor = reader.readActor(file);
+	  m_Flow = TreeHelper.buildTree(actor);
+        }
 	m_Errors.addAll(reader.getErrors());
 	m_Warnings.addAll(reader.getWarnings());
 	setCurrentFlow(m_Flow);
@@ -647,11 +658,11 @@ public class FlowPanel
 	if (!m_Errors.isEmpty()) {
 	  GUIHelper.showErrorMessage(
 	      m_Owner, 
-	      "Failed to load flow '" + file + "':\n" + Utils.flatten(m_Errors, "\n") 
-	      + (m_Warnings.isEmpty() ? "" : "\nWarning(s):\n" + Utils.flatten(m_Warnings, "\n")));
+	      "Failed to load flow '" + file + "':\n" + m_Errors
+	      + (m_Warnings.isEmpty() ? "" : "\nWarning(s):\n" + m_Warnings));
 	}
 	if (!m_Warnings.isEmpty()) {
-          msg = "Warning(s) encountered while loading flow '" + file + "':\n" + Utils.flatten(m_Warnings, "\n");
+          msg = "Warning(s) encountered while loading flow '" + file + "':\n" + m_Warnings;
           if (canExecute)
             ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
           else
@@ -873,9 +884,9 @@ public class FlowPanel
    */
   public void save(final FlowWriter writer, final File file) {
     SwingWorker		worker;
-    final Node 		flow;
+    final Node 		rootNode;
 
-    flow         = getTree().getRootNode();
+    rootNode = getTree().getRootNode();
     m_LastWriter = (FlowWriter) OptionUtils.shallowCopy(writer);
 
     worker = new SwingWorker() {
@@ -888,7 +899,7 @@ public class FlowPanel
 
 	if (getCheckOnSave()) {
 	  SwingUtilities.invokeLater(() -> setPageIcon("hourglass.png"));
-	  String check = ActorUtils.checkFlow(flow.getFullActor(), false, false, file);
+	  String check = ActorUtils.checkFlow(rootNode.getFullActor(), false, false, file);
 	  if (check != null) {
 	    String msg = "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check;
             showNotification(msg, true);
@@ -908,7 +919,10 @@ public class FlowPanel
 
 	SwingUtilities.invokeLater(() -> setPageIcon("save.gif"));
 	showStatus("Saving '" + file + "'...");
-	m_Result = writer.write(flow, file);
+	if (writer instanceof NestedFlowWriter)
+	  m_Result = ((NestedFlowWriter) writer).write(TreeHelper.getNested(rootNode), file);
+	else
+	  m_Result = writer.write(rootNode.getFullActor(), file);
 	showStatus("");
         return null;
       }
@@ -1525,7 +1539,7 @@ public class FlowPanel
   @Override
   public Object getSendToItem(Class[] cls) {
     Object		result;
-    Node 		root;
+    Node 		rootNode;
     DefaultFlowWriter	writer;
 
     result = null;
@@ -1533,9 +1547,9 @@ public class FlowPanel
     if (SendToActionUtils.isAvailable(PlaceholderFile.class, cls)) {
       if (getTree().isModified()) {
 	result = SendToActionUtils.nextTmpFile("floweditor", "flow");
-	root   = getTree().getRootNode();
+	rootNode = getTree().getRootNode();
 	writer = new DefaultFlowWriter();
-	writer.write(root, (PlaceholderFile) result);
+	writer.write(TreeHelper.getNested(rootNode), (PlaceholderFile) result);
       }
       else if (getCurrentFile() != null) {
 	result = new PlaceholderFile(getCurrentFile());

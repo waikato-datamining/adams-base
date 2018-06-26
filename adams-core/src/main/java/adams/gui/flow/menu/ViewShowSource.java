@@ -21,6 +21,7 @@ package adams.gui.flow.menu;
 
 import adams.data.io.output.DefaultFlowWriter;
 import adams.gui.dialog.TextDialog;
+import adams.gui.flow.tree.TreeHelper;
 
 import java.awt.event.ActionEvent;
 import java.io.StringWriter;
@@ -57,7 +58,7 @@ public class ViewShowSource
       StringWriter swriter = new StringWriter();
       DefaultFlowWriter writer = new DefaultFlowWriter();
       writer.setUseCompact(true);
-      writer.write(m_State.getCurrentTree().getRootNode(), swriter);
+      writer.write(TreeHelper.getNested(m_State.getCurrentTree().getRootNode()), swriter);
       String buffer = swriter.toString();
       TextDialog dialog;
       if (getParentDialog() != null)

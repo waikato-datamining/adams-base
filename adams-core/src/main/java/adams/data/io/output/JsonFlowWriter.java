@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonFlowWriter.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -23,7 +23,6 @@ import adams.core.option.JsonProducer;
 import adams.data.io.input.FlowReader;
 import adams.data.io.input.JsonFlowReader;
 import adams.flow.core.Actor;
-import adams.gui.flow.tree.Node;
 
 import java.io.File;
 
@@ -31,7 +30,6 @@ import java.io.File;
  * Writes flows in JSON format.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonFlowWriter
   extends AbstractFlowWriter {
@@ -78,18 +76,6 @@ public class JsonFlowWriter
   @Override
   protected OutputType getOutputType() {
     return OutputType.FILE;
-  }
-
-  /**
-   * Writes the given content to the specified file.
-   *
-   * @param content	the content to write
-   * @param file	the file to write to
-   * @return		true if successfully written
-   */
-  @Override
-  protected boolean doWrite(Node content, File file) {
-    return write(content.getFullActor(), file);
   }
 
   /**

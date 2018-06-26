@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultFlowReader.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -24,14 +24,15 @@ import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
+import adams.core.option.CompactFlowConsumer;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedFormatHelper;
+import adams.core.option.NestedFormatHelper.Line;
 import adams.core.option.NestedProducer;
+import adams.core.option.OptionUtils;
 import adams.data.io.output.DefaultFlowWriter;
 import adams.data.io.output.FlowWriter;
 import adams.flow.core.Actor;
-import adams.gui.flow.tree.Node;
-import adams.gui.flow.tree.TreeHelper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,10 +46,9 @@ import java.util.List;
  * Reads flows in the default format (nested).
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DefaultFlowReader
-  extends AbstractFlowReader
+  extends AbstractNestedFlowReader
   implements EncodingSupporter {
 
   /** for serialization. */
@@ -220,8 +220,8 @@ public class DefaultFlowReader
    * @param lines	the flow data
    * @return		the flow or null in case of an error
    */
-  protected Node readNode(List<String> lines) {
-    Node		result;
+  protected List readNested(List<String> lines) {
+    List		result;
     MessageCollection   errors;
     MessageCollection   warnings;
     String		msg;
@@ -233,14 +233,14 @@ public class DefaultFlowReader
       Utils.removeComments(lines, NestedProducer.COMMENT);
       errors   = new MessageCollection();
       warnings = new MessageCollection();
-      result = TreeHelper.buildTree(lines, warnings, errors);
+      result   = NestedFormatHelper.linesToNested(lines, ' ');
       if (!warnings.isEmpty())
 	m_Warnings.addAll(warnings.toList());
       if (!errors.isEmpty())
 	m_Errors.addAll(errors.toList());
     }
     else {
-      result = TreeHelper.buildTree(readNonCompact(lines));
+      result = NestedFormatHelper.linesToNested(lines, '\t');
     }
 
     return result;
@@ -253,15 +253,15 @@ public class DefaultFlowReader
    * @return		the flow or null in case of an error
    */
   @Override
-  protected Node doReadNode(File file) {
-    Node		result;
+  protected List doReadNested(File file) {
+    List 		result;
     List<String>	lines;
 
     lines = new ArrayList<>();
     if (isCompact(file, lines))
-      result = readNode(lines);
+      result = readNested(lines);
     else
-      result = TreeHelper.buildTree(readNonCompact(lines));
+      result = NestedFormatHelper.linesToNested(lines, '\t');
 
     return result;
   }
@@ -273,7 +273,7 @@ public class DefaultFlowReader
    * @return		the flow or null in case of an error
    * @see		#getInputType()
    */
-  protected Node doReadNode(Reader r) {
+  protected List doReadNested(Reader r) {
     List<String>	lines;
     String		line;
     BufferedReader 	reader;
@@ -293,7 +293,7 @@ public class DefaultFlowReader
       return null;
     }
 
-    return readNode(lines);
+    return readNested(lines);
   }
 
   /**
@@ -303,8 +303,8 @@ public class DefaultFlowReader
    * @return		the flow or null in case of an error
    * @see		#getInputType()
    */
-  protected Node doReadNode(InputStream in) {
-    return doReadNode(new InputStreamReader(in));
+  protected List doReadNested(InputStream in) {
+    return doReadNested(new InputStreamReader(in));
   }
 
   /**
@@ -315,10 +315,10 @@ public class DefaultFlowReader
    */
   protected Actor readActor(List<String> lines) {
     Actor		result;
-    Node		node;
-    MessageCollection	warnings;
-    MessageCollection	errors;
     String		msg;
+    List		nested;
+    List		list;
+    CompactFlowConsumer	compact;
 
     result = null;
     if (isCompact(lines)) {
@@ -326,15 +326,23 @@ public class DefaultFlowReader
       if (msg != null)
         addWarning(msg);
       Utils.removeComments(lines, NestedProducer.COMMENT);
-      warnings = new MessageCollection();
-      errors   = new MessageCollection();
-      node     = TreeHelper.buildTree(lines, warnings, errors);
-      if (!warnings.isEmpty())
-	m_Warnings.addAll(warnings.toList());
-      if (!errors.isEmpty())
-	m_Errors.addAll(errors.toList());
-      if (node != null)
-	result = node.getFullActor();
+      nested = NestedFormatHelper.linesToNested(lines, ' ');
+      try {
+	result = (Actor) OptionUtils.forCommandLine(Actor.class, ((Line) nested.get(0)).getContent());
+	nested.remove(0);
+      }
+      catch (Exception e) {
+        addError("Failed to instantiate top-level actor: ", e);
+        return null;
+      }
+      if (nested.isEmpty())
+        list = new ArrayList();
+      else
+        list = (List) nested.get(0);
+      compact = new CompactFlowConsumer();
+      result  = (Actor) compact.consume(result, list);
+      if (compact.hasErrors())
+        m_Errors.addAll(compact.getErrors());
     }
     else {
       result = readNonCompact(lines);

@@ -19,14 +19,15 @@
  */
 package adams.gui.flow;
 
+import adams.core.MessageCollection;
 import adams.core.Pausable;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.net.HtmlUtils;
 import adams.data.io.input.FlowReader;
+import adams.data.io.input.NestedFlowReader;
 import adams.db.LogEntryHandler;
 import adams.env.Environment;
 import adams.env.FlowRunnerPanelDefinition;
@@ -55,6 +56,7 @@ import adams.gui.core.ToolBarPanel;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.flow.tree.Node;
+import adams.gui.flow.tree.TreeHelper;
 import adams.gui.tools.LogEntryViewerPanel;
 import adams.gui.tools.VariableManagementPanel;
 import adams.gui.visualization.debug.StoragePanel;
@@ -83,7 +85,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -774,8 +775,8 @@ public class FlowRunnerPanel
     m_RunningSwingWorker = true;
     worker = new SwingWorker() {
       Node 		m_Flow;
-      List<String> 	m_Errors;
-      List<String> 	m_Warnings;
+      MessageCollection m_Errors;
+      MessageCollection m_Warnings;
 
       @Override
       protected Object doInBackground() throws Exception {
@@ -784,9 +785,16 @@ public class FlowRunnerPanel
 
 	showStatus("Loading '" + file + "'...");
 
-	m_Errors   = new ArrayList<String>();
-	m_Warnings = new ArrayList<String>();
-	m_Flow     = reader.readNode(file);
+	m_Errors   = new MessageCollection();
+	m_Warnings = new MessageCollection();
+	if (reader instanceof NestedFlowReader) {
+	  List nested = ((NestedFlowReader) reader).readNested(file);
+          m_Flow = TreeHelper.buildTree(nested, m_Warnings, m_Errors);
+        }
+        else {
+	  Actor actor = reader.readActor(file);
+	  m_Flow = TreeHelper.buildTree(actor);
+        }
 	m_Errors.addAll(reader.getErrors());
 	m_Warnings.addAll(reader.getWarnings());
 	if (!m_Errors.isEmpty())
@@ -812,7 +820,7 @@ public class FlowRunnerPanel
 		m_Self, "Failed to load flow '" + file + "'!");
 	  else
 	    GUIHelper.showErrorMessage(
-		m_Self, "Failed to load flow '" + file + "':\n" + Utils.flatten(m_Errors, "\n"));
+		m_Self, "Failed to load flow '" + file + "':\n" + m_Errors);
 	}
 	else {
 	  setCurrentFile(file);
@@ -820,7 +828,7 @@ public class FlowRunnerPanel
 	  if (m_RecentFilesHandler != null)
 	    m_RecentFilesHandler.addRecentItem(file);
 	  if (!m_Warnings.isEmpty()) {
-            msg = "Warning(s) encountered while loading flow '" + file + "':\n" + Utils.flatten(m_Warnings, "\n");
+            msg = "Warning(s) encountered while loading flow '" + file + "':\n" + m_Warnings;
             if (canExecute)
               ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
             else

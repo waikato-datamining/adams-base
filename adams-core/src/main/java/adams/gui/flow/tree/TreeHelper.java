@@ -20,7 +20,8 @@
 package adams.gui.flow.tree;
 
 import adams.core.MessageCollection;
-import adams.core.option.OptionUtils;
+import adams.core.option.ArrayConsumer;
+import adams.core.option.NestedFormatHelper.Line;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorPath;
@@ -165,96 +166,70 @@ public class TreeHelper {
   }
 
   /**
-   * Builds the tree from the actor commandlines.
+   * Builds the tree from the nested commandlines.
    *
-   * @param actors	the commandlines with indentation
-   * @param root	the root node
+   * @param nested	the nested commandlines
+   * @return		the root node, null if failed to build
+   */
+  public static Node buildTree(List nested) {
+    return buildTree(nested, new MessageCollection(), new MessageCollection());
+  }
+
+  /**
+   * Builds the tree from the nested commandlines.
+   *
+   * @param nested	the nested commandlines
    * @param warnings	for storing any warnings
    * @param errors	for storing any errors
+   * @return		the root node, null if failed to build
    */
-  protected static void buildTree(List<String> actors, Node root, MessageCollection warnings, MessageCollection errors) {
-    int		level;
-    int		index;
-    String	cmdline;
-    Actor	actor;
-    Node 	previous;
-    Node	node;
-    Node	parent;
+  public static Node buildTree(List nested, MessageCollection warnings, MessageCollection errors) {
+    return buildTree(null, nested, warnings, errors, new ArrayConsumer());
+  }
 
-    previous = root;
+  /**
+   * Builds the tree from the nested commandlines.
+   *
+   * @param root	the root node to add to
+   * @param nested	the nested commandlines
+   * @param warnings	for storing any warnings
+   * @param errors	for storing any errors
+   * @return		the root node, null if failed to build
+   */
+  protected static Node buildTree(Node root, List nested, MessageCollection warnings, MessageCollection errors, ArrayConsumer consumer) {
+    Actor		actor;
+    Node 		node;
+    int			i;
 
-    for (index = 1; index < actors.size(); index++) {
-      cmdline = actors.get(index);
+    if (nested.size() == 0)
+      return null;
 
-      // determine level
-      level = 0;
-      while (level < cmdline.length() && cmdline.charAt(level) == ' ')
-	level++;
-
+    i = 0;
+    while (i < nested.size()) {
       try {
-	actor = (Actor) OptionUtils.forCommandLine(Actor.class, actors.get(index).trim(), warnings, errors);
-	node = new Node(previous.getOwner(), actor);
+	actor = (Actor) consumer.fromString(((Line) nested.get(i)).getContent());
+	if (consumer.hasErrors()) {
+	  errors.addAll(consumer.getErrors());
+	  return null;
+	}
       }
       catch (Exception e) {
-	errors.add("Failed to parse actor: " + actors.get(index), e);
-	return;
+	errors.add("Failed to parse actor: " + nested.get(0), e);
+	return null;
       }
-
-      // sibling
-      if (level == previous.getLevel()) {
-	((Node) previous.getParent()).add(node);
+      node = new Node(null, actor);
+      if (root != null)
+	root.add(node);
+      else
+        root = node;
+      i++;
+      if ((i < nested.size()) && (nested.get(i) instanceof List)) {
+	buildTree(node, (List) nested.get(i), warnings, errors, consumer);
+	i++;
       }
-      // child of some parent node
-      else if (level < previous.getLevel()) {
-	parent = previous;
-	while (level < parent.getLevel())
-	  parent = (Node) parent.getParent();
-	((Node) parent.getParent()).add(node);
-      }
-      // child
-      else {
-	previous.add(node);
-      }
-
-      previous = node;
     }
-  }
 
-  /**
-   * Builds the tree from the nested commandlines.
-   *
-   * @param actors	the nested commandlines
-   * @return		the root node, null if failed to build
-   */
-  public static Node buildTree(List<String> actors) {
-    return buildTree(actors, new MessageCollection(), new MessageCollection());
-  }
-
-  /**
-   * Builds the tree from the nested commandlines.
-   *
-   * @param actors	the nested commandlines
-   * @param warnings	for storing any warnings
-   * @param errors	for storing any errors
-   * @return		the root node, null if failed to build
-   */
-  public static Node buildTree(List<String> actors, MessageCollection warnings, MessageCollection errors) {
-    Actor	actor;
-    Node	root;
-
-    if (actors.size() == 0)
-      return null;
-
-    try {
-      actor = (Actor) OptionUtils.forCommandLine(Actor.class, actors.get(0).trim(), warnings, errors);
-      root  = new Node(null, actor);
-      buildTree(actors, root, warnings, errors);
-      return root;
-    }
-    catch (Exception e) {
-      errors.add("Failed to parse actor: " + actors.get(0), e);
-      return null;
-    }
+    return root;
   }
 
   /**
@@ -374,6 +349,53 @@ public class TreeHelper {
 
     result = new ArrayList<>();
     getCommandLines(root, result, noExtActors);
+
+    return result;
+  }
+
+  /**
+   * Adds the node and its children to the nested format.
+   *
+   * @param node      	the node to add
+   * @param nested	the nested format to add to
+   */
+  protected static void getNested(Node node, List nested, boolean noExtActors) {
+    int		i;
+    boolean	skipChildren;
+    List	list;
+
+    nested.add(new Line(node.getCommandLine()));
+    skipChildren = noExtActors && (node.getActor() instanceof ExternalActorHandler);
+    if (!skipChildren && (node.getChildCount() > 0)) {
+      list = new ArrayList();
+      nested.add(list);
+      for (i = 0; i < node.getChildCount(); i++)
+	getCommandLines((Node) node.getChildAt(i), list, noExtActors);
+    }
+  }
+
+  /**
+   * Returns the nested format.
+   *
+   * @param root	the root node
+   * @return		the tree as nested format
+   */
+  public static List getNested(Node root) {
+    return getNested(root, false);
+  }
+
+  /**
+   * Returns the nested format.
+   *
+   * @param root	the root node
+   * @param noExtActors	whether to exclude external actors
+   * @return		the tree as nested format
+   */
+  public static List getNested(Node root, boolean noExtActors) {
+    List	result;
+
+    result = new ArrayList<>();
+    getNested(root, result, noExtActors);
 
     return result;
   }

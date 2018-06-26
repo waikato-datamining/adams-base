@@ -20,23 +20,19 @@
 package adams.data.io.output;
 
 import adams.core.DateFormat;
-import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
+import adams.core.option.AbstractOptionProducer;
+import adams.core.option.CompactFlowProducer;
 import adams.core.option.NestedProducer;
 import adams.data.io.input.DefaultFlowReader;
 import adams.data.io.input.FlowReader;
-import adams.env.Environment;
-import adams.env.Modules;
 import adams.flow.core.Actor;
-import adams.gui.flow.tree.Node;
-import adams.gui.flow.tree.TreeHelper;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -47,7 +43,7 @@ import java.util.logging.Level;
  * @version $Revision$
  */
 public class DefaultFlowWriter
-  extends AbstractFlowWriter
+  extends AbstractNestedFlowWriter
   implements EncodingSupporter {
 
   /** for serialization. */
@@ -190,6 +186,26 @@ public class DefaultFlowWriter
   }
 
   /**
+   * Turns the nested format into a string.
+   *
+   * @param nested	the nested format to convert
+   * @return		the generated string
+   */
+  protected String toCompactString(List nested) {
+    return new CompactFlowProducer().toString(nested);
+  }
+
+  /**
+   * Turns the nested format into a string.
+   *
+   * @param nested	the nested format to convert
+   * @return		the generated string
+   */
+  protected String toNestedString(List nested) {
+    return new NestedProducer().toString(nested);
+  }
+
+  /**
    * Writes the given content to the specified file.
    *
    * @param content	the content to write
@@ -197,21 +213,15 @@ public class DefaultFlowWriter
    * @return		true if successfully written
    */
   @Override
-  protected boolean doWrite(Node content, File file) {
-    List<String>	lines;
+  protected boolean doWrite(List content, File file) {
+    String	contentStr;
 
-    if (getUseCompact()) {
-      lines = TreeHelper.getCommandLines(content, true);
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.CHARSET + ": " + m_Encoding.charsetValue().name());
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.USER + ": " + System.getProperty("user.name"));
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.DATE + ": " + m_DateFormat.format(new Date()));
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ","));
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.PROJECT + ": " + Environment.getInstance().getProject());
-      return FileUtils.writeToFile(file.getAbsolutePath(), Utils.flatten(lines, "\n"), false, m_Encoding.getValue());
-    }
-    else {
-      return write(content.getFullActor(), file);
-    }
+    if (getUseCompact())
+      contentStr = toCompactString(content);
+    else
+      contentStr = toNestedString(content);
+
+    return FileUtils.writeToFile(file.getAbsolutePath(), contentStr, false, m_Encoding.getValue());
   }
 
   /**
@@ -222,28 +232,22 @@ public class DefaultFlowWriter
    * @param writer	the writer to write the content to
    * @return		true if successfully written
    */
-  protected boolean doWrite(Node content, Writer writer) {
-    List<String>	lines;
+  protected boolean doWrite(List content, Writer writer) {
+    String	contentStr;
 
-    if (getUseCompact()) {
-      lines = TreeHelper.getCommandLines(content, true);
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.CHARSET + ": " + m_Encoding.charsetValue().name());
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.USER + ": " + System.getProperty("user.name"));
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.DATE + ": " + m_DateFormat.format(new Date()));
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ","));
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.PROJECT + ": " + Environment.getInstance().getProject());
-      try {
-	writer.write(Utils.flatten(lines, "\n"));
-	writer.flush();
-	return true;
-      }
-      catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to writer node to writer!", e);
-	return false;
-      }
+    if (getUseCompact())
+      contentStr = toCompactString(content);
+    else
+      contentStr = toNestedString(content);
+
+    try {
+      writer.write(contentStr);
+      writer.flush();
+      return true;
     }
-    else {
-      return write(content.getFullActor(), writer);
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to write nested format to writer!", e);
+      return false;
     }
   }
 
@@ -255,29 +259,33 @@ public class DefaultFlowWriter
    * @param out		the output stream to write the content to
    * @return		true if successfully written
    */
-  protected boolean doWrite(Node content, OutputStream out) {
-    List<String>	lines;
+  protected boolean doWrite(List content, OutputStream out) {
+    String	contentStr;
 
-    if (getUseCompact()) {
-      lines = TreeHelper.getCommandLines(content, true);
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.CHARSET + ": " + m_Encoding.charsetValue().name());
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.USER + ": " + System.getProperty("user.name"));
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.DATE + ": " + m_DateFormat.format(new Date()));
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ","));
-      lines.add(0, NestedProducer.COMMENT + " " + NestedProducer.PROJECT + ": " + Environment.getInstance().getProject());
-      try {
-	out.write(Utils.flatten(lines, "\n").getBytes());
-	out.flush();
-	return true;
-      }
-      catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to writer node to output stream!", e);
-	return false;
-      }
+    if (getUseCompact())
+      contentStr = toCompactString(content);
+    else
+      contentStr = toNestedString(content);
+
+    try {
+      out.write(contentStr.getBytes());
+      out.flush();
+      return true;
     }
-    else {
-      return write(content.getFullActor(), out);
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to write nested format to output stream!", e);
+      return false;
     }
+  }
+
+  /**
+   * Turns the actor into a compact string.
+   *
+   * @param actor	the actor to convert
+   * @return		the
+   */
+  protected String toCompactString(Actor actor) {
+    return AbstractOptionProducer.toString(CompactFlowProducer.class, actor);
   }
 
   /**
@@ -289,17 +297,22 @@ public class DefaultFlowWriter
    */
   @Override
   protected boolean doWrite(Actor content, File file) {
-    NestedProducer	producer;
+    CompactFlowProducer	compact;
+    NestedProducer 	nested;
 
     if (getUseCompact()) {
-      return write(TreeHelper.buildTree(content), file);
+      compact = new CompactFlowProducer();
+      compact.setOutputClasspath(false);
+      compact.setEncoding(m_Encoding);
+      compact.produce(content);
+      return compact.write(file.getAbsolutePath());
     }
     else {
-      producer = new NestedProducer();
-      producer.setOutputClasspath(false);
-      producer.setEncoding(m_Encoding);
-      producer.produce(content);
-      return producer.write(file.getAbsolutePath());
+      nested = new NestedProducer();
+      nested.setOutputClasspath(false);
+      nested.setEncoding(m_Encoding);
+      nested.produce(content);
+      return nested.write(file.getAbsolutePath());
     }
   }
 
@@ -312,25 +325,33 @@ public class DefaultFlowWriter
    * @return		true if successfully written
    */
   protected boolean doWrite(Actor content, Writer writer) {
-    NestedProducer	producer;
+    CompactFlowProducer	compact;
+    NestedProducer 	nested;
+    String		contentStr;
 
     if (getUseCompact()) {
-      return write(TreeHelper.buildTree(content), writer);
+      compact = new CompactFlowProducer();
+      compact.setOutputClasspath(false);
+      compact.setEncoding(m_Encoding);
+      compact.produce(content);
+      contentStr = compact.toString();
     }
     else {
-      producer = new NestedProducer();
-      producer.setOutputClasspath(false);
-      producer.setEncoding(m_Encoding);
-      producer.produce(content);
-      try {
-	writer.write(producer.toString());
-	writer.flush();
-	return true;
-      }
-      catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to write actor to writer!", e);
-	return false;
-      }
+      nested = new NestedProducer();
+      nested.setOutputClasspath(false);
+      nested.setEncoding(m_Encoding);
+      nested.produce(content);
+      contentStr = nested.toString();
+    }
+
+    try {
+      writer.write(contentStr);
+      writer.flush();
+      return true;
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to write actor to writer!", e);
+      return false;
     }
   }
 
@@ -343,25 +364,33 @@ public class DefaultFlowWriter
    * @return		true if successfully written
    */
   protected boolean doWrite(Actor content, OutputStream out) {
-    NestedProducer	producer;
+    CompactFlowProducer	compact;
+    NestedProducer 	nested;
+    String		contentStr;
 
     if (getUseCompact()) {
-      return write(TreeHelper.buildTree(content), out);
+      compact = new CompactFlowProducer();
+      compact.setOutputClasspath(false);
+      compact.setEncoding(m_Encoding);
+      compact.produce(content);
+      contentStr = compact.toString();
     }
     else {
-      producer = new NestedProducer();
-      producer.setOutputClasspath(false);
-      producer.setEncoding(m_Encoding);
-      producer.produce(content);
-      try {
-	out.write(producer.toString().getBytes());
-	out.flush();
-	return true;
-      }
-      catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to writer actor to output stream!", e);
-	return false;
-      }
+      nested = new NestedProducer();
+      nested.setOutputClasspath(false);
+      nested.setEncoding(m_Encoding);
+      nested.produce(content);
+      contentStr = nested.toString();
+    }
+
+    try {
+      out.write(contentStr.getBytes());
+      out.flush();
+      return true;
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to writer actor to output stream!", e);
+      return false;
     }
   }
 
