@@ -404,16 +404,23 @@ public class NestedProducer
    */
   @Override
   public String toString() {
+    return toString(getOutput());
+  }
+
+  /**
+   * Returns the output generated from the visit.
+   *
+   * @return		the output, null in case of an error
+   */
+  public String toString(List nested) {
     StringBuilder	result;
     List<String>	lines;
     int			i;
-    List		nested;
 
     try {
       result = new StringBuilder();
 
       // create nested structure
-      nested = getOutput();
       if (m_OutputLineNumbers)
 	NestedFormatHelper.renumber(nested);
       lines = NestedFormatHelper.nestedToLines(nested, m_OutputLineNumbers);

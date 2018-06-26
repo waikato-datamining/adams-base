@@ -418,6 +418,16 @@ public class CompactFlowProducer
    */
   @Override
   public String toString() {
+    return toString(m_Output);
+  }
+
+  /**
+   * Returns the output generated from the visit.
+   *
+   * @param nested	the nested format
+   * @return		the output, null in case of an error
+   */
+  public String toString(List nested) {
     StringBuilder	result;
 
     result = new StringBuilder();
@@ -433,7 +443,7 @@ public class CompactFlowProducer
       result.append(COMMENT + "\n");
     }
 
-    toString(result, m_Output, 0, 1);
+    toString(result, nested, 0, 1);
 
     // remove trailing newline
     if (result.charAt(result.length() - 1) == '\n')
