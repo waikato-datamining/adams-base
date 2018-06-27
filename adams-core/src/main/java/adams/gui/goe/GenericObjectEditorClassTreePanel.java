@@ -77,6 +77,9 @@ public class GenericObjectEditorClassTreePanel
   /** The button for closing the popup again. */
   protected JButton m_CloseButton;
 
+  /** the panel for the filter. */
+  protected JPanel m_PanelFilter;
+
   /** The checkbox for enabling/disabling the class tree filter. */
   protected JCheckBox m_CheckBoxFilter;
 
@@ -155,40 +158,30 @@ public class GenericObjectEditorClassTreePanel
     panel.add(m_TextSearch);
 
     // filter
-    if (m_Tree.getFilter() != null) {
-      panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-      bottomPanel.add(panel, BorderLayout.SOUTH);
+    m_PanelFilter = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    bottomPanel.add(m_PanelFilter, BorderLayout.SOUTH);
 
-      m_CheckBoxFilter = new JCheckBox("Filtering");
-      m_CheckBoxFilter.setMnemonic('F');
-      m_CheckBoxFilter.setSelected(m_Tree.getFilter().isEnabled());
-      m_CheckBoxFilter.addActionListener((ActionEvent e) -> {
-	AbstractItemFilter filter = m_Tree.getFilter();
-	filter.setEnabled(m_CheckBoxFilter.isSelected());
-	m_Tree.setFilter(filter);
-	m_CheckBoxStrict.setEnabled(
-	  m_CheckBoxFilter.isEnabled()
-	    && m_CheckBoxFilter.isSelected()
-	    && (m_Tree.getFilter() instanceof StrictClassTreeFilter));
-      });
-      panel.add(m_CheckBoxFilter);
-
-      m_CheckBoxStrict = new JCheckBox("Strict mode");
-      m_CheckBoxStrict.setMnemonic('m');
+    m_CheckBoxFilter = new JCheckBox("Filtering");
+    m_CheckBoxFilter.setMnemonic('F');
+    m_CheckBoxFilter.addActionListener((ActionEvent e) -> {
+      AbstractItemFilter filter = m_Tree.getFilter();
+      filter.setEnabled(m_CheckBoxFilter.isSelected());
+      m_Tree.setFilter(filter);
       m_CheckBoxStrict.setEnabled(
-	     m_CheckBoxFilter.isEnabled()
+	m_CheckBoxFilter.isEnabled()
 	  && m_CheckBoxFilter.isSelected()
 	  && (m_Tree.getFilter() instanceof StrictClassTreeFilter));
-      m_CheckBoxStrict.setSelected(
-	     m_CheckBoxStrict.isEnabled()
-	  && ((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
-      m_CheckBoxStrict.addActionListener((ActionEvent e) -> {
-	((StrictClassTreeFilter) m_Tree.getFilter()).setStrict(
-	  !((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
-	m_Tree.setFilter(m_Tree.getFilter());
-      });
-      panel.add(m_CheckBoxStrict);
-    }
+    });
+    m_PanelFilter.add(m_CheckBoxFilter);
+
+    m_CheckBoxStrict = new JCheckBox("Strict mode");
+    m_CheckBoxStrict.setMnemonic('m');
+    m_CheckBoxStrict.addActionListener((ActionEvent e) -> {
+      ((StrictClassTreeFilter) m_Tree.getFilter()).setStrict(
+	!((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
+      m_Tree.setFilter(m_Tree.getFilter());
+    });
+    m_PanelFilter.add(m_CheckBoxStrict);
 
     // close
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -297,5 +290,22 @@ public class GenericObjectEditorClassTreePanel
    */
   public void focusSearch() {
     SwingUtilities.invokeLater(() -> m_TextSearch.requestFocus());
+  }
+
+  /**
+   * Updates whether the filter panel is visible.
+   */
+  public void updateFilterPanel() {
+    m_PanelFilter.setVisible((m_Tree != null) && (m_Tree.getFilter() != null));
+    if (m_PanelFilter.isVisible()) {
+      m_CheckBoxFilter.setSelected(m_Tree.getFilter().isEnabled());
+      m_CheckBoxStrict.setEnabled(
+	m_CheckBoxFilter.isEnabled()
+	  && m_CheckBoxFilter.isSelected()
+	  && (m_Tree.getFilter() instanceof StrictClassTreeFilter));
+      m_CheckBoxStrict.setSelected(
+	m_CheckBoxStrict.isEnabled()
+	  && ((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
+    }
   }
 }

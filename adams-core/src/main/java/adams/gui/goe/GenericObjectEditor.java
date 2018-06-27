@@ -554,6 +554,7 @@ public class GenericObjectEditor
 	m_Tree.setSelectedItem(m_Object.getClass().getName());
 	if (m_Tree.getSelectedItem() == null)
 	  m_Tree.expandAll();
+        m_PanelTree.updateFilterPanel();
       }
 
       // Adjust size of containing window if possible
