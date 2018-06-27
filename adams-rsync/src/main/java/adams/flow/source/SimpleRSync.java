@@ -198,6 +198,9 @@ public class SimpleRSync
   /** the destination path/url. */
   protected String m_Destination;
 
+  /** whether to output the commandline. */
+  protected boolean m_OutputCommandline;
+
   protected boolean m_Verbose;
 
   protected boolean m_Quiet;
@@ -262,6 +265,10 @@ public class SimpleRSync
     m_OptionManager.add(
       "destination", "destination",
       "");
+
+    m_OptionManager.add(
+      "outputCommandline", "outputCommandline",
+      false);
 
     m_OptionManager.add(
       "verbose", "verbose",
@@ -388,6 +395,29 @@ public class SimpleRSync
 
   public String destinationTipText() {
     return "The local or remote destination path (path or [user@]host:path)";
+  }
+
+  /**
+   * Sets output commandline flag.
+   *
+   * @param value	true if to output commandline
+   */
+  public void setOutputCommandline(boolean value) {
+    m_OutputCommandline = value;
+    reset();
+  }
+
+  /**
+   * Returns output commandline flag.
+   *
+   * @return		true if to output commandline
+   */
+  public boolean getOutputCommandline() {
+    return m_OutputCommandline;
+  }
+
+  public String outputCommandlineTipText() {
+    return "output the command-line generated for the rsync binary";
   }
 
   public boolean isVerbose() {
@@ -694,6 +724,7 @@ public class SimpleRSync
 
     try {
       rsync = new com.github.fracpete.rsync4j.RSync();
+      rsync.outputCommandline(m_OutputCommandline);
       rsync.verbose(m_Verbose);
       rsync.quiet(m_Quiet);
       rsync.checksum(m_Checksum);
