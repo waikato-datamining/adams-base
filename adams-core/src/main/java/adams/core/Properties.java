@@ -15,7 +15,7 @@
 
 /*
  * Properties.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -38,6 +38,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
@@ -1545,6 +1546,36 @@ public class Properties
       System.err.println("Error obtaining properties from comments:");
       e.printStackTrace();
       result = null;
+    }
+
+    return result;
+  }
+
+  /**
+   * Loads the properties with the given name as a classpath resource.
+   *
+   * @param resourceName	the name of the props file on the classpath
+   * @return			true if successful
+   */
+  public static boolean loadFromResource(Properties props, String resourceName) {
+    boolean		result;
+    InputStream 	is;
+
+    result = false;
+    is     = null;
+
+    try {
+      is = props.getClass().getClassLoader().getResourceAsStream(resourceName);
+      if (is != null) {
+	props.load(is);
+	result = true;
+      }
+    }
+    catch (Exception e) {
+      // ignored
+    }
+    finally {
+      FileUtils.closeQuietly(is);
     }
 
     return result;
