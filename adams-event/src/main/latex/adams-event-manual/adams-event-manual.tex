@@ -44,7 +44,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2015} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2018} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -115,6 +115,30 @@ the format (see \cite{cronformat}).
   \caption{The editor for entering the execution time of a cron job.}
   \label{cron-editor}
 \end{figure}
+
+\section{Customizing scheduler}
+The Quartz Job Scheduler\cite{quartz}, which is used by cron jobs, can be further
+customized by supplying a custom properties files. This property file has to be
+on the classpath, with a name of \texttt{quartz.properties} or \texttt{quartz.props}.
+
+Here are the default settings for version 1.8.6 of the library (located in
+\texttt{org/quartz/quartz.properties}):
+\begin{verbatim}
+org.quartz.scheduler.instanceName = DefaultQuartzScheduler
+org.quartz.scheduler.rmi.export = false
+org.quartz.scheduler.rmi.proxy = false
+org.quartz.scheduler.wrapJobExecutionInUserTransaction = false
+org.quartz.threadPool.class = org.quartz.simpl.SimpleThreadPool
+org.quartz.threadPool.threadCount = 10
+org.quartz.threadPool.threadPriority = 5
+org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread = true
+org.quartz.jobStore.misfireThreshold = 60000
+org.quartz.jobStore.class = org.quartz.simpl.RAMJobStore
+\end{verbatim}
+To avoid update checks at start up time, set the following property:
+\begin{verbatim}
+org.quartz.scheduler.skipUpdateCheck = true
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
