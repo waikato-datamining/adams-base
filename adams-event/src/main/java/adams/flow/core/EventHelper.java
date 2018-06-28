@@ -15,11 +15,12 @@
 
 /*
  * EventHelper.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
+import adams.core.Properties;
 import adams.core.logging.LoggingObject;
 import adams.flow.control.AbstractDirectedControlActor;
 import adams.flow.standalone.Events;
@@ -32,14 +33,19 @@ import java.util.List;
 /**
  * Helper class for events.
  *
+ * You can place "quartz.properties" or "quartz.props" on the classpath to
+ * customize the settings of the scheduler.
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EventHelper
   extends LoggingObject {
 
   /** for serialization. */
   private static final long serialVersionUID = -763479272812116920L;
+
+  /** the scheduler factory. */
+  protected static transient StdSchedulerFactory m_SchedulerFactory;
 
   /**
    * Checks a control actor's children whether they contain the event
@@ -141,6 +147,26 @@ public class EventHelper
    * @throws SchedulerException	if scheduler cannot be initialized
    */
   public static synchronized Scheduler getDefaultScheduler() throws SchedulerException {
-    return StdSchedulerFactory.getDefaultScheduler();
+    Properties		props;
+    Properties		defaultProps;
+    Properties		userProps1;
+    Properties		userProps2;
+
+    if (m_SchedulerFactory == null) {
+      defaultProps = new Properties();
+      Properties.loadFromResource(defaultProps, "org/quartz/quartz.properties");
+      userProps1 = new Properties(defaultProps);
+      Properties.loadFromResource(userProps1, "quartz.properties");
+      userProps2 = new Properties(userProps1);
+      Properties.loadFromResource(userProps2, "quartz.props");
+      props = userProps2;
+
+      // disable update check
+      props.setProperty("org.quartz.scheduler.skipUpdateCheck", "true");
+
+      m_SchedulerFactory = new StdSchedulerFactory(props);
+    }
+
+    return m_SchedulerFactory.getScheduler();
   }
 }
