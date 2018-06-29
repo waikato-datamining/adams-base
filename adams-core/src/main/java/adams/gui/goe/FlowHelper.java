@@ -410,13 +410,8 @@ public class FlowHelper {
 		  result.add(current);
 	      }
 	      if (actor instanceof ActorHandler) {
-		for (n = 0; n < current.getChildCount(); n++) {
-		  subactor = ((Node) current.getChildAt(n)).getActor();
-		  if (!subactor.getSkip() && ClassLocator.matches(type, subactor.getClass())) {
-		    if ((restrict == null) || isRestricted(subactor.getClass(), restrict))
-		      result.add((Node) current.getChildAt(n));
-		  }
-		}
+		for (n = 0; n < current.getChildCount(); n++)
+		  result.addAll(findNodes((Node) current.getChildAt(n), false, restrict, type));
 	      }
 	      else if (actor instanceof ExternalActorHandler) {
 		// load in external actor
