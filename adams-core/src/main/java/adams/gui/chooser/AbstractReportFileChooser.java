@@ -20,19 +20,18 @@
 
 package adams.gui.chooser;
 
-import java.awt.Component;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.output.AbstractReportWriter;
 import adams.data.report.Report;
-import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import java.awt.Component;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
@@ -213,7 +212,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
       if (m_CheckBoxOptions.isSelected()) {
 	m_Editor.setValue(m_CurrentHandler);
 	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+	dialog.setLocationRelativeTo(dialog.getParent());
 	dialog.setVisible(true);
 	result = dialog.getResultType();
 	if (result == APPROVE_OPTION)
@@ -238,7 +237,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
       // bring up options dialog?
       if (m_CheckBoxOptions.isSelected()) {
 	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+	dialog.setLocationRelativeTo(dialog.getParent());
 	dialog.setVisible(true);
 	result = dialog.getResultType();
 	if (result == APPROVE_OPTION)

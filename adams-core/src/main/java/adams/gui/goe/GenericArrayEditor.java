@@ -1020,7 +1020,7 @@ public class GenericArrayEditor
     if (editor.getValue() != null) {
       if (m_Dialog == null) {
 	m_Dialog = GenericObjectEditorDialog.createDialog(this, editor);
-	m_Dialog.setLocationRelativeTo(this);
+	m_Dialog.setLocationRelativeTo(m_Dialog.getParent());
 	m_Dialog.setVisible(true);
       }
       else {

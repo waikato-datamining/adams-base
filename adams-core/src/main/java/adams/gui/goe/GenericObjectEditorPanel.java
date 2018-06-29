@@ -24,7 +24,6 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.BasePopupMenu;
-import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditor.GOEPanel;
 import adams.gui.goe.GenericObjectEditor.PostProcessObjectHandler;
 
@@ -118,7 +117,7 @@ public class GenericObjectEditorPanel
       m_Editor.setValue(m_Current);
     if (m_Dialog == null)
       m_Dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-    m_Dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+    m_Dialog.setLocationRelativeTo(m_Dialog.getParent());
     m_Dialog.setVisible(true);
     if (m_Dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
       return m_Editor.getValue();

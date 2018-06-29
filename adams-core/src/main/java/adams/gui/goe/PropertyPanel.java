@@ -22,7 +22,6 @@
 package adams.gui.goe;
 
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 
 import javax.swing.BorderFactory;
@@ -45,8 +44,6 @@ import java.beans.PropertyEditor;
  *
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
- * @version $Revision$
- * @see weka.gui.PropertyPanel
  */
 public class PropertyPanel
   extends BasePanel {
@@ -224,7 +221,10 @@ public class PropertyPanel
     if (m_Editor.getValue() != null) {
       if (m_Dialog == null) {
 	m_Dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-	GUIHelper.setSizeAndLocation(m_Dialog, getLocationOnScreen().y, getLocationOnScreen().x);
+	// center dialog on parent
+	m_Dialog.setLocationRelativeTo(m_Dialog.getParent());
+	// show dialog next to
+	//GUIHelper.setSizeAndLocation(m_Dialog, getLocationOnScreen().y, getLocationOnScreen().x);
 	m_Dialog.setLocationRelativeTo(this);
 	m_Dialog.setVisible(true);
       }

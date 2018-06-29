@@ -25,7 +25,6 @@ import adams.data.io.input.EmailFileReader;
 import adams.data.io.input.PropertiesEmailFileReader;
 import adams.data.io.output.EmailFileWriter;
 import adams.data.io.output.PropertiesEmailFileWriter;
-import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 
 import java.awt.Component;
@@ -263,7 +262,7 @@ public class EmailFileChooser
       if (m_CheckBoxOptions.isSelected()) {
 	m_Editor.setValue(m_CurrentHandler);
 	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+	dialog.setLocationRelativeTo(dialog.getParent());
 	dialog.setVisible(true);
 	result = dialog.getResultType();
 	if (result == APPROVE_OPTION)
@@ -289,7 +288,7 @@ public class EmailFileChooser
       if (m_CheckBoxOptions.isSelected()) {
 	m_Editor.setValue(m_CurrentHandler);
 	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+	dialog.setLocationRelativeTo(dialog.getParent());
 	dialog.setVisible(true);
 	result = dialog.getResultType();
 	if (result == APPROVE_OPTION)

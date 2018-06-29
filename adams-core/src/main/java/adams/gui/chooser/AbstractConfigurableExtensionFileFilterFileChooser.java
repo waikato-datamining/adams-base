@@ -21,7 +21,6 @@
 package adams.gui.chooser;
 
 import adams.core.option.OptionUtils;
-import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorDialog;
 import nz.ac.waikato.cms.locator.ClassLocator;
@@ -328,7 +327,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
       if (m_CheckBoxOptions.isSelected()) {
 	getEditor().setValue(m_CurrentHandler);
 	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, getEditor());
-	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+	dialog.setLocationRelativeTo(dialog.getParent());
 	dialog.setVisible(true);
 	result = dialog.getResultType();
 	if (result == APPROVE_OPTION)
@@ -356,7 +355,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
       if (m_CheckBoxOptions.isSelected()) {
 	getEditor().setValue(m_CurrentHandler);
 	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, getEditor());
-	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+	dialog.setLocationRelativeTo(dialog.getParent());
 	dialog.setVisible(true);
 	result = dialog.getResultType();
 	if (result == APPROVE_OPTION)

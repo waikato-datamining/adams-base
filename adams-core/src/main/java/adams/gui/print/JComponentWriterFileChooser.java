@@ -323,7 +323,7 @@ public class JComponentWriterFileChooser
       if (m_CheckBoxOptions.isSelected()) {
 	m_Editor.setValue(m_CurrentConverter);
 	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-	dialog.setLocationRelativeTo(GUIHelper.getParentComponent(this));
+	dialog.setLocationRelativeTo(dialog.getParent());
 	dialog.setVisible(true);
 	result = dialog.getResultType();
 	if (result == APPROVE_OPTION)
