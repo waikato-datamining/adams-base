@@ -81,7 +81,7 @@ public abstract class AbstractActor
   protected String m_LoggingPrefix;
   
   /** the parent actor this actor is part of, e.g., a sequence. */
-  protected Actor m_Parent;
+  protected transient Actor m_Parent;
 
   /** whether the actor was executed at least once after setup. */
   protected boolean m_Executed;
