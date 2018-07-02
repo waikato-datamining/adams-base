@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseSplitPane.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.awt.Component;
-
 import javax.swing.JSplitPane;
+import javax.swing.UIManager;
+import java.awt.Component;
 
 /**
  * An extended JSplitPane class. It offers methods for hiding the components
  * (only works if both of the components are present).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseSplitPane
   extends JSplitPane {
@@ -155,6 +154,7 @@ public class BaseSplitPane
 	m_DividerLocationBeforeHiding = getDividerLocation();
 	m_HiddenTopComponent          = getTopComponent();
 	remove(m_HiddenTopComponent);
+	setDividerSize(0);
       }
     }
     else {
@@ -163,6 +163,8 @@ public class BaseSplitPane
 	setDividerLocation(m_DividerLocationBeforeHiding);
 	m_HiddenTopComponent          = null;
 	m_DividerLocationBeforeHiding = null;
+	if (!isBottomComponentHidden())
+          setDividerSize((Integer) UIManager.get("SplitPane.dividerSize"));
       }
     }
   }
@@ -210,6 +212,7 @@ public class BaseSplitPane
 	m_DividerLocationBeforeHiding = getDividerLocation();
 	m_HiddenBottomComponent       = getBottomComponent();
 	remove(m_HiddenBottomComponent);
+	setDividerSize(0);
       }
     }
     else {
@@ -218,6 +221,8 @@ public class BaseSplitPane
 	setDividerLocation(m_DividerLocationBeforeHiding);
 	m_HiddenBottomComponent       = null;
 	m_DividerLocationBeforeHiding = null;
+	if (!isTopComponentHidden())
+          setDividerSize((Integer) UIManager.get("SplitPane.dividerSize"));
       }
     }
   }
