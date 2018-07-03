@@ -237,6 +237,7 @@ public class SpreadSheetDisplay
       m_TableModel.setReadOnly(m_Owner.getReadOnly());
       m_Table      = new SpreadSheetTable(m_TableModel);
       m_Table.setUseOptimalColumnWidths(m_Owner.getOptimalColumnWidth());
+      m_Table.setFont(m_Owner.getFont());
       add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       SpreadSheetColumnComboBox columnCombo = new SpreadSheetColumnComboBox(m_Table);
@@ -693,6 +694,7 @@ public class SpreadSheetDisplay
     m_TableModel = new SpreadSheetTableModel(new DefaultSpreadSheet());
     m_TableModel.setReadOnly(m_ReadOnly);
     m_Table      = new SpreadSheetTable(m_TableModel);
+    m_Table.setFont(m_Font);
     m_Table.setUseOptimalColumnWidths(m_OptimalColumnWidth);
     result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
 
