@@ -31,6 +31,7 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ColorHelper;
+import adams.gui.core.Fonts;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
@@ -50,6 +51,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -64,8 +66,11 @@ import java.awt.event.WindowEvent;
 /**
  <!-- globalinfo-start -->
  * Lets the user highlight cells in a spreadsheet which get output:<br>
- * - spreadsheet with X&#47;Y coordinates and the associated value of the selected cell<br>
- * - spreadsheet with all un-selected cells set to missing
+ * - spreadsheet with X&#47;Y coordinates (1-based) and the associated value of the selected cell<br>
+ * - spreadsheet with all un-selected cells set to missing<br>
+ * Usage:<br>
+ * You select cells by left-clicking on them and&#47;or holding the left mouse button and moving the mouse over the cells that you want to select.<br>
+ * You can unselect cells in the same fashion, by holding the shift key in addition.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -162,6 +167,11 @@ import java.awt.event.WindowEvent;
  * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
  * &nbsp;&nbsp;&nbsp;The stop mode to use.
  * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
+ * <pre>-font &lt;java.awt.Font&gt; (property: font)
+ * &nbsp;&nbsp;&nbsp;The font of the dialog.
+ * &nbsp;&nbsp;&nbsp;default: Monospaced-PLAIN-12
  * </pre>
  *
  * <pre>-color-selected &lt;java.awt.Color&gt; (property: colorSelected)
@@ -519,6 +529,9 @@ public class SpreadSheetCellSelector
     }
   }
 
+  /** the font to use. */
+  protected Font m_Font;
+
   /** the color for selected cells. */
   protected Color m_ColorSelected;
 
@@ -564,36 +577,50 @@ public class SpreadSheetCellSelector
     super.defineOptions();
 
     m_OptionManager.add(
+      "font", "font",
+      getDefaultFont());
+
+    m_OptionManager.add(
       "color-selected", "colorSelected",
       ColorHelper.valueOf("#22FF0000"));
   }
 
   /**
-   * Clears the content of the panel.
+   * Returns the default font for the dialog.
+   *
+   * @return		the default font
    */
-  @Override
-  public void clearPanel() {
-    if (m_Table != null) {
-      m_TableModel = new TableModel();
-      m_Table.setModel(m_TableModel);
-    }
+  protected Font getDefaultFont() {
+    return Fonts.getMonospacedFont();
   }
 
   /**
-   * Creates the panel to display in the dialog.
+   * Sets the font of the table.
    *
-   * @return		the panel
+   * @param value 	the font
    */
-  @Override
-  protected BasePanel newPanel() {
-    BasePanel		result;
+  public void setFont(Font value) {
+    m_Font = value;
+    reset();
+  }
 
-    result       = new BasePanel(new BorderLayout());
-    m_TableModel = new TableModel();
-    m_Table      = new Table(m_TableModel);
-    result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+  /**
+   * Returns the currently set font of the table.
+   *
+   * @return 		the font
+   */
+  public Font getFont() {
+    return m_Font;
+  }
 
-    return result;
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String fontTipText() {
+    return "The font of the table.";
   }
 
   /**
@@ -643,6 +670,34 @@ public class SpreadSheetCellSelector
   @Override
   public Class[] generates() {
     return new Class[]{SpreadSheetCellSelectionContainer.class};
+  }
+
+  /**
+   * Clears the content of the panel.
+   */
+  @Override
+  public void clearPanel() {
+    if (m_Table != null) {
+      m_TableModel = new TableModel();
+      m_Table.setModel(m_TableModel);
+    }
+  }
+
+  /**
+   * Creates the panel to display in the dialog.
+   *
+   * @return		the panel
+   */
+  @Override
+  protected BasePanel newPanel() {
+    BasePanel		result;
+
+    result       = new BasePanel(new BorderLayout());
+    m_TableModel = new TableModel();
+    m_Table      = new Table(m_TableModel);
+    result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+
+    return result;
   }
 
   /**
