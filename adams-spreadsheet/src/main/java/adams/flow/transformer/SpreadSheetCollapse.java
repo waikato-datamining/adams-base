@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetCollapse.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -98,7 +98,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8336 $
  */
 public class SpreadSheetCollapse
   extends AbstractSpreadSheetTransformer {
@@ -149,7 +148,7 @@ public class SpreadSheetCollapse
   }
 
   /**
-   * Sets the colums that identify a row.
+   * Sets the columns that identify a row.
    *
    * @param value	the range
    */
@@ -159,7 +158,7 @@ public class SpreadSheetCollapse
   }
 
   /**
-   * Returns the colums that identify a rowx
+   * Returns the columns that identify a row.
    *
    * @return		the range
    */
