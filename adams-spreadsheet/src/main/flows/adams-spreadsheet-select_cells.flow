@@ -1,0 +1,21 @@
+# Project: adams
+# Date: 2018-07-03 15:29:31
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Flow for interactively selecting cells.\\nDisplays three spreadsheets:\\n- original input\\n- coordinates and values of selected cells\\n- subset of non-selected cells set to missing" -flow-execution-listener adams.flow.execution.NullListener
+  adams.flow.standalone.CallableActors
+   adams.flow.sink.DisplayPanelManager -width 1000 -height 600 -provider "adams.flow.sink.SpreadSheetDisplay -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter" -entry-name-variable entry
+  adams.flow.source.SelectFile -stop-if-canceled true -extension csv -initial-file ${FLOWS}/data/bolts.csv
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+  adams.flow.transformer.SpreadSheetCellSelector
+  adams.flow.control.ContainerValuePicker -name original -value Original
+   adams.flow.transformer.SetVariable -var-name entry -var-value original
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.ContainerValuePicker -name selected -value Selected
+   adams.flow.transformer.SetVariable -var-name entry -var-value selected
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
+  adams.flow.control.ContainerValuePicker -name subset -value Subset
+   adams.flow.transformer.SetVariable -var-name entry -var-value subset
+   adams.flow.sink.CallableSink -callable DisplayPanelManager
