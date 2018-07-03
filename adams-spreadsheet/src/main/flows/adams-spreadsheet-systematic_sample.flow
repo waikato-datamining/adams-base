@@ -1,0 +1,11 @@
+# Project: adams
+# Date: 2018-07-03 21:48:24
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Picks a random system sample of size 10 (= rows) from a spreadsheet." -flow-execution-listener adams.flow.execution.NullListener
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+  adams.flow.transformer.SpreadSheetRandomSystematicSample
+  adams.flow.sink.SpreadSheetDisplay -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
