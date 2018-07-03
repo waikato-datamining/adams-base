@@ -695,6 +695,7 @@ public class SpreadSheetCellSelector
     result       = new BasePanel(new BorderLayout());
     m_TableModel = new TableModel();
     m_Table      = new Table(m_TableModel);
+    m_Table.setFont(m_Font);
     result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
 
     return result;
