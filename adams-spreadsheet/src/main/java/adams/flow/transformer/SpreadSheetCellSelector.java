@@ -66,7 +66,7 @@ import java.awt.event.WindowEvent;
 /**
  <!-- globalinfo-start -->
  * Lets the user highlight cells in a spreadsheet which get output:<br>
- * - spreadsheet with X&#47;Y coordinates (1-based) and the associated value of the selected cell<br>
+ * - spreadsheet with coordinates (1-based row and column) and the associated value of the selected cell<br>
  * - spreadsheet with all un-selected cells set to missing<br>
  * Usage:<br>
  * You select cells by left-clicking on them and&#47;or holding the left mouse button and moving the mouse over the cells that you want to select.<br>
@@ -170,7 +170,7 @@ import java.awt.event.WindowEvent;
  * </pre>
  *
  * <pre>-font &lt;java.awt.Font&gt; (property: font)
- * &nbsp;&nbsp;&nbsp;The font of the dialog.
+ * &nbsp;&nbsp;&nbsp;The font of the table.
  * &nbsp;&nbsp;&nbsp;default: Monospaced-PLAIN-12
  * </pre>
  *
@@ -561,7 +561,7 @@ public class SpreadSheetCellSelector
   @Override
   public String globalInfo() {
     return "Lets the user highlight cells in a spreadsheet which get output:\n"
-      + "- spreadsheet with X/Y coordinates (1-based) and the associated value of the selected cell\n"
+      + "- spreadsheet with coordinates (1-based row and column) and the associated value of the selected cell\n"
       + "- spreadsheet with all un-selected cells set to missing\n"
       + "Usage:\n"
       + "You select cells by left-clicking on them and/or holding the left mouse button "
