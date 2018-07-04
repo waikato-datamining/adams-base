@@ -20,7 +20,6 @@
 
 package adams.flow.transformer;
 
-import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
 import adams.data.spreadsheet.SpreadSheet;
@@ -30,14 +29,12 @@ import adams.flow.core.Token;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 /**
  <!-- globalinfo-start -->
- * Performs random systematic sampling.<br>
+ * Performs random systematic sampling on the rows of the incoming spreadsheet.<br>
+ * Divides the rows into N blocks with N being the sample size. Then chooses a random starting position. Adds the row the output increments the position by the sample size. Position wraps around if output hasn't yet reached sample size.<br>
  * For more information see:<br>
  * https:&#47;&#47;en.wikipedia.org&#47;wiki&#47;Systematic_sampling
  * <br><br>
@@ -98,12 +95,6 @@ import java.util.Random;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  *
- * <pre>-starting-pos &lt;adams.core.Index&gt; (property: startingPos)
- * &nbsp;&nbsp;&nbsp;The starting position within the sample size (1-samplesize).
- * &nbsp;&nbsp;&nbsp;default: first
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
- * </pre>
- *
  * <pre>-create-view &lt;boolean&gt; (property: createView)
  * &nbsp;&nbsp;&nbsp;If enabled, then only a view of the subset is created.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -125,9 +116,6 @@ public class SpreadSheetRandomSystematicSample
   /** the sample size. */
   protected int m_SampleSize;
 
-  /** the starting position (within the sample size). */
-  protected Index m_StartingPos;
-
   /** whether to create a view only. */
   protected boolean m_CreateView;
 
@@ -138,7 +126,10 @@ public class SpreadSheetRandomSystematicSample
    */
   @Override
   public String globalInfo() {
-    return "Performs random systematic sampling.\n"
+    return "Performs random systematic sampling on the rows of the incoming spreadsheet.\n"
+      + "Divides the rows into N blocks with N being the sample size. Then chooses a random "
+      + "starting position. Adds the row the output increments the position by the sample size. "
+      + "Position wraps around if output hasn't yet reached sample size.\n"
       + "For more information see:\n"
       + "https://en.wikipedia.org/wiki/Systematic_sampling";
   }
@@ -159,10 +150,6 @@ public class SpreadSheetRandomSystematicSample
       10, 1, null);
 
     m_OptionManager.add(
-      "starting-pos", "startingPos",
-      new Index(Index.FIRST));
-
-    m_OptionManager.add(
       "create-view", "createView",
       false);
   }
@@ -178,7 +165,6 @@ public class SpreadSheetRandomSystematicSample
     String	value;
 
     result  = QuickInfoHelper.toString(this, "sampleSize", m_SampleSize, "size: ");
-    result += QuickInfoHelper.toString(this, "startingPos", m_StartingPos, ", pos: ");
     value  = QuickInfoHelper.toString(this, "createView", m_CreateView, ", view only");
     if (value != null)
       result += value;
@@ -245,35 +231,6 @@ public class SpreadSheetRandomSystematicSample
   }
 
   /**
-   * Sets the starting position within the sample size.
-   *
-   * @param value	the position
-   */
-  public void setStartingPos(Index value) {
-    m_StartingPos = value;
-    reset();
-  }
-
-  /**
-   * Returns the starting position within the sample size.
-   *
-   * @return  		the position
-   */
-  public Index getStartingPos() {
-    return m_StartingPos;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String startingPosTipText() {
-    return "The starting position within the sample size (1-samplesize).";
-  }
-
-  /**
    * Sets whether to create a view only.
    *
    * @param value	true if to create a view only
@@ -311,44 +268,29 @@ public class SpreadSheetRandomSystematicSample
   protected String doExecute() {
     String 		result;
     SpreadSheet 	sheet;
-    List<Integer> 	rows;
     TIntList 		rowsOut;
     int 		i;
-    int 		start;
     int 		pos;
     int 		inc;
     SpreadSheet		sheetOut;
+    Random		rand;
 
     result = null;
     sheet  = m_InputToken.getPayload(SpreadSheet.class);
-    inc    = 1;
-
-    m_StartingPos.setMax(m_SampleSize);
-    start = m_StartingPos.getIntIndex();
-    if (start == -1)
-      result = "Invalid starting position: " + m_StartingPos;
+    inc    = sheet.getRowCount() / m_SampleSize;
+    if (inc == 0)
+      result = "Less rows than sample size: " + sheet.getRowCount() + " < " + m_SampleSize;
 
     if (result == null) {
-      inc = sheet.getRowCount() / m_SampleSize;
-      if (inc == 0)
-        result = "Less rows than sample size: " + sheet.getRowCount() + " < " + m_SampleSize;
-    }
-
-    if (result == null) {
-      // shuffle rows
-      rows = new ArrayList<>();
-      for (i = 0; i < sheet.getRowCount(); i++)
-	rows.add(i);
-      Collections.shuffle(rows, new Random(m_Seed));
-
       // collect sample rows
       rowsOut = new TIntArrayList();
-      pos     = start;
+      rand    = new Random(m_Seed);
+      pos     = rand.nextInt(inc) - inc;
       for (i = 0; i < m_SampleSize; i++) {
-        rowsOut.add(rows.get(pos));
         pos += inc;
-        if (pos > rows.size())
-          pos -= rows.size();
+        if (pos > sheet.getRowCount())
+          pos -= sheet.getRowCount();
+        rowsOut.add(pos);
       }
 
       // assemble output
