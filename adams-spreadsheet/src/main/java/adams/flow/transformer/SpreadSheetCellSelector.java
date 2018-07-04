@@ -800,8 +800,8 @@ public class SpreadSheetCellSelector
       subset   = original.getClone();
       selected = new DefaultSpreadSheet();
       row      = selected.getHeaderRow();
-      row.addCell("C").setContentAsString("Column");
       row.addCell("R").setContentAsString("Row");
+      row.addCell("C").setContentAsString("Column");
       row.addCell("V").setContentAsString("Value");
       for (n = 0; n < m_Table.getRowCount(); n++) {
         for (i = 0; i < m_Table.getColumnCount(); i++) {
@@ -812,8 +812,8 @@ public class SpreadSheetCellSelector
             continue;
           if (m_Table.isSelected(n, i)) {
             row = selected.addRow();
-            row.addCell("R").setContent(n + 1);
             row.addCell("C").setContent(col + 1);
+            row.addCell("R").setContent(n + 1);
             row.addCell("V").setNative(m_Table.getValueAt(n, i));
 	  }
 	  else {
