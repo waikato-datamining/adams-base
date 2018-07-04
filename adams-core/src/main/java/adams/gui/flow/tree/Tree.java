@@ -1923,7 +1923,7 @@ public class Tree
   }
 
   /**
-   * Enables/diables all breakpoint actors.
+   * Enables/disables all breakpoint actors.
    *
    * @param parent	the parent node to start recursion from
    * @param enable	if true all breakpoint actors get enabled, otherwise disabled
@@ -1931,15 +1931,17 @@ public class Tree
   protected void enableBreakpoints(Node parent, boolean enable) {
     int		i;
 
-    if (parent.getActor() instanceof Breakpoint)
+    if (parent.getActor() instanceof Breakpoint) {
       parent.getActor().setSkip(!enable);
+      parent.invalidateRendering();
+    }
 
     for (i = 0; i < parent.getChildCount(); i++)
       enableBreakpoints((Node) parent.getChildAt(i), enable);
   }
 
   /**
-   * Enables/diables all breakpoint actors.
+   * Enables/disables all breakpoint actors.
    *
    * @param enable	if true all breakpoint actors get enabled, otherwise disabled
    */
