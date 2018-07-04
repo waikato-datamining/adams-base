@@ -277,19 +277,29 @@ public class SpreadSheetRandomSystematicSample
 
     result = null;
     sheet  = m_InputToken.getPayload(SpreadSheet.class);
-    inc    = sheet.getRowCount() / m_SampleSize;
+
+    if (isLoggingEnabled())
+      getLogger().info("# rows: " + sheet.getRowCount());
+
+    inc = sheet.getRowCount() / m_SampleSize;
     if (inc == 0)
       result = "Less rows than sample size: " + sheet.getRowCount() + " < " + m_SampleSize;
+    if (isLoggingEnabled())
+      getLogger().info("inc: " + inc);
 
     if (result == null) {
       // collect sample rows
       rowsOut = new TIntArrayList();
       rand    = new Random(m_Seed);
       pos     = rand.nextInt(inc) - inc;
+      if (isLoggingEnabled())
+	getLogger().info("starting pos: " + pos);
       for (i = 0; i < m_SampleSize; i++) {
         pos += inc;
         if (pos > sheet.getRowCount())
           pos -= sheet.getRowCount();
+	if (isLoggingEnabled())
+	  getLogger().info("pos: " + pos);
         rowsOut.add(pos);
       }
 
