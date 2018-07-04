@@ -15,7 +15,7 @@
 
 /*
  * WekaFilter.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -214,7 +214,9 @@ public class WekaFilter
   @Override
   public String globalInfo() {
     return
-      "Filters Instances/Instance objects using the specified filter.\n\n"
+      "Filters Instances/Instance objects using the specified filter.\n"
+	+ "When re-using a trained filter, ensure that 'initializeOnce' is checked."
+	+ "\n\n"
 	+ m_ModelLoader.automaticOrderInfo();
   }
 
@@ -669,10 +671,13 @@ public class WekaFilter
   protected String initActualFilter(Instances data) throws Exception {
     String		result;
     MessageCollection	errors;
+    boolean		initFilter;
 
     errors         = new MessageCollection();
+    initFilter     = false;
     m_ActualFilter = m_ModelLoader.getModel(errors);
     if (m_ActualFilter == null) {
+      initFilter = true;
       if (getModelLoadingType() == ModelLoadingType.AUTO)
 	m_ActualFilter = (Filter) OptionUtils.shallowCopy(m_Filter);
       else
@@ -684,7 +689,8 @@ public class WekaFilter
     if (result == null)
       result = updateObject(m_ActualFilter);
 
-    m_ActualFilter.setInputFormat(data);
+    if (!m_InitializeOnce || initFilter)
+      m_ActualFilter.setInputFormat(data);
 
     return result;
   }
