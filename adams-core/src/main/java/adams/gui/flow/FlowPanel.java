@@ -551,6 +551,18 @@ public class FlowPanel
   }
 
   /**
+   * Just updates the current file.
+   *
+   * @param file	the file
+   */
+  public void updateCurrentFile(File file) {
+    m_CurrentFile = file;
+    m_Tree.setFile(file);
+    setTitle(FileUtils.replaceExtension(file.getName(), ""));
+    updateTitle();
+  }
+
+  /**
    * Returns the current file in use.
    *
    * @return		the current file, can be null

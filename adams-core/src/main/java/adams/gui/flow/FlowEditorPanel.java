@@ -1293,8 +1293,18 @@ public class FlowEditorPanel
       updateActions();
     }
     else {
-      panel.load(m_FileChooser.getReaderForFile(file), file, false);
+      panel.load(getReaderForFile(file), file, false);
     }
+  }
+
+  /**
+   * Returns the reader for the file.
+   *
+   * @param file	the file to get a reader for
+   * @return		the suggested reader (based on file ext)
+   */
+  public FlowReader getReaderForFile(File file) {
+    return m_FileChooser.getReaderForFile(file);
   }
 
   /**
