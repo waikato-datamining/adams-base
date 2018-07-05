@@ -3,7 +3,6 @@
 # Mac-specific shortcuts only.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision: 9847 $
 
 # Format:
 # <action-classname>-Shortcut=<empty or shortcut definition>
@@ -27,6 +26,7 @@ adams.gui.flow.menu.FileClose-Shortcut=meta shift Q
 adams.gui.flow.menu.EditUndo-Shortcut=meta Z
 adams.gui.flow.menu.EditRedo-Shortcut=meta Y
 adams.gui.flow.menu.EditEnableUndo-Shortcut=
+adams.gui.flow.menu.EditClearClipboard-Shortcut=
 adams.gui.flow.menu.EditDiff-Shortcut=
 adams.gui.flow.menu.EditFind-Shortcut=meta F
 adams.gui.flow.menu.EditFindNext-Shortcut=meta shift F

@@ -25,6 +25,9 @@ adams.gui.tools.spreadsheetviewer.menu.FileExit-Mnemonic=C
 adams.gui.tools.spreadsheetviewer.menu.FileExit-Shortcut=ctrl pressed Q
 
 # Edit
+adams.gui.tools.spreadsheetviewer.menu.EditClearClipboard-Icon=clearclipboard.gif
+adams.gui.tools.spreadsheetviewer.menu.EditClearClipboard-Mnemonic=b
+adams.gui.tools.spreadsheetviewer.menu.EditClearClipboard-Shortcut=
 adams.gui.tools.spreadsheetviewer.menu.EditPasteAsNew-Icon=paste.gif
 adams.gui.tools.spreadsheetviewer.menu.EditPasteAsNew-Mnemonic=C
 adams.gui.tools.spreadsheetviewer.menu.EditPasteAsNew-Shortcut=

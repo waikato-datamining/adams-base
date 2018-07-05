@@ -55,6 +55,7 @@ import adams.gui.event.UndoEvent;
 import adams.gui.flow.menu.AbstractFlowEditorMenuItem;
 import adams.gui.flow.menu.EditCheckVariables;
 import adams.gui.flow.menu.EditCleanUpFlow;
+import adams.gui.flow.menu.EditClearClipboard;
 import adams.gui.flow.menu.EditDiff;
 import adams.gui.flow.menu.EditEnableUndo;
 import adams.gui.flow.menu.EditFind;
@@ -254,6 +255,9 @@ public class FlowEditorPanel
 
   /** the diff action. */
   protected FlowEditorAction m_ActionEditDiff;
+
+  /** the clear clipboard action. */
+  protected FlowEditorAction m_ActionEditClearClipboard;
 
   /** the find action. */
   protected FlowEditorAction m_ActionEditFind;
@@ -579,6 +583,11 @@ public class FlowEditorPanel
     // Edit/Redo
     action = new EditRedo();
     m_ActionEditRedo = action;
+    m_MenuItems.add(action);
+
+    // Edit/Clear clipboard
+    action = new EditClearClipboard();
+    m_ActionEditClearClipboard = action;
     m_MenuItems.add(action);
 
     // Edit/Diff
@@ -1025,6 +1034,7 @@ public class FlowEditorPanel
       menu.add(m_ActionEditRedo);
       menu.add(m_ActionEditDiff);
       menu.addSeparator();
+      menu.add(m_ActionEditClearClipboard);
       menu.add(m_ActionEditFind);
       menu.add(m_ActionEditLocateActor);
       menu.add(m_ActionEditLocateVariable);

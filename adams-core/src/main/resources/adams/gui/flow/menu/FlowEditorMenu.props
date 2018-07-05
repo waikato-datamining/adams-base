@@ -1,7 +1,6 @@
 # Configuration file for the Flow Editor menu.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision: 9847 $
 
 # Format:
 # <action-classname>-Shortcut=<empty or shortcut definition>
@@ -53,6 +52,9 @@ adams.gui.flow.menu.EditRedo-Shortcut=control Y
 adams.gui.flow.menu.EditEnableUndo-Icon=
 adams.gui.flow.menu.EditEnableUndo-Mnemonic=N
 adams.gui.flow.menu.EditEnableUndo-Shortcut=
+adams.gui.flow.menu.EditClearClipboard-Icon=clearclipboard.gif
+adams.gui.flow.menu.EditClearClipboard-Mnemonic=b
+adams.gui.flow.menu.EditClearClipboard-Shortcut=
 adams.gui.flow.menu.EditDiff-Icon=diff.png
 adams.gui.flow.menu.EditDiff-Mnemonic=D
 adams.gui.flow.menu.EditDiff-Shortcut=
