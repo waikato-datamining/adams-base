@@ -372,7 +372,7 @@ public class TreeHelper {
       list = new ArrayList();
       nested.add(list);
       for (i = 0; i < node.getChildCount(); i++)
-	getCommandLines((Node) node.getChildAt(i), list, noExtActors);
+	getNested((Node) node.getChildAt(i), list, noExtActors);
     }
   }
 

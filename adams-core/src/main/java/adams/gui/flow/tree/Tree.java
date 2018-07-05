@@ -93,7 +93,7 @@ public class Tree
    */
   public static class TreeState {
     /** the nested commandlines. */
-    public List<String> actors;
+    public List actors;
     /** the full names of the expanded actors. */
     public List<String> expanded;
     /** whether the tree is modified. */
@@ -1791,6 +1791,8 @@ public class Tree
   public void setState(TreeState value) {
     if (value.actors != null)
       buildTree(TreeHelper.buildTree(value.actors));
+    else
+      buildTree(new Flow());
     setModified(value.modified);
     setFile(value.file);
     SwingUtilities.invokeLater(() -> setExpandedFullNames(value.expanded));
@@ -1820,7 +1822,7 @@ public class Tree
     result = new TreeState();
 
     if (getRootNode() != null)
-      result.actors = TreeHelper.getCommandLines(getRootNode());
+      result.actors = TreeHelper.getNested(getRootNode());
     result.expanded  = getExpandedFullNames();
     result.modified  = isModified();
     result.file      = getFile();
