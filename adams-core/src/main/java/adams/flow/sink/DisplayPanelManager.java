@@ -253,6 +253,16 @@ public class DisplayPanelManager
 
       return result;
     }
+
+    /**
+     * Calls the wrapUp method of the display panels.
+     */
+    public void wrapUp() {
+      int	i;
+
+      for (i = 0; i < count(); i++)
+        getEntry(i).wrapUp();
+    }
   }
 
   /**
@@ -463,6 +473,13 @@ public class DisplayPanelManager
      */
     public boolean getAllowSearch() {
       return m_History.getAllowSearch();
+    }
+
+    /**
+     * Calls the wrapUp method of the display panels.
+     */
+    public void wrapUp() {
+      m_History.wrapUp();
     }
   }
 
@@ -1292,5 +1309,15 @@ public class DisplayPanelManager
     }
 
     return result;
+  }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void wrapUp() {
+    super.wrapUp();
+    if (m_HistoryPanel != null)
+      m_HistoryPanel.wrapUp();
   }
 }

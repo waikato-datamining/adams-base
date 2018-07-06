@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DisplayPanelGrid.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -154,7 +154,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DisplayPanelGrid
   extends AbstractDisplay
@@ -720,5 +719,17 @@ public class DisplayPanelGrid
     }
 
     return result;
+  }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void wrapUp() {
+    super.wrapUp();
+    if (m_DisplayPanels != null) {
+      for (DisplayPanel panel: m_DisplayPanels)
+        panel.wrapUp();
+    }
   }
 }

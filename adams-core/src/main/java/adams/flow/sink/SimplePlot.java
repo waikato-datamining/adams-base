@@ -15,7 +15,7 @@
 
 /*
  * SimplePlot.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -1065,15 +1065,23 @@ public class SimplePlot
 	XYSequencePoint			point;
 	SequencePlotterContainer	plotCont;
 	String				plotName;
-	Double				x;
-	Double				y;
+	Comparable			x;
+	Comparable			y;
+	double				dX;
+	double				dY;
+	Double[]			errorX;
+	Double[]			errorY;
 	ContentType			type;
+	HashMap<String,Object>		meta;
 
 	plotCont = (SequencePlotterContainer) token.getPayload();
 	plotName = (String) plotCont.getValue(SequencePlotterContainer.VALUE_PLOTNAME);
-	x        = (Double) plotCont.getValue(SequencePlotterContainer.VALUE_X);
-	y        = (Double) plotCont.getValue(SequencePlotterContainer.VALUE_Y);
+	x        = (Comparable) plotCont.getValue(SequencePlotterContainer.VALUE_X);
+	y        = (Comparable) plotCont.getValue(SequencePlotterContainer.VALUE_Y);
+	errorX   = (Double[]) plotCont.getValue(SequencePlotterContainer.VALUE_ERROR_X);
+	errorY   = (Double[]) plotCont.getValue(SequencePlotterContainer.VALUE_ERROR_Y);
 	type     = (ContentType) plotCont.getValue(SequencePlotterContainer.VALUE_CONTENTTYPE);
+	meta     = plotCont.getMetaData();
 
 	switch (type) {
 	  case PLOT:
@@ -1106,7 +1114,17 @@ public class SimplePlot
 	// create and add new point
 	if (x == null)
 	  x = new Double(m_Counter.next(plotName));
-	point = new XYSequencePoint("" + seq.size(), x, y);
+	if (x instanceof Number)
+	  dX = ((Number) x).doubleValue();
+	else
+	  dX = seq.putMappingX(x.toString());
+	if (y instanceof Number)
+	  dY = ((Number) y).doubleValue();
+	else
+	  dY = seq.putMappingY(y.toString());
+	point = new SequencePlotPoint("" + seq.size(), dX, dY, errorX, errorY);
+	if (meta != null)
+	  point.setMetaData(meta);
 	seq.add(point);
 
 	m_PlotUpdater.update(m_Panel, plotCont);
@@ -1114,6 +1132,11 @@ public class SimplePlot
       @Override
       public void clearPanel() {
 	m_Panel.getContainerManager().clear();
+      }
+      @Override
+      public void wrapUp() {
+        super.wrapUp();
+        m_PlotUpdater.update(m_Panel);
       }
       @Override
       public void cleanUp() {

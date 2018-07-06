@@ -15,7 +15,7 @@
 
 /*
  * SequencePlotter.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -1508,6 +1508,11 @@ public class SequencePlotter
       @Override
       public void clearPanel() {
 	m_Panel.getContainerManager().clear();
+      }
+      @Override
+      public void wrapUp() {
+        super.wrapUp();
+        m_PlotUpdater.update(m_Panel);
       }
       @Override
       public void cleanUp() {

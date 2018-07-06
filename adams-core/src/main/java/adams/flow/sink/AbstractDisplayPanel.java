@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDisplayPanel.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -26,7 +26,6 @@ import adams.gui.core.BasePanel;
  * Ancestor for panels that can be created from tokens.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDisplayPanel
   extends BasePanel
@@ -69,4 +68,12 @@ public abstract class AbstractDisplayPanel
    * Clears the content of the panel.
    */
   public abstract void clearPanel();
+
+  /**
+   * Wraps up the execution.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void wrapUp() {
+  }
 }
