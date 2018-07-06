@@ -465,8 +465,8 @@ public class AssociateTab
       result.add(menuitem);
 
       menuitem = new JMenuItem("Regenerate output" + (m_Owner.getOutputGenerators().length > 1 ? "s" : ""));
-      menuitem.setEnabled((indices.length == 1));
-      menuitem.addActionListener((ActionEvent ae) -> regenerateOutput(getEntry(indices[0])));
+      menuitem.setEnabled((indices.length >= 1));
+      menuitem.addActionListener((ActionEvent ae) -> { for (int index: indices) regenerateOutput(getEntry(index)); });
       result.add(menuitem);
 
       submenu = new BaseMenu("Additional output");
