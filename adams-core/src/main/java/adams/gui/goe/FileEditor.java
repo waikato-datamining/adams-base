@@ -15,7 +15,7 @@
 
 /*
  *    FileEditor.java
- *    Copyright (C) 1999-2015 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -51,8 +51,6 @@ import java.io.File;
  * Based on <code>weka.gui.FileEditor</code>.
  *
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
- * @version $Revision$
- * @see weka.gui.FileEditor
  */
 public class FileEditor
   extends AbstractPropertyEditorSupport
@@ -271,12 +269,12 @@ public class FileEditor
    * @param menu	the menu to customize
    */
   public void customizePopupMenu(final BasePanel owner, JPopupMenu menu) {
-    JMenuItem			menuitem;
-    final PlaceholderFile	file;
+    JMenuItem		menuitem;
+    final File		file;
 
     menu.addSeparator();
 
-    file     = (PlaceholderFile) getValue();
+    file     = (File) getValue();
     menuitem = new JMenuItem("Open in preview browser...");
     menuitem.setIcon(GUIHelper.getIcon("previewbrowser.png"));
     menuitem.setEnabled(FileUtils.directoryExists(file));
@@ -288,7 +286,7 @@ public class FileEditor
       }
       else {
 	dialog = new SimplePreviewBrowserDialog();
-	((SimplePreviewBrowserDialog) dialog).open(file);
+	((SimplePreviewBrowserDialog) dialog).open(new PlaceholderFile(file));
       }
       dialog.setLocationRelativeTo(dialog.getOwner());
       dialog.setVisible(true);
