@@ -61,7 +61,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyEditor;
@@ -254,7 +253,6 @@ public class GenericObjectEditor
       });
 
       m_PropertySheetChild = new PropertySheetPanel();
-      m_PropertySheetChild.addPropertyChangeListener((PropertyChangeEvent evt) -> GenericObjectEditor.this.firePropertyChange());
 
       m_ButtonOpen = new JButton(GUIHelper.getIcon("open.gif"));
       m_ButtonOpen.setActionCommand(ACTION_CMD_OPEN);
