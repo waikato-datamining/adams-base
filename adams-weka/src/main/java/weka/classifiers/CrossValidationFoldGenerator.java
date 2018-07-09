@@ -54,6 +54,13 @@ public interface CrossValidationFoldGenerator
   public int getNumFolds();
 
   /**
+   * Returns the actual number of folds used (eg when using LOO).
+   *
+   * @return		the actual number of folds
+   */
+  public int getActualNumFolds();
+
+  /**
    * Sets whether to randomize the data.
    *
    * @param value	true if to randomize the data

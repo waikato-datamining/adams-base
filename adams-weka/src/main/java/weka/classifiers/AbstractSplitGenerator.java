@@ -235,7 +235,7 @@ public abstract class AbstractSplitGenerator
    *
    * @see		#canRandomize()
    */
-  protected void initializeIterator() {
+  public void initializeIterator() {
     doInitializeIterator();
     m_Initialized = true;
   }

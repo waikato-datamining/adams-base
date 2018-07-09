@@ -143,7 +143,9 @@ public class DefaultCrossValidationFoldGenerator
   @Override
   protected void reset() {
     super.reset();
-    m_CurrentFold = 1;
+
+    m_CurrentFold    = 1;
+    m_ActualNumFolds = -1;
   }
 
   /**
@@ -186,6 +188,16 @@ public class DefaultCrossValidationFoldGenerator
    */
   public String numFoldsTipText() {
     return "The number of folds; use <2 for leave one out (LOO).";
+  }
+
+  /**
+   * Returns the actual number of folds used (eg when using LOO).
+   *
+   * @return		the actual number of folds, -1 if not yet calculated
+   * @see		#initializeIterator()
+   */
+  public int getActualNumFolds() {
+    return m_ActualNumFolds;
   }
 
   /**

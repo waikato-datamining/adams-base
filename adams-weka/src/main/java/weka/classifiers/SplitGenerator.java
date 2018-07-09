@@ -52,6 +52,11 @@ public interface SplitGenerator
   public Instances getData();
 
   /**
+   * Initializes the iterator (gets implicitly called, when calling next()).
+   */
+  public void initializeIterator() ;
+
+  /**
    * Returns <tt>true</tt> if the iteration has more elements. (In other
    * words, returns <tt>true</tt> if <tt>next</tt> would return an element
    * rather than throwing an exception.)

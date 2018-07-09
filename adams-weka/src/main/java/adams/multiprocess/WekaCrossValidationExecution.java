@@ -467,21 +467,16 @@ public class WekaCrossValidationExecution
       if (isLoggingEnabled())
 	getLogger().info(OptionUtils.getCommandLine(m_Classifier));
 
-      folds = m_Folds;
-      if (folds == -1)
-	folds = m_Data.numInstances();
-
       m_ActualNumThreads = Performance.determineNumThreads(m_NumThreads);
-
-      if (!m_DiscardPredictions)
-	indices = CrossValidationHelper.crossValidationIndices(m_Data, folds, new Random(m_Seed));
 
       generator = (CrossValidationFoldGenerator) OptionUtils.shallowCopy(m_Generator);
       generator.setData(m_Data);
-      generator.setNumFolds(folds);
+      generator.setNumFolds(m_Folds);
       generator.setSeed(m_Seed);
       generator.setStratify(true);
       generator.setUseViews(m_UseViews);
+      generator.initializeIterator();
+      folds = generator.getActualNumFolds();
       if ((m_ActualNumThreads == 1) && !m_SeparateFolds) {
 	initOutputBuffer();
 	if (m_Output != null) {
@@ -562,6 +557,8 @@ public class WekaCrossValidationExecution
 	m_JobRunner = null;
       }
 
+      if (!m_DiscardPredictions)
+	indices = CrossValidationHelper.crossValidationIndices(m_Data, folds, new Random(m_Seed));
     }
     catch (Exception e) {
       result.add(Utils.handleException(this, "Failed to cross-validate classifier: ", e));
