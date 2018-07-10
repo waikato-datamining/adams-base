@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WindowDuplicateInTab.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -24,10 +24,9 @@ import adams.gui.flow.FlowPanel;
 import java.awt.event.ActionEvent;
 
 /**
- * Duplicates the flow in a new tab.
+ * Duplicates the flow in a new page.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WindowDuplicateInTab
   extends AbstractFlowEditorMenuItemAction {
@@ -42,7 +41,7 @@ public class WindowDuplicateInTab
    */
   @Override
   protected String getTitle() {
-    return "Duplicate in new tab";
+    return "Duplicate in new page";
   }
   
   /**
