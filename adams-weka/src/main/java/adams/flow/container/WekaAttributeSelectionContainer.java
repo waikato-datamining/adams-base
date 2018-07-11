@@ -15,7 +15,7 @@
 
 /*
  * WekaAttributeSelectionContainer.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
@@ -121,15 +121,11 @@ public class WekaAttributeSelectionContainer
     super();
 
     store(VALUE_TRAIN, train);
-    if (reduced != null)
-      store(VALUE_REDUCED, reduced);
-    if (transformed != null)
-      store(VALUE_TRANSFORMED, transformed);
+    store(VALUE_REDUCED, reduced);
+    store(VALUE_TRANSFORMED, transformed);
     store(VALUE_EVALUATION, eval);
-    if (statistics != null)
-      store(VALUE_STATISTICS, statistics);
-    if (range != null)
-      store(VALUE_SELECTEDATTRIBUTES, range);
+    store(VALUE_STATISTICS, statistics);
+    store(VALUE_SELECTEDATTRIBUTES, range);
     store(VALUE_SEED, seed);
     store(VALUE_FOLD_COUNT, foldCount);
   }
