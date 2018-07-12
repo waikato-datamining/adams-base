@@ -19,11 +19,12 @@
  */
 package adams.data.spreadsheet.cellfinder;
 
+import adams.data.spreadsheet.Cell.ContentType;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import adams.data.spreadsheet.Cell.ContentType;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  * Iterates over a range of cells, looking for a type of cell.
@@ -36,7 +37,10 @@ public class TypeRangeIterator
 
   /** the spreadsheet to process. */
   protected SpreadSheet m_Sheet;
-  
+
+  /** the row to process. */
+  protected Row m_SheetRow;
+
   /** the cell type to look for. */
   protected ContentType m_Type;
   
@@ -60,12 +64,15 @@ public class TypeRangeIterator
   
   /**
    * Initializes the iterator.
-   * 
+   *
+   * @param sheet	the sheet to use
+   * @param type	the content type
    * @param rows	the row indices of the range
    * @param cols	the column indices of the range
    */
   public TypeRangeIterator(SpreadSheet sheet, ContentType type, int[] rows, int[] cols) {
     m_Sheet    = sheet;
+    m_SheetRow = null;
     m_Type     = type;
     m_Rows     = rows.clone();
     m_Columns  = cols.clone();
@@ -74,7 +81,26 @@ public class TypeRangeIterator
     m_Finished = false;
     m_Next     = null;
   }
-  
+
+  /**
+   * Initializes the iterator.
+   *
+   * @param sheetRow	the row to use
+   * @param type	the content type
+   * @param cols	the column indices of the range
+   */
+  public TypeRangeIterator(Row sheetRow, ContentType type, int[] cols) {
+    m_Sheet    = null;
+    m_SheetRow = sheetRow;
+    m_Type     = type;
+    m_Rows     = null;
+    m_Columns  = cols.clone();
+    m_Row      = -1;
+    m_Column   = m_Columns.length - 1;
+    m_Finished = false;
+    m_Next     = null;
+  }
+
   /**
    * Find the next location.
    */
@@ -91,8 +117,14 @@ public class TypeRangeIterator
       }
 
       // correct cell type?
-      if (m_Sheet.hasCell(m_Rows[m_Row], m_Columns[m_Column]) && (m_Sheet.getCell(m_Rows[m_Row], m_Columns[m_Column]).getContentType() == m_Type))
-	m_Next = new int[]{m_Rows[m_Row], m_Columns[m_Column]};
+      if (m_Sheet != null) {
+	if (m_Sheet.hasCell(m_Rows[m_Row], m_Columns[m_Column]) && (m_Sheet.getCell(m_Rows[m_Row], m_Columns[m_Column]).getContentType() == m_Type))
+	  m_Next = new int[]{m_Rows[m_Row], m_Columns[m_Column]};
+      }
+      else if (m_SheetRow != null) {
+	if (m_SheetRow.hasCell(m_Columns[m_Column]) && (m_SheetRow.getCell(m_Columns[m_Column]).getContentType() == m_Type))
+	  m_Next = new int[]{0, m_Columns[m_Column]};
+      }
 
       // reached last cell?
       m_Finished = ((m_Row == m_Rows.length - 1) && (m_Column == m_Columns.length - 1));

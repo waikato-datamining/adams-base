@@ -13,19 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SingleCell.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.cellfinder;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -56,10 +57,9 @@ import adams.data.spreadsheet.SpreadSheetColumnIndex;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SingleCell
-  extends AbstractCellFinder {
+  extends AbstractRowCellFinder {
 
   /** for serialization. */
   private static final long serialVersionUID = 7552127288975155281L;
@@ -181,7 +181,7 @@ public class SingleCell
     int				row;
     int				col;
     
-    result = new ArrayList<CellLocation>();
+    result = new ArrayList<>();
 
     m_Row.setMax(sheet.getRowCount());
     m_Column.setSpreadSheet(sheet);
@@ -192,6 +192,29 @@ public class SingleCell
     if ((row != -1) && (col != -1))
       result.add(new CellLocation(row, col));
     
+    return result.iterator();
+  }
+
+  /**
+   * Performs the actual locating.
+   *
+   * @param row		the row to locate the cells in
+   * @return		the iterator over the locations
+   */
+  @Override
+  protected Iterator<CellLocation> doFindCells(Row row) {
+    ArrayList<CellLocation>	result;
+    int				col;
+
+    result = new ArrayList<>();
+
+    m_Column.setSpreadSheet(row.getOwner());
+
+    col = m_Column.getIntIndex();
+
+    if (col != -1)
+      result.add(new CellLocation(0, col));
+
     return result.iterator();
   }
 }

@@ -15,6 +15,10 @@ adams.data.conversion.AbstractSpreadSheetColumnConverter=\
 adams.data.spreadsheet.cellfinder.CellFinder=\
   adams.data.spreadsheet.cellfinder
 
+# The cell locators that operate on rows
+adams.data.spreadsheet.cellfinder.RowCellFinder=\
+  adams.data.spreadsheet.cellfinder
+
 # The RowFinder algorithms
 adams.data.spreadsheet.rowfinder.RowFinder=\
   adams.data.spreadsheet.rowfinder
