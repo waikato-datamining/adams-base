@@ -1,3 +1,23 @@
+/*
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * PLS1AttributeEval.java
+ * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ */
+
 package weka.attributeSelection;
 
 import adams.data.instancesanalysis.pls.PLS1;
@@ -21,6 +41,8 @@ import java.util.Vector;
 
 public class PLS1AttributeEval extends ASEvaluation
   implements AttributeEvaluator, OptionHandler {
+
+  private static final long serialVersionUID = -3761260113452151430L;
 
   public enum LoadingsCalculations {
     USE_FIRST_COMPONENT,
@@ -99,7 +121,7 @@ public class PLS1AttributeEval extends ASEvaluation
 
     String numComponentsString = Utils.getOption('N', options);
     if (numComponentsString.length() != 0) {
-      setNumComponents(new Integer(numComponentsString).intValue());
+      setNumComponents(Integer.parseInt(numComponentsString));
     } else {
       setNumComponents(20);
     }

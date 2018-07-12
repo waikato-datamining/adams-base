@@ -35,6 +35,8 @@ public class LinearRegressionAttributeEval
   extends ASEvaluation
   implements AttributeEvaluator, OptionHandler {
 
+  private static final long serialVersionUID = 129917929429910376L;
+
   /** the degtermined attribute ranking. */
   protected double[] m_Ranking;
 
@@ -89,7 +91,7 @@ public class LinearRegressionAttributeEval
   public void setOptions(String[] options) throws Exception {
     String ridgeString = Utils.getOption('R', options);
     if (ridgeString.length() != 0) {
-      setRidge(new Double(ridgeString).doubleValue());
+      setRidge(Double.parseDouble(ridgeString));
     } else {
       setRidge(1.0e-8);
     }
