@@ -751,6 +751,10 @@ public class SpreadSheetTransformCells
 	input = cell.toTimeMsec();
       else if (m_Compatibility.isCompatible(new Class[]{String.class}, classIn))
 	input = cell.getContent();
+      else if (m_Compatibility.isCompatible(new Class[]{Object.class}, classIn))
+	input = cell.getNative();
+      else if (m_Compatibility.isCompatible(new Class[]{Unknown.class}, classIn))
+	input = cell.getNative();
       else
 	result = "Don't know how to get cell value for transformation input type:\n"
 	    + Utils.classesToString(classIn)

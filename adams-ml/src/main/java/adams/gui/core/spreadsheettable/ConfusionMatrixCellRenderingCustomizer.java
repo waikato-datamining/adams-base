@@ -287,6 +287,7 @@ public class ConfusionMatrixCellRenderingCustomizer
     double	max;
     double	value;
     int		index;
+    Cell	spCell;
 
     initColors();
 
@@ -320,9 +321,15 @@ public class ConfusionMatrixCellRenderingCustomizer
       min    = minMax[0];
       max    = minMax[1];
       if (min < max) {
-	value = table.getCellAt(row, column).toDouble();
-	index = (int) ((value - min) / (max - min) * (m_Colors.size() - 1));
-	result = m_Colors.get(index);
+        spCell = table.getCellAt(row, column);
+        if ((spCell != null) && spCell.isNumeric()) {
+	  value = spCell.toDouble();
+	  index = (int) ((value - min) / (max - min) * (m_Colors.size() - 1));
+	  result = m_Colors.get(index);
+	}
+	else {
+          result = defColor;
+	}
 	if (isSelected)
 	  result = result.darker();
       }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetConvertCells.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -35,6 +35,7 @@ import adams.data.spreadsheet.cellfinder.CellFinder;
 import adams.data.spreadsheet.cellfinder.CellLocation;
 import adams.data.spreadsheet.cellfinder.CellRange;
 import adams.flow.core.Token;
+import adams.flow.core.Unknown;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -121,7 +122,6 @@ import java.util.Iterator;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetConvertCells
   extends AbstractInPlaceSpreadSheetTransformer {
@@ -470,6 +470,10 @@ public class SpreadSheetConvertCells
 	input = cell.toTimeMsec();
       else if (classIn == String.class)
 	input = cell.getContent();
+      else if (classIn == Object.class)
+	input = cell.getNative();
+      else if (classIn == Unknown.class)
+	input = cell.getNative();
       else
 	result = "Don't know how to get cell value for conversion input type: " + classIn.getName();
     }
@@ -501,6 +505,10 @@ public class SpreadSheetConvertCells
 	cell.setContent((TimeMsec) output);
       else if (classOut == String.class)
 	cell.setContentAsString((String) output);
+      else if (classOut == Object.class)
+	cell.setNative(output);
+      else if (classOut == Unknown.class)
+	cell.setNative(output);
       else if (classOut == SpreadSheet.class)
 	transfer((SpreadSheet) output, cell);
       else

@@ -15,7 +15,7 @@
 
 /*
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -460,10 +460,12 @@ public class PreviewBrowserPanel
     dir   = m_PanelDir.getCurrent();
     files = filterFiles(dir.listFiles());
     fileList = new ArrayList<>();
-    for (File file: files) {
-      if (file.isDirectory())
-	continue;
-      fileList.add(file);
+    if (files != null) {
+      for (File file : files) {
+        if (file.isDirectory())
+          continue;
+        fileList.add(file);
+      }
     }
     Collections.sort(fileList, new FileComparator());
     m_ListLocalFiles.clearSelection();

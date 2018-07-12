@@ -13,20 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CellTypeRange.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.cellfinder;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.data.spreadsheet.Cell.ContentType;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -60,10 +61,9 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CellTypeRange
-  extends AbstractCellFinder {
+  extends AbstractRowCellFinder {
 
   /** for serialization. */
   private static final long serialVersionUID = 3956527986917157099L;
@@ -229,6 +229,24 @@ public class CellTypeRange
     
     if ((rows.length > 0) && (cols.length > 0))
       return new TypeRangeIterator(sheet, m_Type, rows, cols);
+    else
+      return new ArrayList<CellLocation>().iterator();
+  }
+
+  /**
+   * Performs the actual locating.
+   *
+   * @param row		the row to locate the cells in
+   * @return		the iterator over the locations
+   */
+  protected Iterator<CellLocation> doFindCells(Row row) {
+    int[]	cols;
+
+    m_Columns.setSpreadSheet(row.getOwner());
+
+    cols = m_Columns.getIntIndices();
+    if ((cols.length > 0))
+      return new TypeRangeIterator(row, m_Type, cols);
     else
       return new ArrayList<CellLocation>().iterator();
   }
