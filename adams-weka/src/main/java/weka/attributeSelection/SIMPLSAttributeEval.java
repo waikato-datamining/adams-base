@@ -20,8 +20,9 @@
 
 package weka.attributeSelection;
 
-import adams.data.instancesanalysis.pls.SIMPLS;
+import adams.data.instancesanalysis.pls.AbstractSingleClassPLS;
 import adams.data.instancesanalysis.pls.PreprocessingType;
+import adams.data.instancesanalysis.pls.SIMPLS;
 import adams.env.Environment;
 import weka.core.Instances;
 import weka.core.Option;
@@ -49,7 +50,7 @@ public class SIMPLSAttributeEval extends ASEvaluation
   }
 
   /** the underlying model. */
-  protected SIMPLS m_Model;
+  protected AbstractSingleClassPLS m_Model;
 
   /** the preprocessing type to perform. */
   protected PreprocessingType m_PreprocessingType = PreprocessingType.NONE;
@@ -61,7 +62,7 @@ public class SIMPLSAttributeEval extends ASEvaluation
   protected int m_NumComponents = 20;
 
   /** for how to use the loadings. */
-  protected SIMPLSAttributeEval.LoadingsCalculations m_LoadingsCalculations = SIMPLSAttributeEval.LoadingsCalculations.USE_FIRST_COMPONENT;
+  protected LoadingsCalculations m_LoadingsCalculations = LoadingsCalculations.USE_FIRST_COMPONENT;
 
   /** the determined attribute ranking. */
   protected double[] m_Ranking;
@@ -240,7 +241,7 @@ public class SIMPLSAttributeEval extends ASEvaluation
    *
    * @param value 	the maximum number of attributes
    */
-  public void setLoadingsCalculations(SIMPLSAttributeEval.LoadingsCalculations value) {
+  public void setLoadingsCalculations(LoadingsCalculations value) {
     m_LoadingsCalculations = value;
   }
 
@@ -249,7 +250,7 @@ public class SIMPLSAttributeEval extends ASEvaluation
    *
    * @return 		the current maximum number of attributes
    */
-  public SIMPLSAttributeEval.LoadingsCalculations getLoadingsCalculations() {
+  public LoadingsCalculations getLoadingsCalculations() {
     return m_LoadingsCalculations;
   }
 
@@ -267,7 +268,7 @@ public class SIMPLSAttributeEval extends ASEvaluation
    * Generates a attribute evaluator. Has to initialize all fields of the
    * evaluator that are not being set via options.
    *
-   * @param data set of instances serving as training data
+   * @param instances set of instances serving as training data
    * @exception Exception if the evaluator has not been generated successfully
    */
   @Override
@@ -305,7 +306,7 @@ public class SIMPLSAttributeEval extends ASEvaluation
   /**
    * evaluates an individual attribute
    *
-   * @param attribute the index of the attribute to be evaluated
+   * @param i the index of the attribute to be evaluated
    * @return the "merit" of the attribute
    * @exception Exception if the attribute could not be evaluated
    */

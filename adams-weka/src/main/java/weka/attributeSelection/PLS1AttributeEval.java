@@ -20,6 +20,7 @@
 
 package weka.attributeSelection;
 
+import adams.data.instancesanalysis.pls.AbstractSingleClassPLS;
 import adams.data.instancesanalysis.pls.PLS1;
 import adams.data.instancesanalysis.pls.PreprocessingType;
 import adams.env.Environment;
@@ -49,7 +50,7 @@ public class PLS1AttributeEval extends ASEvaluation
   }
 
   /** the underlying model. */
-  protected PLS1 m_Model;
+  protected AbstractSingleClassPLS m_Model;
 
   /** the preprocessing type to perform. */
   protected PreprocessingType m_PreprocessingType = PreprocessingType.NONE;
@@ -267,7 +268,7 @@ public class PLS1AttributeEval extends ASEvaluation
    * Generates a attribute evaluator. Has to initialize all fields of the
    * evaluator that are not being set via options.
    *
-   * @param data set of instances serving as training data
+   * @param instances set of instances serving as training data
    * @exception Exception if the evaluator has not been generated successfully
    */
   @Override
@@ -305,7 +306,7 @@ public class PLS1AttributeEval extends ASEvaluation
   /**
    * evaluates an individual attribute
    *
-   * @param attribute the index of the attribute to be evaluated
+   * @param i the index of the attribute to be evaluated
    * @return the "merit" of the attribute
    * @exception Exception if the attribute could not be evaluated
    */
