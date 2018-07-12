@@ -15,18 +15,24 @@
 
 /*
  * SpreadSheetSetCell.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
+import adams.core.Utils;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.cellfinder.CellFinder;
+import adams.data.spreadsheet.cellfinder.CellLocation;
+import adams.data.spreadsheet.cellfinder.RowCellFinder;
 import adams.flow.core.Token;
+
+import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
@@ -68,31 +74,44 @@ import adams.flow.core.Token;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
  * &nbsp;&nbsp;&nbsp;If enabled, no copy of the spreadsheet is created before processing it.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-row &lt;adams.core.Range&gt; (property: row)
  * &nbsp;&nbsp;&nbsp;The row(s) of the cell(s) to set.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-col &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: column)
  * &nbsp;&nbsp;&nbsp;The column(s) of the cell(s) to set
  * &nbsp;&nbsp;&nbsp;default: 1
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ *
+ * <pre>-use-finder &lt;boolean&gt; (property: useFinder)
+ * &nbsp;&nbsp;&nbsp;If enabled, the value is set at the locations that the specified finder
+ * &nbsp;&nbsp;&nbsp;scheme determined.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-finder &lt;adams.data.spreadsheet.cellfinder.CellFinder&gt; (property: finder)
+ * &nbsp;&nbsp;&nbsp;The column finder to use for identifying cells.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.cellfinder.CellRange
  * </pre>
  * 
  * <pre>-value &lt;java.lang.String&gt; (property: value)
@@ -108,7 +127,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetSetCell
   extends AbstractInPlaceSpreadSheetTransformer {
@@ -121,6 +139,12 @@ public class SpreadSheetSetCell
 
   /** the column of the cell to obtain. */
   protected SpreadSheetColumnRange m_Column;
+
+  /** whether to use a cell finder instead. */
+  protected boolean m_UseFinder;
+
+  /** the finder to use. */
+  protected CellFinder m_Finder;
 
   /** the value to set. */
   protected String m_Value;
@@ -146,16 +170,24 @@ public class SpreadSheetSetCell
     super.defineOptions();
 
     m_OptionManager.add(
-	    "row", "row",
-	    new Range("1"));
+      "row", "row",
+      new Range("1"));
 
     m_OptionManager.add(
-	    "col", "column",
-	    new SpreadSheetColumnRange("1"));
+      "col", "column",
+      new SpreadSheetColumnRange("1"));
 
     m_OptionManager.add(
-	    "value", "value",
-	    "");
+      "use-finder", "useFinder",
+      false);
+
+    m_OptionManager.add(
+      "finder", "finder",
+      new adams.data.spreadsheet.cellfinder.CellRange());
+
+    m_OptionManager.add(
+      "value", "value",
+      "");
 
     m_OptionManager.add(
       "force-string", "forceString",
@@ -182,8 +214,13 @@ public class SpreadSheetSetCell
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "row", m_Row, "row: ");
-    result += QuickInfoHelper.toString(this, "column", m_Column, "/col: ");
+    if (m_UseFinder) {
+      result = QuickInfoHelper.toString(this, "finder", m_Finder, "finder: ");
+    }
+    else {
+      result = QuickInfoHelper.toString(this, "row", m_Row, "row: ");
+      result += QuickInfoHelper.toString(this, "column", m_Column, "/col: ");
+    }
     result += QuickInfoHelper.toString(this, "value", "'" + m_Value + "'", ", value: ");
     result += QuickInfoHelper.toString(this, "noCopy", m_NoCopy, "no copy", ", ");
     result += QuickInfoHelper.toString(this, "forceString", m_ForceString, "force string", ", ");
@@ -247,6 +284,66 @@ public class SpreadSheetSetCell
    */
   public String columnTipText() {
     return "The column(s) of the cell(s) to set";
+  }
+
+  /**
+   * Sets whether to the value is set at the locations that the specified
+   * finder scheme determined.
+   *
+   * @param value	true if to use cell finder
+   */
+  public void setUseFinder(boolean value) {
+    m_UseFinder = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to the value is set at the locations that the specified
+   * finder scheme determined.
+   *
+   * @return		true if to use cell finder
+   */
+  public boolean getUseFinder() {
+    return m_UseFinder;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useFinderTipText() {
+    return "If enabled, the value is set at the locations that the specified finder scheme determined.";
+  }
+
+  /**
+   * Sets the finder to use.
+   *
+   * @param value	the finder
+   */
+  public void setFinder(CellFinder value) {
+    m_Finder = value;
+    reset();
+  }
+
+  /**
+   * Returns the finder in use.
+   *
+   * @return		the finder
+   */
+  public CellFinder getFinder() {
+    return m_Finder;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String finderTipText() {
+    return "The column finder to use for identifying cells.";
   }
 
   /**
@@ -336,12 +433,14 @@ public class SpreadSheetSetCell
    */
   @Override
   protected String doExecute() {
-    String	result;
-    SpreadSheet	sheet;
-    Row		row;
-    Cell	cell;
-    int[]	rows;
-    int[]	cols;
+    String			result;
+    SpreadSheet			sheet;
+    Row				row;
+    Cell			cell;
+    int[]			rows;
+    int[]			cols;
+    Iterator<CellLocation> 	locs;
+    CellLocation		loc;
 
     result = null;
 
@@ -349,23 +448,88 @@ public class SpreadSheetSetCell
       sheet = ((SpreadSheet) m_InputToken.getPayload());
       if (!m_NoCopy)
 	sheet = sheet.getClone();
-      m_Row.setMax(sheet.getRowCount());
-      m_Column.setSpreadSheet(sheet);
 
-      rows = m_Row.getIntIndices();
-      cols = m_Column.getIntIndices();
-      if (rows.length == 0) {
-	result = "No row(s) selected? " + m_Row.getRange();
-	m_OutputToken = new Token(sheet);
-      }
-      else if (cols.length == 0) {
-	result = "No column(s) selected? " + m_Column.getRange();
+      if (m_UseFinder) {
+        locs = m_Finder.findCells(sheet);
+        while (locs.hasNext()) {
+          loc  = locs.next();
+	  row  = sheet.getRow(loc.getRow());
+	  cell = row.getCell(loc.getColumn());
+	  if (cell == null)
+	    cell = row.addCell(loc.getColumn());
+	  if (m_ForceString)
+	    cell.setContentAsString(m_Value);
+	  else
+	    cell.setContent(m_Value);
+	}
 	m_OutputToken = new Token(sheet);
       }
       else {
-	for (int r : rows) {
+	m_Row.setMax(sheet.getRowCount());
+	m_Column.setSpreadSheet(sheet);
+
+	rows = m_Row.getIntIndices();
+	cols = m_Column.getIntIndices();
+	if (rows.length == 0) {
+	  result = "No row(s) selected? " + m_Row.getRange();
+	  m_OutputToken = new Token(sheet);
+	}
+	else if (cols.length == 0) {
+	  result = "No column(s) selected? " + m_Column.getRange();
+	  m_OutputToken = new Token(sheet);
+	}
+	else {
+	  for (int r : rows) {
+	    for (int c : cols) {
+	      row = sheet.getRow(r);
+	      cell = row.getCell(c);
+	      if (cell == null)
+		cell = row.addCell(c);
+	      if (m_ForceString)
+		cell.setContentAsString(m_Value);
+	      else
+		cell.setContent(m_Value);
+	    }
+	  }
+	  m_OutputToken = new Token(sheet);
+	}
+      }
+    }
+    else if (m_InputToken.getPayload() instanceof Row) {
+      row = (Row) m_InputToken.getPayload();
+      if (!m_NoCopy)
+	row = row.getClone(row.getOwner());
+
+      if (m_UseFinder) {
+        if (m_Finder instanceof RowCellFinder) {
+          locs = ((RowCellFinder) m_Finder).findCells(row);
+	  while (locs.hasNext()) {
+	    loc  = locs.next();
+	    cell = row.getCell(loc.getColumn());
+	    if (cell == null)
+	      cell = row.addCell(loc.getColumn());
+	    if (m_ForceString)
+	      cell.setContentAsString(m_Value);
+	    else
+	      cell.setContent(m_Value);
+	  }
+	  m_OutputToken = new Token(row);
+	}
+	else {
+          result = "Finder cannot handle rows by themselves (does not implement " + Utils.classToString(RowCellFinder.class) + ")";
+	  m_OutputToken = new Token(row);
+	}
+      }
+      else {
+	m_Column.setSpreadSheet(row.getOwner());
+
+	cols = m_Column.getIntIndices();
+	if (cols.length == 0) {
+	  result = "No column(s) selected? " + m_Column.getRange();
+	  m_OutputToken = new Token(row);
+	}
+	else {
 	  for (int c : cols) {
-	    row = sheet.getRow(r);
 	    cell = row.getCell(c);
 	    if (cell == null)
 	      cell = row.addCell(c);
@@ -374,32 +538,8 @@ public class SpreadSheetSetCell
 	    else
 	      cell.setContent(m_Value);
 	  }
+	  m_OutputToken = new Token(row);
 	}
-	m_OutputToken = new Token(sheet);
-      }
-    }
-    else if (m_InputToken.getPayload() instanceof Row) {
-      row = (Row) m_InputToken.getPayload();
-      if (!m_NoCopy)
-	row = row.getClone(row.getOwner());
-      m_Column.setSpreadSheet(row.getOwner());
-
-      cols = m_Column.getIntIndices();
-      if (cols.length == 0) {
-	result = "No column(s) selected? " + m_Column.getRange();
-	m_OutputToken = new Token(row);
-      }
-      else {
-	for (int c : cols) {
-	  cell = row.getCell(c);
-	  if (cell == null)
-	    cell = row.addCell(c);
-	  if (m_ForceString)
-	    cell.setContentAsString(m_Value);
-	  else
-	    cell.setContent(m_Value);
-	}
-	m_OutputToken = new Token(row);
       }
     }
 
