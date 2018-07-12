@@ -265,6 +265,15 @@ public class PLS1AttributeEval extends ASEvaluation
   }
 
   /**
+   * Creates a new instance of a PLS algorrithm.
+   *
+   * @return		the instance
+   */
+  protected AbstractSingleClassPLS newModel() {
+    return new PLS1();
+  }
+
+  /**
    * Generates a attribute evaluator. Has to initialize all fields of the
    * evaluator that are not being set via options.
    *
@@ -275,7 +284,7 @@ public class PLS1AttributeEval extends ASEvaluation
   public void buildEvaluator(Instances instances) throws Exception {
     getCapabilities().testWithFail(instances);
 
-    m_Model = new PLS1();
+    m_Model = newModel();
 
     // user supplied options
     m_Model.setPreprocessingType(m_PreprocessingType);
