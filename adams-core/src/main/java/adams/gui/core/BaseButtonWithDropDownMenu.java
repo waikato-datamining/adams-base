@@ -15,7 +15,7 @@
 
 /*
  * BaseButtonWithDropDownMenu.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -48,20 +48,10 @@ public class BaseButtonWithDropDownMenu
   protected JPopupMenu m_Menu;
 
   /**
-   * Initializes the button.
+   * Initializes the button. Uses the "arrow-head-down.png" icon.
    */
   public BaseButtonWithDropDownMenu() {
-    super();
-    initialize();
-  }
-
-  /**
-   * Initializes the button, using the specified button text.
-   *
-   * @param text	the text for the button
-   */
-  public BaseButtonWithDropDownMenu(String text) {
-    super(text);
+    super(GUIHelper.getIcon("arrow-head-down.png"));
     initialize();
   }
 

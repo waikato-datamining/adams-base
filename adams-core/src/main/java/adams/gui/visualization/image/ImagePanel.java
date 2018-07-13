@@ -275,7 +275,8 @@ public class ImagePanel
 		m_Dragged          = false;
 		m_SelectionTopLeft = e.getPoint();
 	        m_SelectionTrace.clear();
-	        m_SelectionTrace.add(e.getPoint());
+		if (m_SelectionShapePainter.canAddTracePoint(PaintPanel.this, m_SelectionTrace, e.getPoint()))
+		  m_SelectionTrace.add(e.getPoint());
 	      }
 	    }
 	  }
