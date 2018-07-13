@@ -20,6 +20,7 @@
 
 package weka.attributeSelection;
 
+import adams.core.Range;
 import adams.data.instancesanalysis.pls.AbstractSingleClassPLS;
 import adams.data.instancesanalysis.pls.PreprocessingType;
 import weka.core.Instances;
@@ -43,6 +44,7 @@ public abstract class AbstractPLSAttributeEval extends ASEvaluation
 
   public enum LoadingsCalculations {
     USE_FIRST_COMPONENT,
+    COMBINE_COMPONENTS,
   }
 
   /** the underlying model. */
@@ -59,6 +61,9 @@ public abstract class AbstractPLSAttributeEval extends ASEvaluation
 
   /** for how to use the loadings. */
   protected LoadingsCalculations m_LoadingsCalculations = LoadingsCalculations.USE_FIRST_COMPONENT;
+
+  /** for user defined range of components used. */
+  protected Range m_ComponentRange = new Range(Range.ALL);
 
   /** the determined attribute ranking. */
   protected double[] m_Ranking;
@@ -80,6 +85,12 @@ public abstract class AbstractPLSAttributeEval extends ASEvaluation
 
     newVector.addElement(new Option("\tSet the number of components (default: 20)",
       "N", 1, "-N <int>"));
+
+    newVector.addElement(new Option("\tUsing first component or combine a range of components (default: first component)",
+      "combine", 0, "-combine"));
+
+    newVector.addElement(new Option("\tSet the range of components used (default: " + Range.ALL + ")",
+      "range", 1, "-range <String>"));
 
     return newVector.elements();
   }
@@ -109,6 +120,16 @@ public abstract class AbstractPLSAttributeEval extends ASEvaluation
     } else {
       setNumComponents(20);
     }
+
+    if (Utils.getFlag("combine", options))
+      setLoadingsCalculations(LoadingsCalculations.COMBINE_COMPONENTS);
+    else
+      setLoadingsCalculations(LoadingsCalculations.USE_FIRST_COMPONENT);
+
+    String componentRangeString = Utils.getOption("range", options);
+    if (componentRangeString.length() != 0) {
+      setComponentRange(new Range(componentRangeString));
+    }
   }
 
   /**
@@ -129,6 +150,11 @@ public abstract class AbstractPLSAttributeEval extends ASEvaluation
 
     result.add("-N");
     result.add("" + getNumComponents());
+
+    if (getLoadingsCalculations() == LoadingsCalculations.COMBINE_COMPONENTS) {
+      result.add("-combine -range");
+      result.add(getComponentRange().getRange());
+    }
 
     return result.toArray(new String[result.size()]);
   }
@@ -220,6 +246,34 @@ public abstract class AbstractPLSAttributeEval extends ASEvaluation
   }
 
   /**
+   * Sets the range of components to be used.
+   *
+   * @param value 	the range
+   */
+  public void setComponentRange(Range value) {
+    m_ComponentRange = value;
+  }
+
+  /**
+   * Returns the range of components to be used.
+   *
+   * @return 		the type
+   */
+  public Range getComponentRange() {
+    return m_ComponentRange;
+  }
+
+  /**
+   * Returns the tip text for this property
+   *
+   * @return 		tip text for this property suitable for displaying in the
+   *         		explorer/experimenter gui
+   */
+  public String componentRangeTipText() {
+    return "The range of components to be used.";
+  }
+
+  /**
    * sets the maximum number of attributes to use.
    *
    * @param value 	the maximum number of attributes
@@ -279,15 +333,25 @@ public abstract class AbstractPLSAttributeEval extends ASEvaluation
     Matrix coefficientsMatrix = m_Model.getLoadings();
     double[] coefficients = new double[coefficientsMatrix.getRowDimension()];
 
+    m_ComponentRange.setMax(m_NumComponents);
+    int[] components = m_ComponentRange.getIntIndices();
+
     switch (m_LoadingsCalculations) {
       case USE_FIRST_COMPONENT:
-	for (int i = 0; i < coefficients.length; i++)
-	  coefficients[i] = Math.abs(coefficientsMatrix.get(i, 0));
-	Utils.normalize(coefficients);
-	break;
+        for (int i = 0; i < coefficients.length; i++)
+          coefficients[i] = Math.abs(coefficientsMatrix.get(i, 0));
+        Utils.normalize(coefficients);
+        break;
+
+      case COMBINE_COMPONENTS:
+        for (int i = 0; i < coefficients.length; i++)
+          for (int j = 0; j < components.length; j++)
+            coefficients[i] += Math.abs(coefficientsMatrix.get(i, components[j]));
+        Utils.normalize(coefficients);
+        break;
 
       default:
-	throw new IllegalStateException("Unhandled loadings calculations: " + m_LoadingsCalculations);
+        throw new IllegalStateException("Unhandled loadings calculations: " + m_LoadingsCalculations);
     }
 
     m_Ranking = coefficients;
