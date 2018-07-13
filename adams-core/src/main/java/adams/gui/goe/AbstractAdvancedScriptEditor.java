@@ -208,7 +208,7 @@ public class AbstractAdvancedScriptEditor
     panelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelBottom.add(panelButtonsLeft, BorderLayout.WEST);
     
-    buttonOptions = new BaseButtonWithDropDownMenu("...");
+    buttonOptions = new BaseButtonWithDropDownMenu();
     buttonOptions.setDropDownMenu(createPopupMenu());
     panelButtonsLeft.add(buttonOptions);
     

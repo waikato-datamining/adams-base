@@ -310,7 +310,7 @@ public class GenericObjectEditor
 	}
       });
 
-      m_ButtonCopyPaste = new JButton("...");
+      m_ButtonCopyPaste = new JButton(GUIHelper.getIcon("arrow-head-down.png"));
       m_ButtonCopyPaste.setToolTipText("Displays copy/paste/favorites action menu");
       m_ButtonCopyPaste.addActionListener((ActionEvent e) -> {
 	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_ButtonCopyPaste);

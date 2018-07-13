@@ -429,7 +429,7 @@ public class MultiPagePane
     m_ButtonRemoveAll.addActionListener((ActionEvent e) -> checkedRemoveAllPages());
     m_PanelListButtons.add(m_ButtonRemoveAll);
 
-    m_ButtonAction = new BaseButtonWithDropDownMenu("...");
+    m_ButtonAction = new BaseButtonWithDropDownMenu();
     m_ButtonAction.setVisible(false);
     m_PanelListButtons.add(m_ButtonAction);
 
