@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LocatedObject.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -66,7 +66,10 @@ public class LocatedObject
   protected int m_Height;
 
   /** the actual rectangle. */
-  protected Rectangle m_Actual;
+  protected Rectangle m_ActualRectangle;
+
+  /** the actual polygon. */
+  protected Polygon m_ActualPolygon;
 
   /** additional meta-data. */
   protected Map<String,Object> m_MetaData;
@@ -101,7 +104,8 @@ public class LocatedObject
     m_Width    = width;
     m_Height   = height;
     m_MetaData = (metaData == null) ? new HashMap<>() : metaData;
-    m_Actual   = null;
+    m_ActualRectangle = null;
+    m_ActualPolygon   = null;
   }
 
   /**
@@ -236,10 +240,21 @@ public class LocatedObject
    *
    * @return		the actual size rectangle
    */
-  public Rectangle getActual() {
-    if (m_Actual == null)
-      m_Actual = getRectangle();
-    return m_Actual;
+  public Rectangle getActualRectangle() {
+    if (m_ActualRectangle == null)
+      m_ActualRectangle = getRectangle();
+    return m_ActualRectangle;
+  }
+
+  /**
+   * Returns the actual size polygon.
+   *
+   * @return		the actual size polygon
+   */
+  public Polygon getActualPolygon() {
+    if (m_ActualPolygon == null)
+      m_ActualPolygon = getPolygon();
+    return m_ActualPolygon;
   }
 
   /**
@@ -248,7 +263,8 @@ public class LocatedObject
    * @param scale	the scale factor
    */
   public void scale(double scale) {
-    m_Actual = getRectangle(scale);
+    m_ActualRectangle = getRectangle(scale);
+    m_ActualPolygon   = getPolygon(scale);
   }
 
   /**
@@ -350,15 +366,33 @@ public class LocatedObject
    * @return		the polygon, null if no/incorrect data stored
    */
   public Polygon getPolygon() {
+    return getPolygon(1.0);
+  }
+
+  /**
+   * Returns the polygon, if possible.
+   *
+   * @param scale 	the scale to use
+   * @return		the polygon, null if no/incorrect data stored
+   */
+  public Polygon getPolygon(double scale) {
     int[]	x;
     int[]	y;
+    int		i;
 
     x = getPolygonX();
     y = getPolygonY();
     if ((x.length == 0) || (x.length != y.length))
       return null;
-    else
-      return new Polygon(x, y, x.length);
+
+    if (scale != 1.0) {
+      for (i = 0; i < x.length; i++) {
+        x[i] = (int) (x[i] * scale);
+        y[i] = (int) (y[i] * scale);
+      }
+    }
+
+    return new Polygon(x, y, x.length);
   }
 
   /**
