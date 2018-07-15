@@ -456,6 +456,7 @@ public class ImageAnnotator
       boolean	hit;
       Report	report;
       double	actual;
+      boolean   contained;
 
       // resized?
       actual = m_PanelImage.calcActualScale(m_PanelImage.getScale());
@@ -467,7 +468,11 @@ public class ImageAnnotator
       hit    = false;
       report = m_PanelImage.getAdditionalProperties();
       for (LocatedObject obj: m_Objects) {
-	if (obj.getActual().contains(e.getPosition())) {
+        if (obj.hasPolygon())
+          contained = obj.getActualPolygon().contains(e.getPosition());
+        else
+          contained = obj.getActualRectangle().contains(e.getPosition());
+	if (contained) {
 	  hit   = true;
 	  field = new Field(m_Prefix + obj.getIndexString() + m_Suffix, DataType.STRING);
 	  if (m_CurrentLabel == null)
