@@ -57,12 +57,10 @@ public abstract class AbstractActorProcessor
     super.initialize();
     
     m_Errors = new ArrayList<>();
-  };
+  }
   
   /**
-   * Resets the filter.
-   * Derived classes must call this method in set-methods of parameters to
-   * assure the invalidation of previously generated data.
+   * Resets the scheme.
    */
   @Override
   public void reset() {
