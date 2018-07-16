@@ -13,14 +13,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlattenStructureTest.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
@@ -29,12 +27,13 @@ import adams.flow.core.Actor;
 import adams.flow.source.Start;
 import adams.parser.BooleanExpressionText;
 import adams.parser.MathematicalExpressionText;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the FlattenStructure processor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlattenStructureTest
   extends AbstractActorProcessorTestCase {
@@ -140,8 +139,8 @@ public class FlattenStructureTest
    * @return		the setups
    */
   @Override
-  protected AbstractActorProcessor[] getRegressionSetups() {
-    return new AbstractActorProcessor[]{
+  protected ActorProcessor[] getRegressionSetups() {
+    return new ActorProcessor[]{
 	new FlattenStructure()
     };
   }

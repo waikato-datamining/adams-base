@@ -47,7 +47,7 @@ import adams.flow.control.Flow;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
-import adams.flow.processor.AbstractActorProcessor;
+import adams.flow.processor.ActorProcessor;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
@@ -1292,7 +1292,7 @@ public class FlowPanel
    *
    * @param processor	the processor to use, null if to prompt user
    */
-  public void processActorsPrompt(AbstractActorProcessor processor) {
+  public void processActorsPrompt(ActorProcessor processor) {
     boolean 	selected;
     int		retVal;
 
@@ -1321,7 +1321,7 @@ public class FlowPanel
    *
    * @param processor	the processor to use, null if to prompt user
    */
-  public void processActors(AbstractActorProcessor processor) {
+  public void processActors(ActorProcessor processor) {
     getTree().getOperations().processActor(null, processor, () -> showNotification("Actors processed!", false));
   }
 
@@ -1331,7 +1331,7 @@ public class FlowPanel
    *
    * @param processor	the processor to use, null if to prompt user
    */
-  public void processSelectedActor(AbstractActorProcessor processor) {
+  public void processSelectedActor(ActorProcessor processor) {
     TreePath	path;
     Node	node;
 

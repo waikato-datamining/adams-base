@@ -56,7 +56,7 @@ import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
-import adams.flow.processor.AbstractActorProcessor;
+import adams.flow.processor.ActorProcessor;
 import adams.flow.processor.GraphicalOutputProducingProcessor;
 import adams.flow.processor.ModifyingProcessor;
 import adams.flow.processor.MultiProcessor;
@@ -1282,7 +1282,7 @@ public class TreeOperations
         m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentFrame());
       m_DialogProcessActors.setModalityType(ModalityType.DOCUMENT_MODAL);
       m_DialogProcessActors.getGOEEditor().setCanChangeClassInDialog(true);
-      m_DialogProcessActors.getGOEEditor().setClassType(AbstractActorProcessor.class);
+      m_DialogProcessActors.getGOEEditor().setClassType(ActorProcessor.class);
       m_DialogProcessActors.setCurrent(new MultiProcessor());
     }
     if (title == null)
@@ -1298,7 +1298,7 @@ public class TreeOperations
    * @param path	the path of the actor, if null the root actor is used
    * @param processor	the processor to use, null if to prompt user
    */
-  public void processActor(TreePath path, AbstractActorProcessor processor) {
+  public void processActor(TreePath path, ActorProcessor processor) {
     processActor(path, processor, null);
   }
 
@@ -1310,9 +1310,9 @@ public class TreeOperations
    * @param processor	the processor to use, null if to prompt user
    * @param after 	runnable to execute after actors have been processed, null for none
    */
-  public void processActor(TreePath path, AbstractActorProcessor processor, final Runnable after) {
+  public void processActor(TreePath path, ActorProcessor processor, final Runnable after) {
     Runnable				runnable;
-    final AbstractActorProcessor 	fProcessor;
+    final ActorProcessor 		fProcessor;
     final TreePath			fPath;
     Node				node;
     Actor				flow;
@@ -1328,7 +1328,7 @@ public class TreeOperations
       if (procDialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
 	return;
 
-      processor = (AbstractActorProcessor) procDialog.getCurrent();
+      processor = (ActorProcessor) procDialog.getCurrent();
     }
 
     // selected actor or full flow?

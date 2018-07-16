@@ -13,14 +13,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoveBreakpointsTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.env.Environment;
@@ -37,6 +35,8 @@ import adams.flow.standalone.CallableActors;
 import adams.flow.standalone.DeleteFile;
 import adams.flow.transformer.Convert;
 import adams.test.TmpDirectory;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the RemoveBreakpoints processor.
@@ -136,8 +136,8 @@ public class RemoveBreakpointsTest
    * @return		the setups
    */
   @Override
-  protected AbstractActorProcessor[] getRegressionSetups() {
-    return new AbstractActorProcessor[]{
+  protected ActorProcessor[] getRegressionSetups() {
+    return new ActorProcessor[]{
 	new RemoveBreakpoints()
     };
   }

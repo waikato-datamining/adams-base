@@ -13,18 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * UpdateCallableActorNameTest.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the UpdateCallableActorName processor.
@@ -113,7 +113,7 @@ public class UpdateCallableActorNameTest
    * @return		the setups
    */
   @Override
-  protected AbstractActorProcessor[] getRegressionSetups() {
+  protected ActorProcessor[] getRegressionSetups() {
     UpdateCallableActorName[]	result;
 
     result    = new UpdateCallableActorName[2];

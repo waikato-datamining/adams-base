@@ -15,7 +15,7 @@
 
 /*
  * MultiProcessor.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.processor;
@@ -47,7 +47,6 @@ import adams.flow.core.Actor;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MultiProcessor
   extends AbstractModifyingProcessor 
@@ -57,7 +56,7 @@ public class MultiProcessor
   private static final long serialVersionUID = 916259679452752997L;
 
   /** the processors. */
-  protected AbstractActorProcessor[] m_Processors;
+  protected ActorProcessor[] m_Processors;
   
   /** the warnings. */
   protected StringBuilder m_Warnings;
@@ -81,7 +80,7 @@ public class MultiProcessor
 
     m_OptionManager.add(
 	    "processor", "subProcessors",
-	    new AbstractActorProcessor[0]);
+	    new ActorProcessor[0]);
   }
 
   /**
@@ -89,7 +88,7 @@ public class MultiProcessor
    *
    * @param value	the processors to use
    */
-  public void setSubProcessors(AbstractActorProcessor[] value) {
+  public void setSubProcessors(ActorProcessor[] value) {
     if (value != null) {
       m_Processors = value;
       reset();
@@ -105,7 +104,7 @@ public class MultiProcessor
    *
    * @return		the processors
    */
-  public AbstractActorProcessor[] getSubProcessors() {
+  public ActorProcessor[] getSubProcessors() {
     return m_Processors;
   }
 
@@ -129,7 +128,7 @@ public class MultiProcessor
     int				i;
     Actor			input;
     Actor			output;
-    AbstractActorProcessor	processor;
+    ActorProcessor		processor;
     ModifyingProcessor		modifying;
     CheckProcessor		check;
 

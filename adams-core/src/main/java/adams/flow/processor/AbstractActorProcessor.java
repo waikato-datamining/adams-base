@@ -15,17 +15,13 @@
 
 /*
  * AbstractActorProcessor.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.processor;
 
-import adams.core.ClassLister;
-import adams.core.ShallowCopySupporter;
 import adams.core.Utils;
-import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
-import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
 
@@ -42,17 +38,16 @@ import java.util.logging.Level;
  * the previously generated data.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractActorProcessor
   extends AbstractOptionHandler
-  implements Comparable, ShallowCopySupporter<AbstractActorProcessor> {
+  implements ActorProcessor {
 
   /** for serialization. */
   private static final long serialVersionUID = 3610605513320220903L;
 
   /** for collecting errors. */
-  protected ArrayList<String> m_Errors;
+  protected List<String> m_Errors;
   
   /**
    * Initializes the members.
@@ -61,7 +56,7 @@ public abstract class AbstractActorProcessor
   protected void initialize() {
     super.initialize();
     
-    m_Errors = new ArrayList<String>();
+    m_Errors = new ArrayList<>();
   };
   
   /**
@@ -168,7 +163,7 @@ public abstract class AbstractActorProcessor
    * @throws ClassCastException 	if the specified object's type prevents it
    *         				from being compared to this object.
    */
-  public int compareTo(Object o) {
+  public int compareTo(ActorProcessor o) {
     if (o == null)
       return 1;
 
@@ -185,7 +180,7 @@ public abstract class AbstractActorProcessor
    */
   @Override
   public boolean equals(Object o) {
-    return (compareTo(o) == 0);
+    return (o instanceof ActorProcessor) && (compareTo((ActorProcessor) o) == 0);
   }
 
   /**
@@ -193,7 +188,7 @@ public abstract class AbstractActorProcessor
    *
    * @return		the shallow copy
    */
-  public AbstractActorProcessor shallowCopy() {
+  public ActorProcessor shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -203,50 +198,7 @@ public abstract class AbstractActorProcessor
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  public AbstractActorProcessor shallowCopy(boolean expand) {
-    return (AbstractActorProcessor) OptionUtils.shallowCopy(this, expand);
-  }
-
-  /**
-   * Returns a list with classnames of processors.
-   *
-   * @return		the processor classnames
-   */
-  public static String[] getProcessors() {
-    return ClassLister.getSingleton().getClassnames(AbstractActorProcessor.class);
-  }
-
-  /**
-   * Instantiates the processor with the given options.
-   *
-   * @param classname	the classname of the processor to instantiate
-   * @param options	the options for the processor
-   * @return		the instantiated processor or null if an error occurred
-   */
-  public static AbstractActorProcessor forName(String classname, String[] options) {
-    AbstractActorProcessor	result;
-
-    try {
-      result = (AbstractActorProcessor) OptionUtils.forName(AbstractActorProcessor.class, classname, options);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
-   * Instantiates the filter from the given commandline
-   * (i.e., classname and optional options).
-   *
-   * @param cmdline	the classname (and optional options) of the
-   * 			filter to instantiate
-   * @return		the instantiated filter
-   * 			or null if an error occurred
-   */
-  public static AbstractActorProcessor forCommandLine(String cmdline) {
-    return (AbstractActorProcessor) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+  public ActorProcessor shallowCopy(boolean expand) {
+    return (ActorProcessor) OptionUtils.shallowCopy(this, expand);
   }
 }

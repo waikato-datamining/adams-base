@@ -408,7 +408,7 @@ adams.flow.container.AbstractContainer=\
   adams.flow.container
 
 # the actor processors
-adams.flow.processor.AbstractActorProcessor=\
+adams.flow.processor.ActorProcessor=\
   adams.flow.processor
 
 # the check processors

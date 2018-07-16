@@ -47,7 +47,7 @@ import adams.flow.control.SubProcess;
 import adams.flow.core.actorfilter.AcceptAll;
 import adams.flow.core.actorfilter.ActorFilter;
 import adams.flow.core.actorfilter.ExactMatch;
-import adams.flow.processor.AbstractActorProcessor;
+import adams.flow.processor.ActorProcessor;
 import adams.flow.processor.CheckProcessor;
 import adams.flow.processor.CheckStorageUsage;
 import adams.flow.processor.CheckVariableUsage;
@@ -1437,17 +1437,17 @@ public class ActorUtils {
     Actor			result;
     MultiProcessor		processor;
     String[]			names;
-    AbstractActorProcessor[]	procs;
+    ActorProcessor[]		procs;
     int				i;
 
     result = null;
 
     processor = new MultiProcessor();
     names     = ClassLister.getSingleton().getClassnames(CleanUpProcessor.class);
-    procs     = new AbstractActorProcessor[names.length];
+    procs     = new ActorProcessor[names.length];
     for (i = 0; i < names.length; i++) {
       try {
-	procs[i] = (AbstractActorProcessor) Class.forName(names[i]).newInstance();
+	procs[i] = (ActorProcessor) Class.forName(names[i]).newInstance();
       }
       catch (Exception e) {
 	LOGGER.log(Level.SEVERE,
@@ -1486,12 +1486,12 @@ public class ActorUtils {
    * @see		CheckProcessor
    */
   public static String checkFlow(Actor actor, boolean variables, boolean storage, File file) {
-    String				result;
-    MultiProcessor			processor;
-    String[]				names;
-    List<AbstractActorProcessor>	procs;
-    AbstractActorProcessor		proc;
-    int					i;
+    String			result;
+    MultiProcessor		processor;
+    String[]			names;
+    List<ActorProcessor>	procs;
+    ActorProcessor		proc;
+    int				i;
 
     // general check
     actor = actor.shallowCopy();
@@ -1506,7 +1506,7 @@ public class ActorUtils {
       procs     = new ArrayList<>();
       for (i = 0; i < names.length; i++) {
 	try {
-	  proc = (AbstractActorProcessor) Class.forName(names[i]).newInstance();
+	  proc = (ActorProcessor) Class.forName(names[i]).newInstance();
 	  if (!variables && (proc instanceof CheckVariableUsage))
 	    continue;
 	  if (!storage && (proc instanceof CheckStorageUsage))
@@ -1519,7 +1519,7 @@ public class ActorUtils {
 	  return null;
 	}
       }
-      processor.setSubProcessors(procs.toArray(new AbstractActorProcessor[procs.size()]));
+      processor.setSubProcessors(procs.toArray(new ActorProcessor[0]));
       processor.process(actor);
       result = processor.getWarnings();
     }

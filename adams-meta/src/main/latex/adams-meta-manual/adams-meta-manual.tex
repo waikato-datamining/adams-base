@@ -45,7 +45,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2009-2017} &
+		\parbox[c][2cm]{2cm}{\copyright 2009-2018} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -121,6 +121,8 @@ Below are other actors that haven't been covered by the previous chapters:
   \item \textit{FlowFileReader} -- reads a flow file from disk and forwards it.
   \item \textit{FlowFileWriter} -- writes the incoming flow to disk.
   \item \textit{FlowDisplay} -- displays an actor or flow.
+  \item \textit{ProcessActor} -- applies an \textit{ActorProcessor} to the
+  incoming flow (eg listing variables, updating variable names).
 \end{tight_itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

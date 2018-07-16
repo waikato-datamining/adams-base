@@ -13,14 +13,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiProcessorTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.env.Environment;
@@ -36,6 +34,8 @@ import adams.flow.standalone.CallableActors;
 import adams.flow.standalone.DeleteFile;
 import adams.flow.transformer.Convert;
 import adams.test.TmpDirectory;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the MultiProcessor processor.
@@ -129,12 +129,12 @@ public class MultiProcessorTest
    * @return		the setups
    */
   @Override
-  protected AbstractActorProcessor[] getRegressionSetups() {
+  protected ActorProcessor[] getRegressionSetups() {
     MultiProcessor[]	result;
 
     result    = new MultiProcessor[1];
     result[0] = new MultiProcessor();
-    result[0].setSubProcessors(new AbstractActorProcessor[]{
+    result[0].setSubProcessors(new ActorProcessor[]{
 	new RemoveDisabledActors(),
 	new RemoveDisabledActors()
     });

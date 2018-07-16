@@ -15,24 +15,23 @@
 
 /*
  * UpdateVariableNameTest.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.processor;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.data.io.input.SingleStringTextReader;
 import adams.env.Environment;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for UpdateVariableName processor.
  *
  * @author fracpete
- * @version $Revision$
  */
 public class UpdateVariableNameTest
   extends AbstractActorProcessorTestCase {
@@ -159,7 +158,7 @@ public class UpdateVariableNameTest
    * @return		the setups
    */
   @Override
-  protected AbstractActorProcessor[] getRegressionSetups() {
+  protected ActorProcessor[] getRegressionSetups() {
     UpdateVariableName[]	result;
 
     result    = new UpdateVariableName[1];

@@ -59,7 +59,6 @@ import java.io.File;
  * </ul>
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractActorProcessorTestCase
   extends AbstractDatabaseTestCase {
@@ -141,7 +140,7 @@ public abstract class AbstractActorProcessorTestCase
    *
    * @return		the setups
    */
-  protected abstract AbstractActorProcessor[] getRegressionSetups();
+  protected abstract ActorProcessor[] getRegressionSetups();
 
   /**
    * Returns the ignored line indices to use in the regression test.
@@ -157,7 +156,7 @@ public abstract class AbstractActorProcessorTestCase
    */
   public void testRegression() {
     int				i;
-    AbstractActorProcessor[]	setups;
+    ActorProcessor[]		setups;
     Actor			input;
     Actor			inputBak;
     Actor			output;

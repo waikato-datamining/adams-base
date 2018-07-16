@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GraphicalOutputProducingProcessor.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -25,9 +25,9 @@ import java.awt.Component;
  * Interface for processors that can generate graphical output.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface GraphicalOutputProducingProcessor {
+public interface GraphicalOutputProducingProcessor
+  extends ActorProcessor {
 
   /**
    * Returns whether graphical output was generated.

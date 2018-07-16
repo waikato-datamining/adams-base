@@ -14,32 +14,26 @@
  */
 
 /*
- * InteractiveProcessor.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * ListingProcessor.java
+ * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
+
 package adams.flow.processor;
 
+import java.util.List;
+
 /**
- * Interface for processors that interact with the user.
- * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * Processors that generate a list.
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface InteractiveProcessor
+public interface ListingProcessor
   extends ActorProcessor {
 
   /**
-   * Checks whether interaction can happen with the given object.
-   * 
-   * @param obj		the current object that the traversal came across
-   * @return		true if interaction should occur for this object
+   * Returns the list.
+   *
+   * @return		the list
    */
-  public boolean canInteract(Object obj);
-  
-  /**
-   * Does the actual interaction with the user on the given object.
-   * 
-   * @param obj		the object to use for interaction
-   * @return		true if successful interaction
-   */
-  public boolean doInteract(Object obj);
+  public List<String> getList();
 }

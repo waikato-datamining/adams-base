@@ -45,7 +45,7 @@ import java.util.List;
  */
 public abstract class AbstractListingProcessor
   extends AbstractActorProcessor 
-  implements GraphicalOutputProducingProcessor {
+  implements GraphicalOutputProducingProcessor, ListingProcessor {
 
   /** for serialization. */
   private static final long serialVersionUID = 5159872442351040225L;
