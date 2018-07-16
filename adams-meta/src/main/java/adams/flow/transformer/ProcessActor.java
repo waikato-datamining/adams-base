@@ -91,6 +91,16 @@ public class ProcessActor
   }
 
   /**
+   * Resets the object.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_Component = null;
+  }
+
+  /**
    * Sets the processor to use.
    *
    * @param value	the processor
