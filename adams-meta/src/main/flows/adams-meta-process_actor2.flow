@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2018-07-16 12:22:24
+# Date: 2018-07-16 12:38:38
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-meta
@@ -12,4 +12,4 @@ adams.flow.control.Flow -annotation "Loads a flow and lists the command-lines of
  adams.flow.transformer.ProcessActor -processor "adams.flow.processor.ListObjectCommandlines -classname adams.flow.transformer.AbstractTransformer"
  adams.flow.control.ContainerValuePicker -value List -switch-outputs true
  adams.flow.transformer.StringJoin -glue \n
- adams.flow.sink.Display -name Variables -short-title true -writer adams.data.io.output.NullWriter
+ adams.flow.sink.Display -name Command-lines -short-title true -writer adams.data.io.output.NullWriter
