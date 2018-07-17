@@ -20,6 +20,8 @@
 
 package adams.data.instancesanalysis.pls;
 
+import com.github.waikatodatamining.matrix.core.MatrixFactory;
+
 /**
  * Helper class for the matrix-algorithm library.
  *
@@ -65,6 +67,6 @@ public class MatrixHelper
    * @return		the converted matrix
    */
   public static com.github.waikatodatamining.matrix.core.Matrix wekaToMatrixAlgo(weka.core.matrix.Matrix weka) {
-    return new com.github.waikatodatamining.matrix.core.Matrix(weka.getArray());
+    return MatrixFactory.fromRaw(weka.getArray());
   }
 }
