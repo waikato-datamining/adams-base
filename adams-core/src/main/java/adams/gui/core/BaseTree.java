@@ -15,7 +15,7 @@
 
 /*
  * BaseTree.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -34,11 +34,10 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- * A JTree ehanced with a few useful methods.
+ * A JTree enhanced with a few useful methods.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @author  Addison-Wesley
- * @version $Revision$
  */
 public class BaseTree
   extends JTree {
@@ -127,6 +126,17 @@ public class BaseTree
   }
 
   /**
+   * Expands all nodes in the tree up to the specified depth.
+   *
+   * @param depth 	the maximum expansion depth (root = 0)
+   */
+  public void expand(int depth) {
+    TreeNode root = (TreeNode) getModel().getRoot();
+    if (root != null)
+      toggleAll(new TreePath(root), true, 0, depth);
+  }
+
+  /**
    * Collapses the specified node.
    *
    * @param node	the node to collapse
@@ -178,14 +188,29 @@ public class BaseTree
    * @param expand	whether to expand or collapse
    */
   protected void toggleAll(TreePath parent, boolean expand) {
+    toggleAll(parent, expand, 0, -1);
+  }
+
+  /**
+   * Performs the expand/collapse recursively.
+   *
+   * @param parent	the parent path
+   * @param expand	whether to expand or collapse
+   * @param currDepth	the current depth
+   * @param maxDepth	the maximum depth, -1 for infinity
+   */
+  protected void toggleAll(TreePath parent, boolean expand, int currDepth, int maxDepth) {
     TreeNode 	node;
     int		i;
     TreeNode	child;
+    boolean	deeper;
 
     node = (TreeNode) parent.getLastPathComponent();
     for (i = 0; i < node.getChildCount(); i++) {
       child = node.getChildAt(i);
-      toggleAll(parent.pathByAddingChild(child), expand);
+      deeper = (maxDepth == -1) || (currDepth < maxDepth);
+      if (deeper)
+	toggleAll(parent.pathByAddingChild(child), expand, currDepth + 1, maxDepth);
     }
 
     if (expand)
