@@ -592,7 +592,7 @@ public class GenericObjectEditor
      */
     public void setReadOnly(boolean value) {
       m_ButtonOK.setEnabled(!value);
-      m_Tree.setEnabled(!value);
+      m_PanelTree.setReadOnly(value);
     }
 
     /**

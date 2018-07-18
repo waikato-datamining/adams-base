@@ -308,4 +308,25 @@ public class GenericObjectEditorClassTreePanel
 	  && ((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
     }
   }
+
+  /**
+   * Sets the readonly state.
+   *
+   * @param value	true if readonly
+   */
+  public void setReadOnly(boolean value) {
+    m_Tree.setEditable(!value);
+    m_TextSearch.setEditable(!value);
+    m_CheckBoxFilter.setEnabled(!value);
+    m_CheckBoxStrict.setEnabled(!value);
+  }
+
+  /**
+   * Returns the readonly state.
+   *
+   * @return		true if readonly
+   */
+  public boolean isReadOnly() {
+    return m_TextSearch.isEditable();
+  }
 }
