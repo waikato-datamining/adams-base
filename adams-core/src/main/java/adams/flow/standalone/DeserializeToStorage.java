@@ -15,22 +15,30 @@
 
 /*
  * DeserializeToStorage.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseKeyValuePair;
 import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.input.SerializedObjectReader;
+import adams.flow.control.Storage;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUpdater;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
- * Deserializes a model from a file with the specified object reader and stores it directly in storage.
+ * Deserializes a model from a file with the specified object reader and stores it directly in storage.<br>
+ * It is also possible to define multiple storage name &#47; file name pairs, to make the deserialization of large amounts of files more efficient.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -69,7 +77,7 @@ import adams.flow.control.StorageUpdater;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-mode-file &lt;adams.core.io.PlaceholderFile&gt; (property: modelFile)
+ * <pre>-model-file &lt;adams.core.io.PlaceholderFile&gt; (property: modelFile)
  * &nbsp;&nbsp;&nbsp;The file to deserialize and put into storage.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
@@ -88,6 +96,11 @@ import adams.flow.control.StorageUpdater;
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name to store the model under.
  * &nbsp;&nbsp;&nbsp;default: storage
+ * </pre>
+ *
+ * <pre>-storage-file-pair &lt;adams.core.base.BaseKeyValuePair&gt; [-storage-file-pair ...] (property: storageFilePairs)
+ * &nbsp;&nbsp;&nbsp;The pairs of storage name and file name.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  <!-- options-end -->
@@ -112,6 +125,9 @@ public class DeserializeToStorage
   /** the storage name to store the model under. */
   protected StorageName m_StorageName;
 
+  /** the storage/file pairs. */
+  protected List<BaseKeyValuePair> m_StorageFilePairs;
+
   /**
    * Returns a string describing the object.
    *
@@ -119,7 +135,10 @@ public class DeserializeToStorage
    */
   @Override
   public String globalInfo() {
-    return "Deserializes a model from a file with the specified object reader and stores it directly in storage.";
+    return "Deserializes a model from a file with the specified object reader "
+      + "and stores it directly in storage.\n"
+      + "It is also possible to define multiple storage name / file name pairs, "
+      + "to make the deserialization of large amounts of files more efficient.";
   }
 
   /**
@@ -130,7 +149,7 @@ public class DeserializeToStorage
     super.defineOptions();
 
     m_OptionManager.add(
-      "mode-file", "modelFile",
+      "model-file", "modelFile",
       new PlaceholderFile());
 
     m_OptionManager.add(
@@ -144,6 +163,20 @@ public class DeserializeToStorage
     m_OptionManager.add(
       "storage-name", "storageName",
       new StorageName());
+
+    m_OptionManager.add(
+      "storage-file-pair", "storageFilePairs",
+      new BaseKeyValuePair[0]);
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_StorageFilePairs = new ArrayList<>();
   }
 
   /**
@@ -263,6 +296,46 @@ public class DeserializeToStorage
   }
 
   /**
+   * Adds the variable name/value pair.
+   *
+   * @param value	the pair to add
+   */
+  public void addStorageFilePair(BaseKeyValuePair value) {
+    m_StorageFilePairs.add(value);
+    reset();
+  }
+
+  /**
+   * Sets the storage name / file name pairs.
+   *
+   * @param value	the pairs
+   */
+  public void setStorageFilePairs(BaseKeyValuePair[] value) {
+    m_StorageFilePairs.clear();
+    m_StorageFilePairs.addAll(Arrays.asList(value));
+    reset();
+  }
+
+  /**
+   * Returns the pairs of storage name / file name.
+   *
+   * @return		the pairs
+   */
+  public BaseKeyValuePair[] getStorageFilePairs() {
+    return m_StorageFilePairs.toArray(new BaseKeyValuePair[0]);
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String storageFilePairsTipText() {
+    return "The pairs of storage name and file name.";
+  }
+
+  /**
    * Returns whether storage items are being updated.
    *
    * @return		true if storage items are updated
@@ -287,6 +360,65 @@ public class DeserializeToStorage
     if (value != null)
       result += value;
     result += QuickInfoHelper.toString(this, "storageName", m_StorageName, ", storage: ");
+    result += QuickInfoHelper.toString(this, "storageFilePairs", "" + m_StorageFilePairs.size(), ", pairs: ");
+
+    return result;
+  }
+
+  /**
+   * Initializes the item for flow execution.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  public String setUp() {
+    String		result;
+    int			i;
+    BaseKeyValuePair	pair;
+
+    result = super.setUp();
+
+    if (result == null) {
+      for (i = 0; i < m_StorageFilePairs.size(); i++) {
+        pair = m_StorageFilePairs.get(i);
+        if (!Storage.isValidName(pair.getPairKey())) {
+          result = "Storage name of pair #" + (i+1) + " is not valid: " + pair.getPairKey();
+          break;
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Reads the file and stores the object in storage.
+   *
+   * @param file	the file to read
+   * @param name	the storage name to use
+   * @return		null if successful, otherwise error message
+   */
+  protected String read(PlaceholderFile file, StorageName name) {
+    String		result;
+    Object		obj;
+
+    result = null;
+
+    try {
+      obj = m_Reader.read(file);
+      if (obj == null) {
+	result = "Failed to read model from: " + file;
+      }
+      else {
+	if (m_Cache.isEmpty())
+	  getStorageHandler().getStorage().put(name, obj);
+	else
+	  getStorageHandler().getStorage().put(m_Cache, name, obj);
+      }
+    }
+    catch (Exception e) {
+      result = handleException("Failed to deserialize model: " + file, e);
+    }
 
     return result;
   }
@@ -298,25 +430,42 @@ public class DeserializeToStorage
    */
   @Override
   protected String doExecute() {
-    String	result;
-    Object	obj;
+    String		result;
+    PlaceholderFile	file;
+    StorageName		name;
+    MessageCollection	errors;
+    String		msg;
+    int			i;
 
     result = null;
 
-    try {
-      obj = m_Reader.read(m_ModelFile);
-      if (obj == null) {
-	result = "Failed to read model from: " + m_ModelFile;
-      }
-      else {
-        if (m_Cache.isEmpty())
-          getStorageHandler().getStorage().put(m_StorageName, obj);
-        else
-          getStorageHandler().getStorage().put(m_Cache, m_StorageName, obj);
-      }
+    if (!m_ModelFile.isDirectory()) {
+      result = read(m_ModelFile, m_StorageName);
     }
-    catch (Exception e) {
-      result = handleException("Failed to deserialize model: " + m_ModelFile, e);
+
+    if ((result == null) && (m_StorageFilePairs.size() > 0)) {
+      errors = new MessageCollection();
+      for (i = 0; i < m_StorageFilePairs.size(); i++) {
+	if (isStopped())
+	  break;
+	name = new StorageName(m_StorageFilePairs.get(i).getPairKey());
+	file = new PlaceholderFile(m_StorageFilePairs.get(i).getPairValue());
+	if (file.exists()) {
+	  if (!file.isDirectory()) {
+	    msg = read(file, name);
+	    if (msg != null)
+	      errors.add(msg);
+	  }
+	  else {
+	    errors.add("File from pair " + (i+1) + " points to a directory: " + file);
+	  }
+	}
+	else {
+	  errors.add("File from pair " + (i+1) + " does not exist: " + file);
+	}
+      }
+      if (!errors.isEmpty())
+        result = errors.toString();
     }
 
     return result;
