@@ -32,6 +32,7 @@ import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.ObjectFileChooser;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
@@ -164,6 +165,15 @@ public class GenericObjectEditor
     /** for serialization. */
     static final long serialVersionUID = 3656028520876011335L;
 
+    /** the split pane. */
+    protected BaseSplitPane m_SplitPane;
+
+    /** the left panel. */
+    protected JPanel m_PanelLeft;
+
+    /** the right panel. */
+    protected JPanel m_PanelRight;
+
     /** the tree to use. */
     protected ClassTree m_Tree;
 
@@ -216,6 +226,16 @@ public class GenericObjectEditor
 
       setLayout(new BorderLayout());
 
+      m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
+      m_SplitPane.setResizeWeight(0.0);
+      add(m_SplitPane, BorderLayout.CENTER);
+
+      m_PanelLeft = new JPanel(new BorderLayout());
+      m_SplitPane.setLeftComponent(m_PanelLeft);
+
+      m_PanelRight = new JPanel(new BorderLayout());
+      m_SplitPane.setRightComponent(m_PanelRight);
+
       m_Tree = new ClassTree();
       m_Tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
@@ -232,7 +252,7 @@ public class GenericObjectEditor
       });
       m_PanelTree = new GenericObjectEditorClassTreePanel(m_Tree);
       m_PanelTree.setVisible(m_canChangeClassInDialog);
-      add(m_PanelTree, BorderLayout.WEST);
+      m_PanelLeft.add(m_PanelTree, BorderLayout.CENTER);
 
       m_LabelClassname = new JLabel("None");
       m_ComboBoxClassname = new JComboBox<>(new String[]{"None"});
@@ -319,7 +339,7 @@ public class GenericObjectEditor
       m_TopPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       m_TopPanel.add(chooseButtonPanel, BorderLayout.EAST);
       m_TopPanel.add(m_ComboBoxClassname, BorderLayout.CENTER);
-      add(m_TopPanel, BorderLayout.NORTH);
+      m_PanelRight.add(m_TopPanel, BorderLayout.NORTH);
 
       // popup menu
       m_ComboBoxClassname.addMouseListener(new MouseAdapter() {
@@ -338,7 +358,7 @@ public class GenericObjectEditor
 
       JPanel childPanel = new JPanel(new BorderLayout());
       childPanel.add(m_PropertySheetChild, BorderLayout.CENTER);
-      add(childPanel, BorderLayout.CENTER);
+      m_PanelRight.add(childPanel, BorderLayout.CENTER);
 
       JPanel allButs = new JPanel(new GridLayout(1, 2));
       JPanel leftButs = new JPanel();
