@@ -133,7 +133,7 @@ public class GenericObjectEditorClassTreePanel
     // search
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     bottomPanel.add(panel, BorderLayout.WEST);
-    m_TextSearch = new JTextField(20);
+    m_TextSearch = new JTextField(15);
     m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
 	update();
