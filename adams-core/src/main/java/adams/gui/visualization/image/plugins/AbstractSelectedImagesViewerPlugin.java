@@ -142,7 +142,7 @@ public abstract class AbstractSelectedImagesViewerPlugin
    * @return		the size
    */
   protected Dimension getDialogSize() {
-    return GUIHelper.getDefaultSmallDialogDimension();
+    return GUIHelper.getDefaultDialogDimension();
   }
   
   /**

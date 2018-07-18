@@ -13,21 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSelectedImagesViewerPluginWithGOE.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JPanel;
-
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditor.GOEPanel;
+
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Ancestor of plugins that use the {@link GenericObjectEditor} for the setup
@@ -87,6 +88,16 @@ public abstract class AbstractSelectedImagesViewerPluginWithGOE
    */
   protected boolean getCanChangeClassInDialog() {
     return true;
+  }
+
+  /**
+   * Returns the size of the dialog.
+   *
+   * @return		the size
+   */
+  @Override
+  protected Dimension getDialogSize() {
+    return GUIHelper.makeWider(super.getDialogSize());
   }
 
   /**
