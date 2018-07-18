@@ -22,6 +22,7 @@ package adams.flow.standalone;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
+import adams.core.Variables;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
@@ -38,7 +39,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Deserializes a model from a file with the specified object reader and stores it directly in storage.<br>
- * It is also possible to define multiple storage name &#47; file name pairs, to make the deserialization of large amounts of files more efficient.
+ * It is also possible to define multiple storage name &#47; file name pairs, to make the deserialization of large amounts of files more efficient. Storage name and&#47;or file name can be variables as well (&#64;{...})
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -138,7 +139,8 @@ public class DeserializeToStorage
     return "Deserializes a model from a file with the specified object reader "
       + "and stores it directly in storage.\n"
       + "It is also possible to define multiple storage name / file name pairs, "
-      + "to make the deserialization of large amounts of files more efficient.";
+      + "to make the deserialization of large amounts of files more efficient. "
+      + "Storage name and/or file name can be variables as well (" + Variables.START + "..." + Variables.END + ")";
   }
 
   /**
@@ -381,9 +383,11 @@ public class DeserializeToStorage
     if (result == null) {
       for (i = 0; i < m_StorageFilePairs.size(); i++) {
         pair = m_StorageFilePairs.get(i);
-        if (!Storage.isValidName(pair.getPairKey())) {
-          result = "Storage name of pair #" + (i+1) + " is not valid: " + pair.getPairKey();
-          break;
+        if (!pair.getPairKey().startsWith(Variables.START)) {
+	  if (!Storage.isValidName(pair.getPairKey())) {
+	    result = "Storage name of pair #" + (i + 1) + " is not valid: " + pair.getPairKey();
+	    break;
+	  }
 	}
       }
     }
@@ -432,10 +436,13 @@ public class DeserializeToStorage
   protected String doExecute() {
     String		result;
     PlaceholderFile	file;
+    String		fileStr;
     StorageName		name;
+    String		nameStr;
     MessageCollection	errors;
     String		msg;
     int			i;
+    BaseKeyValuePair	pair;
 
     result = null;
 
@@ -448,8 +455,31 @@ public class DeserializeToStorage
       for (i = 0; i < m_StorageFilePairs.size(); i++) {
 	if (isStopped())
 	  break;
-	name = new StorageName(m_StorageFilePairs.get(i).getPairKey());
-	file = new PlaceholderFile(m_StorageFilePairs.get(i).getPairValue());
+
+	pair = m_StorageFilePairs.get(i);
+
+	// name
+	if (pair.getPairKey().startsWith(Variables.START))
+	  nameStr = getVariables().get(pair.getPairKey());
+	else
+	  nameStr = pair.getPairKey();
+	if ((nameStr == null) || nameStr.isEmpty() || !Storage.isValidName(nameStr)) {
+	  errors.add("Failed to obtain valid storage name from pair #" + (i+1) + ": " + nameStr);
+	  continue;
+	}
+	name = new StorageName(nameStr);
+
+	// file
+	if (pair.getPairValue().startsWith(Variables.START))
+	  fileStr = getVariables().get(pair.getPairValue());
+	else
+	  fileStr = pair.getPairValue();
+	if ((fileStr == null) || fileStr.isEmpty()) {
+	  errors.add("Failed to obtain valid file name from pair #" + (i+1) + ": " + fileStr);
+	  continue;
+	}
+	file = new PlaceholderFile(fileStr);
+
 	if (file.exists()) {
 	  if (!file.isDirectory()) {
 	    msg = read(file, name);
