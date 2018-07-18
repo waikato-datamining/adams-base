@@ -164,9 +164,6 @@ public class GenericObjectEditor
     /** for serialization. */
     static final long serialVersionUID = 3656028520876011335L;
 
-    /** the panel itself. */
-    protected GOEPanel m_Self;
-
     /** the tree to use. */
     protected ClassTree m_Tree;
 
@@ -215,7 +212,6 @@ public class GenericObjectEditor
     public GOEPanel() {
       super();
 
-      m_Self   = this;
       m_Backup = copyObject(m_Object);
 
       setLayout(new BorderLayout());
@@ -331,8 +327,8 @@ public class GenericObjectEditor
 	public void mouseClicked(MouseEvent e) {
 	  if (MouseUtils.isRightClick(e)) {
 	    e.consume();
-	    GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_Self);
-	    menu.show(m_Self, e.getX(), e.getY());
+	    GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, GOEPanel.this);
+	    menu.show(GOEPanel.this, e.getX(), e.getY());
 	  }
 	  else {
 	    super.mouseClicked(e);
