@@ -119,6 +119,7 @@ public class GenericObjectEditorClassTreePanel
     super.initGUI();
 
     setLayout(new BorderLayout());
+    setPreferredSize(new Dimension(200, 100));
 
     m_LabelInfo = new JLabel("");
     m_LabelInfo.setLabelFor(m_Tree);
