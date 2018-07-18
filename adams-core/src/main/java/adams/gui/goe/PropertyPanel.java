@@ -223,9 +223,6 @@ public class PropertyPanel
 	m_Dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
 	// center dialog on parent
 	m_Dialog.setLocationRelativeTo(m_Dialog.getParent());
-	// show dialog next to
-	//GUIHelper.setSizeAndLocation(m_Dialog, getLocationOnScreen().y, getLocationOnScreen().x);
-	m_Dialog.setLocationRelativeTo(this);
 	m_Dialog.setVisible(true);
       }
       else {
