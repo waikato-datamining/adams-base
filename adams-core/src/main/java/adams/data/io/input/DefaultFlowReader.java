@@ -25,6 +25,7 @@ import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.option.CompactFlowConsumer;
+import adams.core.option.CompactFlowProducer;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedFormatHelper;
 import adams.core.option.NestedFormatHelper.Line;
@@ -202,14 +203,38 @@ public class DefaultFlowReader
   protected Actor readNonCompact(List<String> lines) {
     Actor		result;
     NestedConsumer	consumer;
+    String		msg;
+
+    msg = NestedFormatHelper.checkModules(NestedFormatHelper.getModules(lines));
+    if (msg != null)
+      addWarning(msg);
 
     consumer = new NestedConsumer();
     consumer.setEncoding(m_Encoding);
+    Utils.removeComments(lines, NestedProducer.COMMENT);
     result = (Actor) consumer.fromString(Utils.flatten(lines, "\n"));
 
     // transfer errors/warnings
     m_Errors.addAll(consumer.getErrors());
     m_Warnings.addAll(consumer.getWarnings());
+
+    return result;
+  }
+
+  /**
+   * Turns the non-compact format into nested format.
+   *
+   * @param lines	the non-compact lines
+   * @return		the nested format
+   */
+  protected List nonCompactToNested(List<String> lines) {
+    List		result;
+    Actor 		actor;
+    CompactFlowProducer	compact;
+
+    actor   = readNonCompact(lines);
+    compact = new CompactFlowProducer();
+    result  = compact.produce(actor);
 
     return result;
   }
@@ -240,7 +265,7 @@ public class DefaultFlowReader
 	m_Errors.addAll(errors.toList());
     }
     else {
-      result = NestedFormatHelper.linesToNested(lines, '\t');
+      result = nonCompactToNested(lines);
     }
 
     return result;
@@ -261,7 +286,7 @@ public class DefaultFlowReader
     if (isCompact(file, lines))
       result = readNested(lines);
     else
-      result = NestedFormatHelper.linesToNested(lines, '\t');
+      result = nonCompactToNested(lines);
 
     return result;
   }
@@ -320,7 +345,6 @@ public class DefaultFlowReader
     List		list;
     CompactFlowConsumer	compact;
 
-    result = null;
     if (isCompact(lines)) {
       msg = NestedFormatHelper.checkModules(NestedFormatHelper.getModules(lines));
       if (msg != null)
