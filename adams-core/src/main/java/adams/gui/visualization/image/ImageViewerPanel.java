@@ -463,7 +463,7 @@ public class ImageViewerPanel
       m_MenuItemFileSaveAs = menuitem;
 
       // File/Close tab
-      menuitem = new JMenuItem("Close tab");
+      menuitem = new JMenuItem("Close page");
       menu.add(menuitem);
       menuitem.setMnemonic('t');
       menuitem.setIcon(GUIHelper.getIcon("close_tab_focused.gif"));
