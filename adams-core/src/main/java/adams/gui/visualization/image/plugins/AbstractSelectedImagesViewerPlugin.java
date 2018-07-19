@@ -77,7 +77,7 @@ public abstract class AbstractSelectedImagesViewerPlugin
     List<ImagePanel>	result;
     ImageViewerPanel	owner;
     
-    result = new ArrayList<ImagePanel>();
+    result = new ArrayList<>();
     
     owner = (ImageViewerPanel) GUIHelper.getParent(m_CurrentPanel, ImageViewerPanel.class);
     if (owner != null)
@@ -101,7 +101,7 @@ public abstract class AbstractSelectedImagesViewerPlugin
     int			index;
     BaseScrollPane	scrollPane;
     
-    result  = new JPanel(new BorderLayout());
+    result = new JPanel(new BorderLayout());
     panels = getAllPanels();
     model  = new DefaultListModel();
     index  = -1;
@@ -191,7 +191,7 @@ public abstract class AbstractSelectedImagesViewerPlugin
     result.getContentPane().add(panel, BorderLayout.CENTER);
     
     panelList   = createListPanel(result);
-    panelList.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    panelList.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
     panelConfig = createConfigurationPanel(result);
     if (panelConfig == null) {
       panel.add(panelList, BorderLayout.CENTER);

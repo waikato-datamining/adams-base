@@ -228,6 +228,7 @@ public class GenericObjectEditor
 
       m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
       m_SplitPane.setResizeWeight(0.0);
+      m_SplitPane.setDividerLocation(250);
       add(m_SplitPane, BorderLayout.CENTER);
 
       m_PanelLeft = new JPanel(new BorderLayout());

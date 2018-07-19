@@ -37,7 +37,6 @@ import adams.gui.tools.spreadsheetviewer.chart.LinePlot;
 import adams.gui.visualization.image.ImagePanel;
 
 import javax.swing.SwingWorker;
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,16 +88,6 @@ public abstract class AbstractSelectedImagesFeatureGenerator
     
     return result;
   }
-  
-  /**
-   * Returns the default size of the dialog.
-   * 
-   * @return		the dimension of the dialog
-   */
-  @Override
-  protected Dimension getDialogSize() {
-    return GUIHelper.getDefaultDialogDimension();
-  }
 
   /**
    * Initializes the processing.
@@ -112,7 +101,7 @@ public abstract class AbstractSelectedImagesFeatureGenerator
     result = super.processInit();
     
     if (result == null)
-      m_Collected = new ArrayList<Row>();
+      m_Collected = new ArrayList<>();
     
     return result;
   }

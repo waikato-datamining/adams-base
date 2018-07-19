@@ -119,7 +119,7 @@ public class GenericObjectEditorClassTreePanel
     super.initGUI();
 
     setLayout(new BorderLayout());
-    setPreferredSize(new Dimension(200, 400));
+    setPreferredSize(new Dimension(250, 500));
 
     m_LabelInfo = new JLabel("");
     m_LabelInfo.setLabelFor(m_Tree);
@@ -134,7 +134,7 @@ public class GenericObjectEditorClassTreePanel
     // search
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     bottomPanel.add(panel, BorderLayout.WEST);
-    m_TextSearch = new JTextField(15);
+    m_TextSearch = new JTextField(10);
     m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
 	update();
