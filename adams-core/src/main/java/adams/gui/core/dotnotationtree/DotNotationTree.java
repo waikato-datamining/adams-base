@@ -925,6 +925,15 @@ public class DotNotationTree<N extends DotNotationNode>
   }
 
   /**
+   * Returns the number of items in the tree.
+   *
+   * @return		the number of items
+   */
+  public int numItems() {
+    return m_Items.size();
+  }
+
+  /**
    * Sets the search string.
    *
    * @param value	the search string, use null or empty string to display all
