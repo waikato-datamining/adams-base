@@ -1,1 +1,1 @@
-variables [scope: EMPTY, filter: .*, no propagation, regexp: .*], storage [scope: EMPTY, filter: .*, no propagation, regexp: .*]
+variables [scope: EMPTY], storage [scope: EMPTY]

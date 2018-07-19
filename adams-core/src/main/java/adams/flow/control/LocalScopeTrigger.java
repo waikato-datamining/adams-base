@@ -15,7 +15,7 @@
 
 /*
  * LocalScopeTrigger.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -256,16 +256,18 @@ public class LocalScopeTrigger
 
     result  = "variables [";
     result += QuickInfoHelper.toString(this, "scopeHandlingVariables", m_ScopeHandlingVariables, "scope: ");
-    result += QuickInfoHelper.toString(this, "variablesFilter", m_VariablesFilter, ", filter: ");
-    result += QuickInfoHelper.toString(this, "propagateVariables", (m_PropagateVariables ? "propagate" : "no propagation"), ", ");
-    result += QuickInfoHelper.toString(this, "variablesRegExp", m_VariablesRegExp, ", regexp: ");
+    result += QuickInfoHelper.toString(this, "variablesFilter", !m_VariablesFilter.isMatchAll(), "filter: " + m_VariablesFilter, ", ");
+    result += QuickInfoHelper.toString(this, "propagateVariables", getPropagateVariables(), "propagate", ", ");
+    if (getPropagateVariables())
+      result += QuickInfoHelper.toString(this, "variablesRegExp", getVariablesRegExp(), ", regexp: ");
     result += "]";
-    
+
     result += ", storage [";
     result += QuickInfoHelper.toString(this, "scopeHandlingStorage", m_ScopeHandlingStorage, "scope: ");
-    result += QuickInfoHelper.toString(this, "storageFilter", m_StorageFilter, ", filter: ");
-    result += QuickInfoHelper.toString(this, "propagateStorage", (m_PropagateStorage ? "propagate" : "no propagation"), ", ");
-    result += QuickInfoHelper.toString(this, "storageRegExp", m_StorageRegExp, ", regexp: ");
+    result += QuickInfoHelper.toString(this, "storageFilter", !m_StorageFilter.isMatchAll(), "filter: " + m_StorageFilter, ", ");
+    result += QuickInfoHelper.toString(this, "propagateStorage", getPropagateStorage(), "propagate", ", ");
+    if (getPropagateStorage())
+      result += QuickInfoHelper.toString(this, "storageRegExp", getStorageRegExp(), ", regexp: ");
     result += "]";
 
     return result;
