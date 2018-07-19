@@ -15,7 +15,7 @@
 
 /*
  * FindUsages.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -301,6 +301,8 @@ public class FindUsages
 	  result.add(createVariableMenuItem(var));
       }
     }
+
+    result.setEnabled(result.getItemCount() > 0);
 
     return result;
   }

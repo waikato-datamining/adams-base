@@ -13,18 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractTreePopupSubMenuAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
-
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-
-import javax.swing.JMenu;
-import javax.swing.KeyStroke;
 
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesAction;
@@ -34,11 +27,16 @@ import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.tree.StateContainer;
 import adams.gui.goe.GenericObjectEditorDialog;
 
+import javax.swing.JMenu;
+import javax.swing.KeyStroke;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+
 /**
  * Ancestor for menu items in the popup menu of the flow tree.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public abstract class AbstractTreePopupSubMenuAction
   extends AbstractPropertiesSubMenuAction<StateContainer, GenericObjectEditorDialog>
@@ -125,6 +123,7 @@ public abstract class AbstractTreePopupSubMenuAction
       result.setIcon(getIcon());
     else
       result.setIcon(GUIHelper.getEmptyIcon());
+    result.setEnabled(subitems.length > 0);
     for (AbstractPropertiesAction action: subitems) {
       if (action == null) {
 	result.addSeparator();

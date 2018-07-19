@@ -158,6 +158,8 @@ public class GoTo
       result.add(item);
     }
 
+    result.setEnabled(result.getItemCount() > 0);
+
     return result;
   }
 
