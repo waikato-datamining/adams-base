@@ -444,6 +444,7 @@ public class MultiPagePane
   protected void finishInit() {
     super.finishInit();
     setTitleRenderer(new TitleRenderer());
+    updateButtons();
   }
 
   /**
@@ -991,6 +992,7 @@ public class MultiPagePane
     m_ButtonUp.setEnabled(pageSelected && canMoveUp());
     m_ButtonDown.setEnabled(pageSelected && canMoveDown());
     m_ButtonRemove.setEnabled(pageSelected);
+    m_ButtonRemoveAll.setEnabled(getPageCount() > 0);
   }
 
   /**
