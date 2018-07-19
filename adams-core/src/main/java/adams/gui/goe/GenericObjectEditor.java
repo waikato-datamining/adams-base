@@ -591,6 +591,7 @@ public class GenericObjectEditor
      * @param value	if true then the user can change the class
      */
     public void setCanChangeClassInDialog(boolean value) {
+      m_SplitPane.setLeftComponentHidden(!value);
       m_PanelTree.setVisible(value);
     }
 
@@ -1071,8 +1072,10 @@ public class GenericObjectEditor
    * @return 		a value of type 'Component'
    */
   public Component getCustomEditor() {
-    if (m_EditorComponent == null)
+    if (m_EditorComponent == null) {
       m_EditorComponent = new GOEPanel();
+      m_EditorComponent.setCanChangeClassInDialog(getCanChangeClassInDialog());
+    }
 
     return m_EditorComponent;
   }
