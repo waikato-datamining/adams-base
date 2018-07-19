@@ -27,7 +27,6 @@ import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.AbstractActorReference;
 import adams.flow.core.Actor;
-import adams.flow.core.CallableActorReference;
 import adams.flow.core.CallableActorUser;
 import adams.gui.action.AbstractPropertiesAction;
 import adams.gui.core.GUIHelper;
@@ -133,25 +132,23 @@ public class GoTo
     else
       result.setIcon(GUIHelper.getEmptyIcon());
     actor = m_State.selNode.getActor();
-    if (actor instanceof CallableActorUser) {
-      refs  = getReferences(actor);
-      paths = new String[refs.length];
+    refs  = getReferences(actor);
+    paths = new String[refs.length];
+    if (refs.length > 0) {
       nodes = FlowHelper.findCallableActorsHandler(m_State.selNode);
       for (i = 0; i < refs.length; i++) {
-        for (n = 0; n < nodes.size(); n++) {
-          int index = nodes.get(i).indexOf(refs[i].getValue());
-          if (index > -1) {
-            paths[i] = ((Node) nodes.get(i).getChildAt(index)).getFullName();
-            break;
+	for (n = 0; n < nodes.size(); n++) {
+	  int index = nodes.get(i).indexOf(refs[i].getValue());
+	  if (index > -1) {
+	    paths[i] = ((Node) nodes.get(i).getChildAt(index)).getFullName();
+	    break;
 	  }
 	}
       }
     }
-    else {
-      refs  = new CallableActorReference[0];
-      paths = new String[0];
-    }
     for (i = 0; i < refs.length; i++) {
+      if (paths[i] == null)
+        continue;
       final String path = paths[i];
       item = new JMenuItem(refs[i].getValue());
       item.addActionListener((ActionEvent e) -> m_State.tree.locateAndDisplay(path, true));
