@@ -575,6 +575,7 @@ public class GenericObjectEditor
 	if (m_Tree.getSelectedItem() == null)
 	  m_Tree.expandAll();
         m_PanelTree.updateFilterPanel();
+        m_SplitPane.setLeftComponentHidden(m_Tree.numItems() < 2);
       }
 
       // Adjust size of containing window if possible
