@@ -173,6 +173,9 @@ public class FlowPanel
   /** whether to check before saving. */
   protected boolean m_CheckOnSave;
 
+  /** whether to check large flows before saving. */
+  protected Boolean m_CheckLargeFlowsOnSave;
+
   /** the registered panels: class of panel - (name of panel - AbstractDisplay instance). */
   protected HashMap<Class,HashMap<String,AbstractDisplay>> m_RegisteredDisplays;
 
@@ -231,6 +234,7 @@ public class FlowPanel
     m_Status                = "";
     m_RegisteredDisplays    = new HashMap<>();
     m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);
+    m_CheckLargeFlowsOnSave = null;
     m_LastReader            = null;
     m_LastWriter            = null;
     m_DebugSourcePanel      = null;
@@ -416,7 +420,8 @@ public class FlowPanel
    * @param value	true if to check before saving
    */
   public void setCheckOnSave(boolean value) {
-    m_CheckOnSave = value;
+    m_CheckOnSave           = value;
+    m_CheckLargeFlowsOnSave = null;
   }
 
   /**
@@ -425,7 +430,10 @@ public class FlowPanel
    * @return		true if to check before saving
    */
   public boolean getCheckOnSave() {
-    return m_CheckOnSave;
+    if (m_CheckLargeFlowsOnSave != null)
+      return m_CheckOnSave && m_CheckLargeFlowsOnSave;
+    else
+      return m_CheckOnSave;
   }
 
   /**
@@ -911,7 +919,35 @@ public class FlowPanel
 
 	if (getCheckOnSave()) {
 	  SwingUtilities.invokeLater(() -> setPageIcon("hourglass.png"));
-	  String check = ActorUtils.checkFlow(rootNode.getFullActor(), false, false, file);
+	  // determine whether to perform checks
+	  boolean performCheck = true;
+	  int maxActors = getProperties().getInteger("LargeFlowMinActors", 200);
+	  Actor full = rootNode.getFullActor();
+	  int size = ActorUtils.determineNumActors(full);
+	  if (size >= maxActors) {
+	    if (m_CheckLargeFlowsOnSave == null) {
+	      int retVal = GUIHelper.showConfirmMessage(
+	        m_Owner,
+		"The flow contains more than " + maxActors + " actors (" + size + "), flow checks may take quite some time.\n"
+		  + "Do you still want to proceed with checks?");
+	      switch (retVal) {
+		case ApprovalDialog.APPROVE_OPTION:
+		  m_CheckLargeFlowsOnSave = true;
+		  break;
+		case ApprovalDialog.DISCARD_OPTION:
+		  m_CheckLargeFlowsOnSave = false;
+		  break;
+		case ApprovalDialog.CANCEL_OPTION:
+		  m_Cancelled = true;
+		  return null;
+	      }
+	    }
+	    performCheck = m_CheckLargeFlowsOnSave;
+	  }
+	  // perform check
+	  String check = null;
+	  if (performCheck)
+	    check = ActorUtils.checkFlow(full, false, false, file);
 	  if (check != null) {
 	    String msg = "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check;
             showNotification(msg, true);
@@ -941,10 +977,16 @@ public class FlowPanel
 
       @Override
       protected void done() {
-	if (!m_Result) {
+        if (m_Cancelled) {
+	  SwingUtilities.invokeLater(() -> setPageIcon(null));
+	  showStatus("");
+	  getTree().requestFocus();
+	}
+	else if (!m_Result) {
 	  SwingUtilities.invokeLater(() -> setPageIcon("error_blue.png"));
           GUIHelper.showErrorMessage(
             m_Owner, "Error saving flow to '" + file.getAbsolutePath() + "'!");
+	  getTree().requestFocus();
         }
 	else {
 	  SwingUtilities.invokeLater(() -> setPageIcon("validate_blue.gif"));

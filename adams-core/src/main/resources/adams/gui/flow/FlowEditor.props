@@ -21,6 +21,14 @@ FlowPanelClass=adams.gui.flow.FlowPanel
 # Whether to check the flow before saving (true|false)
 CheckOnSave=true
 
+# The number of actors when a flow is considered large (int)
+# Notes:
+#   If a flow has at least this many actors, it will prompt
+#   the user whether they still want to perform checks on
+#   saving the flow (only when "CheckOnSave=true"), as it can
+#   take a long time performing these checks
+LargeFlowMinActors=200
+
 # Whether to show the quick info (true|false)
 ShowQuickInfo=true
 

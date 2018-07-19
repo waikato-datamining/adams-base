@@ -1886,4 +1886,14 @@ public class ActorUtils {
 
     return result;
   }
+
+  /**
+   * Returns how many actors this flow is made of.
+   *
+   * @param flow	the flow to check
+   * @return		the number of actors
+   */
+  public static int determineNumActors(Actor flow) {
+    return enumerate(flow).size();
+  }
 }
