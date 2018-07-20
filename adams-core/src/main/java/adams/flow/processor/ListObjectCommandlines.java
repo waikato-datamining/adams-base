@@ -29,9 +29,27 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
  <!-- globalinfo-start -->
+ * Lists the command-lines of the objects of the specified superclass.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-classname &lt;adams.core.base.BaseClassname&gt; (property: classname)
+ * &nbsp;&nbsp;&nbsp;The class to look for.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.core.Actor
+ * </pre>
+ *
+ * <pre>-add-full-actor-name &lt;boolean&gt; (property: addFullActorName)
+ * &nbsp;&nbsp;&nbsp;Whether to add the full actor name (separated by tab), if the enclosing
+ * &nbsp;&nbsp;&nbsp;object is of type adams.flow.core.Actor.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -43,6 +61,9 @@ public class ListObjectCommandlines
 
   /** the classname to look for. */
   protected BaseClassname m_Classname;
+
+  /** whether to add the full name of an enclosing actor (if available). */
+  protected boolean m_AddFullActorName;
 
   /** the class we are looking for. */
   protected transient Class m_Class;
@@ -67,6 +88,10 @@ public class ListObjectCommandlines
     m_OptionManager.add(
 	"classname", "classname",
 	new BaseClassname(Actor.class));
+
+    m_OptionManager.add(
+	"add-full-actor-name", "addFullActorName",
+	false);
   }
 
   /**
@@ -109,6 +134,35 @@ public class ListObjectCommandlines
   }
 
   /**
+   * Sets whether to add the full name of the enclosing actor (if available).
+   *
+   * @param value 	the class
+   */
+  public void setAddFullActorName(boolean value) {
+    m_AddFullActorName = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add the full name of the enclosing actor (if available).
+   *
+   * @return 		true if to add
+   */
+  public boolean getAddFullActorName() {
+    return m_AddFullActorName;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String addFullActorNameTipText() {
+    return "Whether to add the full actor name (separated by tab), if the enclosing object is of type " + Actor.class.getName() + ".";
+  }
+
+  /**
    * Returns the string representation of the object that is to be added to the list.
    *
    * @param option	the current option
@@ -117,7 +171,19 @@ public class ListObjectCommandlines
    * @return		the string representation, null if to ignore the item
    */
   protected String objectToString(AbstractOption option, Object obj, OptionTraversalPath path) {
-    return OptionUtils.getCommandLine(obj);
+    String	result;
+
+    result = "";
+    if (m_AddFullActorName) {
+      if (option.getOptionHandler() instanceof Actor)
+	result += ((Actor) option.getOptionHandler()).getFullName();
+      else
+        result += "-";
+      result += "\t";
+    }
+    result += OptionUtils.getCommandLine(obj);
+
+    return result;
   }
 
   /**
