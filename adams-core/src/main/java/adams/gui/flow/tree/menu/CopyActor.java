@@ -19,7 +19,7 @@
  */
 package adams.gui.flow.tree.menu;
 
-import adams.gui.flow.tree.TransferableNode;
+import adams.gui.flow.tree.TransferableNestedList;
 import adams.gui.flow.tree.TreeHelper;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -62,6 +62,6 @@ public class CopyActor
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    ClipboardHelper.copyToClipboard(new TransferableNode(TreeHelper.pathsToNodes(m_State.selPaths)));
+    ClipboardHelper.copyToClipboard(new TransferableNestedList(TreeHelper.pathsToNodes(m_State.selPaths)));
   }
 }

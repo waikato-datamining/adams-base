@@ -14,7 +14,7 @@
  */
 
 /*
- * TransferableNode.java
+ * TransferableNestedList.java
  * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
@@ -24,32 +24,33 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * A container for nodes. Used in drag'n'drop.
+ * A container for nested list. Used in drag'n'drop.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class TransferableNode
+public class TransferableNestedList
   implements Serializable, Transferable {
 
   /** for serialization. */
   private static final long serialVersionUID = -4291529156857201031L;
 
-  public static DataFlavor Flavour = new DataFlavor(Node.class, "Flow node");
+  public static DataFlavor Flavour = new DataFlavor(List.class, "Nested list");
 
   /** the nodes to transfer. */
-  protected Node[] m_Data;
+  protected List[] m_Data;
 
   /**
    * Initializes the container.
    *
    * @param data	the node to transfer
    */
-  public TransferableNode(Node data) {
+  public TransferableNestedList(Node data) {
     super();
 
-    m_Data = new Node[]{data};
+    m_Data = new List[]{TreeHelper.getNested(data)};
   }
 
   /**
@@ -57,10 +58,34 @@ public class TransferableNode
    *
    * @param data	the nodes to transfer
    */
-  public TransferableNode(Node[] data) {
+  public TransferableNestedList(Node[] data) {
     super();
 
-    m_Data = data.clone();
+    m_Data = new List[data.length];
+    for (int i = 0; i < data.length; i++)
+      m_Data[i] = TreeHelper.getNested(data[i]);
+  }
+
+  /**
+   * Initializes the container.
+   *
+   * @param data	the nested list to transfer
+   */
+  public TransferableNestedList(List data) {
+    super();
+
+    m_Data = new List[]{data};
+  }
+
+  /**
+   * Initializes the container.
+   *
+   * @param data	the nested lists to transfer
+   */
+  public TransferableNestedList(List[] data) {
+    super();
+
+    m_Data = data;
   }
 
   /**
@@ -109,7 +134,7 @@ public class TransferableNode
    *
    * @return		the nodes
    */
-  public Node[] getData() {
+  public List[] getData() {
     return m_Data;
   }
 
@@ -119,6 +144,6 @@ public class TransferableNode
    * @return		the commandline
    */
   public String toString() {
-    return m_Data.length + " nodes";
+    return m_Data.length + " list(s)";
   }
 }

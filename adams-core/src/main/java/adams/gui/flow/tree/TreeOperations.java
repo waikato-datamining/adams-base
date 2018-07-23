@@ -2095,21 +2095,56 @@ public class TreeOperations
   }
 
   /**
-   * Returns the nodes stored on the clipboard.
+   * Checks whether any nodes in nested listed form are on the clipboard.
+   *
+   * @return		true if nodes available
+   */
+  public static boolean hasNodesOnClipboard() {
+    return (getListsFromClipboard() != null);
+  }
+
+  /**
+   * Returns the nested lists stored on the clipboard.
    *
    * @return		the nodes or null if none available
    */
-  public static Node[] getNodesFromClipboard() {
-    Node[]		result;
+  public static List[] getListsFromClipboard() {
+    List[]	result;
 
     result = null;
 
     try {
-      if (ClipboardHelper.canPasteFromClipboard(TransferableNode.Flavour))
-        result = (Node[]) ClipboardHelper.pasteFromClipboard(TransferableNode.Flavour);
+      if (ClipboardHelper.canPasteFromClipboard(TransferableNestedList.Flavour))
+        result = (List[]) ClipboardHelper.pasteFromClipboard(TransferableNestedList.Flavour);
     }
     catch (Exception ex) {
       result = null;
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the nodes stored on the clipboard.
+   * Note: use {@link #hasNodesOnClipboard()} if you just want a fast check
+   * whether there is anything on the clipboard.
+   *
+   * @return		the nodes or null if none available
+   * @see		#hasNodesOnClipboard()
+   * @see		#getListsFromClipboard()
+   */
+  public static Node[] getNodesFromClipboard() {
+    Node[]	result;
+    List[]	lists;
+    int		i;
+
+    result = null;
+    lists  = getListsFromClipboard();
+
+    if (lists != null) {
+      result = new Node[lists.length];
+      for (i = 0; i < lists.length; i++)
+        result[i] = TreeHelper.buildTree(lists[i]);
     }
 
     return result;

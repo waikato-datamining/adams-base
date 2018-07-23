@@ -59,7 +59,7 @@ public class PasteActorHere
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    if (TreeOperations.getNodesFromClipboard() != null)
+    if (TreeOperations.hasNodesOnClipboard())
       m_State.tree.getOperations().pasteNodes(m_State.selPath, TreeOperations.getNodesFromClipboard(), TreeOperations.InsertPosition.HERE);
     else
       m_State.tree.getOperations().addActor(m_State.selPath, TreeOperations.getActorFromClipboard(), TreeOperations.InsertPosition.HERE);

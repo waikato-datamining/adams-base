@@ -925,7 +925,7 @@ public class Tree
    * @return		true if pasting is possible
    */
   protected boolean canPasteActor() {
-    return (TreeOperations.getNodesFromClipboard() != null)
+    return TreeOperations.hasNodesOnClipboard()
       || (TreeOperations.getActorFromClipboard() != null);
   }
 

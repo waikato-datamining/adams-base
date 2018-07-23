@@ -147,6 +147,39 @@ public class TreeHelper {
   }
 
   /**
+   * Converts the path to nested node format (the last component in a path).
+   *
+   * @param path	the path to the actor
+   * @return		the nested format
+   */
+  public static List pathToNested(TreePath path) {
+    if (path == null)
+      return null;
+
+    return getNested(pathToNode(path));
+  }
+
+  /**
+   * Converts the paths to actors (the last component in a path).
+   *
+   * @param paths	the paths to the actors
+   * @return		the actors
+   */
+  public static List[] pathsToNested(TreePath[] paths) {
+    List[]	result;
+    int		i;
+
+    if (paths == null)
+      return null;
+
+    result = new List[paths.length];
+    for (i = 0; i < paths.length; i++)
+      result[i] = getNested(pathToNode(paths[i]));
+
+    return result;
+  }
+
+  /**
    * Turns a {@link TreePath} into a {@link ActorPath}.
    *
    * @param path	the path to convert
