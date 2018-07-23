@@ -51,7 +51,6 @@ public abstract class AbstractTee
    * SwingWorker for asynchronous execution of the tee's sub-actors.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class TeeSwingWorker
     extends SwingWorker<String,Object> {
@@ -129,16 +128,20 @@ public abstract class AbstractTee
     super.defineOptions();
 
     m_OptionManager.add(
-	    "finish-before-stopping", "finishBeforeStopping",
-	    false);
+      "finish-before-stopping", "finishBeforeStopping",
+      false);
 
     m_OptionManager.add(
-	    "asynchronous", "asynchronous",
-	    false);
+      "stopping-timeout", "stoppingTimeout",
+      -1, -1, null);
 
     m_OptionManager.add(
-	    "tee", "actors",
-	    new Actor[0]);
+      "asynchronous", "asynchronous",
+      false);
+
+    m_OptionManager.add(
+      "tee", "actors",
+      new Actor[0]);
   }
 
   /**
@@ -259,6 +262,35 @@ public abstract class AbstractTee
    */
   public String finishBeforeStoppingTipText() {
     return m_Actors.finishBeforeStoppingTipText();
+  }
+
+  /**
+   * Sets the timeout for waiting for the sub-flow to stop.
+   *
+   * @param value	timeout in milliseconds (<= 0 for infinity)
+   */
+  public void setStoppingTimeout(int value) {
+    m_Actors.setStoppingTimeout(value);
+    reset();
+  }
+
+  /**
+   * Returns the timeout for waiting for the sub-flow to stop.
+   *
+   * @return		timeout in milliseconds (<= 0 for infinity)
+   */
+  public int getStoppingTimeout() {
+    return m_Actors.getStoppingTimeout();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stoppingTimeoutTipText() {
+    return m_Actors.stoppingTimeoutTipText();
   }
 
   /**

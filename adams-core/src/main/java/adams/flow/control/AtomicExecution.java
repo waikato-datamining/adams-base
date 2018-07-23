@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AtomicExecution.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -26,7 +26,6 @@ import adams.flow.core.Actor;
  * before attempting to be stopped. Useful for encapsulating critical steps.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface AtomicExecution 
   extends Actor {
@@ -52,4 +51,26 @@ public interface AtomicExecution
    * 			displaying in the GUI or for listing the options.
    */
   public String finishBeforeStoppingTipText();
+
+  /**
+   * Sets the timeout for waiting for the sub-flow to stop.
+   *
+   * @param value	timeout in milliseconds (<= 0 for infinity)
+   */
+  public void setStoppingTimeout(int value);
+
+  /**
+   * Returns the timeout for waiting for the sub-flow to stop.
+   *
+   * @return		timeout in milliseconds (<= 0 for infinity)
+   */
+  public int getStoppingTimeout();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stoppingTimeoutTipText();
 }

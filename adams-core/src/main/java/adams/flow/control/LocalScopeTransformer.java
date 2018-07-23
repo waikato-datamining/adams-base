@@ -212,44 +212,48 @@ public class LocalScopeTransformer
     super.defineOptions();
 
     m_OptionManager.add(
-	    "actor", "actors",
-	    new Actor[0]);
+      "actor", "actors",
+      new Actor[0]);
 
     m_OptionManager.add(
-	    "scope-handling-variables", "scopeHandlingVariables",
-	    ScopeHandling.EMPTY);
+      "scope-handling-variables", "scopeHandlingVariables",
+      ScopeHandling.EMPTY);
 
     m_OptionManager.add(
-	    "variables-filter", "variablesFilter",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "variables-filter", "variablesFilter",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "propagate-variables", "propagateVariables",
-	    false);
+      "propagate-variables", "propagateVariables",
+      false);
 
     m_OptionManager.add(
-	    "variables-regexp", "variablesRegExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "variables-regexp", "variablesRegExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "scope-handling-storage", "scopeHandlingStorage",
-	    ScopeHandling.EMPTY);
+      "scope-handling-storage", "scopeHandlingStorage",
+      ScopeHandling.EMPTY);
 
     m_OptionManager.add(
-	    "storage-filter", "storageFilter",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "storage-filter", "storageFilter",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "propagate-storage", "propagateStorage",
-	    false);
+      "propagate-storage", "propagateStorage",
+      false);
 
     m_OptionManager.add(
-	    "storage-regexp", "storageRegExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "storage-regexp", "storageRegExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "finish-before-stopping", "finishBeforeStopping",
-	    false);
+      "finish-before-stopping", "finishBeforeStopping",
+      false);
+
+    m_OptionManager.add(
+      "stopping-timeout", "stoppingTimeout",
+      -1, -1, null);
   }
 
   /**
@@ -629,6 +633,35 @@ public class LocalScopeTransformer
    */
   public String finishBeforeStoppingTipText() {
     return m_Actors.finishBeforeStoppingTipText();
+  }
+
+  /**
+   * Sets the timeout for waiting for the sub-flow to stop.
+   *
+   * @param value	timeout in milliseconds (<= 0 for infinity)
+   */
+  public void setStoppingTimeout(int value) {
+    m_Actors.setStoppingTimeout(value);
+    reset();
+  }
+
+  /**
+   * Returns the timeout for waiting for the sub-flow to stop.
+   *
+   * @return		timeout in milliseconds (<= 0 for infinity)
+   */
+  public int getStoppingTimeout() {
+    return m_Actors.getStoppingTimeout();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stoppingTimeoutTipText() {
+    return m_Actors.stoppingTimeoutTipText();
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * AbstractControlActor.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -24,7 +24,6 @@ package adams.flow.control;
  * Ancestor for all actors that control sub-actors in some way.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDirectedControlActor
   extends AbstractControlActor 
@@ -39,6 +38,9 @@ public abstract class AbstractDirectedControlActor
   /** whether to finish execution first before stopping. */
   protected boolean m_FinishBeforeStopping;
 
+  /** the timeout in milliseconds for stopping in case of atomic execution (<= 0 is infinity). */
+  protected int m_StoppingTimeout;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -47,8 +49,12 @@ public abstract class AbstractDirectedControlActor
     super.defineOptions();
 
     m_OptionManager.add(
-	    "finish-before-stopping", "finishBeforeStopping",
-	    false);
+      "finish-before-stopping", "finishBeforeStopping",
+      false);
+
+    m_OptionManager.add(
+      "stopping-timeout", "stoppingTimeout",
+      -1, -1, null);
   }
 
   /**
@@ -78,6 +84,35 @@ public abstract class AbstractDirectedControlActor
    */
   public String finishBeforeStoppingTipText() {
     return "If enabled, actor first finishes processing all data before stopping.";
+  }
+
+  /**
+   * Sets the timeout for waiting for the sub-flow to stop.
+   *
+   * @param value	timeout in milliseconds (<= 0 for infinity)
+   */
+  public void setStoppingTimeout(int value) {
+    m_StoppingTimeout = value;
+    reset();
+  }
+
+  /**
+   * Returns the timeout for waiting for the sub-flow to stop.
+   *
+   * @return		timeout in milliseconds (<= 0 for infinity)
+   */
+  public int getStoppingTimeout() {
+    return m_StoppingTimeout;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stoppingTimeoutTipText() {
+    return "The timeout in milliseconds when waiting for actors to finish (<= 0 for infinity; see 'finishBeforeStopping').";
   }
 
   /**
@@ -190,13 +225,17 @@ public abstract class AbstractDirectedControlActor
   public void stopExecution() {
     if (m_Director != null) {
       if (m_FinishBeforeStopping) {
+        int waited = 0;
 	while (isExecuting()) {
 	  synchronized(this)  {
+	    waited += 100;
 	    try {
 	      wait(100);
 	    }
 	    catch (Exception e) {
 	    }
+	    if ((m_StoppingTimeout > 0) && (waited >= m_StoppingTimeout))
+	      break;
 	  }
 	}
       }

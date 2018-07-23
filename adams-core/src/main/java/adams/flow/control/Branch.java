@@ -15,7 +15,7 @@
 
 /*
  * Branch.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -136,6 +136,9 @@ public class Branch
   /** whether to finish execution first before stopping. */
   protected boolean m_FinishBeforeStopping;
 
+  /** the timeout in milliseconds for stopping in case of atomic execution (<= 0 is infinity). */
+  protected int m_StoppingTimeout;
+
   /** whether to collect the output of the branches. */
   protected boolean m_CollectOutput;
   
@@ -172,16 +175,20 @@ public class Branch
     super.defineOptions();
 
     m_OptionManager.add(
-	    "finish-before-stopping", "finishBeforeStopping",
-	    false);
+      "finish-before-stopping", "finishBeforeStopping",
+      false);
 
     m_OptionManager.add(
-	    "branch", "branches",
-	    new Actor[0]);
+      "stopping-timeout", "stoppingTimeout",
+      -1, -1, null);
 
     m_OptionManager.add(
-	    "num-threads", "numThreads",
-	    0);
+      "branch", "branches",
+      new Actor[0]);
+
+    m_OptionManager.add(
+      "num-threads", "numThreads",
+      0);
   }
 
   /**
@@ -226,6 +233,35 @@ public class Branch
    */
   public String finishBeforeStoppingTipText() {
     return "If enabled, actor first finishes processing all data before stopping.";
+  }
+
+  /**
+   * Sets the timeout for waiting for the sub-flow to stop.
+   *
+   * @param value	timeout in milliseconds (<= 0 for infinity)
+   */
+  public void setStoppingTimeout(int value) {
+    m_StoppingTimeout = value;
+    reset();
+  }
+
+  /**
+   * Returns the timeout for waiting for the sub-flow to stop.
+   *
+   * @return		timeout in milliseconds (<= 0 for infinity)
+   */
+  public int getStoppingTimeout() {
+    return m_StoppingTimeout;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stoppingTimeoutTipText() {
+    return "The timeout in milliseconds when waiting for actors to finish (<= 0 for infinity; see 'finishBeforeStopping').";
   }
 
   /**
@@ -898,14 +934,18 @@ public class Branch
     int		i;
 
     if (m_FinishBeforeStopping) {
+      int waited = 0;
       while (isExecuting()) {
 	synchronized(this)  {
+          waited += 100;
 	  try {
 	    wait(100);
 	  }
 	  catch (Exception e) {
 	    // ignored
 	  }
+          if ((m_StoppingTimeout > 0) && (waited >= m_StoppingTimeout))
+            break;
 	}
       }
     }
