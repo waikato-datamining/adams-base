@@ -15,7 +15,7 @@
 
 /*
  * AbstractConfigurableExtensionFileFilterFileChooser.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -40,7 +40,6 @@ import java.util.List;
  * the reader/writer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
   extends AbstractExtensionFileFilterFileChooser<ExtensionFileFilterWithClass> {
@@ -227,6 +226,11 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
     filter = restoreLastFilter(dialogType);
 
     if (dialogType == OPEN_DIALOG) {
+      // last handler != filter?
+      if ((filter != null) && (m_LastOpenHandler != null)) {
+        if (!filter.getClassname().equals(m_LastOpenHandler.getClass().getName()))
+          m_LastOpenHandler = null;
+      }
       if ((filter != null) && (m_LastOpenHandler == null)) {
 	try {
 	  m_LastOpenHandler = Class.forName(filter.getClassname()).newInstance();
@@ -239,6 +243,11 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
       getEditor().setValue(m_CurrentHandler);
     }
     else {
+      // last handler != filter?
+      if ((filter != null) && (m_LastSaveHandler != null)) {
+        if (!filter.getClassname().equals(m_LastSaveHandler.getClass().getName()))
+          m_LastSaveHandler = null;
+      }
       if ((filter != null) && (m_LastSaveHandler == null)) {
 	try {
 	  m_LastSaveHandler = Class.forName(filter.getClassname()).newInstance();
