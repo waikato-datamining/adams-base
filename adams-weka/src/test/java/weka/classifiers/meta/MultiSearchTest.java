@@ -70,7 +70,7 @@ public class MultiSearchTest
     param.setMax(0.5);
     param.setStep(0.1);
     param.setExpression("I");
-    param.setProperty("classifier.confidenceFactor");
+    param.setProperty("confidenceFactor");
     result.setSearchParameters(new AbstractParameter[]{
 	param
     });
