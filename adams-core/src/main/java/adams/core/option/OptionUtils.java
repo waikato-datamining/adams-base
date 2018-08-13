@@ -516,7 +516,7 @@ public class OptionUtils {
    * @see		#forAnyCommandLine(Class, String)
    */
   public static OptionHandler forCommandLine(Class classType, String cmdline) throws Exception {
-    return forCommandLine(classType, cmdline, null, null);
+    return forCommandLine(classType, cmdline, null, null, false);
   }
 
   /**
@@ -531,13 +531,14 @@ public class OptionUtils {
    * 			options of the object
    * @param warnings 	for collecting warnings, can be null
    * @param errors 	for collecting errors, can be null
+   * @param quiet	suppressed logging output if set to true
    * @return 		the newly created object, ready for use.
    * @throws Exception 	if the class name is invalid, or if the
    * 			class is not assignable to the desired class type, or
    * 			the options supplied are not acceptable to the object
    * @see		#forAnyCommandLine(Class, String)
    */
-  public static OptionHandler forCommandLine(Class classType, String cmdline, MessageCollection warnings, MessageCollection errors) throws Exception {
+  public static OptionHandler forCommandLine(Class classType, String cmdline, MessageCollection warnings, MessageCollection errors, boolean quiet) throws Exception {
     OptionHandler	result;
     ArrayConsumer 	consumer;
 
@@ -549,13 +550,13 @@ public class OptionUtils {
     if (consumer.hasErrors()) {
       if (errors != null)
 	errors.addAll(consumer.getErrors());
-      else
+      else if (!quiet)
         LOGGER.severe("Error(s) parsing commandline: " + cmdline + "\n" + Utils.flatten(consumer.getErrors(), "\n"));
     }
     if (consumer.hasWarnings()) {
       if (warnings != null)
         warnings.addAll(consumer.getWarnings());
-      else
+      else if (!quiet)
         LOGGER.warning("Warning(s) parsing commandline: " + cmdline + "\n" + Utils.flatten(consumer.getWarnings(), "\n"));
     }
     if (result == null)

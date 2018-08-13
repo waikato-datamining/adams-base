@@ -353,7 +353,7 @@ public class DefaultFlowReader
       Utils.removeComments(lines, NestedProducer.COMMENT);
       nested = NestedFormatHelper.linesToNested(lines, ' ');
       try {
-	result = (Actor) OptionUtils.forCommandLine(Actor.class, ((Line) nested.get(0)).getContent());
+	result = (Actor) OptionUtils.forCommandLine(Actor.class, ((Line) nested.get(0)).getContent(), null, null, true);
 	nested.remove(0);
       }
       catch (Exception e) {
