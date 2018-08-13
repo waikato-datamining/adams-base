@@ -211,6 +211,7 @@ public class DefaultFlowReader
 
     consumer = new NestedConsumer();
     consumer.setEncoding(m_Encoding);
+    consumer.setQuiet(m_Quiet);
     Utils.removeComments(lines, NestedProducer.COMMENT);
     result = (Actor) consumer.fromString(Utils.flatten(lines, "\n"));
 
@@ -364,6 +365,7 @@ public class DefaultFlowReader
       else
         list = (List) nested.get(0);
       compact = new CompactFlowConsumer();
+      compact.setQuiet(m_Quiet);
       result  = (Actor) compact.consume(result, list);
       if (compact.hasErrors())
         m_Errors.addAll(compact.getErrors());

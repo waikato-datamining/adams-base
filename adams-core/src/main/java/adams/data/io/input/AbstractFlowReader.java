@@ -71,7 +71,10 @@ public abstract class AbstractFlowReader
   
   /** for storing errors. */
   protected List<String> m_Errors;
-  
+
+  /** whether to suppress logging output. */
+  protected boolean m_Quiet;
+
   /**
    * Initializes the members.
    */
@@ -81,6 +84,7 @@ public abstract class AbstractFlowReader
     
     m_Warnings = new ArrayList<>();
     m_Errors   = new ArrayList<>();
+    m_Quiet    = false;
   }
   
   /**
@@ -113,6 +117,24 @@ public abstract class AbstractFlowReader
    * @return		how to read the data
    */
   protected abstract InputType getInputType();
+
+  /**
+   * Sets whether to suppress logging output.
+   *
+   * @param value 	true if to suppress
+   */
+  public void setQuiet(boolean value) {
+    m_Quiet = value;
+  }
+
+  /**
+   * Returns whether logging output is suppressed.
+   *
+   * @return		true if suppressed
+   */
+  public boolean isQuiet() {
+    return m_Quiet;
+  }
 
   /**
    * Hook method to perform some checks before performing the actual read.
@@ -307,11 +329,13 @@ public abstract class AbstractFlowReader
   protected void addWarning(String msg, Throwable t) {
     if (t == null) {
       m_Warnings.add(msg);
-      getLogger().warning(msg);
+      if (!m_Quiet)
+	getLogger().warning(msg);
     }
     else {
       m_Warnings.add(msg + "\n" + Utils.throwableToString(t));
-      getLogger().log(Level.WARNING, msg, t);
+      if (!m_Quiet)
+	getLogger().log(Level.WARNING, msg, t);
     }
   }
 
@@ -342,11 +366,13 @@ public abstract class AbstractFlowReader
   protected void addError(String msg, Throwable t) {
     if (t == null) {
       m_Errors.add(msg);
-      getLogger().severe(msg);
+      if (!m_Quiet)
+	getLogger().severe(msg);
     }
     else {
       m_Errors.add(msg + "\n" + Utils.throwableToString(t));
-      getLogger().log(Level.SEVERE, msg, t);
+      if (!m_Quiet)
+	getLogger().log(Level.SEVERE, msg, t);
     }
   }
 

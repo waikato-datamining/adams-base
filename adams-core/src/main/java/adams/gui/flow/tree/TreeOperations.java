@@ -28,10 +28,10 @@ import adams.core.SizeOf;
 import adams.core.Utils;
 import adams.core.io.FlowFile;
 import adams.core.logging.LoggingLevel;
-import adams.core.option.NestedConsumer;
 import adams.core.option.OptionUtils;
 import adams.core.optiontransfer.AbstractOptionTransfer;
 import adams.core.sizeof.ActorFilter;
+import adams.data.io.input.DefaultFlowReader;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -115,6 +115,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -2075,16 +2076,17 @@ public class TreeOperations
    */
   public static Actor getActorFromClipboard() {
     Actor		result;
-    NestedConsumer 	consumer;
+    DefaultFlowReader	freader;
+    StringReader	sreader;
 
     result = null;
 
     try {
       if (ClipboardHelper.canPasteStringFromClipboard()) {
-	consumer = new NestedConsumer();
-	consumer.setQuiet(true);
-	result = (Actor) consumer.fromString(OptionUtils.pasteSetupFromClipboard());
-	consumer.cleanUp();
+        sreader = new StringReader(OptionUtils.pasteSetupFromClipboard());
+        freader = new DefaultFlowReader();
+        freader.setQuiet(true);
+        result  = freader.readActor(sreader);
       }
     }
     catch (Exception ex) {

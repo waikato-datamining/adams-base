@@ -19,14 +19,17 @@
  */
 package adams.gui.flow.tree.menu;
 
-import adams.core.option.AbstractOptionProducer;
-import adams.core.option.NestedProducer;
-import adams.flow.core.Actor;
+import adams.data.io.output.DefaultFlowWriter;
+import adams.gui.core.GUIHelper;
 import adams.gui.flow.tree.ClipboardActorContainer;
+import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import java.awt.event.ActionEvent;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * For copying the currently selected actor(s) and placing them on the 
@@ -59,30 +62,34 @@ public class CopyActorPlainText
   }
 
   /**
-   * Puts the actors in nested form on the clipboard.
-   *
-   * @param actors	the actors to put on the clipboard
-   */
-  protected void putActorOnClipboard(Actor[] actors) {
-    ClipboardActorContainer	cont;
-
-    if (actors.length == 1) {
-      ClipboardHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, actors[0]));
-    }
-    else if (actors.length > 1) {
-      cont = new ClipboardActorContainer();
-      cont.setActors(actors);
-      ClipboardHelper.copyToClipboard(cont.toNestedString());
-    }
-  }
-
-  /**
    * The action to execute.
    *
    * @param e		the event
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    putActorOnClipboard(TreeHelper.pathsToActors(m_State.selPaths, true));
+    Node[]		nodes;
+    List 		data;
+    DefaultFlowWriter	fwriter;
+    StringWriter	swriter;
+
+    nodes = TreeHelper.pathsToNodes(m_State.selPaths);
+    if (nodes.length == 1) {
+      data = TreeHelper.getNested(nodes[0]);
+    }
+    else {
+      data = new ArrayList();
+      data.add(ClipboardActorContainer.class.getName());
+      for (Node node: nodes)
+        data.add(TreeHelper.getNested(node));
+    }
+
+    swriter = new StringWriter();
+    fwriter = new DefaultFlowWriter();
+    fwriter.setUseCompact(true);
+    if (fwriter.write(data, swriter))
+      ClipboardHelper.copyToClipboard(swriter.toString());
+    else
+      GUIHelper.showErrorMessage(getParentDialog(), "Failed to copy actor(s) to clipboard!");
   }
 }
