@@ -1184,6 +1184,36 @@ public abstract class AbstractDatabaseConnection
   }
 
   /**
+   * Removes the given connection from the props file.
+   *
+   * @param conn	the connection to remove
+   * @return		true if successfully removed
+   */
+  public boolean removeConnection(ConnectionParameters conn) {
+    boolean			result;
+    List<ConnectionParameters>	connections;
+    Properties			props;
+
+    // insert connection as most recent
+    connections = getConnections();
+    if (connections.contains(conn))
+      connections.remove(conn);
+    else
+      return false;
+
+    // update properties file
+    props = getProperties();
+    props.removeWithPrefix(PREFIX_CONNECTION);
+    props.setInteger(PREFIX_CONNECTION + "." + SUFFIX_COUNT, connections.size());
+
+    result = updateConnections();
+    if (!result)
+      System.err.println("Error removing connection: " + conn);
+
+    return result;
+  }
+
+  /**
    * Sets the given connection as the default one.
    *
    * @param conn	the connection to use as default
