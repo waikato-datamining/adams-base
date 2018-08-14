@@ -15,7 +15,7 @@
 
 /*
  * ConnectionParameters.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -33,7 +33,6 @@ import java.util.Vector;
  * Container class for connection information.
  *
  *  @author  fracpete (fracpete at waikato dot ac dot nz)
- *  @version $Revision$
  */
 public class ConnectionParameters
   implements Serializable, Comparable<ConnectionParameters>, CloneHandler<ConnectionParameters> {
@@ -201,9 +200,9 @@ public class ConnectionParameters
   }
 
   /**
-   * Returns the parameter for the specified key.
+   * Sets the parameter for the specified key.
    *
-   * @param key		the key of the parameter to retrieve
+   * @param key		the key of the parameter to set
    * @param value	the associated value
    */
   public void setParameter(String key, String value) {
@@ -324,7 +323,9 @@ public class ConnectionParameters
    */
   @Override
   public String toString() {
-    return m_URL.replaceAll(".*\\/\\/", "");
+    return m_User
+      + "@"
+      + m_URL.replaceAll(".*\\/\\/", "");
   }
 
   /**
