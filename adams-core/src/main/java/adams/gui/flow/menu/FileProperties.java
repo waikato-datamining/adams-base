@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileProperties.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -27,25 +27,27 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.flow.tree.Node;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JTextField;
+import javax.swing.tree.TreeNode;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * Displays properties of a flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileProperties
   extends AbstractFlowEditorMenuItemAction {
@@ -69,15 +71,17 @@ public class FileProperties
   protected void showStatistics() {
     ActorStatistic			stats;
     InformativeStatisticFactory.Dialog	dialog;
-    Vector<InformativeStatistic>	statsList;
+    List<InformativeStatistic> 		statsList;
 
-    if (m_State.getCurrentTree().getSelectedNode() != null)
-      stats = new ActorStatistic(m_State.getCurrentTree().getSelectedNode().getFullActor());
-    else if (m_State.getCurrentFlow() != null)
-      stats = new ActorStatistic(m_State.getCurrentFlow());
-    else
-      stats = new ActorStatistic(m_State.getCurrentFlow());
-    statsList = new Vector<InformativeStatistic>();
+    stats = new ActorStatistic();
+    if (m_State.getCurrentTree() != null) {
+      Enumeration<TreeNode> all = m_State.getCurrentTree().getRootNode().breadthFirstEnumeration();
+      while (all.hasMoreElements()) {
+	Node child = (Node) all.nextElement();
+	stats.update(child.getActor());
+      }
+    }
+    statsList = new ArrayList<>();
     statsList.add(stats);
 
     if (getParentDialog() != null)
@@ -105,20 +109,15 @@ public class FileProperties
     JTextField		textSize;
 
     if (m_State.getCurrentFile() != null)
-      file = m_State.getCurrentFile().toString();
+      file = m_State.getCurrentFile().getAbsolutePath();
     else
       file = "N/A";
     if ((m_State.getCurrentFile() != null) && !m_State.isModified())
-      size = ByteFormat.toKiloBytes(m_State.getCurrentFile().length(), 1);
+      size = ByteFormat.toBestFitBytes(m_State.getCurrentFile().length(), 1);
     else
       size = "N/A";
     buttonStats = new JButton("Display", GUIHelper.getIcon("statistics.png"));
-    buttonStats.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showStatistics();
-      }
-    });
+    buttonStats.addActionListener((ActionEvent ae) -> showStatistics());
 
     params = new ParameterPanel();
     textFile = new JTextField(file, 20);
@@ -130,12 +129,7 @@ public class FileProperties
 	  e.consume();
 	  BasePopupMenu menu = new BasePopupMenu();
 	  JMenuItem menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
-	  menuitem.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-	      ClipboardHelper.copyToClipboard(textFile.getText());
-	    }
-	  });
+	  menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(textFile.getText()));
 	  menu.add(menuitem);
 	  menu.showAbsolute(textFile, e);
 	}
