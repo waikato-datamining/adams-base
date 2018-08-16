@@ -426,7 +426,9 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
       for (i = 0; i < m_Actors.size(); i++) {
 	if (m_Actors.get(i).getSkip())
 	  continue;
-	result = m_Actors.get(i).setUp();
+	result = checkActor(m_Actors.get(i), i);
+	if (result == null)
+          result = m_Actors.get(i).setUp();
 	if (result != null) {
 	  result = m_Actors.get(i).getFullName() + ": " + result;
 	  break;
