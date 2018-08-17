@@ -968,7 +968,7 @@ public class FlowPanel
 	SwingUtilities.invokeLater(() -> setPageIcon("save.gif"));
 	showStatus("Saving '" + file + "'...");
 	if (writer instanceof NestedFlowWriter)
-	  m_Result = ((NestedFlowWriter) writer).write(TreeHelper.getNested(rootNode), file);
+	  m_Result = ((NestedFlowWriter) writer).write(TreeHelper.getNested(rootNode, true), file);
 	else
 	  m_Result = writer.write(rootNode.getFullActor(), file);
 	showStatus("");
