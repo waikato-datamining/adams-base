@@ -20,6 +20,8 @@
 
 package adams.flow.control.flowrestart;
 
+import adams.flow.control.Flow;
+
 /**
  * Does nothing.
  *
@@ -43,20 +45,22 @@ public class NullManager
   /**
    * Starts the restart handling.
    *
+   * @param flow	the flow to handle
    * @return		null if successfully started, otherwise error message
    */
   @Override
-  public String start() {
+  public String start(Flow flow) {
     return null;
   }
 
   /**
    * Stops the restart handling.
    *
+   * @param flow	the flow to handle
    * @return		null if successfully stopped, otherwise error message
    */
   @Override
-  public String stop() {
+  public String stop(Flow flow) {
     return null;
   }
 }

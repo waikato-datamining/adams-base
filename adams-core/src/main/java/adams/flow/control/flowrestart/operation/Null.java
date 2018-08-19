@@ -14,38 +14,42 @@
  */
 
 /*
- * AbstractFlowRestartManager.java
+ * Null.java
  * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.control.flowrestart;
+package adams.flow.control.flowrestart.operation;
 
-import adams.core.option.AbstractOptionHandler;
 import adams.flow.control.Flow;
 
 /**
- * Ancestor for schemes that can trigger a flow restart.
+ * Dummy, does nothing.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractFlowRestartManager
-  extends AbstractOptionHandler  {
+public class Null
+  extends AbstractRestartOperation {
 
-  private static final long serialVersionUID = -7658888648857332698L;
-
-  /**
-   * Starts the restart handling.
-   *
-   * @param flow	the flow to handle
-   * @return		null if successfully started, otherwise error message
-   */
-  public abstract String start(Flow flow);
+  private static final long serialVersionUID = -3691032357446176274L;
 
   /**
-   * Stops the restart handling.
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Dummy, does nothing.";
+  }
+
+  /**
+   * Restarts the flow.
    *
    * @param flow	the flow to handle
-   * @return		null if successfully stopped, otherwise error message
+   * @return		null if successfully restarted, otherwise the error message
    */
-  public abstract String stop(Flow flow);
+  @Override
+  public String restart(Flow flow) {
+    return null;
+  }
 }

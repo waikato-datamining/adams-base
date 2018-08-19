@@ -1254,7 +1254,7 @@ public class Flow
       m_FlowExecutionListener.finishListening();
 
     if (result == null)
-      result = m_FlowRestartManager.start();
+      result = m_FlowRestartManager.start(this);
 
     return result;
   }
@@ -1291,7 +1291,7 @@ public class Flow
       }
     }
 
-    m_FlowRestartManager.stop();
+    m_FlowRestartManager.stop(this);
 
     RunningFlowsRegistry.getSingleton().removeFlow(this);
 

@@ -14,27 +14,27 @@
  */
 
 /*
- * AbstractFlowRestartManager.java
+ * AbstractTrigger.java
  * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.control.flowrestart;
+package adams.flow.control.flowrestart.trigger;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.control.Flow;
 
 /**
- * Ancestor for schemes that can trigger a flow restart.
+ * Ancestor for restart triggers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractFlowRestartManager
+public abstract class AbstractTrigger
   extends AbstractOptionHandler  {
 
-  private static final long serialVersionUID = -7658888648857332698L;
+  private static final long serialVersionUID = -2532215576000442873L;
 
   /**
-   * Starts the restart handling.
+   * Starts the trigger.
    *
    * @param flow	the flow to handle
    * @return		null if successfully started, otherwise error message
@@ -42,10 +42,9 @@ public abstract class AbstractFlowRestartManager
   public abstract String start(Flow flow);
 
   /**
-   * Stops the restart handling.
+   * Stops the trigger.
    *
-   * @param flow	the flow to handle
    * @return		null if successfully stopped, otherwise error message
    */
-  public abstract String stop(Flow flow);
+  public abstract String stop();
 }

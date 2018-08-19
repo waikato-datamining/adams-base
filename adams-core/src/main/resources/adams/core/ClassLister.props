@@ -331,6 +331,14 @@ adams.flow.control.errorpostprocessor.ErrorPostProcessor=\
 adams.flow.control.flowrestart.AbstractFlowRestartManager=\
   adams.flow.control.flowrestart
 
+# the flow restart triggers
+adams.flow.control.flowrestart.trigger.AbstractTrigger=\
+  adams.flow.control.flowrestart.trigger
+
+# the flow restart operation
+adams.flow.control.flowrestart.operation.AbstractRestartOperation=\
+  adams.flow.control.flowrestart.operation
+
 # the plot processor algorithms
 adams.flow.control.plotprocessor.AbstractPlotProcessor=\
   adams.flow.control.plotprocessor
