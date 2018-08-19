@@ -327,6 +327,10 @@ adams.flow.core.ActorReferenceHandler=\
 adams.flow.control.errorpostprocessor.ErrorPostProcessor=\
   adams.flow.control.errorpostprocessor
 
+# the managers for restarting a flow
+adams.flow.control.flowrestart.AbstractFlowRestartManager=\
+  adams.flow.control.flowrestart
+
 # the plot processor algorithms
 adams.flow.control.plotprocessor.AbstractPlotProcessor=\
   adams.flow.control.plotprocessor

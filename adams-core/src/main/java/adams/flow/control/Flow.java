@@ -33,6 +33,8 @@ import adams.db.LogEntry;
 import adams.db.MutableLogEntryHandler;
 import adams.env.Environment;
 import adams.env.FlowDefinition;
+import adams.flow.control.flowrestart.AbstractFlowRestartManager;
+import adams.flow.control.flowrestart.NullManager;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
@@ -225,6 +227,9 @@ public class Flow
   /** the frame for graphical flow execution listeners. */
   protected transient BaseFrame m_FlowExecutionListenerFrame;
 
+  /** the manager for restarting the flow. */
+  protected AbstractFlowRestartManager m_FlowRestartManager;
+
   /** the callable names. */
   protected CallableNamesRecorder m_CallableNames;
 
@@ -289,6 +294,10 @@ public class Flow
     m_OptionManager.add(
       "flow-execution-listener", "flowExecutionListener",
       new NullListener());
+
+    m_OptionManager.add(
+      "flow-restart-manager", "flowRestartManager",
+      new NullManager());
   }
 
   /**
@@ -550,6 +559,35 @@ public class Flow
    */
   public String flowExecutionListenerTipText() {
     return "The listener for the flow execution; must be enabled explicitly.";
+  }
+
+  /**
+   * Sets the restart manager to use.
+   *
+   * @param value	the manager
+   */
+  public void setFlowRestartManager(AbstractFlowRestartManager value) {
+    m_FlowRestartManager = value;
+    reset();
+  }
+
+  /**
+   * Returns the restart manager in use.
+   *
+   * @return		the manager
+   */
+  public AbstractFlowRestartManager getFlowRestartManager() {
+    return m_FlowRestartManager;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String flowRestartManagerTipText() {
+    return "The manager for restarting the flow.";
   }
 
   /**
@@ -1215,6 +1253,9 @@ public class Flow
     if (m_FlowExecutionListeningEnabled)
       m_FlowExecutionListener.finishListening();
 
+    if (result == null)
+      result = m_FlowRestartManager.start();
+
     return result;
   }
 
@@ -1249,6 +1290,8 @@ public class Flow
 	}
       }
     }
+
+    m_FlowRestartManager.stop();
 
     RunningFlowsRegistry.getSingleton().removeFlow(this);
 
