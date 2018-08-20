@@ -15,7 +15,7 @@
 
 /*
  * FileChanged.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -89,7 +89,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileChanged
   extends AbstractTransformer {
@@ -125,9 +124,9 @@ public class FileChanged
   }
 
   /**
-   * Sets the type of conversion to perform.
+   * Sets the monitor to use.
    *
-   * @param value	the type of conversion
+   * @param value	the monitor
    */
   public void setMonitor(FileChangeMonitor value) {
     m_Monitor = value;
@@ -135,9 +134,9 @@ public class FileChanged
   }
 
   /**
-   * Returns the type of conversion to perform.
+   * Returns the monitor in use.
    *
-   * @return		the type of conversion
+   * @return		the monitor
    */
   public FileChangeMonitor getMonitor() {
     return m_Monitor;
