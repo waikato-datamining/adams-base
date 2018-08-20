@@ -1225,7 +1225,10 @@ public class Flow
       ConsoleHelper.printlnOut("");
     }
 
-    result = super.doExecute();
+    result = m_FlowRestartManager.start(this);
+
+    if (result == null)
+      result = super.doExecute();
 
     if (m_Headless) {
       finish = new Date();
@@ -1252,9 +1255,6 @@ public class Flow
 
     if (m_FlowExecutionListeningEnabled)
       m_FlowExecutionListener.finishListening();
-
-    if (result == null)
-      result = m_FlowRestartManager.start(this);
 
     return result;
   }
