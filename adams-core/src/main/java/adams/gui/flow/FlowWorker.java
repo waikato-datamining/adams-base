@@ -27,6 +27,7 @@ import adams.core.Utils;
 import adams.core.VariablesHandler;
 import adams.db.LogEntryHandler;
 import adams.flow.control.Flow;
+import adams.flow.control.flowrestart.NullManager;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.execution.debug.AnyActorBreakpoint;
@@ -91,7 +92,8 @@ public class FlowWorker
    * @throws Exception if unable to compute a result
    */
   protected Object doInBackground() throws Exception {
-    AnyActorBreakpoint breakpoint;
+    AnyActorBreakpoint 	breakpoint;
+    boolean 		finished;
 
     m_Owner.update();
     m_Owner.cleanUp();
@@ -126,7 +128,18 @@ public class FlowWorker
         ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_Flow, m_File);
 	showStatus("Running");
 	m_Owner.setLastFlow(m_Flow);
-	m_Output = m_Flow.execute();
+	do {
+	  m_Output = m_Flow.execute();
+	  finished = true;
+	  // has flow been restarted?
+	  if (m_Flow instanceof Flow) {
+	    if (!(((Flow) m_Flow).getFlowRestartManager() instanceof NullManager)) {
+	      Utils.wait(m_Flow, 2000, 100);  // TODO option in FlowEditor.props?
+	      finished = m_Flow.isStopped();
+	    }
+	  }
+	}
+	while (!finished);
 	// did the flow get stopped by a critical actor?
 	if ((m_Output == null) && m_Flow.hasStopMessage())
 	  m_Output = m_Flow.getStopMessage();
