@@ -39,6 +39,9 @@ public class RestartItself
 
   private static final long serialVersionUID = 5721670854550551855L;
 
+  /** whether to use the {@link adams.flow.core.ActorUtils#FLOW_FILENAME_LONG} or just the flow itself. */
+  protected boolean m_UseFlowFileVariable;
+
   /**
    * Returns a string describing the object.
    *
@@ -46,7 +49,48 @@ public class RestartItself
    */
   @Override
   public String globalInfo() {
-    return "Restarts the flow as defined in variable " + ActorUtils.FLOW_FILENAME_LONG + ".";
+    return "Restarts the flow. Either as is or executes the flow as defined in variable " + ActorUtils.FLOW_FILENAME_LONG + ".";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "use-flow-file-variable", "useFlowFileVariable",
+      false);
+  }
+
+  /**
+   * Sets whether to just restart the flow or execute from file ({@link ActorUtils#FLOW_FILENAME_LONG}).
+   *
+   * @param value	true if to use variable
+   */
+  public void setUseFlowFileVariable(boolean value) {
+    m_UseFlowFileVariable = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to just restart the flow or execute from file ({@link ActorUtils#FLOW_FILENAME_LONG}).
+   *
+   * @return		true if to use variable
+   */
+  public boolean getUseFlowFileVariable() {
+    return m_UseFlowFileVariable;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useFlowFileVariableTipText() {
+    return "If enabled, the flow defined by variable " + ActorUtils.FLOW_FILENAME_LONG + " is executed.";
   }
 
   /**
@@ -67,22 +111,30 @@ public class RestartItself
     result = null;
 
     flowFile = flow.getVariables().get(ActorUtils.FLOW_FILENAME_LONG);
-    if (flowFile == null)
-      result = "Variable " + ActorUtils.FLOW_FILENAME_LONG + " not defined?";
-    else if (!FileUtils.fileExists(flowFile))
-      result = "Flow file does not exist: " + flowFile;
+    if (m_UseFlowFileVariable) {
+      if (!FileUtils.fileExists(flowFile))
+	result = "Flow file does not exist: " + flowFile;
+    }
 
     actor = null;
     if (result == null) {
       if (isLoggingEnabled())
         getLogger().info("Stopping flow...");
       flow.stopExecution();
-      if (isLoggingEnabled())
-        getLogger().info("Reading flow: " + flowFile);
-      errors = new MessageCollection();
-      actor = ActorUtils.read(flowFile, errors);
-      if (!(actor instanceof Flow))
-        result = "Loaded actor is not of type Flow: " + Utils.classToString(actor);
+      flow.wrapUp();
+      flow.cleanUp();
+      // load flow?
+      if (m_UseFlowFileVariable) {
+	if (isLoggingEnabled())
+	  getLogger().info("Reading flow: " + flowFile);
+	errors = new MessageCollection();
+	actor = ActorUtils.read(flowFile, errors);
+	if (!(actor instanceof Flow))
+	  result = "Loaded actor is not of type Flow: " + Utils.classToString(actor);
+      }
+      else {
+        actor = flow;
+      }
     }
 
     if (result == null) {
