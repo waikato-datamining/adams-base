@@ -20,6 +20,7 @@
 
 package adams.flow.control.flowrestart.trigger;
 
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.CronSchedule;
 import adams.flow.control.Flow;
@@ -133,6 +134,16 @@ public class Cron
     return
         "The schedule for execution the cron actor; "
       + "format 'SECOND MINUTE HOUR DAYOFMONTH MONTH WEEKDAY [YEAR]'.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "schedule", m_Schedule.getValue());
   }
 
   /**

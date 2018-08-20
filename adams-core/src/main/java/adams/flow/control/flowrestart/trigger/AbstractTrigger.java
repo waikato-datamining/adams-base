@@ -20,6 +20,7 @@
 
 package adams.flow.control.flowrestart.trigger;
 
+import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.control.Flow;
 import adams.flow.control.flowrestart.RestartHandler;
@@ -30,7 +31,8 @@ import adams.flow.control.flowrestart.RestartHandler;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractTrigger
-  extends AbstractOptionHandler  {
+  extends AbstractOptionHandler
+  implements QuickInfoSupporter {
 
   private static final long serialVersionUID = -2532215576000442873L;
 
@@ -53,6 +55,17 @@ public abstract class AbstractTrigger
    */
   public RestartHandler getRestartHandler() {
     return m_RestartHandler;
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   * <br>
+   * Default implementation returns null.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    return null;
   }
 
   /**
