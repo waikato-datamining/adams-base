@@ -33,7 +33,6 @@ import adams.core.base.BaseLong;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseShort;
 import adams.core.base.BaseString;
-import adams.core.logging.LoggingObject;
 import adams.core.logging.LoggingSupporter;
 import adams.core.management.LocaleHelper;
 import gnu.trove.list.array.TByteArrayList;
@@ -2023,7 +2022,7 @@ public class Utils {
    * @param msec	the maximum number of milli-seconds to wait, no waiting if 0
    * @param interval	the amount msecs to wait before checking state (interval < msec)
    */
-  public static void wait(LoggingObject obj, int msec, int interval) {
+  public static void wait(LoggingSupporter obj, int msec, int interval) {
     wait(obj, null, msec, interval);
   }
 
@@ -2035,7 +2034,7 @@ public class Utils {
    * @param msec	the maximum number of milli-seconds to wait, no waiting if 0
    * @param interval	the amount msecs to wait before checking state (interval < msec)
    */
-  public static void wait(LoggingObject obj, StoppableWithFeedback stoppable, int msec, int interval) {
+  public static void wait(LoggingSupporter obj, StoppableWithFeedback stoppable, int msec, int interval) {
     int count;
     int current;
 
