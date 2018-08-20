@@ -137,6 +137,7 @@ public class TriggerManager
   @Override
   public String start(Flow flow) {
     m_Flow = flow;
+    m_Trigger.setRestartHandler(this);
     return m_Trigger.start(flow);
   }
 
