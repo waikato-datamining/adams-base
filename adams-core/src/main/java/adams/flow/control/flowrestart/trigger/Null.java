@@ -49,7 +49,7 @@ public class Null
    * @return		null if successfully started, otherwise error message
    */
   @Override
-  public String start(Flow flow) {
+  protected String doStart(Flow flow) {
     return null;
   }
 
