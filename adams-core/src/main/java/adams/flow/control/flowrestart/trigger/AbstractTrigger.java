@@ -22,6 +22,7 @@ package adams.flow.control.flowrestart.trigger;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.control.Flow;
+import adams.flow.control.flowrestart.RestartHandler;
 
 /**
  * Ancestor for restart triggers.
@@ -33,13 +34,64 @@ public abstract class AbstractTrigger
 
   private static final long serialVersionUID = -2532215576000442873L;
 
+  /** the restart handler to notify. */
+  protected RestartHandler m_RestartHandler;
+
+  /**
+   * Sets the restart handler to use.
+   *
+   * @param value 	the handler to use
+   */
+  public void setRestartHandler(RestartHandler value) {
+    m_RestartHandler = value;
+  }
+
+  /**
+   * Returns the restart handler.
+   *
+   * @return		the handler
+   */
+  public RestartHandler getRestartHandler() {
+    return m_RestartHandler;
+  }
+
+  /**
+   * Performs checks before starting the trigger.
+   *
+   * @param flow	the flow to check
+   * @return		null if successfully checked, otherwise error message
+   */
+  protected String check(Flow flow) {
+    if (m_RestartHandler == null)
+      return "No restart handler!";
+    if (flow == null)
+      return "No flow provided!";
+    return null;
+  }
+
   /**
    * Starts the trigger.
    *
    * @param flow	the flow to handle
    * @return		null if successfully started, otherwise error message
    */
-  public abstract String start(Flow flow);
+  protected abstract String doStart(Flow flow);
+
+  /**
+   * Starts the trigger.
+   *
+   * @param flow	the flow to handle
+   * @return		null if successfully started, otherwise error message
+   */
+  public String start(Flow flow) {
+    String	result;
+
+    result = check(flow);
+    if (result == null)
+      result = doStart(flow);
+
+    return result;
+  }
 
   /**
    * Stops the trigger.

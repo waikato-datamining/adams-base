@@ -145,6 +145,7 @@ public class TriggerManager
    *
    * @return		null if successfully restarted, otherwise the error message
    */
+  @Override
   public String restart() {
     return m_Operation.restart(m_Flow);
   }
