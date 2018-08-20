@@ -34,7 +34,7 @@ import adams.flow.core.RunnableWithLogging;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class Itself
+public class RestartItself
   extends AbstractRestartOperation {
 
   private static final long serialVersionUID = 5721670854550551855L;
