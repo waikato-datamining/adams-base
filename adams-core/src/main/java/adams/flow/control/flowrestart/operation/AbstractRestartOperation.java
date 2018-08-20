@@ -20,6 +20,7 @@
 
 package adams.flow.control.flowrestart.operation;
 
+import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.control.Flow;
 
@@ -29,9 +30,21 @@ import adams.flow.control.Flow;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractRestartOperation
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements QuickInfoSupporter  {
 
   private static final long serialVersionUID = 6832098720619392305L;
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   * <br>
+   * Default implementation returns null.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    return null;
+  }
 
   /**
    * Restarts the flow.
