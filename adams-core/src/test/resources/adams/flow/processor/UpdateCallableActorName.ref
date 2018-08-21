@@ -30,6 +30,8 @@ adams.flow.control.Flow
 					DumpFile
 	-flow-execution-listener
 		adams.flow.execution.NullListener
+	-flow-restart-manager
+		adams.flow.control.flowrestart.NullManager
 
 
 --> processed-2
@@ -64,5 +66,7 @@ adams.flow.control.Flow
 					DumpFileNew
 	-flow-execution-listener
 		adams.flow.execution.NullListener
+	-flow-restart-manager
+		adams.flow.control.flowrestart.NullManager
 
 

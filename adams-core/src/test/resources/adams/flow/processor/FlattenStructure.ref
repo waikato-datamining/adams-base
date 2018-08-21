@@ -48,5 +48,7 @@ adams.flow.control.Flow
 												adams.data.io.output.NullWriter
 	-flow-execution-listener
 		adams.flow.execution.NullListener
+	-flow-restart-manager
+		adams.flow.control.flowrestart.NullManager
 
 

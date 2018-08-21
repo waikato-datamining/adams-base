@@ -42,5 +42,7 @@ adams.flow.control.Flow
 							dis
 	-flow-execution-listener
 		adams.flow.execution.NullListener
+	-flow-restart-manager
+		adams.flow.control.flowrestart.NullManager
 
 
