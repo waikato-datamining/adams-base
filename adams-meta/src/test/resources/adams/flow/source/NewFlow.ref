@@ -38,4 +38,6 @@ adams.flow.control.Flow
 			${TMP}/dumpfile.txt
 	-flow-execution-listener
 		adams.flow.execution.NullListener
+	-flow-restart-manager
+		adams.flow.control.flowrestart.NullManager
 
