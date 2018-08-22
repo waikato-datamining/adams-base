@@ -274,9 +274,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.markdownj</groupId>
-      <artifactId>markdownj-core</artifactId>
-      <version>0.4</version>
+      <groupId>com.vladsch.flexmark</groupId>
+      <artifactId>flexmark</artifactId>
+      <version>0.34.18</version>
     </dependency>
 
     <dependency>

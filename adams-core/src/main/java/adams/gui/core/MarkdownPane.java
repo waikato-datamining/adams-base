@@ -13,41 +13,33 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * MarkdownTextPane.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+/*
+ * MarkdownPane.java
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
+import adams.core.net.MarkdownHelper;
 import adams.env.Environment;
-import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
-import org.markdownj.MarkdownProcessor;
 
-import javax.swing.JEditorPane;
-import javax.swing.text.Document;
 import java.awt.BorderLayout;
 
 /**
  * Renders Markdown text.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class MarkdownTextPane
-  extends BasePanel
-  implements TextPaneComponent {
+public class MarkdownPane
+  extends BasePanel{
 
   private static final long serialVersionUID = -3021897813785552183L;
-
-  /** the markdown processor. */
-  protected MarkdownProcessor m_Processor;
 
   /** the markdown text. */
   protected String m_Markdown;
 
   /** for rendering the markdown. */
-  protected JEditorPane m_PaneView;
+  protected HtmlPane m_PaneView;
 
   /**
    * Initializes the members.
@@ -56,8 +48,7 @@ public class MarkdownTextPane
   protected void initialize() {
     super.initialize();
 
-    m_Processor = new MarkdownProcessor();
-    m_Markdown  = "";
+    m_Markdown = "";
   }
 
   /**
@@ -69,10 +60,8 @@ public class MarkdownTextPane
 
     setLayout(new BorderLayout());
 
-    m_PaneView = new JEditorPane();
-    m_PaneView.setEditable(false);
-    m_PaneView.setContentType("text/html");
-    add(new BaseScrollPane(m_PaneView), BorderLayout.CENTER);
+    m_PaneView = new HtmlPane();
+    add(m_PaneView, BorderLayout.CENTER);
   }
 
   /**
@@ -87,14 +76,7 @@ public class MarkdownTextPane
       value = "";
     m_Markdown = value;
 
-    html = m_Processor.markdown(m_Markdown);
-    try {
-      m_PaneView.setText("<html>" + html + "</html>");
-      m_PaneView.setCaretPosition(0);
-    }
-    catch (Exception e) {
-      ConsolePanel.getSingleton().append("Failed to update preview!", e);
-    }
+    m_PaneView.setText(MarkdownHelper.markdownToHtml(m_Markdown));
   }
 
   /**
@@ -106,69 +88,6 @@ public class MarkdownTextPane
     return m_Markdown;
   }
 
-  @Override
-  public String getSelectedText() {
-    return m_PaneView.getSelectedText();
-  }
-
-  /**
-   * Sets whether the text pane is editable or not.
-   *
-   * @param value if true the text pane is editable
-   */
-  @Override
-  public void setEditable(boolean value) {
-    m_PaneView.setEditable(value);
-  }
-
-  /**
-   * Returns whether the text pane is editable or not.
-   *
-   * @return true if the text pane is editable
-   */
-  @Override
-  public boolean isEditable() {
-    return m_PaneView.isEditable();
-  }
-
-  /**
-   * Returns the underlying document.
-   *
-   * @return		the document
-   */
-  @Override
-  public Document getDocument() {
-    return m_PaneView.getDocument();
-  }
-
-  /**
-   * Sets the position of the cursor.
-   *
-   * @param value	the position
-   */
-  @Override
-  public void setCaretPosition(int value) {
-    m_PaneView.setCaretPosition(value);
-  }
-
-  /**
-   * Returns the current position of the cursor.
-   *
-   * @return		the cursor position
-   */
-  @Override
-  public int getCaretPosition() {
-    return m_PaneView.getCaretPosition();
-  }
-
-  /**
-   * Sets the position of the cursor at the end.
-   */
-  @Override
-  public void setCaretPositionLast() {
-    setCaretPosition(getDocument().getLength());
-  }
-
   /**
    * For testing only.
    *
@@ -176,7 +95,7 @@ public class MarkdownTextPane
    */
   public static void main(String[] args) {
     Environment.setEnvironmentClass(Environment.class);
-    MarkdownTextPane pane = new MarkdownTextPane();
+    MarkdownPane pane = new MarkdownPane();
     pane.setText("# Markdown test\n\n* item 1\n* item 2\n\n## Other stuff\n*italic* __bold__");
     BaseFrame frame = new BaseFrame("Markdown test");
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);

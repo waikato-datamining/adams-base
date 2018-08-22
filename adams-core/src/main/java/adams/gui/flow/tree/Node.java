@@ -24,6 +24,7 @@ import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.base.BaseAnnotation.Tag;
 import adams.core.net.HtmlUtils;
+import adams.core.net.MarkdownHelper;
 import adams.core.option.ArrayProducer;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
@@ -39,7 +40,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.LazyExpansionTreeNode;
 import adams.gui.core.MouseUtils;
 import com.github.fracpete.jclipboardhelper.TransferableString;
-import org.markdownj.MarkdownProcessor;
 
 import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
@@ -74,11 +74,8 @@ public class Node
   /** whether the node is currently bookmarked. */
   protected boolean m_Bookmarked;
 
-  /** the markdown processor. */
-  protected static MarkdownProcessor m_MarkdownProcessor;
-
-  /** whether the processor has been initialized. */
-  protected static Boolean m_MarkdownProcessorInitialized;
+  /** whether to use markdown. */
+  protected static Boolean m_UseMarkdown;
 
   /** the commandline (cache for undo/redo). */
   protected String m_CommandLine;
@@ -87,7 +84,6 @@ public class Node
    * Initializes the node.
    *
    * @param owner	the owning tree, can be null
-   * @param actor	the underlying actor
    */
   protected Node(Tree owner) {
     super();
@@ -98,11 +94,8 @@ public class Node
     m_Bookmarked   = false;
     m_Variables    = null;
     m_CommandLine  = null;
-    if (m_MarkdownProcessorInitialized == null) {
-      m_MarkdownProcessorInitialized = true;
-      if (GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"))
-	m_MarkdownProcessor = new MarkdownProcessor();
-    }
+    if (m_UseMarkdown == null)
+      m_UseMarkdown = (GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"));
   }
 
   /**
@@ -504,9 +497,9 @@ public class Node
     colorDef = hasOwner() ? getOwner().getAnnotationsColor() : "blue";
     sizeDef  = hasOwner() ? getOwner().getAnnotationsSize() : "-2";
 
-    if (m_MarkdownProcessor != null) {
+    if (m_UseMarkdown) {
       result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
-      result.append(m_MarkdownProcessor.markdown(actor.getAnnotations().getValue()));
+      result.append(MarkdownHelper.markdownToHtml(actor.getAnnotations().getValue()));
       result.append("</font>");
     }
     else {

@@ -13,18 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MarkdownTextAreaWithPreview.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
+import adams.core.net.MarkdownHelper;
 import adams.env.Environment;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
-import org.markdownj.MarkdownProcessor;
 
-import javax.swing.JEditorPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.text.Document;
 import java.awt.BorderLayout;
@@ -34,7 +33,6 @@ import java.awt.Font;
  * Text area for handling Markdown with code and preview tabs.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MarkdownTextAreaWithPreview
   extends BasePanel
@@ -49,20 +47,7 @@ public class MarkdownTextAreaWithPreview
   protected BaseTextArea m_TextCode;
 
   /** the preview. */
-  protected JEditorPane m_PanePreview;
-
-  /** the markdown processor. */
-  protected MarkdownProcessor m_Processor;
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Processor = new MarkdownProcessor();
-  }
+  protected HtmlPane m_PanePreview;
 
   /**
    * Initializes the widgets.
@@ -80,10 +65,8 @@ public class MarkdownTextAreaWithPreview
     m_TextCode.setFont(Fonts.getMonospacedFont());
     m_TabbedPane.addTab("Write", new BaseScrollPane(m_TextCode));
 
-    m_PanePreview = new JEditorPane();
-    m_PanePreview.setEditable(false);
-    m_PanePreview.setContentType("text/html");
-    m_TabbedPane.addTab("Preview", new BaseScrollPane(m_PanePreview));
+    m_PanePreview = new HtmlPane();
+    m_TabbedPane.addTab("Preview", m_PanePreview);
 
     m_TabbedPane.addChangeListener((ChangeEvent e) -> update());
   }
@@ -267,10 +250,9 @@ public class MarkdownTextAreaWithPreview
   protected void update() {
     String	html;
 
-    html = m_Processor.markdown(getText());
+    html = MarkdownHelper.markdownToHtml(getText());
     try {
-      m_PanePreview.setText("<html>" + html + "</html>");
-      m_PanePreview.setCaretPosition(0);
+      m_PanePreview.setText(html);
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append("Failed to update preview!", e);
