@@ -44,6 +44,9 @@ public class HtmlPane
   /** for rendering the html. */
   protected JFXPanel m_PaneView;
 
+  /** the Webview. */
+  protected WebView m_WebView;
+
   /**
    * Initializes the members.
    */
@@ -51,7 +54,8 @@ public class HtmlPane
   protected void initialize() {
     super.initialize();
 
-    m_HTML = "";
+    m_HTML    = "";
+    m_WebView = null;
   }
 
   /**
@@ -78,9 +82,9 @@ public class HtmlPane
     m_HTML = value;
 
     Platform.runLater(() -> {
-      WebView webView = new WebView();
-      m_PaneView.setScene(new Scene(webView));
-      webView.getEngine().loadContent(m_HTML);
+      m_WebView = new WebView();
+      m_PaneView.setScene(new Scene(m_WebView));
+      m_WebView.getEngine().loadContent(m_HTML);
     });
   }
 
@@ -91,6 +95,15 @@ public class HtmlPane
    */
   public String getText() {
     return m_HTML;
+  }
+
+  /**
+   * Returns the webview.
+   *
+   * @return		the view
+   */
+  public WebView getWebView() {
+    return m_WebView;
   }
 
   /**
