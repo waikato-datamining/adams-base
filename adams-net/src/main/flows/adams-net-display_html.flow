@@ -1,0 +1,10 @@
+# Project: adams
+# Date: 2018-08-23 10:02:24
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-net
+#
+adams.flow.control.Flow -annotation "Downloads an HTML page and renders it." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.URLSupplier -url https://github.com/index.html
+ adams.flow.transformer.DownloadContent
+ adams.flow.sink.HTMLDisplay -writer adams.gui.print.NullWriter

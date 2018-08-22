@@ -1,0 +1,10 @@
+# Project: adams
+# Date: 2018-08-23 10:10:32
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-net
+#
+adams.flow.control.Flow -annotation "Renders Markdown as HTML and displays it." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.CombineVariables -expression "# Title\\n\\n* bullet 1\\n* bullet 2\\n\\n  * sub bullet 1 with *italic text*\\n  * sub bullet 2 with **bold text**" -conversion adams.data.conversion.StringToString
+ adams.flow.transformer.Convert -conversion adams.data.conversion.MarkdownToHTML
+ adams.flow.sink.HTMLDisplay -writer adams.gui.print.NullWriter

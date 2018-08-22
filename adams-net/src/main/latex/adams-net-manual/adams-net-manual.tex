@@ -324,6 +324,7 @@ Some other basic, but useful actors are the following:
 	\item \textit{DownloadContent} -- downloads (textual) content via HTTP and 
 	forwards it.\footnote{adams-net-download\_content.flow}
 	\item \textit{HTMLFileReader} -- reads an HTML file, generating a DOM object.
+	\item \textit{HTMLDisplays} -- sink for rendering HTML content.
 	\item \textit{HttpRequest} -- the source allows accessing URLs (POST/GET, sending data,
 	cookies), returns the HTML from the reponse as text; the transformer allows
 	sending the incoming text via HTTP request (and optional headers).
@@ -341,17 +342,18 @@ The following conversions are available:
 \begin{tight_itemize}
     \item \textit{HTMLToDOM} -- generates a DOM document from an HTML string.
     \item \textit{HTMLToText} -- extracts the text from an HTML string.
+    \item \textit{MarkdownToHTML} -- extracts the text from an HTML string.
     \item \textit{RenderHTMLAsText} -- renders an HTML string as text.
-	\item \textit{SpreadSheetToHTML} -- converts a spreadsheet into an HTML 
-	page (or just a table fragment).
-	\item \textit{StringArrayToURLParameters} -- converts a string array of
-	key-value pairs into a string to used in a URL.
-	\item \textit{StringToURL} -- converts a string into a URL object.
-	\item \textit{URLEncode} -- encodes a string into a URL-conform string.
-	\item \textit{URLDecode} -- decodes a URL string into a regular string.
-	\item \textit{URLParametersToStringArray} -- converts the parameters of
-	a URL (after the '?') back into a string array of key-value pairs.
-	\item \textit{URLToString} -- converts a URL object into a string.
+    \item \textit{SpreadSheetToHTML} -- converts a spreadsheet into an HTML
+    page (or just a table fragment).
+    \item \textit{StringArrayToURLParameters} -- converts a string array of
+    key-value pairs into a string to used in a URL.
+    \item \textit{StringToURL} -- converts a string into a URL object.
+    \item \textit{URLEncode} -- encodes a string into a URL-conform string.
+    \item \textit{URLDecode} -- decodes a URL string into a regular string.
+    \item \textit{URLParametersToStringArray} -- converts the parameters of
+    a URL (after the '?') back into a string array of key-value pairs.
+    \item \textit{URLToString} -- converts a URL object into a string.
 \end{tight_itemize}
 In case you need to debug a connection, \texttt{telnet} is always a useful tool.
 ADAMS comes with a very simple graphical version, depicted in Figure \ref{telnet}.

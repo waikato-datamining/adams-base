@@ -81,9 +81,12 @@ public class HtmlPane
       value = "";
     m_HTML = value;
 
+    Platform.setImplicitExit(false);
     Platform.runLater(() -> {
-      m_WebView = new WebView();
-      m_PaneView.setScene(new Scene(m_WebView));
+      if (m_WebView == null) {
+	m_WebView = new WebView();
+	m_PaneView.setScene(new Scene(m_WebView));
+      }
       m_WebView.getEngine().loadContent(m_HTML);
     });
   }
