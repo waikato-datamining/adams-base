@@ -23,8 +23,7 @@ package adams.data.instancesanalysis.pls;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
-import com.github.waikatodatamining.matrix.algorithm.NIPALS.DeflationMode;
-import com.github.waikatodatamining.matrix.algorithm.PreprocessingType;
+import com.github.waikatodatamining.matrix.algorithm.pls.NIPALS.DeflationMode;
 import weka.core.Instances;
 import weka.core.matrix.Matrix;
 
@@ -48,7 +47,7 @@ public class NIPALS
   private static final long serialVersionUID = -1605633160253194760L;
 
   /** the actual algorithm. */
-  protected com.github.waikatodatamining.matrix.algorithm.NIPALS m_NIPALS;
+  protected com.github.waikatodatamining.matrix.algorithm.pls.NIPALS m_NIPALS;
 
   /** Inner NIPALS loop improvement tolerance */
   protected double m_Tol;
@@ -296,9 +295,9 @@ public class NIPALS
     X = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
     y = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getY(data));
     if (!isInitialized()) {
-      m_NIPALS = new com.github.waikatodatamining.matrix.algorithm.NIPALS();
+      m_NIPALS = new com.github.waikatodatamining.matrix.algorithm.pls.NIPALS();
       m_NIPALS.setNumComponents(m_NumComponents);
-      m_NIPALS.setPreprocessingType(PreprocessingType.NONE);
+      m_NIPALS.setPreprocessingType(com.github.waikatodatamining.matrix.core.PreprocessingType.NONE);
       m_NIPALS.setTol(m_Tol);
       m_NIPALS.setMaxIter(m_MaxIter);
       m_NIPALS.setNormYWeights(m_NormYWeights);

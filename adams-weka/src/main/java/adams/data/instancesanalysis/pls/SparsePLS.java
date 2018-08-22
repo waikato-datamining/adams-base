@@ -46,7 +46,7 @@ public class SparsePLS
   private static final long serialVersionUID = -1605633160253194760L;
 
   /** the actual algorithm. */
-  protected com.github.waikatodatamining.matrix.algorithm.SparsePLS m_SparsePLS;
+  protected com.github.waikatodatamining.matrix.algorithm.pls.SparsePLS m_SparsePLS;
 
   /** Inner NIPALS loop improvement tolerance */
   protected double m_Tol;
@@ -274,9 +274,9 @@ public class SparsePLS
     X = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
     y = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getY(data));
     if (!isInitialized()) {
-      m_SparsePLS = new com.github.waikatodatamining.matrix.algorithm.SparsePLS();
+      m_SparsePLS = new com.github.waikatodatamining.matrix.algorithm.pls.SparsePLS();
       m_SparsePLS.setNumComponents(m_NumComponents);
-      m_SparsePLS.setPreprocessingType(com.github.waikatodatamining.matrix.algorithm.PreprocessingType.NONE);
+      m_SparsePLS.setPreprocessingType(com.github.waikatodatamining.matrix.core.PreprocessingType.NONE);
       m_SparsePLS.setTol(m_Tol);
       m_SparsePLS.setMaxIter(m_MaxIter);
       m_SparsePLS.setLambda(m_Lambda);

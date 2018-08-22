@@ -24,7 +24,6 @@ import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.option.OptionUtils;
-import com.github.waikatodatamining.matrix.algorithm.PreprocessingType;
 import com.github.waikatodatamining.matrix.transformation.kernel.AbstractKernel;
 import com.github.waikatodatamining.matrix.transformation.kernel.RBFKernel;
 import weka.core.Instances;
@@ -59,7 +58,7 @@ public class KernelPLS
   protected int m_MaxIter;
 
   /** the actual algorithm. */
-  protected com.github.waikatodatamining.matrix.algorithm.KernelPLS m_KernelPLS;
+  protected com.github.waikatodatamining.matrix.algorithm.pls.KernelPLS m_KernelPLS;
 
   /**
    * Returns a string describing the object.
@@ -264,10 +263,10 @@ public class KernelPLS
     X    = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
     Y    = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getY(data, cols));
     if (!isInitialized()) {
-      m_KernelPLS = new com.github.waikatodatamining.matrix.algorithm.KernelPLS();
+      m_KernelPLS = new com.github.waikatodatamining.matrix.algorithm.pls.KernelPLS();
       m_KernelPLS.setKernel((AbstractKernel) OptionUtils.shallowCopy(m_Kernel));
       m_KernelPLS.setNumComponents(m_NumComponents);
-      m_KernelPLS.setPreprocessingType(PreprocessingType.NONE);
+      m_KernelPLS.setPreprocessingType(com.github.waikatodatamining.matrix.core.PreprocessingType.NONE);
       m_KernelPLS.setTol(m_Tol);
       m_KernelPLS.setMaxIter(m_MaxIter);
       error = m_KernelPLS.initialize(X, Y);

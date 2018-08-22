@@ -24,9 +24,6 @@ import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.option.OptionUtils;
-import com.github.waikatodatamining.matrix.algorithm.AbstractPLS;
-import com.github.waikatodatamining.matrix.algorithm.PLS1;
-import com.github.waikatodatamining.matrix.algorithm.PreprocessingType;
 import weka.core.Instances;
 import weka.core.matrix.Matrix;
 
@@ -50,10 +47,10 @@ public class OPLS
   private static final long serialVersionUID = -1605633160253194760L;
 
   /** the base PLS algorithm. */
-  protected com.github.waikatodatamining.matrix.algorithm.AbstractPLS m_Base;
+  protected com.github.waikatodatamining.matrix.algorithm.pls.AbstractPLS m_Base;
 
   /** the actual algorithm. */
-  protected com.github.waikatodatamining.matrix.algorithm.OPLS m_OPLS;
+  protected com.github.waikatodatamining.matrix.algorithm.pls.OPLS m_OPLS;
 
   /**
    * Returns a string describing the object.
@@ -107,7 +104,7 @@ public class OPLS
    *
    * @param value	the base algorithm
    */
-  public void setBase(com.github.waikatodatamining.matrix.algorithm.AbstractPLS value) {
+  public void setBase(com.github.waikatodatamining.matrix.algorithm.pls.AbstractPLS value) {
     m_Base = value;
     reset();
   }
@@ -117,7 +114,7 @@ public class OPLS
    *
    * @return		the base algorithm
    */
-  public com.github.waikatodatamining.matrix.algorithm.AbstractPLS getBase() {
+  public com.github.waikatodatamining.matrix.algorithm.pls.AbstractPLS getBase() {
     return m_Base;
   }
 
@@ -203,10 +200,10 @@ public class OPLS
     X = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
     y = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getY(data));
     if (!isInitialized()) {
-      m_OPLS = new com.github.waikatodatamining.matrix.algorithm.OPLS();
+      m_OPLS = new com.github.waikatodatamining.matrix.algorithm.pls.OPLS();
       m_OPLS.setNumComponents(m_NumComponents);
-      m_OPLS.setPreprocessingType(PreprocessingType.NONE);
-      m_OPLS.setBasePLS((AbstractPLS) OptionUtils.shallowCopy(m_Base));
+      m_OPLS.setPreprocessingType(com.github.waikatodatamining.matrix.core.PreprocessingType.NONE);
+      m_OPLS.setBasePLS((com.github.waikatodatamining.matrix.algorithm.pls.AbstractPLS) OptionUtils.shallowCopy(m_Base));
       error = m_OPLS.initialize(X, y);
       if (error != null)
 	throw new Exception(error);
