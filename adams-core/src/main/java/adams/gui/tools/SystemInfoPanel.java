@@ -15,7 +15,7 @@
 
 /*
  * SystemInfoPanel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -36,7 +36,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.HashtableTableModel;
+import adams.gui.core.MapTableModel;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SearchPanel;
@@ -65,7 +65,6 @@ import java.awt.event.MouseEvent;
  * A panel displaying information about the system.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SystemInfoPanel
   extends BasePanel
@@ -75,7 +74,7 @@ public class SystemInfoPanel
   private static final long serialVersionUID = 5962605234258828474L;
 
   /** the table model displaying the data. */
-  protected HashtableTableModel m_TableModel;
+  protected MapTableModel m_TableModel;
 
   /** the table displaying the information. */
   protected SortableAndSearchableTable m_Table;
@@ -132,7 +131,7 @@ public class SystemInfoPanel
     setLayout(new BorderLayout());
 
     // table
-    m_TableModel = new HashtableTableModel(m_SystemInfo.getInfo());
+    m_TableModel = new MapTableModel(m_SystemInfo.getInfo());
     m_Table      = new SortableAndSearchableTable(m_TableModel);
     m_Table.setShowSimpleCellPopupMenu(true);
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);

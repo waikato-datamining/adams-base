@@ -14,24 +14,23 @@
  */
 
 /*
- * HashtableTableModel.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * MapTableModel.java
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 /**
- * The model for displaying a hashtable.
+ * The model for displaying a map.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class HashtableTableModel
+public class MapTableModel
   extends KeyValuePairTableModel {
 
   /** for serialization. */
@@ -40,35 +39,35 @@ public class HashtableTableModel
   /**
    * Initializes the table model with no data.
    */
-  public HashtableTableModel() {
+  public MapTableModel() {
     super(new String[0][]);
   }
 
   /**
    * Initializes the table model with no data.
-   * 
+   *
    * @param colNames	the column names to use
    */
-  public HashtableTableModel(String[] colNames) {
+  public MapTableModel(String[] colNames) {
     super(new String[0][], colNames);
   }
 
   /**
    * Initializes the table model.
    *
-   * @param data	the hashtable to display
+   * @param data	the map to display
    */
-  public HashtableTableModel(Hashtable data) {
+  public MapTableModel(Map data) {
     super(convert(data));
   }
 
   /**
    * Initializes the table model.
    *
-   * @param data	the hashtable to display
+   * @param data	the map to display
    * @param colNames	the column names to use
    */
-  public HashtableTableModel(Hashtable data, String[] colNames) {
+  public MapTableModel(Map data, String[] colNames) {
     super(convert(data), colNames);
   }
 
@@ -79,7 +78,7 @@ public class HashtableTableModel
    * @param data	the data to convert
    * @return		the converted data
    */
-  protected static Object[][] convert(Hashtable data) {
+  protected static Object[][] convert(Map data) {
     Object[][]	result;
     List 	keys;
 

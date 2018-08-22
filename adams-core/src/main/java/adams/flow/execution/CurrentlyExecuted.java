@@ -13,21 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CurrentlyExecuted.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
-
-import java.util.Date;
-import java.util.Hashtable;
-
-import javax.swing.table.TableModel;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.flow.core.Actor;
-import adams.gui.core.HashtableTableModel;
+import adams.gui.core.MapTableModel;
+
+import javax.swing.table.TableModel;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -54,7 +54,6 @@ import adams.gui.core.HashtableTableModel;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CurrentlyExecuted
   extends AbstractTimedFlowExecutionListenerWithTable {
@@ -63,7 +62,7 @@ public class CurrentlyExecuted
   private static final long serialVersionUID = -6155792276833652477L;
   
   /** keeps track of the actors that are being executed (actor name - start time). */
-  protected Hashtable<String,String> m_Counts;
+  protected Map<String,String> m_Counts;
   
   /** the date formatter for the timestamps. */
   protected transient DateFormat m_DateFormat;
@@ -85,7 +84,7 @@ public class CurrentlyExecuted
   protected void initialize() {
     super.initialize();
     
-    m_Counts = new Hashtable<String,String>();
+    m_Counts = new HashMap<>();
   }
 
   /**
@@ -115,7 +114,7 @@ public class CurrentlyExecuted
    */
   @Override
   protected TableModel createTableModel() {
-    return new HashtableTableModel((Hashtable) m_Counts.clone(), new String[]{"Actor", "Timestamp"});
+    return new MapTableModel(new HashMap<>(m_Counts), new String[]{"Actor", "Timestamp"});
   }
   
   /**

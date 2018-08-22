@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SystemInfo.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -34,15 +34,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
  * Gathers information about system properties.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SystemInfo
   implements Serializable, SpreadSheetSupporter {
@@ -50,7 +50,7 @@ public class SystemInfo
   private static final long serialVersionUID = -4633948405872915214L;
 
   /** the hashtable containing the information. */
-  protected Hashtable<String,String> m_Info;
+  protected Map<String,String> m_Info;
 
   /** the key for the JVM PID. */
   public final static String JVM_PID = "java.vm.pid";
@@ -63,6 +63,9 @@ public class SystemInfo
 
   /** the memory prefix. */
   public final static String MEMORY_PREFIX = "memory.";
+
+  /** the key for the # cores. */
+  public final static String NUM_CORES = "num_cores";
 
   /** the environment prefix. */
   public final static String ENV_PREFIX = "env.";
@@ -104,7 +107,7 @@ public class SystemInfo
     Enumeration<String>	enm;
     String		name;
 
-    m_Info = new Hashtable<>();
+    m_Info = new HashMap<>();
 
     // general
     props = System.getProperties();
@@ -143,6 +146,7 @@ public class SystemInfo
 
     // others
     m_Info.put(JVM_PID, "" + ProcessUtils.getVirtualMachinePID());
+    m_Info.put(NUM_CORES, "" + ProcessUtils.getAvailableProcessors());
     m_Info.put(OS_BITNESS, "" + OS.getBitness());
     m_Info.put(OS_ISWINDOWS, "" + OS.isWindows());
     m_Info.put(OS_ISMAC, "" + OS.isMac());
@@ -156,7 +160,7 @@ public class SystemInfo
    *
    * @return		the information
    */
-  public Hashtable<String,String> getInfo() {
+  public Map<String,String> getInfo() {
     return m_Info;
   }
 

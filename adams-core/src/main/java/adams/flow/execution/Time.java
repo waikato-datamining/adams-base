@@ -13,19 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Time.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
-import java.util.Hashtable;
-
-import javax.swing.table.TableModel;
-
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
-import adams.gui.core.HashtableTableModel;
+import adams.gui.core.MapTableModel;
+
+import javax.swing.table.TableModel;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -71,10 +71,10 @@ public class Time
   public final static String SUFFIX_OUTPUT = ".output";
   
   /** keeps track of the start time of an actor. */
-  protected Hashtable<String,Long> m_Start;
+  protected Map<String,Long> m_Start;
   
   /** keeps track of the time that actors used up. */
-  protected Hashtable<String,Long> m_Overall;
+  protected Map<String,Long> m_Overall;
   
   /**
    * Returns a string describing the object.
@@ -93,8 +93,8 @@ public class Time
   protected void initialize() {
     super.initialize();
     
-    m_Start   = new Hashtable<String,Long>();
-    m_Overall = new Hashtable<String,Long>();
+    m_Start   = new HashMap<>();
+    m_Overall = new HashMap<>();
   }
 
   /**
@@ -176,7 +176,7 @@ public class Time
    */
   @Override
   protected TableModel createTableModel() {
-    return new HashtableTableModel((Hashtable) m_Overall.clone(), new String[]{"Actor", "Time in msec"});
+    return new MapTableModel(new HashMap<>(m_Overall), new String[]{"Actor", "Time in msec"});
   }
 
   /**

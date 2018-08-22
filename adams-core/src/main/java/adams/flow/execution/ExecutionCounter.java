@@ -13,18 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExecutionCounter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
-import java.util.Hashtable;
+import adams.flow.core.Actor;
+import adams.gui.core.MapTableModel;
 
 import javax.swing.table.TableModel;
-
-import adams.flow.core.Actor;
-import adams.gui.core.HashtableTableModel;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -45,7 +45,6 @@ import adams.gui.core.HashtableTableModel;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExecutionCounter
   extends AbstractTimedFlowExecutionListenerWithTable {
@@ -54,7 +53,7 @@ public class ExecutionCounter
   private static final long serialVersionUID = -4978449149708112013L;
   
   /** keeps track of the execution count (actor name - count). */
-  protected Hashtable<String,Integer> m_Counts;
+  protected Map<String,Integer> m_Counts;
   
   /**
    * Returns a string describing the object.
@@ -73,7 +72,7 @@ public class ExecutionCounter
   protected void initialize() {
     super.initialize();
     
-    m_Counts = new Hashtable<String,Integer>();
+    m_Counts = new HashMap<>();
   }
 
   @Override
@@ -108,7 +107,7 @@ public class ExecutionCounter
    */
   @Override
   protected TableModel createTableModel() {
-    return new HashtableTableModel((Hashtable) m_Counts.clone(), new String[]{"Actor", "Count"});
+    return new MapTableModel(new HashMap<>(m_Counts), new String[]{"Actor", "Count"});
   }
   
   /**

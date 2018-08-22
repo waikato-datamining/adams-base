@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SystemInfo.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.basic;
@@ -29,7 +29,7 @@ import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.responsehandler.ResponseHandler;
 
 import java.io.StringReader;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -183,7 +183,7 @@ public class SystemInfo
   @Override
   protected void prepareResponsePayload() {
     Properties 			props;
-    Hashtable<String,String> 	info;
+    Map<String,String> 		info;
 
     super.prepareResponsePayload();
 
