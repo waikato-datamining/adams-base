@@ -96,7 +96,7 @@ public class OPLS
 
     m_OptionManager.add(
       "base", "base",
-      new PLS1());
+      new com.github.waikatodatamining.matrix.algorithm.pls.PLS1());
   }
 
   /**
