@@ -253,7 +253,7 @@
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
       <artifactId>matrix-algorithms</artifactId>
-      <version>0.0.8</version>
+      <version>0.0.9</version>
       <type>jar</type>
     </dependency>
   </dependencies>
