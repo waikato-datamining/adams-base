@@ -15,7 +15,7 @@
 
 /*
  * GUIHelpProducer.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -34,7 +34,6 @@ import java.lang.reflect.Method;
  * Generates the help for the GUI, i.e., HTML output.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HtmlHelpProducer
   extends AbstractOptionProducer<String,StringBuilder>
@@ -184,31 +183,7 @@ public class HtmlHelpProducer
    */
   @Override
   public StringBuilder processOption(BooleanOption option) {
-    StringBuilder	result;
-
-    result = new StringBuilder();
-
-    result.append("<li>\n");
-    result.append("<b>" + toHTML(option.getProperty()) + "</b>\n");
-    result.append("<br>\n");
-
-    // help
-    addToolTip(option, result);
-
-    // command-line
-    result.append("<table border=\"1\" cellspacing=\"0\">\n");
-    result.append("<tr>\n");
-    result.append("<td>command-line</td>");
-    result.append("<td><code>-" + toHTML(option.getCommandline()) + "</code></td>\n");
-    result.append("</tr>\n");
-    result.append("</table>\n");
-
-    result.append("<br>\n");
-    result.append("</li>\n");
-
-    m_OutputBuffer.append(result);
-
-    return result;
+    return processOption((AbstractArgumentOption) option);
   }
 
   /**
