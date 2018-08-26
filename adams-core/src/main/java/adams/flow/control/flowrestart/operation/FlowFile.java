@@ -21,6 +21,7 @@
 package adams.flow.control.flowrestart.operation;
 
 import adams.core.MessageCollection;
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.control.Flow;
@@ -90,6 +91,16 @@ public class FlowFile
    */
   public String flowFileTipText() {
     return "The flow file to start.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "flowFile", m_FlowFile, "flow: ");
   }
 
   /**

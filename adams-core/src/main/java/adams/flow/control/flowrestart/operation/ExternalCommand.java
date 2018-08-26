@@ -20,6 +20,7 @@
 
 package adams.flow.control.flowrestart.operation;
 
+import adams.core.QuickInfoHelper;
 import adams.core.base.BaseCommandLine;
 import adams.core.management.ProcessUtils;
 import adams.flow.control.Flow;
@@ -90,6 +91,16 @@ public class ExternalCommand
    */
   public String commandTipText() {
     return "The external command to execute.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "command", m_Command, "command: ");
   }
 
   /**
