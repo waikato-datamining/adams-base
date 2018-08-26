@@ -102,11 +102,7 @@ public class ExternalCommand
   public String restart(Flow flow) {
     RunnableWithLogging	runnable;
 
-    if (isLoggingEnabled())
-      getLogger().info("Stopping flow...");
-    flow.stopExecution();
-    flow.wrapUp();
-    flow.cleanUp();
+    stopFlow(flow);
 
     runnable = new RunnableWithLogging() {
       private static final long serialVersionUID = -5446295909630418597L;

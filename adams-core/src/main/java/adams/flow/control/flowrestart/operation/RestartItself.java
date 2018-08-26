@@ -118,11 +118,7 @@ public class RestartItself
 
     actor = null;
     if (result == null) {
-      if (isLoggingEnabled())
-        getLogger().info("Stopping flow...");
-      flow.stopExecution();
-      flow.wrapUp();
-      flow.cleanUp();
+      stopFlow(flow);
       // load flow?
       if (m_UseFlowFileVariable) {
 	if (isLoggingEnabled())

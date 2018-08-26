@@ -47,6 +47,19 @@ public abstract class AbstractRestartOperation
   }
 
   /**
+   * Stops the flow.
+   *
+   * @param flow	the flow to stop
+   */
+  protected void stopFlow(Flow flow) {
+    if (isLoggingEnabled())
+      getLogger().info("Stopping flow...");
+    flow.stopExecution();
+    flow.wrapUp();
+    flow.cleanUp();
+  }
+
+  /**
    * Restarts the flow.
    *
    * @param flow	the flow to handle
