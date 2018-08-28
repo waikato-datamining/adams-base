@@ -82,6 +82,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -413,7 +414,7 @@ public class ActorUtils {
    * @param names	the existing names
    * @return		true if the name was updated
    */
-  public static boolean uniqueName(Actor actor, HashSet<String> names) {
+  public static boolean uniqueName(Actor actor, Set<String> names) {
     boolean		result;
     String		name;
     String		baseName;
