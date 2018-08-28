@@ -313,19 +313,19 @@ public class UpdateProperties
    * Sets the sub actor.
    *
    * @param value	the actor
-   * @return		null if everything is fine, otherwise the error
    */
-  public String setSubActor(Actor value) {
-    String 	result;
+  public void setSubActor(Actor value) {
+    String 	msg;
 
-    result = checkSubActor(value);
-    if (result == null) {
+    msg = checkSubActor(value);
+    if (msg == null) {
       m_SubActor = value;
       reset();
       updateParent();
     }
-
-    return result;
+    else {
+      getLogger().severe(msg);
+    }
   }
 
   /**
@@ -381,9 +381,10 @@ public class UpdateProperties
   @Override
   public String set(int index, Actor actor) {
     if (index == 0)
-      return setSubActor(actor);
+      setSubActor(actor);
     else
       return "Illegal index: " + index;
+    return null;
   }
 
   /**
