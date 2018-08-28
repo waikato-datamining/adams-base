@@ -406,14 +406,12 @@ public class IfStorageValue
    * Sets the actor of the 'then' branch.
    *
    * @param value	the actor
-   * @return		null if everything is fine, otherwise the error
    */
-  public String setThenActor(Actor value) {
+  public void setThenActor(Actor value) {
     ActorUtils.uniqueName(value, this, 0);
     m_ThenActor = value;
     reset();
     updateParent();
-    return null;
   }
 
   /**
@@ -439,14 +437,12 @@ public class IfStorageValue
    * Sets the actor of the 'else' branch.
    *
    * @param value	the actor
-   * @return		null if everything is fine, otherwise the error
    */
-  public String setElseActor(Actor value) {
+  public void setElseActor(Actor value) {
     ActorUtils.uniqueName(value, this, 1);
     m_ElseActor = value;
     reset();
     updateParent();
-    return null;
   }
 
   /**
@@ -525,11 +521,12 @@ public class IfStorageValue
   @Override
   public String set(int index, Actor actor) {
     if (index == 0)
-      return setThenActor(actor);
+      setThenActor(actor);
     else if (index == 1)
-      return setElseActor(actor);
+      setElseActor(actor);
     else
       return "Index out of range: " + index;
+    return null;
   }
 
   /**

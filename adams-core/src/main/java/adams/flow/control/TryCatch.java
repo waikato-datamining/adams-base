@@ -261,13 +261,8 @@ public class TryCatch
    * Sets the try branch.
    *
    * @param value 	the try branch
-   * @return		null if everything is fine, otherwise the error
    */
-  public String setTry(Actor value) {
-    String  	result;
-
-    result = null;
-
+  public void setTry(Actor value) {
     if (ActorUtils.isTransformer(value)) {
       m_Try = value;
       m_Try.setName(NAME_TRY);
@@ -275,11 +270,8 @@ public class TryCatch
       reset();
     }
     else {
-      result = "'" + NAME_TRY + "' actor(s) must be a transformer, " + value.getClass().getName() + " is not!";
-      getLogger().severe(result);
+      getLogger().severe("'" + NAME_TRY + "' actor(s) must be a transformer, " + value.getClass().getName() + " is not!");
     }
-
-    return result;
   }
 
   /**
@@ -319,13 +311,8 @@ public class TryCatch
    * Sets the catch branch.
    *
    * @param value 	the catch branch
-   * @return		null if everything is fine, otherwise the error
    */
-  public String setCatch(Actor value) {
-    String	result;
-
-    result = null;
-
+  public void setCatch(Actor value) {
     if (ActorUtils.isSource(value) || ActorUtils.isTransformer(value)) {
       m_Catch = value;
       m_Catch.setName(NAME_CATCH);
@@ -333,11 +320,8 @@ public class TryCatch
       reset();
     }
     else {
-      result = "'" + NAME_CATCH + "' actor(s) must be a source or transformer, " + value.getClass().getName() + " is not!";
-      getLogger().severe(result);
+      getLogger().severe("'" + NAME_CATCH + "' actor(s) must be a source or transformer, " + value.getClass().getName() + " is not!");
     }
-
-    return result;
   }
 
   /**
@@ -574,11 +558,13 @@ public class TryCatch
   @Override
   public String set(int index, Actor actor) {
     if (index == 0)
-      return setTry(actor);
+      setTry(actor);
     else if (index == 1)
-      return setCatch(actor);
+      setCatch(actor);
     else
       return "Illegal index: " + index;
+
+    return null;
   }
 
   /**

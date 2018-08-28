@@ -403,13 +403,8 @@ public class JavaExec
    * Sets the actor for further processing the stdout output (string).
    *
    * @param value	the actor
-   * @return		null if everything is fine, otherwise the error
    */
-  public String setStdOut(Actor value) {
-    String	result;
-
-    result = null;
-
+  public void setStdOut(Actor value) {
     if (value instanceof InputConsumer) {
       m_StdOut = value;
       m_StdOut.setName(NAME_STDOUT);
@@ -417,11 +412,8 @@ public class JavaExec
       reset();
     }
     else {
-      result = "stdout actor must consume input, " + value.getClass().getName() + " doesn't!";
-      getLogger().severe(result);
+      getLogger().severe("stdout actor must consume input, " + value.getClass().getName() + " doesn't!");
     }
-
-    return result;
   }
 
   /**
@@ -447,13 +439,8 @@ public class JavaExec
    * Sets the actor for further processing the stderr output (string).
    *
    * @param value	the actor
-   * @return		null if everything is fine, otherwise the error
    */
-  public String setStdErr(Actor value) {
-    String	result;
-
-    result = null;
-
+  public void setStdErr(Actor value) {
     if (value instanceof InputConsumer) {
       m_StdErr = value;
       m_StdErr.setName(NAME_STDERR);
@@ -461,11 +448,8 @@ public class JavaExec
       reset();
     }
     else {
-      result = "stderr actor must consume input, " + value.getClass().getName() + " doesn't!";
-      getLogger().severe(result);
+      getLogger().severe("stderr actor must consume input, " + value.getClass().getName() + " doesn't!");
     }
-
-    return result;
   }
 
   /**
@@ -534,11 +518,12 @@ public class JavaExec
   @Override
   public String set(int index, Actor actor) {
     if (index == 0)
-      return setStdOut(actor);
+      setStdOut(actor);
     else if (index == 1)
-      return setStdErr(actor);
+      setStdErr(actor);
     else
       return "Invalid index: " + index;
+    return null;
   }
 
   /**

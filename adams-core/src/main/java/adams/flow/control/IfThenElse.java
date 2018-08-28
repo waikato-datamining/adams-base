@@ -387,14 +387,12 @@ public class IfThenElse
    * Sets the actor of the 'then' branch.
    *
    * @param value	the actor
-   * @return		null if everything is fine, otherwise the error
    */
-  public String setThenActor(Actor value) {
+  public void setThenActor(Actor value) {
     m_ThenActor = value;
     m_ThenActor.setName(NAME_THEN);
     reset();
     updateParent();
-    return null;
   }
 
   /**
@@ -420,14 +418,12 @@ public class IfThenElse
    * Sets the actor of the 'else' branch.
    *
    * @param value	the actor
-   * @return		null if everything is fine, otherwise the error
    */
-  public String setElseActor(Actor value) {
+  public void setElseActor(Actor value) {
     m_ElseActor = value;
     m_ElseActor.setName(NAME_ELSE);
     reset();
     updateParent();
-    return null;
   }
 
   /**
@@ -485,11 +481,12 @@ public class IfThenElse
   @Override
   public String set(int index, Actor actor) {
     if (index == 0)
-      return setThenActor(actor);
+      setThenActor(actor);
     else if (index == 1)
-      return setElseActor(actor);
+      setElseActor(actor);
     else
       return "Index out of range: " + index;
+    return null;
   }
 
   /**
