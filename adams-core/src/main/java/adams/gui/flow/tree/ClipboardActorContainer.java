@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ClipboardActorContainer.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
@@ -37,7 +37,6 @@ import java.util.Arrays;
  * from the clipboard.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClipboardActorContainer
   extends AbstractActor
@@ -124,10 +123,13 @@ public class ClipboardActorContainer
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
-  public void set(int index, Actor actor) {
+  @Override
+  public String set(int index, Actor actor) {
     m_Actors.set(index, actor);
     reset();
+    return null;
   }
 
   /**
@@ -197,9 +199,11 @@ public class ClipboardActorContainer
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  @Override
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -207,10 +211,13 @@ public class ClipboardActorContainer
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
-  public void add(int index, Actor actor) {
+  @Override
+  public String add(int index, Actor actor) {
     m_Actors.add(index, actor);
     reset();
+    return null;
   }
 
   /**

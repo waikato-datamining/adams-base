@@ -129,7 +129,11 @@ public abstract class MutableConnectedControlActor
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, Actor actor) {
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = null;
+
     if ((index > -1) && (index < m_Actors.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Actors.set(index, actor);
@@ -138,17 +142,21 @@ public abstract class MutableConnectedControlActor
       reset();
     }
     else {
-      getLogger().severe("Index out of range (0-" + (m_Actors.size() - 1) + "): " + index);
+      result = "Index out of range (0-" + (m_Actors.size() - 1) + "): " + index;
+      getLogger().severe(result);
     }
+
+    return result;
   }
 
   /**
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -156,12 +164,15 @@ public abstract class MutableConnectedControlActor
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(int index, Actor actor) {
+  public String add(int index, Actor actor) {
     m_Actors.add(index, actor);
     m_Actors.get(index).setParent(null);
     m_Actors.get(index).setParent(this);
     reset();
+
+    return null;
   }
 
   /**

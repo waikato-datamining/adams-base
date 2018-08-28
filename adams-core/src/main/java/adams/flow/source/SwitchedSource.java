@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SwitchedSource.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -50,11 +50,12 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SwitchedSource
   extends AbstractSource
   implements MutableActorHandler, IndexedBooleanConditionSupporter {
+
+  private static final long serialVersionUID = 7440087569126732985L;
 
   /** the "conditions" for the various switch cases. */
   protected BooleanCondition[] m_Conditions;
@@ -256,9 +257,14 @@ public class SwitchedSource
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public void set(int index, Actor actor) {
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = null;
+
     if ((index > -1) && (index < m_Cases.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Cases.set(index, actor);
@@ -266,17 +272,21 @@ public class SwitchedSource
       updateParent();
     }
     else {
-      getLogger().severe("Index out of range (0-" + (m_Cases.size() - 1) + "): " + index);
+      result = "Index out of range (0-" + (m_Cases.size() - 1) + "): " + index;
+      getLogger().severe(result);
     }
+
+    return result;
   }
 
   /**
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -284,11 +294,13 @@ public class SwitchedSource
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(int index, Actor actor) {
+  public String add(int index, Actor actor) {
     m_Cases.add(index, actor);
     reset();
     updateParent();
+    return check(index, actor);
   }
 
   /**
@@ -418,7 +430,30 @@ public class SwitchedSource
   }
 
   /**
-   * Performs checks on the "sub-actors". Default implementation does nothing.
+   * Performs checks on the "sub-actor".
+   *
+   * @param index 	the index of the actor
+   * @param actor 	the actor to check
+   * @return		null if successful passed, otherwise error message
+   */
+  public String check(int index, Actor actor) {
+    String	result;
+
+    result = null;
+
+    if (actor.getSkip()) {
+      result = "Actor #" + (index+1) + " gets skipped!";
+    }
+    else {
+      if (!ActorUtils.isSource(actor))
+	result = "Actor #" + (index+1) + " is not a source!";
+    }
+
+    return result;
+  }
+
+  /**
+   * Performs checks on the "sub-actors".
    *
    * @return		null
    */
@@ -430,16 +465,9 @@ public class SwitchedSource
     result = null;
 
     for (i = 0; i < size(); i++) {
-      if (get(i).getSkip()) {
-	result = "Actor #" + (i+1) + " gets skipped!";
-	break;
-      }
-      else {
-	if (!ActorUtils.isSource(get(i))) {
-	  result = "Actor #" + (i+1) + " is not a source!";
-	  break;
-	}
-      }
+      result = check(i, get(i));
+      if (result != null)
+        break;
     }
 
     return result;

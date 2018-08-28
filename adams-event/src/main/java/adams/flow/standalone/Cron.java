@@ -15,7 +15,7 @@
 
 /*
  * Cron.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -103,7 +103,6 @@ import java.util.Date;
  * <a href="http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html" target="_blank">CronTrigger Tutorial</a>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Cron
   extends AbstractStandalone
@@ -372,11 +371,17 @@ public class Cron
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
-  public void set(int index, Actor actor) {
-    m_CronActors.set(index, actor);
+  @Override
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = m_CronActors.set(index, actor);
     reset();
     updateParent();
+
+    return result;
   }
 
   /**
@@ -393,9 +398,11 @@ public class Cron
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  @Override
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -403,11 +410,17 @@ public class Cron
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
-  public void add(int index, Actor actor) {
-    m_CronActors.add(index, actor);
+  @Override
+  public String add(int index, Actor actor) {
+    String	result;
+
+    result = m_CronActors.add(index, actor);
     reset();
     updateParent();
+
+    return result;
   }
 
   /**

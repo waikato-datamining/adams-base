@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Events.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -79,7 +79,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Events
   extends AbstractControlActor
@@ -228,9 +227,14 @@ public class Events
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void set(int index, Actor actor) {
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = null;
+
     if ((index > -1) && (index < m_Actors.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Actors.set(index, checkActor(actor));
@@ -238,17 +242,22 @@ public class Events
       updateParent();
     }
     else {
-      getLogger().severe("Index out of range (0-" + (m_Actors.size() - 1) + "): " + index);
+      result = "Index out of range (0-" + (m_Actors.size() - 1) + "): " + index;
+      getLogger().severe(result);
     }
+
+    return result;
   }
 
   /**
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  @Override
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -256,11 +265,14 @@ public class Events
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
-  public void add(int index, Actor actor) {
+  @Override
+  public String add(int index, Actor actor) {
     m_Actors.add(index, checkActor(actor));
     reset();
     updateParent();
+    return null;
   }
 
   /**

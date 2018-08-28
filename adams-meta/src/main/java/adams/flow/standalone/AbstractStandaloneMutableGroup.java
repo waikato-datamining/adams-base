@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractStandaloneMutableGroup.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -26,7 +26,6 @@ import adams.flow.core.ActorUtils;
  * Ancestor for mutable groups of standalones.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractStandaloneMutableGroup<T extends Actor>
   extends AbstractStandaloneGroup<T>
@@ -39,21 +38,24 @@ public abstract class AbstractStandaloneMutableGroup<T extends Actor>
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void add(Actor actor) {
-    String	msg;
+  public String add(Actor actor) {
+    String 	result;
     
-    msg = checkActor(actor);
-    if (msg == null) {
+    result = checkActor(actor);
+    if (result == null) {
       m_Actors.add((T) actor);
       ActorUtils.uniqueName(actor, this, m_Actors.size() - 1);
       reset();
       updateParent();
     }
     else {
-      getLogger().warning(msg);
+      getLogger().warning(result);
     }
+
+    return result;
   }
 
   /**
@@ -61,21 +63,24 @@ public abstract class AbstractStandaloneMutableGroup<T extends Actor>
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void add(int index, Actor actor) {
-    String	msg;
+  public String add(int index, Actor actor) {
+    String 	result;
     
-    msg = checkActor(actor, index);
-    if (msg == null) {
+    result = checkActor(actor, index);
+    if (result == null) {
       m_Actors.add(index, (T) actor);
       ActorUtils.uniqueName(actor, this, index);
       reset();
       updateParent();
     }
     else {
-      getLogger().warning(msg);
+      getLogger().warning(result);
     }
+
+    return result;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * AbstractMutableActorDaemonEvent.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -34,7 +34,6 @@ import com.jidesoft.utils.SwingWorker;
  * Ancestor for daemon events that handle sub-actors.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <E> the type of event
  * @param <P> the type of the processed event
  */
@@ -288,11 +287,17 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if successful, otherwise error message
    */
-  public void set(int index, Actor actor) {
-    m_Actors.set(index, actor);
+  @Override
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = m_Actors.set(index, actor);
     reset();
     updateParent();
+
+    return result;
   }
 
   /**
@@ -309,9 +314,11 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  @Override
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -319,11 +326,17 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(int index, Actor actor) {
-    m_Actors.add(index, actor);
+  @Override
+  public String add(int index, Actor actor) {
+    String	result;
+
+    result = m_Actors.add(index, actor);
     reset();
     updateParent();
+
+    return result;
   }
 
   /**

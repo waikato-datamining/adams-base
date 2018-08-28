@@ -224,21 +224,24 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void set(int index, Actor actor) {
-    String	msg;
+  public String set(int index, Actor actor) {
+    String 	result;
     
-    msg = checkActor(actor, index);
-    if (msg == null) {
+    result = checkActor(actor, index);
+    if (result == null) {
       ActorUtils.uniqueName(actor, this, index);
       m_Actors.set(index, (T) actor);
       reset();
       updateParent();
     }
     else {
-      getLogger().severe(msg);
+      getLogger().severe(result);
     }
+
+    return result;
   }
 
   /**

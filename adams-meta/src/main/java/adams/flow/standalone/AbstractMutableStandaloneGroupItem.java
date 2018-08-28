@@ -15,7 +15,7 @@
 
 /*
  * AbstractMutableStandaloneGroupItem.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -33,7 +33,6 @@ import nz.ac.waikato.cms.locator.ClassLocator;
  * Ancestor for group items that can contain other actors.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of the enclosing group
  */
 public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
@@ -245,21 +244,21 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    * @see		#checkSubActor(int, Actor)
    */
   @Override
-  public void set(int index, Actor actor) {
-    String	msg;
+  public String set(int index, Actor actor) {
+    String 	result;
 
-    msg = checkSubActor(index, actor);
-    if (msg == null) {
+    result = checkSubActor(index, actor);
+    if (result == null) {
       m_Actors.set(index, actor);
       reset();
       updateParent();
     }
-    else {
-      throw new IllegalArgumentException(msg);
-    }
+
+    return result;
   }
 
   /**
@@ -277,9 +276,11 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  @Override
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -287,20 +288,21 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    * @see		#checkSubActor(int, Actor)
    */
-  public void add(int index, Actor actor) {
-    String	msg;
+  @Override
+  public String add(int index, Actor actor) {
+    String 	result;
 
-    msg = checkSubActor(index, actor);
-    if (msg == null) {
+    result = checkSubActor(index, actor);
+    if (result == null) {
       m_Actors.add(index, actor);
       reset();
       updateParent();
     }
-    else {
-      throw new IllegalArgumentException(msg);
-    }
+
+    return result;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * MutableActorHandler.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -24,7 +24,6 @@ package adams.flow.core;
  * Interface for actors that allow to add/remove sub-actors as well.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface MutableActorHandler
   extends ActorHandler {
@@ -33,16 +32,18 @@ public interface MutableActorHandler
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(Actor actor);
+  public String add(Actor actor);
 
   /**
    * Inserts the actor at the given position.
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(int index, Actor actor);
+  public String add(int index, Actor actor);
 
   /**
    * Removes the actor at the given position and returns the removed object.

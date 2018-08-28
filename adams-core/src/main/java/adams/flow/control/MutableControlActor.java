@@ -15,7 +15,7 @@
 
 /*
  * MutableControlActor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -32,7 +32,6 @@ import java.util.List;
  * (adding, removing, editing). The sub-actors are not connected.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class MutableControlActor
   extends AbstractDirectedControlActor
@@ -127,9 +126,14 @@ public abstract class MutableControlActor
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public void set(int index, Actor actor) {
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = null;
+
     if ((index > -1) && (index < m_Actors.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Actors.set(index, actor);
@@ -137,17 +141,22 @@ public abstract class MutableControlActor
       updateParent();
     }
     else {
-      getLogger().severe("Index out of range (0-" + (m_Actors.size() - 1) + "): " + index);
+      result = "Index out of range (0-" + (m_Actors.size() - 1) + "): " + index;
+      getLogger().severe(result);
     }
+
+    return result;
   }
 
   /**
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  @Override
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -155,12 +164,15 @@ public abstract class MutableControlActor
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(int index, Actor actor) {
+  @Override
+  public String add(int index, Actor actor) {
     ActorUtils.uniqueName(actor, this, index);
     m_Actors.add(index, actor);
     reset();
     updateParent();
+    return null;
   }
 
   /**

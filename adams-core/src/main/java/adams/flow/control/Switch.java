@@ -484,9 +484,14 @@ public class Switch
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public void set(int index, Actor actor) {
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = null;
+
     if ((index > -1) && (index < m_Cases.size())) {
       ActorUtils.uniqueName(actor, this, index);
       m_Cases.set(index, actor);
@@ -495,17 +500,21 @@ public class Switch
       reset();
     }
     else {
-      getLogger().severe("Index out of range (0-" + (m_Cases.size() - 1) + "): " + index);
+      result = "Index out of range (0-" + (m_Cases.size() - 1) + "): " + index;
+      getLogger().severe(result);
     }
+
+    return result;
   }
 
   /**
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -513,12 +522,14 @@ public class Switch
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(int index, Actor actor) {
+  public String add(int index, Actor actor) {
     m_Cases.add(index, actor);
     m_Cases.get(index).setParent(null);
     m_Cases.get(index).setParent(this);
     reset();
+    return null;
   }
 
   /**

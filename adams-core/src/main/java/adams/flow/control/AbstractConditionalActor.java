@@ -274,15 +274,23 @@ public abstract class AbstractConditionalActor
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
-  public void set(int index, Actor actor) {
+  @Override
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = null;
+
     if (index == 0) {
       m_BaseActor = actor;
       updateParent();
     }
     else {
-      throw new IllegalArgumentException("Illegal index: " + index);
+      result = "Illegal index: " + index;
     }
+
+    return result;
   }
 
   /**

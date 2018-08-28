@@ -15,7 +15,7 @@
 
 /*
  * DelayedEvent.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -83,7 +83,6 @@ import adams.flow.core.TriggerableEvent;
  * <a href="http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html" target="_blank">CronTrigger Tutorial</a>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DelayedEvent
   extends AbstractStandalone
@@ -270,11 +269,17 @@ public class DelayedEvent
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
-  public void set(int index, Actor actor) {
-    m_Actors.set(index, actor);
+  @Override
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = m_Actors.set(index, actor);
     reset();
     updateParent();
+
+    return result;
   }
 
   /**
@@ -291,9 +296,11 @@ public class DelayedEvent
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  @Override
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -301,11 +308,17 @@ public class DelayedEvent
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
-  public void add(int index, Actor actor) {
-    m_Actors.add(index, actor);
+  @Override
+  public String add(int index, Actor actor) {
+    String	result;
+
+    result = m_Actors.add(index, actor);
     reset();
     updateParent();
+
+    return result;
   }
 
   /**

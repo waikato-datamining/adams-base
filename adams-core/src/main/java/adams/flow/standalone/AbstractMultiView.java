@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMultiView.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -62,7 +62,6 @@ import java.util.List;
  * Ancestor for graphical actors that display multiple views.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMultiView
   extends AbstractDisplay
@@ -75,7 +74,6 @@ public abstract class AbstractMultiView
    * A wrapper for the actual actors.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class ViewWrapper
     extends AbstractDisplay
@@ -448,16 +446,17 @@ public abstract class AbstractMultiView
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void add(Actor actor) {
-    String	msg;
+  public String add(Actor actor) {
+    String 	result;
 
-    msg = check(actor);
-    if (msg == null)
+    result = check(actor);
+    if (result == null)
       m_Actors.add(actor);
-    else
-      throw new IllegalArgumentException(msg);
+
+    return result;
   }
 
   /**
@@ -465,16 +464,17 @@ public abstract class AbstractMultiView
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void add(int index, Actor actor) {
-    String	msg;
+  public String add(int index, Actor actor) {
+    String 	result;
 
-    msg = check(actor);
-    if (msg == null)
+    result = check(actor);
+    if (result == null)
       m_Actors.add(index, actor);
-    else
-      throw new IllegalArgumentException(msg);
+
+    return result;
   }
 
   /**
@@ -591,16 +591,17 @@ public abstract class AbstractMultiView
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void set(int index, Actor actor) {
-    String	msg;
+  public String set(int index, Actor actor) {
+    String 	result;
 
-    msg = check(actor);
-    if (msg == null)
+    result = check(actor);
+    if (result == null)
       m_Actors.set(index, actor);
-    else
-      throw new IllegalArgumentException(msg);
+
+    return result;
   }
 
   /**

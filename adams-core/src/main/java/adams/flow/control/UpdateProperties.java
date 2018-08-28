@@ -15,7 +15,7 @@
 
 /*
  * UpdateProperties.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -103,7 +103,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class UpdateProperties
   extends AbstractControlActor
@@ -314,19 +313,19 @@ public class UpdateProperties
    * Sets the sub actor.
    *
    * @param value	the actor
+   * @return		null if everything is fine, otherwise the error
    */
-  public void setSubActor(Actor value) {
-    String	msg;
+  public String setSubActor(Actor value) {
+    String 	result;
 
-    msg = checkSubActor(value);
-    if (msg == null) {
+    result = checkSubActor(value);
+    if (result == null) {
       m_SubActor = value;
       reset();
       updateParent();
     }
-    else {
-      throw new IllegalArgumentException(msg);
-    }
+
+    return result;
   }
 
   /**
@@ -377,13 +376,14 @@ public class UpdateProperties
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void set(int index, Actor actor) {
+  public String set(int index, Actor actor) {
     if (index == 0)
-      setSubActor(actor);
+      return setSubActor(actor);
     else
-      throw new IllegalArgumentException("Illegal index: " + index);
+      return "Illegal index: " + index;
   }
 
   /**

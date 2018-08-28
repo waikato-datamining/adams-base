@@ -15,7 +15,7 @@
 
 /*
  * ActorHandler.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -24,7 +24,6 @@ package adams.flow.core;
  * For actors that handle "sub-actors".
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface ActorHandler 
   extends Actor, Flushable {
@@ -64,8 +63,9 @@ public interface ActorHandler
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if successful, otherwise error message
    */
-  public void set(int index, Actor actor);
+  public String set(int index, Actor actor);
 
   /**
    * Returns the index of the actor.

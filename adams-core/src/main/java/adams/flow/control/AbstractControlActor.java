@@ -15,7 +15,7 @@
 
 /*
  * AbstractControlActor.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -42,7 +42,6 @@ import java.util.HashSet;
  * Ancestor for all actors that control sub-actors in some way.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractControlActor
   extends AbstractActor
@@ -219,9 +218,10 @@ public abstract class AbstractControlActor
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public abstract void set(int index, Actor actor);
+  public abstract String set(int index, Actor actor);
 
   /**
    * Returns the index of the actor.

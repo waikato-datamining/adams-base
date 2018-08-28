@@ -87,7 +87,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IfThenElse
   extends AbstractDirectedControlActor
@@ -388,12 +387,14 @@ public class IfThenElse
    * Sets the actor of the 'then' branch.
    *
    * @param value	the actor
+   * @return		null if everything is fine, otherwise the error
    */
-  public void setThenActor(Actor value) {
+  public String setThenActor(Actor value) {
     m_ThenActor = value;
     m_ThenActor.setName(NAME_THEN);
     reset();
     updateParent();
+    return null;
   }
 
   /**
@@ -419,12 +420,14 @@ public class IfThenElse
    * Sets the actor of the 'else' branch.
    *
    * @param value	the actor
+   * @return		null if everything is fine, otherwise the error
    */
-  public void setElseActor(Actor value) {
+  public String setElseActor(Actor value) {
     m_ElseActor = value;
     m_ElseActor.setName(NAME_ELSE);
     reset();
     updateParent();
+    return null;
   }
 
   /**
@@ -477,15 +480,16 @@ public class IfThenElse
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void set(int index, Actor actor) {
+  public String set(int index, Actor actor) {
     if (index == 0)
-      setThenActor(actor);
+      return setThenActor(actor);
     else if (index == 1)
-      setElseActor(actor);
+      return setElseActor(actor);
     else
-      getLogger().severe("Index out of range: " + index);
+      return "Index out of range: " + index;
   }
 
   /**

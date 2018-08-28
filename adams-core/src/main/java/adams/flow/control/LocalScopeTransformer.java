@@ -823,12 +823,17 @@ public class LocalScopeTransformer
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public void set(int index, Actor actor) {
-    m_Actors.set(index, actor);
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = m_Actors.set(index, actor);
     reset();
     updateParent();
+
+    return result;
   }
 
   /**
@@ -846,9 +851,10 @@ public class LocalScopeTransformer
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -856,11 +862,16 @@ public class LocalScopeTransformer
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(int index, Actor actor) {
-    m_Actors.add(index, actor);
+  public String add(int index, Actor actor) {
+    String	result;
+
+    result = m_Actors.add(index, actor);
     reset();
     updateParent();
+
+    return result;
   }
 
   /**

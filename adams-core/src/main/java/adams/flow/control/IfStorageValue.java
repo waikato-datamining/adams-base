@@ -15,7 +15,7 @@
 
 /*
  * IfStorageValue.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -95,7 +95,6 @@ import adams.flow.source.StringConstants;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IfStorageValue
   extends AbstractDirectedControlActor {
@@ -407,12 +406,14 @@ public class IfStorageValue
    * Sets the actor of the 'then' branch.
    *
    * @param value	the actor
+   * @return		null if everything is fine, otherwise the error
    */
-  public void setThenActor(Actor value) {
+  public String setThenActor(Actor value) {
     ActorUtils.uniqueName(value, this, 0);
     m_ThenActor = value;
     reset();
     updateParent();
+    return null;
   }
 
   /**
@@ -438,12 +439,14 @@ public class IfStorageValue
    * Sets the actor of the 'else' branch.
    *
    * @param value	the actor
+   * @return		null if everything is fine, otherwise the error
    */
-  public void setElseActor(Actor value) {
+  public String setElseActor(Actor value) {
     ActorUtils.uniqueName(value, this, 1);
     m_ElseActor = value;
     reset();
     updateParent();
+    return null;
   }
 
   /**
@@ -517,15 +520,16 @@ public class IfStorageValue
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void set(int index, Actor actor) {
+  public String set(int index, Actor actor) {
     if (index == 0)
-      setThenActor(actor);
+      return setThenActor(actor);
     else if (index == 1)
-      setElseActor(actor);
+      return setElseActor(actor);
     else
-      getLogger().severe("Index out of range: " + index);
+      return "Index out of range: " + index;
   }
 
   /**

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileProcessor.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -34,10 +34,16 @@ import adams.flow.transformer.AbstractDataProcessor;
 import java.io.File;
 
 /**
- * TODO: what this class does
+ <!-- globalinfo-start -->
+ <!-- globalinfo-end -->
+ *
+ <!-- flow-summary-start -->
+ <!-- flow-summary-end -->
+ *
+ <!-- options-start -->
+ <!-- options-end -->
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileProcessor
   extends AbstractDataProcessor
@@ -259,10 +265,11 @@ public class FileProcessor
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public void set(int index, Actor actor) {
-    m_Actors.set(index, actor);
+  public String set(int index, Actor actor) {
+    return m_Actors.set(index, actor);
   }
 
   /**
@@ -313,10 +320,11 @@ public class FileProcessor
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public void add(Actor actor) {
-    add(size(), actor);
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -324,20 +332,20 @@ public class FileProcessor
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
   @Override
-  public void add(int index, Actor actor) {
-    String	msg;
+  public String add(int index, Actor actor) {
+    String result;
 
-    msg = checkSubActor(index, actor);
-    if (msg == null) {
+    result = checkSubActor(index, actor);
+    if (result == null) {
       m_Actors.add(index, actor);
       reset();
       updateParent();
     }
-    else {
-      throw new IllegalArgumentException(msg);
-    }
+
+    return result;
   }
 
   /**

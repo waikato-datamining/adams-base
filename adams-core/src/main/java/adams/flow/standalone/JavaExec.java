@@ -15,7 +15,7 @@
 
 /*
  * JavaExec.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -119,7 +119,6 @@ import adams.flow.sink.Null;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JavaExec
   extends AbstractControlActor 
@@ -404,8 +403,13 @@ public class JavaExec
    * Sets the actor for further processing the stdout output (string).
    *
    * @param value	the actor
+   * @return		null if everything is fine, otherwise the error
    */
-  public void setStdOut(Actor value) {
+  public String setStdOut(Actor value) {
+    String	result;
+
+    result = null;
+
     if (value instanceof InputConsumer) {
       m_StdOut = value;
       m_StdOut.setName(NAME_STDOUT);
@@ -413,8 +417,11 @@ public class JavaExec
       reset();
     }
     else {
-      getLogger().severe("stdout actor must consume input, " + value.getClass().getName() + " doesn't!");
+      result = "stdout actor must consume input, " + value.getClass().getName() + " doesn't!";
+      getLogger().severe(result);
     }
+
+    return result;
   }
 
   /**
@@ -440,8 +447,13 @@ public class JavaExec
    * Sets the actor for further processing the stderr output (string).
    *
    * @param value	the actor
+   * @return		null if everything is fine, otherwise the error
    */
-  public void setStdErr(Actor value) {
+  public String setStdErr(Actor value) {
+    String	result;
+
+    result = null;
+
     if (value instanceof InputConsumer) {
       m_StdErr = value;
       m_StdErr.setName(NAME_STDERR);
@@ -449,8 +461,11 @@ public class JavaExec
       reset();
     }
     else {
-      getLogger().severe("stderr actor must consume input, " + value.getClass().getName() + " doesn't!");
+      result = "stderr actor must consume input, " + value.getClass().getName() + " doesn't!";
+      getLogger().severe(result);
     }
+
+    return result;
   }
 
   /**
@@ -514,15 +529,16 @@ public class JavaExec
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void set(int index, Actor actor) {
+  public String set(int index, Actor actor) {
     if (index == 0)
-      setStdOut(actor);
+      return setStdOut(actor);
     else if (index == 1)
-      setStdErr(actor);
+      return setStdErr(actor);
     else
-      throw new IllegalArgumentException("Invalid index: " + index);
+      return "Invalid index: " + index;
   }
 
   /**

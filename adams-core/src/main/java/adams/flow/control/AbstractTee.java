@@ -374,21 +374,21 @@ public abstract class AbstractTee
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    * @see		#checkTeeActor(int, Actor)
    */
   @Override
-  public void set(int index, Actor actor) {
-    String	msg;
+  public String set(int index, Actor actor) {
+    String result;
 
-    msg = checkTeeActor(index, actor);
-    if (msg == null) {
+    result = checkTeeActor(index, actor);
+    if (result == null) {
       m_Actors.set(index, actor);
       reset();
       updateParent();
     }
-    else {
-      throw new IllegalArgumentException(msg);
-    }
+
+    return result;
   }
 
   /**
@@ -406,9 +406,11 @@ public abstract class AbstractTee
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  @Override
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -416,20 +418,21 @@ public abstract class AbstractTee
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if everything is fine, otherwise the error
    * @see		#checkTeeActor(int, Actor)
    */
-  public void add(int index, Actor actor) {
-    String	msg;
+  @Override
+  public String add(int index, Actor actor) {
+    String result;
 
-    msg = checkTeeActor(index, actor);
-    if (msg == null) {
+    result = checkTeeActor(index, actor);
+    if (result == null) {
       m_Actors.add(index, actor);
       reset();
       updateParent();
     }
-    else {
-      throw new IllegalArgumentException(msg);
-    }
+
+    return result;
   }
 
   /**

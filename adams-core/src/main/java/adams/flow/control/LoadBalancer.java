@@ -15,7 +15,7 @@
 
 /*
  * LoadBalancer.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -125,7 +125,6 @@ import java.util.concurrent.TimeUnit;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LoadBalancer
   extends AbstractControlActor
@@ -417,10 +416,14 @@ public class LoadBalancer
    * @param actor	the actor to set at this position
    */
   @Override
-  public void set(int index, Actor actor) {
-    m_Actors.set(index, actor);
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = m_Actors.set(index, actor);
     reset();
     updateParent();
+
+    return result;
   }
 
   /**
@@ -438,9 +441,11 @@ public class LoadBalancer
    * Inserts the actor at the end.
    *
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(Actor actor) {
-    add(size(), actor);
+  @Override
+  public String add(Actor actor) {
+    return add(size(), actor);
   }
 
   /**
@@ -448,11 +453,17 @@ public class LoadBalancer
    *
    * @param index	the position
    * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
    */
-  public void add(int index, Actor actor) {
-    m_Actors.add(index, actor);
+  @Override
+  public String add(int index, Actor actor) {
+    String	result;
+
+    result = m_Actors.add(index, actor);
     reset();
     updateParent();
+
+    return result;
   }
 
   /**

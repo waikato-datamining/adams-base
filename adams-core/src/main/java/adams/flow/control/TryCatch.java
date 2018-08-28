@@ -15,7 +15,7 @@
 
 /*
  * TryCatch.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -121,7 +121,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TryCatch
   extends AbstractControlActor
@@ -262,8 +261,13 @@ public class TryCatch
    * Sets the try branch.
    *
    * @param value 	the try branch
+   * @return		null if everything is fine, otherwise the error
    */
-  public void setTry(Actor value) {
+  public String setTry(Actor value) {
+    String  	result;
+
+    result = null;
+
     if (ActorUtils.isTransformer(value)) {
       m_Try = value;
       m_Try.setName(NAME_TRY);
@@ -271,8 +275,11 @@ public class TryCatch
       reset();
     }
     else {
-      getLogger().severe("'" + NAME_TRY + "' actor(s) must be a transformer, " + value.getClass().getName() + " is not!");
+      result = "'" + NAME_TRY + "' actor(s) must be a transformer, " + value.getClass().getName() + " is not!";
+      getLogger().severe(result);
     }
+
+    return result;
   }
 
   /**
@@ -312,8 +319,13 @@ public class TryCatch
    * Sets the catch branch.
    *
    * @param value 	the catch branch
+   * @return		null if everything is fine, otherwise the error
    */
-  public void setCatch(Actor value) {
+  public String setCatch(Actor value) {
+    String	result;
+
+    result = null;
+
     if (ActorUtils.isSource(value) || ActorUtils.isTransformer(value)) {
       m_Catch = value;
       m_Catch.setName(NAME_CATCH);
@@ -321,8 +333,11 @@ public class TryCatch
       reset();
     }
     else {
-      getLogger().severe("'" + NAME_CATCH + "' actor(s) must be a source or transformer, " + value.getClass().getName() + " is not!");
+      result = "'" + NAME_CATCH + "' actor(s) must be a source or transformer, " + value.getClass().getName() + " is not!";
+      getLogger().severe(result);
     }
+
+    return result;
   }
 
   /**
@@ -554,15 +569,16 @@ public class TryCatch
    *
    * @param index	the position
    * @param actor	the actor to set at this position
+   * @return		null if everything is fine, otherwise the error
    */
   @Override
-  public void set(int index, Actor actor) {
+  public String set(int index, Actor actor) {
     if (index == 0)
-      setTry(actor);
+      return setTry(actor);
     else if (index == 1)
-      setCatch(actor);
+      return setCatch(actor);
     else
-      throw new IllegalArgumentException("Illegal index: " + index);
+      return "Illegal index: " + index;
   }
 
   /**
