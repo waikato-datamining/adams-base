@@ -126,6 +126,21 @@ it is possible to use the following wrappers for \textit{auto-generated} actors:
 to remove all these actors again.
 
 \newpage
+\chapter{Inactive actors}
+\label{inactiveactors}
+In some cases, flows get generated on the fly with actors being added. Original
+actors may get replaced, but you can keep them as \textit{inactive} ones in the
+flow (no setup or execution occurs), by wrapping them in one of these meta-actors:
+\begin{tight_itemize}
+	\item \textit{InactiveStandalone} -- encapsulates inactive standalones
+	\item \textit{InactiveSource} -- encapsulates inactive actors that act as source
+	\item \textit{InactiveTransformer} -- encapsulates inactive actors that form a transformer
+	\item \textit{InactiveSink} -- encapsulates inactive actors that behave as sink
+\end{tight_itemize}
+\textbf{NB:} With the \textit{ReactivateActors} processor it is possible
+to activate all these actors again, replacing the wrappers.
+
+\newpage
 \chapter{Miscellaneous}
 Below are other actors that haven't been covered by the previous chapters:
 \begin{tight_itemize}
