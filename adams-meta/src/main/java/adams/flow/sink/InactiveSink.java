@@ -22,6 +22,7 @@ package adams.flow.sink;
 
 import adams.core.Utils;
 import adams.flow.control.Sequence;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InactiveActor;
 import adams.flow.processor.ReactivateActors;
@@ -104,6 +105,35 @@ public class InactiveSink
   implements InactiveActor {
 
   private static final long serialVersionUID = 754684747726770598L;
+
+  /**
+   * Default constructor.
+   */
+  public InactiveSink() {
+    super();
+  }
+
+  /**
+   * Encapsulates the specified actor.
+   * Automatically uses its name with the {@link #PREFIX_INACTIVE} prefix.
+   *
+   * @param actor 	the actor to encapsulate
+   */
+  public InactiveSink(Actor actor) {
+    this();
+    setName(PREFIX_INACTIVE + actor.getName());
+    setActors(new Actor[]{actor});
+  }
+
+  /**
+   * Encapsulates the specified actors.
+   *
+   * @param actors 	the actors to encapsulate
+   */
+  public InactiveSink(Actor[] actors) {
+    this();
+    setActors(actors);
+  }
 
   /**
    * Returns a string describing the object.

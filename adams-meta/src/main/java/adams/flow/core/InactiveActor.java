@@ -28,4 +28,7 @@ package adams.flow.core;
 public interface InactiveActor
   extends Actor {
 
+  /** actor prefix for inactive actors. */
+  public final static String PREFIX_INACTIVE = "inactive: ";
+
 }

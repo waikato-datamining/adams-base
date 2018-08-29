@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.Utils;
 import adams.flow.control.SubProcess;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InactiveActor;
 import adams.flow.processor.ReactivateActors;
@@ -109,6 +110,35 @@ public class InactiveTransformer
   implements InactiveActor {
 
   private static final long serialVersionUID = 6167290413146648447L;
+
+  /**
+   * Default constructor.
+   */
+  public InactiveTransformer() {
+    super();
+  }
+
+  /**
+   * Encapsulates the specified actor.
+   * Automatically uses its name with the {@link #PREFIX_INACTIVE} prefix.
+   *
+   * @param actor 	the actor to encapsulate
+   */
+  public InactiveTransformer(Actor actor) {
+    this();
+    setName(PREFIX_INACTIVE + actor.getName());
+    setActors(new Actor[]{actor});
+  }
+
+  /**
+   * Encapsulates the specified actors.
+   *
+   * @param actors 	the actors to encapsulate
+   */
+  public InactiveTransformer(Actor[] actors) {
+    this();
+    setActors(actors);
+  }
 
   /**
    * Returns a string describing the object.

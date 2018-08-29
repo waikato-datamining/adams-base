@@ -21,6 +21,7 @@
 package adams.flow.standalone;
 
 import adams.core.Utils;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InactiveActor;
 import adams.flow.processor.ReactivateActors;
@@ -96,6 +97,35 @@ public class InactiveStandalone
   implements InactiveActor {
 
   private static final long serialVersionUID = -4371755952682752628L;
+
+  /**
+   * Default constructor.
+   */
+  public InactiveStandalone() {
+    super();
+  }
+
+  /**
+   * Encapsulates the specified actor.
+   * Automatically uses its name with the {@link #PREFIX_INACTIVE} prefix.
+   *
+   * @param actor 	the actor to encapsulate
+   */
+  public InactiveStandalone(Actor actor) {
+    this();
+    setName(PREFIX_INACTIVE + actor.getName());
+    setActors(new Actor[]{actor});
+  }
+
+  /**
+   * Encapsulates the specified actors.
+   *
+   * @param actors 	the actors to encapsulate
+   */
+  public InactiveStandalone(Actor[] actors) {
+    this();
+    setActors(actors);
+  }
 
   /**
    * Returns a string describing the object.

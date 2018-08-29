@@ -21,6 +21,7 @@
 package adams.flow.source;
 
 import adams.core.Utils;
+import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InactiveActor;
 import adams.flow.processor.ReactivateActors;
@@ -103,6 +104,35 @@ public class InactiveSource
   implements InactiveActor  {
 
   private static final long serialVersionUID = 1146652019996411523L;
+
+  /**
+   * Default constructor.
+   */
+  public InactiveSource() {
+    super();
+  }
+
+  /**
+   * Encapsulates the specified actor.
+   * Automatically uses its name with the {@link #PREFIX_INACTIVE} prefix.
+   *
+   * @param actor 	the actor to encapsulate
+   */
+  public InactiveSource(Actor actor) {
+    this();
+    setName(PREFIX_INACTIVE + actor.getName());
+    setActors(new Actor[]{actor});
+  }
+
+  /**
+   * Encapsulates the specified actors.
+   *
+   * @param actors 	the actors to encapsulate
+   */
+  public InactiveSource(Actor[] actors) {
+    this();
+    setActors(actors);
+  }
 
   /**
    * Returns a string describing the object.
