@@ -1,16 +1,26 @@
 # Project: adams
-# Modules: adams-core,adams-imaging,adams-spreadsheet
-# Date: 2018-05-14 14:54:11
+# Date: 2018-08-30 11:36:37
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+#
 adams.flow.control.Flow -annotation "Converts object annotations from reports into VIA (VGG Image Annotator) JSON format." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -output-array true -file ${FLOWS}/data/annotated_objects.report -file ${FLOWS}/data/circle.report
- adams.flow.control.ArrayProcess
+ adams.flow.standalone.SetVariable -var-name outfile -var-value ${FLOWS}/output/via.json
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "combine reports"
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/annotated_objects.report -file ${FLOWS}/data/circle.report
   adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
- adams.flow.transformer.ViaAnnotations -finder adams.data.objectfinder.AllFinder
- adams.flow.control.Branch
-  adams.flow.sink.JsonDisplay -writer adams.gui.print.NullWriter -preview true
-  adams.flow.sink.JsonFileWriter -output ${FLOWS}/output/via.json -pretty-printing true
-  adams.flow.control.Sequence -name "plain text"
-   adams.flow.transformer.Convert -conversion "adams.data.conversion.JsonToString -pretty-printing true"
-   adams.flow.sink.Display -x -3 -writer adams.data.io.output.NullWriter
+  adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.HasStorageValue -storage-name report\""
+   adams.flow.control.Sequence -name then
+    adams.flow.transformer.SetStorageValue -storage-name report
+   adams.flow.control.Sequence -name else
+    adams.flow.transformer.MergeObjectLocations -storage-name report -overlap-action KEEP
+    adams.flow.transformer.SetStorageValue -storage-name report
+ adams.flow.control.Trigger -name "display report"
+  adams.flow.source.StorageValue -storage-name report -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.sink.ReportDisplay -name Objects -short-title true -x -3
+ adams.flow.control.Trigger -name "save JSON"
+  adams.flow.source.StorageValue -storage-name report -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.ReportFileWriter -writer "adams.data.io.output.ViaAnnotationsReportWriter -finder adams.data.objectfinder.AllFinder -pretty-printing true" -generator "adams.core.io.SimpleFixedFilenameGenerator -name @{outfile}"
+  adams.flow.transformer.TextFileReader -reader adams.data.io.input.SingleStringTextReader
+  adams.flow.sink.Display -name JSON -short-title true -writer adams.data.io.output.NullWriter
