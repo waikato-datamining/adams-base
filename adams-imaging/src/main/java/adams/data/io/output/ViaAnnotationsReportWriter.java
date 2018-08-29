@@ -21,12 +21,17 @@
 package adams.data.io.output;
 
 import adams.core.io.FileUtils;
+import adams.core.io.PrettyPrintingSupporter;
 import adams.data.io.input.ViaAnnotationsReportReader;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -56,17 +61,26 @@ import java.awt.Polygon;
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
  * </pre>
  *
+ * <pre>-pretty-printing &lt;boolean&gt; (property: prettyPrinting)
+ * &nbsp;&nbsp;&nbsp;If enabled, the output is printed in a 'pretty' format.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ViaAnnotationsReportWriter
-  extends AbstractReportWriter<Report> {
+  extends AbstractReportWriter<Report>
+  implements PrettyPrintingSupporter {
 
   private static final long serialVersionUID = -7250784020894287952L;
 
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
+
+  /** whether to use pretty-printing. */
+  protected boolean m_PrettyPrinting;
 
   /**
    * Returns a string describing the object.
@@ -90,6 +104,10 @@ public class ViaAnnotationsReportWriter
     m_OptionManager.add(
       "finder", "finder",
       new AllFinder());
+
+    m_OptionManager.add(
+      "pretty-printing", "prettyPrinting",
+      false);
   }
 
   /**
@@ -119,6 +137,35 @@ public class ViaAnnotationsReportWriter
    */
   public String finderTipText() {
     return "The object finder to use.";
+  }
+
+  /**
+   * Sets whether to use pretty-printing or not.
+   *
+   * @param value	true if to use pretty-printing
+   */
+  public void setPrettyPrinting(boolean value) {
+    m_PrettyPrinting = value;
+    reset();
+  }
+
+  /**
+   * Returns whether pretty-printing is used or not.
+   *
+   * @return		true if to use pretty-printing
+   */
+  public boolean getPrettyPrinting() {
+    return m_PrettyPrinting;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prettyPrintingTipText() {
+    return "If enabled, the output is printed in a 'pretty' format.";
   }
 
   /**
@@ -164,6 +211,10 @@ public class ViaAnnotationsReportWriter
     int[]		x;
     int[]		y;
     int			i;
+    String		content;
+    Gson 		gson;
+    JsonParser 		jp;
+    JsonElement 	je;
 
     all = new JSONObject();
     jrep = new JSONObject();
@@ -226,6 +277,16 @@ public class ViaAnnotationsReportWriter
       }
     }
 
-    return FileUtils.writeToFile(m_Output.getAbsolutePath(), all, false);
+    if (m_PrettyPrinting) {
+      gson    = new GsonBuilder().setPrettyPrinting().create();
+      jp      = new JsonParser();
+      je      = jp.parse(all.toString());
+      content = gson.toJson(je);
+    }
+    else {
+      content = all.toString();
+    }
+
+    return FileUtils.writeToFile(m_Output.getAbsolutePath(), content, false);
   }
 }
