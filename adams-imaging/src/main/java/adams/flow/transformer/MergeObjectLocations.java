@@ -15,7 +15,7 @@
 
 /*
  * MergeObjectLocations.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -37,7 +37,8 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  <!-- globalinfo-start -->
  * Merges the object locations in the report of the container passing through with the one obtained from storage.<br>
  * The 'overlap action' determines what to do if objects overlap.<br>
- * With the 'check type' you can still trigger a 'skip' if the type values of the two overlapping objects differ.
+ * With the 'check type' you can still trigger a 'skip' if the type values of the two overlapping objects differ.<br>
+ * For simply merging all objects, choose a minOverlapRatio of 0.0 and  the OverlapAction of KEEP.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -59,70 +60,71 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: MergeObjectLocations
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name of the storage item to merge with (Report or ReportHandler).
  * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
- * 
+ *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
  * &nbsp;&nbsp;&nbsp;The report field prefix used in the report.
  * &nbsp;&nbsp;&nbsp;default: Object.
  * </pre>
- * 
+ *
  * <pre>-overlap-action &lt;SKIP|KEEP&gt; (property: overlapAction)
  * &nbsp;&nbsp;&nbsp;The action to take when an object from this and the other report overlap.
  * &nbsp;&nbsp;&nbsp;default: SKIP
  * </pre>
- * 
+ *
  * <pre>-no-overlap-action &lt;SKIP|KEEP&gt; (property: noOverlapAction)
  * &nbsp;&nbsp;&nbsp;The action to take when an object has no overlaps at all.
  * &nbsp;&nbsp;&nbsp;default: KEEP
  * </pre>
- * 
+ *
  * <pre>-check-type &lt;boolean&gt; (property: checkType)
  * &nbsp;&nbsp;&nbsp;If enabled, the type of the objects gets checked as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-type-suffix &lt;java.lang.String&gt; (property: typeSuffix)
  * &nbsp;&nbsp;&nbsp;The report field suffix for the type used in the report (ignored if empty
  * &nbsp;&nbsp;&nbsp;).
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-type-find &lt;adams.core.base.BaseRegExp&gt; (property: typeFind)
  * &nbsp;&nbsp;&nbsp;The regular expression to apply to the type, ignored if empty.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
  * 
  * <pre>-type-replace &lt;java.lang.String&gt; (property: typeReplace)
@@ -141,7 +143,6 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MergeObjectLocations
   extends AbstractTransformer {
@@ -152,7 +153,6 @@ public class MergeObjectLocations
    * Determines what to do when two objects overlap.
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum OverlapAction {
     SKIP,
@@ -163,7 +163,6 @@ public class MergeObjectLocations
    * Determines what to do when an object has no overlaps.
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum NoOverlapAction {
     SKIP,
@@ -209,7 +208,9 @@ public class MergeObjectLocations
 	+ "through with the one obtained from storage.\n"
 	+ "The 'overlap action' determines what to do if objects overlap.\n"
 	+ "With the 'check type' you can still trigger a 'skip' if the type "
-	+ "values of the two overlapping objects differ.";
+	+ "values of the two overlapping objects differ.\n"
+	+ "For simply merging all objects, choose a minOverlapRatio of 0.0 and "
+	+ " the OverlapAction of " + OverlapAction.KEEP + ".";
   }
 
   /**
@@ -618,6 +619,10 @@ public class MergeObjectLocations
       mergedObjs = new LocatedObjects();
       if (thisObjs.size() == 0) {
         mergedObjs = otherObjs;
+      }
+      else if ((m_MinOverlapRatio == 0) && (m_OverlapAction == OverlapAction.KEEP)) {
+        mergedObjs.addAll(thisObjs);
+        mergedObjs.addAll(otherObjs);
       }
       else {
         for (LocatedObject thisObj : thisObjs) {
