@@ -21,11 +21,14 @@
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
+import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.ViaAnnotationsReportReader;
+import adams.data.objectfinder.ByMetaDataStringValue;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 
@@ -82,8 +85,10 @@ public class ViaAnnotationsHandler
     ObjectLocationsOverlayFromReport	overlay;
     File				reportFile;
     ViaAnnotationsReportReader		reportReader;
-    List<Report> reports;
-    Report report;
+    List<Report> 			reports;
+    Report 				report;
+    ByMetaDataStringValue		filter;
+    LocatedObjects			lobjs;
 
     panel      = new ImagePanel();
     overlay    = null;
@@ -95,6 +100,12 @@ public class ViaAnnotationsHandler
       reports = reportReader.read();
       if (reports.size() > 0) {
         report  = reports.get(0);
+        filter  = new ByMetaDataStringValue();
+        filter.setKey("filename");
+        filter.setRegExp(new BaseRegExp(file.getName()));
+        lobjs = filter.findObjects(report);
+        if (lobjs.size() > 0)
+	  report = lobjs.toReport(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
 	overlay = new ObjectLocationsOverlayFromReport();
 	overlay.setPrefix(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
       }
