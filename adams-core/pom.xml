@@ -308,6 +308,20 @@
       <artifactId>processoutput4j</artifactId>
       <version>0.0.7</version>
     </dependency>
+
+    <!-- for post Java 8 compilation
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-swing</artifactId>
+      <version>11-ea+25</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-web</artifactId>
+      <version>11-ea+25</version>
+    </dependency>
+    -->
   </dependencies>
 
   <build>
