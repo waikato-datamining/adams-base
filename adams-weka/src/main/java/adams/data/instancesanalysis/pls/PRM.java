@@ -227,7 +227,7 @@ public class PRM
    * @param value	the C, > 0
    */
   public void setC(double value) {
-    if (getOptionManager().isValid("lambda", value)) {
+    if (getOptionManager().isValid("c", value)) {
       m_C = value;
       reset();
     }
