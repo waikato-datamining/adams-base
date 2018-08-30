@@ -527,10 +527,7 @@ public class SavitzkyGolay
 
     // smooth values
     width = m_NumPointsLeft + m_NumPointsRight + 1;
-    if (hasClass)
-      values = new double[count - width + 1];
-    else
-      values = new double[count - width];
+    values = new double[count - width + 1];
     for (i = 0; i <= count - width; i++) {
       values[i] = 0;
       for (n = 0; n < width; n++)
