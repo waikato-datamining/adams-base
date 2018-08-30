@@ -15,12 +15,13 @@
 
 /*
  * PartitionedMultiFilter2.java
- * Copyright (C) 2006-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package weka.filters.unsupervised.attribute;
 
+import adams.core.base.BaseString;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.core.Attribute;
@@ -81,7 +82,6 @@ import java.util.Vector;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10215 $
  * @see weka.filters.StreamableFilter
  */
 public class PartitionedMultiFilter2
@@ -98,6 +98,11 @@ public class PartitionedMultiFilter2
   /** The attribute ranges. */
   protected Range m_Ranges[] = {
     new Range("first-last")
+  };
+
+  /** The prefixes. */
+  protected BaseString m_Prefixes[] = {
+    new BaseString("filtered")
   };
 
   /** Whether unused attributes are left out of the output. */
@@ -121,7 +126,8 @@ public class PartitionedMultiFilter2
     return "A filter that applies filters on subsets of attributes and "
       + "assembles the output into a new dataset. Attributes that are "
       + "not covered by any of the ranges can be either retained or removed "
-      + "from the output.";
+      + "from the output.\n"
+      + "Custom attribute name prefixes can be supplied, by default 'filtered-' is used.";
   }
 
   /**
@@ -142,6 +148,11 @@ public class PartitionedMultiFilter2
 	+ "\tFor each filter a range must be supplied. 'first' and 'last'\n"
 	+ "\tare valid indices. 'inv(...)' around the range denotes an\n"
 	+ "\tinverted range.", "R", 1, "-R <range>"));
+
+    result.addElement(new Option(
+      "\tA prefix for the filtered attributes (can be specified multiple times)."
+      + "\t(default: 'filtered')",
+      "P", 1, "-P <prefix>"));
 
     result.addElement(new Option(
       "\tFlag for leaving unused attributes out of the output, by default\n"
@@ -165,6 +176,7 @@ public class PartitionedMultiFilter2
     String[] 		options2;
     List<Filter> 	filters;
     List<Range> 	ranges;
+    List<BaseString>	prefixes;
     Range 		range;
 
     setRemoveUnused(Utils.getFlag("U", options));
@@ -200,6 +212,16 @@ public class PartitionedMultiFilter2
       ranges.add(new Range("first-last"));
 
     setRanges(ranges.toArray(new Range[filters.size()]));
+
+    prefixes = new ArrayList<>();
+    while ((tmpStr = Utils.getOption("P", options)).length() != 0)
+      prefixes.add(new BaseString(tmpStr));
+
+    // at least one Range
+    if (prefixes.size() == 0)
+      prefixes.add(new BaseString("filtered"));
+
+    setPrefixes(prefixes.toArray(new BaseString[filters.size()]));
 
     // is number of filters the same as ranges?
     checkDimensions();
@@ -240,6 +262,11 @@ public class PartitionedMultiFilter2
       result.add(tmpStr);
     }
 
+    for (i = 0; i < getFilters().length; i++) {
+      result.add("-P");
+      result.add(getPrefixes()[i].getValue());
+    }
+
     Collections.addAll(result, super.getOptions());
 
     return result.toArray(new String[result.size()]);
@@ -255,6 +282,11 @@ public class PartitionedMultiFilter2
       throw new IllegalArgumentException(
 	"Number of filters (= " + getFilters().length + ") "
 	  + "and ranges (= " + getRanges().length + ") don't match!");
+    }
+    if (getFilters().length != getPrefixes().length) {
+      throw new IllegalArgumentException(
+	"Number of filters (= " + getFilters().length + ") "
+	  + "and prefixes (= " + getPrefixes().length + ") don't match!");
     }
   }
 
@@ -321,7 +353,9 @@ public class PartitionedMultiFilter2
    * @see #reset()
    */
   public void setFilters(Filter[] filters) {
-    m_Filters = filters;
+    m_Filters  = filters;
+    m_Ranges   = (Range[]) adams.core.Utils.adjustArray(m_Ranges, m_Filters.length, new Range());
+    m_Prefixes = (BaseString[]) adams.core.Utils.adjustArray(m_Prefixes, m_Filters.length, new BaseString("filtered"));
     reset();
   }
 
@@ -383,7 +417,9 @@ public class PartitionedMultiFilter2
    * @see #reset()
    */
   public void setRanges(Range[] Ranges) {
-    m_Ranges = Ranges;
+    m_Ranges   = Ranges;
+    m_Prefixes = (BaseString[]) adams.core.Utils.adjustArray(m_Prefixes, m_Ranges.length, new BaseString("filtered"));
+    m_Filters  = (Filter[]) adams.core.Utils.adjustArray(m_Filters, m_Filters.length, new AllFilter());
     reset();
   }
 
@@ -404,6 +440,38 @@ public class PartitionedMultiFilter2
    */
   public String rangesTipText() {
     return "The attribute ranges to be used; 'inv(...)' denotes an inverted range.";
+  }
+
+  /**
+   * Sets the list of prefixes to use.
+   *
+   * @param prefixes an array of prefixes
+   * @see #reset()
+   */
+  public void setPrefixes(BaseString[] prefixes) {
+    m_Prefixes = prefixes;
+    m_Ranges   = (Range[]) adams.core.Utils.adjustArray(m_Ranges, m_Prefixes.length, new Range());
+    m_Filters  = (Filter[]) adams.core.Utils.adjustArray(m_Filters, m_Prefixes.length, new AllFilter());
+    reset();
+  }
+
+  /**
+   * Gets the list of prefixes to use.
+   *
+   * @return the array of prefixes
+   */
+  public BaseString[] getPrefixes() {
+    return m_Prefixes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return tip text for this property suitable for displaying in the
+   *         explorer/experimenter gui
+   */
+  public String prefixesTipText() {
+    return "The prefixes to use; uses 'filtered' if empty.";
   }
 
   /**
@@ -557,6 +625,7 @@ public class PartitionedMultiFilter2
     int 			n;
     ArrayList<Attribute> 	atts;
     Attribute 			att;
+    String			prefix;
 
     if (!isFirstBatchDone()) {
       checkDimensions();
@@ -576,7 +645,10 @@ public class PartitionedMultiFilter2
 	m_Processed[i] = Filter.useFilter(m_Processed[i], getFilter(i));
 
 	// rename attributes
-	m_Processed[i] = renameAttributes(m_Processed[i], "filtered-" + i + "-");
+	prefix = m_Prefixes[i].getValue();
+	if (prefix.trim().isEmpty())
+	  prefix = "filtered";
+	m_Processed[i] = renameAttributes(m_Processed[i], prefix + "-" + i + "-");
 
 	// add attributes
 	for (n = 0; n < m_Processed[i].numAttributes(); n++) {
