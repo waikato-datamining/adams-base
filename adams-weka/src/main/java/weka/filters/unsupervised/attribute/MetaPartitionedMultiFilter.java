@@ -20,6 +20,7 @@
 package weka.filters.unsupervised.attribute;
 
 import adams.core.base.BaseRegExp;
+import adams.core.base.BaseString;
 import adams.core.option.OptionUtils;
 import weka.core.Attribute;
 import weka.core.Capabilities;
@@ -82,6 +83,11 @@ public class MetaPartitionedMultiFilter
   /** The filters. */
   protected Filter[] m_Filters = {new AllFilter()};
 
+  /** The prefixes. */
+  protected BaseString m_Prefixes[] = {
+    new BaseString("filtered")
+  };
+
   /** Whether unused attributes are left out of the output. */
   protected boolean m_RemoveUnused = false;
 
@@ -127,6 +133,11 @@ public class MetaPartitionedMultiFilter
         "R", 1, "-R <regexp>"));
 
     result.addElement(new Option(
+      "\tA prefix for the filtered attributes (can be specified multiple times)."
+      + "\t(default: 'filtered')",
+      "P", 1, "-P <prefix>"));
+
+    result.addElement(new Option(
         "\tFlag for leaving unused attributes out of the output, by default\n"
 	+ "\tthese are included in the filter output.",
         "U", 0, "-U"));
@@ -167,6 +178,7 @@ public class MetaPartitionedMultiFilter
     String[]	options2;
     Vector	objects;
     BaseRegExp	regexp;
+    List<BaseString>	prefixes;
 
     super.setOptions(options);
 
@@ -192,11 +204,21 @@ public class MetaPartitionedMultiFilter
       objects.add(regexp);
     }
 
-    // at least one Range
+    // at least one regexp
     if (objects.size() == 0)
       objects.add(new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     setRegExp((BaseRegExp[]) objects.toArray(new BaseRegExp[objects.size()]));
+
+    prefixes = new ArrayList<>();
+    while ((tmpStr = Utils.getOption("P", options)).length() != 0)
+      prefixes.add(new BaseString(tmpStr));
+
+    // at least one Range
+    if (prefixes.size() == 0)
+      prefixes.add(new BaseString("filtered"));
+
+    setPrefixes(prefixes.toArray(new BaseString[prefixes.size()]));
 
     // is number of filters the same as ranges?
     checkDimensions();
@@ -232,6 +254,11 @@ public class MetaPartitionedMultiFilter
       result.add(getRegExp(i).stringValue());
     }
 
+    for (i = 0; i < getFilters().length; i++) {
+      result.add("-P");
+      result.add(getPrefixes()[i].getValue());
+    }
+
     return (String[]) result.toArray(new String[result.size()]);
   }
 
@@ -245,6 +272,11 @@ public class MetaPartitionedMultiFilter
       throw new IllegalArgumentException(
 	  "Number of filters (= " + getFilters().length + ") "
 	  + "and regular expressions (= " + getRegExp().length + ") don't match!");
+    if (getFilters().length != getPrefixes().length) {
+      throw new IllegalArgumentException(
+	"Number of filters (= " + getFilters().length + ") "
+	  + "and prefixes (= " + getPrefixes().length + ") don't match!");
+    }
   }
 
   /**
@@ -288,7 +320,9 @@ public class MetaPartitionedMultiFilter
    * @see #reset()
    */
   public void setFilters(Filter[] filters) {
-    m_Filters = filters;
+    m_Filters  = filters;
+    m_RegExp   = (BaseRegExp[]) adams.core.Utils.adjustArray(m_RegExp, m_Filters.length, new BaseRegExp(BaseRegExp.MATCH_ALL));
+    m_Prefixes = (BaseString[]) adams.core.Utils.adjustArray(m_Prefixes, m_Filters.length, new BaseString("filtered"));
     reset();
   }
 
@@ -352,7 +386,9 @@ public class MetaPartitionedMultiFilter
    * @see #reset()
    */
   public void setRegExp(BaseRegExp[] value) {
-    m_RegExp = value;
+    m_RegExp   = value;
+    m_Filters  = (Filter[])  adams.core.Utils.adjustArray(m_Filters, m_RegExp.length, new AllFilter());
+    m_Prefixes = (BaseString[]) adams.core.Utils.adjustArray(m_Prefixes, m_RegExp.length, new BaseString("filtered"));
     reset();
   }
 
@@ -383,6 +419,38 @@ public class MetaPartitionedMultiFilter
    */
   public BaseRegExp getRegExp(int index) {
     return m_RegExp[index];
+  }
+
+  /**
+   * Sets the list of prefixes to use.
+   *
+   * @param prefixes an array of prefixes
+   * @see #reset()
+   */
+  public void setPrefixes(BaseString[] prefixes) {
+    m_Prefixes = prefixes;
+    m_RegExp   = (BaseRegExp[]) adams.core.Utils.adjustArray(m_RegExp, m_Prefixes.length, new BaseRegExp(BaseRegExp.MATCH_ALL));
+    m_Filters  = (Filter[]) adams.core.Utils.adjustArray(m_Filters, m_Prefixes.length, new AllFilter());
+    reset();
+  }
+
+  /**
+   * Gets the list of prefixes to use.
+   *
+   * @return the array of prefixes
+   */
+  public BaseString[] getPrefixes() {
+    return m_Prefixes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return tip text for this property suitable for displaying in the
+   *         explorer/experimenter gui
+   */
+  public String prefixesTipText() {
+    return "The prefixes to use; uses 'filtered' if empty.";
   }
 
   /** 
@@ -450,6 +518,7 @@ public class MetaPartitionedMultiFilter
     Attribute				att;
     List<Range>				ranges;
     List<Filter>			filters;
+    List<BaseString>			prefixes;
     Integer[]				range;
     adams.core.Range 			aRange;
 
@@ -459,9 +528,9 @@ public class MetaPartitionedMultiFilter
 	return null;
 
       // build indices of subsets
-      indices = new HashMap<Integer,List<Integer>>();
+      indices = new HashMap<>();
       for (n = 0; n < m_RegExp.length; n++)
-	indices.put(n, new ArrayList<Integer>());
+	indices.put(n, new ArrayList<>());
       for (i = 0; i < inputFormat.numAttributes(); i++) {
 	att = inputFormat.attribute(i);
 	for (n = 0; n < m_RegExp.length; n++) {
@@ -471,8 +540,9 @@ public class MetaPartitionedMultiFilter
       }
 
       // compile list of ranges/filters
-      ranges  = new ArrayList<Range>();
-      filters = new ArrayList<Filter>();
+      ranges   = new ArrayList<>();
+      filters  = new ArrayList<>();
+      prefixes = new ArrayList<>();
       for (i = 0; i < m_RegExp.length; i++) {
 	// output warning for empty subsets
 	if (indices.get(i).size() == 0) {
@@ -484,6 +554,7 @@ public class MetaPartitionedMultiFilter
 	  aRange.setIndices(range);
 	  ranges.add(new Range(aRange.getRange()));
 	  filters.add((Filter) OptionUtils.shallowCopy(m_Filters[i]));
+	  prefixes.add(new BaseString(m_Prefixes[i].getValue()));
 	}
       }
 
@@ -492,6 +563,7 @@ public class MetaPartitionedMultiFilter
       m_ActualFilter.setRemoveUnused(m_RemoveUnused);
       m_ActualFilter.setFilters(filters.toArray(new Filter[filters.size()]));
       m_ActualFilter.setRanges(ranges.toArray(new Range[ranges.size()]));
+      m_ActualFilter.setPrefixes(prefixes.toArray(new BaseString[prefixes.size()]));
       m_ActualFilter.setInputFormat(inputFormat);
 
       if (getDebug())

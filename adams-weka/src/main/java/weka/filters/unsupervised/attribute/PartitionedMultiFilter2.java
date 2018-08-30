@@ -25,6 +25,8 @@ import adams.core.base.BaseString;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.core.Attribute;
+import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -288,6 +290,22 @@ public class PartitionedMultiFilter2
 	"Number of filters (= " + getFilters().length + ") "
 	  + "and prefixes (= " + getPrefixes().length + ") don't match!");
     }
+  }
+
+  /**
+   * Returns the Capabilities of this filter.
+   *
+   * @return the capabilities of this object
+   * @see Capabilities
+   */
+  @Override
+  public Capabilities getCapabilities() {
+    Capabilities	result;
+
+    result = super.getCapabilities();
+    result.enable(Capability.NO_CLASS);
+
+    return result;
   }
 
   /**
