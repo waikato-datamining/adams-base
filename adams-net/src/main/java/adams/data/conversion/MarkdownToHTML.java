@@ -20,13 +20,20 @@
 
 package adams.data.conversion;
 
-import adams.core.net.MarkdownHelper;
+import org.markdownj.MarkdownProcessor;
 
 /**
  <!-- globalinfo-start -->
+ * Converts Markdown to HTML.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -35,6 +42,9 @@ public class MarkdownToHTML
   extends AbstractStringConversion {
 
   private static final long serialVersionUID = 854883837794321938L;
+
+  /** the markdown processor. */
+  protected MarkdownProcessor m_MarkdownProcessor;
 
   /**
    * Returns a string describing the object.
@@ -54,6 +64,8 @@ public class MarkdownToHTML
    */
   @Override
   protected Object doConvert() throws Exception {
-    return MarkdownHelper.markdownToHtml((String) m_Input);
+    if (m_MarkdownProcessor == null)
+      m_MarkdownProcessor = new MarkdownProcessor();
+    return m_MarkdownProcessor.markdown((String) m_Input);
   }
 }

@@ -274,9 +274,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.vladsch.flexmark</groupId>
-      <artifactId>flexmark</artifactId>
-      <version>0.34.18</version>
+      <groupId>org.markdownj</groupId>
+      <artifactId>markdownj-core</artifactId>
+      <version>0.4</version>
     </dependency>
 
     <dependency>
@@ -308,20 +308,6 @@
       <artifactId>processoutput4j</artifactId>
       <version>0.0.7</version>
     </dependency>
-
-    <!-- for post Java 8 compilation
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-swing</artifactId>
-      <version>11-ea+25</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-web</artifactId>
-      <version>11-ea+25</version>
-    </dependency>
-    -->
   </dependencies>
 
   <build>

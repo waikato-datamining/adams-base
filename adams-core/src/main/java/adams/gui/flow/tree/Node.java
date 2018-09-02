@@ -24,7 +24,6 @@ import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.base.BaseAnnotation.Tag;
 import adams.core.net.HtmlUtils;
-import adams.core.net.MarkdownHelper;
 import adams.core.option.ArrayProducer;
 import adams.core.option.NestedConsumer;
 import adams.core.option.NestedProducer;
@@ -40,6 +39,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.LazyExpansionTreeNode;
 import adams.gui.core.MouseUtils;
 import com.github.fracpete.jclipboardhelper.TransferableString;
+import org.markdownj.MarkdownProcessor;
 
 import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
@@ -67,15 +67,18 @@ public class Node
 
   /** the render string. */
   protected String m_RenderString;
-  
+
   /** whether the node is editable. */
   protected boolean m_Editable;
 
   /** whether the node is currently bookmarked. */
   protected boolean m_Bookmarked;
 
-  /** whether to use markdown. */
-  protected static Boolean m_UseMarkdown;
+  /** the markdown processor. */
+  protected static MarkdownProcessor m_MarkdownProcessor;
+
+  /** whether the processor has been initialized. */
+  protected static Boolean m_MarkdownProcessorInitialized;
 
   /** the commandline (cache for undo/redo). */
   protected String m_CommandLine;
@@ -94,8 +97,11 @@ public class Node
     m_Bookmarked   = false;
     m_Variables    = null;
     m_CommandLine  = null;
-    if (m_UseMarkdown == null)
-      m_UseMarkdown = (GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"));
+    if (m_MarkdownProcessorInitialized == null) {
+      m_MarkdownProcessorInitialized = true;
+      if (GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"))
+	m_MarkdownProcessor = new MarkdownProcessor();
+    }
   }
 
   /**
@@ -174,13 +180,13 @@ public class Node
 
   /**
    * Returns the tree the node belongs to.
-   * 
+   *
    * @return		the tree
    */
   public Tree getOwner() {
     return m_Owner;
   }
-  
+
   /**
    * Sets the actor. Strips it down before using it.
    *
@@ -441,7 +447,7 @@ public class Node
 
   /**
    * Inserts line breaks.
-   * 
+   *
    * @param s		the string to process
    * @return		the updated string
    */
@@ -470,16 +476,16 @@ public class Node
 	result.append("<br>");
       result.append(line);
     }
-    
+
     if (trailingLF)
       result.append("<br>");
-    
+
     return result.toString();
   }
-  
+
   /**
    * Assembles the annotation HTML string.
-   * 
+   *
    * @param actor	the actor to obtain the annotation from
    * @return		the generated string
    */
@@ -492,14 +498,14 @@ public class Node
     boolean		font;
     List		parts;
     Tag			tag;
-    
+
     result   = new StringBuilder();
     colorDef = hasOwner() ? getOwner().getAnnotationsColor() : "blue";
     sizeDef  = hasOwner() ? getOwner().getAnnotationsSize() : "-2";
 
-    if (m_UseMarkdown) {
+    if (m_MarkdownProcessor != null) {
       result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
-      result.append(MarkdownHelper.markdownToHtml(actor.getAnnotations().getValue()));
+      result.append(m_MarkdownProcessor.markdown(actor.getAnnotations().getValue()));
       result.append("</font>");
     }
     else {
