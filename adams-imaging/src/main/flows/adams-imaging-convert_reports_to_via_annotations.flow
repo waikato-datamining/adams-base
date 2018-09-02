@@ -1,0 +1,28 @@
+# Project: adams
+# Date: 2018-09-03 10:03:19
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Converts annotations from .report files to VIA .json ones." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name Info -short-title true -writer adams.data.io.output.NullWriter
+ adams.flow.standalone.SetVariable -name "restore file" -var-name restore_file -var-value @{flow_filename_long}.props -expand-value true
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory (.report files)\" -type DIRECTORY_ABSOLUTE -default-value ." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name output_dir -display \"Output directory (.json files)\" -type DIRECTORY_ABSOLUTE -default-value ." -output-type MAP -restoration-enabled true -restoration-file @{restore_file}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name "process files"
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.report -sorting SORT_BY_NAME"
+  adams.flow.control.Tee -name info
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.control.Tee -name "output file"
+   adams.flow.transformer.BaseName
+   adams.flow.transformer.Convert -conversion "adams.data.conversion.ReplaceFileExtension -extension .json"
+   adams.flow.transformer.PrependDir -prefix @{output_dir}
+   adams.flow.transformer.SetVariable -var-name outfile
+  adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
+  adams.flow.transformer.ReportFileWriter -writer "adams.data.io.output.ViaAnnotationsReportWriter -finder adams.data.objectfinder.AllFinder" -generator "adams.core.io.SimpleFixedFilenameGenerator -name @{outfile}"
+  adams.flow.control.Tee -name "info (2)"
+   adams.flow.transformer.StringInsert -position first -value "--> "
+   adams.flow.sink.CallableSink -callable Info
