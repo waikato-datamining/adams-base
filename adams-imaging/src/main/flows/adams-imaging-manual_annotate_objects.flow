@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2018-09-03 09:56:28
+# Date: 2018-09-03 12:24:15
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-spreadsheet
@@ -31,7 +31,7 @@ adams.flow.control.Flow -annotation "Allows the user to manually annotate object
   adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
   adams.flow.control.ConditionalSubProcess -name "existing report?" -condition "adams.flow.condition.bool.FileExists -file @{reportfile} -generator adams.core.io.NullFilenameGenerator"
    adams.flow.transformer.MergeReport -source "load report" -merge MERGE_OTHER_WITH_CURRENT
-  adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{selection_type}\\\\\\\" = \\\\\\\"user_drawn_box\\\\\\\"\"" -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{selection_type}\\\\\\\" = \\\\\\\"object_shape\\\\\\\"\"" -condition adams.flow.condition.bool.True
+  adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{selection_type}\\\\\\\" = \\\\\\\"bounding_box\\\\\\\"\"" -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{selection_type}\\\\\\\" = \\\\\\\"object_shape\\\\\\\"\"" -condition adams.flow.condition.bool.True
    adams.flow.transformer.ImageAnnotator -name "bounding box" -width 1400 -height 800 -label @{labels} -selection-processor adams.gui.visualization.image.selection.SelectObjects -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -overlay "adams.gui.visualization.image.ObjectLocationsOverlayFromReport -color #ffffff -use-colors-per-type true -type-color-provider \"adams.gui.visualization.core.CustomColorProvider -color #0000ff -color #00ffff -color #00ff00 -color #ff00ff -color #ffc800 -color #ff0000 -color #9999ff\" -label-format $ -predefined-labels @{labels}" -zoom -1.0
    adams.flow.transformer.ImageAnnotator -name "object shape" -width 1400 -height 800 -label @{labels} -selection-processor adams.gui.visualization.image.selection.SelectObjects -selection-shape-painter adams.gui.visualization.image.selectionshape.PolygonPainter -overlay "adams.gui.visualization.image.ObjectLocationsOverlayFromReport -color #ffffff -use-colors-per-type true -type-color-provider \"adams.gui.visualization.core.CustomColorProvider -color #0000ff -color #00ffff -color #00ff00 -color #ff00ff -color #ffc800 -color #ff0000 -color #9999ff\" -label-format $ -predefined-labels @{labels}" -zoom -1.0
    adams.flow.control.Stop -stop-msg "Unknonwn selection type: @{selection_type}"
