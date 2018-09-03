@@ -237,16 +237,19 @@ public class SelectObjects
     // polygon overrides rectangle corners
     poly = null;
     if (trace.size() > 0) {
-      poly        = panel.traceToPolygon(trace);
-      bounds      = poly.getBounds();
-      topLeft     = new Point((int) bounds.getX(), (int) bounds.getY());
-      bottomRight = new Point((int) (bounds.getX() + bounds.getWidth() - 1), (int) (bounds.getY() + bounds.getHeight() - 1));
+      poly   = panel.traceToPolygon(trace);
+      bounds = poly.getBounds();
+      x = (int) bounds.getX();
+      y = (int) bounds.getY();
+      w = (int) bounds.getWidth();
+      h = (int) bounds.getHeight();
     }
-
-    x    = panel.mouseToPixelLocation(topLeft).x;
-    y    = panel.mouseToPixelLocation(topLeft).y;
-    w    = panel.mouseToPixelLocation(bottomRight).x - panel.mouseToPixelLocation(topLeft).x + 1;
-    h    = panel.mouseToPixelLocation(bottomRight).y - panel.mouseToPixelLocation(topLeft).y + 1;
+    else {
+      x = panel.mouseToPixelLocation(topLeft).x;
+      y = panel.mouseToPixelLocation(topLeft).y;
+      w = panel.mouseToPixelLocation(bottomRight).x - panel.mouseToPixelLocation(topLeft).x + 1;
+      h = panel.mouseToPixelLocation(bottomRight).y - panel.mouseToPixelLocation(topLeft).y + 1;
+    }
     rect = new SelectionRectangle(x, y, w, h, -1);
 
     queue    = new ArrayList<>();
