@@ -14,30 +14,28 @@
  */
 
 /*
- * TrimapImageHandler.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * VggXmlAnnotationHandler.java
+ * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
+
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
-import adams.data.image.BufferedImageContainer;
-import adams.data.image.transformer.TrimapColorizer;
-import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.VggXmlAnnotationReportReader;
 import adams.data.report.Report;
-import adams.gui.visualization.image.ImagePanel;
-import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.visualization.report.ReportFactory;
+import adams.gui.visualization.report.ReportFactory.Table;
 
-import java.awt.Color;
 import java.io.File;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Displays the following image types as trimaps: jpg,tif,tiff,bmp,gif,png,wbmp,jpeg<br>
- * If VGG XML annotation file with the same name exists, then an object overlay is added.
+ * Displays the following image types with an overlay for the objects stored in the VGG XML file with the same name (using object prefix 'Object.'): jpg,tif,tiff,bmp,gif,png,jpeg,wbmp
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -49,13 +47,12 @@ import java.util.List;
  *
  <!-- options-end -->
  *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class TrimapImageHandler
+public class VggXmlAnnotationHandler
   extends AbstractContentHandler {
 
-  /** for serialization. */
-  private static final long serialVersionUID = -3962259305718630395L;
+  private static final long serialVersionUID = -1671414346233382229L;
 
   /**
    * Returns a string describing the object.
@@ -64,8 +61,9 @@ public class TrimapImageHandler
    */
   @Override
   public String globalInfo() {
-    return "Displays the following image types as trimaps: " + Utils.arrayToString(getExtensions()) + "\n"
-      + "If VGG XML annotation file with the same name exists, then an object overlay is added.";
+    return
+      "Displays the VGG XML file as a report: "
+	+ Utils.arrayToString(getExtensions());
   }
 
   /**
@@ -76,7 +74,7 @@ public class TrimapImageHandler
    */
   @Override
   public String[] getExtensions() {
-    return new JAIImageReader().getFormatExtensions();
+    return new String[]{"xml"};
   }
 
   /**
@@ -87,45 +85,24 @@ public class TrimapImageHandler
    */
   @Override
   protected PreviewPanel createPreview(File file) {
-    ImagePanel				panel;
-    JAIImageReader			reader;
-    BufferedImageContainer		cont;
-    TrimapColorizer			colorizer;
-    ObjectLocationsOverlayFromReport	overlay;
+    final BasePanel			result;
+    final Table 			table;
     File				reportFile;
     VggXmlAnnotationReportReader	reportReader;
     List<Report> 			reports;
-    Report 				report;
 
-    reader = new JAIImageReader();
-    cont   = reader.read(new PlaceholderFile(file));
-    if (cont == null)
-      return new NoPreviewAvailablePanel();
-
-    colorizer = new TrimapColorizer();
-    cont      = colorizer.transform(cont)[0];
-
-    panel = new ImagePanel();
-    panel.setCurrentImage(cont);
-    overlay    = null;
-    report     = null;
     reportFile = FileUtils.replaceExtension(file, ".xml");
     if (reportFile.exists() && reportFile.isFile()) {
       reportReader = new VggXmlAnnotationReportReader();
       reportReader.setInput(new PlaceholderFile(reportFile));
       reports = reportReader.read();
       if (reports.size() > 0) {
-        report  = reports.get(0);
-	overlay = new ObjectLocationsOverlayFromReport();
-	overlay.setPrefix(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
-	overlay.setColor(Color.GREEN);
+        result = ReportFactory.getPanel(reports.get(0), true);
+        table  = (ReportFactory.Table) GUIHelper.findFirstComponent(result, ReportFactory.Table.class, true, true);
+        return new PreviewPanel(result, table);
       }
     }
-    if (overlay != null) {
-      panel.addImageOverlay(overlay);
-      panel.setAdditionalProperties(report);
-    }
 
-    return new PreviewPanel(panel, panel.getPaintPanel());
+    return new NoPreviewAvailablePanel();
   }
 }
