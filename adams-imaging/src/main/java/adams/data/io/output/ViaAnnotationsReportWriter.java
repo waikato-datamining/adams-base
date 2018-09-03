@@ -61,6 +61,11 @@ import java.awt.Polygon;
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
  * </pre>
  *
+ * <pre>-label-key &lt;java.lang.String&gt; (property: labelKey)
+ * &nbsp;&nbsp;&nbsp;The key in the meta-data containing the label, ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-pretty-printing &lt;boolean&gt; (property: prettyPrinting)
  * &nbsp;&nbsp;&nbsp;If enabled, the output is printed in a 'pretty' format.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -78,6 +83,9 @@ public class ViaAnnotationsReportWriter
 
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
+
+  /** the meta-data key with the label. */
+  protected String m_LabelKey;
 
   /** whether to use pretty-printing. */
   protected boolean m_PrettyPrinting;
@@ -104,6 +112,10 @@ public class ViaAnnotationsReportWriter
     m_OptionManager.add(
       "finder", "finder",
       new AllFinder());
+
+    m_OptionManager.add(
+      "label-key", "labelKey",
+      "");
 
     m_OptionManager.add(
       "pretty-printing", "prettyPrinting",
@@ -137,6 +149,35 @@ public class ViaAnnotationsReportWriter
    */
   public String finderTipText() {
     return "The object finder to use.";
+  }
+
+  /**
+   * Sets the key in the meta-data containing the label.
+   *
+   * @param value	the key
+   */
+  public void setLabelKey(String value) {
+    m_LabelKey = value;
+    reset();
+  }
+
+  /**
+   * Returns the key in the meta-data containing the label.
+   *
+   * @return		the key
+   */
+  public String getLabelKey() {
+    return m_LabelKey;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelKeyTipText() {
+    return "The key in the meta-data containing the label, ignored if empty.";
   }
 
   /**
@@ -206,6 +247,7 @@ public class ViaAnnotationsReportWriter
     JSONObject		jregion;
     JSONObject		jshape;
     JSONArray 		jpoints;
+    JSONObject		jatts;
     String		name;
     Polygon		polygon;
     int[]		x;
@@ -242,7 +284,10 @@ public class ViaAnnotationsReportWriter
       jregions.put("" + n, jregion);
       jshape = new JSONObject();
       jregion.put("shape_attributes", jshape);
-      jregion.put("region_attributes", new JSONObject());
+      jatts = new JSONObject();
+      jregion.put("region_attributes", jatts);
+      if (!m_LabelKey.isEmpty() && (obj.getMetaData().get(m_LabelKey) != null))
+        jatts.put("name", obj.getMetaData().get(m_LabelKey));
       jshape.put("name", "polygon");
       if (obj.hasPolygon()) {
         polygon = obj.getPolygon();

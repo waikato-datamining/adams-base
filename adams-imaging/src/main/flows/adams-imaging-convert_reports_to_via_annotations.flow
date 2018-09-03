@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2018-09-03 10:03:19
+# Date: 2018-09-03 13:02:06
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-spreadsheet
@@ -10,7 +10,7 @@ adams.flow.control.Flow -annotation "Converts annotations from .report files to 
  adams.flow.standalone.SetVariable -name "restore file" -var-name restore_file -var-value @{flow_filename_long}.props -expand-value true
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
-  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory (.report files)\" -type DIRECTORY_ABSOLUTE -default-value ." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name output_dir -display \"Output directory (.json files)\" -type DIRECTORY_ABSOLUTE -default-value ." -output-type MAP -restoration-enabled true -restoration-file @{restore_file}
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory (.report files)\" -type DIRECTORY_ABSOLUTE -default-value ." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labelkey -display \"Key in meta-data with label\" -help \"optional, ignored if empty\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name output_dir -display \"Output directory (.json files)\" -type DIRECTORY_ABSOLUTE -default-value ." -output-type MAP -restoration-enabled true -restoration-file @{restore_file}
   adams.flow.transformer.MapToVariables
  adams.flow.control.Trigger -name "process files"
   adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.report -sorting SORT_BY_NAME"
@@ -22,7 +22,7 @@ adams.flow.control.Flow -annotation "Converts annotations from .report files to 
    adams.flow.transformer.PrependDir -prefix @{output_dir}
    adams.flow.transformer.SetVariable -var-name outfile
   adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
-  adams.flow.transformer.ReportFileWriter -writer "adams.data.io.output.ViaAnnotationsReportWriter -finder adams.data.objectfinder.AllFinder" -generator "adams.core.io.SimpleFixedFilenameGenerator -name @{outfile}"
+  adams.flow.transformer.ReportFileWriter -writer "adams.data.io.output.ViaAnnotationsReportWriter -finder adams.data.objectfinder.AllFinder -label-key @{labelkey}" -generator "adams.core.io.SimpleFixedFilenameGenerator -name @{outfile}"
   adams.flow.control.Tee -name "info (2)"
    adams.flow.transformer.StringInsert -position first -value "--> "
    adams.flow.sink.CallableSink -callable Info

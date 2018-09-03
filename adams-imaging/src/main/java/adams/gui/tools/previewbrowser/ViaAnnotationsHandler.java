@@ -96,6 +96,7 @@ public class ViaAnnotationsHandler
     reportFile = FileUtils.replaceExtension(file, ".json");
     if (reportFile.exists() && reportFile.isFile()) {
       reportReader = new ViaAnnotationsReportReader();
+      reportReader.setLabelKey("type");
       reportReader.setInput(new PlaceholderFile(reportFile));
       reports = reportReader.read();
       if (reports.size() > 0) {

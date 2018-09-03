@@ -61,6 +61,11 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: Object.
  * </pre>
  *
+ * <pre>-label-key &lt;java.lang.String&gt; (property: labelKey)
+ * &nbsp;&nbsp;&nbsp;The key in the meta-data containing the label, ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -72,6 +77,9 @@ public class ViaAnnotationsReportReader
 
   /** the prefix of the objects in the report. */
   protected String m_Prefix;
+
+  /** the meta-data key with the label. */
+  protected String m_LabelKey;
 
   /**
    * Returns a string describing the object.
@@ -95,6 +103,10 @@ public class ViaAnnotationsReportReader
     m_OptionManager.add(
       "prefix", "prefix",
       ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
+
+    m_OptionManager.add(
+      "label-key", "labelKey",
+      "");
   }
 
   /**
@@ -124,6 +136,35 @@ public class ViaAnnotationsReportReader
    */
   public String prefixTipText() {
     return "The report field prefix used in the report.";
+  }
+
+  /**
+   * Sets the key in the meta-data containing the label.
+   *
+   * @param value	the key
+   */
+  public void setLabelKey(String value) {
+    m_LabelKey = value;
+    reset();
+  }
+
+  /**
+   * Returns the key in the meta-data containing the label.
+   *
+   * @return		the key
+   */
+  public String getLabelKey() {
+    return m_LabelKey;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelKeyTipText() {
+    return "The key in the meta-data containing the label, ignored if empty.";
   }
 
   /**
@@ -187,6 +228,8 @@ public class ViaAnnotationsReportReader
     JSONObject		regions;
     JSONObject		region;
     JSONObject		shapeAtts;
+    JSONObject		regionAtts;
+    String		label;
     String		shapeName;
     JSONArray		pointsX;
     JSONArray		pointsY;
@@ -210,11 +253,16 @@ public class ViaAnnotationsReportReader
 	fname   = img.getAsString("filename");
 	regions = (JSONObject) img.get("regions");
 	for (String regionKey: regions.keySet()) {
-	  region    = (JSONObject) regions.get(regionKey);
-	  shapeAtts = (JSONObject) region.get("shape_attributes");
-	  shapeName = shapeAtts.getAsString("name");
+	  region     = (JSONObject) regions.get(regionKey);
+	  regionAtts = (JSONObject) region.get("region_attributes");
+	  shapeAtts  = (JSONObject) region.get("shape_attributes");
+	  shapeName  = shapeAtts.getAsString("name");
 	  if (!shapeName.equals("polygon"))
 	    continue;
+	  // label?
+	  label = null;
+	  if ((regionAtts != null) && (regionAtts.get("name") != null))
+	    label = "" + regionAtts.get("name");
 	  // parse polygon
 	  pointsX = (JSONArray) shapeAtts.get("all_points_x");
 	  pointsY = (JSONArray) shapeAtts.get("all_points_y");
@@ -230,6 +278,8 @@ public class ViaAnnotationsReportReader
 	  lobj.setPolygon(polygon);
 	  lobj.getMetaData().put("filename", fname);
 	  lobj.getMetaData().put("region", regionKey);
+	  if (label != null)
+	    lobj.getMetaData().put(m_LabelKey, label);
 	  lobjs.add(lobj);
 	}
       }
