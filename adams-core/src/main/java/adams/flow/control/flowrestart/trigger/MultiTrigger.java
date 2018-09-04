@@ -24,6 +24,10 @@ import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.flow.control.Flow;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Manages multiple triggers.
  *
@@ -35,7 +39,7 @@ public class MultiTrigger
   private static final long serialVersionUID = -1011230298891411662L;
 
   /** the triggers to manage. */
-  protected AbstractTrigger[] m_Triggers;
+  protected List<AbstractTrigger> m_Triggers;
 
   /**
    * Returns a string describing the object.
@@ -60,12 +64,32 @@ public class MultiTrigger
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Triggers = new ArrayList<>();
+  }
+
+  /**
+   * Appends the specified trigger.
+   *
+   * @param value	the trigger to add
+   */
+  public void addTrigger(AbstractTrigger value) {
+    m_Triggers.add(value);
+  }
+
+  /**
    * Sets the managed triggers.
    *
    * @param value	the triggers
    */
   public void setTriggers(AbstractTrigger[] value) {
-    m_Triggers = value;
+    m_Triggers.clear();
+    m_Triggers.addAll(Arrays.asList(value));
     reset();
   }
 
@@ -75,7 +99,7 @@ public class MultiTrigger
    * @return		the trigger
    */
   public AbstractTrigger[] getTriggers() {
-    return m_Triggers;
+    return m_Triggers.toArray(new AbstractTrigger[0]);
   }
 
   /**
@@ -111,10 +135,10 @@ public class MultiTrigger
 
     result = null;
 
-    for (i = 0; i < m_Triggers.length; i++) {
+    for (i = 0; i < m_Triggers.size(); i++) {
       if (isLoggingEnabled())
-        getLogger().info("Starting trigger #" + (i+1) + ": " + m_Triggers[i]);
-      result = m_Triggers[i].start(flow);
+        getLogger().info("Starting trigger #" + (i+1) + ": " + m_Triggers.get(i));
+      result = m_Triggers.get(i).start(flow);
       if (result != null) {
         getLogger().severe("Trigger #" + (i+1) + " failed to start: " + result);
         stop();
@@ -137,10 +161,10 @@ public class MultiTrigger
     int			i;
 
     errors = new MessageCollection();
-    for (i = 0; i < m_Triggers.length; i++) {
+    for (i = 0; i < m_Triggers.size(); i++) {
       if (isLoggingEnabled())
-        getLogger().info("Stopping trigger #" + (i+1) + ": " + m_Triggers[i]);
-      msg = m_Triggers[i].stop();
+        getLogger().info("Stopping trigger #" + (i+1) + ": " + m_Triggers.get(i));
+      msg = m_Triggers.get(i).stop();
       if (msg != null) {
         errors.add(msg);
         getLogger().severe("Trigger #" + (i+1) + " failed to stop: " + msg);

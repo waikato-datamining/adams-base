@@ -22,6 +22,10 @@ package adams.flow.control.flowrestart.operation;
 
 import adams.flow.control.Flow;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Executes multiple restart operations, one after the other.
  *
@@ -33,7 +37,7 @@ public class MultiOperation
   private static final long serialVersionUID = 5721670854550551855L;
 
   /** the operations to execute. */
-  protected AbstractRestartOperation[] m_Operations;
+  protected List<AbstractRestartOperation> m_Operations;
 
   /**
    * Returns a string describing the object.
@@ -58,12 +62,32 @@ public class MultiOperation
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Operations = new ArrayList<>();
+  }
+
+  /**
+   * Appends the operation to execute.
+   *
+   * @param value	the operation to add
+   */
+  public void addOperation(AbstractRestartOperation value) {
+    m_Operations.add(value);
+  }
+
+  /**
    * Sets the operations to execute.
    *
    * @param value	the operations
    */
   public void setOperations(AbstractRestartOperation[] value) {
-    m_Operations = value;
+    m_Operations.clear();
+    m_Operations.addAll(Arrays.asList(value));
     reset();
   }
 
@@ -73,7 +97,7 @@ public class MultiOperation
    * @return		the operations
    */
   public AbstractRestartOperation[] getOperations() {
-    return m_Operations;
+    return m_Operations.toArray(new AbstractRestartOperation[0]);
   }
 
   /**
@@ -101,10 +125,10 @@ public class MultiOperation
 
     stopFlow(flow);
 
-    for (i = 0; i < m_Operations.length; i++) {
+    for (i = 0; i < m_Operations.size(); i++) {
       if (isLoggingEnabled())
-        getLogger().info("Executing restart operation #" + (i+1) + ": " + m_Operations[i]);
-      result = m_Operations[i].restart(flow);
+        getLogger().info("Executing restart operation #" + (i+1) + ": " + m_Operations.get(i));
+      result = m_Operations.get(i).restart(flow);
       if (result != null) {
         getLogger().severe("Restart operation #" + (i+1) + " generated: " + result);
 	break;
