@@ -23,6 +23,7 @@ package adams.flow.control.flowrestart.trigger;
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.flow.control.Flow;
+import adams.flow.control.flowrestart.RestartHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,6 +121,17 @@ public class MultiTrigger
   @Override
   public String getQuickInfo() {
     return QuickInfoHelper.toString(this, "triggers", m_Triggers, "trigger(s): ");
+  }
+
+  /**
+   * Sets the restart handler to use.
+   *
+   * @param value 	the handler to use
+   */
+  public void setRestartHandler(RestartHandler value) {
+    super.setRestartHandler(value);
+    for (AbstractTrigger trigger: m_Triggers)
+      trigger.setRestartHandler(value);
   }
 
   /**
