@@ -135,10 +135,12 @@ public class RestartItself
 
     if (result == null) {
       newFlow = (Flow) actor;
-      ActorUtils.updateProgrammaticVariables(newFlow, new PlaceholderFile(flowFile));
+      if (flowFile != null)
+	ActorUtils.updateProgrammaticVariables(newFlow, new PlaceholderFile(flowFile));
       result = newFlow.setUp();
       if (result == null) {
-	ActorUtils.updateProgrammaticVariables(newFlow, new PlaceholderFile(flowFile));
+	if (flowFile != null)
+	  ActorUtils.updateProgrammaticVariables(newFlow, new PlaceholderFile(flowFile));
 	runnable = new RunnableWithLogging() {
 	  private static final long serialVersionUID = -5446295909630418597L;
 	  @Override
