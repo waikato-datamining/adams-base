@@ -204,8 +204,8 @@ public class FileMonitor
           }
           if (m_Monitor.hasChanged(m_MonitoredFile)) {
             if (isLoggingEnabled())
-              getLogger().info("File has changed (" + m_MonitoredFile + "), restarting!");
-            getRestartHandler().restart();
+              getLogger().info("File has changed (" + m_MonitoredFile + "), triggering!");
+            getTriggerHandler().trigger();
           }
           m_Monitor.update(m_MonitoredFile);
         }

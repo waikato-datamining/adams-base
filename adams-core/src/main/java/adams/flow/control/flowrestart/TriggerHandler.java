@@ -21,16 +21,16 @@
 package adams.flow.control.flowrestart;
 
 /**
- * Interface for classes that allow a flow restart.
+ * Interface for classes that respond to a trigger.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface RestartHandler {
+public interface TriggerHandler {
 
   /**
-   * Restarts the flow.
+   * Receive a trigger.
    *
-   * @return		null if successfully restarted, otherwise the error message
+   * @return		null if successfully triggered, otherwise the error message
    */
-  public abstract String restart();
+  public abstract String trigger();
 }

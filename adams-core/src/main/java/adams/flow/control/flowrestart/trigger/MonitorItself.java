@@ -183,8 +183,8 @@ public class MonitorItself
             }
             if (m_Monitor.hasChanged(monitoredFlow)) {
               if (isLoggingEnabled())
-                getLogger().info("Flow has changed (" + monitoredFlow + "), restarting!");
-              getRestartHandler().restart();
+                getLogger().info("Flow has changed (" + monitoredFlow + "), triggering!");
+              getTriggerHandler().trigger();
             }
             m_Monitor.update(monitoredFlow);
           }

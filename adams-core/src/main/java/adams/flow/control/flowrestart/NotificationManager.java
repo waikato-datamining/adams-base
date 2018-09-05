@@ -21,7 +21,7 @@
 package adams.flow.control.flowrestart;
 
 import adams.flow.control.Flow;
-import adams.flow.control.flowrestart.operation.AbstractRestartOperation;
+import adams.flow.control.flowrestart.notification.AbstractNotification;
 import adams.flow.control.flowrestart.trigger.AbstractTrigger;
 
 /**
@@ -29,7 +29,7 @@ import adams.flow.control.flowrestart.trigger.AbstractTrigger;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class TriggerManager
+public class NotificationManager
   extends AbstractFlowRestartManager
   implements TriggerHandler {
 
@@ -38,8 +38,8 @@ public class TriggerManager
   /** the trigger in use. */
   protected AbstractTrigger m_Trigger;
 
-  /** the restart operation. */
-  protected AbstractRestartOperation m_Operation;
+  /** the notification. */
+  protected AbstractNotification m_Notification;
 
   /** the flow to restart. */
   protected Flow m_Flow;
@@ -51,7 +51,7 @@ public class TriggerManager
    */
   @Override
   public String globalInfo() {
-    return "Applies the specified action once the trigger fires.";
+    return "Sends the specified notification once the trigger fires.";
   }
 
   /**
@@ -66,8 +66,8 @@ public class TriggerManager
       new adams.flow.control.flowrestart.trigger.Null());
 
     m_OptionManager.add(
-      "operation", "operation",
-      new adams.flow.control.flowrestart.operation.Null());
+      "notification", "notification",
+      new adams.flow.control.flowrestart.notification.Null());
   }
 
   /**
@@ -77,6 +77,7 @@ public class TriggerManager
    */
   public void setTrigger(AbstractTrigger value) {
     m_Trigger = value;
+    m_Trigger.setTriggerHandler(this);
     reset();
   }
 
@@ -96,7 +97,7 @@ public class TriggerManager
    * 			displaying in the GUI or for listing the options.
    */
   public String triggerTipText() {
-    return "The trigger for initiating the restart.";
+    return "The trigger for initiating the notification.";
   }
 
   /**
@@ -104,8 +105,8 @@ public class TriggerManager
    *
    * @param value	the operation
    */
-  public void setOperation(AbstractRestartOperation value) {
-    m_Operation = value;
+  public void setNotification(AbstractNotification value) {
+    m_Notification = value;
     reset();
   }
 
@@ -114,8 +115,8 @@ public class TriggerManager
    *
    * @return		the operation
    */
-  public AbstractRestartOperation getOperation() {
-    return m_Operation;
+  public AbstractNotification getNotification() {
+    return m_Notification;
   }
 
   /**
@@ -124,8 +125,8 @@ public class TriggerManager
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String operationTipText() {
-    return "The restart operation to execute.";
+  public String notificationTipText() {
+    return "The notification to execute.";
   }
 
   /**
@@ -137,18 +138,7 @@ public class TriggerManager
   @Override
   public String start(Flow flow) {
     m_Flow = flow;
-    m_Trigger.setTriggerHandler(this);
     return m_Trigger.start(flow);
-  }
-
-  /**
-   * Restarts the flow.
-   *
-   * @return		null if successfully restarted, otherwise the error message
-   */
-  @Override
-  public String trigger() {
-    return m_Operation.restart(m_Flow);
   }
 
   /**
@@ -160,5 +150,14 @@ public class TriggerManager
   @Override
   public String stop(Flow flow) {
     return m_Trigger.stop();
+  }
+
+  /**
+   * Receive a trigger.
+   *
+   * @return		null if successfully triggered, otherwise the error message
+   */
+  public String trigger() {
+    return m_Notification.notify(m_Flow);
   }
 }

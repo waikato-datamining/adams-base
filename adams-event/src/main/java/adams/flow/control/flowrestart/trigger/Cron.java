@@ -66,8 +66,8 @@ public class Cron
       result = null;
       owner = (Cron) context.getJobDetail().getJobDataMap().get(KEY_OWNER);
 
-      if (owner.getRestartHandler() != null)
-	result = owner.getRestartHandler().restart();
+      if (owner.getTriggerHandler() != null)
+	result = owner.getTriggerHandler().trigger();
 
       if (result != null)
 	owner.getLogger().warning(result);

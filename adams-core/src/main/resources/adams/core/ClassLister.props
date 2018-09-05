@@ -339,6 +339,10 @@ adams.flow.control.flowrestart.AbstractFlowRestartManager=\
 adams.flow.control.flowrestart.trigger.AbstractTrigger=\
   adams.flow.control.flowrestart.trigger
 
+# the flow restart notifications
+adams.flow.control.flowrestart.notification.AbstractNotification=\
+  adams.flow.control.flowrestart.notification
+
 # the flow restart operation
 adams.flow.control.flowrestart.operation.AbstractRestartOperation=\
   adams.flow.control.flowrestart.operation
