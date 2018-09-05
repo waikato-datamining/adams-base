@@ -176,7 +176,8 @@ public class MetaPartitionedMultiFilter
     String	tmpStr;
     String	classname;
     String[]	options2;
-    Vector	objects;
+    Vector 	filters;
+    Vector 	ranges;
     BaseRegExp	regexp;
     List<BaseString>	prefixes;
 
@@ -184,39 +185,43 @@ public class MetaPartitionedMultiFilter
 
     setRemoveUnused(Utils.getFlag("U", options));
 
-    objects = new Vector();
+    filters = new Vector();
     while ((tmpStr = Utils.getOption("F", options)).length() != 0) {
       options2    = Utils.splitOptions(tmpStr);
       classname      = options2[0];
       options2[0] = "";
-      objects.add(Utils.forName(Filter.class, classname, options2));
+      filters.add(Utils.forName(Filter.class, classname, options2));
     }
 
     // at least one filter
-    if (objects.size() == 0)
-      objects.add(new AllFilter());
+    if (filters.size() == 0)
+      filters.add(new AllFilter());
 
-    setFilters((Filter[]) objects.toArray(new Filter[objects.size()]));
+    setFilters((Filter[]) filters.toArray(new Filter[filters.size()]));
 
-    objects = new Vector();
+    ranges = new Vector();
     while ((tmpStr = Utils.getOption("R", options)).length() != 0) {
       regexp = new BaseRegExp(tmpStr);
-      objects.add(regexp);
+      ranges.add(regexp);
     }
 
-    // at least one regexp
-    if (objects.size() == 0)
-      objects.add(new BaseRegExp(BaseRegExp.MATCH_ALL));
+    // adjust to filters
+    if (ranges.size() == 0) {
+      for (Object obj: filters)
+        ranges.add(new BaseRegExp(BaseRegExp.MATCH_ALL));
+    }
 
-    setRegExp((BaseRegExp[]) objects.toArray(new BaseRegExp[objects.size()]));
+    setRegExp((BaseRegExp[]) ranges.toArray(new BaseRegExp[ranges.size()]));
 
     prefixes = new ArrayList<>();
     while ((tmpStr = Utils.getOption("P", options)).length() != 0)
       prefixes.add(new BaseString(tmpStr));
 
-    // at least one Range
-    if (prefixes.size() == 0)
-      prefixes.add(new BaseString("filtered"));
+    // adjust to filters
+    if (prefixes.size() == 0) {
+      for (Object obj: filters)
+        prefixes.add(new BaseString("filtered"));
+    }
 
     setPrefixes(prefixes.toArray(new BaseString[prefixes.size()]));
 

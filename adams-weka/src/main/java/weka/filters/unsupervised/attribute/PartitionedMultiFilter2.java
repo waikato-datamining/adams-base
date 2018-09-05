@@ -209,9 +209,11 @@ public class PartitionedMultiFilter2
       ranges.add(range);
     }
 
-    // at least one Range
-    if (ranges.size() == 0)
-      ranges.add(new Range("first-last"));
+    // adjust to filters
+    if (ranges.size() == 0) {
+      for (Object filter: filters)
+        ranges.add(new Range("first-last"));
+    }
 
     setRanges(ranges.toArray(new Range[filters.size()]));
 
@@ -219,9 +221,11 @@ public class PartitionedMultiFilter2
     while ((tmpStr = Utils.getOption("P", options)).length() != 0)
       prefixes.add(new BaseString(tmpStr));
 
-    // at least one Range
-    if (prefixes.size() == 0)
-      prefixes.add(new BaseString("filtered"));
+    // adjust to filters
+    if (prefixes.size() == 0) {
+      for (Object filter: filters)
+        prefixes.add(new BaseString("filtered"));
+    }
 
     setPrefixes(prefixes.toArray(new BaseString[filters.size()]));
 
