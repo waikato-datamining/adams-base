@@ -1,0 +1,5 @@
+--> out-0.txt
+adams.data.conversion.StringToInt
+adams.flow.transformer.Convert -conversion adams.data.conversion.StringToLong
+adams.data.conversion.StringToLong
+

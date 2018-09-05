@@ -1,0 +1,1 @@
+old: weka.filters.supervised.attribute.PLSFilter, just class, new: weka.filters.supervised.attribute.PLS, keep #comps

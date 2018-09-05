@@ -118,6 +118,10 @@ adams.data.conversion.ConversionToString=\
 adams.data.conversion.AbstractStringConversion=\
   adams.data.conversion
 
+# object swapping
+adams.data.conversion.AbstractSwapObject=\
+  adams.data.conversion
+
 # distribution schemes
 adams.data.distribution.AbstractRealDistribution=\
   adams.data.distribution

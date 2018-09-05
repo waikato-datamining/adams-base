@@ -1,0 +1,18 @@
+--> out-0.txt
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLS -algorithm adams.data.instancesanalysis.pls.PLS1"
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLS -algorithm \"adams.data.instancesanalysis.pls.PLS1 -num-components 5\""
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLSFilterExtended -C 20 -M -A PLS1 -P center"
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLS -algorithm adams.data.instancesanalysis.pls.PRM"
+
+--> out-1.txt
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLS -algorithm adams.data.instancesanalysis.pls.PLS1"
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLSFilter -C 5 -M -A PLS1 -P center"
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLSFilterExtended -C 20 -M -A PLS1 -P center"
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLS -algorithm adams.data.instancesanalysis.pls.PRM"
+
+--> out-2.txt
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLS -algorithm adams.data.instancesanalysis.pls.PLS1"
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLS -algorithm adams.data.instancesanalysis.pls.PLS1"
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLSFilterExtended -C 20 -M -A PLS1 -P center"
+adams.flow.transformer.WekaFilter -filter "weka.filters.supervised.attribute.PLS -algorithm adams.data.instancesanalysis.pls.PRM"
+

@@ -1,0 +1,1 @@
+old: adams.data.conversion.StringToInt, just class, new: adams.data.conversion.StringToLong
