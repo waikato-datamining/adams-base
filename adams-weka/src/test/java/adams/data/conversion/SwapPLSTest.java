@@ -20,6 +20,8 @@
 
 package adams.data.conversion;
 
+import adams.core.Utils;
+import adams.core.option.OptionUtils;
 import adams.data.instancesanalysis.pls.PRM;
 import adams.env.Environment;
 import adams.flow.transformer.WekaFilter;
@@ -28,6 +30,8 @@ import junit.framework.TestSuite;
 import weka.filters.supervised.attribute.PLS;
 import weka.filters.supervised.attribute.PLSFilter;
 import weka.filters.supervised.attribute.PLSFilterExtended;
+
+import java.lang.reflect.Array;
 
 /**
  * Tests the SwapPLS conversion.
@@ -44,6 +48,33 @@ public class SwapPLSTest
    */
   public SwapPLSTest(String name) {
     super(name);
+  }
+
+  /**
+   * Turns the data object into a useful string representation.
+   * <br><br>
+   * The default implementation merely performs a "toString()" on the object,
+   * or, in case of arrays, a {@link Utils#arrayToString(Object)}.
+   *
+   * @param data	the object to convert
+   * @return		the string representation
+   */
+  protected String toString(Object data) {
+    StringBuilder 	result;
+    int			i;
+
+    if (data.getClass().isArray()) {
+      result = new StringBuilder();
+      for (i = 0; i < Array.getLength(data); i++) {
+        if (i > 0)
+          result.append("\n");
+        result.append(toString(Array.get(data, i)));
+      }
+      return result.toString();
+    }
+    else {
+      return OptionUtils.getCommandLine(data);
+    }
   }
 
   /**
