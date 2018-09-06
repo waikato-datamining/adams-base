@@ -166,10 +166,8 @@ ADAMS tries to suggest an actor depending on pre-defined rules and the context
 where the actor will get placed. The ones pre-defined by rules will be 
 automatically available through the combobox at the top. But due to the large 
 amount of actors, quite often you will choose a different one. You can do this 
-by simply clicking on the button --
-showing an icon of a hierarchical structure - in the top-right corner of the current dialog. A
-new popup will be displayed right next to the button (see Figure
-\ref{floweditor-helloworld-addactor2}).
+by either scrolling through the list of actors on the left and selecting it
+(see Figure \ref{floweditor-helloworld-addactor2}).
 
 \begin{figure}[htb]
   \centering
@@ -186,7 +184,7 @@ the initial actors that ADAMS suggests are based on pre-defined rules of what
 actors are commonly placed in certain situations. If there are more than one
 suggestions, a combobox with all the class names is displayed in the
 GenericObjectEditor instead of a simple label.}, most of the time it is quicker
-to use the search facility of the popup displaying the class tree. Either click
+to use the search facility on the left displaying the class tree. Either click
 in the search box or use the shortcut \texttt{Alt+S} to jump there. As soon as
 you type, the display filters out all the class names that don't match the
 entered string. After entering \textit{str} you will see a result similar to
@@ -292,11 +290,9 @@ Figure \ref{floweditor-helloworld-addactor6}.
   \label{floweditor-helloworld-addactor6}
 \end{figure}
 
-Once again, bring up the class tree dialog with all the actors by clicking on
-the button in the top-right corner of the actor dialog. This time, you have to
-search for \textit{Display}. As soon as you have entered \textit{dis} you will
-see the dialog showing a filtered class tree as shown in Figure
-\ref{floweditor-helloworld-addactor7}.
+This time, you have to search for \textit{Display}. As soon as you have
+entered \textit{dis} you will see the dialog showing a filtered class tree
+as shown in Figure \ref{floweditor-helloworld-addactor7}.
 
 \begin{figure}[htb]
   \centering
@@ -383,7 +379,7 @@ Change the type of \textit{conversion} to \textit{UpperCase} (Figure
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=6.0cm]{images/floweditor-helloworld-processdata3.png}
+  \includegraphics[width=10.0cm]{images/floweditor-helloworld-processdata3.png}
   \caption{Configuring the \textit{Convert} transformer}
   \label{floweditor-helloworld-processdata3}
 \end{figure}
@@ -418,7 +414,7 @@ string that we want to append `` How are you today!'' (see Figure
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=6.0cm]{images/floweditor-helloworld-processdata6.png}
+  \includegraphics[width=10.0cm]{images/floweditor-helloworld-processdata6.png}
   \caption{Customizing the \textit{StringReplace} transformer}
   \label{floweditor-helloworld-processdata6}
 \end{figure}
@@ -451,7 +447,8 @@ For example for debugging purposes, when you need to investigate the data
 generation at various stages throughout the flow.
 
 In the following example \footnote{adams-core-hello\_world4.flow} we will use
-the \textit{Tee} actor to document the various stages of transformation that the \textit{Hello World!} string goes
+the \textit{Tee} actor to document the various stages of transformation that the
+\textit{Hello World!} string goes
 through. Three \textit{Tee} actors will be placed in the flow: one right after
 the \textit{StringConstants} source, the next after the \textit{Convert}
 transformer, and the last after the \textit{StringReplace} transformer.
@@ -489,7 +486,7 @@ the first token output is the 102nd and the last one the 198th one). See Figure
 \ref{floweditor-conditionaltee} for an example of this set up.
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=5.0cm]{images/floweditor-conditionaltee.png}
+  \includegraphics[width=10.0cm]{images/floweditor-conditionaltee.png}
   \caption{A customized \textit{ConditionalTee} actor.}
   \label{floweditor-conditionaltee}
 \end{figure}
@@ -549,11 +546,17 @@ actor.
   \caption{The \textit{Hello World} flow using a \textit{Branch} actor.}
   \label{floweditor-helloworld-branch_flow}
 \end{figure}
-The default setting of the \textit{Branch} actor is to process the branches in
-separate threads, taking the maximum number of cores/CPUs of the underlying
-architecture into account. But it is also possible to enforce a sequential
-execution of the sub-branches, by setting the \textit{number of threads} to
-\textbf{0}. There are two reasons fro this:
+How many threads are being used by the \textit{Branch} actor depends on the
+underlying architecture (how many CPUs/cores are available; the upper limit)
+and what parameter is used for the \textit{numThreads} option. This parameter
+offers basically three different settings:
+\begin{tight_itemize}
+  \item \textbf{$0$} - sequential execution of sub-branches (see below for more information).
+  \item \textbf{$>0$} - explicit number of threads, limited by available CPUs/cores.
+  \item \textbf{$<0$} - all CPUs/cores plus this value; the default of \textit{-1} results to
+  using \textit{three} cores on a quad-core machine.
+\end{tight_itemize}
+There are basically two reasons for sequential execution:
 \begin{enumerate}
   \item \textit{Resources} -- If the branch is located deeper in the flow with
   other parallel execution happening, spawning too many threads can slow down
@@ -565,6 +568,7 @@ execution of the sub-branches, by setting the \textit{number of threads} to
   sub-directory in which to store the value of the integer token in a file.
   These two sub-branches need to get executed one after the other, of course.
 \end{enumerate}
+
 
 \subsubsection{Further control actors}
 The \textit{Branch}, \textit{Tee} and \textit{Trigger} control actors are just
@@ -723,7 +727,7 @@ as help through a button next to the edit field with the variable value.
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=12.0cm]{images/flowrunner-mandelbrot.png}
+  \includegraphics[width=10.0cm]{images/flowrunner-mandelbrot.png}
   \caption{Flow runner interface with a flow for generating the Mandelbrot set.}
   \label{flowrunner-mandelbrot}
 \end{figure}
