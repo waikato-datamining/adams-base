@@ -13,18 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseMultiPagePane.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
@@ -33,13 +26,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Similar to a {@link BaseTabbedPane}, but with the names of the pages
  * listed in a {@link BaseList} on the left-hand side.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseMultiPagePane
   extends BasePanel {
@@ -78,10 +76,10 @@ public class BaseMultiPagePane
   protected void initialize() {
     super.initialize();
     
-    m_PageLookup      = new HashMap<String, Component>();
-    m_PageOrder       = new ArrayList<String>();
+    m_PageLookup      = new HashMap<>();
+    m_PageOrder       = new ArrayList<>();
     m_SelectedPage    = -1;
-    m_ChangeListeners = new HashSet<ChangeListener>();
+    m_ChangeListeners = new HashSet<>();
   }
   
   /**
@@ -156,7 +154,38 @@ public class BaseMultiPagePane
     repaint();
     notifyChangeListeners(new ChangeEvent(this));
   }
-  
+
+  /**
+   * Returns the index of the selected page.
+   *
+   * @return		the index, -1 if none selected
+   */
+  public int getSelectedPageIndex() {
+    return m_SelectedPage;
+  }
+
+  /**
+   * Returns the selected page.
+   *
+   * @return		the page, null if none selected
+   */
+  public Component getSelectedPage() {
+    if (m_SelectedPage > -1)
+      return m_PageLookup.get(m_PageOrder.get(m_SelectedPage));
+    else
+      return null;
+  }
+
+  /**
+   * Returns the page at the given index.
+   *
+   * @param index	the index of the page
+   * @return		the page
+   */
+  public Component getPageAt(int index) {
+    return m_PageLookup.get(m_PageOrder.get(index));
+  }
+
   /**
    * Adds the page under the given name.
    * 
