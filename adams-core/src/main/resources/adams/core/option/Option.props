@@ -203,8 +203,8 @@ adams.core.base.BaseDimension#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 
 # BaseInterval objects
 adams.core.base.BaseInterval=true
-adams.core.base.BaseInterval#toString=adams.gui.goe.BaseObjectEditor#toString
-adams.core.base.BaseInterval#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+adams.core.base.BaseInterval#toString=adams.gui.goe.BaseIntervalEditor#toString
+adams.core.base.BaseInterval#valueOf=adams.gui.goe.BaseIntervalEditor#valueOf
 
 # BasePointInt objects
 adams.core.base.BasePointInt=true
