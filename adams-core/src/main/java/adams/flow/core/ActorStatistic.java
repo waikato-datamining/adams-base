@@ -56,6 +56,9 @@ public class ActorStatistic
   /** the sink count. */
   public static String COUNT_SINKS = "Sinks";
 
+  /** the skipped count. */
+  public static String COUNT_SKIPPED = "Skipped";
+
   /** the statistics per actor type. */
   protected NamedCounter m_TypeStatistics;
 
@@ -113,6 +116,8 @@ public class ActorStatistic
    */
   public void update(Actor actor) {
     m_TypeStatistics.next(COUNT_ACTORS);
+    if (actor.getSkip())
+      m_TypeStatistics.next(COUNT_SKIPPED);
     if (ActorUtils.isControlActor(actor))
       m_TypeStatistics.next(COUNT_CONTROLACTORS);
     if (ActorUtils.isStandalone(actor))
@@ -140,6 +145,7 @@ public class ActorStatistic
     m_TypeStatistics.clear(COUNT_SOURCES);
     m_TypeStatistics.clear(COUNT_TRANSFORMERS);
     m_TypeStatistics.clear(COUNT_SINKS);
+    m_TypeStatistics.clear(COUNT_SKIPPED);
     m_ClassStatistics.clear();
 
     if (m_Actor == null)
@@ -172,9 +178,9 @@ public class ActorStatistic
     List<String>	result;
     List<String>	classes;
 
-    result = new ArrayList<String>(m_TypeStatistics.nameSet());
+    result = new ArrayList<>(m_TypeStatistics.nameSet());
     Collections.sort(result);
-    classes = new ArrayList<String>(m_ClassStatistics.nameSet());
+    classes = new ArrayList<>(m_ClassStatistics.nameSet());
     Collections.sort(classes);
     result.addAll(classes);
 
