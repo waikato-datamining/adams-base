@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
  * regular expression.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseRegExp
   extends AbstractBaseString
@@ -195,7 +194,9 @@ public class BaseRegExp
    */
   @Override
   public String getHelpURL() {
-    return "https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html";
+    return "https://docs.oracle.com/javase/tutorial/essential/regex/"
+      + "\t"
+      + "https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html";
   }
 
   /**

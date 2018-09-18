@@ -15,7 +15,7 @@
 
 /*
  * CommandlineHelpProducer.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -33,7 +33,6 @@ import java.lang.reflect.Method;
  * Generates the help for the command-line.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CommandlineHelpProducer
   extends AbstractOptionProducer<String,StringBuilder> {
@@ -197,6 +196,8 @@ public class CommandlineHelpProducer
     Object			defValue;
     AbstractNumericOption	numeric;
     Object			val;
+    String			url;
+    String[]			urls;
 
     result = new StringBuilder();
 
@@ -268,8 +269,20 @@ public class CommandlineHelpProducer
     if (val instanceof ExampleProvider)
       result.append("\texample: " + ((ExampleProvider) val).getExample() + "\n");
     
-    if ((val instanceof HelpProvider) && (((HelpProvider) val).getHelpURL() != null))
-      result.append("\tmore: " + ((HelpProvider) val).getHelpURL() + "\n");
+    if ((val instanceof HelpProvider) && (((HelpProvider) val).getHelpURL() != null)) {
+      url = ((HelpProvider) val).getHelpURL();
+      if (url.contains("\t"))
+        urls = url.split("\t");
+      else
+        urls = new String[]{url};
+      for (n = 0; n < urls.length; n++) {
+        if (n == 0)
+	  result.append("\tmore: ");
+        else
+          result.append("\t");
+        result.append(urls[n] + "\n");
+      }
+    }
 
     m_OutputBuffer.append(result);
     m_OutputBuffer.append("\n");

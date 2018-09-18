@@ -211,6 +211,8 @@ public class HtmlHelpProducer
     Object			defValue;
     Object			val;
     AbstractNumericOption	numeric;
+    String[]			urls;
+    String			url;
 
     result = new StringBuilder();
 
@@ -303,10 +305,20 @@ public class HtmlHelpProducer
     }
 
     if ((val instanceof HelpProvider) && ((HelpProvider) val).getHelpURL() != null) {
-      result.append("<tr>\n");
-      result.append("<td valign=\"top\">more</td>");
-      result.append("<td><a href=\"" + ((HelpProvider) val).getHelpURL() + "\" target=\"_blank\">" + ((HelpProvider) val).getHelpURL() + "</a></td>\n");
-      result.append("</tr>\n");
+      url = ((HelpProvider) val).getHelpURL();
+      if (url.contains("\t"))
+        urls = url.split("\t");
+      else
+        urls = new String[]{url};
+      for (n = 0; n < urls.length; n++) {
+	result.append("<tr>\n");
+	if (n == 0)
+	  result.append("<td valign=\"top\">more</td>");
+	else
+	  result.append("<td valign=\"top\">&nbsp;</td>");
+	result.append("<td><a href=\"" + urls[n] + "\" target=\"_blank\">" + urls[n] + "</a></td>\n");
+	result.append("</tr>\n");
+      }
     }
 
     result.append("</table>\n");

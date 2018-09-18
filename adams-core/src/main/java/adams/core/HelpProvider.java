@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HelpProvider.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -23,14 +23,13 @@ package adams.core;
  * Interface for classes that provide some kind of help.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface HelpProvider {
   
   /**
    * Returns a URL with additional information.
    * 
-   * @return		the URL, null if not available
+   * @return		the URL (or multiple URLs tab-separated), null if not available
    */
   public String getHelpURL();
   

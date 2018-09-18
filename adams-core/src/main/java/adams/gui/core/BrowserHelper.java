@@ -15,11 +15,24 @@
 
 /*
  * BrowserHelper.java
- * Copyright (C) 2006-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.core.Properties;
+import adams.core.management.OS;
+import adams.env.BrowserDefinition;
+import adams.env.Environment;
+import org.codehaus.plexus.util.FileUtils;
+
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
@@ -29,21 +42,6 @@ import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
 import java.net.URI;
 
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkEvent.EventType;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLFrameHyperlinkEvent;
-
-import org.codehaus.plexus.util.FileUtils;
-
-import adams.core.Properties;
-import adams.core.management.OS;
-import adams.env.BrowserDefinition;
-import adams.env.Environment;
-
 /**
  * A little helper class for browser related stuff.
  * <br><br>
@@ -52,7 +50,6 @@ import adams.env.Environment;
  * which has been placed in the public domain.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BrowserHelper {
   
@@ -98,7 +95,7 @@ public class BrowserHelper {
   /**
    * Opens the URL in the system's default browser.
    *
-   * @param url		the URL to open
+   * @param url		the URL to open, use tab to separate multiple URLs
    * @return		null if executed OK, otherwise error message
    */
   public static synchronized String openURL(String url) {
@@ -109,7 +106,7 @@ public class BrowserHelper {
    * Opens the URL in the system's default browser.
    *
    * @param parent	the parent component
-   * @param url		the URL to open
+   * @param url		the URL to open, use tab to separate multiple URLs
    * @return		null if executed OK, otherwise error message
    */
   public static synchronized String openURL(Component parent, String url) {
@@ -120,7 +117,7 @@ public class BrowserHelper {
    * Opens the URL in the system's default browser.
    *
    * @param parent	the parent component
-   * @param url		the URL to open
+   * @param url		the URL to open, use tab to separate multiple URLs
    * @param showDialog	whether to display a dialog in case of an error or
    * 			just print the error to the console
    * @return		null if executed OK, otherwise error message
@@ -129,8 +126,24 @@ public class BrowserHelper {
     String	result;
     String	defBrowser;
     String[]	browsers;
+    String[]	urls;
+    String	localResult;
 
     result = null;
+
+    // multiple URLs?
+    if (url.contains("\t")) {
+      urls = url.split("\t");
+      for (String localUrl: urls) {
+        localResult = openURL(parent, localUrl, showDialog);
+        if (localResult != null) {
+          if (result != null)
+            result += "\n";
+          result = result + localResult;
+	}
+      }
+      return result;
+    }
 
     try {
       // do we have an explicit browser?
