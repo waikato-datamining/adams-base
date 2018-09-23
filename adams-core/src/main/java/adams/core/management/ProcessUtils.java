@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ProcessUtils.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.management;
 
 import adams.core.Utils;
+import adams.core.base.BaseKeyValuePair;
 import adams.core.io.PlaceholderDirectory;
 import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 
@@ -31,7 +32,6 @@ import java.util.HashMap;
  * A helper class for process related stuff.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ProcessUtils {
 
@@ -346,7 +346,54 @@ public class ProcessUtils {
   public static HashMap<String, String> getEnvironment() {
     HashMap<String, String> result;
 
-    result = new HashMap<String, String>(System.getenv());
+    result = new HashMap<>(System.getenv());
+
+    return result;
+  }
+
+  /**
+   * Returns the system's environment variables with the provided ones overlayed
+   * on top.
+   *
+   * @param envVars		the environment variables to overlay
+   * @param nullIfEmpty 	if true and no custom environment variables, then returns null
+   * @return 			the environment variables as key-value pairs or
+   * 				null if nullIfEmpty is true and no custom environment variables
+   */
+  public static HashMap<String, String> getEnvironment(BaseKeyValuePair[] envVars, boolean nullIfEmpty) {
+    HashMap<String, String> result;
+
+    if (nullIfEmpty && (envVars.length == 0))
+      return null;
+
+    result = getEnvironment();
+    if (envVars.length > 0) {
+      for (BaseKeyValuePair envVar: envVars)
+        result.put(envVar.getPairKey(), envVar.getPairValue());
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns a flattened environment with key=value pairs.
+   *
+   * @param env		the environment to flatten, can be null
+   * @return 		the flattened environment
+   */
+  public static String[] flattenEnvironment(HashMap<String, String> env) {
+    String[]	result;
+    int		i;
+
+    if (env == null)
+      return null;
+
+    result = new String[env.size()];
+    i      = 0;
+    for (String key: env.keySet()) {
+      result[i] = key + "=" + env.get(key);
+      i++;
+    }
 
     return result;
   }

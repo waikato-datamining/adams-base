@@ -13,23 +13,30 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Exec.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseText;
+import adams.core.io.PlaceholderDirectory;
+import adams.core.management.EnvironmentVariablesHandler;
 import adams.core.management.LoggingObjectOutputPrinter;
 import adams.core.management.OutputProcessStream;
+import adams.core.management.ProcessUtils;
+import adams.core.management.WorkingDirectoryHandler;
 import adams.core.option.OptionUtils;
 import adams.data.conversion.AnyToString;
 import adams.data.conversion.ConversionToString;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -41,43 +48,58 @@ import java.util.Hashtable;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Exec
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-cmd &lt;java.lang.String&gt; (property: command)
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-cmd &lt;adams.core.base.BaseText&gt; (property: command)
  * &nbsp;&nbsp;&nbsp;The external command to pipe the data into.
  * &nbsp;&nbsp;&nbsp;default: mysql test
+ * </pre>
+ *
+ * <pre>-working-directory &lt;java.lang.String&gt; (property: workingDirectory)
+ * &nbsp;&nbsp;&nbsp;The current working directory for the command.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-env-var &lt;adams.core.base.BaseKeyValuePair&gt; [-env-var ...] (property: envVars)
+ * &nbsp;&nbsp;&nbsp;The environment variables to overlay on top of the current ones.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  * 
  * <pre>-conversion &lt;adams.data.conversion.ConversionToString&gt; (property: conversion)
@@ -101,10 +123,10 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Exec
-  extends AbstractSink {
+  extends AbstractSink
+  implements EnvironmentVariablesHandler, WorkingDirectoryHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -5040421332565191432L;
@@ -123,6 +145,12 @@ public class Exec
   
   /** the command to run. */
   protected BaseText m_Command;
+
+  /** the current working directory. */
+  protected String m_WorkingDirectory;
+
+  /** environment variables. */
+  protected BaseKeyValuePair[] m_EnvVars;
 
   /** the conversion scheme to turn the input into strings. */
   protected ConversionToString m_Conversion;
@@ -165,20 +193,28 @@ public class Exec
     super.defineOptions();
 
     m_OptionManager.add(
-	    "cmd", "command",
-	    new BaseText("mysql test"));
+      "cmd", "command",
+      new BaseText("mysql test"));
 
     m_OptionManager.add(
-	    "conversion", "conversion",
-	    new AnyToString());
+      "working-directory", "workingDirectory",
+      "");
 
     m_OptionManager.add(
-	    "delimiter", "delimiter",
-	    "\\n");
+      "env-var", "envVars",
+      new BaseKeyValuePair[0]);
 
     m_OptionManager.add(
-	    "finished-signal", "finishedSignal",
-	    "");
+      "conversion", "conversion",
+      new AnyToString());
+
+    m_OptionManager.add(
+      "delimiter", "delimiter",
+      "\\n");
+
+    m_OptionManager.add(
+      "finished-signal", "finishedSignal",
+      "");
   }
 
   /**
@@ -300,6 +336,70 @@ public class Exec
    */
   public String commandTipText() {
     return "The external command to pipe the data into.";
+  }
+
+  /**
+   * Sets the current working directory for the command.
+   *
+   * @param value	the directory, ignored if empty
+   */
+  @Override
+  public void setWorkingDirectory(String value) {
+    m_WorkingDirectory = value;
+    reset();
+  }
+
+  /**
+   * Returns the current working directory for the command.
+   *
+   * @return 		the directory, ignored if empty
+   */
+  @Override
+  public String getWorkingDirectory() {
+    return m_WorkingDirectory;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String workingDirectoryTipText() {
+    return "The current working directory for the command.";
+  }
+
+  /**
+   * Sets the environment variables to overlay on top of the current ones.
+   *
+   * @param value	the environment variables
+   */
+  @Override
+  public void setEnvVars(BaseKeyValuePair[] value) {
+    m_EnvVars = value;
+    reset();
+  }
+
+  /**
+   * Returns the environment variables to overlay on top of the current ones.
+   *
+   * @return 		the environment variables
+   */
+  @Override
+  public BaseKeyValuePair[] getEnvVars() {
+    return m_EnvVars;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String envVarsTipText() {
+    return "The environment variables to overlay on top of the current ones.";
   }
 
   /**
@@ -450,16 +550,20 @@ public class Exec
    */
   @Override
   protected String doExecute() {
-    String	result;
-    String[]	cmd;
-    String	msg;
-    
+    String			result;
+    String[]			cmd;
+    String			msg;
+    File 			cwd;
+    HashMap<String, String> 	env;
+
     result = null;
 
     if (m_Process == null) {
       try {
 	cmd       = OptionUtils.splitOptions(m_Command.getValue());
-	m_Process = Runtime.getRuntime().exec(cmd);
+	cwd       = m_WorkingDirectory.isEmpty() ? null : new PlaceholderDirectory(m_WorkingDirectory).getAbsoluteFile();
+	env       = ProcessUtils.getEnvironment(m_EnvVars, true);
+	m_Process = Runtime.getRuntime().exec(cmd, ProcessUtils.flattenEnvironment(env), cwd);
 	m_Writer  = new BufferedWriter(new OutputStreamWriter(m_Process.getOutputStream()));
 	m_Stdout  = new OutputProcessStream(m_Process, LoggingObjectOutputPrinter.class, true);
 	m_Stderr  = new OutputProcessStream(m_Process, LoggingObjectOutputPrinter.class, false);

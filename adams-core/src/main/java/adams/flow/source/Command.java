@@ -15,7 +15,7 @@
 
 /*
  * Command.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -24,8 +24,12 @@ import adams.core.ClassCrossReference;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderDirectory;
+import adams.core.management.EnvironmentVariablesHandler;
+import adams.core.management.ProcessUtils;
+import adams.core.management.WorkingDirectoryHandler;
 import adams.core.option.OptionUtils;
 import adams.flow.core.RunnableWithLogging;
 import adams.flow.core.Token;
@@ -34,6 +38,7 @@ import com.github.fracpete.processoutput4j.core.StreamingProcessOwner;
 import com.github.fracpete.processoutput4j.output.StreamingProcessOutput;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -97,6 +102,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-env-var &lt;adams.core.base.BaseKeyValuePair&gt; [-env-var ...] (property: envVars)
+ * &nbsp;&nbsp;&nbsp;The environment variables to overlay on top of the current ones.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-placeholder &lt;boolean&gt; (property: commandContainsPlaceholder)
  * &nbsp;&nbsp;&nbsp;Set this to true to enable automatic placeholder expansion for the command
  * &nbsp;&nbsp;&nbsp;string.
@@ -135,11 +145,11 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Command
   extends AbstractSource
-  implements ClassCrossReference, StreamingProcessOwner {
+  implements ClassCrossReference, StreamingProcessOwner,
+             EnvironmentVariablesHandler, WorkingDirectoryHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -132045002653940359L;
@@ -149,6 +159,9 @@ public class Command
 
   /** the current working directory. */
   protected String m_WorkingDirectory;
+
+  /** environment variables. */
+  protected BaseKeyValuePair[] m_EnvVars;
 
   /** whether the replace string contains a placeholder, which needs to be
    * expanded first. */
@@ -218,6 +231,10 @@ public class Command
     m_OptionManager.add(
       "working-directory", "workingDirectory",
       "");
+
+    m_OptionManager.add(
+      "env-var", "envVars",
+      new BaseKeyValuePair[0]);
 
     m_OptionManager.add(
       "placeholder", "commandContainsPlaceholder",
@@ -308,6 +325,7 @@ public class Command
    *
    * @param value	the directory, ignored if empty
    */
+  @Override
   public void setWorkingDirectory(String value) {
     m_WorkingDirectory = value;
     reset();
@@ -318,6 +336,7 @@ public class Command
    *
    * @return 		the directory, ignored if empty
    */
+  @Override
   public String getWorkingDirectory() {
     return m_WorkingDirectory;
   }
@@ -328,8 +347,41 @@ public class Command
    * @return		tip text for this property suitable for
    *             	displaying in the GUI or for listing the options.
    */
+  @Override
   public String workingDirectoryTipText() {
     return "The current working directory for the command.";
+  }
+
+  /**
+   * Sets the environment variables to overlay on top of the current ones.
+   *
+   * @param value	the environment variables
+   */
+  @Override
+  public void setEnvVars(BaseKeyValuePair[] value) {
+    m_EnvVars = value;
+    reset();
+  }
+
+  /**
+   * Returns the environment variables to overlay on top of the current ones.
+   *
+   * @return 		the environment variables
+   */
+  @Override
+  public BaseKeyValuePair[] getEnvVars() {
+    return m_EnvVars;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String envVarsTipText() {
+    return "The environment variables to overlay on top of the current ones.";
   }
 
   /**
@@ -532,8 +584,9 @@ public class Command
    */
   @Override
   protected String doExecute() {
-    String		cmd;
-    final String	fCmd;
+    String			cmd;
+    final String		fCmd;
+    HashMap<String, String> 	env;
 
     m_Output.clear();
 
@@ -554,6 +607,7 @@ public class Command
     m_ExecutionFailure = null;
     m_ProcessOutput = new StreamingProcessOutput(this);
     m_ProcessOutput.setTimeOut(m_TimeOut);
+    if (m_EnvVars.length > 0)
     m_Monitor = new RunnableWithLogging() {
       private static final long serialVersionUID = -4475355379511760429L;
       @Override
@@ -562,6 +616,8 @@ public class Command
           ProcessBuilder builder = new ProcessBuilder(OptionUtils.splitOptions(fCmd));
           if (!m_WorkingDirectory.isEmpty())
             builder.directory(new PlaceholderDirectory(m_WorkingDirectory).getAbsoluteFile());
+          if (m_EnvVars.length > 0)
+            builder.environment().putAll(ProcessUtils.getEnvironment(m_EnvVars, false));
 	  m_ProcessOutput.monitor(builder);
 	}
 	catch (Exception e) {
