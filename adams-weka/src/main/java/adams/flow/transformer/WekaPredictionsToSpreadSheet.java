@@ -255,12 +255,16 @@ public class WekaPredictionsToSpreadSheet
         pred = predictions.get(i);
 	row  = data.addRow();
 	// actual
-        if (nominal)
+	if (Double.isNaN(pred.actual()))
+	  row.addCell(0).setMissing();
+        else if (nominal)
 	  row.addCell(0).setContentAsString(header.classAttribute().value((int) pred.actual()));
         else
 	  row.addCell(0).setContent(pred.actual());
 	// predicted
-        if (nominal)
+	if (Double.isNaN(pred.predicted()))
+	  row.addCell(1).setMissing();
+        else if (nominal)
 	  row.addCell(1).setContentAsString(header.classAttribute().value((int) pred.predicted()));
         else
 	  row.addCell(1).setContent(pred.predicted());
