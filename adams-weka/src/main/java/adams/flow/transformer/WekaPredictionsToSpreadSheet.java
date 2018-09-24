@@ -249,7 +249,7 @@ public class WekaPredictionsToSpreadSheet
       }
 
       // add data
-      if (indices != null)
+      if ((indices != null) && m_UseOriginalIndices)
         predictions = CrossValidationHelper.alignPredictions(predictions, indices);
       for (i = 0; i < predictions.size(); i++) {
         pred = predictions.get(i);

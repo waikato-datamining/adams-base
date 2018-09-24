@@ -20,8 +20,6 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
@@ -33,6 +31,8 @@ import adams.flow.source.WekaClassifierSetup;
 import adams.flow.standalone.CallableActors;
 import adams.flow.transformer.WekaFileReader.OutputType;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the WekaPredictionsToInstances actor.
@@ -104,6 +104,7 @@ public class WekaPredictionsToInstancesTest
     cv.setClassifier(new CallableActorReference("cls"));
 
     WekaPredictionsToInstances p2i = new WekaPredictionsToInstances();
+    p2i.setUseOriginalIndices(true);
 
     WekaFileWriter fw = new WekaFileWriter();
     fw.setOutputFile(new TmpFile("dumpfile.arff"));

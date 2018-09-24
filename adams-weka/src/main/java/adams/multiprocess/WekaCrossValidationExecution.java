@@ -34,13 +34,10 @@ import adams.flow.standalone.JobRunnerSetup;
 import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
-import weka.classifiers.CrossValidationHelper;
 import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.output.prediction.AbstractOutput;
 import weka.core.Instances;
-
-import java.util.Random;
 
 /**
  * Performs cross-validation, either single or multi-threaded.
@@ -558,7 +555,7 @@ public class WekaCrossValidationExecution
       }
 
       if (!m_DiscardPredictions)
-	indices = CrossValidationHelper.crossValidationIndices(m_Data, folds, new Random(m_Seed));
+	indices = generator.crossValidationIndices();
     }
     catch (Exception e) {
       result.add(Utils.handleException(this, "Failed to cross-validate classifier: ", e));

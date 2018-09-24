@@ -104,6 +104,7 @@ public class WekaPredictionsToSpreadSheetTest
     cv.setClassifier(new CallableActorReference("cls"));
 
     WekaPredictionsToSpreadSheet p2i = new WekaPredictionsToSpreadSheet();
+    p2i.setUseOriginalIndices(true);
 
     DumpFile df = new DumpFile();
     df.setOutputFile(new TmpFile("dumpfile.csv"));

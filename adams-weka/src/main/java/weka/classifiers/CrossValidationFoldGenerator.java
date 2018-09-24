@@ -101,4 +101,11 @@ public interface CrossValidationFoldGenerator
    * @return		the template
    */
   public String getRelationName();
+
+  /**
+   * Returns the cross-validation indices.
+   *
+   * @return		the indices
+   */
+  public int[] crossValidationIndices();
 }

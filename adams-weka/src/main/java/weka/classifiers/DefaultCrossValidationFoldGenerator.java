@@ -541,7 +541,16 @@ public class DefaultCrossValidationFoldGenerator
 
     return result;
   }
-  
+
+  /**
+   * Returns the cross-validation indices.
+   *
+   * @return		the indices
+   */
+  public int[] crossValidationIndices() {
+    return m_OriginalIndices.toArray();
+  }
+
   /**
    * Returns a short description of the generator.
    * 

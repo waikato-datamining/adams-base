@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PredictionHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
@@ -82,6 +82,7 @@ public class PredictionHelper {
     p2s.setShowProbability(showProbability);
     p2s.setShowError(showError);
     p2s.setShowWeight(showWeight);
+    p2s.setUseOriginalIndices(true);
     p2s.input(new Token(cont));
     try {
       p2s.execute();

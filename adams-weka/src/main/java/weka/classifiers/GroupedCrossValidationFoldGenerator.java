@@ -651,7 +651,23 @@ public class GroupedCrossValidationFoldGenerator
 
     return result;
   }
-  
+
+  /**
+   * Returns the cross-validation indices.
+   *
+   * @return		the indices
+   */
+  public int[] crossValidationIndices() {
+    TIntList 	indices;
+    int		i;
+
+    indices = new TIntArrayList();
+    for (i = 0; i < m_Collapsed.numInstances(); i++)
+      indices.add(i);
+
+    return m_Grouping.expand(m_Collapsed, indices).toArray();
+  }
+
   /**
    * Returns a short description of the generator.
    * 

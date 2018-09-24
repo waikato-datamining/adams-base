@@ -262,7 +262,7 @@ public class WekaPredictionsToInstances
       data.setClassIndex(1);  // predicted
 
       // add data
-      if (indices != null)
+      if ((indices != null) && m_UseOriginalIndices)
         predictions = CrossValidationHelper.alignPredictions(predictions, indices);
       for (i = 0; i < predictions.size(); i++) {
 	pred = predictions.get(i);

@@ -113,6 +113,7 @@ public class WekaExtractArrayTest
     cv.setClassifier(new CallableActorReference("cl"));
 
     WekaPredictionsToInstances p2i = new WekaPredictionsToInstances();
+    p2i.setUseOriginalIndices(true);
 
     MultiArrayStatistic mas = new MultiArrayStatistic();
     mas.setSubStatistics(new AbstractArrayStatistic[]{
