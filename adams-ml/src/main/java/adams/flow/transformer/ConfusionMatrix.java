@@ -15,7 +15,7 @@
 
 /*
  * ConfusionMatrix.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -447,6 +447,15 @@ public class ConfusionMatrix
       }
       Collections.sort(predLabels);
       Collections.sort(actLabels);
+      // missing?
+      for (Row r: sheet.rows()) {
+        if ((r.hasCell(actCol) && r.getCell(actCol).isMissing())
+	  || (r.hasCell(predCol) && r.getCell(predCol).isMissing())) {
+	  actLabels.add(0, SpreadSheet.MISSING_VALUE);
+	  predLabels.add(0, SpreadSheet.MISSING_VALUE);
+	  break;
+	}
+      }
       matrix = new DefaultSpreadSheet();
       row = matrix.getHeaderRow();
       row.addCell("0").setContentAsString("x");
@@ -465,12 +474,18 @@ public class ConfusionMatrix
       // fill in matrix
       for (i = 0; i < sheet.getRowCount(); i++) {
 	row = sheet.getRow(i);
-	if (!row.hasCell(actCol) || row.getCell(actCol).isMissing())
+	if (!row.hasCell(actCol))
 	  continue;
-	if (!row.hasCell(predCol) || row.getCell(predCol).isMissing())
+	if (!row.hasCell(predCol))
 	  continue;
-	actLabel  = row.getCell(actCol).getContent();
-	predLabel = row.getCell(predCol).getContent();
+	if (row.getCell(actCol).isMissing())
+	  actLabel = SpreadSheet.MISSING_VALUE;
+	else
+	  actLabel  = row.getCell(actCol).getContent();
+	if (row.getCell(predCol).isMissing())
+	  predLabel = SpreadSheet.MISSING_VALUE;
+	else
+	  predLabel = row.getCell(predCol).getContent();
 	actIndex  = actIndices.get(actLabel);
 	predIndex = predIndices.get(predLabel);
 	if (probCol == -1)
