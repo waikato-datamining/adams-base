@@ -54,6 +54,9 @@ public class ConfusionMatrix
   /** for highlighting the cells in the table. */
   protected CellRenderingCustomizer m_CellRenderingCustomizer;
 
+  /** the number of decimals to use. */
+  protected int m_NumDecimals;
+
   /**
    * Returns a string describing the object.
    *
@@ -82,6 +85,10 @@ public class ConfusionMatrix
     m_OptionManager.add(
       "cell-rendering-customizer", "cellRenderingCustomizer",
       new ConfusionMatrixCellRenderingCustomizer());
+
+    m_OptionManager.add(
+      "num-decimals", "numDecimals",
+      -1, -1, null);
   }
 
   /**
@@ -172,6 +179,35 @@ public class ConfusionMatrix
   }
 
   /**
+   * Sets the number of decimals to display. Use -1 to display all.
+   *
+   * @param value	the number of decimals
+   */
+  public void setNumDecimals(int value) {
+    m_NumDecimals = value;
+    reset();
+  }
+
+  /**
+   * Returns the currently set number of decimals. -1 if displaying all.
+   *
+   * @return		the number of decimals
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numDecimalsTipText() {
+    return "The number of decimals to use; -1 for automatic.";
+  }
+
+  /**
    * The title to use for the tab.
    *
    * @return		the title
@@ -233,6 +269,7 @@ public class ConfusionMatrix
     sheet = matrix.output().getPayload(SpreadSheet.class);
     table = new SpreadSheetTable(sheet);
     table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_CellRenderingCustomizer));
+    table.setNumDecimals(m_NumDecimals);
 
     return new TableContentPanel(table, true, true);
   }
