@@ -13,13 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HashSet.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
+import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.ObjectToObject;
 import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
@@ -27,7 +31,12 @@ import adams.flow.transformer.HashSetInit;
 
 /**
  <!-- globalinfo-start -->
- * Evaluates to true if the payload of the current token or the specified string (if non-empty) is present in the specified hashset.
+ * Evaluates to true if the payload of the current token or the specified string (if non-empty) is present in the specified hashset.<br>
+ * The value gets transformed using the specified conversion.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.standalone.HashSetInit<br>
+ * adams.flow.transformer.HashSetInit
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -36,25 +45,30 @@ import adams.flow.transformer.HashSetInit;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name of the hashset in the internal storage.
  * &nbsp;&nbsp;&nbsp;default: hashset
  * </pre>
- * 
+ *
  * <pre>-value &lt;java.lang.String&gt; (property: value)
- * &nbsp;&nbsp;&nbsp;The value (if non-empty) to look for in the hashset, takes precedence of 
+ * &nbsp;&nbsp;&nbsp;The value (if non-empty) to look for in the hashset, takes precedence of
  * &nbsp;&nbsp;&nbsp;the token passing through.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-conversion &lt;adams.data.conversion.Conversion&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The type of conversion to perform.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.ObjectToObject
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HashSet
-  extends AbstractBooleanCondition {
+  extends AbstractBooleanCondition
+  implements ClassCrossReference {
   
   /** for serialization. */
   private static final long serialVersionUID = -1349114354556041598L;
@@ -65,6 +79,9 @@ public class HashSet
   /** the value to check. */
   protected String m_Value;
 
+  /** the type of conversion. */
+  protected Conversion m_Conversion;
+
   /**
    * Returns a string describing the object.
    *
@@ -74,7 +91,17 @@ public class HashSet
   public String globalInfo() {
     return
       "Evaluates to true if the payload of the current token or the specified "
-	+ "string (if non-empty) is present in the specified hashset.";
+	+ "string (if non-empty) is present in the specified hashset.\n"
+	+ "The value gets transformed using the specified conversion.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{adams.flow.standalone.HashSetInit.class, HashSetInit.class};
   }
 
   /**
@@ -91,6 +118,10 @@ public class HashSet
     m_OptionManager.add(
 	    "value", "value",
 	    "");
+
+    m_OptionManager.add(
+	    "conversion", "conversion",
+	    new ObjectToObject());
   }
 
   /**
@@ -104,6 +135,7 @@ public class HashSet
 
     result = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
     result += QuickInfoHelper.toString(this, "value", (m_Value.isEmpty() ? "-from token-" : m_Value), ", value: ");
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
 
     return result;
   }
@@ -169,6 +201,36 @@ public class HashSet
   }
 
   /**
+   * Sets the type of conversion to perform.
+   *
+   * @param value	the type of conversion
+   */
+  public void setConversion(Conversion value) {
+    m_Conversion = value;
+    m_Conversion.setOwner(this);
+    reset();
+  }
+
+  /**
+   * Returns the type of conversion to perform.
+   *
+   * @return		the type of conversion
+   */
+  public Conversion getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The type of conversion to perform.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		adams.flow.core.Unknown.class
@@ -190,11 +252,12 @@ public class HashSet
     boolean		result;
     java.util.HashSet	hashset;
     Object		value;
+    String		msg;
     
     result = false;
 
     if (!owner.getStorageHandler().getStorage().has(m_StorageName)) {
-      getLogger().severe("Hashset '" + m_StorageName + "' not available! Not initialized with " + HashSetInit.class.getName() + "?");
+      getLogger().severe("Hashset '" + m_StorageName + "' not available! Not initialized with " + Utils.classesToString(getClassCrossReferences()) + "?");
     }
     else {
       hashset = (java.util.HashSet) owner.getStorageHandler().getStorage().get(m_StorageName);
@@ -202,7 +265,14 @@ public class HashSet
 	value = token.getPayload();
       else
         value = m_Value;
-      result  = hashset.contains(value);
+      m_Conversion.setInput(value);
+      msg = m_Conversion.convert();
+      if (msg != null)
+	msg = owner.getFullName() + ": " + msg;
+      if ((msg == null) && (m_Conversion.getOutput() != null)) {
+        value  = m_Conversion.getOutput();
+	result = hashset.contains(value);
+      }
     }
 
     return result;

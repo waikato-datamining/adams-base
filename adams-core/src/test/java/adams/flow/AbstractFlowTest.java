@@ -15,13 +15,13 @@
 
 /*
  * AbstractFlowTest.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow;
 
 import adams.core.io.FileUtils;
-import adams.core.option.NestedProducer;
+import adams.core.option.CompactFlowProducer;
 import adams.core.option.OptionProducer;
 import adams.flow.control.Flow;
 import adams.flow.control.Flow.ErrorHandling;
@@ -57,7 +57,6 @@ import java.io.File;
  *   <code>-Dadams.test.flow.noregression=true</code>
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFlowTest
   extends AbstractDatabaseTestCase {
@@ -229,8 +228,10 @@ public abstract class AbstractFlowTest
       }
     }
 
-    if (producer == null)
-      producer = new NestedProducer();
+    if (producer == null) {
+      producer = new CompactFlowProducer();
+      ((CompactFlowProducer) producer).setOutputProlog(false);
+    }
 
     producer.produce(actor);
 

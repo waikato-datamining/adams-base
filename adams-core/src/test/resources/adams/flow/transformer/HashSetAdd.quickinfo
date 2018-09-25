@@ -1,1 +1,1 @@
-storage: hashset, col: first
+storage: hashset, col: first, conversion: ObjectToObject

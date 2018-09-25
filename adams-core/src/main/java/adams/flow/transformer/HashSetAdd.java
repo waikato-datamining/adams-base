@@ -13,14 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HashSetAdd.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
+import adams.core.ClassCrossReference;
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.ObjectToObject;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.StorageName;
@@ -33,7 +37,12 @@ import java.util.HashSet;
  * Adds a value to the specified hashset. <br>
  * The input for the actor can be any object, the user has to ensure that the correct type is stored.<br>
  * In case of arrays, elements get stored one by one.<br>
- * SpreadSheet cells with actual data get added as strings.
+ * SpreadSheet cells with actual data get retrieved as strings.<br>
+ * The conversion can be used to transform the values.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.standalone.HashSetInit<br>
+ * adams.flow.transformer.HashSetInit
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -53,53 +62,60 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: HashSetAdd
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name of the hashset in the internal storage.
  * &nbsp;&nbsp;&nbsp;default: hashset
  * </pre>
- * 
+ *
  * <pre>-column &lt;adams.core.Index&gt; (property: column)
- * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet which values to store in the 
+ * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet which values to store in the
  * &nbsp;&nbsp;&nbsp;hashset.
  * &nbsp;&nbsp;&nbsp;default: first
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ *
+ * <pre>-conversion &lt;adams.data.conversion.Conversion&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The type of conversion to perform.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.ObjectToObject
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HashSetAdd
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = 7602201480653131469L;
@@ -109,6 +125,9 @@ public class HashSetAdd
 
   /** the index of the column which values to store in the hashset. */
   protected Index m_Column;
+
+  /** the type of conversion. */
+  protected Conversion m_Conversion;
 
   /**
    * Returns a string describing the object.
@@ -122,7 +141,17 @@ public class HashSetAdd
 	+ "The input for the actor can be any object, the user has to ensure "
 	+ "that the correct type is stored.\n"
 	+ "In case of arrays, elements get stored one by one.\n"
-	+ "SpreadSheet cells with actual data get added as strings.";
+	+ "SpreadSheet cells with actual data get retrieved as strings.\n"
+	+ "The conversion can be used to transform the values.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{adams.flow.standalone.HashSetInit.class, HashSetInit.class};
   }
 
   /**
@@ -139,6 +168,10 @@ public class HashSetAdd
     m_OptionManager.add(
       "column", "column",
       new Index(Index.FIRST));
+
+    m_OptionManager.add(
+      "conversion", "conversion",
+      new ObjectToObject());
   }
 
   /**
@@ -152,6 +185,7 @@ public class HashSetAdd
 
     result  = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
     result += QuickInfoHelper.toString(this, "column", m_Column, ", col: ");
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
 
     return result;
   }
@@ -215,6 +249,36 @@ public class HashSetAdd
   }
 
   /**
+   * Sets the type of conversion to perform.
+   *
+   * @param value	the type of conversion
+   */
+  public void setConversion(Conversion value) {
+    m_Conversion = value;
+    m_Conversion.setOwner(this);
+    reset();
+  }
+
+  /**
+   * Returns the type of conversion to perform.
+   *
+   * @return		the type of conversion
+   */
+  public Conversion getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The type of conversion to perform.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    * 
    * @return		the Class of objects that can be processed
@@ -239,15 +303,27 @@ public class HashSetAdd
    *
    * @param hashset	the hashset to update
    * @param value	the value to store
+   * @return		null if successfully added, otherwise error message
    */
-  protected void addValue(HashSet hashset, Object value) {
-    if (isLoggingEnabled()) {
-      if (hashset.contains(value))
-        getLogger().info("Replacing: '" + value + "'");
-      else
-        getLogger().info("Adding: '" + value + "'");
+  protected String addValue(HashSet hashset, Object value) {
+    String	result;
+
+    m_Conversion.setInput(value);
+    result = m_Conversion.convert();
+    if (result != null)
+      result = getFullName() + ": " + result;
+    if ((result == null) && (m_Conversion.getOutput() != null)) {
+      if (isLoggingEnabled()) {
+	if (hashset.contains(value))
+	  getLogger().info("Replacing: '" + value + "'");
+	else
+	  getLogger().info("Adding: '" + value + "'");
+      }
+      hashset.add(m_Conversion.getOutput());
     }
-    hashset.add(value);
+    m_Conversion.cleanUp();
+
+    return result;
   }
 
   /**
@@ -261,7 +337,6 @@ public class HashSetAdd
     HashSet		hashset;
     Object		value;
     int			i;
-    int			n;
     SpreadSheet		sheet;
     int			col;
     Cell 		cell;
@@ -269,7 +344,7 @@ public class HashSetAdd
     result = null;
     
     if (!getStorageHandler().getStorage().has(m_StorageName)) {
-      result = "Hashset '" + m_StorageName + "' not available! Not initialized with " + HashSetInit.class.getName() + "?";
+      result = "Hashset '" + m_StorageName + "' not available! Not initialized with " + Utils.classesToString(getClassCrossReferences()) + "?";
     }
     else {
       hashset = (HashSet) getStorageHandler().getStorage().get(m_StorageName);
@@ -286,15 +361,18 @@ public class HashSetAdd
 	  if (sheet.hasCell(i, col)) {
 	    cell = sheet.getCell(i, col);
 	    if (!cell.isMissing())
-	      addValue(hashset, cell.getContent());
+	      result = addValue(hashset, cell.getContent());
 	  }
+	  if (result != null)
+	    break;
 	}
       }
       else {
-	addValue(hashset, value);
+	result = addValue(hashset, value);
       }
 
-      m_OutputToken = m_InputToken;
+      if (result == null)
+	m_OutputToken = m_InputToken;
     }
     
     return result;
