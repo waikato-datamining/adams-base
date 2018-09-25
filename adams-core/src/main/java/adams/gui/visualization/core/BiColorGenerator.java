@@ -95,19 +95,28 @@ public class BiColorGenerator
 
     m_OptionManager.add(
       "num-colors", "numColors",
-      255, 1, null);
+      getDefaultNumColors(), 1, null);
 
     m_OptionManager.add(
       "first-color", "firstColor",
-      Color.BLACK);
+      getDefaultFirstColor());
 
     m_OptionManager.add(
       "second-color", "secondColor",
-      Color.WHITE);
+      getDefaultSecondColor());
 
     m_OptionManager.add(
       "alpha", "alpha",
-      255, 0, 255);
+      getDefaultAlpha(), 0, 255);
+  }
+
+  /**
+   * Returns the default for the number of colors.
+   *
+   * @return		the default
+   */
+  protected int getDefaultNumColors() {
+    return 255;
   }
 
   /**
@@ -142,6 +151,15 @@ public class BiColorGenerator
   }
 
   /**
+   * Returns the default for the first color.
+   *
+   * @return		the default
+   */
+  protected Color getDefaultFirstColor() {
+    return Color.BLACK;
+  }
+
+  /**
    * Sets the first color of the gradient.
    *
    * @param value	the first color
@@ -171,6 +189,15 @@ public class BiColorGenerator
   }
 
   /**
+   * Returns the default for the second color.
+   *
+   * @return		the default
+   */
+  protected Color getDefaultSecondColor() {
+    return Color.WHITE;
+  }
+
+  /**
    * Sets the second color of the gradient.
    *
    * @param value	the second color
@@ -197,6 +224,15 @@ public class BiColorGenerator
    */
   public String secondColorTipText() {
     return "The second color of the gradient.";
+  }
+
+  /**
+   * Returns the default for the alpha value.
+   *
+   * @return		the default
+   */
+  protected int getDefaultAlpha() {
+    return 255;
   }
 
   /**
