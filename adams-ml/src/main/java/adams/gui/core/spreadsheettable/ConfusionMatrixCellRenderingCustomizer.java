@@ -24,7 +24,7 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.visualization.core.AbstractColorGradientGenerator;
-import adams.gui.visualization.core.BiColorGenerator;
+import adams.gui.visualization.core.ConfusionMatrixColorGenerator;
 
 import javax.swing.SwingConstants;
 import java.awt.Color;
@@ -82,7 +82,7 @@ public class ConfusionMatrixCellRenderingCustomizer
 
     m_OptionManager.add(
       "background-color-generator", "backgroundColorGenerator",
-      new BiColorGenerator());
+      new ConfusionMatrixColorGenerator());
   }
 
   /**
