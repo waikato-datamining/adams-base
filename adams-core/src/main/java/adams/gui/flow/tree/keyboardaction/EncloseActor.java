@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * AddActorHere.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+/*
+ * EncloseActor.java
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.keyboardaction;
@@ -27,10 +27,9 @@ import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
 
 /**
- * Adds an actor at the current location.
+ * Encloses the selected actor(s) with the specified actor.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EncloseActor
   extends AbstractKeyboardActionWithActor {
