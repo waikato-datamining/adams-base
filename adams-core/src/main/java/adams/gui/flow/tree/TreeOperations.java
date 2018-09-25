@@ -1082,6 +1082,43 @@ public class TreeOperations
   }
 
   /**
+   * Pulls up the actors of the selected mutable actor.
+   *
+   * @param path	the (paths to the) actors to wrap in the control actor
+   */
+  public void pullUpActors(TreePath path) {
+    Node 	handlerNode;
+    Node	parentNode;
+    List<Node>	subNodes;
+    int		index;
+    int		i;
+
+    handlerNode = TreeHelper.pathToNode(path);
+    parentNode  = (Node) handlerNode.getParent();
+    if (parentNode == null)
+      return;
+
+    index    = parentNode.getIndex(handlerNode);
+    subNodes = new ArrayList<>();
+    for (i = 0; i < handlerNode.getChildCount(); i++)
+      subNodes.add((Node) handlerNode.getChildAt(i));
+    if (subNodes.size() == 0)
+      return;
+
+    getOwner().addUndoPoint("Pulling up '" + handlerNode.getFullName() + "'");
+
+    parentNode.remove(index);
+    for (i = 0; i < subNodes.size(); i++)
+      parentNode.insert(subNodes.get(i), index + i);
+
+    SwingUtilities.invokeLater(() -> {
+      getOwner().setModified(true);
+      getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), parentNode, Type.MODIFY));
+      getOwner().redraw();
+    });
+  }
+
+  /**
    * Swaps the actor handler of the node with the new node, keeping the children
    * intact, as well as some basic options.
    *
@@ -1096,7 +1133,7 @@ public class TreeOperations
     node   = TreeHelper.pathToNode(sourcePath);
     source = TreeHelper.pathToActor(sourcePath);
 
-    getOwner().addUndoPoint("Swapping node '" + source.getFullName() + "' with " + target.getClass().getName());
+    getOwner().addUndoPoint("Swapping node '" + node.getFullName() + "' with " + target.getClass().getName());
 
     // transfer options
     transfers = AbstractOptionTransfer.getTransfers(source, target);

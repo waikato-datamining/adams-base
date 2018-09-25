@@ -127,7 +127,8 @@ Tree.KeyboardActions=\
    "adams.gui.flow.tree.keyboardaction.FavoriteActorHere" \
    "adams.gui.flow.tree.keyboardaction.FavoriteActorAfter" \
    "adams.gui.flow.tree.keyboardaction.FavoriteActorBeneath" \
-   "adams.gui.flow.tree.keyboardaction.EncloseActor"
+   "adams.gui.flow.tree.keyboardaction.EncloseActor" \
+   "adams.gui.flow.tree.keyboardaction.PullUpActor"
 
 # Whether to show the global info in the class tree as child node of the
 # actor class (true|false)
@@ -183,6 +184,7 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.AddBreakpoint,\
   adams.gui.flow.tree.menu.AddFromTemplate,\
   adams.gui.flow.tree.menu.EncloseActor,\
+  adams.gui.flow.tree.menu.PullUpActor,\
   adams.gui.flow.tree.menu.SwapActor,\
   adams.gui.flow.tree.menu.CreateCallableActor,\
   adams.gui.flow.tree.menu.MakeConditional,\
