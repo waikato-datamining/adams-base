@@ -15,7 +15,7 @@
 
 /*
  * StringConstants.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -92,7 +92,6 @@ import adams.data.conversion.StringToString;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringConstants
   extends AbstractArrayProvider {
@@ -268,6 +267,8 @@ public class StringConstants
       if ((result == null) && (m_Conversion.getOutput() != null))
 	m_Queue.add(m_Conversion.getOutput());
       m_Conversion.cleanUp();
+      if (result != null)
+        break;
     }
 
     return result;
