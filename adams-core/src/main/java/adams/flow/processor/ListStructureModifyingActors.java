@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ListStructureModifyingActors.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -25,11 +25,10 @@ import adams.core.option.OptionTraversalPath;
 import adams.flow.control.FlowStructureModifier;
 
 /**
- * Processor that lists actors implementing
+ * Processor that lists (active) actors implementing
  * {@link adams.flow.control.FlowStructureModifier}.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ListStructureModifyingActors
   extends AbstractListingProcessor {
@@ -65,7 +64,7 @@ public class ListStructureModifyingActors
    * @return		true if valid
    */
   protected boolean isValid(AbstractOption option, Object obj, OptionTraversalPath path) {
-    return (obj instanceof FlowStructureModifier);
+    return (obj instanceof FlowStructureModifier) && !((FlowStructureModifier) obj).getSkip();
   }
 
   /**
