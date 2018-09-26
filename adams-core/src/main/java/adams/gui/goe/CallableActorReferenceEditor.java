@@ -15,12 +15,31 @@
 
 /*
  * CallableActorReferenceEditor.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
+import adams.core.Utils;
+import adams.core.option.AbstractOption;
+import adams.flow.core.CallableActorReference;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTreeNode;
+import adams.gui.core.MouseUtils;
+import adams.gui.flow.tree.Node;
+import adams.gui.goe.actorpathtree.ActorPathNode;
+import adams.gui.goe.callableactorstree.CallableActorsTree;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
@@ -34,26 +53,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-
-import adams.core.Utils;
-import adams.core.option.AbstractOption;
-import adams.flow.core.CallableActorReference;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTreeNode;
-import adams.gui.core.MouseUtils;
-import adams.gui.flow.tree.Node;
-import adams.gui.goe.actorpathtree.ActorPathNode;
-import adams.gui.goe.callableactorstree.CallableActorsTree;
 
 /**
  * A PropertyEditor for CallableActorReference objects.
@@ -353,7 +352,7 @@ public class CallableActorReferenceEditor
     int			i;
     Node		child;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     callables = FlowHelper.findCallableActorsHandler(m_CustomEditor);
     for (Node callable: callables) {

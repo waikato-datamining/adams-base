@@ -15,7 +15,7 @@
 
 /*
  * FlowHelper.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -374,6 +374,21 @@ public class FlowHelper {
   }
 
   /**
+   * Checks whether the actor is a match for the type/restrictions.
+   *
+   * @param type	the type the actor has to be
+   * @param restrict	whether to restrict the classes
+   * @param actor	the actor to check
+   * @return 		true if a match
+   * @see #findNodes(Node, boolean, HashSet, Class)
+   */
+  protected static boolean findNodesMatch(Class type, HashSet<Class> restrict, Actor actor) {
+    if (!actor.getSkip() && ClassLocator.matches(type, actor.getClass()))
+      return ((restrict == null) || isRestricted(actor.getClass(), restrict));
+    return false;
+  }
+
+  /**
    * Locates all nodes representing the specified type of actors.
    *
    * @param parent	the parent node
@@ -385,7 +400,6 @@ public class FlowHelper {
     List<Node>		result;
     ActorHandler	handler;
     Actor		actor;
-    Actor		subactor;
     int			i;
     int			n;
     Node		current;
@@ -405,19 +419,23 @@ public class FlowHelper {
 	    actor   = current.getActor();
 
 	    if (ActorUtils.isStandalone(actor)) {
-	      if (!actor.getSkip() && ClassLocator.matches(type, actor.getClass())) {
-		if ((restrict == null) || isRestricted(actor.getClass(), restrict))
-		  result.add(current);
-	      }
+	      if (findNodesMatch(type, restrict, actor))
+		result.add(current);
 	      if (actor instanceof ActorHandler) {
-		for (n = 0; n < current.getChildCount(); n++)
+		for (n = 0; n < current.getChildCount(); n++) {
+		  if (findNodesMatch(type, restrict, ((Node) current.getChildAt(n)).getActor()))
+		    result.add((Node) current.getChildAt(n));
 		  result.addAll(findNodes((Node) current.getChildAt(n), false, restrict, type));
+		}
 	      }
 	      else if (actor instanceof ExternalActorHandler) {
 		// load in external actor
 		current.expand();
-		for (n = 0; n < current.getChildCount(); n++)
+		for (n = 0; n < current.getChildCount(); n++) {
+		  if (findNodesMatch(type, restrict, ((Node) current.getChildAt(n)).getActor()))
+		    result.add((Node) current.getChildAt(n));
 		  result.addAll(findNodes((Node) current.getChildAt(n), false, restrict, type));
+		}
 	      }
 	    }
 	    else {
