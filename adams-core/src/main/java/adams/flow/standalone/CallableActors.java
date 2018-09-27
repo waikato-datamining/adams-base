@@ -175,7 +175,7 @@ public class CallableActors
       }
       else {
 	if (getScopeHandler() != null)
-	  result = getScopeHandler().addCallableName(get(i));
+	  result = getScopeHandler().addCallableName(this, get(i));
 	if (result != null)
 	  break;
 	names.add(get(i).getName());

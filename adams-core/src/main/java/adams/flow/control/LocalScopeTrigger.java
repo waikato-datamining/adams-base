@@ -24,6 +24,7 @@ import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseRegExp;
 import adams.flow.core.Actor;
+import adams.flow.core.ActorHandler;
 import adams.flow.core.CallableNamesRecorder;
 import adams.flow.core.FlowVariables;
 import adams.flow.core.StopRestrictor;
@@ -570,31 +571,33 @@ public class LocalScopeTrigger
   /**
    * Checks whether a callable name is already in use.
    * 
+   * @param handler 	the handler for the actor
    * @param actor	the actor name to check
    * @see		#getEnforceCallableNameCheck()
    */
-  public boolean isCallableNameUsed(Actor actor) {
+  public boolean isCallableNameUsed(ActorHandler handler, Actor actor) {
     if (!getEnforceCallableNameCheck())
       return false;
     else
-      return m_CallableNames.contains(actor);
+      return m_CallableNames.contains(handler, actor);
   }
 
   /**
    * Adds the callable name to the list of used ones.
    * 
+   * @param handler 	the handler for the actor
    * @param actor	the actor name to add
    * @return		null if successfully added, otherwise error message
    * @see		#getEnforceCallableNameCheck()
    */
-  public String addCallableName(Actor actor) {
+  public String addCallableName(ActorHandler handler, Actor actor) {
     if (!getEnforceCallableNameCheck())
       return null;
     
-    if (isCallableNameUsed(actor))
+    if (isCallableNameUsed(handler, actor))
       return "Callable name '" + actor.getName() + "' is already used in this scope ('" + getFullName() + "')!";
     
-    m_CallableNames.add(actor);
+    m_CallableNames.add(handler, actor);
     return null;
   }
   

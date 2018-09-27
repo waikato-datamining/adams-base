@@ -137,7 +137,7 @@ public class Events
     if (result == null) {
       for (i = 0; i < size(); i++) {
 	if (getScopeHandler() != null)
-	  result = getScopeHandler().addCallableName(get(i));
+	  result = getScopeHandler().addCallableName(this, get(i));
       }
     }
     
@@ -157,9 +157,9 @@ public class Events
 	    "Only " + Event.class.getName() + " actors are accepted, "
 	  + "provided: " + actor.getClass().getName());
     
-    if ((getScopeHandler() != null) && getScopeHandler().isCallableNameUsed(actor))
+    if ((getScopeHandler() != null) && getScopeHandler().isCallableNameUsed(this, actor))
       throw new IllegalArgumentException(
-	  getScopeHandler().addCallableName(actor));
+	  getScopeHandler().addCallableName(this, actor));
 
     return actor;
   }

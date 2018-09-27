@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ScopeHandler.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -64,17 +64,19 @@ public interface ScopeHandler
   /**
    * Checks whether a callable name is already in use.
    * 
+   * @param handler 	the handler for the actor
    * @param actor	the actor name to check
    * @see		#getEnforceCallableNameCheck()
    */
-  public boolean isCallableNameUsed(Actor actor);
+  public boolean isCallableNameUsed(ActorHandler handler, Actor actor);
 
   /**
    * Adds the callable name to the list of used ones.
-   * 
+   *
+   * @param handler 	the handler for the actor
    * @param actor	the actor name to add
    * @return		null if successfully added, otherwise error message
    * @see		#getEnforceCallableNameCheck()
    */
-  public String addCallableName(Actor actor);
+  public String addCallableName(ActorHandler handler, Actor actor);
 }
