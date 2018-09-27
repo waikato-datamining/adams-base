@@ -78,7 +78,7 @@ public class ActorHandlerInfo
     allowEncloseActors(info.canEncloseActors());
     forwardsInput(info.getForwardsInput());
     restrictions(info.getRestrictions());
-    actorExecution(getActorExecution());
+    actorExecution(info.getActorExecution());
   }
 
   /**
