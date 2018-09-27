@@ -15,7 +15,7 @@
 
 /*
  * Trigger.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -81,7 +81,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Trigger
   extends AbstractTee
@@ -209,6 +208,9 @@ public class Trigger
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(true, ActorExecution.SEQUENTIAL, false);
+    return new ActorHandlerInfo()
+      .allowStandalones(true)
+      .actorExecution(ActorExecution.SEQUENTIAL)
+      .forwardsInput(false);
   }
 }

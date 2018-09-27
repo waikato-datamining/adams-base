@@ -479,7 +479,13 @@ public class JavaExec
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(false, false, ActorExecution.PARALLEL, true, new Class[]{InputConsumer.class}, false);
+    return new ActorHandlerInfo()
+      .allowStandalones(false)
+      .allowSource(false)
+      .actorExecution(ActorExecution.PARALLEL)
+      .forwardsInput(true)
+      .allowEncloseActors(false)
+      .restrictions(new Class[]{InputConsumer.class});
   }
 
   /**

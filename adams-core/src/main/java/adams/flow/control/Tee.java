@@ -15,7 +15,7 @@
 
 /*
  * Tee.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -93,7 +93,6 @@ import adams.flow.core.InputConsumer;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Tee
   extends AbstractTee
@@ -138,11 +137,8 @@ public class Tee
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    ActorHandlerInfo	info;
-
-    info = super.getActorHandlerInfo();
-
-    return new ActorHandlerInfo(info.canContainStandalones(), false, info.getActorExecution(), info.getForwardsInput());
+    return new ActorHandlerInfo(super.getActorHandlerInfo())
+      .allowSource(false);
   }
 
   /**

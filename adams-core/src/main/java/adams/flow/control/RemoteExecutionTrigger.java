@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteExecutionTrigger.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control;
@@ -423,6 +423,9 @@ public class RemoteExecutionTrigger
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(true, ActorExecution.SEQUENTIAL, false);
+    return new ActorHandlerInfo()
+      .allowStandalones(true)
+      .actorExecution(ActorExecution.SEQUENTIAL)
+      .forwardsInput(false);
   }
 }

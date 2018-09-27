@@ -504,7 +504,12 @@ public abstract class AbstractMultiView
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(true, false, ActorExecution.PARALLEL, false, new Class[]{adams.flow.sink.AbstractDisplay.class});
+    return new ActorHandlerInfo()
+      .allowStandalones(true)
+      .allowSource(false)
+      .actorExecution(ActorExecution.PARALLEL)
+      .forwardsInput(false)
+      .restrictions(new Class[]{adams.flow.sink.AbstractDisplay.class});
   }
 
   /**

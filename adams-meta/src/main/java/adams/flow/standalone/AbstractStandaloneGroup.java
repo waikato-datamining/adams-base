@@ -82,7 +82,12 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(true, false, ActorExecution.UNDEFINED, false, getActorFilter());
+    return new ActorHandlerInfo()
+      .allowStandalones(true)
+      .allowSource(false)
+      .actorExecution(ActorExecution.UNDEFINED)
+      .forwardsInput(false)
+      .restrictions(getActorFilter());
   }
 
   /**

@@ -596,7 +596,10 @@ public class Switch
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(false, ActorExecution.PARALLEL, true);
+    return new ActorHandlerInfo()
+      .allowStandalones(false)
+      .actorExecution(ActorExecution.PARALLEL)
+      .forwardsInput(true);
   }
 
   /**

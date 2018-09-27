@@ -15,7 +15,7 @@
 
 /*
  * Sequence.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -67,7 +67,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Sequence
   extends MutableConnectedControlActor
@@ -153,7 +152,11 @@ public class Sequence
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(m_AllowStandalones, m_AllowSource, ActorExecution.SEQUENTIAL, true);
+    return new ActorHandlerInfo()
+      .allowStandalones(m_AllowStandalones)
+      .allowSource(m_AllowSource)
+      .actorExecution(ActorExecution.SEQUENTIAL)
+      .forwardsInput(true);
   }
 
   /**

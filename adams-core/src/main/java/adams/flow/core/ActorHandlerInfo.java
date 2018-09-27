@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorInfo.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
-import java.io.Serializable;
-
 import adams.core.Utils;
+
+import java.io.Serializable;
 
 
 /**
  * Container for information about an ActorHandler.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorHandlerInfo
   implements Serializable {
@@ -55,63 +54,42 @@ public class ActorHandlerInfo
   protected Class[] m_Restrictions;
 
   /**
-   * Initializes the info. Allows source actors.
-   *
-   * @param canContainStandalones	whether the actor can manage standalones
-   * @param actorExecution		the execution/orientation of the actors
-   * @param forwardsInput		whether the actor handler forwards input to the sub-actors
-   */
-  public ActorHandlerInfo(boolean canContainStandalones, ActorExecution actorExecution, boolean forwardsInput) {
-    this(canContainStandalones, true, actorExecution, forwardsInput);
-  }
-
-  /**
    * Initializes the info.
-   *
-   * @param canContainStandalones	whether the actor can manage standalones
-   * @param canContainSource		whether the actor can contain a source
-   * @param actorExecution		the execution/orientation of the actors
-   * @param forwardsInput		whether the actor handler forwards input to the sub-actors
    */
-  public ActorHandlerInfo(boolean canContainStandalones, boolean canContainSource, ActorExecution actorExecution, boolean forwardsInput) {
-    this(canContainStandalones, canContainSource, actorExecution, forwardsInput, null);
-  }
-
-  /**
-   * Initializes the info.
-   *
-   * @param canContainStandalones	whether the actor can manage standalones
-   * @param canContainSource		whether the actor can contain a source
-   * @param actorExecution		the execution/orientation of the actors
-   * @param forwardsInput		whether the actor handler forwards input to the sub-actors
-   * @param restrictions		further class/interface restrictions, use null or empty array for no restrictions
-   */
-  public ActorHandlerInfo(boolean canContainStandalones, boolean canContainSource, ActorExecution actorExecution, boolean forwardsInput, Class[] restrictions) {
-    this(canContainStandalones, canContainSource, actorExecution, forwardsInput, restrictions, true);
-  }
-
-  /**
-   * Initializes the info.
-   *
-   * @param canContainStandalones	whether the actor can manage standalones
-   * @param canContainSource		whether the actor can contain a source
-   * @param actorExecution		the execution/orientation of the actors
-   * @param forwardsInput		whether the actor handler forwards input to the sub-actors
-   * @param restrictions		further class/interface restrictions, use null or empty array for no restrictions
-   * @param canEncloseActors		whether this actor can be used to enclose other actors
-   */
-  public ActorHandlerInfo(boolean canContainStandalones, boolean canContainSource, ActorExecution actorExecution, boolean forwardsInput, Class[] restrictions, boolean canEncloseActors) {
+  public ActorHandlerInfo() {
     super();
+    allowStandalones(false);
+    allowSource(true);
+    allowEncloseActors(true);
+    forwardsInput(false);
+    restrictions(null);
+    actorExecution(ActorExecution.UNDEFINED);
+  }
 
-    m_CanContainStandalones = canContainStandalones;
-    m_CanContainSource      = canContainSource;
-    m_CanEncloseActors      = canEncloseActors;
-    m_ActorExecution        = actorExecution;
-    m_ForwardsInput         = forwardsInput;
-    if (restrictions == null)
-      m_Restrictions = new Class[0];
-    else
-      m_Restrictions = restrictions.clone();
+  /**
+   * Initializes the info with the provided info object.
+   *
+   * @param info 	the other info object to initialize with
+   */
+  public ActorHandlerInfo(ActorHandlerInfo info) {
+    super();
+    allowStandalones(info.canContainStandalones());
+    allowSource(info.canContainSource());
+    allowEncloseActors(info.canEncloseActors());
+    forwardsInput(info.getForwardsInput());
+    restrictions(info.getRestrictions());
+    actorExecution(getActorExecution());
+  }
+
+  /**
+   * Sets whether to allow standalones.
+   *
+   * @param value 	true if to allow
+   * @return		itself
+   */
+  public ActorHandlerInfo allowStandalones(boolean value) {
+    m_CanContainStandalones = value;
+    return this;
   }
 
   /**
@@ -124,12 +102,34 @@ public class ActorHandlerInfo
   }
 
   /**
+   * Sets whether to allow source.
+   *
+   * @param value 	true if to allow
+   * @return		itself
+   */
+  public ActorHandlerInfo allowSource(boolean value) {
+    m_CanContainSource = value;
+    return this;
+  }
+
+  /**
    * Returns whether a source is allowed in this group or not.
    *
    * @return		true if a source is allowed
    */
   public boolean canContainSource() {
     return m_CanContainSource;
+  }
+
+  /**
+   * Sets whether to allow enclosing of actors.
+   *
+   * @param value 	true if to allow
+   * @return		itself
+   */
+  public ActorHandlerInfo allowEncloseActors(boolean value) {
+    m_CanEncloseActors = value;
+    return this;
   }
 
   /**
@@ -142,6 +142,17 @@ public class ActorHandlerInfo
   }
 
   /**
+   * Sets how the actors are executed.
+   *
+   * @param value 	the execution
+   * @return		itself
+   */
+  public ActorHandlerInfo actorExecution(ActorExecution value) {
+    m_ActorExecution = value;
+    return this;
+  }
+
+  /**
    * Returns the how the actors are executed.
    *
    * @return		how the actors are executed
@@ -151,12 +162,36 @@ public class ActorHandlerInfo
   }
 
   /**
+   * Sets whether to actor forwards the input.
+   *
+   * @param value 	true if it forwards
+   * @return		itself
+   */
+  public ActorHandlerInfo forwardsInput(boolean value) {
+    m_ForwardsInput = value;
+    return this;
+  }
+
+  /**
    * Returns whether the handler forwards the input.
    *
    * @return		true if handler forwards the input
    */
   public boolean getForwardsInput() {
     return m_ForwardsInput;
+  }
+
+  /**
+   * Sets the restrictions in terms of classes/interfaces.
+   *
+   * @param value 	the restrictions, null or empty array for none
+   * @return		itself
+   */
+  public ActorHandlerInfo restrictions(Class[] value) {
+    if (value == null)
+      value = new Class[0];
+    m_Restrictions = value;
+    return this;
   }
 
   /**
@@ -186,9 +221,11 @@ public class ActorHandlerInfo
   @Override
   public String toString() {
     return
-        "standalones=" + m_CanContainStandalones + ", "
-      + "execution=" + m_ActorExecution + ", "
-      + "forwardsInput=" + m_ForwardsInput + ", "
-      + "restrictions=" + Utils.arrayToString(m_Restrictions);
+      "standalones=" + canContainStandalones() + ", "
+	+ "source=" + canContainSource()
+	+ "execution=" + getActorExecution() + ", "
+	+ "forwardsInput=" + getForwardsInput() + ", "
+	+ "encloseActors=" + canEncloseActors() + ", "
+	+ "restrictions=" + Utils.arrayToString(getRestrictions());
   }
 }

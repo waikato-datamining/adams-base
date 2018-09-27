@@ -15,7 +15,7 @@
 
 /*
  * CallableActors.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -149,7 +149,10 @@ public class CallableActors
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(true, ActorExecution.UNDEFINED, false);
+    return new ActorHandlerInfo()
+      .allowStandalones(true)
+      .actorExecution(ActorExecution.UNDEFINED)
+      .forwardsInput(false);
   }
 
   /**

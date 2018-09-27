@@ -15,7 +15,7 @@
 
 /*
  * Flow.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -896,7 +896,10 @@ public class Flow
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(true, ActorExecution.SEQUENTIAL, false);
+    return new ActorHandlerInfo()
+      .allowStandalones(true)
+      .actorExecution(ActorExecution.SEQUENTIAL)
+      .forwardsInput(false);
   }
 
   /**

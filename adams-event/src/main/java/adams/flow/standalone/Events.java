@@ -329,7 +329,12 @@ public class Events
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(true, true, ActorExecution.UNDEFINED, false, new Class[]{Event.class});
+    return new ActorHandlerInfo()
+      .allowStandalones(true)
+      .allowSource(true)
+      .actorExecution(ActorExecution.UNDEFINED)
+      .forwardsInput(false)
+      .restrictions(new Class[]{Event.class});
   }
 
   /**

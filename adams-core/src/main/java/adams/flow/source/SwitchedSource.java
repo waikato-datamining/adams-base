@@ -409,7 +409,10 @@ public class SwitchedSource
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(false, ActorExecution.SEQUENTIAL, false);
+    return new ActorHandlerInfo()
+      .allowStandalones(false)
+      .actorExecution(ActorExecution.SEQUENTIAL)
+      .forwardsInput(false);
   }
 
   /**

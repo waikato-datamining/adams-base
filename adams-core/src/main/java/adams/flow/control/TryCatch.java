@@ -519,7 +519,10 @@ public class TryCatch
    */
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(false, ActorExecution.UNDEFINED, true);
+    return new ActorHandlerInfo()
+      .allowStandalones(false)
+      .actorExecution(ActorExecution.UNDEFINED)
+      .forwardsInput(true);
   }
 
   /**

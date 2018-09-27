@@ -87,7 +87,10 @@ public class ClipboardActorContainer
    * @return		the info
    */
   public ActorHandlerInfo getActorHandlerInfo() {
-    return new ActorHandlerInfo(true, ActorExecution.UNDEFINED, false);
+    return new ActorHandlerInfo()
+      .allowStandalones(true)
+      .actorExecution(ActorExecution.UNDEFINED)
+      .forwardsInput(false);
   }
 
   /**

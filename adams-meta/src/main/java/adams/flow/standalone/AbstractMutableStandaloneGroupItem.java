@@ -357,7 +357,12 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
     if (getActorFilter() != null)
-      return new ActorHandlerInfo(true, false, ActorExecution.UNDEFINED, false, getActorFilter());
+      return new ActorHandlerInfo()
+        .allowStandalones(true)
+        .allowSource(false)
+        .actorExecution(ActorExecution.UNDEFINED)
+        .forwardsInput(false)
+        .restrictions(getActorFilter());
     else
       return m_Actors.getActorHandlerInfo();
   }
