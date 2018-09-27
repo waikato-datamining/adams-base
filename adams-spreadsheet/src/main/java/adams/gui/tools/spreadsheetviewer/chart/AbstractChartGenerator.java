@@ -176,7 +176,7 @@ public abstract class AbstractChartGenerator
     Collection<ContentType>	types;
     ContentType			type;
     
-    result = Type.ABSOLUTE;
+    result = Type.DEFAULT;
     if ((colIndex < 0) || (colIndex >= sheet.getColumnCount()))
       return result;
     
@@ -191,7 +191,7 @@ public abstract class AbstractChartGenerator
     switch (type) {
       case DOUBLE:
       case LONG:
-	result = Type.ABSOLUTE;
+	result = Type.DEFAULT;
 	break;
       case DATE:
 	result = Type.DATE;
@@ -206,7 +206,7 @@ public abstract class AbstractChartGenerator
 	result = Type.DATETIMEMSEC;
 	break;
       default:
-	result = Type.ABSOLUTE;
+	result = Type.DEFAULT;
     }
     
     return result;
@@ -224,7 +224,7 @@ public abstract class AbstractChartGenerator
     NamedCounter	counter;
     Iterator<String>	types;
     
-    result  = Type.ABSOLUTE;
+    result  = Type.DEFAULT;
 
     // determine most common type
     counter = new NamedCounter();

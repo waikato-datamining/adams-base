@@ -14,23 +14,22 @@
  */
 
 /*
- * LogPercentageAxisModel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * LogAxisModel.java
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.axis;
 
 /**
- * An axis model for displaying ln(percentage) values.
+ * An axis model for displaying ln values.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class LogPercentageAxisModel
+public class LogAxisModel
   extends AbstractAxisModel {
 
   /** for serialization. */
-  private static final long serialVersionUID = 4789707129254053023L;
+  private static final long serialVersionUID = -8737139976887145167L;
 
   /**
    * Checks whether the data range can be handled by the model.
@@ -45,13 +44,39 @@ public class LogPercentageAxisModel
   }
 
   /**
+   * Adjusts the minimum to work with this model.
+   *
+   * @param min		the minimum to adjust
+   * @return		the updated value
+   */
+  public double adjustMinimum(double min) {
+    if (min <= 0.0)
+      return 1.0e-6;
+    else
+      return min;
+  }
+
+  /**
+   * Adjusts the maximum to work with this model.
+   *
+   * @param max		the maximum to adjust
+   * @return		the updated value
+   */
+  public double adjustMaximum(double max) {
+    if (max <= 0.0)
+      return 1.0e-5;
+    else
+      return max;
+  }
+
+  /**
    * Returns the display name of this model.
    *
    * @return		the display name
    */
   @Override
   public String getDisplayName() {
-    return "Log percent";
+    return "Log";
   }
 
   /**
@@ -62,18 +87,7 @@ public class LogPercentageAxisModel
    */
   @Override
   protected String doValueToDisplay(double value) {
-    String	result;
-    double	raw;
-
-    if (Double.isNaN(value)) {
-      result = getActualFormatter().format(value);
-    }
-    else {
-      raw    = (value - m_Minimum) / (m_Maximum - m_Minimum) * 100.0;
-      result = getActualFormatter().format(Math.log(raw));
-    }
-
-    return result;
+    return getActualFormatter().format(value);
   }
 
   /**
@@ -108,7 +122,7 @@ public class LogPercentageAxisModel
   @Override
   public double posToValue(int pos) {
     double	result;
-    int	size;
+    int		size;
     double	tmp;
 
     validate();

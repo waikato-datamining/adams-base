@@ -758,7 +758,7 @@ public class SequencePlotter
     SimpleTickGenerator	tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("x");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
@@ -782,7 +782,7 @@ public class SequencePlotter
     SimpleTickGenerator	tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("y");
     result.setShowGridLines(true);
     result.setLengthTicks(4);

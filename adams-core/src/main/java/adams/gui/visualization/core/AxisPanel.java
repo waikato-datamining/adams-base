@@ -29,8 +29,8 @@ import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.visualization.core.axis.AbsoluteAxisModel;
 import adams.gui.visualization.core.axis.AbstractAxisModel;
+import adams.gui.visualization.core.axis.DefaultAxisModel;
 import adams.gui.visualization.core.axis.Direction;
 import adams.gui.visualization.core.axis.FlippableAxisModel;
 import adams.gui.visualization.core.axis.Orientation;
@@ -164,7 +164,7 @@ public class AxisPanel
     m_ShowGridLines          = false;
     m_Visibility             = Visibility.VISIBLE;
 
-    m_Model = new AbsoluteAxisModel();
+    m_Model = new DefaultAxisModel();
     m_Model.setParent(this);
 
     setToolTipText("Right-click for menu");
@@ -211,7 +211,7 @@ public class AxisPanel
     catch (Exception e) {
       System.err.println("Failed to create instance of axis model:");
       e.printStackTrace();
-      m_Model = new AbsoluteAxisModel();
+      m_Model = new DefaultAxisModel();
     }
     m_Model.assign(other.getAxisModel());
     m_Model.setParent(this);

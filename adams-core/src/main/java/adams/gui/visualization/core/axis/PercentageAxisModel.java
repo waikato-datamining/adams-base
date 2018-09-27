@@ -15,7 +15,7 @@
 
 /*
  * PercentageAxisModel.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.axis;
@@ -24,7 +24,6 @@ package adams.gui.visualization.core.axis;
  * An axis model for displaying percentages.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PercentageAxisModel
   extends AbstractAxisModel
@@ -69,6 +68,26 @@ public class PercentageAxisModel
   @Override
   public boolean canHandle(double min, double max) {
     return true;
+  }
+
+  /**
+   * Adjusts the minimum to work with this model.
+   *
+   * @param min		the minimum to adjust
+   * @return		the updated value
+   */
+  public double adjustMinimum(double min) {
+    return min;
+  }
+
+  /**
+   * Adjusts the maximum to work with this model.
+   *
+   * @param max		the maximum to adjust
+   * @return		the updated value
+   */
+  public double adjustMaximum(double max) {
+    return max;
   }
 
   /**

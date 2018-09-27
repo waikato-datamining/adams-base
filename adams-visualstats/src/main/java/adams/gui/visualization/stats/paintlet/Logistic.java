@@ -89,9 +89,9 @@ extends AbstractProbabilityPaintlet{
     m_AxisBottom = getPanel().getPlot().getAxis(Axis.BOTTOM);
     m_AxisLeft = getPanel().getPlot().getAxis(Axis.LEFT);
 
-    m_AxisBottom.setType(Type.ABSOLUTE);
+    m_AxisBottom.setType(Type.DEFAULT);
     m_AxisBottom.setNumberFormat("#.##");
-    m_AxisLeft.setType(Type.LOG_ABSOLUTE);
+    m_AxisLeft.setType(Type.LOG);
     m_AxisLeft.setNumberFormat("#.##");
   }
 

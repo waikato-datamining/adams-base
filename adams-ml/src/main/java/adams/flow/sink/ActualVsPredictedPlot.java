@@ -843,7 +843,7 @@ public class ActualVsPredictedPlot
     FancyTickGenerator tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("Actual");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
@@ -869,7 +869,7 @@ public class ActualVsPredictedPlot
     FancyTickGenerator	tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("Predicted");
     result.setShowGridLines(true);
     result.setLengthTicks(4);

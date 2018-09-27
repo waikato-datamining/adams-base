@@ -138,7 +138,7 @@ public class HistogramOptions
     FancyTickGenerator	tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
@@ -165,7 +165,7 @@ public class HistogramOptions
     FancyTickGenerator	tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("");
     result.setShowGridLines(true);
     result.setLengthTicks(4);

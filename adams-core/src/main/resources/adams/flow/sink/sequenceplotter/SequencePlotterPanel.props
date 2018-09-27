@@ -31,7 +31,7 @@ Title=Sequence plotter
 # - .TopMargin=double (0-1)
 # - .BottomMargin=0.0
 # - .ShowGridLines=bool
-# - .Type=ABSOLUTE|PERCENTAGE|LOG10_ABSOLUTE|LOG10_PERCENTAGE|LOG_ABSOLUTE|LOG_PERCENTAGE|DATE|TIME|DATETIME
+# - .Type=DEFAULT|PERCENTAGE|LOG10|LOG2|LOG|DATE|TIME|DATETIME
 # - .NumberFormat=<positive>;<negative>  see java.text.DecimalFormat/java.text.SimpleDateFormat
 
 # Top axis
@@ -52,7 +52,7 @@ Axis.Left.LengthTicks=6
 Axis.Left.TopMargin=0.0
 Axis.Left.BottomMargin=0.0
 Axis.Left.ShowGridLines=true
-Axis.Left.Type=ABSOLUTE
+Axis.Left.Type=DEFAULT
 Axis.Left.NumberFormat=0.00E0;-0.00E0
 
 # Bottom axis
@@ -67,7 +67,7 @@ Axis.Bottom.LengthTicks=6
 Axis.Bottom.TopMargin=0.0
 Axis.Bottom.BottomMargin=0.0
 Axis.Bottom.ShowGridLines=true
-Axis.Bottom.Type=ABSOLUTE
+Axis.Bottom.Type=DEFAULT
 Axis.Bottom.NumberFormat=0.00E0;-0.00E0
 
 ##############

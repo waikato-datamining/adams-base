@@ -76,7 +76,7 @@ public class BoxPlotGraph
   protected void initGUI() {
     super.initGUI();
     setAxisVisibility(Axis.LEFT, Visibility.VISIBLE);
-    m_AxisLeft.setType(Type.ABSOLUTE);
+    m_AxisLeft.setType(Type.DEFAULT);
     m_AxisLeft.setTickGenerator(new FancyTickGenerator());
     m_AxisLeft.setNumberFormat("#.##");
     m_AxisLeft.setNthValueToShow(2);

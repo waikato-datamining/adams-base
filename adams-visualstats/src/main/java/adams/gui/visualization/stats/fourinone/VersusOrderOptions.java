@@ -93,7 +93,7 @@ public class VersusOrderOptions
     FancyTickGenerator	tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("Order");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
@@ -120,7 +120,7 @@ public class VersusOrderOptions
     FancyTickGenerator	tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("Residuals");
     result.setShowGridLines(true);
     result.setLengthTicks(4);

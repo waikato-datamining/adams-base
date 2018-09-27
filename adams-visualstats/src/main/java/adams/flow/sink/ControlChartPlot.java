@@ -564,7 +564,7 @@ public class ControlChartPlot
     FancyTickGenerator	tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("sample");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
@@ -590,7 +590,7 @@ public class ControlChartPlot
     FancyTickGenerator	tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("y");
     result.setShowGridLines(true);
     result.setLengthTicks(4);

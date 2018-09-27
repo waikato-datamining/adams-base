@@ -420,7 +420,7 @@ public class TimeseriesDisplay
     FancyTickGenerator			tick;
 
     result = new DefaultTimeseriesYAxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("value");
     result.setShowGridLines(true);
     result.setLengthTicks(4);

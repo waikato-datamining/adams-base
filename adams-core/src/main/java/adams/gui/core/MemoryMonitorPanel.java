@@ -137,7 +137,7 @@ public class MemoryMonitorPanel
     // left
     options = new AxisPanelOptions();
     options.setLabel(props.getPath("Axis.Left.Title", "MB"));
-    options.setType(Type.valueOf((AbstractOption) null, props.getPath("Axis.Left.Type", Type.ABSOLUTE.toString())));
+    options.setType(Type.valueOf((AbstractOption) null, props.getPath("Axis.Left.Type", Type.DEFAULT.toString())));
     options.setTickGenerator(AbstractTickGenerator.forCommandLine(props.getProperty("Axis.Left.TickGenerator", new FancyTickGenerator().toString())));
     options.setWidth(props.getInteger("Axis.Left.Width", 80));
     options.setNthValueToShow(props.getInteger("Axis.Left.NthValueToShow", 2));

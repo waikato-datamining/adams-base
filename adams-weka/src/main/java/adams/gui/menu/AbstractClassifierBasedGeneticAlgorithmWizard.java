@@ -34,8 +34,6 @@ import adams.event.GeneticFitnessChangeListener;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
-import adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm;
-import adams.opt.genetic.OutputPrefixType;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
@@ -56,6 +54,8 @@ import adams.gui.wizard.PropertySheetPanelPage;
 import adams.gui.wizard.StartPage;
 import adams.gui.wizard.WekaSelectMultipleDatasetsPage;
 import adams.gui.wizard.WizardPane;
+import adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm;
+import adams.opt.genetic.OutputPrefixType;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 
@@ -160,7 +160,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
     FancyTickGenerator tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("iteration");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
@@ -186,7 +186,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
     FancyTickGenerator	tick;
 
     result = new AxisPanelOptions();
-    result.setType(Type.ABSOLUTE);
+    result.setType(Type.DEFAULT);
     result.setLabel("measure");
     result.setShowGridLines(true);
     result.setLengthTicks(4);

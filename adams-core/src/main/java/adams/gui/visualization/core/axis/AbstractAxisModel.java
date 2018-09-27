@@ -166,6 +166,22 @@ public abstract class AbstractAxisModel
   public abstract boolean canHandle(double min, double max);
 
   /**
+   * Adjusts the minimum to work with this model.
+   *
+   * @param min		the minimum to adjust
+   * @return		the updated value
+   */
+  public abstract double adjustMinimum(double min);
+
+  /**
+   * Adjusts the maximum to work with this model.
+   *
+   * @param max		the maximum to adjust
+   * @return		the updated value
+   */
+  public abstract double adjustMaximum(double max);
+
+  /**
    * Sets the minimum to display on the axis.
    *
    * @param value	the minimum value
@@ -709,10 +725,10 @@ public abstract class AbstractAxisModel
    */
   public void assign(AbstractAxisModel model) {
     m_Parent             = model.m_Parent;
-    m_Minimum            = model.m_Minimum;
-    m_Maximum            = model.m_Maximum;
-    m_ManualMinimum      = model.m_ManualMinimum;
-    m_ManualMaximum      = model.m_ManualMaximum;
+    m_Minimum            = adjustMinimum(model.m_Minimum);
+    m_Maximum            = adjustMaximum(model.m_Maximum);
+    m_ManualMinimum      = (model.m_ManualMinimum == null ? null : adjustMinimum(model.m_ManualMinimum));
+    m_ManualMaximum      = (model.m_ManualMaximum == null ? null : adjustMaximum(model.m_ManualMaximum));
     m_MarginTop          = model.m_MarginTop;
     m_MarginBottom       = model.m_MarginBottom;
     m_ManualMarginTop    = model.m_ManualMarginTop;
@@ -724,6 +740,8 @@ public abstract class AbstractAxisModel
     m_TickGenerator      = model.getTickGenerator().shallowCopy();
     m_TickGenerator.setParent(this);
     m_NthValueToShow     = model.getNthValueToShow();
+    m_Formatter          = model.m_Formatter;
+    m_CustomerFormatter  = model.m_CustomerFormatter;
 
     invalidate();
     update();

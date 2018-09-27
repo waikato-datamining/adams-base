@@ -159,7 +159,7 @@ public class AxisPanelOptions
 
     m_OptionManager.add(
 	    "type", "type",
-	    Type.ABSOLUTE);
+	    Type.DEFAULT);
 
     m_OptionManager.add(
 	    "hide-grid-lines", "showGridLines",

@@ -20,17 +20,6 @@
 
 package adams.gui.visualization.container;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.HashSet;
-import java.util.Hashtable;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
@@ -57,6 +46,16 @@ import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.axis.Visibility;
 import adams.gui.visualization.core.plot.Axis;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.HashSet;
+import java.util.Hashtable;
 
 /**
  * Special panel for displaying the DataContainer data.
@@ -222,7 +221,7 @@ public abstract class DataContainerPanel<T extends DataContainer, M extends Abst
 	m_PlotPanel.getAxis(axis).setBottomMargin(props.getDouble("Axis." + axis + ".BottomMargin", 0.0));
 	m_PlotPanel.getAxis(axis).setTopMargin(props.getDouble("Axis." + axis + ".TopMargin", 0.0));
 	m_PlotPanel.getAxis(axis).setShowGridLines(props.getBoolean("Axis." + axis + ".ShowGridLines", true));
-	m_PlotPanel.getAxis(axis).setType(Type.valueOf((AbstractOption) null, props.getPath("Axis." + axis + ".Type", "Absolute")));
+	m_PlotPanel.getAxis(axis).setType(Type.valueOf((AbstractOption) null, props.getPath("Axis." + axis + ".Type", "Default")));
 	m_PlotPanel.getAxis(axis).setNumberFormat(props.getPath("Axis." + axis + ".NumberFormat", "0.00E0;-0.00E0"));
       }
     }

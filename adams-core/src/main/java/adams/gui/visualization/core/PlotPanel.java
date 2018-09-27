@@ -207,19 +207,19 @@ public class PlotPanel
     add(m_PanelContent, BorderLayout.CENTER);
 
     // axes
-    m_AxisLeft = new AxisPanel(Direction.VERTICAL, Orientation.LEFT_TO_RIGHT, Type.ABSOLUTE);
+    m_AxisLeft = new AxisPanel(Direction.VERTICAL, Orientation.LEFT_TO_RIGHT, Type.DEFAULT);
     m_AxisLeft.setAxisWidth(m_AxisWidth);
     m_AxisLeft.addChangeListener(m_PanelContent);
 
-    m_AxisRight = new AxisPanel(Direction.VERTICAL, Orientation.RIGHT_TO_LEFT, Type.ABSOLUTE);
+    m_AxisRight = new AxisPanel(Direction.VERTICAL, Orientation.RIGHT_TO_LEFT, Type.DEFAULT);
     m_AxisRight.setAxisWidth(m_AxisWidth);
     m_AxisRight.addChangeListener(m_PanelContent);
 
-    m_AxisTop = new AxisPanel(Direction.HORIZONTAL, Orientation.RIGHT_TO_LEFT, Type.ABSOLUTE);
+    m_AxisTop = new AxisPanel(Direction.HORIZONTAL, Orientation.RIGHT_TO_LEFT, Type.DEFAULT);
     m_AxisTop.setAxisWidth(m_AxisWidth);
     m_AxisTop.addChangeListener(m_PanelContent);
 
-    m_AxisBottom = new AxisPanel(Direction.HORIZONTAL, Orientation.LEFT_TO_RIGHT, Type.ABSOLUTE);
+    m_AxisBottom = new AxisPanel(Direction.HORIZONTAL, Orientation.LEFT_TO_RIGHT, Type.DEFAULT);
     m_AxisBottom.setAxisWidth(m_AxisWidth);
     m_AxisBottom.addChangeListener(m_PanelContent);
 
@@ -287,10 +287,10 @@ public class PlotPanel
       m_AxisLeft.setType(Type.PERCENTAGE);
       m_AxisLeft.setMinimum(1.0);
       m_AxisLeft.setMaximum(11.0);
-      m_AxisRight.setType(Type.ABSOLUTE);
+      m_AxisRight.setType(Type.DEFAULT);
       m_AxisRight.setMinimum(-2.0);
       m_AxisRight.setMaximum(11.0);
-      m_AxisTop.setType(Type.ABSOLUTE);
+      m_AxisTop.setType(Type.DEFAULT);
       m_AxisTop.setMinimum(0.0);
       m_AxisTop.setMaximum(1.0);
       m_AxisBottom.setType(Type.PERCENTAGE);

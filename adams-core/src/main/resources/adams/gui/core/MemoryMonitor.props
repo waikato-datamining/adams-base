@@ -27,14 +27,14 @@ ColorProvider=adams.gui.visualization.core.CustomColorProvider -color #0000ff -c
 # - .TopMargin=double (0-1)
 # - .BottomMargin=0.0
 # - .ShowGridLines=bool
-# - .Type=ABSOLUTE|PERCENTAGE|LOG10_ABSOLUTE|LOG10_PERCENTAGE|LOG_ABSOLUTE|LOG_PERCENTAGE|DATE|TIME|DATETIME
+# - .Type=DEFAULT|PERCENTAGE|LOG10|LOG2|LOG|DATE|TIME|DATETIME
 # - .NumberFormat=<positive>;<negative>  see java.text.DecimalFormat/java.text.SimpleDateFormat
 
 # the left axis
 Axis.Left.Title=MB
 Axis.Left.Width=80
 Axis.Left.Format=0
-Axis.Left.Type=Absolute
+Axis.Left.Type=Default
 Axis.Left.TickGenerator=adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 10
 Axis.Left.NthValueToShow=2
 

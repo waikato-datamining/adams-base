@@ -15,7 +15,7 @@
 
 /*
  * Type.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.axis;
@@ -27,23 +27,16 @@ import adams.core.option.AbstractOption;
  * Enumeration for the type of axis.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum Type
   implements EnumWithCustomDisplay<Type> {
 
   /** displaying absolute values (default). */
-  ABSOLUTE(AbsoluteAxisModel.class),
+  DEFAULT(DefaultAxisModel.class),
   /** displaying percentage values. */
   PERCENTAGE(PercentageAxisModel.class),
-  /** displaying log10(absolute) values. */
-  LOG10_ABSOLUTE(Log10AbsoluteAxisModel.class),
-  /** displaying log10(percentage) values. */
-  LOG10_PERCENTAGE(Log10PercentageAxisModel.class),
-  /** displaying ln(absolute) values. */
-  LOG_ABSOLUTE(LogAbsoluteAxisModel.class),
-  /** displaying ln(percentage) values. */
-  LOG_PERCENTAGE(LogPercentageAxisModel.class),
+  /** displaying ln values. */
+  LOG(LogAxisModel.class),
   /** displaying dates. */
   DATE(DateAxisModel.class),
   /** displaying times. */
