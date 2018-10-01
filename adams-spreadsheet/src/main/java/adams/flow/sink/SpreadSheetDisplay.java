@@ -288,6 +288,7 @@ public class SpreadSheetDisplay
       m_Table.setNumDecimals(m_Owner.getNumDecimals());
       m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_Owner.getCellRenderingCustomizer()));
       m_Table.setShowFormulas(m_Owner.getShowFormulas());
+      m_Table.setUseOptimalColumnWidths(m_Owner.getOptimalColumnWidth());
     }
 
     /**
@@ -760,6 +761,7 @@ public class SpreadSheetDisplay
     m_Table.setNumDecimals(m_NumDecimals);
     m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_CellRenderingCustomizer));
     m_Table.setShowFormulas(m_ShowFormulas);
+    m_Table.setUseOptimalColumnWidths(m_OptimalColumnWidth);
   }
 
   /**
