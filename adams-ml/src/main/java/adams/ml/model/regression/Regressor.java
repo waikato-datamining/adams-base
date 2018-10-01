@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Regressor.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.model.regression;
@@ -23,10 +23,9 @@ package adams.ml.model.regression;
 import adams.ml.model.Algorithm;
 
 /**
- * Interface for classification algorithms.
+ * Interface for regression algorithms.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface Regressor
   extends Algorithm<RegressionModel> {
