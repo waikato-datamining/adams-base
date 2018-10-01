@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ClassificationModel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.model.classification;
@@ -24,10 +24,9 @@ import adams.data.spreadsheet.Row;
 import adams.ml.model.Model;
 
 /**
- * Interface for regression models.
+ * Interface for classification models.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface ClassificationModel
   extends Model {
