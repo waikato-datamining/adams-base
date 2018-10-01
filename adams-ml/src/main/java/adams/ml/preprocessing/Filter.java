@@ -13,28 +13,43 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * TrainableFilter.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * Filter.java
+ * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.preprocessing;
 
+import adams.ml.capabilities.Capabilities;
+import adams.ml.capabilities.CapabilitiesHandler;
 import adams.ml.data.Dataset;
 
 /**
- * Interface for filters that can be trained/initialized on a batch of data.
+ * Interface for filters.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface TrainableFilter {
+public interface Filter
+  extends CapabilitiesHandler {
 
   /**
-   * Initializes the filter on the dataset.
+   * Returns the capabilities.
    *
-   * @param data  	the data to initialize the filter with
-   * @throws Exception	if initialization fails
+   * @return		the capabilities
    */
-  public void initFilter(Dataset data) throws Exception;
+  public Capabilities getCapabilities();
+
+  /**
+   * Returns whether the filter has been initialized.
+   *
+   * @return		true if initialized
+   */
+  public boolean isInitialized();
+
+  /**
+   * Returns the output format.
+   *
+   * @return		the format, null if not yet defined
+   */
+  public Dataset getOutputFormat();
 }

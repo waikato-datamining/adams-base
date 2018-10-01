@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StreamFilter.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.preprocessing;
@@ -26,7 +26,6 @@ import adams.data.spreadsheet.Row;
  * Interface for filters that filter a data stream, i.e., row by row.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface StreamFilter
   extends BatchFilter {

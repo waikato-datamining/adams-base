@@ -23,15 +23,31 @@ adams.flow.transformer.summarystatistics.SummaryStatistic=\
 adams.ml.model.classification.Classifier=\
   adams.ml.model.classification
 
+# the multi-target classifiers
+adams.ml.model.classification.MultiTargetClassifier=\
+  adams.ml.model.classification
+
 # the incremental classifiers
 adams.ml.model.classification.IncrementalClassifier=\
+  adams.ml.model.classification
+
+# the incremental multi-target classifiers
+adams.ml.model.classification.IncrementalMultiTargetClassifier=\
   adams.ml.model.classification
 
 # the regressors
 adams.ml.model.regression.Regressor=\
   adams.ml.model.regression
 
+# the multi-target regressors
+adams.ml.model.regression.MultiTargetRegressor=\
+  adams.ml.model.regression
+
 # the incremental regressors
+adams.ml.model.regression.IncrementalMultiTargetRegressor=\
+  adams.ml.model.regression
+
+# the multi-target incremental regressors
 adams.ml.model.regression.IncrementalRegressor=\
   adams.ml.model.regression
 
@@ -42,3 +58,13 @@ adams.ml.model.clustering.Clusterer=\
 # the incremental clusterers
 adams.ml.model.clustering.IncrementalClusterer=\
   adams.ml.model.clustering
+
+# batch filters
+adams.ml.preprocessing.BatchFilter=\
+  adams.ml.preprocessing.supervised,\
+  adams.ml.preprocessing.unsupervised
+
+# stream filters
+adams.ml.preprocessing.StreamFilter=\
+  adams.ml.preprocessing.supervised,\
+  adams.ml.preprocessing.unsupervised

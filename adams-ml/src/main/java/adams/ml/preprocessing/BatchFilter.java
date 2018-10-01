@@ -13,32 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BatchFilter.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.preprocessing;
 
-import adams.ml.capabilities.Capabilities;
-import adams.ml.capabilities.CapabilitiesHandler;
 import adams.ml.data.Dataset;
 
 /**
  * Interface for filters that filter data in batches.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface BatchFilter
-  extends CapabilitiesHandler {
-
-  /**
-   * Returns the capabilities.
-   *
-   * @return		the capabilities
-   */
-  public Capabilities getCapabilities();
+  extends Filter  {
 
   /**
    * Filters the dataset coming through.
