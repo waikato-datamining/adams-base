@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Capabilities.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.capabilities;
@@ -34,7 +34,6 @@ import java.util.Set;
  * Encapsulates the capabilities for an algorithm.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Capabilities
   extends LoggingObject
@@ -499,8 +498,6 @@ public class Capabilities
 
     result = new StringBuilder();
 
-    result.append("Owner: ").append(getOwner() != null ? getOwner().getClass().getName() : "-none-");
-    result.append("\n");
     caps = new ArrayList<>(capabilities());
     Collections.sort(caps);
     result.append("Capabilities: ").append(caps.toString());
