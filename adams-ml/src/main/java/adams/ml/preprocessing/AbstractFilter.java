@@ -288,14 +288,14 @@ public abstract class AbstractFilter
         throw new Exception("Unhandled column determination: " + m_Columns);
     }
 
+    m_ClassColumns.add(data.getClassAttributeIndices());
+
     caps = getCapabilities();
     if (cols != null) {
       for (int col : cols.toArray()) {
 	msg = CapabilitiesHelper.handles(caps, data, col);
 	if (msg == null) {
-	  if (data.isClassAttribute(col))
-	    m_ClassColumns.add(col);
-	  else
+	  if (!data.isClassAttribute(col))
 	    m_DataColumns.add(col);
 	}
       }
@@ -304,9 +304,7 @@ public abstract class AbstractFilter
       for (i = 0; i < data.getColumnCount(); i++) {
 	msg = CapabilitiesHelper.handles(caps, data, i);
 	if (msg == null) {
-	  if (data.isClassAttribute(i))
-	    m_ClassColumns.add(i);
-	  else
+	  if (!data.isClassAttribute(i))
 	    m_DataColumns.add(i);
 	}
       }
@@ -356,7 +354,7 @@ public abstract class AbstractFilter
 
     for (i = 0; i < cols.size(); i++) {
       colName = input.getOwner().getColumnName(cols.get(i));
-      data.addCell("" + colName + i).setNative(input.getCell(cols.get(i)));
+      data.addCell("" + colName + i).setNative(input.getCell(cols.get(i)).getNative());
     }
   }
 }
