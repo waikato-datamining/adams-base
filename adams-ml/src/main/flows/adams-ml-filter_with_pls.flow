@@ -1,0 +1,19 @@
+# Project: adams
+# Date: 2018-10-02 20:10:12
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-ml,adams-spreadsheet,adams-visualstats
+#
+adams.flow.control.Flow -annotation "Filters a spectral dataset using the SIMPLS PLS filter." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -width 740 -provider "adams.flow.sink.SpreadSheetDisplay -num-decimals 6 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -optimal-column-width false -writer adams.data.io.output.NullWriter" -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/IDRC2016-Test_ManufacturerA.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.ml.data.DefaultDataset -text-columns 1"
+ adams.flow.transformer.ClassSelector -class 2
+ adams.flow.control.Tee -name original
+  adams.flow.transformer.SetVariable -var-name entry -var-value original
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.transformer.DatasetFilter -filter "adams.ml.preprocessing.supervised.PLS -col-range 3-last -algorithm \"com.github.waikatodatamining.matrix.algorithm.pls.SIMPLS -debug false -num-coefficients 0 -num-components 10 -preprocessing-type NONE\""
+ adams.flow.control.Tee -name filtered
+  adams.flow.transformer.SetVariable -var-name entry -var-value filtered
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
