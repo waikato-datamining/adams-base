@@ -42,21 +42,13 @@ public abstract class AbstractFilter
 
   private static final long serialVersionUID = -7832232995060446187L;
 
-  /**
-   * Defines how to determine columns to use in the filtering process.
-   */
-  public enum Columns {
-    RANGE,
-    REGEXP,
-  }
-
   /** how to determine columns to use for filtering. */
-  protected Columns m_Columns;
+  protected ColumnSubset m_ColumnSubset;
 
-  /** the columns to operate on (if {@link Columns#RANGE}). */
+  /** the columns to operate on (if {@link ColumnSubset#RANGE}). */
   protected SpreadSheetColumnRange m_ColRange;
 
-  /** the column names to operate on (if {@link Columns#REGEXP}). */
+  /** the column names to operate on (if {@link ColumnSubset#REGEXP}). */
   protected BaseRegExp m_ColRegExp;
 
   /** whether to drop the unprocessed columns (excl class columns). */
@@ -85,8 +77,8 @@ public abstract class AbstractFilter
     super.defineOptions();
 
     m_OptionManager.add(
-      "columns", "columns",
-      Columns.RANGE);
+      "column-subset", "columnSubset",
+      ColumnSubset.RANGE);
 
     m_OptionManager.add(
       "col-range", "colRange",
@@ -120,8 +112,8 @@ public abstract class AbstractFilter
    *
    * @param value 	the type
    */
-  public void setColumns(Columns value) {
-    m_Columns = value;
+  public void setColumnSubset(ColumnSubset value) {
+    m_ColumnSubset = value;
     reset();
   }
 
@@ -130,8 +122,8 @@ public abstract class AbstractFilter
    *
    * @return 		the type
    */
-  public Columns getColumns() {
-    return m_Columns;
+  public ColumnSubset getColumnSubset() {
+    return m_ColumnSubset;
   }
 
   /**
@@ -140,12 +132,12 @@ public abstract class AbstractFilter
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String columnsTipText() {
+  public String columnSubsetTipText() {
     return "Defines how to determine the columns to use for filtering.";
   }
 
   /**
-   * Sets the range of columns to use for filtering (if {@link Columns#RANGE}).
+   * Sets the range of columns to use for filtering (if {@link ColumnSubset#RANGE}).
    *
    * @param value 	the range
    */
@@ -155,7 +147,7 @@ public abstract class AbstractFilter
   }
 
   /**
-   * Returns the range of columns to use for filtering (if {@link Columns#RANGE}).
+   * Returns the range of columns to use for filtering (if {@link ColumnSubset#RANGE}).
    *
    * @return 		the range
    */
@@ -175,7 +167,7 @@ public abstract class AbstractFilter
 
   /**
    * Sets the regular expression to use on the column names to determine whether
-   *    * to use a column for filtering (if {@link Columns#REGEXP}).
+   *    * to use a column for filtering (if {@link ColumnSubset#REGEXP}).
    *
    * @param value 	the expression
    */
@@ -186,7 +178,7 @@ public abstract class AbstractFilter
 
   /**
    * Returns the regular expression to use on the column names to determine whether
-   * to use a column for filtering (if {@link Columns#REGEXP}).
+   * to use a column for filtering (if {@link ColumnSubset#REGEXP}).
    *
    * @return 		the expression
    */
@@ -266,7 +258,7 @@ public abstract class AbstractFilter
     String		msg;
 
     cols = null;
-    switch (m_Columns) {
+    switch (m_ColumnSubset) {
       case RANGE:
         if (!m_ColRange.isAllRange()) {
 	  m_ColRange.setSpreadSheet(data);
@@ -285,7 +277,7 @@ public abstract class AbstractFilter
         break;
 
       default:
-        throw new Exception("Unhandled column determination: " + m_Columns);
+        throw new Exception("Unhandled column determination: " + m_ColumnSubset);
     }
 
     m_ClassColumns.add(data.getClassAttributeIndices());
