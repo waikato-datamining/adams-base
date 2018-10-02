@@ -14,7 +14,7 @@
  */
 
 /*
- * AbstractBatchFilter.java
+ * AbstractColumnSubsetBatchFilter.java
  * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 
@@ -23,12 +23,12 @@ package adams.ml.preprocessing;
 import adams.ml.data.Dataset;
 
 /**
- * Ancestor for batch filters.
+ * Ancestor for batch filters with column subset handling.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractBatchFilter
-  extends AbstractFilter
+public abstract class AbstractColumnSubsetBatchFilter
+  extends AbstractColumnSubsetFilter
   implements BatchFilter {
 
   private static final long serialVersionUID = -3113520581439940331L;
@@ -37,10 +37,12 @@ public abstract class AbstractBatchFilter
    * Before the actual filter initialization. Initializes the columns.
    *
    * @param data 	the data to initialize with
+   * @see		#initColumns(Dataset)
    * @throws Exception	if initialization fails
    */
   protected void preInitFilter(Dataset data) throws Exception {
     reset();
+    initColumns(data);
   }
 
   /**

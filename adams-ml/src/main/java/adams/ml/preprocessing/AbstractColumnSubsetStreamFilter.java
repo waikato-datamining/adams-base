@@ -14,22 +14,23 @@
  */
 
 /*
- * AbstractBatchFilter.java
+ * AbstractStreamFilter.java
  * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.preprocessing;
 
+import adams.data.spreadsheet.Row;
 import adams.ml.data.Dataset;
 
 /**
- * Ancestor for batch filters.
+ * Ancestor for stream filters with column subset handling.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractBatchFilter
-  extends AbstractFilter
-  implements BatchFilter {
+public abstract class AbstractColumnSubsetStreamFilter
+  extends AbstractColumnSubsetFilter
+  implements StreamFilter {
 
   private static final long serialVersionUID = -3113520581439940331L;
 
@@ -37,10 +38,12 @@ public abstract class AbstractBatchFilter
    * Before the actual filter initialization. Initializes the columns.
    *
    * @param data 	the data to initialize with
+   * @see		#initColumns(Dataset)
    * @throws Exception	if initialization fails
    */
-  protected void preInitFilter(Dataset data) throws Exception {
+  protected void preInitFilter(Row data) throws Exception {
     reset();
+    initColumns((Dataset) data.getOwner());
   }
 
   /**
@@ -49,7 +52,7 @@ public abstract class AbstractBatchFilter
    * @param data 	the data to initialize with
    * @throws Exception	if initialization fails
    */
-  protected abstract void doInitFilter(Dataset data) throws Exception;
+  protected abstract void doInitFilter(Row data) throws Exception;
 
   /**
    * Initializes the output format.
@@ -57,17 +60,17 @@ public abstract class AbstractBatchFilter
    * @param data	the output format
    * @throws Exception	if initialization fails
    */
-  protected abstract Dataset initOutputFormat(Dataset data) throws Exception;
+  protected abstract Dataset initOutputFormat(Row data) throws Exception;
 
   /**
    * After the filter has been initialized. Sets the initialized flag.
    *
    * @param data 	the data to initialize with
-   * @see		#initOutputFormat(Dataset)
+   * @see		#initOutputFormat(Row)
    * @see		#isInitialized()
    * @throws Exception	if initialization fails
    */
-  protected void postInitFilter(Dataset data) throws Exception {
+  protected void postInitFilter(Row data) throws Exception {
     m_OutputFormat = initOutputFormat(data);
     m_Initialized = true;
   }
@@ -76,15 +79,37 @@ public abstract class AbstractBatchFilter
    * Initializes the filter.
    *
    * @param data 	the data to initialize with
-   * @see		#preInitFilter(Dataset)
-   * @see		#doInitFilter(Dataset)
-   * @see		#postInitFilter(Dataset)
+   * @see		#preInitFilter(Row)
+   * @see		#doInitFilter(Row)
+   * @see		#postInitFilter(Row)
    * @throws Exception	if initialization fails
    */
-  protected void initFilter(Dataset data) throws Exception {
+  protected void initFilter(Row data) throws Exception {
     preInitFilter(data);
     doInitFilter(data);
     postInitFilter(data);
+  }
+
+  /**
+   * Filters the dataset row coming through.
+   *
+   * @param data	the data to filter
+   * @return		the filtered data
+   * @throws Exception	if filtering fails
+   */
+  protected abstract Row doFilter(Row data) throws Exception;
+
+  /**
+   * Filters the dataset row coming through.
+   *
+   * @param data	the data to filter
+   * @return		the filtered data
+   * @throws Exception	if filtering fails
+   */
+  public Row filter(Row data) throws Exception {
+    if (!isInitialized())
+      initFilter(data);
+    return doFilter(data);
   }
 
   /**
@@ -94,18 +119,20 @@ public abstract class AbstractBatchFilter
    * @return		the filtered data
    * @throws Exception	if filtering fails
    */
-  protected abstract Dataset doFilter(Dataset data) throws Exception;
-
-  /**
-   * Filters the dataset coming through.
-   *
-   * @param data	the data to filter
-   * @return		the filtered data
-   * @throws Exception	if filtering fails
-   */
+  @Override
   public Dataset filter(Dataset data) throws Exception {
-    if (!isInitialized())
-      initFilter(data);
-    return doFilter(data);
+    Dataset	result;
+    Row		filtered;
+
+    result = null;
+
+    for (Row row: data.rows()) {
+      filtered = filter(row);
+      if (result == null)
+        result = (Dataset) filtered.getOwner().getClone();
+      result.addRow().assign(filtered);
+    }
+
+    return result;
   }
 }

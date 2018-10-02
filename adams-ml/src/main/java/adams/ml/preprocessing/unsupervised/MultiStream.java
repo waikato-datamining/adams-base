@@ -14,7 +14,7 @@
  */
 
 /*
- * PassThrough.java
+ * MultiStream.java
  * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 
@@ -24,10 +24,11 @@ import adams.data.spreadsheet.Row;
 import adams.ml.capabilities.Capabilities;
 import adams.ml.data.Dataset;
 import adams.ml.preprocessing.AbstractStreamFilter;
+import adams.ml.preprocessing.StreamFilter;
 
 /**
  <!-- globalinfo-start -->
- * Dummy, just passes through the data.
+ * Applies the specified filters sequentially.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -37,14 +38,22 @@ import adams.ml.preprocessing.AbstractStreamFilter;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
+ * <pre>-filter &lt;adams.ml.preprocessing.StreamFilter&gt; [-filter ...] (property: filters)
+ * &nbsp;&nbsp;&nbsp;The filters to apply sequentially.
+ * &nbsp;&nbsp;&nbsp;default: adams.ml.preprocessing.unsupervised.PassThrough
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class PassThrough
+public class MultiStream
   extends AbstractStreamFilter {
 
   private static final long serialVersionUID = 8129384772744387384L;
+
+  /** the filters to apply. */
+  protected StreamFilter[] m_Filters;
 
   /**
    * Returns a string describing the object.
@@ -53,7 +62,48 @@ public class PassThrough
    */
   @Override
   public String globalInfo() {
-    return "Dummy, just passes through the data.";
+    return "Applies the specified filters sequentially.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "filter", "filters",
+      new StreamFilter[]{new PassThrough()});
+  }
+
+  /**
+   * Sets the filters to apply.
+   *
+   * @param value 	the filters
+   */
+  public void setFilters(StreamFilter[] value) {
+    m_Filters = value;
+    reset();
+  }
+
+  /**
+   * Returns the filters to apply.
+   *
+   * @return 		the filters
+   */
+  public StreamFilter[] getFilters() {
+    return m_Filters;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String filtersTipText() {
+    return "The filters to apply sequentially.";
   }
 
   /**
@@ -65,9 +115,15 @@ public class PassThrough
   public Capabilities getCapabilities() {
     Capabilities	result;
 
-    result = new Capabilities(this);
-    result.enableAllClass();
-    result.enableAll();
+    if (m_Filters.length == 0) {
+      result = new Capabilities(this);
+      result.enableAllClass();
+      result.enableAll();
+    }
+    else {
+      result = m_Filters[0].getCapabilities();
+      result.setOwner(this);
+    }
 
     return result;
   }
@@ -80,6 +136,8 @@ public class PassThrough
    */
   @Override
   protected void doInitFilter(Row data) throws Exception {
+    if (m_Filters.length == 0)
+      throw new Exception("No filters specified!");
   }
 
   /**
@@ -90,7 +148,7 @@ public class PassThrough
    */
   @Override
   protected Dataset initOutputFormat(Row data) throws Exception {
-    return ((Dataset) data.getOwner()).getClone();
+    return m_Filters[0].getOutputFormat();
   }
 
   /**
@@ -102,6 +160,17 @@ public class PassThrough
    */
   @Override
   protected Row doFilter(Row data) throws Exception {
-    return data.getClone(getOutputFormat());
+    Row		result;
+    int		i;
+
+    result = data;
+
+    for (i = 0; i < m_Filters.length; i++) {
+      if (isLoggingEnabled())
+        getLogger().info("Applying filter #" + (i+1));
+      result = m_Filters[i].filter(result);
+    }
+
+    return result;
   }
 }

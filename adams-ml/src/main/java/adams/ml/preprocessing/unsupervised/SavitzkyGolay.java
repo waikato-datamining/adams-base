@@ -27,22 +27,81 @@ import adams.ml.capabilities.Capabilities;
 import adams.ml.capabilities.Capability;
 import adams.ml.data.Dataset;
 import adams.ml.data.DefaultDataset;
-import adams.ml.preprocessing.AbstractStreamFilter;
+import adams.ml.preprocessing.AbstractColumnSubsetStreamFilter;
 
 /**
  <!-- globalinfo-start -->
+ * A filter that applies Savitzky-Golay smoothing.<br>
+ * <br>
+ * For more information see:<br>
+ * <br>
+ * A. Savitzky, Marcel J.E. Golay (1964). Smoothing and Differentiation of Data by Simplified Least Squares Procedures. Analytical Chemistry. 36:1627-1639.<br>
+ * <br>
+ * William H. Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery (1992). Savitzky-Golay Smoothing Filters.
+ * <br><br>
  <!-- globalinfo-end -->
  *
- <!-- flow-summary-start -->
- <!-- flow-summary-end -->
- *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-column-subset &lt;RANGE|REGEXP&gt; (property: columnSubset)
+ * &nbsp;&nbsp;&nbsp;Defines how to determine the columns to use for filtering.
+ * &nbsp;&nbsp;&nbsp;default: RANGE
+ * </pre>
+ *
+ * <pre>-col-range &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: colRange)
+ * &nbsp;&nbsp;&nbsp;The range of columns to use in the filtering process.
+ * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ *
+ * <pre>-col-regexp &lt;adams.core.base.BaseRegExp&gt; (property: colRegExp)
+ * &nbsp;&nbsp;&nbsp;The regular expression to use on the column names to determine whether to
+ * &nbsp;&nbsp;&nbsp;use a column for filtering.
+ * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
+ * </pre>
+ *
+ * <pre>-drop-other-columns &lt;boolean&gt; (property: dropOtherColumns)
+ * &nbsp;&nbsp;&nbsp;If enabled, other columns that aren't used for filtering get removed from
+ * &nbsp;&nbsp;&nbsp;the output; does not affect any class columns.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-polynomial &lt;int&gt; (property: polynomialOrder)
+ * &nbsp;&nbsp;&nbsp;The polynomial order to use, must be at least 2.
+ * &nbsp;&nbsp;&nbsp;default: 2
+ * &nbsp;&nbsp;&nbsp;minimum: 2
+ * </pre>
+ *
+ * <pre>-derivative &lt;int&gt; (property: derivativeOrder)
+ * &nbsp;&nbsp;&nbsp;The order of the derivative to use, &gt;= 0.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
+ * <pre>-left &lt;int&gt; (property: numPointsLeft)
+ * &nbsp;&nbsp;&nbsp;The number of points left of a data point, &gt;= 0.
+ * &nbsp;&nbsp;&nbsp;default: 3
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
+ * <pre>-right &lt;int&gt; (property: numPointsRight)
+ * &nbsp;&nbsp;&nbsp;The number of points right of a data point, &gt;= 0.
+ * &nbsp;&nbsp;&nbsp;default: 3
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SavitzkyGolay
-  extends AbstractStreamFilter
+  extends AbstractColumnSubsetStreamFilter
   implements TechnicalInformationHandler {
 
   private static final long serialVersionUID = 5753905967950878654L;

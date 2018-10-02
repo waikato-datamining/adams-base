@@ -38,12 +38,10 @@ public abstract class AbstractStreamFilter
    * Before the actual filter initialization. Initializes the columns.
    *
    * @param data 	the data to initialize with
-   * @see		#initColumns(Dataset)
    * @throws Exception	if initialization fails
    */
   protected void preInitFilter(Row data) throws Exception {
-    m_OutputFormat = null;
-    initColumns((Dataset) data.getOwner());
+    reset();
   }
 
   /**
