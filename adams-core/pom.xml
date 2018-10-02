@@ -370,8 +370,7 @@
           <mainClass>adams.parser.GenerateParser</mainClass>
           <workingDirectory>.</workingDirectory>
           <arguments>
-            <argument>${project.basedir}/src/main/resources/adams/parser/externalactorsuggestion</argument>
-            <!--argument>${project.basedir}/src/main/resources/adams/parser/actorsuggestion</argument>
+            <argument>${project.basedir}/src/main/resources/adams/parser/actorsuggestion</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/basedate</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/basedatetime</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/basedatetimemsec</argument>
@@ -382,7 +381,7 @@
             <argument>${project.basedir}/src/main/resources/adams/parser/mathematicalexpression</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/spreadsheetformula</argument>
             <argument>${project.basedir}/src/main/resources/adams/parser/stringexpression</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/templatesuggestion</argument-->
+            <argument>${project.basedir}/src/main/resources/adams/parser/templatesuggestion</argument>
           </arguments>
         </configuration>
       </plugin>

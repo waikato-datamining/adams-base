@@ -85,4 +85,6 @@
 'signum(2.1): 1.00000000
 'if(has(X), X, -1)' using X=9.0: 9.00000000
 'if(has(Y), X, -1)' using X=9.0: -1.00000000
+'if([hello world] = 1, 1, 0)' using hello world=1: 1.00000000
+'if('hello world' = 1, 1, 0)' using hello world=1: 1.00000000
 

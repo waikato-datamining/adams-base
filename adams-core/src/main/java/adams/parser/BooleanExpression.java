@@ -20,6 +20,7 @@
 
 package adams.parser;
 
+import adams.core.Utils;
 import adams.data.report.Report;
 import adams.parser.booleanexpression.Parser;
 import adams.parser.booleanexpression.Scanner;
@@ -144,7 +145,9 @@ import java.util.logging.Level;
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all upper case letters (e.g., "ABC"), any character<br>
+ *   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - 'index' for function 'get' starts at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
@@ -196,7 +199,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BooleanExpression
   extends AbstractSymbolEvaluator<Boolean> {
@@ -332,8 +334,9 @@ public class BooleanExpression
       + "              ;\n"
       + "\n"
       + "Notes:\n"
-      + "- Variables are either all upper case letters (e.g., \"ABC\") or any character "
-      + "  apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\").\n"
+      + "- Variables are either all upper case letters (e.g., \"ABC\"), any character\n"
+      + "  apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\") or\n"
+      + "  enclosed by single quotes (e.g., \"'Hello World'\").\n"
       + "- 'start' and 'end' for function 'substr' are indices that start at 1.\n"
       + "- 'index' for function 'get' starts at 1.\n"
       + "- Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)\n"
@@ -344,7 +347,7 @@ public class BooleanExpression
       + "- times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'\n"
       + "- the characters in square brackets in function names are optional:\n"
       + "  e.g. 'len(\"abc\")' is the same as 'length(\"abc\")'\n"
-      + "- 'str' uses "  + java.text.DecimalFormat.class.getName() + " when supplying a format string\n"
+      + "- 'str' uses "  + Utils.classToString(java.text.DecimalFormat.class) + " when supplying a format string\n"
       + "\n"
       + "A lot of the functions have been modeled after LibreOffice:\n"
       + "  https://help.libreoffice.org/Calc/Functions_by_Category\n"

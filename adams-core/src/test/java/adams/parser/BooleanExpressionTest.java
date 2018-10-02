@@ -161,6 +161,8 @@ public class BooleanExpressionTest
 	  {/** no symbols necessary */},		// 108
 	  {/** no symbols necessary */},		// 109
 	  {/** no symbols necessary */},		// 110
+	  {new BaseString("hello world=1")},		// 111
+	  {new BaseString("hello world=1")},		// 112
 	}
     };
   }
@@ -284,6 +286,8 @@ public class BooleanExpressionTest
 	  "ext(\"hello_world.txt\") = \"txt\"", 	// 108
 	  "replaceext(\"hello_world.txt\", \".doc\") = \"hello_world.doc\"", 	// 109
 	  "replaceext(\"hello_world.txt\", \"\") = \"hello_world\"", 	// 110
+	  "[hello world] = 1",			// 111
+	  "'hello world' = 1",			// 112
 	}
     };
   }

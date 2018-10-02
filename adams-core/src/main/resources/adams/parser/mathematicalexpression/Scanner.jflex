@@ -155,6 +155,7 @@ import java.io.*;
   "NaN" { return sf.newSymbol("Number", sym.NUMBER, new Double(Double.NaN)); }
   [A-Z]+ { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext())); }
   "["[^\]]+"]" { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext().replace("[", "").replace("]", ""))); }
+  "'"[^\']+"'" { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext().replace("'", "").replace("'", ""))); }
 
   // comment
   "#".* { /* ignore line comments. */ }

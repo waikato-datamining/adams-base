@@ -24,4 +24,6 @@
 'ext("hello_world.txt"): txt
 'replaceext("hello_world.txt", ".doc"): hello_world.doc
 'replaceext("hello_world.txt", ""): hello_world
+'str([hello world] = 1)' using hello world=1: true
+'str('hello world' = 1)' using hello world=1: true
 

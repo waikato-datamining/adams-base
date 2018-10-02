@@ -138,6 +138,8 @@ public class MathematicalExpressionTest
 	  {/** no symbols necessary */},		// 84
 	  {new BaseString("X=9.0")},			// 85
 	  {new BaseString("X=9.0")},			// 86
+	  {new BaseString("hello world=1")},		// 87
+	  {new BaseString("hello world=1")},		// 88
 	}
     };
   }
@@ -237,6 +239,8 @@ public class MathematicalExpressionTest
 	  "signum(2.1)", 	// 84
 	  "if(has(X), X, -1)", 	// 85
 	  "if(has(Y), X, -1)", 	// 86
+	  "if([hello world] = 1, 1, 0)",	// 87
+	  "if('hello world' = 1, 1, 0)",	// 88
 	}
     };
   }
