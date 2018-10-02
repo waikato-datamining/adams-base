@@ -68,3 +68,11 @@ adams.ml.preprocessing.BatchFilter=\
 adams.ml.preprocessing.StreamFilter=\
   adams.ml.preprocessing.supervised,\
   adams.ml.preprocessing.unsupervised
+
+# matrix-algorithm PLS variants
+com.github.waikatodatamining.matrix.algorithm.pls.AbstractPLS=\
+  com.github.waikatodatamining.matrix.algorithm.pls
+
+# the kernels of the matrix-algorithm library
+com.github.waikatodatamining.matrix.transformation.kernel.AbstractKernel=\
+  com.github.waikatodatamining.matrix.transformation.kernel
