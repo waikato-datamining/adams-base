@@ -129,7 +129,7 @@ public abstract class AbstractColumnSubsetStreamFilter
     for (Row row: data.rows()) {
       filtered = filter(row);
       if (result == null)
-        result = (Dataset) filtered.getOwner().getClone();
+        result = (Dataset) filtered.getOwner().getHeader();
       result.addRow().assign(filtered);
     }
 
