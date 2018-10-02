@@ -33,7 +33,6 @@ import junit.framework.TestSuite;
  * java adams.parser.LookUpUpdateTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LookUpUpdateTest
   extends AbstractSymbolEvaluatorTestCase<Double, LookUpUpdate> {
@@ -85,6 +84,10 @@ public class LookUpUpdateTest
 	  {/** no symbols. */},	//  7
 	  {/** no symbols. */},	//  8
 	  {/** no symbols. */},	//  9
+	  {new BaseString("_Hello World=1")},	//  10
+	  {new BaseString("Hello World=1")},	//  11
+	  {new BaseString("Hello World=9.9")},	//  12
+	  {new BaseString("_Hello World=9.9")},	//  13
 	}
     };
   }
@@ -107,6 +110,10 @@ public class LookUpUpdateTest
 	  "all(\".*\") := 0.33;",		                                           //  7
 	  "C := -5;",			                                                   //  8
 	  "if (C = 2) then all(\".*\") := 0.12; else all(\".*\") := 0.78; end",		   //  9
+	  "if ([_Hello World] = 1) then C := 1.3; end",				   //  10
+	  "if ('Hello World' = 1) then C := 4.5; end",				   //  11
+	  "C := [Hello World];",			                                   //  12
+	  "C := '_Hello World';",			                                   //  13
 	}
     };
   }

@@ -15,7 +15,7 @@
 
 /*
  * LookUpUpdate.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -106,11 +106,12 @@ import java.util.logging.Level;
  *               | max ( expr1 , expr2 )<br>
  * <br>
  * Notes:<br>
- * - Variables are either all alphanumeric and -&#47;_ (e.g., "ABc_1-2") or any character<br>
- *   apart from "'" enclosed by "'" and "'" (e.g., "'Hello World'").<br>
+ * - Variables are either all alphanumeric and -&#47;_ (e.g., "ABc_1-2"), any character<br>
+ *   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - The 'all' method applies the value to all the values in the lookup table<br>
  *   that match the regular expression.<br>
- * - Variables starting with '_' are considered local and don't get transferred back out.<br>
+ * - Variables starting with '_' (inside the [] or '') are considered local and don't get transferred back out.<br>
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -127,12 +128,12 @@ import java.util.logging.Level;
  *
  * <pre>-expression &lt;java.lang.String&gt; (property: expression)
  * &nbsp;&nbsp;&nbsp;The lookup update rules to evaluate.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-symbol &lt;adams.core.base.BaseString&gt; [-symbol ...] (property: symbols)
  * &nbsp;&nbsp;&nbsp;The symbols to initialize the parser with, key-value pairs: name=value.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-reader &lt;adams.data.io.input.SpreadSheetReader&gt; (property: reader)
@@ -141,26 +142,26 @@ import java.util.logging.Level;
  * </pre>
  *
  * <pre>-input &lt;adams.core.io.PlaceholderFile&gt; (property: input)
- * &nbsp;&nbsp;&nbsp;The input file to load with the specified reader; ignored if pointing to 
+ * &nbsp;&nbsp;&nbsp;The input file to load with the specified reader; ignored if pointing to
  * &nbsp;&nbsp;&nbsp;directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
  * <pre>-key-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: keyColumn)
- * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as key; An index is a 
- * &nbsp;&nbsp;&nbsp;number starting with 1; column names (case-sensitive) as well as the following 
- * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last; numeric 
- * &nbsp;&nbsp;&nbsp;indices can be enforced by preceding them with '#' (eg '#12'); column names 
+ * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as key; An index is a
+ * &nbsp;&nbsp;&nbsp;number starting with 1; column names (case-sensitive) as well as the following
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last; numeric
+ * &nbsp;&nbsp;&nbsp;indices can be enforced by preceding them with '#' (eg '#12'); column names
  * &nbsp;&nbsp;&nbsp;can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  *
  * <pre>-value-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: valueColumn)
- * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as value; An index is 
- * &nbsp;&nbsp;&nbsp;a number starting with 1; column names (case-sensitive) as well as the following 
- * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last; numeric 
- * &nbsp;&nbsp;&nbsp;indices can be enforced by preceding them with '#' (eg '#12'); column names 
+ * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as value; An index is
+ * &nbsp;&nbsp;&nbsp;a number starting with 1; column names (case-sensitive) as well as the following
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last; numeric
+ * &nbsp;&nbsp;&nbsp;indices can be enforced by preceding them with '#' (eg '#12'); column names
  * &nbsp;&nbsp;&nbsp;can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: 2
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
@@ -174,7 +175,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 14588 $
  */
 public class LookUpUpdate
   extends AbstractSymbolEvaluator<SpreadSheet> {
@@ -313,11 +313,12 @@ public class LookUpUpdate
 	+ "              | max ( expr1 , expr2 )\n"
 	+ "\n"
 	+ "Notes:\n"
-	+ "- Variables are either all alphanumeric and -/_ (e.g., \"ABc_1-2\") or any character\n"
-	+ "  apart from \"'\" enclosed by \"'\" and \"'\" (e.g., \"'Hello World'\").\n"
+        + "- Variables are either all alphanumeric and -/_ (e.g., \"ABc_1-2\"), any character\n"
+        + "  apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\") or\n"
+        + "  enclosed by single quotes (e.g., \"'Hello World'\").\n"
 	+ "- The 'all' method applies the value to all the values in the lookup table\n"
 	+ "  that match the regular expression.\n"
-	+ "- Variables starting with '_' are considered local and don't get transferred back out.\n"
+	+ "- Variables starting with '_' (inside the [] or '') are considered local and don't get transferred back out.\n"
       ;
   }
 
