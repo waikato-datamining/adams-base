@@ -140,6 +140,7 @@ public class MathematicalExpressionTest
 	  {new BaseString("X=9.0")},			// 86
 	  {new BaseString("hello world=1")},		// 87
 	  {new BaseString("hello world=1")},		// 88
+	  {new BaseString("Ab_c0=1")},			// 89
 	}
     };
   }
@@ -241,6 +242,7 @@ public class MathematicalExpressionTest
 	  "if(has(Y), X, -1)", 	// 86
 	  "if([hello world] = 1, 1, 0)",	// 87
 	  "if('hello world' = 1, 1, 0)",	// 88
+	  "if(Ab_c0 = 1, 1, 0)",		// 89
 	}
     };
   }

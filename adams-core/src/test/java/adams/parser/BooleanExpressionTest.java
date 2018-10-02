@@ -163,6 +163,7 @@ public class BooleanExpressionTest
 	  {/** no symbols necessary */},		// 110
 	  {new BaseString("hello world=1")},		// 111
 	  {new BaseString("hello world=1")},		// 112
+	  {new BaseString("Ab_c0=1")},			// 113
 	}
     };
   }
@@ -288,6 +289,7 @@ public class BooleanExpressionTest
 	  "replaceext(\"hello_world.txt\", \"\") = \"hello_world\"", 	// 110
 	  "[hello world] = 1",			// 111
 	  "'hello world' = 1",			// 112
+	  "Ab_c0 = 1",				// 113
 	}
     };
   }

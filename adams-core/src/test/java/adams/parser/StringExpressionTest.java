@@ -79,6 +79,7 @@ public class StringExpressionTest
 	  {/** no symbols necessary */},		// 25
 	  {new BaseString("hello world=1")},		// 26
 	  {new BaseString("hello world=1")},		// 27
+	  {new BaseString("Ab_c0=1")},			// 28
 	}
     };
   }
@@ -119,6 +120,7 @@ public class StringExpressionTest
 	  "replaceext(\"hello_world.txt\", \"\")", 			// 25
 	  "str([hello world] = 1)",					// 26
 	  "str('hello world' = 1)",					// 27
+	  "str(Ab_c0 = 1)",						// 28
 	}
     };
   }

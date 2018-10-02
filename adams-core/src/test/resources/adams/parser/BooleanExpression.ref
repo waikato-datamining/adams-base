@@ -111,4 +111,5 @@
 'replaceext("hello_world.txt", "") = "hello_world": true
 '[hello world] = 1' using hello world=1: true
 ''hello world' = 1' using hello world=1: true
+'Ab_c0 = 1' using Ab_c0=1: true
 

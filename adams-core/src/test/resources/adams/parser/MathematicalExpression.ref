@@ -87,4 +87,5 @@
 'if(has(Y), X, -1)' using X=9.0: -1.00000000
 'if([hello world] = 1, 1, 0)' using hello world=1: 1.00000000
 'if('hello world' = 1, 1, 0)' using hello world=1: 1.00000000
+'if(Ab_c0 = 1, 1, 0)' using Ab_c0=1: 1.00000000
 

@@ -145,8 +145,8 @@ import java.util.logging.Level;
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC"), any character<br>
- *   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
  *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - 'index' for function 'get' starts at 1.<br>
@@ -334,8 +334,8 @@ public class BooleanExpression
       + "              ;\n"
       + "\n"
       + "Notes:\n"
-      + "- Variables are either all upper case letters (e.g., \"ABC\"), any character\n"
-      + "  apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\") or\n"
+      + "- Variables are either all alphanumeric and _, starting with uppercase letter (e.g., \"ABc_12\"),\n"
+      + "  any character apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\") or\n"
       + "  enclosed by single quotes (e.g., \"'Hello World'\").\n"
       + "- 'start' and 'end' for function 'substr' are indices that start at 1.\n"
       + "- 'index' for function 'get' starts at 1.\n"

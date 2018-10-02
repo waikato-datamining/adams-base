@@ -141,8 +141,8 @@ import java.util.HashMap;
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC"), any character<br>
- *   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
  *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
@@ -352,8 +352,8 @@ public class MathematicalExpression
       + "              ;\n"
       + "\n"
       + "Notes:\n"
-      + "- Variables are either all upper case letters (e.g., \"ABC\"), any character\n"
-      + "  apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\") or\n"
+      + "- Variables are either all alphanumeric and _, starting with uppercase letter (e.g., \"ABc_12\"),\n"
+      + "  any character apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\") or\n"
       + "  enclosed by single quotes (e.g., \"'Hello World'\").\n"
       + "- 'start' and 'end' for function 'substr' are indices that start at 1.\n"
       + "- Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)\n"
