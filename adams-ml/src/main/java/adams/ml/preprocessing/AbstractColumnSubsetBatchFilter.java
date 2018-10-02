@@ -83,7 +83,7 @@ public abstract class AbstractColumnSubsetBatchFilter
    * @see		#postInitFilter(Dataset)
    * @throws Exception	if initialization fails
    */
-  protected void initFilter(Dataset data) throws Exception {
+  protected synchronized void initFilter(Dataset data) throws Exception {
     preInitFilter(data);
     doInitFilter(data);
     postInitFilter(data);
@@ -105,7 +105,7 @@ public abstract class AbstractColumnSubsetBatchFilter
    * @return		the filtered data
    * @throws Exception	if filtering fails
    */
-  public Dataset filter(Dataset data) throws Exception {
+  public synchronized Dataset filter(Dataset data) throws Exception {
     if (!isInitialized())
       initFilter(data);
     return doFilter(data);

@@ -82,7 +82,7 @@ public abstract class AbstractStreamFilter
    * @see		#postInitFilter(Row)
    * @throws Exception	if initialization fails
    */
-  protected void initFilter(Row data) throws Exception {
+  protected synchronized void initFilter(Row data) throws Exception {
     preInitFilter(data);
     doInitFilter(data);
     postInitFilter(data);
@@ -104,7 +104,7 @@ public abstract class AbstractStreamFilter
    * @return		the filtered data
    * @throws Exception	if filtering fails
    */
-  public Row filter(Row data) throws Exception {
+  public synchronized Row filter(Row data) throws Exception {
     if (!isInitialized())
       initFilter(data);
     return doFilter(data);
@@ -118,7 +118,7 @@ public abstract class AbstractStreamFilter
    * @throws Exception	if filtering fails
    */
   @Override
-  public Dataset filter(Dataset data) throws Exception {
+  public synchronized Dataset filter(Dataset data) throws Exception {
     Dataset	result;
     Row		filtered;
 
