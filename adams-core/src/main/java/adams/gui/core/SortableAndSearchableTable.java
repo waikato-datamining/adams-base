@@ -42,8 +42,11 @@ public class SortableAndSearchableTable
   /** the key for the sort column setting. */
   public static final String KEY_SORTCOL = "sort col";
 
-  /** the key for the sort oder. */
+  /** the key for the sort order. */
   public static final String KEY_SORTORDER = "sort order";
+
+  /** the key for case-sensitive. */
+  public static final String KEY_SORTCASESENSITIVE = "sort case-sensitive";
 
   /** the key for the search string. */
   public static final String KEY_SEARCHSTRING = "search string";
@@ -204,6 +207,15 @@ public class SortableAndSearchableTable
   }
 
   /**
+   * Returns whether the initial sort is case-sensitive.
+   *
+   * @return		true if case-sensitive
+   */
+  protected boolean initialSortCaseSensitive() {
+    return true;
+  }
+
+  /**
    * Sets whether to sort new models.
    *
    * @param value	if true then new models get sorted
@@ -232,6 +244,7 @@ public class SortableAndSearchableTable
     super.initGUI();
 
     m_SortNewTableModel = initialSortNewTableModel();
+    setCaseSensitive(initialSortCaseSensitive());
     m_Model.addMouseListenerToHeader(this);
     if (getSortNewTableModel())
       sort(0);
@@ -262,10 +275,11 @@ public class SortableAndSearchableTable
   protected Hashtable<String,Object> backupModelSettings(TableModel model) {
     Hashtable<String,Object>	result;
 
-    result = new Hashtable<String,Object>();
+    result = new Hashtable<>();
 
     result.put(KEY_SORTCOL, m_Model.getSortColumn());
     result.put(KEY_SORTORDER, m_Model.isAscending());
+    result.put(KEY_SORTCASESENSITIVE, m_Model.isCaseSensitive());
 
     if (model instanceof SearchableTableModel) {
       if (((SearchableTableModel) model).getSeachString() != null)
@@ -285,19 +299,22 @@ public class SortableAndSearchableTable
   protected void restoreModelSettings(TableModel model, Hashtable<String,Object> settings) {
     int		sortCol;
     boolean	asc;
+    boolean	caseSensitive;
     String	search;
     boolean	regexp;
 
     // default values
-    sortCol = 0;
-    asc     = true;
-    search  = null;
-    regexp  = false;
+    sortCol       = 0;
+    asc           = true;
+    caseSensitive = true;
+    search        = null;
+    regexp        = false;
 
     // get stored values
     if (settings != null) {
-      sortCol = (Integer) settings.get(KEY_SORTCOL);
-      asc     = (Boolean) settings.get(KEY_SORTORDER);
+      sortCol       = (Integer) settings.get(KEY_SORTCOL);
+      asc           = (Boolean) settings.get(KEY_SORTORDER);
+      caseSensitive = (Boolean) settings.get(KEY_SORTCASESENSITIVE);
 
       if (model instanceof SearchableTableModel) {
 	search = (String) settings.get(KEY_SEARCHSTRING);
@@ -306,6 +323,7 @@ public class SortableAndSearchableTable
     }
 
     // restore sorting
+    m_Model.setCaseSensitive(caseSensitive);
     if (getSortNewTableModel())
       m_Model.sort(sortCol, asc);
 
@@ -426,6 +444,24 @@ public class SortableAndSearchableTable
    */
   public synchronized boolean isAscending() {
     return m_Model.isAscending();
+  }
+
+  /**
+   * Sets whether the sorting is case-sensitive.
+   *
+   * @param value	true if case-sensitive
+   */
+  public void setCaseSensitive(boolean value) {
+    m_Model.setCaseSensitive(value);
+  }
+
+  /**
+   * Returns whether the sorting is case-sensitive.
+   *
+   * @return		true if case-sensitive
+   */
+  public boolean isCaseSensitive() {
+    return m_Model.isCaseSensitive();
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * ReportFactory.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.report;
@@ -94,13 +94,14 @@ import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * A factory for GUI components for reports.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReportFactory {
 
@@ -142,10 +143,18 @@ public class ReportFactory {
       super();
 
       m_Report = report;
-      if (m_Report != null)
+      if (m_Report != null) {
 	m_Fields = m_Report.getFields();
-      else
+	Collections.sort(m_Fields, new Comparator<AbstractField>() {
+	  @Override
+	  public int compare(AbstractField o1, AbstractField o2) {
+	    return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+	  }
+	});
+      }
+      else {
 	m_Fields = new ArrayList<>();
+      }
       m_NumDecimals = -1;
     }
 
@@ -377,7 +386,16 @@ public class ReportFactory {
 	}
       });
     }
-    
+
+    /**
+     * Returns whether the initial sort is case-sensitive.
+     *
+     * @return		true if case-sensitive
+     */
+    protected boolean initialSortCaseSensitive() {
+      return false;
+    }
+
     /**
      * Returns the file chooser to use for exporting the reports.
      *

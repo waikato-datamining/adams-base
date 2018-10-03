@@ -15,7 +15,7 @@
 
 /*
  * SortableAndSearchableWrapperTableModel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -44,7 +44,6 @@ import java.util.Collections;
  * searchable.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SortableAndSearchableWrapperTableModel
   extends AbstractTableModel
@@ -163,6 +162,9 @@ public class SortableAndSearchableWrapperTableModel
   /** whether sorting is ascending or descending. */
   protected boolean m_SortAscending;
 
+  /** whether sorting is case-sensitive (default). */
+  protected boolean m_SortCaseSensitive;
+
   /** the mouse listener in use. */
   protected MouseListener m_MouseListener;
 
@@ -231,10 +233,12 @@ public class SortableAndSearchableWrapperTableModel
     boolean	sorted;
     int		sortCol;
     boolean	asc;
+    boolean	caseSensitive;
 
-    sorted  = isSorted();
-    sortCol = getSortColumn();
-    asc     = isAscending();
+    sorted        = isSorted();
+    sortCol       = getSortColumn();
+    asc           = isAscending();
+    caseSensitive = isCaseSensitive();
 
     m_Model = value;
 
@@ -244,8 +248,11 @@ public class SortableAndSearchableWrapperTableModel
     initialize();
 
     // restore sorting
-    if (restoreSorting && sorted)
-      sort(sortCol, asc);
+    if (restoreSorting) {
+      setCaseSensitive(caseSensitive);
+      if (sorted)
+	sort(sortCol, asc);
+    }
 
     fireTableDataChanged();
   }
@@ -271,9 +278,10 @@ public class SortableAndSearchableWrapperTableModel
     else {
       initializeSortIndices();
       initializeColumnTypes();
-      m_DisplayIndices = null;
-      m_SortColumn     = -1;
-      m_SortAscending  = true;
+      m_DisplayIndices    = null;
+      m_SortColumn        = -1;
+      m_SortAscending     = true;
+      m_SortCaseSensitive = true;
       getUnsortedModel().addTableModelListener(this);
       doSearchAndFilter();
     }
@@ -323,6 +331,24 @@ public class SortableAndSearchableWrapperTableModel
     m_SortedIndices = new int[getUnsortedModel().getRowCount()];
     for (i = 0; i < m_SortedIndices.length; i++)
       m_SortedIndices[i] = i;
+  }
+
+  /**
+   * Sets whether the sorting is case-sensitive.
+   *
+   * @param value	true if case-sensitive
+   */
+  public void setCaseSensitive(boolean value) {
+    m_SortCaseSensitive = value;
+  }
+
+  /**
+   * Returns whether the sorting is case-sensitive.
+   *
+   * @return		true if case-sensitive
+   */
+  public boolean isCaseSensitive() {
+    return m_SortCaseSensitive;
   }
 
   /**
@@ -554,6 +580,19 @@ public class SortableAndSearchableWrapperTableModel
   }
 
   /**
+   * Fixes the case of strings passing through if not case-sensitive.
+   *
+   * @param comp	the comparable to check
+   * @return		the (potentially) updated comparable
+   */
+  protected Comparable fixCase(Comparable comp) {
+    if (!m_SortCaseSensitive && (comp instanceof String))
+      return ((String) comp).toLowerCase();
+    else
+      return comp;
+  }
+
+  /**
    * sorts the table over the given column, either ascending or descending.
    *
    * @param columnIndex     the column to sort over
@@ -593,11 +632,11 @@ public class SortableAndSearchableWrapperTableModel
       columnType = 0;
 
     // create list for sorting
-    sorted = new ArrayList<SortContainer>();
+    sorted = new ArrayList<>();
     for (i = 0; i < getRowCount(); i++) {
       value = getValueForComparison(m_SortedIndices[i], m_SortColumn);
       if (columnType == 0) {
-	cont = new SortContainer((value == null) ? null : value.toString(), m_SortedIndices[i]);
+	cont = new SortContainer((value == null) ? null : fixCase(value.toString()), m_SortedIndices[i]);
       }
       else {
 	if (m_ColumnIsNumeric[m_SortColumn] && (!(value instanceof Number))) {
@@ -606,15 +645,15 @@ public class SortableAndSearchableWrapperTableModel
 	  }
 	  catch (Exception e) {
 	    try {
-	      cont = new SortContainer((Comparable) value, m_SortedIndices[i]);
+	      cont = new SortContainer(fixCase((Comparable) value), m_SortedIndices[i]);
 	    }
 	    catch (Exception ex) {
-	      cont = new SortContainer(value.toString(), m_SortedIndices[i]);
+	      cont = new SortContainer(fixCase(value.toString()), m_SortedIndices[i]);
 	    }
 	  }
 	}
 	else {
-	  cont = new SortContainer((Comparable) value, m_SortedIndices[i]);
+	  cont = new SortContainer(fixCase((Comparable) value), m_SortedIndices[i]);
 	}
       }
       sorted.add(cont);

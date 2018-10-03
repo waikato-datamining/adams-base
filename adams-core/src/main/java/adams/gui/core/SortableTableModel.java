@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SortableTableModel.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -25,7 +25,6 @@ import javax.swing.table.TableModel;
  * Interface for table models that are sortable.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface SortableTableModel
   extends TableModel {
@@ -43,6 +42,20 @@ public interface SortableTableModel
    * @return            the current model
    */
   public TableModel getUnsortedModel();
+
+  /**
+   * Sets whether the sorting is case-sensitive.
+   *
+   * @param value	true if case-sensitive
+   */
+  public void setCaseSensitive(boolean value);
+
+  /**
+   * Returns whether the sorting is case-sensitive.
+   *
+   * @return		true if case-sensitive
+   */
+  public boolean isCaseSensitive();
 
   /**
    * returns whether the table was sorted.
