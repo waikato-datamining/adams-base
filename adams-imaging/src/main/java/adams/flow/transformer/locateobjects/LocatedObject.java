@@ -36,7 +36,6 @@ import java.util.Map;
  * Container for located objects.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 78 $
  */
 public class LocatedObject
   implements Serializable, CloneHandler<LocatedObject> {
@@ -98,6 +97,17 @@ public class LocatedObject
    * @param metaData	optional meta-data, can be null
    */
   public LocatedObject(BufferedImage image, int x, int y, int width, int height, Map<String,Object> metaData) {
+    // fix negative width
+    if (width < 0) {
+      x     += width;
+      width  = -width;
+    }
+    // fix negative height
+    if (height < 0) {
+      y      += height;
+      height  = -height;
+    }
+
     m_Image    = image;
     m_X        = x;
     m_Y        = y;
