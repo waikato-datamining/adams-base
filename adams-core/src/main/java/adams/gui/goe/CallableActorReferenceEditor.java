@@ -58,7 +58,6 @@ import java.util.List;
  * A PropertyEditor for CallableActorReference objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CallableActorReferenceEditor
   extends AbstractPropertyEditorSupport
@@ -343,7 +342,6 @@ public class CallableActorReferenceEditor
   /**
    * Locates all the callable actors for the node.
    *
-   * @param node	the node to start the search from
    * @return		the located callable actors (including CallableActors nodes)
    */
   protected List<String> findCallableActors() {
@@ -359,6 +357,8 @@ public class CallableActorReferenceEditor
       result.add(callable.getFullName());
       for (i = 0; i < callable.getChildCount(); i++) {
 	child = (Node) callable.getChildAt(i);
+	if (child.getActor().getSkip())
+	  continue;
 	result.add(child.getFullName());
       }
     }

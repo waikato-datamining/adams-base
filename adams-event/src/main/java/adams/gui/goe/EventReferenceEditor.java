@@ -15,7 +15,7 @@
 
 /*
  * EventReferenceEditor.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -59,7 +59,6 @@ import java.util.List;
  * A PropertyEditor for EventReference objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EventReferenceEditor
   extends AbstractPropertyEditorSupport
@@ -369,6 +368,8 @@ public class EventReferenceEditor
       result.add(event.getFullName());
       for (i = 0; i < event.getChildCount(); i++) {
 	child = (Node) event.getChildAt(i);
+	if (child.getActor().getSkip())
+	  continue;
 	if (isValidNode(child))
 	  result.add(child.getFullName());
       }

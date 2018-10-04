@@ -44,7 +44,6 @@ import java.util.List;
  * A helper class for flow-related queries.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowHelper {
 
@@ -413,18 +412,22 @@ public class FlowHelper {
       if (parent.getActor() instanceof ActorHandler) {
 	handler = (ActorHandler) parent.getActor();
 
-	if (handler.getActorHandlerInfo().canContainStandalones()) {
+	if (!handler.getSkip() && handler.getActorHandlerInfo().canContainStandalones()) {
 	  for (i = 0; i < parent.getChildCount(); i++) {
 	    current = (Node) parent.getChildAt(i);
 	    actor   = current.getActor();
+	    if (actor.getSkip())
+	      continue;
 
 	    if (ActorUtils.isStandalone(actor)) {
 	      if (findNodesMatch(type, restrict, actor))
 		result.add(current);
 	      if (actor instanceof ActorHandler) {
 		for (n = 0; n < current.getChildCount(); n++) {
-		  if (findNodesMatch(type, restrict, ((Node) current.getChildAt(n)).getActor()))
-		    result.add((Node) current.getChildAt(n));
+		  if (findNodesMatch(type, restrict, ((Node) current.getChildAt(n)).getActor())) {
+		    if (!((Node) current.getChildAt(n)).getActor().getSkip())
+		      result.add((Node) current.getChildAt(n));
+		  }
 		  result.addAll(findNodes((Node) current.getChildAt(n), false, restrict, type));
 		}
 	      }
@@ -432,8 +435,10 @@ public class FlowHelper {
 		// load in external actor
 		current.expand();
 		for (n = 0; n < current.getChildCount(); n++) {
-		  if (findNodesMatch(type, restrict, ((Node) current.getChildAt(n)).getActor()))
-		    result.add((Node) current.getChildAt(n));
+		  if (findNodesMatch(type, restrict, ((Node) current.getChildAt(n)).getActor())) {
+		    if (!((Node) current.getChildAt(n)).getActor().getSkip())
+		      result.add((Node) current.getChildAt(n));
+		  }
 		  result.addAll(findNodes((Node) current.getChildAt(n), false, restrict, type));
 		}
 	      }
@@ -503,13 +508,15 @@ public class FlowHelper {
     if (parent.getActor() instanceof ActorHandler) {
       handler = (ActorHandler) parent.getActor();
 
-      if (handler.getActorHandlerInfo().canContainStandalones()) {
+      if (!handler.getSkip() && handler.getActorHandlerInfo().canContainStandalones()) {
 	for (i = 0; i < parent.getChildCount(); i++) {
 	  current = (Node) parent.getChildAt(i);
 	  actor   = current.getActor();
+	  if (actor.getSkip())
+	    continue;
 
 	  if (ActorUtils.isStandalone(actor)) {
-	    if (!actor.getSkip() && ClassLocator.matches(type, actor.getClass())) {
+	    if (ClassLocator.matches(type, actor.getClass())) {
 	      result.add(current);
 	    }
 	    if (actor instanceof ActorHandler) {
