@@ -149,12 +149,16 @@ public class Objects
     BufferedImageContainer		cont;
     BufferedImage			bimage;
     LocatedObjects			objs;
+    boolean				modified;
 
     result = new ArrayList<>();
 
     objs   = LocatedObjects.fromReport(image.getReport(), m_Finder.getPrefix());
     bimage = image.getImage();
     for (LocatedObject obj: objs) {
+      modified = obj.makeFit(bimage.getWidth(), bimage.getHeight());
+      if (isLoggingEnabled())
+        getLogger().info("Object #" + obj.getIndexString() + ": " + obj + " (modified=" + modified + ")");
       cont = (BufferedImageContainer) image.getHeader();
       cont.setReport(transferObjects(cont.getReport(), obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight()));
       cont.setImage(bimage.getSubimage(obj.getX(), obj.getY(), obj.getWidth(), obj.getHeight()));
