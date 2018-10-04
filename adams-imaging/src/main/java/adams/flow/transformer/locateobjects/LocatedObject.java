@@ -416,6 +416,30 @@ public class LocatedObject
   }
 
   /**
+   * Ensures that the object fits within this region.
+   *
+   * @param width	the width of the region
+   * @param height	the height of the region
+   * @return		true if object got adjusted
+   */
+  public boolean makeFit(int width, int height) {
+    boolean	result;
+
+    result = false;
+
+    if (m_X + m_Width > width) {
+      m_Width -= (m_X + m_Width) - width;
+      result = true;
+    }
+    if (m_Y + m_Height > height) {
+      m_Height -= (m_Y + m_Height) - height;
+      result = true;
+    }
+
+    return result;
+  }
+
+  /**
    * Checks whether a value is within the range (allowed to be on borders).
    *
    * @param value	the value to check
