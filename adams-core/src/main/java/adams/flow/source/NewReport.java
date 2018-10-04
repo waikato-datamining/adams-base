@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NewReport.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseClassname;
 import adams.data.report.Report;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -60,17 +61,19 @@ import adams.flow.core.Unknown;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-report-class &lt;java.lang.String&gt; (property: reportClass)
+ *
+ * <pre>-report-class &lt;adams.core.base.BaseClassname&gt; (property: reportClass)
  * &nbsp;&nbsp;&nbsp;The class to use for the report.
  * &nbsp;&nbsp;&nbsp;default: adams.data.report.Report
  * </pre>
@@ -78,7 +81,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7828 $
  */
 public class NewReport
   extends AbstractSimpleSource {
@@ -87,7 +89,7 @@ public class NewReport
   private static final long serialVersionUID = 7272049518765623563L;
 
   /** the class of the report. */
-  protected String m_ReportClass;
+  protected BaseClassname m_ReportClass;
   
   /**
    * Returns a string describing the object.
@@ -118,7 +120,7 @@ public class NewReport
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "reportClass", (m_ReportClass.length() != 0) ? m_ReportClass : "-from 1st element-", "Class: ");
+    return QuickInfoHelper.toString(this, "reportClass", m_ReportClass, "Class: ");
   }
 
   /**
@@ -126,8 +128,8 @@ public class NewReport
    * 
    * @return		the class
    */
-  protected String getDefaultReportClass() {
-    return Report.class.getName();
+  protected BaseClassname getDefaultReportClass() {
+    return new BaseClassname(Report.class);
   }
   
   /**
@@ -135,7 +137,7 @@ public class NewReport
    *
    * @param value	the classname
    */
-  public void setReportClass(String value) {
+  public void setReportClass(BaseClassname value) {
     m_ReportClass = value;
     reset();
   }
@@ -145,7 +147,7 @@ public class NewReport
    *
    * @return		the classname
    */
-  public String getReportClass() {
+  public BaseClassname getReportClass() {
     return m_ReportClass;
   }
 
@@ -170,7 +172,7 @@ public class NewReport
 
     if (m_ReportClass.length() > 0) {
       try {
-	result = new Class[]{Class.forName(m_ReportClass)};
+	result = new Class[]{m_ReportClass.classValue()};
       }
       catch (Exception e) {
 	// ignored
@@ -197,7 +199,7 @@ public class NewReport
     result = null;
     
     try {
-      report        = (Report) Class.forName(m_ReportClass).newInstance();
+      report        = (Report) m_ReportClass.classValue().newInstance();
       m_OutputToken = new Token(report);
     }
     catch (Exception e) {
