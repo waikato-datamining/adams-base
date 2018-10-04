@@ -63,6 +63,7 @@ import adams.gui.event.SearchListener;
 import adams.gui.event.UndoEvent;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.print.PrintMouseListener;
+import adams.gui.visualization.image.RectangleUtils.RectangleCorner;
 import adams.gui.visualization.image.paintlet.Paintlet;
 import adams.gui.visualization.image.selectionshape.RectanglePainter;
 import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
@@ -168,11 +169,11 @@ public class ImagePanel
     /** whether dragging has happened at all. */
     protected boolean m_Dragged;
 
-    /** the top left corner of the selection box. */
-    protected Point m_SelectionTopLeft;
+    /** the starting corner of the selection box. */
+    protected Point m_SelectionFrom;
 
-    /** the bottom right corner of the selection box. */
-    protected Point m_SelectionBottomRight;
+    /** the finishing corner of the selection box. */
+    protected Point m_SelectionTo;
 
     /** the selection trace. */
     protected List<Point> m_SelectionTrace;
@@ -237,7 +238,7 @@ public class ImagePanel
 	  // update zoom box
 	  if (m_Selecting && !e.isShiftDown()) {
 	    m_Dragged              = true;
-	    m_SelectionBottomRight = e.getPoint();
+	    m_SelectionTo = e.getPoint();
 	    if (m_SelectionShapePainter.canAddTracePoint(PaintPanel.this, m_SelectionTrace, e.getPoint()))
 	      m_SelectionTrace.add(e.getPoint());
 
@@ -253,7 +254,7 @@ public class ImagePanel
 	      if (m_SelectionEnabled) {
 		m_Selecting        = true;
 		m_Dragged          = false;
-		m_SelectionTopLeft = e.getPoint();
+		m_SelectionFrom = e.getPoint();
 	      }
 	    }
 	  }
@@ -273,7 +274,7 @@ public class ImagePanel
 	      if (m_SelectionEnabled) {
 		m_Selecting        = true;
 		m_Dragged          = false;
-		m_SelectionTopLeft = e.getPoint();
+		m_SelectionFrom = e.getPoint();
 	        m_SelectionTrace.clear();
 		if (m_SelectionShapePainter.canAddTracePoint(PaintPanel.this, m_SelectionTrace, e.getPoint()))
 		  m_SelectionTrace.add(e.getPoint());
@@ -291,7 +292,7 @@ public class ImagePanel
 	      if (m_SelectionEnabled) {
 		m_Selecting        = true;
 		m_Dragged          = false;
-		m_SelectionTopLeft = e.getPoint();
+		m_SelectionFrom = e.getPoint();
 	      }
 	    }
 	  }
@@ -308,11 +309,11 @@ public class ImagePanel
 	    if (m_Selecting && m_Dragged) {
 	      m_Selecting = false;
 	      m_Dragged   = false;
-	      m_SelectionBottomRight = e.getPoint();
-	      if (m_SelectionTopLeft.getX() > m_SelectionBottomRight.getX())
-		notifySelectionListeners(m_SelectionBottomRight, m_SelectionTopLeft, e.getModifiersEx());
-	      else
-		notifySelectionListeners(m_SelectionTopLeft, m_SelectionBottomRight, e.getModifiersEx());
+	      m_SelectionTo = e.getPoint();
+	      notifySelectionListeners(
+	        RectangleUtils.rectangleCorner(m_SelectionFrom, m_SelectionTo, RectangleCorner.TOP_LEFT),
+		RectangleUtils.rectangleCorner(m_SelectionFrom, m_SelectionTo, RectangleCorner.BOTTOM_RIGHT),
+		e.getModifiersEx());
 	    }
 	  }
 	}
@@ -620,8 +621,8 @@ public class ImagePanel
      */
     public void setCurrentImage(BufferedImage value, double scale) {
       m_CurrentImage         = value;
-      m_SelectionTopLeft     = null;
-      m_SelectionBottomRight = null;
+      m_SelectionFrom = null;
+      m_SelectionTo = null;
       m_Dragged              = false;
       m_Selecting            = false;
       setScale(scale);
@@ -832,7 +833,7 @@ public class ImagePanel
      * @param g		the graphics context
      */
     protected void paintSelectionShape(Graphics g) {
-      m_SelectionShapePainter.paintSelectionShape(this, g, m_SelectionTopLeft, m_SelectionBottomRight, m_SelectionTrace);
+      m_SelectionShapePainter.paintSelectionShape(this, g, m_SelectionFrom, m_SelectionTo, m_SelectionTrace);
     }
 
     /**
