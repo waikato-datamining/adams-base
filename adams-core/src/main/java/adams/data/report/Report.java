@@ -15,7 +15,7 @@
 
 /*
  * Report.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -85,7 +85,7 @@ public class Report
   public Report() {
     super();
 
-    m_Params     = new Hashtable<AbstractField,Object>();
+    m_Params     = new Hashtable<>();
     m_DatabaseID = Constants.NO_ID;
 
     initFields();
@@ -134,7 +134,7 @@ public class Report
    * Set field types.
    */
   protected void initFields() {
-    m_Fields = new Hashtable<String,AbstractField>();
+    m_Fields = new Hashtable<>();
 
     addField(new Field(FIELD_DUMMYREPORT, DataType.BOOLEAN));
     addField(new Field(FIELD_EXCLUDED, DataType.BOOLEAN));
@@ -193,7 +193,7 @@ public class Report
   public List<AbstractField> getFields() {
     List<AbstractField> 	result;
 
-    result = new ArrayList<AbstractField>();
+    result = new ArrayList<>();
 
     for (AbstractField key:m_Params.keySet())
       result.add(key);
@@ -211,7 +211,7 @@ public class Report
     List<AbstractField> 	result;
     String			str;
 
-    result = new ArrayList<AbstractField>();
+    result = new ArrayList<>();
     str    = prefix.getPrefix();
     for (AbstractField key: m_Params.keySet()) {
       if (key.isCompound() && key.getPrefix().equals(str))
@@ -231,7 +231,7 @@ public class Report
     List<AbstractField> 	result;
     String		str;
 
-    result = new ArrayList<AbstractField>();
+    result = new ArrayList<>();
     str    = suffix.getSuffix();
     for (AbstractField key: m_Params.keySet()) {
       if (key.isCompound() && key.getSuffix().equals(str))
@@ -250,13 +250,13 @@ public class Report
     List<PrefixOnlyField>	result;
     HashSet<PrefixOnlyField>	fields;
 
-    fields = new HashSet<PrefixOnlyField>();
+    fields = new HashSet<>();
     for (AbstractField key: m_Params.keySet()) {
       if (key.isCompound())
 	fields.add(new PrefixField(key));
     }
 
-    result = new ArrayList<PrefixOnlyField>(fields);
+    result = new ArrayList<>(fields);
     Collections.sort(result);
 
     return result;
@@ -271,13 +271,13 @@ public class Report
     List<SuffixOnlyField>	result;
     HashSet<SuffixOnlyField>	fields;
 
-    fields = new HashSet<SuffixOnlyField>();
+    fields = new HashSet<>();
     for (AbstractField key: m_Params.keySet()) {
       if (key.isCompound())
 	fields.add(new SuffixField(key));
     }
 
-    result = new ArrayList<SuffixOnlyField>(fields);
+    result = new ArrayList<>(fields);
     Collections.sort(result);
 
     return result;
@@ -297,7 +297,7 @@ public class Report
     else {
       Object o = f.valueOf(value);
       if (o == null) {
-	getLogger().info("Null object from: " + value.toString());
+	getLogger().info("Null object from: " + value);
 	return;
       }
       m_Params.put(f, o);
@@ -410,17 +410,17 @@ public class Report
   public void setValue(AbstractField key, Object value) {
     // correct type if necessary (Boolean/Double/String)
     if (value instanceof Byte)
-      value = new Double(((Byte) value).doubleValue());
+      value = ((Byte) value).doubleValue();
     else if (value instanceof Short)
-      value = new Double(((Short) value).doubleValue());
+      value = ((Short) value).doubleValue();
     else if (value instanceof Integer)
-      value = new Double(((Integer) value).doubleValue());
+      value = ((Integer) value).doubleValue();
     else if (value instanceof Long)
-      value = new Double(((Long) value).doubleValue());
+      value = ((Long) value).doubleValue();
     else if (value instanceof Float)
-      value = new Double(((Float) value).doubleValue());
+      value = ((Float) value).doubleValue();
     else if (value instanceof Character)
-      value = new String(value.toString());
+      value = value.toString();
 
     if (value instanceof String)
       value = Field.fixString((String) value);
@@ -428,9 +428,9 @@ public class Report
     // convert to correct type
     if (value instanceof String) {
       if (key.getDataType() == DataType.NUMERIC)
-	value = new Double((String) value);
+	value = Double.parseDouble((String) value);
       else if (key.getDataType() == DataType.BOOLEAN)
-	value = new Boolean((String) value);
+	value = Boolean.parseBoolean((String) value);
     }
     else if (value instanceof Double) {
       if ((key.getDataType() == DataType.STRING) || (key.getDataType() == DataType.UNKNOWN))
@@ -582,7 +582,7 @@ public class Report
   @Override
   public String toString() {
     StringBuilder ret = new StringBuilder();
-    List<AbstractField> fields = new ArrayList<AbstractField>();
+    List<AbstractField> fields = new ArrayList<>();
     for (AbstractField s:m_Params.keySet())
       fields.add(s);
     Collections.sort(fields);
@@ -641,10 +641,15 @@ public class Report
     AbstractField	field;
 
     field = new Field(FIELD_DUMMYREPORT, DataType.BOOLEAN);
-    if (hasValue(field))
-      return getBooleanValue(field);
-    else
+    try {
+      if (hasValue(field))
+        return getBooleanValue(field);
+      else
+        return false;
+    }
+    catch (Exception e) {
       return false;
+    }
   }
 
   /**
@@ -677,15 +682,15 @@ public class Report
     qr = (Report) o;
 
     if (result == 0)
-      result = new Integer(m_Params.size()).compareTo(new Integer(qr.m_Params.size()));
+      result = Integer.compare(m_Params.size(), qr.m_Params.size());
 
-    keys = new ArrayList<AbstractField>();
+    keys = new ArrayList<>();
     enm = m_Params.keys();
     while (enm.hasMoreElements())
       keys.add(enm.nextElement());
     Collections.sort(keys);
 
-    keysQr = new ArrayList<AbstractField>();
+    keysQr = new ArrayList<>();
     enm = m_Params.keys();
     while (enm.hasMoreElements())
       keysQr.add(enm.nextElement());
@@ -752,7 +757,7 @@ public class Report
 
     result = newInstance(report);
     if (result != null) {
-      params = new Hashtable<AbstractField,Object>();
+      params = new Hashtable<>();
       for (AbstractField key: getFields()) {
 	if (report.hasValue(key))
 	  params.put(key, getValue(key));
@@ -778,7 +783,7 @@ public class Report
 
     result = newInstance(report);
     if (result != null) {
-      params = new Hashtable<AbstractField,Object>();
+      params = new Hashtable<>();
       for (AbstractField key: getFields()) {
 	if (!report.hasValue(key))
 	  params.put(key, getValue(key));
@@ -942,13 +947,13 @@ public class Report
 	continue;
       if (name.equals(PROPERTY_PARENTID))
 	result.setDatabaseID(props.getDouble(PROPERTY_PARENTID, -1.0).intValue());
-      type = (DataType) DataType.valueOf((AbstractOption) null, props.getProperty(name + DATATYPE_SUFFIX, "U"));
+      type = DataType.valueOf((AbstractOption) null, props.getProperty(name + DATATYPE_SUFFIX, "U"));
       if (type == null)
 	type = DataType.UNKNOWN;
       if (type == DataType.NUMERIC)
 	result.setValue(new Field(name, type), Utils.toDouble(props.getProperty(name)));
       else if (type == DataType.BOOLEAN)
-	result.setValue(new Field(name, type), new Boolean(props.getProperty(name)));
+	result.setValue(new Field(name, type), Boolean.parseBoolean(props.getProperty(name)));
       else
 	result.setValue(new Field(name, type), props.getProperty(name));
     }
