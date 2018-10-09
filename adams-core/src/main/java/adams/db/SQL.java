@@ -15,7 +15,7 @@
 
 /*
  * SQL.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -50,7 +50,6 @@ import java.util.logging.Level;
  *
  * @author dale
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SQL
   extends LoggingObject
@@ -259,7 +258,8 @@ public class SQL
   public PreparedStatement prepareStatement(String query, boolean returnKeys) throws Exception{
     Connection connection = m_DatabaseConnection.getConnection(true);
     PreparedStatement stmt = null;
-    getLogger().info("Preparing statement for: " + query);
+    if (isLoggingEnabled())
+      getLogger().info("Preparing statement for: " + query);
     try {
       if (returnKeys)
 	stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -293,7 +293,8 @@ public class SQL
     String query="UPDATE " + table + " SET " + updateString + " WHERE " + where;
     Connection connection = m_DatabaseConnection.getConnection(true);
     Statement stmt = null;
-    getLogger().info("Updating: " + query);
+    if (isLoggingEnabled())
+      getLogger().info("Updating: " + query);
     int uc = 0;
     try {
       stmt = connection.createStatement();
@@ -336,7 +337,8 @@ public class SQL
   public ResultSet executeGeneratedKeys(String query) throws Exception {
     Connection connection = m_DatabaseConnection.getConnection(true);
     Statement stmt = null;
-    getLogger().info("Execute generated keys: " + query);
+    if (isLoggingEnabled())
+      getLogger().info("Execute generated keys: " + query);
     try {
       stmt = connection.createStatement();
       stmt.execute(query, Statement.RETURN_GENERATED_KEYS);
@@ -373,7 +375,8 @@ public class SQL
       throw new IllegalStateException(
 	  "Connection object is null (" + m_DatabaseConnection.toStringShort() + "/" + m_DatabaseConnection.hashCode() + ")!");
     stmt = null;
-    getLogger().info("Execute: " + query);
+    if (isLoggingEnabled())
+      getLogger().info("Execute: " + query);
     try {
       stmt   = connection.createStatement();
       result = stmt.execute(query);
@@ -626,7 +629,8 @@ public class SQL
       query += " " + where;
     }
 
-    getLogger().info("doSelect: " + query);
+    if (isLoggingEnabled())
+      getLogger().info("doSelect: " + query);
     try {
       return getResultSet(query);
     }
@@ -832,7 +836,8 @@ public class SQL
    */
   public ResultSet getResultSet(String query) throws Exception {
     Connection connection = m_DatabaseConnection.getConnection(true);
-    getLogger().info("Get ResultSet for : " + query);
+    if (isLoggingEnabled())
+      getLogger().info("Get ResultSet for : " + query);
     if (connection == null)
       throw new IllegalStateException("Connection object is null!");
 
