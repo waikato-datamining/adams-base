@@ -24,6 +24,8 @@ import adams.core.ClassLister;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
+import adams.gui.core.DelayedActionRunnable;
+import adams.gui.core.DelayedActionRunnable.AbstractAction;
 import adams.gui.core.Fonts;
 import adams.gui.core.SearchableBaseList;
 import adams.gui.help.AbstractHelpGenerator;
@@ -34,17 +36,21 @@ import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Simple panel for lookup of help information on classes (if available).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClassHelpPanel
   extends BasePanel {
@@ -59,6 +65,23 @@ public class ClassHelpPanel
 
   /** for displaying the help. */
   protected JEditorPane m_TextPaneHelp;
+
+  /** the change listeners. */
+  protected Set<ChangeListener> m_ChangeListeners;
+
+  /** for updating the search etc. */
+  protected DelayedActionRunnable m_DelayedAction;
+
+  /**
+   * Initializes the listeners.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_ChangeListeners = new HashSet<>();
+    m_DelayedAction   = new DelayedActionRunnable(500, 50);
+  }
 
   /**
    * For initializing the GUI.
@@ -77,6 +100,21 @@ public class ClassHelpPanel
     m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
       protected void update() {
 	m_ListClasses.search(m_TextSearch.getText().length() == 0 ? null : m_TextSearch.getText(), false);
+	m_DelayedAction.queue(new AbstractAction(m_DelayedAction) {
+	  @Override
+	  public String execute() {
+	    SwingUtilities.invokeLater(() -> {
+	      if (m_ListClasses.getModel().getSize() > 0) {
+		int index = m_ListClasses.getSelectedIndex();
+		if (index == -1)
+		  index = 0;
+		m_ListClasses.ensureIndexIsVisible(index);
+	      }
+	      notifyChangeListeners();
+	    });
+	    return null;
+	  }
+	});
       }
       @Override
       public void insertUpdate(DocumentEvent e) {
@@ -102,9 +140,11 @@ public class ClassHelpPanel
     m_ListClasses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     m_ListClasses.addListSelectionListener((ListSelectionEvent e) -> {
       String clsName = (String) m_ListClasses.getSelectedValue();
-      if (clsName == null)
-	return;
-      displayHelp(clsName);
+      if (clsName != null)
+	displayHelp(clsName);
+      else
+        clearHelp();
+      notifyChangeListeners();
     });
     split.setTopComponent(new BaseScrollPane(m_ListClasses));
 
@@ -117,6 +157,13 @@ public class ClassHelpPanel
 
     split.setResizeWeight(1.0);
     split.setDividerLocation(200);
+  }
+
+  /**
+   * Removes all text.
+   */
+  protected void clearHelp() {
+    m_TextPaneHelp.setText("");
   }
 
   /**
@@ -136,5 +183,55 @@ public class ClassHelpPanel
       m_TextPaneHelp.setText(cont.getHelp());
       m_TextPaneHelp.setCaretPosition(0);
     }
+  }
+
+  /**
+   * Sets the initially selected class.
+   *
+   * @param value	the class to select
+   */
+  public void setSelectedClass(String value) {
+    m_ListClasses.setSelectedValue(value, true);
+  }
+
+  /**
+   * Returns the currently selected class.
+   *
+   * @return		the class, null if none selected
+   */
+  public String getSelectedClass() {
+    if (m_ListClasses.getSelectedIndex() == -1)
+      return null;
+    else
+      return (String) m_ListClasses.getSelectedValue();
+  }
+
+  /**
+   * Adds the change listener to notify whenever the class changes.
+   *
+   * @param l 		the listener to add
+   */
+  public void addChangeListener(ChangeListener l) {
+    m_ChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the change listener from notifications whenever the class changes.
+   *
+   * @param l 		the listener to remove
+   */
+  public void removeChangeListener(ChangeListener l) {
+    m_ChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all change listeners.
+   */
+  protected void notifyChangeListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_ChangeListeners)
+      l.stateChanged(e);
   }
 }
