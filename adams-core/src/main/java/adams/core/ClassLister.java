@@ -26,8 +26,11 @@ import adams.env.ClassListerBlacklistDefinition;
 import adams.env.ClassListerDefinition;
 import adams.env.Environment;
 import adams.flow.core.Compatibility;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -117,6 +120,53 @@ public class ClassLister
     }
 
     return result.toArray(new Class[0]);
+  }
+
+  /**
+   * For returning a list of all classes.
+   *
+   * @param managed	whether to restrict to managed classes
+   * @return		the list of class names
+   */
+  public List<String> getAllClassnames(boolean managed) {
+    List<String> 	result;
+    int			i;
+    String		name;
+    Iterator<String> 	iter;
+
+    result = new ArrayList<>();
+    if (!managed) {
+      // all classes
+      iter = ClassLocator.getSingleton().getCache().packages();
+      while (iter.hasNext()) {
+	for (String cls: ClassLocator.getSingleton().getCache().getClassnames(iter.next())) {
+	  if (cls.contains("$"))
+	    continue;
+	  result.add(cls);
+	}
+      }
+    }
+    else {
+      // only managed classes
+      for (String supercls : ClassLister.getSingleton().getSuperclasses()) {
+	for (Class cls : ClassLister.getSingleton().getClasses(supercls))
+	  result.add(cls.getName());
+      }
+    }
+    Collections.sort(result);
+    i = 0;
+    name = "";
+    while (i < result.size()) {
+      if (!name.equals(result.get(i))) {
+	name = result.get(i);
+	i++;
+      }
+      else {
+	result.remove(i);
+      }
+    }
+
+    return result;
   }
 
   /**

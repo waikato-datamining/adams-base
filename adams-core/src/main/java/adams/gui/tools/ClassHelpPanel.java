@@ -29,7 +29,6 @@ import adams.gui.core.SearchableBaseList;
 import adams.gui.help.AbstractHelpGenerator;
 import adams.gui.help.HelpContainer;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
-import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
@@ -39,9 +38,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -100,7 +96,7 @@ public class ClassHelpPanel
     split = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     add(split, BorderLayout.CENTER);
 
-    classes = getClasses(true);
+    classes = ClassLister.getSingleton().getAllClassnames(false);
     m_ListClasses = new SearchableBaseList(classes.toArray(new String[classes.size()]));
     m_ListClasses.search(null, false);
     m_ListClasses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -121,53 +117,6 @@ public class ClassHelpPanel
 
     split.setResizeWeight(1.0);
     split.setDividerLocation(200);
-  }
-
-  /**
-   * Returns the list of classes to use.
-   *
-   * @param all		whether to list all classes or only managed ones
-   * @return		the class names
-   */
-  protected List<String> getClasses(boolean all) {
-    List<String> 	classes;
-    int			i;
-    String		name;
-    Iterator<String>	iter;
-
-    classes = new ArrayList<>();
-    if (all) {
-      // all classes
-      iter = ClassLocator.getSingleton().getCache().packages();
-      while (iter.hasNext()) {
-	for (String cls: ClassLocator.getSingleton().getCache().getClassnames(iter.next())) {
-	  if (cls.contains("$"))
-	    continue;
-	  classes.add(cls);
-	}
-      }
-    }
-    else {
-      // only managed classes
-      for (String supercls : ClassLister.getSingleton().getSuperclasses()) {
-	for (Class cls : ClassLister.getSingleton().getClasses(supercls))
-	  classes.add(cls.getName());
-      }
-    }
-    Collections.sort(classes);
-    i = 0;
-    name = "";
-    while (i < classes.size()) {
-      if (!name.equals(classes.get(i))) {
-	name = classes.get(i);
-	i++;
-      }
-      else {
-	classes.remove(i);
-      }
-    }
-
-    return classes;
   }
 
   /**
