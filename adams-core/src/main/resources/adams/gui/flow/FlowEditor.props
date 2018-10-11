@@ -161,7 +161,6 @@ StatusBar.Height=400
 # The flow editor tree popup menu
 Tree.PopupMenu=\
   adams.gui.flow.tree.menu.EditActor,\
-  adams.gui.flow.tree.menu.ExternalFlow,\
   -,\
   adams.gui.flow.tree.menu.AddActorBeneath,\
   adams.gui.flow.tree.menu.AddActorHere,\
@@ -189,15 +188,17 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.CreateCallableActor,\
   adams.gui.flow.tree.menu.MakeConditional,\
   adams.gui.flow.tree.menu.MakeTimed,\
+  -,\
+  adams.gui.flow.tree.menu.ExternalFlow,\
   adams.gui.flow.tree.menu.ExternalizeActor,\
   adams.gui.flow.tree.menu.MaterializeExternalActor,\
-  adams.gui.flow.tree.menu.CompareActors,\
-  adams.gui.flow.tree.menu.InspectMemory,\
   -,\
   adams.gui.flow.tree.menu.ExpandAll,\
   adams.gui.flow.tree.menu.CollapseAll,\
   -,\
   adams.gui.flow.tree.menu.AnnotateActor,\
+  adams.gui.flow.tree.menu.CompareActors,\
+  adams.gui.flow.tree.menu.InspectMemory,\
   adams.gui.flow.tree.menu.Help
 
 # Whether to record the actors that the user adds, to improve suggestions
