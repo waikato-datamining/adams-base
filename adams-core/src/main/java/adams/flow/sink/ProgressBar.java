@@ -15,7 +15,7 @@
 
 /*
  * ProgressBar.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -782,6 +782,7 @@ public class ProgressBar
       result.setLayout(new BorderLayout());
       result.add(m_PanelProgress, BorderLayout.CENTER);
       label = new JLabel(m_Title);
+      label.setToolTipText(m_Title);
       label.setFont(m_TitleFont);
       label.setVerticalAlignment(SwingConstants.CENTER);
       panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
