@@ -81,6 +81,7 @@ public class FlowPreferencesPanel
     addPropertyType("Toolbar.Actions", PropertyType.COMMA_SEPARATED_LIST);
     setEnum("ToolBar.Location", ToolBarLocation.class);
     addPropertyType("Tree.PopupMenu", PropertyType.COMMA_SEPARATED_LIST);
+    addPropertyType("Tree.PopupMenuExtensions", PropertyType.COMMA_SEPARATED_LIST);
     addPropertyType("Tree.KeyboardActions", PropertyType.BLANK_SEPARATED_LIST);
     addPropertyType("Tree.InputOutput.Prefixes", PropertyType.COMMA_SEPARATED_LIST);
     setPreferences(Environment.getInstance().read(FlowEditorPanelDefinition.KEY));

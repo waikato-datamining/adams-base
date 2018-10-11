@@ -1061,6 +1061,10 @@ public class Tree
     MenuHeader		header;
     TreePopupAction	action;
     boolean		first;
+    String[]		parts;
+    int			i;
+    Class		ext;
+    boolean		inserted;
 
     state = getTreeState(e);
     if (state == null)
@@ -1092,6 +1096,47 @@ public class Tree
 	    ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu item class '" + item + "':", ex);
 	  }
 	}
+      }
+
+      // extensions
+      items = FlowEditorPanel.getPropertiesEditor().getProperty("Tree.PopupMenuExtensions", "").replace(" ", "").split(",");
+      for (String item : items) {
+	if (item.trim().length() == 0)
+	  continue;
+        try {
+          inserted = false;
+          parts    = item.split(":");
+          if (parts.length == 3) {
+            ext = Class.forName(parts[2]);
+            for (i = 0; i < m_NodePopupClasses.size(); i++) {
+              if (m_NodePopupClasses.get(i).getName().equals(parts[1])) {
+                switch (parts[0]) {
+		  case "before":
+		    m_NodePopupClasses.add(i, ext);
+		    inserted = true;
+		    break;
+		  case "after":
+		    m_NodePopupClasses.add(i+1, ext);
+		    inserted = true;
+		    break;
+		  default:
+		    ConsolePanel.getSingleton().append(this, LoggingLevel.WARNING, "Unhandled flow tree popup menu extension insertion '" + parts[0] + "': " + item);
+		    break;
+		}
+	      }
+	      if (inserted)
+	        break;
+	    }
+	    if (!inserted)
+	      m_NodePopupClasses.add(ext);
+	  }
+	  else {
+	    ConsolePanel.getSingleton().append(this, LoggingLevel.WARNING, "Flow tree popup menu extension in wrong format ({after|before}:classname:classname): " + item);
+	  }
+        }
+        catch (Exception ex) {
+          ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu extension item '" + item + "':", ex);
+        }
       }
     }
 

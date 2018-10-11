@@ -201,6 +201,13 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.InspectMemory,\
   adams.gui.flow.tree.menu.Help
 
+# The extensions for the tree menu (comma-separated list)
+# Format: {after|before}:<classname_existing_menuitem>:<classname_extension>
+# Example:
+# Tree.PopupMenuExtensions=\
+#    after:adams.gui.flow.tree.menu.PasteActor:adams.gui.flow.tree.menu.PasteActorHere
+Tree.PopupMenuExtensions=
+
 # Whether to record the actors that the user adds, to improve suggestions
 # (true|false)
 Tree.RecordAdd=false
