@@ -691,6 +691,17 @@ public class ConsolePanel
   }
 
   /**
+   * Convenience method for outputting exceptions.
+   *
+   * @param source	the source object
+   * @param level	the logging level
+   * @param msg		the message to precede the stacktrace
+   */
+  public void append(Object source, LoggingLevel level, String msg) {
+    append(level, source.getClass().getName() + ": " + msg);
+  }
+
+  /**
    * Appends the given string to the according panels.
    *
    * @param level	the logging level
