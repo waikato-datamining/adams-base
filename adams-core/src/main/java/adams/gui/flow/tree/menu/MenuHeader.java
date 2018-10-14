@@ -13,11 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MenuHeader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
+
+import adams.core.Shortening;
 
 import java.awt.event.ActionEvent;
 
@@ -25,7 +27,6 @@ import java.awt.event.ActionEvent;
  * Adds a disabled menu item to the popup menu with the name of the current actor.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class MenuHeader
   extends AbstractTreePopupMenuItemAction {
@@ -48,7 +49,7 @@ public class MenuHeader
    */
   @Override
   protected void doUpdate() {
-    setName(m_State.nodeAtMouseLoc.getActor().getName());
+    setName(Shortening.shortenEnd(m_State.nodeAtMouseLoc.getActor().getName(), 50));
     setEnabled(false);
   }
 
