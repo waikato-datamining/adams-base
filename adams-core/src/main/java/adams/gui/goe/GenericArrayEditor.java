@@ -27,6 +27,8 @@ import adams.core.Utils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
+import adams.gui.action.AbstractBaseAction;
+import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -66,13 +68,13 @@ import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * A PropertyEditor for arrays of objects that themselves have
  * property editors.
  *
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
- * @version $Revision$
  * @see weka.gui.GenericArrayEditor
  */
 public class GenericArrayEditor
@@ -220,6 +222,9 @@ public class GenericArrayEditor
   /** whether the objects are wrapped with BaseObject. */
   protected boolean m_IsPrimitive;
 
+  /** whether the objects implement comparable. */
+  protected boolean m_CanSort;
+
   /** Click this to delete the selected array values. */
   protected JButton m_ButtonRemove;
 
@@ -250,8 +255,17 @@ public class GenericArrayEditor
   /** Click to cancel the dialog. */
   protected JButton m_ButtonCancel;
 
-  /** Click to revert the changes. */
-  protected JButton m_ButtonRevert;
+  /** More actions. */
+  protected BaseButtonWithDropDownMenu m_ButtonActions;
+
+  /** the restore action. */
+  protected AbstractBaseAction m_ActionRestore;
+
+  /** the sort (asc) action. */
+  protected AbstractBaseAction m_ActionSortAsc;
+
+  /** the sort (desc) action. */
+  protected AbstractBaseAction m_ActionSortDesc;
 
   /** the panel for the buttons. */
   protected JPanel m_PanelDialogButtons;
@@ -372,9 +386,47 @@ public class GenericArrayEditor
       close();
     });
 
-    m_ButtonRevert = new JButton(GUIHelper.getIcon("undo.gif"));
-    m_ButtonRevert.setToolTipText("Reverts the changes");
-    m_ButtonRevert.addActionListener((ActionEvent e) -> restore());
+    m_ButtonActions = new BaseButtonWithDropDownMenu();
+    m_ButtonActions.setToolTipText("More actions");
+    m_ActionRestore = new AbstractBaseAction() {
+      @Override
+      protected void initialize() {
+	super.initialize();
+	setName("Restore");
+	setIcon("undo.gif");
+      }
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+	restore();
+      }
+    };
+    m_ButtonActions.addToMenu(m_ActionRestore);
+    m_ActionSortAsc = new AbstractBaseAction() {
+      @Override
+      protected void initialize() {
+	super.initialize();
+	setName("Sort (asc)");
+	setIcon("sort-ascending.png");
+      }
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+	sort(true);
+      }
+    };
+    m_ButtonActions.addToMenu(m_ActionSortAsc);
+    m_ActionSortDesc = new AbstractBaseAction() {
+      @Override
+      protected void initialize() {
+	super.initialize();
+	setName("Sort (desc)");
+	setIcon("sort-descending.png");
+      }
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+	sort(false);
+      }
+    };
+    m_ButtonActions.addToMenu(m_ActionSortDesc);
 
     m_ElementList = new BaseListWithButtons();
     m_ElementList.setDoubleClickButton(m_ButtonEdit);
@@ -404,7 +456,9 @@ public class GenericArrayEditor
   protected void updateButtons() {
     m_ButtonAddMultiple.setEnabled(m_ElementEditor instanceof MultiSelectionEditor);
     m_ButtonOK.setEnabled(m_Modified || m_OkAlwaysEnabled);
-    m_ButtonRevert.setEnabled(m_Modified);
+    m_ActionRestore.setEnabled(m_Modified);
+    m_ActionSortAsc.setEnabled(m_CanSort && (m_ListModel.getSize() > 1));
+    m_ActionSortDesc.setEnabled(m_CanSort && (m_ListModel.getSize() > 1));
     if (m_ElementList.getSelectedIndex() != -1) {
       m_ButtonCopy.setEnabled(m_ElementList.getSelectedIndices().length == 1);
       m_ButtonRemove.setEnabled(true);
@@ -456,6 +510,35 @@ public class GenericArrayEditor
   }
 
   /**
+   * Sorts the values.
+   *
+   * @param ascending	if true, sorting is done ascending, otherwise descending
+   */
+  protected void sort(boolean ascending) {
+    int 		i;
+    DefaultListModel	listModel;
+    Object[]		items;
+
+    items = new Object[m_ListModelBackup.getSize()];
+    for (i = 0; i < m_ListModelBackup.size(); i++)
+      items[i] = m_ListModelBackup.get(i);
+    Arrays.sort(items);
+    listModel = new DefaultListModel();
+    if (ascending) {
+      for (i = 0; i < items.length; i++)
+	listModel.addElement(items[i]);
+    }
+    else {
+      for (i = items.length - 1; i >= 0; i--)
+	listModel.addElement(items[i]);
+    }
+    m_ListModel = listModel;
+    m_ElementList.setModel(m_ListModel);
+    m_Modified = true;
+    updateButtons();
+  }
+
+  /**
    * Updates the type of object being edited, so attempts to find an
    * appropriate propertyeditor.
    *
@@ -484,6 +567,7 @@ public class GenericArrayEditor
     m_View          = null;
     m_ListModel     = null;
     m_IsPrimitive   = false;
+    m_CanSort       = false;
     m_ButtonAdd.setIcon(GUIHelper.getIcon("add.gif"));
     removeAll();
 
@@ -492,6 +576,7 @@ public class GenericArrayEditor
       primitive    = Utils.isPrimitive(elementClass);
       if (primitive)
 	elementClass = Utils.getWrapperClass(elementClass);
+      m_CanSort = ClassLocator.hasInterface(Comparable.class, elementClass);
       editor = PropertyEditorManager.findEditor(elementClass);
       view         = null;
       lcr          = new DefaultListCellRenderer();
@@ -623,7 +708,7 @@ public class GenericArrayEditor
 	panelRight           = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 	m_PanelDialogButtons.add(panelLeft);
 	m_PanelDialogButtons.add(panelRight);
-	panelLeft.add(m_ButtonRevert);
+	panelLeft.add(m_ButtonActions);
 	panelRight.add(m_ButtonOK);
 	panelRight.add(m_ButtonCancel);
 	add(m_PanelDialogButtons, BorderLayout.SOUTH);
