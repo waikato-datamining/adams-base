@@ -869,6 +869,9 @@ public class SortableAndSearchableWrapperTableModel
 	      else if (m_ColumnFiltersRegExp.containsKey(col))
 		show = m_ColumnFiltersRegExp.get(col).isMatch(valueStr);
 	    }
+	    else {
+	      show = !((m_ColumnFilters.containsKey(col)) || (m_ColumnFiltersRegExp.containsKey(col)));
+            }
 	  }
 	}
 
