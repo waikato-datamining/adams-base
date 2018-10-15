@@ -519,9 +519,9 @@ public class GenericArrayEditor
     DefaultListModel	listModel;
     Object[]		items;
 
-    items = new Object[m_ListModelBackup.getSize()];
-    for (i = 0; i < m_ListModelBackup.size(); i++)
-      items[i] = m_ListModelBackup.get(i);
+    items = new Object[m_ListModel.getSize()];
+    for (i = 0; i < m_ListModel.size(); i++)
+      items[i] = m_ListModel.get(i);
     Arrays.sort(items);
     listModel = new DefaultListModel();
     if (ascending) {
