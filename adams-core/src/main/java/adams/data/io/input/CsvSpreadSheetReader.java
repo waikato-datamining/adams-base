@@ -29,6 +29,7 @@ import adams.core.TimeMsec;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.base.BaseRegExp;
+import adams.core.io.FileUtils;
 import adams.core.management.LocaleHelper;
 import adams.core.management.OptionHandlingLocaleSupporter;
 import adams.data.DateFormatString;
@@ -446,11 +447,15 @@ public class CsvSpreadSheetReader
      * @param cells	the cells to add to
      */
     protected void addCell(StringBuilder current, List<String> cells) {
+      String	content;
+
       removeTrailingCR(current);
+      content = FileUtils.removeAllByteOrderMarks(current.toString());
+
       if (m_Trim)
-        cells.add(unquote(current.toString().trim()));
+        cells.add(unquote(content.trim()));
       else
-        cells.add(unquote(current.toString()));
+        cells.add(unquote(content));
       if (current.length() > 0)
         current.delete(0, current.length());
     }

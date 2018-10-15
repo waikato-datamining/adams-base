@@ -13,11 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LineArrayTextReader.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
+
+import adams.core.io.FileUtils;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -55,7 +57,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LineArrayTextReader
   extends AbstractTextReaderWithEncoding<String[]> {
@@ -154,11 +155,11 @@ public class LineArrayTextReader
     List<String>	result;
     String		line;
     
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     
     try {
       while ((line = m_Scanner.nextLine()) != null) {
-	result.add(line);
+	result.add(FileUtils.removeAllByteOrderMarks(line));
 	if (m_ChunkSize > -1) {
 	  if (result.size() >= m_ChunkSize)
 	    break;
@@ -185,6 +186,6 @@ public class LineArrayTextReader
     if (m_Scanner == null)
       m_Stream = null;
     
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 }

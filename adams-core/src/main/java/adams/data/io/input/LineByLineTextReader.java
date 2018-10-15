@@ -13,11 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LineByLineTextReader.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
+
+import adams.core.io.FileUtils;
 
 import java.io.InputStream;
 import java.util.NoSuchElementException;
@@ -45,7 +47,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LineByLineTextReader
   extends AbstractTextReaderWithEncoding<String> {
@@ -98,7 +99,7 @@ public class LineByLineTextReader
     result = null;
     
     try {
-      result = m_Scanner.nextLine();
+      result = FileUtils.removeAllByteOrderMarks(m_Scanner.nextLine());
     }
     catch (NoSuchElementException e) {
       // nothing left in stream

@@ -13,11 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SingleStringTextReader.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
+
+import adams.core.io.FileUtils;
 
 import java.io.InputStream;
 import java.util.NoSuchElementException;
@@ -45,7 +47,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SingleStringTextReader
   extends AbstractTextReaderWithEncoding<String> {
@@ -99,7 +100,7 @@ public class SingleStringTextReader
     result = new StringBuilder();
     try {
       while ((line = m_Scanner.nextLine()) != null) {
-	result.append(line);
+	result.append(FileUtils.removeAllByteOrderMarks(line));
 	result.append("\n");
       }
     }

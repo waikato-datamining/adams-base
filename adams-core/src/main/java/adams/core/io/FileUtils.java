@@ -131,6 +131,32 @@ public class FileUtils {
   }
 
   /**
+   * Removes a UTF-8 BOM.
+   *
+   * @param s		the current string
+   */
+  public static void removeUTF8BOM(StringBuilder s) {
+    if (s.length() > 0) {
+      if (s.charAt(0) == '\uFEFF')
+        s.delete(0, 1);
+    }
+  }
+
+  /**
+   * Removes a UTF-8 BOM.
+   *
+   * @param s		the string to process
+   * @return		the (potentially) updated string
+   */
+  public static String removeUTF8BOM(String s) {
+    if (s.length() > 0) {
+      if (s.charAt(0) == '\uFEFF')
+        return s.substring(1);
+    }
+    return s;
+  }
+
+  /**
    * Removes byte order marks (BOMs) from the start of the string (if present).
    * For UTF-16 and UTF-32.
    *
@@ -155,6 +181,17 @@ public class FileUtils {
 	return s.substring(2);
     }
     return s;
+  }
+
+  /**
+   * Removes byte order marks (BOMs) from the start of the string (if present).
+   * For UTDF-8, UTF-16 and UTF-32.
+   *
+   * @param s		the string to process
+   * @return		the processed string
+   */
+  public static String removeAllByteOrderMarks(String s) {
+    return removeUTF8BOM(removeByteOrderMarks(s));
   }
 
   /**
@@ -205,7 +242,7 @@ public class FileUtils {
 	  result = new ArrayList<>(Arrays.asList(Utils.split(str, "\n")));
 	  // remove byte order marks
 	  if (result.size() > 0)
-	    result.set(0, removeByteOrderMarks(result.get(0)));
+	    result.set(0, removeAllByteOrderMarks(result.get(0)));
 	}
 	else {
           result = null;
@@ -219,7 +256,7 @@ public class FileUtils {
           result = Files.readAllLines(file.toPath(), Charset.forName(encoding));
         // remove byte order marks
         if (result.size() > 0)
-          result.set(0, removeByteOrderMarks(result.get(0)));
+          result.set(0, removeAllByteOrderMarks(result.get(0)));
         return result;
       }
     }

@@ -2305,30 +2305,4 @@ public class Utils {
 
     return result.toString();
   }
-
-  /**
-   * Removes a UTF-8 BOM.
-   *
-   * @param s		the current string
-   */
-  public static void removeUTF8BOM(StringBuilder s) {
-    if (s.length() > 0) {
-      if (s.charAt(0) == '\uFEFF')
-        s.delete(0, 1);
-    }
-  }
-
-  /**
-   * Removes a UTF-8 BOM.
-   *
-   * @param s		the string to process
-   * @return		the (potentially) updated string
-   */
-  public static String removeUTF8BOM(String s) {
-    if (s.length() > 0) {
-      if (s.charAt(0) == '\uFEFF')
-        return s.substring(1);
-    }
-    return s;
-  }
 }
