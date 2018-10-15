@@ -57,7 +57,6 @@ import java.util.logging.Level;
  * @author Julien Prados
  * @author FracPete (fracpete at waikat dot ac dot nz)
  * @author Herong Yang
- * @version $Revision$
  * @see weka.core.Utils
  */
 public class Utils {
@@ -2313,7 +2312,7 @@ public class Utils {
    * @param s		the current string
    */
   public static void removeUTF8BOM(StringBuilder s) {
-    if (s.length() >= 2) {
+    if (s.length() > 0) {
       if (s.charAt(0) == '\uFEFF')
         s.delete(0, 1);
     }
@@ -2326,7 +2325,7 @@ public class Utils {
    * @return		the (potentially) updated string
    */
   public static String removeUTF8BOM(String s) {
-    if (s.length() >= 2) {
+    if (s.length() > 0) {
       if (s.charAt(0) == '\uFEFF')
         return s.substring(1);
     }
