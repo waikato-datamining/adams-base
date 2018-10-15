@@ -261,7 +261,7 @@ public class SpreadSheetTable
     menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy_column.gif"));
     menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
     menuitem.addActionListener((ActionEvent ae) -> {
-      SpreadSheet sheet = ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
+      SpreadSheet sheet = toSpreadSheet(TableRowRange.VISIBLE);
       StringBuilder content = new StringBuilder();
       String sep = System.getProperty("line.separator");
       content.append(sheet.getColumnName(actCol) + sep);
