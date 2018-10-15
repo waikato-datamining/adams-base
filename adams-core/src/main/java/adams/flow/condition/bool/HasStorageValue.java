@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HasStorageValue.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -44,7 +44,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8036 $
  */
 public class HasStorageValue
   extends AbstractBooleanCondition {
@@ -136,6 +135,11 @@ public class HasStorageValue
    */
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
+    if (owner == null) {
+      getLogger().warning("No owning actor provided, cannot evaluate!");
+      return false;
+    }
+
     return owner.getStorageHandler().getStorage().has(m_StorageName);
   }
 }

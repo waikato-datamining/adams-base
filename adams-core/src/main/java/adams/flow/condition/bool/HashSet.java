@@ -253,7 +253,12 @@ public class HashSet
     java.util.HashSet	hashset;
     Object		value;
     String		msg;
-    
+
+    if (owner == null) {
+      getLogger().warning("No owning actor provided, cannot evaluate!");
+      return false;
+    }
+
     result = false;
 
     if (!owner.getStorageHandler().getStorage().has(m_StorageName)) {
