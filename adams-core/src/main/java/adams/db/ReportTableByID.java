@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ReportTableByID.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -34,7 +34,6 @@ import java.util.logging.Level;
  * tables.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <R> the type of reports to handle
  * @param <F> the type of fields to handle
  */
@@ -72,6 +71,8 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
       result = new Field(name, DataType.STRING);
     else if (type.equals("N"))
       result = new Field(name, DataType.NUMERIC);
+    else if (type.equals("U"))
+      result = new Field(name, DataType.STRING);
     else
       throw new IllegalStateException("Unhandled type '" + type + "'!");
 
