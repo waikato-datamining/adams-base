@@ -15,7 +15,7 @@
 
 /*
  * EffectiveTagsTab.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -36,7 +36,6 @@ import java.util.List;
  * Tab for displaying the effective tags for the currently selected actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EffectiveTagsTab
   extends AbstractEditorTab
@@ -64,6 +63,7 @@ public class EffectiveTagsTab
 
     m_Model = new KeyValuePairTableModel(new Object[0][], COLUMN_NAMES);
     m_Table = new SortableAndSearchableTable(m_Model);
+    m_Table.setShowSimpleCellPopupMenu(true);
 
     add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
   }
