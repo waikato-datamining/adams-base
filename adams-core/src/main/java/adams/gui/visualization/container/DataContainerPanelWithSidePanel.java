@@ -15,27 +15,26 @@
 
 /*
  * DataContainerPanelWithSidePanel.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-
 import adams.core.Properties;
 import adams.data.container.DataContainer;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.PanelSettings;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 /**
  * Special panel for displaying the DataContainer data and a side panel with
  * additional information.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of container to visualize
  * @param <M> the type of container manager to use
  * @see #m_SidePanel
@@ -100,6 +99,11 @@ public abstract class DataContainerPanelWithSidePanel<T extends DataContainer, M
     m_SplitPane.setLeftComponent(m_PlotWrapperPanel);
     m_SplitPane.setRightComponent(m_SidePanel);
     m_SplitPane.setResizeWeight(1.0);
+    if (PanelSettings.has(getClass(), "Divider"))
+      m_SplitPane.setDividerLocation(PanelSettings.get(getClass(), "Divider", props.getInteger("DividerLocation", 600)));
+    else
+      m_SplitPane.setDividerLocation(0.75);
+    m_SplitPane.setSettingsParameters(getClass(), "Divider");
     m_SplitPane.setOneTouchExpandable(true);
 
     add(m_SplitPane, BorderLayout.CENTER);
