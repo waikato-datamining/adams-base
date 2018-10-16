@@ -32,6 +32,7 @@ import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1363,6 +1364,9 @@ public class FileUtils {
         }
       }
     }
+    catch (FileNotFoundException e) {
+      // ignored
+    }
     catch (Exception ex) {
       System.err.println("Failed to check file open status of: " + file);
       ex.printStackTrace();
@@ -1391,6 +1395,9 @@ public class FileUtils {
     fos = null;
     try {
       fos = new FileOutputStream(file.getAbsolutePath(), true);
+    }
+    catch (FileNotFoundException e) {
+      // ignored
     }
     catch (Exception e) {
       result = true;
