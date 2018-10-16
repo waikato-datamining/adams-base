@@ -1108,6 +1108,18 @@ directory). The key for the menu is called \texttt{Tree.PopupMenu} and the value
 for this property is a simple comma-separated list of class names (use ``-''
 if you want to add a separator).
 
+Instead of modifying the \texttt{Tree.PopupMenu} property (it is easy to forget
+an item), you can easily inject menu items using the \texttt{Tree.PopupMenuExtensions}
+property. This property is also a comma-separated list, but comes with a slightly different
+format for the list elements:
+\begin{verbatim}
+{before|after}:classname_of_anchor:classname_to_inject
+\end{verbatim}
+The \textit{classname\_of\_anchor} refers to a menu item that is currently
+listed in \texttt{Tree.PopupMenu}. From this, the \textit{before} or \textit{after}
+flag then determines where the new menu item, i.e., \textit{classname\_to\_inject},
+gets injected into the menu.
+
 Shortcuts definitions can be stored in the \texttt{FlowEditorShortcuts.props}
 files (package \texttt{adams.gui.flow}, below \texttt{src/main/resources}). The
 definition can be accessed and converted into a \texttt{KeyStroke} object using

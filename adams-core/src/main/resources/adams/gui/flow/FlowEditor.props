@@ -202,7 +202,7 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.Help
 
 # The extensions for the tree menu (comma-separated list)
-# Format: {after|before}:<classname_existing_menuitem>:<classname_extension>
+# Format: {after|before}:<classname_of_anchor>:<classname_to_inject>
 # Example:
 # Tree.PopupMenuExtensions=\
 #    after:adams.gui.flow.tree.menu.PasteActor:adams.gui.flow.tree.menu.PasteActorHere
