@@ -22,6 +22,7 @@ package adams.gui.core;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
 
 /**
  * An extended JSplitPane class. It offers methods for hiding the components
@@ -44,6 +45,12 @@ public class BaseSplitPane
   /** the divider location before hiding a component. */
   protected Integer m_DividerLocationBeforeHiding = null;
 
+  /** the settings class for storing the divider location. */
+  protected Class m_SettingsClass = null;
+
+  /** the settings property for storing the divider location. */
+  protected String m_SettingsProperty = null;
+
   /**
    * Creates a new <code>BaseSplitPane</code> configured to arrange the child
    * components side-by-side horizontally with no continuous
@@ -51,6 +58,7 @@ public class BaseSplitPane
    */
   public BaseSplitPane() {
     super();
+    initialize();
   }
 
   /**
@@ -64,6 +72,7 @@ public class BaseSplitPane
    */
   public BaseSplitPane(int newOrientation) {
     super(newOrientation);
+    initialize();
   }
 
   /**
@@ -80,6 +89,7 @@ public class BaseSplitPane
    */
   public BaseSplitPane(int newOrientation, boolean newContinuousLayout) {
     super(newOrientation, newContinuousLayout);
+    initialize();
   }
 
   /**
@@ -103,6 +113,7 @@ public class BaseSplitPane
    */
   public BaseSplitPane(int newOrientation, Component newLeftComponent, Component newRightComponent) {
     super(newOrientation, newLeftComponent, newRightComponent);
+    initialize();
   }
 
   /**
@@ -128,6 +139,38 @@ public class BaseSplitPane
    */
   public BaseSplitPane(int newOrientation, boolean newContinuousLayout, Component newLeftComponent, Component newRightComponent){
     super(newOrientation, newContinuousLayout, newLeftComponent, newRightComponent);
+    initialize();
+  }
+
+  /**
+   * Initializes members.
+   */
+  protected void initialize() {
+    addPropertyChangeListener((PropertyChangeEvent evt) -> {
+      if ((m_SettingsClass != null) && (m_SettingsProperty != null)) {
+	if (!isTopComponentHidden() && !isBottomComponentHidden())
+	  PanelSettings.set(m_SettingsClass, m_SettingsProperty, getDividerLocation());
+      }
+    });
+  }
+
+  /**
+   * Sets the parameters for storing the divider location.
+   *
+   * @param cls		the class
+   * @param property	the property
+   */
+  public void setSettingsParameters(Class cls, String property) {
+    m_SettingsClass    = cls;
+    m_SettingsProperty = property;
+  }
+
+  /**
+   * Clears the para meters for storing the divider location.
+   */
+  public void clearSettingsParameters() {
+    m_SettingsClass    = null;
+    m_SettingsProperty = null;
   }
 
   /**

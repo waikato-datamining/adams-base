@@ -55,6 +55,7 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MultiPageIconSupporter;
+import adams.gui.core.PanelSettings;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.TitleGenerator;
@@ -265,6 +266,9 @@ public class FlowPanel
     m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     m_SplitPane.setResizeWeight(1.0);
     m_SplitPane.setOneTouchExpandable(true);
+    m_SplitPane.setSettingsParameters(getClass(), "NotificationsDivider");
+    if (PanelSettings.has(getClass(), "NotificationsDivider"))
+      m_SplitPane.setDividerLocation(PanelSettings.get(getClass(), "NotificationsDivider", 500));
     add(m_SplitPane, BorderLayout.CENTER);
     
     // the tree

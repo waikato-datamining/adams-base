@@ -345,7 +345,7 @@ public class MultiPagePane
 
   /** an optional customizer for the tooltips of the JList. */
   protected ToolTipCustomizer m_ToolTipCustomizer;
-  
+
   /**
    * For initializing members.
    */
@@ -445,6 +445,23 @@ public class MultiPagePane
     super.finishInit();
     setTitleRenderer(new TitleRenderer());
     updateButtons();
+  }
+
+  /**
+   * Sets the parameters for storing the divider location.
+   *
+   * @param cls		the class
+   * @param property	the property
+   */
+  public void setSettingsParameters(Class cls, String property) {
+    m_SplitPane.setSettingsParameters(cls, property);
+  }
+
+  /**
+   * Clears the para meters for storing the divider location.
+   */
+  public void clearSettingsParameters() {
+    m_SplitPane.clearSettingsParameters();
   }
 
   /**
