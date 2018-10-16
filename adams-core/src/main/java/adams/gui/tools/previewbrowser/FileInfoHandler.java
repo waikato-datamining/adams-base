@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileInfoHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -28,6 +28,9 @@ import adams.gui.core.SortableAndSearchableTable;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.Date;
 
@@ -46,7 +49,6 @@ import java.util.Date;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileInfoHandler
   extends AbstractContentHandler {
@@ -87,17 +89,44 @@ public class FileInfoHandler
     KeyValuePairTableModel	model;
     SortableAndSearchableTable	table;
     Object[][]			data;
+    Path 			path;
+    String			hidden;
+    String			owner;
+    String			posix;
 
     result = new BasePanel(new BorderLayout());
+    path   = file.toPath();
+    try {
+      hidden = "" + Files.isHidden(path);
+    }
+    catch (Exception e) {
+      hidden = "N/A";
+    }
+    try {
+      owner = "" + Files.getOwner(path, LinkOption.NOFOLLOW_LINKS);
+    }
+    catch (Exception e) {
+      owner = "N/A";
+    }
+    try {
+      posix = "" + Files.getPosixFilePermissions(path, LinkOption.NOFOLLOW_LINKS);
+    }
+    catch (Exception e) {
+      posix = "N/A";
+    }
     data   = new Object[][]{
       {"Name", file.getName()},
       {"Path", file.getParent()},
       {"Size", ByteFormat.toBestFitBytes(file.length(), 1) + " (" + new DecimalFormat("###,###").format(file.length()) + " bytes)"},
-      {"Hidden", file.isHidden()},
-      {"Executable", file.canExecute()},
-      {"Readable", file.canRead()},
-      {"Writeable", file.canWrite()},
       {"Last modified", DateUtils.getTimestampFormatter().format(new Date(file.lastModified()))},
+      {"Hidden", hidden},
+      {"Executable", Files.isExecutable(path)},
+      {"Readable", Files.isReadable(path)},
+      {"Writeable", Files.isWritable(path)},
+      {"Regular file", Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS)},
+      {"Symbolic link", Files.isSymbolicLink(path)},
+      {"Owner", owner},
+      {"POSIX file permissions", posix},
     };
     model  = new KeyValuePairTableModel(data);
     table  = new SortableAndSearchableTable(model);
