@@ -115,27 +115,7 @@ public abstract class DataContainerPanelWithSidePanel<T extends DataContainer, M
    * @param visible	if true, then the side panel will be displayed
    */
   public void setSidePanelVisible(boolean visible) {
-    if (visible) {
-      remove(m_PlotWrapperPanel);
-      add(m_SplitPane, BorderLayout.CENTER);
-      m_SplitPane.setLeftComponent(m_PlotWrapperPanel);
-      m_SplitPane.setRightComponent(m_SidePanel);
-    }
-    else {
-      remove(m_SplitPane);
-      add(m_PlotWrapperPanel, BorderLayout.CENTER);
-    }
-
-    m_SidePanel.setVisible(visible);
-
-    if (getParent() != null) {
-      getParent().invalidate();
-      getParent().validate();
-    }
-    else {
-      invalidate();
-      validate();
-    }
+    m_SplitPane.setRightComponentHidden(!visible);
   }
 
   /**
@@ -144,7 +124,7 @@ public abstract class DataContainerPanelWithSidePanel<T extends DataContainer, M
    * @return		true if the side panel is visible
    */
   public boolean isSidePanelVisible() {
-    return m_SidePanel.isVisible();
+    return !m_SplitPane.isRightComponentHidden();
   }
 
   /**
