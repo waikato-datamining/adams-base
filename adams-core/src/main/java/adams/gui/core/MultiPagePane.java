@@ -346,6 +346,9 @@ public class MultiPagePane
   /** an optional customizer for the tooltips of the JList. */
   protected ToolTipCustomizer m_ToolTipCustomizer;
 
+  /** whether the page list is readonly. */
+  protected boolean m_ReadOnly;
+
   /**
    * For initializing members.
    */
@@ -359,6 +362,7 @@ public class MultiPagePane
     m_PageCloseApprover = null;
     m_PopupCustomizer   = null;
     m_ToolTipCustomizer = null;
+    m_ReadOnly          = false;
   }
 
   /**
@@ -445,6 +449,25 @@ public class MultiPagePane
     super.finishInit();
     setTitleRenderer(new TitleRenderer());
     updateButtons();
+  }
+
+  /**
+   * Sets whether the pages are readonly or can be manipulated.
+   *
+   * @param value	true if no manipulation possible
+   */
+  public void setReadOnly(boolean value) {
+    m_ReadOnly = value;
+    m_PanelListButtons.setVisible(!m_ReadOnly);
+  }
+
+  /**
+   * Returns whether the pages are readonly or can be manipulated.
+   *
+   * @return		true if no manipulation possible
+   */
+  public boolean isReadOnly() {
+    return m_ReadOnly;
   }
 
   /**
@@ -914,7 +937,7 @@ public class MultiPagePane
    * @return		true if the selected items can be moved
    */
   public boolean canMoveUp() {
-    return m_PageList.canMoveUp();
+    return !m_ReadOnly && m_PageList.canMoveUp();
   }
 
   /**
@@ -923,7 +946,7 @@ public class MultiPagePane
    * @return		true if the selected items can be moved
    */
   public boolean canMoveDown() {
-    return m_PageList.canMoveDown();
+    return !m_ReadOnly && m_PageList.canMoveDown();
   }
 
   /**
