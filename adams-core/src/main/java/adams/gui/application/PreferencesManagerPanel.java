@@ -13,18 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PreferencesManagerPanel.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
 import adams.core.logging.LoggingLevel;
-import adams.gui.core.BaseMultiPagePane;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MultiPagePane;
+import adams.gui.core.PanelSettings;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -40,7 +41,6 @@ import java.util.Collections;
  * Panel that combines all the preference panels.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PreferencesManagerPanel
   extends BasePanel {
@@ -49,7 +49,7 @@ public class PreferencesManagerPanel
   private static final long serialVersionUID = 8245611221697036772L;
 
   /** the multi-page pane with all the setups. */
-  protected BaseMultiPagePane m_MultiPagePanel;
+  protected MultiPagePane m_MultiPagePanel;
 
   /** the setup panels. */
   protected ArrayList<PreferencesPanel> m_Panels;
@@ -78,7 +78,11 @@ public class PreferencesManagerPanel
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 
-    m_MultiPagePanel = new BaseMultiPagePane();
+    m_MultiPagePanel = new MultiPagePane();
+    m_MultiPagePanel.setReadOnly(true);
+    m_MultiPagePanel.setSettingsParameters(getClass(), "Divider");
+    if (PanelSettings.has(getClass(), "Divider"))
+      m_MultiPagePanel.setDividerLocation(PanelSettings.get(getClass(), "Divider", 200));
     add(m_MultiPagePanel, BorderLayout.CENTER);
 
     classes = AbstractPreferencesPanel.getPanels();
@@ -127,6 +131,8 @@ public class PreferencesManagerPanel
 	panelPage.add((JComponent) panel, BorderLayout.CENTER);
       m_MultiPagePanel.addPage(panel.getTitle(), panelPage);
     }
+    if (m_MultiPagePanel.getPageCount() > 0)
+      m_MultiPagePanel.setSelectedIndex(0);
   }
 
   /**
