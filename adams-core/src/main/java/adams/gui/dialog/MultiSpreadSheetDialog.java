@@ -20,7 +20,7 @@
 package adams.gui.dialog;
 
 import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.core.BaseMultiPagePane;
+import adams.gui.core.MultiPagePane;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer;
 import adams.gui.visualization.core.PopupMenuCustomizer;
@@ -31,7 +31,7 @@ import java.awt.Frame;
 
 /**
  * Dialog for displaying multiple spreadsheets in a multi-page pane.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class MultiSpreadSheetDialog
@@ -41,7 +41,7 @@ public class MultiSpreadSheetDialog
   private static final long serialVersionUID = 7604505322768892726L;
 
   /** the tabbed pane for the spreadsheets. */
-  protected BaseMultiPagePane m_MultiPagePane;
+  protected MultiPagePane m_MultiPagePane;
 
   /** the customizer for the table cells popup menu. */
   protected PopupMenuCustomizer m_CellPopupMenuCustomizer;
@@ -173,9 +173,10 @@ public class MultiSpreadSheetDialog
     setCancelVisible(false);
     setDiscardVisible(false);
 
-    m_MultiPagePane = new BaseMultiPagePane();
+    m_MultiPagePane = new MultiPagePane();
+    m_MultiPagePane.setReadOnly(true);
     m_MultiPagePane.addChangeListener((ChangeEvent e) -> {
-      if (m_MultiPagePane.getSelectedPageIndex() > -1)
+      if (m_MultiPagePane.getSelectedIndex() > -1)
 	setJMenuBar(getSelectedPanel().getMenuBar());
       else
 	setJMenuBar(null);
@@ -183,6 +184,23 @@ public class MultiSpreadSheetDialog
     getContentPane().add(m_MultiPagePane);
 
     setSize(400, 600);
+  }
+
+  /**
+   * Sets the parameters for storing the divider location.
+   *
+   * @param cls		the class
+   * @param property	the property
+   */
+  public void setSettingsParameters(Class cls, String property) {
+    m_MultiPagePane.setSettingsParameters(cls, property);
+  }
+
+  /**
+   * Clears the para meters for storing the divider location.
+   */
+  public void clearSettingsParameters() {
+    m_MultiPagePane.clearSettingsParameters();
   }
 
   /**
@@ -237,13 +255,15 @@ public class MultiSpreadSheetDialog
 
   /**
    * Sets the spreadsheets to display.
-   * 
+   *
    * @param value	the spreadsheets to display
    */
   public void setSpreadSheets(SpreadSheet[] value) {
-    m_MultiPagePane.removeAll();
+    m_MultiPagePane.removeAllPages();
     for (SpreadSheet sheet: value)
       addSpreadSheet(sheet);
+    if (m_MultiPagePane.getPageCount() > 0)
+      m_MultiPagePane.setSelectedIndex(0);
   }
   
   /**
