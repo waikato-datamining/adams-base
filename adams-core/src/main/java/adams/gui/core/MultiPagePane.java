@@ -28,7 +28,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -314,16 +313,16 @@ public class MultiPagePane
   protected BasePanel m_PanelListButtons;
 
   /** the move up button. */
-  protected JButton m_ButtonUp;
+  protected BaseButton m_ButtonUp;
 
   /** the move down button. */
-  protected JButton m_ButtonDown;
+  protected BaseButton m_ButtonDown;
 
   /** the remove button. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** the remove all button. */
-  protected JButton m_ButtonRemoveAll;
+  protected BaseButton m_ButtonRemoveAll;
 
   /** the action button. */
   protected BaseButtonWithDropDownMenu m_ButtonAction;
@@ -417,19 +416,19 @@ public class MultiPagePane
     m_PanelListButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     m_LeftPanel.add(m_PanelListButtons, BorderLayout.SOUTH);
 
-    m_ButtonUp = new JButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp = new BaseButton(GUIHelper.getIcon("arrow_up.gif"));
     m_ButtonUp.addActionListener((ActionEvent e) -> moveUp());
     m_PanelListButtons.add(m_ButtonUp);
 
-    m_ButtonDown = new JButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown = new BaseButton(GUIHelper.getIcon("arrow_down.gif"));
     m_ButtonDown.addActionListener((ActionEvent e) -> moveDown());
     m_PanelListButtons.add(m_ButtonDown);
 
-    m_ButtonRemove = new JButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.addActionListener((ActionEvent e) -> checkedRemoveSelectedPage());
     m_PanelListButtons.add(m_ButtonRemove);
 
-    m_ButtonRemoveAll = new JButton(GUIHelper.getIcon("delete_all.gif"));
+    m_ButtonRemoveAll = new BaseButton(GUIHelper.getIcon("delete_all.gif"));
     m_ButtonRemoveAll.addActionListener((ActionEvent e) -> checkedRemoveAllPages());
     m_PanelListButtons.add(m_ButtonRemoveAll);
 
