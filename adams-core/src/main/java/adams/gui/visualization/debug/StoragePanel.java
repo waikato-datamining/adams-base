@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StoragePanel.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -35,6 +35,7 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.PanelSettings;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
@@ -64,7 +65,6 @@ import java.util.List;
  * Displays the current items stored in the temp storage of a flow.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StoragePanel
   extends BasePanel
@@ -77,7 +77,6 @@ public class StoragePanel
    * Table model for displaying a storage container.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class TableModel
     extends AbstractBaseTableModel {
@@ -322,7 +321,8 @@ public class StoragePanel
     setLayout(new BorderLayout());
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
-    m_SplitPane.setDividerLocation(150);
+    m_SplitPane.setDividerLocation(PanelSettings.get(getClass(), "Divider", 150));
+    m_SplitPane.setSettingsParameters(getClass(), "Divider");
     add(m_SplitPane, BorderLayout.CENTER);
 
     // preview
