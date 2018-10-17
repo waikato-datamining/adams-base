@@ -13,14 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RarUtils.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
 import adams.core.base.BaseRegExp;
 import com.github.junrar.Archive;
+import com.github.junrar.UnrarCallback;
+import com.github.junrar.Volume;
 import com.github.junrar.rarfile.FileHeader;
 
 import java.io.BufferedInputStream;
@@ -34,9 +36,22 @@ import java.util.List;
  * A helper class for RAR-file related tasks.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RarUtils {
+
+  /**
+   * Dummy class.
+   */
+  public static class DummyUnrarCallback
+    implements UnrarCallback {
+    @Override
+    public boolean isNextVolumeReady(Volume nextVolume) {
+      return false;
+    }
+    @Override
+    public void volumeProgressChanged(long current, long total) {
+    }
+  }
 
   /**
    * Unrars the files in a RAR file. Does not recreate the directory structure
@@ -125,7 +140,7 @@ public class RarUtils {
     archive = null;
     try {
       // unrar archive
-      archive = new Archive(input.getAbsoluteFile());
+      archive = new Archive(input.getAbsoluteFile(), new DummyUnrarCallback());
       if (archive.isEncrypted())
 	throw new IllegalStateException("Cannot handle encrypted archives!");
       for (FileHeader entry : archive.getFileHeaders()) {
@@ -277,7 +292,7 @@ public class RarUtils {
     rarfile = null;
     try {
       // unrar archive
-      rarfile = new Archive(input.getAbsoluteFile());
+      rarfile = new Archive(input.getAbsoluteFile(), new DummyUnrarCallback());
       for (FileHeader entry: rarfile.getFileHeaders()) {
 	entryFilename = entry.getFileNameString().replace("\\", "/");
 	if (entry.isDirectory())
@@ -385,7 +400,7 @@ public class RarUtils {
     result  = new ArrayList<>();
     rarfile = null;
     try {
-      rarfile = new Archive(input.getAbsoluteFile());
+      rarfile = new Archive(input.getAbsoluteFile(), new DummyUnrarCallback());
       // encrypted?
       if (rarfile.isEncrypted())
 	return result;
