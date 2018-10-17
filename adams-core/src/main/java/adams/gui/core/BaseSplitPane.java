@@ -163,6 +163,8 @@ public class BaseSplitPane
   public void setSettingsParameters(Class cls, String property) {
     m_SettingsClass    = cls;
     m_SettingsProperty = property;
+    if (PanelSettings.has(cls, property))
+      setDividerLocation(PanelSettings.get(cls, property, 100));
   }
 
   /**
