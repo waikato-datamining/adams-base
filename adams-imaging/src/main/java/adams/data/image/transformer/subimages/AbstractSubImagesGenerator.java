@@ -15,7 +15,7 @@
 
 /*
  * AbstractSubImagesGenerator.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.subimages;
 
@@ -27,8 +27,8 @@ import adams.data.objectfilter.Translate;
 import adams.data.objectfinder.ObjectsInRegion;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
-import gnu.trove.set.TIntSet;
 
 import java.awt.Rectangle;
 import java.util.List;
@@ -51,6 +51,9 @@ public abstract class AbstractSubImagesGenerator
   /** whether to include partial hits. */
   protected boolean m_Partial;
 
+  /** whether to fix the shapes of partial hits. */
+  protected boolean m_FixInvalid;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -64,6 +67,10 @@ public abstract class AbstractSubImagesGenerator
 
     m_OptionManager.add(
       "partial", "partial",
+      false);
+
+    m_OptionManager.add(
+      "fix-invalid", "fixInvalid",
       false);
   }
 
@@ -109,7 +116,7 @@ public abstract class AbstractSubImagesGenerator
   /**
    * Returns whether to include partial hits.
    *
-   * @return 		true if to count partial hits
+   * @return 		true if to include partial hits
    */
   public boolean getPartial() {
     return m_Partial;
@@ -123,6 +130,35 @@ public abstract class AbstractSubImagesGenerator
    */
   public String partialTipText() {
     return "If enabled, partial hits are included as well.";
+  }
+
+  /**
+   * Sets whether to fix invalid shapes.
+   *
+   * @param value 	true if to fix invalid shapes
+   */
+  public void setFixInvalid(boolean value) {
+    m_FixInvalid = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to fix invalid shapes.
+   *
+   * @return 		true if to fix invalid shapes
+   */
+  public boolean getFixInvalid() {
+    return m_FixInvalid;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String fixInvalidTipText() {
+    return "If enabled, objects that fall partially outside the image boundaries get fixed (eg when allowing partial hits).";
   }
 
   /**
@@ -170,7 +206,7 @@ public abstract class AbstractSubImagesGenerator
    * Generates a new report with only the objects that fall within the region.
    *
    * @param oldReport	the old report to use as basis
-   * @param region	the region that the
+   * @param region	the region in which to locate objects
    * @return		the new report with the subset of objects in the region
    */
   protected Report transferObjects(Report oldReport, Rectangle region) {
@@ -179,7 +215,6 @@ public abstract class AbstractSubImagesGenerator
     LocatedObjects	objects;
     LocatedObjects	newObjects;
     Translate		trans;
-    TIntSet		indices;
     boolean		anyObjects;
 
     try {
@@ -218,6 +253,12 @@ public abstract class AbstractSubImagesGenerator
       trans.setX((int) -region.getX());
       trans.setY((int) -region.getY());
       newObjects = trans.filter(newObjects);
+
+      // fix invalid shapes
+      if (m_FixInvalid) {
+        for (LocatedObject obj: newObjects)
+          obj.makeFit((int) region.getWidth(), (int) region.getHeight());
+      }
 
       // transfer objects
       result.mergeWith(newObjects.toReport(m_Prefix));
