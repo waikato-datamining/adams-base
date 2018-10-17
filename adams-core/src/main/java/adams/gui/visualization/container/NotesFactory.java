@@ -296,6 +296,9 @@ public class NotesFactory {
         }
         addPage(title, new BaseScrollPane(text));
       }
+
+      if (getPageCount() > 0)
+        setSelectedIndex(0);
     }
   }
 
