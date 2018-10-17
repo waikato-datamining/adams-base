@@ -172,6 +172,7 @@ public abstract class AbstractSubImagesGenerator
 
     result = QuickInfoHelper.toString(this, "prefix", m_Prefix, "prefix: ");
     result += QuickInfoHelper.toString(this, "partial", m_Partial, "incl. partial", ", ");
+    result += QuickInfoHelper.toString(this, "fixInvalid", m_FixInvalid, "fix", ", ");
 
     return result;
   }
