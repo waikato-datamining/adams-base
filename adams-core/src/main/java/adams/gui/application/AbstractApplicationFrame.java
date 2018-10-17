@@ -15,7 +15,7 @@
 
 /*
  * ApplicationFrame.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -47,6 +47,7 @@ import adams.gui.core.AbstractFrameWithOptionHandling;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
+import adams.gui.core.PanelSettings;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.scripting.ScriptingEngine;
@@ -660,6 +661,9 @@ public abstract class AbstractApplicationFrame
    * Closes the application down.
    */
   public void close() {
+    if (PanelSettings.isModified())
+      PanelSettings.save();
+
     // close all children
     closeChildren();
 

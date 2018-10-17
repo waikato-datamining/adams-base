@@ -54,6 +54,9 @@ public class PanelSettings {
   /** the threading for saving. */
   protected static Thread m_SaveThread;
 
+  /** whether settings are not yet saved. */
+  protected static boolean m_Modified;
+
   /**
    * Initializes the properties if necessary.
    */
@@ -133,6 +136,8 @@ public class PanelSettings {
       getProperties().setPassword(key, (BasePassword) value);
     else
       getProperties().setProperty(key, "" + value);
+
+    m_Modified = true;
 
     queueSave();
   }
@@ -400,9 +405,18 @@ public class PanelSettings {
   }
 
   /**
+   * Returns whether the settings are currently unsaved.
+   *
+   * @return		true if not yet saved
+   */
+  public synchronized static boolean isModified() {
+    return m_Modified;
+  }
+
+  /**
    * Queues saving the settings after {@link #SECONDS_WAIT} seconds.
    */
-  protected synchronized static void queueSave() {
+  public synchronized static void queueSave() {
     if (m_SaveRunnable == null) {
       m_SaveRunnable = new DelayedActionRunnable(SECONDS_WAIT * 1000, 250);
       m_SaveThread = new Thread(m_SaveRunnable);
@@ -423,10 +437,10 @@ public class PanelSettings {
    *
    * @return		null if successful, otherwise error message
    */
-  protected synchronized static String save() {
+  public synchronized static String save() {
     if (!getProperties().save(Environment.getInstance().createPropertiesFilename(new File(FILENAME).getName())))
       return "Failed to save panel settings!";
-    else
-      return null;
+    m_Modified = false;
+    return null;
   }
 }
