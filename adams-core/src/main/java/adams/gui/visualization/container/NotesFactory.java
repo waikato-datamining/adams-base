@@ -15,24 +15,10 @@
 
 /*
  * NotesFactory.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
-
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.text.Document;
 
 import adams.core.Properties;
 import adams.data.Notes;
@@ -42,24 +28,33 @@ import adams.data.report.ReportHandler;
 import adams.env.Environment;
 import adams.env.ScriptingDialogDefinition;
 import adams.gui.core.BaseDialog;
-import adams.gui.core.BaseMultiPagePane;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.scripting.SyntaxDocument;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import javax.swing.text.Document;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A factory for GUI components for notes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NotesFactory {
 
   /**
-   * A specialized JTextPane for displaying the notes of a spectrum.
+   * A specialized JTextPane for displaying the notes of a container.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    * @param <T> the type of container to use
    */
   public static class TextPane<T extends AbstractContainer>
@@ -79,7 +74,7 @@ public class NotesFactory {
     }
 
     /**
-     * Initializes the text pane with the notes in the given spectrum.
+     * Initializes the text pane with the notes in the given container.
      *
      * @param data	the data to initialize with
      */
@@ -108,9 +103,9 @@ public class NotesFactory {
     }
 
     /**
-     * Sets the data and spectrum notes.
+     * Sets the data and notes.
      *
-     * @param data	the spectrum container containing the spectrum notes
+     * @param data	the container containing the notes
      */
     public void setData(T data) {
       Notes		notes;
@@ -178,7 +173,7 @@ public class NotesFactory {
     /**
      * Returns the underlying data.
      *
-     * @return		the spectrum container
+     * @return		the container
      */
     public T getData() {
       return m_Data;
@@ -215,7 +210,7 @@ public class NotesFactory {
    * @param <T> the type of container to use
    */
   public static class MultiPagePane<T extends AbstractContainer>
-    extends BaseMultiPagePane {
+    extends adams.gui.core.MultiPagePane {
 
     /** for serialization. */
     private static final long serialVersionUID = -113778971321461204L;
@@ -238,6 +233,7 @@ public class NotesFactory {
     public MultiPagePane(List<T> data) {
       super();
 
+      setReadOnly(true);
       setData(data);
     }
 
@@ -249,12 +245,12 @@ public class NotesFactory {
     public synchronized void setData(List<T> data) {
       int	i;
 
-      m_Data = new ArrayList<T>();
+      m_Data = new ArrayList<>();
       if (data != null) {
 	for (i = 0; i < data.size(); i++)
 	  m_Data.add(data.get(i));
       }
-      update();
+      updateNotes();
     }
 
     /**
@@ -265,7 +261,7 @@ public class NotesFactory {
     public List<T> getData() {
       List<T>	result;
 
-      result = new ArrayList<T>();
+      result = new ArrayList<>();
       result.addAll(m_Data);
 
       return result;
@@ -274,13 +270,13 @@ public class NotesFactory {
     /**
      * updates the multi-page pane.
      */
-    protected synchronized void update() {
+    protected synchronized void updateNotes() {
       int		i;
       TextPane		text;
       ReportHandler	handler;
       String		title;
 
-      removeAll();
+      removeAllPages();
 
       for (i = 0; i < m_Data.size(); i++) {
 	if (!(m_Data.get(i).getPayload() instanceof ReportHandler))
@@ -381,11 +377,7 @@ public class NotesFactory {
 
       buttonOK = new JButton("OK");
       buttonOK.setMnemonic('O');
-      buttonOK.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          m_Self.setVisible(false);
-        }
-      });
+      buttonOK.addActionListener((ActionEvent e) -> m_Self.setVisible(false));
       panel.add(buttonOK);
 
       adjustSize();
