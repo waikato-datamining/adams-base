@@ -424,16 +424,59 @@ public class LocatedObject
    */
   public boolean makeFit(int width, int height) {
     boolean	result;
+    int[]	px;
+    int[]	py;
+    boolean	padjusted;
+    int		i;
 
     result = false;
 
+    if (m_X < 0) {
+      m_Width += m_X;
+      m_X      = 0;
+      result   = true;
+    }
     if (m_X + m_Width > width) {
       m_Width -= (m_X + m_Width) - width;
-      result = true;
+      result   = true;
+    }
+
+    if (m_Y < 0) {
+      m_Height += m_Y;
+      m_Y       = 0;
+      result    = true;
     }
     if (m_Y + m_Height > height) {
       m_Height -= (m_Y + m_Height) - height;
-      result = true;
+      result    = true;
+    }
+
+    if (hasPolygon()) {
+      px = getPolygonX();
+      py = getPolygonY();
+      padjusted = false;
+      for (i = 0; i < px.length; i++) {
+        if (px[i] < 0) {
+          px[i]     = 0;
+          padjusted = true;
+	}
+        if (px[i] >= width) {
+          px[i]     = width - 1;
+          padjusted = true;
+	}
+        if (py[i] < 0) {
+          py[i]     = 0;
+          padjusted = true;
+	}
+        if (py[i] >= height) {
+          py[i]     = height - 1;
+          padjusted = true;
+	}
+      }
+      if (padjusted) {
+        setPolygon(new Polygon(px, py, px.length));
+	result = true;
+      }
     }
 
     return result;
