@@ -15,7 +15,7 @@
 
 /*
  * InformativeStatisticFactory.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.statistics;
@@ -24,7 +24,6 @@ package adams.gui.visualization.statistics;
 import adams.data.statistics.InformativeStatistic;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseDialog;
-import adams.gui.core.BaseMultiPagePane;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
@@ -46,7 +45,6 @@ import java.util.List;
  * A factory for GUI components for InformativeStatistic objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InformativeStatisticFactory {
 
@@ -55,7 +53,6 @@ public class InformativeStatisticFactory {
    * interface.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class Model
     extends AbstractBaseTableModel {
@@ -190,7 +187,6 @@ public class InformativeStatisticFactory {
    * InformativeStatistic interface.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    * @see     InformativeStatistic
    */
   public static class Table
@@ -254,10 +250,9 @@ public class InformativeStatisticFactory {
    * A specialized multi-page pane that displays statistics.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class MultiPagePane
-    extends BaseMultiPagePane {
+    extends adams.gui.core.MultiPagePane {
 
     /** for serialization. */
     private static final long serialVersionUID = 3805619139057394474L;
@@ -280,6 +275,7 @@ public class InformativeStatisticFactory {
     public MultiPagePane(List<InformativeStatistic> stats) {
       super();
 
+      setReadOnly(true);
       setStatistics(stats);
     }
 
@@ -296,7 +292,7 @@ public class InformativeStatisticFactory {
         m_SplitPane.setLeftComponentHidden(value.size() < 2);
       }
 
-      update();
+      updateStats();
     }
 
     /**
@@ -311,16 +307,19 @@ public class InformativeStatisticFactory {
     /**
      * updates the tabbed pane.
      */
-    protected void update() {
+    protected void updateStats() {
       int	i;
       BaseTable	table;
 
-      removeAll();
+      removeAllPages();
 
       for (i = 0; i < m_Statistics.size(); i++) {
         table = getTable(m_Statistics.get(i));
         addPage(m_Statistics.get(i).getStatisticDescription(), new BaseScrollPane(table));
       }
+
+      if (getPageCount() > 0)
+        setSelectedIndex(0);
     }
   }
 
@@ -328,7 +327,6 @@ public class InformativeStatisticFactory {
    * A specialized dialog that displays informative statistics.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class Dialog
     extends BaseDialog {
