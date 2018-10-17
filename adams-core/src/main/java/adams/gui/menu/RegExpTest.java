@@ -27,6 +27,7 @@ import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.RegExpTextField;
@@ -84,10 +85,11 @@ public class RegExpTest
     final JCheckBox 		checkboxReplaceAll;
     final JTextField 		fieldReplaceOutput;
     final JTextField 		fieldMatchInput;
-    final RegExpTextField fieldMatchExp;
+    final RegExpTextField 	fieldMatchExp;
     final JCheckBox 		checkboxMatchLowerCase;
     final JTextField 		fieldMatchOutput;
     JButton			buttonTest;
+    JButton			buttonHelp;
     JButton			buttonClose;
 
     panel = new BasePanel(new BorderLayout());
@@ -151,6 +153,12 @@ public class RegExpTest
       }
     });
     panelButtons.add(buttonTest);
+    buttonHelp = new JButton("Help");
+    buttonHelp.setMnemonic('H');
+    buttonHelp.addActionListener((ActionEvent e) -> {
+      BrowserHelper.openURL(new BaseRegExp().getHelpURL());
+    });
+    panelButtons.add(buttonHelp);
     panelTab.add(panelButtons, BorderLayout.SOUTH);
 
     // match
@@ -179,6 +187,12 @@ public class RegExpTest
       fieldMatchOutput.setText(regexp.isMatch(input) ? "yes" : "no");
     });
     panelButtons.add(buttonTest);
+    buttonHelp = new JButton("Help");
+    buttonHelp.setMnemonic('H');
+    buttonHelp.addActionListener((ActionEvent e) -> {
+      BrowserHelper.openURL(new BaseRegExp().getHelpURL());
+    });
+    panelButtons.add(buttonHelp);
     panelTab.add(panelButtons, BorderLayout.SOUTH);
 
     createChildFrame(panel);
