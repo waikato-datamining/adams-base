@@ -15,25 +15,24 @@
 
 /*
  * AbstractWekaModelReader.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
-import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.Token;
+import weka.core.Instances;
+
+import java.io.File;
 
 /**
  * Ancestor for actors that deserialize models.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractWekaModelReader
   extends AbstractTransformer {
@@ -143,7 +142,7 @@ public abstract class AbstractWekaModelReader
 	else if (data.length == 2)
 	  m_OutputToken = new Token(data[0]);
 	else
-	  result = "Unexpected number of objects in serialized file (instead of 1 or 2): " + data.length;
+	  result = "Unexpected number of objects in serialized file '" + file + "' (instead of 1 or 2): " + data.length;
       }
       else {
 	cont = null;
@@ -152,7 +151,7 @@ public abstract class AbstractWekaModelReader
 	else if (data.length == 2)
 	  cont = new WekaModelContainer(data[0], (Instances) data[1]);
 	else
-	  result = "Unexpected number of objects in serialized file (instead of 1 or 2): " + data.length;
+	  result = "Unexpected number of objects in serialized file '" + file + "' (instead of 1 or 2): " + data.length;
 	if (cont != null)
 	  m_OutputToken = new Token(cont);
       }
