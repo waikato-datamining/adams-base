@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SetContainerValue.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control;
@@ -32,7 +32,8 @@ import adams.flow.transformer.AbstractTransformer;
 
 /**
  <!-- globalinfo-start -->
- * Updates a single item in the container passing through, using either the data obtained from a callable actor or a storage item.
+ * Updates a single item in the container passing through, using either the data obtained from a callable actor or a storage item.<br>
+ * Using the 'force' option, additional meta-data can be stored in the container as well.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -44,7 +45,7 @@ import adams.flow.transformer.AbstractTransformer;
  * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.AbstractContainer: 
+ * - adams.flow.container.AbstractContainer:
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -53,60 +54,65 @@ import adams.flow.transformer.AbstractTransformer;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: UpdateContainer
+ * &nbsp;&nbsp;&nbsp;default: SetContainerValue
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-callable-actor &lt;adams.flow.core.CallableActorReference&gt; (property: callableActor)
  * &nbsp;&nbsp;&nbsp;The callable actor to obtain the data from.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The storage item to use.
  * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
- * 
+ *
  * <pre>-use-storage &lt;boolean&gt; (property: useStorage)
  * &nbsp;&nbsp;&nbsp;Whether to use storage items or data from callable actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-value-name &lt;adams.core.base.BaseString&gt; (property: valueName)
  * &nbsp;&nbsp;&nbsp;The name to use for storing the value in the container.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-force &lt;boolean&gt; (property: force)
+ * &nbsp;&nbsp;&nbsp;If enabled, the value is stored regardless whether a valid name or not (
+ * &nbsp;&nbsp;&nbsp;eg additional meta-data).
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SetContainerValue
   extends AbstractTransformer
@@ -126,6 +132,9 @@ public class SetContainerValue
   /** whether to use callable actors or storage. */
   protected boolean m_UseStorage;
 
+  /** whether to force the setting. */
+  protected boolean m_Force;
+
   /**
    * Returns a string describing the object.
    *
@@ -135,7 +144,9 @@ public class SetContainerValue
   public String globalInfo() {
     return
       "Updates a single item in the container passing through, using either "
-	+ "the data obtained from a callable actor or a storage item.";
+	+ "the data obtained from a callable actor or a storage item.\n"
+	+ "Using the 'force' option, additional meta-data can be stored in the "
+	+ "container as well.";
   }
 
   /**
@@ -160,6 +171,10 @@ public class SetContainerValue
     m_OptionManager.add(
       "value-name", "valueName",
       new BaseString());
+
+    m_OptionManager.add(
+      "force", "force",
+      false);
   }
 
   /**
@@ -288,13 +303,49 @@ public class SetContainerValue
   }
 
   /**
+   * Sets whether to force the setting, ie the value is stored regardless
+   * whether a valid name or not (eg additional meta-data)
+   *
+   * @param value	true if to force
+   */
+  public void setForce(boolean value) {
+    m_Force = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to force the setting, ie the value is stored regardless
+   * whether a valid name or not (eg additional meta-data)
+   *
+   * @return 		true if to force setting
+   */
+  public boolean getForce() {
+    return m_Force;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String forceTipText() {
+    return "If enabled, the value is stored regardless whether a valid name or not (eg additional meta-data).";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "valueName", m_ValueName, "value: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "valueName", m_ValueName, "value: ");
+    result += QuickInfoHelper.toString(this, "force", m_Force, "force", ", ");
+
+    return result;
   }
 
   /**
@@ -368,6 +419,10 @@ public class SetContainerValue
     result = null;
 
     cont = (AbstractContainer) m_InputToken.getPayload();
+    if (m_Force) {
+      if (!cont.hasValue(m_ValueName.getValue()))
+	cont.addAdditionalName(m_ValueName.getValue());
+    }
     if (m_UseStorage) {
       value = getValue(m_StorageName);
       cont.setValue(m_ValueName.getValue(), value);
