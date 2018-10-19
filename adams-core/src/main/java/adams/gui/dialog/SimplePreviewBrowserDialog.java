@@ -21,13 +21,13 @@ package adams.gui.dialog;
 
 import adams.core.io.PlaceholderFile;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.tools.previewbrowser.PreviewDisplay;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -49,7 +49,7 @@ public class SimplePreviewBrowserDialog
   protected PreviewDisplay m_PanelDisplay;
 
   /** for displaying the filename. */
-  protected JTextField m_TextFilename;
+  protected BaseTextField m_TextFilename;
 
   /**
    * Creates a modeless dialog without a title and without a specified Frame
@@ -120,7 +120,7 @@ public class SimplePreviewBrowserDialog
     panel = new JPanel(new BorderLayout(5, 5));
     panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     getContentPane().add(panel, BorderLayout.NORTH);
-    m_TextFilename = new JTextField();
+    m_TextFilename = new BaseTextField();
     m_TextFilename.setEditable(false);
     label = new JLabel("File");
     panel.add(label, BorderLayout.WEST);

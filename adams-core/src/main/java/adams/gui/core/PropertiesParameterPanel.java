@@ -52,7 +52,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -919,7 +918,7 @@ public class PropertiesParameterPanel
             addProperty(key, label, dateTimePanel);
             break;
           case DOUBLE: {
-            final JTextField textfield = new JTextField(20);
+            final BaseTextField textfield = new BaseTextField(20);
             textfield.setText(value.getProperty(key));
             textfield.setToolTipText(help);
             textfield.setBorder(BorderFactory.createEtchedBorder());
@@ -1151,7 +1150,7 @@ public class PropertiesParameterPanel
     int				i;
     Component			comp;
     PropertyType		type;
-    JTextField			textfield;
+    BaseTextField			textfield;
     JPasswordField		pwfield;
     SQLSyntaxEditorPanel	query;
     BaseCheckBox			checkbox;
@@ -1198,7 +1197,7 @@ public class PropertiesParameterPanel
           result.setDateTime(key, dateTimePanel.getCurrent());
           break;
         case DOUBLE:
-          textfield = (JTextField) comp;
+          textfield = (BaseTextField) comp;
           result.setProperty(key, textfield.getText());
           break;
         case STRING:

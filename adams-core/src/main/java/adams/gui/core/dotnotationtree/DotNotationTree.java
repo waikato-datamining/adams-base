@@ -23,13 +23,13 @@ package adams.gui.core.dotnotationtree;
 import adams.core.base.BaseString;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.DragAndDropTree;
 import adams.gui.core.MouseUtils;
 import com.github.fracpete.jclipboardhelper.TransferableString;
 
 import javax.swing.JFrame;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -1031,7 +1031,7 @@ public class DotNotationTree<N extends DotNotationNode>
 	System.out.println(tree.getSelectedItem());
       }
     });
-    final JTextField search = new JTextField();
+    final BaseTextField search = new BaseTextField();
     search.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
 	tree.setSearch(search.getText());

@@ -218,7 +218,7 @@ public abstract class AbstractExplorerPanelHandler
   }
   
   /**
-   * Restores the text of the text component, e.g., a JTextField.
+   * Restores the text of the text component, e.g., a BaseTextField.
    * 
    * @param map		the map to obtain the value from
    * @param key		the key to obtain the value for

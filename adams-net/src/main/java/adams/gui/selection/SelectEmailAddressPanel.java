@@ -25,12 +25,12 @@ import adams.core.net.EmailContact;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchParameters;
 import adams.gui.tools.EmailAddressBookPanel;
 
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
@@ -267,7 +267,7 @@ public class SelectEmailAddressPanel
   protected JLabel m_LabelManualAddresses;
 
   /** the textfield for manually entering a list of addresses (blank separated). */
-  protected JTextField m_TextManualAddresses;
+  protected BaseTextField m_TextManualAddresses;
 
   /** the button for bringing up the addressbook. */
   protected BaseButton m_ButtonAddressBook;
@@ -286,7 +286,7 @@ public class SelectEmailAddressPanel
       }
     });
 
-    m_TextManualAddresses  = new JTextField(15);
+    m_TextManualAddresses  = new BaseTextField(15);
     m_LabelManualAddresses = new JLabel();
     m_LabelManualAddresses.setLabelFor(m_LabelManualAddresses);
 

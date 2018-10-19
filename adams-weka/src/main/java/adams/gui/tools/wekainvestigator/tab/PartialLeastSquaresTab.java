@@ -39,6 +39,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -60,7 +61,6 @@ import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
@@ -110,7 +110,7 @@ public class PartialLeastSquaresTab
   protected BaseComboBox<String> m_ComboBoxDatasets;
 
   /** the attribute range. */
-  protected JTextField m_TextAttributeRange;
+  protected BaseTextField m_TextAttributeRange;
 
   /** the algorithm. */
   protected GenericObjectEditorPanel m_PanelGOE;
@@ -177,7 +177,7 @@ public class PartialLeastSquaresTab
     m_ComboBoxDatasets = new BaseComboBox<>(m_ModelDatasets);
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
-    m_TextAttributeRange = new JTextField(20);
+    m_TextAttributeRange = new BaseTextField(20);
     m_TextAttributeRange.setText(Range.ALL);
     m_TextAttributeRange.getDocument().addDocumentListener(new DocumentListener() {
       @Override

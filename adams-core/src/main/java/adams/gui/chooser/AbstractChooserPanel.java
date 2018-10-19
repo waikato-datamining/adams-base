@@ -25,6 +25,7 @@ import adams.core.option.OptionUtils;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
@@ -34,7 +35,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
@@ -110,7 +110,7 @@ public abstract class AbstractChooserPanel<T>
   protected AbstractChooserPanel m_Self;
 
   /** the text field. */
-  protected JTextField m_TextSelection;
+  protected BaseTextField m_TextSelection;
 
   /** the panel for the prefix. */
   protected JPanel m_PanelPrefix;
@@ -183,7 +183,7 @@ public abstract class AbstractChooserPanel<T>
     m_PanelPrefix.add(m_LabelPrefixSpacer, BorderLayout.EAST);
     add(m_PanelPrefix, BorderLayout.WEST);
 
-    m_TextSelection = new JTextField(getSelectionColumns());
+    m_TextSelection = new BaseTextField(getSelectionColumns());
     m_TextSelection.setTransferHandler(null);
     m_TextSelection.setText(getDefaultString());
     m_TextSelection.setEditable(false);

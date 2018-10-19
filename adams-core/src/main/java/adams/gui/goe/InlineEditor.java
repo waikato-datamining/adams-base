@@ -26,6 +26,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.dialog.ApprovalDialog;
@@ -36,7 +37,6 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -78,7 +78,7 @@ public class InlineEditor
   private static final long serialVersionUID = 2445831775173113711L;
 
   /** the text field. */
-  protected JTextField m_TextField;
+  protected BaseTextField m_TextField;
   
   /** the button for bringing up the custom editor. */
   protected BaseButton m_ButtonEditor;
@@ -150,7 +150,7 @@ public class InlineEditor
     m_DefaultBackground = getBackground();
     setBorder(BorderFactory.createLineBorder(m_DefaultBackground));
     
-    m_TextField = new JTextField(20);
+    m_TextField = new BaseTextField(20);
     m_TextField.setText("");  // gets set after initialization
     m_TextField.setPreferredSize(
 	new Dimension(

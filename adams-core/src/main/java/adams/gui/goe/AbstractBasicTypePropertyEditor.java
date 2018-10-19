@@ -19,14 +19,14 @@
  */
 package adams.gui.goe;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import adams.gui.core.BaseTextField;
 
 import javax.swing.JComponent;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 
 /**
  * A superclass for custom editor for basic Java types.
@@ -124,9 +124,9 @@ public abstract class AbstractBasicTypePropertyEditor
    */
   @Override
   protected JComponent createCustomEditor() {
-    JTextField	result;
+    BaseTextField	result;
 
-    result = new JTextField();
+    result = new BaseTextField();
     result.getDocument().addDocumentListener(new DocumentListener() {
       public void removeUpdate(DocumentEvent e) {
 	set(e.getDocument());
@@ -158,7 +158,7 @@ public abstract class AbstractBasicTypePropertyEditor
   @Override
   protected void initForDisplay() {
     super.initForDisplay();
-    if (!((JTextField) m_CustomEditor).getText().equals(toString(getValue())))
-      ((JTextField) m_CustomEditor).setText(toString(getValue()));
+    if (!((BaseTextField) m_CustomEditor).getText().equals(toString(getValue())))
+      ((BaseTextField) m_CustomEditor).setText(toString(getValue()));
   }
 }

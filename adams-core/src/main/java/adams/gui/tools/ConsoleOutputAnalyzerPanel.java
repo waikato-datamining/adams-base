@@ -35,6 +35,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.PanelType;
 import adams.gui.core.ExtensionFileFilter;
@@ -59,7 +60,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -602,7 +602,7 @@ public class ConsoleOutputAnalyzerPanel
   protected transient TextFileChooser m_FileChooser;
   
   /** the regexp for the origin. */
-  protected JTextField m_TextOrigin;
+  protected BaseTextField m_TextOrigin;
   
   /** the combobox with all origins. */
   protected BaseComboBox m_ComboBoxOrigin;
@@ -611,7 +611,7 @@ public class ConsoleOutputAnalyzerPanel
   protected BaseComboBox m_ComboBoxType;
   
   /** the regexp for the output. */
-  protected JTextField m_TextOutput;
+  protected BaseTextField m_TextOutput;
   
   /** the panel with the search parameters. */
   protected ParameterPanel m_PanelSearch;
@@ -703,7 +703,7 @@ public class ConsoleOutputAnalyzerPanel
     panel.add(m_PanelSearch, BorderLayout.NORTH);
     m_SplitPane.setRightComponent(panel);
 
-    m_TextOrigin = new JTextField(20);
+    m_TextOrigin = new BaseTextField(20);
     m_PanelSearch.addParameter("_Origin (regexp)", m_TextOrigin);
     
     m_ComboBoxOrigin = new BaseComboBox();
@@ -712,7 +712,7 @@ public class ConsoleOutputAnalyzerPanel
     m_ComboBoxType = new BaseComboBox();
     m_PanelSearch.addParameter("_Type", m_ComboBoxType);
     
-    m_TextOutput = new JTextField(20);
+    m_TextOutput = new BaseTextField(20);
     m_PanelSearch.addParameter("Out_put", m_TextOutput);
     
     m_ButtonSearch = new BaseButton("Search");

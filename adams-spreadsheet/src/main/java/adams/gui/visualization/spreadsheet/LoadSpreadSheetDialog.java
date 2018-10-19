@@ -29,6 +29,7 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -42,7 +43,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
@@ -111,7 +111,7 @@ public class LoadSpreadSheetDialog
   protected DefaultListModel m_ListAdditionalAttributesModel;
 
   /** the text field for the attribute range. */
-  protected JTextField m_TextAttributeRange;
+  protected BaseTextField m_TextAttributeRange;
 
   /** the default range. */
   protected Range m_DefaultAttributeRange;
@@ -282,7 +282,7 @@ public class LoadSpreadSheetDialog
     panel.add(m_ComboBoxID);
 
     // attribute range
-    m_TextAttributeRange = new JTextField(10);
+    m_TextAttributeRange = new BaseTextField(10);
     m_TextAttributeRange.setText(Range.ALL);
     m_TextAttributeRange.setToolTipText("For limiting the attributes being displayed");
     label = new JLabel("Attribute range");

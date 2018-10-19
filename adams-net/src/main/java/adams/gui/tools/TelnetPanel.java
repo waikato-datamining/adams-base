@@ -25,6 +25,7 @@ import adams.core.annotation.MixedCopyright;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
@@ -37,7 +38,6 @@ import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -71,7 +71,7 @@ public class TelnetPanel
   private static final long serialVersionUID = 6647177121906710884L;
 
   /** the remote server. */
-  protected JTextField m_TextRemote;
+  protected BaseTextField m_TextRemote;
 
   /** the model of the spinner. */
   protected SpinnerNumberModel m_PortModel;
@@ -92,7 +92,7 @@ public class TelnetPanel
   protected BaseButton m_ButtonCopy;
   
   /** the text field for the command to issue. */
-  protected JTextField m_TextCommand;
+  protected BaseTextField m_TextCommand;
   
   /** the button for executing the command. */
   protected BaseButton m_ButtonCommand;
@@ -152,7 +152,7 @@ public class TelnetPanel
     topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(topPanel, BorderLayout.NORTH);
     
-    m_TextRemote = new JTextField(20);
+    m_TextRemote = new BaseTextField(20);
     label = new JLabel("Remote");
     label.setDisplayedMnemonic('R');
     label.setLabelFor(m_TextRemote);
@@ -211,7 +211,7 @@ public class TelnetPanel
     bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(bottomPanel, BorderLayout.SOUTH);
     
-    m_TextCommand = new JTextField(40);
+    m_TextCommand = new BaseTextField(40);
     m_TextCommand.setFont(Fonts.getMonospacedFont());
     m_TextCommand.addKeyListener(new KeyListener() {
       @Override

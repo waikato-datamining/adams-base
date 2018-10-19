@@ -22,6 +22,7 @@ package adams.gui.chooser;
 
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
@@ -33,7 +34,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
@@ -81,7 +81,7 @@ public class BaseFileChooser
   protected JLabel m_LabelFilter;
 
   /** the edit field for the filter. */
-  protected JTextField m_TextFilter;
+  protected BaseTextField m_TextFilter;
 
   /** the icon for clearing the text field. */
   protected JLabel m_LabelFilterClear;
@@ -199,7 +199,7 @@ public class BaseFileChooser
 
     m_PanelFilter = new JPanel(new GridLayout(2, 1, 5, 5));
     m_PanelFilter.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-    m_TextFilter = new JTextField();
+    m_TextFilter = new BaseTextField();
     m_TextFilter.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void insertUpdate(DocumentEvent e) {

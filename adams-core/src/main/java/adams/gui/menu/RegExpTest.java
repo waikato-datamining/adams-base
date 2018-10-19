@@ -29,13 +29,13 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.RegExpTextField;
 
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -78,16 +78,16 @@ public class RegExpTest
     JPanel			panelButtons;
     JPanel			panelButtonsAll;
     ParameterPanel		panelParams;
-    final JTextField 		fieldReplaceInput;
+    final BaseTextField 		fieldReplaceInput;
     final RegExpTextField 	fieldReplaceFind;
-    final JTextField 		fieldReplaceReplace;
+    final BaseTextField 		fieldReplaceReplace;
     final BaseCheckBox 		checkboxReplaceLowerCase;
     final BaseCheckBox 		checkboxReplaceAll;
-    final JTextField 		fieldReplaceOutput;
-    final JTextField 		fieldMatchInput;
+    final BaseTextField 		fieldReplaceOutput;
+    final BaseTextField 		fieldMatchInput;
     final RegExpTextField 	fieldMatchExp;
     final BaseCheckBox 		checkboxMatchLowerCase;
-    final JTextField 		fieldMatchOutput;
+    final BaseTextField 		fieldMatchOutput;
     BaseButton			buttonTest;
     BaseButton			buttonHelp;
     BaseButton			buttonClose;
@@ -109,18 +109,18 @@ public class RegExpTest
     tabbedPane.addTab("Replace", panelTab);
 
     panelParams = new ParameterPanel();
-    fieldReplaceInput = new JTextField(30);
+    fieldReplaceInput = new BaseTextField(30);
     panelParams.addParameter("Input", fieldReplaceInput);
     fieldReplaceFind = new RegExpTextField();
     panelParams.addParameter("Find", fieldReplaceFind);
-    fieldReplaceReplace = new JTextField();
+    fieldReplaceReplace = new BaseTextField();
     panelParams.addParameter("Replace", fieldReplaceReplace);
     checkboxReplaceLowerCase = new BaseCheckBox();
     panelParams.addParameter("Use lower case", checkboxReplaceLowerCase);
     checkboxReplaceAll = new BaseCheckBox();
     checkboxReplaceAll.setSelected(true);
     panelParams.addParameter("Replace all", checkboxReplaceAll);
-    fieldReplaceOutput = new JTextField(30);
+    fieldReplaceOutput = new BaseTextField(30);
     panelParams.addParameter("Output", fieldReplaceOutput);
     panelTab.add(panelParams, BorderLayout.CENTER);
 
@@ -166,13 +166,13 @@ public class RegExpTest
     tabbedPane.addTab("Match", panelTab);
 
     panelParams = new ParameterPanel();
-    fieldMatchInput = new JTextField(30);
+    fieldMatchInput = new BaseTextField(30);
     panelParams.addParameter("Input", fieldMatchInput);
     fieldMatchExp = new RegExpTextField();
     panelParams.addParameter("Expression", fieldMatchExp);
     checkboxMatchLowerCase = new BaseCheckBox();
     panelParams.addParameter("Use lower case", checkboxMatchLowerCase);
-    fieldMatchOutput = new JTextField(30);
+    fieldMatchOutput = new BaseTextField(30);
     panelParams.addParameter("Matches?", fieldMatchOutput);
     panelTab.add(panelParams, BorderLayout.CENTER);
 

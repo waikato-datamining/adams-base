@@ -44,6 +44,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.CustomSearchTableModel;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
@@ -80,7 +81,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
@@ -1380,13 +1380,13 @@ public class ReportFactory {
     protected JLabel m_LabelMinValue;
 
     /** the text field for the minimum value. */
-    protected JTextField m_TextMinValue;
+    protected BaseTextField m_TextMinValue;
 
     /** the label for the max value text field. */
     protected JLabel m_LabelMaxValue;
 
     /** the text field for the maximum value. */
-    protected JTextField m_TextMaxValue;
+    protected BaseTextField m_TextMaxValue;
 
     /** for Add button. */
     protected BaseButton m_ButtonAdd;
@@ -1468,7 +1468,7 @@ public class ReportFactory {
       panel.add(m_ComboBoxCompounds);
 
       // the min value
-      m_TextMinValue = new JTextField(10);
+      m_TextMinValue = new BaseTextField(10);
       m_TextMinValue.setToolTipText("Use -1 to ignore - gets automatically ignored if no compound selected");
       m_LabelMinValue = new JLabel("Minimum value");
       m_LabelMinValue.setDisplayedMnemonic('i');
@@ -1479,7 +1479,7 @@ public class ReportFactory {
       panel.add(m_TextMinValue);
 
       // the max value
-      m_TextMaxValue = new JTextField(10);
+      m_TextMaxValue = new BaseTextField(10);
       m_TextMaxValue.setToolTipText("Use -1 to ignore - gets automatically ignored if no compound selected");
       m_LabelMaxValue = new JLabel("Maximum value");
       m_LabelMaxValue.setDisplayedMnemonic('a');

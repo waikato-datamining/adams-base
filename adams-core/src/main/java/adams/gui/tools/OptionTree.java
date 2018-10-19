@@ -26,12 +26,12 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -64,7 +64,7 @@ public class OptionTree
   public final static String LABEL_NESTED = "<nested>";
 
   /** the text field for pasting the complete option string. */
-  protected JTextField m_TextOptionsFull;
+  protected BaseTextField m_TextOptionsFull;
 
   /** the checkbox for properties file pre-processing. */
   protected BaseCheckBox m_CheckBoxPropsFile;
@@ -73,7 +73,7 @@ public class OptionTree
   protected BaseButton m_ButtonUpdate;
 
   /** the text field for options represented by the currently selected sub-tree. */
-  protected JTextField m_TextOptionsSelected;
+  protected BaseTextField m_TextOptionsSelected;
 
   /** the button to copy the partial options to clipboard. */
   protected BaseButton m_ButtonCopy;
@@ -96,7 +96,7 @@ public class OptionTree
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(panel, BorderLayout.NORTH);
 
-    m_TextOptionsFull = new JTextField(40);
+    m_TextOptionsFull = new BaseTextField(40);
     m_TextOptionsFull.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
 	update();
@@ -141,7 +141,7 @@ public class OptionTree
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(panel, BorderLayout.SOUTH);
 
-    m_TextOptionsSelected = new JTextField(50);
+    m_TextOptionsSelected = new BaseTextField(50);
     m_TextOptionsSelected.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
 	update();

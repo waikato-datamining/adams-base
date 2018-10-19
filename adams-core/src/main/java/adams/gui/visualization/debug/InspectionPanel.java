@@ -25,6 +25,7 @@ import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
@@ -33,7 +34,6 @@ import adams.gui.visualization.debug.objecttree.Node;
 import adams.gui.visualization.debug.objecttree.Tree;
 
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.TreeSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -74,7 +74,7 @@ public class InspectionPanel
   protected BaseCheckBox m_CheckBoxSize;
 
   /** the text field for the size. */
-  protected JTextField m_TextSize;
+  protected BaseTextField m_TextSize;
   
   /** the last property path in use. */
   protected String[] m_LastPath;
@@ -140,7 +140,7 @@ public class InspectionPanel
     });
     m_PanelSize.add(m_CheckBoxSize);
 
-    m_TextSize = new JTextField(10);
+    m_TextSize = new BaseTextField(10);
     m_TextSize.setEditable(false);
     m_PanelSize.add(m_TextSize);
 

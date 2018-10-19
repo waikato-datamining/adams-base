@@ -22,7 +22,6 @@ package adams.gui.core;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JMenuItem;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -35,13 +34,13 @@ import java.awt.event.MouseEvent;
 import java.io.Serializable;
 
 /**
- * A specialized JTextField that takes a check model as input.
+ * A specialized BaseTextField that takes a check model as input.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public class CheckedTextField
-  extends JTextField {
+  extends BaseTextField {
 
   /** for serialization. */
   private static final long serialVersionUID = -1011286612484850433L;
@@ -279,7 +278,7 @@ public class CheckedTextField
   }
 
   /**
-   * Constructs a new <code>JTextField</code> that uses the given text
+   * Constructs a new <code>BaseTextField</code> that uses the given text
    * storage model and the given number of columns.
    * This is the constructor through which the other constructors feed.
    * If the document is <code>null</code>, a default model is created.
@@ -302,7 +301,7 @@ public class CheckedTextField
   }
 
   /**
-   * Constructs a new <code>JTextField</code> that uses the given text
+   * Constructs a new <code>BaseTextField</code> that uses the given text
    * storage model and the given number of columns.
    * This is the constructor through which the other constructors feed.
    * If the document is <code>null</code>, a default model is created.

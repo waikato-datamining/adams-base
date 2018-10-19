@@ -25,13 +25,13 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import de.intarsys.pdf.pd.PDDocument;
 
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -77,7 +77,7 @@ public class PDFPanel
   protected BasePanel m_PanelNavigation;
 
   /** the edit field with the page number. */
-  protected JTextField m_TextPage;
+  protected BaseTextField m_TextPage;
 
   /** the previous page button. */
   protected BaseButton m_ButtonPrevious;
@@ -148,7 +148,7 @@ public class PDFPanel
     });
     m_PanelNavigation.add(m_ButtonNext);
 
-    m_TextPage = new JTextField(5);
+    m_TextPage = new BaseTextField(5);
     m_TextPage.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {

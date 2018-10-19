@@ -19,17 +19,16 @@
  */
 package adams.gui.tools;
 
-import java.util.List;
-
-import javax.swing.JTextField;
-
 import adams.core.Properties;
 import adams.core.net.EmailAddress;
 import adams.core.net.EmailAddressBook;
 import adams.core.net.EmailContact;
 import adams.gui.core.BaseTextArea;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanelWithButtons;
 import adams.gui.core.SearchParameters;
+
+import java.util.List;
 
 /**
  * Panel for managing email addresses.
@@ -203,13 +202,13 @@ public class EmailAddressBookPanel
   }
 
   /** the first name. */
-  protected JTextField m_TextFirstName;
+  protected BaseTextField m_TextFirstName;
 
   /** the last name. */
-  protected JTextField m_TextLastName;
+  protected BaseTextField m_TextLastName;
 
   /** the email address. */
-  protected JTextField m_TextEmail;
+  protected BaseTextField m_TextEmail;
 
   /** the phone number. */
   protected BaseTextArea m_TextPhone;
@@ -227,15 +226,15 @@ public class EmailAddressBookPanel
    */
   @Override
   protected void addFields(ParameterPanelWithButtons panel) {
-    m_TextFirstName = new JTextField(30);
+    m_TextFirstName = new BaseTextField(30);
     addListener(m_TextFirstName);
     panel.addParameter("_First", m_TextFirstName);
     
-    m_TextLastName = new JTextField(30);
+    m_TextLastName = new BaseTextField(30);
     addListener(m_TextLastName);
     panel.addParameter("_Last", m_TextLastName);
     
-    m_TextEmail = new JTextField(30);
+    m_TextEmail = new BaseTextField(30);
     addListener(m_TextEmail);
     panel.addParameter("_Email", m_TextEmail);
     

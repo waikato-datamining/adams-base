@@ -32,6 +32,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
@@ -42,7 +43,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -369,8 +369,8 @@ public class PlaceholderManagementPanel
     /** the table model to use. */
     protected PlaceholderTableModel m_TableModel;
 
-    /** the JTextField used for displaying the path. */
-    protected JTextField m_TextPath;
+    /** the BaseTextField used for displaying the path. */
+    protected BaseTextField m_TextPath;
 
     /** the underlying directory chooser. */
     protected BaseDirectoryChooser m_DirChooser;
@@ -383,9 +383,9 @@ public class PlaceholderManagementPanel
      * @param dirChooser	the directory chooser to use
      */
     public PlaceholderTableCellEditor(BaseTable table, PlaceholderTableModel model, BaseDirectoryChooser dirChooser) {
-      super(new JTextField());
+      super(new BaseTextField());
 
-      m_TextPath = (JTextField) getComponent();
+      m_TextPath = (BaseTextField) getComponent();
       m_TextPath.setToolTipText("Double-click to bring up a dialog to select a directory");
       m_TextPath.addMouseListener(new MouseAdapter() {
 	@Override

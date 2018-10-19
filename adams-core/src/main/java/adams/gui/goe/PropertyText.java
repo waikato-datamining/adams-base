@@ -21,13 +21,13 @@
 
 package adams.gui.goe;
 
+import adams.gui.core.BaseTextField;
+
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyEditor;
-
-import javax.swing.JTextField;
 
 /** 
  * Support for a PropertyEditor that uses text.
@@ -39,7 +39,7 @@ import javax.swing.JTextField;
  * @see weka.gui.PropertyText
  */
 public class PropertyText
-  extends JTextField {
+  extends BaseTextField {
 
   /** for serialization. */
   private static final long serialVersionUID = -3915342928825822730L;

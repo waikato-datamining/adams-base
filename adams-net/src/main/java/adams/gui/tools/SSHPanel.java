@@ -30,6 +30,7 @@ import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.BaseTextPaneWithButtons;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
@@ -45,7 +46,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -89,7 +89,7 @@ public class SSHPanel
   private static final long serialVersionUID = 6647177121906710884L;
 
   /** the remote server. */
-  protected JTextField m_TextRemote;
+  protected BaseTextField m_TextRemote;
 
   /** the model of the spinner. */
   protected SpinnerNumberModel m_PortModel;
@@ -119,7 +119,7 @@ public class SSHPanel
   protected JPasswordField m_TextKeyPassphrase;
 
   /** the text field for the user. */
-  protected JTextField m_TextUser;
+  protected BaseTextField m_TextUser;
 
   /** the text field for the password. */
   protected JPasswordField m_TextPassword;
@@ -134,7 +134,7 @@ public class SSHPanel
   protected BaseButton m_ButtonCopy;
   
   /** the text field for the command to issue. */
-  protected JTextField m_TextCommand;
+  protected BaseTextField m_TextCommand;
   
   /** the button for executing the command. */
   protected BaseButton m_ButtonCommand;
@@ -214,7 +214,7 @@ public class SSHPanel
     topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     topPanels.add(topPanel);
 
-    m_TextRemote = new JTextField(20);
+    m_TextRemote = new BaseTextField(20);
     label = new JLabel("Remote");
     label.setDisplayedMnemonic('R');
     label.setLabelFor(m_TextRemote);
@@ -262,7 +262,7 @@ public class SSHPanel
       authPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       switch (type) {
 	case CREDENTIALS:
-	  m_TextUser = new JTextField(8);
+	  m_TextUser = new BaseTextField(8);
 	  m_TextUser.setText(System.getProperty("user.name"));
 	  label = new JLabel("User");
 	  label.setLabelFor(m_TextUser);
@@ -275,7 +275,7 @@ public class SSHPanel
 	  authPanel.add(m_TextPassword);
 	  break;
 	case PUBLIC_KEY:
-	  m_TextUser = new JTextField(8);
+	  m_TextUser = new BaseTextField(8);
 	  m_TextUser.setText(System.getProperty("user.name"));
 	  label = new JLabel("User");
 	  label.setLabelFor(m_TextUser);
@@ -349,7 +349,7 @@ public class SSHPanel
     bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(bottomPanel, BorderLayout.SOUTH);
     
-    m_TextCommand = new JTextField(40);
+    m_TextCommand = new BaseTextField(40);
     m_TextCommand.setFont(Fonts.getMonospacedFont());
     m_TextCommand.addKeyListener(new KeyListener() {
       @Override

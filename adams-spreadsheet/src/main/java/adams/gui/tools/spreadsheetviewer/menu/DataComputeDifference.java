@@ -23,12 +23,12 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.transformer.SpreadSheetDifference;
 import adams.gui.core.BaseComboBox;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
@@ -79,7 +79,7 @@ public class DataComputeDifference
     final BaseComboBox	sheet1;
     final BaseComboBox	sheet2;
     List<String>	titles;
-    final JTextField	range;
+    final BaseTextField	range;
 
     if (getParentDialog() != null)
       dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
@@ -95,7 +95,7 @@ public class DataComputeDifference
     sheet2 = new BaseComboBox(titles.toArray(new String[titles.size()]));
     params.addParameter("Second sheet", sheet2);
     params.addParameter("", new JLabel("using"));
-    range = new JTextField(10);
+    range = new BaseTextField(10);
     range.setText("");
     range.setToolTipText(new SpreadSheetColumnRange().getExample());
     params.addParameter("Key columns", range);

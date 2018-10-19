@@ -26,6 +26,7 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ClearableModel;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
@@ -34,7 +35,6 @@ import adams.parser.MathematicalExpression;
 import adams.parser.StringExpression;
 
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -401,7 +401,7 @@ public class ExpressionWatchPanel
     private static final long serialVersionUID = -8201358257732667201L;
 
     /** the text field for the expression. */
-    protected JTextField m_TextExpression;
+    protected BaseTextField m_TextExpression;
 
     /** the combobox with the expression types. */
     protected BaseComboBox m_ComboBoxType;
@@ -439,7 +439,7 @@ public class ExpressionWatchPanel
       panel = new ParameterPanel();
       getContentPane().add(panel);
 
-      m_TextExpression = new JTextField(30);
+      m_TextExpression = new BaseTextField(30);
       m_TextExpression.getDocument().addDocumentListener(new DocumentListener() {
         public void removeUpdate(DocumentEvent e) {
           updateButtons();

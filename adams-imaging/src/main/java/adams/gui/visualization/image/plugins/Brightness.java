@@ -21,11 +21,11 @@ package adams.gui.visualization.image.plugins;
 
 import adams.data.image.BufferedImageContainer;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.DialogWithButtons;
 import adams.gui.visualization.image.ImagePanel;
 
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -61,10 +61,10 @@ public class Brightness
     protected Brightness m_Owner;
     
     /** the brightness factor. */
-    protected JTextField m_TextFactor;
+    protected BaseTextField m_TextFactor;
     
     /** the brightness offset. */
-    protected JTextField m_TextOffset;
+    protected BaseTextField m_TextOffset;
     
     /** the preview button. */
     protected BaseButton m_ButtonPreview;
@@ -113,11 +113,11 @@ public class Brightness
       getContentPane().add(panel, BorderLayout.CENTER);
       
       // the factor
-      m_TextFactor = new JTextField(10);
+      m_TextFactor = new BaseTextField(10);
       panel.addParameter("Factor", m_TextFactor);
       
       // the offset
-      m_TextOffset = new JTextField(10);
+      m_TextOffset = new BaseTextField(10);
       panel.addParameter("Offset", m_TextOffset);
       
       // the buttons

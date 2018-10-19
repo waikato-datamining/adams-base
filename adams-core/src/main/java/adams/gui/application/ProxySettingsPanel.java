@@ -29,13 +29,13 @@ import adams.env.ProxyDefinition;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -64,7 +64,7 @@ public class ProxySettingsPanel
   protected ParameterPanel m_PanelHttpFtp;
 
   /** the http proxy host. */
-  protected JTextField m_TextHttpFtpHost;
+  protected BaseTextField m_TextHttpFtpHost;
 
   /** the http proxy port. */
   protected JSpinner m_SpinnerHttpFtpPort;
@@ -73,7 +73,7 @@ public class ProxySettingsPanel
   protected BaseCheckBox m_CheckBoxHttpFtpAuthentication;
 
   /** the http proxy user. */
-  protected JTextField m_TextHttpFtpUser;
+  protected BaseTextField m_TextHttpFtpUser;
 
   /** the http proxy password. */
   protected JPasswordField m_TextHttpFtpPassword;
@@ -82,13 +82,13 @@ public class ProxySettingsPanel
   protected BaseCheckBox m_CheckBoxShowHttpFtpPassword;
 
   /** the hosts that bypass the http proxy . */
-  protected JTextField m_TextHttpFtpNoProxy;
+  protected BaseTextField m_TextHttpFtpNoProxy;
 
   /** the panel for the socks parameters. */
   protected ParameterPanel m_PanelSocks;
 
   /** the socks proxy host. */
-  protected JTextField m_TextSocksHost;
+  protected BaseTextField m_TextSocksHost;
 
   /** the socks proxy port. */
   protected JSpinner m_SpinnerSocksPort;
@@ -97,7 +97,7 @@ public class ProxySettingsPanel
   protected BaseCheckBox m_CheckBoxSocksAuthentication;
 
   /** the socks proxy user. */
-  protected JTextField m_TextSocksUser;
+  protected BaseTextField m_TextSocksUser;
 
   /** the socks proxy password. */
   protected JPasswordField m_TextSocksPassword;
@@ -144,13 +144,13 @@ public class ProxySettingsPanel
     m_PanelHttpFtp.setBorder(BorderFactory.createTitledBorder("Http & Ftp"));
     add(m_PanelHttpFtp, BorderLayout.CENTER);
 
-    m_TextHttpFtpHost = new JTextField(15);
+    m_TextHttpFtpHost = new BaseTextField(15);
     m_PanelHttpFtp.addParameter("_Host", m_TextHttpFtpHost);
 
     m_SpinnerHttpFtpPort = new JSpinner();
     m_PanelHttpFtp.addParameter("Port", m_SpinnerHttpFtpPort);
 
-    m_TextHttpFtpNoProxy = new JTextField(15);
+    m_TextHttpFtpNoProxy = new BaseTextField(15);
     m_PanelHttpFtp.addParameter("No pro_xy for", m_TextHttpFtpNoProxy);
 
     m_CheckBoxHttpFtpAuthentication = new BaseCheckBox();
@@ -161,7 +161,7 @@ public class ProxySettingsPanel
     });
     m_PanelHttpFtp.addParameter("Requires _authentication", m_CheckBoxHttpFtpAuthentication);
 
-    m_TextHttpFtpUser = new JTextField(15);
+    m_TextHttpFtpUser = new BaseTextField(15);
     m_TextHttpFtpUser.setEnabled(false);
     m_PanelHttpFtp.addParameter("User", m_TextHttpFtpUser);
 
@@ -185,7 +185,7 @@ public class ProxySettingsPanel
     m_PanelSocks.setBorder(BorderFactory.createTitledBorder("Socks"));
     add(m_PanelSocks, BorderLayout.SOUTH);
 
-    m_TextSocksHost = new JTextField(15);
+    m_TextSocksHost = new BaseTextField(15);
     m_PanelSocks.addParameter("_Host", m_TextSocksHost);
 
     m_SpinnerSocksPort = new JSpinner();
@@ -199,7 +199,7 @@ public class ProxySettingsPanel
     });
     m_PanelSocks.addParameter("Requires _authentication", m_CheckBoxSocksAuthentication);
 
-    m_TextSocksUser = new JTextField(15);
+    m_TextSocksUser = new BaseTextField(15);
     m_TextSocksUser.setEnabled(false);
     m_PanelSocks.addParameter("User", m_TextSocksUser);
 

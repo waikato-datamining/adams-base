@@ -34,6 +34,7 @@ import adams.flow.execution.ExecutionStage;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
@@ -53,7 +54,6 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -140,13 +140,13 @@ public class ControlPanel
   protected BreakpointPanel m_PanelBreakpoints;
 
   /** the text field for the actor path. */
-  protected JTextField m_TextActorPath;
+  protected BaseTextField m_TextActorPath;
 
   /** the button for copying the actor path. */
   protected JToggleButton m_ButtonActorPath;
 
   /** the text field for the stage. */
-  protected JTextField m_TextStage;
+  protected BaseTextField m_TextStage;
 
   /** the owning listener. */
   protected transient Debug m_Owner;
@@ -311,11 +311,11 @@ public class ControlPanel
 
     // the path to the breakpoint
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    m_TextActorPath = new JTextField(30);
+    m_TextActorPath = new BaseTextField(30);
     m_TextActorPath.setEditable(false);
     m_ButtonActorPath = new JToggleButton(GUIHelper.getIcon("copy.gif"));
     m_ButtonActorPath.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(m_TextActorPath.getText()));
-    m_TextStage = new JTextField(15);
+    m_TextStage = new BaseTextField(15);
     m_TextStage.setEditable(false);
     panel.add(new JLabel("Actor path"));
     panel.add(m_TextActorPath);

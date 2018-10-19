@@ -25,6 +25,7 @@ import adams.core.Index;
 import adams.core.Utils;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.help.HelpFrame;
@@ -33,7 +34,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -63,7 +63,7 @@ public class IndexEditor
              InlineEditorSupport {
 
   /** The text field with the value. */
-  protected JTextField m_TextValue;
+  protected BaseTextField m_TextValue;
 
   /** the help button for bringing up a dialog with the example text. */
   protected BaseButton m_ButtonHelp;
@@ -199,7 +199,7 @@ public class IndexEditor
     m_DefaultBackground = m_PanelValue.getBackground();
     m_PanelValue.setBorder(BorderFactory.createLineBorder(m_DefaultBackground));
     panelAll.add(m_PanelValue, BorderLayout.CENTER);
-    m_TextValue = new JTextField(10);
+    m_TextValue = new BaseTextField(10);
     m_TextValue.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {

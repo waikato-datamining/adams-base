@@ -27,11 +27,11 @@ import adams.data.report.DataType;
 import adams.data.report.FieldType;
 import adams.db.FieldProvider;
 import adams.gui.core.BaseComboBox;
+import adams.gui.core.BaseTextField;
 import adams.gui.event.FieldCacheUpdateEvent;
 import adams.gui.event.FieldCacheUpdateListener;
 
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
@@ -59,7 +59,7 @@ public abstract class AbstractSelectDatabaseFieldPanel<T extends AbstractField>
   protected JLabel m_LabelManualFields;
 
   /** the textfield for manually entering a list of fields (blank separated). */
-  protected JTextField m_TextManualFields;
+  protected BaseTextField m_TextManualFields;
 
   /** the label for the data type combobox. */
   protected JLabel m_LabelDataType;
@@ -99,7 +99,7 @@ public abstract class AbstractSelectDatabaseFieldPanel<T extends AbstractField>
       }
     });
 
-    m_TextManualFields  = new JTextField(15);
+    m_TextManualFields  = new BaseTextField(15);
     m_LabelManualFields = new JLabel();
     m_LabelManualFields.setLabelFor(m_LabelManualFields);
 

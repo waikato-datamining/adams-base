@@ -25,6 +25,7 @@ import adams.core.io.TempUtils;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import weka.classifiers.Classifier;
@@ -71,7 +72,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
@@ -151,7 +151,7 @@ public class ExperimentPanel
   protected JLabel m_FoldsPercLabel = new JLabel("Folds");
 
   /** Either the number of folds or the percentage for the random split. */
-  protected JTextField m_FoldsPercText = new JTextField("10", 10);
+  protected BaseTextField m_FoldsPercText = new BaseTextField("10", 10);
 
   /** Lets the user select the class column. */
   protected BaseComboBox m_ClassCombo = new BaseComboBox();

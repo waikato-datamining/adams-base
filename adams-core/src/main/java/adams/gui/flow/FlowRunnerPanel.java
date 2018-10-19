@@ -48,6 +48,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseStatusBar.StatusProcessor;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
@@ -71,7 +72,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
@@ -183,7 +183,7 @@ public class FlowRunnerPanel
   protected Vector<SetVariable> m_CurrentSetVariables;
 
   /** the textfields for the current SetVariable singletons. */
-  protected Vector<JTextField> m_CurrentParameters;
+  protected Vector<BaseTextField> m_CurrentParameters;
 
   /** the buttons for the current SetVariable singletons. */
   protected Vector<BaseButton> m_CurrentHelpButtons;
@@ -216,7 +216,7 @@ public class FlowRunnerPanel
     m_RecentFilesHandler  = null;
     m_TitleGenerator      = new TitleGenerator("Flow runner", true);
     m_CurrentSetVariables = new Vector<SetVariable>();
-    m_CurrentParameters   = new Vector<JTextField>();
+    m_CurrentParameters   = new Vector<BaseTextField>();
     m_CurrentHelpButtons  = new Vector<BaseButton>();
     m_FileChooser         = new FlowFileChooser();
     m_FileChooser.setCurrentDirectory(new PlaceholderFile(getProperties().getPath("InitialDir", "%h")));
@@ -612,7 +612,7 @@ public class FlowRunnerPanel
   protected void updateParameters() {
     int		i;
     JLabel	label;
-    JTextField	textfield;
+    BaseTextField	textfield;
     BaseButton	buttonHelp;
     char[]	mnemonics;
     String[]	labels;
@@ -648,7 +648,7 @@ public class FlowRunnerPanel
 	// set up panel
 	for (i = 0; i < m_CurrentSetVariables.size(); i++) {
 	  // text field
-	  textfield = new JTextField(15);
+	  textfield = new BaseTextField(15);
 	  textfield.setText(m_CurrentSetVariables.get(i).getVariableValue().getValue());
 	  buttonHelp = null;
 	  final String annotation = m_CurrentSetVariables.get(i).getAnnotations().getValue();

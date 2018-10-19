@@ -31,12 +31,12 @@ import adams.env.Environment;
 import adams.gui.chooser.BaseTextChooserPanel;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -60,7 +60,7 @@ public class EmailSetupPanel
   protected BaseCheckBox m_CheckBoxEnabled;
 
   /** the SMTP host. */
-  protected JTextField m_TextSmtpServer;
+  protected BaseTextField m_TextSmtpServer;
 
   /** the SMTP port. */
   protected JSpinner m_SpinnerSmtpPort;
@@ -78,7 +78,7 @@ public class EmailSetupPanel
   protected BaseCheckBox m_CheckBoxSmtpUseSSL;
 
   /** the SMTP user. */
-  protected JTextField m_TextSmtpUser;
+  protected BaseTextField m_TextSmtpUser;
 
   /** the SMTP password. */
   protected JPasswordField m_TextSmtpPassword;
@@ -87,13 +87,13 @@ public class EmailSetupPanel
   protected BaseCheckBox m_CheckBoxShowPassword;
 
   /** the default FROM address. */
-  protected JTextField m_TextDefaultFromAddress;
+  protected BaseTextField m_TextDefaultFromAddress;
 
   /** the default signature. */
   protected BaseTextChooserPanel m_TextDefaultSignature;
 
   /** the support email addres. */
-  protected JTextField m_TextSupportEmailAddress;
+  protected BaseTextField m_TextSupportEmailAddress;
 
   /**
    * Initializes the members.
@@ -111,7 +111,7 @@ public class EmailSetupPanel
     m_CheckBoxEnabled.setSelected(EmailHelper.isEnabled());
     m_PanelParameters.addParameter("_Enabled", m_CheckBoxEnabled);
 
-    m_TextSmtpServer = new JTextField(20);
+    m_TextSmtpServer = new BaseTextField(20);
     m_TextSmtpServer.setText(EmailHelper.getSmtpServer());
     m_PanelParameters.addParameter("SMTP _Server", m_TextSmtpServer);
 
@@ -141,7 +141,7 @@ public class EmailSetupPanel
     m_CheckBoxSmtpUseSSL.setSelected(EmailHelper.getSmtpUseSSL());
     m_PanelParameters.addParameter("Use SS_L", m_CheckBoxSmtpUseSSL);
 
-    m_TextSmtpUser = new JTextField(20);
+    m_TextSmtpUser = new BaseTextField(20);
     m_TextSmtpUser.setText(EmailHelper.getSmtpUser());
     m_PanelParameters.addParameter("SMTP _User", m_TextSmtpUser);
 
@@ -160,7 +160,7 @@ public class EmailSetupPanel
     });
     m_PanelParameters.addParameter("Sho_w Password", m_CheckBoxShowPassword);
 
-    m_TextDefaultFromAddress = new JTextField(20);
+    m_TextDefaultFromAddress = new BaseTextField(20);
     m_TextDefaultFromAddress.setText(EmailHelper.getDefaultFromAddress());
     m_PanelParameters.addParameter("Default FROM address", m_TextDefaultFromAddress);
 
@@ -171,7 +171,7 @@ public class EmailSetupPanel
     m_TextDefaultSignature.setCurrent(new BaseText(Utils.unbackQuoteChars(EmailHelper.getDefaultSignature())));
     m_PanelParameters.addParameter("Default signature", new BaseScrollPane(m_TextDefaultSignature));
 
-    m_TextSupportEmailAddress = new JTextField(20);
+    m_TextSupportEmailAddress = new BaseTextField(20);
     m_TextSupportEmailAddress.setText(EmailHelper.getSupportEmail());
     m_PanelParameters.addParameter("Suport email address", m_TextSupportEmailAddress);
   }

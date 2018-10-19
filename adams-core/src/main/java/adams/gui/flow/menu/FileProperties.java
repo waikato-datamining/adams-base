@@ -24,6 +24,7 @@ import adams.data.statistics.InformativeStatistic;
 import adams.flow.core.ActorStatistic;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
@@ -33,7 +34,6 @@ import adams.gui.visualization.statistics.InformativeStatisticFactory;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JMenuItem;
-import javax.swing.JTextField;
 import javax.swing.tree.TreeNode;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
@@ -105,8 +105,8 @@ public class FileProperties
     String		file;
     String		size;
     BaseButton		buttonStats;
-    final JTextField	textFile;
-    JTextField		textSize;
+    final BaseTextField	textFile;
+    BaseTextField		textSize;
 
     if (m_State.getCurrentFile() != null)
       file = m_State.getCurrentFile().getAbsolutePath();
@@ -120,7 +120,7 @@ public class FileProperties
     buttonStats.addActionListener((ActionEvent ae) -> showStatistics());
 
     params = new ParameterPanel();
-    textFile = new JTextField(file, 20);
+    textFile = new BaseTextField(file, 20);
     textFile.setEditable(false);
     textFile.addMouseListener(new MouseAdapter() {
       @Override
@@ -139,7 +139,7 @@ public class FileProperties
       }
     });
     params.addParameter("File", textFile);
-    textSize = new JTextField(size, 7);
+    textSize = new BaseTextField(size, 7);
     textSize.setEditable(false);
     params.addParameter("Size", textSize);
     params.addParameter("Statistics", buttonStats);

@@ -24,13 +24,13 @@ import adams.core.VariableNameValuePair;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -125,7 +125,7 @@ public class VariableNameValuePairEditor
     m_PanelPair.setBorder(BorderFactory.createLineBorder(m_DefaultBackground));
     panelAll.add(m_PanelPair, BorderLayout.CENTER);
 
-    m_TextName  = new JTextField(10);
+    m_TextName  = new BaseTextField(10);
     m_TextName.getDocument().addDocumentListener(new DocumentListener() {
       public void removeUpdate(DocumentEvent e) {
 	indicateValidity();
@@ -137,7 +137,7 @@ public class VariableNameValuePairEditor
 	indicateValidity();
       }
     });
-    m_TextValue = new JTextField(30);
+    m_TextValue = new BaseTextField(30);
 
     m_PanelPair.addParameter("_Name", m_TextName);
     m_PanelPair.addParameter("_Value", m_TextValue);

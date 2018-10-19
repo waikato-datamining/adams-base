@@ -146,7 +146,7 @@ public abstract class DataContainerPanelWithSidePanel<T extends DataContainer, M
    * is called,  the first validateRoot (if any) found when walking
    * up the containment hierarchy of this component will be validated.
    * By default, <code>JRootPane</code>, <code>JScrollPane</code>,
-   * and <code>JTextField</code> return true
+   * and <code>BaseTextField</code> return true
    * from <code>isValidateRoot</code>.
    * <p>
    * This method will automatically be called on this component

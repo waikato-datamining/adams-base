@@ -24,12 +24,12 @@ import adams.core.io.PlaceholderDirectory;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.chooser.FileChooserBookmarksPanel.FileChooserBookmarksFactory;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanelWithButtons;
 import adams.gui.core.SearchParameters;
 import com.googlecode.jfilechooserbookmarks.Bookmark;
 
-import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -166,7 +166,7 @@ public class FileChooserBookmarksManagementPanel
   }
 
   /** the name. */
-  protected JTextField m_TextName;
+  protected BaseTextField m_TextName;
 
   /** the directory. */
   protected DirectoryChooserPanel m_PanelDirectory;
@@ -234,7 +234,7 @@ public class FileChooserBookmarksManagementPanel
    */
   @Override
   protected void addFields(ParameterPanelWithButtons panel) {
-    m_TextName = new JTextField(30);
+    m_TextName = new BaseTextField(30);
     addListener(m_TextName);
     panel.addParameter("_Name", m_TextName);
     

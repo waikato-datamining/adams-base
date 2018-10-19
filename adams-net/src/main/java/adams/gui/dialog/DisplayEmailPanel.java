@@ -19,20 +19,19 @@
  */
 package adams.gui.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import adams.core.net.Email;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTextArea;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.KeyValuePairTableModel;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 
 /**
  * Panel for displaying an {@link Email} object.
@@ -50,7 +49,7 @@ public class DisplayEmailPanel
   protected Email m_Email;
   
   /** the sender. */
-  protected JTextField m_TextSender;
+  protected BaseTextField m_TextSender;
   
   /** the recipients. */
   protected BaseTable m_TableRecipients;
@@ -62,7 +61,7 @@ public class DisplayEmailPanel
   protected BaseScrollPane m_ScrollPaneRecipients;
   
   /** the subject. */
-  protected JTextField m_TextSubject;
+  protected BaseTextField m_TextSubject;
   
   /** the body. */
   protected BaseTextArea m_TextBody;
@@ -102,7 +101,7 @@ public class DisplayEmailPanel
     panelTop = new JPanel(new BorderLayout());
     add(panelTop, BorderLayout.NORTH);
 
-    m_TextSender = new JTextField(40);
+    m_TextSender = new BaseTextField(40);
     m_TextSender.setEditable(false);
     label        = new JLabel("From");
     label.setDisplayedMnemonic('F');
@@ -119,7 +118,7 @@ public class DisplayEmailPanel
     m_ScrollPaneRecipients.setPreferredSize(new Dimension(0, 125));
     panelTop.add(m_ScrollPaneRecipients, BorderLayout.CENTER);
     
-    m_TextSubject = new JTextField(40);
+    m_TextSubject = new BaseTextField(40);
     m_TextSubject.setEditable(false);
     label        = new JLabel("Subject");
     label.setDisplayedMnemonic('S');

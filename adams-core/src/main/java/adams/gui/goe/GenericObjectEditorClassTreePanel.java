@@ -24,6 +24,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.goe.classtree.ClassTree;
@@ -32,7 +33,6 @@ import adams.gui.goe.classtree.StrictClassTreeFilter;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -72,7 +72,7 @@ public class GenericObjectEditorClassTreePanel
   protected BaseScrollPane m_ScrollPane;
 
   /** The search field. */
-  protected JTextField m_TextSearch;
+  protected BaseTextField m_TextSearch;
 
   /** The button for closing the popup again. */
   protected BaseButton m_CloseButton;
@@ -134,7 +134,7 @@ public class GenericObjectEditorClassTreePanel
     // search
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     bottomPanel.add(panel, BorderLayout.WEST);
-    m_TextSearch = new JTextField(10);
+    m_TextSearch = new BaseTextField(10);
     m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
 	update();

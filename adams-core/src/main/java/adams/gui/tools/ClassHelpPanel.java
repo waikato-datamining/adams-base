@@ -23,6 +23,7 @@ package adams.gui.tools;
 import adams.core.ClassLister;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 import adams.gui.core.DelayedActionRunnable;
 import adams.gui.core.DelayedActionRunnable.AbstractAction;
@@ -34,7 +35,6 @@ import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -58,7 +58,7 @@ public class ClassHelpPanel
   private static final long serialVersionUID = 1459345403620296387L;
 
   /** the search panel. */
-  protected JTextField m_TextSearch;
+  protected BaseTextField m_TextSearch;
 
   /** the flow editor for displaying flows. */
   protected SearchableBaseList m_ListClasses;
@@ -96,7 +96,7 @@ public class ClassHelpPanel
     setLayout(new BorderLayout(5, 5));
     setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-    m_TextSearch = new JTextField();
+    m_TextSearch = new BaseTextField();
     m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
       protected void update() {
 	m_ListClasses.search(m_TextSearch.getText().length() == 0 ? null : m_TextSearch.getText(), false);

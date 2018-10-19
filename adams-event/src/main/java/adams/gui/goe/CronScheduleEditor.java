@@ -27,6 +27,7 @@ import adams.core.base.CronSchedule;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -35,7 +36,6 @@ import org.quartz.CronExpression;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
@@ -63,25 +63,25 @@ public class CronScheduleEditor
   protected ParameterPanel m_PanelParts;
 
   /** the text field for the seconds. */
-  protected JTextField m_TextSeconds;
+  protected BaseTextField m_TextSeconds;
 
   /** the text field for the minutes. */
-  protected JTextField m_TextMinutes;
+  protected BaseTextField m_TextMinutes;
 
   /** the text field for the hours. */
-  protected JTextField m_TextHours;
+  protected BaseTextField m_TextHours;
 
   /** the text field for the day-of-month. */
-  protected JTextField m_TextDayOfMonth;
+  protected BaseTextField m_TextDayOfMonth;
 
   /** the text field for the month. */
-  protected JTextField m_TextMonth;
+  protected BaseTextField m_TextMonth;
 
   /** the text field for the day-of-week. */
-  protected JTextField m_TextDayOfWeek;
+  protected BaseTextField m_TextDayOfWeek;
 
   /** the text field for the year. */
-  protected JTextField m_TextYear;
+  protected BaseTextField m_TextYear;
 
   /**
    * Returns the Compound as string.
@@ -199,19 +199,19 @@ public class CronScheduleEditor
 
     panelAll    = new JPanel(new BorderLayout());
 
-    m_TextSeconds = new JTextField(5);
+    m_TextSeconds = new BaseTextField(5);
     m_TextSeconds.setToolTipText("0-59 and , - * /");
-    m_TextMinutes = new JTextField(5);
+    m_TextMinutes = new BaseTextField(5);
     m_TextMinutes.setToolTipText("0-59 and , - * /");
-    m_TextHours = new JTextField(5);
+    m_TextHours = new BaseTextField(5);
     m_TextHours.setToolTipText("0-23 and , - * /");
-    m_TextDayOfMonth = new JTextField(5);
+    m_TextDayOfMonth = new BaseTextField(5);
     m_TextDayOfMonth.setToolTipText("1-31 and , - * ? / L W");
-    m_TextMonth = new JTextField(5);
+    m_TextMonth = new BaseTextField(5);
     m_TextMonth.setToolTipText("1-12 or JAN-DEC and , - * /");
-    m_TextDayOfWeek = new JTextField(5);
+    m_TextDayOfWeek = new BaseTextField(5);
     m_TextDayOfWeek.setToolTipText("1-7 and , - * ? / L #");
-    m_TextYear = new JTextField(5);
+    m_TextYear = new BaseTextField(5);
     m_TextYear.setToolTipText("empty, 1970-2099 and , - * /");
 
     m_PanelParts = new ParameterPanel();

@@ -30,12 +30,12 @@ import adams.gui.application.UserMode;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -79,11 +79,11 @@ public class DateTest
     JPanel			panelButtons;
     JPanel			panelButtonsAll;
     ParameterPanel		panelParams;
-    final JTextField 		fieldFormatInput;
-    final JTextField 		fieldFormatOutput;
-    final JTextField 		fieldParseInput;
-    final JTextField 		fieldParseFormat;
-    final JTextField fieldParseValue;
+    final BaseTextField 		fieldFormatInput;
+    final BaseTextField 		fieldFormatOutput;
+    final BaseTextField 		fieldParseInput;
+    final BaseTextField 		fieldParseFormat;
+    final BaseTextField fieldParseValue;
     BaseButton			buttonTest;
     BaseButton			buttonHelp;
     BaseButton			buttonClose;
@@ -105,9 +105,9 @@ public class DateTest
     tabbedPane.addTab("Format", panelTab);
 
     panelParams = new ParameterPanel();
-    fieldFormatInput = new JTextField(30);
+    fieldFormatInput = new BaseTextField(30);
     panelParams.addParameter("Format", fieldFormatInput);
-    fieldFormatOutput = new JTextField(30);
+    fieldFormatOutput = new BaseTextField(30);
     panelParams.addParameter("Output", fieldFormatOutput);
     panelTab.add(panelParams, BorderLayout.CENTER);
 
@@ -146,11 +146,11 @@ public class DateTest
     tabbedPane.addTab("Parse", panelTab);
 
     panelParams = new ParameterPanel();
-    fieldParseInput = new JTextField(30);
+    fieldParseInput = new BaseTextField(30);
     panelParams.addParameter("Input", fieldParseInput);
-    fieldParseFormat = new JTextField();
+    fieldParseFormat = new BaseTextField();
     panelParams.addParameter("Format", fieldParseFormat);
-    fieldParseValue = new JTextField(30);
+    fieldParseValue = new BaseTextField(30);
     panelParams.addParameter("Value", fieldParseValue);
     panelTab.add(panelParams, BorderLayout.CENTER);
 

@@ -30,6 +30,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextArea;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -37,7 +38,6 @@ import adams.gui.goe.GenericArrayEditorPanel;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -58,7 +58,7 @@ public class ComposeEmailPanel
   private static final long serialVersionUID = 8667404133601287157L;
 
   /** the "from". */
-  protected JTextField m_TextFrom;
+  protected BaseTextField m_TextFrom;
 
   /** the "to recipients". */
   protected GenericArrayEditorPanel m_GAEPanelTO;
@@ -73,7 +73,7 @@ public class ComposeEmailPanel
   protected GenericArrayEditorPanel m_GAEPanelAttachments;
 
   /** the subject. */
-  protected JTextField m_TextSubject;
+  protected BaseTextField m_TextSubject;
 
   /** the body. */
   protected BaseTextArea m_TextBody;
@@ -125,7 +125,7 @@ public class ComposeEmailPanel
     paramPanel = new ParameterPanel();
     m_TabbedPane.addTab("Addresses", paramPanel);
 
-    m_TextFrom = new JTextField(40);
+    m_TextFrom = new BaseTextField(40);
     paramPanel.addParameter("_From", m_TextFrom);
 
     m_GAEPanelTO = new GenericArrayEditorPanel(new EmailAddress[0]);
@@ -151,7 +151,7 @@ public class ComposeEmailPanel
     panel = new JPanel(new BorderLayout());
     add(panel, BorderLayout.CENTER);
 
-    m_TextSubject = new JTextField(40);
+    m_TextSubject = new BaseTextField(40);
     panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
     label = new JLabel("Subject");
     label.setLabelFor(m_TextSubject);

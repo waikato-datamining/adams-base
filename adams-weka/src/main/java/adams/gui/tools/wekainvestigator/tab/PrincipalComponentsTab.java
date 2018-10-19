@@ -32,6 +32,7 @@ import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
@@ -49,7 +50,6 @@ import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
@@ -103,7 +103,7 @@ public class PrincipalComponentsTab
   protected BaseComboBox<String> m_ComboBoxDatasets;
 
   /** the attribute range. */
-  protected JTextField m_TextAttributeRange;
+  protected BaseTextField m_TextAttributeRange;
 
   /** the variance. */
   protected NumberTextField m_TextVariance;
@@ -174,7 +174,7 @@ public class PrincipalComponentsTab
     m_ComboBoxDatasets = new BaseComboBox<>(m_ModelDatasets);
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
-    m_TextAttributeRange = new JTextField(20);
+    m_TextAttributeRange = new BaseTextField(20);
     m_TextAttributeRange.setText(Range.ALL);
     m_TextAttributeRange.getDocument().addDocumentListener(new DocumentListener() {
       @Override

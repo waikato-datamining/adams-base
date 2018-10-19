@@ -26,7 +26,6 @@ import adams.gui.event.SearchListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
@@ -85,7 +84,7 @@ public class SearchPanel
   protected JLabel m_LabelPrefix;
 
   /** the text field for entering the search text. */
-  protected JTextField m_TextSearch;
+  protected BaseTextField m_TextSearch;
 
   /** whether to use regular expressions for searching or plain string
    * comparison. */
@@ -190,7 +189,7 @@ public class SearchPanel
     else
       size = 20;
 
-    m_TextSearch = new JTextField(size);
+    m_TextSearch = new BaseTextField(size);
     m_TextSearch.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         if (m_ButtonSearch != null)

@@ -24,12 +24,12 @@ import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -110,8 +110,8 @@ public class BaseKeyValuePairEditor
     panelPair = new ParameterPanel();
     panelAll.add(panelPair, BorderLayout.CENTER);
 
-    m_TextKey   = new JTextField(10);
-    m_TextValue = new JTextField(30);
+    m_TextKey   = new BaseTextField(10);
+    m_TextValue = new BaseTextField(30);
 
     panelPair.addParameter("_Key", m_TextKey);
     panelPair.addParameter("_Value", m_TextValue);

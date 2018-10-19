@@ -346,7 +346,7 @@ public class NumberTextField
   }
 
   /**
-   * Constructs a new <code>JTextField</code> that uses the given text
+   * Constructs a new <code>BaseTextField</code> that uses the given text
    * storage model and the given number of columns.
    * This is the constructor through which the other constructors feed.
    * If the document is <code>null</code>, a default model is created.

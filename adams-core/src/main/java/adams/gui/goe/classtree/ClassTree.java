@@ -20,12 +20,13 @@
 
 package adams.gui.goe.classtree;
 
-import java.awt.BorderLayout;
-import java.util.Enumeration;
-import java.util.Vector;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextField;
+import adams.gui.core.BaseTreeNode;
+import adams.gui.core.DragAndDropTreeNodeCollection;
+import adams.gui.core.dotnotationtree.DotNotationTree;
 
 import javax.swing.JFrame;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -33,11 +34,9 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTreeNode;
-import adams.gui.core.DragAndDropTreeNodeCollection;
-import adams.gui.core.dotnotationtree.DotNotationTree;
+import java.awt.BorderLayout;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Displays classes in a tree structure.
@@ -156,7 +155,7 @@ public class ClassTree
 	System.out.println(tree.getSelectedItem());
       }
     });
-    final JTextField search = new JTextField();
+    final BaseTextField search = new BaseTextField();
     search.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
 	tree.setSearch(search.getText());

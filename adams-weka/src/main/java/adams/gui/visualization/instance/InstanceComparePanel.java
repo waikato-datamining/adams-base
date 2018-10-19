@@ -42,6 +42,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTable;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
@@ -63,7 +64,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -390,7 +390,7 @@ public class InstanceComparePanel
     protected BaseButton m_ButtonDisplay;
 
     /** the edit field for the range. */
-    protected JTextField m_TextAttributeRange;
+    protected BaseTextField m_TextAttributeRange;
 
     /** the label for the range. */
     protected JLabel m_LabelAttributeRange;
@@ -464,7 +464,7 @@ public class InstanceComparePanel
       add(panel);
 
       // Range
-      m_TextAttributeRange = new JTextField(10);
+      m_TextAttributeRange = new BaseTextField(10);
       m_TextAttributeRange.setToolTipText(GUIHelper.processTipText(new Range().getExample(), 40));
       m_TextAttributeRange.getDocument().addDocumentListener(new DocumentListener() {
         public void removeUpdate(DocumentEvent e) {

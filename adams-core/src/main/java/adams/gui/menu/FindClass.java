@@ -30,12 +30,12 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextArea;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -90,7 +90,7 @@ public class FindClass
     BaseTabbedPane		tabbedPane;
     JPanel panelButtons;
     ParameterPanel		panelParams;
-    final JTextField 		fieldSearch;
+    final BaseTextField 		fieldSearch;
     final BaseCheckBox 		checkboxRegExp;
     final BaseTextArea 		areaOutput;
     BaseButton 			buttonSearch;
@@ -105,7 +105,7 @@ public class FindClass
     panel.add(panelSearch, BorderLayout.CENTER);
 
     panelParams = new ParameterPanel();
-    fieldSearch = new JTextField(30);
+    fieldSearch = new BaseTextField(30);
     panelParams.addParameter("Search", fieldSearch);
     checkboxRegExp = new BaseCheckBox();
     panelParams.addParameter("Regular expression?", checkboxRegExp);

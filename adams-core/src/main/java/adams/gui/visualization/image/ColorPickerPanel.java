@@ -19,6 +19,12 @@
  */
 package adams.gui.visualization.image;
 
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTextField;
+import adams.gui.core.ColorHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.core.ParameterPanel;
+
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -32,13 +38,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
-
-import javax.swing.JTextField;
-
-import adams.gui.core.BasePanel;
-import adams.gui.core.ColorHelper;
-import adams.gui.core.MouseUtils;
-import adams.gui.core.ParameterPanel;
 
 /**
  * A panel allowing the user to pick a color on an {@link ImagePanel}.
@@ -277,10 +276,10 @@ public class ColorPickerPanel
   protected ParameterPanel m_PanelColors;
   
   /** the text field for the selected color. */
-  protected JTextField m_TextSelectedColor;
+  protected BaseTextField m_TextSelectedColor;
   
   /** the text field for the color at the current position. */
-  protected JTextField m_TextCurrentColor;
+  protected BaseTextField m_TextCurrentColor;
 
   /**
    * Initializes the widgets.
@@ -299,11 +298,11 @@ public class ColorPickerPanel
     m_PanelColors = new ParameterPanel();
     add(m_PanelColors, BorderLayout.EAST);
     
-    m_TextCurrentColor = new JTextField(10);
+    m_TextCurrentColor = new BaseTextField(10);
     m_TextCurrentColor.setEditable(false);
     m_PanelColors.addParameter("Current", m_TextCurrentColor);
     
-    m_TextSelectedColor = new JTextField(10);
+    m_TextSelectedColor = new BaseTextField(10);
     m_TextSelectedColor.setEditable(false);
     m_PanelColors.addParameter("Selected", m_TextSelectedColor);
   }
@@ -337,7 +336,7 @@ public class ColorPickerPanel
    * @param field	the text field to update
    * @param color	the color to display
    */
-  protected void updateColor(JTextField field, Color color) {
+  protected void updateColor(BaseTextField field, Color color) {
     field.setText(ColorHelper.toHex(color));
     field.setBackground(color);
     field.setForeground(ColorHelper.getContrastColor(color));

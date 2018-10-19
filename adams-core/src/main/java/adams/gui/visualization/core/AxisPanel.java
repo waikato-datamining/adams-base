@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.core.base.BaseInterval;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
@@ -45,7 +46,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -833,16 +833,16 @@ public class AxisPanel
   public void selectRange() {
     ApprovalDialog		dialog;
     ParameterPanel		panel;
-    final JTextField		textMin;
-    final JTextField		textMax;
+    final BaseTextField		textMin;
+    final BaseTextField		textMax;
     double			min;
     double			max;
 
     panel = new ParameterPanel();
-    textMin = new JTextField(10);
+    textMin = new BaseTextField(10);
     textMin.setText(Utils.doubleToString(getActualMinimumNoMargin(), 8));
     panel.addParameter("Minimum", textMin);
-    textMax = new JTextField(10);
+    textMax = new BaseTextField(10);
     textMax.setText(Utils.doubleToString(getActualMaximumNoMargin(), 8));
     panel.addParameter("Maximum", textMax);
 
@@ -940,16 +940,16 @@ public class AxisPanel
   public void selectMargins() {
     ApprovalDialog	dialog;
     ParameterPanel	panel;
-    final JTextField 	textTop;
-    final JTextField 	textBottom;
+    final BaseTextField 	textTop;
+    final BaseTextField 	textBottom;
     double 		top;
     double 		bottom;
 
     panel = new ParameterPanel();
-    textTop = new JTextField(10);
+    textTop = new BaseTextField(10);
     textTop.setText(Utils.doubleToString(getManualTopMargin() == null ? getTopMargin() : getManualTopMargin(), 8));
     panel.addParameter("Top", textTop);
-    textBottom = new JTextField(10);
+    textBottom = new BaseTextField(10);
     textBottom.setText(Utils.doubleToString(getManualBottomMargin() == null ? getBottomMargin() : getManualBottomMargin(), 8));
     panel.addParameter("Bottom", textBottom);
 

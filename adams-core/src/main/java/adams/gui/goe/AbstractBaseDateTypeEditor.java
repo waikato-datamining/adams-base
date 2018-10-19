@@ -28,6 +28,7 @@ import adams.gui.chooser.DateProvider;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseComboBox;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.help.HelpFrame;
@@ -38,7 +39,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
@@ -88,7 +88,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
   protected BaseComboBox<String> m_ComboBoxPlaceholders;
 
   /** For entering a custom date string. */
-  protected JTextField m_TextCustom;
+  protected BaseTextField m_TextCustom;
 
   /** the button for the bringing up the help for the custom format. */
   protected BaseButton m_ButtonCustomHelp;
@@ -265,7 +265,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     panel.add(m_ButtonNow);
     panelCustom.add(panel, BorderLayout.NORTH);
 
-    m_TextCustom = new JTextField(12);
+    m_TextCustom = new BaseTextField(12);
     m_TextCustom.getDocument().addDocumentListener(new DocumentListener() {
       public void removeUpdate(DocumentEvent e) {
 	update();

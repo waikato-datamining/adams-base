@@ -30,6 +30,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -41,7 +42,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -193,7 +193,7 @@ public class VariableSupport {
     JPanel 			panelButtons;
     BaseButton 			buttonOK;
     BaseButton 			buttonClose;
-    final JTextField		textValue;
+    final BaseTextField		textValue;
     final StringBuilder		selected;
 
     result = null;
@@ -240,7 +240,7 @@ public class VariableSupport {
     panel    = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelAll.add(panel, BorderLayout.CENTER);
 
-    textValue = new JTextField(20);
+    textValue = new BaseTextField(20);
     textValue.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {

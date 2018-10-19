@@ -21,11 +21,10 @@
 package adams.gui.core;
 
 
-import java.util.Date;
+import adams.core.DateFormat;
 
 import javax.swing.text.Document;
-
-import adams.core.DateFormat;
+import java.util.Date;
 
 /**
  * A specialized text field for dates.
@@ -197,7 +196,7 @@ public class DateTextField
   }
 
   /**
-   * Constructs a new <code>JTextField</code> that uses the given text
+   * Constructs a new <code>BaseTextField</code> that uses the given text
    * storage model and the given number of columns.
    * This is the constructor through which the other constructors feed.
    * If the document is <code>null</code>, a default model is created.

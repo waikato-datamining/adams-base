@@ -28,6 +28,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -52,7 +53,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
@@ -115,7 +115,7 @@ public class InstanceTab
   protected BaseComboBox<String> m_ComboBoxID;
 
   /** the attribute range. */
-  protected JTextField m_TextAttributeRange;
+  protected BaseTextField m_TextAttributeRange;
 
   /** whether to use anti-aliasing. */
   protected BaseCheckBox m_CheckBoxAntiAliasing;
@@ -188,7 +188,7 @@ public class InstanceTab
     m_ComboBoxID.addActionListener((ActionEvent e) -> updateIDs());
     m_PanelParameters.addParameter("ID", m_ComboBoxID);
 
-    m_TextAttributeRange = new JTextField(20);
+    m_TextAttributeRange = new BaseTextField(20);
     m_TextAttributeRange.setText(Range.ALL);
     m_TextAttributeRange.getDocument().addDocumentListener(new DocumentListener() {
       @Override

@@ -29,9 +29,9 @@ import adams.data.report.FieldType;
 import adams.data.report.FieldUtils;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
 
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.util.Vector;
 
@@ -51,7 +51,7 @@ public class SelectFieldPanel
   protected ParameterPanel m_Panel;
 
   /** the textfield for entering a list of fields (blank separated). */
-  protected JTextField m_TextFields;
+  protected BaseTextField m_TextFields;
 
   /** the data types to display. */
   protected BaseComboBox m_ComboBoxDataType;
@@ -89,7 +89,7 @@ public class SelectFieldPanel
     m_Panel = new ParameterPanel();
     add(m_Panel, BorderLayout.CENTER);
 
-    m_TextFields  = new JTextField(15);
+    m_TextFields  = new BaseTextField(15);
     m_Panel.addParameter("Field _name", m_TextFields);
 
     m_ComboBoxDataType = new BaseComboBox();
