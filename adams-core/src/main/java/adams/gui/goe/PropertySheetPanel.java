@@ -30,7 +30,6 @@ import adams.core.option.AbstractNumericOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
 import adams.gui.core.BaseButton;
-import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -41,6 +40,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -464,7 +464,7 @@ public class PropertySheetPanel extends BasePanel
 	  m_Views[i].setPreferredSize(new Dimension(100, 20));
 	  m_Views[i].setMaximumSize(new Dimension(100, 40));
 	}
-	else if (m_Views[i] instanceof BaseCheckBox) {
+	else if (m_Views[i] instanceof JCheckBox) {
 	  m_Views[i].setSize(new Dimension(25, 20));
 	  m_Views[i].setPreferredSize(new Dimension(25, 20));
 	  m_Views[i].setMaximumSize(new Dimension(25, 25));

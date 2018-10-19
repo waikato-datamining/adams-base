@@ -44,6 +44,7 @@ import adams.gui.visualization.stats.paintlet.ZScoreCircle;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -364,7 +365,7 @@ public class ZScore
   public class gridListener implements ItemListener {
     public void itemStateChanged(ItemEvent e) {
       //need to change this to use the existing grid
-      BaseCheckBox check = (BaseCheckBox)e.getSource();
+      JCheckBox check = (JCheckBox)e.getSource();
       if (check.isSelected()) {
 	m_Plot.getLeft().setShowGridLines(true);
 	m_Plot.getBottom().setShowGridLines(true);

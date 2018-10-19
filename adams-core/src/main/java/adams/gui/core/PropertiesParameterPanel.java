@@ -48,10 +48,13 @@ import adams.gui.goe.FontEditor;
 import adams.gui.goe.GenericArrayEditorPanel;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -1150,10 +1153,10 @@ public class PropertiesParameterPanel
     int				i;
     Component			comp;
     PropertyType		type;
-    BaseTextField			textfield;
+    JTextField 			textfield;
     JPasswordField		pwfield;
     SQLSyntaxEditorPanel	query;
-    BaseCheckBox			checkbox;
+    JCheckBox 			checkbox;
     JSpinner			spinner;
     FontChooserPanel 		fontPanel;
     DirectoryChooserPanel	dirPanel;
@@ -1168,7 +1171,7 @@ public class PropertiesParameterPanel
     RangeTextField		rangeText;
     RegExpTextField		regexpText;
     RegExpConstrainedTextField	regexpConstText;
-    BaseComboBox			comboEnum;
+    JComboBox			comboEnum;
     BaseString[]		list;
     String			key;
     Object			array;
@@ -1197,7 +1200,7 @@ public class PropertiesParameterPanel
           result.setDateTime(key, dateTimePanel.getCurrent());
           break;
         case DOUBLE:
-          textfield = (BaseTextField) comp;
+          textfield = (JTextField) comp;
           result.setProperty(key, textfield.getText());
           break;
         case STRING:
@@ -1213,7 +1216,7 @@ public class PropertiesParameterPanel
           result.setProperty(key, query.getContent());
           break;
         case BOOLEAN:
-          checkbox = (BaseCheckBox) comp;
+          checkbox = (JCheckBox) comp;
           result.setBoolean(key, checkbox.isSelected());
           break;
         case INTEGER:
@@ -1249,14 +1252,14 @@ public class PropertiesParameterPanel
           result.setColor(key, colorPanel.getCurrent());
           break;
         case ENUM:
-          comboEnum = (BaseComboBox) comp;
+          comboEnum = (JComboBox) comp;
           if (comboEnum.getSelectedIndex() > -1)
             result.setProperty(key, "" + comboEnum.getSelectedItem());
           break;
         case LIST:
         case BLANK_SEPARATED_LIST_FIXED:
         case COMMA_SEPARATED_LIST_FIXED:
-          comboEnum = (BaseComboBox) comp;
+          comboEnum = (JComboBox) comp;
           if (comboEnum.getSelectedIndex() > -1)
             result.setProperty(key, "" + comboEnum.getSelectedItem());
           break;

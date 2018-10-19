@@ -29,13 +29,13 @@ import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextPane;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.ScriptingEvent;
 import adams.gui.event.ScriptingListener;
 
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
 import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -57,7 +57,7 @@ public class ScriptingLogPanel
   private static final long serialVersionUID = 7316507289818697814L;
 
   /** the text pane for displaying the commands. */
-  protected JTextPane m_TextLog;
+  protected BaseTextPane m_TextLog;
 
   /** the button for clearing the log. */
   protected BaseButton m_ButtonClear;
@@ -98,7 +98,7 @@ public class ScriptingLogPanel
 
     setLayout(new BorderLayout());
 
-    m_TextLog = new JTextPane() {
+    m_TextLog = new BaseTextPane() {
       private static final long serialVersionUID = -8867551408542402385L;
       @Override
       public void setSize(Dimension d) {

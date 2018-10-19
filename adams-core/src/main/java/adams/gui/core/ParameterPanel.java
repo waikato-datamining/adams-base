@@ -23,10 +23,12 @@ import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.goe.PropertyPanel;
 
 import javax.swing.AbstractButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -365,7 +367,7 @@ public class ParameterPanel
     else
       check = null;
 
-    if (comp instanceof BaseTextArea)
+    if (comp instanceof JTextArea)
       comp = new BaseScrollPane(comp);
     else if (comp instanceof JTextPane)
       comp = new BaseScrollPane(comp);
@@ -616,7 +618,7 @@ public class ParameterPanel
     for (i = 0; i < m_Parameters.size(); i++) {
       if (m_Parameters.get(i) instanceof JSpinner)
 	m_Parameters.get(i).setPreferredSize((Dimension) m_PreferredDimensionJSpinner.clone());
-      if (m_Parameters.get(i) instanceof BaseComboBox)
+      if (m_Parameters.get(i) instanceof JComboBox)
 	m_Parameters.get(i).setMinimumSize((Dimension) m_MinDimensionJComboBox.clone());
     }
   }
@@ -756,8 +758,8 @@ public class ParameterPanel
       ((JTextComponent) comp).getDocument().addDocumentListener(m_DocumentListener);
     else if (comp instanceof AbstractButton)
       ((AbstractButton) comp).addActionListener(m_ActionListener);
-    else if (comp instanceof BaseComboBox)
-      ((BaseComboBox) comp).addActionListener(m_ActionListener);
+    else if (comp instanceof JComboBox)
+      ((JComboBox) comp).addActionListener(m_ActionListener);
     else if (comp instanceof JSpinner)
       ((JSpinner) comp).addChangeListener(this);
     else if (comp instanceof PropertyEditor)
@@ -780,8 +782,8 @@ public class ParameterPanel
       ((JTextComponent) comp).getDocument().removeDocumentListener(m_DocumentListener);
     else if (comp instanceof AbstractButton)
       ((AbstractButton) comp).removeActionListener(m_ActionListener);
-    else if (comp instanceof BaseComboBox)
-      ((BaseComboBox) comp).removeActionListener(m_ActionListener);
+    else if (comp instanceof JComboBox)
+      ((JComboBox) comp).removeActionListener(m_ActionListener);
     else if (comp instanceof JSpinner)
       ((JSpinner) comp).removeChangeListener(this);
     else if (comp instanceof PropertyEditor)

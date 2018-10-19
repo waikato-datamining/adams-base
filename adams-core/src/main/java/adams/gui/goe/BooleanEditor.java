@@ -21,6 +21,7 @@ package adams.gui.goe;
 
 import adams.gui.core.BaseCheckBox;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,7 +58,7 @@ public class BooleanEditor
     result = new BaseCheckBox();
     result.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	BaseCheckBox checkbox = (BaseCheckBox) e.getSource();
+	JCheckBox checkbox = (JCheckBox) e.getSource();
 	if (!getValue().equals(checkbox.isSelected()))
 	  setValue(checkbox.isSelected());
       }

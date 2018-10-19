@@ -31,13 +31,13 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
+import adams.gui.core.BaseTextPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.scripting.SyntaxDocument;
 import adams.gui.visualization.sequence.XYSequencePanel;
 import adams.gui.visualization.sequence.XYSequenceTable;
 
 import javax.swing.JPanel;
-import javax.swing.JTextPane;
 import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -64,7 +64,7 @@ public abstract class AbstractSequenceViewerPanel
   protected JPanel m_PanelSQL;
 
   /** the text area for the SQL statement. */
-  protected JTextPane m_TextSQL;
+  protected BaseTextPane m_TextSQL;
 
   /** the combobox with the templates. */
   protected BaseComboBox m_ComboboxTemplates;
@@ -93,7 +93,7 @@ public abstract class AbstractSequenceViewerPanel
     m_PanelSQL = new JPanel(new BorderLayout());
     add(m_PanelSQL, BorderLayout.NORTH);
 
-    m_TextSQL = new JTextPane();
+    m_TextSQL = new BaseTextPane();
     m_TextSQL.setDocument(createDocument());
     m_TextSQL.setPreferredSize(GUIHelper.getDefaultTinyDialogDimension());
     m_PanelSQL.add(new BaseScrollPane(m_TextSQL), BorderLayout.CENTER);

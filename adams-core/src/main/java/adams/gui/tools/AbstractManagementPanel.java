@@ -25,11 +25,8 @@ import adams.data.id.IDHandler;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseButton;
-import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseTextArea;
 import adams.gui.core.BaseTextAreaWithButtons;
-import adams.gui.core.BaseTextField;
 import adams.gui.core.BaseTextPaneWithWordWrap;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanelWithButtons;
@@ -41,8 +38,11 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.SearchEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
@@ -232,7 +232,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
    * @param combo	the combobox to add the listener to
    * @see		#addListener(Component)
    */
-  protected void addActionListener(BaseComboBox combo) {
+  protected void addActionListener(JComboBox combo) {
     combo.addActionListener((ActionEvent e) -> update());
   }
   
@@ -253,10 +253,10 @@ public abstract class AbstractManagementPanel<T extends Comparable>
    */
   protected void addListener(Component comp) {
     // document listeners
-    if (comp instanceof BaseTextField)
-      addDocumentListener(((BaseTextField) comp).getDocument());
-    else if (comp instanceof BaseTextArea)
-      addDocumentListener(((BaseTextArea) comp).getDocument());
+    if (comp instanceof JTextField)
+      addDocumentListener(((JTextField) comp).getDocument());
+    else if (comp instanceof JTextArea)
+      addDocumentListener(((JTextArea) comp).getDocument());
     else if (comp instanceof BaseTextAreaWithButtons)
       addDocumentListener(((BaseTextAreaWithButtons) comp).getDocument());
     else if (comp instanceof JTextPane)
@@ -264,8 +264,8 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     else if (comp instanceof BaseTextPaneWithWordWrap)
       addDocumentListener(((BaseTextPaneWithWordWrap) comp).getDocument());
     // action listeners
-    else if (comp instanceof BaseComboBox)
-      addActionListener((BaseComboBox) comp);
+    else if (comp instanceof JComboBox)
+      addActionListener((JComboBox) comp);
     // change listeners
     else if (comp instanceof AbstractChooserPanel)
       addChangeListener((AbstractChooserPanel) comp);
