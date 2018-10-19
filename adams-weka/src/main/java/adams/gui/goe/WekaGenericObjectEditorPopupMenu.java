@@ -20,13 +20,13 @@
 package adams.gui.goe;
 
 import adams.core.option.OptionUtils;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -123,7 +123,7 @@ public class WekaGenericObjectEditorPopupMenu
 	  dlg.getContentPane().add(textpanel, BorderLayout.CENTER);
 
 	  // buttons
-	  JButton buttonOK = new JButton("OK");
+	  BaseButton buttonOK = new BaseButton("OK");
 	  buttonOK.setMnemonic('O');
 	  buttonOK.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -131,7 +131,7 @@ public class WekaGenericObjectEditorPopupMenu
 	      updateEditor(editor, comp, textpanel.getContent());
 	    }
 	  });
-	  JButton buttonCancel = new JButton("Cancel");
+	  BaseButton buttonCancel = new BaseButton("Cancel");
 	  buttonCancel.setMnemonic('C');
 	  buttonCancel.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {

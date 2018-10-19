@@ -24,13 +24,13 @@ import adams.core.option.OptionHandler;
 import adams.core.option.OptionTraversalPath;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.Tree;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -149,8 +149,8 @@ public abstract class AbstractActorListingProcessor
   public Component getGraphicalOutput() {
     final BaseListWithButtons	result;
     DefaultListModel<String>	model;
-    final JButton		buttonCopy;
-    final JButton		buttonJumpTo;
+    final BaseButton		buttonCopy;
+    final BaseButton		buttonJumpTo;
     final Flow			flow;
 
     if (m_Current instanceof Flow)
@@ -166,7 +166,7 @@ public abstract class AbstractActorListingProcessor
       model.addElement(item);
     result.setModel(model);
 
-    buttonCopy = new JButton("Copy");
+    buttonCopy = new BaseButton("Copy");
     buttonCopy.setEnabled(false);
     buttonCopy.addActionListener((ActionEvent e) -> {
       Object[] values = result.getSelectedValues();
@@ -181,7 +181,7 @@ public abstract class AbstractActorListingProcessor
     result.addToButtonsPanel(buttonCopy);
 
     if ((flow != null) && (flow.getParentComponent() != null)) {
-      buttonJumpTo = new JButton("Jump to");
+      buttonJumpTo = new BaseButton("Jump to");
       buttonJumpTo.setEnabled(false);
       buttonJumpTo.addActionListener((ActionEvent e) -> {
         if (result.getSelectedIndex() > -1) {

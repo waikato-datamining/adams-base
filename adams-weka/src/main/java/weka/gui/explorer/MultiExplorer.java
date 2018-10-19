@@ -24,6 +24,7 @@ import adams.env.Environment;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionEvent;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionListener;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -32,7 +33,6 @@ import weka.core.logging.Logger;
 import weka.core.logging.Logger.Level;
 import weka.gui.LookAndFeel;
 
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
@@ -76,16 +76,16 @@ public class MultiExplorer
   protected BasePanel m_PanelButtons;
 
   /** the button for adding a panel. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the button for copying a panel. */
-  protected JButton m_ButtonCopy;
+  protected BaseButton m_ButtonCopy;
 
   /** the button for removing a panel. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** the button for managing the workspaces. */
-  protected JButton m_ButtonWorkspace;
+  protected BaseButton m_ButtonWorkspace;
 
   /** the file chooser for the workspaces. */
   protected BaseFileChooser m_WorkspaceFileChooser;
@@ -129,7 +129,7 @@ public class MultiExplorer
     m_SplitPane.setTopComponent(m_PanelHistory);
 
     // left buttons
-    m_ButtonAdd = new JButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
     height = m_ButtonAdd.getHeight();
     m_ButtonAdd.setSize(height, height);
     m_ButtonAdd.setToolTipText("Adds a new Explorer panel");
@@ -145,7 +145,7 @@ public class MultiExplorer
     });
     m_PanelButtons.add(m_ButtonAdd);
 
-    m_ButtonCopy = new JButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.setSize(height, height);
     m_ButtonCopy.setToolTipText("Creates a copy of the currently selected Explorer panel");
     m_ButtonCopy.addActionListener((ActionEvent e) -> {
@@ -172,7 +172,7 @@ public class MultiExplorer
     });
     m_PanelButtons.add(m_ButtonCopy);
 
-    m_ButtonRemove = new JButton(GUIHelper.getIcon("remove.gif"));
+    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("remove.gif"));
     m_ButtonRemove.setSize(height, height);
     m_ButtonRemove.setToolTipText("Removes all selected Explorer panels");
     m_ButtonRemove.addActionListener((ActionEvent e) -> {
@@ -182,7 +182,7 @@ public class MultiExplorer
     });
     m_PanelButtons.add(m_ButtonRemove);
 
-    m_ButtonWorkspace = new JButton(GUIHelper.getIcon("workspace.png"));
+    m_ButtonWorkspace = new BaseButton(GUIHelper.getIcon("workspace.png"));
     m_ButtonWorkspace.setSize(height, height);
     m_ButtonWorkspace.setToolTipText("Loading/saving of workspaces");
     m_ButtonWorkspace.addActionListener((ActionEvent ae) -> {

@@ -21,13 +21,13 @@
 package adams.flow.execution.debug;
 
 import adams.core.CleanUpHandler;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.flow.FlowTreeHandler;
 import adams.gui.flow.tree.Tree;
 import adams.gui.goe.GenericObjectEditorDialog;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -63,19 +63,19 @@ public class BreakpointPanel
   protected BreakpointTableModel m_TableModelBreakpoints;
 
   /** the disable/enable button for breakpoints. */
-  protected JButton m_ButtonBreakpointsToggle;
+  protected BaseButton m_ButtonBreakpointsToggle;
 
   /** the add button for breakpoints. */
-  protected JButton m_ButtonBreakpointsAdd;
+  protected BaseButton m_ButtonBreakpointsAdd;
 
   /** the edit button for breakpoints. */
-  protected JButton m_ButtonBreakpointsEdit;
+  protected BaseButton m_ButtonBreakpointsEdit;
 
   /** the remove button for breakpoints. */
-  protected JButton m_ButtonBreakpointsRemove;
+  protected BaseButton m_ButtonBreakpointsRemove;
 
   /** the remove all button for breakpoints. */
-  protected JButton m_ButtonBreakpointsRemoveAll;
+  protected BaseButton m_ButtonBreakpointsRemoveAll;
 
   /** the GOE for adding/editing breakpoints. */
   protected GenericObjectEditorDialog m_DialogGOE;
@@ -106,7 +106,7 @@ public class BreakpointPanel
     m_TableBreakpoints.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     add(m_TableBreakpoints, BorderLayout.CENTER);
 
-    m_ButtonBreakpointsToggle = new JButton("Toggle");
+    m_ButtonBreakpointsToggle = new BaseButton("Toggle");
     m_ButtonBreakpointsToggle.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -115,7 +115,7 @@ public class BreakpointPanel
     });
     m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsToggle);
 
-    m_ButtonBreakpointsAdd = new JButton("Add...");
+    m_ButtonBreakpointsAdd = new BaseButton("Add...");
     m_ButtonBreakpointsAdd.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -124,7 +124,7 @@ public class BreakpointPanel
     });
     m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsAdd);
 
-    m_ButtonBreakpointsEdit = new JButton("Edit...");
+    m_ButtonBreakpointsEdit = new BaseButton("Edit...");
     m_ButtonBreakpointsEdit.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -135,7 +135,7 @@ public class BreakpointPanel
 
     m_TableBreakpoints.addToButtonsPanel(new JLabel(""));
 
-    m_ButtonBreakpointsRemove = new JButton("Remove");
+    m_ButtonBreakpointsRemove = new BaseButton("Remove");
     m_ButtonBreakpointsRemove.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -144,7 +144,7 @@ public class BreakpointPanel
     });
     m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsRemove);
 
-    m_ButtonBreakpointsRemoveAll = new JButton("Remove all");
+    m_ButtonBreakpointsRemoveAll = new BaseButton("Remove all");
     m_ButtonBreakpointsRemoveAll.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

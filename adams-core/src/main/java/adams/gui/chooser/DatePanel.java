@@ -5,21 +5,18 @@
  */
 package adams.gui.chooser;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.text.DateFormat;
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Properties;
+import adams.core.DateUtils;
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import adams.gui.core.BaseButton;
+import adams.gui.core.BasePanel;
+import org.jdatepicker.DateModel;
+import org.jdatepicker.JDatePanel;
+import org.jdatepicker.graphics.JNextIcon;
+import org.jdatepicker.graphics.JPreviousIcon;
+import org.jdatepicker.impl.UtilCalendarModel;
+import org.jdatepicker.util.JDatePickerUtil;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -36,18 +33,19 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-
-import org.jdatepicker.DateModel;
-import org.jdatepicker.JDatePanel;
-import org.jdatepicker.graphics.JNextIcon;
-import org.jdatepicker.graphics.JPreviousIcon;
-import org.jdatepicker.impl.UtilCalendarModel;
-import org.jdatepicker.util.JDatePickerUtil;
-
-import adams.core.DateUtils;
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
-import adams.gui.core.BasePanel;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Properties;
 
 /**
  * Panel for selecting a date.
@@ -248,10 +246,10 @@ public class DatePanel
     protected JLabel noneLabel;
     protected JPopupMenu monthPopupMenu;
     protected JMenuItem[] monthPopupMenuItems;
-    protected JButton nextMonthButton;
-    protected JButton previousMonthButton;
-    protected JButton previousYearButton;
-    protected JButton nextYearButton;
+    protected BaseButton nextMonthButton;
+    protected BaseButton previousMonthButton;
+    protected BaseButton previousYearButton;
+    protected BaseButton nextYearButton;
     protected JSpinner yearSpinner;
 
     /**
@@ -498,11 +496,11 @@ public class DatePanel
     /**
      * This method initializes nextMonthButton	
      * 	
-     * @return javax.swing.JButton	
+     * @return adams.gui.core.BaseButton
      */    
-    protected JButton getNextMonthButton() {
+    protected BaseButton getNextMonthButton() {
       if (nextMonthButton == null) {
-	nextMonthButton = new javax.swing.JButton(new JNextIcon(4,7));
+	nextMonthButton = new adams.gui.core.BaseButton(new JNextIcon(4,7));
 	nextMonthButton.setText("");
 	nextMonthButton.setPreferredSize(new java.awt.Dimension(20,15));
 	nextMonthButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -516,11 +514,11 @@ public class DatePanel
     /**
      * This method initializes nextYearButton	
      * 	
-     * @return javax.swing.JButton	
+     * @return adams.gui.core.BaseButton
      */    
-    protected JButton getNextYearButton() {
+    protected BaseButton getNextYearButton() {
       if (nextYearButton == null) {
-	nextYearButton = new javax.swing.JButton(new JNextIcon(8,7, true));
+	nextYearButton = new adams.gui.core.BaseButton(new JNextIcon(8,7, true));
 	nextYearButton.setText("");
 	nextYearButton.setPreferredSize(new java.awt.Dimension(20,15));
 	nextYearButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -534,11 +532,11 @@ public class DatePanel
     /**
      * This method initializes previousMonthButton	
      * 	
-     * @return javax.swing.JButton	
+     * @return adams.gui.core.BaseButton
      */    
-    protected JButton getPreviousMonthButton() {
+    protected BaseButton getPreviousMonthButton() {
       if (previousMonthButton == null) {
-	previousMonthButton = new javax.swing.JButton(new JPreviousIcon(4,7));
+	previousMonthButton = new adams.gui.core.BaseButton(new JPreviousIcon(4,7));
 	previousMonthButton.setText("");
 	previousMonthButton.setPreferredSize(new java.awt.Dimension(20,15));
 	previousMonthButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -552,11 +550,11 @@ public class DatePanel
     /**
      * This method initializes previousMonthButton	
      * 	
-     * @return javax.swing.JButton	
+     * @return adams.gui.core.BaseButton
      */    
-    protected JButton getPreviousYearButton() {
+    protected BaseButton getPreviousYearButton() {
       if (previousYearButton == null) {
-	previousYearButton = new javax.swing.JButton(new JPreviousIcon(8,7, true));
+	previousYearButton = new adams.gui.core.BaseButton(new JPreviousIcon(8,7, true));
 	previousYearButton.setText("");
 	previousYearButton.setPreferredSize(new java.awt.Dimension(20,15));
 	previousYearButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));

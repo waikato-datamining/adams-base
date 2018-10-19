@@ -24,6 +24,7 @@ import adams.core.Range;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -36,7 +37,6 @@ import adams.gui.visualization.core.plot.Axis;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
@@ -125,10 +125,10 @@ public class BoxPlotManager
   protected Range m_Range;
 
   /** Button to add selected attribute to chosen attributes list */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** Button to add all attributes to chosen attributes list */
-  protected JButton m_ButtonAddAll;
+  protected BaseButton m_ButtonAddAll;
 
   /** Object that contains a list and a group of buttons for choosing attributes */
   protected BaseListWithButtons m_ListAvailableAttributes;
@@ -137,10 +137,10 @@ public class BoxPlotManager
   protected BaseListWithButtons m_ListChosenAttributes;
 
   /** Button to remove a selected attribute from chosen attributes list */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** Button to remove all attributes from the chosen attributes list */
-  protected JButton m_ButtonRemoveAll;
+  protected BaseButton m_ButtonRemoveAll;
 
   /** Object that contains a set of label and component objects, aids displaying */
   protected ParameterPanel m_PanelParams;
@@ -152,7 +152,7 @@ public class BoxPlotManager
   protected JCheckBox m_CheckBoxFill;
 
   /** Button to choose color of boxes */
-  protected JButton m_ButtonFillColor;
+  protected BaseButton m_ButtonFillColor;
 
   @Override
   protected void initialize() {
@@ -192,12 +192,12 @@ public class BoxPlotManager
     m_ListAvailableAttributes.setPreferredSize(new Dimension(m_WidthLeft, 140));
     m_ListAvailableAttributes.setModel(m_ModelAvailableAttributes);
     top.add(m_ListAvailableAttributes, BorderLayout.NORTH);
-    m_ButtonAdd = new JButton("Add");
+    m_ButtonAdd = new BaseButton("Add");
     m_ButtonAdd.setMnemonic('A');
     m_ButtonAdd.setEnabled(false);
     // add listener for add button
     m_ButtonAdd.addActionListener((ActionEvent e) -> addClicked());
-    m_ButtonAddAll = new JButton("Add all");
+    m_ButtonAddAll = new BaseButton("Add all");
     m_ButtonAddAll.setMnemonic('d');
     // add listener for add all button
     m_ButtonAddAll.addActionListener((ActionEvent e) -> addAllClicked());
@@ -212,12 +212,12 @@ public class BoxPlotManager
     m_ListChosenAttributes.setPreferredSize(new Dimension(m_WidthLeft, 140));
     m_ListChosenAttributes.setModel(m_ModelChosenAttributes);
     bottom.add(m_ListChosenAttributes, BorderLayout.CENTER);
-    m_ButtonRemove = new JButton("Remove");
+    m_ButtonRemove = new BaseButton("Remove");
     m_ButtonRemove.setMnemonic('R');
     m_ButtonRemove.setEnabled(false);
     // add listener for remove button
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeClicked());
-    m_ButtonRemoveAll = new JButton("Remove all");
+    m_ButtonRemoveAll = new BaseButton("Remove all");
     m_ButtonRemoveAll.setMnemonic('m');
     m_ButtonRemoveAll.setEnabled(false);
     // add listener for remove all button
@@ -248,7 +248,7 @@ public class BoxPlotManager
     m_CheckBoxFill = new JCheckBox();
     m_CheckBoxFill.addItemListener((ItemEvent e) -> fillChange(e));
 
-    m_ButtonFillColor = new JButton("Choose");
+    m_ButtonFillColor = new BaseButton("Choose");
     m_ButtonFillColor.addActionListener((ActionEvent e) -> colorChange());
 
     m_PanelParams.addParameter("Width of plot", m_SpinnerWidth);

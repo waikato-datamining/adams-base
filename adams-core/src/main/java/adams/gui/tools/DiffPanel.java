@@ -22,6 +22,7 @@ package adams.gui.tools;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.FileChooserPanel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
@@ -35,7 +36,6 @@ import adams.gui.event.RecentItemListener;
 import adams.gui.visualization.debug.SideBySideDiffPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -249,10 +249,10 @@ public class DiffPanel
   protected LoadDialog m_LoadDialog;
   
   /** the button for pasting the left content. */
-  protected JButton m_ButtonPasteLeft;
+  protected BaseButton m_ButtonPasteLeft;
   
   /** the button for pasting the right content. */
-  protected JButton m_ButtonPasteRight;
+  protected BaseButton m_ButtonPasteRight;
 
   /** the recent files handler (left). */
   protected RecentFilesHandler<JMenu> m_RecentFilesHandlerLeft;
@@ -290,7 +290,7 @@ public class DiffPanel
     add(m_PanelDiff, BorderLayout.CENTER);
     
     // paste left
-    m_ButtonPasteLeft = new JButton(GUIHelper.getIcon("paste.gif"));
+    m_ButtonPasteLeft = new BaseButton(GUIHelper.getIcon("paste.gif"));
     m_ButtonPasteLeft.setToolTipText("Paste from clipboard");
     m_ButtonPasteLeft.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -302,7 +302,7 @@ public class DiffPanel
     m_PanelDiff.getPanel(true).add(panel, BorderLayout.SOUTH);
 
     // paste right
-    m_ButtonPasteRight = new JButton(GUIHelper.getIcon("paste.gif"));
+    m_ButtonPasteRight = new BaseButton(GUIHelper.getIcon("paste.gif"));
     m_ButtonPasteRight.setToolTipText("Paste from clipboard");
     m_ButtonPasteRight.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

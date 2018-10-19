@@ -31,6 +31,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.execution.Debug;
 import adams.flow.execution.ExecutionStage;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.Fonts;
@@ -50,7 +51,6 @@ import adams.gui.visualization.debug.StoragePanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -83,16 +83,16 @@ public class ControlPanel
   protected BaseTabbedPane m_TabbedPaneDisplays;
 
   /** the button for stopping execution. */
-  protected JButton m_ButtonStop;
+  protected BaseButton m_ButtonStop;
 
   /** the button for disabling/enabling the breakpoint. */
-  protected JButton m_ButtonToggle;
+  protected BaseButton m_ButtonToggle;
 
   /** the button for resuming execution. */
-  protected JButton m_ButtonPauseResume;
+  protected BaseButton m_ButtonPauseResume;
 
   /** the button for performing the next step when in manual mode. */
-  protected JButton m_ButtonStep;
+  protected BaseButton m_ButtonStep;
 
   /** the button for displaying dialog with watch expressions. */
   protected JToggleButton m_ButtonExpressions;
@@ -211,24 +211,24 @@ public class ControlPanel
     panelButtons = new JPanel(new GridLayout(1, 4));
     panel.add(panelButtons, BorderLayout.NORTH);
 
-    m_ButtonPauseResume = new JButton("Resume", GUIHelper.getIcon("resume.gif"));
+    m_ButtonPauseResume = new BaseButton("Resume", GUIHelper.getIcon("resume.gif"));
     m_ButtonPauseResume.setToolTipText("Pause/Resume execution");
     m_ButtonPauseResume.addActionListener((ActionEvent e) -> pauseResumeExecution());
     panelButtons.add(m_ButtonPauseResume);
 
-    m_ButtonStep = new JButton("Step", GUIHelper.getIcon("step.gif"));
+    m_ButtonStep = new BaseButton("Step", GUIHelper.getIcon("step.gif"));
     m_ButtonStep.setMnemonic('e');
     m_ButtonStep.setToolTipText("Step to next actor");
     m_ButtonStep.addActionListener((ActionEvent e) -> nextStep());
     panelButtons.add(m_ButtonStep);
 
-    m_ButtonToggle = new JButton("Disable", GUIHelper.getIcon("debug_off.png"));
+    m_ButtonToggle = new BaseButton("Disable", GUIHelper.getIcon("debug_off.png"));
     m_ButtonToggle.setMnemonic('D');
     m_ButtonToggle.setToolTipText("Disable the breakpoint");
     m_ButtonToggle.addActionListener((ActionEvent e) -> disableEnableBreakpoint());
     panelButtons.add(m_ButtonToggle);
 
-    m_ButtonStop = new JButton("Stop", GUIHelper.getIcon("stop.gif"));
+    m_ButtonStop = new BaseButton("Stop", GUIHelper.getIcon("stop.gif"));
     m_ButtonStop.setMnemonic('S');
     m_ButtonStop.setToolTipText("Stops the flow execution immediately");
     m_ButtonStop.addActionListener((ActionEvent e) -> stopFlowExecution());
@@ -708,8 +708,8 @@ public class ControlPanel
   protected void showSource(boolean visible) {
     String		content;
     DebugNestedProducer producer;
-    final JButton	buttonCopy;
-    final JButton	buttonPasteAsNew;
+    final BaseButton	buttonCopy;
+    final BaseButton	buttonPasteAsNew;
     JPanel		buttons;
 
     if (m_PanelSource == null) {
@@ -724,7 +724,7 @@ public class ControlPanel
       buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       m_PanelSourceAll.add(buttons, BorderLayout.SOUTH);
 
-      buttonCopy = new JButton(GUIHelper.getIcon("copy.gif"));
+      buttonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
       buttonCopy.setToolTipText("Copy to clipboard");
       buttonCopy.addActionListener((ActionEvent e) -> {
 	if (m_PanelSource.getSelectedText() == null)
@@ -734,7 +734,7 @@ public class ControlPanel
       });
       buttons.add(buttonCopy);
 
-      buttonPasteAsNew = new JButton(GUIHelper.getIcon("paste_as_new.gif"));
+      buttonPasteAsNew = new BaseButton(GUIHelper.getIcon("paste_as_new.gif"));
       buttonPasteAsNew.setToolTipText("Paste as new flow");
       buttonPasteAsNew.setEnabled(getFlow().getParentComponent() instanceof Container);
       buttonPasteAsNew.addActionListener((ActionEvent e) -> {

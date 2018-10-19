@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Range;
 import adams.data.instance.Instance;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.SearchPanel;
@@ -47,7 +48,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -133,7 +133,7 @@ public class InstanceTab
   protected SearchPanel m_PanelSearchID;
 
   /** the button for visualizing. */
-  protected JButton m_ButtonVisualize;
+  protected BaseButton m_ButtonVisualize;
 
   /** the plot. */
   protected InstancePanel m_PanelInstance;
@@ -233,7 +233,7 @@ public class InstanceTab
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelLeft.add(panelButtons, BorderLayout.SOUTH);
 
-    m_ButtonVisualize = new JButton("Visualize");
+    m_ButtonVisualize = new BaseButton("Visualize");
     m_ButtonVisualize.setMnemonic('V');
     m_ButtonVisualize.addActionListener((ActionEvent e) -> visualize());
     panelButtons.add(m_ButtonVisualize);

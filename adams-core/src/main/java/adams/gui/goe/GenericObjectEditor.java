@@ -31,6 +31,7 @@ import adams.core.option.AbstractCommandLineHandler;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.ObjectFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
@@ -40,7 +41,6 @@ import adams.gui.goe.classtree.ClassTree;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -134,7 +134,7 @@ public class GenericObjectEditor
   protected JPanel m_CustomPanel;
 
   /** the button for choosing a different class in the custom panel. */
-  protected JButton m_CustomPanelChooseButton;
+  protected BaseButton m_CustomPanelChooseButton;
 
   /** The property panel created for the objects. */
   protected PropertyPanel m_ObjectPropertyPanel;
@@ -190,25 +190,25 @@ public class GenericObjectEditor
     protected JLabel m_LabelClassname;
 
     /** Open object from disk. */
-    protected JButton m_ButtonOpen;
+    protected BaseButton m_ButtonOpen;
 
     /** Save object to disk. */
-    protected JButton m_ButtonSave;
+    protected BaseButton m_ButtonSave;
 
     /** ok button. */
-    protected JButton m_ButtonOK;
+    protected BaseButton m_ButtonOK;
 
     /** cancel button. */
-    protected JButton m_ButtonCancel;
+    protected BaseButton m_ButtonCancel;
 
     /** revert button. */
-    protected JButton m_ButtonRevert;
+    protected BaseButton m_ButtonRevert;
 
     /** The filechooser for opening and saving object files. */
     protected transient ObjectFileChooser m_FileChooser;
 
     /** the button for copy/paste menu. */
-    protected JButton m_ButtonCopyPaste;
+    protected BaseButton m_ButtonCopyPaste;
 
     /** the top panel with the classname and choose button. */
     protected JPanel m_TopPanel;
@@ -276,7 +276,7 @@ public class GenericObjectEditor
 	  GenericObjectEditor.this.firePropertyChange();
       });
 
-      m_ButtonOpen = new JButton(GUIHelper.getIcon("open.gif"));
+      m_ButtonOpen = new BaseButton(GUIHelper.getIcon("open.gif"));
       m_ButtonOpen.setActionCommand(ACTION_CMD_OPEN);
       m_ButtonOpen.setToolTipText("Load a serialized object");
       m_ButtonOpen.setEnabled(true);
@@ -286,13 +286,13 @@ public class GenericObjectEditor
 	  setValue(object);
       });
 
-      m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
+      m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
       m_ButtonSave.setActionCommand(ACTION_CMD_SAVE);
       m_ButtonSave.setToolTipText("Save the current as serialized object");
       m_ButtonSave.setEnabled(true);
       m_ButtonSave.addActionListener((ActionEvent e) -> saveObject(m_Object));
 
-      m_ButtonOK = new JButton("OK");
+      m_ButtonOK = new BaseButton("OK");
       m_ButtonOK.setActionCommand(ACTION_CMD_OK);
       m_ButtonOK.setEnabled(true);
       m_ButtonOK.setMnemonic('O');
@@ -302,7 +302,7 @@ public class GenericObjectEditor
 	close();
       });
 
-      m_ButtonCancel = new JButton("Cancel");
+      m_ButtonCancel = new BaseButton("Cancel");
       m_ButtonCancel.setActionCommand(ACTION_CMD_CANCEL);
       m_ButtonCancel.setEnabled(true);
       m_ButtonCancel.setMnemonic('C');
@@ -313,7 +313,7 @@ public class GenericObjectEditor
 	close();
       });
 
-      m_ButtonRevert = new JButton(GUIHelper.getIcon("undo.gif"));
+      m_ButtonRevert = new BaseButton(GUIHelper.getIcon("undo.gif"));
       m_ButtonRevert.setActionCommand(ACTION_CMD_REVERT);
       m_ButtonRevert.setEnabled(true);
       m_ButtonRevert.setToolTipText("Revert changes");
@@ -327,7 +327,7 @@ public class GenericObjectEditor
 	}
       });
 
-      m_ButtonCopyPaste = new JButton(GUIHelper.getIcon("arrow-head-down.png"));
+      m_ButtonCopyPaste = new BaseButton(GUIHelper.getIcon("arrow-head-down.png"));
       m_ButtonCopyPaste.setToolTipText("Displays copy/paste/favorites action menu");
       m_ButtonCopyPaste.addActionListener((ActionEvent e) -> {
 	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_ButtonCopyPaste);
@@ -1158,8 +1158,8 @@ public class GenericObjectEditor
    *
    * @return 		the choose button
    */
-  protected JButton createChooseClassButton() {
-    JButton setButton = new JButton(GUIHelper.getIcon("tree.gif"));
+  protected BaseButton createChooseClassButton() {
+    BaseButton setButton = new BaseButton(GUIHelper.getIcon("tree.gif"));
     setButton.setToolTipText("Select different class");
 
     // anonymous action listener shows a JTree popup and allows the user

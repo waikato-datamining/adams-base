@@ -23,10 +23,10 @@ import adams.core.Utils;
 import adams.core.base.BaseInterval;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -109,9 +109,9 @@ public class BaseIntervalEditor
     JPanel		panelAll;
     ParameterPanel	panelPair;
     JPanel 		panelButtons;
-    JButton 		buttonClear;
-    JButton 		buttonOK;
-    JButton 		buttonClose;
+    BaseButton 		buttonClear;
+    BaseButton 		buttonOK;
+    BaseButton 		buttonClose;
 
     panelAll  = new JPanel(new BorderLayout());
     panelPair = new ParameterPanel();
@@ -130,7 +130,7 @@ public class BaseIntervalEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonClear = new JButton("Clear");
+    buttonClear = new BaseButton("Clear");
     buttonClear.setMnemonic('l');
     buttonClear.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -142,7 +142,7 @@ public class BaseIntervalEditor
     });
     panelButtons.add(buttonClear);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -151,7 +151,7 @@ public class BaseIntervalEditor
     });
     panelButtons.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

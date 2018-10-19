@@ -22,6 +22,7 @@ package adams.flow.transformer.pixelselector;
 import adams.core.CleanUpHandler;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -40,12 +41,10 @@ import adams.gui.visualization.report.reportfactory.CopyFieldValue;
 import adams.gui.visualization.report.reportfactory.ModifyValue;
 import adams.gui.visualization.report.reportfactory.RemoveField;
 
-import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -95,10 +94,10 @@ public class PixelSelectorPanel
   protected ReportFactory.Table m_ReportTable;
   
   /** the OK button. */
-  protected JButton m_ButtonOK;
+  protected BaseButton m_ButtonOK;
   
   /** the Cancel button. */
-  protected JButton m_ButtonCancel;
+  protected BaseButton m_ButtonCancel;
   
   /** the result (ok or cancel). */
   protected int m_Result;
@@ -169,7 +168,7 @@ public class PixelSelectorPanel
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
     
-    m_ButtonOK = new JButton("Accept");
+    m_ButtonOK = new BaseButton("Accept");
     m_ButtonOK.setMnemonic('A');
     m_ButtonOK.setIcon(GUIHelper.getIcon("accept.png"));
     m_ButtonOK.addActionListener(new ActionListener() {
@@ -179,7 +178,7 @@ public class PixelSelectorPanel
     });
     panel.add(m_ButtonOK);
     
-    m_ButtonCancel = new JButton("Cancel");
+    m_ButtonCancel = new BaseButton("Cancel");
     m_ButtonCancel.setMnemonic('C');
     m_ButtonCancel.setIcon(GUIHelper.getIcon("delete.gif"));
     m_ButtonCancel.addActionListener(new ActionListener() {

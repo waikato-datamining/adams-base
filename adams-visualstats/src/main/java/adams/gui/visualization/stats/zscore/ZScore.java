@@ -25,6 +25,7 @@ import adams.core.base.BaseRegExp;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -41,7 +42,6 @@ import adams.gui.visualization.stats.paintlet.ZScoreCircle;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
@@ -387,7 +387,7 @@ public class ZScore
       m_Key.removeAll();
       int len = m_Over.length;
       for (int i = 0; i< len; i++) {
-	JButton temp = new JButton(m_Over[i].shortName());
+	BaseButton temp = new BaseButton(m_Over[i].shortName());
 	//make it not look like a button
 	temp.setBorder(null);
 	temp.setFocusPainted(false);
@@ -413,7 +413,7 @@ public class ZScore
 
     public void actionPerformed(ActionEvent arg0) {
       //overlay pressed
-      JButton push = (JButton)arg0.getSource();
+      BaseButton push = (BaseButton)arg0.getSource();
       int index =0 ;
       //find position of overlay
       for (int i = 0; i< m_Over.length; i++) {

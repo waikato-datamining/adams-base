@@ -30,6 +30,7 @@ import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntryToolTipProvider;
 import adams.gui.core.AdjustableGridPanel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -59,7 +60,6 @@ import weka.classifiers.rules.ZeroR;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -557,16 +557,16 @@ public class ClassifyTab
   protected Classifier m_CurrentClassifier;
 
   /** the button for editing the output generators. */
-  protected JButton m_ButtonOutputGenerators;
+  protected BaseButton m_ButtonOutputGenerators;
 
   /** the panel with the buttons. */
   protected JPanel m_PanelExecutionButtons;
 
   /** the start button. */
-  protected JButton m_ButtonStart;
+  protected BaseButton m_ButtonStart;
 
   /** the stop button. */
-  protected JButton m_ButtonStop;
+  protected BaseButton m_ButtonStop;
 
   /** the history. */
   protected HistoryPanel m_History;
@@ -712,7 +712,7 @@ public class ClassifyTab
     m_PanelEvaluation.add(buttonsAll, BorderLayout.SOUTH);
 
     // output generators
-    m_ButtonOutputGenerators = new JButton("...");
+    m_ButtonOutputGenerators = new BaseButton("...");
     m_ButtonOutputGenerators.addActionListener((ActionEvent) -> editOutputGenerators());
     label = new JLabel("Output generators");
     label.setLabelFor(m_ButtonOutputGenerators);
@@ -725,11 +725,11 @@ public class ClassifyTab
     m_PanelExecutionButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     buttonsAll.add(m_PanelExecutionButtons);
 
-    m_ButtonStart = new JButton("Start");
+    m_ButtonStart = new BaseButton("Start");
     m_ButtonStart.addActionListener((ActionEvent e) -> startExecution());
     m_PanelExecutionButtons.add(m_ButtonStart);
 
-    m_ButtonStop = new JButton("Stop");
+    m_ButtonStop = new BaseButton("Stop");
     m_ButtonStop.addActionListener((ActionEvent e) -> stopExecution());
     m_PanelExecutionButtons.add(m_ButtonStop);
 

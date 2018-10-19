@@ -20,10 +20,10 @@
 package adams.gui.flow.menu;
 
 import adams.flow.processor.CheckVariableUsage;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.GUIHelper;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -70,7 +70,7 @@ public class EditCheckVariables
 	dialog.setTitle(processor.getClass().getSimpleName());
 	dialog.getContentPane().setLayout(new BorderLayout());
 	dialog.getContentPane().add(processor.getGraphicalOutput(), BorderLayout.CENTER);
-	JButton button = new JButton("Close");
+	BaseButton button = new BaseButton("Close");
 	button.setMnemonic('C');
 	button.addActionListener((ActionEvent ae) -> dialog.setVisible(false));
 	JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

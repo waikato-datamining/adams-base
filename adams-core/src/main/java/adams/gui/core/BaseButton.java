@@ -39,24 +39,27 @@ public class BaseButton
    */
   public BaseButton() {
     super();
+    initButton();
   }
 
   /**
    * Creates a button with an icon.
    *
-   * @param icon  the Icon image to display on the button
+   * @param icon the Icon image to display on the button
    */
   public BaseButton(Icon icon) {
     super(icon);
+    initButton();
   }
 
   /**
    * Creates a button with text.
    *
-   * @param text  the text of the button
+   * @param text the text of the button
    */
   public BaseButton(String text) {
     super(text);
+    initButton();
   }
 
   /**
@@ -64,20 +67,27 @@ public class BaseButton
    * <code>Action</code> supplied.
    *
    * @param a the <code>Action</code> used to specify the new button
-   *
    * @since 1.3
    */
   public BaseButton(Action a) {
     super();
+    initButton();
   }
 
   /**
    * Creates a button with initial text and an icon.
    *
-   * @param text  the text of the button
-   * @param icon  the Icon image to display on the button
+   * @param text the text of the button
+   * @param icon the Icon image to display on the button
    */
   public BaseButton(String text, Icon icon) {
     super(text, icon);
+    initButton();
+  }
+
+  /**
+   * Initializes members.
+   */
+  protected void initButton() {
   }
 }

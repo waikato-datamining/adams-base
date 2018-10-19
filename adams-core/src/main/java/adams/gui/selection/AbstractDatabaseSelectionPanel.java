@@ -24,11 +24,10 @@ import adams.db.DatabaseConnectionHandler;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
+import adams.gui.core.BaseButton;
 import adams.gui.core.MouseUtils;
 
-import javax.swing.JButton;
 import javax.swing.SwingWorker;
-import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
@@ -49,7 +48,7 @@ public abstract class AbstractDatabaseSelectionPanel<T>
   private static final long serialVersionUID = 3870916380764854145L;
 
   /** the button for refreshing the fields. */
-  protected JButton m_ButtonRefresh;
+  protected BaseButton m_ButtonRefresh;
 
   /** whether data has been displayed already. */
   protected boolean m_DataDisplayed;
@@ -74,7 +73,7 @@ public abstract class AbstractDatabaseSelectionPanel<T>
   protected void initGUI() {
     super.initGUI();
 
-    m_ButtonRefresh = new JButton("Refresh");
+    m_ButtonRefresh = new BaseButton("Refresh");
     m_ButtonRefresh.setMnemonic('R');
     m_ButtonRefresh.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

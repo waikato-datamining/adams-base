@@ -20,11 +20,11 @@
 package adams.gui.visualization.image.plugins;
 
 import adams.data.image.BufferedImageContainer;
+import adams.gui.core.BaseButton;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.DialogWithButtons;
 import adams.gui.visualization.image.ImagePanel;
 
-import javax.swing.JButton;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -67,13 +67,13 @@ public class Brightness
     protected JTextField m_TextOffset;
     
     /** the preview button. */
-    protected JButton m_ButtonPreview;
+    protected BaseButton m_ButtonPreview;
     
     /** the ok button. */
-    protected JButton m_ButtonOK;
+    protected BaseButton m_ButtonOK;
     
     /** the cancel button. */
-    protected JButton m_ButtonCancel;
+    protected BaseButton m_ButtonCancel;
     
     /** the current setup for changing the brightness. */
     protected adams.data.jai.transformer.Brightness m_Brightness;
@@ -121,7 +121,7 @@ public class Brightness
       panel.addParameter("Offset", m_TextOffset);
       
       // the buttons
-      m_ButtonPreview = new JButton("Preview");
+      m_ButtonPreview = new BaseButton("Preview");
       m_ButtonPreview.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -131,7 +131,7 @@ public class Brightness
       });
       m_PanelButtonsLeft.add(m_ButtonPreview);
       
-      m_ButtonOK = new JButton("OK");
+      m_ButtonOK = new BaseButton("OK");
       m_ButtonOK.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -141,7 +141,7 @@ public class Brightness
       });
       m_PanelButtonsRight.add(m_ButtonOK);
       
-      m_ButtonCancel = new JButton("Cancel");
+      m_ButtonCancel = new BaseButton("Cancel");
       m_ButtonCancel.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {

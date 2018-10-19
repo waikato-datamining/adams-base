@@ -19,13 +19,13 @@
  */
 package adams.gui.tools.wekamultiexperimenter;
 
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -48,7 +48,7 @@ public class LogPanel
   protected BaseTextArea m_TextArea;
   
   /** the button for clearing the log. */
-  protected JButton m_ButtonClear;
+  protected BaseButton m_ButtonClear;
   
   /**
    * Initializes the widgets.
@@ -68,7 +68,7 @@ public class LogPanel
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
     
-    m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
     m_ButtonClear.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

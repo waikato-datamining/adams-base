@@ -5,20 +5,19 @@
 
 package adams.gui.tools.spreadsheetviewer;
 
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.SortSetupEvent;
 import adams.gui.event.SortSetupEvent.EventType;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * Represents a single sorting definition.
@@ -42,13 +41,13 @@ public class SortDefinitionPanel
   protected JComboBox m_ComboBoxSorting;
 
   /** the move up button. */
-  protected JButton m_ButtonMoveUp;
+  protected BaseButton m_ButtonMoveUp;
 
   /** the move down button. */
-  protected JButton m_ButtonMoveDown;
+  protected BaseButton m_ButtonMoveDown;
 
   /** the remove button. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /**
    * Initializes the definition panel.
@@ -99,7 +98,7 @@ public class SortDefinitionPanel
     add(label);
     add(m_ComboBoxSorting);
 
-    m_ButtonMoveUp = new JButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonMoveUp = new BaseButton(GUIHelper.getIcon("arrow_up.gif"));
     m_ButtonMoveUp.setToolTipText("Click to move condition up");
     m_ButtonMoveUp.addActionListener(new ActionListener() {
       @Override
@@ -109,7 +108,7 @@ public class SortDefinitionPanel
     });
     add(m_ButtonMoveUp);
 
-    m_ButtonMoveDown = new JButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonMoveDown = new BaseButton(GUIHelper.getIcon("arrow_down.gif"));
     m_ButtonMoveDown.setToolTipText("Click to move condition down");
     m_ButtonMoveDown.addActionListener(new ActionListener() {
       @Override
@@ -119,7 +118,7 @@ public class SortDefinitionPanel
     });
     add(m_ButtonMoveDown);
 
-    m_ButtonRemove = new JButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Click to remove condition");
     m_ButtonRemove.addActionListener(new ActionListener() {
       @Override

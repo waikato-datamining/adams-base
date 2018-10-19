@@ -21,6 +21,7 @@ package adams.gui.tools;
 
 import adams.core.Variables;
 import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
@@ -31,7 +32,6 @@ import adams.parser.BooleanExpression;
 import adams.parser.MathematicalExpression;
 import adams.parser.StringExpression;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -543,22 +543,22 @@ public class ExpressionWatchPanel
   protected BaseTableWithButtons m_Table;
 
   /** the button for adding an expression. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the button for editing an expression. */
-  protected JButton m_ButtonEdit;
+  protected BaseButton m_ButtonEdit;
 
   /** the button for removing an expression. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** the button for removing all expressions. */
-  protected JButton m_ButtonRemoveAll;
+  protected BaseButton m_ButtonRemoveAll;
 
   /** the button for refreshing an expression. */
-  protected JButton m_ButtonRefresh;
+  protected BaseButton m_ButtonRefresh;
 
   /** the button for refreshing all expression. */
-  protected JButton m_ButtonRefreshAll;
+  protected BaseButton m_ButtonRefreshAll;
 
   /** the dialog for adding expressions. */
   protected ExpressionDialog m_DialogExpression;
@@ -582,7 +582,7 @@ public class ExpressionWatchPanel
     });
     add(m_Table, BorderLayout.CENTER);
 
-    m_ButtonAdd = new JButton("Add...");
+    m_ButtonAdd = new BaseButton("Add...");
     m_ButtonAdd.setMnemonic('A');
     m_ButtonAdd.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -591,7 +591,7 @@ public class ExpressionWatchPanel
     });
     m_Table.addToButtonsPanel(m_ButtonAdd);
 
-    m_ButtonEdit = new JButton("Edit...");
+    m_ButtonEdit = new BaseButton("Edit...");
     m_ButtonEdit.setMnemonic('E');
     m_ButtonEdit.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -601,7 +601,7 @@ public class ExpressionWatchPanel
     m_Table.addToButtonsPanel(m_ButtonEdit);
     m_Table.setDoubleClickButton(m_ButtonEdit);
 
-    m_ButtonRemove = new JButton("Remove");
+    m_ButtonRemove = new BaseButton("Remove");
     m_ButtonRemove.setMnemonic('R');
     m_ButtonRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -611,7 +611,7 @@ public class ExpressionWatchPanel
     m_Table.addToButtonsPanel(new JLabel());
     m_Table.addToButtonsPanel(m_ButtonRemove);
 
-    m_ButtonRemoveAll = new JButton("Remove all");
+    m_ButtonRemoveAll = new BaseButton("Remove all");
     m_ButtonRemoveAll.setMnemonic('m');
     m_ButtonRemoveAll.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -620,7 +620,7 @@ public class ExpressionWatchPanel
     });
     m_Table.addToButtonsPanel(m_ButtonRemoveAll);
 
-    m_ButtonRefresh = new JButton("Refresh");
+    m_ButtonRefresh = new BaseButton("Refresh");
     m_ButtonRefresh.setMnemonic('f');
     m_ButtonRefresh.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -630,7 +630,7 @@ public class ExpressionWatchPanel
     m_Table.addToButtonsPanel(new JLabel());
     m_Table.addToButtonsPanel(m_ButtonRefresh);
 
-    m_ButtonRefreshAll = new JButton("Refresh all");
+    m_ButtonRefreshAll = new BaseButton("Refresh all");
     m_ButtonRefreshAll.setMnemonic('l');
     m_ButtonRefreshAll.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

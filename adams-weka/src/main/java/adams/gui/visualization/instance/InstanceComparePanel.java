@@ -19,45 +19,6 @@
  */
 package adams.gui.visualization.instance;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
-import weka.filters.unsupervised.attribute.Remove;
-import weka.gui.arffviewer.ArffPanel;
 import adams.core.CleanUpHandler;
 import adams.core.Index;
 import adams.core.Properties;
@@ -73,6 +34,7 @@ import adams.data.statistics.StatUtils;
 import adams.env.Environment;
 import adams.env.InstanceCompareDefinition;
 import adams.gui.chooser.DatasetFileChooserPanel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseList;
 import adams.gui.core.BasePanel;
@@ -86,6 +48,43 @@ import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.report.ReportFactory;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.filters.unsupervised.attribute.Remove;
+import weka.gui.arffviewer.ArffPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeMap;
 
 /**
  * A tool for comparing two datasets visually.
@@ -388,7 +387,7 @@ public class InstanceComparePanel
     protected DatasetFileChooserPanel m_PanelDataset;
 
     /** the button for displaying the dataset. */
-    protected JButton m_ButtonDisplay;
+    protected BaseButton m_ButtonDisplay;
 
     /** the edit field for the range. */
     protected JTextField m_TextAttributeRange;
@@ -453,7 +452,7 @@ public class InstanceComparePanel
           update();
         }
       });
-      m_ButtonDisplay = new JButton("Display");
+      m_ButtonDisplay = new BaseButton("Display");
       m_ButtonDisplay.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           displayDataset();
@@ -712,7 +711,7 @@ public class InstanceComparePanel
       final BaseDialog	dialog;
       ArffPanel		arffpanel;
       JPanel		panel;
-      JButton		buttonClose;
+      BaseButton		buttonClose;
 
       if (getParentDialog() != null)
 	dialog = new BaseDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
@@ -725,7 +724,7 @@ public class InstanceComparePanel
       arffpanel = new ArffPanel(m_Indexer.getDataset());
       dialog.getContentPane().add(arffpanel, BorderLayout.CENTER);
 
-      buttonClose = new JButton("Close", GUIHelper.getIcon("exit.png"));
+      buttonClose = new BaseButton("Close", GUIHelper.getIcon("exit.png"));
       buttonClose.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           dialog.setVisible(false);

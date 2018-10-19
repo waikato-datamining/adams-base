@@ -21,11 +21,11 @@ package adams.gui.tools.wekamultiexperimenter.setup;
 
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.WekaFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.tools.wekamultiexperimenter.ExperimenterPanel;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
@@ -49,22 +49,22 @@ public class DatasetPanel
   protected WekaFileChooser m_FileChooser;
   
   /** the button for adding files. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the button for changing files. */
-  protected JButton m_ButtonEdit;
+  protected BaseButton m_ButtonEdit;
 
   /** the button for removing files. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
   
   /** the button for removing all files. */
-  protected JButton m_ButtonRemoveAll;
+  protected BaseButton m_ButtonRemoveAll;
   
   /** the button for moving files up. */
-  protected JButton m_ButtonUp;
+  protected BaseButton m_ButtonUp;
   
   /** the button for moving files down. */
-  protected JButton m_ButtonDown;
+  protected BaseButton m_ButtonDown;
   
   /** for listing the files. */
   protected BaseListWithButtons m_List;
@@ -96,7 +96,7 @@ public class DatasetPanel
     m_List = new BaseListWithButtons(m_Model);
     add(m_List, BorderLayout.CENTER);
     
-    m_ButtonAdd = new JButton("Add...");
+    m_ButtonAdd = new BaseButton("Add...");
     m_ButtonAdd.addActionListener((ActionEvent e) -> {
       int retVal = m_FileChooser.showOpenDialog(DatasetPanel.this);
       if (retVal != WekaFileChooser.APPROVE_OPTION)
@@ -108,7 +108,7 @@ public class DatasetPanel
       modified();
     });
 
-    m_ButtonEdit = new JButton("Edit...");
+    m_ButtonEdit = new BaseButton("Edit...");
     m_ButtonEdit.addActionListener((ActionEvent e) -> {
       int index = m_List.getSelectedIndex();
       File current = m_Model.get(index);
@@ -122,7 +122,7 @@ public class DatasetPanel
       modified();
     });
 
-    m_ButtonRemove = new JButton("Remove");
+    m_ButtonRemove = new BaseButton("Remove");
     m_ButtonRemove.addActionListener((ActionEvent e) -> {
       int[] indices = m_List.getSelectedIndices();
       if (indices.length == 0)
@@ -133,19 +133,19 @@ public class DatasetPanel
       modified();
     });
 
-    m_ButtonRemoveAll = new JButton("Remove all");
+    m_ButtonRemoveAll = new BaseButton("Remove all");
     m_ButtonRemoveAll.addActionListener((ActionEvent e) -> {
       m_Model.clear();
       modified();
     });
 
-    m_ButtonUp = new JButton("Up");
+    m_ButtonUp = new BaseButton("Up");
     m_ButtonUp.addActionListener((ActionEvent e) -> {
       m_List.moveUp();
       modified();
     });
 
-    m_ButtonDown = new JButton("Down");
+    m_ButtonDown = new BaseButton("Down");
     m_ButtonDown.addActionListener((ActionEvent e) -> {
       m_List.moveDown();
       modified();

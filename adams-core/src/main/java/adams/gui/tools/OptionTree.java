@@ -20,13 +20,14 @@
 
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Vector;
+import adams.core.Utils;
+import adams.core.option.OptionUtils;
+import adams.gui.core.BaseButton;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.GUIHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,13 +39,11 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-
-import adams.core.Utils;
-import adams.core.option.OptionUtils;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.GUIHelper;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
 
 /**
  * Displays commandline options as tree.
@@ -71,13 +70,13 @@ public class OptionTree
   protected JCheckBox m_CheckBoxPropsFile;
 
   /** the button to update the tree. */
-  protected JButton m_ButtonUpdate;
+  protected BaseButton m_ButtonUpdate;
 
   /** the text field for options represented by the currently selected sub-tree. */
   protected JTextField m_TextOptionsSelected;
 
   /** the button to copy the partial options to clipboard. */
-  protected JButton m_ButtonCopy;
+  protected BaseButton m_ButtonCopy;
 
   /** the tree for displaying the options hierarchy. */
   protected JTree m_TreeOptions;
@@ -119,7 +118,7 @@ public class OptionTree
     m_CheckBoxPropsFile.setMnemonic('P');
     panel.add(m_CheckBoxPropsFile);
 
-    m_ButtonUpdate = new JButton("Update");
+    m_ButtonUpdate = new BaseButton("Update");
     m_ButtonUpdate.setMnemonic('U');
     m_ButtonUpdate.setIcon(GUIHelper.getIcon("refresh.gif"));
     m_ButtonUpdate.addActionListener(new ActionListener() {
@@ -160,7 +159,7 @@ public class OptionTree
     panel.add(label);
     panel.add(m_TextOptionsSelected);
 
-    m_ButtonCopy = new JButton("Copy");
+    m_ButtonCopy = new BaseButton("Copy");
     m_ButtonCopy.setMnemonic('C');
     m_ButtonCopy.setIcon(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener(new ActionListener() {

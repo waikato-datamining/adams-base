@@ -19,9 +19,8 @@
  */
 package adams.gui.selection;
 
-import javax.swing.JButton;
-
 import adams.core.CleanUpHandler;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 
 /**
@@ -48,7 +47,7 @@ public abstract class AbstractSelectionPanel
    * @return		true if the button became available
    * @see		#DEFAULT_REFRESH_TIMEOUT
    */
-  protected boolean waitForEnabled(JButton button) {
+  protected boolean waitForEnabled(BaseButton button) {
     return waitForEnabled(button, DEFAULT_REFRESH_TIMEOUT);
   }
 
@@ -59,7 +58,7 @@ public abstract class AbstractSelectionPanel
    * @param msec	the maximum amount of milliseconds to wait
    * @return		true if the button became available
    */
-  protected boolean waitForEnabled(JButton button, int msec) {
+  protected boolean waitForEnabled(BaseButton button, int msec) {
     int		current;
 
     current = 0;

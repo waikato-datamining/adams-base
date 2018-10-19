@@ -27,6 +27,7 @@ import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.core.net.SSHAuthenticationType;
 import adams.gui.chooser.FileChooserPanel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextPaneWithButtons;
 import adams.gui.core.ConsolePanel;
@@ -39,7 +40,6 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -98,7 +98,7 @@ public class SSHPanel
   protected JSpinner m_SpinnerPort;
 
   /** for connecting/disconnecting. */
-  protected JButton m_ButtonConnection;
+  protected BaseButton m_ButtonConnection;
 
   /** the file panel for the known hosts. */
   protected FileChooserPanel m_FileChooserPanelKnownHosts;
@@ -128,16 +128,16 @@ public class SSHPanel
   protected BaseTextPaneWithButtons m_TextOutput;
   
   /** the button for clearing the output. */
-  protected JButton m_ButtonClear;
+  protected BaseButton m_ButtonClear;
   
   /** the button for copying the selected output. */
-  protected JButton m_ButtonCopy;
+  protected BaseButton m_ButtonCopy;
   
   /** the text field for the command to issue. */
   protected JTextField m_TextCommand;
   
   /** the button for executing the command. */
-  protected JButton m_ButtonCommand;
+  protected BaseButton m_ButtonCommand;
   
   /** the ssh session. */
   protected Session m_Session;
@@ -233,7 +233,7 @@ public class SSHPanel
     topPanel.add(label);
     topPanel.add(m_SpinnerPort);
     
-    m_ButtonConnection = new JButton();
+    m_ButtonConnection = new BaseButton();
     m_ButtonConnection.setMnemonic('n');
     m_ButtonConnection.addActionListener(new ActionListener() {
       @Override
@@ -319,7 +319,7 @@ public class SSHPanel
     m_ComboBoxAuthenticationType.setSelectedIndex(0);
 
     // output
-    m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
     m_ButtonClear.setMnemonic('l');
     m_ButtonClear.addActionListener(new ActionListener() {
       @Override
@@ -327,7 +327,7 @@ public class SSHPanel
 	clear();
       }
     });
-    m_ButtonCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.setMnemonic('C');
     m_ButtonCopy.addActionListener(new ActionListener() {
       @Override
@@ -382,7 +382,7 @@ public class SSHPanel
     bottomPanel.add(label);
     bottomPanel.add(m_TextCommand);
     
-    m_ButtonCommand = new JButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonCommand = new BaseButton(GUIHelper.getIcon("run.gif"));
     m_ButtonCommand.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

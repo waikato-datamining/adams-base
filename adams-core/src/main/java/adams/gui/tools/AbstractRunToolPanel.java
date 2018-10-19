@@ -25,6 +25,7 @@ import adams.core.option.NestedProducer;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.AbstractChooserPanel.PopupMenuCustomizer;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -37,7 +38,6 @@ import adams.tools.RunTool;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -79,8 +79,8 @@ public abstract class AbstractRunToolPanel
   protected void initGUI() {
     JPanel			panel;
     JPanel			panel2;
-    JButton			buttonOK;
-    JButton			buttonCancel;
+    BaseButton			buttonOK;
+    BaseButton			buttonCancel;
     GenericObjectEditorPanel 	panelTool;
 
     super.initGUI();
@@ -109,7 +109,7 @@ public abstract class AbstractRunToolPanel
       }
     });
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -118,7 +118,7 @@ public abstract class AbstractRunToolPanel
       }
     });
 
-    buttonCancel = new JButton("Cancel");
+    buttonCancel = new BaseButton("Cancel");
     buttonCancel.setMnemonic('C');
     buttonCancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

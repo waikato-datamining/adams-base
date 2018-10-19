@@ -25,13 +25,13 @@ import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.CronSchedule;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import org.quartz.CronExpression;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -191,11 +191,11 @@ public class CronScheduleEditor
     JPanel	panelAll;
     JPanel 	panelButtons;
     JPanel	panelBottom;
-    JButton 	buttonClose;
-    JButton 	buttonOK;
-    JButton	buttonHelp;
+    BaseButton 	buttonClose;
+    BaseButton 	buttonOK;
+    BaseButton	buttonHelp;
     BaseButtonWithDropDownMenu	buttonTemplates;
-    JButton 	buttonValidate;
+    BaseButton 	buttonValidate;
 
     panelAll    = new JPanel(new BorderLayout());
 
@@ -231,7 +231,7 @@ public class CronScheduleEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelBottom.add(panelButtons, BorderLayout.WEST);
 
-    buttonHelp = new JButton(GUIHelper.getIcon(getHelpIcon()));
+    buttonHelp = new BaseButton(GUIHelper.getIcon(getHelpIcon()));
     buttonHelp.setToolTipText(getHelpDescription());
     buttonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -252,7 +252,7 @@ public class CronScheduleEditor
     }
     panelButtons.add(buttonTemplates);
 
-    buttonValidate = new JButton(GUIHelper.getIcon("validate.png"));
+    buttonValidate = new BaseButton(GUIHelper.getIcon("validate.png"));
     buttonValidate.setToolTipText("Checks the validity of the expressions");
     buttonValidate.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -273,7 +273,7 @@ public class CronScheduleEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelBottom.add(panelButtons, BorderLayout.EAST);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -285,7 +285,7 @@ public class CronScheduleEditor
     });
     panelButtons.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

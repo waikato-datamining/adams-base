@@ -19,22 +19,21 @@
  */
 package adams.gui.tools;
 
+import adams.core.option.WekaCommandLineHandler;
+import adams.gui.core.BaseButton;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.GUIHelper;
+import weka.core.OptionHandler;
+import weka.core.Utils;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
-import weka.core.OptionHandler;
-import weka.core.Utils;
-import adams.core.option.WekaCommandLineHandler;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseTextAreaWithButtons;
-import adams.gui.core.GUIHelper;
 
 /**
  * Helper panel that turns Weka commandline strings into quoted strings
@@ -53,22 +52,22 @@ public class WekaOptionsConversionPanel
   protected BaseTextAreaWithButtons m_TextAreaInput;
 
   /** the button for copying the input. */
-  protected JButton m_ButtonInputCopy;
+  protected BaseButton m_ButtonInputCopy;
 
   /** the button for pasting the input. */
-  protected JButton m_ButtonInputPaste;
+  protected BaseButton m_ButtonInputPaste;
 
   /** the text area for the output. */
   protected BaseTextAreaWithButtons m_TextAreaCodeOutput;
 
   /** the button for copying the code output. */
-  protected JButton m_ButtonCodeOutputCopy;
+  protected BaseButton m_ButtonCodeOutputCopy;
 
   /** the button for pasting the code output. */
-  protected JButton m_ButtonCodeOutputPaste;
+  protected BaseButton m_ButtonCodeOutputPaste;
 
   /** the button initiating the conversion. */
-  protected JButton m_ButtonConvert;
+  protected BaseButton m_ButtonConvert;
 
   /**
    * Initializes the widgets.
@@ -94,7 +93,7 @@ public class WekaOptionsConversionPanel
     m_TextAreaInput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaInput, BorderLayout.CENTER);
 
-    m_ButtonInputCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonInputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonInputCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -103,7 +102,7 @@ public class WekaOptionsConversionPanel
     });
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputCopy);
 
-    m_ButtonInputPaste = new JButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonInputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
     m_ButtonInputPaste.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -120,7 +119,7 @@ public class WekaOptionsConversionPanel
     m_TextAreaCodeOutput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaCodeOutput, BorderLayout.CENTER);
 
-    m_ButtonCodeOutputCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCodeOutputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonCodeOutputCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -129,7 +128,7 @@ public class WekaOptionsConversionPanel
     });
     m_TextAreaCodeOutput.addToButtonsPanel(m_ButtonCodeOutputCopy);
 
-    m_ButtonCodeOutputPaste = new JButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonCodeOutputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
     m_ButtonCodeOutputPaste.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -142,7 +141,7 @@ public class WekaOptionsConversionPanel
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
 
-    m_ButtonConvert = new JButton("Convert");
+    m_ButtonConvert = new BaseButton("Convert");
     m_ButtonConvert.setMnemonic('C');
     m_ButtonConvert.addActionListener(new ActionListener() {
       @Override

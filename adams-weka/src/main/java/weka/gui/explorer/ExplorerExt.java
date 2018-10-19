@@ -25,6 +25,7 @@ import adams.core.io.PlaceholderFile;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
@@ -53,7 +54,6 @@ import weka.gui.explorer.panels.AbstractAdditionalExplorerPanel;
 import weka.gui.explorer.panels.AdditionalExplorerPanel;
 import weka.gui.sql.SqlViewerDialog;
 
-import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -117,10 +117,10 @@ public class ExplorerExt
   protected JMenuItem m_MenuItemViewInstanceExplorer;
 
   /** the undo button of the preprocess panel. */
-  protected JButton m_ButtonUndo;
+  protected BaseButton m_ButtonUndo;
 
   /** the edit button of the preprocess panel. */
-  protected JButton m_ButtonEdit;
+  protected BaseButton m_ButtonEdit;
 
   /** The file chooser for selecting data files */
   protected ConverterFileChooser m_FileChooser;
@@ -216,14 +216,14 @@ public class ExplorerExt
     result = false;
     
     for (i = 0; i < cont.getComponentCount(); i++) {
-      if (cont.getComponent(i) instanceof JButton) {
-	if (((JButton) cont.getComponent(i)).getText().equals("Edit...")) {
-	  m_ButtonEdit = (JButton) cont.getComponent(i);
+      if (cont.getComponent(i) instanceof BaseButton) {
+	if (((BaseButton) cont.getComponent(i)).getText().equals("Edit...")) {
+	  m_ButtonEdit = (BaseButton) cont.getComponent(i);
 	  cont.setVisible(false);
 	  result = true;
 	}
-	else if (((JButton) cont.getComponent(i)).getText().equals("Undo")) {
-	  m_ButtonUndo = (JButton) cont.getComponent(i);
+	else if (((BaseButton) cont.getComponent(i)).getText().equals("Undo")) {
+	  m_ButtonUndo = (BaseButton) cont.getComponent(i);
 	}
       }
       else if (cont.getComponent(i) instanceof Container) {

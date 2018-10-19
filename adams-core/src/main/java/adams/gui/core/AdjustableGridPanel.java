@@ -20,7 +20,6 @@
 
 package adams.gui.core;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -64,7 +63,7 @@ public class AdjustableGridPanel
   protected JSpinner m_SpinnerColumns;
 
   /** the button for applying the dimensions. */
-  protected JButton m_ButtonApply;
+  protected BaseButton m_ButtonApply;
 
   /** the panel for the actual content. */
   protected JPanel m_PanelContent;
@@ -151,7 +150,7 @@ public class AdjustableGridPanel
     m_PanelControl.add(labelColumns);
     m_PanelControl.add(m_SpinnerColumns);
 
-    m_ButtonApply = new JButton("Apply");
+    m_ButtonApply = new BaseButton("Apply");
     m_ButtonApply.addActionListener((ActionEvent e) -> {
       int rows = ((Number) m_SpinnerRows.getValue()).intValue();
       int cols = ((Number) m_SpinnerColumns.getValue()).intValue();

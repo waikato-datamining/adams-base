@@ -21,12 +21,12 @@
 package adams.gui.goe;
 
 import adams.env.Environment;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditor.GOEPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -198,7 +198,7 @@ public class GenericObjectEditorDialog
     Component		view;
     JPanel		panelAll;
     JPanel		panelButton;
-    final JButton	buttonOK;
+    final BaseButton	buttonOK;
     
     if (m_Editor.getCustomEditor() instanceof GOEPanel)
       ((GOEPanel) m_Editor.getCustomEditor()).removeOkListener(this);
@@ -216,7 +216,7 @@ public class GenericObjectEditorDialog
       panelAll    = new JPanel(new BorderLayout());
       panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 5));
-      buttonOK    = new JButton("Close");
+      buttonOK    = new BaseButton("Close");
       buttonOK.addActionListener((ActionEvent e) -> GUIHelper.closeParent(buttonOK));
       panelButton.add(buttonOK);
       panelAll.add(panelButton, BorderLayout.SOUTH);

@@ -24,10 +24,10 @@ import adams.event.FlowPauseStateEvent;
 import adams.event.FlowPauseStateListener;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.ControlActor;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -156,13 +156,13 @@ public class MissionControl
     protected JLabel m_LabelText;
 
     /** the buttom for pausing the flow. */
-    protected JButton m_ButtonPause;
+    protected BaseButton m_ButtonPause;
 
     /** the buttom for resuming the flow. */
-    protected JButton m_ButtonResume;
+    protected BaseButton m_ButtonResume;
 
     /** the button for stopping the flow. */
-    protected JButton m_ButtonStop;
+    protected BaseButton m_ButtonStop;
 
     /**
      * Initializes the panel.
@@ -199,7 +199,7 @@ public class MissionControl
       panel = new JPanel(new GridLayout(1, 3));
       add(panel, BorderLayout.CENTER);
 
-      m_ButtonPause = new JButton(GUIHelper.getIcon("pause.gif"));
+      m_ButtonPause = new BaseButton(GUIHelper.getIcon("pause.gif"));
       m_ButtonPause.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -211,7 +211,7 @@ public class MissionControl
       });
       panel.add(m_ButtonPause);
 
-      m_ButtonResume = new JButton(GUIHelper.getIcon("resume.gif"));
+      m_ButtonResume = new BaseButton(GUIHelper.getIcon("resume.gif"));
       m_ButtonResume.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -223,7 +223,7 @@ public class MissionControl
       });
       panel.add(m_ButtonResume);
 
-      m_ButtonStop = new JButton(GUIHelper.getIcon("stop_blue.gif"));
+      m_ButtonStop = new BaseButton(GUIHelper.getIcon("stop_blue.gif"));
       m_ButtonStop.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {

@@ -35,6 +35,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.weka.WekaAttributeRange;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ParameterPanel;
@@ -57,7 +58,6 @@ import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -116,10 +116,10 @@ public class PartialLeastSquaresTab
   protected GenericObjectEditorPanel m_PanelGOE;
 
   /** the button to start PLS. */
-  protected JButton m_ButtonStart;
+  protected BaseButton m_ButtonStart;
 
   /** the button to stop PLS. */
-  protected JButton m_ButtonStop;
+  protected BaseButton m_ButtonStop;
 
   /** the tabbed pane for the plots. */
   protected BaseTabbedPane m_TabbedPanePlots;
@@ -202,11 +202,11 @@ public class PartialLeastSquaresTab
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelOptions.add(panelButtons, BorderLayout.SOUTH);
 
-    m_ButtonStart = new JButton("Start");
+    m_ButtonStart = new BaseButton("Start");
     m_ButtonStart.addActionListener((ActionEvent e) -> startExecution());
     panelButtons.add(m_ButtonStart);
 
-    m_ButtonStop = new JButton("Stop");
+    m_ButtonStop = new BaseButton("Stop");
     m_ButtonStop.addActionListener((ActionEvent e) -> stopExecution());
     panelButtons.add(m_ButtonStop);
 

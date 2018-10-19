@@ -26,12 +26,12 @@ import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.AbstractSimpleScript;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.StyledTextEditorPanel;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -183,10 +183,10 @@ public class AbstractSimpleScriptEditor
     JPanel		panelBottom;
     JPanel 		panelButtonsRight;
     JPanel		panelButtonsLeft;
-    final JButton	buttonOptions;
-    JButton		buttonHelp;
-    JButton 		buttonOK;
-    JButton 		buttonClose;
+    final BaseButton	buttonOptions;
+    BaseButton		buttonHelp;
+    BaseButton 		buttonOK;
+    BaseButton 		buttonClose;
 
     panelAll = new JPanel(new BorderLayout());
     panelAll.setSize(getDefaultSize());
@@ -207,7 +207,7 @@ public class AbstractSimpleScriptEditor
     panelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelBottom.add(panelButtonsLeft, BorderLayout.WEST);
     
-    buttonOptions = new JButton("...");
+    buttonOptions = new BaseButton("...");
     buttonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	JPopupMenu menu = createPopupMenu();
@@ -220,7 +220,7 @@ public class AbstractSimpleScriptEditor
     panelBottom.add(panelButtonsRight, BorderLayout.EAST);
 
     if (m_TextStatement instanceof AdditionalInformationHandler) {
-      buttonHelp = new JButton("Help");
+      buttonHelp = new BaseButton("Help");
       buttonHelp.setMnemonic('H');
       buttonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -231,7 +231,7 @@ public class AbstractSimpleScriptEditor
       panelButtonsRight.add(buttonHelp);
     }
     
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -252,7 +252,7 @@ public class AbstractSimpleScriptEditor
     });
     panelButtonsRight.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

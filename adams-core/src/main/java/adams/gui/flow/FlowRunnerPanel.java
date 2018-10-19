@@ -42,6 +42,7 @@ import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.FlowFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -62,7 +63,6 @@ import adams.gui.tools.VariableManagementPanel;
 import adams.gui.visualization.debug.StoragePanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -186,7 +186,7 @@ public class FlowRunnerPanel
   protected Vector<JTextField> m_CurrentParameters;
 
   /** the buttons for the current SetVariable singletons. */
-  protected Vector<JButton> m_CurrentHelpButtons;
+  protected Vector<BaseButton> m_CurrentHelpButtons;
 
   /** the current worker. */
   protected FlowWorker m_CurrentWorker;
@@ -217,7 +217,7 @@ public class FlowRunnerPanel
     m_TitleGenerator      = new TitleGenerator("Flow runner", true);
     m_CurrentSetVariables = new Vector<SetVariable>();
     m_CurrentParameters   = new Vector<JTextField>();
-    m_CurrentHelpButtons  = new Vector<JButton>();
+    m_CurrentHelpButtons  = new Vector<BaseButton>();
     m_FileChooser         = new FlowFileChooser();
     m_FileChooser.setCurrentDirectory(new PlaceholderFile(getProperties().getPath("InitialDir", "%h")));
   }
@@ -613,7 +613,7 @@ public class FlowRunnerPanel
     int		i;
     JLabel	label;
     JTextField	textfield;
-    JButton	buttonHelp;
+    BaseButton	buttonHelp;
     char[]	mnemonics;
     String[]	labels;
     JPanel	panel;
@@ -654,7 +654,7 @@ public class FlowRunnerPanel
 	  final String annotation = m_CurrentSetVariables.get(i).getAnnotations().getValue();
 	  final String variable = m_CurrentSetVariables.get(i).getVariableName().getValue();
 	  if (annotation.length() > 0) {
-	    buttonHelp = new JButton(GUIHelper.getIcon("help2.png"));
+	    buttonHelp = new BaseButton(GUIHelper.getIcon("help2.png"));
 	    buttonHelp.addActionListener(new ActionListener() {
 	      public void actionPerformed(ActionEvent e) {
 		GUIHelper.showInformationMessage(

@@ -24,6 +24,7 @@ import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.processor.ListAllStorageNames;
 import adams.flow.processor.ListStorageUsage;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
@@ -31,7 +32,6 @@ import adams.gui.flow.FlowPanel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
@@ -50,10 +50,10 @@ public class StorageNamesTab
   protected BaseSplitPane m_SplitPane;
 
   /** the button for refreshing the variable list. */
-  protected JButton m_ButtonRefresh;
+  protected BaseButton m_ButtonRefresh;
 
   /** the button for locating the usages. */
-  protected JButton m_ButtonUsages;
+  protected BaseButton m_ButtonUsages;
 
   /** for listing all the names. */
   protected BaseListWithButtons m_ListStorageNames;
@@ -103,9 +103,9 @@ public class StorageNamesTab
     m_SplitPane.setTopComponent(panel);
 
     // list
-    m_ButtonRefresh = new JButton("Refresh", GUIHelper.getIcon("refresh.gif"));
+    m_ButtonRefresh = new BaseButton("Refresh", GUIHelper.getIcon("refresh.gif"));
     m_ButtonRefresh.addActionListener(e -> refreshStorageNames());
-    m_ButtonUsages = new JButton("Usages", GUIHelper.getIcon("glasses.gif"));
+    m_ButtonUsages = new BaseButton("Usages", GUIHelper.getIcon("glasses.gif"));
     m_ButtonUsages.addActionListener(e -> findUsages());
 
     m_ListStorageNames = new BaseListWithButtons(m_ModelStorageNames);

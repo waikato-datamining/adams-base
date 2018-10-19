@@ -26,9 +26,9 @@ import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.PreferencesManagerPanel;
 import adams.gui.application.UserMode;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -84,7 +84,7 @@ public class Preferences
     // left
     JPanel panelLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelButtons.add(panelLeft, BorderLayout.WEST);
-    JButton buttonReset = new JButton("Reset all");
+    BaseButton buttonReset = new BaseButton("Reset all");
     buttonReset.addActionListener((ActionEvent e) -> {
       prefs.reset();
       frame.setVisible(false);
@@ -94,14 +94,14 @@ public class Preferences
     // right
     JPanel panelRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panelRight, BorderLayout.EAST);
-    JButton buttonApply = new JButton("Apply all");
+    BaseButton buttonApply = new BaseButton("Apply all");
     buttonApply.addActionListener((ActionEvent e) -> {
       prefs.activate();
       frame.setVisible(false);
       frame.dispose();
     });
     panelRight.add(buttonApply);
-    JButton buttonCancel = new JButton("Close");
+    BaseButton buttonCancel = new BaseButton("Close");
     buttonCancel.addActionListener((ActionEvent e) -> {
       frame.setVisible(false);
       frame.dispose();

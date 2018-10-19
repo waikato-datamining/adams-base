@@ -24,12 +24,12 @@ package adams.gui.goe;
 import adams.core.Index;
 import adams.core.Utils;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -66,7 +66,7 @@ public class IndexEditor
   protected JTextField m_TextValue;
 
   /** the help button for bringing up a dialog with the example text. */
-  protected JButton m_ButtonHelp;
+  protected BaseButton m_ButtonHelp;
 
   /** the panel with the text value (border indicates validity). */
   protected JPanel m_PanelValue;
@@ -191,8 +191,8 @@ public class IndexEditor
     JPanel	panelAll;
     JLabel	label;
     JPanel 	panelButtons;
-    JButton 	buttonOK;
-    JButton 	buttonClose;
+    BaseButton 	buttonOK;
+    BaseButton 	buttonClose;
 
     panelAll            = new JPanel(new BorderLayout());
     m_PanelValue        = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -228,7 +228,7 @@ public class IndexEditor
       }
     });
 
-    m_ButtonHelp = new JButton();
+    m_ButtonHelp = new BaseButton();
     m_ButtonHelp.setVisible(false);
     m_ButtonHelp.setToolTipText(createTipText(getHelpDescription()));
     m_ButtonHelp.addActionListener(new ActionListener() {
@@ -247,7 +247,7 @@ public class IndexEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -256,7 +256,7 @@ public class IndexEditor
     });
     panelButtons.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

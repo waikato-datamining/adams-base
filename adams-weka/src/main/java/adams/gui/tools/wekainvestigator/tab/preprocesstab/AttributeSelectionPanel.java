@@ -21,6 +21,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab;
 
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
 import gnu.trove.list.TIntList;
@@ -28,7 +29,6 @@ import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instances;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -307,16 +307,16 @@ public class AttributeSelectionPanel
   }
 
   /** Press to select all attributes */
-  protected JButton m_ButtonAll = new JButton("All");
+  protected BaseButton m_ButtonAll = new BaseButton("All");
 
   /** Press to deselect all attributes */
-  protected JButton m_ButtonNone = new JButton("None");
+  protected BaseButton m_ButtonNone = new BaseButton("None");
 
   /** Press to invert the current selection */
-  protected JButton m_ButtonInvert = new JButton("Invert");
+  protected BaseButton m_ButtonInvert = new BaseButton("Invert");
 
   /** Press to enter a perl regular expression for selection */
-  protected JButton m_ButtonPattern = new JButton("Pattern");
+  protected BaseButton m_ButtonPattern = new BaseButton("Pattern");
 
   /** The table displaying attribute names and selection status */
   protected BaseTable m_Table = new BaseTable();

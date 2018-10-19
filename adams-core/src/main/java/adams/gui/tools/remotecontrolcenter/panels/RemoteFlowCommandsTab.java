@@ -23,6 +23,7 @@ package adams.gui.tools.remotecontrolcenter.panels;
 import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.base.BaseHostname;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SimpleLogPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -35,7 +36,6 @@ import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.DefaultScriptingEngine;
 import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -56,7 +56,7 @@ public class RemoteFlowCommandsTab
   protected GenericObjectEditorPanel m_GOECommand;
 
   /** the button for executing the command. */
-  protected JButton m_ButtonExecute;
+  protected BaseButton m_ButtonExecute;
 
   /** the log for the responses. */
   protected SimpleLogPanel m_Log;
@@ -95,7 +95,7 @@ public class RemoteFlowCommandsTab
     m_GOECommand.setPrefix("Command");
     panelCmd.add(m_GOECommand);
 
-    m_ButtonExecute = new JButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
     m_ButtonExecute.addActionListener((ActionEvent e) -> executeCommand());
     panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButton.add(m_ButtonExecute);

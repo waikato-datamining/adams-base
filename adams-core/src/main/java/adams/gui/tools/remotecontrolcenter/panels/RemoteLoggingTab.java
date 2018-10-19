@@ -24,6 +24,7 @@ import adams.core.base.BaseHostname;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.RemoteReceiveHandler.AbstractRemoteListenerRunnable;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
@@ -38,7 +39,6 @@ import adams.scripting.command.basic.StopRemoteLogging;
 import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -168,7 +168,7 @@ public class RemoteLoggingTab
   protected BaseObjectTextField<BaseHostname> m_TextLocal;
 
   /** the button for executing the command. */
-  protected JButton m_ButtonStartStop;
+  protected BaseButton m_ButtonStartStop;
 
   /** the log for the responses. */
   protected SimpleLogPanel m_Log;
@@ -240,7 +240,7 @@ public class RemoteLoggingTab
     panelHosts.add(label);
     panelHosts.add(m_TextLocal);
 
-    m_ButtonStartStop = new JButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonStartStop = new BaseButton(GUIHelper.getIcon("run.gif"));
     m_ButtonStartStop.addActionListener((ActionEvent e) -> startStopLogging());
     panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButton.add(m_ButtonStartStop);

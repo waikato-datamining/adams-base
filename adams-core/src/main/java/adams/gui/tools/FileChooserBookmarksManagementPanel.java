@@ -19,22 +19,20 @@
  */
 package adams.gui.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JTextField;
-
 import adams.core.Properties;
 import adams.core.io.PlaceholderDirectory;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.chooser.FileChooserBookmarksPanel.FileChooserBookmarksFactory;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanelWithButtons;
 import adams.gui.core.SearchParameters;
-
 import com.googlecode.jfilechooserbookmarks.Bookmark;
+
+import javax.swing.JTextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * Panel for managing email addresses.
@@ -174,10 +172,10 @@ public class FileChooserBookmarksManagementPanel
   protected DirectoryChooserPanel m_PanelDirectory;
   
   /** the move up button. */
-  protected JButton m_ButtonUp;
+  protected BaseButton m_ButtonUp;
   
   /** the move down button. */
-  protected JButton m_ButtonDown;
+  protected BaseButton m_ButtonDown;
   
   /** the manager. */
   protected FileChooserBookmarksFactory m_Factory;
@@ -198,7 +196,7 @@ public class FileChooserBookmarksManagementPanel
     super.initGUI();
 
     // up/down buttons
-    m_ButtonUp = new JButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp = new BaseButton(GUIHelper.getIcon("arrow_up.gif"));
     m_ButtonUp.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -213,7 +211,7 @@ public class FileChooserBookmarksManagementPanel
     });
     m_TableValues.addToButtonsPanel(m_ButtonUp);
 
-    m_ButtonDown = new JButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown = new BaseButton(GUIHelper.getIcon("arrow_down.gif"));
     m_ButtonDown.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

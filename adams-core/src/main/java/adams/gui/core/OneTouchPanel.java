@@ -21,7 +21,6 @@
 package adams.gui.core;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -72,7 +71,7 @@ public class OneTouchPanel
   protected BasePanel m_PanelContent;
 
   /** the button for hiding/showing the content. */
-  protected JButton m_ButtonVisibility;
+  protected BaseButton m_ButtonVisibility;
 
   /**
    * Initializes the panel.
@@ -139,7 +138,7 @@ public class OneTouchPanel
     m_PanelContent = new BasePanel(new BorderLayout());
     add(m_PanelContent, BorderLayout.CENTER);
 
-    m_ButtonVisibility = new JButton(GUIHelper.getIcon(m_IconVisible));
+    m_ButtonVisibility = new BaseButton(GUIHelper.getIcon(m_IconVisible));
     m_ButtonVisibility.setBorder(BorderFactory.createEmptyBorder());
     m_ButtonVisibility.setPreferredSize(new Dimension(18, 18));
     m_ButtonVisibility.setBorderPainted(false);

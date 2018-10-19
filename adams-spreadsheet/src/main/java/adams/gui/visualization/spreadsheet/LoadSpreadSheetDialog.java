@@ -24,6 +24,7 @@ import adams.core.Index;
 import adams.core.Range;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooserPanel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -37,7 +38,6 @@ import adams.gui.event.SearchEvent;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -78,16 +78,16 @@ public class LoadSpreadSheetDialog
   protected SpreadSheetFileChooserPanel m_FilePanel;
 
   /** the button for reloading an existing file. */
-  protected JButton m_ButtonReload;
+  protected BaseButton m_ButtonReload;
 
   /** the table for displaying the instances. */
   protected SpreadSheetTable m_TableData;
 
   /** the Load button. */
-  protected JButton m_ButtonLoad;
+  protected BaseButton m_ButtonLoad;
 
   /** the Close button. */
-  protected JButton m_ButtonClose;
+  protected BaseButton m_ButtonClose;
 
   /** the search panel. */
   protected SearchPanel m_SearchPanel;
@@ -233,7 +233,7 @@ public class LoadSpreadSheetDialog
     });
     panel.add(m_FilePanel, BorderLayout.CENTER);
 
-    m_ButtonReload = new JButton(GUIHelper.getIcon("refresh.gif"));
+    m_ButtonReload = new BaseButton(GUIHelper.getIcon("refresh.gif"));
     m_ButtonReload.setEnabled(false);
     m_ButtonReload.addActionListener((ActionEvent e) -> loadFile(true));
     panelAttributes = new JPanel(new BorderLayout());
@@ -316,13 +316,13 @@ public class LoadSpreadSheetDialog
     panelAll = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     contentPanel.add(panelAll, BorderLayout.SOUTH);
 
-    m_ButtonLoad = new JButton("OK");
+    m_ButtonLoad = new BaseButton("OK");
     m_ButtonLoad.setMnemonic('O');
     m_ButtonLoad.setEnabled(false);
     m_ButtonLoad.addActionListener((ActionEvent e) -> acceptSelection());
     panelAll.add(m_ButtonLoad);
 
-    m_ButtonClose = new JButton("Cancel");
+    m_ButtonClose = new BaseButton("Cancel");
     m_ButtonClose.setMnemonic('l');
     m_ButtonClose.addActionListener((ActionEvent e) -> close());
     panelAll.add(m_ButtonClose);

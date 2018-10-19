@@ -27,6 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.env.NamedSetupsDefinition;
 import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
@@ -34,7 +35,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.goe.GenericObjectEditorDialog;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -277,10 +277,10 @@ public class NamedSetupManagementPanel
   protected Model m_Model;
 
   /** the button for adding a setup. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the button for removing a setup. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
@@ -319,7 +319,7 @@ public class NamedSetupManagementPanel
     add(m_Table, BorderLayout.CENTER);
 
     // buttons
-    m_ButtonAdd = new JButton("Add...");
+    m_ButtonAdd = new BaseButton("Add...");
     m_ButtonAdd.setMnemonic('A');
     m_ButtonAdd.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -328,7 +328,7 @@ public class NamedSetupManagementPanel
     });
     m_Table.addToButtonsPanel(m_ButtonAdd);
 
-    m_ButtonRemove = new JButton("Remove");
+    m_ButtonRemove = new BaseButton("Remove");
     m_ButtonRemove.setMnemonic('R');
     m_ButtonRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

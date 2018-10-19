@@ -24,9 +24,9 @@ package adams.gui.goe;
 import adams.core.Utils;
 import adams.core.base.BaseBoolean;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
 import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -177,8 +177,8 @@ public class BaseBooleanEditor
     JPanel	panel;
     JLabel	label;
     JPanel 	panelButtons;
-    JButton 	buttonOK;
-    JButton 	buttonClose;
+    BaseButton 	buttonOK;
+    BaseButton 	buttonClose;
 
     panelAll = new JPanel(new BorderLayout());
     panel    = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -209,7 +209,7 @@ public class BaseBooleanEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -218,7 +218,7 @@ public class BaseBooleanEditor
     });
     panelButtons.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

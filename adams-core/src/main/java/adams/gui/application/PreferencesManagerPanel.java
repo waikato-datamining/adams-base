@@ -20,6 +20,7 @@
 package adams.gui.application;
 
 import adams.core.logging.LoggingLevel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ConsolePanel;
@@ -28,7 +29,6 @@ import adams.gui.core.MultiPagePane;
 import adams.gui.core.PanelSettings;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -100,7 +100,7 @@ public class PreferencesManagerPanel
       panelPage = new JPanel(new BorderLayout());
       panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       panelPage.add(panelButtons, BorderLayout.SOUTH);
-      final JButton buttonReset = new JButton("Default");
+      final BaseButton buttonReset = new BaseButton("Default");
       buttonReset.setEnabled(panel.canReset());
       buttonReset.addActionListener((ActionEvent e) -> {
 	String msg = panel.reset();
@@ -113,7 +113,7 @@ public class PreferencesManagerPanel
 	buttonReset.setEnabled(panel.canReset());
       });
       panelButtons.add(buttonReset);
-      final JButton buttonApply = new JButton("Apply");
+      final BaseButton buttonApply = new BaseButton("Apply");
       buttonApply.addActionListener((ActionEvent e) -> {
 	String msg = panel.activate();
 	if (msg != null)

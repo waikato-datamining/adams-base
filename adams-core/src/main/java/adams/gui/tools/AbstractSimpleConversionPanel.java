@@ -22,12 +22,12 @@ package adams.gui.tools;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -51,28 +51,28 @@ public abstract class AbstractSimpleConversionPanel
   protected BaseTextAreaWithButtons m_TextAreaInput;
 
   /** the button for copying the input. */
-  protected JButton m_ButtonInputCopy;
+  protected BaseButton m_ButtonInputCopy;
 
   /** the button for pasting the input. */
-  protected JButton m_ButtonInputPaste;
+  protected BaseButton m_ButtonInputPaste;
 
   /** the button for loading the input from file. */
-  protected JButton m_ButtonInputOpen;
+  protected BaseButton m_ButtonInputOpen;
 
   /** the text area for the output. */
   protected BaseTextAreaWithButtons m_TextAreaOutput;
 
   /** the button for copying the output. */
-  protected JButton m_ButtonOutputCopy;
+  protected BaseButton m_ButtonOutputCopy;
 
   /** the button for pasting the output. */
-  protected JButton m_ButtonOutputPaste;
+  protected BaseButton m_ButtonOutputPaste;
 
   /** the button for saving the output to a file. */
-  protected JButton m_ButtonOutputSave;
+  protected BaseButton m_ButtonOutputSave;
 
   /** the button initiating the conversion. */
-  protected JButton m_ButtonConvert;
+  protected BaseButton m_ButtonConvert;
 
   /** the file chooser for loading the options. */
   protected BaseFileChooser m_FileChooserInput;
@@ -114,15 +114,15 @@ public abstract class AbstractSimpleConversionPanel
     m_TextAreaInput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaInput, BorderLayout.CENTER);
 
-    m_ButtonInputCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonInputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonInputCopy.addActionListener((ActionEvent e) -> m_TextAreaInput.getComponent().copy());
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputCopy);
 
-    m_ButtonInputPaste = new JButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonInputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
     m_ButtonInputPaste.addActionListener((ActionEvent e) -> m_TextAreaInput.getComponent().paste());
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputPaste);
 
-    m_ButtonInputOpen = new JButton("Open...", GUIHelper.getIcon("open.gif"));
+    m_ButtonInputOpen = new BaseButton("Open...", GUIHelper.getIcon("open.gif"));
     m_ButtonInputOpen.addActionListener((ActionEvent e) -> openInput(m_FileChooserInput, m_TextAreaInput));
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputOpen);
 
@@ -134,15 +134,15 @@ public abstract class AbstractSimpleConversionPanel
     m_TextAreaOutput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaOutput, BorderLayout.CENTER);
 
-    m_ButtonOutputCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonOutputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonOutputCopy.addActionListener((ActionEvent e) -> m_TextAreaOutput.getComponent().copy());
     m_TextAreaOutput.addToButtonsPanel(m_ButtonOutputCopy);
 
-    m_ButtonOutputPaste = new JButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonOutputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
     m_ButtonOutputPaste.addActionListener((ActionEvent e) -> m_TextAreaOutput.getComponent().paste());
     m_TextAreaOutput.addToButtonsPanel(m_ButtonOutputPaste);
 
-    m_ButtonOutputSave = new JButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonOutputSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
     m_ButtonOutputSave.addActionListener((ActionEvent e) -> saveOutput(m_FileChooserOutput, m_TextAreaOutput));
     m_TextAreaOutput.addToButtonsPanel(m_ButtonOutputSave);
 
@@ -150,7 +150,7 @@ public abstract class AbstractSimpleConversionPanel
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
 
-    m_ButtonConvert = new JButton("Convert");
+    m_ButtonConvert = new BaseButton("Convert");
     m_ButtonConvert.setMnemonic('C');
     m_ButtonConvert.addActionListener((ActionEvent e) -> convert());
     panel.add(m_ButtonConvert);

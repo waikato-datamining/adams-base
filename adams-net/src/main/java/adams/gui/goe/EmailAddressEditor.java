@@ -25,13 +25,13 @@ import adams.core.net.EmailAddress;
 import adams.core.net.EmailAddressBook;
 import adams.core.net.EmailContact;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.DoubleClickEvent;
 import adams.gui.event.DoubleClickListener;
 import adams.gui.selection.SelectEmailAddressPanel;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -58,10 +58,10 @@ public class EmailAddressEditor
   protected SelectEmailAddressPanel m_SelectPanel;
 
   /** the OK button. */
-  protected JButton m_ButtonOK;
+  protected BaseButton m_ButtonOK;
 
   /** the close button. */
-  protected JButton m_ButtonClose;
+  protected BaseButton m_ButtonClose;
 
   /**
    * Returns the field as string.
@@ -148,7 +148,7 @@ public class EmailAddressEditor
     JPanel panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(panelButtons, BorderLayout.SOUTH);
 
-    m_ButtonOK = new JButton("OK");
+    m_ButtonOK = new BaseButton("OK");
     m_ButtonOK.setMnemonic('O');
     m_ButtonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -163,7 +163,7 @@ public class EmailAddressEditor
     });
     panelButtons.add(m_ButtonOK);
 
-    m_ButtonClose = new JButton("Cancel");
+    m_ButtonClose = new BaseButton("Cancel");
     m_ButtonClose.setMnemonic('C');
     m_ButtonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

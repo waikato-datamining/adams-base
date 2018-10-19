@@ -27,6 +27,7 @@ import adams.env.Environment;
 import adams.env.PlaceholdersDefinition;
 import adams.gui.chooser.BaseDirectoryChooser;
 import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
@@ -36,7 +37,6 @@ import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 
 import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -432,10 +432,10 @@ public class PlaceholderManagementPanel
   protected JMenuItem m_MenuItemClose;
 
   /** the button for adding a placeholder. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the button for removing the selected placeholders. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** the directory chooser for choosing directories. */
   protected BaseDirectoryChooser m_DirChooser;
@@ -481,7 +481,7 @@ public class PlaceholderManagementPanel
     m_TabbedPane.addTab("User", m_Table);
 
     // buttons
-    m_ButtonAdd = new JButton("Add...");
+    m_ButtonAdd = new BaseButton("Add...");
     m_ButtonAdd.setMnemonic('A');
     m_ButtonAdd.addActionListener((ActionEvent e) -> {
       String key = GUIHelper.showInputDialog(PlaceholderManagementPanel.this, "Please add new placeholder");
@@ -496,7 +496,7 @@ public class PlaceholderManagementPanel
     });
     m_Table.addToButtonsPanel(m_ButtonAdd);
 
-    m_ButtonRemove = new JButton("Remove");
+    m_ButtonRemove = new BaseButton("Remove");
     m_ButtonRemove.setMnemonic('R');
     m_ButtonRemove.addActionListener((ActionEvent e) -> {
       int[] indices = m_Table.getSelectedRows();

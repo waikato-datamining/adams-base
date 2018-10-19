@@ -20,6 +20,7 @@
 
 package weka.gui.explorer;
 
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import weka.core.Instances;
 import weka.experiment.InstanceQuery;
@@ -29,7 +30,6 @@ import weka.gui.explorer.Explorer.ExplorerPanel;
 import weka.gui.explorer.Explorer.LogHandler;
 import weka.gui.sql.SqlViewer;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -80,7 +80,7 @@ public class SqlPanel
   protected JPanel m_PanelButtons;
 
   /** the Load button */
-  protected JButton m_ButtonLoad = new JButton("Load data");
+  protected BaseButton m_ButtonLoad = new BaseButton("Load data");
 
   /** displays the current query */
   protected JLabel m_LabelQuery = new JLabel("");

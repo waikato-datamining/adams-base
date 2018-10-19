@@ -22,7 +22,6 @@ package adams.gui.core;
 
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
@@ -37,7 +36,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class BaseButtonWithDropDownMenu
-  extends JButton {
+  extends BaseButton {
 
   private static final long serialVersionUID = 6616758688778479716L;
 

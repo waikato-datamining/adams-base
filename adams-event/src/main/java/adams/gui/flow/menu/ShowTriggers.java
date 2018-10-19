@@ -21,6 +21,7 @@ package adams.gui.flow.menu;
 
 import adams.flow.core.EventHelper;
 import adams.gui.action.AbstractBaseAction;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
@@ -30,7 +31,6 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.flow.FlowEditorPanel;
 
-import javax.swing.JButton;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.Dialog.ModalityType;
@@ -117,7 +117,7 @@ public class ShowTriggers
       @Override
       protected void doActionPerformed(ActionEvent e) {
 	final BaseTableWithButtons table = new BaseTableWithButtons(getTabelModel());
-	final JButton viewButton = new JButton("View");
+	final BaseButton viewButton = new BaseButton("View");
 	viewButton.setMnemonic('V');
 	viewButton.setEnabled(false);
 	viewButton.addActionListener(new ActionListener() {

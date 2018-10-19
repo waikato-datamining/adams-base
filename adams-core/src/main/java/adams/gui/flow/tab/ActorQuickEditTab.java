@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
@@ -35,7 +36,6 @@ import adams.gui.goe.GenericObjectEditorPopupMenu;
 import adams.gui.goe.PropertySheetPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.tree.TreePath;
@@ -97,13 +97,13 @@ public class ActorQuickEditTab
     protected JLabel m_LabelClassname;
 
     /** apply button. */
-    protected JButton m_ButtonApply;
+    protected BaseButton m_ButtonApply;
 
     /** revert button. */
-    protected JButton m_ButtonRevert;
+    protected BaseButton m_ButtonRevert;
 
     /** the button for copy/paste menu. */
-    protected JButton m_ButtonCopyPaste;
+    protected BaseButton m_ButtonCopyPaste;
 
     /** the top panel with the classname and choose button. */
     protected JPanel m_TopPanel;
@@ -133,7 +133,7 @@ public class ActorQuickEditTab
 
       m_PanelProperties = new PropertySheetPanel();
 
-      m_ButtonApply = new JButton("Apply");
+      m_ButtonApply = new BaseButton("Apply");
       m_ButtonApply.setEnabled(true);
       m_ButtonApply.setToolTipText("Apply changes");
       m_ButtonApply.setMnemonic('A');
@@ -156,7 +156,7 @@ public class ActorQuickEditTab
 	m_Backup = copyObject(m_Object);
       });
 
-      m_ButtonRevert = new JButton(GUIHelper.getIcon("undo.gif"));
+      m_ButtonRevert = new BaseButton(GUIHelper.getIcon("undo.gif"));
       m_ButtonRevert.setEnabled(true);
       m_ButtonRevert.setToolTipText("Revert changes");
       m_ButtonRevert.addActionListener((ActionEvent e) -> {
@@ -168,7 +168,7 @@ public class ActorQuickEditTab
 
       setLayout(new BorderLayout());
 
-      m_ButtonCopyPaste = new JButton("...");
+      m_ButtonCopyPaste = new BaseButton("...");
       m_ButtonCopyPaste.setToolTipText("Displays copy/paste/favorites action menu");
       m_ButtonCopyPaste.addActionListener((ActionEvent e) -> {
 	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(m_Editor, m_ButtonCopyPaste);

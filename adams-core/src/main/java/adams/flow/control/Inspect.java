@@ -26,11 +26,11 @@ import adams.flow.sink.DisplayPanel;
 import adams.flow.sink.DisplayPanelProvider;
 import adams.flow.sink.UpdateableDisplayPanel;
 import adams.flow.transformer.AbstractInteractiveTransformerDialog;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
@@ -185,13 +185,13 @@ public class Inspect
   protected boolean m_CloseDialog;
 
   /** the button for turning on/off the interactive state of the viewer. */
-  protected JButton m_ButtonToggle;
+  protected BaseButton m_ButtonToggle;
 
   /** the button for skipping the token. */
-  protected JButton m_ButtonSkip;
+  protected BaseButton m_ButtonSkip;
 
   /** the button for accepting the token. */
-  protected JButton m_ButtonAccept;
+  protected BaseButton m_ButtonAccept;
 
   /** whether the dialog is interactive. */
   protected boolean m_Interactive;
@@ -471,7 +471,7 @@ public class Inspect
     panelPart = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelButtons.add(panelPart, BorderLayout.WEST);
     
-    m_ButtonToggle = new JButton("Interactive");
+    m_ButtonToggle = new BaseButton("Interactive");
     m_ButtonToggle.setMnemonic('n');
     m_ButtonToggle.addActionListener(new ActionListener() {
       @Override
@@ -494,7 +494,7 @@ public class Inspect
     panelPart = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panelPart, BorderLayout.EAST);
     
-    m_ButtonSkip = new JButton(GUIHelper.stripMnemonic(m_LabelSkip));
+    m_ButtonSkip = new BaseButton(GUIHelper.stripMnemonic(m_LabelSkip));
     if (GUIHelper.hasMnemonic(m_LabelSkip))
       m_ButtonSkip.setMnemonic(GUIHelper.getMnemonic(m_LabelSkip));
     m_ButtonSkip.setIcon(GUIHelper.getIcon("delete.gif"));
@@ -510,7 +510,7 @@ public class Inspect
     });
     panelPart.add(m_ButtonSkip);
     
-    m_ButtonAccept = new JButton(GUIHelper.stripMnemonic(m_LabelAccept));
+    m_ButtonAccept = new BaseButton(GUIHelper.stripMnemonic(m_LabelAccept));
     if (GUIHelper.hasMnemonic(m_LabelAccept))
       m_ButtonAccept.setMnemonic(GUIHelper.getMnemonic(m_LabelAccept));
     m_ButtonAccept.setIcon(GUIHelper.getIcon("accept.png"));

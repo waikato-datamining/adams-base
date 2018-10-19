@@ -22,6 +22,7 @@ package adams.gui.tools;
 
 import adams.core.io.FileUtils;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ExtensionFileFilter;
@@ -31,7 +32,6 @@ import adams.gui.dialog.TextPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import org.w3c.dom.Document;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -78,19 +78,19 @@ public class XSLTPanel
     protected JPanel m_PanelButtons;
 
     /** the button for clearing the text. */
-    protected JButton m_ButtonClear;
+    protected BaseButton m_ButtonClear;
 
     /** the button for loading a file. */
-    protected JButton m_ButtonOpen;
+    protected BaseButton m_ButtonOpen;
 
     /** the button for saving to a file. */
-    protected JButton m_ButtonSave;
+    protected BaseButton m_ButtonSave;
 
     /** the button for copy. */
-    protected JButton m_ButtonCopy;
+    protected BaseButton m_ButtonCopy;
 
     /** the button for paste. */
-    protected JButton m_ButtonPaste;
+    protected BaseButton m_ButtonPaste;
 
     /** the file chooser. */
     protected BaseFileChooser m_FileChooser;
@@ -123,23 +123,23 @@ public class XSLTPanel
       m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
       add(m_PanelButtons, BorderLayout.SOUTH);
 
-      m_ButtonClear = new JButton(GUIHelper.getIcon("new.gif"));
+      m_ButtonClear = new BaseButton(GUIHelper.getIcon("new.gif"));
       m_ButtonClear.addActionListener((ActionEvent e) -> clear());
       m_PanelButtons.add(m_ButtonClear);
 
-      m_ButtonOpen = new JButton(GUIHelper.getIcon("open.gif"));
+      m_ButtonOpen = new BaseButton(GUIHelper.getIcon("open.gif"));
       m_ButtonOpen.addActionListener((ActionEvent e) -> open());
       m_PanelButtons.add(m_ButtonOpen);
 
-      m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
+      m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
       m_ButtonSave.addActionListener((ActionEvent e) -> save());
       m_PanelButtons.add(m_ButtonSave);
 
-      m_ButtonCopy = new JButton(GUIHelper.getIcon("copy.gif"));
+      m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
       m_ButtonCopy.addActionListener((ActionEvent e) -> copy());
       m_PanelButtons.add(m_ButtonCopy);
 
-      m_ButtonPaste = new JButton(GUIHelper.getIcon("paste.gif"));
+      m_ButtonPaste = new BaseButton(GUIHelper.getIcon("paste.gif"));
       m_ButtonPaste.addActionListener((ActionEvent e) -> paste());
       m_PanelButtons.add(m_ButtonPaste);
     }
@@ -250,7 +250,7 @@ public class XSLTPanel
   protected JPanel m_PanelButtons;
 
   /** the Apply button. */
-  protected JButton m_ButtonApply;
+  protected BaseButton m_ButtonApply;
 
   /** the menu item for validating. */
   protected JCheckBoxMenuItem m_MenuItemValidating;
@@ -308,7 +308,7 @@ public class XSLTPanel
     m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(m_PanelButtons, BorderLayout.SOUTH);
 
-    m_ButtonApply = new JButton("Apply", GUIHelper.getIcon("run.gif"));
+    m_ButtonApply = new BaseButton("Apply", GUIHelper.getIcon("run.gif"));
     m_ButtonApply.addActionListener((ActionEvent e) -> apply());
     m_PanelButtons.add(m_ButtonApply);
   }

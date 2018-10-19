@@ -20,11 +20,11 @@
 package adams.gui.selection;
 
 import adams.db.AbstractConditions;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
-import javax.swing.JButton;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -44,7 +44,7 @@ public abstract class AbstractConditionalDatabaseSelectionPanel<T, C extends Abs
   private static final long serialVersionUID = 6833350757448286729L;
 
   /** the button for setting the name retrieval options. */
-  protected JButton m_ButtonOptions;
+  protected BaseButton m_ButtonOptions;
 
   /** the conditions for retrieving the items. */
   protected C m_Conditions;
@@ -64,7 +64,7 @@ public abstract class AbstractConditionalDatabaseSelectionPanel<T, C extends Abs
   protected void initGUI() {
     super.initGUI();
 
-    m_ButtonOptions = new JButton("Options");
+    m_ButtonOptions = new BaseButton("Options");
     m_ButtonOptions.setMnemonic('p');
     m_ButtonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

@@ -23,6 +23,7 @@ import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
@@ -30,7 +31,6 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import weka.filters.supervised.attribute.AddClassification;
 import weka.gui.PropertySheetPanel;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
@@ -102,10 +102,10 @@ public class WekaPropertySheetPanelPage
   protected JPanel m_PanelButtons;
 
   /** the load props button. */
-  protected JButton m_ButtonLoad;
+  protected BaseButton m_ButtonLoad;
 
   /** the save props button. */
-  protected JButton m_ButtonSave;
+  protected BaseButton m_ButtonSave;
 
   /** the filechooser for loading/saving properties. */
   protected BaseFileChooser m_FileChooser;
@@ -152,7 +152,7 @@ public class WekaPropertySheetPanelPage
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelButtons.add(panel, BorderLayout.WEST);
 
-    m_ButtonLoad = new JButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
     m_ButtonLoad.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -161,7 +161,7 @@ public class WekaPropertySheetPanelPage
     });
     panel.add(m_ButtonLoad);
 
-    m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
     m_ButtonSave.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

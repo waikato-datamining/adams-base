@@ -25,6 +25,7 @@ import adams.core.base.BaseRegExp;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BrowserHelper;
@@ -32,7 +33,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.RegExpTextField;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -88,9 +88,9 @@ public class RegExpTest
     final RegExpTextField 	fieldMatchExp;
     final JCheckBox 		checkboxMatchLowerCase;
     final JTextField 		fieldMatchOutput;
-    JButton			buttonTest;
-    JButton			buttonHelp;
-    JButton			buttonClose;
+    BaseButton			buttonTest;
+    BaseButton			buttonHelp;
+    BaseButton			buttonClose;
 
     panel = new BasePanel(new BorderLayout());
 
@@ -98,7 +98,7 @@ public class RegExpTest
     panel.add(tabbedPane, BorderLayout.CENTER);
 
     panelButtonsAll = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    buttonClose = new JButton("Close");
+    buttonClose = new BaseButton("Close");
     buttonClose.setMnemonic('l');
     buttonClose.addActionListener((ActionEvent e) -> panel.closeParent());
     panelButtonsAll.add(buttonClose);
@@ -125,7 +125,7 @@ public class RegExpTest
     panelTab.add(panelParams, BorderLayout.CENTER);
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    buttonTest = new JButton("Test");
+    buttonTest = new BaseButton("Test");
     buttonTest.setMnemonic('T');
     buttonTest.addActionListener((ActionEvent e) -> {
       String input = fieldReplaceInput.getText();
@@ -153,7 +153,7 @@ public class RegExpTest
       }
     });
     panelButtons.add(buttonTest);
-    buttonHelp = new JButton("Help");
+    buttonHelp = new BaseButton("Help");
     buttonHelp.setMnemonic('H');
     buttonHelp.addActionListener((ActionEvent e) -> {
       BrowserHelper.openURL(new BaseRegExp().getHelpURL());
@@ -177,7 +177,7 @@ public class RegExpTest
     panelTab.add(panelParams, BorderLayout.CENTER);
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    buttonTest = new JButton("Test");
+    buttonTest = new BaseButton("Test");
     buttonTest.setMnemonic('T');
     buttonTest.addActionListener((ActionEvent e) -> {
       String input = fieldMatchInput.getText();
@@ -187,7 +187,7 @@ public class RegExpTest
       fieldMatchOutput.setText(regexp.isMatch(input) ? "yes" : "no");
     });
     panelButtons.add(buttonTest);
-    buttonHelp = new JButton("Help");
+    buttonHelp = new BaseButton("Help");
     buttonHelp.setMnemonic('H');
     buttonHelp.addActionListener((ActionEvent e) -> {
       BrowserHelper.openURL(new BaseRegExp().getHelpURL());

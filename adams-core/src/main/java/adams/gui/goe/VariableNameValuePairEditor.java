@@ -23,11 +23,11 @@ import adams.core.Utils;
 import adams.core.VariableNameValuePair;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -115,9 +115,9 @@ public class VariableNameValuePairEditor
   protected JComponent createCustomEditor() {
     JPanel		panelAll;
     JPanel 		panelButtons;
-    JButton 		buttonClear;
-    JButton 		buttonOK;
-    JButton 		buttonClose;
+    BaseButton 		buttonClear;
+    BaseButton 		buttonOK;
+    BaseButton 		buttonClose;
 
     panelAll  = new JPanel(new BorderLayout());
     m_PanelPair = new ParameterPanel();
@@ -145,7 +145,7 @@ public class VariableNameValuePairEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonClear = new JButton("Clear");
+    buttonClear = new BaseButton("Clear");
     buttonClear.setMnemonic('l');
     buttonClear.addActionListener((ActionEvent e) -> {
       m_TextName.setText("");
@@ -153,12 +153,12 @@ public class VariableNameValuePairEditor
     });
     panelButtons.add(buttonClear);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener((ActionEvent e) -> acceptInput());
     panelButtons.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener((ActionEvent e) -> discardInput());
     panelButtons.add(buttonClose);

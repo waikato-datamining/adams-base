@@ -29,6 +29,7 @@ import adams.flow.setup.FlowSetup;
 import adams.flow.setup.FlowSetupManager;
 import adams.gui.application.ChildFrame;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
@@ -50,7 +51,6 @@ import adams.gui.flow.setup.FlowSetupCellEditor;
 import adams.gui.flow.setup.FlowSetupTableModel;
 import adams.gui.goe.GenericObjectEditorDialog;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -153,34 +153,34 @@ public class FlowControlCenterPanel
   protected BaseTableWithButtons m_TableSetups;
 
   /** the button for adding a setup. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the button for editing a setup. */
-  protected JButton m_ButtonEdit;
+  protected BaseButton m_ButtonEdit;
 
   /** the button for editing a flow directly. */
-  protected JButton m_ButtonEditFlow;
+  protected BaseButton m_ButtonEditFlow;
 
   /** the button for starting setups. */
-  protected JButton m_ButtonStart;
+  protected BaseButton m_ButtonStart;
 
   /** the button for pausing/resuming setups. */
-  protected JButton m_ButtonPauseAndResume;
+  protected BaseButton m_ButtonPauseAndResume;
 
   /** the button for stopping setups. */
-  protected JButton m_ButtonStop;
+  protected BaseButton m_ButtonStop;
 
   /** the button for moving the selected setups up. */
-  protected JButton m_ButtonMoveUp;
+  protected BaseButton m_ButtonMoveUp;
 
   /** the button for moving the selected setups down. */
-  protected JButton m_ButtonMoveDown;
+  protected BaseButton m_ButtonMoveDown;
 
   /** the button for removing a setup. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** the button for removing all setups. */
-  protected JButton m_ButtonRemoveAll;
+  protected BaseButton m_ButtonRemoveAll;
 
   /** the GOE for editing the setups. */
   protected GenericObjectEditorDialog m_GOEDialog;
@@ -257,14 +257,14 @@ public class FlowControlCenterPanel
     panel.add(new BaseScrollPane(m_TableSetups), BorderLayout.CENTER);
 
     // the buttons
-    m_ButtonAdd = new JButton("Add...");
+    m_ButtonAdd = new BaseButton("Add...");
     m_ButtonAdd.setMnemonic('A');
     m_ButtonAdd.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	addSetup();
       }
     });
-    m_ButtonEdit = new JButton("Edit...");
+    m_ButtonEdit = new BaseButton("Edit...");
     m_ButtonEdit.setMnemonic('E');
     m_TableSetups.setDoubleClickButton(m_ButtonEdit);
     m_ButtonEdit.addActionListener(new ActionListener() {
@@ -272,56 +272,56 @@ public class FlowControlCenterPanel
 	editSetup();
       }
     });
-    m_ButtonEditFlow = new JButton("Edit flow...");
+    m_ButtonEditFlow = new BaseButton("Edit flow...");
     m_ButtonEditFlow.setMnemonic('f');
     m_ButtonEditFlow.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	editFlow();
       }
     });
-    m_ButtonStart = new JButton("Start");
+    m_ButtonStart = new BaseButton("Start");
     m_ButtonStart.setMnemonic('S');
     m_ButtonStart.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	startSetups();
       }
     });
-    m_ButtonPauseAndResume = new JButton("Pause");
+    m_ButtonPauseAndResume = new BaseButton("Pause");
     m_ButtonPauseAndResume.setMnemonic('u');
     m_ButtonPauseAndResume.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	pauseAndResumeSetups();
       }
     });
-    m_ButtonStop = new JButton("Stop");
+    m_ButtonStop = new BaseButton("Stop");
     m_ButtonStop.setMnemonic('p');
     m_ButtonStop.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	stopSetups();
       }
     });
-    m_ButtonMoveUp = new JButton("Move up");
+    m_ButtonMoveUp = new BaseButton("Move up");
     m_ButtonMoveUp.setMnemonic('u');
     m_ButtonMoveUp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	moveRows(true);
       }
     });
-    m_ButtonMoveDown = new JButton("Move down");
+    m_ButtonMoveDown = new BaseButton("Move down");
     m_ButtonMoveDown.setMnemonic('d');
     m_ButtonMoveDown.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	moveRows(false);
       }
     });
-    m_ButtonRemove = new JButton("Remove");
+    m_ButtonRemove = new BaseButton("Remove");
     m_ButtonRemove.setMnemonic('R');
     m_ButtonRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	removeSetups();
       }
     });
-    m_ButtonRemoveAll = new JButton("Remove all");
+    m_ButtonRemoveAll = new BaseButton("Remove all");
     m_ButtonRemoveAll.setMnemonic('m');
     m_ButtonRemoveAll.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

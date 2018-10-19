@@ -20,15 +20,19 @@
 
 package adams.gui.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashSet;
-import java.util.List;
+import adams.core.ClassLister;
+import adams.core.Constants;
+import adams.core.StatusMessageHandler;
+import adams.core.logging.LoggingLevel;
+import adams.db.AbstractDatabaseConnection;
+import adams.db.ConnectionParameters;
+import adams.db.DatabaseConnectionProvider;
+import adams.gui.core.BaseButton;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.ParameterPanel;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -38,17 +42,12 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import adams.core.ClassLister;
-import adams.core.Constants;
-import adams.core.StatusMessageHandler;
-import adams.core.logging.LoggingLevel;
-import adams.db.AbstractDatabaseConnection;
-import adams.db.ConnectionParameters;
-import adams.db.DatabaseConnectionProvider;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.ParameterPanel;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.List;
 
 
 /**
@@ -93,10 +92,10 @@ public abstract class AbstractDatabaseConnectionPanel
   protected JCheckBox m_CheckBoxAutoCommit;
 
   /** the button for making a connection the default one. */
-  protected JButton m_ButtonMakeDefault;
+  protected BaseButton m_ButtonMakeDefault;
 
   /** the button connecting/disconnecting the database. */
-  protected JButton m_ButtonConnect;
+  protected BaseButton m_ButtonConnect;
 
   /** the label for status messages. */
   protected JLabel m_LabelStatus;
@@ -195,7 +194,7 @@ public abstract class AbstractDatabaseConnectionPanel
     // buttons
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-    m_ButtonMakeDefault = new JButton("Make default");
+    m_ButtonMakeDefault = new BaseButton("Make default");
     panel.add(m_ButtonMakeDefault);
     m_ButtonMakeDefault.setMnemonic('m');
     m_ButtonMakeDefault.addActionListener(new ActionListener() {
@@ -207,7 +206,7 @@ public abstract class AbstractDatabaseConnectionPanel
       }
     });
 
-    m_ButtonConnect = new JButton("Connect");
+    m_ButtonConnect = new BaseButton("Connect");
     panel.add(m_ButtonConnect);
     m_ButtonConnect.setMnemonic('C');
     m_ButtonConnect.addActionListener(new ActionListener() {

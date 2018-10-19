@@ -23,12 +23,12 @@ import adams.core.net.EmailAddress;
 import adams.core.net.EmailAddressBook;
 import adams.core.net.EmailContact;
 import adams.core.option.OptionUtils;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchParameters;
 import adams.gui.tools.EmailAddressBookPanel;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
@@ -270,7 +270,7 @@ public class SelectEmailAddressPanel
   protected JTextField m_TextManualAddresses;
 
   /** the button for bringing up the addressbook. */
-  protected JButton m_ButtonAddressBook;
+  protected BaseButton m_ButtonAddressBook;
   
   /**
    * Initializes the GUI elements.
@@ -290,7 +290,7 @@ public class SelectEmailAddressPanel
     m_LabelManualAddresses = new JLabel();
     m_LabelManualAddresses.setLabelFor(m_LabelManualAddresses);
 
-    m_ButtonAddressBook = new JButton("Addressbook");
+    m_ButtonAddressBook = new BaseButton("Addressbook");
     m_ButtonAddressBook.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

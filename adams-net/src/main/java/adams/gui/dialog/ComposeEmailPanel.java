@@ -25,6 +25,7 @@ import adams.core.net.AbstractSendEmail;
 import adams.core.net.Email;
 import adams.core.net.EmailAddress;
 import adams.core.net.EmailHelper;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -34,7 +35,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericArrayEditorPanel;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -82,7 +82,7 @@ public class ComposeEmailPanel
   protected BaseTextArea m_TextSignature;
 
   /** the button for sending. */
-  protected JButton m_ButtonSend;
+  protected BaseButton m_ButtonSend;
 
   /** the tabbed pane for recipients and attachments. */
   protected BaseTabbedPane m_TabbedPane;
@@ -175,7 +175,7 @@ public class ComposeEmailPanel
     panel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(panel2, BorderLayout.SOUTH);
 
-    m_ButtonSend = new JButton("Send");
+    m_ButtonSend = new BaseButton("Send");
     m_ButtonSend.setMnemonic('S');
     m_ButtonSend.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

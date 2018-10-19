@@ -24,6 +24,7 @@ import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
@@ -32,7 +33,6 @@ import adams.gui.goe.popupmenu.CustomizerComparator;
 import adams.gui.goe.popupmenu.GenericObjectEditorPopupMenuCustomizer;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -170,13 +170,13 @@ public class GenericObjectEditorPopupMenu
       dlg.getContentPane().add(textpanel, BorderLayout.CENTER);
 
       // buttons
-      JButton buttonOK = new JButton("OK");
+      BaseButton buttonOK = new BaseButton("OK");
       buttonOK.setMnemonic('O');
       buttonOK.addActionListener((ActionEvent ae) -> {
 	dlg.setVisible(false);
 	updateEditor(editor, comp, canChangeClass, customStringRepresentation, textpanel.getContent());
       });
-      JButton buttonCancel = new JButton("Cancel");
+      BaseButton buttonCancel = new BaseButton("Cancel");
       buttonCancel.setMnemonic('C');
       buttonCancel.addActionListener((ActionEvent ae) -> dlg.setVisible(false));
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

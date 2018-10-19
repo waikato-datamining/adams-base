@@ -25,6 +25,7 @@ import adams.data.sequence.XYSequence;
 import adams.db.SequenceProvider;
 import adams.env.Environment;
 import adams.env.SequenceViewerDefinition;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -34,7 +35,6 @@ import adams.gui.scripting.SyntaxDocument;
 import adams.gui.visualization.sequence.XYSequencePanel;
 import adams.gui.visualization.sequence.XYSequenceTable;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
@@ -70,7 +70,7 @@ public abstract class AbstractSequenceViewerPanel
   protected JComboBox m_ComboboxTemplates;
 
   /** the button for executing the SQL. */
-  protected JButton m_ButtonExecute;
+  protected BaseButton m_ButtonExecute;
 
   /** the panel for the results. */
   protected JPanel m_PanelResults;
@@ -111,7 +111,7 @@ public abstract class AbstractSequenceViewerPanel
     });
     panel.add(m_ComboboxTemplates);
 
-    m_ButtonExecute = new JButton("Execute");
+    m_ButtonExecute = new BaseButton("Execute");
     m_ButtonExecute.setMnemonic('E');
     m_ButtonExecute.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

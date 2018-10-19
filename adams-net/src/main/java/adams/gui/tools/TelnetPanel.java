@@ -22,6 +22,7 @@ package adams.gui.tools;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.ConsolePanel;
@@ -33,7 +34,6 @@ import org.apache.commons.net.telnet.SuppressGAOptionHandler;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -80,22 +80,22 @@ public class TelnetPanel
   protected JSpinner m_SpinnerPort;
 
   /** for connecting/disconnecting. */
-  protected JButton m_ButtonConnection;
+  protected BaseButton m_ButtonConnection;
   
   /** text area for the output. */
   protected BaseTextAreaWithButtons m_TextOutput;
   
   /** the button for clearing the output. */
-  protected JButton m_ButtonClear;
+  protected BaseButton m_ButtonClear;
   
   /** the button for copying the selected output. */
-  protected JButton m_ButtonCopy;
+  protected BaseButton m_ButtonCopy;
   
   /** the text field for the command to issue. */
   protected JTextField m_TextCommand;
   
   /** the button for executing the command. */
-  protected JButton m_ButtonCommand;
+  protected BaseButton m_ButtonCommand;
   
   /** the telnet client. */
   protected TelnetClient m_Client;
@@ -171,7 +171,7 @@ public class TelnetPanel
     topPanel.add(label);
     topPanel.add(m_SpinnerPort);
     
-    m_ButtonConnection = new JButton();
+    m_ButtonConnection = new BaseButton();
     m_ButtonConnection.setMnemonic('n');
     m_ButtonConnection.addActionListener(new ActionListener() {
       @Override
@@ -182,7 +182,7 @@ public class TelnetPanel
     topPanel.add(m_ButtonConnection);
     
     // output
-    m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
     m_ButtonClear.setMnemonic('l');
     m_ButtonClear.addActionListener(new ActionListener() {
       @Override
@@ -190,7 +190,7 @@ public class TelnetPanel
 	m_TextOutput.setText("");
       }
     });
-    m_ButtonCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.setMnemonic('C');
     m_ButtonCopy.addActionListener(new ActionListener() {
       @Override
@@ -244,7 +244,7 @@ public class TelnetPanel
     bottomPanel.add(label);
     bottomPanel.add(m_TextCommand);
     
-    m_ButtonCommand = new JButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonCommand = new BaseButton(GUIHelper.getIcon("run.gif"));
     m_ButtonCommand.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

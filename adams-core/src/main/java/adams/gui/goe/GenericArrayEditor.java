@@ -28,6 +28,7 @@ import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.gui.action.AbstractBaseAction;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
@@ -39,7 +40,6 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -226,34 +226,34 @@ public class GenericArrayEditor
   protected boolean m_CanSort;
 
   /** Click this to delete the selected array values. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** Click this to delete all the array values. */
-  protected JButton m_ButtonRemoveAll;
+  protected BaseButton m_ButtonRemoveAll;
 
   /** Click this to edit the selected array value. */
-  protected JButton m_ButtonEdit;
+  protected BaseButton m_ButtonEdit;
 
   /** Click this to move the selected array value(s) one up. */
-  protected JButton m_ButtonUp;
+  protected BaseButton m_ButtonUp;
 
   /** Click this to move the selected array value(s) one down. */
-  protected JButton m_ButtonDown;
+  protected BaseButton m_ButtonDown;
 
   /** Click to add the current object configuration to the array. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** Click to add multiple objects to the array. */
-  protected JButton m_ButtonAddMultiple;
+  protected BaseButton m_ButtonAddMultiple;
 
   /** Click to copy the currently selected object in array into the edit field. */
-  protected JButton m_ButtonCopy;
+  protected BaseButton m_ButtonCopy;
 
   /** Click to OK the dialog. */
-  protected JButton m_ButtonOK;
+  protected BaseButton m_ButtonOK;
 
   /** Click to cancel the dialog. */
-  protected JButton m_ButtonCancel;
+  protected BaseButton m_ButtonCancel;
 
   /** More actions. */
   protected BaseButtonWithDropDownMenu m_ButtonActions;
@@ -327,31 +327,31 @@ public class GenericArrayEditor
     setLayout(new BorderLayout());
     add(m_Label, BorderLayout.CENTER);
 
-    m_ButtonAdd = new JButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
     m_ButtonAdd.setToolTipText("Add the current item to the array");
     m_ButtonAdd.addActionListener((ActionEvent e) -> addObject(m_ElementEditor.getValue()));
 
-    m_ButtonAddMultiple = new JButton(GUIHelper.getIcon("add_multiple.gif"));
+    m_ButtonAddMultiple = new BaseButton(GUIHelper.getIcon("add_multiple.gif"));
     m_ButtonAddMultiple.setToolTipText("Add multiple items to the array");
     m_ButtonAddMultiple.addActionListener((ActionEvent e) -> addMultipleObjects());
 
-    m_ButtonCopy = new JButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.setToolTipText("Copies the currently selected array item to the edit field");
     m_ButtonCopy.addActionListener((ActionEvent e) -> m_ElementEditor.setValue(ObjectCopyHelper.copyObject(m_ElementList.getSelectedValue())));
 
-    m_ButtonRemove = new JButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Remove the selected array item(s)");
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeSelectedObjects());
 
-    m_ButtonRemoveAll = new JButton(GUIHelper.getIcon("delete_all.gif"));
+    m_ButtonRemoveAll = new BaseButton(GUIHelper.getIcon("delete_all.gif"));
     m_ButtonRemoveAll.setToolTipText("Remove all the array items");
     m_ButtonRemoveAll.addActionListener((ActionEvent e) -> removeAllObjects());
 
-    m_ButtonEdit = new JButton(GUIHelper.getIcon("properties.gif"));
+    m_ButtonEdit = new BaseButton(GUIHelper.getIcon("properties.gif"));
     m_ButtonEdit.setToolTipText("Edit the selected array item");
     m_ButtonEdit.addActionListener((ActionEvent e) -> editSelectedObject());
 
-    m_ButtonUp = new JButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp = new BaseButton(GUIHelper.getIcon("arrow_up.gif"));
     m_ButtonUp.setToolTipText("Move the selected item(s) one up");
     m_ButtonUp.addActionListener((ActionEvent e) -> {
       m_ElementList.moveUp();
@@ -359,7 +359,7 @@ public class GenericArrayEditor
       updateButtons();
     });
 
-    m_ButtonDown = new JButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown = new BaseButton(GUIHelper.getIcon("arrow_down.gif"));
     m_ButtonDown.setToolTipText("Move the selected item(s) one down");
     m_ButtonDown.addActionListener((ActionEvent e) -> {
       m_ElementList.moveDown();
@@ -367,7 +367,7 @@ public class GenericArrayEditor
       updateButtons();
     });
 
-    m_ButtonOK = new JButton("OK");
+    m_ButtonOK = new BaseButton("OK");
     m_ButtonOK.setMnemonic('O');
     m_ButtonOK.setToolTipText("Applies the changes and closes the dialog");
     m_ButtonOK.setEnabled(false);
@@ -377,7 +377,7 @@ public class GenericArrayEditor
       close();
     });
 
-    m_ButtonCancel = new JButton("Cancel");
+    m_ButtonCancel = new BaseButton("Cancel");
     m_ButtonCancel.setMnemonic('C');
     m_ButtonCancel.setToolTipText("Cancels the dialog");
     m_ButtonCancel.addActionListener((ActionEvent e) -> {

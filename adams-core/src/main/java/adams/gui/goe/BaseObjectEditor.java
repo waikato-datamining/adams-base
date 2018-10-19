@@ -26,6 +26,7 @@ import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.BrowserHelper;
@@ -33,7 +34,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -69,7 +69,7 @@ public class BaseObjectEditor
   protected JTextComponent m_TextValue;
 
   /** the help button for bringing up a browser with the Java Pattern class. */
-  protected JButton m_ButtonHelp;
+  protected BaseButton m_ButtonHelp;
 
   /**
    * Returns the BaseObject as string.
@@ -246,8 +246,8 @@ public class BaseObjectEditor
     JPanel		panel;
     JLabel		label;
     JPanel 		panelButtons;
-    JButton 		buttonOK;
-    JButton 		buttonClose;
+    BaseButton 		buttonOK;
+    BaseButton 		buttonClose;
 
     m_TextValue = new BaseTextArea(2, 30);
     ((BaseTextArea) m_TextValue).setLineWrap(true);
@@ -285,7 +285,7 @@ public class BaseObjectEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
 
-    m_ButtonHelp = new JButton();
+    m_ButtonHelp = new BaseButton();
     m_ButtonHelp.setVisible(false);
     m_ButtonHelp.setToolTipText(getHelpDescription());
     m_ButtonHelp.addActionListener((ActionEvent e) -> BrowserHelper.openURL(getHelpURL()));
@@ -293,12 +293,12 @@ public class BaseObjectEditor
     panelAll.add(panel, BorderLayout.EAST);
     panel.add(m_ButtonHelp);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener((ActionEvent e) -> acceptInput());
     panelButtons.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener((ActionEvent e) -> discardInput());
     panelButtons.add(buttonClose);

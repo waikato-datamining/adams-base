@@ -24,6 +24,7 @@ package adams.gui.goe;
 import adams.core.Utils;
 import adams.core.option.AbstractOption;
 import adams.flow.core.CallableActorReference;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.MouseUtils;
@@ -32,7 +33,6 @@ import adams.gui.goe.actorpathtree.ActorPathNode;
 import adams.gui.goe.callableactorstree.CallableActorsTree;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -219,8 +219,8 @@ public class CallableActorReferenceEditor
     JPanel	panel;
     JLabel	label;
     JPanel 	panelButtons;
-    JButton 	buttonOK;
-    JButton 	buttonClose;
+    BaseButton 	buttonOK;
+    BaseButton 	buttonClose;
 
     panelTree = new JPanel(new BorderLayout(0, 5));
     panelTree.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
@@ -279,7 +279,7 @@ public class CallableActorReferenceEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -288,7 +288,7 @@ public class CallableActorReferenceEditor
     });
     panelButtons.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

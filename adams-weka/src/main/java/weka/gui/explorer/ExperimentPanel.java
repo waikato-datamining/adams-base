@@ -23,6 +23,7 @@ package weka.gui.explorer;
 
 import adams.core.io.TempUtils;
 import adams.core.option.OptionUtils;
+import adams.gui.core.BaseButton;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import weka.classifiers.Classifier;
@@ -62,7 +63,6 @@ import weka.gui.explorer.Explorer.LogHandler;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -157,10 +157,10 @@ public class ExperimentPanel
   protected JComboBox m_ClassCombo = new JComboBox();
   
   /** Click to start running the experiment. */
-  protected JButton m_StartBut = new JButton("Start");
+  protected BaseButton m_StartBut = new BaseButton("Start");
 
   /** Click to stop a running experiment. */
-  protected JButton m_StopBut = new JButton("Stop");
+  protected BaseButton m_StopBut = new BaseButton("Stop");
 
   /** Stop the class combo from taking up to much space. */
   private Dimension COMBO_SIZE = new Dimension(100, m_StartBut.getPreferredSize().height);

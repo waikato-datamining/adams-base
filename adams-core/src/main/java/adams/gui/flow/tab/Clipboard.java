@@ -8,6 +8,7 @@ package adams.gui.flow.tab;
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
 import adams.flow.core.Actor;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseList;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -16,7 +17,6 @@ import adams.gui.flow.FlowPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -125,16 +125,16 @@ public class Clipboard
   protected FlowPanel m_PanelPreview;
   
   /** the button for clearing the clipboard. */
-  protected JButton m_ButtonClear;
+  protected BaseButton m_ButtonClear;
   
   /** the button for adding the actor to the clipboard. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
   
   /** the button for removing the selected items from the clipboard. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
   
   /** the button for copying the actor to the clipboard. */
-  protected JButton m_ButtonCopy;
+  protected BaseButton m_ButtonCopy;
   
   /** the panel for the buttons. */
   protected JPanel m_PanelButtons;
@@ -182,7 +182,7 @@ public class Clipboard
     m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(m_PanelButtons, BorderLayout.SOUTH);
     
-    m_ButtonClear = new JButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton(GUIHelper.getIcon("new.gif"));
     m_ButtonClear.setToolTipText("Remove all entries");
     m_ButtonClear.addActionListener(new ActionListener() {
       @Override
@@ -192,7 +192,7 @@ public class Clipboard
     });
     m_PanelButtons.add(m_ButtonClear);
     
-    m_ButtonAdd = new JButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
     m_ButtonAdd.setToolTipText("Add currently selected actor to clipboard");
     m_ButtonAdd.addActionListener(new ActionListener() {
       @Override
@@ -206,7 +206,7 @@ public class Clipboard
     });
     m_PanelButtons.add(m_ButtonAdd);
     
-    m_ButtonRemove = new JButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Remove selected entries");
     m_ButtonRemove.addActionListener(new ActionListener() {
       @Override
@@ -219,7 +219,7 @@ public class Clipboard
     });
     m_PanelButtons.add(m_ButtonRemove);
     
-    m_ButtonCopy = new JButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.setToolTipText("Copy actor to system clipboard");
     m_ButtonCopy.addActionListener(new ActionListener() {
       @Override

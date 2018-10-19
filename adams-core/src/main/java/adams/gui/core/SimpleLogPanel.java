@@ -25,7 +25,6 @@ import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -46,13 +45,13 @@ public class SimpleLogPanel
   protected BaseTextAreaWithButtons m_TextLog;
 
   /** the button for emptying the log. */
-  protected JButton m_ButtonClear;
+  protected BaseButton m_ButtonClear;
 
   /** the button for copying the text. */
-  protected JButton m_ButtonCopy;
+  protected BaseButton m_ButtonCopy;
 
   /** the button for saving the text. */
-  protected JButton m_ButtonSave;
+  protected BaseButton m_ButtonSave;
 
   /** the checkbox for linewrap. */
   protected JCheckBox m_CheckBoxLineWrap;
@@ -86,15 +85,15 @@ public class SimpleLogPanel
     m_TextLog.setWrapStyleWord(true);
     add(m_TextLog, BorderLayout.CENTER);
 
-    m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
     m_ButtonClear.addActionListener((ActionEvent e) -> clear());
     m_TextLog.addToButtonsPanel(m_ButtonClear);
 
-    m_ButtonCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener((ActionEvent e) -> copy());
     m_TextLog.addToButtonsPanel(m_ButtonCopy);
 
-    m_ButtonSave = new JButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
     m_ButtonSave.addActionListener((ActionEvent e) -> saveAs());
     m_TextLog.addToButtonsPanel(m_ButtonSave);
 

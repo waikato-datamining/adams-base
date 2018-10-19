@@ -20,16 +20,15 @@
 
 package adams.gui.dialog;
 
+import adams.gui.core.BaseButton;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.JOptionPane;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-
-import adams.gui.core.GUIHelper;
 
 /**
  * Ancestor for dialogs that offer approval/disapproval buttons, e.g.,
@@ -56,13 +55,13 @@ public class ApprovalDialog
   public final static int CANCEL_OPTION = JOptionPane.CANCEL_OPTION;
 
   /** the Approve button. */
-  protected JButton m_ButtonApprove;
+  protected BaseButton m_ButtonApprove;
 
   /** the Discard button. */
-  protected JButton m_ButtonDiscard;
+  protected BaseButton m_ButtonDiscard;
 
   /** the Cancel button. */
-  protected JButton m_ButtonCancel;
+  protected BaseButton m_ButtonCancel;
 
   /** the option selected by the user (CANCEL_OPTION, APPROVE_OPTION). */
   protected int m_Option;
@@ -170,7 +169,7 @@ public class ApprovalDialog
   protected void initGUI() {
     super.initGUI();
 
-    m_ButtonApprove = new JButton();
+    m_ButtonApprove = new BaseButton();
     setApproveCaption("OK");
     setApproveMnemonic(KeyEvent.VK_O);
     m_ButtonApprove.addActionListener(new ActionListener() {
@@ -187,7 +186,7 @@ public class ApprovalDialog
     });
     m_PanelButtonsRight.add(m_ButtonApprove);
 
-    m_ButtonDiscard = new JButton();
+    m_ButtonDiscard = new BaseButton();
     setDiscardCaption("Discard");
     setDiscardMnemonic(KeyEvent.VK_D);
     m_ButtonDiscard.setVisible(false);
@@ -199,7 +198,7 @@ public class ApprovalDialog
     });
     m_PanelButtonsRight.add(m_ButtonDiscard);
 
-    m_ButtonCancel = new JButton();
+    m_ButtonCancel = new BaseButton();
     setCancelCaption("Cancel");
     setCancelMnemonic(KeyEvent.VK_C);
     m_ButtonCancel.addActionListener(new ActionListener() {
@@ -249,7 +248,7 @@ public class ApprovalDialog
    * 
    * @return		the button
    */
-  public JButton getApproveButton() {
+  public BaseButton getApproveButton() {
     return m_ButtonApprove;
   }
 
@@ -312,7 +311,7 @@ public class ApprovalDialog
    * 
    * @return		the button
    */
-  public JButton getDiscardButton() {
+  public BaseButton getDiscardButton() {
     return m_ButtonDiscard;
   }
 
@@ -375,7 +374,7 @@ public class ApprovalDialog
    * 
    * @return		the button
    */
-  public JButton getCancelButton() {
+  public BaseButton getCancelButton() {
     return m_ButtonCancel;
   }
   

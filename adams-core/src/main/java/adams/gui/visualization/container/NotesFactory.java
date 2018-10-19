@@ -27,12 +27,12 @@ import adams.data.id.DatabaseIDHandler;
 import adams.data.report.ReportHandler;
 import adams.env.Environment;
 import adams.env.ScriptingDialogDefinition;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.scripting.SyntaxDocument;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.text.Document;
@@ -363,7 +363,7 @@ public class NotesFactory {
     @Override
     protected void initGUI() {
       JPanel	panel;
-      JButton	buttonOK;
+      BaseButton	buttonOK;
 
       super.initGUI();
 
@@ -378,7 +378,7 @@ public class NotesFactory {
       panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       getContentPane().add(panel, BorderLayout.SOUTH);
 
-      buttonOK = new JButton("OK");
+      buttonOK = new BaseButton("OK");
       buttonOK.setMnemonic('O');
       buttonOK.addActionListener((ActionEvent e) -> m_Self.setVisible(false));
       panel.add(buttonOK);

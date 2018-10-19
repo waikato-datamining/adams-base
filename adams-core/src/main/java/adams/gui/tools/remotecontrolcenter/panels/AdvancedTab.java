@@ -22,6 +22,7 @@ package adams.gui.tools.remotecontrolcenter.panels;
 
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.AbstractChooserPanel.ChooseListener;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -38,7 +39,6 @@ import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.responsehandler.AbstractResponseHandler;
 import adams.scripting.responsehandler.SimpleLogPanelResponseHandler;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -170,7 +170,7 @@ public class AdvancedTab
   protected GenericObjectEditorPanel m_GOECommandProcessor;
 
   /** the button for sending the command. */
-  protected JButton m_ButtonSend;
+  protected BaseButton m_ButtonSend;
 
   /** the tabbed pane for log/results. */
   protected BaseTabbedPane m_TabbedPane;
@@ -233,7 +233,7 @@ public class AdvancedTab
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(panelButtons, BorderLayout.SOUTH);
-    m_ButtonSend = new JButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonSend = new BaseButton(GUIHelper.getIcon("run.gif"));
     m_ButtonSend.addActionListener((ActionEvent e) -> sendCommand());
     panelButtons.add(m_ButtonSend);
 

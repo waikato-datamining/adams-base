@@ -22,13 +22,13 @@ package adams.gui.visualization.container;
 import adams.data.container.DataContainer;
 import adams.data.filter.Filter;
 import adams.data.filter.PassThrough;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.event.FilterEvent;
 import adams.gui.event.FilterListener;
 import adams.gui.goe.GenericObjectEditorPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -61,10 +61,10 @@ public class FilterDialog<T extends DataContainer>
   protected GenericObjectEditorPanel m_PanelFilter;
 
   /** the OK button. */
-  protected JButton m_ButtonOK;
+  protected BaseButton m_ButtonOK;
 
   /** the Cancel button. */
-  protected JButton m_ButtonCancel;
+  protected BaseButton m_ButtonCancel;
 
   /** the checkbox for whether the filtered data is to be overlayed over the
    * original data. */
@@ -125,7 +125,7 @@ public class FilterDialog<T extends DataContainer>
     m_CheckboxOverlay = new JCheckBox("Overlay original data");
     m_CheckboxOverlay.setMnemonic('d');
 
-    m_ButtonOK = new JButton("OK");
+    m_ButtonOK = new BaseButton("OK");
     m_ButtonOK.setMnemonic('O');
     m_ButtonOK.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -139,7 +139,7 @@ public class FilterDialog<T extends DataContainer>
 	}
     });
 
-    m_ButtonCancel = new JButton("Cancel");
+    m_ButtonCancel = new BaseButton("Cancel");
     m_ButtonCancel.setMnemonic('C');
     m_ButtonCancel.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {

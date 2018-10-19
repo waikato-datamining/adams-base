@@ -20,6 +20,7 @@
 package adams.gui.tools;
 
 import adams.core.ClassLister;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
@@ -31,7 +32,6 @@ import adams.gui.goe.GenericObjectEditorDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -323,31 +323,31 @@ public class FavoritesManagementPanel
   protected BaseListWithButtons m_PanelSuperclasses;
 
   /** the button for adding a superclass. */
-  protected JButton m_ButtonSuperclassAdd;
+  protected BaseButton m_ButtonSuperclassAdd;
 
   /** the button for removing a superclass. */
-  protected JButton m_ButtonSuperclassRemove;
+  protected BaseButton m_ButtonSuperclassRemove;
 
   /** the button for removing all superclasses. */
-  protected JButton m_ButtonSuperclassRemoveAll;
+  protected BaseButton m_ButtonSuperclassRemoveAll;
 
   /** the panel for the favorites. */
   protected BaseListWithButtons m_PanelFavorites;
 
   /** the button for adding a favorite. */
-  protected JButton m_ButtonFavoriteAdd;
+  protected BaseButton m_ButtonFavoriteAdd;
 
   /** the button for editing a favorite. */
-  protected JButton m_ButtonFavoriteEdit;
+  protected BaseButton m_ButtonFavoriteEdit;
 
   /** the button for renaming a favorite. */
-  protected JButton m_ButtonFavoriteRename;
+  protected BaseButton m_ButtonFavoriteRename;
 
   /** the button for removing a favorite. */
-  protected JButton m_ButtonFavoriteRemove;
+  protected BaseButton m_ButtonFavoriteRemove;
 
   /** the button for removing all favorites. */
-  protected JButton m_ButtonFavoriteRemoveAll;
+  protected BaseButton m_ButtonFavoriteRemoveAll;
 
   /** the list model for the superclasses. */
   protected SuperclassListModel m_ListModelSuperclass;
@@ -392,14 +392,14 @@ public class FavoritesManagementPanel
     });
     add(m_PanelSuperclasses);
 
-    m_ButtonSuperclassAdd = new JButton("Add...");
+    m_ButtonSuperclassAdd = new BaseButton("Add...");
     m_ButtonSuperclassAdd.addActionListener((ActionEvent e) -> {
       addSuperclass();
       update();
     });
     m_PanelSuperclasses.addToButtonsPanel(m_ButtonSuperclassAdd);
 
-    m_ButtonSuperclassRemove = new JButton("Remove");
+    m_ButtonSuperclassRemove = new BaseButton("Remove");
     m_ButtonSuperclassRemove.addActionListener((ActionEvent e) -> {
       Object[] classes = m_PanelSuperclasses.getSelectedValues();
       for (int i = 0; i < classes.length; i++)
@@ -410,7 +410,7 @@ public class FavoritesManagementPanel
     });
     m_PanelSuperclasses.addToButtonsPanel(m_ButtonSuperclassRemove);
 
-    m_ButtonSuperclassRemoveAll = new JButton("Remove all");
+    m_ButtonSuperclassRemoveAll = new BaseButton("Remove all");
     m_ButtonSuperclassRemoveAll.addActionListener((ActionEvent e) -> {
       m_Favorites.clear();
       m_ListModelFavorites.setSuperclass((Class) null);
@@ -426,14 +426,14 @@ public class FavoritesManagementPanel
     m_PanelFavorites.addListSelectionListener((ListSelectionEvent e) -> update());
     add(m_PanelFavorites);
 
-    m_ButtonFavoriteAdd = new JButton("Add...");
+    m_ButtonFavoriteAdd = new BaseButton("Add...");
     m_ButtonFavoriteAdd.addActionListener((ActionEvent e) -> {
       addFavorite(m_ListModelFavorites.getSuperclass());
       update();
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteAdd);
 
-    m_ButtonFavoriteEdit = new JButton("Edit...");
+    m_ButtonFavoriteEdit = new BaseButton("Edit...");
     m_ButtonFavoriteEdit.addActionListener((ActionEvent e) -> {
       editFavorite(m_ListModelFavorites.getSuperclass(), (String) m_PanelFavorites.getSelectedValue());
       update();
@@ -441,14 +441,14 @@ public class FavoritesManagementPanel
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteEdit);
     m_PanelFavorites.setDoubleClickButton(m_ButtonFavoriteEdit);
 
-    m_ButtonFavoriteRename = new JButton("Rename...");
+    m_ButtonFavoriteRename = new BaseButton("Rename...");
     m_ButtonFavoriteRename.addActionListener((ActionEvent e) -> {
       renameFavorite(m_ListModelFavorites.getSuperclass(), (String) m_PanelFavorites.getSelectedValue());
       update();
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteRename);
 
-    m_ButtonFavoriteRemove = new JButton("Remove");
+    m_ButtonFavoriteRemove = new BaseButton("Remove");
     m_ButtonFavoriteRemove.addActionListener((ActionEvent e) -> {
       if (m_ListModelFavorites.getSuperclass() == null)
 	return;
@@ -461,7 +461,7 @@ public class FavoritesManagementPanel
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteRemove);
 
-    m_ButtonFavoriteRemoveAll = new JButton("Remove all");
+    m_ButtonFavoriteRemoveAll = new BaseButton("Remove all");
     m_ButtonFavoriteRemoveAll.addActionListener((ActionEvent e) -> {
       if (m_ListModelFavorites.getSuperclass() == null)
 	return;
@@ -501,8 +501,8 @@ public class FavoritesManagementPanel
     BaseDialog			dialog;
     BasePanel			panel;
     BasePanel			panelBox;
-    JButton			buttonOK;
-    JButton			buttonCancel;
+    BaseButton			buttonOK;
+    BaseButton			buttonCancel;
     JLabel			label;
     String[] 			superclasses;
     final JComboBox<String> 	combobox;
@@ -530,7 +530,7 @@ public class FavoritesManagementPanel
     final BaseDialog dialogF = dialog;
     panel = new BasePanel(new FlowLayout(FlowLayout.RIGHT));
     dialog.getContentPane().add(panel, BorderLayout.SOUTH);
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener((ActionEvent e) -> {
       try {
@@ -548,7 +548,7 @@ public class FavoritesManagementPanel
       }
     });
     panel.add(buttonOK);
-    buttonCancel = new JButton("Cancel");
+    buttonCancel = new BaseButton("Cancel");
     buttonCancel.setMnemonic('C');
     buttonCancel.addActionListener((ActionEvent e) -> dialogF.setVisible(false));
     panel.add(buttonCancel);

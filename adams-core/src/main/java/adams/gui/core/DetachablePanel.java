@@ -22,7 +22,6 @@ package adams.gui.core;
 
 import adams.core.CleanUpHandler;
 
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -57,7 +56,7 @@ public abstract class DetachablePanel
   protected BasePanel m_PanelReattach;
 
   /** the button for reattaching. */
-  protected JButton m_ButtonReattach;
+  protected BaseButton m_ButtonReattach;
 
   /** the frame title to use. */
   protected String m_FrameTitle;
@@ -90,7 +89,7 @@ public abstract class DetachablePanel
     panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     m_PanelReattach.add(panel, BorderLayout.CENTER);
 
-    m_ButtonReattach = new JButton("Reattach");
+    m_ButtonReattach = new BaseButton("Reattach");
     m_ButtonReattach.addActionListener((ActionEvent e) -> reattach());
     panel.add(m_ButtonReattach);
   }

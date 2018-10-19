@@ -22,12 +22,12 @@ package adams.gui.tools.spreadsheetviewer.tab;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.flow.transformer.SpreadSheetQuery;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
 import adams.gui.dialog.TextDialog;
 import adams.gui.tools.spreadsheetviewer.MultiPagePane;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -53,10 +53,10 @@ public class Query
   protected SpreadSheetQueryEditorPanel m_PanelQuery;
   
   /** the help button. */
-  protected JButton m_ButtonHelp;
+  protected BaseButton m_ButtonHelp;
   
   /** the execute button. */
-  protected JButton m_ButtonExecute;
+  protected BaseButton m_ButtonExecute;
   
   /**
    * For initializing the GUI.
@@ -99,7 +99,7 @@ public class Query
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panel, BorderLayout.EAST);
 
-    m_ButtonHelp = new JButton("Help");
+    m_ButtonHelp = new BaseButton("Help");
     m_ButtonHelp.setMnemonic('H');
     m_ButtonHelp.addActionListener(new ActionListener() {
       @Override
@@ -109,7 +109,7 @@ public class Query
     });
     panel.add(m_ButtonHelp);
 
-    m_ButtonExecute = new JButton("Execute");
+    m_ButtonExecute = new BaseButton("Execute");
     m_ButtonExecute.setMnemonic('E');
     m_ButtonExecute.setEnabled(false);
     m_ButtonExecute.addActionListener(new ActionListener() {

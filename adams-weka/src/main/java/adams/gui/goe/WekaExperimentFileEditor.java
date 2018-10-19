@@ -26,6 +26,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOption;
 import adams.data.WekaExperimentFile;
 import adams.gui.chooser.FileChooserPanel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import weka.classifiers.Classifier;
@@ -35,7 +36,6 @@ import weka.experiment.Experiment;
 import weka.gui.experiment.SimpleSetupPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -81,10 +81,10 @@ public class WekaExperimentFileEditor
     protected Experiment m_Experiment;
 
     /** the OK button. */
-    protected JButton m_ButtonOK;
+    protected BaseButton m_ButtonOK;
 
     /** the Cancel button. */
-    protected JButton m_ButtonCancel;
+    protected BaseButton m_ButtonCancel;
 
     /**
      * Initializes the dialog.
@@ -132,7 +132,7 @@ public class WekaExperimentFileEditor
       panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       add(panel, BorderLayout.SOUTH);
 
-      m_ButtonOK = new JButton("OK");
+      m_ButtonOK = new BaseButton("OK");
       m_ButtonOK.setMnemonic('O');
       m_ButtonOK.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -142,7 +142,7 @@ public class WekaExperimentFileEditor
       });
       panel.add(m_ButtonOK);
 
-      m_ButtonCancel = new JButton("Cancel");
+      m_ButtonCancel = new BaseButton("Cancel");
       m_ButtonCancel.setMnemonic('C');
       m_ButtonCancel.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -170,9 +170,9 @@ public class WekaExperimentFileEditor
       caption = "Open...";
 
       for (i = 0; i < cont.getComponentCount(); i++) {
-	if (cont.getComponent(i) instanceof JButton) {
+	if (cont.getComponent(i) instanceof BaseButton) {
 	  // disable buttons
-	  if (((JButton) cont.getComponent(i)).getText().equals(caption)) {
+	  if (((BaseButton) cont.getComponent(i)).getText().equals(caption)) {
 	    cont.setVisible(false);
 	    result = true;
 	  }
@@ -217,13 +217,13 @@ public class WekaExperimentFileEditor
   protected BasePanel m_PanelEditor;
 
   /** the button to bring up the dialog for editing the experiment. */
-  protected JButton m_ButtonEdit;
+  protected BaseButton m_ButtonEdit;
 
   /** the OK button. */
-  protected JButton m_ButtonOK;
+  protected BaseButton m_ButtonOK;
 
   /** the Cancel button. */
-  protected JButton m_ButtonCancel;
+  protected BaseButton m_ButtonCancel;
 
   /**
    * Returns the file as string.
@@ -330,7 +330,7 @@ public class WekaExperimentFileEditor
     m_PanelEditor.add(panel);
 
     // edit
-    m_ButtonEdit = new JButton("Edit");
+    m_ButtonEdit = new BaseButton("Edit");
     m_ButtonEdit.setMnemonic('E');
     m_ButtonEdit.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -376,7 +376,7 @@ public class WekaExperimentFileEditor
     m_PanelEditor.add(panel);
 
     // buttons
-    m_ButtonOK = new JButton("OK");
+    m_ButtonOK = new BaseButton("OK");
     m_ButtonOK.setMnemonic('O');
     m_ButtonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -384,7 +384,7 @@ public class WekaExperimentFileEditor
 	m_PanelEditor.closeParent();
       }
     });
-    m_ButtonCancel = new JButton("Cancel");
+    m_ButtonCancel = new BaseButton("Cancel");
     m_ButtonCancel.setMnemonic('C');
     m_ButtonCancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

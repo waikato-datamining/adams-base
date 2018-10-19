@@ -24,6 +24,7 @@ import adams.core.CleanUpHandler;
 import adams.data.id.IDHandler;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.BaseTextPaneWithWordWrap;
@@ -37,7 +38,6 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.SearchEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -69,13 +69,13 @@ public abstract class AbstractManagementPanel<T extends Comparable>
   private static final long serialVersionUID = 3181901882660335578L;
 
   /** the button for clearing the input. */
-  protected JButton m_ButtonClear;
+  protected BaseButton m_ButtonClear;
 
   /** the button for adding an object. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the button for updating an object. */
-  protected JButton m_ButtonUpdate;
+  protected BaseButton m_ButtonUpdate;
 
   /** the table for displaying the objects. */
   protected SortableAndSearchableTableWithButtons m_TableValues;
@@ -84,13 +84,13 @@ public abstract class AbstractManagementPanel<T extends Comparable>
   protected AbstractManagementTableModel<T> m_ModelValues;
 
   /** the button for refreshing the table. */
-  protected JButton m_ButtonRefresh;
+  protected BaseButton m_ButtonRefresh;
 
   /** the button for deleting selected objects. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** the button for loading the selected object. */
-  protected JButton m_ButtonLoad;
+  protected BaseButton m_ButtonLoad;
 
   /** the panel with the values for adding/updating objects. */
   protected ParameterPanelWithButtons m_PanelValues;
@@ -122,14 +122,14 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     // buttons
 
     // buttons/clear
-    m_ButtonClear = new JButton("Clear");
+    m_ButtonClear = new BaseButton("Clear");
     m_ButtonClear.setMnemonic('C');
     m_ButtonClear.addActionListener((ActionEvent e) -> clear());
     m_PanelValues.addToButtonsPanel(m_ButtonClear);
 
     // buttons/add
     if (!isReadOnly()) {
-      m_ButtonAdd = new JButton("Add");
+      m_ButtonAdd = new BaseButton("Add");
       m_ButtonAdd.setMnemonic('A');
       m_ButtonAdd.addActionListener((ActionEvent e) -> addObject());
       m_PanelValues.addToButtonsPanel(m_ButtonAdd);
@@ -137,7 +137,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
     // buttons/update
     if (!isReadOnly()) {
-      m_ButtonUpdate = new JButton("Update");
+      m_ButtonUpdate = new BaseButton("Update");
       m_ButtonUpdate.setMnemonic('U');
       m_ButtonUpdate.addActionListener((ActionEvent e) -> updateObject());
       m_PanelValues.addToButtonsPanel(m_ButtonUpdate);
@@ -156,12 +156,12 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     m_TableValues.setShowSimpleCellPopupMenu(true);
     m_PanelTable.add(m_TableValues, BorderLayout.CENTER);
 
-    m_ButtonRefresh = new JButton("Refresh");
+    m_ButtonRefresh = new BaseButton("Refresh");
     m_ButtonRefresh.setMnemonic('R');
     m_ButtonRefresh.addActionListener((ActionEvent e) -> refresh());
     m_TableValues.addToButtonsPanel(m_ButtonRefresh);
 
-    m_ButtonLoad = new JButton("Load");
+    m_ButtonLoad = new BaseButton("Load");
     m_ButtonLoad.setMnemonic('L');
     m_ButtonLoad.addActionListener((ActionEvent e) -> loadValue());
     m_TableValues.addToButtonsPanel(m_ButtonLoad);
@@ -169,7 +169,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
     m_TableValues.addToButtonsPanel(new JLabel(" "));  // separator
 
-    m_ButtonRemove = new JButton("Remove");
+    m_ButtonRemove = new BaseButton("Remove");
     m_ButtonRemove.setMnemonic('m');
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeObjects());
     m_TableValues.addToButtonsPanel(m_ButtonRemove);

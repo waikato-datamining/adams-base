@@ -5,6 +5,16 @@
 
 package adams.gui.tools.spreadsheetviewer;
 
+import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.RowComparator;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.BaseButton;
+import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.event.SortSetupEvent;
+import adams.gui.event.SortSetupEvent.EventType;
+import adams.gui.event.SortSetupListener;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -13,17 +23,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import javax.swing.JButton;
-
-import adams.data.spreadsheet.Cell;
-import adams.data.spreadsheet.RowComparator;
-import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
-import adams.gui.event.SortSetupEvent;
-import adams.gui.event.SortSetupEvent.EventType;
-import adams.gui.event.SortSetupListener;
 
 /**
  * Panel that allows users to sort a spreadsheet over an arbitrary number
@@ -54,10 +53,10 @@ public class SortPanel
   protected BasePanel m_PanelButtons;
 
   /** the button for resetting the definitions. */
-  protected JButton m_ButtonReset;
+  protected BaseButton m_ButtonReset;
 
   /** the button for a new sort definition. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the column names. */
   protected List<String> m_ColumnNames;
@@ -93,7 +92,7 @@ public class SortPanel
     m_PanelButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     add(m_PanelButtons, BorderLayout.NORTH);
 
-    m_ButtonReset = new JButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonReset = new BaseButton(GUIHelper.getIcon("new.gif"));
     m_ButtonReset.setToolTipText("Click to reset the conditions");
     m_ButtonReset.addActionListener(new ActionListener() {
       @Override
@@ -103,7 +102,7 @@ public class SortPanel
     });
     m_PanelButtons.add(m_ButtonReset);
 
-    m_ButtonAdd = new JButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
     m_ButtonAdd.setToolTipText("Click to add a condition");
     m_ButtonAdd.addActionListener(new ActionListener() {
       @Override

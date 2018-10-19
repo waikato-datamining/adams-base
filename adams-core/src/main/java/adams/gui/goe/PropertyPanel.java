@@ -21,11 +21,11 @@
 
 package adams.gui.goe;
 
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.MouseUtils;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
@@ -79,7 +79,7 @@ public class PropertyPanel
   protected boolean m_HasCustomPanel;
 
   /** the button for bringing up the properties. */
-  protected JButton m_ButtonProperties;
+  protected BaseButton m_ButtonProperties;
 
   /** the panel itself. */
   protected PropertyPanel m_Self;
@@ -208,7 +208,7 @@ public class PropertyPanel
 
     m_Editor.addPropertyChangeListener((PropertyChangeEvent evt) -> repaint());
 
-    m_ButtonProperties = new JButton("...");
+    m_ButtonProperties = new BaseButton("...");
     m_ButtonProperties.setToolTipText("Click to edit properties");
     m_ButtonProperties.addActionListener((ActionEvent e) -> showPropertyDialog());
     add(m_ButtonProperties, BorderLayout.EAST);

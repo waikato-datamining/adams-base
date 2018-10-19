@@ -35,6 +35,7 @@ import adams.gui.chooser.AbstractReportFileChooser;
 import adams.gui.chooser.DefaultReportFileChooser;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
@@ -75,7 +76,6 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -1389,16 +1389,16 @@ public class ReportFactory {
     protected JTextField m_TextMaxValue;
 
     /** for Add button. */
-    protected JButton m_ButtonAdd;
+    protected BaseButton m_ButtonAdd;
 
     /** for Add button. */
-    protected JButton m_ButtonRemove;
+    protected BaseButton m_ButtonRemove;
 
     /** for OK button. */
-    protected JButton m_ButtonOK;
+    protected BaseButton m_ButtonOK;
 
     /** for Cancel button. */
-    protected JButton m_ButtonCancel;
+    protected BaseButton m_ButtonCancel;
 
     /** the selected compound. */
     protected Field m_SelectedCompound;
@@ -1490,7 +1490,7 @@ public class ReportFactory {
       panel.add(m_TextMaxValue);
 
       // the add button
-      m_ButtonAdd = new JButton("Add");
+      m_ButtonAdd = new BaseButton("Add");
       m_ButtonAdd.setMnemonic('A');
       m_ButtonAdd.addActionListener(e -> {
         if (m_ComboBoxCompounds.getSelectedIndex() == -1)
@@ -1531,7 +1531,7 @@ public class ReportFactory {
       getContentPane().add(panel, BorderLayout.CENTER);
 
       // the remove button
-      m_ButtonRemove = new JButton("Remove");
+      m_ButtonRemove = new BaseButton("Remove");
       m_ButtonRemove.setMnemonic('R');
       m_ButtonRemove.setEnabled(false);
       m_ButtonRemove.addActionListener(e -> {
@@ -1548,7 +1548,7 @@ public class ReportFactory {
       panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       getContentPane().add(panel, BorderLayout.SOUTH);
 
-      m_ButtonOK = new JButton("OK");
+      m_ButtonOK = new BaseButton("OK");
       m_ButtonOK.setMnemonic('O');
       m_ButtonOK.setEnabled(false);
       m_ButtonOK.addActionListener(e -> {
@@ -1559,7 +1559,7 @@ public class ReportFactory {
       });
       panel.add(m_ButtonOK);
 
-      m_ButtonCancel = new JButton("Cancel", GUIHelper.getIcon("exit.png"));
+      m_ButtonCancel = new BaseButton("Cancel", GUIHelper.getIcon("exit.png"));
       m_ButtonCancel.setMnemonic('a');
       m_ButtonCancel.addActionListener(e -> m_Self.setVisible(false));
       panel.add(m_ButtonCancel);
@@ -1763,7 +1763,7 @@ public class ReportFactory {
     JPanel				panelBottom;
     BaseSplitPane			split;
     final BaseTextAreaWithButtons	textArea;
-    JButton				button;
+    BaseButton				button;
 
     result = new BasePanel(new BorderLayout());
     result.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -1805,10 +1805,10 @@ public class ReportFactory {
           textArea.setCaretPosition(0);
 	}
       });
-      button = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+      button = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
       button.addActionListener(e -> ClipboardHelper.copyToClipboard(textArea.getText()));
       textArea.addToButtonsPanel(button);
-      button = new JButton("Save as...", GUIHelper.getIcon("save.gif"));
+      button = new BaseButton("Save as...", GUIHelper.getIcon("save.gif"));
       button.addActionListener(e -> {
         TextFileChooser fileChooser = new TextFileChooser();
         int retVal = fileChooser.showSaveDialog(result);

@@ -27,6 +27,7 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.SpreadSheetCellSelectionContainer;
 import adams.flow.core.Token;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -37,7 +38,6 @@ import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -542,10 +542,10 @@ public class SpreadSheetCellSelector
   protected TableModel m_TableModel;
 
   /** the button for accepting. */
-  protected JButton m_ButtonOK;
+  protected BaseButton m_ButtonOK;
 
   /** the button for cancelling. */
-  protected JButton m_ButtonCancel;
+  protected BaseButton m_ButtonCancel;
 
   /** whether the token was accepted. */
   protected boolean m_Accepted;
@@ -728,7 +728,7 @@ public class SpreadSheetCellSelector
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     result.getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
-    m_ButtonOK = new JButton("OK");
+    m_ButtonOK = new BaseButton("OK");
     m_ButtonOK.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -739,7 +739,7 @@ public class SpreadSheetCellSelector
     });
     panelButtons.add(m_ButtonOK);
 
-    m_ButtonCancel = new JButton("Cancel");
+    m_ButtonCancel = new BaseButton("Cancel");
     m_ButtonCancel.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

@@ -25,6 +25,7 @@ import adams.core.DateUtils;
 import adams.core.Properties;
 import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
@@ -44,7 +45,6 @@ import weka.experiment.ResultMatrixPlainText;
 import weka.experiment.Tester;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -189,7 +189,7 @@ public class DefaultAnalysisPanel
   protected List<AbstractResultsPanel> m_PanelsResults;
 
   /** the analyze button. */
-  protected JButton m_ButtonAnalyze;
+  protected BaseButton m_ButtonAnalyze;
 
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
@@ -343,7 +343,7 @@ public class DefaultAnalysisPanel
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelLeft.add(panelButtons, BorderLayout.NORTH);
 
-    m_ButtonAnalyze = new JButton("Analyze");
+    m_ButtonAnalyze = new BaseButton("Analyze");
     m_ButtonAnalyze.addActionListener((ActionEvent e) -> analyze());
     panelButtons.add(m_ButtonAnalyze);
 

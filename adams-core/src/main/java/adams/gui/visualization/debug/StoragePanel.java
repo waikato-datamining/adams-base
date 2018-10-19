@@ -29,6 +29,7 @@ import adams.flow.control.StorageHandler;
 import adams.flow.control.StorageName;
 import adams.gui.chooser.ObjectExporterFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
@@ -44,7 +45,6 @@ import adams.gui.goe.EditorHelper;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -280,13 +280,13 @@ public class StoragePanel
   protected TableModel m_TableModel;
 
   /** the button for inspecting an item. */
-  protected JButton m_ButtonInspect;
+  protected BaseButton m_ButtonInspect;
 
   /** the button for editing an item. */
-  protected JButton m_ButtonEdit;
+  protected BaseButton m_ButtonEdit;
 
   /** the button for exporting an item. */
-  protected JButton m_ButtonExport;
+  protected BaseButton m_ButtonExport;
 
   /** the checkbox for previewing items. */
   protected JCheckBox m_CheckBoxPreview;
@@ -346,18 +346,18 @@ public class StoragePanel
     m_Table.addCellPopupMenuListener((MouseEvent e) -> showTablePopup(e));
     panelTable.add(m_Table, BorderLayout.CENTER);
 
-    m_ButtonInspect = new JButton("Inspect...");
+    m_ButtonInspect = new BaseButton("Inspect...");
     m_ButtonInspect.setMnemonic('I');
     m_ButtonInspect.addActionListener((ActionEvent e) -> inspect());
     m_Table.addToButtonsPanel(m_ButtonInspect);
     m_Table.setDoubleClickButton(m_ButtonInspect);
 
-    m_ButtonEdit = new JButton("Edit...");
+    m_ButtonEdit = new BaseButton("Edit...");
     m_ButtonEdit.setMnemonic('E');
     m_ButtonEdit.addActionListener((ActionEvent e) -> edit());
     m_Table.addToButtonsPanel(m_ButtonEdit);
 
-    m_ButtonExport = new JButton("Export...");
+    m_ButtonExport = new BaseButton("Export...");
     m_ButtonExport.setMnemonic('x');
     m_ButtonExport.addActionListener((ActionEvent e) -> export());
     m_Table.addToButtonsPanel(m_ButtonExport);

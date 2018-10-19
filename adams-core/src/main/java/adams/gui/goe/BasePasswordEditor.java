@@ -19,6 +19,18 @@
  */
 package adams.gui.goe;
 
+import adams.core.Constants;
+import adams.core.Utils;
+import adams.core.base.BasePassword;
+import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
+import adams.gui.dialog.ApprovalDialog;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -30,19 +42,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-
-import adams.core.Constants;
-import adams.core.Utils;
-import adams.core.base.BasePassword;
-import adams.core.option.AbstractOption;
-import adams.gui.dialog.ApprovalDialog;
 
 /**
  * Editor specifically designed for entering passwords.
@@ -90,8 +89,8 @@ public class BasePasswordEditor
     JPanel	panel;
     JLabel	label;
     JPanel 	panelButtons;
-    JButton 	buttonOK;
-    JButton 	buttonClose;
+    BaseButton 	buttonOK;
+    BaseButton 	buttonClose;
 
     panelAll = new JPanel(new BorderLayout());
     panel    = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -139,7 +138,7 @@ public class BasePasswordEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -148,7 +147,7 @@ public class BasePasswordEditor
     });
     panelButtons.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

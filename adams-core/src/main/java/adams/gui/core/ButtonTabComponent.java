@@ -41,7 +41,6 @@ import adams.core.annotation.MixedCopyright;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -57,7 +56,7 @@ import java.awt.event.MouseListener;
 /**
  * Component to be used as tabComponent;
  * Contains a JLabel to show the text and 
- * a JButton to close the tab it belongs to 
+ * a BaseButton to close the tab it belongs to
  */
 @MixedCopyright(
   copyright = "1995, 2008, Oracle and/or its affiliates",
@@ -73,7 +72,7 @@ public class ButtonTabComponent
 
   protected JLabel m_Label;
 
-  protected JButton m_Button;
+  protected BaseButton m_Button;
 
   public ButtonTabComponent(final JTabbedPane pane) {
     //unset default FlowLayout' gaps
@@ -137,7 +136,7 @@ public class ButtonTabComponent
   }
 
   protected class TabButton
-    extends JButton
+    extends BaseButton
     implements ActionListener {
 
     private static final long serialVersionUID = 1628783933894855989L;

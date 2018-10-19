@@ -20,10 +20,10 @@
 package adams.gui.chooser;
 
 import adams.env.Environment;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.dialog.DialogWithButtons;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.BorderLayout;
@@ -50,10 +50,10 @@ public class FontChooser
   protected FontChooserPanelWithPreview m_FontPanel;
 
   /** the OK button. */
-  protected JButton m_ButtonOK;
+  protected BaseButton m_ButtonOK;
 
   /** the Cancel button. */
-  protected JButton m_ButtonCancel;
+  protected BaseButton m_ButtonCancel;
 
   /** The font the user has chosen. */
   protected Font m_Current;
@@ -86,7 +86,7 @@ public class FontChooser
     m_FontPanel = new FontChooserPanelWithPreview();
     getContentPane().add(m_FontPanel, BorderLayout.CENTER);
 
-    m_ButtonOK = new JButton("OK");
+    m_ButtonOK = new BaseButton("OK");
     m_ButtonOK.setMnemonic('O');
     m_PanelButtonsRight.add(m_ButtonOK);
     m_ButtonOK.addActionListener(new ActionListener() {
@@ -97,7 +97,7 @@ public class FontChooser
       }
     });
 
-    m_ButtonCancel = new JButton("Cancel");
+    m_ButtonCancel = new BaseButton("Cancel");
     m_ButtonCancel.setMnemonic('C');
     m_PanelButtonsRight.add(m_ButtonCancel);
     m_ButtonCancel.addActionListener(new ActionListener() {
@@ -152,7 +152,7 @@ public class FontChooser
     chooser.setCurrent(null);
     frame.getContentPane().setLayout(new GridLayout(0, 1));
 
-    JButton button = new JButton("Change font");
+    BaseButton button = new BaseButton("Change font");
     frame.getContentPane().add(button);
 
     final JLabel label = new JLabel("Java is great!", JLabel.CENTER);

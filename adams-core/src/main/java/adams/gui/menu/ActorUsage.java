@@ -28,6 +28,7 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.chooser.BaseDirectoryChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
@@ -38,7 +39,6 @@ import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
@@ -178,7 +178,7 @@ public class ActorUsage
     final SortableAndSearchableTableWithButtons	table;
     SpreadSheetTableModel			model;
     SearchPanel					search;
-    final JButton				editFlow;
+    final BaseButton				editFlow;
     
     model = new SpreadSheetTableModel(sheet);
     model.setUseSimpleHeader(true);
@@ -194,7 +194,7 @@ public class ActorUsage
       }
     });
     table.add(search, BorderLayout.SOUTH);
-    editFlow = new JButton("Edit");
+    editFlow = new BaseButton("Edit");
     editFlow.setMnemonic('E');
     editFlow.setToolTipText("Opens the selected flows with the Flow editor");
     editFlow.setEnabled(false);

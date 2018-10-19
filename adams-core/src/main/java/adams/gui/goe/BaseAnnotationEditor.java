@@ -26,6 +26,7 @@ import adams.core.base.BaseAnnotation;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.flow.processor.ListAnnotationTags;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.GUIHelper;
@@ -34,7 +35,6 @@ import adams.gui.core.TextAreaComponent;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -148,10 +148,10 @@ public class BaseAnnotationEditor
   protected JComponent createCustomEditor() {
     JPanel		panelAll;
     JPanel 		panelButtons;
-    JButton 		buttonClose;
-    JButton 		buttonOK;
-    JButton		buttonClear;
-    JButton		buttonHelp;
+    BaseButton 		buttonClose;
+    BaseButton 		buttonOK;
+    BaseButton		buttonClear;
+    BaseButton		buttonHelp;
     JPanel		panel;
     final JCheckBox	checkLineWrap;
 
@@ -174,7 +174,7 @@ public class BaseAnnotationEditor
 
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panel, BorderLayout.WEST);
-    buttonClear = new JButton("Clear");
+    buttonClear = new BaseButton("Clear");
     buttonClear.setMnemonic('l');
     buttonClear.setIcon(GUIHelper.getIcon("new.gif"));
     buttonClear.addActionListener(new ActionListener() {
@@ -196,7 +196,7 @@ public class BaseAnnotationEditor
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panel, BorderLayout.EAST);
     
-    buttonHelp = new JButton("Help");
+    buttonHelp = new BaseButton("Help");
     buttonHelp.setMnemonic('H');
     buttonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -206,7 +206,7 @@ public class BaseAnnotationEditor
     });
     panel.add(buttonHelp);
     
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -218,7 +218,7 @@ public class BaseAnnotationEditor
     });
     panel.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

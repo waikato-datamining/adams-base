@@ -20,18 +20,6 @@
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.ArrayList;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import adams.core.QuickInfoHelper;
 import adams.core.io.LogEntryWriter;
 import adams.db.LogEntry;
@@ -39,12 +27,23 @@ import adams.flow.core.Token;
 import adams.flow.sink.logview.AbstractLogEntryDialog;
 import adams.flow.sink.logview.DefaultLogEntryDialog;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.tools.LogEntryViewerTableModel;
+
+import javax.swing.BorderFactory;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -140,10 +139,10 @@ public class LogViewer
   protected BaseTableWithButtons m_TableEntries;
 
   /** the button for displaying the message details. */
-  protected JButton m_ButtonDisplay;
+  protected BaseButton m_ButtonDisplay;
 
   /** the button for saving the selected entries (or all if none selected). */
-  protected JButton m_ButtonSave;
+  protected BaseButton m_ButtonSave;
 
   /** the dialog for displaying the message details. */
   protected AbstractLogEntryDialog m_Dialog;
@@ -304,7 +303,7 @@ public class LogViewer
     });
     result.add(m_TableEntries, BorderLayout.CENTER);
 
-    m_ButtonDisplay = new JButton("Display...");
+    m_ButtonDisplay = new BaseButton("Display...");
     m_ButtonDisplay.setMnemonic('D');
     m_ButtonDisplay.setEnabled(false);
     m_ButtonDisplay.addActionListener(new ActionListener() {
@@ -318,7 +317,7 @@ public class LogViewer
     m_TableEntries.addToButtonsPanel(m_ButtonDisplay);
     m_TableEntries.setDoubleClickButton(m_ButtonDisplay);
 
-    m_ButtonSave = new JButton("Save...");
+    m_ButtonSave = new BaseButton("Save...");
     m_ButtonSave.setMnemonic('S');
     m_ButtonSave.setEnabled(true);
     m_ButtonSave.addActionListener(new ActionListener() {

@@ -25,9 +25,9 @@ import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.SerializationFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
@@ -46,10 +46,10 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
   private static final long serialVersionUID = -20320489406680254L;
 
   /** the button for copying a panel. */
-  protected JButton m_ButtonCopy;
+  protected BaseButton m_ButtonCopy;
 
   /** the button for managing the workspaces. */
-  protected JButton m_ButtonWorkspace;
+  protected BaseButton m_ButtonWorkspace;
 
   /** the workspace helper. */
   protected AbstractWorkspaceHelper<P, AbstractSerializableWorkspaceManagerPanel<P>> m_WorkspaceHelper;
@@ -77,13 +77,13 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
     height = m_ButtonAdd.getHeight();
 
     // left buttons
-    m_ButtonCopy = new JButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.setSize(height, height);
     m_ButtonCopy.setToolTipText("Creates a copy of the current workspace");
     m_ButtonCopy.addActionListener((ActionEvent e) -> copyWorkspace());
     m_PanelButtons.add(m_ButtonCopy);
 
-    m_ButtonWorkspace = new JButton(GUIHelper.getIcon("workspace.png"));
+    m_ButtonWorkspace = new BaseButton(GUIHelper.getIcon("workspace.png"));
     m_ButtonWorkspace.setSize(height, height);
     m_ButtonWorkspace.setToolTipText("Loading/saving of workspaces");
     m_ButtonWorkspace.addActionListener((ActionEvent e) -> {

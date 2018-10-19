@@ -40,13 +40,13 @@ package adams.gui.chooser;
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.env.Environment;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -298,7 +298,7 @@ public class FontChooserPanelWithPreview
     chooser.setCurrent(null);
     frame.getContentPane().setLayout(new GridLayout(0, 1));
 
-    JButton button = new JButton("Change font");
+    BaseButton button = new BaseButton("Change font");
     frame.getContentPane().add(button);
 
     final JLabel label = new JLabel("Java is great!", JLabel.CENTER);

@@ -22,6 +22,7 @@ package adams.gui.tools.remotecontrolcenter.panels;
 
 import adams.core.base.BaseHostname;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
@@ -42,7 +43,6 @@ import adams.scripting.processor.RemoteCommandProcessor;
 import adams.scripting.processor.RemoteCommandProcessorHandler;
 import adams.scripting.responsehandler.ResponseHandler;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -142,25 +142,25 @@ public abstract class AbstractRemoteFlowTab
   protected BaseObjectTextField<BaseHostname> m_TextLocal;
 
   /** the button for refreshing the flows. */
-  protected JButton m_ButtonRefresh;
+  protected BaseButton m_ButtonRefresh;
 
   /** the table with the remote flows. */
   protected BaseTableWithButtons m_TableFlows;
 
   /** the button for pausing the flow. */
-  protected JButton m_ButtonPauseFlow;
+  protected BaseButton m_ButtonPauseFlow;
 
   /** the button for resuming the flow. */
-  protected JButton m_ButtonResumeFlow;
+  protected BaseButton m_ButtonResumeFlow;
 
   /** the button for stopping the flow. */
-  protected JButton m_ButtonStopFlow;
+  protected BaseButton m_ButtonStopFlow;
 
   /** the button for stopping the ADAMS instance. */
-  protected JButton m_ButtonStopAdams;
+  protected BaseButton m_ButtonStopAdams;
 
   /** the button for killing the ADAMS isntance. */
-  protected JButton m_ButtonKillAdams;
+  protected BaseButton m_ButtonKillAdams;
 
   /** the command processor. */
   protected RemoteCommandProcessor m_CommandProcessor;
@@ -216,7 +216,7 @@ public abstract class AbstractRemoteFlowTab
     panelConn.add(label);
     panelConn.add(m_TextLocal);
 
-    m_ButtonRefresh = new JButton(GUIHelper.getIcon("refresh.gif"));
+    m_ButtonRefresh = new BaseButton(GUIHelper.getIcon("refresh.gif"));
     m_ButtonRefresh.addActionListener((ActionEvent e) -> refreshFlows());
     panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButton.add(m_ButtonRefresh);
@@ -230,23 +230,23 @@ public abstract class AbstractRemoteFlowTab
     m_TableFlows.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_PanelFlows.add(m_TableFlows, BorderLayout.CENTER);
 
-    m_ButtonPauseFlow = new JButton(GUIHelper.getIcon("pause.gif"));
+    m_ButtonPauseFlow = new BaseButton(GUIHelper.getIcon("pause.gif"));
     m_ButtonPauseFlow.addActionListener((ActionEvent e) -> pauseFlow());
     m_TableFlows.addToButtonsPanel(m_ButtonPauseFlow);
 
-    m_ButtonResumeFlow = new JButton(GUIHelper.getIcon("resume.gif"));
+    m_ButtonResumeFlow = new BaseButton(GUIHelper.getIcon("resume.gif"));
     m_ButtonResumeFlow.addActionListener((ActionEvent e) -> resumeFlow());
     m_TableFlows.addToButtonsPanel(m_ButtonResumeFlow);
 
-    m_ButtonStopFlow = new JButton(GUIHelper.getIcon("stop_blue.gif"));
+    m_ButtonStopFlow = new BaseButton(GUIHelper.getIcon("stop_blue.gif"));
     m_ButtonStopFlow.addActionListener((ActionEvent e) -> stopFlow());
     m_TableFlows.addToButtonsPanel(m_ButtonStopFlow);
 
-    m_ButtonStopAdams = new JButton(GUIHelper.getIcon("exit.png"));
+    m_ButtonStopAdams = new BaseButton(GUIHelper.getIcon("exit.png"));
     m_ButtonStopAdams.addActionListener((ActionEvent e) -> stopAdams());
     m_TableFlows.addToButtonsPanel(m_ButtonStopAdams);
 
-    m_ButtonKillAdams = new JButton(GUIHelper.getIcon("kill.png"));
+    m_ButtonKillAdams = new BaseButton(GUIHelper.getIcon("kill.png"));
     m_ButtonKillAdams.addActionListener((ActionEvent e) -> killAdams());
     m_TableFlows.addToButtonsPanel(m_ButtonKillAdams);
   }

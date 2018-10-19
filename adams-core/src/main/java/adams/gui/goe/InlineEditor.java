@@ -22,6 +22,7 @@
 package adams.gui.goe;
 
 import adams.core.Utils;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
@@ -33,7 +34,6 @@ import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
@@ -81,7 +81,7 @@ public class InlineEditor
   protected JTextField m_TextField;
   
   /** the button for bringing up the custom editor. */
-  protected JButton m_ButtonEditor;
+  protected BaseButton m_ButtonEditor;
   
   /** whether the editor is located in a PropertySheetPanel. */
   protected PropertySheetPanel m_PropertySheetPanel;
@@ -201,7 +201,7 @@ public class InlineEditor
     });
     add(m_TextField, BorderLayout.CENTER);
 
-    m_ButtonEditor = new JButton("...");
+    m_ButtonEditor = new BaseButton("...");
     m_ButtonEditor.setPreferredSize(
 	new Dimension(
 	    m_ButtonEditor.getPreferredSize().width,

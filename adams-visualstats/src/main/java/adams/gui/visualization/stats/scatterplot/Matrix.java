@@ -22,6 +22,7 @@ package adams.gui.visualization.stats.scatterplot;
 
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -32,7 +33,6 @@ import adams.gui.visualization.stats.core.SubSample;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
 import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -136,7 +136,7 @@ extends BasePanel{
   protected boolean m_NeedUpdate;
 
   /** Button to stop the thread updating the overlays */
-  protected JButton m_Stop;
+  protected BaseButton m_Stop;
 
   /**Panel containing the matrix options */
   protected ParameterPanel m_OptionPanel;
@@ -164,7 +164,7 @@ extends BasePanel{
   public void updateOverlays() {
     m_Progress = new JPanel();
     add(m_Progress, BorderLayout.SOUTH);
-    m_Stop = new JButton("Stop");
+    m_Stop = new BaseButton("Stop");
     m_Stop.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent arg0) {
 	m_IsCancel = true;
@@ -316,7 +316,7 @@ extends BasePanel{
       }});
 
     //To update the display
-    JButton updateBut = new JButton("update");
+    BaseButton updateBut = new BaseButton("update");
     updateBut.addActionListener(new action());
 
     //Add the options to the parameterpanel

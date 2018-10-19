@@ -37,15 +37,18 @@
 
 package adams.gui.chooser;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
+import adams.core.io.PdfFont;
+import adams.env.Environment;
+import adams.gui.core.BaseButton;
+import adams.gui.core.BaseFrame;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.goe.PdfFontEditor;
+import com.itextpdf.text.Font;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -54,17 +57,12 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import adams.core.License;
-import adams.core.annotation.MixedCopyright;
-import adams.core.io.PdfFont;
-import adams.env.Environment;
-import adams.gui.core.BaseFrame;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.goe.PdfFontEditor;
-
-import com.itextpdf.text.Font;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 /**
  * A font selection panel.
@@ -301,7 +299,7 @@ public class PdfFontChooserPanel
     chooser.setCurrent(null);
     frame.getContentPane().setLayout(new GridLayout(0, 1));
 
-    JButton button = new JButton("Change font");
+    BaseButton button = new BaseButton("Change font");
     frame.getContentPane().add(button);
 
     final JLabel label = new JLabel("Java is great!", JLabel.CENTER);

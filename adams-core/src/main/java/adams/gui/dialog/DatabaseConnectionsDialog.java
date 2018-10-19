@@ -20,6 +20,12 @@
 
 package adams.gui.dialog;
 
+import adams.gui.core.BaseButton;
+import adams.gui.core.BaseDialog;
+import adams.gui.core.GUIHelper;
+
+import javax.swing.JDialog;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -28,13 +34,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-
-import adams.gui.core.BaseDialog;
-import adams.gui.core.GUIHelper;
 
 /**
  * A standalone dialog for managing all the connections to the databases.
@@ -55,7 +54,7 @@ public class DatabaseConnectionsDialog
   protected DatabaseConnectionsPanel m_Panel;
 
   /** the Close button. */
-  protected JButton m_ButtonClose;
+  protected BaseButton m_ButtonClose;
 
   /**
    * Creates a modal dialog.
@@ -123,7 +122,7 @@ public class DatabaseConnectionsDialog
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
 
-    m_ButtonClose = new JButton("Close", GUIHelper.getIcon("exit.png"));
+    m_ButtonClose = new BaseButton("Close", GUIHelper.getIcon("exit.png"));
     m_ButtonClose.setMnemonic('l');
     m_ButtonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

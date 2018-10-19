@@ -48,7 +48,6 @@ import adams.gui.goe.FontEditor;
 import adams.gui.goe.GenericArrayEditorPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -206,10 +205,10 @@ public class PropertiesParameterPanel
   protected JPanel m_PanelButtons;
 
   /** the load props button. */
-  protected JButton m_ButtonLoad;
+  protected BaseButton m_ButtonLoad;
 
   /** the save props button. */
-  protected JButton m_ButtonSave;
+  protected BaseButton m_ButtonSave;
 
   /** the filechooser for loading/saving properties. */
   protected BaseFileChooser m_FileChooser;
@@ -261,11 +260,11 @@ public class PropertiesParameterPanel
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelButtons.add(panel, BorderLayout.WEST);
 
-    m_ButtonLoad = new JButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
     m_ButtonLoad.addActionListener((ActionEvent e) -> loadProperties());
     panel.add(m_ButtonLoad);
 
-    m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
     m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
     panel.add(m_ButtonSave);
   }

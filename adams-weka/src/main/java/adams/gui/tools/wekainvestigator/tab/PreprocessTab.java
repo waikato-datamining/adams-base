@@ -28,6 +28,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.FileChooserPanel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
@@ -51,7 +52,6 @@ import weka.filters.AllFilter;
 import weka.filters.Filter;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -115,10 +115,10 @@ public class PreprocessTab
   protected FileChooserPanel m_FileSerialize;
 
   /** the button for starting the filtering. */
-  protected JButton m_ButtonStart;
+  protected BaseButton m_ButtonStart;
 
   /** the button for stop the filtering. */
-  protected JButton m_ButtonStop;
+  protected BaseButton m_ButtonStop;
 
   /** the instances summary panel. */
   protected InstancesSummaryPanel m_PanelInstSummary;
@@ -215,12 +215,12 @@ public class PreprocessTab
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelTop.add(panel, BorderLayout.SOUTH);
 
-    m_ButtonStart = new JButton("Start");
+    m_ButtonStart = new BaseButton("Start");
     m_ButtonStart.setEnabled(false);
     m_ButtonStart.addActionListener((ActionEvent e) -> startExecution());
     panel.add(m_ButtonStart);
 
-    m_ButtonStop  = new JButton("Stop");
+    m_ButtonStop  = new BaseButton("Stop");
     m_ButtonStop.setEnabled(false);
     m_ButtonStart.addActionListener((ActionEvent e) -> stopExecution());
     panel.add(m_ButtonStop);

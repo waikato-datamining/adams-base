@@ -24,12 +24,12 @@ package adams.gui.goe;
 import adams.core.NamedSetup;
 import adams.core.Utils;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.tools.NamedSetupManagementPanel.Model;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
@@ -63,10 +63,10 @@ public class NamedSetupEditor
   protected Model m_Model;
 
   /** the OK button. */
-  protected JButton m_ButtonOK;
+  protected BaseButton m_ButtonOK;
 
   /** the close button. */
-  protected JButton m_ButtonClose;
+  protected BaseButton m_ButtonClose;
 
   /**
    * Returns the NamedSetup as string.
@@ -159,7 +159,7 @@ public class NamedSetupEditor
     JPanel panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(panelButtons, BorderLayout.SOUTH);
 
-    m_ButtonOK = new JButton("OK");
+    m_ButtonOK = new BaseButton("OK");
     m_ButtonOK.setMnemonic('O');
     m_ButtonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -173,7 +173,7 @@ public class NamedSetupEditor
     });
     panelButtons.add(m_ButtonOK);
 
-    m_ButtonClose = new JButton("Cancel");
+    m_ButtonClose = new BaseButton("Cancel");
     m_ButtonClose.setMnemonic('C');
     m_ButtonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

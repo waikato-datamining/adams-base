@@ -23,13 +23,13 @@ package adams.gui.visualization.statistics;
 
 import adams.data.statistics.InformativeStatistic;
 import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SortableAndSearchableTable;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
@@ -376,7 +376,7 @@ public class InformativeStatisticFactory {
     @Override
     protected void initGUI() {
       JPanel	panel;
-      JButton	buttonOK;
+      BaseButton	buttonOK;
 
       super.initGUI();
 
@@ -389,7 +389,7 @@ public class InformativeStatisticFactory {
       panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       getContentPane().add(panel, BorderLayout.SOUTH);
 
-      buttonOK = new JButton("OK");
+      buttonOK = new BaseButton("OK");
       buttonOK.setMnemonic('O');
       buttonOK.addActionListener((ActionEvent e) -> m_Self.setVisible(false));
       panel.add(buttonOK);

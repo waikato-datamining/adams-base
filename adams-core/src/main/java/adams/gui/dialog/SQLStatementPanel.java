@@ -21,6 +21,7 @@ package adams.gui.dialog;
 
 import adams.core.AdditionalInformationHandler;
 import adams.db.SQLStatement;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.RecentSQLStatementsHandler;
@@ -29,7 +30,6 @@ import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.help.HelpFrame;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -58,13 +58,13 @@ public class SQLStatementPanel
   protected SQLSyntaxEditorPanel m_PanelStatement;
 
   /** the button for the options. */
-  protected JButton m_ButtonOptions;
+  protected BaseButton m_ButtonOptions;
 
   /** the button for the history. */
-  protected JButton m_ButtonHistory;
+  protected BaseButton m_ButtonHistory;
 
   /** the button for displaying the help. */
-  protected JButton m_ButtonHelp;
+  protected BaseButton m_ButtonHelp;
 
   /** the panel for the buttons at the bottom. */
   protected JPanel m_PanelBottom;
@@ -96,7 +96,7 @@ public class SQLStatementPanel
     m_PanelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelBottom.add(m_PanelButtonsLeft, BorderLayout.WEST);
     
-    m_ButtonOptions = new JButton("...");
+    m_ButtonOptions = new BaseButton("...");
     m_ButtonOptions.setToolTipText("Options menu");
     m_ButtonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -153,7 +153,7 @@ public class SQLStatementPanel
     });
     m_PanelButtonsLeft.add(m_ButtonOptions);
     
-    m_ButtonHistory = new JButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
     m_ButtonHistory.setToolTipText("Recent queries");
     m_ButtonHistory.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -166,7 +166,7 @@ public class SQLStatementPanel
     m_PanelBottom.add(m_PanelButtonsRight, BorderLayout.EAST);
 
     if (m_PanelStatement instanceof AdditionalInformationHandler) {
-      m_ButtonHelp = new JButton("Help");
+      m_ButtonHelp = new BaseButton("Help");
       m_ButtonHelp.setMnemonic('H');
       m_ButtonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {

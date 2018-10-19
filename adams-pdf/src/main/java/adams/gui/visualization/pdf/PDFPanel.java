@@ -21,6 +21,7 @@ package adams.gui.visualization.pdf;
 
 import adams.core.Utils;
 import adams.core.io.JPod;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -28,7 +29,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import de.intarsys.pdf.pd.PDDocument;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JTextField;
@@ -80,10 +80,10 @@ public class PDFPanel
   protected JTextField m_TextPage;
 
   /** the previous page button. */
-  protected JButton m_ButtonPrevious;
+  protected BaseButton m_ButtonPrevious;
 
   /** the next page button. */
-  protected JButton m_ButtonNext;
+  protected BaseButton m_ButtonNext;
 
   /** the PDF to display. */
   protected PDDocument m_Document;
@@ -132,7 +132,7 @@ public class PDFPanel
     m_PanelNavigation = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     add(m_PanelNavigation, BorderLayout.SOUTH);
 
-    m_ButtonPrevious = new JButton(GUIHelper.getIcon("arrow_left.gif"));
+    m_ButtonPrevious = new BaseButton(GUIHelper.getIcon("arrow_left.gif"));
     m_ButtonPrevious.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	previousPage();
@@ -140,7 +140,7 @@ public class PDFPanel
     });
     m_PanelNavigation.add(m_ButtonPrevious);
 
-    m_ButtonNext = new JButton(GUIHelper.getIcon("arrow_right.gif"));
+    m_ButtonNext = new BaseButton(GUIHelper.getIcon("arrow_right.gif"));
     m_ButtonNext.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	nextPage();

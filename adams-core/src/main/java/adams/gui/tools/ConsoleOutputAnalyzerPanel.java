@@ -29,6 +29,7 @@ import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.flow.sink.TextSupplier;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -52,7 +53,6 @@ import adams.gui.sendto.SendToActionUtils;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -617,10 +617,10 @@ public class ConsoleOutputAnalyzerPanel
   protected ParameterPanel m_PanelSearch;
 
   /** the button for triggering the search. */
-  protected JButton m_ButtonSearch;
+  protected BaseButton m_ButtonSearch;
 
   /** the button for clearing the search. */
-  protected JButton m_ButtonClearSearch;
+  protected BaseButton m_ButtonClearSearch;
   
   /** the table for displaying the output. */
   protected SpreadSheetTable m_Table;
@@ -715,7 +715,7 @@ public class ConsoleOutputAnalyzerPanel
     m_TextOutput = new JTextField(20);
     m_PanelSearch.addParameter("Out_put", m_TextOutput);
     
-    m_ButtonSearch = new JButton("Search");
+    m_ButtonSearch = new BaseButton("Search");
     m_ButtonSearch.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -723,7 +723,7 @@ public class ConsoleOutputAnalyzerPanel
       }
     });
     
-    m_ButtonClearSearch = new JButton("Clear");
+    m_ButtonClearSearch = new BaseButton("Clear");
     m_ButtonClearSearch.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

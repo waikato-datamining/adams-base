@@ -19,15 +19,6 @@
  */
 package adams.gui.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.db.AbstractConditions;
@@ -42,9 +33,17 @@ import adams.env.LogEntryDBViewerPanelDefinition;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
+import adams.gui.core.BaseButton;
 import adams.gui.core.PropertiesTableModel;
 import adams.gui.dialog.TextDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
+
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * For viewing LogEntry records stored in the database.
@@ -66,13 +65,13 @@ public class LogEntryDatabaseViewerPanel
   protected static Properties m_Properties;
 
   /** the button for displaying the options. */
-  protected JButton m_ButtonOptions;
+  protected BaseButton m_ButtonOptions;
 
   /** the button for refreshing the entries. */
-  protected JButton m_ButtonRefresh;
+  protected BaseButton m_ButtonRefresh;
 
   /** the button for deleting the entries. */
-  protected JButton m_ButtonDelete;
+  protected BaseButton m_ButtonDelete;
 
   /** the conditions currently in use. */
   protected LogEntryConditions m_Conditions;
@@ -111,7 +110,7 @@ public class LogEntryDatabaseViewerPanel
 
     props = getProperties();
 
-    m_ButtonOptions = new JButton("Options");
+    m_ButtonOptions = new BaseButton("Options");
     m_ButtonOptions.setMnemonic('O');
     m_ButtonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -119,7 +118,7 @@ public class LogEntryDatabaseViewerPanel
       }
     });
 
-    m_ButtonRefresh = new JButton("Refresh");
+    m_ButtonRefresh = new BaseButton("Refresh");
     m_ButtonRefresh.setMnemonic('R');
     m_ButtonRefresh.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -127,7 +126,7 @@ public class LogEntryDatabaseViewerPanel
       }
     });
 
-    m_ButtonDelete = new JButton("Delete");
+    m_ButtonDelete = new BaseButton("Delete");
     m_ButtonDelete.setMnemonic('D');
     m_ButtonDelete.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

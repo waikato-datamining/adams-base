@@ -26,6 +26,7 @@ import adams.flow.control.StorageName;
 import adams.flow.core.FlowVariables;
 import adams.flow.source.StorageValue;
 import adams.flow.standalone.CallableActors;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -37,7 +38,6 @@ import adams.gui.goe.actorpathtree.ActorPathNode;
 import adams.gui.goe.callableactorstree.CallableActorsTree;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -191,8 +191,8 @@ public class VariableSupport {
     JPanel			panel;
     JLabel			label;
     JPanel 			panelButtons;
-    JButton 			buttonOK;
-    JButton 			buttonClose;
+    BaseButton 			buttonOK;
+    BaseButton 			buttonClose;
     final JTextField		textValue;
     final StringBuilder		selected;
 
@@ -267,7 +267,7 @@ public class VariableSupport {
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -280,7 +280,7 @@ public class VariableSupport {
     });
     panelButtons.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

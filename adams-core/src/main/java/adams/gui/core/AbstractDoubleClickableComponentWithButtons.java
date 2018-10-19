@@ -23,8 +23,6 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JButton;
-
 /**
  * Ancestor for components with buttons that can be double-clicked.
  *
@@ -39,7 +37,7 @@ public abstract class AbstractDoubleClickableComponentWithButtons<T extends Comp
   private static final long serialVersionUID = 5421965370098048279L;
 
   /** button that gets clicked when double-clicking list element. */
-  protected JButton m_DoubleClickButton;
+  protected BaseButton m_DoubleClickButton;
 
   /**
    * Initializes the widgets.
@@ -76,7 +74,7 @@ public abstract class AbstractDoubleClickableComponentWithButtons<T extends Comp
    *
    * @param value	the button
    */
-  public void setDoubleClickButton(JButton value) {
+  public void setDoubleClickButton(BaseButton value) {
     m_DoubleClickButton = value;
   }
 
@@ -86,7 +84,7 @@ public abstract class AbstractDoubleClickableComponentWithButtons<T extends Comp
    *
    * @return		the button, null if not set
    */
-  public JButton getDoubleClickButton() {
+  public BaseButton getDoubleClickButton() {
     return m_DoubleClickButton;
   }
 

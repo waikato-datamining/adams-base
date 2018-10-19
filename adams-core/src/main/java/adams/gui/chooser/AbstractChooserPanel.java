@@ -22,6 +22,7 @@ package adams.gui.chooser;
 
 import adams.core.CleanUpHandler;
 import adams.core.option.OptionUtils;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
@@ -29,7 +30,6 @@ import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -125,7 +125,7 @@ public abstract class AbstractChooserPanel<T>
   protected JPanel m_PanelButtons;
 
   /** the button for bringing up the chooser dialog. */
-  protected JButton m_ButtonSelection;
+  protected BaseButton m_ButtonSelection;
 
   /** listeners that listen to changes of the selected value. */
   protected Set<ChangeListener> m_ChangeListeners;
@@ -238,7 +238,7 @@ public abstract class AbstractChooserPanel<T>
     m_PanelButtons = new JPanel(new GridLayout(1, 0));
     add(m_PanelButtons, BorderLayout.EAST);
 
-    m_ButtonSelection = new JButton("...");
+    m_ButtonSelection = new BaseButton("...");
     m_ButtonSelection.setPreferredSize(
 	new Dimension(
 	    m_ButtonSelection.getPreferredSize().width,

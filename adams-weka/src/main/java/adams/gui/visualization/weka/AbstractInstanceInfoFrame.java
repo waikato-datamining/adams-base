@@ -24,6 +24,7 @@ import adams.core.Constants;
 import adams.core.Shortening;
 import adams.data.weka.ArffUtils;
 import adams.env.Environment;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -34,7 +35,6 @@ import weka.core.Instances;
 import weka.gui.arffviewer.ArffSortedTableModel;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -94,7 +94,7 @@ public abstract class AbstractInstanceInfoFrame
   protected JComboBox m_ComboBoxTextActions;
 
   /** the button for displaying the instances. */
-  protected JButton m_ButtonTextGo;
+  protected BaseButton m_ButtonTextGo;
 
   /** the panel with buttons etc. */
   protected JPanel m_PanelTextAction;
@@ -115,7 +115,7 @@ public abstract class AbstractInstanceInfoFrame
   protected JComboBox m_ComboBoxDataActions;
 
   /** the button for displaying the instances. */
-  protected JButton m_ButtonDataGo;
+  protected BaseButton m_ButtonDataGo;
 
   /** the panel with buttons etc. */
   protected JPanel m_PanelDataAction;
@@ -169,7 +169,7 @@ public abstract class AbstractInstanceInfoFrame
     m_ComboBoxDataActions.setSelectedIndex(0);
     m_PanelDataAction.add(m_ComboBoxDataActions);
 
-    m_ButtonDataGo = new JButton("Go");
+    m_ButtonDataGo = new BaseButton("Go");
     m_ButtonDataGo.setMnemonic('G');
     m_ButtonDataGo.setEnabled(false);
     m_ButtonDataGo.addActionListener(new ActionListener() {
@@ -207,7 +207,7 @@ public abstract class AbstractInstanceInfoFrame
     m_ComboBoxTextActions.setSelectedIndex(0);
     m_PanelTextAction.add(m_ComboBoxTextActions);
 
-    m_ButtonTextGo = new JButton("Go");
+    m_ButtonTextGo = new BaseButton("Go");
     m_ButtonTextGo.setMnemonic('G');
     m_ButtonTextGo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

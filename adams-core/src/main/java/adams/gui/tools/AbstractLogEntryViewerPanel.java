@@ -21,6 +21,7 @@ package adams.gui.tools;
 
 import adams.core.Properties;
 import adams.db.LogEntry;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
@@ -30,7 +31,6 @@ import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.dialog.TextDialog;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -62,7 +62,7 @@ public abstract class AbstractLogEntryViewerPanel
   protected BaseTableWithButtons m_TableMessage;
 
   /** the button for displaying a key-value pair of the message. */
-  protected JButton m_ButtonDisplay;
+  protected BaseButton m_ButtonDisplay;
 
   /** the split pane for entries/message details. */
   protected BaseSplitPane m_SplitPane;
@@ -107,7 +107,7 @@ public abstract class AbstractLogEntryViewerPanel
       }
     });
 
-    m_ButtonDisplay = new JButton("Display");
+    m_ButtonDisplay = new BaseButton("Display");
     m_ButtonDisplay.setMnemonic('i');
     m_ButtonDisplay.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

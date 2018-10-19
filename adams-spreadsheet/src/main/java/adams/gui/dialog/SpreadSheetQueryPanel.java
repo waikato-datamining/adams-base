@@ -20,6 +20,7 @@
 package adams.gui.dialog;
 
 import adams.core.AdditionalInformationHandler;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
@@ -27,7 +28,6 @@ import adams.gui.help.HelpFrame;
 import adams.parser.SpreadSheetQuery;
 import adams.parser.SpreadSheetQueryText;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -53,10 +53,10 @@ public class SpreadSheetQueryPanel
   protected SpreadSheetQueryEditorPanel m_PanelQuery;
 
   /** the button for the options. */
-  protected JButton m_ButtonOptions;
+  protected BaseButton m_ButtonOptions;
 
   /** the button for displaying the help. */
-  protected JButton m_ButtonHelp;
+  protected BaseButton m_ButtonHelp;
 
   /** the panel for the buttons at the bottom. */
   protected JPanel m_PanelBottom;
@@ -82,7 +82,7 @@ public class SpreadSheetQueryPanel
     m_PanelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelBottom.add(m_PanelButtonsLeft, BorderLayout.WEST);
     
-    m_ButtonOptions = new JButton("...");
+    m_ButtonOptions = new BaseButton("...");
     m_ButtonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	JPopupMenu menu = new JPopupMenu();
@@ -142,7 +142,7 @@ public class SpreadSheetQueryPanel
     m_PanelBottom.add(m_PanelButtonsRight, BorderLayout.EAST);
 
     if (m_PanelQuery instanceof AdditionalInformationHandler) {
-      m_ButtonHelp = new JButton("Help");
+      m_ButtonHelp = new BaseButton("Help");
       m_ButtonHelp.setMnemonic('H');
       m_ButtonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {

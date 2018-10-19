@@ -27,13 +27,13 @@ import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.AbstractAdvancedScript;
 import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.DefaultTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.GUIHelper;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -186,9 +186,9 @@ public class AbstractAdvancedScriptEditor
     JPanel 			panelButtonsRight;
     JPanel			panelButtonsLeft;
     BaseButtonWithDropDownMenu	buttonOptions;
-    JButton			buttonHelp;
-    JButton 			buttonOK;
-    JButton 			buttonClose;
+    BaseButton			buttonHelp;
+    BaseButton 			buttonOK;
+    BaseButton 			buttonClose;
 
     panelAll = new JPanel(new BorderLayout());
     panelAll.setSize(getDefaultSize());
@@ -216,7 +216,7 @@ public class AbstractAdvancedScriptEditor
     panelBottom.add(panelButtonsRight, BorderLayout.EAST);
 
     if (m_TextStatement instanceof AdditionalInformationHandler) {
-      buttonHelp = new JButton("Help");
+      buttonHelp = new BaseButton("Help");
       buttonHelp.setMnemonic('H');
       buttonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -227,7 +227,7 @@ public class AbstractAdvancedScriptEditor
       panelButtonsRight.add(buttonHelp);
     }
     
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -248,7 +248,7 @@ public class AbstractAdvancedScriptEditor
     });
     panelButtonsRight.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

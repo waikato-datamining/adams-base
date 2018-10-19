@@ -30,7 +30,6 @@ import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -89,13 +88,13 @@ public class ConsolePanel
     protected StyledTextEditorPanel m_TextArea;
 
     /** the button for enabling/disabling the output. */
-    protected JButton m_ButtonEnabledDisable;
+    protected BaseButton m_ButtonEnabledDisable;
 
     /** the spinner for the maximum number of lines. */
     protected JSpinner m_SpinnerMaxLines;
 
     /** the button for clearing the output. */
-    protected JButton m_ButtonClear;
+    protected BaseButton m_ButtonClear;
 
     /** the level/color association. */
     protected HashMap<LoggingLevel,AttributeSet> m_LevelAttributeSets;
@@ -138,7 +137,7 @@ public class ConsolePanel
       panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
       add(panel, BorderLayout.SOUTH);
 
-      m_ButtonEnabledDisable = new JButton("Disable");
+      m_ButtonEnabledDisable = new BaseButton("Disable");
       m_ButtonEnabledDisable.setMnemonic('a');
       m_ButtonEnabledDisable.addActionListener((ActionEvent e) -> {
         m_OutputEnabled = !m_OutputEnabled;
@@ -158,7 +157,7 @@ public class ConsolePanel
       model.setValue(100000);
       panel.add(m_SpinnerMaxLines);
 
-      m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
+      m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
       m_ButtonClear.setMnemonic('l');
       m_ButtonClear.addActionListener((ActionEvent e) -> m_TextArea.clear());
       panel.add(m_ButtonClear);

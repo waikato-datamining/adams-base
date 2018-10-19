@@ -20,6 +20,7 @@
 
 package adams.gui.goe;
 
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
@@ -27,7 +28,6 @@ import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.goe.classtree.ClassTree;
 import adams.gui.goe.classtree.StrictClassTreeFilter;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -75,7 +75,7 @@ public class GenericObjectEditorClassTreePanel
   protected JTextField m_TextSearch;
 
   /** The button for closing the popup again. */
-  protected JButton m_CloseButton;
+  protected BaseButton m_CloseButton;
 
   /** the panel for the filter. */
   protected JPanel m_PanelFilter;
@@ -187,7 +187,7 @@ public class GenericObjectEditorClassTreePanel
     // close
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     bottomPanel.add(panel, BorderLayout.EAST);
-    m_CloseButton = new JButton("Close");
+    m_CloseButton = new BaseButton("Close");
     m_CloseButton.setMnemonic('C');
     m_CloseButton.setVisible(false);
     m_CloseButton.addActionListener((ActionEvent e) -> {

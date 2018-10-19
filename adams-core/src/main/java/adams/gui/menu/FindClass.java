@@ -24,6 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -32,7 +33,6 @@ import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -93,8 +93,8 @@ public class FindClass
     final JTextField 		fieldSearch;
     final JCheckBox 		checkboxRegExp;
     final BaseTextArea 		areaOutput;
-    JButton 			buttonSearch;
-    JButton			buttonClose;
+    BaseButton 			buttonSearch;
+    BaseButton			buttonClose;
 
     panel = new BasePanel(new BorderLayout());
 
@@ -120,7 +120,7 @@ public class FindClass
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonSearch = new JButton("Search");
+    buttonSearch = new BaseButton("Search");
     buttonSearch.setMnemonic('S');
     buttonSearch.addActionListener((ActionEvent e) -> {
       String search = fieldSearch.getText();
@@ -137,7 +137,7 @@ public class FindClass
     });
     panelButtons.add(buttonSearch);
 
-    buttonClose = new JButton("Close");
+    buttonClose = new BaseButton("Close");
     buttonClose.setMnemonic('l');
     buttonClose.addActionListener((ActionEvent e) -> panel.closeParent());
     panelButtons.add(buttonClose);

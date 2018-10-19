@@ -38,6 +38,7 @@ import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.flow.sink.sequenceplotter.ToggleOutlier;
 import adams.flow.transformer.AbstractInteractiveTransformerDialog;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.core.AxisPanelOptions;
@@ -51,7 +52,6 @@ import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -382,10 +382,10 @@ public class RemoveOutliers
     JPanel 				panelButtonsRight;
     JPanel 				panelBottom;
     JPanel 				panelButtonsBottom;
-    final JButton			buttonReset;
-    final JButton			buttonClear;
-    final JButton			buttonOK;
-    final JButton			buttonCancel;
+    final BaseButton			buttonReset;
+    final BaseButton			buttonClear;
+    final BaseButton			buttonOK;
+    final BaseButton			buttonCancel;
     OutlierPaintlet			paintlet;
     ToggleOutlier 			mouseClick;
     MultiPaintlet 			overlays;
@@ -441,7 +441,7 @@ public class RemoveOutliers
     panelButtonsRight = new JPanel(new GridLayout(3, 1, 5, 5));
     panelRight.add(panelButtonsRight, BorderLayout.NORTH);
 
-    buttonReset = new JButton("Reset", GUIHelper.getIcon("revert.png"));
+    buttonReset = new BaseButton("Reset", GUIHelper.getIcon("revert.png"));
     buttonReset.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -462,7 +462,7 @@ public class RemoveOutliers
     });
     panelButtonsRight.add(buttonReset);
 
-    buttonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
+    buttonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
     buttonClear.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -489,7 +489,7 @@ public class RemoveOutliers
     panelButtonsBottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelBottom.add(panelButtonsBottom, BorderLayout.EAST);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       @Override
@@ -500,7 +500,7 @@ public class RemoveOutliers
     });
     panelButtonsBottom.add(buttonOK);
 
-    buttonCancel = new JButton("Cancel");
+    buttonCancel = new BaseButton("Cancel");
     buttonCancel.setMnemonic('C');
     buttonCancel.addActionListener(new ActionListener() {
       @Override

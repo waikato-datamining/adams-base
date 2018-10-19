@@ -27,6 +27,7 @@ import adams.event.VariableChangeEvent.Type;
 import adams.event.VariableChangeListener;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTable;
@@ -40,7 +41,6 @@ import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -319,13 +319,13 @@ public class VariableManagementPanel
   protected SearchPanel m_PanelSearch;
 
   /** the button for copying the variable name. */
-  protected JButton m_ButtonCopyName;
+  protected BaseButton m_ButtonCopyName;
 
   /** the button for copying the variable value. */
-  protected JButton m_ButtonCopyValue;
+  protected BaseButton m_ButtonCopyValue;
 
   /** the button for showing the variable value. */
-  protected JButton m_ButtonShowValue;
+  protected BaseButton m_ButtonShowValue;
   
   /**
    * Initializes the members.
@@ -399,7 +399,7 @@ public class VariableManagementPanel
     });
     add(m_Table, BorderLayout.CENTER);
 
-    m_ButtonCopyName = new JButton("Copy name");
+    m_ButtonCopyName = new BaseButton("Copy name");
     m_ButtonCopyName.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	copyName(m_Table.getSelectedRow());
@@ -407,7 +407,7 @@ public class VariableManagementPanel
     });
     m_Table.addToButtonsPanel(m_ButtonCopyName);
 
-    m_ButtonCopyValue = new JButton("Copy value");
+    m_ButtonCopyValue = new BaseButton("Copy value");
     m_ButtonCopyValue.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	copyValue(m_Table.getSelectedRow());
@@ -415,7 +415,7 @@ public class VariableManagementPanel
     });
     m_Table.addToButtonsPanel(m_ButtonCopyValue);
 
-    m_ButtonShowValue = new JButton("Show value");
+    m_ButtonShowValue = new BaseButton("Show value");
     m_ButtonShowValue.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	showValue(m_Table.getSelectedRow());

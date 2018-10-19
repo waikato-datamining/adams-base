@@ -23,13 +23,13 @@ import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseRegExp;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -60,7 +60,7 @@ public class BaseRegExpEditor
   protected JCheckBox m_CheckBoxEscapedInput;
 
   /** the help button for bringing up a browser with the Java Pattern class. */
-  protected JButton m_ButtonHelp;
+  protected BaseButton m_ButtonHelp;
 
   /**
    * Returns the Compound as string.
@@ -97,8 +97,8 @@ public class BaseRegExpEditor
     JPanel	panel;
     JLabel	label;
     JPanel 	panelButtons;
-    JButton 	buttonOK;
-    JButton 	buttonClose;
+    BaseButton 	buttonOK;
+    BaseButton 	buttonClose;
 
     panelAll   = new JPanel(new BorderLayout());
     panelInput = new JPanel(new BorderLayout());
@@ -124,7 +124,7 @@ public class BaseRegExpEditor
     label = new JLabel("Value");
     label.setDisplayedMnemonic('V');
     label.setLabelFor(m_TextValue);
-    m_ButtonHelp = new JButton(getHelpTitle(), GUIHelper.getIcon(getHelpIcon()));
+    m_ButtonHelp = new BaseButton(getHelpTitle(), GUIHelper.getIcon(getHelpIcon()));
     m_ButtonHelp.setToolTipText(getHelpDescription());
     m_ButtonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -160,7 +160,7 @@ public class BaseRegExpEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -169,7 +169,7 @@ public class BaseRegExpEditor
     });
     panelButtons.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

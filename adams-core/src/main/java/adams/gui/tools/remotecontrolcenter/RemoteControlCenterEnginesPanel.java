@@ -22,6 +22,7 @@ package adams.gui.tools.remotecontrolcenter;
 
 import adams.core.CleanUpHandler;
 import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -37,7 +38,6 @@ import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
@@ -69,22 +69,22 @@ public class RemoteControlCenterEnginesPanel
   protected BaseListWithButtons m_ListEngines;
 
   /** the button for refreshing the engine list. */
-  protected JButton m_ButtonRefresh;
+  protected BaseButton m_ButtonRefresh;
 
   /** the button for adding the engine. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the button for copying the engine. */
-  protected JButton m_ButtonCopy;
+  protected BaseButton m_ButtonCopy;
 
   /** the button for removing the engine. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** the button for stopping engines. */
-  protected JButton m_ButtonStop;
+  protected BaseButton m_ButtonStop;
 
   /** the button for starting engines. */
-  protected JButton m_ButtonStart;
+  protected BaseButton m_ButtonStart;
 
   /**
    * Initializes the widgets.
@@ -108,31 +108,31 @@ public class RemoteControlCenterEnginesPanel
     m_ListEngines.addListSelectionListener((ListSelectionEvent e) -> updateButtons());
     add(m_ListEngines, BorderLayout.CENTER);
 
-    m_ButtonRefresh = new JButton("Refresh", GUIHelper.getIcon("refresh.gif"));
+    m_ButtonRefresh = new BaseButton("Refresh", GUIHelper.getIcon("refresh.gif"));
     m_ButtonRefresh.addActionListener((ActionEvent e) -> refreshEngines());
     m_ListEngines.addToButtonsPanel(m_ButtonRefresh);
 
     m_ListEngines.addToButtonsPanel(new JLabel());
 
-    m_ButtonAdd = new JButton("Add", GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton("Add", GUIHelper.getIcon("add.gif"));
     m_ButtonAdd.addActionListener((ActionEvent e) -> addEngine());
     m_ListEngines.addToButtonsPanel(m_ButtonAdd);
 
-    m_ButtonRemove = new JButton("Remove", GUIHelper.getIcon("remove.gif"));
+    m_ButtonRemove = new BaseButton("Remove", GUIHelper.getIcon("remove.gif"));
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeEngines());
     m_ListEngines.addToButtonsPanel(m_ButtonRemove);
 
-    m_ButtonCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener((ActionEvent e) -> copyEngine());
     m_ListEngines.addToButtonsPanel(m_ButtonCopy);
 
     m_ListEngines.addToButtonsPanel(new JLabel());
 
-    m_ButtonStart = new JButton("Start", GUIHelper.getIcon("run.gif"));
+    m_ButtonStart = new BaseButton("Start", GUIHelper.getIcon("run.gif"));
     m_ButtonStart.addActionListener((ActionEvent e) -> startEngines());
     m_ListEngines.addToButtonsPanel(m_ButtonStart);
 
-    m_ButtonStop = new JButton("Stop", GUIHelper.getIcon("stop_blue.gif"));
+    m_ButtonStop = new BaseButton("Stop", GUIHelper.getIcon("stop_blue.gif"));
     m_ButtonStop.addActionListener((ActionEvent e) -> stopEngines());
     m_ListEngines.addToButtonsPanel(m_ButtonStop);
   }

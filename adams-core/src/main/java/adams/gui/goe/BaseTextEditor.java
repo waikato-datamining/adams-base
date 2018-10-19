@@ -25,12 +25,12 @@ import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseText;
 import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -144,9 +144,9 @@ public class BaseTextEditor
   protected JComponent createCustomEditor() {
     JPanel		panelAll;
     JPanel 		panelButtons;
-    JButton 		buttonClose;
-    JButton 		buttonOK;
-    JButton		buttonClear;
+    BaseButton 		buttonClose;
+    BaseButton 		buttonOK;
+    BaseButton		buttonClear;
     JPanel		panel;
     final JCheckBox	checkLineWrap;
 
@@ -160,7 +160,7 @@ public class BaseTextEditor
 
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panel, BorderLayout.WEST);
-    buttonClear = new JButton("Clear");
+    buttonClear = new BaseButton("Clear");
     buttonClear.setMnemonic('l');
     buttonClear.setIcon(GUIHelper.getIcon("new.gif"));
     buttonClear.addActionListener(new ActionListener() {
@@ -181,7 +181,7 @@ public class BaseTextEditor
     
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panel, BorderLayout.EAST);
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -193,7 +193,7 @@ public class BaseTextEditor
     });
     panel.add(buttonOK);
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

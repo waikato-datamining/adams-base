@@ -25,6 +25,7 @@ import adams.core.DateValueSupporter;
 import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.gui.chooser.DateProvider;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
@@ -32,7 +33,6 @@ import adams.gui.help.HelpFrame;
 import adams.parser.GrammarSupplier;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -91,16 +91,16 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
   protected JTextField m_TextCustom;
 
   /** the button for the bringing up the help for the custom format. */
-  protected JButton m_ButtonCustomHelp;
+  protected BaseButton m_ButtonCustomHelp;
 
   /** The NOW button. */
-  protected JButton m_ButtonNow;
+  protected BaseButton m_ButtonNow;
 
   /** the template button. */
   protected BaseButtonWithDropDownMenu m_ButtonTemplates;
 
   /** The OK button. */
-  protected JButton m_ButtonOK;
+  protected BaseButton m_ButtonOK;
 
   /** for parsing the date type. */
   protected B m_Date;
@@ -227,7 +227,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     JPanel	panelValues;
     JPanel	panelCustom;
     JPanel 	panelButtons;
-    JButton buttonCancel;
+    BaseButton buttonCancel;
 
     panelAll = new JPanel(new BorderLayout());
     panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -256,7 +256,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
       m_ButtonNow.setEnabled(index == 1);
       ((JPanel) m_Calendar).setEnabled(index == 1);
     });
-    m_ButtonNow = new JButton(getNowButtonText());
+    m_ButtonNow = new BaseButton(getNowButtonText());
     m_ButtonNow.addActionListener((ActionEvent e) -> m_Calendar.setDate(newDateType(getPlaceholder(Placeholder.NOW)).dateValue()));
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -280,7 +280,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 	updateButtons();
       }
     });
-    m_ButtonCustomHelp = new JButton(GUIHelper.getIcon("help2.png"));
+    m_ButtonCustomHelp = new BaseButton(GUIHelper.getIcon("help2.png"));
     m_ButtonCustomHelp.addActionListener(e1 -> showHelp());
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -307,7 +307,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
       panelButtons.add(m_ButtonTemplates);
     }
 
-    m_ButtonOK = new JButton("OK");
+    m_ButtonOK = new BaseButton("OK");
     m_ButtonOK.setMnemonic('O');
     m_ButtonOK.addActionListener((ActionEvent e) -> {
       int index = m_ComboBoxPlaceholders.getSelectedIndex();
@@ -321,7 +321,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     });
     panelButtons.add(m_ButtonOK);
 
-    buttonCancel = new JButton("Cancel");
+    buttonCancel = new BaseButton("Cancel");
     buttonCancel.setMnemonic('C');
     buttonCancel.addActionListener((ActionEvent e) -> closeDialog(CANCEL_OPTION));
     panelButtons.add(buttonCancel);

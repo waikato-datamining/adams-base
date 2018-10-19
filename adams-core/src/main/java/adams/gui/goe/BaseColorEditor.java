@@ -21,6 +21,22 @@
 
 package adams.gui.goe;
 
+import adams.core.Utils;
+import adams.core.base.BaseColor;
+import adams.core.option.AbstractOption;
+import adams.gui.core.BaseButton;
+import adams.gui.core.BasePanel;
+import adams.gui.core.ColorHelper;
+import adams.gui.dialog.ApprovalDialog;
+
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -31,23 +47,6 @@ import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import adams.core.Utils;
-import adams.core.base.BaseColor;
-import adams.core.option.AbstractOption;
-import adams.gui.core.BasePanel;
-import adams.gui.core.ColorHelper;
-import adams.gui.dialog.ApprovalDialog;
 
 /**
  * A PropertyEditor for {@link BaseColor} objects that lets the user select a color from
@@ -148,8 +147,8 @@ public class BaseColorEditor
     JPanel	panelAlpha;
     JPanel	panelButtons;
     JLabel	labelAlpha;
-    JButton	buttonOK;
-    JButton	buttonCancel;
+    BaseButton	buttonOK;
+    BaseButton	buttonCancel;
     BaseColor 	currentColor;
 
     currentColor = (BaseColor) getValue();
@@ -188,7 +187,7 @@ public class BaseColorEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     result.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -198,7 +197,7 @@ public class BaseColorEditor
     });
     panelButtons.add(buttonOK);
 
-    buttonCancel = new JButton("Cancel");
+    buttonCancel = new BaseButton("Cancel");
     buttonCancel.setMnemonic('C');
     buttonCancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

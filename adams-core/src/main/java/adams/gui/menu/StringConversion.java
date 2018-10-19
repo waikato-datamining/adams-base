@@ -27,6 +27,7 @@ import adams.data.conversion.UnBackQuote;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.Fonts;
@@ -35,7 +36,6 @@ import adams.gui.goe.GenericObjectEditorPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -83,12 +83,12 @@ public class StringConversion
     final GenericObjectEditorPanel	conversion;
     JLabel 				label;
     final BaseTextAreaWithButtons 	textLeft;
-    JButton				button;
+    BaseButton				button;
     final BaseTextAreaWithButtons	textRight;
     JPanel				panelText;
     JPanel				buttons;
-    JButton 				buttonConvert;
-    JButton 				buttonCancel;
+    BaseButton 				buttonConvert;
+    BaseButton 				buttonCancel;
 
     panel = new BasePanel(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -106,7 +106,7 @@ public class StringConversion
     textLeft.setLineWrap(true);
     textLeft.setWrapStyleWord(true);
     textLeft.setTextFont(Fonts.getMonospacedFont());
-    button = new JButton(GUIHelper.getIcon("copy.gif"));
+    button = new BaseButton(GUIHelper.getIcon("copy.gif"));
     button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -114,7 +114,7 @@ public class StringConversion
       }
     });
     textLeft.addToButtonsPanel(button);
-    button = new JButton(GUIHelper.getIcon("paste.gif"));
+    button = new BaseButton(GUIHelper.getIcon("paste.gif"));
     button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -138,7 +138,7 @@ public class StringConversion
     textRight.setLineWrap(true);
     textRight.setWrapStyleWord(true);
     textRight.setTextFont(Fonts.getMonospacedFont());
-    button = new JButton(GUIHelper.getIcon("copy.gif"));
+    button = new BaseButton(GUIHelper.getIcon("copy.gif"));
     button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -157,7 +157,7 @@ public class StringConversion
     buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(buttons, BorderLayout.SOUTH);
 
-    buttonConvert = new JButton("Convert");
+    buttonConvert = new BaseButton("Convert");
     buttonConvert.setMnemonic('v');
     buttonConvert.addActionListener(new ActionListener() {
       @Override
@@ -177,7 +177,7 @@ public class StringConversion
     });
     buttons.add(buttonConvert);
 
-    buttonCancel = new JButton("Cancel");
+    buttonCancel = new BaseButton("Cancel");
     buttonCancel.setMnemonic('C');
     buttonCancel.addActionListener(new ActionListener() {
       @Override

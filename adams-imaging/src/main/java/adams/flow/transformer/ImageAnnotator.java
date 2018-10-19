@@ -30,6 +30,7 @@ import adams.data.report.Report;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -46,7 +47,6 @@ import adams.gui.visualization.image.selectionshape.RectanglePainter;
 import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import java.awt.BorderLayout;
@@ -222,7 +222,7 @@ public class ImageAnnotator
     protected JToggleButton m_ButtonUnset;
 
     /** the reset button. */
-    protected JButton m_ButtonReset;
+    protected BaseButton m_ButtonReset;
 
     /** the button group. */
     protected ButtonGroup m_ButtonGroup;
@@ -312,7 +312,7 @@ public class ImageAnnotator
       comps.add(m_ButtonUnset);
       m_ButtonGroup.add(m_ButtonUnset);
 
-      m_ButtonReset = new JButton("Reset");
+      m_ButtonReset = new BaseButton("Reset");
       m_ButtonReset.addActionListener((ActionEvent e) -> resetLabels());
       comps.add(m_ButtonReset);
 
@@ -832,21 +832,21 @@ public class ImageAnnotator
    * @param panel	the panel displayed in the frame
    */
   protected void postCreateDialog(final BaseDialog dialog, BasePanel panel) {
-    JButton	buttonOK;
-    JButton	buttonCancel;
+    BaseButton	buttonOK;
+    BaseButton	buttonCancel;
     JPanel	panelButtons;
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     dialog.getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.addActionListener((ActionEvent e) -> {
       m_Accepted = true;
       dialog.setVisible(false);
     });
     panelButtons.add(buttonOK);
 
-    buttonCancel = new JButton("Cancel");
+    buttonCancel = new BaseButton("Cancel");
     buttonCancel.addActionListener((ActionEvent e) -> {
       m_Accepted = false;
       dialog.setVisible(false);

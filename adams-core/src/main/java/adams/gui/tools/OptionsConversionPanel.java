@@ -19,17 +19,6 @@
  */
 package adams.gui.tools;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.option.ArrayConsumer;
@@ -38,10 +27,20 @@ import adams.core.option.OptionConsumer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionProducer;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorPanel;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * Helper panel for converting options from format into another.
@@ -63,13 +62,13 @@ public class OptionsConversionPanel
   protected BaseTextAreaWithButtons m_TextAreaInput;
 
   /** the button for copying the input. */
-  protected JButton m_ButtonInputCopy;
+  protected BaseButton m_ButtonInputCopy;
 
   /** the button for pasting the input. */
-  protected JButton m_ButtonInputPaste;
+  protected BaseButton m_ButtonInputPaste;
 
   /** the button for loading the input from file. */
-  protected JButton m_ButtonInputOpen;
+  protected BaseButton m_ButtonInputOpen;
 
   /** the GOE panel for the output. */
   protected GenericObjectEditorPanel m_OutputFormat;
@@ -78,28 +77,28 @@ public class OptionsConversionPanel
   protected BaseTextAreaWithButtons m_TextAreaOutput;
 
   /** the button for copying the output. */
-  protected JButton m_ButtonOutputCopy;
+  protected BaseButton m_ButtonOutputCopy;
 
   /** the button for pasting the output. */
-  protected JButton m_ButtonOutputPaste;
+  protected BaseButton m_ButtonOutputPaste;
 
   /** the button for saving the output to a file. */
-  protected JButton m_ButtonOutputSave;
+  protected BaseButton m_ButtonOutputSave;
 
   /** the text area for the code output. */
   protected BaseTextAreaWithButtons m_TextAreaCodeOutput;
 
   /** the button for copying the code output. */
-  protected JButton m_ButtonCodeOutputCopy;
+  protected BaseButton m_ButtonCodeOutputCopy;
 
   /** the button for pasting the code output. */
-  protected JButton m_ButtonCodeOutputPaste;
+  protected BaseButton m_ButtonCodeOutputPaste;
 
   /** the button for saving the code output to a file. */
-  protected JButton m_ButtonCodeOutputSave;
+  protected BaseButton m_ButtonCodeOutputSave;
 
   /** the button initiating the conversion. */
-  protected JButton m_ButtonConvert;
+  protected BaseButton m_ButtonConvert;
 
   /** the file chooser for loading the options. */
   protected BaseFileChooser m_FileChooserInput;
@@ -151,7 +150,7 @@ public class OptionsConversionPanel
     m_TextAreaInput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaInput, BorderLayout.CENTER);
 
-    m_ButtonInputCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonInputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonInputCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -160,7 +159,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputCopy);
 
-    m_ButtonInputPaste = new JButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonInputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
     m_ButtonInputPaste.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -169,7 +168,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputPaste);
 
-    m_ButtonInputOpen = new JButton("Open...", GUIHelper.getIcon("open.gif"));
+    m_ButtonInputOpen = new BaseButton("Open...", GUIHelper.getIcon("open.gif"));
     m_ButtonInputOpen.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -191,7 +190,7 @@ public class OptionsConversionPanel
     m_TextAreaOutput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaOutput, BorderLayout.CENTER);
 
-    m_ButtonOutputCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonOutputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonOutputCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -200,7 +199,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaOutput.addToButtonsPanel(m_ButtonOutputCopy);
 
-    m_ButtonOutputPaste = new JButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonOutputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
     m_ButtonOutputPaste.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -209,7 +208,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaOutput.addToButtonsPanel(m_ButtonOutputPaste);
 
-    m_ButtonOutputSave = new JButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonOutputSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
     m_ButtonOutputSave.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -226,7 +225,7 @@ public class OptionsConversionPanel
     m_TextAreaCodeOutput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaCodeOutput, BorderLayout.CENTER);
 
-    m_ButtonCodeOutputCopy = new JButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCodeOutputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
     m_ButtonCodeOutputCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -235,7 +234,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaCodeOutput.addToButtonsPanel(m_ButtonCodeOutputCopy);
 
-    m_ButtonCodeOutputPaste = new JButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonCodeOutputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
     m_ButtonCodeOutputPaste.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -244,7 +243,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaCodeOutput.addToButtonsPanel(m_ButtonCodeOutputPaste);
 
-    m_ButtonCodeOutputSave = new JButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonCodeOutputSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
     m_ButtonCodeOutputSave.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -257,7 +256,7 @@ public class OptionsConversionPanel
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
 
-    m_ButtonConvert = new JButton("Convert");
+    m_ButtonConvert = new BaseButton("Convert");
     m_ButtonConvert.setMnemonic('C');
     m_ButtonConvert.addActionListener(new ActionListener() {
       @Override

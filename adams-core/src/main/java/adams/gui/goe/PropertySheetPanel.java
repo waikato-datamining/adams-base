@@ -29,6 +29,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractNumericOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -39,7 +40,6 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -118,7 +118,7 @@ public class PropertySheetPanel extends BasePanel
   protected String m_GlobalInfo;
 
   /** Button to pop up the full help text in a separate frame. */
-  protected JButton m_ButtonHelp;
+  protected BaseButton m_ButtonHelp;
 
   /** The panel holding global info and help, if provided by
       the object being editied. */
@@ -361,7 +361,7 @@ public class PropertySheetPanel extends BasePanel
 
     if (m_GlobalInfo != null) {
       summary = extractFirstSentence(m_GlobalInfo, true);
-      m_ButtonHelp = new JButton(GUIHelper.getIcon("help.gif"));
+      m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
       m_ButtonHelp.setToolTipText("Help on " + m_Target.getClass().getName());
       m_ButtonHelp.addActionListener(new ActionListener() {
 	@Override
@@ -806,7 +806,7 @@ public class PropertySheetPanel extends BasePanel
    *
    * @return		the help button
    */
-  public JButton getHelpButton() {
+  public BaseButton getHelpButton() {
     return m_ButtonHelp;
   }
 }

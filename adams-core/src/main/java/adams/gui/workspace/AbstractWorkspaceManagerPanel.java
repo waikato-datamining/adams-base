@@ -22,10 +22,10 @@ package adams.gui.workspace;
 import adams.core.CleanUpHandler;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionEvent;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionListener;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 
-import javax.swing.JButton;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
@@ -63,10 +63,10 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
   protected BasePanel m_PanelButtons;
 
   /** the button for adding a panel. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the button for removing a panel. */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /**
    * For initializing the GUI.
@@ -100,7 +100,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     m_SplitPane.setTopComponent(m_PanelHistory);
 
     // left buttons
-    m_ButtonAdd = new JButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
     height = m_ButtonAdd.getHeight();
     m_ButtonAdd.setSize(height, height);
     m_ButtonAdd.setToolTipText("Adds a new workspace");
@@ -116,7 +116,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     });
     m_PanelButtons.add(m_ButtonAdd);
 
-    m_ButtonRemove = new JButton(GUIHelper.getIcon("remove.gif"));
+    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("remove.gif"));
     m_ButtonRemove.setSize(height, height);
     m_ButtonRemove.setToolTipText("Removes all selected workspaces");
     m_ButtonRemove.addActionListener((ActionEvent e) -> {

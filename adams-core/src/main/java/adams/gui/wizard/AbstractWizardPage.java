@@ -23,13 +23,13 @@ import adams.core.Properties;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingSupporter;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextPane;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.StyledEditorKit;
@@ -76,10 +76,10 @@ public abstract class AbstractWizardPage
   protected JPanel m_PanelButtons;
 
   /** the load props button. */
-  protected JButton m_ButtonLoad;
+  protected BaseButton m_ButtonLoad;
 
   /** the save props button. */
-  protected JButton m_ButtonSave;
+  protected BaseButton m_ButtonSave;
 
   /** the filechooser for loading/saving properties. */
   protected BaseFileChooser m_FileChooser;
@@ -121,7 +121,7 @@ public abstract class AbstractWizardPage
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelButtons.add(panel, BorderLayout.WEST);
 
-    m_ButtonLoad = new JButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
     m_ButtonLoad.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -130,7 +130,7 @@ public abstract class AbstractWizardPage
     });
     panel.add(m_ButtonLoad);
 
-    m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
     m_ButtonSave.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

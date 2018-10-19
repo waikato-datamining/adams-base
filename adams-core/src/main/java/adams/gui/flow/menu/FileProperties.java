@@ -22,6 +22,7 @@ package adams.gui.flow.menu;
 import adams.core.ByteFormat;
 import adams.data.statistics.InformativeStatistic;
 import adams.flow.core.ActorStatistic;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -31,7 +32,6 @@ import adams.gui.flow.tree.Node;
 import adams.gui.visualization.statistics.InformativeStatisticFactory;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JTextField;
 import javax.swing.tree.TreeNode;
@@ -104,7 +104,7 @@ public class FileProperties
     ParameterPanel	params;
     String		file;
     String		size;
-    JButton		buttonStats;
+    BaseButton		buttonStats;
     final JTextField	textFile;
     JTextField		textSize;
 
@@ -116,7 +116,7 @@ public class FileProperties
       size = ByteFormat.toBestFitBytes(m_State.getCurrentFile().length(), 1);
     else
       size = "N/A";
-    buttonStats = new JButton("Display", GUIHelper.getIcon("statistics.png"));
+    buttonStats = new BaseButton("Display", GUIHelper.getIcon("statistics.png"));
     buttonStats.addActionListener((ActionEvent ae) -> showStatistics());
 
     params = new ParameterPanel();

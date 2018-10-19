@@ -23,11 +23,11 @@ package adams.gui.goe;
 
 import adams.core.base.BaseClassname;
 import adams.core.base.BaseObject;
+import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import adams.gui.tools.ClassHelpPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -118,8 +118,8 @@ public class BaseClassnameEditor
   protected JComponent createCustomEditor() {
     JPanel		panelAll;
     JPanel 		panelButtons;
-    JButton 		buttonClose;
-    JButton 		buttonOK;
+    BaseButton 		buttonClose;
+    BaseButton 		buttonOK;
     JPanel		panel;
 
     panelAll    = new JPanel(new BorderLayout());
@@ -136,7 +136,7 @@ public class BaseClassnameEditor
 
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panel, BorderLayout.EAST);
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.setEnabled(false);
     buttonOK.addActionListener(new ActionListener() {
@@ -150,7 +150,7 @@ public class BaseClassnameEditor
     panel.add(buttonOK);
     m_PanelHelp.addChangeListener((ChangeEvent e) -> buttonOK.setEnabled(m_PanelHelp.getSelectedClass() != null));
 
-    buttonClose = new JButton("Cancel");
+    buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
     buttonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

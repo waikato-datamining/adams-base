@@ -20,6 +20,7 @@
 package adams.gui.core.json;
 
 import adams.core.JsonSupporter;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -30,7 +31,6 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -61,7 +61,7 @@ public class JsonTreeWithPreview
   protected BaseTextArea m_TextArea;
 
   /** the button for copying. */
-  protected JButton m_ButtonCopy;
+  protected BaseButton m_ButtonCopy;
   
   /**
    * Initializes the widgets.
@@ -109,7 +109,7 @@ public class JsonTreeWithPreview
     panelButtons = new JPanel(new BorderLayout());
     panelPreview.add(panelButtons, BorderLayout.EAST);
     
-    m_ButtonCopy = new JButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

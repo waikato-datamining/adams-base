@@ -33,6 +33,7 @@ import adams.flow.transformer.locateobjects.AbstractObjectLocator;
 import adams.flow.transformer.locateobjects.PassThrough;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.chooser.ImageFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
@@ -51,7 +52,6 @@ import adams.gui.visualization.image.ImageViewerPanel;
 import adams.gui.visualization.image.NullOverlay;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -140,19 +140,19 @@ public class ImageProcessorPanel
   protected JLabel m_LabelProgress;
 
   /** the "new flow" button. */
-  protected JButton m_ButtonNew;
+  protected BaseButton m_ButtonNew;
 
   /** the "load flow" button. */
-  protected JButton m_ButtonLoad;
+  protected BaseButton m_ButtonLoad;
 
   /** the "save flow" button. */
-  protected JButton m_ButtonSave;
+  protected BaseButton m_ButtonSave;
 
   /** the "check flow" button. */
-  protected JButton m_ButtonCheck;
+  protected BaseButton m_ButtonCheck;
 
   /** the "run flow" button. */
-  protected JButton m_ButtonRun;
+  protected BaseButton m_ButtonRun;
 
   /** the last object locator in use (original). */
   protected AbstractObjectLocator m_LastObjectLocatorOriginal;
@@ -225,23 +225,23 @@ public class ImageProcessorPanel
     m_LabelProgress = new JLabel();
     panelStatus.add(m_LabelProgress);
 
-    m_ButtonNew = new JButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonNew = new BaseButton(GUIHelper.getIcon("new.gif"));
     m_ButtonNew.addActionListener((ActionEvent e) -> newFlow());
     panelButtons.add(m_ButtonNew);
 
-    m_ButtonLoad = new JButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
     m_ButtonLoad.addActionListener((ActionEvent e) -> loadFlow());
     panelButtons.add(m_ButtonLoad);
 
-    m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
     m_ButtonSave.addActionListener((ActionEvent e) -> saveFlow());
     panelButtons.add(m_ButtonSave);
 
-    m_ButtonCheck = new JButton(GUIHelper.getIcon("validate.png"));
+    m_ButtonCheck = new BaseButton(GUIHelper.getIcon("validate.png"));
     m_ButtonCheck.addActionListener((ActionEvent e) -> checkFlow(false));
     panelButtons.add(m_ButtonCheck);
 
-    m_ButtonRun = new JButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonRun = new BaseButton(GUIHelper.getIcon("run.gif"));
     m_ButtonRun.addActionListener((ActionEvent e) -> runFlow());
     panelButtons.add(m_ButtonRun);
     m_SplitPane.setRightComponent(panel);

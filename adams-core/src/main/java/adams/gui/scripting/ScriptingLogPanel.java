@@ -20,29 +20,28 @@
 
 package adams.gui.scripting;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.text.Document;
-
 import adams.core.Properties;
 import adams.core.io.FileUtils;
 import adams.core.io.FilenameProposer;
 import adams.env.Environment;
 import adams.env.ScriptingDialogDefinition;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.ScriptingEvent;
 import adams.gui.event.ScriptingListener;
+
+import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import javax.swing.text.Document;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A panel for outputting scripting commands globally.
@@ -61,13 +60,13 @@ public class ScriptingLogPanel
   protected JTextPane m_TextLog;
 
   /** the button for clearing the log. */
-  protected JButton m_ButtonClear;
+  protected BaseButton m_ButtonClear;
 
   /** the button for closing the log. */
-  protected JButton m_ButtonClose;
+  protected BaseButton m_ButtonClose;
 
   /** the button for saving the log. */
-  protected JButton m_ButtonSave;
+  protected BaseButton m_ButtonSave;
 
   /** the file chooser for saving the log. */
   protected BaseFileChooser m_FileChooser;
@@ -119,7 +118,7 @@ public class ScriptingLogPanel
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
 
-    m_ButtonClear = new JButton("Clear", GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
     m_ButtonClear.setMnemonic('e');
     m_ButtonClear.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -128,7 +127,7 @@ public class ScriptingLogPanel
     });
     panel.add(m_ButtonClear);
 
-    m_ButtonSave = new JButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
     m_ButtonSave.setMnemonic('s');
     m_ButtonSave.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -137,7 +136,7 @@ public class ScriptingLogPanel
     });
     panel.add(m_ButtonSave);
 
-    m_ButtonClose = new JButton("Close", GUIHelper.getIcon("exit.png"));
+    m_ButtonClose = new BaseButton("Close", GUIHelper.getIcon("exit.png"));
     m_ButtonClose.setMnemonic('l');
     m_ButtonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

@@ -27,6 +27,7 @@ import adams.core.logging.LoggingSupporter;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.env.Environment;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BaseList;
 import adams.gui.core.BasePanel;
@@ -38,7 +39,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -111,13 +111,13 @@ public class WizardPane
   protected JPanel m_PanelButtons;
   
   /** the button for the previous page. */
-  protected JButton m_ButtonBack;
+  protected BaseButton m_ButtonBack;
   
   /** the button for the next page. */
-  protected JButton m_ButtonNext;
+  protected BaseButton m_ButtonNext;
   
   /** the button for the cancelling/finishing. */
-  protected JButton m_ButtonCancelFinish;
+  protected BaseButton m_ButtonCancelFinish;
   
   /** the action listeners (ie hitting cancel/finish). */
   protected HashSet<ActionListener> m_ActionListeners;
@@ -129,10 +129,10 @@ public class WizardPane
   protected JPanel m_PanelButtonsProperties;
 
   /** the load props button. */
-  protected JButton m_ButtonLoad;
+  protected BaseButton m_ButtonLoad;
 
   /** the save props button. */
-  protected JButton m_ButtonSave;
+  protected BaseButton m_ButtonSave;
 
   /** the filechooser for loading/saving properties. */
   protected BaseFileChooser m_FileChooser;
@@ -209,7 +209,7 @@ public class WizardPane
     m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(m_PanelButtons, BorderLayout.EAST);
     
-    m_ButtonBack = new JButton("Back");
+    m_ButtonBack = new BaseButton("Back");
     m_ButtonBack.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -218,7 +218,7 @@ public class WizardPane
     });
     m_PanelButtons.add(m_ButtonBack);
     
-    m_ButtonNext = new JButton("Next");
+    m_ButtonNext = new BaseButton("Next");
     m_ButtonNext.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -231,7 +231,7 @@ public class WizardPane
     });
     m_PanelButtons.add(m_ButtonNext);
     
-    m_ButtonCancelFinish = new JButton("");
+    m_ButtonCancelFinish = new BaseButton("");
     m_ButtonCancelFinish.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -245,7 +245,7 @@ public class WizardPane
     });
     m_PanelButtons.add(m_ButtonCancelFinish);
 
-    m_ButtonLoad = new JButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
     m_ButtonLoad.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -254,7 +254,7 @@ public class WizardPane
     });
     m_PanelButtonsProperties.add(m_ButtonLoad);
 
-    m_ButtonSave = new JButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
     m_ButtonSave.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

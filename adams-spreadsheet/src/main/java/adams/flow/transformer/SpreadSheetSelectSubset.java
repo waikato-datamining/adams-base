@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -32,7 +33,6 @@ import adams.gui.core.TableRowRange;
 import adams.gui.event.SearchEvent;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -347,8 +347,8 @@ public class SpreadSheetSelectSubset
     JPanel		panelCenter;
     JPanel		panelMessage;
     JPanel 		panelButtons;
-    final JButton 	buttonOK;
-    final JButton	buttonCancel;
+    final BaseButton 	buttonOK;
+    final BaseButton	buttonCancel;
     SearchPanel		panelSearch;
 
     result = new BasePanel(new BorderLayout());
@@ -375,7 +375,7 @@ public class SpreadSheetSelectSubset
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     result.add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new JButton("OK");
+    buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener((ActionEvent e) -> {
       m_Accepted = true;
@@ -383,7 +383,7 @@ public class SpreadSheetSelectSubset
     });
     panelButtons.add(buttonOK);
 
-    buttonCancel = new JButton("Cancel");
+    buttonCancel = new BaseButton("Cancel");
     buttonCancel.setMnemonic('C');
     buttonCancel.addActionListener((ActionEvent e) -> {
       m_Accepted = false;

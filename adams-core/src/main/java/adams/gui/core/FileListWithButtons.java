@@ -19,22 +19,20 @@
  */
 package adams.gui.core;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import adams.core.io.PlaceholderFile;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.event.RemoveItemsEvent;
+import adams.gui.event.RemoveItemsListener;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
-
-import adams.core.io.PlaceholderFile;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.event.RemoveItemsEvent;
-import adams.gui.event.RemoveItemsListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * A specialized list that allows the addition/removal of files.
@@ -49,22 +47,22 @@ public class FileListWithButtons
   private static final long serialVersionUID = 4722609868753213745L;
 
   /** the button for adding a file. */
-  protected JButton m_ButtonAdd;
+  protected BaseButton m_ButtonAdd;
 
   /** the button for removing file(s). */
-  protected JButton m_ButtonRemove;
+  protected BaseButton m_ButtonRemove;
 
   /** the button for removing all files. */
-  protected JButton m_ButtonRemoveAll;
+  protected BaseButton m_ButtonRemoveAll;
 
   /** the file chooser for selecting files. */
   protected BaseFileChooser m_FileChooser;
 
   /** the button for moving an entry up. */
-  protected JButton m_ButtonMoveUp;
+  protected BaseButton m_ButtonMoveUp;
 
   /** the button for moving an entry down. */
-  protected JButton m_ButtonMoveDown;
+  protected BaseButton m_ButtonMoveDown;
 
   /**
    * Initializes the members.
@@ -93,7 +91,7 @@ public class FileListWithButtons
       }
     });
 
-    m_ButtonAdd = new JButton("Add");
+    m_ButtonAdd = new BaseButton("Add");
     m_ButtonAdd.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	addFile();
@@ -101,7 +99,7 @@ public class FileListWithButtons
     });
     addToButtonsPanel(m_ButtonAdd);
 
-    m_ButtonRemove = new JButton("Remove");
+    m_ButtonRemove = new BaseButton("Remove");
     m_ButtonRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	removeFile(getSelectedIndices());
@@ -109,7 +107,7 @@ public class FileListWithButtons
     });
     addToButtonsPanel(m_ButtonRemove);
 
-    m_ButtonRemoveAll = new JButton("Remove all");
+    m_ButtonRemoveAll = new BaseButton("Remove all");
     m_ButtonRemoveAll.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	removeAllFiles();
@@ -117,7 +115,7 @@ public class FileListWithButtons
     });
     addToButtonsPanel(m_ButtonRemoveAll);
 
-    m_ButtonMoveUp = new JButton("Up");
+    m_ButtonMoveUp = new BaseButton("Up");
     m_ButtonMoveUp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	moveUp();
@@ -126,7 +124,7 @@ public class FileListWithButtons
     addToButtonsPanel(new JLabel());
     addToButtonsPanel(m_ButtonMoveUp);
 
-    m_ButtonMoveDown = new JButton("Down");
+    m_ButtonMoveDown = new BaseButton("Down");
     m_ButtonMoveDown.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	moveDown();

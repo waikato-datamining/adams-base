@@ -38,7 +38,6 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -1881,7 +1880,7 @@ public class GUIHelper {
     JLabel		label;
     final StringBuilder	result;
     Boolean             sync;
-    JButton             initialFocus;
+    BaseButton             initialFocus;
 
     if (initial == null)
       initial = "";
@@ -1918,7 +1917,7 @@ public class GUIHelper {
     panelButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
     initialFocus = null;
     for (String option: options) {
-      final JButton button = new JButton(option);
+      final BaseButton button = new BaseButton(option);
       button.addActionListener((ActionEvent e) -> {
 	result.append(button.getText());
 	dialog.setVisible(false);
