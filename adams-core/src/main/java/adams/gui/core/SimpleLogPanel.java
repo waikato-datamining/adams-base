@@ -25,7 +25,6 @@ import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JCheckBox;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 
@@ -54,7 +53,7 @@ public class SimpleLogPanel
   protected BaseButton m_ButtonSave;
 
   /** the checkbox for linewrap. */
-  protected JCheckBox m_CheckBoxLineWrap;
+  protected BaseCheckBox m_CheckBoxLineWrap;
 
   /** the filechooser for saving the log. */
   protected transient BaseFileChooser m_FileChooser;
@@ -97,7 +96,7 @@ public class SimpleLogPanel
     m_ButtonSave.addActionListener((ActionEvent e) -> saveAs());
     m_TextLog.addToButtonsPanel(m_ButtonSave);
 
-    m_CheckBoxLineWrap = new JCheckBox("Line wrap");
+    m_CheckBoxLineWrap = new BaseCheckBox("Line wrap");
     m_CheckBoxLineWrap.setSelected(false);
     m_CheckBoxLineWrap.addActionListener((ActionEvent e) -> setLineWrap(m_CheckBoxLineWrap.isSelected()));
     m_TextLog.addToButtonsPanel(m_CheckBoxLineWrap);

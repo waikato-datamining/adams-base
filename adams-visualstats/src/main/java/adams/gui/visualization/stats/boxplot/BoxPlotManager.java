@@ -25,6 +25,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -37,7 +38,6 @@ import adams.gui.visualization.core.plot.Axis;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -119,7 +119,7 @@ public class BoxPlotManager
   protected JSpinner m_SpinnerAxisWid;
 
   /** select whether graphs have the same axis */
-  protected JCheckBox m_CheckBoxSameAxis;
+  protected BaseCheckBox m_CheckBoxSameAxis;
 
   /** Range of box plots to display initially */
   protected Range m_Range;
@@ -149,7 +149,7 @@ public class BoxPlotManager
   protected JSpinner m_SpinnerGrid;
 
   /** Check box to choose if boxes should b filled */
-  protected JCheckBox m_CheckBoxFill;
+  protected BaseCheckBox m_CheckBoxFill;
 
   /** Button to choose color of boxes */
   protected BaseButton m_ButtonFillColor;
@@ -242,10 +242,10 @@ public class BoxPlotManager
     m_SpinnerHeight.addChangeListener((ChangeEvent e) -> spinHeightChange(e));
     m_SpinnerAxisWid.addChangeListener((ChangeEvent e) -> spinAxisChange(e));
     m_SpinnerGrid.addChangeListener((ChangeEvent e) -> spinHorizontalChange(e));
-    m_CheckBoxSameAxis = new JCheckBox();
+    m_CheckBoxSameAxis = new BaseCheckBox();
     m_CheckBoxSameAxis.addItemListener((ItemEvent e) -> sameAxisChange(e));
 
-    m_CheckBoxFill = new JCheckBox();
+    m_CheckBoxFill = new BaseCheckBox();
     m_CheckBoxFill.addItemListener((ItemEvent e) -> fillChange(e));
 
     m_ButtonFillColor = new BaseButton("Choose");
@@ -308,7 +308,7 @@ public class BoxPlotManager
    * @param val		the event
    */
   protected void fillChange(ItemEvent val) {
-    m_Fill = ((JCheckBox) val.getSource()).isSelected();
+    m_Fill = ((BaseCheckBox) val.getSource()).isSelected();
     update();
   }
 

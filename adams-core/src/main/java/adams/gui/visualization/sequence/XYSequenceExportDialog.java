@@ -19,15 +19,14 @@
  */
 package adams.gui.visualization.sequence;
 
-import java.awt.Dialog;
-import java.awt.Frame;
-
-import javax.swing.JCheckBox;
-
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.dialog.AbstractDirectoryExportDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
+
+import java.awt.Dialog;
+import java.awt.Frame;
 
 /**
  * Export dialog for XY sequences.
@@ -42,7 +41,7 @@ public class XYSequenceExportDialog
   private static final long serialVersionUID = 6635283474671937011L;
 
   /** whether the sequences should be saved in the same file, if possible. */
-  protected JCheckBox m_CheckBoxCombine;
+  protected BaseCheckBox m_CheckBoxCombine;
 
   /**
    * Creates a modeless dialog without a title with the specified Dialog as
@@ -92,7 +91,7 @@ public class XYSequenceExportDialog
   protected void initGUI() {
     super.initGUI();
     
-    m_CheckBoxCombine = new JCheckBox();
+    m_CheckBoxCombine = new BaseCheckBox();
     m_PanelParams.addParameter("_Combine (if possible)", m_CheckBoxCombine);
   }
 

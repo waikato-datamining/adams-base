@@ -26,11 +26,11 @@ import adams.core.io.FileUtils;
 import adams.core.net.ProxyHelper;
 import adams.env.Environment;
 import adams.env.ProxyDefinition;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ParameterPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
@@ -70,7 +70,7 @@ public class ProxySettingsPanel
   protected JSpinner m_SpinnerHttpFtpPort;
 
   /** whether authentication is necessary. */
-  protected JCheckBox m_CheckBoxHttpFtpAuthentication;
+  protected BaseCheckBox m_CheckBoxHttpFtpAuthentication;
 
   /** the http proxy user. */
   protected JTextField m_TextHttpFtpUser;
@@ -79,7 +79,7 @@ public class ProxySettingsPanel
   protected JPasswordField m_TextHttpFtpPassword;
 
   /** Whether to show the http password. */
-  protected JCheckBox m_CheckBoxShowHttpFtpPassword;
+  protected BaseCheckBox m_CheckBoxShowHttpFtpPassword;
 
   /** the hosts that bypass the http proxy . */
   protected JTextField m_TextHttpFtpNoProxy;
@@ -94,7 +94,7 @@ public class ProxySettingsPanel
   protected JSpinner m_SpinnerSocksPort;
 
   /** whether authentication is necessary. */
-  protected JCheckBox m_CheckBoxSocksAuthentication;
+  protected BaseCheckBox m_CheckBoxSocksAuthentication;
 
   /** the socks proxy user. */
   protected JTextField m_TextSocksUser;
@@ -103,7 +103,7 @@ public class ProxySettingsPanel
   protected JPasswordField m_TextSocksPassword;
 
   /** Whether to show the password. */
-  protected JCheckBox m_CheckBoxShowSocksPassword;
+  protected BaseCheckBox m_CheckBoxShowSocksPassword;
 
   /**
    * Initializes the widgets.
@@ -153,7 +153,7 @@ public class ProxySettingsPanel
     m_TextHttpFtpNoProxy = new JTextField(15);
     m_PanelHttpFtp.addParameter("No pro_xy for", m_TextHttpFtpNoProxy);
 
-    m_CheckBoxHttpFtpAuthentication = new JCheckBox();
+    m_CheckBoxHttpFtpAuthentication = new BaseCheckBox();
     m_CheckBoxHttpFtpAuthentication.addChangeListener((ChangeEvent e) -> {
       m_TextHttpFtpUser.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
       m_TextHttpFtpPassword.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
@@ -170,7 +170,7 @@ public class ProxySettingsPanel
     m_TextHttpFtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
     m_PanelHttpFtp.addParameter("Password", m_TextHttpFtpPassword);
 
-    m_CheckBoxShowHttpFtpPassword = new JCheckBox();
+    m_CheckBoxShowHttpFtpPassword = new BaseCheckBox();
     m_CheckBoxShowHttpFtpPassword.setSelected(false);
     m_CheckBoxShowHttpFtpPassword.addActionListener((ActionEvent e) -> {
       if (m_CheckBoxShowHttpFtpPassword.isSelected())
@@ -191,7 +191,7 @@ public class ProxySettingsPanel
     m_SpinnerSocksPort = new JSpinner();
     m_PanelSocks.addParameter("Port", m_SpinnerSocksPort);
 
-    m_CheckBoxSocksAuthentication = new JCheckBox();
+    m_CheckBoxSocksAuthentication = new BaseCheckBox();
     m_CheckBoxSocksAuthentication.addChangeListener((ChangeEvent e) -> {
       m_TextSocksUser.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
       m_TextSocksPassword.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
@@ -208,7 +208,7 @@ public class ProxySettingsPanel
     m_TextSocksPassword.setEchoChar(Constants.PASSWORD_CHAR);
     m_PanelSocks.addParameter("Password", m_TextSocksPassword);
 
-    m_CheckBoxShowSocksPassword = new JCheckBox();
+    m_CheckBoxShowSocksPassword = new BaseCheckBox();
     m_CheckBoxShowSocksPassword.setSelected(false);
     m_CheckBoxShowSocksPassword.addActionListener((ActionEvent e) -> {
       if (m_CheckBoxShowSocksPassword.isSelected())

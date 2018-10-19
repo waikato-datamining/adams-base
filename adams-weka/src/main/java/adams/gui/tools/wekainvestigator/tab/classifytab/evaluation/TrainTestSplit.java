@@ -27,6 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.chooser.SelectOptionPanel;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
@@ -43,7 +44,6 @@ import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
@@ -92,7 +92,7 @@ public class TrainTestSplit
   protected NumberTextField m_TextPercentage;
 
   /** whether to preserve the order. */
-  protected JCheckBox m_CheckBoxPreserveOrder;
+  protected BaseCheckBox m_CheckBoxPreserveOrder;
 
   /** the seed value. */
   protected NumberTextField m_TextSeed;
@@ -101,13 +101,13 @@ public class TrainTestSplit
   protected SelectOptionPanel m_SelectAdditionalAttributes;
 
   /** whether to use views. */
-  protected JCheckBox m_CheckBoxUseViews;
+  protected BaseCheckBox m_CheckBoxUseViews;
 
   /** the split generator. */
   protected GenericObjectEditorPanel m_GOEGenerator;
 
   /** whether to discard the predictions. */
-  protected JCheckBox m_CheckBoxDiscardPredictions;
+  protected BaseCheckBox m_CheckBoxDiscardPredictions;
 
   /**
    * Returns a string describing the object.
@@ -161,7 +161,7 @@ public class TrainTestSplit
     m_PanelParameters.addParameter("Percentage", m_TextPercentage);
 
     // preserve order?
-    m_CheckBoxPreserveOrder = new JCheckBox();
+    m_CheckBoxPreserveOrder = new BaseCheckBox();
     m_CheckBoxPreserveOrder.setSelected(props.getBoolean("Classify.PreserveOrder", false));
     m_CheckBoxPreserveOrder.setToolTipText("No randomization is performed if checked");
     m_CheckBoxPreserveOrder.addActionListener((ActionEvent e) -> update());
@@ -196,7 +196,7 @@ public class TrainTestSplit
     m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
 
     // use views?
-    m_CheckBoxUseViews = new JCheckBox();
+    m_CheckBoxUseViews = new BaseCheckBox();
     m_CheckBoxUseViews.setSelected(props.getBoolean("Classify.UseViews", false));
     m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
     m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
@@ -217,7 +217,7 @@ public class TrainTestSplit
     m_PanelParameters.addParameter("Generator", m_GOEGenerator);
 
     // discard predictions?
-    m_CheckBoxDiscardPredictions = new JCheckBox();
+    m_CheckBoxDiscardPredictions = new BaseCheckBox();
     m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
     m_CheckBoxDiscardPredictions.setToolTipText("Save memory by discarding predictions?");
     m_CheckBoxDiscardPredictions.addActionListener((ActionEvent e) -> update());

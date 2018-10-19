@@ -21,11 +21,11 @@
 package adams.gui.chooser;
 
 import adams.core.option.OptionUtils;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorDialog;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -48,7 +48,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
   private static final long serialVersionUID = 6245115901277297175L;
 
   /** the checkbox for bringing up the GenericObjectEditor. */
-  protected JCheckBox m_CheckBoxOptions;
+  protected BaseCheckBox m_CheckBoxOptions;
 
   /** the GOE for displaying the options of a reader/writer. */
   protected transient GenericObjectEditor m_Editor;
@@ -120,7 +120,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
     
     super.createAccessoryPanel();
 
-    m_CheckBoxOptions = new JCheckBox("Edit options");
+    m_CheckBoxOptions = new BaseCheckBox("Edit options");
     m_CheckBoxOptions.setMnemonic('E');
     result = new JPanel(new BorderLayout());
     result.add(m_CheckBoxOptions, BorderLayout.NORTH);

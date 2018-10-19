@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.datatable.action;
 
 import adams.flow.container.WekaTrainTestSetContainer;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
@@ -32,7 +33,6 @@ import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import weka.classifiers.DefaultRandomSplitGenerator;
 import weka.core.Instances;
 
-import javax.swing.JCheckBox;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
@@ -67,7 +67,7 @@ public class Split
   @Override
   protected void doActionPerformed(ActionEvent e) {
     ParameterPanel		params;
-    JCheckBox			checkboxPreserveOrder;
+    BaseCheckBox			checkboxPreserveOrder;
     NumberTextField		textSeed;
     NumberTextField		textPercentage;
     ApprovalDialog		dialog;
@@ -80,7 +80,7 @@ public class Split
     MemoryContainer 		testCont;
 
     params = new ParameterPanel();
-    checkboxPreserveOrder = new JCheckBox();
+    checkboxPreserveOrder = new BaseCheckBox();
     checkboxPreserveOrder.setToolTipText("Whether to preserve the order or randomize the data");
     params.addParameter("Preserve order", checkboxPreserveOrder);
     textSeed = new NumberTextField(Type.INTEGER);

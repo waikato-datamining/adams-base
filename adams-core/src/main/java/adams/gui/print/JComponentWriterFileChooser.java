@@ -24,12 +24,12 @@ import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.ImagePreview;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditorDialog;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
@@ -80,7 +80,7 @@ public class JComponentWriterFileChooser
   protected JComponentWriter m_PreferredWriter;
 
   /** the checkbox for bringing up the GenericObjectEditor. */
-  protected JCheckBox m_CheckBoxOptions;
+  protected BaseCheckBox m_CheckBoxOptions;
 
   /** the image preview. */
   protected ImagePreview m_ImagePreview;
@@ -147,7 +147,7 @@ public class JComponentWriterFileChooser
 
     super.createAccessoryPanel();
     
-    m_CheckBoxOptions = new JCheckBox("Edit options");
+    m_CheckBoxOptions = new BaseCheckBox("Edit options");
     m_CheckBoxOptions.setMnemonic('E');
     result = new JPanel(new BorderLayout());
     result.add(m_CheckBoxOptions, BorderLayout.NORTH);

@@ -23,12 +23,12 @@ package adams.gui.tools;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -67,7 +67,7 @@ public class OptionTree
   protected JTextField m_TextOptionsFull;
 
   /** the checkbox for properties file pre-processing. */
-  protected JCheckBox m_CheckBoxPropsFile;
+  protected BaseCheckBox m_CheckBoxPropsFile;
 
   /** the button to update the tree. */
   protected BaseButton m_ButtonUpdate;
@@ -114,7 +114,7 @@ public class OptionTree
     panel.add(label);
     panel.add(m_TextOptionsFull);
 
-    m_CheckBoxPropsFile = new JCheckBox("from Props file");
+    m_CheckBoxPropsFile = new BaseCheckBox("from Props file");
     m_CheckBoxPropsFile.setMnemonic('P');
     panel.add(m_CheckBoxPropsFile);
 

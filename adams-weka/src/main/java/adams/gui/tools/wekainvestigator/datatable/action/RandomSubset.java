@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.datatable.action;
 
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
@@ -31,7 +32,6 @@ import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import weka.filters.Filter;
 
-import javax.swing.JCheckBox;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
@@ -67,8 +67,8 @@ public class RandomSubset
     ParameterPanel		params;
     NumberTextField		textSeed;
     NumberTextField		textPercentage;
-    JCheckBox 			checkboxReplacement;
-    JCheckBox 			checkboxSupervised;
+    BaseCheckBox 			checkboxReplacement;
+    BaseCheckBox 			checkboxSupervised;
     NumberTextField		textBias;
     ApprovalDialog		dialog;
     int				seed;
@@ -91,11 +91,11 @@ public class RandomSubset
     textPercentage.setValue(66.0);
     textPercentage.setToolTipText("The size of the subset (0;100)");
     params.addParameter("Percentage", textPercentage);
-    checkboxReplacement = new JCheckBox();
+    checkboxReplacement = new BaseCheckBox();
     checkboxReplacement.setToolTipText("Whether to allow instances being drawn multiple times");
     params.addParameter("With replacement", checkboxReplacement);
     if ((cont.getData().classIndex() > -1) && cont.getData().classAttribute().isNominal()) {
-      checkboxSupervised = new JCheckBox();
+      checkboxSupervised = new BaseCheckBox();
       checkboxSupervised.setToolTipText("Whether to take the class distribution into account");
       params.addParameter("Supervised?", checkboxSupervised);
       textBias = new NumberTextField(Type.DOUBLE);

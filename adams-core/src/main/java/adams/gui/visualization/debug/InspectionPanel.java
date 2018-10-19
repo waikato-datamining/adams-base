@@ -21,6 +21,7 @@ package adams.gui.visualization.debug;
 
 import adams.core.ByteFormat;
 import adams.core.SizeOf;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -31,7 +32,6 @@ import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 import adams.gui.visualization.debug.objecttree.Node;
 import adams.gui.visualization.debug.objecttree.Tree;
 
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.TreeSelectionEvent;
@@ -71,7 +71,7 @@ public class InspectionPanel
   protected BasePanel m_PanelSize;
 
   /** whether to calculate the size. */
-  protected JCheckBox m_CheckBoxSize;
+  protected BaseCheckBox m_CheckBoxSize;
 
   /** the text field for the size. */
   protected JTextField m_TextSize;
@@ -131,7 +131,7 @@ public class InspectionPanel
     m_PanelSize.setVisible(SizeOf.isSizeOfAgentAvailable());
     m_PanelContent.add(m_PanelSize, BorderLayout.SOUTH);
 
-    m_CheckBoxSize = new JCheckBox("Size");
+    m_CheckBoxSize = new BaseCheckBox("Size");
     m_CheckBoxSize.addActionListener((ActionEvent e) -> {
       if (m_Tree.getSelectionPath() == null)
         updateSize(null);

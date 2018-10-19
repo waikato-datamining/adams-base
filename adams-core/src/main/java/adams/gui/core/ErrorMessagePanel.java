@@ -19,17 +19,15 @@
  */
 package adams.gui.core;
 
+import adams.gui.core.ConsolePanel.PanelType;
+import adams.gui.dialog.TextPanel;
+
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JCheckBox;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-
-import adams.gui.core.ConsolePanel.PanelType;
-import adams.gui.dialog.TextPanel;
 
 /**
  * A panel for displaying an error message, optionally being able to include
@@ -55,7 +53,7 @@ public class ErrorMessagePanel
   protected BasePanel m_PanelBottom;
   
   /** the checkbox for including the console output. */
-  protected JCheckBox m_CheckBoxConsole;
+  protected BaseCheckBox m_CheckBoxConsole;
   
   /**
    * Initializes the members.
@@ -87,7 +85,7 @@ public class ErrorMessagePanel
     m_PanelBottom = new BasePanel(new BorderLayout());
     add(m_PanelBottom, BorderLayout.SOUTH);
     
-    m_CheckBoxConsole = new JCheckBox("Console output");
+    m_CheckBoxConsole = new BaseCheckBox("Console output");
     m_CheckBoxConsole.setSelected(false);
     m_CheckBoxConsole.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -125,7 +123,7 @@ public class ErrorMessagePanel
    * @return		the checkbox
    * @see		#m_CheckBoxConsole
    */
-  public JCheckBox getConsoleCheckBox() {
+  public BaseCheckBox getConsoleCheckBox() {
     return m_CheckBoxConsole;
   }
   

@@ -27,6 +27,7 @@ import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.flow.processor.ListAnnotationTags;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.GUIHelper;
@@ -35,7 +36,6 @@ import adams.gui.core.TextAreaComponent;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -153,7 +153,7 @@ public class BaseAnnotationEditor
     BaseButton		buttonClear;
     BaseButton		buttonHelp;
     JPanel		panel;
-    final JCheckBox	checkLineWrap;
+    final BaseCheckBox	checkLineWrap;
 
     panelAll    = new JPanel(new BorderLayout());
     switch (GUIHelper.getString("AnnotationsRenderer", "plain")) {
@@ -184,7 +184,7 @@ public class BaseAnnotationEditor
     });
     panel.add(buttonClear);
 
-    checkLineWrap = new JCheckBox("Line wrap");
+    checkLineWrap = new BaseCheckBox("Line wrap");
     checkLineWrap.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

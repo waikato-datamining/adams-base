@@ -23,7 +23,6 @@ package adams.gui.core;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -271,14 +270,14 @@ public class JComponentList
   }
 
   /**
-   * A specialized JCheckBox to be used in a JComponentList, which provides a
+   * A specialized BaseCheckBox to be used in a JComponentList, which provides a
    * rudimentary popup menu.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
   public static abstract class CheckBoxListItem
-    extends JCheckBox
+    extends BaseCheckBox
     implements PopupMenuProvider, ActionListener {
 
     /** for serialization. */

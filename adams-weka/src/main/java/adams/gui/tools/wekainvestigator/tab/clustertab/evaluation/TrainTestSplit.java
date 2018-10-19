@@ -26,6 +26,7 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.flow.container.WekaTrainTestSetContainer;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
@@ -40,7 +41,6 @@ import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -83,13 +83,13 @@ public class TrainTestSplit
   protected NumberTextField m_TextPercentage;
 
   /** whether to preserve the order. */
-  protected JCheckBox m_CheckBoxPreserveOrder;
+  protected BaseCheckBox m_CheckBoxPreserveOrder;
 
   /** the seed value. */
   protected NumberTextField m_TextSeed;
 
   /** whether to use views. */
-  protected JCheckBox m_CheckBoxUseViews;
+  protected BaseCheckBox m_CheckBoxUseViews;
 
   /**
    * Returns a string describing the object.
@@ -142,7 +142,7 @@ public class TrainTestSplit
     m_PanelParameters.addParameter("Percentage", m_TextPercentage);
 
     // preserve order?
-    m_CheckBoxPreserveOrder = new JCheckBox();
+    m_CheckBoxPreserveOrder = new BaseCheckBox();
     m_CheckBoxPreserveOrder.setSelected(props.getBoolean("Classify.PreserveOrder", false));
     m_CheckBoxPreserveOrder.setToolTipText("No randomization is performed if checked");
     m_CheckBoxPreserveOrder.addActionListener((ActionEvent e) -> update());
@@ -168,7 +168,7 @@ public class TrainTestSplit
     m_PanelParameters.addParameter("Seed", m_TextSeed);
 
     // use views?
-    m_CheckBoxUseViews = new JCheckBox();
+    m_CheckBoxUseViews = new BaseCheckBox();
     m_CheckBoxUseViews.setSelected(props.getBoolean("Classify.UseViews", false));
     m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
     m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());

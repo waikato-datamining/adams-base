@@ -29,11 +29,11 @@ import adams.core.net.EmailHelper;
 import adams.env.EmailDefinition;
 import adams.env.Environment;
 import adams.gui.chooser.BaseTextChooserPanel;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 
-import javax.swing.JCheckBox;
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -57,7 +57,7 @@ public class EmailSetupPanel
   protected ParameterPanel m_PanelParameters;
 
   /** Whether to enable email support. */
-  protected JCheckBox m_CheckBoxEnabled;
+  protected BaseCheckBox m_CheckBoxEnabled;
 
   /** the SMTP host. */
   protected JTextField m_TextSmtpServer;
@@ -69,13 +69,13 @@ public class EmailSetupPanel
   protected JSpinner m_SpinnerSmtpTimeout;
 
   /** Whether the SMTP server requires authentication. */
-  protected JCheckBox m_CheckBoxSmtpRequiresAuthentication;
+  protected BaseCheckBox m_CheckBoxSmtpRequiresAuthentication;
 
   /** Whether to start TLS. */
-  protected JCheckBox m_CheckBoxSmtpStartTLS;
+  protected BaseCheckBox m_CheckBoxSmtpStartTLS;
 
   /** Whether to use SSL. */
-  protected JCheckBox m_CheckBoxSmtpUseSSL;
+  protected BaseCheckBox m_CheckBoxSmtpUseSSL;
 
   /** the SMTP user. */
   protected JTextField m_TextSmtpUser;
@@ -84,7 +84,7 @@ public class EmailSetupPanel
   protected JPasswordField m_TextSmtpPassword;
 
   /** Whether to show the password. */
-  protected JCheckBox m_CheckBoxShowPassword;
+  protected BaseCheckBox m_CheckBoxShowPassword;
 
   /** the default FROM address. */
   protected JTextField m_TextDefaultFromAddress;
@@ -107,7 +107,7 @@ public class EmailSetupPanel
     m_PanelParameters = new ParameterPanel();
     add(m_PanelParameters, BorderLayout.CENTER);
 
-    m_CheckBoxEnabled = new JCheckBox();
+    m_CheckBoxEnabled = new BaseCheckBox();
     m_CheckBoxEnabled.setSelected(EmailHelper.isEnabled());
     m_PanelParameters.addParameter("_Enabled", m_CheckBoxEnabled);
 
@@ -129,15 +129,15 @@ public class EmailSetupPanel
     m_SpinnerSmtpTimeout.setValue(EmailHelper.getSmtpTimeout());
     m_PanelParameters.addParameter("SMTP T_imeout (msec)", m_SpinnerSmtpTimeout);
 
-    m_CheckBoxSmtpRequiresAuthentication = new JCheckBox();
+    m_CheckBoxSmtpRequiresAuthentication = new BaseCheckBox();
     m_CheckBoxSmtpRequiresAuthentication.setSelected(EmailHelper.getSmtpRequiresAuthentication());
     m_PanelParameters.addParameter("_Authentication required", m_CheckBoxSmtpRequiresAuthentication);
 
-    m_CheckBoxSmtpStartTLS = new JCheckBox();
+    m_CheckBoxSmtpStartTLS = new BaseCheckBox();
     m_CheckBoxSmtpStartTLS.setSelected(EmailHelper.getSmtpStartTLS());
     m_PanelParameters.addParameter("Start _TLS", m_CheckBoxSmtpStartTLS);
 
-    m_CheckBoxSmtpUseSSL = new JCheckBox();
+    m_CheckBoxSmtpUseSSL = new BaseCheckBox();
     m_CheckBoxSmtpUseSSL.setSelected(EmailHelper.getSmtpUseSSL());
     m_PanelParameters.addParameter("Use SS_L", m_CheckBoxSmtpUseSSL);
 
@@ -150,7 +150,7 @@ public class EmailSetupPanel
     m_TextSmtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
     m_PanelParameters.addParameter("SMTP _Password", m_TextSmtpPassword);
 
-    m_CheckBoxShowPassword = new JCheckBox();
+    m_CheckBoxShowPassword = new BaseCheckBox();
     m_CheckBoxShowPassword.setSelected(false);
     m_CheckBoxShowPassword.addActionListener((ActionEvent e) -> {
       if (m_CheckBoxShowPassword.isSelected())

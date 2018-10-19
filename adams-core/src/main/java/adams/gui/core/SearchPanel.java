@@ -24,7 +24,6 @@ package adams.gui.core;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -90,7 +89,7 @@ public class SearchPanel
 
   /** whether to use regular expressions for searching or plain string
    * comparison. */
-  protected JCheckBox m_CheckboxRegExp;
+  protected BaseCheckBox m_CheckboxRegExp;
 
   /** the button for searching the table. */
   protected BaseButton m_ButtonSearch;
@@ -237,7 +236,7 @@ public class SearchPanel
         m_LabelPrefix.setDisplayedMnemonicIndex(-1);
     }
 
-    m_CheckboxRegExp = new JCheckBox("Use reg. Exp");
+    m_CheckboxRegExp = new BaseCheckBox("Use reg. Exp");
 
     if (m_ButtonCaption != null) {
       m_ButtonSearch = new BaseButton();

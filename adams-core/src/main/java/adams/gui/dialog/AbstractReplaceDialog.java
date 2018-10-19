@@ -20,18 +20,17 @@
 
 package adams.gui.dialog;
 
+import adams.core.CleanUpHandler;
+import adams.gui.core.BaseCheckBox;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import adams.core.CleanUpHandler;
 
 /**
  * A dialog that allows the user to select a field to find and replace
@@ -52,7 +51,7 @@ public abstract class AbstractReplaceDialog<T>
   protected JLabel m_LabelRecursive;
 
   /** the recursive checkbox. */
-  protected JCheckBox m_CheckBoxRecursive;
+  protected BaseCheckBox m_CheckBoxRecursive;
 
   /**
    * Creates a modal dialog without a title with the specified Dialog as
@@ -92,7 +91,7 @@ public abstract class AbstractReplaceDialog<T>
     // recursive
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel2.add(panel);
-    m_CheckBoxRecursive = new JCheckBox("");
+    m_CheckBoxRecursive = new BaseCheckBox("");
     m_LabelRecursive = new JLabel("Recursive");
     m_LabelRecursive.setDisplayedMnemonic('v');
     m_LabelRecursive.setLabelFor(m_CheckBoxRecursive);

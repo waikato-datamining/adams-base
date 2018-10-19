@@ -26,12 +26,12 @@ import adams.core.base.BaseObject;
 import adams.core.base.BaseText;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -148,7 +148,7 @@ public class BaseTextEditor
     BaseButton 		buttonOK;
     BaseButton		buttonClear;
     JPanel		panel;
-    final JCheckBox	checkLineWrap;
+    final BaseCheckBox	checkLineWrap;
 
     panelAll    = new JPanel(new BorderLayout());
     m_TextValue = new BaseTextArea(30, 60);
@@ -170,7 +170,7 @@ public class BaseTextEditor
     });
     panel.add(buttonClear);
 
-    checkLineWrap = new JCheckBox("Line wrap");
+    checkLineWrap = new BaseCheckBox("Line wrap");
     checkLineWrap.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

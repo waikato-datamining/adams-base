@@ -30,6 +30,7 @@ import adams.flow.control.StorageName;
 import adams.gui.chooser.ObjectExporterFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
@@ -45,7 +46,6 @@ import adams.gui.goe.EditorHelper;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 
-import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
@@ -289,7 +289,7 @@ public class StoragePanel
   protected BaseButton m_ButtonExport;
 
   /** the checkbox for previewing items. */
-  protected JCheckBox m_CheckBoxPreview;
+  protected BaseCheckBox m_CheckBoxPreview;
 
   /** the dialog for inspecting an item. */
   protected BaseDialog m_DialogInspect;
@@ -362,7 +362,7 @@ public class StoragePanel
     m_ButtonExport.addActionListener((ActionEvent e) -> export());
     m_Table.addToButtonsPanel(m_ButtonExport);
 
-    m_CheckBoxPreview = new JCheckBox("Preview");
+    m_CheckBoxPreview = new BaseCheckBox("Preview");
     m_CheckBoxPreview.setSelected(true);
     m_CheckBoxPreview.addActionListener((ActionEvent e) -> {
       m_SplitPane.setBottomComponentHidden(!m_CheckBoxPreview.isSelected());

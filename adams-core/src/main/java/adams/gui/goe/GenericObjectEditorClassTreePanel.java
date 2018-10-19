@@ -21,6 +21,7 @@
 package adams.gui.goe;
 
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
@@ -28,7 +29,6 @@ import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.goe.classtree.ClassTree;
 import adams.gui.goe.classtree.StrictClassTreeFilter;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -81,10 +81,10 @@ public class GenericObjectEditorClassTreePanel
   protected JPanel m_PanelFilter;
 
   /** The checkbox for enabling/disabling the class tree filter. */
-  protected JCheckBox m_CheckBoxFilter;
+  protected BaseCheckBox m_CheckBoxFilter;
 
   /** The checkbox for enabling/disabling strict filtering. */
-  protected JCheckBox m_CheckBoxStrict;
+  protected BaseCheckBox m_CheckBoxStrict;
 
   /** the minimum number of characters before triggering search events. */
   protected int m_MinimumChars;
@@ -162,7 +162,7 @@ public class GenericObjectEditorClassTreePanel
     m_PanelFilter = new JPanel(new FlowLayout(FlowLayout.LEFT));
     bottomPanel.add(m_PanelFilter, BorderLayout.SOUTH);
 
-    m_CheckBoxFilter = new JCheckBox("Filtering");
+    m_CheckBoxFilter = new BaseCheckBox("Filtering");
     m_CheckBoxFilter.setMnemonic('F');
     m_CheckBoxFilter.addActionListener((ActionEvent e) -> {
       AbstractItemFilter filter = m_Tree.getFilter();
@@ -175,7 +175,7 @@ public class GenericObjectEditorClassTreePanel
     });
     m_PanelFilter.add(m_CheckBoxFilter);
 
-    m_CheckBoxStrict = new JCheckBox("Strict mode");
+    m_CheckBoxStrict = new BaseCheckBox("Strict mode");
     m_CheckBoxStrict.setMnemonic('m');
     m_CheckBoxStrict.addActionListener((ActionEvent e) -> {
       ((StrictClassTreeFilter) m_Tree.getFilter()).setStrict(

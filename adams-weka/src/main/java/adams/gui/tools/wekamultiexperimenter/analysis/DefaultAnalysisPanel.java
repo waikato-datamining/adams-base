@@ -26,6 +26,7 @@ import adams.core.Properties;
 import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
@@ -45,7 +46,6 @@ import weka.experiment.ResultMatrixPlainText;
 import weka.experiment.Tester;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -171,7 +171,7 @@ public class DefaultAnalysisPanel
   protected SelectOptionPanel m_SelectColumns;
 
   /** for swapping rows/columns. */
-  protected JCheckBox m_CheckBoxSwapRowsColumns;
+  protected BaseCheckBox m_CheckBoxSwapRowsColumns;
 
   /** the comparison base. */
   protected SelectOptionPanel m_SelectComparisonBase;
@@ -304,7 +304,7 @@ public class DefaultAnalysisPanel
     panelParams.addParameter("Columns", m_SelectColumns);
 
     // swap
-    m_CheckBoxSwapRowsColumns = new JCheckBox();
+    m_CheckBoxSwapRowsColumns = new BaseCheckBox();
     m_CheckBoxSwapRowsColumns.addActionListener((ActionEvent e) -> updateComparisonBase());
     panelParams.addParameter("Swap rows/columns", m_CheckBoxSwapRowsColumns);
 

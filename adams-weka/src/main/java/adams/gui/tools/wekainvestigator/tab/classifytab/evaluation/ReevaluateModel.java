@@ -29,6 +29,7 @@ import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.chooser.SelectOptionPanel;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -43,7 +44,6 @@ import weka.core.Capabilities.Capability;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
@@ -84,7 +84,7 @@ public class ReevaluateModel
   protected SelectOptionPanel m_SelectAdditionalAttributes;
 
   /** whether to discard the predictions. */
-  protected JCheckBox m_CheckBoxDiscardPredictions;
+  protected BaseCheckBox m_CheckBoxDiscardPredictions;
 
   /** the serialized model. */
   protected FileChooserPanel m_PanelModel;
@@ -158,7 +158,7 @@ public class ReevaluateModel
     m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
 
     // discard predictions?
-    m_CheckBoxDiscardPredictions = new JCheckBox();
+    m_CheckBoxDiscardPredictions = new BaseCheckBox();
     m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
     m_CheckBoxDiscardPredictions.setToolTipText("Save memory by discarding predictions?");
     m_CheckBoxDiscardPredictions.addActionListener((ActionEvent e) -> update());

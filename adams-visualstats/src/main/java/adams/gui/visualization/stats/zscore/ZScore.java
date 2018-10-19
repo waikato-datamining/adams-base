@@ -26,6 +26,7 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -42,7 +43,6 @@ import adams.gui.visualization.stats.paintlet.ZScoreCircle;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -336,7 +336,7 @@ public class ZScore
     south.add(titleHolder, BorderLayout.NORTH);
     south.add(keyHold, BorderLayout.SOUTH);
     east.add(south, BorderLayout.SOUTH);
-    JCheckBox grid = new JCheckBox();
+    BaseCheckBox grid = new BaseCheckBox();
 
     grid.addItemListener(new gridListener());
 
@@ -364,7 +364,7 @@ public class ZScore
   public class gridListener implements ItemListener {
     public void itemStateChanged(ItemEvent e) {
       //need to change this to use the existing grid
-      JCheckBox check = (JCheckBox)e.getSource();
+      BaseCheckBox check = (BaseCheckBox)e.getSource();
       if (check.isSelected()) {
 	m_Plot.getLeft().setShowGridLines(true);
 	m_Plot.getBottom().setShowGridLines(true);

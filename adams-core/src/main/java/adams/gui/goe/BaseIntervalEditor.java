@@ -24,10 +24,10 @@ import adams.core.base.BaseInterval;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -53,13 +53,13 @@ public class BaseIntervalEditor
   implements MultiSelectionEditor {
 
   /** whether to include the lower bound. */
-  protected JCheckBox m_CheckBoxLower;
+  protected BaseCheckBox m_CheckBoxLower;
 
   /** The text field with the upper bound. */
   protected JTextComponent m_TextUpper;
 
   /** whether to include the upper bound. */
-  protected JCheckBox m_CheckBoxUpper;
+  protected BaseCheckBox m_CheckBoxUpper;
 
   /**
    * Returns the Compound as string.
@@ -117,10 +117,10 @@ public class BaseIntervalEditor
     panelPair = new ParameterPanel();
     panelAll.add(panelPair, BorderLayout.CENTER);
 
-    m_CheckBoxLower = new JCheckBox();
+    m_CheckBoxLower = new BaseCheckBox();
     m_TextValue     = new JTextField(10);
     m_TextUpper     = new JTextField(10);
-    m_CheckBoxUpper = new JCheckBox();
+    m_CheckBoxUpper = new BaseCheckBox();
 
     panelPair.addParameter("Incl. lower bound", m_CheckBoxLower);
     panelPair.addParameter("_Lower bound", m_TextValue);

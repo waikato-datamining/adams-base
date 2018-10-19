@@ -28,6 +28,7 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.SelectOptionPanel;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
@@ -43,7 +44,6 @@ import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -106,16 +106,16 @@ public class CrossValidation
   protected SelectOptionPanel m_SelectAdditionalAttributes;
 
   /** whether to use views. */
-  protected JCheckBox m_CheckBoxUseViews;
+  protected BaseCheckBox m_CheckBoxUseViews;
 
   /** the fold generator. */
   protected GenericObjectEditorPanel m_GOEGenerator;
 
   /** whether to discard the predictions. */
-  protected JCheckBox m_CheckBoxDiscardPredictions;
+  protected BaseCheckBox m_CheckBoxDiscardPredictions;
   
   /** whether to produce a final model. */
-  protected JCheckBox m_CheckBoxFinalModel;
+  protected BaseCheckBox m_CheckBoxFinalModel;
 
   /** performs the actual evaluation. */
   protected WekaCrossValidationExecution m_CrossValidation;
@@ -197,7 +197,7 @@ public class CrossValidation
     m_PanelParameters.addParameter("Threads", m_SpinnerThreads);
 
     // use views?
-    m_CheckBoxUseViews = new JCheckBox();
+    m_CheckBoxUseViews = new BaseCheckBox();
     m_CheckBoxUseViews.setSelected(props.getBoolean("Classify.UseViews", false));
     m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
     m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
@@ -218,7 +218,7 @@ public class CrossValidation
     m_PanelParameters.addParameter("Generator", m_GOEGenerator);
 
     // discard predictions?
-    m_CheckBoxDiscardPredictions = new JCheckBox();
+    m_CheckBoxDiscardPredictions = new BaseCheckBox();
     m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
     m_CheckBoxDiscardPredictions.setToolTipText("Save memory by discarding predictions?");
     m_CheckBoxDiscardPredictions.addActionListener((ActionEvent e) -> update());
@@ -234,7 +234,7 @@ public class CrossValidation
     m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
 
     // final model?
-    m_CheckBoxFinalModel = new JCheckBox();
+    m_CheckBoxFinalModel = new BaseCheckBox();
     m_CheckBoxFinalModel.setSelected(props.getBoolean("Classify.CrossValidationFinalModel", true));
     m_CheckBoxFinalModel.setToolTipText("Produce a final model using the full training data?");
     m_CheckBoxFinalModel.addActionListener((ActionEvent e) -> update());

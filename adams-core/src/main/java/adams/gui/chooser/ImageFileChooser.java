@@ -23,10 +23,10 @@ import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.JAIImageWriter;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -51,7 +51,7 @@ public class ImageFileChooser
   private static final long serialVersionUID = -4519042048473978377L;
 
   /** the checkbox for bringing up the GenericObjectEditor. */
-  protected JCheckBox m_CheckBoxPreview;
+  protected BaseCheckBox m_CheckBoxPreview;
 
   /** the image preview. */
   protected ImagePreview m_ImagePreview;
@@ -116,7 +116,7 @@ public class ImageFileChooser
 
     config = (JPanel) super.createAccessoryPanel();
 
-    m_CheckBoxPreview = new JCheckBox("Preview");
+    m_CheckBoxPreview = new BaseCheckBox("Preview");
     m_CheckBoxPreview.setMnemonic('P');
     m_CheckBoxPreview.setSelected(false);
     m_CheckBoxPreview.addActionListener(new ActionListener() {

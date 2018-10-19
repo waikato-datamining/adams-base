@@ -25,6 +25,7 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
@@ -39,7 +40,6 @@ import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -87,7 +87,7 @@ public class CrossValidation
   protected NumberTextField m_TextSeed;
 
   /** whether to produce a final model. */
-  protected JCheckBox m_CheckBoxFinalModel;
+  protected BaseCheckBox m_CheckBoxFinalModel;
 
   /**
    * Returns a string describing the object.
@@ -147,7 +147,7 @@ public class CrossValidation
     m_PanelParameters.addParameter("Seed", m_TextSeed);
 
     // final model?
-    m_CheckBoxFinalModel = new JCheckBox();
+    m_CheckBoxFinalModel = new BaseCheckBox();
     m_CheckBoxFinalModel.setSelected(props.getBoolean("Cluster.CrossValidationFinalModel", true));
     m_CheckBoxFinalModel.setToolTipText("Produce a final model using the full training data?");
     m_CheckBoxFinalModel.addActionListener((ActionEvent e) -> update());

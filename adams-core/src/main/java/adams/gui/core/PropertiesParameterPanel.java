@@ -48,7 +48,6 @@ import adams.gui.goe.FontEditor;
 import adams.gui.goe.GenericArrayEditorPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -860,7 +859,7 @@ public class PropertiesParameterPanel
    */
   public void setProperties(Properties value) {
     List<String>		keys;
-    JCheckBox			checkbox;
+    BaseCheckBox			checkbox;
     JSpinner			spinner;
     PropertyType		type;
     FontChooserPanel 		fontPanel;
@@ -972,7 +971,7 @@ public class PropertiesParameterPanel
             addProperty(key, label, query);
             break;
           case BOOLEAN:
-            checkbox = new JCheckBox();
+            checkbox = new BaseCheckBox();
             checkbox.setSelected(value.getBoolean(key));
             checkbox.setToolTipText(help);
             addProperty(key, label, checkbox);
@@ -1156,7 +1155,7 @@ public class PropertiesParameterPanel
     JTextField			textfield;
     JPasswordField		pwfield;
     SQLSyntaxEditorPanel	query;
-    JCheckBox			checkbox;
+    BaseCheckBox			checkbox;
     JSpinner			spinner;
     FontChooserPanel 		fontPanel;
     DirectoryChooserPanel	dirPanel;
@@ -1216,7 +1215,7 @@ public class PropertiesParameterPanel
           result.setProperty(key, query.getContent());
           break;
         case BOOLEAN:
-          checkbox = (JCheckBox) comp;
+          checkbox = (BaseCheckBox) comp;
           result.setBoolean(key, checkbox.isSelected());
           break;
         case INTEGER:

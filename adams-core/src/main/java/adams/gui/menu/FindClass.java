@@ -25,6 +25,7 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -33,7 +34,6 @@ import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
@@ -91,7 +91,7 @@ public class FindClass
     JPanel panelButtons;
     ParameterPanel		panelParams;
     final JTextField 		fieldSearch;
-    final JCheckBox 		checkboxRegExp;
+    final BaseCheckBox 		checkboxRegExp;
     final BaseTextArea 		areaOutput;
     BaseButton 			buttonSearch;
     BaseButton			buttonClose;
@@ -107,7 +107,7 @@ public class FindClass
     panelParams = new ParameterPanel();
     fieldSearch = new JTextField(30);
     panelParams.addParameter("Search", fieldSearch);
-    checkboxRegExp = new JCheckBox();
+    checkboxRegExp = new BaseCheckBox();
     panelParams.addParameter("Regular expression?", checkboxRegExp);
     areaOutput = new BaseTextArea(5, 40);
     areaOutput.setTextFont(Fonts.getMonospacedFont());

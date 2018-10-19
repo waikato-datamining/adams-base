@@ -19,6 +19,14 @@
  */
 package adams.gui.dialog;
 
+import adams.core.Constants;
+import adams.core.base.BasePassword;
+import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseDialog;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -27,15 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-
-import adams.core.Constants;
-import adams.core.base.BasePassword;
-import adams.gui.core.BaseDialog;
 
 /**
  * Simple dialog for entering a password.
@@ -53,7 +52,7 @@ public class PasswordDialog
   protected JPasswordField m_TextPassword;
   
   /** whether to display the password or not. */
-  protected JCheckBox m_CheckBoxShowPassword;
+  protected BaseCheckBox m_CheckBoxShowPassword;
 
   /**
    * Creates a modeless dialog without a title with the specified Dialog as
@@ -187,7 +186,7 @@ public class PasswordDialog
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     getContentPane().add(panel, BorderLayout.CENTER);
     
-    m_CheckBoxShowPassword = new JCheckBox("Show password");
+    m_CheckBoxShowPassword = new BaseCheckBox("Show password");
     m_CheckBoxShowPassword.setMnemonic('S');
     m_CheckBoxShowPassword.setToolTipText("If checked, the password will be shown in clear text as you type it");
     m_CheckBoxShowPassword.addActionListener(new ActionListener() {

@@ -23,6 +23,7 @@ import adams.core.base.BaseText;
 import adams.core.io.PlaceholderFile;
 import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import adams.data.weka.classattribute.LastAttribute;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
@@ -47,7 +48,6 @@ import weka.classifiers.RandomSplitGenerator;
 import weka.classifiers.SplitGenerator;
 import weka.gui.experiment.ExperimenterDefaults;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -86,7 +86,7 @@ public class BasicAdamsSetupPanel
   protected NumberTextField m_TextEvaluation;
 
   /** whether to use a custom split generator. */
-  protected JCheckBox m_CheckBoxCustomSplitGenerator;
+  protected BaseCheckBox m_CheckBoxCustomSplitGenerator;
 
   /** the fold generator. */
   protected GenericObjectEditorPanel m_PanelGenerator;
@@ -164,7 +164,7 @@ public class BasicAdamsSetupPanel
     m_TextEvaluation.getDocument().addDocumentListener(new ModificationDocumentListener());
     m_PanelParameters.addParameter("", m_TextEvaluation);
 
-    m_CheckBoxCustomSplitGenerator = new JCheckBox();
+    m_CheckBoxCustomSplitGenerator = new BaseCheckBox();
     m_CheckBoxCustomSplitGenerator.addChangeListener(new ModificationChangeListener());
     m_PanelParameters.addParameter("Use custom split generator", m_CheckBoxCustomSplitGenerator);
 

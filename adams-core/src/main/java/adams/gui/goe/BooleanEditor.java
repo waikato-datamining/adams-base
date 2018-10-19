@@ -19,11 +19,11 @@
  */
 package adams.gui.goe;
 
+import adams.gui.core.BaseCheckBox;
+
+import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 
 /**
  * A custom editor for Booleans.
@@ -52,12 +52,12 @@ public class BooleanEditor
    * @return		the custom editor
    */
   protected JComponent createCustomEditor() {
-    JCheckBox	result;
+    BaseCheckBox	result;
 
-    result = new JCheckBox();
+    result = new BaseCheckBox();
     result.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	JCheckBox checkbox = (JCheckBox) e.getSource();
+	BaseCheckBox checkbox = (BaseCheckBox) e.getSource();
 	if (!getValue().equals(checkbox.isSelected()))
 	  setValue(checkbox.isSelected());
       }
@@ -119,7 +119,7 @@ public class BooleanEditor
    */
   protected void initForDisplay() {
     resetChosenOption();
-    if (!m_Current.equals(((JCheckBox) m_CustomEditor).isSelected()))
-      ((JCheckBox) m_CustomEditor).setSelected(m_Current);
+    if (!m_Current.equals(((BaseCheckBox) m_CustomEditor).isSelected()))
+      ((BaseCheckBox) m_CustomEditor).setSelected(m_Current);
   }
 }

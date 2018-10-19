@@ -41,13 +41,13 @@ import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.env.Environment;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -108,10 +108,10 @@ public class FontChooserPanelWithPreview
   protected JList m_ListFontSize;
 
   /** The bold chooser. */
-  protected JCheckBox m_CheckBoxBold;
+  protected BaseCheckBox m_CheckBoxBold;
 
   /** The italic chooser. */
-  protected JCheckBox m_CheckBoxItalic;
+  protected BaseCheckBox m_CheckBoxItalic;
 
   /** The display area. */
   protected JTextArea m_TextSample;
@@ -177,7 +177,7 @@ public class FontChooserPanelWithPreview
     panel2 = new JPanel(new BorderLayout());
     panel.add(panel2, BorderLayout.CENTER);
 
-    m_CheckBoxBold = new JCheckBox("Bold", false);
+    m_CheckBoxBold = new BaseCheckBox("Bold", false);
     m_CheckBoxBold.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	if (m_IgnoreUpdates)
@@ -185,7 +185,7 @@ public class FontChooserPanelWithPreview
 	previewFont();
       }
     });
-    m_CheckBoxItalic = new JCheckBox("Italic", false);
+    m_CheckBoxItalic = new BaseCheckBox("Italic", false);
     m_CheckBoxItalic.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	if (m_IgnoreUpdates)

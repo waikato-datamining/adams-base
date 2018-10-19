@@ -27,6 +27,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
 import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -42,7 +43,6 @@ import adams.gui.visualization.stats.paintlet.Normal;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -94,10 +94,10 @@ public class ProbabilityPlot
   protected ParameterPanel m_OptionPanel;
 
   /** Check box for line overlay */
-  protected JCheckBox m_CheckBoxLine;
+  protected BaseCheckBox m_CheckBoxLine;
 
   /** Check box for grid overlay */
-  protected JCheckBox m_CheckBoxGrid;
+  protected BaseCheckBox m_CheckBoxGrid;
 
   /** Whether to display the grid */
   protected boolean m_Grid;
@@ -147,11 +147,11 @@ public class ProbabilityPlot
     // options
     m_OptionPanel = new ParameterPanel();
 
-    m_CheckBoxLine = new JCheckBox();
+    m_CheckBoxLine = new BaseCheckBox();
     if(m_Paintlet != null)
       m_CheckBoxLine.setEnabled(m_Paintlet.hasFitLine());
 
-    m_CheckBoxGrid = new JCheckBox();
+    m_CheckBoxGrid = new BaseCheckBox();
     m_CheckBoxLine.setSelected(false);
     m_CheckBoxGrid.setSelected(false);
     if(m_Paintlet == null)
@@ -164,11 +164,11 @@ public class ProbabilityPlot
       changeGrid();
     });
     m_CheckBoxGrid.addActionListener((ActionEvent arg0) -> {
-      m_Grid = ((JCheckBox)(arg0.getSource())).isSelected();
+      m_Grid = ((BaseCheckBox)(arg0.getSource())).isSelected();
       changeGrid();
     });
     m_CheckBoxLine.addItemListener((ItemEvent arg0) -> {
-      m_Line = ((JCheckBox)(arg0.getSource())).isSelected();
+      m_Line = ((BaseCheckBox)(arg0.getSource())).isSelected();
       if(m_Paintlet.hasFitLine())
 	changeLine();
     });

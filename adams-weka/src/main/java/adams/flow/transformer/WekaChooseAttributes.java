@@ -31,6 +31,7 @@ import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.provenance.ProvenanceSupporter;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTextArea;
@@ -39,7 +40,6 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
@@ -335,7 +335,7 @@ public class WekaChooseAttributes
     ApprovalDialog	dialog;
     JPanel		panelAll;
     JPanel		panelOptions;
-    JCheckBox		checkBoxInvert;
+    BaseCheckBox		checkBoxInvert;
     BaseTextArea	textMessage;
     Range		range;
     int[][]		segments;
@@ -377,7 +377,7 @@ public class WekaChooseAttributes
       panelAll.add(new BaseScrollPane(textMessage), BorderLayout.NORTH);
     }
     panelOptions = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    checkBoxInvert = new JCheckBox("Remove selected attributes rather than keep them");
+    checkBoxInvert = new BaseCheckBox("Remove selected attributes rather than keep them");
     panelOptions.add(checkBoxInvert);
     panelAll.add(panelOptions, BorderLayout.SOUTH);
     dialog = new ApprovalDialog(null, ModalityType.DOCUMENT_MODAL);

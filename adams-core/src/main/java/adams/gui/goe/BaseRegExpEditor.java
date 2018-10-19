@@ -24,13 +24,13 @@ import adams.core.base.BaseObject;
 import adams.core.base.BaseRegExp;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -57,7 +57,7 @@ public class BaseRegExpEditor
   implements MultiSelectionEditor {
 
   /** the checkbox for "escaped input". */
-  protected JCheckBox m_CheckBoxEscapedInput;
+  protected BaseCheckBox m_CheckBoxEscapedInput;
 
   /** the help button for bringing up a browser with the Java Pattern class. */
   protected BaseButton m_ButtonHelp;
@@ -143,7 +143,7 @@ public class BaseRegExpEditor
     panelInput.add(panelCheck, BorderLayout.SOUTH);
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelCheck.add(panel, BorderLayout.NORTH);
-    m_CheckBoxEscapedInput = new JCheckBox("Escaped input");
+    m_CheckBoxEscapedInput = new BaseCheckBox("Escaped input");
     m_CheckBoxEscapedInput.setSelected(true);
     m_CheckBoxEscapedInput.setMnemonic('E');
     m_CheckBoxEscapedInput.setToolTipText("If checked, you can eg enter new lines like '\\n' or tabs like '\\t' (without the quotes)");

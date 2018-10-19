@@ -24,9 +24,9 @@ import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,7 +54,7 @@ public class BasePasswordEditor
   implements MultiSelectionEditor {
 
   /** the checkbox for "show password". */
-  protected JCheckBox m_CheckBoxShowPassword;
+  protected BaseCheckBox m_CheckBoxShowPassword;
 
   /**
    * Returns the Compound as string.
@@ -122,7 +122,7 @@ public class BasePasswordEditor
     panelAll.add(panelCheck, BorderLayout.CENTER);
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelCheck.add(panel, BorderLayout.NORTH);
-    m_CheckBoxShowPassword = new JCheckBox("Show password");
+    m_CheckBoxShowPassword = new BaseCheckBox("Show password");
     m_CheckBoxShowPassword.setMnemonic('S');
     m_CheckBoxShowPassword.setToolTipText("If checked, the password will be shown in clear text as you type it");
     m_CheckBoxShowPassword.addActionListener(new ActionListener() {

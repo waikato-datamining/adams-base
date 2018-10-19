@@ -24,6 +24,7 @@ import adams.core.Index;
 import adams.core.Range;
 import adams.gui.chooser.DatasetFileChooserPanel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -37,7 +38,6 @@ import weka.core.Instances;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -127,19 +127,19 @@ public class LoadDatasetDialog
   protected Range m_DefaultAttributeRange;
 
   /** whether to include numeric attributes. */
-  protected JCheckBox m_CheckBoxIncludeNumericAttributes;
+  protected BaseCheckBox m_CheckBoxIncludeNumericAttributes;
 
   /** whether to include date attributes. */
-  protected JCheckBox m_CheckBoxIncludeDateAttributes;
+  protected BaseCheckBox m_CheckBoxIncludeDateAttributes;
 
   /** whether to include numeric nominal. */
-  protected JCheckBox m_CheckBoxIncludeNominalAttributes;
+  protected BaseCheckBox m_CheckBoxIncludeNominalAttributes;
 
   /** whether to include string attributes. */
-  protected JCheckBox m_CheckBoxIncludeStringAttributes;
+  protected BaseCheckBox m_CheckBoxIncludeStringAttributes;
 
   /** whether to include relational attributes. */
-  protected JCheckBox m_CheckBoxIncludeRelationalAttributes;
+  protected BaseCheckBox m_CheckBoxIncludeRelationalAttributes;
 
   /** the full dataset. */
   protected Instances m_Instances;
@@ -350,11 +350,11 @@ public class LoadDatasetDialog
 
     // attribute types
     label = new JLabel("Attribute types");
-    m_CheckBoxIncludeNumericAttributes = new JCheckBox("Numeric");
-    m_CheckBoxIncludeDateAttributes = new JCheckBox("Date");
-    m_CheckBoxIncludeNominalAttributes = new JCheckBox("Nominal");
-    m_CheckBoxIncludeStringAttributes = new JCheckBox("String");
-    m_CheckBoxIncludeRelationalAttributes = new JCheckBox("Relational");
+    m_CheckBoxIncludeNumericAttributes = new BaseCheckBox("Numeric");
+    m_CheckBoxIncludeDateAttributes = new BaseCheckBox("Date");
+    m_CheckBoxIncludeNominalAttributes = new BaseCheckBox("Nominal");
+    m_CheckBoxIncludeStringAttributes = new BaseCheckBox("String");
+    m_CheckBoxIncludeRelationalAttributes = new BaseCheckBox("Relational");
     panel.add(label);
     panel.add(m_CheckBoxIncludeNumericAttributes);
     panel.add(m_CheckBoxIncludeDateAttributes);

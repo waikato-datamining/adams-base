@@ -23,13 +23,13 @@ import adams.data.container.DataContainer;
 import adams.data.filter.Filter;
 import adams.data.filter.PassThrough;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseDialog;
 import adams.gui.event.FilterEvent;
 import adams.gui.event.FilterListener;
 import adams.gui.goe.GenericObjectEditorPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -68,7 +68,7 @@ public class FilterDialog<T extends DataContainer>
 
   /** the checkbox for whether the filtered data is to be overlayed over the
    * original data. */
-  protected JCheckBox m_CheckboxOverlay;
+  protected BaseCheckBox m_CheckboxOverlay;
 
   /** the listener. */
   protected FilterListener m_FilterListener;
@@ -122,7 +122,7 @@ public class FilterDialog<T extends DataContainer>
       }
     });
 
-    m_CheckboxOverlay = new JCheckBox("Overlay original data");
+    m_CheckboxOverlay = new BaseCheckBox("Overlay original data");
     m_CheckboxOverlay.setMnemonic('d');
 
     m_ButtonOK = new BaseButton("OK");

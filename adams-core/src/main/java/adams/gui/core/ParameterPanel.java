@@ -23,7 +23,6 @@ import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.goe.PropertyPanel;
 
 import javax.swing.AbstractButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -68,7 +67,7 @@ public class ParameterPanel
   private static final long serialVersionUID = 7164103981772081436L;
 
   /** the check boxes. */
-  protected List<JCheckBox> m_CheckBoxes;
+  protected List<BaseCheckBox> m_CheckBoxes;
 
   /** the labels. */
   protected List<JLabel> m_Labels;
@@ -348,7 +347,7 @@ public class ParameterPanel
    */
   public int addParameter(int index, boolean checked, String label, Component comp) {
     JLabel		lbl;
-    JCheckBox		check;
+    BaseCheckBox		check;
     JPanel		panel;
     GridBagConstraints	con;
     GridBagLayout	layout;
@@ -364,7 +363,7 @@ public class ParameterPanel
     }
 
     if (m_UseCheckBoxes)
-      check = new JCheckBox("", checked);
+      check = new BaseCheckBox("", checked);
     else
       check = null;
 
@@ -453,7 +452,7 @@ public class ParameterPanel
    */
   public int addParameter(int index, boolean checked, AbstractChooserPanel chooser) {
     JPanel		panel;
-    JCheckBox		check;
+    BaseCheckBox		check;
     GridBagConstraints	con;
     GridBagLayout	layout;
 
@@ -461,7 +460,7 @@ public class ParameterPanel
     panel  = new JPanel(layout);
 
     if (m_UseCheckBoxes)
-      check = new JCheckBox("", checked);
+      check = new BaseCheckBox("", checked);
     else
       check = null;
 
@@ -560,7 +559,7 @@ public class ParameterPanel
    * @return		the requested checkbox, null if not used
    * @see		#useCheckBoxes()
    */
-  public JCheckBox getCheckBox(int index) {
+  public BaseCheckBox getCheckBox(int index) {
     if (m_UseCheckBoxes)
       return m_CheckBoxes.get(index);
     else

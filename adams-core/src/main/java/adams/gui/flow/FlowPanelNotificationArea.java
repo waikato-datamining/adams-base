@@ -21,6 +21,7 @@ package adams.gui.flow;
 
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.ActorUtils;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
@@ -38,7 +39,6 @@ import com.jidesoft.swing.JideButton;
 import com.jidesoft.swing.JideSplitButton;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -81,7 +81,7 @@ public class FlowPanelNotificationArea
   protected JideSplitButton m_ButtonAction;
 
   /** the checkbox for including the console output. */
-  protected JCheckBox m_CheckBoxConsole;
+  protected BaseCheckBox m_CheckBoxConsole;
 
   /** the close listeners. */
   protected HashSet<ActionListener> m_CloseListeners;
@@ -169,7 +169,7 @@ public class FlowPanelNotificationArea
     });
     m_PanelButtons.add(m_ButtonClose);
 
-    m_CheckBoxConsole = new JCheckBox("Console output");
+    m_CheckBoxConsole = new BaseCheckBox("Console output");
     m_CheckBoxConsole.setSelected(false);
     m_CheckBoxConsole.addActionListener((ActionEvent e) -> update());
     m_PanelButtons.add(m_CheckBoxConsole);
