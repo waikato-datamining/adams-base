@@ -74,8 +74,8 @@
     <javax.activation.version>1.1.1</javax.activation.version>
     <javaws.version>2.2.11</javaws.version>
     <moa.version>2014.04</moa.version>
-    <weka.version>3.9.2-fork-0.0.2</weka.version>
-    <weka-lts.version>3.9.0-fork-0.0.5</weka-lts.version>
+    <weka.version>3.9.2-fork-0.0.3</weka.version>
+    <weka-lts.version>3.9.0-fork-0.0.6</weka-lts.version>
     <postgresql.version>42.0.0</postgresql.version>
     <postgis.version>2.2.1</postgis.version>
     <jodd.version>3.5.2</jodd.version>
