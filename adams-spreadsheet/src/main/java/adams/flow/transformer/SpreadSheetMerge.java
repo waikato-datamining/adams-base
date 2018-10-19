@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetMerge.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -29,7 +29,6 @@ import adams.data.spreadsheet.columnfinder.ColumnFinder;
 import adams.data.spreadsheet.columnfinder.Invert;
 import adams.flow.core.Token;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -146,7 +145,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetMerge
   extends AbstractTransformer {
@@ -928,16 +926,16 @@ public class SpreadSheetMerge
 
 	// remove duplicate unique IDs
 	if (m_UniqueIDAtts.size() > 0) {
-	  uniqueList = new TIntArrayList();
-	  for (String att: m_UniqueIDAtts)
-	    uniqueList.add(output.getHeaderRow().indexOfContent(att));
-	  uniqueList.sort();
-	  uniqueList.reverse();
-	  for (int unique: uniqueList.toArray()) {
-	    if (isLoggingEnabled())
-	      getLogger().info("Removing unique ID column: " + output.getColumnName(unique));
-	    output.removeColumn(unique);
-	  }
+	  for (String col: m_UniqueIDAtts) {
+	    for (i = output.getColumnCount() - 1; i >= 0; i--) {
+              if (output.getColumnName(i).equals(col)) {
+                if (isLoggingEnabled())
+                  getLogger().info("Removing unique ID column: #" + (i+1) + "/" + col);
+                output.removeColumn(i);
+	        break;
+              }
+            }
+          }
 	}
       }
 
