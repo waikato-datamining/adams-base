@@ -23,6 +23,7 @@ package adams.gui.visualization.core.axis;
 import adams.core.logging.LoggingObject;
 import adams.gui.visualization.core.AxisPanel;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Stack;
 
@@ -124,13 +125,22 @@ public abstract class AbstractAxisModel
     m_ManualMarginBottom = null;
     m_PixelOffset        = 0;
     m_Validated          = false;
-    m_Formatter          = Formatter.getDecimalFormatter(getDefaultNumberFormat());
+    m_Formatter          = getDefaultFormatter();
     m_CustomerFormatter  = null;
     m_ZoomHandler        = new ZoomHandler();
     m_PixelOffsets       = new Stack<>();
     m_TickGenerator      = new SimpleTickGenerator();
   }
-  
+
+  /**
+   * Returns the default formatter.
+   *
+   * @return		the formatter
+   */
+  protected Formatter getDefaultFormatter() {
+    return Formatter.getDecimalFormatter(getDefaultNumberFormat());
+  }
+
   /**
    * Sets the owning axis panel.
    *
@@ -740,11 +750,23 @@ public abstract class AbstractAxisModel
     m_TickGenerator      = model.getTickGenerator().shallowCopy();
     m_TickGenerator.setParent(this);
     m_NthValueToShow     = model.getNthValueToShow();
-    m_Formatter          = model.m_Formatter;
-    m_CustomerFormatter  = model.m_CustomerFormatter;
+    if (canAssignFormatter(model.m_Formatter))
+      m_Formatter = model.m_Formatter;
+    if (canAssignFormatter(model.m_CustomerFormatter))
+      m_CustomerFormatter = model.m_CustomerFormatter;
 
     invalidate();
     update();
+  }
+
+  /**
+   * Returns whether the formatter can be assigned.
+   *
+   * @param formatter	the formatter to check
+   * @return		true if it can be used
+   */
+  protected boolean canAssignFormatter(Formatter formatter) {
+    return (formatter != null) && (formatter.getFormat() instanceof DecimalFormat);
   }
 
   /**

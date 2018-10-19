@@ -20,6 +20,8 @@
 
 package adams.gui.visualization.core.axis;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Ancestor axis model for displaying date-based values.
  *
@@ -43,7 +45,15 @@ public abstract class AbstractDateBasedAxisModel
     super.initialize();
     
     m_Flipped = false;
-    m_Formatter = Formatter.getDateFormatter(getDefaultDateFormat());
+  }
+
+  /**
+   * Returns the default formatter.
+   *
+   * @return		the formatter
+   */
+  protected Formatter getDefaultFormatter() {
+    return Formatter.getDateFormatter(getDefaultDateFormat());
   }
 
   /**
@@ -57,6 +67,16 @@ public abstract class AbstractDateBasedAxisModel
       m_Flipped = ((FlippableAxisModel) model).isFlipped();
     
     super.assign(model);
+  }
+
+  /**
+   * Returns whether the formatter can be assigned.
+   *
+   * @param formatter	the formatter to check
+   * @return		true if it can be used
+   */
+  protected boolean canAssignFormatter(Formatter formatter) {
+    return (formatter != null) && (formatter.getFormat() instanceof SimpleDateFormat);
   }
 
   /**
