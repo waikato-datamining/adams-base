@@ -27,7 +27,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -366,7 +365,7 @@ public class ParameterPanel
     else
       check = null;
 
-    if (comp instanceof JTextArea)
+    if (comp instanceof BaseTextArea)
       comp = new BaseScrollPane(comp);
     else if (comp instanceof JTextPane)
       comp = new BaseScrollPane(comp);

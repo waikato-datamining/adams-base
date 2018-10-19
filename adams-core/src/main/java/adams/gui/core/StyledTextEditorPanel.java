@@ -266,7 +266,7 @@ public class StyledTextEditorPanel
   }
 
   /**
-   * Returns the underlying JTextArea element.
+   * Returns the underlying BaseTextArea element.
    *
    * @return		the component
    */

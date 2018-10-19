@@ -31,7 +31,7 @@ import java.awt.Font;
 import java.awt.Frame;
 
 /**
- * A customized JTextArea. Adds functionality for printing and selecting fonts.
+ * A customized BaseTextArea. Adds functionality for printing and selecting fonts.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -86,7 +86,7 @@ public class BaseTextArea
   }
 
   /**
-   * Constructs a new JTextArea with the given document model, and defaults
+   * Constructs a new BaseTextArea with the given document model, and defaults
    * for all of the other arguments (null, 0, 0).
    *
    * @param doc  the model to use
@@ -96,7 +96,7 @@ public class BaseTextArea
   }
 
   /**
-   * Constructs a new JTextArea with the specified number of rows
+   * Constructs a new BaseTextArea with the specified number of rows
    * and columns, and the given model.  All of the constructors
    * feed through this constructor.
    *

@@ -45,6 +45,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextArea;
 import adams.gui.goe.PdfFontEditor;
 import com.itextpdf.text.Font;
 
@@ -53,7 +54,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -114,7 +114,7 @@ public class PdfFontChooserPanel
   protected JList m_ListFontFace;
 
   /** The display area. */
-  protected JTextArea m_TextSample;
+  protected BaseTextArea m_TextSample;
 
   /** whether to ignore updates in the GUI temporarily. */
   protected boolean m_IgnoreUpdates;
@@ -197,7 +197,7 @@ public class PdfFontChooserPanel
     scrollPane.setPreferredSize(new Dimension(100, 0));
     panelAttributes.add(scrollPane, BorderLayout.CENTER);
 
-    m_TextSample = new JTextArea("The quick brown fox jumps over the lazy dog.");
+    m_TextSample = new BaseTextArea("The quick brown fox jumps over the lazy dog.");
     m_TextSample.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
     m_TextSample.setColumns(30);
     m_TextSample.setRows(5);

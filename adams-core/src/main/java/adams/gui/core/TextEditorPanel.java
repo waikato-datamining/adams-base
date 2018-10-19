@@ -32,7 +32,6 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
-import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditEvent;
@@ -69,7 +68,7 @@ public class TextEditorPanel
   private static final long serialVersionUID = 3594108882868668611L;
 
   /**
-   * Specialized JTextArea. Only used to react to setText(...) and append(...)
+   * Specialized BaseTextArea. Only used to react to setText(...) and append(...)
    * events.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -399,11 +398,11 @@ public class TextEditorPanel
   }
 
   /**
-   * Returns the underlying JTextArea element.
+   * Returns the underlying BaseTextArea element.
    *
    * @return		the component
    */
-  public JTextArea getTextArea() {
+  public BaseTextArea getTextArea() {
     return m_TextArea;
   }
 

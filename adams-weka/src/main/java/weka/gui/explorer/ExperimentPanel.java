@@ -25,6 +25,7 @@ import adams.core.io.TempUtils;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
+import adams.gui.core.BaseTextArea;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
@@ -71,7 +72,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTextArea;
 import javax.swing.JViewport;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
@@ -130,7 +130,7 @@ public class ExperimentPanel
   protected PropertyPanel m_CEPanel = new PropertyPanel(m_ClassifierEditor);
   
   /** The output area for classification results. */
-  protected JTextArea m_OutText = new JTextArea(20, 40);
+  protected BaseTextArea m_OutText = new BaseTextArea(20, 40);
 
   /** The destination for log/status messages. */
   protected Logger m_Log = new SysErrLog();

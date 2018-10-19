@@ -53,7 +53,7 @@ public class HelpHistoryPanel
   private static final long serialVersionUID = 1704390033157269580L;
 
   /**
-   * A specialized frame class for displaying a StringBuilder in a JTextArea.
+   * A specialized frame class for displaying a StringBuilder in a BaseTextArea.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$

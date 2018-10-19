@@ -27,6 +27,7 @@ import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTextArea;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.BaseTextPaneWithWordWrap;
@@ -42,7 +43,6 @@ import adams.gui.event.SearchEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
@@ -255,8 +255,8 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     // document listeners
     if (comp instanceof BaseTextField)
       addDocumentListener(((BaseTextField) comp).getDocument());
-    else if (comp instanceof JTextArea)
-      addDocumentListener(((JTextArea) comp).getDocument());
+    else if (comp instanceof BaseTextArea)
+      addDocumentListener(((BaseTextArea) comp).getDocument());
     else if (comp instanceof BaseTextAreaWithButtons)
       addDocumentListener(((BaseTextAreaWithButtons) comp).getDocument());
     else if (comp instanceof JTextPane)

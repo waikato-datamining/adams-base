@@ -26,7 +26,6 @@ import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel.FrameDisplaySupporter;
 
 import javax.swing.JMenuItem;
-import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,7 +48,7 @@ public class BufferHistoryPanel
   private static final long serialVersionUID = 1704390033157269580L;
 
   /**
-   * A specialized frame class for displaying a StringBuilder in a JTextArea.
+   * A specialized frame class for displaying a StringBuilder in a BaseTextArea.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
@@ -61,7 +60,7 @@ public class BufferHistoryPanel
     private static final long serialVersionUID = 2552148773749071235L;
 
     /** the text area to display the StringBuilder in. */
-    protected JTextArea m_TextArea;
+    protected BaseTextArea m_TextArea;
 
     /**
      * Initializes the frame.
@@ -82,7 +81,7 @@ public class BufferHistoryPanel
 
       getContentPane().setLayout(new BorderLayout());
 
-      m_TextArea = new JTextArea();
+      m_TextArea = new BaseTextArea();
       m_TextArea.setFont(Fonts.getMonospacedFont());
       getContentPane().add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
     }
@@ -106,7 +105,7 @@ public class BufferHistoryPanel
   protected Hashtable<String,BufferFrame> m_Frames;
 
   /** the text area to display the result in. */
-  protected JTextArea m_TextArea;
+  protected BaseTextArea m_TextArea;
 
   /** the file chooser for saving buffers. */
   protected transient TextFileChooser m_FileChooser;
@@ -147,7 +146,7 @@ public class BufferHistoryPanel
    *
    * @param value	the text area to use
    */
-  public void setTextArea(JTextArea value) {
+  public void setTextArea(BaseTextArea value) {
     m_TextArea = value;
   }
 
