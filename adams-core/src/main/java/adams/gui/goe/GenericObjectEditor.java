@@ -32,6 +32,7 @@ import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.ObjectFileChooser;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
@@ -41,7 +42,6 @@ import adams.gui.goe.classtree.ClassTree;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -184,7 +184,7 @@ public class GenericObjectEditor
     protected PropertySheetPanel m_PropertySheetChild;
 
     /** The names of the proposed classes. */
-    protected JComboBox<String> m_ComboBoxClassname;
+    protected BaseComboBox<String> m_ComboBoxClassname;
 
     /** The name of the current class. */
     protected JLabel m_LabelClassname;
@@ -256,7 +256,7 @@ public class GenericObjectEditor
       m_PanelLeft.add(m_PanelTree, BorderLayout.CENTER);
 
       m_LabelClassname = new JLabel("None");
-      m_ComboBoxClassname = new JComboBox<>(new String[]{"None"});
+      m_ComboBoxClassname = new BaseComboBox<>(new String[]{"None"});
       m_ComboBoxClassname.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
       m_ComboBoxClassname.addActionListener((ActionEvent e) -> {
 	if ((m_ComboBoxClassname.getSelectedIndex() == -1) || m_IgnoreChanges)

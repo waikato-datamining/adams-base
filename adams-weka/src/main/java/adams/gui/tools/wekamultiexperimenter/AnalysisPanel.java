@@ -20,13 +20,13 @@
 package adams.gui.tools.wekamultiexperimenter;
 
 import adams.core.ObjectCopyHelper;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.GUIHelper;
 import adams.gui.tools.wekamultiexperimenter.analysis.AbstractAnalysisPanel;
 import adams.gui.tools.wekamultiexperimenter.analysis.DefaultAnalysisPanel;
 import weka.core.Instances;
 
 import javax.swing.Icon;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -52,7 +52,7 @@ public class AnalysisPanel
   protected AbstractAnalysisPanel m_PanelAnalysis;
 
   /** the combobox with all available panels. */
-  protected JComboBox m_ComboBoxPanels;
+  protected BaseComboBox m_ComboBoxPanels;
 
   /**
    * For initializing the GUI.
@@ -80,7 +80,7 @@ public class AnalysisPanel
       }
     }
     panels.add(0, new DefaultAnalysisPanel());
-    m_ComboBoxPanels = new JComboBox(panels.toArray(new AbstractAnalysisPanel[panels.size()]));
+    m_ComboBoxPanels = new BaseComboBox(panels.toArray(new AbstractAnalysisPanel[panels.size()]));
     m_ComboBoxPanels.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

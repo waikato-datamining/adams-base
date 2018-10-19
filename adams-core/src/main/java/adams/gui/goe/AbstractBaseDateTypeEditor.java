@@ -27,13 +27,13 @@ import adams.core.base.BaseObject;
 import adams.gui.chooser.DateProvider;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.help.HelpFrame;
 import adams.parser.GrammarSupplier;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -85,7 +85,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
   protected P m_Calendar;
 
   /** For specific date placeholders. */
-  protected JComboBox<String> m_ComboBoxPlaceholders;
+  protected BaseComboBox<String> m_ComboBoxPlaceholders;
 
   /** For entering a custom date string. */
   protected JTextField m_TextCustom;
@@ -239,7 +239,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     m_Calendar  = newPanel();
     panelValues.add((JPanel) m_Calendar, BorderLayout.CENTER);
 
-    m_ComboBoxPlaceholders = new JComboBox<>(new String[]{
+    m_ComboBoxPlaceholders = new BaseComboBox<>(new String[]{
       "Custom",
       "Selected",
       getPlaceholder(Placeholder.INF_PAST),

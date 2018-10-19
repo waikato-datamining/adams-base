@@ -36,6 +36,7 @@ import adams.gui.chooser.DefaultReportFileChooser;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
@@ -76,7 +77,6 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -1374,7 +1374,7 @@ public class ReportFactory {
     protected JLabel m_LabelCompounds;
 
     /** for combobox with the compounds. */
-    protected JComboBox m_ComboBoxCompounds;
+    protected BaseComboBox m_ComboBoxCompounds;
 
     /** the label for the min value text field. */
     protected JLabel m_LabelMinValue;
@@ -1458,7 +1458,7 @@ public class ReportFactory {
       getContentPane().add(m_PanelValues, BorderLayout.WEST);
 
       // the compounds
-      m_ComboBoxCompounds = new JComboBox(new DefaultComboBoxModel());
+      m_ComboBoxCompounds = new BaseComboBox(new DefaultComboBoxModel());
       m_LabelCompounds = new JLabel("Compound");
       m_LabelCompounds.setDisplayedMnemonic('C');
       m_LabelCompounds.setLabelFor(m_ComboBoxCompounds);

@@ -25,6 +25,7 @@ import adams.data.id.IDHandler;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.BaseTextPaneWithWordWrap;
@@ -38,7 +39,6 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.SearchEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -232,7 +232,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
    * @param combo	the combobox to add the listener to
    * @see		#addListener(Component)
    */
-  protected void addActionListener(JComboBox combo) {
+  protected void addActionListener(BaseComboBox combo) {
     combo.addActionListener((ActionEvent e) -> update());
   }
   
@@ -264,8 +264,8 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     else if (comp instanceof BaseTextPaneWithWordWrap)
       addDocumentListener(((BaseTextPaneWithWordWrap) comp).getDocument());
     // action listeners
-    else if (comp instanceof JComboBox)
-      addActionListener((JComboBox) comp);
+    else if (comp instanceof BaseComboBox)
+      addActionListener((BaseComboBox) comp);
     // change listeners
     else if (comp instanceof AbstractChooserPanel)
       addChangeListener((AbstractChooserPanel) comp);

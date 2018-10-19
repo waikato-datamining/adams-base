@@ -22,6 +22,7 @@ package adams.gui.tools;
 import adams.core.Variables;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
@@ -32,7 +33,6 @@ import adams.parser.BooleanExpression;
 import adams.parser.MathematicalExpression;
 import adams.parser.StringExpression;
 
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -404,7 +404,7 @@ public class ExpressionWatchPanel
     protected JTextField m_TextExpression;
 
     /** the combobox with the expression types. */
-    protected JComboBox m_ComboBoxType;
+    protected BaseComboBox m_ComboBoxType;
 
     /**
      * Creates a modal dialog.
@@ -453,7 +453,7 @@ public class ExpressionWatchPanel
       });
       panel.addParameter("_Expression", m_TextExpression);
 
-      m_ComboBoxType = new JComboBox(ExpressionType.values());
+      m_ComboBoxType = new BaseComboBox(ExpressionType.values());
       m_ComboBoxType.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           updateButtons();

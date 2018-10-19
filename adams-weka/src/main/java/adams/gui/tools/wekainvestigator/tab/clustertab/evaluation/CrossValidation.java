@@ -26,6 +26,7 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
@@ -40,7 +41,6 @@ import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
@@ -75,7 +75,7 @@ public class CrossValidation
   protected ParameterPanel m_PanelParameters;
 
   /** the datasets. */
-  protected JComboBox<String> m_ComboBoxDatasets;
+  protected BaseComboBox<String> m_ComboBoxDatasets;
 
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
@@ -114,7 +114,7 @@ public class CrossValidation
 
     // dataset
     m_ModelDatasets    = new DefaultComboBoxModel<>();
-    m_ComboBoxDatasets = new JComboBox<>(m_ModelDatasets);
+    m_ComboBoxDatasets = new BaseComboBox<>(m_ModelDatasets);
     m_ComboBoxDatasets.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 

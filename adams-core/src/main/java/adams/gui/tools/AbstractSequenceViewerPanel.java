@@ -26,6 +26,7 @@ import adams.db.SequenceProvider;
 import adams.env.Environment;
 import adams.env.SequenceViewerDefinition;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -35,7 +36,6 @@ import adams.gui.scripting.SyntaxDocument;
 import adams.gui.visualization.sequence.XYSequencePanel;
 import adams.gui.visualization.sequence.XYSequenceTable;
 
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.text.Document;
@@ -67,7 +67,7 @@ public abstract class AbstractSequenceViewerPanel
   protected JTextPane m_TextSQL;
 
   /** the combobox with the templates. */
-  protected JComboBox m_ComboboxTemplates;
+  protected BaseComboBox m_ComboboxTemplates;
 
   /** the button for executing the SQL. */
   protected BaseButton m_ButtonExecute;
@@ -103,7 +103,7 @@ public abstract class AbstractSequenceViewerPanel
     panel = new JPanel(new GridLayout(2, 1));
     panel2.add(panel, BorderLayout.NORTH);
 
-    m_ComboboxTemplates = new JComboBox(new Vector(getSequenceProvider().getTemplates().keySet()));
+    m_ComboboxTemplates = new BaseComboBox(new Vector(getSequenceProvider().getTemplates().keySet()));
     m_ComboboxTemplates.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         loadTemplate();

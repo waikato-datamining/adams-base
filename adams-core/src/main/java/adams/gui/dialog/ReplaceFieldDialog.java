@@ -20,20 +20,19 @@
 
 package adams.gui.dialog;
 
+import adams.data.report.AbstractField;
+import adams.data.report.FieldType;
+import adams.gui.chooser.FieldChooserPanel;
+import adams.gui.core.BaseComboBox;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import adams.data.report.AbstractField;
-import adams.data.report.FieldType;
-import adams.gui.chooser.FieldChooserPanel;
 
 /**
  * A dialog that allows the user to select a field to find and replace
@@ -58,7 +57,7 @@ public class ReplaceFieldDialog
   protected JLabel m_LabelType;
 
   /** the type combobox. */
-  protected JComboBox m_ComboBoxType;
+  protected BaseComboBox m_ComboBoxType;
 
   /**
    * Creates a modal dialog without a title with the specified Dialog as
@@ -119,7 +118,7 @@ public class ReplaceFieldDialog
     // type
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     result.add(panel);
-    m_ComboBoxType = new JComboBox(FieldType.values());
+    m_ComboBoxType = new BaseComboBox(FieldType.values());
     m_ComboBoxType.setSelectedItem(FieldType.FIELD);
     m_ComboBoxType.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

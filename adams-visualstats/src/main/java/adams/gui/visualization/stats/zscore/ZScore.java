@@ -27,6 +27,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -44,7 +45,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -103,7 +103,7 @@ public class ZScore
   protected DefaultComboBoxModel m_ComboBox;
 
   /**combo box for attribute selection */
-  protected JComboBox m_Att;
+  protected BaseComboBox m_Att;
 
   /** For displaying a generic object editor for choosing the paintlet */
   protected GenericObjectEditorPanel m_PanelPaintlet;
@@ -290,7 +290,7 @@ public class ZScore
     hold.setPreferredSize(new Dimension(500,0));
 
     m_ComboBox = new DefaultComboBoxModel();
-    m_Att = new JComboBox(m_ComboBox);
+    m_Att = new BaseComboBox(m_ComboBox);
     AttListener listen = new AttListener(this);
     m_Att.addItemListener(listen);
 

@@ -36,6 +36,7 @@ import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.AbstractChooserPanel.PopupMenuCustomizer;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.DirectoryChooserPanel;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -64,7 +65,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -182,7 +182,7 @@ public class PreviewBrowserPanel
   protected BasePanel m_PanelArchiveHandlers;
 
   /** the combobox with the archive handlers (if more than one available). */
-  protected JComboBox m_ComboBoxArchiveHandlers;
+  protected BaseComboBox m_ComboBoxArchiveHandlers;
 
   /** the model of the combobox. */
   protected DefaultComboBoxModel<String> m_ModelArchiveHandlers;
@@ -349,7 +349,7 @@ public class PreviewBrowserPanel
     m_PanelArchiveFilesBottom.add(m_PanelArchiveHandlers, BorderLayout.SOUTH);
 
     m_ModelArchiveHandlers    = new DefaultComboBoxModel<>();
-    m_ComboBoxArchiveHandlers = new JComboBox<>(m_ModelArchiveHandlers);
+    m_ComboBoxArchiveHandlers = new BaseComboBox<>(m_ModelArchiveHandlers);
     m_ComboBoxArchiveHandlers.addActionListener((ActionEvent e) -> {
       if (m_IgnoreArchiveHandlerChanges)
 	return;

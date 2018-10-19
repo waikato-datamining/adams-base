@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 import adams.core.MessageCollection;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
@@ -33,7 +34,6 @@ import weka.core.Capabilities;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -54,10 +54,10 @@ public class TrainTestSet
   protected ParameterPanel m_PanelParameters;
 
   /** the train set. */
-  protected JComboBox<String> m_ComboBoxTrain;
+  protected BaseComboBox<String> m_ComboBoxTrain;
 
   /** the test set. */
-  protected JComboBox<String> m_ComboBoxTest;
+  protected BaseComboBox<String> m_ComboBoxTest;
 
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
@@ -86,12 +86,12 @@ public class TrainTestSet
     m_ModelDatasets = new DefaultComboBoxModel<>();
 
     // Train
-    m_ComboBoxTrain = new JComboBox<>(m_ModelDatasets);
+    m_ComboBoxTrain = new BaseComboBox<>(m_ModelDatasets);
     m_ComboBoxTrain.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Train", m_ComboBoxTrain);
 
     // Test
-    m_ComboBoxTest = new JComboBox<>(m_ModelDatasets);
+    m_ComboBoxTest = new BaseComboBox<>(m_ModelDatasets);
     m_ComboBoxTest.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Test", m_ComboBoxTest);
   }

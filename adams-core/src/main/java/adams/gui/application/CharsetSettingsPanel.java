@@ -20,9 +20,9 @@
 package adams.gui.application;
 
 import adams.core.management.CharsetHelper;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.ParameterPanel;
 
-import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 
 /**
@@ -41,7 +41,7 @@ public class CharsetSettingsPanel
   protected ParameterPanel m_PanelParameters;
 
   /** the combobox with all the charsets. */
-  protected JComboBox<String> m_ComboBoxCharsets;
+  protected BaseComboBox<String> m_ComboBoxCharsets;
 
   /**
    * Initializes the widgets.
@@ -56,7 +56,7 @@ public class CharsetSettingsPanel
     m_PanelParameters = new ParameterPanel();
     add(m_PanelParameters, BorderLayout.NORTH);
 
-    m_ComboBoxCharsets = new JComboBox<>(CharsetHelper.getIDs());
+    m_ComboBoxCharsets = new BaseComboBox<>(CharsetHelper.getIDs());
     m_PanelParameters.addParameter("_Charset", m_ComboBoxCharsets);
 
     // display values

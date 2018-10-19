@@ -19,20 +19,18 @@
  */
 package adams.gui.core;
 
+import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.Row;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-
-import adams.data.spreadsheet.Cell;
-import adams.data.spreadsheet.Row;
 
 /**
  * ComboBox that lists the column names of the associated spreadsheet in
@@ -43,7 +41,7 @@ import adams.data.spreadsheet.Row;
  * @version $Revision$
  */
 public class SpreadSheetColumnComboBox
-  extends JComboBox {
+  extends BaseComboBox {
 
   /** for serialization. */
   private static final long serialVersionUID = 5256160332596403161L;

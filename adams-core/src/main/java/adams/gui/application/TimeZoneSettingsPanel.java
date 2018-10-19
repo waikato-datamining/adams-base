@@ -20,9 +20,9 @@
 package adams.gui.application;
 
 import adams.core.management.TimeZoneHelper;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.ParameterPanel;
 
-import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 
 /**
@@ -41,7 +41,7 @@ public class TimeZoneSettingsPanel
   protected ParameterPanel m_PanelParameters;
 
   /** the combobox with all the timezones. */
-  protected JComboBox<String> m_ComboBoxTimeZones;
+  protected BaseComboBox<String> m_ComboBoxTimeZones;
 
   /**
    * Initializes the widgets.
@@ -56,7 +56,7 @@ public class TimeZoneSettingsPanel
     m_PanelParameters = new ParameterPanel();
     add(m_PanelParameters, BorderLayout.NORTH);
 
-    m_ComboBoxTimeZones = new JComboBox<>(TimeZoneHelper.getIDs());
+    m_ComboBoxTimeZones = new BaseComboBox<>(TimeZoneHelper.getIDs());
     m_PanelParameters.addParameter("_Time zone", m_ComboBoxTimeZones);
 
     // display values

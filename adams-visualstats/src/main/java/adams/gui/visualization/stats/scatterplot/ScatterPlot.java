@@ -25,6 +25,7 @@ import adams.core.base.BaseRegExp;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -41,7 +42,6 @@ import adams.gui.visualization.stats.scatterplot.action.MouseClickAction;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -69,7 +69,7 @@ public class ScatterPlot
   private static final long serialVersionUID = -7798200657432959204L;
 
   /**
-   * Listener for when the y attribute JComboBox selection changes.
+   * Listener for when the y attribute BaseComboBox selection changes.
    *
    * @author msf8
    */
@@ -100,7 +100,7 @@ public class ScatterPlot
   }
 
   /**
-   * Listener for when the x attribute JComboBox selection changes.
+   * Listener for when the x attribute BaseComboBox selection changes.
    *
    * @author msf8
    */
@@ -131,7 +131,7 @@ public class ScatterPlot
   }
 
   /**
-   * Listener for when the color attribute JComboBox selection changes
+   * Listener for when the color attribute BaseComboBox selection changes
    * @author fracpete
    */
   protected class AttColorListener implements ItemListener {
@@ -183,13 +183,13 @@ public class ScatterPlot
   protected int m_ColorIntIndex;
 
   /**For choosing attribute to display on x axis */
-  protected JComboBox<String> m_ComboBoxY;
+  protected BaseComboBox<String> m_ComboBoxY;
 
   /**For choosing attribute to display on y axis */
-  protected JComboBox<String> m_ComboBoxX;
+  protected BaseComboBox<String> m_ComboBoxX;
 
   /**For choosing attribute to use for color. */
-  protected JComboBox<String> m_ComboBoxColor;
+  protected BaseComboBox<String> m_ComboBoxColor;
 
   /**Model for the comboBox choosing the x attribute to display */
   protected DefaultComboBoxModel<String> m_ModelX;
@@ -355,11 +355,11 @@ public class ScatterPlot
     panel.add(m_Plot, BorderLayout.CENTER);
     splitPane.setBottomComponent(panel);
 
-    m_ComboBoxY     = new JComboBox<>(m_ModelY);
-    m_ComboBoxX     = new JComboBox<>(m_ModelX);
-    m_ComboBoxColor = new JComboBox<>(m_ModelColor);
+    m_ComboBoxY     = new BaseComboBox<>(m_ModelY);
+    m_ComboBoxX     = new BaseComboBox<>(m_ModelX);
+    m_ComboBoxColor = new BaseComboBox<>(m_ModelColor);
 
-    // Create and register listeners for the JComboBox's
+    // Create and register listeners for the BaseComboBox's
     AttYListener listenY = new AttYListener(this);
     m_ComboBoxY.addItemListener(listenY);
     AttXListener listenX = new AttXListener(this);

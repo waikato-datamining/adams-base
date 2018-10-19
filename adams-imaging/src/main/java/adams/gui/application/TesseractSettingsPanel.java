@@ -19,15 +19,14 @@
  */
 package adams.gui.application;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JComboBox;
-
 import adams.core.io.PlaceholderFile;
 import adams.data.tesseract.TesseractHelper;
 import adams.flow.core.TesseractLanguage;
 import adams.gui.chooser.FileChooserPanel;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.ParameterPanel;
+
+import java.awt.BorderLayout;
 
 /**
  * Panel for configuring the tesseract settings.
@@ -48,7 +47,7 @@ public class TesseractSettingsPanel
   protected FileChooserPanel m_PanelExecutable;
   
   /** the combobox with all the languages. */
-  protected JComboBox m_ComboBoxLanguages;
+  protected BaseComboBox m_ComboBoxLanguages;
 
   /**
    * Initializes the widgets.
@@ -65,7 +64,7 @@ public class TesseractSettingsPanel
     m_PanelExecutable = new FileChooserPanel();
     m_PanelParameters.addParameter("_Executable", m_PanelExecutable);
     
-    m_ComboBoxLanguages = new JComboBox(TesseractLanguage.values());
+    m_ComboBoxLanguages = new BaseComboBox(TesseractLanguage.values());
     m_PanelParameters.addParameter("_Language", m_ComboBoxLanguages);
 
     // display values

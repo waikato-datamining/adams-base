@@ -38,7 +38,6 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -1754,7 +1753,7 @@ public class GUIHelper {
     JPanel			panelCombo;
     JPanel			panel;
     JLabel			label;
-    JComboBox			combobox;
+    BaseComboBox			combobox;
     final ApprovalDialog	dialog;
     Component			pparent;
     Boolean                     sync;
@@ -1781,7 +1780,7 @@ public class GUIHelper {
     }
     dialog.setTitle(title);
     
-    combobox = new JComboBox(options);
+    combobox = new BaseComboBox(options);
     if (!initial.isEmpty())
       combobox.setSelectedItem(initial);
     else

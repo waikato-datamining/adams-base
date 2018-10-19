@@ -35,6 +35,7 @@ import adams.env.Environment;
 import adams.env.InstanceCompareDefinition;
 import adams.gui.chooser.DatasetFileChooserPanel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseList;
 import adams.gui.core.BasePanel;
@@ -57,7 +58,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -396,7 +396,7 @@ public class InstanceComparePanel
     protected JLabel m_LabelAttributeRange;
 
     /** the combobox with the attribute names. */
-    protected JComboBox m_ComboBoxRowAttribute;
+    protected BaseComboBox m_ComboBoxRowAttribute;
 
     /** the underlying model for the comboxbox. */
     protected DefaultComboBoxModel m_ComboBoxRowAttributeModel;
@@ -489,7 +489,7 @@ public class InstanceComparePanel
       // Index attribute
       m_ComboBoxRowAttributeModel = new DefaultComboBoxModel();
       m_ComboBoxRowAttributeModel.addElement("-none-");
-      m_ComboBoxRowAttribute = new JComboBox(m_ComboBoxRowAttributeModel);
+      m_ComboBoxRowAttribute = new BaseComboBox(m_ComboBoxRowAttributeModel);
       m_ComboBoxRowAttribute.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           int index = m_ComboBoxRowAttribute.getSelectedIndex();

@@ -28,6 +28,7 @@ import adams.core.logging.LoggingSupporter;
 import adams.core.net.SSHAuthenticationType;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextPaneWithButtons;
 import adams.gui.core.ConsolePanel;
@@ -40,7 +41,6 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -110,7 +110,7 @@ public class SSHPanel
   protected JPanel m_PanelAuthentication;
 
   /** the combobox for the authentication type. */
-  protected JComboBox<SSHAuthenticationType> m_ComboBoxAuthenticationType;
+  protected BaseComboBox<SSHAuthenticationType> m_ComboBoxAuthenticationType;
 
   /** the file panel for the key. */
   protected FileChooserPanel m_FileChooserPanelKey;
@@ -302,7 +302,7 @@ public class SSHPanel
       m_AuthenticationPanels.put(type, authPanel);
     }
 
-    m_ComboBoxAuthenticationType = new JComboBox<>(SSHAuthenticationType.values());
+    m_ComboBoxAuthenticationType = new BaseComboBox<>(SSHAuthenticationType.values());
     m_ComboBoxAuthenticationType.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

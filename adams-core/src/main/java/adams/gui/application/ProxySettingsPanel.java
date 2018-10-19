@@ -27,11 +27,11 @@ import adams.core.net.ProxyHelper;
 import adams.env.Environment;
 import adams.env.ProxyDefinition;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ParameterPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
@@ -58,7 +58,7 @@ public class ProxySettingsPanel
   protected BasePanel m_PanelType;
 
   /** the combobox for the proxy type. */
-  protected JComboBox m_ComboBoxType;
+  protected BaseComboBox m_ComboBoxType;
 
   /** the panel for the http parameters. */
   protected ParameterPanel m_PanelHttpFtp;
@@ -121,7 +121,7 @@ public class ProxySettingsPanel
     m_PanelType = new BasePanel(new GridLayout(1, 2, 5, 5));
     add(m_PanelType, BorderLayout.NORTH);
 
-    m_ComboBoxType = new JComboBox(Proxy.Type.values());
+    m_ComboBoxType = new BaseComboBox(Proxy.Type.values());
     m_ComboBoxType.addActionListener((ActionEvent e) -> {
       // http/ftp
       m_PanelHttpFtp.setEnabled(m_ComboBoxType.getSelectedItem().equals(Proxy.Type.HTTP));

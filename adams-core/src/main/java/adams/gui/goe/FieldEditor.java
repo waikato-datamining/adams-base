@@ -29,10 +29,10 @@ import adams.data.report.Field;
 import adams.data.report.FieldType;
 import adams.data.report.PrefixOnlyField;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.selection.SelectFieldPanel;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -240,10 +240,10 @@ public class FieldEditor
     MultiLineValueDialog	dialog;
     JPanel			panelType;
     Vector<String>		lines;
-    JComboBox			combo;
+    BaseComboBox			combo;
     DataType			dtype;
 
-    combo = new JComboBox();
+    combo = new BaseComboBox();
     for (DataType type: DataType.values()) {
       combo.addItem(type.toDisplay());
       if (type == DataType.NUMERIC)

@@ -29,6 +29,7 @@ import adams.data.instancesanalysis.PCA;
 import adams.data.weka.WekaAttributeRange;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.NumberTextField;
@@ -47,7 +48,6 @@ import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -100,7 +100,7 @@ public class PrincipalComponentsTab
   protected DefaultComboBoxModel<String> m_ModelDatasets;
 
   /** the datasets. */
-  protected JComboBox<String> m_ComboBoxDatasets;
+  protected BaseComboBox<String> m_ComboBoxDatasets;
 
   /** the attribute range. */
   protected JTextField m_TextAttributeRange;
@@ -171,7 +171,7 @@ public class PrincipalComponentsTab
     m_PanelParameters = new ParameterPanel();
     panelOptions.add(m_PanelParameters, BorderLayout.CENTER);
 
-    m_ComboBoxDatasets = new JComboBox<>(m_ModelDatasets);
+    m_ComboBoxDatasets = new BaseComboBox<>(m_ModelDatasets);
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
     m_TextAttributeRange = new JTextField(20);

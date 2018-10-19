@@ -22,10 +22,10 @@ package adams.gui.tools.previewbrowser;
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -67,7 +67,7 @@ public class SerializedObjectPanel
   protected JPanel m_PanelCombobox;
   
   /** the combobox with the viewers. */
-  protected JComboBox m_ComboBoxViewers;
+  protected BaseComboBox m_ComboBoxViewers;
 
   /** the currently displayed object. */
   protected Object m_Current;
@@ -97,7 +97,7 @@ public class SerializedObjectPanel
     m_PanelCombobox = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(m_PanelCombobox, BorderLayout.SOUTH);
     
-    m_ComboBoxViewers = new JComboBox();
+    m_ComboBoxViewers = new BaseComboBox();
     m_PanelCombobox.add(new JLabel("Preferred viewer"));
     m_PanelCombobox.add(m_ComboBoxViewers);
   }
@@ -239,7 +239,7 @@ public class SerializedObjectPanel
    * @param cls		the class of the current object
    * @param combobox	the current state of viewers
    */
-  protected void updatePreferredViewer(Class cls, JComboBox combobox) {
+  protected void updatePreferredViewer(Class cls, BaseComboBox combobox) {
     SerializedObjectViewer	viewer;
     Properties			props;
     String			filename;

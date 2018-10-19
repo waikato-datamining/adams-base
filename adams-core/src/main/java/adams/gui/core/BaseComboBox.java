@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseComboBox.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -27,10 +27,9 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Improved JComboBox component.
+ * Custom JComboBox component.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <E> the type of the elements
  */
 public class BaseComboBox<E>
@@ -48,6 +47,7 @@ public class BaseComboBox<E>
    */
   public BaseComboBox() {
     super();
+    initComboBox();
   }
 
   /**
@@ -63,6 +63,7 @@ public class BaseComboBox<E>
    */
   public BaseComboBox(ComboBoxModel<E> model) {
     super(model);
+    initComboBox();
   }
 
   /**
@@ -75,6 +76,7 @@ public class BaseComboBox<E>
    */
   public BaseComboBox(E[] items) {
     super(items);
+    initComboBox();
   }
 
   /**
@@ -87,6 +89,13 @@ public class BaseComboBox<E>
    */
   public BaseComboBox(List<E> items) {
     super(new Vector<>(items));
+    initComboBox();
+  }
+
+  /**
+   * Initializes members.
+   */
+  protected void initComboBox() {
   }
 
   /**

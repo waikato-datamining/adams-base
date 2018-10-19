@@ -20,9 +20,10 @@
 
 package adams.gui.flow.setup;
 
+import adams.gui.core.BaseComboBox;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -43,7 +44,7 @@ public class FlowSetupCellEditor
   protected FlowSetupTableModel m_TableModel;
   
   /** the JCombobox used for displaying the flow setup names. */
-  protected JComboBox m_ComboBox;
+  protected BaseComboBox m_ComboBox;
   
   /**
    * Initializes the cell editor.
@@ -51,9 +52,9 @@ public class FlowSetupCellEditor
    * @param model	the model to use
    */
   public FlowSetupCellEditor(FlowSetupTableModel model) {
-    super(new JComboBox());
+    super(new BaseComboBox());
     
-    m_ComboBox   = (JComboBox) getComponent();
+    m_ComboBox   = (BaseComboBox) getComponent();
     m_TableModel = model;
     m_TableModel.addTableModelListener(this);
     

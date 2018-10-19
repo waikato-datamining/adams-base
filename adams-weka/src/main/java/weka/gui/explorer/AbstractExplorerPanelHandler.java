@@ -254,12 +254,12 @@ public abstract class AbstractExplorerPanelHandler
   }
   
   /**
-   * Restores the selected index of the JComboBox.
+   * Restores the selected index of the BaseComboBox.
    * 
    * @param map		the map to obtain the index from
    * @param key		the key to obtain the index for
    * @param defValue	the default index in case the index is not present in map, -1 means last
-   * @param combo	the JComboBox to update
+   * @param combo	the BaseComboBox to update
    */
   protected void restoreSelectedIndex(Map map, String key, Integer defValue, JComboBox combo) {
     Integer	index;

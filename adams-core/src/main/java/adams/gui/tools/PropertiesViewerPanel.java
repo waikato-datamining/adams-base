@@ -25,6 +25,7 @@ import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.env.Project;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
@@ -43,7 +44,6 @@ import adams.gui.event.SearchListener;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -90,7 +90,7 @@ public class PropertiesViewerPanel
   public final static String SESSION_FILE = "PropertiesViewerSession.props";
 
   /** the combobox with the properties keys. */
-  protected JComboBox m_ComboBoxKeys;
+  protected BaseComboBox m_ComboBoxKeys;
 
   /** the table model displaying the data. */
   protected PropertiesTableModel m_TableModel;
@@ -164,7 +164,7 @@ public class PropertiesViewerPanel
       list.add(keys.next());
     Collections.sort(list);
     list.add(0, "");
-    m_ComboBoxKeys = new JComboBox(list.toArray(new String[list.size()]));
+    m_ComboBoxKeys = new BaseComboBox(list.toArray(new String[list.size()]));
     m_ComboBoxKeys.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	if (m_ComboBoxKeys.getSelectedIndex() <= 0) {

@@ -25,9 +25,9 @@ import adams.core.Utils;
 import adams.core.base.BaseBoolean;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -56,7 +56,7 @@ public class BaseBooleanEditor
   implements CustomStringRepresentationHandler, MultiSelectionEditor {
 
   /** The combobox with the values. */
-  protected JComboBox m_ComboBoxValue;
+  protected BaseComboBox m_ComboBoxValue;
 
   /**
    * Returns the {@link BaseBoolean} as string.
@@ -183,7 +183,7 @@ public class BaseBooleanEditor
     panelAll = new JPanel(new BorderLayout());
     panel    = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelAll.add(panel, BorderLayout.CENTER);
-    m_ComboBoxValue = new JComboBox(new String[]{"false", "true"});
+    m_ComboBoxValue = new BaseComboBox(new String[]{"false", "true"});
     m_ComboBoxValue.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {

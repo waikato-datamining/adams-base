@@ -25,6 +25,7 @@ import adams.core.Range;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooserPanel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -38,7 +39,6 @@ import adams.gui.event.SearchEvent;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -93,13 +93,13 @@ public class LoadSpreadSheetDialog
   protected SearchPanel m_SearchPanel;
 
   /** the sorting index. */
-  protected JComboBox m_ComboBoxSorting;
+  protected BaseComboBox m_ComboBoxSorting;
 
   /** the soriting index model. */
   protected DefaultComboBoxModel m_ComboBoxSortingModel;
 
   /** the ID index. */
-  protected JComboBox m_ComboBoxID;
+  protected BaseComboBox m_ComboBoxID;
 
   /** the ID index model. */
   protected DefaultComboBoxModel m_ComboBoxIDModel;
@@ -272,7 +272,7 @@ public class LoadSpreadSheetDialog
     panelAttributes.add(panel, BorderLayout.NORTH);
 
     // ID
-    m_ComboBoxID = new JComboBox(m_ComboBoxIDModel);
+    m_ComboBoxID = new BaseComboBox(m_ComboBoxIDModel);
     m_ComboBoxID.setSelectedIndex(0);
     m_ComboBoxID.setToolTipText("The selected attribute gets used as ID for the instances, rather than the row index");
     label = new JLabel("ID");
@@ -292,7 +292,7 @@ public class LoadSpreadSheetDialog
     panel.add(m_TextAttributeRange);
 
     // sorting
-    m_ComboBoxSorting = new JComboBox(m_ComboBoxSortingModel);
+    m_ComboBoxSorting = new BaseComboBox(m_ComboBoxSortingModel);
     m_ComboBoxSorting.setSelectedIndex(0);
     m_ComboBoxSorting.setToolTipText("The attribute to sort the data on (ascending)");
     label = new JLabel("Sorting");

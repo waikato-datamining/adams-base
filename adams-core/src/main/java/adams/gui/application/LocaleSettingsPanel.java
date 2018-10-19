@@ -20,9 +20,9 @@
 package adams.gui.application;
 
 import adams.core.management.LocaleHelper;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.ParameterPanel;
 
-import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 
 /**
@@ -41,7 +41,7 @@ public class LocaleSettingsPanel
   protected ParameterPanel m_PanelParameters;
 
   /** the combobox with all the locales. */
-  protected JComboBox<String> m_ComboBoxLocales;
+  protected BaseComboBox<String> m_ComboBoxLocales;
 
   /**
    * Initializes the widgets.
@@ -56,7 +56,7 @@ public class LocaleSettingsPanel
     m_PanelParameters = new ParameterPanel();
     add(m_PanelParameters, BorderLayout.NORTH);
 
-    m_ComboBoxLocales = new JComboBox<>(LocaleHelper.getIDs());
+    m_ComboBoxLocales = new BaseComboBox<>(LocaleHelper.getIDs());
     m_PanelParameters.addParameter("_Locale", m_ComboBoxLocales);
 
     // display values

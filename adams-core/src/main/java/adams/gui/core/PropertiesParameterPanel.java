@@ -48,7 +48,6 @@ import adams.gui.goe.FontEditor;
 import adams.gui.goe.GenericArrayEditorPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -874,7 +873,7 @@ public class PropertiesParameterPanel
     RangeTextField		rangeText;
     RegExpTextField		regexpText;
     RegExpConstrainedTextField	regexpConstText;
-    JComboBox			combo;
+    BaseComboBox			combo;
     Component			comp;
     String			help;
     BaseString[]		list;
@@ -1020,7 +1019,7 @@ public class PropertiesParameterPanel
             addProperty(key, label, colorPanel);
             break;
           case ENUM:
-            combo = new JComboBox(EnumHelper.getValues(getEnum(key)));
+            combo = new BaseComboBox(EnumHelper.getValues(getEnum(key)));
             combo.setSelectedItem(EnumHelper.parse(getEnum(key), value.getProperty(key)));
             combo.setToolTipText(help);
             addProperty(key, label, combo);
@@ -1029,11 +1028,11 @@ public class PropertiesParameterPanel
           case BLANK_SEPARATED_LIST_FIXED:
           case COMMA_SEPARATED_LIST_FIXED:
             if (type == PropertyType.BLANK_SEPARATED_LIST_FIXED)
-              combo = new JComboBox(SpreadSheetUtils.split(value.getProperty(key), ' ', true));
+              combo = new BaseComboBox(SpreadSheetUtils.split(value.getProperty(key), ' ', true));
             else if (type == PropertyType.COMMA_SEPARATED_LIST_FIXED)
-              combo = new JComboBox(SpreadSheetUtils.split(value.getProperty(key), ',', true));
+              combo = new BaseComboBox(SpreadSheetUtils.split(value.getProperty(key), ',', true));
             else
-              combo = new JComboBox(getList(key));
+              combo = new BaseComboBox(getList(key));
             combo.setSelectedItem(value.getProperty(key));
             combo.setToolTipText(help);
             addProperty(key, label, combo);
@@ -1170,7 +1169,7 @@ public class PropertiesParameterPanel
     RangeTextField		rangeText;
     RegExpTextField		regexpText;
     RegExpConstrainedTextField	regexpConstText;
-    JComboBox			comboEnum;
+    BaseComboBox			comboEnum;
     BaseString[]		list;
     String			key;
     Object			array;
@@ -1251,14 +1250,14 @@ public class PropertiesParameterPanel
           result.setColor(key, colorPanel.getCurrent());
           break;
         case ENUM:
-          comboEnum = (JComboBox) comp;
+          comboEnum = (BaseComboBox) comp;
           if (comboEnum.getSelectedIndex() > -1)
             result.setProperty(key, "" + comboEnum.getSelectedItem());
           break;
         case LIST:
         case BLANK_SEPARATED_LIST_FIXED:
         case COMMA_SEPARATED_LIST_FIXED:
-          comboEnum = (JComboBox) comp;
+          comboEnum = (BaseComboBox) comp;
           if (comboEnum.getSelectedIndex() > -1)
             result.setProperty(key, "" + comboEnum.getSelectedItem());
           break;

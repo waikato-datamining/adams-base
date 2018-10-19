@@ -27,6 +27,7 @@ import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
@@ -46,7 +47,6 @@ import weka.experiment.ResultMatrixPlainText;
 import weka.experiment.Tester;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
@@ -177,13 +177,13 @@ public class DefaultAnalysisPanel
   protected SelectOptionPanel m_SelectComparisonBase;
 
   /** the combobox with the metric to evaluate. */
-  protected JComboBox<String> m_ComboBoxMetric;
+  protected BaseComboBox<String> m_ComboBoxMetric;
 
   /** the model for the metric. */
   protected DefaultComboBoxModel<String> m_ModelMetric;
 
   /** the combobox with the results panels. */
-  protected JComboBox<AbstractResultsPanel> m_ComboBoxResults;
+  protected BaseComboBox<AbstractResultsPanel> m_ComboBoxResults;
 
   /** the results panels. */
   protected List<AbstractResultsPanel> m_PanelsResults;
@@ -318,11 +318,11 @@ public class DefaultAnalysisPanel
     panelParams.addParameter("Comparison base", m_SelectComparisonBase);
 
     // metric
-    m_ComboBoxMetric = new JComboBox<>(m_ModelMetric);
+    m_ComboBoxMetric = new BaseComboBox<>(m_ModelMetric);
     panelParams.addParameter("Metric", m_ComboBoxMetric);
 
     // results
-    m_ComboBoxResults = new JComboBox<>(
+    m_ComboBoxResults = new BaseComboBox<>(
       new DefaultComboBoxModel<>(
 	m_PanelsResults.toArray(new AbstractResultsPanel[m_PanelsResults.size()])));
     panelParams.addParameter("Results", m_ComboBoxResults);

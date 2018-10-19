@@ -20,12 +20,6 @@
 
 package adams.gui.selection;
 
-import java.awt.BorderLayout;
-import java.util.Vector;
-
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionUtils;
 import adams.data.report.AbstractField;
@@ -33,8 +27,13 @@ import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.FieldType;
 import adams.data.report.FieldUtils;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ParameterPanel;
+
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.util.Vector;
 
 /**
  * A panel for selecting a field (obtained from a database).
@@ -55,7 +54,7 @@ public class SelectFieldPanel
   protected JTextField m_TextFields;
 
   /** the data types to display. */
-  protected JComboBox m_ComboBoxDataType;
+  protected BaseComboBox m_ComboBoxDataType;
 
   /** the type of fields to display. */
   protected FieldType m_FieldType;
@@ -93,7 +92,7 @@ public class SelectFieldPanel
     m_TextFields  = new JTextField(15);
     m_Panel.addParameter("Field _name", m_TextFields);
 
-    m_ComboBoxDataType = new JComboBox();
+    m_ComboBoxDataType = new BaseComboBox();
     for (DataType type: DataType.values()) {
       m_ComboBoxDataType.addItem(type.toDisplay());
       if (type == DataType.NUMERIC)

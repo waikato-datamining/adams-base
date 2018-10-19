@@ -381,7 +381,7 @@ public class AttributeSummaryPanel extends JPanel {
       final weka.gui.AttributeSummaryPanel p = new weka.gui.AttributeSummaryPanel();
       p.setBorder(BorderFactory.createTitledBorder("Attribute"));
       jf.getContentPane().add(p, BorderLayout.CENTER);
-      final javax.swing.JComboBox j = new javax.swing.JComboBox();
+      final adams.gui.core.BaseComboBox j = new adams.gui.core.BaseComboBox();
       j.setEnabled(false);
       j.addActionListener(new java.awt.event.ActionListener() {
         @Override

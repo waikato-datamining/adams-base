@@ -29,11 +29,11 @@ import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingObject;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
+import adams.gui.core.BaseComboBox;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.util.HashMap;
@@ -170,7 +170,7 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
    * @param combobox	the combobox to check
    * @return		true if valid index
    */
-  protected boolean isValidDataIndex(JComboBox combobox) {
+  protected boolean isValidDataIndex(BaseComboBox combobox) {
     if (combobox.getSelectedIndex() == -1)
       return false;
     if (combobox.getSelectedIndex() >= getOwner().getData().size())

@@ -19,6 +19,7 @@
  */
 package adams.gui.tools.wekamultiexperimenter.setup;
 
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
@@ -37,7 +38,6 @@ import weka.experiment.RemoteExperiment;
 import weka.experiment.SplitEvaluator;
 import weka.gui.experiment.ExperimenterDefaults;
 
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -68,16 +68,16 @@ public class BasicWekaSetupPanel
   protected NumberTextField m_TextRepetitions;
   
   /** classification or regression. */
-  protected JComboBox m_ComboBoxClassificationRegression;
+  protected BaseComboBox m_ComboBoxClassificationRegression;
   
   /** the type of evaluation. */
-  protected JComboBox<String> m_ComboBoxEvaluation;
+  protected BaseComboBox<String> m_ComboBoxEvaluation;
   
   /** the evaluation parameter. */
   protected NumberTextField m_TextEvaluation;
   
   /** how to traverse. */
-  protected JComboBox<String> m_ComboBoxOrder;
+  protected BaseComboBox<String> m_ComboBoxOrder;
   
   /** the tabbed pane for datasets and classifiers. */
   protected BaseTabbedPane m_TabbedPane;
@@ -113,14 +113,14 @@ public class BasicWekaSetupPanel
     m_TextRepetitions.getDocument().addDocumentListener(new ModificationDocumentListener());
     m_PanelParameters.addParameter("Repetitions", m_TextRepetitions);
     
-    m_ComboBoxClassificationRegression = new JComboBox<>(new String[]{
+    m_ComboBoxClassificationRegression = new BaseComboBox<>(new String[]{
 	"Classification",
 	"Regression"
     });
     m_ComboBoxClassificationRegression.addActionListener(new ModificationActionListener());
     m_PanelParameters.addParameter("Task", m_ComboBoxClassificationRegression);
     
-    m_ComboBoxEvaluation = new JComboBox<>(new String[]{
+    m_ComboBoxEvaluation = new BaseComboBox<>(new String[]{
 	"Cross-validation",
 	"Train/test split (randomized)",
 	"Train/test split (order preserved)",
@@ -147,7 +147,7 @@ public class BasicWekaSetupPanel
     m_TextEvaluation.getDocument().addDocumentListener(new ModificationDocumentListener());
     m_PanelParameters.addParameter("", m_TextEvaluation);
 
-    m_ComboBoxOrder = new JComboBox<>(new String[]{
+    m_ComboBoxOrder = new BaseComboBox<>(new String[]{
       "Datasets -> Classifiers",
       "Classifiers -> Datasets"
     });

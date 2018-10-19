@@ -34,6 +34,7 @@ import adams.core.io.lister.DirectoryLister;
 import adams.gui.chooser.AbstractChooserPanelWithIOSupport;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.chooser.RemoteDirectorySetup;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.FilePanel;
@@ -44,7 +45,6 @@ import adams.gui.event.SearchEvent;
 import adams.gui.tools.FileCommanderPanel;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -79,7 +79,7 @@ public class FileCommanderDirectoryPanel
   protected JPanel m_PanelChooser;
 
   /** the combobox with the available directory chooser panels. */
-  protected JComboBox<AbstractChooserPanelWithIOSupport> m_Choosers;
+  protected BaseComboBox<AbstractChooserPanelWithIOSupport> m_Choosers;
 
   /** the left dir panel. */
   protected AbstractChooserPanelWithIOSupport m_Dir;
@@ -137,7 +137,7 @@ public class FileCommanderDirectoryPanel
     m_Files.addFileDoubleClickListener((FileDoubleClickEvent e) -> view(e.getFile()));
     m_Files.addSearchListener((SearchEvent e) -> setActive());
 
-    m_Choosers = new JComboBox<>();
+    m_Choosers = new BaseComboBox<>();
     addChooserPanels(m_Choosers);
     m_Choosers.addActionListener((ActionEvent e) -> updateChooser());
     m_Choosers.setVisible(m_Choosers.getItemCount() > 1);
@@ -159,7 +159,7 @@ public class FileCommanderDirectoryPanel
    *
    * @param combobox	the combobox to fil
    */
-  protected void addChooserPanels(JComboBox<AbstractChooserPanelWithIOSupport> combobox) {
+  protected void addChooserPanels(BaseComboBox<AbstractChooserPanelWithIOSupport> combobox) {
     AbstractChooserPanelWithIOSupport				chooser;
     AbstractChooserPanelWithIOSupport				selected;
     DefaultComboBoxModel<AbstractChooserPanelWithIOSupport> 	model;

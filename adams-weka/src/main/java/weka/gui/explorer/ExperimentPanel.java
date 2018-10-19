@@ -24,6 +24,7 @@ package weka.gui.explorer;
 import adams.core.io.TempUtils;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import weka.classifiers.Classifier;
@@ -63,7 +64,6 @@ import weka.gui.explorer.Explorer.LogHandler;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -145,7 +145,7 @@ public class ExperimentPanel
   protected JSpinner m_RunsSpinner = new JSpinner();
   
   /** The type of evaluation: cross-validation or random split. */
-  protected JComboBox m_EvalCombo = new JComboBox(new String[]{"Cross-validation", "Random split"});
+  protected BaseComboBox m_EvalCombo = new BaseComboBox(new String[]{"Cross-validation", "Random split"});
 
   /** The label for either the number of folds or the percentage for the random split. */
   protected JLabel m_FoldsPercLabel = new JLabel("Folds");
@@ -154,7 +154,7 @@ public class ExperimentPanel
   protected JTextField m_FoldsPercText = new JTextField("10", 10);
 
   /** Lets the user select the class column. */
-  protected JComboBox m_ClassCombo = new JComboBox();
+  protected BaseComboBox m_ClassCombo = new BaseComboBox();
   
   /** Click to start running the experiment. */
   protected BaseButton m_StartBut = new BaseButton("Start");

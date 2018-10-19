@@ -21,13 +21,13 @@
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab;
 
+import adams.gui.core.BaseComboBox;
 import weka.core.Attribute;
 import weka.core.AttributeStats;
 import weka.core.Instances;
 import weka.core.SparseInstance;
 import weka.core.Utils;
 
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -143,7 +143,7 @@ public class AttributeVisualizationPanel extends JPanel {
    * entry "No Class" if the user does not want to set a class attribute for
    * colouring.
    */
-  protected JComboBox<String> m_colorAttrib;
+  protected BaseComboBox<String> m_colorAttrib;
 
   /**
    * Fontmetrics used to get the font size which is required for calculating
@@ -207,7 +207,7 @@ public class AttributeVisualizationPanel extends JPanel {
       }
     });
 
-    m_colorAttrib = new JComboBox<String>();
+    m_colorAttrib = new BaseComboBox<String>();
     m_colorAttrib.addItemListener((ItemEvent ie) -> {
       if (ie.getStateChange() == ItemEvent.SELECTED) {
 	m_classIndex = m_colorAttrib.getSelectedIndex() - 1;
@@ -264,7 +264,7 @@ public class AttributeVisualizationPanel extends JPanel {
    * Returns the class selection combo box if the parent component wants to
    * place it in itself or in some component other than this component.
    */
-  public JComboBox getColorBox() {
+  public BaseComboBox getColorBox() {
     return m_colorAttrib;
   }
 

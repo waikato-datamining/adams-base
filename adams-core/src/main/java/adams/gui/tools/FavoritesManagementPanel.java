@@ -21,6 +21,7 @@ package adams.gui.tools;
 
 import adams.core.ClassLister;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
@@ -32,7 +33,6 @@ import adams.gui.goe.GenericObjectEditorDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -505,7 +505,7 @@ public class FavoritesManagementPanel
     BaseButton			buttonCancel;
     JLabel			label;
     String[] 			superclasses;
-    final JComboBox<String> 	combobox;
+    final BaseComboBox<String> 	combobox;
 
     if (getParentFrame() != null)
       dialog = new BaseDialog(getParentFrame(), true);
@@ -518,7 +518,7 @@ public class FavoritesManagementPanel
     superclasses = ClassLister.getSingleton().getSuperclasses();
     Arrays.sort(superclasses);
     panelBox = new BasePanel(new FlowLayout(FlowLayout.LEFT));
-    combobox = new JComboBox<>(superclasses);
+    combobox = new BaseComboBox<>(superclasses);
     label = new JLabel("Superclass");
     label.setDisplayedMnemonic('S');
     label.setLabelFor(combobox);

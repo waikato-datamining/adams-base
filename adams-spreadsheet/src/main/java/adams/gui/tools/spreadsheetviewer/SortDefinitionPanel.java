@@ -6,13 +6,13 @@
 package adams.gui.tools.spreadsheetviewer;
 
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.SortSetupEvent;
 import adams.gui.event.SortSetupEvent.EventType;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -35,10 +35,10 @@ public class SortDefinitionPanel
   protected SortPanel m_Owner;
 
   /** the combobox with column names. */
-  protected JComboBox m_ComboBoxNames;
+  protected BaseComboBox m_ComboBoxNames;
 
   /** the type of sorting. */
-  protected JComboBox m_ComboBoxSorting;
+  protected BaseComboBox m_ComboBoxSorting;
 
   /** the move up button. */
   protected BaseButton m_ButtonMoveUp;
@@ -72,7 +72,7 @@ public class SortDefinitionPanel
 
     setLayout(new FlowLayout(FlowLayout.LEFT));
 
-    m_ComboBoxNames = new JComboBox();  // model gets set later
+    m_ComboBoxNames = new BaseComboBox();  // model gets set later
     m_ComboBoxNames.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -85,7 +85,7 @@ public class SortDefinitionPanel
     add(label);
     add(m_ComboBoxNames);
 
-    m_ComboBoxSorting = new JComboBox(new String[]{"Ascending", "Descending"});
+    m_ComboBoxSorting = new BaseComboBox(new String[]{"Ascending", "Descending"});
     m_ComboBoxSorting.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

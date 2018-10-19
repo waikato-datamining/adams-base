@@ -24,13 +24,13 @@ import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -61,7 +61,7 @@ public class PreviewDisplay
   protected BasePanel m_PanelContentHandlers;
 
   /** the combobox with the content handlers (if more than one available). */
-  protected JComboBox m_ComboBoxContentHandlers;
+  protected BaseComboBox m_ComboBoxContentHandlers;
 
   /** the model of the combobox. */
   protected DefaultComboBoxModel<String> m_ModelContentHandlers;
@@ -107,7 +107,7 @@ public class PreviewDisplay
     add(m_PanelContentHandlers, BorderLayout.SOUTH);
 
     m_ModelContentHandlers    = new DefaultComboBoxModel<>();
-    m_ComboBoxContentHandlers = new JComboBox<>(m_ModelContentHandlers);
+    m_ComboBoxContentHandlers = new BaseComboBox<>(m_ModelContentHandlers);
     m_ComboBoxContentHandlers.addActionListener((ActionEvent e) -> {
       if (m_IgnoreContentHandlerChanges)
 	return;

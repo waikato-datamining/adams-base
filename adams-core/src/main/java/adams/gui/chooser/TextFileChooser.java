@@ -19,21 +19,20 @@
  */
 package adams.gui.chooser;
 
+import adams.core.management.CharsetHelper;
+import adams.gui.core.BaseComboBox;
+import adams.gui.core.BasePanel;
+import adams.gui.core.ExtensionFileFilter;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
 import java.nio.charset.Charset;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import adams.core.management.CharsetHelper;
-import adams.gui.core.BasePanel;
-import adams.gui.core.ExtensionFileFilter;
 
 /**
  * Specialized filechooser for text files.
@@ -69,7 +68,7 @@ public class TextFileChooser
     protected JLabel m_LabelEncoding;
     
     /** the text field for the encoding. */
-    protected JComboBox m_ComboBoxEncoding;
+    protected BaseComboBox m_ComboBoxEncoding;
 
     /** the default background color of the panel. */
     protected Color m_DefaultBackground;
@@ -101,7 +100,7 @@ public class TextFileChooser
       m_PanelEncoding.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 0));
       add(m_PanelEncoding, BorderLayout.NORTH);
 
-      m_ComboBoxEncoding = new JComboBox(CharsetHelper.getIDs());
+      m_ComboBoxEncoding = new BaseComboBox(CharsetHelper.getIDs());
       m_ComboBoxEncoding.setSelectedItem(CharsetHelper.getSingleton().getCharset().name());
       
       m_LabelEncoding = new JLabel("Encoding");

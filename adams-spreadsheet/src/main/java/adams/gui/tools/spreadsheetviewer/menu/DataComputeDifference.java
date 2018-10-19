@@ -22,11 +22,11 @@ package adams.gui.tools.spreadsheetviewer.menu;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.transformer.SpreadSheetDifference;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
@@ -76,8 +76,8 @@ public class DataComputeDifference
   protected void doActionPerformed(ActionEvent e) {
     ApprovalDialog	dialog;
     ParameterPanel	params;
-    final JComboBox	sheet1;
-    final JComboBox	sheet2;
+    final BaseComboBox	sheet1;
+    final BaseComboBox	sheet2;
     List<String>	titles;
     final JTextField	range;
 
@@ -89,10 +89,10 @@ public class DataComputeDifference
     params = new ParameterPanel();
     dialog.getContentPane().add(params, BorderLayout.CENTER);
     titles = getTabbedPane().getPageTitles();
-    sheet1 = new JComboBox(titles.toArray(new String[titles.size()]));
+    sheet1 = new BaseComboBox(titles.toArray(new String[titles.size()]));
     params.addParameter("First sheet", sheet1);
     params.addParameter("", new JLabel("minus"));
-    sheet2 = new JComboBox(titles.toArray(new String[titles.size()]));
+    sheet2 = new BaseComboBox(titles.toArray(new String[titles.size()]));
     params.addParameter("Second sheet", sheet2);
     params.addParameter("", new JLabel("using"));
     range = new JTextField(10);

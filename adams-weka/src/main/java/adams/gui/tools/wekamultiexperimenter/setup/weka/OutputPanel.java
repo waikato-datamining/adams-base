@@ -19,11 +19,11 @@
  */
 package adams.gui.tools.wekamultiexperimenter.setup.weka;
 
-import adams.gui.tools.wekamultiexperimenter.setup.AbstractSetupPanel;
+import adams.gui.core.BaseComboBox;
 import adams.gui.tools.wekamultiexperimenter.setup.AbstractSetupOptionPanel;
+import adams.gui.tools.wekamultiexperimenter.setup.AbstractSetupPanel;
 import weka.experiment.ResultListener;
 
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -51,7 +51,7 @@ public class OutputPanel
   protected JPanel m_PanelComboBox;
 
   /** the combobox listing all the output types. */
-  protected JComboBox m_ComboBoxOutput;
+  protected BaseComboBox m_ComboBoxOutput;
   
   /** the currently output panel. */
   protected AbstractOutputPanel m_Panel;
@@ -93,7 +93,7 @@ public class OutputPanel
     
     names = m_Panels.keySet().toArray(new String[m_Panels.size()]);
     Arrays.sort(names);
-    m_ComboBoxOutput = new JComboBox(names);
+    m_ComboBoxOutput = new BaseComboBox(names);
     m_ComboBoxOutput.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

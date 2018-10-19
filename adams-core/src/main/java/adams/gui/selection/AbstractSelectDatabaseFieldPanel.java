@@ -20,25 +20,24 @@
 
 package adams.gui.selection;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
-import java.util.Vector;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionUtils;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.FieldType;
 import adams.db.FieldProvider;
+import adams.gui.core.BaseComboBox;
 import adams.gui.event.FieldCacheUpdateEvent;
 import adams.gui.event.FieldCacheUpdateListener;
+
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
+import java.util.Vector;
 
 /**
  * A panel for selecting a field (obtained from a database).
@@ -66,7 +65,7 @@ public abstract class AbstractSelectDatabaseFieldPanel<T extends AbstractField>
   protected JLabel m_LabelDataType;
 
   /** the data types to display. */
-  protected JComboBox m_ComboBoxDataType;
+  protected BaseComboBox m_ComboBoxDataType;
 
   /** the type of fields to display. */
   protected FieldType m_FieldType;
@@ -104,7 +103,7 @@ public abstract class AbstractSelectDatabaseFieldPanel<T extends AbstractField>
     m_LabelManualFields = new JLabel();
     m_LabelManualFields.setLabelFor(m_LabelManualFields);
 
-    m_ComboBoxDataType = new JComboBox();
+    m_ComboBoxDataType = new BaseComboBox();
     m_ComboBoxDataType.addItem("All");
     for (DataType type: DataType.values()) {
       m_ComboBoxDataType.addItem(type.toDisplay());

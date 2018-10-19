@@ -26,6 +26,7 @@ import adams.core.Range;
 import adams.data.instance.Instance;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.SearchPanel;
@@ -49,7 +50,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -109,10 +109,10 @@ public class InstanceTab
   protected DefaultComboBoxModel<String> m_ModelDatasets;
 
   /** the datasets. */
-  protected JComboBox<String> m_ComboBoxDatasets;
+  protected BaseComboBox<String> m_ComboBoxDatasets;
 
   /** the ID. */
-  protected JComboBox<String> m_ComboBoxID;
+  protected BaseComboBox<String> m_ComboBoxID;
 
   /** the attribute range. */
   protected JTextField m_TextAttributeRange;
@@ -180,11 +180,11 @@ public class InstanceTab
     m_PanelParameters = new ParameterPanel();
     panelOptions.add(m_PanelParameters, BorderLayout.CENTER);
 
-    m_ComboBoxDatasets = new JComboBox<>(m_ModelDatasets);
+    m_ComboBoxDatasets = new BaseComboBox<>(m_ModelDatasets);
     m_ComboBoxDatasets.addActionListener((ActionEvent e) -> updateAttributes());
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
-    m_ComboBoxID = new JComboBox<>(m_ModelAttributes);
+    m_ComboBoxID = new BaseComboBox<>(m_ModelAttributes);
     m_ComboBoxID.addActionListener((ActionEvent e) -> updateIDs());
     m_PanelParameters.addParameter("ID", m_ComboBoxID);
 

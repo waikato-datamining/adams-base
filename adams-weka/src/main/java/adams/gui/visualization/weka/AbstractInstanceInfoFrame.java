@@ -25,6 +25,7 @@ import adams.core.Shortening;
 import adams.data.weka.ArffUtils;
 import adams.env.Environment;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -35,7 +36,6 @@ import weka.core.Instances;
 import weka.gui.arffviewer.ArffSortedTableModel;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
@@ -88,10 +88,10 @@ public abstract class AbstractInstanceInfoFrame
   protected JLabel m_LabelTextNumPoints;
 
   /** the combobox with all the instances. */
-  protected JComboBox m_ComboBoxTextInstances;
+  protected BaseComboBox m_ComboBoxTextInstances;
 
   /** the combobox with all the actions. */
-  protected JComboBox m_ComboBoxTextActions;
+  protected BaseComboBox m_ComboBoxTextActions;
 
   /** the button for displaying the instances. */
   protected BaseButton m_ButtonTextGo;
@@ -106,13 +106,13 @@ public abstract class AbstractInstanceInfoFrame
   protected BasePanel m_PanelData;
 
   /** the combobox with all the datasets. */
-  protected JComboBox m_ComboBoxData;
+  protected BaseComboBox m_ComboBoxData;
 
   /** the panel for the combobox listing the datasets. */
   protected BasePanel m_PanelComboBoxData;
 
   /** the combobox with all the actions. */
-  protected JComboBox m_ComboBoxDataActions;
+  protected BaseComboBox m_ComboBoxDataActions;
 
   /** the button for displaying the instances. */
   protected BaseButton m_ButtonDataGo;
@@ -151,7 +151,7 @@ public abstract class AbstractInstanceInfoFrame
     });
     m_PanelData.add(new BaseScrollPane(m_TableData), BorderLayout.CENTER);
 
-    m_ComboBoxData      = new JComboBox();
+    m_ComboBoxData      = new BaseComboBox();
     m_ComboBoxData.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	updateDataTable();
@@ -165,7 +165,7 @@ public abstract class AbstractInstanceInfoFrame
     m_PanelDataAction = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_PanelData.add(m_PanelDataAction, BorderLayout.SOUTH);
 
-    m_ComboBoxDataActions = new JComboBox(getActions());
+    m_ComboBoxDataActions = new BaseComboBox(getActions());
     m_ComboBoxDataActions.setSelectedIndex(0);
     m_PanelDataAction.add(m_ComboBoxDataActions);
 
@@ -200,10 +200,10 @@ public abstract class AbstractInstanceInfoFrame
     m_LabelTextNumPoints = new JLabel();
     m_PanelTextAction.add(m_LabelTextNumPoints);
 
-    m_ComboBoxTextInstances = new JComboBox();
+    m_ComboBoxTextInstances = new BaseComboBox();
     m_PanelTextAction.add(m_ComboBoxTextInstances);
 
-    m_ComboBoxTextActions = new JComboBox(getActions());
+    m_ComboBoxTextActions = new BaseComboBox(getActions());
     m_ComboBoxTextActions.setSelectedIndex(0);
     m_PanelTextAction.add(m_ComboBoxTextActions);
 

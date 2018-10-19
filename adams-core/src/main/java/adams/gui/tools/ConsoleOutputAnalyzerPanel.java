@@ -30,6 +30,7 @@ import adams.flow.sink.TextSupplier;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -53,7 +54,6 @@ import adams.gui.sendto.SendToActionUtils;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -605,10 +605,10 @@ public class ConsoleOutputAnalyzerPanel
   protected JTextField m_TextOrigin;
   
   /** the combobox with all origins. */
-  protected JComboBox m_ComboBoxOrigin;
+  protected BaseComboBox m_ComboBoxOrigin;
   
   /** the combobox with the types. */
-  protected JComboBox m_ComboBoxType;
+  protected BaseComboBox m_ComboBoxType;
   
   /** the regexp for the output. */
   protected JTextField m_TextOutput;
@@ -706,10 +706,10 @@ public class ConsoleOutputAnalyzerPanel
     m_TextOrigin = new JTextField(20);
     m_PanelSearch.addParameter("_Origin (regexp)", m_TextOrigin);
     
-    m_ComboBoxOrigin = new JComboBox();
+    m_ComboBoxOrigin = new BaseComboBox();
     m_PanelSearch.addParameter("Origin (list)", m_ComboBoxOrigin);
     
-    m_ComboBoxType = new JComboBox();
+    m_ComboBoxType = new BaseComboBox();
     m_PanelSearch.addParameter("_Type", m_ComboBoxType);
     
     m_TextOutput = new JTextField(20);

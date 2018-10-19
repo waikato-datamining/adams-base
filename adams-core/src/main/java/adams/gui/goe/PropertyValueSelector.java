@@ -21,11 +21,11 @@
 
 package adams.gui.goe;
 
-import java.beans.PropertyEditor;
+import adams.gui.core.BaseComboBox;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
+import java.beans.PropertyEditor;
 
 /** 
  * Support for any PropertyEditor that uses tags.
@@ -35,7 +35,7 @@ import javax.swing.JComboBox;
  * @see weka.gui.PropertyValueSelector
  */
 public class PropertyValueSelector
-  extends JComboBox {
+  extends BaseComboBox {
 
   /** for serialization. */
   private static final long serialVersionUID = 128041237745933212L;
