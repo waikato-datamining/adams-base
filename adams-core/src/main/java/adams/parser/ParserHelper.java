@@ -15,7 +15,7 @@
 
 /*
  * ParserHelper.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -44,7 +44,6 @@ import java.util.List;
  * Helper class for parsers.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ParserHelper
   extends LoggingObject {
@@ -89,15 +88,21 @@ public class ParserHelper
     result = new HashMap();
     fields = report.getFields();
     for (AbstractField field: fields) {
-      switch (field.getDataType()) {
-	case NUMERIC:
-	  result.put(field.toString(), report.getDoubleValue(field));
-	  break;
-	case BOOLEAN:
-	  result.put(field.toString(), report.getBooleanValue(field));
-	  break;
-	default:
-	  result.put(field.toString(), "" + report.getValue(field));
+      try {
+        switch (field.getDataType()) {
+          case NUMERIC:
+            result.put(field.toString(), report.getDoubleValue(field));
+            break;
+          case BOOLEAN:
+            result.put(field.toString(), report.getBooleanValue(field));
+            break;
+          default:
+            result.put(field.toString(), "" + report.getValue(field));
+        }
+      }
+      catch (Exception e) {
+        System.err.println(ParserHelper.class.getName() + ": Failed to retrieve field '" + field + ":");
+        e.printStackTrace();
       }
     }
 
@@ -262,7 +267,7 @@ public class ParserHelper
       date = (Date) obj;
     
     if (date != null)
-      result = new Double(getCalendar(date).get(field));
+      result = (double) getCalendar(date).get(field);
       
     return result;
   }
@@ -405,9 +410,9 @@ public class ParserHelper
    */
   public Double compare(Object o1, Object o2) {
     if ((o1 instanceof Number) && (o2 instanceof Number))
-      return new Double(new Double(((Number) o1).doubleValue()).compareTo(((Number) o2).doubleValue()));
+      return (double) Double.compare(((Number) o1).doubleValue(), ((Number) o2).doubleValue());
     else if ((o1 instanceof Comparable) && (o2 instanceof Comparable))
-      return new Double(((Comparable) o1).compareTo((Comparable) o2));
+      return (double) (((Comparable) o1).compareTo((Comparable) o2));
     else
       return Double.NaN;
   }
@@ -559,7 +564,7 @@ public class ParserHelper
     ParserFunction			function;
     
     if (m_Functions == null) {
-      map    = new HashMap<String,ParserFunction>();
+      map    = new HashMap<>();
       cnames = AbstractParserFunction.getFunctions();
       for (String cname: cnames) {
 	try {
@@ -603,7 +608,7 @@ public class ParserHelper
     initFunctions();
     
     result = new StringBuilder();
-    names  = new ArrayList<String>(m_Functions.keySet());
+    names  = new ArrayList<>(m_Functions.keySet());
     Collections.sort(names);
     for (String name: names) {
       if (result.length() > 0)
@@ -634,7 +639,7 @@ public class ParserHelper
     ParserProcedure			procedure;
     
     if (m_Procedures == null) {
-      map    = new HashMap<String,ParserProcedure>();
+      map    = new HashMap<>();
       cnames = AbstractParserProcedure.getProcedures();
       for (String cname: cnames) {
 	try {
@@ -678,7 +683,7 @@ public class ParserHelper
     initProcedures();
     
     result = new StringBuilder();
-    names  = new ArrayList<String>(m_Procedures.keySet());
+    names  = new ArrayList<>(m_Procedures.keySet());
     Collections.sort(names);
     for (String name: names) {
       if (result.length() > 0)
