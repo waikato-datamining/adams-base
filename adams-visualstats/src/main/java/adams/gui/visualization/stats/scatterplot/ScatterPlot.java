@@ -15,7 +15,7 @@
 
 /*
  * ScatterPlot.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.scatterplot;
@@ -59,7 +59,6 @@ import java.awt.event.MouseEvent;
  * panel as well as combo boxes for choosing attributes.
  *
  * @author msf8
- * @version $Revision$
  */
 public class ScatterPlot
   extends AbstractScatterPlot
@@ -543,8 +542,8 @@ public class ScatterPlot
   public void change() {
     if (m_Data != null)
       m_Plot.setData(m_Data);
-    m_Plot.setX(m_XIntIndex);
-    m_Plot.setY(m_YIntIndex);
+    m_Plot.setXIndex(m_XIntIndex);
+    m_Plot.setYIndex(m_YIntIndex);
     m_Plot.reset();
     m_Paintlet.setXIndex(m_XIntIndex);
     m_Paintlet.setYIndex(m_YIntIndex);

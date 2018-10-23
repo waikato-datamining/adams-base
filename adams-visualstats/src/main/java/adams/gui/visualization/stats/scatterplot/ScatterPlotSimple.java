@@ -15,7 +15,7 @@
 
 /*
  * ScatterPlotSimple.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.scatterplot;
@@ -32,7 +32,6 @@ import java.util.Iterator;
  * Class for displaying a single scatterplotpanel only, used in the matrix.
  *
  * @author msf8
- * @version $Revision$
  */
 public class ScatterPlotSimple
 extends AbstractScatterPlot{
@@ -47,8 +46,8 @@ extends AbstractScatterPlot{
     if(m_Data != null){
       //set the data for the scatterplot
       m_Plot.setData(m_Data);
-      m_Plot.setX(m_XIntIndex);
-      m_Plot.setY(m_YIntIndex);
+      m_Plot.setXIndex(m_XIntIndex);
+      m_Plot.setYIndex(m_YIntIndex);
       //set the data for the paintlet
       if(m_Paintlet != null) {
 	m_Paintlet.setRepaintOnChange(false);

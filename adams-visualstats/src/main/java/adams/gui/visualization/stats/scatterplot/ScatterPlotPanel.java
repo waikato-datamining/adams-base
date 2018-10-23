@@ -15,7 +15,7 @@
 
 /*
  * ScatterPlotPanel.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.scatterplot;
@@ -32,7 +32,6 @@ import adams.gui.visualization.core.plot.Axis;
  * Panel for displaying scatter plot data.
  *
  * @author msf8
- * @version $Revision$
  */
 public class ScatterPlotPanel
   extends PlotPanel{
@@ -129,7 +128,7 @@ public class ScatterPlotPanel
    *
    * @param val		index of x attribute
    */
-  public void setX(int val) {
+  public void setXIndex(int val) {
     m_XIndex = val;
     reset();
   }
@@ -139,7 +138,7 @@ public class ScatterPlotPanel
    *
    * @return		the index
    */
-  public int getX() {
+  public int getXIndex() {
     return m_XIndex;
   }
 
@@ -148,7 +147,7 @@ public class ScatterPlotPanel
    *
    * @param val		index of y attribute
    */
-  public void setY(int val) {
+  public void setYIndex(int val) {
     m_YIndex = val;
     reset();
   }
@@ -158,7 +157,7 @@ public class ScatterPlotPanel
    *
    * @return		the index
    */
-  public int getY() {
+  public int getYIndex() {
     return m_YIndex;
   }
 }
