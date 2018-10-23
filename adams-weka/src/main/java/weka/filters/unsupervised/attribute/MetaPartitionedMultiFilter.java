@@ -259,9 +259,11 @@ public class MetaPartitionedMultiFilter
       result.add(getRegExp(i).stringValue());
     }
 
-    for (i = 0; i < getFilters().length; i++) {
-      result.add("-P");
-      result.add(getPrefixes()[i].getValue());
+    if (getPrefixes() != null) {
+      for (i = 0; i < getPrefixes().length; i++) {
+        result.add("-P");
+        result.add(getPrefixes()[i].getValue());
+      }
     }
 
     return (String[]) result.toArray(new String[result.size()]);
@@ -559,7 +561,10 @@ public class MetaPartitionedMultiFilter
 	  aRange.setIndices(range);
 	  ranges.add(new Range(aRange.getRange()));
 	  filters.add((Filter) OptionUtils.shallowCopy(m_Filters[i]));
-	  prefixes.add(new BaseString(m_Prefixes[i].getValue()));
+	  if (m_Prefixes != null)
+            prefixes.add(new BaseString(m_Prefixes[i].getValue()));
+	  else
+            prefixes.add(new BaseString());
 	}
       }
 
