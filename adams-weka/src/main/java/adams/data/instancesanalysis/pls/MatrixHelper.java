@@ -20,7 +20,11 @@
 
 package adams.data.instancesanalysis.pls;
 
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 import com.github.waikatodatamining.matrix.core.MatrixFactory;
+import weka.core.matrix.Matrix;
 
 /**
  * Helper class for the matrix-algorithm library.
@@ -68,5 +72,39 @@ public class MatrixHelper
    */
   public static com.github.waikatodatamining.matrix.core.Matrix wekaToMatrixAlgo(weka.core.matrix.Matrix weka) {
     return MatrixFactory.fromRaw(weka.getArray());
+  }
+
+  /**
+   * Turns the matrix into a spreadsheet.
+   *
+   * @param matrix	the matrix to convert
+   * @param colPrefix	the prefix for the column names
+   * @return		the generated spreadsheet
+   */
+  public static SpreadSheet matrixToSpreadSheet(Matrix matrix, String colPrefix) {
+    SpreadSheet	result;
+    Row row;
+    int		i;
+    int		n;
+
+    result = null;
+
+    if (matrix != null) {
+      result = new DefaultSpreadSheet();
+
+      // header
+      row = result.getHeaderRow();
+      for (i = 0; i < matrix.getColumnDimension(); i++)
+	row.addCell("" + i).setContent(colPrefix + (i+1));
+
+      // data
+      for (n = 0; n < matrix.getRowDimension(); n++) {
+	row = result.addRow();
+	for (i = 0; i < matrix.getColumnDimension(); i++)
+	  row.addCell("" + i).setContent(matrix.get(n, i));
+      }
+    }
+
+    return result;
   }
 }

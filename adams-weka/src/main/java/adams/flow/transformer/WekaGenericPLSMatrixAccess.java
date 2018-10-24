@@ -13,23 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaGenericPLSMatrixAccess.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.data.spreadsheet.DefaultSpreadSheet;
-import adams.data.spreadsheet.Row;
+import adams.data.instancesanalysis.pls.AbstractPLS;
+import adams.data.instancesanalysis.pls.MatrixHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.Token;
 import weka.classifiers.Classifier;
 import weka.core.GenericPLSMatrixAccess;
-import weka.core.matrix.Matrix;
 import weka.filters.Filter;
-import adams.data.instancesanalysis.pls.AbstractPLS;
 
 /**
  <!-- globalinfo-start -->
@@ -96,7 +94,6 @@ import adams.data.instancesanalysis.pls.AbstractPLS;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaGenericPLSMatrixAccess
   extends AbstractTransformer {
@@ -193,40 +190,6 @@ public class WekaGenericPLSMatrixAccess
   }
 
   /**
-   * Turns the matrix into a spreadsheet.
-   *
-   * @param matrix	the matrix to convert
-   * @param colPrefix	the prefix for the column names
-   * @return		the generated spreadsheet
-   */
-  protected SpreadSheet matrixToSpreadSheet(Matrix matrix, String colPrefix) {
-    SpreadSheet	result;
-    Row		row;
-    int		i;
-    int		n;
-
-    result = null;
-
-    if (matrix != null) {
-      result = new DefaultSpreadSheet();
-
-      // header
-      row = result.getHeaderRow();
-      for (i = 0; i < matrix.getColumnDimension(); i++)
-	row.addCell("" + i).setContent(colPrefix + (i+1));
-
-      // data
-      for (n = 0; n < matrix.getRowDimension(); n++) {
-	row = result.addRow();
-	for (i = 0; i < matrix.getColumnDimension(); i++)
-	  row.addCell("" + i).setContent(matrix.get(n, i));
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Returns the spreadsheet representation of the chosen from the classifier.
    *
    * @param classifier	the classifier to extract the matrix from
@@ -246,7 +209,7 @@ public class WekaGenericPLSMatrixAccess
    * @return		the generated spreadsheet, null if matrix not available
    */
   protected SpreadSheet getMatrix(GenericPLSMatrixAccess obj) {
-    return matrixToSpreadSheet(obj.getMatrix(m_Matrix), m_Matrix);
+    return MatrixHelper.matrixToSpreadSheet(obj.getMatrix(m_Matrix), m_Matrix);
   }
 
   /**

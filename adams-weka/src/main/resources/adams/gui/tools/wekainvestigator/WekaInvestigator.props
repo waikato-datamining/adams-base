@@ -241,6 +241,14 @@ Instance.AntiAliasing=true
 # (true|false)
 Instance.Markers=true
 
+# the width of the left-hand side of the ICA panel
+# (integer)
+IndependentComponents.LeftPanelWidth=275
+
+# the FastICA setup
+# (classname + options)
+IndependentComponents.FastICA=com.github.waikatodatamining.matrix.algorithm.ica.FastICA
+
 # the width of the left-hand side of the PCA panel
 # (integer)
 PrincipalComponents.LeftPanelWidth=275

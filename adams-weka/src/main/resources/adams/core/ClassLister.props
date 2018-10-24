@@ -254,3 +254,7 @@ com.github.waikatodatamining.matrix.algorithm.pls.AbstractPLS=\
 # the kernels of the matrix-algorithm library
 com.github.waikatodatamining.matrix.transformation.kernel.AbstractKernel=\
   com.github.waikatodatamining.matrix.transformation.kernel
+
+# FastICA of the matrix-algorithm library
+com.github.waikatodatamining.matrix.algorithm.ica.FastICA=\
+  com.github.waikatodatamining.matrix.algorithm.ica

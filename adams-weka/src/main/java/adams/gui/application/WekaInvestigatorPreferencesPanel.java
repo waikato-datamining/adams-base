@@ -169,6 +169,12 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Instance.AntiAliasing", PropertyType.BOOLEAN);
     addPropertyType("Instance.Markers", PropertyType.BOOLEAN);
 
+    // ica
+    addPropertyType("IndependentComponents.LeftPanelWidth", PropertyType.INTEGER);
+    addPropertyType("IndependentComponents.FastICA", PropertyType.OBJECT_EDITOR);
+    setChooser("IndependentComponents.FastICA", new GenericObjectEditorPanel(
+      com.github.waikatodatamining.matrix.algorithm.ica.FastICA.class, new com.github.waikatodatamining.matrix.algorithm.ica.FastICA(), false));
+
     // pca
     addPropertyType("PrincipalComponents.LeftPanelWidth", PropertyType.INTEGER);
     addPropertyType("PrincipalComponents.Variance", PropertyType.DOUBLE);

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MatrixHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package weka.core.matrix;
@@ -29,9 +29,40 @@ import weka.core.Utils;
  * Some matrix operations.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MatrixHelper {
+
+  /**
+   * returns the data as matrix
+   *
+   * @param instances the data to work on
+   * @return the data
+   */
+  public static Matrix getAll(Instances instances) {
+    double[][] x;
+    double[] values;
+    Matrix result;
+    int i;
+    int n;
+    int j;
+
+    x = new double[instances.numInstances()][];
+
+    for (i = 0; i < instances.numInstances(); i++) {
+      values = instances.instance(i).toDoubleArray();
+      x[i] = new double[values.length];
+
+      j = 0;
+      for (n = 0; n < values.length; n++) {
+        x[i][j] = values[n];
+        j++;
+      }
+    }
+
+    result = new Matrix(x);
+
+    return result;
+  }
 
   /**
    * returns the data minus the class column as matrix

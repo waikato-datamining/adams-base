@@ -13,21 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaExtractPLSMatrix.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.data.spreadsheet.DefaultSpreadSheet;
-import adams.data.spreadsheet.Row;
+import adams.data.instancesanalysis.pls.MatrixHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.Token;
 import weka.classifiers.Classifier;
 import weka.core.PLSMatrixAccess;
-import weka.core.matrix.Matrix;
 import weka.filters.Filter;
 
 /**
@@ -87,7 +85,6 @@ import weka.filters.Filter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaExtractPLSMatrix
   extends AbstractTransformer {
@@ -204,40 +201,6 @@ public class WekaExtractPLSMatrix
   }
 
   /**
-   * Turns the matrix into a spreadsheet.
-   * 
-   * @param matrix	the matrix to convert
-   * @param colPrefix	the prefix for the column names
-   * @return		the generated spreadsheet
-   */
-  protected SpreadSheet matrixToSpreadSheet(Matrix matrix, String colPrefix) {
-    SpreadSheet	result;
-    Row		row;
-    int		i;
-    int		n;
-    
-    result = null;
-    
-    if (matrix != null) {
-      result = new DefaultSpreadSheet();
-      
-      // header
-      row = result.getHeaderRow();
-      for (i = 0; i < matrix.getColumnDimension(); i++)
-	row.addCell("" + i).setContent(colPrefix + (i+1));
-      
-      // data
-      for (n = 0; n < matrix.getRowDimension(); n++) {
-	row = result.addRow();
-	for (i = 0; i < matrix.getColumnDimension(); i++)
-	  row.addCell("" + i).setContent(matrix.get(n, i));
-      }
-    }
-    
-    return result;
-  }
-  
-  /**
    * Returns the spreadsheet representation of the chosen from the classifier.
    * 
    * @param classifier	the classifier to extract the matrix from
@@ -259,17 +222,17 @@ public class WekaExtractPLSMatrix
   protected SpreadSheet getMatrix(PLSMatrixAccess obj) {
     switch (m_MatrixType) {
       case PLS1_B_HAT:
-	return matrixToSpreadSheet(obj.getPLS1bHat(), m_MatrixType.toString());
+	return MatrixHelper.matrixToSpreadSheet(obj.getPLS1bHat(), m_MatrixType.toString());
       case PLS1_P:
-	return matrixToSpreadSheet(obj.getPLS1P(), m_MatrixType.toString());
+	return MatrixHelper.matrixToSpreadSheet(obj.getPLS1P(), m_MatrixType.toString());
       case PLS1_REGVECTOR:
-	return matrixToSpreadSheet(obj.getPLS1RegVector(), m_MatrixType.toString());
+	return MatrixHelper.matrixToSpreadSheet(obj.getPLS1RegVector(), m_MatrixType.toString());
       case PLS1_W:
-	return matrixToSpreadSheet(obj.getPLS1W(), m_MatrixType.toString());
+	return MatrixHelper.matrixToSpreadSheet(obj.getPLS1W(), m_MatrixType.toString());
       case SIMPLS_B:
-	return matrixToSpreadSheet(obj.getSimplsB(), m_MatrixType.toString());
+	return MatrixHelper.matrixToSpreadSheet(obj.getSimplsB(), m_MatrixType.toString());
       case SIMPLS_W:
-	return matrixToSpreadSheet(obj.getSimplsW(), m_MatrixType.toString());
+	return MatrixHelper.matrixToSpreadSheet(obj.getSimplsW(), m_MatrixType.toString());
       default:
 	return null;
     }
