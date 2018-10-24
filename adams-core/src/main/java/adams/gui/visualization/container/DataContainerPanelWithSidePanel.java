@@ -23,7 +23,7 @@ package adams.gui.visualization.container;
 import adams.core.Properties;
 import adams.data.container.DataContainer;
 import adams.gui.core.BaseSplitPane;
-import adams.gui.core.PanelSettings;
+import adams.gui.core.UISettings;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -99,11 +99,11 @@ public abstract class DataContainerPanelWithSidePanel<T extends DataContainer, M
     m_SplitPane.setLeftComponent(m_PlotWrapperPanel);
     m_SplitPane.setRightComponent(m_SidePanel);
     m_SplitPane.setResizeWeight(1.0);
-    if (PanelSettings.has(getClass(), "Divider"))
-      m_SplitPane.setDividerLocation(PanelSettings.get(getClass(), "Divider", props.getInteger("DividerLocation", 600)));
+    if (UISettings.has(getClass(), "Divider"))
+      m_SplitPane.setDividerLocation(UISettings.get(getClass(), "Divider", props.getInteger("DividerLocation", 600)));
     else
       m_SplitPane.setDividerLocation(0.75);
-    m_SplitPane.setSettingsParameters(getClass(), "Divider");
+    m_SplitPane.setUISettingsParameters(getClass(), "Divider");
     m_SplitPane.setOneTouchExpandable(true);
 
     add(m_SplitPane, BorderLayout.CENTER);

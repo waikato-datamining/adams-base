@@ -58,7 +58,7 @@ import java.util.HashSet;
  */
 public class MultiPagePane
   extends BasePanel
-  implements CleanUpHandler {
+  implements CleanUpHandler, UISettingsSupporter {
 
   private static final long serialVersionUID = -2108092957035381345L;
 
@@ -475,15 +475,17 @@ public class MultiPagePane
    * @param cls		the class
    * @param property	the property
    */
-  public void setSettingsParameters(Class cls, String property) {
-    m_SplitPane.setSettingsParameters(cls, property);
+  @Override
+  public void setUISettingsParameters(Class cls, String property) {
+    m_SplitPane.setUISettingsParameters(cls, property);
   }
 
   /**
    * Clears the para meters for storing the divider location.
    */
-  public void clearSettingsParameters() {
-    m_SplitPane.clearSettingsParameters();
+  @Override
+  public void clearUISettingsParameters() {
+    m_SplitPane.clearUISettingsParameters();
   }
 
   /**

@@ -14,7 +14,7 @@
  */
 
 /*
- * PanelSettings.java
+ * UISettings.java
  * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 
@@ -37,10 +37,10 @@ import java.util.Date;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class PanelSettings {
+public class UISettings {
 
   /** the filename. */
-  public final static String FILENAME = "PanelSettings.props";
+  public final static String FILENAME = "UISettings.props";
 
   /** the seconds to wait before saving the settings. */
   public final static int SECONDS_WAIT = 15;
@@ -439,7 +439,7 @@ public class PanelSettings {
    */
   public synchronized static String save() {
     if (!getProperties().save(Environment.getInstance().createPropertiesFilename(new File(FILENAME).getName())))
-      return "Failed to save panel settings!";
+      return "Failed to save UI settings!";
     m_Modified = false;
     return null;
   }

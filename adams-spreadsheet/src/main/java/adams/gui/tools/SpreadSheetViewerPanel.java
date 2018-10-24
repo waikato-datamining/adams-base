@@ -37,12 +37,12 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
-import adams.gui.core.PanelSettings;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.core.ToolBarPanel;
+import adams.gui.core.UISettings;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.RecentItemEvent;
@@ -252,12 +252,12 @@ public class SpreadSheetViewerPanel
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT, true);
     m_SplitPane.setOneTouchExpandable(true);
     m_SplitPane.setResizeWeight(1.0);
-    m_SplitPane.setSettingsParameters(getClass(), "TabsDivider");
+    m_SplitPane.setUISettingsParameters(getClass(), "TabsDivider");
     add(m_SplitPane, BorderLayout.CENTER);
     
     m_MultiPagePane = new MultiPagePane(this);
-    m_MultiPagePane.setDividerLocation(PanelSettings.get(getClass(), "SheetsDivider", 250));
-    m_MultiPagePane.setSettingsParameters(getClass(), "SheetsDivider");
+    m_MultiPagePane.setDividerLocation(UISettings.get(getClass(), "SheetsDivider", 250));
+    m_MultiPagePane.setUISettingsParameters(getClass(), "SheetsDivider");
     m_SplitPane.setLeftComponent(m_MultiPagePane);
     
     m_ViewerTabs = new ViewerTabManager(this);
@@ -265,10 +265,10 @@ public class SpreadSheetViewerPanel
 	m_SplitPane.setRightComponentHidden(m_ViewerTabs.getTabCount() == 0));
     m_SplitPane.setRightComponent(m_ViewerTabs);
     m_SplitPane.setRightComponentHidden(m_ViewerTabs.getTabCount() == 0);
-    if (!PanelSettings.has(getClass(), "TabsDivider"))
+    if (!UISettings.has(getClass(), "TabsDivider"))
       m_SplitPane.setDividerLocation(0.8);
     else
-      m_SplitPane.setDividerLocation(PanelSettings.get(getClass(), "TabsDivider", 850));
+      m_SplitPane.setDividerLocation(UISettings.get(getClass(), "TabsDivider", 850));
   }
 
   /**

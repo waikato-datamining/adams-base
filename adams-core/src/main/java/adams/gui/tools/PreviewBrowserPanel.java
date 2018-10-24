@@ -44,12 +44,12 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
-import adams.gui.core.PanelSettings;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SearchableBaseList;
 import adams.gui.core.TitleGenerator;
+import adams.gui.core.UISettings;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.event.SearchEvent;
@@ -251,8 +251,8 @@ public class PreviewBrowserPanel
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPane.setOneTouchExpandable(true);
-    m_SplitPane.setDividerLocation(PanelSettings.get(getClass(), "Divider", props.getInteger("DividerLocation", 200)));
-    m_SplitPane.setSettingsParameters(getClass(), "Divider");
+    m_SplitPane.setDividerLocation(UISettings.get(getClass(), "Divider", props.getInteger("DividerLocation", 200)));
+    m_SplitPane.setUISettingsParameters(getClass(), "Divider");
     add(m_SplitPane, BorderLayout.CENTER);
 
     // browsing

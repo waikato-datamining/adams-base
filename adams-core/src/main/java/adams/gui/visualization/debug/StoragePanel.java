@@ -37,10 +37,10 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.PanelSettings;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
+import adams.gui.core.UISettings;
 import adams.gui.event.SearchEvent;
 import adams.gui.goe.EditorHelper;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
@@ -321,8 +321,8 @@ public class StoragePanel
     setLayout(new BorderLayout());
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
-    m_SplitPane.setDividerLocation(PanelSettings.get(getClass(), "Divider", 150));
-    m_SplitPane.setSettingsParameters(getClass(), "Divider");
+    m_SplitPane.setDividerLocation(UISettings.get(getClass(), "Divider", 150));
+    m_SplitPane.setUISettingsParameters(getClass(), "Divider");
     add(m_SplitPane, BorderLayout.CENTER);
 
     // preview

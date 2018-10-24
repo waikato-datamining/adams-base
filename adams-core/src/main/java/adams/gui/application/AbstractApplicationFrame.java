@@ -47,7 +47,7 @@ import adams.gui.core.AbstractFrameWithOptionHandling;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
-import adams.gui.core.PanelSettings;
+import adams.gui.core.UISettings;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.scripting.ScriptingEngine;
@@ -661,8 +661,8 @@ public abstract class AbstractApplicationFrame
    * Closes the application down.
    */
   public void close() {
-    if (PanelSettings.isModified())
-      PanelSettings.save();
+    if (UISettings.isModified())
+      UISettings.save();
 
     // close all children
     closeChildren();

@@ -26,7 +26,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MultiPagePane;
-import adams.gui.core.PanelSettings;
+import adams.gui.core.UISettings;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -80,9 +80,9 @@ public class PreferencesManagerPanel
 
     m_MultiPagePanel = new MultiPagePane();
     m_MultiPagePanel.setReadOnly(true);
-    m_MultiPagePanel.setSettingsParameters(getClass(), "Divider");
-    if (PanelSettings.has(getClass(), "Divider"))
-      m_MultiPagePanel.setDividerLocation(PanelSettings.get(getClass(), "Divider", 200));
+    m_MultiPagePanel.setUISettingsParameters(getClass(), "Divider");
+    if (UISettings.has(getClass(), "Divider"))
+      m_MultiPagePanel.setDividerLocation(UISettings.get(getClass(), "Divider", 200));
     add(m_MultiPagePanel, BorderLayout.CENTER);
 
     classes = AbstractPreferencesPanel.getPanels();

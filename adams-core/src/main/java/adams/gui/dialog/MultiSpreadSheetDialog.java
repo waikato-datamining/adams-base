@@ -21,6 +21,7 @@ package adams.gui.dialog;
 
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.MultiPagePane;
+import adams.gui.core.UISettingsSupporter;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer;
 import adams.gui.visualization.core.PopupMenuCustomizer;
@@ -35,7 +36,8 @@ import java.awt.Frame;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class MultiSpreadSheetDialog
-  extends ApprovalDialog {
+  extends ApprovalDialog
+  implements UISettingsSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 7604505322768892726L;
@@ -192,15 +194,17 @@ public class MultiSpreadSheetDialog
    * @param cls		the class
    * @param property	the property
    */
-  public void setSettingsParameters(Class cls, String property) {
-    m_MultiPagePane.setSettingsParameters(cls, property);
+  @Override
+  public void setUISettingsParameters(Class cls, String property) {
+    m_MultiPagePane.setUISettingsParameters(cls, property);
   }
 
   /**
    * Clears the para meters for storing the divider location.
    */
-  public void clearSettingsParameters() {
-    m_MultiPagePane.clearSettingsParameters();
+  @Override
+  public void clearUISettingsParameters() {
+    m_MultiPagePane.clearUISettingsParameters();
   }
 
   /**

@@ -31,7 +31,8 @@ import java.beans.PropertyChangeEvent;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class BaseSplitPane
-  extends JSplitPane {
+  extends JSplitPane
+  implements UISettingsSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1785298915994980413L;
@@ -149,7 +150,7 @@ public class BaseSplitPane
     addPropertyChangeListener((PropertyChangeEvent evt) -> {
       if ((m_SettingsClass != null) && (m_SettingsProperty != null)) {
 	if (!isTopComponentHidden() && !isBottomComponentHidden())
-	  PanelSettings.set(m_SettingsClass, m_SettingsProperty, getDividerLocation());
+	  UISettings.set(m_SettingsClass, m_SettingsProperty, getDividerLocation());
       }
     });
   }
@@ -160,17 +161,19 @@ public class BaseSplitPane
    * @param cls		the class
    * @param property	the property
    */
-  public void setSettingsParameters(Class cls, String property) {
+  @Override
+  public void setUISettingsParameters(Class cls, String property) {
     m_SettingsClass    = cls;
     m_SettingsProperty = property;
-    if (PanelSettings.has(cls, property))
-      setDividerLocation(PanelSettings.get(cls, property, 100));
+    if (UISettings.has(cls, property))
+      setDividerLocation(UISettings.get(cls, property, 100));
   }
 
   /**
    * Clears the para meters for storing the divider location.
    */
-  public void clearSettingsParameters() {
+  @Override
+  public void clearUISettingsParameters() {
     m_SettingsClass    = null;
     m_SettingsProperty = null;
   }

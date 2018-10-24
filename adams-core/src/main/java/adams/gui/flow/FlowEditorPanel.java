@@ -45,10 +45,10 @@ import adams.gui.core.BaseStatusBar.PopupMenuCustomizer;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
-import adams.gui.core.PanelSettings;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.core.ToolBarPanel;
+import adams.gui.core.UISettings;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.event.TabVisibilityChangeEvent;
@@ -475,16 +475,16 @@ public class FlowEditorPanel
     setToolBarLocation(ToolBarLocation.valueOf(props.getProperty("ToolBar.Location", "NORTH")));
 
     m_SplitPane = new BaseSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
-    m_SplitPane.setDividerLocation(PanelSettings.get(this, "TabsDivider", props.getInteger("DividerLocation", 850)));
+    m_SplitPane.setDividerLocation(UISettings.get(this, "TabsDivider", props.getInteger("DividerLocation", 850)));
     m_SplitPane.setOneTouchExpandable(true);
     m_SplitPane.setResizeWeight(0.5);
-    m_SplitPane.setSettingsParameters(getClass(), "TabsDivider");
+    m_SplitPane.setUISettingsParameters(getClass(), "TabsDivider");
     getContentPanel().add(m_SplitPane, BorderLayout.CENTER);
 
     // the flows
     m_FlowPanels = new FlowMultiPagePane(this);
-    m_FlowPanels.setDividerLocation(PanelSettings.get(this, "FlowDivider", props.getInteger("FlowList.DividerLocation", 250)));
-    m_FlowPanels.setSettingsParameters(getClass(), "FlowDivider");
+    m_FlowPanels.setDividerLocation(UISettings.get(this, "FlowDivider", props.getInteger("FlowList.DividerLocation", 250)));
+    m_FlowPanels.setUISettingsParameters(getClass(), "FlowDivider");
     m_SplitPane.setLeftComponent(m_FlowPanels);
 
     // the tabs
