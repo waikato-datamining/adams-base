@@ -78,11 +78,20 @@ public class PropertiesUpdaterHelper {
    */
   public static void update(Actor context, Object obj, BaseString[] props, VariableName[] vars, PropertyContainer[] conts, MessageCollection errors) {
     int		i;
+    String	valueStr;
     Object	value;
 
     for (i = 0; i < props.length; i++) {
       try {
+        valueStr = context.getVariables().get(vars[i].getValue());
+	if (valueStr == null)
+	  throw new IllegalStateException(
+	      "Property #" + (i+1) + " failed to obtain variable value: " + vars[i].getValue());
+
 	value = PropertyHelper.convertValue(conts[i], context.getVariables().get(vars[i].getValue()), errors);
+	if (value == null)
+	  throw new IllegalStateException(
+	      "Property #" + (i+1) + " failed to convert variable value (" + vars[i].getValue() + "): " + valueStr);
 
 	if (context.isLoggingEnabled())
 	  context.getLogger().info(
