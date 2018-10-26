@@ -15,14 +15,10 @@
 
 /*
  * BoofCVFeatureGenerator.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
 
 import adams.core.QuickInfoHelper;
 import adams.data.boofcv.BoofCVHelper;
@@ -34,7 +30,10 @@ import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -87,11 +86,10 @@ import adams.flow.provenance.ProvenanceSupporter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BoofCVFeatureGenerator
   extends AbstractTransformer
-  implements ProvenanceSupporter {
+  implements FeatureGenerator<AbstractBoofCVFeatureGenerator> {
 
   /** for serialization. */
   private static final long serialVersionUID = -1998955116780561587L;

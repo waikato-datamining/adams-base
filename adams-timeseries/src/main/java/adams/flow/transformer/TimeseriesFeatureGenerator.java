@@ -13,15 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TimeseriesFeatureGenerator.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
 
 import adams.core.QuickInfoHelper;
 import adams.data.timeseries.AbstractTimeseriesFeatureGenerator;
@@ -32,6 +28,10 @@ import adams.flow.provenance.ActorType;
 import adams.flow.provenance.Provenance;
 import adams.flow.provenance.ProvenanceContainer;
 import adams.flow.provenance.ProvenanceInformation;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -84,10 +84,10 @@ import adams.flow.provenance.ProvenanceInformation;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7306 $
  */
 public class TimeseriesFeatureGenerator
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements FeatureGenerator<AbstractTimeseriesFeatureGenerator> {
 
   /** for serialization. */
   private static final long serialVersionUID = -7637423921443102660L;
