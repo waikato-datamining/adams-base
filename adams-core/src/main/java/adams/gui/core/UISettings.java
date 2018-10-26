@@ -28,6 +28,7 @@ import adams.env.Environment;
 import adams.gui.core.DelayedActionRunnable.AbstractAction;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.File;
 import java.util.Date;
 
@@ -93,57 +94,245 @@ public class UISettings {
   }
 
   /**
-   * Sets the value for the object.
+   * Sets the Integer value for the object.
    *
    * @param obj		the object to set the value for
    * @param property	the property to set
    * @param value	the value to set
-   * @see		#set(Class, String, Object)
    */
-  public static synchronized void set(Object obj, String property, Object value) {
+  public static synchronized void set(Object obj, String property, Integer value) {
     set(obj.getClass(), property, value);
   }
 
   /**
-   * Sets the value for the class.
+   * Sets the Integer value for the class.
    *
    * @param cls		the class to set the value for
    * @param property	the property to set
    * @param value	the value to set
    */
-  public static synchronized void set(Class cls, String property, Object value) {
-    String	key;
+  public static synchronized void set(Class cls, String property, Integer value) {
+    getProperties().setInteger(createKey(cls, property), value);
+    flagModified();
+  }
 
-    key = createKey(cls, property);
+  /**
+   * Sets the Long value for the object.
+   *
+   * @param obj		the object to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Object obj, String property, Long value) {
+    set(obj.getClass(), property, value);
+  }
 
-    if (value instanceof Integer)
-      getProperties().setInteger(key, (Integer) value);
-    else if (value instanceof Long)
-      getProperties().setLong(key, (Long) value);
-    else if (value instanceof Double)
-      getProperties().setDouble(key, (Double) value);
-    else if (value instanceof Boolean)
-      getProperties().setBoolean(key, (Boolean) value);
-    else if (value instanceof Time)
-      getProperties().setTime(key, (Time) value);
-    else if (value instanceof DateTime)
-      getProperties().setDateTime(key, (DateTime) value);
-    else if (value instanceof Date)
-      getProperties().setDate(key, (Date) value);
-    else if (value instanceof Color)
-      getProperties().setColor(key, (Color) value);
-    else if (value instanceof BasePassword)
-      getProperties().setPassword(key, (BasePassword) value);
-    else
-      getProperties().setProperty(key, "" + value);
+  /**
+   * Sets the Long value for the class.
+   *
+   * @param cls		the class to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Class cls, String property, Long value) {
+    getProperties().setLong(createKey(cls, property), value);
+    flagModified();
+  }
 
+  /**
+   * Sets the Double value for the object.
+   *
+   * @param obj		the object to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Object obj, String property, Double value) {
+    set(obj.getClass(), property, value);
+  }
+
+  /**
+   * Sets the Double value for the class.
+   *
+   * @param cls		the class to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Class cls, String property, Double value) {
+    getProperties().setDouble(createKey(cls, property), value);
+    flagModified();
+  }
+
+  /**
+   * Sets the Boolean value for the object.
+   *
+   * @param obj		the object to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Object obj, String property, Boolean value) {
+    set(obj.getClass(), property, value);
+  }
+
+  /**
+   * Sets the Boolean value for the class.
+   *
+   * @param cls		the class to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Class cls, String property, Boolean value) {
+    getProperties().setBoolean(createKey(cls, property), value);
+    flagModified();
+  }
+
+  /**
+   * Sets the Time value for the object.
+   *
+   * @param obj		the object to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Object obj, String property, Time value) {
+    set(obj.getClass(), property, value);
+  }
+
+  /**
+   * Sets the Time value for the class.
+   *
+   * @param cls		the class to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Class cls, String property, Time value) {
+    getProperties().setTime(createKey(cls, property), value);
+    flagModified();
+  }
+
+  /**
+   * Sets the DateTime value for the object.
+   *
+   * @param obj		the object to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Object obj, String property, DateTime value) {
+    set(obj.getClass(), property, value);
+  }
+
+  /**
+   * Sets the DateTime value for the class.
+   *
+   * @param cls		the class to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Class cls, String property, DateTime value) {
+    getProperties().setDateTime(createKey(cls, property), value);
+    flagModified();
+  }
+
+  /**
+   * Sets the Date value for the object.
+   *
+   * @param obj		the object to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Object obj, String property, Date value) {
+    set(obj.getClass(), property, value);
+  }
+
+  /**
+   * Sets the Date value for the class.
+   *
+   * @param cls		the class to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Class cls, String property, Date value) {
+    getProperties().setDate(createKey(cls, property), value);
+    flagModified();
+  }
+
+  /**
+   * Sets the Color value for the object.
+   *
+   * @param obj		the object to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Object obj, String property, Color value) {
+    set(obj.getClass(), property, value);
+  }
+
+  /**
+   * Sets the Color value for the class.
+   *
+   * @param cls		the class to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Class cls, String property, Color value) {
+    getProperties().setColor(createKey(cls, property), value);
+    flagModified();
+  }
+
+  /**
+   * Sets the BasePassword value for the object.
+   *
+   * @param obj		the object to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Object obj, String property, BasePassword value) {
+    set(obj.getClass(), property, value);
+  }
+
+  /**
+   * Sets the BasePassword value for the class.
+   *
+   * @param cls		the class to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Class cls, String property, BasePassword value) {
+    getProperties().setPassword(createKey(cls, property), value);
+    flagModified();
+  }
+
+  /**
+   * Sets the Dimension value for the object.
+   *
+   * @param obj		the object to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Object obj, String property, Dimension value) {
+    set(obj.getClass(), property, value);
+  }
+
+  /**
+   * Sets the Dimension value for the class.
+   *
+   * @param cls		the class to set the value for
+   * @param property	the property to set
+   * @param value	the value to set
+   */
+  public static synchronized void set(Class cls, String property, Dimension value) {
+    getProperties().setProperty(createKey(cls, property), value.width + ";" + value.height);
+    flagModified();
+  }
+
+  /**
+   * Flags as modified and queues saving.
+   */
+  protected static synchronized void flagModified() {
     m_Modified = true;
-
     queueSave();
   }
 
   /**
-   * Returns the boolean value.
+   * Returns the Boolean value.
    *
    * @param obj		the object
    * @param property	the property
@@ -155,7 +344,7 @@ public class UISettings {
   }
 
   /**
-   * Returns the boolean value.
+   * Returns the Boolean value.
    *
    * @param cls		the class
    * @param property	the property
@@ -167,7 +356,7 @@ public class UISettings {
   }
 
   /**
-   * Returns the int value.
+   * Returns the Integer value.
    *
    * @param obj		the object
    * @param property	the property
@@ -179,7 +368,7 @@ public class UISettings {
   }
 
   /**
-   * Returns the int value.
+   * Returns the Integer value.
    *
    * @param cls		the class
    * @param property	the property
@@ -191,7 +380,7 @@ public class UISettings {
   }
 
   /**
-   * Returns the long value.
+   * Returns the Long value.
    *
    * @param obj		the object
    * @param property	the property
@@ -203,7 +392,7 @@ public class UISettings {
   }
 
   /**
-   * Returns the long value.
+   * Returns the Long value.
    *
    * @param cls		the class
    * @param property	the property
@@ -215,7 +404,7 @@ public class UISettings {
   }
 
   /**
-   * Returns the double value.
+   * Returns the Double value.
    *
    * @param obj		the object
    * @param property	the property
@@ -227,7 +416,7 @@ public class UISettings {
   }
 
   /**
-   * Returns the double value.
+   * Returns the Double value.
    *
    * @param cls		the class
    * @param property	the property
@@ -380,6 +569,24 @@ public class UISettings {
    */
   public static synchronized String get(Class cls, String property, String defValue) {
     return getProperties().getProperty(createKey(cls, property), defValue);
+  }
+
+  /**
+   * Returns the Dimension value.
+   *
+   * @param cls		the class
+   * @param property	the property
+   * @param defValue	the default value
+   * @return		the stored value or the default value
+   */
+  public static synchronized Dimension get(Class cls, String property, Dimension defValue) {
+    String 	dim;
+    String[]	parts;
+
+    dim = defValue.width + ";" + defValue.height;
+    dim = getProperties().getProperty(createKey(cls, property), dim);
+    parts = dim.split(";");
+    return new Dimension(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
   }
 
   /**
