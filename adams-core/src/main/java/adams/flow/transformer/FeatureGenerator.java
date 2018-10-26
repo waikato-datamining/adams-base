@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.flow.core.Actor;
+import adams.flow.core.VariableMonitor;
 import adams.flow.provenance.ProvenanceSupporter;
 
 /**
@@ -29,7 +30,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public interface FeatureGenerator<T>
-  extends Actor, ProvenanceSupporter {
+  extends Actor, ProvenanceSupporter, VariableMonitor {
 
   /**
    * Sets the algorithm to use.
