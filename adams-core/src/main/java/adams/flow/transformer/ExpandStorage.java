@@ -15,7 +15,7 @@
 
 /*
  * ExpandStorage.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -74,7 +74,6 @@ import adams.flow.control.Storage;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9034 $
  */
 public class ExpandStorage
   extends AbstractStringOperation {
@@ -102,10 +101,11 @@ public class ExpandStorage
    * Processes the string. If null is returned, this output will be ignored.
    *
    * @param s		the string to process
+   * @param index	the 0-based index of the string currently being processed
    * @return		the processed string or null if nothing produced
    */
   @Override
-  protected String process(String s) {
+  protected String process(String s, int index) {
     String	result;
 
     result = getVariables().expand(s);

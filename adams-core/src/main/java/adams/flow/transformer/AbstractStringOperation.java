@@ -15,7 +15,7 @@
 
 /*
  * AbstractStringOperation.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -29,7 +29,6 @@ import java.util.List;
  * Ancestor for transformers that perform operations on strings.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractStringOperation
   extends AbstractTransformer {
@@ -59,9 +58,10 @@ public abstract class AbstractStringOperation
    * Processes the string. If null is returned, this output will be ignored.
    *
    * @param s		the string to process
+   * @param index	the 0-based index of the string currently being processed
    * @return		the processed string or null if nothing produced
    */
-  protected abstract String process(String s);
+  protected abstract String process(String s, int index);
 
   /**
    * Executes the flow item.
@@ -90,7 +90,7 @@ public abstract class AbstractStringOperation
       for (i = 0; i < str.length; i++) {
         if (isLoggingEnabled())
           getLogger().info("input: " + str[i]);
-	strTmp = process(str[i]);
+	strTmp = process(str[i], i);
         if (isLoggingEnabled())
           getLogger().info("output: " + strTmp);
 	if (strTmp != null)

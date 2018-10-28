@@ -15,17 +15,17 @@
 
 /*
  * StringRangeCut.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.core.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -103,7 +103,6 @@ import adams.core.Utils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringRangeCut
   extends AbstractStringOperation {
@@ -336,10 +335,11 @@ public class StringRangeCut
    * Processes the string. If null is returned, this output will be ignored.
    *
    * @param s		the string to process
+   * @param index	the 0-based index of the string currently being processed
    * @return		the processed string or null if nothing produced
    */
   @Override
-  protected String process(String s) {
+  protected String process(String s, int index) {
     String		result;
     String[]		parts;
     List<String>	substrings;

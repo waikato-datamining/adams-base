@@ -15,7 +15,7 @@
 
 /*
  * StringTrim.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -62,7 +62,6 @@ package adams.flow.transformer;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringTrim
   extends AbstractStringOperation {
@@ -83,9 +82,10 @@ public class StringTrim
    * Processes the string.
    *
    * @param s		the string to process
-   * @return		the processed string
+   * @param index	the 0-based index of the string currently being processed
+   * @return		the processed string or null if nothing produced
    */
-  protected String process(String s) {
+  protected String process(String s, int index) {
     return s.trim();
   }
 }

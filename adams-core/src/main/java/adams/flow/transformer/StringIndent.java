@@ -15,7 +15,7 @@
 
 /*
  * StringIndent.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -89,7 +89,6 @@ import adams.core.Utils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringIndent
   extends AbstractStringOperation {
@@ -206,9 +205,10 @@ public class StringIndent
    * Processes the string.
    *
    * @param s		the string to process
-   * @return		the processed string
+   * @param index	the 0-based index of the string currently being processed
+   * @return		the processed string or null if nothing produced
    */
-  protected String process(String s) {
+  protected String process(String s, int index) {
     StringBuilder	result;
     String[]		lines;
     int			i;

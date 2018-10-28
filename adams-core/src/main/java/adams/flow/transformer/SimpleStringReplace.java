@@ -323,10 +323,11 @@ public class SimpleStringReplace
    * Processes the string.
    *
    * @param s		the string to process
-   * @return		the processed string
+   * @param index	the 0-based index of the string currently being processed
+   * @return		the processed string or null if nothing produced
    */
   @Override
-  protected String process(String s) {
+  protected String process(String s, int index) {
     String	replace;
 
     if (isLoggingEnabled())

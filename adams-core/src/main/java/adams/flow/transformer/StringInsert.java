@@ -15,19 +15,19 @@
 
 /*
  * StringInsert.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.Index;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -107,7 +107,6 @@ import adams.core.base.BaseString;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringInsert
   extends AbstractStringOperation {
@@ -367,10 +366,11 @@ public class StringInsert
    * Processes the string.
    *
    * @param s		the string to process
-   * @return		the processed string
+   * @param index	the 0-based index of the string currently being processed
+   * @return		the processed string or null if nothing produced
    */
   @Override
-  protected String process(String s) {
+  protected String process(String s, int index) {
     StringBuilder	result;
     int			pos;
     int			i;

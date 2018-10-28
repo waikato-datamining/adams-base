@@ -366,10 +366,11 @@ public class StringCut
    * Processes the string. If null is returned, this output will be ignored.
    *
    * @param s		the string to process
+   * @param index	the 0-based index of the string currently being processed
    * @return		the processed string or null if nothing produced
    */
   @Override
-  protected String process(String s) {
+  protected String process(String s, int index) {
     String	result;
     int		from;
     int		to;
