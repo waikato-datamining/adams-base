@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileWrapperTableModel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -23,6 +23,7 @@ package adams.gui.core;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.io.FileObject;
+import adams.core.io.FileUtils;
 
 import java.util.List;
 
@@ -89,6 +90,7 @@ public class FileWrapperTableModel
     result = 0;
 
     result++;  // file
+    result++;  // ext
     result++;  // DIR
     result++;  // size
     result++;  // last mod
@@ -108,10 +110,12 @@ public class FileWrapperTableModel
       case 0:
 	return "File";
       case 1:
-	return "Dir";
+	return "Ext";
       case 2:
-	return "Size";
+	return "Dir";
       case 3:
+	return "Size";
+      case 4:
 	return "Date modified";
       default:
 	return null;
@@ -132,8 +136,10 @@ public class FileWrapperTableModel
       case 1:
 	return String.class;
       case 2:
-	return Long.class;
+	return String.class;
       case 3:
+	return Long.class;
+      case 4:
 	return String.class;
       default:
 	return null;
@@ -162,18 +168,23 @@ public class FileWrapperTableModel
 	else
 	  return wrapper.getName();
       case 1:
+	if (wrapper.isDirectory() || !wrapper.getName().contains("."))
+	  return "";
+	else
+	  return FileUtils.getExtension(wrapper.getName());
+      case 2:
 	if (wrapper.isDirectory())
 	  return "DIR";
 	else if (wrapper.isLink())
 	  return "LNK";
 	else
 	  return null;
-      case 2:
+      case 3:
 	if (wrapper.isDirectory())
 	  return null;
 	else
 	  return wrapper.getLength();
-      case 3:
+      case 4:
 	return m_DateFormat.format(wrapper.getLastModified());
       default:
 	return null;
