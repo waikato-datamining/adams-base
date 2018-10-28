@@ -15,7 +15,7 @@
 
 /*
  * FileCommander.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -29,10 +29,9 @@ import adams.gui.tools.FileCommanderPanel;
 /**
  * Opens the File commander.
  * You can supply the directories for left and right panel. If only one
- * is supplied then it used for both.
+ * is supplied then it is used for both.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileCommander
   extends AbstractParameterHandlingMenuItemDefinition {
@@ -72,7 +71,7 @@ public class FileCommander
   @Override
   public void launch() {
     FileCommanderPanel panel = new FileCommanderPanel();
-    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
+    createChildFrame(panel, GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension()));
     if (m_Parameters.length > 0) {
       panel.setDirectory(m_Parameters[0], true);
       if (m_Parameters.length > 1)
