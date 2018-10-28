@@ -15,7 +15,7 @@
 
 /*
  * StringMatcher.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -26,56 +26,77 @@ import adams.core.base.BaseRegExp;
 /**
  <!-- globalinfo-start -->
  * Lets string tokens only pass if they match the regular expression. Matching sense can be inverted as well.<br>
- * Special characters like \n \r \t and \ need to be escaped properly. The input is expected to be escaped, i.e., the string "\t" will get turned into the character '\t'.
+ * Special characters like \n \r \t and \ need to be escaped properly. The input is expected to be escaped, i.e., the string "\t" will get turned into the character '\t'.<br>
+ * Instead of outputting the strings, it is also possible to output the 1-based indices.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
- * <pre>   java.lang.String</pre>
- * <pre>   java.lang.String[]</pre>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
  * - generates:<br>
- * <pre>   java.lang.String</pre>
- * <pre>   java.lang.String[]</pre>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D (property: debug)
- *         If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
- *         The name of the actor.
- *         default: StringMatcher
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: StringMatcher
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
- *         The annotations to attach to this actor.
- *         default:
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
- *         If set to true, transformation is skipped and the input token is just forwarded
- *          as it is.
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-regexp &lt;java.lang.String&gt; (property: regExp)
- *         The regular expression used for matching the strings.
- *         default: .*
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-invert (property: invert)
- *         If set to true, then the matching sense is inverted.
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
+ * &nbsp;&nbsp;&nbsp;The regular expression used for matching the strings.
+ * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
+ * </pre>
+ *
+ * <pre>-invert &lt;boolean&gt; (property: invert)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the matching sense is inverted.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-output-indices &lt;boolean&gt; (property: outputIndices)
+ * &nbsp;&nbsp;&nbsp;If set to true, 1-based indices of matches are output instead of strings.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringMatcher
   extends AbstractStringOperation {
@@ -89,6 +110,9 @@ public class StringMatcher
   /** whether to invert the matching sense. */
   protected boolean m_Invert;
 
+  /** whether to output indices instead of the strings. */
+  protected boolean m_OutputIndices;
+
   /**
    * Returns a string describing the object.
    *
@@ -97,11 +121,13 @@ public class StringMatcher
   @Override
   public String globalInfo() {
     return
-        "Lets string tokens only pass if they match the regular expression. "
-      + "Matching sense can be inverted as well.\n"
-      + "Special characters like \\n \\r \\t and \\ need to be escaped "
-      + "properly. The input is expected to be escaped, i.e., the string "
-      + "\"\\t\" will get turned into the character '\\t'.";
+      "Lets string tokens only pass if they match the regular expression. "
+        + "Matching sense can be inverted as well.\n"
+        + "Special characters like \\n \\r \\t and \\ need to be escaped "
+        + "properly. The input is expected to be escaped, i.e., the string "
+        + "\"\\t\" will get turned into the character '\\t'.\n"
+        + "Instead of outputting the strings, it is also possible to output the "
+        + "1-based indices.";
   }
 
   /**
@@ -112,12 +138,16 @@ public class StringMatcher
     super.defineOptions();
 
     m_OptionManager.add(
-	    "regexp", "regExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "regexp", "regExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "invert", "invert",
-	    false);
+      "invert", "invert",
+      false);
+
+    m_OptionManager.add(
+      "output-indices", "outputIndices",
+      false);
   }
 
   /**
@@ -127,11 +157,14 @@ public class StringMatcher
    */
   @Override
   public String getQuickInfo() {
+    String	result;
     String	value;
     
     value = QuickInfoHelper.toString(this, "invert", m_Invert, "! ");
-    
-    return QuickInfoHelper.toString(this, "regExp", m_RegExp, value);
+    result = QuickInfoHelper.toString(this, "regExp", m_RegExp, value);
+    result += QuickInfoHelper.toString(this, "outputIndices", m_OutputIndices, "output indices", ", ");
+
+    return result;
   }
 
   /**
@@ -193,13 +226,43 @@ public class StringMatcher
   }
 
   /**
+   * Sets whether to output 1-based indices of matches instead of the strings.
+   *
+   * @param value	true if to output indices
+   */
+  public void setOutputIndices(boolean value) {
+    m_OutputIndices = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output 1-based indices of matches instead of the strings.
+   *
+   * @return		true if to output indices
+   */
+  public boolean getOutputIndices() {
+    return m_OutputIndices;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputIndicesTipText() {
+    return "If set to true, 1-based indices of matches are output instead of strings.";
+  }
+
+  /**
    * Processes the string. If null is returned, this output will be ignored.
    *
    * @param s		the string to process
+   * @param index	the 0-based index of the string currently being processed
    * @return		the processed string or null if nothing produced
    */
   @Override
-  protected String process(String s) {
+  protected String process(String s, int index) {
     boolean	pass;
 
     if (m_Invert)
@@ -211,7 +274,7 @@ public class StringMatcher
       getLogger().info("'" + s + "' " + (m_Invert ? "doesn't match" : "matches") +  " '" + m_RegExp + "': " + pass);
 
     if (pass)
-      return s;
+      return (m_OutputIndices ? "" + (index+1) : s);
     else
       return null;
   }
