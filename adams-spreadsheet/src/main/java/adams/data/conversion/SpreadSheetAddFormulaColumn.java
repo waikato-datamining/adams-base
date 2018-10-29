@@ -76,10 +76,13 @@ public class SpreadSheetAddFormulaColumn
   private static final long serialVersionUID = 3333030701857606514L;
 
   /** the placeholder for the row. */
-  public final static String PLACEHOLDER_ROW = "@";
+  public final static String PLACEHOLDER_CURRENT_ROW = "@";
 
   /** the placeholder for the last column. */
   public final static String PLACEHOLDER_LAST_COL = "#";
+
+  /** the placeholder for the last row. */
+  public final static String PLACEHOLDER_LAST_ROW = "&";
 
   /** the column header. */
   protected String m_Header;
@@ -100,7 +103,7 @@ public class SpreadSheetAddFormulaColumn
    */
   @Override
   public String globalInfo() {
-    return "Adds a column with a user-supploed formula for the specified rows.";
+    return "Adds a column with a user-supplied formula for the specified rows.";
   }
 
   /**
@@ -182,7 +185,7 @@ public class SpreadSheetAddFormulaColumn
    * 			displaying in the GUI or for listing the options.
    */
   public String formulaTipText() {
-    return "The formula to add (incl '='); use '@' as placeholder for the current row and '#' for the last column.";
+    return "The formula to add (incl '='); use '@' as placeholder for the current row, '&' for the last row, '#' for the last column.";
   }
 
   /**
@@ -273,7 +276,8 @@ public class SpreadSheetAddFormulaColumn
       formula = m_Formula.getValue();
       if (m_ExpandVariables)
         formula = getOptionManager().getVariables().expand(formula);
-      formula = formula.replace(PLACEHOLDER_ROW, Integer.toString(rows[i] + 2));
+      formula = formula.replace(PLACEHOLDER_CURRENT_ROW, Integer.toString(rows[i] + 2));
+      formula = formula.replace(PLACEHOLDER_LAST_ROW, Integer.toString(result.getRowCount() + 1));
       formula = formula.replace(PLACEHOLDER_LAST_COL, SpreadSheetUtils.getColumnPosition(result.getColumnCount() - 2));
       row     = result.getRow(rows[i]);
       row.addCell(result.getColumnCount() - 1).setFormula(formula);
