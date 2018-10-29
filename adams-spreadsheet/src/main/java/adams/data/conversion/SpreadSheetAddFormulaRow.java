@@ -76,8 +76,11 @@ public class SpreadSheetAddFormulaRow
   /** for serialization. */
   private static final long serialVersionUID = 6046280641743329345L;
 
-  /** the placeholder for the column. */
-  public final static String PLACEHOLDER_COLUMN = "@";
+  /** the placeholder for the current column. */
+  public final static String PLACEHOLDER_CURRENT_COLUMN = "@";
+
+  /** the placeholder for the last column. */
+  public final static String PLACEHOLDER_LAST_COLUMN = "&";
 
   /** the placeholder for the last row. */
   public final static String PLACEHOLDER_LAST_ROW = "#";
@@ -147,7 +150,7 @@ public class SpreadSheetAddFormulaRow
    * 			displaying in the GUI or for listing the options.
    */
   public String formulaTipText() {
-    return "The formula to add (incl '='); use '@' as placeholder for the current column and '#' for the last row.";
+    return "The formula to add (incl '='); use '@' as placeholder for the current column, '&' for the last column and '#' for the last row.";
   }
 
   /**
@@ -238,7 +241,8 @@ public class SpreadSheetAddFormulaRow
       formula = m_Formula.getValue();
       if (m_ExpandVariables)
         formula = getOptionManager().getVariables().expand(formula);
-      formula = formula.replace(PLACEHOLDER_COLUMN, SpreadSheetUtils.getColumnPosition(cols[i]));
+      formula = formula.replace(PLACEHOLDER_CURRENT_COLUMN, SpreadSheetUtils.getColumnPosition(cols[i]));
+      formula = formula.replace(PLACEHOLDER_LAST_COLUMN, Integer.toString(result.getColumnCount()));
       formula = formula.replace(PLACEHOLDER_LAST_ROW, Integer.toString(result.getRowCount()));
       row.addCell(cols[i]).setFormula(formula);
     }
