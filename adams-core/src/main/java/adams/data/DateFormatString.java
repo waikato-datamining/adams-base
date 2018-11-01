@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DateFormatString.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
@@ -30,7 +30,6 @@ import java.util.TimeZone;
  * Wrapper for date/time formats.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DateFormatString
   extends AbstractBaseString
@@ -130,7 +129,8 @@ public class DateFormatString
    * @return		the help text, null if not available
    */
   public String getHelpDescription() {
-    return "Information on the format string";
+    return "Information on the format string; "
+      + "use single quotes for non-format chars, eg: \"yyyyMMdd'T'HHmmss.'csv'\"";
   }
   
   /**

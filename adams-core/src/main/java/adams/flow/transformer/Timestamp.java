@@ -15,7 +15,7 @@
 
 /*
  * Timestamp.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -68,21 +68,23 @@ import java.util.TimeZone;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-format &lt;adams.data.DateFormatString&gt; (property: format)
- * &nbsp;&nbsp;&nbsp;The format of the timestamp to generate.
+ * &nbsp;&nbsp;&nbsp;The format of the timestamp to generate; use single quotes for non-format
+ * &nbsp;&nbsp;&nbsp;chars, eg: "yyyyMMdd'T'HHmmss.'csv'"
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss
- * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
  * 
  * <pre>-time-zone &lt;java.util.TimeZone&gt; (property: timeZone)
@@ -93,7 +95,6 @@ import java.util.TimeZone;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Timestamp
   extends AbstractTransformer {
@@ -183,7 +184,8 @@ public class Timestamp
   }
 
   /**
-   * Sets the format string to use.
+   * Sets the format string to use;
+   * use single quotes for non-format chars, eg: "yyyyMMdd'T'HHmmss.'csv'".
    *
    * @param value	the format
    */
@@ -193,7 +195,8 @@ public class Timestamp
   }
 
   /**
-   * Returns the format string in use.
+   * Returns the format string in use;
+   * use single quotes for non-format chars, eg: "yyyyMMdd'T'HHmmss.'csv'".
    *
    * @return		the format
    */
@@ -208,7 +211,8 @@ public class Timestamp
    * 			displaying in the GUI or for listing the options.
    */
   public String formatTipText() {
-    return "The format of the timestamp to generate.";
+    return "The format of the timestamp to generate; "
+      + "use single quotes for non-format chars, eg: \"yyyyMMdd'T'HHmmss.'csv'\"";
   }
 
   /**
