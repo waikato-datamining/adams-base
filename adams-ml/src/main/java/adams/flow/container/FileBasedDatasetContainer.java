@@ -40,6 +40,9 @@ public class FileBasedDatasetContainer
   /** the identifier for the test files. */
   public final static String VALUE_TEST = "Test";
 
+  /** the identifier for the validation files. */
+  public final static String VALUE_VALIDATION = "Validation";
+
   /** the identifier for the negative files. */
   public final static String VALUE_NEGATIVE = "Negative";
 
@@ -47,7 +50,7 @@ public class FileBasedDatasetContainer
    * Initializes the container.
    */
   public FileBasedDatasetContainer() {
-    this(null, null, null);
+    this(null, null, null, null);
   }
 
   /**
@@ -55,14 +58,16 @@ public class FileBasedDatasetContainer
    *
    * @param train	the training files
    * @param test	the test files (optional)
+   * @param validation	the validation files (optional)
    * @param negative	the negative files (optional)
    */
-  public FileBasedDatasetContainer(String[] train, String[] test, String[] negative) {
+  public FileBasedDatasetContainer(String[] train, String[] test, String[] validation, String[] negative) {
     super();
 
-    store(VALUE_NEGATIVE, train);
-    store(VALUE_TRAIN, test);
-    store(VALUE_TEST, negative);
+    store(VALUE_TRAIN, train);
+    store(VALUE_TEST, test);
+    store(VALUE_VALIDATION, validation);
+    store(VALUE_NEGATIVE, negative);
   }
 
   /**
@@ -71,9 +76,10 @@ public class FileBasedDatasetContainer
   protected void initHelp() {
     super.initHelp();
 
-    addHelp(VALUE_NEGATIVE, "training files", String[].class);
-    addHelp(VALUE_TRAIN, "test files (optional)", String[].class);
-    addHelp(VALUE_TEST, "negative files (optional)", String[].class);
+    addHelp(VALUE_TRAIN, "training files", String[].class);
+    addHelp(VALUE_TEST, "test files (optional)", String[].class);
+    addHelp(VALUE_VALIDATION, "validation files (optional)", String[].class);
+    addHelp(VALUE_NEGATIVE, "negative files (optional)", String[].class);
   }
 
   /**
@@ -87,9 +93,10 @@ public class FileBasedDatasetContainer
 
     result = new ArrayList<>();
 
-    result.add(VALUE_NEGATIVE);
     result.add(VALUE_TRAIN);
     result.add(VALUE_TEST);
+    result.add(VALUE_VALIDATION);
+    result.add(VALUE_NEGATIVE);
 
     return result.iterator();
   }
