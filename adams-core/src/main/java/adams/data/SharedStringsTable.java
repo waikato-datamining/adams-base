@@ -47,8 +47,8 @@ public class SharedStringsTable
   public SharedStringsTable() {
     super();
     
-    m_Map     = new TObjectIntHashMap<String>();
-    m_Strings = new ArrayList<String>();
+    m_Map     = new TObjectIntHashMap<>();
+    m_Strings = new ArrayList<>();
   }
   
   /**
@@ -101,7 +101,16 @@ public class SharedStringsTable
   public String getString(int index) {
     return m_Strings.get(index);
   }
-  
+
+  /**
+   * Returns the number of stored mappings.
+   *
+   * @return		the number of mappings
+   */
+  public int size() {
+    return m_Map.size();
+  }
+
   /**
    * Returns a clone of itself.
    * 
