@@ -11,6 +11,14 @@
 adams.data.spreadsheet.SpreadSheet=\
   adams.ml.data
 
+# the file-based dataset preparation schemes
+adams.flow.transformer.preparefilebaseddataset.AbstractFileBasedDatasetPreparation=\
+  adams.flow.transformer.preparefilebaseddataset
+
+# the file-based dataset generation schemes
+adams.flow.transformer.generatefilebaseddataset.AbstractFileBasedDatasetGeneration=\
+  adams.flow.transformer.generatefilebaseddataset
+
 # the outlier detectors
 adams.flow.control.removeoutliers.AbstractOutlierDetector=\
   adams.flow.control.removeoutliers
