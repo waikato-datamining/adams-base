@@ -13,55 +13,59 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ClusterCenters.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.wekaclusterer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.List;
-
+import adams.data.statistics.StatUtils;
 import weka.clusterers.Clusterer;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SelectedTag;
+import weka.core.Utils;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Add;
-import adams.data.statistics.StatUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
  * Computes the cluster centers for the provided dataset. An additional attribute is added to the dataset structure that contains the cluster index.<br>
- * Only numeric attributes are considered when computing the centers.<br>
+ * For numeric attributes the mean is calculated (or median, if 'useMedian' is enabled). For nominal attributes, the most common value is used.<br>
  * Stored in container under: Clustered dataset
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-use-median &lt;boolean&gt; (property: useMedian)
+ * &nbsp;&nbsp;&nbsp;If enabled, the median instead of the mean is calculated for numeric attributes.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClusterCenters
   extends AbstractClusterMembershipPostProcessor {
 
   /** for serialization. */
   private static final long serialVersionUID = 5983792992620091051L;
+
+  /** compute median instead of mean. */
+  protected boolean m_UseMedian;
 
   /**
    * Returns a string describing the object.
@@ -70,14 +74,56 @@ public class ClusterCenters
    */
   @Override
   public String globalInfo() {
-    return 
-	"Computes the cluster centers for the provided dataset. An additional "
+    return
+      "Computes the cluster centers for the provided dataset. An additional "
 	+ "attribute is added to the dataset structure that contains the "
 	+ "cluster index.\n"
-	+ "Only numeric attributes are considered when computing the centers.\n"
+	+ "For numeric attributes the mean is calculated (or median, if 'useMedian' is enabled). "
+	+ "For nominal attributes, the most common value is used.\n"
 	+ "Stored in container under: " + VALUE_CLUSTERED_DATASET;
   }
-  
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "use-median", "useMedian",
+      false);
+  }
+
+  /**
+   * Sets whether to use the median instead of the mean.
+   *
+   * @param value	true if to use median
+   */
+  public void setUseMedian(boolean value){
+    m_UseMedian = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the median instead of the mean.
+   *
+   * @return		true if to use median
+   */
+  public boolean getUseMedian(){
+    return m_UseMedian;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useMedianTipText() {
+    return "If enabled, the median instead of the mean is calculated for numeric attributes.";
+  }
+
   /**
    * Generates the output format (additional attribute for cluster index).
    * 
@@ -123,9 +169,11 @@ public class ClusterCenters
     Instances				subset;
     double[]				values;
     Instance				inst;
+    int[]				counts;
+    int					maxIndex;
     
     result   = new Instances(outputFormat, 0);
-    clusters = new Hashtable<Integer,Instances>();
+    clusters = new Hashtable<>();
     
     // cluster the data
     error    = false;
@@ -148,17 +196,27 @@ public class ClusterCenters
     
     // process clusters
     if (!error) {
-      indices = new ArrayList<Integer>(clusters.keySet());
+      indices = new ArrayList<>(clusters.keySet());
       Collections.sort(indices);
       for (Integer cl: indices) {
 	subset = clusters.get(cl);
 	inst   = new DenseInstance(result.numAttributes());
 	inst.setValue(0, cl);
 	for (i = 0; i < subset.numAttributes(); i++) {
-	  if (!subset.attribute(i).isNumeric())
-	    continue;
-	  values = subset.attributeToDoubleArray(i);
-	  inst.setValue(i + 1, StatUtils.mean(values));
+	  if (subset.attribute(i).isNumeric()) {
+	    values = subset.attributeToDoubleArray(i);
+	    if (m_UseMedian)
+	      inst.setValue(i + 1, StatUtils.median(values));
+	    else
+	      inst.setValue(i + 1, StatUtils.mean(values));
+	  }
+	  else if (subset.attribute(i).isNominal()) {
+	    counts = subset.attributeStats(i).nominalCounts;
+	    if (counts.length > 0) {
+	      maxIndex = Utils.maxIndex(counts);
+	      inst.setValue(i + 1, maxIndex);
+	    }
+	  }
 	}
 	result.add(inst);
       }
