@@ -15,7 +15,7 @@
 
 /*
  * WekaTrainClusterer.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -101,7 +101,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaTrainClusterer
   extends AbstractTransformer 
@@ -224,7 +223,7 @@ public class WekaTrainClusterer
     String	value;
 
     result = QuickInfoHelper.toString(this, "clusterer", m_Clusterer);
-    value = QuickInfoHelper.toString(this, "postProcessor", (m_PostProcessor instanceof PassThrough ? m_PostProcessor : null), ", post-processor: ");
+    value = QuickInfoHelper.toString(this, "postProcessor", (m_PostProcessor instanceof PassThrough ? null : m_PostProcessor), ", post-processor: ");
     if (value != null)
       result += value;
     
