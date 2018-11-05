@@ -27,6 +27,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanelWithButtons;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
@@ -108,20 +109,24 @@ public class DataQueryTab
     panelTop.add(m_PanelQuery, BorderLayout.CENTER);
 
     m_ButtonExecute = new BaseButton("Execute");
+    m_ButtonExecute.setToolTipText("Executes the query on the selected dataset");
     m_ButtonExecute.addActionListener((ActionEvent e) -> executeQuery());
     panelTop.addToButtonsPanel(m_ButtonExecute);
 
     m_ButtonClear = new BaseButton("Clear");
+    m_ButtonClear.setToolTipText("Removes the previously generated result");
     m_ButtonClear.addActionListener((ActionEvent e) -> clear());
     panelTop.addToButtonsPanel(m_ButtonClear);
 
     m_ButtonSave = new BaseButton("Save...");
+    m_ButtonSave.setToolTipText("Stores the result as a new dataset");
     m_ButtonSave.addActionListener((ActionEvent e) -> saveDataset());
     panelTop.addToButtonsPanel(m_ButtonSave);
 
     panelTop.addToButtonsPanel(new JLabel(""));
 
     m_ButtonHelp = new BaseButton("Help");
+    m_ButtonHelp.setToolTipText("Help screen for the query language");
     m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
     panelTop.addToButtonsPanel(m_ButtonHelp);
 
@@ -241,6 +246,7 @@ public class DataQueryTab
   protected void saveDataset() {
     SpreadSheetToWekaInstances	conv;
     String			msg;
+    String			name;
     Instances			newData;
     MemoryContainer		newCont;
 
@@ -252,10 +258,17 @@ public class DataQueryTab
     msg = conv.convert();
     if (msg != null) {
       logError(msg, "Conversion failed!");
+      conv.cleanUp();
       return;
     }
+
+    name = m_PanelQuery.getQuery().getValue().replace("\n", " ");
+    name = GUIHelper.showInputDialog(this, "Please enter relation name", name);
+    if (name == null)
+      return;
+
     newData = (Instances) conv.getOutput();
-    newData.setRelationName(m_PanelQuery.getQuery().getValue().replace("\n", " "));
+    newData.setRelationName(name);
     conv.cleanUp();
 
     newCont = new MemoryContainer(newData);
