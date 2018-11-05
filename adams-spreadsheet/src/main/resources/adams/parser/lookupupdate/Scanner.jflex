@@ -28,7 +28,6 @@ import java.io.*;
  * A scanner for lookup update rules.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 %%
 %caseless
@@ -38,7 +37,6 @@ import java.io.*;
 %class Scanner
 %{
   // Author: FracPete (fracpete at waikato dot ac dot nz)
-  // Version: $Revision$
   protected SymbolFactory sf;
 
   public Scanner(InputStream r, SymbolFactory sf){
@@ -102,6 +100,8 @@ import java.io.*;
   "ceil" { return sf.newSymbol("Ceil", sym.CEIL); }
   "min" { return sf.newSymbol("Min", sym.MIN); }
   "max" { return sf.newSymbol("Max", sym.MAX); }
+  "has" { return sf.newSymbol("Has", sym.HAS); }
+  "remove" { return sf.newSymbol("Remove", sym.REMOVE); }
 
   // boolean stuff
   "<" { return sf.newSymbol("Less than", sym.LT); }

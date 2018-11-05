@@ -88,6 +88,9 @@ public class LookUpUpdateTest
 	  {new BaseString("Hello World=1")},	//  11
 	  {new BaseString("Hello World=9.9")},	//  12
 	  {new BaseString("_Hello World=9.9")},	//  13
+	  {new BaseString("_Hello World=9.9")},	//  14
+	  {new BaseString("_Hello World=9.9")},	//  15
+	  {new BaseString("_Hello World=9.9")},	//  16
 	}
     };
   }
@@ -114,6 +117,9 @@ public class LookUpUpdateTest
 	  "if ('Hello World' = 1) then C := 4.5; end",				   //  11
 	  "C := [Hello World];",			                                   //  12
 	  "C := '_Hello World';",			                                   //  13
+	  "C := has('_Hello World');",			                                   //  14
+	  "C := remove('_Hello World');",		                                   //  15
+	  "C := remove('_Hello World2');",		                                   //  16
 	}
     };
   }

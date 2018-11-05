@@ -104,6 +104,8 @@ import java.util.logging.Level;
  *               | ceil ( expr )<br>
  *               | min ( expr1 , expr2 )<br>
  *               | max ( expr1 , expr2 )<br>
+ *               | has ( variable )<br>
+ *               | remove ( variable )<br>
  * <br>
  * Notes:<br>
  * - Variables are either all alphanumeric and -&#47;_ (e.g., "ABc_1-2"), any character<br>
@@ -112,6 +114,8 @@ import java.util.logging.Level;
  * - The 'all' method applies the value to all the values in the lookup table<br>
  *   that match the regular expression.<br>
  * - Variables starting with '_' (inside the [] or '') are considered local and don't get transferred back out.<br>
+ * - The 'has' function checks whether a variable&#47;symbol is present.<br>
+ * - The 'remove' function returns 'true' when the symbol was present and got removed, otherwise false.<br>
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -311,6 +315,8 @@ public class LookUpUpdate
 	+ "              | ceil ( expr )\n"
 	+ "              | min ( expr1 , expr2 )\n"
 	+ "              | max ( expr1 , expr2 )\n"
+	+ "              | has ( variable )\n"
+	+ "              | remove ( variable )\n"
 	+ "\n"
 	+ "Notes:\n"
         + "- Variables are either all alphanumeric and -/_ (e.g., \"ABc_1-2\"), any character\n"
@@ -319,6 +325,8 @@ public class LookUpUpdate
 	+ "- The 'all' method applies the value to all the values in the lookup table\n"
 	+ "  that match the regular expression.\n"
 	+ "- Variables starting with '_' (inside the [] or '') are considered local and don't get transferred back out.\n"
+	+ "- The 'has' function checks whether a variable/symbol is present.\n"
+	+ "- The 'remove' function returns 'true' when the symbol was present and got removed, otherwise false.\n"
       ;
   }
 

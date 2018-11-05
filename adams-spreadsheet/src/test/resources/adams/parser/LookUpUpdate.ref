@@ -69,4 +69,19 @@ A,1
 B,2
 C,9.9
 
+'C := has('_Hello World');' using _Hello World=9.9: key,value
+A,1
+B,2
+C,true
+
+'C := remove('_Hello World');' using _Hello World=9.9: key,value
+A,1
+B,2
+C,true
+
+'C := remove('_Hello World2');' using _Hello World=9.9: key,value
+A,1
+B,2
+C,false
+
 
