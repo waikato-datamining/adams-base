@@ -15,7 +15,7 @@
 
 /*
  * BaseObjectEditor.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -48,8 +48,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * A PropertyEditor for BaseObject-derived objects.
@@ -378,7 +379,7 @@ public class BaseObjectEditor
   public Object[] getSelectedObjects(Container parent) {
     Object[]			result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String> 		lines;
     Class			cls;
     int				i;
 
@@ -389,7 +390,7 @@ public class BaseObjectEditor
 
     cls = determineClass(getValue());
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
+      lines = new ArrayList<>(Arrays.asList(dialog.getContent().split("\n")));
       Utils.removeEmptyLines(lines);
       result = (Object[]) Array.newInstance(cls, lines.size());
       for (i = 0; i < lines.size(); i++)
