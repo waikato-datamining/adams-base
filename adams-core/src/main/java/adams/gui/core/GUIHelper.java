@@ -2005,18 +2005,33 @@ public class GUIHelper {
     else
       return showInputDialogButtons(parent, msg, initial, options, title, comm);
   }
-  
+
   /**
    * Parses the tool tip and breaks it up into multiple lines if longer
-   * than width characters.
+   * than width characters. No limit on number of rows.
    *
    * @param text	the tiptext to parse, can be null
    * @param width	the maximum width
    * @return		the processed tiptext
    */
   public static String processTipText(String text, int width) {
+    return processTipText(text, width, -1);
+  }
+
+  /**
+   * Parses the tool tip and breaks it up into multiple lines if longer
+   * than width characters.
+   *
+   * @param text	the tiptext to parse, can be null
+   * @param width	the maximum width
+   * @param maxLines	the maximum number of lines to allow, -1 for no limit
+   * @return		the processed tiptext
+   */
+  public static String processTipText(String text, int width, int maxLines) {
     String	result;
     String[]	lines;
+    String[]	tmp;
+    int		i;
 
     if (text == null)
       return null;
@@ -2025,6 +2040,14 @@ public class GUIHelper {
     if (result.length() > width) {
       result = HtmlUtils.toHTML(text);
       lines  = Utils.breakUp(result, width);
+      // too many lines?
+      if ((maxLines > -1) && (lines.length > maxLines)) {
+        tmp = new String[maxLines + 1];
+        for (i = 0; i < maxLines; i++)
+          tmp[i] = lines[i];
+        tmp[maxLines] = "...";
+        lines = tmp;
+      }
       result = processTipText(Utils.flatten(lines, "\n"));
     }
 

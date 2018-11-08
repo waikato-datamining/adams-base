@@ -84,6 +84,7 @@ Plot.SidePanelWidth=200
 Plot.ColorProvider=adams.gui.visualization.core.DefaultColorProvider
 Plot.AntiAliasing=true
 Plot.ToolTip.MaxColumns=80
+Plot.ToolTip.MaxRows=40
 
 #######################
 # Zoom overview panel #

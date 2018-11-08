@@ -109,6 +109,9 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
   /** the maximum number of columns for the tooltip. */
   protected int m_ToolTipMaxColumns;
 
+  /** the maximum number of rows for the tooltip. */
+  protected int m_ToolTipMaxRows;
+
   /** the zoom overview panel. */
   protected TimeseriesZoomOverviewPanel m_PanelZoomOverview;
 
@@ -202,6 +205,7 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
     props = getProperties();
 
     m_ToolTipMaxColumns = props.getInteger("Plot.ToolTip.MaxColumns", 80);
+    m_ToolTipMaxRows = props.getInteger("Plot.ToolTip.MaxRows", 40);
 
     setAdjustToVisibleData(props.getBoolean("Plot.AdjustToVisibleData", false));
 
@@ -591,11 +595,11 @@ public class TimeseriesPanel<T extends Timeseries, M extends TimeseriesContainer
       0,
       false);
 
-    hit = (String) m_TimeseriesPointHitDetector.detect(event);
+    hit = m_TimeseriesPointHitDetector.detect(event);
     if (hit != null)
       result += hit;
 
-    result = GUIHelper.processTipText(result, m_ToolTipMaxColumns);
+    result = GUIHelper.processTipText(result, m_ToolTipMaxColumns, m_ToolTipMaxRows);
 
     return result;
   }

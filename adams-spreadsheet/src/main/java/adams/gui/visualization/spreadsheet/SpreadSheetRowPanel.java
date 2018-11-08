@@ -97,6 +97,9 @@ public class SpreadSheetRowPanel
   /** the maximum number of columns for the tooltip. */
   protected int m_ToolTipMaxColumns;
 
+  /** the maximum number of rows for the tooltip. */
+  protected int m_ToolTipMaxRows;
+
   /** the zoom overview panel. */
   protected SpreadSheetRowZoomOverviewPanel m_PanelZoomOverview;
 
@@ -189,6 +192,7 @@ public class SpreadSheetRowPanel
     props = getProperties();
 
     m_ToolTipMaxColumns = props.getInteger("Plot.ToolTip.MaxColumns", 80);
+    m_ToolTipMaxRows = props.getInteger("Plot.ToolTip.MaxRows", 40);
 
     setAdjustToVisibleData(props.getBoolean("Plot.AdjustToVisibleData", false));
 
@@ -614,9 +618,9 @@ public class SpreadSheetRowPanel
       0,
       false);
 
-    hit = (String) m_SpreadSheetRowPointHitDetector.detect(event);
+    hit = m_SpreadSheetRowPointHitDetector.detect(event);
     if (hit != null)
-      result = GUIHelper.processTipText(hit, m_ToolTipMaxColumns);
+      result = GUIHelper.processTipText(hit, m_ToolTipMaxColumns, m_ToolTipMaxRows);
 
     return result;
   }
