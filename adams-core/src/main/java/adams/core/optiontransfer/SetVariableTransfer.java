@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SetVariableTransfer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.optiontransfer;
@@ -25,7 +25,6 @@ package adams.core.optiontransfer;
  * and {@link adams.flow.transformer.SetVariable} objects as vice versa.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SetVariableTransfer
   extends AbstractOptionTransfer {
@@ -60,20 +59,32 @@ public class SetVariableTransfer
       transformer = (adams.flow.transformer.SetVariable) target;
 
       transformer.setVariableName(standalone.getVariableName());
-      transferVariable(standalone, transformer, "variableValue");
+      transferVariable(standalone, transformer, "variableName");
 
       transformer.setVariableValue(standalone.getVariableValue());
       transferVariable(standalone, transformer, "variableValue");
+
+      transformer.setValueType(standalone.getValueType());
+      transferVariable(standalone, transformer, "valueType");
+
+      transformer.setExpandValue(standalone.getExpandValue());
+      transferVariable(standalone, transformer, "expandValue");
     }
     else {
       transformer = (adams.flow.transformer.SetVariable) source;
       standalone  = (adams.flow.standalone.SetVariable) target;
 
       standalone.setVariableName(transformer.getVariableName());
-      transferVariable(transformer, standalone, "variableValue");
+      transferVariable(transformer, standalone, "variableName");
 
       standalone.setVariableValue(transformer.getVariableValue());
       transferVariable(transformer, standalone, "variableValue");
+
+      standalone.setValueType(transformer.getValueType());
+      transferVariable(transformer, standalone, "valueType");
+
+      standalone.setExpandValue(transformer.getExpandValue());
+      transferVariable(transformer, standalone, "expandValue");
     }
 
     return null;
