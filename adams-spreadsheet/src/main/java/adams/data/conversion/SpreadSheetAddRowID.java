@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetAddRowID.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -66,7 +66,6 @@ import adams.data.spreadsheet.SpreadSheetColumnIndex;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetAddRowID
   extends AbstractInPlaceSpreadSheetConversion {
@@ -148,7 +147,7 @@ public class SpreadSheetAddRowID
     else
       result += ", at: ";
     result += QuickInfoHelper.toString(this, "position", m_Position);
-    result = QuickInfoHelper.toString(this, "start", m_Start, ", start: ");
+    result += QuickInfoHelper.toString(this, "start", m_Start, ", start: ");
 
     return result;
   }
