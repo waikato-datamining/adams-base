@@ -513,6 +513,10 @@ public class TreeOperations
       }
     }
     else {
+      // make sure name is not empty
+      if (actor.getName().length() == 0)
+	actor.setName(actor.getDefaultName());
+
       if (position == InsertPosition.BENEATH) {
 	node = TreeHelper.pathToNode(path);
 
