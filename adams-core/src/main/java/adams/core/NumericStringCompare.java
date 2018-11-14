@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NumericStringCompare.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -31,7 +31,6 @@ import java.util.logging.Level;
  * the supplied regexp.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 4584 $
  */
 public class NumericStringCompare
   extends AbstractOptionHandler
@@ -160,8 +159,18 @@ public class NumericStringCompare
     Double	d2;
     String	msg;
 
-    s1 = o1.replaceAll(m_Find.getValue(), m_Replace);
-    s2 = o2.replaceAll(m_Find.getValue(), m_Replace);
+    try {
+      s1 = o1.replaceAll(m_Find.getValue(), m_Replace);
+    }
+    catch (Exception e) {
+      throw new IllegalStateException("Failed to replace '" + m_Find + "' with '" + m_Replace + "' on: " + o1, e);
+    }
+    try {
+      s2 = o2.replaceAll(m_Find.getValue(), m_Replace);
+    }
+    catch (Exception e) {
+      throw new IllegalStateException("Failed to replace '" + m_Find + "' with '" + m_Replace + "' on: " + o2, e);
+    }
 
     try {
       d1 = Double.parseDouble(s1);
