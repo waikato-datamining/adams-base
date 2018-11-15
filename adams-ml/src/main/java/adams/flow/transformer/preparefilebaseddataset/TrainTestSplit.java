@@ -196,9 +196,7 @@ public class TrainTestSplit
 
     cont = new FileBasedDatasetContainer(
       Arrays.copyOfRange(data, 0, train),
-      Arrays.copyOfRange(data, train, data.length),
-      null,
-      null);
+      Arrays.copyOfRange(data, train, data.length));
 
     result = new ArrayList<>();
     result.add(cont);

@@ -58,6 +58,16 @@ public class FileBasedDatasetContainer
    *
    * @param train	the training files
    * @param test	the test files (optional)
+   */
+  public FileBasedDatasetContainer(String[] train, String[] test) {
+    this(train, test, null, null);
+  }
+
+  /**
+   * Initializes the container with the specified file names.
+   *
+   * @param train	the training files
+   * @param test	the test files (optional)
    * @param validation	the validation files (optional)
    * @param negative	the negative files (optional)
    */
