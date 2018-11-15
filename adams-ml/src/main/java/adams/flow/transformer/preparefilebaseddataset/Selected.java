@@ -24,6 +24,9 @@ import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.FileBasedDatasetContainer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Generates a container from the selected elements of the array.
  *
@@ -292,12 +295,13 @@ public class Selected
    * @return		the generated container
    */
   @Override
-  protected FileBasedDatasetContainer doPrepare(String[][] data) {
-    FileBasedDatasetContainer	result;
-    String[]			train;
-    String[]			test;
-    String[]			validation;
-    String[]			negative;
+  protected List<FileBasedDatasetContainer> doPrepare(String[][] data) {
+    List<FileBasedDatasetContainer>	result;
+    FileBasedDatasetContainer   	cont;
+    String[]				train;
+    String[]				test;
+    String[]				validation;
+    String[]				negative;
 
     train = null;
     if (m_Train.getIntIndex() > -1)
@@ -315,11 +319,14 @@ public class Selected
     if (m_Negative.getIntIndex() > -1)
       negative = data[m_Negative.getIntIndex()];
 
-    result = new FileBasedDatasetContainer(
+    cont = new FileBasedDatasetContainer(
       (train      != null ? train.clone()      : null),
       (test       != null ? test.clone()       : null),
       (validation != null ? validation.clone() : null),
       (negative   != null ? negative.clone()   : null));
+
+    result = new ArrayList<>();
+    result.add(cont);
 
     return result;
   }

@@ -24,6 +24,8 @@ import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.container.FileBasedDatasetContainer;
 
+import java.util.List;
+
 /**
  * Ancestor for schemes that prepare file-based datasets.
  *
@@ -69,17 +71,17 @@ public abstract class AbstractFileBasedDatasetPreparation<T>
    * Prepares the data.
    *
    * @param data	the data to use
-   * @return		the generated container
+   * @return		the generated container(s)
    */
-  protected abstract FileBasedDatasetContainer doPrepare(T data);
+  protected abstract List<FileBasedDatasetContainer> doPrepare(T data);
 
   /**
    * Prepares the data.
    *
    * @param data	the data to use
-   * @return		the generated container
+   * @return		the generated container(s)
    */
-  public FileBasedDatasetContainer prepare(T data) {
+  public List<FileBasedDatasetContainer> prepare(T data) {
     String	msg;
 
     msg = check(data);

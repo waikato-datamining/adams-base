@@ -26,7 +26,9 @@ import adams.flow.container.FileBasedDatasetContainer;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -219,13 +221,14 @@ public class TrainTestSplit
    * @return		the generated container
    */
   @Override
-  protected FileBasedDatasetContainer doPrepare(String[] data) {
-    FileBasedDatasetContainer	result;
-    Random			rand;
-    TIntList			indices;
-    String[]			tmp;
-    int				i;
-    int				train;
+  protected List<FileBasedDatasetContainer> doPrepare(String[] data) {
+    List<FileBasedDatasetContainer>	result;
+    FileBasedDatasetContainer   	cont;
+    Random				rand;
+    TIntList				indices;
+    String[]				tmp;
+    int					i;
+    int					train;
 
     if (!m_PreserveOrder) {
       rand = new Random(m_Seed);
@@ -245,11 +248,14 @@ public class TrainTestSplit
     if (isLoggingEnabled())
       getLogger().info("# instances for train: " + train);
 
-    result = new FileBasedDatasetContainer(
+    cont = new FileBasedDatasetContainer(
       Arrays.copyOfRange(data, 0, train),
       Arrays.copyOfRange(data, train, data.length),
       null,
       null);
+
+    result = new ArrayList<>();
+    result.add(cont);
 
     return result;
   }
