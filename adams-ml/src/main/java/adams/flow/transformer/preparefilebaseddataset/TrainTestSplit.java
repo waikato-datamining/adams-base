@@ -21,15 +21,11 @@
 package adams.flow.transformer.preparefilebaseddataset;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Randomizable;
 import adams.flow.container.FileBasedDatasetContainer;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Generates a train/test split.
@@ -37,13 +33,9 @@ import java.util.Random;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class TrainTestSplit
-  extends AbstractFileBasedDatasetPreparation<String[]>
-  implements Randomizable {
+  extends AbstractRandomizableFileBasedDatasetPreparation<String[]> {
 
   private static final long serialVersionUID = 7027794624748574933L;
-
-  /** the seed. */
-  protected long m_Seed;
 
   /** the percentage. */
   protected double m_Percentage;
@@ -69,45 +61,12 @@ public class TrainTestSplit
     super.defineOptions();
 
     m_OptionManager.add(
-      "seed", "seed",
-      1L);
-
-    m_OptionManager.add(
       "percentage", "percentage",
       0.66, 0.0, 1.0);
 
     m_OptionManager.add(
       "preserve-order", "preserveOrder",
       false);
-  }
-
-  /**
-   * Sets the seed value.
-   *
-   * @param value	the seed
-   */
-  public void setSeed(long value) {
-    m_Seed = value;
-    reset();
-  }
-
-  /**
-   * Returns the seed value.
-   *
-   * @return  		the seed
-   */
-  public long getSeed() {
-    return m_Seed;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String seedTipText() {
-    return "The seed value for randomizing the data.";
   }
 
   /**
@@ -224,23 +183,10 @@ public class TrainTestSplit
   protected List<FileBasedDatasetContainer> doPrepare(String[] data) {
     List<FileBasedDatasetContainer>	result;
     FileBasedDatasetContainer   	cont;
-    Random				rand;
-    TIntList				indices;
-    String[]				tmp;
-    int					i;
     int					train;
 
-    if (!m_PreserveOrder) {
-      rand = new Random(m_Seed);
-      indices = new TIntArrayList();
-      for (i = 0; i < data.length; i++)
-        indices.add(i);
-      indices.shuffle(rand);
-      tmp = new String[data.length];
-      for (i = 0; i < indices.size(); i++)
-        tmp[i] = data[indices.get(i)];
-      data = tmp;
-    }
+    if (!m_PreserveOrder)
+      data = randomize(data);
 
     train = (int) Math.round(data.length * m_Percentage);
     if (train == data.length)
