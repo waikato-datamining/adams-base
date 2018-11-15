@@ -52,7 +52,8 @@ public class CrossValidation
    */
   @Override
   public String globalInfo() {
-    return "Generates cross-validation folds.";
+    return "Generates cross-validation folds.\n"
+      + "If number of folds is less than 2, leave-one-out is performed.";
   }
 
   /**
