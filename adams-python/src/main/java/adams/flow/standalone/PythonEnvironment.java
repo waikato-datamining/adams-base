@@ -21,8 +21,13 @@
 package adams.flow.standalone;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+
+import java.io.File;
+import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -69,6 +74,16 @@ import adams.core.io.PlaceholderFile;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-python-path-env-var &lt;adams.core.base.BaseString&gt; [-python-path-env-var ...] (property: pythonPathEnvVar)
+ * &nbsp;&nbsp;&nbsp;The paths to use for the PYTHONPATH environment variable.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-python-path-update-type &lt;NO_UPDATE|REPLACE|APPEND|PREPEND&gt; (property: pythonPathUpdateType)
+ * &nbsp;&nbsp;&nbsp;Determines how to update the PYTHONPATH environment variable.
+ * &nbsp;&nbsp;&nbsp;default: NO_UPDATE
+ * </pre>
+ *
  * <pre>-python &lt;adams.core.io.PlaceholderFile&gt; (property: python)
  * &nbsp;&nbsp;&nbsp;The python executable, uses one on path if pointing to a directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
@@ -93,6 +108,34 @@ public class PythonEnvironment
   extends AbstractStandalone {
 
   private static final long serialVersionUID = 5148275104228911234L;
+
+  /**
+   * How to update the environment varibale.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   */
+  public enum PythonPathUpdateType {
+    /** does not change the environment variable. */
+    NO_UPDATE,
+    /** replaces the current path. */
+    REPLACE,
+    /** appends the path to the existing one. */
+    APPEND,
+    /** prepends the path to the existing pne. */
+    PREPEND,
+  }
+
+  /** the placeholder for the environment variable. */
+  public final static String PYTHONPATH = "PYTHONPATH";
+
+  /** the PYTHONPATH environment variable. */
+  protected BaseString[] m_PythonPathEnvVar;
+
+  /** how to update the PYTHONPATH environment variable. */
+  protected PythonPathUpdateType m_PythonPathUpdateType;
+
+  /** the actual python path env var (null if not to use). */
+  protected String m_ActualPythonPath;
 
   /** the python executable. */
   protected PlaceholderFile m_Python;
@@ -129,6 +172,14 @@ public class PythonEnvironment
     super.defineOptions();
 
     m_OptionManager.add(
+      "python-path-env-var", "pythonPathEnvVar",
+      new BaseString[0]);
+
+    m_OptionManager.add(
+      "python-path-update-type", "pythonPathUpdateType",
+      PythonPathUpdateType.NO_UPDATE);
+
+    m_OptionManager.add(
       "python", "python",
       new PlaceholderFile());
 
@@ -148,8 +199,67 @@ public class PythonEnvironment
   protected void reset() {
     super.reset();
 
-    m_ActualPython = null;
-    m_ActualPip    = null;
+    m_ActualPythonPath = null;
+    m_ActualPython     = null;
+    m_ActualPip        = null;
+  }
+
+  /**
+   * Sets the path(s) for the PYTHONPATH environment variable.
+   *
+   * @param value 	the path(s)
+   */
+  public void setPythonPathEnvVar(BaseString[] value) {
+    m_PythonPathEnvVar = value;
+    reset();
+  }
+
+  /**
+   * Returns the path(s) for the PYTHONPATH environment variable.
+   *
+   * @return 		the path(s)
+   */
+  public BaseString[] getPythonPathEnvVar() {
+    return m_PythonPathEnvVar;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String pythonPathEnvVarTipText() {
+    return "The paths to use for the " + PYTHONPATH + " environment variable.";
+  }
+
+  /**
+   * Sets how to update the PYTHONPATH environment variable.
+   *
+   * @param value 	the update type
+   */
+  public void setPythonPathUpdateType(PythonPathUpdateType value) {
+    m_PythonPathUpdateType = value;
+    reset();
+  }
+
+  /**
+   * Returns how to update the PYTHONPATH environment variable.
+   *
+   * @return 		the update type
+   */
+  public PythonPathUpdateType getPythonPathUpdateType() {
+    return m_PythonPathUpdateType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String pythonPathUpdateTypeTipText() {
+    return "Determines how to update the " + PYTHONPATH + " environment variable.";
   }
 
   /**
@@ -252,8 +362,31 @@ public class PythonEnvironment
     result  = QuickInfoHelper.toString(this, "python", (m_Python.isDirectory() ? "-system-" : m_Python.toString()), "python: ");
     result += QuickInfoHelper.toString(this, "pip", (m_Pip.isDirectory() ? "-system-" : m_Pip.toString()), ", pip: ");
     result += QuickInfoHelper.toString(this, "suffix", (m_Suffix.isEmpty() ? "-none-" : m_Suffix), ", suffix: ");
+    if (m_PythonPathUpdateType != PythonPathUpdateType.NO_UPDATE) {
+      result += QuickInfoHelper.toString(this, "pythonPathUpdateType", m_PythonPathUpdateType, ", ");
+      result += QuickInfoHelper.toString(this, "pythonPathEnvVar", (m_PythonPathEnvVar.length == 0 ? "-none-" : m_PythonPathEnvVar), ": ");
+    }
 
     return result;
+  }
+
+  /**
+   * Returns the actual PYTHONPATH environment variable.
+   *
+   * @return		the variable, null if not yet configured or not to be used
+   */
+  public String getActualPythonPath() {
+    return m_ActualPythonPath;
+  }
+
+  /**
+   * Updates the PYTHONPATH value in the environment if necessary.
+   *
+   * @param env		the environment to update
+   */
+  public void updatePythonPath(Map<String,String> env) {
+    if (m_ActualPythonPath != null)
+      env.put(PYTHONPATH, m_ActualPythonPath);
   }
 
   /**
@@ -282,8 +415,39 @@ public class PythonEnvironment
   @Override
   protected String doExecute() {
     String	result;
+    String	path;
+    String	currPath;
 
     result = null;
+
+    // python path
+    if (m_PythonPathEnvVar.length > 0)
+      path = Utils.flatten(m_PythonPathEnvVar, File.pathSeparator);
+    else
+      path = "";
+    currPath = System.getenv(PYTHONPATH);
+    switch (m_PythonPathUpdateType) {
+      case NO_UPDATE:
+        m_ActualPythonPath = null;
+        break;
+      case REPLACE:
+        m_ActualPythonPath = path;
+        break;
+      case APPEND:
+        if ((currPath == null) || currPath.isEmpty())
+          m_ActualPythonPath = path;
+        else
+          m_ActualPythonPath = currPath + File.pathSeparator + path;
+        break;
+      case PREPEND:
+        if ((currPath == null) || currPath.isEmpty())
+          m_ActualPythonPath = path;
+        else
+          m_ActualPythonPath = path + File.pathSeparator + currPath;
+        break;
+      default:
+        throw new IllegalStateException("Unhandled python path update type: " + m_PythonPathUpdateType);
+    }
 
     // python
     if (m_Python.isDirectory()) {

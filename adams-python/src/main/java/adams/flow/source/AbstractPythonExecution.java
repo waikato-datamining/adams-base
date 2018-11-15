@@ -301,6 +301,7 @@ public abstract class AbstractPythonExecution
 	    ProcessBuilder builder = new ProcessBuilder(cmd);
 	    if (!workingDir.isEmpty())
 	      builder.directory(new PlaceholderDirectory(workingDir).getAbsoluteFile());
+            m_Environment.updatePythonPath(builder.environment());
 	    m_ProcessOutput.monitor(builder);
 	  }
 	  catch (Exception e) {
