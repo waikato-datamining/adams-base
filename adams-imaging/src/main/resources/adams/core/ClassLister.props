@@ -62,7 +62,11 @@ adams.data.image.moments.AbstractBufferedImageMoment=\
 # the meta-data extractors
 adams.flow.transformer.metadata.AbstractMetaDataExtractor=\
   adams.flow.transformer.metadata
-  
+
+# the generators for negative regions
+adams.flow.transformer.negativeregions.AbstractNegativeRegionsGenerator=\
+  adams.flow.transformer.negativeregions
+
 # the actions for the PixelSelector transformer
 adams.flow.transformer.pixelselector.AbstractPixelSelectorAction=\
   adams.flow.transformer.pixelselector
