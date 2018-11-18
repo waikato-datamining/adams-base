@@ -54,6 +54,7 @@ import adams.gui.flow.tree.menu.MenuHeader;
 import adams.gui.flow.tree.menu.Separator;
 import adams.gui.flow.tree.menu.TreePopupAction;
 import adams.gui.goe.FlowHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
@@ -926,7 +927,7 @@ public class Tree
    */
   protected boolean canPasteActor() {
     return TreeOperations.hasNodesOnClipboard()
-      || (TreeOperations.getActorFromClipboard() != null);
+      || ClipboardHelper.canPasteStringFromClipboard();
   }
 
   /**

@@ -19,6 +19,8 @@
  */
 package adams.gui.flow.tree.menu;
 
+import adams.flow.core.Actor;
+import adams.gui.core.GUIHelper;
 import adams.gui.flow.tree.TreeOperations;
 
 import java.awt.event.ActionEvent;
@@ -59,9 +61,17 @@ public class PasteActorBeneath
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    if (TreeOperations.hasNodesOnClipboard())
+    Actor actor;
+
+    if (TreeOperations.hasNodesOnClipboard()) {
       m_State.tree.getOperations().pasteNodes(m_State.selPath, TreeOperations.getNodesFromClipboard(), TreeOperations.InsertPosition.BENEATH);
-    else
-      m_State.tree.getOperations().addActor(m_State.selPath, TreeOperations.getActorFromClipboard(), TreeOperations.InsertPosition.BENEATH);
+    }
+    else {
+      actor = TreeOperations.getActorFromClipboard();
+      if (actor != null)
+        m_State.tree.getOperations().addActor(m_State.selPath, actor, TreeOperations.InsertPosition.BENEATH);
+      else
+	GUIHelper.showErrorMessage(m_State.tree.getParent(), "Failed to parse clipboard content as actor(s)!");
+    }
   }
 }
