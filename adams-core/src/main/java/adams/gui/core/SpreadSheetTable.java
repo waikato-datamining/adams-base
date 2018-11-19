@@ -391,6 +391,14 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth());
     menu.add(menuitem);
 
+    menuitem = new JMenuItem("Set column width...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> setColumnWidth(col));
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Set column widths...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> setColumnWidths());
+    menu.add(menuitem);
+
     SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, row, actCol);
 
     if (m_HeaderPopupMenuCustomizer != null)

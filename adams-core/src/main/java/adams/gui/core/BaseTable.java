@@ -21,6 +21,7 @@
 package adams.gui.core;
 
 import adams.core.Range;
+import adams.core.Utils;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
@@ -41,6 +42,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
@@ -342,6 +345,87 @@ public class BaseTable
   public void setOptimalColumnWidthBounded(final int column, final int max) {
     if (isVisible())
       SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidthBounded(column, max));
+  }
+
+  /**
+   * Prompts the user to enter a column width.
+   *
+   * @return		the column width, -1 if not to proceed
+   */
+  protected int enterColumnWidth() {
+    String	widthStr;
+    final int	width;
+
+    widthStr = GUIHelper.showInputDialog(getParent(), "Please enter column width (pixels)");
+    if (widthStr == null)
+      return -1;
+    if (!Utils.isInteger(widthStr)) {
+      GUIHelper.showErrorMessage(getParent(), "Entered width is not a number: " + widthStr);
+      return - 1;
+    }
+    width = Integer.parseInt(widthStr);
+    if (width < 1) {
+      GUIHelper.showErrorMessage(getParent(), "Entered width is less than 1: " + widthStr);
+      return - 1;
+    }
+    return width;
+  }
+
+  /**
+   * Prompts the user for a col width value and sets the column width for all
+   * columns. AutoResize must be set to BaseTable.AUTO_RESIZE_OFF.
+   */
+  public void setColumnWidths() {
+    setColumnWidths(enterColumnWidth());
+  }
+
+  /**
+   * Sets the specified column width for all columns.
+   * AutoResize must be set to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param width 	the width for all columns
+   */
+  public void setColumnWidths(int width) {
+    if (width < 1)
+      return;
+    SwingUtilities.invokeLater(() -> {
+      JTableHeader header = getTableHeader();
+      for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
+	TableColumn column = getColumnModel().getColumn(i);
+	column.setPreferredWidth(width);
+      }
+      doLayout();
+      header.repaint();
+    });
+  }
+
+  /**
+   * Prompts the user for a col width value and sets the column width
+   * for the specified column. AutoResize must be set to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param column	the column to resize
+   */
+  public void setColumnWidth(final int column) {
+    setColumnWidth(column, enterColumnWidth());
+  }
+
+  /**
+   * Sets the specified column width for the specified column.
+   * AutoResize must be set to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param column	the column to resize
+   * @param width 	the width to use
+   */
+  public void setColumnWidth(final int column, int width) {
+    if (width < 1)
+      return;
+    SwingUtilities.invokeLater(() -> {
+      JTableHeader header = getTableHeader();
+      TableColumn col = getColumnModel().getColumn(column);
+      col.setPreferredWidth(width);
+      doLayout();
+      header.repaint();
+    });
   }
 
   /**
