@@ -15,7 +15,7 @@
 
 /*
  * DirectoryChooserPanel.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -40,7 +40,6 @@ import java.io.File;
  * button for bringing up a BaseDirectoryChooser.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DirectoryChooserPanel
   extends AbstractChooserPanelWithIOSupport<File> {
@@ -108,6 +107,15 @@ public class DirectoryChooserPanel
     else {
       return null;
     }
+  }
+
+  /**
+   * Hook method after pasting from clipboard.
+   */
+  @Override
+  protected void afterPasteFromClipboard() {
+    super.afterPasteFromClipboard();
+    m_History.add(new PlaceholderDirectory(m_DirectoryChooser.getSelectedFile()));
   }
 
   /**

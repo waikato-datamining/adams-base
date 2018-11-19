@@ -15,7 +15,7 @@
 
 /*
  * FileChooserPanel.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -37,7 +37,6 @@ import java.io.File;
  * button for bringing up a BaseFileChooser.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileChooserPanel
   extends AbstractChooserPanel<File> {
@@ -123,6 +122,15 @@ public class FileChooserPanel
         return null;
       }
     }
+  }
+
+  /**
+   * Hook method after pasting from clipboard.
+   */
+  @Override
+  protected void afterPasteFromClipboard() {
+    super.afterPasteFromClipboard();
+    m_History.add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
   }
 
   /**
