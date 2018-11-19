@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractContentHandler.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -36,7 +36,6 @@ import java.util.List;
  * Ancestor for all content handlers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractContentHandler
   extends AbstractOptionHandler {
@@ -122,19 +121,23 @@ public abstract class AbstractContentHandler
     int				n;
     AbstractContentHandler	handler;
     String[]			extensions;
+    String			ext;
     List<Class>			classes;
 
     if (m_Relation == null) {
-      m_Relation = new Hashtable<String,List<Class>>();
+      m_Relation = new Hashtable<>();
       handlers   = getHandlers();
       for (i = 0; i < handlers.length; i++) {
 	try {
 	  handler    = (AbstractContentHandler) Class.forName(handlers[i]).newInstance();
 	  extensions = handler.getExtensions();
 	  for (n = 0; n < extensions.length; n++) {
-	    if (!m_Relation.containsKey(extensions[n]))
-	      m_Relation.put(extensions[n], new ArrayList<Class>());
-	    classes = m_Relation.get(extensions[n]);
+	    ext = extensions[n];
+	    if (ext.startsWith("."))
+	      ext = ext.substring(1);
+	    if (!m_Relation.containsKey(ext))
+	      m_Relation.put(ext, new ArrayList<>());
+	    classes = m_Relation.get(ext);
 	    if (!classes.contains(handler.getClass()))
 	      classes.add(handler.getClass());
 	  }
@@ -173,16 +176,11 @@ public abstract class AbstractContentHandler
       extension = extension.toLowerCase();
 
     if (extension != null) {
-      if (getRelation().containsKey(MATCH_ALL))
-	return true;
-      else
-	return getRelation().containsKey(extension);
+      return (getRelation().containsKey(MATCH_ALL))
+	|| getRelation().containsKey(extension);
     }
     else {
-      if (getRelation().containsKey(MATCH_ALL))
-	return true;
-      else
-	return false;
+      return (getRelation().containsKey(MATCH_ALL));
     }
   }
 
