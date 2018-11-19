@@ -750,6 +750,34 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
   }
 
   /**
+   * Sets whether to show a simple header/cell popup menu.
+   *
+   * @param value	true if to show menus
+   */
+  public void setShowSimplePopupMenus(boolean value) {
+    setShowSimpleHeaderPopupMenu(value);
+    setShowSimpleCellPopupMenu(value);
+  }
+
+  /**
+   * Sets whether to show a simple header popup menu.
+   *
+   * @param value	true if to show menu
+   */
+  public void setShowSimpleHeaderPopupMenu(boolean value) {
+    m_Component.setShowSimpleHeaderPopupMenu(value);
+  }
+
+  /**
+   * Returns whether to show a simple header popup menu.
+   *
+   * @return		true if to show menu
+   */
+  public boolean getShowSimpleHeaderPopupMenu() {
+    return m_Component.getShowSimpleHeaderPopupMenu();
+  }
+
+  /**
    * Sets whether to show a simple cell popup menu.
    *
    * @param value	true if to show menu

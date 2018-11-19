@@ -207,7 +207,7 @@ public class InformativeStatisticFactory {
       setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
       setOptimalColumnWidth();
-      setShowSimpleCellPopupMenu(true);
+      setShowSimplePopupMenus(true);
     }
 
     /**

@@ -43,7 +43,7 @@ public class InstanceTable
    */
   public InstanceTable(Instances data) {
     super(new InstanceTableModel(data));
-    setShowSimpleCellPopupMenu(true);
+    setShowSimplePopupMenus(true);
   }
 
   /**

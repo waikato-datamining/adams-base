@@ -73,7 +73,7 @@ public class PropertiesRenderer
     model      = new PropertiesTableModel(props);
     table      = new SortableAndSearchableTable(model);
     table.setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
-    table.setShowSimpleCellPopupMenu(true);
+    table.setShowSimplePopupMenus(true);
     table.setOptimalColumnWidth();
     panelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
     panelSearch.addSearchListener((SearchEvent e) -> {

@@ -206,7 +206,7 @@ public class XYSequenceTable
       setModel(newModel(null));
 
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    setShowSimpleCellPopupMenu(true);
+    setShowSimplePopupMenus(true);
   }
 
   /**

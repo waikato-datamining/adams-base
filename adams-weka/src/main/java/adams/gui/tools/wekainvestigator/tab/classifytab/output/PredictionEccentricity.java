@@ -287,7 +287,7 @@ public class PredictionEccentricity
     infoModel.setReadOnly(true);
     infoModel.setNumDecimals(2);
     infoTable = new SpreadSheetTable(infoModel);
-    infoTable.setShowSimpleCellPopupMenu(true);
+    infoTable.setShowSimplePopupMenus(true);
     imagePanel = new ImagePanel();
     imagePanel.setCurrentImage(matrix.toBufferedImage());
     imagePanel.setScale(-1);

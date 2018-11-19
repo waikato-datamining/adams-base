@@ -63,7 +63,7 @@ public class EffectiveTagsTab
 
     m_Model = new KeyValuePairTableModel(new Object[0][], COLUMN_NAMES);
     m_Table = new SortableAndSearchableTable(m_Model);
-    m_Table.setShowSimpleCellPopupMenu(true);
+    m_Table.setShowSimplePopupMenus(true);
     m_Table.setUseOptimalColumnWidths(true);
 
     add(new BaseScrollPane(m_Table), BorderLayout.CENTER);

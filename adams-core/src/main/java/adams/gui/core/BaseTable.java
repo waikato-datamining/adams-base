@@ -15,7 +15,7 @@
 
 /*
  * BaseTable.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -60,7 +60,6 @@ import java.util.Vector;
  * optimal width.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTable
   extends JTable
@@ -81,8 +80,14 @@ public class BaseTable
   /** the popup menu listeners for the cells. */
   protected HashSet<PopupMenuListener> m_CellPopupMenuListeners;
 
+  /** whether to show a simple header popup menu. */
+  protected boolean m_ShowSimpleHeaderPopupMenu;
+
   /** whether to show a simple cell popup menu. */
   protected boolean m_ShowSimpleCellPopupMenu;
+
+  /** the simple header popup menu listener. */
+  protected PopupMenuListener m_SimpleHeaderPopupMenuListener;
 
   /** the simple cell popup menu listener. */
   protected PopupMenuListener m_SimpleCellPopupMenuListener;
@@ -212,10 +217,17 @@ public class BaseTable
    * Initializes some GUI-related things.
    */
   protected void initGUI() {
-    m_RemoveItemsListeners     = new HashSet<>();
-    m_HeaderPopupMenuListeners = new HashSet<>();
-    m_CellPopupMenuListeners   = new HashSet<>();
-    m_ShowSimpleCellPopupMenu  = false;
+    m_RemoveItemsListeners      = new HashSet<>();
+    m_HeaderPopupMenuListeners  = new HashSet<>();
+    m_CellPopupMenuListeners    = new HashSet<>();
+    m_ShowSimpleHeaderPopupMenu = false;
+    m_ShowSimpleCellPopupMenu   = false;
+
+    m_SimpleHeaderPopupMenuListener = (MouseEvent e) -> {
+      if (m_ShowSimpleHeaderPopupMenu) {
+        showSimpleHeaderPopupMenu(e);
+      }
+    };
 
     m_SimpleCellPopupMenuListener = (MouseEvent e) -> {
       if (m_ShowSimpleCellPopupMenu) {
@@ -554,6 +566,104 @@ public class BaseTable
    */
   public void showCell(int row, int column) {
     scrollRectToVisible(getCellRect(row, column, true));
+  }
+
+  /**
+   * Sets whether to show a simple header/cell popup menu.
+   *
+   * @param value	true if to show menus
+   */
+  public void setShowSimplePopupMenus(boolean value) {
+    setShowSimpleHeaderPopupMenu(value);
+    setShowSimpleCellPopupMenu(value);
+  }
+
+  /**
+   * Sets whether to show a simple header popup menu.
+   *
+   * @param value	true if to show menu
+   */
+  public void setShowSimpleHeaderPopupMenu(boolean value) {
+    m_ShowSimpleHeaderPopupMenu = value;
+    removeHeaderPopupMenuListener(m_SimpleHeaderPopupMenuListener);
+    if (value)
+      addHeaderPopupMenuListener(m_SimpleHeaderPopupMenuListener);
+  }
+
+  /**
+   * Returns whether to show a simple header popup menu.
+   *
+   * @return		true if to show menu
+   */
+  public boolean getShowSimpleHeaderPopupMenu() {
+    return m_ShowSimpleHeaderPopupMenu;
+  }
+
+  /**
+   * Pops up a simple header menu.
+   *
+   * @param e		the trigger event
+   */
+  protected void showSimpleHeaderPopupMenu(MouseEvent e) {
+    BasePopupMenu menu;
+
+    menu = createSimpleHeaderPopupMenu(e);
+    menu.showAbsolute(this, e);
+  }
+
+  /**
+   * Creates a simple header popup menu.
+   *
+   * @param e		the trigger event
+   * @return		the popup menu
+   */
+  protected BasePopupMenu createSimpleHeaderPopupMenu(MouseEvent e) {
+    BasePopupMenu 	menu;
+    JMenuItem 		menuitem;
+    final int 		col;
+
+    menu = new BasePopupMenu();
+    col = columnAtPoint(e.getPoint());
+
+    menuitem = new JMenuItem("Copy column name", GUIHelper.getIcon("copy.gif"));
+    menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(getColumnName(col)));
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy_column.gif"));
+    menuitem.addActionListener((ActionEvent ae) -> {
+      SpreadSheet sheet = toSpreadSheet(TableRowRange.VISIBLE);
+      StringBuilder content = new StringBuilder();
+      String sep = System.getProperty("line.separator");
+      content.append(sheet.getColumnName(col) + sep);
+      for (int i = 0; i < sheet.getRowCount(); i++) {
+	if (!sheet.hasCell(i, col) || sheet.getCell(i, col).isMissing())
+	  content.append(sep);
+	else
+	  content.append(sheet.getCell(i, col).getContent() + sep);
+      }
+      ClipboardHelper.copyToClipboard(content.toString());
+    });
+    menu.add(menuitem);
+
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Optimal column width", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth(col));
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Optimal column widths", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Set column width...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> setColumnWidth(col));
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Set column widths...", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ae) -> setColumnWidths());
+    menu.add(menuitem);
+
+    return menu;
   }
 
   /**

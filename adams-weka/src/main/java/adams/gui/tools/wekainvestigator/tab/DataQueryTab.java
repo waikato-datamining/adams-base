@@ -133,7 +133,7 @@ public class DataQueryTab
     splitPane.setTopComponent(panelTop);
 
     m_TableResult = new SpreadSheetTable(new SpreadSheetTableModel());
-    m_TableResult.setShowSimpleCellPopupMenu(true);
+    m_TableResult.setShowSimplePopupMenus(true);
     splitPane.setBottomComponent(new BaseScrollPane(m_TableResult));
 
     m_SplitPane.setBottomComponentHidden(false);

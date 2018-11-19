@@ -195,7 +195,7 @@ public class PropertiesViewerPanel
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
     m_Table.setOptimalColumnWidth(0);
-    m_Table.setShowSimpleCellPopupMenu(true);
+    m_Table.setShowSimplePopupMenus(true);
 
     // search
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));

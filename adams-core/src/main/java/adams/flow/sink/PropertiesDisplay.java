@@ -201,7 +201,7 @@ public class PropertiesDisplay
     
     m_Model = new PropertiesTableModel();
     m_Table = new SortableAndSearchableTable(m_Model);
-    m_Table.setShowSimpleCellPopupMenu(true);
+    m_Table.setShowSimplePopupMenus(true);
     result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
 
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);

@@ -95,7 +95,7 @@ public class PropertiesHandler
     props.load(file.getAbsolutePath());
     model  = new PropertiesTableModel(props);
     table  = new SortableAndSearchableTable(model);
-    table.setShowSimpleCellPopupMenu(true);
+    table.setShowSimplePopupMenus(true);
     table.setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
     table.setOptimalColumnWidth();
     result.add(new BaseScrollPane(table));
