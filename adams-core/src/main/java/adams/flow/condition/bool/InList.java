@@ -45,6 +45,12 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-value &lt;java.lang.String&gt; (property: value)
+ * &nbsp;&nbsp;&nbsp;The value (if non-empty) to look for in the items, takes precedence of the
+ * &nbsp;&nbsp;&nbsp;token passing through.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -56,6 +62,9 @@ public class InList
 
   /** the strings to match against. */
   protected BaseString[] m_Items;
+
+  /** the value to check. */
+  protected String m_Value;
 
   /** the set to use for checks. */
   protected transient Set<String> m_ItemSet;
@@ -80,6 +89,10 @@ public class InList
     m_OptionManager.add(
       "item", "items",
       new BaseString[0]);
+
+    m_OptionManager.add(
+      "value", "value",
+      "");
   }
 
   /**
@@ -99,7 +112,12 @@ public class InList
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "items", m_Items, "items: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "items", m_Items, "items: ");
+    result += QuickInfoHelper.toString(this, "value", (m_Value.isEmpty() ? "-from token-" : m_Value), ", value: ");
+
+    return result;
   }
 
   /**
@@ -132,6 +150,37 @@ public class InList
   }
 
   /**
+   * Sets the (optional) value to look for in the items, takes precedence
+   * over the token passing through.
+   *
+   * @param value	the value
+   */
+  public void setValue(String value) {
+    m_Value = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) value to look for in the items, takes precedence
+   * over the token passing through.
+   *
+   * @return		the value
+   */
+  public String getValue() {
+    return m_Value;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String valueTipText() {
+    return "The value (if non-empty) to look for in the items, takes precedence of the token passing through.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		adams.flow.core.Unknown.class
@@ -150,11 +199,19 @@ public class InList
    */
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
+    String	value;
+
     if (m_ItemSet == null) {
       m_ItemSet = new HashSet<>();
       for (BaseString item: m_Items)
         m_ItemSet.add(item.getValue());
     }
-    return m_ItemSet.contains(token.getPayload(String.class));
+
+    if (m_Value.isEmpty())
+      value = token.getPayload(String.class);
+    else
+      value = m_Value;
+
+    return m_ItemSet.contains(value);
   }
 }
