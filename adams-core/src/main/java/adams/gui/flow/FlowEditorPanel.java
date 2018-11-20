@@ -83,6 +83,7 @@ import adams.gui.flow.menu.FileRevert;
 import adams.gui.flow.menu.FileSave;
 import adams.gui.flow.menu.FileSaveAs;
 import adams.gui.flow.menu.FlowEditorAction;
+import adams.gui.flow.menu.HelpActors;
 import adams.gui.flow.menu.HelpBooleanExpression;
 import adams.gui.flow.menu.HelpMathematicalExpression;
 import adams.gui.flow.menu.HelpStringExpression;
@@ -379,6 +380,9 @@ public class FlowEditorPanel
 
   /** the "duplicate tab" action. */
   protected FlowEditorAction m_ActionDuplicateTab;
+
+  /** the "help actors" action. */
+  protected FlowEditorAction m_ActionHelpActors;
 
   /** the "help variables" action. */
   protected FlowEditorAction m_ActionHelpVariables;
@@ -794,6 +798,11 @@ public class FlowEditorPanel
     m_MenuItems.add(action);
 
     // Help/Variables
+    action = new HelpActors();
+    m_ActionHelpActors = action;
+    m_MenuItems.add(action);
+
+    // Help/Variables
     action = new HelpVariables();
     m_ActionHelpVariables = action;
     m_MenuItems.add(action);
@@ -1115,6 +1124,7 @@ public class FlowEditorPanel
       menu.setMnemonic('H');
       menu.addChangeListener((ChangeEvent e) -> updateActions());
 
+      menu.add(m_ActionHelpActors);
       menu.add(m_ActionHelpVariables);
       menu.add(m_ActionHelpBooleanExpression);
       menu.add(m_ActionHelpMathematicalExpression);

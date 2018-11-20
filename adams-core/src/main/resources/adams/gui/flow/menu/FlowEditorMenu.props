@@ -180,6 +180,9 @@ adams.gui.flow.menu.WindowDuplicateInTab-Mnemonic=T
 adams.gui.flow.menu.WindowDuplicateInTab-Shortcut=
 
 # Help
+adams.gui.flow.menu.HelpActors-Icon=actor.gif
+adams.gui.flow.menu.HelpActors-Mnemonic=
+adams.gui.flow.menu.HelpActors-Shortcut=
 adams.gui.flow.menu.HelpVariables-Icon=variable.gif
 adams.gui.flow.menu.HelpVariables-Mnemonic=
 adams.gui.flow.menu.HelpVariables-Shortcut=

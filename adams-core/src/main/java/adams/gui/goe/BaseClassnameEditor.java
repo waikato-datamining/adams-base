@@ -141,14 +141,14 @@ public class BaseClassnameEditor
     buttonOK.setEnabled(false);
     buttonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	String s = m_PanelHelp.getSelectedClass();
+	String s = m_PanelHelp.getSelectedClassName();
 	if ((s != null) && ((BaseClassname) getValue()).isValid(s) && !s.equals(((BaseObject) getValue()).getValue()))
 	  setValue(new BaseClassname(s));
 	closeDialog(APPROVE_OPTION);
       }
     });
     panel.add(buttonOK);
-    m_PanelHelp.addChangeListener((ChangeEvent e) -> buttonOK.setEnabled(m_PanelHelp.getSelectedClass() != null));
+    m_PanelHelp.addChangeListener((ChangeEvent e) -> buttonOK.setEnabled(m_PanelHelp.getSelectedClassName() != null));
 
     buttonClose = new BaseButton("Cancel");
     buttonClose.setMnemonic('C');
@@ -168,7 +168,7 @@ public class BaseClassnameEditor
   @Override
   protected void initForDisplay() {
     super.initForDisplay();
-    if ((m_PanelHelp.getSelectedClass() == null) || !m_PanelHelp.getSelectedClass().equals("" + getValue()))
+    if ((m_PanelHelp.getSelectedClassName() == null) || !m_PanelHelp.getSelectedClassName().equals("" + getValue()))
       m_PanelHelp.setSelectedClass("" + getValue());
     m_PanelHelp.setToolTipText(((BaseObject) getValue()).getTipText());
   }
