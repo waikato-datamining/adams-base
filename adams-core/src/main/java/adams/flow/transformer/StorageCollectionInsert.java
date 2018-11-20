@@ -14,7 +14,7 @@
  */
 
 /*
- * CollectionInsert.java
+ * StorageCollectionInsert.java
  * Copyright (C) 2018 University of Waikato, Hamilton, NZ
  */
 
@@ -22,36 +22,33 @@ package adams.flow.transformer;
 
 import adams.core.ClassCrossReference;
 import adams.core.Index;
-import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
-import adams.core.base.BaseClassname;
 import adams.flow.control.StorageName;
-import adams.flow.core.CallableActorReference;
-import adams.flow.core.ObjectRetriever;
-import adams.flow.core.ObjectRetriever.RetrievalType;
+import adams.flow.control.StorageUpdater;
 import adams.flow.core.Token;
+import adams.flow.core.Unknown;
 
 import java.util.Collection;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Inserts an object in the collection using the specified position.<br>
- * The object can be retrieved from a callable actor or from storage.<br>
+ * Inserts the object passing through to the collection in storage at the specified position.<br>
+ * After inserting the object successfully, just forwards the object.<br>
  * If the collection does not implement the java.util.List interface and the insertion is not at the end, the insertion will fail.<br>
  * <br>
  * See also:<br>
- * adams.flow.transformer.StorageCollectionInsert
+ * adams.flow.transformer.CollectionInsert
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;java.util.Collection<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;java.util.Collection<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -63,7 +60,7 @@ import java.util.List;
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: CollectionInsert
+ * &nbsp;&nbsp;&nbsp;default: StorageCollectionInsert
  * </pre>
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -90,26 +87,9 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-retrieval-type &lt;AUTO|SOURCE_ACTOR|STORAGE&gt; (property: retrievalType)
- * &nbsp;&nbsp;&nbsp;Determines how to retrieve the object, in case of AUTO, first the callable
- * &nbsp;&nbsp;&nbsp;actor is checked and then the storage.
- * &nbsp;&nbsp;&nbsp;default: AUTO
- * </pre>
- *
- * <pre>-object-actor &lt;adams.flow.core.CallableActorReference&gt; (property: objectActor)
- * &nbsp;&nbsp;&nbsp;The callable actor (source) to retrieve the object from, ignored if not
- * &nbsp;&nbsp;&nbsp;present.
- * &nbsp;&nbsp;&nbsp;default:
- * </pre>
- *
- * <pre>-object-storage &lt;adams.flow.control.StorageName&gt; (property: objectStorage)
- * &nbsp;&nbsp;&nbsp;The storage item to retrieve the object from, ignored if not present.
+ * <pre>-storageName &lt;adams.flow.control.StorageName&gt; (property: storageName)
+ * &nbsp;&nbsp;&nbsp;The name of the storage item that represents the collection to update.
  * &nbsp;&nbsp;&nbsp;default: storage
- * </pre>
- *
- * <pre>-object-type &lt;adams.core.base.BaseClassname&gt; (property: objectType)
- * &nbsp;&nbsp;&nbsp;The interface or superclass to restrict the object to.
- * &nbsp;&nbsp;&nbsp;default: java.lang.Object
  * </pre>
  *
  * <pre>-position &lt;adams.core.Index&gt; (property: position)
@@ -128,20 +108,20 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class CollectionInsert
+public class StorageCollectionInsert
   extends AbstractTransformer
-  implements ClassCrossReference {
+  implements StorageUpdater, ClassCrossReference {
 
   private static final long serialVersionUID = -4381778255320714964L;
+
+  /** the name of the collection in storage. */
+  protected StorageName m_StorageName;
 
   /** the position where to insert the string. */
   protected Index m_Position;
 
   /** whether to insert after the position instead of at. */
   protected boolean m_After;
-
-  /** for retrieving the object. */
-  protected ObjectRetriever m_Retriever;
 
   /**
    * Returns a string describing the object.
@@ -151,10 +131,10 @@ public class CollectionInsert
   @Override
   public String globalInfo() {
     return
-      "Inserts an object in the collection using the specified position.\n"
-      + "The object can be retrieved from a callable actor or from storage.\n"
-      + "If the collection does not implement the " + Utils.classToString(List.class) + " "
-      + "interface and the insertion is not at the end, the insertion will fail.";
+      "Inserts the object passing through to the collection in storage at the specified position.\n"
+	+ "After inserting the object successfully, just forwards the object.\n"
+	+ "If the collection does not implement the " + Utils.classToString(List.class) + " "
+	+ "interface and the insertion is not at the end, the insertion will fail.";
   }
 
   /**
@@ -163,7 +143,7 @@ public class CollectionInsert
    * @return		the classes
    */
   public Class[] getClassCrossReferences() {
-    return new Class[]{StorageCollectionInsert.class};
+    return new Class[]{CollectionInsert.class};
   }
 
   /**
@@ -174,20 +154,8 @@ public class CollectionInsert
     super.defineOptions();
 
     m_OptionManager.add(
-      "retrieval-type", "retrievalType",
-      RetrievalType.AUTO);
-
-    m_OptionManager.add(
-      "object-actor", "objectActor",
-      new CallableActorReference());
-
-    m_OptionManager.add(
-      "object-storage", "objectStorage",
+      "storageName", "storageName",
       new StorageName());
-
-    m_OptionManager.add(
-      "object-type", "objectType",
-      new BaseClassname(Object.class));
 
     m_OptionManager.add(
       "position", "position",
@@ -199,93 +167,22 @@ public class CollectionInsert
   }
 
   /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Retriever = new ObjectRetriever();
-    m_Retriever.setFlowContext(this);
-  }
-
-  /**
-   * Sets the retrieval type. In case of {@link RetrievalType#AUTO}, first
-   * file, then callable actor, then storage.
-   *
-   * @param value	the type
-   */
-  public void setRetrievalType(RetrievalType value) {
-    m_Retriever.setRetrievalType(value);
-    reset();
-  }
-
-  /**
-   * Returns the retrieval type. In case of {@link RetrievalType#AUTO}, first
-   * file, then callable actor, then storage.
-   *
-   * @return		the type
-   */
-  public RetrievalType getRetrievalType() {
-    return m_Retriever.getRetrievalType();
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String retrievalTypeTipText() {
-    return m_Retriever.retrievalTypeTipText();
-  }
-
-  /**
-   * Sets the callable actor to retrieve the object from.
-   *
-   * @param value	the actor reference
-   */
-  public void setObjectActor(CallableActorReference value) {
-    m_Retriever.setObjectActor(value);
-    reset();
-  }
-
-  /**
-   * Returns the callable actor to retrieve the object from.
-   *
-   * @return		the actor reference
-   */
-  public CallableActorReference getObjectActor() {
-    return m_Retriever.getObjectActor();
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String objectActorTipText() {
-    return m_Retriever.objectActorTipText();
-  }
-
-  /**
-   * Sets the storage item name to get the object from.
+   * Sets the storage item name that represents the collection to update.
    *
    * @param value	the storage name
    */
-  public void setObjectStorage(StorageName value) {
-    m_Retriever.setObjectStorage(value);
+  public void setStorageName(StorageName value) {
+    m_StorageName = value;
     reset();
   }
 
   /**
-   * Returns the storage item name to get the object from.
+   * Returns the storage item name that represents the collection to update.
    *
    * @return		the storage name
    */
-  public StorageName getObjectStorage() {
-    return m_Retriever.getObjectStorage();
+  public StorageName getStorageName() {
+    return m_StorageName;
   }
 
   /**
@@ -294,37 +191,8 @@ public class CollectionInsert
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String objectStorageTipText() {
-    return m_Retriever.objectStorageTipText();
-  }
-
-  /**
-   * Sets the interface or superclass to restrict the objects to.
-   *
-   * @param value	the class
-   */
-  public void setObjectType(BaseClassname value) {
-    m_Retriever.setObjectType(value);
-    reset();
-  }
-
-  /**
-   * Returns the interface or superclass to restrict the objects to.
-   *
-   * @return		the class
-   */
-  public BaseClassname getObjectType() {
-    return m_Retriever.getObjectType();
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String objectTypeTipText() {
-    return m_Retriever.objectTypeTipText();
+  public String storageNameTipText() {
+    return "The name of the storage item that represents the collection to update.";
   }
 
   /**
@@ -389,13 +257,22 @@ public class CollectionInsert
   }
 
   /**
+   * Returns whether storage items are being updated.
+   *
+   * @return		true if storage items are updated
+   */
+  public boolean isUpdatingStorage() {
+    return !getSkip();
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{Collection.class};
+    return new Class[]{Unknown.class};
   }
 
   /**
@@ -405,7 +282,7 @@ public class CollectionInsert
    */
   @Override
   public Class[] generates() {
-    return new Class[]{Collection.class};
+    return new Class[]{Unknown.class};
   }
 
   /**
@@ -417,16 +294,14 @@ public class CollectionInsert
   public String getQuickInfo() {
     String	result;
 
+    result = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
     if (QuickInfoHelper.hasVariable(this, "after"))
-      result = QuickInfoHelper.getVariable(this, "after") + ": ";
+      result += ", " + QuickInfoHelper.getVariable(this, "after") + ": ";
     else if (m_After)
-      result = "after: ";
+      result += ", after: ";
     else
-      result = "at: ";
+      result = ", at: ";
     result += QuickInfoHelper.toString(this, "position", m_Position);
-    result += QuickInfoHelper.toString(this, "retrievalType", getRetrievalType(), ", type: ");
-    result += QuickInfoHelper.toString(this, "objectSource", getObjectActor(), ", source: ");
-    result += QuickInfoHelper.toString(this, "objectStorage", getObjectStorage(), ", storage: ");
 
     return result;
   }
@@ -440,18 +315,19 @@ public class CollectionInsert
   protected String doExecute() {
     String		result;
     Collection		coll;
-    MessageCollection	errors;
     Object		obj;
     int			pos;
 
     result = null;
-    coll   = m_InputToken.getPayload(Collection.class);
-    errors = new MessageCollection();
-    obj    = m_Retriever.getObject(errors);
-    if (!errors.isEmpty()) {
-      result = errors.toString();
-    }
-    else {
+
+    obj  = m_InputToken.getPayload();
+    coll = null;
+    if (!getStorageHandler().getStorage().has(m_StorageName))
+      result = "Collection not available from storage: " + m_StorageName;
+    else
+      coll = (Collection) getStorageHandler().getStorage().get(m_StorageName);
+
+    if (result == null) {
       // determine position
       if (coll.size() == 0) {
 	pos = 0;
@@ -480,7 +356,7 @@ public class CollectionInsert
       }
 
       if (result == null)
-	m_OutputToken = new Token(coll);
+	m_OutputToken = new Token(obj);
     }
 
     return result;
