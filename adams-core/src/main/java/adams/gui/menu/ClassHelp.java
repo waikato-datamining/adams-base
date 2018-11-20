@@ -15,7 +15,7 @@
 
 /*
  * ClassHelp.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -31,7 +31,6 @@ import adams.gui.tools.ClassHelpPanel;
  * Displays help for any selected class.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClassHelp
   extends AbstractBasicMenuItemDefinition {
@@ -101,7 +100,12 @@ public class ClassHelp
    */
   @Override
   public void launch() {
-    createChildFrame(new ClassHelpPanel(), GUIHelper.getDefaultDialogDimension());
+    ClassHelpPanel  panel;
+
+    panel = new ClassHelpPanel();
+    panel.listAllClassNames(false);
+
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
   }
 
   /**

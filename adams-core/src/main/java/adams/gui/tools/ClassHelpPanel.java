@@ -34,7 +34,9 @@ import adams.gui.help.HelpContainer;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JEditorPane;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -43,6 +45,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -89,7 +93,6 @@ public class ClassHelpPanel
   @Override
   protected void initGUI() {
     BaseSplitPane 	split;
-    List<String> 	classes;
 
     super.initGUI();
 
@@ -134,8 +137,7 @@ public class ClassHelpPanel
     split = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     add(split, BorderLayout.CENTER);
 
-    classes = ClassLister.getSingleton().getAllClassnames(false);
-    m_ListClasses = new SearchableBaseList(classes.toArray(new String[classes.size()]));
+    m_ListClasses = new SearchableBaseList();
     m_ListClasses.search(null, false);
     m_ListClasses.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     m_ListClasses.addListSelectionListener((ListSelectionEvent e) -> {
@@ -186,6 +188,58 @@ public class ClassHelpPanel
   }
 
   /**
+   * Updates the listed classes.
+   *
+   * @param managed	whether to list only managed classes or all
+   * @see		#setListedClassNames(List)
+   */
+  public void listAllClassNames(boolean managed) {
+    setListedClassNames(ClassLister.getSingleton().getAllClassnames(managed));
+  }
+
+  /**
+   * Sets the class names to list.
+   *
+   * @param classes 	the class names
+   */
+  public void setListedClassNames(String[] classes) {
+    setListedClassNames(Arrays.asList(classes));
+  }
+
+  /**
+   * Sets the class names to list.
+   *
+   * @param classes 	the class names
+   */
+  public void setListedClassNames(List<String> classes) {
+    DefaultListModel	model;
+
+    model = new DefaultListModel();
+    for (String cls: classes)
+      model.addElement(cls);
+
+    m_ListClasses.setModel(model);
+  }
+
+  /**
+   * Returns the currently listed class names.
+   *
+   * @return		the class names
+   */
+  public List<String> getListedClassNames() {
+    List<String>	result;
+    ListModel 		model;
+    int			i;
+
+    result = new ArrayList<>();
+    model  = m_ListClasses.getActualModel();
+    for (i = 0; i < model.getSize(); i++)
+      result.add(model.getElementAt(i).toString());
+
+    return result;
+  }
+
+  /**
    * Sets the initially selected class.
    *
    * @param value	the class to select
@@ -199,7 +253,7 @@ public class ClassHelpPanel
    *
    * @return		the class, null if none selected
    */
-  public String getSelectedClass() {
+  public String getSelectedClassName() {
     if (m_ListClasses.getSelectedIndex() == -1)
       return null;
     else
