@@ -135,6 +135,8 @@ public class ClassHelpPanel
     add(m_TextSearch, BorderLayout.NORTH);
 
     split = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    split.setUISettingsParameters(getClass(), "Divider");
+    split.setResizeWeight(0.0);
     add(split, BorderLayout.CENTER);
 
     m_ListClasses = new SearchableBaseList();
@@ -156,9 +158,6 @@ public class ClassHelpPanel
     m_TextPaneHelp.setAutoscrolls(true);
     m_TextPaneHelp.addHyperlinkListener(new DefaultHyperlinkListener());
     split.setBottomComponent(new BaseScrollPane(m_TextPaneHelp));
-
-    split.setResizeWeight(1.0);
-    split.setDividerLocation(200);
   }
 
   /**
