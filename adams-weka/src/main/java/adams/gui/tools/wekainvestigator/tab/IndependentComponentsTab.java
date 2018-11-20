@@ -275,9 +275,9 @@ public class IndependentComponentsTab
     }
 
     datasets = DatasetHelper.generateDatasetList(getData());
-    index    = DatasetHelper.indexOfDataset(getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    index    = DatasetHelper.indexOfDataset(getData(), m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);
@@ -404,6 +404,7 @@ public class IndependentComponentsTab
     result = super.doSerialize();
     result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
     result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    result.put(KEY_RANGE, m_TextAttributeRange.getText());
     result.put(KEY_ICA, m_PanelICA.getCurrent());
 
     return result;
@@ -421,6 +422,8 @@ public class IndependentComponentsTab
       m_SplitPane.setDividerLocation((int) data.get(KEY_LEFTPANELWIDTH));
     if (data.containsKey(KEY_DATASET))
       m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+    if (data.containsKey(KEY_RANGE))
+      m_TextAttributeRange.setText((String) data.get(KEY_RANGE));
     if (data.containsKey(KEY_ICA))
       m_PanelICA.setCurrent(data.get(KEY_ICA));
   }
