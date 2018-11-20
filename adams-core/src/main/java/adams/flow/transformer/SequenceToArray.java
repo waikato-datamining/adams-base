@@ -15,13 +15,14 @@
 
 /*
  * SequenceToArray.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseClassname;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -69,33 +70,34 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-length &lt;int&gt; (property: arrayLength)
- * &nbsp;&nbsp;&nbsp;The length of the output array; use -1 to output an array with all collected 
+ * &nbsp;&nbsp;&nbsp;The length of the output array; use -1 to output an array with all collected
  * &nbsp;&nbsp;&nbsp;elements so far whenever a token arrives.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-overlap &lt;int&gt; (property: overlap)
  * &nbsp;&nbsp;&nbsp;The overlap of elements between arrays; e.g., sequence of 1,2,3,4 with length
- * &nbsp;&nbsp;&nbsp;=2 and overlap=0 gets packaged in to (1,2),(3,4); with overlap=1, this changes 
+ * &nbsp;&nbsp;&nbsp;=2 and overlap=0 gets packaged in to (1,2),(3,4); with overlap=1, this changes
  * &nbsp;&nbsp;&nbsp;to (1,2),(2,3),(3,4); array length option must be &gt; 0.
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
- * <pre>-array-class &lt;java.lang.String&gt; (property: arrayClass)
+ *
+ * <pre>-array-class &lt;adams.core.base.BaseClassname&gt; (property: arrayClass)
  * &nbsp;&nbsp;&nbsp;The class to use for the array; if none is specified, the class of the first 
  * &nbsp;&nbsp;&nbsp;element is used.
  * &nbsp;&nbsp;&nbsp;default: 
@@ -104,7 +106,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SequenceToArray
   extends AbstractTransformer {
@@ -125,7 +126,7 @@ public class SequenceToArray
   protected int m_Overlap;
 
   /** the class for the array. */
-  protected String m_ArrayClass;
+  protected BaseClassname m_ArrayClass;
 
   /**
    * Returns a string describing the object.
@@ -158,7 +159,7 @@ public class SequenceToArray
 
     m_OptionManager.add(
       "array-class", "arrayClass",
-      "");
+      new BaseClassname());
   }
 
   /**
@@ -172,7 +173,7 @@ public class SequenceToArray
 
     result  = QuickInfoHelper.toString(this, "arrayLength", m_ArrayLength, "length: ");
     result += QuickInfoHelper.toString(this, "overlap", m_Overlap, ", overlap: ");
-    result += QuickInfoHelper.toString(this, "arrayClass", (m_ArrayClass.length() != 0 ? m_ArrayClass : "-from 1st element-"), ", class: ");
+    result += QuickInfoHelper.toString(this, "arrayClass", (!m_ArrayClass.isEmpty() ? m_ArrayClass : "-from 1st element-"), ", class: ");
 
     return result;
   }
@@ -248,7 +249,7 @@ public class SequenceToArray
    * @param value	the classname, use empty string to use class of first
    * 			element
    */
-  public void setArrayClass(String value) {
+  public void setArrayClass(BaseClassname value) {
     m_ArrayClass = value;
     reset();
   }
@@ -259,7 +260,7 @@ public class SequenceToArray
    * @return		the classname, empty string if class of first element
    * 			is used
    */
-  public String getArrayClass() {
+  public BaseClassname getArrayClass() {
     return m_ArrayClass;
   }
 
@@ -375,7 +376,7 @@ public class SequenceToArray
 	  if (m_ArrayClass.length() == 0)
 	    array = Array.newInstance(m_Elements.get(0).getClass(), m_Elements.size());
 	  else
-	    array = Utils.newArray(m_ArrayClass, m_Elements.size());
+	    array = Utils.newArray(m_ArrayClass.getValue(), m_Elements.size());
 	  if (isLoggingEnabled())
 	    getLogger().info("Array type: " + array.getClass().getComponentType());
 	  for (i = 0; i < m_Elements.size(); i++)
