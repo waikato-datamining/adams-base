@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PropertiesManager.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -23,6 +23,7 @@ package adams.gui.tools.previewbrowser;
 import adams.core.Properties;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
+import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.env.PreviewBrowserPanelDefinition;
 import adams.gui.core.ConsolePanel;
@@ -33,7 +34,6 @@ import java.io.File;
  * Manages the properties.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PropertiesManager {
 
@@ -45,6 +45,9 @@ public class PropertiesManager {
 
   /** the prefix for the preferred content handler keys in the props file. */
   public final static String PREFIX_PREFERRED_CONTENT_HANDLER = "PreferredContentHandler-";
+
+  /** the prefix for the custom content handler keys in the props file. */
+  public final static String PREFIX_CUSTOM_CONTENT_HANDLER = "CustomContentHandler-";
 
   /** the properties. */
   protected static Properties m_Properties;
@@ -72,7 +75,7 @@ public class PropertiesManager {
     if (props.hasKey(PREFIX_PREFERRED_CONTENT_HANDLER + ext)) {
       handler = props.getProperty(PREFIX_PREFERRED_CONTENT_HANDLER + ext);
       try {
-	result = (AbstractContentHandler) Class.forName(handler).newInstance();
+	result = (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, handler);
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(
@@ -92,7 +95,7 @@ public class PropertiesManager {
    * @param handler	the preferred handler
    * @return		true if successfully updated
    */
-  public static synchronized boolean updatePreferredContentHandler(String[] ext, String handler) {
+  public static synchronized boolean updatePreferredContentHandler(String[] ext, AbstractContentHandler handler) {
     int		i;
     Properties	props;
 
@@ -101,7 +104,9 @@ public class PropertiesManager {
 
     props = getProperties();
     for (i = 0; i < ext.length; i++)
-      props.setProperty(PropertiesManager.PREFIX_PREFERRED_CONTENT_HANDLER + ext[i], handler);
+      props.setProperty(PREFIX_PREFERRED_CONTENT_HANDLER + ext[i], OptionUtils.getCommandLine(handler));
+
+    setCustomContentHandler(handler);
 
     return save("updating content handler");
   }
@@ -158,9 +163,93 @@ public class PropertiesManager {
 
     props = getProperties();
     for (i = 0; i < ext.length; i++)
-      props.setProperty(PropertiesManager.PREFIX_PREFERRED_ARCHIVE_HANDLER + ext[i], handler);
+      props.setProperty(PREFIX_PREFERRED_ARCHIVE_HANDLER + ext[i], handler);
 
     return save("updating archive handler");
+  }
+
+  /**
+   * Returns any custom content handler for the class. If not available, then
+   * just an instance of the class.
+   *
+   * @param cls		the handler class to get the custom setup for
+   * @return		the custom setup (or just an instance of the class), null if failed to instantiate
+   */
+  public static AbstractContentHandler getCustomContentHandler(Class cls) {
+    try {
+      return getCustomContentHandler((AbstractContentHandler) cls.newInstance());
+    }
+    catch (Exception e) {
+      ConsolePanel.getSingleton().append(
+	LoggingLevel.SEVERE,
+	"Failed to create instance of content handler " + cls.getName() + "!", e);
+      return null;
+    }
+  }
+
+  /**
+   * Returns any custom content handler for the class. If not available, then
+   * just the provided instance.
+   *
+   * @param handler	the handler to get the custom setup for
+   * @return		the custom setup (or just the input)
+   */
+  public static AbstractContentHandler getCustomContentHandler(AbstractContentHandler handler) {
+    AbstractContentHandler	result;
+    String 			custom;
+
+    result = handler;
+    custom = getProperties().getProperty(PREFIX_CUSTOM_CONTENT_HANDLER + handler.getClass().getName());
+    if (custom != null) {
+      try {
+        result = (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, custom);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(
+	  LoggingLevel.SEVERE,
+	  "Failed to instantiate custom setup of content handler " + handler.getClass().getName() + ": " + custom, e);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Stores the custom setup of the handler. If just default options, then it
+   * gets ignored.
+   *
+   * @param handler	the custom handler to update in props file
+   * @return		true if updated
+   */
+  public static boolean setCustomContentHandler(AbstractContentHandler handler) {
+    String	key;
+    String	cmdline;
+    String	cmdlineDefault;
+    boolean	update;
+
+    key = PREFIX_CUSTOM_CONTENT_HANDLER + handler.getClass().getName();
+
+    cmdline = OptionUtils.getCommandLine(handler);
+    try {
+      cmdlineDefault = OptionUtils.getCommandLine(handler.getClass().newInstance());
+    }
+    catch (Exception e) {
+      cmdlineDefault = handler.getClass().getName();
+    }
+
+    update = false;
+    if (cmdline.equals(cmdlineDefault)) {
+      if (getProperties().hasKey(key)) {
+        getProperties().removeKey(key);
+	update = true;
+      }
+    }
+    else {
+      getProperties().setProperty(key, cmdline);
+      update = true;
+    }
+
+    return update && save("Updating custom handler setup: " + cmdline);
   }
 
   /**

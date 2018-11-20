@@ -21,14 +21,13 @@
 package adams.gui.tools.previewbrowser;
 
 import adams.core.CleanUpHandler;
-import adams.core.Utils;
 import adams.core.io.FileUtils;
-import adams.core.logging.LoggingLevel;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
-import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SearchPanel;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
@@ -37,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -66,6 +66,12 @@ public class PreviewDisplay
   /** the model of the combobox. */
   protected DefaultComboBoxModel<String> m_ModelContentHandlers;
 
+  /** the list of content handler objects (aligned with combobox). */
+  protected List<AbstractContentHandler> m_ListContentHandlers;
+
+  /** the button for displaying the options for the content handler. */
+  protected BaseButton m_ButtonContentHandler;
+
   /** whether to ignore selections of the content handler combobox temporarily. */
   protected boolean m_IgnoreContentHandlerChanges;
 
@@ -88,6 +94,7 @@ public class PreviewDisplay
     m_CurrentFiles                = new File[0];
     m_IgnoreContentHandlerChanges = false;
     m_DisplayInProgress           = false;
+    m_ListContentHandlers         = new ArrayList<>();
   }
 
   /**
@@ -116,8 +123,46 @@ public class PreviewDisplay
       if (m_CurrentFiles != null)
 	display(m_CurrentFiles, false);
     });
+    m_ButtonContentHandler = new BaseButton("...");
+    m_ButtonContentHandler.addActionListener((ActionEvent e) -> editContentHandler());
+    m_ButtonContentHandler.setToolTipText("Configure content handler...");
     m_PanelContentHandlers.add(new JLabel("Preferred handler"));
     m_PanelContentHandlers.add(m_ComboBoxContentHandlers);
+    m_PanelContentHandlers.add(m_ButtonContentHandler);
+  }
+
+  /**
+   * Displays GOE for current content handler.
+   */
+  protected void editContentHandler() {
+    GenericObjectEditorDialog	dialog;
+    int				index;
+    AbstractContentHandler	handler;
+
+    if (m_ComboBoxContentHandlers.getSelectedIndex() < 0)
+      index = 0;
+    else
+      index = m_ComboBoxContentHandlers.getSelectedIndex();
+    handler = m_ListContentHandlers.get(index);
+
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.getGOEEditor().setCanChangeClassInDialog(false);
+    dialog.getGOEEditor().setClassType(AbstractContentHandler.class);
+    dialog.setCurrent(handler);
+    dialog.setLocationRelativeTo(getParent());
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    handler = (AbstractContentHandler) dialog.getCurrent();
+    PropertiesManager.setCustomContentHandler(handler);
+    m_ListContentHandlers.set(index, handler);
+
+    if (m_CurrentFiles != null)
+      display(m_CurrentFiles, false);
   }
 
   /**
@@ -176,8 +221,10 @@ public class PreviewDisplay
       // update combobox
       m_IgnoreContentHandlerChanges = true;
       m_ModelContentHandlers.removeAllElements();
-      for (Class handler: handlers)
+      for (Class handler: handlers) {
 	m_ModelContentHandlers.addElement(handler.getName());
+	m_ListContentHandlers.add(PropertiesManager.getCustomContentHandler(handler));
+      }
       m_PanelContentHandlers.setVisible(m_ModelContentHandlers.getSize() > 1);
       // set preferred one
       preferred = PropertiesManager.getPreferredContentHandler(localFiles[0]);
@@ -195,20 +242,11 @@ public class PreviewDisplay
       if (prefIndex > -1) {
 	m_ComboBoxContentHandlers.setSelectedIndex(prefIndex);
 	// get preferred handler
-	try {
-	  cls = Class.forName((String) m_ModelContentHandlers.getElementAt(prefIndex));
-	  contentHandler = (AbstractContentHandler) cls.newInstance();
-	  if (contentHandler instanceof MultipleFileContentHandler)
-	    result = ((MultipleFileContentHandler) contentHandler).getPreview(localFiles);
-	  else
-	    result = contentHandler.getPreview(localFiles[0]);
-	}
-	catch (Exception e) {
-	  ConsolePanel.getSingleton().append(
-	    LoggingLevel.SEVERE,
-	    "Failed to obtain content handler for '" + Utils.arrayToString(localFiles) + "':",
-	    e);
-	}
+	contentHandler = m_ListContentHandlers.get(prefIndex);
+	if (contentHandler instanceof MultipleFileContentHandler)
+	  result = ((MultipleFileContentHandler) contentHandler).getPreview(localFiles);
+	else
+	  result = contentHandler.getPreview(localFiles[0]);
       }
       SwingUtilities.invokeLater(() -> m_IgnoreContentHandlerChanges = false);
     }
@@ -264,17 +302,21 @@ public class PreviewDisplay
    * Updates the preferred handler.
    */
   protected void updatePreferredContentHandler() {
-    String		ext;
-    String		handler;
-    List<String>	exts;
+    String			ext;
+    AbstractContentHandler	handlerObj;
+    int				index;
+    List<String>		exts;
 
     if (m_CurrentFiles == null)
       return;
 
+
     if (m_ComboBoxContentHandlers.getSelectedIndex() < 0)
-      handler = (String) m_ComboBoxContentHandlers.getItemAt(0);
+      index = 0;
     else
-      handler = (String) m_ComboBoxContentHandlers.getSelectedItem();
+      index = m_ComboBoxContentHandlers.getSelectedIndex();
+
+    handlerObj = m_ListContentHandlers.get(index);
 
     exts = new ArrayList<>();
     for (File file: m_CurrentFiles) {
@@ -285,7 +327,7 @@ public class PreviewDisplay
       exts.add(ext);
     }
 
-    PropertiesManager.updatePreferredContentHandler(exts.toArray(new String[exts.size()]), handler);
+    PropertiesManager.updatePreferredContentHandler(exts.toArray(new String[0]), handlerObj);
   }
 
   /**

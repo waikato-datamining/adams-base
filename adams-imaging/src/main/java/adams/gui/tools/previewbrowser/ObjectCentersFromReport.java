@@ -15,21 +15,27 @@
 
 /*
  * ObjectCentersFromReport.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
+import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.report.Report;
+import adams.gui.core.Fonts;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectCentersOverlayFromReport;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.util.List;
 
@@ -55,6 +61,33 @@ public class ObjectCentersFromReport
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;
 
+  /** the prefix for the objects in the report. */
+  protected String m_Prefix;
+
+  /** the diameter of the circle. */
+  protected int m_Diameter;
+
+  /** the color for the objects. */
+  protected Color m_Color;
+
+  /** whether to use colors per type. */
+  protected boolean m_UseColorsPerType;
+
+  /** the color provider to use. */
+  protected ColorProvider m_TypeColorProvider;
+
+  /** the suffix for the type. */
+  protected String m_TypeSuffix;
+
+  /** the regular expression for the types to draw. */
+  protected BaseRegExp m_TypeRegExp;
+
+  /** the label for the rectangles. */
+  protected String m_LabelFormat;
+
+  /** the label font. */
+  protected Font m_LabelFont;
+
   /**
    * Returns a string describing the object.
    *
@@ -66,6 +99,317 @@ public class ObjectCentersFromReport
       "Displays the following image types with an overlay for the objects "
 	+ "stored in the report with the same name (using object prefix '" + ObjectCentersOverlayFromReport.PREFIX_DEFAULT + "'): "
 	+ Utils.arrayToString(getExtensions());
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "prefix", "prefix",
+      ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
+
+    m_OptionManager.add(
+      "diameter", "diameter",
+      10, -1, null);
+
+    m_OptionManager.add(
+      "color", "color",
+      Color.RED);
+
+    m_OptionManager.add(
+      "use-colors-per-type", "useColorsPerType",
+      true);
+
+    m_OptionManager.add(
+      "type-color-provider", "typeColorProvider",
+      new DefaultColorProvider());
+
+    m_OptionManager.add(
+      "type-suffix", "typeSuffix",
+      ".type");
+
+    m_OptionManager.add(
+      "type-regexp", "typeRegExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
+      "label-format", "labelFormat",
+      "#. $");
+
+    m_OptionManager.add(
+      "label-font", "labelFont",
+      Fonts.getSansFont(14));
+  }
+
+  /**
+   * Sets the prefix to use for the objects in the report.
+   *
+   * @param value 	the prefix
+   */
+  public void setPrefix(String value) {
+    m_Prefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix to use for the objects in the report.
+   *
+   * @return 		the prefix
+   */
+  public String getPrefix() {
+    return m_Prefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prefixTipText() {
+    return "The prefix of fields in the report to identify as object location, eg 'Object.'.";
+  }
+
+  /**
+   * Sets the diameter to use for drawing the circle
+   * (if < 1 to draw an ellipse using the rectangle's dimensions).
+   *
+   * @param value 	the diameter, < 1 if using the rectangle's dimensions
+   */
+  public void setDiameter(int value) {
+    if (getOptionManager().isValid("diameter", value)) {
+      m_Diameter = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the diameter to use for drawing the circle
+   * (if < 1 to draw an ellipse using the rectangle's dimensions).
+   *
+   * @return 		the diameter, < 1 if using the rectangle's dimensions
+   */
+  public int getDiameter() {
+    return m_Diameter;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String diameterTipText() {
+    return "The diameter of the circle that is drawn; < 1 to use the rectangle's dimensions to draw an ellipse.";
+  }
+
+  /**
+   * Sets the color to use for the objects.
+   *
+   * @param value 	the color
+   */
+  public void setColor(Color value) {
+    m_Color = value;
+    reset();
+  }
+
+  /**
+   * Returns the color to use for the objects.
+   *
+   * @return 		the color
+   */
+  public Color getColor() {
+    return m_Color;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String colorTipText() {
+    return "The color to use for the objects.";
+  }
+
+  /**
+   * Sets whether to use colors per type.
+   *
+   * @param value 	true if to use colors per type
+   */
+  public void setUseColorsPerType(boolean value) {
+    m_UseColorsPerType = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use colors per type.
+   *
+   * @return 		true if to use colors per type
+   */
+  public boolean getUseColorsPerType() {
+    return m_UseColorsPerType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useColorsPerTypeTipText() {
+    return "If enabled, individual colors per type are used.";
+  }
+
+  /**
+   * Sets the color provider to use for the types.
+   *
+   * @param value 	the provider
+   */
+  public void setTypeColorProvider(ColorProvider value) {
+    m_TypeColorProvider = value;
+    reset();
+  }
+
+  /**
+   * Returns the color provider to use for the types.
+   *
+   * @return 		the provider
+   */
+  public ColorProvider getTypeColorProvider() {
+    return m_TypeColorProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeColorProviderTipText() {
+    return "The color provider to use for the various types.";
+  }
+
+  /**
+   * Sets the suffix to use for the types.
+   *
+   * @param value 	the suffix
+   */
+  public void setTypeSuffix(String value) {
+    m_TypeSuffix = value;
+    reset();
+  }
+
+  /**
+   * Returns the suffix to use for the types.
+   *
+   * @return 		the suffix
+   */
+  public String getTypeSuffix() {
+    return m_TypeSuffix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeSuffixTipText() {
+    return "The suffix of fields in the report to identify the type.";
+  }
+
+  /**
+   * Sets the regular expression that the types must match in order to get
+   * drawn.
+   *
+   * @param value 	the expression
+   */
+  public void setTypeRegExp(BaseRegExp value) {
+    m_TypeRegExp = value;
+    reset();
+  }
+
+  /**
+   * Returns the regular expression that the types must match in order to get
+   * drawn.
+   *
+   * @return 		the expression
+   */
+  public BaseRegExp getTypeRegExp() {
+    return m_TypeRegExp;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeRegExpTipText() {
+    return "The regular expression that the types must match in order to get drawn (eg only plotting a subset).";
+  }
+
+  /**
+   * Sets the label format.
+   *
+   * @param value 	the label format
+   */
+  public void setLabelFormat(String value) {
+    m_LabelFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the label format.
+   *
+   * @return 		the label format
+   */
+  public String getLabelFormat() {
+    return m_LabelFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelFormatTipText() {
+    return "The label format string to use for the rectangles; '#' for index, '@' for type and '$' for short type (type suffix must be defined for '@' and '$'); for instance: '# @'.";
+  }
+
+  /**
+   * Sets the label font.
+   *
+   * @param value 	the label font
+   */
+  public void setLabelFont(Font value) {
+    m_LabelFont = value;
+    reset();
+  }
+
+  /**
+   * Returns the label font.
+   *
+   * @return 		the label font
+   */
+  public Font getLabelFont() {
+    return m_LabelFont;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelFontTipText() {
+    return "The font to use for the labels.";
   }
 
   /**
@@ -105,10 +449,15 @@ public class ObjectCentersFromReport
       if (reports.size() > 0) {
         report  = reports.get(0);
 	overlay = new ObjectCentersOverlayFromReport();
-	overlay.setUseColorsPerType(true);
-	overlay.setTypeSuffix(".type");
-	overlay.setLabelFormat("#. $");
-	overlay.setPrefix(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
+	overlay.setDiameter(m_Diameter);
+	overlay.setPrefix(m_Prefix);
+	overlay.setColor(m_Color);
+	overlay.setUseColorsPerType(m_UseColorsPerType);
+	overlay.setTypeColorProvider(m_TypeColorProvider.shallowCopy());
+	overlay.setTypeSuffix(m_TypeSuffix);
+	overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
+	overlay.setLabelFormat(m_LabelFormat);
+	overlay.setLabelFont(m_LabelFont);
       }
     }
     if (overlay != null) {

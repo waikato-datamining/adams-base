@@ -15,7 +15,7 @@
 
 /*
  * PlainTextHandler.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -46,13 +46,21 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PlainTextHandler
   extends AbstractContentHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 4859255638148506547L;
+
+  /** the tab size. */
+  protected int m_TabSize;
+
+  /** whether to perform line wrap. */
+  protected boolean m_LineWrap;
+
+  /** whether to wrap word style. */
+  protected boolean m_WrapStyleWord;
 
   /**
    * Returns a string describing the object.
@@ -62,6 +70,128 @@ public class PlainTextHandler
   @Override
   public String globalInfo() {
     return "Displays the following plain text file types: " + Utils.arrayToString(getExtensions());
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "tab-size", "tabSize",
+      8, 0, null);
+
+    m_OptionManager.add(
+      "line-wrap", "lineWrap",
+      false);
+
+    m_OptionManager.add(
+      "wrap-style-word", "wrapStyleWord",
+      true);
+  }
+
+  /**
+   * Sets the tab size, i.e., the number of maximum width characters.
+   *
+   * @param value	the number of maximum width chars
+   */
+  public void setTabSize(int value) {
+    if (getOptionManager().isValid("tabSize", value)) {
+      m_TabSize = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the tab size, i.e., the number of maximum width characters.
+   *
+   * @return		the number of maximum width chars
+   */
+  public int getTabSize() {
+    return m_TabSize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String tabSizeTipText() {
+    return "The number of characters to use for a tab.";
+  }
+
+  /**
+   * Enables/disables line wrap.
+   *
+   * @param value	if true line wrap gets enabled
+   */
+  public void setLineWrap(boolean value) {
+    m_LineWrap = value;
+    reset();
+  }
+
+  /**
+   * Returns whether line wrap is enabled.
+   *
+   * @return		true if line wrap enabled
+   */
+  public boolean getLineWrap() {
+    return m_LineWrap;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lineWrapTipText() {
+    return "Whether to wrap lines or not.";
+  }
+
+  /**
+   * Sets the style of wrapping used if the text area is wrapping
+   * lines.  If set to true the lines will be wrapped at word
+   * boundaries (whitespace) if they are too long
+   * to fit within the allocated width.  If set to false,
+   * the lines will be wrapped at character boundaries.
+   * By default this property is false.
+   *
+   * @param word indicates if word boundaries should be used
+   *   for line wrapping
+   * @see #getWrapStyleWord
+   */
+  public void setWrapStyleWord(boolean word) {
+    m_WrapStyleWord = word;
+    reset();
+  }
+
+  /**
+   * Gets the style of wrapping used if the text area is wrapping
+   * lines.  If set to true the lines will be wrapped at word
+   * boundaries (ie whitespace) if they are too long
+   * to fit within the allocated width.  If set to false,
+   * the lines will be wrapped at character boundaries.
+   *
+   * @return if the wrap style should be word boundaries
+   *  instead of character boundaries
+   * @see #setWrapStyleWord
+   */
+  public boolean getWrapStyleWord() {
+    return m_WrapStyleWord;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String wrapStyleWordTipText() {
+    return "Whether to wrap lines at word boundaries or characters.";
   }
 
   /**
@@ -96,6 +226,9 @@ public class PlainTextHandler
         panel = new TextEditorPanel();
         ((TextEditorPanel) panel).setContent(Utils.flatten(lines, "\n"));
         ((TextEditorPanel) panel).setEditable(false);
+        ((TextEditorPanel) panel).setTabSize(m_TabSize);
+        ((TextEditorPanel) panel).setLineWrap(m_LineWrap);
+        ((TextEditorPanel) panel).setWrapStyleWord(m_WrapStyleWord);
         return new PreviewPanel(panel, ((TextEditorPanel) panel).getTextArea());
       }
     }
