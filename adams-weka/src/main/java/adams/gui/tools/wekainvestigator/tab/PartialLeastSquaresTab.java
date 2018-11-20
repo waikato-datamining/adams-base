@@ -89,8 +89,6 @@ public class PartialLeastSquaresTab
 
   public static final String KEY_ALGORITHM = "algorithm";
 
-  public static final String KEY_COMPONENTS = "components";
-
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
