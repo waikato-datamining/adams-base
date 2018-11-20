@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PrincipalComponentsTab.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -26,6 +26,7 @@ import adams.core.Properties;
 import adams.core.Range;
 import adams.core.base.BaseRegExp;
 import adams.data.instancesanalysis.PCA;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.data.weka.WekaAttributeRange;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
@@ -63,7 +64,6 @@ import java.util.Map;
  * dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PrincipalComponentsTab
   extends AbstractInvestigatorTab {
@@ -83,6 +83,8 @@ public class PrincipalComponentsTab
   public static final String KEY_MAXATTRIBUTENAMES = "maxattributenames";
 
   public static final String KEY_SKIPNOMINAL = "skipnominal";
+
+  public static final String KEY_ADDITIONALATTRIBUTES = "additional attributes";
 
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
@@ -116,6 +118,9 @@ public class PrincipalComponentsTab
 
   /** whether to skip nominal attributes. */
   protected BaseCheckBox m_CheckBoxSkipNominal;
+
+  /** the additional attribute range. */
+  protected BaseTextField m_TextAdditionalAttributes;
 
   /** the button to start PCA. */
   protected BaseButton m_ButtonStart;
@@ -207,6 +212,24 @@ public class PrincipalComponentsTab
     m_CheckBoxSkipNominal = new BaseCheckBox();
     m_CheckBoxSkipNominal.setSelected(props.getBoolean("PrincipalComponents.SkipNominal", false));
     m_PanelParameters.addParameter("Skip nominal attributes", m_CheckBoxSkipNominal);
+
+    m_TextAdditionalAttributes = new BaseTextField(20);
+    m_TextAdditionalAttributes.setText("");
+    m_TextAdditionalAttributes.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+    });
+    m_PanelParameters.addParameter("Additional attributes", m_TextAdditionalAttributes);
 
     // buttons
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -323,9 +346,11 @@ public class PrincipalComponentsTab
    */
   protected String canVisualize() {
     String	rangeStr;
+    String	additionalStr;
     Instances	data;
 
-    rangeStr = m_TextAttributeRange.getText();
+    rangeStr      = m_TextAttributeRange.getText();
+    additionalStr = m_TextAdditionalAttributes.getText();
     if (m_ComboBoxDatasets.getSelectedIndex() > -1)
       data = getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     else
@@ -343,6 +368,9 @@ public class PrincipalComponentsTab
     if (!Range.isValid(rangeStr, data.numAttributes()))
       return "Invalid attribute range!";
 
+    if (!additionalStr.isEmpty() && !Range.isValid(rangeStr, data.numAttributes()))
+      return "Invalid additional attributes range!";
+
     return null;
   }
 
@@ -359,6 +387,59 @@ public class PrincipalComponentsTab
   }
 
   /**
+   * Returns the additional attribute indices.
+   *
+   * @param data	the data to use
+   * @return		the indices
+   */
+  protected int[] getAdditionalAttributeIndices(Instances data) {
+    int[] 		result;
+    WekaAttributeRange 	addRange;
+
+    if (!m_TextAdditionalAttributes.getText().isEmpty()) {
+      addRange = new WekaAttributeRange(m_TextAdditionalAttributes.getText());
+      addRange.setData(data);
+      result = addRange.getIntIndices();
+    }
+    else {
+      result = new int[0];
+    }
+
+    return result;
+  }
+
+  /**
+   * Adds the additional columns from the Instances to the spreadsheet.
+   *
+   * @param sheet	the spreadsheet to extend
+   * @param data	the data to use
+   * @param additional	the additional attribute indices to add
+   */
+  protected void addAdditionalAttributes(SpreadSheet sheet, Instances data, int[] additional) {
+    int			r;
+    int			a;
+    int[]		newIndices;
+
+    if (additional.length == 0)
+      return;
+
+    newIndices = new int[additional.length];
+    for (a = 0; a < additional.length; a++) {
+      newIndices[a] = sheet.getColumnCount();
+      sheet.insertColumn(sheet.getColumnCount(), data.attribute(additional[a]).name());
+    }
+
+    for (r = 0; r < sheet.getRowCount(); r++) {
+      for (a = 0; a < additional.length; a++) {
+	if (data.attribute(additional[a]).isNumeric())
+	  sheet.getCell(r, newIndices[a]).setContent(data.instance(r).value(additional[a]));
+	else if (data.attribute(additional[a]).isNominal() || data.attribute(additional[a]).isString())
+	  sheet.getCell(r, newIndices[a]).setContent(data.instance(r).stringValue(additional[a]));
+      }
+    }
+  }
+
+  /**
    * Generates PCA visualization.
    */
   protected void startExecution() {
@@ -366,20 +447,28 @@ public class PrincipalComponentsTab
       @Override
       protected void doRun() {
         DataContainer cont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
+        Instances data = cont.getData();
         PCA pca = new PCA();
         pca.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
         pca.setVariance(m_TextVariance.getValue().doubleValue());
         pca.setMaxAttributes(m_TextMaxAttributes.getValue().intValue());
         pca.setMaxAttributeNames(m_TextMaxAttributeNames.getValue().intValue());
 	pca.setSkipNominal(m_CheckBoxSkipNominal.isSelected());
-        String result = pca.analyze(cont.getData());
+        String result = pca.analyze(data);
         if (result != null) {
           logError(result, "PCA error");
         }
         else {
-          m_PanelLoadings.setData(pca.getLoadings());
+	  int[] additional = getAdditionalAttributeIndices(data);
+	  // loadings
+	  SpreadSheet loadings = pca.getLoadings();
+	  addAdditionalAttributes(loadings, data, additional);
+          m_PanelLoadings.setData(loadings);
           m_PanelLoadings.reset();
-          m_PanelScores.setData(pca.getScores());
+          // scores
+	  SpreadSheet scores = pca.getScores();
+	  addAdditionalAttributes(scores, data, additional);
+          m_PanelScores.setData(scores);
           m_PanelScores.reset();
         }
       }
@@ -432,6 +521,7 @@ public class PrincipalComponentsTab
     result.put(KEY_MAXATTRIBUTES, m_TextMaxAttributes.getValue().intValue());
     result.put(KEY_MAXATTRIBUTENAMES, m_TextMaxAttributeNames.getValue().intValue());
     result.put(KEY_SKIPNOMINAL, m_CheckBoxSkipNominal.isSelected());
+    result.put(KEY_ADDITIONALATTRIBUTES, m_TextAdditionalAttributes.getText());
 
     return result;
   }
@@ -458,5 +548,7 @@ public class PrincipalComponentsTab
       m_TextMaxAttributeNames.setValue((int) data.get(KEY_MAXATTRIBUTENAMES));
     if (data.containsKey(KEY_SKIPNOMINAL))
       m_CheckBoxSkipNominal.setSelected((boolean) data.get(KEY_MAXATTRIBUTENAMES));
+    if (data.containsKey(KEY_ADDITIONALATTRIBUTES))
+      m_TextAdditionalAttributes.setText((String) data.get(KEY_ADDITIONALATTRIBUTES));
   }
 }

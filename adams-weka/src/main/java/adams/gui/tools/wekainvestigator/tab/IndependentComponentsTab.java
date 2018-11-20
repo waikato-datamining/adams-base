@@ -25,6 +25,7 @@ import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Range;
 import adams.core.option.OptionUtils;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.data.weka.WekaAttributeRange;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
@@ -76,6 +77,8 @@ public class IndependentComponentsTab
 
   public static final String KEY_ICA = "ica";
 
+  public static final String KEY_ADDITIONALATTRIBUTES = "additional attributes";
+
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
@@ -99,6 +102,9 @@ public class IndependentComponentsTab
 
   /** the ICA setup. */
   protected GenericObjectEditorPanel m_PanelICA;
+
+  /** the additional attribute range. */
+  protected BaseTextField m_TextAdditionalAttributes;
 
   /** the button to start PCA. */
   protected BaseButton m_ButtonStart;
@@ -187,6 +193,24 @@ public class IndependentComponentsTab
     m_PanelICA = new GenericObjectEditorPanel(FastICA.class, fastica);
     m_PanelICA.addChangeListener((ChangeEvent e) -> updateButtons());
     m_PanelParameters.addParameter("ICA", m_PanelICA);
+
+    m_TextAdditionalAttributes = new BaseTextField(20);
+    m_TextAdditionalAttributes.setText("");
+    m_TextAdditionalAttributes.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+    });
+    m_PanelParameters.addParameter("Additional attributes", m_TextAdditionalAttributes);
 
     // buttons
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -303,9 +327,11 @@ public class IndependentComponentsTab
    */
   protected String canVisualize() {
     String	rangeStr;
+    String	additionalStr;
     Instances	data;
 
-    rangeStr = m_TextAttributeRange.getText();
+    rangeStr      = m_TextAttributeRange.getText();
+    additionalStr = m_TextAdditionalAttributes.getText();
     if (m_ComboBoxDatasets.getSelectedIndex() > -1)
       data = getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     else
@@ -323,6 +349,9 @@ public class IndependentComponentsTab
     if (!Range.isValid(rangeStr, data.numAttributes()))
       return "Invalid attribute range!";
 
+    if (!additionalStr.isEmpty() && !Range.isValid(rangeStr, data.numAttributes()))
+      return "Invalid additional attributes range!";
+
     return null;
   }
 
@@ -339,6 +368,59 @@ public class IndependentComponentsTab
   }
 
   /**
+   * Returns the additional attribute indices.
+   *
+   * @param data	the data to use
+   * @return		the indices
+   */
+  protected int[] getAdditionalAttributeIndices(Instances data) {
+    int[] 		result;
+    WekaAttributeRange 	addRange;
+
+    if (!m_TextAdditionalAttributes.getText().isEmpty()) {
+      addRange = new WekaAttributeRange(m_TextAdditionalAttributes.getText());
+      addRange.setData(data);
+      result = addRange.getIntIndices();
+    }
+    else {
+      result = new int[0];
+    }
+
+    return result;
+  }
+
+  /**
+   * Adds the additional columns from the Instances to the spreadsheet.
+   *
+   * @param sheet	the spreadsheet to extend
+   * @param data	the data to use
+   * @param additional	the additional attribute indices to add
+   */
+  protected void addAdditionalAttributes(SpreadSheet sheet, Instances data, int[] additional) {
+    int			r;
+    int			a;
+    int[]		newIndices;
+
+    if (additional.length == 0)
+      return;
+
+    newIndices = new int[additional.length];
+    for (a = 0; a < additional.length; a++) {
+      newIndices[a] = sheet.getColumnCount();
+      sheet.insertColumn(sheet.getColumnCount(), data.attribute(additional[a]).name());
+    }
+
+    for (r = 0; r < sheet.getRowCount(); r++) {
+      for (a = 0; a < additional.length; a++) {
+	if (data.attribute(additional[a]).isNumeric())
+	  sheet.getCell(r, newIndices[a]).setContent(data.instance(r).value(additional[a]));
+	else if (data.attribute(additional[a]).isNominal() || data.attribute(additional[a]).isString())
+	  sheet.getCell(r, newIndices[a]).setContent(data.instance(r).stringValue(additional[a]));
+      }
+    }
+  }
+
+  /**
    * Generates PCA visualization.
    */
   protected void startExecution() {
@@ -346,17 +428,25 @@ public class IndependentComponentsTab
       @Override
       protected void doRun() {
         DataContainer cont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
+	Instances data = cont.getData();
 	adams.data.instancesanalysis.FastICA fastica = new adams.data.instancesanalysis.FastICA();
 	fastica.setICA((com.github.waikatodatamining.matrix.algorithm.ica.FastICA) m_PanelICA.getCurrent());
 	fastica.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
-	String msg = fastica.analyze(cont.getData());
+	String msg = fastica.analyze(data);
 	if (msg != null) {
 	  logError(msg, "ICA error");
 	}
 	else {
-	  m_PanelComponents.setData(fastica.getComponents());
+	  int[] additional = getAdditionalAttributeIndices(data);
+	  // components
+	  SpreadSheet components = fastica.getComponents();
+	  addAdditionalAttributes(components, data, additional);
+	  m_PanelComponents.setData(components);
 	  m_PanelComponents.reset();
-	  m_PanelSources.setData(fastica.getSources());
+	  // sources
+	  SpreadSheet sources = fastica.getSources();
+	  addAdditionalAttributes(sources, data, additional);
+	  m_PanelSources.setData(sources);
 	  m_PanelSources.reset();
 	}
       }
@@ -406,6 +496,7 @@ public class IndependentComponentsTab
     result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
     result.put(KEY_RANGE, m_TextAttributeRange.getText());
     result.put(KEY_ICA, m_PanelICA.getCurrent());
+    result.put(KEY_ADDITIONALATTRIBUTES, m_TextAdditionalAttributes.getText());
 
     return result;
   }
@@ -426,5 +517,7 @@ public class IndependentComponentsTab
       m_TextAttributeRange.setText((String) data.get(KEY_RANGE));
     if (data.containsKey(KEY_ICA))
       m_PanelICA.setCurrent(data.get(KEY_ICA));
+    if (data.containsKey(KEY_ADDITIONALATTRIBUTES))
+      m_TextAdditionalAttributes.setText((String) data.get(KEY_ADDITIONALATTRIBUTES));
   }
 }

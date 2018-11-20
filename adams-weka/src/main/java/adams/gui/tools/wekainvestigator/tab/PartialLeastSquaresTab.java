@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PartialLeastSquaresTab.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -66,6 +66,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -88,6 +89,8 @@ public class PartialLeastSquaresTab
   public static final String KEY_RANGE = "range";
 
   public static final String KEY_ALGORITHM = "algorithm";
+
+  public static final String KEY_ADDITIONALATTRIBUTES = "additional attributes";
 
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
@@ -112,6 +115,9 @@ public class PartialLeastSquaresTab
 
   /** the algorithm. */
   protected GenericObjectEditorPanel m_PanelGOE;
+
+  /** the additional attribute range. */
+  protected BaseTextField m_TextAdditionalAttributes;
 
   /** the button to start PLS. */
   protected BaseButton m_ButtonStart;
@@ -195,6 +201,24 @@ public class PartialLeastSquaresTab
 
     m_PanelGOE = new GenericObjectEditorPanel(AbstractPLS.class, new PLS1(), true);
     m_PanelParameters.addParameter("Algorithm", m_PanelGOE);
+
+    m_TextAdditionalAttributes = new BaseTextField(20);
+    m_TextAdditionalAttributes.setText("");
+    m_TextAdditionalAttributes.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	updateButtons();
+      }
+    });
+    m_PanelParameters.addParameter("Additional attributes", m_TextAdditionalAttributes);
 
     // buttons
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -331,9 +355,11 @@ public class PartialLeastSquaresTab
    */
   protected String canVisualize() {
     String	rangeStr;
+    String	additionalStr;
     Instances	data;
 
-    rangeStr = m_TextAttributeRange.getText();
+    rangeStr      = m_TextAttributeRange.getText();
+    additionalStr = m_TextAdditionalAttributes.getText();
     if (m_ComboBoxDatasets.getSelectedIndex() > -1)
       data = getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     else
@@ -354,6 +380,9 @@ public class PartialLeastSquaresTab
     if (!Range.isValid(rangeStr, data.numAttributes()))
       return "Invalid attribute range!";
 
+    if (!additionalStr.isEmpty() && !Range.isValid(rangeStr, data.numAttributes()))
+      return "Invalid additional attributes range!";
+
     return null;
   }
 
@@ -370,6 +399,59 @@ public class PartialLeastSquaresTab
   }
 
   /**
+   * Returns the additional attribute indices.
+   *
+   * @param data	the data to use
+   * @return		the indices
+   */
+  protected int[] getAdditionalAttributeIndices(Instances data) {
+    int[] 		result;
+    WekaAttributeRange 	addRange;
+
+    if (!m_TextAdditionalAttributes.getText().isEmpty()) {
+      addRange = new WekaAttributeRange(m_TextAdditionalAttributes.getText());
+      addRange.setData(data);
+      result = addRange.getIntIndices();
+    }
+    else {
+      result = new int[0];
+    }
+
+    return result;
+  }
+
+  /**
+   * Adds the additional columns from the Instances to the spreadsheet.
+   *
+   * @param sheet	the spreadsheet to extend
+   * @param data	the data to use
+   * @param additional	the additional attribute indices to add
+   */
+  protected void addAdditionalAttributes(SpreadSheet sheet, Instances data, int[] additional) {
+    int			r;
+    int			a;
+    int[]		newIndices;
+
+    if (additional.length == 0)
+      return;
+
+    newIndices = new int[additional.length];
+    for (a = 0; a < additional.length; a++) {
+      newIndices[a] = sheet.getColumnCount();
+      sheet.insertColumn(sheet.getColumnCount(), data.attribute(additional[a]).name());
+    }
+
+    for (r = 0; r < sheet.getRowCount(); r++) {
+      for (a = 0; a < additional.length; a++) {
+	if (data.attribute(additional[a]).isNumeric())
+	  sheet.getCell(r, newIndices[a]).setContent(data.instance(r).value(additional[a]));
+	else if (data.attribute(additional[a]).isNominal() || data.attribute(additional[a]).isString())
+	  sheet.getCell(r, newIndices[a]).setContent(data.instance(r).stringValue(additional[a]));
+      }
+    }
+  }
+
+  /**
    * Generates PLS visualization.
    */
   protected void startExecution() {
@@ -378,16 +460,19 @@ public class PartialLeastSquaresTab
       protected void doRun() {
 	try {
 	  DataContainer datacont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
+	  Instances data = datacont.getData();
 	  PLS pls = new PLS();
           pls.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
 	  pls.setAlgorithm((AbstractPLS) m_PanelGOE.getCurrent());
-	  String msg = pls.analyze(datacont.getData());
+	  String msg = pls.analyze(data);
 	  if (msg != null) {
 	    logError(msg, "PLS Error");
 	  }
 	  else {
+	    int[] additional = getAdditionalAttributeIndices(data);
 	    // loadings (scatter)
 	    SpreadSheet loadings = pls.getLoadings();
+	    addAdditionalAttributes(loadings, data, additional);
 	    m_PanelLoadings.setData(loadings);
 	    m_PanelLoadings.reset();
 	    // loadings (weights)
@@ -396,7 +481,7 @@ public class PartialLeastSquaresTab
 	    double max = Double.NEGATIVE_INFINITY;
 	    manager.clear();
 	    manager.startUpdate();
-	    for (int c = 0; c < loadings.getColumnCount(); c++) {
+	    for (int c = 0; c < loadings.getColumnCount() - additional.length; c++) {
 	      XYSequence seq = new XYSequence();
 	      seq.setComparison(Comparison.X_AND_Y);
 	      seq.setID(loadings.getColumnName(c));
@@ -409,11 +494,21 @@ public class PartialLeastSquaresTab
 		max = Math.max(max, value);
 		XYSequencePoint point = new XYSequencePoint("" + seq.size(), seq.size(), value);
 		seq.add(point);
+		if (additional.length > 0)
+		  point.setMetaData(new HashMap<>());
+		for (int a: additional) {
+		  if (data.attribute(a).isNumeric())
+		    point.getMetaData().put(data.attribute(a).name(), data.instance(r).value(a));
+		  else if (data.attribute(a).isNominal() || data.attribute(a).isString())
+		    point.getMetaData().put(data.attribute(a).name(), data.instance(r).stringValue(a));
+		}
 	      }
 	    }
 	    manager.finishUpdate();
 	    // scores (scatter)
-	    m_PanelScores.setData(pls.getScores());
+	    SpreadSheet scores = pls.getScores();
+	    addAdditionalAttributes(scores, data, additional);
+	    m_PanelScores.setData(scores);
 	    m_PanelScores.reset();
 	  }
 	}
@@ -467,6 +562,7 @@ public class PartialLeastSquaresTab
     result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
     result.put(KEY_RANGE, m_TextAttributeRange.getText());
     result.put(KEY_ALGORITHM, OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
+    result.put(KEY_ADDITIONALATTRIBUTES, m_TextAdditionalAttributes.getText());
 
     return result;
   }
@@ -493,5 +589,7 @@ public class PartialLeastSquaresTab
 	m_PanelGOE.setCurrent(new PLS1());
       }
     }
+    if (data.containsKey(KEY_ADDITIONALATTRIBUTES))
+      m_TextAdditionalAttributes.setText((String) data.get(KEY_ADDITIONALATTRIBUTES));
   }
 }
