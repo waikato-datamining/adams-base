@@ -123,7 +123,7 @@ parser code {:
 
 terminal IF, THEN, ELSE, END;
 terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO;
-terminal ALL, ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, HAS, REMOVE;
+terminal ALL, ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, HAS;
 terminal CBRT, LOG10, COSH, SINH, TANH, ATAN, ATAN2, HYPOT, SIGNUM;
 terminal ASSIGNMENT, SEMI, COMMA, LPAREN, RPAREN;
 terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
@@ -142,7 +142,7 @@ precedence left PLUS, MINUS;
 precedence left TIMES, DIVISION, MODULO;
 precedence left EXPONENT;
 precedence left LPAREN, RPAREN;
-precedence left ALL, ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, HAS, REMOVE;
+precedence left ALL, ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, HAS;
 precedence left NOT, UMINUS;
 
 expr_list ::= expr_list expr_part | expr_part;
@@ -315,8 +315,6 @@ expr ::=        LPAREN expr:c RPAREN
                 {: RESULT = new Double(Math.max(parser.getHelper().toDouble(e1), parser.getHelper().toDouble(e2))); :}
               | HAS LPAREN VARIABLE:v RPAREN
                 {: RESULT = new Boolean(parser.getSymbols().containsKey(v.toString())); :}
-              | REMOVE LPAREN VARIABLE:v RPAREN
-                {: RESULT = new Boolean(parser.getSymbols().remove(v.toString()) != null); :}
 
               | expr:l PLUS expr:r
                 {: RESULT = new Double(parser.getHelper().toNumber(l) + parser.getHelper().toNumber(r)); :}

@@ -101,7 +101,6 @@ import java.io.*;
   "min" { return sf.newSymbol("Min", sym.MIN); }
   "max" { return sf.newSymbol("Max", sym.MAX); }
   "has" { return sf.newSymbol("Has", sym.HAS); }
-  "remove" { return sf.newSymbol("Remove", sym.REMOVE); }
 
   // boolean stuff
   "<" { return sf.newSymbol("Less than", sym.LT); }
