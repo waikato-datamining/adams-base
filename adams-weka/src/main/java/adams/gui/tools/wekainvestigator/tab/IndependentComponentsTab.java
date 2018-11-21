@@ -404,6 +404,15 @@ public class IndependentComponentsTab
     if (additional.length == 0)
       return;
 
+    if (sheet.getRowCount() != data.numInstances()) {
+      logError(
+        "Failed to transfer additional attributes, number of rows in data differ: "
+	  + sheet.getRowCount() + " != " + data.numInstances() + "\n"
+	  + "Dataset: " + data.relationName(),
+	getTitle() + " - Additional attributes transfer");
+      return;
+    }
+
     newIndices = new int[additional.length];
     for (a = 0; a < additional.length; a++) {
       newIndices[a] = sheet.getColumnCount();
