@@ -300,7 +300,7 @@ public class StorageCollectionInsert
     else if (m_After)
       result += ", after: ";
     else
-      result = ", at: ";
+      result += ", at: ";
     result += QuickInfoHelper.toString(this, "position", m_Position);
 
     return result;
