@@ -71,6 +71,10 @@ extends AbstractScatterPlotPaintlet {
 
   protected void drawData(Graphics g) {
     super.drawData(g);
+
+    if ((m_XData == null) || (m_YData == null))
+      return;
+
     int size = m_Size;
     //need to convert value to pos using axis class
     for(int i = 0; i< m_XData.length; i++)

@@ -108,10 +108,14 @@ extends AbstractScatterPlotPaintlet {
   }
 
   protected void drawData(Graphics g) {
-    super.drawData(g);
-
     int posX;
     int posY;
+
+    super.drawData(g);
+
+    if ((m_XData == null) || (m_YData == null))
+      return;
+
     for(int i = 0; i< m_XData.length; i++) {
       posX = m_AxisBottom.valueToPos(m_XData[i]);
       posY = m_AxisLeft.valueToPos(m_YData[i]);
