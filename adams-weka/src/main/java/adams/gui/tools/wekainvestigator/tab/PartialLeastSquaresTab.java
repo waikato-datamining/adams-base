@@ -66,7 +66,6 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -495,7 +494,7 @@ public class PartialLeastSquaresTab
 	    double max = Double.NEGATIVE_INFINITY;
 	    manager.clear();
 	    manager.startUpdate();
-	    for (int c = 0; c < loadings.getColumnCount() - additional.length - 1; c++) {
+	    for (int c = 0; c < loadings.getColumnCount() - 1; c++) {
 	      XYSequence seq = new XYSequence();
 	      seq.setComparison(Comparison.X_AND_Y);
 	      seq.setID(loadings.getColumnName(c));
@@ -508,14 +507,6 @@ public class PartialLeastSquaresTab
 		max = Math.max(max, value);
 		XYSequencePoint point = new XYSequencePoint("" + seq.size(), seq.size(), value);
 		seq.add(point);
-		if (additional.length > 0)
-		  point.setMetaData(new HashMap<>());
-		for (int a: additional) {
-		  if (data.attribute(a).isNumeric())
-		    point.getMetaData().put(data.attribute(a).name(), data.instance(r).value(a));
-		  else if (data.attribute(a).isNominal() || data.attribute(a).isString())
-		    point.getMetaData().put(data.attribute(a).name(), data.instance(r).stringValue(a));
-		}
 	      }
 	    }
 	    manager.finishUpdate();
