@@ -449,7 +449,6 @@ public class IndependentComponentsTab
 	  int[] additional = getAdditionalAttributeIndices(data);
 	  // components
 	  SpreadSheet components = fastica.getComponents();
-	  addAdditionalAttributes(components, data, additional);
 	  m_PanelComponents.setData(components);
 	  m_PanelComponents.reset();
 	  // sources

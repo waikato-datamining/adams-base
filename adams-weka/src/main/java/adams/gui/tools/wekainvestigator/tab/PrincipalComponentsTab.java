@@ -471,7 +471,6 @@ public class PrincipalComponentsTab
 	  int[] additional = getAdditionalAttributeIndices(data);
 	  // loadings
 	  SpreadSheet loadings = pca.getLoadings();
-	  addAdditionalAttributes(loadings, data, additional);
           m_PanelLoadings.setData(loadings);
           m_PanelLoadings.reset();
           // scores

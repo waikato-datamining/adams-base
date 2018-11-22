@@ -481,7 +481,6 @@ public class PartialLeastSquaresTab
 	    int[] additional = getAdditionalAttributeIndices(data);
 	    // loadings (scatter)
 	    SpreadSheet loadings = pls.getLoadings();
-	    addAdditionalAttributes(loadings, data, additional);
 	    m_PanelLoadings.setData(loadings);
 	    m_PanelLoadings.reset();
 	    // loadings (weights)
