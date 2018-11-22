@@ -65,10 +65,14 @@ public class ScatterPlotPanel
   @Override
   protected void initGUI() {
     super.initGUI();
+
     setAxisVisibility(Axis.LEFT, Visibility.VISIBLE);
-    setAxisVisibility(Axis.BOTTOM, Visibility.VISIBLE);
     m_AxisLeft.setNumberFormat("#.##");
+    m_AxisLeft.setShowGridLines(true);
+
+    setAxisVisibility(Axis.BOTTOM, Visibility.VISIBLE);
     m_AxisBottom.setNumberFormat("#.##");
+    m_AxisBottom.setShowGridLines(true);
   }
 
   /**
