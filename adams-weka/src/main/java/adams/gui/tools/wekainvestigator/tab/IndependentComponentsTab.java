@@ -448,11 +448,11 @@ public class IndependentComponentsTab
 	else {
 	  int[] additional = getAdditionalAttributeIndices(data);
 	  // components
-	  SpreadSheet components = fastica.getComponents();
+	  SpreadSheet components = fastica.getComponents().getClone();
 	  m_PanelComponents.setData(components);
 	  m_PanelComponents.reset();
 	  // sources
-	  SpreadSheet sources = fastica.getSources();
+	  SpreadSheet sources = fastica.getSources().getClone();
 	  addAdditionalAttributes(sources, data, additional);
 	  m_PanelSources.setData(sources);
 	  m_PanelSources.reset();

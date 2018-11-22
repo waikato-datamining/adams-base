@@ -480,7 +480,13 @@ public class PartialLeastSquaresTab
 	  else {
 	    int[] additional = getAdditionalAttributeIndices(data);
 	    // loadings (scatter)
-	    SpreadSheet loadings = pls.getLoadings();
+	    SpreadSheet loadings = pls.getLoadings().getClone();
+	    WekaAttributeRange range = new WekaAttributeRange(m_TextAttributeRange.getText());
+	    range.setData(data);
+	    int[] indices = range.getIntIndices();
+	    loadings.insertColumn(loadings.getColumnCount(), "Attribute");
+	    for (int i = 0; i < loadings.getRowCount(); i++)
+	      loadings.getRow(i).getCell(loadings.getColumnCount() - 1).setContent(data.attribute(indices[i]).name());
 	    m_PanelLoadings.setData(loadings);
 	    m_PanelLoadings.reset();
 	    // loadings (weights)
@@ -489,7 +495,7 @@ public class PartialLeastSquaresTab
 	    double max = Double.NEGATIVE_INFINITY;
 	    manager.clear();
 	    manager.startUpdate();
-	    for (int c = 0; c < loadings.getColumnCount() - additional.length; c++) {
+	    for (int c = 0; c < loadings.getColumnCount() - additional.length - 1; c++) {
 	      XYSequence seq = new XYSequence();
 	      seq.setComparison(Comparison.X_AND_Y);
 	      seq.setID(loadings.getColumnName(c));
@@ -514,7 +520,7 @@ public class PartialLeastSquaresTab
 	    }
 	    manager.finishUpdate();
 	    // scores (scatter)
-	    SpreadSheet scores = pls.getScores();
+	    SpreadSheet scores = pls.getScores().getClone();
 	    addAdditionalAttributes(scores, data, additional);
 	    m_PanelScores.setData(scores);
 	    m_PanelScores.reset();

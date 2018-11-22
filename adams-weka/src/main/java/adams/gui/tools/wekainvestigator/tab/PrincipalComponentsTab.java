@@ -470,11 +470,11 @@ public class PrincipalComponentsTab
         else {
 	  int[] additional = getAdditionalAttributeIndices(data);
 	  // loadings
-	  SpreadSheet loadings = pca.getLoadings();
+	  SpreadSheet loadings = pca.getLoadings().getClone();
           m_PanelLoadings.setData(loadings);
           m_PanelLoadings.reset();
           // scores
-	  SpreadSheet scores = pca.getScores();
+	  SpreadSheet scores = pca.getScores().getClone();
 	  addAdditionalAttributes(scores, data, additional);
           m_PanelScores.setData(scores);
           m_PanelScores.reset();
