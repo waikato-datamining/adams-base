@@ -310,6 +310,7 @@ public class GenericObjectEditor
       m_ButtonCancel.addActionListener((ActionEvent e) -> {
 	if (m_Backup != null)
 	  m_Object = copyObject(m_Backup);
+	GenericObjectEditor.this.firePropertyChange();
 	close();
       });
 
