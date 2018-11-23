@@ -30,6 +30,7 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.RevisionUtils;
+import weka.core.WeightedInstancesHandler;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -51,7 +52,8 @@ import java.util.zip.GZIPInputStream;
  * @version $Revision$
  */
 public class SimpleArffLoader
-  extends AbstractFileLoader {
+  extends AbstractFileLoader
+  implements WeightedInstancesHandler {
 
   private static final long serialVersionUID = 8692708185900983930L;
 
@@ -231,6 +233,8 @@ public class SimpleArffLoader
       result.put("values", current.trim());
     }
 
+    // TODO weight
+
     return result;
   }
 
@@ -288,6 +292,8 @@ public class SimpleArffLoader
     Instances 			result;
     String			line;
     String			lower;
+    String			weightStr;
+    double			weight;
     boolean			header;
     int 			lineIndex;
     String[]			cells;
@@ -330,6 +336,17 @@ public class SimpleArffLoader
 	  }
 	}
 	else {
+	  weight = 1.0;
+	  if (line.endsWith("}")) {
+	    weightStr = line.substring(line.lastIndexOf('{') + 1, line.length() - 1);
+	    line      = line.substring(0, line.lastIndexOf('{') - 1);
+	    try {
+	      weight = Double.parseDouble(weightStr);
+	    }
+	    catch (Exception e) {
+	      System.err.println("Failed to parse weight string: " + line);
+	    }
+	  }
 	  cells = SpreadSheetUtils.split(line, ',', false, '\'', true);
 	  values = new double[result.numAttributes()];
 	  for (i = 0; i < cells.length; i++) {
@@ -353,7 +370,7 @@ public class SimpleArffLoader
 		break;
 	    }
 	  }
-	  inst = new DenseInstance(1.0, values);
+	  inst = new DenseInstance(weight, values);
 	  result.add(inst);
 	}
       }

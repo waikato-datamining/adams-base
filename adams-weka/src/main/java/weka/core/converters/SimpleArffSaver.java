@@ -15,7 +15,7 @@
 
 /*
  * SimpleArffSaver.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -28,6 +28,7 @@ import weka.core.Instances;
 import weka.core.Option;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
+import weka.core.WeightedInstancesHandler;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -61,12 +62,11 @@ import java.util.zip.GZIPOutputStream;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see Saver
  */
 public class SimpleArffSaver
   extends AbstractFileSaver
-  implements BatchConverter {
+  implements BatchConverter, WeightedInstancesHandler {
 
   /** for serialization */
   private static final long serialVersionUID = -6155802217430401683L;
