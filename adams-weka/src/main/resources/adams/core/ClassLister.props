@@ -258,3 +258,11 @@ com.github.waikatodatamining.matrix.transformation.kernel.AbstractKernel=\
 # FastICA of the matrix-algorithm library
 com.github.waikatodatamining.matrix.algorithm.ica.FastICA=\
   com.github.waikatodatamining.matrix.algorithm.ica
+
+# Lists the AttributeWeightsModifier schemes
+weka.filters.unsupervised.attribute.attributeweightsmodifiers.AttributeWeightsModifier=\
+  weka.filters.unsupervised.attribute.attributeweightsmodifiers
+
+# Lists the InstanceWeightsModifier schemes
+weka.filters.unsupervised.instance.instanceweightsmodifiers.InstanceWeightsModifier=\
+  weka.filters.unsupervised.instance.instanceweightsmodifiers
