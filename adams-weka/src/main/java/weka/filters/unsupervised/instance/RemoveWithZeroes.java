@@ -20,19 +20,19 @@
 
 package weka.filters.unsupervised.instance;
 
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
-import weka.core.Capabilities.Capability;
 import weka.filters.SimpleBatchFilter;
 import weka.filters.UnsupervisedFilter;
+
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -135,7 +135,7 @@ public class RemoveWithZeroes
   public String[] getOptions() {
     Vector<String>	result;
 
-    result = new Vector<String>();
+    result = new Vector<>();
 
     result.add("-num-zeroes");
     result.add("" + getNumZeroes());
@@ -152,9 +152,9 @@ public class RemoveWithZeroes
    * @param value     the number of zeroes or percentage
    */
   public void setNumZeroes(double value) {
-    if ((m_NumZeroes > 0) && (m_NumZeroes < 1))
+    if ((value > 0) && (value < 1))
       m_NumZeroes = value;
-    else if ((m_NumZeroes >= 1) && (Math.floor(m_NumZeroes)) == Math.ceil(m_NumZeroes))
+    else if ((value >= 1) && (Math.floor(value)) == Math.ceil(value))
       m_NumZeroes = value;
     else
       System.err.println(
