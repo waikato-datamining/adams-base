@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
  * and a button for bringing up the GenericObjectEditor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GenericObjectEditorPanel
   extends AbstractChooserPanel {
@@ -183,11 +182,8 @@ public class GenericObjectEditorPanel
 
     result = super.setCurrent(value);
 
-    if (result) {
+    if (result)
       m_Current = value;
-      if (m_Current != null)
-        m_Editor.setValue(m_Current);
-    }
 
     return result;
   }
