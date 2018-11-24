@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InvestigatorPanel.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator;
@@ -24,7 +24,6 @@ import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
-import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
@@ -80,7 +79,6 @@ import java.util.logging.Level;
  * The main panel for the Investigator.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InvestigatorPanel
   extends AbstractWorkspacePanel
@@ -270,23 +268,7 @@ public class InvestigatorPanel
       protected void doActionPerformed(ActionEvent e) {
 	InvestigatorJob job = new InvestigatorJob(InvestigatorPanel.this, "Copying tab") {
 	  protected void doRun() {
-	    int index = m_TabbedPane.getSelectedIndex();
-	    if (index == -1)
-	      return;
-	    AbstractInvestigatorTab tab = (AbstractInvestigatorTab) m_TabbedPane.getComponentAt(index);
-	    AbstractInvestigatorTab tabNew;
-	    MessageCollection errors = new MessageCollection();
-	    try {
-	      tabNew = tab.getClass().newInstance();
-	      m_TabbedPane.addTab(tabNew);
-	      tabNew.deserialize(Utils.deepCopy(tab.serialize()), errors);
-	    }
-	    catch (Exception ex) {
-	      errors.add("Failed to copy tab!", ex);
-	    }
-	    if (!errors.isEmpty())
-	      GUIHelper.showErrorMessage(
-		InvestigatorPanel.this, "Errors occurred when copying tab:\n" + errors);
+	    m_TabbedPane.copySelectedTab();
 	  }
 	};
 	startExecution(job);

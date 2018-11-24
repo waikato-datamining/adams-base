@@ -13,26 +13,31 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InvestigatorTabbedPane.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.CleanUpHandler;
+import adams.core.MessageCollection;
+import adams.core.Utils;
 import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 
+import javax.swing.JPopupMenu;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Tabbed pane for managing the tabs of the Investigator.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InvestigatorTabbedPane
   extends DragAndDropTabbedPane
@@ -53,7 +58,7 @@ public class InvestigatorTabbedPane
 
     m_Owner = owner;
 
-    setCloseTabsWithMiddleMouseButton(true);
+    setCloseTabsWithMiddleMouseButton(false);
     setShowCloseTabButton(true);
     setPromptUserWhenClosingTab(true);
   }
@@ -92,6 +97,22 @@ public class InvestigatorTabbedPane
     // icon
     button = (ButtonTabComponent) getTabComponentAt(getTabCount() - 1);
     button.setIcon((tab.getTabIcon() == null) ? null : GUIHelper.getIcon(tab.getTabIcon()));
+    button.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isRightClick(e)) {
+          JPopupMenu menu = tab.createPopupMenu();
+          menu.show(button, e.getX(), e.getY());
+          e.consume();
+        }
+        else if (MouseUtils.isLeftClick(e)) {
+          setSelectedComponent(tab);
+	}
+        else {
+          super.mouseClicked(e);
+        }
+      }
+    });
 
     if (show)
       setSelectedIndex(getTabCount() - 1);
@@ -114,6 +135,41 @@ public class InvestigatorTabbedPane
       if (comp instanceof CleanUpHandler)
 	((CleanUpHandler) comp).cleanUp();
     }
+  }
+
+  /**
+   * Creates a copy of the current tab.
+   */
+  public void copySelectedTab() {
+    copyTabAt(getSelectedIndex());
+  }
+
+  /**
+   * Creates a copy of the specified tab.
+   *
+   * @param index	the index of the tab to copy
+   */
+  public void copyTabAt(int index) {
+    AbstractInvestigatorTab 	tab;
+    AbstractInvestigatorTab 	tabNew;
+    MessageCollection 		errors;
+
+    if (index == -1)
+      return;
+
+    tab    = (AbstractInvestigatorTab) getComponentAt(index);
+    errors = new MessageCollection();
+    try {
+      tabNew = tab.getClass().newInstance();
+      addTab(tabNew);
+      tabNew.deserialize(Utils.deepCopy(tab.serialize()), errors);
+    }
+    catch (Exception ex) {
+      errors.add("Failed to copy tab!", ex);
+    }
+    if (!errors.isEmpty())
+      GUIHelper.showErrorMessage(
+	InvestigatorTabbedPane.this, "Errors occurred when copying tab:\n" + errors);
   }
 
   /**

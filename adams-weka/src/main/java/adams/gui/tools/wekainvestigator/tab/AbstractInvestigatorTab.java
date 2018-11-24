@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractInvestigatorTab.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -24,12 +24,16 @@ import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
 import adams.core.StatusMessageHandler;
 import adams.gui.core.DetachablePanel;
+import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.event.WekaInvestigatorDataListener;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +101,36 @@ public abstract class AbstractInvestigatorTab
    */
   public String getTabIcon() {
     return null;
+  }
+
+  /**
+   * Creates and returns the popup menu.
+   *
+   * @return		the menu
+   */
+  public JPopupMenu createPopupMenu() {
+    JPopupMenu		result;
+    JMenuItem		item;
+    final int		index;
+
+    result = super.createPopupMenu();
+    index  = getOwner().getTabbedPane().indexOfComponent(this);
+
+    item = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    item.addActionListener((ActionEvent e) -> {
+      getOwner().getTabbedPane().copyTabAt(index);
+    });
+    result.add(item);
+
+    item = new JMenuItem("Close", GUIHelper.getIcon("close_tab_focused.gif"));
+    item.addActionListener((ActionEvent e) -> {
+      if (getOwner().getTabbedPane().canCloseTab(index))
+	getOwner().getTabbedPane().removeTabAt(index);
+    });
+    result.addSeparator();
+    result.add(item);
+
+    return result;
   }
 
   /**
