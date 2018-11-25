@@ -42,6 +42,12 @@ public class GenericObjectEditorPanel
   /** for serialization. */
   private static final long serialVersionUID = -8351558686664299781L;
 
+  /** the super class to manage. */
+  protected Class m_ClassType;
+
+  /** whether the class can be changed. */
+  protected boolean m_CanChangeClass;
+
   /** the generic object editor. */
   protected transient GenericObjectEditor m_Editor;
 
@@ -76,17 +82,8 @@ public class GenericObjectEditorPanel
   public GenericObjectEditorPanel(Class cls, Object defValue, boolean canChangeClassInDialog) {
     super();
 
-    m_Editor = new GenericObjectEditor(canChangeClassInDialog);
-    m_Editor.setClassType(cls);
-    ((GOEPanel) m_Editor.getCustomEditor()).addOkListener((ActionEvent e) -> {
-        if (isEditable()) {
-          setCurrent(m_Editor.getValue());
-          m_History.add(m_Editor.getValue());
-          notifyChangeListeners(new ChangeEvent(m_Self));
-      }
-    });
-    ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener((ActionEvent e) ->
-      m_Editor.setValue(getCurrent()));
+    m_ClassType      = cls;
+    m_CanChangeClass = canChangeClassInDialog;
 
     setCurrent(defValue);
 
@@ -106,6 +103,27 @@ public class GenericObjectEditorPanel
   }
 
   /**
+   * Initializes the editor if necessary and returns it.
+   */
+  protected GenericObjectEditor getEditor() {
+    if (m_Editor == null) {
+      m_Editor = new GenericObjectEditor(m_CanChangeClass);
+      m_Editor.setClassType(m_ClassType);
+      ((GOEPanel) m_Editor.getCustomEditor()).addOkListener((ActionEvent e) -> {
+	if (isEditable()) {
+	  setCurrent(m_Editor.getValue());
+	  m_History.add(m_Editor.getValue());
+	  notifyChangeListeners(new ChangeEvent(m_Self));
+	}
+      });
+      ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener((ActionEvent e) ->
+	m_Editor.setValue(getCurrent()));
+    }
+
+    return m_Editor;
+  }
+
+  /**
    * Performs the actual choosing of an object.
    *
    * @return		the chosen object or null if none chosen
@@ -113,13 +131,13 @@ public class GenericObjectEditorPanel
   @Override
   protected Object doChoose() {
     if (m_Current != null)
-      m_Editor.setValue(m_Current);
+      getEditor().setValue(m_Current);
     if (m_Dialog == null)
-      m_Dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
+      m_Dialog = GenericObjectEditorDialog.createDialog(this, getEditor());
     m_Dialog.setLocationRelativeTo(m_Dialog.getParent());
     m_Dialog.setVisible(true);
     if (m_Dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
-      return m_Editor.getValue();
+      return getEditor().getValue();
     else
       return null;
   }
@@ -197,9 +215,9 @@ public class GenericObjectEditorPanel
   protected BasePopupMenu getPopupMenu() {
     GenericObjectEditorPopupMenu 	menu;
 
-    menu = new GenericObjectEditorPopupMenu(m_Editor, m_Self);
+    menu = new GenericObjectEditorPopupMenu(getEditor(), m_Self);
     menu.addChangeListener((ChangeEvent e) -> {
-      setCurrent(m_Editor.getValue());
+      setCurrent(getEditor().getValue());
       notifyChangeListeners(new ChangeEvent(m_Self));
     });
 
@@ -217,7 +235,7 @@ public class GenericObjectEditorPanel
    * @param value	the handler, null to remove
    */
   public void setPostProcessObjectHandler(PostProcessObjectHandler value) {
-    m_Editor.setPostProcessObjectHandler(value);
+    getEditor().setPostProcessObjectHandler(value);
   }
 
   /**
@@ -227,6 +245,6 @@ public class GenericObjectEditorPanel
    * @return		the handler, null if none set
    */
   public PostProcessObjectHandler getPostProcessObjectHandler() {
-    return m_Editor.getPostProcessObjectHandler();
+    return getEditor().getPostProcessObjectHandler();
   }
 }
