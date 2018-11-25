@@ -28,11 +28,14 @@ import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
+import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
 
 import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Tabbed pane for managing the tabs of the Investigator.
@@ -162,7 +165,7 @@ public class InvestigatorTabbedPane
     try {
       tabNew = tab.getClass().newInstance();
       addTab(tabNew);
-      tabNew.deserialize(Utils.deepCopy(tab.serialize()), errors);
+      tabNew.deserialize(Utils.deepCopy(tab.serialize(new HashSet<>(Arrays.asList(SerializationOption.values())))), errors);
     }
     catch (Exception ex) {
       errors.add("Failed to copy tab!", ex);

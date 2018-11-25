@@ -36,6 +36,7 @@ import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
+import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.Classifier;
@@ -54,6 +55,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Performs cross-validation.
@@ -441,21 +443,25 @@ public class CrossValidation
   /**
    * Returns the objects for serialization.
    *
+   * @param options 	what to serialize
    * @return		the mapping of the objects to serialize
    */
-  public Map<String,Object> serialize() {
+  public Map<String,Object> serialize(Set<SerializationOption> options) {
     Map<String,Object>	result;
 
-    result = super.serialize();
-    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
-    result.put(KEY_FOLDS, m_SpinnerFolds.getValue());
-    result.put(KEY_SEED, m_TextSeed.getValue().intValue());
-    result.put(KEY_THREADS, m_SpinnerThreads.getValue());
-    result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
-    result.put(KEY_USEVIEWS, m_CheckBoxUseViews.isSelected());
-    result.put(KEY_GENERATOR, OptionUtils.getCommandLine(m_GOEGenerator.getCurrent()));
-    result.put(KEY_DISCARDPREDICTIONS, m_CheckBoxDiscardPredictions.isSelected());
-    result.put(KEY_FINALMODEL, m_CheckBoxFinalModel.isSelected());
+    result = super.serialize(options);
+    if (options.contains(SerializationOption.GUI))
+      result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    if (options.contains(SerializationOption.PARAMETERS)) {
+      result.put(KEY_FOLDS, m_SpinnerFolds.getValue());
+      result.put(KEY_SEED, m_TextSeed.getValue().intValue());
+      result.put(KEY_THREADS, m_SpinnerThreads.getValue());
+      result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
+      result.put(KEY_USEVIEWS, m_CheckBoxUseViews.isSelected());
+      result.put(KEY_GENERATOR, OptionUtils.getCommandLine(m_GOEGenerator.getCurrent()));
+      result.put(KEY_DISCARDPREDICTIONS, m_CheckBoxDiscardPredictions.isSelected());
+      result.put(KEY_FINALMODEL, m_CheckBoxFinalModel.isSelected());
+    }
 
     return result;
   }
@@ -477,7 +483,7 @@ public class CrossValidation
     if (data.containsKey(KEY_THREADS))
       m_SpinnerThreads.setValue(data.get(KEY_THREADS));
     if (data.containsKey(KEY_ADDITIONAL))
-      m_SelectAdditionalAttributes.setCurrent((String[]) data.get(KEY_ADDITIONAL));
+      m_SelectAdditionalAttributes.setCurrent(listOrArray(data.get(KEY_ADDITIONAL)));
     if (data.containsKey(KEY_USEVIEWS))
       m_CheckBoxUseViews.setSelected((Boolean) data.get(KEY_USEVIEWS));
     if (data.containsKey(KEY_GENERATOR)) {

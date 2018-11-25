@@ -68,6 +68,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Visualizes the PLS loadings and PLS space calculated from the selected
@@ -557,17 +558,22 @@ public class PartialLeastSquaresTab
   /**
    * Returns the objects for serialization.
    *
+   * @param options 	what to serialize
    * @return		the mapping of the objects to serialize
    */
-  protected Map<String,Object> doSerialize() {
+  protected Map<String,Object> doSerialize(Set<SerializationOption> options) {
     Map<String,Object>	result;
 
-    result = super.doSerialize();
-    result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
-    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
-    result.put(KEY_RANGE, m_TextAttributeRange.getText());
-    result.put(KEY_ALGORITHM, OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
-    result.put(KEY_ADDITIONALATTRIBUTES, m_TextAdditionalAttributes.getText());
+    result = super.doSerialize(options);
+    if (options.contains(SerializationOption.GUI)) {
+      result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
+      result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    }
+    if (options.contains(SerializationOption.PARAMETERS)) {
+      result.put(KEY_RANGE, m_TextAttributeRange.getText());
+      result.put(KEY_ALGORITHM, OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
+      result.put(KEY_ADDITIONALATTRIBUTES, m_TextAdditionalAttributes.getText());
+    }
 
     return result;
   }

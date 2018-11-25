@@ -25,11 +25,14 @@ import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import adams.data.weka.relationname.AbstractRelationNameHeuristic;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
+import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
 import adams.gui.workspace.AbstractSerializableWorkspaceManagerPanel;
 import adams.gui.workspace.AbstractWorkspaceHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +85,7 @@ public class InvestigatorWorkspaceHelper
     for (i = 0; i < panel.getTabbedPane().getTabCount(); i++) {
       tab = (AbstractInvestigatorTab) panel.getTabbedPane().getComponentAt(i);
       list.add(tab.getClass().getName());
-      list.add(tab.serialize());
+      list.add(tab.serialize(new HashSet<>(Arrays.asList(SerializationOption.values()))));
     }
     result.put(KEY_TABS, list);
 

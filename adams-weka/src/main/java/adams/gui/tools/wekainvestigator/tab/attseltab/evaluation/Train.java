@@ -27,6 +27,7 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
+import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
@@ -39,6 +40,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Performs attribute selection on the train data.
@@ -227,13 +229,15 @@ public class Train
   /**
    * Returns the objects for serialization.
    *
+   * @param options 	what to serialize
    * @return		the mapping of the objects to serialize
    */
-  public Map<String,Object> serialize() {
+  public Map<String,Object> serialize(Set<SerializationOption> options) {
     Map<String,Object>	result;
 
-    result = super.serialize();
-    result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
+    result = super.serialize(options);
+    if (options.contains(SerializationOption.GUI))
+      result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
 
     return result;
   }

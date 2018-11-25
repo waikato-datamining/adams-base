@@ -31,6 +31,7 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
+import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -43,6 +44,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Uses dedicated train/validate/test sets.
@@ -393,17 +395,22 @@ public class TrainValidateTestSet
   /**
    * Returns the objects for serialization.
    *
+   * @param options 	what to serialize
    * @return		the mapping of the objects to serialize
    */
-  public Map<String,Object> serialize() {
+  public Map<String,Object> serialize(Set<SerializationOption> options) {
     Map<String,Object>	result;
 
-    result = super.serialize();
-    result.put(KEY_TRAIN, m_ComboBoxTrain.getSelectedIndex());
-    result.put(KEY_VALIDATE, m_ComboBoxValidate.getSelectedIndex());
-    result.put(KEY_TEST, m_ComboBoxTest.getSelectedIndex());
-    result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
-    result.put(KEY_DISCARDPREDICTIONS, m_CheckBoxDiscardPredictions.isSelected());
+    result = super.serialize(options);
+    if (options.contains(SerializationOption.GUI)) {
+      result.put(KEY_TRAIN, m_ComboBoxTrain.getSelectedIndex());
+      result.put(KEY_VALIDATE, m_ComboBoxValidate.getSelectedIndex());
+      result.put(KEY_TEST, m_ComboBoxTest.getSelectedIndex());
+    }
+    if (options.contains(SerializationOption.PARAMETERS)) {
+      result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
+      result.put(KEY_DISCARDPREDICTIONS, m_CheckBoxDiscardPredictions.isSelected());
+    }
 
     return result;
   }
@@ -423,7 +430,7 @@ public class TrainValidateTestSet
     if (data.containsKey(KEY_TEST))
       m_ComboBoxTest.setSelectedIndex((int) data.get(KEY_TEST));
     if (data.containsKey(KEY_ADDITIONAL))
-      m_SelectAdditionalAttributes.setCurrent((String[]) data.get(KEY_ADDITIONAL));
+      m_SelectAdditionalAttributes.setCurrent(listOrArray(data.get(KEY_ADDITIONAL)));
     if (data.containsKey(KEY_DISCARDPREDICTIONS))
       m_CheckBoxDiscardPredictions.setSelected((Boolean) data.get(KEY_DISCARDPREDICTIONS));
   }

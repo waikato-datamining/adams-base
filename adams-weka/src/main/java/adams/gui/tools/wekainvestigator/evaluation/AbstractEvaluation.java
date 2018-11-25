@@ -26,6 +26,7 @@ import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.SizeOf;
 import adams.core.StatusMessageHandler;
+import adams.core.Utils;
 import adams.core.logging.LoggingObject;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.AbstractNamedHistoryPanel;
@@ -33,11 +34,14 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.output.AbstractResultItem;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
+import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Ancestor for evaluation setups.
@@ -198,14 +202,33 @@ public abstract class AbstractEvaluation<T extends AbstractInvestigatorTab, R ex
   /**
    * Returns the objects for serialization.
    *
+   * @param options 	what to serialize
    * @return		the mapping of the objects to serialize
    */
-  public Map<String,Object> serialize() {
+  public Map<String,Object> serialize(Set<SerializationOption> options) {
     Map<String,Object>	result;
 
     result = new HashMap<>();
 
     return result;
+  }
+
+  /**
+   * If the object should be a list of strings instead of an array of strings,
+   * then it gets converted accordingly.
+   *
+   * @param obj		the list/array
+   * @return		the generated array
+   */
+  protected String[] listOrArray(Object obj) {
+    if (obj == null)
+      return new String[0];
+    else if (obj instanceof String[])
+      return (String[]) obj;
+    else if (obj instanceof List)
+      return ((List<String>) obj).toArray(new String[0]);
+    else
+      throw new IllegalStateException("Object neither String array nor String list: " + Utils.classToString(obj));
   }
 
   /**

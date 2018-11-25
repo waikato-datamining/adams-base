@@ -23,26 +23,34 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
 import adams.core.StatusMessageHandler;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.DetachablePanel;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.event.WekaInvestigatorDataListener;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Ancestor for tabs in the Investigator.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractInvestigatorTab
   extends DetachablePanel
@@ -50,11 +58,22 @@ public abstract class AbstractInvestigatorTab
 
   private static final long serialVersionUID = 1860821657853747908L;
 
+  /** options for serialization. */
+  public enum SerializationOption {
+    PARAMETERS,
+    DATASETS,
+    HISTORY,
+    GUI,
+  }
+
   /** the owner. */
   protected InvestigatorPanel m_Owner;
 
   /** whether the evaluation is currently running. */
   protected Thread m_Worker;
+
+  /** the file chooser. */
+  protected BaseFileChooser m_FileChooserParameters;
 
   /**
    * Initializes the members.
@@ -104,6 +123,24 @@ public abstract class AbstractInvestigatorTab
   }
 
   /**
+   * Returns the file chooser for parameters.
+   *
+   * @return		the chooser
+   */
+  protected BaseFileChooser getFileChooserParameters() {
+    ExtensionFileFilter		filter;
+
+    if (m_FileChooserParameters == null) {
+      m_FileChooserParameters = new BaseFileChooser();
+      m_FileChooserParameters.setAutoAppendExtension(true);
+      filter = new ExtensionFileFilter("YAML file", "yaml");
+      m_FileChooserParameters.addChoosableFileFilter(filter);
+      m_FileChooserParameters.setFileFilter(filter);
+    }
+    return m_FileChooserParameters;
+  }
+
+  /**
    * Creates and returns the popup menu.
    *
    * @return		the menu
@@ -112,6 +149,7 @@ public abstract class AbstractInvestigatorTab
     JPopupMenu		result;
     JMenuItem		item;
     final int		index;
+    Object 		map;
 
     result = super.createPopupMenu();
     index  = getOwner().getTabbedPane().indexOfComponent(this);
@@ -121,6 +159,16 @@ public abstract class AbstractInvestigatorTab
       getOwner().getTabbedPane().copyTabAt(index);
     });
     result.add(item);
+
+    if (serialize(new HashSet<>(Arrays.asList(SerializationOption.PARAMETERS))) instanceof Map) {
+      item = new JMenuItem("Save parameters...", GUIHelper.getIcon("save.gif"));
+      item.addActionListener((ActionEvent e) -> saveParameters());
+      result.add(item);
+
+      item = new JMenuItem("Load parameters...", GUIHelper.getIcon("open.gif"));
+      item.addActionListener((ActionEvent e) -> loadParameters());
+      result.add(item);
+    }
 
     item = new JMenuItem("Close", GUIHelper.getIcon("close_tab_focused.gif"));
     item.addActionListener((ActionEvent e) -> {
@@ -236,25 +284,75 @@ public abstract class AbstractInvestigatorTab
   }
 
   /**
+   * Prompts the user to select a yaml file to store the parameters of the tab under.
+   */
+  public void saveParameters() {
+    int 		retVal;
+    File 		paramFile;
+    Map<String,Object> 	params;
+    Yaml 		yaml;
+
+    retVal = getFileChooserParameters().showSaveDialog(getOwner());
+    if (retVal != BaseFileChooser.APPROVE_OPTION)
+      return;
+
+    paramFile = getFileChooserParameters().getSelectedFile();
+    params    = (Map<String,Object>) serialize(new HashSet<>(Arrays.asList(SerializationOption.PARAMETERS)));
+    yaml      = new Yaml();
+    if (!FileUtils.writeToFile(paramFile.getAbsolutePath(), yaml.dump(params), false))
+      GUIHelper.showErrorMessage(getOwner(), "Failed to write parameters to: " + paramFile);
+  }
+
+  /**
+   * Prompts the user to select a yaml file to load the parameters for this tab from.
+   */
+  public void loadParameters() {
+    int 		retVal;
+    File 		paramFile;
+    Yaml 		yaml;
+    Map<String,Object> 	params;
+    MessageCollection 	errors;
+
+    retVal = getFileChooserParameters().showOpenDialog(getOwner());
+    if (retVal != BaseFileChooser.APPROVE_OPTION)
+      return;
+
+    paramFile = getFileChooserParameters().getSelectedFile();
+    yaml      = new Yaml();
+    params    = yaml.load(Utils.flatten(FileUtils.loadFromFile(paramFile), "\n"));
+    if (params == null) {
+      GUIHelper.showErrorMessage(getOwner(), "Failed to load parameters from: " + paramFile);
+    }
+    else {
+      errors = new MessageCollection();
+      deserialize(params, errors);
+      if (!errors.isEmpty())
+	GUIHelper.showErrorMessage(getOwner(), "Error(s) encountered when loading parameters from: " + paramFile + "\n" + errors);
+    }
+  }
+
+  /**
    * Returns the objects for serialization.
    * <br>
    * Default implementation returns an empty map.
    *
+   * @param options 	what to serialize
    * @return		the mapping of the objects to serialize
    */
-  protected Map<String,Object> doSerialize() {
+  protected Map<String,Object> doSerialize(Set<SerializationOption> options) {
     return new HashMap<>();
   }
 
   /**
    * Generates a view of the tab that can be serialized.
    *
+   * @param options 	what to serialize
    * @return		the data to serialize
    */
-  public Object serialize() {
+  public Object serialize(Set<SerializationOption> options) {
     Map<String,Object>	data;
 
-    data = doSerialize();
+    data = doSerialize(options);
 
     return (data.size() == 0) ? null : data;
   }

@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Ancestor for tabs that have the data table on top.
@@ -402,14 +403,17 @@ public abstract class AbstractInvestigatorTabWithDataTable
   /**
    * Returns the objects for serialization.
    *
+   * @param options 	what to serialize
    * @return		the mapping of the objects to serialize
    */
-  protected Map<String,Object> doSerialize() {
+  protected Map<String,Object> doSerialize(Set<SerializationOption> options) {
     Map<String,Object>	result;
 
-    result = super.doSerialize();
-    result.put(KEY_DATATABLE_SELECTEDROWS, m_Table.getSelectedRows());
-    result.put(KEY_DATATABLE_HEIGHT, m_SplitPane.getDividerLocation());
+    result = super.doSerialize(options);
+    if (options.contains(SerializationOption.GUI)) {
+      result.put(KEY_DATATABLE_SELECTEDROWS, m_Table.getSelectedRows());
+      result.put(KEY_DATATABLE_HEIGHT, m_SplitPane.getDividerLocation());
+    }
 
     return result;
   }

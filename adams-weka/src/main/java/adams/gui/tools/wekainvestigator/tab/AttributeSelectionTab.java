@@ -78,6 +78,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -1031,21 +1032,25 @@ public class AttributeSelectionTab
    *
    * @return		the mapping of the objects to serialize
    */
-  protected Map<String,Object> doSerialize() {
+  protected Map<String,Object> doSerialize(Set<SerializationOption> options) {
     Map<String,Object>				result;
     int						i;
     AbstractAttributeSelectionEvaluation 	eval;
 
-    result = super.doSerialize();
-    result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
-    result.put(KEY_SEARCH, OptionUtils.getCommandLine(m_PanelSearch.getCurrent()));
-    result.put(KEY_EVALUATOR, OptionUtils.getCommandLine(m_PanelEvaluator.getCurrent()));
-    result.put(KEY_EVALUATION, m_ComboBoxEvaluations.getSelectedIndex());
+    result = super.doSerialize(options);
+    if (options.contains(SerializationOption.GUI))
+      result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
+    if (options.contains(SerializationOption.PARAMETERS)) {
+      result.put(KEY_SEARCH, OptionUtils.getCommandLine(m_PanelSearch.getCurrent()));
+      result.put(KEY_EVALUATOR, OptionUtils.getCommandLine(m_PanelEvaluator.getCurrent()));
+      result.put(KEY_EVALUATION, m_ComboBoxEvaluations.getSelectedIndex());
+    }
     for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
       eval = m_ModelEvaluations.getElementAt(i);
-      result.put(KEY_EVALUATION_PREFIX + eval.getName(), eval.serialize());
+      result.put(KEY_EVALUATION_PREFIX + eval.getName(), eval.serialize(options));
     }
-    result.put(KEY_HISTORY, m_History.serialize());
+    if (options.contains(SerializationOption.HISTORY))
+      result.put(KEY_HISTORY, m_History.serialize());
 
     return result;
   }

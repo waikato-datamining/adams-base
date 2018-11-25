@@ -28,6 +28,7 @@ import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 
 import java.awt.BorderLayout;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Just displays the log messages.
@@ -115,13 +116,15 @@ public class LogTab
   /**
    * Returns the objects for serialization.
    *
+   * @param options 	what to serialize
    * @return		the mapping of the objects to serialize
    */
-  protected Map<String,Object> doSerialize() {
+  protected Map<String,Object> doSerialize(Set<SerializationOption> options) {
     Map<String,Object>	result;
 
-    result = super.doSerialize();
-    result.put(KEY_LOG, m_LogPanel.getText());
+    result = super.doSerialize(options);
+    if (options.contains(SerializationOption.GUI))
+      result.put(KEY_LOG, m_LogPanel.getText());
 
     return result;
   }
