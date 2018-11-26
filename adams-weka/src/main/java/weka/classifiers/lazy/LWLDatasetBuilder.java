@@ -20,7 +20,9 @@
 
 package weka.classifiers.lazy;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.logging.CustomLoggingLevelObject;
+import adams.core.option.OptionUtils;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.neighboursearch.LinearNNSearch;
@@ -77,14 +79,10 @@ public class LWLDatasetBuilder
   protected boolean m_NoUpdate = false;
 
   /**
-   * Gets the number of neighbours used for kernel bandwidth setting.
-   * The bandwidth is taken as the distance to the kth neighbour.
-   *
-   * @return the number of neighbours included inside the kernel
-   * bandwidth, or 0 for all neighbours
+   * Resets the scheme.
    */
-  public int getKNN() {
-    return m_kNN;
+  protected void reset() {
+    m_ActualSearch = null;
   }
 
   /**
@@ -99,9 +97,22 @@ public class LWLDatasetBuilder
     if (value <= 0) {
       m_kNN = 0;
       m_UseAllK = true;
-    } else {
+    }
+    else {
       m_UseAllK = false;
     }
+    reset();
+  }
+
+  /**
+   * Gets the number of neighbours used for kernel bandwidth setting.
+   * The bandwidth is taken as the distance to the kth neighbour.
+   *
+   * @return the number of neighbours included inside the kernel
+   * bandwidth, or 0 for all neighbours
+   */
+  public int getKNN() {
+    return m_kNN;
   }
 
   /**
@@ -122,6 +133,7 @@ public class LWLDatasetBuilder
       return;
     }
     m_WeightKernel = value;
+    reset();
   }
 
   /**
@@ -141,6 +153,7 @@ public class LWLDatasetBuilder
    */
   public void setSearchAlgorithm(NearestNeighbourSearch value) {
     m_Search = value;
+    reset();
   }
 
   /**
@@ -159,6 +172,7 @@ public class LWLDatasetBuilder
    */
   public void setNoUpdate(boolean value) {
     m_NoUpdate = value;
+    reset();
   }
 
   /**
@@ -178,6 +192,7 @@ public class LWLDatasetBuilder
    */
   public void setTrain(Instances value) {
     m_Train = value;
+    reset();
   }
 
   /**
@@ -208,15 +223,20 @@ public class LWLDatasetBuilder
     Instance 		inst;
     LWLContainer 	result;
 
+    if (m_ActualSearch == null) {
+      m_ActualSearch = ObjectCopyHelper.copyObject(m_Search);
+      // TODO
+    }
+
     if (!m_NoUpdate)
-      m_Search.addInstanceInfo(instance);
+      m_ActualSearch.addInstanceInfo(instance);
 
     k = m_Train.numInstances();
     if (!m_UseAllK && (m_kNN < k))
       k = m_kNN;
 
-    weighted = m_Search.kNearestNeighbours(instance, k);
-    distances = m_Search.getDistances();
+    weighted = m_ActualSearch.kNearestNeighbours(instance, k);
+    distances = m_ActualSearch.getDistances();
 
     if (isLoggingEnabled()) {
       getLogger().fine("Test Instance: "+instance);
@@ -303,5 +323,22 @@ public class LWLDatasetBuilder
     result.originalIndices = null;  // TODO
 
     return result;
+  }
+
+  /**
+   * Returns a short string description of the setup.
+   *
+   * @return		the description
+   */
+  public String toString() {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+    result.append("kNN: " + m_kNN + "\n");
+    result.append("Weighting Kernel: " + m_WeightKernel + "\n");
+    result.append("Search: " + OptionUtils.getCommandLine(m_Search) + "\n");
+    result.append("No update: " + m_NoUpdate + "\n");
+
+    return result.toString();
   }
 }
