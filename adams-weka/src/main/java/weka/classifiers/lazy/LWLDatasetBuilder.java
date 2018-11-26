@@ -201,6 +201,7 @@ public class LWLDatasetBuilder
     Instances 		weighted;
     double 		distances[];
     int			i;
+    double 		bandwidth;
     double 		sumOfWeights;
     double 		newSumOfWeights;
     double 		weight;
@@ -211,17 +212,15 @@ public class LWLDatasetBuilder
       m_Search.addInstanceInfo(instance);
 
     k = m_Train.numInstances();
-    if(!m_UseAllK && (m_kNN < k)) {
+    if(!m_UseAllK && (m_kNN < k))
       k = m_kNN;
-    }
 
     weighted = m_Search.kNearestNeighbours(instance, k);
     distances = m_Search.getDistances();
 
     if (isLoggingEnabled()) {
       getLogger().fine("Test Instance: "+instance);
-      getLogger().fine("For "+k+" kept " + weighted.numInstances() + " out of " +
-                         m_Train.numInstances() + " instances.");
+      getLogger().fine("For " + k + " kept " + weighted.numInstances() + " out of " + m_Train.numInstances() + " instances.");
     }
 
     // IF LinearNN has skipped so much that <k neighbours are remaining.
@@ -236,14 +235,15 @@ public class LWLDatasetBuilder
     }
 
     // Determine the bandwidth
-    double bandwidth = distances[k-1];
+    bandwidth = distances[k-1];
 
     // Check for bandwidth zero
     if (bandwidth <= 0) {
       //if the kth distance is zero than give all instances the same weight
-      for(i = 0; i < distances.length; i++)
+      for (i = 0; i < distances.length; i++)
         distances[i] = 1;
-    } else {
+    }
+    else {
       // Rescale the distances by the bandwidth
       for (i = 0; i < distances.length; i++)
         distances[i] = distances[i] / bandwidth;
@@ -284,9 +284,9 @@ public class LWLDatasetBuilder
     sumOfWeights    = 0;
     newSumOfWeights = 0;
     for (i = 0; i < distances.length; i++) {
-      weight = distances[i];
-      inst = weighted.instance(i);
-      sumOfWeights += inst.weight();
+      weight           = distances[i];
+      inst             = weighted.instance(i);
+      sumOfWeights    += inst.weight();
       newSumOfWeights += inst.weight() * weight;
       inst.setWeight(inst.weight() * weight);
     }
@@ -298,8 +298,8 @@ public class LWLDatasetBuilder
     }
 
     result = new LWLContainer();
-    result.dataset = weighted;
-    result.distances = distances.clone();
+    result.dataset         = weighted;
+    result.distances       = distances.clone();
     result.originalIndices = null;  // TODO
 
     return result;
