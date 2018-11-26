@@ -199,7 +199,7 @@ public class LWLDatasetBuilder
   public LWLContainer build(Instance instance) throws Exception {
     int 		k;
     Instances 		weighted;
-    double 		distances[];
+    double[] 		distances;
     int			i;
     double 		bandwidth;
     double 		sumOfWeights;
@@ -212,7 +212,7 @@ public class LWLDatasetBuilder
       m_Search.addInstanceInfo(instance);
 
     k = m_Train.numInstances();
-    if(!m_UseAllK && (m_kNN < k))
+    if (!m_UseAllK && (m_kNN < k))
       k = m_kNN;
 
     weighted = m_Search.kNearestNeighbours(instance, k);
@@ -224,7 +224,7 @@ public class LWLDatasetBuilder
     }
 
     // IF LinearNN has skipped so much that <k neighbours are remaining.
-    if(k > distances.length)
+    if (k > distances.length)
       k = distances.length;
 
     if (isLoggingEnabled()) {
