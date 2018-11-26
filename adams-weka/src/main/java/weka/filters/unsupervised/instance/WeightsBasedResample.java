@@ -283,20 +283,20 @@ public class WeightsBasedResample
   /**
    * Sets the maximum percentage of instances to drop.
    *
-   * @param value     the threshold (0-1)
+   * @param value     the percentage (0-1)
    */
   public void setDropAtMost(double value) {
     if ((value >= 0) && (value <= 1))
       m_DropAtMost = value;
     else
       System.err.println(
-	  "'drop-below' threshold must be within [0;1], provided: " + value);
+	  "'drop-at-most' must be within [0;1], provided: " + value);
   }
 
   /**
-   * Returns the threshold of the normalized weights below which to drop instances.
+   * Returns the maximum percentage of instances to drop.
    *
-   * @return		the threshold (0-1)
+   * @return		the percentage (0-1)
    */
   public double getDropAtMost() {
     return m_DropAtMost;
@@ -310,7 +310,7 @@ public class WeightsBasedResample
    */
   public String dropAtMostTipText() {
     return
-        "The threshold of the normalized weights below which to drop instances (0-1).";
+        "The maximum percentage of instances to drop (0-1).";
   }
 
   /**
