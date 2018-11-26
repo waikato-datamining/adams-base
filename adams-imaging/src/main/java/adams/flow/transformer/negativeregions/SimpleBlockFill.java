@@ -323,10 +323,14 @@ public class SimpleBlockFill
     int[]		newX;
     int[]		newY;
 
-    // scale annotations
     annotations = m_Finder.findObjects(cont.getReport());
+    if (isLoggingEnabled())
+      getLogger().info("# objects: " + annotations.size());
 
+    // scale annotations
     if (m_ScaleFactor != 1.0) {
+      if (isLoggingEnabled())
+        getLogger().info("Scaling with factor: " + m_ScaleFactor);
       scale = new Scale();
       scale.setScaleX(m_ScaleFactor);
       scale.setScaleY(m_ScaleFactor);
@@ -342,6 +346,12 @@ public class SimpleBlockFill
     offsetX    = tileWidth / 2;
     offsetY    = tileHeight / 2;
     matrix     = new IntArrayMatrixView(width, height);
+    if (isLoggingEnabled()) {
+      getLogger().info(
+	"width=" + width + ", height=" + height
+	  + ", tileWidth=" + tileWidth + ", tileHeight=" + tileHeight
+	  + ", offsetX=" + offsetX + ", offsetY=" + offsetY);
+    }
 
     // fill in annotations
     for (LocatedObject obj: annotations)
@@ -359,6 +369,8 @@ public class SimpleBlockFill
         t = y * tileHeight + offsetY;
         if (matrix.get(s, t) != 0)
           continue;
+        if (isLoggingEnabled())
+          getLogger().info("row=" + y + ", col=" + x + ", y=" + t + ", x=" + s);
 
         // horizontal
 	findExtent(matrix, s, t, true, extX);
@@ -382,6 +394,8 @@ public class SimpleBlockFill
 	  if (isValidExtent(extY)) {
 	    region = new LocatedObject(null, extX[0], extY[0], extX[1] - extX[0] + 1, extY[1] - extY[0] + 1);
 	    result.add(region);
+	    if (isLoggingEnabled())
+	      getLogger().info("horizontal block found: " + region);
 	    fillInArea(matrix, region, NEGATIVE);
 	  }
 	}
@@ -408,6 +422,8 @@ public class SimpleBlockFill
 	  if (isValidExtent(extX)) {
 	    region = new LocatedObject(null, extX[0], extY[0], extX[1] - extX[0] + 1, extY[1] - extY[0] + 1);
 	    result.add(region);
+	    if (isLoggingEnabled())
+	      getLogger().info("vertical block found: " + region);
 	    fillInArea(matrix, region, NEGATIVE);
 	  }
 	}
@@ -416,6 +432,8 @@ public class SimpleBlockFill
 
     // scale regions back into original space
     if (m_ScaleFactor != 1.0) {
+      if (isLoggingEnabled())
+        getLogger().info("Reverse scaling of negative regions: " + m_ScaleFactor);
       scale = new Scale();
       scale.setScaleX(1.0 / m_ScaleFactor);
       scale.setScaleY(1.0 / m_ScaleFactor);
