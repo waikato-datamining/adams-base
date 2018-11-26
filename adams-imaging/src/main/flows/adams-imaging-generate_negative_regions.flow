@@ -1,0 +1,19 @@
+# Project: adams
+# Date: 2018-11-26 12:03:10
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Generates negative regions automatically outside the annotations in an image." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -width 1300 -height 600 -provider "adams.flow.sink.ImageViewer -width 1200 -height 600 -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\"" -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/two-girl-friends-871278530751FPYN.jpg
+ adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.control.Tee -name original
+  adams.flow.transformer.SetVariable -var-name entry -var-value original
+  adams.flow.transformer.Copy
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name negative
+  adams.flow.transformer.NegativeRegions -algorithm "adams.flow.transformer.negativeregions.SimpleBlockFill -finder adams.data.objectfinder.AllFinder -scale-factor 0.5" -transfer-type REPLACE -no-copy true
+  adams.flow.transformer.SetVariable -var-name entry -var-value negative
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
