@@ -26,6 +26,8 @@ import weka.core.Instances;
 import weka.core.neighboursearch.LinearNNSearch;
 import weka.core.neighboursearch.NearestNeighbourSearch;
 
+import java.io.Serializable;
+
 /**
  * Class for building LWL-style weighted datasets.
  *
@@ -35,6 +37,22 @@ public class LWLDatasetBuilder
   extends CustomLoggingLevelObject {
 
   private static final long serialVersionUID = 246129751885426502L;
+
+  /** the container with the weighted dataset, distances, indices. */
+  public static class LWLContainer
+    implements Serializable {
+
+    private static final long serialVersionUID = 5090533464519863032L;
+
+    /** the weighted dataset. */
+    public Instances dataset;
+
+    /** the distances. */
+    public double[] distances;
+
+    /** the indices (from the training dataset). */
+    public int[] originalIndices;
+  }
 
   /** The training instances used for classification. */
   protected Instances m_Train = null;
@@ -48,10 +66,11 @@ public class LWLDatasetBuilder
   /** True if m_kNN should be set to all instances. */
   protected boolean m_UseAllK = true;
 
-  /** The nearest neighbour search algorithm to use.
-   * (Default: weka.core.neighboursearch.LinearNNSearch)
-   */
-  protected NearestNeighbourSearch m_NNSearch =  new LinearNNSearch();
+  /** The nearest neighbour search algorithm to use. */
+  protected NearestNeighbourSearch m_Search =  new LinearNNSearch();
+
+  /** The actual nearest neighbour search algorithm to use. */
+  protected NearestNeighbourSearch m_ActualSearch;
 
   /** whether to suppress the update of the nearest-neighbor search algorithm
    * when making predictions. */
@@ -72,12 +91,12 @@ public class LWLDatasetBuilder
    * Sets the number of neighbours used for kernel bandwidth setting.
    * The bandwidth is taken as the distance to the kth neighbour.
    *
-   * @param knn the number of neighbours included inside the kernel
+   * @param value the number of neighbours included inside the kernel
    * bandwidth, or 0 to specify using all neighbors.
    */
-  public void setKNN(int knn) {
-    m_kNN = knn;
-    if (knn <= 0) {
+  public void setKNN(int value) {
+    m_kNN = value;
+    if (value <= 0) {
       m_kNN = 0;
       m_UseAllK = true;
     } else {
@@ -90,19 +109,19 @@ public class LWLDatasetBuilder
    * EPANECHNIKOV,  TRICUBE, INVERSE, GAUSS or CONSTANT, other values
    * are ignored.
    *
-   * @param kernel the new kernel method to use. Must be one of LINEAR,
+   * @param value the new kernel method to use. Must be one of LINEAR,
    * EPANECHNIKOV,  TRICUBE, INVERSE, GAUSS or CONSTANT.
    */
-  public void setWeightingKernel(int kernel) {
-    if ((kernel != LWL.LINEAR)
-      && (kernel != LWL.EPANECHNIKOV)
-      && (kernel != LWL.TRICUBE)
-      && (kernel != LWL.INVERSE)
-      && (kernel != LWL.GAUSS)
-      && (kernel != LWL.CONSTANT)) {
+  public void setWeightingKernel(int value) {
+    if ((value != LWL.LINEAR)
+      && (value != LWL.EPANECHNIKOV)
+      && (value != LWL.TRICUBE)
+      && (value != LWL.INVERSE)
+      && (value != LWL.GAUSS)
+      && (value != LWL.CONSTANT)) {
       return;
     }
-    m_WeightKernel = kernel;
+    m_WeightKernel = value;
   }
 
   /**
@@ -118,18 +137,18 @@ public class LWLDatasetBuilder
   /**
    * Sets the nearestNeighbourSearch algorithm to be used for finding nearest
    * neighbour(s).
-   * @param nearestNeighbourSearchAlgorithm - The NearestNeighbourSearch class.
+   * @param value - The NearestNeighbourSearch class.
    */
-  public void setNearestNeighbourSearchAlgorithm(NearestNeighbourSearch nearestNeighbourSearchAlgorithm) {
-    m_NNSearch = nearestNeighbourSearchAlgorithm;
+  public void setSearchAlgorithm(NearestNeighbourSearch value) {
+    m_Search = value;
   }
 
   /**
    * Returns the current nearestNeighbourSearch algorithm in use.
    * @return the NearestNeighbourSearch algorithm currently in use.
    */
-  public NearestNeighbourSearch getNearestNeighbourSearchAlgorithm() {
-    return m_NNSearch;
+  public NearestNeighbourSearch getSearchAlgorithm() {
+    return m_Search;
   }
 
   /**
@@ -174,36 +193,44 @@ public class LWLDatasetBuilder
    * Constructs the weighted dataset.
    *
    * @param instance	the instance to make prediction for
-   * @return 		the weighted dataset for the classifier to train with
+   * @return 		the container with the generated for the classifier to train with
    * @throws Exception	if build fails
    */
-  public Instances build(Instance instance) throws Exception {
-    if (!m_NoUpdate)
-      m_NNSearch.addInstanceInfo(instance);
+  public LWLContainer build(Instance instance) throws Exception {
+    int 		k;
+    Instances 		weighted;
+    double 		distances[];
+    int			i;
+    double 		sumOfWeights;
+    double 		newSumOfWeights;
+    double 		weight;
+    Instance 		inst;
+    LWLContainer 	result;
 
-    int k = m_Train.numInstances();
-    if( (!m_UseAllK && (m_kNN < k)) /*&&
-       !(m_WeightKernel==INVERSE ||
-         m_WeightKernel==GAUSS)*/ ) {
+    if (!m_NoUpdate)
+      m_Search.addInstanceInfo(instance);
+
+    k = m_Train.numInstances();
+    if(!m_UseAllK && (m_kNN < k)) {
       k = m_kNN;
     }
 
-    Instances result = m_NNSearch.kNearestNeighbours(instance, k);
-    double distances[] = m_NNSearch.getDistances();
+    weighted = m_Search.kNearestNeighbours(instance, k);
+    distances = m_Search.getDistances();
 
     if (isLoggingEnabled()) {
       getLogger().fine("Test Instance: "+instance);
-      getLogger().fine("For "+k+" kept " + result.numInstances() + " out of " +
+      getLogger().fine("For "+k+" kept " + weighted.numInstances() + " out of " +
                          m_Train.numInstances() + " instances.");
     }
 
-    //IF LinearNN has skipped so much that <k neighbours are remaining.
-    if(k>distances.length)
+    // IF LinearNN has skipped so much that <k neighbours are remaining.
+    if(k > distances.length)
       k = distances.length;
 
     if (isLoggingEnabled()) {
       getLogger().fine("Instance Distances");
-      for (int i = 0; i < distances.length; i++) {
+      for (i = 0; i < distances.length; i++) {
 	getLogger().fine((i+1) + ". " + distances[i]);
       }
     }
@@ -214,16 +241,16 @@ public class LWLDatasetBuilder
     // Check for bandwidth zero
     if (bandwidth <= 0) {
       //if the kth distance is zero than give all instances the same weight
-      for(int i=0; i < distances.length; i++)
+      for(i = 0; i < distances.length; i++)
         distances[i] = 1;
     } else {
       // Rescale the distances by the bandwidth
-      for (int i = 0; i < distances.length; i++)
+      for (i = 0; i < distances.length; i++)
         distances[i] = distances[i] / bandwidth;
     }
 
     // Pass the distances through a weighting kernel
-    for (int i = 0; i < distances.length; i++) {
+    for (i = 0; i < distances.length; i++) {
       switch (m_WeightKernel) {
         case LWL.LINEAR:
           distances[i] = 1.0001 - distances[i];
@@ -248,27 +275,32 @@ public class LWLDatasetBuilder
 
     if (isLoggingEnabled()) {
       getLogger().fine("Instance Weights");
-      for (int i = 0; i < distances.length; i++) {
+      for (i = 0; i < distances.length; i++) {
 	getLogger().fine((i+1) + ". " + distances[i]);
       }
     }
 
     // Set the weights on the training data
-    double sumOfWeights = 0, newSumOfWeights = 0;
-    for (int i = 0; i < distances.length; i++) {
-      double weight = distances[i];
-      Instance inst = result.instance(i);
+    sumOfWeights    = 0;
+    newSumOfWeights = 0;
+    for (i = 0; i < distances.length; i++) {
+      weight = distances[i];
+      inst = weighted.instance(i);
       sumOfWeights += inst.weight();
       newSumOfWeights += inst.weight() * weight;
       inst.setWeight(inst.weight() * weight);
-      //weightedTrain.add(newInst);
     }
 
     // Rescale weights
-    for (int i = 0; i < result.numInstances(); i++) {
-      Instance inst = result.instance(i);
+    for (i = 0; i < weighted.numInstances(); i++) {
+      inst = weighted.instance(i);
       inst.setWeight(inst.weight() * sumOfWeights / newSumOfWeights);
     }
+
+    result = new LWLContainer();
+    result.dataset = weighted;
+    result.distances = distances.clone();
+    result.originalIndices = null;  // TODO
 
     return result;
   }
