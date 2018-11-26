@@ -15,7 +15,7 @@
 
 /*
  * SFTPGet.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JSch
  */
 
@@ -103,7 +103,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
     copyright = "JCraft",
@@ -300,7 +299,7 @@ public class SFTPGet
 
     file       = (String) m_InputToken.getPayload();
     remotefile = (m_RemoteDir.isEmpty() ? "" : (m_RemoteDir + "/")) + file;
-    outFile    = m_OutputDirectory.getAbsolutePath() + File.separator + file;
+    outFile    = m_OutputDirectory.getAbsolutePath() + File.separator + new File(file).getName();
     ops        = new SftpFileOperations();
     ops.setProvider(m_Connection);
     ops.setDirection(RemoteDirection.REMOTE_TO_LOCAL);
