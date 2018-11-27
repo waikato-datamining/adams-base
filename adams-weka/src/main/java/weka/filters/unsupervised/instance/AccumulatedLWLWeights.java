@@ -30,6 +30,7 @@ import weka.core.Instances;
 import weka.core.Option;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
+import weka.core.WeightedInstancesHandler;
 import weka.core.neighboursearch.LinearNNSearch;
 import weka.core.neighboursearch.NearestNeighbourSearch;
 import weka.filters.SimpleBatchFilter;
@@ -81,7 +82,7 @@ import java.util.Vector;
  */
 public class AccumulatedLWLWeights
   extends SimpleBatchFilter
-  implements UnsupervisedFilter {
+  implements UnsupervisedFilter, WeightedInstancesHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -6784901276150528252L;
