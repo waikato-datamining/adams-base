@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SafeArffLoader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 package weka.core.converters;
 
+import weka.core.Instances;
+
 import java.io.IOException;
 import java.io.Reader;
-
-import weka.core.Instances;
 
 /**
  * Safe version of the {@link ArffLoader}, always retaining string values.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AArffLoader
   extends ArffLoader {
@@ -168,5 +167,15 @@ public class AArffLoader
     }
 
     return new Instances(m_structure, 0);
+  }
+
+  /**
+   * Returns a description of the file type.
+   *
+   * @return a short file description
+   */
+  @Override
+  public String getFileDescription() {
+    return "Arff data files (safe)";
   }
 }
