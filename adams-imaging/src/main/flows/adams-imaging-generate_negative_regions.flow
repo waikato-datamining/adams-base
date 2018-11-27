@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2018-11-26 12:03:10
+# Date: 2018-11-27 16:33:44
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-spreadsheet
@@ -11,9 +11,12 @@ adams.flow.control.Flow -annotation "Generates negative regions automatically ou
  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
  adams.flow.control.Tee -name original
   adams.flow.transformer.SetVariable -var-name entry -var-value original
-  adams.flow.transformer.Copy
   adams.flow.sink.CallableSink -callable DisplayPanelManager
  adams.flow.control.Tee -name negative
-  adams.flow.transformer.NegativeRegions -algorithm "adams.flow.transformer.negativeregions.SimpleBlockFill -finder adams.data.objectfinder.AllFinder -scale-factor 0.5" -transfer-type REPLACE -no-copy true
+  adams.flow.transformer.NegativeRegions -algorithm "adams.flow.transformer.negativeregions.SimpleBlockFill -finder adams.data.objectfinder.AllFinder -scale-factor 0.5" -transfer-type REPLACE
   adams.flow.transformer.SetVariable -var-name entry -var-value negative
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name "negative (top 3)"
+  adams.flow.transformer.NegativeRegions -algorithm "adams.flow.transformer.negativeregions.LargestRegions -algorithm \"adams.flow.transformer.negativeregions.SimpleBlockFill -finder adams.data.objectfinder.AllFinder -scale-factor 0.5\" -max-regions 3" -transfer-type REPLACE
+  adams.flow.transformer.SetVariable -var-name entry -var-value "negative top 3"
   adams.flow.sink.CallableSink -callable DisplayPanelManager
