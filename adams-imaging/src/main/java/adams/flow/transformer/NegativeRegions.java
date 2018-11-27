@@ -107,6 +107,11 @@ import adams.flow.transformer.negativeregions.Null;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-no-regions-no-output &lt;boolean&gt; (property: noRegionsNoOutput)
+ * &nbsp;&nbsp;&nbsp;If enabled, no container is forwarded if no negative regions were generated.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -145,6 +150,9 @@ public class NegativeRegions
   /** whether to skip creating a copy of the container. */
   protected boolean m_NoCopy;
 
+  /** whether to suppress forwarding the container if no regions were generated. */
+  protected boolean m_NoRegionsNoOutput;
+
   /**
    * Returns a string describing the object.
    *
@@ -180,6 +188,10 @@ public class NegativeRegions
 
     m_OptionManager.add(
       "no-copy", "noCopy",
+      false);
+
+    m_OptionManager.add(
+      "no-regions-no-output", "noRegionsNoOutput",
       false);
   }
 
@@ -339,6 +351,37 @@ public class NegativeRegions
   }
 
   /**
+   * Sets whether to suppress forwarding the container if no negative regions
+   * were generated.
+   *
+   * @param value	true if to suppress if no regions generated
+   */
+  public void setNoRegionsNoOutput(boolean value) {
+    m_NoRegionsNoOutput = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to suppress forwarding the container if no negative regions
+   * were generated.
+   *
+   * @return		true if to suppress if no regions generated
+   */
+  public boolean getNoRegionsNoOutput() {
+    return m_NoRegionsNoOutput;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String noRegionsNoOutputTipText() {
+    return "If enabled, no container is forwarded if no negative regions were generated.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -386,7 +429,6 @@ public class NegativeRegions
     AbstractImageContainer	cont;
     LocatedObjects 		regions;
     LocatedObjects 		current;
-    int				i;
 
     result = null;
 
@@ -403,6 +445,12 @@ public class NegativeRegions
     }
     catch (Exception e) {
       result = handleException("Failed to generate negative regions!", e);
+    }
+
+    if (m_NoRegionsNoOutput && (regions != null) && (regions.size() == 0)) {
+      if (isLoggingEnabled())
+        getLogger().info("No regions generated, suppressing output.");
+      return null;
     }
 
     if (result == null) {
