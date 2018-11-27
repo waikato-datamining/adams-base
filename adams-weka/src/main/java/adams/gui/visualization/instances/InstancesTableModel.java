@@ -15,7 +15,7 @@
 
 /*
  * InstancesTableModel.java
- * Copyright (C) 2005-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2005-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -54,7 +54,6 @@ import java.util.logging.Level;
  * {@link UndoHandlerWithQuickAccess} as well.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 12708 $
  */
 public class InstancesTableModel
   extends DefaultTableModel
@@ -90,6 +89,9 @@ public class InstancesTableModel
   /** whether to display the attribute index in the table header. */
   protected boolean m_ShowAttributeIndex;
 
+  /** whether to show a weights column. */
+  protected boolean m_ShowWeightsColumn;
+
   /**
    * for caching long relational and string values that get processed for
    * display.
@@ -111,6 +113,7 @@ public class InstancesTableModel
     m_UndoEnabled         = true;
     m_ReadOnly            = false;
     m_ShowAttributeIndex  = false;
+    m_ShowWeightsColumn   = false;
     m_Cache               = new Hashtable<>();
   }
 
@@ -264,16 +267,20 @@ public class InstancesTableModel
    * @return the attribute type
    */
   public int getType(int rowIndex, int columnIndex) {
-    int result;
+    int 	result;
+    int		offset;
 
     result = Attribute.STRING;
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
 
-    if ((rowIndex < 0) && columnIndex > 0 && columnIndex < getColumnCount()) {
-      result = m_Data.attribute(columnIndex - 1).type();
+    if ((rowIndex < 0) && columnIndex >= offset && columnIndex < getColumnCount()) {
+      result = m_Data.attribute(columnIndex - offset).type();
     }
     else if ((rowIndex >= 0) && (rowIndex < getRowCount())
-      && (columnIndex > 0) && (columnIndex < getColumnCount())) {
-      result = m_Data.instance(rowIndex).attribute(columnIndex - 1).type();
+      && (columnIndex >= offset) && (columnIndex < getColumnCount())) {
+      result = m_Data.instance(rowIndex).attribute(columnIndex - offset).type();
     }
 
     return result;
@@ -295,10 +302,16 @@ public class InstancesTableModel
    * @param notify whether to notify the listeners
    */
   public void deleteAttributeAt(int columnIndex, boolean notify) {
-    if ((columnIndex > 0) && (columnIndex < getColumnCount())) {
+    int		offset;
+
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
+
+    if ((columnIndex >= offset) && (columnIndex < getColumnCount())) {
       if (!m_IgnoreChanges)
 	addUndoPoint();
-      m_Data.deleteAttributeAt(columnIndex - 1);
+      m_Data.deleteAttributeAt(columnIndex - offset);
       if (notify)
 	notifyListener(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
     }
@@ -331,9 +344,15 @@ public class InstancesTableModel
    * @param newName the new name of the attribute
    */
   public void renameAttributeAt(int columnIndex, String newName) {
-    if ((columnIndex > 0) && (columnIndex < getColumnCount())) {
+    int		offset;
+
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
+
+    if ((columnIndex >= offset) && (columnIndex < getColumnCount())) {
       addUndoPoint();
-      m_Data.renameAttribute(columnIndex - 1, newName);
+      m_Data.renameAttribute(columnIndex - offset, newName);
       notifyListener(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
     }
   }
@@ -345,32 +364,37 @@ public class InstancesTableModel
    * @param columnIndex the index of the column
    */
   public void attributeAsClassAt(int columnIndex) {
-    Reorder reorder;
-    String order;
-    int i;
+    Reorder 		reorder;
+    StringBuilder 	order;
+    int 		i;
+    int			offset;
 
-    if ((columnIndex > 0) && (columnIndex < getColumnCount())) {
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
+
+    if ((columnIndex >= offset) && (columnIndex < getColumnCount())) {
       addUndoPoint();
 
       try {
 	// build order string (1-based!)
-	order = "";
+	order = new StringBuilder();
 	for (i = 1; i < m_Data.numAttributes() + 1; i++) {
 	  // skip new class
-	  if (i == columnIndex)
+	  if (i + offset - 1 == columnIndex)
 	    continue;
 
-	  if (!order.isEmpty())
-	    order += ",";
-	  order += Integer.toString(i);
+	  if (order.length() != 0)
+	    order.append(",");
+	  order.append(Integer.toString(i));
 	}
-	if (!order.isEmpty())
-	  order += ",";
-	order += Integer.toString(columnIndex);
+	if (order.length() != 0)
+	  order.append(",");
+	order.append(Integer.toString(columnIndex - offset + 1));
 
 	// process data
 	reorder = new Reorder();
-	reorder.setAttributeIndices(order);
+	reorder.setAttributeIndices(order.toString());
 	reorder.setInputFormat(m_Data);
 	m_Data = Filter.useFilter(m_Data, reorder);
 
@@ -469,9 +493,15 @@ public class InstancesTableModel
    * @param columnIndex the index of the column
    */
   public void sortInstances(int columnIndex) {
-    if ((columnIndex > 0) && (columnIndex < getColumnCount())) {
+    int		offset;
+
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
+
+    if ((columnIndex >= offset) && (columnIndex < getColumnCount())) {
       addUndoPoint();
-      m_Data.stableSort(columnIndex - 1);
+      m_Data.stableSort(columnIndex - offset);
       notifyListener(new TableModelEvent(this));
     }
   }
@@ -483,9 +513,15 @@ public class InstancesTableModel
    * @param ascending ascending if true, otherwise descending
    */
   public void sortInstances(int columnIndex, boolean ascending) {
-    if ((columnIndex > 0) && (columnIndex < getColumnCount())) {
+    int		offset;
+
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
+
+    if ((columnIndex >= offset) && (columnIndex < getColumnCount())) {
       addUndoPoint();
-      m_Data.stableSort(columnIndex - 1);
+      m_Data.stableSort(columnIndex - offset);
       if (!ascending) {
 	Instances reversedData = new Instances(m_Data, m_Data.numInstances());
 	int i = m_Data.numInstances();
@@ -493,8 +529,7 @@ public class InstancesTableModel
 	  i--;
 	  int equalCount = 1;
 	  while ((i > 0)
-	    && (m_Data.instance(i).value(columnIndex - 1) == m_Data.instance(
-	    i - 1).value(columnIndex - 1))) {
+	    && (m_Data.instance(i).value(columnIndex - offset) == m_Data.instance(i - 1).value(columnIndex - offset))) {
 	    equalCount++;
 	    i--;
 	  }
@@ -517,14 +552,18 @@ public class InstancesTableModel
    * @return the column index or -1 if not found
    */
   public int getAttributeColumn(String name) {
-    int i;
-    int result;
+    int 	i;
+    int 	result;
+    int		offset;
 
     result = -1;
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
 
     for (i = 0; i < m_Data.numAttributes(); i++) {
       if (m_Data.attribute(i).name().equals(name)) {
-	result = i + 1;
+	result = i + offset;
 	break;
       }
     }
@@ -548,6 +587,8 @@ public class InstancesTableModel
     if ((columnIndex >= 0) && (columnIndex < getColumnCount())) {
       if (columnIndex == 0)
 	result = Integer.class;
+      else if ((m_ShowWeightsColumn) && (columnIndex == 1))
+        result = Double.class;
       else if (getType(columnIndex) == Attribute.NUMERIC)
 	result = Double.class;
       else
@@ -567,6 +608,8 @@ public class InstancesTableModel
     int result;
 
     result = 1;
+    if (m_ShowWeightsColumn)
+      result ++;
     if (m_Data != null)
       result += m_Data.numAttributes();
 
@@ -580,11 +623,15 @@ public class InstancesTableModel
    * @return true if the column is the class attribute
    */
   protected boolean isClassIndex(int columnIndex) {
-    boolean result;
-    int index;
+    boolean 	result;
+    int 	index;
+    int 	offset;
 
     index  = m_Data.classIndex();
-    result = (index == columnIndex - 1);
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
+    result = (index == columnIndex - offset);
 
     return result;
   }
@@ -597,18 +644,26 @@ public class InstancesTableModel
    */
   @Override
   public String getColumnName(int columnIndex) {
-    String result;
+    String 	result;
+    int		offset;
 
     result = "";
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
 
     if ((columnIndex >= 0) && (columnIndex < getColumnCount())) {
       if (columnIndex == 0) {
 	result =
 	  "<html><center>No.<br><font size=\"-2\">&nbsp;</font></center></html>";
       }
+      else if ((columnIndex == 1) && m_ShowWeightsColumn) {
+	result =
+	  "<html><center>Weight<br><font size=\"-2\">&nbsp;</font></center></html>";
+      }
       else {
 	if (m_Data != null) {
-	  if ((columnIndex - 1 < m_Data.numAttributes())) {
+	  if ((columnIndex - offset < m_Data.numAttributes())) {
 	    result = "<html><center>";
 
 	    // index
@@ -617,9 +672,9 @@ public class InstancesTableModel
 
 	    // name
 	    if (isClassIndex(columnIndex))
-	      result += "<b>" + m_Data.attribute(columnIndex - 1).name() + "</b>";
+	      result += "<b>" + m_Data.attribute(columnIndex - offset).name() + "</b>";
 	    else
-	      result += m_Data.attribute(columnIndex - 1).name();
+	      result += m_Data.attribute(columnIndex - offset).name();
 
 	    // attribute type
 	    switch (getType(columnIndex)) {
@@ -672,13 +727,17 @@ public class InstancesTableModel
    * @return true if the value at the position is missing
    */
   public boolean isMissingAt(int rowIndex, int columnIndex) {
-    boolean result;
+    boolean 	result;
+    int		offset;
 
     result = false;
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
 
-    if ((rowIndex >= 0) && (rowIndex < getRowCount()) && (columnIndex > 0)
+    if ((rowIndex >= 0) && (rowIndex < getRowCount()) && (columnIndex >= offset)
       && (columnIndex < getColumnCount())) {
-      result = (m_Data.instance(rowIndex).isMissing(columnIndex - 1));
+      result = (m_Data.instance(rowIndex).isMissing(columnIndex - offset));
     }
 
     return result;
@@ -693,13 +752,17 @@ public class InstancesTableModel
    * @return the underlying value in the Instances object
    */
   public double getInstancesValueAt(int rowIndex, int columnIndex) {
-    double result;
+    double 	result;
+    int		offset;
 
     result = -1;
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
 
-    if ((rowIndex >= 0) && (rowIndex < getRowCount()) && (columnIndex > 0)
+    if ((rowIndex >= 0) && (rowIndex < getRowCount()) && (columnIndex >= offset)
       && (columnIndex < getColumnCount())) {
-      result = m_Data.instance(rowIndex).value(columnIndex - 1);
+      result = m_Data.instance(rowIndex).value(columnIndex - offset);
     }
 
     return result;
@@ -714,18 +777,25 @@ public class InstancesTableModel
    */
   @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
-    Object result;
-    String tmp;
-    String key;
-    boolean modified;
+    Object 	result;
+    String 	tmp;
+    String 	key;
+    boolean 	modified;
+    int		offset;
 
     result = null;
-    key = rowIndex + "-" + columnIndex;
+    key    = rowIndex + "-" + columnIndex;
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
 
     if ((rowIndex >= 0) && (rowIndex < getRowCount()) && (columnIndex >= 0)
       && (columnIndex < getColumnCount())) {
       if (columnIndex == 0) {
 	result = rowIndex + 1;
+      }
+      else if (m_ShowWeightsColumn && (columnIndex == 1)) {
+        result = m_Data.instance(rowIndex).weight();
       }
       else {
 	if (isMissingAt(rowIndex, columnIndex)) {
@@ -741,10 +811,10 @@ public class InstancesTableModel
 	      case Attribute.NOMINAL:
 	      case Attribute.STRING:
 	      case Attribute.RELATIONAL:
-		result = m_Data.instance(rowIndex).stringValue(columnIndex - 1);
+		result = m_Data.instance(rowIndex).stringValue(columnIndex - offset);
 		break;
 	      case Attribute.NUMERIC:
-		result = m_Data.instance(rowIndex).value(columnIndex - 1);
+		result = m_Data.instance(rowIndex).value(columnIndex - offset);
 		break;
 	      default:
 		result = "-can't display-";
@@ -797,7 +867,13 @@ public class InstancesTableModel
    */
   @Override
   public boolean isCellEditable(int rowIndex, int columnIndex) {
-    return (columnIndex > 0) && !isReadOnly();
+    int		offset;
+
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
+
+    return (columnIndex >= offset) && !isReadOnly();
   }
 
   /**
@@ -831,6 +907,11 @@ public class InstancesTableModel
     Attribute 	att;
     Object 	oldValue;
     boolean	different;
+    int		offset;
+
+    offset = 1;
+    if (m_ShowWeightsColumn)
+      offset++;
 
     oldValue  = getValueAt(rowIndex, columnIndex);
     different = !("" + oldValue).equals("" + aValue);
@@ -841,7 +922,7 @@ public class InstancesTableModel
       addUndoPoint();
 
     type  = getType(rowIndex, columnIndex);
-    index = columnIndex - 1;
+    index = columnIndex - offset;
     inst  = m_Data.instance(rowIndex);
     att   = inst.attribute(index);
 
@@ -1057,6 +1138,25 @@ public class InstancesTableModel
   }
 
   /**
+   * Sets whether to display a weights column.
+   *
+   * @param value if true then the weights get shown in a separate column
+   */
+  public void setShowWeightsColumn(boolean value) {
+    m_ShowWeightsColumn = value;
+    fireTableStructureChanged();
+  }
+
+  /**
+   * Returns whether to display a weights column.
+   *
+   * @return true if the weights get shown in a separate column
+   */
+  public boolean getShowWeightsColumn() {
+    return m_ShowWeightsColumn;
+  }
+
+  /**
    * Returns a new model with the same setup.
    *
    * @param data	the data to display
@@ -1067,6 +1167,7 @@ public class InstancesTableModel
 
     result = new InstancesTableModel(data);
     result.setShowAttributeIndex(getShowAttributeIndex());
+    result.setShowWeightsColumn(getShowWeightsColumn());
     result.setReadOnly(isReadOnly());
     result.setUndoEnabled(isUndoEnabled());
     result.setNotificationEnabled(isNotificationEnabled());

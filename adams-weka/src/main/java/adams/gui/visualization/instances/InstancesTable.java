@@ -15,7 +15,7 @@
 
 /*
  * InstancesTable.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances;
@@ -26,6 +26,7 @@ import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.core.SortableAndSearchableWrapperTableModel;
 import adams.gui.core.TableRowRange;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.dialog.ApprovalDialog;
@@ -322,6 +323,17 @@ public class InstancesTable
     menu.add(menuitem);
 
     menu.addSeparator();
+
+    if (getShowWeightsColumn()) {
+      menuitem = new JMenuItem("Hide weights", GUIHelper.getEmptyIcon());
+      menuitem.addActionListener((ActionEvent ae) -> setShowWeightsColumn(false));
+      menu.add(menuitem);
+    }
+    else {
+      menuitem = new JMenuItem("Show weights", GUIHelper.getEmptyIcon());
+      menuitem.addActionListener((ActionEvent ae) -> setShowWeightsColumn(true));
+      menu.add(menuitem);
+    }
 
     menuitem = new JMenuItem("Filter", GUIHelper.getIcon("filter.png"));
     menuitem.setEnabled(col > 0);
@@ -653,5 +665,24 @@ public class InstancesTable
   @Override
   protected SpreadSheet modelToSpreadSheet() {
     return ((InstancesTableModel) getUnsortedModel()).toSpreadSheet();
+  }
+
+  /**
+   * Sets whether to display a weights column.
+   *
+   * @param value if true then the weights get shown in a separate column
+   */
+  public void setShowWeightsColumn(boolean value) {
+    ((InstancesTableModel) getUnsortedModel()).setShowWeightsColumn(value);
+    ((SortableAndSearchableWrapperTableModel) getModel()).fireTableStructureChanged();
+  }
+
+  /**
+   * Returns whether to display a weights column.
+   *
+   * @return true if the weights get shown in a separate column
+   */
+  public boolean getShowWeightsColumn() {
+    return ((InstancesTableModel) getUnsortedModel()).getShowWeightsColumn();
   }
 }
