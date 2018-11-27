@@ -15,14 +15,14 @@
 
 /*
  * WekaFileChooser.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
+import adams.core.ClassLister;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
-import weka.core.converters.ConverterUtils;
 import weka.core.converters.SimpleArffLoader;
 import weka.core.converters.SimpleArffSaver;
 
@@ -30,14 +30,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
  * for Weka file formats.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaFileChooser
   extends AbstractConfigurableExtensionFileFilterFileChooser<AbstractFileLoader,AbstractFileSaver>
@@ -93,8 +91,8 @@ public class WekaFileChooser
   @Override
   protected void doInitializeFilters() {
     try {
-      initFilters(true, ConverterUtils.getFileLoaders());
-      initFilters(false, ConverterUtils.getFileSavers());
+      initFilters(true, ClassLister.getSingleton().getClasses(AbstractFileLoader.class));
+      initFilters(false, ClassLister.getSingleton().getClasses(AbstractFileSaver.class));
     }
     catch (Exception e) {
       handleException("Failed to initialize Weka loader/saver filters!", e);
@@ -107,9 +105,8 @@ public class WekaFileChooser
    * @param reader	if true then the reader filters are initialized
    * @param classnames	the classnames of the converters
    */
-  protected static void initFilters(boolean reader, Vector<String> classnames) {
+  protected static void initFilters(boolean reader, Class[] classes) {
     int					i;
-    String 				classname;
     Class 				cls;
     String[] 				ext;
     String 				desc;
@@ -126,12 +123,11 @@ public class WekaFileChooser
     else
       m_WriterFileFilters  = new ArrayList<>();
 
-    for (i = 0; i < classnames.size(); i++) {
-      classname = classnames.get(i);
+    for (i = 0; i < classes.length; i++) {
+      cls = classes[i];
 
       // get data from converter
       try {
-	cls       = Class.forName(classname);
 	converter = cls.newInstance();
 	if (reader) {
 	  desc = ((AbstractFileLoader) converter).getFileDescription();
@@ -143,7 +139,7 @@ public class WekaFileChooser
 	}
       }
       catch (Exception e) {
-	handleException("Failed to set up: " + classname, e);
+	handleException("Failed to set up: " + cls.getName(), e);
 	cls       = null;
 	converter = null;
 	ext       = new String[0];
@@ -155,11 +151,11 @@ public class WekaFileChooser
 
       // reader?
       if (reader) {
-	filter = new ExtensionFileFilterWithClass(classname, desc, ext);
+	filter = new ExtensionFileFilterWithClass(cls.getName(), desc, ext);
 	m_ReaderFileFilters.add(filter);
       }
       else {
-	filter = new ExtensionFileFilterWithClass(classname, desc, ext);
+	filter = new ExtensionFileFilterWithClass(cls.getName(), desc, ext);
 	m_WriterFileFilters.add(filter);
       }
     }
@@ -262,7 +258,7 @@ public class WekaFileChooser
     result = null;
 
     try {
-      initFilters(true, ConverterUtils.getFileLoaders());
+      initFilters(true, ClassLister.getSingleton().getClasses(AbstractFileLoader.class));
     }
     catch (Exception e) {
       handleException("Failed to initialize Weka loader/saver filters!", e);
@@ -294,7 +290,7 @@ public class WekaFileChooser
     result = null;
 
     try {
-      initFilters(false, ConverterUtils.getFileSavers());
+      initFilters(false, ClassLister.getSingleton().getClasses(AbstractFileSaver.class));
     }
     catch (Exception e) {
       handleException("Failed to initialize Weka loader/saver filters!", e);
