@@ -983,4 +983,13 @@ public class SortableAndSearchableWrapperTableModel
     m_ColumnFiltersRegExp.clear();
     doSearchAndFilter();
   }
+
+  /**
+   * Table structure changed.
+   */
+  @Override
+  public void fireTableStructureChanged() {
+    super.fireTableStructureChanged();
+    initialize();
+  }
 }
