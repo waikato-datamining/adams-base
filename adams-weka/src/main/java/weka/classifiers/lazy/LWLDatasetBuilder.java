@@ -21,14 +21,22 @@
 package weka.classifiers.lazy;
 
 import adams.core.ObjectCopyHelper;
+import adams.core.Range;
+import adams.core.Utils;
 import adams.core.logging.CustomLoggingLevelObject;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.neighboursearch.LinearNNSearch;
 import weka.core.neighboursearch.NearestNeighbourSearch;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.AddID;
 
 import java.io.Serializable;
+import java.util.logging.Level;
 
 /**
  * Class for building LWL-style weighted datasets.
@@ -54,10 +62,24 @@ public class LWLDatasetBuilder
 
     /** the indices (from the training dataset). */
     public int[] originalIndices;
+
+    /**
+     * Outputs distances and original indices.
+     *
+     * @return		the distances
+     */
+    public String toString() {
+      return "Dataset: " + dataset.numInstances() + " rows\n"
+	+ "Distances: " + Utils.arrayToString(distances) + "\n"
+	+ "Original indices: " + Utils.arrayToString(originalIndices);
+    }
   }
 
   /** The training instances used for classification. */
   protected Instances m_Train = null;
+
+  /** The actual training instances used for classification. */
+  protected transient Instances m_ActualTrain;
 
   /** The number of neighbours used to select the kernel bandwidth. */
   protected int m_kNN = -1;
@@ -72,17 +94,22 @@ public class LWLDatasetBuilder
   protected NearestNeighbourSearch m_Search =  new LinearNNSearch();
 
   /** The actual nearest neighbour search algorithm to use. */
-  protected NearestNeighbourSearch m_ActualSearch;
+  protected transient NearestNeighbourSearch m_ActualSearch;
 
   /** whether to suppress the update of the nearest-neighbor search algorithm
    * when making predictions. */
   protected boolean m_NoUpdate = false;
+
+  /** for adding the ID to trace the instances. */
+  protected transient AddID m_AddID;
 
   /**
    * Resets the scheme.
    */
   protected void reset() {
     m_ActualSearch = null;
+    m_ActualTrain  = null;
+    m_AddID        = null;
   }
 
   /**
@@ -205,6 +232,30 @@ public class LWLDatasetBuilder
   }
 
   /**
+   * Returns a unique attribute name for the ID attribute.
+   *
+   * @param data	the data to insert the attribute
+   * @return		the attribute name
+   */
+  protected String getIDAttributeName(Instances data) {
+    String	result;
+    int		count;
+
+    result = "ID";
+    if (data.attribute(result) == null)
+      return result;
+
+    count = 0;
+    do {
+      count++;
+    }
+    while (data.attribute(result + "-" + count) != null);
+    result = result + "-" + count;
+
+    return result;
+  }
+
+  /**
    * Constructs the weighted dataset.
    *
    * @param instance	the instance to make prediction for
@@ -212,6 +263,7 @@ public class LWLDatasetBuilder
    * @throws Exception	if build fails
    */
   public LWLContainer build(Instance instance) throws Exception {
+    Instance		actualInstance;
     int 		k;
     Instances 		weighted;
     double[] 		distances;
@@ -222,24 +274,57 @@ public class LWLDatasetBuilder
     double 		weight;
     Instance 		inst;
     LWLContainer 	result;
+    Range		range;
+    TIntList		rangeList;
+    TIntList		indices;
 
+    // configure actual search/dataset
     if (m_ActualSearch == null) {
+      // add ID
+      m_AddID = new AddID();
+      m_AddID.setAttributeName(getIDAttributeName(m_Train));
+      m_AddID.setIDIndex("" + (m_Train.numAttributes() + 1));
+      m_AddID.setInputFormat(m_Train);
+      m_ActualTrain = Filter.useFilter(m_Train, m_AddID);
+
+      // ignore ID attribute
       m_ActualSearch = ObjectCopyHelper.copyObject(m_Search);
-      // TODO
+      if (m_Search.getDistanceFunction().getAttributeIndices().equals("first-last") && !m_Search.getDistanceFunction().getInvertSelection()) {
+        m_ActualSearch.getDistanceFunction().setAttributeIndices("1-" + m_Train.numAttributes());
+      }
+      else {
+        range = new Range(m_Search.getDistanceFunction().getAttributeIndices());
+        range.setInverted(m_Search.getDistanceFunction().getInvertSelection());
+        rangeList = new TIntArrayList(range.getIntIndices());
+        rangeList.remove(m_Train.numAttributes());
+        range.setIndices(rangeList.toArray());
+        m_ActualSearch.getDistanceFunction().setAttributeIndices(range.toExplicitRange());
+        m_ActualSearch.getDistanceFunction().setInvertSelection(false);
+      }
+
+      m_ActualSearch.setInstances(m_ActualTrain);
+
+      if (isLoggingEnabled())
+        getLogger().info("Actual search: " + OptionUtils.getCommandLine(m_ActualSearch));
     }
 
+    // add ID
+    m_AddID.input(instance);
+    m_AddID.batchFinished();
+    actualInstance = m_AddID.output();
+
     if (!m_NoUpdate)
-      m_ActualSearch.addInstanceInfo(instance);
+      m_ActualSearch.addInstanceInfo(actualInstance);
 
     k = m_Train.numInstances();
     if (!m_UseAllK && (m_kNN < k))
       k = m_kNN;
 
-    weighted = m_ActualSearch.kNearestNeighbours(instance, k);
+    weighted = m_ActualSearch.kNearestNeighbours(actualInstance, k);
     distances = m_ActualSearch.getDistances();
 
-    if (isLoggingEnabled()) {
-      getLogger().fine("Test Instance: "+instance);
+    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE)) {
+      getLogger().fine("Test Instance: " + instance);
       getLogger().fine("For " + k + " kept " + weighted.numInstances() + " out of " + m_Train.numInstances() + " instances.");
     }
 
@@ -247,11 +332,10 @@ public class LWLDatasetBuilder
     if (k > distances.length)
       k = distances.length;
 
-    if (isLoggingEnabled()) {
+    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE)) {
       getLogger().fine("Instance Distances");
-      for (i = 0; i < distances.length; i++) {
+      for (i = 0; i < distances.length; i++)
 	getLogger().fine((i+1) + ". " + distances[i]);
-      }
     }
 
     // Determine the bandwidth
@@ -293,11 +377,10 @@ public class LWLDatasetBuilder
       }
     }
 
-    if (isLoggingEnabled()) {
+    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE)) {
       getLogger().fine("Instance Weights");
-      for (i = 0; i < distances.length; i++) {
+      for (i = 0; i < distances.length; i++)
 	getLogger().fine((i+1) + ". " + distances[i]);
-      }
     }
 
     // Set the weights on the training data
@@ -317,10 +400,22 @@ public class LWLDatasetBuilder
       inst.setWeight(inst.weight() * sumOfWeights / newSumOfWeights);
     }
 
-    result = new LWLContainer();
-    result.dataset         = weighted;
+    // determine indices
+    indices = new TIntArrayList();
+    for (i = 0; i < weighted.numInstances(); i++)
+      indices.add((int) weighted.instance(i).value(weighted.numAttributes() - 1) - 1);
+
+    result                 = new LWLContainer();
     result.distances       = distances.clone();
-    result.originalIndices = null;  // TODO
+    result.originalIndices = indices.toArray();
+
+    // compile weighted original dataset
+    result.dataset = new Instances(m_Train, indices.size());
+    for (i = 0; i < indices.size(); i++) {
+      inst = (Instance) m_Train.instance(indices.get(i)).copy();
+      inst.setWeight(weighted.instance(i).weight() * sumOfWeights / newSumOfWeights);
+      result.dataset.add(inst);
+    }
 
     return result;
   }
