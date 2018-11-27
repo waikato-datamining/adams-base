@@ -15,7 +15,7 @@
 
 /*
  * DatabaseConnectionDialog.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -31,7 +31,6 @@ import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -39,7 +38,6 @@ import java.awt.event.WindowEvent;
  * A standalone dialog for managing all the connections to the databases.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatabaseConnectionsDialog
   extends BaseDialog {
@@ -55,6 +53,9 @@ public class DatabaseConnectionsDialog
 
   /** the Close button. */
   protected BaseButton m_ButtonClose;
+
+  /** the Disconnect button. */
+  protected BaseButton m_ButtonDisconnect;
 
   /**
    * Creates a modal dialog.
@@ -122,13 +123,14 @@ public class DatabaseConnectionsDialog
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
 
+    m_ButtonDisconnect = new BaseButton("Disconnect");
+    m_ButtonDisconnect.setMnemonic('D');
+    m_ButtonDisconnect.addActionListener((ActionEvent e) -> m_Panel.disconnectConnections());
+    panel.add(m_ButtonDisconnect);
+
     m_ButtonClose = new BaseButton("Close", GUIHelper.getIcon("exit.png"));
     m_ButtonClose.setMnemonic('l');
-    m_ButtonClose.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        m_Self.setVisible(false);
-      }
-    });
+    m_ButtonClose.addActionListener((ActionEvent e) -> m_Self.setVisible(false));
     panel.add(m_ButtonClose);
 
     addWindowListener(new WindowAdapter() {

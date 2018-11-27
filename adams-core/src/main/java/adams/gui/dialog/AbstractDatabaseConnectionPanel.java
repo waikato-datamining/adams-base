@@ -15,12 +15,11 @@
 
 /*
  * AbstractDatabaseConnectionPanel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
 
-import adams.core.ClassLister;
 import adams.core.Constants;
 import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingLevel;
@@ -54,7 +53,6 @@ import java.util.List;
  * A panel for connecting to a database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDatabaseConnectionPanel
   extends BasePanel
@@ -114,7 +112,7 @@ public abstract class AbstractDatabaseConnectionPanel
     super.initialize();
 
     m_Self            = this;
-    m_ChangeListeners = new HashSet<ChangeListener>();
+    m_ChangeListeners = new HashSet<>();
   }
 
   /**
@@ -453,11 +451,19 @@ public abstract class AbstractDatabaseConnectionPanel
   }
 
   /**
-   * Returns a list with classnames of panels.
+   * Clears the connections.
    *
-   * @return		the panel classnames
+   * @return true if able to clear connections
    */
-  public static String[] getPanels() {
-    return ClassLister.getSingleton().getClassnames(AbstractDatabaseConnectionPanel.class);
+  public boolean disconnectConnections() {
+    if (getDatabaseConnection() == null)
+      return false;
+    if (getDatabaseConnection().getOwner() == null)
+      return false;
+    getDatabaseConnection().getOwner().disconnectConnections();
+    getDatabaseConnection().getOwner().disconnectAllConnections();
+    notifyChangeListeners();
+    update();
+    return true;
   }
 }

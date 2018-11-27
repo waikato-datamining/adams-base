@@ -15,28 +15,30 @@
 
 /*
  * ConnectToDatabases.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import java.awt.Dimension;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
+import adams.gui.core.BaseButton;
 import adams.gui.dialog.DatabaseConnectionsPanel;
+
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 
 /**
  * Connects to the database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ConnectToDatabases
   extends AbstractBasicMenuItemDefinition {
@@ -73,16 +75,28 @@ public class ConnectToDatabases
    * Launches the functionality of the menu item.
    */
   public void launch() {
-    DatabaseConnectionsPanel	panel;
-    ChildFrame 			frame;
+    final DatabaseConnectionsPanel	panelDB;
+    JPanel			        panel;
+    ChildFrame 			        frame;
+    final BaseButton                    buttonClose;
+    final BaseButton                    buttonDisconnect;
 
-    panel = new DatabaseConnectionsPanel();
-    panel.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-	getOwner().createTitle(getTitle());
-      }
-    });
-    frame = createChildFrame(panel);
+    panelDB = new DatabaseConnectionsPanel();
+    panelDB.addChangeListener((ChangeEvent e) -> getOwner().createTitle(getTitle()));
+
+    panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    buttonDisconnect = new BaseButton("Disconnect all");
+    buttonDisconnect.setMnemonic('D');
+    buttonDisconnect.addActionListener((ActionEvent e) -> panelDB.disconnectConnections());
+    panel.add(buttonDisconnect);
+
+    buttonClose = new BaseButton("Close");
+    buttonClose.setMnemonic('l');
+    buttonClose.addActionListener((ActionEvent e) -> panelDB.closeParent());
+    panel.add(buttonClose);
+    panelDB.add(panel, BorderLayout.SOUTH);
+
+    frame = createChildFrame(panelDB);
     frame.pack();
     frame.setSize(new Dimension((int) (frame.getWidth() * 1.2), frame.getHeight()));
     frame.setLocationRelativeTo(null);
@@ -95,7 +109,7 @@ public class ConnectToDatabases
    * @return 		the title
    */
   public String getTitle() {
-    return "Connect to databases";
+    return "Databases";
   }
 
   /**

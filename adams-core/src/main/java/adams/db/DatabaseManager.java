@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DatabaseManager.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -65,7 +65,7 @@ public class DatabaseManager<T extends AbstractDatabaseConnection>
     super();
 
     m_DatabaseName = dbName;
-    m_Connections  = new HashMap<String,T>();
+    m_Connections  = new HashMap<>();
   }
 
   /**
@@ -217,5 +217,27 @@ public class DatabaseManager<T extends AbstractDatabaseConnection>
     }
 
     return result;
+  }
+
+  /**
+   * Performs a disconnect on all connects and removes them.
+   *
+   * @see #m_Connections
+   */
+  public void disconnectConnections() {
+    for (AbstractDatabaseConnection conn: m_Connections.values())
+      conn.disconnect();
+    m_Connections.clear();
+  }
+
+  /**
+   * Performs a disconnect on all connects and removes them.
+   *
+   * @see #m_AllConnections
+   */
+  public static void disconnectAllConnections() {
+    for (AbstractDatabaseConnection conn: m_AllConnections.values())
+      conn.disconnect();
+    m_AllConnections.clear();
   }
 }

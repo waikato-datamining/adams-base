@@ -13,28 +13,29 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DatabaseConnectionsPanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
-import java.awt.BorderLayout;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Vector;
+import adams.core.ClassLister;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTabbedPane;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import adams.gui.core.BasePanel;
-import adams.gui.core.BaseTabbedPane;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Panel for managing all the database connections.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatabaseConnectionsPanel
   extends BasePanel {
@@ -46,7 +47,10 @@ public class DatabaseConnectionsPanel
   protected BaseTabbedPane m_TabbedPane;
 
   /** the change listeners. */
-  protected HashSet<ChangeListener> m_ChangeListeners;
+  protected Set<ChangeListener> m_ChangeListeners;
+
+  /** the panels. */
+  protected List<AbstractDatabaseConnectionPanel> m_Panels;
 
   /**
    * For initializing members.
@@ -54,15 +58,14 @@ public class DatabaseConnectionsPanel
   protected void initialize() {
     super.initialize();
 
-    m_ChangeListeners = new HashSet<ChangeListener>();
+    m_ChangeListeners = new HashSet<>();
   }
 
   /**
    * Initializes the members.
    */
   protected void initGUI() {
-    String[]					classes;
-    Vector<AbstractDatabaseConnectionPanel> 	panels;
+    Class[]					classes;
     AbstractDatabaseConnectionPanel		panel;
 
     super.initGUI();
@@ -73,27 +76,23 @@ public class DatabaseConnectionsPanel
     add(m_TabbedPane, BorderLayout.CENTER);
 
     // get available panels
-    classes = AbstractDatabaseConnectionPanel.getPanels();
-    panels  = new Vector<AbstractDatabaseConnectionPanel>();
-    for (String cls: classes) {
+    classes = ClassLister.getSingleton().getClasses(AbstractDatabaseConnectionPanel.class);
+    m_Panels  = new ArrayList<>();
+    for (Class cls: classes) {
       try {
-	panel = (AbstractDatabaseConnectionPanel) Class.forName(cls).newInstance();
-	panel.addChangeListener(new ChangeListener() {
-	  public void stateChanged(ChangeEvent e) {
-	    notifyChangeListeners();
-	  }
-	});
-	panels.add(panel);
+	panel = (AbstractDatabaseConnectionPanel) cls.newInstance();
+	panel.addChangeListener((ChangeEvent e) -> notifyChangeListeners());
+	m_Panels.add(panel);
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate '" + cls + "':");
 	e.printStackTrace();
       }
     }
-    Collections.sort(panels);
+    Collections.sort(m_Panels);
 
     // add available panels
-    for (AbstractDatabaseConnectionPanel pnl: panels)
+    for (AbstractDatabaseConnectionPanel pnl: m_Panels)
       m_TabbedPane.addTab(pnl.getTitle(), pnl);
   }
 
@@ -124,5 +123,13 @@ public class DatabaseConnectionsPanel
     event = new ChangeEvent(this);
     for (ChangeListener l: m_ChangeListeners)
       l.stateChanged(event);
+  }
+
+  /**
+   * Clears the connections.
+   */
+  public void disconnectConnections() {
+    for (AbstractDatabaseConnectionPanel panel: m_Panels)
+      panel.disconnectConnections();
   }
 }
