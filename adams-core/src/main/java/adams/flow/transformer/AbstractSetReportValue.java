@@ -15,13 +15,14 @@
 
 /*
  * AbstractSetReportValue.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.data.report.AbstractField;
+import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
@@ -32,7 +33,6 @@ import adams.flow.core.Token;
  * Ancestor for transformers that update the value of field in a report.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSetReportValue
   extends AbstractTransformer {
@@ -187,6 +187,7 @@ public abstract class AbstractSetReportValue
     Report	report;
     Field	field;
     String	value;
+    boolean 	added;
 
     result = null;
 
@@ -205,12 +206,14 @@ public abstract class AbstractSetReportValue
       }
       
       if (report != null) {
-	field = new Field(m_Field);
-	report.addField(field);
 	if (m_AutoDetectDataType)
-	  report.addParameter(m_Field.getName(), value);
+	  field = new Field(m_Field.getName(), DataType.guessType(value));
 	else
-	  report.setValue(m_Field, value);
+	  field = new Field(m_Field);
+	report.addField(field);
+	added = report.setValue(new Field(m_Field.getName(), DataType.guessType(value)), value);
+	if (!added)
+	  getLogger().warning("Failed to add: " + m_Field);
       }
       else {
 	if (isLoggingEnabled())
