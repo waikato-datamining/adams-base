@@ -83,6 +83,7 @@ public class ParserHelper
   public static HashMap reportToSymbols(Report report) {
     HashMap 		result;
     List<AbstractField>	fields;
+    Object		obj;
 
     // transfer values
     result = new HashMap();
@@ -91,10 +92,14 @@ public class ParserHelper
       try {
         switch (field.getDataType()) {
           case NUMERIC:
-            result.put(field.toString(), report.getDoubleValue(field));
+            obj = report.getDoubleValue(field);
+            if (obj != null)
+	      result.put(field.toString(), obj);
             break;
           case BOOLEAN:
-            result.put(field.toString(), report.getBooleanValue(field));
+            obj = report.getBooleanValue(field);
+            if (obj != null)
+	      result.put(field.toString(), obj);
             break;
           default:
             result.put(field.toString(), "" + report.getValue(field));
@@ -411,7 +416,7 @@ public class ParserHelper
   public Double compare(Object o1, Object o2) {
     if ((o1 instanceof Number) && (o2 instanceof Number))
       return (double) Double.compare(((Number) o1).doubleValue(), ((Number) o2).doubleValue());
-    else if ((o1 instanceof Comparable) && (o2 instanceof Comparable))
+    else if ((o1 instanceof Comparable) && (o2 instanceof Comparable) && (o1.getClass().equals(o2.getClass())))
       return (double) (((Comparable) o1).compareTo((Comparable) o2));
     else
       return Double.NaN;
