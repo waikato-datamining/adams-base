@@ -15,19 +15,19 @@
 
 /*
  * DataType.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.report;
 
 import adams.core.EnumWithCustomDisplay;
+import adams.core.Utils;
 import adams.core.option.AbstractOption;
 
 /**
  * The type of the fields.
  *
  * @author  dale (dale at cs dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum DataType
   implements EnumWithCustomDisplay<DataType> {
@@ -136,5 +136,25 @@ public enum DataType
     }
 
     return result;
+  }
+
+  /**
+   * Guesses the data type from the object.
+   * In case of string, it checks for: boolean -> double -> string
+   *
+   * @param obj		the object to inspect
+   * @return		the data type
+   */
+  public static DataType guessType(Object obj) {
+    if (obj instanceof Boolean)
+      return BOOLEAN;
+    else if (obj instanceof Number)
+      return NUMERIC;
+    else if (Utils.isBoolean("" + obj))
+      return BOOLEAN;
+    else if (Utils.isDouble("" + obj))
+      return NUMERIC;
+    else
+      return STRING;
   }
 }
