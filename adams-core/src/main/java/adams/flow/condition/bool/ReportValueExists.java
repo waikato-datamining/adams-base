@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ReportValueExists.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -50,7 +50,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReportValueExists
   extends AbstractBooleanCondition {
@@ -172,8 +171,20 @@ public class ReportValueExists
 	report = ((ReportHandler) token.getPayload()).getReport();
       else
 	report = (Report) token.getPayload();
-      if (report != null)
-	result = report.hasValue(m_Field);
+
+      if (report != null) {
+        result = report.hasValue(m_Field);
+        if (result) {
+          switch (m_Field.getDataType()) {
+            case NUMERIC:
+              result = (report.getDoubleValue(m_Field) != null);
+              break;
+            case BOOLEAN:
+              result = (report.getBooleanValue(m_Field) != null);
+              break;
+          }
+        }
+      }
     }
 
     return result;
