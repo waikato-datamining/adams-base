@@ -47,7 +47,6 @@ import java.util.List;
  * Data structure for a report.
  *
  * @author Dale (dale at cs dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Report
   extends LoggingObject
@@ -524,7 +523,7 @@ public class Report
    * @return 		parameter value, null if not present
    */
   public Boolean getBooleanValue(AbstractField key) {
-    if (m_Params.containsKey(key))
+    if (m_Params.containsKey(key) && (m_Params.get(key) instanceof Boolean))
       return (Boolean) m_Params.get(key);
     else
       return null;
@@ -547,7 +546,7 @@ public class Report
    * @return 		parameter value, null if not present
    */
   public Double getDoubleValue(AbstractField key) {
-    if (m_Params.containsKey(key))
+    if (m_Params.containsKey(key) && (m_Params.get(key) instanceof Double))
       return (Double) m_Params.get(key);
     else
       return null;
