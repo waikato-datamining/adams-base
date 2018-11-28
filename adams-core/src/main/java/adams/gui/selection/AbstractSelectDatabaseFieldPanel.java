@@ -32,6 +32,7 @@ import adams.gui.event.FieldCacheUpdateEvent;
 import adams.gui.event.FieldCacheUpdateListener;
 
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
@@ -434,27 +435,29 @@ public abstract class AbstractSelectDatabaseFieldPanel<T extends AbstractField>
    * Updates the table model.
    */
   protected void updateTableModel() {
-    m_TableDataModel.removeTableModelListener(m_TableData);
-    m_TableDataModel = (AbstractSelectionTableModel<T>) new FieldCacheTableModel(
-	getFieldCacheManager().get(getFieldProvider()),
-	m_FieldType, getDataType());
+    SwingUtilities.invokeLater(() -> {
+      m_TableDataModel.removeTableModelListener(m_TableData);
+      m_TableDataModel = (AbstractSelectionTableModel<T>) new FieldCacheTableModel(
+        getFieldCacheManager().get(getFieldProvider()),
+        m_FieldType, getDataType());
 
-    m_TableData.setModel(m_TableDataModel);
-    m_TableData.setOptimalColumnWidth();
+      m_TableData.setModel(m_TableDataModel);
+      m_TableData.setOptimalColumnWidth();
 
-    int[] indices = new int[Array.getLength(m_Current)];
-    for (int i = 0; i < indices.length; i++)
-      indices[i] = m_TableDataModel.indexOf((T) Array.get(m_Current, i));
-
-    sort();
-
-    if (indices.length > 0) {
-      m_TableData.getSelectionModel().clearSelection();
+      int[] indices = new int[Array.getLength(m_Current)];
       for (int i = 0; i < indices.length; i++)
-	m_TableData.getSelectionModel().addSelectionInterval(
-	    m_TableData.getDisplayRow(indices[i]),
-	    m_TableData.getDisplayRow(indices[i]));
-    }
+        indices[i] = m_TableDataModel.indexOf((T) Array.get(m_Current, i));
+
+      sort();
+
+      if (indices.length > 0) {
+        m_TableData.getSelectionModel().clearSelection();
+        for (int i = 0; i < indices.length; i++)
+          m_TableData.getSelectionModel().addSelectionInterval(
+            m_TableData.getDisplayRow(indices[i]),
+            m_TableData.getDisplayRow(indices[i]));
+      }
+    });
   }
 
   /**

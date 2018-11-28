@@ -27,6 +27,7 @@ import adams.event.DatabaseConnectionChangeListener;
 import adams.gui.core.BaseButton;
 import adams.gui.core.MouseUtils;
 
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -128,12 +129,14 @@ public abstract class AbstractDatabaseSelectionPanel<T>
    * counts and changing mouse cursor back to normal one.
    */
   protected void postRefresh(final T[] items) {
-    MouseUtils.setDefaultCursor(this);
-    m_Current = (T[]) select(items).toArray();
-    updateCounts();
-    m_ButtonRefresh.setEnabled(true);
-    m_SearchPanel.setEnabled(true);
-    m_DataDisplayed = true;
+    SwingUtilities.invokeLater(() -> {
+      MouseUtils.setDefaultCursor(this);
+      m_Current = (T[]) select(items).toArray();
+      updateCounts();
+      m_ButtonRefresh.setEnabled(true);
+      m_SearchPanel.setEnabled(true);
+      m_DataDisplayed = true;
+    });
   }
 
   /**
