@@ -312,7 +312,9 @@ public class Report
   public void addParameter(String key, Object value) {
     AbstractField f = m_Fields.get(key);
     if (f == null) {
-      m_Params.put(new Field(key, DataType.UNKNOWN), Field.fixString(value.toString()));
+      m_Params.put(
+        new Field(key, DataType.guessType(Field.fixString(value.toString()))),
+	Field.fixString(value.toString()));
     }
     else {
       Object o = f.valueOf(value.toString());
@@ -405,8 +407,9 @@ public class Report
    *
    * @param key		the key of the value
    * @param value	the new value
+   * @return		whether successfully set
    */
-  public void setValue(AbstractField key, Object value) {
+  public boolean setValue(AbstractField key, Object value) {
     // correct type if necessary (Boolean/Double/String)
     if (value instanceof Byte)
       value = ((Byte) value).doubleValue();
@@ -426,10 +429,18 @@ public class Report
 
     // convert to correct type
     if (value instanceof String) {
-      if (key.getDataType() == DataType.NUMERIC)
-	value = Double.parseDouble((String) value);
-      else if (key.getDataType() == DataType.BOOLEAN)
-	value = Boolean.parseBoolean((String) value);
+      if (key.getDataType() == DataType.NUMERIC) {
+        if (Utils.isDouble((String) value))
+	  value = Double.parseDouble((String) value);
+        else
+          return false;
+      }
+      else if (key.getDataType() == DataType.BOOLEAN) {
+        if (Utils.isBoolean((String) value))
+	  value = Boolean.parseBoolean((String) value);
+        else
+          return false;
+      }
     }
     else if (value instanceof Double) {
       if ((key.getDataType() == DataType.STRING) || (key.getDataType() == DataType.UNKNOWN))
@@ -440,7 +451,14 @@ public class Report
 	value = value.toString();
     }
 
+    // double check for numeric/boolean
+    if ((key.getDataType() == DataType.NUMERIC) || (key.getDataType() == DataType.BOOLEAN)) {
+      if (key.getDataType() != DataType.guessType(value))
+        return false;
+    }
+
     m_Params.put(key, value);
+    return true;
   }
 
   /**
