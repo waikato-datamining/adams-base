@@ -668,7 +668,7 @@ public class InstancesTableModel
 
 	    // index
 	    if (m_ShowAttributeIndex)
-	      result += columnIndex + ":";
+	      result += (columnIndex - offset + 1) + ":";
 
 	    // name
 	    if (isClassIndex(columnIndex))
