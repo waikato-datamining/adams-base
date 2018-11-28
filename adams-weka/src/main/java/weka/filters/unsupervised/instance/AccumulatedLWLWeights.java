@@ -21,6 +21,11 @@
 package weka.filters.unsupervised.instance;
 
 import adams.core.ObjectCopyHelper;
+import adams.core.logging.LoggingLevel;
+import adams.data.weka.rowfinder.NullFinder;
+import adams.data.weka.rowfinder.RowFinder;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.lazy.LWL;
 import weka.classifiers.lazy.LWLDatasetBuilder;
 import weka.classifiers.lazy.LWLDatasetBuilder.LWLContainer;
@@ -68,6 +73,14 @@ import java.util.Vector;
  * (default: nns gets updated).
  * </pre>
  *
+ * <pre> -row-finder-enabled
+ *  Whether to use a row finder to limit the instances for which  to determine the LWL neighborhoods for.
+ *  (default off)</pre>
+ *
+ * <pre> -row-finder &lt;classname + options&gt;
+ *  The row finder scheme to use for limiting the instances to  determine the LWL neighborhoods for.
+ *  (default: adams.data.weka.rowfinder.NullFinder)</pre>
+ *
  * <pre> -output-debug-info
  *  If set, filter is run in debug mode and
  *  may output additional info to the console</pre>
@@ -102,6 +115,12 @@ public class AccumulatedLWLWeights
    * when making predictions. */
   protected boolean m_NoUpdate;
 
+  /** whether to use the row finder. */
+  protected boolean m_RowFinderEnabled = false;
+
+  /** the row finder to use if enabled. */
+  protected RowFinder m_RowFinder = new NullFinder();
+
   /**
    * Returns a string describing this classifier.
    *
@@ -124,21 +143,27 @@ public class AccumulatedLWLWeights
   public Enumeration<Option> listOptions() {
     Vector<Option> result = new Vector<>();
 
-    result.addElement(new Option("\tThe nearest neighbour search " +
-      "algorithm to use " +
-      "(default: weka.core.neighboursearch.LinearNNSearch).\n",
-      "A", 0, "-A"));
+    result.addElement(
+      new Option(
+        "\tThe nearest neighbour search " +
+          "algorithm to use " +
+          "(default: " + LinearNNSearch.class.getName() + ").\n",
+        "A", 0, "-A"));
 
-    result.addElement(new Option("\tSet the number of neighbours used to set"
-      +" the kernel bandwidth.\n"
-      +"\t(default all)",
-      "K", 1, "-K <number of neighbours>"));
+    result.addElement(
+      new Option(
+        "\tSet the number of neighbours used to set"
+          +" the kernel bandwidth.\n"
+          +"\t(default all)",
+        "K", 1, "-K <number of neighbours>"));
 
-    result.addElement(new Option("\tSet the weighting kernel shape to use."
-      +" 0=Linear, 1=Epanechnikov,\n"
-      +"\t2=Tricube, 3=Inverse, 4=Gaussian.\n"
-      +"\t(default 0 = Linear)",
-      "U", 1,"-U <number of weighting method>"));
+    result.addElement(
+      new Option(
+        "\tSet the weighting kernel shape to use."
+          +" 0=Linear, 1=Epanechnikov,\n"
+          +"\t2=Tricube, 3=Inverse, 4=Gaussian.\n"
+          +"\t(default 0 = Linear)",
+        "U", 1,"-U <number of weighting method>"));
 
     result.addElement(
       new Option(
@@ -146,6 +171,20 @@ public class AccumulatedLWLWeights
           + "\talgorithm with the data that is to be classified.\n"
           + "(default: nns gets updated).\n",
         "no-update", 0, "-no-update"));
+
+    result.addElement(
+      new Option(
+        "\tWhether to use a row finder to limit the instances for which "
+          + "\tto determine the LWL neighborhoods for.\n"
+          +"\t(default off)",
+        "row-finder-enabled", 0, "-row-finder-enabled"));
+
+    result.addElement(
+      new Option(
+        "\tThe row finder scheme to use for limiting the instances to "
+          + "\tdetermine the LWL neighborhoods for.\n"
+          +"\t(default: " + NullFinder.class.getName() + ")",
+        "row-finder", 1, "-row-finder <classname + options>"));
 
     result.addAll(Collections.list(super.listOptions()));
 
@@ -225,16 +264,6 @@ public class AccumulatedLWLWeights
   }
 
   /**
-   * Returns the tip text for this property.
-   * @return tip text for this property suitable for
-   * displaying in the explorer/experimenter gui
-   */
-  public String KNNTipText() {
-    return "How many neighbours are used to determine the width of the "
-      + "weighting function (<= 0 means all neighbours).";
-  }
-
-  /**
    * Sets the number of neighbours used for kernel bandwidth setting.
    * The bandwidth is taken as the distance to the kth neighbour.
    *
@@ -263,10 +292,9 @@ public class AccumulatedLWLWeights
    * @return tip text for this property suitable for
    * displaying in the explorer/experimenter gui
    */
-  public String weightingKernelTipText() {
-    return "Determines weighting function. [0 = Linear, 1 = Epnechnikov,"+
-	   "2 = Tricube, 3 = Inverse, 4 = Gaussian and 5 = Constant. "+
-	   "(default 0 = Linear)].";
+  public String KNNTipText() {
+    return "How many neighbours are used to determine the width of the "
+      + "weighting function (<= 0 means all neighbours).";
   }
 
   /**
@@ -304,16 +332,10 @@ public class AccumulatedLWLWeights
    * @return tip text for this property suitable for
    * displaying in the explorer/experimenter gui
    */
-  public String nearestNeighbourSearchAlgorithmTipText() {
-    return "The nearest neighbour search algorithm to use (Default: LinearNN).";
-  }
-
-  /**
-   * Returns the current nearestNeighbourSearch algorithm in use.
-   * @return the NearestNeighbourSearch algorithm currently in use.
-   */
-  public NearestNeighbourSearch getNearestNeighbourSearchAlgorithm() {
-    return m_NNSearch;
+  public String weightingKernelTipText() {
+    return "Determines weighting function. [0 = Linear, 1 = Epnechnikov,"+
+      "2 = Tricube, 3 = Inverse, 4 = Gaussian and 5 = Constant. "+
+      "(default 0 = Linear)].";
   }
 
   /**
@@ -326,15 +348,20 @@ public class AccumulatedLWLWeights
   }
 
   /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the explorer/experimenter gui
+   * Returns the current nearestNeighbourSearch algorithm in use.
+   * @return the NearestNeighbourSearch algorithm currently in use.
    */
-  public String noUpdateTipText() {
-    return
-        "If turned on, suppresses the update of the nearest-neighbor search "
-      + "algorithm when making predictions (EXPERIMENTAL).";
+  public NearestNeighbourSearch getNearestNeighbourSearchAlgorithm() {
+    return m_NNSearch;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   * @return tip text for this property suitable for
+   * displaying in the explorer/experimenter gui
+   */
+  public String nearestNeighbourSearchAlgorithmTipText() {
+    return "The nearest neighbour search algorithm to use (Default: LinearNN).";
   }
 
   /**
@@ -355,6 +382,74 @@ public class AccumulatedLWLWeights
    */
   public boolean getNoUpdate() {
     return m_NoUpdate;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String noUpdateTipText() {
+    return
+      "If turned on, suppresses the update of the nearest-neighbor search "
+        + "algorithm when making predictions (EXPERIMENTAL).";
+  }
+
+  /**
+   * Sets the whether to use the row finder.
+   *
+   * @param value true if to use the row finder
+   */
+  public void setRowFinderEnabled(boolean value) {
+    m_RowFinderEnabled = value;
+  }
+
+  /**
+   * Returns whether to use the row finder.
+   *
+   * @return true if to use the row finder
+   */
+  public boolean getRowFinderEnabled() {
+    return m_RowFinderEnabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return tip text for this property suitable for
+   * displaying in the explorer/experimenter gui
+   */
+  public String rowFinderEnabledTipText() {
+    return "If enabled, the row finder is used to limit the instances to build the LWL neighborhoods for.";
+  }
+
+  /**
+   * Sets the row finder scheme.
+   *
+   * @param value the row finder scheme
+   */
+  public void setRowFinder(RowFinder value) {
+    m_RowFinder = value;
+  }
+
+  /**
+   * Returns the row finder scheme.
+   *
+   * @return the row finder
+   */
+  public RowFinder getRowFinder() {
+    return m_RowFinder;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return tip text for this property suitable for
+   * displaying in the explorer/experimenter gui
+   */
+  public String rowFinderTipText() {
+    return "The row finder scheme to use, if enabled.";
   }
 
   /**
@@ -407,6 +502,7 @@ public class AccumulatedLWLWeights
     double		min;
     double		max;
     double		range;
+    TIntList		indices;
 
     // only first batch will get processed
     if (m_FirstBatchDone)
@@ -418,9 +514,25 @@ public class AccumulatedLWLWeights
     lwl.setNoUpdate(m_NoUpdate);
     lwl.setWeightingKernel(m_WeightKernel);
     lwl.setSearchAlgorithm(ObjectCopyHelper.copyObject(m_NNSearch));
+    if (m_Debug)
+      lwl.setLoggingLevel(LoggingLevel.INFO);
+
+    // indices to work on
+    indices = new TIntArrayList();
+    if (m_RowFinderEnabled) {
+      indices.add(m_RowFinder.findRows(instances));
+      if (m_Debug)
+        System.err.println("Before/after row finder: " + instances.numInstances() + "/" + indices.size());
+    }
+    else {
+      for (i = 0; i < instances.numInstances(); i++)
+        indices.add(i);
+    }
+
+    // generate weights
     weights = new double[instances.numInstances()];
-    for (i = 0; i < instances.numInstances(); i++) {
-      cont = lwl.build(instances.instance(i));
+    for (i = 0; i < indices.size(); i++) {
+      cont = lwl.build(instances.instance(indices.get(i)));
       for (n = 0; n < cont.originalIndices.length; n++)
         weights[cont.originalIndices[n]] += cont.dataset.instance(n).weight();
     }
@@ -431,6 +543,7 @@ public class AccumulatedLWLWeights
       System.err.println("Weights are all the same, not adjusting weights!");
       return new Instances(instances);
     }
+
     result = new Instances(instances);
     for (i = 0; i < weights.length; i++)
       result.instance(i).setWeight((weights[i] - min) / range);
