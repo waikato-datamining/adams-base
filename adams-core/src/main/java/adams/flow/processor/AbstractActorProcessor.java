@@ -82,8 +82,8 @@ public abstract class AbstractActorProcessor
       processActor(actor);
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to processed actor: " + actor, e);
-      m_Errors.add("Failed to processed actor: " + Utils.throwableToString(e));
+      getLogger().log(Level.SEVERE, "Failed to process actor: " + actor, e);
+      m_Errors.add("Failed to process actor: " + Utils.throwableToString(e));
     }
   }
 
