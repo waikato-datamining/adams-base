@@ -211,7 +211,7 @@ public abstract class AbstractSetReportValue
 	else
 	  field = new Field(m_Field);
 	report.addField(field);
-	added = report.setValue(new Field(m_Field.getName(), DataType.guessType(value)), value);
+	added = report.setValue(field, value);
 	if (!added)
 	  getLogger().warning("Failed to add: " + m_Field);
       }
