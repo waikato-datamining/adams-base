@@ -20,8 +20,6 @@
 
 package adams.flow.sink;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.output.JAIImageWriter;
@@ -29,6 +27,9 @@ import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import adams.flow.transformer.ImageFileReader;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for ImageWriter actor.
@@ -104,7 +105,7 @@ public class ImageWriterTest
       tmp2.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/adams_logo.png")});
 
       tmp1[0] = tmp2;
-      adams.flow.transformer.ImageReader tmp4 = new adams.flow.transformer.ImageReader();
+      ImageFileReader tmp4 = new ImageFileReader();
       tmp4.setReader(new JAIImageReader());
       tmp1[1] = tmp4;
       adams.flow.sink.ImageWriter tmp5 = new adams.flow.sink.ImageWriter();

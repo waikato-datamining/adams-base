@@ -20,8 +20,6 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.features.Pixels;
 import adams.data.image.features.Pixels.PixelType;
@@ -33,6 +31,8 @@ import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the BufferedImageFeatureGenerator actor.
@@ -94,7 +94,7 @@ public class BufferedImageFeatureGeneratorTest
 	    new TmpFile("adams_icon.png")
 	});
 
-    ImageReader ir = new ImageReader();
+    ImageFileReader ir = new ImageFileReader();
 
     BufferedImageTransformer trans = new BufferedImageTransformer();
     Resize res = new Resize();

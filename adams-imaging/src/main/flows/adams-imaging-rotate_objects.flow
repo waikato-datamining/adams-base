@@ -7,7 +7,7 @@ adams.flow.control.Flow -annotation "Shows how to rotate object annotations." -f
  adams.flow.standalone.CallableActors
   adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -zoom -1 -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\"" -entry-name-variable degrees
  adams.flow.source.FileSupplier -file ${FLOWS}/data/circle.png
- adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
  adams.flow.control.Tee -name "image dimensions"
   adams.flow.control.Tee -name width
    adams.flow.transformer.ImageInfo

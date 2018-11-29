@@ -10,7 +10,7 @@ adams.flow.control.Flow -annotation "Shows how to use multi-image operations." -
   adams.flow.control.Tee -name "get name"
    adams.flow.transformer.BaseName -remove-extensions true
    adams.flow.transformer.SetVariable -var-name entry
-  adams.flow.transformer.ImageReader -reader adams.data.io.input.BoofCVImageReader
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.BoofCVImageReader
   adams.flow.control.Tee
    adams.flow.sink.CallableSink -callable DisplayPanelManager
  adams.flow.transformer.BoofCVMultiImageOperation -operation adams.data.boofcv.multiimageoperation.And

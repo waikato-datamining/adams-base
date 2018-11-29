@@ -14,29 +14,28 @@
  */
 
 /*
- * ImageReaderTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * ImageFileReaderTest.java
+ * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.data.io.input.JAIImageReader;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
- * Test for ImageReader actor.
+ * Test for ImageFileReader actor.
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision: 6839 $
  */
-public class ImageReaderTest
+public class ImageFileReaderTest
   extends AbstractFlowTest {
 
   /**
@@ -44,7 +43,7 @@ public class ImageReaderTest
    *
    * @param name	the name of the test
    */
-  public ImageReaderTest(String name) {
+  public ImageFileReaderTest(String name) {
     super(name);
   }
 
@@ -79,7 +78,7 @@ public class ImageReaderTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(ImageReaderTest.class);
+    return new TestSuite(ImageFileReaderTest.class);
   }
 
   /**
@@ -101,7 +100,7 @@ public class ImageReaderTest
       tmp2.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/adams_logo.png")});
 
       tmp1[0] = tmp2;
-      adams.flow.transformer.ImageReader tmp4 = new adams.flow.transformer.ImageReader();
+      ImageFileReader tmp4 = new ImageFileReader();
       tmp4.setReader(new JAIImageReader());
       tmp1[1] = tmp4;
       adams.flow.sink.ImageViewer tmp5 = new adams.flow.sink.ImageViewer();

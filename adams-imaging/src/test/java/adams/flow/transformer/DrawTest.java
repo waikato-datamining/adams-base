@@ -117,7 +117,7 @@ public class DrawTest
       tmp9.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/adams_logo.png")});
 
       tmp1[1] = tmp9;
-      adams.flow.transformer.ImageReader tmp11 = new adams.flow.transformer.ImageReader();
+      ImageFileReader tmp11 = new ImageFileReader();
       tmp11.setReader(new JAIImageReader());
       tmp1[2] = tmp11;
       adams.flow.control.Tee tmp12 = new adams.flow.control.Tee();

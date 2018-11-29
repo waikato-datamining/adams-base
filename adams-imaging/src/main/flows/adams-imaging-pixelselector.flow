@@ -4,7 +4,7 @@
 # Charset: UTF-8
 adams.flow.control.Flow -annotation "This flows generates a CSV file from the JPG pictures\\nin the \\\"data\\\" directory, which the user manually labels.\\nThe labelling consists of selecting pixels on the image\\nand labelling them using the right-click menu for selecting\\na classification label for this pixel. A region around these\\nselected pixels is then cropped and turned into a \\nadams.data.spreadsheet.Row object which gets output in a CSV file." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory ${FLOWS}/data -regexp .*.jpg -sorting SORT_BY_NAME"
- adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Resize -width 0.75 -height 0.75"
  adams.flow.transformer.PixelSelector -action "adams.flow.transformer.pixelselector.AddClassification -label Object -label Background -remember-last-selection true" -overlay "adams.flow.transformer.pixelselector.ClassificationOverlay -color #ffffff -show-label true"
  adams.flow.control.Cast -classname adams.data.image.BufferedImageContainer

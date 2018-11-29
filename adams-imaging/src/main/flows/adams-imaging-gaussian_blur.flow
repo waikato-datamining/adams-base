@@ -8,7 +8,7 @@ adams.flow.control.Flow -annotation "Loads images from disk and displays the ori
  adams.flow.control.Tee -name "extract name"
   adams.flow.transformer.BaseName
   adams.flow.transformer.SetVariable -var-name name
- adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
  adams.flow.control.Branch
   adams.flow.control.Sequence -name blurred
    adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.GaussianBlur -radius 10.0"

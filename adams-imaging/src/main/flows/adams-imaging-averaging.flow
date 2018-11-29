@@ -10,7 +10,7 @@ adams.flow.control.Flow -annotation "Computes the average of several images." -f
   adams.flow.control.Tee -name name
    adams.flow.transformer.BaseName -remove-extensions true
    adams.flow.transformer.SetVariable -var-name name
-  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader
   adams.flow.control.Tee
    adams.flow.sink.CallableSink -callable DisplayPanelManager
  adams.flow.transformer.BufferedImageMultiImageOperation -operation adams.data.image.multiimageoperation.Average

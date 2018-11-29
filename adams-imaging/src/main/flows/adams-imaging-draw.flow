@@ -6,7 +6,7 @@ adams.flow.control.Flow -annotation "Drawing on images is easy using the Draw tr
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name image
    adams.flow.source.FileSupplier -file ${FLOWS}/data/3666455665_18795f0741.jpg
-   adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+   adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
    adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Resize -width 100.0 -height 100.0"
  adams.flow.source.NewImage -width 600 -height 400 -conversion adams.data.conversion.BufferedImageToBufferedImage
  adams.flow.transformer.Draw -name Line -operation "adams.flow.transformer.draw.Line -x1 10 -y1 40 -x2 400 -y2 45"

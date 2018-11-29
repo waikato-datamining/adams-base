@@ -7,7 +7,7 @@ adams.flow.control.Flow -annotation "Processes one or more image, apply the resi
   adams.flow.sink.DisplayPanelManager -width 740 -x -3 -provider "adams.flow.sink.ImageViewer -x -3 -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
  adams.flow.source.SelectFile -stop-if-canceled true -initial-dir ${FLOWS}/data
  adams.flow.control.Tee -name original
-  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader
   adams.flow.transformer.SetVariable -var-name name -var-value original
   adams.flow.sink.CallableSink -callable DisplayPanelManager
  adams.flow.control.Tee -name "output filename"
@@ -21,7 +21,7 @@ adams.flow.control.Flow -annotation "Processes one or more image, apply the resi
  adams.flow.transformer.ImageMagickOperation -name resize -operation "adams.data.imagemagick.im.AdaptiveResize -width 400" -output @{tmpfile}
  adams.flow.transformer.ImageMagickOperation -name blur -operation adams.data.imagemagick.im.AdaptiveBlur -output @{outfile}
  adams.flow.control.Tee -name processed
-  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader
   adams.flow.transformer.SetVariable -var-name name -var-value processed
   adams.flow.sink.CallableSink -callable DisplayPanelManager
  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

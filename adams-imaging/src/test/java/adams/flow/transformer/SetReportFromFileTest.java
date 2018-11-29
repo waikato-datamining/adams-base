@@ -126,7 +126,7 @@ public class SetReportFromFileTest
       tmp2.setFiles(new adams.core.io.PlaceholderFile[]{(adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/adams_logo.png")});
 
       tmp1[0] = tmp2;
-      adams.flow.transformer.ImageReader tmp4 = new adams.flow.transformer.ImageReader();
+      ImageFileReader tmp4 = new ImageFileReader();
       tmp4.setReader(new JAIImageReader());
       tmp1[1] = tmp4;
       adams.flow.transformer.SetReportFromFile tmp5 = new adams.flow.transformer.SetReportFromFile();

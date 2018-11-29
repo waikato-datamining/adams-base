@@ -76,7 +76,7 @@ The following actors are available:
 	\texttt{BufferedImageContainer} into an \texttt{weka.core.Instance} object to
 	be used in WEKA. The attaced meta-data in form of a report can be added to the
 	output object as well.
-	\item \texttt{transformer.ImageReader} -- reads an image file using the
+	\item \texttt{transformer.ImageFileReader} -- reads an image file using the
 	specified image reader.
 \end{tight_itemize}
 
@@ -118,10 +118,10 @@ Java Advanced Imaging (JAI) is an API to provide a simple, high-level
 programming model which allows developers to create their own image manipulation
 routines\footnote{\url{http://en.wikipedia.org/wiki/Java_Advanced_Imaging}{}}.
 
-Reading and writing images are done using the \textit{ImageReader} transformer
+Reading and writing images are done using the \textit{ImageFileReader} transformer
 and \textit{ImageWriter} sink:
 \begin{tight_itemize}
-	\item \texttt{ImageReader} -- use the \textit{JAIImageReader}
+	\item \texttt{ImageFileReader} -- use the \textit{JAIImageFileReader}
 	\item \texttt{ImageWriter} -- use the \textit{JAIImageWriter}
 \end{tight_itemize}
 

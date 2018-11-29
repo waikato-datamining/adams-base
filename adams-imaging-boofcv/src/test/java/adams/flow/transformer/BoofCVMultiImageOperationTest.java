@@ -127,7 +127,7 @@ public class BoofCVMultiImageOperationTest
       adams.flow.core.Actor[] actors5 = new adams.flow.core.Actor[3];
 
       // Flow.ArrayProcess.ImageReader
-      adams.flow.transformer.ImageReader imagereader6 = new adams.flow.transformer.ImageReader();
+      ImageFileReader imagereader6 = new ImageFileReader();
       argOption = (AbstractArgumentOption) imagereader6.getOptionManager().findByProperty("reader");
       adams.data.io.input.JAIImageReader jaiimagereader8 = new adams.data.io.input.JAIImageReader();
       imagereader6.setReader(jaiimagereader8);

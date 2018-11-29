@@ -97,7 +97,7 @@ public class BoofCVTransformerTest
 	    new TmpFile("adams_icon.png")
 	});
 
-    ImageReader ir = new ImageReader();
+    ImageFileReader ir = new ImageFileReader();
 
     BufferedImageTransformer itr = new BufferedImageTransformer();
     Resize res = new Resize();

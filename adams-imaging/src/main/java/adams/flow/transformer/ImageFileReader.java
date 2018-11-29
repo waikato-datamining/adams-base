@@ -14,8 +14,8 @@
  */
 
 /*
- * ImageReader.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * ImageFileReader.java
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -118,9 +118,8 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7706 $
  */
-public class ImageReader
+public class ImageFileReader
   extends AbstractTransformer
   implements ProvenanceSupporter {
 

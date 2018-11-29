@@ -8,7 +8,7 @@ adams.flow.control.Flow -annotation "Generates negative regions automatically ou
  adams.flow.standalone.CallableActors
   adams.flow.sink.DisplayPanelManager -width 1300 -height 600 -provider "adams.flow.sink.ImageViewer -width 1200 -height 600 -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\"" -entry-name-variable entry
  adams.flow.source.FileSupplier -file ${FLOWS}/data/two-girl-friends-871278530751FPYN.jpg
- adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
  adams.flow.control.Tee -name original
   adams.flow.transformer.SetVariable -var-name entry -var-value original
   adams.flow.sink.CallableSink -callable DisplayPanelManager

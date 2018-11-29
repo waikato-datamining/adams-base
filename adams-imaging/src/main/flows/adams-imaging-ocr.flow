@@ -10,7 +10,7 @@ adams.flow.control.Flow -annotation "This flow performs OCR on an image containi
    adams.flow.control.Tee -name "image name"
     adams.flow.transformer.BaseName -remove-extensions true
     adams.flow.transformer.SetVariable -var-name image
-   adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+   adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader
    adams.flow.sink.CallableSink -callable Image
  adams.flow.standalone.TesseractConfiguration
  adams.flow.source.Start

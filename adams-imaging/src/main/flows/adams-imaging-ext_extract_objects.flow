@@ -13,7 +13,7 @@ adams.flow.control.Trigger -name "extract images" -annotation "Expects the follo
   adams.flow.transformer.SetVariable -var-name file
   adams.flow.sink.CallableSink -callable Info
  adams.flow.control.Block -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.FileExists -file @{report} -generator adams.core.io.NullFilenameGenerator\""
- adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
  adams.flow.control.Trigger -name "load report"
   adams.flow.source.Variable -var-name report -conversion adams.data.conversion.StringToString
   adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader

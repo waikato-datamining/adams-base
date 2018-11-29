@@ -25,6 +25,7 @@ import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import adams.flow.transformer.ImageFileReader;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -102,7 +103,7 @@ public class ImageHistogramTest
       actors1[0] = filesupplier2;
 
       // Flow.ImageReader
-      adams.flow.transformer.ImageReader imagereader4 = new adams.flow.transformer.ImageReader();
+      ImageFileReader imagereader4 = new ImageFileReader();
       argOption = (AbstractArgumentOption) imagereader4.getOptionManager().findByProperty("reader");
       adams.data.io.input.JAIImageReader jaiimagereader6 = new adams.data.io.input.JAIImageReader();
       imagereader4.setReader(jaiimagereader6);

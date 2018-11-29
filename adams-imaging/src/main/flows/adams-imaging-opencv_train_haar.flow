@@ -81,7 +81,7 @@ adams.flow.control.Flow -annotation "Trains an OpenCV Haar classifier cascade us
   adams.flow.control.Continue -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.FileExists -file @{report} -generator adams.core.io.NullFilenameGenerator\""
   adams.flow.control.ConditionalTee -name "copy image" -condition "adams.flow.condition.bool.Expression -expression \"@{scale} = 1.0\""
    adams.flow.transformer.CopyFile -target-dir @{out_annotated_dir}
-  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
   adams.flow.control.Trigger -name "load report"
    adams.flow.source.Variable -var-name report -conversion adams.data.conversion.StringToString
    adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader

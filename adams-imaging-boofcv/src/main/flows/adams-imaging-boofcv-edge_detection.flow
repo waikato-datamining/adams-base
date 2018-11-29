@@ -9,7 +9,7 @@ adams.flow.control.Flow -annotation "Demonstrates how to detect edges." -flow-ex
  adams.flow.control.Tee -name filename
   adams.flow.transformer.BaseName -remove-extensions true
   adams.flow.transformer.SetVariable -var-name base
- adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader
  adams.flow.control.Tee -name original
   adams.flow.transformer.SetVariable -var-name name -var-value @{base}-original -expand-value true
   adams.flow.sink.CallableSink -callable ImageViewer

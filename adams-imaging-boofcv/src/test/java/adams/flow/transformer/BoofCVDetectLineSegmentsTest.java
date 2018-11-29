@@ -120,7 +120,7 @@ public class BoofCVDetectLineSegmentsTest
       actors1[0] = filesupplier2;
 
       // Flow.JAIReader
-      adams.flow.transformer.ImageReader jaireader4 = new adams.flow.transformer.ImageReader();
+      ImageFileReader jaireader4 = new ImageFileReader();
       actors1[1] = jaireader4;
 
       // Flow.Convert

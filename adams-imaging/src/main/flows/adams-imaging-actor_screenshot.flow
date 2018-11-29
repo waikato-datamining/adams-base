@@ -8,7 +8,7 @@ adams.flow.control.Flow -annotation "Shows how to take screenshots of callable a
   adams.flow.sink.ImageViewer -name "for showing screenshot" -short-title true -x -3 -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay
  adams.flow.source.FileSupplier -file ${FLOWS}/data/3267694739_4981d2f944_z.jpg
  adams.flow.control.Tee
-  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader
   adams.flow.sink.CallableSink -callable "for taking screenshot"
  adams.flow.control.CallableActorScreenshot -callable "for taking screenshot" -output-type BUFFEREDIMAGE_CONTAINER -filename-generator adams.core.io.DefaultFilenameGenerator -writer adams.gui.print.NullWriter
  adams.flow.sink.CallableSink -callable "for showing screenshot"

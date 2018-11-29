@@ -28,7 +28,7 @@ adams.flow.control.Flow -annotation "Allows the user to manually annotate object
   adams.flow.control.Tee -name "report file"
    adams.flow.transformer.Convert -conversion "adams.data.conversion.ReplaceFileExtension -extension .report"
    adams.flow.transformer.SetVariable -var-name reportfile
-  adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
   adams.flow.control.ConditionalSubProcess -name "existing report?" -condition "adams.flow.condition.bool.FileExists -file @{reportfile} -generator adams.core.io.NullFilenameGenerator"
    adams.flow.transformer.MergeReport -source "load report" -merge MERGE_OTHER_WITH_CURRENT
   adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{selection_type}\\\\\\\" = \\\\\\\"bounding_box\\\\\\\"\"" -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{selection_type}\\\\\\\" = \\\\\\\"object_shape\\\\\\\"\"" -condition adams.flow.condition.bool.True

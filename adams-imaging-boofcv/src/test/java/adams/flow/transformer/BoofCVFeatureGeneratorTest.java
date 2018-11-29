@@ -96,7 +96,7 @@ public class BoofCVFeatureGeneratorTest
 	    new TmpFile("adams_icon.png"),
 	});
 
-    ImageReader ir = new ImageReader();
+    ImageFileReader ir = new ImageFileReader();
 
     BufferedImageTransformer trans = new BufferedImageTransformer();
     Resize res = new Resize();

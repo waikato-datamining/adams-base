@@ -6,6 +6,6 @@
 #
 adams.flow.control.Flow -annotation "Colorizes and displays a trimap image, in this\\nexample the colors are pet, background, border.\\nData from here:\\nhttp://www.robots.ox.ac.uk/%7Evgg/data/pets/" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.source.FileSupplier -file ${FLOWS}/data/Abyssinian_1.png
- adams.flow.transformer.ImageReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.TrimapColorizer -color-provider \"adams.gui.visualization.core.CustomColorProvider -color #ffff00 -color #0000ff -color #ff0000\""
  adams.flow.sink.DisplayPanelManager -width 1000 -height 600 -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay"
