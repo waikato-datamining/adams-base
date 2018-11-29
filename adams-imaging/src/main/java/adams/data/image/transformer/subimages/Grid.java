@@ -15,7 +15,7 @@
 
 /*
  * Grid.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.subimages;
 
@@ -31,7 +31,10 @@ import java.util.List;
  * Splits the image using a grid of specified number of columns and rows.<br>
  * Additional report values:<br>
  * - Row for the row<br>
- * - Column for the column
+ * - Column for the column<br>
+ * It is possible to generate overlapping images (all but last row and last column) by defining overlaps. In case of overlaps, the following report values are then available:<br>
+ * - OverlapX on the x axis<br>
+ * - OverlapY on the y axis
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -51,6 +54,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-fix-invalid &lt;boolean&gt; (property: fixInvalid)
+ * &nbsp;&nbsp;&nbsp;If enabled, objects that fall partially outside the image boundaries get
+ * &nbsp;&nbsp;&nbsp;fixed (eg when allowing partial hits).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-num-cols &lt;int&gt; (property: numCols)
  * &nbsp;&nbsp;&nbsp;The number of columns.
  * &nbsp;&nbsp;&nbsp;default: 1
@@ -61,6 +70,18 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The number of rows.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-overlap-x &lt;int&gt; (property: overlapX)
+ * &nbsp;&nbsp;&nbsp;The overlap on the x axis.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
+ * <pre>-overlap-y &lt;int&gt; (property: overlapY)
+ * &nbsp;&nbsp;&nbsp;The overlap on the y axis.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  *
  <!-- options-end -->
@@ -79,11 +100,23 @@ public class Grid
   /** the key for the row. */
   public final static String KEY_ROW = "Row";
 
+  /** the key for the X overlap. */
+  public final static String KEY_OVERLAP_X = "OverlapX";
+
+  /** the key for the Y overlap. */
+  public final static String KEY_OVERLAP_Y = "OverlapY";
+
   /** the number of columns to use. */
   protected int m_NumCols;
 
   /** the number of rows to use. */
   protected int m_NumRows;
+
+  /** the overlap on the x axis. */
+  protected int m_OverlapX;
+
+  /** the overlap on the y axis. */
+  protected int m_OverlapY;
 
   /**
    * Returns a string describing the object.
@@ -94,9 +127,14 @@ public class Grid
   public String globalInfo() {
     return
       "Splits the image using a grid of specified number of columns and rows.\n"
-      + "Additional report values:\n"
-      + "- " + KEY_ROW + " for the row\n"
-      + "- " + KEY_COLUMN + " for the column";
+	+ "Additional report values:\n"
+	+ "- " + KEY_ROW + " for the row\n"
+	+ "- " + KEY_COLUMN + " for the column\n"
+	+ "It is possible to generate overlapping images (all but last row and "
+	+ "last column) by defining overlaps. In case of overlaps, the following "
+        + "report values are then available:\n"
+	+ "- " + KEY_OVERLAP_X + " on the x axis\n"
+	+ "- " + KEY_OVERLAP_Y + " on the y axis";
   }
 
   /**
@@ -113,6 +151,14 @@ public class Grid
     m_OptionManager.add(
       "num-rows", "numRows",
       1, 1, null);
+
+    m_OptionManager.add(
+      "overlap-x", "overlapX",
+      0, 0, null);
+
+    m_OptionManager.add(
+      "overlap-y", "overlapY",
+      0, 0, null);
   }
 
   /**
@@ -178,6 +224,68 @@ public class Grid
   }
 
   /**
+   * Sets the overlap on the x axis.
+   *
+   * @param value	the overlap
+   */
+  public void setOverlapX(int value) {
+    if (getOptionManager().isValid("overlapX", value)) {
+      m_OverlapX = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the overlap on the x axis.
+   *
+   * @return		the overlap
+   */
+  public int getOverlapX() {
+    return m_OverlapX;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String overlapXTipText() {
+    return "The overlap on the x axis.";
+  }
+
+  /**
+   * Sets the overlap on the y axis.
+   *
+   * @param value	the overlap
+   */
+  public void setOverlapY(int value) {
+    if (getOptionManager().isValid("overlapY", value)) {
+      m_OverlapY = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the overlap on the y axis.
+   *
+   * @return		the overlap
+   */
+  public int getOverlapY() {
+    return m_OverlapY;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String overlapYTipText() {
+    return "The overlap on the y axis.";
+  }
+
+  /**
    * Returns a quick info about the object, which can be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -189,6 +297,8 @@ public class Grid
     result = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "numCols", m_NumCols, ", cols: ");
     result += QuickInfoHelper.toString(this, "numRows", m_NumRows, ", rows: ");
+    result += QuickInfoHelper.toString(this, "overlapX", m_OverlapX, ", overlap x: ");
+    result += QuickInfoHelper.toString(this, "overlapY", m_OverlapY, ", overlap y: ");
 
     return result;
   }
@@ -212,6 +322,8 @@ public class Grid
     int					y;
     int					width;
     int					height;
+    int					overlapX;
+    int					overlapY;
 
     result = new ArrayList<>();
 
@@ -224,26 +336,46 @@ public class Grid
 
     for (w = 0; w < m_NumCols; w++) {
       x = w * dw;
-      if (w == m_NumCols - 1)
-	width = bimage.getWidth() - x;
-      else
-	width = dw;
+      if (w == m_NumCols - 1) {
+        overlapX = 0;
+	width    = bimage.getWidth() - x;
+      }
+      else {
+        overlapX = m_OverlapX;
+	if (x + dw - 1 + overlapX >= bimage.getWidth())
+	  overlapX = bimage.getWidth() - (x + dw - 1);
+	width = dw + overlapX;
+      }
 
       for (h = 0; h < m_NumRows; h++) {
 	y = h * dh;
-	if (h == m_NumRows - 1)
-	  height = bimage.getHeight() - y;
-	else
-	  height = dh;
+	if (h == m_NumRows - 1) {
+	  overlapY = 0;
+	  height   = bimage.getHeight() - y;
+	}
+	else {
+	  overlapY = m_OverlapY;
+	  if (y + dh - 1 + overlapY >= bimage.getHeight())
+	    overlapY = bimage.getHeight() - (y + dh - 1);
+	  height = dh + overlapY;
+	}
 
-	if (isLoggingEnabled())
-	  getLogger().info("row=" + h + ", col=" + w + ", x=" + x + ", y=" + y + ", width=" + width + ", height=" + height);
+	if (isLoggingEnabled()) {
+	  getLogger().info(
+	    "row=" + h + ", col=" + w + ", x=" + x + ", y=" + y
+	      + ", width=" + width + ", height=" + height
+	      + ", overlapX=" + overlapX + ", overlapY=" + overlapY);
+	}
 
 	cont = (BufferedImageContainer) image.getHeader();
 	cont.setReport(transferObjects(cont.getReport(), x, y, width, height));
 	cont.setImage(bimage.getSubimage(x, y, width, height));
 	cont.getReport().setNumericValue(KEY_COLUMN, w);
 	cont.getReport().setNumericValue(KEY_ROW,    h);
+	if ((m_OverlapX != 0) || (m_OverlapY != 0)) {
+	  cont.getReport().setNumericValue(KEY_OVERLAP_X, overlapX);
+	  cont.getReport().setNumericValue(KEY_OVERLAP_Y, overlapY);
+	}
 	result.add(cont);
       }
     }
