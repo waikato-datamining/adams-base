@@ -14,19 +14,19 @@
 # read file
 adams-imaging.ImageReader1=\
   IF AFTER adams.flow.source.FileSupplier \
-  THEN adams.flow.transformer.ImageReader
+  THEN adams.flow.transformer.ImageFileReader
 
 adams-imaging.ImageReader2=\
   IF AFTER adams.flow.source.SelectFile \
-  THEN adams.flow.transformer.ImageReader
+  THEN adams.flow.transformer.ImageFileReader
 
 adams-imaging.ImageReader3=\
   IF AFTER adams.flow.source.DirectoryLister \
-  THEN adams.flow.transformer.ImageReader
+  THEN adams.flow.transformer.ImageFileReader
 
 adams-imaging.ImageReader4=\
   IF AFTER adams.flow.source.FileSystemSearch \
-  THEN adams.flow.transformer.ImageReader
+  THEN adams.flow.transformer.ImageFileReader
 
 adams-imaging.ImageMagickOperation1=\
   IF AFTER adams.flow.source.SelectFile \
@@ -46,7 +46,7 @@ adams-imaging.ImageMagickOperation4=\
 
 # transformers
 adams-imaging.BufferedImageTransformer1=\
-  IF AFTER adams.flow.transformer.ImageReader \
+  IF AFTER adams.flow.transformer.ImageFileReader \
   THEN adams.flow.transformer.BufferedImageTransformer
 
 adams-imaging.BufferedImageTransformer2=\
@@ -54,7 +54,7 @@ adams-imaging.BufferedImageTransformer2=\
   THEN adams.flow.transformer.BufferedImageTransformer
 
 adams-imaging.ImageMagickTransformer1=\
-  IF AFTER adams.flow.transformer.ImageReader \
+  IF AFTER adams.flow.transformer.ImageFileReader \
   THEN adams.flow.transformer.ImageMagickTransformer
 
 adams-imaging.ImageMagickTransformer2=\
@@ -63,7 +63,7 @@ adams-imaging.ImageMagickTransformer2=\
 
 # features
 adams-imaging.BufferedImageFeatureGenerator1=\
-  IF AFTER adams.flow.transformer.ImageReader \
+  IF AFTER adams.flow.transformer.ImageFileReader \
   THEN adams.flow.transformer.BufferedImageFeatureGenerator
   
 adams-imaging.BufferedImageFeatureGenerator2=\

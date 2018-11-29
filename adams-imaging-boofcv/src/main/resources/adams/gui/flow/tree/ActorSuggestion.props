@@ -12,7 +12,7 @@
 # Version: $Revision$
 
 adams-imaging-boofcv.BoofCVTransformer1=\
-  IF AFTER adams.flow.transformer.ImageReader \
+  IF AFTER adams.flow.transformer.ImageFileReader \
   THEN adams.flow.transformer.BoofCVTransformer
 
 adams-imaging-boofcv.BoofCVTransformer2=\
@@ -20,7 +20,7 @@ adams-imaging-boofcv.BoofCVTransformer2=\
   THEN adams.flow.transformer.BoofCVTransformer
 
 adams-imaging-boofcv.BoofCVFeatureGenerator1=\
-  IF AFTER adams.flow.transformer.ImageReader \
+  IF AFTER adams.flow.transformer.ImageFileReader \
   THEN adams.flow.transformer.BoofCVFeatureGenerator
 
 adams-imaging.BoofCVFeatureGenerator2=\
