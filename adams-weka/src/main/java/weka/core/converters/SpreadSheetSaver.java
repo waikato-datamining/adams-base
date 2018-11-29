@@ -195,6 +195,16 @@ public class SpreadSheetSaver
   }
 
   /**
+   * Get the file extension used for this type of file
+   *
+   * @return the file extension
+   */
+  @Override
+  public String getFileExtension() {
+    return getFileExtensions()[0];
+  }
+
+  /**
    * Gets all the file extensions used for this type of file
    *
    * @return the file extensions

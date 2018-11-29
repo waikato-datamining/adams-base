@@ -84,6 +84,7 @@ public class SimpleArffSaver
    * Constructor
    */
   public SimpleArffSaver(){
+    setFileExtension(".arff");
     resetOptions();
   }
 
