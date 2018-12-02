@@ -14,8 +14,8 @@
  */
 
 /*
- * ImageWriter.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * ImageFileWriter.java
+ * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -79,9 +79,8 @@ import adams.data.io.output.JAIImageWriter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9700 $
  */
-public class ImageWriter
+public class ImageFileWriter
   extends AbstractFileWriter {
 
   /** for serialization. */

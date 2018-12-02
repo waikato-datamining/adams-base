@@ -67,7 +67,7 @@ ADAMS has custom image processing support that does not rely on other libraries.
 
 The following actors are available:
 \begin{tight_itemize}
-	\item \texttt{sink.ImageWriter} -- writes an image container to a file
+	\item \texttt{sink.ImageFileWriter} -- writes an image container to a file
 	using the specified writer.
 	\item \texttt{transformer.BufferedImageTransformer} -- performs a transformation
 	using an existing transformer class on the incoming image and
@@ -119,10 +119,10 @@ programming model which allows developers to create their own image manipulation
 routines\footnote{\url{http://en.wikipedia.org/wiki/Java_Advanced_Imaging}{}}.
 
 Reading and writing images are done using the \textit{ImageFileReader} transformer
-and \textit{ImageWriter} sink:
+and \textit{ImageFileWriter} sink:
 \begin{tight_itemize}
 	\item \texttt{ImageFileReader} -- use the \textit{JAIImageFileReader}
-	\item \texttt{ImageWriter} -- use the \textit{JAIImageWriter}
+	\item \texttt{ImageFileWriter} -- use the \textit{JAIImageFileWriter}
 \end{tight_itemize}
 
 Since the JAI actors, readers and writers use \texttt{BufferedImageContainer}, the 

@@ -6,12 +6,14 @@
 # This is used to ensure a minimal backwards compatibility, in case classes
 # get renamed.
 Rename=\
-  Rename-imaging-imagereader
+  Rename-imaging-imagereader,\
+  Rename-imaging-imagewriter
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
 #Rename-jai_flattener_dft=adams.data.jai.flattener.DFT-adams.data.jai.features.DFT
 Rename-imaging-imagereader=adams.flow.transformer.ImageReader-adams.flow.transformer.ImageFileReader
+Rename-imaging-imagewriter=adams.flow.sink.ImageWriter-adams.flow.sink.ImageFileWriter
 
 # Lists the keys that contain partial classname renaming.
 PartialRename=

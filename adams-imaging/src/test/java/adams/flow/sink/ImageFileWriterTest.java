@@ -38,7 +38,7 @@ import junit.framework.TestSuite;
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
  * @version $Revision: 6839 $
  */
-public class ImageWriterTest
+public class ImageFileWriterTest
   extends AbstractFlowTest {
 
   /**
@@ -46,7 +46,7 @@ public class ImageWriterTest
    *
    * @param name	the name of the test
    */
-  public ImageWriterTest(String name) {
+  public ImageFileWriterTest(String name) {
     super(name);
   }
 
@@ -83,7 +83,7 @@ public class ImageWriterTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(ImageWriterTest.class);
+    return new TestSuite(ImageFileWriterTest.class);
   }
 
   /**
@@ -108,7 +108,7 @@ public class ImageWriterTest
       ImageFileReader tmp4 = new ImageFileReader();
       tmp4.setReader(new JAIImageReader());
       tmp1[1] = tmp4;
-      adams.flow.sink.ImageWriter tmp5 = new adams.flow.sink.ImageWriter();
+      ImageFileWriter tmp5 = new ImageFileWriter();
       tmp5.setWriter(new JAIImageWriter());
       argOption = (AbstractArgumentOption) tmp5.getOptionManager().findByProperty("outputFile");
       tmp5.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.png"));

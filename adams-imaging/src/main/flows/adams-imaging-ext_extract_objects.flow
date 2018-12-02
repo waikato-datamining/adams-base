@@ -65,7 +65,7 @@ adams.flow.control.Trigger -name "extract images" -annotation "Expects the follo
   adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.Cropping -algorithm \"adams.data.image.transformer.crop.RelativeCrop -x @{x} -y @{y} -width @{width} -height @{height}\""
   adams.flow.control.ConditionalSubProcess -condition "adams.flow.condition.bool.Expression -expression \"@{scale} != 1.0\""
    adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Resize -width @{scale} -height @{scale}"
-  adams.flow.sink.ImageWriter -output @{outfile} -writer adams.data.io.output.JAIImageWriter
+  adams.flow.sink.ImageFileWriter -output @{outfile} -writer adams.data.io.output.JAIImageWriter
  adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.Expression -expression \"(@{max_obj_width} > -1) or (@{max_obj_height} > -1)\""
   adams.flow.control.Trigger -name then
    adams.flow.source.CombineVariables -expression "@{index}: too large = @{skip_object}" -conversion adams.data.conversion.StringToString
