@@ -457,7 +457,13 @@ public class Report
         return false;
     }
 
+    m_Params.remove(key);
     m_Params.put(key, value);
+    if (m_Fields.containsKey(key.getName())) {
+      m_Fields.remove(key.getName());
+      m_Fields.put(key.getName(), key);
+    }
+
     return true;
   }
 
