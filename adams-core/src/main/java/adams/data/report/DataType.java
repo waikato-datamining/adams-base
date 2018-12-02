@@ -146,14 +146,14 @@ public enum DataType
    * @return		the data type
    */
   public static DataType guessType(Object obj) {
-    if (obj instanceof Boolean)
-      return BOOLEAN;
-    else if (obj instanceof Number)
+    if (obj instanceof Number)
       return NUMERIC;
-    else if (Utils.isBoolean("" + obj))
+    else if (obj instanceof Boolean)
       return BOOLEAN;
     else if (Utils.isDouble("" + obj))
       return NUMERIC;
+    else if (Utils.isBoolean("" + obj))
+      return BOOLEAN;
     else
       return STRING;
   }
