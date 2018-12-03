@@ -25,12 +25,12 @@ import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.Frame;
+import java.io.File;
 
 /**
  * A simple dialog for displaying text.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TextDialog
   extends BaseDialog {
@@ -302,11 +302,42 @@ public class TextDialog
   }
 
   /**
-   * Returns the underlying panel.
+   * Sets whether the editor can open files.
    *
-   * @return		the panel
+   * @param value 	if true then the editor can open files as well
    */
-  public TextPanel getTextPanel() {
-    return m_TextPanel;
+  public void setCanOpenFiles(boolean value) {
+    m_TextPanel.setCanOpenFiles(value);
+    setJMenuBar(m_TextPanel.getMenuBar());
+  }
+
+  /**
+   * Returns whether the editor can open files.
+   *
+   * @return		true if the editor can open files
+   */
+  public boolean getCanOpenFiles() {
+    return m_TextPanel.getCanOpenFiles();
+  }
+
+  /**
+   * Opens the specified file using UTF-8 and loads/displays the content.
+   *
+   * @param file	the file to load
+   * @see		#getCanOpenFiles()
+   */
+  public void open(File file) {
+    m_TextPanel.open(file);
+  }
+
+  /**
+   * Opens the specified file and loads/displays the content.
+   *
+   * @param file	the file to load
+   * @param encoding	the encoding to use, null for default UTF-8
+   * @see		#getCanOpenFiles()
+   */
+  public void open(File file, String encoding) {
+    m_TextPanel.open(file, encoding);
   }
 }
