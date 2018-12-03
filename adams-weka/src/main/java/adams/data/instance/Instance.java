@@ -15,7 +15,7 @@
 
 /*
  * Instance.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.instance;
@@ -35,6 +35,8 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.weka.ArffUtils;
+import gnu.trove.list.TDoubleList;
+import gnu.trove.list.array.TDoubleArrayList;
 import weka.core.Attribute;
 import weka.core.Instances;
 
@@ -47,7 +49,6 @@ import java.util.Iterator;
  * attribute index (integer) and Y being the internal value (double).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Instance
   extends AbstractDataContainer<InstancePoint>
@@ -333,6 +334,21 @@ public class Instance
    */
   public Report getReport() {
     return m_Report;
+  }
+
+  /**
+   * Returns the y values as double array.
+   *
+   * @return		the y values
+   */
+  public double[] toDoubleArray() {
+    TDoubleList	result;
+
+    result = new TDoubleArrayList();
+    for (InstancePoint p: toList())
+      result.add(p.getY());
+
+    return result.toArray();
   }
 
   /**

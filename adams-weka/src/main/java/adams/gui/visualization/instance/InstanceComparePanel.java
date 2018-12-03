@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InstanceComparator.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.instance;
 
@@ -1264,8 +1264,8 @@ public class InstanceComparePanel
 
       // extend report
       reportDiff = instDiff.getReport();
-      values1    = inst1.toInstance().toDoubleArray();
-      values2    = inst2.toInstance().toDoubleArray();
+      values1    = inst1.toDoubleArray();
+      values2    = inst2.toDoubleArray();
       // 1. correlation coefficient
       field = new Field("Correlation coefficient", DataType.NUMERIC);
       reportDiff.addField(field);
