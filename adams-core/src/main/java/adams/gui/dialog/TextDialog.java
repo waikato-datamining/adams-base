@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TextDialog.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -299,5 +299,14 @@ public class TextDialog
    */
   public boolean getUpdateParentTitle() {
     return m_TextPanel.getUpdateParentTitle();
+  }
+
+  /**
+   * Returns the underlying panel.
+   *
+   * @return		the panel
+   */
+  public TextPanel getTextPanel() {
+    return m_TextPanel;
   }
 }
