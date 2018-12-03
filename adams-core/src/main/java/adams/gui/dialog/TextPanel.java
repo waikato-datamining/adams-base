@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TextPanel.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -53,7 +53,6 @@ import java.io.File;
  * to be allowed explicitly via <code>setCanOpenFiles(boolean)</code>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see #setCanOpenFiles(boolean)
  */
 public class TextPanel
@@ -176,6 +175,7 @@ public class TextPanel
    */
   public void setCanOpenFiles(boolean value) {
     m_CanOpenFiles = value;
+    m_MenuBar      = null;
   }
 
   /**
