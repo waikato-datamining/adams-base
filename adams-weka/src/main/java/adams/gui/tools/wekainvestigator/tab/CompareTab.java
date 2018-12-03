@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.MessageCollection;
 import adams.core.Range;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -73,6 +74,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -84,6 +86,14 @@ public class CompareTab
   extends AbstractInvestigatorTab {
 
   private static final long serialVersionUID = 6828735730385124766L;
+
+  public static final String KEY_FIRST_DATASET = "dataset1";
+
+  public static final String KEY_SECOND_DATASET = "dataset2";
+
+  public static final String KEY_FIRST_ATTRANGE = "attrange1";
+
+  public static final String KEY_SECOND_ATTRANGE = "attrange2";
 
   /** the first dataset. */
   protected BaseComboBox<String> m_ComboBoxFirstDataset;
@@ -870,5 +880,47 @@ public class CompareTab
     m_TextOnlyFirst.setEnabled(hasIDs);
     m_TextCommon.setEnabled(hasIDs);
     m_TextOnlySecond.setEnabled(hasIDs);
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @param options 	what to serialize
+   * @return		the mapping of the objects to serialize
+   */
+  @Override
+  protected Map<String,Object> doSerialize(Set<SerializationOption> options) {
+    Map<String,Object>	result;
+
+    result = super.doSerialize(options);
+    if (options.contains(SerializationOption.GUI)) {
+      result.put(KEY_FIRST_DATASET, m_ComboBoxFirstDataset.getSelectedIndex());
+      result.put(KEY_SECOND_DATASET, m_ComboBoxSecondDataset.getSelectedIndex());
+    }
+    if (options.contains(SerializationOption.PARAMETERS)) {
+      result.put(KEY_FIRST_ATTRANGE, m_TextFirstRange.getText());
+      result.put(KEY_SECOND_ATTRANGE, m_TextSecondRange.getText());
+    }
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  @Override
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
+    super.doDeserialize(data, errors);
+    if (data.containsKey(KEY_FIRST_DATASET))
+      m_ComboBoxFirstDataset.setSelectedIndex((int) data.get(KEY_FIRST_DATASET));
+    if (data.containsKey(KEY_SECOND_DATASET))
+      m_ComboBoxSecondDataset.setSelectedIndex((int) data.get(KEY_SECOND_DATASET));
+    if (data.containsKey(KEY_FIRST_ATTRANGE))
+      m_TextFirstRange.setText((String) data.get(KEY_FIRST_ATTRANGE));
+    if (data.containsKey(KEY_SECOND_ATTRANGE))
+      m_TextSecondRange.setText((String) data.get(KEY_SECOND_ATTRANGE));
   }
 }
