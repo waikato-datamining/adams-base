@@ -42,6 +42,7 @@ Menu-Tools=\
   adams.gui.menu.FlowRunner,\
   -,\
   adams.gui.menu.FileMonitor,\
+  adams.gui.menu.FindInFiles,\
   adams.gui.menu.TextEditor,\
   adams.gui.menu.Diff
 
