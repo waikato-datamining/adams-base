@@ -372,6 +372,7 @@ public class CompareTab
 
     m_ReportTable = ReportFactory.getTable(null);
     m_ReportTable.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
+    m_ReportTable.setNumDecimals(3);
     panel2.add(new BaseScrollPane(m_ReportTable));
   }
 

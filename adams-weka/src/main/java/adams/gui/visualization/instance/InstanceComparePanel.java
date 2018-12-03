@@ -970,6 +970,7 @@ public class InstanceComparePanel
     // report
     m_ReportTable = ReportFactory.getTable(null);
     m_ReportTable.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
+    m_ReportTable.setNumDecimals(3);
     panel3 = new JPanel(new BorderLayout());
     panel3.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
     panel3.add(new BaseScrollPane(m_ReportTable), BorderLayout.CENTER);
