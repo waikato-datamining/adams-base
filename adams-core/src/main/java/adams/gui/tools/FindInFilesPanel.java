@@ -101,8 +101,14 @@ public class FindInFilesPanel
   /** the button for viewing the file. */
   protected BaseButton m_ButtonView;
 
-  /** the button for copying the file name. */
-  protected BaseButton m_ButtonCopy;
+  /** the button for copying the full file name. */
+  protected BaseButton m_ButtonCopyFull;
+
+  /** the button for copying the name. */
+  protected BaseButton m_ButtonCopyName;
+
+  /** the button for copying the directory name. */
+  protected BaseButton m_ButtonCopyDir;
 
   /** the status bar. */
   protected BaseStatusBar m_StatusBar;
@@ -187,20 +193,40 @@ public class FindInFilesPanel
     m_ListResults.addListSelectionListener((ListSelectionEvent e) -> updateButtons());
     add(m_ListResults, BorderLayout.CENTER);
 
-    m_ButtonView = new BaseButton(GUIHelper.getIcon("glasses.gif"));
+    m_ButtonView = new BaseButton("View...");
     m_ButtonView.setToolTipText("Views the selected file");
     m_ButtonView.addActionListener((ActionEvent e) -> viewFile());
     m_ListResults.addToButtonsPanel(m_ButtonView);
     m_ListResults.setDoubleClickButton(m_ButtonView);
 
-    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
-    m_ButtonCopy.setToolTipText("Copies the file name to the clipboard");
-    m_ButtonCopy.addActionListener((ActionEvent e) -> {
+    m_ButtonCopyFull = new BaseButton("Copy full path");
+    m_ButtonCopyFull.setToolTipText("Copies the full file path to the clipboard");
+    m_ButtonCopyFull.addActionListener((ActionEvent e) -> {
       if (m_ListResults.getSelectedIndex() == -1)
         return;
       ClipboardHelper.copyToClipboard("" + m_ListResults.getSelectedValue());
     });
-    m_ListResults.addToButtonsPanel(m_ButtonCopy);
+    m_ListResults.addToButtonsPanel(m_ButtonCopyFull);
+
+    m_ButtonCopyName = new BaseButton("Copy name");
+    m_ButtonCopyName.setToolTipText("Copies the name (no path) to the clipboard");
+    m_ButtonCopyName.addActionListener((ActionEvent e) -> {
+      if (m_ListResults.getSelectedIndex() == -1)
+        return;
+      ClipboardHelper.copyToClipboard(
+        new PlaceholderFile("" + m_ListResults.getSelectedValue()).getName());
+    });
+    m_ListResults.addToButtonsPanel(m_ButtonCopyName);
+
+    m_ButtonCopyDir = new BaseButton("Copy dir");
+    m_ButtonCopyDir.setToolTipText("Copies the directory name to the clipboard");
+    m_ButtonCopyDir.addActionListener((ActionEvent e) -> {
+      if (m_ListResults.getSelectedIndex() == -1)
+        return;
+      ClipboardHelper.copyToClipboard(
+        new PlaceholderFile("" + m_ListResults.getSelectedValue()).getParentFile().getAbsolutePath());
+    });
+    m_ListResults.addToButtonsPanel(m_ButtonCopyDir);
 
     // status
     m_StatusBar = new BaseStatusBar();
@@ -220,8 +246,16 @@ public class FindInFilesPanel
    * Updates the state of the buttons.
    */
   protected void updateButtons() {
+    boolean selected;
+
+    selected = (m_ListResults.getSelectedIndex() > -1);
+
     m_ButtonStart.setEnabled(!m_Running);
     m_ButtonStop.setEnabled(m_Running);
+    m_ButtonView.setEnabled(selected);
+    m_ButtonCopyFull.setEnabled(selected);
+    m_ButtonCopyName.setEnabled(selected);
+    m_ButtonCopyDir.setEnabled(selected);
   }
 
   /**
