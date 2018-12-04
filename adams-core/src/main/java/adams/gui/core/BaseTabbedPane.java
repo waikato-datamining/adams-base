@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseTabbedPane.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -28,12 +28,13 @@ import javax.swing.JTabbedPane;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Enhanced JTabbedPane. Offers closing of tabs with middle mouse button.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTabbedPane
   extends JTabbedPane {
@@ -59,6 +60,32 @@ public class BaseTabbedPane
     public boolean approveClosingWithMiddleMouseButton(BaseTabbedPane source, MouseEvent e);
   }
 
+  /**
+   * Container for the tab undo list.
+   */
+  public static class TabUndo {
+    /** the component that made up the tab. */
+    public Component component;
+
+    /** the title. */
+    public String title;
+
+    /** the position. */
+    public int index;
+
+    /** tiptext. */
+    public String tiptext;
+
+    /** the icon. */
+    public Icon icon;
+
+    /** the tab component. */
+    public Component tabComponent;
+
+    /** whether the tab was selected. */
+    public boolean selected;
+  }
+
   /** Allows the user to close tabs with the middle mouse button. */
   protected boolean m_CloseTabsWithMiddleMouseButton;
 
@@ -73,6 +100,15 @@ public class BaseTabbedPane
 
   /** the maximum length in chars for titles before getting shortened. */
   protected int m_MaxTitleLength;
+
+  /** the maximum number of tabs to keep for undo. */
+  protected int m_MaxTabCloseUndo;
+
+  /** the list of tabs to undo. */
+  protected transient List<TabUndo> m_TabUndoList;
+
+  /** whether to skip tab undo. */
+  protected boolean m_SkipTabUndo;
 
   /**
    * Creates an empty <code>TabbedPane</code> with a default
@@ -125,6 +161,8 @@ public class BaseTabbedPane
     m_ShowCloseTabButton             = false;
     m_PromptUserWhenClosingTab       = false;
     m_MaxTitleLength                 = 30;
+    m_MaxTabCloseUndo                = 0;
+    m_TabUndoList                    = null;
   }
 
   /**
@@ -134,7 +172,7 @@ public class BaseTabbedPane
     addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        tabClicked(e);
+	tabClicked(e);
       }
     });
   }
@@ -204,9 +242,9 @@ public class BaseTabbedPane
    * Hook method that gets executed after a tab was successfully removed with
    * a middle mouse button click.
    * <br><br>
-   * Default implementation calls cleanUp() method of {@link CleanUpHandler} 
+   * Default implementation calls cleanUp() method of {@link CleanUpHandler}
    * instances.
-   * 
+   *
    * @param index	the original index
    * @param comp	the component that was removed
    */
@@ -386,5 +424,116 @@ public class BaseTabbedPane
    */
   public int getMaxTitleLength() {
     return m_MaxTitleLength;
+  }
+
+  /**
+   * Sets the maximum tabs to keep around for undoing closing.
+   *
+   * @param value	the maximum, <1 turned off
+   */
+  public void setMaxTabCloseUndo(int value) {
+    m_MaxTabCloseUndo = value;
+  }
+
+  /**
+   * Returns the maximum tabs to keep around for undoing closing.
+   *
+   * @return		the maximum, <1 turned off
+   */
+  public int getMaxTabCloseUndo() {
+    return m_MaxTabCloseUndo;
+  }
+
+  /**
+   * Returns the tab undo list.
+   *
+   * @return		the list
+   */
+  protected List<TabUndo> getTabUndoList() {
+    if (m_TabUndoList == null)
+      m_TabUndoList = new ArrayList<>();
+    return m_TabUndoList;
+  }
+
+  /**
+   * Adds the tab to its undo list, if enabled.
+   *
+   * @param index	the position of the tab
+   */
+  protected void addTabUndo(int index) {
+    TabUndo	undo;
+
+    if ((m_MaxTabCloseUndo < 1) || m_SkipTabUndo)
+      return;
+
+    undo              = new TabUndo();
+    undo.component    = getComponentAt(index);
+    undo.title        = getTitleAt(index);
+    undo.index        = index;
+    undo.tiptext      = getToolTipTextAt(index);
+    undo.icon         = getIconAt(index);
+    undo.tabComponent = getTabComponentAt(index);
+    undo.selected     = (index == getSelectedIndex());
+
+    getTabUndoList().add(undo);
+
+    while (getTabUndoList().size() > m_MaxTabCloseUndo)
+      getTabUndoList().remove(0);
+  }
+
+  /**
+   * Returns whether a tab close can be undone.
+   *
+   * @return		true if possible
+   */
+  public boolean canUndoTabClose() {
+    return (getTabUndoList().size() > 0);
+  }
+
+  /**
+   * Performs an undo of a tab close.
+   *
+   * @return		true if successfully restored
+   */
+  public boolean undoTabClose() {
+    TabUndo	undo;
+    int		size;
+
+    size = getTabUndoList().size();
+    if (size < 1)
+      return false;
+
+    undo = getTabUndoList().get(size - 1);
+    getTabUndoList().remove(size - 1);
+    insertTab(undo.title, undo.icon, undo.component, undo.tiptext, undo.index);
+    setTabComponentAt(undo.index, undo.tabComponent);
+    if (undo.selected)
+      setSelectedIndex(undo.index);
+
+    return true;
+  }
+
+  /**
+   * Removes the tab at <code>index</code>. Automatically handles the tab undo.
+   * @param index the index of the tab to be removed
+   * @throws IndexOutOfBoundsException if index is out of range
+   *            {@code (index < 0 || index >= tab count)}
+   */
+  @Override
+  public void removeTabAt(int index) {
+    addTabUndo(index);
+    super.removeTabAt(index);
+  }
+
+  /**
+   * Removes all the tabs and their corresponding components
+   * from the <code>tabbedpane</code>.
+   * Bypasses undo for tabs, clears the undo list.
+   */
+  public void removeAll() {
+    m_SkipTabUndo = true;
+    super.removeAll();
+    m_SkipTabUndo = false;
+    getTabUndoList().clear();
   }
 }
