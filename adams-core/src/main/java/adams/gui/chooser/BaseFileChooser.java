@@ -15,35 +15,29 @@
 
 /*
  * BaseFileChooser.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
-import adams.gui.core.BaseTextField;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.FilterPanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.HeadlessException;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 
 /**
@@ -75,16 +69,7 @@ public class BaseFileChooser
   protected JPanel m_PanelBookmarksAndFilter;
 
   /** the panel for the filter. */
-  protected JPanel m_PanelFilter;
-
-  /** the label for the filter. */
-  protected JLabel m_LabelFilter;
-
-  /** the edit field for the filter. */
-  protected BaseTextField m_TextFilter;
-
-  /** the icon for clearing the text field. */
-  protected JLabel m_LabelFilterClear;
+  protected FilterPanel m_PanelFilter;
 
   /** the bookmarks. */
   protected FileChooserBookmarksPanel m_PanelBookmarks;
@@ -197,50 +182,9 @@ public class BaseFileChooser
     }
     m_PanelBookmarksAndFilter.add(m_PanelBookmarks, BorderLayout.CENTER);
 
-    m_PanelFilter = new JPanel(new GridLayout(2, 1, 5, 5));
+    m_PanelFilter = new FilterPanel(FilterPanel.VERTICAL);
     m_PanelFilter.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-    m_TextFilter = new BaseTextField();
-    m_TextFilter.getDocument().addDocumentListener(new DocumentListener() {
-      @Override
-      public void insertUpdate(DocumentEvent e) {
-	filterFiles();
-      }
-      @Override
-      public void removeUpdate(DocumentEvent e) {
-	filterFiles();
-      }
-      @Override
-      public void changedUpdate(DocumentEvent e) {
-	filterFiles();
-      }
-      protected void filterFiles() {
-        m_LabelFilterClear.setEnabled(!m_TextFilter.getText().isEmpty());
-	firePropertyChange(JFileChooser.FILE_FILTER_CHANGED_PROPERTY, null, null);
-      }
-    });
-    m_LabelFilterClear = new JLabel(GUIHelper.getIcon("clear_text.png"));
-    m_LabelFilterClear.setToolTipText("Clears the filter text field");
-    m_LabelFilterClear.setEnabled(false);
-    m_LabelFilterClear.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        if (MouseUtils.isLeftClick(e)) {
-	  e.consume();
-          m_TextFilter.setText("");
-        }
-        else {
-          super.mouseClicked(e);
-        }
-      }
-    });
-    panel = new JPanel(new BorderLayout(0, 0));
-    panel.add(m_TextFilter, BorderLayout.CENTER);
-    panel.add(m_LabelFilterClear, BorderLayout.EAST);
-    m_LabelFilter = new JLabel("Filter");
-    m_LabelFilter.setDisplayedMnemonic('F');
-    m_LabelFilter.setLabelFor(m_TextFilter);
-    m_PanelFilter.add(m_LabelFilter);
-    m_PanelFilter.add(panel);
+    m_PanelFilter.addChangeListener((ChangeEvent e) -> firePropertyChange(JFileChooser.FILE_FILTER_CHANGED_PROPERTY, null, null));
     m_PanelBookmarksAndFilter.add(m_PanelFilter, BorderLayout.SOUTH);
 
     return m_PanelBookmarksAndFilter;
@@ -683,13 +627,13 @@ public class BaseFileChooser
   public boolean accept(File f) {
     String	filter;
 
-    if (m_TextFilter == null)
+    if (m_PanelFilter == null)
       return super.accept(f);
 
     if (f.isDirectory())
       return super.accept(f);
 
-    filter = m_TextFilter.getText().toLowerCase();
+    filter = m_PanelFilter.getFilter().toLowerCase();
     if (!filter.isEmpty())
       return f.getName().toLowerCase().contains(filter);
     else
