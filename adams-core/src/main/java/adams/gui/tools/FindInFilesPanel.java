@@ -21,11 +21,13 @@
 package adams.gui.tools;
 
 import adams.core.CleanUpHandler;
+import adams.core.Properties;
 import adams.core.StoppableWithFeedback;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.lister.LocalDirectoryLister;
+import adams.env.Environment;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
@@ -64,6 +66,21 @@ public class FindInFilesPanel
   implements StoppableWithFeedback, CleanUpHandler {
 
   private static final long serialVersionUID = -7039965284917973727L;
+
+  /** the file to store the recent parameters in. */
+  public final static String SESSION_FILE = "FindInFilesSession.props";
+
+  public static final String KEY_DIR = "dir";
+
+  public static final String KEY_RECURSIVE = "recursive";
+
+  public static final String KEY_FILEREGEXP = "fileregexp";
+
+  public static final String KEY_MATCHING = "matching";
+
+  public static final String KEY_SEARCHTEXT = "searchtext";
+
+  public static final String KEY_CASESENSITIVE = "casesensitive";
 
   /** for the parameters. */
   protected ParameterPanel m_PanelParameters;
@@ -239,6 +256,7 @@ public class FindInFilesPanel
   @Override
   protected void finishInit() {
     super.finishInit();
+    loadSession();
     updateButtons();
   }
 
@@ -315,6 +333,8 @@ public class FindInFilesPanel
     final boolean	regexp;
     final boolean	caseSensitive;
     final String	searchText;
+
+    saveSession();
 
     m_Stopped     = false;
     m_Running     = true;
@@ -403,6 +423,56 @@ public class FindInFilesPanel
     m_TextDialog.open(new PlaceholderFile("" + m_ListResults.getSelectedValue()));
     m_TextDialog.setLocationRelativeTo(this);
     m_TextDialog.setVisible(true);
+  }
+
+  /**
+   * Loads the parameters from an existing session file.
+   */
+  protected void loadSession() {
+    String	filename;
+    Properties	props;
+
+    filename = Environment.getInstance().createPropertiesFilename(SESSION_FILE);
+    if (FileUtils.fileExists(filename)) {
+      props = new Properties();
+      if (props.load(filename)) {
+        if (props.hasKey(KEY_DIR))
+          m_PanelDir.setCurrentDirectory(props.getPath(KEY_DIR));
+        if (props.hasKey(KEY_RECURSIVE))
+          m_CheckBoxRecursive.setSelected(props.getBoolean(KEY_RECURSIVE));
+        if (props.hasKey(KEY_FILEREGEXP))
+          m_TextFileRegExp.setText(props.getProperty(KEY_FILEREGEXP));
+        if (props.hasKey(KEY_MATCHING)) {
+	  m_ComboBoxMatching.setSelectedItem(props.getProperty(KEY_MATCHING));
+	  if (m_ComboBoxMatching.getSelectedIndex() == -1)
+	    m_ComboBoxMatching.setSelectedIndex(0);
+	}
+	if (props.hasKey(KEY_SEARCHTEXT))
+	  m_TextSearchText.setText(props.getProperty(KEY_SEARCHTEXT));
+        if (props.hasKey(KEY_CASESENSITIVE))
+          m_CheckBoxCaseSensitive.setSelected(props.getBoolean(KEY_CASESENSITIVE));
+      }
+    }
+  }
+
+  /**
+   * Stores the current parameters in a session props file.
+   */
+  protected void saveSession() {
+    Properties	props;
+    String	filename;
+
+    props = new Properties();
+    props.setPath(KEY_DIR, m_PanelDir.getCurrentDirectory());
+    props.setBoolean(KEY_RECURSIVE, m_CheckBoxRecursive.isSelected());
+    props.setProperty(KEY_FILEREGEXP, m_TextFileRegExp.getText());
+    props.setProperty(KEY_MATCHING, m_ComboBoxMatching.getSelectedItem());
+    props.setProperty(KEY_SEARCHTEXT, m_TextSearchText.getText());
+    props.setBoolean(KEY_CASESENSITIVE, m_CheckBoxCaseSensitive.isSelected());
+
+    filename = Environment.getInstance().createPropertiesFilename(SESSION_FILE);
+    if (!props.save(filename))
+      GUIHelper.showErrorMessage(this, "Failed to store session file:\n" + filename);
   }
 
   /**
