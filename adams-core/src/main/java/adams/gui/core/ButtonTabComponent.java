@@ -29,8 +29,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ.
+/*
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ.
  */
 
 package adams.gui.core;
@@ -175,7 +175,7 @@ public class ButtonTabComponent
         if (!((BaseTabbedPane) pane).canCloseTab(index))
           return;
       }
-      pane.remove(index);
+      pane.removeTabAt(index);
     }
 
     //we don't want to update UI for this button
