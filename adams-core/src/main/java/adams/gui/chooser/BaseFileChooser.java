@@ -167,7 +167,6 @@ public class BaseFileChooser
    */
   protected JComponent createAccessoryPanel() {
     Dimension	dim;
-    JPanel	panel;
 
     m_PanelBookmarksAndFilter = new JPanel(new BorderLayout());
 
