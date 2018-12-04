@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaInvestigatorPreferencesPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -32,7 +32,6 @@ import adams.gui.goe.GenericObjectEditorPanel;
  * Preferences for the WEKA Investigator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaInvestigatorPreferencesPanel
   extends AbstractPropertiesPreferencesPanel {
@@ -46,6 +45,8 @@ public class WekaInvestigatorPreferencesPanel
 
     // general
     addPropertyType("General.DefaultTabs", PropertyType.COMMA_SEPARATED_LIST);
+    addPropertyType("General.MaxTabUndo", PropertyType.INTEGER);
+    addPropertyType("General.PromptCloseTab", PropertyType.BOOLEAN);
     addPropertyType("General.DefaultDataTableHeight", PropertyType.INTEGER);
     addPropertyType("General.ClassAttributeHeuristic", PropertyType.OBJECT_EDITOR);
     setChooser("General.ClassAttributeHeuristic", new GenericObjectEditorPanel(

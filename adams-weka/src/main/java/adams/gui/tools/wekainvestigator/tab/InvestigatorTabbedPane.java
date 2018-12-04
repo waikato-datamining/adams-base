@@ -63,7 +63,6 @@ public class InvestigatorTabbedPane
 
     setCloseTabsWithMiddleMouseButton(false);
     setShowCloseTabButton(true);
-    setPromptUserWhenClosingTab(true);
   }
 
   /**

@@ -11,6 +11,14 @@ General.DefaultTabs=\
   adams.gui.tools.wekainvestigator.tab.MatrixTab,\
   adams.gui.tools.wekainvestigator.tab.DataTab
 
+# the maximum number of undos for tabs
+# (integer, <1 = off)
+General.MaxTabUndo=10
+
+# whether to prompt the user before closing a tab
+# (boolean)
+General.PromptCloseTab=false
+
 # the default height for the data table for tabs that display one
 # (integer)
 General.DefaultDataTableHeight=150

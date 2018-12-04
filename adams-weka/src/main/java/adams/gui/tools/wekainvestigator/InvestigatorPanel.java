@@ -155,6 +155,9 @@ public class InvestigatorPanel
   /** the action for closing a tab. */
   protected BaseAction m_ActionTabCloseTab;
 
+  /** the action for undoing closed a tab. */
+  protected BaseAction m_ActionTabUndoCloseTab;
+
   /** the action for closing all tabs. */
   protected BaseAction m_ActionTabCloseAllTabs;
 
@@ -234,6 +237,8 @@ public class InvestigatorPanel
     setLayout(new BorderLayout());
 
     m_TabbedPane = new InvestigatorTabbedPane(this);
+    m_TabbedPane.setMaxTabCloseUndo(getProperties().getInteger("General.MaxTabUndo", 3));  // TODO
+    m_TabbedPane.setPromptUserWhenClosingTab(getProperties().getBoolean("General.PromptCloseTab", true));
     add(m_TabbedPane, BorderLayout.CENTER);
 
     m_StatusBar = new BaseStatusBar();
@@ -333,6 +338,17 @@ public class InvestigatorPanel
     m_ActionTabCloseAllTabs.setName("Close all tabs");
     m_ActionTabCloseAllTabs.setIcon(GUIHelper.getEmptyIcon());
 
+    m_ActionTabUndoCloseTab = new AbstractBaseAction() {
+      private static final long serialVersionUID = 1028160012672649573L;
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+        m_TabbedPane.undoTabClose();
+	updateMenu();
+      }
+    };
+    m_ActionTabUndoCloseTab.setName("Undo close tab");
+    m_ActionTabUndoCloseTab.setIcon(GUIHelper.getIcon("undo.gif"));
+
     m_ActionFileClose = new AbstractBaseAction() {
       private static final long serialVersionUID = -1104246458353845500L;
       @Override
@@ -409,6 +425,7 @@ public class InvestigatorPanel
     m_ActionTabLoadParameters.setEnabled(m_TabbedPane.getSelectedIndex() > -1);
     m_ActionTabCloseTab.setEnabled(m_TabbedPane.getTabCount() > 0);
     m_ActionTabCloseAllTabs.setEnabled(m_TabbedPane.getTabCount() > 0);
+    m_ActionTabUndoCloseTab.setEnabled(m_TabbedPane.canUndoTabClose());
   }
 
   /**
@@ -557,6 +574,7 @@ public class InvestigatorPanel
       menu.addSeparator();
       menu.add(m_ActionTabCloseTab);
       menu.add(m_ActionTabCloseAllTabs);
+      menu.add(m_ActionTabUndoCloseTab);
 
       m_MenuBar = result;
     }
