@@ -23,6 +23,7 @@ package adams.gui.tools;
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.StoppableWithFeedback;
+import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -53,7 +54,10 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -206,7 +210,7 @@ public class FindInFilesPanel
     // results
     m_ModelResults = new DefaultListModel<>();
     m_ListResults  = new BaseListWithButtons(m_ModelResults);
-    m_ListResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    m_ListResults.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     m_ListResults.addListSelectionListener((ListSelectionEvent e) -> updateButtons());
     add(m_ListResults, BorderLayout.CENTER);
 
@@ -219,29 +223,27 @@ public class FindInFilesPanel
     m_ButtonCopyFull = new BaseButton("Copy full path");
     m_ButtonCopyFull.setToolTipText("Copies the full file path to the clipboard");
     m_ButtonCopyFull.addActionListener((ActionEvent e) -> {
-      if (m_ListResults.getSelectedIndex() == -1)
-        return;
-      ClipboardHelper.copyToClipboard("" + m_ListResults.getSelectedValue());
+      ClipboardHelper.copyToClipboard(Utils.flatten(getSelectedFiles(), "\n"));
     });
     m_ListResults.addToButtonsPanel(m_ButtonCopyFull);
 
     m_ButtonCopyName = new BaseButton("Copy name");
     m_ButtonCopyName.setToolTipText("Copies the name (no path) to the clipboard");
     m_ButtonCopyName.addActionListener((ActionEvent e) -> {
-      if (m_ListResults.getSelectedIndex() == -1)
-        return;
-      ClipboardHelper.copyToClipboard(
-        new PlaceholderFile("" + m_ListResults.getSelectedValue()).getName());
+      List<String> names = new ArrayList<>();
+      for (File f: getSelectedFiles())
+        names.add(f.getName());
+      ClipboardHelper.copyToClipboard(Utils.flatten(names, "\n"));
     });
     m_ListResults.addToButtonsPanel(m_ButtonCopyName);
 
     m_ButtonCopyDir = new BaseButton("Copy dir");
     m_ButtonCopyDir.setToolTipText("Copies the directory name to the clipboard");
     m_ButtonCopyDir.addActionListener((ActionEvent e) -> {
-      if (m_ListResults.getSelectedIndex() == -1)
-        return;
-      ClipboardHelper.copyToClipboard(
-        new PlaceholderFile("" + m_ListResults.getSelectedValue()).getParentFile().getAbsolutePath());
+      List<String> names = new ArrayList<>();
+      for (File f: getSelectedFiles())
+        names.add(f.getParentFile().getAbsolutePath());
+      ClipboardHelper.copyToClipboard(Utils.flatten(names, "\n"));
     });
     m_ListResults.addToButtonsPanel(m_ButtonCopyDir);
 
@@ -264,16 +266,18 @@ public class FindInFilesPanel
    * Updates the state of the buttons.
    */
   protected void updateButtons() {
-    boolean selected;
+    boolean selectedAny;
+    boolean selectedOne;
 
-    selected = (m_ListResults.getSelectedIndex() > -1);
+    selectedAny = (m_ListResults.getSelectedIndices().length > 0);
+    selectedOne = (m_ListResults.getSelectedIndices().length == 1);
 
     m_ButtonStart.setEnabled(!m_Running);
     m_ButtonStop.setEnabled(m_Running);
-    m_ButtonView.setEnabled(selected);
-    m_ButtonCopyFull.setEnabled(selected);
-    m_ButtonCopyName.setEnabled(selected);
-    m_ButtonCopyDir.setEnabled(selected);
+    m_ButtonView.setEnabled(selectedOne);
+    m_ButtonCopyFull.setEnabled(selectedAny);
+    m_ButtonCopyName.setEnabled(selectedAny);
+    m_ButtonCopyDir.setEnabled(selectedAny);
   }
 
   /**
@@ -405,6 +409,33 @@ public class FindInFilesPanel
   }
 
   /**
+   * Returns the currently selected file.
+   *
+   * @return		the file, null if none or more than one selected
+   */
+  public File getSelectedFile() {
+    if (m_ListResults.getSelectedIndices().length != 1)
+      return null;
+    else
+      return new PlaceholderFile("" + m_ListResults.getSelectedValue()).getAbsoluteFile();
+  }
+
+  /**
+   * Returns the currently selected files.
+   *
+   * @return		the files
+   */
+  public File[] getSelectedFiles() {
+    List<File> 	result;
+
+    result = new ArrayList<>();
+    for (Object o: m_ListResults.getSelectedValues())
+      result.add(new PlaceholderFile("" + o).getAbsoluteFile());
+
+    return result.toArray(new File[0]);
+  }
+
+  /**
    * Views the currently selected file.
    */
   public void viewFile() {
@@ -420,7 +451,7 @@ public class FindInFilesPanel
       m_TextDialog.setSize(GUIHelper.getDefaultDialogDimension());
     }
     m_TextDialog.setDefaultCloseOperation(TextDialog.HIDE_ON_CLOSE);
-    m_TextDialog.open(new PlaceholderFile("" + m_ListResults.getSelectedValue()));
+    m_TextDialog.open(getSelectedFile());
     m_TextDialog.setLocationRelativeTo(this);
     m_TextDialog.setVisible(true);
   }
