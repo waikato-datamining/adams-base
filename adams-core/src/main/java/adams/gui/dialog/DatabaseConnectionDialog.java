@@ -15,7 +15,7 @@
 
 /*
  * DatabaseConnectionDialog.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -39,7 +39,6 @@ import java.awt.event.WindowEvent;
  * A standalone dialog for connecting to a database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatabaseConnectionDialog
   extends BaseDialog {
@@ -148,5 +147,14 @@ public class DatabaseConnectionDialog
     });
 
     pack();
+  }
+
+  /**
+   * Returns the connection panel.
+   *
+   * @return		the panel
+   */
+  public DatabaseConnectionPanel getConnectionPanel() {
+    return m_Panel;
   }
 }
