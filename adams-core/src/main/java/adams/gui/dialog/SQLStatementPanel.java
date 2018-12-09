@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SQLStatementPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -212,5 +212,32 @@ public class SQLStatementPanel
    */
   public void addStatementToHistory() {
     m_RecentStatementsHandler.addRecentItem(getStatement());
+  }
+
+  /**
+   * Returns the panel for the buttons on the left.
+   *
+   * @return		the panel
+   */
+  public JPanel getButtonsLeft() {
+    return m_PanelButtonsLeft;
+  }
+
+  /**
+   * Returns the panel for the buttons on the right.
+   *
+   * @return		the panel
+   */
+  public JPanel getButtonsRight() {
+    return m_PanelButtonsRight;
+  }
+
+  /**
+   * Returns the query panel.
+   *
+   * @return		the panel
+   */
+  public SQLSyntaxEditorPanel getQueryPanel() {
+    return m_PanelStatement;
   }
 }
