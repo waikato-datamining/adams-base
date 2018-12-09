@@ -327,6 +327,7 @@ The following conversion schemes are available:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Tools}
+\section{Spreadsheet file viewer}
 The \textit{Spreadsheet file viewer} is a simple tool for loading all spreadsheet
 file formats that ADAMS supports. Despite its name, the tool also allows you to
 modify cell values and save them back to a file. Figure \ref{spreadsheet-viewer} shows a
@@ -347,7 +348,7 @@ also unify this and specify how many digits should be used for all floating
 point cells.
 
 \clearpage
-\section{Filtering and processing}
+\subsection{Filtering and processing}
 The viewer supports some basic filtering and processing:
 \begin{tight_itemize}
 	\item \textit{columns} -- creates a subset of the spreadsheet by selecting
@@ -378,14 +379,14 @@ show the setup for a row finder filter and the resulting new spreadsheet.
   \end{minipage}
 \end{figure}
 
-\section{Plug-ins}
+\subsection{Plug-ins}
 The viewer can be extended with two sorts of plug-ins:
 \begin{tight_itemize}
 	\item ones that generate a view based on the current sheet (``view'')
 	\item ones that process the current sheet (``data'')
 \end{tight_itemize}
 
-\subsection{View plug-ins}
+\subsubsection{View plug-ins}
 A view plug-in is derived from the following super-class:
 \begin{verbatim}
   adams.gui.tools.spreadsheetviewer.AbstractViewPlugin
@@ -414,7 +415,7 @@ Further superclasses:
 	the settings through a GenericObjectEditor view.
 \end{tight_itemize}
 
-\subsection{Data plug-ins}
+\subsubsection{Data plug-ins}
 A view plug-in is derived from the following super-class:
 \begin{verbatim}
   adams.gui.tools.spreadsheetviewer.AbstractDataPlugin
@@ -440,6 +441,23 @@ Further superclasses:
 	\textit{AbstractSelectedSheetsDataPlugin} but offers the user to change
 	the settings through a GenericObjectEditor view (see \textit{Merge} plugin).
 \end{tight_itemize}
+
+
+\clearpage
+\section{SQL Workbench}
+The \textit{SQL Workbench} tool allows you to run queries (SELECT, UPDATE, DELETE)
+from within ADAMS, without having to rely on third-party database tools. You can
+have an arbitrary number of query panels and a history of your queries is kept
+as well. Further analysis or export of the results is possible via the result table's
+right-click popup menu.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=12.0cm]{images/sqlworkbench.png}
+  \caption{Workbench for SQL queries.}
+  \label{sqlworkbench}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
