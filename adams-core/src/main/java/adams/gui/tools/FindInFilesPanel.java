@@ -20,7 +20,6 @@
 
 package adams.gui.tools;
 
-import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
@@ -67,7 +66,7 @@ import java.util.regex.Pattern;
  */
 public class FindInFilesPanel
   extends BasePanel
-  implements StoppableWithFeedback, CleanUpHandler {
+  implements StoppableWithFeedback {
 
   private static final long serialVersionUID = -7039965284917973727L;
 
@@ -142,9 +141,6 @@ public class FindInFilesPanel
 
   /** the file lister to use. */
   protected LocalDirectoryLister m_Lister;
-
-  /** the dialog for viewing a file. */
-  protected TextDialog m_TextDialog;
 
   /**
    * Initializes the members
@@ -439,21 +435,21 @@ public class FindInFilesPanel
    * Views the currently selected file.
    */
   public void viewFile() {
+    TextDialog 		dialog;
+
     if (m_ListResults.getSelectedIndices().length != 1)
       return;
 
-    if (m_TextDialog == null) {
-      if (getParentDialog() != null)
-        m_TextDialog = new TextDialog(getParentDialog(), ModalityType.MODELESS);
-      else
-        m_TextDialog = new TextDialog(getParentFrame(), false);
-      m_TextDialog.setCanOpenFiles(true);
-      m_TextDialog.setSize(GUIHelper.getDefaultDialogDimension());
-    }
-    m_TextDialog.setDefaultCloseOperation(TextDialog.HIDE_ON_CLOSE);
-    m_TextDialog.open(getSelectedFile());
-    m_TextDialog.setLocationRelativeTo(this);
-    m_TextDialog.setVisible(true);
+    if (getParentDialog() != null)
+      dialog = new TextDialog(getParentDialog(), ModalityType.MODELESS);
+    else
+      dialog = new TextDialog(getParentFrame(), false);
+    dialog.setCanOpenFiles(true);
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
+    dialog.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
+    dialog.open(getSelectedFile());
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
   }
 
   /**
@@ -504,16 +500,5 @@ public class FindInFilesPanel
     filename = Environment.getInstance().createPropertiesFilename(SESSION_FILE);
     if (!props.save(filename))
       GUIHelper.showErrorMessage(this, "Failed to store session file:\n" + filename);
-  }
-
-  /**
-   * Cleans up data structures, frees up memory.
-   */
-  public void cleanUp() {
-    if (m_TextDialog != null) {
-      m_TextDialog.setVisible(false);
-      m_TextDialog.dispose();
-      m_TextDialog = null;
-    }
   }
 }
