@@ -20,14 +20,27 @@
 
 package adams.gui.tools.sqlworkbench;
 
+import adams.core.Constants;
+import adams.core.Utils;
+import adams.core.base.BasePassword;
+import adams.core.logging.LoggingLevel;
 import adams.db.AbstractDatabaseConnection;
+import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionProvider;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseTextField;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.ParameterPanel;
+import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.DatabaseConnectionDialog;
 
 import javax.swing.JLabel;
+import javax.swing.JPasswordField;
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 
 /**
@@ -91,16 +104,73 @@ public class SqlConnectionPanel
    * Allows the user to select a connection.
    */
   protected void selectConnection() {
-    DatabaseConnectionDialog 	dialog;
+    ApprovalDialog  		dialog;
+    ParameterPanel 		panelParameters;
+    BaseTextField 		textURL;
+    BaseTextField 		textUser;
+    JPasswordField 		textPassword;
+    BaseCheckBox 		checkBoxShowPassword;
+    BaseComboBox<LoggingLevel> 	comboBoxLoggingLevel;
+    String			error;
+
+    panelParameters = new ParameterPanel();
+
+    textURL = new BaseTextField(20);
+    textURL.setText(getDatabaseConnection().getURL());
+    panelParameters.addParameter("_URL", textURL);
+
+    textUser = new BaseTextField(20);
+    textUser.setText(getDatabaseConnection().getUser());
+    panelParameters.addParameter("U_ser", textUser);
+
+    textPassword = new JPasswordField(20);
+    textPassword.setText(getDatabaseConnection().getPassword().getValue());
+    textPassword.setEchoChar(Constants.PASSWORD_CHAR);
+    panelParameters.addParameter("_Password", textPassword);
+
+    checkBoxShowPassword = new BaseCheckBox();
+    checkBoxShowPassword.setSelected(false);
+    checkBoxShowPassword.addActionListener((ActionEvent e) ->
+      textPassword.setEchoChar(checkBoxShowPassword.isSelected() ? (char) 0 : Constants.PASSWORD_CHAR));
+    panelParameters.addParameter("Sho_w password", checkBoxShowPassword);
+
+    comboBoxLoggingLevel = new BaseComboBox<>(LoggingLevel.values());
+    comboBoxLoggingLevel.setSelectedItem(getDatabaseConnection().getLoggingLevel());
+    panelParameters.addParameter("_Logging level", comboBoxLoggingLevel);
 
     if (getParentDialog() != null)
-      dialog = new DatabaseConnectionDialog(getParentDialog());
+      dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
-      dialog = new DatabaseConnectionDialog(getParentFrame());
+      dialog = new ApprovalDialog(getParentFrame(), true);
+    dialog.setTitle("Connect to database");
     dialog.setDefaultCloseOperation(DatabaseConnectionDialog.DISPOSE_ON_CLOSE);
+    dialog.getContentPane().add(panelParameters, BorderLayout.CENTER);
+    dialog.setApproveCaption("Connect");
+    dialog.setApproveVisible(true);
+    dialog.setCancelVisible(true);
+    dialog.setDiscardVisible(false);
+    dialog.pack();
     dialog.setLocationRelativeTo(getParent());
     dialog.setVisible(true);
-    m_DatabaseConnection = dialog.getConnectionPanel().getDatabaseConnection();
+    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
+      return;
+
+    m_DatabaseConnection = DatabaseConnection.getSingleton(textURL.getText(), textUser.getText(), new BasePassword(textPassword.getText()));
+    m_DatabaseConnection.setLoggingLevel(comboBoxLoggingLevel.getSelectedItem());
+    error = null;
+    if (!m_DatabaseConnection.isConnected()) {
+      try {
+	m_DatabaseConnection.connect();
+	if (!m_DatabaseConnection.isConnected())
+	  error = "Failed to connect to: " + textURL.getText();
+      }
+      catch (Exception e) {
+        error = Utils.handleException(m_DatabaseConnection, "Failed to connect to: " + textURL.getText(), e);
+      }
+    }
+    if (error != null)
+      GUIHelper.showErrorMessage(this, error);
+
     updateConnection();
   }
 
