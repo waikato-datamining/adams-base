@@ -13,25 +13,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Database.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.source;
 
+import adams.db.AbstractDatabaseConnection;
+import adams.gui.core.GUIHelper;
+import adams.gui.dialog.SqlQueryDialog;
 import adams.gui.tools.wekainvestigator.data.DatabaseContainer;
 import adams.gui.tools.wekainvestigator.job.InvestigatorJob;
-import weka.gui.sql.SqlViewerDialog;
 
-import javax.swing.JOptionPane;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 
 /**
  * For loading data from a database.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Database
   extends AbstractSource {
@@ -54,21 +55,25 @@ public class Database
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    SqlViewerDialog	dialog;
+    SqlQueryDialog 	dialog;
     InvestigatorJob 	job;
 
-    dialog = new SqlViewerDialog(null);
-    dialog.setDefaultCloseOperation(SqlViewerDialog.DISPOSE_ON_CLOSE);
-    dialog.pack();
+    if (getOwner().getParentDialog() != null)
+      dialog = new SqlQueryDialog(getOwner().getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new SqlQueryDialog(getOwner().getParentFrame(), true);
+    dialog.setDefaultCloseOperation(SqlQueryDialog.DISPOSE_ON_CLOSE);
+    dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(getOwner());
     dialog.setVisible(true);
-    if (dialog.getReturnValue() != JOptionPane.OK_OPTION)
+    if (dialog.getOption() != SqlQueryDialog.APPROVE_OPTION)
       return;
 
     job = new InvestigatorJob(getOwner(), "Loading data from database") {
       @Override
       protected void doRun() {
-	addData(new DatabaseContainer(dialog.getURL(), dialog.getUser(), dialog.getPassword(), dialog.getQuery()));
+	AbstractDatabaseConnection conn = dialog.getDatabaseConnection();
+	addData(new DatabaseContainer(conn.getURL(), conn.getUser(), conn.getPassword().getValue(), dialog.getQuery()));
       }
     };
     getOwner().startExecution(job);
