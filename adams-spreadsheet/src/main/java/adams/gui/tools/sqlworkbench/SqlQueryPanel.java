@@ -25,6 +25,8 @@ import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
+import adams.db.AbstractDatabaseConnection;
+import adams.db.DatabaseConnectionProvider;
 import adams.db.SQL;
 import adams.db.SQLStatement;
 import adams.gui.core.BaseButton;
@@ -56,7 +58,8 @@ import java.sql.ResultSet;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SqlQueryPanel
-  extends BasePanel {
+  extends BasePanel
+  implements DatabaseConnectionProvider {
 
   private static final long serialVersionUID = -7292928176878371096L;
 
@@ -229,5 +232,14 @@ public class SqlQueryPanel
       }
     };
     worker.execute();
+  }
+
+  /**
+   * Returns the currently used database connection object, can be null.
+   *
+   * @return		the current object
+   */
+  public AbstractDatabaseConnection getDatabaseConnection() {
+    return m_PanelConnection.getDatabaseConnection();
   }
 }
