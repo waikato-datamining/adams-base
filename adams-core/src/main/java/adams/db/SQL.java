@@ -674,6 +674,45 @@ public class SQL
   }
 
   /**
+   * Selects all strings from the specified columns. Can be distinct.
+   *
+   * @param distinct	whether values in column have to be distinct
+   * @param columns	the string columns to select
+   * @param tables	the tables to select from, ignored if null
+   * @param where	condition, can be null
+   * @return		resultset of data
+   * @throws Exception 	if something goes wrong
+   */
+  public List<String[]> selectStrings(boolean distinct, String[] columns, String tables, String where) throws Exception {
+    List<String[]>	result;
+    ResultSet		rs;
+    String[]		row;
+    int			i;
+
+    result = new ArrayList<>();
+
+    rs = null;
+    try {
+      rs = doSelect(distinct, Utils.flatten(columns, ", "), tables, where);
+      while (rs.next()) {
+        row = new String[columns.length];
+	for (i = 1; i <= columns.length; i++)
+	  row[i-1] = rs.getString(i);
+	result.add(row);
+      }
+    }
+    catch (SQLException e) {
+      getLogger().log(Level.SEVERE, "Error executing 'selectStrings'!", e);
+      throw e;
+    }
+    finally {
+      closeAll(rs);
+    }
+
+    return result;
+  }
+
+  /**
    * Selects all integers from the specified column. Can be distinct.
    *
    * @param distinct	whether values in column have to be distinct
