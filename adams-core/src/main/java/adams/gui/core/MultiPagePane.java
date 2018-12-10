@@ -48,7 +48,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Manages multiple pages, like JTabbedPane manages multiple tabs.
@@ -297,6 +299,32 @@ public class MultiPagePane
     }
   }
 
+  /**
+   * Container for the page undo list.
+   */
+  public static class PageUndo {
+    /** the component that made up the tab. */
+    public Component component;
+
+    /** the title. */
+    public String title;
+
+    /** the position. */
+    public int index;
+
+    /** tiptext. */
+    public String tiptext;
+
+    /** the icon. */
+    public ImageIcon icon;
+
+    /** the tab component. */
+    public Component tabComponent;
+
+    /** whether the tab was selected. */
+    public boolean selected;
+  }
+
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
@@ -324,6 +352,9 @@ public class MultiPagePane
   /** the remove all button. */
   protected BaseButton m_ButtonRemoveAll;
 
+  /** the undo button. */
+  protected BaseButton m_ButtonUndo;
+
   /** the action button. */
   protected BaseButtonWithDropDownMenu m_ButtonAction;
 
@@ -348,6 +379,15 @@ public class MultiPagePane
   /** whether the page list is readonly. */
   protected boolean m_ReadOnly;
 
+  /** the maximum number of tabs to keep for undo. */
+  protected int m_MaxPageCloseUndo;
+
+  /** the list of tabs to undo. */
+  protected transient List<PageUndo> m_PageUndoList;
+
+  /** whether to skip tab undo. */
+  protected boolean m_SkipPageUndo;
+
   /**
    * For initializing members.
    */
@@ -362,6 +402,8 @@ public class MultiPagePane
     m_PopupCustomizer   = null;
     m_ToolTipCustomizer = null;
     m_ReadOnly          = false;
+    m_MaxPageCloseUndo  = 0;
+    m_PageUndoList      = null;
   }
 
   /**
@@ -374,7 +416,7 @@ public class MultiPagePane
     setLayout(new BorderLayout());
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-    m_SplitPane.setDividerLocation(250);
+    m_SplitPane.setDividerLocation(280);
     m_SplitPane.setResizeWeight(0.0);
     m_SplitPane.setOneTouchExpandable(true);
     add(m_SplitPane, BorderLayout.CENTER);
@@ -417,24 +459,33 @@ public class MultiPagePane
     m_LeftPanel.add(m_PanelListButtons, BorderLayout.SOUTH);
 
     m_ButtonUp = new BaseButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp.setToolTipText("Moves up selected");
     m_ButtonUp.addActionListener((ActionEvent e) -> moveUp());
     m_PanelListButtons.add(m_ButtonUp);
 
     m_ButtonDown = new BaseButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown.setToolTipText("Moves down selected");
     m_ButtonDown.addActionListener((ActionEvent e) -> moveDown());
     m_PanelListButtons.add(m_ButtonDown);
 
     m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove.setToolTipText("Removes currently selected");
     m_ButtonRemove.addActionListener((ActionEvent e) -> checkedRemoveSelectedPage());
     m_PanelListButtons.add(m_ButtonRemove);
 
     m_ButtonRemoveAll = new BaseButton(GUIHelper.getIcon("delete_all.gif"));
+    m_ButtonRemoveAll.setToolTipText("Removes all");
     m_ButtonRemoveAll.addActionListener((ActionEvent e) -> checkedRemoveAllPages());
     m_PanelListButtons.add(m_ButtonRemoveAll);
 
     m_ButtonAction = new BaseButtonWithDropDownMenu();
+    m_ButtonAction.setToolTipText("Additional actions");
     m_ButtonAction.setVisible(false);
     m_PanelListButtons.add(m_ButtonAction);
+
+    m_ButtonUndo = new BaseButton(GUIHelper.getIcon("undo.gif"));
+    m_ButtonUndo.setToolTipText("Undo removal");
+    m_ButtonUndo.addActionListener((ActionEvent e) -> undoPageClose());
 
     m_PanelContent = new BasePanel(new BorderLayout());
     m_SplitPane.setRightComponent(m_PanelContent);
@@ -813,6 +864,7 @@ public class MultiPagePane
   public PageContainer removePageAt(int index) {
     PageContainer	result;
 
+    addPageUndo(index);
     result = m_PageListModel.remove(index);
 
     // detached?
@@ -832,12 +884,13 @@ public class MultiPagePane
   }
 
   /**
-   * Removes all pages.
+   * Removes all pages. Does not stored them in undo.
    */
   public void checkedRemoveAllPages() {
     PageContainer	removed;
 
     m_IgnoreUpdates = true;
+    m_SkipPageUndo  = true;
 
     while (getPageCount() > 0) {
       removed = checkedRemovePageAt(0);
@@ -846,19 +899,22 @@ public class MultiPagePane
     }
 
     m_IgnoreUpdates = false;
+    m_SkipPageUndo  = false;
     update();
   }
 
   /**
-   * Removes all pages.
+   * Removes all pages. Does not stored them in undo.
    */
   public void removeAllPages() {
     m_IgnoreUpdates = true;
+    m_SkipPageUndo  = true;
 
     while (getPageCount() > 0)
       removePageAt(0);
 
     m_IgnoreUpdates = false;
+    m_SkipPageUndo  = false;
     update();
   }
 
@@ -1034,6 +1090,7 @@ public class MultiPagePane
     m_ButtonDown.setEnabled(pageSelected && canMoveDown());
     m_ButtonRemove.setEnabled(pageSelected);
     m_ButtonRemoveAll.setEnabled(getPageCount() > 0);
+    m_ButtonUndo.setEnabled(canUndoPageClose());
   }
 
   /**
@@ -1234,9 +1291,105 @@ public class MultiPagePane
   }
 
   /**
+   * Sets the maximum pages to keep around for undoing closing.
+   *
+   * @param value	the maximum, <1 turned off
+   */
+  public void setMaxPageCloseUndo(int value) {
+    m_MaxPageCloseUndo = value;
+    m_PanelListButtons.remove(m_ButtonUndo);
+    if (m_MaxPageCloseUndo > 0)
+      m_PanelListButtons.add(m_ButtonUndo);
+  }
+
+  /**
+   * Returns the maximum pages to keep around for undoing closing.
+   *
+   * @return		the maximum, <1 turned off
+   */
+  public int getMaxPageCloseUndo() {
+    return m_MaxPageCloseUndo;
+  }
+
+  /**
+   * Returns the page undo list.
+   *
+   * @return		the list
+   */
+  protected List<PageUndo> getPageUndoList() {
+    if (m_PageUndoList == null)
+      m_PageUndoList = new ArrayList<>();
+    return m_PageUndoList;
+  }
+
+  /**
+   * Adds the page to its undo list, if enabled.
+   *
+   * @param index	the position of the tab
+   */
+  protected void addPageUndo(int index) {
+    PageUndo 	undo;
+
+    if ((m_MaxPageCloseUndo < 1) || m_SkipPageUndo)
+      return;
+
+    undo              = new PageUndo();
+    undo.component    = getPageAt(index);
+    undo.title        = getTitleAt(index);
+    undo.index        = index;
+    undo.icon         = getIconAt(index);
+    undo.selected     = (index == getSelectedIndex());
+
+    getPageUndoList().add(undo);
+
+    while (getPageUndoList().size() > m_MaxPageCloseUndo)
+      getPageUndoList().remove(0);
+  }
+
+  /**
+   * Returns whether a tab close can be undone.
+   *
+   * @return		true if possible
+   */
+  public boolean canUndoPageClose() {
+    return (getPageUndoList().size() > 0);
+  }
+
+  /**
+   * Performs an undo of a page close.
+   *
+   * @return		true if successfully restored
+   */
+  public boolean undoPageClose() {
+    PageUndo undo;
+    int			size;
+    PageContainer	cont;
+
+    size = getPageUndoList().size();
+    if (size < 1)
+      return false;
+
+    undo = getPageUndoList().get(size - 1);
+    getPageUndoList().remove(size - 1);
+    cont = new PageContainer(undo.title, undo.component, undo.icon);
+    addPage(undo.index, cont);
+    if (undo.selected)
+      setSelectedIndex(undo.index);
+
+    return true;
+  }
+
+  /**
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
     removeAllPages();
+    if (m_PageUndoList != null) {
+      for (PageUndo undo: m_PageUndoList)
+        if (undo.component instanceof CleanUpHandler)
+	  ((CleanUpHandler) undo.component).cleanUp();
+      m_PageUndoList.clear();
+      m_PageUndoList = null;
+    }
   }
 }

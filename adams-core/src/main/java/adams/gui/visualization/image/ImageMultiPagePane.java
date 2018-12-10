@@ -50,6 +50,7 @@ public class ImageMultiPagePane
   public ImageMultiPagePane(ImageViewerPanel owner) {
     super();
     m_Owner = owner;
+    setMaxPageCloseUndo(10);
     setPageCloseApprover(new PageCloseApprover() {
       @Override
       public boolean approvePageClosing(MultiPagePane source, int index) {

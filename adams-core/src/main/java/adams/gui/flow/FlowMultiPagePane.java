@@ -69,6 +69,7 @@ public class FlowMultiPagePane
 
     m_Owner = owner;
 
+    setMaxPageCloseUndo(10);
     setPageCloseApprover((MultiPagePane source, int index) -> {
       FlowPanel panel = getPanelAt(index);
       boolean result = checkForModified(panel);

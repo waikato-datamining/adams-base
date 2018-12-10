@@ -86,6 +86,7 @@ public class SqlWorkbenchPanel
     setLayout(new BorderLayout());
 
     m_MultiPagePane = new MultiPagePane();
+    m_MultiPagePane.setMaxPageCloseUndo(10);
     add(m_MultiPagePane, BorderLayout.CENTER);
   }
 

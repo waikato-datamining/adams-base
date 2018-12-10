@@ -67,6 +67,7 @@ public class MultiPagePane
     setOwner(owner);
 
     addChangeListener((ChangeEvent e) -> pageSelected(e));
+    setMaxPageCloseUndo(10);
     setPageCloseApprover((adams.gui.core.MultiPagePane source, int index) -> {
       SpreadSheetPanel panel = getPanelAt(index);
       boolean result = checkForModified(panel);

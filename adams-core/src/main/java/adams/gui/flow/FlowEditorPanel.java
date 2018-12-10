@@ -487,7 +487,7 @@ public class FlowEditorPanel
 
     // the flows
     m_FlowPanels = new FlowMultiPagePane(this);
-    m_FlowPanels.setDividerLocation(UISettings.get(this, "FlowDivider", props.getInteger("FlowList.DividerLocation", 250)));
+    m_FlowPanels.setDividerLocation(UISettings.get(this, "FlowDivider", props.getInteger("FlowList.DividerLocation", 280)));
     m_FlowPanels.setUISettingsParameters(getClass(), "FlowDivider");
     m_SplitPane.setLeftComponent(m_FlowPanels);
 

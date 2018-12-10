@@ -48,6 +48,7 @@ public class ImageProcessorMultiPagePane
   public ImageProcessorMultiPagePane(ImageProcessorPanel owner) {
     super();
     m_Owner = owner;
+    setMaxPageCloseUndo(10);
     setDividerLocation(250);
   }
   
