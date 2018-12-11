@@ -22,7 +22,9 @@ package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.ListHelper;
 import adams.core.logging.LoggingLevel;
+import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseSplitButton;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.UndoEvent;
@@ -31,8 +33,6 @@ import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.datatable.action.AbstractEditableDataTableAction;
 import adams.gui.tools.wekainvestigator.datatable.action.Save;
-import com.jidesoft.swing.JideButton;
-import com.jidesoft.swing.JideSplitButton;
 
 import javax.swing.JPanel;
 import java.awt.GridLayout;
@@ -54,25 +54,25 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
   private static final long serialVersionUID = -94945456385486233L;
 
   /** the button for activating a dataset. */
-  protected JideButton m_ButtonActivate;
+  protected BaseFlatButton m_ButtonActivate;
 
   /** the button for removing a dataset. */
-  protected JideButton m_ButtonRemove;
+  protected BaseFlatButton m_ButtonRemove;
 
   /** the save button. */
-  protected JideButton m_ButtonSave;
+  protected BaseFlatButton m_ButtonSave;
 
   /** the action button. */
-  protected JideSplitButton m_ButtonAction;
+  protected BaseSplitButton m_ButtonAction;
 
   /** the up button. */
-  protected JideButton m_ButtonUp;
+  protected BaseFlatButton m_ButtonUp;
 
   /** the down button. */
-  protected JideButton m_ButtonDown;
+  protected BaseFlatButton m_ButtonDown;
 
   /** the button for undoing changes. */
-  protected JideButton m_ButtonUndo;
+  protected BaseFlatButton m_ButtonUndo;
 
   /** the available actions. */
   protected List<AbstractEditableDataTableAction> m_Actions;
@@ -111,29 +111,24 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
 
     super.initGUI();
 
-    m_ButtonActivate = new JideButton("Activate", GUIHelper.getIcon("location.png"));
-    m_ButtonActivate.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonActivate = new BaseFlatButton("Activate", GUIHelper.getIcon("location.png"));
     m_ButtonActivate.addActionListener((ActionEvent e) -> activate(m_Table.getSelectedRow()));
     m_Table.addToButtonsPanel(m_ButtonActivate);
 
-    m_ButtonRemove = new JideButton("Remove", GUIHelper.getIcon("delete.gif"));
-    m_ButtonRemove.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonRemove = new BaseFlatButton("Remove", GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeData(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonRemove);
 
-    m_ButtonUndo = new JideButton("Undo", GUIHelper.getIcon("undo.gif"));
-    m_ButtonUndo.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonUndo = new BaseFlatButton("Undo", GUIHelper.getIcon("undo.gif"));
     m_ButtonUndo.addActionListener((ActionEvent e) -> undo(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonUndo);
 
-    m_ButtonSave = new JideButton("Save", GUIHelper.getIcon("save.gif"));
-    m_ButtonSave.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonSave = new BaseFlatButton("Save", GUIHelper.getIcon("save.gif"));
     m_Table.addToButtonsPanel(m_ButtonSave);
 
-    m_ButtonAction = new JideSplitButton("...", GUIHelper.getEmptyIcon());
+    m_ButtonAction = new BaseSplitButton("...", GUIHelper.getEmptyIcon());
     m_ButtonAction.setAlwaysDropdown(false);
     m_ButtonAction.setButtonEnabled(true);
-    m_ButtonAction.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
     for (AbstractEditableDataTableAction action: m_Actions) {
       if (action instanceof Save)
 	m_ButtonSave.setAction(action);
@@ -143,14 +138,12 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     m_Table.addToButtonsPanel(m_ButtonAction);
 
     panel = new JPanel(new GridLayout(1, 2));
-    m_ButtonUp = new JideButton(GUIHelper.getIcon("arrow_up.gif"));
-    m_ButtonUp.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonUp = new BaseFlatButton(GUIHelper.getIcon("arrow_up.gif"));
     m_ButtonUp.addActionListener((ActionEvent e) -> {
       ListHelper.moveUp(getData(), getSelectedRows());
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED));
     });
-    m_ButtonDown = new JideButton(GUIHelper.getIcon("arrow_down.gif"));
-    m_ButtonDown.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonDown = new BaseFlatButton(GUIHelper.getIcon("arrow_down.gif"));
     m_ButtonDown.addActionListener((ActionEvent e) -> {
       ListHelper.moveDown(getData(), getSelectedRows());
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED));

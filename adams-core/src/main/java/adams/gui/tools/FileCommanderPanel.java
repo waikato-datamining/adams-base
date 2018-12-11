@@ -31,7 +31,9 @@ import adams.core.io.fileoperations.RemoteDirection;
 import adams.core.io.fileoperations.RemoteFileOperations;
 import adams.core.io.fileoperations.RemoteToRemoteFileOperations;
 import adams.core.logging.LoggingLevel;
+import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseSplitButton;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
@@ -40,8 +42,6 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.tools.filecommander.AbstractFileCommanderAction;
 import adams.gui.tools.filecommander.Actions;
 import adams.gui.tools.filecommander.FileCommanderDirectoryPanel;
-import com.jidesoft.swing.JideButton;
-import com.jidesoft.swing.JideSplitButton;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
@@ -88,34 +88,34 @@ public class FileCommanderPanel
   protected JPanel m_PanelButtons;
 
   /** the button for reloading the files. */
-  protected JideButton m_ButtonReload;
+  protected BaseFlatButton m_ButtonReload;
 
   /** the button for renaming. */
-  protected JideButton m_ButtonRename;
+  protected BaseFlatButton m_ButtonRename;
 
   /** the button for viewing the file. */
-  protected JideButton m_ButtonView;
+  protected BaseFlatButton m_ButtonView;
 
   /** the button for copying the file. */
-  protected JideButton m_ButtonCopy;
+  protected BaseFlatButton m_ButtonCopy;
 
   /** the button for moving. */
-  protected JideButton m_ButtonMove;
+  protected BaseFlatButton m_ButtonMove;
 
   /** the button for creating a directory. */
-  protected JideButton m_ButtonMkDir;
+  protected BaseFlatButton m_ButtonMkDir;
 
   /** the button for deleting. */
-  protected JideButton m_ButtonDelete;
+  protected BaseFlatButton m_ButtonDelete;
 
   /** the action button. */
-  protected JideSplitButton m_ButtonAction;
+  protected BaseSplitButton m_ButtonAction;
 
   /** the button for stopping an operation. */
-  protected JideButton m_ButtonStop;
+  protected BaseFlatButton m_ButtonStop;
 
   /** the button for quitting. */
-  protected JideButton m_ButtonQuit;
+  protected BaseFlatButton m_ButtonQuit;
 
   /** the statusbar. */
   protected BaseStatusBar m_StatusBar;
@@ -206,48 +206,40 @@ public class FileCommanderPanel
     m_PanelButtons = new JPanel(new FlowLayout());
     panelAll.add(m_PanelButtons, BorderLayout.SOUTH);
 
-    m_ButtonReload = new JideButton("Reload");
-    m_ButtonReload.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonReload = new BaseFlatButton("Reload");
     m_ButtonReload.addActionListener((ActionEvent) -> reload());
     m_PanelButtons.add(m_ButtonReload);
 
-    m_ButtonRename = new JideButton("Rename");
-    m_ButtonRename.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonRename = new BaseFlatButton("Rename");
     m_ButtonRename.addActionListener((ActionEvent) -> rename());
     m_PanelButtons.add(m_ButtonRename);
 
-    m_ButtonView = new JideButton("View");
-    m_ButtonView.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonView = new BaseFlatButton("View");
     m_ButtonView.addActionListener((ActionEvent) -> view());
     m_PanelButtons.add(m_ButtonView);
 
-    m_ButtonCopy = new JideButton("Copy");
-    m_ButtonCopy.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonCopy = new BaseFlatButton("Copy");
     m_ButtonCopy.addActionListener((ActionEvent) -> copy());
     m_PanelButtons.add(m_ButtonCopy);
 
-    m_ButtonMove = new JideButton("Move");
-    m_ButtonMove.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonMove = new BaseFlatButton("Move");
     m_ButtonMove.addActionListener((ActionEvent) -> move());
     m_PanelButtons.add(m_ButtonMove);
 
-    m_ButtonMkDir = new JideButton("MkDir");
-    m_ButtonMkDir.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonMkDir = new BaseFlatButton("MkDir");
     m_ButtonMkDir.addActionListener((ActionEvent) -> mkdir());
     m_PanelButtons.add(m_ButtonMkDir);
 
-    m_ButtonDelete = new JideButton("Delete");
-    m_ButtonDelete.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonDelete = new BaseFlatButton("Delete");
     m_ButtonDelete.addActionListener((ActionEvent) -> delete());
     m_PanelButtons.add(m_ButtonDelete);
 
     // only show actions button if actual actions present
     // discounting the dummy "Actions" action
     if (m_Actions.size() > 1) {
-      m_ButtonAction = new JideSplitButton();
+      m_ButtonAction = new BaseSplitButton();
       m_ButtonAction.setAlwaysDropdown(false);
       m_ButtonAction.setButtonEnabled(true);
-      m_ButtonAction.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
       for (AbstractFileCommanderAction action: m_Actions) {
 	if (action.getClass() == Actions.class)
 	  m_ButtonAction.setAction(action);
@@ -257,13 +249,11 @@ public class FileCommanderPanel
       m_PanelButtons.add(m_ButtonAction);
     }
 
-    m_ButtonStop = new JideButton("Stop");
-    m_ButtonStop.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonStop = new BaseFlatButton("Stop");
     m_ButtonStop.addActionListener((ActionEvent) -> stopExecution());
     m_PanelButtons.add(m_ButtonStop);
 
-    m_ButtonQuit = new JideButton("Quit");
-    m_ButtonQuit.setButtonStyle(JideButton.TOOLBOX_STYLE);
+    m_ButtonQuit = new BaseFlatButton("Quit");
     m_ButtonQuit.addActionListener((ActionEvent) -> quit());
     m_PanelButtons.add(m_ButtonQuit);
 

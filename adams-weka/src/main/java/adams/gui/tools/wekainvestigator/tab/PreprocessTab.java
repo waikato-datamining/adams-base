@@ -30,6 +30,8 @@ import adams.core.option.OptionUtils;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseFlatButton;
+import adams.gui.core.BaseSplitButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
@@ -47,8 +49,6 @@ import adams.gui.tools.wekainvestigator.tab.preprocesstab.InstancesSummaryPanel;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.AbstractSelectedAttributesAction;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.RemoveChecked;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
-import com.jidesoft.swing.JideButton;
-import com.jidesoft.swing.JideSplitButton;
 import weka.core.Instances;
 import weka.filters.AllFilter;
 import weka.filters.Filter;
@@ -137,10 +137,10 @@ public class PreprocessTab
   protected BaseTextField m_TextSelectedAttributes;
 
   /** the button for copying the selected attributes range. */
-  protected JideButton m_ButtonSelectedAttributes;
+  protected BaseFlatButton m_ButtonSelectedAttributes;
 
   /** button for removing checked attributes. */
-  protected JideSplitButton m_ButtonSelectedAttributesAction;
+  protected BaseSplitButton m_ButtonSelectedAttributesAction;
 
   /** whether the evaluation is currently running. */
   protected Thread m_Worker;
@@ -263,8 +263,7 @@ public class PreprocessTab
     panel.add(panelAtts, BorderLayout.SOUTH);
     m_TextSelectedAttributes = new BaseTextField(15);
     m_TextSelectedAttributes.setEditable(false);
-    m_ButtonSelectedAttributes = new JideButton(GUIHelper.getIcon("copy.gif"));
-    m_ButtonSelectedAttributes.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
+    m_ButtonSelectedAttributes = new BaseFlatButton(GUIHelper.getIcon("copy.gif"));
     m_ButtonSelectedAttributes.setSize(m_TextSelectedAttributes.getHeight(), m_TextSelectedAttributes.getHeight());
     m_ButtonSelectedAttributes.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(m_TextSelectedAttributes.getText()));
     panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -273,10 +272,9 @@ public class PreprocessTab
     panelAtts.add(panel2, BorderLayout.WEST);
 
     panel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    m_ButtonSelectedAttributesAction = new JideSplitButton();
+    m_ButtonSelectedAttributesAction = new BaseSplitButton();
     m_ButtonSelectedAttributesAction.setAlwaysDropdown(false);
     m_ButtonSelectedAttributesAction.setButtonEnabled(true);
-    m_ButtonSelectedAttributesAction.setButtonStyle(JideSplitButton.TOOLBOX_STYLE);
     for (AbstractSelectedAttributesAction action: m_Actions) {
       if (action instanceof RemoveChecked)
 	m_ButtonSelectedAttributesAction.setAction(action);
