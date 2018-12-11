@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSerializableWorkspaceManagerPanel.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.workspace;
 
@@ -25,7 +25,7 @@ import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.SerializationFileChooser;
-import adams.gui.core.BaseButton;
+import adams.gui.core.BaseFlatButton;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.JMenuItem;
@@ -37,7 +37,6 @@ import java.io.File;
  * Ancestor for manager panels that allow saving/loading of workspaces.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSerializableWorkspaceManagerPanel<P extends AbstractWorkspacePanel>
   extends AbstractWorkspaceManagerPanel<P> {
@@ -46,10 +45,10 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
   private static final long serialVersionUID = -20320489406680254L;
 
   /** the button for copying a panel. */
-  protected BaseButton m_ButtonCopy;
+  protected BaseFlatButton m_ButtonCopy;
 
   /** the button for managing the workspaces. */
-  protected BaseButton m_ButtonWorkspace;
+  protected BaseFlatButton m_ButtonWorkspace;
 
   /** the workspace helper. */
   protected AbstractWorkspaceHelper<P, AbstractSerializableWorkspaceManagerPanel<P>> m_WorkspaceHelper;
@@ -77,13 +76,13 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
     height = m_ButtonAdd.getHeight();
 
     // left buttons
-    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseFlatButton(GUIHelper.getIcon("copy.gif"));
     m_ButtonCopy.setSize(height, height);
     m_ButtonCopy.setToolTipText("Creates a copy of the current workspace");
     m_ButtonCopy.addActionListener((ActionEvent e) -> copyWorkspace());
     m_PanelButtons.add(m_ButtonCopy);
 
-    m_ButtonWorkspace = new BaseButton(GUIHelper.getIcon("workspace.png"));
+    m_ButtonWorkspace = new BaseFlatButton(GUIHelper.getIcon("workspace.png"));
     m_ButtonWorkspace.setSize(height, height);
     m_ButtonWorkspace.setToolTipText("Loading/saving of workspaces");
     m_ButtonWorkspace.addActionListener((ActionEvent e) -> {

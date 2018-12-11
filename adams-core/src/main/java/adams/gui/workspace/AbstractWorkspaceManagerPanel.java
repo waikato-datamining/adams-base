@@ -13,20 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractWorkspaceManagerPanel.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.workspace;
 
 import adams.core.CleanUpHandler;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionEvent;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionListener;
-import adams.gui.core.BaseButton;
+import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 
-import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -37,7 +37,6 @@ import java.awt.event.ActionEvent;
  * Ancestor for workspace managers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8799 $
  * @param <T> the type of workspace panel to handle
  */
 public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspacePanel>
@@ -48,7 +47,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
   private static final long serialVersionUID = -20320489406680254L;
 
   /** the split pane for the components. */
-  protected JSplitPane m_SplitPane;
+  protected BaseSplitPane m_SplitPane;
 
   /** the history panel. */
   protected AbstractWorkspaceListPanel<T> m_History;
@@ -63,10 +62,10 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
   protected BasePanel m_PanelButtons;
 
   /** the button for adding a panel. */
-  protected BaseButton m_ButtonAdd;
+  protected BaseFlatButton m_ButtonAdd;
 
   /** the button for removing a panel. */
-  protected BaseButton m_ButtonRemove;
+  protected BaseFlatButton m_ButtonRemove;
 
   /**
    * For initializing the GUI.
@@ -79,7 +78,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
 
     setLayout(new BorderLayout());
 
-    m_SplitPane = new JSplitPane();
+    m_SplitPane = new BaseSplitPane();
     add(m_SplitPane, BorderLayout.CENTER);
 
     // right
@@ -100,7 +99,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     m_SplitPane.setTopComponent(m_PanelHistory);
 
     // left buttons
-    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseFlatButton(GUIHelper.getIcon("add.gif"));
     height = m_ButtonAdd.getHeight();
     m_ButtonAdd.setSize(height, height);
     m_ButtonAdd.setToolTipText("Adds a new workspace");
@@ -116,7 +115,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     });
     m_PanelButtons.add(m_ButtonAdd);
 
-    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("remove.gif"));
+    m_ButtonRemove = new BaseFlatButton(GUIHelper.getIcon("remove.gif"));
     m_ButtonRemove.setSize(height, height);
     m_ButtonRemove.setToolTipText("Removes all selected workspaces");
     m_ButtonRemove.addActionListener((ActionEvent e) -> {
