@@ -674,7 +674,8 @@ public class SQL
   }
 
   /**
-   * Selects all strings from the specified columns. Can be distinct.
+   * Selects all strings from the specified columns. Can be distinct
+   * (uses a CONCAT internally for that).
    *
    * @param distinct	whether values in column have to be distinct
    * @param columns	the string columns to select
@@ -685,6 +686,7 @@ public class SQL
    */
   public List<String[]> selectStrings(boolean distinct, String[] columns, String tables, String where) throws Exception {
     List<String[]>	result;
+    StringBuilder	columnsStr;
     ResultSet		rs;
     String[]		row;
     int			i;
@@ -693,11 +695,26 @@ public class SQL
 
     rs = null;
     try {
-      rs = doSelect(distinct, Utils.flatten(columns, ", "), tables, where);
+      columnsStr = new StringBuilder();
+      if (distinct) {
+        columnsStr.append("CONCAT(");
+        columnsStr.append(Utils.flatten(columns, ", '\t', "));
+	columnsStr.append(")");
+      }
+      else {
+        columnsStr.append(Utils.flatten(columns, ", "));
+      }
+      rs = doSelect(distinct, columnsStr.toString(), tables, where);
       while (rs.next()) {
-        row = new String[columns.length];
-	for (i = 1; i <= columns.length; i++)
-	  row[i-1] = rs.getString(i);
+        if (distinct) {
+	  row = rs.getString(1).split("\t");
+	}
+	else {
+	  row = new String[columns.length];
+	  for (i = 1; i <= columns.length; i++) {
+	    row[i - 1] = rs.getString(i);
+	  }
+	}
 	result.add(row);
       }
     }
