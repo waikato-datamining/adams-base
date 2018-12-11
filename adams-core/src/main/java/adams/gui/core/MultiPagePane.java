@@ -341,22 +341,22 @@ public class MultiPagePane
   protected BasePanel m_PanelListButtons;
 
   /** the move up button. */
-  protected BaseButton m_ButtonUp;
+  protected BaseFlatButton m_ButtonUp;
 
   /** the move down button. */
-  protected BaseButton m_ButtonDown;
+  protected BaseFlatButton m_ButtonDown;
 
   /** the remove button. */
-  protected BaseButton m_ButtonRemove;
+  protected BaseFlatButton m_ButtonRemove;
 
   /** the remove all button. */
-  protected BaseButton m_ButtonRemoveAll;
+  protected BaseFlatButton m_ButtonRemoveAll;
 
   /** the undo button. */
-  protected BaseButton m_ButtonUndo;
+  protected BaseFlatButton m_ButtonUndo;
 
   /** the action button. */
-  protected BaseButtonWithDropDownMenu m_ButtonAction;
+  protected BaseSplitButton m_ButtonAction;
 
   /** the content pane for the pages. */
   protected BasePanel m_PanelContent;
@@ -416,7 +416,7 @@ public class MultiPagePane
     setLayout(new BorderLayout());
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-    m_SplitPane.setDividerLocation(280);
+    m_SplitPane.setDividerLocation(200);
     m_SplitPane.setResizeWeight(0.0);
     m_SplitPane.setOneTouchExpandable(true);
     add(m_SplitPane, BorderLayout.CENTER);
@@ -458,32 +458,33 @@ public class MultiPagePane
     m_PanelListButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     m_LeftPanel.add(m_PanelListButtons, BorderLayout.SOUTH);
 
-    m_ButtonUp = new BaseButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp = new BaseFlatButton(GUIHelper.getIcon("arrow_up.gif"));
     m_ButtonUp.setToolTipText("Moves up selected");
     m_ButtonUp.addActionListener((ActionEvent e) -> moveUp());
     m_PanelListButtons.add(m_ButtonUp);
 
-    m_ButtonDown = new BaseButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown = new BaseFlatButton(GUIHelper.getIcon("arrow_down.gif"));
     m_ButtonDown.setToolTipText("Moves down selected");
     m_ButtonDown.addActionListener((ActionEvent e) -> moveDown());
     m_PanelListButtons.add(m_ButtonDown);
 
-    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseFlatButton(GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Removes currently selected");
     m_ButtonRemove.addActionListener((ActionEvent e) -> checkedRemoveSelectedPage());
     m_PanelListButtons.add(m_ButtonRemove);
 
-    m_ButtonRemoveAll = new BaseButton(GUIHelper.getIcon("delete_all.gif"));
+    m_ButtonRemoveAll = new BaseFlatButton(GUIHelper.getIcon("delete_all.gif"));
     m_ButtonRemoveAll.setToolTipText("Removes all");
     m_ButtonRemoveAll.addActionListener((ActionEvent e) -> checkedRemoveAllPages());
     m_PanelListButtons.add(m_ButtonRemoveAll);
 
-    m_ButtonAction = new BaseButtonWithDropDownMenu();
+    m_ButtonAction = new BaseSplitButton();
+    m_ButtonAction.setAlwaysDropdown(false);
     m_ButtonAction.setToolTipText("Additional actions");
     m_ButtonAction.setVisible(false);
     m_PanelListButtons.add(m_ButtonAction);
 
-    m_ButtonUndo = new BaseButton(GUIHelper.getIcon("undo.gif"));
+    m_ButtonUndo = new BaseFlatButton(GUIHelper.getIcon("undo.gif"));
     m_ButtonUndo.setToolTipText("Undo removal");
     m_ButtonUndo.addActionListener((ActionEvent e) -> undoPageClose());
 
@@ -915,6 +916,7 @@ public class MultiPagePane
 
     m_IgnoreUpdates = false;
     m_SkipPageUndo  = false;
+    clearPageUndo();
     update();
   }
 
@@ -1099,7 +1101,10 @@ public class MultiPagePane
    * @param action	the action to add
    */
   protected void addAction(Action action) {
-    m_ButtonAction.addToMenu(action);
+    if (m_ButtonAction.getAction() == null)
+      m_ButtonAction.setAction(action);
+    else
+      m_ButtonAction.add(action);
     m_ButtonAction.setVisible(true);
   }
 
@@ -1109,7 +1114,7 @@ public class MultiPagePane
    * @param action	the item to add
    */
   protected void addAction(JMenuItem action) {
-    m_ButtonAction.addToMenu(action);
+    m_ButtonAction.add(action);
     m_ButtonAction.setVisible(true);
   }
 
@@ -1380,16 +1385,23 @@ public class MultiPagePane
   }
 
   /**
+   * Clears the page undo list.
+   */
+  protected void clearPageUndo() {
+    if (m_PageUndoList != null) {
+      for (PageUndo undo: m_PageUndoList)
+	if (undo.component instanceof CleanUpHandler)
+	  ((CleanUpHandler) undo.component).cleanUp();
+      m_PageUndoList.clear();
+    }
+  }
+
+  /**
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
     removeAllPages();
-    if (m_PageUndoList != null) {
-      for (PageUndo undo: m_PageUndoList)
-        if (undo.component instanceof CleanUpHandler)
-	  ((CleanUpHandler) undo.component).cleanUp();
-      m_PageUndoList.clear();
-      m_PageUndoList = null;
-    }
+    clearPageUndo();
+    m_PageUndoList = null;
   }
 }
