@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseTextArea.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -34,11 +34,10 @@ import java.awt.Frame;
  * A customized BaseTextArea. Adds functionality for printing and selecting fonts.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTextArea
   extends JTextArea
-  implements TextAreaComponent {
+  implements AppendableTextAreaComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = 7970608693979989912L;

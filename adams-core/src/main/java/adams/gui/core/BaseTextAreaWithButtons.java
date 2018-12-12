@@ -15,7 +15,7 @@
 
 /*
  * BaseTextAreaWithButtons.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -28,11 +28,10 @@ import java.awt.Font;
  * right-hand side.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTextAreaWithButtons
   extends AbstractComponentWithButtons<BaseTextArea>
-  implements TextAreaComponent {
+  implements AppendableTextAreaComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = 1935542795448084154L;
@@ -282,7 +281,7 @@ public class BaseTextAreaWithButtons
    * Appends the given text to the end of the document.  Does nothing if
    * the model is null or the string is null or empty.
    *
-   * @param str the text to insert
+   * @param text the text to insert
    */
   public void append(String text) {
     m_Component.append(text);
