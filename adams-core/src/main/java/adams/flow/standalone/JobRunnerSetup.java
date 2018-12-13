@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JobRunnerSetup.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -23,6 +23,7 @@ package adams.flow.standalone;
 import adams.core.QuickInfoHelper;
 import adams.core.option.OptionUtils;
 import adams.multiprocess.JobRunner;
+import adams.multiprocess.JobRunnerHandler;
 import adams.multiprocess.LocalJobRunner;
 
 /**
@@ -75,10 +76,10 @@ import adams.multiprocess.LocalJobRunner;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JobRunnerSetup
-  extends AbstractStandalone {
+  extends AbstractStandalone
+  implements JobRunnerHandler {
 
   private static final long serialVersionUID = 4221231366291664608L;
 
