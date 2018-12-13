@@ -127,7 +127,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
 
     m_SplitPane.setOneTouchExpandable(true);
     m_SplitPane.setResizeWeight(0);
-    m_SplitPane.setDividerLocation(250);
+    m_SplitPane.setDividerLocation(200);
   }
 
   /**
