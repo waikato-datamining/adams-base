@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab;
 
+import adams.core.MessageCollection;
 import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
@@ -42,6 +43,8 @@ import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Allows the execution of an SQL-like query to manipulate datasets.
@@ -52,6 +55,9 @@ public class DataQueryTab
   extends AbstractInvestigatorTabWithDataTable {
 
   private static final long serialVersionUID = -4106630131554796889L;
+
+  /** the key for the query. */
+  public final static String KEY_QUERY = "query";
 
   /** the query panel. */
   protected SpreadSheetQueryEditorPanel m_PanelQuery;
@@ -302,5 +308,35 @@ public class DataQueryTab
     m_ButtonExecute.setEnabled((getSelectedRows().length == 1) && !m_PanelQuery.getQuery().isEmpty());
     m_ButtonClear.setEnabled(m_DataGenerated);
     m_ButtonSave.setEnabled(m_ButtonExecute.isEnabled() && m_DataGenerated);
+  }
+
+  /**
+   * Returns the objects for serialization.
+   *
+   * @param options 	what to serialize
+   * @return		the mapping of the objects to serialize
+   */
+  @Override
+  protected Map<String,Object> doSerialize(Set<SerializationOption> options) {
+    Map<String,Object>	result;
+
+    result = super.doSerialize(options);
+    if (options.contains(SerializationOption.PARAMETERS))
+      result.put(KEY_QUERY, m_PanelQuery.getText());
+
+    return result;
+  }
+
+  /**
+   * Restores the objects.
+   *
+   * @param data	the data to restore
+   * @param errors	for storing errors
+   */
+  @Override
+  protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
+    super.doDeserialize(data, errors);
+    if (data.containsKey(KEY_QUERY))
+      m_PanelQuery.setText((String) data.get(KEY_QUERY));
   }
 }
