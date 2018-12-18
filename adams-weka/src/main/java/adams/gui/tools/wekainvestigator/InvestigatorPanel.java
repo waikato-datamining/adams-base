@@ -569,8 +569,8 @@ public class InvestigatorPanel
       }
       m_MenuTabNewTab.sort();
       menu.add(m_ActionTabCopyTab);
-      menu.add(m_ActionTabSaveParameters);
       menu.add(m_ActionTabLoadParameters);
+      menu.add(m_ActionTabSaveParameters);
       menu.addSeparator();
       menu.add(m_ActionTabCloseTab);
       menu.add(m_ActionTabCloseAllTabs);
