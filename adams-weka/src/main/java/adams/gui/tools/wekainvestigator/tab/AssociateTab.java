@@ -92,6 +92,9 @@ public class AssociateTab
 
   public static final String KEY_HISTORY = "history";
 
+  /** the key for the output generators. */
+  public final static String KEY_OUTPUTGENERATORS = "output generators";
+
   /**
    * Customized history panel.
    */
@@ -999,8 +1002,10 @@ public class AssociateTab
     result = super.doSerialize(options);
     if (options.contains(SerializationOption.GUI))
       result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
-    if (options.contains(SerializationOption.PARAMETERS))
+    if (options.contains(SerializationOption.PARAMETERS)) {
       result.put(KEY_CLUSTERER, OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
+      result.put(KEY_OUTPUTGENERATORS, OptionUtils.getCommandLines(m_OutputGenerators));
+    }
     result.put(KEY_EVALUATION, m_ComboBoxEvaluations.getSelectedIndex());
     for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
       eval = m_ModelEvaluations.getElementAt(i);
@@ -1046,6 +1051,14 @@ public class AssociateTab
     }
     if (data.containsKey(KEY_HISTORY))
       m_History.deserialize(data.get(KEY_HISTORY), errors);
+    if (data.containsKey(KEY_OUTPUTGENERATORS)) {
+      try {
+	m_OutputGenerators = (AbstractOutputGenerator[]) OptionUtils.forCommandLines(AbstractOutputGenerator.class, ((List<String>) data.get(KEY_OUTPUTGENERATORS)).toArray(new String[0]));
+      }
+      catch (Exception e) {
+        errors.add("Failed to restore output generators!", e);
+      }
+    }
   }
 
   /**

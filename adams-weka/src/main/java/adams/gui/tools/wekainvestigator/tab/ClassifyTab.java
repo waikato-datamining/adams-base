@@ -93,6 +93,9 @@ public class ClassifyTab
 
   public static final String KEY_HISTORY = "history";
 
+  /** the key for the output generators. */
+  public final static String KEY_OUTPUTGENERATORS = "output generators";
+
   /**
    * Customized history panel.
    */
@@ -1054,6 +1057,7 @@ public class ClassifyTab
     if (options.contains(SerializationOption.PARAMETERS)) {
       result.put(KEY_CLASSIFIER, OptionUtils.getCommandLine(m_PanelGOE.getCurrent()));
       result.put(KEY_EVALUATION, m_ComboBoxEvaluations.getSelectedIndex());
+      result.put(KEY_OUTPUTGENERATORS, OptionUtils.getCommandLines(m_OutputGenerators));
     }
     for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
       eval = m_ModelEvaluations.getElementAt(i);
@@ -1099,6 +1103,14 @@ public class ClassifyTab
     }
     if (data.containsKey(KEY_HISTORY))
       m_History.deserialize(data.get(KEY_HISTORY), errors);
+    if (data.containsKey(KEY_OUTPUTGENERATORS)) {
+      try {
+	m_OutputGenerators = (AbstractOutputGenerator[]) OptionUtils.forCommandLines(AbstractOutputGenerator.class, ((List<String>) data.get(KEY_OUTPUTGENERATORS)).toArray(new String[0]));
+      }
+      catch (Exception e) {
+        errors.add("Failed to restore output generators!", e);
+      }
+    }
   }
 
   /**
