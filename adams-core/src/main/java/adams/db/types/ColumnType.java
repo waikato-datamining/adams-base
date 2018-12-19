@@ -15,7 +15,7 @@
 
 /*
  * ColumnType.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -34,10 +34,10 @@ import java.sql.Types;
 public class ColumnType {
 
   /** java sql type. */
-  protected int m_type;
+  protected int m_Type;
 
   /** size of type. */
-  protected int m_size;
+  protected int m_Size;
 
   /**
    * Constructor.
@@ -45,8 +45,8 @@ public class ColumnType {
    * @param type	java sql type
    */
   public ColumnType(int type) {
-    m_type = type;
-    m_size = -1;
+    m_Type = type;
+    m_Size = -1;
   }
 
   /**
@@ -61,15 +61,33 @@ public class ColumnType {
     switch (type) {
       case Types.VARCHAR:
       case Types.LONGVARCHAR:
-        m_size = size;
+        m_Size = size;
         break;
 
       case Types.TIME:
       case Types.TIMESTAMP:
         if ((size == 3) || (size == 6) || (size == 9))
-        m_size = size;
+        m_Size = size;
         break;
     }
+  }
+
+  /**
+   * Returns the type.
+   *
+   * @return		the type
+   */
+  public int getType() {
+    return m_Type;
+  }
+
+  /**
+   * Returns the size.
+   *
+   * @return		the size
+   */
+  public int getSize() {
+    return m_Size;
   }
 
   /**
@@ -78,7 +96,7 @@ public class ColumnType {
    * @return 		string representation of this type
    */
   public String getCompareType(AbstractDatabaseConnection conn) {
-    return JDBC.getTypes(conn).toTypeString(m_type, m_size, true);
+    return JDBC.getTypes(conn).toTypeString(m_Type, m_Size, true);
   }
 
   /**
@@ -92,12 +110,25 @@ public class ColumnType {
   }
 
   /**
+   * True if given type if encompassed to this object, ie if this type is at most
+   * the size of the provided one.
+   *
+   * @param type		sql type
+   * @return		encompassed
+   */
+  public boolean isEncompassed(AbstractDatabaseConnection conn, ColumnType type) {
+    if (getType() != type.getType())
+      return false;
+    return getSize() < type.getSize();
+  }
+
+  /**
    * Get String for creating this type.
    *
    * @return		creation string
    */
   public String getCreateType(AbstractDatabaseConnection conn) {
-    return JDBC.getTypes(conn).toTypeString(m_type, m_size, false);
+    return JDBC.getTypes(conn).toTypeString(m_Type, m_Size, false);
   }
 
   /**
@@ -106,6 +137,6 @@ public class ColumnType {
    * @return 		string representation
    */
   public String toString() {
-    return m_type + ": " + JDBC.TYPES_MYSQL.toTypeString(m_type, m_size, false);
+    return m_Type + ": " + JDBC.TYPES_MYSQL.toTypeString(m_Type, m_Size, false);
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * Table.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -43,7 +43,6 @@ import java.util.logging.Level;
  * Subclass with column descriptions
  *
  * @author dale
- * @version $Revision$
  */
 public abstract class AbstractIndexedTable
   extends AbstractTable {
@@ -137,13 +136,23 @@ public abstract class AbstractIndexedTable
 	  ok = false;
 	}
 	else if (!expectedColumn.equivalentTo(getDatabaseConnection(), columnType)) {
-	  if (print)
-	    getLogger().severe(
+	  if (expectedColumn.isEncompassed(getDatabaseConnection(), columnType)) {
+	    if (print)
+	      getLogger().warning(
+		"column type different (but encompassed) for '" + cname + "': "
+		  + expectedColumn.getCompareType(getDatabaseConnection())
+		  + " < "
+		  + columnType.getCompareType(getDatabaseConnection()) + " " + getTableName() + ")");
+	  }
+	  else {
+	    if (print)
+	      getLogger().severe(
 		"false because column type different for '" + cname + "': "
-                  + expectedColumn.getCompareType(getDatabaseConnection())
-                  + " != "
-                  + columnType.getCompareType(getDatabaseConnection()) + " " + getTableName() + ")");
-	  ok = false;
+		  + expectedColumn.getCompareType(getDatabaseConnection())
+		  + " != "
+		  + columnType.getCompareType(getDatabaseConnection()) + " " + getTableName() + ")");
+	    ok = false;
+	  }
 	}
       }
 
