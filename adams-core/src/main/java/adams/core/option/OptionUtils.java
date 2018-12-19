@@ -588,6 +588,33 @@ public class OptionUtils {
   }
 
   /**
+   * Creates new instances of option handlers given their command-line, including
+   * class name and (optional) arguments to pass to its setOptions method.
+   * NB: works only with ADAMS option handlers.
+   *
+   * @param classType 	the class that the instantiated object should
+   * 			be assignable to -- an exception is thrown if this
+   * 			is not the case
+   * @param cmdlines 	the fully qualified class names and the (optional)
+   * 			options of the objects
+   * @return 		the newly created object, ready for use.
+   * @throws Exception 	if the class name is invalid, or if the
+   * 			class is not assignable to the desired class type, or
+   * 			the options supplied are not acceptable to the object
+   * @see		#forAnyCommandLine(Class, String)
+   */
+  public static OptionHandler[] forCommandLines(Class classType, String[] cmdlines) throws Exception {
+    Object	result;
+    int		i;
+
+    result = Array.newInstance(classType, cmdlines.length);
+    for (i = 0; i < cmdlines.length; i++)
+      Array.set(result, i, forCommandLine(classType, cmdlines[i]));
+
+    return (OptionHandler[]) result;
+  }
+
+  /**
    * Creates a new instance of an object given its class name and
    * (optional) arguments to pass to its setOptions method. If the
    * object implements OptionHandler and the options parameter is
