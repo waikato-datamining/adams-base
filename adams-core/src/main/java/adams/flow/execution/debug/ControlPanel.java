@@ -15,7 +15,7 @@
 
 /*
  * ControlPanel.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
@@ -143,7 +143,10 @@ public class ControlPanel
   protected BaseTextField m_TextActorPath;
 
   /** the button for copying the actor path. */
-  protected JToggleButton m_ButtonActorPath;
+  protected BaseButton m_ButtonActorPath;
+
+  /** the button for highlighting the ctor. */
+  protected BaseButton m_ButtonActorHighlight;
 
   /** the text field for the stage. */
   protected BaseTextField m_TextStage;
@@ -313,13 +316,18 @@ public class ControlPanel
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_TextActorPath = new BaseTextField(30);
     m_TextActorPath.setEditable(false);
-    m_ButtonActorPath = new JToggleButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonActorPath = new BaseButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonActorPath.setToolTipText("Copy path");
     m_ButtonActorPath.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(m_TextActorPath.getText()));
+    m_ButtonActorHighlight = new BaseButton(GUIHelper.getIcon("goto.gif"));
+    m_ButtonActorHighlight.setToolTipText("Highlight actor in editor window");
+    m_ButtonActorHighlight.addActionListener((ActionEvent e) -> highlightActor());
     m_TextStage = new BaseTextField(15);
     m_TextStage.setEditable(false);
     panel.add(new JLabel("Actor path"));
     panel.add(m_TextActorPath);
     panel.add(m_ButtonActorPath);
+    panel.add(m_ButtonActorHighlight);
     panel.add(m_TextStage);
     panelAllButtons.add(panel, BorderLayout.SOUTH);
 
