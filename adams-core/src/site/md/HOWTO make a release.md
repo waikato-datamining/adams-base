@@ -9,6 +9,8 @@ Requirements
 
 * all files need to be up-to-date and committed
 
+* use same Java version as on build server (1.8.0_191)
+
 
 Commands
 --------
