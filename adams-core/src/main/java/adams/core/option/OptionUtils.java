@@ -348,6 +348,25 @@ public class OptionUtils {
 
   /**
    * Returns the classname and, if the object is an option handler, the
+   * options as a single string.
+   *
+   * @param obj		the handler to turn into a string
+   * @return		the generated string
+   * @see		#getShortCommandLine(Object)
+   */
+  public static String[] getCommandLines(Object[] obj) {
+    String[]  	result;
+    int		i;
+
+    result = new String[obj.length];
+    for (i = 0; i < obj.length; i++)
+      result[i] = getCommandLine(obj[i]);
+
+    return result;
+  }
+
+  /**
+   * Returns the classname and, if the object is an option handler, the
    * options as a single string. Shortened version.
    *
    * @param obj		the handler to turn into a string
