@@ -1,9 +1,11 @@
 # Project: adams
-# Date: 2016-02-15 11:28:51
+# Date: 2018-12-20 13:09:04
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core
+#
 adams.flow.control.Flow -annotation "Demonstrates the debugging functionality of the flow\\nusing the \\\"Breakpoint\\\" actor. The \\\"Breakpoint\\\" actor\\nevaluates in this case the \\\"loop_var\\\" variable, whether\\nit has a value greater than 5. If that is the case, the \\nflow is paused and the user can inspect the current\\nflow environment, whether everything is as expected." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.ForLoop
  adams.flow.transformer.SetVariable -var-name loop_var
- adams.flow.control.Breakpoint -condition "adams.flow.condition.bool.Expression -expression \"@{loop_var} > 5\"" -watch (@{loop_var}) -watch-type VARIABLE -view INSPECT_TOKEN -view EXPRESSIONS
+ adams.flow.control.Breakpoint -scope-restriction adams.flow.execution.debug.NoScopeRestriction -condition "adams.flow.condition.bool.Expression -expression \"@{loop_var} > 5\"" -watch loop_var -watch "loop_var is: @{loop_var}" -watch "@{loop_var} > 5" -watch-type VARIABLE -watch-type STRING -watch-type BOOLEAN_EXPRESSION -view INSPECT_TOKEN -view EXPRESSIONS
  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
