@@ -1,13 +1,18 @@
 # Project: adams
-# Date: 2017-09-15 11:10:13
+# Date: 2018-12-20 14:08:09
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-spreadsheet
+#
 adams.flow.control.Flow -annotation "Shows how to let the user select a subset from a spreadsheet." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.GridView -width 1200 -num-cols 2 -add-headers true -writer adams.gui.print.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name Original -short-title true -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name Subset -short-title true -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
  adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
  adams.flow.transformer.SetStorageValue -storage-name original
  adams.flow.transformer.SpreadSheetSelectSubset -message "Please select the rows that you want" -allow-search true
  adams.flow.control.Trigger -name original
   adams.flow.source.StorageValue -storage-name original -conversion adams.data.conversion.UnknownToUnknown
-  adams.flow.sink.SpreadSheetDisplay -name Original -short-title true -writer adams.data.io.output.NullWriter
- adams.flow.sink.SpreadSheetDisplay -name Subset -short-title true -x -3 -writer adams.data.io.output.NullWriter
+  adams.flow.sink.CallableSink -callable Original
+ adams.flow.sink.CallableSink -callable Subset

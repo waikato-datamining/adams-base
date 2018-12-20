@@ -1,13 +1,18 @@
 # Project: adams
-# Date: 2016-02-15 15:01:27
+# Date: 2018-12-20 14:09:22
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-spreadsheet
+#
 adams.flow.control.Flow -annotation "This flows applies a callable MathExpression transformer to all the\\ncells in columns 4 and 7. The original and the transformer\\nspreadsheet are displayed side-by-side." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.GridView -width 1200 -num-cols 2 -add-headers true -writer adams.gui.print.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name original -short-title true -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name rounded -short-title true -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
  adams.flow.standalone.CallableActors
   adams.flow.transformer.MathExpression -expression rint(X)
  adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.control.Tee
-  adams.flow.sink.SpreadSheetDisplay -name original -short-title true -writer adams.data.io.output.NullWriter
+  adams.flow.sink.CallableSink -callable original
  adams.flow.transformer.SpreadSheetTransformCells -finder "adams.data.spreadsheet.cellfinder.CellRange -columns 4,7" -transformer MathExpression
- adams.flow.sink.SpreadSheetDisplay -name rounded -short-title true -x -3 -writer adams.data.io.output.NullWriter
+ adams.flow.sink.CallableSink -callable rounded

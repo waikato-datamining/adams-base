@@ -1,11 +1,16 @@
 # Project: adams
-# Date: 2016-02-15 14:58:18
+# Date: 2018-12-20 14:00:14
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-spreadsheet
+#
 adams.flow.control.Flow -annotation "This flow shows how to filter columns from spreadsheets.\\nThe original spreadsheet and the filtered one (displays all \\ncolumns that have \\\"T\\\" in their name) are displayed side-by-side." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.GridView -width 1000 -num-cols 2 -add-headers true -writer adams.gui.print.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name original -short-title true -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name filtered -short-title true -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
  adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.control.Tee
-  adams.flow.sink.SpreadSheetDisplay -name original -short-title true -x -3 -writer adams.data.io.output.NullWriter
+  adams.flow.sink.CallableSink -callable original
  adams.flow.transformer.SpreadSheetColumnFilter -finder "adams.data.spreadsheet.columnfinder.ByName -reg-exp .*T.*"
- adams.flow.sink.SpreadSheetDisplay -name filtered -short-title true -writer adams.data.io.output.NullWriter
+ adams.flow.sink.CallableSink -callable filtered
