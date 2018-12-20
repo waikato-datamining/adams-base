@@ -113,7 +113,7 @@ Uploads/updates
   bin/launcher.sh -main adams.core.ClassLister -super adams.data.conversion.Conversion > conversions.txt
   ```
 
-* create a new directory on sf.net and upload the -bin.zip files:
+* create a new directory on sf.net and upload the -bin.zip files via SFTP:
 
   * adams-base-all
   * adams-addons-all
@@ -132,7 +132,7 @@ Uploads/updates
   adams.cms.waikato.ac.nz:/var/www/html/releases/adams
   ```
 
-* deploy artifacts on Maven Central
+* (TODO) deploy artifacts on Maven Central
 
   ```
   adams-core/src/main/scripts/central.sh  
@@ -162,5 +162,3 @@ Uploads/updates
 
 * publish release on Twitter, LinkedIn, blog
 
-
-$Revision$
