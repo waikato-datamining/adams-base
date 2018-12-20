@@ -145,6 +145,7 @@ public class SqlWorkbenchPanel
 
       // Queries/Close
       menuitem = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.addActionListener((ActionEvent e) -> closeParent());
       menu.add(menuitem);
       m_MenuItemClose = menuitem;
