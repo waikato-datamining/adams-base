@@ -96,11 +96,12 @@ Order
 
 * copy target/*-bin.zip files and test them
 
-  * adams-base-all
   * adams-addons-all
   * adams-annotator
-  * adams-ml-app
+  * adams-base-all
+  * adams-basic-app
   * adams-deeplearning-spectral-app
+  * adams-ml-app
   * adams-spectral-app
 
 
