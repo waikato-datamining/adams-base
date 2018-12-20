@@ -1,10 +1,13 @@
 # Project: adams
-# Date: 2016-02-15 15:18:47
+# Date: 2018-12-20 14:39:31
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
 adams.flow.control.Flow -annotation "Since only classes implementing the ADAMS OptionHandler can \\nhandle variables, the SetProperty transformer can be used to update \\nan arbitrary property in a callable actor.\\nThe SetProperty actor just updates the property whenever a token \\npasses through (uses the string representation of this token as value \\nfor the property).\\nNB: No re-initializations are taking place, just simple setting of a value.\\n\\nThis example cross-validates J48 on a dataset with three different\\nconfidence factors: 0.2, 0.3 and 0.4. Each time outputting the \\npredictions of the cross-validation." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -name WekaClassifier -classifier "weka.classifiers.trees.J48 -C 0.25 -M 2"
+  adams.flow.sink.DisplayPanelManager -width 900 -provider "adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter" -entry-name-variable confidence
  adams.flow.source.StringConstants -string 0.2 -string 0.3 -string 0.4
  adams.flow.transformer.SetVariable -var-name confidence
  adams.flow.transformer.SetProperty -property classifier.confidenceFactor -actor-name WekaClassifier
@@ -14,4 +17,4 @@ adams.flow.control.Flow -annotation "Since only classes implementing the ADAMS O
   adams.flow.transformer.WekaClassSelector
   adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -classifier WekaClassifier -num-threads -1
   adams.flow.transformer.WekaPredictionsToInstances -add-index true -error true -probability true -distribution true
-  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter" -entry-name-variable confidence
+  adams.flow.sink.CallableSink -callable DisplayPanelManager

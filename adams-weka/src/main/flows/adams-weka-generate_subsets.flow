@@ -1,9 +1,14 @@
 # Project: adams
-# Date: 2016-02-15 15:23:59
+# Date: 2018-12-20 14:49:31
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
 adams.flow.control.Flow -annotation "Here, the  dataset is split into subsets based on the class value.\\nEach subset contains all rows of a unique class value." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.FileSupplier -file ${FLOWS}/data/anneal.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
  adams.flow.transformer.WekaSubsets -index last
- adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter"
+ adams.flow.control.Tee -name "get class"
+  adams.flow.transformer.WekaGetInstancesValue -column last
+  adams.flow.transformer.SetVariable -var-name entry
+ adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.WekaInstancesDisplay -writer adams.gui.print.NullWriter" -entry-name-variable entry
