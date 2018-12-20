@@ -7,6 +7,8 @@ Requirements
 * has the java-cup dependency changed? If so, change launcher.sh and
   launcher.bat files
 
+* execute/check all flows
+
 * all files need to be up-to-date and committed
 
 * use same Java version as on build server (1.8.0_191)
