@@ -698,7 +698,11 @@ public class LoadBalancer
     for (i = 0; i < m_Actors.size(); i++)
       shell.add((Actor) OptionUtils.shallowCopy(m_Actors.get(i), false, false));
     shell.getVariables().assign(vars);
-    shell.setUp();
+    result = shell.setUp();
+    if (result != null) {
+      getLogger().severe("Failed to setup shell!");
+      return result;
+    }
     for (StorageName sname: getStorageHandler().getStorage().keySet()) {
       svalue = getStorageHandler().getStorage().get(sname);
       if (m_UseLocalStorage)
