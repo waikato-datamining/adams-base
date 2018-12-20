@@ -485,6 +485,12 @@ public class ControlPanel
    */
   public void setCurrentActor(Actor value) {
     m_CurrentActor = value;
+    if (m_CurrentActor != null) {
+      if (m_PanelExpressions != null)
+	m_PanelExpressions.setVariables(getCurrentActor().getVariables());
+      if (m_PanelVariables != null)
+	m_PanelVariables.setVariables(getCurrentActor().getVariables());
+    }
   }
 
   /**
