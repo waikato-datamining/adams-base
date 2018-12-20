@@ -85,10 +85,7 @@ Order
   
   * change parent pom version to just released adams-pom one (remove -SNAPSHOT)
   * change `adams.version` property to just released adams-pom one (remove -SNAPSHOT)
-  * comment out adams-incubator-all module
   * `mvn --batch-mode release:prepare release:perform`
-  * uncomment adams-incubator-all module
-  * increment parent pom version in adams-incubator-all module
   * increment version of parent pom and add -SNAPSHOT
   * increment version of `adams.version` property and add -SNAPSHOT
 
