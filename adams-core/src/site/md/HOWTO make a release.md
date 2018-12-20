@@ -141,10 +141,8 @@ Uploads/updates
 * update adams webpage
 
   ```
-  https://adams.cms.waikato.ac.nz/index.html
-  https://adams.cms.waikato.ac.nz/release.html
-  https://adams.cms.waikato.ac.nz/rollyourown.html
-  https://adams.cms.waikato.ac.nz/resources/rollyourown/modules/*
+  pages/root/index.rst
+  pages/download/release.rst
   ```
 
 * publish release on theadamsflow-dev and theadamsflow-user mailing lists
