@@ -248,7 +248,8 @@ public class FlowWorker
   @Override
   public void pauseExecution() {
     showStatus("Pausing");
-    ((Pausable) m_Flow).pauseExecution();
+    if (m_Flow != null)
+      ((Pausable) m_Flow).pauseExecution();
     updateTabIcon("pause.gif");
     m_Owner.update();
   }
@@ -260,7 +261,7 @@ public class FlowWorker
    */
   @Override
   public boolean isPaused() {
-    return ((Pausable) m_Flow).isPaused();
+    return (m_Flow != null) && ((Pausable) m_Flow).isPaused();
   }
 
   /**
@@ -269,7 +270,8 @@ public class FlowWorker
   @Override
   public void resumeExecution() {
     showStatus("Resuming");
-    ((Pausable) m_Flow).resumeExecution();
+    if (m_Flow != null)
+      ((Pausable) m_Flow).resumeExecution();
     updateTabIcon("run.gif");
     m_Owner.update();
   }
