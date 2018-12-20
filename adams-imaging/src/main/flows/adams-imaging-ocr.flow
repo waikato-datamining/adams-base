@@ -1,11 +1,13 @@
 # Project: adams
-# Date: 2016-02-15 14:27:58
+# Date: 2018-12-20 13:33:49
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+#
 adams.flow.control.Flow -annotation "This flow performs OCR on an image containing English and \\nGerman text and outputs the content of the generated text files.\\ntesseract is used for OCR, which is configured in the \\nTesseractConfiguration standalone. You might need to adjust \\nthe \\\"executable\\\" option of this actor.\\nMore on tesseract:\\nhttp://code.google.com/p/tesseract-ocr/" -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.sink.HistoryDisplay -name Text -short-title true -x -3 -entry-name-variable image
-  adams.flow.sink.DisplayPanelManager -name Image -short-title true -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable image
+  adams.flow.sink.DisplayPanelManager -name Image -short-title true -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable image
   adams.flow.control.Tee -name image
    adams.flow.control.Tee -name "image name"
     adams.flow.transformer.BaseName -remove-extensions true

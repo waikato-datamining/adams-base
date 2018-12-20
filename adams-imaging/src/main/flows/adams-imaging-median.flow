@@ -1,10 +1,12 @@
 # Project: adams
-# Date: 2016-02-15 14:27:41
+# Date: 2018-12-20 13:32:39
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+#
 adams.flow.control.Flow -annotation "Computes the median of several images." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
-  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
+  adams.flow.sink.DisplayPanelManager -provider "adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable name
  adams.flow.source.FileSupplier -output-array true -file ${FLOWS}/data/text1.png -file ${FLOWS}/data/text2.png -file ${FLOWS}/data/text3.png -file ${FLOWS}/data/text4.png
  adams.flow.control.ArrayProcess
   adams.flow.control.Tee -name name
