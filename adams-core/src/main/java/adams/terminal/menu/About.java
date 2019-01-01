@@ -15,7 +15,7 @@
 
 /*
  * About.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -29,7 +29,6 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
  * Shows the about box.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class About
   extends AbstractMenuItemDefinition {
@@ -63,7 +62,7 @@ public class About
       context,
       getTitle(),
       "Advanced Data Mining and Machine Learning System\n"
-	+ "(c) 2009-2017 University of Waikato\n"
+	+ "(c) 2009-2019 University of Waikato\n"
 	+ "Hamilton, New Zealand");
   }
 
