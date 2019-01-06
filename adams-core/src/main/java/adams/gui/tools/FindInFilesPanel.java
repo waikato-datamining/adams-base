@@ -20,6 +20,8 @@
 
 package adams.gui.tools;
 
+import adams.core.ClassLister;
+import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
@@ -30,6 +32,7 @@ import adams.core.io.lister.LocalDirectoryLister;
 import adams.env.Environment;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseListWithButtons;
@@ -41,7 +44,8 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.RegExpTextField;
 import adams.gui.dialog.TextDialog;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+import adams.gui.tools.findinfiles.AbstractFindInFilesAction;
+import adams.gui.tools.findinfiles.View;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
@@ -56,6 +60,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -66,7 +71,7 @@ import java.util.regex.Pattern;
  */
 public class FindInFilesPanel
   extends BasePanel
-  implements StoppableWithFeedback {
+  implements StoppableWithFeedback, CleanUpHandler {
 
   private static final long serialVersionUID = -7039965284917973727L;
 
@@ -118,17 +123,11 @@ public class FindInFilesPanel
   /** for listing the files that matched. */
   protected BaseListWithButtons m_ListResults;
 
-  /** the button for viewing the file. */
-  protected BaseButton m_ButtonView;
+  /** the actions. */
+  protected List<AbstractFindInFilesAction> m_Actions;
 
-  /** the button for copying the full file name. */
-  protected BaseButton m_ButtonCopyFull;
-
-  /** the button for copying the name. */
-  protected BaseButton m_ButtonCopyName;
-
-  /** the button for copying the directory name. */
-  protected BaseButton m_ButtonCopyDir;
+  /** the action button. */
+  protected BaseButtonWithDropDownMenu m_ButtonActions;
 
   /** the status bar. */
   protected BaseStatusBar m_StatusBar;
@@ -147,11 +146,26 @@ public class FindInFilesPanel
    */
   @Override
   protected void initialize() {
+    AbstractFindInFilesAction	action;
+
     super.initialize();
 
     m_Stopped = false;
     m_Running = false;
     m_Lister  = new LocalDirectoryLister();
+    m_Actions = new ArrayList<>();
+    for (Class cls: ClassLister.getSingleton().getClasses(AbstractFindInFilesAction.class)) {
+      try {
+        action = (AbstractFindInFilesAction) cls.newInstance();
+        action.setOwner(this);
+        m_Actions.add(action);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append(
+	  "Failed to instantiate action: " + Utils.classToString(cls), e);
+      }
+    }
+    Collections.sort(m_Actions);
   }
 
   /**
@@ -210,38 +224,13 @@ public class FindInFilesPanel
     m_ListResults.addListSelectionListener((ListSelectionEvent e) -> updateButtons());
     add(m_ListResults, BorderLayout.CENTER);
 
-    m_ButtonView = new BaseButton("View...");
-    m_ButtonView.setToolTipText("Views the selected file");
-    m_ButtonView.addActionListener((ActionEvent e) -> viewFile());
-    m_ListResults.addToButtonsPanel(m_ButtonView);
-    m_ListResults.setDoubleClickButton(m_ButtonView);
-
-    m_ButtonCopyFull = new BaseButton("Copy full path");
-    m_ButtonCopyFull.setToolTipText("Copies the full file path to the clipboard");
-    m_ButtonCopyFull.addActionListener((ActionEvent e) -> {
-      ClipboardHelper.copyToClipboard(Utils.flatten(getSelectedFiles(), "\n"));
-    });
-    m_ListResults.addToButtonsPanel(m_ButtonCopyFull);
-
-    m_ButtonCopyName = new BaseButton("Copy name");
-    m_ButtonCopyName.setToolTipText("Copies the name (no path) to the clipboard");
-    m_ButtonCopyName.addActionListener((ActionEvent e) -> {
-      List<String> names = new ArrayList<>();
-      for (File f: getSelectedFiles())
-        names.add(f.getName());
-      ClipboardHelper.copyToClipboard(Utils.flatten(names, "\n"));
-    });
-    m_ListResults.addToButtonsPanel(m_ButtonCopyName);
-
-    m_ButtonCopyDir = new BaseButton("Copy dir");
-    m_ButtonCopyDir.setToolTipText("Copies the directory name to the clipboard");
-    m_ButtonCopyDir.addActionListener((ActionEvent e) -> {
-      List<String> names = new ArrayList<>();
-      for (File f: getSelectedFiles())
-        names.add(f.getParentFile().getAbsolutePath());
-      ClipboardHelper.copyToClipboard(Utils.flatten(names, "\n"));
-    });
-    m_ListResults.addToButtonsPanel(m_ButtonCopyDir);
+    m_ButtonActions = new BaseButtonWithDropDownMenu();
+    for (AbstractFindInFilesAction action: m_Actions) {
+      if (action instanceof View)
+        m_ListResults.setDoubleClickAction(action);
+      m_ButtonActions.addToMenu(action);
+    }
+    m_ListResults.addToButtonsPanel(m_ButtonActions);
 
     // status
     m_StatusBar = new BaseStatusBar();
@@ -270,10 +259,8 @@ public class FindInFilesPanel
 
     m_ButtonStart.setEnabled(!m_Running);
     m_ButtonStop.setEnabled(m_Running);
-    m_ButtonView.setEnabled(selectedOne);
-    m_ButtonCopyFull.setEnabled(selectedAny);
-    m_ButtonCopyName.setEnabled(selectedAny);
-    m_ButtonCopyDir.setEnabled(selectedAny);
+    for (AbstractFindInFilesAction action: m_Actions)
+      action.update();
   }
 
   /**
@@ -500,5 +487,17 @@ public class FindInFilesPanel
     filename = Environment.getInstance().createPropertiesFilename(SESSION_FILE);
     if (!props.save(filename))
       GUIHelper.showErrorMessage(this, "Failed to store session file:\n" + filename);
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    if (m_Actions != null) {
+      for (AbstractFindInFilesAction action: m_Actions)
+        action.cleanUp();
+      m_Actions.clear();
+      m_Actions = null;
+    }
   }
 }

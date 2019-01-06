@@ -627,6 +627,10 @@ adams.gui.help.AbstractHelpGenerator=\
 adams.gui.tools.filecommander.AbstractFileCommanderAction=\
   adams.gui.tools.filecommander
 
+# the action plugins for the Find in files tool
+adams.gui.tools.findinfiles.AbstractFindInFilesAction=\
+  adams.gui.tools.findinfiles
+
 # the archive handlers for the preview browser
 adams.gui.tools.previewbrowser.AbstractArchiveHandler=\
   adams.gui.tools.previewbrowser
