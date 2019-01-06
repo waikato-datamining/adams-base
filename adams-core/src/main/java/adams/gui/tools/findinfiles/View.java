@@ -20,7 +20,9 @@
 
 package adams.gui.tools.findinfiles;
 
+import adams.core.io.PlaceholderFile;
 import adams.gui.core.GUIHelper;
+import adams.gui.dialog.PreviewBrowserDialog;
 import adams.gui.dialog.TextDialog;
 
 import java.awt.Dialog.ModalityType;
@@ -60,18 +62,15 @@ public class View
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    TextDialog dialog;
-
-    // TODO change into preview browser
+    PreviewBrowserDialog dialog;
 
     if (getOwner().getParentDialog() != null)
-      dialog = new TextDialog(getOwner().getParentDialog(), ModalityType.MODELESS);
+      dialog = new PreviewBrowserDialog(getOwner().getParentDialog(), ModalityType.MODELESS);
     else
-      dialog = new TextDialog(getOwner().getParentFrame(), false);
-    dialog.setCanOpenFiles(true);
+      dialog = new PreviewBrowserDialog(getOwner().getParentFrame(), false);
     dialog.setSize(GUIHelper.getDefaultDialogDimension());
     dialog.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-    dialog.open(getOwner().getSelectedFile());
+    dialog.open(new PlaceholderFile(getOwner().getSelectedFile()));
     dialog.setLocationRelativeTo(getOwner());
     dialog.setVisible(true);
   }
