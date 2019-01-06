@@ -13,13 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDoubleClickableComponentWithButtons.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.gui.action.BaseAction;
+
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -27,7 +30,6 @@ import java.awt.event.MouseEvent;
  * Ancestor for components with buttons that can be double-clicked.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of
  */
 public abstract class AbstractDoubleClickableComponentWithButtons<T extends Component>
@@ -39,6 +41,9 @@ public abstract class AbstractDoubleClickableComponentWithButtons<T extends Comp
   /** button that gets clicked when double-clicking list element. */
   protected BaseButton m_DoubleClickButton;
 
+  /** action that gets executed when double-clicking list element. */
+  protected BaseAction m_DoubleClickAction;
+
   /**
    * Initializes the widgets.
    */
@@ -47,15 +52,20 @@ public abstract class AbstractDoubleClickableComponentWithButtons<T extends Comp
 
     m_Component.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
-	if (MouseUtils.isDoubleClick(e) && (m_DoubleClickButton != null)) {
+	if (MouseUtils.isDoubleClick(e)) {
 	  if (isValidDoubleClick(e)) {
-	    e.consume();
-	    m_DoubleClickButton.doClick();
+	    if (m_DoubleClickButton != null) {
+	      e.consume();
+	      m_DoubleClickButton.doClick();
+	    }
+	    else if (m_DoubleClickAction != null) {
+	      e.consume();
+	      m_DoubleClickAction.actionPerformed(new ActionEvent(m_Component, ActionEvent.ACTION_PERFORMED, "double click"));
+	    }
 	  }
 	}
-	else {
+	if (!e.isConsumed())
 	  super.mouseClicked(e);
-	}
       }
     });
   }
@@ -88,4 +98,23 @@ public abstract class AbstractDoubleClickableComponentWithButtons<T extends Comp
     return m_DoubleClickButton;
   }
 
+  /**
+   * Sets the action that gets executed when a double-click on a list element
+   * occurs. Use null to deactivate.
+   *
+   * @param value	the action
+   */
+  public void setDoubleClickAction(BaseAction value) {
+    m_DoubleClickAction = value;
+  }
+
+  /**
+   * Returns the current action that gets executed when a list element is
+   * double-clicked.
+   *
+   * @return		the action, null if not set
+   */
+  public BaseAction getDoubleClickAction() {
+    return m_DoubleClickAction;
+  }
 }
