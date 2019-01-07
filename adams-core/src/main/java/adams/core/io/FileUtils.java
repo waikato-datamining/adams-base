@@ -15,7 +15,7 @@
 
 /*
  * FileUtils.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -845,7 +845,7 @@ public class FileUtils {
     result = executable;
 
     if (OS.isWindows()) {
-      if (!result.endsWith(".exe") || !result.endsWith(".com"))
+      if (!result.endsWith(".exe") && !result.endsWith(".com"))
 	result += ".exe";
     }
     else {
