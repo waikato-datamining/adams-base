@@ -15,7 +15,7 @@
 
 /*
  * CrossValidation.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.preparefilebaseddataset;
@@ -233,7 +233,7 @@ public class CrossValidation
 	train = new String[data.length - 1];
 	m = 0;
 	for (n = 0; n < data.length; n++) {
-	  if (n != i)
+	  if (n == i)
 	    continue;
 	  train[m] = data[n];
 	  m++;
