@@ -396,26 +396,28 @@
                 <goal>unpack-dependencies</goal>
               </goals>
               <configuration>
+                <includeArtifactIds>adams-scripts</includeArtifactIds>
                 <classifier>scripts</classifier>
                 <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
                 <outputDirectory>${project.build.directory}/scripts</outputDirectory>
                 <includeGroupIds>${project.groupId}</includeGroupIds>
               </configuration>
             </execution>
-            <!-- get all wsdl jars -->
-            <execution>
+            <!-- get wsdl jars -->
+            <!--execution>
               <id>wsdl</id>
               <phase>prepare-package</phase>
               <goals>
                 <goal>unpack-dependencies</goal>
               </goals>
               <configuration>
+                <includeArtifactIds>artifact1,artifact2,...</includeArtifactIds>
                 <classifier>wsdl</classifier>
                 <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
                 <outputDirectory>${project.build.directory}/wsdl</outputDirectory>
                 <includeGroupIds>${project.groupId}</includeGroupIds>
               </configuration>
-            </execution>
+            </execution-->
             <!-- get all source jars -->
             <execution>
               <id>sources</id>
