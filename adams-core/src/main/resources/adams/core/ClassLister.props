@@ -463,6 +463,10 @@ adams.flow.core.TriggerableEvent=\
   adams.flow.transformer,\
   adams.flow.sink
 
+# the display types
+adams.flow.core.displaytype.AbstractDisplayType=\
+  adams.flow.core.displaytype
+
 # the DataContainer post-processors
 adams.flow.transformer.datacontainer.AbstractDataContainerPostProcessor=\
   adams.flow.transformer.datacontainer

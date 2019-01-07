@@ -724,8 +724,7 @@ public class ConsoleWindow
     Runnable	result;
 
     result = () -> {
-      if (getCreateFrame() && !m_Frame.isVisible())
-	m_Frame.setVisible(true);
+      m_DisplayType.show(ConsoleWindow.this);
       synchronized(m_Self) {
 	m_Self.notifyAll();
       }

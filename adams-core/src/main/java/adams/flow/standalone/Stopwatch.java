@@ -634,8 +634,7 @@ public class Stopwatch
 
     result = new Runnable() {
       public void run() {
-	if (getCreateFrame() && !m_Frame.isVisible())
-	  m_Frame.setVisible(true);
+        m_DisplayType.show(Stopwatch.this);
 	synchronized(m_Self) {
 	  m_Self.notifyAll();
 	}

@@ -15,7 +15,7 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -23,6 +23,8 @@ package adams.flow.core;
 import adams.core.CleanUpHandler;
 import adams.core.QuickInfoHelper;
 import adams.flow.control.Flow;
+import adams.flow.core.displaytype.AbstractDisplayType;
+import adams.flow.core.displaytype.Default;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
@@ -40,10 +42,10 @@ import java.util.Hashtable;
  * Ancestor for actors that display stuff.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDisplay
-  extends AbstractActor {
+  extends AbstractActor
+  implements DisplayTypeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8175993838879683118L;
@@ -69,8 +71,8 @@ public abstract class AbstractDisplay
   /** the Y position of the dialog. */
   protected int m_Y;
 
-  /** whether to display the panel in the editor rather than in a separate frame. */
-  protected boolean m_DisplayInEditor;
+  /** how to show the display. */
+  protected AbstractDisplayType m_DisplayType;
   
   /** the panel to display. */
   protected BasePanel m_Panel;
@@ -96,8 +98,8 @@ public abstract class AbstractDisplay
 	    getDefaultShortTitle());
 
     m_OptionManager.add(
-	    "display-in-editor", "displayInEditor",
-	    getDefaultDisplayInEditor());
+	    "display-type", "displayType",
+	    getDefaultDisplayType());
 
     m_OptionManager.add(
 	    "width", "width",
@@ -221,9 +223,8 @@ public abstract class AbstractDisplay
   public void wrapUp() {
     super.wrapUp();
 
-    if (m_DisplayInEditor && deregisterInWrapUp())
-      deregisterWithEditor();
-    
+    m_DisplayType.wrapUp(this);
+
     m_InputToken = null;
   }
 
@@ -237,13 +238,12 @@ public abstract class AbstractDisplay
   }
 
   /**
-   * Returns the default value for displaying the panel in the editor
-   * rather than in a separate frame.
+   * Returns the default value for showing the display.
    * 
    * @return		the default
    */
-  protected boolean getDefaultDisplayInEditor() {
-    return false;
+  protected AbstractDisplayType getDefaultDisplayType() {
+    return new Default();
   }
 
   /**
@@ -428,26 +428,23 @@ public abstract class AbstractDisplay
   }
 
   /**
-   * Sets whether to display the panel in the flow editor rather than
-   * in a separate frame.
+   * Sets how to show the display.
    *
-   * @param value 	true if to display in editor
+   * @param value 	the type
    */
-  public void setDisplayInEditor(boolean value) {
-    m_DisplayInEditor = value;
-    if (m_DisplayInEditor)
-      setCreateFrame(false);
+  public void setDisplayType(AbstractDisplayType value) {
+    m_DisplayType = value;
+    m_DisplayType.updateOptions(this);
     reset();
   }
   
   /**
-   * Returns whether to display the panel in the flow editor rather than
-   * in a separate frame.
+   * Returns how to show the display.
    *
-   * @return 		true if to display in editor
+   * @return 		the type
    */
-  public boolean getDisplayInEditor() {
-    return m_DisplayInEditor;
+  public AbstractDisplayType getDisplayType() {
+    return m_DisplayType;
   }
 
   /**
@@ -456,10 +453,10 @@ public abstract class AbstractDisplay
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String displayInEditorTipText() {
+  public String displayTypeTipText() {
     return 
-	"If enabled displays the panel in a tab in the flow editor rather "
-	+ "than in a separate frame.";
+	"Determines how to show the display, eg as standalone frame (default) "
+	  + "or in the Flow editor window.";
   }
 
   /**
@@ -649,7 +646,7 @@ public abstract class AbstractDisplay
   /**
    * Registers the actor with the flow editor, if possible.
    */
-  protected void registerWithEditor() {
+  public void registerWithEditor() {
     if (getParentComponent() instanceof FlowPanel)
       ((FlowPanel) getParentComponent()).registerDisplay(getClass(), getName(), this);
   }
@@ -657,7 +654,7 @@ public abstract class AbstractDisplay
   /**
    * Deregisters the actor from the flow editor, if possible.
    */
-  protected void deregisterWithEditor() {
+  public void deregisterWithEditor() {
     if (getParentComponent() instanceof FlowPanel)
       ((FlowPanel) getParentComponent()).deregisterDisplay(getClass(), getName());
   }
@@ -670,7 +667,7 @@ public abstract class AbstractDisplay
    * 
    * @return		true if to deregister already in {@link #wrapUp()}
    */
-  protected boolean deregisterInWrapUp() {
+  public boolean deregisterInWrapUp() {
     return false;
   }
 
@@ -719,8 +716,7 @@ public abstract class AbstractDisplay
 	m_Panel = newPanel();
 	if (getCreateFrame())
 	  m_Frame = createFrame(m_Panel);
-	else if (m_DisplayInEditor)
-	  registerWithEditor();
+	m_DisplayType.init(this);
 	registerWindow();
       }
 
@@ -751,9 +747,9 @@ public abstract class AbstractDisplay
       m_Panel = null;
     }
     
-    if (m_Executed && m_DisplayInEditor)
-      deregisterWithEditor();
-    
+    if (m_Executed)
+      m_DisplayType.cleanUpGUI(this);
+
     if (m_Frame != null) {
       deregisterWindow();
       m_Frame.setVisible(false);

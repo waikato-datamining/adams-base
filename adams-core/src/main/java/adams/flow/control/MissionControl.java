@@ -392,8 +392,7 @@ public class MissionControl
 
     result = new Runnable() {
       public void run() {
-	if (getCreateFrame() && !m_Frame.isVisible())
-	  m_Frame.setVisible(true);
+        m_DisplayType.show(MissionControl.this);
 	((ControlPanel) m_Panel).updateButtons();
 	synchronized(m_Self) {
 	  m_Self.notifyAll();

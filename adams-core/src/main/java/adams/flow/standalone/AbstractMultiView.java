@@ -35,6 +35,7 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.core.Flushable;
 import adams.flow.core.InputConsumer;
+import adams.flow.core.displaytype.NoDisplay;
 import adams.flow.sink.ComponentSupplier;
 import adams.flow.sink.SequencePlotter;
 import adams.flow.sink.TextSupplier;
@@ -765,7 +766,7 @@ public abstract class AbstractMultiView
       m_Wrappers = new ArrayList<ViewWrapper>();
       for (Actor actor: m_Actors) {
         ((AbstractDisplay) actor).setCreateFrame(false);
-        ((AbstractDisplay) actor).setDisplayInEditor(false);
+        ((AbstractDisplay) actor).setDisplayType(new NoDisplay());
         wrapper = new ViewWrapper();
         wrapper.setParent(this);
         wrapper.setName(actor.getName());
