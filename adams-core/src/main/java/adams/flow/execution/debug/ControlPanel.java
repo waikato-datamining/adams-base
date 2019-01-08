@@ -15,7 +15,7 @@
 
 /*
  * ControlPanel.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
@@ -393,6 +393,7 @@ public class ControlPanel
     m_PanelCondition.setEnabled(actorPresent && !stopped && blocked);
     m_GOEPanelCondition.setEnabled(m_PanelCondition.isEnabled());
     m_ButtonActorPath.setEnabled(m_TextActorPath.getText().length() > 0);
+    m_ButtonActorHighlight.setEnabled(m_TextActorPath.getText().length() > 0);
 
     if (!m_ButtonInspectToken.isEnabled()) {
       if (m_PanelInspectionToken != null)
