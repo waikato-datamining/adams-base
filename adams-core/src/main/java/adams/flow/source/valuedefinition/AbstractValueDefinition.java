@@ -15,7 +15,7 @@
 
 /*
  * AbstractValueDefinition.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source.valuedefinition;
@@ -29,7 +29,6 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  * Combines name, type and default value for a single value.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see EnterManyValues
  */
 public abstract class AbstractValueDefinition
@@ -37,6 +36,9 @@ public abstract class AbstractValueDefinition
 
   /** for serialization. */
   private static final long serialVersionUID = 1003051563895321458L;
+
+  /** whether the value definition is enabled. */
+  protected boolean m_Enabled;
 
   /** the name of the value. */
   protected String m_Name;
@@ -55,6 +57,10 @@ public abstract class AbstractValueDefinition
     super.defineOptions();
 
     m_OptionManager.add(
+	    "enabled", "enabled",
+	    true);
+
+    m_OptionManager.add(
 	    "name", "name",
 	    "");
 
@@ -65,6 +71,35 @@ public abstract class AbstractValueDefinition
     m_OptionManager.add(
 	    "help", "help",
 	    "");
+  }
+
+  /**
+   * Sets whether the definition is to be used.
+   *
+   * @param value	true if enabled
+   */
+  public void setEnabled(boolean value) {
+    m_Enabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the definition is to be used.
+   *
+   * @return 		true if enabled
+   */
+  public boolean getEnabled() {
+    return m_Enabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String enabledTipText() {
+    return "Only when enabled will this definition be used.";
   }
 
   /**

@@ -286,8 +286,10 @@ public class EnterManyValues
     result = QuickInfoHelper.toString(this, "message", m_Message);
 
     names = new ArrayList<>();
-    for (AbstractValueDefinition def: m_Values)
-      names.add(def.getName());
+    for (AbstractValueDefinition def: m_Values) {
+      if (def.getEnabled())
+	names.add(def.getName());
+    }
     result += QuickInfoHelper.toString(this, "values", (names.size() > 0 ? Utils.flatten(names, "|") : "-none-"), ", ");
 
     options = new ArrayList<>();
@@ -565,8 +567,10 @@ public class EnterManyValues
     Properties	result;
     
     result = new Properties();
-    for (AbstractValueDefinition val: m_Values)
-      result.setProperty(val.getName(), getVariables().expand(val.getDefaultValueAsString()));
+    for (AbstractValueDefinition val: m_Values) {
+      if (val.getEnabled())
+        result.setProperty(val.getName(), getVariables().expand(val.getDefaultValueAsString()));
+    }
     
     return result;
   }
@@ -586,12 +590,16 @@ public class EnterManyValues
     
     // header
     row   = result.getHeaderRow();
-    for (AbstractValueDefinition val: m_Values)
-      row.addCell(val.getName()).setContent(val.getName());
+    for (AbstractValueDefinition val: m_Values) {
+      if (val.getEnabled())
+        row.addCell(val.getName()).setContent(val.getName());
+    }
     
     // data
     row = result.addRow();
     for (AbstractValueDefinition val: m_Values) {
+      if (!val.getEnabled())
+        continue;
       switch (val.getType()) {
 	case INTEGER:
 	  row.addCell(val.getName()).setContent(props.getInteger(val.getName()));
@@ -711,6 +719,8 @@ public class EnterManyValues
     panel.setButtonPanelVisible(true);
     order = new ArrayList<>();
     for (AbstractValueDefinition val: m_Values) {
+      if (!val.getEnabled())
+        continue;
       order.add(val.getName());
       if (!val.addToPanel(panel)) {
 	getLogger().severe("Failed to add value definition: " + val.toCommandLine());
@@ -780,7 +790,7 @@ public class EnterManyValues
       if (m_RestorationEnabled) {
         props = panel.getProperties();
 	for (AbstractValueDefinition val: m_Values) {
-	  if (!val.canBeRestored())
+	  if (!val.canBeRestored() || !val.getEnabled())
 	    props.removeKey(val.getName());
 	}
 	msg = RestorableActorHelper.write(props, m_RestorationFile);
@@ -830,6 +840,8 @@ public class EnterManyValues
 
     result = true;
     for (AbstractValueDefinition valueDef: m_Values) {
+      if (!valueDef.getEnabled())
+        continue;
       if (props.hasKey(valueDef.getName()))
 	valueDef.setDefaultValueAsString(props.getProperty(valueDef.getName()));
       value = valueDef.headlessInteraction();
