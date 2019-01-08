@@ -4,6 +4,8 @@ adams.flow.control.Flow
 		adams.flow.standalone.CallableActors
 			-actor
 				adams.flow.sink.Display
+					-display-type
+						adams.flow.core.displaytype.Default
 					-writer
 						adams.data.io.output.NullWriter
 			-actor
@@ -40,6 +42,8 @@ adams.flow.control.Flow
 		adams.flow.standalone.CallableActors
 			-actor
 				adams.flow.sink.Display
+					-display-type
+						adams.flow.core.displaytype.Default
 					-writer
 						adams.data.io.output.NullWriter
 			-actor

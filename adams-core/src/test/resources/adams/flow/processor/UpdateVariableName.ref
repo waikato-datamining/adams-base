@@ -50,6 +50,8 @@ adams.flow.control.Flow
 						adams.data.io.input.SingleStringTextReader
 			-tee
 				adams.flow.sink.HistoryDisplay
+					-display-type
+						adams.flow.core.displaytype.Default
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 	-flow-restart-manager

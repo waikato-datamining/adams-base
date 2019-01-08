@@ -6,6 +6,8 @@ adams.flow.control.Trigger
 				adams.core.option.VariableLister
 	-tee
 		adams.flow.sink.HistoryDisplay
+			-display-type
+				adams.flow.core.displaytype.Default
 
 
 --> adams.flow.template.OptionTraverser-out1.txt
@@ -18,6 +20,8 @@ adams.flow.control.Once
 						adams.core.option.VariableLister
 			-tee
 				adams.flow.sink.Display
+					-display-type
+						adams.flow.core.displaytype.Default
 					-writer
 						adams.data.io.output.NullWriter
 

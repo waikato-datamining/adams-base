@@ -6,6 +6,8 @@ adams.flow.control.Flow
 				adams.flow.sink.Display
 					-name
 					dis
+					-display-type
+						adams.flow.core.displaytype.Default
 					-writer
 						adams.data.io.output.NullWriter
 	-actor

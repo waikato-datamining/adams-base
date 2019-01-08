@@ -44,6 +44,8 @@ adams.flow.control.Flow
 											i
 									-actor
 										adams.flow.sink.Display
+											-display-type
+												adams.flow.core.displaytype.Default
 											-writer
 												adams.data.io.output.NullWriter
 	-flow-execution-listener
