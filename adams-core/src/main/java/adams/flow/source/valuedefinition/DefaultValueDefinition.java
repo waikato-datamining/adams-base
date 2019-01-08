@@ -21,8 +21,10 @@
 package adams.flow.source.valuedefinition;
 
 import adams.core.io.ConsoleHelper;
+import adams.core.io.ForwardSlashSupporter;
 import adams.flow.source.EnterManyValues;
 import adams.gui.core.PropertiesParameterPanel;
+import adams.gui.core.PropertiesParameterPanel.PropertyHint;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 
 /**
@@ -33,7 +35,8 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  * @see EnterManyValues
  */
 public class DefaultValueDefinition
-  extends AbstractValueDefinition {
+  extends AbstractValueDefinition
+  implements ForwardSlashSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1003051563895321458L;
@@ -43,7 +46,10 @@ public class DefaultValueDefinition
   
   /** the default value (string representation). */
   protected String m_DefaultValue;
-  
+
+  /** whether to output forward slashes. */
+  protected boolean m_UseForwardSlashes;
+
   /**
    * Returns a string describing the object.
    *
@@ -68,6 +74,10 @@ public class DefaultValueDefinition
     m_OptionManager.add(
 	    "default-value", "defaultValue",
 	    "");
+
+    m_OptionManager.add(
+	    "use-forward-slashes", "useForwardSlashes",
+	    false);
   }
 
   /**
@@ -147,6 +157,37 @@ public class DefaultValueDefinition
   }
 
   /**
+   * Sets whether to use forward slashes in the output.
+   *
+   * @param value	if true then use forward slashes
+   */
+  public void setUseForwardSlashes(boolean value) {
+    m_UseForwardSlashes = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use forward slashes in the output.
+   *
+   * @return		true if forward slashes are used
+   */
+  public boolean getUseForwardSlashes() {
+    return m_UseForwardSlashes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useForwardSlashesTipText() {
+    return
+	"If enabled and receiving string(s) as input, forward slashes are used in the output (but "
+	+ "the '\\\\' prefix of UNC paths is not converted).";
+  }
+
+  /**
    * Adds the value to the panel.
    *
    * @param panel	the panel to add to
@@ -158,6 +199,8 @@ public class DefaultValueDefinition
       panel.setLabel(getName(), getDisplay());
     if (!getHelp().trim().isEmpty())
       panel.setHelp(getName(), getHelp());
+    if (getUseForwardSlashes())
+      panel.addPropertyHint(getName(), PropertyHint.FORWARD_SLASHES);
     return true;
   }
 

@@ -15,7 +15,7 @@
 
 /*
  * PropertiesParameterPanel.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -29,6 +29,7 @@ import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.core.base.BaseText;
 import adams.core.base.BaseTime;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
@@ -73,7 +74,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Displays all properties in a props file as parameters (alphabetically
@@ -159,6 +162,13 @@ public class PropertiesParameterPanel
     ARRAY_EDITOR,
   }
 
+  /**
+   * Enumeration of hints for properties.
+   */
+  public enum PropertyHint {
+    FORWARD_SLASHES,
+  }
+
   /** the panel for the properties. */
   protected ParameterPanel m_PanelProperties;
 
@@ -198,6 +208,9 @@ public class PropertiesParameterPanel
   /** the property/arrayseparator relation. */
   protected HashMap<String,String> m_ArraySeparator;
 
+  /** the property/hints relation. */
+  protected HashMap<String,Set<PropertyHint>> m_PropertyHints;
+
   /** the custom order for the properties. */
   protected List<String> m_Order;
 
@@ -235,6 +248,7 @@ public class PropertiesParameterPanel
     m_Component           = new HashMap<>();
     m_ArrayClass          = new HashMap<>();
     m_ArraySeparator      = new HashMap<>();
+    m_PropertyHints       = new HashMap<>();
     m_Order               = new ArrayList<>();
     m_FileChooser         = null;
     m_DefaultSQLDimension = new Dimension(200, 70);
@@ -319,6 +333,7 @@ public class PropertiesParameterPanel
     m_Enums.clear();
     m_Lists.clear();
     m_Help.clear();
+    m_PropertyHints.clear();
   }
 
   /**
@@ -469,6 +484,43 @@ public class PropertiesParameterPanel
    */
   public List<String> getPropertyOrder() {
     return m_Order;
+  }
+
+  /**
+   * Associates the property hint with the specified property.
+   *
+   * @param property	the property to associate a hint with
+   * @param hint	the property hint
+   */
+  public void addPropertyHint(String property, PropertyHint hint) {
+    if (!m_PropertyHints.containsKey(property))
+      m_PropertyHints.put(property, new HashSet<>());
+    m_PropertyHints.get(property).add(hint);
+  }
+
+  /**
+   * Checks whether any property hints have been specified for a particular
+   * property.
+   *
+   * @param property	the property to check
+   * @return		true if at least one hint has been specified
+   */
+  public boolean hasPropertyHints(String property) {
+    return m_PropertyHints.containsKey(property)
+      && (m_PropertyHints.get(property).size() > 0);
+  }
+
+  /**
+   * Returns the hints associated with a property.
+   *
+   * @param property	the property to get the hints for
+   * @return		the hints
+   */
+  public Set<PropertyHint> getPropertyHints(String property) {
+    if (hasPropertyHints(property))
+      return m_PropertyHints.get(property);
+    else
+      return new HashSet<>();
   }
 
   /**
@@ -1144,6 +1196,22 @@ public class PropertiesParameterPanel
   }
 
   /**
+   * Fixes the path, if necessary.
+   *
+   * @param property	the property this path is from
+   * @param path	the path to fix
+   * @return		the fixed path
+   * @see		PropertyHint#FORWARD_SLASHES
+   * @see		#getPropertyHints(String)
+   */
+  protected String fixPath(String property, String path) {
+    if (getPropertyHints(property).contains(PropertyHint.FORWARD_SLASHES))
+      return FileUtils.useForwardSlashes(path);
+    else
+      return path;
+  }
+
+  /**
    * Returns the currently display properties as a properties object.
    *
    * @return		the properties
@@ -1232,22 +1300,22 @@ public class PropertiesParameterPanel
           result.setProperty(key, FontEditor.toString(null, fontPanel.getCurrent()));
           break;
         case DIRECTORY:
-          dirPanel = (DirectoryChooserPanel) comp;
-          result.setProperty(key, dirPanel.getCurrent().getPath());
-          break;
-        case DIRECTORY_ABSOLUTE:
-          dirPanel = (DirectoryChooserPanel) comp;
-          result.setProperty(key, dirPanel.getCurrent().getAbsolutePath());
-          break;
-        case FILE:
-          filePanel = (FileChooserPanel) comp;
-          result.setProperty(key, filePanel.getCurrent().getPath());
-          break;
-        case FILE_ABSOLUTE:
-          filePanel = (FileChooserPanel) comp;
-          result.setProperty(key, filePanel.getCurrent().getAbsolutePath());
-          break;
-        case COLOR:
+	  dirPanel = (DirectoryChooserPanel) comp;
+	  result.setProperty(key, fixPath(key, dirPanel.getCurrent().getPath()));
+	  break;
+	case DIRECTORY_ABSOLUTE:
+	  dirPanel = (DirectoryChooserPanel) comp;
+	  result.setProperty(key, fixPath(key, dirPanel.getCurrent().getAbsolutePath()));
+	  break;
+	case FILE:
+	  filePanel = (FileChooserPanel) comp;
+	  result.setProperty(key, fixPath(key, filePanel.getCurrent().getPath()));
+	  break;
+	case FILE_ABSOLUTE:
+	  filePanel = (FileChooserPanel) comp;
+	  result.setProperty(key, fixPath(key, filePanel.getCurrent().getAbsolutePath()));
+	  break;
+	case COLOR:
           colorPanel = (ColorChooserPanel) comp;
           result.setColor(key, colorPanel.getCurrent());
           break;
