@@ -15,7 +15,7 @@
 
 /*
  * ActualVsPredictedPlot.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -112,85 +112,90 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
- * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
- * &nbsp;&nbsp;&nbsp;a separate frame.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-display-type &lt;adams.flow.core.displaytype.AbstractDisplayType&gt; (property: displayType)
+ * &nbsp;&nbsp;&nbsp;Determines how to show the display, eg as standalone frame (default) or
+ * &nbsp;&nbsp;&nbsp;in the Flow editor window.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.core.displaytype.Default
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 350
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
- * 
+ *
  * <pre>-actual &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: actual)
  * &nbsp;&nbsp;&nbsp;The column with the actual values.
  * &nbsp;&nbsp;&nbsp;default: Actual
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-actual-min &lt;double&gt; (property: actualMin)
  * &nbsp;&nbsp;&nbsp;The minimum to use for the display of the actual axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -Infinity
  * </pre>
- * 
+ *
  * <pre>-actual-max &lt;double&gt; (property: actualMax)
  * &nbsp;&nbsp;&nbsp;The maximum to use for the display of the actual axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: Infinity
  * </pre>
- * 
+ *
  * <pre>-predicted &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: predicted)
  * &nbsp;&nbsp;&nbsp;The column with the predicted values.
  * &nbsp;&nbsp;&nbsp;default: Predicted
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-predicted-min &lt;double&gt; (property: predictedMin)
  * &nbsp;&nbsp;&nbsp;The minimum to use for the display of the predicted axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -Infinity
  * </pre>
- * 
+ *
  * <pre>-predicted-max &lt;double&gt; (property: predictedMax)
  * &nbsp;&nbsp;&nbsp;The maximum to use for the display of the predicted axis; use NaN for unlimited.
  * &nbsp;&nbsp;&nbsp;default: Infinity
  * </pre>
- * 
+ *
  * <pre>-error &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: error)
  * &nbsp;&nbsp;&nbsp;The column with the error values.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-additional &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: additional)
  * &nbsp;&nbsp;&nbsp;The additional columns to add to the plot containers.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ *
+ * <pre>-title &lt;java.lang.String&gt; (property: title)
+ * &nbsp;&nbsp;&nbsp;The (optional) title of the plot.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  * 
  * <pre>-plot-name &lt;java.lang.String&gt; (property: plotName)
@@ -260,6 +265,9 @@ public class ActualVsPredictedPlot
 
   /** the column with the error values (optional). */
   protected SpreadSheetColumnIndex m_Error;
+
+  /** the title. */
+  protected String m_Title;
 
   /** the (optional) plot name. */
   protected String m_PlotName;
@@ -342,6 +350,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "additional", "additional",
       new SpreadSheetColumnRange(""));
+
+    m_OptionManager.add(
+      "title", "title",
+      "");
 
     m_OptionManager.add(
       "plot-name", "plotName",
@@ -616,6 +628,35 @@ public class ActualVsPredictedPlot
    */
   public String additionalTipText() {
     return "The additional columns to add to the plot containers.";
+  }
+
+  /**
+   * Sets the (optional) title of the plot.
+   *
+   * @param value	the title
+   */
+  public void setTitle(String value) {
+    m_Title = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) title of the plot.
+   *
+   * @return		the title
+   */
+  public String getTitle() {
+    return m_Title;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String titleTipText() {
+    return "The (optional) title of the plot.";
   }
 
   /**
@@ -1070,6 +1111,10 @@ public class ActualVsPredictedPlot
    */
   @Override
   protected void display(Token token) {
+    if (!m_Title.isEmpty()) {
+      if (!((SequencePlotterPanel) m_Panel).getTitle().equals(m_Title))
+        ((SequencePlotterPanel) m_Panel).setTitle(m_Title);
+    }
     addData((SequencePlotterPanel) m_Panel, (SpreadSheet) token.getPayload());
   }
 
@@ -1121,6 +1166,10 @@ public class ActualVsPredictedPlot
       }
       @Override
       public void display(Token token) {
+	if (!m_Title.isEmpty()) {
+	  if (!m_Panel.getTitle().equals(m_Title))
+	    m_Panel.setTitle(m_Title);
+	}
 	addData(m_Panel, (SpreadSheet) token.getPayload());
       }
       @Override
