@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JFreeChart.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.spreadsheetviewer.chart;
@@ -27,12 +27,15 @@ import adams.flow.sink.JFreeChartPlot;
 import adams.gui.visualization.jfreechart.chart.XYLineChart;
 import adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator;
 import adams.gui.visualization.jfreechart.dataset.DefaultXY;
+import adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator;
+import adams.gui.visualization.jfreechart.shape.Default;
+
+import java.awt.Color;
 
 /**
  * Uses JFreeChart to display the data.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JFreeChart
   extends AbstractChartGenerator {
@@ -44,6 +47,22 @@ public class JFreeChart
 
   /** the chart generator. */
   protected adams.gui.visualization.jfreechart.chart.AbstractChartGenerator m_Chart;
+
+  /** the shape generator. */
+  protected AbstractShapeGenerator m_Shape;
+
+  /** the color for the plot. */
+  protected Color m_PlotColor;
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Uses JFreeChart to display the data.";
+  }
 
   /**
    * Adds options to the internal list of options.
@@ -59,6 +78,14 @@ public class JFreeChart
     m_OptionManager.add(
       "chart", "chart",
       new XYLineChart());
+
+    m_OptionManager.add(
+      "shape", "shape",
+      new Default());
+
+    m_OptionManager.add(
+      "plot-color", "plotColor",
+      Color.BLUE);
   }
 
   /**
@@ -120,13 +147,61 @@ public class JFreeChart
   }
 
   /**
-   * Returns a string describing the object.
+   * Sets the shape generator.
    *
-   * @return 			a description suitable for displaying in the gui
+   * @param value	the generator
    */
-  @Override
-  public String globalInfo() {
-    return "Uses JFreeChart to display the data.";
+  public void setShape(AbstractShapeGenerator value) {
+    m_Shape = value;
+    reset();
+  }
+
+  /**
+   * Returns the shape generator.
+   *
+   * @return		the generator
+   */
+  public AbstractShapeGenerator getShape() {
+    return m_Shape;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shapeTipText() {
+    return "The shape generator to use for the data point markers.";
+  }
+
+  /**
+   * Sets the color for the plot.
+   *
+   * @param value	the color
+   */
+  public void setPlotColor(Color value) {
+    m_PlotColor = value;
+    reset();
+  }
+
+  /**
+   * Returns the color for the plot.
+   *
+   * @return		the color
+   */
+  public Color getPlotColor() {
+    return m_PlotColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String plotColorTipText() {
+    return "The color for the plot.";
   }
 
   /**
@@ -144,6 +219,8 @@ public class JFreeChart
     plot = new JFreeChartPlot();
     plot.setDataset((AbstractDatasetGenerator) OptionUtils.shallowCopy(m_Dataset));
     plot.setChart((adams.gui.visualization.jfreechart.chart.AbstractChartGenerator) OptionUtils.shallowCopy(m_Chart));
+    plot.setShape((AbstractShapeGenerator) OptionUtils.shallowCopy(m_Shape));
+    plot.setPlotColor(m_PlotColor);
     plot.setWidth(m_Width);
     plot.setHeight(m_Height);
     flow.add(plot);

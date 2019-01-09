@@ -63,6 +63,10 @@ adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator=\
 adams.gui.visualization.jfreechart.chart.AbstractChartGenerator=\
   adams.gui.visualization.jfreechart.chart
 
+# the shapes for plots
+adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator=\
+  adams.gui.visualization.jfreechart.shape
+
 # transformers for spreadsheets
 adams.flow.transformer.AbstractSpreadSheetTransformer=\
   adams.flow.transformer

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JFreeChartFileWriter.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -29,9 +29,14 @@ import adams.gui.visualization.jfreechart.chart.AbstractChartGenerator;
 import adams.gui.visualization.jfreechart.chart.XYLineChart;
 import adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator;
 import adams.gui.visualization.jfreechart.dataset.DefaultXY;
+import adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator;
+import adams.gui.visualization.jfreechart.shape.Default;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.general.Dataset;
 
+import java.awt.Color;
+import java.awt.Shape;
 import java.awt.image.BufferedImage;
 
 /**
@@ -97,6 +102,16 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.chart.XYLineChart
  * </pre>
  * 
+ * <pre>-shape &lt;adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator&gt; (property: shape)
+ * &nbsp;&nbsp;&nbsp;The shape generator to use for the data point markers.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.shape.Default
+ * </pre>
+ *
+ * <pre>-plot-color &lt;java.awt.Color&gt; (property: plotColor)
+ * &nbsp;&nbsp;&nbsp;The color for the plot.
+ * &nbsp;&nbsp;&nbsp;default: #0000ff
+ * </pre>
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the plot.
  * &nbsp;&nbsp;&nbsp;default: 800
@@ -117,7 +132,6 @@ import java.awt.image.BufferedImage;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JFreeChartFileWriter
   extends AbstractFileWriter {
@@ -129,6 +143,12 @@ public class JFreeChartFileWriter
 
   /** the chart generator. */
   protected AbstractChartGenerator m_Chart;
+
+  /** the shape generator. */
+  protected AbstractShapeGenerator m_Shape;
+
+  /** the color for the plot. */
+  protected Color m_PlotColor;
 
   /** the width of the plot. */
   protected int m_Width;
@@ -163,6 +183,14 @@ public class JFreeChartFileWriter
     m_OptionManager.add(
       "chart", "chart",
       new XYLineChart());
+
+    m_OptionManager.add(
+      "shape", "shape",
+      new Default());
+
+    m_OptionManager.add(
+      "plot-color", "plotColor",
+      Color.BLUE);
 
     m_OptionManager.add(
       "width", "width",
@@ -243,6 +271,64 @@ public class JFreeChartFileWriter
    */
   public String chartTipText() {
     return "The chart generator to use.";
+  }
+
+  /**
+   * Sets the shape generator.
+   *
+   * @param value	the generator
+   */
+  public void setShape(AbstractShapeGenerator value) {
+    m_Shape = value;
+    reset();
+  }
+
+  /**
+   * Returns the shape generator.
+   *
+   * @return		the generator
+   */
+  public AbstractShapeGenerator getShape() {
+    return m_Shape;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shapeTipText() {
+    return "The shape generator to use for the data point markers.";
+  }
+
+  /**
+   * Sets the color for the plot.
+   *
+   * @param value	the color
+   */
+  public void setPlotColor(Color value) {
+    m_PlotColor = value;
+    reset();
+  }
+
+  /**
+   * Returns the color for the plot.
+   *
+   * @return		the color
+   */
+  public Color getPlotColor() {
+    return m_PlotColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String plotColorTipText() {
+    return "The color for the plot.";
   }
 
   /**
@@ -354,6 +440,7 @@ public class JFreeChartFileWriter
     result  = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "dataset", m_Dataset, ", dataset: ");
     result += QuickInfoHelper.toString(this, "chart", m_Chart, ", chart: ");
+    result += QuickInfoHelper.toString(this, "shape", m_Shape, ", shape: ");
     result += QuickInfoHelper.toString(this, "width", m_Width, ", width:");
     result += QuickInfoHelper.toString(this, "height", m_Height, ", height:");
     result += QuickInfoHelper.toString(this, "writer", m_Writer, ", writer: ");
@@ -374,6 +461,8 @@ public class JFreeChartFileWriter
     JFreeChart			jfreechart;
     BufferedImage		image;
     BufferedImageContainer	cont;
+    Shape			shape;
+    XYPlot			plot;
 
     result = null;
 
@@ -381,6 +470,18 @@ public class JFreeChartFileWriter
       sheet      = (SpreadSheet) m_InputToken.getPayload();
       dataset    = m_Dataset.generate(sheet);
       jfreechart = m_Chart.generate(dataset);
+      shape      = m_Shape.generate();
+      jfreechart.getPlot().setBackgroundPaint(Color.WHITE);
+      if (jfreechart.getPlot() instanceof XYPlot) {
+	plot = (XYPlot) jfreechart.getPlot();
+	plot.setDomainGridlinesVisible(true);
+	plot.setDomainGridlinePaint(Color.GRAY);
+	plot.setRangeGridlinesVisible(true);
+	plot.setRangeGridlinePaint(Color.GRAY);
+        plot.getRenderer().setSeriesPaint(0, m_PlotColor);
+        if (shape != null)
+	  plot.getRenderer().setSeriesShape(0, shape);
+      }
       image      = jfreechart.createBufferedImage(m_Width, m_Height);
       cont       = new BufferedImageContainer();
       cont.setImage(image);

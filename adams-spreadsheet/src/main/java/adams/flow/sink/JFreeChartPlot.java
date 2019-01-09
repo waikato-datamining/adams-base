@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JFreeChartPlot.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -23,17 +23,22 @@ package adams.flow.sink;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+import adams.gui.core.BasePanel;
 import adams.gui.visualization.jfreechart.chart.AbstractChartGenerator;
 import adams.gui.visualization.jfreechart.chart.XYLineChart;
 import adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator;
 import adams.gui.visualization.jfreechart.dataset.DefaultXY;
-import adams.gui.core.BasePanel;
+import adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator;
+import adams.gui.visualization.jfreechart.shape.Default;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.general.Dataset;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Shape;
 
 /**
  <!-- globalinfo-start -->
@@ -89,57 +94,66 @@ import java.awt.BorderLayout;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
- * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
- * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
- * &nbsp;&nbsp;&nbsp;a separate frame.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-display-type &lt;adams.flow.core.displaytype.AbstractDisplayType&gt; (property: displayType)
+ * &nbsp;&nbsp;&nbsp;Determines how to show the display, eg as standalone frame (default) or
+ * &nbsp;&nbsp;&nbsp;in the Flow editor window.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.core.displaytype.Default
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 600
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
- * 
+ *
  * <pre>-dataset &lt;adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator&gt; (property: dataset)
  * &nbsp;&nbsp;&nbsp;The dataset generator to use.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.dataset.DefaultXY
  * </pre>
- * 
+ *
  * <pre>-chart &lt;adams.gui.visualization.jfreechart.chart.AbstractChartGenerator&gt; (property: chart)
  * &nbsp;&nbsp;&nbsp;The chart generator to use.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.chart.XYLineChart
+ * </pre>
+ *
+ * <pre>-shape &lt;adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator&gt; (property: shape)
+ * &nbsp;&nbsp;&nbsp;The shape generator to use for the data point markers.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.shape.Default
+ * </pre>
+ *
+ * <pre>-plot-color &lt;java.awt.Color&gt; (property: plotColor)
+ * &nbsp;&nbsp;&nbsp;The color for the plot.
+ * &nbsp;&nbsp;&nbsp;default: #0000ff
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JFreeChartPlot
   extends AbstractGraphicalDisplay
@@ -152,6 +166,12 @@ public class JFreeChartPlot
 
   /** the chart generator. */
   protected AbstractChartGenerator m_Chart;
+
+  /** the shape generator. */
+  protected AbstractShapeGenerator m_Shape;
+
+  /** the color for the plot. */
+  protected Color m_PlotColor;
 
   /** the generated chart. */
   protected JFreeChart m_JFreeChart;
@@ -183,6 +203,14 @@ public class JFreeChartPlot
     m_OptionManager.add(
       "chart", "chart",
       new XYLineChart());
+
+    m_OptionManager.add(
+      "shape", "shape",
+      new Default());
+
+    m_OptionManager.add(
+      "plot-color", "plotColor",
+      Color.BLUE);
   }
 
   /**
@@ -244,6 +272,64 @@ public class JFreeChartPlot
   }
 
   /**
+   * Sets the shape generator.
+   *
+   * @param value	the generator
+   */
+  public void setShape(AbstractShapeGenerator value) {
+    m_Shape = value;
+    reset();
+  }
+
+  /**
+   * Returns the shape generator.
+   *
+   * @return		the generator
+   */
+  public AbstractShapeGenerator getShape() {
+    return m_Shape;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shapeTipText() {
+    return "The shape generator to use for the data point markers.";
+  }
+
+  /**
+   * Sets the color for the plot.
+   *
+   * @param value	the color
+   */
+  public void setPlotColor(Color value) {
+    m_PlotColor = value;
+    reset();
+  }
+
+  /**
+   * Returns the color for the plot.
+   *
+   * @return		the color
+   */
+  public Color getPlotColor() {
+    return m_PlotColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String plotColorTipText() {
+    return "The color for the plot.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -255,6 +341,7 @@ public class JFreeChartPlot
     result  = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "dataset", m_Dataset, ", dataset: ");
     result += QuickInfoHelper.toString(this, "chart", m_Chart, ", chart: ");
+    result += QuickInfoHelper.toString(this, "shape", m_Shape, ", shape: ");
 
     return result;
   }
@@ -279,10 +366,24 @@ public class JFreeChartPlot
   protected void display(Token token) {
     SpreadSheet		sheet;
     Dataset		dataset;
+    Shape 		shape;
+    XYPlot		plot;
 
     sheet        = (SpreadSheet) token.getPayload();
     dataset      = m_Dataset.generate(sheet);
     m_JFreeChart = m_Chart.generate(dataset);
+    m_JFreeChart.getPlot().setBackgroundPaint(Color.WHITE);
+    if (m_JFreeChart.getPlot() instanceof XYPlot) {
+      plot = (XYPlot) m_JFreeChart.getPlot();
+      plot.setDomainGridlinesVisible(true);
+      plot.setDomainGridlinePaint(Color.GRAY);
+      plot.setRangeGridlinesVisible(true);
+      plot.setRangeGridlinePaint(Color.GRAY);
+      plot.getRenderer().setSeriesPaint(0, m_PlotColor);
+      shape = m_Shape.generate();
+      if (shape != null)
+	plot.getRenderer().setSeriesShape(0, shape);
+    }
     m_PlotPanel  = new ChartPanel(m_JFreeChart);
     m_Panel.removeAll();
     m_Panel.add(m_PlotPanel, BorderLayout.CENTER);
@@ -341,6 +442,17 @@ public class JFreeChartPlot
 	SpreadSheet sheet = (SpreadSheet) token.getPayload();
 	Dataset dataset = m_Dataset.generate(sheet);
 	m_JFreeChart = m_Chart.generate(dataset);
+	if (m_JFreeChart.getPlot() instanceof XYPlot) {
+	  XYPlot plot = (XYPlot) m_JFreeChart.getPlot();
+	  plot.setDomainGridlinesVisible(true);
+	  plot.setDomainGridlinePaint(Color.GRAY);
+	  plot.setRangeGridlinesVisible(true);
+	  plot.setRangeGridlinePaint(Color.GRAY);
+	  plot.getRenderer().setSeriesPaint(0, m_PlotColor);
+	  Shape shape = m_Shape.generate();
+	  if (shape != null)
+	    plot.getRenderer().setSeriesShape(0, shape);
+	}
 	m_PlotPanel = new ChartPanel(m_JFreeChart);
 	removeAll();
 	add(m_PlotPanel, BorderLayout.CENTER);
