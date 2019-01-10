@@ -15,7 +15,7 @@
 
 /*
  * FindInFilesPanel.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
@@ -209,10 +209,12 @@ public class FindInFilesPanel
     panel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(panel2, BorderLayout.SOUTH);
     m_ButtonStart = new BaseButton("Start");
+    m_ButtonStart.setMnemonic('S');
     m_ButtonStart.setToolTipText("Starts the seach");
     m_ButtonStart.addActionListener((ActionEvent e) -> startSearch());
     panel2.add(m_ButtonStart);
     m_ButtonStop = new BaseButton("Stop");
+    m_ButtonStop.setMnemonic('t');
     m_ButtonStop.setToolTipText("Stops a search that is currently underway");
     m_ButtonStop.addActionListener((ActionEvent e) -> stopExecution());
     panel2.add(m_ButtonStop);
