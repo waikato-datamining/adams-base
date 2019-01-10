@@ -15,20 +15,19 @@
 
 /*
  * WekaEvaluationSummary.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-
-import adams.core.Shortening;
-import weka.classifiers.Evaluation;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.Shortening;
 import adams.core.base.BaseText;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
+import weka.classifiers.Evaluation;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -45,65 +44,89 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output, Original indices, Test data
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaEvaluationSummary
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-relation (property: outputRelationName)
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-relation &lt;boolean&gt; (property: outputRelationName)
  * &nbsp;&nbsp;&nbsp;If set to true, then the relation name of the dataset is output as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-confusion-matrix (property: confusionMatrix)
+ *
+ * <pre>-confusion-matrix &lt;boolean&gt; (property: confusionMatrix)
  * &nbsp;&nbsp;&nbsp;If set to true, then the confusion matrix will be output as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-complexity-stats (property: complexityStatistics)
+ *
+ * <pre>-complexity-stats &lt;boolean&gt; (property: complexityStatistics)
  * &nbsp;&nbsp;&nbsp;If set to true, then the complexity statistics will be output as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-class-details (property: classDetails)
+ *
+ * <pre>-class-details &lt;boolean&gt; (property: classDetails)
  * &nbsp;&nbsp;&nbsp;If set to true, then the class details are output as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-comment &lt;adams.core.base.BaseText&gt; (property: comment)
  * &nbsp;&nbsp;&nbsp;An optional comment to output in the summary.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-title-summary &lt;java.lang.String&gt; (property: titleSummary)
+ * &nbsp;&nbsp;&nbsp;The title to use, default one is used when left empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-title-matrix &lt;java.lang.String&gt; (property: titleMatrix)
+ * &nbsp;&nbsp;&nbsp;The title to use for the confusion matrix, default one is used when left
+ * &nbsp;&nbsp;&nbsp;empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-title-class-details &lt;java.lang.String&gt; (property: titleClassDetails)
+ * &nbsp;&nbsp;&nbsp;The title to use for the class details, default one is used when left empty.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaEvaluationSummary
   extends AbstractTransformer {
@@ -125,6 +148,15 @@ public class WekaEvaluationSummary
 
   /** an optional comment to output. */
   protected BaseText m_Comment;
+
+  /** the title to use for the summary. */
+  protected String m_TitleSummary;
+
+  /** the title to use for the matrix. */
+  protected String m_TitleMatrix;
+
+  /** the title to use for the summary. */
+  protected String m_TitleClassDetails;
 
   /**
    * Returns a string describing the object.
@@ -164,6 +196,18 @@ public class WekaEvaluationSummary
     m_OptionManager.add(
 	    "comment", "comment",
 	    new BaseText(""));
+
+    m_OptionManager.add(
+	    "title-summary", "titleSummary",
+	    "");
+
+    m_OptionManager.add(
+	    "title-matrix", "titleMatrix",
+	    "");
+
+    m_OptionManager.add(
+	    "title-class-details", "titleClassDetails",
+	    "");
   }
 
   /**
@@ -177,20 +221,20 @@ public class WekaEvaluationSummary
     ArrayList<String>	options;
     String		value;
 
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputRelationName", m_OutputRelationName, "output relation"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "confusionMatrix", m_ConfusionMatrix, "confusion matrix"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "classDetails", m_ClassDetails, "class details"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "complexityStatistics", m_ComplexityStatistics, "complexity stats"));
     result = QuickInfoHelper.flatten(options);
-    
+
     value = QuickInfoHelper.toString(this, "comment", (m_Comment.stringValue().length() > 0 ? Shortening.shortenEnd(m_Comment.stringValue(), 20) : null));
     if (value != null) {
       if (result.length() > 0)
 	result += ", ";
       result += "comment: " + value;
     }
-    
+
     return result;
   }
 
@@ -210,6 +254,93 @@ public class WekaEvaluationSummary
    */
   public Class[] generates() {
     return new Class[]{String.class};
+  }
+
+  /**
+   * Sets the title to use for the summary.
+   *
+   * @param value	the title
+   */
+  public void setTitleSummary(String value) {
+    m_TitleSummary = value;
+    reset();
+  }
+
+  /**
+   * Returns the title to use for the summary.
+   *
+   * @return		the title
+   */
+  public String getTitleSummary() {
+    return m_TitleSummary;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String titleSummaryTipText() {
+    return "The title to use, default one is used when left empty.";
+  }
+
+  /**
+   * Sets the title to use for the confusion matrix.
+   *
+   * @param value	the title
+   */
+  public void setTitleMatrix(String value) {
+    m_TitleMatrix = value;
+    reset();
+  }
+
+  /**
+   * Returns the title to use for the confusion matrix.
+   *
+   * @return		the title
+   */
+  public String getTitleMatrix() {
+    return m_TitleMatrix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String titleMatrixTipText() {
+    return "The title to use for the confusion matrix, default one is used when left empty.";
+  }
+
+  /**
+   * Sets the title to use for the class details.
+   *
+   * @param value	the title
+   */
+  public void setTitleClassDetails(String value) {
+    m_TitleClassDetails = value;
+    reset();
+  }
+
+  /**
+   * Returns the title to use for the class details.
+   *
+   * @return		the title
+   */
+  public String getTitleClassDetails() {
+    return m_TitleClassDetails;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String titleClassDetailsTipText() {
+    return "The title to use for the class details, default one is used when left empty.";
   }
 
   /**
@@ -404,12 +535,19 @@ public class WekaEvaluationSummary
       buffer.append("\n");
 
     // summary
-    buffer.append(eval.toSummaryString(m_ComplexityStatistics));
+    if (m_TitleSummary.isEmpty())
+      buffer.append(eval.toSummaryString(m_ComplexityStatistics));
+    else
+      buffer.append(eval.toSummaryString(m_TitleSummary, m_ComplexityStatistics));
 
     // confusion matrix
     if (m_ConfusionMatrix) {
       try {
-	buffer.append("\n\n" + eval.toMatrixString());
+        buffer.append("\n\n");
+        if (m_TitleMatrix.isEmpty())
+	  buffer.append(eval.toMatrixString());
+        else
+	  buffer.append(eval.toMatrixString(m_TitleMatrix));
       }
       catch (Exception e) {
 	result = handleException("Failed to generate confusion matrix: ", e);
@@ -419,7 +557,11 @@ public class WekaEvaluationSummary
     // class details
     if (m_ClassDetails) {
       try {
-	buffer.append("\n\n" + eval.toClassDetailsString());
+	buffer.append("\n\n");
+        if (m_TitleClassDetails.isEmpty())
+	  buffer.append(eval.toClassDetailsString());
+        else
+	  buffer.append(eval.toClassDetailsString(m_TitleClassDetails));
       }
       catch (Exception e) {
 	result = handleException("Failed to generate class details: ", e);
