@@ -15,7 +15,7 @@
 
 /*
  * MultiPagePane.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -35,6 +35,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -273,6 +274,12 @@ public class MultiPagePane
 
     private static final long serialVersionUID = 662711521384106051L;
 
+    /** the border for no focus. */
+    protected Border m_BorderNoFocus;
+
+    /** the border for focused. */
+    protected Border m_BorderFocused;
+
     /**
      * Returns the rendering component.
      *
@@ -289,9 +296,17 @@ public class MultiPagePane
       JLabel 		label;
       PageContainer	cont;
 
+      if (m_BorderNoFocus == null) {
+        m_BorderNoFocus = BorderFactory.createEmptyBorder(1, 1, 1, 1);
+        m_BorderFocused = BorderFactory.createLineBorder(list.getSelectionBackground().darker(), 1);
+      }
+
       result = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
       label  = (JLabel) result;
-      label.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+      if (cellHasFocus)
+        label.setBorder(m_BorderFocused);
+      else
+        label.setBorder(m_BorderNoFocus);
       cont   = (PageContainer) list.getModel().getElementAt(index);
       label.setIcon(cont.getIcon());
 
