@@ -15,7 +15,7 @@
 
 /*
  * LocalScopeTrigger.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -23,8 +23,10 @@ import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseRegExp;
+import adams.core.io.PlaceholderFile;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
+import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableNamesRecorder;
 import adams.flow.core.FlowVariables;
 import adams.flow.core.StopRestrictor;
@@ -637,6 +639,10 @@ public class LocalScopeTrigger
 	case EMPTY:
 	  m_LocalVariables = new FlowVariables();
 	  m_LocalVariables.setFlow(this);
+	  if (getParent().getVariables().has(ActorUtils.FLOW_FILENAME_LONG))
+	    ActorUtils.updateProgrammaticVariables(this, new PlaceholderFile(getParent().getVariables().get(ActorUtils.FLOW_FILENAME_LONG)));
+	  else
+	    ActorUtils.updateProgrammaticVariables(this, null);
 	  break;
 	case COPY:
 	  m_LocalVariables = new FlowVariables();
