@@ -20,14 +20,16 @@
 
 package adams.flow.control;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
+import adams.flow.condition.bool.Expression;
 import adams.flow.core.Actor;
+import adams.parser.BooleanExpressionText;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for LocalScopeTrigger actor.
@@ -166,12 +168,10 @@ public class LocalScopeTriggerTest
       // Flow.Trigger
       adams.flow.control.Trigger trigger21 = new adams.flow.control.Trigger();
       argOption = (AbstractArgumentOption) trigger21.getOptionManager().findByProperty("actors");
-      adams.flow.core.Actor[] actors22 = new adams.flow.core.Actor[3];
+      adams.flow.core.Actor[] actors22 = new adams.flow.core.Actor[4];
 
       // Flow.Trigger.ListVariables
       adams.flow.source.ListVariables listvariables23 = new adams.flow.source.ListVariables();
-      argOption = (AbstractArgumentOption) listvariables23.getOptionManager().findByProperty("regExp");
-      listvariables23.setRegExp((adams.core.base.BaseRegExp) argOption.valueOf("[^f].*"));
       actors22[0] = listvariables23;
 
       // Flow.Trigger.SetVariable
@@ -179,6 +179,13 @@ public class LocalScopeTriggerTest
       argOption = (AbstractArgumentOption) setvariable25.getOptionManager().findByProperty("variableName");
       setvariable25.setVariableName((adams.core.VariableName) argOption.valueOf("v"));
       actors22[1] = setvariable25;
+
+      // continue if variable starts with "flow_" or contains "gui"
+      Expression expr = new Expression();
+      expr.setExpression(new BooleanExpressionText("matches(\"@{v}\", \"flow_.*\") or matches(\"@{v}\", \".*gui.*\")"));
+      Block cont = new Block();
+      cont.setCondition(expr);
+      actors22[2] = cont;
 
       // Flow.Trigger.Trigger
       adams.flow.control.Trigger trigger27 = new adams.flow.control.Trigger();
@@ -199,7 +206,7 @@ public class LocalScopeTriggerTest
       actors28[1] = dumpfile31;
       trigger27.setActors(actors28);
 
-      actors22[2] = trigger27;
+      actors22[3] = trigger27;
       trigger21.setActors(actors22);
 
       actors1[4] = trigger21;

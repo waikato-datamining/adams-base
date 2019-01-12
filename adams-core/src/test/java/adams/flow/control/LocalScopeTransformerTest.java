@@ -187,9 +187,9 @@ public class LocalScopeTransformerTest
       combinevariables27.setExpression((adams.core.base.BaseText) argOption.valueOf("@{v}: @{@{v}}"));
       actors26[0] = combinevariables27;
 
-      // continue if variable starts with "flow_"
+      // continue if variable starts with "flow_" or contains "gui"
       Expression expr = new Expression();
-      expr.setExpression(new BooleanExpressionText("matches(\"@{v}\", \"flow_.*\")"));
+      expr.setExpression(new BooleanExpressionText("matches(\"@{v}\", \"flow_.*\") or matches(\"@{v}\", \".*gui.*\")"));
       Block cont = new Block();
       cont.setCondition(expr);
       actors26[1] = cont;
