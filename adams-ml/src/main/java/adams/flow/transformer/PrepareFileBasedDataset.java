@@ -15,7 +15,7 @@
 
 /*
  * PrepareFileBasedDataset.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -87,7 +87,7 @@ import java.util.List;
  * </pre>
  *
  * <pre>-output-array &lt;boolean&gt; (property: outputArray)
- * &nbsp;&nbsp;&nbsp;If enabled, outputs the contains as array rather than one-by-one.
+ * &nbsp;&nbsp;&nbsp;If enabled, outputs the containers as array rather than one-by-one.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
@@ -148,7 +148,7 @@ public class PrepareFileBasedDataset
    */
   @Override
   public String outputArrayTipText() {
-    return "If enabled, outputs the contains as array rather than one-by-one.";
+    return "If enabled, outputs the containers as array rather than one-by-one.";
   }
 
   /**
