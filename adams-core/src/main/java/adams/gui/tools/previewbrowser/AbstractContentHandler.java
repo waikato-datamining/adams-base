@@ -15,7 +15,7 @@
 
 /*
  * AbstractContentHandler.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -202,6 +202,7 @@ public abstract class AbstractContentHandler
    */
   public static List<Class> getHandlersForFile(String filename) {
     List<Class>		result;
+    List<Class> 	matchAll;
     HashSet<Class>	set;
     String		extension;
 
@@ -214,15 +215,19 @@ public abstract class AbstractContentHandler
     else
       set = new HashSet<>();
 
-    if (getRelation().containsKey(MATCH_ALL))
-      set.addAll(getRelation().get(MATCH_ALL));
-
     if (set.size() == 0)
       result = null;
     else
       result = new ArrayList<>(set);
 
     Collections.sort(result, new ClassCompare());
+
+    matchAll = new ArrayList<>();
+    if (getRelation().containsKey(MATCH_ALL)) {
+      matchAll.addAll(getRelation().get(MATCH_ALL));
+      Collections.sort(matchAll, new ClassCompare());
+      result.addAll(matchAll);
+    }
 
     return result;
   }
