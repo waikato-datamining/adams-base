@@ -15,7 +15,7 @@
 
 /*
  * ImagePanel.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -75,6 +75,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
@@ -342,6 +343,13 @@ public class ImagePanel
 
       addMouseWheelListener(new MouseWheelListener() {
 	public void mouseWheelMoved(MouseWheelEvent e) {
+	  // get old relative positions of scrollbars
+	  final JScrollBar sbHor = getOwner().getScrollPane().getHorizontalScrollBar();
+	  final JScrollBar sbVer = getOwner().getScrollPane().getVerticalScrollBar();
+	  final double relHor = (double) (sbHor.getValue() + sbHor.getWidth() / 2) / sbHor.getMaximum();
+	  final double relVer = (double) (sbVer.getValue() + sbVer.getHeight() / 2) / sbVer.getMaximum();
+
+	  // update scale
 	  int rotation = e.getWheelRotation();
 	  double scale = getScale();
 	  if (rotation < 0)
@@ -349,6 +357,13 @@ public class ImagePanel
 	  else
 	    scale = scale / Math.pow(1.2, rotation);
 	  getOwner().setScale(scale);
+
+	  // set new relative positions of scrollbars
+	  SwingUtilities.invokeLater(() -> {
+	    sbHor.setValue((int) (sbHor.getMaximum() * relHor) - (sbHor.getWidth() / 2));
+	    sbVer.setValue((int) (sbVer.getMaximum() * relVer) - (sbVer.getHeight() / 2));
+	  });
+
 	  updateStatus();
 	}
       });
@@ -643,8 +658,10 @@ public class ImagePanel
      * @param value	the scaling factor
      */
     public void setScale(double value) {
-      int	width;
-      int	height;
+      int		width;
+      int		height;
+      JScrollBar	sbHor;
+      JScrollBar	sbVer;
 
       m_Scale = value;
       if (m_CurrentImage != null) {
@@ -658,10 +675,15 @@ public class ImagePanel
       setSize(new Dimension(width, height));
       setMinimumSize(new Dimension(width, height));
       setPreferredSize(new Dimension(width, height));
-      getOwner().getScrollPane().getHorizontalScrollBar().setUnitIncrement(width / 25);
-      getOwner().getScrollPane().getHorizontalScrollBar().setBlockIncrement(width / 10);
-      getOwner().getScrollPane().getVerticalScrollBar().setUnitIncrement(height / 25);
-      getOwner().getScrollPane().getVerticalScrollBar().setBlockIncrement(height / 10);
+
+      sbHor = getOwner().getScrollPane().getHorizontalScrollBar();
+      sbHor.setUnitIncrement(width / 25);
+      sbHor.setBlockIncrement(width / 10);
+
+      sbVer = getOwner().getScrollPane().getVerticalScrollBar();
+      sbVer.setUnitIncrement(height / 25);
+      sbVer.setBlockIncrement(height / 10);
+
       SwingUtilities.invokeLater(() -> update());
     }
 
