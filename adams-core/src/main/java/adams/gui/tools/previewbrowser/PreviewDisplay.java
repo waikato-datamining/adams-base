@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PreviewDisplay.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -212,7 +212,6 @@ public class PreviewDisplay
     AbstractContentHandler 	preferred;
     int				i;
     AbstractContentHandler 	contentHandler;
-    Class 			cls;
     int 			prefIndex;
 
     result = new NoPreviewAvailablePanel();
@@ -221,6 +220,7 @@ public class PreviewDisplay
       // update combobox
       m_IgnoreContentHandlerChanges = true;
       m_ModelContentHandlers.removeAllElements();
+      m_ListContentHandlers.clear();
       for (Class handler: handlers) {
 	m_ModelContentHandlers.addElement(handler.getName());
 	m_ListContentHandlers.add(PropertiesManager.getCustomContentHandler(handler));
