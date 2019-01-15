@@ -15,7 +15,7 @@
 
 /*
  * PythonEnvironment.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -405,6 +405,21 @@ public class PythonEnvironment
    */
   public String getActualPip() {
     return m_ActualPip;
+  }
+
+  /**
+   * Returns the directory with the binaries, uses either the parent directory
+   * of the actual python or pip executable to determine that.
+   *
+   * @return		the binary dir
+   */
+  public String getActualBinDir() {
+    if (m_ActualPython != null)
+      return new File(m_ActualPython).getParentFile().getAbsolutePath();
+    else if (m_ActualPip != null)
+      return new File(m_ActualPip).getParentFile().getAbsolutePath();
+    else
+      return null;
   }
 
   /**
