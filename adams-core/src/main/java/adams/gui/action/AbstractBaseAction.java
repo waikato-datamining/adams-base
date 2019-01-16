@@ -19,15 +19,14 @@
  */
 package adams.gui.action;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
-
-import adams.gui.core.GUIHelper;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 /**
  * Action with some methods added for convenience.
@@ -86,6 +85,16 @@ public abstract class AbstractBaseAction
    */
   public AbstractBaseAction(String name, String icon) {
     this(name, GUIHelper.getIcon(icon));
+  }
+
+  /**
+   * Defines an <code>Action</code> object with the specified icon.
+   *
+   * @param icon	the icon
+   */
+  public AbstractBaseAction(Icon icon) {
+    this();
+    setIcon(icon);
   }
 
   /**
