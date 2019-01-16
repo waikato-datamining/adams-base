@@ -60,20 +60,30 @@
 The following standalones are available:
 \begin{tight_itemize}
   \item \textit{PyroNameServer} -- for launching/connecting to a Pyro4\cite{pyro4} nameserver.
+  \item \textit{PyroStandalone} -- for calling a Pyro4\cite{pyro4} remote object.
   \item \textit{PythonEnvironment} -- defines what executables to use, system-wide
   or specific ones (e.g., from a virtual environment).
 \end{tight_itemize}
 
 The following sources are available:
 \begin{tight_itemize}
-  \item \textit{PythonExec} -- executes the specified Python script.
   \item \textit{PipExec} -- executes pip.
+  \item \textit{PyroSource} -- for generating data with a Pyro4\cite{pyro4} remote object.
+  \item \textit{PythonExec} -- executes the specified Python script.
+  \item \textit{PythonVenvExec} -- executes the specified executable from the virtual
+  environment defined with \textit{PythonEnvironment}.
 \end{tight_itemize}
 
 The following transformers are available:
 \begin{tight_itemize}
+  \item \textit{PyroTransformer} -- for transforming data with a Pyro4\cite{pyro4} remote object.
   \item \textit{PythonExpandScript} -- expands variables and placeholders in a
   script template and saves it as a separate file.
+\end{tight_itemize}
+
+The following sinks are available:
+\begin{tight_itemize}
+  \item \textit{PyroSink} -- for consuming data with a Pyro4\cite{pyro4} remote object.
 \end{tight_itemize}
 
 

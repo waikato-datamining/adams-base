@@ -1,0 +1,23 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+
+# the Pyro standalone calls
+adams.flow.standalone.pyrostandalone.AbstractPyroStandalone=\
+  adams.flow.standalone.pyrostandalone
+
+# the Pyro source calls
+adams.flow.source.pyrosource.AbstractPyroSource=\
+  adams.flow.source.pyrosource
+
+# the Pyro transformer calls
+adams.flow.transformer.pyrotransformer.AbstractPyroTransformer=\
+  adams.flow.transformer.pyrotransformer
+
+# the Pyro sink calls
+adams.flow.sink.pyrosink.AbstractPyroSink=\
+  adams.flow.sink.pyrosink

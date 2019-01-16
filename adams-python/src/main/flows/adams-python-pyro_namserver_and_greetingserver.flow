@@ -1,0 +1,16 @@
+# Project: adams
+# Date: 2019-01-16 16:45:00
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-python
+#
+adams.flow.control.Flow -annotation "Starts up the Pyro4 nameserver,\\n\\nNB: You will need to update the virtualenv path to make this work\\nand install Pyro4 using:\\n  pip install Pyro4" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.SetVariable -name host -var-name host -var-value localhost
+ adams.flow.standalone.SetVariable -name port -var-name port -var-value 9090
+ adams.flow.standalone.SetVariable -name "host/port combined" -var-name hostport -var-value @{host}:@{port} -expand-value true
+ adams.flow.standalone.PythonEnvironment -python ${CWD}/venv/bin/python3
+ adams.flow.standalone.PyroNameServer -server @{hostport} -mode LAUNCH_AND_CONNECT
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "start greeting server"
+  adams.flow.source.PythonExec -output-type BOTH -prefix-stdout "[OUT] " -prefix-stderr "[ERR] " -script ${FLOWS}/data/pyro-greeting-server.py
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
