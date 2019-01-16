@@ -24,9 +24,7 @@ package adams.gui.menu;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
-import adams.gui.core.GUIHelper;
 import groovy.ui.Console;
-import nz.ac.waikato.cms.locator.JavaVersion;
 
 /**
  * Launches the Groovy Console.
@@ -71,16 +69,8 @@ public class GroovyConsole
    */
   @Override
   public void launch() {
-    if (JavaVersion.atLeast9()) {
-      GUIHelper.showErrorMessage(
-        null,
-	"Unfortunately, the current version of the Groovy Console "
-	  + "shipped with ADAMS only works with Java up to version 8.");
-    }
-    else {
-      Console console = new Console();
-      console.run();
-    }
+    Console console = new Console();
+    console.run();
   }
 
   /**
