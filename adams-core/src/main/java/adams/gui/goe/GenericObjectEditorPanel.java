@@ -215,6 +215,8 @@ public class GenericObjectEditorPanel
   protected BasePopupMenu getPopupMenu() {
     GenericObjectEditorPopupMenu 	menu;
 
+    getEditor().setValue(getCurrent());
+
     menu = new GenericObjectEditorPopupMenu(getEditor(), m_Self);
     menu.addChangeListener((ChangeEvent e) -> {
       setCurrent(getEditor().getValue());
