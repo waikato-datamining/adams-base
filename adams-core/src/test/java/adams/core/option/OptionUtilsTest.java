@@ -13,14 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * OptionUtilsTest.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.logging.LoggingLevel;
-import adams.data.baseline.NamedSetup;
 import adams.data.baseline.SlidingWindow;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
@@ -259,11 +258,9 @@ public class OptionUtilsTest
    * Tests the shallowCopy (array) method.
    */
   public void testShallowCopyArray() {
-    adams.data.filter.BaselineCorrection[] array = new adams.data.filter.BaselineCorrection[2];
+    adams.data.filter.BaselineCorrection[] array = new adams.data.filter.BaselineCorrection[1];
     array[0] = new adams.data.filter.BaselineCorrection();
     array[0].setBaselineCorrection(new SlidingWindow());
-    array[1] = new adams.data.filter.BaselineCorrection();
-    array[1].setBaselineCorrection(new NamedSetup());
     OptionHandler[] copy = OptionUtils.shallowCopy(array, false);
     assertNotNull("shallow copy shouldn't be null", copy);
     assertEqualsArrays("arrays differs", array, copy);

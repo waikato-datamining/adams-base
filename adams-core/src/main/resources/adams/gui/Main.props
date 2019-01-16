@@ -48,7 +48,6 @@ Menu-Tools=\
 
 Menu-Maintenance=\
   adams.gui.menu.PlaceholderManagement,\
-  adams.gui.menu.NamedSetupManagement,\
   adams.gui.menu.FavoritesManagement,\
   adams.gui.menu.FileChooserBookmarksManagement,\
   -,\

@@ -15,7 +15,7 @@
 
 /*
  * PropertyPathTest.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -24,9 +24,9 @@ import adams.core.discovery.PropertyPath;
 import adams.core.discovery.PropertyPath.Path;
 import adams.core.logging.LoggingLevel;
 import adams.data.filter.BaselineCorrection;
+import adams.data.filter.DownSize;
 import adams.data.filter.Filter;
 import adams.data.filter.MultiFilter;
-import adams.data.filter.NamedSetup;
 import adams.data.filter.RemoveNoise;
 import adams.data.filter.ReportFilter;
 import adams.test.AdamsTestCase;
@@ -165,8 +165,8 @@ public class PropertyPathTest
     
     Path path;
     Object obj;
-    NamedSetup named = new NamedSetup();
-    named.setLoggingLevel(LoggingLevel.INFO);
+    DownSize downsize = new DownSize();
+    downsize.setLoggingLevel(LoggingLevel.INFO);
     
     // old debug level
     path = new Path("subFilters[1].loggingLevel");
@@ -175,13 +175,13 @@ public class PropertyPathTest
     
     // set new filter at index 1
     path = new Path("subFilters[1]");
-    PropertyPath.setValue(multi, path, named, new MessageCollection());
+    PropertyPath.setValue(multi, path, downsize, new MessageCollection());
     obj = PropertyPath.getValue(multi, path, new MessageCollection());
-    assertEquals("objects differ: " + path, named, obj);
+    assertEquals("objects differ: " + path, downsize, obj);
     
     // new debug level
     path = new Path("subFilters[1].loggingLevel");
     obj = PropertyPath.getValue(multi, path, new MessageCollection());
-    assertEquals("objects differ: " + path, named.getLoggingLevel(), obj);
+    assertEquals("objects differ: " + path, downsize.getLoggingLevel(), obj);
   }
 }

@@ -56,11 +56,6 @@ java.util.Locale=true
 java.util.Locale#toString=adams.gui.goe.LocaleEditor#toString
 java.util.Locale#valueOf=adams.gui.goe.LocaleEditor#valueOf
 
-# NamedSetup objects
-adams.core.NamedSetup=true
-adams.core.NamedSetup#toString=adams.gui.goe.NamedSetupEditor#toString
-adams.core.NamedSetup#valueOf=adams.gui.goe.NamedSetupEditor#valueOf
-
 # TriState objects
 adams.core.TriState=true
 adams.core.TriState#toString=adams.gui.goe.TriStateEditor#toString
