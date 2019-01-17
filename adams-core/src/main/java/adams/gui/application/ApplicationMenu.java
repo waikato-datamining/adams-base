@@ -15,7 +15,7 @@
 
 /*
  * ApplicationMenu.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -404,7 +404,7 @@ public class ApplicationMenu
               menus[i].setVisible(true);
               // check for "Exit", "Restart" or "Close" (these are always last!)
               if (menus[i].getMenuComponentCount() > 0) {
-                indexLast = determineItemIndex(new String[]{"restart.*", "exit", "close"}, menus[i]);
+                indexLast = determineItemIndex(new String[]{"restart.*", "exit", "close", "about"}, menus[i]);
                 if (indexLast != -1) {
                   menus[i].insertSeparator(indexLast);
                   menus[i].insert(menuitem, indexLast);
