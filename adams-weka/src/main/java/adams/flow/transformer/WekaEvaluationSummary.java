@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
+import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
@@ -282,7 +283,7 @@ public class WekaEvaluationSummary
    * 			displaying in the GUI or for listing the options.
    */
   public String titleSummaryTipText() {
-    return "The title to use, default one is used when left empty.";
+    return "The title to use, default one is used when left empty; use \\n, \\r or \\t for newline, carriage return or tab.";
   }
 
   /**
@@ -311,7 +312,7 @@ public class WekaEvaluationSummary
    * 			displaying in the GUI or for listing the options.
    */
   public String titleMatrixTipText() {
-    return "The title to use for the confusion matrix, default one is used when left empty.";
+    return "The title to use for the confusion matrix, default one is used when left empty; use \\n, \\r or \\t for newline, carriage return or tab.";
   }
 
   /**
@@ -340,7 +341,7 @@ public class WekaEvaluationSummary
    * 			displaying in the GUI or for listing the options.
    */
   public String titleClassDetailsTipText() {
-    return "The title to use for the class details, default one is used when left empty.";
+    return "The title to use for the class details, default one is used when left empty; use \\n, \\r or \\t for newline, carriage return or tab.";
   }
 
   /**
@@ -538,7 +539,7 @@ public class WekaEvaluationSummary
     if (m_TitleSummary.isEmpty())
       buffer.append(eval.toSummaryString(m_ComplexityStatistics));
     else
-      buffer.append(eval.toSummaryString(m_TitleSummary, m_ComplexityStatistics));
+      buffer.append(eval.toSummaryString(Utils.unbackQuoteChars(m_TitleSummary), m_ComplexityStatistics));
 
     // confusion matrix
     if (m_ConfusionMatrix) {
@@ -547,7 +548,7 @@ public class WekaEvaluationSummary
         if (m_TitleMatrix.isEmpty())
 	  buffer.append(eval.toMatrixString());
         else
-	  buffer.append(eval.toMatrixString(m_TitleMatrix));
+	  buffer.append(eval.toMatrixString(Utils.unbackQuoteChars(m_TitleMatrix)));
       }
       catch (Exception e) {
 	result = handleException("Failed to generate confusion matrix: ", e);
@@ -561,7 +562,7 @@ public class WekaEvaluationSummary
         if (m_TitleClassDetails.isEmpty())
 	  buffer.append(eval.toClassDetailsString());
         else
-	  buffer.append(eval.toClassDetailsString(m_TitleClassDetails));
+	  buffer.append(eval.toClassDetailsString(Utils.unbackQuoteChars(m_TitleClassDetails)));
       }
       catch (Exception e) {
 	result = handleException("Failed to generate class details: ", e);
