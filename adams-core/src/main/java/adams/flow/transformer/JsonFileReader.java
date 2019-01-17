@@ -15,15 +15,18 @@
 
 /*
  * JsonFileReader.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONAware;
+import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
 import java.io.BufferedReader;
@@ -32,7 +35,8 @@ import java.io.FileReader;
 
 /**
  <!-- globalinfo-start -->
- * Reads a JSON file and forwards the parsed JSON object.
+ * Reads a JSON file and forwards the parsed JSON object.<br>
+ * If it is know beforehand, whether the JSON file contains an object or an array, the output type can be specified.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -42,50 +46,69 @@ import java.io.FileReader;
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * &nbsp;&nbsp;&nbsp;java.io.File<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;org.json.simple.JSONAware<br>
+ * &nbsp;&nbsp;&nbsp;net.minidev.json.JSONAware<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: JsonFileReader
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-type &lt;ANY|OBJECT|ARRAY&gt; (property: type)
+ * &nbsp;&nbsp;&nbsp;The type of the output to enforce.
+ * &nbsp;&nbsp;&nbsp;default: ANY
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonFileReader
   extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -184602726110144511L;
+
+  /** the type of output it will generate. */
+  public enum OutputType {
+    ANY,
+    OBJECT,
+    ARRAY,
+  }
+
+  /** the type of output to generate. */
+  protected OutputType m_Type;
 
   /**
    * Returns a string describing the object.
@@ -95,7 +118,60 @@ public class JsonFileReader
   @Override
   public String globalInfo() {
     return
-        "Reads a JSON file and forwards the parsed JSON object.";
+      "Reads a JSON file and forwards the parsed JSON object.\n"
+	+ "If it is know beforehand, whether the JSON file contains an object "
+	+ "or an array, the output type can be specified.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "type", "type",
+      OutputType.ANY);
+  }
+
+  /**
+   * Sets the type of the output to enforce.
+   *
+   * @param value	the type
+   */
+  public void setType(OutputType value) {
+    m_Type = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of the output to enforce.
+   *
+   * @return		the type
+   */
+  public OutputType getType() {
+    return m_Type;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String typeTipText() {
+    return "The type of the output to enforce.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "type", m_Type);
   }
 
   /**
@@ -111,11 +187,20 @@ public class JsonFileReader
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->org.json.simple.JSONAware.class<!-- flow-generates-end -->
+   * @return		<!-- flow-generates-start -->net.minidev.json.JSONAware.class<!-- flow-generates-end -->
    */
   @Override
   public Class[] generates() {
-    return new Class[]{JSONAware.class};
+    switch (m_Type) {
+      case ANY:
+	return new Class[]{JSONAware.class};
+      case ARRAY:
+	return new Class[]{JSONArray.class};
+      case OBJECT:
+	return new Class[]{JSONObject.class};
+      default:
+        throw new IllegalStateException("Unhandled output type: " + m_Type);
+    }
   }
 
   /**
@@ -148,7 +233,20 @@ public class JsonFileReader
       breader = new BufferedReader(freader);
       parser  = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
       obj     = parser.parse(breader);
-      m_OutputToken = new Token(obj);
+      // enforce type, if necessary
+      switch (m_Type) {
+	case ANY:
+	  m_OutputToken = new Token(obj);
+	  break;
+	case ARRAY:
+	  m_OutputToken = new Token((JSONArray) obj);
+	  break;
+	case OBJECT:
+	  m_OutputToken = new Token((JSONObject) obj);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled output type: " + m_Type);
+      }
     }
     catch (Exception e) {
       result = handleException("Failed to read JSON file: " + file, e);
