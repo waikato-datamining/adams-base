@@ -15,7 +15,7 @@
 
 /*
  * TreeOperations.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree;
@@ -40,6 +40,7 @@ import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
 import adams.flow.control.Flow;
+import adams.flow.control.Trigger;
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
@@ -63,12 +64,17 @@ import adams.flow.processor.MultiProcessor;
 import adams.flow.sink.CallableSink;
 import adams.flow.sink.ExternalSink;
 import adams.flow.source.CallableSource;
+import adams.flow.source.EnterManyValues;
+import adams.flow.source.EnterManyValues.OutputType;
 import adams.flow.source.ExternalSource;
+import adams.flow.source.valuedefinition.DefaultValueDefinition;
 import adams.flow.standalone.AbstractMultiView;
 import adams.flow.standalone.CallableActors;
 import adams.flow.standalone.ExternalStandalone;
+import adams.flow.standalone.SetVariable;
 import adams.flow.transformer.CallableTransformer;
 import adams.flow.transformer.ExternalTransformer;
+import adams.flow.transformer.MapToVariables;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
@@ -78,6 +84,7 @@ import adams.gui.core.ErrorMessagePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SearchableBaseList;
@@ -2005,6 +2012,93 @@ public class TreeOperations
     getOwner().nodeStructureChanged(parentNode);
     getOwner().locateAndDisplay(newNode.getFullName(), true);
     getOwner().redraw();
+  }
+
+  /**
+   * Turns the selected Setvariable standalines into a subflow with
+   * EnterManyValues for prompting the user.
+   *
+   * @param paths	the (paths to the) actors to turn interactive
+   */
+  public void makeInteractive(TreePath[] paths) {
+    Node[]	nodes;
+    String	subflowName;
+    Trigger 	subflow;
+    String	defValue;
+    Node	parent;
+    Node	newNode;
+    int		index;
+
+    if (paths.length == 0)
+      return;
+    nodes  = TreeHelper.pathsToNodes(paths);
+    parent = (Node) nodes[0].getParent();
+    if (!(parent.getActor() instanceof MutableActorHandler))
+      return;
+
+    subflowName = GUIHelper.showInputDialog(getOwner(), "Please enter name of interactive sub-flow:", "prompt user");
+    if (subflowName == null)
+      return;
+
+    // create interactive snippet
+    subflow = new Trigger();
+    subflow.setName(subflowName);
+    {
+      EnterManyValues many = new EnterManyValues();
+      many.setStopFlowIfCanceled(true);
+      many.setOutputType(OutputType.MAP);
+      subflow.add(many);
+      for (Node node: nodes) {
+        if (!(node.getActor() instanceof SetVariable))
+          return;
+        SetVariable set = (SetVariable) node.getActor();
+	DefaultValueDefinition value = new DefaultValueDefinition();
+	value.setName(set.getVariableName().getValue());
+	if (set.getName().startsWith(set.getDefaultName()))
+	  value.setDisplay(set.getVariableName().getValue());
+	else
+	  value.setDisplay(set.getName());
+	defValue = set.getVariableValue().stringValue();
+	if (Utils.isInteger(defValue))
+	  value.setType(PropertyType.INTEGER);
+	else if (Utils.isLong(defValue))
+	  value.setType(PropertyType.LONG);
+	else if (Utils.isDouble(defValue))
+	  value.setType(PropertyType.DOUBLE);
+	else if (Utils.isBoolean(defValue))
+	  value.setType(PropertyType.BOOLEAN);
+	else
+	  value.setType(PropertyType.STRING);
+	value.setDefaultValue(defValue);
+	many.addValue(value);
+      }
+
+      subflow.add(new MapToVariables());
+    }
+
+    // undo
+    getOwner().addUndoPoint("Making interactive (" + paths.length + "actor" + (paths.length != 1 ? "s" : "") + ")");
+
+    // insert subflow
+    newNode = TreeHelper.buildTree(null, subflow, false);
+    newNode.setOwner(nodes[0].getOwner());
+    index = parent.getIndex(nodes[0]);
+    parent.insert(newNode, index);
+
+    // remove old variables
+    for (Node node: nodes)
+      parent.remove(node);
+
+      SwingUtilities.invokeLater(() -> {
+	getOwner().setModified(true);
+	getOwner().nodeStructureChanged(parent);
+	getOwner().expand(newNode);
+      });
+      SwingUtilities.invokeLater(() -> {
+	getOwner().locateAndDisplay(newNode.getFullName(), true);
+	getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), newNode, Type.MODIFY));
+	getOwner().redraw();
+      });
   }
 
   /**

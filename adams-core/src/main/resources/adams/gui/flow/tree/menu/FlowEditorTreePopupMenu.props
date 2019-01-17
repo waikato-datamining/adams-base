@@ -1,7 +1,6 @@
 # Configuration file for the Flow Editor tree popup menu.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision: 8731 $
 #
 # Format:
 # <action-classname>-Shortcut=<empty or shortcut definition>
@@ -95,6 +94,8 @@ adams.gui.flow.tree.menu.Listeners-Icon=listen.png
 adams.gui.flow.tree.menu.Listeners-Shortcut=adams.gui.flow.tree.menu.MakeConditional-Icon=
 adams.gui.flow.tree.menu.MakeConditional-Icon=make_conditional.png
 adams.gui.flow.tree.menu.MakeConditional-Shortcut=
+adams.gui.flow.tree.menu.MakeInteractive-Icon=make_interactive.png
+adams.gui.flow.tree.menu.MakeInteractive-Shortcut=
 adams.gui.flow.tree.menu.MakeTimed-Icon=make_timed.png
 adams.gui.flow.tree.menu.MakeTimed-Shortcut=
 adams.gui.flow.tree.menu.MenuHeader-Icon=flow.gif

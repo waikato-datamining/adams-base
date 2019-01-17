@@ -1,7 +1,6 @@
 # Configuration file for the Flow Editor.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # The initial directory for loading setups.
 # the following placeholders are recognized
@@ -186,6 +185,7 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.SwapActor,\
   adams.gui.flow.tree.menu.CreateCallableActor,\
   adams.gui.flow.tree.menu.MakeConditional,\
+  adams.gui.flow.tree.menu.MakeInteractive,\
   adams.gui.flow.tree.menu.MakeTimed,\
   -,\
   adams.gui.flow.tree.menu.ExternalFlow,\
