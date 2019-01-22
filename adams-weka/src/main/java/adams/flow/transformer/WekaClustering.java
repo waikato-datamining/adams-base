@@ -15,7 +15,7 @@
 
 /*
  * WekaClustering.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -126,7 +126,6 @@ import weka.core.Instance;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaClustering
   extends AbstractProcessWekaInstanceWithModel<weka.clusterers.Clusterer> {
@@ -178,19 +177,21 @@ public class WekaClustering
     Token			result;
     WekaClusteringContainer	cont;
 
-    if (m_Model instanceof MakeDensityBasedClusterer)
-      cont = new WekaClusteringContainer(
+    synchronized(m_Model) {
+      if (m_Model instanceof MakeDensityBasedClusterer)
+	cont = new WekaClusteringContainer(
 	  inst,
 	  m_Model.clusterInstance(inst),
 	  m_Model.distributionForInstance(inst),
 	  ((MakeDensityBasedClusterer) m_Model).logDensityForInstance(inst),
 	  ((MakeDensityBasedClusterer) m_Model).logDensityPerClusterForInstance(inst),
 	  ((MakeDensityBasedClusterer) m_Model).logJointDensitiesForInstance(inst));
-    else
-      cont = new WekaClusteringContainer(
+      else
+	cont = new WekaClusteringContainer(
 	  inst,
 	  m_Model.clusterInstance(inst),
 	  m_Model.distributionForInstance(inst));
+    }
 
     result = new Token((WekaClusteringContainer) cont.getClone());
 

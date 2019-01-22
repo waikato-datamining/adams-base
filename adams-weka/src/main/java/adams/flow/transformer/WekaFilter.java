@@ -15,7 +15,7 @@
 
 /*
  * WekaFilter.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -169,7 +169,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaFilter
   extends AbstractTransformerWithPropertiesUpdating
@@ -734,36 +733,38 @@ public class WekaFilter
 	  initActualFilter(data);
 	}
 
-	if (!m_FlowContextUpdated) {
-	  m_FlowContextUpdated = true;
-	  if (m_ActualFilter instanceof FlowContextHandler)
-	    ((FlowContextHandler) m_ActualFilter).setFlowContext(this);
-	}
+	synchronized(m_ActualFilter) {
+          if (!m_FlowContextUpdated) {
+            m_FlowContextUpdated = true;
+            if (m_ActualFilter instanceof FlowContextHandler)
+              ((FlowContextHandler) m_ActualFilter).setFlowContext(this);
+          }
 
-	// filter data
-	filteredData = null;
-	filteredInst = null;
-	if (data != null) {
-	  relation = data.relationName();
-	  filteredData = weka.filters.Filter.useFilter(data, m_ActualFilter);
-	  if (m_KeepRelationName) {
-	    filteredData.setRelationName(relation);
-	    if (isLoggingEnabled())
-	      getLogger().info("Setting relation name: " + relation);
-	  }
-	  m_Initialized = true;
-	}
-	else {
-	  relation = inst.dataset().relationName();
-	  m_ActualFilter.input(inst);
-	  m_ActualFilter.batchFinished();
-	  filteredInst = m_ActualFilter.output();
-	  if (m_KeepRelationName) {
-	    filteredInst.dataset().setRelationName(relation);
-	    if (isLoggingEnabled())
-	      getLogger().info("Setting relation name: " + relation);
-	  }
-	}
+          // filter data
+          filteredData = null;
+          filteredInst = null;
+          if (data != null) {
+            relation = data.relationName();
+            filteredData = weka.filters.Filter.useFilter(data, m_ActualFilter);
+            if (m_KeepRelationName) {
+              filteredData.setRelationName(relation);
+              if (isLoggingEnabled())
+                getLogger().info("Setting relation name: " + relation);
+            }
+            m_Initialized = true;
+          }
+          else {
+            relation = inst.dataset().relationName();
+            m_ActualFilter.input(inst);
+            m_ActualFilter.batchFinished();
+            filteredInst = m_ActualFilter.output();
+            if (m_KeepRelationName) {
+              filteredInst.dataset().setRelationName(relation);
+              if (isLoggingEnabled())
+                getLogger().info("Setting relation name: " + relation);
+            }
+          }
+        }
 
 	// build output token
 	if (inst != null) {
