@@ -19,10 +19,10 @@
  */
 package adams.gui.flow.menu;
 
+import adams.gui.flow.ExportDialog;
+
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
-
-import adams.gui.flow.ExportDialog;
 
 /**
  * Lets user export a flow.
@@ -76,7 +76,7 @@ public class FileExport
   protected void doUpdate() {
     setEnabled(
 	   m_State.hasCurrentPanel() 
-	&& isInputEnabled());
+	&& m_State.getCurrentPanel().isInputEnabled());
   }
   
   /**

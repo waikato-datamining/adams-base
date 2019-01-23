@@ -13,14 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFlowEditorCheckBoxMenuItemAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
-
-import java.awt.Dialog;
-import java.awt.Frame;
 
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesCheckBoxMenuItemAction;
@@ -29,11 +26,13 @@ import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.goe.GenericObjectEditorDialog;
 
+import java.awt.Dialog;
+import java.awt.Frame;
+
 /**
  * Ancestor for checkbox menu item actions in the flow editor.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFlowEditorCheckBoxMenuItemAction
   extends AbstractPropertiesCheckBoxMenuItemAction<FlowEditorPanel, GenericObjectEditorDialog>
@@ -77,17 +76,5 @@ public abstract class AbstractFlowEditorCheckBoxMenuItemAction
    */
   protected Child getParentChild() {
     return GUIHelper.getParentChild(m_State);
-  }
-
-  /**
-   * Returns whether the flow accepts input.
-   * 
-   * @return		true if user can change flow
-   */
-  protected boolean isInputEnabled() {
-    return
-	   !m_State.isRunning() 
-	&& !m_State.isStopping() 
-	&& !m_State.isSwingWorkerRunning();
   }
 }

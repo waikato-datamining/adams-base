@@ -88,7 +88,7 @@ public class RunDisplayErrors
   protected void doUpdate() {
     setEnabled(
 	   m_State.hasCurrentPanel() 
-	&& isInputEnabled()
+	&& m_State.getCurrentPanel().isInputEnabled()
 	&& (m_State.getLastFlow() != null)
 	&& (m_State.getLastFlow() instanceof LogEntryHandler)
 	&& (((LogEntryHandler) m_State.getLastFlow()).countLogEntries() > 0));

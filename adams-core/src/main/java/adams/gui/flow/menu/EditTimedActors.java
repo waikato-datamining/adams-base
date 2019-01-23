@@ -19,9 +19,9 @@
  */
 package adams.gui.flow.menu;
 
-import java.awt.event.ActionEvent;
-
 import adams.flow.processor.ManageTimedActors;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Enables/disables timed actors.
@@ -80,6 +80,6 @@ public class EditTimedActors
   protected void doUpdate() {
     setEnabled(
 	   m_State.hasCurrentPanel() 
-	&& isInputEnabled());
+	&& m_State.getCurrentPanel().isInputEnabled());
   }
 }

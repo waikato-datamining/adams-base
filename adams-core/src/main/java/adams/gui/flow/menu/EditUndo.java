@@ -58,7 +58,7 @@ public class EditUndo
   protected void doUpdate() {
     setEnabled(
       m_State.hasCurrentPanel()
-	&& isInputEnabled()
+	&& m_State.getCurrentPanel().isInputEnabled()
 	&& m_State.getCurrentPanel().isUndoSupported()
 	&& m_State.getCurrentPanel().getUndo().isEnabled());
     

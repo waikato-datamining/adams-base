@@ -70,6 +70,6 @@ public class EditCleanUpFlow
   protected void doUpdate() {
     setEnabled(
 	   m_State.hasCurrentPanel() 
-	&& isInputEnabled());
+	&& m_State.getCurrentPanel().isInputEnabled());
   }
 }

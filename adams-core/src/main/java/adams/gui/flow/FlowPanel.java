@@ -1798,6 +1798,18 @@ public class FlowPanel
   }
 
   /**
+   * Returns whether the flow accepts input.
+   *
+   * @return		true if user can change flow
+   */
+  public boolean isInputEnabled() {
+    return
+	   !isRunning()
+	&& !isStopping()
+	&& !isSwingWorkerRunning();
+  }
+
+  /**
    * For starting background tasks. Block user from running other background
    * tasks till finished.
    *

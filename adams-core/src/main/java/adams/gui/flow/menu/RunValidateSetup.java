@@ -98,6 +98,6 @@ public class RunValidateSetup
     setEnabled(
 	   m_State.hasCurrentPanel() 
         && !m_State.getCurrentPanel().getTree().isDebug()
-	&& isInputEnabled());
+	&& m_State.getCurrentPanel().isInputEnabled());
   }
 }
