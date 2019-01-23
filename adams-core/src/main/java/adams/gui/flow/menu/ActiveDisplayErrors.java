@@ -14,7 +14,7 @@
  */
 
 /*
- * RunDisplayErrors.java
+ * activeDisplayErrors.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
@@ -33,7 +33,7 @@ import java.awt.event.ActionEvent;
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveDisplayErrors
+public class ActiveDisplayErrors
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */

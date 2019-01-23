@@ -14,19 +14,21 @@
  */
 
 /*
- * RunActiveStorage.java
+ * ActivePauseResume.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
+import adams.gui.core.GUIHelper;
+
 import java.awt.event.ActionEvent;
 
 /**
- * Brings up dialog with current storage items.
+ * Pauses/resumes the active flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveStorage
+public class ActivePauseResume
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -39,7 +41,7 @@ public class RunActiveStorage
    */
   @Override
   protected String getTitle() {
-    return "Storage";
+    return "Pause";
   }
 
   /**
@@ -47,7 +49,9 @@ public class RunActiveStorage
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().showStorage();
+    m_State.getActivePanel().closeStorage();
+    m_State.getActivePanel().pauseAndResume();
+    m_State.updateActions();
   }
 
   /**
@@ -55,6 +59,15 @@ public class RunActiveStorage
    */
   @Override
   protected void doUpdate() {
+    if (m_State.hasActivePanel() && m_State.getActivePanel().isPaused()) {
+      setIcon(GUIHelper.getIcon("active_resume.gif"));
+      setName("Resume");
+    }
+    else {
+      setIcon(GUIHelper.getIcon("active_pause.gif"));
+      setName("Pause");
+    }
+    
     setEnabled(
       m_State.hasActivePanel()
       && m_State.getActivePanel().isRunning());

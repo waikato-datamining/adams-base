@@ -54,6 +54,18 @@ import adams.gui.event.RecentItemListener;
 import adams.gui.event.TabVisibilityChangeEvent;
 import adams.gui.event.UndoEvent;
 import adams.gui.flow.menu.AbstractFlowEditorMenuItem;
+import adams.gui.flow.menu.ActiveClearGraphicalOutput;
+import adams.gui.flow.menu.ActiveDebug;
+import adams.gui.flow.menu.ActiveDisplayErrors;
+import adams.gui.flow.menu.ActiveGC;
+import adams.gui.flow.menu.ActiveHeadless;
+import adams.gui.flow.menu.ActiveKill;
+import adams.gui.flow.menu.ActivePauseResume;
+import adams.gui.flow.menu.ActiveRun;
+import adams.gui.flow.menu.ActiveStop;
+import adams.gui.flow.menu.ActiveStorage;
+import adams.gui.flow.menu.ActiveValidateSetup;
+import adams.gui.flow.menu.ActiveVariables;
 import adams.gui.flow.menu.EditCheckVariables;
 import adams.gui.flow.menu.EditCleanUpFlow;
 import adams.gui.flow.menu.EditClearClipboard;
@@ -88,18 +100,6 @@ import adams.gui.flow.menu.HelpBooleanExpression;
 import adams.gui.flow.menu.HelpMathematicalExpression;
 import adams.gui.flow.menu.HelpStringExpression;
 import adams.gui.flow.menu.HelpVariables;
-import adams.gui.flow.menu.RunActiveClearGraphicalOutput;
-import adams.gui.flow.menu.RunActiveDebug;
-import adams.gui.flow.menu.RunActiveDisplayErrors;
-import adams.gui.flow.menu.RunActiveGC;
-import adams.gui.flow.menu.RunActiveHeadless;
-import adams.gui.flow.menu.RunActiveKill;
-import adams.gui.flow.menu.RunActivePauseResume;
-import adams.gui.flow.menu.RunActiveRun;
-import adams.gui.flow.menu.RunActiveStop;
-import adams.gui.flow.menu.RunActiveStorage;
-import adams.gui.flow.menu.RunActiveValidateSetup;
-import adams.gui.flow.menu.RunActiveVariables;
 import adams.gui.flow.menu.RunClearGraphicalOutput;
 import adams.gui.flow.menu.RunDebug;
 import adams.gui.flow.menu.RunDisableAllBreakpoints;
@@ -177,8 +177,8 @@ public class FlowEditorPanel
   /** the Run menu text. */
   public static final String MENU_RUN = "Run";
 
-  /** the Run (active) menu text. */
-  public static final String MENU_RUN_ACTIVE = "Run (active)";
+  /** the Active menu text. */
+  public static final String MENU_ACTIVE = "Active";
 
   /** the View menu text. */
   public static final String MENU_VIEW = "View";
@@ -355,40 +355,40 @@ public class FlowEditorPanel
   protected FlowEditorAction m_ActionRunClearGraphicalOutput;
 
   /** the "variables" action. */
-  protected FlowEditorAction m_ActionRunActiveVariables;
+  protected FlowEditorAction m_ActionActiveVariables;
 
   /** the "storage" action. */
-  protected FlowEditorAction m_ActionRunActiveStorage;
+  protected FlowEditorAction m_ActionActiveStorage;
 
   /** the "headless" action. */
-  protected FlowEditorAction m_ActionRunActiveHeadless;
+  protected FlowEditorAction m_ActionActiveHeadless;
 
   /** the "gc" action. */
-  protected FlowEditorAction m_ActionRunActiveGC;
+  protected FlowEditorAction m_ActionActiveGC;
 
   /** the "check setup" action. */
-  protected FlowEditorAction m_ActionRunActiveValidateSetup;
+  protected FlowEditorAction m_ActionActiveValidateSetup;
 
   /** the "run" action. */
-  protected FlowEditorAction m_ActionRunActiveRun;
+  protected FlowEditorAction m_ActionActiveRun;
 
   /** the "run (debug)" action. */
-  protected FlowEditorAction m_ActionRunActiveDebug;
+  protected FlowEditorAction m_ActionActiveDebug;
 
   /** the "pause" action. */
-  protected FlowEditorAction m_ActionRunActivePauseAndResume;
+  protected FlowEditorAction m_ActionActivePauseAndResume;
 
   /** the "stop" action. */
-  protected FlowEditorAction m_ActionRunActiveStop;
+  protected FlowEditorAction m_ActionActiveStop;
 
   /** the "kill" action. */
-  protected FlowEditorAction m_ActionRunActiveKill;
+  protected FlowEditorAction m_ActionActiveKill;
 
   /** the "display errors" action. */
-  protected FlowEditorAction m_ActionRunActiveDisplayErrors;
+  protected FlowEditorAction m_ActionActiveDisplayErrors;
 
   /** the "Clear graphical output" action. */
-  protected FlowEditorAction m_ActionRunActiveClearGraphicalOutput;
+  protected FlowEditorAction m_ActionActiveClearGraphicalOutput;
 
   /** the "show toolbar" action. */
   protected FlowEditorAction m_ActionViewShowToolbar;
@@ -781,63 +781,63 @@ public class FlowEditorPanel
     m_MenuItems.add(action);
 
     // Run Active/Validate setup
-    action = new RunActiveValidateSetup();
-    m_ActionRunActiveValidateSetup = action;
+    action = new ActiveValidateSetup();
+    m_ActionActiveValidateSetup = action;
     m_MenuItems.add(action);
 
     // Run Active/Run
-    action = new RunActiveRun();
-    m_ActionRunActiveRun = action;
+    action = new ActiveRun();
+    m_ActionActiveRun = action;
     m_MenuItems.add(action);
 
     // Run Active/Run (debug)
-    action = new RunActiveDebug();
-    m_ActionRunActiveDebug = action;
+    action = new ActiveDebug();
+    m_ActionActiveDebug = action;
     m_MenuItems.add(action);
 
     // Run Active/Pause+Resume
-    action = new RunActivePauseResume();
-    m_ActionRunActivePauseAndResume = action;
+    action = new ActivePauseResume();
+    m_ActionActivePauseAndResume = action;
     m_MenuItems.add(action);
 
     // Run Active/Stop
-    action = new RunActiveStop();
-    m_ActionRunActiveStop = action;
+    action = new ActiveStop();
+    m_ActionActiveStop = action;
     m_MenuItems.add(action);
 
     // Run Active/Kill
-    action = new RunActiveKill();
-    m_ActionRunActiveKill = action;
+    action = new ActiveKill();
+    m_ActionActiveKill = action;
     m_MenuItems.add(action);
 
     // Run Active/Variables
-    action = new RunActiveVariables();
-    m_ActionRunActiveVariables = action;
+    action = new ActiveVariables();
+    m_ActionActiveVariables = action;
     m_MenuItems.add(action);
 
     // Run Active/Storage
-    action = new RunActiveStorage();
-    m_ActionRunActiveStorage = action;
+    action = new ActiveStorage();
+    m_ActionActiveStorage = action;
     m_MenuItems.add(action);
 
     // Run Active/Display errors
-    action = new RunActiveDisplayErrors();
-    m_ActionRunActiveDisplayErrors = action;
+    action = new ActiveDisplayErrors();
+    m_ActionActiveDisplayErrors = action;
     m_MenuItems.add(action);
 
     // Run Active/Clear graphical output
-    action = new RunActiveClearGraphicalOutput();
-    m_ActionRunActiveClearGraphicalOutput = action;
+    action = new ActiveClearGraphicalOutput();
+    m_ActionActiveClearGraphicalOutput = action;
     m_MenuItems.add(action);
 
     // Run Active/Headless
-    action = new RunActiveHeadless();
-    m_ActionRunActiveHeadless = action;
+    action = new ActiveHeadless();
+    m_ActionActiveHeadless = action;
     m_MenuItems.add(action);
 
     // Run Active/GC
-    action = new RunActiveGC();
-    m_ActionRunActiveGC = action;
+    action = new ActiveGC();
+    m_ActionActiveGC = action;
     m_MenuItems.add(action);
 
     // View/Show toolbar
@@ -955,6 +955,12 @@ public class FlowEditorPanel
       addToToolBar(m_ActionRunDebug);
       addToToolBar(m_ActionRunPauseAndResume);
       addToToolBar(m_ActionRunStop);
+      addSeparator();
+      addToToolBar(m_ActionActiveValidateSetup);
+      addToToolBar(m_ActionActiveRun);
+      addToToolBar(m_ActionActiveDebug);
+      addToToolBar(m_ActionActivePauseAndResume);
+      addToToolBar(m_ActionActiveStop);
     }
     else {
       items = props.getProperty("Toolbar.Actions").replaceAll(" ", "").split(",");
@@ -1194,27 +1200,27 @@ public class FlowEditorPanel
       menu.add(m_ActionRunHeadless);
       menu.add(m_ActionRunGC);
 
-      // Run (active)
-      menu = new BaseMenu(MENU_RUN_ACTIVE);
+      // Active
+      menu = new BaseMenu(MENU_ACTIVE);
       result.add(menu);
       menu.setMnemonic('A');
       menu.addChangeListener((ChangeEvent e) -> updateActions());
 
-      menu.add(m_ActionRunActiveValidateSetup);
-      menu.add(m_ActionRunActiveRun);
-      menu.add(m_ActionRunActiveDebug);
-      menu.add(m_ActionRunActivePauseAndResume);
-      menu.add(m_ActionRunActiveStop);
-      menu.add(m_ActionRunActiveKill);
+      menu.add(m_ActionActiveValidateSetup);
+      menu.add(m_ActionActiveRun);
+      menu.add(m_ActionActiveDebug);
+      menu.add(m_ActionActivePauseAndResume);
+      menu.add(m_ActionActiveStop);
+      menu.add(m_ActionActiveKill);
       menu.addSeparator();
-      menu.add(m_ActionRunActiveVariables);
-      menu.add(m_ActionRunActiveStorage);
+      menu.add(m_ActionActiveVariables);
+      menu.add(m_ActionActiveStorage);
       menu.addSeparator();
-      menu.add(m_ActionRunActiveDisplayErrors);
-      menu.add(m_ActionRunActiveClearGraphicalOutput);
+      menu.add(m_ActionActiveDisplayErrors);
+      menu.add(m_ActionActiveClearGraphicalOutput);
       menu.addSeparator();
-      menu.add(m_ActionRunActiveHeadless);
-      menu.add(m_ActionRunActiveGC);
+      menu.add(m_ActionActiveHeadless);
+      menu.add(m_ActionActiveGC);
 
       // View
       menu = new BaseMenu(MENU_VIEW);

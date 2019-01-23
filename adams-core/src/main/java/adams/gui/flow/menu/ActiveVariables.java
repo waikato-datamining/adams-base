@@ -14,7 +14,7 @@
  */
 
 /*
- * RunVariables.java
+ * Variables.java
  * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
@@ -26,7 +26,7 @@ import java.awt.event.ActionEvent;
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveVariables
+public class ActiveVariables
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */

@@ -151,7 +151,13 @@ Toolbar.Actions=\
   adams.gui.flow.menu.RunRun,\
   adams.gui.flow.menu.RunDebug,\
   adams.gui.flow.menu.RunPauseResume,\
-  adams.gui.flow.menu.RunStop
+  adams.gui.flow.menu.RunStop,\
+  -,\
+  adams.gui.flow.menu.ActiveValidateSetup,\
+  adams.gui.flow.menu.ActiveRun,\
+  adams.gui.flow.menu.ActiveDebug,\
+  adams.gui.flow.menu.ActivePauseResume,\
+  adams.gui.flow.menu.ActiveStop
 
 # The dimensions for the dialog of the status bar
 StatusBar.Width=600

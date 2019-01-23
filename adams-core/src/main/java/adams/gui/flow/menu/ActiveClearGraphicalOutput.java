@@ -14,7 +14,7 @@
  */
 
 /*
- * RunActiveStop.java
+ * ActiveClearGraphicalOutput.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
@@ -22,11 +22,11 @@ package adams.gui.flow.menu;
 import java.awt.event.ActionEvent;
 
 /**
- * Stops the active flow.
+ * Removes all graphical output.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveStop
+public class ActiveClearGraphicalOutput
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -39,7 +39,7 @@ public class RunActiveStop
    */
   @Override
   protected String getTitle() {
-    return "Stop";
+    return "Clear graphical output";
   }
 
   /**
@@ -47,7 +47,8 @@ public class RunActiveStop
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().stop();
+    m_State.getActivePanel().cleanUp();
+    m_State.update();
   }
 
   /**
@@ -56,7 +57,8 @@ public class RunActiveStop
   @Override
   protected void doUpdate() {
     setEnabled(
-      m_State.hasActivePanel()
-      && m_State.getActivePanel().isRunning());
+	   m_State.hasActivePanel()
+	&& m_State.getActivePanel().isInputEnabled()
+	&& (m_State.getActivePanel().getLastFlow() != null));
   }
 }

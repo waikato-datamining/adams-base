@@ -14,7 +14,7 @@
  */
 
 /*
- * RunActiveKill.java
+ * ActiveDebug.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
@@ -22,11 +22,11 @@ package adams.gui.flow.menu;
 import java.awt.event.ActionEvent;
 
 /**
- * Kills the active flow.
+ * Executes the active flow in debug mode.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveKill
+public class ActiveDebug
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -39,7 +39,7 @@ public class RunActiveKill
    */
   @Override
   protected String getTitle() {
-    return "Kill";
+    return "Debug";
   }
 
   /**
@@ -47,7 +47,7 @@ public class RunActiveKill
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().kill();
+    m_State.getActivePanel().run(true, true);
   }
 
   /**
@@ -56,7 +56,9 @@ public class RunActiveKill
   @Override
   protected void doUpdate() {
     setEnabled(
-      m_State.hasActivePanel()
-      && (m_State.getActivePanel().isRunning() || m_State.getActivePanel().isStopping()));
+	   m_State.hasActivePanel()
+	&& m_State.getActivePanel().isInputEnabled()
+        && !m_State.getActivePanel().getTree().isDebug()
+	&& m_State.getActivePanel().getTree().isFlow());
   }
 }

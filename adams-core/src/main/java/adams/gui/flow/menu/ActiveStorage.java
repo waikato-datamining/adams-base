@@ -14,7 +14,7 @@
  */
 
 /*
- * RunActiveHeadless.java
+ * ActiveStorage.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
@@ -22,12 +22,12 @@ package adams.gui.flow.menu;
 import java.awt.event.ActionEvent;
 
 /**
- * Enables/disables headless mode for active flow.
+ * Brings up dialog with current storage items.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveHeadless
-  extends AbstractFlowEditorCheckBoxMenuItemAction {
+public class ActiveStorage
+  extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -39,25 +39,15 @@ public class RunActiveHeadless
    */
   @Override
   protected String getTitle() {
-    return "Headless";
+    return "Storage";
   }
 
-  /**
-   * Returns the initial selected state of the menu item.
-   * 
-   * @return		true if selected initially
-   */
-  @Override
-  protected boolean isInitiallySelected() {
-    return false;
-  }
-  
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().setHeadless(isSelected());
+    m_State.getActivePanel().showStorage();
   }
 
   /**
@@ -66,7 +56,7 @@ public class RunActiveHeadless
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasActivePanel()
-	&& m_State.getActivePanel().isInputEnabled());
+      m_State.hasActivePanel()
+      && m_State.getActivePanel().isRunning());
   }
 }

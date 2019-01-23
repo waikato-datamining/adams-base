@@ -14,7 +14,7 @@
  */
 
 /*
- * RunClearGraphicalOutput.java
+ * ActiveHeadless.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
@@ -22,12 +22,12 @@ package adams.gui.flow.menu;
 import java.awt.event.ActionEvent;
 
 /**
- * Removes all graphical output.
+ * Enables/disables headless mode for active flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveClearGraphicalOutput
-  extends AbstractFlowEditorMenuItemAction {
+public class ActiveHeadless
+  extends AbstractFlowEditorCheckBoxMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -39,16 +39,25 @@ public class RunActiveClearGraphicalOutput
    */
   @Override
   protected String getTitle() {
-    return "Clear graphical output";
+    return "Headless";
   }
 
+  /**
+   * Returns the initial selected state of the menu item.
+   * 
+   * @return		true if selected initially
+   */
+  @Override
+  protected boolean isInitiallySelected() {
+    return false;
+  }
+  
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().cleanUp();
-    m_State.update();
+    m_State.getActivePanel().setHeadless(isSelected());
   }
 
   /**
@@ -58,7 +67,6 @@ public class RunActiveClearGraphicalOutput
   protected void doUpdate() {
     setEnabled(
 	   m_State.hasActivePanel()
-	&& m_State.getActivePanel().isInputEnabled()
-	&& (m_State.getActivePanel().getLastFlow() != null));
+	&& m_State.getActivePanel().isInputEnabled());
   }
 }

@@ -14,21 +14,22 @@
  */
 
 /*
- * RunActivePauseResume.java
+ * ActiveValidateSetup.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
-import adams.gui.core.GUIHelper;
+import adams.flow.core.Actor;
+import adams.flow.core.ActorUtils;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Pauses/resumes the active flow.
+ * Validates the active setup.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActivePauseResume
+public class ActiveValidateSetup
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -41,7 +42,7 @@ public class RunActivePauseResume
    */
   @Override
   protected String getTitle() {
-    return "Pause";
+    return "Validate setup";
   }
 
   /**
@@ -49,9 +50,44 @@ public class RunActivePauseResume
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().closeStorage();
-    m_State.getActivePanel().pauseAndResume();
-    m_State.updateActions();
+    Runnable	runnable;
+
+    runnable = () -> {
+      String msg = null;
+      StringBuilder errors = new StringBuilder();
+      Actor actor = m_State.getActiveFlow(errors);
+      if (errors.length() > 0)
+	msg = errors.toString();
+
+      if (msg == null) {
+	try {
+	  msg = actor.setUp();
+	  actor.wrapUp();
+	  actor.cleanUp();
+	}
+	catch (Exception ex) {
+	  msg = "Actor generated exception: ";
+	  System.err.println(msg);
+	  ex.printStackTrace();
+	  msg += e;
+	}
+      }
+
+      // perform some checks
+      if (msg == null)
+	msg = ActorUtils.checkFlow(actor, m_State.getCurrentFile());
+
+      if (msg == null) {
+	msg = "The flow passed validation!";
+	m_State.getActivePanel().showStatus(msg);
+	m_State.getActivePanel().showNotification(msg, false);
+      }
+      else {
+	m_State.getActivePanel().showStatus("The flow didn't pass validation!");
+	m_State.getActivePanel().showNotification("The flow setup failed validation:\n" + msg, true);
+      }
+    };
+    m_State.getActivePanel().startBackgroundTask(runnable, "Validating flow...", false);
   }
 
   /**
@@ -59,17 +95,9 @@ public class RunActivePauseResume
    */
   @Override
   protected void doUpdate() {
-    if (m_State.hasActivePanel() && m_State.getActivePanel().isPaused()) {
-      setIcon(GUIHelper.getIcon("resume.gif"));
-      setName("Resume");
-    }
-    else {
-      setIcon(GUIHelper.getIcon("pause.gif"));
-      setName("Pause");
-    }
-    
     setEnabled(
-      m_State.hasActivePanel()
-      && m_State.getActivePanel().isRunning());
+	   m_State.hasActivePanel()
+        && !m_State.getActivePanel().getTree().isDebug()
+	&& m_State.getActivePanel().isInputEnabled());
   }
 }

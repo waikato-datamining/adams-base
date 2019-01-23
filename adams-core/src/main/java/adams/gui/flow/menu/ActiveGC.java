@@ -14,20 +14,22 @@
  */
 
 /*
- * RunActiveDebug.java
+ * ActiveGC.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
+import adams.gui.flow.FlowEditorPanel;
+
 import java.awt.event.ActionEvent;
 
 /**
- * Executes the active flow in debug mode.
+ * Enables/disables running GC after active flow execution.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveDebug
-  extends AbstractFlowEditorMenuItemAction {
+public class ActiveGC
+  extends AbstractFlowEditorCheckBoxMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -39,15 +41,25 @@ public class RunActiveDebug
    */
   @Override
   protected String getTitle() {
-    return "Debug";
+    return "GC after execution";
   }
 
+  /**
+   * Returns the initial selected state of the menu item.
+   * 
+   * @return		true if selected initially
+   */
+  @Override
+  protected boolean isInitiallySelected() {
+    return FlowEditorPanel.getPropertiesEditor().getBoolean("GarbageCollectAfterFinish", true);
+  }
+  
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().run(true, true);
+    m_State.getActivePanel().setRunGC(isSelected());
   }
 
   /**
@@ -57,8 +69,6 @@ public class RunActiveDebug
   protected void doUpdate() {
     setEnabled(
 	   m_State.hasActivePanel()
-	&& m_State.getActivePanel().isInputEnabled()
-        && !m_State.getActivePanel().getTree().isDebug()
-	&& m_State.getActivePanel().getTree().isFlow());
+	&& m_State.getActivePanel().isInputEnabled());
   }
 }

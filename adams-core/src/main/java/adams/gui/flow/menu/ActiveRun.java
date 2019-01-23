@@ -14,22 +14,19 @@
  */
 
 /*
- * RunActiveValidateSetup.java
+ * ActiveRun.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
-import adams.flow.core.Actor;
-import adams.flow.core.ActorUtils;
-
 import java.awt.event.ActionEvent;
 
 /**
- * Validates the active setup.
+ * Executes the flow flagged as active (if any).
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveValidateSetup
+public class ActiveRun
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -42,7 +39,7 @@ public class RunActiveValidateSetup
    */
   @Override
   protected String getTitle() {
-    return "Validate setup";
+    return "Run";
   }
 
   /**
@@ -50,44 +47,7 @@ public class RunActiveValidateSetup
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    Runnable	runnable;
-
-    runnable = () -> {
-      String msg = null;
-      StringBuilder errors = new StringBuilder();
-      Actor actor = m_State.getActiveFlow(errors);
-      if (errors.length() > 0)
-	msg = errors.toString();
-
-      if (msg == null) {
-	try {
-	  msg = actor.setUp();
-	  actor.wrapUp();
-	  actor.cleanUp();
-	}
-	catch (Exception ex) {
-	  msg = "Actor generated exception: ";
-	  System.err.println(msg);
-	  ex.printStackTrace();
-	  msg += e;
-	}
-      }
-
-      // perform some checks
-      if (msg == null)
-	msg = ActorUtils.checkFlow(actor, m_State.getCurrentFile());
-
-      if (msg == null) {
-	msg = "The flow passed validation!";
-	m_State.getActivePanel().showStatus(msg);
-	m_State.getActivePanel().showNotification(msg, false);
-      }
-      else {
-	m_State.getActivePanel().showStatus("The flow didn't pass validation!");
-	m_State.getActivePanel().showNotification("The flow setup failed validation:\n" + msg, true);
-      }
-    };
-    m_State.getActivePanel().startBackgroundTask(runnable, "Validating flow...", false);
+    m_State.getActivePanel().run(true, false);
   }
 
   /**
@@ -96,8 +56,9 @@ public class RunActiveValidateSetup
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasActivePanel()
+      m_State.hasActivePanel()
+	&& m_State.getActivePanel().isInputEnabled()
         && !m_State.getActivePanel().getTree().isDebug()
-	&& m_State.getActivePanel().isInputEnabled());
+	&& m_State.getActivePanel().getTree().isFlow());
   }
 }

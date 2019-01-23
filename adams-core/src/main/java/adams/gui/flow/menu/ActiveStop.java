@@ -14,22 +14,20 @@
  */
 
 /*
- * RunActiveGC.java
+ * ActiveStop.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
-import adams.gui.flow.FlowEditorPanel;
-
 import java.awt.event.ActionEvent;
 
 /**
- * Enables/disables running GC after active flow execution.
+ * Stops the active flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveGC
-  extends AbstractFlowEditorCheckBoxMenuItemAction {
+public class ActiveStop
+  extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -41,25 +39,15 @@ public class RunActiveGC
    */
   @Override
   protected String getTitle() {
-    return "GC after execution";
+    return "Stop";
   }
 
-  /**
-   * Returns the initial selected state of the menu item.
-   * 
-   * @return		true if selected initially
-   */
-  @Override
-  protected boolean isInitiallySelected() {
-    return FlowEditorPanel.getPropertiesEditor().getBoolean("GarbageCollectAfterFinish", true);
-  }
-  
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().setRunGC(isSelected());
+    m_State.getActivePanel().stop();
   }
 
   /**
@@ -68,7 +56,7 @@ public class RunActiveGC
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasActivePanel()
-	&& m_State.getActivePanel().isInputEnabled());
+      m_State.hasActivePanel()
+      && m_State.getActivePanel().isRunning());
   }
 }

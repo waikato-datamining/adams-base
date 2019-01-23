@@ -57,19 +57,19 @@ adams.gui.flow.menu.RunClearGraphicalOutput-Shortcut=
 adams.gui.flow.menu.RunHeadless-Shortcut=meta H
 adams.gui.flow.menu.RunGC-Shortcut=
 
-# Run (active)
-adams.gui.flow.menu.RunActiveValidateSetup-Shortcut=alt F7
-adams.gui.flow.menu.RunActiveRun-Shortcut=meta alt R
-adams.gui.flow.menu.RunActiveDebug-Shortcut=meta alt shift R
-adams.gui.flow.menu.RunActivePauseResume-Shortcut=meta alt P
-adams.gui.flow.menu.RunActiveStop-Shortcut=meta alt K
-adams.gui.flow.menu.RunActiveKill-Shortcut=
-adams.gui.flow.menu.RunActiveVariables-Shortcut=
-adams.gui.flow.menu.RunActiveStorage-Shortcut=
-adams.gui.flow.menu.RunActiveDisplayErrors-Shortcut=
-adams.gui.flow.menu.RunActiveClearGraphicalOutput-Shortcut=
-adams.gui.flow.menu.RunActiveHeadless-Shortcut=meta alt H
-adams.gui.flow.menu.RunActiveGC-Shortcut=
+# Active
+adams.gui.flow.menu.ActiveValidateSetup-Shortcut=alt F7
+adams.gui.flow.menu.ActiveRun-Shortcut=meta alt R
+adams.gui.flow.menu.ActiveDebug-Shortcut=meta alt shift R
+adams.gui.flow.menu.ActivePauseResume-Shortcut=meta alt P
+adams.gui.flow.menu.ActiveStop-Shortcut=meta alt K
+adams.gui.flow.menu.ActiveKill-Shortcut=
+adams.gui.flow.menu.ActiveVariables-Shortcut=
+adams.gui.flow.menu.ActiveStorage-Shortcut=
+adams.gui.flow.menu.ActiveDisplayErrors-Shortcut=
+adams.gui.flow.menu.ActiveClearGraphicalOutput-Shortcut=
+adams.gui.flow.menu.ActiveHeadless-Shortcut=meta alt H
+adams.gui.flow.menu.ActiveGC-Shortcut=
 
 # View
 adams.gui.flow.menu.ViewShowToolbar-Shortcut=

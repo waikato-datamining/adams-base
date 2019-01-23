@@ -14,7 +14,7 @@
  */
 
 /*
- * RunActiveRun.java
+ * ActiveKill.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
@@ -22,11 +22,11 @@ package adams.gui.flow.menu;
 import java.awt.event.ActionEvent;
 
 /**
- * Executes the flow flagged as active (if any).
+ * Kills the active flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunActiveRun
+public class ActiveKill
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -39,7 +39,7 @@ public class RunActiveRun
    */
   @Override
   protected String getTitle() {
-    return "Run";
+    return "Kill";
   }
 
   /**
@@ -47,7 +47,7 @@ public class RunActiveRun
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().run(true, false);
+    m_State.getActivePanel().kill();
   }
 
   /**
@@ -57,8 +57,6 @@ public class RunActiveRun
   protected void doUpdate() {
     setEnabled(
       m_State.hasActivePanel()
-	&& m_State.getActivePanel().isInputEnabled()
-        && !m_State.getActivePanel().getTree().isDebug()
-	&& m_State.getActivePanel().getTree().isFlow());
+      && (m_State.getActivePanel().isRunning() || m_State.getActivePanel().isStopping()));
   }
 }
