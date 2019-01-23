@@ -48,7 +48,7 @@ public class RunRun
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.run(true, false);
+    m_State.getCurrentPanel().run(true, false);
   }
 
   /**

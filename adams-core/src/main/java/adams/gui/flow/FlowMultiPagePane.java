@@ -15,7 +15,7 @@
 
 /*
  * FlowTabbedPane.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -24,14 +24,20 @@ import adams.core.Properties;
 import adams.flow.core.Actor;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.MultiPagePane;
 import adams.gui.flow.multipageaction.AbstractMultiPageMenuItem;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Tree;
 
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.TreePath;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -50,6 +56,51 @@ public class FlowMultiPagePane
   /** for serialization. */
   private static final long serialVersionUID = -1675887825433207074L;
 
+  /**
+   * The cell renderer.
+   */
+  public static class FlowTitleRenderer
+    extends TitleRenderer {
+
+    private static final long serialVersionUID = 206875248088135198L;
+
+    /**
+     * Initializes the renderer with the owner.
+     *
+     * @param owner		the owner
+     */
+    public FlowTitleRenderer(MultiPagePane owner) {
+      super(owner);
+    }
+
+    /**
+     * Returns the rendering component.
+     *
+     * @param list		the list this renderer is for
+     * @param value		the current list value
+     * @param index		the index of the value
+     * @param isSelected	whether the item is selected
+     * @param cellHasFocus	whether the cell has the focus
+     * @return			the rendering component
+     */
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      Component 	result;
+      JLabel 		label;
+      FlowMultiPagePane	flowMulti;
+      Font		bold;
+
+      result    = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+      flowMulti = (FlowMultiPagePane) getOwner();
+      if (flowMulti.isActiveFlowAt(index)) {
+	label = (JLabel) result;
+	bold  = label.getFont().deriveFont(Font.BOLD);
+	label.setFont(bold);
+      }
+      return result;
+    }
+  }
+
   /** the owning editor. */
   protected FlowEditorPanel m_Owner;
 
@@ -58,6 +109,9 @@ public class FlowMultiPagePane
 
   /** the menu items. */
   protected List<AbstractMultiPageMenuItem> m_MenuItems;
+
+  /** the active flow. */
+  protected FlowPanel m_ActiveFlow;
 
   /**
    * Initializes the tabbed pane.
@@ -102,7 +156,8 @@ public class FlowMultiPagePane
 
     super.initialize();
 
-    m_MenuItems = new ArrayList<>();
+    m_ActiveFlow = null;
+    m_MenuItems  = new ArrayList<>();
     classes     = ClassLister.getSingleton().getClasses(AbstractMultiPageMenuItem.class);
     for (Class cls: classes) {
       try {
@@ -123,6 +178,15 @@ public class FlowMultiPagePane
    */
   public FlowEditorPanel getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Returns the renderer to use.
+   *
+   * @return		the renderer
+   */
+  protected TitleRenderer newRenderer() {
+    return new FlowTitleRenderer(this);
   }
 
   /**
@@ -406,11 +470,62 @@ public class FlowMultiPagePane
     else
       panel.cleanUp();
 
+    if (panel == m_ActiveFlow)
+      m_ActiveFlow = null;
+
     result = super.removePageAt(index);
 
     updateOwnerTitle();
 
     return result;
+  }
+
+  /**
+   * Checks whether an active flow is set.
+   *
+   * @return		true if active flow set
+   */
+  public boolean hasActiveFlow() {
+    return (m_ActiveFlow != null);
+  }
+
+  /**
+   * Unsets the active flow.
+   */
+  public void unsetActiveFlow() {
+    if (m_ActiveFlow != null) {
+      m_ActiveFlow = null;
+      update();
+    }
+  }
+
+  /**
+   * Returns the active flow panel (if any).
+   *
+   * @return		the panel, null if no active one set
+   */
+  public FlowPanel getActiveFlow() {
+    return m_ActiveFlow;
+  }
+
+  /**
+   * Checks whether the flow at the given position is the active one.
+   *
+   * @param index	the page index
+   * @return		true if it is the active one
+   */
+  public boolean isActiveFlowAt(int index) {
+    return (m_ActiveFlow != null) && (getPanelAt(index) == m_ActiveFlow);
+  }
+
+  /**
+   * Sets the flow at the given position as the new active one.
+   *
+   * @param index	the flow to use as active one
+   */
+  public void setActiveFlowAt(int index) {
+    m_ActiveFlow = getPanelAt(index);
+    update();
   }
 
   /**
@@ -425,8 +540,21 @@ public class FlowMultiPagePane
     BasePopupMenu	result;
     JMenuItem 		menuitem;
     String		group;
+    final int		index;
 
     result = super.createPopup(e);
+    index  = getSelectedIndex();
+
+    if (isActiveFlowAt(index)) {
+      menuitem = new JMenuItem("Unset active", GUIHelper.getIcon("flow_unsetactive.gif"));
+      menuitem.addActionListener((ActionEvent ae) -> unsetActiveFlow());
+      result.add(menuitem);
+    }
+    else {
+      menuitem = new JMenuItem("Set active", GUIHelper.getIcon("flow_setactive.gif"));
+      menuitem.addActionListener((ActionEvent ae) -> setActiveFlowAt(index));
+      result.add(menuitem);
+    }
 
     group = "";
     for (AbstractMultiPageMenuItem item: m_MenuItems) {

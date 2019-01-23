@@ -14,20 +14,22 @@
  */
 
 /*
- * RunClearGraphicalOutput.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * RunActiveGC.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
+
+import adams.gui.flow.FlowEditorPanel;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Removes all graphical output.
+ * Enables/disables running GC after active flow execution.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunClearGraphicalOutput
-  extends AbstractFlowEditorMenuItemAction {
+public class RunActiveGC
+  extends AbstractFlowEditorCheckBoxMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -39,16 +41,25 @@ public class RunClearGraphicalOutput
    */
   @Override
   protected String getTitle() {
-    return "Clear graphical output";
+    return "GC after execution";
   }
 
+  /**
+   * Returns the initial selected state of the menu item.
+   * 
+   * @return		true if selected initially
+   */
+  @Override
+  protected boolean isInitiallySelected() {
+    return FlowEditorPanel.getPropertiesEditor().getBoolean("GarbageCollectAfterFinish", true);
+  }
+  
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().cleanUp();
-    m_State.update();
+    m_State.getActivePanel().setRunGC(isSelected());
   }
 
   /**
@@ -57,8 +68,7 @@ public class RunClearGraphicalOutput
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& m_State.getCurrentPanel().isInputEnabled()
-	&& (m_State.getCurrentPanel().getLastFlow() != null));
+	   m_State.hasActivePanel()
+	&& m_State.getActivePanel().isInputEnabled());
   }
 }

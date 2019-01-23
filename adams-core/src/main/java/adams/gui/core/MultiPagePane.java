@@ -274,11 +274,33 @@ public class MultiPagePane
 
     private static final long serialVersionUID = 662711521384106051L;
 
+    /** the owner. */
+    protected MultiPagePane m_Owner;
+
     /** the border for no focus. */
     protected Border m_BorderNoFocus;
 
     /** the border for focused. */
     protected Border m_BorderFocused;
+
+    /**
+     * Initializes the renderer with the owner.
+     *
+     * @param owner		the owner
+     */
+    public TitleRenderer(MultiPagePane owner) {
+      super();
+      m_Owner = owner;
+    }
+
+    /**
+     * Returns the owner.
+     *
+     * @return		the pane this renderer belongs to
+     */
+    public MultiPagePane getOwner() {
+      return m_Owner;
+    }
 
     /**
      * Returns the rendering component.
@@ -513,8 +535,17 @@ public class MultiPagePane
   @Override
   protected void finishInit() {
     super.finishInit();
-    setTitleRenderer(new TitleRenderer());
+    setTitleRenderer(newRenderer());
     updateButtons();
+  }
+
+  /**
+   * Returns the renderer to use.
+   *
+   * @return		the renderer
+   */
+  protected TitleRenderer newRenderer() {
+    return new TitleRenderer(this);
   }
 
   /**

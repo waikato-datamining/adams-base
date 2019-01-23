@@ -14,19 +14,19 @@
  */
 
 /*
- * RunClearGraphicalOutput.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * RunActiveKill.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Removes all graphical output.
+ * Kills the active flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunClearGraphicalOutput
+public class RunActiveKill
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -39,7 +39,7 @@ public class RunClearGraphicalOutput
    */
   @Override
   protected String getTitle() {
-    return "Clear graphical output";
+    return "Kill";
   }
 
   /**
@@ -47,8 +47,7 @@ public class RunClearGraphicalOutput
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().cleanUp();
-    m_State.update();
+    m_State.getActivePanel().kill();
   }
 
   /**
@@ -57,8 +56,7 @@ public class RunClearGraphicalOutput
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& m_State.getCurrentPanel().isInputEnabled()
-	&& (m_State.getCurrentPanel().getLastFlow() != null));
+      m_State.hasActivePanel()
+      && (m_State.getActivePanel().isRunning() || m_State.getActivePanel().isStopping()));
   }
 }

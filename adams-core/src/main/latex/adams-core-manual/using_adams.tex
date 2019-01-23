@@ -1408,11 +1408,18 @@ selecting the \textit{Edit\ldots} menu item as shown in Figure
   \label{floweditor-externalactors1_editsubflow}
 \end{figure}
 
-\textbf{Tip:} In the flow editor, you can \textit{inline} an external flow by
-selecting \icon{images/expand}\textit{Expand} from the popup menu on the external
-actor. This will load the external flow and place it below the external actor
-as read-only sub-tree (see Figure \ref{floweditor-externalactors1_expandedsubflow}). You can simply remove the actors using the
-\icon{images/collapse}\textit{Collapse} option from the popup menu of the external actor.
+\textbf{Tips:}
+\begin{tight_itemize}
+  \item In the flow editor, you can \textit{inline} an external flow by
+  selecting \icon{images/expand}\textit{Expand} from the popup menu on the external
+  actor. This will load the external flow and place it below the external actor
+  as read-only sub-tree (see Figure \ref{floweditor-externalactors1_expandedsubflow}). You can simply remove the actors using the
+  \icon{images/collapse}\textit{Collapse} option from the popup menu of the external actor.
+  \item When working with external flows, it can be cumbersome to always switch
+  to the outer flow that contains the \textit{Flow} and then execute this one.
+  You can mark a flow as the \textit{active} one and then use the shortcuts
+  from the \textit{Run (active)} menu.
+\end{tight_itemize}
 
 \begin{figure}[htb]
   \centering
@@ -1481,6 +1488,11 @@ interactive nature on or off (``Edit'' $\rightarrow$ ``Interactive actors'').
   value of ``42'' and a custom message.}
   \label{floweditor-interactive_actors1}
 \end{figure}
+
+\textbf{Tip:} The \textit{Make interactive} menu item from the right-click
+popup menu in the Flow editor allows you to turn one or more \textit{SetVariable}
+standalones into an interactive sub-flow, migrating names and values. It
+automatically sets the correct type for boolean, integer, long and double values.
 
 \newpage
 \section{Templates}

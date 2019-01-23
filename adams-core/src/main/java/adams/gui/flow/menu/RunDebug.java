@@ -48,7 +48,7 @@ public class RunDebug
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.run(true, true);
+    m_State.getCurrentPanel().run(true, true);
   }
 
   /**

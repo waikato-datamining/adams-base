@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RunStop.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
  * Stops the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RunStop
   extends AbstractFlowEditorMenuItemAction {
@@ -48,7 +47,7 @@ public class RunStop
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.stop();
+    m_State.getCurrentPanel().stop();
   }
 
   /**
@@ -56,6 +55,8 @@ public class RunStop
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.isRunning());
+    setEnabled(
+      m_State.hasCurrentPanel()
+      && m_State.getCurrentPanel().isRunning());
   }
 }

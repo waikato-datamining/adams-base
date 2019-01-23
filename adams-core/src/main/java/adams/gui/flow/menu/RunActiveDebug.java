@@ -14,19 +14,19 @@
  */
 
 /*
- * RunClearGraphicalOutput.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * RunActiveDebug.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Removes all graphical output.
+ * Executes the active flow in debug mode.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunClearGraphicalOutput
+public class RunActiveDebug
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -39,7 +39,7 @@ public class RunClearGraphicalOutput
    */
   @Override
   protected String getTitle() {
-    return "Clear graphical output";
+    return "Debug";
   }
 
   /**
@@ -47,8 +47,7 @@ public class RunClearGraphicalOutput
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().cleanUp();
-    m_State.update();
+    m_State.getActivePanel().run(true, true);
   }
 
   /**
@@ -57,8 +56,9 @@ public class RunClearGraphicalOutput
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& m_State.getCurrentPanel().isInputEnabled()
-	&& (m_State.getCurrentPanel().getLastFlow() != null));
+	   m_State.hasActivePanel()
+	&& m_State.getActivePanel().isInputEnabled()
+        && !m_State.getActivePanel().getTree().isDebug()
+	&& m_State.getActivePanel().getTree().isFlow());
   }
 }

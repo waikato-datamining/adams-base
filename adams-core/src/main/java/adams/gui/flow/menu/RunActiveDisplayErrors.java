@@ -15,7 +15,7 @@
 
 /*
  * RunDisplayErrors.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -33,7 +33,7 @@ import java.awt.event.ActionEvent;
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class RunDisplayErrors
+public class RunActiveDisplayErrors
   extends AbstractFlowEditorMenuItemAction {
 
   /** for serialization. */
@@ -58,11 +58,11 @@ public class RunDisplayErrors
     LogEntryHandler	handler;
     LogEntryViewerPanel	panel;
 
-    if (m_State.getCurrentPanel().getLastFlow() == null)
+    if (m_State.getActivePanel().getLastFlow() == null)
       return;
-    if (!(m_State.getCurrentPanel().getLastFlow() instanceof LogEntryHandler))
+    if (!(m_State.getActivePanel().getLastFlow() instanceof LogEntryHandler))
       return;
-    handler = (LogEntryHandler) m_State.getCurrentPanel().getLastFlow();
+    handler = (LogEntryHandler) m_State.getActivePanel().getLastFlow();
     if (handler.getLogEntries().size() == 0)
       return;
 
@@ -86,10 +86,10 @@ public class RunDisplayErrors
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& m_State.getCurrentPanel().isInputEnabled()
-	&& (m_State.getCurrentPanel().getLastFlow() != null)
-	&& (m_State.getCurrentPanel().getLastFlow() instanceof LogEntryHandler)
-	&& (((LogEntryHandler) m_State.getCurrentPanel().getLastFlow()).countLogEntries() > 0));
+	   m_State.hasActivePanel()
+	&& m_State.getActivePanel().isInputEnabled()
+	&& (m_State.getActivePanel().getLastFlow() != null)
+	&& (m_State.getActivePanel().getLastFlow() instanceof LogEntryHandler)
+	&& (((LogEntryHandler) m_State.getActivePanel().getLastFlow()).countLogEntries() > 0));
   }
 }

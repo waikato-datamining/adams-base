@@ -15,7 +15,7 @@
 
 /*
  * FlowEditorPanel.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -88,6 +88,18 @@ import adams.gui.flow.menu.HelpBooleanExpression;
 import adams.gui.flow.menu.HelpMathematicalExpression;
 import adams.gui.flow.menu.HelpStringExpression;
 import adams.gui.flow.menu.HelpVariables;
+import adams.gui.flow.menu.RunActiveClearGraphicalOutput;
+import adams.gui.flow.menu.RunActiveDebug;
+import adams.gui.flow.menu.RunActiveDisplayErrors;
+import adams.gui.flow.menu.RunActiveGC;
+import adams.gui.flow.menu.RunActiveHeadless;
+import adams.gui.flow.menu.RunActiveKill;
+import adams.gui.flow.menu.RunActivePauseResume;
+import adams.gui.flow.menu.RunActiveRun;
+import adams.gui.flow.menu.RunActiveStop;
+import adams.gui.flow.menu.RunActiveStorage;
+import adams.gui.flow.menu.RunActiveValidateSetup;
+import adams.gui.flow.menu.RunActiveVariables;
 import adams.gui.flow.menu.RunClearGraphicalOutput;
 import adams.gui.flow.menu.RunDebug;
 import adams.gui.flow.menu.RunDisableAllBreakpoints;
@@ -164,6 +176,9 @@ public class FlowEditorPanel
 
   /** the Run menu text. */
   public static final String MENU_RUN = "Run";
+
+  /** the Run (active) menu text. */
+  public static final String MENU_RUN_ACTIVE = "Run (active)";
 
   /** the View menu text. */
   public static final String MENU_VIEW = "View";
@@ -322,13 +337,10 @@ public class FlowEditorPanel
   protected FlowEditorAction m_ActionRunRun;
 
   /** the "run (debug)" action. */
-  protected FlowEditorAction m_ActionRunRunDebug;
+  protected FlowEditorAction m_ActionRunDebug;
 
   /** the "pause" action. */
   protected FlowEditorAction m_ActionRunPauseAndResume;
-
-  /** the "pause" menu item. */
-  protected FlowEditorAction m_MenuItemExecutionPauseAndResume;
 
   /** the "stop" action. */
   protected FlowEditorAction m_ActionRunStop;
@@ -341,6 +353,42 @@ public class FlowEditorPanel
 
   /** the "Clear graphical output" action. */
   protected FlowEditorAction m_ActionRunClearGraphicalOutput;
+
+  /** the "variables" action. */
+  protected FlowEditorAction m_ActionRunActiveVariables;
+
+  /** the "storage" action. */
+  protected FlowEditorAction m_ActionRunActiveStorage;
+
+  /** the "headless" action. */
+  protected FlowEditorAction m_ActionRunActiveHeadless;
+
+  /** the "gc" action. */
+  protected FlowEditorAction m_ActionRunActiveGC;
+
+  /** the "check setup" action. */
+  protected FlowEditorAction m_ActionRunActiveValidateSetup;
+
+  /** the "run" action. */
+  protected FlowEditorAction m_ActionRunActiveRun;
+
+  /** the "run (debug)" action. */
+  protected FlowEditorAction m_ActionRunActiveDebug;
+
+  /** the "pause" action. */
+  protected FlowEditorAction m_ActionRunActivePauseAndResume;
+
+  /** the "stop" action. */
+  protected FlowEditorAction m_ActionRunActiveStop;
+
+  /** the "kill" action. */
+  protected FlowEditorAction m_ActionRunActiveKill;
+
+  /** the "display errors" action. */
+  protected FlowEditorAction m_ActionRunActiveDisplayErrors;
+
+  /** the "Clear graphical output" action. */
+  protected FlowEditorAction m_ActionRunActiveClearGraphicalOutput;
 
   /** the "show toolbar" action. */
   protected FlowEditorAction m_ActionViewShowToolbar;
@@ -657,79 +705,139 @@ public class FlowEditorPanel
     m_ActionEditProcessActors = action;
     m_MenuItems.add(action);
 
-    // Execution/Validate setup
+    // Run/Validate setup
     action = new RunValidateSetup();
     m_ActionRunValidateSetup = action;
     m_MenuItems.add(action);
 
-    // Execution/Run
+    // Run/Run
     action = new RunRun();
     m_ActionRunRun = action;
     m_MenuItems.add(action);
 
-    // Execution/Run (debug)
+    // Run/Run (debug)
     action = new RunDebug();
-    m_ActionRunRunDebug = action;
+    m_ActionRunDebug = action;
     m_MenuItems.add(action);
 
-    // Execution/Pause+Resume
+    // Run/Pause+Resume
     action = new RunPauseResume();
     m_ActionRunPauseAndResume = action;
     m_MenuItems.add(action);
 
-    // Execution/Stop
+    // Run/Stop
     action = new RunStop();
     m_ActionRunStop = action;
     m_MenuItems.add(action);
 
-    // Execution/Kill
+    // Run/Kill
     action = new RunKill();
     m_ActionRunKill = action;
     m_MenuItems.add(action);
 
-    // Debug/Enable all breakpoints
+    // Run/Enable all breakpoints
     action = new RunEnableAllBreakpoints();
     m_ActionRunEnableAllBreakpoints = action;
     m_MenuItems.add(action);
 
-    // Debug/Disable all breakpoints
+    // Run/Disable all breakpoints
     action = new RunDisableAllBreakpoints();
     m_ActionRunDisableAllBreakpoints = action;
     m_MenuItems.add(action);
 
-    // Debug/Remove all breakpoints
+    // Run/Remove all breakpoints
     action = new RunRemoveAllBreakpoints();
     m_ActionRunRemoveAllBreakpoints = action;
     m_MenuItems.add(action);
 
-    // Debug/Variables
+    // Run/Variables
     action = new RunVariables();
     m_ActionRunVariables = action;
     m_MenuItems.add(action);
 
-    // Debug/Storage
+    // Run/Storage
     action = new RunStorage();
     m_ActionRunStorage = action;
     m_MenuItems.add(action);
 
-    // Execution/Display errors
+    // Run/Display errors
     action = new RunDisplayErrors();
     m_ActionRunDisplayErrors = action;
     m_MenuItems.add(action);
 
-    // Execution/Clear graphical output
+    // Run/Clear graphical output
     action = new RunClearGraphicalOutput();
     m_ActionRunClearGraphicalOutput = action;
     m_MenuItems.add(action);
 
-    // Execution/Headless
+    // Run/Headless
     action = new RunHeadless();
     m_ActionRunHeadless = action;
     m_MenuItems.add(action);
 
-    // Execution/GC
+    // Run/GC
     action = new RunGC();
     m_ActionRunGC = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Validate setup
+    action = new RunActiveValidateSetup();
+    m_ActionRunActiveValidateSetup = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Run
+    action = new RunActiveRun();
+    m_ActionRunActiveRun = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Run (debug)
+    action = new RunActiveDebug();
+    m_ActionRunActiveDebug = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Pause+Resume
+    action = new RunActivePauseResume();
+    m_ActionRunActivePauseAndResume = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Stop
+    action = new RunActiveStop();
+    m_ActionRunActiveStop = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Kill
+    action = new RunActiveKill();
+    m_ActionRunActiveKill = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Variables
+    action = new RunActiveVariables();
+    m_ActionRunActiveVariables = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Storage
+    action = new RunActiveStorage();
+    m_ActionRunActiveStorage = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Display errors
+    action = new RunActiveDisplayErrors();
+    m_ActionRunActiveDisplayErrors = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Clear graphical output
+    action = new RunActiveClearGraphicalOutput();
+    m_ActionRunActiveClearGraphicalOutput = action;
+    m_MenuItems.add(action);
+
+    // Run Active/Headless
+    action = new RunActiveHeadless();
+    m_ActionRunActiveHeadless = action;
+    m_MenuItems.add(action);
+
+    // Run Active/GC
+    action = new RunActiveGC();
+    m_ActionRunActiveGC = action;
     m_MenuItems.add(action);
 
     // View/Show toolbar
@@ -844,7 +952,7 @@ public class FlowEditorPanel
       addSeparator();
       addToToolBar(m_ActionRunValidateSetup);
       addToToolBar(m_ActionRunRun);
-      addToToolBar(m_ActionRunRunDebug);
+      addToToolBar(m_ActionRunDebug);
       addToToolBar(m_ActionRunPauseAndResume);
       addToToolBar(m_ActionRunStop);
     }
@@ -1069,7 +1177,7 @@ public class FlowEditorPanel
 
       menu.add(m_ActionRunValidateSetup);
       menu.add(m_ActionRunRun);
-      menu.add(m_ActionRunRunDebug);
+      menu.add(m_ActionRunDebug);
       menu.add(m_ActionRunPauseAndResume);
       menu.add(m_ActionRunStop);
       menu.add(m_ActionRunKill);
@@ -1085,6 +1193,28 @@ public class FlowEditorPanel
       menu.addSeparator();
       menu.add(m_ActionRunHeadless);
       menu.add(m_ActionRunGC);
+
+      // Run (active)
+      menu = new BaseMenu(MENU_RUN_ACTIVE);
+      result.add(menu);
+      menu.setMnemonic('A');
+      menu.addChangeListener((ChangeEvent e) -> updateActions());
+
+      menu.add(m_ActionRunActiveValidateSetup);
+      menu.add(m_ActionRunActiveRun);
+      menu.add(m_ActionRunActiveDebug);
+      menu.add(m_ActionRunActivePauseAndResume);
+      menu.add(m_ActionRunActiveStop);
+      menu.add(m_ActionRunActiveKill);
+      menu.addSeparator();
+      menu.add(m_ActionRunActiveVariables);
+      menu.add(m_ActionRunActiveStorage);
+      menu.addSeparator();
+      menu.add(m_ActionRunActiveDisplayErrors);
+      menu.add(m_ActionRunActiveClearGraphicalOutput);
+      menu.addSeparator();
+      menu.add(m_ActionRunActiveHeadless);
+      menu.add(m_ActionRunActiveGC);
 
       // View
       menu = new BaseMenu(MENU_VIEW);
@@ -1379,6 +1509,24 @@ public class FlowEditorPanel
   }
 
   /**
+   * Returns whether an active panel is set.
+   *
+   * @return		true if active panel set
+   */
+  public boolean hasActivePanel() {
+    return m_FlowPanels.hasActiveFlow();
+  }
+
+  /**
+   * Returns the active panel (if any).
+   *
+   * @return		the active panel, null if not set
+   */
+  public FlowPanel getActivePanel() {
+    return m_FlowPanels.getActiveFlow();
+  }
+
+  /**
    * Returns the current root actor without its children.
    *
    * @return		the current root, null if not available
@@ -1387,6 +1535,19 @@ public class FlowEditorPanel
   public Actor getCurrentRoot() {
     if (hasCurrentPanel())
       return getCurrentPanel().getCurrentRoot();
+    else
+      return null;
+  }
+
+  /**
+   * Returns the active root actor without its children.
+   *
+   * @return		the active root, null if not available
+   * @see		#getActiveFlow()
+   */
+  public Actor getActiveRoot() {
+    if (hasActivePanel())
+      return getActivePanel().getCurrentRoot();
     else
       return null;
   }
@@ -1417,6 +1578,36 @@ public class FlowEditorPanel
   public Actor getCurrentFlow(StringBuilder errors) {
     if (hasCurrentPanel())
       return getCurrentPanel().getCurrentFlow(errors);
+    else
+      return null;
+  }
+
+  /**
+   * Returns the active flow.
+   * <br><br>
+   * WARNING: Recreates an actor hierarchy based on the tree. Method gets very
+   * slow for large flows. If you only need the root actor, then use getActiveRoot()
+   * instead.
+   *
+   * @return		the active flow, null if not available
+   */
+  public Actor getActiveFlow() {
+    return getActiveFlow(null);
+  }
+
+  /**
+   * Returns the active flow.
+   * <br><br>
+   * WARNING: Recreates an actor hierarchy based on the tree. Method gets very
+   * slow for large flows. If you only need the root actor, then use getActiveRoot()
+   * instead.
+   *
+   * @param errors	for storing errors, use null to ignore
+   * @return		the active flow, null if not available
+   */
+  public Actor getActiveFlow(StringBuilder errors) {
+    if (hasActivePanel())
+      return getActivePanel().getCurrentFlow(errors);
     else
       return null;
   }

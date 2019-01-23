@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RunStorage.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
  * Brings up dialog with current storage items.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RunStorage
   extends AbstractFlowEditorMenuItemAction {
@@ -56,6 +55,8 @@ public class RunStorage
    */
   @Override
   protected void doUpdate() {
-    setEnabled(m_State.isRunning());
+    setEnabled(
+      m_State.hasCurrentPanel()
+      && m_State.getCurrentPanel().isRunning());
   }
 }
