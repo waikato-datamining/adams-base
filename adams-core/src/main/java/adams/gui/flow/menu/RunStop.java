@@ -47,7 +47,7 @@ public class RunStop
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().stop();
+    m_State.getDebugOrCurrentPanel().stop();
   }
 
   /**
@@ -56,7 +56,7 @@ public class RunStop
   @Override
   protected void doUpdate() {
     setEnabled(
-      m_State.hasCurrentPanel()
-      && m_State.getCurrentPanel().isRunning());
+      m_State.hasDebugOrCurrentPanel()
+	&& m_State.getDebugOrCurrentPanel().isRunning());
   }
 }

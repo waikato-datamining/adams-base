@@ -47,7 +47,7 @@ public class ActiveStop
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().stop();
+    m_State.getDebugOrActivePanel().stop();
   }
 
   /**
@@ -56,7 +56,7 @@ public class ActiveStop
   @Override
   protected void doUpdate() {
     setEnabled(
-      m_State.hasActivePanel()
-      && m_State.getActivePanel().isRunning());
+      m_State.hasDebugOrActivePanel()
+      && m_State.getDebugOrActivePanel().isRunning());
   }
 }

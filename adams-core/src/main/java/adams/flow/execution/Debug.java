@@ -534,7 +534,7 @@ public class Debug
     // display copy of flow for debugging purposes
     if ((m_Owner.getParentComponent() != null) && (m_Owner.getParentComponent() instanceof Container)) {
       panel = (FlowPanel) GUIHelper.getParent((Container) m_Owner.getParentComponent(), FlowPanel.class);
-      if ((panel != null) && (panel.getOwner() != null)) {
+      if ((panel != null) && (panel.getOwner() != null) && !panel.isDebug()) {
 	flow = panel.getCurrentFlow();
 	if (flow != null) {
 	  proc = new ListStructureModifyingActors();
@@ -563,6 +563,7 @@ public class Debug
 	  }
 	}
       }
+      panel.update();
     }
 
     return m_ControlPanel;

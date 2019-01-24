@@ -49,8 +49,8 @@ public class RunPauseResume
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().closeStorage();
-    m_State.getCurrentPanel().pauseAndResume();
+    m_State.getDebugOrCurrentPanel().closeStorage();
+    m_State.getDebugOrCurrentPanel().pauseAndResume();
     m_State.updateActions();
   }
 
@@ -59,7 +59,7 @@ public class RunPauseResume
    */
   @Override
   protected void doUpdate() {
-    if (m_State.hasCurrentPanel() && m_State.getCurrentPanel().isPaused()) {
+    if (m_State.hasDebugOrCurrentPanel() && m_State.getDebugOrCurrentPanel().isPaused()) {
       setIcon(GUIHelper.getIcon("resume.gif"));
       setName("Resume");
     }
@@ -69,7 +69,7 @@ public class RunPauseResume
     }
     
     setEnabled(
-      m_State.hasCurrentPanel()
-      && m_State.getCurrentPanel().isRunning());
+      m_State.hasDebugOrCurrentPanel()
+      && m_State.getDebugOrCurrentPanel().isRunning());
   }
 }
