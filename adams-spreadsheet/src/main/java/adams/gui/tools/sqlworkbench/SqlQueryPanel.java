@@ -15,7 +15,7 @@
 
 /*
  * SqlPanel.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.sqlworkbench;
@@ -46,6 +46,7 @@ import adams.gui.event.SearchEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -112,6 +113,7 @@ public class SqlQueryPanel
     add(m_SplitPane, BorderLayout.CENTER);
 
     m_PanelQuery = new SQLStatementPanel();
+    m_PanelQuery.addQueryChangeListener((ChangeEvent e) -> updateButtons());
     m_SplitPane.setTopComponent(m_PanelQuery);
     m_PanelQuery.getQueryPanel().getTextPane().addKeyListener(new KeyAdapter() {
       @Override
@@ -151,6 +153,22 @@ public class SqlQueryPanel
   }
 
   /**
+   * Finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    updateButtons();
+  }
+
+  /**
+   * Updates the buttons.
+   */
+  protected void updateButtons() {
+    m_ButtonExecute.setEnabled(!m_PanelQuery.getStatement().isEmpty());
+  }
+
+  /**
    * Sets the query.
    *
    * @param query	the query
@@ -185,6 +203,9 @@ public class SqlQueryPanel
       protected String m_Result= null;
       @Override
       protected Object doInBackground() throws Exception {
+        m_ButtonExecute.setEnabled(false);
+        m_PanelQuery.setEnabled(false);
+        m_PanelConnection.setEnabled(false);
 	try {
 	  SQL sql = new SQL(m_PanelConnection.getDatabaseConnection());
 	  if (query.toLowerCase().startsWith("select ")) {
@@ -211,6 +232,9 @@ public class SqlQueryPanel
       @Override
       protected void done() {
 	super.done();
+	m_PanelQuery.setEnabled(true);
+	m_ButtonExecute.setEnabled(true);
+        m_PanelConnection.setEnabled(true);
 	int location = m_SplitPane.getDividerLocation();
 	if (m_Error != null) {
 	  m_TextResults.setText(m_Error);
