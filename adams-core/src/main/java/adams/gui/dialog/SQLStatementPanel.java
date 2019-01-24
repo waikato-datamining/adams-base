@@ -15,13 +15,14 @@
 
 /*
  * SQLStatementPanel.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
 import adams.core.AdditionalInformationHandler;
 import adams.db.SQLStatement;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.RecentSQLStatementsHandler;
@@ -34,16 +35,20 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Panel with SQL statement editor.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SQLStatementPanel
   extends BasePanel {
@@ -58,7 +63,7 @@ public class SQLStatementPanel
   protected SQLSyntaxEditorPanel m_PanelStatement;
 
   /** the button for the options. */
-  protected BaseButton m_ButtonOptions;
+  protected BaseButtonWithDropDownMenu m_ButtonOptions;
 
   /** the button for the history. */
   protected BaseButton m_ButtonHistory;
@@ -80,14 +85,43 @@ public class SQLStatementPanel
 
   /** the recent files handler. */
   protected RecentSQLStatementsHandler<JPopupMenu> m_RecentStatementsHandler;
-  
+
+  /** the list of query change listeners. */
+  protected Set<ChangeListener> m_QueryChangeListeners;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_QueryChangeListeners = new HashSet<>();
+  }
+
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
+    JMenuItem 	menuitem;
+
     m_PanelStatement = new SQLSyntaxEditorPanel();
     m_PanelStatement.setWordWrap(true);
+    m_PanelStatement.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	notifyQueryChangeListeners();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	notifyQueryChangeListeners();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	notifyQueryChangeListeners();
+      }
+    });
     add(m_PanelStatement, BorderLayout.CENTER);
 
     m_PanelBottom = new JPanel(new BorderLayout());
@@ -96,70 +130,38 @@ public class SQLStatementPanel
     m_PanelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelBottom.add(m_PanelButtonsLeft, BorderLayout.WEST);
     
-    m_ButtonOptions = new BaseButton("...");
+    m_ButtonOptions = new BaseButtonWithDropDownMenu();
     m_ButtonOptions.setToolTipText("Options menu");
-    m_ButtonOptions.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	JPopupMenu menu = new JPopupMenu();
-	JMenuItem menuitem;
-	// cut
-	menuitem = new JMenuItem("Cut");
-	menuitem.setIcon(GUIHelper.getIcon("cut.gif"));
-	menuitem.setEnabled(m_PanelStatement.canCut());
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    m_PanelStatement.cut();
-	  }
-	});
-	menu.add(menuitem);
-	// copy
-	menuitem = new JMenuItem("Copy");
-	menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
-	menuitem.setEnabled(m_PanelStatement.canCopy());
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    m_PanelStatement.copy();
-	  }
-	});
-	menu.add(menuitem);
-	// paste
-	menuitem = new JMenuItem("Paste");
-	menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
-	menuitem.setEnabled(m_PanelStatement.canPaste());
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    m_PanelStatement.paste();
-	  }
-	});
-	menu.add(menuitem);
-	// line wrap
-	menuitem = new JCheckBoxMenuItem("Line wrap");
-	menuitem.setIcon(GUIHelper.getEmptyIcon());
-	menuitem.setSelected(m_PanelStatement.getWordWrap());
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    m_PanelStatement.setWordWrap(((JMenuItem) e.getSource()).isSelected());
-	  }
-	});
-	menu.addSeparator();
-	menu.add(menuitem);
-	
-	menu.show(m_ButtonOptions, 0, m_ButtonOptions.getHeight());
-      }
-    });
+    // cut
+    menuitem = new JMenuItem("Cut");
+    menuitem.setIcon(GUIHelper.getIcon("cut.gif"));
+    menuitem.setEnabled(m_PanelStatement.canCut());
+    menuitem.addActionListener((ActionEvent e) -> m_PanelStatement.cut());
+    m_ButtonOptions.addToMenu(menuitem);
+    // copy
+    menuitem = new JMenuItem("Copy");
+    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setEnabled(m_PanelStatement.canCopy());
+    menuitem.addActionListener((ActionEvent e) -> m_PanelStatement.copy());
+    m_ButtonOptions.addToMenu(menuitem);
+    // paste
+    menuitem = new JMenuItem("Paste");
+    menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
+    menuitem.setEnabled(m_PanelStatement.canPaste());
+    menuitem.addActionListener((ActionEvent e) -> m_PanelStatement.paste());
+    m_ButtonOptions.addToMenu(menuitem);
+    // line wrap
+    menuitem = new JCheckBoxMenuItem("Line wrap");
+    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setSelected(m_PanelStatement.getWordWrap());
+    menuitem.addActionListener((ActionEvent e) -> m_PanelStatement.setWordWrap(((JMenuItem) e.getSource()).isSelected()));
+    m_ButtonOptions.addSeparatorToMenu();
+    m_ButtonOptions.addToMenu(menuitem);
     m_PanelButtonsLeft.add(m_ButtonOptions);
     
     m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
     m_ButtonHistory.setToolTipText("Recent queries");
-    m_ButtonHistory.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_PopupMenu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight());
-      }
-    });
+    m_ButtonHistory.addActionListener((ActionEvent e) -> m_PopupMenu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight()));
     m_PanelButtonsLeft.add(m_ButtonHistory);
 
     m_PanelButtonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -168,17 +170,15 @@ public class SQLStatementPanel
     if (m_PanelStatement instanceof AdditionalInformationHandler) {
       m_ButtonHelp = new BaseButton("Help");
       m_ButtonHelp.setMnemonic('H');
-      m_ButtonHelp.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  String help = ((AdditionalInformationHandler) m_PanelStatement).getAdditionalInformation();
-          HelpFrame.showHelp(SQLStatement.class, help, false);
-	}
+      m_ButtonHelp.addActionListener((ActionEvent e) -> {
+	String help = ((AdditionalInformationHandler) m_PanelStatement).getAdditionalInformation();
+	HelpFrame.showHelp(SQLStatement.class, help, false);
       });
       m_PanelButtonsRight.add(m_ButtonHelp);
     }
     
     m_PopupMenu = new JPopupMenu();
-    m_RecentStatementsHandler = new RecentSQLStatementsHandler<JPopupMenu>(SESSION_FILE, 5, m_PopupMenu);
+    m_RecentStatementsHandler = new RecentSQLStatementsHandler<>(SESSION_FILE, 10, m_PopupMenu);
     m_RecentStatementsHandler.addRecentItemListener(new RecentItemListener<JPopupMenu,SQLStatement>() {
       public void recentItemAdded(RecentItemEvent<JPopupMenu,SQLStatement> e) {
 	// ignored
@@ -239,5 +239,48 @@ public class SQLStatementPanel
    */
   public SQLSyntaxEditorPanel getQueryPanel() {
     return m_PanelStatement;
+  }
+
+  /**
+   * Sets the enabled state.
+   *
+   * @param value	true if to be enabled
+   */
+  public void setEnabled(boolean value) {
+    super.setEnabled(value);
+    m_ButtonOptions.setEnabled(value);
+    m_ButtonHistory.setEnabled(value);
+    if (m_ButtonHelp != null)
+      m_ButtonHelp.setEnabled(value);
+    m_PanelStatement.setEnabled(value);
+  }
+
+  /**
+   * Adds the listener for changes to the query.
+   *
+   * @param l		the listener to add
+   */
+  public void addQueryChangeListener(ChangeListener l) {
+    m_QueryChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for changes to the query.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeQueryChangeListener(ChangeListener l) {
+    m_QueryChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners that the query has changed.
+   */
+  protected void notifyQueryChangeListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_QueryChangeListeners)
+      l.stateChanged(e);
   }
 }
