@@ -15,7 +15,7 @@
 
 /*
  * SqlConnectionPanel.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.sqlworkbench;
@@ -190,5 +190,15 @@ public class SqlConnectionPanel
    */
   public AbstractDatabaseConnection getDatabaseConnection() {
     return m_DatabaseConnection;
+  }
+
+  /**
+   * Sets the enabled state.
+   *
+   * @param value	true if enabled
+   */
+  public void setEnabled(boolean value) {
+    super.setEnabled(value);
+    m_ButtonConnection.setEnabled(value);
   }
 }
