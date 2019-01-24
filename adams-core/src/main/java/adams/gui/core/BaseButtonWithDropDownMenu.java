@@ -15,7 +15,7 @@
 
 /*
  * BaseButtonWithDropDownMenu.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -39,6 +39,8 @@ public class BaseButtonWithDropDownMenu
   extends BaseButton {
 
   private static final long serialVersionUID = 6616758688778479716L;
+
+  public static final String SEPARATOR = "---";
 
   /** the menu items. */
   protected List<JMenuItem> m_MenuItems;
@@ -103,6 +105,13 @@ public class BaseButtonWithDropDownMenu
   }
 
   /**
+   * Adds a separator to the dropdown menu.
+   */
+  public void addSeparatorToMenu() {
+    m_MenuItems.add(new JMenuItem(SEPARATOR));
+  }
+
+  /**
    * Sets the menu to display.
    *
    * @param menu 	the menu to use
@@ -131,8 +140,12 @@ public class BaseButtonWithDropDownMenu
     }
     else {
       menu = new BasePopupMenu();
-      for (JMenuItem menuitem : m_MenuItems)
-	menu.add(menuitem);
+      for (JMenuItem menuitem : m_MenuItems) {
+        if (menuitem.getText().equals(SEPARATOR))
+          menu.addSeparator();
+        else
+          menu.add(menuitem);
+      }
     }
     menu.show(this, 0, this.getHeight());
   }
