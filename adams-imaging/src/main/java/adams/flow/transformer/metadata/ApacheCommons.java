@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Sanselan.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+/*
+ * ApacheCommons.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.metadata;
 
@@ -26,7 +26,7 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Uses the Sanselan library to extract the meta-data.<br>
+ * Uses the Apache Commons Imaging library to extract the meta-data.<br>
  * For more information see:<br>
  * https:&#47;&#47;commons.apache.org&#47;proper&#47;commons-imaging&#47;
  * <br><br>
@@ -41,9 +41,8 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class Sanselan
+public class ApacheCommons
   extends AbstractMetaDataExtractor {
 
   /** for serialization. */
@@ -57,7 +56,7 @@ public class Sanselan
   @Override
   public String globalInfo() {
     return 
-	"Uses the Sanselan library to extract the meta-data.\n"
+	"Uses the Apache Commons Imaging library to extract the meta-data.\n"
 	+ "For more information see:\n"
 	+ "https://commons.apache.org/proper/commons-imaging/";
   }
@@ -71,6 +70,6 @@ public class Sanselan
    */
   @Override
   protected SpreadSheet doExtract(File file) throws Exception {
-    return ImageMetaDataHelper.sanselan(file);
+    return ImageMetaDataHelper.commons(file);
   }
 }

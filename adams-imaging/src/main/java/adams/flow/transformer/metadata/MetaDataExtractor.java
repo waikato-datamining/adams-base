@@ -19,10 +19,10 @@
  */
 package adams.flow.transformer.metadata;
 
-import java.io.File;
-
 import adams.data.image.ImageMetaDataHelper;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -71,6 +71,6 @@ public class MetaDataExtractor
    */
   @Override
   protected SpreadSheet doExtract(File file) throws Exception {
-    return ImageMetaDataHelper.getMetaDataExtractor(file);
+    return ImageMetaDataHelper.metaDataExtractor(file);
   }
 }

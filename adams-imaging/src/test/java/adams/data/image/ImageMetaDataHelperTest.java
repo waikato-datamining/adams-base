@@ -116,7 +116,7 @@ public class ImageMetaDataHelperTest
   }
 
   /**
-   * Tests the {@link ImageMetaDataHelper#getMetaData(File)} method.
+   * Tests the {@link ImageMetaDataHelper#sanselan(File)} method.
    */
   public void testGetMetaData() {
     Regression	reg;
@@ -139,7 +139,7 @@ public class ImageMetaDataHelperTest
       m_TestHelper.deleteFileFromTmp(output[i]);
       regFiles[i] = new TmpFile(output[i]);
       try {
-	meta = ImageMetaDataHelper.getMetaData(new TmpFile(input[i]));
+	meta = ImageMetaDataHelper.sanselan(new TmpFile(input[i]));
 	removeKey(meta, "File Modified Date");
 	save(meta, output[i]);
       }
@@ -155,7 +155,7 @@ public class ImageMetaDataHelperTest
   }
 
   /**
-   * Tests the {@link ImageMetaDataHelper#getMetaDataExtractor(File)} method.
+   * Tests the {@link ImageMetaDataHelper#metaDataExtractor(File)} method.
    */
   public void testGetMetaDataExtractor() {
     Regression	reg;
@@ -178,7 +178,7 @@ public class ImageMetaDataHelperTest
       m_TestHelper.deleteFileFromTmp(output[i]);
       regFiles[i] = new TmpFile(output[i]);
       try {
-	meta = ImageMetaDataHelper.getMetaDataExtractor(new TmpFile(input[i]));
+	meta = ImageMetaDataHelper.metaDataExtractor(new TmpFile(input[i]));
 	removeKey(meta, "File Modified Date");
 	save(meta, output[i]);
       }

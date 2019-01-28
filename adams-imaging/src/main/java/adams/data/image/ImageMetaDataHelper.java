@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageMetaDataHelper.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
@@ -25,10 +25,9 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
-import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
+import org.apache.commons.imaging.Imaging;
 import org.apache.sanselan.Sanselan;
-import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.common.ImageMetadata;
 
 import java.io.File;
@@ -64,23 +63,23 @@ public class ImageMetaDataHelper {
   }
   
   /**
-   * Reads the meta-data from the file.
+   * Reads the meta-data from the file (using Sanselan).
    * 
    * @param file	the file to read the meta-data from
    * @return		the meta-data
    * @throws Exception	if failed to read meta-data
    */
-  public static SpreadSheet getMetaData(File file) throws Exception {
-    SpreadSheet				sheet;
-    Row					row;
-    IImageMetadata			meta;
-    String[]				parts;
-    String				key;
-    String				value;
-    org.apache.sanselan.ImageInfo	info;
-    String				infoStr;
-    String[]				lines;
-    HashSet<String>			keys;
+  public static SpreadSheet sanselan(File file) throws Exception {
+    SpreadSheet					sheet;
+    Row						row;
+    org.apache.sanselan.common.IImageMetadata	meta;
+    String[]					parts;
+    String					key;
+    String					value;
+    org.apache.sanselan.ImageInfo		info;
+    String					infoStr;
+    String[]					lines;
+    HashSet<String>				keys;
 
     sheet = new DefaultSpreadSheet();
     
@@ -143,16 +142,95 @@ public class ImageMetaDataHelper {
   }
 
   /**
+   * Reads the meta-data from the file (Commons Imaging).
+   *
+   * @param file	the file to read the meta-data from
+   * @return		the meta-data
+   * @throws Exception	if failed to read meta-data
+   */
+  public static SpreadSheet commons(File file) throws Exception {
+    SpreadSheet						sheet;
+    Row							row;
+    org.apache.commons.imaging.common.ImageMetadata	meta;
+    String[]						parts;
+    String						key;
+    String						value;
+    org.apache.commons.imaging.ImageInfo 		info;
+    String						infoStr;
+    String[]						lines;
+    HashSet<String>					keys;
+
+    sheet = new DefaultSpreadSheet();
+
+    // header
+    row = sheet.getHeaderRow();
+    row.addCell("K").setContent("Key");
+    row.addCell("V").setContent("Value");
+
+    keys = new HashSet<String>();
+
+    // meta-data
+    meta = Imaging.getMetadata(file.getAbsoluteFile());
+    if (meta != null) {
+      for (Object item: meta.getItems()) {
+	key   = null;
+	value = null;
+	if (item instanceof ImageMetadata.Item) {
+	  key   = ((ImageMetadata.Item) item).getKeyword().trim();
+	  value = ((ImageMetadata.Item) item).getText().trim();
+	}
+	else {
+	  parts = item.toString().split(": ");
+	  if (parts.length == 2) {
+	    key   = parts[0].trim();
+	    value = parts[1].trim();
+	  }
+	}
+	if (key != null) {
+	  if (!keys.contains(key)) {
+	    keys.add(key);
+	    row = sheet.addRow();
+	    row.addCell("K").setContent(key);
+	    row.addCell("V").setContent(fixDateTime(Utils.unquote(value)));
+	  }
+	}
+      }
+    }
+
+    // image info
+    info = Imaging.getImageInfo(file.getAbsoluteFile());
+    if (info != null) {
+      infoStr = info.toString();
+      lines = infoStr.split(System.lineSeparator());
+      for (String line: lines) {
+	parts = line.split(": ");
+	if (parts.length == 2) {
+	  key   = parts[0].trim();
+	  value = parts[1].trim();
+	  if (!keys.contains(key)) {
+	    row   = sheet.addRow();
+	    row.addCell("K").setContent(key);
+	    row.addCell("V").setContent(Utils.unquote(value));
+	    keys.add(key);
+	  }
+	}
+      }
+    }
+
+    return sheet;
+  }
+
+  /**
    * Reads the meta-data from the file (using meta-data extractor).
    * 
    * @param file	the file to read the meta-data from
    * @return		the meta-data
    * @throws Exception	if failed to read meta-data
    */
-  public static SpreadSheet getMetaDataExtractor(File file) throws Exception {
-    SpreadSheet		sheet;
-    Row			row;
-    Metadata 		metadata;
+  public static SpreadSheet metaDataExtractor(File file) throws Exception {
+    SpreadSheet			sheet;
+    Row				row;
+    com.drew.metadata.Metadata 	metadata;
 
     sheet = new DefaultSpreadSheet();
     

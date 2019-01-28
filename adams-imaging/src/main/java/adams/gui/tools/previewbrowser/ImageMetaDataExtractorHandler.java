@@ -91,7 +91,7 @@ public class ImageMetaDataExtractorHandler
 
     try {
       panel = new JPanel(new BorderLayout(5, 5));
-      sheet = ImageMetaDataHelper.getMetaDataExtractor(file);
+      sheet = ImageMetaDataHelper.metaDataExtractor(file);
       table = new SpreadSheetTable(sheet);
       panel.add(new BaseScrollPane(table));
 

@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Sanselan.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+/*
+ * ApacheCommonsImageHandler.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
-package adams.flow.transformer.metadata;
+package adams.gui.tools.previewbrowser;
 
-import adams.data.image.ImageMetaDataHelper;
-import adams.data.spreadsheet.SpreadSheet;
+import adams.core.Utils;
+import adams.data.io.input.ApacheCommonsImageReader;
+import adams.gui.visualization.image.ImagePanel;
 
 import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Uses the Sanselan library to extract the meta-data.<br>
- * For more information see:<br>
- * https:&#47;&#47;commons.apache.org&#47;proper&#47;commons-imaging&#47;
+ * Displays the following image types: bmp,gif,ico,pbm,pgm,png,pnm,ppm,psd,tif,tiff
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -41,13 +40,12 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class Sanselan
-  extends AbstractMetaDataExtractor {
+public class ApacheCommonsImageHandler
+  extends AbstractContentHandler {
 
   /** for serialization. */
-  private static final long serialVersionUID = 3185245918519979059L;
+  private static final long serialVersionUID = -3962259305718630395L;
 
   /**
    * Returns a string describing the object.
@@ -56,21 +54,33 @@ public class Sanselan
    */
   @Override
   public String globalInfo() {
-    return 
-	"Uses the Sanselan library to extract the meta-data.\n"
-	+ "For more information see:\n"
-	+ "https://commons.apache.org/proper/commons-imaging/";
+    return "Displays the following image types: " + Utils.arrayToString(getExtensions());
   }
 
   /**
-   * Performs the actual meta-data extraction.
-   * 
-   * @param file	the file to process
-   * @return		the meta-data
-   * @throws Exception	if extraction fails
+   * Returns the list of extensions (without dot) that this handler can
+   * take care of.
+   *
+   * @return		the list of extensions (no dot)
    */
   @Override
-  protected SpreadSheet doExtract(File file) throws Exception {
-    return ImageMetaDataHelper.sanselan(file);
+  public String[] getExtensions() {
+    return new ApacheCommonsImageReader().getFormatExtensions();
+  }
+
+  /**
+   * Creates the actual view.
+   *
+   * @param file	the file to create the view for
+   * @return		the view
+   */
+  @Override
+  protected PreviewPanel createPreview(File file) {
+    ImagePanel		panel;
+
+    panel = new ImagePanel();
+    panel.load(file, new ApacheCommonsImageReader());
+
+    return new PreviewPanel(panel, panel.getPaintPanel());
   }
 }

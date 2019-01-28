@@ -103,7 +103,13 @@
       <artifactId>sanselan</artifactId>
       <version>0.97-incubator</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>com.github.mike10004</groupId>
+      <artifactId>commons-imaging</artifactId>
+      <version>1.0a1</version>
+    </dependency>
+
     <dependency>
       <groupId>com.drewnoakes</groupId>
       <artifactId>metadata-extractor</artifactId>

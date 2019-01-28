@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * SanselanImageMetaDataHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+/*
+ * ApacheCommonsImageMetaDataHandler.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
 import adams.data.image.ImageMetaDataHelper;
-import adams.data.io.input.SanselanImageReader;
+import adams.data.io.input.ApacheCommonsImageReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.SearchPanel;
@@ -48,9 +48,8 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10619 $
  */
-public class SanselanImageMetaDataHandler
+public class ApacheCommonsImageMetaDataHandler
   extends AbstractContentHandler {
 
   /** for serialization. */
@@ -74,7 +73,7 @@ public class SanselanImageMetaDataHandler
    */
   @Override
   public String[] getExtensions() {
-    return new SanselanImageReader().getFormatExtensions();
+    return new ApacheCommonsImageReader().getFormatExtensions();
   }
 
   /**
