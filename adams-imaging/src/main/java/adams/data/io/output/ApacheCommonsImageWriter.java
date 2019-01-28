@@ -80,7 +80,7 @@ public class ApacheCommonsImageWriter
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"bmp", "gif", "ico", "pbm", "pgm", "png", "pnm", "ppm", "tif", "tiff"};
+    return new String[]{"bmp", "gif", "ico", "jpg", "pbm", "pgm", "png", "pnm", "ppm", "tif", "tiff"};
   }
 
   /**

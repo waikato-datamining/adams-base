@@ -19,16 +19,15 @@
  */
 package adams.data.io.input;
 
-import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-
-import org.apache.sanselan.Sanselan;
-
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.SanselanImageWriter;
+import org.apache.sanselan.Sanselan;
+
+import java.awt.image.BufferedImage;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -81,7 +80,7 @@ public class SanselanImageReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"bmp", "gif", "ico", "pbm", "pgm", "png", "pnm", "ppm", "psd", "tif", "tiff"};
+    return new String[]{"bmp", "gif", "ico", "jpg", "pbm", "pgm", "png", "pnm", "ppm", "psd", "tif", "tiff"};
   }
 
   /**

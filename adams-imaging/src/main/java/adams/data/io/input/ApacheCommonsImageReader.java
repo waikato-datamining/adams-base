@@ -79,7 +79,7 @@ public class ApacheCommonsImageReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"bmp", "gif", "ico", "pbm", "pgm", "png", "pnm", "ppm", "psd", "tif", "tiff"};
+    return new String[]{"bmp", "gif", "ico", "jpg", "pbm", "pgm", "png", "pnm", "ppm", "psd", "tif", "tiff"};
   }
 
   /**

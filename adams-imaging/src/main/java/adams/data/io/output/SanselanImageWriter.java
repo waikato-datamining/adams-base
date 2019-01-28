@@ -19,17 +19,16 @@
  */
 package adams.data.io.output;
 
-import java.util.HashMap;
-
-import org.apache.sanselan.ImageFormat;
-import org.apache.sanselan.Sanselan;
-
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.SanselanImageReader;
+import org.apache.sanselan.ImageFormat;
+import org.apache.sanselan.Sanselan;
+
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -82,7 +81,7 @@ public class SanselanImageWriter
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"bmp", "gif", "ico", "pbm", "pgm", "png", "pnm", "ppm", "tif", "tiff"};
+    return new String[]{"bmp", "gif", "ico", "jpg", "pbm", "pgm", "png", "pnm", "ppm", "tif", "tiff"};
   }
 
   /**
