@@ -15,7 +15,7 @@
 
 /*
  * DirectoryChooserPanel.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -141,6 +141,17 @@ public class DirectoryChooserPanel
     catch (Exception e) {
       return new PlaceholderFile(value);
     }
+  }
+
+  /**
+   * Checks whether the string value is valid and can be parsed.
+   *
+   * @param value	the value to check
+   * @return		true if valid
+   */
+  @Override
+  protected boolean isValid(String value) {
+    return PlaceholderFile.isValid(value);
   }
 
   /**
