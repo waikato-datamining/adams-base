@@ -852,9 +852,11 @@ public class PropertiesParameterPanel
    * Updates the tool tip.
    *
    * @param comp	the component to update
-   * @param help	the tip text to use
+   * @param help	the tip text to use, ignored if null
    */
   protected void updateToolTipText(Component comp, String help) {
+    if (help == null)
+      return;
     if (comp instanceof JComponent)
       ((JComponent) comp).setToolTipText(help);
   }
@@ -954,28 +956,32 @@ public class PropertiesParameterPanel
           case TIME:
             timePanel = new TimeChooserPanel();
             timePanel.setCurrent(new BaseTime(value.getProperty(key)).timeValue());
-            timePanel.setToolTipText(help);
+            if (help != null)
+	      timePanel.setToolTipText(help);
             timePanel.setInlineEditingEnabled(true);
             addProperty(key, label, timePanel);
             break;
           case DATE:
             datePanel = new DateChooserPanel();
             datePanel.setCurrent(new BaseDate(value.getProperty(key)).dateValue());
-            datePanel.setToolTipText(help);
+            if (help != null)
+	      datePanel.setToolTipText(help);
             datePanel.setInlineEditingEnabled(true);
             addProperty(key, label, datePanel);
             break;
           case DATETIME:
             dateTimePanel = new DateTimeChooserPanel();
             dateTimePanel.setCurrent(new BaseDateTime(value.getProperty(key)).dateTimeValue());
-            dateTimePanel.setToolTipText(help);
+            if (help != null)
+	      dateTimePanel.setToolTipText(help);
             dateTimePanel.setInlineEditingEnabled(true);
             addProperty(key, label, dateTimePanel);
             break;
           case DOUBLE: {
             final BaseTextField textfield = new BaseTextField(20);
             textfield.setText(value.getProperty(key));
-            textfield.setToolTipText(help);
+            if (help != null)
+	      textfield.setToolTipText(help);
             textfield.setBorder(BorderFactory.createEtchedBorder());
             textfield.getDocument().addDocumentListener(new DocumentListener() {
               @Override
@@ -1004,14 +1010,16 @@ public class PropertiesParameterPanel
           case STRING:
             final BaseTextChooserPanel textfield = new BaseTextChooserPanel();
             textfield.setCurrent(new BaseText(value.getProperty(key)));
-            textfield.setToolTipText(help);
+            if (help != null)
+	      textfield.setToolTipText(help);
             textfield.setInlineEditingEnabled(true);
             addProperty(key, label, textfield);
             break;
           case PASSWORD:
             final JPasswordField pwfield = new JPasswordField(20);
             pwfield.setText(value.getPassword(key).getValue());
-            pwfield.setToolTipText(help);
+            if (help != null)
+	      pwfield.setToolTipText(help);
             pwfield.setBorder(BorderFactory.createEtchedBorder());
             addProperty(key, label, pwfield);
             break;
@@ -1020,19 +1028,22 @@ public class PropertiesParameterPanel
             query.setWordWrap(true);
             query.setPreferredSize(m_DefaultSQLDimension);
             query.setContent(value.getProperty(key));
-            query.setToolTipText(help);
+            if (help != null)
+	      query.setToolTipText(help);
             addProperty(key, label, query);
             break;
           case BOOLEAN:
             checkbox = new BaseCheckBox();
             checkbox.setSelected(value.getBoolean(key));
-            checkbox.setToolTipText(help);
+            if (help != null)
+	      checkbox.setToolTipText(help);
             addProperty(key, label, checkbox);
             break;
           case INTEGER:
             spinner = new JSpinner();
             spinner.setValue(value.getInteger(key));
-            spinner.setToolTipText(help);
+            if (help != null)
+	      spinner.setToolTipText(help);
             addProperty(key, label, spinner);
             break;
           case LONG:
@@ -1044,7 +1055,8 @@ public class PropertiesParameterPanel
           case FONT:
             fontPanel = new FontChooserPanel();
             fontPanel.setCurrent((Font) FontEditor.valueOf(null, value.getProperty(key)));
-            fontPanel.setToolTipText(help);
+            if (help != null)
+	      fontPanel.setToolTipText(help);
             addProperty(key, label, fontPanel);
             break;
           case DIRECTORY:
@@ -1052,7 +1064,8 @@ public class PropertiesParameterPanel
             dirPanel = new DirectoryChooserPanel();
             dirPanel.setCurrent(new PlaceholderDirectory(value.getPath(key)));
             dirPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, dirPanel.getPreferredSize().height));
-            dirPanel.setToolTipText(help);
+            if (help != null)
+	      dirPanel.setToolTipText(help);
             dirPanel.setInlineEditingEnabled(true);
             addProperty(key, label, dirPanel);
             break;
@@ -1061,21 +1074,24 @@ public class PropertiesParameterPanel
             filePanel = new FileChooserPanel();
             filePanel.setCurrent(new PlaceholderFile(value.getPath(key)));
             filePanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, filePanel.getPreferredSize().height));
-            filePanel.setToolTipText(help);
+            if (help != null)
+	      filePanel.setToolTipText(help);
             filePanel.setInlineEditingEnabled(true);
             addProperty(key, label, filePanel);
             break;
           case COLOR:
             colorPanel = new ColorChooserPanel();
             colorPanel.setCurrent(value.getColor(key));
-            colorPanel.setToolTipText(help);
+            if (help != null)
+	      colorPanel.setToolTipText(help);
             colorPanel.setInlineEditingEnabled(true);
             addProperty(key, label, colorPanel);
             break;
           case ENUM:
             combo = new BaseComboBox(EnumHelper.getValues(getEnum(key)));
             combo.setSelectedItem(EnumHelper.parse(getEnum(key), value.getProperty(key)));
-            combo.setToolTipText(help);
+            if (help != null)
+	      combo.setToolTipText(help);
             addProperty(key, label, combo);
             break;
           case LIST:
@@ -1088,7 +1104,8 @@ public class PropertiesParameterPanel
             else
               combo = new BaseComboBox(getList(key));
             combo.setSelectedItem(value.getProperty(key));
-            combo.setToolTipText(help);
+            if (help != null)
+	      combo.setToolTipText(help);
             addProperty(key, label, combo);
             break;
           case BLANK_SEPARATED_LIST:
@@ -1108,7 +1125,8 @@ public class PropertiesParameterPanel
           case OBJECT_EDITOR:
             chooserPanel = getChooser(key);
             chooserPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, chooserPanel.getPreferredSize().height));
-            chooserPanel.setToolTipText(help);
+            if (help != null)
+	      chooserPanel.setToolTipText(help);
             try {
               if (value.getProperty(key).trim().length() > 0)
                 chooserPanel.setCurrent(OptionUtils.forAnyCommandLine(Object.class, value.getProperty(key)));
@@ -1126,7 +1144,8 @@ public class PropertiesParameterPanel
 	      sep = ",";
             chooserPanel = getChooser(key);
             chooserPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, chooserPanel.getPreferredSize().height));
-            chooserPanel.setToolTipText(help);
+            if (help != null)
+	      chooserPanel.setToolTipText(help);
             try {
               if (value.getProperty(key).trim().length() > 0) {
 		if (sep.equals(" "))
@@ -1152,28 +1171,32 @@ public class PropertiesParameterPanel
             indexText = new IndexTextField();
             indexText.setColumns(20);
             indexText.setText(value.getProperty(key));
-            indexText.setToolTipText(help);
+            if (help != null)
+	      indexText.setToolTipText(help);
             addProperty(key, label, indexText);
             break;
           case RANGE:
             rangeText = new RangeTextField();
             rangeText.setColumns(20);
             rangeText.setText(value.getProperty(key));
-            rangeText.setToolTipText(help);
+            if (help != null)
+	      rangeText.setToolTipText(help);
             addProperty(key, label, rangeText);
             break;
           case REGEXP:
             regexpText = new RegExpTextField();
             regexpText.setColumns(20);
             regexpText.setText(value.getProperty(key));
-            regexpText.setToolTipText(help);
+            if (help != null)
+	      regexpText.setToolTipText(help);
             addProperty(key, label, regexpText);
             break;
 	  case REGEXP_CONSTRAINED_STRING:
             regexpConstText = new RegExpConstrainedTextField(hasRegExp(key) ? getRegExp(key) : new BaseRegExp(BaseRegExp.MATCH_ALL));
             regexpConstText.setColumns(20);
             regexpConstText.setText(value.getProperty(key));
-            regexpConstText.setToolTipText(help);
+            if (help != null)
+	      regexpConstText.setToolTipText(help);
             addProperty(key, label, regexpConstText);
             break;
 	  case CUSTOM_COMPONENT:
