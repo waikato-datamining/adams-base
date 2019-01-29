@@ -50,7 +50,11 @@ adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation=\
 # the draw operations
 adams.flow.transformer.draw.AbstractDrawOperation=\
   adams.flow.transformer.draw
-  
+
+# the EXIF operations
+adams.flow.transformer.exiftagoperation.AbstractExifTagOperation=\
+  adams.flow.transformer.exiftagoperation
+
 # the algorithms for locating objects
 adams.flow.transformer.locateobjects.AbstractObjectLocator=\
   adams.flow.transformer.locateobjects

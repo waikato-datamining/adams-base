@@ -15,7 +15,6 @@
 #
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 #########
 # hooks #
@@ -30,3 +29,8 @@ adams.core.base.BaseRectangle#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 adams.core.base.QuadrilateralLocation=true
 adams.core.base.QuadrilateralLocation#toString=adams.gui.goe.BaseObjectEditor#toString
 adams.core.base.QuadrilateralLocation#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+
+# ExifTagEnumeration/Item objects
+adams.data.exif.commons.ExifTagEnum$Item=true
+adams.data.exif.commons.ExifTagEnum$Item#toString=adams.gui.goe.ConfigurableEnumerationItemEditor#toString
+adams.data.exif.commons.ExifTagEnum$Item#valueOf=adams.gui.goe.ConfigurableEnumerationItemEditor#valueOf

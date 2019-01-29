@@ -1,0 +1,14 @@
+# Project: adams
+# Date: 2019-01-29 12:21:30
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Reads the \\\"DateTimeOriginal\\\" EXIF tag" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/8726547192_1d08b00bdf_o-small.jpg
+ adams.flow.control.Tee -name filename
+  adams.flow.transformer.BaseName -remove-extensions true
+  adams.flow.transformer.SetVariable -var-name name
+ adams.flow.transformer.ExifTagOperation -operation "adams.flow.transformer.exiftagoperation.ApacheCommonsExifTagRead -tag 36867"
+ adams.flow.transformer.StringInsert -position first -value "@{name}: " -variable true
+ adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter

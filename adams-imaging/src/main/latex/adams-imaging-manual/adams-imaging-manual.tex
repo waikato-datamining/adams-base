@@ -1,8 +1,6 @@
 % This work is made available under the terms of the
 % Creative Commons Attribution-ShareAlike 4.0 license,
 % http://creativecommons.org/licenses/by-sa/4.0/.
-%
-% Version: $Revision: 3363 $
 
 \documentclass[a4paper]{book}
 
@@ -48,7 +46,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2009-2018} &
+		\parbox[c][2cm]{2cm}{\copyright 2009-2019} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -313,6 +311,7 @@ The imaging module offers some more actors that have not been introduced yet.
 	\item \textit{Draw} -- Performs draw operations on images, like setting
 	pixels, drawing lines, rectangles, ovals, text, images\footnote{adams-imaging-draw.flow}
 	and even barcodes (e.g., EAN and QRCode)\footnote{adams-imaging-barcode.flow}.
+	\item \textit{ExifTagOperation} -- allows operations on EXIF meta-data tags.
 	\item \texttt{GetImageObjectIndices} -- lists all the indices of the objects
 	stored in the report, as located by the specified finder.
 	\item \texttt{GetImageObjects} -- lists all the objects stored in the

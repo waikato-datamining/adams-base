@@ -13,8 +13,8 @@
 #
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 com.google.zxing.BarcodeFormat=adams.gui.goe.EnumEditor
 adams.core.base.QuadrilateralLocation=adams.gui.goe.BaseObjectEditor
 adams.core.base.BaseRectangle=adams.gui.goe.BaseObjectEditor
+adams.data.exif.commons.ExifTagEnum$Item=adams.gui.goe.ConfigurableEnumerationItemEditor
