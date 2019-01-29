@@ -28,8 +28,8 @@ import adams.data.exif.commons.ExifTagEnum;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractApacheCommonsExifTagOperation
-  extends AbstractExifTagOperation {
+public abstract class AbstractApacheCommonsExifTagOperation<I,O>
+  extends AbstractExifTagOperation<I,O> {
 
   private static final long serialVersionUID = 3967360712684705885L;
 

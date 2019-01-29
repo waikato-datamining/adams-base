@@ -21,7 +21,6 @@
 package adams.flow.transformer.exiftagoperation;
 
 import adams.core.MessageCollection;
-import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 
 /**
@@ -29,9 +28,9 @@ import adams.core.option.AbstractOptionHandler;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractExifTagOperation
+public abstract class AbstractExifTagOperation<I, O>
   extends AbstractOptionHandler
-  implements QuickInfoSupporter {
+  implements ExifTagOperation<I, O> {
 
   private static final long serialVersionUID = -4311927144082965123L;
 
@@ -66,7 +65,7 @@ public abstract class AbstractExifTagOperation
    * @param input	the input to process
    * @return		null if successful, otherwise error message
    */
-  protected String check(Object input) {
+  protected String check(I input) {
     if (input == null)
       return "No input data provided!";
     return null;
@@ -79,7 +78,7 @@ public abstract class AbstractExifTagOperation
    * @param errors	for storing errors
    * @return		the generated output
    */
-  protected abstract Object doProcess(Object input, MessageCollection errors);
+  protected abstract O doProcess(I input, MessageCollection errors);
 
   /**
    * Processes the incoming data.
@@ -88,7 +87,7 @@ public abstract class AbstractExifTagOperation
    * @param errors	for storing errors
    * @return		the generated output
    */
-  public Object process(Object input, MessageCollection errors) {
+  public O process(I input, MessageCollection errors) {
     String	msg;
 
     msg = check(input);

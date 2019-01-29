@@ -52,7 +52,23 @@ adams.flow.transformer.draw.AbstractDrawOperation=\
   adams.flow.transformer.draw
 
 # the EXIF operations
-adams.flow.transformer.exiftagoperation.AbstractExifTagOperation=\
+adams.flow.transformer.exiftagoperation.ExifTagOperation=\
+  adams.flow.transformer.exiftagoperation
+
+# the EXIF exists operations
+adams.flow.transformer.exiftagoperation.ExifTagExistsOperation=\
+  adams.flow.transformer.exiftagoperation
+
+# the EXIF read operations
+adams.flow.transformer.exiftagoperation.ExifTagReadOperation=\
+  adams.flow.transformer.exiftagoperation
+
+# the EXIF write operations
+adams.flow.transformer.exiftagoperation.ExifTagWriteOperation=\
+  adams.flow.transformer.exiftagoperation
+
+# the EXIF remove operations
+adams.flow.transformer.exiftagoperation.ExifTagRemoveOperation=\
   adams.flow.transformer.exiftagoperation
 
 # the algorithms for locating objects

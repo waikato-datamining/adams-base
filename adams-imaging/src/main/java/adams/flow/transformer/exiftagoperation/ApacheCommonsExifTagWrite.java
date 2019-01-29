@@ -58,7 +58,8 @@ import java.io.FileOutputStream;
   note = "general usage of Apache Commons Imaging for EXIF operations"
 )
 public class ApacheCommonsExifTagWrite
-  extends AbstractApacheCommonsExifTagOperation {
+  extends AbstractApacheCommonsExifTagOperation<Object,Object>
+  implements ExifTagWriteOperation<Object,Object> {
 
   private static final long serialVersionUID = -4257460091938302125L;
 

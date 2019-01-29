@@ -22,9 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
-import adams.env.Environment;
 import adams.flow.core.Token;
-import adams.flow.transformer.exiftagoperation.AbstractExifTagOperation;
 import adams.flow.transformer.exiftagoperation.ApacheCommonsExifTagRead;
 
 /**
@@ -78,7 +76,7 @@ import adams.flow.transformer.exiftagoperation.ApacheCommonsExifTagRead;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-operation &lt;adams.flow.transformer.exiftagoperation.AbstractExifTagOperation&gt; (property: operation)
+ * <pre>-operation &lt;adams.flow.transformer.exiftagoperation.ExifTagOperation&gt; (property: operation)
  * &nbsp;&nbsp;&nbsp;The operation to execute.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.exiftagoperation.ApacheCommonsExifTagRead
  * </pre>
@@ -93,7 +91,7 @@ public class ExifTagOperation
   private static final long serialVersionUID = 1884823351778616872L;
 
   /** the operation to use. */
-  protected AbstractExifTagOperation m_Operation;
+  protected adams.flow.transformer.exiftagoperation.ExifTagOperation m_Operation;
 
   /**
    * Returns a string describing the object.
@@ -122,7 +120,7 @@ public class ExifTagOperation
    *
    * @param value	the operation
    */
-  public void setOperation(AbstractExifTagOperation value) {
+  public void setOperation(adams.flow.transformer.exiftagoperation.ExifTagOperation value) {
     m_Operation = value;
     reset();
   }
@@ -132,7 +130,7 @@ public class ExifTagOperation
    *
    * @return		the operation
    */
-  public AbstractExifTagOperation getOperation() {
+  public adams.flow.transformer.exiftagoperation.ExifTagOperation getOperation() {
     return m_Operation;
   }
 
@@ -208,10 +206,5 @@ public class ExifTagOperation
     }
 
     return result;
-  }
-
-  public static void main(String[] args) throws Exception {
-    Environment.setEnvironmentClass(Environment.class);
-    new ExifTagOperation();
   }
 }

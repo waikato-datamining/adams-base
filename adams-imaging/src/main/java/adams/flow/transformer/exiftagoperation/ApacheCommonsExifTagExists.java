@@ -14,7 +14,7 @@
  */
 
 /*
- * ApacheCommonsExifTagRemove.java
+ * ApacheCommonsExifTagRead.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
@@ -22,23 +22,23 @@ package adams.flow.transformer.exiftagoperation;
 
 import adams.core.License;
 import adams.core.MessageCollection;
+import adams.core.Utils;
 import adams.core.annotation.MixedCopyright;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
-import adams.core.io.TempUtils;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
-import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
 import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
-import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
-import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
+import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoAscii;
+import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoByte;
+import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoDouble;
+import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoFloat;
+import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoRational;
+import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoShort;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 
 /**
- * Removes the specified tag from the file.
+ * Checks whether the specified tag is present in the the file.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
@@ -48,9 +48,9 @@ import java.io.FileOutputStream;
   license = License.CC_BY_SA_3,
   note = "general usage of Apache Commons Imaging for EXIF operations"
 )
-public class ApacheCommonsExifTagRemove
-  extends AbstractApacheCommonsExifTagOperation<Object,Object>
-  implements ExifTagRemoveOperation<Object,Object> {
+public class ApacheCommonsExifTagExists
+  extends AbstractApacheCommonsExifTagOperation<Object,Boolean>
+  implements ExifTagExistsOperation<Object> {
 
   private static final long serialVersionUID = -4257460091938302125L;
 
@@ -61,7 +61,7 @@ public class ApacheCommonsExifTagRemove
    */
   @Override
   public String globalInfo() {
-    return "Removes the specified tag from the file.";
+    return "Checks whether the specified tag is present in the the file.";
   }
 
   /**
@@ -81,7 +81,32 @@ public class ApacheCommonsExifTagRemove
    */
   @Override
   public Class[] generates() {
-    return new Class[]{String.class, File.class};
+    return new Class[]{Boolean.class};
+  }
+
+  /**
+   * Hook method for performing checks before processing the data.
+   *
+   * @param input	the input to process
+   * @return		null if successful, otherwise error message
+   */
+  @Override
+  protected String check(Object input) {
+    String	result;
+
+    result = super.check(input);
+
+    if (result == null) {
+      if (!(m_Tag.getTagInfo() instanceof TagInfoAscii)
+	&& !(m_Tag.getTagInfo() instanceof TagInfoByte)
+	&& !(m_Tag.getTagInfo() instanceof TagInfoShort)
+	&& !(m_Tag.getTagInfo() instanceof TagInfoDouble)
+	&& !(m_Tag.getTagInfo() instanceof TagInfoFloat)
+	&& !(m_Tag.getTagInfo() instanceof TagInfoRational))
+	result = "Unhandled tag info type: " + Utils.classToString(m_Tag.getTagInfo());
+    }
+
+    return result;
   }
 
   /**
@@ -92,52 +117,25 @@ public class ApacheCommonsExifTagRemove
    * @return		the generated output
    */
   @Override
-  protected Object doProcess(Object input, MessageCollection errors) {
-    Object			result;
-    File 			inputFile;
-    File			tmpFile;
-    JpegImageMetadata 		meta;
-    TiffImageMetadata 		exif;
-    TiffOutputSet 		outputSet;
-    TiffOutputDirectory 	exifDir;
-    FileOutputStream		fos;
-    BufferedOutputStream	bos;
+  protected Boolean doProcess(Object input, MessageCollection errors) {
+    Boolean		result;
+    File 		inputFile;
+    JpegImageMetadata 	meta;
+    TiffImageMetadata 	exif;
 
-    result = null;
+    result = false;
 
     if (input instanceof String)
       inputFile = new PlaceholderFile((String) input).getAbsoluteFile();
     else
       inputFile = ((File) input).getAbsoluteFile();
-    tmpFile = TempUtils.createTempFile(getClass().getSimpleName().toLowerCase() + "-", ".jpg");
 
-    fos = null;
-    bos = null;
     try {
       meta = (JpegImageMetadata) Imaging.getMetadata(inputFile);
       if (meta != null) {
 	exif = meta.getExif();
 	if (exif != null) {
-	  outputSet = exif.getOutputSet();
-	  if (outputSet != null) {
-	    exifDir = outputSet.getOrCreateExifDirectory();
-	    if (exifDir != null) {
-	      exifDir.removeField(m_Tag.getTagInfo());
-	      fos = new FileOutputStream(tmpFile);
-	      bos = new BufferedOutputStream(fos);
-	      new ExifRewriter().updateExifMetadataLossless(inputFile, bos, outputSet);
-	      if (!FileUtils.copy(tmpFile, inputFile))
-	        errors.add("Failed to replace " + inputFile + " with updated EXIF from " + tmpFile);
-	      if (!FileUtils.delete(tmpFile))
-	        errors.add("Failed to delete tmp file: " + tmpFile);
-	    }
-	    else {
-	      errors.add("Failed to obtain EXIF directory: " + input);
-	    }
-	  }
-	  else {
-	    errors.add("Failed to obtain output set: " + input);
-	  }
+	  result = (exif.getFieldValue(m_Tag.getTagInfo()) != null);
 	}
 	else {
 	  errors.add("No EXIF meta-data available: " + input);
@@ -150,13 +148,6 @@ public class ApacheCommonsExifTagRemove
     catch (Exception e) {
       errors.add("Failed to read EXIF tag " + m_Tag + " from: " + input, e);
     }
-    finally {
-      FileUtils.closeQuietly(bos);
-      FileUtils.closeQuietly(fos);
-    }
-
-    if (errors.isEmpty())
-      result = input;
 
     return result;
   }

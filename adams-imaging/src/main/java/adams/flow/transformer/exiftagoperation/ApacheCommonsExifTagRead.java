@@ -50,7 +50,8 @@ import java.io.File;
   note = "general usage of Apache Commons Imaging for EXIF operations"
 )
 public class ApacheCommonsExifTagRead
-  extends AbstractApacheCommonsExifTagOperation {
+  extends AbstractApacheCommonsExifTagOperation<Object,Object>
+  implements ExifTagReadOperation<Object,Object> {
 
   private static final long serialVersionUID = -4257460091938302125L;
 
