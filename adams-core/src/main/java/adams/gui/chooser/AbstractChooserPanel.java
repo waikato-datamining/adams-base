@@ -15,7 +15,7 @@
 
 /*
  * AbstractSelectorPanel.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -37,7 +37,10 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.FocusAdapter;
@@ -55,7 +58,6 @@ import java.util.Set;
  * button for bringing up a dialog offering the choice.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of object to handle
  */
 public abstract class AbstractChooserPanel<T>
@@ -145,6 +147,12 @@ public abstract class AbstractChooserPanel<T>
   /** the listeners for choose events. */
   protected Set<ChooseListener> m_ChooseListeners;
 
+  /** the color for valid input. */
+  protected Color m_ColorValid;
+
+  /** the color for invalid input. */
+  protected Color m_ColorInvalid;
+
   /**
    * Initializes the panel with no value.
    */
@@ -165,6 +173,7 @@ public abstract class AbstractChooserPanel<T>
     m_InlineEditingEnabled = false;
     m_NoChooseYet          = true;
     m_ChooseListeners      = new HashSet<>();
+    m_ColorInvalid         = Color.RED;
   }
 
   /**
@@ -187,6 +196,8 @@ public abstract class AbstractChooserPanel<T>
     m_TextSelection.setTransferHandler(null);
     m_TextSelection.setText(getDefaultString());
     m_TextSelection.setEditable(false);
+    m_TextSelection.setToolTipText(textFieldToolTipText());
+    m_ColorValid = m_TextSelection.getForeground();
     m_TextSelection.setPreferredSize(
       new Dimension(
         m_TextSelection.getPreferredSize().width,
@@ -230,7 +241,22 @@ public abstract class AbstractChooserPanel<T>
       public void focusLost(FocusEvent e) {
         super.focusLost(e);
         if (isInlineEditingEnabled())
-          setCurrent(fromString(m_TextSelection.getText()));
+          if (isValid(m_TextSelection.getText()))
+	    setCurrent(fromString(m_TextSelection.getText()));
+      }
+    });
+    m_TextSelection.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	updateValidity();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	updateValidity();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	updateValidity();
       }
     });
     add(m_TextSelection, BorderLayout.CENTER);
@@ -247,6 +273,17 @@ public abstract class AbstractChooserPanel<T>
     m_PanelButtons.add(m_ButtonSelection);
 
     updatePreferredSize();
+  }
+
+  /**
+   * Returns the tooltip for the text field.
+   * <br>
+   * Default implementation returns null.
+   *
+   * @return		the tooltip
+   */
+  protected String textFieldToolTipText() {
+    return null;
   }
 
   /**
@@ -386,6 +423,28 @@ public abstract class AbstractChooserPanel<T>
   }
 
   /**
+   * Checks whether the string value is valid and can be parsed.
+   * <br>
+   * Default implementation returns always true.
+   *
+   * @param value	the value to check
+   * @return		true if valid
+   */
+  protected boolean isValid(String value) {
+    return true;
+  }
+
+  /**
+   * Updates the validity indicator.
+   */
+  protected void updateValidity() {
+    if (isValid(m_TextSelection.getText()))
+      m_TextSelection.setForeground(m_ColorValid);
+    else
+      m_TextSelection.setForeground(m_ColorInvalid);
+  }
+
+  /**
    * Converts the string representation into its object representation.
    *
    * @param value	the string value to convert
@@ -399,7 +458,10 @@ public abstract class AbstractChooserPanel<T>
    * @return		the current value
    */
   public T getCurrent() {
-    return fromString(m_TextSelection.getText());
+    if (isValid(m_TextSelection.getText()))
+      return fromString(m_TextSelection.getText());
+    else
+      return fromString(getDefaultString());
   }
 
   /**
@@ -463,10 +525,12 @@ public abstract class AbstractChooserPanel<T>
 	  text = new StringBuilder(m_TextSelection.getText());
 	  text.replace(m_TextSelection.getSelectionStart(), m_TextSelection.getSelectionEnd(), clipboard);
 	}
-	setCurrent(fromString(text.toString()));
+	if (isValid(text.toString()))
+	  setCurrent(fromString(text.toString()));
       }
       else {
-	setCurrent(fromString(clipboard));
+	if (isValid(clipboard))
+	  setCurrent(fromString(clipboard));
       }
       if (caret > m_TextSelection.getDocument().getLength())
 	caret = m_TextSelection.getDocument().getLength();
@@ -754,8 +818,14 @@ public abstract class AbstractChooserPanel<T>
 
     menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
     menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed V"));
-    menuitem.setEnabled(isEditable() && ClipboardHelper.canPasteStringFromClipboard());
+    menuitem.setEnabled(isEditable() && ClipboardHelper.canPasteStringFromClipboard() && isValid(ClipboardHelper.pasteStringFromClipboard()));
     menuitem.addActionListener(e -> pasteFromClipboard());
+    result.add(menuitem);
+
+    result.addSeparator();
+
+    menuitem = new JMenuItem("Use default", GUIHelper.getIcon("revert.png"));
+    menuitem.addActionListener(e -> setDefault());
     result.add(menuitem);
 
     if (m_PopupMenuCustomizer != null) {

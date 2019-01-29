@@ -15,23 +15,21 @@
 
 /*
  * ColorChooserPanel.java
- * Copyright (C) 2008-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
-import java.awt.Color;
+import adams.gui.core.ColorHelper;
 
 import javax.swing.JColorChooser;
-
-import adams.gui.core.ColorHelper;
+import java.awt.Color;
 
 /**
  * A panel that contains a text field with the current Color (in hex notation)
  * and a button for bringing up a Color dialog.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ColorChooserPanel
   extends AbstractChooserPanel<Color> {
@@ -67,6 +65,24 @@ public class ColorChooserPanel
   }
 
   /**
+   * Returns the tooltip for the text field.
+   *
+   * @return		the tooltip
+   */
+  protected String textFieldToolTipText() {
+    return "<html>"
+      + "Formats:\n"
+      + "<ul>\n"
+      + "  <li>hex notation: #(AA)RRGGBB with AA/RR/GG/BB being hexadecimal strings</li>\n"
+      + "  <li>RGB notation: (A,)R,G,B with A/R/G/B from 0-255</li>\n"
+      + "  </li>predefined names (case-insensitive): black, blue, cyan, darkgray,"
+      + "  darkgrey, gray, grey, green, lightgray, lightgrey, magenta, orange,"
+      + "  pink, red, white, yellow</li>\n"
+      + "</ul>\n"
+      + "</html>";
+  }
+
+  /**
    * Performs the actual choosing of an object.
    *
    * @return		the chosen object or null if none chosen
@@ -93,5 +109,15 @@ public class ColorChooserPanel
    */
   protected Color fromString(String value) {
     return ColorHelper.valueOf(value);
+  }
+
+  /**
+   * Checks whether the string value is valid and can be parsed.
+   *
+   * @param value	the value to check
+   * @return		true if valid
+   */
+  protected boolean isValid(String value) {
+    return (ColorHelper.valueOf(value, null) != null);
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * AbstractDateBasedChooserPanel.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
@@ -26,13 +26,13 @@ import adams.gui.dialog.ApprovalDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Ancestor for chooser panels that use {@link Date} objects.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of date
  */
 public abstract class AbstractDateBasedChooserPanel<T extends Date>
@@ -73,6 +73,15 @@ public abstract class AbstractDateBasedChooserPanel<T extends Date>
   }
 
   /**
+   * Returns the tooltip for the text field.
+   *
+   * @return		the tooltip
+   */
+  protected String textFieldToolTipText() {
+    return "Format: " + getFormatter().toPattern();
+  }
+
+  /**
    * Converts the string representation into its object representation.
    *
    * @param value	the string value to convert
@@ -92,6 +101,25 @@ public abstract class AbstractDateBasedChooserPanel<T extends Date>
   @Override
   protected String toString(Date value) {
     return getFormatter().format(value);
+  }
+
+  /**
+   * Checks whether the string value is valid and can be parsed.
+   *
+   * @param value	the value to check
+   * @return		true if valid
+   */
+  protected boolean isValid(String value) {
+    SimpleDateFormat	df;
+
+    try {
+      df = new SimpleDateFormat(getFormatter().toPattern());
+      df.parse(value);
+      return true;
+    }
+    catch (Exception e) {
+      return false;
+    }
   }
 
   /**

@@ -15,15 +15,15 @@
 
 /*
  * SpreadSheetQueryChooserPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
-import java.awt.Dialog.ModalityType;
-
 import adams.gui.dialog.SpreadSheetQueryDialog;
 import adams.parser.SpreadSheetQueryText;
+
+import java.awt.Dialog.ModalityType;
 
 /**
  * A panel that contains a text field with the current spreadsheet query and a
@@ -106,5 +106,15 @@ public class SpreadSheetQueryChooserPanel
   @Override
   protected SpreadSheetQueryText fromString(String value) {
     return new SpreadSheetQueryText(value);
+  }
+
+  /**
+   * Checks whether the string value is valid and can be parsed.
+   *
+   * @param value	the value to check
+   * @return		true if valid
+   */
+  protected boolean isValid(String value) {
+    return new SpreadSheetQueryText().isValid(value);
   }
 }
