@@ -49,7 +49,7 @@ public class ExifTagEnum
     private static final long serialVersionUID = 436668216654476094L;
 
     /** the wrapped tag. */
-    protected TagInfo m_TagInfo;
+    protected transient TagInfo m_TagInfo;
 
     /**
      * Initializes the enum type.
@@ -68,6 +68,15 @@ public class ExifTagEnum
      * @return		the taginfo
      */
     public TagInfo getTagInfo() {
+      // null after serialization?
+      if (m_TagInfo == null) {
+	for (TagInfo tagInfo : ExifTagConstants.ALL_EXIF_TAGS) {
+	  if (tagInfo.name.equals(getID())) {
+	    m_TagInfo = tagInfo;
+	    break;
+	  }
+	}
+      }
       return m_TagInfo;
     }
   }
