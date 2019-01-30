@@ -1,10 +1,9 @@
 # File for listing simple actor swap suggestion.
 #
 # Format:
-#   current actor class = suggested actor class
+#   current actor class = suggested actor class(es), comma-separated list
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision: 15239 $
 
 # SelectFile - FileSupplier
 adams.flow.source.FileSupplier=adams.flow.source.SelectFile
@@ -17,10 +16,16 @@ adams.flow.source.DirectoryLister=adams.flow.source.FileSystemSearch
 adams.flow.sink.Display=adams.flow.sink.DumpFile
 adams.flow.sink.DumpFile=adams.flow.sink.Display
 
-# SetVariable: transformer - standalone
+# Variable/SetVariable
 adams.flow.standalone.SetVariable=adams.flow.transformer.SetVariable
-adams.flow.transformer.SetVariable=adams.flow.standalone.SetVariable
+adams.flow.transformer.SetVariable=adams.flow.standalone.SetVariable,adams.flow.source.Variable
+adams.flow.source.Variable=adams.flow.transformer.SetVariable
 
 # ForLoop - StorageForLoop
 adams.flow.source.ForLoop=adams.flow.source.StorageForLoop
 adams.flow.source.StorageForLoop=adams.flow.source.ForLoop
+
+# StorageValue/SetStorageValue/DeleteStorageValue
+adams.flow.source.StorageValue=adams.flow.transformer.SetStorageValue
+adams.flow.transformer.SetStorageValue=adams.flow.source.StorageValue,adams.flow.transformer.DeleteStorageValue
+adams.flow.transformer.DeleteStorageValue=adams.flow.transformer.SetStorageValue

@@ -15,7 +15,7 @@
 
 /*
  * SwapActor.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.goe.popupmenu;
@@ -111,6 +111,7 @@ public class SwapActor
         menuitem = new JMenuItem(target.getClass().getSimpleName() + " (" + target.getClass().getPackage().getName() + ")");
       else
         menuitem = new JMenuItem(target.getClass().getSimpleName());
+      menuitem.setIcon(GUIHelper.getIcon(target.getClass()));
       menuitems.add(menuitem);
       menuitem.addActionListener((ActionEvent e) -> swapActor(editor, current, target));
     }

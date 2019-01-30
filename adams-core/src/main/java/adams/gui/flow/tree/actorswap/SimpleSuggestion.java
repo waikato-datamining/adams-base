@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleSuggestion.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.actorswap;
@@ -33,7 +33,6 @@ import java.util.logging.Level;
  * Suggests actors based on the {@link #PROPERTIES_FILENAME} rules.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleSuggestion
   extends AbstractActorSwapSuggestion {
@@ -67,6 +66,7 @@ public class SimpleSuggestion
     List<Actor>		result;
     Properties		props;
     String		name;
+    String[]		classes;
 
     result = new ArrayList<>();
 
@@ -74,7 +74,9 @@ public class SimpleSuggestion
     name  = current.getClass().getName();
     if (props.hasKey(name)) {
       try {
-	result.add((Actor) Class.forName(props.getProperty(name)).newInstance());
+        classes = props.getProperty(name).replace(" ", "").split(",");
+        for (String cls: classes)
+	  result.add((Actor) Class.forName(cls).newInstance());
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to instantiate suggestion for '" + name + "': " + props.getProperty(name), e);

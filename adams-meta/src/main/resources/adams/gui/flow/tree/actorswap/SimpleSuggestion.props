@@ -1,10 +1,9 @@
 # File for listing simple actor swap suggestion.
 #
 # Format:
-#   current actor class = suggested actor class
+#   current actor class = suggested actor class(es), comma-separated list
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision: 15239 $
 
 # CallableX - CopyCallableX
 adams.flow.source.CallableSource=adams.flow.source.CopyCallableSource

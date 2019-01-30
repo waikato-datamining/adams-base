@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SwapActor.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import adams.flow.core.Actor;
 import adams.gui.core.BaseMenu;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuItemComparator;
 import adams.gui.flow.tree.actorswap.AbstractActorSwapSuggestion;
 
@@ -34,7 +35,6 @@ import java.util.List;
  * For swapping one actor with another.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class SwapActor
   extends AbstractTreePopupMenuItemAction {
@@ -76,6 +76,7 @@ public class SwapActor
         menuitem = new JMenuItem(actor.getClass().getSimpleName() + " (" + actor.getClass().getPackage().getName() + ")");
       else
         menuitem = new JMenuItem(actor.getClass().getSimpleName());
+      menuitem.setIcon(GUIHelper.getIcon(actor.getClass()));
       menuitems.add(menuitem);
       menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().swapActor(m_State.selPath, actor));
     }
