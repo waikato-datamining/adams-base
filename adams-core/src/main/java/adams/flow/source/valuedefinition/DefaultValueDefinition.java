@@ -15,7 +15,7 @@
 
 /*
  * DefaultValueDefinition.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source.valuedefinition;
@@ -31,7 +31,6 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  * Combines name, type and default value for a single value.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see EnterManyValues
  */
 public class DefaultValueDefinition
@@ -183,7 +182,7 @@ public class DefaultValueDefinition
    */
   public String useForwardSlashesTipText() {
     return
-	"If enabled and receiving string(s) as input, forward slashes are used in the output (but "
+	"If enabled and the type is a file- or directory-based one, then forward slashes are used in the output (but "
 	+ "the '\\\\' prefix of UNC paths is not converted).";
   }
 
