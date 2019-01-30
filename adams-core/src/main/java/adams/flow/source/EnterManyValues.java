@@ -825,7 +825,7 @@ public class EnterManyValues
     Properties	props;
     String	msg;
 
-    props = new Properties();
+    props = getDefaultProperties();
     if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
       msg = RestorableActorHelper.read(m_RestorationFile, props);
       if (msg != null) {
