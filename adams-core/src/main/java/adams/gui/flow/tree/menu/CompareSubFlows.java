@@ -14,20 +14,21 @@
  */
 
 /*
- * CompareActors.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * CompareSubFlows.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import adams.gui.action.AbstractPropertiesAction;
+import adams.flow.core.Actor;
+import adams.gui.flow.tree.Node;
 
 /**
  * Performs a diff on two actors.
  * 
  * @author fracpete
  */
-public class CompareActors
-  extends AbstractTreePopupSubMenuAction {
+public class CompareSubFlows
+  extends AbstractCompareActors {
 
   /** for serialization. */
   private static final long serialVersionUID = 3991575839421394939L;
@@ -39,32 +40,16 @@ public class CompareActors
    */
   @Override
   protected String getTitle() {
-    return "Compare actors";
+    return "Sub-flows";
   }
 
   /**
-   * Returns any sub menu actions. By default, this method returns null.
-   * Override this method when creating a submenu, use "null" in an array
-   * element to create a separator.
+   * Turns the node into an actor.
    *
-   * @return		the submenu actions
+   * @param node	the node to get the actor from
+   * @return		the retrieved actor
    */
-  @Override
-  protected AbstractPropertiesAction[] getSubMenuActions() {
-    return new AbstractPropertiesAction[]{
-      new CompareJustActors(),
-      new CompareSubFlows(),
-    };
-  }
-
-  /**
-   * Updates the action using the current state information.
-   */
-  @Override
-  protected void doUpdate() {
-    setEnabled(	     
-	   m_State.editable 
-	&& (m_State.numSel == 2)
-	&& (m_State.tree.getOwner() != null));
+  protected Actor nodeToActor(Node node) {
+    return node.getFullActor();
   }
 }
