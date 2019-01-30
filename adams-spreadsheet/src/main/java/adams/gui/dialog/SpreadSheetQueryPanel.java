@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetQueryPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -82,7 +82,7 @@ public class SpreadSheetQueryPanel
     m_PanelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelBottom.add(m_PanelButtonsLeft, BorderLayout.WEST);
     
-    m_ButtonOptions = new BaseButton("...");
+    m_ButtonOptions = new BaseButton(GUIHelper.getIcon("arrow-head-down.png"));
     m_ButtonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	JPopupMenu menu = new JPopupMenu();

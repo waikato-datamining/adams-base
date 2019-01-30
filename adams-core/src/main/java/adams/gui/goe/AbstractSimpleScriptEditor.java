@@ -15,7 +15,7 @@
 
 /*
  * AbstractSimpleScriptEditor.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -207,7 +207,7 @@ public class AbstractSimpleScriptEditor
     panelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelBottom.add(panelButtonsLeft, BorderLayout.WEST);
     
-    buttonOptions = new BaseButton("...");
+    buttonOptions = new BaseButton(GUIHelper.getIcon("arrow-head-down.png"));
     buttonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	JPopupMenu menu = createPopupMenu();

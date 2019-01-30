@@ -15,7 +15,7 @@
 
 /*
  * ActorQuickEditTab.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -168,7 +168,7 @@ public class ActorQuickEditTab
 
       setLayout(new BorderLayout());
 
-      m_ButtonCopyPaste = new BaseButton("...");
+      m_ButtonCopyPaste = new BaseButton(GUIHelper.getIcon("arrow-head-down.png"));
       m_ButtonCopyPaste.setToolTipText("Displays copy/paste/favorites action menu");
       m_ButtonCopyPaste.addActionListener((ActionEvent e) -> {
 	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(m_Editor, m_ButtonCopyPaste);
