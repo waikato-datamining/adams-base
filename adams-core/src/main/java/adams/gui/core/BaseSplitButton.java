@@ -15,7 +15,7 @@
 
 /*
  * BaseSplitButton.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -25,6 +25,7 @@ import com.jidesoft.swing.JideSplitButton;
 
 import javax.swing.Action;
 import javax.swing.Icon;
+import java.awt.Font;
 
 /**
  * Custom class for split buttons, i.e., buttons with dropdown list.
@@ -93,5 +94,6 @@ public class BaseSplitButton
    */
   protected void initButton() {
     setButtonStyle(JideButton.TOOLBOX_STYLE);
+    setFont(getFont().deriveFont(Font.PLAIN));
   }
 }
