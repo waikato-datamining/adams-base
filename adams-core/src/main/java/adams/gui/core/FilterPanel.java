@@ -15,11 +15,12 @@
 
 /*
  * FilterPanel.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -159,6 +160,7 @@ public class FilterPanel
     }
     else if (m_Layout == HORIZONTAL) {
       setLayout(new BorderLayout(0, 0));
+      m_LabelFilter.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
       add(m_LabelFilter, BorderLayout.WEST);
       add(m_TextFilter, BorderLayout.CENTER);
       add(m_LabelFilterClear, BorderLayout.EAST);
