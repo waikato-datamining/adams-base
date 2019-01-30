@@ -15,7 +15,7 @@
 
 /*
  * EnterValue.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -136,7 +136,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EnterValue
   extends AbstractInteractiveSource
@@ -490,11 +489,6 @@ public class EnterValue
     initial = getVariables().expand(initial);
     m_Comm  = new GUIHelper.DialogCommunication();
 
-    if (m_NonInteractive) {
-      m_OutputToken = new Token(initial);
-      return true;
-    }
-
     if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
       props = new Properties();
       props.setProperty(KEY_INITIAL, initial);
@@ -504,7 +498,12 @@ public class EnterValue
       else if (props.hasKey(KEY_INITIAL))
 	initial = props.getProperty(KEY_INITIAL);
     }
-    
+
+    if (m_NonInteractive) {
+      m_OutputToken = new Token(initial);
+      return true;
+    }
+
     if (m_SelectionValues.length > 0)
       value = GUIHelper.showInputDialog(
         getActualParentComponent(),
@@ -556,11 +555,6 @@ public class EnterValue
     initial = m_InitialValue.getValue();
     initial = getVariables().expand(initial);
 
-    if (m_NonInteractive) {
-      m_OutputToken = new Token(initial);
-      return true;
-    }
-
     if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
       props = new Properties();
       props.setProperty(KEY_INITIAL, initial);
@@ -569,6 +563,11 @@ public class EnterValue
 	getLogger().warning(msg);
       else if (props.hasKey(KEY_INITIAL))
 	initial = props.getProperty(KEY_INITIAL);
+    }
+
+    if (m_NonInteractive) {
+      m_OutputToken = new Token(initial);
+      return true;
     }
 
     if (m_SelectionValues.length > 0)

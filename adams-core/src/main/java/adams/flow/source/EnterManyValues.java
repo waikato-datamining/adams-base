@@ -15,7 +15,7 @@
 
 /*
  * EnterManyValues.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -709,8 +709,20 @@ public class EnterManyValues
 
     m_Queue.clear();
 
+    if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
+      props = getDefaultProperties();
+      msg   = RestorableActorHelper.read(m_RestorationFile, props);
+      if (msg != null) {
+	getLogger().warning(msg);
+	props = getDefaultProperties();
+      }
+    }
+    else {
+      props = getDefaultProperties();
+    }
+
     if (m_NonInteractive) {
-      m_Queue.addAll(Arrays.asList(propertiesToOutputType(getDefaultProperties())));
+      m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
       return true;
     }
 
@@ -728,17 +740,6 @@ public class EnterManyValues
       }
     }
     panel.setPropertyOrder(order);
-    if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
-      props = getDefaultProperties();
-      msg   = RestorableActorHelper.read(m_RestorationFile, props);
-      if (msg != null) {
-	getLogger().warning(msg);
-	props = getDefaultProperties();
-      }
-    }
-    else {
-      props = getDefaultProperties();
-    }
     panel.setProperties(props);
     panelMsg = new JPanel(new FlowLayout(FlowLayout.LEFT));
     msg = m_Message;
@@ -824,11 +825,6 @@ public class EnterManyValues
     Properties	props;
     String	msg;
 
-    if (m_NonInteractive) {
-      m_Queue.addAll(Arrays.asList(propertiesToOutputType(getDefaultProperties())));
-      return true;
-    }
-
     props = new Properties();
     if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
       msg = RestorableActorHelper.read(m_RestorationFile, props);
@@ -836,6 +832,11 @@ public class EnterManyValues
 	getLogger().warning(msg);
 	props = new Properties();
       }
+    }
+
+    if (m_NonInteractive) {
+      m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
+      return true;
     }
 
     result = true;

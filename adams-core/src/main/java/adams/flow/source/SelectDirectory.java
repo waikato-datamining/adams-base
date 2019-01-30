@@ -15,7 +15,7 @@
 
 /*
  * SelectDirectory.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -137,7 +137,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SelectDirectory
   extends AbstractInteractiveSource
@@ -508,20 +507,20 @@ public class SelectDirectory
     String			msg;
     PlaceholderDirectory	initial;
 
-    if (m_NonInteractive) {
-      m_OutputToken = new Token(convert(m_InitialDirectory));
-      return true;
-    }
-
     initial = m_InitialDirectory;
     if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
       props = new Properties();
-      props.setProperty(KEY_INITIAL, m_InitialDirectory.getAbsolutePath());
+      props.setProperty(KEY_INITIAL, initial.getAbsolutePath());
       msg = RestorableActorHelper.read(m_RestorationFile, props);
       if (msg != null)
         getLogger().warning(msg);
       else if (props.hasKey(KEY_INITIAL))
         initial = new PlaceholderDirectory(props.getProperty(KEY_INITIAL));
+    }
+
+    if (m_NonInteractive) {
+      m_OutputToken = new Token(convert(initial));
+      return true;
     }
 
     result     = false;
@@ -568,20 +567,20 @@ public class SelectDirectory
     String			msg;
     PlaceholderDirectory	initial;
 
-    if (m_NonInteractive) {
-      m_OutputToken = new Token(convert(m_InitialDirectory));
-      return true;
-    }
-
     initial = m_InitialDirectory;
     if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
       props = new Properties();
-      props.setProperty(KEY_INITIAL, m_InitialDirectory.getAbsolutePath());
+      props.setProperty(KEY_INITIAL, initial.getAbsolutePath());
       msg = RestorableActorHelper.read(m_RestorationFile, props);
       if (msg != null)
         getLogger().warning(msg);
       else if (props.hasKey(KEY_INITIAL))
         initial = new PlaceholderDirectory(props.getProperty(KEY_INITIAL));
+    }
+
+    if (m_NonInteractive) {
+      m_OutputToken = new Token(convert(initial));
+      return true;
     }
 
     result = false;

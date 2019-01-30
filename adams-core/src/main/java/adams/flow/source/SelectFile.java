@@ -15,7 +15,7 @@
 
 /*
  * SelectFile.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -164,7 +164,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SelectFile
   extends AbstractArrayProvider
@@ -879,12 +878,6 @@ public class SelectFile
 
     m_Queue.clear();
 
-    if (m_NonInteractive) {
-      for (File file: m_InitialFiles)
-        m_Queue.add(convert(file));
-      return true;
-    }
-
     initialDir      = m_InitialDirectory;
     initialFiles    = m_InitialFiles;
     initialFilesStr = new String[m_InitialFiles.length];
@@ -915,6 +908,12 @@ public class SelectFile
       }
     }
 
+    if (m_NonInteractive) {
+      for (File file: initialFiles)
+        m_Queue.add(convert(file));
+      return true;
+    }
+
     fileChooser = new BaseFileChooser();
     fileChooser.resetChoosableFileFilters();
     activeFilter = null;
@@ -942,14 +941,17 @@ public class SelectFile
     if (retVal == BaseFileChooser.APPROVE_OPTION) {
       result = true;
       files  = fileChooser.getSelectedFiles();
-      for (File file: files)
-        m_Queue.add(convert(file));
+      initialDir = new PlaceholderDirectory(fileChooser.getCurrentDirectory());
+      for (File file: files) {
+        initialDir = new PlaceholderDirectory(file.getParentFile());
+	m_Queue.add(convert(file));
+      }
       if (m_RestorationEnabled) {
         initialFilesStr = new String[files.length];
         for (i = 0; i < files.length; i++)
           initialFilesStr[i] = files[i].getAbsolutePath();
         props = new Properties();
-        props.setProperty(KEY_INITIAL_DIR, fileChooser.getCurrentDirectory().getAbsolutePath());
+        props.setProperty(KEY_INITIAL_DIR, initialDir.getAbsolutePath());
         props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(initialFilesStr));
         msg = RestorableActorHelper.write(props, m_RestorationFile);
         if (msg != null)
@@ -975,19 +977,52 @@ public class SelectFile
    * @return		true if successfully interacted
    */
   public boolean doInteractHeadless() {
-    boolean		result;
-    PlaceholderFile[]	files;
-    String[]		filesStr;
-    Properties		props;
-    String		msg;
-    int			i;
+    boolean			result;
+    PlaceholderFile[]		files;
+    String[]			filesStr;
+    Properties			props;
+    String			msg;
+    int				i;
+    PlaceholderDirectory 	initialDir;
+    PlaceholderFile[]		initialFiles;
+    String[]			initialFilesStr;
 
     result = false;
 
     m_Queue.clear();
 
+    initialDir      = m_InitialDirectory;
+    initialFiles    = m_InitialFiles;
+    initialFilesStr = new String[m_InitialFiles.length];
+    for (i = 0; i < initialFiles.length; i++)
+      initialFilesStr[i] = initialFiles[i].getAbsolutePath();
+    if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
+      props = new Properties();
+      props.setProperty(KEY_INITIAL_DIR, initialDir.getAbsolutePath());
+      props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(initialFilesStr));
+      msg = RestorableActorHelper.read(m_RestorationFile, props);
+      if (msg != null)
+        getLogger().warning(msg);
+      else {
+        if (props.hasKey(KEY_INITIAL_DIR)) {
+          initialDir = new PlaceholderDirectory(props.getProperty(KEY_INITIAL_DIR));
+        }
+        if (props.hasKey(KEY_INITIAL_FILES)) {
+          try {
+            initialFilesStr = OptionUtils.splitOptions(props.getProperty(KEY_INITIAL_FILES));
+            initialFiles    = new PlaceholderFile[initialFilesStr.length];
+            for (i = 0; i < initialFilesStr.length; i++)
+              initialFiles[i] = new PlaceholderFile(initialFilesStr[i]);
+          }
+          catch (Exception e) {
+            getLogger().log(Level.WARNING, "Failed to process '" + KEY_INITIAL_FILES + "' from restoration data!", e);
+          }
+        }
+      }
+    }
+
     if (m_NonInteractive) {
-      for (File file: m_InitialFiles)
+      for (File file: initialFiles)
         m_Queue.add(convert(file));
       return true;
     }
@@ -998,11 +1033,12 @@ public class SelectFile
       filesStr = new String[files.length];
       for (i = 0; i < files.length; i++) {
         filesStr[i] = convert(files[i]);
+        initialDir = new PlaceholderDirectory(files[i].getParentFile());
         m_Queue.add(filesStr[i]);
       }
       if (m_RestorationEnabled) {
         props = new Properties();
-        props.setProperty(KEY_INITIAL_DIR, m_InitialDirectory.getAbsolutePath());
+        props.setProperty(KEY_INITIAL_DIR, initialDir.getAbsolutePath());
         props.setProperty(KEY_INITIAL_FILES, OptionUtils.joinOptions(filesStr));
         msg = RestorableActorHelper.write(props, m_RestorationFile);
         if (msg != null)
