@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2018-08-30 11:36:37
+# Date: 2019-02-01 10:01:33
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-spreadsheet
@@ -8,7 +8,7 @@ adams.flow.control.Flow -annotation "Converts object annotations from reports in
  adams.flow.standalone.SetVariable -var-name outfile -var-value ${FLOWS}/output/via.json
  adams.flow.source.Start
  adams.flow.control.Trigger -name "combine reports"
-  adams.flow.source.FileSupplier -file ${FLOWS}/data/annotated_objects.report -file ${FLOWS}/data/circle.report
+  adams.flow.source.SelectFile -initial-file ${FLOWS}/data/annotated_objects.report -initial-file ${FLOWS}/data/circle.report
   adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
   adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.HasStorageValue -storage-name report\""
    adams.flow.control.Sequence -name then
