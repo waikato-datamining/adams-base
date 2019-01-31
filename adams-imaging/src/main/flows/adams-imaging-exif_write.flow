@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2019-01-29 13:28:47
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Updates the \\\"DateTimeOriginal\\\" EXIF tag with the current date/time." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.HistoryDisplay -display-type adams.flow.core.displaytype.Default -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/8726547192_1d08b00bdf_o-small.jpg
+ adams.flow.transformer.CopyFile -target-dir ${TMP}
+ adams.flow.control.Tee -name filename
+  adams.flow.transformer.BaseName -remove-extensions true
+  adams.flow.transformer.SetVariable -var-name name
+ adams.flow.control.Tee -name "original metadata"
+  adams.flow.transformer.ImageMetaData -extractor adams.flow.transformer.metadata.ApacheCommons
+  adams.flow.transformer.SetVariable -var-name entry -var-value original
+  adams.flow.sink.CallableSink -callable HistoryDisplay
+ adams.flow.control.Tee -name "new timestamp"
+  adams.flow.transformer.Timestamp
+  adams.flow.transformer.SetVariable -var-name timestamp
+ adams.flow.transformer.ExifTagOperation -operation "adams.flow.transformer.exiftagoperation.ApacheCommonsExifTagWrite -tag 36867 -value @{timestamp}"
+ adams.flow.control.Tee -name "modified metadata"
+  adams.flow.transformer.ImageMetaData -extractor adams.flow.transformer.metadata.ApacheCommons
+  adams.flow.transformer.SetVariable -var-name entry -var-value modified
+  adams.flow.sink.CallableSink -callable HistoryDisplay
