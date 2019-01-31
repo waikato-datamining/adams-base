@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringToByte.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -38,7 +38,6 @@ package adams.data.conversion;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringToByte
   extends AbstractConversionFromString {
@@ -75,7 +74,7 @@ public class StringToByte
   @Override
   protected Object doConvert() throws Exception {
     try {
-      return new Byte((String) m_Input);
+      return Byte.parseByte((String) m_Input);
     }
     catch (Exception e) {
       throw new Exception("Failed to parse: " + m_Input, e);

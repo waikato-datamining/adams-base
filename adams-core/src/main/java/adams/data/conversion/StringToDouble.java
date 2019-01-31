@@ -13,17 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringToDouble.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
-
-import java.util.Locale;
 
 import adams.core.QuickInfoHelper;
 import adams.core.management.LocaleHelper;
 import adams.core.management.OptionHandlingLocaleSupporter;
+
+import java.util.Locale;
 
 /**
  <!-- globalinfo-start -->
@@ -44,7 +44,6 @@ import adams.core.management.OptionHandlingLocaleSupporter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringToDouble
   extends AbstractConversionFromString
@@ -141,6 +140,12 @@ public class StringToDouble
       input = (String) m_Input;
       if (input.equalsIgnoreCase("nan"))
 	return Double.NaN;
+      else if (input.equalsIgnoreCase("-infinity"))
+	return Double.NEGATIVE_INFINITY;
+      else if (input.equalsIgnoreCase("+infinity"))
+	return Double.POSITIVE_INFINITY;
+      else if (input.equalsIgnoreCase("infinity"))
+	return Double.POSITIVE_INFINITY;
       else
 	return LocaleHelper.getSingleton().getNumberFormat(m_Locale).parse(input).doubleValue();
     }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringToLong.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -38,7 +38,6 @@ package adams.data.conversion;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringToLong
   extends AbstractConversionFromString {
@@ -75,7 +74,7 @@ public class StringToLong
   @Override
   protected Object doConvert() throws Exception {
     try {
-      return new Long((String) m_Input);
+      return Long.parseLong((String) m_Input);
     }
     catch (Exception e) {
       throw new Exception("Failed to parse: " + m_Input, e);
