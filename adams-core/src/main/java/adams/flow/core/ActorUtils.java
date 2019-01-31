@@ -15,7 +15,7 @@
 
 /*
  * ActorUtils.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -415,16 +415,32 @@ public class ActorUtils {
    * @return		true if the name was updated
    */
   public static boolean uniqueName(Actor actor, Set<String> names) {
+    // don't remove "tail" as it can change actor names in flow when loading/
+    // debugging, creating bizarre jumping around behaviour
+    return uniqueName(actor, names, false);
+  }
+
+  /**
+   * Updates the name of the actor to make it unique among all the other
+   * specified names.
+   *
+   * @param actor	the actor which name needs to be made unique
+   * @param names	the existing names
+   * @param tailRemoval whether the "tail" (eg ' (2)') can be removed to determine basename
+   * @return		true if the name was updated
+   */
+  public static boolean uniqueName(Actor actor, Set<String> names, boolean tailRemoval) {
     boolean		result;
     String		name;
     String		baseName;
     int			i;
 
     // create unique name
-    // don't remove "tail" as it can change actor names in flow when loading/
-    // debugging, creating bizarre jumping around behaviour
     baseName = actor.getName();
-    i        = 1;
+    if (tailRemoval)
+      baseName = baseName.replaceAll(" \\([0-9]+\\)$", "");
+
+    i = 1;
     do {
       if (i == 1)
 	name = baseName;

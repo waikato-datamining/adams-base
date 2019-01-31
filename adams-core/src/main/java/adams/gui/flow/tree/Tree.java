@@ -15,7 +15,7 @@
 
 /*
  * Tree.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -566,7 +566,7 @@ public class Tree
 	    continue;
 	  names.add(((Node) parent.getChildAt(i)).getActor().getName());
 	}
-	result = ActorUtils.uniqueName(actor, names);
+	result = ActorUtils.uniqueName(actor, names, true);
       }
     }
 
