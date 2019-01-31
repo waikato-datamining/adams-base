@@ -436,9 +436,9 @@ public class ActorUtils {
     int			i;
 
     // create unique name
-    baseName = actor.getName();
+    baseName = actor.getName().trim();
     if (tailRemoval)
-      baseName = baseName.replaceAll(" \\([0-9]+\\)$", "");
+      baseName = baseName.replaceAll(" \\([0-9]+\\)$", "").trim();
 
     i = 1;
     do {

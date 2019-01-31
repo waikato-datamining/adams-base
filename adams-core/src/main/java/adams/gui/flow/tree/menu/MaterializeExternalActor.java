@@ -109,7 +109,7 @@ public class MaterializeExternalActor
     parent.insert(newNode, index);
     currNode = newNode;
     
-    m_State.tree.updateActorName(currNode);
+    m_State.tree.updateActorName(currNode, false);
     m_State.tree.setModified(true);
     m_State.tree.nodeStructureChanged(currNode);
     m_State.tree.notifyActorChangeListeners(new ActorChangeEvent(m_State.tree, currNode, Type.MODIFY));

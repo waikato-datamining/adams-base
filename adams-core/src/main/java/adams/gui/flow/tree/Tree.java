@@ -365,7 +365,7 @@ public class Tree
       if (e.getNotificationTime() == NotificationTime.FINISHED) {
 	for (BaseTreeNode node: tnodes) {
 	  if (node instanceof Node) {
-	    if (updateActorName((Node) node))
+	    if (updateActorName((Node) node, true))
 	      nodeStructureChanged((Node) node);
 	  }
 	}
@@ -534,9 +534,10 @@ public class Tree
    * is determined.
    *
    * @param node	the actor to check
+   * @param force	whether to force the updating
    * @return		true if the actor's name was modified
    */
-  public boolean updateActorName(final Node node) {
+  public boolean updateActorName(final Node node, boolean force) {
     boolean		result;
     Node 		parent;
     Actor 		actor;
@@ -566,7 +567,7 @@ public class Tree
 	    continue;
 	  names.add(((Node) parent.getChildAt(i)).getActor().getName());
 	}
-	result = ActorUtils.uniqueName(actor, names, true);
+	result = ActorUtils.uniqueName(actor, names, force);
       }
     }
 

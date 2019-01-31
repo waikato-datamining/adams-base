@@ -147,7 +147,7 @@ public class ActorQuickEditTab
 	Node node = (Node) m_TreePath.getLastPathComponent();
 	Node parent = (Node) node.getParent();
 	node.setActor((Actor) m_Object);
-	tree.updateActorName(node);
+	tree.updateActorName(node, false);
 	tree.setModified(true);
 	tree.nodeStructureChanged(node);
 	tree.notifyActorChangeListeners(new ActorChangeEvent(tree, node, Type.MODIFY));

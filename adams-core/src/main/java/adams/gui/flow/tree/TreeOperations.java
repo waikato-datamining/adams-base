@@ -547,7 +547,7 @@ public class TreeOperations
 	exp      = getOwner().getExpandedFullNames();
 	children = TreeHelper.buildTree(node, actors, true);
 	for (Node child: children)
-	  getOwner().updateActorName(child);
+	  getOwner().updateActorName(child, true);
 	SwingUtilities.invokeLater(() -> {
 	  getOwner().nodeStructureChanged(node);
 	  getOwner().setExpandedFullNames(exp);
@@ -599,7 +599,7 @@ public class TreeOperations
 	  final int fIndex = index;
 	  SwingUtilities.invokeLater(() -> {
 	    parent.insert(child, fIndex);
-	    getOwner().updateActorName(child);
+	    getOwner().updateActorName(child, true);
 	  });
 	  index++;
 	}
@@ -668,7 +668,7 @@ public class TreeOperations
 	for (Node node: nodes) {
           node.setOwner(getOwner());
           currentNode.add(node);
-          getOwner().updateActorName(node);
+          getOwner().updateActorName(node, true);
 	}
 	getOwner().setModified(true);
 	SwingUtilities.invokeLater(() -> {
@@ -692,7 +692,7 @@ public class TreeOperations
 	for (Node node: nodes) {
           node.setOwner(getOwner());
           parentNode.insert(node, index);
-          getOwner().updateActorName(node);
+          getOwner().updateActorName(node, true);
           index++;
 	}
 	getOwner().setModified(true);
@@ -717,7 +717,7 @@ public class TreeOperations
 	for (Node node: nodes) {
           node.setOwner(getOwner());
           parentNode.insert(node, index);
-          getOwner().updateActorName(node);
+          getOwner().updateActorName(node, true);
           index++;
 	}
 	getOwner().setModified(true);
@@ -915,7 +915,7 @@ public class TreeOperations
 	currNode.setActor(actor);
 	expanded = getOwner().getExpandedState();
       }
-      getOwner().updateActorName(currNode);
+      getOwner().updateActorName(currNode, false);
       currNode.invalidateRendering();
       getOwner().redraw(currNode);
       getOwner().setModified(true);
@@ -966,7 +966,7 @@ public class TreeOperations
       actorNew = actorOld.shallowCopy();
       actorNew.setName(newName);
       node.setActor(actorNew);
-      getOwner().updateActorName(node);
+      getOwner().updateActorName(node, false);
       ((DefaultTreeModel) getOwner().getModel()).nodeChanged(node);
       getOwner().setModified(getOwner().isModified() || !oldName.equals(node.getActor().getName()));
       getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), node, Type.MODIFY));
@@ -1064,7 +1064,7 @@ public class TreeOperations
 	current = newNode;
       else
 	current = parent;
-      getOwner().updateActorName(newNode);
+      getOwner().updateActorName(newNode, false);
       if (referenced) {
 	if (!getOwner().getIgnoreNameChanges())
 	  AbstractEditPostProcessor.apply(getOwner(), parent.getActor(), TreeHelper.pathToNode(paths[0]).getActor(), newNode.getActor());
@@ -1589,7 +1589,7 @@ public class TreeOperations
       final int fIndex = index;
       SwingUtilities.invokeLater(() -> {
 	root.insert(callableNode, fIndex);
-	getOwner().updateActorName(callableNode);
+	getOwner().updateActorName(callableNode, false);
       });
     }
     else {
@@ -1600,7 +1600,7 @@ public class TreeOperations
 
     // move actor
     moved = TreeHelper.buildTree(callableNode, currActor, true);
-    getOwner().updateActorName(moved);
+    getOwner().updateActorName(moved, false);
 
     // create replacement
     replacement = null;
@@ -1616,7 +1616,7 @@ public class TreeOperations
 	fReplacement.setCallableName(new CallableActorReference(moved.getActor().getName()));
 	currNode.setActor(fReplacement);
 	currNode.removeAllChildren();
-	getOwner().updateActorName(currNode);
+	getOwner().updateActorName(currNode, false);
       });
     }
 
@@ -1728,7 +1728,7 @@ public class TreeOperations
       if (i == 0)
 	parent.insert(newNode, index);
     }
-    getOwner().updateActorName(newNode);
+    getOwner().updateActorName(newNode, false);
     getOwner().setModified(true);
     final Node fParent = parent;
     SwingUtilities.invokeLater(() -> {
@@ -1912,7 +1912,7 @@ public class TreeOperations
     if (!defaultName) {
       newActor.setName(currActor.getName());
       newNode.setActor(newActor);
-      getOwner().updateActorName(newNode);
+      getOwner().updateActorName(newNode, false);
     }
     if (expanded)
       getOwner().expand(newNode);
@@ -2000,7 +2000,7 @@ public class TreeOperations
     if (!defaultName) {
       newActor.setName(currActor.getName());
       newNode.setActor(newActor);
-      getOwner().updateActorName(newNode);
+      getOwner().updateActorName(newNode, false);
     }
     if (expanded)
       getOwner().expand(newNode);

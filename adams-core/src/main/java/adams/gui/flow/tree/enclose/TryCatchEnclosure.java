@@ -101,7 +101,7 @@ public class TryCatchEnclosure
 	  state.parent.insert(newNode, index);
       }
       SwingUtilities.invokeLater(() -> {
-	state.tree.updateActorName(newNode);
+	state.tree.updateActorName(newNode, false);
 	state.tree.setModified(true);
 	state.tree.nodeStructureChanged(state.parent);
 	state.tree.expand(newNode);
