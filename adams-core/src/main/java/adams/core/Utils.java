@@ -721,13 +721,26 @@ public class Utils {
    * @return		the new instance, or null in case of an error
    */
   public static Object newInstance(Object o) {
+    if (o != null)
+      return newInstance(o.getClass());
+    else
+      return null;
+  }
+
+  /**
+   * Creates a new instance of the class.
+   *
+   * @param cls		the class to create a new instance for
+   * @return		the new instance, or null in case of an error
+   */
+  public static Object newInstance(Class cls) {
     Object	result;
 
     try {
-      result = o.getClass().newInstance();
+      result = cls.newInstance();
     }
     catch (Exception e) {
-      System.err.println("Error creating new instance for " + o.getClass().getName() + ":");
+      System.err.println("Error creating new instance for " + cls.getName() + ":");
       e.printStackTrace();
       result = null;
     }
