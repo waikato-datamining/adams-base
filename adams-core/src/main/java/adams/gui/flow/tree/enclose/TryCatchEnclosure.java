@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TryCatchEnclosure.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.enclose;
 
 import adams.flow.control.TryCatch;
 import adams.flow.core.MutableActorHandler;
+import adams.gui.core.GUIHelper;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
@@ -37,7 +38,6 @@ import java.awt.event.ActionEvent;
  * Encloses the selected actors in a {@link TryCatch}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TryCatchEnclosure
   extends AbstractEncloseActor {
@@ -76,6 +76,7 @@ public class TryCatchEnclosure
     JMenuItem		result;
 
     result = new JMenuItem(TryCatch.class.getSimpleName());
+    result.setIcon(GUIHelper.getIcon(TryCatch.class));
     result.addActionListener((ActionEvent e) -> {
       if (state.selPaths.length == 1)
 	state.tree.addUndoPoint("Enclosing node '" + TreeHelper.pathToActor(state.selPaths[0]).getFullName() + "' in " + TryCatch.class.getName());

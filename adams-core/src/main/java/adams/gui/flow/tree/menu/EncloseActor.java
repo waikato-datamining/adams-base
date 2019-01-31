@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EncloseActor.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -25,6 +25,7 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.MutableActorHandler;
 import adams.gui.core.BaseMenu;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuItemComparator;
 import adams.gui.flow.tree.enclose.AbstractEncloseActor;
 
@@ -38,7 +39,6 @@ import java.util.List;
  * For enclosing the actors in an actor handler.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class EncloseActor
   extends AbstractTreePopupMenuItemAction {
@@ -79,6 +79,7 @@ public class EncloseActor
       if ((m_State.selPaths != null) && (m_State.selPaths.length > 1) && (!(actor instanceof MutableActorHandler)))
 	continue;
       menuitem = new JMenuItem(actor.getClass().getSimpleName());
+      menuitem.setIcon(GUIHelper.getIcon(actor.getClass()));
       menuitems.add(menuitem);
       menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().encloseActor(m_State.selPaths, actor));
     }

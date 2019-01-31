@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DisplayPanelManagerEnclosure.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.enclose;
@@ -24,6 +24,7 @@ import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
 import adams.flow.sink.DisplayPanelManager;
 import adams.flow.sink.DisplayPanelProvider;
+import adams.gui.core.GUIHelper;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
@@ -39,7 +40,6 @@ import java.util.List;
  * Encloses the {@link DisplayPanelProvider} in a {@link DisplayPanelManager}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DisplayPanelManagerEnclosure
   extends AbstractEncloseActor {
@@ -116,6 +116,7 @@ public class DisplayPanelManagerEnclosure
     JMenuItem 	result;
 
     result = new JMenuItem(DisplayPanelManager.class.getSimpleName());
+    result.setIcon(GUIHelper.getIcon(DisplayPanelManager.class));
     result.addActionListener((ActionEvent e) -> encloseInDisplayPanelManager(state));
 
     return result;
