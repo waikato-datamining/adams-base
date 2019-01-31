@@ -678,9 +678,16 @@ public class EnterManyValues
 	sheet = propertiesToSpreadSheet(props);
 	map   = new HashMap<>();
 	for (i = 0; i < sheet.getColumnCount(); i++) {
-	  map.put(
-	    sheet.getHeaderRow().getCell(i).getContent(),
-	    sheet.getRow(0).getCell(i).getNative());
+	  if (sheet.getRow(0).getCell(i).isAnyDateType()) {
+	    map.put(
+	      sheet.getHeaderRow().getCell(i).getContent(),
+	      sheet.getRow(0).getCell(i).getContent());
+	  }
+	  else {
+	    map.put(
+	      sheet.getHeaderRow().getCell(i).getContent(),
+	      sheet.getRow(0).getCell(i).getNative());
+	  }
 	}
 	result = new Token[]{new Token(map)};
 	break;
