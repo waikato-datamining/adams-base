@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractActorSwapSuggestion.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.actorswap;
@@ -39,7 +39,6 @@ import java.util.logging.Level;
  * class(es) in place.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractActorSwapSuggestion
   extends AbstractOptionHandler {
@@ -96,7 +95,7 @@ public abstract class AbstractActorSwapSuggestion
 	  result.addAll(list);
       }
       catch (Exception e) {
-	LOGGER.log(Level.SEVERE, "Failed to retrieve swap suggestions from: " + cls.getName());
+	LOGGER.log(Level.SEVERE, "Failed to retrieve swap suggestions from: " + cls.getName(), e);
       }
     }
     m_Cache.put(current.getClass(), result);

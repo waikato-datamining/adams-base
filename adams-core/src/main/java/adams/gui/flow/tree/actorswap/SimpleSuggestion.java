@@ -52,7 +52,9 @@ public class SimpleSuggestion
    */
   @Override
   public String globalInfo() {
-    return "Suggests " + DumpFile.class + " as swap partner for " + Display.class.getName() + ".";
+    return "Suggests " + DumpFile.class + " as swap partner for " + Display.class.getName() + ".\n"
+      + "Suggestions are defined in the following props file:\n"
+      + PROPERTIES_FILENAME;
   }
 
   /**

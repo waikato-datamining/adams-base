@@ -1,0 +1,8 @@
+# File for blacklisting actor handlers.
+#
+# Format:
+#   class/interface = true|false
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+
+adams.flow.condition.test.TestConditionSupporter=true

@@ -36,6 +36,7 @@ import adams.flow.core.ActorHandler;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
+@Deprecated
 public abstract class AbstractConditionalActor
   extends AbstractActor
   implements ActorHandler, TestConditionSupporter {
