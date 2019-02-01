@@ -15,21 +15,15 @@
 
 /*
  * SpreadSheetReorderColumns.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.QuickInfoHelper;
-import adams.core.Range;
-import adams.core.Utils;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetColumnRange;
-import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 import adams.flow.core.Token;
 
 /**
@@ -48,47 +42,49 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetReorderColumns
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-order &lt;java.lang.String&gt; (property: order)
- * &nbsp;&nbsp;&nbsp;The new order for the columns; A range is a comma-separated list of single 
- * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts 
- * &nbsp;&nbsp;&nbsp;the range '...'; the following placeholders can be used as well: first, 
- * &nbsp;&nbsp;&nbsp;second, third, last_2, last_1, last
- * &nbsp;&nbsp;&nbsp;default: first-last
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-order &lt;adams.data.spreadsheet.SpreadSheetUnorderedColumnRange&gt; (property: order)
+ * &nbsp;&nbsp;&nbsp;The new order for the columns
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.SpreadSheetUnorderedColumnRange
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetReorderColumns
   extends AbstractSpreadSheetTransformer {
@@ -97,7 +93,7 @@ public class SpreadSheetReorderColumns
   private static final long serialVersionUID = -6140158624456525670L;
   
   /** the new order of the columns. */
-  protected String m_Order;
+  protected SpreadSheetUnorderedColumnRange m_Order;
   
   /**
    * Returns a string describing the object.
@@ -122,7 +118,7 @@ public class SpreadSheetReorderColumns
 
     m_OptionManager.add(
 	    "order", "order",
-	    Range.ALL);
+	    new SpreadSheetUnorderedColumnRange(SpreadSheetUnorderedColumnRange.ALL));
   }
 
   /**
@@ -140,7 +136,7 @@ public class SpreadSheetReorderColumns
    *
    * @param value	the regular expression
    */
-  public void setOrder(String value) {
+  public void setOrder(SpreadSheetUnorderedColumnRange value) {
     m_Order = value;
     reset();
   }
@@ -150,7 +146,7 @@ public class SpreadSheetReorderColumns
    *
    * @return		the regular expression
    */
-  public String getOrder() {
+  public SpreadSheetUnorderedColumnRange getOrder() {
     return m_Order;
   }
 
@@ -161,7 +157,7 @@ public class SpreadSheetReorderColumns
    * 			displaying in the GUI or for listing the options.
    */
   public String orderTipText() {
-    return "The new order for the columns; " + new SpreadSheetColumnRange().getExample();
+    return "The new order for the columns";
   }
 
   /**
@@ -178,13 +174,11 @@ public class SpreadSheetReorderColumns
     Row				rowNew;
     int				i;
     int				n;
-    List<Integer>		indices;
-    String[]			ranges;
-    SpreadSheetColumnRange	range;
+    int[]			indices;
 
     result = null;
 
-    if (m_Order.trim().length() == 0)
+    if (m_Order.isEmpty())
       result = "No new column order provided!";
     
     if (result == null) {
@@ -195,27 +189,22 @@ public class SpreadSheetReorderColumns
 	output.addComment(comment);
 
       // determine indices
-      indices = new ArrayList<Integer>();
-      ranges  = SpreadSheetUtils.split(m_Order, ',');
-      for (String r: ranges) {
-	range = new SpreadSheetColumnRange(r);
-	range.setSpreadSheet(input);
-	indices.addAll(Utils.toList(range.getIntIndices()));
-      }
-      
+      m_Order.setData(input);
+      indices = m_Order.getIntIndices();
+
       // header
       rowOld = input.getHeaderRow();
       rowNew = output.getHeaderRow();
-      for (i = 0; i < indices.size(); i++)
-	rowNew.addCell("" + i).setContent(rowOld.getContent(indices.get(i)));
+      for (i = 0; i < indices.length; i++)
+	rowNew.addCell("" + i).setContent(rowOld.getContent(indices[i]));
       
       // data
       for (n = 0; n < input.getRowCount(); n++) {
 	rowOld = input.getRow(n);
 	rowNew = output.addRow();
-	for (i = 0; i < indices.size(); i++) {
-	  if (rowOld.hasCell(indices.get(i)))
-	    rowNew.addCell("" + i).setContent(rowOld.getContent(indices.get(i)));
+	for (i = 0; i < indices.length; i++) {
+	  if (rowOld.hasCell(indices[i]))
+	    rowNew.addCell("" + i).setContent(rowOld.getContent(indices[i]));
 	}
       }
 

@@ -15,26 +15,26 @@
 
 /*
  * SpreadSheetReorderColumnsTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
+import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for SpreadSheetReorderColumns actor.
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision$
  */
 public class SpreadSheetReorderColumnsTest
   extends AbstractFlowTest {
@@ -129,7 +129,7 @@ public class SpreadSheetReorderColumnsTest
       // Flow.SpreadSheetReorderColumns
       adams.flow.transformer.SpreadSheetReorderColumns spreadsheetreordercolumns7 = new adams.flow.transformer.SpreadSheetReorderColumns();
       argOption = (AbstractArgumentOption) spreadsheetreordercolumns7.getOptionManager().findByProperty("order");
-      spreadsheetreordercolumns7.setOrder((java.lang.String) argOption.valueOf("last,2,RUN,SENS,4,3,TIME,last"));
+      spreadsheetreordercolumns7.setOrder(new SpreadSheetUnorderedColumnRange("last,2,RUN,SENS,4,3,TIME,last"));
 
       abstractactor1[2] = spreadsheetreordercolumns7;
 

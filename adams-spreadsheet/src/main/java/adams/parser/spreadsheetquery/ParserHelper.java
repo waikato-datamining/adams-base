@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ParserHelper.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser.spreadsheetquery;
 
@@ -32,6 +32,7 @@ import adams.data.conversion.RenameSpreadSheetColumn;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 import adams.data.spreadsheet.rowfinder.ByIndex;
 import adams.data.spreadsheet.rowfinder.RowFinder;
 import adams.flow.control.SubProcess;
@@ -59,7 +60,6 @@ import java.util.List;
  * Helper class for spreadsheet formulas.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ParserHelper
   extends adams.parser.ParserHelper {
@@ -513,7 +513,7 @@ public class ParserHelper
       // subset of columns?
       if (!m_AllColumns) {
         SpreadSheetReorderColumns reorder = new SpreadSheetReorderColumns();
-        reorder.setOrder(Utils.flatten(m_Columns, ","));
+        reorder.setOrder(new SpreadSheetUnorderedColumnRange(Utils.flatten(m_Columns, ",")));
         sub.add(reorder);
       }
       // rename columns?

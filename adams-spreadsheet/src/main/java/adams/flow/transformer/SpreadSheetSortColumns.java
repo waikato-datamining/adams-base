@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetSortColumns.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -24,6 +24,7 @@ import adams.core.DefaultCompare;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 import adams.flow.core.Token;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.set.hash.TIntHashSet;
@@ -103,7 +104,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetSortColumns
   extends AbstractSpreadSheetTransformer {
@@ -387,7 +387,7 @@ public class SpreadSheetSortColumns
       }
       // reorder
       reorder = new SpreadSheetReorderColumns();
-      reorder.setOrder(order.toString());
+      reorder.setOrder(new SpreadSheetUnorderedColumnRange(order.toString()));
       reorder.input(new Token(sheet));
       result = reorder.execute();
       if (result == null)
