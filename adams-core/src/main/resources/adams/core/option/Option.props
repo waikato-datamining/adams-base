@@ -15,7 +15,6 @@
 #
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 ###########
 # options #
@@ -270,6 +269,11 @@ adams.core.Index#valueOf=adams.gui.goe.IndexEditor#valueOf
 adams.core.Range=true
 adams.core.Range#toString=adams.gui.goe.RangeEditor#toString
 adams.core.Range#valueOf=adams.gui.goe.RangeEditor#valueOf
+
+# UnorderedRange objects
+adams.core.UnorderedRange=true
+adams.core.UnorderedRange#toString=adams.gui.goe.UnorderedRangeEditor#toString
+adams.core.UnorderedRange#valueOf=adams.gui.goe.UnorderedRangeEditor#valueOf
 
 # CallableActorReference objects
 adams.flow.core.CallableActorReference=true

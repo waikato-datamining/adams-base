@@ -103,7 +103,6 @@ public class UnorderedRange
     initialize();
     setRange(range);
     setMax(max);
-    getRange();
   }
 
   /**
