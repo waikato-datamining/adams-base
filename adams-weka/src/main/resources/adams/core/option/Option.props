@@ -15,7 +15,6 @@
 #
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 #########
 # hooks #
@@ -40,6 +39,11 @@ adams.data.weka.WekaAttributeIndex#valueOf=adams.gui.goe.WekaAttributeIndexEdito
 adams.data.weka.WekaAttributeRange=true
 adams.data.weka.WekaAttributeRange#toString=adams.gui.goe.WekaAttributeRangeEditor#toString
 adams.data.weka.WekaAttributeRange#valueOf=adams.gui.goe.WekaAttributeRangeEditor#valueOf
+
+# WekaUnorderedAttributeRange objects
+adams.data.weka.WekaUnorderedAttributeRange=true
+adams.data.weka.WekaUnorderedAttributeRange#toString=adams.gui.goe.WekaUnorderedAttributeRangeEditor#toString
+adams.data.weka.WekaUnorderedAttributeRange#valueOf=adams.gui.goe.WekaUnorderedAttributeRangeEditor#valueOf
 
 # WekaLabelIndex objects
 adams.data.weka.WekaLabelIndex=true
