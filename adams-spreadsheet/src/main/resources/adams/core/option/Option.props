@@ -15,7 +15,6 @@
 #
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # SpreadSheetColumnIndex objects
 adams.data.spreadsheet.SpreadSheetColumnIndex=true
@@ -26,6 +25,11 @@ adams.data.spreadsheet.SpreadSheetColumnIndex#valueOf=adams.gui.goe.SpreadSheetC
 adams.data.spreadsheet.SpreadSheetColumnRange=true
 adams.data.spreadsheet.SpreadSheetColumnRange#toString=adams.gui.goe.SpreadSheetColumnRangeEditor#toString
 adams.data.spreadsheet.SpreadSheetColumnRange#valueOf=adams.gui.goe.SpreadSheetColumnRangeEditor#valueOf
+
+# SpreadSheetUnorderedColumnRange objects
+adams.data.spreadsheet.SpreadSheetUnorderedColumnRange=true
+adams.data.spreadsheet.SpreadSheetUnorderedColumnRange#toString=adams.gui.goe.SpreadSheetUnorderedColumnRangeEditor#toString
+adams.data.spreadsheet.SpreadSheetUnorderedColumnRange#valueOf=adams.gui.goe.SpreadSheetUnorderedColumnRangeEditor#valueOf
 
 # SpreadSheetQueryText objects
 adams.parser.SpreadSheetQueryText=true
