@@ -15,7 +15,7 @@
 
 /*
  * QuickInfoHelper.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -108,11 +108,8 @@ public class QuickInfoHelper {
       else
 	result = (String) current;
     }
-    else if (current instanceof Range) {
-      result = ((Range) current).getRange();
-    }
-    else if (current instanceof Index) {
-      result = ((Index) current).getIndex();
+    else if (current instanceof CustomDisplayStringProvider) {
+      result = ((CustomDisplayStringProvider) current).toDisplay();
     }
     else if (current instanceof OptionHandler) {
       result = current.getClass().getSimpleName();
