@@ -13,23 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetJoinColumns.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import adams.core.Range;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 
 import java.util.HashSet;
 
+
 /**
  <!-- globalinfo-start -->
- * Merges two or more columns in a spreadsheet into a single column.
+ * Merges two or more columns in a spreadsheet into a single column.<br>
+ * Columns can be out-of-order.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -38,32 +39,27 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
- * <pre>-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: columns)
- * &nbsp;&nbsp;&nbsp;The range of columns to merge into a single one; A range is a comma-separated 
- * &nbsp;&nbsp;&nbsp;list of single 1-based indices or sub-ranges of indices ('start-end'); '
- * &nbsp;&nbsp;&nbsp;inv(...)' inverts the range '...'; apart from column names (case-sensitive
- * &nbsp;&nbsp;&nbsp;), the following placeholders can be used as well: first, second, third, 
- * &nbsp;&nbsp;&nbsp;last_2, last_1, last
+ *
+ * <pre>-columns &lt;adams.data.spreadsheet.SpreadSheetUnorderedColumnRange&gt; (property: columns)
+ * &nbsp;&nbsp;&nbsp;The range of columns to merge into a single one
  * &nbsp;&nbsp;&nbsp;default: first-last
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-glue &lt;java.lang.String&gt; (property: glue)
  * &nbsp;&nbsp;&nbsp;The 'glue' string to use between two values that get merged.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-column-name &lt;java.lang.String&gt; (property: columnName)
- * &nbsp;&nbsp;&nbsp;The new column name; if left empty, a name is generated from the processed 
+ * &nbsp;&nbsp;&nbsp;The new column name; if left empty, a name is generated from the processed
  * &nbsp;&nbsp;&nbsp;columns.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetJoinColumns
   extends AbstractSpreadSheetConversion {
@@ -72,14 +68,14 @@ public class SpreadSheetJoinColumns
   private static final long serialVersionUID = -5364554292793461868L;
 
   /** the columns to merge. */
-  protected SpreadSheetColumnRange m_Columns;
-  
+  protected SpreadSheetUnorderedColumnRange m_Columns;
+
   /** the concatenation string to use. */
   protected String m_Glue;
-  
+
   /** the new column name. */
   protected String m_ColumnName;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -87,7 +83,8 @@ public class SpreadSheetJoinColumns
    */
   @Override
   public String globalInfo() {
-    return "Merges two or more columns in a spreadsheet into a single column.";
+    return "Merges two or more columns in a spreadsheet into a single column.\n"
+      + "Columns can be out-of-order.";
   }
 
   /**
@@ -98,16 +95,16 @@ public class SpreadSheetJoinColumns
     super.defineOptions();
 
     m_OptionManager.add(
-	    "columns", "columns",
-	    new SpreadSheetColumnRange(Range.ALL));
+      "columns", "columns",
+      new SpreadSheetUnorderedColumnRange(SpreadSheetUnorderedColumnRange.ALL));
 
     m_OptionManager.add(
-	    "glue", "glue",
-	    "");
+      "glue", "glue",
+      "");
 
     m_OptionManager.add(
-	    "column-name", "columnName",
-	    "");
+      "column-name", "columnName",
+      "");
   }
 
   /**
@@ -115,7 +112,7 @@ public class SpreadSheetJoinColumns
    *
    * @param value	the range
    */
-  public void setColumns(SpreadSheetColumnRange value) {
+  public void setColumns(SpreadSheetUnorderedColumnRange value) {
     m_Columns = value;
     reset();
   }
@@ -125,7 +122,7 @@ public class SpreadSheetJoinColumns
    *
    * @return		true range
    */
-  public SpreadSheetColumnRange getColumns() {
+  public SpreadSheetUnorderedColumnRange getColumns() {
     return m_Columns;
   }
 
@@ -136,7 +133,7 @@ public class SpreadSheetJoinColumns
    * 			displaying in the GUI or for listing the options.
    */
   public String columnsTipText() {
-    return "The range of columns to merge into a single one; " + m_Columns.getExample();
+    return "The range of columns to merge into a single one";
   }
 
   /**
@@ -207,7 +204,7 @@ public class SpreadSheetJoinColumns
     SpreadSheet		result;
     int[]		indicesMerge;
     HashSet<Integer>	hashMerge;
-    String		headerMerged;
+    StringBuilder	headerMerged;
     int			i;
     Row			headerInput;
     Row			headerOutput;
@@ -216,7 +213,7 @@ public class SpreadSheetJoinColumns
     String		content;
     int			indexMerged;
     boolean		first;
-    
+
     m_Columns.setSpreadSheet(input);
     indicesMerge = m_Columns.getIntIndices();
     if (indicesMerge.length < 2) {
@@ -224,24 +221,24 @@ public class SpreadSheetJoinColumns
       return input;
     }
 
-    hashMerge = new HashSet<Integer>();
+    hashMerge = new HashSet<>();
     for (int index: indicesMerge)
       hashMerge.add(index);
-    
+
     result = input.getHeader();
     result.getHeaderRow().clear();
-    
+
     // header
     if (m_ColumnName.isEmpty()) {
-      headerMerged = "";
+      headerMerged = new StringBuilder();
       for (i = 0; i < indicesMerge.length; i++) {
 	if (i > 0)
-	  headerMerged += m_Glue;
-	headerMerged += input.getHeaderRow().getCell(indicesMerge[i]);
+	  headerMerged.append(m_Glue);
+	headerMerged.append(input.getHeaderRow().getCell(indicesMerge[i]));
       }
     }
     else {
-      headerMerged = m_ColumnName;
+      headerMerged = new StringBuilder(m_ColumnName);
     }
     headerInput  = input.getHeaderRow();
     headerOutput = result.getHeaderRow();
@@ -250,11 +247,11 @@ public class SpreadSheetJoinColumns
     first        = true;
     for (i = 0; i < input.getColumnCount(); i++) {
       if (m_Stopped)
-        return null;
+	return null;
       if (hashMerge.contains(i)) {
 	if (headerMerged != null) {
 	  indexMerged  = n;
-	  headerOutput.addCell("" + n).setContentAsString(headerMerged);
+	  headerOutput.addCell("" + n).setContentAsString(headerMerged.toString());
 	  headerMerged = null;
 	}
 	if (first) {
@@ -267,17 +264,17 @@ public class SpreadSheetJoinColumns
 	n++;
       }
     }
-    
+
     // data
     for (DataRow rowInput: input.rows()) {
       if (m_Stopped)
-        return null;
+	return null;
       rowOutput = result.addRow();
       first     = true;
       n         = 0;
       for (i = 0; i < input.getColumnCount(); i++) {
-        if (m_Stopped)
-          return null;
+	if (m_Stopped)
+	  return null;
 	if (hashMerge.contains(i)) {
 	  content = SpreadSheet.MISSING_VALUE;
 	  if (rowInput.hasCell(i) && !rowInput.getCell(i).isMissing())
@@ -298,7 +295,7 @@ public class SpreadSheetJoinColumns
 	}
       }
     }
-  
+
     return result;
   }
 }

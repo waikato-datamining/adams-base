@@ -20,13 +20,13 @@
 
 package adams.data.conversion;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 import adams.env.Environment;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the SpreadSheetJoinColumns conversion.
@@ -107,9 +107,9 @@ public class SpreadSheetJoinColumnsTest
     result    = new SpreadSheetJoinColumns[3];
     result[0] = new SpreadSheetJoinColumns();
     result[1] = new SpreadSheetJoinColumns();
-    result[1].setColumns(new SpreadSheetColumnRange("2-3"));
+    result[1].setColumns(new SpreadSheetUnorderedColumnRange("2-3"));
     result[2] = new SpreadSheetJoinColumns();
-    result[2].setColumns(new SpreadSheetColumnRange("2-3"));
+    result[2].setColumns(new SpreadSheetUnorderedColumnRange("2-3"));
     result[2].setGlue(" | ");
 
     return result;
