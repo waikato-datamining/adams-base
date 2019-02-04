@@ -253,12 +253,6 @@ public class FindInFilesPanel
    * Updates the state of the buttons.
    */
   protected void updateButtons() {
-    boolean selectedAny;
-    boolean selectedOne;
-
-    selectedAny = (m_ListResults.getSelectedIndices().length > 0);
-    selectedOne = (m_ListResults.getSelectedIndices().length == 1);
-
     m_ButtonStart.setEnabled(!m_Running);
     m_ButtonStop.setEnabled(m_Running);
     for (AbstractFindInFilesAction action: m_Actions)
@@ -326,7 +320,7 @@ public class FindInFilesPanel
     saveSession();
 
     m_Stopped     = false;
-    m_Running     = true;
+    m_Running     = false;
     searchText    = m_TextSearchText.getText();
     regexp        = (m_ComboBoxMatching.getSelectedIndex() == 1);
     caseSensitive = m_CheckBoxCaseSensitive.isSelected();
@@ -339,6 +333,9 @@ public class FindInFilesPanel
       GUIHelper.showErrorMessage(this, "Invalid regular expression: " + searchText);
       return;
     }
+
+    m_Running = true;
+    updateButtons();
 
     worker = new SwingWorker() {
       @Override
