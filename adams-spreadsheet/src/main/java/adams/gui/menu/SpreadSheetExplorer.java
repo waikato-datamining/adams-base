@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetExplorer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -30,7 +30,6 @@ import adams.gui.core.GUIHelper;
  * For visualizing spreadsheets.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetExplorer
   extends AbstractParameterHandlingMenuItemDefinition {
@@ -80,6 +79,15 @@ public class SpreadSheetExplorer
    */
   public String getTitle() {
     return "Spreadsheet Explorer";
+  }
+
+  /**
+   * Returns whether the menu item is available.
+   *
+   * @return		true if available
+   */
+  public boolean isAvailable() {
+    return false;
   }
 
   /**
