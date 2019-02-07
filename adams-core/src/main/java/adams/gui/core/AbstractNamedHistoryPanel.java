@@ -15,13 +15,14 @@
 
 /*
  * AbstractHistoryPanel.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
 import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
 import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.SearchEvent;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import gnu.trove.list.array.TIntArrayList;
@@ -67,7 +68,6 @@ public abstract class AbstractNamedHistoryPanel<T>
    * entries.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static interface PopupCustomizer {
 
@@ -84,7 +84,6 @@ public abstract class AbstractNamedHistoryPanel<T>
    * Event object that gets sent whenever a history entry gets selected.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class HistoryEntrySelectionEvent
     extends EventObject {
@@ -131,7 +130,6 @@ public abstract class AbstractNamedHistoryPanel<T>
    * history entry gets selected.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static interface HistoryEntrySelectionListener {
 
@@ -148,7 +146,6 @@ public abstract class AbstractNamedHistoryPanel<T>
    * in separate frames.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    * @param <T> the type of content to display
    */
   public static interface FrameDisplaySupporter<T> {
@@ -198,7 +195,6 @@ public abstract class AbstractNamedHistoryPanel<T>
    * A specialized frame class for displaying a history entries.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    * @param <T> the type of
    */
   public static abstract class AbstractHistoryEntryFrame<T extends Object>
@@ -287,7 +283,6 @@ public abstract class AbstractNamedHistoryPanel<T>
    * Interface for classes that generate tool tips for entries in the history.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static interface HistoryEntryToolTipProvider<T> {
 
@@ -549,7 +544,16 @@ public abstract class AbstractNamedHistoryPanel<T>
     // remove all
     menuitem = new JMenuItem("Remove all");
     menuitem.setEnabled(m_Entries.size() > 0);
-    menuitem.addActionListener((ActionEvent ae) -> clear());
+    menuitem.addActionListener((ActionEvent ae) -> {
+      String msg = "Do you want to remove ";
+      if (count() != 1)
+        msg += "all " + count() + " entries?";
+      else
+        msg += "the only entry?";
+      if (GUIHelper.showConfirmMessage(getParent(), msg) != ApprovalDialog.APPROVE_OPTION)
+        return;
+      clear();
+    });
     result.add(menuitem);
 
     // rename - if enabled
