@@ -1026,6 +1026,29 @@ public class Utils {
   }
 
   /**
+   * Compares two integer arrays.
+   *
+   * @param a1		the first array
+   * @param a2		the second array
+   * @return		-1, 0, +1 if a1 is smaller than, equal to, or larger than a2
+   */
+  public static int compare(int[] a1, int[] a2) {
+    int		result;
+    int		i;
+
+    result = Integer.compare(a1.length, a2.length);
+    if (result == 0) {
+      for (i = 0; i < a1.length; i++) {
+        result = Integer.compare(a1[i], a2[i]);
+        if (result != 0)
+          break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Creates a new array of the specified length and fills it with the values
    * of the old array before returning it.
    *
