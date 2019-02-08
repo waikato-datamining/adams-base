@@ -15,7 +15,7 @@
 
 /*
  * LocatedObject.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -38,7 +38,7 @@ import java.util.Map;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class LocatedObject
-  implements Serializable, CloneHandler<LocatedObject> {
+  implements Serializable, CloneHandler<LocatedObject>, Comparable<LocatedObject> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8662599273386642371L;
@@ -561,8 +561,59 @@ public class LocatedObject
   }
 
   /**
+   * Compares this object with the provided one. Bounding box, then polygon (if present).
+   *
+   * @param o		the object to compare with
+   * @return		if x/y/width/height are less, equal to, or larger than
+   * 			the other one
+   */
+  @Override
+  public int compareTo(LocatedObject o) {
+    int		result;
+
+    result = Integer.compare(m_X, o.getX());
+    if (result == 0)
+      result = Integer.compare(m_Y, o.getY());
+    if (result == 0)
+      result = Integer.compare(m_Width, o.getWidth());
+    if (result == 0)
+      result = Integer.compare(m_Height, o.getHeight());
+    if (result == 0)
+      result = Boolean.compare(hasPolygon(), o.hasPolygon());
+    if (result == 0) {
+      result = Utils.compare(getPolygonX(), o.getPolygonX());
+      if (result == 0)
+	result = Utils.compare(getPolygonY(), o.getPolygonY());
+    }
+
+    return result;
+  }
+
+  /**
+   * Tests if this object is the same as the other one.
+   *
+   * @param obj		the object to compare with
+   * @return		true if the same
+   * @see		#compareTo(LocatedObject)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    return (obj instanceof LocatedObject) && (compareTo((LocatedObject) obj) == 0);
+  }
+
+  /**
+   * Returns the hashcode of the rectangle.
+   *
+   * @return		the hash
+   */
+  @Override
+  public int hashCode() {
+    return getRectangle().hashCode();
+  }
+
+  /**
    * Returns a short description of the container.
-   * 
+   *
    * @return		the description
    */
   @Override
