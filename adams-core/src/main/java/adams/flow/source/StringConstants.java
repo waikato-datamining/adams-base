@@ -15,7 +15,7 @@
 
 /*
  * StringConstants.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -154,7 +154,7 @@ public class StringConstants
    */
   @Override
   protected Class getItemClass() {
-    return String.class;
+    return m_Conversion.generates();
   }
 
   /**
