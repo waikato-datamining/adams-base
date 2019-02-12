@@ -226,7 +226,7 @@ public class FlowHelper {
 	      }
 	      else if (actor instanceof ExternalActorHandler) {
 		// load in external actor
-		current.expandOrReexpandIfNecessary();
+		current.expandOrReexpandIfNecessary(true);
 		for (n = 0; n < current.getChildCount(); n++) {
 		  result = getDatabaseConnection((Node) current.getChildAt(n), actorCls, defDbCon, false);
 		  if (result != null)
@@ -433,7 +433,7 @@ public class FlowHelper {
 	      }
 	      else if (actor instanceof ExternalActorHandler) {
 		// load in external actor
-		current.expandOrReexpandIfNecessary();
+		current.expandOrReexpandIfNecessary(true);
 		for (n = 0; n < current.getChildCount(); n++) {
 		  if (findNodesMatch(type, restrict, ((Node) current.getChildAt(n)).getActor())) {
 		    if (!((Node) current.getChildAt(n)).getActor().getSkip())
@@ -529,7 +529,7 @@ public class FlowHelper {
 	    }
 	    else if (actor instanceof ExternalActorHandler) {
 	      // load in external actor
-	      current.expandOrReexpandIfNecessary();
+	      current.expandOrReexpandIfNecessary(true);
 	      for (n = 0; n < current.getChildCount(); n++)
 		result.addAll(findTopNodes((Node) current.getChildAt(n), type));
 	    }

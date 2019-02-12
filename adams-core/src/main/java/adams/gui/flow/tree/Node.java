@@ -1015,4 +1015,16 @@ public class Node
         getOwner().nodeStructureChanged(this);
     }
   }
+
+  /**
+   * Expands or e-expands the node if necessary.
+   *
+   * @see	#expand()
+   * @see	#reexpand()
+   */
+  public void expandOrReexpandIfNecessary(boolean notify) {
+    expandOrReexpandIfNecessary();
+    if (notify && getOwner() != null)
+      getOwner().nodeStructureChanged(this);
+  }
 }
