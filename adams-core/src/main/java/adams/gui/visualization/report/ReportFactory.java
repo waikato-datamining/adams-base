@@ -500,6 +500,25 @@ public class ReportFactory {
     }
 
     /**
+     * Returns the selected rows as new report.
+     *
+     * @return		the selected fields
+     */
+    public Report getSelectionAsReport() {
+      Report		result;
+      AbstractField	field;
+
+      result = new Report();
+      for (int row: getSelectedRows()) {
+        field = getFieldAt(getActualRow(row));
+        result.addField(field);
+        result.setValue(field, getReport().getValue(field));
+      }
+
+      return result;
+    }
+
+    /**
      * Sets the underlying spectrum panel.
      *
      * @param value	the panel
