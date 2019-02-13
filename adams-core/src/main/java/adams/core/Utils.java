@@ -861,7 +861,7 @@ public class Utils {
    * @param indentStr	the string to use for indentation
    * @return		the processed string
    */
-  protected static String indent(String s, String indentStr) {
+  public static String indent(String s, String indentStr) {
     StringBuilder	result;
     String[]		lines;
     int			i;
