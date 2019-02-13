@@ -1307,6 +1307,24 @@ public class FlowRunnerPanel
   }
 
   /**
+   * Returns the source for this debug panel.
+   *
+   * @return		the actual panel, null if not available
+   */
+  public FlowPanel getDebugSourcePanel() {
+    return null;
+  }
+
+  /**
+   * Returns the debug panel.
+   *
+   * @return		the debug panel, null if not available
+   */
+  public FlowPanel getDebugTargetPanel() {
+    return null;
+  }
+
+  /**
    * Returns the properties that define the editor.
    *
    * @return		the properties

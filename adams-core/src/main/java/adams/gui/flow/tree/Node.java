@@ -15,7 +15,7 @@
 
 /*
  * Node.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -23,6 +23,8 @@ package adams.gui.flow.tree;
 import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.base.BaseAnnotation.Tag;
+import adams.core.io.filechanged.AbstractFileChangeMonitor;
+import adams.core.io.filechanged.LastModified;
 import adams.core.net.HtmlUtils;
 import adams.core.option.ArrayProducer;
 import adams.core.option.NestedConsumer;
@@ -83,6 +85,9 @@ public class Node
   /** the commandline (cache for undo/redo). */
   protected String m_CommandLine;
 
+  /** for monitoring external actor files. */
+  protected AbstractFileChangeMonitor m_ExternalFlowMonitor;
+
   /**
    * Initializes the node.
    *
@@ -91,12 +96,13 @@ public class Node
   protected Node(Tree owner) {
     super();
 
-    m_Owner        = owner;
-    m_RenderString = null;
-    m_Editable     = true;
-    m_Bookmarked   = false;
-    m_Variables    = null;
-    m_CommandLine  = null;
+    m_Owner               = owner;
+    m_RenderString        = null;
+    m_Editable            = true;
+    m_Bookmarked          = false;
+    m_Variables           = null;
+    m_CommandLine         = null;
+    m_ExternalFlowMonitor = null;
     if (m_MarkdownProcessorInitialized == null) {
       m_MarkdownProcessorInitialized = true;
       if (GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"))
@@ -140,6 +146,13 @@ public class Node
     m_RenderString = null;
     m_CommandLine  = null;
     super.setUserObject(userObject);
+
+    // monitor ext flow?
+    m_ExternalFlowMonitor = null;
+    if (userObject instanceof ExternalActorHandler) {
+      m_ExternalFlowMonitor = new LastModified();
+      m_ExternalFlowMonitor.initialize(((ExternalActorHandler) userObject).getActorFile());
+    }
   }
 
   /**
@@ -882,12 +895,23 @@ public class Node
   }
 
   /**
+   * Returns whether the node requires resetting.
+   *
+   * @return		true if it can be expanded
+   */
+  public boolean requiresReexpand() {
+    return (m_ExternalFlowMonitor != null)
+      && m_ExternalFlowMonitor.hasChanged(((ExternalActorHandler) getActor()).getActorFile());
+  }
+
+  /**
    * Resets the node.
    */
   @Override
   protected void doReset() {
     if (getActor() instanceof ExternalActorHandler) {
       ((ExternalActorHandler) getActor()).cleanUpExternalActor();
+      m_ExternalFlowMonitor.update(((ExternalActorHandler) getActor()).getActorFile());
     }
   }
   
@@ -990,5 +1014,17 @@ public class Node
       if (getOwner() != null)
         getOwner().nodeStructureChanged(this);
     }
+  }
+
+  /**
+   * Expands or e-expands the node if necessary.
+   *
+   * @see	#expand()
+   * @see	#reexpand()
+   */
+  public void expandOrReexpandIfNecessary(boolean notify) {
+    expandOrReexpandIfNecessary();
+    if (notify && getOwner() != null)
+      getOwner().nodeStructureChanged(this);
   }
 }

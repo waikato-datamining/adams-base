@@ -15,7 +15,7 @@
 
 /*
  * BaseTextArea.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -31,7 +31,7 @@ import java.awt.Font;
 import java.awt.Frame;
 
 /**
- * A customized BaseTextArea. Adds functionality for printing and selecting fonts.
+ * A customized JTextArea. Adds functionality for printing and selecting fonts.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
@@ -256,5 +256,29 @@ public class BaseTextArea
   @Override
   public void setCaretPositionLast() {
     setCaretPosition(getDocument().getLength());
+  }
+
+  /**
+   * Appends the string at the end and keeps the number of lines to the
+   * given limit (discarding from the top).
+   *
+   * @param str		the line to append
+   * @param limit	the maximum number of lines to keep, ignored if <= 0
+   */
+  public void append(String str, int limit) {
+    int 	offset;
+
+    append(str);
+
+    if ((limit > 0) && (getLineCount() > limit)) {
+      try {
+	offset = getLineEndOffset(getLineCount() - limit);
+	replaceRange("", 0, offset);
+      }
+      catch (Exception e) {
+        System.err.println("append(String,int) generated exception:");
+        e.printStackTrace();
+      }
+    }
   }
 }

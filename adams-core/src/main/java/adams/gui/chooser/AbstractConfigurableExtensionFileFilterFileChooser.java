@@ -15,11 +15,12 @@
 
 /*
  * AbstractConfigurableExtensionFileFilterFileChooser.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.goe.GenericObjectEditor;
@@ -28,6 +29,7 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -306,6 +308,26 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
   }
 
   /**
+   * Sets the reader to use.
+   *
+   * @param reader	the reader
+   */
+  public void setReader(R reader) {
+    ExtensionFileFilterWithClass	extFilter;
+
+    m_LastOpenHandler = ObjectCopyHelper.copyObject(reader);
+    for (FileFilter filter: getChoosableFileFilters()) {
+      if (filter instanceof ExtensionFileFilterWithClass) {
+        extFilter = (ExtensionFileFilterWithClass) filter;
+        if (extFilter.getClassname().equals(m_LastOpenHandler.getClass().getName())) {
+          setFileFilter(extFilter);
+          break;
+	}
+      }
+    }
+  }
+
+  /**
    * returns the writer that was chosen by the user, can be null in case the
    * user aborted the dialog or the open dialog was shown.
    *
@@ -319,6 +341,26 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
       return null;
     else
       return (W) OptionUtils.shallowCopy(m_CurrentHandler);
+  }
+
+  /**
+   * Sets the writer to use.
+   *
+   * @param writer	the writer
+   */
+  public void setWriter(W writer) {
+    ExtensionFileFilterWithClass	extFilter;
+
+    m_LastSaveHandler = ObjectCopyHelper.copyObject(writer);
+    for (FileFilter filter: getChoosableFileFilters()) {
+      if (filter instanceof ExtensionFileFilterWithClass) {
+        extFilter = (ExtensionFileFilterWithClass) filter;
+        if (extFilter.getClassname().equals(m_LastSaveHandler.getClass().getName())) {
+          setFileFilter(extFilter);
+          break;
+	}
+      }
+    }
   }
 
   /**

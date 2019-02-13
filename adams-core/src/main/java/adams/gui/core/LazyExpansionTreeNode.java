@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LazyExpansionTreeNode.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -23,7 +23,6 @@ package adams.gui.core;
  * Allows for lazy expansion of a node's sub-tree.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class LazyExpansionTreeNode
   extends BaseTreeNode {
@@ -113,13 +112,34 @@ public abstract class LazyExpansionTreeNode
     boolean	result;
     
     result = false;
-    
+
     if (!m_ExpansionOccurred) {
       result              = doExpand();
       m_ExpansionOccurred = true;
     }
 
     return result;
+  }
+
+  /**
+   * Returns whether the node requires reexpanding.
+   * <br><br>
+   * Default implementation returns false.
+   *
+   * @return		true if it needs to be reexpanded
+   */
+  public boolean requiresReexpand() {
+    return false;
+  }
+
+  /**
+   * Resets the node.
+   *
+   * @see		#doReset()
+   */
+  public void reset() {
+    doReset();
+    m_ExpansionOccurred = false;
   }
 
   /**
@@ -136,10 +156,10 @@ public abstract class LazyExpansionTreeNode
     boolean	result;
     
     result = false;
-    
+
     if (!m_ExpansionOccurred)
       return result;
-    
+
     if (getChildCount() > 0) {
       removeAllChildren();
       result = true;
@@ -150,5 +170,33 @@ public abstract class LazyExpansionTreeNode
     m_ExpansionOccurred = false;
     
     return result;
+  }
+
+  /**
+   * Re-expands the node.
+   *
+   * @see	#collapse()
+   * @see	#reset()
+   * @see	#expand()
+   */
+  public void reexpand() {
+    if (getExpansionOccurred())
+      collapse();
+    if (requiresReexpand())
+      reset();
+    expand();
+  }
+
+  /**
+   * Expands or e-expands the node if necessary.
+   *
+   * @see	#expand()
+   * @see	#reexpand()
+   */
+  public void expandOrReexpandIfNecessary() {
+    if (requiresReexpand())
+      reexpand();
+    else if (!getExpansionOccurred())
+      expand();
   }
 }

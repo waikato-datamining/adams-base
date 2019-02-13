@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExpandCollapseExternalFlow.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -30,7 +30,6 @@ import java.awt.event.ActionEvent;
  * For expanding/collapsing of an external flow.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class ExpandCollapseExternalFlow
   extends AbstractTreePopupMenuItemAction {
@@ -59,12 +58,15 @@ public class ExpandCollapseExternalFlow
       enabled = file.exists() && !file.isDirectory();
     }
     setEnabled(enabled);
-    if ((m_State.selNode != null) && m_State.selNode.getExpansionOccurred()) {
+    if ((m_State.selNode != null) && (m_State.selNode.getExpansionOccurred() && !m_State.selNode.requiresReexpand())) {
       setName("Collapse");
       setIcon(GUIHelper.getIcon("collapse.png"));
     }
     else {
-      setName("Expand");
+      if ((m_State.selNode != null) && m_State.selNode.requiresReexpand())
+        setName("Reexpand");
+      else
+	setName("Expand");
       setIcon(GUIHelper.getIcon("expand.png"));
     }
   }
@@ -77,10 +79,10 @@ public class ExpandCollapseExternalFlow
   @Override
   protected void doActionPerformed(ActionEvent e) {
     new Thread(() -> {
-      if (m_State.selNode.getExpansionOccurred())
+      if (m_State.selNode.getExpansionOccurred() && !m_State.selNode.requiresReexpand())
         m_State.selNode.collapse();
       else
-        m_State.selNode.expand();
+        m_State.selNode.reexpand();
       SwingUtilities.invokeLater(() -> m_State.tree.nodeStructureChanged(m_State.selNode));
     }).start();
   }

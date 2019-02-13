@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ReportProviderByID.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
+import adams.data.report.AbstractField;
 import adams.data.report.Field;
 import adams.data.report.Report;
 
@@ -28,7 +29,6 @@ import java.util.List;
  * Interface for table classes that handle the reports of a project.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of report to handle
  * @see AbstractIndexedTable
  */
@@ -81,6 +81,15 @@ public interface ReportProviderByID<T extends Report>
    * @return		true if successfully removed
    */
   public boolean remove(String id);
+
+  /**
+   * Removes the report field from the database.
+   *
+   * @param id		the ID of the parent data container
+   * @param field	the field to remove
+   * @return		true if successfully removed
+   */
+  public boolean remove(String id, AbstractField field);
 
   /**
    * Return a list (Vector) of IDs of data containers that match the defined

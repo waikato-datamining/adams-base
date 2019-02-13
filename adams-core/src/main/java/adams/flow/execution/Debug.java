@@ -15,7 +15,7 @@
 
 /*
  * Debug.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -560,6 +560,7 @@ public class Debug
 	    panelCopy.updateTitle();
 	    panelCopy.setDebugSourcePanel(panel);
 	    m_Owner.setParentComponent(panelCopy);
+	    panel.setDebugTargetPanel(panelCopy);
 	  }
 	}
       }
@@ -613,12 +614,14 @@ public class Debug
   }
 
   /**
-   * Blocks thhe flow execution.
+   * Blocks the flow execution.
    */
   public void blockExecution() {
     m_Blocked = true;
     m_ControlPanel.update();
-    while (m_Blocked && !m_Stopped && !m_ControlPanel.getCurrentActor().isStopped()) {
+    while (m_Blocked && !m_Stopped) {
+      if ((m_ControlPanel.getCurrentActor() != null) && m_ControlPanel.getCurrentActor().isStopped())
+        break;
       try {
 	synchronized(this) {
 	  wait(50);

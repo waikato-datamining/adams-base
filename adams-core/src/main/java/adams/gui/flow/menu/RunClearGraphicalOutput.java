@@ -47,7 +47,10 @@ public class RunClearGraphicalOutput
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
+    if (m_State.getCurrentPanel().getDebugTargetPanel() != null)
+      m_State.getCurrentPanel().getDebugTargetPanel().close();
     m_State.getCurrentPanel().cleanUp();
+    m_State.getCurrentPanel().clearNotification();
     m_State.update();
   }
 

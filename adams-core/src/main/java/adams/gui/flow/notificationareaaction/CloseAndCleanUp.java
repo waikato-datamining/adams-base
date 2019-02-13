@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CloseAndCleanUp.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.notificationareaaction;
@@ -28,7 +28,6 @@ import java.awt.event.ActionEvent;
  * Closes the area panel and cleans up GUI output.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CloseAndCleanUp
   extends AbstractNotificationAreaAction {
@@ -51,8 +50,11 @@ public class CloseAndCleanUp
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    if (m_Owner.getOwner() != null)
+    if (m_Owner.getOwner() != null) {
+      if (m_Owner.getOwner().getDebugTargetPanel() != null)
+	m_Owner.getOwner().getDebugTargetPanel().close();
       m_Owner.getOwner().cleanUp();
+    }
     m_Owner.clearNotification();
     m_Owner.notifyCloseListeners();
   }

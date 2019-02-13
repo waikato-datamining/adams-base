@@ -15,7 +15,7 @@
 
 /*
  * ReportTableByID.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -128,6 +128,36 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
     sql =   "DELETE "
       + "FROM " + getTableName() + " "
       + "WHERE ID = " + backquote(id);
+
+    // execute SQL
+    try {
+      execute(sql);
+      result = true;
+    }
+    catch (Exception e) {
+      result = false;
+      getLogger().log(Level.SEVERE, "Failed to remove: " + sql, e);
+    }
+
+    return result;
+  }
+
+  /**
+   * Removes the report field from the database.
+   *
+   * @param id		the ID of the parent data container
+   * @param field	the field to remove
+   * @return		true if successfully removed
+   */
+  public boolean remove(String id, AbstractField field) {
+    boolean	result;
+    String	sql;
+
+    // build SQL statement
+    sql =   "DELETE "
+      + "FROM " + getTableName() + " "
+      + "WHERE ID = " + backquote(id) + " "
+      + "AND NAME = " + backquote(field.getName());
 
     // execute SQL
     try {

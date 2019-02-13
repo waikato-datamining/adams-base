@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowWorkerHandler.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow;
@@ -32,7 +32,6 @@ import adams.gui.visualization.debug.StoragePanel;
  * class.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface FlowWorkerHandler
   extends StatusMessageHandler, CleanUpHandler {
@@ -115,4 +114,18 @@ public interface FlowWorkerHandler
    * @return		the panel, null if not available
    */
   public StoragePanel getStoragePanel();
+
+  /**
+   * Returns the source for this debug panel.
+   *
+   * @return		the actual panel, null if not available
+   */
+  public FlowPanel getDebugSourcePanel();
+
+  /**
+   * Returns the debug panel.
+   *
+   * @return		the debug panel, null if not available
+   */
+  public FlowPanel getDebugTargetPanel();
 }
