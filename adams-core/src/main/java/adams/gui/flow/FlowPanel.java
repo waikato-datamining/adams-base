@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -188,6 +188,9 @@ public class FlowPanel
 
   /** the last flow writer used. */
   protected FlowWriter m_LastWriter;
+
+  /** the generated debug panel. */
+  protected FlowPanel m_DebugTargetPanel;
 
   /** the source panel for the debug panel. */
   protected FlowPanel m_DebugSourcePanel;
@@ -1192,6 +1195,7 @@ public class FlowPanel
    * Cleans up the last flow that was run.
    */
   public void cleanUp() {
+    m_DebugTargetPanel = null;
     m_DebugSourcePanel = null;
     if (m_LastFlow != null) {
       showStatus("Cleaning up");
@@ -1217,7 +1221,7 @@ public class FlowPanel
     if (m_Undo != null)
       m_Undo.cleanUp();
     if (m_Owner != null)
-      m_Owner.remove(this);
+      m_Owner.removePageAt(m_Owner.indexOfPage(this));
   }
 
   /**
@@ -1786,6 +1790,24 @@ public class FlowPanel
    */
   public FlowPanel getDebugSourcePanel() {
     return m_DebugSourcePanel;
+  }
+
+  /**
+   * Sets the debug panel.
+   *
+   * @param value	the debug panel
+   */
+  public void setDebugTargetPanel(FlowPanel value) {
+    m_DebugTargetPanel = value;
+  }
+
+  /**
+   * Returns the debug panel.
+   *
+   * @return		the debug panel, null if not available
+   */
+  public FlowPanel getDebugTargetPanel() {
+    return m_DebugTargetPanel;
   }
 
   /**

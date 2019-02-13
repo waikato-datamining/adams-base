@@ -15,7 +15,7 @@
 
 /*
  * Debug.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -560,6 +560,7 @@ public class Debug
 	    panelCopy.updateTitle();
 	    panelCopy.setDebugSourcePanel(panel);
 	    m_Owner.setParentComponent(panelCopy);
+	    panel.setDebugTargetPanel(panelCopy);
 	  }
 	}
       }
