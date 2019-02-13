@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetFileChooserPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -32,7 +32,6 @@ import java.io.File;
  * button for bringing up a SpreadSheetFileChooser.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetFileChooserPanel
   extends FileChooserPanel {
@@ -145,6 +144,16 @@ public class SpreadSheetFileChooserPanel
   }
 
   /**
+   * Sets the reader to use.
+   *
+   * @param reader	the reader
+   */
+  public void setReader(SpreadSheetReader reader) {
+    m_Reader = reader;
+    m_FileChooser.setReader(reader);
+  }
+
+  /**
    * Returns the current writer. Only initialized after the user selected
    * a file with the filechooser.
    *
@@ -152,6 +161,16 @@ public class SpreadSheetFileChooserPanel
    */
   public SpreadSheetWriter getWriter() {
     return m_Writer;
+  }
+
+  /**
+   * Sets the writer to use.
+   *
+   * @param writer	the writer
+   */
+  public void setWriter(SpreadSheetWriter writer) {
+    m_Writer = writer;
+    m_FileChooser.setWriter(writer);
   }
 
   /**
