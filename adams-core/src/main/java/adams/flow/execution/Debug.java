@@ -614,12 +614,14 @@ public class Debug
   }
 
   /**
-   * Blocks thhe flow execution.
+   * Blocks the flow execution.
    */
   public void blockExecution() {
     m_Blocked = true;
     m_ControlPanel.update();
-    while (m_Blocked && !m_Stopped && !m_ControlPanel.getCurrentActor().isStopped()) {
+    while (m_Blocked && !m_Stopped) {
+      if ((m_ControlPanel.getCurrentActor() != null) && m_ControlPanel.getCurrentActor().isStopped())
+        break;
       try {
 	synchronized(this) {
 	  wait(50);
