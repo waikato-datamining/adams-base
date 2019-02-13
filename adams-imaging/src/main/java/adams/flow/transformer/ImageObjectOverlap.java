@@ -34,6 +34,9 @@ import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  <!-- globalinfo-start -->
  * Computes the overlap of objects with the specified report from storage.<br>
@@ -116,6 +119,18 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-use-other-object &lt;boolean&gt; (property: useOtherObject)
+ * &nbsp;&nbsp;&nbsp;If enabled, the object data from the other report is used&#47;forwarded in case
+ * &nbsp;&nbsp;&nbsp;of an overlap.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-additional-object &lt;boolean&gt; (property: additionalObject)
+ * &nbsp;&nbsp;&nbsp;If enabled, the additional predicted objects not present in actual objects
+ * &nbsp;&nbsp;&nbsp;will be checked.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -137,6 +152,9 @@ public class ImageObjectOverlap
   /** the overlap count. */
   public final static String OVERLAP_COUNT = "overlap_count";
 
+  /** the additional objects boolean. */
+  public final static String ADDITIONAL_OBJ = "additional_object";
+
   public static final String UNKNOWN_LABEL = "???";
 
   /** the storage item. */
@@ -153,6 +171,9 @@ public class ImageObjectOverlap
 
   /** whether to use the other object in the output in case of an overlap. */
   protected boolean m_UseOtherObject;
+
+  /** whether to check for additional predicted objects not present in actual. */
+  protected boolean m_AdditionalObject;
 
   /**
    * Returns a string describing the object.
@@ -195,6 +216,10 @@ public class ImageObjectOverlap
 
     m_OptionManager.add(
       "use-other-object", "useOtherObject",
+      false);
+
+    m_OptionManager.add(
+      "additional-object", "additionalObject",
       false);
   }
 
@@ -355,6 +380,35 @@ public class ImageObjectOverlap
   }
 
   /**
+   * Sets whether to count additional predicted objects.
+   *
+   * @param value	true if to count additional predicted objects
+   */
+  public void setAdditionalObject(boolean value) {
+    m_AdditionalObject = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to count additional predicted objects.
+   *
+   * @return		true if to count additional predicted objects
+   */
+  public boolean getAdditionalObject() {
+    return m_AdditionalObject;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String additionalObjectTipText() {
+    return "If enabled, the additional predicted objects not present in actual objects will be checked.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -368,6 +422,7 @@ public class ImageObjectOverlap
     result += QuickInfoHelper.toString(this, "minOverlapRatio", m_MinOverlapRatio, ", overlap ratio: ");
     result += QuickInfoHelper.toString(this, "labelKey", (m_LabelKey.isEmpty() ? "-none-" : m_LabelKey), ", label key: ");
     result += QuickInfoHelper.toString(this, "useOtherObject", m_UseOtherObject, "use other obj", ", ");
+    result += QuickInfoHelper.toString(this, "additionalObject", m_AdditionalObject, "additional obj", ", ");
 
     return result;
   }
@@ -414,12 +469,15 @@ public class ImageObjectOverlap
     String			labelHighest;
     double			ratio;
     Object			output;
+    boolean                     additionalObj;
 
     result = null;
 
     output      = null;
     thisReport  = null;
     otherReport = null;
+
+    additionalObj = false;
 
     if (m_InputToken.getPayload() instanceof AbstractImageContainer)
       thisReport = ((AbstractImageContainer) m_InputToken.getPayload()).getReport();
@@ -452,6 +510,7 @@ public class ImageObjectOverlap
         newObjs = otherObjs;
       }
       else {
+        Set<LocatedObject> matchingObjects = new HashSet<>();
         for (LocatedObject thisObj : thisObjs) {
           count          = 0;
           overlapHighest = 0.0;
@@ -465,26 +524,39 @@ public class ImageObjectOverlap
             if (ratio >= m_MinOverlapRatio) {
               count++;
               if (ratio > overlapHighest) {
-		if (m_UseOtherObject)
-		  actObj = otherObj;
-		overlapHighest = ratio;
-		if (!m_LabelKey.isEmpty()) {
-		  if (otherObj.getMetaData().containsKey(m_LabelKey))
-		    labelHighest = "" + otherObj.getMetaData().get(m_LabelKey);
-		  else
-		    labelHighest = UNKNOWN_LABEL;
-		}
-	      }
+                if (m_UseOtherObject)
+                  actObj = otherObj;
+                overlapHighest = ratio;
+                if (!m_LabelKey.isEmpty()) {
+                  if (otherObj.getMetaData().containsKey(m_LabelKey)) {
+                    labelHighest = "" + otherObj.getMetaData().get(m_LabelKey);
+                    matchingObjects.add(otherObj);
+                  }
+                  else
+                    labelHighest = UNKNOWN_LABEL;
+                }
+              }
             }
           }
           actObj = actObj.getClone();
-	  actObj.getMetaData().put(OVERLAP_COUNT, count);
-	  actObj.getMetaData().put(OVERLAP_PERCENTAGE_HIGHEST, overlapHighest);
+          actObj.getMetaData().put(OVERLAP_COUNT, count);
+          actObj.getMetaData().put(OVERLAP_PERCENTAGE_HIGHEST, overlapHighest);
           if (!m_LabelKey.isEmpty()) {
-	    actObj.getMetaData().put(OVERLAP_LABEL_HIGHEST, labelHighest);
-	    actObj.getMetaData().put(OVERLAP_LABEL_HIGHEST_MATCH, thisLabel.equals(labelHighest));
-	  }
+            actObj.getMetaData().put(OVERLAP_LABEL_HIGHEST, labelHighest);
+            actObj.getMetaData().put(OVERLAP_LABEL_HIGHEST_MATCH, thisLabel.equals(labelHighest));
+          }
+          if (m_AdditionalObject) actObj.getMetaData().put(ADDITIONAL_OBJ, additionalObj);
           newObjs.add(actObj);
+        }
+        if (m_AdditionalObject) {
+          additionalObj = true;
+          for (LocatedObject otherObj : otherObjs) {
+            if (!matchingObjects.contains(otherObj)) {
+              otherObj = otherObj.getClone();
+              otherObj.getMetaData().put(ADDITIONAL_OBJ, additionalObj);
+              newObjs.add(otherObj);
+            }
+          }
         }
       }
 
