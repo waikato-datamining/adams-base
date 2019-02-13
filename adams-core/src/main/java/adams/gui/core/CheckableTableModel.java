@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CheckableTableModel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -26,7 +26,6 @@ import javax.swing.table.TableModel;
  * Meta-model that wraps another table model and allows "ticking" of rows.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CheckableTableModel<T extends TableModel>
   extends AbstractBaseTableModel
@@ -37,10 +36,10 @@ public class CheckableTableModel<T extends TableModel>
   /** the wrapped table model. */
   protected T m_Model;
 
-  /** whether a row got selected. */
+  /** whether a row got checked. */
   protected boolean[] m_Selected;
 
-  /** the name for the "tick" column. */
+  /** the name for the "check" column. */
   protected String m_CheckColName;
 
   /**
@@ -161,43 +160,80 @@ public class CheckableTableModel<T extends TableModel>
   }
 
   /**
-   * Returns whether the row at the specified position is selected.
+   * Returns whether the row at the specified position is checked.
    *
    * @param row		the (actual, not visible) position of the row
-   * @return		true if selected
+   * @return		true if checked
    */
-  public boolean getSelectedAt(int row) {
+  public boolean getCheckedAt(int row) {
     return ((row >= 0) && (row < m_Selected.length)) && m_Selected[row];
   }
 
   /**
-   * Marks all rows as selected.
+   * Sets the checked state.
+   *
+   * @param row		the row to update
+   * @param checked	the checked state
    */
-  public void selectAll() {
-    select(true);
-  }
-
-  /**
-   * Marks all rows as un-selected.
-   */
-  public void selectNone() {
-    select(false);
-  }
-
-  /**
-   * Marks all rows with the specified select state.
-   */
-  protected void select(boolean select) {
-    for (int i = 0; i < m_Selected.length; i++)
-      m_Selected[i] = select;
+  public void setCheckedAt(int row, boolean checked) {
+    if ((row >= 0) && (row < m_Selected.length))
+      m_Selected[row] = checked;
 
     fireTableDataChanged();
   }
 
   /**
-   * Inverts the selection state.
+   * Marks all rows as checked.
    */
-  public void invertSelection() {
+  public void checkAll() {
+    check(true);
+  }
+
+  /**
+   * Marks all rows as un-checked.
+   */
+  public void checkNone() {
+    check(false);
+  }
+
+  /**
+   * Marks all rows with the specified check state.
+   */
+  protected void check(boolean check) {
+    for (int i = 0; i < m_Selected.length; i++)
+      m_Selected[i] = check;
+
+    fireTableDataChanged();
+  }
+
+  /**
+   * Marks the rows as checked.
+   */
+  public void check(int[] rows) {
+    for (int i = 0; i < rows.length; i++) {
+      if ((rows[i] >= 0) && (rows[i] < m_Selected.length))
+	m_Selected[rows[i]] = true;
+    }
+
+    fireTableDataChanged();
+  }
+
+  /**
+   * Marks the rows as unchecked.
+   */
+  public void uncheck(int[] rows) {
+    for (int i = 0; i < rows.length; i++) {
+      if ((rows[i] >= 0) && (rows[i] < m_Selected.length))
+	m_Selected[rows[i]] = false;
+    }
+
+    fireTableDataChanged();
+  }
+
+  /**
+   * Inverts the checked state.
+   */
+  public void invertChecked() {
     for (int i = 0; i < m_Selected.length; i++)
       m_Selected[i] = !m_Selected[i];
 
@@ -209,7 +245,7 @@ public class CheckableTableModel<T extends TableModel>
    *
    * @return		the number of checked
    */
-  public int getSelectedCount() {
+  public int getCheckedCount() {
     int	result;
 
     result = 0;
