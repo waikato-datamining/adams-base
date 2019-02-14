@@ -15,7 +15,7 @@
 
 /*
  * DeserializeToStorage.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -464,7 +464,7 @@ public class DeserializeToStorage
 	else
 	  nameStr = pair.getPairKey();
 	if ((nameStr == null) || nameStr.isEmpty() || !Storage.isValidName(nameStr)) {
-	  errors.add("Failed to obtain valid storage name from pair #" + (i+1) + ": " + nameStr);
+	  errors.add("Failed to obtain valid storage name from pair #" + (i+1) + " (" + pair + "): " + nameStr);
 	  continue;
 	}
 	name = new StorageName(nameStr);
@@ -475,7 +475,7 @@ public class DeserializeToStorage
 	else
 	  fileStr = pair.getPairValue();
 	if ((fileStr == null) || fileStr.isEmpty()) {
-	  errors.add("Failed to obtain valid file name from pair #" + (i+1) + ": " + fileStr);
+	  errors.add("Failed to obtain valid file name from pair #" + (i+1) + " (" + pair + "): " + fileStr);
 	  continue;
 	}
 	file = new PlaceholderFile(fileStr);
@@ -487,11 +487,11 @@ public class DeserializeToStorage
 	      errors.add(msg);
 	  }
 	  else {
-	    errors.add("File from pair " + (i+1) + " points to a directory: " + file);
+	    errors.add("File from pair " + (i+1) + " (" + pair + ") points to a directory: " + file);
 	  }
 	}
 	else {
-	  errors.add("File from pair " + (i+1) + " does not exist: " + file);
+	  errors.add("File from pair " + (i+1) + " (" + pair + ") does not exist: " + file);
 	}
       }
       if (!errors.isEmpty())
