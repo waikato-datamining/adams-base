@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ArrayProcess.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.VariableName;
 import adams.core.base.BaseClassname;
 import adams.flow.core.Actor;
 import adams.flow.core.InputConsumer;
@@ -60,36 +61,55 @@ import java.util.Hashtable;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
  * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-stopping-timeout &lt;int&gt; (property: stoppingTimeout)
+ * &nbsp;&nbsp;&nbsp;The timeout in milliseconds when waiting for actors to finish (&lt;= 0 for
+ * &nbsp;&nbsp;&nbsp;infinity; see 'finishBeforeStopping').
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
  * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;All the actors that define this sequence.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-array-class &lt;adams.core.base.BaseClassname&gt; (property: arrayClass)
- * &nbsp;&nbsp;&nbsp;The class to use for the array; if none is specified, the class of the first 
+ * &nbsp;&nbsp;&nbsp;The class to use for the array; if none is specified, the class of the first
  * &nbsp;&nbsp;&nbsp;element is used.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-store-element-index &lt;boolean&gt; (property: storeElementIndex)
+ * &nbsp;&nbsp;&nbsp;If enabled, the element index (1-based) of the current element being processed
+ * &nbsp;&nbsp;&nbsp;gets stored in the specified variable.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-element-index-variable &lt;adams.core.VariableName&gt; (property: elementIndexVariable)
+ * &nbsp;&nbsp;&nbsp;The variable to store the element index in.
+ * &nbsp;&nbsp;&nbsp;default: variable
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ArrayProcess
   extends SubProcess {
@@ -102,6 +122,12 @@ public class ArrayProcess
 
   /** the class for the array. */
   protected BaseClassname m_ArrayClass;
+
+  /** whether to store the index of the element currently being processed in a variable. */
+  protected boolean m_StoreElementIndex;
+
+  /** the variable to store the element index in. */
+  protected VariableName m_ElementIndexVariable;
 
   /** the output array. */
   protected Token m_OutputToken;
@@ -124,8 +150,16 @@ public class ArrayProcess
     super.defineOptions();
 
     m_OptionManager.add(
-	    "array-class", "arrayClass",
-	    new BaseClassname());
+      "array-class", "arrayClass",
+      new BaseClassname());
+
+    m_OptionManager.add(
+      "store-element-index", "storeElementIndex",
+      false);
+
+    m_OptionManager.add(
+      "element-index-variable", "elementIndexVariable",
+      new VariableName());
   }
 
   /**
@@ -141,6 +175,9 @@ public class ArrayProcess
     
     if (super.getQuickInfo() != null)
       result += ", " + super.getQuickInfo();
+
+    if (m_StoreElementIndex)
+      result += QuickInfoHelper.toString(this, "elementIndexVariable", m_ElementIndexVariable, ", index var: ");
 
     return result;
   }
@@ -184,8 +221,68 @@ public class ArrayProcess
    */
   public String arrayClassTipText() {
     return
-        "The class to use for the array; if none is specified, the class of "
-      + "the first element is used.";
+      "The class to use for the array; if none is specified, the class of "
+	+ "the first element is used.";
+  }
+
+  /**
+   * Sets whether to store the element index in a variable.
+   *
+   * @param value	true if the element index should get stored in variable
+   */
+  public void setStoreElementIndex(boolean value) {
+    m_StoreElementIndex = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to store the element index in a variable.
+   *
+   * @return		true if the element index gets stored in variable
+   */
+  public boolean getStoreElementIndex() {
+    return m_StoreElementIndex;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String storeElementIndexTipText() {
+    return
+      "If enabled, the element index (1-based) of the current element being "
+	+ "processed gets stored in the specified variable.";
+  }
+
+  /**
+   * Sets the variable name to store the current element index in.
+   *
+   * @param value	the variable name
+   */
+  public void setElementIndexVariable(VariableName value) {
+    m_ElementIndexVariable = value;
+    reset();
+  }
+
+  /**
+   * Returns the variable name to store the current element index in.
+   *
+   * @return		the variable name
+   */
+  public VariableName getElementIndexVariable() {
+    return m_ElementIndexVariable;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String elementIndexVariableTipText() {
+    return "The variable to store the element index in.";
   }
 
   /**
@@ -310,6 +407,11 @@ public class ArrayProcess
     if ((first != null) && (first instanceof InputConsumer)) {
       len = Array.getLength(m_CurrentToken.getPayload());
       for (i = 0; i < len; i++) {
+        if (m_StoreElementIndex) {
+	  getVariables().set(m_ElementIndexVariable.getValue(), "" + (i + 1));
+	  if (isLoggingEnabled())
+	    getLogger().fine("element index variable '" + m_ElementIndexVariable + "' set to: " + (i+1));
+	}
 	input = new Token(Array.get(m_CurrentToken.getPayload(), i));
 	((InputConsumer) first).input(input);
 	if (isLoggingEnabled())
