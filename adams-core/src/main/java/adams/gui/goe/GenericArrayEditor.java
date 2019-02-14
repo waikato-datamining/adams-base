@@ -15,7 +15,7 @@
 
 /*
  *    GenericArrayEditor.java
- *    Copyright (C) 1999-2016 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -45,6 +45,10 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -69,6 +73,8 @@ import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A PropertyEditor for arrays of objects that themselves have
@@ -284,7 +290,13 @@ public class GenericArrayEditor
   
   /** the view in use. */
   protected Component m_View;
-  
+
+  /** the change listeners (get notified whenever items get added/removed/updated). */
+  protected Set<ChangeListener> m_ArrayChangeListeners;
+
+  /** the listener for model updates. */
+  protected ListDataListener m_ModelListener;
+
   /**
    * Sets up the array editor.
    */
@@ -304,6 +316,7 @@ public class GenericArrayEditor
     m_ElementClass    = String.class;
     m_Modified        = false;
     m_OkAlwaysEnabled = false;
+    m_ArrayChangeListeners = new HashSet<>();
     m_WindowAdapter   = new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
@@ -433,6 +446,21 @@ public class GenericArrayEditor
     m_ElementList.setInfoVisible(true);
     m_ElementList.addListSelectionListener((ListSelectionEvent e) -> updateButtons());
     m_ElementList.addRemoveItemsListener((RemoveItemsEvent e) -> removeSelectedObjects());
+    m_ModelListener = new ListDataListener() {
+      @Override
+      public void intervalAdded(ListDataEvent e) {
+        notifyArrayChangeListeners();
+      }
+      @Override
+      public void intervalRemoved(ListDataEvent e) {
+        notifyArrayChangeListeners();
+      }
+      @Override
+      public void contentsChanged(ListDataEvent e) {
+        notifyArrayChangeListeners();
+      }
+    };
+    m_ElementList.getModel().addListDataListener(m_ModelListener);
   }
 
   /**
@@ -501,10 +529,12 @@ public class GenericArrayEditor
     int 		i;
     DefaultListModel	listModel;
 
+    m_ListModel.removeListDataListener(m_ModelListener);
     listModel = new DefaultListModel();
     for (i = 0; i < m_ListModelBackup.size(); i++)
       listModel.addElement(m_ListModelBackup.get(i));
     m_ListModel = listModel;
+    m_ListModel.addListDataListener(m_ModelListener);
     m_ElementList.setModel(m_ListModel);
     apply();
   }
@@ -519,6 +549,7 @@ public class GenericArrayEditor
     DefaultListModel	listModel;
     Object[]		items;
 
+    m_ListModel.removeListDataListener(m_ModelListener);
     items = new Object[m_ListModel.getSize()];
     for (i = 0; i < m_ListModel.size(); i++)
       items[i] = m_ListModel.get(i);
@@ -533,6 +564,7 @@ public class GenericArrayEditor
 	listModel.addElement(items[i]);
     }
     m_ListModel = listModel;
+    m_ListModel.addListDataListener(m_ModelListener);
     m_ElementList.setModel(m_ListModel);
     m_Modified = true;
     updateButtons();
@@ -654,6 +686,7 @@ public class GenericArrayEditor
 
 	// Create the ListModel and populate it
 	m_ListModel       = new DefaultListModel<>();
+	m_ListModel.addListDataListener(m_ModelListener);
 	m_ListModelBackup = new DefaultListModel<>();
 	m_ElementClass = elementClass;
 	for (i = 0; i < Array.getLength(o); i++) {
@@ -1022,6 +1055,7 @@ public class GenericArrayEditor
     int				i;
     DefaultListModel<Object>	updated;
 
+    m_ListModel.removeListDataListener(m_ModelListener);
     result   = true;
     objects  = ObjectCopyHelper.copyObjects(objects);
     selected = m_ElementList.getSelectedIndex();
@@ -1044,6 +1078,7 @@ public class GenericArrayEditor
       }
     }
     m_ListModel = updated;
+    m_ListModel.addListDataListener(m_ModelListener);
     m_ElementList.setModel(m_ListModel);
     updateButtons();
 
@@ -1070,6 +1105,7 @@ public class GenericArrayEditor
 
     selected = m_ElementList.getSelectedIndices();
     if (selected != null) {
+      m_ListModel.removeListDataListener(m_ModelListener);
       selIndices = new TIntHashSet(selected);
       listModel = new DefaultListModel<>();
       for (i = 0; i < m_ListModel.getSize(); i++) {
@@ -1078,6 +1114,7 @@ public class GenericArrayEditor
 	listModel.addElement(m_ListModel.getElementAt(i));
       }
       m_Modified  = true;
+      m_ListModel.addListDataListener(m_ModelListener);
       m_ListModel = listModel;
       m_ElementList.setModel(m_ListModel);
       updateButtons();
@@ -1151,5 +1188,52 @@ public class GenericArrayEditor
    */
   public boolean isOkAlwaysEnabled() {
     return m_OkAlwaysEnabled;
+  }
+
+  /**
+   * Sets the visibility state of the OK/Cancel/action buttons.
+   *
+   * @param value	whether to show them or hide them
+   */
+  public void setButtonsVisible(boolean value) {
+    m_PanelDialogButtons.setVisible(value);
+  }
+
+  /**
+   * Returns whether the OK/Cancel/action buttons are visible.
+   *
+   * @return		true if visible
+   */
+  public boolean getButtonsVisible() {
+    return m_PanelDialogButtons.isVisible();
+  }
+
+  /**
+   * Adds the change listener. Gets notified whenever the array elements change.
+   *
+   * @param l		the listener to add
+   */
+  public void addArrayChangeListener(ChangeListener l) {
+    m_ArrayChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the change listener.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeArrayChangeListener(ChangeListener l) {
+    m_ArrayChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all change listeners that the array elements have changed.
+   */
+  protected void notifyArrayChangeListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_ArrayChangeListeners)
+      l.stateChanged(e);
   }
 }
