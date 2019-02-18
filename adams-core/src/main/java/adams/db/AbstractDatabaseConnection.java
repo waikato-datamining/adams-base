@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnection.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -846,6 +846,13 @@ public abstract class AbstractDatabaseConnection
     m_FailedConnectAttempts.put(key, count);
 
     m_LastConnectionError = "Failed connection attempt: URL=" + url + ", user=" + user + ", pw=" + password;
+  }
+
+  /**
+   * Resets the failed attempts for the current connection.
+   */
+  public void resetFailedConnectAttempt() {
+    resetFailedConnectAttempt(m_URL, m_User, m_Password);
   }
 
   /**
