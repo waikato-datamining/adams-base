@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JFreeChart.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -46,7 +46,6 @@ import java.util.Random;
  * Allows to create a JFreeChart plot of a column or row.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JFreeChart
   extends AbstractOptionHandler
@@ -133,6 +132,8 @@ public class JFreeChart
 	return;
       if (Integer.parseInt(newPoints) != numPoints)
         numPoints = Integer.parseInt(newPoints);
+      else
+        numPoints = -1;
     }
     else {
       numPoints = -1;
