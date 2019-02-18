@@ -160,6 +160,7 @@ public class SqlConnectionPanel
     error = null;
     if (!m_DatabaseConnection.isConnected()) {
       try {
+        m_DatabaseConnection.resetFailedConnectAttempt();
 	m_DatabaseConnection.connect();
 	if (!m_DatabaseConnection.isConnected())
 	  error = "Failed to connect to: " + textURL.getText();
