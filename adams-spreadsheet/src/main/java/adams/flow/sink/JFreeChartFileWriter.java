@@ -112,6 +112,11 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;default: #0000ff
  * </pre>
  *
+ * <pre>-diagonal-color &lt;java.awt.Color&gt; (property: diagonalColor)
+ * &nbsp;&nbsp;&nbsp;The color for the diagonal (ie second data series if present).
+ * &nbsp;&nbsp;&nbsp;default: #000000
+ * </pre>
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the plot.
  * &nbsp;&nbsp;&nbsp;default: 800
@@ -149,6 +154,9 @@ public class JFreeChartFileWriter
 
   /** the color for the plot. */
   protected Color m_PlotColor;
+
+  /** the color for the diagonal plot. */
+  protected Color m_DiagonalColor;
 
   /** the width of the plot. */
   protected int m_Width;
@@ -191,6 +199,10 @@ public class JFreeChartFileWriter
     m_OptionManager.add(
       "plot-color", "plotColor",
       Color.BLUE);
+
+    m_OptionManager.add(
+      "diagonal-color", "diagonalColor",
+      Color.BLACK);
 
     m_OptionManager.add(
       "width", "width",
@@ -329,6 +341,35 @@ public class JFreeChartFileWriter
    */
   public String plotColorTipText() {
     return "The color for the plot.";
+  }
+
+  /**
+   * Sets the color for the diagonal (ie second data series if present).
+   *
+   * @param value	the color
+   */
+  public void setDiagonalColor(Color value) {
+    m_DiagonalColor = value;
+    reset();
+  }
+
+  /**
+   * Returns the color for the diagonal (ie second data series if present).
+   *
+   * @return		the color
+   */
+  public Color getDiagonalColor() {
+    return m_DiagonalColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String diagonalColorTipText() {
+    return "The color for the diagonal (ie second data series if present).";
   }
 
   /**
@@ -479,6 +520,8 @@ public class JFreeChartFileWriter
 	plot.setRangeGridlinesVisible(true);
 	plot.setRangeGridlinePaint(Color.GRAY);
         plot.getRenderer().setSeriesPaint(0, m_PlotColor);
+        if (plot.getSeriesCount() > 1)
+          plot.getRenderer().setSeriesPaint(1, m_DiagonalColor);
         if (shape != null)
 	  plot.getRenderer().setSeriesShape(0, shape);
       }

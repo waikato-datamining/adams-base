@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2019-01-09 13:26:29
+# Date: 2019-02-20 14:49:09
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-spreadsheet
@@ -10,4 +10,4 @@ adams.flow.control.Flow -annotation "Plots actual vs predicted using JFreeChart.
   adams.flow.transformer.BaseName -remove-extensions true
   adams.flow.transformer.SetVariable -var-name file
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
- adams.flow.sink.JFreeChartPlot -display-type adams.flow.core.displaytype.Default -width 1200 -writer adams.gui.print.NullWriter -dataset adams.gui.visualization.jfreechart.dataset.DefaultXY -chart adams.gui.visualization.jfreechart.chart.ScatterPlot -shape "adams.gui.visualization.jfreechart.shape.Cross -length 3.0 -thickness 0.25"
+ adams.flow.sink.JFreeChartPlot -display-type adams.flow.core.displaytype.Default -width 1200 -writer adams.gui.print.NullWriter -dataset "adams.gui.visualization.jfreechart.dataset.DefaultXY -add-diagonal-series true" -chart adams.gui.visualization.jfreechart.chart.ScatterPlot -shape adams.gui.visualization.jfreechart.shape.Cross

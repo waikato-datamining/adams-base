@@ -13,22 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ScatterPlot.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.jfreechart.chart;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 
 /**
  * Generates a scatter plot from XY data.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ScatterPlot
   extends AbstractChartGeneratorWithAxisLabels<XYDataset> {
@@ -97,6 +97,15 @@ public class ScatterPlot
    */
   @Override
   protected JFreeChart doGenerate(XYDataset data) {
-    return ChartFactory.createScatterPlot(m_Title, m_LabelX, m_LabelY, data, m_Orientation.getOrientation(), m_Legend, m_ToolTips, false);
+    JFreeChart result = ChartFactory.createScatterPlot(m_Title, m_LabelX, m_LabelY, data, m_Orientation.getOrientation(), m_Legend, m_ToolTips, false);
+    XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+    if (result.getXYPlot().getSeriesCount() == 2) {
+      renderer.setSeriesLinesVisible(0, false);
+      renderer.setSeriesLinesVisible(1, true);
+      renderer.setSeriesShapesVisible(0, true);
+      renderer.setSeriesShapesVisible(1, false);
+      result.getXYPlot().setRenderer(renderer);
+    }
+    return result;
   }
 }

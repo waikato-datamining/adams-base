@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultXY.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.jfreechart.dataset;
@@ -25,13 +25,13 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.data.statistics.StatUtils;
 import org.jfree.data.xy.DefaultXYDataset;
 
 /**
  * Generates {@link DefaultXYDataset} datasets.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DefaultXY
   extends AbstractDatasetGenerator<DefaultXYDataset> {
@@ -43,6 +43,9 @@ public class DefaultXY
 
   /** the Y columns. */
   protected SpreadSheetColumnRange m_Y;
+
+  /** whether to add an additional series for a diagonal to the dataset. */
+  protected boolean m_AddDiagonalSeries;
 
   /**
    * Returns a string describing the object.
@@ -70,6 +73,10 @@ public class DefaultXY
     m_OptionManager.add(
       "y", "Y",
       new SpreadSheetColumnRange("2"));
+
+    m_OptionManager.add(
+      "add-diagonal-series", "addDiagonalSeries",
+      false);
   }
 
   /**
@@ -131,6 +138,35 @@ public class DefaultXY
   }
 
   /**
+   * Sets whether to add an additional series for the diagonal to the data.
+   *
+   * @param value	true if to add
+   */
+  public void setAddDiagonalSeries(boolean value) {
+    m_AddDiagonalSeries = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add an additional series for the diagonal to the data.
+   *
+   * @return		true if to add
+   */
+  public boolean getAddDiagonalSeries() {
+    return m_AddDiagonalSeries;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String addDiagonalSeriesTipText() {
+    return "If enabled, a second series with data points for a diagonal get added.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -141,6 +177,7 @@ public class DefaultXY
 
     result  = QuickInfoHelper.toString(this, "X", m_X, "X: ");
     result += QuickInfoHelper.toString(this, "Y", m_Y, ", Y: ");
+    result += QuickInfoHelper.toString(this, "addDiagonalSeries", m_AddDiagonalSeries, "diagonal", ", ");
 
     return result;
   }
@@ -183,6 +220,8 @@ public class DefaultXY
     int			i;
     double[] 		plotX;
     double[] 		plotY;
+    double 		min;
+    double 		max;
 
     m_X.setData(data);
     x = m_X.getIntIndex();
@@ -191,10 +230,16 @@ public class DefaultXY
 
     result = new DefaultXYDataset();
     plotX = SpreadSheetUtils.getNumericColumn(data, x);
+    min = StatUtils.min(plotX);
+    max = StatUtils.max(plotX);
     for (i = 0; i < y.length; i++) {
       plotY = SpreadSheetUtils.getNumericColumn(data, y[i]);
+      min = Math.min(min, StatUtils.min(plotY));
+      max = Math.max(max, StatUtils.max(plotY));
       result.addSeries(data.getColumnName(y[i]), new double[][]{plotX, plotY});
     }
+    if (m_AddDiagonalSeries)
+      result.addSeries("$$$Diagonal$$$", new double[][]{new double[]{min, max}, new double[]{min, max}});
 
     return result;
   }
