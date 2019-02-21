@@ -15,7 +15,7 @@
 
 /*
  * SetManyVariables.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,6 +24,8 @@ import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableNameValuePair;
 import adams.core.VariableUpdater;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.flow.core.Unknown;
 import adams.flow.core.VariableValueType;
 import adams.parser.BooleanExpression;
@@ -40,7 +42,7 @@ import java.util.List;
  * Sets the values of the variables whenever a token passes through, but does not use the token's value.<br>
  * Optionally, the specified values can be expanded, in case it is made up of variables itself.<br>
  * <br>
- * Grammar for mathematical expressions (value type 'MATH_EXPRESSION'):<br>
+ * Grammar for mathematical expressions (value type 'MATH_EXPRESSION, MATH_EXPRESSION_ROUND'):<br>
  * <br>
  * expr_list ::= '=' expr_list expr_part | expr_part ;<br>
  * expr_part ::=  expr ;<br>
@@ -135,16 +137,20 @@ import java.util.List;
  *               | matches ( expr , regexp )<br>
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
- *               | find ( search , expr [, pos] )<br>
+ *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
  *               | replace ( str , pos , len , newstr )<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
  *               | str ( expr )<br>
  *               | str ( expr  , numdecimals )<br>
  *               | str ( expr  , decimalformat )<br>
+ *               | ext ( file_str )  (extracts extension from file)<br>
+ *               | replaceext ( file_str, ext_str )  (replaces the extension of the file with the new one)<br>
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
  * - Line comments start with '#'.<br>
@@ -265,12 +271,14 @@ import java.util.List;
  *               | matches ( expr , regexp )<br>
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
- *               | find ( search , expr [, pos] )<br>
+ *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
  *               | replace ( str , pos , len , newstr )<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
  *               | str ( expr )<br>
  *               | str ( expr  , numdecimals )<br>
  *               | str ( expr  , decimalformat )<br>
+ *               | ext ( file_str )  (extracts extension from file)<br>
+ *               | replaceext ( file_str, ext_str )  (replaces the extension of the file with the new one)<br>
  * <br>
  * # array functions<br>
  *               | len[gth] ( array )<br>
@@ -278,7 +286,9 @@ import java.util.List;
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - 'index' for function 'get' starts at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
@@ -400,12 +410,14 @@ import java.util.List;
  *               | matches ( expr , regexp )<br>
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
- *               | find ( search , expr [, pos] )<br>
+ *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
  *               | replace ( str , pos , len , newstr )<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
  *               | str ( expr )<br>
  *               | str ( expr  , numdecimals )<br>
  *               | str ( expr  , decimalformat )<br>
+ *               | ext ( file_str )  (extracts extension from file)<br>
+ *               | replaceext ( file_str, ext_str )  (replaces the extension of the file with the new one)<br>
  * <br>
  * # array functions<br>
  *               | len[gth] ( array )<br>
@@ -413,7 +425,9 @@ import java.util.List;
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - 'index' for function 'get' starts at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
@@ -490,7 +504,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-value-type &lt;STRING|MATH_EXPRESSION|BOOL_EXPRESSION|STRING_EXPRESSION&gt; (property: valueType)
+ * <pre>-value-type &lt;STRING|MATH_EXPRESSION|MATH_EXPRESSION_ROUND|BOOL_EXPRESSION|STRING_EXPRESSION|FILE_FORWARD_SLASHES&gt; (property: valueType)
  * &nbsp;&nbsp;&nbsp;How to interpret the 'value' string.
  * &nbsp;&nbsp;&nbsp;default: STRING
  * </pre>
@@ -780,6 +794,14 @@ public class SetManyVariables
 	  }
 	  catch (Exception e) {
 	    errors.add("Failed to parse string expression (" + pair.varValue() + "): " + value, e);
+	  }
+	  break;
+        case FILE_FORWARD_SLASHES:
+	  try {
+	    value = FileUtils.useForwardSlashes(new PlaceholderFile(value).getAbsolutePath());
+	  }
+	  catch (Exception e) {
+	    errors.add("Failed to generate file using forward slashes (" + pair.varValue() + "): " + value, e);
 	  }
 	  break;
 	default:

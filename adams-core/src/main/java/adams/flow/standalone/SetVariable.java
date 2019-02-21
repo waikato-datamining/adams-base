@@ -15,7 +15,7 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -24,6 +24,8 @@ import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.VariableUpdater;
 import adams.core.base.BaseText;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.flow.core.VariableValueType;
 import adams.parser.BooleanExpression;
 import adams.parser.MathematicalExpression;
@@ -39,7 +41,7 @@ import java.util.List;
  * Optionally, the specified value can be expanded, in case it is made up of variables itself.<br>
  * It is also possible to override the variable value with the value obtained from an environment variable.<br>
  * <br>
- * Grammar for mathematical expressions (value type 'MATH_EXPRESSION'):<br>
+ * Grammar for mathematical expressions (value type 'MATH_EXPRESSION, MATH_EXPRESSION_ROUND'):<br>
  * <br>
  * expr_list ::= '=' expr_list expr_part | expr_part ;<br>
  * expr_part ::=  expr ;<br>
@@ -77,6 +79,7 @@ import java.util.List;
  *               | expr | expr (or: expr or expr)<br>
  *               | if[else] ( expr , expr (if true) , expr (if false) )<br>
  *               | ifmissing ( variable , expr (default value if variable is missing) )<br>
+ *               | has ( variable )<br>
  *               | isNaN ( expr )<br>
  * <br>
  * # arithmetics<br>
@@ -133,13 +136,20 @@ import java.util.List;
  *               | matches ( expr , regexp )<br>
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
- *               | find ( search , expr [, pos] )<br>
+ *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
  *               | replace ( str , pos , len , newstr )<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
+ *               | str ( expr )<br>
+ *               | str ( expr  , numdecimals )<br>
+ *               | str ( expr  , decimalformat )<br>
+ *               | ext ( file_str )  (extracts extension from file)<br>
+ *               | replaceext ( file_str, ext_str )  (replaces the extension of the file with the new one)<br>
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
  * - Line comments start with '#'.<br>
@@ -149,6 +159,7 @@ import java.util.List;
  * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br>
  * - the characters in square brackets in function names are optional:<br>
  *   e.g. 'len("abc")' is the same as 'length("abc")'<br>
+ * - 'str' uses java.text.DecimalFormat when supplying a format string<br>
  * <br>
  * A lot of the functions have been modeled after LibreOffice:<br>
  *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br>
@@ -202,6 +213,7 @@ import java.util.List;
  *               | expr | expr (or: expr or expr)<br>
  *               | if[else] ( expr , expr (if true) , expr (if false) )<br>
  *               | ifmissing ( variable , expr (default value if variable is missing) )<br>
+ *               | has ( variable )<br>
  *               | isNaN ( expr )<br>
  * <br>
  * # arithmetics<br>
@@ -258,9 +270,14 @@ import java.util.List;
  *               | matches ( expr , regexp )<br>
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
- *               | find ( search , expr [, pos] )<br>
+ *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
  *               | replace ( str , pos , len , newstr )<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
+ *               | str ( expr )<br>
+ *               | str ( expr  , numdecimals )<br>
+ *               | str ( expr  , decimalformat )<br>
+ *               | ext ( file_str )  (extracts extension from file)<br>
+ *               | replaceext ( file_str, ext_str )  (replaces the extension of the file with the new one)<br>
  * <br>
  * # array functions<br>
  *               | len[gth] ( array )<br>
@@ -268,7 +285,9 @@ import java.util.List;
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - 'index' for function 'get' starts at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
@@ -279,6 +298,7 @@ import java.util.List;
  * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br>
  * - the characters in square brackets in function names are optional:<br>
  *   e.g. 'len("abc")' is the same as 'length("abc")'<br>
+ * - 'str' uses java.text.DecimalFormat when supplying a format string<br>
  * <br>
  * A lot of the functions have been modeled after LibreOffice:<br>
  *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br>
@@ -332,6 +352,7 @@ import java.util.List;
  *               | expr | expr (or: expr or expr)<br>
  *               | if[else] ( expr , expr (if true) , expr (if false) )<br>
  *               | ifmissing ( variable , expr (default value if variable is missing) )<br>
+ *               | has ( variable )<br>
  *               | isNaN ( expr )<br>
  * <br>
  * # arithmetics<br>
@@ -388,9 +409,14 @@ import java.util.List;
  *               | matches ( expr , regexp )<br>
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
- *               | find ( search , expr [, pos] )<br>
+ *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
  *               | replace ( str , pos , len , newstr )<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
+ *               | str ( expr )<br>
+ *               | str ( expr  , numdecimals )<br>
+ *               | str ( expr  , decimalformat )<br>
+ *               | ext ( file_str )  (extracts extension from file)<br>
+ *               | replaceext ( file_str, ext_str )  (replaces the extension of the file with the new one)<br>
  * <br>
  * # array functions<br>
  *               | len[gth] ( array )<br>
@@ -398,7 +424,9 @@ import java.util.List;
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - 'index' for function 'get' starts at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
@@ -409,6 +437,7 @@ import java.util.List;
  * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br>
  * - the characters in square brackets in function names are optional:<br>
  *   e.g. 'len("abc")' is the same as 'length("abc")'<br>
+ * - 'str' uses java.text.DecimalFormat when supplying a format string<br>
  * <br>
  * A lot of the functions have been modeled after LibreOffice:<br>
  *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br>
@@ -441,24 +470,24 @@ import java.util.List;
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -473,27 +502,27 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: value
  * </pre>
  *
- * <pre>-value-type &lt;STRING|MATH_EXPRESSION|BOOL_EXPRESSION|STRING_EXPRESSION&gt; (property: valueType)
+ * <pre>-value-type &lt;STRING|MATH_EXPRESSION|MATH_EXPRESSION_ROUND|BOOL_EXPRESSION|STRING_EXPRESSION|FILE_FORWARD_SLASHES&gt; (property: valueType)
  * &nbsp;&nbsp;&nbsp;How to interpret the 'value' string.
  * &nbsp;&nbsp;&nbsp;default: STRING
  * </pre>
  *
  * <pre>-expand-value &lt;boolean&gt; (property: expandValue)
- * &nbsp;&nbsp;&nbsp;If enabled, the value gets expanded first in case it is made up of variables 
+ * &nbsp;&nbsp;&nbsp;If enabled, the value gets expanded first in case it is made up of variables
  * &nbsp;&nbsp;&nbsp;itself.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-override-with-env-var &lt;boolean&gt; (property: overrideWithEnvVar)
- * &nbsp;&nbsp;&nbsp;If enabled, the value gets overriden by the value obtained from the specified 
+ * &nbsp;&nbsp;&nbsp;If enabled, the value gets overriden by the value obtained from the specified
  * &nbsp;&nbsp;&nbsp;environment variable.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-env-variable &lt;java.lang.String&gt; (property: envVariable)
- * &nbsp;&nbsp;&nbsp;The name of the environment variable to use for overriding the variable 
+ * &nbsp;&nbsp;&nbsp;The name of the environment variable to use for overriding the variable
  * &nbsp;&nbsp;&nbsp;value.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  <!-- options-end -->
@@ -871,6 +900,14 @@ public class SetVariable
 	}
 	catch (Exception e) {
 	  result = handleException("Failed to parse string expression: " + value, e);
+	}
+	break;
+      case FILE_FORWARD_SLASHES:
+	try {
+	  value = FileUtils.useForwardSlashes(new PlaceholderFile(value).getAbsolutePath());
+	}
+	catch (Exception e) {
+	  result = handleException("Failed to generate file using forward slashes: " + value, e);
 	}
 	break;
       default:

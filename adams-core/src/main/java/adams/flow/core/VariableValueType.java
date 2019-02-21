@@ -15,7 +15,7 @@
 
 /*
  * VariableValueType.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.core;
@@ -40,4 +40,6 @@ public enum VariableValueType {
   BOOL_EXPRESSION,
   /** string expression. */
   STRING_EXPRESSION,
+  /** file with forward slashes. */
+  FILE_FORWARD_SLASHES,
 }
