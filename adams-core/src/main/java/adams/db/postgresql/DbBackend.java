@@ -22,6 +22,7 @@ package adams.db.postgresql;
 
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractDbBackend;
+import adams.db.JDBC;
 import adams.db.LogIntf;
 
 /**
@@ -52,6 +53,8 @@ public class DbBackend
    */
   @Override
   public LogIntf getLog(AbstractDatabaseConnection conn) {
+    if (!JDBC.isPostgreSQL(conn))
+      throw new IllegalStateException("Not a PostgreSQL JDBC URL: " + conn.getURL());
     return LogT.getSingleton(conn);
   }
 }
