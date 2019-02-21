@@ -14,22 +14,21 @@
  */
 
 /*
- * LogTMySQL.java
+ * LogTSQLite.java
  * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.db.mysql;
+package adams.db.sqlite;
 
 import adams.db.AbstractDatabaseConnection;
-import adams.db.LogT;
 
 /**
- * MySQL implementation.
+ * SQLite implementation.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class LogTMySQL
-  extends LogT {
+public class LogT
+  extends adams.db.LogT {
 
   private static final long serialVersionUID = 6309576140124918549L;
 
@@ -38,7 +37,7 @@ public class LogTMySQL
    *
    * @param dbcon the database context this table is used in
    */
-  public LogTMySQL(AbstractDatabaseConnection dbcon) {
+  public LogT(AbstractDatabaseConnection dbcon) {
     super(dbcon);
   }
 }

@@ -21,15 +21,14 @@
 package adams.db.postgresql;
 
 import adams.db.AbstractDatabaseConnection;
-import adams.db.LogT;
 
 /**
  * PostgreSQL implementation.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class LogTPostgreSQL
-  extends LogT {
+public class LogT
+  extends adams.db.LogT {
 
   private static final long serialVersionUID = 6309576140124918549L;
 
@@ -38,7 +37,7 @@ public class LogTPostgreSQL
    *
    * @param dbcon the database context this table is used in
    */
-  public LogTPostgreSQL(AbstractDatabaseConnection dbcon) {
+  public LogT(AbstractDatabaseConnection dbcon) {
     super(dbcon);
   }
 }
