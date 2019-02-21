@@ -13,20 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * LogTPostgreSQL.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * LogTSQLite.java
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.db;
+package adams.db.sqlite;
+
+import adams.db.AbstractDatabaseConnection;
+import adams.db.LogT;
 
 /**
- * PostgreSQL implementation.
+ * SQLite implementation.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class LogTPostgreSQL
+public class LogTSQLite
   extends LogT {
 
   private static final long serialVersionUID = 6309576140124918549L;
@@ -36,7 +38,7 @@ public class LogTPostgreSQL
    *
    * @param dbcon the database context this table is used in
    */
-  protected LogTPostgreSQL(AbstractDatabaseConnection dbcon) {
+  public LogTSQLite(AbstractDatabaseConnection dbcon) {
     super(dbcon);
   }
 }

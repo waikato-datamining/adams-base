@@ -15,7 +15,7 @@
 
 /*
  * LogT.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,6 +26,9 @@ import adams.core.base.BaseDateTime;
 import adams.db.indices.Index;
 import adams.db.indices.IndexColumn;
 import adams.db.indices.Indices;
+import adams.db.mysql.LogTMySQL;
+import adams.db.postgresql.LogTPostgreSQL;
+import adams.db.sqlite.LogTSQLite;
 import adams.db.types.AutoIncrementType;
 import adams.db.types.ColumnType;
 
@@ -414,7 +417,7 @@ public abstract class LogT
    */
   public static synchronized LogT getSingleton(AbstractDatabaseConnection dbcon) {
     if (m_TableManager == null)
-      m_TableManager = new TableManager<LogT>(TABLE_NAME, dbcon.getOwner());
+      m_TableManager = new TableManager<>(TABLE_NAME, dbcon.getOwner());
     if (!m_TableManager.has(dbcon)) {
       if (JDBC.isMySQL(dbcon))
         m_TableManager.add(dbcon, new LogTMySQL(dbcon));

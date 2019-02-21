@@ -13,18 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LogTMySQL.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.db;
+package adams.db.mysql;
+
+import adams.db.AbstractDatabaseConnection;
+import adams.db.LogT;
 
 /**
  * MySQL implementation.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LogTMySQL
   extends LogT {
@@ -36,7 +38,7 @@ public class LogTMySQL
    *
    * @param dbcon the database context this table is used in
    */
-  protected LogTMySQL(AbstractDatabaseConnection dbcon) {
+  public LogTMySQL(AbstractDatabaseConnection dbcon) {
     super(dbcon);
   }
 }
