@@ -1,0 +1,4 @@
+# Defines what class provides the DB backend interface implementations.
+
+# Class name (+ options) that provides the backend
+#Backend=adams.db.mysql.DbBackend

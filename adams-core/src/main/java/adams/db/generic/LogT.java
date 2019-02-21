@@ -19,10 +19,17 @@
  *
  */
 
-package adams.db;
+package adams.db.generic;
 
 import adams.core.Constants;
 import adams.core.base.BaseDateTime;
+import adams.db.AbstractDatabaseConnection;
+import adams.db.AbstractIndexedTable;
+import adams.db.ColumnMapping;
+import adams.db.JDBC;
+import adams.db.LogEntry;
+import adams.db.LogEntryConditions;
+import adams.db.LogIntf;
 import adams.db.indices.Index;
 import adams.db.indices.IndexColumn;
 import adams.db.indices.Indices;
@@ -44,16 +51,11 @@ import java.util.logging.Level;
  * @author Fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class LogT
-  extends AbstractIndexedTable {
+  extends AbstractIndexedTable
+  implements LogIntf {
 
   /** for serialization. */
   private static final long serialVersionUID = -5955333734406125700L;
-
-  /** the table name. */
-  public final static String TABLE_NAME = "logging";
-
-  /** the table manager. */
-  protected static TableManager<LogT> m_TableManager;
 
   /**
    * The constructor.
@@ -172,13 +174,13 @@ public abstract class LogT
     int			i;
     String		regexp;
 
-    result = new ArrayList<LogEntry>();
+    result = new ArrayList<>();
     regexp = JDBC.regexpKeyword(getDatabaseConnection());
 
     cond.update();
 
     // translate conditions
-    where = new ArrayList<String>();
+    where = new ArrayList<>();
     if (!cond.getHost().isEmpty() && !cond.getHost().isMatchAll())
       where.add("HOST " + regexp + " " + backquote(cond.getHost()));
     if (!cond.getIP().isEmpty() && !cond.getIP().isMatchAll())
@@ -395,37 +397,5 @@ public abstract class LogT
     }
 
     return result;
-  }
-
-  /**
-   * Initializes the table. Used by the "InitializeTables" tool.
-   *
-   * @param dbcon	the database context
-   */
-  public static synchronized void initTable(AbstractDatabaseConnection dbcon) {
-    getSingleton(dbcon).init();
-  }
-
-  /**
-   * Returns the singleton of the table.
-   *
-   * @param dbcon	the database connection to get the singleton for
-   * @return		the singleton
-   */
-  public static synchronized LogT getSingleton(AbstractDatabaseConnection dbcon) {
-    if (m_TableManager == null)
-      m_TableManager = new TableManager<>(TABLE_NAME, dbcon.getOwner());
-    if (!m_TableManager.has(dbcon)) {
-      if (JDBC.isMySQL(dbcon))
-        m_TableManager.add(dbcon, new adams.db.mysql.LogT(dbcon));
-      else if (JDBC.isPostgreSQL(dbcon))
-        m_TableManager.add(dbcon, new adams.db.postgresql.LogT(dbcon));
-      else if (JDBC.isSQLite(dbcon))
-        m_TableManager.add(dbcon, new adams.db.sqlite.LogT(dbcon));
-      else
-	throw new IllegalArgumentException("Unrecognized JDBC URL: " + dbcon.getURL());
-    }
-
-    return m_TableManager.get(dbcon);
   }
 }

@@ -6,8 +6,6 @@
 InitTables.Debug=false
 
 # The logging table
-adams.db.LogT.Enabled=false
-adams.db.LogT.Debug=false
 adams.db.mysql.LogT.Debug=false
 adams.db.postgresql.LogT.Debug=false
 adams.db.sqlite.LogT.Debug=false

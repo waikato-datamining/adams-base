@@ -21,6 +21,7 @@
 package adams.db.mysql;
 
 import adams.db.AbstractDatabaseConnection;
+import adams.db.TableManager;
 
 /**
  * MySQL implementation.
@@ -28,9 +29,12 @@ import adams.db.AbstractDatabaseConnection;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class LogT
-  extends adams.db.LogT {
+  extends adams.db.generic.LogT {
 
   private static final long serialVersionUID = 6309576140124918549L;
+
+  /** the table manager. */
+  protected static TableManager<LogT> m_TableManager;
 
   /**
    * The constructor.
@@ -39,5 +43,29 @@ public class LogT
    */
   public LogT(AbstractDatabaseConnection dbcon) {
     super(dbcon);
+  }
+
+  /**
+   * Initializes the table. Used by the "InitializeTables" tool.
+   *
+   * @param dbcon	the database context
+   */
+  public static synchronized void initTable(AbstractDatabaseConnection dbcon) {
+    getSingleton(dbcon).init();
+  }
+
+  /**
+   * Returns the singleton of the table.
+   *
+   * @param dbcon	the database connection to get the singleton for
+   * @return		the singleton
+   */
+  public static synchronized LogT getSingleton(AbstractDatabaseConnection dbcon) {
+    if (m_TableManager == null)
+      m_TableManager = new TableManager<>(TABLE_NAME, dbcon.getOwner());
+    if (!m_TableManager.has(dbcon))
+      m_TableManager.add(dbcon, new LogT(dbcon));
+
+    return m_TableManager.get(dbcon);
   }
 }

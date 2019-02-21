@@ -1,7 +1,6 @@
 # Stores the classnames of the properties definition files.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 Definitions=\
   adams.env.ActorSuggestionDefinition,\
@@ -14,6 +13,7 @@ Definitions=\
   adams.env.ConditionsDefinition,\
   adams.env.ConversionDefinition,\
   adams.env.DatabaseConnectionDefinition,\
+  adams.env.DbBackendDefinition,\
   adams.env.DriversDefinition,\
   adams.env.ExternalActorSuggestionDefinition,\
   adams.env.FlowControlCenterPanelDefinition,\

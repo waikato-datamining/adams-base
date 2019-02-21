@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LogEntryDatabaseViewerPanel.java
- * Copyright (C) 2010-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -27,7 +27,7 @@ import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
 import adams.db.LogEntry;
 import adams.db.LogEntryConditions;
-import adams.db.LogT;
+import adams.db.LogF;
 import adams.env.Environment;
 import adams.env.LogEntryDBViewerPanelDefinition;
 import adams.event.DatabaseConnectionChangeEvent;
@@ -204,7 +204,7 @@ public class LogEntryDatabaseViewerPanel
     run = new Runnable() {
       public void run() {
 	setEnabled(false);
-	List<LogEntry> entries = LogT.getSingleton(getDatabaseConnection()).load(m_Conditions);
+	List<LogEntry> entries = LogF.getSingleton(getDatabaseConnection()).load(m_Conditions);
 	m_TableModelEntries.clear();
 	m_TableModelEntries.addAll(entries);
 	m_TableEntries.setOptimalColumnWidth();
@@ -231,7 +231,7 @@ public class LogEntryDatabaseViewerPanel
 	for (int i = 0; i < sel.length; i++)
 	  entries[i] = m_TableModelEntries.getLogEntryAt(sel[i]);
 	for (int i = 0; i < entries.length; i++)
-	  LogT.getSingleton(getDatabaseConnection()).remove(entries[i]);
+	  LogF.getSingleton(getDatabaseConnection()).remove(entries[i]);
         return null;
       }
       @Override

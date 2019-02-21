@@ -15,14 +15,14 @@
 
 /*
  * Logger.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
 import adams.db.DatabaseConnectionUser;
 import adams.db.LogEntry;
-import adams.db.LogT;
+import adams.db.LogF;
 import adams.flow.core.ActorUtils;
 
 /**
@@ -131,7 +131,7 @@ public class Logger
     result = null;
 
     log = (LogEntry) m_InputToken.getPayload();
-    if (!LogT.getSingleton(m_DatabaseConnection).add(log))
+    if (!LogF.getSingleton(m_DatabaseConnection).add(log))
       result = "Failed to add log entry:\n" + log;
 
     return result;

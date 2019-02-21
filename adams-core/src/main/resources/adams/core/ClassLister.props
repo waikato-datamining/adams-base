@@ -291,6 +291,13 @@ adams.db.AbstractTableCleanUp=\
 adams.db.datatype.AbstractDataTypeSetup=\
   adams.db.datatype
 
+# the DB backends
+adams.db.DbBackend=\
+  adams.db,\
+  adams.db.mysql,\
+  adams.db.postgresql,\
+  adams.db.sqlite
+
 # the Javadoc generators
 adams.doc.javadoc.Javadoc=\
   adams.doc.javadoc
