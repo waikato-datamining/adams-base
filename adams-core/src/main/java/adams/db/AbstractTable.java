@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractTable.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -30,11 +30,10 @@ import adams.event.DatabaseConnectionChangeListener;
  * Ancestor for all table classes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractTable
   extends SQL
-  implements DatabaseConnectionChangeListener {
+  implements TableInterface, DatabaseConnectionChangeListener {
 
   /** for serialization. */
   private static final long serialVersionUID = 4511302757992864994L;
