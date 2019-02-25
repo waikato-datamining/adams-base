@@ -266,6 +266,10 @@ adams.data.statistics.AbstractArrayStatistic=\
 adams.data.statistics.AbstractDataStatistic=\
   adams.data.statistics
 
+# the connection objects
+adams.db.AbstractDatabaseConnection=\
+  adams.db
+
 # the condition objects
 adams.db.AbstractConditions=\
   adams.db,\

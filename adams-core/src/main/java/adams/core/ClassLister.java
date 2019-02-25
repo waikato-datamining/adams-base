@@ -15,7 +15,7 @@
 
 /*
  * ClassLister.java
- * Copyright (C) 2007-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -58,7 +58,6 @@ import java.util.List;
  * </pre>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see #main(String[])
  */
 public class ClassLister
@@ -129,6 +128,51 @@ public class ClassLister
    * @return		the list of class names
    */
   public List<String> getAllClassnames(boolean managed) {
+    return getAllClassnames(managed, null);
+  }
+
+  /**
+   * Matches the class against the filters (interfaces, superclasses).
+   *
+   * @param cls		the class to match
+   * @param filters	the interfaces/superclasses to match, null if no filtering
+   * @return		true if a match
+   */
+  protected boolean matches(String cls, Class[] filters) {
+    if (filters == null)
+      return true;
+    for (Class filter: filters) {
+      if (!ClassLocator.matches(filter.getName(), cls))
+        return false;
+    }
+    return true;
+  }
+
+  /**
+   * Matches the class against the filters (interfaces, superclasses).
+   *
+   * @param cls		the class to match
+   * @param filters	the interfaces/superclasses to match, null if no filtering
+   * @return		true if a match
+   */
+  protected boolean matches(Class cls, Class[] filters) {
+    if (filters == null)
+      return true;
+    for (Class filter: filters) {
+      if (!ClassLocator.matches(filter, cls))
+        return false;
+    }
+    return true;
+  }
+
+  /**
+   * For returning a list of all classes.
+   *
+   * @param managed	whether to restrict to managed classes
+   * @param filters 	for filtering the classes (interfaces/superclasses to match again), null to ignore
+   * @return		the list of class names
+   */
+  public List<String> getAllClassnames(boolean managed, Class[] filters) {
     List<String> 	result;
     int			i;
     String		name;
@@ -142,15 +186,18 @@ public class ClassLister
 	for (String cls: ClassLocator.getSingleton().getCache().getClassnames(iter.next())) {
 	  if (cls.contains("$"))
 	    continue;
-	  result.add(cls);
+	  if (matches(cls, filters))
+	    result.add(cls);
 	}
       }
     }
     else {
       // only managed classes
       for (String supercls : ClassLister.getSingleton().getSuperclasses()) {
-	for (Class cls : ClassLister.getSingleton().getClasses(supercls))
-	  result.add(cls.getName());
+	for (Class cls : ClassLister.getSingleton().getClasses(supercls)) {
+	  if (matches(cls, filters))
+	    result.add(cls.getName());
+	}
       }
     }
     Collections.sort(result);
