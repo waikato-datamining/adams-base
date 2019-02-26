@@ -26,7 +26,8 @@ import adams.core.Utils;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.JDBC;
-import adams.db.SQL;
+import adams.db.SQLF;
+import adams.db.SQLIntf;
 import adams.flow.core.ActorUtils;
 import adams.opt.genetic.AbstractGeneticAlgorithm;
 
@@ -161,10 +162,10 @@ public class MySQL
    */
   protected String initTable() {
     StringBuilder	create;
-    SQL			sql;
+    SQLIntf 		sql;
     Boolean 		resultSet;
 
-    sql = SQL.getSingleton(m_DatabaseConnection);
+    sql = SQLF.getSingleton(m_DatabaseConnection);
     if (sql.tableExists(m_Table))
       return null;
 

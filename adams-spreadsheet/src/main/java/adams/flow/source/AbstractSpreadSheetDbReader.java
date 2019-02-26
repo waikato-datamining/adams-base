@@ -29,7 +29,8 @@ import adams.data.spreadsheet.sql.AbstractTypeMapper;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
 import adams.db.AbstractDatabaseConnection;
-import adams.db.SQL;
+import adams.db.SQLF;
+import adams.db.SQLIntf;
 import adams.db.SQLStatement;
 import adams.flow.core.Token;
 
@@ -285,7 +286,7 @@ public abstract class AbstractSpreadSheetDbReader
   protected String queryDatabase() {
     String		result;
     SpreadSheet		sheet;
-    SQL			sql;
+    SQLIntf 		sql;
     String		query;
     
     result = null;
@@ -294,7 +295,7 @@ public abstract class AbstractSpreadSheetDbReader
     query = m_Query.getValue();
     query = getVariables().expand(query);
     try {
-      sql      = new SQL(m_DatabaseConnection);
+      sql      = SQLF.getSingleton(m_DatabaseConnection);
       sql.setDebug(isLoggingEnabled());
       m_Reader = new Reader(m_TypeMapper, m_DataRowType.getClass());
       m_Reader.setLoggingLevel(getLoggingLevel());

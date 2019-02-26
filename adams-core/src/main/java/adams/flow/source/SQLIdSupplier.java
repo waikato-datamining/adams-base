@@ -21,8 +21,10 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
-import adams.db.SQL;
+import adams.db.SQLF;
+import adams.db.SQLIntf;
 import adams.db.SQLStatement;
+import adams.db.SQLUtils;
 import adams.flow.core.ActorUtils;
 
 import java.sql.ResultSet;
@@ -257,7 +259,7 @@ public class SQLIdSupplier
   @Override
   protected ArrayList getIDs(StringBuilder errors) {
     ArrayList	result;
-    SQL		sql;
+    SQLIntf 	sql;
     ResultSet	rs;
     String	query;
 
@@ -266,7 +268,7 @@ public class SQLIdSupplier
     rs    = null;
     query = null;
     try {
-      sql   = new SQL(getDatabaseConnection());
+      sql   = SQLF.getSingleton(getDatabaseConnection());
       query = m_SQL.getValue();
       // replace variables
       query = getVariables().expand(query);
@@ -291,7 +293,7 @@ public class SQLIdSupplier
     catch (Exception e) {
       errors.append(handleException("Failed to obtain IDs, using: " + ((query == null) ? m_SQL : query), e));
     }
-    SQL.closeAll(rs);
+    SQLUtils.closeAll(rs);
 
     return result;
   }

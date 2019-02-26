@@ -24,8 +24,9 @@ import adams.core.Shortening;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
 import adams.db.AbstractDatabaseConnection;
-import adams.db.SQL;
+import adams.db.SQLF;
 import adams.db.SQLStatement;
+import adams.db.SQLUtils;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 
@@ -199,7 +200,7 @@ public class TimeseriesDbReader
     m_ColumnTimestampIndex = -1;
     m_ColumnValueType      = Types.OTHER;
     m_ColumnValueIndex     = -1;
-    SQL.closeAll(m_ResultSet);
+    SQLUtils.closeAll(m_ResultSet);
   }
 
   /**
@@ -379,7 +380,7 @@ public class TimeseriesDbReader
     Date		timestamp;
     double		val;
     
-    if (SQL.isInteger(m_ColumnTimestampIndex))
+    if (SQLUtils.isInteger(m_ColumnTimestampIndex))
       timestamp = new Date(m_ResultSet.getInt(m_ColumnTimestampIndex));
     else if (m_ColumnTimestampType == Types.DATE)
       timestamp = m_ResultSet.getDate(m_ColumnTimestampIndex);
@@ -443,14 +444,14 @@ public class TimeseriesDbReader
     if (finished) {
       m_Timeseries = null;
       if (dataRead) {
-	SQL.closeAll(m_ResultSet);
+	SQLUtils.closeAll(m_ResultSet);
 	m_ResultSet = null;
       }
     }
     if (!dataRead) {
       m_Timeseries = null;
       result       = null;
-      SQL.closeAll(m_ResultSet);
+      SQLUtils.closeAll(m_ResultSet);
       m_ResultSet = null;
     }
     
@@ -482,7 +483,7 @@ public class TimeseriesDbReader
       
       // ID
       if (m_ColumnIDIndex == -1) {
-	if (    (m_ColumnID.isEmpty() && SQL.isString(type)) 
+	if (    (m_ColumnID.isEmpty() && SQLUtils.isString(type))
 	     || col.toLowerCase().equals(m_ColumnID.toLowerCase()) ) {
 	  m_ColumnIDIndex = i;
 	  m_ColumnIDType  = type;
@@ -492,7 +493,7 @@ public class TimeseriesDbReader
 
       // timestamp
       if (m_ColumnTimestampIndex == -1) {
-	if (   (m_ColumnTimestamp.isEmpty() && SQL.isDate(type)) 
+	if (   (m_ColumnTimestamp.isEmpty() && SQLUtils.isDate(type))
 	     || col.toLowerCase().equals(m_ColumnTimestamp.toLowerCase()) ) {
 	  m_ColumnTimestampIndex = i;
 	  m_ColumnTimestampType  = type;
@@ -502,7 +503,7 @@ public class TimeseriesDbReader
       
       // value
       if (m_ColumnValueIndex == -1) {
-	if (    (m_ColumnValue.isEmpty() && SQL.isNumeric(type)) 
+	if (    (m_ColumnValue.isEmpty() && SQLUtils.isNumeric(type))
 	     || col.toLowerCase().equals(m_ColumnValue.toLowerCase()) ) {
 	  m_ColumnValueIndex = i;
 	  m_ColumnValueType  = type;
@@ -518,7 +519,7 @@ public class TimeseriesDbReader
       else
 	throw new IllegalStateException("ID column '" + m_ColumnID + "' not found in result set!");
     }
-    if (!(SQL.isNumeric(m_ColumnIDType) || SQL.isString(m_ColumnIDType)))
+    if (!(SQLUtils.isNumeric(m_ColumnIDType) || SQLUtils.isString(m_ColumnIDType)))
       throw new IllegalStateException("ID column '" + m_ColumnID + "' must be a numeric or string type: " + m_ColumnIDType);
     
     // timestamp
@@ -528,7 +529,7 @@ public class TimeseriesDbReader
       else
 	throw new IllegalStateException("Timestamp column '" + m_ColumnTimestamp + "' not found in result set!");
     }
-    if (!(SQL.isInteger(m_ColumnTimestampType) || (m_ColumnTimestampType == Types.DATE) || (m_ColumnTimestampType == Types.TIME) || (m_ColumnTimestampType == Types.TIMESTAMP)))
+    if (!(SQLUtils.isInteger(m_ColumnTimestampType) || (m_ColumnTimestampType == Types.DATE) || (m_ColumnTimestampType == Types.TIME) || (m_ColumnTimestampType == Types.TIMESTAMP)))
       throw new IllegalStateException("Timestamp column '" + m_ColumnTimestamp + "' must be a integer or date-related type: " + m_ColumnTimestampType);
     
     // value
@@ -538,7 +539,7 @@ public class TimeseriesDbReader
       else
 	throw new IllegalStateException("Value column '" + m_ColumnValue + "' not found in result set!");
     }
-    if (!SQL.isNumeric(m_ColumnValueType))
+    if (!SQLUtils.isNumeric(m_ColumnValueType))
       throw new IllegalStateException("Value column '" + m_ColumnValue + "' must be a numeric type: " + m_ColumnValueType);
   }
 
@@ -559,7 +560,7 @@ public class TimeseriesDbReader
     try {
       query = m_SQL.getValue();
       query = getVariables().expand(query);
-      m_ResultSet = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
+      m_ResultSet = SQLF.getSingleton(m_DatabaseConnection).getResultSet(query);
       if (isLoggingEnabled())
 	getLogger().fine("SQL: " + query);
       analyzeColumns();
@@ -614,7 +615,7 @@ public class TimeseriesDbReader
    */
   @Override
   public void wrapUp() {
-    SQL.closeAll(m_ResultSet);
+    SQLUtils.closeAll(m_ResultSet);
     m_Timeseries = null;
 
     super.wrapUp();

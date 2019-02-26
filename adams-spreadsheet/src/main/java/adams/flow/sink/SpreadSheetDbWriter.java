@@ -30,7 +30,8 @@ import adams.data.spreadsheet.sql.AbstractTypeMapper;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Writer;
 import adams.db.DatabaseConnectionUser;
-import adams.db.SQL;
+import adams.db.SQLF;
+import adams.db.SQLIntf;
 import adams.flow.core.ActorUtils;
 
 /**
@@ -444,7 +445,7 @@ public class SpreadSheetDbWriter
     String		result;
     Row			row;
     SpreadSheet		sheet;
-    SQL			sql;
+    SQLIntf 		sql;
 
     result = null;
 
@@ -460,7 +461,7 @@ public class SpreadSheetDbWriter
     else {
       sheet = (SpreadSheet) m_InputToken.getPayload();
     }
-    sql = new SQL(m_DatabaseConnection);
+    sql = SQLF.getSingleton(m_DatabaseConnection);
     sql.setDebug(isLoggingEnabled());
 
     m_Writer = null;

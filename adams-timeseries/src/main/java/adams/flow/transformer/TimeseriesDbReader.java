@@ -25,8 +25,9 @@ import adams.core.Shortening;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
 import adams.db.AbstractDatabaseConnection;
-import adams.db.SQL;
+import adams.db.SQLF;
 import adams.db.SQLStatement;
+import adams.db.SQLUtils;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 
@@ -345,7 +346,7 @@ public class TimeseriesDbReader
     Date		timestamp;
     double		val;
 
-    if (SQL.isInteger(m_ColumnTimestampIndex))
+    if (SQLUtils.isInteger(m_ColumnTimestampIndex))
       timestamp = new Date(rs.getInt(m_ColumnTimestampIndex));
     else if (m_ColumnTimestampType == Types.DATE)
       timestamp = rs.getDate(m_ColumnTimestampIndex);
@@ -407,7 +408,7 @@ public class TimeseriesDbReader
 
       // timestamp
       if (m_ColumnTimestampIndex == -1) {
-        if (   (m_ColumnTimestamp.isEmpty() && SQL.isDate(type))
+        if (   (m_ColumnTimestamp.isEmpty() && SQLUtils.isDate(type))
           || col.toLowerCase().equals(m_ColumnTimestamp.toLowerCase()) ) {
           m_ColumnTimestampIndex = i;
           m_ColumnTimestampType  = type;
@@ -417,7 +418,7 @@ public class TimeseriesDbReader
 
       // value
       if (m_ColumnValueIndex == -1) {
-        if (    (m_ColumnValue.isEmpty() && SQL.isNumeric(type))
+        if (    (m_ColumnValue.isEmpty() && SQLUtils.isNumeric(type))
           || col.toLowerCase().equals(m_ColumnValue.toLowerCase()) ) {
           m_ColumnValueIndex = i;
           m_ColumnValueType  = type;
@@ -433,7 +434,7 @@ public class TimeseriesDbReader
       else
         throw new IllegalStateException("Timestamp column '" + m_ColumnTimestamp + "' not found in result set!");
     }
-    if (!(SQL.isInteger(m_ColumnTimestampType) || (m_ColumnTimestampType == Types.DATE) || (m_ColumnTimestampType == Types.TIME) || (m_ColumnTimestampType == Types.TIMESTAMP)))
+    if (!(SQLUtils.isInteger(m_ColumnTimestampType) || (m_ColumnTimestampType == Types.DATE) || (m_ColumnTimestampType == Types.TIME) || (m_ColumnTimestampType == Types.TIMESTAMP)))
       throw new IllegalStateException("Timestamp column '" + m_ColumnTimestamp + "' must be a integer or date-related type: " + m_ColumnTimestampType);
 
     // value
@@ -443,7 +444,7 @@ public class TimeseriesDbReader
       else
         throw new IllegalStateException("Value column '" + m_ColumnValue + "' not found in result set!");
     }
-    if (!SQL.isNumeric(m_ColumnValueType))
+    if (!SQLUtils.isNumeric(m_ColumnValueType))
       throw new IllegalStateException("Value column '" + m_ColumnValue + "' must be a numeric type: " + m_ColumnValueType);
   }
 
@@ -468,7 +469,7 @@ public class TimeseriesDbReader
     try {
       query = m_SQL.getValue().replace(PLACEHOLDER_ID, id);
       query = getVariables().expand(query);
-      rs = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
+      rs = SQLF.getSingleton(m_DatabaseConnection).getResultSet(query);
       if (isLoggingEnabled())
         getLogger().fine("SQL: " + query);
       if (m_ColumnTimestampIndex == -1)
@@ -482,7 +483,7 @@ public class TimeseriesDbReader
     }
     finally {
       if (rs != null)
-        SQL.closeAll(rs);
+        SQLUtils.closeAll(rs);
     }
 
     return result;

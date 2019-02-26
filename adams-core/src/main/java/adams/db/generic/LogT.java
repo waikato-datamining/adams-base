@@ -30,6 +30,7 @@ import adams.db.JDBC;
 import adams.db.LogEntry;
 import adams.db.LogEntryConditions;
 import adams.db.LogIntf;
+import adams.db.SQLUtils;
 import adams.db.indices.Index;
 import adams.db.indices.IndexColumn;
 import adams.db.indices.Indices;
@@ -153,7 +154,7 @@ public abstract class LogT
       getLogger().log(Level.SEVERE, "Failed to load auto_id=" + auto_id, e);
     }
     finally {
-      closeAll(rs);
+      SQLUtils.closeAll(rs);
     }
 
     return result;
@@ -182,15 +183,15 @@ public abstract class LogT
     // translate conditions
     where = new ArrayList<>();
     if (!cond.getHost().isEmpty() && !cond.getHost().isMatchAll())
-      where.add("HOST " + regexp + " " + backquote(cond.getHost()));
+      where.add("HOST " + regexp + " " + SQLUtils.backquote(cond.getHost()));
     if (!cond.getIP().isEmpty() && !cond.getIP().isMatchAll())
-      where.add("IP " + regexp + " " + backquote(cond.getIP()));
+      where.add("IP " + regexp + " " + SQLUtils.backquote(cond.getIP()));
     if (!cond.getType().isEmpty() && !cond.getType().isMatchAll())
-      where.add("TYPE " + regexp + " " + backquote(cond.getType()));
+      where.add("TYPE " + regexp + " " + SQLUtils.backquote(cond.getType()));
     if (!cond.getStatus().isEmpty() && !cond.getStatus().isMatchAll())
-      where.add("STATUS " + regexp + " " + backquote(cond.getStatus()));
+      where.add("STATUS " + regexp + " " + SQLUtils.backquote(cond.getStatus()));
     if (!cond.getSource().isEmpty() && !cond.getSource().isMatchAll())
-      where.add("SOURCE " + regexp + " " + backquote(cond.getSource()));
+      where.add("SOURCE " + regexp + " " + SQLUtils.backquote(cond.getSource()));
     if (!cond.getGenerationStartDate().equals(BaseDateTime.infinityPast()))
       where.add("GENERATION >= '" + cond.getGenerationStartDate().stringValue() + "'");
     if (!cond.getGenerationEndDate().equals(BaseDateTime.infinityFuture()))
@@ -221,7 +222,7 @@ public abstract class LogT
       getLogger().log(Level.SEVERE, "Failed to load: " + sqlWhere, e);
     }
     finally {
-      closeAll(rs);
+      SQLUtils.closeAll(rs);
     }
 
     Collections.sort(result);

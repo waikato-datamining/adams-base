@@ -13,18 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * TableExists.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+/*
+ * TruncateTables.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ *
  */
-package adams.flow.condition.bool;
 
-import adams.core.QuickInfoHelper;
+package adams.tools;
+
+import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import adams.db.AbstractDatabaseConnection;
+import adams.db.DatabaseConnection;
+import adams.db.SQLF;
 import adams.db.SQLUtils;
-import adams.flow.core.Actor;
-import adams.flow.core.Token;
-import adams.flow.core.Unknown;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -35,38 +37,41 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Checks whether table(s) exist that match the given regular expression.
+ * Truncates all tables that match a regular expression (matching sense can be inverted).
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
  * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ *
+ * <pre>-D (property: debug)
+ * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.
  * </pre>
- * 
- * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
+ *
+ * <pre>-regexp &lt;java.lang.String&gt; (property: regExp)
  * &nbsp;&nbsp;&nbsp;The regular expression used for matching the table names.
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
- * 
+ *
+ * <pre>-invert (property: invert)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the matching sense is inverted.
+ * </pre>
+ *
  <!-- options-end -->
  *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class TableExists
-  extends AbstractBooleanDatabaseCondition {
+public class TruncateTables
+  extends AbstractDatabaseTool {
 
   /** for serialization. */
-  private static final long serialVersionUID = -338472091205326476L;
-  
-  /** the regular expression for the table name to match. */
+  private static final long serialVersionUID = 5980651808577627734L;
+
+  /** the regular expression to match. */
   protected BaseRegExp m_RegExp;
+
+  /** whether to invert the matching sense. */
+  protected boolean m_Invert;
 
   /**
    * Returns a string describing the object.
@@ -75,7 +80,9 @@ public class TableExists
    */
   @Override
   public String globalInfo() {
-    return "Checks whether table(s) exist that match the given regular expression.";
+    return
+        "Trunaces all tables that match a regular expression (matching sense "
+      + "can be inverted).";
   }
 
   /**
@@ -88,6 +95,20 @@ public class TableExists
     m_OptionManager.add(
 	    "regexp", "regExp",
 	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
+	    "invert", "invert",
+	    false);
+  }
+
+  /**
+   * Returns the default database connection.
+   *
+   * @return		the database connection
+   */
+  @Override
+  protected AbstractDatabaseConnection getDefaultDatabaseConnection() {
+    return DatabaseConnection.getSingleton();
   }
 
   /**
@@ -120,55 +141,55 @@ public class TableExists
   }
 
   /**
-   * Returns the quick info string to be displayed in the flow editor.
+   * Sets whether to invert the matching sense.
    *
-   * @return		the info or null if no info to be displayed
+   * @param value	true if inverting matching sense
    */
-  @Override
-  public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "regExp", m_RegExp);
+  public void setInvert(boolean value) {
+    m_Invert = value;
+    reset();
   }
 
   /**
-   * Returns the class that the consumer accepts.
+   * Returns whether to invert the matching sense.
    *
-   * @return		Unknown
+   * @return		true if matching sense is inverted
    */
-  @Override
-  public Class[] accepts() {
-    return new Class[]{Unknown.class};
+  public boolean getInvert() {
+    return m_Invert;
   }
 
   /**
-   * Performs the actual evaluation.
+   * Returns the tip text for this property.
    *
-   * @param owner	the owning actor
-   * @param token	the current token passing through
-   * @return		true if the condition evaluates to 'true'
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String invertTipText() {
+    return "If set to true, then the matching sense is inverted.";
+  }
+
+  /**
+   * Attempt to load the file and save to db.
+   * Exit java upon failure
    */
   @Override
-  protected boolean doEvaluate(Actor owner, Token token) {
-    boolean		result;
+  protected void doRun() {
     Connection		conn;
     DatabaseMetaData	metadata;
     ResultSet		rs;
     List<String>	tables;
 
-    result = false;
-    
     conn = getDatabaseConnection().getConnection(false);
     if (conn == null) {
       getLogger().severe("Failed to obtain database connection??");
-      return result;
+      return;
     }
 
+    tables = new ArrayList<>();
     try {
-      // get metadata
       metadata = conn.getMetaData();
-
-      // determine table names
       rs       = null;
-      tables   = new ArrayList<String>();
       try {
 	rs = metadata.getTables(null, null, null, new String[]{"TABLE"});
 	while (rs.next())
@@ -186,18 +207,22 @@ public class TableExists
 
       // drop tables
       for (String table: tables) {
-	if (m_RegExp.isMatch(table)) {
-	  result = true;
-	  if (isLoggingEnabled())
-	    getLogger().info("Table matches '" + m_RegExp + "': " + table);
-	  break;
+	if (m_Invert) {
+	  if (m_RegExp.isMatch(table))
+	    continue;
 	}
+	else {
+	  if (!m_RegExp.isMatch(table))
+	    continue;
+	}
+	getLogger().info("Truncating table '" + table + "': " + SQLF.getSingleton(getDatabaseConnection()).truncate(table));
+
+	if (m_Stopped)
+	  break;
       }
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to check for tables:", e);
+      getLogger().log(Level.SEVERE, "Failed to truncate tables (" + Utils.flatten(tables, ", ") + "):", e);
     }
-    
-    return result;
   }
 }

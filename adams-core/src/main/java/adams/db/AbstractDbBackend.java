@@ -23,6 +23,7 @@ package adams.db;
 import adams.core.ClassLister;
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.logging.LoggingLevel;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.env.DbBackendDefinition;
@@ -81,6 +82,8 @@ public abstract class AbstractDbBackend
 	      + "Available: " + Utils.classesToString(available));
 	try {
 	  m_Singleton = (DbBackend) OptionUtils.forCommandLine(DbBackend.class, cmdline);
+	  m_Singleton.setLoggingLevel(LoggingLevel.INFO);
+	  m_Singleton.getLogger().info("Using DB Backend: " + m_Singleton.toCommandLine());
 	}
 	catch (Exception e) {
 	  m_Singleton = null;

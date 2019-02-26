@@ -14,37 +14,22 @@
  */
 
 /*
- * DbBackend.java
+ * BackendManager.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
 
+import adams.core.logging.LoggingLevelHandler;
+import adams.core.logging.LoggingSupporter;
+import adams.core.option.OptionHandler;
+
 /**
- * Interface for classes that return actual implementations of the
- * processing database interfaces.
+ * Interface for database backends.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface DbBackend
-  extends BackendManager {
+public interface BackendManager
+  extends OptionHandler, LoggingSupporter, LoggingLevelHandler {
 
-  /** the properties file containing the setup. */
-  public final static String FILENAME = "DbBackend.props";
-
-  /**
-   * Returns the generic SQL handler.
-   *
-   * @param conn	the database connection
-   * @return		the handler
-   */
-  public SQLIntf getSQL(AbstractDatabaseConnection conn);
-
-  /**
-   * Returns the handler for the log table.
-   *
-   * @param conn	the database connection
-   * @return		the handler
-   */
-  public LogIntf getLog(AbstractDatabaseConnection conn);
 }

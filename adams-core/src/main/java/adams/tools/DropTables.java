@@ -15,11 +15,18 @@
 
 /*
  * DropTables.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.tools;
+
+import adams.core.Utils;
+import adams.core.base.BaseRegExp;
+import adams.db.AbstractDatabaseConnection;
+import adams.db.DatabaseConnection;
+import adams.db.SQLF;
+import adams.db.SQLUtils;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -27,11 +34,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
-import adams.core.base.BaseRegExp;
-import adams.db.AbstractDatabaseConnection;
-import adams.db.DatabaseConnection;
-import adams.db.SQL;
 
 /**
  <!-- globalinfo-start -->
@@ -185,13 +187,10 @@ public class DropTables
       return;
     }
 
+    tables = new ArrayList<>();
     try {
-      // get metadata
       metadata = conn.getMetaData();
-
-      // determine table names
       rs       = null;
-      tables   = new ArrayList<String>();
       try {
 	rs = metadata.getTables(null, null, null, new String[]{"TABLE"});
 	while (rs.next())
@@ -202,7 +201,7 @@ public class DropTables
       }
       finally {
 	if (rs != null)
-	  SQL.closeAll(rs);
+	  SQLUtils.closeAll(rs);
       }
       if (isLoggingEnabled())
 	getLogger().info("Tables found: " + tables);
@@ -217,14 +216,14 @@ public class DropTables
 	  if (!m_RegExp.isMatch(table))
 	    continue;
 	}
-	getLogger().info("Dropping table '" + table + "': " + SQL.getSingleton(getDatabaseConnection()).drop(table));
+	getLogger().info("Dropping table '" + table + "': " + SQLF.getSingleton(getDatabaseConnection()).drop(table));
 
 	if (m_Stopped)
 	  break;
       }
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to drop tables:", e);
+      getLogger().log(Level.SEVERE, "Failed to drop tables (" + Utils.flatten(tables, ", ") + "):", e);
     }
   }
 }

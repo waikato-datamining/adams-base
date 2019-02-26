@@ -28,7 +28,8 @@ import java.util.List;
  *
  * @author Fracpete (fracpete at waikato dot ac dot nz)
  */
-public interface LogIntf {
+public interface LogIntf
+  extends TableInterface {
 
   /** the table name. */
   public final static String TABLE_NAME = "logging";

@@ -196,7 +196,7 @@ public abstract class AbstractIndexedTable
     }
     catch (SQLException e) {
       if (tryAgain) {
-	closeAll(rs);
+	SQLUtils.closeAll(rs);
 	ok = columnsMatchTest(cm, print, false, addMissing);
       }
     }
@@ -204,7 +204,7 @@ public abstract class AbstractIndexedTable
       // ignored?
     }
     finally {
-      closeAll(rs);
+      SQLUtils.closeAll(rs);
     }
     return ok;
   }
@@ -321,11 +321,11 @@ public abstract class AbstractIndexedTable
     try{
       SimpleResultSet rs = new SimpleResultSet(select("*", condition));
       if (!rs.next()) {
-	closeAll(rs);
+	SQLUtils.closeAll(rs);
 	return(false);
       }
       else{
-	closeAll(rs);
+	SQLUtils.closeAll(rs);
 	return(true);
       }
     }

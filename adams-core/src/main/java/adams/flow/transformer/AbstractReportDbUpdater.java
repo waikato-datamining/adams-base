@@ -30,8 +30,9 @@ import adams.data.report.Field;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.db.DatabaseConnectionUser;
-import adams.db.SQL;
+import adams.db.SQLF;
 import adams.db.SQLStatement;
+import adams.db.SQLUtils;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 
@@ -414,7 +415,7 @@ public abstract class AbstractReportDbUpdater
         if (isLoggingEnabled())
           getLogger().fine("query: " + query);
 
-        rs = SQL.getSingleton(m_DatabaseConnection).getResultSet(query);
+        rs = SQLF.getSingleton(m_DatabaseConnection).getResultSet(query);
         dataRead = false;
 
         switch (m_QueryType) {
@@ -444,7 +445,7 @@ public abstract class AbstractReportDbUpdater
           default:
             throw new IllegalStateException("Unhandled query type: " + m_QueryType);
         }
-        SQL.closeAll(rs);
+        SQLUtils.closeAll(rs);
         if (!dataRead && !m_Lenient)
           result = "No data found: " + query;
 

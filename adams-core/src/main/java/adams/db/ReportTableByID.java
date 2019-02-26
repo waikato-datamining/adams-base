@@ -127,7 +127,7 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
     // build SQL statement
     sql =   "DELETE "
       + "FROM " + getTableName() + " "
-      + "WHERE ID = " + backquote(id);
+      + "WHERE ID = " + SQLUtils.backquote(id);
 
     // execute SQL
     try {
@@ -156,8 +156,8 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
     // build SQL statement
     sql =   "DELETE "
       + "FROM " + getTableName() + " "
-      + "WHERE ID = " + backquote(id) + " "
-      + "AND NAME = " + backquote(field.getName());
+      + "WHERE ID = " + SQLUtils.backquote(id) + " "
+      + "AND NAME = " + SQLUtils.backquote(field.getName());
 
     // execute SQL
     try {

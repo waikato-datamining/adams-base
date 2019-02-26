@@ -277,11 +277,17 @@ adams.db.AbstractConditions=\
 
 # all tables
 adams.db.AbstractTable=\
-  adams.db
+  adams.db,\
+  adams.db.mysql,\
+  adams.db.postgresql,\
+  adams.db.sqlite
 
 # the indexed tables
 adams.db.AbstractIndexedTable=\
-  adams.db
+  adams.db,\
+  adams.db.mysql,\
+  adams.db.postgresql,\
+  adams.db.sqlite
 
 # helper classes for upgrading tables
 adams.db.upgrade.AbstractTableUpgrade=\
@@ -298,6 +304,7 @@ adams.db.datatype.AbstractDataTypeSetup=\
 # the DB backends
 adams.db.DbBackend=\
   adams.db,\
+  adams.db.mirrored,\
   adams.db.mysql,\
   adams.db.postgresql,\
   adams.db.sqlite

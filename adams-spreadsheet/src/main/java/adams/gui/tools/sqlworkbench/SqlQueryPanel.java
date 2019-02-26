@@ -27,7 +27,8 @@ import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnectionProvider;
-import adams.db.SQL;
+import adams.db.SQLF;
+import adams.db.SQLIntf;
 import adams.db.SQLStatement;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
@@ -207,7 +208,7 @@ public class SqlQueryPanel
         m_PanelQuery.setEnabled(false);
         m_PanelConnection.setEnabled(false);
 	try {
-	  SQL sql = new SQL(m_PanelConnection.getDatabaseConnection());
+	  SQLIntf sql = SQLF.getSingleton(m_PanelConnection.getDatabaseConnection());
 	  if (query.toLowerCase().startsWith("select ")) {
 	    Reader reader = new Reader(new DefaultTypeMapper(), DenseDataRow.class);
 	    ResultSet rs = sql.getResultSet(query);

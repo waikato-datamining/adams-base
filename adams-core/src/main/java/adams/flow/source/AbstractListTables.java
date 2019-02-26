@@ -22,7 +22,7 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
-import adams.db.SQL;
+import adams.db.SQLUtils;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -195,7 +195,7 @@ public abstract class AbstractListTables
       result = handleException("Failed to obtain list of tables!", e);
     }
     finally {
-      SQL.closeAll(rs);
+      SQLUtils.closeAll(rs);
     }
 
     if (result == null) {

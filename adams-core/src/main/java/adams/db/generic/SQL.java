@@ -19,13 +19,16 @@
  *
  */
 
-package adams.db;
+package adams.db.generic;
 
 import adams.core.Utils;
-import adams.core.base.BaseRegExp;
-import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
+import adams.db.AbstractDatabaseConnection;
+import adams.db.SQLIntf;
+import adams.db.SQLUtils;
+import adams.db.SimpleResultSet;
+import adams.db.TableManager;
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.TLongList;
@@ -37,10 +40,8 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -53,7 +54,7 @@ import java.util.logging.Level;
  */
 public class SQL
   extends LoggingObject
-  implements DatabaseConnectionProvider {
+  implements SQLIntf {
 
   /** for serialization. */
   private static final long serialVersionUID = -7708896486343190549L;
@@ -66,21 +67,28 @@ public class SQL
 
   /** the table manager. */
   protected static TableManager<SQL> m_TableManager;
-  
-  /** the static logger. */
-  protected static Logger LOGGER = LoggingHelper.getConsoleLogger(SQL.class);
 
   /**
    * Constructor.
    *
    * @param dbcon	the database context to use
    */
-  public SQL(AbstractDatabaseConnection dbcon) {
+  protected SQL(AbstractDatabaseConnection dbcon) {
     super();
 
     m_DatabaseConnection = dbcon;
 
     updatePrefix();
+  }
+
+  /**
+   * Returns fake table name.
+   *
+   * @return		the name
+   */
+  @Override
+  public String getTableName() {
+    return FAKE_TABLE_NAME;
   }
 
   /**
@@ -120,17 +128,6 @@ public class SQL
    */
   public boolean getDebug() {
     return m_Debug;
-  }
-
-  /**
-   * Replaces all single quotes -' with double quotes -".
-   *
-   * @param in  Input String to replace quotes
-   * @return  String with quotes replaced
-   */
-  public String escapeQuotes(String in) {
-    String ret=in.replaceAll("'","\"");
-    return(ret);
   }
 
   /**
@@ -187,7 +184,7 @@ public class SQL
     ResultSet 		rs;
     Connection 		conn;
     DatabaseMetaData 	dbmd;
-    
+
     result = false;
     rs     = null;
     conn   = m_DatabaseConnection.getConnection(true);
@@ -220,7 +217,7 @@ public class SQL
 	}
       }
     }
-    
+
     return result;
   }
 
@@ -399,7 +396,7 @@ public class SQL
       result = null;
     }
     finally {
-      close(stmt);
+      SQLUtils.close(stmt);
     }
 
     return result;
@@ -445,129 +442,6 @@ public class SQL
     }
 
     return result;
-  }
-
-  /**
-   * Checks whether the given column type is numeric.
-   * 
-   * @param colType	the column type
-   * @return		true if numeric
-   */
-  public static boolean isNumeric(int colType) {
-    return 
-	   (colType == Types.BIGINT)
-	|| (colType == Types.BIT)
-	|| (colType == Types.DECIMAL)
-	|| (colType == Types.DOUBLE)
-	|| (colType == Types.FLOAT)
-	|| (colType == Types.INTEGER)
-	|| (colType == Types.NUMERIC)
-	|| (colType == Types.REAL)
-	|| (colType == Types.SMALLINT)
-	|| (colType == Types.TINYINT)
-	;
-  }
-
-  /**
-   * Checks whether the given column type is an integer type.
-   * 
-   * @param colType	the column type
-   * @return		true if an integer type
-   */
-  public static boolean isInteger(int colType) {
-    return 
-	   (colType == Types.BIGINT)
-	|| (colType == Types.BIT)
-	|| (colType == Types.INTEGER)
-	|| (colType == Types.SMALLINT)
-	|| (colType == Types.TINYINT)
-	;
-  }
-
-  /**
-   * Checks whether the given column type represents strings.
-   * 
-   * @param colType	the column type
-   * @return		true if a string type
-   */
-  public static boolean isString(int colType) {
-    return 
-	   (colType == Types.CHAR)
-	|| (colType == Types.CLOB)
-	|| (colType == Types.LONGNVARCHAR)
-	|| (colType == Types.LONGVARCHAR)
-	|| (colType == Types.NCHAR)
-	|| (colType == Types.NVARCHAR)
-	|| (colType == Types.VARCHAR)
-	;
-  }
-
-  /**
-   * Checks whether the given column type represents a date-like type.
-   * 
-   * @param colType	the column type
-   * @return		true if a date-like type
-   */
-  public static boolean isDate(int colType) {
-    return 
-	   (colType == Types.DATE)
-	|| (colType == Types.TIME)
-	|| (colType == Types.TIMESTAMP)
-	;
-  }
-  
-  /**
-   * Close this statement to avoid memory leaks.
-   *
-   * @param s		the statement to close
-   */
-  public static void close(Statement s) {
-    if (s != null) {
-      try {
-	s.close();
-	s = null;
-      }
-      catch (Exception e) {
-	LOGGER.log(Level.SEVERE, "Error closing statement", e);
-      }
-    }
-  }
-
-  /**
-   * Close objects related to this ResultSet. Important because some (most,all?) jdbc drivers
-   * do not clean up after themselves, resulting in memory leaks.
-   *
-   * @param r  The ResultSet to clean up after
-   */
-  public static void closeAll(ResultSet r) {
-    if (r != null) {
-      try {
-	Statement s = r.getStatement();
-	r.close();
-	close(s);
-	s = null;
-	r = null;
-      }
-      catch (Exception e) {
-	LOGGER.log(Level.SEVERE, "Error closing resultset", e);
-      }
-    }
-  }
-
-  /**
-   * Close objects related to this ResultSet.
-   *
-   * @param r  The ResultSet to clean up after
-   */
-  public static void closeAll(SimpleResultSet r) {
-    if (r != null) {
-      try {
-	r.close();
-      }
-      catch (Exception e) {
-	LOGGER.log(Level.SEVERE, "Error closing resultset/statement", e);
-      }
-    }
   }
 
   /**
@@ -667,7 +541,7 @@ public class SQL
       throw e;
     }
     finally {
-      closeAll(rs);
+      SQLUtils.closeAll(rs);
     }
 
     return result;
@@ -723,7 +597,7 @@ public class SQL
       throw e;
     }
     finally {
-      closeAll(rs);
+      SQLUtils.closeAll(rs);
     }
 
     return result;
@@ -756,7 +630,7 @@ public class SQL
       throw e;
     }
     finally {
-      closeAll(rs);
+      SQLUtils.closeAll(rs);
     }
 
     return result;
@@ -789,7 +663,7 @@ public class SQL
       throw e;
     }
     finally {
-      closeAll(rs);
+      SQLUtils.closeAll(rs);
     }
 
     return result;
@@ -822,63 +696,8 @@ public class SQL
       throw e;
     }
     finally {
-      closeAll(rs);
+      SQLUtils.closeAll(rs);
     }
-
-    return result;
-  }
-
-  /**
-   * MySQL boolean to tinyint.
-   *
-   * @param b	boolean
-   * @return	tiny int value
-   */
-  public static int booleanToTinyInt(boolean b) {
-    if (b) {
-      return(1);
-    } else {
-      return(0);
-    }
-  }
-
-  /**
-   * MySQL tinyint to boolean.
-   * @param i	tiny int
-   * @return	boolean
-   */
-  public static boolean tinyIntToBoolean(int i) {
-    if (i==0) {
-      return(false);
-    } else {
-      return(true);
-    }
-  }
-
-  /**
-   * Backquotes the regular expression and ensures that it is surrounded by single
-   * quotes.
-   *
-   * @param s		the regular expression to backquote and enclose
-   * @return		the processed string
-   */
-  public static String backquote(BaseRegExp s) {
-    return backquote(s.getValue());
-  }
-
-  /**
-   * Backquotes the string and ensures that it is surrounded by single
-   * quotes.
-   *
-   * @param s		the string to backquote and enclose
-   * @return		the processed string
-   */
-  public static String backquote(String s) {
-    String	result;
-
-    result = Utils.backQuoteChars(s);
-    if (!result.startsWith("'"))
-      result = "'" + result + "'";
 
     return result;
   }
@@ -917,11 +736,11 @@ public class SQL
   public String toString() {
     return "SQL: " + getDatabaseConnection().toString();
   }
-  
+
   /**
    * Returns the maximum length for column names. In case the meta-data
    * returns 0, {@link Integer#MAX_VALUE} is used instead.
-   * 
+   *
    * @return			the maximum length
    * @throws SQLException	if the query fails
    */
@@ -933,67 +752,7 @@ public class SQL
     result = meta.getMaxColumnNameLength();
     if (result == 0)
       result = Integer.MAX_VALUE;
-    
-    return result;
-  }
-  
-  /**
-   * Determines the SQL column types used in the provided resultset.
-   * 
-   * @param rs		the resultset to inspect
-   * @return		the SQL column types
-   * @see		Types
-   * @throws SQLException	if querying the meta-data fails
-   */
-  public static int[] getColumnTypes(ResultSet rs) throws SQLException {
-    return getColumnTypes(rs.getMetaData());
-  }
-  
-  /**
-   * Determines the SQL column types used in the provided resultset.
-   * 
-   * @param rs		the metadata resultset to inspect
-   * @return		the SQL column types
-   * @see		Types
-   * @throws SQLException	if querying the meta-data fails
-   */
-  public static int[] getColumnTypes(ResultSetMetaData rs) throws SQLException {
-    int[]	result;
-    int		i;
 
-    result = new int[rs.getColumnCount()];
-    for (i = 1; i <= rs.getColumnCount(); i++)
-      result[i - 1] = rs.getColumnType(i);
-    
-    return result;
-  }
-  
-  /**
-   * Determines the SQL column names used in the provided resultset.
-   * 
-   * @param rs		the resultset to inspect
-   * @return		the SQL column names (or label if present)
-   * @throws SQLException	if querying the meta-data fails
-   */
-  public static String[] getColumnNames(ResultSet rs) throws SQLException {
-    return getColumnNames(rs.getMetaData());
-  }
-  
-  /**
-   * Determines the SQL column names used in the provided resultset.
-   * 
-   * @param rs		the meta-data resultset to inspect
-   * @return		the SQL column names (or label if present)
-   * @throws SQLException	if querying the meta-data fails
-   */
-  public static String[] getColumnNames(ResultSetMetaData rs) throws SQLException {
-    String[]	result;
-    int		i;
-
-    result = new String[rs.getColumnCount()];
-    for (i = 1; i <= rs.getColumnCount(); i++)
-      result[i - 1] = rs.getColumnLabel(i);
-    
     return result;
   }
 
@@ -1002,9 +761,9 @@ public class SQL
    *
    * @return		the singleton
    */
-  public synchronized static SQL getSingleton(AbstractDatabaseConnection dbcon) {
+  public synchronized static SQL singleton(AbstractDatabaseConnection dbcon) {
     if (m_TableManager == null)
-      m_TableManager = new TableManager<SQL>("SQL", null);
+      m_TableManager = new TableManager<>("SQL", null);
     if (!m_TableManager.has(dbcon))
       m_TableManager.add(dbcon, new SQL(dbcon));
 

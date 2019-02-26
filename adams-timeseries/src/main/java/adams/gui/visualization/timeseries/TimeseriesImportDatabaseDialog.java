@@ -22,7 +22,9 @@ package adams.gui.visualization.timeseries;
 import adams.core.Constants;
 import adams.core.Properties;
 import adams.db.DatabaseConnection;
-import adams.db.SQL;
+import adams.db.SQLF;
+import adams.db.SQLIntf;
+import adams.db.SQLUtils;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.wizard.AbstractDatabaseConnectionPage.DatabaseConnectionPageCheck;
@@ -276,12 +278,12 @@ public class TimeseriesImportDatabaseDialog
 	try {
 	  conn.connect();
 	  props = m_PageQueries.getProperties();
-	  SQL sql = new SQL(conn);
+	  SQLIntf sql = SQLF.getSingleton(conn);
 	  ResultSet rs = sql.getResultSet(props.getProperty(QUERY_IDS));
-	  List<String> ids = new ArrayList<String>();
+	  List<String> ids = new ArrayList<>();
 	  while (rs.next())
 	    ids.add("" + rs.getObject(1));
-	  SQL.closeAll(rs);
+	  SQLUtils.closeAll(rs);
 	  m_PageIDs.setValues(ids);
 	}
 	catch (Exception e) {

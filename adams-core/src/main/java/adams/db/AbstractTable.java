@@ -21,6 +21,7 @@ package adams.db;
 
 import adams.core.ClassLister;
 import adams.core.Properties;
+import adams.db.generic.SQL;
 import adams.env.Environment;
 import adams.env.TableDefinition;
 import adams.event.DatabaseConnectionChangeEvent;

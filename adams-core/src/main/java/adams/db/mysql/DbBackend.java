@@ -24,6 +24,8 @@ import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractDbBackend;
 import adams.db.JDBC;
 import adams.db.LogIntf;
+import adams.db.SQLIntf;
+import adams.db.generic.SQL;
 
 /**
  * MySQL database backend.
@@ -43,6 +45,18 @@ public class DbBackend
   @Override
   public String globalInfo() {
     return "MySQL database backend.";
+  }
+
+  /**
+   * Returns the generic SQL handler.
+   *
+   * @param conn	the database connection
+   * @return		the handler
+   */
+  public SQLIntf getSQL(AbstractDatabaseConnection conn) {
+    if (!JDBC.isMySQL(conn))
+      throw new IllegalStateException("Not a MySQL JDBC URL: " + conn.getURL());
+    return SQL.singleton(conn);
   }
 
   /**

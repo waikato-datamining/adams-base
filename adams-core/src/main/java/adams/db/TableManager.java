@@ -34,7 +34,7 @@ import java.util.Iterator;
  * @version $Revision$
  * @param <T> the type of table this manager is for
  */
-public class TableManager<T extends SQL>
+public class TableManager<T extends SQLIntf>
   implements Serializable {
 
   /** for serialization. */

@@ -142,7 +142,7 @@ public class SQLTableCleanUp
     try {
       stmt = m_Connection.getConnection(false).createStatement();
       stmt.executeUpdate(m_Statement.getValue());
-      SQL.close(stmt);
+      SQLUtils.close(stmt);
     }
     catch (Exception e) {
       msg    = "Failed to execute '" + m_Statement + "': ";

@@ -28,7 +28,7 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.db.SQL;
+import adams.db.SQLUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -106,8 +106,8 @@ public class Reader
 
     // header
     row    = result.getHeaderRow();
-    m_Type = SQL.getColumnTypes(rs);
-    names  = SQL.getColumnNames(rs);
+    m_Type = SQLUtils.getColumnTypes(rs);
+    names  = SQLUtils.getColumnNames(rs);
     for (i = 1; i <= names.length; i++)
       row.addCell("" + i).setContentAsString(names[i - 1]);
     m_Header = result.getHeader();
@@ -227,7 +227,7 @@ public class Reader
     }
 
     if (m_Finished || m_Stopped)
-      SQL.closeAll(rs);
+      SQLUtils.closeAll(rs);
 
     return result;
   }

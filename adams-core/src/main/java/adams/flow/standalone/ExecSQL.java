@@ -23,7 +23,8 @@ package adams.flow.standalone;
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.db.AbstractDatabaseConnection;
-import adams.db.SQL;
+import adams.db.SQLF;
+import adams.db.SQLIntf;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
 
@@ -226,7 +227,7 @@ public class ExecSQL
   @Override
   protected String queryDatabase() {
     String	result;
-    SQL		sql;
+    SQLIntf 	sql;
     String	query;
 
     result = null;
@@ -236,7 +237,7 @@ public class ExecSQL
     query  = getVariables().expand(query);
 
     try {
-      sql = new SQL(m_DatabaseConnection);
+      sql = SQLF.getSingleton(m_DatabaseConnection);
       if (isLoggingEnabled() || m_DryRun) {
 	if (m_DryRun)
 	  getLogger().setLevel(Level.INFO);

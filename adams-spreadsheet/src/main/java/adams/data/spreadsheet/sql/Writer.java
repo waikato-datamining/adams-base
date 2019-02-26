@@ -29,7 +29,8 @@ import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.ColumnNameConversion;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.db.SQL;
+import adams.db.SQLIntf;
+import adams.db.SQLUtils;
 
 import java.sql.BatchUpdateException;
 import java.sql.PreparedStatement;
@@ -345,7 +346,7 @@ public class Writer
    * @param sql		for executing queries
    * @return		null if everything OK, otherwise error message
    */
-  public String createTable(SQL sql) {
+  public String createTable(SQLIntf sql) {
     String		result;
     Boolean		rs;
     String		query;
@@ -372,7 +373,7 @@ public class Writer
    * @param sql		for performing the writing
    * @return		null if everything OK, otherwise error message
    */
-  public String writeData(SQL sql) {
+  public String writeData(SQLIntf sql) {
     String		result;
     StringBuilder	query;
     PreparedStatement 	stmt;
@@ -484,7 +485,7 @@ public class Writer
       }
     }
 
-    SQL.close(stmt);
+    SQLUtils.close(stmt);
 
     return result;
   }
