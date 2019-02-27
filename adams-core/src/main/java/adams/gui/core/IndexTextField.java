@@ -26,7 +26,6 @@ import adams.core.Index;
  * Text field designed for entering a single index, eg for attributes.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IndexTextField
   extends CheckedTextField {
@@ -37,7 +36,6 @@ public class IndexTextField
    * A model for checking Index values.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 4584 $
    */
   public static class IndexCheckModel
     extends AbstractCheckModel {
@@ -85,5 +83,14 @@ public class IndexTextField
    */
   public IndexTextField(String index) {
     super(index, new IndexCheckModel());
+  }
+
+  /**
+   * The help string (can be HTML) to use as tool tip.
+   *
+   * @return		the tool tip, null if none available
+   */
+  public String getHelpText() {
+    return new Index().getExample();
   }
 }

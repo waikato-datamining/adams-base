@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CheckedTextField.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -37,7 +37,6 @@ import java.io.Serializable;
  * A specialized BaseTextField that takes a check model as input.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CheckedTextField
   extends BaseTextField {
@@ -49,7 +48,6 @@ public class CheckedTextField
    * Abstract model for checking the text from a text field.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static abstract class AbstractCheckModel
     implements Serializable {
@@ -118,7 +116,6 @@ public class CheckedTextField
    * A (dummy) check model that allows any string.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class StringCheckModel
     extends AbstractCheckModel {
@@ -343,8 +340,14 @@ public class CheckedTextField
    * Initializes the members.
    */
   protected void initialize() {
+    String	toolTip;
+
     m_DefaultForeground = getForeground();
     attachListener();
+
+    toolTip = getHelpText();
+    if (toolTip != null)
+      setToolTipText(GUIHelper.processTipText(toolTip, 40));
   }
 
   /**
@@ -603,6 +606,17 @@ public class CheckedTextField
   public void setDefaultValue() {
     if (m_CheckModel != null)
       setTextUnchecked(m_CheckModel.getDefaultValue());
+  }
+
+  /**
+   * The help string (can be HTML) to use as tool tip.
+   * <br>
+   * Default implementation returns null.
+   *
+   * @return		the tool tip, null if none available
+   */
+  public String getHelpText() {
+    return null;
   }
 
   /**

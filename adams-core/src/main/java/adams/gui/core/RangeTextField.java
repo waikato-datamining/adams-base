@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RangeTextField.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -26,7 +26,6 @@ import adams.core.Range;
  * Text field designed for entering a single index, eg for attributes.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RangeTextField
   extends CheckedTextField {
@@ -37,7 +36,6 @@ public class RangeTextField
    * A model for checking Range values.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 4584 $
    */
   public static class RangeCheckModel
     extends AbstractCheckModel {
@@ -83,5 +81,14 @@ public class RangeTextField
    */
   public RangeTextField(String range) {
     super(range, new RangeCheckModel());
+  }
+
+  /**
+   * The help string (can be HTML) to use as tool tip.
+   *
+   * @return		the tool tip, null if none available
+   */
+  public String getHelpText() {
+    return new Range().getExample();
   }
 }

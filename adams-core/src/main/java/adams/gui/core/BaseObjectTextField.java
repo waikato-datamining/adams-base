@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseObjectTextField.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -33,7 +33,6 @@ import java.awt.event.ActionEvent;
  * object.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseObjectTextField<T extends BaseObject>
   extends CheckedTextField {
@@ -44,7 +43,6 @@ public class BaseObjectTextField<T extends BaseObject>
    * A model for checking regexp values.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 4584 $
    */
   public static class BaseObjectCheckModel<T extends BaseObject>
     extends AbstractCheckModel {
@@ -116,8 +114,6 @@ public class BaseObjectTextField<T extends BaseObject>
    */
   public BaseObjectTextField(T check, String initial) {
     super(initial, new BaseObjectCheckModel<>(check));
-    if (check.getTipText() != null)
-      setToolTipText(check.getTipText());
   }
 
   /**
@@ -172,5 +168,14 @@ public class BaseObjectTextField<T extends BaseObject>
     }
 
     return result;
+  }
+
+  /**
+   * The help string (can be HTML) to use as tool tip.
+   *
+   * @return		the tool tip, null if none available
+   */
+  public String getHelpText() {
+    return ((BaseObjectCheckModel) getCheckModel()).getCheck().getTipText();
   }
 }
