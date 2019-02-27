@@ -13,22 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HelpQuery.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import adams.gui.help.HelpFrame;
 import adams.parser.SpreadSheetQuery;
 
+import java.awt.event.ActionEvent;
+
 /**
- * Opens the help for formulas.
+ * Opens the help for queries.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HelpQuery
-  extends AbstractHelpTextAction {
+  extends AbstractSpreadSheetViewerMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -44,13 +46,13 @@ public class HelpQuery
   }
 
   /**
-   * Returns the help text to display.
-   * 
-   * @return		the help content
+   * Invoked when an action occurs.
+   *
+   * @param e		the event
    */
   @Override
-  protected String getHelpContent() {
-    return new SpreadSheetQuery().getGrammar();
+  protected void doActionPerformed(ActionEvent e) {
+    HelpFrame.showHelp(SpreadSheetQuery.class);
   }
 
   /**

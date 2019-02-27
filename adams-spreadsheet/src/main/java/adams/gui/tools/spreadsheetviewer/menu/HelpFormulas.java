@@ -13,22 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HelpFormulas.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import adams.gui.help.HelpFrame;
 import adams.parser.SpreadSheetFormula;
+
+import java.awt.event.ActionEvent;
 
 /**
  * Opens the help for formulas.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HelpFormulas
-  extends AbstractHelpTextAction {
+  extends AbstractSpreadSheetViewerMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
@@ -44,20 +46,20 @@ public class HelpFormulas
   }
 
   /**
-   * Returns the help text to display.
-   * 
-   * @return		the help content
-   */
-  @Override
-  protected String getHelpContent() {
-    return new SpreadSheetFormula().getGrammar();
-  }
-
-  /**
    * Performs the actual update of the state of the action.
    */
   @Override
   protected void doUpdate() {
     setEnabled(true);
+  }
+
+  /**
+   * Invoked when an action occurs.
+   *
+   * @param e		the event
+   */
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
+    HelpFrame.showHelp(SpreadSheetFormula.class);
   }
 }
