@@ -14,7 +14,7 @@
  */
 
 /*
- * GraphSourceCode.java
+ * GraphSource.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
@@ -34,7 +34,7 @@ import javax.swing.JComponent;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class GraphSourceCode
+public class GraphSource
   extends AbstractOutputGenerator {
 
   private static final long serialVersionUID = -6829245659118360739L;
@@ -46,7 +46,7 @@ public class GraphSourceCode
    */
   @Override
   public String globalInfo() {
-    return "Outputs the graph source code (dot or XML BIF).";
+    return "Outputs the graph source (dot or XML BIF).";
   }
 
   /**
@@ -55,7 +55,7 @@ public class GraphSourceCode
    * @return		the title
    */
   public String getTitle() {
-    return "Graph source code";
+    return "Graph source";
   }
 
   /**
@@ -92,7 +92,7 @@ public class GraphSourceCode
       return new TextualContentPanel(text, true);
     }
     catch (Exception e) {
-      errors.add("Failed to obtain graph source code!", e);
+      errors.add("Failed to obtain graph source!", e);
       return null;
     }
   }
