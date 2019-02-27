@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InstanceTab.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -28,8 +28,8 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
-import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
+import adams.gui.core.RangeTextField;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SearchableBaseList;
@@ -69,7 +69,6 @@ import java.util.Set;
  * Visualizes the selected dataset like the instance explorer.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InstanceTab
   extends AbstractInvestigatorTab {
@@ -115,7 +114,7 @@ public class InstanceTab
   protected BaseComboBox<String> m_ComboBoxID;
 
   /** the attribute range. */
-  protected BaseTextField m_TextAttributeRange;
+  protected RangeTextField m_TextAttributeRange;
 
   /** whether to use anti-aliasing. */
   protected BaseCheckBox m_CheckBoxAntiAliasing;
@@ -188,8 +187,8 @@ public class InstanceTab
     m_ComboBoxID.addActionListener((ActionEvent e) -> updateIDs());
     m_PanelParameters.addParameter("ID", m_ComboBoxID);
 
-    m_TextAttributeRange = new BaseTextField(20);
-    m_TextAttributeRange.setText(Range.ALL);
+    m_TextAttributeRange = new RangeTextField(Range.ALL);
+    m_TextAttributeRange.setColumns(20);
     m_TextAttributeRange.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void insertUpdate(DocumentEvent e) {
