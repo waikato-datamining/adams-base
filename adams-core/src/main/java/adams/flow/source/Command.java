@@ -15,7 +15,7 @@
 
 /*
  * Command.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -595,7 +595,7 @@ public class Command
     if (m_CommandContainsVariable)
       cmd = getVariables().expand(cmd);
     if (m_CommandContainsPlaceholder)
-      cmd = Placeholders.getSingleton().expand(cmd).replace("\\", "/");
+      cmd = Placeholders.getSingleton().expand(cmd);
     fCmd = cmd;
     if (isLoggingEnabled()) {
       getLogger().info("Command: " + cmd);
@@ -607,7 +607,6 @@ public class Command
     m_ExecutionFailure = null;
     m_ProcessOutput = new StreamingProcessOutput(this);
     m_ProcessOutput.setTimeOut(m_TimeOut);
-    if (m_EnvVars.length > 0)
     m_Monitor = new RunnableWithLogging() {
       private static final long serialVersionUID = -4475355379511760429L;
       @Override

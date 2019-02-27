@@ -15,7 +15,7 @@
 
 /*
  * StringInsert.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -381,7 +381,7 @@ public class StringInsert
     if (m_ValueContainsVariable)
       value = getVariables().expand(value);
     if (m_ValueContainsPlaceholder)
-      value = Placeholders.getSingleton().expand(value).replace("\\", "/");
+      value = Placeholders.getSingleton().expand(value);
     
     // determine position
     if (s.length() == 0) {

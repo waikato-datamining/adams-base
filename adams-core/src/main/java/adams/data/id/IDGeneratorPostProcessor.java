@@ -13,14 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * IDGeneratorPostProcessor.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.id;
 
-import adams.core.Utils;
 import adams.core.Placeholders;
+import adams.core.Utils;
 
 /**
  <!-- globalinfo-start -->
@@ -66,7 +66,6 @@ import adams.core.Placeholders;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IDGeneratorPostProcessor
   extends AbstractIDGenerator {
@@ -288,7 +287,7 @@ public class IDGeneratorPostProcessor
     result = m_Generator.generate(o);
 
     if (m_ReplaceContainsPlaceholder)
-      actReplace = Placeholders.getSingleton().expand(m_Replace).replace("\\", "/");
+      actReplace = Placeholders.getSingleton().expand(m_Replace);
     else
       actReplace = m_Replace;
 

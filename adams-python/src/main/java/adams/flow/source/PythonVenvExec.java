@@ -394,7 +394,7 @@ public class PythonVenvExec
       if (m_OptionsContainVariable)
 	options = getVariables().expand(options);
       if (m_OptionsContainPlaceholder)
-	options = Placeholders.getSingleton().expand(options).replace("\\", "/");
+	options = Placeholders.getSingleton().expand(options);
     }
 
     cmd = new ArrayList<>();

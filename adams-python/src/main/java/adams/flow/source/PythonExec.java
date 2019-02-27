@@ -15,7 +15,7 @@
 
 /*
  * PythonExec.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -381,7 +381,7 @@ public class PythonExec
       if (m_OptionsContainVariable)
 	options = getVariables().expand(options);
       if (m_OptionsContainPlaceholder)
-	options = Placeholders.getSingleton().expand(options).replace("\\", "/");
+	options = Placeholders.getSingleton().expand(options);
     }
     cmd = new ArrayList<>();
     cmd.add(m_Environment.getActualPython());

@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetInsertRow.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -107,7 +107,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetInsertRow
   extends AbstractInPlaceSpreadSheetTransformer {
@@ -387,7 +386,7 @@ public class SpreadSheetInsertRow
     if (m_ValueContainsVariable)
       value = getVariables().expand(value);
     if (m_ValueContainsPlaceholder)
-      value = Placeholders.getSingleton().expand(value).replace("\\", "/");
+      value = Placeholders.getSingleton().expand(value);
 
     // determine position
     pos = 0;

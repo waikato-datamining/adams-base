@@ -15,7 +15,7 @@
 
 /*
  * Exec.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -603,7 +603,7 @@ public class Exec
     if (m_CommandContainsVariable)
       cmd = getVariables().expand(cmd);
     if (m_CommandContainsPlaceholder)
-      cmd = Placeholders.getSingleton().expand(cmd).replace("\\", "/");
+      cmd = Placeholders.getSingleton().expand(cmd);
     if (isLoggingEnabled()) {
       getLogger().info("Command: " + cmd);
       if (!m_WorkingDirectory.isEmpty())

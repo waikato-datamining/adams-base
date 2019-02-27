@@ -15,18 +15,18 @@
 
 /*
  * Java.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.SystemInfo;
 import adams.core.option.OptionUtils;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  <!-- globalinfo-start -->
@@ -87,7 +87,6 @@ import adams.core.option.OptionUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Java
   extends AbstractStandalone {
@@ -258,7 +257,7 @@ public class Java
     if (m_CommandContainsVariable)
       cmd = getVariables().expand(cmd);
     if (m_CommandContainsPlaceholder)
-      cmd = Placeholders.getSingleton().expand(cmd).replace("\\", "/");
+      cmd = Placeholders.getSingleton().expand(cmd);
     
     try {
       cmdArray = OptionUtils.splitOptions(cmd);

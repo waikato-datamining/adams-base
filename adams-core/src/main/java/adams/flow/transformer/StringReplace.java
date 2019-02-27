@@ -15,7 +15,7 @@
 
 /*
  * StringReplace.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -404,7 +404,7 @@ public class StringReplace
     if (m_ReplaceContainsVariable)
       replace = getVariables().expand(replace);
     if (m_ReplaceContainsPlaceholder)
-      replace = Placeholders.getSingleton().expand(replace).replace("\\", "/");
+      replace = Placeholders.getSingleton().expand(replace);
 
     if (isLoggingEnabled())
       getLogger().info("replacement string: " + replace);

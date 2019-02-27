@@ -15,12 +15,10 @@
 
 /*
  * SpreadSheetReplaceCellValue.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.Hashtable;
 
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
@@ -30,6 +28,8 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.core.Token;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -121,7 +121,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetReplaceCellValue
   extends AbstractInPlaceSpreadSheetTransformer {
@@ -519,7 +518,7 @@ public class SpreadSheetReplaceCellValue
 
       // do we need to expand placeholders?
       if (m_ReplaceContainsPlaceholder)
-	m_ActualReplace = Placeholders.getSingleton().expand(m_ActualReplace).replace("\\", "/");
+	m_ActualReplace = Placeholders.getSingleton().expand(m_ActualReplace);
     }
 
     return result;
