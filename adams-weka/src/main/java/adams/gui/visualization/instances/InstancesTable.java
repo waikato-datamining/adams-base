@@ -21,6 +21,7 @@
 package adams.gui.visualization.instances;
 
 import adams.core.Range;
+import adams.data.instances.InstanceComparator;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BasePopupMenu;
@@ -684,5 +685,15 @@ public class InstancesTable
    */
   public boolean getShowWeightsColumn() {
     return ((InstancesTableModel) getUnsortedModel()).getShowWeightsColumn();
+  }
+
+  /**
+   * Sorts the data with the given comparator.
+   *
+   * @param comparator	the comparator to use
+   */
+  public void sort(InstanceComparator comparator) {
+    ((InstancesTableModel) getUnsortedModel()).getInstances().sort(comparator);
+    ((SortableAndSearchableWrapperTableModel) getModel()).fireTableDataChanged();
   }
 }
