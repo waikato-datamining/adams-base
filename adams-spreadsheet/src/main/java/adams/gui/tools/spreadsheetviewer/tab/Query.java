@@ -15,26 +15,30 @@
 
 /*
  * Query.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.tab;
 
 import adams.data.spreadsheet.SpreadSheet;
+import adams.db.SQLStatement;
 import adams.flow.core.Token;
 import adams.flow.transformer.SpreadSheetQuery;
 import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.RecentSQLStatementsHandler;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
-import adams.gui.dialog.TextDialog;
+import adams.gui.event.RecentItemEvent;
+import adams.gui.event.RecentItemListener;
+import adams.gui.help.HelpFrame;
 import adams.gui.tools.spreadsheetviewer.MultiPagePane;
 
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Allows the user to run a query on a spreadsheet and create a new transformed
@@ -48,24 +52,37 @@ public class Query
 
   /** for serialization. */
   private static final long serialVersionUID = -4215008790991120558L;
-  
+
+  /** the file to store the recent files in. */
+  public final static String SESSION_FILE = "SpreadsSheetViewerQueries.props";
+
   /** the table with the information. */
   protected SpreadSheetQueryEditorPanel m_PanelQuery;
   
   /** the help button. */
   protected BaseButton m_ButtonHelp;
-  
+
+  /** the button for the history. */
+  protected BaseButton m_ButtonHistory;
+
   /** the execute button. */
   protected BaseButton m_ButtonExecute;
-  
+
+  /** the popup menu for the recent items. */
+  protected JPopupMenu m_PopupMenu;
+
+  /** the recent files handler. */
+  protected RecentSQLStatementsHandler<JPopupMenu> m_RecentStatementsHandler;
+
   /**
    * For initializing the GUI.
    */
   @Override
   protected void initGUI() {
-    JPanel	panel;
     JPanel	panelButtons;
-    
+    JPanel	panelButtonsLeft;
+    JPanel	panelButtonsRight;
+
     super.initGUI();
     
     setLayout(new BorderLayout());
@@ -95,30 +112,39 @@ public class Query
     
     panelButtons = new JPanel(new BorderLayout());
     add(panelButtons, BorderLayout.SOUTH);
-    
-    panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    panelButtons.add(panel, BorderLayout.EAST);
+
+    panelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelButtons.add(panelButtonsLeft, BorderLayout.WEST);
+
+    panelButtonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    panelButtons.add(panelButtonsRight, BorderLayout.EAST);
 
     m_ButtonHelp = new BaseButton("Help");
     m_ButtonHelp.setMnemonic('H');
-    m_ButtonHelp.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	showHelp();
-      }
-    });
-    panel.add(m_ButtonHelp);
+    m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
+    panelButtonsLeft.add(m_ButtonHelp);
+
+    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory.setToolTipText("Recent queries");
+    m_ButtonHistory.addActionListener((ActionEvent e) -> m_PopupMenu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight()));
+    panelButtonsRight.add(m_ButtonHistory);
 
     m_ButtonExecute = new BaseButton("Execute");
     m_ButtonExecute.setMnemonic('E');
     m_ButtonExecute.setEnabled(false);
-    m_ButtonExecute.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	performQuery();
+    m_ButtonExecute.addActionListener((ActionEvent e) -> performQuery());
+    panelButtonsRight.add(m_ButtonExecute);
+
+    m_PopupMenu = new JPopupMenu();
+    m_RecentStatementsHandler = new RecentSQLStatementsHandler<>(SESSION_FILE, 10, m_PopupMenu);
+    m_RecentStatementsHandler.addRecentItemListener(new RecentItemListener<JPopupMenu,SQLStatement>() {
+      public void recentItemAdded(RecentItemEvent<JPopupMenu,SQLStatement> e) {
+	// ignored
+      }
+      public void recentItemSelected(RecentItemEvent<JPopupMenu,SQLStatement> e) {
+	setStatement(e.getItem());
       }
     });
-    panel.add(m_ButtonExecute);
   }
   
   /**
@@ -157,6 +183,7 @@ public class Query
       query.cleanUp();
       return;
     }
+    m_RecentStatementsHandler.addRecentItem(new SQLStatement(m_PanelQuery.getContent()));
     output = null;
     if (query.hasPendingOutput())
       output = query.output();
@@ -172,16 +199,15 @@ public class Query
    * Displays the grammar.
    */
   protected void showHelp() {
-    String 	help;
-    TextDialog 	dlg;
-    
-    help = m_PanelQuery.getAdditionalInformation();
-    dlg = new TextDialog();
-    dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-    dlg.setDialogTitle("Help");
-    dlg.setContent(help);
-    dlg.setLineWrap(true);
-    dlg.setEditable(false);
-    dlg.setVisible(true);
+    HelpFrame.showHelp(adams.parser.SpreadSheetQuery.class);
+  }
+
+  /**
+   * Sets the SQL statement.
+   *
+   * @param value	the statement to use
+   */
+  public void setStatement(SQLStatement value) {
+    m_PanelQuery.setContent(value.getValue());
   }
 }
