@@ -119,7 +119,7 @@ public class Query
     panelButtonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panelButtonsRight, BorderLayout.EAST);
 
-    m_ButtonHelp = new BaseButton("Help");
+    m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
     m_ButtonHelp.setMnemonic('H');
     m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
     panelButtonsLeft.add(m_ButtonHelp);
@@ -129,7 +129,7 @@ public class Query
     m_ButtonHistory.addActionListener((ActionEvent e) -> m_PopupMenu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight()));
     panelButtonsRight.add(m_ButtonHistory);
 
-    m_ButtonExecute = new BaseButton("Execute");
+    m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
     m_ButtonExecute.setMnemonic('E');
     m_ButtonExecute.setEnabled(false);
     m_ButtonExecute.addActionListener((ActionEvent e) -> performQuery());
