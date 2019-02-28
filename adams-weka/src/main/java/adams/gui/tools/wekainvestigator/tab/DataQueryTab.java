@@ -15,7 +15,7 @@
 
 /*
  * DataQueryTab.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -24,20 +24,24 @@ import adams.core.MessageCollection;
 import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.db.SQLStatement;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanelWithButtons;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.RecentSQLStatementsHandler;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
+import adams.gui.event.RecentItemEvent;
+import adams.gui.event.RecentItemListener;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.help.HelpFrame;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import weka.core.Instances;
 
-import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
@@ -56,6 +60,9 @@ public class DataQueryTab
 
   private static final long serialVersionUID = -4106630131554796889L;
 
+  /** the file to store the recent files in. */
+  public final static String SESSION_FILE = "WekaInvestigatorDataQueries.props";
+
   /** the key for the query. */
   public final static String KEY_QUERY = "query";
 
@@ -68,6 +75,9 @@ public class DataQueryTab
   /** the clear button. */
   protected BaseButton m_ButtonClear;
 
+  /** the button for the history. */
+  protected BaseButton m_ButtonHistory;
+
   /** the help button. */
   protected BaseButton m_ButtonHelp;
 
@@ -79,6 +89,12 @@ public class DataQueryTab
 
   /** whether data was generated. */
   protected boolean m_DataGenerated;
+
+  /** the popup menu for the recent items. */
+  protected JPopupMenu m_PopupMenu;
+
+  /** the recent files handler. */
+  protected RecentSQLStatementsHandler<JPopupMenu> m_RecentStatementsHandler;
 
   /**
    * Initializes the members.
@@ -114,24 +130,27 @@ public class DataQueryTab
     m_PanelQuery.addChangeListener((ChangeEvent e) -> updateButtons());
     panelTop.add(m_PanelQuery, BorderLayout.CENTER);
 
-    m_ButtonExecute = new BaseButton("Execute");
+    m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
     m_ButtonExecute.setToolTipText("Executes the query on the selected dataset");
     m_ButtonExecute.addActionListener((ActionEvent e) -> executeQuery());
     panelTop.addToButtonsPanel(m_ButtonExecute);
 
-    m_ButtonClear = new BaseButton("Clear");
+    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory.setToolTipText("Recent queries");
+    m_ButtonHistory.addActionListener((ActionEvent e) -> m_PopupMenu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight()));
+    panelTop.addToButtonsPanel(m_ButtonHistory);
+
+    m_ButtonClear = new BaseButton(GUIHelper.getIcon("new.gif"));
     m_ButtonClear.setToolTipText("Removes the previously generated result");
     m_ButtonClear.addActionListener((ActionEvent e) -> clear());
     panelTop.addToButtonsPanel(m_ButtonClear);
 
-    m_ButtonSave = new BaseButton("Save...");
+    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
     m_ButtonSave.setToolTipText("Stores the result as a new dataset");
     m_ButtonSave.addActionListener((ActionEvent e) -> saveDataset());
     panelTop.addToButtonsPanel(m_ButtonSave);
 
-    panelTop.addToButtonsPanel(new JLabel(""));
-
-    m_ButtonHelp = new BaseButton("Help");
+    m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
     m_ButtonHelp.setToolTipText("Help screen for the query language");
     m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
     panelTop.addToButtonsPanel(m_ButtonHelp);
@@ -143,6 +162,17 @@ public class DataQueryTab
     splitPane.setBottomComponent(new BaseScrollPane(m_TableResult));
 
     m_SplitPane.setBottomComponentHidden(false);
+
+    m_PopupMenu = new JPopupMenu();
+    m_RecentStatementsHandler = new RecentSQLStatementsHandler<>(SESSION_FILE, 10, m_PopupMenu);
+    m_RecentStatementsHandler.addRecentItemListener(new RecentItemListener<JPopupMenu,SQLStatement>() {
+      public void recentItemAdded(RecentItemEvent<JPopupMenu,SQLStatement> e) {
+	// ignored
+      }
+      public void recentItemSelected(RecentItemEvent<JPopupMenu,SQLStatement> e) {
+	setStatement(e.getItem());
+      }
+    });
   }
 
   /**
@@ -235,6 +265,7 @@ public class DataQueryTab
     query = m_PanelQuery.getQuery().getValue();
     try {
       generated = adams.parser.SpreadSheetQuery.evaluate(query, new HashMap(), current);
+      m_RecentStatementsHandler.addRecentItem(new SQLStatement(m_PanelQuery.getContent()));
       m_TableResult.setModel(new SpreadSheetTableModel(generated));
       m_DataGenerated = true;
     }
@@ -299,6 +330,15 @@ public class DataQueryTab
       adams.parser.SpreadSheetQuery.class.getName(),
       new adams.parser.SpreadSheetQuery().getGrammar(),
       false);
+  }
+
+  /**
+   * Sets the SQL statement.
+   *
+   * @param value	the statement to use
+   */
+  public void setStatement(SQLStatement value) {
+    m_PanelQuery.setContent(value.getValue());
   }
 
   /**
