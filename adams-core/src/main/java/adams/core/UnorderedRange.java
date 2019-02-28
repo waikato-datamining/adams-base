@@ -336,7 +336,7 @@ public class UnorderedRange
    * @return		the icon name, null if not available
    */
   public String getHelpIcon() {
-    return "help2.png";
+    return "help.gif";
   }
 
   /**

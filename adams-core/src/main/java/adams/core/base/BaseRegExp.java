@@ -226,6 +226,6 @@ public class BaseRegExp
    */
   @Override
   public String getHelpIcon() {
-    return "help2.png";
+    return "help.gif";
   }
 }

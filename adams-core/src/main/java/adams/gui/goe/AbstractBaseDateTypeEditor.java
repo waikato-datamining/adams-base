@@ -280,7 +280,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 	updateButtons();
       }
     });
-    m_ButtonCustomHelp = new BaseButton(GUIHelper.getIcon("help2.png"));
+    m_ButtonCustomHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
     m_ButtonCustomHelp.addActionListener(e1 -> showHelp());
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));

@@ -654,7 +654,7 @@ public class FlowRunnerPanel
 	  final String annotation = m_CurrentSetVariables.get(i).getAnnotations().getValue();
 	  final String variable = m_CurrentSetVariables.get(i).getVariableName().getValue();
 	  if (annotation.length() > 0) {
-	    buttonHelp = new BaseButton(GUIHelper.getIcon("help2.png"));
+	    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
 	    buttonHelp.addActionListener(new ActionListener() {
 	      public void actionPerformed(ActionEvent e) {
 		GUIHelper.showInformationMessage(

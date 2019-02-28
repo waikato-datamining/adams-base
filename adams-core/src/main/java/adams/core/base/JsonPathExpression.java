@@ -20,7 +20,6 @@
 package adams.core.base;
 
 import adams.core.HelpProvider;
-
 import com.jayway.jsonpath.JsonPath;
 
 /**
@@ -142,6 +141,6 @@ public class JsonPathExpression
    * @return		the icon name, null if not available
    */
   public String getHelpIcon() {
-    return "help2.png";
+    return "help.gif";
   }
 }
