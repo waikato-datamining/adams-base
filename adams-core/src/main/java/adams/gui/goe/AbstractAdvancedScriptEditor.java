@@ -216,7 +216,7 @@ public class AbstractAdvancedScriptEditor
     panelBottom.add(panelButtonsRight, BorderLayout.EAST);
 
     if (m_TextStatement instanceof AdditionalInformationHandler) {
-      buttonHelp = new BaseButton("Help");
+      buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
       buttonHelp.setMnemonic('H');
       buttonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {

@@ -133,8 +133,7 @@ public class DateTest
       }
     });
     panelButtons.add(buttonTest);
-    buttonHelp = new BaseButton("Help");
-    buttonHelp.setMnemonic('H');
+    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
     buttonHelp.addActionListener((ActionEvent e) -> {
       BrowserHelper.openURL(new DateFormatString().getHelpURL());
     });
@@ -176,8 +175,7 @@ public class DateTest
       }
     });
     panelButtons.add(buttonTest);
-    buttonHelp = new BaseButton("Help");
-    buttonHelp.setMnemonic('H');
+    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
     buttonHelp.addActionListener((ActionEvent e) -> {
       BrowserHelper.openURL(new DateFormatString().getHelpURL());
     });

@@ -196,8 +196,7 @@ public class BaseAnnotationEditor
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panel, BorderLayout.EAST);
     
-    buttonHelp = new BaseButton("Help");
-    buttonHelp.setMnemonic('H');
+    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
     buttonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	String help = getHelpDescription();

@@ -168,8 +168,7 @@ public class SQLStatementPanel
     m_PanelBottom.add(m_PanelButtonsRight, BorderLayout.EAST);
 
     if (m_PanelStatement instanceof AdditionalInformationHandler) {
-      m_ButtonHelp = new BaseButton("Help");
-      m_ButtonHelp.setMnemonic('H');
+      m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
       m_ButtonHelp.addActionListener((ActionEvent e) -> {
 	String help = ((AdditionalInformationHandler) m_PanelStatement).getAdditionalInformation();
 	HelpFrame.showHelp(SQLStatement.class, help, false);

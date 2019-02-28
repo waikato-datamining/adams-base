@@ -153,8 +153,7 @@ public class RegExpTest
       }
     });
     panelButtons.add(buttonTest);
-    buttonHelp = new BaseButton("Help");
-    buttonHelp.setMnemonic('H');
+    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
     buttonHelp.addActionListener((ActionEvent e) -> {
       BrowserHelper.openURL(new BaseRegExp().getHelpURL());
     });
@@ -187,8 +186,7 @@ public class RegExpTest
       fieldMatchOutput.setText(regexp.isMatch(input) ? "yes" : "no");
     });
     panelButtons.add(buttonTest);
-    buttonHelp = new BaseButton("Help");
-    buttonHelp.setMnemonic('H');
+    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
     buttonHelp.addActionListener((ActionEvent e) -> {
       BrowserHelper.openURL(new BaseRegExp().getHelpURL());
     });
