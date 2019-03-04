@@ -43,3 +43,13 @@ mvn deploy:deploy-file -DgroupId=$GROUP \
   -DgeneratePom.description="JDBC driver provided by Ubuntu repositories." \
   -DrepositoryId=$REPO \
   -Durl=$REPO_URL
+
+GROUP=com.github.grumlimited
+mvn deploy:deploy-file -DgroupId=$GROUP \
+  -DartifactId=geocalc \
+  -Dversion=0.5.7 \
+  -Dpackaging=jar \
+  -Dfile=$LIB_DIR/geocalc-0.5.7.jar \
+  -DpomFile=$LIB_DIR/geocalc-0.5.7.pom \
+  -DrepositoryId=$REPO \
+  -Durl=$REPO_URL
