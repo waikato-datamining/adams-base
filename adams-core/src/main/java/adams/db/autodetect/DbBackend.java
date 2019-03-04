@@ -44,7 +44,9 @@ public class DbBackend
    */
   @Override
   public String globalInfo() {
-    return "Auto-detection database backend.";
+    return "Auto-detect Spectral backend.\n"
+      + "Detects: MySQL, PostgreSQL, SQLite.\n"
+      + "Otherwise uses generic SQL/LogT.";
   }
 
   /**
