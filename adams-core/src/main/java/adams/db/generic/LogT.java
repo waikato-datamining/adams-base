@@ -31,6 +31,7 @@ import adams.db.LogEntry;
 import adams.db.LogEntryConditions;
 import adams.db.LogIntf;
 import adams.db.SQLUtils;
+import adams.db.TableManager;
 import adams.db.indices.Index;
 import adams.db.indices.IndexColumn;
 import adams.db.indices.Indices;
@@ -51,12 +52,15 @@ import java.util.logging.Level;
  *
  * @author Fracpete (fracpete at waikato dot ac dot nz)
  */
-public abstract class LogT
+public class LogT
   extends AbstractIndexedTable
   implements LogIntf {
 
   /** for serialization. */
   private static final long serialVersionUID = -5955333734406125700L;
+
+  /** the table manager. */
+  protected static TableManager<LogT> m_TableManager;
 
   /**
    * The constructor.
@@ -398,5 +402,19 @@ public abstract class LogT
     }
 
     return result;
+  }
+
+  /**
+   * Returns the singleton instance.
+   *
+   * @return		the singleton
+   */
+  public synchronized static LogT singleton(AbstractDatabaseConnection dbcon) {
+    if (m_TableManager == null)
+      m_TableManager = new TableManager<>(TABLE_NAME, null);
+    if (!m_TableManager.has(dbcon))
+      m_TableManager.add(dbcon, new LogT(dbcon));
+
+    return m_TableManager.get(dbcon);
   }
 }
