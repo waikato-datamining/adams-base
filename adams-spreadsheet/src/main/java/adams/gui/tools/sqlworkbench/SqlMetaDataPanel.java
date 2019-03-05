@@ -38,7 +38,6 @@ import adams.gui.core.BaseTextField;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
-import adams.gui.core.SQLConnectionPanel;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SpreadSheetTable;
@@ -66,7 +65,7 @@ public class SqlMetaDataPanel
   private static final long serialVersionUID = -7292928176878371096L;
 
   /** the connection panel. */
-  protected SQLConnectionPanel m_PanelConnection;
+  protected SqlConnectionPanel m_PanelConnection;
 
   /** the panel with the table. */
   protected JPanel m_PanelTable;
@@ -125,7 +124,7 @@ public class SqlMetaDataPanel
     m_PanelCenter = new JPanel(new BorderLayout());
     add(m_PanelCenter, BorderLayout.CENTER);
 
-    m_PanelConnection = new SQLConnectionPanel();
+    m_PanelConnection = new SqlConnectionPanel();
     m_PanelConnection.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     m_PanelTop.add(m_PanelConnection, BorderLayout.NORTH);
 

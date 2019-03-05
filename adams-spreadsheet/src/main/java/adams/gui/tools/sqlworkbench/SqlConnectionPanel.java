@@ -14,11 +14,11 @@
  */
 
 /*
- * SQLConnectionPanel.java
+ * SqlConnectionPanel.java
  * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.core;
+package adams.gui.tools.sqlworkbench;
 
 import adams.core.Constants;
 import adams.core.Utils;
@@ -28,6 +28,14 @@ import adams.db.AbstractDatabaseConnection;
 import adams.db.ConnectionParameters;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionProvider;
+import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseComboBox;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseTextField;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.JLabel;
@@ -46,7 +54,7 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SQLConnectionPanel
+public class SqlConnectionPanel
   extends BasePanel
   implements DatabaseConnectionProvider {
 
@@ -115,7 +123,7 @@ public class SQLConnectionPanel
    * Shows the popup menu with the connections.
    */
   protected void showConnectionsPopup() {
-    BasePopupMenu 	menu;
+    BasePopupMenu menu;
     JMenuItem		menuitem;
     List<JMenuItem> 	menuitems;
 
@@ -168,12 +176,12 @@ public class SQLConnectionPanel
    */
   protected void enterConnection() {
     ApprovalDialog  		dialog;
-    ParameterPanel 		panelParameters;
-    BaseTextField 		textURL;
+    ParameterPanel panelParameters;
+    BaseTextField textURL;
     BaseTextField 		textUser;
     JPasswordField 		textPassword;
-    BaseCheckBox 		checkBoxShowPassword;
-    BaseComboBox<LoggingLevel> 	comboBoxLoggingLevel;
+    BaseCheckBox checkBoxShowPassword;
+    BaseComboBox<LoggingLevel> comboBoxLoggingLevel;
     String			error;
     ConnectionParameters	params;
 
