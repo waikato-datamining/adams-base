@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseTest.java
- * Copyright (C) 2009 University of Waikato
+ * Copyright (C) 2009-2019 University of Waikato
  */
 
 package adams.test;
@@ -31,7 +31,6 @@ import java.util.Hashtable;
  * Abstract Test class for flow actors.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDatabaseTestCase
   extends AdamsTestCase {
@@ -41,6 +40,9 @@ public abstract class AbstractDatabaseTestCase
 
   /** the properties. */
   protected Properties m_Properties;
+
+  /** whether the "database disabled" message was output already. */
+  protected static boolean m_DatabaseDisableMessageDisplayed;
 
   /** whether the tables got already initialized (JDBC URL &lt-&gt; true|false). */
   protected static Hashtable<String,Boolean> m_TablesInitialized;
@@ -118,6 +120,15 @@ public abstract class AbstractDatabaseTestCase
   }
 
   /**
+   * Returns whether the database is enabled.
+   *
+   * @return		true if enabled
+   */
+  public boolean isDatabaseEnabled() {
+    return getDatabaseProperties().getBoolean("DatabaseEnabled", true);
+  }
+
+  /**
    * Returns the database URL.
    *
    * @return		the URL
@@ -148,9 +159,17 @@ public abstract class AbstractDatabaseTestCase
    * Tries to connect to the database.
    */
   protected synchronized void connect() {
-    m_TestHelper.connect(getDatabaseURL(), getDatabaseUser(), getDatabasePassword());
-    initTables();
-    postConnect();
+    if (isDatabaseEnabled()) {
+      m_TestHelper.connect(getDatabaseURL(), getDatabaseUser(), getDatabasePassword());
+      initTables();
+      postConnect();
+    }
+    else {
+      if (!m_DatabaseDisableMessageDisplayed) {
+	m_DatabaseDisableMessageDisplayed = true;
+	System.out.println("Test database disabled for unit tests");
+      }
+    }
   }
 
   /**
@@ -158,7 +177,9 @@ public abstract class AbstractDatabaseTestCase
    * Calls the test helper's postConnect() method.
    */
   protected void postConnect() {
-    m_TestHelper.postConnect();
+    if (isDatabaseEnabled()) {
+      m_TestHelper.postConnect();
+    }
   }
 
   /**
@@ -168,7 +189,9 @@ public abstract class AbstractDatabaseTestCase
    * @see		#reconnect(String)
    */
   protected synchronized void reconnect() {
-    reconnect(getDatabasePropertiesFile());
+    if (isDatabaseEnabled()) {
+      reconnect(getDatabasePropertiesFile());
+    }
   }
 
   /**

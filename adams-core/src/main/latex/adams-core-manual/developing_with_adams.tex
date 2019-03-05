@@ -874,6 +874,14 @@ that you should remove temporary files that you use for regression tests in the
 \textit{setUp()} and \textit{tearDown()} methods of the unit test, to provide a
 clean environment to this and other tests.
 
+Historically, unit tests required a test database to be present (as defined by
+\verb|src/test/resources/adams/test/TestDatabase.props|). However, you can turn
+this off by creating a \texttt{TestDatabase.props} file in the project's home directory
+(Linux/Mac: \verb|$HOME/.adams|, Windows: \verb|\%USERPROFILE\%\\_adams|):
+\begin{verbatim}
+DatabaseEnabled=false
+\end{verbatim}
+
 \section{Extending Actor suggestions}
 The flow editor comes with some predefined rules for suggesting actors based
 on the context that you are trying to add an actor using the context sensitive

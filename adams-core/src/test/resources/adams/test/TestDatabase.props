@@ -1,7 +1,9 @@
 # Properties file for the tests.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
+
+# Whether the database is enabled or not
+DatabaseEnabled=true
 
 # The database URL to use
 DatabaseURL=jdbc:mysql://localhost:3306/test
