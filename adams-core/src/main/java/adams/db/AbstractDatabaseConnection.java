@@ -785,6 +785,26 @@ public abstract class AbstractDatabaseConnection
   }
 
   /**
+   * Turns the database connection into a parameters object.
+   *
+   * @param conn	the connection to convert
+   * @return		the parameters
+   */
+  public ConnectionParameters toConnectionParameters(AbstractDatabaseConnection conn) {
+    ConnectionParameters	result;
+
+    result = newConnectionParameters();
+    result.setParameter(ConnectionParameters.PARAM_URL, conn.getURL());
+    result.setParameter(ConnectionParameters.PARAM_USER, conn.getUser());
+    result.setParameter(ConnectionParameters.PARAM_PASSWORD, conn.getPassword().stringValue());
+    result.setParameter(ConnectionParameters.PARAM_LOGGINGLEVEL, "" + conn.getLoggingLevel());
+    result.setParameter(ConnectionParameters.PARAM_CONNECTONSTARTUP, "" + conn.getConnectOnStartUp());
+    result.setParameter(ConnectionParameters.PARAM_AUTOCOMMIT, "" + conn.getAutoCommit());
+
+    return result;
+  }
+
+  /**
    * Generates a key for the failed connect attempt hashtable.
    *
    * @param url		the JDBC URL
