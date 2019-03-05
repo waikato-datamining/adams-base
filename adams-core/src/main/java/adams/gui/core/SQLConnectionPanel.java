@@ -14,11 +14,11 @@
  */
 
 /*
- * SqlConnectionPanel.java
+ * SQLConnectionPanel.java
  * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.sqlworkbench;
+package adams.gui.core;
 
 import adams.core.Constants;
 import adams.core.Utils;
@@ -28,14 +28,6 @@ import adams.db.AbstractDatabaseConnection;
 import adams.db.ConnectionParameters;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionProvider;
-import adams.gui.core.BaseButton;
-import adams.gui.core.BaseCheckBox;
-import adams.gui.core.BaseComboBox;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BasePopupMenu;
-import adams.gui.core.BaseTextField;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.JLabel;
@@ -54,7 +46,7 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SqlConnectionPanel
+public class SQLConnectionPanel
   extends BasePanel
   implements DatabaseConnectionProvider {
 

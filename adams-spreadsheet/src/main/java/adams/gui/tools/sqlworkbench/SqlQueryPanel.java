@@ -37,6 +37,7 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.SQLConnectionPanel;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SpreadSheetTable;
@@ -66,7 +67,7 @@ public class SqlQueryPanel
   private static final long serialVersionUID = -7292928176878371096L;
 
   /** the connection panel. */
-  protected SqlConnectionPanel m_PanelConnection;
+  protected SQLConnectionPanel m_PanelConnection;
 
   /** the split panel. */
   protected BaseSplitPane m_SplitPane;
@@ -104,7 +105,7 @@ public class SqlQueryPanel
 
     setLayout(new BorderLayout());
 
-    m_PanelConnection = new SqlConnectionPanel();
+    m_PanelConnection = new SQLConnectionPanel();
     m_PanelConnection.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     add(m_PanelConnection, BorderLayout.NORTH);
 
