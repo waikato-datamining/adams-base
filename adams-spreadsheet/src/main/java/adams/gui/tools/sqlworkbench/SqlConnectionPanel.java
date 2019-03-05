@@ -37,7 +37,6 @@ import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
-import adams.gui.dialog.DatabaseConnectionDialog;
 
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -216,7 +215,7 @@ public class SqlConnectionPanel
     else
       dialog = new ApprovalDialog(getParentFrame(), true);
     dialog.setTitle("Connect to database");
-    dialog.setDefaultCloseOperation(DatabaseConnectionDialog.DISPOSE_ON_CLOSE);
+    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
     dialog.getContentPane().add(panelParameters, BorderLayout.CENTER);
     dialog.setApproveCaption("Connect");
     dialog.setApproveVisible(true);
