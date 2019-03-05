@@ -25,12 +25,14 @@ import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.logging.LoggingLevel;
 import adams.db.AbstractDatabaseConnection;
+import adams.db.ConnectionParameters;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionProvider;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -38,10 +40,15 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.DatabaseConnectionDialog;
 
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Panel for database connection.
@@ -56,6 +63,9 @@ public class SqlConnectionPanel
 
   /** the label for the showing the active connection. */
   protected JLabel m_LabelConnection;
+
+  /** the button for the history. */
+  protected BaseButton m_ButtonHistory;
 
   /** the button for opening the connection dialog. */
   protected BaseButton m_ButtonConnection;
@@ -78,6 +88,8 @@ public class SqlConnectionPanel
    */
   @Override
   protected void initGUI() {
+    JPanel	panelButtons;
+
     super.initGUI();
 
     setLayout(new BorderLayout());
@@ -85,10 +97,18 @@ public class SqlConnectionPanel
     m_LabelConnection = new JLabel();
     add(m_LabelConnection, BorderLayout.CENTER);
 
+    panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    add(panelButtons, BorderLayout.EAST);
+
+    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory.setToolTipText("Recent connections");
+    m_ButtonHistory.addActionListener((ActionEvent e) -> showConnectionsPopup());
+    panelButtons.add(m_ButtonHistory);
+
     m_ButtonConnection = new BaseButton("...");
-    m_ButtonConnection.setToolTipText("Opens dialog to select database connection");
-    m_ButtonConnection.addActionListener((ActionEvent e) -> selectConnection());
-    add(m_ButtonConnection, BorderLayout.EAST);
+    m_ButtonConnection.setToolTipText("Opens dialog to enter database connection");
+    m_ButtonConnection.addActionListener((ActionEvent e) -> enterConnection());
+    panelButtons.add(m_ButtonConnection);
   }
 
   /**
@@ -101,9 +121,61 @@ public class SqlConnectionPanel
   }
 
   /**
+   * Shows the popup menu with the connections.
+   */
+  protected void showConnectionsPopup() {
+    BasePopupMenu 	menu;
+    JMenuItem		menuitem;
+    List<JMenuItem> 	menuitems;
+
+    menuitems = new ArrayList<>();
+    for (ConnectionParameters params: DatabaseConnection.getSingleton().getConnections()) {
+      final ConnectionParameters fParams = params;
+      menuitem = new JMenuItem(params.toString());
+      menuitem.addActionListener((ActionEvent e) -> connect(fParams));
+      menuitems.add(menuitem);
+    }
+    menu = BasePopupMenu.createCascadingMenu(menuitems, (int) m_ButtonHistory.getLocationOnScreen().getY(), -1, "More...");
+    menu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight());
+  }
+
+  /**
+   * Connects using the parameters.
+   *
+   * @param params	the connection parameters
+   */
+  protected void connect(ConnectionParameters params) {
+    String	error;
+
+    error                = null;
+    m_DatabaseConnection = params.toDatabaseConnection(DatabaseConnection.getSingleton().getClass());
+
+    if (!m_DatabaseConnection.isConnected()) {
+      try {
+        m_DatabaseConnection.resetFailedConnectAttempt();
+	m_DatabaseConnection.connect();
+	if (!m_DatabaseConnection.isConnected()) {
+	  error = "Failed to connect to: " + params.getURL();
+	}
+	else {
+	  params = m_DatabaseConnection.toConnectionParameters(m_DatabaseConnection);
+	  m_DatabaseConnection.addConnection(params);
+	}
+      }
+      catch (Exception e) {
+        error = Utils.handleException(m_DatabaseConnection, "Failed to connect to: " + params.getURL(), e);
+      }
+    }
+    if (error != null)
+      GUIHelper.showErrorMessage(this, error);
+
+    updateConnection();
+  }
+
+  /**
    * Allows the user to select a connection.
    */
-  protected void selectConnection() {
+  protected void enterConnection() {
     ApprovalDialog  		dialog;
     ParameterPanel 		panelParameters;
     BaseTextField 		textURL;
@@ -112,6 +184,7 @@ public class SqlConnectionPanel
     BaseCheckBox 		checkBoxShowPassword;
     BaseComboBox<LoggingLevel> 	comboBoxLoggingLevel;
     String			error;
+    ConnectionParameters	params;
 
     panelParameters = new ParameterPanel();
 
@@ -162,8 +235,13 @@ public class SqlConnectionPanel
       try {
         m_DatabaseConnection.resetFailedConnectAttempt();
 	m_DatabaseConnection.connect();
-	if (!m_DatabaseConnection.isConnected())
+	if (!m_DatabaseConnection.isConnected()) {
 	  error = "Failed to connect to: " + textURL.getText();
+	}
+	else {
+	  params = m_DatabaseConnection.toConnectionParameters(m_DatabaseConnection);
+	  m_DatabaseConnection.addConnection(params);
+	}
       }
       catch (Exception e) {
         error = Utils.handleException(m_DatabaseConnection, "Failed to connect to: " + textURL.getText(), e);
