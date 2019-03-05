@@ -268,7 +268,7 @@ public class SQLIdSupplier
     rs    = null;
     query = null;
     try {
-      sql   = SQLF.getSingleton(getDatabaseConnection());
+      sql   = SQLF.getSingleton(m_DatabaseConnection);
       query = m_SQL.getValue();
       // replace variables
       query = getVariables().expand(query);
