@@ -366,7 +366,7 @@ public class BaseObjectEditor
     // update help button
     if (m_ButtonHelp != null) {
       m_ButtonHelp.setVisible(getHelpURL() != null);
-      m_ButtonHelp.setToolTipText(getHelpDescription());
+      m_ButtonHelp.setToolTipText("<html>" + GUIHelper.processTipText(getHelpDescription(), 120) + "</html>");
       if (getHelpIcon() != null)
 	m_ButtonHelp.setIcon(GUIHelper.getIcon(getHelpIcon()));
       else
