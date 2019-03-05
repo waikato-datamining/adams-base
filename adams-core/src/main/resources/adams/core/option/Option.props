@@ -307,8 +307,8 @@ adams.data.DecimalFormatString#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
 
 # JdbcUrl objects
 adams.db.JdbcUrl=true
-adams.db.JdbcUrl#toString=adams.gui.goe.BaseObjectEditor#toString
-adams.db.JdbcUrl#valueOf=adams.gui.goe.BaseObjectEditor#valueOf
+adams.db.JdbcUrl#toString=adams.gui.goe.JdbcUrlEditor#toString
+adams.db.JdbcUrl#valueOf=adams.gui.goe.JdbcUrlEditor#valueOf
 
 # SQLStatement objects
 adams.db.SQLStatement=true
