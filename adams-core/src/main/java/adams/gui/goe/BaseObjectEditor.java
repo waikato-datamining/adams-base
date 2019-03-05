@@ -15,7 +15,7 @@
 
 /*
  * BaseObjectEditor.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -351,11 +351,17 @@ public class BaseObjectEditor
    */
   @Override
   protected void initForDisplay() {
+    String	toolTip;
+
     super.initForDisplay();
+
     if (!m_TextValue.getText().equals("" + getValue()))
       m_TextValue.setText("" + getValue());
     m_TextValue.setCaretPosition(0);
-    m_TextValue.setToolTipText(((BaseObject) getValue()).getTipText());
+    toolTip = ((BaseObject) getValue()).getTipText();
+    if (toolTip != null)
+      toolTip = "<html>" + GUIHelper.processTipText(toolTip, 120) + "</html>";
+    m_TextValue.setToolTipText(toolTip);
     m_TextValue.grabFocus();
     // update help button
     if (m_ButtonHelp != null) {
