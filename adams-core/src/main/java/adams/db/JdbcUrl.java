@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JdbcUrl.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
@@ -28,7 +28,6 @@ import java.sql.DriverManager;
  * Encapsulates a JDBC URL Performs some minimal checks.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JdbcUrl
   extends AbstractBaseString {
@@ -93,7 +92,13 @@ public class JdbcUrl
    */
   @Override
   public String getTipText() {
-    return "Format: 'jdbc:<sub-protocol>:<database url>'";
+    return "Format: jdbc:<sub-protocol>:<database url>\n"
+      + "Examples:\n"
+      + "- MySQL: jdbc:mysql://<host>:3306/<database>\n"
+      + "- PostgreSQL: jdbc:postgresql://<host>:5432/<database>\n"
+      + "- SQLite: jdbc:sqlite:<path_to_file>\n"
+      + "- HSQLDB: jdbc:hsqldb:{mem|file|res|hsql|http|hsqls|https}:...\n"
+      + "- MS SQL Server: jdbc:jtds:sqlserver://<host>:1433/<database>";
   }
 
   /**
