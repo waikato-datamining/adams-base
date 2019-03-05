@@ -333,21 +333,21 @@ public class CheckedTextField
    * Initializes the model.
    */
   protected void initializeCheckModel() {
+    String	toolTip;
+
     m_CheckModel = getDefaultCheckModel();
+
+    toolTip = getHelpText();
+    if (toolTip != null)
+      setToolTipText(GUIHelper.processTipText(toolTip, 40));
   }
 
   /**
    * Initializes the members.
    */
   protected void initialize() {
-    String	toolTip;
-
     m_DefaultForeground = getForeground();
     attachListener();
-
-    toolTip = getHelpText();
-    if (toolTip != null)
-      setToolTipText(GUIHelper.processTipText(toolTip, 40));
   }
 
   /**
