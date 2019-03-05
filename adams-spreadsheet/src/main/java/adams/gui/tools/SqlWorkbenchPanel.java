@@ -25,6 +25,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MultiPagePane;
+import adams.gui.tools.sqlworkbench.SqlMetaDataPanel;
 import adams.gui.tools.sqlworkbench.SqlQueryPanel;
 
 import javax.swing.JMenu;
@@ -54,6 +55,9 @@ public class SqlWorkbenchPanel
   /** the "new query" menu item. */
   protected JMenuItem m_MenuItemNewQuery;
 
+  /** the "new meta-data" menu item. */
+  protected JMenuItem m_MenuItemNewMetaData;
+
   /** the "close query" menu item. */
   protected JMenuItem m_MenuItemCloseQuery;
 
@@ -63,8 +67,11 @@ public class SqlWorkbenchPanel
   /** the "close" menu item. */
   protected JMenuItem m_MenuItemClose;
 
-  /** the counter. */
-  protected int m_Counter;
+  /** the SQL counter. */
+  protected int m_SQLCounter;
+
+  /** the MetaData counter. */
+  protected int m_MetaDataCounter;
 
   /**
    * Initializes the members.
@@ -73,7 +80,8 @@ public class SqlWorkbenchPanel
   protected void initialize() {
     super.initialize();
 
-    m_Counter = 0;
+    m_SQLCounter = 0;
+    m_MetaDataCounter = 0;
   }
 
   /**
@@ -119,12 +127,19 @@ public class SqlWorkbenchPanel
       menu.setMnemonic('Q');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
-      // Queries/New
-      menuitem = new JMenuItem("New query", GUIHelper.getIcon("new.gif"));
+      // Queries/New query
+      menuitem = new JMenuItem("New SQL query", GUIHelper.getIcon("query.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.addActionListener((ActionEvent e) -> newQuery());
       menu.add(menuitem);
       m_MenuItemNewQuery = menuitem;
+
+      // Queries/New meta-data
+      menuitem = new JMenuItem("New meta-data query", GUIHelper.getIcon("metadata.gif"));
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed N"));
+      menuitem.addActionListener((ActionEvent e) -> newMetaData());
+      menu.add(menuitem);
+      m_MenuItemNewMetaData = menuitem;
 
       menu.addSeparator();
 
@@ -171,8 +186,16 @@ public class SqlWorkbenchPanel
    * Adds a new query page.
    */
   public void newQuery() {
-    m_Counter++;
-    m_MultiPagePane.addPage("Query-" + m_Counter, new SqlQueryPanel());
+    m_SQLCounter++;
+    m_MultiPagePane.addPage("SQL-" + m_SQLCounter, new SqlQueryPanel());
+  }
+
+  /**
+   * Adds a new meta-data query page.
+   */
+  public void newMetaData() {
+    m_MetaDataCounter++;
+    m_MultiPagePane.addPage("MetaData-" + m_MetaDataCounter, new SqlMetaDataPanel());
   }
 
   /**
