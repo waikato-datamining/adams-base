@@ -114,6 +114,7 @@ public class BaseObjectTextField<T extends BaseObject>
    */
   public BaseObjectTextField(T check, String initial) {
     super(initial, new BaseObjectCheckModel<>(check));
+    setToolTipText(getHelpText());
   }
 
   /**
@@ -176,6 +177,9 @@ public class BaseObjectTextField<T extends BaseObject>
    * @return		the tool tip, null if none available
    */
   public String getHelpText() {
-    return ((BaseObjectCheckModel) getCheckModel()).getCheck().getTipText();
+    if (getCheckModel() instanceof BaseObjectCheckModel)
+      return ((BaseObjectCheckModel) getCheckModel()).getCheck().getTipText();
+    else
+      return null;
   }
 }
