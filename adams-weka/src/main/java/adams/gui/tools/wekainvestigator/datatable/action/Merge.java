@@ -13,16 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Merge.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
 
-import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaInstancesMerge;
+import adams.flow.transformer.WekaMergeInstancesActor;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -76,8 +76,8 @@ public class Merge
     else
       dialog = new GenericObjectEditorDialog(getOwner().getParentFrame(), true);
     dialog.setTitle("Configure merge");
-    dialog.getGOEEditor().setCanChangeClassInDialog(false);
-    dialog.getGOEEditor().setClassType(Actor.class);
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(WekaMergeInstancesActor.class);
     dialog.setCurrent(merge);
     dialog.pack();
     dialog.setLocationRelativeTo(getOwner());
