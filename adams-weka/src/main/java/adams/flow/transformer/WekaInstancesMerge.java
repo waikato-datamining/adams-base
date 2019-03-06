@@ -160,11 +160,10 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaInstancesMerge
 extends AbstractTransformer
-implements ProvenanceSupporter {
+implements ProvenanceSupporter, WekaMergeInstancesActor {
 
   /** for serialization. */
   private static final long serialVersionUID = -2923715594018710295L;

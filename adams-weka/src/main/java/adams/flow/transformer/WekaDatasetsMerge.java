@@ -90,7 +90,9 @@ import weka.core.Instances;
  *
  * @author Corey Sterling (csterlin at waikato dot ac dot nz)
  */
-public class WekaDatasetsMerge extends AbstractTransformer {
+public class WekaDatasetsMerge
+  extends AbstractTransformer
+  implements WekaMergeInstancesActor {
 
   private static final long serialVersionUID = 433833069085059906L;
 
