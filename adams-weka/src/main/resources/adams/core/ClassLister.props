@@ -55,6 +55,10 @@ adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
 adams.flow.transformer.wekaevaluationpostprocessor.AbstractWekaEvaluationPostProcessor=\
   adams.flow.transformer.wekaevaluationpostprocessor
 
+# the merge schemes
+adams.flow.transformer.wekadatasetsmerge.AbstractMerge=\
+  adams.flow.transformer.wekadatasetsmerge
+
 # the heuristics for determining the class attribute
 adams.data.weka.classattribute.AbstractClassAttributeHeuristic=\
   adams.data.weka.classattribute

@@ -1,0 +1,26 @@
+% Test dataset for unit testing WekaDatasetsMerge
+%
+% Has the following properties (in conjunction with test-input-1.arff):
+% - Has the same number of rows (to test Simple merge)
+% - Contains rows where the IDs match, rows where they do not (to test JoinByID merge)
+% - Contains multiple class attributes
+% - Contains missing values
+% - Contains rows where the class values differ between datasets (to test ensureEqualValues)
+%
+% Should be used in conjunction with test-input-1.arff to create a merged dataset.
+
+@relation test-input-2
+
+@attribute setIndex	numeric
+@attribute rowIndex	numeric
+@attribute id		numeric
+@attribute attr1 	numeric
+@attribute attr2 	numeric
+@attribute class 	{class1,class2}
+@attribute class2	{class2-1,class2-2,class2-3}
+
+@data
+1.0,0.0,1.1,0.07,0.08,class2,class2-2
+1.0,1.0,1.3,0.09,0.10,class1,class2-1
+1.0,2.0,1.2,0.11,0.12,class1,class2-1
+1.0,3.0,1.5,0.13,0.14,class1,class2-2
