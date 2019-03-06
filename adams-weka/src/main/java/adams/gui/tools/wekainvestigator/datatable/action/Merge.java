@@ -61,7 +61,7 @@ public class Merge
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    WekaInstancesMerge 		merge;
+    WekaMergeInstancesActor 	merge;
     GenericObjectEditorDialog	dialog;
     DataContainer[]		conts;
     Instances[]			data;
@@ -87,7 +87,7 @@ public class Merge
       logMessage("Merge cancelled!");
       return;
     }
-    merge = (WekaInstancesMerge) dialog.getCurrent();
+    merge = (WekaMergeInstancesActor) dialog.getCurrent();
     dialog.dispose();
 
     // collect data
