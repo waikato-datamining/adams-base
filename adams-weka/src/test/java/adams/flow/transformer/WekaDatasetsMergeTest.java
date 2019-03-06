@@ -83,7 +83,8 @@ public class WekaDatasetsMergeTest
 
     m_TestHelper.copyResourceToTmp("test-input-1.arff");
     m_TestHelper.copyResourceToTmp("test-input-2.arff");
-    m_TestHelper.deleteFileFromTmp("dumpfile.arff");
+    m_TestHelper.deleteFileFromTmp("dumpfile1.arff");
+    m_TestHelper.deleteFileFromTmp("dumpfile2.arff");
   }
 
   /**
@@ -94,7 +95,8 @@ public class WekaDatasetsMergeTest
   protected void tearDown() throws Exception {
     m_TestHelper.deleteFileFromTmp("test-input-1.arff");
     m_TestHelper.deleteFileFromTmp("test-input-2.arff");
-    m_TestHelper.deleteFileFromTmp("dumpfile.arff");
+    m_TestHelper.deleteFileFromTmp("dumpfile1.arff");
+    m_TestHelper.deleteFileFromTmp("dumpfile2.arff");
 
     super.tearDown();
   }
@@ -105,7 +107,8 @@ public class WekaDatasetsMergeTest
   public void testRegression() {
     performRegressionTest(
       new TmpFile[]{
-        new TmpFile("dumpfile.arff")
+        new TmpFile("dumpfile1.arff"),
+        new TmpFile("dumpfile2.arff")
       });
   }
 
@@ -213,7 +216,7 @@ public class WekaDatasetsMergeTest
       // Flow.simple-pass.WekaFileWriter
       WekaFileWriter wekafilewriter = new WekaFileWriter();
       argOption = (AbstractArgumentOption) wekafilewriter.getOptionManager().findByProperty("outputFile");
-      wekafilewriter.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.arff"));
+      wekafilewriter.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile1.arff"));
       SimpleArffSaver simplearffsaver = new SimpleArffSaver();
       adams.core.option.WekaCommandLineHandler wekacommandlinehandler = new adams.core.option.WekaCommandLineHandler();
       wekacommandlinehandler.setOptions(simplearffsaver, OptionUtils.splitOptions("-decimal 6"));
@@ -280,7 +283,7 @@ public class WekaDatasetsMergeTest
       // Flow.id-pass.WekaFileWriter
       WekaFileWriter wekafilewriter2 = new WekaFileWriter();
       argOption = (AbstractArgumentOption) wekafilewriter2.getOptionManager().findByProperty("outputFile");
-      wekafilewriter2.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.arff"));
+      wekafilewriter2.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile2.arff"));
       SimpleArffSaver simplearffsaver2 = new SimpleArffSaver();
       adams.core.option.WekaCommandLineHandler wekacommandlinehandler2 = new adams.core.option.WekaCommandLineHandler();
       wekacommandlinehandler2.setOptions(simplearffsaver2, OptionUtils.splitOptions("-decimal 6"));

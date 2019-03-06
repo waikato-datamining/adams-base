@@ -1,4 +1,28 @@
---> dumpfile.arff
+--> dumpfile1.arff
+@relation output
+
+@attribute input1-setIndex numeric
+@attribute input1-rowIndex numeric
+@attribute input1-id numeric
+@attribute input1-attr1 numeric
+@attribute input1-attr2 numeric
+@attribute input2-setIndex numeric
+@attribute input2-rowIndex numeric
+@attribute input2-id numeric
+@attribute input2-attr1 numeric
+@attribute input2-attr2 numeric
+@attribute input1-class {class1,class2}
+@attribute input1-class2 {class2-1,class2-2,class2-3}
+@attribute input2-class {class1,class2}
+@attribute input2-class2 {class2-1,class2-2,class2-3}
+
+@data
+0,0,1.2,0.01,?,1,0,1.1,0.07,0.08,class1,class2-1,class2,class2-2
+0,1,1.1,0.03,0.04,1,1,1.3,0.09,0.1,class2,class2-2,class1,class2-1
+0,2,1.4,0.05,0.06,1,2,1.2,0.11,0.12,class2,class2-2,class1,class2-1
+0,3,1.5,0.16,0.17,1,3,1.5,0.13,0.14,class2,class2-2,class1,class2-2
+
+--> dumpfile2.arff
 @relation output
 
 @attribute id numeric
