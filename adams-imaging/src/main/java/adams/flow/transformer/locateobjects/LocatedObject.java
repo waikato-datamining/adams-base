@@ -76,6 +76,49 @@ public class LocatedObject
   /**
    * Initializes the container.
    *
+   * @param polygon	the polygon to use
+   */
+  public LocatedObject(Polygon polygon) {
+    this(null, polygon);
+  }
+
+  /**
+   * Initializes the container.
+   *
+   * @param image	the object image, can be null
+   * @param polygon	the polygon to use
+   */
+  public LocatedObject(BufferedImage image, Polygon polygon) {
+    this(image, polygon, null);
+  }
+
+  /**
+   * Initializes the container.
+   *
+   * @param image	the object image, can be null
+   * @param polygon	the polygon to use
+   * @param metaData	optional meta-data, can be null
+   */
+  public LocatedObject(BufferedImage image, Polygon polygon, Map<String,Object> metaData) {
+    this(image, polygon.getBounds().x, polygon.getBounds().y, polygon.getBounds().width, polygon.getBounds().height, metaData);
+    setPolygon(polygon);
+  }
+
+  /**
+   * Initializes the container.
+   *
+   * @param x		the x of the top-left corner in the original image
+   * @param y		the y of the top-left corner in the original image
+   * @param width	the width of the object sub-image
+   * @param height	the height of the object sub-image
+   */
+  public LocatedObject(int x, int y, int width, int height) {
+    this(null, x, y, width, height, null);
+  }
+
+  /**
+   * Initializes the container.
+   *
    * @param image	the object image, can be null
    * @param x		the x of the top-left corner in the original image
    * @param y		the y of the top-left corner in the original image
