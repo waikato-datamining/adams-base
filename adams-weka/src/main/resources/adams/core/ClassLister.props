@@ -47,6 +47,10 @@ adams.data.weka.columnfinder.ColumnFinder=\
 adams.data.weka.predictions.AbstractErrorScaler=\
   adams.data.weka.predictions
 
+# the actors for merging Weka Instances
+adams.flow.transformer.WekaMergeInstancesActor=\
+  adams.flow.transformer
+
 # the cluster post-processors
 adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
   adams.flow.transformer.wekaclusterer
