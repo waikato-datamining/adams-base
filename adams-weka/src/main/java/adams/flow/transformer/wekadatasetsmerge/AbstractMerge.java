@@ -473,13 +473,6 @@ public abstract class AbstractMerge
    * @return the merged dataset
    */
   public Instances merge(Instances[] datasets) {
-    // Unset the class attributes so they're handled properly
-    int[] savedClassIndices = new int[datasets.length];
-    for (int i = 0; i < datasets.length; i++) {
-      savedClassIndices[i] = datasets[i].classIndex();
-      datasets[i].setClassIndex(-1);
-    }
-
     // Reset the internal state
     resetInternalState(datasets);
 
@@ -487,60 +480,46 @@ public abstract class AbstractMerge
     String msg = check(datasets);
     if (msg != null) throw new IllegalStateException(msg);
 
-    try {
-      // Create the attribute mapping
-      Map<String, List<AttributeMappingElement>> attributeMapping = createAttributeMapping();
+    // Create the attribute mapping
+    Map<String, List<AttributeMappingElement>> attributeMapping = createAttributeMapping();
 
-      // Create the empty resulting dataset
-      Instances mergedDataset = createEmptyResultantDataset(attributeMapping);
+    // Create the empty resulting dataset
+    Instances mergedDataset = createEmptyResultantDataset(attributeMapping);
 
-      // Get the row-set iterator over the datasets
-      Enumeration<int[]> rowSetEnumeration = getRowSetEnumeration();
+    // Get the row-set iterator over the datasets
+    Enumeration<int[]> rowSetEnumeration = getRowSetEnumeration();
 
-      // Add the data to the merged dataset
-      while (rowSetEnumeration.hasMoreElements()) {
-	// Get the row-set to work from
-	int[] rowSet = rowSetEnumeration.nextElement();
+    // Add the data to the merged dataset
+    while (rowSetEnumeration.hasMoreElements()) {
+      // Get the row-set to work from
+      int[] rowSet = rowSetEnumeration.nextElement();
 
-	// Create a new instance for the merged dataset
-	Instance mergedInstance = newInstanceForDataset(mergedDataset);
+      // Create a new instance for the merged dataset
+      Instance mergedInstance = newInstanceForDataset(mergedDataset);
 
-	// Process each attribute of the merged dataset in turn
-	for (int attributeIndex = 0; attributeIndex < mergedDataset.numAttributes(); attributeIndex++) {
-	  // Get the next attribute to copy
-	  Attribute attribute = mergedDataset.attribute(attributeIndex);
+      // Process each attribute of the merged dataset in turn
+      for (int attributeIndex = 0; attributeIndex < mergedDataset.numAttributes(); attributeIndex++) {
+	// Get the next attribute to copy
+	Attribute attribute = mergedDataset.attribute(attributeIndex);
 
-	  // Find the source(s) of the attribute's data
-	  List<AttributeMappingElement> sourceAttributeElements = attributeMapping.get(attribute.name());
+	// Find the source(s) of the attribute's data
+	List<AttributeMappingElement> sourceAttributeElements = attributeMapping.get(attribute.name());
 
-	  // Get the value of this attribute from it's source(s)
-	  Object value = m_EnsureEqualValues ?
-	    getValueEnsureEqual(rowSet, sourceAttributeElements) :
-	    getValueFirstAvailable(rowSet, sourceAttributeElements);
+	// Get the value of this attribute from it's source(s)
+	Object value = m_EnsureEqualValues ?
+	  getValueEnsureEqual(rowSet, sourceAttributeElements) :
+	  getValueFirstAvailable(rowSet, sourceAttributeElements);
 
-	  // Copy the value to the merged dataset if it's found
-	  if (value != null) setValue(mergedInstance, attributeIndex, value);
-	}
-
-	// Add the completed instance to the merged dataset
-	mergedDataset.add(mergedInstance);
+	// Copy the value to the merged dataset if it's found
+	if (value != null) setValue(mergedInstance, attributeIndex, value);
       }
 
-      // Return the resulting merged dataset
-      return mergedDataset;
+      // Add the completed instance to the merged dataset
+      mergedDataset.add(mergedInstance);
+    }
 
-    }
-    catch (Throwable t) {
-      // Just re-throw the exception
-      throw t;
-
-    }
-    finally {
-      // Restore the saved class indices
-      for (int i = 0; i < datasets.length; i++) {
-	datasets[i].setClassIndex(savedClassIndices[i]);
-      }
-    }
+    // Return the resulting merged dataset
+    return mergedDataset;
   }
 
   /**
@@ -638,11 +617,9 @@ public abstract class AbstractMerge
       Instances dataset = m_Datasets[datasetIndex];
 
       // Go through each attribute of the dataset in turn
-      int attributeIndex = 0;
-      Enumeration<Attribute> attributeEnumeration = dataset.enumerateAttributes();
-      while (attributeEnumeration.hasMoreElements()) {
+      for (int attributeIndex = 0; attributeIndex < dataset.numAttributes(); attributeIndex++) {
 	// Get the next attribute to process
-	Attribute attribute = attributeEnumeration.nextElement();
+	Attribute attribute = dataset.attribute(attributeIndex);
 
 	// Get the attribute's mapped name in the merged dataset
 	String mappedAttributeName = getMappedAttributeName(datasetIndex, attribute.name());
@@ -659,7 +636,6 @@ public abstract class AbstractMerge
 
 	// Increment the counters
 	originalOrdering++;
-	attributeIndex++;
       }
     }
 
@@ -704,10 +680,9 @@ public abstract class AbstractMerge
 	  break;
 	case REGEXP:
 	  // Check all the attributes for a regex match
-	  Enumeration<Attribute> attributeEnumeration = dataset.enumerateAttributes();
-	  while (attributeEnumeration.hasMoreElements()) {
+	  for (int attributeIndex = 0; attributeIndex < dataset.numAttributes(); attributeIndex++) {
 	    // Get the attribute's name
-	    String attributeName = attributeEnumeration.nextElement().name();
+	    String attributeName = dataset.attribute(attributeIndex).name();
 
 	    // See if it matches the matching regex
 	    boolean regexMatches = m_ClassAttributeMatchingRegex.isMatch(attributeName);

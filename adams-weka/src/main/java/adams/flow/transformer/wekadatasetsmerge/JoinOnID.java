@@ -270,20 +270,13 @@ public class JoinOnID
    * @return The index of the unique ID attribute, or -1 if not found.
    */
   protected int findAttributeIndexOfUniqueID(Instances dataset) {
-    // Keep track of the index of the attribute we are checking
-    int attributeIndex = 0;
-
     // Check each attribute in turn
-    Enumeration<Attribute> attributeEnumeration = dataset.enumerateAttributes();
-    while (attributeEnumeration.hasMoreElements()) {
+    for (int attributeIndex = 0; attributeIndex < dataset.numAttributes(); attributeIndex++) {
       // Get the attribute
-      Attribute attribute = attributeEnumeration.nextElement();
+      Attribute attribute = dataset.attribute(attributeIndex);
 
       // See if it has the right name. If so, return its index
       if (isUniqueIDName(attribute.name())) return attributeIndex;
-
-      // Update the index counter
-      attributeIndex++;
     }
 
     // The unique ID attribute wasn't found in the dataset
