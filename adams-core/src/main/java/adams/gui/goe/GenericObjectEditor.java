@@ -15,7 +15,7 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2018 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -213,8 +213,14 @@ public class GenericObjectEditor
     /** the top panel with the classname and choose button. */
     protected JPanel m_TopPanel;
 
+    /** the panel with the buttons. */
+    protected JPanel m_PanelButtons;
+
     /** whether to ignore selection changes to the combobox. */
     protected boolean m_IgnoreChanges;
+
+    /** whether to update the dialog size. */
+    protected boolean m_UpdateSize;
 
     /**
      * Creates the GUI editor component.
@@ -222,7 +228,8 @@ public class GenericObjectEditor
     public GOEPanel() {
       super();
 
-      m_Backup = copyObject(m_Object);
+      m_Backup     = copyObject(m_Object);
+      m_UpdateSize = true;
 
       setLayout(new BorderLayout());
 
@@ -362,12 +369,12 @@ public class GenericObjectEditor
       childPanel.add(m_PropertySheetChild, BorderLayout.CENTER);
       m_PanelRight.add(childPanel, BorderLayout.CENTER);
 
-      JPanel allButs = new JPanel(new GridLayout(1, 2));
+      m_PanelButtons = new JPanel(new GridLayout(1, 2));
       JPanel leftButs = new JPanel();
       JPanel rightButs = new JPanel();
-      allButs.add(leftButs, BorderLayout.WEST);
-      allButs.add(rightButs, BorderLayout.EAST);
-      allButs.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+      m_PanelButtons.add(leftButs, BorderLayout.WEST);
+      m_PanelButtons.add(rightButs, BorderLayout.EAST);
+      m_PanelButtons.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       leftButs.setLayout(new FlowLayout(FlowLayout.LEFT));
       leftButs.add(m_ButtonOpen);
       leftButs.add(m_ButtonSave);
@@ -375,7 +382,7 @@ public class GenericObjectEditor
       rightButs.setLayout(new FlowLayout(FlowLayout.RIGHT));
       rightButs.add(m_ButtonOK);
       rightButs.add(m_ButtonCancel);
-      add(allButs, BorderLayout.SOUTH);
+      add(m_PanelButtons, BorderLayout.SOUTH);
 
       if (m_ClassType != null) {
 	m_ObjectNames = getClasses();
@@ -386,6 +393,42 @@ public class GenericObjectEditor
       }
 
       m_PanelTree.focusSearch();
+    }
+
+    /**
+     * Sets whether to update the preferred size.
+     *
+     * @param value	true if to update
+     */
+    public void setUpdateSize(boolean value) {
+      m_UpdateSize = value;
+    }
+
+    /**
+     * Returns whether to update the preferred size.
+     *
+     * @return		true if to update
+     */
+    public boolean getUpdateSize() {
+      return m_UpdateSize;
+    }
+
+    /**
+     * Sets whether to display the buttons.
+     *
+     * @param value	true if to display
+     */
+    public void setButtonsVisible(boolean value) {
+      m_PanelButtons.setVisible(value);
+    }
+
+    /**
+     * Returns whether the buttons are visible.
+     *
+     * @return		true if displayed
+     */
+    public boolean getButtonsVisible() {
+      return m_PanelButtons.isVisible();
     }
 
     /**
@@ -580,8 +623,10 @@ public class GenericObjectEditor
       }
 
       // Adjust size of containing window if possible
-      if ((getTopLevelAncestor() != null) && (getTopLevelAncestor() instanceof Window))
-	((Window) getTopLevelAncestor()).pack();
+      if (m_UpdateSize) {
+	if ((getTopLevelAncestor() != null) && (getTopLevelAncestor() instanceof Window))
+	  ((Window) getTopLevelAncestor()).pack();
+      }
 
       m_IgnoreChanges = false;
     }
@@ -1320,4 +1365,40 @@ public class GenericObjectEditor
   public PostProcessObjectHandler getPostProcessObjectHandler() {
     return m_PostProcessObjectHandler;
   }
+
+  /**
+   * Sets whether to update the size.
+   *
+   * @param value	true if to update
+   */
+  public void setUpdateSize(boolean value) {
+    ((GOEPanel) getCustomEditor()).setUpdateSize(value);
+  }
+
+  /**
+   * Returns whether to update the size.
+   *
+   * @return		true if to update
+   */
+  public boolean getUpdateSize() {
+    return ((GOEPanel) getCustomEditor()).getUpdateSize();
+  }
+
+    /**
+     * Sets whether to display the buttons.
+     *
+     * @param value	true if to display
+     */
+    public void setButtonsVisible(boolean value) {
+      ((GOEPanel) getCustomEditor()).setButtonsVisible(value);
+    }
+
+    /**
+     * Returns whether the buttons are visible.
+     *
+     * @return		true if displayed
+     */
+    public boolean getButtonsVisible() {
+      return ((GOEPanel) getCustomEditor()).getButtonsVisible();
+    }
 }
