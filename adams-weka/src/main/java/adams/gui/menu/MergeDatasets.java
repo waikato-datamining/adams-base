@@ -15,7 +15,7 @@
 
 /*
  * MergeDatasets.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,6 +26,7 @@ import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaInstancesMerge;
+import adams.flow.transformer.WekaMergeInstancesActor;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
@@ -33,8 +34,8 @@ import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
 import adams.gui.wizard.AbstractWizardPage;
 import adams.gui.wizard.FinalPage;
+import adams.gui.wizard.GenericObjectEditorPage;
 import adams.gui.wizard.PageCheck;
-import adams.gui.wizard.PropertySheetPanelPage;
 import adams.gui.wizard.WekaPropertySheetPanelPage;
 import adams.gui.wizard.WekaSelectDatasetPage;
 import adams.gui.wizard.WekaSelectMultipleDatasetsPage;
@@ -54,7 +55,6 @@ import java.util.logging.Level;
  * For merging datasets (side-by-side) into single dataset.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MergeDatasets
   extends AbstractBasicMenuItemDefinition {
@@ -95,7 +95,7 @@ public class MergeDatasets
   public void launch() {
     final WizardPane                wizard;
     WekaSelectMultipleDatasetsPage  infiles;
-    PropertySheetPanelPage          goe;
+    GenericObjectEditorPage         goe;
     WekaSelectDatasetPage           outfile;
     FinalPage                       finalpage;
     WekaInstancesMerge              merge;
@@ -124,9 +124,11 @@ public class MergeDatasets
       }
     });
     wizard.addPage(infiles);
-    goe = new PropertySheetPanelPage("Setup");
+    goe = new GenericObjectEditorPage("Setup");
     goe.setDescription("Specify how the files should get merged.");
-    goe.setTarget(merge);
+    goe.setClassType(WekaMergeInstancesActor.class);
+    goe.setCanChangeClassInDialog(true);
+    goe.setValue(merge);
     wizard.addPage(goe);
     outfile = new WekaSelectDatasetPage("Output");
     outfile.setDescription("Select the file to save the merged data to.");
@@ -136,7 +138,7 @@ public class MergeDatasets
     finalpage.setLogo(null);
     finalpage.setDescription("<html><h2>Ready</h2>Please click on <b>Merge</b> to start the process.</html>");
     wizard.addPage(finalpage);
-    frame = createChildFrame(wizard, GUIHelper.getDefaultDialogDimension());
+    frame = createChildFrame(wizard, GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension()));
     wizard.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -147,13 +149,13 @@ public class MergeDatasets
         Properties props = wizard.getProperties(false);
         File[] input = null;
         File output = null;
-        WekaInstancesMerge merge = null;
+        WekaMergeInstancesActor merge = null;
         try {
           String[] files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
           input = new File[files.length];
           for (int i = 0; i < files.length; i++)
             input[i] = new File(files[i]);
-          merge = (WekaInstancesMerge) OptionUtils.forCommandLine(WekaInstancesMerge.class, props.getProperty(WekaPropertySheetPanelPage.PROPERTY_CMDLINE));
+          merge = (WekaMergeInstancesActor) OptionUtils.forCommandLine(WekaMergeInstancesActor.class, props.getProperty(WekaPropertySheetPanelPage.PROPERTY_CMDLINE));
           output = new File(props.getProperty(WekaSelectDatasetPage.KEY_FILE));
         }
         catch (Exception ex) {
@@ -174,7 +176,7 @@ public class MergeDatasets
    * @param merge       the merge setup
    * @param output      the output file
    */
-  protected void doMerge(ChildFrame frame, File[] input, WekaInstancesMerge merge, File output) {
+  protected void doMerge(ChildFrame frame, File[] input, WekaMergeInstancesActor merge, File output) {
     Instances[]                 data;
     Instances                   full;
     int                         i;
