@@ -21,6 +21,7 @@
 package adams.flow.transformer.wekadatasetsmerge;
 
 import adams.core.QuickInfoSupporter;
+import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
@@ -57,6 +58,7 @@ public abstract class AbstractMerge
   extends AbstractOptionHandler
   implements QuickInfoSupporter {
 
+  /** Auto-generated serialisation UID#. */
   private static final long serialVersionUID = 5230406420788469572L;
 
   /** The keyword to replace with the dataset name in attribute renaming. */
@@ -81,10 +83,10 @@ public abstract class AbstractMerge
   protected BaseString[] m_DatasetNames;
 
   /** The regexs to use to find attributes that require renaming. */
-  protected BaseRegExp[] m_AttributeRenameFindRegex;
+  protected BaseRegExp[] m_AttributeRenameFindRegexs;
 
   /** The format strings specifying how to rename attributes. */
-  protected BaseString[] m_AttributeRenameFormatString;
+  protected BaseString[] m_AttributeRenameFormatStrings;
 
   /** The name to give the resulting dataset. */
   protected String m_MergedDatasetName;
@@ -243,7 +245,24 @@ public abstract class AbstractMerge
    * @param value The list of dataset names.
    */
   public void setDatasetNames(BaseString[] value) {
+    if (value == null) value = new BaseString[0];
+
+    if (m_AttributeRenameFindRegexs != null && value.length < m_AttributeRenameFindRegexs.length) {
+      BaseString[] expandedValue = new BaseString[m_AttributeRenameFindRegexs.length];
+
+      for (int i = 0; i < m_AttributeRenameFindRegexs.length; i++) {
+        if (value != null && i < value.length) {
+	  expandedValue[i] = value[i];
+	} else {
+	  expandedValue[i] = new BaseString("Dataset" + i);
+	}
+      }
+
+      value = expandedValue;
+    }
+
     m_DatasetNames = value;
+
     reset();
   }
 
@@ -262,7 +281,7 @@ public abstract class AbstractMerge
    * @return The array of regexs.
    */
   public BaseRegExp[] getAttributeRenamesExp() {
-    return m_AttributeRenameFindRegex;
+    return m_AttributeRenameFindRegexs;
   }
 
   /**
@@ -271,7 +290,9 @@ public abstract class AbstractMerge
    * @param value The array of regexs.
    */
   public void setAttributeRenamesExp(BaseRegExp[] value) {
-    m_AttributeRenameFindRegex = value;
+    m_AttributeRenameFindRegexs = value;
+    setAttributeRenamesFormat(m_AttributeRenameFormatStrings);
+    setDatasetNames(m_DatasetNames);
     reset();
   }
 
@@ -281,7 +302,7 @@ public abstract class AbstractMerge
    * @return The tip-text as a String.
    */
   public String attributeRenamesExpTipText() {
-    return "The expressions to use to select attribute names for renaming.";
+    return "The expressions to use to select attribute names for renaming (one per dataset).";
   }
 
   /**
@@ -290,7 +311,7 @@ public abstract class AbstractMerge
    * @return The array of format strings.
    */
   public BaseString[] getAttributeRenamesFormat() {
-    return m_AttributeRenameFormatString;
+    return m_AttributeRenameFormatStrings;
   }
 
   /**
@@ -299,7 +320,14 @@ public abstract class AbstractMerge
    * @param value The array of format strings.
    */
   public void setAttributeRenamesFormat(BaseString[] value) {
-    m_AttributeRenameFormatString = value;
+    if (value == null) value = new BaseString[0];
+
+    if (m_AttributeRenameFindRegexs != null && value.length < m_AttributeRenameFindRegexs.length) {
+      value = (BaseString[]) Utils.adjustArray(value, m_AttributeRenameFindRegexs.length, new BaseString("$0"));
+    }
+
+    m_AttributeRenameFormatStrings = value;
+
     reset();
   }
 
@@ -409,7 +437,6 @@ public abstract class AbstractMerge
     else {
       toSet.setValue(attributeIndex, (Double) value);
     }
-
   }
 
   /**
@@ -461,6 +488,22 @@ public abstract class AbstractMerge
     // Check that at least 2 datasets are available to merge
     if (datasets.length < 2)
       return "Require at least 2 datasets to merge, but " + datasets.length + " were provided.";
+
+    // Make sure an output name is provided
+    if (m_MergedDatasetName.length() == 0)
+      return "Must provide a name for the output dataset.";
+
+    // Check that there are enough dataset names provided
+    if (m_DatasetNames.length < m_AttributeRenameFindRegexs.length) {
+      return "Not enough dataset names supplied for attribute renaming (require " +
+	m_AttributeRenameFindRegexs.length + ", have " + m_DatasetNames.length + ").";
+    }
+
+    // Check that there are enough renaming format strings provided
+    if (m_AttributeRenameFormatStrings.length < m_AttributeRenameFindRegexs.length) {
+      return "Not enough format strings supplied for attribute renaming (require " +
+	m_AttributeRenameFindRegexs.length + ", have " + m_AttributeRenameFormatStrings.length + ").";
+    }
 
     // All checks passed
     return null;
@@ -786,9 +829,13 @@ public abstract class AbstractMerge
    * @return The name of the mapped attribute in the merged dataset.
    */
   protected String getMappedAttributeName(int datasetIndex, String attributeName) {
-    // Try the rename expressions in order
-    for (int renameRegexIndex = 0; renameRegexIndex < m_AttributeRenameFindRegex.length; renameRegexIndex++) {
-      BaseRegExp renameRegex = m_AttributeRenameFindRegex[renameRegexIndex];
+    // Can't rename class names
+    if (isClassName(attributeName)) return attributeName;
+
+    // See if we have a rename expression for the dataset
+    if (datasetIndex < m_AttributeRenameFindRegexs.length) {
+      // Get the rename expression for the dataset
+      BaseRegExp renameRegex = m_AttributeRenameFindRegexs[datasetIndex];
 
       // Get the regex matcher for the attribute name
       Matcher attributeNameMatcher = renameRegex.patternValue().matcher(attributeName);
@@ -796,7 +843,7 @@ public abstract class AbstractMerge
       // Rename the attribute if it is matched
       if (attributeNameMatcher.matches()) {
 	// Initialise the mapped name with the format string
-	String mappedString = m_AttributeRenameFormatString[renameRegexIndex].stringValue();
+	String mappedString = m_AttributeRenameFormatStrings[datasetIndex].stringValue();
 
 	// Replace the {DATASET} keyword with the dataset name
 	mappedString = mappedString.replace(DATASET_KEYWORD, m_DatasetNames[datasetIndex].stringValue());
@@ -813,7 +860,7 @@ public abstract class AbstractMerge
       }
     }
 
-    // No expression matched, return the original attribute name
+    // Couldn't rename, return the original attribute name
     return attributeName;
   }
 

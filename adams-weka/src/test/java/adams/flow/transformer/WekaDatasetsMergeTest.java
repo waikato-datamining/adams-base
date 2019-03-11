@@ -204,9 +204,11 @@ public class WekaDatasetsMergeTest
       argOption = (AbstractArgumentOption) simple.getOptionManager().findByProperty("attributeRenamesExp");
       List<BaseRegExp> attributerenamesexp = new ArrayList<>();
       attributerenamesexp.add((BaseRegExp) argOption.valueOf(".*"));
+      attributerenamesexp.add((BaseRegExp) argOption.valueOf(".*"));
       simple.setAttributeRenamesExp(attributerenamesexp.toArray(new BaseRegExp[0]));
       argOption = (AbstractArgumentOption) simple.getOptionManager().findByProperty("attributeRenamesFormat");
       List<BaseString> attributerenamesformat = new ArrayList<>();
+      attributerenamesformat.add((BaseString) argOption.valueOf("{DATASET}-$0"));
       attributerenamesformat.add((BaseString) argOption.valueOf("{DATASET}-$0"));
       simple.setAttributeRenamesFormat(attributerenamesformat.toArray(new BaseString[0]));
       wekadatasetsmerge.setMergeMethod(simple);
@@ -264,12 +266,12 @@ public class WekaDatasetsMergeTest
       joinonid.setDatasetNames(datasetnames2.toArray(new BaseString[0]));
       argOption = (AbstractArgumentOption) joinonid.getOptionManager().findByProperty("attributeRenamesExp");
       List<BaseRegExp> attributerenamesexp2 = new ArrayList<>();
-      attributerenamesexp2.add((BaseRegExp) argOption.valueOf("^attr([0-9])$"));
-      attributerenamesexp2.add((BaseRegExp) argOption.valueOf("^.*Index$"));
+      attributerenamesexp2.add((BaseRegExp) argOption.valueOf("^.*$"));
+      attributerenamesexp2.add((BaseRegExp) argOption.valueOf("^.*$"));
       joinonid.setAttributeRenamesExp(attributerenamesexp2.toArray(new BaseRegExp[0]));
       argOption = (AbstractArgumentOption) joinonid.getOptionManager().findByProperty("attributeRenamesFormat");
       List<BaseString> attributerenamesformat2 = new ArrayList<>();
-      attributerenamesformat2.add((BaseString) argOption.valueOf("{DATASET}-$1"));
+      attributerenamesformat2.add((BaseString) argOption.valueOf("{DATASET}-$0"));
       attributerenamesformat2.add((BaseString) argOption.valueOf("{DATASET}-$0"));
       joinonid.setAttributeRenamesFormat(attributerenamesformat2.toArray(new BaseString[0]));
       argOption = (AbstractArgumentOption) joinonid.getOptionManager().findByProperty("uniqueID");
