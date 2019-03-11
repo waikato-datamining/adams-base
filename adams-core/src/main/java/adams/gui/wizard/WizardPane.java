@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WizardPane.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -25,6 +25,7 @@ import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.data.io.input.CsvSpreadSheetReader;
+import adams.data.io.input.SpreadSheetReader;
 import adams.env.Environment;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseButton;
@@ -62,7 +63,6 @@ import java.util.logging.Level;
  * or {@link #ACTION_FINISH} as command.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WizardPane
   extends BasePanel
@@ -656,6 +656,12 @@ public class WizardPane
     shpage.setDescription("<html><h3>Object properties</h3>Here you can change all properties of the " + CsvSpreadSheetReader.class.getName() + ".");
     shpage.setTarget(new CsvSpreadSheetReader());
     wizard.addPage(shpage);
+    GenericObjectEditorPage goepage = new GenericObjectEditorPage("Any Reader");
+    shpage.setDescription("<html><h3>Class hierarchy</h3>Here you can select a class of the " + SpreadSheetReader.class.getName() + " class hierarchy.");
+    goepage.setClassType(SpreadSheetReader.class);
+    goepage.setCanChangeClassInDialog(true);
+    goepage.setValue(new CsvSpreadSheetReader());
+    wizard.addPage(goepage);
     ListPage lpage = new ListPage();
     lpage.setPageName("List");
     lpage.setDescription("Select any number of items from the list below");
