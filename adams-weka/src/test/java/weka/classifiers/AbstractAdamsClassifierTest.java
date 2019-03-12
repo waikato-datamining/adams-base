@@ -53,4 +53,26 @@ public abstract class AbstractAdamsClassifierTest
     Environment.setEnvironmentClass(adams.env.Environment.class);
     System.setProperty("weka.test.maventest", "true");
   }
+
+  /**
+   * configures the CheckClassifier instance used throughout the tests
+   *
+   * @return the fully configured CheckClassifier instance used for testing
+   */
+  @Override
+  protected CheckClassifier getTester() {
+    CheckClassifier result;
+
+    // Only difference from AbstractClassifierTest.getTester() is
+    // that we are using the ADAMS CheckClassifier override
+    result = new CheckAdamsClassifier();
+
+    result.setSilent(true);
+    result.setClassifier(m_Classifier);
+    result.setNumInstances(20);
+    result.setDebug(DEBUG);
+    result.setPostProcessor(getPostProcessor());
+
+    return result;
+  }
 }

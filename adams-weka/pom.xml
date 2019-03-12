@@ -269,6 +269,12 @@
       <version>${matrix-algorithms.version}</version>
       <type>jar</type>
     </dependency>
+
+    <dependency>
+      <groupId>ml.dmlc</groupId>
+      <artifactId>xgboost4j</artifactId>
+      <version>0.82</version>
+    </dependency>
   </dependencies>
 
   <build>
