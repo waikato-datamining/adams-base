@@ -1,0 +1,3 @@
+Cat=cat
+Dog=dog
+Tiger=tiger
