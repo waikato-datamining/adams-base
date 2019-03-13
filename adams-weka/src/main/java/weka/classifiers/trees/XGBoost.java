@@ -20,6 +20,9 @@
 
 package weka.classifiers.trees;
 
+import adams.core.TechnicalInformation;
+import adams.core.TechnicalInformation.Type;
+import adams.core.TechnicalInformationHandler;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.option.AbstractOption;
 import ml.dmlc.xgboost4j.java.Booster;
@@ -42,12 +45,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <!-- globalinfo-start -->
+ <!-- globalinfo-start -->
  * Classifier implementing XGBoost.
  * <br><br>
- * <!-- globalinfo-end -->
+ <!-- globalinfo-end -->
+ *
+ <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;inproceedings{Chen2016,
+ *    address = {New York, NY, USA},
+ *    author = {Chen, Tianqi and Guestrin, Carlos},
+ *    booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+ *    pages = {785--794},
+ *    publisher = {ACM},
+ *    series = {KDD '16},
+ *    title = {XGBoost: A Scalable Tree Boosting System},
+ *    year = {2016},
+ *    ISBN = {978-1-4503-4232-2},
+ *    keywords = {large-scale machine learning},
+ *    location = {San Francisco, California, USA},
+ *    URL = {http:&#47;&#47;doi.acm.org&#47;10.1145&#47;2939672.2939785}
+ * }
+ * </pre>
+ * <br><br>
+ <!-- technical-bibtex-end -->
  * <p>
- * <!-- options-start -->
+ <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
@@ -271,15 +294,15 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;Passes any additional parameters to XGBoost.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * <p>
- * <!-- options-end -->
+ *
+ <!-- options-end -->
  * <p>
  * Wrapper class that uses the XGBoost4J library to implement
  * XGBoost as a WEKA classifier.
  *
  * @author Corey Sterling (csterlin at waikato dot ac dot nz)
  */
-public class XGBoost extends AbstractSimpleClassifier {
+public class XGBoost extends AbstractSimpleClassifier implements TechnicalInformationHandler {
 
   /** Auto-generated serialisation UID#. */
   private static final long serialVersionUID = 7228620850250174821L;
@@ -1542,6 +1565,33 @@ public class XGBoost extends AbstractSimpleClassifier {
   }
 
   /**
+   * Returns an instance of a TechnicalInformation object, containing
+   * detailed information about the technical background of this class,
+   * e.g., paper reference or book this class is based on.
+   *
+   * @return the technical information about this class
+   */
+  @Override
+  public TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation result = new TechnicalInformation(Type.INPROCEEDINGS);
+
+    result.setValue(TechnicalInformation.Field.AUTHOR, "Chen, Tianqi and Guestrin, Carlos");
+    result.setValue(TechnicalInformation.Field.TITLE, "XGBoost: A Scalable Tree Boosting System");
+    result.setValue(TechnicalInformation.Field.BOOKTITLE, "Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining");
+    result.setValue(TechnicalInformation.Field.SERIES, "KDD '16");
+    result.setValue(TechnicalInformation.Field.YEAR, "2016");
+    result.setValue(TechnicalInformation.Field.ISBN, "978-1-4503-4232-2");
+    result.setValue(TechnicalInformation.Field.LOCATION, "San Francisco, California, USA");
+    result.setValue(TechnicalInformation.Field.PAGES, "785--794");
+    result.setValue(TechnicalInformation.Field.URL, "http://doi.acm.org/10.1145/2939672.2939785");
+    result.setValue(TechnicalInformation.Field.PUBLISHER, "ACM");
+    result.setValue(TechnicalInformation.Field.ADDRESS, "New York, NY, USA");
+    result.setValue(TechnicalInformation.Field.KEYWORDS, "large-scale machine learning");
+
+    return result;
+  }
+
+  /**
    * Trains the XGBoost classifier on the incoming dataset.
    *
    * @param instances The training dataset.
@@ -1654,11 +1704,11 @@ public class XGBoost extends AbstractSimpleClassifier {
 
       // Date and numeric attributes take one column each
       if (attribute.isNumeric() || attribute.isDate()) {
-	nColumns += 1;
+        nColumns += 1;
       }
       else if (attribute.isNominal()) {
-	// One-hot encoding requires one column per nominal value
-	nColumns += attribute.numValues();
+        // One-hot encoding requires one column per nominal value
+        nColumns += attribute.numValues();
       }
     }
 
@@ -1707,22 +1757,22 @@ public class XGBoost extends AbstractSimpleClassifier {
 
       // Extract the instance data into the DMatrix array
       for (int i = 0; i < instanceData.length; i++) {
-	// Get the attribute for this column
-	Attribute attribute = instances.attribute(i);
+        // Get the attribute for this column
+        Attribute attribute = instances.attribute(i);
 
-	// Skip the class index
-	if (i == classIndex) continue;
+        // Skip the class index
+        if (i == classIndex) continue;
 
-	// Insert the data
-	if (attribute.isDate() || attribute.isNumeric()) {
-	  data[insertionIndex] = (float) instanceData[i];
-	  insertionIndex++;
-	}
-	else if (attribute.isNominal()) {
-	  // One-hot encoding
-	  data[insertionIndex + ((int) instanceData[i])] = 1.0f;
-	  insertionIndex += attribute.numValues();
-	}
+        // Insert the data
+        if (attribute.isDate() || attribute.isNumeric()) {
+          data[insertionIndex] = (float) instanceData[i];
+          insertionIndex++;
+        }
+        else if (attribute.isNominal()) {
+          // One-hot encoding
+          data[insertionIndex + ((int) instanceData[i])] = 1.0f;
+          insertionIndex += attribute.numValues();
+        }
       }
     }
 
@@ -1784,10 +1834,10 @@ public class XGBoost extends AbstractSimpleClassifier {
       // Convert it to its parameter form if it provides one,
       // otherwise just use the raw value itself
       if (optionValue instanceof ParamValueProvider) {
-	optionValue = ((ParamValueProvider) optionValue).paramValue();
+        optionValue = ((ParamValueProvider) optionValue).paramValue();
       }
       else if (optionValue instanceof Enum) {
-	optionValue = ((Enum) optionValue).name().toLowerCase();
+        optionValue = ((Enum) optionValue).name().toLowerCase();
       }
 
       // Add the parameter to the map
