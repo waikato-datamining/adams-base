@@ -92,13 +92,13 @@ public class JdbcUrl
    */
   @Override
   public String getTipText() {
-    return "Format: jdbc:<sub-protocol>:<database url>\n"
+    return "Format: jdbc:SUB-PROTOCOL:DATABASE-URL\n"
       + "Examples:\n"
-      + "- MySQL: jdbc:mysql://<host>:3306/<database>\n"
-      + "- PostgreSQL: jdbc:postgresql://<host>:5432/<database>\n"
-      + "- SQLite: jdbc:sqlite:<path_to_file>\n"
+      + "- MySQL: jdbc:mysql://HOST:3306/DATABASE\n"
+      + "- PostgreSQL: jdbc:postgresql://HOST:5432/DATABASE\n"
+      + "- SQLite: jdbc:sqlite:PATH_TO_FILE\n"
       + "- HSQLDB: jdbc:hsqldb:{mem|file|res|hsql|http|hsqls|https}:...\n"
-      + "- MS SQL Server: jdbc:jtds:sqlserver://<host>:1433/<database>";
+      + "- MS SQL Server: jdbc:jtds:sqlserver://HOST:1433/DATABASE";
   }
 
   /**
