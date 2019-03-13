@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PDFViewerPanel.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.pdf;
 
@@ -25,7 +25,6 @@ import adams.core.io.PDFBox;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
@@ -51,7 +50,6 @@ import java.io.File;
  * A basic PDF viewer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFViewerPanel
   extends BasePanel
@@ -64,10 +62,9 @@ public class PDFViewerPanel
    * A specialized tabbed pane with a few methods for easier access.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
-  public static class TabbedPane
-    extends BaseTabbedPane {
+  public static class MultiPagePane
+    extends adams.gui.core.MultiPagePane {
 
     /** for serialization. */
     private static final long serialVersionUID = -2048229771213837710L;
@@ -82,12 +79,12 @@ public class PDFViewerPanel
       PDFPanel		result;
       JScrollPane	pane;
 
-      if (getComponentAt(index) instanceof JScrollPane) {
-	pane   = (JScrollPane) getComponentAt(index);
+      if (getPageAt(index) instanceof JScrollPane) {
+	pane   = (JScrollPane) getPageAt(index);
 	result = (PDFPanel) pane.getViewport().getView();
       }
       else {
-	result = (PDFPanel) getComponentAt(index);
+	result = (PDFPanel) getPageAt(index);
       }
 
       return result;
@@ -100,8 +97,8 @@ public class PDFViewerPanel
   /** the properties. */
   protected static Properties m_Properties;
 
-  /** the tabbed pane for displaying the CSV files. */
-  protected TabbedPane m_TabbedPane;
+  /** the multipage pane for displaying the PDF files. */
+  protected MultiPagePane m_MultiPagePane;
 
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
@@ -155,9 +152,8 @@ public class PDFViewerPanel
 
     setLayout(new BorderLayout());
 
-    m_TabbedPane = new TabbedPane();
-    m_TabbedPane.setCloseTabsWithMiddleMouseButton(true);
-    add(m_TabbedPane, BorderLayout.CENTER);
+    m_MultiPagePane = new MultiPagePane();
+    add(m_MultiPagePane, BorderLayout.CENTER);
   }
 
   /**
@@ -362,9 +358,9 @@ public class PDFViewerPanel
 
     result = null;
 
-    index = m_TabbedPane.getSelectedIndex();
+    index = m_MultiPagePane.getSelectedIndex();
     if (index >= 0)
-      result = (PDFPanel) m_TabbedPane.getComponentAt(index);
+      result = (PDFPanel) m_MultiPagePane.getPageAt(index);
 
     return result;
   }
@@ -378,7 +374,7 @@ public class PDFViewerPanel
     if (m_MenuBar == null)
       return;
 
-    pdfAvailable = (m_TabbedPane.getTabCount() > 0) && (m_TabbedPane.getSelectedIndex() != -1);
+    pdfAvailable = (m_MultiPagePane.getPageCount() > 0) && (m_MultiPagePane.getSelectedIndex() != -1);
 
     // File
     m_MenuItemFileClose.setEnabled(pdfAvailable);
@@ -423,8 +419,8 @@ public class PDFViewerPanel
     else {
       panel = new PDFPanel();
       panel.setDocument(document);
-      m_TabbedPane.addTab(file.getName(), panel);
-      m_TabbedPane.setSelectedIndex(m_TabbedPane.getTabCount() - 1);
+      m_MultiPagePane.addPage(file.getName(), panel);
+      m_MultiPagePane.setSelectedIndex(m_MultiPagePane.getPageCount() - 1);
 
       getFileChooser().setCurrentDirectory(file.getParentFile());
       if (m_RecentFilesHandler != null)
@@ -438,12 +434,12 @@ public class PDFViewerPanel
   protected void closeFile() {
     int		index;
 
-    index = m_TabbedPane.getSelectedIndex();
+    index = m_MultiPagePane.getSelectedIndex();
     if (index == -1)
       return;
 
-    m_TabbedPane.getPanelAt(index).closeDocument();
-    m_TabbedPane.remove(index);
+    m_MultiPagePane.getPanelAt(index).closeDocument();
+    m_MultiPagePane.remove(index);
   }
 
   /**
@@ -453,12 +449,12 @@ public class PDFViewerPanel
     int		index;
     File        file;
 
-    index = m_TabbedPane.getSelectedIndex();
+    index = m_MultiPagePane.getSelectedIndex();
     if (index == -1)
       return;
 
     file = SendToActionUtils.nextTmpFile("pdfviewer", "pdf");
-    if (JPod.save(m_TabbedPane.getPanelAt(index).getDocument(), file)) {
+    if (JPod.save(m_MultiPagePane.getPanelAt(index).getDocument(), file)) {
       if (!PDFBox.print(file))
         GUIHelper.showErrorMessage(this, "Failed to print PDF document: " + file);
     }

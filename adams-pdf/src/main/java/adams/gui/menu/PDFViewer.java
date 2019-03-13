@@ -15,7 +15,7 @@
 
 /*
  * PDFViewer.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -31,7 +31,6 @@ import adams.gui.visualization.pdf.PDFViewerPanel;
  * Opens the PDF viewer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFViewer
   extends AbstractParameterHandlingMenuItemDefinition {
@@ -69,7 +68,7 @@ public class PDFViewer
    */
   public void launch() {
     PDFViewerPanel panel = new PDFViewerPanel();
-    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
+    createChildFrame(panel, GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
     for (int i = 0; i < m_Parameters.length; i++)
       panel.load(new PlaceholderFile(m_Parameters[i]));
   }
