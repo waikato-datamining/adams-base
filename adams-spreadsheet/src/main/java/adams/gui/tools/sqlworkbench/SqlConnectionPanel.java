@@ -28,6 +28,7 @@ import adams.db.AbstractDatabaseConnection;
 import adams.db.ConnectionParameters;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionProvider;
+import adams.db.JdbcUrl;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
@@ -176,8 +177,8 @@ public class SqlConnectionPanel
    */
   protected void enterConnection() {
     ApprovalDialog  		dialog;
-    ParameterPanel panelParameters;
-    BaseTextField textURL;
+    ParameterPanel 		panelParameters;
+    BaseTextField 		textURL;
     BaseTextField 		textUser;
     JPasswordField 		textPassword;
     BaseCheckBox checkBoxShowPassword;
@@ -189,6 +190,7 @@ public class SqlConnectionPanel
 
     textURL = new BaseTextField(20);
     textURL.setText(getDatabaseConnection().getURL());
+    textURL.setToolTipText(GUIHelper.processTipText(new JdbcUrl().getTipText()));
     panelParameters.addParameter("_URL", textURL);
 
     textUser = new BaseTextField(20);
@@ -245,6 +247,10 @@ public class SqlConnectionPanel
       catch (Exception e) {
         error = Utils.handleException(m_DatabaseConnection, "Failed to connect to: " + textURL.getText(), e);
       }
+    }
+    else {
+      params = m_DatabaseConnection.toConnectionParameters(m_DatabaseConnection);
+      m_DatabaseConnection.addConnection(params);
     }
     if (error != null)
       GUIHelper.showErrorMessage(this, error);
