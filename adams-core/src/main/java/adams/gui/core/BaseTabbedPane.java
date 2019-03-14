@@ -24,8 +24,10 @@ import adams.core.Shortening;
 import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.Icon;
+import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -456,15 +458,13 @@ public class BaseTabbedPane
   }
 
   /**
-   * Adds the tab to its undo list, if enabled.
+   * Generates a tab undo container.
    *
-   * @param index	the position of the tab
+   * @param index	the index of the tab to back up
+   * @return		the undo container
    */
-  protected void addTabUndo(int index) {
+  protected TabUndo generateTabUndo(int index) {
     TabUndo	undo;
-
-    if ((m_MaxTabCloseUndo < 1) || m_SkipTabUndo)
-      return;
 
     undo              = new TabUndo();
     undo.component    = getComponentAt(index);
@@ -475,7 +475,19 @@ public class BaseTabbedPane
     undo.tabComponent = getTabComponentAt(index);
     undo.selected     = (index == getSelectedIndex());
 
-    getTabUndoList().add(undo);
+    return undo;
+  }
+
+  /**
+   * Adds the tab to its undo list, if enabled.
+   *
+   * @param index	the position of the tab
+   */
+  protected void addTabUndo(int index) {
+    if ((m_MaxTabCloseUndo < 1) || m_SkipTabUndo)
+      return;
+
+    getTabUndoList().add(generateTabUndo(index));
 
     while (getTabUndoList().size() > m_MaxTabCloseUndo)
       getTabUndoList().remove(0);
@@ -535,5 +547,160 @@ public class BaseTabbedPane
     super.removeAll();
     m_SkipTabUndo = false;
     getTabUndoList().clear();
+  }
+
+  /**
+   * Returns whether the tab can be moved.
+   *
+   * @param from	the current tab's index
+   * @param to 		the destination index
+   * @return		true if can be moved
+   */
+  protected boolean canMoveTabTo(int from, int to) {
+    return (from != to) && (to >= 0) && (to < getTabCount());
+  }
+
+  /**
+   * Returns whether the tab can be moved to the start.
+   *
+   * @param from	the current tab's index
+   * @return		true if can be moved
+   */
+  public boolean canMoveTabToStart(int from) {
+    return canMoveTabTo(from, 0);
+  }
+
+  /**
+   * Returns whether the tab can be moved to the left.
+   *
+   * @param from	the current tab's index
+   * @return		true if can be moved
+   */
+  public boolean canMoveTabToLeft(int from) {
+    return canMoveTabTo(from, from - 1);
+  }
+
+  /**
+   * Returns whether the tab can be moved to the right.
+   *
+   * @param from	the current tab's index
+   * @return		true if can be moved
+   */
+  public boolean canMoveTabToRight(int from) {
+    return canMoveTabTo(from, from + 1);
+  }
+
+  /**
+   * Returns whether the tab can be moved to the end.
+   *
+   * @param from	the current tab's index
+   * @return		true if can be moved
+   */
+  public boolean canMoveTabToEnd(int from) {
+    return canMoveTabTo(from, getTabCount() - 1);
+  }
+
+  /**
+   * Moves a tab from A to B.
+   *
+   * @param from 	the current position
+   * @param to		the new position
+   */
+  protected void moveTabTo(int from, int to) {
+    TabUndo	undo;
+
+    undo = generateTabUndo(from);
+    removeTabAt(from);
+    insertTab(undo.title, undo.icon, undo.component, undo.tiptext, to);
+    setTabComponentAt(to, undo.tabComponent);
+    if (undo.selected)
+      setSelectedIndex(to);
+  }
+
+  /**
+   * Moves the tab to the left most position.
+   *
+   * @param index	the tab's current index
+   * @return		true if successfully moved
+   */
+  public boolean moveTabToStart(int index) {
+    if (!canMoveTabTo(index, 0))
+      return false;
+    moveTabTo(index, 0);
+    return true;
+  }
+
+  /**
+   * Moves the tab to the left.
+   *
+   * @param index	the tab's current index
+   * @return		true if successfully moved
+   */
+  public boolean moveTabToLeft(int index) {
+    if (!canMoveTabTo(index, index - 1))
+      return false;
+    moveTabTo(index, index - 1);
+    return true;
+  }
+
+  /**
+   * Moves the tab to the right.
+   *
+   * @param index	the tab's current index
+   * @return		true if successfully moved
+   */
+  public boolean moveTabToRight(int index) {
+    if (!canMoveTabTo(index, index + 1))
+      return false;
+    moveTabTo(index, index + 1);
+    return true;
+  }
+
+  /**
+   * Moves the tab to the right most position.
+   *
+   * @param index	the tab's current index
+   * @return		true if successfully moved
+   */
+  public boolean moveTabToEnd(int index) {
+    if (!canMoveTabTo(index, getTabCount() - 1))
+      return false;
+    moveTabTo(index, getTabCount() - 1);
+    return true;
+  }
+
+  /**
+   * Generates the submenu for moving tabs.
+   *
+   * @param index	the current tab's index
+   * @return		the submenu
+   */
+  public BaseMenu getTabMoveSubMenu(final int index) {
+    BaseMenu	result;
+    JMenuItem	menuitem;
+
+    result = new BaseMenu("Move tab to");
+
+    menuitem = new JMenuItem("Start");
+    menuitem.setEnabled(canMoveTabToStart(index));
+    menuitem.addActionListener((ActionEvent e) -> moveTabToStart(index));
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Left");
+    menuitem.setEnabled(canMoveTabToLeft(index));
+    menuitem.addActionListener((ActionEvent e) -> moveTabToLeft(index));
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Right");
+    menuitem.setEnabled(canMoveTabToRight(index));
+    menuitem.addActionListener((ActionEvent e) -> moveTabToRight(index));
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("End");
+    menuitem.setEnabled(canMoveTabToEnd(index));
+    menuitem.addActionListener((ActionEvent e) -> moveTabToEnd(index));
+    result.add(menuitem);
+
+    return result;
   }
 }
