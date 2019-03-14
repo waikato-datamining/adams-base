@@ -15,7 +15,7 @@
 
 /*
  * AbstractInvestigatorTab.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -149,7 +149,6 @@ public abstract class AbstractInvestigatorTab
     JPopupMenu		result;
     JMenuItem		item;
     final int		index;
-    Object 		map;
 
     result = super.createPopupMenu();
     index  = getOwner().getTabbedPane().indexOfComponent(this);
@@ -169,6 +168,8 @@ public abstract class AbstractInvestigatorTab
       item.addActionListener((ActionEvent e) -> loadParameters());
       result.add(item);
     }
+
+    result.add(getOwner().getTabbedPane().getTabMoveSubMenu(index));
 
     item = new JMenuItem("Close", GUIHelper.getIcon("close_tab_focused.gif"));
     item.addActionListener((ActionEvent e) -> {
