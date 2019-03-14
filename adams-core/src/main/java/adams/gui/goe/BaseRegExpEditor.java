@@ -15,7 +15,7 @@
 
 /*
  * BaseRegExpEditor.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -29,7 +29,6 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
-import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -43,8 +42,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Editor specifically designed for entering regular expression. In order to
@@ -292,24 +290,21 @@ public class BaseRegExpEditor
   public Object[] getSelectedObjects(Container parent) {
     BaseRegExp[]		result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the regular expressions, one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = new BaseRegExp[lines.size()];
-      for (i = 0; i < lines.size(); i++)
-	result[i] = (BaseRegExp) parse(lines.get(i));
-    }
-    else {
-      result = new BaseRegExp[0];
-    }
+    lines  = dialog.getValues();
+    result = new BaseRegExp[lines.size()];
+    for (i = 0; i < lines.size(); i++)
+      result[i] = (BaseRegExp) parse(lines.get(i));
 
     return result;
   }

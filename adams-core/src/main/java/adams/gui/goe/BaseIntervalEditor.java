@@ -15,19 +15,18 @@
 
 /*
  * BaseIntervalEditor.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
-import adams.core.Utils;
 import adams.core.base.BaseInterval;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseTextField;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
-import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -39,8 +38,6 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -245,21 +242,18 @@ public class BaseIntervalEditor
     List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the intervals, one per line (possible formats: [A;B] (C;D) [E;F) (G;H]):");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new ArrayList<>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = new BaseInterval[lines.size()];
-      for (i = 0; i < lines.size(); i++)
-	result[i] = (BaseInterval) parse(lines.get(i));
-    }
-    else {
-      result = new BaseInterval[0];
-    }
+    lines  = dialog.getValues();
+    result = new BaseInterval[lines.size()];
+    for (i = 0; i < lines.size(); i++)
+      result[i] = (BaseInterval) parse(lines.get(i));
 
     return result;
   }

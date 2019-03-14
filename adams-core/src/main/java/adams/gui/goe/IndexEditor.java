@@ -15,19 +15,17 @@
 
 /*
  * IndexEditor.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
 import adams.core.Index;
-import adams.core.Utils;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
-import adams.gui.dialog.ApprovalDialog;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
@@ -48,14 +46,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * A PropertyEditor for Index objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IndexEditor
   extends AbstractPropertyEditorSupport
@@ -343,24 +339,21 @@ public class IndexEditor
   public Object[] getSelectedObjects(Container parent) {
     Index[]			result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the indices, one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = new Index[lines.size()];
-      for (i = 0; i < lines.size(); i++)
-	result[i] = parse(lines.get(i));
-    }
-    else {
-      result = new Index[0];
-    }
+    lines  = dialog.getValues();
+    result = new Index[lines.size()];
+    for (i = 0; i < lines.size(); i++)
+      result[i] = parse(lines.get(i));
 
     return result;
   }

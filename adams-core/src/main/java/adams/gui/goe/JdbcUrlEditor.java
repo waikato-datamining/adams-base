@@ -34,7 +34,6 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
-import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -53,7 +52,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -396,21 +394,18 @@ public class JdbcUrlEditor
     List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the string representations, one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new ArrayList<>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = (Object[]) Array.newInstance(JdbcUrl.class, lines.size());
-      for (i = 0; i < lines.size(); i++)
-	Array.set(result, i, parse(lines.get(i)));
-    }
-    else {
-      result = (Object[]) Array.newInstance(JdbcUrl.class, 0);
-    }
+    lines  = dialog.getValues();
+    result = (Object[]) Array.newInstance(JdbcUrl.class, lines.size());
+    for (i = 0; i < lines.size(); i++)
+      Array.set(result, i, parse(lines.get(i)));
 
     return result;
   }

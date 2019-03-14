@@ -15,23 +15,21 @@
 
 /*
  *    BaseCharsetEditor.java
- *    Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import java.awt.Container;
-import java.beans.PropertyEditorSupport;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Vector;
-
-import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.management.CharsetHelper;
 import adams.core.option.AbstractOption;
-import adams.gui.dialog.ApprovalDialog;
+import adams.gui.core.GUIHelper;
+
+import java.awt.Container;
+import java.beans.PropertyEditorSupport;
+import java.lang.reflect.Array;
+import java.util.List;
 
 /**
  * A PropertyEditor that displays charsets. {@link CharsetHelper#CHARSET_DEFAULT}
@@ -120,24 +118,21 @@ public class BaseCharsetEditor
   public Object[] getSelectedObjects(Container parent) {
     Object[]			result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the string representations, one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = (Object[]) Array.newInstance(BaseCharset.class, lines.size());
-      for (i = 0; i < lines.size(); i++)
-	Array.set(result, i, new BaseCharset(lines.get(i)));
-    }
-    else {
-      result = (Object[]) Array.newInstance(BaseCharset.class, 0);
-    }
+    lines  = dialog.getValues();
+    result = (Object[]) Array.newInstance(BaseCharset.class, lines.size());
+    for (i = 0; i < lines.size(); i++)
+      Array.set(result, i, new BaseCharset(lines.get(i)));
 
     return result;
   }

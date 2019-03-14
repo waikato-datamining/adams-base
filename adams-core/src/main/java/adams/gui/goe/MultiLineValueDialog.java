@@ -13,33 +13,33 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiLineValueDialog.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.util.ArrayList;
-import java.util.Arrays;
+import adams.core.Utils;
+import adams.gui.core.TextEditorPanel;
+import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import adams.core.Utils;
-import adams.gui.core.TextEditorPanel;
-import adams.gui.dialog.ApprovalDialog;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Dialog for entering multiple values (one per line) for MultiSelectionEditor
  * editors that can parse objects from text.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see MultiSelectionEditor
  */
 public class MultiLineValueDialog
@@ -74,6 +74,24 @@ public class MultiLineValueDialog
    */
   public MultiLineValueDialog() {
     super((Frame) null);
+  }
+
+  /**
+   * Frame constructor.
+   *
+   * @param owner	the owning frame
+   */
+  public MultiLineValueDialog(Frame owner) {
+    super(owner);
+  }
+
+  /**
+   * Dialog constructor.
+   *
+   * @param owner	the owning dialog
+   */
+  public MultiLineValueDialog(Dialog owner) {
+    super(owner);
   }
 
   /**
@@ -220,5 +238,24 @@ public class MultiLineValueDialog
    */
   public String getContent() {
     return m_Editor.getContent();
+  }
+
+  /**
+   * Returns the entered values (removes empty lines).
+   *
+   * @return		the values, empty list if dialog canceled
+   */
+  public List<String> getValues() {
+    List<String> 	result;
+
+    if (getOption() == APPROVE_OPTION) {
+      result = new ArrayList<>(Arrays.asList(getContent().split("\n")));
+      Utils.removeEmptyLines(result);
+    }
+    else {
+      result = new ArrayList<>();
+    }
+
+    return result;
   }
 }

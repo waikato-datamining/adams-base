@@ -13,19 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BasePasswordEditor.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
 import adams.core.Constants;
-import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
-import adams.gui.dialog.ApprovalDialog;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -40,8 +39,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Editor specifically designed for entering passwords.
@@ -208,24 +206,21 @@ public class BasePasswordEditor
   public Object[] getSelectedObjects(Container parent) {
     BasePassword[]		result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the passwords, one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = new BasePassword[lines.size()];
-      for (i = 0; i < lines.size(); i++)
-	result[i] = new BasePassword(lines.get(i));
-    }
-    else {
-      result = new BasePassword[0];
-    }
+    lines  = dialog.getValues();
+    result = new BasePassword[lines.size()];
+    for (i = 0; i < lines.size(); i++)
+      result[i] = new BasePassword(lines.get(i));
 
     return result;
   }

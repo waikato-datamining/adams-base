@@ -15,18 +15,17 @@
 
 /*
  *    ColorEditor.java
- *    Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import adams.core.Utils;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ColorHelper;
-import adams.gui.dialog.ApprovalDialog;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -44,15 +43,13 @@ import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * A PropertyEditor for Color objects that lets the user select a color from
  * the color dialog.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ColorEditor
   extends AbstractPropertyEditorSupport
@@ -257,24 +254,21 @@ public class ColorEditor
   public Object[] getSelectedObjects(Container parent) {
     Object[]			result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the colors (#RRGGBB; #AARRGGBB; R,G,B; A,R,G,B), one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = (Object[]) Array.newInstance(Color.class, lines.size());
-      for (i = 0; i < lines.size(); i++)
-	Array.set(result, i, ColorHelper.valueOf(lines.get(i)));
-    }
-    else {
-      result = (Object[]) Array.newInstance(Color.class, 0);
-    }
+    lines  = dialog.getValues();
+    result = (Object[]) Array.newInstance(Color.class, lines.size());
+    for (i = 0; i < lines.size(); i++)
+      Array.set(result, i, ColorHelper.valueOf(lines.get(i)));
 
     return result;
   }

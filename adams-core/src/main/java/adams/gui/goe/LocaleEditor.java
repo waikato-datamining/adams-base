@@ -21,17 +21,15 @@
 
 package adams.gui.goe;
 
+import adams.core.management.LocaleHelper;
+import adams.core.option.AbstractOption;
+import adams.gui.core.GUIHelper;
+
 import java.awt.Container;
 import java.beans.PropertyEditorSupport;
 import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
-
-import adams.core.Utils;
-import adams.core.management.LocaleHelper;
-import adams.core.option.AbstractOption;
-import adams.gui.dialog.ApprovalDialog;
 
 /**
  * A PropertyEditor that displays locales. {@link LocaleHelper#LOCALE_DEFAULT}
@@ -120,24 +118,21 @@ public class LocaleEditor
   public Object[] getSelectedObjects(Container parent) {
     Object[]			result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the string representations, one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = (Object[]) Array.newInstance(Locale.class, lines.size());
-      for (i = 0; i < lines.size(); i++)
-	Array.set(result, i, LocaleHelper.valueOf(lines.get(i)));
-    }
-    else {
-      result = (Object[]) Array.newInstance(Locale.class, 0);
-    }
+    lines  = dialog.getValues();
+    result = (Object[]) Array.newInstance(Locale.class, lines.size());
+    for (i = 0; i < lines.size(); i++)
+      Array.set(result, i, LocaleHelper.valueOf(lines.get(i)));
 
     return result;
   }

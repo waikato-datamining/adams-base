@@ -15,13 +15,12 @@
 
 /*
  * FieldEditor.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import adams.core.Utils;
 import adams.core.option.AbstractOption;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
@@ -30,6 +29,7 @@ import adams.data.report.FieldType;
 import adams.data.report.PrefixOnlyField;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.selection.SelectFieldPanel;
 
@@ -44,8 +44,8 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A PropertyEditor for Field objects that lets the user select a field.
@@ -217,7 +217,7 @@ public class FieldEditor
    * @param type	the type of the fields
    * @return		the field array
    */
-  protected AbstractField[] newArray(Vector<String> fields, DataType type) {
+  protected AbstractField[] newArray(List<String> fields, DataType type) {
     Field[]	result;
     int		i;
 
@@ -239,8 +239,8 @@ public class FieldEditor
     AbstractField[]		result;
     MultiLineValueDialog	dialog;
     JPanel			panelType;
-    Vector<String>		lines;
-    BaseComboBox			combo;
+    List<String>  		lines;
+    BaseComboBox		combo;
     DataType			dtype;
 
     combo = new BaseComboBox();
@@ -250,7 +250,10 @@ public class FieldEditor
 	combo.setSelectedIndex(combo.getModel().getSize() - 1);
     }
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setPrefixCount("Field count: ");
     dialog.setInfoText("Enter the field names, one per line:");
     panelType = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
@@ -261,8 +264,7 @@ public class FieldEditor
     dialog.setVisible(true);
 
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
+      lines = dialog.getValues();
       if (combo.getSelectedIndex() == -1)
 	dtype = DataType.UNKNOWN;
       else
@@ -270,7 +272,7 @@ public class FieldEditor
       result = newArray(lines, dtype);
     }
     else {
-      result = newArray(new Vector<String>(), DataType.UNKNOWN);
+      result = newArray(new ArrayList<>(), DataType.UNKNOWN);
     }
 
     return result;

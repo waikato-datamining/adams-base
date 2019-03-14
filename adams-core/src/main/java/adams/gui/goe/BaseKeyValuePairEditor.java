@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseKeyValuePairEditor.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -25,8 +25,8 @@ import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTextField;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
-import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -38,8 +38,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Editor specifically designed for entering key/value pairs.
@@ -213,24 +212,21 @@ public class BaseKeyValuePairEditor
   public Object[] getSelectedObjects(Container parent) {
     BaseKeyValuePair[]		result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the key/value pairs, one per line (separator '='):");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = new BaseKeyValuePair[lines.size()];
-      for (i = 0; i < lines.size(); i++)
-	result[i] = (BaseKeyValuePair) parse(lines.get(i));
-    }
-    else {
-      result = new BaseKeyValuePair[0];
-    }
+    lines  = dialog.getValues();
+    result = new BaseKeyValuePair[lines.size()];
+    for (i = 0; i < lines.size(); i++)
+      result[i] = (BaseKeyValuePair) parse(lines.get(i));
 
     return result;
   }

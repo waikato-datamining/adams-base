@@ -15,14 +15,13 @@
 
 /*
  * AbstractBaseDateTypeEditor.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
 import adams.core.DateValueSupporter;
-import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.gui.chooser.DateProvider;
 import adams.gui.core.BaseButton;
@@ -30,7 +29,6 @@ import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
-import adams.gui.dialog.ApprovalDialog;
 import adams.gui.help.HelpFrame;
 import adams.parser.GrammarSupplier;
 
@@ -50,18 +48,15 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 /**
  * Ancestor property editors that handle base date types.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <B> the base object type in use
  * @param <P> the panel in use for selecting the date type
  */
@@ -372,26 +367,23 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
   public Object[] getSelectedObjects(Container parent) {
     Object			result;
     MultiLineValueDialog	dialog;
-    Vector<String>		lines;
+    List<String>		lines;
     int				i;
 
     initForDisplay();
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the date values, one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new Vector<String>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = Array.newInstance(m_Date.getClass(), lines.size());
-      for (i = 0; i < lines.size(); i++)
-	Array.set(result, i, newDateType(lines.get(i)));
-    }
-    else {
-      result = Array.newInstance(m_Date.getClass(), 0);
-    }
+    lines  = dialog.getValues();
+    result = Array.newInstance(m_Date.getClass(), lines.size());
+    for (i = 0; i < lines.size(); i++)
+      Array.set(result, i, newDateType(lines.get(i)));
 
     return (B[]) result;
   }

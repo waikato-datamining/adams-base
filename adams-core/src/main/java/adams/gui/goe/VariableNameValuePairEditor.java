@@ -15,7 +15,7 @@
 
 /*
  * VariableNameValuePairEditor.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -25,8 +25,8 @@ import adams.core.base.BaseObject;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTextField;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
-import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -42,15 +42,12 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Editor specifically designed for entering variable name/value pairs.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class VariableNameValuePairEditor
   extends BaseObjectEditor
@@ -250,21 +247,18 @@ public class VariableNameValuePairEditor
     List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the variable name/value pairs, one per line (separator '='):");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new ArrayList<>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = new VariableNameValuePair[lines.size()];
-      for (i = 0; i < lines.size(); i++)
-	result[i] = (VariableNameValuePair) parse(lines.get(i));
-    }
-    else {
-      result = new VariableNameValuePair[0];
-    }
+    lines  = dialog.getValues();
+    result = new VariableNameValuePair[lines.size()];
+    for (i = 0; i < lines.size(); i++)
+      result[i] = (VariableNameValuePair) parse(lines.get(i));
 
     return result;
   }

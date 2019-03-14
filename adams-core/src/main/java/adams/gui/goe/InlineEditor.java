@@ -16,12 +16,11 @@
 /*
  *    InlineEditor.java
  *
- *    Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
-import adams.core.Utils;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
@@ -57,8 +56,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -67,7 +64,6 @@ import java.util.List;
  * number of clicks/dialogs required to enter a value.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InlineEditor
   extends BasePanel 
@@ -642,7 +638,10 @@ public class InlineEditor
     int				i;
     Object			backup;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the string representations, one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
@@ -651,8 +650,7 @@ public class InlineEditor
     cls    = backup.getClass();
     
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new ArrayList<>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
+      lines  = dialog.getValues();
       result = (Object[]) Array.newInstance(cls, lines.size());
       for (i = 0; i < lines.size(); i++)
 	Array.set(result, i, fromCustomStringRepresentation(lines.get(i)));

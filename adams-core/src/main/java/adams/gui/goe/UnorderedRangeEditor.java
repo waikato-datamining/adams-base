@@ -22,12 +22,10 @@
 package adams.gui.goe;
 
 import adams.core.UnorderedRange;
-import adams.core.Utils;
 import adams.core.option.AbstractOption;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
-import adams.gui.dialog.ApprovalDialog;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
@@ -48,8 +46,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -352,21 +348,18 @@ public class UnorderedRangeEditor
     List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the ranges, one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new ArrayList<>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = new UnorderedRange[lines.size()];
-      for (i = 0; i < lines.size(); i++)
-	result[i] = parse(lines.get(i));
-    }
-    else {
-      result = new UnorderedRange[0];
-    }
+    lines  = dialog.getValues();
+    result = new UnorderedRange[lines.size()];
+    for (i = 0; i < lines.size(); i++)
+      result[i] = parse(lines.get(i));
 
     return result;
   }

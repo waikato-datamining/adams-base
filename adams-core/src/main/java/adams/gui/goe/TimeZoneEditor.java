@@ -15,22 +15,19 @@
 
 /*
  *    TimeZoneEditor.java
- *    Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import adams.core.Utils;
 import adams.core.management.TimeZoneHelper;
 import adams.core.option.AbstractOption;
-import adams.gui.dialog.ApprovalDialog;
+import adams.gui.core.GUIHelper;
 
 import java.awt.Container;
 import java.beans.PropertyEditorSupport;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -39,7 +36,6 @@ import java.util.TimeZone;
  * is a placeholder for the system's default timezone.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TimeZoneEditor
   extends PropertyEditorSupport
@@ -124,21 +120,18 @@ public class TimeZoneEditor
     List<String> 		lines;
     int				i;
 
-    dialog = new MultiLineValueDialog();
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
     dialog.setInfoText("Enter the string representations, one per line:");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
-      lines = new ArrayList<>(Arrays.asList(dialog.getContent().split("\n")));
-      Utils.removeEmptyLines(lines);
-      result = (Object[]) Array.newInstance(TimeZone.class, lines.size());
-      for (i = 0; i < lines.size(); i++)
-	Array.set(result, i, TimeZoneHelper.valueOf(lines.get(i)));
-    }
-    else {
-      result = (Object[]) Array.newInstance(TimeZone.class, 0);
-    }
+    lines  = dialog.getValues();
+    result = (Object[]) Array.newInstance(TimeZone.class, lines.size());
+    for (i = 0; i < lines.size(); i++)
+      Array.set(result, i, TimeZoneHelper.valueOf(lines.get(i)));
 
     return result;
   }
