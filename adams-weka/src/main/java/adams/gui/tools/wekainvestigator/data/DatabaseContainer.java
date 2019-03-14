@@ -13,24 +13,33 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DatabaseContainer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.data;
 
+import adams.core.base.BasePassword;
+import adams.data.conversion.SpreadSheetToWekaInstances;
+import adams.data.spreadsheet.DenseDataRow;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.sql.DefaultTypeMapper;
+import adams.data.spreadsheet.sql.Reader;
+import adams.db.DatabaseConnection;
+import adams.db.SQLF;
+import adams.db.SQLIntf;
 import weka.core.Instances;
 import weka.experiment.InstanceQuery;
 
 import java.io.Serializable;
+import java.sql.ResultSet;
 import java.util.logging.Level;
 
 /**
  * Dataset loaded from database.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatabaseContainer
   extends AbstractDataContainer {
@@ -60,16 +69,22 @@ public class DatabaseContainer
   public DatabaseContainer(String url, String user, String pw, String query) {
     super();
     try {
-      InstanceQuery instq = new InstanceQuery();
-      instq.setDatabaseURL(url);
-      instq.setUsername(user);
-      instq.setPassword(pw);
-      instq.setQuery(query);
-      m_Data     = instq.retrieveInstances();
+      DatabaseConnection conn = new DatabaseConnection(url, user, new BasePassword(pw));
+      SQLIntf sql = SQLF.getSingleton(conn);
+      Reader reader = new Reader(new DefaultTypeMapper(), DenseDataRow.class);
+      ResultSet rs = sql.getResultSet(query);
+      SpreadSheet sheet = reader.read(rs);
+      SpreadSheetToWekaInstances conv = new SpreadSheetToWekaInstances();
+      conv.setInput(sheet);
+      String msg = conv.convert();
+      if (msg != null)
+        throw new IllegalStateException(msg);
+      m_Data     = conv.getOutput(Instances.class);
       m_URL      = url;
       m_Query    = query;
       m_User     = user;
       m_Password = pw;
+      conv.cleanUp();
     }
     catch (Exception e) {
       throw new IllegalArgumentException("Failed to load data from DB: " + url, e);
