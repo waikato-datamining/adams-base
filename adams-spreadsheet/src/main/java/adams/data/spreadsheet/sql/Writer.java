@@ -357,8 +357,10 @@ public class Writer
       getLogger().info("Query: " + query);
     try {
       rs = sql.execute(query);
-      if (rs == null)
-	result = "Failed to create table '" + m_Table + "', check console! Query: " + query;
+      if (rs == null) {
+        if (!sql.tableExists(m_Table))
+	  result = "Failed to create table '" + m_Table + "', check console! Create query: " + query;
+      }
     }
     catch (Exception e) {
       result = Utils.handleException(this, "Failed to create table '" + m_Table + "' using: " + query, e);
