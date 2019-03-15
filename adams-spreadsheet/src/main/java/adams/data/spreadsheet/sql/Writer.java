@@ -358,7 +358,7 @@ public class Writer
     try {
       rs = sql.execute(query);
       if (rs == null)
-	result = "Failed to create table '" + m_Table + "', check console!";
+	result = "Failed to create table '" + m_Table + "', check console! Query: " + query;
     }
     catch (Exception e) {
       result = Utils.handleException(this, "Failed to create table '" + m_Table + "' using: " + query, e);
