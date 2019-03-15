@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Writer.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.spreadsheet.sql;
@@ -358,7 +358,7 @@ public class Writer
     try {
       rs = sql.execute(query);
       if (rs == null)
-	result = "Failed to create table, check console!";
+	result = "Failed to create table '" + m_Table + "', check console!";
     }
     catch (Exception e) {
       result = Utils.handleException(this, "Failed to create table '" + m_Table + "' using: " + query, e);
