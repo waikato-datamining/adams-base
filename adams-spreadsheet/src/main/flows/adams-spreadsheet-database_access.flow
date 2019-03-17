@@ -1,11 +1,13 @@
 # Project: adams
-# Date: 2016-02-15 14:57:31
+# Date: 2019-03-18 10:25:08
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-spreadsheet
+#
 adams.flow.control.Flow -annotation "Demonstrates how to load spreadsheet data into a database (sqlite)\\nand return a subset using a SQL query." -error-handling ACTORS_DECIDE_TO_STOP_ON_ERROR -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.standalone.DatabaseConnection -url jdbc:sqlite:${FLOWS}/output/test.db -data-type-setup adams.db.datatype.DummySetup
+ adams.flow.standalone.DatabaseConnection -url jdbc:sqlite:${FLOWS}/output/test.db -data-type-setup adams.db.datatype.DummySetup -close-connection true
  adams.flow.source.Start
- adams.flow.control.Trigger -name "drop database"
+ adams.flow.control.ConditionalTrigger -name "drop database" -condition "adams.flow.condition.bool.TableExists -regexp iris"
   adams.flow.standalone.ExecSQL -sql "drop table iris"
  adams.flow.control.Trigger -name "load data"
   adams.flow.source.FileSupplier -file ${FLOWS}/data/iris.csv
