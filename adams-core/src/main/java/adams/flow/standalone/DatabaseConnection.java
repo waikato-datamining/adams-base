@@ -15,7 +15,7 @@
 
 /*
  * DatabaseConnection.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -90,7 +90,6 @@ package adams.flow.standalone;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatabaseConnection
   extends AbstractDatabaseConnection
@@ -118,7 +117,7 @@ public class DatabaseConnection
    * @return		the connection object
    */
   @Override
-  public adams.db.AbstractDatabaseConnection getConnection() {
+  protected adams.db.AbstractDatabaseConnection retrieveConnection() {
     return adams.db.DatabaseConnection.getSingleton(getResolvedURL(), getUser(), (m_ActualPassword == null ? m_Password : m_ActualPassword));
   }
 }

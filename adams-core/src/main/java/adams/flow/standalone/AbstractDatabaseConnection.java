@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnection.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -76,6 +76,12 @@ public abstract class AbstractDatabaseConnection
   /** the data type setup to apply. */
   protected AbstractDataTypeSetup m_DataTypeSetup;
 
+  /** whether to close the connection when the flow wraps up. */
+  protected boolean m_CloseConnection;
+
+  /** the database connection in use. */
+  protected transient adams.db.AbstractDatabaseConnection m_Connection;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -114,6 +120,10 @@ public abstract class AbstractDatabaseConnection
     m_OptionManager.add(
       "stop-mode", "stopMode",
       StopMode.GLOBAL);
+
+    m_OptionManager.add(
+      "close-connection", "closeConnection",
+      false);
   }
 
   /**
@@ -131,6 +141,7 @@ public abstract class AbstractDatabaseConnection
       result += ", prompt for password";
       result += QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stop flow", ", ");
     }
+    result += QuickInfoHelper.toString(this, "closeConnection", m_CloseConnection, "close connection", ", ");
 
     return result;
   }
@@ -390,6 +401,35 @@ public abstract class AbstractDatabaseConnection
   }
 
   /**
+   * Sets whether to close the connection once the flow wraps up.
+   *
+   * @param value	true if to close
+   */
+  public void setCloseConnection(boolean value) {
+    m_CloseConnection = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to close the connection once the flow wraps up.
+   *
+   * @return		true if to close
+   */
+  public boolean getCloseConnection() {
+    return m_CloseConnection;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String closeConnectionTipText() {
+    return "If enabled, the connections gets closed once the flow wraps up.";
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		true if successfully interacted
@@ -515,5 +555,30 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		the connection object
    */
-  public abstract adams.db.AbstractDatabaseConnection getConnection();
+  protected abstract adams.db.AbstractDatabaseConnection retrieveConnection();
+
+  /**
+   * Returns the database connection in use. Reconnects the database, to make
+   * sure that the database connection is the correct one.
+   *
+   * @return		the connection object
+   */
+  public adams.db.AbstractDatabaseConnection getConnection() {
+    m_Connection = retrieveConnection();
+    return m_Connection;
+  }
+
+  /**
+   * Cleans up after the execution has finished. Graphical output is left
+   * untouched.
+   */
+  @Override
+  public void wrapUp() {
+    if (m_CloseConnection && (m_Connection != null)) {
+      if (m_Connection.isConnected())
+	m_Connection.disconnect();
+      m_Connection = null;
+    }
+    super.wrapUp();
+  }
 }
