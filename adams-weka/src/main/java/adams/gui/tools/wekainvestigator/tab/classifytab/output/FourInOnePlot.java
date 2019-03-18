@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FourInOnePlot.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -42,7 +42,6 @@ import javax.swing.JComponent;
  * Generates the 4-in-1 plot: normal plot, histogram, residuals vs fit and vs order.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FourInOnePlot
   extends AbstractOutputGenerator {
@@ -259,7 +258,10 @@ public class FourInOnePlot
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasEvaluation() && (item.getEvaluation().predictions() != null);
+    return item.hasEvaluation()
+      && (item.getEvaluation().predictions() != null)
+      && (item.getEvaluation().getHeader() != null)
+      && (item.getEvaluation().getHeader().classAttribute().isNumeric());
   }
 
   /**
