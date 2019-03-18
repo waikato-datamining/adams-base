@@ -15,7 +15,7 @@
 
 /*
  * Windows.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.multipageaction;
@@ -76,7 +76,7 @@ public class Windows
     Map<Window,String> 	windows;
 
     windows = null;
-    if (multi.hasCurrentPanel()) {
+    if ((multi.getSelectedIndices().length == 1) && multi.hasCurrentPanel()) {
       if (multi.getCurrentPanel().getRunningFlow() != null)
         windows = ((Flow) multi.getCurrentPanel().getRunningFlow().getRoot()).getWindowRegister();
       else if (multi.getCurrentPanel().getLastFlow() != null)

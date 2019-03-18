@@ -543,17 +543,21 @@ public class FlowMultiPagePane
     JMenuItem 		menuitem;
     String		group;
     final int		index;
+    final int[]		indices;
 
-    result = super.createPopup(e);
-    index  = getSelectedIndex();
+    result  = super.createPopup(e);
+    index   = getSelectedIndex();
+    indices = getSelectedIndices();
 
     if (isActiveFlowAt(index)) {
       menuitem = new JMenuItem("Unset active", GUIHelper.getIcon("flow_unsetactive.gif"));
+      menuitem.setEnabled(indices.length == 1);
       menuitem.addActionListener((ActionEvent ae) -> unsetActiveFlow());
       result.add(menuitem);
     }
     else {
       menuitem = new JMenuItem("Set active", GUIHelper.getIcon("flow_setactive.gif"));
+      menuitem.setEnabled(indices.length == 1);
       menuitem.addActionListener((ActionEvent ae) -> setActiveFlowAt(index));
       result.add(menuitem);
     }

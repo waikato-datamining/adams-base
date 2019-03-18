@@ -15,7 +15,7 @@
 
 /*
  * OpenContainingFolder.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.multipageaction;
@@ -72,7 +72,9 @@ public class OpenContainingFolder
     result = new JMenuItem(getName());
     result.setIcon(getIcon());
     result.setEnabled(
-      multi.hasCurrentPanel() && (multi.getCurrentPanel().getCurrentFile() != null));
+      (multi.getSelectedIndices().length == 1)
+        && multi.hasCurrentPanel()
+        && (multi.getCurrentPanel().getCurrentFile() != null));
     if (result.isEnabled()) {
       result.addActionListener((ActionEvent ae) ->
 	FileBrowser.launch(multi.getCurrentPanel().getCurrentFile()));

@@ -15,7 +15,7 @@
 
 /*
  * Revert.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.multipageaction;
@@ -71,7 +71,8 @@ public class Revert
     result = new JMenuItem(getName());
     result.setIcon(getIcon());
     result.setEnabled(
-      multi.hasCurrentPanel()
+      (multi.getSelectedIndices().length == 1)
+        && multi.hasCurrentPanel()
 	&& !multi.getCurrentPanel().isRunning()
 	&& !multi.getCurrentPanel().isStopping()
 	&& !multi.getCurrentPanel().isSwingWorkerRunning()

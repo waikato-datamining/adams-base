@@ -1286,11 +1286,13 @@ public class MultiPagePane
     BasePopupMenu		result;
     JMenuItem	  		menuitem;
     final int			index;
+    final int[]			indices;
     final DetachablePage	detach;
     final String		title;
 
-    result = new BasePopupMenu();
-    index  = getSelectedIndex();
+    result  = new BasePopupMenu();
+    index   = getSelectedIndex();
+    indices = getSelectedIndices();
 
     // remove
     menuitem = new JMenuItem("Remove");
@@ -1308,24 +1310,26 @@ public class MultiPagePane
     result.add(menuitem);
 
     // detach/reattach
-    detach = getSelectedDetachablePage();
-    if (detach != null) {
-      title = getSelectedTitle();
-      result.addSeparator();
-      if (detach.isDetached()) {
-	menuitem = new JMenuItem("Reattach");
-	menuitem.setIcon(GUIHelper.getIcon("minimize.png"));
-	menuitem.addActionListener((ActionEvent ae) -> detach.reattach());
-	result.add(menuitem);
-      }
-      else {
-	menuitem = new JMenuItem("Detach");
-	menuitem.setIcon(GUIHelper.getIcon("maximize.png"));
-	menuitem.addActionListener((ActionEvent ae) -> {
-	  updateTitle(title, detach);
-	  detach.detach();
-	});
-	result.add(menuitem);
+    if (indices.length == 1) {
+      detach = getDetachablePageAt(index);
+      if (detach != null) {
+	title = getSelectedTitle();
+	result.addSeparator();
+	if (detach.isDetached()) {
+	  menuitem = new JMenuItem("Reattach");
+	  menuitem.setIcon(GUIHelper.getIcon("minimize.png"));
+	  menuitem.addActionListener((ActionEvent ae) -> detach.reattach());
+	  result.add(menuitem);
+	}
+	else {
+	  menuitem = new JMenuItem("Detach");
+	  menuitem.setIcon(GUIHelper.getIcon("maximize.png"));
+	  menuitem.addActionListener((ActionEvent ae) -> {
+	    updateTitle(title, detach);
+	    detach.detach();
+	  });
+	  result.add(menuitem);
+	}
       }
     }
 

@@ -15,7 +15,7 @@
 
 /*
  * RenameFlow.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.multipageaction;
@@ -76,7 +76,10 @@ public class RenameFlow
     result = new JMenuItem(getName());
     result.setIcon(getIcon());
     result.setEnabled(
-      multi.hasCurrentPanel() && (multi.getCurrentPanel().getCurrentFile() != null) && !multi.getCurrentPanel().isModified());
+      (multi.getSelectedIndices().length == 1)
+        && multi.hasCurrentPanel()
+        && (multi.getCurrentPanel().getCurrentFile() != null)
+        && !multi.getCurrentPanel().isModified());
     if (result.isEnabled()) {
       result.addActionListener((ActionEvent ae) -> {
         File oldFile = multi.getCurrentPanel().getCurrentFile();
