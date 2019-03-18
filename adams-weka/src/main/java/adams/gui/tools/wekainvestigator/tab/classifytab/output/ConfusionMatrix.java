@@ -15,7 +15,7 @@
 
 /*
  * ConfusionMatrix.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -223,7 +223,10 @@ public class ConfusionMatrix
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasEvaluation() && (item.getEvaluation().predictions() != null);
+    return item.hasEvaluation()
+      && (item.getEvaluation().predictions() != null)
+      && (item.getEvaluation().getHeader() != null)
+      && (item.getEvaluation().getHeader().classAttribute().isNominal());
   }
 
   /**

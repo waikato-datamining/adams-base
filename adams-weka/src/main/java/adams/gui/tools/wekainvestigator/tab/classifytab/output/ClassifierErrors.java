@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ClassifierErrors.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -46,7 +46,6 @@ import java.util.List;
  * Generates classifier errors plot.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClassifierErrors
   extends AbstractOutputGenerator {
@@ -421,7 +420,10 @@ public class ClassifierErrors
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasEvaluation() && (item.getEvaluation().predictions() != null);
+    return item.hasEvaluation()
+      && (item.getEvaluation().predictions() != null)
+      && (item.getEvaluation().getHeader() != null)
+      && (item.getEvaluation().getHeader().classAttribute().isNumeric());
   }
 
   /**
