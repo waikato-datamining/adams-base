@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LegacyTreeVisualizer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.output;
@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.flow.core.Token;
 import adams.flow.sink.WekaTreeVisualizer;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
+import adams.gui.tools.wekainvestigator.output.GraphHelper;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
 import weka.core.Drawable;
 
@@ -34,7 +35,6 @@ import javax.swing.JPanel;
  * Displays the tree that the model generated (legacy Weka output).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LegacyTreeVisualizer
   extends AbstractOutputGenerator {
@@ -67,7 +67,7 @@ public class LegacyTreeVisualizer
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasModel() && (item.getModel() instanceof Drawable);
+    return item.hasModel() && (item.getModel() instanceof Drawable) && GraphHelper.hasGraph((Drawable) item.getModel());
   }
 
   /**
