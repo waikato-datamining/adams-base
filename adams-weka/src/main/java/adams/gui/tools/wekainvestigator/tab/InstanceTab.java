@@ -38,7 +38,7 @@ import adams.gui.event.SearchEvent;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
-import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.PaintletWithMarkers;
@@ -299,32 +299,6 @@ public class InstanceTab
   }
 
   /**
-   * Determines the index of the old dataset name in the current dataset model.
-   *
-   * @param oldDataset	the old dataset to look for
-   * @return		the index, -1 if not found
-   */
-  protected int indexOfDataset(String oldDataset) {
-    int 		result;
-    int			i;
-    DataContainer data;
-
-    result = -1;
-
-    if (oldDataset != null)
-      oldDataset = oldDataset.replaceAll("^[0-9]+: ", "");
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      if ((oldDataset != null) && data.getData().relationName().equals(oldDataset)) {
-        result = i;
-        break;
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Checks whether the data has changed and the model needs updating.
    *
    * @param newDatasets		the new list of datasets
@@ -347,30 +321,11 @@ public class InstanceTab
       || !(setDatasets.containsAll(setModel) && setModel.containsAll(setDatasets));
 
     if (!result) {
-      index = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
+      index = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
       if (index > -1) {
 	if (getData().get(index).getData().numAttributes() != m_ComboBoxID.getModel().getSize() - 1)
 	  result = true;
       }
-    }
-
-    return result;
-  }
-
-  /**
-   * Generates the list of datasets for a combobox.
-   *
-   * @return		the list
-   */
-  protected List<String> generateDatasetList() {
-    List<String> 	result;
-    int			i;
-    DataContainer 	data;
-
-    result = new ArrayList<>();
-    for (i = 0; i < getOwner().getData().size(); i++) {
-      data = getOwner().getData().get(i);
-      result.add((i + 1) + ": " + data.getData().relationName());
     }
 
     return result;
@@ -391,14 +346,14 @@ public class InstanceTab
       return;
     }
 
-    datasets = generateDatasetList();
-    index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
+    datasets = DatasetHelper.generateDatasetList(getOwner().getData());
+    index    = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
     if (hasDataChanged(datasets, m_ModelDatasets) || (e.getType() == WekaInvestigatorDataEvent.ROWS_MODIFIED)) {
       m_ModelIDs.clear();
       m_ModelAttributesID.removeAllElements();
       m_ModelAttributesColor.removeAllElements();
       m_PanelInstance.getSequenceManager().clear();
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);
@@ -420,6 +375,9 @@ public class InstanceTab
     Instances		data;
     int			i;
 
+    oldID    = m_ComboBoxID.getSelectedItem();
+    oldColor = m_ComboBoxColor.getSelectedItem();
+
     m_ModelAttributesID.removeAllElements();
     m_ModelAttributesColor.removeAllElements();
     if (m_ComboBoxDatasets.getSelectedIndex() == -1)
@@ -427,17 +385,14 @@ public class InstanceTab
     if (m_ComboBoxDatasets.getSelectedIndex() > getData().size() - 1)
       return;
 
-    oldID    = m_ComboBoxID.getSelectedItem();
-    oldColor = m_ComboBoxColor.getSelectedItem();
-
     data = getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     atts = new ArrayList<>();
     atts.add("-none-");
     for (i = 0; i < data.numAttributes(); i++)
       atts.add((i+1) + ": " + data.attribute(i).name());
-    m_ModelAttributesID = new DefaultComboBoxModel<>(atts.toArray(new String[atts.size()]));
+    m_ModelAttributesID = new DefaultComboBoxModel<>(atts.toArray(new String[0]));
     indexID    = m_ModelAttributesID.getIndexOf(oldID);
-    m_ModelAttributesColor = new DefaultComboBoxModel<>(atts.toArray(new String[atts.size()]));
+    m_ModelAttributesColor = new DefaultComboBoxModel<>(atts.toArray(new String[0]));
     indexColor = m_ModelAttributesColor.getIndexOf(oldColor);
 
     m_ComboBoxID.setModel(m_ModelAttributesID);
@@ -580,6 +535,10 @@ public class InstanceTab
       attColors     = new HashMap<>();
       attColorIndex = m_ComboBoxColor.getSelectedIndex() - 1;
       provider      = (ColorProvider) m_PanelColorProvider.getCurrent();
+      if (data.attribute(attColorIndex).isNominal()) {
+        for (i = 0; i < data.attribute(attColorIndex).numValues(); i++)
+          attColors.put((double) i, provider.next());
+      }
     }
     else {
       attColors     = null;
