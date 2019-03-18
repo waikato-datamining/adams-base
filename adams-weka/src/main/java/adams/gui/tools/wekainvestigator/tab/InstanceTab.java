@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Range;
+import adams.core.option.OptionUtils;
 import adams.data.instance.Instance;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
@@ -35,8 +36,11 @@ import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SearchableBaseList;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.WekaInvestigatorDataEvent;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.PaintletWithMarkers;
 import adams.gui.visualization.instance.InstanceContainer;
 import adams.gui.visualization.instance.InstanceContainerManager;
@@ -56,10 +60,12 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +86,10 @@ public class InstanceTab
   public static final String KEY_DATASET = "dataset";
 
   public static final String KEY_ID = "id";
+
+  public static final String KEY_COLOR = "color";
+
+  public static final String KEY_COLORPROVIDER = "colorprovider";
 
   public static final String KEY_RANGE = "range";
 
@@ -102,7 +112,10 @@ public class InstanceTab
   protected ParameterPanel m_PanelParameters;
 
   /** the attribute model. */
-  protected DefaultComboBoxModel<String> m_ModelAttributes;
+  protected DefaultComboBoxModel<String> m_ModelAttributesID;
+
+  /** the color attribute model. */
+  protected DefaultComboBoxModel<String> m_ModelAttributesColor;
 
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
@@ -115,6 +128,12 @@ public class InstanceTab
 
   /** the attribute range. */
   protected RangeTextField m_TextAttributeRange;
+
+  /** the attribute to use for color. */
+  protected BaseComboBox<String> m_ComboBoxColor;
+
+  /** the color provider. */
+  protected GenericObjectEditorPanel m_PanelColorProvider;
 
   /** whether to use anti-aliasing. */
   protected BaseCheckBox m_CheckBoxAntiAliasing;
@@ -144,9 +163,10 @@ public class InstanceTab
   protected void initialize() {
     super.initialize();
 
-    m_ModelDatasets   = new DefaultComboBoxModel<>();
-    m_ModelAttributes = new DefaultComboBoxModel<>();
-    m_ModelIDs        = new DefaultListModel<>();
+    m_ModelDatasets        = new DefaultComboBoxModel<>();
+    m_ModelAttributesID    = new DefaultComboBoxModel<>();
+    m_ModelAttributesColor = new DefaultComboBoxModel<>();
+    m_ModelIDs             = new DefaultListModel<>();
   }
 
   /**
@@ -183,7 +203,7 @@ public class InstanceTab
     m_ComboBoxDatasets.addActionListener((ActionEvent e) -> updateAttributes());
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
-    m_ComboBoxID = new BaseComboBox<>(m_ModelAttributes);
+    m_ComboBoxID = new BaseComboBox<>(m_ModelAttributesID);
     m_ComboBoxID.addActionListener((ActionEvent e) -> updateIDs());
     m_PanelParameters.addParameter("ID", m_ComboBoxID);
 
@@ -204,6 +224,12 @@ public class InstanceTab
       }
     });
     m_PanelParameters.addParameter("Range", m_TextAttributeRange);
+
+    m_ComboBoxColor = new BaseComboBox<>(m_ModelAttributesColor);
+    m_PanelParameters.addParameter("Color", m_ComboBoxColor);
+
+    m_PanelColorProvider = new GenericObjectEditorPanel(ColorProvider.class, new DefaultColorProvider(), true);
+    m_PanelParameters.addParameter("Color provider", m_PanelColorProvider);
 
     m_CheckBoxAntiAliasing = new BaseCheckBox();
     m_CheckBoxAntiAliasing.setSelected(props.getBoolean("Instance.AntiAliasing", true));
@@ -369,7 +395,8 @@ public class InstanceTab
     index    = indexOfDataset((String) m_ComboBoxDatasets.getSelectedItem());
     if (hasDataChanged(datasets, m_ModelDatasets) || (e.getType() == WekaInvestigatorDataEvent.ROWS_MODIFIED)) {
       m_ModelIDs.clear();
-      m_ModelAttributes.removeAllElements();
+      m_ModelAttributesID.removeAllElements();
+      m_ModelAttributesColor.removeAllElements();
       m_PanelInstance.getSequenceManager().clear();
       m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
@@ -387,31 +414,43 @@ public class InstanceTab
   protected void updateAttributes() {
     String		oldID;
     int			indexID;
+    String		oldColor;
+    int			indexColor;
     List<String>	atts;
     Instances		data;
     int			i;
 
-    m_ModelAttributes.removeAllElements();
+    m_ModelAttributesID.removeAllElements();
+    m_ModelAttributesColor.removeAllElements();
     if (m_ComboBoxDatasets.getSelectedIndex() == -1)
       return;
     if (m_ComboBoxDatasets.getSelectedIndex() > getData().size() - 1)
       return;
 
-    oldID = (String) m_ComboBoxID.getSelectedItem();
+    oldID    = m_ComboBoxID.getSelectedItem();
+    oldColor = m_ComboBoxColor.getSelectedItem();
 
     data = getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     atts = new ArrayList<>();
     atts.add("-none-");
     for (i = 0; i < data.numAttributes(); i++)
       atts.add((i+1) + ": " + data.attribute(i).name());
-    m_ModelAttributes = new DefaultComboBoxModel<>(atts.toArray(new String[atts.size()]));
-    indexID = m_ModelAttributes.getIndexOf(oldID);
+    m_ModelAttributesID = new DefaultComboBoxModel<>(atts.toArray(new String[atts.size()]));
+    indexID    = m_ModelAttributesID.getIndexOf(oldID);
+    m_ModelAttributesColor = new DefaultComboBoxModel<>(atts.toArray(new String[atts.size()]));
+    indexColor = m_ModelAttributesColor.getIndexOf(oldColor);
 
-    m_ComboBoxID.setModel(m_ModelAttributes);
+    m_ComboBoxID.setModel(m_ModelAttributesID);
     if (indexID == -1)
       m_ComboBoxID.setSelectedIndex(0);
     else
       m_ComboBoxID.setSelectedIndex(indexID);
+
+    m_ComboBoxColor.setModel(m_ModelAttributesColor);
+    if (indexColor == -1)
+      m_ComboBoxColor.setSelectedIndex(0);
+    else
+      m_ComboBoxColor.setSelectedIndex(indexColor);
   }
 
   /**
@@ -510,6 +549,11 @@ public class InstanceTab
     int[]			sel;
     boolean 			numericID;
     Comparable			id;
+    int 			attColorIndex;
+    Map<Double,Color> 		attColors;
+    double 			attValue;
+    Color 			attColor;
+    ColorProvider		provider;
 
     if (m_ComboBoxDatasets.getSelectedIndex() == -1)
       return;
@@ -531,6 +575,16 @@ public class InstanceTab
       ids = new HashSet<>();
       for (int s: sel)
 	ids.add(m_ModelIDs.get(s));
+    }
+    if ((m_ComboBoxColor.getSelectedIndex() > 0) && (data.classIndex() > -1)) {
+      attColors     = new HashMap<>();
+      attColorIndex = m_ComboBoxColor.getSelectedIndex() - 1;
+      provider      = (ColorProvider) m_PanelColorProvider.getCurrent();
+    }
+    else {
+      attColors     = null;
+      attColorIndex = -1;
+      provider      = null;
     }
 
     manager = m_PanelInstance.getContainerManager();
@@ -569,7 +623,18 @@ public class InstanceTab
 	else
 	  cont.setID(winst.stringValue(indexID));
       }
+      else {
+        cont.setID("" + (i+1));
+      }
       manager.add(cont);
+      if (attColors != null) {
+        attValue = winst.value(attColorIndex);
+        if (!attColors.containsKey(attValue)) {
+	  attColor = provider.next();
+	  attColors.put(attValue, attColor);
+	}
+        cont.setColor(attColors.get(attValue));
+      }
     }
     manager.finishUpdate();
   }
@@ -588,10 +653,12 @@ public class InstanceTab
       result.put(KEY_LEFTPANELWIDTH, m_SplitPane.getDividerLocation());
       result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
       result.put(KEY_ID, m_ComboBoxID.getSelectedIndex());
+      result.put(KEY_COLOR, m_ComboBoxColor.getSelectedIndex());
       result.put(KEY_IDS, m_ListIDs.getSelectedIndices());
     }
     if (options.contains(SerializationOption.PARAMETERS)) {
       result.put(KEY_RANGE, m_TextAttributeRange.getText());
+      result.put(KEY_COLORPROVIDER, OptionUtils.getCommandLine(m_PanelColorProvider.getCurrent()));
       result.put(KEY_ANTIALIASING, m_CheckBoxAntiAliasing.isSelected());
       result.put(KEY_MARKERS, m_CheckBoxMarkers.isSelected());
     }
@@ -613,6 +680,16 @@ public class InstanceTab
       m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
     if (data.containsKey(KEY_ID))
       m_ComboBoxID.setSelectedIndex((int) data.get(KEY_ID));
+    if (data.containsKey(KEY_COLOR))
+      m_ComboBoxColor.setSelectedIndex((int) data.get(KEY_COLOR));
+    if (data.containsKey(KEY_COLORPROVIDER)) {
+      try {
+	m_PanelColorProvider.setCurrent(OptionUtils.forAnyCommandLine(ColorProvider.class, (String) data.get(KEY_COLORPROVIDER)));
+      }
+      catch (Exception e) {
+	m_PanelColorProvider.setCurrent(new DefaultColorProvider());
+      }
+    }
     if (data.containsKey(KEY_RANGE))
       m_TextAttributeRange.setText((String) data.get(KEY_RANGE));
     if (data.containsKey(KEY_ANTIALIASING))
