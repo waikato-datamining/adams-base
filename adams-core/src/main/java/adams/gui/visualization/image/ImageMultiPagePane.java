@@ -15,7 +15,7 @@
 
 /*
  * ImageMultiPagePane.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -54,7 +54,13 @@ public class ImageMultiPagePane
     setPageCloseApprover(new PageCloseApprover() {
       @Override
       public boolean approvePageClosing(MultiPagePane source, int index) {
-        return checkForModified((ImagePanel) source.getPageAt(index));
+        ImagePanel panel = (ImagePanel) source.getPageAt(index);
+        boolean result = checkForModified(panel);
+        if (result && panel.isModified()) {
+          panel.setModified(false);
+          updateTabTitle(index);
+	}
+	return result;
       }
     });
   }

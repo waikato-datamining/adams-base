@@ -15,7 +15,7 @@
 
 /*
  * MultiPagePane.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
@@ -72,8 +72,10 @@ public class MultiPagePane
       SpreadSheetPanel panel = getPanelAt(index);
       boolean result = checkForModified(panel);
       // to avoid second popup from checkModified() in removeTab method
-      if (result && panel.isModified())
-        panel.setModified(false);
+      if (result && panel.isModified()) {
+	panel.setModified(false);
+	updatePage(index);
+      }
       return result;
     });
   }

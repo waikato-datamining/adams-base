@@ -218,14 +218,15 @@ public class MultiPagePane
   }
 
   /**
-   * Interface for classes that can hook into the closing of tabs and stop it.
+   * Interface for classes that can hook into the closing of pages and stop it.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
   public interface PageCloseApprover {
 
     /**
-     * Method gets called when having to approve a close operation.
+     * Method gets called when having to approve a close operation of
+     * multiple pages.
      *
      * @param source 	the origin of the closing operation
      * @param index	the page that is to be closed
@@ -462,7 +463,7 @@ public class MultiPagePane
     m_SplitPane.setLeftComponent(m_LeftPanel);
 
     m_PageList = new BaseList(m_PageListModel);
-    m_PageList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    m_PageList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     m_PageList.addListSelectionListener((ListSelectionEvent e) -> update());
     m_PageList.addKeyListener(new KeyAdapter() {
       @Override
@@ -507,7 +508,7 @@ public class MultiPagePane
 
     m_ButtonRemove = new BaseFlatButton(GUIHelper.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Removes currently selected");
-    m_ButtonRemove.addActionListener((ActionEvent e) -> checkedRemoveSelectedPage());
+    m_ButtonRemove.addActionListener((ActionEvent e) -> checkedRemoveSelectedPages());
     m_PanelListButtons.add(m_ButtonRemove);
 
     m_ButtonRemoveAll = new BaseFlatButton(GUIHelper.getIcon("delete_all.gif"));
@@ -648,6 +649,24 @@ public class MultiPagePane
    */
   public void setSelectedIndex(int index) {
     m_PageList.setSelectedIndex(index);
+  }
+
+  /**
+   * Returns the currently selected page indices.
+   *
+   * @return		the indices, 0-length array if none selected
+   */
+  public int[] getSelectedIndices() {
+    return m_PageList.getSelectedIndices();
+  }
+
+  /**
+   * Sets the currently selected page indices.
+   *
+   * @param indices	the indices
+   */
+  public void setSelectedIndices(int[] indices) {
+    m_PageList.setSelectedIndices(indices);
   }
 
   /**
@@ -863,6 +882,39 @@ public class MultiPagePane
   }
 
   /**
+   * Approves the closing of the specified page.
+   *
+   * @param index	the page index
+   * @return		true if can be closed
+   * @see		#getPageCloseApprover()
+   */
+  protected boolean isPageClosingApproved(int index) {
+    if (m_PageCloseApprover == null)
+      return true;
+    return m_PageCloseApprover.approvePageClosing(this, index);
+  }
+
+  /**
+   * Approves the closing of the specified pages.
+   *
+   * @param indices	the page indices
+   * @return		true if can be closed
+   * @see		#getPageCloseApprover()
+   */
+  protected boolean isPageClosingApproved(int[] indices) {
+    boolean	result;
+
+    result = true;
+    for (int index: indices) {
+      result = m_PageCloseApprover.approvePageClosing(this, index);
+      if (!result)
+        break;
+    }
+
+    return result;
+  }
+
+  /**
    * Removes the currently selected page container, if approved.
    *
    * @return		the removed container, if any
@@ -870,7 +922,7 @@ public class MultiPagePane
   public PageContainer checkedRemoveSelectedPage() {
     if (getSelectedIndex() == -1)
       return null;
-    if ((m_PageCloseApprover == null) || (m_PageCloseApprover.approvePageClosing(this, getSelectedIndex())))
+    if (isPageClosingApproved(getSelectedIndex()))
       return removeSelectedPage();
     else
       return null;
@@ -889,6 +941,28 @@ public class MultiPagePane
   }
 
   /**
+   * Removes the currently selected page containers, if approved.
+   */
+  public void checkedRemoveSelectedPages() {
+    if (getSelectedIndex() == -1)
+      return;
+    if (isPageClosingApproved(getSelectedIndices()))
+      removeSelectedPages();
+  }
+
+  /**
+   * Removes the currently selected page containers.
+   */
+  public void removeSelectedPages() {
+    int[]	indices;
+    int		i;
+
+    indices = getSelectedIndices();
+    for (i = indices.length - 1; i >= 0; i--)
+      removePageAt(indices[i]);
+  }
+
+  /**
    * Removes the page container at the specified index, if approved.
    *
    * @param index	the page index
@@ -896,7 +970,7 @@ public class MultiPagePane
    * @see		#m_PageCloseApprover
    */
   public PageContainer checkedRemovePageAt(int index) {
-    if ((m_PageCloseApprover == null) || (m_PageCloseApprover.approvePageClosing(this, index)))
+    if (isPageClosingApproved(index))
       return removePageAt(index);
     else
       return null;
@@ -1130,13 +1204,13 @@ public class MultiPagePane
    * Updates the enabled state of the buttons.
    */
   protected void updateButtons() {
-    boolean	pageSelected;
+    int		numSelected;
 
-    pageSelected = (getPageCount() > 0) && (getSelectedIndex() > -1);
+    numSelected = m_PageList.getSelectedIndices().length;
 
-    m_ButtonUp.setEnabled(pageSelected && canMoveUp());
-    m_ButtonDown.setEnabled(pageSelected && canMoveDown());
-    m_ButtonRemove.setEnabled(pageSelected);
+    m_ButtonUp.setEnabled((numSelected > 0) && canMoveUp());
+    m_ButtonDown.setEnabled((numSelected > 0) && canMoveDown());
+    m_ButtonRemove.setEnabled(numSelected > 0);
     m_ButtonRemoveAll.setEnabled(getPageCount() > 0);
     m_ButtonUndo.setEnabled(canUndoPageClose());
   }
@@ -1173,7 +1247,7 @@ public class MultiPagePane
   protected boolean processListKey(KeyEvent e) {
     if (e.getKeyCode() == KeyEvent.VK_DELETE) {
       if (getSelectedIndex() > -1) {
-	checkedRemoveSelectedPage();
+	checkedRemoveSelectedPages();
 	return true;
       }
     }
@@ -1223,7 +1297,7 @@ public class MultiPagePane
     menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
     menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
     menuitem.setEnabled(index > -1);
-    menuitem.addActionListener((ActionEvent ae) -> checkedRemovePageAt(index));
+    menuitem.addActionListener((ActionEvent ae) -> checkedRemoveSelectedPages());
     result.add(menuitem);
 
     // remove all

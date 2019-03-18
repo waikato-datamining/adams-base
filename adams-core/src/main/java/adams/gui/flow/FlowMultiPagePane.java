@@ -128,8 +128,10 @@ public class FlowMultiPagePane
       FlowPanel panel = getPanelAt(index);
       boolean result = checkForModified(panel);
       // to avoid second popup from checkModified() in removeTab method
-      if (result && panel.isModified())
+      if (result && panel.isModified()) {
 	panel.setModified(false);
+	panel.updateTitle();
+      }
       return result;
     });
     setToolTipCustomizer(new ToolTipCustomizer() {
