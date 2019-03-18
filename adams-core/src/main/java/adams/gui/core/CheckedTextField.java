@@ -22,7 +22,6 @@ package adams.gui.core;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
@@ -567,8 +566,6 @@ public class CheckedTextField
       }
       else {
 	result = m_CheckModel.getDefaultValue();
-	final String s = result;
-	SwingUtilities.invokeLater(() -> setTextUnchecked(s));
       }
     }
     else {
