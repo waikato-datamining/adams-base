@@ -81,6 +81,7 @@ public class DefaultXY
 
   /**
    * Sets the index of the column to act as X axis.
+   * If left empty, the row index is used instead.
    *
    * @param value	the index
    */
@@ -91,6 +92,7 @@ public class DefaultXY
 
   /**
    * Returns the index of the column to act as X axis.
+   * If left empty, the row index is used instead.
    *
    * @return		the index
    */
@@ -105,7 +107,7 @@ public class DefaultXY
    * 			displaying in the GUI or for listing the options.
    */
   public String XTipText() {
-    return "The index of the column in the spreadsheet to use for the X axis.";
+    return "The index of the column in the spreadsheet to use for the X axis; if left empty, the row index is used instead.";
   }
 
   /**
@@ -195,11 +197,13 @@ public class DefaultXY
     result = super.check(data);
 
     if (result == null) {
-      m_X.setData(data);
+      if (!m_X.isEmpty()) {
+	m_X.setData(data);
+	if (m_X.getIntIndex() == -1)
+	  result = "X column not valid? Provided: " + m_X;
+      }
       m_Y.setData(data);
-      if (m_X.getIntIndex() == -1)
-	result = "X column not valid? Provided: " + m_X;
-      else if (m_Y.getIntIndices().length == 0)
+      if (m_Y.getIntIndices().length == 0)
 	result = "No Y column(s) available? Provided: " + m_Y;
     }
 
@@ -223,13 +227,20 @@ public class DefaultXY
     double 		min;
     double 		max;
 
-    m_X.setData(data);
-    x = m_X.getIntIndex();
+    if (m_X.isEmpty()) {
+      plotX = new double[data.getRowCount()];
+      for (i = 0; i < plotX.length; i++)
+        plotX[i] = i;
+    }
+    else {
+      m_X.setData(data);
+      x = m_X.getIntIndex();
+      plotX = SpreadSheetUtils.getNumericColumn(data, x);
+    }
     m_Y.setData(data);
     y = m_Y.getIntIndices();
 
     result = new DefaultXYDataset();
-    plotX = SpreadSheetUtils.getNumericColumn(data, x);
     min = StatUtils.min(plotX);
     max = StatUtils.max(plotX);
     for (i = 0; i < y.length; i++) {
