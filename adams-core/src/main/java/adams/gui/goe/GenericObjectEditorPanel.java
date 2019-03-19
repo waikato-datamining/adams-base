@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorPanel.java
- * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -29,6 +29,7 @@ import adams.gui.goe.GenericObjectEditor.PostProcessObjectHandler;
 
 import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A panel that contains text field with the current setup of the object
@@ -60,6 +61,12 @@ public class GenericObjectEditorPanel
   /** the current object. */
   protected transient Object m_Current;
 
+  /** the OK listener. */
+  protected transient ActionListener m_OkListener;
+
+  /** the Cancel listener. */
+  protected transient ActionListener m_CancelListener;
+
   /**
    * Initializes the panel with the given class and default value. Cannot
    * change the class.
@@ -86,9 +93,6 @@ public class GenericObjectEditorPanel
     m_CanChangeClass = canChangeClassInDialog;
 
     setCurrent(defValue);
-
-    m_History = new PersistentObjectHistory();
-    m_History.setSuperclass(cls);
   }
 
   /**
@@ -107,20 +111,76 @@ public class GenericObjectEditorPanel
    */
   protected GenericObjectEditor getEditor() {
     if (m_Editor == null) {
-      m_Editor = new GenericObjectEditor(m_CanChangeClass);
-      m_Editor.setClassType(m_ClassType);
-      ((GOEPanel) m_Editor.getCustomEditor()).addOkListener((ActionEvent e) -> {
+      m_OkListener = (ActionEvent e) -> {
 	if (isEditable()) {
 	  setCurrent(m_Editor.getValue());
-	  m_History.add(m_Editor.getValue());
+	  getHistory().add(m_Editor.getValue());
 	  notifyChangeListeners(new ChangeEvent(m_Self));
 	}
-      });
-      ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener((ActionEvent e) ->
-	m_Editor.setValue(getCurrent()));
+      };
+      m_CancelListener = (ActionEvent e) -> m_Editor.setValue(getCurrent());
+      m_Editor = new GenericObjectEditor(m_CanChangeClass);
+      m_Editor.setClassType(m_ClassType);
+      ((GOEPanel) m_Editor.getCustomEditor()).addOkListener(m_OkListener);
+      ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener(m_CancelListener);
     }
 
     return m_Editor;
+  }
+
+  /**
+   * Invalidates the GOE editor.
+   */
+  protected void invalidatedEditor() {
+    if (m_OkListener != null)
+      ((GOEPanel) m_Editor.getCustomEditor()).removeOkListener(m_OkListener);
+    if (m_CancelListener != null)
+      ((GOEPanel) m_Editor.getCustomEditor()).removeCancelListener(m_CancelListener);
+    if (m_Dialog != null)
+      m_Dialog.dispose();
+    m_Dialog         = null;
+    m_OkListener     = null;
+    m_CancelListener = null;
+    m_Editor         = null;
+    m_History        = null;
+  }
+
+  /**
+   * Sets the class of values that can be edited.
+   *
+   * @param type 	a value of type 'Class'
+   */
+  public void setClassType(Class type) {
+    m_ClassType = type;
+    invalidatedEditor();
+  }
+
+  /**
+   * Returns the currently set class.
+   *
+   * @return		the current class
+   */
+  public Class getClassType() {
+    return m_ClassType;
+  }
+
+  /**
+   * Sets whether the user can change the class.
+   *
+   * @param value	if true then the user can change the class
+   */
+  public void setCanChangeClassInDialog(boolean value) {
+    m_CanChangeClass = value;
+    invalidatedEditor();
+  }
+
+  /**
+   * Returns whether the user can change the class.
+   *
+   * @return		true if the user can change the class
+   */
+  public boolean getCanChangeClass() {
+    return m_CanChangeClass;
   }
 
   /**
@@ -164,6 +224,10 @@ public class GenericObjectEditorPanel
    * @return		the underlying history
    */
   public PersistentObjectHistory getHistory() {
+    if (m_History == null) {
+      m_History = new PersistentObjectHistory();
+      m_History.setSuperclass(m_ClassType);
+    }
     return m_History;
   }
 
