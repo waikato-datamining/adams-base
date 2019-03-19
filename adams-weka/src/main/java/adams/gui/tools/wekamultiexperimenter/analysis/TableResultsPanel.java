@@ -161,6 +161,7 @@ public class TableResultsPanel
 	row.addCell("" + i).setContent(array[n][i]);
     }
     m_TableResults.setModel(new SpreadSheetTableModel(sheet));
+    m_TableResults.setOptimalColumnWidthBounded(250);
 
     m_TextAreaKey.setText(m_Matrix.toStringKey());
     m_TextAreaKey.setCaretPosition(0);
