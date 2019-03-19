@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractArrayStatistic.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.statistics;
 
+import adams.core.AdditionalInformationHandler;
 import adams.core.ClassLister;
 import adams.core.ShallowCopySupporter;
 import adams.core.Utils;
@@ -33,20 +34,20 @@ import adams.data.spreadsheet.SpreadSheet;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Ancestor for classes that calculate statistics from arrays.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of element in the arrays
  */
 public abstract class AbstractArrayStatistic<T extends Serializable>
   extends AbstractOptionHandler
-  implements ShallowCopySupporter<AbstractArrayStatistic> {
+  implements ShallowCopySupporter<AbstractArrayStatistic>, AdditionalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 5803268124112742362L;
@@ -55,7 +56,6 @@ public abstract class AbstractArrayStatistic<T extends Serializable>
    * The container for the generated statistic result.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    * @param <T> the type of element in the arrays
    */
   public static class StatisticContainer<T extends Serializable>
@@ -71,7 +71,7 @@ public abstract class AbstractArrayStatistic<T extends Serializable>
     protected Object[][] m_Data;
 
     /** for storing additional information. */
-    protected Hashtable<String,Object> m_MetaData;
+    protected Map<String,Object> m_MetaData;
 
     /**
      * Initializes the container with the specified (data) dimensions.
@@ -84,7 +84,7 @@ public abstract class AbstractArrayStatistic<T extends Serializable>
 
       m_Header   = new String[cols];
       m_Data     = new Object[rows][cols];
-      m_MetaData = new Hashtable<>();
+      m_MetaData = new HashMap<>();
     }
 
     /**
@@ -200,8 +200,8 @@ public abstract class AbstractArrayStatistic<T extends Serializable>
      *
      * @return		the keys
      */
-    public Enumeration<String> keysMetaData() {
-      return m_MetaData.keys();
+    public Set<String> keysMetaData() {
+      return m_MetaData.keySet();
     }
 
     /**
@@ -232,7 +232,7 @@ public abstract class AbstractArrayStatistic<T extends Serializable>
 	for (i = 0; i < m_Data[n].length; i++) {
 	  cell = row.addCell("" + (i+1));
 	  if (m_Data[n][i] != null)
-	    cell.setContent("" + (T) m_Data[n][i]);
+	    cell.setContent("" + m_Data[n][i]);
 	}
       }
 
@@ -260,7 +260,7 @@ public abstract class AbstractArrayStatistic<T extends Serializable>
   protected void initialize() {
     super.initialize();
 
-    m_Data = new ArrayList<T[]>();
+    m_Data = new ArrayList<>();
   }
 
   /**
@@ -334,6 +334,32 @@ public abstract class AbstractArrayStatistic<T extends Serializable>
    * @return		the maximum number, -1 for unbounded
    */
   public abstract int getMax();
+
+  /**
+   * Returns the additional information.
+   *
+   * @return		the additional information, null or 0-length string for no information
+   */
+  public String getAdditionalInformation() {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+    result.append("Min # of arrays: ");
+    if (getMin() == -1)
+      result.append("-unbounded-");
+    else
+      result.append(getMin());
+
+    result.append("\n");
+
+    result.append("Max # of arrays: ");
+    if (getMax() == -1)
+      result.append("-unbounded-");
+    else
+      result.append(getMax());
+
+    return result.toString();
+  }
 
   /**
    * Checks whether all the arrays have the same length.
