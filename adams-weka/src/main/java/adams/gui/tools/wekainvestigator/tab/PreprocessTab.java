@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PreprocessTab.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -286,19 +286,7 @@ public class PreprocessTab
 
     m_PanelAttSelection = new AttributeSelectionPanel();
     m_PanelAttSelection.setBorder(BorderFactory.createTitledBorder("Attributes"));
-    m_PanelAttSelection.addChangeListener((ChangeEvent e) -> {
-      // range
-      int[] indices = m_PanelAttSelection.getSelectedAttributes();
-      if (indices.length == 0) {
-	m_TextSelectedAttributes.setText("");
-      }
-      else {
-	Range range = new Range();
-	range.setIndices(indices);
-	m_TextSelectedAttributes.setText(range.getRange());
-      }
-      m_ButtonSelectedAttributes.setEnabled(indices.length > 0);
-    });
+    m_PanelAttSelection.addChangeListener((ChangeEvent e) -> updateAttributeSelection());
     m_PanelAttSelection.addSelectionListener((ListSelectionEvent e) -> {
       // update other panels
       int[] indices = m_PanelAttSelection.getSelectedRows();
@@ -328,6 +316,29 @@ public class PreprocessTab
 
     m_SplitPane.setBottomComponentHidden(false);
     m_SplitPane.setDividerLocation(m_DefaultDataTableHeight);
+  }
+
+  /**
+   * For updating the state of the selected attributes text field and button.
+   */
+  protected void updateAttributeSelection() {
+    int[] 	indices;
+    Range 	range;
+
+    indices = m_PanelAttSelection.getSelectedAttributes();
+    if (indices == null)
+      indices = new int[0];
+
+    if (indices.length == 0) {
+      m_TextSelectedAttributes.setText("");
+    }
+    else {
+      range = new Range();
+      range.setIndices(indices);
+      m_TextSelectedAttributes.setText(range.getRange());
+    }
+
+    m_ButtonSelectedAttributes.setEnabled(indices.length > 0);
   }
 
   /**
@@ -458,6 +469,8 @@ public class PreprocessTab
     m_ButtonStop.setEnabled(isBusy());
     m_ButtonSelectedAttributesAction.setEnabled(!isBusy() && (getSelectedRows().length == 1));
     m_ButtonSelectedAttributes.setEnabled(m_TextSelectedAttributes.getText().length() > 0);
+
+    updateAttributeSelection();
   }
 
   /**
