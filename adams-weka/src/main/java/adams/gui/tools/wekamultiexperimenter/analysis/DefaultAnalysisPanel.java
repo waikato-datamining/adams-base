@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultAnalysisPanel.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.analysis;
 
@@ -63,7 +63,6 @@ import java.util.logging.Level;
  * Default panel for analyzing results from experiments.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DefaultAnalysisPanel
   extends AbstractAnalysisPanel {
@@ -235,13 +234,13 @@ public class DefaultAnalysisPanel
    */
   @Override
   protected void initGUI() {
-    JPanel panelTop;
-    ParameterPanel panelParams;
-    JPanel panelButtons;
-    Properties props;
-    Tester tester;
-    ResultMatrix matrix;
-    double siglevel;
+    JPanel 		panelTop;
+    ParameterPanel 	panelParams;
+    JPanel 		panelButtons;
+    Properties 		props;
+    Tester 		tester;
+    ResultMatrix 	matrix;
+    double 		siglevel;
 
     super.initGUI();
 
@@ -323,8 +322,7 @@ public class DefaultAnalysisPanel
 
     // results
     m_ComboBoxResults = new BaseComboBox<>(
-      new DefaultComboBoxModel<>(
-	m_PanelsResults.toArray(new AbstractResultsPanel[m_PanelsResults.size()])));
+      new DefaultComboBoxModel<>(m_PanelsResults.toArray(new AbstractResultsPanel[0])));
     panelParams.addParameter("Results", m_ComboBoxResults);
 
     // split pane
@@ -443,7 +441,7 @@ public class DefaultAnalysisPanel
     List<String> names;
 
     // update metric
-    oldValue = (String) m_ComboBoxMetric.getSelectedItem();
+    oldValue = m_ComboBoxMetric.getSelectedItem();
     metric = new DefaultComboBoxModel<>();
     if (m_Results != null) {
       for (index = 0; index < m_Results.numAttributes(); index++)
@@ -466,8 +464,8 @@ public class DefaultAnalysisPanel
       for (index = 0; index < m_Results.numAttributes(); index++)
 	names.add(m_Results.attribute(index).name());
     }
-    m_SelectRows.setOptions(names.toArray(new String[names.size()]));
-    m_SelectColumns.setOptions(names.toArray(new String[names.size()]));
+    m_SelectRows.setOptions(names.toArray(new String[0]));
+    m_SelectColumns.setOptions(names.toArray(new String[0]));
     updateComparisonBase();
     updateButtons();
   }
@@ -622,7 +620,7 @@ public class DefaultAnalysisPanel
       return;
     }
 
-    panel = ((AbstractResultsPanel) m_ComboBoxResults.getSelectedItem()).getClone();
+    panel = m_ComboBoxResults.getSelectedItem().getClone();
     panel.display(tester.getResultMatrix());
     m_History.addEntry(m_Formatter.format(new Date()) + " - " + metric.replace("_", " "), panel);
     m_History.setSelectedIndex(m_History.count() - 1);

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AnalysisPanel.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter;
 
@@ -32,7 +32,6 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,6 @@ import java.util.List;
  * The analysis panel.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AnalysisPanel
   extends AbstractExperimenterPanel {
@@ -52,14 +50,14 @@ public class AnalysisPanel
   protected AbstractAnalysisPanel m_PanelAnalysis;
 
   /** the combobox with all available panels. */
-  protected BaseComboBox m_ComboBoxPanels;
+  protected BaseComboBox<AbstractAnalysisPanel> m_ComboBoxPanels;
 
   /**
    * For initializing the GUI.
    */
   @Override
   protected void initGUI() {
-    String[]			classes;
+    Class[]			classes;
     List<AbstractAnalysisPanel>	panels;
     int				i;
     JPanel			panel;
@@ -68,25 +66,20 @@ public class AnalysisPanel
     super.initGUI();
     
     classes = AbstractAnalysisPanel.getPanels();
-    panels  = new ArrayList<AbstractAnalysisPanel>();
+    panels  = new ArrayList<>();
     for (i = 0; i < classes.length; i++) {
       try {
-	if (classes[i].equals(DefaultAnalysisPanel.class.getName()))
+	if (classes[i].equals(DefaultAnalysisPanel.class))
 	  continue;
-	panels.add((AbstractAnalysisPanel) Class.forName(classes[i]).newInstance());
+	panels.add((AbstractAnalysisPanel) classes[i].newInstance());
       }
       catch (Exception e) {
 	logError("Failed to instantiate analysis panel: " + classes[i], "Analysis panels");
       }
     }
     panels.add(0, new DefaultAnalysisPanel());
-    m_ComboBoxPanels = new BaseComboBox(panels.toArray(new AbstractAnalysisPanel[panels.size()]));
-    m_ComboBoxPanels.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	updatePanel((AbstractAnalysisPanel) m_ComboBoxPanels.getSelectedItem());
-      }
-    });
+    m_ComboBoxPanels = new BaseComboBox<>(panels.toArray(new AbstractAnalysisPanel[0]));
+    m_ComboBoxPanels.addActionListener((ActionEvent e) -> updatePanel(m_ComboBoxPanels.getSelectedItem()));
     
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(panel, BorderLayout.NORTH);
@@ -120,7 +113,7 @@ public class AnalysisPanel
 	  "ResultsInitialPanel", DefaultAnalysisPanel.class.getName());
       for (i = 0; i < m_ComboBoxPanels.getItemCount(); i++) {
 	if (m_ComboBoxPanels.getItemAt(i).getClass().getName().equals(preferred)) {
-	  updatePanel((AbstractAnalysisPanel) m_ComboBoxPanels.getItemAt(i));
+	  updatePanel(m_ComboBoxPanels.getItemAt(i));
 	  break;
 	}
       }
@@ -140,7 +133,7 @@ public class AnalysisPanel
       results = m_PanelAnalysis.getResults();
       remove(m_PanelAnalysis);
     }
-    m_PanelAnalysis = (AbstractAnalysisPanel) ObjectCopyHelper.copyObject(panel);
+    m_PanelAnalysis = ObjectCopyHelper.copyObject(panel);
     add(m_PanelAnalysis, BorderLayout.CENTER);
     m_PanelAnalysis.setResults(results);
   }

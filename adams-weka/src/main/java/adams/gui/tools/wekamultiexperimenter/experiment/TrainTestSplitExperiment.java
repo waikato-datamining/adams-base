@@ -15,7 +15,7 @@
 
 /*
  * TrainTestSplitExperiment.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
@@ -35,7 +35,6 @@ import weka.core.Instances;
  * Performs train-test splits.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TrainTestSplitExperiment
   extends AbstractExperiment {
@@ -89,6 +88,7 @@ public class TrainTestSplitExperiment
 	eval.evaluateModel(classifier, test);
 	results = new DefaultSpreadSheet();
 	addMetrics(results, m_Run, m_Classifier, m_Data, eval);
+	m_Owner.appendResults(results);
       }
       catch (Exception e) {
 	Utils.handleException(m_Owner, "Failed to evaluate classifier on train/test split!", e);

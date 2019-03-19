@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExperimenterPanel.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter;
 
@@ -46,7 +46,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -57,7 +56,6 @@ import java.util.logging.Level;
  * The Experimenter panel.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExperimenterPanel
   extends AbstractWorkspacePanelWithStatusBar {
@@ -153,7 +151,6 @@ public class ExperimenterPanel
   protected void initGUI() {
     Properties		props;
     String		cname;
-    JPanel		panel;
 
     super.initGUI();
 
@@ -201,19 +198,26 @@ public class ExperimenterPanel
    * 
    * @param setup	the new setup panel
    */
-  public void newSetup(AbstractSetupPanel setup) {
+  public void newSetup(Class setup) {
     AbstractSetupPanel	current;
-    
+    AbstractSetupPanel	newSetup;
+
     current = (AbstractSetupPanel) m_TabbedPane.getComponentAt(0);
     current.setOwner(null);
 
-    setup.setOwner(this);
-    m_TabbedPane.setComponentAt(0, setup);
-    m_TabbedPane.setIconAt(0, setup.getTabIcon());
+    try {
+      newSetup = (AbstractSetupPanel) setup.newInstance();
+      newSetup.setOwner(this);
+      m_TabbedPane.setComponentAt(0, newSetup);
+      m_TabbedPane.setIconAt(0, newSetup.getTabIcon());
 
-    m_PanelSetup = setup;
+      m_PanelSetup = newSetup;
 
-    logMessage("New setup: " + m_PanelSetup.getClass().getName());
+      logMessage("New setup: " + m_PanelSetup.getClass().getName());
+    }
+    catch (Exception e) {
+      logError("Failed to instantiate setup: " + Utils.classToString(setup), e, "New setup failed");
+    }
   }
 
   /**
@@ -491,7 +495,7 @@ public class ExperimenterPanel
     JMenu		menu;
     JMenu		submenu;
     JMenuItem		menuitem;
-    String[]		classes;
+    Class[]		classes;
     String		defSetup;
 
     if (m_MenuBar == null) {
@@ -509,15 +513,15 @@ public class ExperimenterPanel
       submenu.setMnemonic('N');
       classes = AbstractSetupPanel.getPanels();
       defSetup = getProperties().getProperty("Setups.InitialPanel", BasicWekaSetupPanel.class.getName());
-      for (String cls: classes) {
+      for (final Class cls: classes) {
 	try {
-	  final AbstractSetupPanel setup = (AbstractSetupPanel) Class.forName(cls).newInstance();
+	  final AbstractSetupPanel setup = (AbstractSetupPanel) cls.newInstance();
 	  menuitem = new JMenuItem(setup.getSetupName());
 	  if (setup.getClass().getName().equals(defSetup)) {
 	    menuitem.setIcon(GUIHelper.getIcon("new.gif"));
 	    menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
 	  }
-	  menuitem.addActionListener((ActionEvent e) -> newSetup(setup));
+	  menuitem.addActionListener((ActionEvent e) -> newSetup(cls));
 	  submenu.add(menuitem);
 	}
 	catch (Exception e) {
@@ -832,6 +836,17 @@ public class ExperimenterPanel
     GUIHelper.showErrorMessage(this,
 	msg,
 	title);
+  }
+
+  /**
+   * Logs the error message and also displays an error dialog.
+   *
+   * @param msg		the error message
+   * @param t 		the exception
+   * @param title	the title for the dialog
+   */
+  public void logError(String msg, Throwable t, String title) {
+    logError(msg + "\n" + Utils.throwableToString(t), title);
   }
 
   /**

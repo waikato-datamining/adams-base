@@ -15,7 +15,7 @@
 
 /*
  * BasicAdamsSetupPanel.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.setup;
 
@@ -113,7 +113,7 @@ public class BasicAdamsSetupPanel
   protected void initGUI() {
     final int		evalIndex;
     JPanel		panel;
-    
+
     super.initGUI();
 
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -143,17 +143,31 @@ public class BasicAdamsSetupPanel
     m_ComboBoxEvaluation.setSelectedIndex(0);
     evalIndex = m_PanelParameters.addParameter("Evaluation", m_ComboBoxEvaluation);
     m_ComboBoxEvaluation.addActionListener((ActionEvent e) -> {
+      RandomSplitGenerator gen;
       setModified(true);
       switch (m_ComboBoxEvaluation.getSelectedIndex()) {
         case -1:
         case 0:
           m_PanelParameters.getLabel(evalIndex+1).setText("Number of folds");
 	  m_PanelParameters.setToolTipText(evalIndex+1, "Use <2 for LOO-CV", true, true);
+	  m_PanelGenerator.setClassType(CrossValidationFoldGenerator.class);
+	  m_PanelGenerator.setCurrent(new DefaultCrossValidationFoldGenerator());
           break;
         case 1:
+          m_PanelParameters.getLabel(evalIndex+1).setText("Split percentage");
+	  m_PanelParameters.setToolTipText(evalIndex+1, "A percentage between 0 and 100", true, true);
+	  m_PanelGenerator.setClassType(RandomSplitGenerator.class);
+	  gen = new DefaultRandomSplitGenerator();
+	  gen.setPreserveOrder(false);
+	  m_PanelGenerator.setCurrent(gen);
+          break;
         case 2:
           m_PanelParameters.getLabel(evalIndex+1).setText("Split percentage");
 	  m_PanelParameters.setToolTipText(evalIndex+1, "A percentage between 0 and 100", true, true);
+	  m_PanelGenerator.setClassType(RandomSplitGenerator.class);
+	  gen = new DefaultRandomSplitGenerator();
+	  gen.setPreserveOrder(true);
+	  m_PanelGenerator.setCurrent(gen);
           break;
         default:
           throw new IllegalStateException("Unhandled evaluation type: " + m_ComboBoxEvaluation.getSelectedItem());
@@ -165,10 +179,10 @@ public class BasicAdamsSetupPanel
     m_PanelParameters.addParameter("", m_TextEvaluation);
 
     m_CheckBoxCustomSplitGenerator = new BaseCheckBox();
-    m_CheckBoxCustomSplitGenerator.addChangeListener(new ModificationChangeListener());
+    m_CheckBoxCustomSplitGenerator.addActionListener(new ModificationActionListener());
     m_PanelParameters.addParameter("Use custom split generator", m_CheckBoxCustomSplitGenerator);
 
-    m_PanelGenerator = new GenericObjectEditorPanel(SplitGenerator.class, new DefaultCrossValidationFoldGenerator(), true);
+    m_PanelGenerator = new GenericObjectEditorPanel(CrossValidationFoldGenerator.class, new DefaultCrossValidationFoldGenerator(), true);
     m_PanelGenerator.addChangeListener(new ModificationChangeListener());
     m_PanelParameters.addParameter("Split generator", m_PanelGenerator);
 
@@ -236,7 +250,6 @@ public class BasicAdamsSetupPanel
   @Override
   public AbstractExperiment getExperiment() {
     AbstractExperiment		result;
-    SplitGenerator		generator;
 
     result = getExperimentIO().create();
 
@@ -244,21 +257,21 @@ public class BasicAdamsSetupPanel
       case 0:
 	result = new CrossValidationExperiment();
 	((CrossValidationExperiment) result).setFolds(m_TextEvaluation.getValue(10).intValue());
-	if (m_CheckBoxCustomSplitGenerator.isSelected())
+	if (m_CheckBoxCustomSplitGenerator.isSelected() && (m_PanelGenerator.getCurrent() instanceof CrossValidationFoldGenerator))
 	  ((CrossValidationExperiment) result).setGenerator((CrossValidationFoldGenerator) m_PanelGenerator.getCurrent());
 	break;
       case 1:
 	result = new TrainTestSplitExperiment();
 	((TrainTestSplitExperiment) result).setPercentage(m_TextEvaluation.getValue(66.0).doubleValue());
 	((TrainTestSplitExperiment) result).setPreserveOrder(false);
-	if (m_CheckBoxCustomSplitGenerator.isSelected())
+	if (m_CheckBoxCustomSplitGenerator.isSelected() && (m_PanelGenerator.getCurrent() instanceof RandomSplitGenerator))
 	  ((TrainTestSplitExperiment) result).setGenerator((RandomSplitGenerator) m_PanelGenerator.getCurrent());
 	break;
       case 2:
 	result = new TrainTestSplitExperiment();
 	((TrainTestSplitExperiment) result).setPercentage(m_TextEvaluation.getValue(66.0).doubleValue());
 	((TrainTestSplitExperiment) result).setPreserveOrder(true);
-	if (m_CheckBoxCustomSplitGenerator.isSelected())
+	if (m_CheckBoxCustomSplitGenerator.isSelected() && (m_PanelGenerator.getCurrent() instanceof RandomSplitGenerator))
 	  ((TrainTestSplitExperiment) result).setGenerator((RandomSplitGenerator) m_PanelGenerator.getCurrent());
 	break;
       default:

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSetupPanel.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.setup;
 
@@ -36,7 +36,6 @@ import java.awt.event.ActionListener;
  * Ancestor for setup panels.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of experiment to handle
  */
 public abstract class AbstractSetupPanel<T>
@@ -49,7 +48,6 @@ public abstract class AbstractSetupPanel<T>
    * Document listener that just sets the modified flag.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public class ModificationDocumentListener
     implements DocumentListener {
@@ -71,7 +69,6 @@ public abstract class AbstractSetupPanel<T>
    * Change listener that just sets the modified flag.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public class ModificationChangeListener
     implements ChangeListener {
@@ -85,7 +82,6 @@ public abstract class AbstractSetupPanel<T>
    * Action listener that just sets the modified flag.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public class ModificationActionListener
     implements ActionListener {
@@ -207,7 +203,7 @@ public abstract class AbstractSetupPanel<T>
    *
    * @return		the panel classnames
    */
-  public static String[] getPanels() {
-    return ClassLister.getSingleton().getClassnames(AbstractSetupPanel.class);
+  public static Class[] getPanels() {
+    return ClassLister.getSingleton().getClasses(AbstractSetupPanel.class);
   }
 }

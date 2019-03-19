@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractAnalysisPanel.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.analysis;
 
+import adams.core.ClassLister;
 import adams.core.CloneHandler;
 import adams.gui.tools.wekamultiexperimenter.AbstractExperimenterPanel;
 import weka.core.Instances;
-import adams.core.ClassLister;
 
 /**
  * Ancestor for panels that analysis experimental results.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractAnalysisPanel
   extends AbstractExperimenterPanel
@@ -122,7 +121,7 @@ public abstract class AbstractAnalysisPanel
    *
    * @return		the panel classnames
    */
-  public static String[] getPanels() {
-    return ClassLister.getSingleton().getClassnames(AbstractAnalysisPanel.class);
+  public static Class[] getPanels() {
+    return ClassLister.getSingleton().getClasses(AbstractAnalysisPanel.class);
   }
 }
