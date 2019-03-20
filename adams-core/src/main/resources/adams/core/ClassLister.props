@@ -687,6 +687,10 @@ adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor=\
 adams.gui.visualization.core.ColorProvider=\
   adams.gui.visualization.core
 
+# the color providers (with name support) to use for plotting
+adams.gui.visualization.core.ColorProviderWithNameSupport=\
+  adams.gui.visualization.core
+
 # gradient color generators
 adams.gui.visualization.core.AbstractColorGradientGenerator=\
   adams.gui.visualization.core
