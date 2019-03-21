@@ -15,7 +15,7 @@
 
 /*
  * ApprovalDialog.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -36,7 +36,6 @@ import java.awt.event.KeyEvent;
  * via <code>getOption()</code>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see #getOption()
  */
 public class ApprovalDialog
@@ -271,6 +270,24 @@ public class ApprovalDialog
   }
 
   /**
+   * Sets the enabled state of the approve button.
+   *
+   * @param value	true if to enable button
+   */
+  public void setApproveEnabled(boolean value) {
+    m_ButtonApprove.setEnabled(value);
+  }
+
+  /**
+   * Returns the enabled state of the approve button.
+   *
+   * @return		true if enabled
+   */
+  public boolean isApproveEnabled() {
+    return m_ButtonApprove.isEnabled();
+  }
+
+  /**
    * Sets the caption/text of the approve button.
    *
    * @param value	the new text
@@ -334,6 +351,24 @@ public class ApprovalDialog
   }
 
   /**
+   * Sets the enabled state of the Discard button.
+   *
+   * @param value	true if to enable button
+   */
+  public void setDiscardEnabled(boolean value) {
+    m_ButtonDiscard.setEnabled(value);
+  }
+
+  /**
+   * Returns the enabled state of the Discard button.
+   *
+   * @return		true if enabled
+   */
+  public boolean isDiscardEnabled() {
+    return m_ButtonDiscard.isEnabled();
+  }
+
+  /**
    * Sets the caption/text of the discard button.
    *
    * @param value	the new text
@@ -394,6 +429,24 @@ public class ApprovalDialog
    */
   public boolean isCancelVisible() {
     return m_ButtonCancel.isVisible();
+  }
+
+  /**
+   * Sets the enabled state of the cancel button.
+   *
+   * @param value	true if to enable button
+   */
+  public void setCancelEnabled(boolean value) {
+    m_ButtonCancel.setEnabled(value);
+  }
+
+  /**
+   * Returns the enabled state of the cancel button.
+   *
+   * @return		true if enabled
+   */
+  public boolean isCancelEnabled() {
+    return m_ButtonCancel.isEnabled();
   }
 
   /**
