@@ -22,6 +22,9 @@ package adams.gui.dialog;
 
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnectionProvider;
+import adams.gui.event.SqlQueryPanelEvent;
+import adams.gui.event.SqlQueryPanelEvent.EventType;
+import adams.gui.event.SqlQueryPanelListener;
 import adams.gui.tools.sqlworkbench.SqlQueryPanel;
 
 import java.awt.BorderLayout;
@@ -35,7 +38,7 @@ import java.awt.Frame;
  */
 public class SqlQueryDialog
   extends ApprovalDialog
-  implements DatabaseConnectionProvider {
+  implements DatabaseConnectionProvider, SqlQueryPanelListener {
 
   private static final long serialVersionUID = -2162869597803771001L;
 
@@ -136,8 +139,10 @@ public class SqlQueryDialog
     super.initGUI();
 
     m_PanelSQL = new SqlQueryPanel();
+    m_PanelSQL.addQueryPanelListener(this);
     getContentPane().add(m_PanelSQL, BorderLayout.CENTER);
 
+    setApproveEnabled(false);
     setSize(600, 300);
   }
 
@@ -166,5 +171,14 @@ public class SqlQueryDialog
    */
   public AbstractDatabaseConnection getDatabaseConnection() {
     return m_PanelSQL.getDatabaseConnection();
+  }
+
+  /**
+   * Gets triggered whenever the sort setup changes.
+   *
+   * @param e		the event
+   */
+  public void sqlQueryPanelChanged(SqlQueryPanelEvent e) {
+    setApproveEnabled(e.getType() == EventType.QUERY_SUCCESS_WITHOUTPUT);
   }
 }

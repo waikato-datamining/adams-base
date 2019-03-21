@@ -43,6 +43,9 @@ import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.dialog.SQLStatementPanel;
 import adams.gui.event.SearchEvent;
+import adams.gui.event.SqlQueryPanelEvent;
+import adams.gui.event.SqlQueryPanelEvent.EventType;
+import adams.gui.event.SqlQueryPanelListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -53,6 +56,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * For executing a query.
@@ -95,6 +100,19 @@ public class SqlQueryPanel
   /** the button for executing the query. */
   protected BaseButton m_ButtonExecute;
 
+  /** the listeners for changes. */
+  protected Set<SqlQueryPanelListener> m_PanelListeners;
+
+  /**
+   * For initializing members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_PanelListeners = new HashSet<>();
+  }
+
   /**
    * For initializing the GUI.
    */
@@ -114,7 +132,7 @@ public class SqlQueryPanel
     add(m_SplitPane, BorderLayout.CENTER);
 
     m_PanelQuery = new SQLStatementPanel();
-    m_PanelQuery.addQueryChangeListener((ChangeEvent e) -> updateButtons());
+    m_PanelQuery.addQueryChangeListener((ChangeEvent e) -> queryChanged());
     m_SplitPane.setTopComponent(m_PanelQuery);
     m_PanelQuery.getQueryPanel().getTextPane().addKeyListener(new KeyAdapter() {
       @Override
@@ -240,6 +258,7 @@ public class SqlQueryPanel
 	if (m_Error != null) {
 	  m_TextResults.setText(m_Error);
 	  m_SplitPane.setBottomComponent(m_PanelText);
+	  notifyQueryPanelListeners(new SqlQueryPanelEvent(SqlQueryPanel.this, EventType.QUERY_ERROR));
 	}
 	else {
 	  m_PanelQuery.addStatementToHistory();
@@ -247,10 +266,12 @@ public class SqlQueryPanel
 	    m_TableResults.setModel(new SpreadSheetTableModel(m_Sheet));
 	    m_TableResults.setOptimalColumnWidthBounded(150);
 	    m_SplitPane.setBottomComponent(m_PanelTable);
+	    notifyQueryPanelListeners(new SqlQueryPanelEvent(SqlQueryPanel.this, EventType.QUERY_SUCCESS_WITHOUTPUT));
 	  }
 	  else {
 	    m_TextResults.setText(m_Result);
 	    m_SplitPane.setBottomComponent(m_PanelText);
+	    notifyQueryPanelListeners(new SqlQueryPanelEvent(SqlQueryPanel.this, EventType.QUERY_SUCCESS_WITHOUTPUT));
 	  }
 	}
 	m_SplitPane.setDividerLocation(location);
@@ -266,5 +287,41 @@ public class SqlQueryPanel
    */
   public AbstractDatabaseConnection getDatabaseConnection() {
     return m_PanelConnection.getDatabaseConnection();
+  }
+
+  /**
+   * Gets called whenever the query changes.
+   */
+  protected void queryChanged() {
+    updateButtons();
+    notifyQueryPanelListeners(new SqlQueryPanelEvent(this, EventType.QUERY_CHANGED));
+  }
+
+  /**
+   * Adds the query panel listener.
+   *
+   * @param l		the listener to add
+   */
+  public void addQueryPanelListener(SqlQueryPanelListener l) {
+    m_PanelListeners.add(l);
+  }
+
+  /**
+   * Removes the query panel listener.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeQueryPanelListener(SqlQueryPanelListener l) {
+    m_PanelListeners.remove(l);
+  }
+
+  /**
+   * Notifies all the query panel listeners with the given event.
+   *
+   * @param e		the event
+   */
+  protected void notifyQueryPanelListeners(SqlQueryPanelEvent e) {
+    for (SqlQueryPanelListener l: m_PanelListeners)
+      l.sqlQueryPanelChanged(e);
   }
 }
