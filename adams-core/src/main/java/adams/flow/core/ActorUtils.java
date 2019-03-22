@@ -21,6 +21,7 @@
 package adams.flow.core;
 
 import adams.core.ClassLister;
+import adams.core.DateUtils;
 import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.Variables;
@@ -76,6 +77,7 @@ import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -107,6 +109,9 @@ public class ActorUtils {
   /** the variable for the flow ID. */
   public final static String FLOW_ID = "flow_id";
 
+  /** the variable for the start timestamp of the flow. */
+  public final static String FLOW_START_TIMESTAMP = "flow_start_timestamp";
+
   /** the variable for the headless flag. */
   public final static String IS_HEADLESS = "is_headless";
 
@@ -129,6 +134,7 @@ public class ActorUtils {
     FLOW_FILENAME_RESTORE,
     FLOW_DIR,
     FLOW_ID,
+    FLOW_START_TIMESTAMP,
     IS_HEADLESS,
     HAS_GUI,
     PROJECT_NAME,
@@ -144,6 +150,7 @@ public class ActorUtils {
     PROGRAMMATIC_VARIABLES_HELP.put(FLOW_FILENAME_RESTORE, "The absolute file name of the flow restoration file (like " + FLOW_FILENAME_LONG + " but with .props extension; flow must be saved)");
     PROGRAMMATIC_VARIABLES_HELP.put(FLOW_DIR, "The absolute directory the flow is stored in (flow must be saved)");
     PROGRAMMATIC_VARIABLES_HELP.put(FLOW_ID, "The flow's unique ID");
+    PROGRAMMATIC_VARIABLES_HELP.put(FLOW_START_TIMESTAMP, "The timestamp the flow started (format: " + DateUtils.getTimestampFormatterMsecs().toPattern() + ")");
     PROGRAMMATIC_VARIABLES_HELP.put(IS_HEADLESS, "Whether the environment is headless (eg server process)");
     PROGRAMMATIC_VARIABLES_HELP.put(HAS_GUI, "Whether the flow can use a GUI");
     PROGRAMMATIC_VARIABLES_HELP.put(PROJECT_NAME, "The name of the project (usually ADAMS)");
@@ -1575,6 +1582,7 @@ public class ActorUtils {
     }
     if ((context != null) && (context.getRoot() != null)) {
       context.getLocalVariables().set(ActorUtils.FLOW_ID, (context.getRoot() instanceof Flow) ? "" + ((Flow) context.getRoot()).getFlowID() : "-1");
+      context.getLocalVariables().set(ActorUtils.FLOW_START_TIMESTAMP, DateUtils.getTimestampFormatterMsecs().format(new Date()));
       context.getLocalVariables().set(ActorUtils.HAS_GUI, "" + !context.getRoot().isHeadless());
     }
   }
@@ -1611,6 +1619,7 @@ public class ActorUtils {
     }
     if ((handler != null) && (context != null) && (context.getRoot() != null)) {
       handler.getLocalVariables().set(ActorUtils.FLOW_ID, (context.getRoot() instanceof Flow) ? "" + ((Flow) context.getRoot()).getFlowID() : "-1");
+      handler.getLocalVariables().set(ActorUtils.FLOW_START_TIMESTAMP, DateUtils.getTimestampFormatterMsecs().format(new Date()));
       handler.getLocalVariables().set(ActorUtils.HAS_GUI, "" + !context.getRoot().isHeadless());
     }
   }
