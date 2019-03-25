@@ -15,10 +15,11 @@
 
 /*
  * FlowReader.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import adams.core.MessageCollection;
 import adams.core.io.FileFormatHandler;
 import adams.core.option.OptionHandler;
 import adams.data.io.output.FlowWriter;
@@ -27,7 +28,6 @@ import adams.flow.core.Actor;
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.List;
 
 /**
  * Interface for flow readers.
@@ -76,14 +76,14 @@ public interface FlowReader
    * 
    * @return		the warnings
    */
-  public List<String> getWarnings();
+  public MessageCollection getWarnings();
   
   /**
    * Returns any errors that were encountered while reading.
    * 
    * @return		the errors
    */
-  public List<String> getErrors();
+  public MessageCollection getErrors();
 
   /**
    * Returns the corresponding writer, if available.
