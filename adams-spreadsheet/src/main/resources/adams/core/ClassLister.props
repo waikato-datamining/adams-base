@@ -43,6 +43,10 @@ adams.data.spreadsheet.matrixstatistic.AbstractMatrixStatistic=\
 adams.data.spreadsheet.rowscore.AbstractRowScore=\
   adams.data.spreadsheet.rowscore
 
+# the merge schemes
+adams.flow.transformer.spreadsheetmethodmerge.AbstractMerge=\
+  adams.flow.transformer.spreadsheetmethodmerge
+
 # The spreadsheet filters
 adams.data.spreadsheet.filter.SpreadSheetFilter=\
   adams.data.spreadsheet.filter
