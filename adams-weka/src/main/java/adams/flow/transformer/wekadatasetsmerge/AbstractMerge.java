@@ -25,19 +25,20 @@ import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
+import adams.data.weka.columnfinder.Class;
+import adams.data.weka.columnfinder.ColumnFinder;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 
 /**
@@ -59,7 +60,7 @@ public abstract class AbstractMerge
   implements QuickInfoSupporter {
 
   /** Auto-generated serialisation UID#. */
-  private static final long serialVersionUID = 5230406420788469572L;
+  private static final long serialVersionUID = 87541569847452058L;
 
   /** The keyword to replace with the dataset name in attribute renaming. */
   protected static final String DATASET_KEYWORD = "{DATASET}";
@@ -67,17 +68,8 @@ public abstract class AbstractMerge
   /** The constant value for datasets that do not have an input row for this output row. */
   protected static final int ROW_MISSING = -1;
 
-  /** The method to use to determine the class attributes across the datasets. */
-  protected ClassAttributeMatchingMethod m_ClassAttributeMatchingMethod;
-
-  /** The regex to use for matching class attributes (for method REGEXP). */
-  protected BaseRegExp m_ClassAttributeMatchingRegex;
-
-  /**
-   * Whether the class-matching regex should consider matches or non-matches
-   * as class attributes.
-   */
-  protected boolean m_InvertClassAttributeMatchingSense;
+  /** The column finder for selecting class attributes. */
+  protected ColumnFinder m_ClassFinder;
 
   /** The name of each dataset to use in attribute renaming. */
   protected BaseString[] m_DatasetNames;
@@ -97,8 +89,8 @@ public abstract class AbstractMerge
   /** The source datasets we are merging. */
   protected Instances[] m_Datasets;
 
-  /** The set of class names for the given datasets. */
-  protected Set<String> m_ClassNames;
+  /** The set of class attributes for the given datasets. */
+  protected int[][] m_ClassAttributes;
 
   /**
    * Adds options to the internal list of options.
@@ -108,16 +100,8 @@ public abstract class AbstractMerge
     super.defineOptions();
 
     m_OptionManager.add(
-      "class-match-method", "classMatchMethod",
-      ClassAttributeMatchingMethod.USE_EXISTING);
-
-    m_OptionManager.add(
-      "class-match-exp", "classMatchExpression",
-      new BaseRegExp(""));
-
-    m_OptionManager.add(
-      "class-match-invert-sense", "classMatchInvertSense",
-      false);
+      "class-finder", "classFinder",
+      new Class());
 
     m_OptionManager.add(
       "dataset-names", "datasetNames",
@@ -141,91 +125,33 @@ public abstract class AbstractMerge
   }
 
   /**
-   * Gets the method to use for finding class attributes in the
+   * Gets the finder to use for finding class attributes in the
    * source datasets.
    *
-   * @return The class-matching method to use.
+   * @return The class-attribute finder.
    */
-  public ClassAttributeMatchingMethod getClassMatchMethod() {
-    return m_ClassAttributeMatchingMethod;
+  public ColumnFinder getClassFinder() {
+    return m_ClassFinder;
   }
 
   /**
-   * Sets the method to use for finding class attributes in the
+   * Sets the finder to use for finding class attributes in the
    * source datasets.
    *
-   * @param value The method to use.
+   * @param value The class-attribute finder.
    */
-  public void setClassMatchMethod(ClassAttributeMatchingMethod value) {
-    m_ClassAttributeMatchingMethod = value;
+  public void setClassFinder(ColumnFinder value) {
+    m_ClassFinder = value;
     reset();
   }
 
   /**
-   * Gets the tip-text for the class-matching method option.
+   * Gets the tip-text for the classFinder option.
    *
    * @return The tip-text as a String.
    */
-  public String classMatchMethodTipText() {
-    return "The method to use to find class attributes in the datasets.";
-  }
-
-  /**
-   * Gets the regex to use to find class attributes (if the matching
-   * method is REGEXP).
-   *
-   * @return The regex to use.
-   */
-  public BaseRegExp getClassMatchExpression() {
-    return m_ClassAttributeMatchingRegex;
-  }
-
-  /**
-   * Sets the regex to use to find class attributes (if the matching
-   * method is REGEXP).
-   *
-   * @param value The regex to use.
-   */
-  public void setClassMatchExpression(BaseRegExp value) {
-    m_ClassAttributeMatchingRegex = value;
-    reset();
-  }
-
-  /**
-   * Gets the tip-text for the class-matching regex option.
-   *
-   * @return The tip-text as a String.
-   */
-  public String classMatchExpressionTipText() {
-    return "The expression to use to identify class attributes in the source datasets.";
-  }
-
-  /**
-   * Gets whether the class-matching regex is matching for or against class attributes.
-   *
-   * @return True if the regex matches class attributes, false if it matches non-class attributes.
-   */
-  public boolean getClassMatchInvertSense() {
-    return m_InvertClassAttributeMatchingSense;
-  }
-
-  /**
-   * Sets whether the class-matching regex is matching for or against class attributes.
-   *
-   * @param value True if the regex matches class attributes, false if it matches non-class attributes.
-   */
-  public void setClassMatchInvertSense(boolean value) {
-    m_InvertClassAttributeMatchingSense = value;
-    reset();
-  }
-
-  /**
-   * Gets the tip-text for the class-matching sense-inversion option.
-   *
-   * @return The tip-text as a String.
-   */
-  public String classMatchInvertSenseTipText() {
-    return "Whether the class-matching regex selects classes or non-classes.";
+  public String classFinderTipText() {
+    return "The column finder to use to find class attributes in the datasets.";
   }
 
   /**
@@ -251,7 +177,7 @@ public abstract class AbstractMerge
       BaseString[] expandedValue = new BaseString[m_AttributeRenameFindRegexs.length];
 
       for (int i = 0; i < m_AttributeRenameFindRegexs.length; i++) {
-        if (value != null && i < value.length) {
+        if (i < value.length) {
 	  expandedValue[i] = value[i];
 	} else {
 	  expandedValue[i] = new BaseString("Dataset" + i);
@@ -510,6 +436,45 @@ public abstract class AbstractMerge
   }
 
   /**
+   * Makes sure the source data for each mapped attribute is the same type.
+   *
+   * @param attributeMapping  The attribute mapping.
+   * @return  Null if all mappings are okay, or an error message if not.
+   */
+  protected String checkAttributeMapping(Map<String, List<SourceAttribute>> attributeMapping) {
+    // Check each mapped attribute in turn
+    for (String mappedName : attributeMapping.keySet()) {
+      // Get the list of source attributes
+      List<SourceAttribute> sources = attributeMapping.get(mappedName);
+
+      // Use the type of the first source as a reference
+      int referenceType = sources.get(0).getSource().type();
+
+      // Check each source against the reference
+      for (SourceAttribute source : sources) {
+        // If this source has a different type, report the error
+        if (source.getSource().type() != referenceType) {
+          return "Source data mismatch for mapped attribute " + mappedName + "! " +
+            m_DatasetNames[sources.get(0).datasetIndex] +
+            ":" +
+            sources.get(0).attributeName +
+            " = " +
+            Attribute.typeToString(referenceType) +
+            ", " +
+            m_DatasetNames[source.datasetIndex] +
+            ":" +
+            source.attributeName +
+            " = " +
+            Attribute.typeToString(source.getSource().type());
+        }
+      }
+    }
+
+    // All sources checked out
+    return null;
+  }
+
+  /**
    * Merges the datasets.
    *
    * @param datasets the datasets to merge
@@ -524,7 +489,11 @@ public abstract class AbstractMerge
     if (msg != null) throw new IllegalStateException(msg);
 
     // Create the attribute mapping
-    Map<String, List<AttributeMappingElement>> attributeMapping = createAttributeMapping();
+    Map<String, List<SourceAttribute>> attributeMapping = createAttributeMapping();
+
+    // Make sure the mapping is valid
+    msg = checkAttributeMapping(attributeMapping);
+    if (msg != null) throw new IllegalStateException(msg);
 
     // Create the empty resulting dataset
     Instances mergedDataset = createEmptyResultantDataset(attributeMapping);
@@ -543,15 +512,15 @@ public abstract class AbstractMerge
       // Process each attribute of the merged dataset in turn
       for (int attributeIndex = 0; attributeIndex < mergedDataset.numAttributes(); attributeIndex++) {
 	// Get the next attribute to copy
-	Attribute attribute = mergedDataset.attribute(attributeIndex);
+	Attribute mergedAttribute = mergedDataset.attribute(attributeIndex);
 
 	// Find the source(s) of the attribute's data
-	List<AttributeMappingElement> sourceAttributeElements = attributeMapping.get(attribute.name());
+	List<SourceAttribute> sourceAttributes = attributeMapping.get(mergedAttribute.name());
 
 	// Get the value of this attribute from it's source(s)
 	Object value = m_EnsureEqualValues ?
-	  getValueEnsureEqual(rowSet, sourceAttributeElements) :
-	  getValueFirstAvailable(rowSet, sourceAttributeElements);
+	  getValueEnsureEqual(rowSet, sourceAttributes) :
+	  getValueFirstAvailable(rowSet, sourceAttributes);
 
 	// Copy the value to the merged dataset if it's found
 	if (value != null) setValue(mergedInstance, attributeIndex, value);
@@ -569,29 +538,26 @@ public abstract class AbstractMerge
    * Gets the first encountered source value for a merged attribute.
    *
    * @param rowSet                  The row-set of source data.
-   * @param sourceAttributeElements The source attribute mapping elements.
+   * @param sourceAttributes The source attribute mapping elements.
    * @return The value of the merged attribute.
    */
-  protected Object getValueFirstAvailable(int[] rowSet, List<AttributeMappingElement> sourceAttributeElements) {
+  protected Object getValueFirstAvailable(int[] rowSet, List<SourceAttribute> sourceAttributes) {
     // Try each source in turn
-    for (AttributeMappingElement element : sourceAttributeElements) {
+    for (SourceAttribute source : sourceAttributes) {
       // Get the row from the row-set
-      int rowIndex = rowSet[element.datasetIndex];
+      int rowIndex = rowSet[source.datasetIndex];
 
       // Skip datasets that don't have source data for this attribute
       if (rowIndex == ROW_MISSING) continue;
 
       // Get the source dataset instance
-      Instance instance = m_Datasets[element.datasetIndex].instance(rowIndex);
+      Instance instance = m_Datasets[source.datasetIndex].instance(rowIndex);
 
       // Skip datasets that don't have source data for this attribute
-      if (instance.isMissing(element.attributeIndex)) continue;
+      if (instance.isMissing(source.attributeIndex)) continue;
 
-      // Get the value of the source data for this attribute
-      Object value = getValue(instance, element.attributeIndex);
-
-      // If we found a value, return it
-      return value;
+      // Return the value of the source data for this attribute
+      return getValue(instance, source.attributeIndex);
     }
 
     // No value found
@@ -606,12 +572,12 @@ public abstract class AbstractMerge
    * @param sourceAttributeElements The source attribute mapping elements.
    * @return The value of the merged attribute.
    */
-  protected Object getValueEnsureEqual(int[] rowSet, List<AttributeMappingElement> sourceAttributeElements) {
+  protected Object getValueEnsureEqual(int[] rowSet, List<SourceAttribute> sourceAttributeElements) {
     Object value = null;
-    AttributeMappingElement valueElement = null;
+    SourceAttribute valueElement = null;
     int valueRowIndex = ROW_MISSING;
 
-    for (AttributeMappingElement element : sourceAttributeElements) {
+    for (SourceAttribute element : sourceAttributeElements) {
       // Get the row from the row-set
       int rowIndex = rowSet[element.datasetIndex];
 
@@ -649,36 +615,33 @@ public abstract class AbstractMerge
    *
    * @return The mapping from input attribute names to output attribute names.
    */
-  protected Map<String, List<AttributeMappingElement>> createAttributeMapping() {
+  protected Map<String, List<SourceAttribute>> createAttributeMapping() {
     // Create the mapping
-    Map<String, List<AttributeMappingElement>> mapping = new HashMap<>();
+    Map<String, List<SourceAttribute>> mapping = new HashMap<>();
 
     // Process each input attribute in turn
-    int originalOrdering = 0;
     for (int datasetIndex = 0; datasetIndex < m_Datasets.length; datasetIndex++) {
       // Get the next dataset to process
       Instances dataset = m_Datasets[datasetIndex];
 
       // Go through each attribute of the dataset in turn
       for (int attributeIndex = 0; attributeIndex < dataset.numAttributes(); attributeIndex++) {
-	// Get the next attribute to process
-	Attribute attribute = dataset.attribute(attributeIndex);
+	// Get the name of the next attribute to process
+	String attributeName = dataset.attribute(attributeIndex).name();
 
-	// Get the attribute's mapped name in the merged dataset
-	String mappedAttributeName = getMappedAttributeName(datasetIndex, attribute.name());
+        // Create the source attribute element
+        SourceAttribute source = new SourceAttribute(datasetIndex, attributeIndex, attributeName);
 
-	// Create the mapping element
-	AttributeMappingElement mappingElement = new AttributeMappingElement(datasetIndex, attributeIndex, attribute.name(), originalOrdering);
+        // Get the attribute's mapped name in the merged dataset
+	String mappedAttributeName = getMappedAttributeName(source);
 
 	// Initialise the mapping list if there isn't one already
+        // for this mapped attribute
 	if (!mapping.containsKey(mappedAttributeName))
 	  mapping.put(mappedAttributeName, new LinkedList<>());
 
 	// Put the mapping into the return value
-	mapping.get(mappedAttributeName).add(mappingElement);
-
-	// Increment the counters
-	originalOrdering++;
+	mapping.get(mappedAttributeName).add(source);
       }
     }
 
@@ -687,58 +650,71 @@ public abstract class AbstractMerge
   }
 
   /**
-   * Whether the given attribute name is the name of a class attribute.
+   * Checks if any of the source attributes in the given list is a class
+   * attribute.
    *
-   * @param attributeName The name to check.
-   * @return True if the given attribute name is the name of a class attribute,
-   * false otherwise.
+   * @param sources The source attributes to check.
+   * @return  True if a source attribute is a class, false if none are.
    */
-  protected boolean isClassName(String attributeName) {
-    if (m_ClassNames == null) recordClassNames();
+  protected boolean isAnyClassAttribute(List<SourceAttribute> sources) {
+    // Check each source in turn
+    for (SourceAttribute source : sources) {
+      // If this source is a class attribute, return a positive hit
+      if (isClassAttribute(source)) return true;
+    }
 
-    return m_ClassNames.contains(attributeName);
+    // No sources were class attributes
+    return false;
+  }
+
+  /**
+   * Checks if the given source attribute is a class attribute.
+   *
+   * @param source  The source attribute to check.
+   * @return  True if the source is a class attribute, false if not.
+   */
+  protected boolean isClassAttribute(SourceAttribute source) {
+    // Defer
+    return isClassAttribute(source.datasetIndex, source.attributeIndex);
+  }
+
+  /**
+   * Whether the given attribute is a class attribute.
+   *
+   * @param datasetIndex  The dataset the attribute is in.
+   * @param attributeIndex  The index of the attribute in the dataset.
+   * @return True if the given attribute is a class attribute,
+   * false if not.
+   */
+  protected boolean isClassAttribute(int datasetIndex, int attributeIndex) {
+    // Initialise the class map once
+    if (m_ClassAttributes == null) recordClassAttributes();
+
+    // See if the given attribute is in the class map
+    return Arrays.binarySearch(m_ClassAttributes[datasetIndex], attributeIndex) >= 0;
   }
 
   /**
    * Scans the datasets for attributes that should be considered classes,
    * and keeps a record of them.
    */
-  protected void recordClassNames() {
-    // Create the set of class names
-    m_ClassNames = new HashSet<>();
+  protected void recordClassAttributes() {
+    // Create the set of class attributes
+    m_ClassAttributes = new int[m_Datasets.length][];
 
-    // Process each dataset for class names
-    for (Instances dataset : m_Datasets) {
-      switch (m_ClassAttributeMatchingMethod) {
-	case USE_EXISTING:
-	  // Skip this dataset if it doesn't have a class attribute
-	  if (dataset.classIndex() < 0) continue;
+    // Process each dataset for class attributes
+    for (int i = 0; i < m_Datasets.length; i++) {
+      // Get the next dataset
+      Instances dataset = m_Datasets[i];
 
-	  // Get the class attribute for this dataset
-	  Attribute classAttribute = dataset.classAttribute();
+      // Find the class attributes
+      int[] classAttributes = m_ClassFinder.findColumns(dataset);
 
-	  // Just add the name of the existing class attribute
-	  m_ClassNames.add(classAttribute.name());
+      // Make sure the array is sorted (so we can do binary search)
+      Arrays.sort(classAttributes);
 
-	  break;
-	case REGEXP:
-	  // Check all the attributes for a regex match
-	  for (int attributeIndex = 0; attributeIndex < dataset.numAttributes(); attributeIndex++) {
-	    // Get the attribute's name
-	    String attributeName = dataset.attribute(attributeIndex).name();
-
-	    // See if it matches the matching regex
-	    boolean regexMatches = m_ClassAttributeMatchingRegex.isMatch(attributeName);
-
-	    // Invert the matching sense if requested
-	    regexMatches = m_InvertClassAttributeMatchingSense ^ regexMatches;
-
-	    // If it's a match, add it to the set
-	    if (regexMatches) m_ClassNames.add(attributeName);
-	  }
-
-	  break;
-      }
+      // Record the class attributes
+      m_ClassAttributes[i] = classAttributes;
     }
   }
 
@@ -749,18 +725,18 @@ public abstract class AbstractMerge
    *                         original names.
    * @return The empty Instances object for the merged dataset.
    */
-  protected Instances createEmptyResultantDataset(Map<String, List<AttributeMappingElement>> attributeMapping) {
+  protected Instances createEmptyResultantDataset(Map<String, List<SourceAttribute>> attributeMapping) {
     // Create a list for ordering the attributes, and a mapping to the actual
     // attributes
-    List<AttributeMappingElement> orderingList = new LinkedList<>();
-    Map<AttributeMappingElement, Attribute> attributes = new HashMap<>();
+    List<List<SourceAttribute>> orderingList = new LinkedList<>();
+    Map<List<SourceAttribute>, Attribute> attributes = new HashMap<>();
 
     // Copy the mapped attributes from their respective datasets
     for (String mappedAttributeName : attributeMapping.keySet()) {
-      Attribute mappedAttribute = createMappedAttribute(mappedAttributeName, attributeMapping.get(mappedAttributeName));
-      AttributeMappingElement orderingElement = attributeMapping.get(mappedAttributeName).get(0);
-      attributes.put(orderingElement, mappedAttribute);
-      orderingList.add(orderingElement);
+      List<SourceAttribute> sources = attributeMapping.get(mappedAttributeName);
+      Attribute mappedAttribute = createMappedAttribute(mappedAttributeName, sources);
+      attributes.put(sources, mappedAttribute);
+      orderingList.add(sources);
     }
 
     // Order the new attributes
@@ -768,8 +744,8 @@ public abstract class AbstractMerge
 
     // Create the ordered array-list of the attributes
     ArrayList<Attribute> orderedAttributes = new ArrayList<>(orderingList.size());
-    for (AttributeMappingElement element : orderingList) {
-      orderedAttributes.add(attributes.get(element));
+    for (List<SourceAttribute> orderingElement : orderingList) {
+      orderedAttributes.add(attributes.get(orderingElement));
     }
 
     // Create the dataset
@@ -780,31 +756,28 @@ public abstract class AbstractMerge
    * Creates the attribute for the output merged dataset for the given attribute mapping.
    *
    * @param name The name of the mapped attribute.
-   * @param from The list of mappings that the attribute maps to.
+   * @param sources The list of mappings that the attribute maps to.
    * @return The attribute for the merged dataset.
    */
-  protected Attribute createMappedAttribute(String name, List<AttributeMappingElement> from) {
+  protected Attribute createMappedAttribute(String name, List<SourceAttribute> sources) {
     // Just return a copy of the first attribute we map to
-    AttributeMappingElement firstElement = from.get(0);
-    Attribute sourceAttribute = m_Datasets[firstElement.datasetIndex].attribute(firstElement.attributeIndex);
-    Attribute mappedAttribute = sourceAttribute.copy(name);
-    return mappedAttribute;
+    return sources.get(0).getSource().copy(name);
   }
 
   /**
-   * Compares two AttributeMappingElements to determine the order in which their
+   * Compares two lists of source attributes to determine the order in which their
    * mapped attributes should appear in the merged dataset.
    *
-   * @param element1 The first element to compare.
-   * @param element2 The second element to compare.
-   * @return element1 < element2 => -1,
-   * element1 > element2 => 1,
+   * @param sources1 The source attributes of the first mapped attribute.
+   * @param sources2 The source attributes of the second mapped attribute.
+   * @return sources1 < sources2 => -1,
+   * sources1 > sources2 => 1,
    * otherwise 0;
    */
-  protected int compare(AttributeMappingElement element1, AttributeMappingElement element2) {
-    // Check if either attribute is a class attribute
-    boolean className1 = isClassName(element1.attributeName);
-    boolean className2 = isClassName(element2.attributeName);
+  protected int compare(List<SourceAttribute> sources1, List<SourceAttribute> sources2) {
+    // Check if either mapped attribute is a class attribute
+    boolean className1 = isAnyClassAttribute(sources1);
+    boolean className2 = isAnyClassAttribute(sources2);
 
     // Put class attributes after everything else
     if (className1 && !className2) {
@@ -814,39 +787,37 @@ public abstract class AbstractMerge
       return -1;
     }
     else {
-      // Otherwise, just keep the original ordering
-      return element1.originalOrdering - element2.originalOrdering;
+      // Otherwise, just order by first source
+      return sources1.get(0).compareTo(sources2.get(0));
     }
   }
 
   /**
    * Gets the name of the attribute in the merged dataset that the given
-   * attribute (given by name) maps to.
+   * source attribute maps to.
    *
-   * @param datasetIndex  The index of the dataset in the input array that
-   *                      the given attribute belongs to.
-   * @param attributeName The name of the attribute in the input datasets.
+   * @param source  The source attribute.
    * @return The name of the mapped attribute in the merged dataset.
    */
-  protected String getMappedAttributeName(int datasetIndex, String attributeName) {
-    // Can't rename class names
-    if (isClassName(attributeName)) return attributeName;
+  protected String getMappedAttributeName(SourceAttribute source) {
+    // Can't rename class attributes
+    if (isClassAttribute(source)) return source.attributeName;
 
     // See if we have a rename expression for the dataset
-    if (datasetIndex < m_AttributeRenameFindRegexs.length) {
+    if (source.datasetIndex < m_AttributeRenameFindRegexs.length) {
       // Get the rename expression for the dataset
-      BaseRegExp renameRegex = m_AttributeRenameFindRegexs[datasetIndex];
+      BaseRegExp renameRegex = m_AttributeRenameFindRegexs[source.datasetIndex];
 
       // Get the regex matcher for the attribute name
-      Matcher attributeNameMatcher = renameRegex.patternValue().matcher(attributeName);
+      Matcher attributeNameMatcher = renameRegex.patternValue().matcher(source.attributeName);
 
       // Rename the attribute if it is matched
       if (attributeNameMatcher.matches()) {
 	// Initialise the mapped name with the format string
-	String mappedString = m_AttributeRenameFormatStrings[datasetIndex].stringValue();
+	String mappedString = m_AttributeRenameFormatStrings[source.datasetIndex].stringValue();
 
 	// Replace the {DATASET} keyword with the dataset name
-	mappedString = mappedString.replace(DATASET_KEYWORD, m_DatasetNames[datasetIndex].stringValue());
+	mappedString = mappedString.replace(DATASET_KEYWORD, m_DatasetNames[source.datasetIndex].stringValue());
 
 	// Replace any group identifiers with the corresponding group match string
 	for (int groupIndex = attributeNameMatcher.groupCount(); groupIndex >= 0; groupIndex--) {
@@ -861,7 +832,7 @@ public abstract class AbstractMerge
     }
 
     // Couldn't rename, return the original attribute name
-    return attributeName;
+    return source.attributeName;
   }
 
   /**
@@ -871,7 +842,7 @@ public abstract class AbstractMerge
    */
   protected void resetInternalState(Instances[] datasets) {
     m_Datasets = datasets;
-    m_ClassNames = null;
+    m_ClassAttributes = null;
   }
 
   /**
@@ -884,19 +855,10 @@ public abstract class AbstractMerge
   protected abstract Enumeration<int[]> getRowSetEnumeration();
 
   /**
-   * Enumeration of the methods available for determining
-   * which attributes are class attributes.
-   */
-  public enum ClassAttributeMatchingMethod {
-    USE_EXISTING,
-    REGEXP
-  }
-
-  /**
    * Helper class for determining the mapping from input attributes in the
    * source datasets to output attributes in the merged dataset.
    */
-  protected static class AttributeMappingElement {
+  protected class SourceAttribute implements Comparable<SourceAttribute> {
 
     /** The index of the source dataset. */
     public final int datasetIndex;
@@ -907,39 +869,47 @@ public abstract class AbstractMerge
     /** The name of the source attribute in the source dataset. */
     public final String attributeName;
 
-    /** The original order in which the source attribute was encountered during search. */
-    public final int originalOrdering;
-
     /**
      * Standard constructor.
      *
      * @param datasetIndex     The index of the source dataset.
      * @param attributeIndex   The index of the source attribute in the source dataset.
      * @param attributeName    The name of the source attribute in the source dataset.
-     * @param originalOrdering The original order in which the source attribute was encountered during search.
      */
-    public AttributeMappingElement(int datasetIndex, int attributeIndex, String attributeName, int originalOrdering) {
+    public SourceAttribute(int datasetIndex, int attributeIndex, String attributeName) {
       this.datasetIndex = datasetIndex;
       this.attributeIndex = attributeIndex;
       this.attributeName = attributeName;
-      this.originalOrdering = originalOrdering;
+    }
+
+    /**
+     * Gets the actual source attribute from the source datasets.
+     *
+     * @return  The source attribute.
+     */
+    public Attribute getSource() {
+      return m_Datasets[datasetIndex].attribute(attributeIndex);
     }
 
     @Override
     public String toString() {
-      StringBuilder builder = new StringBuilder();
+      return attributeName +
+        '[' +
+        datasetIndex +
+        ", " +
+        attributeIndex +
+        ']';
+    }
 
-      builder.append('(')
-	.append(datasetIndex)
-	.append(',')
-	.append(attributeIndex)
-	.append(',')
-	.append(attributeName)
-	.append(',')
-	.append(originalOrdering)
-	.append(')');
-
-      return builder.toString();
+    @Override
+    public int compareTo(SourceAttribute o) {
+      if (datasetIndex < o.datasetIndex) {
+        return -1;
+      } else if (datasetIndex > o.datasetIndex) {
+        return 1;
+      } else {
+        return Integer.compare(attributeIndex, o.attributeIndex);
+      }
     }
   }
 }

@@ -20,7 +20,6 @@
 
 package adams.flow.transformer.wekadatasetsmerge;
 
-import weka.core.Instance;
 import weka.core.Instances;
 
 import java.util.Enumeration;
@@ -37,21 +36,9 @@ import java.util.Enumeration;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
- * <pre>-class-match-method &lt;USE_EXISTING|REGEXP&gt; (property: classMatchMethod)
- * &nbsp;&nbsp;&nbsp;The method to use to find class attributes in the datasets.
- * &nbsp;&nbsp;&nbsp;default: USE_EXISTING
- * </pre>
- *
- * <pre>-class-match-exp &lt;adams.core.base.BaseRegExp&gt; (property: classMatchExpression)
- * &nbsp;&nbsp;&nbsp;The expression to use to identify class attributes in the source datasets.
- * &nbsp;&nbsp;&nbsp;default:
- * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
- * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
- * </pre>
- *
- * <pre>-class-match-invert-sense &lt;boolean&gt; (property: classMatchInvertSense)
- * &nbsp;&nbsp;&nbsp;Whether the class-matching regex selects classes or non-classes.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-class-finder &lt;adams.data.weka.columnfinder.ColumnFinder&gt; (property: classFinder)
+ * &nbsp;&nbsp;&nbsp;The column finder to use to find class attributes in the datasets.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.weka.columnfinder.Class
  * </pre>
  *
  * <pre>-dataset-names &lt;adams.core.base.BaseString&gt; [-dataset-names ...] (property: datasetNames)
@@ -60,7 +47,8 @@ import java.util.Enumeration;
  * </pre>
  *
  * <pre>-attr-renames-exp &lt;adams.core.base.BaseRegExp&gt; [-attr-renames-exp ...] (property: attributeRenamesExp)
- * &nbsp;&nbsp;&nbsp;The expressions to use to select attribute names for renaming.
+ * &nbsp;&nbsp;&nbsp;The expressions to use to select attribute names for renaming (one per dataset
+ * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
  * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
@@ -84,7 +72,7 @@ import java.util.Enumeration;
  * &nbsp;&nbsp;&nbsp;equal values from all sources.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * <p>
+ *
  <!-- options-end -->
  * <p>
  * Performs a merge over a set of datasets of equal size by joining
@@ -95,6 +83,7 @@ import java.util.Enumeration;
 public class Simple
   extends AbstractMerge {
 
+  /** Auto-generated serialisation UID#. */
   private static final long serialVersionUID = 6417253231850358108L;
 
   /**

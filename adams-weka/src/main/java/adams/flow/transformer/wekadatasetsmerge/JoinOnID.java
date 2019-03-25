@@ -27,6 +27,7 @@ import weka.core.Instances;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,21 +42,9 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
- * <pre>-class-match-method &lt;USE_EXISTING|REGEXP&gt; (property: classMatchMethod)
- * &nbsp;&nbsp;&nbsp;The method to use to find class attributes in the datasets.
- * &nbsp;&nbsp;&nbsp;default: USE_EXISTING
- * </pre>
- *
- * <pre>-class-match-exp &lt;adams.core.base.BaseRegExp&gt; (property: classMatchExpression)
- * &nbsp;&nbsp;&nbsp;The expression to use to identify class attributes in the source datasets.
- * &nbsp;&nbsp;&nbsp;default:
- * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
- * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
- * </pre>
- *
- * <pre>-class-match-invert-sense &lt;boolean&gt; (property: classMatchInvertSense)
- * &nbsp;&nbsp;&nbsp;Whether the class-matching regex selects classes or non-classes.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-class-finder &lt;adams.data.weka.columnfinder.ColumnFinder&gt; (property: classFinder)
+ * &nbsp;&nbsp;&nbsp;The column finder to use to find class attributes in the datasets.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.weka.columnfinder.Class
  * </pre>
  *
  * <pre>-dataset-names &lt;adams.core.base.BaseString&gt; [-dataset-names ...] (property: datasetNames)
@@ -64,7 +53,8 @@ import java.util.Map;
  * </pre>
  *
  * <pre>-attr-renames-exp &lt;adams.core.base.BaseRegExp&gt; [-attr-renames-exp ...] (property: attributeRenamesExp)
- * &nbsp;&nbsp;&nbsp;The expressions to use to select attribute names for renaming.
+ * &nbsp;&nbsp;&nbsp;The expressions to use to select attribute names for renaming (one per dataset
+ * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
  * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
@@ -98,7 +88,7 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;Whether only those IDs that have source data in all datasets should be merged.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * <p>
+ *
  <!-- options-end -->
  * <p>
  * Performs a merge by using a unique ID attribute for each source dataset
@@ -284,20 +274,20 @@ public class JoinOnID
   }
 
   /**
-   * Compares two AttributeMappingElements to determine the order in which their
+   * Compares two lists of source attributes to determine the order in which their
    * mapped attributes should appear in the merged dataset.
    *
-   * @param element1 The first element to compare.
-   * @param element2 The second element to compare.
-   * @return element1 < element2 => -1,
-   * element1 > element2 => 1,
+   * @param sources1 The source attributes of the first mapped attribute.
+   * @param sources2 The source attributes of the second mapped attribute.
+   * @return sources1 < sources2 => -1,
+   * sources1 > sources2 => 1,
    * otherwise 0;
    */
   @Override
-  protected int compare(AttributeMappingElement element1, AttributeMappingElement element2) {
+  protected int compare(List<SourceAttribute> sources1, List<SourceAttribute> sources2) {
     // Check if the attribute is the unique ID attribute
-    boolean idName1 = isUniqueIDName(element1.attributeName);
-    boolean idName2 = isUniqueIDName(element2.attributeName);
+    boolean idName1 = isUniqueIDName(sources1.get(0).attributeName);
+    boolean idName2 = isUniqueIDName(sources2.get(0).attributeName);
 
     // Put the ID attribute before all other attributes
     if (idName1 && !idName2) {
@@ -308,28 +298,26 @@ public class JoinOnID
     }
     else {
       // Otherwise, just use the default ordering
-      return super.compare(element1, element2);
+      return super.compare(sources1, sources2);
     }
   }
 
   /**
    * Gets the name of the attribute in the merged dataset that the given
-   * attribute (given by name) maps to.
+   * source attribute maps to.
    *
-   * @param datasetIndex  The index of the dataset in the input array that
-   *                      the given attribute belongs to.
-   * @param attributeName The name of the attribute in the input datasets.
+   * @param source  The source attribute.
    * @return The name of the mapped attribute in the merged dataset.
    */
   @Override
-  protected String getMappedAttributeName(int datasetIndex, String attributeName) {
-    if (isUniqueIDName(attributeName)) {
+  protected String getMappedAttributeName(SourceAttribute source) {
+    if (isUniqueIDName(source.attributeName)) {
       // The unique ID name can't be renamed
-      return attributeName;
+      return source.attributeName;
     }
     else {
       // Otherwise, default
-      return super.getMappedAttributeName(datasetIndex, attributeName);
+      return super.getMappedAttributeName(source);
     }
   }
 
@@ -353,16 +341,28 @@ public class JoinOnID
    */
   @Override
   protected String check(Instances[] datasets) {
+    // Perform the standard checks first
     String result = super.check(datasets);
-
     if (result != null) return result;
 
-    result = checkAllDatasetsHaveIDAttribute(datasets);
+    // Check all datasets have the ID attribute
+    return checkAllDatasetsHaveIDAttribute(datasets);
+  }
 
+  /**
+   * Makes sure the source data for each mapped attribute is the same type.
+   *
+   * @param attributeMapping  The attribute mapping.
+   * @return  Null if all mappings are okay, or an error message if not.
+   */
+  @Override
+  protected String checkAttributeMapping(Map<String, List<SourceAttribute>> attributeMapping) {
+    // Perform the standard checks first
+    String result = super.checkAttributeMapping(attributeMapping);
     if (result != null) return result;
 
     // Make sure the unique ID is not also a class attribute
-    if (isClassName(getUniqueID()))
+    if (isAnyClassAttribute(attributeMapping.get(m_UniqueID)))
       result = "The provided unique ID (" + getUniqueID() + ") is also a class attribute.";
 
     return result;
@@ -480,9 +480,9 @@ public class JoinOnID
 	int[] rowSet = m_UniqueIDRowMap.get(id);
 
 	// Check that there are no null entries
-	for (int i = 0; i < rowSet.length; i++) {
+	for (int rowEntry : rowSet) {
 	  // If there is a null entry, remove this row
-	  if (rowSet[i] == ROW_MISSING) {
+	  if (rowEntry == ROW_MISSING) {
 	    idIterator.remove();
 	    break;
 	  }
