@@ -481,6 +481,37 @@ df.setOutputFile(new PlaceholderFile("${TMP}/random.txt"));
 flow.add(df);
 \end{verbatim}
 
+\subsection{Listening to the data}
+Using the \textit{ProgrammaticTokenListener} transformer, it is possible for
+non-flow code to listen to data that is passing through the flow.
+The following code listens to the tokens that a \textit{ForLoop} source
+is generating. This transformer allows background flows to update, for instance,
+Swing user interface components.
+
+\begin{verbatim}
+import adams.flow.control.Flow;
+import adams.flow.transformer.ProgrammaticTokenListener;
+import adams.flow.transformer.ProgrammaticTokenListener.TokenListener;
+
+...
+
+Flow flow = new Flow();
+
+ForLoop loop = new ForLoop();
+flow.add(loop);
+
+ProgrammaticTokenListener listener = new ProgrammaticTokenListener();
+listener.addTokenListener((Token token) -> System.out.println("[WIRE] " + token.getPayload()));
+flow.add(listener);
+
+msg = flow.setUp();
+if (msg != null)
+  throw new IllegalStateException(msg);
+flow.execute();
+flow.wrapUp();
+flow.cleanUp();
+\end{verbatim}
+
 %%%%%%%%%%%%%%%%%%%
 % Extending ADAMS %
 %%%%%%%%%%%%%%%%%%%
