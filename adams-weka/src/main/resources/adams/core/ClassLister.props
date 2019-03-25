@@ -63,6 +63,10 @@ adams.flow.transformer.wekaevaluationpostprocessor.AbstractWekaEvaluationPostPro
 adams.flow.transformer.wekadatasetsmerge.AbstractMerge=\
   adams.flow.transformer.wekadatasetsmerge
 
+# the dataset splitters
+adams.data.weka.datasetsplitter.AbstractSplitter=\
+  adams.data.weka.datasetsplitter
+
 # the heuristics for determining the class attribute
 adams.data.weka.classattribute.AbstractClassAttributeHeuristic=\
   adams.data.weka.classattribute

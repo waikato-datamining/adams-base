@@ -20,9 +20,9 @@
 
 package adams.flow.transformer;
 
+import adams.data.weka.columnfinder.ByName;
 import adams.env.Environment;
 import adams.core.option.AbstractArgumentOption;
-import adams.core.option.ClassOption;
 import adams.core.option.OptionUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +45,6 @@ import adams.flow.sink.WekaFileWriter;
 import adams.flow.source.FileSupplier;
 import adams.flow.source.Start;
 import adams.flow.standalone.CallableActors;
-import adams.flow.transformer.CallableTransformer;
-import adams.flow.transformer.WekaClassSelector;
-import adams.flow.transformer.WekaDatasetsMerge;
-import adams.flow.transformer.WekaFileReader;
-import adams.flow.transformer.wekadatasetsmerge.AbstractMerge.ClassAttributeMatchingMethod;
 import adams.flow.transformer.wekadatasetsmerge.JoinOnID;
 import adams.flow.transformer.wekadatasetsmerge.Simple;
 import weka.core.converters.SimpleArffLoader;
@@ -192,10 +187,9 @@ public class WekaDatasetsMergeTest
       // Flow.simple-pass.WekaDatasetsMerge
       WekaDatasetsMerge wekadatasetsmerge = new WekaDatasetsMerge();
       Simple simple = new Simple();
-      argOption = (AbstractArgumentOption) simple.getOptionManager().findByProperty("classMatchMethod");
-      simple.setClassMatchMethod((ClassAttributeMatchingMethod) argOption.valueOf("REGEXP"));
-      argOption = (AbstractArgumentOption) simple.getOptionManager().findByProperty("classMatchExpression");
-      simple.setClassMatchExpression((BaseRegExp) argOption.valueOf("^.*class.*$"));
+      ByName byName = new ByName();
+      byName.setRegExp(new BaseRegExp("^.*class.*$"));
+      simple.setClassFinder(byName);
       argOption = (AbstractArgumentOption) simple.getOptionManager().findByProperty("datasetNames");
       List<BaseString> datasetnames = new ArrayList<>();
       datasetnames.add((BaseString) argOption.valueOf("input1"));
@@ -255,10 +249,9 @@ public class WekaDatasetsMergeTest
       // Flow.id-pass.WekaDatasetsMerge
       WekaDatasetsMerge wekadatasetsmerge2 = new WekaDatasetsMerge();
       JoinOnID joinonid = new JoinOnID();
-      argOption = (AbstractArgumentOption) joinonid.getOptionManager().findByProperty("classMatchMethod");
-      joinonid.setClassMatchMethod((ClassAttributeMatchingMethod) argOption.valueOf("REGEXP"));
-      argOption = (AbstractArgumentOption) joinonid.getOptionManager().findByProperty("classMatchExpression");
-      joinonid.setClassMatchExpression((BaseRegExp) argOption.valueOf("^class.*$"));
+      byName = new ByName();
+      byName.setRegExp(new BaseRegExp("^.*class.*$"));
+      joinonid.setClassFinder(byName);
       argOption = (AbstractArgumentOption) joinonid.getOptionManager().findByProperty("datasetNames");
       List<BaseString> datasetnames2 = new ArrayList<>();
       datasetnames2.add((BaseString) argOption.valueOf("input1"));
