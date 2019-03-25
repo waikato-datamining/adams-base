@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
@@ -163,7 +164,7 @@ import java.util.List;
  */
 public class WekaInstancesMerge
 extends AbstractTransformer
-implements ProvenanceSupporter, WekaMergeInstancesActor {
+implements ProvenanceSupporter, WekaMergeInstancesActor, ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = -2923715594018710295L;
@@ -216,6 +217,15 @@ implements ProvenanceSupporter, WekaMergeInstancesActor {
 	+ "If no 'ID' attribute is named, then all datasets must contain the same number of rows.\n"
 	+ "Attributes can be excluded from ending up in the final dataset via "
 	+ "a regular expression. They can also be prefixed with name and/or index.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{WekaDatasetsMerge.class};
   }
 
   /**
