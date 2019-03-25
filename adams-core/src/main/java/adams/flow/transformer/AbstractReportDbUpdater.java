@@ -407,6 +407,7 @@ public abstract class AbstractReportDbUpdater
       }
 
       query = null;
+      rs    = null;
       try {
         query = m_SQL.getValue();
         if (isHandler && (handler instanceof IDHandler))
@@ -445,7 +446,6 @@ public abstract class AbstractReportDbUpdater
           default:
             throw new IllegalStateException("Unhandled query type: " + m_QueryType);
         }
-        SQLUtils.closeAll(rs);
         if (!dataRead && !m_Lenient)
           result = "No data found: " + query;
 
@@ -459,6 +459,9 @@ public abstract class AbstractReportDbUpdater
       }
       catch (Exception e) {
         result = handleException("Failed to read report data: " + query, e);
+      }
+      finally {
+        SQLUtils.closeAll(rs);
       }
     }
     

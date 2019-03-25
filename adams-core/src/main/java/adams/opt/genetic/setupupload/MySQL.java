@@ -28,6 +28,7 @@ import adams.db.DatabaseConnection;
 import adams.db.JDBC;
 import adams.db.SQLF;
 import adams.db.SQLIntf;
+import adams.db.SQLUtils;
 import adams.flow.core.ActorUtils;
 import adams.opt.genetic.AbstractGeneticAlgorithm;
 
@@ -252,6 +253,8 @@ public class MySQL
 	}
       }
     }
+
+    SQLUtils.close(stmt);
 
     return result;
   }

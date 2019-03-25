@@ -257,6 +257,7 @@ public class MetaDataUtils {
     String		db;
 
     result = null;
+    rs     = null;
     try {
       metadata = conn.getConnection(false).getMetaData();
       reader   = new Reader(mapper, DenseDataRow.class);
@@ -377,6 +378,8 @@ public class MetaDataUtils {
     catch (Exception e) {
       errors.add("Failed to obtain database meta-data!", e);
     }
+
+    SQLUtils.closeAll(rs);
 
     if (!errors.isEmpty())
       return null;

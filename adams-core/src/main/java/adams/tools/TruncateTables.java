@@ -199,8 +199,7 @@ public class TruncateTables
 	getLogger().log(Level.SEVERE, "Failed to retrieve list of tables:", e);
       }
       finally {
-	if (rs != null)
-	  SQLUtils.closeAll(rs);
+	SQLUtils.closeAll(rs);
       }
       if (isLoggingEnabled())
 	getLogger().info("Tables found: " + tables);

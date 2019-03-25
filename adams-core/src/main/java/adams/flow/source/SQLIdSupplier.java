@@ -293,7 +293,9 @@ public class SQLIdSupplier
     catch (Exception e) {
       errors.append(handleException("Failed to obtain IDs, using: " + ((query == null) ? m_SQL : query), e));
     }
-    SQLUtils.closeAll(rs);
+    finally {
+      SQLUtils.closeAll(rs);
+    }
 
     return result;
   }

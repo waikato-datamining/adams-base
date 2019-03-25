@@ -160,14 +160,7 @@ public class SQL
       // ignored?
     }
     finally{
-      if (rs!=null) {
-	try{
-	  rs.close();
-	}
-	catch (Exception e) {
-	  // ignored?
-	}
-      }
+      SQLUtils.closeAll(rs);
     }
     return tableExists;
   }
@@ -208,14 +201,7 @@ public class SQL
       // ignored?
     }
     finally{
-      if (rs != null) {
-	try {
-	  rs.close();
-	}
-	catch (Exception e) {
-	  // ignored?
-	}
-      }
+      SQLUtils.closeAll(rs);
     }
 
     return result;

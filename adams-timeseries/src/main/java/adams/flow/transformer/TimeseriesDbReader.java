@@ -482,8 +482,7 @@ public class TimeseriesDbReader
       result = handleException("Failed to execute statement: " + ((query == null) ? m_SQL : query), e);
     }
     finally {
-      if (rs != null)
-        SQLUtils.closeAll(rs);
+      SQLUtils.closeAll(rs);
     }
 
     return result;

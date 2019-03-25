@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TableExists.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -57,7 +57,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TableExists
   extends AbstractBooleanDatabaseCondition {
@@ -168,7 +167,7 @@ public class TableExists
 
       // determine table names
       rs       = null;
-      tables   = new ArrayList<String>();
+      tables   = new ArrayList<>();
       try {
 	rs = metadata.getTables(null, null, null, new String[]{"TABLE"});
 	while (rs.next())
@@ -178,8 +177,7 @@ public class TableExists
 	getLogger().log(Level.SEVERE, "Failed to retrieve list of tables:", e);
       }
       finally {
-	if (rs != null)
-	  SQLUtils.closeAll(rs);
+        SQLUtils.closeAll(rs);
       }
       if (isLoggingEnabled())
 	getLogger().info("Tables found: " + tables);

@@ -349,6 +349,8 @@ public class LogT
       }
     }
 
+    SQLUtils.close(stmt);
+
     return result;
   }
 

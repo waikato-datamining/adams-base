@@ -275,19 +275,22 @@ public class TimeseriesImportDatabaseDialog
 	    props.getProperty(DatabaseConnectionPage.CONNECTION_URL), 
 	    props.getProperty(DatabaseConnectionPage.CONNECTION_USER), 
 	    props.getPassword(DatabaseConnectionPage.CONNECTION_PASSWORD));
+	ResultSet rs = null;
 	try {
 	  conn.connect();
 	  props = m_PageQueries.getProperties();
 	  SQLIntf sql = SQLF.getSingleton(conn);
-	  ResultSet rs = sql.getResultSet(props.getProperty(QUERY_IDS));
+	  rs = sql.getResultSet(props.getProperty(QUERY_IDS));
 	  List<String> ids = new ArrayList<>();
 	  while (rs.next())
 	    ids.add("" + rs.getObject(1));
-	  SQLUtils.closeAll(rs);
 	  m_PageIDs.setValues(ids);
 	}
 	catch (Exception e) {
           currPage.getLogger().log(Level.SEVERE, "Failed to retrieve IDs!", e);
+	}
+	finally {
+	  SQLUtils.closeAll(rs);
 	}
       }
     });
