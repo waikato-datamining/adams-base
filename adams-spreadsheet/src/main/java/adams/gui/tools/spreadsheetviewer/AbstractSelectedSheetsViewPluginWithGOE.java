@@ -19,21 +19,21 @@
  */
 package adams.gui.tools.spreadsheetviewer;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JPanel;
-
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.GenericObjectEditor;
 import adams.gui.goe.GenericObjectEditor.GOEPanel;
+
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Ancestor for plugins that use a GOE setup on all the panels.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSelectedSheetsViewPluginWithGOE
   extends AbstractSelectedSheetsViewPlugin {
@@ -86,6 +86,15 @@ public abstract class AbstractSelectedSheetsViewPluginWithGOE
   @Override
   protected boolean hasCancelButton() {
     return false;
+  }
+
+  /**
+   * Returns the size of the dialog.
+   *
+   * @return		the size
+   */
+  protected Dimension getDialogSize() {
+    return GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension());
   }
 
   /**

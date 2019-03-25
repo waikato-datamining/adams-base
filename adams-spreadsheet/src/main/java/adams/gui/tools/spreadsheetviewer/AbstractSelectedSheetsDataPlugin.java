@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSelectedSheetsDataPlugin.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
@@ -41,7 +41,6 @@ import java.util.List;
  * Ancestor for plugins that operate on multiple panels.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSelectedSheetsDataPlugin
   extends AbstractDataPlugin {
@@ -126,7 +125,7 @@ public abstract class AbstractSelectedSheetsDataPlugin
    * @return		the size
    */
   protected Dimension getDialogSize() {
-    return GUIHelper.getDefaultSmallDialogDimension();
+    return GUIHelper.makeWider(GUIHelper.getDefaultSmallDialogDimension());
   }
   
   /**
