@@ -15,19 +15,20 @@
 
 /**
  * RowFinder.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka.rowfinder;
 
+import adams.core.option.OptionHandler;
 import weka.core.Instances;
 
 /**
  * Interface for classes that "find" rows of interest in datasets.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface RowFinder {
+public interface RowFinder
+  extends OptionHandler {
 
   /**
    * Returns the rows of interest in the dataset.
