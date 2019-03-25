@@ -28,78 +28,78 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
-import java.awt.*;
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * <!-- globalinfo-start -->
- * * Converts the JSON object passing through to Reports.
- * * <br><br>
+ <!-- globalinfo-start -->
+ * Converts the JSON object passing through to Reports.
+ * <br><br>
  * <!-- globalinfo-end -->
  * <p>
- * <!-- flow-summary-start -->
- * * Input&#47;output:<br>
- * * - accepts:<br>
- * * &nbsp;&nbsp;&nbsp;net.minidev.json.JSONObject<br>
- * * - generates:<br>
- * * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
- * * <br><br>
- * <!-- flow-summary-end -->
+ <!-- flow-summary-start -->
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;net.minidev.json.JSONObject<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
+ * <br><br>
+ <!-- flow-summary-end -->
  * <p>
  * <!-- options-start -->
- * * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
- * * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
- * * &nbsp;&nbsp;&nbsp;default: WARNING
- * * </pre>
- * *
- * * <pre>-name &lt;java.lang.String&gt; (property: name)
- * * &nbsp;&nbsp;&nbsp;The name of the actor.
- * * &nbsp;&nbsp;&nbsp;default: ViaAnnotationsToReports
- * * </pre>
- * *
- * * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
- * * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * * &nbsp;&nbsp;&nbsp;default:
- * * </pre>
- * *
- * * <pre>-skip &lt;boolean&gt; (property: skip)
- * * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
- * * &nbsp;&nbsp;&nbsp;as it is.
- * * &nbsp;&nbsp;&nbsp;default: false
- * * </pre>
- * *
- * * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
- * * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
- * * &nbsp;&nbsp;&nbsp;actors.
- * * &nbsp;&nbsp;&nbsp;default: false
- * * </pre>
- * *
- * * <pre>-silent &lt;boolean&gt; (property: silent)
- * * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
- * * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
- * * &nbsp;&nbsp;&nbsp;default: false
- * * </pre>
- * *
- * * <pre>-output-array &lt;boolean&gt; (property: outputArray)
- * * &nbsp;&nbsp;&nbsp;Whether to output the Reports as array or one-by-one.
- * * &nbsp;&nbsp;&nbsp;default: false
- * * </pre>
- * *
- * * <pre>-default-label &lt;java.lang.String&gt; (property: defaultLabel)
- * * &nbsp;&nbsp;&nbsp;Replaces empty labels with provided label. No default label if empty.
- * * &nbsp;&nbsp;&nbsp;default:
- * * </pre>
- * *
- * * <pre>-label-mapping &lt;adams.core.base.BaseKeyValuePair&gt; [-label-mapping ...] (property: labelMapping)
- * * &nbsp;&nbsp;&nbsp;Label mapping, in the form old=new\n. No label mapping if empty.
- * * &nbsp;&nbsp;&nbsp;default:
- * * </pre>
- * *
- * <!-- options-end -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: ViaAnnotationsToReports
+ * </pre>
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;Whether to output the Reports as array or one-by-one.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-default-label &lt;java.lang.String&gt; (property: defaultLabel)
+ * &nbsp;&nbsp;&nbsp;Replaces empty labels with provided label. No default label if empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-label-mapping &lt;adams.core.base.BaseKeyValuePair&gt; [-label-mapping ...] (property: labelMapping)
+ * &nbsp;&nbsp;&nbsp;Label mapping, in the form old=new\n. No label mapping if empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ <!-- options-end -->
  *
  * @author Hisham Abdel Qader (habdelqa at waikato dot ac dot nz)
  */
@@ -249,7 +249,7 @@ public class ViaAnnotationsToReports
     else
       result = "";
     result += QuickInfoHelper.toString(this, "labelMapping", m_LabelMapping, "label-mapping: ");
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "output array"));
     result += QuickInfoHelper.flatten(options);
 
@@ -292,7 +292,6 @@ public class ViaAnnotationsToReports
     String label;
 
     result = null;
-    report = null;
     json = m_InputToken.getPayload(JSONObject.class);
 
     // generate lookup table
@@ -308,7 +307,6 @@ public class ViaAnnotationsToReports
       // generate a report per image
       for (String key : metadata.keySet()) {
 	image = (JSONObject) metadata.get(key);
-	report = new Report();
 	regions = (JSONArray) image.get("regions");
 	objects = new LocatedObjects();
 
