@@ -15,7 +15,7 @@
 
 /*
  * WekaGeneticAlgorithm.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -133,7 +133,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaGeneticAlgorithm
   extends AbstractTransformer
@@ -579,18 +578,20 @@ public class WekaGeneticAlgorithm
       m_ActualAlgorithm.setInstances(data);
       if (getStorageHandler().getStorage().has(m_TestData))
 	m_ActualAlgorithm.setTestInstances((Instances) getStorageHandler().getStorage().get(m_TestData));
-      m_ActualAlgorithm.run();
-      if (m_ActualAlgorithm.isStopped())
-	result = "Genetic algorithm stopped!";
-      else if (m_ActualAlgorithm.getCurrentWeights() == null)
-        result = "No results (measure, fitness, weights) from run available: " + OptionUtils.getCommandLine(m_ActualAlgorithm.getCurrentSetup());
-      else
-	cont = new WekaGeneticAlgorithmContainer(
-	  (Classifier) m_ActualAlgorithm.getCurrentSetup(),
-	  m_ActualAlgorithm.getMeasure(),
-	  m_ActualAlgorithm.getCurrentFitness(),
-          GeneticAlgorithmJob.weightsToString(m_ActualAlgorithm.getCurrentWeights()),
-          m_ActualAlgorithm.getCurrentWeights());
+      result = m_ActualAlgorithm.run();
+      if (result == null) {
+        if (m_ActualAlgorithm.isStopped())
+          result = "Genetic algorithm stopped!";
+        else if (m_ActualAlgorithm.getCurrentWeights() == null)
+          result = "No results (measure, fitness, weights) from run available: " + OptionUtils.getCommandLine(m_ActualAlgorithm.getCurrentSetup());
+        else
+          cont = new WekaGeneticAlgorithmContainer(
+            (Classifier) m_ActualAlgorithm.getCurrentSetup(),
+            m_ActualAlgorithm.getMeasure(),
+            m_ActualAlgorithm.getCurrentFitness(),
+            GeneticAlgorithmJob.weightsToString(m_ActualAlgorithm.getCurrentWeights()),
+            m_ActualAlgorithm.getCurrentWeights());
+      }
       m_ActualAlgorithm.removeFitnessChangeListener(this);
       m_ActualAlgorithm = null;
     }

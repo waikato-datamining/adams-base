@@ -15,7 +15,7 @@
 
 /*
  * AbstractClassifierBasedGeneticAlgorithm.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.opt.genetic;
@@ -1092,17 +1092,17 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   /**
    * Further clean-ups in derived classes.
    *
-   * @param successfulRun  	whether the run was successful
+   * @param error  		null if successful, otherwise error message
    * @throws Exception		if something goes wrong
    */
-  protected void postRun(boolean successfulRun) throws Exception {
+  protected void postRun(String error) throws Exception {
     Map<String,Object>	params;
 
-    super.postRun(successfulRun);
+    super.postRun(error);
 
     params = new HashMap<>();
     params.put(AbstractSetupUpload.KEY_MEASURE, "" + getMeasure());
-    m_SetupUpload.finish(this, successfulRun, params);
+    m_SetupUpload.finish(this, error, params);
   }
 
   /**

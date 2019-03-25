@@ -15,7 +15,7 @@
 
 /*
  * Hermione.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.opt.genetic;
@@ -175,7 +175,6 @@ import java.util.logging.Level;
  *
  * @author Dale (dale at cs dot waikato dot ac dot nz)
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 4322 $
  */
 public class Hermione
   extends AbstractClassifierBasedGeneticAlgorithmWithSecondEvaluation {
@@ -193,7 +192,6 @@ public class Hermione
    * A job class specific to Hermione.
    *
    * @author  dale
-   * @version $Revision: 4322 $
    */
   public static class HermioneJob
     extends ClassifierBasedGeneticAlgorithmWithSecondEvaluationJob<Hermione> {
@@ -414,6 +412,9 @@ public class Hermione
   @Override
   protected void preRun() {
     super.preRun();
+
+    if (m_Handlers.length == 0)
+      throw new IllegalStateException("No handlers defined!");
 
     AbstractGeneticDiscoveryHandler[] handlers = new AbstractGeneticDiscoveryHandler[m_Handlers.length];
     for (int i = 0; i < m_Handlers.length; i++)
