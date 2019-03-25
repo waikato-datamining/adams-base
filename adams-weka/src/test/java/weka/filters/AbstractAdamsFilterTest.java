@@ -20,6 +20,7 @@
 package weka.filters;
 
 import adams.env.Environment;
+import weka.core.AbstractInstance;
 import weka.test.AdamsTestHelper;
 
 /**
@@ -34,6 +35,12 @@ public abstract class AbstractAdamsFilterTest
   static {
     AdamsTestHelper.setRegressionRoot();
   }
+
+  /** The default number of decimal places to print during regression tests. */
+  public static final int REGRESSION_DECIMAL_PLACES_DEFAULT = 6;
+
+  /** The number of decimal places to print during regression tests. */
+  protected int m_RegressionDecimalPlaces = REGRESSION_DECIMAL_PLACES_DEFAULT;
 
   /**
    * Initializes the test.
@@ -65,5 +72,32 @@ public abstract class AbstractAdamsFilterTest
   protected void setUpEnvironment() {
     Environment.setEnvironmentClass(adams.env.Environment.class);
     System.setProperty("weka.test.maventest", "true");
+  }
+
+  /**
+   * Sets the number of decimal places to print for instance values
+   * during the regression test.
+   */
+  public void setRegressionDecimalPlaces(int value) {
+    m_RegressionDecimalPlaces = value;
+  }
+
+  /**
+   * Modifies the standard regression test to use a custom number of
+   * decimal places when printing instance values.
+   */
+  @Override
+  public void testRegression() {
+    // Remember the current precision setting for printing instance values
+    int previousDecimalPlaces = AbstractInstance.s_numericAfterDecimalPoint;
+
+    // Set the precision to our custom value
+    AbstractInstance.s_numericAfterDecimalPoint = m_RegressionDecimalPlaces;
+
+    // Run the regression test
+    super.testRegression();
+
+    // Restore the saved precision value
+    AbstractInstance.s_numericAfterDecimalPoint = previousDecimalPlaces;
   }
 }
