@@ -71,6 +71,10 @@ adams.gui.visualization.jfreechart.chart.AbstractChartGenerator=\
 adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator=\
   adams.gui.visualization.jfreechart.shape
 
+# merge actors
+adams.flow.transformer.SpreadSheetMergeActor=\
+  adams.flow.transformer
+
 # transformers for spreadsheets
 adams.flow.transformer.AbstractSpreadSheetTransformer=\
   adams.flow.transformer
