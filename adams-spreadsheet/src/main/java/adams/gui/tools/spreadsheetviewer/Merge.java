@@ -15,14 +15,14 @@
 
 /*
  * Merge.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
 import adams.data.spreadsheet.SpreadSheet;
-import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.transformer.SpreadSheetMerge;
+import adams.flow.transformer.SpreadSheetMergeActor;
 
 /**
  * Merges multiple spreadsheets into a single one.
@@ -83,7 +83,7 @@ public class Merge
    */
   @Override
   protected Class getEditorType() {
-    return Actor.class;
+    return SpreadSheetMergeActor.class;
   }
 
   /**
@@ -104,7 +104,7 @@ public class Merge
    */
   @Override
   protected boolean getCanChangeClassInDialog() {
-    return false;
+    return true;
   }
 
   /**
@@ -125,12 +125,12 @@ public class Merge
    */
   @Override
   protected SpreadSheet process() {
-    SpreadSheet		result;
-    SpreadSheetMerge	merge;
-    SpreadSheet[]	sheets;
-    int			i;
-    Token		token;
-    String		msg;
+    SpreadSheet			result;
+    SpreadSheetMergeActor	merge;
+    SpreadSheet[]		sheets;
+    int				i;
+    Token			token;
+    String			msg;
     
     if (m_SelectedPanels.length < 2) {
       getLogger().warning("At least two panels must be selected!");
@@ -138,7 +138,7 @@ public class Merge
     }
 
     result = null;
-    merge  = (SpreadSheetMerge) m_Editor.getValue();
+    merge  = (SpreadSheetMergeActor) m_Editor.getValue();
     sheets = new SpreadSheet[m_SelectedPanels.length];
     for (i = 0; i < m_SelectedPanels.length; i++)
       sheets[i] = m_SelectedPanels[i].getSheet();

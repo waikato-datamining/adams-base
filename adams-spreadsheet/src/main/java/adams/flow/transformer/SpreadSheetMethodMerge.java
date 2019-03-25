@@ -89,7 +89,8 @@ import adams.flow.transformer.spreadsheetmethodmerge.Simple;
  * @author Corey Sterling (csterlin at waikato dot ac dot nz)
  */
 public class SpreadSheetMethodMerge
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements SpreadSheetMergeActor {
 
   /** Auto-generated serialisation UID#. */
   private static final long serialVersionUID = 3778575114133031631L;

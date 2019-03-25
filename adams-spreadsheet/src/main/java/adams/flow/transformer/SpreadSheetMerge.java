@@ -19,6 +19,7 @@
  */
 package adams.flow.transformer;
 
+import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.data.spreadsheet.Row;
@@ -147,7 +148,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SpreadSheetMerge
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements SpreadSheetMergeActor, ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = 3363405805013155845L;
@@ -195,6 +197,15 @@ public class SpreadSheetMerge
     return 
 	"Merges two or more spreadsheets. The merge can be done by using "
 	+ "a common key-column or by simply putting the spreadsheets side-by-side.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{SpreadSheetMethodMerge.class};
   }
 
   /**
