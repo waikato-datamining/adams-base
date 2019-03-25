@@ -1,0 +1,15 @@
+# Customizing the console window.
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+
+# The minimum number of lines allowed as input
+LinesMinimum=1
+
+# The maximum number of lines allowed as input
+LinesMaximum=1000000
+
+# The step size
+LinesStepSize=10000
+
+# The default number of lines
+LinesDefault=10000

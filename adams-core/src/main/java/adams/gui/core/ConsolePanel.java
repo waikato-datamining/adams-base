@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ConsolePanel.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
@@ -56,7 +57,6 @@ import java.util.logging.Level;
  * Global panel for capturing output via PrintObject instances.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ConsolePanel
   extends BasePanel
@@ -69,7 +69,6 @@ public class ConsolePanel
    * Represents a single panel for a specific type of output.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class OutputPanel
     extends BasePanel
@@ -125,8 +124,11 @@ public class ConsolePanel
     protected void initGUI() {
       JPanel			panel;
       SpinnerNumberModel	model;
+      Properties		props;
 
       super.initGUI();
+
+      props = getProperties();
 
       setLayout(new BorderLayout());
 
@@ -151,10 +153,10 @@ public class ConsolePanel
       m_SpinnerMaxLines = new JSpinner();
       m_SpinnerMaxLines.addChangeListener((ChangeEvent e) -> trimOutput());
       model = (SpinnerNumberModel) m_SpinnerMaxLines.getModel();
-      model.setMinimum(1);
-      model.setMaximum(10000000);
-      model.setStepSize(10000);
-      model.setValue(100000);
+      model.setMinimum(props.getInteger("LinesMinimum", 1));
+      model.setMaximum(props.getInteger("LinesMaximum", 10000000));
+      model.setStepSize(props.getInteger("LinesStep", 10000));
+      model.setValue(props.getInteger("LinesDefault", 10000));
       panel.add(m_SpinnerMaxLines);
 
       m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
@@ -312,7 +314,6 @@ public class ConsolePanel
    * The type of panel.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum PanelType {
     /** contains all the output. */
@@ -325,7 +326,6 @@ public class ConsolePanel
    * For letting {@link PrintStream} objects print to the {@link ConsolePanel}.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class ConsolePanelOutputStream
     extends OutputStream {
@@ -373,6 +373,12 @@ public class ConsolePanel
       }
     }
   }
+
+  /** the props file with the style definitions. */
+  public final static String FILENAME = "adams/gui/core/ConsolePanel.props";
+
+  /** the properties. */
+  protected static Properties m_Properties;
 
   /** the singleton. */
   protected static ConsolePanel m_Singleton;
@@ -759,6 +765,25 @@ public class ConsolePanel
     }
 
     return result;
+  }
+
+  /**
+   * Returns the syntax style definition.
+   *
+   * @return		the props file with the definitions
+   */
+  public static synchronized Properties getProperties() {
+    if (m_Properties == null) {
+      try {
+        m_Properties = Properties.read(FILENAME);
+      }
+      catch (Exception e) {
+        System.err.println("Failed to load properties '" + FILENAME + "': ");
+        e.printStackTrace();
+        m_Properties = new Properties();
+      }
+    }
+    return m_Properties;
   }
 
   /**
