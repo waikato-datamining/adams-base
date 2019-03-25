@@ -1,8 +1,6 @@
 % This work is made available under the terms of the
 % Creative Commons Attribution-ShareAlike 4.0 license,
 % http://creativecommons.org/licenses/by-sa/4.0/.
-%
-% Version: $Revision$
 
 \documentclass[a4paper]{book}
 
@@ -45,7 +43,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2018} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2019} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -163,6 +161,9 @@ The following transformers are available:
 	the whole spreadsheet (or a defined subset).
 	\item \textit{SpreadSheetMerge} -- merges multiple spreadsheets into a single
 	one.\footnote{adams-spreadsheet-simple\_merge.flow, adams-spreadsheet-merge\_using\_id.flow}
+	\item \textit{SpreadSheetMethodMerge} -- like \textit{SpreadSheetMerge},
+	merges multiple spreadsheets into a single, but uses a class hierarchy
+	of merge algorithms.
 	\item \textit{SpreadSheetPlotGenerator} -- turns a spreadsheet into plot
 	containers to be displayed in the \textit{SequencePlotter} 
 	sink.\footnote{adams-spreadsheet-spreadsheet\_plot1.flow, 
