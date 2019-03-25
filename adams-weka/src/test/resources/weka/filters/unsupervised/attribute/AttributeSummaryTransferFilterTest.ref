@@ -1,0 +1,27 @@
+@relation 'output-weka.filters.unsupervised.attribute.AttributeSummaryTransferFilter-row-finderadams.data.weka.rowfinder.Constant -rows 10 -rows 11 -rows 12 -rows 13 -rows 14 -rows 15 -rows 16 -rows 17 -rows 18 -rows 19 -rows 20 -rows 21 -rows 22 -rows 23 -rows 24 -rows 25 -rows 26 -rows 27 -rows 28 -rows 29 -rows 30 -rows 31 -rows 32 -rows 33 -rows 34 -rows 35 -rows 36 -rows 37 -rows 38 -rows 39 -rows 40 -rows 41 -rows 42 -rows 43 -rows 44 -rows 45 -rows 46 -rows 47 -rows 48 -rows 49-column-finderadams.data.weka.columnfinder.Constant -columns 1 -columns 2 -columns 3 -columns 4 -columns 5 -columns 6 -columns 7 -columns 8 -columns 9-summary-filterweka.filters.unsupervised.attribute.PrincipalComponentsJ -R 0.95 -A 5 -M -1 -simple-attribute-names-class-name'
+
+@attribute PCA_1 numeric
+@attribute Numeric1 numeric
+@attribute Numeric11 numeric
+@attribute Numeric12 numeric
+@attribute Numeric13 numeric
+@attribute Numeric14 numeric
+@attribute Numeric15 numeric
+@attribute Numeric16 numeric
+@attribute Numeric17 numeric
+@attribute Numeric18 numeric
+@attribute Numeric19 numeric
+@attribute Numeric20 numeric
+@attribute Class {class1,class2}
+
+@data
+2.245108,3.600473,3.652736,4.463705,3.659578,4.439865,4.054072,4.447195,4.41095,4.437082,3.987087,3.897174,class2
+2.319144,3.847518,4.159893,3.542298,3.656747,4.261675,3.878202,4.123973,3.639763,4.379263,4.194948,3.950218,class2
+2.250977,3.504853,3.575388,4.044555,4.110592,4.0771,4.454931,3.704913,3.774069,4.123364,3.690202,3.684707,class2
+-3.676556,-0.489316,-0.254573,-0.293724,-0.105479,0.345656,-0.282398,-0.093459,-0.067993,0.44984,-0.266844,0.020779,class1
+2.232236,3.88725,4.086248,4.484323,4.462215,3.706737,3.765155,3.874649,3.862896,3.96335,4.378429,3.83361,class2
+-3.553817,-0.056788,0.00766,-0.23421,-0.008549,-0.38333,-0.071216,-0.36317,-0.191907,0.046089,0.217322,-0.005381,class1
+2.21776,3.515384,4.018787,4.289191,4.026726,4.199007,3.860055,3.704636,3.942536,3.754909,4.199594,4.277916,class2
+-3.356218,-0.274978,0.137497,-0.179216,-0.49124,0.154426,0.13119,-0.127127,-0.292022,0.410566,0.380357,-0.195764,class1
+2.34074,4.308241,4.44726,4.323981,4.009387,3.623671,4.154316,4.116951,4.207768,3.981862,3.765903,3.59975,class2
+-3.854145,0.117146,0.179935,0.142382,-0.219998,-0.146661,0.103984,-0.345025,0.349641,-0.133229,-0.146177,0.063477,class1
