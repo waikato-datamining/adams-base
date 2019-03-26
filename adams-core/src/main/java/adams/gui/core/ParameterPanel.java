@@ -158,8 +158,8 @@ public class ParameterPanel
     m_CheckBoxes                 = new ArrayList<>();
     m_Labels                     = new ArrayList<>();
     m_Parameters                 = new ArrayList<>();
-    m_PreferredDimensionJSpinner = new Dimension(100, 20);
-    m_MinDimensionJComboBox      = new Dimension(50, 20);
+    m_PreferredDimensionJSpinner = new Dimension(100, GUIHelper.getInteger("GOESpinnerHeight", 20));
+    m_MinDimensionJComboBox      = new Dimension(50, GUIHelper.getInteger("GOEComboBoxHeight", 20));
     m_ChangeListeners            = new HashSet<>();
     m_UseMnemonicIndicators      = true;
     m_DocumentListener = new DocumentListener() {

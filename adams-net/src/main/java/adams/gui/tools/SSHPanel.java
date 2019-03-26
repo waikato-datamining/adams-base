@@ -288,7 +288,7 @@ public class SSHPanel
 	      + File.separator
 	      + "id_rsa");
 	  m_FileChooserPanelKey.setPrefix("Private key");
-	  m_FileChooserPanelKey.setPreferredSize(new Dimension(250, 20));
+	  m_FileChooserPanelKey.setPreferredSize(new Dimension(250, GUIHelper.getInteger("GOEDefaultHeight", 20)));
 	  authPanel.add(m_FileChooserPanelKey);
 	  m_TextKeyPassphrase = new JPasswordField(8);
 	  label = new JLabel("Passphrase");
