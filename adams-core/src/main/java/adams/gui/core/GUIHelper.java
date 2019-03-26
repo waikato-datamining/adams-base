@@ -2546,7 +2546,7 @@ public class GUIHelper {
    * @return		the spinner height
    */
   public static int getPreferredSpinnerHeight() {
-    return (int) (getInteger("SpinnerHeight", 20) * getDisplayScaleFactor());
+    return (int) (getInteger("SpinnerHeight", 25) * getDisplayScaleFactor());
   }
 
   /**
