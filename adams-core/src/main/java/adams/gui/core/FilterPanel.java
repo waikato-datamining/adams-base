@@ -221,6 +221,24 @@ public class FilterPanel
   }
 
   /**
+   * Sets the tool tip for the text field and label.
+   *
+   * @param value	the tip text
+   */
+  public void setToolTipText(String value) {
+    m_TextFilter.setToolTipText(value);
+  }
+
+  /**
+   * Returns the tool tip for the text field.
+   *
+   * @return		the tip text
+   */
+  public String getToolTipText() {
+    return m_TextFilter.getToolTipText();
+  }
+
+  /**
    * Adds the listener to the internal set.
    *
    * @param l		the listener to add
