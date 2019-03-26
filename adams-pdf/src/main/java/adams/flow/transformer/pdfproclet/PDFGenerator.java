@@ -484,7 +484,7 @@ public class PDFGenerator
 	proclet.process(this, file);
 	processed = true;
 	if (isLoggingEnabled())
-	  getLogger().info("File '" + file + "' processed by: " + proclet.toCommandLine());
+	  getLogger().fine("File '" + file + "' processed by: " + proclet.toCommandLine());
       }
     }
 
