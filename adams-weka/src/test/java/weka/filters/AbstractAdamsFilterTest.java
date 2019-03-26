@@ -94,9 +94,6 @@ public abstract class AbstractAdamsFilterTest
     // Set the precision to our custom value
     AbstractInstance.s_numericAfterDecimalPoint = m_RegressionDecimalPlaces;
 
-    // Print the test set
-    System.out.println(m_Instances);
-
     // Run the regression test
     super.testRegression();
 
