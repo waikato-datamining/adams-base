@@ -5,7 +5,6 @@
 # class.name=package1,package2,...
 #
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # the PDF processors writers
 adams.flow.transformer.pdfproclet.PdfProclet=\
@@ -14,3 +13,7 @@ adams.flow.transformer.pdfproclet.PdfProclet=\
 # the stamp algorithms
 adams.flow.transformer.pdfstamp.AbstractStamper=\
   adams.flow.transformer.pdfstamp
+
+# the PDF generator schemes
+adams.flow.transformer.pdfgenerate.AbstractPDFGenerator=\
+  adams.flow.transformer.pdfgenerate
