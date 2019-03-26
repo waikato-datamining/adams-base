@@ -24,8 +24,9 @@ package adams.gui.tools.wekainvestigator.tab.preprocesstab;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTable;
-import adams.gui.core.BaseTableWithButtons;
+import adams.gui.core.FilterPanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.SortableAndSearchableTableWithButtons;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instances;
@@ -41,6 +42,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -77,7 +79,8 @@ public class AttributeSelectionPanel
    * A table model that looks at the names of attributes and maintains a list of
    * attributes that have been "selected".
    */
-  public static class AttributeTableModel extends AbstractTableModel {
+  public static class AttributeTableModel
+    extends AbstractTableModel {
 
     /** for serialization */
     private static final long serialVersionUID = -4152987434024338064L;
@@ -149,6 +152,8 @@ public class AttributeSelectionPanel
      */
     @Override
     public Object getValueAt(int row, int column) {
+      if (m_Instances == null)
+        return null;
       if (row >= m_Instances.numAttributes())
 	return null;
       switch (column) {
@@ -192,6 +197,8 @@ public class AttributeSelectionPanel
      */
     @Override
     public void setValueAt(Object value, int row, int col) {
+      if (m_Instances == null)
+        return;
       if (col == 1) {
 	m_Selected.put(m_Instances.attribute(row).name(), (Boolean) value);
 	fireTableRowsUpdated(0, getRowCount());
@@ -206,7 +213,10 @@ public class AttributeSelectionPanel
      */
     @Override
     public Class<?> getColumnClass(int col) {
-      return getValueAt(0, col).getClass();
+      if (m_Instances == null)
+        return Object.class;
+      else
+	return getValueAt(0, col).getClass();
     }
 
     /**
@@ -318,20 +328,23 @@ public class AttributeSelectionPanel
     }
   }
 
-  /** Press to select all attributes */
+  /** to select all attributes */
   protected BaseButton m_ButtonAll;
 
-  /** Press to deselect all attributes */
+  /** to deselect all attributes */
   protected BaseButton m_ButtonNone;
 
-  /** Press to invert the current selection */
+  /** to invert the current selection */
   protected BaseButton m_ButtonInvert;
 
-  /** Press to enter a perl regular expression for selection */
+  /** for entering a regular expression for selection */
   protected BaseButton m_ButtonPattern;
 
+  /** the filter panel. */
+  protected FilterPanel m_PanelFilter;
+
   /** The table displaying attribute names and selection status */
-  protected BaseTableWithButtons m_Table;
+  protected SortableAndSearchableTableWithButtons m_Table;
 
   /** The table model containing attribute names and selection status */
   protected AttributeTableModel m_Model;
@@ -366,17 +379,26 @@ public class AttributeSelectionPanel
 
     setLayout(new BorderLayout());
 
+    m_Table = new SortableAndSearchableTableWithButtons();
+    m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
+    m_Table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    m_Table.getSelectionModel().addListSelectionListener(this);
+    add(m_Table, BorderLayout.CENTER);
+
     m_ButtonAll = new BaseButton("All");
     m_ButtonAll.setToolTipText("Selects all attributes");
     m_ButtonAll.addActionListener((ActionEvent e) -> m_Model.selectAll());
+    m_Table.addToButtonsPanel(m_ButtonAll);
 
     m_ButtonNone = new BaseButton("None");
     m_ButtonNone.setToolTipText("Unselects all attributes");
     m_ButtonNone.addActionListener((ActionEvent e) -> m_Model.selectNone());
+    m_Table.addToButtonsPanel(m_ButtonNone);
 
     m_ButtonInvert = new BaseButton("Invert");
     m_ButtonInvert.setToolTipText("Inverts the current attribute selection");
     m_ButtonInvert.addActionListener((ActionEvent e) -> m_Model.invert());
+    m_Table.addToButtonsPanel(m_ButtonInvert);
 
     m_ButtonPattern = new BaseButton("Pattern");
     m_ButtonPattern.setToolTipText("Selects all attributes that match a reg. expression");
@@ -396,20 +418,13 @@ public class AttributeSelectionPanel
 	}
       }
     });
-
-    m_Table = new BaseTableWithButtons();
-    m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
-    m_Table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    //m_Table.getComponent().setColumnSelectionAllowed(false);
-    m_Table.getSelectionModel().addListSelectionListener(this);
-
-    // Set up the layout
-    m_Table.addToButtonsPanel(m_ButtonAll);
-    m_Table.addToButtonsPanel(m_ButtonNone);
-    m_Table.addToButtonsPanel(m_ButtonInvert);
     m_Table.addToButtonsPanel(m_ButtonPattern);
 
-    add(m_Table, BorderLayout.CENTER);
+    m_PanelFilter = new FilterPanel(FilterPanel.HORIZONTAL);
+    m_PanelFilter.setToolTipText("For filtering the attribute names");
+    m_PanelFilter.addChangeListener((ChangeEvent e) -> search());
+    m_PanelFilter.setPreferredSize(new Dimension(150, GUIHelper.getPreferredButtonHeight()));
+    m_Table.addToButtonsPanel(m_PanelFilter);
   }
 
   /**
@@ -418,13 +433,13 @@ public class AttributeSelectionPanel
   @Override
   protected void finishInit() {
     super.finishInit();
-    updateButtons();
+    updateWidgets();
   }
 
   /**
-   * Updates the enabled state of the buttons.
+   * Updates the enabled state of the buttons/combobox.
    */
-  protected void updateButtons() {
+  protected void updateWidgets() {
     boolean 	dataLoaded;
 
     dataLoaded = (getInstances() != null);
@@ -433,6 +448,7 @@ public class AttributeSelectionPanel
     m_ButtonNone.setEnabled(dataLoaded);
     m_ButtonInvert.setEnabled(dataLoaded);
     m_ButtonPattern.setEnabled(dataLoaded);
+    m_PanelFilter.setEnabled(dataLoaded);
   }
 
   /**
@@ -443,22 +459,21 @@ public class AttributeSelectionPanel
   public void setInstances(Instances data) {
     TableColumnModel 	colModel;
 
-    if (m_Model == null) {
-      m_Model = new AttributeTableModel(data);
-      m_Model.addTableModelListener(this);
-      m_Table.setModel(m_Model);
-    }
-    else {
-      m_Model.setInstances(data);
-      m_Table.getComponent().clearSelection();
-    }
+    if (m_Model != null)
+      m_Model.removeTableModelListener(this);
+
+    m_Model = new AttributeTableModel(data);
+    m_Model.addTableModelListener(this);
+    m_Table.setModel(m_Model);
 
     colModel = m_Table.getColumnModel();
     colModel.getColumn(0).setMaxWidth(60);
     colModel.getColumn(1).setMaxWidth(colModel.getColumn(1).getMinWidth());
-    m_Table.getComponent().setOptimalColumnWidth(2);
+    colModel.getColumn(2).setMinWidth(100);
 
-    updateButtons();
+    updateWidgets();
+    if (!m_PanelFilter.getFilter().isEmpty())
+      search();
   }
 
   /**
@@ -471,6 +486,16 @@ public class AttributeSelectionPanel
       return null;
     else
       return m_Model.getInstances();
+  }
+
+  /**
+   * Searches the panel with the filter.
+   */
+  protected void search() {
+    if (getInstances() == null)
+      return;
+
+    m_Table.search(m_PanelFilter.getFilter(), false);
   }
 
   /**
