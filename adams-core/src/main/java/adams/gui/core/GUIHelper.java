@@ -2523,6 +2523,51 @@ public class GUIHelper {
   }
 
   /**
+   * Returns the preferred button height.
+   *
+   * @return		the button height
+   */
+  public static int getPreferredButtonHeight() {
+    return (int) (getInteger("ButtonHeight", 25) * getDisplayScaleFactor());
+  }
+
+  /**
+   * Returns the preferred textfield height.
+   *
+   * @return		the textfield height
+   */
+  public static int getPreferredTextFieldHeight() {
+    return (int) (getInteger("TextFieldHeight", 25) * getDisplayScaleFactor());
+  }
+
+  /**
+   * Returns the preferred spinner height.
+   *
+   * @return		the spinner height
+   */
+  public static int getPreferredSpinnerHeight() {
+    return (int) (getInteger("SpinnerHeight", 20) * getDisplayScaleFactor());
+  }
+
+  /**
+   * Returns the preferred checkbox height.
+   *
+   * @return		the checkbox height
+   */
+  public static int getPreferredCheckBoxHeight() {
+    return (int) (getInteger("CheckBoxHeight", 25) * getDisplayScaleFactor());
+  }
+
+  /**
+   * Returns the preferred combobox height.
+   *
+   * @return		the combobox height
+   */
+  public static int getPreferredComboBoxHeight() {
+    return (int) (getInteger("ComboBoxHeight", 25) * getDisplayScaleFactor());
+  }
+
+  /**
    * Returns the scale factor for the display.
    *
    * @return		the scale factor

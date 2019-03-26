@@ -82,6 +82,13 @@ ScreenBorder.Right=0
 # (1.0 = 100%)
 DisplayScaleFactor=1.0
 
+# The preferred heights
+ButtonHeight=25
+TextFieldHeight=25
+SpinnerHeight=25
+CheckBoxHeight=25
+ComboBoxHeight=25
+
 # Dimensions and location
 # - pack the window
 # <classname of component>.pack=true|false
