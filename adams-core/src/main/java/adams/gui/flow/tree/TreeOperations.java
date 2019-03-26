@@ -679,6 +679,7 @@ public class TreeOperations
 	SwingUtilities.invokeLater(() -> {
 	  getOwner().setSelectedFullName(currentNode.getFullName());
 	  getOwner().requestFocus();
+	  getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), currentNode, Type.MODIFY));
 	});
         break;
 
@@ -704,6 +705,7 @@ public class TreeOperations
 	SwingUtilities.invokeLater(() -> {
 	  getOwner().setSelectedFullName(nodes[nodes.length - 1].getFullName());
 	  getOwner().requestFocus();
+	  getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), parentNode, Type.MODIFY));
 	});
         break;
 
@@ -729,6 +731,7 @@ public class TreeOperations
 	SwingUtilities.invokeLater(() -> {
 	  getOwner().setSelectedFullName(nodes[nodes.length - 1].getFullName());
 	  getOwner().requestFocus();
+	  getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), parentNode, Type.MODIFY));
 	});
         break;
 

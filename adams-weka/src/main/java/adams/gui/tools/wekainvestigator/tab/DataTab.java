@@ -13,30 +13,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DataTab.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.gui.core.GUIHelper;
-import adams.gui.core.SearchPanel;
-import adams.gui.core.SearchPanel.LayoutType;
-import adams.gui.event.SearchEvent;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import adams.gui.visualization.core.PopupMenuCustomizer;
-import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.InstancesPanel;
 import adams.gui.visualization.instances.InstancesTableModel;
-import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import weka.core.Instance;
 import weka.core.Instances;
 
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
@@ -54,7 +49,6 @@ import java.util.Set;
  * Lists the currently loaded datasets.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DataTab
   extends AbstractInvestigatorTabWithEditableDataTable
@@ -63,7 +57,7 @@ public class DataTab
   private static final long serialVersionUID = -94945456385486233L;
 
   /** the cache for the tables. */
-  protected Map<DataContainer,InstancesTable> m_TableCache;
+  protected Map<DataContainer,InstancesPanel> m_TableCache;
 
   /** the cache for the last update cache. */
   protected Map<DataContainer,Date> m_TimestampCache;
@@ -71,11 +65,8 @@ public class DataTab
   /** the default max column width. */
   protected Integer m_MaxColWidth;
 
-  /** the currently displayed table. */
-  protected InstancesTable m_CurrentTable;
-
-  /** the search panel. */
-  protected SearchPanel m_PanelSearch;
+  /** the currently displayed panel. */
+  protected InstancesPanel m_CurrentPanel;
 
   /**
    * Initializes the members.
@@ -87,25 +78,7 @@ public class DataTab
     m_TableCache     = new HashMap<>();
     m_TimestampCache = new HashMap<>();
     m_MaxColWidth    = null;
-    m_CurrentTable   = null;
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initGUI() {
-    super.initGUI();
-
-    m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
-    m_PanelSearch.addSearchListener((SearchEvent e) -> {
-      if (m_CurrentTable != null) {
-	if (e.getParameters().getSearchString().isEmpty())
-	  m_CurrentTable.search(null, false);
-	else
-	  m_CurrentTable.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
-      }
-    });
+    m_CurrentPanel   = null;
   }
 
   /**
@@ -145,7 +118,7 @@ public class DataTab
   public void dataChanged(WekaInvestigatorDataEvent e) {
     Set<DataContainer>	cached;
     Set<DataContainer>	current;
-    InstancesTable	table;
+    InstancesPanel 	panel;
     DataContainer	con;
 
     super.dataChanged(e);
@@ -158,18 +131,18 @@ public class DataTab
       current.add(cont);
     cached.removeAll(current);
     for (DataContainer cont: cached) {
-      table = m_TableCache.remove(cont);
-      table.removeChangeListener(this);
-      table.setCellPopupMenuCustomizer(null);
+      panel = m_TableCache.remove(cont);
+      panel.getTable().removeChangeListener(this);
+      panel.getTable().setCellPopupMenuCustomizer(null);
       m_TimestampCache.remove(cont);
     }
     // 2. remove containers that were modified
     for (DataContainer cont: current) {
       if (m_TimestampCache.containsKey(cont)) {
 	if (!cont.lastUpdated().equals(m_TimestampCache.get(cont))) {
-	  table = m_TableCache.remove(cont);
-	  table.removeChangeListener(this);
-	  table.setCellPopupMenuCustomizer(null);
+	  panel = m_TableCache.remove(cont);
+	  panel.getTable().removeChangeListener(this);
+	  panel.getTable().setCellPopupMenuCustomizer(null);
 	  m_TimestampCache.remove(cont);
 	}
       }
@@ -178,10 +151,10 @@ public class DataTab
     if (e.getType() == WekaInvestigatorDataEvent.ROWS_MODIFIED) {
       for (int row: e.getRows()) {
 	con = getData().get(row);
-	table = m_TableCache.remove(con);
-	if (table != null) {
-	  table.removeChangeListener(this);
-	  table.setCellPopupMenuCustomizer(null);
+	panel = m_TableCache.remove(con);
+	if (panel != null) {
+	  panel.getTable().removeChangeListener(this);
+	  panel.getTable().setCellPopupMenuCustomizer(null);
 	}
 	m_TimestampCache.remove(con);
       }
@@ -202,7 +175,6 @@ public class DataTab
    * Displays the data.
    */
   protected void displayData() {
-    JPanel			panel;
     DataContainer		cont;
     int				index;
     InstancesTableModel 	model;
@@ -212,38 +184,35 @@ public class DataTab
       m_MaxColWidth = InvestigatorPanel.getProperties().getInteger("Data.MaxColWidth", 100);
 
     if ((m_Table.getRowCount() > 0) && (m_Table.getSelectedRow() > -1)) {
-      panel = new JPanel(new BorderLayout());
       index = m_Table.getSelectedRow();
       cont  = getData().get(index);
       // table
       if (m_TableCache.containsKey(cont)) {
-	m_CurrentTable = m_TableCache.get(cont);
-	m_CurrentTable.setCellPopupMenuCustomizer(this);
+	m_CurrentPanel = m_TableCache.get(cont);
+	m_CurrentPanel.getTable().setCellPopupMenuCustomizer(this);
 	setOptimal     = false;
       }
       else {
 	model = new InstancesTableModel(cont.getData());
 	model.setUndoHandler(getData().get(index));
 	model.setShowAttributeIndex(true);
-	m_CurrentTable = new InstancesTable(model);
-	m_CurrentTable.setCellPopupMenuCustomizer(this);
-	m_CurrentTable.setUndoEnabled(true);
-	m_CurrentTable.addChangeListener(this);
-	m_TableCache.put(cont, m_CurrentTable);
+	m_CurrentPanel = new InstancesPanel();
+	m_CurrentPanel.setModel(model);
+	m_CurrentPanel.getTable().setCellPopupMenuCustomizer(this);
+	m_CurrentPanel.getTable().setUndoEnabled(true);
+	m_CurrentPanel.getTable().addChangeListener(this);
+	m_TableCache.put(cont, m_CurrentPanel);
 	m_TimestampCache.put(cont, new Date(cont.lastUpdated().getTime()));
 	setOptimal = true;
       }
-      panel.add(new BaseScrollPane(m_CurrentTable), BorderLayout.CENTER);
-      // search
-      panel.add(m_PanelSearch, BorderLayout.SOUTH);
       m_PanelData.removeAll();
-      m_PanelData.add(panel, BorderLayout.CENTER);
+      m_PanelData.add(m_CurrentPanel, BorderLayout.CENTER);
       if (m_SplitPane.isBottomComponentHidden()) {
 	m_SplitPane.setDividerLocation(m_DefaultDataTableHeight);
 	m_SplitPane.setBottomComponentHidden(false);
       }
       if (setOptimal)
-	m_CurrentTable.setOptimalColumnWidthBounded(m_MaxColWidth);
+	m_CurrentPanel.getTable().setOptimalColumnWidthBounded(m_MaxColWidth);
     }
     else {
       m_PanelData.removeAll();
@@ -278,7 +247,7 @@ public class DataTab
     JMenuItem	menuitem;
 
     menuitem = new JMenuItem("Insert as dataset", GUIHelper.getIcon("new.gif"));
-    menuitem.setEnabled((m_CurrentTable != null) && (m_CurrentTable.getSelectedRowCount() > 0));
+    menuitem.setEnabled((m_CurrentPanel != null) && (m_CurrentPanel.getTable().getSelectedRowCount() > 0));
     menuitem.addActionListener((ActionEvent ae) -> insertAsDataset());
     menu.add(menuitem);
   }
@@ -293,14 +262,14 @@ public class DataTab
     int			i;
     MemoryContainer	cont;
 
-    if ((m_CurrentTable == null) || (m_CurrentTable.getSelectedRowCount() == 0))
+    if ((m_CurrentPanel == null) || (m_CurrentPanel.getTable().getSelectedRowCount() == 0))
       return;
 
-    indices = m_CurrentTable.getSelectedRows();
-    data    = m_CurrentTable.getInstances();
+    indices = m_CurrentPanel.getTable().getSelectedRows();
+    data    = m_CurrentPanel.getInstances();
     newData = new Instances(data, indices.length);
     for (i = 0; i < indices.length; i++)
-      newData.add((Instance) data.instance(m_CurrentTable.getActualRow(indices[i])).copy());
+      newData.add((Instance) data.instance(m_CurrentPanel.getTable().getActualRow(indices[i])).copy());
 
     cont = new MemoryContainer(newData);
     getData().add(cont);

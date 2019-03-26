@@ -159,22 +159,22 @@ public abstract class AbstractSetupUpload
    * Finishing up the genetic algorithm run.
    *
    * @param algorithm		the algorithm that initiated the run
-   * @param successfulRun 	whether the run was successful
+   * @param error  		null if successful, otherwise error message
    * @param params              the parameters to store
    */
-  protected abstract void doFinish(AbstractGeneticAlgorithm algorithm, boolean successfulRun, Map<String,Object> params);
+  protected abstract void doFinish(AbstractGeneticAlgorithm algorithm, String error, Map<String,Object> params);
 
   /**
    * Finishing up the genetic algorithm run.
    *
    * @param algorithm		the algorithm that initiated the run
-   * @param successfulRun 	whether the run was successful
+   * @param error  		null if successful, otherwise error message
    * @param params              the parameters to store
    */
-  public void finish(AbstractGeneticAlgorithm algorithm, boolean successfulRun, Map<String,Object> params) {
+  public void finish(AbstractGeneticAlgorithm algorithm, String error, Map<String,Object> params) {
     if (isLoggingEnabled())
-      getLogger().info("finish: successfulRun=" + successfulRun);
-    doFinish(algorithm, successfulRun, params);
+      getLogger().info("finish: successfulRun=" + error);
+    doFinish(algorithm, error, params);
   }
 
   /**

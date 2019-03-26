@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFlowReader.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
 import adams.core.ClassLister;
+import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -34,15 +35,12 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
  * Ancestor for classes that can read flows.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFlowReader
   extends AbstractOptionHandler 
@@ -67,10 +65,10 @@ public abstract class AbstractFlowReader
   }
 
   /** for storing warnings. */
-  protected List<String> m_Warnings;
+  protected MessageCollection m_Warnings;
   
   /** for storing errors. */
-  protected List<String> m_Errors;
+  protected MessageCollection m_Errors;
 
   /** whether to suppress logging output. */
   protected boolean m_Quiet;
@@ -82,8 +80,8 @@ public abstract class AbstractFlowReader
   protected void initialize() {
     super.initialize();
     
-    m_Warnings = new ArrayList<>();
-    m_Errors   = new ArrayList<>();
+    m_Warnings = new MessageCollection();
+    m_Errors   = new MessageCollection();
     m_Quiet    = false;
   }
   
@@ -344,7 +342,7 @@ public abstract class AbstractFlowReader
    * 
    * @return		the warnings
    */
-  public List<String> getWarnings() {
+  public MessageCollection getWarnings() {
     return m_Warnings;
   }
 
@@ -370,7 +368,7 @@ public abstract class AbstractFlowReader
 	getLogger().severe(msg);
     }
     else {
-      m_Errors.add(msg + "\n" + Utils.throwableToString(t));
+      m_Errors.add(msg, t);
       if (!m_Quiet)
 	getLogger().log(Level.SEVERE, msg, t);
     }
@@ -381,7 +379,7 @@ public abstract class AbstractFlowReader
    * 
    * @return		the errors
    */
-  public List<String> getErrors() {
+  public MessageCollection getErrors() {
     return m_Errors;
   }
 

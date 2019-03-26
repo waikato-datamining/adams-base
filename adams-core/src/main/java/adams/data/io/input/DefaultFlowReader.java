@@ -15,7 +15,7 @@
 
 /*
  * DefaultFlowReader.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -353,7 +353,7 @@ public class DefaultFlowReader
       Utils.removeComments(lines, NestedProducer.COMMENT);
       nested = NestedFormatHelper.linesToNested(lines, ' ');
       try {
-	result = (Actor) OptionUtils.forCommandLine(Actor.class, ((Line) nested.get(0)).getContent(), null, null, true);
+	result = (Actor) OptionUtils.forCommandLine(Actor.class, ((Line) nested.get(0)).getContent(), m_Warnings, m_Errors, true);
 	nested.remove(0);
       }
       catch (Exception e) {

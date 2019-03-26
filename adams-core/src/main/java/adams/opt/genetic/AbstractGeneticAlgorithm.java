@@ -15,7 +15,7 @@
 
 /*
  * AbstractGeneticAlgorithm.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.opt.genetic;
@@ -68,7 +68,6 @@ public abstract class AbstractGeneticAlgorithm
    * A job class specific to genetic algorithms.
    *
    * @author  dale
-   * @version $Revision$
    */
   public static abstract class GeneticAlgorithmJob<T extends AbstractGeneticAlgorithm>
     extends AbstractJob
@@ -1075,22 +1074,21 @@ public abstract class AbstractGeneticAlgorithm
   /**
    * Runs the genetic algorithm.
    *
-   * @return		true if successfully finished, false when interrupted
+   * @return		null if successfully finished, otherwise error message
    */
-  public boolean run() {
-    boolean	result;
+  public String run() {
+    String	result;
 
-    result = true;
+    result = null;
 
     try {
       preRun();
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Error on preRun", e);
-      result = false;
+      result = Utils.handleException(this, "Error on preRun", e);
     }
 
-    if (result) {
+    if (result == null) {
       try {
 	m_CurrentIteration = 0;
 	do {
@@ -1140,8 +1138,7 @@ public abstract class AbstractGeneticAlgorithm
 	while (!getStoppingCriterion().checkStopping(this));
       }
       catch (Exception e) {
-	result = false;
-	getLogger().log(Level.SEVERE, "Error in iteration", e);
+	result = Utils.handleException(this, "Error in iteration", e);
       }
     }
 
@@ -1149,8 +1146,7 @@ public abstract class AbstractGeneticAlgorithm
       postRun(result);
     }
     catch (Exception e) {
-      result = false;
-      getLogger().log(Level.SEVERE, "Error in postRun", e);
+      result = Utils.handleException(this, "Error in postRun", e);
     }
 
     return result;
@@ -1159,10 +1155,10 @@ public abstract class AbstractGeneticAlgorithm
   /**
    * Further clean-ups in derived classes.
    *
-   * @param successfulRun  	whether the run was successful
+   * @param error  		null if successful, otherwise error message
    * @throws Exception		if something goes wrong
    */
-  protected void postRun(boolean successfulRun) throws Exception {
+  protected void postRun(String error) throws Exception {
     m_Running = false;
   }
 
