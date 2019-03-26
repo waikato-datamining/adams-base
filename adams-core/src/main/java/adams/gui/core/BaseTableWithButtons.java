@@ -15,7 +15,7 @@
 
 /*
  * BaseTableWithButtons.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -40,7 +40,6 @@ import java.awt.event.MouseEvent;
  * right-hand side.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTableWithButtons
   extends AbstractDoubleClickableComponentWithButtons<BaseTable>
@@ -462,6 +461,24 @@ public class BaseTableWithButtons
    */
   public boolean isCellSelected(int row, int column) {
     return m_Component.isCellSelected(row, column);
+  }
+
+  /**
+   * Scrolls the row into view.
+   *
+   * @param row		the row to scroll into view
+   */
+  public void scrollRowToVisible(int row) {
+    getComponent().scrollRowToVisible(row);
+  }
+
+  /**
+   * Scrolls the column into view.
+   *
+   * @param col		the column to scroll into view
+   */
+  public void scrollColumnToVisible(int col) {
+    getComponent().scrollColumnToVisible(col);
   }
 
   /**
