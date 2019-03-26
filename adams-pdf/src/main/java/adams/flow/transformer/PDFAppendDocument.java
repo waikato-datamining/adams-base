@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PDFAppendDocument.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -115,7 +115,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFAppendDocument
   extends AbstractTransformer
@@ -405,6 +404,7 @@ public class PDFAppendDocument
       if (file != null) {
 	try {
 	  generator = new PDFGenerator();
+	  generator.setLoggingLevel(getLoggingLevel());
 	  generator.setOutput(file);
 	  generator.append();
 	}

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PDFNewDocument.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -24,11 +24,11 @@ import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.io.FileWriter;
 import adams.core.io.PlaceholderFile;
+import adams.data.PageOrientation;
 import adams.flow.core.Token;
 import adams.flow.sink.PDFCloseDocument;
 import adams.flow.transformer.PDFAppendDocument;
 import adams.flow.transformer.pdfproclet.PDFGenerator;
-import adams.data.PageOrientation;
 import adams.flow.transformer.pdfproclet.PageSize;
 
 /**
@@ -102,7 +102,6 @@ import adams.flow.transformer.pdfproclet.PageSize;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFNewDocument
   extends AbstractSimpleSource
@@ -294,6 +293,7 @@ public class PDFNewDocument
 
     if (result == null) {
       generator = new PDFGenerator();
+      generator.setLoggingLevel(getLoggingLevel());
       generator.setOutput(m_OutputFile);
       generator.setPageOrientation(m_PageOrientation);
       generator.setPageSize(m_PageSize);

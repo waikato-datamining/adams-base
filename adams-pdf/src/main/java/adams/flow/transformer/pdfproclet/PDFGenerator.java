@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PDFGenerator.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
 
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
+import adams.core.logging.CustomLoggingLevelObject;
 import adams.data.PageOrientation;
 import adams.env.Environment;
 import com.itextpdf.text.Document;
@@ -38,9 +39,11 @@ import java.io.FileOutputStream;
  * A helper class for PDF generation.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class PDFGenerator {
+public class PDFGenerator
+  extends CustomLoggingLevelObject {
+
+  private static final long serialVersionUID = 8778949995989733244L;
 
   /** the output file. */
   protected PlaceholderFile m_Output;
@@ -397,6 +400,9 @@ public class PDFGenerator {
     m_Document.addCreator(Environment.getInstance().getProject());
     m_Document.addAuthor(System.getProperty("user.name"));
     m_State = new DocumentState();
+
+    if (isLoggingEnabled())
+      getLogger().info("Opening document: " + m_Output);
   }
 
   /**
@@ -410,6 +416,9 @@ public class PDFGenerator {
     int			i;
     PdfImportedPage 	page;
     PdfContentByte	cb;
+
+    if (isLoggingEnabled())
+      getLogger().info("Appending document: " + m_Output);
 
     resetState();
 
@@ -465,17 +474,22 @@ public class PDFGenerator {
   public void addFile(File file) throws Exception {
     boolean	processed;
 
+    if (isLoggingEnabled())
+      getLogger().info("Appending: " + file);
+
     processed = false;
 
     for (PdfProclet proclet: m_Proclets) {
       if (proclet.canProcess(this, file)) {
 	proclet.process(this, file);
 	processed = true;
+	if (isLoggingEnabled())
+	  getLogger().info("File '" + file + "' processed by: " + proclet.toCommandLine());
       }
     }
 
     if (!processed)
-      System.err.println("Unhandled file format - skipped: " + file);
+      getLogger().warning("Unhandled file format - skipped: " + file);
   }
 
   /**
@@ -494,6 +508,8 @@ public class PDFGenerator {
    * Closes the document again.
    */
   public void close() {
+    if (isLoggingEnabled())
+      getLogger().info("Closing document");
     m_Document.close();
     FileUtils.closeQuietly(m_Stream);
     resetState();

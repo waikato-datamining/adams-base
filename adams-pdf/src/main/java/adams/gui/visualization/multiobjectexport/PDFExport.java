@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PDFExport.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.multiobjectexport;
@@ -44,7 +44,6 @@ import java.util.List;
  * Generates a PDF from the exported objects (first get turned into files).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFExport
   extends AbstractMultiObjectExportWithPreferredExtensions
@@ -289,6 +288,7 @@ public class PDFExport
     // create PDF file
     if (errors.isEmpty()) {
       generator = new PDFGenerator();
+      generator.setLoggingLevel(getLoggingLevel());
       generator.setOutput(getOutputFile());
       generator.setPageSize(getPageSize());
       generator.setPageOrientation(getPageOrientation());
