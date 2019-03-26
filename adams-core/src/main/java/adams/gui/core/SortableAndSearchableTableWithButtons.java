@@ -400,6 +400,15 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
   }
 
   /**
+   * Sets the selected row (clears all others).
+   *
+   * @param row		the row to select
+   */
+  public void setSelectedRow(int row) {
+    m_Component.setSelectedRow(row);
+  }
+
+  /**
    * Returns the index of the first selected column,
    * -1 if no column is selected.
    * @return the index of the first selected column
@@ -417,6 +426,15 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
    */
   public int[] getSelectedRows() {
     return m_Component.getSelectedRows();
+  }
+
+  /**
+   * Sets the selected rows (clears all others).
+   *
+   * @param rows	the rows to select
+   */
+  public void setSelectedRows(int[] rows) {
+    m_Component.setSelectedRows(rows);
   }
 
   /**
