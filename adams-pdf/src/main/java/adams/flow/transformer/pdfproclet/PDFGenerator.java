@@ -475,7 +475,7 @@ public class PDFGenerator
     boolean	processed;
 
     if (isLoggingEnabled())
-      getLogger().info("Appending: " + file);
+      getLogger().info("Trying to add: " + file);
 
     processed = false;
 
@@ -490,6 +490,8 @@ public class PDFGenerator
 
     if (!processed)
       getLogger().warning("Unhandled file format - skipped: " + file);
+    else
+      getLogger().info("Added successfully: " + file);
   }
 
   /**
