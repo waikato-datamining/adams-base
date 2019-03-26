@@ -15,22 +15,21 @@
 
 /*
  *    AttributeSelectionPanel.java
- *    Copyright (C) 1999-2016 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab;
 
 import adams.gui.core.BaseButton;
+import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTable;
+import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.GUIHelper;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instances;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -42,8 +41,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,10 +65,9 @@ import java.util.regex.Pattern;
  *
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10216 $
  */
 public class AttributeSelectionPanel
-  extends JPanel
+  extends BasePanel
   implements TableModelListener, ListSelectionListener {
 
   /** for serialization */
@@ -81,7 +77,7 @@ public class AttributeSelectionPanel
    * A table model that looks at the names of attributes and maintains a list of
    * attributes that have been "selected".
    */
-  class AttributeTableModel extends AbstractTableModel {
+  public static class AttributeTableModel extends AbstractTableModel {
 
     /** for serialization */
     private static final long serialVersionUID = -4152987434024338064L;
@@ -109,6 +105,16 @@ public class AttributeSelectionPanel
     public void setInstances(Instances instances) {
       m_Instances = instances;
       m_Selected  = new HashMap<>();
+      fireTableStructureChanged();
+    }
+
+    /**
+     * Returns the underlying instances.
+     *
+     * @return		the data
+     */
+    public Instances getInstances() {
+      return m_Instances;
     }
 
     /**
@@ -277,12 +283,12 @@ public class AttributeSelectionPanel
     }
 
     /**
-     * applies the perl regular expression pattern to select the attribute names
+     * applies the regular expression pattern to select the attribute names
      * (expects a valid reg expression!)
      *
      * @param pattern a perl reg. expression
      */
-    public void pattern(String pattern) {
+    public void applyPattern(String pattern) {
       String	name;
 
       if (m_Instances == null)
@@ -294,6 +300,12 @@ public class AttributeSelectionPanel
       fireTableRowsUpdated(0, getRowCount());
     }
 
+    /**
+     * Applies the selected state of the array to the model.
+     *
+     * @param selected	the selected stat
+     * @throws Exception	if array length does not match number of attributes
+     */
     public void setSelectedAttributes(boolean[] selected) throws Exception {
       if (m_Instances == null)
 	return;
@@ -307,25 +319,25 @@ public class AttributeSelectionPanel
   }
 
   /** Press to select all attributes */
-  protected BaseButton m_ButtonAll = new BaseButton("All");
+  protected BaseButton m_ButtonAll;
 
   /** Press to deselect all attributes */
-  protected BaseButton m_ButtonNone = new BaseButton("None");
+  protected BaseButton m_ButtonNone;
 
   /** Press to invert the current selection */
-  protected BaseButton m_ButtonInvert = new BaseButton("Invert");
+  protected BaseButton m_ButtonInvert;
 
   /** Press to enter a perl regular expression for selection */
-  protected BaseButton m_ButtonPattern = new BaseButton("Pattern");
+  protected BaseButton m_ButtonPattern;
 
   /** The table displaying attribute names and selection status */
-  protected BaseTable m_Table = new BaseTable();
+  protected BaseTableWithButtons m_Table;
 
   /** The table model containing attribute names and selection status */
   protected AttributeTableModel m_Model;
 
   /** The current regular expression. */
-  protected String m_PatternRegEx = "";
+  protected String m_PatternRegEx;
 
   /** the listeners for changes in the checked attributes. */
   protected Set<ChangeListener> m_ChangeListeners;
@@ -334,111 +346,131 @@ public class AttributeSelectionPanel
   protected Set<ListSelectionListener> m_SelectionListeners;
 
   /**
-   * Creates the attribute selection panel with no initial instances.
+   * Initializes the members.
    */
-  public AttributeSelectionPanel() {
-    this(true, true, true, true);
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_PatternRegEx       = "";
+    m_ChangeListeners    = new HashSet<>();
+    m_SelectionListeners = new HashSet<>();
   }
 
   /**
-   * Creates the attribute selection panel with no initial instances.
-   *
-   * @param include true if the include button is to be shown
-   * @param remove true if the remove button is to be shown
-   * @param invert true if the invert button is to be shown
-   * @param pattern true if the pattern button is to be shown
+   * Initializes the widgets.
    */
-  public AttributeSelectionPanel(boolean include, boolean remove,
-				 boolean invert, boolean pattern) {
+  @Override
+  protected void initGUI() {
+    super.initGUI();
 
-    m_ChangeListeners    = new HashSet<>();
-    m_SelectionListeners = new HashSet<>();
+    setLayout(new BorderLayout());
 
+    m_ButtonAll = new BaseButton("All");
     m_ButtonAll.setToolTipText("Selects all attributes");
-    m_ButtonAll.setEnabled(false);
     m_ButtonAll.addActionListener((ActionEvent e) -> m_Model.selectAll());
+
+    m_ButtonNone = new BaseButton("None");
     m_ButtonNone.setToolTipText("Unselects all attributes");
-    m_ButtonNone.setEnabled(false);
     m_ButtonNone.addActionListener((ActionEvent e) -> m_Model.selectNone());
+
+    m_ButtonInvert = new BaseButton("Invert");
     m_ButtonInvert.setToolTipText("Inverts the current attribute selection");
-    m_ButtonInvert.setEnabled(false);
     m_ButtonInvert.addActionListener((ActionEvent e) -> m_Model.invert());
+
+    m_ButtonPattern = new BaseButton("Pattern");
     m_ButtonPattern.setToolTipText("Selects all attributes that match a reg. expression");
-    m_ButtonPattern.setEnabled(false);
     m_ButtonPattern.addActionListener((ActionEvent e) -> {
       String patternStr = GUIHelper.showInputDialog(m_ButtonPattern.getParent(),
-	"Enter a Perl regular expression", m_PatternRegEx);
+	"Enter a regular expression", m_PatternRegEx);
       if (patternStr != null) {
 	try {
 	  Pattern.compile(patternStr);
 	  m_PatternRegEx = patternStr;
-	  m_Model.pattern(patternStr);
+	  m_Model.applyPattern(patternStr);
 	}
 	catch (Exception ex) {
 	  GUIHelper.showErrorMessage(m_ButtonPattern.getParent(), "'" + patternStr
-	      + "' is not a valid Perl regular expression!", ex,
+	      + "' is not a valid regular expression!", ex,
 	    "Error in Pattern...");
 	}
       }
     });
+
+    m_Table = new BaseTableWithButtons();
+    m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_Table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    m_Table.setColumnSelectionAllowed(false);
-    m_Table.setPreferredScrollableViewportSize(new Dimension(250, 150));
+    //m_Table.getComponent().setColumnSelectionAllowed(false);
     m_Table.getSelectionModel().addListSelectionListener(this);
 
     // Set up the layout
-    JPanel p1 = new JPanel();
-    p1.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
-    p1.setLayout(new GridLayout(1, 4, 5, 5));
-    if (include)
-      p1.add(m_ButtonAll);
-    if (remove)
-      p1.add(m_ButtonNone);
-    if (invert)
-      p1.add(m_ButtonInvert);
-    if (pattern)
-      p1.add(m_ButtonPattern);
+    m_Table.addToButtonsPanel(m_ButtonAll);
+    m_Table.addToButtonsPanel(m_ButtonNone);
+    m_Table.addToButtonsPanel(m_ButtonInvert);
+    m_Table.addToButtonsPanel(m_ButtonPattern);
 
-    setLayout(new BorderLayout());
-    if (include || remove || invert || pattern)
-      add(p1, BorderLayout.NORTH);
-    add(new JScrollPane(m_Table), BorderLayout.CENTER);
-  }
-
-  public Dimension getPreferredScrollableViewportSize() {
-    return m_Table.getPreferredScrollableViewportSize();
-  }
-
-  public void setPreferredScrollableViewportSize(Dimension d) {
-    m_Table.setPreferredScrollableViewportSize(d);
+    add(m_Table, BorderLayout.CENTER);
   }
 
   /**
-   * Sets the instances who's attribute names will be displayed.
-   *
-   * @param newInstances the new set of instances
+   * Finishes the initialization.
    */
-  public void setInstances(Instances newInstances) {
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    updateButtons();
+  }
+
+  /**
+   * Updates the enabled state of the buttons.
+   */
+  protected void updateButtons() {
+    boolean 	dataLoaded;
+
+    dataLoaded = (getInstances() != null);
+
+    m_ButtonAll.setEnabled(dataLoaded);
+    m_ButtonNone.setEnabled(dataLoaded);
+    m_ButtonInvert.setEnabled(dataLoaded);
+    m_ButtonPattern.setEnabled(dataLoaded);
+  }
+
+  /**
+   * Sets the instances to display the attribute names for.
+   *
+   * @param data  	the instances
+   */
+  public void setInstances(Instances data) {
+    TableColumnModel 	colModel;
+
     if (m_Model == null) {
-      m_Model = new AttributeTableModel(newInstances);
+      m_Model = new AttributeTableModel(data);
       m_Model.addTableModelListener(this);
       m_Table.setModel(m_Model);
-      TableColumnModel tcm = m_Table.getColumnModel();
-      tcm.getColumn(0).setMaxWidth(60);
-      tcm.getColumn(1).setMaxWidth(tcm.getColumn(1).getMinWidth());
-      tcm.getColumn(2).setMinWidth(100);
     }
     else {
-      m_Model.setInstances(newInstances);
-      m_Table.clearSelection();
+      m_Model.setInstances(data);
+      m_Table.getComponent().clearSelection();
     }
-    m_ButtonAll.setEnabled(true);
-    m_ButtonNone.setEnabled(true);
-    m_ButtonInvert.setEnabled(true);
-    m_ButtonPattern.setEnabled(true);
-    m_Table.sizeColumnsToFit(2);
-    m_Table.revalidate();
-    m_Table.repaint();
+
+    colModel = m_Table.getColumnModel();
+    colModel.getColumn(0).setMaxWidth(60);
+    colModel.getColumn(1).setMaxWidth(colModel.getColumn(1).getMinWidth());
+    m_Table.getComponent().setOptimalColumnWidth(2);
+
+    updateButtons();
+  }
+
+  /**
+   * Returns the currently displayed instances.
+   *
+   * @return		the instances, null if none available
+   */
+  public Instances getInstances() {
+    if (m_Model == null)
+      return null;
+    else
+      return m_Model.getInstances();
   }
 
   /**
@@ -451,15 +483,6 @@ public class AttributeSelectionPanel
   }
 
   /**
-   * Gets an array containing the indices of all selected (ie checked) attributes.
-   *
-   * @return the array of selected indices.
-   */
-  public int[] getSelectedAttributes() {
-    return (m_Model == null) ? null : m_Model.getSelectedAttributes();
-  }
-
-  /**
    * Set the selected (ie checked) attributes in the widget. Note that setInstances() must
    * have been called first.
    *
@@ -469,9 +492,17 @@ public class AttributeSelectionPanel
    *           number of elements as there are attributes.
    */
   public void setSelectedAttributes(boolean[] selected) throws Exception {
-    if (m_Model != null) {
+    if (m_Model != null)
       m_Model.setSelectedAttributes(selected);
-    }
+  }
+
+  /**
+   * Gets an array containing the indices of all selected (ie checked) attributes.
+   *
+   * @return the array of selected indices, null if no model present.
+   */
+  public int[] getSelectedAttributes() {
+    return (m_Model == null) ? null : m_Model.getSelectedAttributes();
   }
 
   /**
@@ -480,7 +511,7 @@ public class AttributeSelectionPanel
    * @return		the table
    */
   public BaseTable getTable() {
-    return m_Table;
+    return m_Table.getComponent();
   }
 
   /**
@@ -577,38 +608,5 @@ public class AttributeSelectionPanel
    */
   public void valueChanged(ListSelectionEvent e) {
     notifySelectionListeners(e);
-  }
-
-  /**
-   * Tests the attribute selection panel from the command line.
-   *
-   * @param args must contain the name of an arff file to load.
-   */
-  public static void main(String[] args) {
-    try {
-      if (args.length == 0) {
-	throw new Exception("supply the name of an arff file");
-      }
-      Instances i = new Instances(new java.io.BufferedReader(
-	new java.io.FileReader(args[0])));
-      weka.gui.AttributeSelectionPanel asp = new weka.gui.AttributeSelectionPanel();
-      final javax.swing.JFrame jf = new javax.swing.JFrame(
-	"Attribute Selection Panel");
-      jf.getContentPane().setLayout(new BorderLayout());
-      jf.getContentPane().add(asp, BorderLayout.CENTER);
-      jf.addWindowListener(new java.awt.event.WindowAdapter() {
-	@Override
-	public void windowClosing(java.awt.event.WindowEvent e) {
-	  jf.dispose();
-	  System.exit(0);
-	}
-      });
-      jf.pack();
-      jf.setVisible(true);
-      asp.setInstances(i);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-      System.err.println(ex.getMessage());
-    }
   }
 }
