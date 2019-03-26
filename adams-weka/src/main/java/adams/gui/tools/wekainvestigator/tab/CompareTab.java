@@ -221,7 +221,7 @@ public class CompareTab
     add(m_PanelDatasets, BorderLayout.NORTH);
 
     m_ComboBoxFirstDataset  = new BaseComboBox<>(m_ModelFirstDataset);
-    m_ComboBoxFirstDataset.setPreferredSize(new Dimension(150, 25));
+    m_ComboBoxFirstDataset.setPreferredSize(new Dimension(150, GUIHelper.getPreferredComboBoxHeight()));
     label = new JLabel("First");
     label.setDisplayedMnemonic('F');
     label.setLabelFor(m_ComboBoxFirstDataset);
@@ -248,7 +248,7 @@ public class CompareTab
     m_PanelDatasets.add(m_TextFirstRange);
 
     m_ComboBoxSecondDataset = new BaseComboBox<>(m_ModelSecondDataset);
-    m_ComboBoxSecondDataset.setPreferredSize(new Dimension(150, 25));
+    m_ComboBoxSecondDataset.setPreferredSize(new Dimension(150, GUIHelper.getPreferredComboBoxHeight()));
     label = new JLabel("Second");
     label.setDisplayedMnemonic('S');
     label.setLabelFor(m_ComboBoxSecondDataset);
@@ -300,7 +300,7 @@ public class CompareTab
 
     m_ModelFirstID    = new DefaultComboBoxModel<>();
     m_ComboBoxFirstID = new BaseComboBox<>(m_ModelFirstID);
-    m_ComboBoxFirstID.setPreferredSize(new Dimension(150, 25));
+    m_ComboBoxFirstID.setPreferredSize(new Dimension(150, GUIHelper.getPreferredComboBoxHeight()));
     label = new JLabel("First");
     label.setLabelFor(m_ComboBoxFirstID);
     panel.add(label);
@@ -308,7 +308,7 @@ public class CompareTab
 
     m_ModelSecondID    = new DefaultComboBoxModel<>();
     m_ComboBoxSecondID = new BaseComboBox<>(m_ModelSecondID);
-    m_ComboBoxSecondID .setPreferredSize(new Dimension(150, 25));
+    m_ComboBoxSecondID .setPreferredSize(new Dimension(150, GUIHelper.getPreferredComboBoxHeight()));
     label = new JLabel("Second");
     label.setLabelFor(m_ComboBoxSecondID);
     panel.add(label);
