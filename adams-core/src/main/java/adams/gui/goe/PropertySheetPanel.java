@@ -460,26 +460,22 @@ public class PropertySheetPanel extends BasePanel
 
 	// set sensible dimensions for widgets
 	if (m_Views[i] instanceof JSpinner) {
-	  m_Views[i].setSize(new Dimension(100, 20));
-	  m_Views[i].setPreferredSize(new Dimension(100, 20));
-	  m_Views[i].setMaximumSize(new Dimension(100, 40));
+	  m_Views[i].setSize(new Dimension(100, GUIHelper.getInteger("GOESpinnerHeight", 20)));
+	  m_Views[i].setPreferredSize(new Dimension(100, GUIHelper.getInteger("GOESpinnerHeight", 20)));
+	  m_Views[i].setMaximumSize(new Dimension(100, GUIHelper.getInteger("GOESpinnerHeight", 20) * 2));
 	}
 	else if (m_Views[i] instanceof JCheckBox) {
-	  m_Views[i].setSize(new Dimension(25, 20));
-	  m_Views[i].setPreferredSize(new Dimension(25, 20));
-	  m_Views[i].setMaximumSize(new Dimension(25, 25));
+	  m_Views[i].setSize(new Dimension(25, GUIHelper.getInteger("GOECheckBoxHeight", 20)));
+	  m_Views[i].setPreferredSize(new Dimension(25, GUIHelper.getInteger("GOECheckBoxHeight", 20)));
+	  m_Views[i].setMaximumSize(new Dimension(25, (int) (GUIHelper.getInteger("GOECheckBoxHeight", 20) * 1.2)));
 	}
 	else {
-	  m_Views[i].setSize(new Dimension(300, 20));
-	  m_Views[i].setPreferredSize(new Dimension(300, 20));
-	  m_Views[i].setMaximumSize(new Dimension(300, 40));
+	  m_Views[i].setSize(new Dimension(300, GUIHelper.getInteger("GOEDefaultHeight", 20)));
+	  m_Views[i].setPreferredSize(new Dimension(300, GUIHelper.getInteger("GOEDefaultHeight", 20)));
+	  m_Views[i].setMaximumSize(new Dimension(300, GUIHelper.getInteger("GOEDefaultHeight", 20) * 2));
 	}
 
 	m_Editors[i].addPropertyChangeListener(this);
-      }
-      catch (InvocationTargetException ex) {
-	printException("Skipping property " + name + " (" + m_Target.getClass().getName() + ")!", ex);
-	continue;
       }
       catch (Exception ex) {
 	printException("Skipping property " + name + " (" + m_Target.getClass().getName() + ")!", ex);

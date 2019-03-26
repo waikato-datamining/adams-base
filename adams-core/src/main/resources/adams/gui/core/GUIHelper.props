@@ -89,6 +89,11 @@ SpinnerHeight=25
 CheckBoxHeight=25
 ComboBoxHeight=25
 
+# The preferred defaults in the GOE
+GOESpinnerHeight=20
+GOECheckBoxHeight=20
+GOEDefaultHeight=20
+
 # Dimensions and location
 # - pack the window
 # <classname of component>.pack=true|false
