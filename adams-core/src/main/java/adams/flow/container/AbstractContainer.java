@@ -15,19 +15,17 @@
 
 /*
  * AbstractContainer.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
 
-import adams.core.CloneHandler;
 import adams.core.Utils;
+import adams.data.report.Report;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetSupporter;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,10 +41,9 @@ import java.util.List;
  * is used to generate help information.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractContainer
-  implements Serializable, CloneHandler<AbstractContainer>, SpreadSheetSupporter {
+  implements Container {
 
   /** for serialization. */
   private static final long serialVersionUID = -6949950627956848217L;
@@ -107,7 +104,7 @@ public abstract class AbstractContainer
 
     result = new StringBuilder();
     
-    result.append(getClass().getName() + "\n");
+    result.append(getClass().getName()).append("\n");
     result.append("Value names:\n");
     iter = names();
     while (iter.hasNext()) {
@@ -165,10 +162,10 @@ public abstract class AbstractContainer
 
   /**
    * Initializes the help strings.
-   * <br><br>
-   * Default implementation does nothing.
    */
   protected void initHelp() {
+    if (this instanceof ContainerWithReport)
+      addHelp(ContainerWithReport.VALUE_REPORT, "report", Report.class);
   }
 
   /**
@@ -186,7 +183,7 @@ public abstract class AbstractContainer
   public Iterator<String> stored() {
     List<String>	result;
 
-    result = new ArrayList<String>(m_Values.keySet());
+    result = new ArrayList<>(m_Values.keySet());
     Collections.sort(result);
 
     return result.iterator();
@@ -349,20 +346,20 @@ public abstract class AbstractContainer
    */
   @Override
   public String toString() {
-    String		result;
+    StringBuilder	result;
     Iterator<String>	names;
     String		name;
 
-    result = "";
+    result = new StringBuilder();
     names  = stored();
     while (names.hasNext()) {
       name = names.next();
       if (result.length() > 0)
-	result += ", ";
-      result += name + "=" + toString(getValue(name));
+	result.append(", ");
+      result.append(name).append("=").append(toString(getValue(name)));
     }
 
-    return result;
+    return result.toString();
   }
 
   /**
@@ -378,7 +375,7 @@ public abstract class AbstractContainer
     Object		value;
     
     synchronized(m_Values) {
-      names  = new ArrayList<String>(m_Values.keySet());
+      names  = new ArrayList<>(m_Values.keySet());
       result = new DefaultSpreadSheet();
       row    = result.getHeaderRow();
       row.addCell("name").setContent("Name");
