@@ -21,7 +21,6 @@
 package adams.flow.container;
 
 import adams.core.Utils;
-import adams.data.report.Report;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -162,10 +161,10 @@ public abstract class AbstractContainer
 
   /**
    * Initializes the help strings.
+   * <br>
+   * Default implementation does nothing.
    */
   protected void initHelp() {
-    if (this instanceof ContainerWithReport)
-      addHelp(ContainerWithReport.VALUE_REPORT, "report", Report.class);
   }
 
   /**

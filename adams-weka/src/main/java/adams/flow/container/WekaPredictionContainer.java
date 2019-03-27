@@ -20,6 +20,7 @@
 
 package adams.flow.container;
 
+import adams.data.report.Report;
 import weka.core.Instance;
 import weka.core.Utils;
 
@@ -118,6 +119,7 @@ public class WekaPredictionContainer
     addHelp(VALUE_ABSTENTION_CLASSIFICATION, "predicted value that made classifier abstain", Double.class);
     addHelp(VALUE_ABSTENTION_CLASSIFICATION_LABEL, "predicted label that made classifier abstain", String.class);
     addHelp(VALUE_ABSTENTION_DISTRIBUTION, "class distribution that made classifier abstain; array of " + Double.TYPE.getName());
+    addHelp(VALUE_REPORT, "report for storing meta-data", Report.class);
   }
 
   /**
