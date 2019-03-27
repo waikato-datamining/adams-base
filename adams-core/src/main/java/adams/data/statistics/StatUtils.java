@@ -1135,6 +1135,56 @@ public class StatUtils {
   }
 
   /**
+   * Computes the covariance between the two data vectors and returns it.
+   *
+   * Cov(X,Y) = Sum((Xi-Xbar)*(Yi-Ybar)) / n
+   *
+   * with n = length of vectors, Xi the ith element of X, Yi the ith element of Y,
+   * Xbar the mean of X, Ybar the mean of Y.
+   *
+   * @param x		the first data array
+   * @param y		the second data array
+   * @return		the computed correlation
+   */
+  public static double covariance(double[] x, double[] y) {
+    return covariance(toNumberArray(x), toNumberArray(y));
+  }
+
+  /**
+   * Computes the covariance between the two data vectors and returns it.
+   *
+   * Cov(X,Y) = Sum((Xi-Xbar)*(Yi-Ybar)) / n
+   *
+   * with n = length of vectors, Xi the ith element of X, Yi the ith element of Y,
+   * Xbar the mean of X, Ybar the mean of Y.
+   *
+   * @param x		the first data array
+   * @param y		the second data array
+   * @return		the computed correlation
+   */
+  public static double covariance(Number[] x, Number[] y) {
+    double 	result;
+    int 	i;
+    double 	xbar;
+    double 	ybar;
+
+    if (x.length != y.length)
+      throw new IllegalArgumentException(
+        "Arrays differ in length: " + x.length + " != " + y.length);
+    if (x.length == 0)
+      throw new IllegalArgumentException("0-length arrays provided!");
+
+    xbar = mean(x);
+    ybar = mean(y);
+    result = 0;
+    for (i = 0; i < x.length; i++)
+      result += (x[i].doubleValue() - xbar) * (y[i].doubleValue() - ybar);
+    result /= x.length;
+
+    return result;
+  }
+
+  /**
    * Computes the root mean squared error between the two data vectors and returns it.
    *
    * @param actual	the second data array
