@@ -1,8 +1,6 @@
 % This work is made available under the terms of the
 % Creative Commons Attribution-ShareAlike 4.0 license,
 % http://creativecommons.org/licenses/by-sa/4.0/.
-%
-% Version: $Revision: 4890 $
 
 \documentclass[a4paper]{book}
 
@@ -44,7 +42,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2018} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2019} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -138,6 +136,25 @@ org.quartz.jobStore.class = org.quartz.simpl.RAMJobStore
 To avoid update checks at start up time, set the following property:
 \begin{verbatim}
 org.quartz.scheduler.skipUpdateCheck = true
+\end{verbatim}
+
+\section{Logging}
+The Quartz scheduler starts by default with \textit{debugging} output enabled,
+which can clog up server log files. In order to fix this, ADAMS includes
+the following \textit{logback.xml} configuration file in the \verb|src/main/resources|
+directory:
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  <logger name="org.quartz" level="INFO"/>
+  <root level="ALL">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %-5level | %thread | %logger{1} | %m%n%rEx</pattern>
+      </encoder>
+    </appender>
+  </root>
+</configuration>
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
