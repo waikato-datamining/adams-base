@@ -138,24 +138,24 @@ To avoid update checks at start up time, set the following property:
 org.quartz.scheduler.skipUpdateCheck = true
 \end{verbatim}
 
-\section{Logging}
-The Quartz scheduler starts by default with \textit{debugging} output enabled,
-which can clog up server log files. In order to fix this, ADAMS includes
-the following \textit{logback.xml} configuration file in the \verb|src/main/resources|
-directory:
-\begin{verbatim}
-<?xml version="1.0" encoding="UTF-8" ?>
-<configuration>
-  <logger name="org.quartz" level="INFO"/>
-  <root level="ALL">
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-      <encoder>
-        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %-5level | %thread | %logger{1} | %m%n%rEx</pattern>
-      </encoder>
-    </appender>
-  </root>
-</configuration>
-\end{verbatim}
+%\section{Logging}
+%The Quartz scheduler starts by default with \textit{debugging} output enabled,
+%which can clog up server log files. In order to fix this, ADAMS includes
+%the following \textit{logback.xml} configuration file in the \verb|src/main/resources|
+%directory:
+%\begin{verbatim}
+%<?xml version="1.0" encoding="UTF-8" ?>
+%<configuration>
+%  <logger name="org.quartz" level="INFO"/>
+%  <root level="ALL">
+%    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+%      <encoder>
+%        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} | %-5level | %thread | %logger{1} | %m%n%rEx</pattern>
+%      </encoder>
+%    </appender>
+%  </root>
+%</configuration>
+%\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
