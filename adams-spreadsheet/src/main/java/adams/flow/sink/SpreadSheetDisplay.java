@@ -191,7 +191,6 @@ public class SpreadSheetDisplay
    * Custom {@link DisplayPanel}.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class SpreadSheetDisplayPanel
     extends AbstractTextDisplayPanel
@@ -282,7 +281,16 @@ public class SpreadSheetDisplay
      */
     @Override
     public void display(Token token) {
-      m_TableModel = new SpreadSheetTableModel((SpreadSheet) token.getPayload());
+      SpreadSheet 	sheet;
+
+      if (token.hasPayload(SpreadSheet.class))
+	sheet = token.getPayload(SpreadSheet.class);
+      else if (token.hasPayload(SpreadSheetSupporter.class))
+	sheet = token.getPayload(SpreadSheetSupporter.class).toSpreadSheet();
+      else
+	throw new IllegalStateException(token.unhandledData());
+
+      m_TableModel = new SpreadSheetTableModel(sheet);
       m_TableModel.setReadOnly(m_Owner.getReadOnly());
       m_Table.setModel(m_TableModel);
       m_Table.setNumDecimals(m_Owner.getNumDecimals());
@@ -744,7 +752,7 @@ public class SpreadSheetDisplay
    * @return		<!-- flow-accepts-start -->adams.data.spreadsheet.SpreadSheet.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{SpreadSheet.class};
+    return new Class[]{SpreadSheet.class, SpreadSheetSupporter.class};
   }
 
   /**
@@ -755,7 +763,16 @@ public class SpreadSheetDisplay
    */
   @Override
   protected void display(Token token) {
-    m_TableModel = new SpreadSheetTableModel((SpreadSheet) token.getPayload());
+    SpreadSheet 	sheet;
+
+    if (token.hasPayload(SpreadSheet.class))
+      sheet = token.getPayload(SpreadSheet.class);
+    else if (token.hasPayload(SpreadSheetSupporter.class))
+      sheet = token.getPayload(SpreadSheetSupporter.class).toSpreadSheet();
+    else
+      throw new IllegalStateException(token.unhandledData());
+
+    m_TableModel = new SpreadSheetTableModel(sheet);
     m_TableModel.setReadOnly(m_ReadOnly);
     m_Table.setModel(m_TableModel);
     m_Table.setNumDecimals(m_NumDecimals);
