@@ -15,7 +15,7 @@
 
 /*
  * WekaPredictionContainer.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
@@ -31,10 +31,10 @@ import java.util.List;
  * A container for predictions made by a classifier.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaPredictionContainer
-  extends AbstractContainer {
+  extends AbstractContainer
+  implements ContainerWithReport {
 
   /** for serialization. */
   private static final long serialVersionUID = 872330681430825295L;
@@ -129,7 +129,7 @@ public class WekaPredictionContainer
   public Iterator<String> names() {
     List<String>	result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     result.add(VALUE_INSTANCE);
     result.add(VALUE_CLASSIFICATION);
@@ -139,6 +139,7 @@ public class WekaPredictionContainer
     result.add(VALUE_ABSTENTION_CLASSIFICATION);
     result.add(VALUE_ABSTENTION_CLASSIFICATION_LABEL);
     result.add(VALUE_ABSTENTION_DISTRIBUTION);
+    result.add(VALUE_REPORT);
 
     return result.iterator();
   }

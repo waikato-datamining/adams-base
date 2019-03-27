@@ -15,7 +15,7 @@
 
 /*
  * AbstractProcessWekaInstanceWithModel.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -24,8 +24,11 @@ import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
+import adams.data.instance.WekaInstanceContainer;
+import adams.data.report.Report;
 import adams.event.VariableChangeEvent;
 import adams.flow.container.AbstractContainer;
+import adams.flow.container.ContainerWithReport;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.control.StorageName;
 import adams.flow.core.AbstractModelLoader;
@@ -42,7 +45,6 @@ import java.util.Hashtable;
  * e.g., classifiers making predictions.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of model to use
  */
 public abstract class AbstractProcessWekaInstanceWithModel<T>
@@ -387,10 +389,10 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		weka.core.Instance.class
+   * @return		the accepted classes
    */
   public Class[] accepts() {
-    return new Class[]{Instance.class};
+    return new Class[]{Instance.class, WekaInstanceContainer.class};
   }
 
   /**
@@ -532,8 +534,10 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
    */
   @Override
   protected String doExecute() {
-    String	result;
-    Instance	inst;
+    String			result;
+    Instance			inst;
+    WekaInstanceContainer 	cont;
+    Report			report;
 
     result = null;
 
@@ -543,10 +547,20 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
 	return result;
     }
 
-    inst = null;
+    inst   = null;
+    report = null;
     try {
-      inst          = (Instance) m_InputToken.getPayload();
+      if (m_InputToken.hasPayload(Instance.class)) {
+	inst = m_InputToken.getPayload(Instance.class);
+      }
+      else {
+        cont   = m_InputToken.getPayload(WekaInstanceContainer.class);
+        inst   = cont.getContent();
+        report = cont.getReport();
+      }
       m_OutputToken = processInstance(inst);
+      if ((report != null) && m_OutputToken.hasPayload(ContainerWithReport.class))
+        m_OutputToken.getPayload(ContainerWithReport.class).setValue(ContainerWithReport.VALUE_REPORT, report.getClone());
     }
     catch (Exception e) {
       m_OutputToken = null;
