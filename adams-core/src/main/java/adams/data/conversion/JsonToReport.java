@@ -15,16 +15,13 @@
 
 /*
  * JsonToReport.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
 
-import adams.core.io.FileUtils;
 import adams.data.report.Report;
 import adams.data.report.ReportJsonUtils;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -97,24 +94,12 @@ public class JsonToReport
   @Override
   protected Object doConvert() throws Exception {
     Report 		result;
-    String 		input;
-    BufferedReader 	breader;
-    JsonParser 		jp;
-    JsonElement 	je;
 
-    input   = (String) m_Input;
-    breader = null;
     try {
-      breader = new BufferedReader(new StringReader(input));
-      jp = new JsonParser();
-      je = jp.parse(breader);
-      result = ReportJsonUtils.fromJson(je.getAsJsonObject());
+      result = ReportJsonUtils.fromJson(new BufferedReader(new StringReader((String) m_Input)));
     }
     catch (Exception e) {
       result = null;
-    }
-    finally {
-      FileUtils.closeQuietly(breader);
     }
 
     return result;

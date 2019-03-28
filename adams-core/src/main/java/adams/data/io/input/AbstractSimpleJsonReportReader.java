@@ -24,8 +24,6 @@ import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.report.Report;
 import adams.data.report.ReportJsonUtils;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -99,31 +97,19 @@ public abstract class AbstractSimpleJsonReportReader<T extends Report>
   protected List<T> readData() {
     List<T>		result;
     List<String>	lines;
-    String 		input;
     Report		report;
-    BufferedReader 	breader;
-    JsonParser 		jp;
-    JsonElement 	je;
 
     result = new ArrayList<>();
     result.add(newInstance());
     result.get(0).setLoggingLevel(getLoggingLevel());
     lines = FileUtils.loadFromFile(getInput());
     if (lines != null) {
-      input = Utils.flatten(lines, "\n");
-      breader = null;
       try {
-	breader = new BufferedReader(new StringReader(input));
-	jp = new JsonParser();
-	je = jp.parse(breader);
-	report = ReportJsonUtils.fromJson(je.getAsJsonObject());
+	report = ReportJsonUtils.fromJson(new BufferedReader(new StringReader(Utils.flatten(lines, "\n"))));
 	result.get(0).mergeWith(report);
       }
       catch (Exception e) {
         getLogger().log(Level.SEVERE, "Failed to parse JSON!", e);
-      }
-      finally {
-	FileUtils.closeQuietly(breader);
       }
     }
 
