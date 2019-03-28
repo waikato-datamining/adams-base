@@ -129,10 +129,28 @@ public class SpectralAngleMapperUtils {
     // Calculate the spectral angles from the accumulated values
     double[] angles = new double[references.length];
     for (int i = 0; i < references.length; i++) {
-      angles[i] = Math.acos(
-	dotProductSums[i] /
-	  (Math.sqrt(referenceLengthSums[i]) * Math.sqrt(testLengthSums[i]))
-      );
+      // Check for zero-length vectors
+      if (referenceLengthSums[i] == 0.0 || testLengthSums[i] == 0.0) {
+        angles[i] = Double.NaN;
+        continue;
+      }
+
+      // Calculate the cosine of the angle
+      double cosAngle = dotProductSums[i] /
+        (Math.sqrt(referenceLengthSums[i]) * Math.sqrt(testLengthSums[i]));
+
+      // Check for rounding errors
+      if (cosAngle > 1.0) {
+        cosAngle = 1.0;
+      } else if (cosAngle < -1.0) {
+        cosAngle = -1.0;
+      }
+
+      // Calculate the angle
+      double angle = Math.acos(cosAngle);
+
+      // Set the angle inside the return array
+      angles[i] = angle;
     }
 
     return angles;
