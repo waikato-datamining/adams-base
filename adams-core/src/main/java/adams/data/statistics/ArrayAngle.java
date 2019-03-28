@@ -68,6 +68,11 @@ import adams.core.TechnicalInformationHandler;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
+ * <pre>-modified &lt;boolean&gt; (property: modified)
+ * &nbsp;&nbsp;&nbsp;Whether to use the modified algorithm described in Oshigami et al.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author Corey Sterling (csterlin at waikato dot ac dot nz)
@@ -79,6 +84,9 @@ public class ArrayAngle<T extends Number>
   /** Auto-generated serialisation UID#. */
   private static final long serialVersionUID = 5466289966807424233L;
 
+  /** Whether to use the modified algorithm described in Oshigami et al. */
+  protected boolean m_UseModifiedAlgorithm;
+
   /**
    * Returns a string describing the object.
    *
@@ -88,9 +96,47 @@ public class ArrayAngle<T extends Number>
   public String globalInfo() {
     return
       "Calculates the angle between the first array and "
-	+ "the remaining arrays. The arrays must be numeric.\n\n"
-	+ "For more information see:\n\n"
-	+ getTechnicalInformation().toString();
+        + "the remaining arrays. The arrays must be numeric.\n\n"
+        + "For more information see:\n\n"
+        + getTechnicalInformation().toString();
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add("modified", "modified", false);
+  }
+
+  /**
+   * Gets whether to use the modified algorithm.
+   *
+   * @return Whether to use the modified algorithm.
+   */
+  public boolean getModified() {
+    return m_UseModifiedAlgorithm;
+  }
+
+  /**
+   * Sets whether to use the modified algorithm.
+   *
+   * @param value Whether to use the modified algorithm.
+   */
+  public void setModified(boolean value) {
+    m_UseModifiedAlgorithm = value;
+    reset();
+  }
+
+  /**
+   * Gets the tip-text for the modified option.
+   *
+   * @return  The tip-text as a string.
+   */
+  public String modifiedTipText() {
+    return "Whether to use the modified algorithm described in Oshigami et al.";
   }
 
   /**
@@ -163,7 +209,7 @@ public class ArrayAngle<T extends Number>
     double[] test = toDoubleArray(get(0));
 
     // Perform angle mapping
-    double[] angles = SpectralAngleMapperUtils.sam(test, references, false);
+    double[] angles = SpectralAngleMapperUtils.sam(test, references, m_UseModifiedAlgorithm);
 
     // Format the angles into the result container
     for (int i = 0; i < numReferences; i++) {

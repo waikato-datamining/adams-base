@@ -23,7 +23,6 @@ package adams.data.statistics;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
-import adams.core.exception.NotImplementedException;
 
 /**
  * Utility class for performing spectral angle mapping between spectra.
@@ -69,7 +68,7 @@ public class SpectralAngleMapperUtils {
    *
    * @param spectrum1	The first spectrum.
    * @param spectrum2	The second spectrum.
-   * @param modified	Whether to use the modified algorithm (unimplemented).
+   * @param modified	Whether to use the modified algorithm.
    * @return	The angle between the two spectra.
    */
   public static double sam(double[] spectrum1, double[] spectrum2, boolean modified) {
@@ -89,13 +88,22 @@ public class SpectralAngleMapperUtils {
    *
    * @param test	The test spectrum.
    * @param references	The reference spectra.
-   * @param modified	Whether to use the modified algorithm (unimplemented).
+   * @param modified	Whether to use the modified algorithm.
    * @return	The array of angles.
    */
   public static double[] sam(double[] test, double[][] references, boolean modified) {
-    // Modified algorithm is currently unimplemented
-    if (modified)
-      throw new NotImplementedException();
+    // Modify the input arrays if requested
+    if (modified) {
+      // Modify the test array
+      test = modify(test);
+
+      // Modify all the reference arrays
+      double[][] modifiedReferences = new double[references.length][];
+      for(int i = 0; i < references.length; i++) {
+        modifiedReferences[i] = modify(references[i]);
+      }
+      references = modifiedReferences;
+    }
 
     // Initialise the sigma accumulators
     double[] dotProductSums = new double[references.length];
@@ -130,4 +138,25 @@ public class SpectralAngleMapperUtils {
     return angles;
   }
 
+  /**
+   * Performs modification of array as in Oshigami et al. by subtracting
+   * the mean of the array from each element.
+   *
+   * @param input The spectrum array to modify.
+   * @return The modified array.
+   */
+  public static double[] modify(double[] input) {
+    // Get the mean value
+    double mean = StatUtils.mean(input);
+
+    // Create a copy of the input array
+    double[] result = new double[input.length];
+
+    // Subtract the mean from each element
+    for (int i = 0; i < result.length; i++) {
+      result[i] = input[i] - mean;
+    }
+
+    return result;
+  }
 }
