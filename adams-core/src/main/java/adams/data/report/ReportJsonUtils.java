@@ -22,8 +22,10 @@ package adams.data.report;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
+import java.io.Reader;
 import java.util.Map.Entry;
 
 /**
@@ -44,6 +46,22 @@ public class ReportJsonUtils {
       "  \"GLV2\": 1.123,\n" +
       "  \"valid\": true\n" +
       "}\n";
+  }
+
+  /**
+   * Creates a report from the reader, reading in JSON.
+   *
+   * @param reader	the reader to obtain the JSON from
+   * @return		the report, null if failed to create or find data
+   * @throws Exception	if reading/parsing fails
+   */
+  public static Report fromJson(Reader reader) throws Exception {
+    JsonParser  	jp;
+    JsonElement 	je;
+
+    jp = new JsonParser();
+    je = jp.parse(reader);
+    return ReportJsonUtils.fromJson(je.getAsJsonObject());
   }
 
   /**
