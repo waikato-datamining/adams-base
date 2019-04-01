@@ -15,26 +15,26 @@
 
 /*
  * WekaNewInstanceTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.base.BaseClassname;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for WekaNewInstance actor.
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision$
  */
 public class WekaNewInstanceTest
   extends AbstractFlowTest {
@@ -165,7 +165,7 @@ public class WekaNewInstanceTest
       adams.flow.core.Actor[] tmp23 = new adams.flow.core.Actor[2];
       adams.flow.transformer.WekaNewInstance tmp24 = new adams.flow.transformer.WekaNewInstance();
       argOption = (AbstractArgumentOption) tmp24.getOptionManager().findByProperty("instanceClass");
-      tmp24.setInstanceClass((java.lang.String) argOption.valueOf("weka.core.SparseInstance"));
+      tmp24.setInstanceClass(new BaseClassname("weka.core.SparseInstance"));
 
       tmp23[0] = tmp24;
       adams.flow.sink.CallableSink tmp26 = new adams.flow.sink.CallableSink();
