@@ -15,12 +15,13 @@
 
 /*
  * BaseClassnameEditor.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
+import adams.core.Utils;
 import adams.core.base.BaseClassname;
 import adams.core.base.BaseObject;
 import adams.gui.core.BaseButton;
@@ -208,6 +209,6 @@ public class BaseClassnameEditor
    * @return		always true
    */
   public boolean isInlineValueValid(String value) {
-    return true;
+    return (Utils.stringToClass(value) != null);
   }
 }
