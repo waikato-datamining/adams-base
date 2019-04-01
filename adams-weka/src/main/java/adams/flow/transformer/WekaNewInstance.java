@@ -15,12 +15,13 @@
 
 /*
  * WekaNewInstance.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseClassname;
 import adams.flow.core.Token;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -74,7 +75,7 @@ import java.lang.reflect.Constructor;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
  *
- * <pre>-instance-class &lt;java.lang.String&gt; (property: instanceClass)
+ * <pre>-instance-class &lt;adams.core.base.BaseClassname&gt; (property: instanceClass)
  * &nbsp;&nbsp;&nbsp;The full class name of the weka.core.Instance-derived object to instantiate.
  * &nbsp;&nbsp;&nbsp;default: weka.core.DenseInstance
  * </pre>
@@ -90,7 +91,7 @@ public class WekaNewInstance
   private static final long serialVersionUID = -786486914801535807L;
 
   /** the class of instance to create. */
-  protected String m_InstanceClass;
+  protected BaseClassname m_InstanceClass;
 
   /**
    * Returns a string describing the object.
@@ -116,7 +117,7 @@ public class WekaNewInstance
 
     m_OptionManager.add(
 	    "instance-class", "instanceClass",
-	    DenseInstance.class.getName());
+	    new BaseClassname(DenseInstance.class));
   }
 
   /**
@@ -124,15 +125,9 @@ public class WekaNewInstance
    *
    * @param value	the class
    */
-  public void setInstanceClass(String value) {
-    try {
-      Class.forName(value);
-      m_InstanceClass = value;
-      reset();
-    }
-    catch (Exception e) {
-      handleException("Failed to instantiate class '" + value + "' - ignored!", e);
-    }
+  public void setInstanceClass(BaseClassname value) {
+    m_InstanceClass = value;
+    reset();
   }
 
   /**
@@ -140,7 +135,7 @@ public class WekaNewInstance
    *
    * @return		the class
    */
-  public String getInstanceClass() {
+  public BaseClassname getInstanceClass() {
     return m_InstanceClass;
   }
 
@@ -200,7 +195,7 @@ public class WekaNewInstance
     data = (Instances) m_InputToken.getPayload();
 
     try {
-      cls    = Class.forName(m_InstanceClass);
+      cls    = m_InstanceClass.classValue();
       constr = cls.getConstructor(new Class[]{Integer.TYPE});
       inst   = (Instance) constr.newInstance(new Object[]{data.numAttributes()});
       inst.setDataset(data);
