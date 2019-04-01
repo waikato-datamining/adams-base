@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleArffLoader.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package weka.core.converters;
@@ -29,6 +29,8 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.Option;
+import weka.core.OptionHandler;
 import weka.core.RevisionUtils;
 import weka.core.WeightedInstancesHandler;
 
@@ -40,20 +42,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
 /**
  * A simple ARFF loader, only supports batch loading.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleArffLoader
   extends AbstractFileLoader
-  implements WeightedInstancesHandler {
+  implements WeightedInstancesHandler, OptionHandler {
 
   private static final long serialVersionUID = 8692708185900983930L;
 
@@ -65,6 +68,9 @@ public class SimpleArffLoader
 
   /** the currently loaded data. */
   protected Instances m_Data;
+
+  /** whether to force compression. */
+  protected boolean m_ForceCompression;
 
   /**
    * Initializes the loader.
@@ -81,6 +87,71 @@ public class SimpleArffLoader
    */
   public String globalInfo() {
     return "Simple ARFF loading functionality of ADAMS. No incremental loading possible. Does not support relational attributes.";
+  }
+
+  /**
+   * Set whether the file gets interpreted as gzip-compressed ARFF file.
+   *
+   * @param value true if to treat as compressed
+   */
+  public void setForceCompression(boolean value) {
+    m_ForceCompression = value;
+  }
+
+  /**
+   * Gets whether the file gets interpreted as gzip-compressed ARFF file.
+   *
+   * @return true if to treat as compressed
+   */
+  public boolean getForceCompression() {
+    return m_ForceCompression;
+  }
+
+  /**
+   * Tip text suitable for displaying int the GUI
+   *
+   * @return a description of this property as a String
+   */
+  public String forceCompressionTipText() {
+    return "If enabled, the file gets interpreted as gzip-compressed ARFF file.";
+  }
+
+  /**
+   * Returns an enumeration of all the available options..
+   *
+   * @return an enumeration of all available options.
+   */
+  @Override
+  public Enumeration<Option> listOptions() {
+    Vector<Option> result = new Vector<>();
+    result.add(new Option("\tTreat file as gzip-compressed.", "force-compression", 0, "-force-compression"));
+    return result.elements();
+  }
+
+  /**
+   * Gets the current option settings for the OptionHandler.
+   *
+   * @return the list of current option settings as an array of strings
+   */
+  @Override
+  public String[] getOptions() {
+    List<String> result = new ArrayList<>();
+    if (getForceCompression())
+      result.add("-force-compression");
+    return result.toArray(new String[result.size()]);
+  }
+
+  /**
+   * Sets the OptionHandler's options using the given list. All options
+   * will be set (or reset) during this call (i.e. incremental setting
+   * of options is not possible).
+   *
+   * @param options the list of options as an array of strings
+   * @exception Exception if an option is not supported
+   */
+  @Override
+  public void setOptions(String[] options) throws Exception {
+    setForceCompression(weka.core.Utils.getFlag("force-compression", options));
   }
 
   /**
@@ -424,7 +495,7 @@ public class SimpleArffLoader
     gis     = null;
     fis     = null;
     try {
-      if (m_sourceFile.getName().endsWith(".gz")) {
+      if (m_sourceFile.getName().endsWith(".gz") || m_ForceCompression) {
 	fis     = new FileInputStream(m_sourceFile);
 	gis     = new GZIPInputStream(fis);
 	breader = new BufferedReader(new InputStreamReader(gis));
