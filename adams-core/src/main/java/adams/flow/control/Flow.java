@@ -15,7 +15,7 @@
 
 /*
  * Flow.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -802,7 +802,15 @@ public class Flow
       setFlowExecutionListener(multiListen);
     }
 
-    if (!isHeadless() && (m_FlowExecutionListenerFrame == null) && showFrame) {
+    if (showFrame)
+      displayExecutionListenerFrameIfNecessary();
+  }
+
+  /**
+   * Displays the execution listener frame (eg for debugging), if necessary.
+   */
+  public void displayExecutionListenerFrameIfNecessary() {
+    if (!isHeadless() && (m_FlowExecutionListenerFrame == null)) {
       m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
       registerWindow(m_FlowExecutionListenerFrame, m_FlowExecutionListenerFrame.getTitle());
     }

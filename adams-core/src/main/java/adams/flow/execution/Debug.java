@@ -25,6 +25,7 @@ import adams.core.base.BaseString;
 import adams.core.option.DebugNestedProducer;
 import adams.core.option.NestedConsumer;
 import adams.flow.condition.bool.BooleanConditionSupporter;
+import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
@@ -668,6 +669,23 @@ public class Debug
   }
 
   /**
+   * Instantiates/displays the control panel if necessary.
+   *
+   * @return		true if either already present or successfully displayed
+   */
+  protected boolean displayControlPanelIfNecessary() {
+    if (m_ControlPanel != null)
+      return true;
+    if (getOwner() == null)
+      return false;
+    if (getOwner().getRoot() instanceof Flow) {
+      ((Flow) getOwner().getRoot()).displayExecutionListenerFrameIfNecessary();
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Suspends the flow execution.
    *
    * @param point	the breakpoint that triggered the suspend
@@ -684,6 +702,8 @@ public class Debug
       getLogger().info(point.getClass().getName() + "/" + stage + ": " + actor.getFullName());
 
     blocked = ((point == null) && isStepMode()) || (point != null);
+
+    displayControlPanelIfNecessary();
 
     m_ControlPanel.setCurrentStage(stage);
     m_ControlPanel.setCurrentActor(actor);
@@ -721,6 +741,8 @@ public class Debug
       getLogger().info(point.getClass().getName() + "/" + stage + ": " + actor.getFullName() + "\n\t" + token);
 
     blocked = ((point == null) && isStepMode()) || (point != null);
+
+    displayControlPanelIfNecessary();
 
     m_ControlPanel.setCurrentStage(stage);
     m_ControlPanel.setCurrentActor(actor);
