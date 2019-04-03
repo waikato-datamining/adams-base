@@ -237,17 +237,6 @@ public class YGradientEPO
   }
 
   /**
-   * Returns whether to allow the determineOutputFormat(Instances) method access
-   * to the full dataset rather than just the header.
-   *
-   * @return whether determineOutputFormat has access to the full input dataset
-   */
-  @Override
-  public boolean allowAccessToFullInputFormat() {
-    return true;
-  }
-
-  /**
    * Determines the output format based on the input format and returns this. In
    * case the output format cannot be returned immediately, i.e.,
    * immediateOutputFormat() returns false, then this method will be called from
