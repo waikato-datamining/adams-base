@@ -42,6 +42,7 @@ import adams.flow.core.PauseStateManager;
 import adams.flow.core.Token;
 import adams.flow.standalone.JobRunnerSetup;
 import adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm;
+import adams.opt.genetic.AbstractGeneticAlgorithm.FitnessContainer;
 import adams.opt.genetic.AbstractGeneticAlgorithm.GeneticAlgorithmJob;
 import adams.opt.genetic.DarkLord;
 import weka.classifiers.Classifier;
@@ -53,7 +54,7 @@ import java.util.Hashtable;
 /**
  <!-- globalinfo-start -->
  * Applies the genetic algorithm to the incoming dataset.<br>
- * Forwards the best setup after the algorithm finishes.<br>
+ * Forwards the best setup(s) after the algorithm finishes.<br>
  * A callable sink can be specified for receiving intermediate performance results.
  * <br><br>
  <!-- globalinfo-end -->
@@ -77,39 +78,44 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaGeneticAlgorithm
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;If enabled, outputs the containers as array rather than one-by-one.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-algorithm &lt;adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm&gt; (property: algorithm)
  * &nbsp;&nbsp;&nbsp;The genetic algorithm to apply to the dataset.
- * &nbsp;&nbsp;&nbsp;default: adams.opt.genetic.DarkLord -stopping-criterion adams.opt.genetic.stopping.MaxIterations -initial-setups-provider adams.opt.genetic.initialsetups.EmptyInitialSetupsProvider -classifier weka.classifiers.rules.ZeroR
+ * &nbsp;&nbsp;&nbsp;default: adams.opt.genetic.DarkLord -stopping-criterion adams.opt.genetic.stopping.MaxIterations -initial-setups-provider adams.opt.genetic.initialsetups.EmptyInitialSetupsProvider -generator weka.classifiers.DefaultCrossValidationFoldGenerator -classifier weka.classifiers.rules.ZeroR -setup-upload adams.opt.genetic.setupupload.Null
  * </pre>
  * 
  * <pre>-callable &lt;adams.flow.core.CallableActorReference&gt; (property: callableName)
@@ -135,7 +141,7 @@ import java.util.Hashtable;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class WekaGeneticAlgorithm
-  extends AbstractTransformer
+  extends AbstractArrayProvider
   implements GeneticFitnessChangeListener, CallableActorUser, OptionalCallableActor,
              FlowPauseStateListener, Pausable {
 
@@ -187,7 +193,7 @@ public class WekaGeneticAlgorithm
   public String globalInfo() {
     return
         "Applies the genetic algorithm to the incoming dataset.\n"
-      + "Forwards the best setup after the algorithm finishes.\n"
+      + "Forwards the best setup(s) after the algorithm finishes.\n"
       + "A callable sink can be specified for receiving intermediate performance results.";
   }
 
@@ -249,8 +255,20 @@ public class WekaGeneticAlgorithm
     result += QuickInfoHelper.toString(this, "callableName", m_CallableName, ", callable: ");
     result += QuickInfoHelper.toString(this, "optional", m_Optional, "optional", ", ");
     result += QuickInfoHelper.toString(this, "testData", m_TestData, ", test: ");
+    result += QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "as array", ", ");
 
     return result;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String outputArrayTipText() {
+    return "If enabled, outputs the containers as array rather than one-by-one.";
   }
 
   /**
@@ -383,12 +401,13 @@ public class WekaGeneticAlgorithm
   }
 
   /**
-   * Returns the class of objects that it generates.
+   * Returns the base class of the items.
    *
-   * @return		<!-- flow-generates-start -->adams.flow.container.WekaGeneticAlgorithmContainer.class<!-- flow-generates-end -->
+   * @return		the class
    */
-  public Class[] generates() {
-    return new Class[]{WekaGeneticAlgorithmContainer.class};
+  @Override
+  protected Class getItemClass() {
+    return WekaGeneticAlgorithmContainer.class;
   }
 
   /**
@@ -559,6 +578,7 @@ public class WekaGeneticAlgorithm
     AbstractClassifierBasedGeneticAlgorithm	algorithm;
 
     result = null;
+    m_Queue.clear();
 
     if (m_InputToken.getPayload() instanceof WekaGeneticAlgorithmInitializationContainer) {
       init      = (WekaGeneticAlgorithmInitializationContainer) m_InputToken.getPayload();
@@ -569,7 +589,6 @@ public class WekaGeneticAlgorithm
       data      = (Instances) m_InputToken.getPayload();
       algorithm = m_Algorithm;
     }
-    cont              = null;
     m_ActualAlgorithm = (AbstractClassifierBasedGeneticAlgorithm) algorithm.shallowCopy(true);
     m_ActualAlgorithm.addFitnessChangeListener(this);
     m_ActualAlgorithm.setJobRunnerSetup(m_JobRunnerSetup);
@@ -580,27 +599,31 @@ public class WekaGeneticAlgorithm
 	m_ActualAlgorithm.setTestInstances((Instances) getStorageHandler().getStorage().get(m_TestData));
       result = m_ActualAlgorithm.run();
       if (result == null) {
-        if (m_ActualAlgorithm.isStopped())
-          result = "Genetic algorithm stopped!";
-        else if (m_ActualAlgorithm.getCurrentWeights() == null)
-          result = "No results (measure, fitness, weights) from run available: " + OptionUtils.getCommandLine(m_ActualAlgorithm.getCurrentSetup());
-        else
-          cont = new WekaGeneticAlgorithmContainer(
-            (Classifier) m_ActualAlgorithm.getCurrentSetup(),
-            m_ActualAlgorithm.getMeasure(),
-            m_ActualAlgorithm.getCurrentFitness(),
-            GeneticAlgorithmJob.weightsToString(m_ActualAlgorithm.getCurrentWeights()),
-            m_ActualAlgorithm.getCurrentWeights());
+        if (m_ActualAlgorithm.isStopped()) {
+	  result = "Genetic algorithm stopped!";
+	}
+        else if (m_ActualAlgorithm.getCurrentWeights() == null) {
+	  result = "No results (measure, fitness, weights) from run available: " + OptionUtils.getCommandLine(m_ActualAlgorithm.getCurrentSetup());
+	}
+        else {
+          for (FitnessContainer fc: m_ActualAlgorithm.getFitnessHistory()) {
+	    cont = new WekaGeneticAlgorithmContainer(
+	      (Classifier) fc.getSetup(),
+	      m_ActualAlgorithm.getMeasure(),
+	      fc.getFitness(),
+	      GeneticAlgorithmJob.weightsToString(fc.getWeights()),
+	      fc.getWeights());
+	    m_Queue.add(cont);
+	  }
+	}
       }
       m_ActualAlgorithm.removeFitnessChangeListener(this);
       m_ActualAlgorithm = null;
     }
     catch (Exception e) {
       result = handleException("Failed to run genetic algorithm!", e);
+      m_Queue.clear();
     }
-
-    if (cont != null)
-      m_OutputToken = new Token(cont);
 
     return result;
   }

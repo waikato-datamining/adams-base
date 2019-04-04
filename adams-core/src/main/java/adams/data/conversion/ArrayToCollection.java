@@ -13,11 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ArrayToCollection.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
+
+import adams.core.Utils;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -47,8 +49,8 @@ import java.util.Collection;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
+@Deprecated
 public class ArrayToCollection
   extends AbstractConversion {
 
@@ -65,7 +67,8 @@ public class ArrayToCollection
    */
   @Override
   public String globalInfo() {
-    return "Turns an array into a collection.";
+    return "DEPRECATED: Use " + Utils.classToString(adams.flow.transformer.ArrayToCollection.class) + " instead!\n"
+      + "Turns an array into a collection.";
   }
 
   /**
