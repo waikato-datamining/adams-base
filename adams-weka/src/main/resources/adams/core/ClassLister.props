@@ -51,6 +51,10 @@ adams.data.weka.predictions.AbstractErrorScaler=\
 adams.flow.transformer.WekaMergeInstancesActor=\
   adams.flow.transformer
 
+# the processor schemes for classifier setups
+adams.flow.transformer.wekaclassifiersetupprocessor.AbstractClassifierSetupProcessor=\
+  adams.flow.transformer.wekaclassifiersetupprocessor
+
 # the cluster post-processors
 adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor=\
   adams.flow.transformer.wekaclusterer
