@@ -43,6 +43,7 @@ import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.axis.AbstractTickGenerator;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
+import adams.gui.visualization.core.axis.FlippableAxisModel;
 import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.axis.Visibility;
 import adams.gui.visualization.core.plot.Axis;
@@ -223,6 +224,8 @@ public abstract class DataContainerPanel<T extends DataContainer, M extends Abst
 	m_PlotPanel.getAxis(axis).setShowGridLines(props.getBoolean("Axis." + axis + ".ShowGridLines", true));
 	m_PlotPanel.getAxis(axis).setType(Type.valueOf((AbstractOption) null, props.getPath("Axis." + axis + ".Type", "Default")));
 	m_PlotPanel.getAxis(axis).setNumberFormat(props.getPath("Axis." + axis + ".NumberFormat", "0.00E0;-0.00E0"));
+	if (m_PlotPanel.getAxis(axis).getAxisModel() instanceof FlippableAxisModel)
+          ((FlippableAxisModel) m_PlotPanel.getAxis(axis).getAxisModel()).setFlipped(props.getBoolean("Axis." + axis + ".Flipped", false));
       }
     }
     m_PlotPanel.setForeground(props.getColor("Plot.ForegroundColor", Color.BLACK));
