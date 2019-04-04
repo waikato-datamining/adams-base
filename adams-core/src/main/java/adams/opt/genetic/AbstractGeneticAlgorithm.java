@@ -21,6 +21,7 @@
 package adams.opt.genetic;
 
 import adams.core.ClassLister;
+import adams.core.ObjectCopyHelper;
 import adams.core.Pausable;
 import adams.core.Performance;
 import adams.core.Randomizable;
@@ -44,6 +45,8 @@ import adams.opt.genetic.initialsetups.EmptyInitialSetupsProvider;
 import adams.opt.genetic.stopping.AbstractStoppingCriterion;
 import adams.opt.genetic.stopping.MaxIterations;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -239,6 +242,85 @@ public abstract class AbstractGeneticAlgorithm
     }
   }
 
+  /**
+   * For storing the fitness parameters.
+   */
+  public static class FitnessContainer
+    implements Serializable, Comparable<FitnessContainer> {
+
+    private static final long serialVersionUID = 8203942415910523410L;
+
+    /** the fitness score. */
+    protected double m_Fitness;
+
+    /** the setup. */
+    protected Object m_Setup;
+
+    /** the weights. */
+    protected int[] m_Weights;
+
+    /**
+     * Initializes the container.
+     *
+     * @param fitness	the fitness
+     * @param setup	the setup
+     * @param weights	the weights
+     */
+    public FitnessContainer(double fitness, Object setup, int[] weights) {
+      m_Fitness = fitness;
+      m_Setup   = ObjectCopyHelper.copyObject(setup);
+      m_Weights = weights.clone();
+    }
+
+    /**
+     * Returns the fitness.
+     *
+     * @return		the fitness
+     */
+    public double getFitness() {
+      return m_Fitness;
+    }
+
+    /**
+     * Returns the setup.
+     *
+     * @return		the setup
+     */
+    public Object getSetup() {
+      return m_Setup;
+    }
+
+    /**
+     * Returns the weights.
+     *
+     * @return		the weights
+     */
+    public int[] getWeights() {
+      return m_Weights;
+    }
+
+    /**
+     * Compares itself with the other container using the fitness.
+     *
+     * @param other	the other container
+     * @return		less than zero, equal to zero, or greater than zero,
+     * 			if this container's fitness is less, equal to, or
+     * 			greater than the other's
+     */
+    public int compareTo(FitnessContainer other) {
+      return Double.compare(getFitness(), other.getFitness());
+    }
+
+    /**
+     * Returns a short string description.
+     *
+     * @return		the description
+     */
+    public String toString() {
+      return getFitness() + ": " + OptionUtils.getCommandLine(getSetup());
+    }
+  }
+
   /** the number of threads to use (-1 for #of cores). */
   protected int m_NumThreads;
 
@@ -294,11 +376,17 @@ public abstract class AbstractGeneticAlgorithm
   /** the time period in seconds after which to notify "fitness" listeners. */
   protected int m_NotificationInterval;
 
+  /** the maximum size of the fitness history. */
+  protected int m_MaxFitnessHistorySize;
+
   /** the timestamp the last notification got sent. */
   protected Long m_LastNotificationTime;
 
   /** the fitness change listeners. */
   protected HashSet<GeneticFitnessChangeListener> m_FitnessChangeListeners;
+
+  /** the fitness history (from best to worst). */
+  protected List<FitnessContainer> m_FitnessHistory;
 
   /** the best fitness so far. */
   protected double m_BestFitness;
@@ -324,6 +412,7 @@ public abstract class AbstractGeneticAlgorithm
     m_BestFitness            = Double.NEGATIVE_INFINITY;
     m_BestSetup              = null;
     m_BestWeights            = null;
+    m_FitnessHistory         = new ArrayList<>();
   }
 
   /**
@@ -380,6 +469,10 @@ public abstract class AbstractGeneticAlgorithm
     m_OptionManager.add(
       "notify", "notificationInterval",
       -1);
+
+    m_OptionManager.add(
+      "max-fitness-history-size", "maxFitnessHistorySize",
+      1);
   }
 
   /**
@@ -677,6 +770,35 @@ public abstract class AbstractGeneticAlgorithm
       "The time interval in seconds after which notification events about "
         + "changes in the fitness can be sent (-1 = never send notifications; "
         + "0 = whenever a change occurs).";
+  }
+
+  /**
+   * Sets the maximum size for the fitness history.
+   *
+   * @param value	the maximum size, <1 = unlimited
+   */
+  public void setMaxFitnessHistorySize(int value) {
+    m_MaxFitnessHistorySize = value;
+    reset();
+  }
+
+  /**
+   * Returns the maximum size for the fitness history.
+   *
+   * @return		the maximum size, <1 = unlimited
+   */
+  public int getMaxFitnessHistorySize() {
+    return m_MaxFitnessHistorySize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String maxFitnessHistorySizeTipText() {
+    return "The maximum number of entries to keep in the fitness history (<1 = unlimited).";
   }
 
   /**
@@ -984,6 +1106,20 @@ public abstract class AbstractGeneticAlgorithm
   }
 
   /**
+   * Adds the fitness container to the history. Automatically prunes the size
+   * of the history.
+   *
+   * @param container	the container to add
+   */
+  protected void addToFitnessHistory(FitnessContainer container) {
+    m_FitnessHistory.add(0, container);
+    if (m_MaxFitnessHistorySize >= 1) {
+      while (m_FitnessHistory.size() > m_MaxFitnessHistorySize)
+	m_FitnessHistory.remove(m_FitnessHistory.size() - 1);
+    }
+  }
+
+  /**
    * Sets a fitness and keep it if better.
    *
    * @param fitness	the new fitness
@@ -998,6 +1134,7 @@ public abstract class AbstractGeneticAlgorithm
     result = false;
 
     if (isBetterFitness(fitness)) {
+      addToFitnessHistory(new FitnessContainer(fitness, setup, weights));
       m_BestFitness = fitness;
       m_BestSetup   = setup;
       m_BestWeights = weights.clone();
@@ -1035,6 +1172,15 @@ public abstract class AbstractGeneticAlgorithm
   }
 
   /**
+   * Returns the fitness history (best to worst).
+   *
+   * @return		the history
+   */
+  public List<FitnessContainer> getFitnessHistory() {
+    return m_FitnessHistory;
+  }
+
+  /**
    * Further initializations in derived classes.
    */
   protected void preRun() {
@@ -1045,6 +1191,7 @@ public abstract class AbstractGeneticAlgorithm
     m_BestFitness          = Double.NEGATIVE_INFINITY;
     m_BestSetup            = null;
     m_BestWeights          = null;
+    m_FitnessHistory.clear();
     m_StoppingCriterion.start();
   }
 
