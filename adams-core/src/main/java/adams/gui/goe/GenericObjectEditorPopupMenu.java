@@ -339,6 +339,20 @@ public class GenericObjectEditorPopupMenu
   }
 
   /**
+   * Returns the class type handled in the editor.
+   *
+   * @param editor	the editor to use
+   * @return		the class
+   */
+  protected Class getClassType(PropertyEditor editor) {
+    AbstractGenericObjectEditorHandler	handler;
+
+    handler = AbstractGenericObjectEditorHandler.getHandler(editor);
+
+    return handler.getClassType(editor);
+  }
+
+  /**
    * Adds the listener to the internal list of listeners that get notified when
    * the user changes the setup.
    *
