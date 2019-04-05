@@ -770,8 +770,12 @@ public abstract class AbstractActor
     if (m_FullName == null) {
       result = new StringBuilder(getName().replace(".", "\\."));
       parent = getParent();
-      if ((parent != null) && !parent.getFullName().isEmpty())
-	result.insert(0, parent.getFullName() + ".");
+      if (parent != null) {
+        if (!parent.getFullName().isEmpty())
+	  result.insert(0, parent.getFullName() + ".");
+        else
+          result.insert(0, parent.getName().replace(".", "\\.") + ".");
+      }
       m_FullName = result.toString();
     }
 

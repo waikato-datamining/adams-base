@@ -243,19 +243,17 @@ public class Node
   public String getFullName() {
     StringBuilder	result;
     Node		parent;
-    Node		child;
+    String		full;
 
     result = new StringBuilder(getActor().getName().replace(".", "\\."));
-    child  = this;
-    parent = (Node) child.getParent();
-    do {
-      if ((parent != null) && !parent.getActor().getName().isEmpty()) {
-	result.insert(0, parent.getActor().getName().replace(".", "\\.") + ".");
-	child  = parent;
-	parent = (Node) child.getParent();
-      }
+    parent = (Node) getParent();
+    if (parent != null) {
+      full = parent.getFullName();
+      if (!full.isEmpty())
+	result.insert(0, full + ".");
+      else
+        result.insert(0, parent.getActor().getName().replace(".", "\\.") + ".");
     }
-    while (parent != null);
 
     return result.toString();
   }
@@ -347,7 +345,7 @@ public class Node
     Node		child;
     HashSet<Class>	excluded;
 
-    excluded = new HashSet<Class>();
+    excluded = new HashSet<>();
     excluded.add(Actor.class);
 
     result = ActorUtils.replace(getActor(), find, replace, recursive, excluded);
