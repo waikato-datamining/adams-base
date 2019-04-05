@@ -249,7 +249,7 @@ public class Node
     child  = this;
     parent = (Node) child.getParent();
     do {
-      if (parent != null) {
+      if ((parent != null) && !parent.getActor().getName().isEmpty()) {
 	result.insert(0, parent.getActor().getName().replace(".", "\\.") + ".");
 	child  = parent;
 	parent = (Node) child.getParent();
