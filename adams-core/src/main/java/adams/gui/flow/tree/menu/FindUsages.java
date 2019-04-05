@@ -15,28 +15,23 @@
 
 /*
  * FindUsages.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import adams.core.VariableName;
-import adams.core.option.AbstractArgumentOption;
-import adams.core.option.AbstractOption;
-import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorReferenceHandler;
 import adams.flow.processor.ListActorReferenceUsage;
+import adams.flow.processor.ListAllStorageNames;
+import adams.flow.processor.ListAllVariables;
 import adams.flow.processor.ListStorageUsage;
 import adams.flow.processor.ListVariableUsage;
 import adams.gui.action.AbstractPropertiesAction;
 import adams.gui.core.GUIHelper;
-import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -82,39 +77,12 @@ public class FindUsages
    * @return		the variable names, empty if none found
    */
   protected List<String> findVariableNames(Actor actor) {
-    List<String>		result;
-    AbstractArgumentOption	arg;
-    Object			array;
-    int				i;
-    String			name;
+    List<String>	result;
+    ListAllVariables	list;
 
-    result = new ArrayList<>();
-
-    for (AbstractOption option: actor.getOptionManager().getOptionsList()) {
-      if (option instanceof AbstractArgumentOption) {
-	arg = (AbstractArgumentOption) option;
-	if (arg.isVariableAttached()) {
-	  name = arg.getVariableName();
-	  if (!result.contains(name))
-	    result.add(name);
-	}
-	if (ClassLocator.isSubclass(VariableName.class, arg.getBaseClass())) {
-	  if (arg.isMultiple()) {
-	    array = arg.getCurrentValue();
-	    for (i = 0; i < Array.getLength(array); i++) {
-	      name = ((VariableName) Array.get(array, i)).getValue();
-	      if (!result.contains(name))
-		result.add(name);
-	    }
-	  }
-	  else {
-	    name = ((VariableName) arg.getCurrentValue()).getValue();
-	    if (!result.contains(name))
-	      result.add(name);
-	  }
-	}
-      }
-    }
+    list = new ListAllVariables();
+    list.process(actor);
+    result = list.getVariables();
 
     if (result.size() > 1)
       Collections.sort(result);
@@ -129,34 +97,12 @@ public class FindUsages
    * @return		the storage name, empty if none found
    */
   protected List<String> findStorageNames(Actor actor) {
-    List<String>		result;
-    AbstractArgumentOption	arg;
-    Object			array;
-    int				i;
-    String			name;
+    List<String>	result;
+    ListAllStorageNames	list;
 
-    result = new ArrayList<>();
-
-    for (AbstractOption option: actor.getOptionManager().getOptionsList()) {
-      if (option instanceof AbstractArgumentOption) {
-	arg = (AbstractArgumentOption) option;
-	if (ClassLocator.isSubclass(StorageName.class, arg.getBaseClass())) {
-	  if (arg.isMultiple()) {
-	    array = arg.getCurrentValue();
-	    for (i = 0; i < Array.getLength(array); i++) {
-	      name = ((StorageName) Array.get(array, i)).getValue();
-	      if (!result.contains(name))
-		result.add(name);
-	    }
-	  }
-	  else {
-	    name = ((StorageName) arg.getCurrentValue()).getValue();
-	    if (!result.contains(name))
-	      result.add(name);
-	  }
-	}
-      }
-    }
+    list = new ListAllStorageNames();
+    list.process(actor);
+    result = list.getStorageNames();
 
     if (result.size() > 1)
       Collections.sort(result);
