@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractActorListingProcessor.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton,  Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton,  Zealand
  */
 package adams.flow.processor;
 
@@ -39,16 +39,37 @@ import java.awt.event.ActionEvent;
  * Ancestor for processors that list full actor names and allow jumping to them.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractActorListingProcessor
-  extends AbstractListingProcessor {
+  extends AbstractListingProcessor
+  implements ActorProcessorWithFlowPanelContext {
 
   /** for serialization. */
   private static final long serialVersionUID = 7133896476260133469L;
 
   /** the current actor being processed. */
   protected transient Actor m_Current;
+
+  /** the context. */
+  protected FlowPanel m_Context;
+
+  /**
+   * Sets the FlowPanel context.
+   *
+   * @param value	the context, null if none
+   */
+  public void setContext(FlowPanel value) {
+    m_Context = value;
+  }
+
+  /**
+   * Returns the FlowPanel context.
+   *
+   * @return		the context, null if not set
+   */
+  public FlowPanel getContext() {
+    return m_Context;
+  }
 
   /**
    * Tries to locate the enclosing actor.
@@ -152,6 +173,8 @@ public abstract class AbstractActorListingProcessor
     final BaseButton		buttonCopy;
     final BaseButton		buttonJumpTo;
     final Flow			flow;
+    Component			parentComp;
+    final Component		fParentComp;
 
     if (m_Current instanceof Flow)
       flow = (Flow) m_Current;
@@ -159,6 +182,14 @@ public abstract class AbstractActorListingProcessor
       flow = (Flow) m_Current.getRoot();
     else
       flow = null;
+
+    // determine parent component
+    parentComp = null;
+    if (flow != null)
+      parentComp = flow.getParentComponent();
+    if ((parentComp == null) && (m_Context != null))
+      parentComp = m_Context;
+    fParentComp = parentComp;
 
     result = new BaseListWithButtons();
     model = new DefaultListModel<>();
@@ -180,17 +211,17 @@ public abstract class AbstractActorListingProcessor
     });
     result.addToButtonsPanel(buttonCopy);
 
-    if ((flow != null) && (flow.getParentComponent() != null)) {
+    if (fParentComp != null) {
       buttonJumpTo = new BaseButton("Jump to");
       buttonJumpTo.setEnabled(false);
       buttonJumpTo.addActionListener((ActionEvent e) -> {
         if (result.getSelectedIndex() > -1) {
-          if (flow.getParentComponent() instanceof FlowPanel) {
-            ((FlowPanel) flow.getParentComponent()).getTree().locateAndDisplay(
+          if (fParentComp instanceof FlowPanel) {
+            ((FlowPanel) fParentComp).getTree().locateAndDisplay(
               "" + result.getSelectedValue(), true);
           }
-          else if (flow.getParentComponent() instanceof Tree) {
-            ((Tree) flow.getParentComponent()).locateAndDisplay(
+          else if (fParentComp instanceof Tree) {
+            ((Tree) fParentComp).locateAndDisplay(
               "" + result.getSelectedValue(), true);
           }
         }

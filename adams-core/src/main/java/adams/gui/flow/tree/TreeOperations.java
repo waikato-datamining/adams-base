@@ -58,6 +58,7 @@ import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
 import adams.flow.processor.ActorProcessor;
+import adams.flow.processor.ActorProcessorWithFlowPanelContext;
 import adams.flow.processor.GraphicalOutputProducingProcessor;
 import adams.flow.processor.ModifyingProcessor;
 import adams.flow.processor.MultiProcessor;
@@ -1382,6 +1383,9 @@ public class TreeOperations
 
       processor = (ActorProcessor) procDialog.getCurrent();
     }
+
+    if (processor instanceof ActorProcessorWithFlowPanelContext)
+      ((ActorProcessorWithFlowPanelContext) processor).setContext(getOwner().getOwner());
 
     // selected actor or full flow?
     flow = getOwner().getActor();
