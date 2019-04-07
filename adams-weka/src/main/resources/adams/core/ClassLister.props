@@ -179,6 +179,17 @@ adams.gui.visualization.instances.instancestable.ProcessRow=\
 adams.gui.visualization.instances.instancestable.ProcessCell=\
   adams.gui.visualization.instances.instancestable
 
+# WEKA single classifier enhancers
+weka.classifiers.SingleClassifierEnhancer=\
+  weka.classifiers,\
+  weka.classifiers.bayes,\
+  weka.classifiers.functions,\
+  weka.classifiers.lazy,\
+  weka.classifiers.meta,\
+  weka.classifiers.misc,\
+  weka.classifiers.rules,\
+  weka.classifiers.trees
+
 # WEKA file loaders
 weka.core.converters.AbstractFileLoader=\
   weka.core.converters
