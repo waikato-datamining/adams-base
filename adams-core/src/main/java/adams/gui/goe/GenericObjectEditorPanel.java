@@ -30,6 +30,8 @@ import adams.gui.goe.GenericObjectEditor.PostProcessObjectHandler;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * A panel that contains text field with the current setup of the object
@@ -38,7 +40,8 @@ import java.awt.event.ActionListener;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class GenericObjectEditorPanel
-  extends AbstractChooserPanel {
+  extends AbstractChooserPanel
+  implements PropertyChangeListener {
 
   /** for serialization. */
   private static final long serialVersionUID = -8351558686664299781L;
@@ -112,15 +115,16 @@ public class GenericObjectEditorPanel
   protected GenericObjectEditor getEditor() {
     if (m_Editor == null) {
       m_OkListener = (ActionEvent e) -> {
-	if (isEditable()) {
-	  setCurrent(m_Editor.getValue());
-	  getHistory().add(m_Editor.getValue());
-	  notifyChangeListeners(new ChangeEvent(m_Self));
-	}
+        if (isEditable()) {
+          setCurrent(m_Editor.getValue());
+          getHistory().add(m_Editor.getValue());
+          notifyChangeListeners(new ChangeEvent(m_Self));
+        }
       };
       m_CancelListener = (ActionEvent e) -> m_Editor.setValue(getCurrent());
       m_Editor = new GenericObjectEditor(m_CanChangeClass);
       m_Editor.setClassType(m_ClassType);
+      m_Editor.addPropertyChangeListener(this);
       ((GOEPanel) m_Editor.getCustomEditor()).addOkListener(m_OkListener);
       ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener(m_CancelListener);
     }
@@ -132,6 +136,7 @@ public class GenericObjectEditorPanel
    * Invalidates the GOE editor.
    */
   protected void invalidatedEditor() {
+    m_Editor.removePropertyChangeListener(this);
     if (m_OkListener != null)
       ((GOEPanel) m_Editor.getCustomEditor()).removeOkListener(m_OkListener);
     if (m_CancelListener != null)
@@ -312,5 +317,14 @@ public class GenericObjectEditorPanel
    */
   public PostProcessObjectHandler getPostProcessObjectHandler() {
     return getEditor().getPostProcessObjectHandler();
+  }
+
+  /**
+   * This method gets called when a bound property is changed.
+   * @param evt A PropertyChangeEvent object describing the event source
+   *          and the property that has changed.
+   */
+  public void propertyChange(PropertyChangeEvent evt) {
+    setCurrent(m_Editor.getValue());
   }
 }
