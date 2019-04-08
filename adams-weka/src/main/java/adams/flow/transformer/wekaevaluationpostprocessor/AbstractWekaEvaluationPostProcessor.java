@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractWekaEvaluationPostProcessor.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.wekaevaluationpostprocessor;
@@ -38,7 +38,6 @@ import java.util.List;
  * Ancestor for classes that post-process Evaluation objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractWekaEvaluationPostProcessor
   extends AbstractOptionHandler {
@@ -61,10 +60,7 @@ public abstract class AbstractWekaEvaluationPostProcessor
       return "No evaluation container provided!";
     if (!cont.hasValue(WekaEvaluationContainer.VALUE_EVALUATION))
       return "No Evaluation object in container present!";
-    eval = (Evaluation) cont.getValue(WekaEvaluationContainer.VALUE_EVALUATION);
-    if (eval.predictions() == null)
-      return "No predictions recorded?";
-    return null;
+    return check((Evaluation) cont.getValue(WekaEvaluationContainer.VALUE_EVALUATION));
   }
 
   /**
@@ -79,6 +75,77 @@ public abstract class AbstractWekaEvaluationPostProcessor
     WekaEvaluationContainer	result;
     Evaluation			eval;
     Evaluation			evalNew;
+
+    eval    = (Evaluation) cont.getValue(WekaEvaluationContainer.VALUE_EVALUATION);
+    evalNew = newEvaluation(suffix, eval, indices);
+
+    // assemble new container
+    result = new WekaEvaluationContainer(evalNew);
+
+    return result;
+  }
+
+  /**
+   * Post-processes the evaluation container.
+   *
+   * @param cont	the container to post-process
+   * @return		the generated evaluation containers
+   */
+  protected List<WekaEvaluationContainer> doPostProcess(WekaEvaluationContainer cont) {
+    List<WekaEvaluationContainer>	result;
+    List<Evaluation>			evals;
+
+    result = new ArrayList<>();
+    evals  = postProcess(cont.getValue(WekaEvaluationContainer.VALUE_EVALUATION, Evaluation.class));
+    for (Evaluation eval: evals)
+      result.add(new WekaEvaluationContainer(eval));
+
+    return result;
+  }
+
+  /**
+   * Post-processes the evaluation container.
+   *
+   * @param cont	the container to post-process
+   * @return		the generated evaluation containers
+   */
+  public List<WekaEvaluationContainer> postProcess(WekaEvaluationContainer cont) {
+    String	msg;
+
+    msg = check(cont);
+    if (msg != null)
+      throw new IllegalArgumentException(msg);
+    else
+      return doPostProcess(cont);
+  }
+
+  /**
+   * Checks the evaluation whether it can be processed.
+   * <br>
+   * Default implementation only ensures that it is not null and predictions
+   * are present.
+   *
+   * @param eval	the evaluation to check
+   * @return		null if successful, otherwise error message
+   */
+  protected String check(Evaluation eval) {
+    if (eval == null)
+      return "No evaluation provided!";
+    if (eval.predictions() == null)
+      return "No predictions recorded?";
+    return null;
+  }
+
+  /**
+   * Creates a new evaluation from the specified subset of predictions.
+   *
+   * @param suffix	the suffix for the relation name
+   * @param eval	the Evaluation to use as basis
+   * @param indices	the indices of the predictions to include in the container
+   * @return		the new container
+   */
+  protected Evaluation newEvaluation(String suffix, Evaluation eval, TIntList indices) {
+    Evaluation 			result;
     Instances			data;
     Instance			inst;
     ArrayList<Attribute> 	atts;
@@ -87,7 +154,6 @@ public abstract class AbstractWekaEvaluationPostProcessor
     ArrayList<Prediction>	preds;
     Prediction			pred;
 
-    eval  = (Evaluation) cont.getValue(WekaEvaluationContainer.VALUE_EVALUATION);
     preds = eval.predictions();
 
     // create fake data
@@ -108,47 +174,44 @@ public abstract class AbstractWekaEvaluationPostProcessor
 
     // make fake predictions
     try {
-      evalNew = new Evaluation(data);
+      result = new Evaluation(data);
       for (i = 0; i < indices.size(); i++) {
 	inst = data.instance(i);
 	pred = preds.get(indices.get(i));
 	if (numeric)
-	  evalNew.evaluateModelOnceAndRecordPrediction(new double[]{pred.predicted()}, inst);
+	  result.evaluateModelOnceAndRecordPrediction(new double[]{pred.predicted()}, inst);
 	else
-	  evalNew.evaluateModelOnceAndRecordPrediction(((NominalPrediction) pred).distribution().clone(), inst);
+	  result.evaluateModelOnceAndRecordPrediction(((NominalPrediction) pred).distribution().clone(), inst);
       }
     }
     catch (Exception e) {
       throw new IllegalStateException("Failed to make fake predictions!", e);
     }
 
-    // assemble new container
-    result = new WekaEvaluationContainer(evalNew);
-
     return result;
   }
 
   /**
-   * Post-processes the evaluation container.
+   * Post-processes the evaluation.
    *
-   * @param cont	the container to post-process
-   * @return		the generated evaluation containers
+   * @param eval	the evaluation to post-process
+   * @return		the generated evaluations
    */
-  protected abstract List<WekaEvaluationContainer> doPostProcess(WekaEvaluationContainer cont);
+  protected abstract List<Evaluation> doPostProcess(Evaluation eval);
 
   /**
-   * Post-processes the evaluation container.
+   * Post-processes the evaluation.
    *
-   * @param cont	the container to post-process
-   * @return		the generated evaluation containers
+   * @param eval	the evaluation to post-process
+   * @return		the generated evaluations
    */
-  public List<WekaEvaluationContainer> postProcess(WekaEvaluationContainer cont) {
+  public List<Evaluation> postProcess(Evaluation eval) {
     String	msg;
 
-    msg = check(cont);
+    msg = check(eval);
     if (msg != null)
       throw new IllegalArgumentException(msg);
     else
-      return doPostProcess(cont);
+      return doPostProcess(eval);
   }
 }

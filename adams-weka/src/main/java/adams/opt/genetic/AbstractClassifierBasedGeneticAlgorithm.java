@@ -29,6 +29,8 @@ import adams.data.weka.WekaAttributeIndex;
 import adams.event.GeneticFitnessChangeNotifier;
 import adams.flow.core.Actor;
 import adams.flow.standalone.JobRunnerSetup;
+import adams.flow.transformer.wekaevaluationpostprocessor.AbstractWekaEvaluationPostProcessor;
+import adams.flow.transformer.wekaevaluationpostprocessor.PassThrough;
 import adams.multiprocess.JobList;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
@@ -48,6 +50,7 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -55,7 +58,6 @@ import java.util.logging.Level;
  * Ancestor for genetic algorithms that evaluate classifiers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractClassifierBasedGeneticAlgorithm
   extends AbstractGeneticAlgorithm
@@ -67,7 +69,6 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    * Job class for algorithms with datasets.
    *
    * @author  dale
-   * @version $Revision: 4322 $
    */
   public static abstract class ClassifierBasedGeneticAlgorithmJob<T extends AbstractClassifierBasedGeneticAlgorithm>
     extends GeneticAlgorithmJob<T> {
@@ -174,6 +175,25 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     }
 
     /**
+     * Post-processes the Evaluation if necessary.
+     *
+     * @param eval	the evaluation to post-process
+     * @return		the (potentially) updated evaluation
+     */
+    protected Evaluation postProcess(Evaluation eval) {
+      List<Evaluation> 			evals;
+
+      if (!(getOwner().getEvaluationPostProcessor() instanceof PassThrough)) {
+        evals = getOwner().getEvaluationPostProcessor().postProcess(eval);
+        if (evals.size() != 1)
+          throw new IllegalStateException("Expected one Evaluation object from post-processor, but received: " + evals.size());
+        eval = evals.get(0);
+      }
+
+      return eval;
+    }
+
+    /**
      * Evaluates the classifier on the dataset and returns the metric.
      *
      * @param cls		the classifier to evaluate
@@ -184,21 +204,23 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @throws Exception	if the evaluation fails
      */
     protected double evaluateClassifier(Classifier cls, Instances data, int folds, int seed) throws Exception {
-      WekaCrossValidationExecution	eval;
+      WekaCrossValidationExecution 	evalExec;
       String				msg;
+      Evaluation 			eval;
 
-      eval = new WekaCrossValidationExecution();
-      eval.setData(data);
-      eval.setClassifier(cls);
-      eval.setNumThreads(1);
-      eval.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(getOwner().getGenerator()));
-      eval.setFolds(folds);
-      eval.setSeed(seed);
-      msg = eval.execute();
+      evalExec = new WekaCrossValidationExecution();
+      evalExec.setData(data);
+      evalExec.setClassifier(cls);
+      evalExec.setNumThreads(1);
+      evalExec.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(getOwner().getGenerator()));
+      evalExec.setFolds(folds);
+      evalExec.setSeed(seed);
+      msg = evalExec.execute();
       if (msg != null)
         throw new IllegalStateException(msg);
+      eval = postProcess(evalExec.getEvaluation());
 
-      return getMeasure().extract(eval.getEvaluation(), true);
+      return getMeasure().extract(eval, true);
     }
 
     /**
@@ -211,13 +233,14 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
      * @throws Exception	if the evaluation fails
      */
     protected double evaluateClassifier(Classifier cls, Instances data, Instances test) throws Exception {
-      Evaluation 	evaluation;
+      Evaluation 	eval;
 
-      evaluation = new Evaluation(data);
+      eval = new Evaluation(data);
       cls.buildClassifier(data);
-      evaluation.evaluateModel(cls, test);
+      eval.evaluateModel(cls, test);
+      eval = postProcess(eval);
 
-      return getMeasure().extract(evaluation, true);
+      return getMeasure().extract(eval, true);
     }
 
     /**
@@ -310,7 +333,6 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       File 			file;
       Map<String,Object>	setup;
       Properties 		props;
-      String			msg;
 
       file  = createFileName(fitness, data, "props.gz");
       setup = assembleSetup(fitness, cls, chromosome, weights);
@@ -393,6 +415,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   /** the measure to use for evaluating the fitness. */
   protected Measure m_Measure;
 
+  /** the postprocessor for the evaluation. */
+  protected AbstractWekaEvaluationPostProcessor m_EvaluationPostProcessor;
+
   /** the directory to store the generated ARFF files in. */
   protected PlaceholderDirectory m_OutputDirectory;
 
@@ -454,6 +479,10 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     m_OptionManager.add(
       "measure", "measure",
       Measure.RMSE);
+
+    m_OptionManager.add(
+      "evaluation-post-processor", "evaluationPostProcessor",
+      new PassThrough());
 
     m_OptionManager.add(
       "output-dir", "outputDirectory",
@@ -722,6 +751,35 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    */
   public String measureTipText() {
     return "The measure used for evaluating the fitness.";
+  }
+
+  /**
+   * Sets the post-processing scheme for the evaluation.
+   *
+   * @param value	the post-processor
+   */
+  public void setEvaluationPostProcessor(AbstractWekaEvaluationPostProcessor value) {
+    m_EvaluationPostProcessor = value;
+    reset();
+  }
+
+  /**
+   * Returns the post-processing scheme for the evaluation.
+   *
+   * @return		the post-processor
+   */
+  public AbstractWekaEvaluationPostProcessor getEvaluationPostProcessor() {
+    return m_EvaluationPostProcessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String evaluationPostProcessorTipText() {
+    return "The scheme for post-processing the evaluation.";
   }
 
   /**

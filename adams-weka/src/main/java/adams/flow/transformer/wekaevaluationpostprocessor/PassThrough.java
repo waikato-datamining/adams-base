@@ -13,14 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PassThrough.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.wekaevaluationpostprocessor;
 
-import adams.flow.container.WekaEvaluationContainer;
+import weka.classifiers.Evaluation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PassThrough
   extends AbstractWekaEvaluationPostProcessor {
@@ -58,14 +57,14 @@ public class PassThrough
   }
 
   /**
-   * Post-processes the evaluation container.
+   * Post-processes the evaluation.
    *
-   * @param cont	the container to post-process
-   * @return		the generated evaluation containers
+   * @param cont	the Evaluation to post-process
+   * @return		the generated evaluation
    */
   @Override
-  protected List<WekaEvaluationContainer> doPostProcess(WekaEvaluationContainer cont) {
-    List<WekaEvaluationContainer>	result;
+  protected List<Evaluation> doPostProcess(Evaluation cont) {
+    List<Evaluation>	result;
 
     result = new ArrayList<>();
     result.add(cont);

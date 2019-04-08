@@ -13,14 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiPostProcessor.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.wekaevaluationpostprocessor;
 
-import adams.flow.container.WekaEvaluationContainer;
+import weka.classifiers.Evaluation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MultiPostProcessor
   extends AbstractWekaEvaluationPostProcessor {
@@ -109,22 +108,22 @@ public class MultiPostProcessor
   }
 
   /**
-   * Post-processes the evaluation container.
+   * Post-processes the Evaluation.
    *
-   * @param cont	the container to post-process
-   * @return		the generated evaluation containers
+   * @param eval	the Evaluation to post-process
+   * @return		the generated evaluations
    */
   @Override
-  protected List<WekaEvaluationContainer> doPostProcess(WekaEvaluationContainer cont) {
-    List<WekaEvaluationContainer>	result;
-    int					i;
+  protected List<Evaluation> doPostProcess(Evaluation eval) {
+    List<Evaluation>	result;
+    int			i;
 
     result = new ArrayList<>();
 
     for (i = 0; i < m_PostProcessors.length; i++) {
       if (isLoggingEnabled())
 	getLogger().info("Applying post-processor #" + (i+1));
-      result.addAll(m_PostProcessors[i].postProcess(cont));
+      result.addAll(m_PostProcessors[i].postProcess(eval));
     }
 
     return result;

@@ -13,16 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SubRange.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.wekaevaluationpostprocessor;
 
 import adams.core.Utils;
 import adams.core.base.BaseInterval;
-import adams.flow.container.WekaEvaluationContainer;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Evaluation;
@@ -51,7 +50,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SubRange
   extends AbstractWekaEvaluationPostProcessor {
@@ -115,20 +113,18 @@ public class SubRange
   }
 
   /**
-   * Checks the container whether it can be processed.
+   * Checks the Evaluation whether it can be processed.
    *
-   * @param cont	the container to check
+   * @param eval	the Evaluation to check
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String check(WekaEvaluationContainer cont) {
+  protected String check(Evaluation eval) {
     String	result;
-    Evaluation	eval;
 
-    result = super.check(cont);
+    result = super.check(eval);
 
     if (result == null) {
-      eval = (Evaluation) cont.getValue(WekaEvaluationContainer.VALUE_EVALUATION);
       if (!eval.getHeader().classAttribute().isNumeric())
 	result = "Class attribute is not numeric!";
     }
@@ -137,24 +133,22 @@ public class SubRange
   }
 
   /**
-   * Post-processes the evaluation container.
+   * Post-processes the evaluation.
    *
-   * @param cont	the container to post-process
-   * @return		the generated evaluation containers
+   * @param eval	the Evaluation to post-process
+   * @return		the generated evaluations
    */
   @Override
-  protected List<WekaEvaluationContainer> doPostProcess(WekaEvaluationContainer cont) {
-    List<WekaEvaluationContainer>	result;
-    Evaluation				eval;
-    Prediction				pred;
-    TIntList 				indices;
-    int					i;
-    int					n;
-    String				relName;
+  protected List<Evaluation> doPostProcess(Evaluation eval) {
+    List<Evaluation>	result;
+    Prediction		pred;
+    TIntList 		indices;
+    int			i;
+    int			n;
+    String		relName;
 
     result  = new ArrayList<>();
     indices = new TIntArrayList();
-    eval    = (Evaluation) cont.getValue(WekaEvaluationContainer.VALUE_EVALUATION);
     for (i = 0; i < eval.predictions().size(); i++) {
       pred = eval.predictions().get(i);
       for (n = 0; n < m_Ranges.length; n++) {
@@ -168,7 +162,7 @@ public class SubRange
       relName = m_Ranges[0].getValue();
     else
       relName = Utils.arrayToString(m_Ranges);
-    result.add(newContainer("-" + relName, cont, indices));
+    result.add(newEvaluation("-" + relName, eval, indices));
 
     return result;
   }

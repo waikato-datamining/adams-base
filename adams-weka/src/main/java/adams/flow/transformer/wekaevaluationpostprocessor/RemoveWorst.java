@@ -20,7 +20,6 @@
 
 package adams.flow.transformer.wekaevaluationpostprocessor;
 
-import adams.flow.container.WekaEvaluationContainer;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Evaluation;
@@ -121,18 +120,16 @@ public class RemoveWorst
   /**
    * Checks the container whether it can be processed.
    *
-   * @param cont	the container to check
+   * @param eval	the container to check
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String check(WekaEvaluationContainer cont) {
+  protected String check(Evaluation eval) {
     String	result;
-    Evaluation eval;
 
-    result = super.check(cont);
+    result = super.check(eval);
 
     if (result == null) {
-      eval = (Evaluation) cont.getValue(WekaEvaluationContainer.VALUE_EVALUATION);
       if (!eval.getHeader().classAttribute().isNumeric())
 	result = "Class attribute is not numeric!";
     }
@@ -141,24 +138,22 @@ public class RemoveWorst
   }
 
   /**
-   * Post-processes the evaluation container.
+   * Post-processes the evaluation.
    *
-   * @param cont	the container to post-process
-   * @return		the generated evaluation containers
+   * @param eval	the Evaluation to post-process
+   * @return		the generated evaluations
    */
   @Override
-  protected List<WekaEvaluationContainer> doPostProcess(WekaEvaluationContainer cont) {
-    List<WekaEvaluationContainer>	result;
-    Evaluation				eval;
-    List<Prediction>			sorted;
-    double				threshold;
-    TIntList 				indices;
-    int					index;
-    Prediction				pred;
-    int					i;
+  protected List<Evaluation> doPostProcess(Evaluation eval) {
+    List<Evaluation>	result;
+    List<Prediction>	sorted;
+    double		threshold;
+    TIntList 		indices;
+    int			index;
+    Prediction		pred;
+    int			i;
 
     result  = new ArrayList<>();
-    eval    = cont.getValue(WekaEvaluationContainer.VALUE_EVALUATION, Evaluation.class);
 
     // sort by prediction error
     sorted  = new ArrayList<>(eval.predictions());
@@ -178,7 +173,7 @@ public class RemoveWorst
         indices.add(i);
     }
 
-    result.add(newContainer("-removed_worst_" + m_Percent, cont, indices));
+    result.add(newEvaluation("-removed_worst_" + m_Percent, eval, indices));
 
     return result;
   }
