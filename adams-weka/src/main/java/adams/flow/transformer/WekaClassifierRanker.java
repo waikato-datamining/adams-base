@@ -15,7 +15,7 @@
 
 /*
  * WekaClassifierRanker.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -157,7 +157,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaClassifierRanker
   extends AbstractTransformer
@@ -170,7 +169,6 @@ public class WekaClassifierRanker
    * A job class specific to ranking classifiers.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class RankingJob
     extends AbstractJob {
@@ -1066,8 +1064,10 @@ public class WekaClassifierRanker
     }
 
     if (result == null) {
-      if (getRoot() instanceof PauseStateHandler)
-	((PauseStateHandler) getRoot()).getPauseStateManager().addListener(this);
+      if (getRoot() instanceof PauseStateHandler) {
+        if (((PauseStateHandler) getRoot()).getPauseStateManager() != null)
+          ((PauseStateHandler) getRoot()).getPauseStateManager().addListener(this);
+      }
     }
 
     if (result == null)
