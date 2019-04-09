@@ -1005,50 +1005,6 @@ public class Utils {
   }
 
   /**
-   * Compares two comparable objects. Takes care of null objects.
-   * Returns -1, 0 or +1, if o1 less than, equal to or greater than o2.
-   * Returns 0 if both objects null, -1 if o1 null but not o2 and +1 if o1 not
-   * null but o2.
-   *
-   * @param o1		the first object
-   * @param o2		the second object
-   * @return		the comparison result
-   */
-  public static int compare(Comparable o1, Comparable o2) {
-    if ((o1 != null) && (o2 != null))
-      return o1.compareTo(o2);
-    else if ((o1 == null) && (o2 == null))
-      return 0;
-    else if (o1 == null)
-      return -1;
-    else
-      return +1;
-  }
-
-  /**
-   * Compares two integer arrays.
-   *
-   * @param a1		the first array
-   * @param a2		the second array
-   * @return		-1, 0, +1 if a1 is smaller than, equal to, or larger than a2
-   */
-  public static int compare(int[] a1, int[] a2) {
-    int		result;
-    int		i;
-
-    result = Integer.compare(a1.length, a2.length);
-    if (result == 0) {
-      for (i = 0; i < a1.length; i++) {
-        result = Integer.compare(a1[i], a2[i]);
-        if (result != 0)
-          break;
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Creates a new array of the specified length and fills it with the values
    * of the old array before returning it.
    *

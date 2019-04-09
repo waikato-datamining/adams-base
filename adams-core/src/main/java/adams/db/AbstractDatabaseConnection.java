@@ -22,6 +22,7 @@
 package adams.db;
 
 import adams.core.CloneHandler;
+import adams.core.CompareUtils;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
@@ -1355,10 +1356,10 @@ public abstract class AbstractDatabaseConnection
     if (o == null)
       return 1;
 
-    result = Utils.compare(getURL(), o.getURL());
+    result = CompareUtils.compare(getURL(), o.getURL());
 
     if (result == 0)
-      result = Utils.compare(getUser(), o.getUser());
+      result = CompareUtils.compare(getUser(), o.getUser());
 
     return result;
   }

@@ -20,6 +20,7 @@
 package adams.flow.transformer.locateobjects;
 
 import adams.core.CloneHandler;
+import adams.core.CompareUtils;
 import adams.core.Utils;
 import adams.core.base.QuadrilateralLocation;
 import adams.data.image.BufferedImageHelper;
@@ -624,9 +625,9 @@ public class LocatedObject
     if (result == 0)
       result = Boolean.compare(hasPolygon(), o.hasPolygon());
     if (result == 0) {
-      result = Utils.compare(getPolygonX(), o.getPolygonX());
+      result = CompareUtils.compare(getPolygonX(), o.getPolygonX());
       if (result == 0)
-	result = Utils.compare(getPolygonY(), o.getPolygonY());
+	result = CompareUtils.compare(getPolygonY(), o.getPolygonY());
     }
 
     return result;

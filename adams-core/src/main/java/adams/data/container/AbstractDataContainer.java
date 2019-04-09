@@ -20,8 +20,8 @@
 
 package adams.data.container;
 
+import adams.core.CompareUtils;
 import adams.core.UniqueIDs;
-import adams.core.Utils;
 import adams.data.id.MutableIDHandler;
 
 import java.util.ArrayList;
@@ -159,7 +159,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
 
     c = (AbstractDataContainer) o;
 
-    result = Utils.compare(getID(), c.getID());
+    result = CompareUtils.compare(getID(), c.getID());
 
     return result;
   }

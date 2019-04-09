@@ -19,10 +19,10 @@
  */
 package adams.data.timeseries;
 
+import adams.core.CompareUtils;
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
-import adams.core.Utils;
 import adams.data.Notes;
 import adams.data.NotesHandler;
 import adams.data.container.AbstractDataContainer;
@@ -325,7 +325,7 @@ public class Timeseries<P extends TimeseriesPoint, R extends Report, S extends T
       result = new Integer(getDatabaseID()).compareTo(new Integer(tp.getDatabaseID()));
 
     if (result == 0)
-      result = Utils.compare(getReport(), tp.getReport());
+      result = CompareUtils.compare(getReport(), tp.getReport());
 
     return result;
   }
