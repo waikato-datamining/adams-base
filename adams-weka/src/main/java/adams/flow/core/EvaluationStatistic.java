@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EvaluationStatistic.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -26,7 +26,6 @@ import adams.core.option.AbstractOption;
  * The enumeration for the comparison field.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum EvaluationStatistic
   implements EnumWithCustomDisplay<EvaluationStatistic> {
@@ -79,6 +78,7 @@ public enum EvaluationStatistic
   UNWEIGHTED_MACRO_F_MEASURE("Unweighted Macro F measure", true),
   UNWEIGHTED_MICRO_F_MEASURE("Unweighted Micro F measure", true),
   BIAS("Bias", false),
+  MSLE("Mean squared logarithmic error", false),
   RSQUARED("R^2", false),
   SDR("Standard Deviation of Residuals", false),
   RPD("Ratio of Performance to Deviation", false);

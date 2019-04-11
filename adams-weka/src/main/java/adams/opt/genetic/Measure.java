@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Measure.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.opt.genetic;
@@ -28,22 +28,23 @@ import weka.core.UnassignedClassException;
  * The measure to use for evaluating.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 4322 $
  */
 public enum Measure {
 
+  /** evaluation via: Accuracy. */
+  ACC(false, true, false),
   /** evaluation via: Correlation coefficient. */
   CC(false, false, true),
+  /** evaluation via: Mean absolute error. */
+  MAE(true, true, true),
+  /** evaluation via: Mean squared logarithmic error. */
+  MSLE(false, false, true),
+  /** evaluation via: Relative absolute error. */
+  RAE(true, true, true),
   /** evaluation via: Root mean squared error. */
   RMSE(true, true, true),
   /** evaluation via: Root relative squared error. */
-  RRSE(true, true, true),
-  /** evaluation via: Mean absolute error. */
-  MAE(true, true, true),
-  /** evaluation via: Relative absolute error. */
-  RAE(true, true, true),
-  /** evaluation via: Accuracy. */
-  ACC(false, true, false);
+  RRSE(true, true, true);
 
 
   /** whether the measure is multiplied by -1 or not. Only used in sorting. */
@@ -75,7 +76,9 @@ public enum Measure {
    * @param adjust	whether to just the measure
    * @return		the measure
    * @see		#adjust(double)
-   * @throws Exception	in case the retrieval of the measure fails
+   * @throws Exception	in case the retrieval of t    else if (this == Measure.RRSE)
+      result = evaluation.rootRelativeSquaredError();
+he measure fails
    */
   public double extract(Evaluation evaluation, boolean adjust) throws Exception {
     double result;
@@ -92,6 +95,8 @@ public enum Measure {
       result = evaluation.rootMeanSquaredError();
     else if (this == Measure.RRSE)
       result = evaluation.rootRelativeSquaredError();
+    else if (this == Measure.MSLE)
+      result = evaluation.getPluginMetric(weka.classifiers.evaluation.MSLE.class.getName()).getStatistic(weka.classifiers.evaluation.MSLE.NAME);
     else
       throw new IllegalStateException("Unhandled measure '" + this + "'!");
 

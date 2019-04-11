@@ -1,6 +1,7 @@
 # additional evaluation metrics
 weka.classifiers.evaluation.AbstractEvaluationMetric=\
   weka.classifiers.evaluation.Bias,\
+  weka.classifiers.evaluation.MSLE,\
   weka.classifiers.evaluation.RPD,\
   weka.classifiers.evaluation.RSquared,\
   weka.classifiers.evaluation.SDR

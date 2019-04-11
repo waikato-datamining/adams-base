@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EvaluationHelper.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.Bias;
+import weka.classifiers.evaluation.MSLE;
 import weka.classifiers.evaluation.RPD;
 import weka.classifiers.evaluation.RSquared;
 import weka.classifiers.evaluation.SDR;
@@ -29,7 +30,6 @@ import weka.classifiers.evaluation.SDR;
  * A helper class for Evaluation related things.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EvaluationHelper {
 
@@ -140,6 +140,8 @@ public class EvaluationHelper {
 	return eval.unweightedMicroFmeasure();
       case BIAS:
         return eval.getPluginMetric(Bias.class.getName()).getStatistic(Bias.NAME);
+      case MSLE:
+        return eval.getPluginMetric(MSLE.class.getName()).getStatistic(MSLE.NAME);
       case RSQUARED:
         return eval.getPluginMetric(RSquared.class.getName()).getStatistic(RSquared.NAME);
       case SDR:
