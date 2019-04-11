@@ -47,4 +47,28 @@ public class GraphHelper {
     return true;
   }
 
+  /**
+   * Simple check whether the drawble generates a dotty tree.
+   *
+   * @param s		the drawble to check
+   * @return		true if dotty tree
+   */
+  public static boolean isDottyTree(Drawable d) {
+    try {
+      return (isDottyTree(d.graph()));
+    }
+    catch (Exception e) {
+      return false;
+    }
+  }
+
+  /**
+   * Simple check whether the string represents a dotty tree.
+   *
+   * @param s		the string to check
+   * @return		true if dotty tree
+   */
+  public static boolean isDottyTree(String s) {
+    return (s != null) && !s.isEmpty() && s.contains("digraph");
+  }
 }
