@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.report.AbstractField;
 import adams.data.report.Field;
 import adams.data.report.Report;
@@ -63,6 +64,16 @@ public abstract class AbstractReportValueDbWriter<T extends Report>
    * 			displaying in the GUI or for listing the options.
    */
   public abstract String fieldsTipText();
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "fields", m_Fields);
+  }
 
   /**
    * Returns the class that the consumer accepts.
