@@ -139,10 +139,16 @@ public abstract class AbstractReportValueDbWriter<T extends Report>
       result = "No report attached: " + m_InputToken.getPayload();
     }
     else {
-      id       = extractID(report);
-      subset   = extractSubset(report);
       provider = getReportProvider();
-      stored   = provider.store(id, subset, false, true, m_Fields);
+      id = extractID(report);
+      if (isLoggingEnabled())
+        getLogger().info("ID: " + id);
+      subset = extractSubset(report);
+      if (isLoggingEnabled())
+        getLogger().info("Subset:\n" + subset);
+      stored = provider.store(id, subset, false, true, m_Fields);
+      if (isLoggingEnabled())
+        getLogger().info("stored: " + stored);
 
       if (stored)
 	m_OutputToken = new Token(id);
