@@ -20,6 +20,7 @@
 
 package adams.flow.transformer.wekaevaluationpostprocessor;
 
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseInterval;
 import gnu.trove.list.TIntList;
@@ -52,7 +53,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SubRange
-  extends AbstractWekaEvaluationPostProcessor {
+  extends AbstractNumericClassPostProcessor {
 
   private static final long serialVersionUID = -1598212513856588223L;
 
@@ -113,23 +114,12 @@ public class SubRange
   }
 
   /**
-   * Checks the Evaluation whether it can be processed.
+   * Returns a quick info about the object, which can be displayed in the GUI.
    *
-   * @param eval	the Evaluation to check
-   * @return		null if successful, otherwise error message
+   * @return		null if no info available, otherwise short string
    */
-  @Override
-  protected String check(Evaluation eval) {
-    String	result;
-
-    result = super.check(eval);
-
-    if (result == null) {
-      if (!eval.getHeader().classAttribute().isNumeric())
-	result = "Class attribute is not numeric!";
-    }
-
-    return result;
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "ranges", m_Ranges, "ranges: ");
   }
 
   /**

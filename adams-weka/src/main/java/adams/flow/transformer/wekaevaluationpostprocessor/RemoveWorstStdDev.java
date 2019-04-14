@@ -14,14 +14,17 @@
  */
 
 /*
- * RemoveWorst.java
+ * RemoveWorstStdDev.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.wekaevaluationpostprocessor;
 
 import adams.core.QuickInfoHelper;
+import adams.data.statistics.StatUtils;
+import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.Prediction;
@@ -31,19 +34,20 @@ import java.util.List;
 
 /**
  * Removes the worst predictions, which are considered outliers that
- * detract from the actual model performance.
+ * detract from the actual model performance. Uses a standard deviation
+ * based approach (threshold: mean + multiplier*stdev).
  *
  * Only works on numeric predictions.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class RemoveWorst
+public class RemoveWorstStdDev
   extends AbstractNumericClassPostProcessor {
 
   private static final long serialVersionUID = -8126062783012759418L;
 
-  /** the percentage of the worst predictions to remove (0-1). */
-  protected double m_Percent;
+  /** the multiplier for the standard deviation. */
+  protected double m_Multiplier;
 
   /**
    * Returns a string describing the object.
@@ -53,7 +57,9 @@ public class RemoveWorst
   @Override
   public String globalInfo() {
     return "Removes the worst predictions, which are considered outliers that "
-      + "detract from the actual model performance.\n"
+      + "detract from the actual model performance. All errors that are larger than "
+      + "'mean + multiplier*stdev' are considered outliers. Mean and stdev are "
+      + "calculated on the actual class values.\n"
       + "Only works on numeric predictions.";
   }
 
@@ -65,29 +71,29 @@ public class RemoveWorst
     super.defineOptions();
 
     m_OptionManager.add(
-      "percent", "percent",
-      0.01, 0.0, 1.0);
+      "multiplier", "multiplier",
+      3.0, 0.0, null);
   }
 
   /**
-   * Sets the percentage to remove.
+   * Sets the multiplier for the stdev.
    *
-   * @param value	the percent (0-1)
+   * @param value	the multiplier
    */
-  public void setPercent(double value) {
-    if (getOptionManager().isValid("percent", value)) {
-      m_Percent = value;
+  public void setMultiplier(double value) {
+    if (getOptionManager().isValid("multiplier", value)) {
+      m_Multiplier = value;
       reset();
     }
   }
 
   /**
-   * Returns the percentage to remove.
+   * Returns the multiplier for the stdev..
    *
-   * @return		the percent (0-1)
+   * @return		the multiplier
    */
-  public double getPercent() {
-    return m_Percent;
+  public double getMultiplier() {
+    return m_Multiplier;
   }
 
   /**
@@ -96,8 +102,8 @@ public class RemoveWorst
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String percentTipText() {
-    return "The percentage of worst predictions to remove (0-1).";
+  public String multiplierTipText() {
+    return "The multiplier for the standard deviation (mean + multiplier*stdev = threshold for outliers).";
   }
 
   /**
@@ -106,7 +112,7 @@ public class RemoveWorst
    * @return		null if no info available, otherwise short string
    */
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "percent", m_Percent, "percent: ");
+    return QuickInfoHelper.toString(this, "multiplier", m_Multiplier, "multiplier: ");
   }
 
   /**
@@ -118,36 +124,36 @@ public class RemoveWorst
   @Override
   protected List<Evaluation> doPostProcess(Evaluation eval) {
     List<Evaluation>	result;
-    List<Prediction>	sorted;
     double		threshold;
     TIntList 		indices;
-    int			index;
-    Prediction		pred;
     int			i;
+    TDoubleList 	errors;
+    double		mean;
+    double		stdev;
 
     result  = new ArrayList<>();
 
-    // sort by prediction error
-    sorted  = new ArrayList<>(eval.predictions());
-    sorted.sort(new AbsolutePredictionErrorComparator());
-
-    // determine threshold
-    index   = (int) Math.round((1.0 - m_Percent) * sorted.size());
-    if (index >= sorted.size())
-      index = sorted.size() - 1;
-    threshold = Math.abs(sorted.get(index).actual() - sorted.get(index).predicted());
-    if (isLoggingEnabled())
+    // calculate mean/stdev
+    errors = new TDoubleArrayList();
+    for (Prediction pred : eval.predictions())
+      errors.add(Math.abs(pred.actual() - pred.predicted()));
+    mean      = StatUtils.mean(errors.toArray());
+    stdev     = StatUtils.stddev(errors.toArray(), true);
+    threshold = mean + stdev * m_Multiplier;
+    if (isLoggingEnabled()) {
+      getLogger().info("mean: " + mean);
+      getLogger().info("stdev: " + stdev);
       getLogger().info("threshold: " + threshold);
+    }
 
     // determine predictions to keep
     indices = new TIntArrayList();
-    for (i = 0; i < eval.predictions().size(); i++) {
-      pred = eval.predictions().get(i);
-      if (Math.abs(pred.actual() - pred.predicted()) < threshold)
+    for (i = 0; i < errors.size(); i++) {
+      if (errors.get(i) < threshold)
         indices.add(i);
     }
 
-    result.add(newEvaluation("-removed_worst_" + m_Percent, eval, indices));
+    result.add(newEvaluation("-removed_worststdev_" + m_Multiplier, eval, indices));
 
     return result;
   }

@@ -20,6 +20,7 @@
 
 package adams.flow.transformer.wekaevaluationpostprocessor;
 
+import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.container.WekaEvaluationContainer;
 import gnu.trove.list.TIntList;
@@ -40,9 +41,21 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractWekaEvaluationPostProcessor
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements QuickInfoSupporter {
 
   private static final long serialVersionUID = -1975307519142567955L;
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   * <br>
+   * Default implementation returns null.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    return null;
+  }
 
   /**
    * Checks the container whether it can be processed.
@@ -54,8 +67,6 @@ public abstract class AbstractWekaEvaluationPostProcessor
    * @return		null if successful, otherwise error message
    */
   protected String check(WekaEvaluationContainer cont) {
-    Evaluation	eval;
-
     if (cont == null)
       return "No evaluation container provided!";
     if (!cont.hasValue(WekaEvaluationContainer.VALUE_EVALUATION))
@@ -155,6 +166,9 @@ public abstract class AbstractWekaEvaluationPostProcessor
     Prediction			pred;
 
     preds = eval.predictions();
+
+    if (isLoggingEnabled())
+      getLogger().info("new eval: from " + preds.size() + " predictions down to " + indices.size());
 
     // create fake data
     atts = new ArrayList<>();
