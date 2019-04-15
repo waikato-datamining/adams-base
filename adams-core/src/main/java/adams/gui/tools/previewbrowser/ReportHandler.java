@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ReportHandler.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
-import adams.data.io.input.DefaultSimpleCSVReportReader;
+import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.report.Report;
 import adams.gui.core.BasePanel;
@@ -33,7 +33,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Displays report files: report,csv
+ * Displays report files: *
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -46,13 +46,15 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReportHandler
   extends AbstractContentHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 8930638838922218410L;
+
+  /** the reader to use. */
+  protected AbstractReportReader m_Reader;
 
   /**
    * Returns a string describing the object.
@@ -61,7 +63,7 @@ public class ReportHandler
    */
   @Override
   public String globalInfo() {
-    return "Displays report files: " + Utils.arrayToString(getExtensions());
+    return "Displays report files (depends on selected reader): " + Utils.arrayToString(getExtensions());
   }
 
   /**
@@ -72,7 +74,57 @@ public class ReportHandler
    */
   @Override
   public String[] getExtensions() {
-    return new String[]{"report", "report.gz", "csv", "csv.gz"};
+    return new String[]{"*"};
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "reader", "reader",
+      getDefaultReader());
+  }
+
+  /**
+   * Returns the default reader.
+   *
+   * @return		the default reader
+   */
+  protected AbstractReportReader getDefaultReader() {
+    return new DefaultSimpleReportReader();
+  }
+
+  /**
+   * Sets the reader to use.
+   *
+   * @param value	the reader
+   */
+  public void setReader(AbstractReportReader value) {
+    m_Reader = value;
+    reset();
+  }
+
+  /**
+   * Returns the reader in use.
+   *
+   * @return		the reader
+   */
+  public AbstractReportReader getReader() {
+    return m_Reader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String readerTipText() {
+    return "The reader to use.";
   }
 
   /**
@@ -83,22 +135,12 @@ public class ReportHandler
    */
   @Override
   protected PreviewPanel createPreview(File file) {
-    BasePanel				result;
-    List<Report> 			reports;
-    DefaultSimpleCSVReportReader	simpleCSV;
-    DefaultSimpleReportReader		simple;
-    ReportFactory.Table			table;
+    BasePanel			result;
+    List<Report> 		reports;
+    ReportFactory.Table		table;
 
-    if (file.getName().endsWith("csv") || file.getName().endsWith("csv.gz")) {
-      simpleCSV = new DefaultSimpleCSVReportReader();
-      simpleCSV.setInput(new PlaceholderFile(file));
-      reports = simpleCSV.read();
-    }
-    else {
-      simple = new DefaultSimpleReportReader();
-      simple.setInput(new PlaceholderFile(file));
-      reports = simple.read();
-    }
+    m_Reader.setInput(new PlaceholderFile(file));
+    reports = m_Reader.read();
     if (reports.size() == 0)
       return new PreviewPanel(new NoPreviewAvailablePanel());
 
