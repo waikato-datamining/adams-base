@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectOverlap.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -155,6 +155,7 @@ public class ImageObjectOverlap
   /** the additional objects boolean. */
   public final static String ADDITIONAL_OBJ = "additional_object";
 
+  /** the placeholder for unknown label. */
   public static final String UNKNOWN_LABEL = "???";
 
   /** the storage item. */
@@ -535,6 +536,9 @@ public class ImageObjectOverlap
                   else
                     labelHighest = UNKNOWN_LABEL;
                 }
+                else {
+		  matchingObjects.add(otherObj);
+		}
               }
             }
           }
@@ -545,7 +549,8 @@ public class ImageObjectOverlap
             actObj.getMetaData().put(OVERLAP_LABEL_HIGHEST, labelHighest);
             actObj.getMetaData().put(OVERLAP_LABEL_HIGHEST_MATCH, thisLabel.equals(labelHighest));
           }
-          if (m_AdditionalObject) actObj.getMetaData().put(ADDITIONAL_OBJ, additionalObj);
+          if (m_AdditionalObject)
+            actObj.getMetaData().put(ADDITIONAL_OBJ, additionalObj);
           newObjs.add(actObj);
         }
         if (m_AdditionalObject) {
