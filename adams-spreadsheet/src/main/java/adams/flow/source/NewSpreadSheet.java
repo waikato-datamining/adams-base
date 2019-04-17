@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NewSpreadSheet.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -67,23 +67,24 @@ import java.util.Arrays;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-spreadsheet-name &lt;java.lang.String&gt; (property: sheetName)
  * &nbsp;&nbsp;&nbsp;The name for the spreadsheet.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-columns &lt;java.lang.String&gt; (property: columns)
+ *
+ * <pre>-columns &lt;adams.core.base.BaseText&gt; (property: columns)
  * &nbsp;&nbsp;&nbsp;The comma-separated list of column names.
  * &nbsp;&nbsp;&nbsp;default: A,B,C
  * </pre>
@@ -106,7 +107,6 @@ import java.util.Arrays;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NewSpreadSheet
   extends AbstractSimpleSource
@@ -119,7 +119,7 @@ public class NewSpreadSheet
   protected String m_SheetName;
 
   /** the comma-separated list of column headers. */
-  protected String m_Columns;
+  protected BaseText m_Columns;
 
   /** the data row type to use. */
   protected DataRow m_DataRowType;
@@ -153,7 +153,7 @@ public class NewSpreadSheet
 
     m_OptionManager.add(
 	    "columns", "columns",
-	    "A,B,C");
+	    new BaseText("A,B,C"));
 
     m_OptionManager.add(
 	    "data-row-type", "dataRowType",
@@ -219,7 +219,7 @@ public class NewSpreadSheet
    *
    * @param value	the list
    */
-  public void setColumns(String value) {
+  public void setColumns(BaseText value) {
     m_Columns = value;
     reset();
   }
@@ -229,7 +229,7 @@ public class NewSpreadSheet
    *
    * @return		the list
    */
-  public String getColumns() {
+  public BaseText getColumns() {
     return m_Columns;
   }
 
@@ -359,7 +359,7 @@ public class NewSpreadSheet
       sheet.setName(m_SheetName);
     sheet.setDataRowClass(m_DataRowType.getClass());
     if (!m_Columns.isEmpty()) {
-      cols = m_Columns.split(",");
+      cols = m_Columns.getValue().split(",");
       for (String col : cols)
         sheet.getHeaderRow().addCell("" + sheet.getColumnCount()).setContentAsString(col);
     }

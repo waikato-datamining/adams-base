@@ -15,26 +15,26 @@
 
 /*
  * NewSpreadSheetTest.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for NewSpreadSheet actor.
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision$
  */
 public class NewSpreadSheetTest
   extends AbstractFlowTest {
@@ -109,8 +109,7 @@ public class NewSpreadSheetTest
 
       // Flow.NewSpreadSheet
       adams.flow.source.NewSpreadSheet newspreadsheet2 = new adams.flow.source.NewSpreadSheet();
-      argOption = (AbstractArgumentOption) newspreadsheet2.getOptionManager().findByProperty("columns");
-      newspreadsheet2.setColumns((java.lang.String) argOption.valueOf("First,Second,Third,Fourth"));
+      newspreadsheet2.setColumns(new BaseText("First,Second,Third,Fourth"));
 
       abstractactor1[0] = newspreadsheet2;
 
