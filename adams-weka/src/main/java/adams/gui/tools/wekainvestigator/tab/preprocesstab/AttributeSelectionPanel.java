@@ -29,6 +29,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
+import weka.core.Attribute;
 import weka.core.Instances;
 
 import javax.swing.ListSelectionModel;
@@ -134,13 +135,13 @@ public class AttributeSelectionPanel
     }
 
     /**
-     * Gets the number of columns: 3
+     * Gets the number of columns: 4
      *
-     * @return 3
+     * @return 4
      */
     @Override
     public int getColumnCount() {
-      return 3;
+      return 4;
     }
 
     /**
@@ -163,6 +164,8 @@ public class AttributeSelectionPanel
 	  return m_Selected.containsKey(m_Instances.attribute(row).name()) && m_Selected.get(m_Instances.attribute(row).name());
 	case 2:
 	  return m_Instances.attribute(row).name();
+	case 3:
+	  return Attribute.typeToString(m_Instances.attribute(row).type());
 	default:
 	  return null;
       }
@@ -183,6 +186,8 @@ public class AttributeSelectionPanel
 	  return "";
 	case 2:
 	  return "Name";
+	case 3:
+	  return "Type";
 	default:
 	  return null;
       }
