@@ -342,6 +342,33 @@ public class PreprocessTab
   }
 
   /**
+   * Checks whether the selected datasets are compatible.
+   *
+   * @param indices	the indices of the data containers to check
+   * @return		null if compatible, otherwise error message
+   */
+  protected String isCompatible(int[] indices) {
+    MessageCollection	errors;
+    DataContainer 	first;
+    DataContainer 	other;
+    String		msg;
+
+    first  = getData().get(indices[0]);
+    errors = new MessageCollection();
+    for (int i = 1; i < indices.length; i++) {
+      other = getData().get(indices[i]);
+      msg   = first.getData().equalHeadersMsg(other.getData());
+      if (msg != null)
+        errors.add("Dataset " + other.getID() + " is not compatible:\n" + msg);
+    }
+
+    if (errors.isEmpty())
+      return null;
+    else
+      return errors.toString();
+  }
+
+  /**
    * Starts the filtering.
    */
   protected void startExecution() {
@@ -351,6 +378,7 @@ public class PreprocessTab
     final boolean		keep;
     final File 			serialize;
     final InvestigatorPanel	owner;
+    String			msg;
 
     if (!canStartExecution())
       return;
@@ -362,6 +390,15 @@ public class PreprocessTab
     keep            = m_CheckBoxKeepName.isSelected();
     serialize       = (m_CheckBoxSerialize.isSelected() && !m_FileSerialize.getCurrent().isDirectory() ? m_FileSerialize.getCurrent() : null);
     indices         = getSelectedRows();
+
+    // ensure that datasets are compatible
+    if (batch && (indices.length > 1)) {
+      msg = isCompatible(indices);
+      if (msg != null) {
+	logError("The datasets are not compatible and cannot be batch-filtered:\n" + msg, "Batch-filtering");
+	return;
+      }
+    }
 
     startExecution(new InvestigatorTabJob(this, "Filtering") {
       @Override
