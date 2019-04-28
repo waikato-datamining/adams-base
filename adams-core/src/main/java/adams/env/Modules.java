@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Modules.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.env;
 
@@ -35,7 +35,6 @@ import java.util.List;
  * For managing module information.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Modules {
 
@@ -73,7 +72,6 @@ public class Modules {
    * Container class for module information.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class Module
     implements Serializable, Comparable<Module> {
@@ -123,20 +121,22 @@ public class Modules {
       m_Author         = props.getProperty(KEY_AUTHOR,         "");
       m_Organization   = props.getProperty(KEY_ORGANIZATION,   "");
       m_LogoName       = props.getProperty(KEY_LOGO,           "");
-      if (m_LogoName.length() > 0) {
-	try {
-	  m_Logo = GUIHelper.getIcon(m_LogoName);
-	  if (m_Logo == null)
-	    m_Logo = new ImageIcon(ClassLoader.getSystemClassLoader().getResource(m_LogoName));
-	}
-	catch (Exception e) {
-	  System.err.println("Failed to load image '" + m_LogoName + "' from classpath:");
-	  e.printStackTrace();
-	  m_Logo = GUIHelper.getIcon("unknown-module.png");
-	}
-      }
-      else {
-	m_Logo = GUIHelper.getIcon("default-module.png");
+      if (!GUIHelper.isHeadless()) {
+        if (m_LogoName.length() > 0) {
+          try {
+            m_Logo = GUIHelper.getIcon(m_LogoName);
+            if (m_Logo == null)
+              m_Logo = new ImageIcon(ClassLoader.getSystemClassLoader().getResource(m_LogoName));
+          }
+          catch (Exception e) {
+            System.err.println("Failed to load image '" + m_LogoName + "' from classpath:");
+            e.printStackTrace();
+            m_Logo = GUIHelper.getIcon("unknown-module.png");
+          }
+        }
+        else {
+          m_Logo = GUIHelper.getIcon("default-module.png");
+        }
       }
     }
 
@@ -292,7 +292,7 @@ public class Modules {
     URL			url;
     Properties		props;
 
-    m_Modules = new ArrayList<Module>();
+    m_Modules = new ArrayList<>();
     setups    = Environment.getInstance().getProperties().get(ModuleDefinition.KEY);
     for (Setup setup: setups) {
       for (String dir: setup.getDirectories()) {
