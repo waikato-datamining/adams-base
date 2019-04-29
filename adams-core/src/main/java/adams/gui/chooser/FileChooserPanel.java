@@ -31,6 +31,8 @@ import javax.swing.JFileChooser;
 import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A panel that contains a text field with the current file/directory and a
@@ -50,8 +52,8 @@ public class FileChooserPanel
   /** whether to use the open or save dialog. */
   protected boolean m_UseSaveDialog;
 
-  /** the history of dirs. */
-  protected PlaceholderFileHistory m_History;
+  /** the history of files. */
+  protected static Map<Class,PlaceholderFileHistory> m_History;
 
   /**
    * Initializes the panel with no file.
@@ -89,10 +91,15 @@ public class FileChooserPanel
 
     m_FileChooser   = new BaseFileChooser();
     m_UseSaveDialog = false;
-    m_History       = new PlaceholderFileHistory();
-    m_History.setHistoryFile(
-      new PlaceholderFile(
-	Environment.getInstance().getHome() + File.separator + getClass().getName() + ".txt"));
+
+    if (m_History == null)
+      m_History = new HashMap<>();
+    if (!m_History.containsKey(getClass())) {
+      m_History.put(getClass(), new PlaceholderFileHistory());
+      m_History.get(getClass()).setHistoryFile(
+        new PlaceholderFile(
+          Environment.getInstance().getHome() + File.separator + getClass().getName() + ".txt"));
+    }
   }
 
   /**
@@ -106,7 +113,7 @@ public class FileChooserPanel
 
     if (m_UseSaveDialog) {
       if (m_FileChooser.showSaveDialog(m_Self) == BaseFileChooser.APPROVE_OPTION) {
-	m_History.add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
+	m_History.get(getClass()).add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
         return m_FileChooser.getSelectedFile();
       }
       else {
@@ -115,7 +122,7 @@ public class FileChooserPanel
     }
     else {
       if (m_FileChooser.showOpenDialog(m_Self) == BaseFileChooser.APPROVE_OPTION) {
-	m_History.add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
+	m_History.get(getClass()).add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
         return m_FileChooser.getSelectedFile();
       }
       else {
@@ -130,7 +137,7 @@ public class FileChooserPanel
   @Override
   protected void afterPasteFromClipboard() {
     super.afterPasteFromClipboard();
-    m_History.add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
+    m_History.get(getClass()).add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
   }
 
   /**
@@ -395,7 +402,7 @@ public class FileChooserPanel
 
     result.addSeparator();
 
-    m_History.customizePopupMenu(
+    m_History.get(getClass()).customizePopupMenu(
       result,
       getCurrent(),
       (HistorySelectionEvent e) -> {

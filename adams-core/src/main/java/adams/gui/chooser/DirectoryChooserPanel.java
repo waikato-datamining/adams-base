@@ -34,6 +34,8 @@ import adams.gui.event.HistorySelectionEvent;
 
 import javax.swing.event.ChangeEvent;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A panel that contains a text field with the current directory and a
@@ -51,7 +53,7 @@ public class DirectoryChooserPanel
   protected BaseDirectoryChooser m_DirectoryChooser;
 
   /** the history of dirs. */
-  protected PlaceholderDirectoryHistory m_History;
+  protected Map<Class,PlaceholderDirectoryHistory> m_History;
 
   /**
    * Initializes the panel with no file.
@@ -87,10 +89,15 @@ public class DirectoryChooserPanel
     super.initialize();
 
     m_DirectoryChooser = new BaseDirectoryChooser();
-    m_History          = new PlaceholderDirectoryHistory();
-    m_History.setHistoryFile(
-      new PlaceholderFile(
-	Environment.getInstance().getHome() + File.separator + getClass().getName() + ".txt"));
+
+    if (m_History == null)
+      m_History = new HashMap<>();
+    if (!m_History.containsKey(getClass())) {
+      m_History.put(getClass(), new PlaceholderDirectoryHistory());
+      m_History.get(getClass()).setHistoryFile(
+        new PlaceholderFile(
+          Environment.getInstance().getHome() + File.separator + getClass().getName() + ".txt"));
+    }
   }
 
   /**
@@ -101,7 +108,7 @@ public class DirectoryChooserPanel
   protected File doChoose() {
     m_DirectoryChooser.setSelectedFile(getCurrent());
     if (m_DirectoryChooser.showOpenDialog(m_Self) == BaseDirectoryChooser.APPROVE_OPTION) {
-      m_History.add(new PlaceholderDirectory(m_DirectoryChooser.getSelectedFile()));
+      m_History.get(getClass()).add(new PlaceholderDirectory(m_DirectoryChooser.getSelectedFile()));
       return m_DirectoryChooser.getSelectedFile();
     }
     else {
@@ -115,7 +122,7 @@ public class DirectoryChooserPanel
   @Override
   protected void afterPasteFromClipboard() {
     super.afterPasteFromClipboard();
-    m_History.add(new PlaceholderDirectory(m_DirectoryChooser.getSelectedFile()));
+    m_History.get(getClass()).add(new PlaceholderDirectory(m_DirectoryChooser.getSelectedFile()));
   }
 
   /**
@@ -235,7 +242,7 @@ public class DirectoryChooserPanel
 
     result.addSeparator();
 
-    m_History.customizePopupMenu(
+    m_History.get(getClass()).customizePopupMenu(
       result,
       getCurrent(),
       (HistorySelectionEvent e) -> {
