@@ -115,6 +115,7 @@ public class SpreadSheetFileChooserPanel
       if (m_FileChooser.showOpenDialog(m_Self) == JFileChooser.APPROVE_OPTION) {
         m_Reader = m_FileChooser.getReader();
         m_Writer = null;
+	m_History.get(getClass()).add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
         return new PlaceholderFile(m_FileChooser.getSelectedFile());
       }
       else {
@@ -125,6 +126,7 @@ public class SpreadSheetFileChooserPanel
       if (m_FileChooser.showSaveDialog(m_Self) == JFileChooser.APPROVE_OPTION) {
         m_Reader = null;
         m_Writer = m_FileChooser.getWriter();
+	m_History.get(getClass()).add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
         return new PlaceholderFile(m_FileChooser.getSelectedFile());
       }
       else {
