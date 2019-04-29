@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTableWithButtons.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -325,5 +325,24 @@ public class SpreadSheetTableWithButtons
    */
   public SpreadSheet toSpreadSheet(TableRowRange range, boolean view) {
     return ((SpreadSheetTable) m_Component).toSpreadSheet(range, view);
+  }
+
+  /**
+   * Sets whether to automatically set optimal column widths.
+   *
+   * @param value	if true then optimal column widths are used
+   */
+  public void setUseOptimalColumnWidths(boolean value) {
+    ((SpreadSheetTable) m_Component).setUseOptimalColumnWidths(value);
+  }
+
+  /**
+   * Returns whether to automatically set optimal column widths.
+   * Default implementation is initialized with "false".
+   *
+   * @return		true if optimal column widths are to be used
+   */
+  public boolean getUseOptimalColumnWidths() {
+    return ((SpreadSheetTable) m_Component).getUseOptimalColumnWidths();
   }
 }
