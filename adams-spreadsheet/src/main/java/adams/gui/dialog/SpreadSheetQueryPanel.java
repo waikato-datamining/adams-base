@@ -23,7 +23,10 @@ import adams.core.AdditionalInformationHandler;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.RecentSpreadSheetQueriesHandler;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
+import adams.gui.event.RecentItemEvent;
+import adams.gui.event.RecentItemListener;
 import adams.gui.help.HelpFrame;
 import adams.parser.SpreadSheetQuery;
 import adams.parser.SpreadSheetQueryText;
@@ -41,13 +44,15 @@ import java.awt.event.ActionListener;
  * Panel with spreadsheet query editor.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetQueryPanel
   extends BasePanel {
 
   /** for serialization. */
   private static final long serialVersionUID = -4419661519749458767L;
+
+  /** the file to store the recent queries in. */
+  public final static String SESSION_FILE = "SpreadSheetQueries.props";
 
   /** the panel with the query. */
   protected SpreadSheetQueryEditorPanel m_PanelQuery;
@@ -66,6 +71,15 @@ public class SpreadSheetQueryPanel
 
   /** the panel for the buttons on the left. */
   protected JPanel m_PanelButtonsLeft;
+
+  /** the button for the history. */
+  protected BaseButton m_ButtonHistory;
+
+  /** the popup menu for the recent items. */
+  protected JPopupMenu m_PopupMenu;
+
+  /** the recent files handler. */
+  protected RecentSpreadSheetQueriesHandler<JPopupMenu> m_RecentStatementsHandler;
 
   /**
    * Initializes the widgets.
@@ -137,17 +151,32 @@ public class SpreadSheetQueryPanel
       }
     });
     m_PanelButtonsLeft.add(m_ButtonOptions);
-    
+
+    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory.setToolTipText("Recent queries");
+    m_ButtonHistory.setVisible(false);
+    m_ButtonHistory.addActionListener((ActionEvent e) -> m_PopupMenu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight()));
+    m_PanelButtonsLeft.add(m_ButtonHistory);
+
+    m_PopupMenu = new JPopupMenu();
+    m_RecentStatementsHandler = new RecentSpreadSheetQueriesHandler<>(SESSION_FILE, 10, m_PopupMenu);
+    m_RecentStatementsHandler.addRecentItemListener(new RecentItemListener<JPopupMenu,SpreadSheetQueryText>() {
+      public void recentItemAdded(RecentItemEvent<JPopupMenu,SpreadSheetQueryText> e) {
+	// ignored
+      }
+      public void recentItemSelected(RecentItemEvent<JPopupMenu,SpreadSheetQueryText> e) {
+	setQuery(e.getItem());
+      }
+    });
+
     m_PanelButtonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_PanelBottom.add(m_PanelButtonsRight, BorderLayout.EAST);
 
     if (m_PanelQuery instanceof AdditionalInformationHandler) {
       m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
-      m_ButtonHelp.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  String help = ((AdditionalInformationHandler) m_PanelQuery).getAdditionalInformation();
-	  HelpFrame.showHelp(SpreadSheetQuery.class, help, false);
-	}
+      m_ButtonHelp.addActionListener((ActionEvent e) -> {
+	String help = m_PanelQuery.getAdditionalInformation();
+	HelpFrame.showHelp(SpreadSheetQuery.class, help, false);
       });
       m_PanelButtonsRight.add(m_ButtonHelp);
     }
@@ -187,5 +216,30 @@ public class SpreadSheetQueryPanel
    */
   public JPanel getButtonsRight() {
     return m_PanelButtonsRight;
+  }
+
+  /**
+   * Sets whether the history button is visible.
+   *
+   * @param value	true if visible
+   */
+  public void setHistoryVisible(boolean value) {
+    m_ButtonHistory.setVisible(value);
+  }
+
+  /**
+   * Returns whether the history button is visible.
+   *
+   * @return		true if visible
+   */
+  public boolean isHistoryVisible() {
+    return m_ButtonHistory.isVisible();
+  }
+
+  /**
+   * Adds the current query to the history.
+   */
+  public void addToHistory() {
+    m_RecentStatementsHandler.addRecentItem(getQuery());
   }
 }
