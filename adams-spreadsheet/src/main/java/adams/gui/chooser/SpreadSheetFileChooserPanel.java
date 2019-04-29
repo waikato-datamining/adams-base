@@ -81,7 +81,7 @@ public class SpreadSheetFileChooserPanel
    * @param path	the path/filename to use
    */
   protected void initializeConverters(File path) {
-    if ((path.length() > 0) && path.isFile()) {
+    if (!path.isDirectory()) {
       m_Reader = m_FileChooser.getReaderForFile(path.getAbsoluteFile());
       m_Writer = m_FileChooser.getWriterForFile(path.getAbsoluteFile());
     }
@@ -133,6 +133,16 @@ public class SpreadSheetFileChooserPanel
         return null;
       }
     }
+  }
+
+  /**
+   * Hook method after pasting from clipboard.
+   */
+  @Override
+  protected void afterPasteFromClipboard() {
+    super.afterPasteFromClipboard();
+    initializeConverters(getCurrent());
+    m_History.get(getClass()).add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
   }
 
   /**
