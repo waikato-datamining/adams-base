@@ -35,10 +35,16 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Panel with spreadsheet query editor.
@@ -81,6 +87,18 @@ public class SpreadSheetQueryPanel
   /** the recent files handler. */
   protected RecentSpreadSheetQueriesHandler<JPopupMenu> m_RecentStatementsHandler;
 
+  /** the change listeners. */
+  protected Set<ChangeListener> m_QueryChangeListeners;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    m_QueryChangeListeners = new HashSet<>();
+  }
+
   /**
    * Initializes the widgets.
    */
@@ -88,6 +106,20 @@ public class SpreadSheetQueryPanel
   protected void initGUI() {
     m_PanelQuery = new SpreadSheetQueryEditorPanel();
     m_PanelQuery.setWordWrap(true);
+    m_PanelQuery.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	notfyQueryChangeListeners();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	notfyQueryChangeListeners();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	notfyQueryChangeListeners();
+      }
+    });
     add(m_PanelQuery, BorderLayout.CENTER);
 
     m_PanelBottom = new JPanel(new BorderLayout());
@@ -198,6 +230,35 @@ public class SpreadSheetQueryPanel
    */
   public SpreadSheetQueryText getQuery() {
     return new SpreadSheetQueryText(m_PanelQuery.getContent());
+  }
+
+  /**
+   * Adds the listener for changes in the query.
+   *
+   * @param l		the listener to add
+   */
+  public void addQueryChangeListener(ChangeListener l) {
+    m_QueryChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for changes in the query.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeQueryChangeListener(ChangeListener l) {
+    m_QueryChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners that query has changed.
+   */
+  protected void notfyQueryChangeListeners() {
+    ChangeEvent	e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_QueryChangeListeners)
+      l.stateChanged(e);
   }
 
   /**
