@@ -23,11 +23,16 @@ package adams.gui.tools;
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
+import adams.core.Utils;
+import adams.core.io.PlaceholderFile;
+import adams.data.io.input.AbstractObjectReader;
+import adams.data.io.output.AbstractObjectWriter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.control.Flow;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
+import adams.gui.chooser.SerializationFileChooser;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
@@ -61,7 +66,9 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The main panel for processing spreadsheets.
@@ -73,6 +80,18 @@ public class SpreadSheetProcessorPanel
   implements MenuBarProvider, SpreadSheetProcessorListener, CleanUpHandler {
 
   private static final long serialVersionUID = -8779070213062972306L;
+
+  public static final String KEY_SOURCE_DATA = "source.data";
+
+  public static final String KEY_PROCESSOR_DATA = "processor.data";
+
+  public static final String KEY_TARGET_DATA = "target.data";
+
+  public static final String KEY_SOURCE_NAME = "source.name";
+
+  public static final String KEY_PROCESSOR_NAME = "processor.name";
+
+  public static final String KEY_TARGET_NAME = "target.name";
 
   /**
    * Encapsulates combobox to select a widget and the selected widget.
@@ -205,6 +224,23 @@ public class SpreadSheetProcessorPanel
     }
 
     /**
+     * Selects the current widget based on name.
+     *
+     * @param name	the widget name
+     * @return 		true if successfully set
+     */
+    public boolean selectCurrentWidget(String name) {
+      for (AbstractWidget widget: m_Widgets) {
+        if (widget.getName().equals(name)) {
+          setCurrentWidget(widget);
+          return true;
+	}
+      }
+
+      return false;
+    }
+
+    /**
      * Sets the current widget.
      *
      * @param value	the widget
@@ -275,6 +311,9 @@ public class SpreadSheetProcessorPanel
   /** the generated flows (eg charts). */
   protected List<Flow> m_GeneratedFlows;
 
+  /** filechooser for load/save views. */
+  protected SerializationFileChooser m_FileChooserView;
+
   /**
    * Initializes the members.
    */
@@ -282,9 +321,10 @@ public class SpreadSheetProcessorPanel
   protected void initialize() {
     super.initialize();
 
-    m_GeneratedFlows = new ArrayList<>();
-    m_DataSource     = null;
-    m_DataProcessor  = null;
+    m_GeneratedFlows  = new ArrayList<>();
+    m_DataSource      = null;
+    m_DataProcessor   = null;
+    m_FileChooserView = new SerializationFileChooser();
   }
 
   /**
@@ -390,6 +430,24 @@ public class SpreadSheetProcessorPanel
       menuitem.setIcon(GUIHelper.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> closeParent());
 
+      // View
+      menu = new JMenu("View");
+      result.add(menu);
+      menu.setMnemonic('V');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+
+      // View/Open
+      menuitem = new JMenuItem("Open...", GUIHelper.getIcon("open.gif"));
+      menu.add(menuitem);
+      menuitem.setMnemonic('O');
+      menuitem.addActionListener((ActionEvent e) -> openView());
+
+      // View/Save
+      menuitem = new JMenuItem("Save...", GUIHelper.getIcon("save.gif"));
+      menu.add(menuitem);
+      menuitem.setMnemonic('S');
+      menuitem.addActionListener((ActionEvent e) -> saveView());
+
       // Window
       menu = new JMenu("Window");
       result.add(menu);
@@ -420,6 +478,106 @@ public class SpreadSheetProcessorPanel
   }
 
   /**
+   * Allows the user to load a previously saved view.
+   */
+  protected void openView() {
+    int				retVal;
+    AbstractObjectReader	reader;
+    PlaceholderFile		file;
+    Object			data;
+    Map<String,Object> 		map;
+    String			msg;
+    MessageCollection		errors;
+
+    retVal = m_FileChooserView.showOpenDialog(this);
+    if (retVal != SerializationFileChooser.APPROVE_OPTION)
+      return;
+
+    file   = m_FileChooserView.getSelectedPlaceholderFile();
+    reader = m_FileChooserView.getObjectReader();
+    msg    = null;
+    try {
+      data = reader.read(file);
+    }
+    catch (Exception e) {
+      msg  = "Failed to load view from: " + file + "\n" + Utils.throwableToString(e);
+      data = null;
+    }
+    if (data != null) {
+      if (data instanceof Map) {
+        errors = new MessageCollection();
+        map    = (Map<String,Object>) data;
+        if (map.containsKey(KEY_SOURCE_NAME) && map.containsKey(KEY_SOURCE_DATA)) {
+          if (selectSourceWidget((String) map.get(KEY_SOURCE_NAME)))
+	    getSourceWidget().deserialize(map.get(KEY_SOURCE_DATA), errors);
+	}
+        if (map.containsKey(KEY_PROCESSOR_NAME) && map.containsKey(KEY_PROCESSOR_DATA)) {
+          if (selectProcessorWidget((String) map.get(KEY_PROCESSOR_NAME)))
+	    getProcessorWidget().deserialize(map.get(KEY_PROCESSOR_DATA), errors);
+	}
+        if (map.containsKey(KEY_TARGET_NAME) && map.containsKey(KEY_TARGET_DATA)) {
+          if (selectTargetWidget((String) map.get(KEY_TARGET_NAME)))
+	    getTargetWidget().deserialize(map.get(KEY_TARGET_DATA), errors);
+	}
+        if (!errors.isEmpty())
+          msg = errors.toString();
+      }
+      else {
+        msg = "Data loaded from '" + file + "' does not represent a map!";
+      }
+    }
+    if (msg != null)
+      GUIHelper.showErrorMessage(this, msg);
+    else
+      m_StatusBar.showStatus("View loaded from: " + file);
+  }
+
+  /**
+   * Alles the user to save the currrent view.
+   */
+  protected void saveView() {
+    int				retVal;
+    AbstractObjectWriter	writer;
+    PlaceholderFile		file;
+    Map<String,Object> 		map;
+    String			msg;
+
+    retVal = m_FileChooserView.showSaveDialog(this);
+    if (retVal != SerializationFileChooser.APPROVE_OPTION)
+      return;
+
+    file   = m_FileChooserView.getSelectedPlaceholderFile();
+    writer = m_FileChooserView.getObjectWriter();
+    map = new HashMap<>();
+    map.put(KEY_SOURCE_NAME,    getSourceWidget().getName());
+    map.put(KEY_SOURCE_DATA,    getSourceWidget().serialize());
+    map.put(KEY_PROCESSOR_NAME, getProcessorWidget().getName());
+    map.put(KEY_PROCESSOR_DATA, getProcessorWidget().serialize());
+    map.put(KEY_TARGET_NAME,    getTargetWidget().getName());
+    map.put(KEY_TARGET_DATA,    getTargetWidget().serialize());
+    try {
+      msg = writer.write(file, map);
+    }
+    catch (Exception e) {
+      msg = "Failed to save view to: " + file + "\n" + Utils.throwableToString(e);
+    }
+    if (msg != null)
+      GUIHelper.showErrorMessage(this, msg);
+    else
+      m_StatusBar.showStatus("View saved to: " + file);
+  }
+
+  /**
+   * Selects the source widget based on name.
+   *
+   * @param name	the name of the widget
+   * @return		true if successfully set
+   */
+  public boolean selectSourceWidget(String name) {
+    return m_PanelSource.selectCurrentWidget(name);
+  }
+
+  /**
    * Sets the source widget.
    *
    * @param value	the source
@@ -439,6 +597,16 @@ public class SpreadSheetProcessorPanel
   }
 
   /**
+   * Selects the processor widget based on name.
+   *
+   * @param name	the name of the widget
+   * @return		true if successfully set
+   */
+  public boolean selectProcessorWidget(String name) {
+    return m_PanelProcessor.selectCurrentWidget(name);
+  }
+
+  /**
    * Sets the processor widget.
    * 
    * @param value	the processor
@@ -455,6 +623,16 @@ public class SpreadSheetProcessorPanel
    */
   public AbstractProcessor getProcessorWidget() {
     return (AbstractProcessor) m_PanelProcessor.getCurrentWidget();
+  }
+
+  /**
+   * Selects the target widget based on name.
+   *
+   * @param name	the name of the widget
+   * @return		true if successfully set
+   */
+  public boolean selectTargetWidget(String name) {
+    return m_PanelTarget.selectCurrentWidget(name);
   }
 
   /**

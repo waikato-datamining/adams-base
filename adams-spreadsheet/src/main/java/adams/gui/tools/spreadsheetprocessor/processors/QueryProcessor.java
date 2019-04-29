@@ -34,6 +34,7 @@ import javax.swing.event.ChangeEvent;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Uses an SQL-like query for processing the data.
@@ -44,6 +45,8 @@ public class QueryProcessor
   extends AbstractProcessor {
 
   private static final long serialVersionUID = 2926743330826433963L;
+
+  public static final String KEY_QUERY = "query";
 
   /** the query panel. */
   protected SpreadSheetQueryPanel m_PanelQuery;
@@ -110,7 +113,45 @@ public class QueryProcessor
 
     if (other instanceof QueryProcessor) {
       widget = (QueryProcessor) other;
+      widget.getWidget();
       setCurrentQuery(widget.getCurrentQuery());
+    }
+  }
+
+  /**
+   * Serializes the setup from the widget.
+   *
+   * @return		the generated setup representation
+   */
+  public Object serialize() {
+    Map<String,Object> result;
+
+    result = new HashMap<>();
+    result.put(KEY_QUERY, getCurrentQuery().getValue());
+
+    return result;
+  }
+
+  /**
+   * Deserializes the setup and maps it onto the widget.
+   *
+  /**
+   * Deserializes the setup and maps it onto the widget.
+   *
+   * @param data	the setup representation to use
+   * @param errors	for collecting errors
+   */
+  public void deserialize(Object data, MessageCollection errors) {
+    Map<String,Object>	map;
+
+    if (data instanceof Map) {
+      map = (Map<String,Object>) data;
+      if (map.containsKey(KEY_QUERY))
+        setCurrentQuery(new SpreadSheetQueryText((String) map.get(KEY_QUERY)));
+      update();
+    }
+    else {
+      errors.add(getClass().getName() + ": Deserialization data is not a map!");
     }
   }
 

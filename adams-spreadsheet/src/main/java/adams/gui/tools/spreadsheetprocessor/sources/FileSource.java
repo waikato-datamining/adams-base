@@ -20,7 +20,10 @@
 
 package adams.gui.tools.spreadsheetprocessor.sources;
 
+import adams.core.MessageCollection;
 import adams.core.Utils;
+import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooserPanel;
@@ -39,6 +42,8 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * For selecting a single file.
@@ -49,6 +54,10 @@ public class FileSource
   extends AbstractSource {
 
   private static final long serialVersionUID = -4475860171792209905L;
+
+  public static final String KEY_INPUT = "input";
+
+  public static final String KEY_READER = "reader";
 
   /** the widget. */
   protected BasePanel m_Widget;
@@ -206,8 +215,55 @@ public class FileSource
 
     if (other instanceof FileSource) {
       widget = (FileSource) other;
+      widget.getWidget();
       setCurrentFile(widget.getCurrentFile());
       setCurrentReader(widget.getCurrentReader());
+    }
+  }
+
+  /**
+   * Serializes the setup from the widget.
+   *
+   * @return		the generated setup representation
+   */
+  public Object serialize() {
+    Map<String,Object> 	result;
+
+    result = new HashMap<>();
+    result.put(KEY_INPUT, getCurrentFile().getAbsolutePath());
+    result.put(KEY_READER, OptionUtils.getCommandLine(getCurrentReader()));
+
+    return result;
+  }
+
+  /**
+   * Deserializes the setup and maps it onto the widget.
+   *
+  /**
+   * Deserializes the setup and maps it onto the widget.
+   *
+   * @param data	the setup representation to use
+   * @param errors	for collecting errors
+   */
+  public void deserialize(Object data, MessageCollection errors) {
+    Map<String,Object>	map;
+
+    if (data instanceof Map) {
+      map = (Map<String,Object>) data;
+      if (map.containsKey(KEY_INPUT))
+        setCurrentFile(new PlaceholderFile((String) map.get(KEY_INPUT)));
+      if (map.containsKey(KEY_READER)) {
+        try {
+	  setCurrentReader((SpreadSheetReader) OptionUtils.forAnyCommandLine(SpreadSheetReader.class, (String) map.get(KEY_READER)));
+	}
+	catch (Exception e) {
+	  errors.add(getClass().getName() + ": Failed to instantiate reader from: " + map.get(KEY_READER));
+	}
+      }
+      update();
+    }
+    else {
+      errors.add(getClass().getName() + ": Deserialization data is not a map!");
     }
   }
 

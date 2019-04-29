@@ -44,6 +44,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * For displaying the data in a chart.
@@ -54,6 +56,10 @@ public class ChartTarget
   extends AbstractTarget {
 
   private static final long serialVersionUID = 6535516712611654393L;
+
+  public static final String KEY_CHART = "chart";
+
+  public static final String KEY_TITLE = "title";
 
   /** the widget. */
   protected BasePanel m_Widget;
@@ -143,17 +149,35 @@ public class ChartTarget
    *
    * @param value	the generator
    */
-  public void setCurrentGenerator(AbstractChartGenerator value) {
+  public void setCurrentChart(AbstractChartGenerator value) {
     m_PanelChart.setCurrent(value);
   }
 
   /**
    * Returns the current chart generator.
    *
-   * @return		the generatoir
+   * @return		the generator
    */
-  public AbstractChartGenerator getCurrentGenerator() {
+  public AbstractChartGenerator getCurrentChart() {
     return (AbstractChartGenerator) m_PanelChart.getCurrent();
+  }
+
+  /**
+   * Sets the current title.
+   *
+   * @param title	the title
+   */
+  public void setCurrentTitle(String title) {
+    m_TextTitle.setText(title);
+  }
+
+  /**
+   * Returns the current title.
+   *
+   * @return		the title
+   */
+  public String getCurrentTitle() {
+    return m_TextTitle.getText();
   }
 
   /**
@@ -166,7 +190,52 @@ public class ChartTarget
 
     if (other instanceof ChartTarget) {
       widget = (ChartTarget) other;
-      setCurrentGenerator(widget.getCurrentGenerator());
+      widget.getWidget();
+      setCurrentChart(widget.getCurrentChart());
+      setCurrentTitle(widget.getCurrentTitle());
+    }
+  }
+
+  /**
+   * Serializes the setup from the widget.
+   *
+   * @return		the generated setup representation
+   */
+  public Object serialize() {
+    Map<String,Object> result;
+
+    result = new HashMap<>();
+    result.put(KEY_CHART, OptionUtils.getCommandLine(getCurrentChart()));
+    result.put(KEY_TITLE, getCurrentTitle());
+
+    return result;
+  }
+
+  /**
+   * Deserializes the setup and maps it onto the widget.
+   *
+   * @param data	the setup representation to use
+   * @param errors	for collecting errors
+   */
+  public void deserialize(Object data, MessageCollection errors) {
+    Map<String,Object>	map;
+
+    if (data instanceof Map) {
+      map = (Map<String,Object>) data;
+      if (map.containsKey(KEY_CHART)) {
+        try {
+	  setCurrentChart((AbstractChartGenerator) OptionUtils.forAnyCommandLine(AbstractChartGenerator.class, (String) map.get(KEY_CHART)));
+	}
+	catch (Exception e) {
+	  errors.add(getClass().getName() + ": Failed to instantiate chart from: " + map.get(KEY_CHART));
+	}
+      }
+      if (map.containsKey(KEY_TITLE))
+        m_TextTitle.setText((String) map.get(KEY_TITLE));
+      update();
+    }
+    else {
+      errors.add(getClass().getName() + ": Deserialization data is not a map!");
     }
   }
 

@@ -20,6 +20,7 @@
 
 package adams.gui.tools.spreadsheetprocessor;
 
+import adams.core.MessageCollection;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.gui.event.SpreadSheetProcessorEvent;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
@@ -93,6 +94,21 @@ public abstract class AbstractWidget
    * @param other	the other widget to get the values from
    */
   public abstract void assign(AbstractWidget other);
+
+  /**
+   * Serializes the setup from the widget.
+   *
+   * @return		the generated setup representation
+   */
+  public abstract Object serialize();
+
+  /**
+   * Deserializes the setup and maps it onto the widget.
+   *
+   * @param data	the setup representation to use
+   * @param errors	for collecting errors
+   */
+  public abstract void deserialize(Object data, MessageCollection errors);
 
   /**
    * Notifies the owner.

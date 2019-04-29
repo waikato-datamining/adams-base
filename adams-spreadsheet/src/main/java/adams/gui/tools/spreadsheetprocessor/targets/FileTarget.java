@@ -21,6 +21,8 @@
 package adams.gui.tools.spreadsheetprocessor.targets;
 
 import adams.core.MessageCollection;
+import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooserPanel;
@@ -39,6 +41,8 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * For storing the processed data in a file.
@@ -49,6 +53,10 @@ public class FileTarget
   extends AbstractTarget {
 
   private static final long serialVersionUID = 6535516712611654393L;
+
+  public static final String KEY_OUTPUT = "output";
+
+  public static final String KEY_WRITER = "writer";
 
   /** the widget. */
   protected BasePanel m_Widget;
@@ -174,8 +182,52 @@ public class FileTarget
 
     if (other instanceof FileTarget) {
       widget = (FileTarget) other;
+      widget.getWidget();
       setCurrentFile(widget.getCurrentFile());
       setCurrentWriter(widget.getCurrentWriter());
+    }
+  }
+
+  /**
+   * Serializes the setup from the widget.
+   *
+   * @return		the generated setup representation
+   */
+  public Object serialize() {
+    Map<String,Object> result;
+
+    result = new HashMap<>();
+    result.put(KEY_OUTPUT, getCurrentFile().getAbsolutePath());
+    result.put(KEY_WRITER, OptionUtils.getCommandLine(getCurrentWriter()));
+
+    return result;
+  }
+
+  /**
+   * Deserializes the setup and maps it onto the widget.
+   *
+   * @param data	the setup representation to use
+   * @param errors	for collecting errors
+   */
+  public void deserialize(Object data, MessageCollection errors) {
+    Map<String,Object>	map;
+
+    if (data instanceof Map) {
+      map = (Map<String,Object>) data;
+      if (map.containsKey(KEY_OUTPUT))
+        m_PanelOutput.setCurrent(new PlaceholderFile((String) map.get(KEY_OUTPUT)));
+      if (map.containsKey(KEY_WRITER)) {
+        try {
+	  setCurrentWriter((SpreadSheetWriter) OptionUtils.forAnyCommandLine(SpreadSheetWriter.class, (String) map.get(KEY_WRITER)));
+	}
+	catch (Exception e) {
+	  errors.add(getClass().getName() + ": Failed to instantiate writer from: " + map.get(KEY_WRITER));
+	}
+      }
+      update();
+    }
+    else {
+      errors.add(getClass().getName() + ": Deserialization data is not a map!");
     }
   }
 
