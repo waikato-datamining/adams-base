@@ -20,7 +20,7 @@
 
 package adams.gui.event;
 
-import adams.gui.tools.spreadsheetprocessor.SpreadSheetProcessorPanel;
+import adams.gui.tools.SpreadSheetProcessorPanel;
 import adams.gui.tools.sqlworkbench.SqlQueryPanel;
 
 import java.util.EventObject;

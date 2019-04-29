@@ -20,8 +20,10 @@
 
 package adams.gui.event;
 
+import adams.gui.tools.SpreadSheetProcessorPanel;
+
 /**
- * Interface for listeners that react to changes in a {@link adams.gui.tools.spreadsheetprocessor.SpreadSheetProcessorPanel}.
+ * Interface for listeners that react to changes in a {@link SpreadSheetProcessorPanel}.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */

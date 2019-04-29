@@ -23,6 +23,7 @@ package adams.gui.tools.spreadsheetprocessor;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.gui.event.SpreadSheetProcessorEvent;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
+import adams.gui.tools.SpreadSheetProcessorPanel;
 
 import java.awt.Component;
 

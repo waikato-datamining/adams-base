@@ -25,7 +25,7 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
-import adams.gui.tools.spreadsheetprocessor.SpreadSheetProcessorPanel;
+import adams.gui.tools.SpreadSheetProcessorPanel;
 
 /**
  * Opens the SpreadSheet Processor.

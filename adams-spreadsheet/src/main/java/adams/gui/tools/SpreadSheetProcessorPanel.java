@@ -18,7 +18,7 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.spreadsheetprocessor;
+package adams.gui.tools;
 
 import adams.core.ClassLister;
 import adams.core.MessageCollection;
@@ -38,6 +38,7 @@ import adams.gui.core.SpreadSheetTableWithSearch;
 import adams.gui.core.UISettings;
 import adams.gui.event.SpreadSheetProcessorEvent;
 import adams.gui.event.SpreadSheetProcessorListener;
+import adams.gui.tools.spreadsheetprocessor.AbstractWidget;
 import adams.gui.tools.spreadsheetprocessor.processors.AbstractProcessor;
 import adams.gui.tools.spreadsheetprocessor.processors.QueryProcessor;
 import adams.gui.tools.spreadsheetprocessor.sources.AbstractSource;
