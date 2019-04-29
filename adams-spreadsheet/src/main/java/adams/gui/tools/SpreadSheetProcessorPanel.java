@@ -21,9 +21,11 @@
 package adams.gui.tools;
 
 import adams.core.ClassLister;
+import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.flow.control.Flow;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
 import adams.gui.core.BaseComboBox;
@@ -68,7 +70,7 @@ import java.util.List;
  */
 public class SpreadSheetProcessorPanel
   extends BasePanel
-  implements MenuBarProvider, SpreadSheetProcessorListener {
+  implements MenuBarProvider, SpreadSheetProcessorListener, CleanUpHandler {
 
   private static final long serialVersionUID = -8779070213062972306L;
 
@@ -269,6 +271,21 @@ public class SpreadSheetProcessorPanel
 
   /** the processed data. */
   protected SpreadSheet m_DataProcessor;
+
+  /** the generated flows (eg charts). */
+  protected List<Flow> m_GeneratedFlows;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_GeneratedFlows = new ArrayList<>();
+    m_DataSource     = null;
+    m_DataProcessor  = null;
+  }
 
   /**
    * For initializing the GUI.
@@ -599,5 +616,23 @@ public class SpreadSheetProcessorPanel
         worker.execute();
         break;
     }
+  }
+
+  /**
+   * Adds the flow to the list of flows to clean up.
+   *
+   * @param flow	the flow to clean up
+   */
+  public void addGeneratedFlow(Flow flow) {
+    m_GeneratedFlows.add(flow);
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    for (Flow flow: m_GeneratedFlows)
+      flow.destroy();
+    m_GeneratedFlows.clear();
   }
 }
