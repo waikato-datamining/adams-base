@@ -170,4 +170,22 @@ public class SpreadSheetQueryPanel
   public SpreadSheetQueryText getQuery() {
     return new SpreadSheetQueryText(m_PanelQuery.getContent());
   }
+
+  /**
+   * Returns the panel with the left buttons.
+   *
+   * @return		the panel
+   */
+  public JPanel getButtonsLeft() {
+    return m_PanelButtonsLeft;
+  }
+
+  /**
+   * Returns the panel with the right buttons.
+   *
+   * @return		the panel
+   */
+  public JPanel getButtonsRight() {
+    return m_PanelButtonsRight;
+  }
 }
