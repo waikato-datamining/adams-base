@@ -33,6 +33,8 @@ import adams.parser.SpreadSheetQueryText;
 import javax.swing.event.ChangeEvent;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +54,7 @@ public class QueryProcessor
   protected SpreadSheetQueryPanel m_PanelQuery;
 
   /** the button for processing. */
-  protected BaseButton m_ButtonProcess;
+  protected BaseButton m_ButtonExecute;
 
   /**
    * Returns the name of the widget.
@@ -75,14 +77,32 @@ public class QueryProcessor
       m_PanelQuery = new SpreadSheetQueryPanel();
       m_PanelQuery.setHistoryVisible(true);
       m_PanelQuery.addQueryChangeListener((ChangeEvent e) -> update());
+      m_PanelQuery.getQueryPanel().getTextPane().addKeyListener(new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+          if ((e.getKeyCode() == KeyEvent.VK_X) && (e.getModifiersEx() == KeyEvent.ALT_DOWN_MASK)) {
+            e.consume();
+            execute();
+          }
+          if (!e.isConsumed())
+            super.keyPressed(e);
+        }
+      });
 
-      m_ButtonProcess = new BaseButton(GUIHelper.getIcon("run.gif"));
-      m_ButtonProcess.addActionListener((ActionEvent e) ->
-	notifyOwner(EventType.PROCESS_DATA, "Execute query: " + m_PanelQuery.getQuery().getValue()));
-      m_PanelQuery.getButtonsRight().add(m_ButtonProcess);
+      m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
+      m_ButtonExecute.addActionListener((ActionEvent e) -> execute());
+      m_ButtonExecute.setToolTipText("Executes the query (Alt+X)");
+      m_PanelQuery.getButtonsRight().add(m_ButtonExecute);
     }
 
     return m_PanelQuery;
+  }
+
+  /**
+   * Executes the query.
+   */
+  protected void execute() {
+    notifyOwner(EventType.PROCESS_DATA, "Execute query: " + m_PanelQuery.getQuery().getValue());
   }
 
   /**
@@ -159,7 +179,7 @@ public class QueryProcessor
    * Updates the widget.
    */
   public void update() {
-    m_ButtonProcess.setEnabled((m_Owner.getSourceData() != null) && !getCurrentQuery().isEmpty());
+    m_ButtonExecute.setEnabled((m_Owner.getSourceData() != null) && !getCurrentQuery().isEmpty());
   }
 
   /**
