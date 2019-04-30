@@ -311,8 +311,8 @@ public class SpreadSheetProcessorPanel
   /** the generated flows (eg charts). */
   protected List<Actor> m_GeneratedFlows;
 
-  /** filechooser for load/save views. */
-  protected SerializationFileChooser m_FileChooserView;
+  /** filechooser for load/save configurations. */
+  protected SerializationFileChooser m_FileChooserConfiguration;
 
   /**
    * Initializes the members.
@@ -324,7 +324,7 @@ public class SpreadSheetProcessorPanel
     m_GeneratedFlows  = new ArrayList<>();
     m_DataSource      = null;
     m_DataProcessor   = null;
-    m_FileChooserView = new SerializationFileChooser();
+    m_FileChooserConfiguration = new SerializationFileChooser();
   }
 
   /**
@@ -435,23 +435,23 @@ public class SpreadSheetProcessorPanel
       menuitem.setIcon(GUIHelper.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> closeParent());
 
-      // View
-      menu = new JMenu("View");
+      // Configuration
+      menu = new JMenu("Configuration");
       result.add(menu);
-      menu.setMnemonic('V');
+      menu.setMnemonic('C');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
-      // View/Open
+      // Configuration/Open
       menuitem = new JMenuItem("Open...", GUIHelper.getIcon("open.gif"));
       menu.add(menuitem);
       menuitem.setMnemonic('O');
-      menuitem.addActionListener((ActionEvent e) -> openView());
+      menuitem.addActionListener((ActionEvent e) -> openConfiguration());
 
-      // View/Save
+      // Configuration/Save
       menuitem = new JMenuItem("Save...", GUIHelper.getIcon("save.gif"));
       menu.add(menuitem);
       menuitem.setMnemonic('S');
-      menuitem.addActionListener((ActionEvent e) -> saveView());
+      menuitem.addActionListener((ActionEvent e) -> saveConfiguration());
 
       // Window
       menu = new JMenu("Window");
@@ -483,9 +483,9 @@ public class SpreadSheetProcessorPanel
   }
 
   /**
-   * Allows the user to load a previously saved view.
+   * Allows the user to load a previously saved configuration.
    */
-  protected void openView() {
+  protected void openConfiguration() {
     int				retVal;
     AbstractObjectReader	reader;
     PlaceholderFile		file;
@@ -494,18 +494,18 @@ public class SpreadSheetProcessorPanel
     String			msg;
     MessageCollection		errors;
 
-    retVal = m_FileChooserView.showOpenDialog(this);
+    retVal = m_FileChooserConfiguration.showOpenDialog(this);
     if (retVal != SerializationFileChooser.APPROVE_OPTION)
       return;
 
-    file   = m_FileChooserView.getSelectedPlaceholderFile();
-    reader = m_FileChooserView.getObjectReader();
+    file   = m_FileChooserConfiguration.getSelectedPlaceholderFile();
+    reader = m_FileChooserConfiguration.getObjectReader();
     msg    = null;
     try {
       data = reader.read(file);
     }
     catch (Exception e) {
-      msg  = "Failed to load view from: " + file + "\n" + Utils.throwableToString(e);
+      msg  = "Failed to load configuration from: " + file + "\n" + Utils.throwableToString(e);
       data = null;
     }
     if (data != null) {
@@ -534,25 +534,25 @@ public class SpreadSheetProcessorPanel
     if (msg != null)
       GUIHelper.showErrorMessage(this, msg);
     else
-      m_StatusBar.showStatus("View loaded from: " + file);
+      m_StatusBar.showStatus("Configuration loaded from: " + file);
   }
 
   /**
-   * Alles the user to save the currrent view.
+   * Alles the user to save the currrent configuration.
    */
-  protected void saveView() {
+  protected void saveConfiguration() {
     int				retVal;
     AbstractObjectWriter	writer;
     PlaceholderFile		file;
     Map<String,Object> 		map;
     String			msg;
 
-    retVal = m_FileChooserView.showSaveDialog(this);
+    retVal = m_FileChooserConfiguration.showSaveDialog(this);
     if (retVal != SerializationFileChooser.APPROVE_OPTION)
       return;
 
-    file   = m_FileChooserView.getSelectedPlaceholderFile();
-    writer = m_FileChooserView.getObjectWriter();
+    file   = m_FileChooserConfiguration.getSelectedPlaceholderFile();
+    writer = m_FileChooserConfiguration.getObjectWriter();
     map = new HashMap<>();
     map.put(KEY_SOURCE_NAME,    getSourceWidget().getName());
     map.put(KEY_SOURCE_DATA,    getSourceWidget().serialize());
@@ -564,12 +564,12 @@ public class SpreadSheetProcessorPanel
       msg = writer.write(file, map);
     }
     catch (Exception e) {
-      msg = "Failed to save view to: " + file + "\n" + Utils.throwableToString(e);
+      msg = "Failed to save configuration to: " + file + "\n" + Utils.throwableToString(e);
     }
     if (msg != null)
       GUIHelper.showErrorMessage(this, msg);
     else
-      m_StatusBar.showStatus("View saved to: " + file);
+      m_StatusBar.showStatus("Configuration saved to: " + file);
   }
 
   /**
