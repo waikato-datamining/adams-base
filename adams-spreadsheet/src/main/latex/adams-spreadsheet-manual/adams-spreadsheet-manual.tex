@@ -445,6 +445,36 @@ Further superclasses:
 
 
 \clearpage
+\section{Spreadsheet processor}
+The \textit{Spreadsheet processor} falls, in terms of functionality for handling
+spreadsheets, between the Preview browser and the Flow editor. It is mainly aimed
+at making it easier to post-process/clean or plot spreadsheets, without having
+to write a full-blown flow. It consists of three parts:
+\begin{tight_itemize}
+  \item \textit{Source} -- where to obtain the spreadsheet from (paste from clipboard,
+  load from database, select specific file, file browser)
+  \item \textit{Processor} -- how to process the spreadsheet (spreadsheet query, flow)
+  \item \textit{Target} -- what to do with the processed spreadsheet (copy to clipboard,
+  save to file, generated chart)
+\end{tight_itemize}
+
+The tool also allows you to save configurations (source, processor and target), to be
+reloaded at a later stage to avoid having to re-setup the processing pipeline.
+
+Figure \ref{spreadsheet-processor} shows a model evaluation
+dataset that was loaded from a CSV (comma-separated values) file, two columns
+selected using the \textit{spreadsheet query} processor and then displayed
+as chart (scatter plot with a diagonal).
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/spreadsheet-processor.png}
+  \caption{Processing tool for spreadsheet files.}
+  \label{spreadsheet-processor}
+\end{figure}
+
+
+\clearpage
 \section{SQL Workbench}
 The \textit{SQL Workbench} tool allows you to run queries (SELECT, UPDATE, DELETE)
 from within ADAMS, without having to rely on third-party database tools. You can
