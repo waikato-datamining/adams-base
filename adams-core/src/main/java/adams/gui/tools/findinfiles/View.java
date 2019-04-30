@@ -68,7 +68,7 @@ public class View
       dialog = new PreviewBrowserDialog(getOwner().getParentDialog(), ModalityType.MODELESS);
     else
       dialog = new PreviewBrowserDialog(getOwner().getParentFrame(), false);
-    dialog.setSize(GUIHelper.getDefaultDialogDimension());
+    dialog.setSize(GUIHelper.getDefaultLargeDialogDimension());
     dialog.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
     dialog.open(new PlaceholderFile(getOwner().getSelectedFile()));
     dialog.setLocationRelativeTo(getOwner());
