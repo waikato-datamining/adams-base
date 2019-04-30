@@ -121,7 +121,7 @@ public class FileBrowserSource
       m_PanelFiles.addSelectionChangeListener((ChangeEvent e) -> update());
       m_PanelFiles.addDirectoryChangeListener((ChangeEvent e) -> {
         m_IgnoreDirUpdates = true;
-        setCurrentDirectory(new PlaceholderFile(m_PanelFiles.getCurrentDir()));
+        m_PanelDirectory.setCurrent(new PlaceholderFile(m_PanelFiles.getCurrentDir()));
         m_IgnoreDirUpdates = false;
       });
       panel.add(m_PanelFiles, BorderLayout.CENTER);
@@ -206,7 +206,7 @@ public class FileBrowserSource
    * @param value	the current directory
    */
   public void setCurrentDirectory(File value) {
-    m_PanelDirectory.setCurrent(value);
+    m_PanelFiles.setCurrentDir(value.getAbsolutePath());
   }
 
   /**
