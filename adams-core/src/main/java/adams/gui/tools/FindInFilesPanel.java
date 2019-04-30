@@ -29,9 +29,13 @@ import adams.core.base.BaseRegExp;
 import adams.core.exception.ConsolePanelExceptionHandler;
 import adams.core.exception.ExceptionHandler;
 import adams.core.io.FileUtils;
-import adams.core.io.FindUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.filesearch.AbstractFileSearchHandler;
+import adams.core.io.filesearch.FileSearchHandler;
+import adams.core.io.filesearch.RegExpFileSearchHandler;
 import adams.core.io.lister.LocalDirectoryLister;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import adams.env.Environment;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.core.BaseButton;
@@ -142,6 +146,9 @@ public class FindInFilesPanel
   /** the exception handler. */
   protected ExceptionHandler m_ExceptionHandler;
 
+  /** for logging. */
+  protected Logger m_Logger;
+
   /**
    * Initializes the members
    */
@@ -155,6 +162,7 @@ public class FindInFilesPanel
     m_Running = false;
     m_Lister  = new LocalDirectoryLister();
     m_Actions = new ArrayList<>();
+    m_Logger  = LoggingHelper.getLogger(FindInFilesPanel.class);
     m_ExceptionHandler = new ConsolePanelExceptionHandler();
     for (Class cls: ClassLister.getSingleton().getClasses(AbstractFindInFilesAction.class)) {
       try {
@@ -299,8 +307,24 @@ public class FindInFilesPanel
           if (m_Stopped)
             break;
           m_StatusBar.showStatus((i+1) + "/" + files.length + ": " + files[i]);
-	  if (FindUtils.searchFile(files[i], searchText, regexp, caseSensitive, m_ExceptionHandler))
-	    m_ModelResults.addElement(files[i]);
+	  FileSearchHandler handler = AbstractFileSearchHandler.getHandlerForFile(files[i]);
+	  if (handler == null) {
+	    m_Logger.warning("No search handler available for: " + files[i]);
+	    continue;
+	  }
+	  if (regexp) {
+	    if (handler instanceof RegExpFileSearchHandler) {
+	      if (((RegExpFileSearchHandler) handler).search(files[i], searchText, regexp, caseSensitive, m_ExceptionHandler))
+		m_ModelResults.addElement(files[i]);
+	    }
+	    else {
+	      m_Logger.warning("Search handler " + Utils.classToString(handler) + " does not support regular expressions, skipping: " + files[i]);
+	    }
+	  }
+	  else {
+	    if (handler.search(files[i], searchText, caseSensitive, m_ExceptionHandler))
+	      m_ModelResults.addElement(files[i]);
+	  }
 	}
 	return null;
       }

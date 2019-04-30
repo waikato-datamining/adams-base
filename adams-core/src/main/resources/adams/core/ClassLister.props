@@ -25,6 +25,10 @@ java.util.logging.Handler=\
 adams.core.io.AbstractFilenameGenerator=\
   adams.core.io
 
+# the file search handlers
+adams.core.io.filesearch.FileSearchHandler=\
+  adams.core.io.filesearch
+
 # the file use checks
 adams.core.io.fileuse.AbstractFileUseCheck=\
   adams.core.io.fileuse
