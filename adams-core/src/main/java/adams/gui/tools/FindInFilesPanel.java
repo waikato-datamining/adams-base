@@ -26,7 +26,10 @@ import adams.core.Properties;
 import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import adams.core.exception.ConsolePanelExceptionHandler;
+import adams.core.exception.ExceptionHandler;
 import adams.core.io.FileUtils;
+import adams.core.io.FindUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.lister.LocalDirectoryLister;
 import adams.env.Environment;
@@ -43,7 +46,6 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.RegExpTextField;
-import adams.gui.dialog.TextDialog;
 import adams.gui.tools.findinfiles.AbstractFindInFilesAction;
 import adams.gui.tools.findinfiles.View;
 
@@ -53,16 +55,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Simple tool for finding text in .
@@ -141,6 +139,9 @@ public class FindInFilesPanel
   /** the file lister to use. */
   protected LocalDirectoryLister m_Lister;
 
+  /** the exception handler. */
+  protected ExceptionHandler m_ExceptionHandler;
+
   /**
    * Initializes the members
    */
@@ -154,6 +155,7 @@ public class FindInFilesPanel
     m_Running = false;
     m_Lister  = new LocalDirectoryLister();
     m_Actions = new ArrayList<>();
+    m_ExceptionHandler = new ConsolePanelExceptionHandler();
     for (Class cls: ClassLister.getSingleton().getClasses(AbstractFindInFilesAction.class)) {
       try {
         action = (AbstractFindInFilesAction) cls.newInstance();
@@ -260,55 +262,6 @@ public class FindInFilesPanel
   }
 
   /**
-   * Searches the specified file.
-   *
-   * @param file	the file to search
-   * @param searchText	the search text
-   * @param regExp	true if the search text is a regular expression
-   * @return		true if the search text was found
-   */
-  protected boolean searchFile(String file, String searchText, boolean regExp, boolean caseSensitive) {
-    FileReader		freader;
-    BufferedReader	breader;
-    String		line;
-    Pattern		pattern;
-    boolean		result;
-
-    result  = false;
-    freader = null;
-    breader = null;
-    pattern = null;
-    if (regExp)
-      pattern = Pattern.compile(searchText);
-    else if (!caseSensitive)
-      searchText = searchText.toLowerCase();
-
-    try {
-      freader = new FileReader(file);
-      breader = new BufferedReader(freader);
-      while ((line = breader.readLine()) != null) {
-        if (!caseSensitive)
-          line = line.toLowerCase();
-        if (pattern != null)
-          result = pattern.matcher(line).matches();
-        else
-          result = line.contains(searchText);
-        if (result)
-          break;
-      }
-    }
-    catch (Exception e) {
-      ConsolePanel.getSingleton().append("Failed to search: " + file, e);
-    }
-    finally {
-      FileUtils.closeQuietly(breader);
-      FileUtils.closeQuietly(freader);
-    }
-
-    return result;
-  }
-
-  /**
    * Starts the search.
    */
   public void startSearch() {
@@ -346,7 +299,7 @@ public class FindInFilesPanel
           if (m_Stopped)
             break;
           m_StatusBar.showStatus((i+1) + "/" + files.length + ": " + files[i]);
-	  if (searchFile(files[i], searchText, regexp, caseSensitive))
+	  if (FindUtils.searchFile(files[i], searchText, regexp, caseSensitive, m_ExceptionHandler))
 	    m_ModelResults.addElement(files[i]);
 	}
 	return null;
@@ -415,27 +368,6 @@ public class FindInFilesPanel
       result.add(new PlaceholderFile("" + o).getAbsoluteFile());
 
     return result.toArray(new File[0]);
-  }
-
-  /**
-   * Views the currently selected file.
-   */
-  public void viewFile() {
-    TextDialog 		dialog;
-
-    if (m_ListResults.getSelectedIndices().length != 1)
-      return;
-
-    if (getParentDialog() != null)
-      dialog = new TextDialog(getParentDialog(), ModalityType.MODELESS);
-    else
-      dialog = new TextDialog(getParentFrame(), false);
-    dialog.setCanOpenFiles(true);
-    dialog.setSize(GUIHelper.getDefaultDialogDimension());
-    dialog.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-    dialog.open(getSelectedFile());
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
   }
 
   /**
