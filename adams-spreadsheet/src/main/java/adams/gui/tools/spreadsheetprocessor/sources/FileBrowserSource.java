@@ -118,6 +118,7 @@ public class FileBrowserSource
 
       m_PanelFiles = new FilePanel(false);
       m_PanelFiles.setListDirs(true);
+      m_PanelFiles.setSearchVisible(true);
       m_PanelFiles.addSelectionChangeListener((ChangeEvent e) -> update());
       m_PanelFiles.addDirectoryChangeListener((ChangeEvent e) -> {
         m_IgnoreDirUpdates = true;
