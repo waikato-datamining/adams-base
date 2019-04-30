@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractXYChartGenerator.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
 import adams.core.QuickInfoHelper;
 import adams.data.DecimalFormatString;
+import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
@@ -38,7 +39,6 @@ import adams.gui.visualization.core.DefaultColorProvider;
  * Ancestor for X/Y (or just Y) plot generators.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractXYChartGenerator
   extends AbstractRowBasedChartGenerator {
@@ -275,6 +275,7 @@ public abstract class AbstractXYChartGenerator
     plotter.setColorProvider(m_ColorProvider.shallowCopy());
     plotter.setWidth(m_Width);
     plotter.setHeight(m_Height);
+    plotter.setComparisonType(Comparison.X_AND_Y);
 
     updater = new SimplePlotUpdater();
     updater.setUpdateInterval(-1);
