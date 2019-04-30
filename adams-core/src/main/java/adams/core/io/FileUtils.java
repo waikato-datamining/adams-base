@@ -1068,7 +1068,7 @@ public class FileUtils {
     
     if (read > -1) {
       for (i = 0; (i < read) && !result; i++) {
-	if (buffer[i] < 32) {
+	if ((buffer[i] >= 0) && (buffer[i] < 32)) {
 	  switch(buffer[i]) {
 	    case 9:  // tab
 	    case 10: // cr
