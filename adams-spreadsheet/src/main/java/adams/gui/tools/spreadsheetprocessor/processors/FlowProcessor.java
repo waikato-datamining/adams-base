@@ -346,6 +346,7 @@ public class FlowProcessor
       msg = subflow.execute();
       if (msg != null)
 	errors.add(msg);
+      m_Owner.addGeneratedFlow(subflow);
     }
 
     // collect output
@@ -357,6 +358,7 @@ public class FlowProcessor
       else {
 	errors.add("Flow did not generate any data!");
       }
+      subflow.wrapUp();
     }
 
     return result;

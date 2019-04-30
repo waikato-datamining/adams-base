@@ -29,7 +29,7 @@ import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.flow.control.Flow;
+import adams.flow.core.Actor;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.ChildWindow;
 import adams.gui.chooser.SerializationFileChooser;
@@ -309,7 +309,7 @@ public class SpreadSheetProcessorPanel
   protected SpreadSheet m_DataProcessor;
 
   /** the generated flows (eg charts). */
-  protected List<Flow> m_GeneratedFlows;
+  protected List<Actor> m_GeneratedFlows;
 
   /** filechooser for load/save views. */
   protected SerializationFileChooser m_FileChooserView;
@@ -801,7 +801,7 @@ public class SpreadSheetProcessorPanel
    *
    * @param flow	the flow to clean up
    */
-  public void addGeneratedFlow(Flow flow) {
+  public void addGeneratedFlow(Actor flow) {
     m_GeneratedFlows.add(flow);
   }
 
@@ -809,7 +809,7 @@ public class SpreadSheetProcessorPanel
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    for (Flow flow: m_GeneratedFlows)
+    for (Actor flow: m_GeneratedFlows)
       flow.destroy();
     m_GeneratedFlows.clear();
   }
