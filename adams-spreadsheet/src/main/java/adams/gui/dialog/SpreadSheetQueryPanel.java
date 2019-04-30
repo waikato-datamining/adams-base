@@ -262,6 +262,15 @@ public class SpreadSheetQueryPanel
   }
 
   /**
+   * Returns the query panel.
+   *
+   * @return		the panel
+   */
+  public SpreadSheetQueryEditorPanel getQueryPanel() {
+    return m_PanelQuery;
+  }
+
+  /**
    * Returns the panel with the left buttons.
    *
    * @return		the panel
