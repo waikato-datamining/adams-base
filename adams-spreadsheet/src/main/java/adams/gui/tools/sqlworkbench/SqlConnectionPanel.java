@@ -27,7 +27,7 @@ import adams.core.logging.LoggingLevel;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.ConnectionParameters;
 import adams.db.DatabaseConnection;
-import adams.db.DatabaseConnectionProvider;
+import adams.db.DatabaseConnectionHandler;
 import adams.db.JdbcUrl;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
@@ -57,7 +57,7 @@ import java.util.List;
  */
 public class SqlConnectionPanel
   extends BasePanel
-  implements DatabaseConnectionProvider {
+  implements DatabaseConnectionHandler {
 
   private static final long serialVersionUID = 8008764357731780782L;
 
@@ -274,6 +274,16 @@ public class SqlConnectionPanel
    */
   public AbstractDatabaseConnection getDatabaseConnection() {
     return m_DatabaseConnection;
+  }
+
+  /**
+   * Sets the database connection.
+   *
+   * @param connection  the connection
+   */
+  public void setDatabaseConnection(AbstractDatabaseConnection connection) {
+    m_DatabaseConnection.addConnection(m_DatabaseConnection.toConnectionParameters(connection));
+    m_DatabaseConnection = connection;
   }
 
   /**
