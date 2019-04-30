@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FilePanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -58,7 +58,6 @@ import java.util.Set;
  * Displays files and directories.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FilePanel
   extends BasePanel
@@ -70,7 +69,6 @@ public class FilePanel
    * Event for double clicks on files.
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class FileDoubleClickEvent
     extends EventObject {
@@ -114,7 +112,6 @@ public class FilePanel
    * Interface for classes that listen to double clicks on files.
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public interface FileDoubleClickListener {
 
@@ -559,7 +556,7 @@ public class FilePanel
     }
     else if (m_List != null) {
       if (m_List.getSelectedIndex() > -1)
-	object = m_Files.get(m_List.getSelectedIndex());
+	object = m_Files.get(m_List.getActualIndex(m_List.getSelectedIndex()));
     }
 
     if (object != null) {
@@ -627,7 +624,7 @@ public class FilePanel
     }
     else if (m_List != null) {
       for (int index: m_List.getSelectedIndices()){
-	object = m_Files.get(index);
+	object = m_Files.get(m_List.getActualIndex(index));
 	if (object.getName().equals(".."))
 	  continue;
 	result.add(object);
