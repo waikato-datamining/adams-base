@@ -354,6 +354,7 @@ public class SpreadSheetProcessorPanel
 
     m_SplitPanelLeft = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     m_SplitPanelLeft.setOneTouchExpandable(true);
+    m_SplitPanelLeft.setResizeWeight(0.5);
     m_SplitPanelLeft.setDividerLocation(UISettings.get(getClass(), "DividerLeft", 300));
     m_SplitPanelLeft.setUISettingsParameters(getClass(), "DividerLeft");
     m_SplitPanelLeft.setTopComponent(m_PanelSource);
@@ -361,6 +362,7 @@ public class SpreadSheetProcessorPanel
 
     m_SplitPanelCenter = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     m_SplitPanelCenter.setOneTouchExpandable(true);
+    m_SplitPanelCenter.setResizeWeight(0.5);
     m_SplitPanelCenter.setDividerLocation(UISettings.get(getClass(), "DividerCenter", 300));
     m_SplitPanelCenter.setUISettingsParameters(getClass(), "DividerCenter");
     m_SplitPanelCenter.setTopComponent(m_PanelProcessor);
@@ -368,12 +370,14 @@ public class SpreadSheetProcessorPanel
 
     m_SplitPanelRight = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     m_SplitPanelRight.setOneTouchExpandable(true);
+    m_SplitPanelRight.setResizeWeight(0.5);
     m_SplitPanelRight.setDividerLocation(UISettings.get(getClass(), "DividerRight", 300));
     m_SplitPanelRight.setUISettingsParameters(getClass(), "DividerRight");
     m_SplitPanelRight.setTopComponent(m_PanelTarget);
 
     m_SplitPanelVert2 = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPanelVert2.setOneTouchExpandable(true);
+    m_SplitPanelVert2.setResizeWeight(0.5);
     m_SplitPanelVert2.setDividerLocation(UISettings.get(getClass(), "DividerVert2", 300));
     m_SplitPanelVert2.setUISettingsParameters(getClass(), "DividerVert2");
     m_SplitPanelVert2.setLeftComponent(m_SplitPanelCenter);
@@ -381,6 +385,7 @@ public class SpreadSheetProcessorPanel
 
     m_SplitPanelVert1 = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPanelVert1.setOneTouchExpandable(true);
+    m_SplitPanelVert1.setResizeWeight(0.33);
     m_SplitPanelVert1.setDividerLocation(UISettings.get(getClass(), "DividerVert1", 300));
     m_SplitPanelVert1.setUISettingsParameters(getClass(), "DividerVert1");
     m_SplitPanelVert1.setLeftComponent(m_SplitPanelLeft);
