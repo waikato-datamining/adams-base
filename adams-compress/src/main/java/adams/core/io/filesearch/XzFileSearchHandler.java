@@ -41,6 +41,9 @@ public class XzFileSearchHandler
 
   private static final long serialVersionUID = 2030528214619565963L;
 
+  /** the actual search. */
+  protected TextFileSearchHandler m_TextSearch;
+
   /**
    * Returns a string describing the object.
    *
@@ -72,24 +75,23 @@ public class XzFileSearchHandler
    */
   @Override
   public boolean search(String file, String searchText, boolean caseSensitive, ExceptionHandler handler) {
-    boolean			result;
-    InputStream 		fis;
-    InputStream 		cis;
-    Reader 			isr;
-    TextFileSearchHandler 	textSearch;
+    boolean		result;
+    InputStream 	fis;
+    InputStream 	cis;
+    Reader 		isr;
 
-    result = false;
-    fis    = null;
-    cis = null;
-    isr    = null;
+    result       = false;
+    fis          = null;
+    cis          = null;
+    isr          = null;
+    m_TextSearch = new TextFileSearchHandler();
+    m_Stopped    = false;
 
     try {
-      fis = new FileInputStream(file);
-      cis = new XZInputStream(new BufferedInputStream(fis));
-      isr = new InputStreamReader(cis, m_Encoding.charsetValue());
-      // search stream
-      textSearch = new TextFileSearchHandler();
-      result     = textSearch.search(isr, searchText, caseSensitive, handler);
+      fis    = new FileInputStream(file);
+      cis    = new XZInputStream(new BufferedInputStream(fis));
+      isr    = new InputStreamReader(cis, m_Encoding.charsetValue());
+      result = m_TextSearch.search(isr, searchText, caseSensitive, handler);
     }
     catch (Exception e) {
       if (handler != null)
@@ -101,6 +103,18 @@ public class XzFileSearchHandler
       FileUtils.closeQuietly(fis);
     }
 
+    m_TextSearch = null;
+
     return result;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_TextSearch != null)
+      m_TextSearch.stopExecution();
+    super.stopExecution();
   }
 }

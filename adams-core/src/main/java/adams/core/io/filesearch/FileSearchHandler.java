@@ -20,6 +20,7 @@
 
 package adams.core.io.filesearch;
 
+import adams.core.StoppableWithFeedback;
 import adams.core.exception.ExceptionHandler;
 
 /**
@@ -27,7 +28,8 @@ import adams.core.exception.ExceptionHandler;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface FileSearchHandler {
+public interface FileSearchHandler
+  extends StoppableWithFeedback {
 
   /**
    * Checks whether the handler can manage this file.

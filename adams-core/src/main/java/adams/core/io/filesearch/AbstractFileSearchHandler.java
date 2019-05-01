@@ -48,6 +48,25 @@ public abstract class AbstractFileSearchHandler
   /** for logging in static context. */
   protected static Logger LOGGER = LoggingHelper.getLogger(AbstractFileSearchHandler.class);
 
+  /** whether the search was stopped. */
+  protected boolean m_Stopped;
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Stopped = true;
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  public boolean isStopped() {
+    return m_Stopped;
+  }
+
   /**
    * Returns a shallow copy of itself.
    *

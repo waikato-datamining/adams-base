@@ -149,6 +149,9 @@ public class FindInFilesPanel
   /** for logging. */
   protected Logger m_Logger;
 
+  /** the current search handler. */
+  protected FileSearchHandler m_CurrentHandler;
+
   /**
    * Initializes the members
    */
@@ -307,24 +310,25 @@ public class FindInFilesPanel
           if (m_Stopped)
             break;
           m_StatusBar.showStatus((i+1) + "/" + files.length + ": " + files[i]);
-	  FileSearchHandler handler = AbstractFileSearchHandler.getHandlerForFile(files[i]);
-	  if (handler == null) {
+	  m_CurrentHandler = AbstractFileSearchHandler.getHandlerForFile(files[i]);
+	  if (m_CurrentHandler == null) {
 	    m_Logger.warning("No search handler available for: " + files[i]);
 	    continue;
 	  }
 	  if (regexp) {
-	    if (handler instanceof RegExpFileSearchHandler) {
-	      if (((RegExpFileSearchHandler) handler).search(files[i], searchText, regexp, caseSensitive, m_ExceptionHandler))
+	    if (m_CurrentHandler instanceof RegExpFileSearchHandler) {
+	      if (((RegExpFileSearchHandler) m_CurrentHandler).search(files[i], searchText, regexp, caseSensitive, m_ExceptionHandler))
 		m_ModelResults.addElement(files[i]);
 	    }
 	    else {
-	      m_Logger.warning("Search handler " + Utils.classToString(handler) + " does not support regular expressions, skipping: " + files[i]);
+	      m_Logger.warning("Search handler " + Utils.classToString(m_CurrentHandler) + " does not support regular expressions, skipping: " + files[i]);
 	    }
 	  }
 	  else {
-	    if (handler.search(files[i], searchText, caseSensitive, m_ExceptionHandler))
+	    if (m_CurrentHandler.search(files[i], searchText, caseSensitive, m_ExceptionHandler))
 	      m_ModelResults.addElement(files[i]);
 	  }
+	  m_CurrentHandler = null;
 	}
 	return null;
       }
@@ -332,7 +336,8 @@ public class FindInFilesPanel
       @Override
       protected void done() {
 	super.done();
-	m_Running = false;
+	m_Running        = false;
+	m_CurrentHandler = null;
 	m_StatusBar.clearStatus();
 	updateButtons();
       }
@@ -345,6 +350,8 @@ public class FindInFilesPanel
    */
   public void stopExecution() {
     m_Lister.stopExecution();
+    if (m_CurrentHandler != null)
+      m_CurrentHandler.stopExecution();
     m_Stopped = true;
     m_Running = false;
   }

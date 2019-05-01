@@ -115,6 +115,8 @@ public class TextFileSearchHandler
           result = line.contains(searchText);
         if (result)
           break;
+        if (m_Stopped)
+          break;
       }
     }
     catch (Exception e) {
@@ -146,10 +148,11 @@ public class TextFileSearchHandler
     String		lastStr;
     String		currStr;
 
-    result  = false;
-    buffLen = 1024;
-    buff    = new char[buffLen];
-    currStr = null;
+    result    = false;
+    m_Stopped = false;
+    buffLen   = 1024;
+    buff      = new char[buffLen];
+    currStr   = null;
     if (reader instanceof BufferedReader)
       breader = (BufferedReader) reader;
     else
@@ -165,6 +168,8 @@ public class TextFileSearchHandler
 	  currStr = currStr.toLowerCase();
 	result = currStr.contains(searchText);
 	if (numRead < buffLen)
+	  break;
+	if (m_Stopped)
 	  break;
       }
       catch (Exception e) {
