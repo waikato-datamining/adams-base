@@ -15,7 +15,7 @@
 
 /*
  * XYSequencePanel.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -26,6 +26,7 @@ import adams.core.option.OptionUtils;
 import adams.data.io.output.MetaFileWriter;
 import adams.data.io.output.MultiSheetSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
+import adams.data.report.AbstractField;
 import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.spreadsheet.SpreadSheet;
@@ -82,7 +83,6 @@ import java.util.List;
  * A panel for displaying XY sequences.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class XYSequencePanel
   extends DataContainerPanelWithContainerList<XYSequence, XYSequenceContainerManager, XYSequenceContainer>
@@ -692,6 +692,26 @@ public class XYSequencePanel
    */
   @Override
   public void storeColorInReport(int[] indices, String name) {
+  }
+
+  /**
+   * Returns true if storing a value in the report of container's data object
+   * is supported.
+   *
+   * @return		true if supported
+   */
+  public boolean supportsStoreValueInReport() {
+    return false;
+  }
+
+  /**
+   * Stores the value in the report of container's data object.
+   *
+   * @param indices	the indices of the containers of the container manager
+   * @param field	the field to use
+   * @param value	the value to store
+   */
+  public void storeValueInReport(int[] indices, AbstractField field, Object value) {
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * InstancePanel.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
@@ -25,6 +25,7 @@ import adams.core.option.OptionUtils;
 import adams.data.instance.Instance;
 import adams.data.instance.InstancePoint;
 import adams.data.io.output.SpreadSheetWriter;
+import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.spreadsheet.SpreadSheet;
@@ -389,6 +390,35 @@ public class InstancePanel
       cont.getData().getReport().addField(field);
       cont.getData().getReport().setValue(field, ColorHelper.toHex(cont.getColor()));
     }
+  }
+
+  /**
+   * Returns true if storing a value in the report of container's data object
+   * is supported.
+   *
+   * @return		true if supported
+   */
+  public boolean supportsStoreValueInReport() {
+    return true;
+  }
+
+  /**
+   * Stores the value in the report of container's data object.
+   *
+   * @param indices	the indices of the containers of the container manager
+   * @param field	the field to use
+   * @param value	the value to store
+   */
+  public void storeValueInReport(int[] indices, AbstractField field, Object value) {
+    InstanceContainer	cont;
+
+    getContainerManager().startUpdate();
+    for (int index: indices) {
+      cont = getContainerManager().get(index);
+      cont.getData().getReport().addField(field);
+      cont.getData().getReport().setValue(field, value);
+    }
+    getContainerManager().finishUpdate();
   }
 
   /**

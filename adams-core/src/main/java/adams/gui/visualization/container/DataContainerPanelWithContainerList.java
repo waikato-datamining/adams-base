@@ -23,6 +23,7 @@ package adams.gui.visualization.container;
 import adams.core.ClassLister;
 import adams.core.logging.LoggingLevel;
 import adams.data.container.DataContainer;
+import adams.data.report.AbstractField;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
 import adams.gui.visualization.container.datacontainerpanel.PopupCustomizerComparator;
@@ -349,6 +350,23 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
    * @param name	the field name to use
    */
   public abstract void storeColorInReport(int[] indices, String name);
+
+  /**
+   * Returns true if storing a value in the report of container's data object
+   * is supported.
+   *
+   * @return		true if supported
+   */
+  public abstract boolean supportsStoreValueInReport();
+
+  /**
+   * Stores the value in the report of container's data object.
+   *
+   * @param indices	the indices of the containers of the container manager
+   * @param field	the field to use
+   * @param value	the value to store
+   */
+  public abstract void storeValueInReport(int[] indices, AbstractField field, Object value);
 
   /**
    * Cleans up data structures, frees up memory.
