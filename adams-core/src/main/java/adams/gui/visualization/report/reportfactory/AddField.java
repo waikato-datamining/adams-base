@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AddField.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
 
@@ -41,7 +41,6 @@ import java.util.List;
  * Allows the user to add a new field to the report.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AddField
   extends AbstractTableAction {
@@ -93,6 +92,7 @@ public class AddField
     props.setProperty("type", "N S B U");
     props.setProperty("value", "0.0");
 
+    panel.setPropertyOrder(order);
     panel.setProperties(props);
 
     dialog = new ApprovalDialog(null, ModalityType.DOCUMENT_MODAL);
