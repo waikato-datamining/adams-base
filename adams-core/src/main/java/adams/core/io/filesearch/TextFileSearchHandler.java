@@ -70,21 +70,45 @@ public class TextFileSearchHandler
    * @return		true if the search text was found
    */
   @Override
-  public boolean search(String file, String searchText, boolean caseSensitive, ExceptionHandler handler) {
-    return search(file, searchText, false, caseSensitive, handler);
+  public boolean searchFile(String file, String searchText, boolean caseSensitive, ExceptionHandler handler) {
+    FileInputStream 	fistream;
+    InputStreamReader	isreader;
+    BufferedReader 	breader;
+    boolean		result;
+
+    result   = false;
+    fistream = null;
+    isreader = null;
+    breader  = null;
+
+    try {
+      fistream = new FileInputStream(file);
+      isreader = new InputStreamReader(fistream, m_Encoding.charsetValue());
+      breader  = new BufferedReader(isreader);
+      result   = searchStream(breader, searchText, caseSensitive, handler);
+    }
+    catch (Exception e) {
+      if (handler != null)
+	handler.handleException("Failed to search: " + file, e);
+    }
+    finally {
+      FileUtils.closeQuietly(breader);
+      FileUtils.closeQuietly(isreader);
+      FileUtils.closeQuietly(fistream);
+    }
+
+    return result;
   }
 
   /**
-   * Searches the specified file.
+   * Searches the specified file using regular expressions.
    *
    * @param file	the file to search
    * @param searchText	the search text
-   * @param regExp	true if the search text is a regular expression
    * @param handler 	for handling exceptions, can be null
    * @return		true if the search text was found
    */
-  @Override
-  public boolean search(String file, String searchText, boolean regExp, boolean caseSensitive, ExceptionHandler handler) {
+  public boolean searchRegExp(String file, String searchText, boolean caseSensitive, ExceptionHandler handler) {
     FileInputStream 	fistream;
     InputStreamReader	isreader;
     BufferedReader 	breader;
@@ -96,11 +120,7 @@ public class TextFileSearchHandler
     fistream = null;
     isreader = null;
     breader  = null;
-    pattern  = null;
-    if (regExp)
-      pattern = Pattern.compile(searchText);
-    else if (!caseSensitive)
-      searchText = searchText.toLowerCase();
+    pattern = Pattern.compile(searchText);
 
     try {
       fistream = new FileInputStream(file);
@@ -109,10 +129,7 @@ public class TextFileSearchHandler
       while ((line = breader.readLine()) != null) {
         if (!caseSensitive)
           line = line.toLowerCase();
-        if (pattern != null)
-          result = pattern.matcher(line).matches();
-        else
-          result = line.contains(searchText);
+	result = pattern.matcher(line).matches();
         if (result)
           break;
         if (m_Stopped)
@@ -131,6 +148,7 @@ public class TextFileSearchHandler
 
     return result;
   }
+
   /**
    * Searches the specified character stream.
    *
@@ -139,7 +157,7 @@ public class TextFileSearchHandler
    * @param handler 	for handling exceptions, can be null
    * @return		true if the search text was found
    */
-  public boolean search(Reader reader, String searchText, boolean caseSensitive, ExceptionHandler handler) {
+  public boolean searchStream(Reader reader, String searchText, boolean caseSensitive, ExceptionHandler handler) {
     boolean		result;
     BufferedReader	breader;
     char[] 		buff;
@@ -153,6 +171,8 @@ public class TextFileSearchHandler
     buffLen   = 1024;
     buff      = new char[buffLen];
     currStr   = null;
+    if (!caseSensitive)
+      searchText = searchText.toLowerCase();
     if (reader instanceof BufferedReader)
       breader = (BufferedReader) reader;
     else

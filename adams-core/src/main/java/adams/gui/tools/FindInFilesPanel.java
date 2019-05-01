@@ -317,7 +317,7 @@ public class FindInFilesPanel
 	  }
 	  if (regexp) {
 	    if (m_CurrentHandler instanceof RegExpFileSearchHandler) {
-	      if (((RegExpFileSearchHandler) m_CurrentHandler).search(files[i], searchText, regexp, caseSensitive, m_ExceptionHandler))
+	      if (((RegExpFileSearchHandler) m_CurrentHandler).searchRegExp(files[i], searchText, caseSensitive, m_ExceptionHandler))
 		m_ModelResults.addElement(files[i]);
 	    }
 	    else {
@@ -325,7 +325,7 @@ public class FindInFilesPanel
 	    }
 	  }
 	  else {
-	    if (m_CurrentHandler.search(files[i], searchText, caseSensitive, m_ExceptionHandler))
+	    if (m_CurrentHandler.searchFile(files[i], searchText, caseSensitive, m_ExceptionHandler))
 	      m_ModelResults.addElement(files[i]);
 	  }
 	  m_CurrentHandler = null;

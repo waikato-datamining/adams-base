@@ -422,9 +422,9 @@ public class FindInFile
       try {
         exHandler = (String msg, Throwable t) -> getLogger().log(Level.SEVERE, msg, t);
         if (m_RegExp && (m_ActualHandler instanceof RegExpFileSearchHandler))
-	  found = ((RegExpFileSearchHandler) m_ActualHandler).search(file, m_Find, m_CaseSensitive, true, exHandler);
+	  found = ((RegExpFileSearchHandler) m_ActualHandler).searchRegExp(file, m_Find, m_CaseSensitive, exHandler);
         else
-	  found = m_ActualHandler.search(file, m_Find, m_CaseSensitive, exHandler);
+	  found = m_ActualHandler.searchFile(file, m_Find, m_CaseSensitive, exHandler);
 	m_ActualHandler = null;
         m_OutputToken   = new Token(found);
       }

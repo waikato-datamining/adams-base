@@ -29,6 +29,10 @@ adams.core.io.AbstractFilenameGenerator=\
 adams.core.io.filesearch.FileSearchHandler=\
   adams.core.io.filesearch
 
+# the streamable file search handlers
+adams.core.io.filesearch.StreamableFileSearchHandler=\
+  adams.core.io.filesearch
+
 # the file use checks
 adams.core.io.fileuse.AbstractFileUseCheck=\
   adams.core.io.fileuse

@@ -37,12 +37,9 @@ import java.util.Enumeration;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ZipFileSearchHandler
-  extends AbstractFileSearchHandlerWithEncoding {
+  extends AbstractMetaFileSearchHandlerWithEncoding {
 
   private static final long serialVersionUID = 2030528214619565963L;
-
-  /** the actual search. */
-  protected TextFileSearchHandler m_TextSearch;
 
   /**
    * Returns a string describing the object.
@@ -74,7 +71,7 @@ public class ZipFileSearchHandler
    * @return		true if the search text was found
    */
   @Override
-  public boolean search(String file, String searchText, boolean caseSensitive, ExceptionHandler handler) {
+  public boolean searchFile(String file, String searchText, boolean caseSensitive, ExceptionHandler handler) {
     boolean				result;
     ZipFile 				archive;
     Enumeration<ZipArchiveEntry> 	enm;
@@ -82,10 +79,9 @@ public class ZipFileSearchHandler
     InputStream 			in;
     Reader 				isr;
 
-    result       = false;
-    archive      = null;
-    m_Stopped    = false;
-    m_TextSearch = new TextFileSearchHandler();
+    result    = false;
+    archive   = null;
+    m_Stopped = false;
 
     try {
       archive = new ZipFile(file);
@@ -102,7 +98,7 @@ public class ZipFileSearchHandler
 	try {
 	  in     = new BufferedInputStream(archive.getInputStream(entry));
 	  isr    = new InputStreamReader(in, m_Encoding.charsetValue());
-	  result = m_TextSearch.search(isr, searchText, caseSensitive, handler);
+	  result = m_Handler.searchStream(isr, searchText, caseSensitive, handler);
 	}
 	catch (Exception e) {
 	  if (handler != null)
@@ -129,18 +125,6 @@ public class ZipFileSearchHandler
       }
     }
 
-    m_TextSearch = null;
-
     return result;
-  }
-
-  /**
-   * Stops the execution.
-   */
-  @Override
-  public void stopExecution() {
-    if (m_TextSearch != null)
-      m_TextSearch.stopExecution();
-    super.stopExecution();
   }
 }

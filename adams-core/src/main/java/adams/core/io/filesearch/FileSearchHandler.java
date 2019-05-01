@@ -47,5 +47,5 @@ public interface FileSearchHandler
    * @param handler 	for handling exceptions, can be null
    * @return		true if the search text was found
    */
-  public boolean search(String file, String searchText, boolean caseSensitive, ExceptionHandler handler);
+  public boolean searchFile(String file, String searchText, boolean caseSensitive, ExceptionHandler handler);
 }

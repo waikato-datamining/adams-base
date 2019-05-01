@@ -20,6 +20,7 @@
 
 package adams.core.io.filesearch;
 
+import adams.core.StoppableWithFeedback;
 import adams.core.exception.ExceptionHandler;
 
 import java.io.Reader;
@@ -30,7 +31,8 @@ import java.io.Reader;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface StreamableFileSearchHandler {
+public interface StreamableFileSearchHandler
+  extends StoppableWithFeedback {
 
   /**
    * Searches the specified character stream.
@@ -40,5 +42,5 @@ public interface StreamableFileSearchHandler {
    * @param handler 	for handling exceptions, can be null
    * @return		true if the search text was found
    */
-  public boolean search(Reader reader, String searchText, boolean caseSensitive, ExceptionHandler handler);
+  public boolean searchStream(Reader reader, String searchText, boolean caseSensitive, ExceptionHandler handler);
 }

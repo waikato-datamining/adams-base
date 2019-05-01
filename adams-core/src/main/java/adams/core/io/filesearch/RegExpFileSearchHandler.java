@@ -35,9 +35,8 @@ public interface RegExpFileSearchHandler
    *
    * @param file	the file to search
    * @param searchText	the search text
-   * @param regExp	true if the search text is a regular expression
    * @param handler 	for handling exceptions, can be null
    * @return		true if the search text was found
    */
-  public boolean search(String file, String searchText, boolean regExp, boolean caseSensitive, ExceptionHandler handler);
+  public boolean searchRegExp(String file, String searchText, boolean caseSensitive, ExceptionHandler handler);
 }
