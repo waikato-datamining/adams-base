@@ -15,7 +15,7 @@
 
 /*
  * TarUtils.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2010 jcscoobyrs
  */
 package adams.core.io;
@@ -50,7 +50,6 @@ public class TarUtils {
    * The type of compression to use.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum Compression {
     /** automatic. */
@@ -100,7 +99,7 @@ public class TarUtils {
    * @return		the input stream
    * @throws Exception	if file not found or similar problems
    */
-  protected static TarArchiveInputStream openArchiveForReading(File file, FileInputStream stream) throws Exception {
+  public static TarArchiveInputStream openArchiveForReading(File file, FileInputStream stream) throws Exception {
     Compression		comp;
 
     comp = determineCompression(file);
@@ -123,7 +122,7 @@ public class TarUtils {
    * @throws Exception	if file not found or similar problems
    * @see		TarArchiveOutputStream#LONGFILE_GNU
    */
-  protected static TarArchiveOutputStream openArchiveForWriting(File input, FileOutputStream stream) throws Exception {
+  public static TarArchiveOutputStream openArchiveForWriting(File input, FileOutputStream stream) throws Exception {
     TarArchiveOutputStream	result;
     Compression			comp;
 
