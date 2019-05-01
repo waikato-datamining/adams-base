@@ -26,7 +26,6 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.ExternalActorHandler;
 import adams.gui.application.Child;
 import adams.gui.application.ChildFrame;
-import adams.gui.application.ChildWindow;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowTreeHandler;
 import adams.gui.flow.tree.Node;
@@ -67,8 +66,6 @@ public class FlowHelper {
       if (parent instanceof Child) {
 	if (parent instanceof ChildFrame)
 	  comp = ((ChildFrame) parent).getContentPane().getComponent(0);
-	else
-	  comp = ((ChildWindow) parent).getContentPane().getComponent(0);
       }
       else if (parent instanceof FlowEditorPanel) {
 	comp = parent;

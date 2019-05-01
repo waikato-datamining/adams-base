@@ -15,7 +15,7 @@
 
 /*
  * MenuItemCodelet.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -37,7 +37,6 @@ import java.lang.reflect.Constructor;
  * Abstract ancestor for definining menu items in the ApplicationFrame menu.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMenuItemDefinition
   implements Serializable, Comparable<AbstractMenuItemDefinition> {
@@ -272,30 +271,6 @@ public abstract class AbstractMenuItemDefinition
       return getOwner().createChildFrame(getTitle(), c, size, getIconName());
     else
       return AbstractApplicationFrame.createChildFrame(null, getTitle(), c, size, getIconName());
-  }
-
-  /**
-   * Creates a window and returns it. Doesn't change width or height.
-   *
-   * @param c			the component to place, can be null
-   * @return			the generated window
-   */
-  protected ChildWindow createChildWindow(Component c) {
-    return createChildWindow(c, new Dimension(-1, -1));
-  }
-
-  /**
-   * creates a window and returns it.
-   *
-   * @param c			the component to place, can be null
-   * @param size		the size of the frame, ignored if -1 and -1
-   * @return			the generated window
-   */
-  protected ChildWindow createChildWindow(Component c, Dimension size) {
-    if (getOwner() != null)
-      return getOwner().createChildWindow(getTitle(), c, size, getIconName());
-    else
-      return AbstractApplicationFrame.createChildWindow(null, getTitle(), c, size, getIconName());
   }
 
   /**

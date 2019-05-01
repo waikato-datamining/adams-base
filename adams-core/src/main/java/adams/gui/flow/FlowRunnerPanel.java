@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowRunnerPanel.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -39,7 +39,6 @@ import adams.flow.standalone.Standalones;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.action.ToggleAction;
 import adams.gui.application.ChildFrame;
-import adams.gui.application.ChildWindow;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseButton;
@@ -1080,8 +1079,6 @@ public class FlowRunnerPanel
     FlowRunnerPanel 	panel;
     ChildFrame 		oldFrame;
     ChildFrame 		newFrame;
-    ChildWindow 	oldWindow;
-    ChildWindow 	newWindow;
 
     panel    = null;
     oldFrame = (ChildFrame) GUIHelper.getParent(m_Self, ChildFrame.class);
@@ -1089,14 +1086,6 @@ public class FlowRunnerPanel
       newFrame = oldFrame.getNewWindow();
       newFrame.setVisible(true);
       panel = (FlowRunnerPanel) newFrame.getContentPane().getComponent(0);
-    }
-    else {
-      oldWindow = (ChildWindow) GUIHelper.getParent(m_Self, ChildWindow.class);
-      if (oldWindow != null) {
-	newWindow = oldWindow.getNewWindow();
-	newWindow.setVisible(true);
-	panel = (FlowRunnerPanel) newWindow.getContentPane().getComponent(0);
-      }
     }
 
     // copy information
@@ -1113,8 +1102,6 @@ public class FlowRunnerPanel
     FlowRunnerPanel 	panel;
     ChildFrame 		oldFrame;
     ChildFrame 		newFrame;
-    ChildWindow 	oldWindow;
-    ChildWindow 	newWindow;
 
     panel    = null;
     oldFrame = (ChildFrame) GUIHelper.getParent(m_Self, ChildFrame.class);
@@ -1122,14 +1109,6 @@ public class FlowRunnerPanel
       newFrame = oldFrame.getNewWindow();
       newFrame.setVisible(true);
       panel = (FlowRunnerPanel) newFrame.getContentPane().getComponent(0);
-    }
-    else {
-      oldWindow = (ChildWindow) GUIHelper.getParent(m_Self, ChildWindow.class);
-      if (oldWindow != null) {
-	newWindow = oldWindow.getNewWindow();
-	newWindow.setVisible(true);
-	panel = (FlowRunnerPanel) newWindow.getContentPane().getComponent(0);
-      }
     }
 
     // copy information

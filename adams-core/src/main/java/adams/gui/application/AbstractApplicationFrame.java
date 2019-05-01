@@ -15,7 +15,7 @@
 
 /*
  * ApplicationFrame.java
- * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -741,6 +741,7 @@ public abstract class AbstractApplicationFrame
     ScriptingEngineHandler 	handler;
 
     result = new ChildFrame(owner, insertHostnamePrefix(title), icon);
+    result.setUISettingsPrefix(title);
 
     // layout
     result.setLayout(new BorderLayout());
@@ -765,6 +766,9 @@ public abstract class AbstractApplicationFrame
     // custom size and location
     if (c != null)
       GUIHelper.setSizeAndLocation(result, c);
+
+    // UI settings?
+    result.applyUISettings();
 
     // add listener
     result.addDisposeWindowListener();
@@ -772,77 +776,6 @@ public abstract class AbstractApplicationFrame
     // menu bar?
     if ((c != null) && (c instanceof MenuBarProvider))
       result.setJMenuBar(((MenuBarProvider) c).getMenuBar());
-
-    // startup script?
-    if ((c != null) && (c instanceof ScriptingEngineHandler) && (c instanceof BasePanel)) {
-      handler = (ScriptingEngineHandler) c;
-      if (GUIHelper.getStartupScript(c) != null)
-	handler.getScriptingEngine().add((BasePanel) c, GUIHelper.getStartupScript(c));
-    }
-
-    // display frame
-    result.setVisible(true);
-
-    return result;
-  }
-
-  /**
-   * creates a window and returns it.
-   *
-   * @param title		the title of the frame
-   * @param c			the component to place, can be null
-   * @param size		the size of the frame, ignored if -1 and -1
-   * @param icon		the icon to use, null for default
-   * @return			the generated frame
-   */
-  protected ChildWindow createChildWindow(String title, Component c, Dimension size, String icon) {
-    return createChildWindow(this, title, c, size, icon);
-  }
-
-  /**
-   * creates a window and returns it.
-   *
-   * @param owner		the owner
-   * @param title		the title of the frame
-   * @param c			the component to place, can be null
-   * @param size		the size of the frame, ignored if -1 and -1
-   * @param icon		the icon to use, null for default
-   * @return			the generated frame
-   */
-  public static ChildWindow createChildWindow(AbstractApplicationFrame owner, String title, Component c, Dimension size, String icon) {
-    ChildWindow 		result;
-    int 			screenHeight;
-    int 			screenWidth;
-    ScriptingEngineHandler 	handler;
-
-    result = new ChildWindow(owner, insertHostnamePrefix(title), icon);
-
-    // layout
-    result.setLayout(new BorderLayout());
-    if (c != null)
-      result.getContentPane().add(c, BorderLayout.CENTER);
-
-    // size
-    result.pack();
-    if ((size.getWidth() > -1) && (size.getHeight() > -1))
-      result.setSize(size);
-    result.validate();
-
-    // location
-    if (owner != null) {
-      screenHeight = owner.getGraphicsConfiguration().getBounds().height;
-      screenWidth  = owner.getGraphicsConfiguration().getBounds().width;
-      result.setLocation(
-	  (screenWidth - result.getBounds().width) / 2,
-	  (screenHeight - result.getBounds().height) / 2);
-    }
-
-    // custom size and location
-    if (c != null)
-      GUIHelper.setSizeAndLocation(result, c);
-
-    // add listener
-    result.addDisposeWindowListener();
 
     // startup script?
     if ((c != null) && (c instanceof ScriptingEngineHandler) && (c instanceof BasePanel)) {
@@ -951,16 +884,6 @@ public abstract class AbstractApplicationFrame
    * @param c 		the child frame to add
    */
   public void addChildFrame(ChildFrame c) {
-    m_Children.add(c);
-    windowListChanged();
-  }
-
-  /**
-   * adds the given child frame to the list of frames.
-   *
-   * @param c 		the child frame to add
-   */
-  public void addChildWindow(ChildWindow c) {
     m_Children.add(c);
     windowListChanged();
   }

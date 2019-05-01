@@ -35,7 +35,6 @@ import adams.env.FlowEditorTreePopupMenuDefinition;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.gui.application.ChildFrame;
-import adams.gui.application.ChildWindow;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseMenu;
@@ -2044,8 +2043,6 @@ public class FlowEditorPanel
     FlowEditorPanel 	result;
     ChildFrame 		oldFrame;
     ChildFrame 		newFrame;
-    ChildWindow 	oldWindow;
-    ChildWindow 	newWindow;
 
     result    = null;
     oldFrame = (ChildFrame) GUIHelper.getParent(m_Self, ChildFrame.class);
@@ -2053,14 +2050,6 @@ public class FlowEditorPanel
       newFrame = oldFrame.getNewWindow();
       newFrame.setVisible(true);
       result  = (FlowEditorPanel) newFrame.getContentPane().getComponent(0);
-    }
-    else {
-      oldWindow = (ChildWindow) GUIHelper.getParent(m_Self, ChildWindow.class);
-      if (oldWindow != null) {
-	newWindow = oldWindow.getNewWindow();
-	newWindow.setVisible(true);
-	result  = (FlowEditorPanel) newWindow.getContentPane().getComponent(0);
-      }
     }
 
     // use same directory

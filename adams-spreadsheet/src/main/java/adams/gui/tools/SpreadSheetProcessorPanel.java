@@ -31,7 +31,6 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Actor;
 import adams.gui.application.ChildFrame;
-import adams.gui.application.ChildWindow;
 import adams.gui.chooser.SerializationFileChooser;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
@@ -686,8 +685,6 @@ public class SpreadSheetProcessorPanel
     SpreadSheetProcessorPanel 	result;
     ChildFrame 			oldFrame;
     ChildFrame 			newFrame;
-    ChildWindow 		oldWindow;
-    ChildWindow 		newWindow;
 
     result    = null;
     oldFrame = (ChildFrame) GUIHelper.getParent(this, ChildFrame.class);
@@ -695,14 +692,6 @@ public class SpreadSheetProcessorPanel
       newFrame = oldFrame.getNewWindow();
       newFrame.setVisible(true);
       result  = (SpreadSheetProcessorPanel) newFrame.getContentPane().getComponent(0);
-    }
-    else {
-      oldWindow = (ChildWindow) GUIHelper.getParent(this, ChildWindow.class);
-      if (oldWindow != null) {
-	newWindow = oldWindow.getNewWindow();
-	newWindow.setVisible(true);
-	result  = (SpreadSheetProcessorPanel) newWindow.getContentPane().getComponent(0);
-      }
     }
 
     if (result != null) {

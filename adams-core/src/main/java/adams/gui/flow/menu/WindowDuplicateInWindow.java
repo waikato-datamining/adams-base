@@ -13,14 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WindowDuplicateInWindow.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import adams.gui.application.ChildFrame;
-import adams.gui.application.ChildWindow;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowEditorPanel;
 
@@ -56,8 +55,6 @@ public class WindowDuplicateInWindow
     FlowEditorPanel 	panel;
     ChildFrame 		oldFrame;
     ChildFrame 		newFrame;
-    ChildWindow 	oldWindow;
-    ChildWindow 	newWindow;
 
     panel    = null;
     oldFrame = (ChildFrame) GUIHelper.getParent(m_State, ChildFrame.class);
@@ -65,14 +62,6 @@ public class WindowDuplicateInWindow
       newFrame = oldFrame.getNewWindow();
       newFrame.setVisible(true);
       panel  = (FlowEditorPanel) newFrame.getContentPane().getComponent(0);
-    }
-    else {
-      oldWindow = (ChildWindow) GUIHelper.getParent(m_State, ChildWindow.class);
-      if (oldWindow != null) {
-	newWindow = oldWindow.getNewWindow();
-	newWindow.setVisible(true);
-	panel  = (FlowEditorPanel) newWindow.getContentPane().getComponent(0);
-      }
     }
 
     // copy information

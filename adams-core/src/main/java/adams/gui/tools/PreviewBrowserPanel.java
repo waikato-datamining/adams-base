@@ -15,7 +15,7 @@
 
 /*
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -31,7 +31,6 @@ import adams.core.io.filechanged.LastModified;
 import adams.core.logging.LoggingLevel;
 import adams.core.management.FileBrowser;
 import adams.gui.application.ChildFrame;
-import adams.gui.application.ChildWindow;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.AbstractChooserPanel.PopupMenuCustomizer;
 import adams.gui.chooser.BaseFileChooser;
@@ -959,8 +958,6 @@ public class PreviewBrowserPanel
     PreviewBrowserPanel result;
     ChildFrame 		oldFrame;
     ChildFrame 		newFrame;
-    ChildWindow 	oldWindow;
-    ChildWindow 	newWindow;
 
     result    = null;
     oldFrame = (ChildFrame) GUIHelper.getParent(this, ChildFrame.class);
@@ -968,14 +965,6 @@ public class PreviewBrowserPanel
       newFrame = oldFrame.getNewWindow();
       newFrame.setVisible(true);
       result  = (PreviewBrowserPanel) newFrame.getContentPane().getComponent(0);
-    }
-    else {
-      oldWindow = (ChildWindow) GUIHelper.getParent(this, ChildWindow.class);
-      if (oldWindow != null) {
-	newWindow = oldWindow.getNewWindow();
-	newWindow.setVisible(true);
-	result  = (PreviewBrowserPanel) newWindow.getContentPane().getComponent(0);
-      }
     }
 
     if (result != null) {
