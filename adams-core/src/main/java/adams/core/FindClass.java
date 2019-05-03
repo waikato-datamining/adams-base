@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FindClass.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
 import adams.core.logging.LoggingObject;
 import nz.ac.waikato.cms.locator.ClassPathTraversal;
-import nz.ac.waikato.cms.locator.ClassPathTraversal.TraversalListener;
+import nz.ac.waikato.cms.locator.TraversalListener;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,7 +31,6 @@ import java.util.List;
  * For locating classes on the classpath.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see ClassPathTraversal
  */
 public class FindClass
@@ -44,7 +43,6 @@ public class FindClass
    * For collecting URLs.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class Listener
     implements TraversalListener {
