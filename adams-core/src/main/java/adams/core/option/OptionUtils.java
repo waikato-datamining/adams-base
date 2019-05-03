@@ -15,7 +15,7 @@
 
 /*
  * OptionUtils.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -1025,7 +1025,7 @@ public class OptionUtils {
    *
    * @param options	the options to check
    * @param option	the option to look for (incl. "-")
-   * @return		the argument of null if not found
+   * @return		the argument or null if not found
    */
   public static String getOption(String[] options, String option) {
     return getOption(new ArrayList<>(Arrays.asList(options)), option);
@@ -1036,7 +1036,7 @@ public class OptionUtils {
    *
    * @param options	the options to check
    * @param option	the option to look for (incl. "-")
-   * @return		the argument of null if not found
+   * @return		the argument or null if not found
    */
   public static String getOption(List<String> options, String option) {
     String	result;
@@ -1061,7 +1061,7 @@ public class OptionUtils {
    *
    * @param options	the options to check
    * @param option	the option to look for (incl. "-")
-   * @return		the argument of null if not found
+   * @return		the argument or null if not found
    */
   public static String removeOption(String[] options, String option) {
     String	result;
@@ -1089,7 +1089,7 @@ public class OptionUtils {
    *
    * @param options	the options to check
    * @param option	the option to look for (incl. "-")
-   * @return		the argument of null if not found
+   * @return		the argument or null if not found
    */
   public static String removeOption(List<String> options, String option) {
     String	result;
