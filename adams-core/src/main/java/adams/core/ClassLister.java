@@ -28,10 +28,13 @@ import adams.env.Environment;
 import adams.flow.core.Compatibility;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Determines the classnames of superclasses that are to be displayed in
@@ -52,9 +55,11 @@ import java.util.List;
  * - List all:
  *   adams.core.ClassLister -allow-empty
  * - List all actors:
- *   adams.core.ClassLister -super adams.flow.core.AbstractActor
+ *   adams.core.ClassLister -super adams.flow.core.Actor
  * - List only transformers:
- *   adams.core.ClassLister -super adams.flow.core.AbstractActor -match ".*\.transformer\..*"
+ *   adams.core.ClassLister -super adams.flow.core.Actor -match ".*\.transformer\..*"
+ * - List only actors from the adams-compress module:
+ *   adams.core.ClassLister -super adams.flow.core.Actor -filter-by-module adams-compress"
  * </pre>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -217,6 +222,32 @@ public class ClassLister
   }
 
   /**
+   * Filters the classes using the ADAMS module name, returning only ones
+   * that are from this module.
+   *
+   * @param classes 	the classes to filter
+   * @param module	the name of the ADAMS module
+   * @return		the filtered classes
+   */
+  public Class[] filterByModule(Class[] classes, String module) {
+    List<Class>		result;
+    Iterator<URL> 	parts;
+    Set<String>		all;
+
+    result = new ArrayList<>();
+    parts  = ClassLocator.getSingleton().getCache().classpathParts(".*\\W" + module + "\\W.*");
+    all    = new HashSet<>();
+    while (parts.hasNext())
+      all.addAll(ClassLocator.getSingleton().getCache().getClassnames(parts.next()));
+    for (Class cls: classes) {
+      if (all.contains(cls.getName()))
+        result.add(cls);
+    }
+
+    return result.toArray(new Class[0]);
+  }
+
+  /**
    * Returns the singleton instance of the class lister.
    *
    * @return		the singleton
@@ -237,7 +268,7 @@ public class ClassLister
   public static void main(String[] args) throws Exception {
     if (OptionUtils.helpRequested(args)) {
       System.out.println();
-      System.out.println("Usage: " + ClassLister.class.getName() + " [-env <classname>] [-super <classname>] [-match <regexp>] [-allow-empty]");
+      System.out.println("Usage: " + ClassLister.class.getName() + " [-env <classname>] [-super <classname>] [-match <regexp>] [-allow-empty] [-filter-by-module <module>]");
       System.out.println();
       return;
     }
@@ -266,10 +297,15 @@ public class ClassLister
     else
       superclasses = new String[]{sclass};
 
+    // filter-by-module
+    String module = OptionUtils.getOption(args, "-filter-by-module");
+
     // list them
     for (String superclass: superclasses) {
       cls = Class.forName(superclass);
       Class[] classes = getSingleton().getClasses(cls);
+      if (module != null)
+        classes = getSingleton().filterByModule(classes, module);
       if ((classes.length > 0) || allowEmpty) {
         System.out.println("--> " + superclass);
         for (Class c: classes) {
