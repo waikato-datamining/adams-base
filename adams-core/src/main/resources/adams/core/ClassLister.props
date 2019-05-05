@@ -321,6 +321,10 @@ adams.db.DbBackend=\
 adams.doc.javadoc.Javadoc=\
   adams.doc.javadoc
 
+# the listing outputs
+adams.doc.listing.AbstractListingOutput=\
+  adams.doc.listing
+
 # the flow actors
 adams.flow.core.Actor=\
   adams.flow.control,\
