@@ -105,6 +105,10 @@
       <name>ADAMS Release Repository</name>
       <url>https://adams.cms.waikato.ac.nz/nexus/content/repositories/adams-releases</url>
     </repository>
+    <site>
+      <id>adams.cms.waikato.ac.nz</id>
+      <url>scp://adams.cms.waikato.ac.nz/var/www/html/dummy/</url>
+    </site>
   </distributionManagement>
 
   <dependencyManagement>
@@ -181,23 +185,46 @@
         </pluginManagement>
       </build>
     </profile>
+
+    <profile>
+      <id>javadoc-generation</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <version>3.3</version>
+            <configuration>
+              <reportPlugins>
+                <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-javadoc-plugin</artifactId>
+                  <version>2.9</version>
+                  <reportSets>
+                    <reportSet>
+                      <id>aggregate</id>
+                      <reports>
+                        <report>aggregate</report>
+                      </reports>
+                    </reportSet>
+                  </reportSets>
+                  <configuration>
+                    <show>protected</show>
+                    <nohelp>true</nohelp>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                  </configuration>
+                </plugin>
+              </reportPlugins>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <build>
     <pluginManagement>
       <plugins>
-        <!-- if javadoc artifacts should be required -->
-        <!--plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.10.3</version>
-          <configuration>
-            <show>protected</show>
-            <nohelp>true</nohelp>
-            <additionalparam>-Xdoclint:none</additionalparam>
-          </configuration>
-        </plugin-->
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
