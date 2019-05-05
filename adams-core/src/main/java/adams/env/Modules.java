@@ -378,4 +378,16 @@ public class Modules {
 
     return m_Singleton;
   }
+
+  /**
+   * Just outputs the modules on the console, one per line.
+   *
+   * @param args	ignored
+   * @throws Exception	if initialization fails
+   */
+  public static void main(String[] args) throws Exception {
+    Environment.setEnvironmentClass(Environment.class);
+    for (Module module: getSingleton().getModules())
+      System.out.println(module.getName());
+  }
 }
