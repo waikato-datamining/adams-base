@@ -20,6 +20,7 @@
 
 package adams.doc.listing;
 
+import adams.core.QuickInfoHelper;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 
@@ -76,5 +77,20 @@ public abstract class AbstractFileBasedListingOutputWithEncoding
    */
   public String encodingTipText() {
     return "The type of encoding to use when reading the file, use empty string for default.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "encoding", m_Encoding, ", encoding: ");
+
+    return result;
   }
 }
