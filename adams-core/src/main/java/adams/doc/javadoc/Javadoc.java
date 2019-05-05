@@ -15,17 +15,11 @@
 
 /*
  * Javadoc.java
- * Copyright (C) 2006-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.doc.javadoc;
 
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
 
 import adams.core.ClassLister;
 import adams.core.logging.LoggingObject;
@@ -37,12 +31,17 @@ import adams.core.option.OptionManager;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+
 /**
  * Abstract superclass for classes that generate Javadoc comments and replace
  * the content between certain comment tags.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see weka.core.Javadoc
  */
 public abstract class Javadoc
@@ -713,6 +712,7 @@ public abstract class Javadoc
       Environment.setEnvironmentClass(Class.forName(env));
     }
     catch (Exception e) {
+      System.err.println("Failed to instantiate the environment class: " + env);
       e.printStackTrace();
       Environment.setEnvironmentClass(Environment.class);
     }
