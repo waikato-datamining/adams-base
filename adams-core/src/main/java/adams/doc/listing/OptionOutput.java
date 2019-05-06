@@ -251,9 +251,11 @@ public class OptionOutput
     if (result == null) {
       for (String module: getModules(listing)) {
         subdir = new PlaceholderDirectory(m_OutputDir.getAbsolutePath() + File.separator + module);
-        if (!subdir.mkdirs()) {
-          result = "Failed to create output directory for module '" + module + "': " + subdir;
-          break;
+        if (!subdir.exists()) {
+	  if (!subdir.mkdirs()) {
+	    result = "Failed to create output directory for module '" + module + "': " + subdir;
+	    break;
+	  }
 	}
 	for (String classname: listing.get(module)) {
           outfile = new PlaceholderFile(subdir.getAbsolutePath() + File.separator + classname + m_Extension);
