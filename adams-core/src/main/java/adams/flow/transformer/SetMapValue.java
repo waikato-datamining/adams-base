@@ -15,12 +15,14 @@
 
 /*
  * SetMapValue.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.ObjectToObject;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUser;
 import adams.flow.core.Actor;
@@ -107,6 +109,11 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
  *
+ * <pre>-conversion &lt;adams.data.conversion.Conversion&gt; (property: conversion)
+ * &nbsp;&nbsp;&nbsp;The type of conversion to perform.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.ObjectToObject
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -145,6 +152,9 @@ public class SetMapValue
 
   /** the callable source actor. */
   protected Actor m_SourceActor;
+
+  /** for processing the value. */
+  protected Conversion m_Conversion;
 
   /**
    * Returns a string describing the object.
@@ -186,6 +196,10 @@ public class SetMapValue
     m_OptionManager.add(
       "storage", "storage",
       new StorageName());
+
+    m_OptionManager.add(
+      "conversion", "conversion",
+      new ObjectToObject());
   }
 
   /**
@@ -354,6 +368,36 @@ public class SetMapValue
   }
 
   /**
+   * Sets the type of conversion to perform.
+   *
+   * @param value	the type of conversion
+   */
+  public void setConversion(Conversion value) {
+    m_Conversion = value;
+    m_Conversion.setOwner(this);
+    reset();
+  }
+
+  /**
+   * Returns the type of conversion to perform.
+   *
+   * @return		the type of conversion
+   */
+  public Conversion getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The type of conversion to perform.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.util.Map.class<!-- flow-accepts-end -->
@@ -379,28 +423,23 @@ public class SetMapValue
   @Override
   public String getQuickInfo() {
     String	result;
-    String	value;
 
-    result = null;
-
-    value  = QuickInfoHelper.toString(this, "key", m_Key);
-    if (value != null) {
-      result  = value;
-      result += " = ";
-      switch (m_Type) {
-	case VALUE:
-	  result += QuickInfoHelper.toString(this, "value", (m_Value.isEmpty() ? "-none-" : m_Value));
-	  break;
-	case SOURCE:
-	  result += QuickInfoHelper.toString(this, "source", m_Source + " (source)");
-	  break;
-	case STORAGE:
-	  result += QuickInfoHelper.toString(this, "storage", m_Storage + " (storage)");
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled type: " + m_Type);
-      }
+    result  = QuickInfoHelper.toString(this, "key", (m_Key.isEmpty() ? "-nokey-" : m_Key));
+    result += " = ";
+    switch (m_Type) {
+      case VALUE:
+	result += QuickInfoHelper.toString(this, "value", (m_Value.isEmpty() ? "-none-" : m_Value));
+	break;
+      case SOURCE:
+	result += QuickInfoHelper.toString(this, "source", m_Source + " (source)");
+	break;
+      case STORAGE:
+	result += QuickInfoHelper.toString(this, "storage", m_Storage + " (storage)");
+	break;
+      default:
+	throw new IllegalStateException("Unhandled type: " + m_Type);
     }
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
 
     return result;
   }
@@ -457,19 +496,21 @@ public class SetMapValue
   @Override
   protected String doExecute() {
     String	result;
+    Object	value;
     Map 	map;
     Token	token;
 
     result = null;
 
-    map = (Map) m_InputToken.getPayload();
+    map   = (Map) m_InputToken.getPayload();
+    value = null;
     if (map == null) {
       result = "Null token instead of map received at input!";
     }
     else {
       switch (m_Type) {
 	case VALUE:
-	  map.put(m_Key, m_Value);
+	  value = m_Value;
 	  break;
 
 	case SOURCE:
@@ -485,18 +526,28 @@ public class SetMapValue
 	      result = "Callable actor '" + m_Source + "' did not generate any output!";
 	  }
 	  if (token != null)
-	    map.put(m_Key, token.getPayload());
+	    value = token.getPayload();
 	  break;
 
 	case STORAGE:
 	  if (getStorageHandler().getStorage().has(m_Storage))
-	    map.put(m_Key, getStorageHandler().getStorage().get(m_Storage));
+	    value = getStorageHandler().getStorage().get(m_Storage);
 	  else
 	    result = "Storage item not found: " + m_Storage;
 	  break;
 
 	default:
 	  throw new IllegalStateException("Unhandled type: " + m_Type);
+      }
+
+      if (value != null) {
+	m_Conversion.setInput(value);
+	result = m_Conversion.convert();
+	if (result == null) {
+	  value = m_Conversion.getOutput();
+	  map.put(m_Key, value);
+	}
+	m_Conversion.cleanUp();
       }
 
       m_OutputToken = new Token(map);
