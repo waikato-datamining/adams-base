@@ -15,7 +15,7 @@
 
 /*
  * GroupedCrossValidationFoldGenerator.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -177,7 +177,7 @@ public class GroupedCrossValidationFoldGenerator
    * 			displaying in the GUI or for listing the options.
    */
   public String indexTipText() {
-    return "The percentage to use for training (0-1).";
+    return "The index of the attribute to determine the group from.";
   }
 
   /**
