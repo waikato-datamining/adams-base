@@ -21,7 +21,7 @@
 
 package adams.gui.goe;
 
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.SpreadSheetUnorderedColumnRangeParsing;
 import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 
 /**
@@ -33,28 +33,6 @@ public class SpreadSheetUnorderedColumnRangeEditor
   extends UnorderedRangeEditor {
 
   /**
-   * Returns the Compound as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((SpreadSheetUnorderedColumnRange) object).getRange();
-  }
-  
-  /**
-   * Returns a Compound generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new SpreadSheetUnorderedColumnRange(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
@@ -62,7 +40,7 @@ public class SpreadSheetUnorderedColumnRangeEditor
    */
   @Override
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return SpreadSheetUnorderedColumnRangeParsing.toString(null, obj);
   }
 
   /**

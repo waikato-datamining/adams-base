@@ -13,45 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetColumnIndexEditor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
-import adams.core.option.AbstractOption;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 
 /**
  * Editor for {@link SpreadSheetColumnIndex} objects.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetColumnIndexEditor
   extends IndexEditor {
-
-  /**
-   * Returns the Compound as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((SpreadSheetColumnIndex) object).getIndex();
-  }
-  
-  /**
-   * Returns a Compound generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new SpreadSheetColumnIndex(str);
-  }
 
   /**
    * Returns an object created from the custom string representation.
