@@ -15,16 +15,13 @@
 
 /*
  *    ConfigurableEnumerationItemEditor.java
- *    Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
 import adams.core.ConfigurableEnumeration.AbstractItem;
-import adams.core.Utils;
-import adams.core.option.AbstractArgumentOption;
-import adams.core.option.AbstractOption;
 import adams.gui.core.BaseList;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.dialog.ApprovalDialog;
@@ -42,55 +39,10 @@ import java.lang.reflect.Array;
  * {@link adams.core.ConfigurableEnumeration}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ConfigurableEnumerationItemEditor
   extends PropertyEditorSupport
   implements MultiSelectionEditor {
-
-  /**
-   * Returns the Item as string.
-   *
-   * @param option	the current option
-   * @param object	the Item object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((AbstractItem) object).getID();
-  }
-
-  /**
-   * Returns an Item object from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Item
-   * @return		the generated Item, null if failed to parse
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    AbstractItem	defValue;
-    Object		defCurrent;
-
-    defCurrent = option.getDefaultValue();
-    if (defCurrent.getClass().isArray()) {
-      if (Array.getLength(defCurrent) == 0) {
-        try {
-	  defValue = (AbstractItem) ((AbstractArgumentOption) option).getBaseClass().newInstance();
-	}
-	catch (Exception e) {
-          System.err.println("Failed to instantiate " + Utils.classToString(((AbstractArgumentOption) option).getBaseClass()) + "!");
-          return null;
-	}
-      }
-      else {
-	defValue = (AbstractItem) Array.get(defCurrent, 0);
-      }
-    }
-    else {
-      defValue = (AbstractItem) defCurrent;
-    }
-
-    return defValue.getEnumeration().parse(str);
-  }
 
   /**
    * Returns a description of the property value as java source.

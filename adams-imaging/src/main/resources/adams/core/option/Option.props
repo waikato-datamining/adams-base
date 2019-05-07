@@ -32,5 +32,5 @@ adams.core.base.QuadrilateralLocation#valueOf=adams.core.option.parsing.BaseObje
 
 # ExifTagEnumeration/Item objects
 adams.data.exif.commons.ExifTagEnum$Item=true
-adams.data.exif.commons.ExifTagEnum$Item#toString=adams.gui.goe.ConfigurableEnumerationItemEditor#toString
-adams.data.exif.commons.ExifTagEnum$Item#valueOf=adams.gui.goe.ConfigurableEnumerationItemEditor#valueOf
+adams.data.exif.commons.ExifTagEnum$Item#toString=adams.core.option.parsing.AdvancedScriptParsing#toString
+adams.data.exif.commons.ExifTagEnum$Item#valueOf=adams.core.option.parsing.AdvancedScriptParsing#valueOf
