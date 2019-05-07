@@ -26,7 +26,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.FileParsing;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
@@ -61,35 +61,13 @@ public class FileEditor
   protected transient BaseFileChooser m_FileChooser;
 
   /**
-   * Returns the file as string.
-   *
-   * @param option	the current option
-   * @param object	the file object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((File) object).getPath();
-  }
-
-  /**
-   * Returns a file generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a file
-   * @return		the generated file
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new File(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return FileParsing.toString(null, obj);
   }
 
   /**
@@ -99,7 +77,7 @@ public class FileEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return FileParsing.valueOf(null, str);
   }
 
   /**
