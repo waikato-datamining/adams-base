@@ -23,6 +23,7 @@ package adams.gui.tools.spreadsheetprocessor.sources;
 import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
+import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
@@ -73,6 +74,10 @@ public class DatabaseSource
 
   public static final String KEY_QUERY = "query";
 
+  public static final String KEY_TYPEMAPPER = "typemapper";
+
+  public static final String KEY_DATAROW = "datarow";
+
   /** the widget. */
   protected BasePanel m_Widget;
 
@@ -83,7 +88,7 @@ public class DatabaseSource
   protected GenericObjectEditorPanel m_PanelTypeMapper;
 
   /** the panel for the row class. */
-  protected GenericObjectEditorPanel m_PanelRowClass;
+  protected GenericObjectEditorPanel m_PanelDataRow;
 
   /** the query panel. */
   protected SQLStatementPanel m_PanelQuery;
@@ -128,8 +133,8 @@ public class DatabaseSource
       topPanel.add(paramsPanel, BorderLayout.CENTER);
       m_PanelTypeMapper = new GenericObjectEditorPanel(AbstractTypeMapper.class, new DefaultTypeMapper(), true);
       paramsPanel.addParameter("Type mapper", m_PanelTypeMapper);
-      m_PanelRowClass = new GenericObjectEditorPanel(DataRow.class, new DenseDataRow(), true);
-      paramsPanel.addParameter("Row class", m_PanelRowClass);
+      m_PanelDataRow = new GenericObjectEditorPanel(DataRow.class, new DenseDataRow(), true);
+      paramsPanel.addParameter("Data row", m_PanelDataRow);
 
       m_PanelQuery = new SQLStatementPanel();
       m_PanelQuery.addQueryChangeListener((ChangeEvent e) -> update());
@@ -168,7 +173,7 @@ public class DatabaseSource
         m_ButtonExecute.setEnabled(false);
         String query = m_PanelQuery.getStatement().getValue();
         SQLF sql = SQLF.getSingleton(m_PanelConnection.getDatabaseConnection());
-        Reader reader = new Reader((AbstractTypeMapper) m_PanelTypeMapper.getCurrent(), m_PanelRowClass.getCurrent().getClass());
+        Reader reader = new Reader((AbstractTypeMapper) m_PanelTypeMapper.getCurrent(), m_PanelDataRow.getCurrent().getClass());
 	try {
 	  m_Data = reader.read(sql.getResultSet(query));
 	  if (m_Data == null)
@@ -251,6 +256,42 @@ public class DatabaseSource
   }
 
   /**
+   * Sets the current type mapper.
+   *
+   * @param value	the mapper
+   */
+  public void setCurrentTypeMapper(AbstractTypeMapper value) {
+    m_PanelTypeMapper.setCurrent(value);
+  }
+
+  /**
+   * Returns the current type mapper.
+   *
+   * @return		the mapper
+   */
+  public AbstractTypeMapper getCurrentTypeMapper() {
+    return (AbstractTypeMapper) m_PanelTypeMapper.getCurrent();
+  }
+
+  /**
+   * Sets the current data row.
+   *
+   * @param value	the data row
+   */
+  public void setCurrentDataRow(DataRow value) {
+    m_PanelDataRow.setCurrent(value);
+  }
+
+  /**
+   * Returns the current data row.
+   *
+   * @return		the data row
+   */
+  public DataRow getCurrentDataRow() {
+    return (DataRow) m_PanelDataRow.getCurrent();
+  }
+
+  /**
    * Retrieves the values from the other widget, if possible.
    *
    * @param other	the other widget to get the values from
@@ -263,6 +304,8 @@ public class DatabaseSource
       widget.getWidget();
       setCurrentConnection(widget.getCurrentConnection());
       setCurrentQuery(widget.getCurrentQuery());
+      setCurrentTypeMapper(widget.getCurrentTypeMapper());
+      setCurrentDataRow(widget.getCurrentDataRow());
     }
   }
 
@@ -277,8 +320,10 @@ public class DatabaseSource
     result = new HashMap<>();
     result.put(KEY_URL, getCurrentConnection().getURL());
     result.put(KEY_USER, getCurrentConnection().getUser());
-    result.put(KEY_PASSWORD, getCurrentConnection().getPassword());
+    result.put(KEY_PASSWORD, getCurrentConnection().getPassword().stringValue());
     result.put(KEY_QUERY, getCurrentQuery().getValue());
+    result.put(KEY_TYPEMAPPER, OptionUtils.getCommandLine(m_PanelTypeMapper.getCurrent()));
+    result.put(KEY_DATAROW, OptionUtils.getCommandLine(m_PanelDataRow.getCurrent()));
 
     return result;
   }
@@ -304,6 +349,22 @@ public class DatabaseSource
       }
       if (map.containsKey(KEY_QUERY))
         setCurrentQuery(new SQLStatement((String) map.get(KEY_QUERY)));
+      if (map.containsKey(KEY_TYPEMAPPER)) {
+        try {
+	  setCurrentTypeMapper((AbstractTypeMapper) OptionUtils.forAnyCommandLine(AbstractTypeMapper.class, (String) map.get(KEY_TYPEMAPPER)));
+	}
+	catch (Exception e) {
+	  errors.add(getClass().getName() + ": Failed to instantiate type mapper from: " + map.get(KEY_TYPEMAPPER));
+	}
+      }
+      if (map.containsKey(KEY_DATAROW)) {
+        try {
+	  setCurrentDataRow((DataRow) OptionUtils.forAnyCommandLine(DataRow.class, (String) map.get(KEY_DATAROW)));
+	}
+	catch (Exception e) {
+	  errors.add(getClass().getName() + ": Failed to instantiate data row from: " + map.get(KEY_DATAROW));
+	}
+      }
       update();
     }
     else {
