@@ -15,7 +15,7 @@
 
 /*
  * EmailAddressEditor.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,7 +24,7 @@ package adams.gui.goe;
 import adams.core.net.EmailAddress;
 import adams.core.net.EmailAddressBook;
 import adams.core.net.EmailContact;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.EmailAddressParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
@@ -47,7 +47,6 @@ import java.awt.event.ActionListener;
  * A PropertyEditor for EmailAddress objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see EmailAddress
  */
 public class EmailAddressEditor
@@ -64,36 +63,13 @@ public class EmailAddressEditor
   protected BaseButton m_ButtonClose;
 
   /**
-   * Returns the field as string.
-   *
-   * @param option	the current option
-   * @param object	the EmailAddress object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((EmailAddress) object).stringValue();
-  }
-
-  /**
-   * Returns a EmailAddress generated from the string. All "\t" strings are turned
-   * automatically into tab characters.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a field
-   * @return		the generated EmailAddress object
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new EmailAddress(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return EmailAddressParsing.toString(null, obj);
   }
 
   /**
@@ -103,7 +79,7 @@ public class EmailAddressEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return EmailAddressParsing.valueOf(null, str);
   }
 
   /**

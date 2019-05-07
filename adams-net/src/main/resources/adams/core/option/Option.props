@@ -23,5 +23,5 @@ adams.core.base.HtmlCode#valueOf=adams.core.option.parsing.BaseObjectParsing#val
 
 # EmailAddress objects
 adams.core.net.EmailAddress=true
-adams.core.net.EmailAddress#toString=adams.gui.goe.EmailAddressEditor#toString
-adams.core.net.EmailAddress#valueOf=adams.gui.goe.EmailAddressEditor#valueOf
+adams.core.net.EmailAddress#toString=adams.core.option.parsing.EmailAddressParsing#toString
+adams.core.net.EmailAddress#valueOf=adams.core.option.parsing.EmailAddressParsing#valueOf
