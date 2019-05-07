@@ -21,7 +21,7 @@
 
 package adams.gui.goe;
 
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.WekaUnorderedAttributeRangeParsing;
 import adams.data.weka.WekaAttributeRange;
 import adams.data.weka.WekaUnorderedAttributeRange;
 
@@ -34,28 +34,6 @@ public class WekaUnorderedAttributeRangeEditor
   extends UnorderedRangeEditor {
 
   /**
-   * Returns the object as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((WekaUnorderedAttributeRange) object).getRange();
-  }
-  
-  /**
-   * Returns a object generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new WekaUnorderedAttributeRange(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
@@ -63,7 +41,7 @@ public class WekaUnorderedAttributeRangeEditor
    */
   @Override
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return WekaUnorderedAttributeRangeParsing.toString(null, obj);
   }
 
   /**

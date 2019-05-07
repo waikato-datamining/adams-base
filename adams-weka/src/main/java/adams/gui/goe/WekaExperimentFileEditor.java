@@ -23,7 +23,7 @@ package adams.gui.goe;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.WekaExperimentFileParsing;
 import adams.data.WekaExperimentFile;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BaseButton;
@@ -56,7 +56,6 @@ import java.io.File;
  * A PropertyEditor for WekaExperimentFile objects that lets the user select a file.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaExperimentFileEditor
   extends AbstractPropertyEditorSupport
@@ -226,35 +225,13 @@ public class WekaExperimentFileEditor
   protected BaseButton m_ButtonCancel;
 
   /**
-   * Returns the file as string.
-   *
-   * @param option	the current option
-   * @param object	the file object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((WekaExperimentFile) object).getPath();
-  }
-
-  /**
-   * Returns a file generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a file
-   * @return		the generated file
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new WekaExperimentFile(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return WekaExperimentFileParsing.toString(null, obj);
   }
 
   /**
@@ -264,7 +241,7 @@ public class WekaExperimentFileEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return WekaExperimentFileParsing.valueOf(null, str);
   }
 
   /**

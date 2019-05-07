@@ -15,45 +15,22 @@
 
 /*
  * WekaAttributeRangeEditor.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.WekaAttributeRangeParsing;
 import adams.data.weka.WekaAttributeRange;
 
 /**
  * A PropertyEditor for {@link WekaAttributeRange} objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaAttributeRangeEditor
   extends RangeEditor {
-
-  /**
-   * Returns the object as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((WekaAttributeRange) object).getRange();
-  }
-  
-  /**
-   * Returns a object generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new WekaAttributeRange(str);
-  }
 
   /**
    * Returns a custom string representation of the object.
@@ -63,7 +40,7 @@ public class WekaAttributeRangeEditor
    */
   @Override
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return WekaAttributeRangeParsing.toString(null, obj);
   }
 
   /**

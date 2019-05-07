@@ -13,45 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaLabelIndexEditor.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
-import adams.core.option.AbstractOption;
 import adams.data.weka.WekaLabelIndex;
 
 /**
  * Editor for {@link WekaLabelIndex} objects.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaLabelIndexEditor
   extends IndexEditor {
-
-  /**
-   * Returns the object as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((WekaLabelIndex) object).getIndex();
-  }
-  
-  /**
-   * Returns a object generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new WekaLabelIndex(str);
-  }
 
   /**
    * Returns an object created from the custom string representation.
