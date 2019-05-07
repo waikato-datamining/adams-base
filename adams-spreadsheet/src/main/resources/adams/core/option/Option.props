@@ -23,8 +23,8 @@ adams.data.spreadsheet.SpreadSheetColumnIndex#valueOf=adams.core.option.parsing.
 
 # SpreadSheetColumnRange objects
 adams.data.spreadsheet.SpreadSheetColumnRange=true
-adams.data.spreadsheet.SpreadSheetColumnRange#toString=adams.core.option.parsing.SpreadSheetColumnRangeEditor#toString
-adams.data.spreadsheet.SpreadSheetColumnRange#valueOf=adams.core.option.parsing.SpreadSheetColumnRangeEditor#valueOf
+adams.data.spreadsheet.SpreadSheetColumnRange#toString=adams.core.option.parsing.SpreadSheetColumnRangeParsing#toString
+adams.data.spreadsheet.SpreadSheetColumnRange#valueOf=adams.core.option.parsing.SpreadSheetColumnRangeParsing#valueOf
 
 # SpreadSheetUnorderedColumnRange objects
 adams.data.spreadsheet.SpreadSheetUnorderedColumnRange=true
