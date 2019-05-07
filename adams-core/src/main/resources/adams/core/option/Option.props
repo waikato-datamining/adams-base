@@ -262,23 +262,23 @@ adams.gui.core.BaseShortcut#valueOf=adams.core.option.parsing.BaseObjectParsing#
 
 # Index objects
 adams.core.Index=true
-adams.core.Index#toString=adams.gui.goe.IndexEditor#toString
-adams.core.Index#valueOf=adams.gui.goe.IndexEditor#valueOf
+adams.core.Index#toString=adams.core.option.parsing.IndexParsing#toString
+adams.core.Index#valueOf=adams.core.option.parsing.IndexParsing#valueOf
 
 # Range objects
 adams.core.Range=true
-adams.core.Range#toString=adams.gui.goe.RangeEditor#toString
-adams.core.Range#valueOf=adams.gui.goe.RangeEditor#valueOf
+adams.core.Range#toString=adams.core.option.parsing.RangeParsing#toString
+adams.core.Range#valueOf=adams.core.option.parsing.RangeParsing#valueOf
 
 # UnorderedRange objects
 adams.core.UnorderedRange=true
-adams.core.UnorderedRange#toString=adams.gui.goe.UnorderedRangeEditor#toString
-adams.core.UnorderedRange#valueOf=adams.gui.goe.UnorderedRangeEditor#valueOf
+adams.core.UnorderedRange#toString=adams.core.option.parsing.UnorderedRangeParsing#toString
+adams.core.UnorderedRange#valueOf=adams.core.option.parsing.UnorderedRangeParsing#valueOf
 
 # CallableActorReference objects
 adams.flow.core.CallableActorReference=true
-adams.flow.core.CallableActorReference#toString=adams.gui.goe.CallableActorReferenceEditor#toString
-adams.flow.core.CallableActorReference#valueOf=adams.gui.goe.CallableActorReferenceEditor#valueOf
+adams.flow.core.CallableActorReference#toString=adams.core.option.parsing.CallableActorReferenceParsing#toString
+adams.flow.core.CallableActorReference#valueOf=adams.core.option.parsing.CallableActorReferenceParsing#valueOf
 
 # VariableName objects
 adams.core.VariableName=true
@@ -307,8 +307,8 @@ adams.data.DecimalFormatString#valueOf=adams.core.option.parsing.BaseObjectParsi
 
 # JdbcUrl objects
 adams.db.JdbcUrl=true
-adams.db.JdbcUrl#toString=adams.gui.goe.JdbcUrlEditor#toString
-adams.db.JdbcUrl#valueOf=adams.gui.goe.JdbcUrlEditor#valueOf
+adams.db.JdbcUrl#toString=adams.core.option.parsing.JdbcUrlParsing#toString
+adams.db.JdbcUrl#valueOf=adams.core.option.parsing.JdbcUrlParsing#valueOf
 
 # SQLStatement objects
 adams.db.SQLStatement=true
@@ -342,40 +342,40 @@ adams.flow.control.StorageName#valueOf=adams.core.option.parsing.BaseObjectParsi
 
 # PlaceholderDirectory objects
 adams.core.io.PlaceholderDirectory=true
-adams.core.io.PlaceholderDirectory#toString=adams.gui.goe.PlaceholderDirectoryEditor#toString
-adams.core.io.PlaceholderDirectory#valueOf=adams.gui.goe.PlaceholderDirectoryEditor#valueOf
+adams.core.io.PlaceholderDirectory#toString=adams.core.option.parsing.PlaceholderDirectoryParsing#toString
+adams.core.io.PlaceholderDirectory#valueOf=adams.core.option.parsing.PlaceholderDirectoryParsing#valueOf
 
 # PlaceholderFile objects
 adams.core.io.PlaceholderFile=true
-adams.core.io.PlaceholderFile#toString=adams.gui.goe.PlaceholderFileEditor#toString
-adams.core.io.PlaceholderFile#valueOf=adams.gui.goe.PlaceholderFileEditor#valueOf
+adams.core.io.PlaceholderFile#toString=adams.core.option.parsing.PlaceholderFileParsing#toString
+adams.core.io.PlaceholderFile#valueOf=adams.core.option.parsing.PlaceholderFileParsing#valueOf
 
 # FlowFile objects
 adams.core.io.FlowFile=true
-adams.core.io.FlowFile#toString=adams.gui.goe.FlowFileEditor#toString
-adams.core.io.FlowFile#valueOf=adams.gui.goe.FlowFileEditor#valueOf
+adams.core.io.FlowFile#toString=adams.core.option.parsing.FlowFileParsing#toString
+adams.core.io.FlowFile#valueOf=adams.core.option.parsing.FlowFileParsing#valueOf
 
 # ActorPath objects
 adams.flow.core.ActorPath=true
-adams.flow.core.ActorPath#toString=adams.gui.goe.ActorPathEditor#toString
-adams.flow.core.ActorPath#valueOf=adams.gui.goe.ActorPathEditor#valueOf
+adams.flow.core.ActorPath#toString=adams.core.option.parsing.ActorPathParsing#toString
+adams.flow.core.ActorPath#valueOf=adams.core.option.parsing.ActorPathParsing#valueOf
 
 # Field objects
 adams.data.report.Field=true
-adams.data.report.Field#toString=adams.gui.goe.FieldEditor#toString
-adams.data.report.Field#valueOf=adams.gui.goe.FieldEditor#valueOf
+adams.data.report.Field#toString=adams.core.option.parsing.FieldParsing#toString
+adams.data.report.Field#valueOf=adams.core.option.parsing.FieldParsing#valueOf
 
 # PrefixField objects
 adams.data.report.PrefixField=true
-adams.data.report.PrefixField#toString=adams.gui.goe.PrefixFieldEditor#toString
-adams.data.report.PrefixField#valueOf=adams.gui.goe.PrefixFieldEditor#valueOf
+adams.data.report.PrefixField#toString=adams.core.option.parsing.PrefixFieldParsing#toString
+adams.data.report.PrefixField#valueOf=adams.core.option.parsing.PrefixFieldParsing#valueOf
 
 # SuffixField objects
 adams.data.report.SuffixField=true
-adams.data.report.SuffixField#toString=adams.gui.goe.SuffixFieldEditor#toString
-adams.data.report.SuffixField#valueOf=adams.gui.goe.SuffixFieldEditor#valueOf
+adams.data.report.SuffixField#toString=adams.core.option.parsing.SuffixFieldParsing#toString
+adams.data.report.SuffixField#valueOf=adams.core.option.parsing.SuffixFieldParsing#valueOf
 
 # VariableNameValuePair objects
 adams.core.VariableNameValuePair=true
-adams.core.VariableNameValuePair#toString=adams.gui.goe.VariableNameValuePairEditor#toString
-adams.core.VariableNameValuePair#valueOf=adams.gui.goe.VariableNameValuePairEditor#valueOf
+adams.core.VariableNameValuePair#toString=adams.core.option.parsing.VariableNameValuePairParsing#toString
+adams.core.VariableNameValuePair#valueOf=adams.core.option.parsing.VariableNameValuePairParsing#valueOf

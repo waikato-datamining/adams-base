@@ -22,7 +22,7 @@
 package adams.gui.goe;
 
 import adams.core.UnorderedRange;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.UnorderedRangeParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
@@ -71,35 +71,13 @@ public class UnorderedRangeEditor
   protected Color m_DefaultBackground;
 
   /**
-   * Returns the Compound as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((UnorderedRange) object).getRange();
-  }
-  
-  /**
-   * Returns a Compound generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new UnorderedRange(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return UnorderedRangeParsing.toString(null, obj);
   }
 
   /**

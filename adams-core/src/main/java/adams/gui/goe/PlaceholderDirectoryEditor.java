@@ -15,27 +15,18 @@
 
 /*
  *    PlaceholderDirectoryEditor.java
- *    Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
-
-import java.awt.FontMetrics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.PlaceholderDirectoryParsing;
 import adams.gui.chooser.BaseDirectoryChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
@@ -44,6 +35,14 @@ import adams.gui.dialog.PreviewBrowserDialog;
 import adams.gui.dialog.SimplePreviewBrowserDialog;
 import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
 
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import java.awt.FontMetrics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+
 /**
  * A PropertyEditor for PlaceholderDirectory objects that lets the user select
  * a directory.
@@ -51,8 +50,6 @@ import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
  * Based on <code>weka.gui.FileEditor</code>.
  *
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
- * @version $Revision$
- * @see weka.gui.PlaceholderDirectoryEditor
  */
 public class PlaceholderDirectoryEditor
   extends AbstractPropertyEditorSupport
@@ -63,35 +60,13 @@ public class PlaceholderDirectoryEditor
   protected BaseDirectoryChooser m_DirChooser;
 
   /**
-   * Returns the file as string.
-   *
-   * @param option	the current option
-   * @param object	the file object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((PlaceholderDirectory) object).getPath();
-  }
-
-  /**
-   * Returns a file generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a file
-   * @return		the generated file
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new PlaceholderDirectory(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return PlaceholderDirectoryParsing.toString(null, obj);
   }
 
   /**
@@ -101,7 +76,7 @@ public class PlaceholderDirectoryEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return PlaceholderDirectoryParsing.valueOf(null, str);
   }
 
   /**

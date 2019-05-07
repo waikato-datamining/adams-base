@@ -15,54 +15,29 @@
 
 /*
  * PrefixFieldEditor.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import java.util.Vector;
-
-import javax.swing.JComponent;
-
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.PrefixFieldParsing;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.FieldType;
 import adams.data.report.PrefixField;
 
+import javax.swing.JComponent;
+import java.util.Vector;
+
 /**
  * A PropertyEditor for PrefixField objects that lets the user select a field.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see PrefixField
  */
 public class PrefixFieldEditor
   extends FieldEditor {
-
-  /**
-   * Returns the field as string.
-   *
-   * @param option	the current option
-   * @param object	the Field object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((PrefixField) object).toString();
-  }
-
-  /**
-   * Returns a Field generated from the string. All "\t" strings are turned
-   * automatically into tab characters.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a field
-   * @return		the generated Field object
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return PrefixField.parseField(str);
-  }
 
   /**
    * Returns a custom string representation of the object.
@@ -71,7 +46,7 @@ public class PrefixFieldEditor
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return PrefixFieldParsing.toString(null, obj);
   }
 
   /**
@@ -81,7 +56,7 @@ public class PrefixFieldEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return PrefixFieldParsing.valueOf(null, str);
   }
 
   /**

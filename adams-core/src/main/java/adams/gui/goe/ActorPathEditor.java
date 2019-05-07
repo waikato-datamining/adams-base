@@ -15,14 +15,14 @@
 
 /*
  * ActorPathEditor.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
 import adams.core.Utils;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.ActorPathParsing;
 import adams.flow.core.ActorPath;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
@@ -53,7 +53,6 @@ import java.awt.event.MouseEvent;
  * A PropertyEditor for ActorPath objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorPathEditor
   extends AbstractPropertyEditorSupport
@@ -66,35 +65,13 @@ public class ActorPathEditor
   protected Tree m_Tree;
 
   /**
-   * Returns the reference as string.
-   *
-   * @param option	the current option
-   * @param object	the reference object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((ActorPath) object).toString();
-  }
-
-  /**
-   * Returns a reference generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a reference
-   * @return		the generated reference
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new ActorPath(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return ActorPathParsing.toString(null, obj);
   }
 
   /**

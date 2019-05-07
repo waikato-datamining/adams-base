@@ -22,6 +22,7 @@
 package adams.gui.goe;
 
 import adams.core.option.AbstractOption;
+import adams.core.option.parsing.FieldParsing;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -51,7 +52,6 @@ import java.util.List;
  * A PropertyEditor for Field objects that lets the user select a field.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see Field
  */
 public class FieldEditor
@@ -68,36 +68,13 @@ public class FieldEditor
   protected BaseButton m_ButtonClose;
 
   /**
-   * Returns the field as string.
-   *
-   * @param option	the current option
-   * @param object	the Field object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((Field) object).toParseableString();
-  }
-
-  /**
-   * Returns a Field generated from the string. All "\t" strings are turned
-   * automatically into tab characters.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a field
-   * @return		the generated Field object
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return Field.parseField(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return FieldParsing.toString(null, obj);
   }
 
   /**
@@ -107,7 +84,7 @@ public class FieldEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return FieldParsing.valueOf(null, str);
   }
 
   /**

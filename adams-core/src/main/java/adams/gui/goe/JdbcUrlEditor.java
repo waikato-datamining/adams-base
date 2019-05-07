@@ -23,7 +23,7 @@ package adams.gui.goe;
 
 import adams.core.HelpProvider;
 import adams.core.Utils;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.JdbcUrlParsing;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.ConnectionParameters;
 import adams.db.DatabaseConnection;
@@ -75,35 +75,13 @@ public class JdbcUrlEditor
   protected BaseButton m_ButtonHelp;
 
   /**
-   * Returns the BaseObject as string.
-   *
-   * @param option	the current option
-   * @param object	the BaseObject object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return Utils.backQuoteChars(((JdbcUrl) object).getValue());
-  }
-
-  /**
-   * Returns a BaseObject generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a BaseObject
-   * @return		the generated BaseObject
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new JdbcUrl(Utils.unbackQuoteChars(str));
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return JdbcUrlParsing.toString(null, obj);
   }
 
   /**
