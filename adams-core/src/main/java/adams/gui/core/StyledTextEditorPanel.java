@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StyledTextEditorPanel.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Patrick Chan and Addison Wesley, Java Developers Almanac 2000 (undo/redo)
  */
 package adams.gui.core;
@@ -29,6 +29,7 @@ import adams.gui.chooser.TextFileChooser;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -49,7 +50,6 @@ import java.util.List;
  * A panel that allows the editing of text, including undo/redo support.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
     copyright = "Patrick Chan and Addision Wesley, Java Developers Almanac 2000",
@@ -95,7 +95,7 @@ public class StyledTextEditorPanel
     super.initialize();
 
     m_CurrentFile     = null;
-    m_ChangeListeners = new HashSet<ChangeListener>();
+    m_ChangeListeners = new HashSet<>();
     m_Undo            = new UndoManager();
   }
 
@@ -110,6 +110,7 @@ public class StyledTextEditorPanel
 
     // text
     m_TextPane = newBaseTextPane();
+    m_TextPane.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
     m_TextPane.setFont(Fonts.getMonospacedFont());
     add(m_TextPane, BorderLayout.CENTER);
 
@@ -527,10 +528,7 @@ public class StyledTextEditorPanel
    * @return		true if text is available for cutting
    */
   public boolean canCut() {
-    if (isEditable() && (m_TextPane.getTextPane().getSelectedText() != null))
-      return true;
-    else
-      return false;
+    return (isEditable() && (m_TextPane.getTextPane().getSelectedText() != null));
   }
 
   /**
@@ -566,10 +564,7 @@ public class StyledTextEditorPanel
    * @return		true if text is available for pasting
    */
   public boolean canPaste() {
-    if (isEditable() && ClipboardHelper.canPasteStringFromClipboard())
-      return true;
-    else
-      return false;
+    return (isEditable() && ClipboardHelper.canPasteStringFromClipboard());
   }
 
   /**
