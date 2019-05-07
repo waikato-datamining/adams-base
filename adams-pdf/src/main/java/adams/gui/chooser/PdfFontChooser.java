@@ -20,11 +20,11 @@
 package adams.gui.chooser;
 
 import adams.core.io.PdfFont;
+import adams.core.option.parsing.PdfFontParsing;
 import adams.env.Environment;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.dialog.DialogWithButtons;
-import adams.gui.goe.PdfFontEditor;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -163,7 +163,7 @@ public class PdfFontChooser
       public void actionPerformed(ActionEvent e) {
         chooser.setVisible(true);
         PdfFont myNewFont = chooser.getCurrent();
-        System.out.println("You chose " + PdfFontEditor.toString(null, myNewFont));
+        System.out.println("You chose " + PdfFontParsing.toString(null, myNewFont));
         label.setFont(myNewFont.toJavaFont());
         frame.pack();
         chooser.dispose();

@@ -40,13 +40,13 @@ package adams.gui.chooser;
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.core.io.PdfFont;
+import adams.core.option.parsing.PdfFontParsing;
 import adams.env.Environment;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
-import adams.gui.goe.PdfFontEditor;
 import com.itextpdf.text.Font;
 
 import javax.swing.BorderFactory;
@@ -309,7 +309,7 @@ public class PdfFontChooserPanel
       public void actionPerformed(ActionEvent e) {
         chooser.setVisible(true);
         PdfFont myNewFont = chooser.getCurrent();
-        System.out.println("You chose " + PdfFontEditor.toString(null, myNewFont));
+        System.out.println("You chose " + PdfFontParsing.toString(null, myNewFont));
         label.setFont(myNewFont.toJavaFont());
         frame.pack();
         chooser.dispose();

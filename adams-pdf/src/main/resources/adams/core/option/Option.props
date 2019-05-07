@@ -22,6 +22,6 @@
 
 # PdfFont objects
 adams.core.io.PdfFont=true
-adams.core.io.PdfFont#toString=adams.gui.goe.PdfFontEditor#toString
-adams.core.io.PdfFont#valueOf=adams.gui.goe.PdfFontEditor#valueOf
+adams.core.io.PdfFont#toString=adams.core.option.parsing.PdfFontParsing#toString
+adams.core.io.PdfFont#valueOf=adams.core.option.parsing.PdfFontParsing#valueOf
 

@@ -15,14 +15,14 @@
 
 /*
  *    PdfFontEditor.java
- *    Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
 import adams.core.io.PdfFont;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.PdfFontParsing;
 import adams.gui.chooser.PdfFontChooserPanel;
 import adams.gui.core.BaseButton;
 
@@ -39,7 +39,6 @@ import java.awt.event.ActionListener;
  * the font dialog.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PdfFontEditor
   extends AbstractPropertyEditorSupport
@@ -55,35 +54,13 @@ public class PdfFontEditor
   protected BaseButton m_ButtonClose;
 
   /**
-   * Returns the color as string.
-   *
-   * @param option	the current option
-   * @param object	the color object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((PdfFont) object).toString();
-  }
-
-  /**
-   * Returns a color generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a color
-   * @return		the generated color
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new PdfFont(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return PdfFontParsing.toString(null, obj);
   }
 
   /**
@@ -93,7 +70,7 @@ public class PdfFontEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return PdfFontParsing.valueOf(null, str);
   }
 
   /**
