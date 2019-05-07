@@ -19,21 +19,18 @@
  */
 package adams.gui.goe;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JComponent;
-
 import adams.core.TriState;
 import adams.core.option.AbstractOption;
-
 import com.jidesoft.swing.TristateCheckBox;
+
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * A custom editor for TriState enums.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 4943 $
  */
 public class TriStateEditor
   extends AbstractBasicTypePropertyEditor {
@@ -177,26 +174,4 @@ public class TriStateEditor
     }
   }
 
-  /**
-   * Returns the field as string.
-   *
-   * @param option	the current option
-   * @param object	the Field object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((TriState) object).toRaw();
-  }
-
-  /**
-   * Returns a Field generated from the string. All "\t" strings are turned
-   * automatically into tab characters.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a field
-   * @return		the generated Field object
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return TriState.valueOf(option, str);
-  }
 }

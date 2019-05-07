@@ -24,7 +24,7 @@ package adams.gui.goe;
 import adams.core.AdditionalInformationHandler;
 import adams.core.Utils;
 import adams.core.base.BaseObject;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.SimpleScriptParsing;
 import adams.gui.core.AbstractSimpleScript;
 import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
@@ -50,7 +50,6 @@ import java.awt.event.ActionListener;
  * A PropertyEditor for AbstractScript-derived objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see adams.gui.core.AbstractSimpleScript
  */
 public class AbstractSimpleScriptEditor
@@ -61,59 +60,13 @@ public class AbstractSimpleScriptEditor
   protected StyledTextEditorPanel m_TextStatement;
 
   /**
-   * Returns the script as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((AbstractSimpleScript) object).stringValue();
-  }
-
-  /**
-   * Returns a script object generated from the string.
-   *
-   * @param cls		the script class
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(Class cls, String str) {
-    AbstractSimpleScript	result;
-
-    try {
-      if (cls.isArray())
-	cls = cls.getComponentType();
-      result = (AbstractSimpleScript) cls.newInstance();
-      result.setValue(Utils.unbackQuoteChars(str));
-    }
-    catch (Exception e) {
-      result = null;
-      e.printStackTrace();
-    }
-
-    return result;
-  }
-
-  /**
-   * Returns a script object generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return valueOf(option.getDefaultValue().getClass(), str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return SimpleScriptParsing.toString(null, obj);
   }
 
   /**
@@ -123,7 +76,7 @@ public class AbstractSimpleScriptEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(getValue().getClass(), str);
+    return SimpleScriptParsing.valueOf(getValue().getClass(), str);
   }
 
   /**
@@ -135,7 +88,7 @@ public class AbstractSimpleScriptEditor
   public String getJavaInitializationString() {
     String	result;
 
-    result = "new " + getValue().getClass().getName() + "(\"" + toString(null, getValue()) + "\")";
+    result = "new " + getValue().getClass().getName() + "(\"" + SimpleScriptParsing.toString(null, getValue()) + "\")";
 
     return result;
   }
@@ -157,7 +110,7 @@ public class AbstractSimpleScriptEditor
     if (getValue() == null)
       val = AbstractPropertyEditorSupport.NULL;
     else
-      val = toString(null, getValue());
+      val = SimpleScriptParsing.toString(null, getValue());
     if (val.isEmpty())
       val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);
@@ -390,7 +343,7 @@ public class AbstractSimpleScriptEditor
    */
   public void setInlineValue(String value) {
     if (isInlineValueValid(value))
-      setValue(valueOf(getValue().getClass(), value));
+      setValue(SimpleScriptParsing.valueOf(getValue().getClass(), value));
   }
 
   /**

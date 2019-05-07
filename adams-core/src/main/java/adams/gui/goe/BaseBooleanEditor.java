@@ -23,7 +23,7 @@ package adams.gui.goe;
 
 import adams.core.Utils;
 import adams.core.base.BaseBoolean;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.BaseBooleanParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.GUIHelper;
@@ -57,35 +57,13 @@ public class BaseBooleanEditor
   protected BaseComboBox m_ComboBoxValue;
 
   /**
-   * Returns the {@link BaseBoolean} as string.
-   *
-   * @param option	the current option
-   * @param object	the BaseBoolean object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((BaseBoolean) object).getValue();
-  }
-  
-  /**
-   * Returns a {@link BaseBoolean} generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a BaseBoolean
-   * @return		the generated BaseBoolean
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new BaseBoolean(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return BaseBooleanParsing.toString(null, obj);
   }
 
   /**

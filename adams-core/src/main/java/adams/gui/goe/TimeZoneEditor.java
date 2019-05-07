@@ -22,7 +22,6 @@
 package adams.gui.goe;
 
 import adams.core.management.TimeZoneHelper;
-import adams.core.option.AbstractOption;
 import adams.gui.core.GUIHelper;
 
 import java.awt.Container;
@@ -40,28 +39,6 @@ import java.util.TimeZone;
 public class TimeZoneEditor
   extends PropertyEditorSupport
   implements MultiSelectionEditor {
-  
-  /**
-   * Returns the timezone as string.
-   *
-   * @param option	the current option
-   * @param object	the timezone object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return TimeZoneHelper.toString((TimeZone) object);
-  }
-
-  /**
-   * Returns a timezone generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a timezone
-   * @return		the generated timezone
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return TimeZoneHelper.valueOf(str);
-  }
 
   /**
    * Returns a description of the property value as java source.

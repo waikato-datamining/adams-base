@@ -6,9 +6,9 @@
 # 1. whether the hook is enabled ("classname=true|false"), e.g.:
 #    java.io.File=true
 # 2. the "hook" for turning the object into a string ("classname#method"), e.g.:
-#    java.io.File#toString=adams.gui.goe.FileEditor#toString
+#    java.io.File#toString=adams.core.option.parsing.FileParsing#toString
 # 3. the "hook" for creating an object from the string ("classname#method"), e.g.:
-#    java.io.File#valueOf=adams.gui.goe.FileEditor#valueOf
+#    java.io.File#valueOf=adams.core.option.parsing.FileParsing#valueOf
 #
 # Other options are stored in here as well, but they must be prefixed with
 # "option.".
@@ -33,10 +33,10 @@ adams.data.spreadsheet.SpreadSheetUnorderedColumnRange#valueOf=adams.gui.goe.Spr
 
 # SpreadSheetQueryText objects
 adams.parser.SpreadSheetQueryText=true
-adams.parser.SpreadSheetQueryText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
-adams.parser.SpreadSheetQueryText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
+adams.parser.SpreadSheetQueryText#toString=adams.core.option.parsing.SimpleScriptParsing#toString
+adams.parser.SpreadSheetQueryText#valueOf=adams.core.option.parsing.SimpleScriptParsing#valueOf
 
 # LookUpUpdateText objects
 adams.parser.LookUpUpdateText=true
-adams.parser.LookUpUpdateText#toString=adams.gui.goe.AbstractSimpleScriptEditor#toString
-adams.parser.LookUpUpdateText#valueOf=adams.gui.goe.AbstractSimpleScriptEditor#valueOf
+adams.parser.LookUpUpdateText#toString=adams.core.option.parsing.SimpleScriptParsing#toString
+adams.parser.LookUpUpdateText#valueOf=adams.core.option.parsing.SimpleScriptParsing#valueOf

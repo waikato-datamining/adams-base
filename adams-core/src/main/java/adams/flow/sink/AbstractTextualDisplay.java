@@ -24,6 +24,7 @@ import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.FileUtils;
+import adams.core.option.parsing.FontParsing;
 import adams.data.io.output.AbstractTextWriter;
 import adams.data.io.output.NullWriter;
 import adams.flow.core.Token;
@@ -33,7 +34,6 @@ import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
-import adams.gui.goe.FontEditor;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 
@@ -144,7 +144,7 @@ public abstract class AbstractTextualDisplay
    */
   @Override
   public String getQuickInfo() {
-    return super.getQuickInfo() + QuickInfoHelper.toString(this, "font", FontEditor.toString(null, m_Font), ", font: ");
+    return super.getQuickInfo() + QuickInfoHelper.toString(this, "font", FontParsing.toString(null, m_Font), ", font: ");
   }
 
   /**

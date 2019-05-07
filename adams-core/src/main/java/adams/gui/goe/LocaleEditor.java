@@ -15,14 +15,13 @@
 
 /*
  *    LocaleEditor.java
- *    Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
 import adams.core.management.LocaleHelper;
-import adams.core.option.AbstractOption;
 import adams.gui.core.GUIHelper;
 
 import java.awt.Container;
@@ -36,33 +35,10 @@ import java.util.Locale;
  * is a placeholder for the system's default locale.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LocaleEditor
   extends PropertyEditorSupport
   implements MultiSelectionEditor {
-  
-  /**
-   * Returns the locale as string.
-   *
-   * @param option	the current option
-   * @param object	the locale object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return LocaleHelper.toString((Locale) object);
-  }
-
-  /**
-   * Returns a locale generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a locale
-   * @return		the generated locale
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return LocaleHelper.valueOf(str);
-  }
 
   /**
    * Returns a description of the property value as java source.

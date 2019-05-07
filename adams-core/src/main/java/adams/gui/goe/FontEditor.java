@@ -15,13 +15,13 @@
 
 /*
  *    FontEditor.java
- *    Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.FontParsing;
 import adams.gui.chooser.FontChooserPanelWithPreview;
 import adams.gui.core.BaseButton;
 
@@ -39,23 +39,10 @@ import java.awt.event.ActionListener;
  * the font dialog.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FontEditor
   extends AbstractPropertyEditorSupport
   implements CustomStringRepresentationHandler {
-
-  /** the string for PLAIN. */
-  public final static String PLAIN = "PLAIN";
-
-  /** the string for BOLD. */
-  public final static String BOLD = "BOLD";
-
-  /** the string for ITALIC. */
-  public final static String ITALIC = "ITALIC";
-
-  /** the separator. */
-  public final static char SEPARATOR = '-';
 
   /** The Font chooser used for selecting colors. */
   protected FontChooserPanelWithPreview m_fontChooserPanelWithPreview;
@@ -67,68 +54,13 @@ public class FontEditor
   protected BaseButton m_ButtonClose;
 
   /**
-   * Returns the color as string.
-   *
-   * @param option	the current option
-   * @param object	the color object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    String	result;
-    Font	font;
-
-    font  = (Font) object;
-    result = font.getName();
-    result += SEPARATOR + (font.isBold() ? BOLD : PLAIN);
-    if (font.isItalic())
-      result += "," + ITALIC;
-    result += "" + SEPARATOR + font.getSize();
-
-    return result;
-  }
-
-  /**
-   * Returns a color generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a color
-   * @return		the generated color
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    Font	result;
-    String	name;
-    int		size;
-    String	attsStr;
-    int		atts;
-
-    // size
-    size = Integer.parseInt(str.substring(str.lastIndexOf(SEPARATOR) + 1));
-    str  = str.substring(0, str.lastIndexOf(SEPARATOR));
-
-    // face
-    attsStr = str.substring(str.lastIndexOf(SEPARATOR) + 1);
-    str     = str.substring(0, str.lastIndexOf(SEPARATOR));
-    atts    = (attsStr.indexOf(BOLD) > -1) ? Font.BOLD : Font.PLAIN;
-    if (attsStr.indexOf(ITALIC) > -1)
-      atts |= Font.ITALIC;
-
-    // name
-    name = str;
-
-    // create font object
-    result = new Font(name, atts, size);
-
-    return result;
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return FontParsing.toString(null, obj);
   }
 
   /**
@@ -138,7 +70,7 @@ public class FontEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return FontParsing.valueOf(null, str);
   }
 
   /**
@@ -220,7 +152,7 @@ public class FontEditor
     Font font = (Font) getValue();
     String val = "No font";
     if (font != null)
-      val = toString(null, font);
+      val = FontParsing.toString(null, font);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 }

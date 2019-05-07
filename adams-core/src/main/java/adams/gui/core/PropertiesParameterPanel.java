@@ -34,6 +34,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
+import adams.core.option.parsing.FontParsing;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.BaseFileChooser;
@@ -45,7 +46,6 @@ import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.chooser.FontChooserPanel;
 import adams.gui.chooser.TimeChooserPanel;
-import adams.gui.goe.FontEditor;
 import adams.gui.goe.GenericArrayEditorPanel;
 
 import javax.swing.BorderFactory;
@@ -1054,7 +1054,7 @@ public class PropertiesParameterPanel
             break;
           case FONT:
             fontPanel = new FontChooserPanel();
-            fontPanel.setCurrent((Font) FontEditor.valueOf(null, value.getProperty(key)));
+            fontPanel.setCurrent((Font) FontParsing.valueOf(null, value.getProperty(key)));
             if (help != null)
 	      fontPanel.setToolTipText(help);
             addProperty(key, label, fontPanel);
@@ -1320,7 +1320,7 @@ public class PropertiesParameterPanel
           break;
         case FONT:
           fontPanel = (FontChooserPanel) comp;
-          result.setProperty(key, FontEditor.toString(null, fontPanel.getCurrent()));
+          result.setProperty(key, FontParsing.toString(null, fontPanel.getCurrent()));
           break;
         case DIRECTORY:
 	  dirPanel = (DirectoryChooserPanel) comp;

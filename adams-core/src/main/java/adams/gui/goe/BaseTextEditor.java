@@ -15,7 +15,7 @@
 
 /*
  * BaseTextEditor.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,7 +24,7 @@ package adams.gui.goe;
 import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseText;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.BaseTextParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
@@ -46,7 +46,6 @@ import java.awt.event.ActionListener;
  * A PropertyEditor for BaseText objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see adams.core.base.BaseText
  */
 public class BaseTextEditor
@@ -57,35 +56,13 @@ public class BaseTextEditor
   protected BaseTextArea m_TextValue;
 
   /**
-   * Returns the BaseText as string.
-   *
-   * @param option	the current option
-   * @param object	the BaseText object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((BaseText) object).stringValue();
-  }
-
-  /**
-   * Returns a BaseText generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a BaseText
-   * @return		the generated BaseText
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new BaseText(Utils.unbackQuoteChars(str));
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return BaseTextParsing.toString(null, obj);
   }
 
   /**
@@ -95,7 +72,7 @@ public class BaseTextEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return BaseTextParsing.valueOf(null, str);
   }
 
   /**
@@ -107,7 +84,7 @@ public class BaseTextEditor
   public String getJavaInitializationString() {
     String	result;
 
-    result = "new " + getValue().getClass().getName() + "(\"" + toString(null, getValue()) + "\")";
+    result = "new " + getValue().getClass().getName() + "(\"" + BaseTextParsing.toString(null, getValue()) + "\")";
 
     return result;
   }
@@ -129,7 +106,7 @@ public class BaseTextEditor
     if (getValue() == null)
       val = AbstractPropertyEditorSupport.NULL;
     else
-      val = toString(null, getValue());
+      val = BaseTextParsing.toString(null, getValue());
     if (val.isEmpty())
       val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);

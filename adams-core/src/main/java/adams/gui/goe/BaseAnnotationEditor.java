@@ -15,7 +15,7 @@
 
 /*
  * BaseAnnotationEditor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,7 +24,7 @@ package adams.gui.goe;
 import adams.core.Utils;
 import adams.core.base.BaseAnnotation;
 import adams.core.base.BaseObject;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.BaseAnnotationParsing;
 import adams.flow.processor.ListAnnotationTags;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
@@ -50,7 +50,6 @@ import java.awt.event.ActionListener;
  * A PropertyEditor for BaseAnnotation objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8805 $
  * @see adams.core.base.BaseAnnotation
  */
 public class BaseAnnotationEditor
@@ -61,35 +60,13 @@ public class BaseAnnotationEditor
   protected TextAreaComponent m_TextValue;
 
   /**
-   * Returns the BaseAnnotation as string.
-   *
-   * @param option	the current option
-   * @param object	the BaseAnnotation object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((BaseAnnotation) object).stringValue();
-  }
-
-  /**
-   * Returns a BaseAnnotation generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a BaseAnnotation
-   * @return		the generated BaseAnnotation
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new BaseAnnotation(Utils.unbackQuoteChars(str));
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return BaseAnnotationParsing.toString(null, obj);
   }
 
   /**
@@ -99,7 +76,7 @@ public class BaseAnnotationEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return BaseAnnotationParsing.valueOf(null, str);
   }
 
   /**
@@ -111,7 +88,7 @@ public class BaseAnnotationEditor
   public String getJavaInitializationString() {
     String	result;
 
-    result = "new " + getValue().getClass().getName() + "(\"" + toString(null, getValue()) + "\")";
+    result = "new " + getValue().getClass().getName() + "(\"" + BaseAnnotationParsing.toString(null, getValue()) + "\")";
 
     return result;
   }
@@ -133,7 +110,7 @@ public class BaseAnnotationEditor
     if (getValue() == null)
       val = AbstractPropertyEditorSupport.NULL;
     else
-      val = toString(null, getValue());
+      val = BaseAnnotationParsing.toString(null, getValue());
     if (val.isEmpty())
       val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);

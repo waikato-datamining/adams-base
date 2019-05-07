@@ -25,7 +25,7 @@ import adams.core.HelpProvider;
 import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.BaseObjectParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
@@ -55,7 +55,6 @@ import java.util.List;
  * If the 
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see adams.core.base.BaseObject
  */
 public class BaseObjectEditor
@@ -70,70 +69,13 @@ public class BaseObjectEditor
   protected BaseButton m_ButtonHelp;
 
   /**
-   * Returns the BaseObject as string.
-   *
-   * @param option	the current option
-   * @param object	the BaseObject object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return Utils.backQuoteChars(((BaseObject) object).getValue());
-  }
-
-  /**
-   * Determines the base class.
-   * 
-   * @param obj		the object to inspect
-   * @return		the determined class
-   */
-  protected static Class determineClass(Object obj) {
-    Class	result;
-    
-    result = obj.getClass();
-    
-    if (result.isArray())
-      result = result.getComponentType();
-    
-    if (result == BaseObject.class) {
-      System.err.println("Falling back to BaseString class!");
-      result = BaseString.class;
-    }
-    
-    return result;
-  }
-  
-  /**
-   * Returns a BaseObject generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a BaseObject
-   * @return		the generated BaseObject
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    BaseObject	result;
-    Class	cls;
-
-    try {
-      cls    = determineClass(option.getDefaultValue());
-      result = (BaseObject) cls.newInstance();
-      result.setValue(Utils.unbackQuoteChars(str));
-    }
-    catch (Exception e) {
-      result = null;
-      e.printStackTrace();
-    }
-
-    return result;
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return BaseObjectParsing.toString(null, obj);
   }
 
   /**
@@ -394,7 +336,7 @@ public class BaseObjectEditor
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    cls    = determineClass(getValue());
+    cls    = BaseObjectParsing.determineClass(getValue());
     lines  = dialog.getValues();
     result = (Object[]) Array.newInstance(cls, lines.size());
     for (i = 0; i < lines.size(); i++)
