@@ -23,8 +23,10 @@ package adams.gui.tools.spreadsheetprocessor.sources;
 import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
+import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.sql.AbstractTypeMapper;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
 import adams.db.AbstractDatabaseConnection;
@@ -34,12 +36,15 @@ import adams.db.SQLStatement;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.SQLStatementPanel;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.spreadsheetprocessor.AbstractWidget;
 import adams.gui.tools.sqlworkbench.SqlConnectionPanel;
 
 import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
@@ -74,6 +79,12 @@ public class DatabaseSource
   /** the connection panel. */
   protected SqlConnectionPanel m_PanelConnection;
 
+  /** the panel for the type mapper. */
+  protected GenericObjectEditorPanel m_PanelTypeMapper;
+
+  /** the panel for the row class. */
+  protected GenericObjectEditorPanel m_PanelRowClass;
+
   /** the query panel. */
   protected SQLStatementPanel m_PanelQuery;
 
@@ -100,12 +111,25 @@ public class DatabaseSource
    */
   @Override
   public Component getWidget() {
+    JPanel		topPanel;
+    ParameterPanel 	paramsPanel;
+
     if (m_Widget == null) {
       m_Widget = new BasePanel(new BorderLayout());
 
+      topPanel = new JPanel(new BorderLayout());
+      m_Widget.add(topPanel, BorderLayout.NORTH);
+
       m_PanelConnection = new SqlConnectionPanel();
       m_PanelConnection.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-      m_Widget.add(m_PanelConnection, BorderLayout.NORTH);
+      topPanel.add(m_PanelConnection, BorderLayout.NORTH);
+
+      paramsPanel = new ParameterPanel();
+      topPanel.add(paramsPanel, BorderLayout.CENTER);
+      m_PanelTypeMapper = new GenericObjectEditorPanel(AbstractTypeMapper.class, new DefaultTypeMapper(), true);
+      paramsPanel.addParameter("Type mapper", m_PanelTypeMapper);
+      m_PanelRowClass = new GenericObjectEditorPanel(DataRow.class, new DenseDataRow(), true);
+      paramsPanel.addParameter("Row class", m_PanelRowClass);
 
       m_PanelQuery = new SQLStatementPanel();
       m_PanelQuery.addQueryChangeListener((ChangeEvent e) -> update());
@@ -144,7 +168,7 @@ public class DatabaseSource
         m_ButtonExecute.setEnabled(false);
         String query = m_PanelQuery.getStatement().getValue();
         SQLF sql = SQLF.getSingleton(m_PanelConnection.getDatabaseConnection());
-        Reader reader = new Reader(new DefaultTypeMapper(), DenseDataRow.class);
+        Reader reader = new Reader((AbstractTypeMapper) m_PanelTypeMapper.getCurrent(), m_PanelRowClass.getCurrent().getClass());
 	try {
 	  m_Data = reader.read(sql.getResultSet(query));
 	  if (m_Data == null)
