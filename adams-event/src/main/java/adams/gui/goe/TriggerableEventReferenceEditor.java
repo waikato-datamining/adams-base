@@ -22,7 +22,6 @@
 package adams.gui.goe;
 
 import adams.core.Utils;
-import adams.core.option.AbstractOption;
 import adams.flow.core.TriggerableEvent;
 import adams.flow.core.TriggerableEventReference;
 import adams.gui.flow.tree.Node;
@@ -31,32 +30,9 @@ import adams.gui.flow.tree.Node;
  * A PropertyEditor for TriggerableEventReference objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TriggerableEventReferenceEditor
   extends EventReferenceEditor {
-
-  /**
-   * Returns the reference as string.
-   *
-   * @param option	the current option
-   * @param object	the reference object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((TriggerableEventReference) object).getValue();
-  }
-
-  /**
-   * Returns a reference generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a reference
-   * @return		the generated reference
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new TriggerableEventReference(str);
-  }
 
   /**
    * Returns an object created from the custom string representation.

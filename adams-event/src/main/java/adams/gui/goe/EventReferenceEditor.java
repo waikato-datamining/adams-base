@@ -15,14 +15,14 @@
 
 /*
  * EventReferenceEditor.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
 import adams.core.Utils;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.EventReferenceParsing;
 import adams.flow.core.EventReference;
 import adams.flow.standalone.Events;
 import adams.gui.core.BaseButton;
@@ -71,35 +71,13 @@ public class EventReferenceEditor
   protected EventsTree m_Tree;
 
   /**
-   * Returns the reference as string.
-   *
-   * @param option	the current option
-   * @param object	the reference object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((EventReference) object).getValue();
-  }
-
-  /**
-   * Returns a reference generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a reference
-   * @return		the generated reference
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new EventReference(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return EventReferenceParsing.toString(null, obj);
   }
 
   /**

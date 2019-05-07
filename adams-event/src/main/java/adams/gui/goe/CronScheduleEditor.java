@@ -21,10 +21,9 @@
 
 package adams.gui.goe;
 
-import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.CronSchedule;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.CronScheduleParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseTextField;
@@ -52,7 +51,6 @@ import java.util.Map;
  * A PropertyEditor for CronSchedule objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see adams.core.base.CronSchedule
  */
 public class CronScheduleEditor
@@ -84,35 +82,13 @@ public class CronScheduleEditor
   protected BaseTextField m_TextYear;
 
   /**
-   * Returns the Compound as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((CronSchedule) object).stringValue();
-  }
-
-  /**
-   * Returns a Compound generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new CronSchedule(Utils.unbackQuoteChars(str));
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return CronScheduleParsing.toString(null, obj);
   }
 
   /**
@@ -122,7 +98,7 @@ public class CronScheduleEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return CronScheduleParsing.valueOf(null, str);
   }
 
   /**
@@ -134,7 +110,7 @@ public class CronScheduleEditor
   public String getJavaInitializationString() {
     String	result;
 
-    result = "new " + getValue().getClass().getName() + "(\"" + toString(null, getValue()) + "\")";
+    result = "new " + getValue().getClass().getName() + "(\"" + CronScheduleParsing.toString(null, getValue()) + "\")";
 
     return result;
   }
@@ -156,7 +132,7 @@ public class CronScheduleEditor
     if (getValue() == null)
       val = "null";
     else
-      val = toString(null, getValue());
+      val = CronScheduleParsing.toString(null, getValue());
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 
