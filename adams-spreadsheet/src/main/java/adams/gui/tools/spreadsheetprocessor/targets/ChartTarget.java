@@ -165,10 +165,10 @@ public class ChartTarget
   /**
    * Sets the current title.
    *
-   * @param title	the title
+   * @param value	the title
    */
-  public void setCurrentTitle(String title) {
-    m_TextTitle.setText(title);
+  public void setCurrentTitle(String value) {
+    m_TextTitle.setText(value);
   }
 
   /**
