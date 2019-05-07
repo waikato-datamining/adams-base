@@ -22,7 +22,7 @@
 package adams.gui.goe;
 
 import adams.core.base.BaseColor;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.BaseColorParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ColorHelper;
@@ -64,35 +64,13 @@ public class BaseColorEditor
   protected JSpinner m_SpinnerAlpha;
 
   /**
-   * Returns the color as string.
-   *
-   * @param option	the current option
-   * @param object	the color object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((BaseColor) object).getValue();
-  }
-
-  /**
-   * Returns a color generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a color
-   * @return		the generated color
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new BaseColor(str);
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return BaseColorParsing.toString(null, obj);
   }
 
   /**
@@ -102,7 +80,7 @@ public class BaseColorEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return BaseColorParsing.valueOf(null, str);
   }
 
   /**
@@ -235,7 +213,7 @@ public class BaseColorEditor
     BaseColor color = (BaseColor) getValue();
     String val = "No color";
     if (color != null)
-      val = toString(null, color);
+      val = BaseColorParsing.toString(null, color);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

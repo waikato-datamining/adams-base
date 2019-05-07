@@ -21,7 +21,7 @@ package adams.gui.goe;
 
 import adams.core.base.BaseInterval;
 import adams.core.base.BaseObject;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.BaseIntervalParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseTextField;
@@ -57,28 +57,6 @@ public class BaseIntervalEditor
 
   /** whether to include the upper bound. */
   protected BaseCheckBox m_CheckBoxUpper;
-
-  /**
-   * Returns the Compound as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((BaseInterval) object).stringValue();
-  }
-
-  /**
-   * Returns a Compound generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new BaseInterval(str);
-  }
 
   /**
    * Accepts the input and closes the dialog.
@@ -215,7 +193,7 @@ public class BaseIntervalEditor
    */
   @Override
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return BaseIntervalParsing.toString(null, obj);
   }
 
   /**
@@ -226,7 +204,7 @@ public class BaseIntervalEditor
    */
   @Override
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return BaseIntervalParsing.valueOf(null, str);
   }
 
   /**

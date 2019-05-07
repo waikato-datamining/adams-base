@@ -19,10 +19,9 @@
  */
 package adams.gui.goe;
 
-import adams.core.Utils;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseObject;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.BaseKeyValuePairParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
@@ -44,7 +43,6 @@ import java.util.List;
  * Editor specifically designed for entering key/value pairs.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseKeyValuePairEditor
   extends BaseObjectEditor
@@ -52,28 +50,6 @@ public class BaseKeyValuePairEditor
 
   /** The text field with the key. */
   protected JTextComponent m_TextKey;
-
-  /**
-   * Returns the Compound as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((BaseKeyValuePair) object).stringValue();
-  }
-
-  /**
-   * Returns a Compound generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new BaseKeyValuePair(Utils.unbackQuoteChars(str));
-  }
 
   /**
    * Accepts the input and closes the dialog.
@@ -188,7 +164,7 @@ public class BaseKeyValuePairEditor
    */
   @Override
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return BaseKeyValuePairParsing.toString(null, obj);
   }
 
   /**
@@ -199,7 +175,7 @@ public class BaseKeyValuePairEditor
    */
   @Override
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return BaseKeyValuePairParsing.valueOf(null, str);
   }
 
   /**

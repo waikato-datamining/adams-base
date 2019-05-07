@@ -142,28 +142,28 @@ adams.core.base.BaseDouble#valueOf=adams.core.option.parsing.BaseObjectParsing#v
 
 # BaseDate objects
 adams.core.base.BaseDate=true
-adams.core.base.BaseDate#toString=adams.gui.goe.BaseDateEditor#toString
-adams.core.base.BaseDate#valueOf=adams.gui.goe.BaseDateEditor#valueOf
+adams.core.base.BaseDate#toString=adams.core.option.parsing.BaseDateParsing#toString
+adams.core.base.BaseDate#valueOf=adams.core.option.parsing.BaseDateParsing#valueOf
 
 # BaseDateTime objects
 adams.core.base.BaseDateTime=true
-adams.core.base.BaseDateTime#toString=adams.gui.goe.BaseDateTimeEditor#toString
-adams.core.base.BaseDateTime#valueOf=adams.gui.goe.BaseDateTimeEditor#valueOf
+adams.core.base.BaseDateTime#toString=adams.core.option.parsing.BaseDateTimeParsing#toString
+adams.core.base.BaseDateTime#valueOf=adams.core.option.parsing.BaseDateTimeParsing#valueOf
 
 # BaseDateTimeMsec objects
 adams.core.base.BaseDateTimeMsec=true
-adams.core.base.BaseDateTimeMsec#toString=adams.gui.goe.BaseDateTimeMsecEditor#toString
-adams.core.base.BaseDateTimeMsec#valueOf=adams.gui.goe.BaseDateTimeMsecEditor#valueOf
+adams.core.base.BaseDateTimeMsec#toString=adams.core.option.parsing.BaseDateTimeMsecParsing#toString
+adams.core.base.BaseDateTimeMsec#valueOf=adams.core.option.parsing.BaseDateTimeMsecParsing#valueOf
 
 # BaseTime objects
 adams.core.base.BaseTime=true
-adams.core.base.BaseTime#toString=adams.gui.goe.BaseTimeEditor#toString
-adams.core.base.BaseTime#valueOf=adams.gui.goe.BaseTimeEditor#valueOf
+adams.core.base.BaseTime#toString=adams.core.option.parsing.BaseTimeParsing#toString
+adams.core.base.BaseTime#valueOf=adams.core.option.parsing.BaseTimeParsing#valueOf
 
 # BaseTimeMsec objects
 adams.core.base.BaseTimeMsec=true
-adams.core.base.BaseTimeMsec#toString=adams.gui.goe.BaseTimeMsecEditor#toString
-adams.core.base.BaseTimeMsec#valueOf=adams.gui.goe.BaseTimeMsecEditor#valueOf
+adams.core.base.BaseTimeMsec#toString=adams.core.option.parsing.BaseTimeMsecParsing#toString
+adams.core.base.BaseTimeMsec#valueOf=adams.core.option.parsing.BaseTimeMsecParsing#valueOf
 
 # BaseList objects
 adams.core.base.BaseList=true
@@ -187,8 +187,8 @@ adams.core.base.BaseCharset#valueOf=adams.core.option.parsing.BaseObjectParsing#
 
 # BaseColor objects
 adams.core.base.BaseColor=true
-adams.core.base.BaseColor#toString=adams.gui.goe.BaseColorEditor#toString
-adams.core.base.BaseColor#valueOf=adams.gui.goe.BaseColorEditor#valueOf
+adams.core.base.BaseColor#toString=adams.core.option.parsing.BaseColorParsing#toString
+adams.core.base.BaseColor#valueOf=adams.core.option.parsing.BaseColorParsing#valueOf
 
 # BaseDimension objects
 adams.core.base.BaseDimension=true
@@ -197,8 +197,8 @@ adams.core.base.BaseDimension#valueOf=adams.core.option.parsing.BaseObjectParsin
 
 # BaseInterval objects
 adams.core.base.BaseInterval=true
-adams.core.base.BaseInterval#toString=adams.gui.goe.BaseIntervalEditor#toString
-adams.core.base.BaseInterval#valueOf=adams.gui.goe.BaseIntervalEditor#valueOf
+adams.core.base.BaseInterval#toString=adams.core.option.parsing.BaseIntervalParsing#toString
+adams.core.base.BaseInterval#valueOf=adams.core.option.parsing.BaseIntervalParsing#valueOf
 
 # BasePointInt objects
 adams.core.base.BasePointInt=true
@@ -217,13 +217,13 @@ adams.core.base.BasePointDouble#valueOf=adams.core.option.parsing.BaseObjectPars
 
 # BaseKeyValuePair objects
 adams.core.base.BaseKeyValuePair=true
-adams.core.base.BaseKeyValuePair#toString=adams.gui.goe.BaseKeyValuePairEditor#toString
-adams.core.base.BaseKeyValuePair#valueOf=adams.gui.goe.BaseKeyValuePairEditor#valueOf
+adams.core.base.BaseKeyValuePair#toString=adams.core.option.parsing.BaseKeyValuePairParsing#toString
+adams.core.base.BaseKeyValuePair#valueOf=adams.core.option.parsing.BaseKeyValuePairParsing#valueOf
 
 # BaseMarkdown objects
 adams.core.base.BaseMarkdown=true
-adams.core.base.BaseMarkdown#toString=adams.gui.goe.BaseMarkdownEditor#toString
-adams.core.base.BaseMarkdown#valueOf=adams.gui.goe.BaseMarkdownEditor#valueOf
+adams.core.base.BaseMarkdown#toString=adams.core.option.parsing.BaseMarkdownParsing#toString
+adams.core.base.BaseMarkdown#valueOf=adams.core.option.parsing.BaseMarkdownParsing#valueOf
 
 # BaseHostname objects
 adams.core.base.BaseHostname=true

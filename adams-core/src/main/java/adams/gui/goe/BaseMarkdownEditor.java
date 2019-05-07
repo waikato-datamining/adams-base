@@ -15,7 +15,7 @@
 
 /*
  * BaseMarkdownEditor.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,7 +24,7 @@ package adams.gui.goe;
 import adams.core.Utils;
 import adams.core.base.BaseMarkdown;
 import adams.core.base.BaseObject;
-import adams.core.option.AbstractOption;
+import adams.core.option.parsing.BaseMarkdownParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
@@ -46,7 +46,6 @@ import java.awt.event.ActionListener;
  * A PropertyEditor for BaseMarkdown objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see BaseMarkdown
  */
 public class BaseMarkdownEditor
@@ -57,35 +56,13 @@ public class BaseMarkdownEditor
   protected MarkdownTextAreaWithPreview m_TextValue;
 
   /**
-   * Returns the BaseMarkdown as string.
-   *
-   * @param option	the current option
-   * @param object	the BaseMarkdown object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((BaseMarkdown) object).stringValue();
-  }
-
-  /**
-   * Returns a BaseMarkdown generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a BaseMarkdown
-   * @return		the generated BaseMarkdown
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new BaseMarkdown(Utils.unbackQuoteChars(str));
-  }
-
-  /**
    * Returns a custom string representation of the object.
    *
    * @param obj		the object to turn into a string
    * @return		the string representation
    */
   public String toCustomStringRepresentation(Object obj) {
-    return toString(null, obj);
+    return BaseMarkdownParsing.toString(null, obj);
   }
 
   /**
@@ -95,7 +72,7 @@ public class BaseMarkdownEditor
    * @return		the object
    */
   public Object fromCustomStringRepresentation(String str) {
-    return valueOf(null, str);
+    return BaseMarkdownParsing.valueOf(null, str);
   }
 
   /**
@@ -107,7 +84,7 @@ public class BaseMarkdownEditor
   public String getJavaInitializationString() {
     String	result;
 
-    result = "new " + getValue().getClass().getName() + "(\"" + toString(null, getValue()) + "\")";
+    result = "new " + getValue().getClass().getName() + "(\"" + BaseMarkdownParsing.toString(null, getValue()) + "\")";
 
     return result;
   }
@@ -129,7 +106,7 @@ public class BaseMarkdownEditor
     if (getValue() == null)
       val = AbstractPropertyEditorSupport.NULL;
     else
-      val = toString(null, getValue());
+      val = BaseMarkdownParsing.toString(null, getValue());
     if (val.isEmpty())
       val = AbstractPropertyEditorSupport.EMPTY;
     gfx.drawString(val, 2, fm.getHeight() + vpad);

@@ -15,14 +15,13 @@
 
 /*
  * BaseTimeEditor.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
 import adams.core.base.BaseTime;
-import adams.core.option.AbstractOption;
 import adams.gui.chooser.TimePanel;
 
 import java.util.Date;
@@ -31,33 +30,10 @@ import java.util.Date;
  * A PropertyEditor for BaseTime objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see adams.core.base.BaseTime
  */
 public class BaseTimeEditor
   extends AbstractBaseDateTypeEditor<BaseTime, TimePanel> {
-
-  /**
-   * Returns the Compound as string.
-   *
-   * @param option	the current option
-   * @param object	the Compound object to convert
-   * @return		the generated string
-   */
-  public static String toString(AbstractOption option, Object object) {
-    return ((BaseTime) object).getValue();
-  }
-
-  /**
-   * Returns a Compound generated from the string.
-   *
-   * @param option	the current option
-   * @param str		the string to convert to a Compound
-   * @return		the generated Compound
-   */
-  public static Object valueOf(AbstractOption option, String str) {
-    return new BaseTime(str);
-  }
 
   /**
    * Returns a new instance of the date type.
