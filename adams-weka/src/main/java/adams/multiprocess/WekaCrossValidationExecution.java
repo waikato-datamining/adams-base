@@ -15,12 +15,13 @@
 
 /*
  * WekaCrossValidation.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.Performance;
 import adams.core.StatusMessageHandler;
 import adams.core.Stoppable;
@@ -89,8 +90,11 @@ public class WekaCrossValidationExecution
   /** the jobrunner setup. */
   protected transient JobRunnerSetup m_JobRunnerSetup;
 
-  /** the runner in use. */
+  /** the jobrunner template. */
   protected transient JobRunner m_JobRunner;
+  
+  /** the runner in use. */
+  protected transient JobRunner m_ActualJobRunner;
 
   /** the (aggregated) evaluation. */
   protected Evaluation m_Evaluation;
@@ -119,6 +123,7 @@ public class WekaCrossValidationExecution
     m_Classifier           = null;
     m_Data                 = null;
     m_Output               = null;
+    m_ActualJobRunner      = null;
     m_JobRunner            = null;
     m_JobRunnerSetup       = null;
     m_StatusMessageHandler = null;
@@ -142,6 +147,24 @@ public class WekaCrossValidationExecution
    */
   public JobRunnerSetup getJobRunnerSetup() {
     return m_JobRunnerSetup;
+  }
+
+  /**
+   * Sets the JobRunner.
+   *
+   * @param value	the template
+   */
+  public void setJobRunner(JobRunner value) {
+    m_JobRunner = value;
+  }
+
+  /**
+   * Returns the JobRunner, if any.
+   *
+   * @return		the JobRunner, null if none available
+   */
+  public JobRunner getJobRunner() {
+    return m_JobRunner;
   }
 
   /**
@@ -506,12 +529,14 @@ public class WekaCrossValidationExecution
         if (m_DiscardPredictions)
           throw new IllegalStateException(
             "Cannot discard predictions in parallel mode, as they are used for aggregating the statistics!");
-	if (m_JobRunnerSetup == null)
-	  m_JobRunner = new LocalJobRunner<WekaCrossValidationJob>();
+	if (m_JobRunnerSetup != null)
+	  m_ActualJobRunner = m_JobRunnerSetup.newInstance();
+	else if (m_JobRunner != null)
+	  m_ActualJobRunner = ObjectCopyHelper.copyObject(m_JobRunner);
 	else
-	  m_JobRunner = m_JobRunnerSetup.newInstance();
-	if (m_JobRunner instanceof ThreadLimiter)
-	  ((ThreadLimiter) m_JobRunner).setNumThreads(m_NumThreads);
+	  m_ActualJobRunner = new LocalJobRunner<WekaCrossValidationJob>();
+	if (m_ActualJobRunner instanceof ThreadLimiter)
+	  ((ThreadLimiter) m_ActualJobRunner).setNumThreads(m_NumThreads);
 	list = new JobList<>();
 	while (generator.hasNext()) {
 	  cont = generator.next();
@@ -524,15 +549,15 @@ public class WekaCrossValidationExecution
 	    m_StatusMessageHandler);
 	  list.add(job);
 	}
-	m_JobRunner.add(list);
-	m_JobRunner.start();
-	m_JobRunner.stop();
+	m_ActualJobRunner.add(list);
+	m_ActualJobRunner.start();
+	m_ActualJobRunner.stop();
 	// aggregate data
 	if (!isStopped()) {
 	  evalAgg = new AggregateEvaluations();
-	  m_Evaluations = new Evaluation[m_JobRunner.getJobs().size()];
-	  for (i = 0; i < m_JobRunner.getJobs().size(); i++) {
-	    job = (WekaCrossValidationJob) m_JobRunner.getJobs().get(i);
+	  m_Evaluations = new Evaluation[m_ActualJobRunner.getJobs().size()];
+	  for (i = 0; i < m_ActualJobRunner.getJobs().size(); i++) {
+	    job = (WekaCrossValidationJob) m_ActualJobRunner.getJobs().get(i);
 	    if (job.getEvaluation() == null) {
 	      result.add("Fold #" + (i + 1) + " failed to evaluate" + (job.hasExecutionError() ? job.getExecutionError() : "?"));
 	      break;
@@ -550,8 +575,8 @@ public class WekaCrossValidationExecution
 	  }
 	}
 	list.cleanUp();
-	m_JobRunner.cleanUp();
-	m_JobRunner = null;
+	m_ActualJobRunner.cleanUp();
+	m_ActualJobRunner = null;
       }
 
       if (!m_DiscardPredictions)
@@ -583,7 +608,7 @@ public class WekaCrossValidationExecution
    */
   public void stopExecution() {
     getLogger().severe("Execution stopped");
-    if (m_JobRunner != null)
-      m_JobRunner.terminate(m_WaitForJobs);
+    if (m_ActualJobRunner != null)
+      m_ActualJobRunner.terminate(m_WaitForJobs);
   }
 }

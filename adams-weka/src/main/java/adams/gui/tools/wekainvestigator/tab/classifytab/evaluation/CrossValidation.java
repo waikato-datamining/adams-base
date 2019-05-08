@@ -15,13 +15,12 @@
 
 /*
  * CrossValidation.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.MessageCollection;
-import adams.core.Performance;
 import adams.core.Properties;
 import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
@@ -38,6 +37,8 @@ import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.multiprocess.JobRunner;
+import adams.multiprocess.LocalJobRunner;
 import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
@@ -74,7 +75,7 @@ public class CrossValidation
 
   public static final String KEY_SEED = "seed";
 
-  public static final String KEY_THREADS = "threads";
+  public static final String KEY_JOBRUNNER = "jobrunner";
 
   public static final String KEY_ADDITIONAL = "additional";
 
@@ -101,8 +102,8 @@ public class CrossValidation
   /** the seed value. */
   protected NumberTextField m_TextSeed;
 
-  /** the number of threads. */
-  protected JSpinner m_SpinnerThreads;
+  /** the jobrunner. */
+  protected GenericObjectEditorPanel m_GOEJobRunner;
 
   /** the additional attributes to store. */
   protected SelectOptionPanel m_SelectAdditionalAttributes;
@@ -148,6 +149,7 @@ public class CrossValidation
   protected void initGUI() {
     Properties 				props;
     CrossValidationFoldGenerator	generator;
+    JobRunner				jobrunner;
 
     super.initGUI();
 
@@ -191,12 +193,18 @@ public class CrossValidation
     m_PanelParameters.addParameter("Seed", m_TextSeed);
 
     // threads
-    m_SpinnerThreads = new JSpinner();
-    ((SpinnerNumberModel) m_SpinnerThreads.getModel()).setStepSize(1);
-    m_SpinnerThreads.setValue(props.getInteger("Classify.NumThreads", -1));
-    m_SpinnerThreads.setToolTipText(Performance.getNumThreadsHelp());
-    m_SpinnerThreads.addChangeListener((ChangeEvent e) -> update());
-    m_PanelParameters.addParameter("Threads", m_SpinnerThreads);
+    try {
+      jobrunner = (JobRunner) OptionUtils.forCommandLine(
+        JobRunner.class,
+	props.getProperty("Classify.JobRunner", new LocalJobRunner().toCommandLine()));
+    }
+    catch (Exception e) {
+      jobrunner = new LocalJobRunner();
+    }
+    m_GOEJobRunner = new GenericObjectEditorPanel(JobRunner.class, jobrunner, true);
+    m_GOEJobRunner.setToolTipText("Whether to execute the jobs locally or remotely");
+    m_GOEJobRunner.addChangeListener((ChangeEvent e) -> update());
+    m_PanelParameters.addParameter("Job runner", m_GOEJobRunner);
 
     // use views?
     m_CheckBoxUseViews = new BaseCheckBox();
@@ -321,7 +329,7 @@ public class CrossValidation
     Classifier				model;
     int					seed;
     int					folds;
-    int					threads;
+    JobRunner 				jobrunner;
     CrossValidationFoldGenerator	generator;
     MetaData 				runInfo;
 
@@ -335,13 +343,13 @@ public class CrossValidation
     discard    = m_CheckBoxDiscardPredictions.isSelected();
     seed       = m_TextSeed.getValue().intValue();
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
-    threads    = ((Number) m_SpinnerThreads.getValue()).intValue();
+    jobrunner  = (JobRunner) m_GOEJobRunner.getCurrent();
     generator  = (CrossValidationFoldGenerator) m_GOEGenerator.getCurrent();
     runInfo    = new MetaData();
     runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Seed", seed);
     runInfo.add("Folds", folds);
-    runInfo.add("Threads", threads);
+    runInfo.add("Threads", jobrunner);
     runInfo.add("Dataset ID", dataCont.getID());
     runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
@@ -357,7 +365,7 @@ public class CrossValidation
     m_CrossValidation.setData(data);
     m_CrossValidation.setFolds(folds);
     m_CrossValidation.setSeed(seed);
-    m_CrossValidation.setNumThreads(threads);
+    m_CrossValidation.setJobRunner(jobrunner);
     m_CrossValidation.setUseViews(views);
     m_CrossValidation.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(generator));
     m_CrossValidation.setDiscardPredictions(discard);
@@ -455,7 +463,7 @@ public class CrossValidation
     if (options.contains(SerializationOption.PARAMETERS)) {
       result.put(KEY_FOLDS, m_SpinnerFolds.getValue());
       result.put(KEY_SEED, m_TextSeed.getValue().intValue());
-      result.put(KEY_THREADS, m_SpinnerThreads.getValue());
+      result.put(KEY_JOBRUNNER, OptionUtils.getCommandLine(m_GOEJobRunner.getCurrent()));
       result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
       result.put(KEY_USEVIEWS, m_CheckBoxUseViews.isSelected());
       result.put(KEY_GENERATOR, OptionUtils.getCommandLine(m_GOEGenerator.getCurrent()));
@@ -480,8 +488,14 @@ public class CrossValidation
       m_SpinnerFolds.setValue(data.get(KEY_FOLDS));
     if (data.containsKey(KEY_SEED))
       m_TextSeed.setValue((int) data.get(KEY_SEED));
-    if (data.containsKey(KEY_THREADS))
-      m_SpinnerThreads.setValue(data.get(KEY_THREADS));
+    if (data.containsKey(KEY_JOBRUNNER)) {
+      try {
+	m_GOEJobRunner.setCurrent(OptionUtils.forCommandLine(JobRunner.class, (String) data.get(KEY_JOBRUNNER)));
+      }
+      catch (Exception e) {
+        errors.add("Failed to parse jobrunner commandline: " + data.get(KEY_JOBRUNNER), e);
+      }
+    }
     if (data.containsKey(KEY_ADDITIONAL))
       m_SelectAdditionalAttributes.setCurrent(listOrArray(data.get(KEY_ADDITIONAL)));
     if (data.containsKey(KEY_USEVIEWS))

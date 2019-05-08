@@ -15,7 +15,7 @@
 
 /*
  * WekaInvestigatorPreferencesPanel.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -27,6 +27,8 @@ import adams.env.WekaInvestigatorDefinition;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.goe.GenericArrayEditorPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
+import adams.multiprocess.JobRunner;
+import adams.multiprocess.LocalJobRunner;
 
 /**
  * Preferences for the WEKA Investigator.
@@ -104,7 +106,9 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Classify.CrossValidationFoldGenerator", PropertyType.OBJECT_EDITOR);
     setChooser("Classify.CrossValidationFoldGenerator", new GenericObjectEditorPanel(
       weka.classifiers.CrossValidationFoldGenerator.class, new weka.classifiers.DefaultCrossValidationFoldGenerator(), true));
-    addPropertyType("Classify.NumThreads", PropertyType.INTEGER);
+    addPropertyType("Classify.JobRunner", PropertyType.OBJECT_EDITOR);
+    setChooser("Classify.JobRunner", new GenericObjectEditorPanel(
+      JobRunner.class, new LocalJobRunner(), true));
     addPropertyType("Classify.UseViews", PropertyType.BOOLEAN);
     addPropertyType("Classify.CrossValidationFinalModel", PropertyType.BOOLEAN);
     addPropertyType("Classify.Seed", PropertyType.INTEGER);

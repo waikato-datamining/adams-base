@@ -114,9 +114,9 @@ Classify.LeftPanelWidth=275
 # (integer; 2-n)
 Classify.NumFolds=10
 
-# the number of threads for cross-validation
-# (integer; -1,1-n)
-Classify.NumThreads=-1
+# the JobRunner defining how to execute the jobs (locally or remotely)
+# (classname with options)
+Classify.JobRunner=adams.multiprocess.LocalJobRunner
 
 # whether to use views instead of copies of datasets
 # (true|false)

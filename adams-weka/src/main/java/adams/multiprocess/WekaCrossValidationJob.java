@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaCrossValidationJob.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
@@ -29,10 +29,9 @@ import weka.classifiers.Evaluation;
 import weka.core.Instances;
 
 /**
- * For evaluation a single train/test fold in parallel.
+ * For evaluation of a single train/test fold in parallel.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 11741 $
  */
 public class WekaCrossValidationJob
   extends AbstractJob {
@@ -59,7 +58,7 @@ public class WekaCrossValidationJob
   protected Evaluation m_Evaluation;
 
   /** for outputting notifications. */
-  protected StatusMessageHandler m_StatusMessageHandler;
+  protected transient StatusMessageHandler m_StatusMessageHandler;
 
   /**
    * Initializes the job.
