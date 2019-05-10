@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PasswordDialog.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -40,14 +40,16 @@ import java.awt.event.KeyEvent;
  * Simple dialog for entering a password.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PasswordDialog
   extends ApprovalDialog {
 
   /** for serialization. */
   private static final long serialVersionUID = -2132414163522707681L;
-  
+
+  /** the password label. */
+  protected JLabel m_LabelPassword;
+
   /** the text field for entering the password. */
   protected JPasswordField m_TextPassword;
   
@@ -146,8 +148,7 @@ public class PasswordDialog
   @Override
   protected void initGUI() {
     JPanel	panel;
-    JLabel	label;
-    
+
     super.initGUI();
     
     setTitle("Enter password");
@@ -177,9 +178,9 @@ public class PasswordDialog
 	}
       }
     });
-    label = new JLabel("Password");
-    label.setLabelFor(m_TextPassword);
-    panel.add(label);
+    m_LabelPassword = new JLabel("Password");
+    m_LabelPassword.setLabelFor(m_TextPassword);
+    panel.add(m_LabelPassword);
     panel.add(m_TextPassword);
 
     // show password
@@ -218,5 +219,23 @@ public class PasswordDialog
    */
   public BasePassword getPassword() {
     return new BasePassword(m_TextPassword.getText());
+  }
+
+  /**
+   * Sets the text for the password label.
+   *
+   * @param value	the label text
+   */
+  public void setLabelPassword(String value) {
+    m_LabelPassword.setText(value);
+  }
+
+  /**
+   * Returns the text of the password label.
+   *
+   * @return		the label text
+   */
+  public String getLabelPassword() {
+    return m_LabelPassword.getText();
   }
 }
