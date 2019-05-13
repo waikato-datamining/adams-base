@@ -24,6 +24,9 @@ import adams.core.QuickInfoHelper;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
  * Executes the actor passing through and forwards it once finished.
@@ -67,7 +70,17 @@ import adams.flow.core.Token;
  *
  * <pre>-call-setup &lt;boolean&gt; (property: callSetUp)
  * &nbsp;&nbsp;&nbsp;If enabled, the actor's 'setUp()' method gets called.
- * &nbsp;&nbsp;&nbsp;default: true
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-call-wrapup &lt;boolean&gt; (property: callWrapUp)
+ * &nbsp;&nbsp;&nbsp;If enabled, the actor's 'wrapUp()' method gets called.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-call-cleanup &lt;boolean&gt; (property: callCleanUp)
+ * &nbsp;&nbsp;&nbsp;If enabled, the actor's 'cleanUp()' method gets called.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  <!-- options-end -->
@@ -81,6 +94,12 @@ public class ExecuteActor
 
   /** whether to call the setUp method. */
   protected boolean m_CallSetUp;
+
+  /** whether to call the wrapUp method. */
+  protected boolean m_CallWrapUp;
+
+  /** whether to call the cleanUp method. */
+  protected boolean m_CallCleanUp;
 
   /** the current actor being executed. */
   protected transient Actor m_Actor;
@@ -104,7 +123,15 @@ public class ExecuteActor
 
     m_OptionManager.add(
       "call-setup", "callSetUp",
-      true);
+      false);
+
+    m_OptionManager.add(
+      "call-wrapup", "callWrapUp",
+      false);
+
+    m_OptionManager.add(
+      "call-cleanup", "callCleanUp",
+      false);
   }
 
   /**
@@ -137,13 +164,80 @@ public class ExecuteActor
   }
 
   /**
+   * Sets whether to call the actor's wrapUp method.
+   *
+   * @param value	true if to call
+   */
+  public void setCallWrapUp(boolean value) {
+    m_CallWrapUp = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to call the actor's wrapUp method.
+   *
+   * @return		true if to call
+   */
+  public boolean getCallWrapUp() {
+    return m_CallWrapUp;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String callWrapUpTipText() {
+    return "If enabled, the actor's 'wrapUp()' method gets called.";
+  }
+
+  /**
+   * Sets whether to call the actor's cleanUp method.
+   *
+   * @param value	true if to call
+   */
+  public void setCallCleanUp(boolean value) {
+    m_CallCleanUp = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to call the actor's cleanUp method.
+   *
+   * @return		true if to call
+   */
+  public boolean getCallCleanUp() {
+    return m_CallCleanUp;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String callCleanUpTipText() {
+    return "If enabled, the actor's 'cleanUp()' method gets called.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "callSetUp", m_CallSetUp, "call setUp", "");
+    String		result;
+    List<String> 	options;
+
+    options = new ArrayList<>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "callSetUp",   m_CallSetUp,   "call setUp"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "callWrapUp",  m_CallWrapUp,  "call wrapUp"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "callCleanUp", m_CallCleanUp, "call cleanUp"));
+    result = QuickInfoHelper.flatten(options);
+
+    return result;
   }
 
   /**
@@ -183,6 +277,10 @@ public class ExecuteActor
 	result = m_Actor.setUp();
       if (result == null)
         result = m_Actor.execute();
+      if (m_CallWrapUp)
+        m_Actor.wrapUp();
+      if (m_CallCleanUp)
+        m_Actor.cleanUp();
       if (result == null)
         m_OutputToken = new Token(m_Actor);
     }
