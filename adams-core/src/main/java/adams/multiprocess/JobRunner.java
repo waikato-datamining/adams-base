@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JobRunner.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
 
 import adams.core.CleanUpHandler;
 import adams.core.Pausable;
+import adams.core.QuickInfoSupporter;
 import adams.core.option.OptionHandler;
 import adams.event.JobCompleteListener;
 import adams.flow.core.Actor;
@@ -32,10 +33,9 @@ import java.util.List;
  * Interface for runners that execute jobs.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface JobRunner<T extends Job>
-  extends Pausable, OptionHandler, CleanUpHandler {
+  extends Pausable, OptionHandler, CleanUpHandler, QuickInfoSupporter {
 
   /**
    * Adds the listener.

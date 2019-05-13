@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ScpJobRunner.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
 
 import adams.core.MultiAttemptWithWaitSupporter;
+import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.Utils;
 import adams.core.base.BaseHostname;
@@ -97,7 +98,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ScpJobRunner
   extends AbstractMetaJobRunner
@@ -215,6 +215,21 @@ public class ScpJobRunner
      */
     public String remoteFileTipText() {
       return "The remote file for the executed jobs on the host that sent the jobs.";
+    }
+
+    /**
+     * Returns a quick info about the object, which can be displayed in the GUI.
+     *
+     * @return		null if no info available, otherwise short string
+     */
+    public String getQuickInfo() {
+      String  	result;
+
+      result = super.getQuickInfo();
+      result += QuickInfoHelper.toString(this, "host", m_Host, ", host: ");
+      result += QuickInfoHelper.toString(this, "remoteFile", m_RemoteFile, ", remote file: ");
+
+      return result;
     }
 
     /**

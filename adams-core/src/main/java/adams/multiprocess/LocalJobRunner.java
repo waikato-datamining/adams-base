@@ -21,6 +21,7 @@
 package adams.multiprocess;
 
 import adams.core.Performance;
+import adams.core.QuickInfoHelper;
 import adams.core.ThreadLimiter;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
@@ -144,6 +145,15 @@ public class LocalJobRunner<T extends Job>
    */
   public String numThreadsTipText() {
     return Performance.getNumThreadsHelp();
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads));
   }
 
   /**

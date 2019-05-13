@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteCommandJobRunner.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
 
+import adams.core.QuickInfoHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
@@ -33,7 +34,6 @@ import adams.scripting.processor.RemoteCommandProcessor;
  * Utilizes the remote command framework for sending jobs to a remote machine.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RemoteCommandJobRunner
   extends AbstractMetaJobRunner {
@@ -44,7 +44,6 @@ public class RemoteCommandJobRunner
    * Handles the job response.
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class RemoteCommandGrabber
     extends AbstractRemoteCommandHandler {
@@ -310,6 +309,21 @@ public class RemoteCommandJobRunner
    */
   public JobRunner getResponseJobRunner() {
     return m_ResponseJobRunner;
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    String  	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "requestConnection", m_RequestConnection, ", request: ");
+    result += QuickInfoHelper.toString(this, "responseConnection", m_ResponseConnection, ", response: ");
+
+    return result;
   }
 
   /**

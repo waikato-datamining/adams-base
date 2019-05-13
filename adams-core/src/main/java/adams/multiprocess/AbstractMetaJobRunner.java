@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMetaJobRunner.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
 
+import adams.core.QuickInfoHelper;
 import adams.core.option.OptionUtils;
 import adams.data.distribution.T;
 import adams.event.JobCompleteListener;
@@ -32,7 +33,6 @@ import java.util.List;
  * Ancestor for meta-jobrunners, that wrap around a base jobrunner.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMetaJobRunner
   extends AbstractJobRunner {
@@ -112,6 +112,15 @@ public abstract class AbstractMetaJobRunner
    */
   public String jobRunnerTipText() {
     return "The base jobrunner to use.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "jobRunner", m_JobRunner, "jobrunner: ");
   }
 
   /**
