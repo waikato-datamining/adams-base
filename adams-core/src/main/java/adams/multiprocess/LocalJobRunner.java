@@ -15,7 +15,7 @@
 
 /*
  * JobRunner.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.multiprocess;
@@ -26,9 +26,11 @@ import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,7 +56,6 @@ import java.util.concurrent.TimeUnit;
  *
  * @author  dale (dale at cs dot waikato dot ac dot nz)
  * @author  FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of job to handle
  */
 public class LocalJobRunner<T extends Job>
@@ -65,6 +66,9 @@ public class LocalJobRunner<T extends Job>
 
   /** the number of threads to use. */
   protected int m_NumThreads;
+
+  /** optional meta-data. */
+  protected Map<String,Object> m_MetaData;
 
   /** call when job complete. */
   protected transient HashSet<JobCompleteListener> m_JobCompleteListeners;
@@ -85,6 +89,7 @@ public class LocalJobRunner<T extends Job>
   protected void initialize() {
     super.initialize();
 
+    m_MetaData             = new HashMap<>();
     m_Jobs                 = new ArrayList<>();
     m_Queue                = new ArrayList<>();
     m_JobCompleteListeners = new HashSet<>();
@@ -179,7 +184,7 @@ public class LocalJobRunner<T extends Job>
   }
 
   /**
-   * Clears all jobs.
+   * Clears all jobs, but not the meta-data.
    */
   public void clear() {
     m_Jobs.clear();
@@ -221,6 +226,15 @@ public class LocalJobRunner<T extends Job>
    */
   public List<T> getJobs() {
     return m_Jobs;
+  }
+
+  /**
+   * Returns the meta-data.
+   *
+   * @return		the meta-data
+   */
+  public Map<String,Object> getMetaData() {
+    return m_MetaData;
   }
 
   /**
