@@ -89,6 +89,19 @@ and \textit{clustering} comprising the most important sections.
 
 \include{tools}
 
+\chapter{Logging}
+Weka performs its own logging of stdout and stderr, which can amount to very
+large log files on the server, which will never get cleared. In order to
+turn off logging, perform the following steps:
+\begin{tight_itemize}
+  \item create the following directory if not already present: \verb|$HOME/wekafiles/props|
+  (or \verb|%USERPROFILE%\wekafiles\props| for Windows)
+  \item in this directory, create file \textit{Logging.props} with the following content:
+  \begin{verbatim}
+weka.core.logging.Logger=weka.core.logging.ConsoleLogger
+  \end{verbatim}
+\end{tight_itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
 
