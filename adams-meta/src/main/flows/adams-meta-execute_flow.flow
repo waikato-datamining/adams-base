@@ -1,0 +1,11 @@
+# Project: adams
+# Date: 2019-05-13 16:14:36
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-meta
+#
+adams.flow.control.Flow -annotation "Loads a flow and executes it." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/adams-core-bell_curve-varying_stdev.flow
+ adams.flow.transformer.FlowFileReader -custom-reader adams.data.io.input.DefaultFlowReader
+ adams.flow.transformer.ExecuteActor
+ adams.flow.sink.FlowDisplay -short-title true -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.gui.print.NullWriter
