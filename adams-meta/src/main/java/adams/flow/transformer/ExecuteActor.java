@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 
@@ -64,6 +65,11 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-call-setup &lt;boolean&gt; (property: callSetUp)
+ * &nbsp;&nbsp;&nbsp;If enabled, the actor's 'setUp()' method gets called.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -72,6 +78,9 @@ public class ExecuteActor
   extends AbstractTransformer {
 
   private static final long serialVersionUID = 1877006726746922569L;
+
+  /** whether to call the setUp method. */
+  protected boolean m_CallSetUp;
 
   /** the current actor being executed. */
   protected transient Actor m_Actor;
@@ -84,6 +93,57 @@ public class ExecuteActor
   @Override
   public String globalInfo() {
     return "Executes the actor passing through and forwards it once finished.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "call-setup", "callSetUp",
+      true);
+  }
+
+  /**
+   * Sets whether to call the actor's setUp method.
+   *
+   * @param value	true if to call
+   */
+  public void setCallSetUp(boolean value) {
+    m_CallSetUp = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to call the actor's setUp method.
+   *
+   * @return		true if to call
+   */
+  public boolean getCallSetUp() {
+    return m_CallSetUp;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String callSetUpTipText() {
+    return "If enabled, the actor's 'setUp()' method gets called.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "callSetUp", m_CallSetUp, "call setUp", "");
   }
 
   /**
@@ -118,7 +178,9 @@ public class ExecuteActor
     m_Actor = m_InputToken.getPayload(Actor.class);
 
     try {
-      result = m_Actor.setUp();
+      result = null;
+      if (m_CallSetUp)
+	result = m_Actor.setUp();
       if (result == null)
         result = m_Actor.execute();
       if (result == null)
