@@ -1,1 +1,1 @@
-LocalJobRunner
+LocalJobRunner (parallel, threads: #cores - 1)
