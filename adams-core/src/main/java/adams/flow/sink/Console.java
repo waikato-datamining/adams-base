@@ -15,7 +15,7 @@
 
 /*
  * Console.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -72,7 +72,6 @@ import adams.core.io.ConsoleHelper;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Console
   extends AbstractSink {
@@ -103,8 +102,8 @@ public class Console
     super.defineOptions();
 
     m_OptionManager.add(
-	    "prefix", "prefix",
-	    "");
+      "prefix", "prefix",
+      "");
   }
 
   /**
@@ -172,7 +171,8 @@ public class Console
       if (m_Prefix.length() > 0)
 	str.append(m_Prefix);
       str.append(m_InputToken.getPayload().toString());
-      getLogger().info(str.toString());
+      if (isLoggingEnabled())
+        getLogger().info(str.toString());
       ConsoleHelper.printlnOut(str.toString());
     }
     catch (Exception e) {
