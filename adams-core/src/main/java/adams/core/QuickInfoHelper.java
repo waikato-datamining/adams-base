@@ -171,7 +171,7 @@ public class QuickInfoHelper {
       if (current instanceof QuickInfoSupporter) {
 	info = ((QuickInfoSupporter) current).getQuickInfo();
 	result = current.getClass().getSimpleName();
-	if (info != null)
+	if ((info != null) && !info.isEmpty())
 	  result += " (" + info + ")";
       }
       else if (current.getClass().isArray()) {
