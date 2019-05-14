@@ -40,6 +40,8 @@ import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
 import adams.flow.control.Flow;
+import adams.flow.control.SubProcess;
+import adams.flow.control.Tee;
 import adams.flow.control.Trigger;
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.Actor;
@@ -2217,22 +2219,77 @@ public class TreeOperations
    * @return		the actor or null if none available
    */
   public static Actor getActorFromClipboard() {
-    Actor		result;
-    DefaultFlowReader	freader;
-    StringReader	sreader;
+    Actor 		result;
+    DefaultFlowReader 	freader;
+    StringReader 	sreader;
+    String 		pasted;
+    Node[]		nodes;
+    int			numLines;
+    boolean		hasInput;
+    boolean		hasOutput;
 
     result = null;
 
-    try {
-      if (ClipboardHelper.canPasteStringFromClipboard()) {
-        sreader = new StringReader(OptionUtils.pasteSetupFromClipboard());
-        freader = new DefaultFlowReader();
-        freader.setQuiet(true);
-        result  = freader.readActor(sreader);
+    if (hasNodesOnClipboard()) {
+      nodes = getNodesFromClipboard();
+      if (nodes.length == 1) {
+        result = nodes[0].getFullActor();
+      }
+      else {
+        hasInput  = (nodes[0].getActor() instanceof InputConsumer);
+        hasOutput = (nodes[nodes.length - 1].getActor() instanceof OutputProducer);
+        if (hasInput && hasOutput) {
+	  SubProcess sub = new SubProcess();
+	  for (Node node: nodes)
+	    sub.add(node.getActor());
+	  result = sub;
+	}
+	else if (hasInput) {
+          Tee sub = new Tee();
+	  for (Node node: nodes)
+	    sub.add(node.getActor());
+	  result = sub;
+	}
+	else {
+          Trigger sub = new Trigger();
+	  for (Node node: nodes)
+	    sub.add(node.getActor());
+	  result = sub;
+	}
+	result.setName("pasted from clipboard");
       }
     }
-    catch (Exception ex) {
-      result = null;
+    else {
+      pasted = null;
+      numLines = 0;
+      if (ClipboardHelper.canPasteStringFromClipboard()) {
+	pasted   = OptionUtils.pasteSetupFromClipboard();
+	numLines = Utils.split(pasted.trim(), "\n").length;
+      }
+
+      if (pasted != null) {
+	// try commandline
+	if (numLines == 1) {
+	  try {
+	    result = (Actor) OptionUtils.forAnyCommandLine(Actor.class, pasted);
+	  }
+	  catch (Exception e) {
+	    result = null;
+	  }
+	}
+
+	if (result == null) {
+	  try {
+	    sreader = new StringReader(pasted);
+	    freader = new DefaultFlowReader();
+	    freader.setQuiet(true);
+	    result = freader.readActor(sreader);
+	  }
+	  catch (Exception ex) {
+	    result = null;
+	  }
+	}
+      }
     }
 
     return result;
