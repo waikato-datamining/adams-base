@@ -1227,7 +1227,8 @@ public class Flow
 	m_FlowExecutionListener.startListening();
 	if (!isHeadless()) {
           m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
-          registerWindow(m_FlowExecutionListenerFrame, m_FlowExecutionListenerFrame.getTitle());
+          if (m_FlowExecutionListenerFrame != null)
+            registerWindow(m_FlowExecutionListenerFrame, m_FlowExecutionListenerFrame.getTitle());
         }
       }
     }
