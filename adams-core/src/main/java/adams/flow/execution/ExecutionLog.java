@@ -13,22 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExecutionLog.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.util.Date;
-import java.util.logging.Level;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.Date;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -37,24 +37,24 @@ import adams.flow.core.Token;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-log-file &lt;adams.core.io.PlaceholderFile&gt; (property: logFile)
  * &nbsp;&nbsp;&nbsp;The log file to write to; writing is disabled if pointing to a directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
+ * <pre>-output-tokens &lt;boolean&gt; (property: outputTokens)
+ * &nbsp;&nbsp;&nbsp;If enabled, a string representation of input tokens are output as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExecutionLog
   extends AbstractFlowExecutionListener {
@@ -64,7 +64,10 @@ public class ExecutionLog
 
   /** the file to write to. */
   protected PlaceholderFile m_LogFile;
-  
+
+  /** whether to output any tokens as well. */
+  protected boolean m_OutputTokens;
+
   /** the file writer. */
   protected BufferedWriter m_Writer;
   
@@ -87,10 +90,14 @@ public class ExecutionLog
   @Override
   public void defineOptions() {
     super.defineOptions();
-    
+
     m_OptionManager.add(
-	    "log-file", "logFile",
-	    new PlaceholderFile("."));
+      "log-file", "logFile",
+      new PlaceholderFile("."));
+
+    m_OptionManager.add(
+      "output-tokens", "outputTokens",
+      false);
   }
 
   /**
@@ -121,7 +128,36 @@ public class ExecutionLog
   public String logFileTipText() {
     return "The log file to write to; writing is disabled if pointing to a directory.";
   }
-  
+
+  /**
+   * Sets whether to output the string representation of input tokens as well.
+   *
+   * @param value	true if to output
+   */
+  public void setOutputTokens(boolean value) {
+    m_OutputTokens = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output the string representation of input tokens as well.
+   *
+   * @return		true if output
+   */
+  public boolean getOutputTokens() {
+    return m_OutputTokens;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputTokensTipText() {
+    return "If enabled, a string representation of input tokens are output as well.";
+  }
+
   /**
    * Initializes the members.
    */
@@ -151,6 +187,10 @@ public class ExecutionLog
 	m_Writer.write("Origin");
 	m_Writer.write("\t");
 	m_Writer.write("Message");
+	if (m_OutputTokens) {
+	  m_Writer.write("\t");
+	  m_Writer.write("Token");
+	}
 	m_Writer.newLine();
       }
       catch (Exception e) {
@@ -166,8 +206,9 @@ public class ExecutionLog
    * @param origin	the origin, e.g., preInput
    * @param actor	the actor this message is for
    * @param msg		the actual message
+   * @param token	the token, can be null
    */
-  protected void add(String origin, Actor actor, String msg) {
+  protected void add(String origin, Actor actor, String msg, Token token) {
     if (m_Writer == null)
       return;
     
@@ -179,6 +220,11 @@ public class ExecutionLog
       m_Writer.write(origin);
       m_Writer.write("\t");
       m_Writer.write(msg);
+      if (m_OutputTokens) {
+	m_Writer.write("\t");
+	if (token != null)
+	  m_Writer.write("" + token.getPayload());
+      }
       m_Writer.newLine();
     }
     catch (Exception e) {
@@ -194,7 +240,7 @@ public class ExecutionLog
    */
   @Override
   public void preInput(Actor actor, Token token) {
-    add("preInput", actor, "#" + token.hashCode());
+    add("preInput", actor, "#" + token.hashCode(), token);
   }
   
   /**
@@ -205,7 +251,7 @@ public class ExecutionLog
    */
   @Override
   public void postInput(Actor actor) {
-    add("postInput", actor, "");
+    add("postInput", actor, "", null);
   }
   
   /**
@@ -215,7 +261,7 @@ public class ExecutionLog
    */
   @Override
   public void preExecute(Actor actor) {
-    add("preExecute", actor, "");
+    add("preExecute", actor, "", null);
   }
 
   /**
@@ -225,7 +271,7 @@ public class ExecutionLog
    */
   @Override
   public void postExecute(Actor actor) {
-    add("postExecute", actor, "");
+    add("postExecute", actor, "", null);
   }
   
   /**
@@ -235,7 +281,7 @@ public class ExecutionLog
    */
   @Override
   public void preOutput(Actor actor) {
-    add("preOutput", actor, "");
+    add("preOutput", actor, "", null);
   }
   
   /**
@@ -246,7 +292,7 @@ public class ExecutionLog
    */
   @Override
   public void postOutput(Actor actor, Token token) {
-    add("postOutput", actor, "#" + token.hashCode());
+    add("postOutput", actor, "#" + token.hashCode(), token);
   }
   
   /**
