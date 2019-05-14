@@ -486,10 +486,6 @@ public class CreateEmail
   protected String doExecute() {
     String			result;
     PlaceholderFile[]		attachments;
-    String[]			recipients;
-    String[]			cc;
-    String[]			bcc;
-    int				i;
     String			subject;
     String			body;
     adams.core.net.Email	email;
@@ -504,17 +500,6 @@ public class CreateEmail
     else {
       attachments = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
     }
-
-    // recipients
-    recipients = new String[m_Recipients.length];
-    for (i = 0; i < m_Recipients.length; i++)
-      recipients[i] = m_Recipients[i].stringValue();
-    cc = new String[m_CC.length];
-    for (i = 0; i < m_CC.length; i++)
-      cc[i] = m_CC[i].stringValue();
-    bcc = new String[m_BCC.length];
-    for (i = 0; i < m_BCC.length; i++)
-      bcc[i] = m_BCC[i].stringValue();
 
     // replace variables
     subject = getVariables().expand(m_Subject);
