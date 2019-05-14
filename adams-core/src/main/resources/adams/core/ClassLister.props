@@ -405,6 +405,10 @@ adams.flow.sink.DisplayPanelProvider=\
 adams.flow.sink.logview.AbstractLogEntryDialog=\
   adams.flow.sink.logview
 
+# the notification schemes
+adams.flow.sink.sendnotification.AbstractNotification=\
+  adams.flow.sink.sendnotification
+
 # the error paintlets for the SequencePlotter
 adams.flow.sink.sequenceplotter.AbstractErrorPaintlet=\
   adams.flow.sink.sequenceplotter
