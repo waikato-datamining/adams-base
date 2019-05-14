@@ -15,12 +15,10 @@
 
 /*
  * CreateEmail.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.io.File;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
@@ -32,6 +30,8 @@ import adams.core.net.EmailHelper;
 import adams.flow.core.NullToken;
 import adams.flow.core.Token;
 
+import java.io.File;
+
 /**
  <!-- globalinfo-start -->
  * Actor for creating emails to be sent. The (optional) attachments are taken from the input.<br>
@@ -40,74 +40,78 @@ import adams.flow.core.Token;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: CreateEmail
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-sender &lt;adams.core.net.EmailAddress&gt; (property: sender)
  * &nbsp;&nbsp;&nbsp;The sender address to use.
  * </pre>
- * 
+ *
  * <pre>-recipient &lt;adams.core.net.EmailAddress&gt; [-recipient ...] (property: recipients)
  * &nbsp;&nbsp;&nbsp;The recipients to send the email to.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-cc &lt;adams.core.net.EmailAddress&gt; [-cc ...] (property: CC)
  * &nbsp;&nbsp;&nbsp;The CC recipients to send the email to.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-bcc &lt;adams.core.net.EmailAddress&gt; [-bcc ...] (property: BCC)
  * &nbsp;&nbsp;&nbsp;The BCC recipients to send the email to.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-subject &lt;java.lang.String&gt; (property: subject)
- * &nbsp;&nbsp;&nbsp;The subject of the email.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;The subject of the email, can contain variables.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-body &lt;adams.core.base.BaseText&gt; (property: body)
- * &nbsp;&nbsp;&nbsp;The body of the email.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;The body of the email, can contain variables.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-signature &lt;adams.core.base.BaseText&gt; (property: signature)
- * &nbsp;&nbsp;&nbsp;The signature of the email, gets separated by an extra line consisting of 
- * &nbsp;&nbsp;&nbsp;'--'.
- * &nbsp;&nbsp;&nbsp;default: Peter Reutemann, Dept. of Computer Science, University of Waikato, NZ\\nhttp:&#47;&#47;www.cms.waikato.ac.nz&#47;~fracpete&#47;          Ph. +64 (7) 858-5174
+ * &nbsp;&nbsp;&nbsp;The signature of the email, gets separated by an extra line consisting of
+ * &nbsp;&nbsp;&nbsp;'--', can contain variables.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CreateEmail
   extends AbstractTransformer {
@@ -367,7 +371,7 @@ public class CreateEmail
    *             displaying in the GUI or for listing the options.
    */
   public String subjectTipText() {
-    return "The subject of the email.";
+    return "The subject of the email, can contain variables.";
   }
 
   /**
@@ -396,7 +400,7 @@ public class CreateEmail
    *             displaying in the GUI or for listing the options.
    */
   public String bodyTipText() {
-    return "The body of the email.";
+    return "The body of the email, can contain variables.";
   }
 
   /**
@@ -427,7 +431,7 @@ public class CreateEmail
   public String signatureTipText() {
     return
         "The signature of the email, gets separated by an extra line "
-      + "consisting of '" + EmailHelper.SIGNATURE_SEPARATOR + "'.";
+      + "consisting of '" + EmailHelper.SIGNATURE_SEPARATOR + "', can contain variables.";
   }
 
   /**
