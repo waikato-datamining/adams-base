@@ -20,16 +20,26 @@
 
 package adams.flow.transformer;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.Variables;
+import adams.flow.container.EncapsulatedActorsContainer;
+import adams.flow.control.Storage;
+import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
+import adams.flow.execution.FlowExecutionListener;
+import adams.flow.execution.FlowExecutionListeningSupporter;
+import adams.flow.execution.NullListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Executes the actor passing through and forwards it once finished.
+ * Executes the actor passing through and forwards it once finished.<br>
+ * If the actor is an instance of adams.flow.execution.FlowExecutionListeningSupporter and flow execution listening enabled, then the specified flow execution listener gets attached.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -83,12 +93,23 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-flow-execution-listening-enabled &lt;boolean&gt; (property: flowExecutionListeningEnabled)
+ * &nbsp;&nbsp;&nbsp;Enables&#47;disables the flow execution listener.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-flow-execution-listener &lt;adams.flow.execution.FlowExecutionListener&gt; (property: flowExecutionListener)
+ * &nbsp;&nbsp;&nbsp;The listener for the flow execution; must be enabled explicitly.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.execution.NullListener
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ExecuteActor
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements FlowExecutionListeningSupporter {
 
   private static final long serialVersionUID = 1877006726746922569L;
 
@@ -104,6 +125,12 @@ public class ExecuteActor
   /** the current actor being executed. */
   protected transient Actor m_Actor;
 
+  /** whether flow execution listening is enabled. */
+  protected boolean m_FlowExecutionListeningEnabled;
+
+  /** the execution listener to use. */
+  protected FlowExecutionListener m_FlowExecutionListener;
+
   /**
    * Returns a string describing the object.
    *
@@ -111,7 +138,10 @@ public class ExecuteActor
    */
   @Override
   public String globalInfo() {
-    return "Executes the actor passing through and forwards it once finished.";
+    return "Executes the actor passing through and forwards it once finished.\n"
+      + "If the actor is an instance of " + Utils.classToString(FlowExecutionListeningSupporter.class) + " and "
+      + "flow execution listening enabled, then the specified flow execution listener "
+      + "gets attached.";
   }
 
   /**
@@ -132,6 +162,14 @@ public class ExecuteActor
     m_OptionManager.add(
       "call-cleanup", "callCleanUp",
       false);
+
+    m_OptionManager.add(
+      "flow-execution-listening-enabled", "flowExecutionListeningEnabled",
+      false);
+
+    m_OptionManager.add(
+      "flow-execution-listener", "flowExecutionListener",
+      new NullListener());
   }
 
   /**
@@ -222,6 +260,83 @@ public class ExecuteActor
   }
 
   /**
+   * Sets whether flow execution listening is enabled.
+   *
+   * @param value	true if to enable listening
+   */
+  public void setFlowExecutionListeningEnabled(boolean value) {
+    m_FlowExecutionListeningEnabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether flow execution listening is enabled.
+   *
+   * @return		true if listening is enabled
+   */
+  public boolean isFlowExecutionListeningEnabled() {
+    return m_FlowExecutionListeningEnabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String flowExecutionListeningEnabledTipText() {
+    return "Enables/disables the flow execution listener.";
+  }
+
+  /**
+   * Sets the listener to use.
+   *
+   * @param l		the listener to use
+   */
+  public void setFlowExecutionListener(FlowExecutionListener l) {
+    m_FlowExecutionListener = l;
+    reset();
+  }
+
+  /**
+   * Returns the current listener in use.
+   *
+   * @return		the listener
+   */
+  public FlowExecutionListener getFlowExecutionListener() {
+    return m_FlowExecutionListener;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String flowExecutionListenerTipText() {
+    return "The listener for the flow execution; must be enabled explicitly.";
+  }
+
+  /**
+   * Returns whether listeners can be attached at runtime.
+   *
+   * @return		true if listeners can be attached dynamically
+   */
+  public boolean canStartListeningAtRuntime() {
+    return false;
+  }
+
+  /**
+   * Attaches the listener and starts listening.
+   *
+   * @param l		the listener to attach and use immediately
+   * @return		true if listening could be started successfully
+   */
+  public boolean startListeningAtRuntime(FlowExecutionListener l) {
+    return false;
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -231,11 +346,15 @@ public class ExecuteActor
     String		result;
     List<String> 	options;
 
+    result = "";
+    if (m_FlowExecutionListeningEnabled || QuickInfoHelper.hasVariable(this, "executionListener"))
+      result = QuickInfoHelper.toString(this, "executionListener", m_FlowExecutionListener, "listener: ");
+
     options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "callSetUp",   m_CallSetUp,   "call setUp"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "callWrapUp",  m_CallWrapUp,  "call wrapUp"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "callCleanUp", m_CallCleanUp, "call cleanUp"));
-    result = QuickInfoHelper.flatten(options);
+    result += QuickInfoHelper.flatten(options);
 
     return result;
   }
@@ -247,7 +366,7 @@ public class ExecuteActor
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{Actor.class};
+    return new Class[]{Actor.class, EncapsulatedActorsContainer.class};
   }
 
   /**
@@ -267,26 +386,74 @@ public class ExecuteActor
    */
   @Override
   protected String doExecute() {
-    String	result;
+    String			result;
+    EncapsulatedActorsContainer	cont;
+    Storage			storage;
+    Variables			variables;
 
-    m_Actor = m_InputToken.getPayload(Actor.class);
+    result    = null;
+    cont      = null;
+    storage   = null;
+    variables = null;
+    if (m_InputToken.hasPayload(Actor.class)) {
+      m_Actor = m_InputToken.getPayload(Actor.class);
+    }
+    else if (m_InputToken.hasPayload(EncapsulatedActorsContainer.class)) {
+      cont      = m_InputToken.getPayload(EncapsulatedActorsContainer.class);
+      m_Actor   = cont.getValue(EncapsulatedActorsContainer.VALUE_ACTOR, Actor.class);
+      storage   = cont.getValue(EncapsulatedActorsContainer.VALUE_STORAGE, Storage.class);
+      variables = cont.getValue(EncapsulatedActorsContainer.VALUE_VARIABLES, Variables.class);
+    }
+    else {
+      result = m_InputToken.unhandledData();
+    }
 
-    try {
-      result = null;
-      if (m_CallSetUp)
-	result = m_Actor.setUp();
-      if (result == null)
-        result = m_Actor.execute();
-      if (m_CallWrapUp)
-        m_Actor.wrapUp();
-      if (m_CallCleanUp)
-        m_Actor.cleanUp();
-      if (result == null)
-        m_OutputToken = new Token(m_Actor);
+    if (result == null) {
+      // attach listener?
+      if (m_FlowExecutionListeningEnabled && (m_Actor instanceof FlowExecutionListeningSupporter)) {
+	((FlowExecutionListeningSupporter) m_Actor).setFlowExecutionListener(ObjectCopyHelper.copyObject(m_FlowExecutionListener));
+	((FlowExecutionListeningSupporter) m_Actor).setFlowExecutionListeningEnabled(true);
+      }
+
+      try {
+        // init actor
+	if (m_CallSetUp)
+	  result = m_Actor.setUp();
+
+        // execute actor
+	if (result == null) {
+	  if (variables != null)
+	    m_Actor.getVariables().assign(variables);
+	  if (storage != null)
+	    m_Actor.getStorageHandler().getStorage().assign(storage);
+	  result = m_Actor.execute();
+	}
+
+	// finish up
+	if (m_CallWrapUp)
+	  m_Actor.wrapUp();
+	if (m_CallCleanUp)
+	  m_Actor.cleanUp();
+
+	// generate output
+	if (result == null) {
+	  if (cont == null) {
+	    m_OutputToken = new Token(m_Actor);
+	  }
+	  else {
+	    if (cont.hasValue(EncapsulatedActorsContainer.VALUE_OUTPUTNAME))
+	      cont.setValue(
+	        EncapsulatedActorsContainer.VALUE_OUTPUT,
+		m_Actor.getStorageHandler().getStorage().get(cont.getValue(EncapsulatedActorsContainer.VALUE_OUTPUTNAME, StorageName.class)));
+	    m_OutputToken = new Token(cont);
+	  }
+	}
+      }
+      catch (Exception e) {
+	result = handleException("Failed to execute actor!", e);
+      }
     }
-    catch (Exception e) {
-      result = handleException("Failed to execute actor!", e);
-    }
+
     m_Actor = null;
 
     return result;
