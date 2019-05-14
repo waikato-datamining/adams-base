@@ -37,6 +37,7 @@ import adams.flow.core.PauseStateManager;
 import adams.flow.core.SubFlowWrapUp;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Ancestor for all actors that control sub-actors in some way.
@@ -271,16 +272,19 @@ public abstract class AbstractControlActor
   protected String setUpSubActors() {
     int			i;
     String		result;
-    HashSet<String>	names;
+    Set<String> 	names;
 
     result = null;
 
     // check whether everything is correctly setup
-    names = new HashSet<String>();
+    names = new HashSet<>();
     for (i = 0; i < size(); i++) {
       // make sure that name is unique!
       ActorUtils.uniqueName(get(i), names);
       names.add(get(i).getName());
+
+      if (get(i).getParent() == null)
+        get(i).setParent(this);
 
       // setup actor
       if (!get(i).getSkip()) {
