@@ -15,7 +15,7 @@
 
 /*
  * Storage.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -27,6 +27,7 @@ import adams.event.StorageChangeEvent;
 import adams.event.StorageChangeEvent.Type;
 import adams.event.StorageChangeListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,10 +40,9 @@ import java.util.Set;
  * Used for temporary storage during flow execution.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Storage
-  implements CloneHandler<Storage>{
+  implements Serializable, CloneHandler<Storage> {
 
   /** allowed characters. */
   public final static String CHARS = "abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ-0123456789:.";
@@ -53,6 +53,8 @@ public class Storage
   /** the end of a storage placeholder. */
   public final static String END = "}";
 
+  private static final long serialVersionUID = 2110403856127326735L;
+
   /** for storing the data. */
   protected HashMap<String,Object> m_Data;
 
@@ -60,15 +62,15 @@ public class Storage
   protected HashMap<String,LRUCache<String,Object>> m_Caches;
 
   /** the listeners. */
-  protected Set<StorageChangeListener> m_ChangeListeners;
+  protected transient Set<StorageChangeListener> m_ChangeListeners;
 
   /**
    * Initializes the storage.
    */
   public Storage() {
-    m_Data            = new HashMap<>();
-    m_Caches          = new HashMap<>();
-    m_ChangeListeners = new HashSet<>();
+    m_Data   = new HashMap<>();
+    m_Caches = new HashMap<>();
+    initChangeListeners();
   }
 
   /**
@@ -264,6 +266,31 @@ public class Storage
     }
 
     return result;
+  }
+
+  /**
+   * Adds all the items from the other Storage object (overwrites
+   * any existing ones).
+   *
+   * @param other	the Storage to copy
+   */
+  public void assign(Storage other) {
+    assign(other, null);
+  }
+
+  /**
+   * Adds all the items from the other Storage object (overwrites
+   * any existing ones).
+   *
+   * @param other	the Storage to copy
+   * @param filter	the regular expression that the item names must
+   * 			match, null to ignore
+   */
+  public void assign(Storage other, BaseRegExp filter) {
+    for (StorageName name: other.keySet()) {
+      if ((filter == null) || filter.isMatch(name.getValue()))
+	put(name, other.get(name));
+    }
   }
 
   /**
@@ -483,11 +510,20 @@ public class Storage
   }
 
   /**
+   * Initializes the change listeners.
+   */
+  protected void initChangeListeners() {
+    if (m_ChangeListeners == null)
+      m_ChangeListeners = new HashSet<>();
+  }
+
+  /**
    * Adds the change listener.
    *
    * @param l		the listener to add
    */
   public void addChangeListener(StorageChangeListener l) {
+    initChangeListeners();
     m_ChangeListeners.add(l);
   }
 
@@ -497,6 +533,7 @@ public class Storage
    * @param l		the listener to remove
    */
   public void removeChangeListener(StorageChangeListener l) {
+    initChangeListeners();
     m_ChangeListeners.remove(l);
   }
 
@@ -506,6 +543,7 @@ public class Storage
    * @param e		the event to send
    */
   protected void notifyChangeListeners(StorageChangeEvent e) {
+    initChangeListeners();
     for (StorageChangeListener l: m_ChangeListeners)
       l.storageChanged(e);
   }
