@@ -15,7 +15,7 @@
 
 /*
  * SendEmail.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -115,7 +115,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SendEmail
   extends AbstractSink {
@@ -152,12 +151,12 @@ public class SendEmail
     super.defineOptions();
 
     m_OptionManager.add(
-	    "send-email", "sendEmail",
-	    EmailHelper.getDefaultSendEmail());
+      "send-email", "sendEmail",
+      EmailHelper.getDefaultSendEmail());
 
     m_OptionManager.add(
-	    "queue", "queue",
-	    false);
+      "queue", "queue",
+      false);
   }
   
   /**
@@ -167,7 +166,7 @@ public class SendEmail
   protected void initialize() {
     super.initialize();
     
-    m_Sending = new ArrayList<SwingWorker>();
+    m_Sending = new ArrayList<>();
   }
   
   /**
@@ -183,7 +182,7 @@ public class SendEmail
     if (!EmailHelper.isEnabled())
       return "No email support enabled, check email setup!";
 
-    result = QuickInfoHelper.toString(this, "sendEmail", m_SendEmail.getClass(), "send: ");;
+    result = QuickInfoHelper.toString(this, "sendEmail", m_SendEmail.getClass(), "send: ");
 
     value = QuickInfoHelper.toString(this, "queue", m_Queue, "queue", ",");
     if (value != null)
