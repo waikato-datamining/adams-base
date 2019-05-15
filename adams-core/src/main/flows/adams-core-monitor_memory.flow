@@ -1,0 +1,28 @@
+# Project: adams
+# Date: 2019-05-15 14:49:53
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core
+#
+adams.flow.control.Flow -annotation "Monitors the memory consumption." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.SequencePlotter -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.LinePaintlet -markers-disabled true -paint-all true" -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider "adams.gui.visualization.core.CustomColorProvider -color #0000ff -color #ff0000 -color #cc00cc" -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title Heap -axis-x "adams.gui.visualization.core.AxisPanelOptions -label \"monitoring step\" -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 40 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label \"memory (in mb)\" -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -width 60 -top-margin 0.05 -bottom-margin 0.05 -custom-format 0" -plot-updater adams.flow.sink.sequenceplotter.SimplePlotUpdater -post-processor "adams.flow.sink.sequenceplotter.SimplePruning -limit 500"
+ adams.flow.source.Start
+ adams.flow.control.WhileLoop -condition adams.flow.condition.bool.Expression
+  adams.flow.source.MemoryUsage
+  adams.flow.control.Tee -name max
+   adams.flow.transformer.GetMapValue -key max_heap
+   adams.flow.transformer.MathExpression -expression "X / (1024*1024)"
+   adams.flow.transformer.MakePlotContainer -plot-name max
+   adams.flow.sink.CallableSink -callable SequencePlotter
+  adams.flow.control.Tee -name used
+   adams.flow.transformer.GetMapValue -key used_heap
+   adams.flow.transformer.MathExpression -expression "X / (1024*1024)"
+   adams.flow.transformer.MakePlotContainer -plot-name used
+   adams.flow.sink.CallableSink -callable SequencePlotter
+  adams.flow.control.Tee -name committed
+   adams.flow.transformer.GetMapValue -key committed_heap
+   adams.flow.transformer.MathExpression -expression "X / (1024*1024)"
+   adams.flow.transformer.MakePlotContainer -plot-name committed
+   adams.flow.sink.CallableSink -callable SequencePlotter
+  adams.flow.control.Sleep -interval 2000
