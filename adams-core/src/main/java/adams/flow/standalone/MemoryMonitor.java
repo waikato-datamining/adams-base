@@ -155,6 +155,11 @@ public class MemoryMonitor
 
   public final static String PH_MAX_BYTES = "{max_bytes}";
 
+  public final static String DEFAULT_MESSAGE_TEMPLATE =
+    PH_COVERAGE_PERC + "% of " + PH_NUM_SAMPLES + " samples have exceeded the "
+      + "threshold of " + PH_THRESHOLD_PERC + "% (= " + PH_THRESHOLD_BYTES + ") of the maximum heap of "
+      + PH_MAX_BYTES + ".";
+
   /**
    * What type of memory to monitor.
    */
@@ -249,10 +254,7 @@ public class MemoryMonitor
 
     m_OptionManager.add(
       "message-template", "messageTemplate",
-      new BaseText(
-        PH_COVERAGE_PERC + "% of " + PH_NUM_SAMPLES + " samples have exceeded the "
-	  + "threshold of " + PH_THRESHOLD_PERC + "% (= " + PH_THRESHOLD_BYTES + ") of the maximum heap of "
-	  + PH_MAX_BYTES + "."));
+      new BaseText(DEFAULT_MESSAGE_TEMPLATE));
 
     m_OptionManager.add(
       "notification-wait", "notificationWait",
