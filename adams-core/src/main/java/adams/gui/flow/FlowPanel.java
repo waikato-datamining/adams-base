@@ -1210,6 +1210,7 @@ public class FlowPanel
 	showStatus("Error cleaning up: " + e);
       }
     }
+    setCurrentFlow((Actor) null);
   }
 
   /**
