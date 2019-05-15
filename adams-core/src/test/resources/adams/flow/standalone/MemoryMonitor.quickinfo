@@ -1,0 +1,1 @@
+type: HEAP_USED, interval: 10, num: 100, threshold: 80.0, coverage: 75.0, notification: Null, wait: 86400

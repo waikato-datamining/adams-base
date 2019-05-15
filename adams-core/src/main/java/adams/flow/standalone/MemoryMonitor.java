@@ -271,7 +271,7 @@ public class MemoryMonitor
     String	result;
 
     result = QuickInfoHelper.toString(this, "memoryType", m_MemoryType, "type: ");
-    result += QuickInfoHelper.toString(this, "sampleInterval", m_SampleInterval, "interval: ");
+    result += QuickInfoHelper.toString(this, "sampleInterval", m_SampleInterval, ", interval: ");
     result += QuickInfoHelper.toString(this, "numSamples", m_NumSamples, ", num: ");
     result += QuickInfoHelper.toString(this, "threshold", m_Threshold, ", threshold: ");
     result += QuickInfoHelper.toString(this, "coverage", m_Coverage, ", coverage: ");
