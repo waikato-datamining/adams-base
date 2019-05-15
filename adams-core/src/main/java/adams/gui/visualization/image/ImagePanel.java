@@ -2147,6 +2147,7 @@ public class ImagePanel
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
+    setCurrentImage((BufferedImage) null);
     removeDependentDialogs();
     removeDependentFlows();
     if (m_Undo != null)
