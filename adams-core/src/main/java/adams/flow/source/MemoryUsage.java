@@ -15,7 +15,7 @@
 
 /*
  * MemoryUsage.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -31,8 +31,12 @@ import java.util.Map;
  <!-- globalinfo-start -->
  * Outputs the memory usage.<br>
  * The generated map has the following keys:<br>
+ * - init_heap<br>
+ * - max_heap<br>
  * - used_heap<br>
  * - committed_heap<br>
+ * - init_non_heap<br>
+ * - max_non_heap<br>
  * - used_non_heap<br>
  * - committed_non_heap
  * <br><br>
@@ -89,9 +93,17 @@ public class MemoryUsage
 
   private static final long serialVersionUID = 6241869472082918544L;
 
+  public static final String KEY_INIT_HEAP = "init_heap";
+
+  public static final String KEY_MAX_HEAP = "max_heap";
+
   public static final String KEY_USED_HEAP = "used_heap";
 
   public static final String KEY_COMMITTED_HEAP = "committed_heap";
+
+  public static final String KEY_INIT_NON_HEAP = "init_non_heap";
+
+  public static final String KEY_MAX_NON_HEAP = "max_non_heap";
 
   public static final String KEY_USED_NON_HEAP = "used_non_heap";
 
@@ -109,8 +121,12 @@ public class MemoryUsage
   public String globalInfo() {
     return "Outputs the memory usage.\n"
       + "The generated map has the following keys:\n"
+      + "- " + KEY_INIT_HEAP + "\n"
+      + "- " + KEY_MAX_HEAP + "\n"
       + "- " + KEY_USED_HEAP + "\n"
       + "- " + KEY_COMMITTED_HEAP + "\n"
+      + "- " + KEY_INIT_NON_HEAP + "\n"
+      + "- " + KEY_MAX_NON_HEAP + "\n"
       + "- " + KEY_USED_NON_HEAP + "\n"
       + "- " + KEY_COMMITTED_NON_HEAP;
   }
@@ -142,11 +158,15 @@ public class MemoryUsage
 
     // heap
     usage = m_Memory.getHeapMemoryUsage();
+    map.put(KEY_INIT_HEAP, usage.getInit());
+    map.put(KEY_MAX_HEAP, usage.getMax());
     map.put(KEY_USED_HEAP, usage.getUsed());
     map.put(KEY_COMMITTED_HEAP, usage.getCommitted());
 
     // non-heap
     usage = m_Memory.getNonHeapMemoryUsage();
+    map.put(KEY_INIT_NON_HEAP, usage.getInit());
+    map.put(KEY_MAX_NON_HEAP, usage.getMax());
     map.put(KEY_USED_NON_HEAP, usage.getUsed());
     map.put(KEY_COMMITTED_NON_HEAP, usage.getCommitted());
 
