@@ -35,14 +35,16 @@ import java.lang.management.MemoryMXBean;
 
 /**
  <!-- globalinfo-start -->
- * Monitors the memory (used heap vs maximum heap).Every number of seconds ('sampleInterval'), the memory consumption, i.e., 'heap used', is sampled, keeping the specified number of latest samples ('numSamples').<br>
+ * Monitors the memory (used&#47;committed heap vs maximum heap).Every number of seconds ('sampleInterval'), the memory consumption, i.e., 'heap used', is sampled, keeping the specified number of latest samples ('numSamples').<br>
  * Once the specified number of samples have been reached, it is checked whether the specified percentage of samples ('coverage') reaches or exceeds the threshold percentage of the maximum heap has been exceeded ('threshold'). If that should be the case, a notification is sent.<br>
  * After a notification has been sent out, a minimum wait time in seconds is imposed before sending out another one ('notificationWait').<br>
  * Available placeholders for the message template:<br>
- * - {threshold}<br>
- * - {numsamples}<br>
- * - {coverage}<br>
- * - {maxheap}
+ * - {threshold_perc}: user-provided parameter<br>
+ * - {threshold_bytes}: calculated bytes<br>
+ * - {num_samples}: user-provided parameter<br>
+ * - {coverage_perc}: user-provided parameter<br>
+ * - {coverage_num}: calculated number<br>
+ * - {max_bytes}: obtained from running system
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -84,6 +86,11 @@ import java.lang.management.MemoryMXBean;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-memory-type &lt;HEAP_USED|HEAP_COMMITTED&gt; (property: memoryType)
+ * &nbsp;&nbsp;&nbsp;The type of memory to monitor.
+ * &nbsp;&nbsp;&nbsp;default: HEAP_USED
+ * </pre>
+ *
  * <pre>-sample-interval &lt;int&gt; (property: sampleInterval)
  * &nbsp;&nbsp;&nbsp;The sample interval in seconds.
  * &nbsp;&nbsp;&nbsp;default: 10
@@ -118,7 +125,7 @@ import java.lang.management.MemoryMXBean;
  *
  * <pre>-message-template &lt;adams.core.base.BaseText&gt; (property: messageTemplate)
  * &nbsp;&nbsp;&nbsp;The message template to use.
- * &nbsp;&nbsp;&nbsp;default: {coverage}% of {numsamples} samples have exceeded the threshold of {threshold} of the maximum heap of {maxheap}.
+ * &nbsp;&nbsp;&nbsp;default: {coverage_perc}% of {num_samples} samples have exceeded the threshold of {threshold_perc}% (= {threshold_bytes}) of the maximum heap of {max_bytes}.
  * </pre>
  *
  * <pre>-notification-wait &lt;int&gt; (property: notificationWait)
@@ -146,7 +153,18 @@ public class MemoryMonitor
 
   public final static String PH_COVERAGE_NUM = "{coverage_num}";
 
-  public final static String PH_MAX_HEAP_BYTES = "{max_heap_bytes}";
+  public final static String PH_MAX_BYTES = "{max_bytes}";
+
+  /**
+   * What type of memory to monitor.
+   */
+  public enum MemoryType {
+    HEAP_USED,
+    HEAP_COMMITTED,
+  }
+
+  /** the type of memory to monitor. */
+  protected MemoryType m_MemoryType;
 
   /** the sample interval in seconds. */
   protected int m_SampleInterval;
@@ -179,7 +197,7 @@ public class MemoryMonitor
    */
   @Override
   public String globalInfo() {
-    return "Monitors the memory (used heap vs maximum heap)."
+    return "Monitors the memory (used/committed heap vs maximum heap)."
       + "Every number of seconds ('sampleInterval'), the memory consumption, "
       + "i.e., 'heap used', is sampled, keeping the specified number "
       + "of latest samples ('numSamples').\n"
@@ -190,12 +208,12 @@ public class MemoryMonitor
       + "After a notification has been sent out, a minimum wait time in seconds "
       + "is imposed before sending out another one ('notificationWait').\n"
       + "Available placeholders for the message template:\n"
-      + "- " + PH_THRESHOLD_PERC + "\n"
-      + "- " + PH_THRESHOLD_BYTES + "\n"
-      + "- " + PH_NUM_SAMPLES + "\n"
-      + "- " + PH_COVERAGE_PERC + "\n"
-      + "- " + PH_COVERAGE_NUM + "\n"
-      + "- " + PH_MAX_HEAP_BYTES;
+      + "- " + PH_THRESHOLD_PERC + ": user-provided parameter\n"
+      + "- " + PH_THRESHOLD_BYTES + ": calculated bytes\n"
+      + "- " + PH_NUM_SAMPLES + ": user-provided parameter\n"
+      + "- " + PH_COVERAGE_PERC + ": user-provided parameter\n"
+      + "- " + PH_COVERAGE_NUM + ": calculated number\n"
+      + "- " + PH_MAX_BYTES + ": obtained from running system";
   }
 
   /**
@@ -204,6 +222,10 @@ public class MemoryMonitor
   @Override
   public void defineOptions() {
     super.defineOptions();
+
+    m_OptionManager.add(
+      "memory-type", "memoryType",
+      MemoryType.HEAP_USED);
 
     m_OptionManager.add(
       "sample-interval", "sampleInterval",
@@ -230,7 +252,7 @@ public class MemoryMonitor
       new BaseText(
         PH_COVERAGE_PERC + "% of " + PH_NUM_SAMPLES + " samples have exceeded the "
 	  + "threshold of " + PH_THRESHOLD_PERC + "% (= " + PH_THRESHOLD_BYTES + ") of the maximum heap of "
-	  + PH_MAX_HEAP_BYTES + "."));
+	  + PH_MAX_BYTES + "."));
 
     m_OptionManager.add(
       "notification-wait", "notificationWait",
@@ -246,7 +268,8 @@ public class MemoryMonitor
   public String getQuickInfo() {
     String	result;
 
-    result = QuickInfoHelper.toString(this, "sampleInterval", m_SampleInterval, "interval: ");
+    result = QuickInfoHelper.toString(this, "memoryType", m_MemoryType, "type: ");
+    result += QuickInfoHelper.toString(this, "sampleInterval", m_SampleInterval, "interval: ");
     result += QuickInfoHelper.toString(this, "numSamples", m_NumSamples, ", num: ");
     result += QuickInfoHelper.toString(this, "threshold", m_Threshold, ", threshold: ");
     result += QuickInfoHelper.toString(this, "coverage", m_Coverage, ", coverage: ");
@@ -254,6 +277,35 @@ public class MemoryMonitor
     result += QuickInfoHelper.toString(this, "notificationWait", m_NotificationWait, ", wait: ");
 
     return result;
+  }
+
+  /**
+   * Sets the type of memory to monitor.
+   *
+   * @param value	the type
+   */
+  public void setMemoryType(MemoryType value) {
+    m_MemoryType = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of memory to monitor.
+   *
+   * @return		the type
+   */
+  public MemoryType getMemoryType() {
+    return m_MemoryType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String memoryTypeTipText() {
+    return "The type of memory to monitor.";
   }
 
   /**
@@ -486,6 +538,7 @@ public class MemoryMonitor
         double threshold = max / 100.0 * m_Threshold;
         double coverage = m_NumSamples / 100.0 * m_Coverage;
         if (isLoggingEnabled()) {
+          getLogger().info("type: " + m_MemoryType);
           getLogger().info("max: " + max);
           getLogger().info("threshold: " + threshold);
           getLogger().info("coverage: " + coverage);
@@ -502,7 +555,16 @@ public class MemoryMonitor
 	    continue;
 
 	  // add sample
-	  samples.add(memory.getHeapMemoryUsage().getUsed());
+	  switch (m_MemoryType) {
+	    case HEAP_COMMITTED:
+	      samples.add(memory.getHeapMemoryUsage().getCommitted());
+	      break;
+	    case HEAP_USED:
+	      samples.add(memory.getHeapMemoryUsage().getUsed());
+	      break;
+	    default:
+	      throw new IllegalStateException("Unhandled memory type: " + m_MemoryType);
+	  }
 	  while (samples.size() > m_NumSamples)
 	    samples.removeAt(0);
 
@@ -538,7 +600,7 @@ public class MemoryMonitor
 	      msg = msg.replace(PH_COVERAGE_NUM, "" + Math.ceil(coverage));
 	      msg = msg.replace(PH_THRESHOLD_PERC, "" + m_Threshold);
 	      msg = msg.replace(PH_THRESHOLD_BYTES, "" + ByteFormat.toMegaBytes(threshold, 1));
-	      msg = msg.replace(PH_MAX_HEAP_BYTES, ByteFormat.toMegaBytes(max, 1));
+	      msg = msg.replace(PH_MAX_BYTES, ByteFormat.toMegaBytes(max, 1));
               if (isLoggingEnabled())
                 getLogger().info("msg: " + msg);
 	      m_Notification.setFlowContext(MemoryMonitor.this);
