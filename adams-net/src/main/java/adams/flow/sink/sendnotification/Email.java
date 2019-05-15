@@ -98,10 +98,6 @@ public class Email
       "");
 
     m_OptionManager.add(
-      "body", "body",
-      new BaseText(""));
-
-    m_OptionManager.add(
       "signature", "signature",
       new BaseText(Utils.unbackQuoteChars(EmailHelper.getDefaultSignature())));
 
