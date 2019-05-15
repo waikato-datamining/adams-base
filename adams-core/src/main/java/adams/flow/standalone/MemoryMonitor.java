@@ -38,6 +38,7 @@ import java.lang.management.MemoryMXBean;
  * Monitors the memory (used&#47;committed heap vs maximum heap).Every number of seconds ('sampleInterval'), the memory consumption, i.e., 'heap used', is sampled, keeping the specified number of latest samples ('numSamples').<br>
  * Once the specified number of samples have been reached, it is checked whether the specified percentage of samples ('coverage') reaches or exceeds the threshold percentage of the maximum heap has been exceeded ('threshold'). If that should be the case, a notification is sent.<br>
  * After a notification has been sent out, a minimum wait time in seconds is imposed before sending out another one ('notificationWait').<br>
+ * Also skips coverage tests, if the number if samples reaching&#47;exceeding the threshold is in decline.<br>
  * Available placeholders for the message template:<br>
  * - {threshold_perc}: user-provided parameter<br>
  * - {threshold_bytes}: calculated bytes<br>
@@ -212,6 +213,8 @@ public class MemoryMonitor
       + "('threshold'). If that should be the case, a notification is sent.\n"
       + "After a notification has been sent out, a minimum wait time in seconds "
       + "is imposed before sending out another one ('notificationWait').\n"
+      + "Also skips coverage tests, if the number if samples reaching/exceeding "
+      + "the threshold is in decline.\n"
       + "Available placeholders for the message template:\n"
       + "- " + PH_THRESHOLD_PERC + ": user-provided parameter\n"
       + "- " + PH_THRESHOLD_BYTES + ": calculated bytes\n"
@@ -539,6 +542,8 @@ public class MemoryMonitor
         long max = memory.getHeapMemoryUsage().getMax();
         double threshold = max / 100.0 * m_Threshold;
         double coverage = m_NumSamples / 100.0 * m_Coverage;
+        int lastHits;
+        int hits = 0;
         if (isLoggingEnabled()) {
           getLogger().info("type: " + m_MemoryType);
           getLogger().info("max: " + max);
@@ -581,13 +586,19 @@ public class MemoryMonitor
 
 	  // enough samples?
 	  if (samples.size() == m_NumSamples) {
-	    int hits = 0;
+	    lastHits = hits;
+	    hits = 0;
 	    for (double sample: samples.toArray()) {
 	      if (sample >= threshold)
 	        hits++;
 	    }
 	    if (isLoggingEnabled())
 	      getLogger().info("hits: " + hits);
+	    if (hits < lastHits) {
+	      if (isLoggingEnabled())
+		getLogger().info("hits declining (last: " + lastHits + "), skipping coverage test");
+	      continue;
+	    }
 
 	    // enough coverage?
 	    if (hits >= coverage) {
