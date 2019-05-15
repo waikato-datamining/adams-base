@@ -136,13 +136,17 @@ public class MemoryMonitor
 
   private static final long serialVersionUID = -7501219980546039648L;
 
-  public final static String PH_THRESHOLD = "{threshold}";
+  public final static String PH_THRESHOLD_PERC = "{threshold_perc}";
 
-  public final static String PH_NUMSAMPLES = "{numsamples}";
+  public final static String PH_THRESHOLD_BYTES = "{threshold_bytes}";
 
-  public final static String PH_COVERAGE = "{coverage}";
+  public final static String PH_NUM_SAMPLES = "{num_samples}";
 
-  public final static String PH_MAX_HEAP = "{maxheap}";
+  public final static String PH_COVERAGE_PERC = "{coverage_perc}";
+
+  public final static String PH_COVERAGE_NUM = "{coverage_num}";
+
+  public final static String PH_MAX_HEAP_BYTES = "{max_heap_bytes}";
 
   /** the sample interval in seconds. */
   protected int m_SampleInterval;
@@ -186,10 +190,12 @@ public class MemoryMonitor
       + "After a notification has been sent out, a minimum wait time in seconds "
       + "is imposed before sending out another one ('notificationWait').\n"
       + "Available placeholders for the message template:\n"
-      + "- " + PH_THRESHOLD + "\n"
-      + "- " + PH_NUMSAMPLES + "\n"
-      + "- " + PH_COVERAGE + "\n"
-      + "- " + PH_MAX_HEAP;
+      + "- " + PH_THRESHOLD_PERC + "\n"
+      + "- " + PH_THRESHOLD_BYTES + "\n"
+      + "- " + PH_NUM_SAMPLES + "\n"
+      + "- " + PH_COVERAGE_PERC + "\n"
+      + "- " + PH_COVERAGE_NUM + "\n"
+      + "- " + PH_MAX_HEAP_BYTES;
   }
 
   /**
@@ -222,9 +228,9 @@ public class MemoryMonitor
     m_OptionManager.add(
       "message-template", "messageTemplate",
       new BaseText(
-        PH_COVERAGE + "% of " + PH_NUMSAMPLES + " samples have exceeded the "
-	  + "threshold of " + PH_THRESHOLD + " of the maximum heap of "
-	  + PH_MAX_HEAP + "."));
+        PH_COVERAGE_PERC + "% of " + PH_NUM_SAMPLES + " samples have exceeded the "
+	  + "threshold of " + PH_THRESHOLD_PERC + "% (= " + PH_THRESHOLD_BYTES + ") of the maximum heap of "
+	  + PH_MAX_HEAP_BYTES + "."));
 
     m_OptionManager.add(
       "notification-wait", "notificationWait",
@@ -477,8 +483,15 @@ public class MemoryMonitor
       @Override
       protected void doRun() {
         long max = memory.getHeapMemoryUsage().getMax();
-        double threshold = max * m_Threshold;
-        double coverage = m_NumSamples * m_Coverage;
+        double threshold = max / 100.0 * m_Threshold;
+        double coverage = m_NumSamples / 100.0 * m_Coverage;
+        if (isLoggingEnabled()) {
+          getLogger().info("max: " + max);
+          getLogger().info("threshold: " + threshold);
+          getLogger().info("coverage: " + coverage);
+          getLogger().info("#samples: " + m_NumSamples);
+          getLogger().info("msg: " + m_MessageTemplate);
+        }
 	TDoubleList samples = new TDoubleArrayList();
 	long nextNotification = -1;
 
@@ -493,6 +506,7 @@ public class MemoryMonitor
 	  while (samples.size() > m_NumSamples)
 	    samples.removeAt(0);
 
+
 	  // have we reached the notification wait time?
 	  if (nextNotification > 0) {
 	    if (nextNotification <= System.currentTimeMillis())
@@ -503,20 +517,30 @@ public class MemoryMonitor
 
 	  // enough samples?
 	  if (samples.size() == m_NumSamples) {
-	    int hit = 0;
+	    int hits = 0;
 	    for (double sample: samples.toArray()) {
 	      if (sample >= threshold)
-	        hit++;
+	        hits++;
 	    }
+	    if (isLoggingEnabled())
+	      getLogger().info("hits: " + hits);
 
 	    // enough coverage?
-	    if (hit >= coverage) {
+	    if (hits >= coverage) {
+              if (isLoggingEnabled())
+                getLogger().info("hits >= coverage: " + true);
 	      nextNotification = System.currentTimeMillis() + m_NotificationWait * 1000;
+              if (isLoggingEnabled())
+                getLogger().info("next notification: " + nextNotification);
 	      String msg = m_MessageTemplate.getValue();
-	      msg = msg.replace(PH_NUMSAMPLES, "" + m_NumSamples);
-	      msg = msg.replace(PH_COVERAGE, "" + m_Coverage);
-	      msg = msg.replace(PH_THRESHOLD, "" + m_Threshold);
-	      msg = msg.replace(PH_MAX_HEAP, ByteFormat.toMegaBytes(max, 1));
+	      msg = msg.replace(PH_NUM_SAMPLES, "" + m_NumSamples);
+	      msg = msg.replace(PH_COVERAGE_PERC, "" + m_Coverage);
+	      msg = msg.replace(PH_COVERAGE_NUM, "" + Math.ceil(coverage));
+	      msg = msg.replace(PH_THRESHOLD_PERC, "" + m_Threshold);
+	      msg = msg.replace(PH_THRESHOLD_BYTES, "" + ByteFormat.toMegaBytes(threshold, 1));
+	      msg = msg.replace(PH_MAX_HEAP_BYTES, ByteFormat.toMegaBytes(max, 1));
+              if (isLoggingEnabled())
+                getLogger().info("msg: " + msg);
 	      m_Notification.setFlowContext(MemoryMonitor.this);
 	      String result = m_Notification.sendNotification(msg);
 	      if (result != null)
@@ -526,6 +550,7 @@ public class MemoryMonitor
 	}
       }
     };
+    m_Sampler.setLoggingLevel(getLoggingLevel());
     new Thread(m_Sampler).start();
 
     return null;
