@@ -1,0 +1,19 @@
+# Project: adams
+# Date: 2019-05-15 14:33:51
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core
+#
+adams.flow.control.Flow -annotation "Shows how to initialize, append a collection (ArrayList) and create a subset from it." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name init
+  adams.flow.source.NewCollection
+  adams.flow.transformer.SetStorageValue -storage-name list
+ adams.flow.control.Trigger -name add
+  adams.flow.source.ForLoop -upper 20
+  adams.flow.transformer.StorageCollectionInsert -storageName list -after true
+ adams.flow.control.Trigger -name subset
+  adams.flow.source.StorageValue -storage-name list -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.CollectionSubset -elements 5-15
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
