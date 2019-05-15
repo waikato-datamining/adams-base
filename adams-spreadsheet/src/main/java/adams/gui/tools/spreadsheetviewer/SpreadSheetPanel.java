@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetPanel.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
@@ -500,5 +500,10 @@ public class SpreadSheetPanel
     for (Flow flow: m_GeneratedFlows)
       flow.destroy();
     m_GeneratedFlows.clear();
+    if (m_Reader != null)
+      m_Reader.destroy();
+    if (m_Writer != null)
+      m_Writer.destroy();
+    m_Table.setModel(new SpreadSheetTableModel());
   }
 }
