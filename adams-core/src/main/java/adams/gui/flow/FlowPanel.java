@@ -1210,7 +1210,6 @@ public class FlowPanel
 	showStatus("Error cleaning up: " + e);
       }
     }
-    setCurrentFlow((Actor) null);
   }
 
   /**
@@ -1218,6 +1217,7 @@ public class FlowPanel
    */
   public void close() {
     cleanUp();
+    setCurrentFlow((Actor) null);
     m_Tree.cleanUp();
     if (m_Undo != null)
       m_Undo.cleanUp();
