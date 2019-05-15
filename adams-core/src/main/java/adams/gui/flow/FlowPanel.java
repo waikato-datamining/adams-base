@@ -54,6 +54,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.KnownParentSupporter;
 import adams.gui.core.MultiPageIconSupporter;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
@@ -83,6 +84,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -97,7 +99,8 @@ import java.util.List;
 public class FlowPanel
   extends UndoPanel
   implements StatusMessageHandler, SendToActionSupporter, FlowTreeHandler,
-  MultiPageIconSupporter, FlowWorkerHandler, UndoHandlerWithQuickAccess {
+  MultiPageIconSupporter, FlowWorkerHandler, UndoHandlerWithQuickAccess,
+  KnownParentSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3579084888256133873L;
@@ -353,6 +356,16 @@ public class FlowPanel
    */
   public FlowMultiPagePane getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Returns the component that acts as this component's parent.
+   *
+   * @return		the parent, null if not available
+   */
+  @Override
+  public Container getKnownParent() {
+    return getOwner();
   }
 
   /**

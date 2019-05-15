@@ -30,6 +30,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.KnownParentSupporter;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SpreadSheetColumnComboBox;
@@ -50,6 +51,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ import java.util.List;
  */
 public class SpreadSheetPanel
   extends BasePanel
-  implements SpreadSheetSupporter, TableModelListener, CleanUpHandler {
+  implements SpreadSheetSupporter, TableModelListener, CleanUpHandler, KnownParentSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4251007424174062651L;
@@ -173,7 +175,17 @@ public class SpreadSheetPanel
   public MultiPagePane getOwner() {
     return m_Owner;
   }
-  
+
+  /**
+   * Returns the component that acts as this component's parent.
+   *
+   * @return		the parent, null if not available
+   */
+  @Override
+  public Container getKnownParent() {
+    return getOwner();
+  }
+
   /**
    * Returns this panel's tab title, if any.
    * 

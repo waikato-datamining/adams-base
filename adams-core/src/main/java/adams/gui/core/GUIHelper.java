@@ -945,7 +945,15 @@ public class GUIHelper {
 	break;
       }
       else {
-	parent = parent.getParent();
+        if (parent instanceof KnownParentSupporter) {
+          if (((KnownParentSupporter) parent).getKnownParent() != null)
+            parent = ((KnownParentSupporter) parent).getKnownParent();
+          else
+            parent = parent.getParent();
+        }
+        else {
+          parent = parent.getParent();
+        }
       }
     }
 
