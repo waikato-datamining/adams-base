@@ -26,6 +26,7 @@ import adams.flow.container.EncapsulatedActorsContainer;
 import adams.flow.control.Flow;
 import adams.flow.control.Storage;
 import adams.flow.control.StorageName;
+import adams.flow.source.Start;
 import adams.flow.source.StorageValue;
 import adams.flow.transformer.SetStorageValue;
 
@@ -195,35 +196,42 @@ public class EncapsulateActors {
     // input?
     inputName  = null;
     outputName = null;
-    if (input != null) {
-      inputName  = createInputStorageName(items);
-      storage.put(inputName, input);
-
-      if (actor instanceof InputConsumer) {
-        Flow flow = new Flow();
-        StorageValue sv = new StorageValue();
-        sv.setStorageName(inputName);
-        flow.add(sv);
-	flow.add(actor);
-        if (actor instanceof InputConsumer) {
-	  outputName = createOutputStorageName(items);
-	  SetStorageValue ssv = new SetStorageValue();
-	  ssv.setStorageName(outputName);
-	  flow.add(ssv);
-	}
-        actor = flow;
+    if (actor instanceof InputConsumer) {
+      Flow flow = new Flow();
+      // input
+      if (input != null) {
+	inputName = createInputStorageName(items);
+	storage.put(inputName, input);
+	StorageValue sv = new StorageValue();
+	sv.setStorageName(inputName);
+	flow.add(sv);
       }
       else {
-        Flow flow = new Flow();
-	flow.add(actor);
-        if (actor instanceof InputConsumer) {
-	  outputName = createOutputStorageName(items);
-	  SetStorageValue ssv = new SetStorageValue();
-	  ssv.setStorageName(outputName);
-	  flow.add(ssv);
-	}
-        actor = flow;
+        flow.add(new Start());
       }
+      // actor itself
+      flow.add(actor);
+      // output
+      if (actor instanceof OutputProducer) {
+        outputName = createOutputStorageName(items);
+        SetStorageValue ssv = new SetStorageValue();
+        ssv.setStorageName(outputName);
+        flow.add(ssv);
+      }
+      actor = flow;
+    }
+    else {
+      Flow flow = new Flow();
+      // actor itself
+      flow.add(actor);
+      // output
+      if (actor instanceof OutputProducer) {
+        outputName = createOutputStorageName(items);
+        SetStorageValue ssv = new SetStorageValue();
+        ssv.setStorageName(outputName);
+        flow.add(ssv);
+      }
+      actor = flow;
     }
 
     return new EncapsulatedActorsContainer(actor.shallowCopy(false), variables, storage, input, inputName, null, outputName);
