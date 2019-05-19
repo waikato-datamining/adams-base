@@ -79,6 +79,7 @@ Menu-Help=\
   adams.gui.menu.JConsole,\
   adams.gui.menu.JVisualVM,\
   adams.gui.menu.GarbageCollector,\
+  adams.gui.menu.HeapDump,\
   -,\
   adams.gui.menu.Homepage,\
   adams.gui.menu.Documentation,\
