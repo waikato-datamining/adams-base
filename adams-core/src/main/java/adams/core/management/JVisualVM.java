@@ -15,7 +15,7 @@
 
 /*
  * JVisualVM.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -143,6 +143,21 @@ public class JVisualVM
     options = options + " --openpid " + pid;
 
     return execute(executable, options);
+  }
+
+  /**
+   * Generates a help string for the properties.
+   *
+   * @return		the help string
+   */
+  public static String getPropertiesHelp() {
+    return "Create props file '" + FILENAME + "' with the following content:\n\n"
+      + "- Linux/Mac:\n"
+      + KEY_EXECUTABLE + "=/some/where/" + EXECUTABLE + "\n\n"
+      + "- Windows:\n"
+      + KEY_EXECUTABLE + "=C:/some/where/" + EXECUTABLE + "\n\n"
+      + "and place the props file, e.g., in your ADAMS home directory:\n"
+      + Environment.getInstance().getHome();
   }
 
   /**

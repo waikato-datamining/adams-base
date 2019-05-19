@@ -15,7 +15,7 @@
 
 /*
  * JVisualVM.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -29,7 +29,6 @@ import adams.gui.core.GUIHelper;
  * Starts up jvisualvm.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see adams.core.management.JVisualVM
  */
 public class JVisualVM
@@ -59,6 +58,15 @@ public class JVisualVM
    */
   @Override
   protected void doLaunch() {
+    if (!adams.core.management.JVisualVM.isAvailable()) {
+      GUIHelper.showErrorMessage(
+	null,
+	"JVisualVM binary '" + adams.core.management.JVisualVM.getExecutablePath() + "' is not available!\n"
+	  + "\n"
+	  + adams.core.management.JVisualVM.getPropertiesHelp());
+      return;
+    }
+
     // query for options
     String options = GUIHelper.showInputDialog(
 	null, "Enter the options for " + adams.core.management.JVisualVM.EXECUTABLE + ":",
