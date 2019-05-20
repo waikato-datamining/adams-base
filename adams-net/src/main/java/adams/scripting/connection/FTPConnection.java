@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FTPConnection.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
 
 import adams.core.MessageCollection;
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.FileUtils;
@@ -42,7 +43,6 @@ import java.util.logging.Level;
  * Uses FTP to send commands.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FTPConnection
   extends AbstractConnection
@@ -285,6 +285,20 @@ public class FTPConnection
    */
   public String remoteDirTipText() {
     return "The FTP directory to upload the command to.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    String  	result;
+
+    result = QuickInfoHelper.toString(this, "user", (m_User.isEmpty() ? "-none-" : m_User));
+    result += QuickInfoHelper.toString(this, "host", m_Host, "@");
+
+    return result;
   }
 
   /**

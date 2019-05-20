@@ -20,6 +20,7 @@
 
 package adams.scripting.connection;
 
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderFile;
@@ -413,6 +414,20 @@ public abstract class AbstractSSHConnection
     return
       "Enables/disables strict host key checking - strict checking is the "
 	+ "recommended setting, as disabling it is very insecure!";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    String  	result;
+
+    result = QuickInfoHelper.toString(this, "host", m_Host);
+    result += QuickInfoHelper.toString(this, "port", m_Port, ":");
+
+    return result;
   }
 
   /**

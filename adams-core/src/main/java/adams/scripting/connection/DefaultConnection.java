@@ -20,6 +20,7 @@
 
 package adams.scripting.connection;
 
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
@@ -128,6 +129,20 @@ public class DefaultConnection
    */
   public String portTipText() {
     return "The port to send the  to.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    String  	result;
+
+    result = QuickInfoHelper.toString(this, "host", m_Host);
+    result += QuickInfoHelper.toString(this, "port", m_Port, ":");
+
+    return result;
   }
 
   /**

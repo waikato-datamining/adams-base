@@ -15,7 +15,7 @@
 
 /*
  * AbstractConnection.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
@@ -30,13 +30,23 @@ import adams.scripting.processor.RemoteCommandProcessor;
  * Ancestor for connections.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractConnection
   extends AbstractOptionHandler
   implements Connection {
 
   private static final long serialVersionUID = 7968903903323685090L;
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   * <br>
+   * Default implementation returns null.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    return null;
+  }
 
   /**
    * Hook method that checks the request command and setup for sending it.
