@@ -1,1 +1,1 @@
-connection: DefaultConnection, don't store, dir: ${CWD}
+connection: DefaultConnection (127.0.0.1:12345), don't store, dir: ${CWD}
