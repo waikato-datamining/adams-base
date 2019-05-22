@@ -103,7 +103,7 @@ public abstract class AbstractCompareActors
     dialog.setApproveMnemonic('l');
     panel = new SideBySideDiffPanel();
     panel.setLabelText(true,  nodes[0].getFullName());
-    panel.setLabelText(false, nodes[0].getFullName());
+    panel.setLabelText(false, nodes[1].getFullName());
     panel.display(diff);
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
     dialog.setSize(GUIHelper.getDefaultLargeDialogDimension());
