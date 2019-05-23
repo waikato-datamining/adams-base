@@ -15,7 +15,7 @@
 
 /*
  *    ClassificationViaRegression.java
- *    Copyright (C) 1999-2013 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -99,7 +99,6 @@ import weka.filters.unsupervised.attribute.MakeIndicator;
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
  * @author Dale Fletcher (dale at waikato dot ac dot nz)
- * @version $Revision$
 */
 public class ClassificationViaRegressionD
   extends SingleClassifierEnhancer
@@ -229,6 +228,7 @@ public class ClassificationViaRegressionD
     probs = new double[inst.numClasses()];
     sum   = 0;
 
+    inst.setClassMissing();
     for (i = 0; i < inst.numClasses(); i++) {
       m_ClassFilters[i].input(inst);
       m_ClassFilters[i].batchFinished();
