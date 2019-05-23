@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MimeTypeHelper.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -33,9 +33,14 @@ import java.io.FileInputStream;
  * Helper class for mime types.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MimeTypeHelper {
+
+  /** mime type: application/octet-stream. */
+  public final static String MIMETYPE_APPLICATION_OCTETSTREAM = "application/octet-stream";
+
+  /** mime type: plain/text. */
+  public final static String MIMETYPE_PLAIN_TEXT = "plain/text";
 
   /**
    * Tries to determine the MIME type of a file by checking its magic bytes.
