@@ -2263,8 +2263,9 @@ public class TreeOperations
       pasted = null;
       numLines = 0;
       if (ClipboardHelper.canPasteStringFromClipboard()) {
-	pasted   = OptionUtils.pasteSetupFromClipboard();
-	numLines = Utils.split(pasted.trim(), "\n").length;
+	pasted = OptionUtils.pasteSetupFromClipboard();
+	if (pasted != null)
+	  numLines = Utils.split(pasted.trim(), "\n").length;
       }
 
       if (pasted != null) {
