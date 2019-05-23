@@ -15,7 +15,7 @@
 
 /*
  * MessageDigestType.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
@@ -33,11 +33,10 @@ import java.security.DigestInputStream;
 /**
  * Enumeration of available message digest algorithms.
  * <br><br>
- * See <a href="http://remington.cs.waikato.ac.nz/documentation/jdk-1.6.0/technotes/guides/security/StandardNames.html#MessageDigest"
+ * See <a href="https://docs.oracle.com/en/java/javase/11/docs/specs/security/standard-names.html#messagedigest-algorithms"
  * target="_blank">here</a>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum MessageDigestType
   implements EnumWithCustomDisplay<MessageDigestType> {
