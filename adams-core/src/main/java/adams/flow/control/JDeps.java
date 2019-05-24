@@ -96,14 +96,13 @@ import java.io.File;
  * </pre>
  * 
  * <pre>-additional &lt;java.lang.String&gt; (property: additionalOptions)
- * &nbsp;&nbsp;&nbsp;Additional options for the jdeps execution.
+ * &nbsp;&nbsp;&nbsp;Additional options for the jdeps execution, supports inline variables.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JDeps
   extends AbstractTransformer {
@@ -146,20 +145,20 @@ public class JDeps
     super.defineOptions();
 
     m_OptionManager.add(
-	    "executable", "executable",
-	    new PlaceholderFile(getJDepsExecutablePath()), false);
+      "executable", "executable",
+      new PlaceholderFile(getJDepsExecutablePath()), false);
 
     m_OptionManager.add(
-	    "classpath-dir", "classpathDirs",
-	    new PlaceholderDirectory[0]);
+      "classpath-dir", "classpathDirs",
+      new PlaceholderDirectory[0]);
 
     m_OptionManager.add(
-	    "classpath-jar", "classpathJars",
-	    new PlaceholderFile[0]);
+      "classpath-jar", "classpathJars",
+      new PlaceholderFile[0]);
 
     m_OptionManager.add(
-	    "additional", "additionalOptions",
-	    "");
+      "additional", "additionalOptions",
+      "");
   }
 
   /**
@@ -289,7 +288,7 @@ public class JDeps
    * 			displaying in the GUI or for listing the options.
    */
   public String additionalOptionsTipText() {
-    return "Additional options for the jdeps execution.";
+    return "Additional options for the jdeps execution, supports inline variables.";
   }
 
   /**
@@ -351,6 +350,9 @@ public class JDeps
     File[]	classpath;
     int		i;
     int		n;
+    String	additional;
+
+    additional = getVariables().expand(m_AdditionalOptions);
 
     // assemble classpath
     classpath = new File[m_ClasspathDirs.length + m_ClasspathJars.length];
@@ -368,7 +370,7 @@ public class JDeps
     outputStr = adams.core.management.JDeps.execute(
       m_Executable.getAbsolutePath(),
       classpath,
-      m_AdditionalOptions + " " + m_InputToken.getPayload());
+      additional + " " + m_InputToken.getPayload());
 
     if (isLoggingEnabled())
       getLogger().info("output: " + outputStr);

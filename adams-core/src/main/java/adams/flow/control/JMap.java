@@ -15,7 +15,7 @@
 
 /*
  * JMap.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -32,19 +32,21 @@ import adams.flow.core.Token;
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * <br><br>
+ * Conditional equivalent:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.control.ConditionalTee
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D (property: debug)
- * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -52,28 +54,51 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: JMap
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-progress (property: showProgress)
- * &nbsp;&nbsp;&nbsp;If set to true, progress information will be output to stdout ('.').
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-on-errors (property: stopOnErrors)
- * &nbsp;&nbsp;&nbsp;If set to true, errors (like exceptions) will stop the flow execution; otherwise
- * &nbsp;&nbsp;&nbsp;it is attempted to continue.
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-tee &lt;adams.flow.core.AbstractActor [options]&gt; (property: teeActor)
- * &nbsp;&nbsp;&nbsp;The actor to siphon-off the tokens to.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.Null
+ * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
+ * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-stopping-timeout &lt;int&gt; (property: stoppingTimeout)
+ * &nbsp;&nbsp;&nbsp;The timeout in milliseconds when waiting for actors to finish (&lt;= 0 for
+ * &nbsp;&nbsp;&nbsp;infinity; see 'finishBeforeStopping').
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-asynchronous &lt;boolean&gt; (property: asynchronous)
+ * &nbsp;&nbsp;&nbsp;If enabled, the sub-actors get executed asynchronously rather than the flow
+ * &nbsp;&nbsp;&nbsp;waiting for them to finish before proceeding with execution.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-tee &lt;adams.flow.core.Actor&gt; [-tee ...] (property: actors)
+ * &nbsp;&nbsp;&nbsp;The actors to siphon-off the tokens to.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-executable &lt;adams.core.io.PlaceholderFile&gt; (property: executable)
@@ -81,7 +106,7 @@ import adams.flow.core.Token;
  * </pre>
  *
  * <pre>-additional &lt;java.lang.String&gt; (property: additionalOptions)
- * &nbsp;&nbsp;&nbsp;Additional options for the jmap execution.
+ * &nbsp;&nbsp;&nbsp;Additional options for the jmap execution, supports inline variables.
  * &nbsp;&nbsp;&nbsp;default: -histo:live
  * </pre>
  *
@@ -94,7 +119,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JMap
   extends Tee {
@@ -134,16 +158,16 @@ public class JMap
     super.defineOptions();
 
     m_OptionManager.add(
-	    "executable", "executable",
-	    new PlaceholderFile(getJMapExecutablePath()), false);
+      "executable", "executable",
+      new PlaceholderFile(getJMapExecutablePath()), false);
 
     m_OptionManager.add(
-	    "additional", "additionalOptions",
-	    "-histo:live");
+      "additional", "additionalOptions",
+      "-histo:live");
 
     m_OptionManager.add(
-	    "pid", "PID",
-	    ProcessUtils.AUTO_PID);
+      "pid", "PID",
+      ProcessUtils.AUTO_PID);
   }
 
   /**
@@ -211,7 +235,7 @@ public class JMap
    * 			displaying in the GUI or for listing the options.
    */
   public String additionalOptionsTipText() {
-    return "Additional options for the jmap execution.";
+    return "Additional options for the jmap execution, supports inline variables.";
   }
 
   /**
@@ -295,9 +319,11 @@ public class JMap
   protected Token createTeeToken(Token token) {
     Token	result;
     String	outputStr;
+    String	additional;
 
+    additional = getVariables().expand(m_AdditionalOptions);
     outputStr = adams.core.management.JMap.execute(
-	  m_Executable.getAbsolutePath(), m_AdditionalOptions, m_ActualPID);
+	  m_Executable.getAbsolutePath(), additional, m_ActualPID);
     if (isLoggingEnabled())
       getLogger().info("output: " + outputStr);
 
