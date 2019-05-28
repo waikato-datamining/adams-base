@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerDbReader.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -36,7 +36,6 @@ import adams.flow.transformer.datacontainer.NoPostProcessing;
  * Ancestor for transformers that read containers from the database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to load from the database
  */
 public abstract class AbstractDataContainerDbReader<T extends DataContainer>
@@ -49,6 +48,9 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
   /** whether to return the raw data or not. */
   protected boolean m_Raw;
 
+  /** whether to ignore not finding any IDs. */
+  protected boolean m_Lenient;
+
   /** the post-processor to apply to the data. */
   protected AbstractDataContainerPostProcessor m_PostProcessor;
   
@@ -60,12 +62,16 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
     super.defineOptions();
 
     m_OptionManager.add(
-	"raw", "raw",
-	false);
-    
+      "raw", "raw",
+      false);
+
     m_OptionManager.add(
-	"post-processor", "postProcessor",
-	new NoPostProcessing());
+      "lenient", "lenient",
+      false);
+
+    m_OptionManager.add(
+      "post-processor", "postProcessor",
+      new NoPostProcessing());
   }
 
   /**
@@ -99,6 +105,35 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
     return
         "If set to true, then the raw data is returned instead of being "
       + "filtered through the global data container filter.";
+  }
+
+  /**
+   * Sets whether to ignore IDs that weren't found (warning rather than error).
+   *
+   * @param value	true if to ignore missing IDs
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to ignore IDs that weren't found (warning rather than error).
+   *
+   * @return		true if to ignore missing IDs
+   */
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return "If enabled, missing IDs will get output as warnings and no longer generate an error.";
   }
 
   /**
@@ -169,10 +204,15 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
       cont = ((FilteredDataProvider<T>) provider).loadRaw(id);
     else
       cont = provider.load(id);
-    if (cont == null)
-      result = "No container loaded for ID: " + m_InputToken;
-    else
+    if (cont == null) {
+      if (!m_Lenient)
+	result = "No container loaded for ID: " + m_InputToken;
+      else
+	getLogger().warning("No container loaded for sample ID: " + m_InputToken);
+    }
+    else {
       m_OutputToken = new Token(m_PostProcessor.postProcess(cont));
+    }
 
     if (m_OutputToken != null)
       updateProvenance(m_OutputToken);
