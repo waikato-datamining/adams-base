@@ -48,14 +48,18 @@ public enum LoggingLevel {
   
   /** the associated level. */
   private Level m_Level;
-  
+
+  /** the comparator. */
+  protected LevelComparator m_Comparator;
+
   /**
    * Initializes the enum element.
    * 
    * @param level	the level to associate
    */
   private LoggingLevel(Level level) {
-    m_Level = level;
+    m_Level      = level;
+    m_Comparator = new LevelComparator();
   }
   
   /**
@@ -86,5 +90,25 @@ public enum LoggingLevel {
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether the level meets the minimum.
+   *
+   * @param min		the minimum level to meet
+   * @return		if minimum logging level met
+   */
+  public boolean isAtLeast(Level min) {
+    return (m_Comparator.compare(m_Level, min) >= 0);
+  }
+
+  /**
+   * Checks whether the level meets the maximum.
+   *
+   * @param max		the maximum level to meet
+   * @return		if maximum logging level met
+   */
+  public boolean isAtMost(Level max) {
+    return (m_Comparator.compare(m_Level, max) <= 0);
   }
 }
