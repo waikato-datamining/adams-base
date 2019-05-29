@@ -39,8 +39,6 @@ Definitions=\
   adams.env.PerformanceDefinition,\
   adams.env.PlaceholdersDefinition,\
   adams.env.PreviewBrowserPanelDefinition,\
-  adams.env.ProvenanceDefinition,\
-  adams.env.ProvenanceTreeDefinition,\
   adams.env.ProxyDefinition,\
   adams.env.ScriptingDialogDefinition,\
   adams.env.ScriptingEngineDefinition,\

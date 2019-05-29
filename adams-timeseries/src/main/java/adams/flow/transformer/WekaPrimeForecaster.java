@@ -21,21 +21,16 @@
 package adams.flow.transformer;
 
 import adams.core.MessageCollection;
+import adams.core.QuickInfoHelper;
+import adams.flow.container.WekaModelContainer;
+import adams.flow.core.CallableActorHelper;
+import adams.flow.core.CallableActorReference;
+import adams.flow.core.Token;
+import adams.flow.source.WekaForecasterSetup;
 import weka.classifiers.timeseries.AbstractForecaster;
 import weka.classifiers.timeseries.core.IncrementallyPrimeable;
 import weka.core.Instance;
 import weka.core.Instances;
-import adams.core.QuickInfoHelper;
-import adams.flow.container.WekaModelContainer;
-import adams.flow.core.CallableActorReference;
-import adams.flow.core.CallableActorHelper;
-import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
-import adams.flow.source.WekaForecasterSetup;
 
 /**
  <!-- globalinfo-start -->
@@ -96,8 +91,7 @@ import adams.flow.source.WekaForecasterSetup;
  * @version $Revision$
  */
 public class WekaPrimeForecaster
-  extends AbstractTransformer 
-  implements ProvenanceSupporter {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -259,22 +253,6 @@ public class WekaPrimeForecaster
       result        = handleException("Failed to process data:", e);
     }
 
-    if (m_OutputToken != null)
-      updateProvenance(m_OutputToken);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.MODEL_GENERATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 }

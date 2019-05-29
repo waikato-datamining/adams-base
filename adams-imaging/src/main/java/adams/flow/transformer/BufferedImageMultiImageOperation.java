@@ -26,7 +26,6 @@ import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 import adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation;
 import adams.flow.core.Token;
-import adams.flow.provenance.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,11 +93,9 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BufferedImageMultiImageOperation
-  extends AbstractArrayProvider
-  implements ProvenanceSupporter {
+  extends AbstractArrayProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 3690378527551302472L;
@@ -310,8 +307,6 @@ public class BufferedImageMultiImageOperation
     result = new Token(m_CurrentImages.get(0));
     m_CurrentImages.remove(0);
 
-    updateProvenance(result);
-
     return result;
   }
 
@@ -323,18 +318,5 @@ public class BufferedImageMultiImageOperation
     m_CurrentImages.clear();
 
     super.wrapUp();
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.PREPROCESSOR, m_InputToken.getPayload().getClass(), this, ((Token) cont).getPayload().getClass()));
-    }
   }
 }

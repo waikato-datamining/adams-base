@@ -20,11 +20,6 @@
 
 package adams.flow.transformer;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
 import adams.core.Constants;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.AbstractReportReader;
@@ -33,11 +28,11 @@ import adams.data.report.Report;
 import adams.db.DatabaseConnectionHandler;
 import adams.db.ReportProviderByDBID;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Abstract ancestor for report import actors.
@@ -47,8 +42,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @param <T> the type of reports to import
  */
 public abstract class AbstractReportFileImport<T extends Report>
-  extends AbstractDbDataProcessor
-  implements ProvenanceSupporter {
+  extends AbstractDbDataProcessor {
 
   /** for serialization. */
   private static final long serialVersionUID = -4427045123505865448L;
@@ -489,7 +483,6 @@ public abstract class AbstractReportFileImport<T extends Report>
     if (m_Forward) {
       result = new Token(m_Reports.get(0));
       m_Reports.remove(0);
-      updateProvenance(result);
     }
     else if (m_Import) {
       result = new Token(m_IDs.get(0));
@@ -513,16 +506,5 @@ public abstract class AbstractReportFileImport<T extends Report>
       return (m_IDs.size() > 0);
     else
       return false;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  @Override
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, ((Token) cont).getPayload().getClass()));
   }
 }

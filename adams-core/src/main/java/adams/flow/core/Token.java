@@ -15,7 +15,7 @@
 
 /*
  * Token.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -24,11 +24,6 @@ package adams.flow.core;
 import adams.core.CloneHandler;
 import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
-import adams.gui.flow.provenance.ProvenanceNode;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.Serializable;
@@ -39,21 +34,15 @@ import java.io.Serializable;
  * If enabled, provenance information can be stored as well.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
- * @see Provenance#isEnabled()
- * @see ProvenanceSupporter
  */
 public class Token
-  implements Serializable, CloneHandler<Token>, ProvenanceContainer {
+  implements Serializable, CloneHandler<Token> {
 
   /** for serialization. */
   private static final long serialVersionUID = -619575965753741493L;
 
   /** the payload. */
   protected Object m_Payload;
-
-  /** the provenance trace. */
-  protected ProvenanceNode m_Provenance;
 
   /**
    * Initializes the token.
@@ -71,7 +60,6 @@ public class Token
     super();
 
     setPayload(payload);
-    setProvenance(null);
   }
 
   /**
@@ -123,69 +111,6 @@ public class Token
   }
 
   /**
-   * Returns whether provenance is available.
-   *
-   * @return		true if provenance is available
-   */
-  public boolean hasProvenance() {
-    return (m_Provenance != null);
-  }
-
-  /**
-   * Sets the provenance to use.
-   *
-   * @param value	the provenance
-   */
-  public void setProvenance(ProvenanceNode value) {
-    m_Provenance = value;
-  }
-
-  /**
-   * Returns the current provenance.
-   *
-   * @return		the provenance, null if none available
-   */
-  public ProvenanceNode getProvenance() {
-    return m_Provenance;
-  }
-
-  /**
-   * Adds the provenance information to the internal structure.
-   *
-   * @param info	the info to add (the new root node)
-   */
-  public void addProvenance(ProvenanceInformation info) {
-    ProvenanceNode	node;
-    ProvenanceNode	child;
-
-    if (!Provenance.getSingleton().isEnabled())
-      return;
-
-    node = new ProvenanceNode(null, info);
-    if (m_Provenance != null) {
-      child = m_Provenance;
-      node.add(child);
-    }
-    m_Provenance = node;
-  }
-
-  /**
-   * Sets the provenance information. The "info" provenance information will
-   * be the result of the parent nodes in the provenance tree.
-   *
-   * @param info	the provenance information to add (the new root node)
-   * @param parents	the parent provenance information of the new node
-   */
-  public void mergeProvenance(ProvenanceInformation info, ProvenanceNode[] parents) {
-    if (!Provenance.getSingleton().isEnabled())
-      return;
-
-    m_Provenance = new ProvenanceNode(null, info);
-    for (ProvenanceNode parent: parents)
-      m_Provenance.add(parent);
-  }
-
-  /**
    * Returns a clone of itself.
    *
    * @return		the clone
@@ -198,9 +123,6 @@ public class Token
 
     if (!isNull())
       result.setPayload(ObjectCopyHelper.copyObject(m_Payload));
-
-    if (Provenance.getSingleton().isEnabled() && (m_Provenance != null))
-      result.setProvenance(m_Provenance.getClone());
 
     return result;
   }

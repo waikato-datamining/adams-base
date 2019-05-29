@@ -32,11 +32,6 @@ import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.report.Report;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.source.filesystemsearch.LocalFileSearch;
 
 import java.io.File;
@@ -120,8 +115,7 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ImageFileReader
-  extends AbstractTransformer
-  implements ProvenanceSupporter {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = 7466006970025235243L;
@@ -450,19 +444,6 @@ public class ImageFileReader
         cont.getReport().mergeWith(metaData);
     }
 
-    if (m_OutputToken != null)
-      updateProvenance(m_OutputToken);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
   }
 }

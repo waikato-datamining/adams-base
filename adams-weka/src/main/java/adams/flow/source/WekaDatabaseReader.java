@@ -20,11 +20,6 @@
 
 package adams.flow.source;
 
-import java.util.logging.Level;
-
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.converters.DatabaseLoader;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderFile;
@@ -32,11 +27,11 @@ import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionParameterHandler;
 import adams.db.SQLStatement;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.DatabaseLoader;
+
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -113,11 +108,10 @@ import adams.flow.provenance.ProvenanceSupporter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaDatabaseReader
   extends AbstractSource
-  implements ProvenanceSupporter, DatabaseConnectionParameterHandler {
+  implements DatabaseConnectionParameterHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 1255964542481136089L;
@@ -566,9 +560,6 @@ public class WekaDatabaseReader
       m_Data   = null;
     }
 
-    if (result != null)
-      updateProvenance(result);
-
     return result;
   }
 
@@ -600,16 +591,6 @@ public class WekaDatabaseReader
     }
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, ((Token) cont).getPayload().getClass()));
   }
 
   /**

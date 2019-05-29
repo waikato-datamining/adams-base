@@ -23,11 +23,6 @@ package adams.flow.transformer;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.output.prediction.Null;
 import weka.core.Instances;
@@ -110,11 +105,9 @@ import weka.core.Instances;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaTrainTestSetEvaluator
-  extends AbstractCallableWekaClassifierEvaluator
-  implements ProvenanceSupporter {
+  extends AbstractCallableWekaClassifierEvaluator {
 
   /** for serialization. */
   private static final long serialVersionUID = -1092101024095887007L;
@@ -206,22 +199,8 @@ public class WekaTrainTestSetEvaluator
         if (test != null)
           ((WekaEvaluationContainer) m_OutputToken.getPayload()).setValue(WekaEvaluationContainer.VALUE_TESTDATA, test);
       }
-      updateProvenance(m_OutputToken);
     }
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.EVALUATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 }

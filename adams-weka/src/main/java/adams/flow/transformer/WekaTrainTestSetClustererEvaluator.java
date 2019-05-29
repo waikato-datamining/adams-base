@@ -20,17 +20,12 @@
 
 package adams.flow.transformer;
 
-import weka.clusterers.ClusterEvaluation;
-import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.flow.container.WekaClusterEvaluationContainer;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
+import weka.clusterers.ClusterEvaluation;
+import weka.core.Instances;
 
 /**
  <!-- globalinfo-start -->
@@ -94,11 +89,9 @@ import adams.flow.provenance.ProvenanceSupporter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaTrainTestSetClustererEvaluator
-  extends AbstractCallableWekaClustererEvaluator
-  implements ProvenanceSupporter {
+  extends AbstractCallableWekaClustererEvaluator {
 
   /** for serialization. */
   private static final long serialVersionUID = -1092101024095887007L;
@@ -249,23 +242,6 @@ public class WekaTrainTestSetClustererEvaluator
       result = handleException("Failed to evaluate: ", e);
     }
 
-    if (m_OutputToken != null)
-      updateProvenance(m_OutputToken);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  @Override
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.EVALUATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 }

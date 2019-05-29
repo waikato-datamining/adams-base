@@ -24,11 +24,6 @@ import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.core.Attribute;
@@ -164,7 +159,7 @@ import java.util.List;
  */
 public class WekaInstancesMerge
 extends AbstractTransformer
-implements ProvenanceSupporter, WekaMergeInstancesActor, ClassCrossReference {
+implements WekaMergeInstancesActor, ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = -2923715594018710295L;
@@ -1077,26 +1072,13 @@ implements ProvenanceSupporter, WekaMergeInstancesActor, ClassCrossReference {
 	}
       }
 
-      if (!isStopped()) {
+      if (!isStopped())
 	m_OutputToken = new Token(output);
-	updateProvenance(m_OutputToken);
-      }
     }
     catch (Exception e) {
       result = handleException("Failed to merge: ", e);
     }
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  @Override
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
   }
 }

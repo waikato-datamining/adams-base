@@ -30,11 +30,6 @@ import adams.db.DatabaseConnectionHandler;
 import adams.db.DatabaseConnectionUser;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -48,7 +43,7 @@ import java.util.List;
  */
 public abstract class AbstractReportFileReader<T extends Report>
   extends AbstractTransformer
-  implements ProvenanceSupporter, DatabaseConnectionUser {
+  implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -207124154855872209L;
@@ -261,8 +256,6 @@ public abstract class AbstractReportFileReader<T extends Report>
     result = new Token(m_Reports.get(0));
     m_Reports.remove(0);
 
-    updateProvenance(result);
-
     return result;
   }
 
@@ -277,16 +270,6 @@ public abstract class AbstractReportFileReader<T extends Report>
     return (m_Reports.size() > 0);
   }
 
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, ((Token) cont).getPayload().getClass()));
-  }
-  
   /**
    * Stops the execution. No message set.
    */

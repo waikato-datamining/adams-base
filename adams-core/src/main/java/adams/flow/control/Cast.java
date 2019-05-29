@@ -234,7 +234,6 @@ public class Cast
         m_OutputToken = new Token(m_InputToken.getPayload());
       else
         m_OutputToken = new Token(m_ActualClass.cast(m_InputToken.getPayload()));
-      m_OutputToken.setProvenance(m_InputToken.getProvenance());
     }
     catch (Exception e) {
       result = handleException("Failed to cast to '" + getClassname() + "': ", e);

@@ -210,18 +210,12 @@ public class Copy
 	  break;
 	case CLONEHANDLER:
 	  m_OutputToken = new Token(ObjectCopyHelper.copyObject(ObjectCopyHelper.CopyType.CLONEHANDLER, m_InputToken.getPayload()));
-	  if (m_OutputToken.hasProvenance())
-	    m_OutputToken.setProvenance(m_OutputToken.getProvenance().getClone());
 	  break;
 	case SERIALIZATION:
 	  m_OutputToken = new Token(ObjectCopyHelper.copyObject(ObjectCopyHelper.CopyType.SERIALIZABLE, m_InputToken.getPayload()));
-	  if (m_OutputToken.hasProvenance())
-	    m_OutputToken.setProvenance(m_OutputToken.getProvenance().getClone());
 	  break;
 	case SHALLOWCOPY:
 	  m_OutputToken = new Token(OptionUtils.shallowCopy(m_InputToken.getPayload()));
-	  if (m_OutputToken.hasProvenance())
-	    m_OutputToken.setProvenance(m_OutputToken.getProvenance().getClone());
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled copy type: " + m_Type);

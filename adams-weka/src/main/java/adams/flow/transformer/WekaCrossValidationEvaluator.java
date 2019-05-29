@@ -30,11 +30,6 @@ import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.standalone.JobRunnerSetup;
 import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.CrossValidationFoldGenerator;
@@ -160,7 +155,7 @@ import weka.core.Instances;
  */
 public class WekaCrossValidationEvaluator
   extends AbstractCallableWekaClassifierEvaluator
-  implements Randomizable, ProvenanceSupporter, ThreadLimiter, InstancesViewSupporter {
+  implements Randomizable, ThreadLimiter, InstancesViewSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -582,23 +577,9 @@ public class WekaCrossValidationEvaluator
         if (indices != null)
           m_OutputToken.getPayload(WekaEvaluationContainer.class).setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, indices);
       }
-      updateProvenance(m_OutputToken);
     }
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.EVALUATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 
   /**

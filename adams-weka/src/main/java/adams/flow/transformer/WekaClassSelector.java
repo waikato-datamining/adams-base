@@ -24,11 +24,6 @@ import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import weka.core.Attribute;
 
 import java.util.ArrayList;
@@ -107,8 +102,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class WekaClassSelector
-  extends AbstractTransformer
-  implements ProvenanceSupporter {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -373,7 +367,7 @@ public class WekaClassSelector
       }
       else {
 	// determine the attributes that fit the regular expression
-	atts = new ArrayList<Attribute>();
+	atts = new ArrayList<>();
 	for (i = 0; i < inst.numAttributes(); i++) {
 	  if (m_RegexName.isEmpty() || m_RegexName.isMatch(inst.attribute(i).name()))
 	    atts.add(inst.attribute(i));
@@ -390,23 +384,8 @@ public class WekaClassSelector
 	m_OutputToken = new Token(inst);
       else
 	m_OutputToken = new Token(o);
-
-      updateProvenance(m_OutputToken);
     }
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.PREPROCESSOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 }

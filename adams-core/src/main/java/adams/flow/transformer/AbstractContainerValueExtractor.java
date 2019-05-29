@@ -171,8 +171,6 @@ public abstract class AbstractContainerValueExtractor
     result = processContainer(cont);
 
     m_OutputToken = new Token(cont);
-    if (m_InputToken.hasProvenance())
-      m_OutputToken.setProvenance(m_InputToken.getProvenance());
 
     return result;
   }

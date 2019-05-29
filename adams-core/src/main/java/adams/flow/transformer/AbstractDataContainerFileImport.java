@@ -20,33 +20,26 @@
 
 package adams.flow.transformer;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
 import adams.core.io.PlaceholderFile;
 import adams.data.container.DataContainer;
 import adams.data.io.input.AbstractDataContainerReader;
 import adams.db.DataProvider;
 import adams.db.DatabaseConnectionHandler;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Abstract ancestor for actors that import data containers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data that is imported
  */
 public abstract class AbstractDataContainerFileImport<T extends DataContainer>
-  extends AbstractDbDataProcessor
-  implements ProvenanceSupporter {
+  extends AbstractDbDataProcessor {
 
   /** for serialization. */
   private static final long serialVersionUID = -3449734957975707303L;
@@ -379,7 +372,6 @@ public abstract class AbstractDataContainerFileImport<T extends DataContainer>
     if (m_Forward) {
       result = new Token(m_Containers.get(0));
       m_Containers.remove(0);
-      updateProvenance(result);
     }
     else if (m_Import) {
       result = new Token(m_IDs.get(0));
@@ -403,16 +395,5 @@ public abstract class AbstractDataContainerFileImport<T extends DataContainer>
       return (m_IDs.size() > 0);
     else
       return false;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  @Override
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, ((Token) cont).getPayload().getClass()));
   }
 }

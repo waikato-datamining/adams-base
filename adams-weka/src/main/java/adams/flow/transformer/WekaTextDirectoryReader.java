@@ -20,18 +20,13 @@
 
 package adams.flow.transformer;
 
-import java.io.File;
-
-import weka.core.Instances;
-import weka.core.converters.TextDirectoryLoader;
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
+import weka.core.Instances;
+import weka.core.converters.TextDirectoryLoader;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -92,11 +87,9 @@ import adams.flow.provenance.ProvenanceSupporter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaTextDirectoryReader
-  extends AbstractTransformer
-  implements ProvenanceSupporter {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = 9097157984356638281L;
@@ -253,7 +246,6 @@ public class WekaTextDirectoryReader
 	loader.setCharSet(m_CharSet);
 	data = loader.getDataSet();
 	m_OutputToken = new Token(data);
-	updateProvenance(m_OutputToken);
       }
       else {
 	result = "Input is not a directory: " + file;
@@ -264,15 +256,5 @@ public class WekaTextDirectoryReader
     }
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, ((Token) cont).getPayload().getClass()));
   }
 }

@@ -26,11 +26,6 @@ import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.source.WekaClustererSetup;
 import adams.flow.transformer.wekaclusterer.AbstractClustererPostProcessor;
 import adams.flow.transformer.wekaclusterer.PassThrough;
@@ -103,8 +98,7 @@ import java.util.Hashtable;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class WekaTrainClusterer
-  extends AbstractTransformer 
-  implements ProvenanceSupporter {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -374,22 +368,6 @@ public class WekaTrainClusterer
       result = handleException("Failed to process input: " + m_InputToken.getPayload(), e);
     }
 
-    if (m_OutputToken != null)
-      updateProvenance(m_OutputToken);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.MODEL_GENERATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 }

@@ -20,21 +20,16 @@
 
 package adams.flow.transformer;
 
-import java.util.Random;
-
-import weka.clusterers.ClusterEvaluation;
-import weka.clusterers.DensityBasedClusterer;
-import weka.clusterers.MakeDensityBasedClusterer;
-import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
 import adams.flow.container.WekaClusterEvaluationContainer;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
+import weka.clusterers.ClusterEvaluation;
+import weka.clusterers.DensityBasedClusterer;
+import weka.clusterers.MakeDensityBasedClusterer;
+import weka.core.Instances;
+
+import java.util.Random;
 
 /**
  <!-- globalinfo-start -->
@@ -102,11 +97,10 @@ import adams.flow.provenance.ProvenanceSupporter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaCrossValidationClustererEvaluator
   extends AbstractCallableWekaClustererEvaluator
-  implements Randomizable, ProvenanceSupporter {
+  implements Randomizable {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -311,23 +305,6 @@ public class WekaCrossValidationClustererEvaluator
       result = handleException("Failed to cross-validate clusterer: ", e);
     }
 
-    if (m_OutputToken != null)
-      updateProvenance(m_OutputToken);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  @Override
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.EVALUATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 }

@@ -24,13 +24,8 @@ import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
-import adams.ml.data.DefaultDataset;
 import adams.ml.data.Dataset;
+import adams.ml.data.DefaultDataset;
 
 /**
  <!-- globalinfo-start -->
@@ -98,8 +93,7 @@ import adams.ml.data.Dataset;
  * @version $Revision$
  */
 public class ClassSelector
-  extends AbstractTransformer
-  implements ProvenanceSupporter {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -317,21 +311,7 @@ public class ClassSelector
     }
 
     m_OutputToken = new Token(data);
-    updateProvenance(m_OutputToken);
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.PREPROCESSOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 }

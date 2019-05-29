@@ -31,10 +31,6 @@ import adams.data.jai.JAIHelper;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -352,19 +348,6 @@ public class BufferedImageFeatureGenerator
   }
 
   /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.PREPROCESSOR, m_InputToken.getPayload().getClass(), this, ((Token) cont).getPayload().getClass()));
-    }
-  }
-
-  /**
    * Checks whether there is pending output to be collected after
    * executing the flow item.
    *
@@ -386,8 +369,6 @@ public class BufferedImageFeatureGenerator
 
     result = new Token(m_Queue.get(0));
     m_Queue.remove(0);
-
-    updateProvenance(result);
 
     return result;
   }

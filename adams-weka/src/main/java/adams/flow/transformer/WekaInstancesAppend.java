@@ -20,20 +20,15 @@
 
 package adams.flow.transformer;
 
-import java.io.File;
-
+import adams.core.io.PlaceholderFile;
+import adams.flow.core.Token;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SparseInstance;
 import weka.core.converters.ConverterUtils.DataSource;
-import adams.core.io.PlaceholderFile;
-import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -88,8 +83,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @version $Revision$
  */
 public class WekaInstancesAppend
-  extends AbstractTransformer
-  implements ProvenanceSupporter {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -268487303904639474L;
@@ -216,15 +210,5 @@ public class WekaInstancesAppend
     }
     
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
   }
 }

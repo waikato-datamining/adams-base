@@ -20,22 +20,17 @@
 
 package adams.flow.source;
 
-import java.util.ArrayList;
-
-import weka.core.Attribute;
-import weka.core.Instances;
-import weka.filters.unsupervised.attribute.AddValues;
-import weka.filters.unsupervised.attribute.ChangeDateFormat;
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.core.base.AttributeTypeList;
 import adams.core.base.BaseList;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
+import weka.core.Attribute;
+import weka.core.Instances;
+import weka.filters.unsupervised.attribute.AddValues;
+import weka.filters.unsupervised.attribute.ChangeDateFormat;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -115,11 +110,9 @@ import adams.flow.provenance.ProvenanceSupporter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaNewInstances
-  extends AbstractSimpleSource
-  implements ProvenanceSupporter {
+  extends AbstractSimpleSource {
 
   /** for serialization. */
   private static final long serialVersionUID = 1862828539481494711L;
@@ -446,23 +439,11 @@ public class WekaNewInstances
       data.setClassIndex(index);
 
       m_OutputToken = new Token(data);
-
-      updateProvenance(m_OutputToken);
     }
     catch (Exception e) {
       result = handleException("Failed to create new dataset: ", e);
     }
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, m_OutputToken.getPayload().getClass()));
   }
 }

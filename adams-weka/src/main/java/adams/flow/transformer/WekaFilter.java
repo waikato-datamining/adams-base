@@ -38,11 +38,6 @@ import adams.flow.core.ModelLoaderSupporter;
 import adams.flow.core.OptionalOneTimeInitializer;
 import adams.flow.core.Token;
 import adams.flow.core.WekaFilterModelLoader;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.AllFilter;
@@ -172,7 +167,7 @@ import java.util.Hashtable;
  */
 public class WekaFilter
   extends AbstractTransformerWithPropertiesUpdating
-  implements ProvenanceSupporter, OptionalContainerOutput, ModelFileHandler,
+  implements OptionalContainerOutput, ModelFileHandler,
              StorageUser, ModelLoaderSupporter, OptionalOneTimeInitializer {
 
   /** for serialization. */
@@ -791,22 +786,6 @@ public class WekaFilter
       }
     }
 
-    if (m_OutputToken != null)
-      updateProvenance(m_OutputToken);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.PREPROCESSOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 }

@@ -20,18 +20,14 @@
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import weka.core.Instance;
-import weka.core.Instances;
 import adams.core.QuickInfoHelper;
 import adams.data.weka.WekaAttributeIndex;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
+import weka.core.Instance;
+import weka.core.Instances;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -263,22 +259,7 @@ public class WekaSubsets
     result = new Token(m_Queue.get(0));
     m_Queue.remove(0);
 
-    updateProvenance(result);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.PREPROCESSOR, m_InputToken.getPayload().getClass(), this, ((Token) cont).getPayload().getClass()));
-    }
   }
 
   /**

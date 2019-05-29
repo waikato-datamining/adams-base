@@ -22,21 +22,19 @@ package adams.core.option;
 import adams.flow.core.Actor;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
-import adams.flow.provenance.ProvenanceInformation;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
  * Specialized ArrayProducer that resolves "callable actor references" into
- * concrete options. Used in provenance.
+ * concrete options.
  * <br><br>
  * Assumes that the callable actor forwards a setup if merely executed, without
  * any input.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
- * @see ProvenanceInformation
  */
 public class MaterializedArrayProducer
   extends ArrayProducer {

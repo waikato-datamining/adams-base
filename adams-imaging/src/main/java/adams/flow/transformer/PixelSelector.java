@@ -21,10 +21,6 @@ package adams.flow.transformer;
 
 import adams.data.image.AbstractImageContainer;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
 import adams.flow.transformer.pixelselector.AbstractPixelSelectorAction;
 import adams.flow.transformer.pixelselector.AbstractPixelSelectorOverlay;
 import adams.flow.transformer.pixelselector.PixelSelectorPanel;
@@ -405,25 +401,7 @@ public class PixelSelector
       else
 	result = "User cancelled dialog!";
     }
-    
-    if (result == null) {
-      if (m_OutputToken != null)
-	updateProvenance(m_OutputToken);
-    }
-    
-    return result;
-  }
 
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.PREPROCESSOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
+    return result;
   }
 }

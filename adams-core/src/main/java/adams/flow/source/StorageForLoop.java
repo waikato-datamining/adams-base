@@ -26,11 +26,6 @@ import adams.core.VariableUpdater;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  <!-- globalinfo-start -->
@@ -108,11 +103,10 @@ import adams.flow.provenance.ProvenanceSupporter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StorageForLoop
   extends AbstractForLoop 
-  implements ProvenanceSupporter, VariableUpdater {
+  implements VariableUpdater {
 
   /** for serialization. */
   private static final long serialVersionUID = 5940182514084428795L;
@@ -271,15 +265,5 @@ public class StorageForLoop
     m_Current += m_LoopStep;
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, ((Token) cont).getPayload().getClass()));
   }
 }

@@ -26,11 +26,6 @@ import adams.core.io.PlaceholderFile;
 import adams.data.imagemagick.AbstractImageOperation;
 import adams.data.imagemagick.im.NoOp;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 
 import java.io.File;
 
@@ -45,11 +40,10 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9987 $
  */
 public class ImageMagickOperation
   extends AbstractTransformer
-  implements ProvenanceSupporter, FileWriter {
+  implements FileWriter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3690378527551302472L;
@@ -223,18 +217,5 @@ public class ImageMagickOperation
       m_OutputToken = new Token(m_OutputFile.getAbsolutePath());
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.PREPROCESSOR, m_InputToken.getPayload().getClass(), this, ((Token) cont).getPayload().getClass()));
-    }
   }
 }

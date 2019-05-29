@@ -27,11 +27,6 @@ import adams.data.container.DataContainer;
 import adams.data.io.input.AbstractDataContainerReader;
 import adams.data.io.input.IncrementalDataContainerReader;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -41,12 +36,10 @@ import java.util.List;
  * Abstract ancestor for actors that read data containers from disk.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data that is read from disk
  */
 public abstract class AbstractDataContainerFileReader<T extends DataContainer>
-  extends AbstractTransformer
-  implements ProvenanceSupporter {
+  extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = 2136481673137019370L;
@@ -249,8 +242,6 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
     result = new Token(m_Containers.get(0));
     m_Containers.remove(0);
 
-    updateProvenance(result);
-
     return result;
   }
 
@@ -266,16 +257,6 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
       return (m_Containers.size() > 0) || ((IncrementalDataContainerReader) m_Reader).hasMoreData();
     else
       return (m_Containers.size() > 0);
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, ((Token) cont).getPayload().getClass()));
   }
 
   /**

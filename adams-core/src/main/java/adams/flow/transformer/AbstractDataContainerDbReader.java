@@ -24,11 +24,6 @@ import adams.data.container.DataContainer;
 import adams.db.DataProvider;
 import adams.db.FilteredDataProvider;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.transformer.datacontainer.AbstractDataContainerPostProcessor;
 import adams.flow.transformer.datacontainer.NoPostProcessing;
 
@@ -40,7 +35,7 @@ import adams.flow.transformer.datacontainer.NoPostProcessing;
  */
 public abstract class AbstractDataContainerDbReader<T extends DataContainer>
   extends AbstractDbTransformer
-  implements ProvenanceSupporter, DataContainerDbReader<T> {
+  implements DataContainerDbReader<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4736058667429890220L;
@@ -214,20 +209,6 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
       m_OutputToken = new Token(m_PostProcessor.postProcess(cont));
     }
 
-    if (m_OutputToken != null)
-      updateProvenance(m_OutputToken);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  @Override
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, m_OutputToken.getPayload().getClass()));
   }
 }

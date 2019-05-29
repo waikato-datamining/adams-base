@@ -26,11 +26,6 @@ import adams.core.base.BaseRegExp;
 import adams.core.option.OptionUtils;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
@@ -131,7 +126,7 @@ import java.util.List;
  */
 public class WekaChooseAttributes
   extends AbstractInteractiveTransformer
-  implements AutomatableInteractiveActor, ProvenanceSupporter {
+  implements AutomatableInteractiveActor {
 
   /** for serialization. */
   private static final long serialVersionUID = -1483735876005865608L;
@@ -456,7 +451,6 @@ public class WekaChooseAttributes
 
     try {
       m_OutputToken = new Token(filter(inst, selected));
-      updateProvenance(m_OutputToken);
       result = true;
     }
     catch (Exception e) {
@@ -518,18 +512,5 @@ public class WekaChooseAttributes
     }
     
     return result;
-  }
-  
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.PREPROCESSOR, m_InputToken.getPayload().getClass(), OptionUtils.getOptions(m_Remove), m_OutputToken.getPayload().getClass()));
-    }
   }
 }

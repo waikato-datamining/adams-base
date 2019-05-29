@@ -24,11 +24,6 @@ import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.Row;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import adams.ml.data.Dataset;
 import adams.ml.preprocessing.StreamFilter;
 import adams.ml.preprocessing.unsupervised.PassThrough;
@@ -95,8 +90,7 @@ import adams.ml.preprocessing.unsupervised.PassThrough;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class DatasetRowFilter
-  extends AbstractTransformer
-  implements ProvenanceSupporter {
+  extends AbstractTransformer {
 
   private static final long serialVersionUID = -2575293379884905336L;
 
@@ -234,22 +228,6 @@ public class DatasetRowFilter
       result = handleException("Failed to filter " + (rowIn != null ? "row" : "dataset") + "!", e);
     }
 
-    if (m_OutputToken != null)
-      updateProvenance(m_OutputToken);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-	cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.PREPROCESSOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 }

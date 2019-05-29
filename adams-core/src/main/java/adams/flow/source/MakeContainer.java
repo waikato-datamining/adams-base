@@ -31,11 +31,6 @@ import adams.flow.control.StorageUser;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 
 import java.util.Iterator;
 
@@ -119,11 +114,10 @@ import java.util.Iterator;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MakeContainer
   extends AbstractSimpleSource
-  implements ProvenanceSupporter, StorageUser {
+  implements StorageUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -132045002653940359L;
@@ -480,15 +474,5 @@ public class MakeContainer
       result = "Container (" + cont.getClass().getName() + ") not valid!";
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, m_OutputToken.getPayload().getClass()));
   }
 }

@@ -24,11 +24,6 @@ import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import weka.core.Instances;
 import weka.datagenerators.classifiers.classification.Agrawal;
 
@@ -98,11 +93,9 @@ import weka.datagenerators.classifiers.classification.Agrawal;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaDataGenerator
-  extends AbstractSimpleSourceWithPropertiesUpdating
-  implements ProvenanceSupporter {
+  extends AbstractSimpleSourceWithPropertiesUpdating {
 
   /** for serialization. */
   private static final long serialVersionUID = 1862828539481494711L;
@@ -210,8 +203,6 @@ public class WekaDataGenerator
 	  result = "No data obtained from data generator!";
 	else
 	  m_OutputToken = new Token(data);
-
-	updateProvenance(m_OutputToken);
       }
     }
     catch (Exception e) {
@@ -219,15 +210,5 @@ public class WekaDataGenerator
     }
 
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, m_OutputToken.getPayload().getClass()));
   }
 }

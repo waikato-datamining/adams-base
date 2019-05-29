@@ -26,11 +26,6 @@ import adams.core.option.OptionUtils;
 import adams.data.weka.InstancesViewCreator;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import weka.classifiers.DefaultRandomSplitGenerator;
 import weka.classifiers.RandomSplitGenerator;
 import weka.core.Instances;
@@ -123,7 +118,7 @@ import weka.core.Instances;
  */
 public class WekaRandomSplit
   extends AbstractTransformer
-  implements Randomizable, ProvenanceSupporter, InstancesViewCreator {
+  implements Randomizable, InstancesViewCreator {
 
   /** for serialization. */
   private static final long serialVersionUID = -6447945986570354931L;
@@ -405,21 +400,6 @@ public class WekaRandomSplit
     if (result == null)
       m_OutputToken = new Token(generator.next());
 
-    updateProvenance(m_OutputToken);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled()) {
-      if (m_InputToken.hasProvenance())
-        cont.setProvenance(m_InputToken.getProvenance().getClone());
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, m_InputToken.getPayload().getClass(), this, m_OutputToken.getPayload().getClass()));
-    }
   }
 }

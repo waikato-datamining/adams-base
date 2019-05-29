@@ -23,11 +23,6 @@ package adams.flow.transformer;
 import adams.data.report.Report;
 import adams.db.ReportProvider;
 import adams.flow.core.Token;
-import adams.flow.provenance.ActorType;
-import adams.flow.provenance.Provenance;
-import adams.flow.provenance.ProvenanceContainer;
-import adams.flow.provenance.ProvenanceInformation;
-import adams.flow.provenance.ProvenanceSupporter;
 import adams.flow.transformer.report.AbstractReportPostProcessor;
 import adams.flow.transformer.report.NoPostProcessing;
 
@@ -35,13 +30,11 @@ import adams.flow.transformer.report.NoPostProcessing;
  * Abstract ancestor for actors that load reports from the database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of report to handle
  * @param <I> the type of ID to handle
  */
 public abstract class AbstractReportDbReader<T extends Report, I>
-  extends AbstractDbTransformer
-  implements ProvenanceSupporter {
+  extends AbstractDbTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = 7352720726300796621L;
@@ -138,20 +131,6 @@ public abstract class AbstractReportDbReader<T extends Report, I>
     else
       m_OutputToken = new Token(m_PostProcessor.postProcess(report));
 
-    if (m_OutputToken != null)
-      updateProvenance(m_OutputToken);
-
     return result;
-  }
-
-  /**
-   * Updates the provenance information in the provided container.
-   *
-   * @param cont	the provenance container to update
-   */
-  @Override
-  public void updateProvenance(ProvenanceContainer cont) {
-    if (Provenance.getSingleton().isEnabled())
-      cont.addProvenance(new ProvenanceInformation(ActorType.DATAGENERATOR, this, m_OutputToken.getPayload().getClass()));
   }
 }

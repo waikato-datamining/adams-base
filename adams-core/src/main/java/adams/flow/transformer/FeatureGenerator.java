@@ -22,7 +22,6 @@ package adams.flow.transformer;
 
 import adams.flow.core.Actor;
 import adams.flow.core.VariableMonitor;
-import adams.flow.provenance.ProvenanceSupporter;
 
 /**
  * General interface for feature generating actors.
@@ -30,7 +29,7 @@ import adams.flow.provenance.ProvenanceSupporter;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public interface FeatureGenerator<T>
-  extends Actor, ProvenanceSupporter, VariableMonitor {
+  extends Actor, VariableMonitor {
 
   /**
    * Sets the algorithm to use.
