@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * VariableSupport.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -145,7 +145,7 @@ public class VariableSupport {
   /**
    * Pops up a dialog with the provided callable actors for the user to select 
    * one.
-   * 
+   *
    * @param parent	the swing parent
    * @param nodes	the actors to choose from
    * @param current	the current actor, null if not available
@@ -155,7 +155,7 @@ public class VariableSupport {
     List<String>	list;
     int			i;
     Node		child;
-    
+
     list = new ArrayList<String>();
     for (Node node: nodes) {
       list.add(node.getFullName());
@@ -164,19 +164,19 @@ public class VariableSupport {
 	list.add(child.getFullName());
       }
     }
-    
+
     if (list.size() == 0) {
       GUIHelper.showErrorMessage(parent, "No callable actors found!");
       return null;
     }
-    
+
     return selectCallableActorFromNames(parent, list, current);
   }
 
   /**
    * Pops up a dialog with the provided callable actors for the user to select 
    * one.
-   * 
+   *
    * @param parent	the swing parent
    * @param actors	the actors to choose from
    * @param current	the current actor, null if not available
@@ -196,13 +196,13 @@ public class VariableSupport {
     final BaseTextField		textValue;
     final StringBuilder		selected;
 
-    result = null;
-    
     if (actors.size() == 0)
-      return result;
+      return null;
+
+    result = null;
 
     selected = new StringBuilder();
-    
+
     if (GUIHelper.getParentDialog(parent) != null)
       dlg = new BaseDialog(GUIHelper.getParentDialog(parent), ModalityType.DOCUMENT_MODAL);
     else
@@ -215,15 +215,15 @@ public class VariableSupport {
     tree.addMouseListener(new MouseAdapter() {
       @Override
       public void mousePressed(MouseEvent e) {
-        final TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-        if (MouseUtils.isDoubleClick(e)) {
-          if (getCallableActor(selPath) != null)
-            selected.append(getCallableActor(selPath));
-          dlg.setVisible(false);
-          e.consume();
-        }
-        if (!e.isConsumed())
-          super.mousePressed(e);
+	final TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+	if (MouseUtils.isDoubleClick(e)) {
+	  if (getCallableActor(selPath) != null)
+	    selected.append(getCallableActor(selPath));
+	  dlg.setVisible(false);
+	  e.consume();
+	}
+	if (!e.isConsumed())
+	  super.mousePressed(e);
       }
     });
     tree.setFlowTree(FlowHelper.getTree(parent));
@@ -294,14 +294,14 @@ public class VariableSupport {
     dlg.pack();
     dlg.setLocationRelativeTo(parent);
     dlg.setVisible(true);
-    
+
     // anything selected
     if (selected.length() > 0)
       result = selected.toString();
-    
+
     return result;
   }
-  
+
   /**
    * Updates a popup menu and adds menu items for variable management.
    *
@@ -311,18 +311,19 @@ public class VariableSupport {
    * @return		the updated popup menu
    */
   public static BasePopupMenu updatePopup(final PropertySheetPanel parent, PropertyEditor editor, BasePopupMenu menu) {
-    BasePopupMenu		result;
-    JMenuItem			item;
+    BasePopupMenu 		result;
+    JMenuItem 			item;
     AbstractOption 		option;
-    JLabel			label;
-    AbstractArgumentOption	argoption;
+    JLabel 			label;
+    AbstractArgumentOption 	argoption;
+    boolean			allowsVars;
 
     result = menu;
     if (parent == null)
       return result;
 
     option = parent.findOption(editor);
-    label  = parent.findLabel(editor);
+    label = parent.findLabel(editor);
 
     if (option instanceof AbstractArgumentOption) {
       argoption = (AbstractArgumentOption) option;
@@ -331,12 +332,14 @@ public class VariableSupport {
       final JLabel fLabel = label;
       final PropertySheetPanel fParent = parent;
 
+      allowsVars = argoption.getOwner().allowsVariables(argoption.getProperty());
       if (result.getComponentCount() > 0)
 	result.addSeparator();
 
       if (!argoption.isVariableAttached()) {
 	// regular variable
 	item = new JMenuItem("Set variable...", GUIHelper.getIcon("variable.gif"));
+	item.setEnabled(allowsVars);
 	item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
 	    String name = GUIHelper.showInputDialog(fParent, "Please enter the variable name:", "", "Set variable");
@@ -344,9 +347,9 @@ public class VariableSupport {
 	      return;
 	    if (!Variables.isValidName(name)) {
 	      GUIHelper.showErrorMessage(
-		  fParent,
-		  "Not a valid variable name: " + name + "\n"
-		      + "Allowed characters:\n" + Variables.CHARS);
+		fParent,
+		"Not a valid variable name: " + name + "\n"
+		  + "Allowed characters:\n" + Variables.CHARS);
 	      return;
 	    }
 	    fArgOption.setVariable(name);
@@ -358,6 +361,7 @@ public class VariableSupport {
 
 	// callable actor reference
 	item = new JMenuItem("Attach callable actor...", GUIHelper.getIcon(CallableActors.class.getName() + ".gif"));
+	item.setEnabled(allowsVars);
 	item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
 	    List<Node> nodes = FlowHelper.findTopCallableActors(fParent);
@@ -373,6 +377,7 @@ public class VariableSupport {
 
 	// storage value reference
 	item = new JMenuItem("Attach storage value...", GUIHelper.getIcon(StorageValue.class.getName() + ".gif"));
+	item.setEnabled(allowsVars);
 	item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
 	    String name = GUIHelper.showInputDialog(fParent, "Please enter the storage name:", "", "Attach storage value");
@@ -381,8 +386,8 @@ public class VariableSupport {
 	    StorageName sn = new StorageName();
 	    if (!sn.isValid(name)) {
 	      GUIHelper.showErrorMessage(
-		  fParent,
-		  "Not a valid storage name: " + name + "!");
+		fParent,
+		"Not a valid storage name: " + name + "!");
 	      return;
 	    }
 	    fArgOption.setVariable(FlowVariables.PREFIX_STORAGE + name);
@@ -395,6 +400,7 @@ public class VariableSupport {
       else {
 	if (fArgOption.getVariableName().startsWith(FlowVariables.PREFIX_CALLABLEACTOR)) {
 	  item = new JMenuItem("Re-attach callable actor...", GUIHelper.getIcon(CallableActors.class.getName() + ".gif"));
+	  item.setEnabled(allowsVars);
 	  item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      List<Node> nodes = FlowHelper.findTopCallableActors(fParent);
@@ -410,6 +416,7 @@ public class VariableSupport {
 	}
 	else if (fArgOption.getVariableName().startsWith(FlowVariables.PREFIX_STORAGE)) {
 	  item = new JMenuItem("Re-attach storage value...", GUIHelper.getIcon(StorageValue.class.getName() + ".gif"));
+	  item.setEnabled(allowsVars);
 	  item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      String oldName = fArgOption.getVariableName().substring(FlowVariables.PREFIX_STORAGE.length());
@@ -419,8 +426,8 @@ public class VariableSupport {
 	      StorageName sn = new StorageName();
 	      if (!sn.isValid(name)) {
 		GUIHelper.showErrorMessage(
-		    fParent,
-		    "Not a valid storage name: " + name + "!");
+		  fParent,
+		  "Not a valid storage name: " + name + "!");
 		return;
 	      }
 	      fArgOption.setVariable(FlowVariables.PREFIX_STORAGE + name);
@@ -432,6 +439,7 @@ public class VariableSupport {
 	}
 	else {
 	  item = new JMenuItem("Change variable '" + fArgOption.getVariableName() + "'...", GUIHelper.getIcon("variable.gif"));
+	  item.setEnabled(allowsVars);
 	  item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      String oldName = fArgOption.getVariableName();
@@ -440,9 +448,9 @@ public class VariableSupport {
 		return;
 	      if (!Variables.isValidName(name)) {
 		GUIHelper.showErrorMessage(
-		    fParent,
-		    "Not a valid variable name: " + name + "\n"
-			+ "Allowed characters:\n" + Variables.CHARS);
+		  fParent,
+		  "Not a valid variable name: " + name + "\n"
+		    + "Allowed characters:\n" + Variables.CHARS);
 		return;
 	      }
 	      fArgOption.setVariable(name);
@@ -459,6 +467,7 @@ public class VariableSupport {
 	  item = new JMenuItem("Detach storage value '" + argoption.getVariableName().substring(FlowVariables.PREFIX_STORAGE.length()) + "'", GUIHelper.getIcon("delete.gif"));
 	else
 	  item = new JMenuItem("Remove variable '" + argoption.getVariableName() + "'", GUIHelper.getIcon("delete.gif"));
+	item.setEnabled(allowsVars);
 	item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
 	    fArgOption.setVariable(null);
@@ -498,7 +507,7 @@ public class VariableSupport {
 
     // hint
     text        = label.getToolTipText();
-    hintPresent = (text.indexOf(HINT_INDICATOR) > -1);
+    hintPresent = text.contains(HINT_INDICATOR);
     if (hintPresent)
       text = text.substring(0, text.indexOf(HINT_INDICATOR));
     if (hasVariable)

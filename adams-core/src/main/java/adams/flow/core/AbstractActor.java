@@ -282,24 +282,25 @@ public abstract class AbstractActor
     super.defineOptions();
 
     m_OptionManager.add(
-	    "name", "name",
-	    getDefaultName());
+      "name", "name",
+      getDefaultName());
 
     m_OptionManager.add(
-	    "annotation", "annotations",
-	    new BaseAnnotation(""));
+      "annotation", "annotations",
+      new BaseAnnotation(""));
 
     m_OptionManager.add(
-	    "skip", "skip",
-	    false);
+      "skip", "skip",
+      false);
+    m_OptionManager.disableVariables("skip");
 
     m_OptionManager.add(
-	    "stop-flow-on-error", "stopFlowOnError",
-	    false);
+      "stop-flow-on-error", "stopFlowOnError",
+      false);
 
     m_OptionManager.add(
-	    "silent", "silent",
-	    false);
+      "silent", "silent",
+      false);
   }
 
   /**

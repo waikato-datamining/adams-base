@@ -147,6 +147,7 @@ public class ArrayConsumer
     ArrayConsumer		consumer;
     int				i;
     AbstractCommandLineHandler	handler;
+    String			msg;
 
     method = getWriteMethod(option);
     if (method == null)
@@ -157,7 +158,8 @@ public class ArrayConsumer
     for (i = 0; i < values.length; i++) {
       // variable?
       if (Variables.isPlaceholder(values[i])) {
-	option.setVariable(values[i]);
+	if ((msg = option.setVariable(values[i])) != null)
+	  m_Warnings.add(msg);
 	return;
       }
 
@@ -205,6 +207,7 @@ public class ArrayConsumer
     Method	method;
     Object	objects;
     int		i;
+    String	msg;
 
     method = getWriteMethod(option);
     if (method == null)
@@ -215,7 +218,8 @@ public class ArrayConsumer
     for (i = 0; i < values.length; i++) {
       // variable?
       if (Variables.isPlaceholder(values[i])) {
-	option.setVariable(values[i]);
+	if ((msg = option.setVariable(values[i])) != null)
+	  m_Warnings.add(msg);
 	return;
       }
 

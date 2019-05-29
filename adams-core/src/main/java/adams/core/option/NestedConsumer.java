@@ -252,7 +252,8 @@ public class NestedConsumer
 
     for (i = 0; i < values.size(); i++) {
       if ((values.get(i).getClass() == Line.class) && Variables.isPlaceholder(((Line) values.get(i)).getContent())) {
-	option.setVariable(((Line) values.get(i)).getContent());
+	if ((msg = option.setVariable(((Line) values.get(i)).getContent())) != null)
+	  m_Warnings.add(msg);
 	return;
       }
 
@@ -343,7 +344,8 @@ public class NestedConsumer
     for (i = 0; i < values.size(); i++) {
       // variable?
       if (Variables.isPlaceholder(((Line) values.get(i)).getContent())) {
-	option.setVariable(((Line) values.get(i)).getContent());
+	if ((msg = option.setVariable(((Line) values.get(i)).getContent())) != null)
+	  m_Warnings.add(msg);
 	return;
       }
 

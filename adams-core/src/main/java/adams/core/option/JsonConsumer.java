@@ -169,7 +169,8 @@ public class JsonConsumer
 
     // variable?
     if ((value instanceof String) && Variables.isPlaceholder((String) value)) {
-      option.setVariable((String) value);
+      if ((msg = option.setVariable((String) value)) != null)
+	m_Warnings.add(msg);
       return;
     }
 
@@ -256,7 +257,8 @@ public class JsonConsumer
 
     // variable?
     if ((value instanceof String) && Variables.isPlaceholder((String) value)) {
-      option.setVariable((String) value);
+      if ((msg = option.setVariable((String) value)) != null)
+	m_Warnings.add(msg);
       return;
     }
 

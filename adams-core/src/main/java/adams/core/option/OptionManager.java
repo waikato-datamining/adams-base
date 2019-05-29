@@ -15,7 +15,7 @@
 
 /*
  * OptionManager.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -36,7 +36,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class for managing option definitions.
@@ -59,10 +62,13 @@ public class OptionManager
   protected List<AbstractOption> m_Options;
 
   /** the commandline flag &lt;-&gt; index relationship. */
-  protected HashMap<String,Integer> m_CommandlineIndex;
+  protected Map<String,Integer> m_CommandlineIndex;
 
   /** the (bean) property &lt;-&gt; index relationship. */
-  protected HashMap<String,Integer> m_PropertyIndex;
+  protected Map<String,Integer> m_PropertyIndex;
+
+  /** the properties that cannot have variables attached. */
+  protected Set<String> m_NoVariablesProperties;
 
   /** whether to throw exceptions or just ignore errors. */
   protected boolean m_ThrowExceptions;
@@ -81,13 +87,14 @@ public class OptionManager
   public OptionManager(OptionHandler owner) {
     super();
 
-    m_Owner            = owner;
-    m_Options          = new ArrayList<>();
-    m_CommandlineIndex = new HashMap<>();
-    m_PropertyIndex    = new HashMap<>();
-    m_ThrowExceptions  = false;
-    m_Variables        = null;
-    m_Quiet            = false;
+    m_Owner                 = owner;
+    m_Options               = new ArrayList<>();
+    m_CommandlineIndex      = new HashMap<>();
+    m_PropertyIndex         = new HashMap<>();
+    m_NoVariablesProperties = null;
+    m_ThrowExceptions       = false;
+    m_Variables             = null;
+    m_Quiet                 = false;
   }
 
   /**
@@ -424,6 +431,41 @@ public class OptionManager
   }
 
   /**
+   * Disables variable support for this bean property.
+   *
+   * @param property	the property to disable
+   */
+  public void disableVariables(String property) {
+    if (m_NoVariablesProperties == null)
+      m_NoVariablesProperties = new HashSet<>();
+    m_NoVariablesProperties.add(property);
+  }
+
+  /**
+   * Enables variable support for this bean property again.
+   *
+   * @param property	the property to enable
+   */
+  public void enabledVariables(String property) {
+    if (m_NoVariablesProperties != null) {
+      m_NoVariablesProperties.remove(property);
+      if (m_NoVariablesProperties.size() == 0)
+        m_NoVariablesProperties = null;
+    }
+  }
+
+  /**
+   * Checks whether this property allows variables.
+   *
+   * @param property	the bean property to check
+   * @return		true if variables allowed
+   */
+  public boolean allowsVariables(String property) {
+    return (m_NoVariablesProperties == null)
+      || !m_NoVariablesProperties.contains(property);
+  }
+
+  /**
    * Returns the list of options.
    *
    * @return		the options
@@ -603,7 +645,7 @@ public class OptionManager
 
     result = null;
     option = findOption(property, false);
-    if ((option != null) && (option instanceof AbstractArgumentOption)) {
+    if (option instanceof AbstractArgumentOption) {
       argOption = (AbstractArgumentOption) option;
       if (argOption.getProperty().equals(property)) {
 	result = argOption;
@@ -627,7 +669,7 @@ public class OptionManager
 
     result = null;
     option = findOption(property, false);
-    if ((option != null) && (option instanceof AbstractArgumentOption)) {
+    if (option instanceof AbstractArgumentOption) {
       argOption = (AbstractArgumentOption) option;
       if (argOption.getProperty().equals(property))
 	result = argOption.getVariable();
@@ -792,7 +834,7 @@ public class OptionManager
 	  if (error != null) {
 	    if (m_Result.length() > 0)
 	      m_Result.append("\n");
-	    m_Result.append(option.getOptionHandler().getClass().getName() + "/" + option.getProperty() + ": " + error);
+	    m_Result.append(option.getOptionHandler().getClass().getName()).append("/").append(option.getProperty()).append(": ").append(error);
 	    if (log != null)
 	      log.severe(path + "/" + option.getOptionHandler().getClass().getName() + "/" + option.getProperty() + "/" + getVariables().hashCode() + ":" + error);
 	  }
@@ -1083,7 +1125,7 @@ public class OptionManager
     result = true;
 
     opt = findByProperty(property);
-    if ((opt != null) && (opt instanceof  AbstractNumericOption)) {
+    if (opt instanceof  AbstractNumericOption) {
       numeric = (AbstractNumericOption) opt;
       result  = numeric.isValid(n);
     }
@@ -1103,6 +1145,8 @@ public class OptionManager
     m_Options.clear();
     m_CommandlineIndex.clear();
     m_PropertyIndex.clear();
+    if (m_NoVariablesProperties != null)
+      m_NoVariablesProperties.clear();
     m_Variables = null;
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * AbstractArgumentOption.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -36,7 +36,6 @@ import java.util.logging.Level;
  * The ancestor of all option classes that take an argument.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractArgumentOption
   extends AbstractOption
@@ -151,13 +150,24 @@ public abstract class AbstractArgumentOption
    * Sets the variable placeholder to use, or null to disable.
    *
    * @param value	the variable placeholder
+   * @return 		null if successfully set/unset, otherwise error message
    */
-  public void setVariable(String value) {
+  public String setVariable(String value) {
     m_VariableReferencesObject = null;
-    if (value != null)
-      m_Variable = Variables.extractName(value);
-    else
+    if (value != null) {
+      if (getOwner().allowsVariables(getProperty())) {
+	m_Variable = Variables.extractName(value);
+	return null;
+      }
+      else {
+        m_Variable = null;
+        return "Cannot attach any variable to property '" + getProperty() + "' of class '" + Utils.classToString(getOwner().getOwner()) + "'!";
+      }
+    }
+    else {
       m_Variable = null;
+      return null;
+    }
   }
 
   /**
