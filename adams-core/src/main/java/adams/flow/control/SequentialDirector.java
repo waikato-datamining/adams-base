@@ -15,19 +15,20 @@
 
 /*
  * SequentialDirector.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 import adams.core.Utils;
-import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,6 @@ import java.util.logging.Level;
  * Manages the execution of actors in sequential order.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SequentialDirector
   extends AbstractDirector {
@@ -85,7 +85,7 @@ public class SequentialDirector
    */
   protected List<Token> getFinalOutput() {
     if (m_FinalOutput == null)
-      m_FinalOutput = new ArrayList<Token>();
+      m_FinalOutput = new ArrayList<>();
 
     return m_FinalOutput;
   }
@@ -113,9 +113,9 @@ public class SequentialDirector
   }
 
   /**
-   * Handles the error message, by outputting the exception on stderr and 
+   * Handles the error message, by outputting the exception on stderr and
    * generating/returning a combined error string.
-   * 
+   *
    * @param actor	the actor that generated the exception
    * @param msg		the error message
    * @param t		the exception
@@ -138,7 +138,7 @@ public class SequentialDirector
     if (msg == null)
       return null;
     if (actor.hasErrorHandler()) {
-      if (isLoggingEnabled())
+      if (getLoggingLevel().isAtLeast(Level.INFO))
         getLogger().info("Error handler: " + actor.getErrorHandler().hashCode());
       return actor.getErrorHandler().handleError(actor, action, msg);
     }
@@ -163,9 +163,9 @@ public class SequentialDirector
     try {
       if (actor.getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	actor.getFlowExecutionListeningSupporter().getFlowExecutionListener().preInput(actor, input);
-      
+
       ((InputConsumer) actor).input(input);
-      
+
       if (actor.getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	actor.getFlowExecutionListeningSupporter().getFlowExecutionListener().postInput(actor);
     }
@@ -194,16 +194,16 @@ public class SequentialDirector
       return "Flushing execution!";
 
     try {
-      if (LoggingHelper.isAtLeast(getLogger(), Level.FINEST))
+      if (getLoggingLevel().isAtLeast(Level.FINEST))
 	getLogger().finest("Size before 'execute()': " + actor.sizeOf() + " [" + actor.getFullName() + "]");
       if (actor.getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	actor.getFlowExecutionListeningSupporter().getFlowExecutionListener().preExecute(actor);
-      
+
       result = actor.execute();
-      
+
       if (actor.getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	actor.getFlowExecutionListeningSupporter().getFlowExecutionListener().postExecute(actor);
-      if (LoggingHelper.isAtLeast(getLogger(), Level.FINEST))
+      if (getLoggingLevel().isAtLeast(Level.FINEST))
 	getLogger().finest("Size after 'execute()': " + actor.sizeOf() + " [" + actor.getFullName() + "]");
     }
     catch (Throwable t) {
@@ -267,16 +267,16 @@ public class SequentialDirector
     msgFull = null;
 
     try {
-      if (LoggingHelper.isAtLeast(getLogger(), Level.FINEST))
+      if (getLoggingLevel().isAtLeast(Level.FINEST))
 	getLogger().finest("Size before 'output()': " + actor.sizeOf() + " [" + actor.getFullName() + "]");
       if (actor.getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	actor.getFlowExecutionListeningSupporter().getFlowExecutionListener().preOutput(actor);
 
       result = ((OutputProducer) actor).output();
-      
+
       if (actor.getFlowExecutionListeningSupporter().isFlowExecutionListeningEnabled())
 	actor.getFlowExecutionListeningSupporter().getFlowExecutionListener().postOutput(actor, result);
-      if (LoggingHelper.isAtLeast(getLogger(), Level.FINEST))
+      if (getLoggingLevel().isAtLeast(Level.FINEST))
 	getLogger().finest("Size after 'output()': " + actor.sizeOf() + " [" + actor.getFullName() + "]");
     }
     catch (Throwable t) {
@@ -290,6 +290,35 @@ public class SequentialDirector
   }
 
   /**
+   * Returns the indices of the active (= non-skipped) actors.
+   *
+   * @return		the indices of active actors
+   */
+  protected int[] activeIndices() {
+    return activeIndices(0, m_ControlActor.size() - 1);
+  }
+
+  /**
+   * Returns the indices of the active (= non-skipped) actors in the given range.
+   *
+   * @param from	the first actor (incl)
+   * @param to		the last actor (incl)
+   * @return		the indices of active actors
+   */
+  protected int[] activeIndices(int from, int to) {
+    TIntList	result;
+    int		i;
+
+    result = new TIntArrayList();
+    for (i = from; i <= to; i++) {
+      if (!m_ControlActor.get(i).getSkip())
+        result.add(i);
+    }
+
+    return result.toArray();
+  }
+
+  /**
    * Executes all the standalone actors. Returns the first non-standalone actor.
    *
    * @return		the first non-standalone actor or null if non present
@@ -297,12 +326,13 @@ public class SequentialDirector
   protected Actor doExecuteStandalones() {
     Actor	result;
     Actor	curr;
-    int		i;
     String	actorResult;
+    int[]	indices;
 
     result = null;
 
-    for (i = 0; i < m_ControlActor.size(); i++) {
+    indices = activeIndices();
+    for (int i: indices) {
       // paused?
       if (m_Paused)
 	pause();
@@ -312,8 +342,6 @@ public class SequentialDirector
 	break;
 
       curr = m_ControlActor.get(i);
-      if (curr.getSkip())
-	continue;
 
       if (!ActorUtils.isStandalone(curr)) {
 	result = curr;
@@ -348,20 +376,20 @@ public class SequentialDirector
     String		result;
     boolean		finished;
     int			startIndex;
-    int			i;
     Actor		notFinishedActor;
     Stack<Actor>	pendingActors;
     Token		token;
     Actor		curr;
     String		actorResult;
     int			lastActive;
+    int[]		indices;
 
     result           = null;
     notFinishedActor = startActor;
     pendingActors    = new Stack<>();
     getFinalOutput().clear();
     do {
-      if (isLoggingEnabled())
+      if (getLoggingLevel().isAtLeast(Level.INFO))
 	getLogger().info("--> iteration start");
 
       // paused?
@@ -380,7 +408,7 @@ public class SequentialDirector
 	startIndex       = m_ControlActor.indexOf(notFinishedActor.getName());
 	notFinishedActor = null;
       }
-      if (isLoggingEnabled())
+      if (getLoggingLevel().isAtLeast(Level.FINE))
 	getLogger().fine("Start index: " + startIndex);
 
       // iterate over actors
@@ -389,7 +417,8 @@ public class SequentialDirector
       lastActive = -1;
       if (m_ControlActor.active() > 0)
 	lastActive = m_ControlActor.lastActive().index();
-      for (i = startIndex; i <= lastActive; i++) {
+      indices = activeIndices(startIndex, lastActive);
+      for (int i: indices) {
 	// paused?
 	if (isPaused())
 	  pause();
@@ -401,7 +430,7 @@ public class SequentialDirector
 	curr = m_ControlActor.get(i);
 	if (curr.getSkip())
 	  continue;
-	if (isLoggingEnabled())
+	if (getLoggingLevel().isAtLeast(Level.FINE))
 	  getLogger().fine("Current actor: " + curr.getFullName());
 
 	// no token? get pending one or produce new one
@@ -409,7 +438,8 @@ public class SequentialDirector
 	  if ((curr instanceof OutputProducer) && doHasOutput(curr)) {
             if (pendingActors.size() > 0)
               pendingActors.pop();
-	    getLogger().fine("Actor holds another output token: " + curr.getFullName());
+	    if (getLoggingLevel().isAtLeast(Level.FINE))
+	      getLogger().fine("Actor holds another output token: " + curr.getFullName());
 	  }
 	  else {
 	    actorResult = doExecute(curr);
@@ -424,7 +454,7 @@ public class SequentialDirector
 	    }
 	    if (!curr.isFinished() && (notFinishedActor == null))
 	      notFinishedActor = curr;
-	    if (isLoggingEnabled())
+	    if (getLoggingLevel().isAtLeast(Level.FINER))
 	      getLogger().finer("Actor needed to be executed: " + curr.getFullName());
 	  }
 
@@ -434,13 +464,13 @@ public class SequentialDirector
 	    token = null;
 	  if (getLoggingLevel() == LoggingLevel.FINEST)
 	    getLogger().finest("Token obtained from output: " + token);
-	  else
+	  else if (getLoggingLevel().isAtLeast(Level.FINE))
 	    getLogger().fine("Token obtained from output");
 
 	  // still more to come?
 	  if ((curr instanceof OutputProducer) && doHasOutput(curr)) {
 	    pendingActors.push(curr);
-	    if (isLoggingEnabled())
+	    if (getLoggingLevel().isAtLeast(Level.FINE))
 	      getLogger().fine("Actor has more tokens on output: " + curr.getFullName());
 	  }
 	}
@@ -461,7 +491,7 @@ public class SequentialDirector
 	    notFinishedActor = curr;
 	  if (getLoggingLevel() == LoggingLevel.FINEST)
 	    getLogger().finer("Actor processes token: " + curr.getFullName() + "/" + token);
-	  else
+	  else if (getLoggingLevel().isAtLeast(Level.FINE))
 	    getLogger().fine("Actor processes token: " + curr.getFullName());
 
 	  // was a new token produced?
@@ -470,12 +500,12 @@ public class SequentialDirector
 	      token = doOutput(curr);
 	    else
 	      token = null;
-	    if (isLoggingEnabled())
+	    if (getLoggingLevel().isAtLeast(Level.FINE))
 	      getLogger().fine("Actor also produces tokens: " + curr.getFullName());
 
 	    // still more to come?
 	    if (doHasOutput(curr)) {
-	      if (isLoggingEnabled())
+	      if (getLoggingLevel().isAtLeast(Level.FINE))
 		getLogger().fine("Actor also has more tokens on output: " + curr.getFullName());
 	      pendingActors.push(curr);
 	    }
@@ -489,24 +519,24 @@ public class SequentialDirector
           continue;
 
 	// token from last actor generated? -> store
-	if ((i == m_ControlActor.lastActive().index()) && (token != null)) {
+	if ((i == lastActive) && (token != null)) {
 	  if (isFinalOutputRecorded() && !isFlushing())
 	    getFinalOutput().add(token);
 	}
 
 	// no token produced, ignore rest of actors
 	if ((curr instanceof OutputProducer) && (token == null)) {
-	  if (isLoggingEnabled())
+	  if (getLoggingLevel().isAtLeast(Level.FINE))
 	    getLogger().fine("No token generated, skipping rest of actors: " + curr.getFullName());
 	  break;
 	}
       }
 
       // all actors finished?
-      if (isLoggingEnabled())
+      if (getLoggingLevel().isAtLeast(Level.FINE))
 	getLogger().fine("notFinishedActor=" + notFinishedActor + ", pendingActors.size=" + pendingActors.size() + ", stopped=" + isStopped());
       finished = (notFinishedActor == null) && (pendingActors.size() == 0);
-      if (isLoggingEnabled())
+      if (getLoggingLevel().isAtLeast(Level.INFO))
 	getLogger().info("---> execution finished: " + finished);
     }
     while (!(finished || isStopped() || isStopping() || isFlushing()));
@@ -534,12 +564,12 @@ public class SequentialDirector
     if (m_ControlActor.getActorHandlerInfo().canContainStandalones() && !isFlushing()) {
       try {
 	start = doExecuteStandalones();
-	if (isLoggingEnabled())
+	if (getLoggingLevel().isAtLeast(Level.INFO))
 	  getLogger().info("doExecuteStandalones: " + ((start == null) ? "only standalones" : start.getFullName()));
       }
       catch (Throwable t) {
 	result = handleException("Execution of standalones failed: ", t);
-	if (isLoggingEnabled())
+	if (getLoggingLevel().isAtLeast(Level.INFO))
 	  getLogger().info("doExecuteStandalones: " + result);
       }
     }
@@ -550,21 +580,21 @@ public class SequentialDirector
     // execute other actors until finished
     if ((result == null) && !isStopped() && !isStopping() && !isFlushing()) {
       if (start != null) {
-	if (isLoggingEnabled())
+	if (getLoggingLevel().isAtLeast(Level.INFO))
 	  getLogger().info("doExecuteActors: start");
 	try {
 	  msg = doExecuteActors(start);
-	  if (isLoggingEnabled())
+	  if (getLoggingLevel().isAtLeast(Level.INFO))
 	    getLogger().info("doExecuteActors: " + ((msg == null) ? "OK" : msg));
 	  if (msg != null)
 	    result = "Execution of actors failed: " + msg;
 	}
 	catch (Throwable t) {
 	  result = handleException("Execution of actors died: ", t);
-	  if (isLoggingEnabled())
+	  if (getLoggingLevel().isAtLeast(Level.INFO))
 	    getLogger().info("doExecuteActors: " + result);
 	}
-	if (isLoggingEnabled())
+	if (getLoggingLevel().isAtLeast(Level.INFO))
 	  getLogger().info("doExecuteActors: end");
       }
     }
@@ -596,7 +626,7 @@ public class SequentialDirector
     if (m_FinalOutput != null)
       m_FinalOutput.clear();
   }
-  
+
   /**
    * Stops the execution.
    */
@@ -618,3 +648,4 @@ public class SequentialDirector
       m_FinalOutput.clear();
   }
 }
+
