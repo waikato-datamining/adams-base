@@ -19,12 +19,12 @@
  */
 package adams.data.timeseries;
 
-import java.util.Date;
-
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.data.container.AbstractDataPoint;
 import adams.data.container.DataPoint;
+
+import java.util.Date;
 
 /**
  * Encapsulates a single data point of a timeseries.
@@ -39,7 +39,7 @@ public class TimeseriesPoint
   private static final long serialVersionUID = 2381133774648848800L;
 
   /** for formatting dates. */
-  protected static DateFormat m_Formatter = new DateFormat(Constants.TIMESTAMP_FORMAT);
+  protected static DateFormat m_DateFormat;
 
   /** the teimstamp of the data point. */
   protected Date m_Timestamp;
@@ -65,6 +65,17 @@ public class TimeseriesPoint
 
     setTimestamp(timestamp);
     setValue(value);
+  }
+
+  /**
+   * Returns the formatter for the timestamps.
+   *
+   * @return		the formatter
+   */
+  protected synchronized DateFormat getDateFormat() {
+    if (m_DateFormat == null)
+      m_DateFormat = new DateFormat(Constants.TIMESTAMP_FORMAT);
+    return m_DateFormat;
   }
 
   /**
@@ -152,6 +163,6 @@ public class TimeseriesPoint
    */
   @Override
   public String toString() {
-    return m_Formatter.format(m_Timestamp) + ": " + m_Value;
+    return getDateFormat().format(m_Timestamp) + ": " + m_Value;
   }
 }

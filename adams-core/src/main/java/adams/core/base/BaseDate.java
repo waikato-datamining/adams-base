@@ -15,7 +15,7 @@
 
 /*
  * BaseDate.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -28,6 +28,8 @@ import adams.parser.BaseDateExpression;
 import adams.parser.GrammarSupplier;
 
 import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Wrapper for a Date string to be editable in the GOE. Dates have to be of
  * format "yyyy-MM-dd".
@@ -47,7 +49,6 @@ import java.util.Date;
  * </pre>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see #FORMAT
  * @see #setStart(Date)
  * @see #setEnd(Date)
@@ -94,9 +95,6 @@ public class BaseDate
 
   /** for formatting/parsing the dates. */
   protected static DateFormat m_Format;
-  static {
-    m_Format = new DateFormat(FORMAT);
-  }
 
   /** the start date to use. */
   protected Date m_Start = null;
@@ -131,7 +129,7 @@ public class BaseDate
    * @param date	the date to use
    */
   public BaseDate(Date date) {
-    this(m_Format.format(date));
+    this(getFormat().format(date));
   }
 
   /**
@@ -140,6 +138,19 @@ public class BaseDate
   @Override
   protected void initialize() {
     m_Internal = NOW;
+  }
+
+  /**
+   * Returns the formatter.
+   *
+   * @return		the formatter
+   */
+  protected static synchronized DateFormat getFormat() {
+    if (m_Format == null) {
+      m_Format = new DateFormat(FORMAT);
+      //m_Format.setTimeZone(TimeZone.getDefault());
+    }
+    return m_Format;
   }
 
   /**
@@ -280,7 +291,7 @@ public class BaseDate
    * @return		the actual date as string
    */
   public String stringValue() {
-    return m_Format.format(dateValue());
+    return getFormat().format(dateValue());
   }
 
   /**
@@ -289,7 +300,12 @@ public class BaseDate
    * @return		the formatted string
    */
   public String formatDateValue(String format) {
-    return new DateFormat(format).format(dateValue());
+    DateFormat	formatter;
+
+    formatter = new DateFormat(format);
+    formatter.setTimeZone(TimeZone.getDefault());
+
+    return formatter.format(dateValue());
   }
 
   /**

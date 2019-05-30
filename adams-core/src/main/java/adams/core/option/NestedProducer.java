@@ -15,7 +15,7 @@
 
 /*
  * NestedProducer.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -90,9 +90,6 @@ public class NestedProducer
 
   /** for formatting dates. */
   protected static DateFormat m_DateFormat;
-  static {
-    m_DateFormat = new DateFormat("yyyy-MM-dd HH:mm:ss");
-  }
 
   /**
    * Returns a string describing the object.
@@ -116,6 +113,17 @@ public class NestedProducer
     m_OutputClasspath   = false;
     m_OutputLineNumbers = false;
     m_Encoding          = new BaseCharset();
+  }
+
+  /**
+   * Returns the formatter for the timestamps.
+   *
+   * @return		the formatter
+   */
+  protected synchronized DateFormat getDateFormat() {
+    if (m_DateFormat == null)
+      m_DateFormat = new DateFormat("yyyy-MM-dd HH:mm:ss");
+    return m_DateFormat;
   }
 
   /**
@@ -428,7 +436,7 @@ public class NestedProducer
       // add meta-data
       if (m_OutputProlog) {
 	result.append(COMMENT + " " + PROJECT + ": " + Environment.getInstance().getProject() + "\n");
-	result.append(COMMENT + " " + DATE + ": " + m_DateFormat.format(new Date()) + "\n");
+	result.append(COMMENT + " " + DATE + ": " + getDateFormat().format(new Date()) + "\n");
 	result.append(COMMENT + " " + USER + ": " + System.getProperty("user.name") + "\n");
         result.append(COMMENT + " " + CHARSET + ": " + m_Encoding.charsetValue().name() + "\n");
         result.append(COMMENT + " " + MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ",") + "\n");

@@ -15,7 +15,7 @@
 
 /*
  * LogEntry.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -102,9 +102,6 @@ public class LogEntry
 
   /** the formatter for the generation timestamp. */
   protected static DateFormat m_DateFormat;
-  static {
-    m_DateFormat = new DateFormat(TIMESTAMP_FORMAT);
-  }
 
   /**
    * Initializes the entry.
@@ -120,6 +117,17 @@ public class LogEntry
     m_Generation = new Date();
     m_Source     = "";
     m_Status     = "";
+  }
+
+  /**
+   * Returns the formatter for the timestamps.
+   *
+   * @return		the formatter
+   */
+  protected synchronized DateFormat getDateFormat() {
+    if (m_DateFormat == null)
+      m_DateFormat = new DateFormat(TIMESTAMP_FORMAT);
+    return m_DateFormat;
   }
 
   /**
@@ -293,7 +301,7 @@ public class LogEntry
    * @see		#TIMESTAMP_FORMAT
    */
   public String getGenerationAsString() {
-    return m_DateFormat.format(m_Generation);
+    return getDateFormat().format(m_Generation);
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * CompactFlowProducer.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.option;
@@ -82,9 +82,6 @@ public class CompactFlowProducer
 
   /** for formatting dates. */
   protected static DateFormat m_DateFormat;
-  static {
-    m_DateFormat = new DateFormat("yyyy-MM-dd HH:mm:ss");
-  }
 
   /** for stripping down an actor. */
   protected NestedProducer m_StripProducer;
@@ -116,6 +113,17 @@ public class CompactFlowProducer
     m_StripConsumer     = new NestedConsumer();
     m_StripProducer     = new NestedProducer();
     m_StripProducer.setBlacklisted(new Class[]{AbstractActor[].class, AbstractActor.class, Actor[].class, Actor.class});
+  }
+
+  /**
+   * Returns the formatter for the timestamps.
+   *
+   * @return		the formatter
+   */
+  protected synchronized DateFormat getDateFormat() {
+    if (m_DateFormat == null)
+      m_DateFormat = new DateFormat("yyyy-MM-dd HH:mm:ss");
+    return m_DateFormat;
   }
 
   /**
@@ -434,7 +442,7 @@ public class CompactFlowProducer
 
     if (m_OutputProlog) {
       result.append(COMMENT + " " + PROJECT + ": " + Environment.getInstance().getProject() + "\n");
-      result.append(COMMENT + " " + DATE + ": " + m_DateFormat.format(new Date()) + "\n");
+      result.append(COMMENT + " " + DATE + ": " + getDateFormat().format(new Date()) + "\n");
       result.append(COMMENT + " " + USER + ": " + System.getProperty("user.name") + "\n");
       result.append(COMMENT + " " + CHARSET + ": " + m_Encoding.charsetValue().name() + "\n");
       result.append(COMMENT + " " + MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ",") + "\n");

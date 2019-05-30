@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.basedatetimemsec;
@@ -45,8 +45,16 @@ import java.util.*;
   protected SymbolFactory sf;
 
   protected static DateFormat m_Format;
-  static {
-    m_Format = new DateFormat(BaseDateTimeMsec.FORMAT);
+
+  /**
+   * Returns the formatter for parsing.
+   *
+   * @return		the formatter
+   */
+  protected static synchronized DateFormat getFormat() {
+    if (m_Format == null)
+      m_Format = new DateFormat(BaseDateTimeMsec.FORMAT);
+    return m_Format;
   }
 
   public Scanner(InputStream r, SymbolFactory sf){
@@ -93,15 +101,15 @@ import java.util.*;
 [0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }
 
 // date
-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][ ][0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9] { return sf.newSymbol("Date", sym.DATE_ACTUAL, m_Format.parse(yytext())); }
-"-INF"      { return sf.newSymbol("-INF", sym.DATE_ACTUAL, m_Format.parse(BaseDateTimeMsec.INF_PAST_DATE)); }
-"+INF"      { return sf.newSymbol("+INF", sym.DATE_ACTUAL, m_Format.parse(BaseDateTimeMsec.INF_FUTURE_DATE)); }
+[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][ ][0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9] { return sf.newSymbol("Date", sym.DATE_ACTUAL, getFormat().parse(yytext())); }
+"-INF"      { return sf.newSymbol("-INF", sym.DATE_ACTUAL, getFormat().parse(BaseDateTimeMsec.INF_PAST_DATE)); }
+"+INF"      { return sf.newSymbol("+INF", sym.DATE_ACTUAL, getFormat().parse(BaseDateTimeMsec.INF_FUTURE_DATE)); }
 "NOW"       { return sf.newSymbol("Now",  sym.DATE_ACTUAL, new Date()); }
 "TODAY"     { return sf.newSymbol("Now",   sym.DATE_ACTUAL, DateUtils.today()); }
 "TOMORROW"  { return sf.newSymbol("Now",   sym.DATE_ACTUAL, DateUtils.tomorrow()); }
 "YESTERDAY" { return sf.newSymbol("Now",   sym.DATE_ACTUAL, DateUtils.yesterday()); }
-"START"     { return sf.newSymbol("Start", sym.DATE_START,  m_Format.parse(BaseDateTimeMsec.INF_PAST_DATE)); }
-"END"       { return sf.newSymbol("End",   sym.DATE_END,    m_Format.parse(BaseDateTimeMsec.INF_FUTURE_DATE)); }
+"START"     { return sf.newSymbol("Start", sym.DATE_START,  getFormat().parse(BaseDateTimeMsec.INF_PAST_DATE)); }
+"END"       { return sf.newSymbol("End",   sym.DATE_END,    getFormat().parse(BaseDateTimeMsec.INF_FUTURE_DATE)); }
 
 // various
 "(" { return sf.newSymbol("Left Bracket", sym.LPAREN); }

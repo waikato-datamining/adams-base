@@ -15,7 +15,7 @@
 
 /*
  * DateUtils.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -35,7 +35,6 @@ import java.util.TimeZone;
  * A helper class for common Date-related operations.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
   copyright = "Apache Foundation, POI 3.11",
@@ -45,10 +44,10 @@ import java.util.TimeZone;
 public class DateUtils {
 
   /** the timezone to use. */
-  protected static TimeZone m_TimeZone = TimeZone.getDefault();
+  protected static TimeZone m_TimeZone;
 
   /** the locale to use. */
-  protected static Locale m_Locale = LocaleHelper.getSingleton().getDefault();
+  protected static Locale m_Locale;
 
   public static final int BAD_DATE = -1;   // used to specify that date is invalid
   public static final int SECONDS_PER_MINUTE = 60;
@@ -72,6 +71,8 @@ public class DateUtils {
    * @return		the time zone
    */
   public static synchronized TimeZone getTimeZone() {
+    if (m_TimeZone == null)
+      m_TimeZone = TimeZone.getDefault();
     return m_TimeZone;
   }
 
@@ -90,6 +91,8 @@ public class DateUtils {
    * @return		the locale
    */
   public static synchronized Locale getLocale() {
+    if (m_Locale == null)
+      m_Locale = LocaleHelper.getSingleton().getDefault();
     return m_Locale;
   }
 

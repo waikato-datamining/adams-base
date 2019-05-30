@@ -28,6 +28,7 @@ import adams.parser.BaseTimeExpression;
 import adams.parser.GrammarSupplier;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Wrapper for a Time string to be editable in the GOE. Dates have to be of
@@ -85,9 +86,6 @@ public class BaseTime
 
   /** for formatting/parsing the dates. */
   protected static DateFormat m_Format;
-  static {
-    m_Format = new DateFormat(FORMAT);
-  }
 
   /** the start time to use. */
   protected Date m_Start = null;
@@ -119,7 +117,7 @@ public class BaseTime
    * @param date	the date to use
    */
   public BaseTime(Date date) {
-    this(m_Format.format(date));
+    this(getFormat().format(date));
   }
 
   /**
@@ -128,6 +126,19 @@ public class BaseTime
   @Override
   protected void initialize() {
     m_Internal = NOW;
+  }
+
+  /**
+   * Returns the formatter.
+   *
+   * @return		the formatter
+   */
+  protected static synchronized DateFormat getFormat() {
+    if (m_Format == null) {
+      m_Format = new DateFormat(FORMAT);
+      //m_Format.setTimeZone(TimeZone.getDefault());
+    }
+    return m_Format;
   }
 
   /**
@@ -259,7 +270,7 @@ public class BaseTime
    * @return		the actual date as string
    */
   public String stringValue() {
-    return m_Format.format(dateValue());
+    return getFormat().format(dateValue());
   }
 
   /**
@@ -268,7 +279,12 @@ public class BaseTime
    * @return		the formatted string
    */
   public String formatDateValue(String format) {
-    return new DateFormat(format).format(dateValue());
+    DateFormat	formatter;
+
+    formatter = new DateFormat(format);
+    formatter.setTimeZone(TimeZone.getDefault());
+
+    return formatter.format(dateValue());
   }
 
   /**

@@ -20,13 +20,13 @@
 
 package adams.core;
 
-import java.util.Calendar;
-import java.util.Date;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Tests the adams.core.DateUtils class. Run from commandline with: <br><br>

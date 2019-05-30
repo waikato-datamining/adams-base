@@ -15,11 +15,10 @@
 
 /*
  * DefaultFlowWriter.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
-import adams.core.DateFormat;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
@@ -54,12 +53,6 @@ public class DefaultFlowWriter
 
   /** whether to use compact format. */
   protected boolean m_UseCompact;
-
-  /** for formatting dates. */
-  protected static DateFormat m_DateFormat;
-  static {
-    m_DateFormat = new DateFormat("yyyy-MM-dd HH:mm:ss");
-  }
 
   /**
    * Returns a string describing the object.

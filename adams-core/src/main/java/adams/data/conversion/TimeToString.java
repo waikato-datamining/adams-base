@@ -19,11 +19,12 @@
  */
 package adams.data.conversion;
 
-import java.util.Date;
-
 import adams.core.DateFormat;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformationHandler;
+
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  <!-- globalinfo-start -->
@@ -167,8 +168,10 @@ public class TimeToString
    * @throws Exception	if something goes wrong with the conversion
    */
   protected Object doConvert() throws Exception {
-    if (m_Formatter == null)
+    if (m_Formatter == null) {
       m_Formatter = new DateFormat(m_Format);
+      m_Formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
     return m_Formatter.format(new Date(((Number) m_Input).longValue()));
   }
 }

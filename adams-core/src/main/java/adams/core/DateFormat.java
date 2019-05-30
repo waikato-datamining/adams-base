@@ -20,14 +20,14 @@
 
 package adams.core;
 
+import adams.core.TechnicalInformation.Field;
+import adams.core.TechnicalInformation.Type;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-
-import adams.core.TechnicalInformation.Field;
-import adams.core.TechnicalInformation.Type;
 
 /**
  * A threadsafe class for date formatting/parsing.
@@ -65,6 +65,7 @@ public class DateFormat
    */
   public DateFormat(String format) {
     m_Format = new SimpleDateFormat(format);
+    m_Format.setTimeZone(TimeZone.getDefault());
   }
 
   /**

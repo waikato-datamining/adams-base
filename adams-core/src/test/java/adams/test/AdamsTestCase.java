@@ -191,6 +191,7 @@ public class AdamsTestCase
     LocaleHelper.getSingleton().setDefault(LocaleHelper.LOCALE_EN_US);
     LocaleHelper.getSingleton().setLocale(LocaleHelper.LOCALE_EN_US);
     DateUtils.setTimeZone(TimeZone.getTimeZone("Pacific/Auckland"));
+    TimeZone.setDefault(TimeZone.getTimeZone("Pacific/Auckland"));
     DateUtils.setLocale(new Locale("en", "NZ"));
     CharsetHelper.getSingleton().setCharset("UTF-8");
     

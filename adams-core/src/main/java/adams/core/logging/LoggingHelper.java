@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LoggingHelper.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -53,7 +53,6 @@ public class LoggingHelper {
   static {
     m_DefaultHandler = new MultiHandler();
     ((MultiHandler) m_DefaultHandler).addHandler(new SimpleConsoleHandler());
-    m_DateFormat = new DateFormat("yyyyMMdd-HHmmss.SSS");
   }
 
   /**
@@ -514,6 +513,17 @@ public class LoggingHelper {
   }
 
   /**
+   * Returns the formatter for the timestamps.
+   *
+   * @return		the formatter
+   */
+  protected static synchronized DateFormat getDateFormat() {
+    if (m_DateFormat == null)
+      m_DateFormat = new DateFormat("yyyyMMdd-HHmmss.SSS");
+    return m_DateFormat;
+  }
+
+  /**
    * Publish a <tt>LogRecord</tt>.
    * <p>
    * The logging request was made initially to a <tt>Logger</tt> object,
@@ -552,7 +562,7 @@ public class LoggingHelper {
 
     // any prefix to print?
     if ((prefix != null) && prefix.length() > 0)
-      actualPrefix = "[" + prefix + suffix + "/" + m_DateFormat.format(new Date()) + "] ";
+      actualPrefix = "[" + prefix + suffix + "/" + getDateFormat().format(new Date()) + "] ";
     else
       actualPrefix = "";
 
