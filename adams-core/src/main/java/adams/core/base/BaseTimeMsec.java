@@ -15,7 +15,7 @@
 
 /*
  * BaseTimeMsec.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -49,7 +49,6 @@ import java.util.Date;
  * </pre>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see #setStart(Date)
  * @see #setEnd(Date)
  */
@@ -325,32 +324,32 @@ public class BaseTimeMsec
   }
 
   /**
-   * Returns a new BaseDate object initialized with the NOW placeholder.
+   * Returns a new BaseTimeMsec object initialized with the NOW placeholder.
    *
-   * @return		the BaseDate object
+   * @return		the BaseTimeMsec object
    * @see		#NOW
    */
-  public static BaseDateTime now() {
-    return new BaseDateTime(NOW);
+  public static BaseTimeMsec now() {
+    return new BaseTimeMsec(NOW);
   }
 
   /**
-   * Returns a new BaseDate object initialized with the INF_FUTURE placeholder.
+   * Returns a new BaseTimeMsec object initialized with the INF_FUTURE placeholder.
    *
-   * @return		the BaseDate object
+   * @return		the BaseTimeMsec object
    * @see		#INF_FUTURE
    */
-  public static BaseDateTime infinityFuture() {
-    return new BaseDateTime(INF_FUTURE);
+  public static BaseTimeMsec infinityFuture() {
+    return new BaseTimeMsec(INF_FUTURE);
   }
 
   /**
-   * Returns a new BaseDate object initialized with the INF_PAST placeholder.
+   * Returns a new BaseTimeMsec object initialized with the INF_PAST placeholder.
    *
-   * @return		the BaseDate object
+   * @return		the BaseTimeMsec object
    * @see		#INF_PAST
    */
-  public static BaseDateTime infinityPast() {
-    return new BaseDateTime(INF_PAST);
+  public static BaseTimeMsec infinityPast() {
+    return new BaseTimeMsec(INF_PAST);
   }
 }
