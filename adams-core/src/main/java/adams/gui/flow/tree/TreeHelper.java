@@ -15,7 +15,7 @@
 
 /*
  * TreeHelper.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
@@ -35,7 +35,6 @@ import java.util.List;
  * Helper class for flow tree related stuff.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TreeHelper {
 
@@ -247,6 +246,8 @@ public class TreeHelper {
 	  errors.addAll(consumer.getErrors());
 	  return null;
 	}
+	if (consumer.hasWarnings())
+	  warnings.addAll(consumer.getWarnings());
       }
       catch (Exception e) {
 	errors.add("Failed to parse actor: " + nested.get(0), e);
