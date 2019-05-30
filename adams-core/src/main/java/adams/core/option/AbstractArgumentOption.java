@@ -161,7 +161,7 @@ public abstract class AbstractArgumentOption
       }
       else {
         m_Variable = null;
-        return "Cannot attach any variable to property '" + getProperty() + "' of class '" + Utils.classToString(getOwner().getOwner()) + "'!";
+        return "Cannot attach variable '" + value + "' (or any variable) to property '" + getProperty() + "' of class '" + Utils.classToString(getOwner().getOwner()) + "'!";
       }
     }
     else {
