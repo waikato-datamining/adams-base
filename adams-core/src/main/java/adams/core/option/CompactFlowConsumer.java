@@ -15,7 +15,7 @@
 
 /*
  * CompactFlowConsumer.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.option;
@@ -231,6 +231,10 @@ public class CompactFlowConsumer
 	    for (String error: m_Consumer.getErrors())
 	      logError(error);
 	  }
+	  if (m_Consumer.hasWarnings()) {
+	    for (String warning : m_Consumer.getWarnings())
+	      logWarning(warning);
+          }
 	  if (mutable)
 	    ((MutableActorHandler) handler).add(actor);
 	  else
