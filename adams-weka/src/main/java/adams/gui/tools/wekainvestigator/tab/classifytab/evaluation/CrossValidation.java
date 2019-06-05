@@ -192,7 +192,7 @@ public class CrossValidation
     });
     m_PanelParameters.addParameter("Seed", m_TextSeed);
 
-    // threads
+    // jobrunner
     try {
       jobrunner = (JobRunner) OptionUtils.forCommandLine(
         JobRunner.class,
@@ -349,7 +349,7 @@ public class CrossValidation
     runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Seed", seed);
     runInfo.add("Folds", folds);
-    runInfo.add("Threads", jobrunner);
+    runInfo.add("JobRunner", jobrunner.toCommandLine());
     runInfo.add("Dataset ID", dataCont.getID());
     runInfo.add("Relation", data.relationName());
     runInfo.add("# Attributes", data.numAttributes());
