@@ -23,6 +23,7 @@ package adams.multiprocess;
 import adams.core.Performance;
 import adams.core.QuickInfoHelper;
 import adams.core.ThreadLimiter;
+import adams.core.management.ProcessUtils;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
 
@@ -311,6 +312,12 @@ public class LocalJobRunner<T extends Job>
 
     if (m_Executor == null) {
       numThreads = Performance.determineNumThreads(m_NumThreads);
+      if (isLoggingEnabled()) {
+	getLogger().info("available # processors: " + ProcessUtils.getAvailableProcessors());
+	getLogger().info("max # processors: " + Performance.getMaxNumProcessors());
+	getLogger().info("# threads (requested): " + m_NumThreads);
+	getLogger().info("# threads (calculated): " + numThreads);
+      }
       m_Executor = new PausableFixedThreadPoolExecutor(numThreads);
     }
 
