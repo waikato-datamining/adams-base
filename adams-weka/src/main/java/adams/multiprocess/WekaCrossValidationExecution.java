@@ -47,7 +47,7 @@ import weka.core.Instances;
  */
 public class WekaCrossValidationExecution
   extends CustomLoggingLevelObject
-  implements Stoppable, InstancesViewSupporter {
+  implements Stoppable, InstancesViewSupporter, ThreadLimiter {
 
   private static final long serialVersionUID = 2021758441076652982L;
 
@@ -81,7 +81,7 @@ public class WekaCrossValidationExecution
   /** whether to discard predictions. */
   protected boolean m_DiscardPredictions;
 
-  /** the number of threads to use for parallel execution. */
+  /** the number of threads to use for parallel execution (only used if no JobRunnerSetup/JobRunner set). */
   protected int m_NumThreads;
 
   /** the actual number of threads to use. */
@@ -357,19 +357,21 @@ public class WekaCrossValidationExecution
   }
 
   /**
-   * Sets the number of threads to use for cross-validation.
+   * Sets the number of threads to use for cross-validation (only used if no JobRunnerSetup/JobRunner set).
    *
    * @param value 	the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
    */
+  @Override
   public void setNumThreads(int value) {
     m_NumThreads = value;
   }
 
   /**
-   * Returns the number of threads to use for cross-validation.
+   * Returns the number of threads to use for cross-validation (only used if no JobRunnerSetup/JobRunner set).
    *
    * @return 		the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
    */
+  @Override
   public int getNumThreads() {
     return m_NumThreads;
   }
@@ -474,6 +476,7 @@ public class WekaCrossValidationExecution
     Instances				train;
     Instances				test;
     Classifier				cls;
+    boolean				setNumThreads;
 
     result        = new MessageCollection();
     indices       = null;
@@ -529,13 +532,19 @@ public class WekaCrossValidationExecution
         if (m_DiscardPredictions)
           throw new IllegalStateException(
             "Cannot discard predictions in parallel mode, as they are used for aggregating the statistics!");
-	if (m_JobRunnerSetup != null)
+        setNumThreads = true;
+	if (m_JobRunnerSetup != null) {
 	  m_ActualJobRunner = m_JobRunnerSetup.newInstance();
-	else if (m_JobRunner != null)
+	  setNumThreads     = false;
+	}
+	else if (m_JobRunner != null) {
 	  m_ActualJobRunner = ObjectCopyHelper.copyObject(m_JobRunner);
-	else
+	  setNumThreads     = false;
+	}
+	else {
 	  m_ActualJobRunner = new LocalJobRunner<WekaCrossValidationJob>();
-	if (m_ActualJobRunner instanceof ThreadLimiter)
+	}
+	if (setNumThreads && (m_ActualJobRunner instanceof ThreadLimiter))
 	  ((ThreadLimiter) m_ActualJobRunner).setNumThreads(m_NumThreads);
 	list = new JobList<>();
 	while (generator.hasNext()) {
