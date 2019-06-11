@@ -31,6 +31,7 @@ import adams.data.spreadsheet.sql.AbstractTypeMapper;
 import adams.data.spreadsheet.sql.Reader;
 
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.util.logging.Level;
@@ -252,6 +253,7 @@ public class MetaDataUtils {
     SpreadSheet 	result;
     ResultSet 		rs;
     DatabaseMetaData	metadata;
+    Connection		dbconn;
     Row			row;
     Reader 		reader;
     String		db;
@@ -259,7 +261,8 @@ public class MetaDataUtils {
     result = null;
     rs     = null;
     try {
-      metadata = conn.getConnection(false).getMetaData();
+      dbconn   = conn.getConnection(false);
+      metadata = dbconn.getMetaData();
       reader   = new Reader(mapper, DenseDataRow.class);
       switch (type) {
 	case CONNECTION:
@@ -284,7 +287,7 @@ public class MetaDataUtils {
 	    addRow(metadata, result, value);
 	  break;
 	case ATTRIBUTES:
-	  rs    = metadata.getAttributes(null, null, "%", null);
+	  rs    = metadata.getAttributes(dbconn.getCatalog(), null, "%", null);
 	  result = reader.read(rs);
 	  break;
 	case CATALOGS:
@@ -296,47 +299,47 @@ public class MetaDataUtils {
 	  result = reader.read(rs);
 	  break;
 	case COLUMN_PRIVILEGES:
-	  rs    = metadata.getColumnPrivileges(null, null, table, "%");
+	  rs    = metadata.getColumnPrivileges(dbconn.getCatalog(), null, table, "%");
 	  result = reader.read(rs);
 	  break;
 	case COLUMNS:
-	  rs    = metadata.getColumns(null, null, "%", "%");
+	  rs    = metadata.getColumns(dbconn.getCatalog(), null, "%", "%");
 	  result = reader.read(rs);
 	  break;
 	case EXPORTED_KEYS:
-	  rs    = metadata.getExportedKeys(null, null, table);
+	  rs    = metadata.getExportedKeys(dbconn.getCatalog(), null, table);
 	  result = reader.read(rs);
 	  break;
 	case FUNCTION_COLUMNS:
-	  rs    = metadata.getFunctionColumns(null, null, "%", "%");
+	  rs    = metadata.getFunctionColumns(dbconn.getCatalog(), null, "%", "%");
 	  result = reader.read(rs);
 	  break;
 	case FUNCTIONS:
-	  rs    = metadata.getFunctions(null, null, "%");
+	  rs    = metadata.getFunctions(dbconn.getCatalog(), null, "%");
 	  result = reader.read(rs);
 	  break;
 	case IMPORTED_KEYS:
-	  rs    = metadata.getImportedKeys(null, null, table);
+	  rs    = metadata.getImportedKeys(dbconn.getCatalog(), null, table);
 	  result = reader.read(rs);
 	  break;
 	case INDEX_INFO:
-	  rs    = metadata.getIndexInfo(null, null, table, false, false);
+	  rs    = metadata.getIndexInfo(dbconn.getCatalog(), null, table, false, false);
 	  result = reader.read(rs);
 	  break;
 	case PRIMARY_KEYS:
-	  rs    = metadata.getPrimaryKeys(null, null, table);
+	  rs    = metadata.getPrimaryKeys(dbconn.getCatalog(), null, table);
 	  result = reader.read(rs);
 	  break;
 	case PROCEDURE_COLUMNS:
-	  rs    = metadata.getProcedureColumns(null, null, "%", "%");
+	  rs    = metadata.getProcedureColumns(dbconn.getCatalog(), null, "%", "%");
 	  result = reader.read(rs);
 	  break;
 	case PROCEDURES:
-	  rs    = metadata.getProcedures(null, null, "%");
+	  rs    = metadata.getProcedures(dbconn.getCatalog(), null, "%");
 	  result = reader.read(rs);
 	  break;
 	case PSEUDO_COLUMNS:
-	  rs    = metadata.getPseudoColumns(null, null, "%", "%");
+	  rs    = metadata.getPseudoColumns(dbconn.getCatalog(), null, "%", "%");
 	  result = reader.read(rs);
 	  break;
 	case SCHEMAS:
@@ -344,11 +347,11 @@ public class MetaDataUtils {
 	  result = reader.read(rs);
 	  break;
 	case SUPER_TABLES:
-	  rs    = metadata.getSuperTables(null, null, "%");
+	  rs    = metadata.getSuperTables(dbconn.getCatalog(), null, "%");
 	  result = reader.read(rs);
 	  break;
 	case SUPER_TYPES:
-	  rs    = metadata.getSuperTypes(null, null, "%");
+	  rs    = metadata.getSuperTypes(dbconn.getCatalog(), null, "%");
 	  result = reader.read(rs);
 	  break;
 	case TABLE_TYPES:
@@ -356,7 +359,7 @@ public class MetaDataUtils {
 	  result = reader.read(rs);
 	  break;
 	case TABLES:
-	  rs    = metadata.getTables(null, null, "%", null);
+	  rs    = metadata.getTables(dbconn.getCatalog(), null, "%", null);
 	  result = reader.read(rs);
 	  break;
 	case TYPE_INFO:
@@ -364,11 +367,11 @@ public class MetaDataUtils {
 	  result = reader.read(rs);
 	  break;
 	case USER_DEFINED_TYPES:
-	  rs    = metadata.getUDTs(null, null, "%", null);
+	  rs    = metadata.getUDTs(dbconn.getCatalog(), null, "%", null);
 	  result = reader.read(rs);
 	  break;
 	case VERSION_COLUMNS:
-	  rs    = metadata.getVersionColumns(null, null, table);
+	  rs    = metadata.getVersionColumns(dbconn.getCatalog(), null, table);
 	  result = reader.read(rs);
 	  break;
 	default:

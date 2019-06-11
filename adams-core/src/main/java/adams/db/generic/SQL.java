@@ -15,7 +15,7 @@
 
 /*
  * SQL.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -183,14 +183,14 @@ public class SQL
     conn   = m_DatabaseConnection.getConnection(true);
     try{
       dbmd   = conn.getMetaData();
-      rs     = dbmd.getColumns(null, null, table, column);
+      rs     = dbmd.getColumns(conn.getCatalog(), null, table, column);
       result = rs.next();
     }
     catch (SQLException e) {
       // try again
       try {
 	dbmd   = conn.getMetaData();
-	rs     = dbmd.getColumns(null, null, table, column);
+	rs     = dbmd.getColumns(conn.getCatalog(), null, table, column);
 	result = rs.next();
       }
       catch (Exception ex) {
