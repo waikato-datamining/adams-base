@@ -23,6 +23,7 @@ package adams.core.management;
 import adams.core.Utils;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.io.PlaceholderDirectory;
+import com.github.fracpete.processoutput4j.core.EnvironmentUtils;
 import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 
 import java.lang.management.ManagementFactory;
@@ -254,15 +255,16 @@ public class ProcessUtils {
   public static CollectingProcessOutput execute(String[] cmd, String[] env, String input,
 						PlaceholderDirectory cwd) throws Exception {
     CollectingProcessOutput result;
-    Runtime runtime;
-    Process process;
+    ProcessBuilder builder;
 
-    runtime = Runtime.getRuntime();
-    process = runtime.exec(cmd, env,
-      (cwd == null) ? null : cwd.getAbsoluteFile());
+    builder = new ProcessBuilder();
+    builder.command(cmd);
+    builder.environment().putAll(EnvironmentUtils.envArrayToMap(env));
+    if (cwd != null)
+      builder.directory(cwd.getAbsoluteFile());
 
     result = new CollectingProcessOutput();
-    result.monitor(cmd, env, input, process);
+    result.monitor(input, builder);
 
     return result;
   }
@@ -285,15 +287,16 @@ public class ProcessUtils {
   public static CollectingProcessOutput execute(String cmd, String[] env, String input,
 						PlaceholderDirectory cwd) throws Exception {
     CollectingProcessOutput result;
-    Runtime runtime;
-    Process process;
+    ProcessBuilder builder;
 
-    runtime = Runtime.getRuntime();
-    process = runtime.exec(cmd, env,
-      (cwd == null) ? null : cwd.getAbsoluteFile());
+    builder = new ProcessBuilder();
+    builder.command(cmd);
+    builder.environment().putAll(EnvironmentUtils.envArrayToMap(env));
+    if (cwd != null)
+      builder.directory(cwd.getAbsoluteFile());
 
     result = new CollectingProcessOutput();
-    result.monitor(cmd, env, input, process);
+    result.monitor(input, builder);
 
     return result;
   }
