@@ -1,8 +1,0 @@
-# Project: adams
-# Modules: adams-core,adams-net
-# Date: 2018-06-25 11:38:14
-# User: fracpete
-# Charset: UTF-8
-adams.flow.control.Flow -annotation "Runs a simple file server on port 8081, serving\\nfiles from ${FLOWS}/www." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.standalone.WebServer -port 8081 -handler "adams.flow.standalone.webserver.ResourceHandler -document-root ${FLOWS}/www" -handler adams.flow.standalone.webserver.DefaultHandler
- adams.flow.source.Idle

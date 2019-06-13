@@ -16,11 +16,6 @@
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 
-# HtmlCode objects
-adams.core.base.HtmlCode=true
-adams.core.base.HtmlCode#toString=adams.core.option.parsing.BaseObjectParsing#toString
-adams.core.base.HtmlCode#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
-
 # EmailAddress objects
 adams.core.net.EmailAddress=true
 adams.core.net.EmailAddress#toString=adams.core.option.parsing.EmailAddressParsing#toString

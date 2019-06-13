@@ -1,8 +1,6 @@
 % This work is made available under the terms of the
 % Creative Commons Attribution-ShareAlike 4.0 license,
 % http://creativecommons.org/licenses/by-sa/4.0/.
-%
-% Version: $Revision$
 
 \documentclass[a4paper]{book}
 
@@ -45,7 +43,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2018} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2019} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -323,28 +321,20 @@ Some other basic, but useful actors are the following:
 	\item \textit{DownloadFile} -- downloads a file via HTTP and saves it to disk.
 	\item \textit{DownloadContent} -- downloads (textual) content via HTTP and 
 	forwards it.\footnote{adams-net-download\_content.flow}
-	\item \textit{HTMLFileReader} -- reads an HTML file, generating a DOM object.
 	\item \textit{HttpRequest} -- the source allows accessing URLs (POST/GET, sending data,
-	cookies), returns the HTML from the reponse as text; the transformer allows
+	cookies), returns the reponse as text; the transformer allows
 	sending the incoming text via HTTP request (and optional headers).
 	\item \textit{MimeType} -- determines the mime-type of
 	files.\footnote{adams-net-mimetype.flow}
 	\item \textit{Socket} -- source and sink allow you to receive and send
 	strings and byte arrays via sockets.
 	\item \textit{URLSupplier} -- outputs one or more URLs.
-	\item \textit{WebServer} -- simple web server for serving static files.
 	\item \textit{WebSocketClient} -- allows executing of clients that implement
 	the websocket protocol\footnote{\url{https://en.wikipedia.org/wiki/WebSocket}{}}.
 	\item \textit{WebSocketServer} -- allows running of websocket servers.
 \end{tight_itemize}
 The following conversions are available:
 \begin{tight_itemize}
-    \item \textit{HTMLToDOM} -- generates a DOM document from an HTML string.
-    \item \textit{HTMLToText} -- extracts the text from an HTML string.
-    \item \textit{MarkdownToHTML} -- extracts the text from an HTML string.
-    \item \textit{RenderHTMLAsText} -- renders an HTML string as text.
-    \item \textit{SpreadSheetToHTML} -- converts a spreadsheet into an HTML
-    page (or just a table fragment).
     \item \textit{StringArrayToURLParameters} -- converts a string array of
     key-value pairs into a string to used in a URL.
     \item \textit{StringToURL} -- converts a string into a URL object.

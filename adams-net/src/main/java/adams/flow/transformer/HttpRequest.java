@@ -26,7 +26,7 @@ import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
 import adams.core.io.EncodingSupporter;
 import adams.core.net.HttpRequestHelper;
-import adams.flow.container.HTMLRequestResult;
+import adams.flow.container.HttpRequestResult;
 import adams.flow.core.Token;
 import org.jsoup.Connection.Method;
 
@@ -42,10 +42,10 @@ import org.jsoup.Connection.Method;
  * &nbsp;&nbsp;&nbsp;byte[]<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.HTMLRequestResult<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.HttpRequestResult<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.HTMLRequestResult: Status code, Status message, Body, Cookies
+ * - adams.flow.container.HttpRequestResult: Status code, Status message, Body, Cookies
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -310,7 +310,7 @@ public class HttpRequest
    */
   @Override
   public Class[] generates() {
-    return new Class[]{HTMLRequestResult.class};
+    return new Class[]{HttpRequestResult.class};
   }
 
   /**
@@ -321,7 +321,7 @@ public class HttpRequest
   @Override
   protected String doExecute() {
     String		result;
-    HTMLRequestResult	cont;
+    HttpRequestResult cont;
 
     result = null;
 

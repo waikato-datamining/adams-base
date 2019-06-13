@@ -24,7 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
 import adams.core.net.HttpRequestHelper;
-import adams.flow.container.HTMLRequestResult;
+import adams.flow.container.HttpRequestResult;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
 import org.jsoup.Connection.Method;
@@ -41,10 +41,10 @@ import java.util.Map;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.HTMLRequestResult<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.HttpRequestResult<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.HTMLRequestResult: Status code, Body, Cookies
+ * - adams.flow.container.HttpRequestResult: Status code, Body, Cookies
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -338,7 +338,7 @@ public class HttpRequest
    */
   @Override
   public Class[] generates() {
-    return new Class[]{HTMLRequestResult.class};
+    return new Class[]{HttpRequestResult.class};
   }
 
   /**
@@ -349,7 +349,7 @@ public class HttpRequest
   @Override
   protected String doExecute() {
     String		result;
-    HTMLRequestResult	cont;
+    HttpRequestResult cont;
     Map<String,String>  cookies;
 
     result = null;

@@ -22,7 +22,7 @@ package adams.core.net;
 
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
-import adams.flow.container.HTMLRequestResult;
+import adams.flow.container.HttpRequestResult;
 import gnu.trove.list.array.TByteArrayList;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
@@ -53,8 +53,8 @@ public class HttpRequestHelper {
    * @return		the result from the request
    * @throws Exception	if request failed
    */
-  public static HTMLRequestResult send(BaseURL url, Method method, BaseKeyValuePair[] headers, byte[] payload) throws Exception {
-    HTMLRequestResult 	result;
+  public static HttpRequestResult send(BaseURL url, Method method, BaseKeyValuePair[] headers, byte[] payload) throws Exception {
+    HttpRequestResult result;
     HttpURLConnection	conn;
     OutputStream 	out;
     InputStream 	in;
@@ -84,10 +84,10 @@ public class HttpRequestHelper {
       in = conn.getInputStream();
       while ((read = in.read()) != -1)
 	response.add((byte) read);
-      result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
+      result = new HttpRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
     }
     catch (IOException e) {
-      result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), null);
+      result = new HttpRequestResult(conn.getResponseCode(), conn.getResponseMessage(), null);
     }
     return result;
   }
@@ -103,8 +103,8 @@ public class HttpRequestHelper {
    * @return		the result from the request
    * @throws Exception	if request failed
    */
-  public static HTMLRequestResult send(BaseURL url, Method method, BaseKeyValuePair[] headers, String payload, String encoding) throws Exception {
-    HTMLRequestResult 	result;
+  public static HttpRequestResult send(BaseURL url, Method method, BaseKeyValuePair[] headers, String payload, String encoding) throws Exception {
+    HttpRequestResult result;
     HttpURLConnection	conn;
     OutputStream 	out;
     OutputStreamWriter  writer;
@@ -141,10 +141,10 @@ public class HttpRequestHelper {
       in = conn.getInputStream();
       while ((read = in.read()) != -1)
 	response.add((byte) read);
-      result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
+      result = new HttpRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
     }
     catch (IOException e) {
-      result = new HTMLRequestResult(conn.getResponseCode(), conn.getResponseMessage(), null);
+      result = new HttpRequestResult(conn.getResponseCode(), conn.getResponseMessage(), null);
     }
     return result;
   }
@@ -160,8 +160,8 @@ public class HttpRequestHelper {
    * @return		the result from the request
    * @throws Exception	if request failed
    */
-  public static HTMLRequestResult send(BaseURL url, Method method, BaseKeyValuePair[] headers, BaseKeyValuePair[] parameters, BaseKeyValuePair[] cookies) throws Exception {
-    HTMLRequestResult 	result;
+  public static HttpRequestResult send(BaseURL url, Method method, BaseKeyValuePair[] headers, BaseKeyValuePair[] parameters, BaseKeyValuePair[] cookies) throws Exception {
+    HttpRequestResult result;
     Connection 		conn;
     Response 		res;
 
@@ -174,10 +174,10 @@ public class HttpRequestHelper {
       conn.cookies(BaseKeyValuePair.toMap(cookies));
     try {
       res = conn.execute();
-      result = new HTMLRequestResult(res.statusCode(), res.statusMessage(), res.body(), res.cookies());
+      result = new HttpRequestResult(res.statusCode(), res.statusMessage(), res.body(), res.cookies());
     }
     catch (HttpStatusException e) {
-      result = new HTMLRequestResult(e.getStatusCode(), e.getMessage(), null);
+      result = new HttpRequestResult(e.getStatusCode(), e.getMessage(), null);
     }
     return result;
   }

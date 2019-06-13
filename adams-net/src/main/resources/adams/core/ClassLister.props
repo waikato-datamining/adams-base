@@ -38,10 +38,6 @@ adams.data.io.output.EmailWriter=\
 # classes for email file writers
 adams.data.io.output.EmailFileWriter=\
   adams.data.io.output
- 
-# the webserver handlers
-adams.flow.standalone.webserver.Handler=\
-  adams.flow.standalone.webserver
 
 # the websocket server generators
 adams.flow.websocket.server.WebSocketServerGenerator=\

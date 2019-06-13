@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * HTMLRequestResult.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+/*
+ * HttpRequestResult.java
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.container;
@@ -26,12 +26,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Container for storing the results of HTML requests.
+ * Container for storing the results of http requests.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class HTMLRequestResult
+public class HttpRequestResult
   extends AbstractContainer {
 
   private static final long serialVersionUID = -2153844706336105272L;
@@ -51,7 +50,7 @@ public class HTMLRequestResult
   /**
    * Default constructor.
    */
-  public HTMLRequestResult() {
+  public HttpRequestResult() {
     super();
     store(VALUE_STATUSCODE, 200);
     store(VALUE_STATUSMESSAGE, "OK");
@@ -65,7 +64,7 @@ public class HTMLRequestResult
    * @param statusMessage	the status message
    * @param body		the body (HTML)
    */
-  public HTMLRequestResult(int statusCode, String statusMessage, String body) {
+  public HttpRequestResult(int statusCode, String statusMessage, String body) {
     this(statusCode, statusMessage, body, null);
   }
 
@@ -77,7 +76,7 @@ public class HTMLRequestResult
    * @param body	the body (HTML)
    * @param cookies	the cookies, can be null
    */
-  public HTMLRequestResult(int statusCode, String statusMessage, String body, Map<String,String> cookies) {
+  public HttpRequestResult(int statusCode, String statusMessage, String body, Map<String,String> cookies) {
     this();
     store(VALUE_STATUSCODE, statusCode);
     store(VALUE_STATUSMESSAGE, statusMessage);
