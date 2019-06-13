@@ -15,7 +15,7 @@
 
 /*
  * AbstractModelLoader.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.core;
@@ -461,6 +461,10 @@ public abstract class AbstractModelLoader<T>
       }
       if (isLoggingEnabled())
         getLogger().info("Reload of model: " + (errors.isEmpty() ? "successful" : errors.toString()));
+
+      // set context
+      if (m_Model instanceof FlowContextHandler)
+        ((FlowContextHandler) m_Model).setFlowContext(m_FlowContext);
     }
 
     return m_Model;
