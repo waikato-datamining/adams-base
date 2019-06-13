@@ -15,7 +15,7 @@
 
 /*
  * AbstractSimpleSourceWithPropertiesUpdating.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -26,6 +26,7 @@ import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.base.BaseString;
 import adams.core.discovery.PropertyPath.PropertyContainer;
+import adams.flow.core.FlowContextHandler;
 import adams.flow.core.PropertiesUpdater;
 import adams.flow.core.PropertiesUpdaterHelper;
 
@@ -208,6 +209,11 @@ public abstract class AbstractSimpleSourceWithPropertiesUpdating
     PropertiesUpdaterHelper.update(this, obj, m_Properties, m_VariableNames, m_Containers, errors);
     if (!errors.isEmpty())
       result = errors.toString();
+
+    if (result == null) {
+      if (obj instanceof FlowContextHandler)
+        ((FlowContextHandler) obj).setFlowContext(this);
+    }
 
     return result;
   }
