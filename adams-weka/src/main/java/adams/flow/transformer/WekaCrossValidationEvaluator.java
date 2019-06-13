@@ -15,7 +15,7 @@
 
 /*
  * WekaCrossValidationEvaluator.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -536,6 +536,7 @@ public class WekaCrossValidationEvaluator
       m_CrossValidation.setNumThreads(m_NumThreads);
       m_CrossValidation.setOutput(m_Output);
       m_CrossValidation.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(m_Generator));
+      m_CrossValidation.setFlowContext(this);
       result = m_CrossValidation.execute();
 
       if (!m_CrossValidation.isStopped()) {

@@ -31,6 +31,8 @@ import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.option.OptionUtils;
 import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaTrainTestSetContainer;
+import adams.flow.core.Actor;
+import adams.flow.core.FlowContextHandler;
 import adams.flow.standalone.JobRunnerSetup;
 import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Classifier;
@@ -47,7 +49,7 @@ import weka.core.Instances;
  */
 public class WekaCrossValidationExecution
   extends CustomLoggingLevelObject
-  implements Stoppable, InstancesViewSupporter, ThreadLimiter {
+  implements Stoppable, InstancesViewSupporter, ThreadLimiter, FlowContextHandler {
 
   private static final long serialVersionUID = 2021758441076652982L;
 
@@ -114,6 +116,9 @@ public class WekaCrossValidationExecution
   /** whether to wait for jobs to finish when stopping. */
   protected boolean m_WaitForJobs;
 
+  /** the flow context. */
+  protected transient Actor m_FlowContext;
+
   /**
    * Initializes the execution.
    */
@@ -129,6 +134,25 @@ public class WekaCrossValidationExecution
     m_StatusMessageHandler = null;
     m_WaitForJobs          = true;
     m_Generator            = new DefaultCrossValidationFoldGenerator();
+    m_FlowContext          = null;
+  }
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value the actor
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return the actor, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
   }
 
   /**
@@ -518,6 +542,8 @@ public class WekaCrossValidationExecution
 	  train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
 	  test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
 	  cls   = (Classifier) OptionUtils.shallowCopy(m_Classifier);
+	  if (cls instanceof FlowContextHandler)
+	    ((FlowContextHandler) cls).setFlowContext(m_FlowContext);
 	  cls.buildClassifier(train);
 	  eval.setPriors(train);
 	  eval.evaluateModel(cls, test, m_Output);
@@ -556,6 +582,7 @@ public class WekaCrossValidationExecution
 	    (Integer) cont.getValue(WekaTrainTestSetContainer.VALUE_FOLD_NUMBER),
 	    m_DiscardPredictions,
 	    m_StatusMessageHandler);
+	  job.setFlowContext(m_FlowContext);
 	  list.add(job);
 	}
 	m_ActualJobRunner.add(list);

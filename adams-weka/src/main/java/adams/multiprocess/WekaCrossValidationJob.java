@@ -24,6 +24,8 @@ import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.flow.core.Actor;
+import adams.flow.core.FlowContextHandler;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
@@ -34,7 +36,8 @@ import weka.core.Instances;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class WekaCrossValidationJob
-  extends AbstractJob {
+  extends AbstractJob
+  implements FlowContextHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -9085803857529039559L;
@@ -59,6 +62,9 @@ public class WekaCrossValidationJob
 
   /** for outputting notifications. */
   protected transient StatusMessageHandler m_StatusMessageHandler;
+
+  /** the flow context. */
+  protected transient Actor m_FlowContext;
 
   /**
    * Initializes the job.
@@ -98,6 +104,25 @@ public class WekaCrossValidationJob
     m_Fold                 = fold;
     m_DiscardPredictions   = discardPred;
     m_StatusMessageHandler = handler;
+    m_FlowContext          = null;
+  }
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value the actor
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return the actor, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
   }
 
   /**
@@ -177,6 +202,8 @@ public class WekaCrossValidationJob
 	"Fold " + m_Fold + " - start: '" + m_Train.relationName() + "' using "
 	  + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
     try {
+      if (m_Classifier instanceof FlowContextHandler)
+        ((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
       m_Classifier.buildClassifier(m_Train);
       m_Evaluation = new Evaluation(m_Train);
       m_Evaluation.setDiscardPredictions(m_DiscardPredictions);
