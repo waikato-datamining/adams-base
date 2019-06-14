@@ -537,6 +537,8 @@ public class PyroNameServer
    */
   @Override
   public void wrapUp() {
+    if (m_Monitor != null)
+      m_Monitor.stopExecution();
     disconnect();
     super.wrapUp();
   }
