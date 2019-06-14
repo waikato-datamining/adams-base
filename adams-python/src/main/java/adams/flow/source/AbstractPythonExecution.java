@@ -332,9 +332,14 @@ public abstract class AbstractPythonExecution
    */
   public void processOutput(String line, boolean stdout) {
     if (stdout)
-      m_Output.add(m_PrefixStdOut + line);
+      line = m_PrefixStdOut + line;
     else
-      m_Output.add(m_PrefixStdErr + line);
+      line = m_PrefixStdErr + line;
+
+    m_Output.add(line);
+
+    if (isLoggingEnabled())
+      getLogger().info(line);
   }
 
   /**
