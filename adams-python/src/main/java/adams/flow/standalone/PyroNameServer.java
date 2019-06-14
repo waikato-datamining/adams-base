@@ -99,6 +99,13 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-launch-wait &lt;int&gt; (property: launchWait)
+ * &nbsp;&nbsp;&nbsp;The number of milliseconds to wait for the nameserver to become operational
+ * &nbsp;&nbsp;&nbsp;(and check for potential errors); disabled if 0.
+ * &nbsp;&nbsp;&nbsp;default: 1000
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -128,6 +135,9 @@ public class PyroNameServer
 
   /** the options for the launch mode. */
   protected String m_LaunchModeOptions;
+
+  /** the number of milliseconds to wait for nameserver to launch (and check for errors). */
+  protected int m_LaunchWait;
 
   /** the nameserver in use. */
   protected transient NameServerProxy m_NameServer;
@@ -175,6 +185,10 @@ public class PyroNameServer
     m_OptionManager.add(
       "launch-mode-options", "launchModeOptions",
       "");
+
+    m_OptionManager.add(
+      "launch-wait", "launchWait",
+      1000, 0, null);
   }
 
   /**
@@ -276,6 +290,35 @@ public class PyroNameServer
   }
 
   /**
+   * Sets the time to wait for the nameserver to become operational (and check for errors).
+   *
+   * @param value 	the wait time (milliseconds), disabled if 0
+   */
+  public void setLaunchWait(int value) {
+    m_LaunchWait = value;
+    reset();
+  }
+
+  /**
+   * Returns the time to wait for the nameserver to become operational (and check for errors).
+   *
+   * @return 		the wait time (milliseconds), disabled if 0
+   */
+  public int getLaunchWait() {
+    return m_LaunchWait;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String launchWaitTipText() {
+    return "The number of milliseconds to wait for the nameserver to become operational (and check for potential errors); disabled if 0.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -288,6 +331,7 @@ public class PyroNameServer
     result += QuickInfoHelper.toString(this, "mode", m_Mode, ", mode: ");
     if (m_Mode == Mode.LAUNCH_AND_CONNECT)
       result += QuickInfoHelper.toString(this, "launchModeOptions", (m_LaunchModeOptions.isEmpty() ? "-none-" : m_LaunchModeOptions), ", launch options: ");
+    result += QuickInfoHelper.toString(this, "launchWait", m_LaunchWait, ", wait: ");
 
     return result;
   }
@@ -326,7 +370,10 @@ public class PyroNameServer
    * @param stdout	whether stdout or stderr
    */
   public void processOutput(String line, boolean stdout) {
-    getLogger().info((stdout ? "[NS-OUT] " : "[NS-ERR] ") + line);
+    if (stdout)
+      getLogger().info("[NS-OUT] " + line);
+    else
+      getLogger().warning("[NS-ERR] " + line);
   }
 
   /**
@@ -366,6 +413,8 @@ public class PyroNameServer
 	  ProcessBuilder builder = new ProcessBuilder(cmd);
 	  m_Environment.updatePythonPath(builder.environment());
 	  m_ProcessOutput.monitor(builder);
+	  if (m_ProcessOutput.getExitCode() > 0)
+	    m_ExecutionFailure = new IllegalStateException("Failed to execute: " + OptionUtils.joinOptions(cmd.toArray(new String[0])) + "\nExit code: " + m_ProcessOutput.getExitCode());
 	}
 	catch (Exception e) {
 	  m_ExecutionFailure = new IllegalStateException("Failed to execute: " + OptionUtils.joinOptions(cmd.toArray(new String[0])), e);
@@ -384,8 +433,11 @@ public class PyroNameServer
     new Thread(m_Monitor).start();
 
     // wait for nameserver to become operational
-    // TODO check stdout output for 'URI = '?
-    Utils.wait(this, 1000, 100);
+    if (m_LaunchWait > 0) {
+      Utils.wait(this, m_LaunchWait, 100);
+      if (m_ExecutionFailure != null)
+	throw m_ExecutionFailure;
+    }
   }
 
   /**
