@@ -42,6 +42,7 @@
     <module>adams-python</module>
     <module>adams-rsync</module>
     <module>adams-scripts</module>
+    <module>adams-scripts-debian</module>
     <module>adams-spreadsheet</module>
     <module>adams-timeseries</module>
     <module>adams-visualstats</module>
@@ -439,6 +440,21 @@
                 <classifier>scripts</classifier>
                 <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
                 <outputDirectory>${project.build.directory}/scripts</outputDirectory>
+                <includeGroupIds>${project.groupId}</includeGroupIds>
+              </configuration>
+            </execution>
+            <!-- get all debian scripts jars -->
+            <execution>
+              <id>scripts-debian</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>unpack-dependencies</goal>
+              </goals>
+              <configuration>
+                <includeArtifactIds>adams-scripts-debian</includeArtifactIds>
+                <classifier>scripts</classifier>
+                <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+                <outputDirectory>${project.build.directory}/scripts-debian</outputDirectory>
                 <includeGroupIds>${project.groupId}</includeGroupIds>
               </configuration>
             </execution>
