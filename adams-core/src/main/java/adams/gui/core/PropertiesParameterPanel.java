@@ -76,6 +76,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -176,40 +177,43 @@ public class PropertiesParameterPanel
   protected List<String> m_Identifiers;
 
   /** the property/property type relation. */
-  protected HashMap<String,PropertyType> m_PropertyTypes;
+  protected Map<String,PropertyType> m_PropertyTypes;
 
   /** the actual property/property type relation. */
-  protected HashMap<String,PropertyType> m_ActualPropertyTypes;
+  protected Map<String,PropertyType> m_ActualPropertyTypes;
 
   /** the property/chooser relation. */
-  protected HashMap<String,AbstractChooserPanel> m_Choosers;
+  protected Map<String,AbstractChooserPanel> m_Choosers;
 
   /** the property/enum relation. */
-  protected HashMap<String,Class> m_Enums;
+  protected Map<String,Class> m_Enums;
 
   /** the property/lists relation. */
-  protected HashMap<String,String[]> m_Lists;
+  protected Map<String,String[]> m_Lists;
+
+  /** the property/list default relation. */
+  protected Map<String,String> m_ListDefaults;
 
   /** the property/help relation. */
-  protected HashMap<String,String> m_Help;
+  protected Map<String,String> m_Help;
 
   /** the property/label relation. */
-  protected HashMap<String,String> m_Label;
+  protected Map<String,String> m_Label;
 
   /** the property/regexp relation. */
-  protected HashMap<String,BaseRegExp> m_RegExp;
+  protected Map<String,BaseRegExp> m_RegExp;
 
   /** the property/component relation. */
-  protected HashMap<String,Component> m_Component;
+  protected Map<String,Component> m_Component;
 
   /** the property/arrayclass relation. */
-  protected HashMap<String,Class> m_ArrayClass;
+  protected Map<String,Class> m_ArrayClass;
 
   /** the property/arrayseparator relation. */
-  protected HashMap<String,String> m_ArraySeparator;
+  protected Map<String,String> m_ArraySeparator;
 
   /** the property/hints relation. */
-  protected HashMap<String,Set<PropertyHint>> m_PropertyHints;
+  protected Map<String,Set<PropertyHint>> m_PropertyHints;
 
   /** the custom order for the properties. */
   protected List<String> m_Order;
@@ -242,6 +246,7 @@ public class PropertiesParameterPanel
     m_Choosers            = new HashMap<>();
     m_Enums               = new HashMap<>();
     m_Lists               = new HashMap<>();
+    m_ListDefaults        = new HashMap<>();
     m_Help                = new HashMap<>();
     m_Label               = new HashMap<>();
     m_RegExp              = new HashMap<>();
@@ -332,6 +337,7 @@ public class PropertiesParameterPanel
     m_ArraySeparator.clear();
     m_Enums.clear();
     m_Lists.clear();
+    m_ListDefaults.clear();
     m_Help.clear();
     m_PropertyHints.clear();
   }
@@ -715,6 +721,38 @@ public class PropertiesParameterPanel
    */
   public String[] getList(String property) {
     return m_Lists.get(property);
+  }
+
+  /**
+   * Checks whether a list default has been specified for a particular
+   * property.
+   *
+   * @param property	the property check
+   * @return		true if a list default has been specified
+   */
+  public boolean hasListDefault(String property) {
+    return m_ListDefaults.containsKey(property);
+  }
+
+  /**
+   * Associates the list default item with a particular property.
+   *
+   * @param property	the property to associate the list with
+   * @param value	the default to use
+   */
+  public void setListDefault(String property, String value) {
+    m_ListDefaults.put(property, value);
+  }
+
+  /**
+   * Returns the default list item associated with a particular
+   * property.
+   *
+   * @param property	the property to get the default for
+   * @return		the default, null if none available
+   */
+  public String getListDefault(String property) {
+    return m_ListDefaults.get(property);
   }
 
   /**
@@ -1103,7 +1141,10 @@ public class PropertiesParameterPanel
               combo = new BaseComboBox(SpreadSheetUtils.split(value.getProperty(key), ',', true));
             else
               combo = new BaseComboBox(getList(key));
-            combo.setSelectedItem(value.getProperty(key));
+            if (hasListDefault(key))
+	      combo.setSelectedItem(getListDefault(key));
+            else
+	      combo.setSelectedItem(value.getProperty(key));
             if (help != null)
 	      combo.setToolTipText(help);
             addProperty(key, label, combo);
