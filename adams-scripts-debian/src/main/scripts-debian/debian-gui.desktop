@@ -6,4 +6,4 @@ Type=Application
 Terminal=true
 Icon=${project.name}
 Name=ADAMS (${project.name})
-Exec=/usr/bin/${project.name}
+Exec=/usr/bin/${project.name}-gui
