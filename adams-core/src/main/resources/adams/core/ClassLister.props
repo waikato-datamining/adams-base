@@ -106,6 +106,14 @@ adams.data.autocorrelation.AbstractAutoCorrelation=\
 adams.data.baseline.AbstractBaselineCorrection=\
   adams.data.baseline
 
+# the binning algorithms
+adams.data.binning.algorithm.AbstractBinningAlgorithm=\
+  adams.data.binning.algorithm
+
+# the schemes for post-processing bins
+adams.data.binning.postprocessing.AbstractBinPostProcessing=\
+  adams.data.binning.postprocessing
+
 # data object compare schemes
 adams.data.compare.AbstractObjectCompare=\
   adams.data.compare
