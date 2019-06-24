@@ -282,9 +282,13 @@ public class ManualBinning<T>
       min = m_ManualMin;
       max = m_ManualMax;
     }
+    if (isLoggingEnabled())
+      getLogger().info("min=" + min + ", max=" + max);
 
     // calculate bin starts
     binWidth = (max - min) / m_NumBins;
+    if (isLoggingEnabled())
+      getLogger().info("binWidth=" + binWidth);
     binStart = new double[m_NumBins + 1];
     for (i = 0; i < m_NumBins; i++)
       binStart[i] = min + i*binWidth;
@@ -296,6 +300,7 @@ public class ManualBinning<T>
       bin = new Bin<T>(
         i,
 	binStart[i],
+	binStart[i + 1],
 	new BaseInterval(
               binStart[i], true,
               binStart[i + 1], (i == m_NumBins - 1),

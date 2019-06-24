@@ -165,6 +165,7 @@ public class DensityBinning<T>
       bin = new Bin<T>(
         i,
 	binStart[i],
+	binStart[i + 1],
 	new BaseInterval(
               binStart[i], true,
               binStart[i + 1], (i == numBins - 1),

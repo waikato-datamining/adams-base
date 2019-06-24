@@ -59,57 +59,57 @@ public class MinBinSizeTest
     result = new List[7];
 
     result[0] = new ArrayList<>();
-    result[0].add(new Bin(0, 0.0, new BaseInterval(0.0, true, 1.0, false)));
+    result[0].add(new Bin(0, 0.0, 1.0, new BaseInterval(0.0, true, 1.0, false)));
     result[0].get(0).add(new Binnable<>(1, 0.1));
 
     result[1] = new ArrayList<>();
-    result[1].add(new Bin(0, 0.0, new BaseInterval(0.0, true, 1.0, false)));
+    result[1].add(new Bin(0, 0.0, 1.0, new BaseInterval(0.0, true, 1.0, false)));
     result[1].get(0).add(new Binnable<>(1, 0.1));
-    result[1].add(new Bin(1, 1.0, new BaseInterval(1.0, true, 2.0, false)));
+    result[1].add(new Bin(1, 1.0, 2.0, new BaseInterval(1.0, true, 2.0, false)));
     result[1].get(1).add(new Binnable<>(2, 1.1));
 
     result[2] = new ArrayList<>();
-    result[2].add(new Bin(0, 0.0, new BaseInterval(0.0, true, 1.0, false)));
+    result[2].add(new Bin(0, 0.0, 1.0, new BaseInterval(0.0, true, 1.0, false)));
     result[2].get(0).add(new Binnable<>(1, 0.1));
     result[2].get(0).add(new Binnable<>(2, 0.2));
-    result[2].add(new Bin(1, 1.0, new BaseInterval(1.0, true, 2.0, false)));
+    result[2].add(new Bin(1, 1.0, 2.0, new BaseInterval(1.0, true, 2.0, false)));
     result[2].get(1).add(new Binnable<>(3, 1.1));
 
     result[3] = new ArrayList<>();
-    result[3].add(new Bin(0, 0.0, new BaseInterval(0.0, true, 1.0, false)));
+    result[3].add(new Bin(0, 0.0, 1.0, new BaseInterval(0.0, true, 1.0, false)));
     result[3].get(0).add(new Binnable<>(1, 0.1));
-    result[3].add(new Bin(1, 1.0, new BaseInterval(1.0, true, 2.0, false)));
+    result[3].add(new Bin(1, 1.0, 2.0, new BaseInterval(1.0, true, 2.0, false)));
     result[3].get(1).add(new Binnable<>(2, 1.1));
     result[3].get(1).add(new Binnable<>(3, 1.2));
 
     result[4] = new ArrayList<>();
-    result[4].add(new Bin(0, 0.0, new BaseInterval(0.0, true, 1.0, false)));
+    result[4].add(new Bin(0, 0.0, 1.0, new BaseInterval(0.0, true, 1.0, false)));
     result[4].get(0).add(new Binnable<>(1, 0.1));
     result[4].get(0).add(new Binnable<>(2, 0.2));
-    result[4].add(new Bin(1, 1.0, new BaseInterval(1.0, true, 2.0, false)));
+    result[4].add(new Bin(1, 1.0, 2.0, new BaseInterval(1.0, true, 2.0, false)));
     result[4].get(1).add(new Binnable<>(2, 1.1));
     result[4].get(1).add(new Binnable<>(3, 1.2));
-    result[4].add(new Bin(2, 2.0, new BaseInterval(2.0, true, 3.0, false)));
+    result[4].add(new Bin(2, 2.0, 3.0, new BaseInterval(2.0, true, 3.0, false)));
     result[4].get(2).add(new Binnable<>(2, 2.1));
     result[4].get(2).add(new Binnable<>(3, 2.2));
 
     result[5] = new ArrayList<>();
-    result[5].add(new Bin(0, 0.0, new BaseInterval(0.0, true, 1.0, false)));
+    result[5].add(new Bin(0, 0.0, 1.0, new BaseInterval(0.0, true, 1.0, false)));
     result[5].get(0).add(new Binnable<>(1, 0.1));
     result[5].get(0).add(new Binnable<>(2, 0.1));
-    result[5].add(new Bin(1, 1.0, new BaseInterval(1.0, true, 2.0, false)));
+    result[5].add(new Bin(1, 1.0, 2.0, new BaseInterval(1.0, true, 2.0, false)));
     result[5].get(1).add(new Binnable<>(3, 1.1));
-    result[5].add(new Bin(2, 2.0, new BaseInterval(2.0, true, 3.0, false)));
+    result[5].add(new Bin(2, 2.0, 3.0, new BaseInterval(2.0, true, 3.0, false)));
     result[5].get(2).add(new Binnable<>(2, 2.1));
     result[5].get(2).add(new Binnable<>(3, 2.2));
 
     result[6] = new ArrayList<>();
-    result[6].add(new Bin(0, 0.0, new BaseInterval(0.0, true, 1.0, false)));
+    result[6].add(new Bin(0, 0.0, 1.0, new BaseInterval(0.0, true, 1.0, false)));
     result[6].get(0).add(new Binnable<>(1, 0.1));
     result[6].get(0).add(new Binnable<>(2, 0.1));
-    result[6].add(new Bin(1, 1.0, new BaseInterval(1.0, true, 2.0, false)));
+    result[6].add(new Bin(1, 1.0, 2.0, new BaseInterval(1.0, true, 2.0, false)));
     result[6].get(1).add(new Binnable<>(3, 1.1));
-    result[6].add(new Bin(2, 2.0, new BaseInterval(2.0, true, 3.0, false)));
+    result[6].add(new Bin(2, 2.0, 3.0, new BaseInterval(2.0, true, 3.0, false)));
     result[6].get(2).add(new Binnable<>(2, 2.1));
 
     return result;

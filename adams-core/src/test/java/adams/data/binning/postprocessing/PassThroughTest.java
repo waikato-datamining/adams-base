@@ -57,7 +57,7 @@ public class PassThroughTest
 
     result = new List[1];
     result[0] = new ArrayList<>();
-    result[0].add(new Bin(0, 0.0, new BaseInterval(0.0, true, 1.0, true)));
+    result[0].add(new Bin(0, 0.0, 1.0, new BaseInterval(0.0, true, 1.0, true)));
 
     return result;
   }

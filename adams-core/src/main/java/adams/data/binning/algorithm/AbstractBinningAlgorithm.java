@@ -149,6 +149,11 @@ public abstract class AbstractBinningAlgorithm<T>
     result = doGenerateBins(objects);
     fillBins(result, objects);
 
+    if (isLoggingEnabled()) {
+      getLogger().info("Data: " + objects);
+      getLogger().info("Bins: " + result);
+    }
+
     return result;
   }
 }
