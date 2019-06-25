@@ -85,7 +85,7 @@ public class CopyTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(RandomizeTest.class);
+    return new TestSuite(CopyTest.class);
   }
 
   /**
