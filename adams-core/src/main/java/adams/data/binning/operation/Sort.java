@@ -46,13 +46,14 @@ public class Sort {
   }
 
   /**
-   * Sorts the binnable data in-place using its values.
-   * Based on Weka's sorting method in Instances#stratify(int).
+   * Groups the binnable data in-place using its values.
+   * Based on Weka's sorting method in Instances#stratify(int), assuming
+   * that the values are discrete.
    *
    * @param data	the data to sort
    * @param <T>		the payload type
    */
-  public static <T> void sort(List<Binnable<T>> data) {
+  public static <T> void group(List<Binnable<T>> data) {
     int 		i;
     int 		n;
     Binnable<T> 	b1;
@@ -70,5 +71,15 @@ public class Sort {
       }
       i++;
     }
+  }
+
+  /**
+   * Sorts the binnable data in-place using its values.
+   *
+   * @param data	the data to sort
+   * @param <T>		the payload type
+   */
+  public static <T> void sort(List<Binnable<T>> data) {
+    data.sort((o1, o2) -> Double.compare(o1.getValue(), o2.getValue()));
   }
 }

@@ -48,7 +48,7 @@ public class Stratify {
     int 		i;
 
     data = Copy.copyData(data, CopyType.LIST);
-    Sort.sort(data);
+    Sort.group(data);
     result = new ArrayList<>();
     start  = 0;
     while (result.size() < data.size()) {
