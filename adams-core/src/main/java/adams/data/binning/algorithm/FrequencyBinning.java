@@ -28,6 +28,7 @@ import adams.core.TechnicalInformationHandler;
 import adams.core.base.BaseInterval;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
+import adams.data.binning.operation.Values;
 import adams.data.statistics.StatUtils;
 
 import java.util.ArrayList;
@@ -147,7 +148,7 @@ public class FrequencyBinning<T>
     int			i;
     Bin			bin;
 
-    array = Binnable.valuesToNumberArray(objects);
+    array = Values.toNumberArray(objects);
     // calculate bin starts
     binStart = new double[m_NumBins + 1];
     sorted = StatUtils.sort(array, true);

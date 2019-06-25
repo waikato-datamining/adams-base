@@ -20,9 +20,9 @@
 package adams.data.statistics;
 
 import adams.data.binning.Bin;
-import adams.data.binning.Binnable;
 import adams.data.binning.algorithm.AbstractBinningAlgorithm;
 import adams.data.binning.algorithm.ManualBinning;
+import adams.data.binning.operation.Wrap;
 import adams.data.binning.postprocessing.AbstractBinPostProcessing;
 import adams.data.binning.postprocessing.PassThrough;
 
@@ -291,7 +291,7 @@ public class ArrayBinning<T extends Number>
       array = StatUtils.normalize(array);
 
     try {
-      bins = m_Algorithm.generateBins(Binnable.wrap(array));
+      bins = m_Algorithm.generateBins(Wrap.wrap(array));
       bins = m_PostProcessing.postProcessBins(bins);
     }
     catch (Exception e) {

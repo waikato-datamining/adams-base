@@ -26,6 +26,7 @@ import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
 import adams.data.binning.algorithm.AbstractBinningAlgorithm;
 import adams.data.binning.algorithm.ManualBinning;
+import adams.data.binning.operation.Wrap;
 import adams.data.binning.postprocessing.AbstractBinPostProcessing;
 import adams.data.binning.postprocessing.PassThrough;
 import adams.data.spreadsheet.Row;
@@ -449,7 +450,7 @@ public class SpreadSheetRowBinning
     values = SpreadSheetUtils.getNumericColumn(sheetOld, binCol);
     rows   = null;
     try {
-      rows = Binnable.wrap(values);
+      rows = Wrap.wrap(values);
     }
     catch (Exception e) {
       result = handleException("Failed to generate binnable data!", e);
