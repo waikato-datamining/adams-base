@@ -19,6 +19,7 @@
  */
 package adams.data.binning.operation;
 
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
@@ -27,6 +28,7 @@ import adams.test.AdamsTestCase;
 import adams.test.TmpFile;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -99,6 +101,23 @@ public abstract class AbstractOperationTestCase<T>
   }
 
   /**
+   * Turns the object into a string.
+   *
+   * @param o		the object to convert
+   * @return		the generated string
+   */
+  protected String toString(Object o) {
+    if (o instanceof Binnable)
+      return ((Binnable) o).toString(NUM_DECIMALS);
+    else if (o instanceof Bin)
+      return ((Bin) o).toString(NUM_DECIMALS);
+    else if (o instanceof Number)
+      return Utils.doubleToString(((Number) o).doubleValue(), NUM_DECIMALS);
+    else
+      return o.toString();
+  }
+
+  /**
    * Saves the data in the tmp directory.
    *
    * @param data	the data to save
@@ -113,7 +132,7 @@ public abstract class AbstractOperationTestCase<T>
     for (i = 0; i < data.size(); i++) {
       if (i > 0)
         str.append("\n");
-      str.append(data.get(i).toString(NUM_DECIMALS));
+      str.append(toString(data.get(i)));
     }
 
     return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, str, false);
@@ -134,7 +153,7 @@ public abstract class AbstractOperationTestCase<T>
     for (i = 0; i < data.size(); i++) {
       if (i > 0)
         str.append("\n");
-      str.append(data.get(i).toString(NUM_DECIMALS));
+      str.append(toString(data.get(i)));
     }
 
     return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, str, false);
@@ -148,7 +167,32 @@ public abstract class AbstractOperationTestCase<T>
    * @return		true if successfully saved
    */
   protected boolean saveObject(Object data, String filename) {
-    return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, data, false);
+    int			i;
+    StringBuilder	str;
+    List		list;
+
+    str = new StringBuilder();
+
+    if (data instanceof List) {
+      list = (List) data;
+      for (i = 0; i < list.size(); i++) {
+	if (i > 0)
+	  str.append("\n");
+	str.append(toString(list.get(i)));
+      }
+    }
+    else if (data.getClass().isArray()) {
+      for (i = 0; i < Array.getLength(data); i++) {
+	if (i > 0)
+	  str.append("\n");
+	str.append(toString(Array.get(data, i)));
+      }
+    }
+    else {
+      str.append(toString(data));
+    }
+
+    return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, str, false);
   }
 
   /**
