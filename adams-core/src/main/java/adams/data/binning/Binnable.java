@@ -35,6 +35,22 @@ public class Binnable<T>
 
   private static final long serialVersionUID = 4963864458212337110L;
 
+  /**
+   * Interface for extracting values for bins from arbitrary objects.
+   *
+   * @param <T> the type of object to process
+   */
+  public interface BinValueExtractor<T> {
+
+    /**
+     * Extracts the numeric value to use for binning from the object.
+     *
+     * @param object	the object to process
+     * @return		the extracted value
+     */
+    public double extractBinValue(T object);
+  }
+
   /** the actual data object. */
   protected T m_Payload;
 
@@ -137,6 +153,26 @@ public class Binnable<T>
       if (Double.isNaN(values[i].doubleValue()))
         throw new Exception("Non-numeric or missing value in row #" + (i+1) + ", cannot generate binnable object wrapper!");
       result.add(new Binnable<>(i, values[i].doubleValue()));
+    }
+
+    return result;
+  }
+
+  /**
+   * Wraps the double array in binnable objects, using the index as payload.
+   *
+   * @param values	the values to bin
+   * @param extractor 	for extracting the bin value from the objects
+   * @return		the wrapped indices/values
+   * @throws Exception	if NaN value is encountered
+   */
+  public static <T> List<Binnable<T>> wrap(T[] values, BinValueExtractor<T> extractor) throws Exception {
+    List<Binnable<T>> 	result;
+    int			i;
+
+    result = new ArrayList<>();
+    for (i = 0; i < values.length; i++) {
+      result.add(new Binnable<>(values[i], extractor.extractBinValue(values[i])));
     }
 
     return result;
