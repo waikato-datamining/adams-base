@@ -22,6 +22,7 @@ package adams.data.binning.operation;
 import adams.core.io.FileUtils;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
+import adams.data.binning.algorithm.AbstractBinningAlgorithm;
 import adams.test.AdamsTestCase;
 import adams.test.TmpFile;
 
@@ -82,6 +83,17 @@ public abstract class AbstractOperationTestCase<T>
       result.add(new Binnable<>(i, rnd.nextInt(max)));
 
     return result;
+  }
+
+  /**
+   * Generates bins from the data using the specified algorithm.
+   *
+   * @param data	the data to use
+   * @param algorithm	the binning algorithm to apply
+   * @return		the generated bin
+   */
+  protected List<Bin<Integer>> generateBins(List<Binnable<Integer>> data, AbstractBinningAlgorithm<Integer> algorithm) {
+    return algorithm.generateBins(data);
   }
 
   /**
