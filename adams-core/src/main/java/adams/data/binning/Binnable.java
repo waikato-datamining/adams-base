@@ -20,6 +20,8 @@
 
 package adams.data.binning;
 
+import adams.core.Utils;
+
 import java.io.Serializable;
 
 /**
@@ -74,7 +76,19 @@ public class Binnable<T>
    * @return		the description
    */
   public String toString() {
-    return m_Value + ": " + m_Payload;
+    return toString(-1);
   }
 
+  /**
+   * Returns a short description of the wrapper.
+   *
+   * @param decimals 	the number of decimals in the output, -1 for no limit
+   * @return		the description
+   */
+  public String toString(int decimals) {
+    if (decimals == -1)
+      return m_Value + ": " + m_Payload;
+    else
+      return Utils.doubleToString(m_Value, decimals) + ": " + m_Payload;
+  }
 }

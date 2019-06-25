@@ -22,6 +22,7 @@ package adams.data.binning;
 
 import adams.core.CloneHandler;
 import adams.core.Mergeable;
+import adams.core.Utils;
 import adams.core.base.BaseInterval;
 
 import java.io.Serializable;
@@ -223,6 +224,19 @@ public class Bin<T>
    * @return		the description
    */
   public String toString() {
-    return m_Index + ": start=" + m_Start + ", end=" + m_End + ", interval=" + m_Interval + ", #objects=" + m_Objects.size();
+    return toString(-1);
+  }
+
+  /**
+   * Returns a short description of the bin.
+   *
+   * @param decimals 	the number of decimals to use in the output, -1 for no limit
+   * @return		the description
+   */
+  public String toString(int decimals) {
+    if (decimals == -1)
+      return m_Index + ": start=" + m_Start + ", end=" + m_End + ", interval=" + m_Interval + ", #objects=" + m_Objects.size();
+    else
+      return m_Index + ": start=" + Utils.doubleToString(m_Start, decimals) + ", end=" + Utils.doubleToString(m_End, decimals) + ", interval=" + m_Interval + ", #objects=" + m_Objects.size();
   }
 }
