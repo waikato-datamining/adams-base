@@ -139,6 +139,17 @@ public abstract class AbstractOperationTestCase<T>
   }
 
   /**
+   * Saves the object in the tmp directory.
+   *
+   * @param data	the data to save
+   * @param filename	the filename to save to (without path)
+   * @return		true if successfully saved
+   */
+  protected boolean saveObject(Object data, String filename) {
+    return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, data, false);
+  }
+
+  /**
    * Creates an output filename based on the input filename.
    *
    * @param no		the number of the test
