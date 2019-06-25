@@ -40,6 +40,8 @@ import java.util.Random;
 public abstract class AbstractOperationTestCase<T>
   extends AdamsTestCase {
 
+  public final static int NUM_DECIMALS = 8;
+
   /**
    * Constructs the test case. Called by subclasses.
    *
@@ -111,7 +113,7 @@ public abstract class AbstractOperationTestCase<T>
     for (i = 0; i < data.size(); i++) {
       if (i > 0)
         str.append("\n");
-      str.append(data.get(i).toString());
+      str.append(data.get(i).toString(NUM_DECIMALS));
     }
 
     return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, str, false);
@@ -132,7 +134,7 @@ public abstract class AbstractOperationTestCase<T>
     for (i = 0; i < data.size(); i++) {
       if (i > 0)
         str.append("\n");
-      str.append(data.get(i).toString());
+      str.append(data.get(i).toString(NUM_DECIMALS));
     }
 
     return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, str, false);
