@@ -22,6 +22,7 @@ package adams.data.binning;
 
 import adams.core.CloneHandler;
 import adams.core.Mergeable;
+import adams.core.Utils;
 import adams.core.base.BaseInterval;
 
 import java.io.Serializable;
@@ -46,6 +47,9 @@ public class Bin<T>
   /** the start of the bin. */
   protected double m_Start;
 
+  /** the end of the bin. */
+  protected double m_End;
+
   /** the range. */
   protected BaseInterval m_Interval;
 
@@ -59,9 +63,10 @@ public class Bin<T>
    * @param start	the starting point
    * @param interval	the complete range
    */
-  public Bin(int index, double start, BaseInterval interval) {
+  public Bin(int index, double start, double end, BaseInterval interval) {
     m_Index    = index;
     m_Start    = start;
+    m_End      = end;
     m_Interval = interval;
     m_Objects  = new ArrayList<>();
   }
@@ -85,6 +90,15 @@ public class Bin<T>
   }
 
   /**
+   * Returns the end of the bin.
+   *
+   * @return		the end
+   */
+  public double getEnd() {
+    return m_End;
+  }
+
+  /**
    * Returns the complete interval of the bin.
    *
    * @return		the interval
@@ -100,7 +114,22 @@ public class Bin<T>
    * @return		true if it fits
    */
   public boolean fits(Binnable<T> object) {
-    return m_Interval.isInside(object.getValue());
+    boolean	result;
+    double	value;
+
+    value = object.getValue();
+    if (m_Interval.isLowerInclusive())
+      result = (value >= m_Start);
+    else
+      result = (value > m_Start);
+    if (result) {
+      if (m_Interval.isUpperInclusive())
+	result = (value <= m_End);
+      else
+	result = (value < m_End);
+    }
+
+    return result;
   }
 
   /**
@@ -171,7 +200,7 @@ public class Bin<T>
   public Bin<T> getClone() {
     Bin<T>	result;
 
-    result = new Bin<>(m_Index, m_Start, new BaseInterval(m_Interval.getValue()));
+    result = new Bin<>(m_Index, m_Start, m_End, new BaseInterval(m_Interval.getValue()));
     result.addAll(get());
 
     return result;
@@ -195,6 +224,19 @@ public class Bin<T>
    * @return		the description
    */
   public String toString() {
-    return m_Index + ": start=" + m_Start + ", interval=" + m_Interval + ", #objects=" + m_Objects.size();
+    return toString(-1);
+  }
+
+  /**
+   * Returns a short description of the bin.
+   *
+   * @param decimals 	the number of decimals to use in the output, -1 for no limit
+   * @return		the description
+   */
+  public String toString(int decimals) {
+    if (decimals == -1)
+      return m_Index + ": start=" + m_Start + ", end=" + m_End + ", interval=" + m_Interval + ", #objects=" + m_Objects.size();
+    else
+      return m_Index + ": start=" + Utils.doubleToString(m_Start, decimals) + ", end=" + Utils.doubleToString(m_End, decimals) + ", interval=" + m_Interval + ", #objects=" + m_Objects.size();
   }
 }

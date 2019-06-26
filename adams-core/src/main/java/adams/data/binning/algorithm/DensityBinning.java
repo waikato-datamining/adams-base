@@ -28,7 +28,8 @@ import adams.core.TechnicalInformationHandler;
 import adams.core.base.BaseInterval;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
-import adams.data.statistics.StatUtils;
+import adams.data.binning.operation.Statistics;
+import com.github.fracpete.javautils.struct.Struct2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,24 +141,24 @@ public class DensityBinning<T>
    */
   @Override
   protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
-    List<Bin<T>>	result;
-    Number[]		array;
-    int			numBins;
-    double		min;
-    double		max;
-    double[]		binStart;
-    int			i;
-    Bin			bin;
+    List<Bin<T>>		result;
+    int				numBins;
+    Struct2<Double,Double>	minMax;
+    double			min;
+    double			max;
+    double[]			binStart;
+    int				i;
+    Bin				bin;
 
-    array   = Binnable.valuesToNumberArray(objects);
-    min     = StatUtils.min(array).doubleValue();
-    max     = StatUtils.max(array).doubleValue();
+    minMax  = Statistics.minMax(objects);
+    min     = minMax.value1;
+    max     = minMax.value2;
     numBins = (int) Math.ceil((max - min) / m_BinWidth);
     // calculate bin starts
     binStart = new double[numBins + 1];
     for (i = 0; i < numBins; i++)
       binStart[i] = min + i*m_BinWidth;
-    binStart[binStart.length - 1] = StatUtils.max(array).doubleValue();
+    binStart[binStart.length - 1] = max;
 
     // create bins
     result = new ArrayList<>();
@@ -165,6 +166,7 @@ public class DensityBinning<T>
       bin = new Bin<T>(
         i,
 	binStart[i],
+	binStart[i + 1],
 	new BaseInterval(
               binStart[i], true,
               binStart[i + 1], (i == numBins - 1),

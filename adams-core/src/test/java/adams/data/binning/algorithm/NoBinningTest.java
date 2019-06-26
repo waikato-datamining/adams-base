@@ -14,35 +14,35 @@
  */
 
 /*
- * PassThroughTest.java
+ * NoBinningTest.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.data.binning.postprocessing;
+package adams.data.binning.algorithm;
 
-import adams.core.base.BaseInterval;
-import adams.data.binning.Bin;
+import adams.data.binning.Binnable;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
- * Tests PassThrough.
+ * Tests NoBinning.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class PassThroughTest
-  extends AbstractBinPostProcessingTestCase<Integer> {
+public class NoBinningTest
+  extends AbstractBinningAlgorithmTestCase<Integer> {
 
   /**
    * Constructs the test case. Called by subclasses.
    *
    * @param name the name of the test
    */
-  public PassThroughTest(String name) {
+  public NoBinningTest(String name) {
     super(name);
   }
 
@@ -52,12 +52,14 @@ public class PassThroughTest
    * @return		the data
    */
   @Override
-  protected List<Bin<Integer>>[] getRegressionInputData() {
-    List<Bin<Integer>>[]	result;
+  protected List<Binnable<Integer>> getRegressionInputData() {
+    List<Binnable<Integer>>	result;
+    Random			rnd;
 
-    result = new List[1];
-    result[0] = new ArrayList<>();
-    result[0].add(new Bin(0, 0.0, 1.0, new BaseInterval(0.0, true, 1.0, true)));
+    result = new ArrayList<>();
+    rnd    = new Random(1);
+    for (int i = 0; i < 100; i++)
+      result.add(new Binnable<>(i, rnd.nextDouble()));
 
     return result;
   }
@@ -68,11 +70,11 @@ public class PassThroughTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinPostProcessing<Integer>[] getRegressionSetups() {
-    PassThrough<Integer>[]	result;
+  protected AbstractBinningAlgorithm<Integer>[] getRegressionSetups() {
+    NoBinning<Integer>[]	result;
 
-    result = new PassThrough[1];
-    result[0] = new PassThrough<>();
+    result = new NoBinning[1];
+    result[0] = new NoBinning<>();
 
     return result;
   }
@@ -83,7 +85,7 @@ public class PassThroughTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(PassThroughTest.class);
+    return new TestSuite(NoBinningTest.class);
   }
 
   /**

@@ -24,6 +24,8 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseInterval;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
+import adams.data.binning.operation.Statistics;
+import com.github.fracpete.javautils.struct.Struct2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -260,6 +262,7 @@ public class ManualBinning<T>
   @Override
   protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
     List<Bin<T>>	result;
+    Struct2<Double,Double> minMax;
     double		min;
     double		max;
     double		binWidth;
@@ -268,12 +271,9 @@ public class ManualBinning<T>
     Bin			bin;
 
     // determine min/max
-    min = Double.MAX_VALUE;
-    max = Double.MIN_VALUE;
-    for (Binnable obj : objects) {
-      min = Math.min(min, obj.getValue());
-      max = Math.max(max, obj.getValue());
-    }
+    minMax = Statistics.minMax(objects);
+    min    = minMax.value1;
+    max    = minMax.value2;
     if (m_UseFixedMinMax) {
       if (min < m_ManualMin)
 	throw new IllegalStateException("Manual min larger than smallest value: " + m_ManualMin + " > " + min);
@@ -282,9 +282,13 @@ public class ManualBinning<T>
       min = m_ManualMin;
       max = m_ManualMax;
     }
+    if (isLoggingEnabled())
+      getLogger().info("min=" + min + ", max=" + max);
 
     // calculate bin starts
     binWidth = (max - min) / m_NumBins;
+    if (isLoggingEnabled())
+      getLogger().info("binWidth=" + binWidth);
     binStart = new double[m_NumBins + 1];
     for (i = 0; i < m_NumBins; i++)
       binStart[i] = min + i*binWidth;
@@ -296,6 +300,7 @@ public class ManualBinning<T>
       bin = new Bin<T>(
         i,
 	binStart[i],
+	binStart[i + 1],
 	new BaseInterval(
               binStart[i], true,
               binStart[i + 1], (i == m_NumBins - 1),

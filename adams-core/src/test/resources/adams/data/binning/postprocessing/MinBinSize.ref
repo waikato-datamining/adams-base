@@ -1,55 +1,55 @@
 --> out-setup=0-data=0.txt
-0: start=0.0, interval=[0;1), #objects=1 - no errors
+0: start=0.0, end=1.0, interval=[0;1), #objects=1 - no errors
 
 --> out-setup=0-data=1.txt
-0: start=0.0, interval=[0;1), #objects=1
-1: start=1.0, interval=[1;2), #objects=1 - no errors
+0: start=0.0, end=1.0, interval=[0;1), #objects=1
+1: start=1.0, end=2.0, interval=[1;2), #objects=1 - no errors
 
 --> out-setup=0-data=2.txt
-0: start=0.0, interval=[0;1), #objects=2
-1: start=1.0, interval=[1;2), #objects=1 - no errors
+0: start=0.0, end=1.0, interval=[0;1), #objects=2
+1: start=1.0, end=2.0, interval=[1;2), #objects=1 - no errors
 
 --> out-setup=0-data=3.txt
-0: start=0.0, interval=[0;1), #objects=1
-1: start=1.0, interval=[1;2), #objects=2 - no errors
+0: start=0.0, end=1.0, interval=[0;1), #objects=1
+1: start=1.0, end=2.0, interval=[1;2), #objects=2 - no errors
 
 --> out-setup=0-data=4.txt
-0: start=0.0, interval=[0;1), #objects=2
-1: start=1.0, interval=[1;2), #objects=2
-2: start=2.0, interval=[2;3), #objects=2 - no errors
+0: start=0.0, end=1.0, interval=[0;1), #objects=2
+1: start=1.0, end=2.0, interval=[1;2), #objects=2
+2: start=2.0, end=3.0, interval=[2;3), #objects=2 - no errors
 
 --> out-setup=0-data=5.txt
-0: start=0.0, interval=[0;1), #objects=2
-1: start=1.0, interval=[1;2), #objects=1
-2: start=2.0, interval=[2;3), #objects=2 - no errors
+0: start=0.0, end=1.0, interval=[0;1), #objects=2
+1: start=1.0, end=2.0, interval=[1;2), #objects=1
+2: start=2.0, end=3.0, interval=[2;3), #objects=2 - no errors
 
 --> out-setup=0-data=6.txt
-0: start=0.0, interval=[0;1), #objects=2
-1: start=1.0, interval=[1;2), #objects=1
-2: start=2.0, interval=[2;3), #objects=1 - no errors
+0: start=0.0, end=1.0, interval=[0;1), #objects=2
+1: start=1.0, end=2.0, interval=[1;2), #objects=1
+2: start=2.0, end=3.0, interval=[2;3), #objects=1 - no errors
 
 --> out-setup=1-data=0.txt
 No data generated! - Failed to process: Only single bin with too few objects, cannot merge!
 
 --> out-setup=1-data=1.txt
-0: start=0.0, interval=[0;2), #objects=2 - no errors
+0: start=0.0, end=1.0, interval=[0;2), #objects=2 - no errors
 
 --> out-setup=1-data=2.txt
-0: start=0.0, interval=[0;2), #objects=3 - no errors
+0: start=0.0, end=1.0, interval=[0;2), #objects=3 - no errors
 
 --> out-setup=1-data=3.txt
-0: start=0.0, interval=[0;2), #objects=3 - no errors
+0: start=0.0, end=1.0, interval=[0;2), #objects=3 - no errors
 
 --> out-setup=1-data=4.txt
-0: start=0.0, interval=[0;1), #objects=2
-1: start=1.0, interval=[1;2), #objects=2
-2: start=2.0, interval=[2;3), #objects=2 - no errors
+0: start=0.0, end=1.0, interval=[0;1), #objects=2
+1: start=1.0, end=2.0, interval=[1;2), #objects=2
+2: start=2.0, end=3.0, interval=[2;3), #objects=2 - no errors
 
 --> out-setup=1-data=5.txt
-0: start=0.0, interval=[0;1), #objects=2
-1: start=1.0, interval=[1;3), #objects=3 - no errors
+0: start=0.0, end=1.0, interval=[0;1), #objects=2
+1: start=1.0, end=2.0, interval=[1;3), #objects=3 - no errors
 
 --> out-setup=1-data=6.txt
-0: start=0.0, interval=[0;1), #objects=2
-1: start=1.0, interval=[1;3), #objects=2 - no errors
+0: start=0.0, end=1.0, interval=[0;1), #objects=2
+1: start=1.0, end=2.0, interval=[1;3), #objects=2 - no errors
 

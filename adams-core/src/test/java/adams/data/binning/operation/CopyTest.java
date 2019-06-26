@@ -14,14 +14,14 @@
  */
 
 /*
- * PassThroughTest.java
+ * CopyTest.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.data.binning.postprocessing;
+package adams.data.binning.operation;
 
-import adams.core.base.BaseInterval;
-import adams.data.binning.Bin;
+import adams.data.binning.Binnable;
+import adams.data.binning.operation.Copy.CopyType;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -30,49 +30,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tests PassThrough.
+ * Tests Copy.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class PassThroughTest
-  extends AbstractBinPostProcessingTestCase<Integer> {
+public class CopyTest
+  extends AbstractOperationTestCase<Integer> {
 
   /**
    * Constructs the test case. Called by subclasses.
    *
    * @param name the name of the test
    */
-  public PassThroughTest(String name) {
+  public CopyTest(String name) {
     super(name);
   }
 
   /**
-   * Returns the data to use in the regression test.
+   * Generates the output data and returns the filenames.
    *
-   * @return		the data
+   * @return		the filenames of the generated output, no path
    */
   @Override
-  protected List<Bin<Integer>>[] getRegressionInputData() {
-    List<Bin<Integer>>[]	result;
+  protected List<String> generateOutput() {
+    List<String> 		result;
+    String			fname;
+    List<Binnable<Integer>> 	data;
 
-    result = new List[1];
-    result[0] = new ArrayList<>();
-    result[0].add(new Bin(0, 0.0, 1.0, new BaseInterval(0.0, true, 1.0, true)));
+    result = new ArrayList<>();
+    data = generateDoubles(10);
 
-    return result;
-  }
+    fname = createOutputFilename(0);
+    saveData(data, fname);
+    result.add(fname);
 
-  /**
-   * Returns the setups to use in the regression test.
-   *
-   * @return		the setups
-   */
-  @Override
-  protected AbstractBinPostProcessing<Integer>[] getRegressionSetups() {
-    PassThrough<Integer>[]	result;
+    fname = createOutputFilename(1);
+    saveData(Copy.copyData(data, CopyType.LIST), fname);
+    result.add(fname);
 
-    result = new PassThrough[1];
-    result[0] = new PassThrough<>();
+    fname = createOutputFilename(2);
+    saveData(Copy.copyData(data, CopyType.BINNABLE), fname);
+    result.add(fname);
+
+    fname = createOutputFilename(3);
+    saveData(Copy.copyData(data, CopyType.DEEP), fname);
+    result.add(fname);
 
     return result;
   }
@@ -83,7 +85,7 @@ public class PassThroughTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(PassThroughTest.class);
+    return new TestSuite(CopyTest.class);
   }
 
   /**
