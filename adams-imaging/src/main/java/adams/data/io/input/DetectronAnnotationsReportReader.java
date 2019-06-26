@@ -14,8 +14,8 @@
  */
 
 /*
- * ViaAnnotationsReportReader.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * DetectronAnnotationsReportReader.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;

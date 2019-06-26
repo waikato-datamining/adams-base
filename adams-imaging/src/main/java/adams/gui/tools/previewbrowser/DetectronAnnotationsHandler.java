@@ -14,8 +14,8 @@
  */
 
 /*
- * ViaAnnotationsHandler.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * DetectronAnnotationsHandler.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
