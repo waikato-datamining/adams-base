@@ -38,6 +38,13 @@ public interface SSLContextProvider
   public String getProtocol();
 
   /**
+   * Returns whether to use the default SSL context.
+   *
+   * @return		true if to use default context
+   */
+  public boolean getUseDefaultContext();
+
+  /**
    * Returns the SSLContext instance.
    *
    * @return		the instance, null if not available
