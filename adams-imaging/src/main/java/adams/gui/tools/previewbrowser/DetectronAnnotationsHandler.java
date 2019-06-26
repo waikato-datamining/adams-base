@@ -397,11 +397,13 @@ public class DetectronAnnotationsHandler
     Report 				report;
     ByMetaDataStringValue		filter;
     LocatedObjects			lobjs;
+    boolean                             found;
 
     panel      = new ImagePanel();
     overlay    = null;
     report     = null;
     reportFile = new File(file.getParent() + "/annotations.json");
+    found = false;
 
     if (reportFile.exists() && reportFile.isFile()) {
       reportReader = new DetectronAnnotationsReportReader();
@@ -416,18 +418,21 @@ public class DetectronAnnotationsHandler
         lobjs = filter.findObjects(report);
         if (lobjs.size() > 0) {
           report = lobjs.toReport(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
+          found = true;
           break;
         }
       }
-      overlay = new ObjectLocationsOverlayFromReport();
-      overlay.setPrefix(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
-      overlay.setColor(m_Color);
-      overlay.setUseColorsPerType(m_UseColorsPerType);
-      overlay.setTypeColorProvider(m_TypeColorProvider.shallowCopy());
-      overlay.setTypeSuffix(m_TypeSuffix);
-      overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
-      overlay.setLabelFormat(m_LabelFormat);
-      overlay.setLabelFont(m_LabelFont);
+      if (found) {
+        overlay = new ObjectLocationsOverlayFromReport();
+        overlay.setPrefix(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
+        overlay.setColor(m_Color);
+        overlay.setUseColorsPerType(m_UseColorsPerType);
+        overlay.setTypeColorProvider(m_TypeColorProvider.shallowCopy());
+        overlay.setTypeSuffix(m_TypeSuffix);
+        overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
+        overlay.setLabelFormat(m_LabelFormat);
+        overlay.setLabelFont(m_LabelFont);
+      }
     }
     if (overlay != null) {
       panel.addImageOverlay(overlay);
