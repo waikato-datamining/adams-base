@@ -23,6 +23,7 @@ import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
+import adams.data.binning.BinnableGroup;
 import adams.data.binning.algorithm.AbstractBinningAlgorithm;
 import adams.test.AdamsTestCase;
 import adams.test.TmpFile;
@@ -30,7 +31,9 @@ import adams.test.TmpFile;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -107,8 +110,12 @@ public abstract class AbstractOperationTestCase<T>
    * @return		the generated string
    */
   protected String toString(Object o) {
+
+
     if (o instanceof Binnable)
       return ((Binnable) o).toString(NUM_DECIMALS);
+    else if (o instanceof BinnableGroup)
+      return ((BinnableGroup) o).toString(NUM_DECIMALS);
     else if (o instanceof Bin)
       return ((Bin) o).toString(NUM_DECIMALS);
     else if (o instanceof Number)
@@ -154,6 +161,29 @@ public abstract class AbstractOperationTestCase<T>
       if (i > 0)
         str.append("\n");
       str.append(toString(data.get(i)));
+    }
+
+    return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, str, false);
+  }
+
+  /**
+   * Saves the groups in the tmp directory.
+   *
+   * @param data	the data to save
+   * @param filename	the filename to save to (without path)
+   * @return		true if successfully saved
+   */
+  protected boolean saveGroups(Map<String,BinnableGroup<T>> data, String filename) {
+    int			i;
+    StringBuilder	str;
+    List<String>	groups;
+
+    str    = new StringBuilder();
+    groups = new ArrayList<>(data.keySet());
+    Collections.sort(groups);
+    for (String group: groups) {
+      str.append(toString(data.get(group)));
+      str.append("\n");
     }
 
     return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, str, false);
