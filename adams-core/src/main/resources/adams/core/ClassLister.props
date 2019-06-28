@@ -365,6 +365,10 @@ adams.flow.core.ActorReferenceHandler=\
   adams.flow.transformer,\
   adams.flow.sink
 
+# the standalone actors
+adams.flow.standalone.AbstractStandalone=\
+  adams.flow.standalone
+
 # the error post-processors
 adams.flow.control.errorpostprocessor.ErrorPostProcessor=\
   adams.flow.control.errorpostprocessor
