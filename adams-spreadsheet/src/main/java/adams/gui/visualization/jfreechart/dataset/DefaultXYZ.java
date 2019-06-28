@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetUtils;
+import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.DefaultXYZDataset;
 
 /**
@@ -180,6 +181,15 @@ public class DefaultXYZ
   }
 
   /**
+   * Returns the class of dataset that it generates.
+   *
+   * @return		the dataset class
+   */
+  public Class<? extends Dataset> generates() {
+    return DefaultXYZDataset.class;
+  }
+
+  /**
    * Hook method for checks before generating the dataset.
    *
    * @param data	the data to use
@@ -214,14 +224,26 @@ public class DefaultXYZ
    */
   @Override
   protected DefaultXYZDataset doGenerate(SpreadSheet data) {
+    return addSeries(new DefaultXYZDataset(), data);
+  }
+
+  /**
+   * Performs the actual addition of the series to the dataset.
+   *
+   * @param dataset   	the dataset to add the series to
+   * @param data	the data to use
+   * @return		the dataset
+   */
+  protected DefaultXYZDataset doAddSeries(Dataset dataset, SpreadSheet data) {
     DefaultXYZDataset	result;
     int			x;
     int 		y;
     int 		z;
-    int			i;
     double[] 		plotX;
     double[] 		plotY;
     double[] 		plotZ;
+
+    result = (DefaultXYZDataset) dataset;
 
     m_X.setData(data);
     x = m_X.getIntIndex();
@@ -230,7 +252,6 @@ public class DefaultXYZ
     m_Z.setData(data);
     z = m_Z.getIntIndex();
 
-    result = new DefaultXYZDataset();
     plotX = SpreadSheetUtils.getNumericColumn(data, x);
     plotY = SpreadSheetUtils.getNumericColumn(data, y);
     plotZ = SpreadSheetUtils.getNumericColumn(data, z);

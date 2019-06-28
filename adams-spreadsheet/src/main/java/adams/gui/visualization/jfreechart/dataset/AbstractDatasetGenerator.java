@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDatasetGenerator.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.jfreechart.dataset;
 
 import adams.core.QuickInfoSupporter;
+import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
 import org.jfree.data.general.Dataset;
@@ -29,7 +30,6 @@ import org.jfree.data.general.Dataset;
  * Ancestor for dataset generators.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDatasetGenerator<T extends Dataset>
   extends AbstractOptionHandler
@@ -47,6 +47,13 @@ public abstract class AbstractDatasetGenerator<T extends Dataset>
   }
 
   /**
+   * Returns the class of dataset that it generates.
+   *
+   * @return		the dataset class
+   */
+  public abstract Class<? extends Dataset> generates();
+
+  /**
    * Hook method for checks before generating the dataset.
    *
    * @param data	the data to use
@@ -54,7 +61,7 @@ public abstract class AbstractDatasetGenerator<T extends Dataset>
    */
   protected String check(SpreadSheet data) {
     if (data == null)
-      return "No data provided!";
+      return "No spreadsheet provided!";
     return null;
   }
 
@@ -80,5 +87,52 @@ public abstract class AbstractDatasetGenerator<T extends Dataset>
       throw new IllegalStateException(msg);
 
     return doGenerate(data);
+  }
+
+  /**
+   * Performs checks before adding series.
+   *
+   * @param dataset   	the dataset to add the series to
+   * @param data	the data to use
+   * @return		null if checks passed, otherwise error message
+   */
+  protected String checkAddSeries(Dataset dataset, SpreadSheet data) {
+    String	result;
+
+    result = check(data);
+    if (result == null) {
+      if (dataset == null)
+	result = "No dataset provided!";
+      else if (!(dataset.getClass().equals(generates())))
+	result = "Dataset must be of type " + Utils.classToString(generates()) + ", not " + Utils.classToString(dataset);
+    }
+
+    return result;
+  }
+
+  /**
+   * Performs the actual addition of the series to the dataset.
+   *
+   * @param dataset   	the dataset to add the series to
+   * @param data	the data to use
+   * @return		the updated dataset
+   */
+  protected abstract T doAddSeries(Dataset dataset, SpreadSheet data);
+
+  /**
+   * Adds the series to the dataset.
+   *
+   * @param dataset   	the dataset to add the series to
+   * @param data	the data to use
+   * @return		the updated dataset
+   */
+  public T addSeries(T dataset, SpreadSheet data) {
+    String	msg;
+
+    msg = checkAddSeries(dataset, data);
+    if (msg != null)
+      throw new IllegalStateException(msg);
+
+    return doAddSeries(dataset, data);
   }
 }

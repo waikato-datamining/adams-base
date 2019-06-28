@@ -24,9 +24,12 @@ import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.jfreechart.chart.AbstractChartGenerator;
 import adams.gui.visualization.jfreechart.chart.XYLineChart;
 import adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator;
+import adams.gui.visualization.jfreechart.dataset.ChartUtils;
 import adams.gui.visualization.jfreechart.dataset.DefaultXY;
 import adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator;
 import adams.gui.visualization.jfreechart.shape.Default;
@@ -178,6 +181,9 @@ public class JFreeChartPlot
   /** the color for the plot. */
   protected Color m_PlotColor;
 
+  /** the color provider for generating the colors (if more than one series). */
+  protected ColorProvider m_ColorProvider;
+
   /** the color for the diagonal plot. */
   protected Color m_DiagonalColor;
 
@@ -194,7 +200,8 @@ public class JFreeChartPlot
    */
   @Override
   public String globalInfo() {
-    return "Generates and displays a plot using JFreeChart.";
+    return "Generates and displays a plot using JFreeChart."
+      + "Dataset generation is skipped if the incoming data already represents a JFreeChart dataset.";
   }
 
   /**
@@ -219,6 +226,10 @@ public class JFreeChartPlot
     m_OptionManager.add(
       "plot-color", "plotColor",
       Color.BLUE);
+
+    m_OptionManager.add(
+      "color-provider", "colorProvider",
+      new DefaultColorProvider());
 
     m_OptionManager.add(
       "diagonal-color", "diagonalColor",
@@ -342,6 +353,35 @@ public class JFreeChartPlot
   }
 
   /**
+   * Sets the color provider to use.
+   *
+   * @param value	the color provider
+   */
+  public void setColorProvider(ColorProvider value) {
+    m_ColorProvider = value;
+    reset();
+  }
+
+  /**
+   * Returns the color provider to use.
+   *
+   * @return		the color provider
+   */
+  public ColorProvider getColorProvider() {
+    return m_ColorProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String colorProviderTipText() {
+    return "The color provider to use for coloring in the trimap image.";
+  }
+
+  /**
    * Sets the color for the diagonal (ie second data series if present).
    *
    * @param value	the color
@@ -394,7 +434,7 @@ public class JFreeChartPlot
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{SpreadSheet.class};
+    return new Class[]{SpreadSheet.class, Dataset.class};
   }
 
   /**
@@ -410,22 +450,24 @@ public class JFreeChartPlot
     Shape 		shape;
     XYPlot		plot;
 
-    sheet        = (SpreadSheet) token.getPayload();
-    dataset      = m_Dataset.generate(sheet);
+    if (token.hasPayload(SpreadSheet.class)) {
+      sheet = (SpreadSheet) token.getPayload();
+      dataset = m_Dataset.generate(sheet);
+    }
+    else {
+      dataset = token.getPayload(Dataset.class);
+    }
     m_JFreeChart = m_Chart.generate(dataset);
     m_JFreeChart.getPlot().setBackgroundPaint(Color.WHITE);
     if (m_JFreeChart.getPlot() instanceof XYPlot) {
-      plot = (XYPlot) m_JFreeChart.getPlot();
+      plot  = (XYPlot) m_JFreeChart.getPlot();
+      shape = m_Shape.generate();
       plot.setDomainGridlinesVisible(true);
       plot.setDomainGridlinePaint(Color.GRAY);
       plot.setRangeGridlinesVisible(true);
       plot.setRangeGridlinePaint(Color.GRAY);
-      plot.getRenderer().setSeriesPaint(0, m_PlotColor);
-      if (plot.getSeriesCount() > 1)
-        plot.getRenderer().setSeriesPaint(1, m_DiagonalColor);
-      shape = m_Shape.generate();
-      if (shape != null)
-	plot.getRenderer().setSeriesShape(0, shape);
+      ChartUtils.applyColor(plot, m_PlotColor, m_DiagonalColor, m_ColorProvider);
+      ChartUtils.applyShape(plot, shape);
     }
     m_PlotPanel  = new ChartPanel(m_JFreeChart);
     m_Panel.removeAll();
@@ -487,16 +529,14 @@ public class JFreeChartPlot
 	m_JFreeChart = m_Chart.generate(dataset);
 	if (m_JFreeChart.getPlot() instanceof XYPlot) {
 	  XYPlot plot = (XYPlot) m_JFreeChart.getPlot();
+	  Shape shape = m_Shape.generate();
 	  plot.setDomainGridlinesVisible(true);
 	  plot.setDomainGridlinePaint(Color.GRAY);
 	  plot.setRangeGridlinesVisible(true);
 	  plot.setRangeGridlinePaint(Color.GRAY);
 	  plot.getRenderer().setSeriesPaint(0, m_PlotColor);
-	  if (plot.getSeriesCount() > 1)
-	    plot.getRenderer().setSeriesPaint(1, m_DiagonalColor);
-	  Shape shape = m_Shape.generate();
-	  if (shape != null)
-	    plot.getRenderer().setSeriesShape(0, shape);
+	  ChartUtils.applyColor(plot, m_PlotColor, m_DiagonalColor, m_ColorProvider);
+	  ChartUtils.applyShape(plot, shape);
 	}
 	m_PlotPanel = new ChartPanel(m_JFreeChart);
 	removeAll();

@@ -26,6 +26,7 @@ import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
+import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.DefaultXYDataset;
 
 /**
@@ -185,6 +186,15 @@ public class DefaultXY
   }
 
   /**
+   * Returns the class of dataset that it generates.
+   *
+   * @return		the dataset class
+   */
+  public Class<? extends Dataset> generates() {
+    return DefaultXYDataset.class;
+  }
+
+  /**
    * Hook method for checks before generating the dataset.
    *
    * @param data	the data to use
@@ -218,6 +228,17 @@ public class DefaultXY
    */
   @Override
   protected DefaultXYDataset doGenerate(SpreadSheet data) {
+    return addSeries(new DefaultXYDataset(), data);
+  }
+
+  /**
+   * Performs the actual addition of the series to the dataset.
+   *
+   * @param dataset   	the dataset to add the series to
+   * @param data	the data to use
+   * @return		the dataset
+   */
+  protected DefaultXYDataset doAddSeries(Dataset dataset, SpreadSheet data) {
     DefaultXYDataset	result;
     int			x;
     int[]		y;
@@ -226,6 +247,8 @@ public class DefaultXY
     double[] 		plotY;
     double 		min;
     double 		max;
+
+    result = (DefaultXYDataset) dataset;
 
     if (m_X.isEmpty()) {
       plotX = new double[data.getRowCount()];
@@ -240,7 +263,6 @@ public class DefaultXY
     m_Y.setData(data);
     y = m_Y.getIntIndices();
 
-    result = new DefaultXYDataset();
     min = StatUtils.min(plotX);
     max = StatUtils.max(plotX);
     for (i = 0; i < y.length; i++) {
@@ -250,7 +272,7 @@ public class DefaultXY
       result.addSeries(data.getColumnName(y[i]), new double[][]{plotX, plotY});
     }
     if (m_AddDiagonalSeries)
-      result.addSeries("$$$Diagonal$$$", new double[][]{new double[]{min, max}, new double[]{min, max}});
+      ChartUtils.addDiagonal(result, min, max);
 
     return result;
   }

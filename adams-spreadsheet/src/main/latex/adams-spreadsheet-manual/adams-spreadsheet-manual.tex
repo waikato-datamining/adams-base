@@ -104,6 +104,8 @@ The following transformers are available:
 	value.\footnote{adams-spreadsheet-lookup.flow}
 	\item \textit{LookUpRemove} -- removes a key/value pair from a lookup 
 	table.\footnote{adams-spreadsheet-lookup.flow}
+	\item \textit{MakeJFreeChartDataset} -- generates a JFreeChart\cite{jfreechart} dataset
+	from a spreadsheet.
 	\item \textit{SpreadSheetAggregate} -- aggregates rows in a spreadsheet
 	(min, max, average, standard deviation, etc).\footnote{adams-spreadsheet-aggregate.flow}
 	\item \textit{SpreadSheetAnonymize} -- for anonymizing 
@@ -216,13 +218,15 @@ The following transformers are available:
 	\item \textit{SpreadSheetVariableRowIterator} -- iterates over a range of 
 	rows/columns and stores the cell values in 
 	variables.\footnote{adams-spreadsheet-variable\_row\_iterator.flow}
+	\item \textit{StorageJFreeChartAddSeries} -- generates a JFreeChart\cite{jfreechart}
+	series from the spreadsheet and adds it to the specified dataset in storage.
 \end{tight_itemize}
 The following sinks are available:
 \begin{tight_itemize}
 	\item \textit{JFreeChartFileWriter} -- generates plots from spreadsheet
-	columns using JFreeChart\cite{jfreechart} and writes them to disk.
+	columns or a JFreeChart\cite{jfreechart} dataset and writes them to disk.
 	\item \textit{JFreeChartPlot} -- allows plotting of columns from
-	spreadsheets using JFreeChart\cite{jfreechart}.
+	spreadsheets or a JFreeChart\cite{jfreechart} dataset.
 	\item \textit{SpreadSheetDbWriter} -- for storing a spreadsheet in a
 	database.\footnote{adams-spreadsheet-database\_access.flow}
 	\item \textit{SpreadSheetDisplay} -- for displaying spreadsheet objects

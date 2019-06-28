@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.jfreechart.chart;
 
+import adams.gui.visualization.jfreechart.dataset.ChartUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -97,13 +98,25 @@ public class ScatterPlot
    */
   @Override
   protected JFreeChart doGenerate(XYDataset data) {
-    JFreeChart result = ChartFactory.createScatterPlot(m_Title, m_LabelX, m_LabelY, data, m_Orientation.getOrientation(), m_Legend, m_ToolTips, false);
-    XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-    if (result.getXYPlot().getSeriesCount() == 2) {
-      renderer.setSeriesLinesVisible(0, false);
-      renderer.setSeriesLinesVisible(1, true);
-      renderer.setSeriesShapesVisible(0, true);
-      renderer.setSeriesShapesVisible(1, false);
+    JFreeChart 			result;
+    int				diagonal;
+    XYLineAndShapeRenderer 	renderer;
+    int				i;
+
+    result   = ChartFactory.createScatterPlot(m_Title, m_LabelX, m_LabelY, data, m_Orientation.getOrientation(), m_Legend, m_ToolTips, false);
+    diagonal = ChartUtils.getDiagonalIndex(data);
+    if (diagonal != -1) {
+      renderer = new XYLineAndShapeRenderer();
+      for (i = 0; i < data.getSeriesCount(); i++) {
+        if (i == diagonal) {
+	  renderer.setSeriesLinesVisible(i, true);
+	  renderer.setSeriesShapesVisible(i, false);
+	}
+	else {
+	  renderer.setSeriesLinesVisible(i, false);
+	  renderer.setSeriesShapesVisible(i, true);
+	}
+      }
       result.getXYPlot().setRenderer(renderer);
     }
     return result;

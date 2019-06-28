@@ -25,9 +25,12 @@ import adams.data.image.BufferedImageContainer;
 import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.JAIImageWriter;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.jfreechart.chart.AbstractChartGenerator;
 import adams.gui.visualization.jfreechart.chart.XYLineChart;
 import adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator;
+import adams.gui.visualization.jfreechart.dataset.ChartUtils;
 import adams.gui.visualization.jfreechart.dataset.DefaultXY;
 import adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator;
 import adams.gui.visualization.jfreechart.shape.Default;
@@ -155,6 +158,9 @@ public class JFreeChartFileWriter
   /** the color for the plot. */
   protected Color m_PlotColor;
 
+  /** the color provider for generating the colors (if more than one series). */
+  protected ColorProvider m_ColorProvider;
+
   /** the color for the diagonal plot. */
   protected Color m_DiagonalColor;
 
@@ -174,7 +180,8 @@ public class JFreeChartFileWriter
    */
   @Override
   public String globalInfo() {
-    return "Generates a JFreeChart plot and writes the bitmap to a file.";
+    return "Generates a JFreeChart plot and writes the bitmap to a file.\n"
+      + "Dataset generation is skipped if the incoming data already represents a JFreeChart dataset.";
   }
 
   /**
@@ -199,6 +206,10 @@ public class JFreeChartFileWriter
     m_OptionManager.add(
       "plot-color", "plotColor",
       Color.BLUE);
+
+    m_OptionManager.add(
+      "color-provider", "colorProvider",
+      new DefaultColorProvider());
 
     m_OptionManager.add(
       "diagonal-color", "diagonalColor",
@@ -344,6 +355,35 @@ public class JFreeChartFileWriter
   }
 
   /**
+   * Sets the color provider to use.
+   *
+   * @param value	the color provider
+   */
+  public void setColorProvider(ColorProvider value) {
+    m_ColorProvider = value;
+    reset();
+  }
+
+  /**
+   * Returns the color provider to use.
+   *
+   * @return		the color provider
+   */
+  public ColorProvider getColorProvider() {
+    return m_ColorProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String colorProviderTipText() {
+    return "The color provider to use for coloring in the trimap image.";
+  }
+
+  /**
    * Sets the color for the diagonal (ie second data series if present).
    *
    * @param value	the color
@@ -466,7 +506,7 @@ public class JFreeChartFileWriter
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{SpreadSheet.class};
+    return new Class[]{SpreadSheet.class, Dataset.class};
   }
 
   /**
@@ -508,25 +548,28 @@ public class JFreeChartFileWriter
     result = null;
 
     try {
-      sheet      = (SpreadSheet) m_InputToken.getPayload();
-      dataset    = m_Dataset.generate(sheet);
+      if (m_InputToken.hasPayload(SpreadSheet.class)) {
+        sheet = (SpreadSheet) m_InputToken.getPayload();
+        dataset = m_Dataset.generate(sheet);
+      }
+      else {
+        dataset = m_InputToken.getPayload(Dataset.class);
+      }
       jfreechart = m_Chart.generate(dataset);
       shape      = m_Shape.generate();
       jfreechart.getPlot().setBackgroundPaint(Color.WHITE);
+      m_ColorProvider.resetColors();
       if (jfreechart.getPlot() instanceof XYPlot) {
 	plot = (XYPlot) jfreechart.getPlot();
 	plot.setDomainGridlinesVisible(true);
 	plot.setDomainGridlinePaint(Color.GRAY);
 	plot.setRangeGridlinesVisible(true);
 	plot.setRangeGridlinePaint(Color.GRAY);
-        plot.getRenderer().setSeriesPaint(0, m_PlotColor);
-        if (plot.getSeriesCount() > 1)
-          plot.getRenderer().setSeriesPaint(1, m_DiagonalColor);
-        if (shape != null)
-	  plot.getRenderer().setSeriesShape(0, shape);
+	ChartUtils.applyColor(plot, m_PlotColor, m_DiagonalColor, m_ColorProvider);
+	ChartUtils.applyShape(plot, shape);
       }
-      image      = jfreechart.createBufferedImage(m_Width, m_Height);
-      cont       = new BufferedImageContainer();
+      image = jfreechart.createBufferedImage(m_Width, m_Height);
+      cont  = new BufferedImageContainer();
       cont.setImage(image);
       m_Writer.write(m_OutputFile, cont);
     }
