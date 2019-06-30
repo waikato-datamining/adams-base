@@ -22,7 +22,7 @@ package adams.core.option.help;
 
 import adams.core.ClassCrossReference;
 import adams.core.Utils;
-import adams.gui.help.HelpFrame;
+import adams.core.net.HtmlUtils;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
@@ -99,7 +99,7 @@ public class ClassCrossReferences
 	cross = ((ClassCrossReference) obj).getClassCrossReferences();
 	result.append("<ul>\n");
 	for (i = 0; i < cross.length; i++)
-	  result.append("<li><a href=\"" + HelpFrame.toClassCrossRefURL(cross[i].getName()) + "\">" + cross[i].getName() + "</a></li>\n");
+	  result.append("<li><a href=\"" + HtmlUtils.toClassCrossRefURL(cross[i].getName()) + "\">" + cross[i].getName() + "</a></li>\n");
 	result.append("</ul>\n");
 	result.append("\n");
 	break;

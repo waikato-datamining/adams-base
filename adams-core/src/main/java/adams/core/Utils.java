@@ -44,9 +44,12 @@ import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 /**
  * Class implementing some simple utility methods.
@@ -72,6 +75,10 @@ public class Utils {
   public static final String NEGATIVE_INFINITY = "-Infinity";
 
   public static final String POSITIVE_INFINITY = "+Infinity";
+
+  public static final String BREAKUP_PUNCTUATION = " .,;:!?'\"";
+
+  public static final String CLASSNAME_PUNCTUATION = " ,;:|?'\"";
 
   /**
    * Rounds a double and converts it into String. Always displays the
@@ -767,7 +774,7 @@ public class Utils {
     String[]		lines;
 
     result      = new ArrayList<>();
-    punctuation = " .,;:!?'\"";
+    punctuation = BREAKUP_PUNCTUATION;
     lines       = s.split("\n");
     line        = new StringBuilder();
 
@@ -2296,5 +2303,46 @@ public class Utils {
     result.append(s);
 
     return result.toString();
+  }
+
+  /**
+   * Extracts all classnames from the string.
+   *
+   * @param s		the string to parse
+   * @param onlyManaged whether to extract only classnames from hierarchies
+   * @return		the classnames
+   */
+  public static Set<String> extractClassnames(String s, boolean onlyManaged) {
+    Set<String>	result;
+    String	cleaned;
+    int		i;
+    String[]	words;
+    Pattern	cname;
+
+    result = new HashSet<>();
+
+    // prepare for split
+    cleaned = s;
+    for (i = 0; i < CLASSNAME_PUNCTUATION.length(); i++)
+      cleaned = cleaned.replace(CLASSNAME_PUNCTUATION.charAt(i), '\n');
+
+    // clean up words
+    words = cleaned.split("\n");
+    for (i = 0; i < words.length; i++) {
+      words[i] = words[i].trim();
+      if (words[i].endsWith("."))
+        words[i] = words[i].substring(0, words[i].length() - 1);
+    }
+
+    // check for classnames
+    cname = Pattern.compile("[a-zA-Z0-9_]+[a-zA-Z0-9_\\.]+");
+    for (String word: words) {
+      if (word.contains(".") && cname.matcher(word).matches()) {
+        if (!onlyManaged || ClassLister.getSingleton().isManaged(word))
+	  result.add(word);
+      }
+    }
+
+    return result;
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * DateFormatString.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
@@ -23,7 +23,9 @@ import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.HelpProvider;
 import adams.core.base.AbstractBaseString;
+import adams.core.net.HtmlUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 /**
@@ -120,7 +122,7 @@ public class DateFormatString
    * @return		the URL, null if not available
    */
   public String getHelpURL() {
-    return "https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html";
+    return HtmlUtils.toJavaApiURL(SimpleDateFormat.class);
   }
   
   /**

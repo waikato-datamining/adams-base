@@ -15,7 +15,7 @@
 
 /*
  * GUIHelpProducer.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -117,6 +117,7 @@ public class HtmlHelpProducer
 
     result = HtmlUtils.markUpURLs(s, true);
     result = HtmlUtils.convertLines(result, nbsp);
+    result = HtmlUtils.hyperlinkClassnames(result);
 
     return result;
   }

@@ -15,13 +15,14 @@
 
 /*
  * BaseRegExp.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
 import adams.core.HelpProvider;
 import adams.core.Utils;
+import adams.core.net.HtmlUtils;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -196,7 +197,7 @@ public class BaseRegExp
   public String getHelpURL() {
     return "https://docs.oracle.com/javase/tutorial/essential/regex/"
       + "\t"
-      + "https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html";
+      + HtmlUtils.toJavaApiURL(Pattern.class);
   }
 
   /**

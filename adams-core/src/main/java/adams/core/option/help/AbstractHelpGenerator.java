@@ -15,7 +15,7 @@
 
 /*
  * AbstractHelpGenerator.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.option.help;
@@ -89,6 +89,7 @@ public abstract class AbstractHelpGenerator
 
     result = HtmlUtils.markUpURLs(s, true);
     result = HtmlUtils.convertLines(result, nbsp);
+    result = HtmlUtils.hyperlinkClassnames(result);
 
     return result;
   }

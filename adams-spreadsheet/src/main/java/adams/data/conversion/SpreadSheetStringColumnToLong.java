@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetStringColumnToLong.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.core.net.HtmlUtils;
 import adams.data.DecimalFormatString;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
@@ -58,7 +59,6 @@ import java.text.DecimalFormat;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetStringColumnToLong
   extends AbstractSpreadSheetColumnConverter {
@@ -83,7 +83,7 @@ public class SpreadSheetStringColumnToLong
 	"Converts the specified spreadsheet column from string to long, "
 	+ "according to the provided format.\n"
 	+ "For more information on the format, see Javadoc of 'java.text.DecimalFormat' class:\n"
-	+ "https://docs.oracle.com/javase/8/docs/api/java/text/DecimalFormat.html";
+	+ HtmlUtils.toJavaApiURL(DecimalFormat.class);
   }
 
   /**

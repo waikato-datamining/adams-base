@@ -13,27 +13,35 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HtmlUtils.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
+import adams.core.ClassLister;
 import adams.core.License;
 import adams.core.Utils;
 import adams.core.annotation.MixedCopyright;
+
+import java.util.Set;
 
 /**
  * Utility functions regarding HTML.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HtmlUtils {
 
   /** the default replacement for URL markup. */
   public final static String DEFAULT_MARKUP = "<a href=\"$0\">$0</a>";
-  
+
+  /** the prefix to use in URLs. */
+  public final static String CROSSREF_PREFIX = "classcrossref-";
+
+  /** the URL prefix for the Java Javadoc. */
+  public static final String JAVA_API_URL = "https://docs.oracle.com/javase/8/docs/api/";
+
   /**
    * Converts the given String into HTML, i.e., replacing some char entities
    * with HTML entities.
@@ -170,6 +178,90 @@ public class HtmlUtils {
 
     result = result.replaceAll("\\b((file|ftps?|https?)\\:\\/\\/[\\w\\d:#@%/;$()~_?!+-=.,&]+)", "<a href=\"$0\">$0</a>");
     
+    return result;
+  }
+
+  /**
+   * Generates a classname cross reference fake link used in the help.
+   *
+   * @param classname	the class to generate the link for
+   * @return		the fake url
+   */
+  public static String toClassCrossRefURL(String classname) {
+    return "http://" + CROSSREF_PREFIX + classname;
+  }
+
+  /**
+   * Checks whether the URL is a fake class cross reference link.
+   *
+   * @param url		the url to check
+   * @return		true if a class cross reference
+   */
+  public static boolean isClassCrossRefURL(String url) {
+    return url.startsWith("http://" + CROSSREF_PREFIX);
+  }
+
+  /**
+   * Returns the classname from the cross reference URL.
+   *
+   * @param url		the cross reference url
+   * @return		the classname, null if failed to extract
+   */
+  public static String extractClassFromCrossRefURL(String url) {
+    if (isClassCrossRefURL(url))
+      return url.substring(("http://" + CROSSREF_PREFIX).length());
+    else
+      return null;
+  }
+
+  /**
+   * Generates an API URL from the Java class.
+   *
+   * @param cls		the class to generate the URL for
+   * @return		the URL
+   */
+  public static String toJavaApiURL(Class cls) {
+    return toJavaApiURL(cls.getName());
+  }
+
+  /**
+   * Generates an API URL from the Java classname.
+   *
+   * @param classname	the classname to generate the URL for
+   * @return		the URL
+   */
+  public static String toJavaApiURL(String classname) {
+    return JAVA_API_URL + classname.replace(".", "/") + ".html";
+  }
+
+  /**
+   * Hyperlinks class names in the string.
+   *
+   * @param s		the string to convert to HTML
+   * @return		the HTML string
+   */
+  public static String hyperlinkClassnames(String s) {
+    String	result;
+    Set<String> classnames;
+    ClassLister clister;
+    String	url;
+
+    if (s == null)
+      return null;
+
+    result = s;
+    classnames = Utils.extractClassnames(result, false);
+    if (classnames.size() > 0) {
+      clister = ClassLister.getSingleton();
+      for (String classname: classnames) {
+        if (!clister.isManaged(classname) && (classname.startsWith("java.") || classname.startsWith("javax.")))
+          url = toJavaApiURL(classname);
+        else
+          url = toClassCrossRefURL(classname);
+	result = result.replace(classname, "<a href=\"" + url + "\">" + classname + "</a>");
+      }
+    }
+
     return result;
   }
 }

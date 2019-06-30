@@ -20,6 +20,7 @@
 
 package adams.gui.help;
 
+import adams.core.net.HtmlUtils;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -75,8 +76,8 @@ public class HelpFrame
       classname = null;
       if (e.getURL() != null) {
         url = "" + e.getURL();
-        if (isClassCrossRefURL(url))
-          classname = extractClassFromCrossRefURL(url);
+        if (HtmlUtils.isClassCrossRefURL(url))
+          classname = HtmlUtils.extractClassFromCrossRefURL(url);
       }
 
       if (e instanceof HTMLFrameHyperlinkEvent) {
@@ -108,9 +109,6 @@ public class HelpFrame
       }
     }
   }
-
-  /** the prefix to use in URLs. */
-  public final static String CROSSREF_PREFIX = "classcrossref-";
 
   /** the singleton. */
   protected static HelpFrame m_Singleton;
@@ -310,36 +308,4 @@ public class HelpFrame
     frame.setVisible(true);
   }
 
-  /**
-   * Generates a classname cross reference fake link used in the help.
-   *
-   * @param classname	the class to generate the link for
-   * @return		the fake url
-   */
-  public static String toClassCrossRefURL(String classname) {
-    return "http://" + CROSSREF_PREFIX + classname;
-  }
-
-  /**
-   * Checks whether the URL is a fake class cross reference link.
-   *
-   * @param url		the url to check
-   * @return		true if a class cross reference
-   */
-  public static boolean isClassCrossRefURL(String url) {
-    return url.startsWith("http://" + CROSSREF_PREFIX);
-  }
-
-  /**
-   * Returns the classname from the cross reference URL.
-   *
-   * @param url		the cross reference url
-   * @return		the classname, null if failed to extract
-   */
-  public static String extractClassFromCrossRefURL(String url) {
-    if (isClassCrossRefURL(url))
-      return url.substring(("http://" + CROSSREF_PREFIX).length());
-    else
-      return null;
-  }
 }

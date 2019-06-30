@@ -13,17 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetStringColumnToDateTimeMsec.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.DateFormat;
 import adams.core.DateTimeMsec;
+import adams.core.net.HtmlUtils;
 import adams.data.DateFormatString;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
+
+import java.text.SimpleDateFormat;
 
 /**
  <!-- globalinfo-start -->
@@ -58,7 +61,6 @@ import adams.data.spreadsheet.SpreadSheet;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetStringColumnToDateTimeMsec
   extends AbstractSpreadSheetColumnConverter {
@@ -83,7 +85,7 @@ public class SpreadSheetStringColumnToDateTimeMsec
 	"Converts the specified spreadsheet column from string to date/time/msec, "
 	+ "according to the provided format.\n"
 	+ "For more information on the format, see Javadoc of 'java.text.SimpleDateFormat' class:\n"
-	+ "https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html";
+	+ HtmlUtils.toJavaApiURL(SimpleDateFormat.class);
   }
 
   /**

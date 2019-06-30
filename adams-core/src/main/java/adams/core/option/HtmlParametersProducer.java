@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HtmlParametersProducer.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -34,7 +34,6 @@ import java.lang.reflect.Method;
  * Generates HTML output of the parameters of an object (non-recursive).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HtmlParametersProducer
   extends AbstractOptionProducer<String,StringBuilder>
@@ -115,7 +114,8 @@ public class HtmlParametersProducer
     
     result = HtmlUtils.markUpURLs(s, true);
     result = HtmlUtils.convertLines(result, nbsp);
-    
+    result = HtmlUtils.hyperlinkClassnames(result);
+
     return result;
   }
 

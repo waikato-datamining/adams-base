@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DecimalFormatString.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
 import adams.core.base.AbstractBaseString;
+import adams.core.net.HtmlUtils;
 
 import java.text.DecimalFormat;
 
@@ -27,7 +28,6 @@ import java.text.DecimalFormat;
  * Wrapper for decimal formats.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DecimalFormatString
   extends AbstractBaseString {
@@ -105,7 +105,7 @@ public class DecimalFormatString
    * @return		the URL, null if not available
    */
   public String getHelpURL() {
-    return "https://docs.oracle.com/javase/8/docs/api/java/text/DecimalFormat.html";
+    return HtmlUtils.toJavaApiURL(DecimalFormat.class);
   }
   
   /**
