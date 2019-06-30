@@ -15,13 +15,14 @@
 
 /*
  * ClassCrossReferences.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.option.help;
 
 import adams.core.ClassCrossReference;
 import adams.core.Utils;
+import adams.gui.help.HelpFrame;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
@@ -98,7 +99,7 @@ public class ClassCrossReferences
 	cross = ((ClassCrossReference) obj).getClassCrossReferences();
 	result.append("<ul>\n");
 	for (i = 0; i < cross.length; i++)
-	  result.append("<li>" + cross[i].getName() + "</li>\n");  // TODO hyperlink to class reference?
+	  result.append("<li><a href=\"" + HelpFrame.toClassCrossRefURL(cross[i].getName()) + "\">" + cross[i].getName() + "</a></li>\n");
 	result.append("</ul>\n");
 	result.append("\n");
 	break;

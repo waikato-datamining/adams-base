@@ -15,7 +15,7 @@
 
 /*
  * HelpPanel.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
@@ -23,7 +23,7 @@ package adams.gui.help;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
-import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
+import adams.gui.core.BrowserHelper;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 
@@ -33,6 +33,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -48,6 +53,64 @@ public class HelpFrame
   extends BaseFrame {
 
   private static final long serialVersionUID = -2182546218856998120L;
+
+  /**
+   * Default handler for hyperlinks. Opens URL in default browser.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   */
+  public static class HelpHyperlinkListener
+    implements HyperlinkListener {
+
+    /**
+     * Called when a hypertext link is updated.
+     *
+     * @param e the event responsible for the update
+     */
+    public void hyperlinkUpdate(HyperlinkEvent e) {
+      String	classname;
+      String	url;
+
+      url       = null;
+      classname = null;
+      if (e.getURL() != null) {
+        url = "" + e.getURL();
+        if (isClassCrossRefURL(url))
+          classname = extractClassFromCrossRefURL(url);
+      }
+
+      if (e instanceof HTMLFrameHyperlinkEvent) {
+	if (e.getSource() instanceof JEditorPane) {
+	  JEditorPane editor = (JEditorPane) e.getSource();
+	  HTMLDocument doc = (HTMLDocument) editor.getDocument();
+	  doc.processHTMLFrameHyperlinkEvent((HTMLFrameHyperlinkEvent) e);
+	}
+      }
+      else if (e.getEventType() == EventType.ACTIVATED) {
+        if (classname != null) {
+          try {
+            showHelp(Class.forName(classname));
+	  }
+	  catch (Exception ex) {
+	    System.err.println("Failed to generate help for class: " + classname);
+	    ex.printStackTrace();
+	  }
+	}
+	else {
+	  try {
+	    BrowserHelper.openURL(url);
+	  }
+	  catch (Exception ex) {
+	    System.err.println("Failed to open URL: " + url);
+	    ex.printStackTrace();
+	  }
+	}
+      }
+    }
+  }
+
+  /** the prefix to use in URLs. */
+  public final static String CROSSREF_PREFIX = "classcrossref-";
 
   /** the singleton. */
   protected static HelpFrame m_Singleton;
@@ -97,7 +160,7 @@ public class HelpFrame
     m_Text.setEditable(false);
     m_Text.setFont(Fonts.getMonospacedFont());
     m_Text.setAutoscrolls(true);
-    m_Text.addHyperlinkListener(new DefaultHyperlinkListener());
+    m_Text.addHyperlinkListener(new HelpHyperlinkListener());
     m_Text.addKeyListener(getKeyListener());
     m_Text.setFont(Fonts.getMonospacedFont());
     m_SplitPane.setRightComponent(new BaseScrollPane(m_Text));
@@ -245,5 +308,38 @@ public class HelpFrame
     frame = getSingleton();
     frame.showHelp(key, cont);
     frame.setVisible(true);
+  }
+
+  /**
+   * Generates a classname cross reference fake link used in the help.
+   *
+   * @param classname	the class to generate the link for
+   * @return		the fake url
+   */
+  public static String toClassCrossRefURL(String classname) {
+    return "http://" + CROSSREF_PREFIX + classname;
+  }
+
+  /**
+   * Checks whether the URL is a fake class cross reference link.
+   *
+   * @param url		the url to check
+   * @return		true if a class cross reference
+   */
+  public static boolean isClassCrossRefURL(String url) {
+    return url.startsWith("http://" + CROSSREF_PREFIX);
+  }
+
+  /**
+   * Returns the classname from the cross reference URL.
+   *
+   * @param url		the cross reference url
+   * @return		the classname, null if failed to extract
+   */
+  public static String extractClassFromCrossRefURL(String url) {
+    if (isClassCrossRefURL(url))
+      return url.substring(("http://" + CROSSREF_PREFIX).length());
+    else
+      return null;
   }
 }
