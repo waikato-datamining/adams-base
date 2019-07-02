@@ -35,47 +35,53 @@ import java.util.Random;
 public class Randomize {
 
   /**
-   * Randomizes the binnable data.
+   * Randomizes the binnable data in-place.
    *
    * @param data	the data to randomize
    * @param seed	the seed to use
    * @param <T>		the type of payload
+   * @return 		returns randomized input
    */
-  public static <T> void randomizeData(List<Binnable<T>> data, long seed) {
-    randomizeData(data, new Random(seed));
+  public static <T> List<Binnable<T>> randomizeData(List<Binnable<T>> data, long seed) {
+    return randomizeData(data, new Random(seed));
   }
 
   /**
-   * Randomizes the binnable data.
+   * Randomizes the binnable data in-place.
    *
    * @param data	the data to randomize
    * @param random	the random number generator to use
    * @param <T>		the type of payload
+   * @return 		returns randomized input
    */
-  public static <T> void randomizeData(List<Binnable<T>> data, Random random) {
+  public static <T> List<Binnable<T>> randomizeData(List<Binnable<T>> data, Random random) {
     Collections.shuffle(data, random);
+    return data;
   }
 
   /**
-   * Randomizes the data in the bins.
+   * Randomizes the data in the bins in-place.
    *
    * @param bins	the bins to randomize
    * @param seed	the seed to use
    * @param <T>		the type of payload
+   * @return 		returns randomized input
    */
-  public static <T> void randomizeBins(List<Bin<T>> bins, long seed) {
-    randomizeBins(bins, new Random(seed));
+  public static <T> List<Bin<T>> randomizeBins(List<Bin<T>> bins, long seed) {
+    return randomizeBins(bins, new Random(seed));
   }
 
   /**
-   * Randomizes the data in the bins.
+   * Randomizes the data in the bins in-place.
    *
    * @param bins	the bins to randomize
    * @param random	the random number generator to use
    * @param <T>		the type of payload
+   * @return 		returns randomized input
    */
-  public static <T> void randomizeBins(List<Bin<T>> bins, Random random) {
+  public static <T> List<Bin<T>> randomizeBins(List<Bin<T>> bins, Random random) {
     for (Bin<T> bin: bins)
       randomizeData(bin.get(), random);
+    return bins;
   }
 }

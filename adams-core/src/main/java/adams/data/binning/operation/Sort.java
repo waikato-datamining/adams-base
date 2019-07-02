@@ -52,8 +52,9 @@ public class Sort {
    *
    * @param data	the data to sort
    * @param <T>		the payload type
+   * @return 		the grouped input list
    */
-  public static <T> void group(List<Binnable<T>> data) {
+  public static <T> List<Binnable<T>> group(List<Binnable<T>> data) {
     int 		i;
     int 		n;
     Binnable<T> 	b1;
@@ -71,6 +72,8 @@ public class Sort {
       }
       i++;
     }
+
+    return data;
   }
 
   /**
@@ -78,8 +81,10 @@ public class Sort {
    *
    * @param data	the data to sort
    * @param <T>		the payload type
+   * @return		the sorted input data
    */
-  public static <T> void sort(List<Binnable<T>> data) {
+  public static <T> List<Binnable<T>> sort(List<Binnable<T>> data) {
     data.sort((o1, o2) -> Double.compare(o1.getValue(), o2.getValue()));
+    return data;
   }
 }
