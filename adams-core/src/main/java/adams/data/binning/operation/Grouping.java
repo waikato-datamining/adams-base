@@ -45,9 +45,8 @@ public class Grouping {
      * @return		the extracted group
      */
     public String extractGroup(Binnable<T> item);
-
-
   }
+
   /**
    * Combines the binnable items into groups based on the groups extracted.
    *
@@ -56,7 +55,7 @@ public class Grouping {
    * @param <T>		the payload type
    * @return		the groups
    */
-  public static <T> Map<String,BinnableGroup<T>> group(List<Binnable<T>> data, GroupExtractor<T> extractor) {
+  public static <T> Map<String,BinnableGroup<T>> groupAsMap(List<Binnable<T>> data, GroupExtractor<T> extractor) {
     Map<String,BinnableGroup<T>>	result;
     String				group;
 
@@ -70,6 +69,31 @@ public class Grouping {
 
     return result;
   }
+
+  /**
+   * Combines the binnable items into groups based on the groups extracted.
+   * The generated list consists of the sorted groups.
+   *
+   * @param data	the data to group
+   * @param extractor 	for extracting the group
+   * @param <T>		the payload type
+   * @return		the groups
+   */
+  public static <T> List<BinnableGroup<T>> groupAsList(List<Binnable<T>> data, GroupExtractor<T> extractor) {
+    List<BinnableGroup<T>>		result;
+    Map<String,BinnableGroup<T>> 	map;
+    List<String>			groups;
+
+    result = new ArrayList<>();
+    map    = groupAsMap(data, extractor);
+    groups = new ArrayList<>(map.keySet());
+    Collections.sort(groups);
+    for (String group: groups)
+      result.add(map.get(group));
+
+    return result;
+  }
+
   /**
    * Unravels the grouped binnable items into a single list again.
    *
@@ -78,7 +102,7 @@ public class Grouping {
    * @param <T>		the payload type
    * @return		the generated list
    */
-  public static <T> List<Binnable<T>> ungroup(Map<String,BinnableGroup<T>> data, boolean sortByGroup) {
+  public static <T> List<Binnable<T>> ungroupMap(Map<String,BinnableGroup<T>> data, boolean sortByGroup) {
     List<Binnable<T>>	result;
     List<String>	groups;
 

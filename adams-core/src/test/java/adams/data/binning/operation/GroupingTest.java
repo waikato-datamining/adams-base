@@ -76,7 +76,7 @@ public class GroupingTest
       }
     };
     try {
-      groups = Grouping.group(data, extractor);
+      groups = Grouping.groupAsMap(data, extractor);
       saveGroups(groups, fname);
     }
     catch (Exception e) {
@@ -86,7 +86,7 @@ public class GroupingTest
     result.add(fname);
 
     fname = createOutputFilename(2);
-    saveData(Grouping.ungroup(groups, true), fname);
+    saveData(Grouping.ungroupMap(groups, true), fname);
     result.add(fname);
 
     return result;

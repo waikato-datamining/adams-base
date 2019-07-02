@@ -190,6 +190,25 @@ public abstract class AbstractOperationTestCase<T>
   }
 
   /**
+   * Saves the groups in the tmp directory.
+   *
+   * @param data	the data to save
+   * @param filename	the filename to save to (without path)
+   * @return		true if successfully saved
+   */
+  protected boolean saveGroups(List<BinnableGroup<T>> data, String filename) {
+    StringBuilder	str;
+
+    str    = new StringBuilder();
+    for (BinnableGroup<T> group: data) {
+      str.append(toString(group));
+      str.append("\n");
+    }
+
+    return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, str, false);
+  }
+
+  /**
    * Saves the object in the tmp directory.
    *
    * @param data	the data to save
