@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class Wrap {
+public class Wrapping {
 
   /**
    * Interface for extracting values for bins from arbitrary objects.
@@ -47,8 +47,8 @@ public class Wrap {
      * @return		the extracted value
      */
     public double extractBinValue(T object);
-  }
 
+  }
   /**
    * Wraps the double array in binnable objects, using the index as payload.
    *
@@ -169,6 +169,23 @@ public class Wrap {
     result = new ArrayList<>();
     for (T value: values)
       result.add(new Binnable<>(value, extractor.extractBinValue(value)));
+
+    return result;
+  }
+
+  /**
+   * Unwraps the payloads from the binnable list.
+   *
+   * @param data	the data to unwrap
+   * @param <T>		the type of payload
+   * @return		the payload list
+   */
+  public static <T> List<T> unwrap(List<Binnable<T>> data) {
+    List<T>	result;
+
+    result = new ArrayList<>();
+    for (Binnable<T> b: data)
+      result.add(b.getPayload());
 
     return result;
   }

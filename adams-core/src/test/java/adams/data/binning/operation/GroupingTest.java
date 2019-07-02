@@ -14,15 +14,15 @@
  */
 
 /*
- * UngroupTest.java
- * Ungroupright (C) 2019 University of Waikato, Hamilton, NZ
+ * GroupTest.java
+ * Groupright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.binning.operation;
 
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableGroup;
-import adams.data.binning.operation.Group.GroupExtractor;
+import adams.data.binning.operation.Grouping.GroupExtractor;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -32,11 +32,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Tests Ungroup.
+ * Tests Group.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class UngroupTest
+public class GroupingTest
   extends AbstractOperationTestCase<Integer> {
 
   /**
@@ -44,7 +44,7 @@ public class UngroupTest
    *
    * @param name the name of the test
    */
-  public UngroupTest(String name) {
+  public GroupingTest(String name) {
     super(name);
   }
 
@@ -55,11 +55,11 @@ public class UngroupTest
    */
   @Override
   protected List<String> generateOutput() {
-    List<String> 			result;
-    String				fname;
-    List<Binnable<Integer>> 		data;
-    GroupExtractor<Integer> 		extractor;
-    Map<String,BinnableGroup<Integer>>	groups;
+    List<String> 		result;
+    String			fname;
+    List<Binnable<Integer>> 	data;
+    GroupExtractor<Integer>	extractor;
+    Map<String,BinnableGroup<Integer>> groups;
 
     result = new ArrayList<>();
 
@@ -76,7 +76,7 @@ public class UngroupTest
       }
     };
     try {
-      groups = Group.group(data, extractor);
+      groups = Grouping.group(data, extractor);
       saveGroups(groups, fname);
     }
     catch (Exception e) {
@@ -86,7 +86,7 @@ public class UngroupTest
     result.add(fname);
 
     fname = createOutputFilename(2);
-    saveData(Ungroup.ungroup(groups, true), fname);
+    saveData(Grouping.ungroup(groups, true), fname);
     result.add(fname);
 
     return result;
@@ -98,7 +98,7 @@ public class UngroupTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(UngroupTest.class);
+    return new TestSuite(GroupingTest.class);
   }
 
   /**

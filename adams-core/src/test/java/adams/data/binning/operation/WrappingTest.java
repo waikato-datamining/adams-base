@@ -34,7 +34,7 @@ import java.util.Random;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class WrapTest
+public class WrappingTest
   extends AbstractOperationTestCase<Integer> {
 
   /**
@@ -42,7 +42,7 @@ public class WrapTest
    *
    * @param name the name of the test
    */
-  public WrapTest(String name) {
+  public WrappingTest(String name) {
     super(name);
   }
 
@@ -74,11 +74,17 @@ public class WrapTest
 
     fname = createOutputFilename(1);
     try {
-      saveObject(Wrap.wrap(numbers), fname);
+      data = Wrapping.wrap(numbers);
+      saveObject(data, fname);
     }
     catch (Exception e) {
+      data = null;
       fail("Wrapping of numbers failed: " + e.getMessage());
     }
+    result.add(fname);
+
+    fname = createOutputFilename(2);
+    saveObject(Wrapping.unwrap(data), fname);
     result.add(fname);
 
     return result;
@@ -90,7 +96,7 @@ public class WrapTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(WrapTest.class);
+    return new TestSuite(WrappingTest.class);
   }
 
   /**

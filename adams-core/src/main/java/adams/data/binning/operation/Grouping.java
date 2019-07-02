@@ -23,16 +23,18 @@ package adams.data.binning.operation;
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableGroup;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * For grouping Binnable objects.
+ * For grouping Binnable and ungrouping BinnableGroup objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class Group {
+public class Grouping {
 
   public interface GroupExtractor<T> {
 
@@ -43,8 +45,9 @@ public class Group {
      * @return		the extracted group
      */
     public String extractGroup(Binnable<T> item);
-  }
 
+
+  }
   /**
    * Combines the binnable items into groups based on the groups extracted.
    *
@@ -64,6 +67,43 @@ public class Group {
         result.put(group, new BinnableGroup<>(group));
       result.get(group).add(item);
     }
+
+    return result;
+  }
+  /**
+   * Unravels the grouped binnable items into a single list again.
+   *
+   * @param data	the data to ungroup
+   * @param sortByGroup 	whether to sort by group
+   * @param <T>		the payload type
+   * @return		the generated list
+   */
+  public static <T> List<Binnable<T>> ungroup(Map<String,BinnableGroup<T>> data, boolean sortByGroup) {
+    List<Binnable<T>>	result;
+    List<String>	groups;
+
+    result = new ArrayList<>();
+    groups = new ArrayList<>(data.keySet());
+    if (sortByGroup)
+      Collections.sort(groups);
+    for (String group: groups)
+      result.addAll(data.get(group).get());
+
+    return result;
+  }
+
+  /**
+   * Unravels the grouped binnable items into a single list again.
+   *
+   * @param data	the data to ungroup
+   * @param <T>		the payload type
+   * @return		the generated list
+   */
+  public static <T> List<Binnable<T>> ungroup(BinnableGroup<T> data) {
+    List<Binnable<T>>	result;
+
+    result = new ArrayList<>();
+    result.addAll(data.get());
 
     return result;
   }
