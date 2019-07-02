@@ -156,10 +156,11 @@ public class Wrapping {
   }
 
   /**
-   * Wraps the double array in binnable objects, using the index as payload.
+   * Wraps the collection in binnable objects, using the extractor to determine
+   * the value for the binnable object.
    *
    * @param values	the values to bin
-   * @param extractor 	for extracting the bin value from the objects
+   * @param extractor 	for extracting the value from the objects
    * @return		the wrapped indices/values
    * @throws Exception	if NaN value is encountered
    */
