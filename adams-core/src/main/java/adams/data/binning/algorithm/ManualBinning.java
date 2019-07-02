@@ -21,13 +21,10 @@
 package adams.data.binning.algorithm;
 
 import adams.core.QuickInfoHelper;
-import adams.core.base.BaseInterval;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
-import adams.data.binning.operation.Statistics;
 import com.github.fracpete.javautils.struct.Struct2;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +34,7 @@ import java.util.List;
  * @param <T> the type of payload
  */
 public class ManualBinning<T>
-  extends AbstractBinningAlgorithm<T> {
+  extends AbstractEqualWidthBinningAlgorithm<T> {
 
   private static final long serialVersionUID = -3591626302229910556L;
 
@@ -261,53 +258,18 @@ public class ManualBinning<T>
    */
   @Override
   protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
-    List<Bin<T>>	result;
-    Struct2<Double,Double> minMax;
-    double		min;
-    double		max;
-    double		binWidth;
-    double[]		binStart;
-    int			i;
-    Bin			bin;
+    Struct2<Double,Double> 	minMax;
 
-    // determine min/max
-    minMax = Statistics.minMax(objects);
-    min    = minMax.value1;
-    max    = minMax.value2;
     if (m_UseFixedMinMax) {
-      if (min < m_ManualMin)
-	throw new IllegalStateException("Manual min larger than smallest value: " + m_ManualMin + " > " + min);
-      if (max > m_ManualMax)
-	throw new IllegalStateException("Manual max smaller than largest value: " + m_ManualMax + " < " + max);
-      min = m_ManualMin;
-      max = m_ManualMax;
+      minMax = getMinMax(objects);
+      if (minMax.value1 < m_ManualMin)
+	throw new IllegalStateException("Manual min larger than smallest value: " + m_ManualMin + " > " + minMax.value1);
+      if (minMax.value2 > m_ManualMax)
+	throw new IllegalStateException("Manual max smaller than largest value: " + m_ManualMax + " < " + minMax.value2);
+      return doGenerateBins(m_ManualMin, m_ManualMax, m_NumBins);
     }
-    if (isLoggingEnabled())
-      getLogger().info("min=" + min + ", max=" + max);
-
-    // calculate bin starts
-    binWidth = (max - min) / m_NumBins;
-    if (isLoggingEnabled())
-      getLogger().info("binWidth=" + binWidth);
-    binStart = new double[m_NumBins + 1];
-    for (i = 0; i < m_NumBins; i++)
-      binStart[i] = min + i*binWidth;
-    binStart[binStart.length - 1] = max;
-
-    // create bins
-    result = new ArrayList<>();
-    for (i = 0; i < m_NumBins; i++) {
-      bin = new Bin<T>(
-        i,
-	binStart[i],
-	binStart[i + 1],
-	new BaseInterval(
-              binStart[i], true,
-              binStart[i + 1], (i == m_NumBins - 1),
-              m_NumDecimals));
-      result.add(bin);
+    else {
+      return doGenerateBins(objects, m_NumBins);
     }
-
-    return result;
   }
 }

@@ -14,13 +14,12 @@
  */
 
 /*
- * DensityBinning.java
+ * RiceRuleBinning.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.binning.algorithm;
 
-import adams.core.QuickInfoHelper;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
@@ -31,19 +30,15 @@ import adams.data.binning.Binnable;
 import java.util.List;
 
 /**
- * Performs density-based binning.
+ * The Rice Rule is presented as a simple alternative to Sturges's rule.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @param <T> the type of payload
  */
-public class DensityBinning<T>
+public class RiceRuleBinning<T>
   extends AbstractEqualWidthBinningAlgorithm<T>
   implements TechnicalInformationHandler {
 
-  private static final long serialVersionUID = -3591626302229910556L;
-
-  /** the bin width. */
-  protected double m_BinWidth;
+  private static final long serialVersionUID = -1486327441961729111L;
 
   /**
    * Returns a string describing the object.
@@ -52,7 +47,7 @@ public class DensityBinning<T>
    */
   @Override
   public String globalInfo() {
-    return "Performs density-based binning.\n\n"
+    return "The Rice Rule is presented as a simple alternative to Sturges's rule.\n\n"
       + "For more information see:\n"
       + getTechnicalInformation();
   }
@@ -77,58 +72,6 @@ public class DensityBinning<T>
   }
 
   /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "bin-width", "binWidth",
-      1.0, 0.00001, null);
-  }
-
-  /**
-   * Sets the bin width to use.
-   *
-   * @param value 	the bin width
-   */
-  public void setBinWidth(double value) {
-    if (getOptionManager().isValid("binWidth", value)) {
-      m_BinWidth = value;
-      reset();
-    }
-  }
-
-  /**
-   * Returns the bin width in use.
-   *
-   * @return 		the bin width
-   */
-  public double getBinWidth() {
-    return m_BinWidth;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String binWidthTipText() {
-    return "The bin width to use.";
-  }
-
-  /**
-   * Returns a quick info about the object, which can be displayed in the GUI.
-   *
-   * @return		null if no info available, otherwise short string
-   */
-  public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "binWidth", m_BinWidth, "bin width: ");
-  }
-
-  /**
    * Performs the actual bin generation on the provided objects.
    *
    * @param objects	the objects to bin
@@ -137,6 +80,6 @@ public class DensityBinning<T>
    */
   @Override
   protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
-    return doGenerateBins(objects, m_BinWidth);
+    return doGenerateBins(objects, (int) Math.ceil(2 * Math.pow(objects.size(), 1./3.)));
   }
 }

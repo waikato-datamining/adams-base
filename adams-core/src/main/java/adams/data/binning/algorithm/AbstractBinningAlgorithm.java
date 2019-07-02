@@ -24,6 +24,8 @@ import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
+import adams.data.binning.operation.Statistics;
+import com.github.fracpete.javautils.struct.Struct2;
 
 import java.util.List;
 
@@ -104,6 +106,16 @@ public abstract class AbstractBinningAlgorithm<T>
     if ((objects == null) || (objects.size() == 0))
       return "No objects provided!";
     return null;
+  }
+
+  /**
+   * Determines the min/max from the binnable objects.
+   *
+   * @param objects 	the objects to determine the min/max from (using their associated value)
+   * @return		the min/max
+   */
+  protected Struct2<Double,Double> getMinMax(List<Binnable<T>> objects) {
+    return Statistics.minMax(objects);
   }
 
   /**
