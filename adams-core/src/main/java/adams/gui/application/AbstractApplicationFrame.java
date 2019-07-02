@@ -741,7 +741,6 @@ public abstract class AbstractApplicationFrame
     ScriptingEngineHandler 	handler;
 
     result = new ChildFrame(owner, insertHostnamePrefix(title), icon);
-    result.setUISettingsPrefix(title);
 
     // layout
     result.setLayout(new BorderLayout());
@@ -768,17 +767,18 @@ public abstract class AbstractApplicationFrame
       GUIHelper.setSizeAndLocation(result, c);
 
     // UI settings?
+    result.setUISettingsPrefix(title);
     result.applyUISettings();
 
     // add listener
     result.addDisposeWindowListener();
 
     // menu bar?
-    if ((c != null) && (c instanceof MenuBarProvider))
+    if (c instanceof MenuBarProvider)
       result.setJMenuBar(((MenuBarProvider) c).getMenuBar());
 
     // startup script?
-    if ((c != null) && (c instanceof ScriptingEngineHandler) && (c instanceof BasePanel)) {
+    if ((c instanceof ScriptingEngineHandler) && (c instanceof BasePanel)) {
       handler = (ScriptingEngineHandler) c;
       if (GUIHelper.getStartupScript(c) != null)
 	handler.getScriptingEngine().add((BasePanel) c, GUIHelper.getStartupScript(c));
@@ -1200,7 +1200,7 @@ public abstract class AbstractApplicationFrame
     final List<AbstractBasicMenuItemDefinition>	items;
 
     // collect menu items
-    items = new ArrayList<AbstractBasicMenuItemDefinition>();
+    items = new ArrayList<>();
     for (i = 0; i < m_StartUps.length; i++) {
       item = AbstractMenuItemDefinition.forCommandLine(this, m_StartUps[i].toString());
       if (getAppMenu().isBlacklisted(item.getClass())) {

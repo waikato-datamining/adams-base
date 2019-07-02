@@ -15,7 +15,7 @@
 
 /*
  * ChildFrame.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -159,7 +159,7 @@ public class ChildFrame
     if (getParentFrame() != null)
       setIconImage(getParentFrame().getIconImage());
     if (m_IconName != null) {
-      if (m_IconName.indexOf("/") > -1)
+      if (m_IconName.contains("/"))
         icon = GUIHelper.getExternalIcon(m_IconName);
       else
         icon = GUIHelper.getIcon(m_IconName);
@@ -288,7 +288,7 @@ public class ChildFrame
     // default constructor available?
     if (result) {
       try {
-        comp.getClass().getConstructor(new Class[0]);
+        comp.getClass().getConstructor();
       }
       catch (Exception e) {
         // ignored
@@ -322,9 +322,8 @@ public class ChildFrame
       result.getContentPane().add(panel, BorderLayout.CENTER);
       if (panel instanceof MenuBarProvider)
         result.setJMenuBar(((MenuBarProvider) panel).getMenuBar());
-      if ((getParentFrame() instanceof DatabaseConnectionHandler) && (panel instanceof DatabaseConnectionHandler))
-        ((DatabaseConnectionHandler) panel).setDatabaseConnection(
-            ((DatabaseConnectionHandler) getParentFrame()).getDatabaseConnection());
+      if (panel instanceof DatabaseConnectionHandler)
+        ((DatabaseConnectionHandler) panel).setDatabaseConnection(getParentFrame().getDatabaseConnection());
       if (m_DisposeWindowListenerAdded)
         result.addDisposeWindowListener();
     }
