@@ -21,10 +21,13 @@
 package adams.data.binning.operation;
 
 import adams.data.binning.Binnable;
+import com.github.fracpete.javautils.enumerate.Enumerated;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static com.github.fracpete.javautils.Enumerate.enumerate;
 
 /**
  * For wrapping data.
@@ -49,10 +52,11 @@ public class Wrapping {
     public double extractBinValue(T object);
 
   }
+
   /**
    * Wraps the double array in binnable objects, using the index as payload.
    *
-   * @param values	the values to bin
+   * @param values	the values to wrap
    * @return		the wrapped indices/values
    * @throws Exception	if NaN value is encountered
    */
@@ -73,7 +77,7 @@ public class Wrapping {
   /**
    * Wraps the float array in binnable objects, using the index as payload.
    *
-   * @param values	the values to bin
+   * @param values	the values to wrap
    * @return		the wrapped indices/values
    * @throws Exception	if NaN value is encountered
    */
@@ -94,7 +98,7 @@ public class Wrapping {
   /**
    * Wraps the double array in binnable objects, using the index as payload.
    *
-   * @param values	the values to bin
+   * @param values	the values to wrap
    * @return		the wrapped indices/values
    * @throws Exception	if NaN value is encountered
    */
@@ -115,7 +119,7 @@ public class Wrapping {
   /**
    * Wraps the double array in binnable objects, using the index as payload.
    *
-   * @param values	the values to bin
+   * @param values	the values to wrap
    * @return		the wrapped indices/values
    * @throws Exception	if NaN value is encountered
    */
@@ -136,12 +140,12 @@ public class Wrapping {
   }
 
   /**
-   * Wraps the double array in binnable objects, using the index as payload.
+   * Wraps the array in binnable objects, using the extractor to determine
+   * the value for the binnable object.
    *
-   * @param values	the values to bin
+   * @param values	the values to wrap
    * @param extractor 	for extracting the bin value from the objects
-   * @return		the wrapped indices/values
-   * @throws Exception	if NaN value is encountered
+   * @return		the wrapped values
    */
   public static <T> List<Binnable<T>> wrap(T[] values, BinValueExtractor<T> extractor) throws Exception {
     List<Binnable<T>> 	result;
@@ -159,10 +163,9 @@ public class Wrapping {
    * Wraps the collection in binnable objects, using the extractor to determine
    * the value for the binnable object.
    *
-   * @param values	the values to bin
+   * @param values	the values to wrap
    * @param extractor 	for extracting the value from the objects
-   * @return		the wrapped indices/values
-   * @throws Exception	if NaN value is encountered
+   * @return		the wrapped values
    */
   public static <T> List<Binnable<T>> wrap(Collection<T> values, BinValueExtractor<T> extractor) throws Exception {
     List<Binnable<T>> 	result;
@@ -170,6 +173,27 @@ public class Wrapping {
     result = new ArrayList<>();
     for (T value: values)
       result.add(new Binnable<>(value, extractor.extractBinValue(value)));
+
+    return result;
+  }
+
+  /**
+   * Wraps the collection in binnable objects, using the extractor to determine
+   * the value for the binnable object.
+   *
+   * @param values	the values to wrap
+   * @param extractor 	for extracting the value from the objects
+   * @return		the wrapped values
+   */
+  public static <T> List<Binnable<Binnable<T>>> wrapIndexed(Collection<T> values, BinValueExtractor<T> extractor) throws Exception {
+    List<Binnable<Binnable<T>>> result;
+    Binnable<T>			item;
+
+    result = new ArrayList<>();
+    for (Enumerated<T> v : enumerate(values)) {
+      item = new Binnable<>(v.value, extractor.extractBinValue(v.value));
+      result.add(new Binnable<>(item, v.index));
+    }
 
     return result;
   }
