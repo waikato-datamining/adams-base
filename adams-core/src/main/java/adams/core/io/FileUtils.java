@@ -54,7 +54,6 @@ import java.util.List;
  * Utility class for I/O related actions.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileUtils {
 
@@ -1430,14 +1429,34 @@ public class FileUtils {
   }
 
   /**
+   * Checks whether the directory (not file!) exists.
+   *
+   * @param dirname	the directory to check
+   * @return		true if file exists
+   */
+  public static boolean dirExists(String dirname) {
+    return dirExists(new PlaceholderFile(dirname));
+  }
+
+  /**
+   * Checks whether the directory (not file!) exists.
+   *
+   * @param dir		the directory to check
+   * @return		true if file exists
+   */
+  public static boolean dirExists(File dir) {
+    return dir.exists() && dir.isDirectory();
+  }
+
+  /**
    * Checks whether the directory exists. If this file object represents a
    * file, then the parent directory is checked.
    *
    * @param filename	the filename to check
    * @return		true if directory exists
    */
-  public static boolean directoryExists(String filename) {
-    return directoryExists(new PlaceholderFile(filename));
+  public static boolean dirOrParentDirExists(String filename) {
+    return dirOrParentDirExists(new PlaceholderFile(filename));
   }
 
   /**
@@ -1447,7 +1466,7 @@ public class FileUtils {
    * @param file	the file object to check
    * @return		true if directory exists
    */
-  public static boolean directoryExists(File file) {
+  public static boolean dirOrParentDirExists(File file) {
     if (file.isDirectory())
       return file.exists();
     else if (file.isFile())

@@ -255,7 +255,7 @@ public class FileEditor
     file     = (File) getValue();
     menuitem = new JMenuItem("Open in preview browser...");
     menuitem.setIcon(GUIHelper.getIcon("previewbrowser.png"));
-    menuitem.setEnabled(FileUtils.directoryExists(file));
+    menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
     menuitem.addActionListener((ActionEvent e) -> {
       BaseDialog dialog;
       if (file.isDirectory()) {
@@ -273,13 +273,13 @@ public class FileEditor
 
     menuitem = new JMenuItem("Open in file browser...");
     menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
-    menuitem.setEnabled(FileUtils.directoryExists(file));
+    menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
     menuitem.addActionListener((ActionEvent e) -> FileBrowser.launch(file));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Open in terminal...");
     menuitem.setIcon(GUIHelper.getIcon("terminal.png"));
-    menuitem.setEnabled(FileUtils.directoryExists(file));
+    menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
     menuitem.addActionListener((ActionEvent e) -> Terminal.launch(file));
     menu.add(menuitem);
 
