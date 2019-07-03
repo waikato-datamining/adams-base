@@ -238,9 +238,10 @@ public class HtmlUtils {
    * Hyperlinks class names in the string.
    *
    * @param s		the string to convert to HTML
+   * @param classCrossRefLinks	whether to generate class cross-reference links interpreted by the ADAMS help interface
    * @return		the HTML string
    */
-  public static String hyperlinkClassnames(String s) {
+  public static String hyperlinkClassnames(String s, boolean classCrossRefLinks) {
     String	result;
     Set<String> classnames;
     ClassLister clister;
@@ -256,9 +257,12 @@ public class HtmlUtils {
       for (String classname: classnames) {
         if (!clister.isManaged(classname) && (classname.startsWith("java.") || classname.startsWith("javax.")))
           url = toJavaApiURL(classname);
-        else
+        else if (classCrossRefLinks)
           url = toClassCrossRefURL(classname);
-	result = result.replace(classname, "<a href=\"" + url + "\">" + classname + "</a>");
+        else
+          url = null;
+        if (url != null)
+          result = result.replace(classname, "<a href=\"" + url + "\">" + classname + "</a>");
       }
     }
 

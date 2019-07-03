@@ -45,6 +45,9 @@ public class HtmlParametersProducer
   /** the buffer for assembling the help. */
   protected StringBuilder m_OutputBuffer;
 
+  /** whether to generate "fake" class cross reference links. */
+  protected boolean m_ClassCrossRefLinks;
+
   /**
    * Returns a string describing the object.
    *
@@ -53,6 +56,25 @@ public class HtmlParametersProducer
   @Override
   public String globalInfo() {
     return "Generates HTML 3 help output, which is used in the GUI.";
+  }
+
+  /**
+   * Sets whether to generate class cross-reference links for the help user interface.
+   *
+   * @param value	true if to generate
+   */
+  public void setClassCrossRefLinks(boolean value) {
+    m_ClassCrossRefLinks = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to generate class cross-reference links for the help user interface.
+   *
+   * @return		true if to generate
+   */
+  public boolean getClassCrossRefLinks() {
+    return m_ClassCrossRefLinks;
   }
 
   /**
@@ -114,7 +136,7 @@ public class HtmlParametersProducer
     
     result = HtmlUtils.markUpURLs(s, true);
     result = HtmlUtils.convertLines(result, nbsp);
-    result = HtmlUtils.hyperlinkClassnames(result);
+    result = HtmlUtils.hyperlinkClassnames(result, m_ClassCrossRefLinks);
 
     return result;
   }

@@ -68,6 +68,7 @@ public class Help
 
     actor = TreeHelper.pathToActor(path);
     producer = new HtmlHelpProducer();
+    producer.setClassCrossRefLinks(true);
     producer.produce(actor);
     HelpFrame.showHelp(actor.getClass(), producer.getOutput(), true);
   }

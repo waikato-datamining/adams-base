@@ -42,6 +42,50 @@ public abstract class AbstractHelpGenerator
   /** for logging in static context. */
   protected static Logger LOGGER = LoggingHelper.getLogger(AbstractHelpGenerator.class);
 
+  /** whether to generate "fake" class cross reference links. */
+  protected boolean m_ClassCrossRefLinks;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "class-crossref-links", "classCrossRefLinks",
+      false);
+  }
+
+  /**
+   * Sets whether to generate class cross-reference links for the help user interface.
+   *
+   * @param value	true if to generate
+   */
+  public void setClassCrossRefLinks(boolean value) {
+    m_ClassCrossRefLinks = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to generate class cross-reference links for the help user interface.
+   *
+   * @return		true if to generate
+   */
+  public boolean getClassCrossRefLinks() {
+    return m_ClassCrossRefLinks;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classCrossRefLinksTipText() {
+    return "If enabled, class cross-reference links get generated that get interpreted by the ADAMS help interface.";
+  }
+
   /**
    * Checks whether the generator handles this object.
    *
@@ -89,7 +133,7 @@ public abstract class AbstractHelpGenerator
 
     result = HtmlUtils.markUpURLs(s, true);
     result = HtmlUtils.convertLines(result, nbsp);
-    result = HtmlUtils.hyperlinkClassnames(result);
+    result = HtmlUtils.hyperlinkClassnames(result, m_ClassCrossRefLinks);
 
     return result;
   }
