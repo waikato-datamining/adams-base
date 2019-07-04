@@ -65,13 +65,13 @@ public class Copy {
       case BINNABLE:
         result = new ArrayList<>();
         for (Binnable<T> b: data)
-          result.add(new Binnable<>(b.getPayload(), b.getValue()));
+          result.add(new Binnable<>(b.getPayload(), b.getValue(), b.getMetaData()));
         break;
 
       case DEEP:
         result = new ArrayList<>();
         for (Binnable<T> b: data)
-          result.add(new Binnable<>((T) Utils.deepCopy(b.getPayload()), b.getValue()));
+          result.add(new Binnable<>((T) Utils.deepCopy(b.getPayload()), b.getValue(), b.getMetaData()));
         break;
 
       default:

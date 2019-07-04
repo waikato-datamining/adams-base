@@ -23,6 +23,8 @@ package adams.data.binning;
 import adams.core.Utils;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Wrapper for objects to be binned.
@@ -41,6 +43,9 @@ public class Binnable<T>
   /** the value to use for binning. */
   protected double m_Value;
 
+  /** the meta-data. */
+  protected Map<String,Object> m_MetaData;
+
   /**
    * Initializes the wrapper.
    *
@@ -48,8 +53,22 @@ public class Binnable<T>
    * @param value 	the value to use for binning
    */
   public Binnable(T payload, double value) {
-    m_Payload = payload;
-    m_Value   = value;
+    this(payload, value, null);
+  }
+
+  /**
+   * Initializes the wrapper.
+   *
+   * @param payload 	the actual object
+   * @param value 	the value to use for binning
+   * @param metaData 	the meta-data to use, ignored if null
+   */
+  public Binnable(T payload, double value, Map<String,Object> metaData) {
+    m_Payload  = payload;
+    m_Value    = value;
+    m_MetaData = null;
+    if (metaData != null)
+      m_MetaData = new HashMap<>(metaData);
   }
 
   /**
@@ -68,6 +87,62 @@ public class Binnable<T>
    */
   public double getValue() {
     return m_Value;
+  }
+
+  /**
+   * Returns if meta-data is present.
+   *
+   * @return		true if meta-data there
+   */
+  public boolean hasMetaData() {
+    return (m_MetaData != null);
+  }
+
+  /**
+   * Adds meta-data.
+   *
+   * @param key		the key of the value
+   * @param value	the value to store
+   */
+  public synchronized void addMetaData(String key, Object value) {
+    if (m_MetaData == null)
+      m_MetaData = new HashMap<>();
+    m_MetaData.put(key, value);
+  }
+
+  /**
+   * Removes meta-data.
+   *
+   * @param key		the key of the value to remove
+   * @return		the removed value, null if none removed
+   */
+  public synchronized Object removeMetaData(String key) {
+    if (m_MetaData != null)
+      return m_MetaData.remove(key);
+    else
+      return null;
+  }
+
+  /**
+   * Rertrieves meta-data.
+   *
+   * @param key		the key of the value to retrieve
+   * @return		the associated value, null if none available
+   */
+  public synchronized Object getMetaData(String key) {
+    if (m_MetaData != null)
+      return m_MetaData.get(key);
+    else
+      return null;
+  }
+
+  /**
+   * Returns the meta-data.
+   *
+   * @return		the data, null if none stored
+   */
+  public Map<String,Object> getMetaData() {
+    return m_MetaData;
   }
 
   /**
