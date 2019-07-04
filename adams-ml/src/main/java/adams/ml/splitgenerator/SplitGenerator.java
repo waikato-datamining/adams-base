@@ -15,44 +15,44 @@
 
 /*
  * SplitGenerator.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
-package weka.classifiers;
+package adams.ml.splitgenerator;
 
-import adams.data.weka.InstancesViewSupporter;
-import adams.flow.container.WekaTrainTestSetContainer;
-import weka.core.Instances;
+import adams.core.Randomizable;
+import adams.core.option.OptionHandler;
 
+import java.io.Serializable;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * Interface for helper classes that generate dataset splits.
+ * Interface for classes that generate dataset splits.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @param <I> the input data
+ * @param <O> the output data
  */
-public interface SplitGenerator
-  extends adams.ml.splitgenerator.SplitGenerator<Instances, WekaTrainTestSetContainer>, InstancesViewSupporter {
+public interface SplitGenerator<I,O>
+  extends Serializable, OptionHandler, Iterator<O>, Randomizable {
 
   /**
    * Sets the original data.
    *
    * @param value	the data
    */
-  @Override
-  public void setData(Instances value);
+  public void setData(I value);
 
   /**
    * Returns the original data.
    *
    * @return		the data
    */
-  @Override
-  public Instances getData();
+  public I getData();
 
   /**
    * Initializes the iterator (gets implicitly called, when calling next()).
    */
-  @Override
   public void initializeIterator() ;
 
   /**
@@ -72,7 +72,7 @@ public interface SplitGenerator
    * @throws NoSuchElementException 	iteration has no more elements.
    */
   @Override
-  public WekaTrainTestSetContainer next();
+  public O next();
 
   /**
    * Unsupported.

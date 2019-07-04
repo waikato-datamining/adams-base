@@ -15,42 +15,25 @@
 
 /*
  * CrossValidationFoldGenerator.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
  */
-package weka.classifiers;
-
-import adams.flow.container.WekaTrainTestSetContainer;
-import adams.ml.splitgenerator.StratifiableSplitGenerator;
-import weka.core.Instances;
+package adams.ml.splitgenerator;
 
 /**
  * Interface for generating cross-validation folds.
- * <br><br>
- * The template for the relation name accepts the following placeholders:
- * @ = original relation name, $T = type (train/test), $N = current fold number
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @param <I> the input data
+ * @param <O> the output data
  */
-public interface CrossValidationFoldGenerator
-  extends SplitGenerator,
-  adams.ml.splitgenerator.CrossValidationFoldGenerator<Instances,WekaTrainTestSetContainer>,
-  StratifiableSplitGenerator<Instances,WekaTrainTestSetContainer> {
-
-  /** the placeholder for the (original) relation name. */
-  public final static String PLACEHOLDER_ORIGINAL = "@";
-
-  /** the placeholder for "train" or "test" type. */
-  public final static String PLACEHOLDER_TYPE = "$T";
-
-  /** the placeholder for the current fold number. */
-  public final static String PLACEHOLDER_CURRENTFOLD = "$N";
+public interface CrossValidationFoldGenerator<I,O>
+  extends SplitGenerator<I,O> {
 
   /**
    * Sets the number of folds to use.
    *
    * @param value	the number of folds, less than 2 for LOO
    */
-  @Override
   public void setNumFolds(int value);
 
   /**
@@ -58,7 +41,6 @@ public interface CrossValidationFoldGenerator
    * 
    * @return		the number of folds
    */
-  @Override
   public int getNumFolds();
 
   /**
@@ -66,7 +48,6 @@ public interface CrossValidationFoldGenerator
    *
    * @return		the actual number of folds
    */
-  @Override
   public int getActualNumFolds();
 
   /**
@@ -74,7 +55,6 @@ public interface CrossValidationFoldGenerator
    *
    * @param value	true if to randomize the data
    */
-  @Override
   public void setRandomize(boolean value);
 
   /**
@@ -82,44 +62,12 @@ public interface CrossValidationFoldGenerator
    *
    * @return		true if to randomize the data
    */
-  @Override
   public boolean getRandomize();
-
-  /**
-   * Sets whether to stratify the data (nominal class).
-   *
-   * @param value	whether to stratify the data (nominal class)
-   */
-  @Override
-  public void setStratify(boolean value);
-
-  /**
-   * Returns whether to stratify the data (in case of nominal class).
-   * 
-   * @return		true if to stratify
-   */
-  @Override
-  public boolean getStratify();
-
-  /**
-   * Sets the template for the relation name.
-   *
-   * @param value	the template
-   */
-  public void setRelationName(String value);
-
-  /**
-   * Returns the relation name template.
-   * 
-   * @return		the template
-   */
-  public String getRelationName();
 
   /**
    * Returns the cross-validation indices.
    *
    * @return		the indices
    */
-  @Override
   public int[] crossValidationIndices();
 }
