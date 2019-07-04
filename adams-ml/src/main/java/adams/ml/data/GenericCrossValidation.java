@@ -271,12 +271,13 @@ public class GenericCrossValidation {
    * @param data	the data to generate the pairs from
    * @param folds	the number of folds to use
    * @param seed	the seed for randomization
+   * @param stratify 	whether to stratify after randomization
    * @param <T>		the payload type
    * @return		the fold pairs
-   * @see		#crossValidate(List, int, Random)
+   * @see		#crossValidate(List, int, Random, boolean)
    */
-  public static <T> List<FoldPair<Binnable<T>>> crossValidate(List<Binnable<T>> data, int folds, long seed) {
-    return crossValidate(data, folds, new Random(seed));
+  public static <T> List<FoldPair<Binnable<T>>> crossValidate(List<Binnable<T>> data, int folds, long seed, boolean stratify) {
+    return crossValidate(data, folds, new Random(seed), stratify);
   }
 
   /**
@@ -286,10 +287,11 @@ public class GenericCrossValidation {
    * @param data	the data to generate the pairs from
    * @param folds	the number of folds to use
    * @param random	the random number generation for randomizing the data
+   * @param stratify 	whether to stratify after randomization
    * @param <T>		the payload type
    * @return		the fold pairs
    */
-  public static <T> List<FoldPair<Binnable<T>>> crossValidate(List<Binnable<T>> data, int folds, Random random) {
+  public static <T> List<FoldPair<Binnable<T>>> crossValidate(List<Binnable<T>> data, int folds, Random random, boolean stratify) {
     List<FoldPair<Binnable<T>>>	result;
     List<Binnable<T>> 		trainData;
     TIntList			trainIndices;
@@ -308,7 +310,8 @@ public class GenericCrossValidation {
 
     // randomize/stratify
     data = Randomize.randomizeData(data, random);
-    data = Stratify.stratify(data, folds);
+    if (stratify)
+      data = Stratify.stratify(data, folds);
 
     // generate pairs
     for (i = 0; i < folds; i++) {
