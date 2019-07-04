@@ -41,6 +41,7 @@ public class Stratify {
    * @param data	the data to stratify
    * @param folds	the number of folds
    * @param <T>		the payload type
+   * @return 		the stratified data
    */
   public static <T> List<Binnable<T>> stratify(List<Binnable<T>> data, int folds) {
     List<Binnable<T>>	result;
