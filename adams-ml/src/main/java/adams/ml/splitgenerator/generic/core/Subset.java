@@ -14,11 +14,11 @@
  */
 
 /*
- * FoldItem.java
+ * Subset.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.crossvalidation;
+package adams.ml.splitgenerator.generic.core;
 
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -28,11 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Container for a single fold item (train or test).
+ * Container for a dataset subset.
  *
  * @param <T>	the type of wrapped data
  */
-public class FoldItem<T>
+public class Subset<T>
   implements Serializable {
 
   private static final long serialVersionUID = 3833693505441351845L;
@@ -49,7 +49,7 @@ public class FoldItem<T>
    * @param data		the data
    * @param originalIndices	the indices
    */
-  public FoldItem(List<T> data, TIntList originalIndices) {
+  public Subset(List<T> data, TIntList originalIndices) {
     m_Data            = new ArrayList<>(data);
     m_OriginalIndices = new TIntArrayList(originalIndices);
   }

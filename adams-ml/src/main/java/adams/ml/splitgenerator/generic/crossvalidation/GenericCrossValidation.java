@@ -22,6 +22,7 @@ package adams.ml.splitgenerator.generic.crossvalidation;
 
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.data.binning.Binnable;
+import adams.ml.splitgenerator.generic.core.Subset;
 import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.ml.splitgenerator.generic.randomization.Randomization;
 import adams.ml.splitgenerator.generic.stratification.DefaultStratification;
@@ -43,10 +44,10 @@ import static com.github.fracpete.javautils.Enumerate.enumerate;
 public class GenericCrossValidation
   extends CustomLoggingLevelObject {
 
+  private static final long serialVersionUID = 6906260013695977045L;
+
   /** the temporary index stored in the binnable meta-data. */
   public static final String TMP_INDEX = "$$$tmpindex$$$";
-
-  private static final long serialVersionUID = 6906260013695977045L;
 
   /** the number of folds to use. */
   protected int m_NumFolds;
@@ -64,6 +65,7 @@ public class GenericCrossValidation
     m_NumFolds       = 10;
     m_Randomization  = new DefaultRandomization();
     m_Stratification = new DefaultStratification();
+    reset();
   }
 
   /**
@@ -247,10 +249,10 @@ public class GenericCrossValidation
     List<FoldPair<Binnable<T>>>	result;
     List<Binnable<T>> 		trainData;
     TIntList			trainIndices;
-    FoldItem<Binnable<T>>	train;
+    Subset<Binnable<T>> train;
     List<Binnable<T>> 		testData;
     TIntList			testIndices;
-    FoldItem<Binnable<T>>	test;
+    Subset<Binnable<T>> test;
     int				i;
     int				n;
     int				folds;
@@ -278,14 +280,14 @@ public class GenericCrossValidation
       trainIndices = new TIntArrayList();
       for (n = 0; n < trainData.size(); n++)
 	trainIndices.add((Integer) trainData.get(n).getMetaData(TMP_INDEX));
-      train = new FoldItem<>(trainData, trainIndices);
+      train = new Subset<>(trainData, trainIndices);
 
       // test
       testData = testCV(data, folds, i);
       testIndices  = new TIntArrayList();
       for (n = 0; n < testData.size(); n++)
 	testIndices.add((Integer) testData.get(n).getMetaData(TMP_INDEX));
-      test = new FoldItem<>(testData, testIndices);
+      test = new Subset<>(testData, testIndices);
 
       result.add(new FoldPair<>(i, train, test));
     }

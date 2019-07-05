@@ -14,11 +14,11 @@
  */
 
 /*
- * FoldPair.java
+ * SplitPair.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.crossvalidation;
+package adams.ml.splitgenerator.generic.randomsplit;
 
 import adams.ml.splitgenerator.generic.core.Subset;
 
@@ -29,13 +29,10 @@ import java.io.Serializable;
  *
  * @param <T> the type of wrapped data
  */
-public class FoldPair<T>
+public class SplitPair<T>
   implements Serializable {
 
   private static final long serialVersionUID = -7911202345550167880L;
-
-  /** the index. */
-  protected int m_Index;
 
   /** the training data. */
   protected Subset<T> m_Train;
@@ -44,25 +41,14 @@ public class FoldPair<T>
   protected Subset<T> m_Test;
 
   /**
-   * Initializes the fold pair.
+   * Initializes the split pair.
    *
-   * @param index 	the index
    * @param train	the training data
    * @param test	the test data
    */
-  public FoldPair(int index, Subset<T> train, Subset<T> test) {
-    m_Index = index;
+  public SplitPair(Subset<T> train, Subset<T> test) {
     m_Train = train;
     m_Test  = test;
-  }
-
-  /**
-   * Returns the index.
-   *
-   * @return		the index
-   */
-  public int getIndex() {
-    return m_Index;
   }
 
   /**
@@ -90,6 +76,6 @@ public class FoldPair<T>
    */
   @Override
   public String toString() {
-    return m_Index + ": train=" + getTrain().getData().size() + ", test=" + getTest().getData().size();
+    return "train=" + getTrain().getData().size() + ", test=" + getTest().getData().size();
   }
 }
