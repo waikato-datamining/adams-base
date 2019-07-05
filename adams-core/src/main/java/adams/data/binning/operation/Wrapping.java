@@ -21,6 +21,7 @@
 package adams.data.binning.operation;
 
 import adams.data.binning.Binnable;
+import adams.data.binning.BinnableGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -170,6 +171,24 @@ public class Wrapping {
     result = new ArrayList<>();
     for (T value: values)
       result.add(new Binnable<>(value, extractor.extractBinValue(value)));
+
+    return result;
+  }
+
+  /**
+   * Wraps the collection of binnable group objects in binnable objects, using the extractor to determine
+   * the value for the binnable object (uses first item of group).
+   *
+   * @param values	the values to wrap
+   * @param extractor 	for extracting the value from the objects
+   * @return		the wrapped values
+   */
+  public static <T> List<Binnable<BinnableGroup<T>>> wrapGroups(Collection<BinnableGroup<T>> values, BinValueExtractor<T> extractor) throws Exception {
+    List<Binnable<BinnableGroup<T>>> 	result;
+
+    result = new ArrayList<>();
+    for (BinnableGroup<T> value: values)
+      result.add(new Binnable<>(value, extractor.extractBinValue(value.get().get(0).getPayload())));
 
     return result;
   }
