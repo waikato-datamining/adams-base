@@ -20,11 +20,14 @@
 
 package adams.data.binning;
 
+import adams.core.MetaDataSupporter;
 import adams.core.Utils;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Wrapper for objects to be binned.
@@ -33,7 +36,7 @@ import java.util.Map;
  * @param <T> the type of payload
  */
 public class Binnable<T>
-  implements Serializable {
+  implements Serializable, MetaDataSupporter {
 
   private static final long serialVersionUID = 4963864458212337110L;
 
@@ -104,10 +107,10 @@ public class Binnable<T>
    * @param key		the key of the value
    * @param value	the value to store
    */
-  public synchronized void addMetaData(String key, Object value) {
+  public synchronized Object addMetaData(String key, Object value) {
     if (m_MetaData == null)
       m_MetaData = new HashMap<>();
-    m_MetaData.put(key, value);
+    return m_MetaData.put(key, value);
   }
 
   /**
@@ -143,6 +146,19 @@ public class Binnable<T>
    */
   public Map<String,Object> getMetaData() {
     return m_MetaData;
+  }
+
+  /**
+   * Returns the set of meta-data keys.
+   *
+   * @return		the meta-data keys
+   */
+  @Override
+  public Set<String> metaDataKeys() {
+    if (m_MetaData == null)
+      return new HashSet<>();
+    else
+      return m_MetaData.keySet();
   }
 
   /**
