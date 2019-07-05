@@ -18,19 +18,20 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.data;
+package adams.ml.splitgenerator.generic.crossvalidation;
 
+import adams.core.logging.CustomLoggingLevelObject;
 import adams.data.binning.Binnable;
-import adams.data.binning.operation.Randomize;
-import adams.data.binning.operation.Stratify;
+import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
+import adams.ml.splitgenerator.generic.randomization.Randomization;
+import adams.ml.splitgenerator.generic.stratification.DefaultStratification;
+import adams.ml.splitgenerator.generic.stratification.Stratification;
 import com.github.fracpete.javautils.enumerate.Enumerated;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static com.github.fracpete.javautils.Enumerate.enumerate;
 
@@ -39,125 +40,95 @@ import static com.github.fracpete.javautils.Enumerate.enumerate;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class GenericCrossValidation {
+public class GenericCrossValidation
+  extends CustomLoggingLevelObject {
 
   /** the temporary index stored in the binnable meta-data. */
   public static final String TMP_INDEX = "$$$tmpindex$$$";
 
+  private static final long serialVersionUID = 6906260013695977045L;
+
+  /** the number of folds to use. */
+  protected int m_NumFolds;
+
+  /** the randomization scheme. */
+  protected Randomization m_Randomization;
+
+  /** the stratification scheme. */
+  protected Stratification m_Stratification;
+
   /**
-   * Container for a single fold item (train or test).
-   *
-   * @param <T>	the type of wrapped data
+   * Initializes the cross-validation.
    */
-  public static class FoldItem<T>
-    implements Serializable {
-
-    private static final long serialVersionUID = 3833693505441351845L;
-
-    /** the data. */
-    protected List<T> m_Data;
-
-    /** the original indices (can be null). */
-    protected TIntList m_OriginalIndices;
-
-    /**
-     * Initializes the container.
-     *
-     * @param data		the data
-     * @param originalIndices	the indices
-     */
-    public FoldItem(List<T> data, TIntList originalIndices) {
-      m_Data            = new ArrayList<>(data);
-      m_OriginalIndices = new TIntArrayList(originalIndices);
-    }
-
-    /**
-     * Returns the data.
-     *
-     * @return		the data
-     */
-    public List<T> getData() {
-      return m_Data;
-    }
-
-    /**
-     * Returns the original indices.
-     *
-     * @return		the indices
-     */
-    public TIntList getOriginalIndices() {
-      return m_OriginalIndices;
-    }
+  public GenericCrossValidation() {
+    m_NumFolds       = 10;
+    m_Randomization  = new DefaultRandomization();
+    m_Stratification = new DefaultStratification();
   }
 
   /**
-   * Combines train and test data.
-   *
-   * @param <T> the type of wrapped data
+   * Resets the scheme.
    */
-  public static class FoldPair<T>
-    implements Serializable {
+  public void reset() {
+    m_Randomization.reset();
+    m_Stratification.reset();
+  }
 
-    private static final long serialVersionUID = -7911202345550167880L;
+  /**
+   * Sets the number of folds to use.
+   *
+   * @param value	the number of folds, LOO if <2
+   */
+  public void setNumFolds(int value) {
+    m_NumFolds = value;
+    reset();
+  }
 
-    /** the index. */
-    protected int m_Index;
+  /**
+   * Returns the number of folds in use.
+   *
+   * @return		the number of folds, LOO if <2
+   */
+  public int getNumFolds() {
+    return m_NumFolds;
+  }
 
-    /** the training data. */
-    protected FoldItem<T> m_Train;
+  /**
+   * Sets the randomization scheme to use.
+   * 
+   * @param value	the scheme
+   */
+  public void setRandomization(Randomization value) {
+    m_Randomization = value;
+    reset();
+  }
 
-    /** the test data. */
-    protected FoldItem<T> m_Test;
+  /**
+   * Returns the randomization scheme in use.
+   * 
+   * @return		the scheme
+   */
+  public Randomization getRandomization() {
+    return m_Randomization;
+  }
 
-    /**
-     * Initializes the fold pair.
-     *
-     * @param index 	the index
-     * @param train	the training data
-     * @param test	the test data
-     */
-    public FoldPair(int index, FoldItem<T> train, FoldItem<T> test) {
-      m_Index = index;
-      m_Train = train;
-      m_Test  = test;
-    }
+  /**
+   * Sets the stratification scheme to use.
+   * 
+   * @param value	the scheme
+   */
+  public void setStratification(Stratification value) {
+    m_Stratification = value;
+    reset();
+  }
 
-    /**
-     * Returns the index.
-     *
-     * @return		the index
-     */
-    public int getIndex() {
-      return m_Index;
-    }
-
-    /**
-     * Returns the training data.
-     *
-     * @return		the data
-     */
-    public FoldItem<T> getTrain() {
-      return m_Train;
-    }
-
-    /**
-     * Returns the test data.
-     *
-     * @return		the data
-     */
-    public FoldItem<T> getTest() {
-      return m_Test;
-    }
-
-    /**
-     * Returns a short string representation.
-     *
-     * @return		the representation
-     */
-    @Override
-    public String toString() {
-      return m_Index + ": train=" + getTrain().getData().size() + ", test=" + getTest().getData().size();
-    }
+  /**
+   * Returns the stratification scheme in use.
+   * 
+   * @return		the scheme
+   */
+  public Stratification getStratification() {
+    return m_Stratification;
   }
 
   /**
@@ -170,7 +141,7 @@ public class GenericCrossValidation {
    * @throws IllegalArgumentException if the number of folds is less than 2 or
    *           greater than the number of instances.
    */
-  protected static <T> List<Binnable<T>> trainCV(List<Binnable<T>> data, int numFolds, int numFold) {
+  protected <T> List<Binnable<T>> trainCV(List<Binnable<T>> data, int numFolds, int numFold) {
     List<Binnable<T>> 	result;
     int 		numInstForFold;
     int 		first;
@@ -216,11 +187,11 @@ public class GenericCrossValidation {
    * @throws IllegalArgumentException if the number of folds is less than 2 or
    *           greater than the number of instances.
    */
-  protected static <T> List<Binnable<T>> trainCV(List<Binnable<T>> data, int numFolds, int numFold, Random random) {
+  protected <T> List<Binnable<T>> trainCV(List<Binnable<T>> data, int numFolds, int numFold, Randomization random) {
     List<Binnable<T>> 	result;
 
     result = trainCV(data, numFolds, numFold);
-    Randomize.randomizeData(result, random);
+    random.randomize(result);
     return result;
   }
 
@@ -234,7 +205,7 @@ public class GenericCrossValidation {
    * @throws IllegalArgumentException if the number of folds is less than 2 or
    *           greater than the number of instances.
    */
-  protected static <T> List<Binnable<T>> testCV(List<Binnable<T>> data, int numFolds, int numFold) {
+  protected <T> List<Binnable<T>> testCV(List<Binnable<T>> data, int numFolds, int numFold) {
     List<Binnable<T>> 	result;
     int 		numInstForFold;
     int 		first;
@@ -269,29 +240,10 @@ public class GenericCrossValidation {
    * Temporarily adds the original index to the Binnable meta-data, using {@link #TMP_INDEX} as key.
    *
    * @param data	the data to generate the pairs from
-   * @param folds	the number of folds to use
-   * @param seed	the seed for randomization
-   * @param stratify 	whether to stratify after randomization
-   * @param <T>		the payload type
-   * @return		the fold pairs
-   * @see		#crossValidate(List, int, Random, boolean)
-   */
-  public static <T> List<FoldPair<Binnable<T>>> crossValidate(List<Binnable<T>> data, int folds, long seed, boolean stratify) {
-    return crossValidate(data, folds, new Random(seed), stratify);
-  }
-
-  /**
-   * Generates cross-validation fold pairs.
-   * Temporarily adds the original index to the Binnable meta-data, using {@link #TMP_INDEX} as key.
-   *
-   * @param data	the data to generate the pairs from
-   * @param folds	the number of folds to use
-   * @param random	the random number generation for randomizing the data
-   * @param stratify 	whether to stratify after randomization
    * @param <T>		the payload type
    * @return		the fold pairs
    */
-  public static <T> List<FoldPair<Binnable<T>>> crossValidate(List<Binnable<T>> data, int folds, Random random, boolean stratify) {
+  public <T> List<FoldPair<Binnable<T>>> generate(List<Binnable<T>> data) {
     List<FoldPair<Binnable<T>>>	result;
     List<Binnable<T>> 		trainData;
     TIntList			trainIndices;
@@ -301,22 +253,28 @@ public class GenericCrossValidation {
     FoldItem<Binnable<T>>	test;
     int				i;
     int				n;
+    int				folds;
 
     result = new ArrayList<>();
+
+    // actual number of folds
+    if (m_NumFolds < 2)
+      folds = data.size();
+    else
+      folds = m_NumFolds;
 
     // add tmp index
     for (Enumerated<Binnable<T>> d: enumerate(data))
       d.value.addMetaData(TMP_INDEX, d.index);
 
     // randomize/stratify
-    data = Randomize.randomizeData(data, random);
-    if (stratify)
-      data = Stratify.stratify(data, folds);
+    data = m_Randomization.randomize(data);
+    data = m_Stratification.stratify(data, folds);
 
     // generate pairs
     for (i = 0; i < folds; i++) {
       // train
-      trainData = trainCV(data, folds, i, random);
+      trainData = trainCV(data, folds, i, m_Randomization);
       trainIndices = new TIntArrayList();
       for (n = 0; n < trainData.size(); n++)
 	trainIndices.add((Integer) trainData.get(n).getMetaData(TMP_INDEX));
