@@ -20,8 +20,6 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -30,6 +28,8 @@ import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.StringConstants;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the DirName actor.
@@ -81,7 +81,6 @@ public class DirNameTest
     sc.setStrings(new BaseString[]{
 	new BaseString("/hello/world/message.txt"),
 	new BaseString("C:\\some\\other\\file.doc"),
-	new BaseString("./peekaboo.flv"),
     });
 
     DirName dn = new DirName();
