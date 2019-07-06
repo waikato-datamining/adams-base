@@ -15,7 +15,7 @@
 
 /*
  * DirName.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -99,7 +99,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DirName
   extends AbstractTransformer
@@ -226,9 +225,9 @@ public class DirName
     strings = new String[files.length];
     for (i = 0; i < files.length; i++) {
       if (string)
-	strings[i] = files[i].getParent();
+	strings[i] = files[i].getAbsoluteFile().getParent();
       else
-	files[i] = files[i].getParentFile();
+	files[i] = files[i].getAbsoluteFile().getParentFile();
     }
 
     if (string) {

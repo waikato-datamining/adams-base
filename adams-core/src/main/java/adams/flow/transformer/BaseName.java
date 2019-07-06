@@ -15,17 +15,17 @@
 
 /*
  * BaseName.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.io.File;
 
 import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.flow.core.Token;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -90,7 +90,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseName
   extends AbstractTransformer
@@ -213,7 +212,7 @@ public class BaseName
 
     strings = new String[files.length];
     for (i = 0; i < files.length; i++) {
-      strings[i] = files[i].getName();
+      strings[i] = files[i].getAbsoluteFile().getName();
       if (m_RemoveExtension)
 	strings[i] = FileUtils.replaceExtension(strings[i], "");
     }
