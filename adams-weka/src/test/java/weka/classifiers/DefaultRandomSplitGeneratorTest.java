@@ -50,15 +50,16 @@ public class DefaultRandomSplitGeneratorTest
   @Override
   protected AbstractSplitGenerator[] getRegressionSetups() {
     DefaultRandomSplitGenerator[]	result;
-    Instances			anneal;
-    Instances			bodyfat;
+    Instances				anneal;
+    Instances				bodyfat;
 
     anneal  = load("anneal.arff");
     bodyfat = load("bodyfat.arff");
 
-    result    = new DefaultRandomSplitGenerator[2];
+    result    = new DefaultRandomSplitGenerator[3];
     result[0] = new DefaultRandomSplitGenerator(anneal, 42, 0.66);
     result[1] = new DefaultRandomSplitGenerator(bodyfat, 0.33);
+    result[2] = new DefaultRandomSplitGenerator(bodyfat, 42, 0.33, true);
 
     return result;
   }
