@@ -78,6 +78,28 @@ public class GroupedRandomSplitGenerator
   }
 
   /**
+   * Initializes the generator. Does not preserve the order.
+   *
+   * @param data	the dataset to split
+   * @param seed	the seed value to use for randomization
+   * @param percentage	the percentage of the training set (0-1)
+   * @param preserveOrder 	whether to preserve the order
+   * @param index 	the attribute index
+   * @param regExp 	the regular expression to apply to the attribute values
+   * @param group 	the regexp group to use as group
+   */
+  public GroupedRandomSplitGenerator(Instances data, long seed, double percentage, boolean preserveOrder, WekaAttributeIndex index, BaseRegExp regExp, String group) {
+    super();
+    setData(data);
+    setSeed(seed);
+    setPercentage(percentage);
+    setPreserveOrder(preserveOrder);
+    setIndex(index);
+    setRegExp(regExp);
+    setGroup(group);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui

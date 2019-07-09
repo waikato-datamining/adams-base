@@ -93,6 +93,29 @@ public class GroupedCrossValidationFoldGenerator
   }
 
   /**
+   * Initializes the generator.
+   *
+   * @param data	the full dataset
+   * @param numFolds	the number of folds, leave-one-out if less than 2
+   * @param seed	the seed for randomization
+   * @param stratify	whether to perform stratified CV
+   * @param index 	the attribute index
+   * @param regExp 	the regular expression to apply to the attribute values
+   * @param group 	the regexp group to use as group
+   */
+  public GroupedCrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean stratify, boolean randomize, WekaAttributeIndex index, BaseRegExp regExp, String group) {
+    super();
+    setData(data);
+    setSeed(seed);
+    setNumFolds(numFolds);
+    setStratify(stratify);
+    setRandomize(randomize);
+    setIndex(index);
+    setRegExp(regExp);
+    setGroup(group);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
