@@ -22,19 +22,17 @@ package adams.ml.splitgenerator.generic.randomsplit;
 
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.data.binning.Binnable;
+import adams.data.binning.operation.Wrapping;
 import adams.ml.splitgenerator.generic.core.Subset;
 import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.ml.splitgenerator.generic.randomization.Randomization;
 import adams.ml.splitgenerator.generic.splitter.DefaultSplitter;
 import adams.ml.splitgenerator.generic.splitter.Splitter;
-import com.github.fracpete.javautils.enumerate.Enumerated;
 import com.github.fracpete.javautils.struct.Struct2;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.List;
-
-import static com.github.fracpete.javautils.Enumerate.enumerate;
 
 /**
  * Generates generic random splits.
@@ -45,9 +43,6 @@ public class GenericRandomSplit
   extends CustomLoggingLevelObject {
 
   private static final long serialVersionUID = 1816472926230469853L;
-
-  /** the temporary index stored in the binnable meta-data. */
-  public static final String TMP_INDEX = "$$$tmpindex$$$";
 
   /** the randomization scheme. */
   protected Randomization m_Randomization;
@@ -112,7 +107,7 @@ public class GenericRandomSplit
 
   /**
    * Generates the split.
-   * Temporarily adds the original index to the Binnable meta-data, using {@link #TMP_INDEX} as key.
+   * Temporarily adds the original index to the Binnable meta-data, using {@link Wrapping#TMP_INDEX} as key.
    *
    * @param data	the data to generate the pairs from
    * @param <T>		the payload type
@@ -127,8 +122,7 @@ public class GenericRandomSplit
     Struct2<List<Binnable<T>>,List<Binnable<T>>>	split;
 
     // add tmp index
-    for (Enumerated<Binnable<T>> d: enumerate(data))
-      d.value.addMetaData(TMP_INDEX, d.index);
+    data = Wrapping.addTmpIndex(data);
 
     // randomize/stratify
     data = m_Randomization.randomize(data);
@@ -139,18 +133,17 @@ public class GenericRandomSplit
     // train
     trainIndices = new TIntArrayList();
     for (Binnable<T> item: split.value1)
-      trainIndices.add((Integer) item.getMetaData(TMP_INDEX));
+      trainIndices.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
     train = new Subset<>(split.value1, trainIndices);
     
     // test
     testIndices = new TIntArrayList();
     for (Binnable<T> item: split.value2)
-      testIndices.add((Integer) item.getMetaData(TMP_INDEX));
+      testIndices.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
     test = new Subset<>(split.value2, testIndices);
 
     // remove tmp index
-    for (Binnable<T> item: data)
-      item.removeMetaData(TMP_INDEX);
+    Wrapping.removeTmpIndex(data);
 
     result = new SplitPair<>(train, test);
 

@@ -22,19 +22,17 @@ package adams.ml.splitgenerator.generic.crossvalidation;
 
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.data.binning.Binnable;
+import adams.data.binning.operation.Wrapping;
 import adams.ml.splitgenerator.generic.core.Subset;
 import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.ml.splitgenerator.generic.randomization.Randomization;
 import adams.ml.splitgenerator.generic.stratification.DefaultStratification;
 import adams.ml.splitgenerator.generic.stratification.Stratification;
-import com.github.fracpete.javautils.enumerate.Enumerated;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.github.fracpete.javautils.Enumerate.enumerate;
 
 /**
  * For generating cross-validation splits.
@@ -45,9 +43,6 @@ public class GenericCrossValidation
   extends CustomLoggingLevelObject {
 
   private static final long serialVersionUID = 6906260013695977045L;
-
-  /** the temporary index stored in the binnable meta-data. */
-  public static final String TMP_INDEX = "$$$tmpindex$$$";
 
   /** the number of folds to use. */
   protected int m_NumFolds;
@@ -239,7 +234,7 @@ public class GenericCrossValidation
 
   /**
    * Generates cross-validation fold pairs.
-   * Temporarily adds the original index to the Binnable meta-data, using {@link #TMP_INDEX} as key.
+   * Temporarily adds the original index to the Binnable meta-data, using {@link Wrapping#TMP_INDEX} as key.
    *
    * @param data	the data to generate the pairs from
    * @param <T>		the payload type
@@ -249,10 +244,10 @@ public class GenericCrossValidation
     List<FoldPair<Binnable<T>>>	result;
     List<Binnable<T>> 		trainData;
     TIntList			trainIndices;
-    Subset<Binnable<T>> train;
+    Subset<Binnable<T>> 	train;
     List<Binnable<T>> 		testData;
     TIntList			testIndices;
-    Subset<Binnable<T>> test;
+    Subset<Binnable<T>> 	test;
     int				i;
     int				n;
     int				folds;
@@ -266,8 +261,7 @@ public class GenericCrossValidation
       folds = m_NumFolds;
 
     // add tmp index
-    for (Enumerated<Binnable<T>> d: enumerate(data))
-      d.value.addMetaData(TMP_INDEX, d.index);
+    data = Wrapping.addTmpIndex(data);
 
     // randomize/stratify
     data = m_Randomization.randomize(data);
@@ -279,22 +273,21 @@ public class GenericCrossValidation
       trainData = trainCV(data, folds, i, m_Randomization);
       trainIndices = new TIntArrayList();
       for (n = 0; n < trainData.size(); n++)
-	trainIndices.add((Integer) trainData.get(n).getMetaData(TMP_INDEX));
+	trainIndices.add((Integer) trainData.get(n).getMetaData(Wrapping.TMP_INDEX));
       train = new Subset<>(trainData, trainIndices);
 
       // test
       testData = testCV(data, folds, i);
       testIndices  = new TIntArrayList();
       for (n = 0; n < testData.size(); n++)
-	testIndices.add((Integer) testData.get(n).getMetaData(TMP_INDEX));
+	testIndices.add((Integer) testData.get(n).getMetaData(Wrapping.TMP_INDEX));
       test = new Subset<>(testData, testIndices);
 
       result.add(new FoldPair<>(i, train, test));
     }
 
     // remove tmp index
-    for (Binnable<T> item: data)
-      item.removeMetaData(TMP_INDEX);
+    Wrapping.removeTmpIndex(data);
 
     return result;
   }
