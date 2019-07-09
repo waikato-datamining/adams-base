@@ -22,10 +22,14 @@ package adams.data.binning.operation;
 
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableGroup;
+import com.github.fracpete.javautils.enumerate.Enumerated;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static com.github.fracpete.javautils.Enumerate.enumerate;
 
 /**
  * For wrapping data.
@@ -33,6 +37,9 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class Wrapping {
+
+  /** the temporary index stored in the binnable meta-data. */
+  public static final String TMP_INDEX = "$$$tmpindex$$$";
 
   /**
    * Interface for extracting values for bins from arbitrary objects.
@@ -48,7 +55,39 @@ public class Wrapping {
      * @return		the extracted value
      */
     public double extractBinValue(T object);
+  }
 
+  /**
+   * Simply keeps track of the number of objects encountered and returns that
+   * count as bin value.
+   *
+   * @param <T> the payload type
+   */
+  public static class IndexedBinValueExtractor<T>
+    implements BinValueExtractor<T>, Serializable {
+
+    private static final long serialVersionUID = -2287393293543008133L;
+
+    /** for keeping track of the index. */
+    protected int m_Index;
+
+    /**
+     * Initializes the index.
+     */
+    public IndexedBinValueExtractor() {
+      m_Index = 0;
+    }
+
+    /**
+     * Extracts the numeric value to use for binning from the object.
+     *
+     * @param object	the object to process
+     * @return		the extracted value
+     */
+    @Override
+    public double extractBinValue(T object) {
+      return m_Index++;
+    }
   }
 
   /**
@@ -208,5 +247,33 @@ public class Wrapping {
       result.add(b.getPayload());
 
     return result;
+  }
+
+  /**
+   * Adds the list index under a temporary key {@link #TMP_INDEX}.
+   *
+   * @param data	the data to enumerate
+   * @param <T>		the payload type
+   * @return		the updated (input)
+   */
+  public static <T> List<Binnable<T>> addTmpIndex(List<Binnable<T>> data) {
+    for (Enumerated<Binnable<T>> d: enumerate(data))
+      d.value.addMetaData(TMP_INDEX, d.index);
+
+    return data;
+  }
+
+  /**
+   * Removes the list index under a temporary key {@link #TMP_INDEX}.
+   *
+   * @param data	the data to enumerate
+   * @param <T>		the payload type
+   * @return		the updated (input)
+   */
+  public static <T> List<Binnable<T>> removeTmpIndex(List<Binnable<T>> data) {
+    for (Binnable<T> item: data)
+      item.removeMetaData(TMP_INDEX);
+
+    return data;
   }
 }
