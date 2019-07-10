@@ -1,0 +1,29 @@
+--> out0.txt
+Test=15.txt,00.txt, Train=12.txt,04.txt,09.txt,02.txt,03.txt,05.txt,11.txt,13.txt,08.txt,01.txt,17.txt,07.txt,16.txt,14.txt,19.txt,18.txt,10.txt,06.txt
+Test=12.txt,04.txt, Train=15.txt,00.txt,09.txt,02.txt,03.txt,05.txt,11.txt,13.txt,08.txt,01.txt,17.txt,07.txt,16.txt,14.txt,19.txt,18.txt,10.txt,06.txt
+Test=09.txt,02.txt, Train=15.txt,00.txt,12.txt,04.txt,03.txt,05.txt,11.txt,13.txt,08.txt,01.txt,17.txt,07.txt,16.txt,14.txt,19.txt,18.txt,10.txt,06.txt
+Test=03.txt,05.txt, Train=15.txt,00.txt,12.txt,04.txt,09.txt,02.txt,11.txt,13.txt,08.txt,01.txt,17.txt,07.txt,16.txt,14.txt,19.txt,18.txt,10.txt,06.txt
+Test=11.txt,13.txt, Train=15.txt,00.txt,12.txt,04.txt,09.txt,02.txt,03.txt,05.txt,08.txt,01.txt,17.txt,07.txt,16.txt,14.txt,19.txt,18.txt,10.txt,06.txt
+Test=08.txt,01.txt, Train=15.txt,00.txt,12.txt,04.txt,09.txt,02.txt,03.txt,05.txt,11.txt,13.txt,17.txt,07.txt,16.txt,14.txt,19.txt,18.txt,10.txt,06.txt
+Test=17.txt,07.txt, Train=15.txt,00.txt,12.txt,04.txt,09.txt,02.txt,03.txt,05.txt,11.txt,13.txt,08.txt,01.txt,16.txt,14.txt,19.txt,18.txt,10.txt,06.txt
+Test=16.txt,14.txt, Train=15.txt,00.txt,12.txt,04.txt,09.txt,02.txt,03.txt,05.txt,11.txt,13.txt,08.txt,01.txt,17.txt,07.txt,19.txt,18.txt,10.txt,06.txt
+Test=19.txt,18.txt, Train=15.txt,00.txt,12.txt,04.txt,09.txt,02.txt,03.txt,05.txt,11.txt,13.txt,08.txt,01.txt,17.txt,07.txt,16.txt,14.txt,10.txt,06.txt
+Test=10.txt,06.txt, Train=15.txt,00.txt,12.txt,04.txt,09.txt,02.txt,03.txt,05.txt,11.txt,13.txt,08.txt,01.txt,17.txt,07.txt,16.txt,14.txt,19.txt,18.txt
+
+--> out1.txt
+Test=00.txt,01.txt, Train=02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt,10.txt,11.txt,12.txt,13.txt,14.txt,15.txt,16.txt,17.txt,18.txt,19.txt
+Test=02.txt,03.txt, Train=00.txt,01.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt,10.txt,11.txt,12.txt,13.txt,14.txt,15.txt,16.txt,17.txt,18.txt,19.txt
+Test=04.txt,05.txt, Train=00.txt,01.txt,02.txt,03.txt,06.txt,07.txt,08.txt,09.txt,10.txt,11.txt,12.txt,13.txt,14.txt,15.txt,16.txt,17.txt,18.txt,19.txt
+Test=06.txt,07.txt, Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,08.txt,09.txt,10.txt,11.txt,12.txt,13.txt,14.txt,15.txt,16.txt,17.txt,18.txt,19.txt
+Test=08.txt,09.txt, Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,10.txt,11.txt,12.txt,13.txt,14.txt,15.txt,16.txt,17.txt,18.txt,19.txt
+Test=10.txt,11.txt, Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt,12.txt,13.txt,14.txt,15.txt,16.txt,17.txt,18.txt,19.txt
+Test=12.txt,13.txt, Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt,10.txt,11.txt,14.txt,15.txt,16.txt,17.txt,18.txt,19.txt
+Test=14.txt,15.txt, Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt,10.txt,11.txt,12.txt,13.txt,16.txt,17.txt,18.txt,19.txt
+Test=16.txt,17.txt, Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt,10.txt,11.txt,12.txt,13.txt,14.txt,15.txt,18.txt,19.txt
+Test=18.txt,19.txt, Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt,10.txt,11.txt,12.txt,13.txt,14.txt,15.txt,16.txt,17.txt
+
+--> out2.txt
+Test=15.txt,00.txt,12.txt,04.txt,09.txt,02.txt,03.txt, Train=05.txt,11.txt,13.txt,08.txt,01.txt,17.txt,07.txt,16.txt,14.txt,19.txt,18.txt,10.txt,06.txt
+Test=05.txt,11.txt,13.txt,08.txt,01.txt,17.txt, Train=15.txt,00.txt,12.txt,04.txt,09.txt,02.txt,03.txt,07.txt,16.txt,14.txt,19.txt,18.txt,10.txt,06.txt
+Test=07.txt,16.txt,14.txt,19.txt,18.txt,10.txt,06.txt, Train=15.txt,00.txt,12.txt,04.txt,09.txt,02.txt,03.txt,05.txt,11.txt,13.txt,08.txt,01.txt,17.txt
+
