@@ -21,16 +21,28 @@
 package weka.classifiers;
 
 import adams.core.base.BaseRegExp;
+import adams.data.binning.Binnable;
+import adams.data.binning.BinnableGroup;
+import adams.data.binning.BinnableInstances;
+import adams.data.binning.BinnableInstances.GroupedClassValueBinValueExtractor;
+import adams.data.binning.BinnableInstances.StringAttributeGroupExtractor;
+import adams.data.binning.operation.Grouping;
+import adams.data.binning.operation.Wrapping;
 import adams.data.weka.WekaAttributeIndex;
 import adams.flow.container.WekaTrainTestSetContainer;
+import adams.ml.splitgenerator.generic.crossvalidation.CrossValidationGenerator;
+import adams.ml.splitgenerator.generic.crossvalidation.FoldPair;
+import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
+import adams.ml.splitgenerator.generic.stratification.DefaultStratification;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
-import weka.core.InstanceGrouping;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.InstancesView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 /**
  * Helper class for generating cross-validation folds.
@@ -64,9 +76,6 @@ public class GroupedCrossValidationFoldGenerator
   /** whether to randomize the data. */
   protected boolean m_Randomize;
 
-  /** the random number generator for the indices. */
-  protected Random m_RandomIndices;
-
   /** the index to use for grouping. */
   protected WekaAttributeIndex m_Index;
 
@@ -76,14 +85,14 @@ public class GroupedCrossValidationFoldGenerator
   /** the group expression. */
   protected String m_Group;
 
-  /** generates the groups. */
-  protected InstanceGrouping m_Grouping;
+  /** the underlying scheme for generating the folds. */
+  protected transient CrossValidationGenerator m_Generator;
 
-  /** the collapsed dataset. */
-  protected Instances m_Collapsed;
+  /** the collapsed data. */
+  protected transient List<Binnable<BinnableGroup<Instance>>> m_BinnedGroups;
 
-  /** the random number generator for the collapsed data. */
-  protected Random m_RandomCollapsed;
+  /** the temporary pairs. */
+  protected transient List<FoldPair<Binnable<BinnableGroup<Instance>>>> m_FoldPairs;
 
   /**
    * Initializes the generator.
@@ -172,6 +181,8 @@ public class GroupedCrossValidationFoldGenerator
 
     m_CurrentFold    = 1;
     m_ActualNumFolds = -1;
+    m_FoldPairs      = null;
+    m_BinnedGroups   = null;
   }
 
   /**
@@ -270,7 +281,7 @@ public class GroupedCrossValidationFoldGenerator
     super.setData(value);
     if (m_Data != null) {
       if (getStratify() && (m_Data.classIndex() == -1))
-        throw new IllegalArgumentException("No class attribute set!");
+	throw new IllegalArgumentException("No class attribute set!");
     }
   }
 
@@ -467,154 +478,63 @@ public class GroupedCrossValidationFoldGenerator
   }
 
   /**
-   * Generates the original indices.
-   *
-   * @return	the original indices
-   */
-  protected TIntList originalIndices() {
-    TIntList 	result;
-    TIntList 	dummy;
-
-    result = new TIntArrayList();
-    result.add(
-      CrossValidationHelper.crossValidationIndices(
-	m_Collapsed, m_ActualNumFolds, new Random(m_Seed),
-	m_Stratify && (m_ActualNumFolds < m_Collapsed.numInstances())));
-
-    // need to simulate initial randomization to get the right state
-    // of the RNG for the trainCV/testCV calls
-    dummy = new TIntArrayList(result);
-    randomize(dummy, m_RandomIndices);
-
-    return result;
-  }
-
-  /**
    * Initializes the iterator, randomizes the data if required.
    */
   @Override
   protected void doInitializeIterator() {
-    m_RandomIndices = new Random(m_Seed);
+    List<Binnable<Instance>> 		binnedData;
+    List<BinnableGroup<Instance>> 	groupedData;
 
     if (m_Data == null)
       throw new IllegalStateException("No data provided!");
 
-    m_Grouping  = new InstanceGrouping(m_Data, m_Index, m_RegExp, m_Group);
-    m_Collapsed = m_Grouping.collapse(m_Data);
+    try {
+      m_Index.setData(m_Data);
+      binnedData = BinnableInstances.toBinnableUsingIndex(m_Data);
+      binnedData = Wrapping.addTmpIndex(binnedData);  // adding the original index
+      groupedData = Grouping.groupAsList(binnedData, new StringAttributeGroupExtractor(m_Index.getIntIndex(), m_RegExp.getValue(), m_Group));
+      m_BinnedGroups = Wrapping.wrap(groupedData, new GroupedClassValueBinValueExtractor());  // wrap for CV generator
+    }
+    catch (Exception e) {
+      throw new IllegalStateException("Failed to create binnable Instances!", e);
+    }
 
     if (m_NumFolds < 2)
-      m_ActualNumFolds = m_Collapsed.numInstances();
+      m_ActualNumFolds = m_BinnedGroups.size();
     else
       m_ActualNumFolds = m_NumFolds;
 
-    m_OriginalIndices = originalIndices();
+    if (m_BinnedGroups.size() < m_ActualNumFolds)
+      throw new IllegalArgumentException(
+	"Cannot have less data than (grouped) folds: "
+	  + "required=" + m_ActualNumFolds + ", provided=" + m_BinnedGroups.size());
 
+    m_Generator = new CrossValidationGenerator();
+    m_Generator.setNumFolds(m_NumFolds);
     if (canRandomize()) {
-      m_Random = new Random(m_Seed);
-      if (!m_UseViews)
-	m_Collapsed.randomize(m_Random);
+      DefaultRandomization rand = new DefaultRandomization();
+      rand.setSeed(m_Seed);
+      rand.setLoggingLevel(m_LoggingLevel);
+      m_Generator.setRandomization(rand);
+    }
+    else {
+      adams.ml.splitgenerator.generic.randomization.PassThrough rand = new adams.ml.splitgenerator.generic.randomization.PassThrough();
+      rand.setLoggingLevel(m_LoggingLevel);
+      m_Generator.setRandomization(rand);
+    }
+    if (m_Stratify && m_Data.classAttribute().isNominal() && (m_ActualNumFolds < m_BinnedGroups.size())) {
+      DefaultStratification strat = new DefaultStratification();
+      strat.setLoggingLevel(m_LoggingLevel);
+      m_Generator.setStratification(strat);
+    }
+    else {
+      adams.ml.splitgenerator.generic.stratification.PassThrough strat = new adams.ml.splitgenerator.generic.stratification.PassThrough();
+      strat.setLoggingLevel(m_LoggingLevel);
+      m_Generator.setStratification(strat);
     }
 
     if ((m_RelationName == null) || m_RelationName.isEmpty())
       m_RelationName = PLACEHOLDER_ORIGINAL;
-
-    if (m_Collapsed.numInstances() < m_ActualNumFolds)
-      throw new IllegalArgumentException(
-	  "Cannot have less data than folds: "
-	      + "required=" + m_ActualNumFolds + ", provided=" + m_Collapsed.numInstances());
-
-    if (m_Random == null)
-      m_Random = new Random(m_Seed);
-
-    if (!m_UseViews) {
-      if (m_Stratify && m_Collapsed.classAttribute().isNominal() && (m_ActualNumFolds < m_Collapsed.numInstances()))
-	m_Collapsed.stratify(m_ActualNumFolds);
-    }
-  }
-
-  /**
-   * Creates the training set for one fold of a cross-validation on the dataset.
-   *
-   * @param numFolds the number of folds in the cross-validation. Must be
-   *          greater than 1.
-   * @param numFold 0 for the first fold, 1 for the second, ...
-   * @return the training set
-   * @throws IllegalArgumentException if the number of folds is less than 2 or
-   *           greater than the number of instances.
-   */
-  protected TIntList trainCV(int numFolds, int numFold) {
-    int numInstForFold, first, offset;
-    TIntList train;
-
-    if (numFolds < 2)
-      throw new IllegalArgumentException("Number of folds must be at least 2!");
-    if (numFolds > m_Collapsed.numInstances())
-      throw new IllegalArgumentException("Can't have more folds than instances!");
-
-    numInstForFold = m_Collapsed.numInstances() / numFolds;
-    if (numFold < m_Collapsed.numInstances() % numFolds) {
-      numInstForFold++;
-      offset = numFold;
-    } else {
-      offset = m_Collapsed.numInstances() % numFolds;
-    }
-    first = numFold * (m_Collapsed.numInstances() / numFolds) + offset;
-    train = m_OriginalIndices.subList(0, first);
-    train.add(m_OriginalIndices.subList(
-      first + numInstForFold,
-      first + numInstForFold + m_Collapsed.numInstances() - first - numInstForFold).toArray());
-
-    return train;
-  }
-
-  /**
-   * Creates the training set for one fold of a cross-validation on the dataset.
-   * The data is subsequently randomized based on the given random number
-   * generator.
-   *
-   * @param numFolds the number of folds in the cross-validation. Must be
-   *          greater than 1.
-   * @param numFold 0 for the first fold, 1 for the second, ...
-   * @param random the random number generator
-   * @return the training set
-   * @throws IllegalArgumentException if the number of folds is less than 2 or
-   *           greater than the number of instances.
-   */
-  protected TIntList trainCV(int numFolds, int numFold, Random random) {
-    TIntList train = trainCV(numFolds, numFold);
-    randomize(train, random);
-    return train;
-  }
-
-  /**
-   * Creates the test set for one fold of a cross-validation on the dataset.
-   *
-   * @param numFolds the number of folds in the cross-validation. Must be
-   *          greater than 1.
-   * @param numFold 0 for the first fold, 1 for the second, ...
-   * @return the test set as a set of weighted instances
-   * @throws IllegalArgumentException if the number of folds is less than 2 or
-   *           greater than the number of instances.
-   */
-  protected TIntList testCV(int numFolds, int numFold) {
-    int numInstForFold, first, offset;
-    TIntList test;
-
-    if (numFolds < 2)
-      throw new IllegalArgumentException("Number of folds must be at least 2!");
-    if (numFolds > m_Collapsed.numInstances())
-      throw new IllegalArgumentException("Can't have more folds than instances!");
-
-    numInstForFold = m_Collapsed.numInstances() / numFolds;
-    if (numFold < m_Collapsed.numInstances() % numFolds) {
-      numInstForFold++;
-      offset = numFold;
-    } else {
-      offset = m_Collapsed.numInstances() % numFolds;
-    }
-    first = numFold * (m_Collapsed.numInstances() / numFolds) + offset;
-    test = m_OriginalIndices.subList(first, first + numInstForFold);
-    return test;
   }
 
   /**
@@ -623,54 +543,75 @@ public class GroupedCrossValidationFoldGenerator
    * @return 				the next element in the iteration.
    * @throws NoSuchElementException 	iteration has no more elements.
    */
-  // TODO
   @Override
   protected WekaTrainTestSetContainer createNext() {
-    WekaTrainTestSetContainer	result;
-    Instances 			trainSet;
-    Instances 			testSet;
-    Instances			trainSetExp;
-    Instances			testSetExp;
-    TIntList			trainRows;
-    TIntList			testRows;
-    TIntList			trainRowsExp;
-    TIntList			testRowsExp;
+    WekaTrainTestSetContainer			result;
+    Instances 					trainSet;
+    Instances 					testSet;
+    TIntList					trainRows;
+    TIntList					testRows;
+    List<BinnableGroup<Instance>>		groupedTrain;
+    List<BinnableGroup<Instance>>		groupedTest;
+    FoldPair<Binnable<BinnableGroup<Instance>>> foldPair;
+    List<Binnable<Instance>>			binnedTrain;
+    List<Binnable<Instance>>			binnedTest;
 
     if (m_CurrentFold > m_ActualNumFolds)
       throw new NoSuchElementException("No more folds available!");
 
-    trainRows = trainCV(m_ActualNumFolds, m_CurrentFold - 1, m_RandomIndices);
-    testRows  = testCV(m_ActualNumFolds, m_CurrentFold - 1);
+    if (m_FoldPairs == null) {
+      m_FoldPairs = m_Generator.generate(m_BinnedGroups);
 
-    // generate fold pair
+      m_OriginalIndices = new TIntArrayList();
+      for (FoldPair<Binnable<BinnableGroup<Instance>>> pair : m_FoldPairs) {
+	for (Binnable<BinnableGroup<Instance>> group: pair.getTest().getData()) {
+	  for (Binnable<Instance> item: group.getPayload().get())
+	    m_OriginalIndices.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
+	}
+      }
+    }
+
+    foldPair = m_FoldPairs.get(m_CurrentFold - 1);
+
+    groupedTrain = Wrapping.unwrap(foldPair.getTrain().getData());
+    groupedTest  = Wrapping.unwrap(foldPair.getTest().getData());
+
+    // compile original indices
+    trainRows = new TIntArrayList();
+    binnedTrain = new ArrayList<>();
+    for (BinnableGroup<Instance> group: groupedTrain) {
+      for (Binnable<Instance> item: group.get()) {
+	trainRows.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
+	binnedTrain.add(item);
+      }
+    }
+    testRows = new TIntArrayList();
+    binnedTest = new ArrayList<>();
+    for (BinnableGroup<Instance> group: groupedTest) {
+      for (Binnable<Instance> item: group.get()) {
+	testRows.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
+	binnedTest.add(item);
+      }
+    }
+
     if (m_UseViews) {
-      trainSet = new InstancesView(m_Collapsed, trainRows.toArray());
-      testSet = new InstancesView(m_Collapsed, testRows.toArray());
+      trainSet = new InstancesView(m_Data, trainRows.toArray());
+      testSet  = new InstancesView(m_Data, testRows.toArray());
     }
     else {
-      trainSet = m_Collapsed.trainCV(m_ActualNumFolds, m_CurrentFold - 1, m_Random);
-      testSet = m_Collapsed.testCV(m_ActualNumFolds, m_CurrentFold - 1);
+      trainSet = BinnableInstances.toInstances(binnedTrain);
+      testSet  = BinnableInstances.toInstances(binnedTest);
     }
 
-    // expand
-    trainRowsExp = m_Grouping.expand(m_Collapsed, trainRows);
-    testRowsExp  = m_Grouping.expand(m_Collapsed, testRows);
-    if (m_UseViews) {
-      trainSetExp = new InstancesView(m_Data, trainRowsExp.toArray());
-      testSetExp  = new InstancesView(m_Data, testRowsExp.toArray());
-    }
-    else {
-      trainSetExp = m_Grouping.expand(trainSet, false);
-      testSetExp  = m_Grouping.expand(testSet, false);
-    }
-
-    // rename datasets
-    trainSetExp.setRelationName(createRelationName(true));
-    testSetExp.setRelationName(createRelationName(false));
+    trainSet.setRelationName(createRelationName(true));
+    testSet.setRelationName(createRelationName(false));
 
     result = new WekaTrainTestSetContainer(
-      trainSetExp, testSetExp, m_Seed, m_CurrentFold, m_ActualNumFolds, trainRowsExp.toArray(), testRowsExp.toArray());
+      trainSet, testSet, m_Seed, m_CurrentFold, m_NumFolds, trainRows.toArray(), testRows.toArray());
     m_CurrentFold++;
+
+    if (m_CurrentFold > m_ActualNumFolds)
+      m_FoldPairs = null;
 
     return result;
   }
@@ -681,19 +622,12 @@ public class GroupedCrossValidationFoldGenerator
    * @return		the indices
    */
   public int[] crossValidationIndices() {
-    TIntList 	indices;
-    int		i;
-
-    indices = new TIntArrayList();
-    for (i = 0; i < m_Collapsed.numInstances(); i++)
-      indices.add(i);
-
-    return m_Grouping.expand(m_Collapsed, indices).toArray();
+    return m_OriginalIndices.toArray();
   }
 
   /**
    * Returns a short description of the generator.
-   * 
+   *
    * @return		a short description
    */
   @Override

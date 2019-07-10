@@ -15,38 +15,47 @@
 
 /*
  * DefaultRandomSplitGenerator.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
+import adams.data.binning.Binnable;
+import adams.data.binning.BinnableInstances;
 import adams.flow.container.WekaTrainTestSetContainer;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
+import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
+import adams.ml.splitgenerator.generic.randomization.PassThrough;
+import adams.ml.splitgenerator.generic.randomsplit.RandomSplitGenerator;
+import adams.ml.splitgenerator.generic.randomsplit.SplitPair;
+import adams.ml.splitgenerator.generic.splitter.DefaultSplitter;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.InstancesView;
 
-import java.util.Random;
+import java.util.List;
 
 /**
  * Generates random splits of datasets.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class DefaultRandomSplitGenerator
   extends AbstractSplitGenerator
-  implements RandomSplitGenerator {
+  implements weka.classifiers.RandomSplitGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -4813006743965500489L;
 
   /** the percentage. */
   protected double m_Percentage;
-  
+
   /** whether to preserve the order. */
   protected boolean m_PreserveOrder;
-  
+
   /** whether the split was generated. */
   protected boolean m_Generated;
+
+  /** the underlying scheme for generating the split. */
+  protected RandomSplitGenerator m_Generator;
 
   /**
    * Initializes the generator.
@@ -188,31 +197,12 @@ public class DefaultRandomSplitGenerator
 
   /**
    * Returns whether randomization is enabled.
-   * 
+   *
    * @return		true if to randomize
    */
   @Override
   protected boolean canRandomize() {
     return !m_PreserveOrder;
-  }
-
-  /**
-   * Generates the original indices.
-   *
-   * @return	the original indices
-   */
-  protected TIntList originalIndices() {
-    TIntList 	result;
-    int		i;
-
-    result = new TIntArrayList();
-    for (i = 0; i < m_Data.numInstances(); i++)
-      result.add(i);
-
-    if (canRandomize())
-      randomize(result, new Random(m_Seed));
-
-    return result;
   }
 
   /**
@@ -224,17 +214,23 @@ public class DefaultRandomSplitGenerator
     if (m_Data == null)
       throw new IllegalStateException("No data available!");
 
-    m_OriginalIndices = originalIndices();
-
+    m_Generator = new RandomSplitGenerator();
     if (canRandomize()) {
-      m_Random = new Random(m_Seed);
-      if (!m_UseViews)
-	m_Data.randomize(m_Random);
+      DefaultRandomization rand = new DefaultRandomization();
+      rand.setSeed(m_Seed);
+      m_Generator.setRandomization(rand);
     }
+    else {
+      PassThrough rand = new PassThrough();
+      m_Generator.setRandomization(rand);
+    }
+    DefaultSplitter splitter = new DefaultSplitter();
+    splitter.setPercentage(m_Percentage);
+    m_Generator.setSplitter(splitter);
 
     m_Generated = false;
   }
-  
+
   /**
    * Returns <tt>true</tt> if the iteration has more elements. (In other
    * words, returns <tt>true</tt> if <tt>next</tt> would return an element
@@ -249,43 +245,49 @@ public class DefaultRandomSplitGenerator
 
   /**
    * Creates the next result.
-   * 
+   *
    * @return		the next result
    */
   @Override
   protected WekaTrainTestSetContainer createNext() {
-    WekaTrainTestSetContainer	result;
-    Instances			trainSet;
-    Instances			testSet;
-    int 			trainSize;
-    int 			testSize;
-    int[]			trainRows;
-    int[]			testRows;
-    
+    WekaTrainTestSetContainer		result;
+    List<Binnable<Instance>> 		binnedData;
+    SplitPair<Binnable<Instance>> 	splitPair;
+    Instances				trainSet;
+    Instances				testSet;
+    int[]				trainRows;
+    int[]				testRows;
+
     m_Generated = true;
 
-    trainSize = (int) Math.round((double) m_Data.numInstances() * m_Percentage);
-    testSize  = m_Data.numInstances() - trainSize;
-    trainRows = m_OriginalIndices.subList(0, trainSize).toArray();
-    testRows  = m_OriginalIndices.subList(trainSize, m_OriginalIndices.size()).toArray();
+    try {
+      binnedData = BinnableInstances.toBinnableUsingIndex(m_Data);
+    }
+    catch (Exception e) {
+      throw new IllegalStateException("Failed to create binnable Instances!", e);
+    }
+    splitPair = m_Generator.generate(binnedData);
+
+    trainRows = splitPair.getTrain().getOriginalIndices().toArray();
+    testRows  = splitPair.getTest().getOriginalIndices().toArray();
     if (m_UseViews) {
       trainSet = new InstancesView(m_Data, trainRows);
       testSet  = new InstancesView(m_Data, testRows);
     }
     else {
-      trainSet = new Instances(m_Data, 0, trainSize);
-      testSet  = new Instances(m_Data, trainSize, testSize);
+      trainSet = BinnableInstances.toInstances(splitPair.getTrain().getData());
+      testSet  = BinnableInstances.toInstances(splitPair.getTest().getData());
     }
 
     result = new WekaTrainTestSetContainer(
       trainSet, testSet, m_Seed, null, null, trainRows, testRows);
-    
+
     return result;
   }
-  
+
   /**
    * Returns a short description of the generator.
-   * 
+   *
    * @return		a short description
    */
   @Override

@@ -20,15 +20,28 @@
 package weka.classifiers;
 
 import adams.core.base.BaseRegExp;
+import adams.data.binning.Binnable;
+import adams.data.binning.BinnableGroup;
+import adams.data.binning.BinnableInstances;
+import adams.data.binning.BinnableInstances.StringAttributeGroupExtractor;
+import adams.data.binning.operation.Grouping;
+import adams.data.binning.operation.Wrapping;
+import adams.data.binning.operation.Wrapping.IndexedBinValueExtractor;
 import adams.data.weka.WekaAttributeIndex;
 import adams.flow.container.WekaTrainTestSetContainer;
+import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
+import adams.ml.splitgenerator.generic.randomization.PassThrough;
+import adams.ml.splitgenerator.generic.randomsplit.RandomSplitGenerator;
+import adams.ml.splitgenerator.generic.randomsplit.SplitPair;
+import adams.ml.splitgenerator.generic.splitter.DefaultSplitter;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
-import weka.core.InstanceGrouping;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.InstancesView;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generates random splits of datasets, making sure that groups of instances
@@ -38,7 +51,7 @@ import java.util.Random;
  */
 public class GroupedRandomSplitGenerator
   extends AbstractSplitGenerator
-  implements RandomSplitGenerator {
+  implements weka.classifiers.RandomSplitGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -4813006743965500489L;
@@ -61,14 +74,8 @@ public class GroupedRandomSplitGenerator
   /** the group expression. */
   protected String m_Group;
 
-  /** generates the groups. */
-  protected InstanceGrouping m_Grouping;
-
-  /** the collapsed dataset. */
-  protected Instances m_Collapsed;
-
-  /** the random number generator for the collapsed data. */
-  protected Random m_RandomCollapsed;
+  /** the underlying scheme for generating the split. */
+  protected RandomSplitGenerator m_Generator;
 
   /**
    * Initializes the generator.
@@ -297,48 +304,26 @@ public class GroupedRandomSplitGenerator
   }
 
   /**
-   * Generates the original indices.
-   *
-   * @return	the original indices
-   */
-  protected TIntList originalIndices() {
-    TIntList 	result;
-    int		i;
-
-    result = new TIntArrayList();
-    for (i = 0; i < m_Collapsed.numInstances(); i++)
-      result.add(i);
-
-    if (canRandomize())
-      randomize(result, new Random(m_Seed));
-
-    return result;
-  }
-
-  /**
    * Initializes the iterator, randomizes the data if required.
    */
   @Override
   protected void doInitializeIterator() {
-    m_Grouping  = new InstanceGrouping(m_Data, m_Index, m_RegExp, m_Group);
-    m_Collapsed = m_Grouping.collapse(m_Data);
-
-    if (canRandomize()) {
-      m_RandomCollapsed = new Random(m_Seed);
-      if (!m_UseViews)
-	m_Collapsed.randomize(m_RandomCollapsed);
-    }
-
     if (m_Data == null)
       throw new IllegalStateException("No data available!");
 
-    m_OriginalIndices = originalIndices();
-
+    m_Generator = new RandomSplitGenerator();
     if (canRandomize()) {
-      m_Random = new Random(m_Seed);
-      if (!m_UseViews)
-	m_Data.randomize(m_Random);
+      DefaultRandomization rand = new DefaultRandomization();
+      rand.setSeed(m_Seed);
+      m_Generator.setRandomization(rand);
     }
+    else {
+      PassThrough rand = new PassThrough();
+      m_Generator.setRandomization(rand);
+    }
+    DefaultSplitter splitter = new DefaultSplitter();
+    splitter.setPercentage(m_Percentage);
+    m_Generator.setSplitter(splitter);
 
     m_Generated = false;
   }
@@ -362,43 +347,66 @@ public class GroupedRandomSplitGenerator
    */
   @Override
   protected WekaTrainTestSetContainer createNext() {
-    WekaTrainTestSetContainer	result;
-    Instances			trainSet;
-    Instances			testSet;
-    Instances			trainSetExp;
-    Instances			testSetExp;
-    int 			trainSize;
-    int 			testSize;
-    TIntList			trainRows;
-    TIntList			testRows;
-    TIntList			trainRowsExp;
-    TIntList			testRowsExp;
+    WekaTrainTestSetContainer			result;
+    List<Binnable<Instance>> 			binnedData;
+    List<BinnableGroup<Instance>>		groupedTrain;
+    List<BinnableGroup<Instance>>		groupedTest;
+    List<BinnableGroup<Instance>> 		groupedData;
+    SplitPair<Binnable<BinnableGroup<Instance>>> splitGroups;
+    List<Binnable<BinnableGroup<Instance>>> 	binnedGroups;
+    List<Binnable<Instance>>			binnedTrain;
+    List<Binnable<Instance>>			binnedTest;
+    Instances					trainSet;
+    Instances					testSet;
+    TIntList					trainRows;
+    TIntList					testRows;
 
     m_Generated = true;
 
-    // split collapsed dataset
-    trainSize = (int) Math.round((double) m_OriginalIndices.size() * m_Percentage);
-    testSize  = m_OriginalIndices.size() - trainSize;
-    trainRows = m_OriginalIndices.subList(0, trainSize);
-    testRows  = m_OriginalIndices.subList(trainSize, m_OriginalIndices.size());
-    trainSet  = new Instances(m_Collapsed, 0, trainSize);
-    testSet   = new Instances(m_Collapsed, trainSize, testSize);
+    try {
+      m_Index.setData(m_Data);
+      binnedData   = BinnableInstances.toBinnableUsingIndex(m_Data);
+      binnedData   = Wrapping.addTmpIndex(binnedData);  // adding the original index
+      groupedData  = Grouping.groupAsList(binnedData, new StringAttributeGroupExtractor(m_Index.getIntIndex(), m_RegExp.getValue(), m_Group));
+      binnedGroups = Wrapping.wrap(groupedData, new IndexedBinValueExtractor<>());  // wrap for split generator
+    }
+    catch (Exception e) {
+      throw new IllegalStateException("Failed to create binnable Instances!", e);
+    }
+    splitGroups  = m_Generator.generate(binnedGroups);
+    groupedTrain = Wrapping.unwrap(splitGroups.getTrain().getData());
+    groupedTest  = Wrapping.unwrap(splitGroups.getTest().getData());
 
-    // expand
-    trainRowsExp = m_Grouping.expand(m_Collapsed, trainRows);
-    testRowsExp  = m_Grouping.expand(m_Collapsed, testRows);
+    // compile original indices
+    trainRows = new TIntArrayList();
+    binnedTrain = new ArrayList<>();
+    for (BinnableGroup<Instance> group: groupedTrain) {
+      for (Binnable<Instance> item: group.get()) {
+	trainRows.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
+	binnedTrain.add(item);
+      }
+    }
+    testRows = new TIntArrayList();
+    binnedTest = new ArrayList<>();
+    for (BinnableGroup<Instance> group: groupedTest) {
+      for (Binnable<Instance> item: group.get()) {
+	testRows.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
+	binnedTest.add(item);
+      }
+    }
+
     if (m_UseViews) {
-      trainSetExp = new InstancesView(m_Data, trainRowsExp.toArray());
-      testSetExp  = new InstancesView(m_Data, testRowsExp.toArray());
+      trainSet = new InstancesView(m_Data, trainRows.toArray());
+      testSet  = new InstancesView(m_Data, testRows.toArray());
     }
     else {
-      trainSetExp = m_Grouping.expand(trainSet, false);
-      testSetExp  = m_Grouping.expand(testSet, false);
+      trainSet = BinnableInstances.toInstances(binnedTrain);
+      testSet  = BinnableInstances.toInstances(binnedTest);
     }
 
     result = new WekaTrainTestSetContainer(
-      trainSetExp, testSetExp, m_Seed, null, null, trainRowsExp.toArray(), testRowsExp.toArray());
-    
+      trainSet, testSet, m_Seed, null, null, trainRows.toArray(), testRows.toArray());
+
     return result;
   }
   

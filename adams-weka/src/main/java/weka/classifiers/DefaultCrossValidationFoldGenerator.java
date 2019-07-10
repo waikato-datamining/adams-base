@@ -15,31 +15,37 @@
 
 /*
  * DefaultCrossValidationFoldGenerator.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
+import adams.data.binning.Binnable;
+import adams.data.binning.BinnableInstances;
 import adams.flow.container.WekaTrainTestSetContainer;
-import gnu.trove.list.TIntList;
+import adams.ml.splitgenerator.generic.crossvalidation.CrossValidationGenerator;
+import adams.ml.splitgenerator.generic.crossvalidation.FoldPair;
+import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
+import adams.ml.splitgenerator.generic.stratification.DefaultStratification;
 import gnu.trove.list.array.TIntArrayList;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.InstancesView;
 
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 /**
  * Helper class for generating cross-validation folds.
  * <br><br>
  * The template for the relation name accepts the following placeholders:
  * @ = original relation name, $T = type (train/test), $N = current fold number
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class DefaultCrossValidationFoldGenerator
   extends AbstractSplitGenerator
   implements CrossValidationFoldGenerator {
-  
+
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;
 
@@ -51,18 +57,21 @@ public class DefaultCrossValidationFoldGenerator
 
   /** whether to stratify the data (in case of nominal class). */
   protected boolean m_Stratify;
-  
+
   /** the current fold. */
-  protected int m_CurrentFold;
-  
+  protected transient int m_CurrentFold;
+
   /** the template for the relation name. */
   protected String m_RelationName;
 
   /** whether to randomize the data. */
   protected boolean m_Randomize;
 
-  /** the random number generator for the indices. */
-  protected Random m_RandomIndices;
+  /** the underlying scheme for generating the folds. */
+  protected transient CrossValidationGenerator m_Generator;
+
+  /** the temporary pairs. */
+  protected transient List<FoldPair<Binnable<Instance>>> m_FoldPairs;
 
   /**
    * Initializes the generator.
@@ -73,7 +82,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Initializes the generator.
-   * 
+   *
    * @param data	the full dataset
    * @param numFolds	the number of folds, leave-one-out if less than 2
    * @param seed	the seed for randomization
@@ -85,7 +94,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Initializes the generator.
-   * 
+   *
    * @param data	the full dataset
    * @param numFolds	the number of folds, leave-one-out if less than 2
    * @param seed	the seed value
@@ -146,6 +155,7 @@ public class DefaultCrossValidationFoldGenerator
 
     m_CurrentFold    = 1;
     m_ActualNumFolds = -1;
+    m_FoldPairs      = null;
   }
 
   /**
@@ -173,7 +183,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Returns the number of folds.
-   * 
+   *
    * @return		the number of folds
    */
   public int getNumFolds() {
@@ -241,7 +251,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Returns whether to stratify the data (in case of nominal class).
-   * 
+   *
    * @return		true if to stratify
    */
   public boolean getStratify() {
@@ -270,7 +280,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Returns the relation name template.
-   * 
+   *
    * @return		the template
    */
   public String getRelationName() {
@@ -292,7 +302,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Returns whether randomization is enabled.
-   * 
+   *
    * @return		true if to randomize
    */
   @Override
@@ -354,35 +364,10 @@ public class DefaultCrossValidationFoldGenerator
   }
 
   /**
-   * Generates the original indices.
-   *
-   * @return	the original indices
-   */
-  protected TIntList originalIndices() {
-    TIntList 	result;
-    TIntList 	dummy;
-
-    result = new TIntArrayList();
-    result.add(
-      CrossValidationHelper.crossValidationIndices(
-	m_Data, m_ActualNumFolds, new Random(m_Seed),
-	m_Stratify && (m_ActualNumFolds < m_Data.numInstances())));
-
-    // need to simulate initial randomization to get the right state
-    // of the RNG for the trainCV/testCV calls
-    dummy = new TIntArrayList(result);
-    randomize(dummy, m_RandomIndices);
-
-    return result;
-  }
-
-  /**
    * Initializes the iterator, randomizes the data if required.
    */
   @Override
   protected void doInitializeIterator() {
-    m_RandomIndices = new Random(m_Seed);
-
     if (m_Data == null)
       throw new IllegalStateException("No data provided!");
 
@@ -391,114 +376,37 @@ public class DefaultCrossValidationFoldGenerator
     else
       m_ActualNumFolds = m_NumFolds;
 
-    m_OriginalIndices = originalIndices();
-
-    if (canRandomize()) {
-      m_Random = new Random(m_Seed);
-      if (!m_UseViews)
-	m_Data.randomize(m_Random);
-    }
-
-    if ((m_RelationName == null) || m_RelationName.isEmpty())
-      m_RelationName = PLACEHOLDER_ORIGINAL;
-
     if (m_Data.numInstances() < m_ActualNumFolds)
       throw new IllegalArgumentException(
 	  "Cannot have less data than folds: "
 	      + "required=" + m_ActualNumFolds + ", provided=" + m_Data.numInstances());
 
-    if (m_Random == null)
-      m_Random = new Random(m_Seed);
-
-    if (!m_UseViews) {
-      if (m_Stratify && m_Data.classAttribute().isNominal() && (m_ActualNumFolds < m_Data.numInstances()))
-	m_Data.stratify(m_ActualNumFolds);
+    m_Generator = new CrossValidationGenerator();
+    m_Generator.setNumFolds(m_NumFolds);
+    if (canRandomize()) {
+      DefaultRandomization rand = new DefaultRandomization();
+      rand.setSeed(m_Seed);
+      rand.setLoggingLevel(m_LoggingLevel);
+      m_Generator.setRandomization(rand);
     }
-  }
-
-  /**
-   * Creates the training set for one fold of a cross-validation on the dataset.
-   *
-   * @param numFolds the number of folds in the cross-validation. Must be
-   *          greater than 1.
-   * @param numFold 0 for the first fold, 1 for the second, ...
-   * @return the training set
-   * @throws IllegalArgumentException if the number of folds is less than 2 or
-   *           greater than the number of instances.
-   */
-  protected TIntList trainCV(int numFolds, int numFold) {
-    int numInstForFold, first, offset;
-    TIntList train;
-
-    if (numFolds < 2)
-      throw new IllegalArgumentException("Number of folds must be at least 2!");
-    if (numFolds > m_Data.numInstances())
-      throw new IllegalArgumentException("Can't have more folds than instances!");
-
-    numInstForFold = m_Data.numInstances() / numFolds;
-    if (numFold < m_Data.numInstances() % numFolds) {
-      numInstForFold++;
-      offset = numFold;
-    } else {
-      offset = m_Data.numInstances() % numFolds;
+    else {
+      adams.ml.splitgenerator.generic.randomization.PassThrough rand = new adams.ml.splitgenerator.generic.randomization.PassThrough();
+      rand.setLoggingLevel(m_LoggingLevel);
+      m_Generator.setRandomization(rand);
     }
-    first = numFold * (m_Data.numInstances() / numFolds) + offset;
-    train = m_OriginalIndices.subList(0, first);
-    train.add(m_OriginalIndices.subList(
-      first + numInstForFold,
-      first + numInstForFold + m_Data.numInstances() - first - numInstForFold).toArray());
-
-    return train;
-  }
-
-  /**
-   * Creates the training set for one fold of a cross-validation on the dataset.
-   * The data is subsequently randomized based on the given random number
-   * generator.
-   *
-   * @param numFolds the number of folds in the cross-validation. Must be
-   *          greater than 1.
-   * @param numFold 0 for the first fold, 1 for the second, ...
-   * @param random the random number generator
-   * @return the training set
-   * @throws IllegalArgumentException if the number of folds is less than 2 or
-   *           greater than the number of instances.
-   */
-  protected TIntList trainCV(int numFolds, int numFold, Random random) {
-    TIntList train = trainCV(numFolds, numFold);
-    randomize(train, random);
-    return train;
-  }
-
-  /**
-   * Creates the test set for one fold of a cross-validation on the dataset.
-   *
-   * @param numFolds the number of folds in the cross-validation. Must be
-   *          greater than 1.
-   * @param numFold 0 for the first fold, 1 for the second, ...
-   * @return the test set as a set of weighted instances
-   * @throws IllegalArgumentException if the number of folds is less than 2 or
-   *           greater than the number of instances.
-   */
-  protected TIntList testCV(int numFolds, int numFold) {
-    int numInstForFold, first, offset;
-    TIntList test;
-
-    if (numFolds < 2)
-      throw new IllegalArgumentException("Number of folds must be at least 2!");
-    if (numFolds > m_Data.numInstances())
-      throw new IllegalArgumentException("Can't have more folds than instances!");
-
-    numInstForFold = m_Data.numInstances() / numFolds;
-    if (numFold < m_Data.numInstances() % numFolds) {
-      numInstForFold++;
-      offset = numFold;
-    } else {
-      offset = m_Data.numInstances() % numFolds;
+    if (m_Stratify && m_Data.classAttribute().isNominal() && (m_ActualNumFolds < m_Data.numInstances())) {
+      DefaultStratification strat = new DefaultStratification();
+      strat.setLoggingLevel(m_LoggingLevel);
+      m_Generator.setStratification(strat);
     }
-    first = numFold * (m_Data.numInstances() / numFolds) + offset;
-    test = m_OriginalIndices.subList(first, first + numInstForFold);
-    return test;
+    else {
+      adams.ml.splitgenerator.generic.stratification.PassThrough strat = new adams.ml.splitgenerator.generic.stratification.PassThrough();
+      strat.setLoggingLevel(m_LoggingLevel);
+      m_Generator.setStratification(strat);
+    }
+
+    if ((m_RelationName == null) || m_RelationName.isEmpty())
+      m_RelationName = PLACEHOLDER_ORIGINAL;
   }
 
   /**
@@ -509,17 +417,38 @@ public class DefaultCrossValidationFoldGenerator
    */
   @Override
   protected WekaTrainTestSetContainer createNext() {
-    WekaTrainTestSetContainer	result;
-    Instances 			train;
-    Instances 			test;
-    int[]			trainRows;
-    int[]			testRows;
+    WekaTrainTestSetContainer		result;
+    List<Binnable<Instance>>  		binnedData;
+    FoldPair<Binnable<Instance>> 	foldPair;
+    Instances 				train;
+    Instances 				test;
+    int[]				trainRows;
+    int[]				testRows;
+
 
     if (m_CurrentFold > m_ActualNumFolds)
       throw new NoSuchElementException("No more folds available!");
 
-    trainRows = trainCV(m_ActualNumFolds, m_CurrentFold - 1, m_RandomIndices).toArray();
-    testRows  = testCV(m_ActualNumFolds, m_CurrentFold - 1).toArray();
+    // generate pairs
+    if (m_FoldPairs == null) {
+      try {
+	binnedData = BinnableInstances.toBinnableUsingClass(m_Data);
+      }
+      catch (Exception e) {
+	throw new IllegalStateException("Failed to create binnable Instances!", e);
+      }
+
+      m_FoldPairs = m_Generator.generate(binnedData);
+
+      m_OriginalIndices = new TIntArrayList();
+      for (FoldPair<Binnable<Instance>> pair : m_FoldPairs)
+	m_OriginalIndices.addAll(pair.getTest().getOriginalIndices());
+    }
+
+    foldPair = m_FoldPairs.get(m_CurrentFold - 1);
+
+    trainRows = foldPair.getTrain().getOriginalIndices().toArray();
+    testRows  = foldPair.getTest().getOriginalIndices().toArray();
 
     // generate fold pair
     if (m_UseViews) {
@@ -527,8 +456,8 @@ public class DefaultCrossValidationFoldGenerator
       test = new InstancesView(m_Data, testRows);
     }
     else {
-      train = m_Data.trainCV(m_ActualNumFolds, m_CurrentFold - 1, m_Random);
-      test  = m_Data.testCV(m_ActualNumFolds, m_CurrentFold - 1);
+      train = BinnableInstances.toInstances(foldPair.getTrain().getData());
+      test  = BinnableInstances.toInstances(foldPair.getTest().getData());
     }
 
     // rename datasets
@@ -538,6 +467,9 @@ public class DefaultCrossValidationFoldGenerator
     result = new WekaTrainTestSetContainer(
       train, test, m_Seed, m_CurrentFold, m_ActualNumFolds, trainRows, testRows);
     m_CurrentFold++;
+
+    if (m_CurrentFold > m_ActualNumFolds)
+      m_FoldPairs = null;
 
     return result;
   }
@@ -553,7 +485,7 @@ public class DefaultCrossValidationFoldGenerator
 
   /**
    * Returns a short description of the generator.
-   * 
+   *
    * @return		a short description
    */
   @Override
