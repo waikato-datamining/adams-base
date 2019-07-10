@@ -21,9 +21,16 @@
 package adams.flow.transformer.preparefilebaseddataset;
 
 import adams.core.QuickInfoHelper;
+import adams.data.binning.Binnable;
+import adams.data.binning.operation.Wrapping;
+import adams.data.binning.operation.Wrapping.IndexedBinValueExtractor;
 import adams.flow.container.FileBasedDatasetContainer;
+import adams.ml.splitgenerator.generic.crossvalidation.CrossValidationGenerator;
+import adams.ml.splitgenerator.generic.crossvalidation.FoldPair;
+import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -208,70 +215,44 @@ public class CrossValidation
   @Override
   protected List<FileBasedDatasetContainer> doPrepare(String[] data) {
     List<FileBasedDatasetContainer>	result;
-    int					i;
-    int					n;
-    int					m;
-    double				inc;
     String[]				train;
     String[]				test;
-    int					testFrom;
-    int					testTo;
+    List<Binnable<String>>		binnable;
+    CrossValidationGenerator		generator;
+    DefaultRandomization 		defRand;
+    List<FoldPair<Binnable<String>>>	foldPairs;
 
     result = new ArrayList<>();
 
-    if (m_NumFolds < 2)
-      m_ActualNumFolds = data.length;
-    else
-      m_ActualNumFolds = m_NumFolds;
-
-    if (m_Randomize)
-      data = randomize(data);
-
-    if (m_ActualNumFolds == data.length) {
-      for (i = 0; i < data.length; i++) {
-        // train
-	train = new String[data.length - 1];
-	m = 0;
-	for (n = 0; n < data.length; n++) {
-	  if (n == i)
-	    continue;
-	  train[m] = data[n];
-	  m++;
-	}
-
-	// test
-	test = new String[]{data[i]};
-
-	result.add(new FileBasedDatasetContainer(train, test));
-      }
+    generator = new CrossValidationGenerator();
+    generator.setNumFolds(m_NumFolds);
+    generator.setStratification(new adams.ml.splitgenerator.generic.stratification.PassThrough());
+    if (m_Randomize) {
+      defRand = new DefaultRandomization();
+      defRand.setSeed(m_Seed);
+      defRand.setLoggingLevel(m_LoggingLevel);
+      generator.setRandomization(defRand);
     }
     else {
-      for (i = 0; i < m_NumFolds; i++) {
-        // test
-        testFrom = (int) Math.round(i * (data.length * 1.0 / m_NumFolds));
-        if (i == m_NumFolds - 1)
-          testTo = data.length;
-        else
-	  testTo = (int) Math.round((i+1) * (data.length * 1.0 / m_NumFolds));
-        test = new String[testTo - testFrom];
-        for (n = testFrom; n < testTo; n++)
-          test[n - testFrom] = data[n];
-
-        // train
-        train = new String[data.length - test.length];
-        m = 0;
-        for (n = 0; n < testFrom; n++) {
-          train[m] = data[n];
-          m++;
-	}
-        for (n = testTo; n < data.length; n++) {
-          train[m] = data[n];
-          m++;
-	}
-
-	result.add(new FileBasedDatasetContainer(train, test));
-      }
+      generator.setRandomization(new adams.ml.splitgenerator.generic.randomization.PassThrough());
     }
+
+    try {
+      binnable = Wrapping.wrap(Arrays.asList(data), new IndexedBinValueExtractor<>());
+    }
+    catch (Exception e) {
+      throw new IllegalStateException("Failed to wrap file names in Binnable objects!");
+    }
+
+    foldPairs = generator.generate(binnable);
+
+    for (FoldPair<Binnable<String>> foldPair: foldPairs) {
+      train = Wrapping.unwrap(foldPair.getTrain().getData()).toArray(new String[0]);
+      test  = Wrapping.unwrap(foldPair.getTest().getData()).toArray(new String[0]);
+      result.add(new FileBasedDatasetContainer(train, test));
+    }
+
+    m_ActualNumFolds = result.size();
 
     return result;
   }

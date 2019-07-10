@@ -21,7 +21,14 @@
 package adams.flow.transformer.preparefilebaseddataset;
 
 import adams.core.QuickInfoHelper;
+import adams.data.binning.Binnable;
+import adams.data.binning.operation.Wrapping;
+import adams.data.binning.operation.Wrapping.IndexedBinValueExtractor;
 import adams.flow.container.FileBasedDatasetContainer;
+import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
+import adams.ml.splitgenerator.generic.randomization.PassThrough;
+import adams.ml.splitgenerator.generic.randomsplit.RandomSplitGenerator;
+import adams.ml.splitgenerator.generic.randomsplit.SplitPair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -183,20 +190,36 @@ public class TrainTestSplit
   protected List<FileBasedDatasetContainer> doPrepare(String[] data) {
     List<FileBasedDatasetContainer>	result;
     FileBasedDatasetContainer   	cont;
-    int					train;
+    String[]				train;
+    String[]				test;
+    RandomSplitGenerator 		generator;
+    DefaultRandomization		defRand;
+    List<Binnable<String>>		binnable;
+    SplitPair<Binnable<String>>		pair;
 
-    if (!m_PreserveOrder)
-      data = randomize(data);
+    generator = new RandomSplitGenerator();
+    if (!m_PreserveOrder) {
+      defRand = new DefaultRandomization();
+      defRand.setSeed(m_Seed);
+      defRand.setLoggingLevel(m_LoggingLevel);
+      generator.setRandomization(defRand);
+    }
+    else {
+      generator.setRandomization(new PassThrough());
+    }
 
-    train = (int) Math.round(data.length * m_Percentage);
-    if (train == data.length)
-      train--;
-    if (isLoggingEnabled())
-      getLogger().info("# instances for train: " + train);
+    try {
+      binnable = Wrapping.wrap(Arrays.asList(data), new IndexedBinValueExtractor<>());
+    }
+    catch (Exception e) {
+      throw new IllegalStateException("Failed to wrap file names in Binnable objects!");
+    }
 
-    cont = new FileBasedDatasetContainer(
-      Arrays.copyOfRange(data, 0, train),
-      Arrays.copyOfRange(data, train, data.length));
+    pair  = generator.generate(binnable);
+    train = Wrapping.unwrap(pair.getTrain().getData()).toArray(new String[0]);
+    test  = Wrapping.unwrap(pair.getTest().getData()).toArray(new String[0]);
+
+    cont = new FileBasedDatasetContainer(train, test);
 
     result = new ArrayList<>();
     result.add(cont);

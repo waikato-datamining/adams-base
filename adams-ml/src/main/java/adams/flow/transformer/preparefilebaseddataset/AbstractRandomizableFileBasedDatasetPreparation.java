@@ -15,16 +15,12 @@
 
 /*
  * AbstractRandomizableFileBasedDatasetPreparation.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.preparefilebaseddataset;
 
 import adams.core.Randomizable;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
-
-import java.util.Random;
 
 /**
  * Ancestor for schemes that randomize the files.
@@ -79,29 +75,5 @@ public abstract class AbstractRandomizableFileBasedDatasetPreparation<T>
    */
   public String seedTipText() {
     return "The seed value for randomizing the data.";
-  }
-
-  /**
-   * Randomizes the order.
-   *
-   * @param data	the files to randomize
-   * @return		the randomized files
-   */
-  protected String[] randomize(String[] data) {
-    String[] 	result;
-    Random 	rand;
-    TIntList 	indices;
-    int		i;
-
-    rand = new Random(m_Seed);
-    indices = new TIntArrayList();
-    for (i = 0; i < data.length; i++)
-      indices.add(i);
-    indices.shuffle(rand);
-    result = new String[data.length];
-    for (i = 0; i < indices.size(); i++)
-      result[i] = data[indices.get(i)];
-
-    return result;
   }
 }
