@@ -14,7 +14,7 @@
  */
 
 /*
- * GenericRandomSplit.java
+ * RandomSplitGenerator.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class GenericRandomSplit
+public class RandomSplitGenerator
   extends CustomLoggingLevelObject {
 
   private static final long serialVersionUID = 1816472926230469853L;
@@ -53,7 +53,7 @@ public class GenericRandomSplit
   /**
    * Initializes the cross-validation.
    */
-  public GenericRandomSplit() {
+  public RandomSplitGenerator() {
     m_Randomization = new DefaultRandomization();
     m_Splitter      = new DefaultSplitter();
     reset();

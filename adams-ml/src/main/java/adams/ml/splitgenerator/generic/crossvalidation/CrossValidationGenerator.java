@@ -14,7 +14,7 @@
  */
 
 /*
- * GenericCrossValidation.java
+ * CrossValidationGenerator.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class GenericCrossValidation
+public class CrossValidationGenerator
   extends CustomLoggingLevelObject {
 
   private static final long serialVersionUID = 6906260013695977045L;
@@ -56,7 +56,7 @@ public class GenericCrossValidation
   /**
    * Initializes the cross-validation.
    */
-  public GenericCrossValidation() {
+  public CrossValidationGenerator() {
     m_NumFolds       = 10;
     m_Randomization  = new DefaultRandomization();
     m_Stratification = new DefaultStratification();
