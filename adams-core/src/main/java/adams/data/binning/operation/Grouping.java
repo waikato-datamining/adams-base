@@ -22,6 +22,7 @@ package adams.data.binning.operation;
 
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableGroup;
+import com.github.fracpete.javautils.struct.Struct2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,21 +54,37 @@ public class Grouping {
    * @param data	the data to group
    * @param extractor 	for extracting the group
    * @param <T>		the payload type
+   * @return		the order of the groups and group map
+   */
+  protected static <T> Struct2<List<String>,Map<String,BinnableGroup<T>>> group(List<Binnable<T>> data, GroupExtractor<T> extractor) {
+    Map<String,BinnableGroup<T>> 	map;
+    List<String>			order;
+    String				group;
+
+    map   = new HashMap<>();
+    order = new ArrayList<>();
+    for (Binnable<T> item: data) {
+      group = extractor.extractGroup(item);
+      if (!map.containsKey(group)) {
+	map.put(group, new BinnableGroup<>(group));
+	order.add(group);
+      }
+      map.get(group).add(item);
+    }
+
+    return new Struct2<>(order, map);
+  }
+
+  /**
+   * Combines the binnable items into groups based on the groups extracted.
+   *
+   * @param data	the data to group
+   * @param extractor 	for extracting the group
+   * @param <T>		the payload type
    * @return		the groups
    */
   public static <T> Map<String,BinnableGroup<T>> groupAsMap(List<Binnable<T>> data, GroupExtractor<T> extractor) {
-    Map<String,BinnableGroup<T>>	result;
-    String				group;
-
-    result = new HashMap<>();
-    for (Binnable<T> item: data) {
-      group = extractor.extractGroup(item);
-      if (!result.containsKey(group))
-        result.put(group, new BinnableGroup<>(group));
-      result.get(group).add(item);
-    }
-
-    return result;
+    return group(data, extractor).value2;
   }
 
   /**
@@ -80,15 +97,16 @@ public class Grouping {
    * @return		the groups
    */
   public static <T> List<BinnableGroup<T>> groupAsList(List<Binnable<T>> data, GroupExtractor<T> extractor) {
-    List<BinnableGroup<T>>		result;
-    Map<String,BinnableGroup<T>> 	map;
-    List<String>			groups;
+    List<BinnableGroup<T>>				result;
+    Struct2<List<String>,Map<String,BinnableGroup<T>>>	all;
+    Map<String,BinnableGroup<T>> 			map;
+    List<String>					order;
 
     result = new ArrayList<>();
-    map    = groupAsMap(data, extractor);
-    groups = new ArrayList<>(map.keySet());
-    Collections.sort(groups);
-    for (String group: groups)
+    all    = group(data, extractor);
+    order  = all.value1;
+    map    = all.value2;
+    for (String group: order)
       result.add(map.get(group));
 
     return result;
