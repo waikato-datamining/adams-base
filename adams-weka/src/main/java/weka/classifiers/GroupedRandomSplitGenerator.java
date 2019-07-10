@@ -34,13 +34,12 @@ import adams.ml.splitgenerator.generic.randomization.PassThrough;
 import adams.ml.splitgenerator.generic.randomsplit.RandomSplitGenerator;
 import adams.ml.splitgenerator.generic.randomsplit.SplitPair;
 import adams.ml.splitgenerator.generic.splitter.DefaultSplitter;
+import com.github.fracpete.javautils.struct.Struct2;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.InstancesView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -349,17 +348,15 @@ public class GroupedRandomSplitGenerator
   protected WekaTrainTestSetContainer createNext() {
     WekaTrainTestSetContainer			result;
     List<Binnable<Instance>> 			binnedData;
-    List<BinnableGroup<Instance>>		groupedTrain;
-    List<BinnableGroup<Instance>>		groupedTest;
     List<BinnableGroup<Instance>> 		groupedData;
     SplitPair<Binnable<BinnableGroup<Instance>>> splitGroups;
     List<Binnable<BinnableGroup<Instance>>> 	binnedGroups;
-    List<Binnable<Instance>>			binnedTrain;
-    List<Binnable<Instance>>			binnedTest;
     Instances					trainSet;
     Instances					testSet;
-    TIntList					trainRows;
-    TIntList					testRows;
+    int[]					trainRows;
+    int[]					testRows;
+    Struct2<TIntList,List<Binnable<Instance>>> 	subsetTrain;
+    Struct2<TIntList,List<Binnable<Instance>>>	subsetTest;
 
     m_Generated = true;
 
@@ -373,39 +370,23 @@ public class GroupedRandomSplitGenerator
     catch (Exception e) {
       throw new IllegalStateException("Failed to create binnable Instances!", e);
     }
-    splitGroups  = m_Generator.generate(binnedGroups);
-    groupedTrain = Wrapping.unwrap(splitGroups.getTrain().getData());
-    groupedTest  = Wrapping.unwrap(splitGroups.getTest().getData());
-
-    // compile original indices
-    trainRows = new TIntArrayList();
-    binnedTrain = new ArrayList<>();
-    for (BinnableGroup<Instance> group: groupedTrain) {
-      for (Binnable<Instance> item: group.get()) {
-	trainRows.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
-	binnedTrain.add(item);
-      }
-    }
-    testRows = new TIntArrayList();
-    binnedTest = new ArrayList<>();
-    for (BinnableGroup<Instance> group: groupedTest) {
-      for (Binnable<Instance> item: group.get()) {
-	testRows.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
-	binnedTest.add(item);
-      }
-    }
+    splitGroups = m_Generator.generate(binnedGroups);
+    subsetTrain = BinnableInstances.extractIndicesAndBinnable(splitGroups.getTrain());
+    subsetTest  = BinnableInstances.extractIndicesAndBinnable(splitGroups.getTest());
+    trainRows   = subsetTrain.value1.toArray();
+    testRows    = subsetTest.value1.toArray();
 
     if (m_UseViews) {
-      trainSet = new InstancesView(m_Data, trainRows.toArray());
-      testSet  = new InstancesView(m_Data, testRows.toArray());
+      trainSet = new InstancesView(m_Data, trainRows);
+      testSet  = new InstancesView(m_Data, testRows);
     }
     else {
-      trainSet = BinnableInstances.toInstances(binnedTrain);
-      testSet  = BinnableInstances.toInstances(binnedTest);
+      trainSet = BinnableInstances.toInstances(subsetTrain.value2);
+      testSet  = BinnableInstances.toInstances(subsetTest.value2);
     }
 
     result = new WekaTrainTestSetContainer(
-      trainSet, testSet, m_Seed, null, null, trainRows.toArray(), testRows.toArray());
+      trainSet, testSet, m_Seed, null, null, trainRows, testRows);
 
     return result;
   }
