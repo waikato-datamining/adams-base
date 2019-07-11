@@ -28,7 +28,7 @@ import weka.core.Instances;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public interface RandomSplitGenerator
-  extends SplitGenerator, adams.ml.splitgenerator.RandomSplitGenerator<Instances, WekaTrainTestSetContainer> {
+  extends SplitGenerator, adams.data.splitgenerator.RandomSplitGenerator<Instances, WekaTrainTestSetContainer> {
 
   /**
    * Sets the split percentage.

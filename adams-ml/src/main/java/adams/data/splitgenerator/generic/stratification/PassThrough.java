@@ -14,31 +14,46 @@
  */
 
 /*
- * StratifiableSplitGenerator.java
+ * PassThrough.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator;
+package adams.data.splitgenerator.generic.stratification;
+
+import adams.data.binning.Binnable;
+
+import java.util.List;
 
 /**
- * Interface for split generators that can stratify the randomized data.
+ * Performs no stratification.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface StratifiableSplitGenerator<I,O>
-  extends SplitGenerator<I,O> {
+public class PassThrough
+  extends AbstractStratification {
+
+  private static final long serialVersionUID = 4334977393029180519L;
 
   /**
-   * Sets whether to stratify the data (nominal class).
+   * Returns a string describing the object.
    *
-   * @param value	whether to stratify the data (nominal class)
+   * @return 			a description suitable for displaying in the gui
    */
-  public void setStratify(boolean value);
+  @Override
+  public String globalInfo() {
+    return "Performs no stratification.";
+  }
 
   /**
-   * Returns whether to stratify the data (in case of nominal class).
+   * Does not stratify the data.
    *
-   * @return		true if to stratify
+   * @param data	the input data
+   * @param folds	the number of folds
+   * @param <T>		the payload type
+   * @return		the input data
    */
-  public boolean getStratify();
+  @Override
+  protected <T> List<Binnable<T>> doStratify(List<Binnable<T>> data, int folds) {
+    return data;
+  }
 }

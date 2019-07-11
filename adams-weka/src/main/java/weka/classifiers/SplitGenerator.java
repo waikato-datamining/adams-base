@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public interface SplitGenerator
-  extends adams.ml.splitgenerator.SplitGenerator<Instances, WekaTrainTestSetContainer>, InstancesViewSupporter {
+  extends adams.data.splitgenerator.SplitGenerator<Instances, WekaTrainTestSetContainer>, InstancesViewSupporter {
 
   /**
    * Sets the original data.

@@ -24,11 +24,11 @@ import adams.core.QuickInfoHelper;
 import adams.data.binning.Binnable;
 import adams.data.binning.operation.Wrapping;
 import adams.data.binning.operation.Wrapping.IndexedBinValueExtractor;
+import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
+import adams.data.splitgenerator.generic.randomization.PassThrough;
+import adams.data.splitgenerator.generic.randomsplit.RandomSplitGenerator;
+import adams.data.splitgenerator.generic.randomsplit.SplitPair;
 import adams.flow.container.FileBasedDatasetContainer;
-import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
-import adams.ml.splitgenerator.generic.randomization.PassThrough;
-import adams.ml.splitgenerator.generic.randomsplit.RandomSplitGenerator;
-import adams.ml.splitgenerator.generic.randomsplit.SplitPair;
 
 import java.util.ArrayList;
 import java.util.Arrays;

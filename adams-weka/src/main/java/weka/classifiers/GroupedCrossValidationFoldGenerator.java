@@ -28,13 +28,13 @@ import adams.data.binning.BinnableInstances.GroupedClassValueBinValueExtractor;
 import adams.data.binning.BinnableInstances.StringAttributeGroupExtractor;
 import adams.data.binning.operation.Grouping;
 import adams.data.binning.operation.Wrapping;
+import adams.data.splitgenerator.generic.core.Subset;
+import adams.data.splitgenerator.generic.crossvalidation.CrossValidationGenerator;
+import adams.data.splitgenerator.generic.crossvalidation.FoldPair;
+import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
+import adams.data.splitgenerator.generic.stratification.DefaultStratification;
 import adams.data.weka.WekaAttributeIndex;
 import adams.flow.container.WekaTrainTestSetContainer;
-import adams.ml.splitgenerator.generic.core.Subset;
-import adams.ml.splitgenerator.generic.crossvalidation.CrossValidationGenerator;
-import adams.ml.splitgenerator.generic.crossvalidation.FoldPair;
-import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
-import adams.ml.splitgenerator.generic.stratification.DefaultStratification;
 import com.github.fracpete.javautils.struct.Struct2;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -519,7 +519,7 @@ public class GroupedCrossValidationFoldGenerator
       m_Generator.setRandomization(rand);
     }
     else {
-      adams.ml.splitgenerator.generic.randomization.PassThrough rand = new adams.ml.splitgenerator.generic.randomization.PassThrough();
+      adams.data.splitgenerator.generic.randomization.PassThrough rand = new adams.data.splitgenerator.generic.randomization.PassThrough();
       rand.setLoggingLevel(m_LoggingLevel);
       m_Generator.setRandomization(rand);
     }
@@ -529,7 +529,7 @@ public class GroupedCrossValidationFoldGenerator
       m_Generator.setStratification(strat);
     }
     else {
-      adams.ml.splitgenerator.generic.stratification.PassThrough strat = new adams.ml.splitgenerator.generic.stratification.PassThrough();
+      adams.data.splitgenerator.generic.stratification.PassThrough strat = new adams.data.splitgenerator.generic.stratification.PassThrough();
       strat.setLoggingLevel(m_LoggingLevel);
       m_Generator.setStratification(strat);
     }

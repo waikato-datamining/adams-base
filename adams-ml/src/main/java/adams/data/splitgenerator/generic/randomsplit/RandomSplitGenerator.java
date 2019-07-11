@@ -18,16 +18,16 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.randomsplit;
+package adams.data.splitgenerator.generic.randomsplit;
 
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.data.binning.Binnable;
 import adams.data.binning.operation.Wrapping;
-import adams.ml.splitgenerator.generic.core.Subset;
-import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
-import adams.ml.splitgenerator.generic.randomization.Randomization;
-import adams.ml.splitgenerator.generic.splitter.DefaultSplitter;
-import adams.ml.splitgenerator.generic.splitter.Splitter;
+import adams.data.splitgenerator.generic.core.Subset;
+import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
+import adams.data.splitgenerator.generic.randomization.Randomization;
+import adams.data.splitgenerator.generic.splitter.DefaultSplitter;
+import adams.data.splitgenerator.generic.splitter.Splitter;
 import com.github.fracpete.javautils.struct.Struct2;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;

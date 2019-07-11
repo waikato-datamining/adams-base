@@ -14,45 +14,34 @@
  */
 
 /*
- * PassThrough.java
+ * Randomization.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.randomization;
+package adams.data.splitgenerator.generic.randomization;
 
 import adams.data.binning.Binnable;
 
 import java.util.List;
 
 /**
- * Performs no randomization.
+ * Interface for randomization schemes.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class PassThrough
-  extends AbstractRandomization {
-
-  private static final long serialVersionUID = 4334977393029180519L;
+public interface Randomization {
 
   /**
-   * Returns a string describing the object.
-   *
-   * @return 			a description suitable for displaying in the gui
+   * Resets the scheme.
    */
-  @Override
-  public String globalInfo() {
-    return "Performs no randomization.";
-  }
+  public void reset();
 
   /**
-   * Does not randomize the data.
+   * Randomizes the data.
    *
-   * @param data	the input data
+   * @param data	the data to randomize
    * @param <T>		the payload type
-   * @return		the input data
+   * @return		the randomized data
    */
-  @Override
-  protected <T> List<Binnable<T>> doRandomize(List<Binnable<T>> data) {
-    return data;
-  }
+  public <T> List<Binnable<T>> randomize(List<Binnable<T>> data);
 }

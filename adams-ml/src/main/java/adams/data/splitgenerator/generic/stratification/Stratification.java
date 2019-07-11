@@ -14,22 +14,22 @@
  */
 
 /*
- * Randomization.java
+ * Stratification.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.randomization;
+package adams.data.splitgenerator.generic.stratification;
 
 import adams.data.binning.Binnable;
 
 import java.util.List;
 
 /**
- * Interface for randomization schemes.
+ * Interface for schemes that stratify data.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface Randomization {
+public interface Stratification {
 
   /**
    * Resets the scheme.
@@ -37,11 +37,14 @@ public interface Randomization {
   public void reset();
 
   /**
-   * Randomizes the data.
+   * Stratifies the list of binnable data, using the value of the items.
+   * Creates copy of list, then sorts list items according to their values.
+   * Based on Weka's Instances.stratify(int) method.
    *
-   * @param data	the data to randomize
+   * @param data	the data to stratify
+   * @param folds	the number of folds
    * @param <T>		the payload type
-   * @return		the randomized data
+   * @return 		the stratified data
    */
-  public <T> List<Binnable<T>> randomize(List<Binnable<T>> data);
+  public <T> List<Binnable<T>> stratify(List<Binnable<T>> data, int folds);
 }

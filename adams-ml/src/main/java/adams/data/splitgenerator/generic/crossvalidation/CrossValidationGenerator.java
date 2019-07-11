@@ -18,16 +18,16 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.crossvalidation;
+package adams.data.splitgenerator.generic.crossvalidation;
 
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.data.binning.Binnable;
 import adams.data.binning.operation.Wrapping;
-import adams.ml.splitgenerator.generic.core.Subset;
-import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
-import adams.ml.splitgenerator.generic.randomization.Randomization;
-import adams.ml.splitgenerator.generic.stratification.DefaultStratification;
-import adams.ml.splitgenerator.generic.stratification.Stratification;
+import adams.data.splitgenerator.generic.core.Subset;
+import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
+import adams.data.splitgenerator.generic.randomization.Randomization;
+import adams.data.splitgenerator.generic.stratification.DefaultStratification;
+import adams.data.splitgenerator.generic.stratification.Stratification;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 

@@ -17,19 +17,19 @@
  * DefaultCrossValidationFoldGenerator.java
  * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
-package weka.classifiers;
+package adams.ml.evaluation;
 
 import adams.data.binning.Binnable;
-import adams.data.binning.BinnableInstances;
-import adams.data.splitgenerator.generic.crossvalidation.CrossValidationGenerator;
+import adams.data.binning.BinnableDataset;
+import adams.data.splitgenerator.CrossValidationFoldGenerator;
 import adams.data.splitgenerator.generic.crossvalidation.FoldPair;
 import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.data.splitgenerator.generic.stratification.DefaultStratification;
-import adams.flow.container.WekaTrainTestSetContainer;
+import adams.data.spreadsheet.DataRow;
+import adams.flow.container.TrainTestSetContainer;
+import adams.ml.data.Dataset;
+import adams.ml.data.DatasetView;
 import gnu.trove.list.array.TIntArrayList;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.InstancesView;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -44,7 +44,7 @@ import java.util.NoSuchElementException;
  */
 public class DefaultCrossValidationFoldGenerator
   extends AbstractSplitGenerator
-  implements CrossValidationFoldGenerator {
+  implements CrossValidationFoldGenerator<Dataset,TrainTestSetContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;
@@ -61,17 +61,14 @@ public class DefaultCrossValidationFoldGenerator
   /** the current fold. */
   protected transient int m_CurrentFold;
 
-  /** the template for the relation name. */
-  protected String m_RelationName;
-
   /** whether to randomize the data. */
   protected boolean m_Randomize;
 
   /** the underlying scheme for generating the folds. */
-  protected transient CrossValidationGenerator m_Generator;
+  protected transient adams.data.splitgenerator.generic.crossvalidation.CrossValidationGenerator m_Generator;
 
   /** the temporary pairs. */
-  protected transient List<FoldPair<Binnable<Instance>>> m_FoldPairs;
+  protected transient List<FoldPair<Binnable<DataRow>>> m_FoldPairs;
 
   /**
    * Initializes the generator.
@@ -88,8 +85,8 @@ public class DefaultCrossValidationFoldGenerator
    * @param seed	the seed for randomization
    * @param stratify	whether to perform stratified CV
    */
-  public DefaultCrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean stratify) {
-    this(data, numFolds, seed, true, stratify, null);
+  public DefaultCrossValidationFoldGenerator(Dataset data, int numFolds, long seed, boolean stratify) {
+    this(data, numFolds, seed, true, stratify);
   }
 
   /**
@@ -100,14 +97,12 @@ public class DefaultCrossValidationFoldGenerator
    * @param seed	the seed value
    * @param randomize 	whether to randomize the data
    * @param stratify	whether to perform stratified CV
-   * @param relName	the relation name template, use null to ignore
    */
-  public DefaultCrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean randomize, boolean stratify, String relName) {
+  public DefaultCrossValidationFoldGenerator(Dataset data, int numFolds, long seed, boolean randomize, boolean stratify) {
     super();
     setData(data);
     setSeed(seed);
     setNumFolds(numFolds);
-    setRelationName(relName);
     setStratify(stratify);
     setRandomize(randomize);
   }
@@ -132,10 +127,6 @@ public class DefaultCrossValidationFoldGenerator
     m_OptionManager.add(
       "num-folds", "numFolds",
       10);
-
-    m_OptionManager.add(
-      "relation-name", "relationName",
-      PLACEHOLDER_ORIGINAL);
 
     m_OptionManager.add(
       "randomize", "randomize",
@@ -163,10 +154,10 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @param value	the data
    */
-  public void setData(Instances value) {
+  public void setData(Dataset value) {
     super.setData(value);
     if (m_Data != null) {
-      if (getStratify() && (m_Data.classIndex() == -1))
+      if (getStratify() && (m_Data.getClassAttributeIndices().length == 0))
         throw new IllegalArgumentException("No class attribute set!");
     }
   }
@@ -269,38 +260,6 @@ public class DefaultCrossValidationFoldGenerator
   }
 
   /**
-   * Sets the template for the relation name.
-   *
-   * @param value	the template
-   */
-  public void setRelationName(String value) {
-    m_RelationName = value;
-    reset();
-  }
-
-  /**
-   * Returns the relation name template.
-   *
-   * @return		the template
-   */
-  public String getRelationName() {
-    return m_RelationName;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String relationNameTipText() {
-    return "The template for the relation name; available placeholders: "
-      + PLACEHOLDER_ORIGINAL + " for original, "
-      + PLACEHOLDER_TYPE + " for type (train/test), "
-      + PLACEHOLDER_CURRENTFOLD + " for current fold";
-  }
-
-  /**
    * Returns whether randomization is enabled.
    *
    * @return		true if to randomize
@@ -323,65 +282,26 @@ public class DefaultCrossValidationFoldGenerator
   }
 
   /**
-   * Generates a relation name for the current fold.
-   *
-   * @param train	whether train or test set
-   * @return		the relation name
-   */
-  protected String createRelationName(boolean train) {
-    StringBuilder	result;
-    String		name;
-    int			len;
-
-    result = new StringBuilder();
-    name   = m_RelationName;
-
-    while (name.length() > 0) {
-      if (name.startsWith(PLACEHOLDER_ORIGINAL)) {
-	len = 1;
-	result.append(m_Data.relationName());
-      }
-      else if (name.startsWith(PLACEHOLDER_TYPE)) {
-	len = 2;
-	if (train)
-	  result.append("train");
-	else
-	  result.append("test");
-      }
-      else if (name.startsWith(PLACEHOLDER_CURRENTFOLD)) {
-	len = 2;
-	result.append(Integer.toString(m_CurrentFold));
-      }
-      else {
-	len = 1;
-	result.append(name.charAt(0));
-      }
-
-      name = name.substring(len);
-    }
-
-    return result.toString();
-  }
-
-  /**
    * Initializes the iterator, randomizes the data if required.
    */
   @Override
   protected void doInitializeIterator() {
+    boolean	classIsNominal;
+
     if (m_Data == null)
       throw new IllegalStateException("No data provided!");
 
     if (m_NumFolds < 2)
-      m_ActualNumFolds = m_Data.numInstances();
+      m_ActualNumFolds = m_Data.getRowCount();
     else
       m_ActualNumFolds = m_NumFolds;
 
-    if (m_Data.numInstances() < m_ActualNumFolds)
+    if (m_Data.getRowCount() < m_ActualNumFolds)
       throw new IllegalArgumentException(
 	  "Cannot have less data than folds: "
-	      + "required=" + m_ActualNumFolds + ", provided=" + m_Data.numInstances());
+	      + "required=" + m_ActualNumFolds + ", provided=" + m_Data.getRowCount());
 
-    m_Generator = new CrossValidationGenerator();
+    m_Generator = new adams.data.splitgenerator.generic.crossvalidation.CrossValidationGenerator();
     m_Generator.setNumFolds(m_NumFolds);
     if (canRandomize()) {
       DefaultRandomization rand = new DefaultRandomization();
@@ -394,7 +314,8 @@ public class DefaultCrossValidationFoldGenerator
       rand.setLoggingLevel(m_LoggingLevel);
       m_Generator.setRandomization(rand);
     }
-    if (m_Stratify && m_Data.classAttribute().isNominal() && (m_ActualNumFolds < m_Data.numInstances())) {
+    classIsNominal = !m_Data.isNumeric(m_Data.getClassAttributeIndices()[0]);
+    if (m_Stratify && classIsNominal && (m_ActualNumFolds < m_Data.getRowCount())) {
       DefaultStratification strat = new DefaultStratification();
       strat.setLoggingLevel(m_LoggingLevel);
       m_Generator.setStratification(strat);
@@ -404,9 +325,6 @@ public class DefaultCrossValidationFoldGenerator
       strat.setLoggingLevel(m_LoggingLevel);
       m_Generator.setStratification(strat);
     }
-
-    if ((m_RelationName == null) || m_RelationName.isEmpty())
-      m_RelationName = PLACEHOLDER_ORIGINAL;
   }
 
   /**
@@ -416,12 +334,12 @@ public class DefaultCrossValidationFoldGenerator
    * @throws NoSuchElementException 	iteration has no more elements.
    */
   @Override
-  protected WekaTrainTestSetContainer createNext() {
-    WekaTrainTestSetContainer		result;
-    List<Binnable<Instance>>  		binnedData;
-    FoldPair<Binnable<Instance>> 	foldPair;
-    Instances 				train;
-    Instances 				test;
+  protected TrainTestSetContainer createNext() {
+    TrainTestSetContainer		result;
+    List<Binnable<DataRow>>  		binnedData;
+    FoldPair<Binnable<DataRow>> 	foldPair;
+    Dataset 				train;
+    Dataset 				test;
     int[]				trainRows;
     int[]				testRows;
 
@@ -432,16 +350,16 @@ public class DefaultCrossValidationFoldGenerator
     // generate pairs
     if (m_FoldPairs == null) {
       try {
-	binnedData = BinnableInstances.toBinnableUsingClass(m_Data);
+	binnedData = BinnableDataset.toBinnableUsingClass(m_Data, m_Data.getClassAttributeIndices()[0]);
       }
       catch (Exception e) {
-	throw new IllegalStateException("Failed to create binnable Instances!", e);
+	throw new IllegalStateException("Failed to create binnable Dataset!", e);
       }
 
       m_FoldPairs = m_Generator.generate(binnedData);
 
       m_OriginalIndices = new TIntArrayList();
-      for (FoldPair<Binnable<Instance>> pair : m_FoldPairs)
+      for (FoldPair<Binnable<DataRow>> pair : m_FoldPairs)
 	m_OriginalIndices.addAll(pair.getTest().getOriginalIndices());
     }
 
@@ -452,19 +370,15 @@ public class DefaultCrossValidationFoldGenerator
 
     // generate fold pair
     if (m_UseViews) {
-      train = new InstancesView(m_Data, trainRows);
-      test = new InstancesView(m_Data, testRows);
+      train = new DatasetView(m_Data, trainRows, null);
+      test = new DatasetView(m_Data, testRows, null);
     }
     else {
-      train = BinnableInstances.toInstances(foldPair.getTrain().getData());
-      test  = BinnableInstances.toInstances(foldPair.getTest().getData());
+      train = BinnableDataset.toDataset(foldPair.getTrain().getData());
+      test  = BinnableDataset.toDataset(foldPair.getTest().getData());
     }
 
-    // rename datasets
-    train.setRelationName(createRelationName(true));
-    test.setRelationName(createRelationName(false));
-
-    result = new WekaTrainTestSetContainer(
+    result = new TrainTestSetContainer(
       train, test, m_Seed, m_CurrentFold, m_ActualNumFolds, trainRows, testRows);
     m_CurrentFold++;
 
@@ -490,6 +404,6 @@ public class DefaultCrossValidationFoldGenerator
    */
   @Override
   public String toString() {
-    return super.toString() + ", numFolds=" + m_NumFolds + ", stratify=" + m_Stratify + ", relName=" + m_RelationName;
+    return super.toString() + ", numFolds=" + m_NumFolds + ", stratify=" + m_Stratify;
   }
 }

@@ -18,7 +18,7 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.core;
+package adams.data.splitgenerator.generic.core;
 
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableGroup;

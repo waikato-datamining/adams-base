@@ -24,10 +24,10 @@ import adams.core.QuickInfoHelper;
 import adams.data.binning.Binnable;
 import adams.data.binning.operation.Wrapping;
 import adams.data.binning.operation.Wrapping.IndexedBinValueExtractor;
+import adams.data.splitgenerator.generic.crossvalidation.CrossValidationGenerator;
+import adams.data.splitgenerator.generic.crossvalidation.FoldPair;
+import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.flow.container.FileBasedDatasetContainer;
-import adams.ml.splitgenerator.generic.crossvalidation.CrossValidationGenerator;
-import adams.ml.splitgenerator.generic.crossvalidation.FoldPair;
-import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -226,7 +226,7 @@ public class CrossValidation
 
     generator = new CrossValidationGenerator();
     generator.setNumFolds(m_NumFolds);
-    generator.setStratification(new adams.ml.splitgenerator.generic.stratification.PassThrough());
+    generator.setStratification(new adams.data.splitgenerator.generic.stratification.PassThrough());
     if (m_Randomize) {
       defRand = new DefaultRandomization();
       defRand.setSeed(m_Seed);
@@ -234,7 +234,7 @@ public class CrossValidation
       generator.setRandomization(defRand);
     }
     else {
-      generator.setRandomization(new adams.ml.splitgenerator.generic.randomization.PassThrough());
+      generator.setRandomization(new adams.data.splitgenerator.generic.randomization.PassThrough());
     }
 
     try {

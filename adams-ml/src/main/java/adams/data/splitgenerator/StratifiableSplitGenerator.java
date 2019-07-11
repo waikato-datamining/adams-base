@@ -14,37 +14,31 @@
  */
 
 /*
- * Stratification.java
+ * StratifiableSplitGenerator.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.stratification;
-
-import adams.data.binning.Binnable;
-
-import java.util.List;
+package adams.data.splitgenerator;
 
 /**
- * Interface for schemes that stratify data.
+ * Interface for split generators that can stratify the randomized data.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface Stratification {
+public interface StratifiableSplitGenerator<I,O>
+  extends SplitGenerator<I,O> {
 
   /**
-   * Resets the scheme.
-   */
-  public void reset();
-
-  /**
-   * Stratifies the list of binnable data, using the value of the items.
-   * Creates copy of list, then sorts list items according to their values.
-   * Based on Weka's Instances.stratify(int) method.
+   * Sets whether to stratify the data (nominal class).
    *
-   * @param data	the data to stratify
-   * @param folds	the number of folds
-   * @param <T>		the payload type
-   * @return 		the stratified data
+   * @param value	whether to stratify the data (nominal class)
    */
-  public <T> List<Binnable<T>> stratify(List<Binnable<T>> data, int folds);
+  public void setStratify(boolean value);
+
+  /**
+   * Returns whether to stratify the data (in case of nominal class).
+   *
+   * @return		true if to stratify
+   */
+  public boolean getStratify();
 }

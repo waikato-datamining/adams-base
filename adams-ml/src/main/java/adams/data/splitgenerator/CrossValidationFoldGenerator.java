@@ -17,7 +17,7 @@
  * CrossValidationFoldGenerator.java
  * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
  */
-package adams.ml.splitgenerator;
+package adams.data.splitgenerator;
 
 /**
  * Interface for generating cross-validation folds.

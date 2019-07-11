@@ -18,19 +18,19 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.stratification;
+package adams.data.splitgenerator.generic.randomization;
 
 import adams.data.binning.Binnable;
 
 import java.util.List;
 
 /**
- * Performs no stratification.
+ * Performs no randomization.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class PassThrough
-  extends AbstractStratification {
+  extends AbstractRandomization {
 
   private static final long serialVersionUID = 4334977393029180519L;
 
@@ -41,19 +41,18 @@ public class PassThrough
    */
   @Override
   public String globalInfo() {
-    return "Performs no stratification.";
+    return "Performs no randomization.";
   }
 
   /**
-   * Does not stratify the data.
+   * Does not randomize the data.
    *
    * @param data	the input data
-   * @param folds	the number of folds
    * @param <T>		the payload type
    * @return		the input data
    */
   @Override
-  protected <T> List<Binnable<T>> doStratify(List<Binnable<T>> data, int folds) {
+  protected <T> List<Binnable<T>> doRandomize(List<Binnable<T>> data) {
     return data;
   }
 }

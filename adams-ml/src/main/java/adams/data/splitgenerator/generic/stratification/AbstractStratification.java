@@ -14,11 +14,11 @@
  */
 
 /*
- * AbstractRandomization.java
+ * AbstractStratification.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.randomization;
+package adams.data.splitgenerator.generic.stratification;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.data.binning.Binnable;
@@ -26,13 +26,13 @@ import adams.data.binning.Binnable;
 import java.util.List;
 
 /**
- * Ancestor for randomization schemes.
+ * Ancestor for stratification schemes.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractRandomization
+public abstract class AbstractStratification
   extends AbstractOptionHandler
-  implements Randomization {
+  implements Stratification {
 
   private static final long serialVersionUID = -5619683133352175979L;
 
@@ -44,41 +44,45 @@ public abstract class AbstractRandomization
   }
 
   /**
-   * Check method before performing randomization.
+   * Check method before performing stratification.
    *
    * @param data	the data to check
    * @return		null if checks passed, otherwise error message
    */
-  protected <T> String check(List<Binnable<T>> data) {
+  protected <T> String check(List<Binnable<T>> data, int folds) {
     if ((data == null) || (data.size() == 0))
       return "No data provided!";
+    if (data.size() < folds)
+      return "You cannot have more folds than data: " + data.size() + " < " + folds;
     return null;
   }
 
   /**
-   * Randomizes the data.
+   * Stratifies the data.
    *
-   * @param data	the data to randomize
+   * @param data	the data to stratify
+   * @param folds	the number of folds
    * @param <T>		the payload type
-   * @return		the randomized data
+   * @return		the stratified data
    */
-  protected abstract <T> List<Binnable<T>> doRandomize(List<Binnable<T>> data);
+  protected abstract <T> List<Binnable<T>> doStratify(List<Binnable<T>> data, int folds);
 
   /**
-   * Randomizes the data.
+   * Stratifies the data.
    *
-   * @param data	the data to randomize
+   * @param data	the data to stratify
+   * @param folds	the number of folds
+   * @return 		the stratified data
    * @param <T>		the payload type
-   * @return		the randomized data
    * @throws IllegalStateException  if checks fail
    */
-  public <T> List<Binnable<T>> randomize(List<Binnable<T>> data) {
-    String    msg;
+  public <T> List<Binnable<T>> stratify(List<Binnable<T>> data, int folds) {
+    String	msg;
 
-    msg = check(data);
+    msg = check(data, folds);
     if (msg != null)
       throw new IllegalStateException(msg);
 
-    return doRandomize(data);
+    return doStratify(data, folds);
   }
 }

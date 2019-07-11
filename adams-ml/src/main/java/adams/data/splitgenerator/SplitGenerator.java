@@ -17,7 +17,7 @@
  * SplitGenerator.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
-package adams.ml.splitgenerator;
+package adams.data.splitgenerator;
 
 import adams.core.Randomizable;
 import adams.core.option.OptionHandler;

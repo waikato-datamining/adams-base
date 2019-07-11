@@ -14,35 +14,48 @@
  */
 
 /*
- * Splitting.java
+ * DefaultStratification.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.ml.splitgenerator.generic.splitter;
+package adams.data.splitgenerator.generic.stratification;
 
 import adams.data.binning.Binnable;
-import com.github.fracpete.javautils.struct.Struct2;
+import adams.data.binning.operation.Stratify;
 
 import java.util.List;
 
 /**
- * Interface for classes that split data.
+ * Stratifies the data.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @see Stratify#stratify(List, int)
  */
-public interface Splitter {
+public class DefaultStratification
+  extends AbstractStratification {
+
+  private static final long serialVersionUID = 1656173611217395496L;
 
   /**
-   * Resets the scheme.
-   */
-  public void reset();
-
-  /**
-   * Splits the data into two.
+   * Returns a string describing the object.
    *
-   * @param data	the data to split
-   * @param <T>		the payload type
-   * @return		the split data
+   * @return 			a description suitable for displaying in the gui
    */
-  public <T> Struct2<List<Binnable<T>>,List<Binnable<T>>> split(List<Binnable<T>> data);
+  @Override
+  public String globalInfo() {
+    return "Stratifies the data.";
+  }
+
+  /**
+   * Stratifies the data.
+   *
+   * @param data	the data to stratify
+   * @param folds	the number of folds
+   * @param <T>		the payload type
+   * @return		the stratified data
+   */
+  @Override
+  protected <T> List<Binnable<T>> doStratify(List<Binnable<T>> data, int folds) {
+    return Stratify.stratify(data, folds);
+  }
 }

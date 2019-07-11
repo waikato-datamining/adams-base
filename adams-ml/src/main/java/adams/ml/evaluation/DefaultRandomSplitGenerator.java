@@ -17,19 +17,19 @@
  * DefaultRandomSplitGenerator.java
  * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
-package weka.classifiers;
+package adams.ml.evaluation;
 
 import adams.data.binning.Binnable;
-import adams.data.binning.BinnableInstances;
+import adams.data.binning.BinnableDataset;
+import adams.data.splitgenerator.RandomSplitGenerator;
 import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.data.splitgenerator.generic.randomization.PassThrough;
-import adams.data.splitgenerator.generic.randomsplit.RandomSplitGenerator;
 import adams.data.splitgenerator.generic.randomsplit.SplitPair;
 import adams.data.splitgenerator.generic.splitter.DefaultSplitter;
-import adams.flow.container.WekaTrainTestSetContainer;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.InstancesView;
+import adams.data.spreadsheet.DataRow;
+import adams.flow.container.TrainTestSetContainer;
+import adams.ml.data.Dataset;
+import adams.ml.data.DatasetView;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class DefaultRandomSplitGenerator
   extends AbstractSplitGenerator
-  implements weka.classifiers.RandomSplitGenerator {
+  implements RandomSplitGenerator<Dataset,TrainTestSetContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4813006743965500489L;
@@ -55,7 +55,7 @@ public class DefaultRandomSplitGenerator
   protected boolean m_Generated;
 
   /** the underlying scheme for generating the split. */
-  protected RandomSplitGenerator m_Generator;
+  protected adams.data.splitgenerator.generic.randomsplit.RandomSplitGenerator m_Generator;
 
   /**
    * Initializes the generator.
@@ -71,7 +71,7 @@ public class DefaultRandomSplitGenerator
    * @param seed	the seed value to use for randomization
    * @param percentage	the percentage of the training set (0-1)
    */
-  public DefaultRandomSplitGenerator(Instances data, long seed, double percentage) {
+  public DefaultRandomSplitGenerator(Dataset data, long seed, double percentage) {
     super();
     setData(data);
     setSeed(seed);
@@ -85,7 +85,7 @@ public class DefaultRandomSplitGenerator
    * @param data	the dataset to split
    * @param percentage	the percentage of the training set (0-1)
    */
-  public DefaultRandomSplitGenerator(Instances data, double percentage) {
+  public DefaultRandomSplitGenerator(Dataset data, double percentage) {
     super();
     setData(data);
     setSeed(-1L);
@@ -101,7 +101,7 @@ public class DefaultRandomSplitGenerator
    * @param percentage	the percentage of the training set (0-1)
    * @param preserveOrder 	whether to preserve the order
    */
-  public DefaultRandomSplitGenerator(Instances data, long seed, double percentage, boolean preserveOrder) {
+  public DefaultRandomSplitGenerator(Dataset data, long seed, double percentage, boolean preserveOrder) {
     super();
     setData(data);
     setSeed(seed);
@@ -214,7 +214,7 @@ public class DefaultRandomSplitGenerator
     if (m_Data == null)
       throw new IllegalStateException("No data available!");
 
-    m_Generator = new RandomSplitGenerator();
+    m_Generator = new adams.data.splitgenerator.generic.randomsplit.RandomSplitGenerator();
     if (canRandomize()) {
       DefaultRandomization rand = new DefaultRandomization();
       rand.setSeed(m_Seed);
@@ -249,37 +249,37 @@ public class DefaultRandomSplitGenerator
    * @return		the next result
    */
   @Override
-  protected WekaTrainTestSetContainer createNext() {
-    WekaTrainTestSetContainer		result;
-    List<Binnable<Instance>> 		binnedData;
-    SplitPair<Binnable<Instance>> 	splitPair;
-    Instances				trainSet;
-    Instances				testSet;
+  protected TrainTestSetContainer createNext() {
+    TrainTestSetContainer		result;
+    List<Binnable<DataRow>> 		binnedData;
+    SplitPair<Binnable<DataRow>> 	splitPair;
+    Dataset				trainSet;
+    Dataset				testSet;
     int[]				trainRows;
     int[]				testRows;
 
     m_Generated = true;
 
     try {
-      binnedData = BinnableInstances.toBinnableUsingIndex(m_Data);
+      binnedData = BinnableDataset.toBinnableUsingIndex(m_Data);
     }
     catch (Exception e) {
-      throw new IllegalStateException("Failed to create binnable Instances!", e);
+      throw new IllegalStateException("Failed to create binnable Dataset!", e);
     }
     splitPair = m_Generator.generate(binnedData);
 
     trainRows = splitPair.getTrain().getOriginalIndices().toArray();
     testRows  = splitPair.getTest().getOriginalIndices().toArray();
     if (m_UseViews) {
-      trainSet = new InstancesView(m_Data, trainRows);
-      testSet  = new InstancesView(m_Data, testRows);
+      trainSet = new DatasetView(m_Data, trainRows, null);
+      testSet  = new DatasetView(m_Data, testRows, null);
     }
     else {
-      trainSet = BinnableInstances.toInstances(splitPair.getTrain().getData());
-      testSet  = BinnableInstances.toInstances(splitPair.getTest().getData());
+      trainSet = BinnableDataset.toDataset(splitPair.getTrain().getData());
+      testSet  = BinnableDataset.toDataset(splitPair.getTest().getData());
     }
 
-    result = new WekaTrainTestSetContainer(
+    result = new TrainTestSetContainer(
       trainSet, testSet, m_Seed, null, null, trainRows, testRows);
 
     return result;
