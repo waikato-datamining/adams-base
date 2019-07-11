@@ -559,15 +559,10 @@ public class GroupedCrossValidationFoldGenerator
       throw new NoSuchElementException("No more folds available!");
 
     if (m_FoldPairs == null) {
-      m_FoldPairs = m_Generator.generate(m_BinnedGroups);
-
+      m_FoldPairs       = m_Generator.generate(m_BinnedGroups);
       m_OriginalIndices = new TIntArrayList();
-      for (FoldPair<Binnable<BinnableGroup<Instance>>> pair : m_FoldPairs) {
-	for (Binnable<BinnableGroup<Instance>> group: pair.getTest().getData()) {
-	  for (Binnable<Instance> item: group.getPayload().get())
-	    m_OriginalIndices.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
-	}
-      }
+      for (FoldPair<Binnable<BinnableGroup<Instance>>> pair : m_FoldPairs)
+        m_OriginalIndices.addAll(Subset.extractIndicesAndBinnable(pair.getTest()).value1);
     }
 
     foldPair = m_FoldPairs.get(m_CurrentFold - 1);
