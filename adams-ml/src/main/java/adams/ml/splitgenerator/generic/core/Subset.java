@@ -20,6 +20,10 @@
 
 package adams.ml.splitgenerator.generic.core;
 
+import adams.data.binning.Binnable;
+import adams.data.binning.BinnableGroup;
+import adams.data.binning.operation.Wrapping;
+import com.github.fracpete.javautils.struct.Struct2;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -70,5 +74,29 @@ public class Subset<T>
    */
   public TIntList getOriginalIndices() {
     return m_OriginalIndices;
+  }
+
+  /**
+   * Extracts row indices and binnable list from grouped subset.
+   *
+   * @param subset	the subset to process
+   * @return		the indices and list
+   */
+  public static <T> Struct2<TIntList,List<Binnable<T>>> extractIndicesAndBinnable(Subset<Binnable<BinnableGroup<T>>> subset) {
+    TIntList 				rows;
+    List<BinnableGroup<T>> 	grouped;
+    List<Binnable<T>> 		binned;
+
+    grouped = Wrapping.unwrap(subset.getData());
+    rows    = new TIntArrayList();
+    binned  = new ArrayList<>();
+    for (BinnableGroup<T> group: grouped) {
+      for (Binnable<T> item: group.get()) {
+	rows.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
+	binned.add(item);
+      }
+    }
+
+    return new Struct2<>(rows, binned);
   }
 }

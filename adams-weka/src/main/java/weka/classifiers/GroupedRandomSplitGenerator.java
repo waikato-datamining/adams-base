@@ -29,6 +29,7 @@ import adams.data.binning.operation.Wrapping;
 import adams.data.binning.operation.Wrapping.IndexedBinValueExtractor;
 import adams.data.weka.WekaAttributeIndex;
 import adams.flow.container.WekaTrainTestSetContainer;
+import adams.ml.splitgenerator.generic.core.Subset;
 import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.ml.splitgenerator.generic.randomization.PassThrough;
 import adams.ml.splitgenerator.generic.randomsplit.RandomSplitGenerator;
@@ -371,8 +372,8 @@ public class GroupedRandomSplitGenerator
       throw new IllegalStateException("Failed to create binnable Instances!", e);
     }
     splitGroups = m_Generator.generate(binnedGroups);
-    subsetTrain = BinnableInstances.extractIndicesAndBinnable(splitGroups.getTrain());
-    subsetTest  = BinnableInstances.extractIndicesAndBinnable(splitGroups.getTest());
+    subsetTrain = Subset.extractIndicesAndBinnable(splitGroups.getTrain());
+    subsetTest  = Subset.extractIndicesAndBinnable(splitGroups.getTest());
     trainRows   = subsetTrain.value1.toArray();
     testRows    = subsetTest.value1.toArray();
 

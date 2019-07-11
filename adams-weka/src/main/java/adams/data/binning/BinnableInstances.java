@@ -24,15 +24,10 @@ import adams.data.binning.operation.Grouping.GroupExtractor;
 import adams.data.binning.operation.Wrapping;
 import adams.data.binning.operation.Wrapping.BinValueExtractor;
 import adams.data.binning.operation.Wrapping.IndexedBinValueExtractor;
-import adams.ml.splitgenerator.generic.core.Subset;
-import com.github.fracpete.javautils.struct.Struct2;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instance;
 import weka.core.Instances;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -160,29 +155,5 @@ public class BinnableInstances {
     result.addAll(Wrapping.unwrap(list));
 
     return result;
-  }
-
-  /**
-   * Extracts row indices and binnable list from grouped subset.
-   *
-   * @param subset	the subset to process
-   * @return		the indices and list
-   */
-  public static Struct2<TIntList,List<Binnable<Instance>>> extractIndicesAndBinnable(Subset<Binnable<BinnableGroup<Instance>>> subset) {
-    TIntList 				rows;
-    List<BinnableGroup<Instance>> 	grouped;
-    List<Binnable<Instance>> 		binned;
-
-    grouped = Wrapping.unwrap(subset.getData());
-    rows    = new TIntArrayList();
-    binned  = new ArrayList<>();
-    for (BinnableGroup<Instance> group: grouped) {
-      for (Binnable<Instance> item: group.get()) {
-	rows.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
-	binned.add(item);
-      }
-    }
-
-    return new Struct2<>(rows, binned);
   }
 }

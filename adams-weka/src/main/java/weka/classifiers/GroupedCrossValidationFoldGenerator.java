@@ -30,6 +30,7 @@ import adams.data.binning.operation.Grouping;
 import adams.data.binning.operation.Wrapping;
 import adams.data.weka.WekaAttributeIndex;
 import adams.flow.container.WekaTrainTestSetContainer;
+import adams.ml.splitgenerator.generic.core.Subset;
 import adams.ml.splitgenerator.generic.crossvalidation.CrossValidationGenerator;
 import adams.ml.splitgenerator.generic.crossvalidation.FoldPair;
 import adams.ml.splitgenerator.generic.randomization.DefaultRandomization;
@@ -571,8 +572,8 @@ public class GroupedCrossValidationFoldGenerator
 
     foldPair = m_FoldPairs.get(m_CurrentFold - 1);
 
-    subsetTrain = BinnableInstances.extractIndicesAndBinnable(foldPair.getTrain());
-    subsetTest  = BinnableInstances.extractIndicesAndBinnable(foldPair.getTest());
+    subsetTrain = Subset.extractIndicesAndBinnable(foldPair.getTrain());
+    subsetTest  = Subset.extractIndicesAndBinnable(foldPair.getTest());
     trainRows   = subsetTrain.value1.toArray();
     testRows    = subsetTest.value1.toArray();
 
