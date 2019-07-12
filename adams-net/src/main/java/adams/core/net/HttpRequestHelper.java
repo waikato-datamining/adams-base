@@ -22,19 +22,28 @@ package adams.core.net;
 
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
+import adams.core.io.FileUtils;
 import adams.flow.container.HttpRequestResult;
 import gnu.trove.list.array.TByteArrayList;
+import org.apache.tika.mime.MediaType;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Random;
 
 /**
  * Helper class for http requests.
@@ -89,6 +98,95 @@ public class HttpRequestHelper {
     catch (IOException e) {
       result = new HttpRequestResult(conn.getResponseCode(), conn.getResponseMessage(), null);
     }
+    return result;
+  }
+
+  /**
+   * Uploads a file as part of an HTML form via POST (multipart/form-data).
+   *
+   * @param url		the URL to connect to
+   * @param form	the form data
+   * @param fileFormName the form name for the file
+   * @param file	the file to upload
+   * @return		the result from the request
+   * @throws Exception	if request failed
+   */
+  public static HttpRequestResult post(BaseURL url, BaseKeyValuePair[] form, String fileFormName, File file) throws Exception {
+    HttpRequestResult	result;
+    URL 		remote;
+    HttpURLConnection 	conn;
+    String 		boundary;
+    OutputStream 	os;
+    BufferedWriter 	writer;
+    MediaType 		mimeType;
+    FileInputStream 	fis;
+    int 		read;
+    byte[] 		buffer;
+    BufferedReader 	reader;
+    String 		line;
+    StringBuilder	response;
+
+    remote   = url.urlValue();
+    boundary = createBoundary();
+    mimeType = MimeTypeHelper.getMimeType(file);
+    response = new StringBuilder();
+    conn     = (HttpURLConnection) remote.openConnection();
+    conn.setDoOutput(true);
+    conn.setRequestMethod("POST");
+    conn.addRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+    os     = null;
+    writer = null;
+    fis    = null;
+    reader = null;
+    try {
+      os     = conn.getOutputStream();
+      writer = new BufferedWriter(new OutputStreamWriter(os));
+      writer.write("\n\n");
+
+      // form parameters
+      for (BaseKeyValuePair param : form) {
+	writer.write("--" + boundary + "\n");
+	writer.write("Content-Disposition: form-data; name=\"" + param.getPairKey() + "\"\n");
+	writer.write("\n");
+	writer.write(param.getPairValue());
+	writer.write("\n");
+	writer.write("\n");
+      }
+
+      // start part for file
+      writer.write("--" + boundary + "\n");
+      writer.write("Content-Disposition: form-data; name=\"" + fileFormName + "\"; filename=\"" + file + "\"\n");
+      writer.write("Content-Type: " + mimeType.toString() + "\n");
+      writer.write("\n");
+      writer.flush();
+
+      // file content
+      fis = new FileInputStream(file);
+      buffer = new byte[1024];
+      while ((read = fis.read(buffer)) != -1)
+	os.write(buffer, 0, read);
+      os.flush();
+
+      // finish
+      writer.write("\n--" + boundary + "--\n");
+      writer.flush();
+
+      os.close();
+      writer.close();
+
+      reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      while ((line = reader.readLine()) != null)
+	response.append(line).append("\n");
+    }
+    finally {
+      FileUtils.closeQuietly(writer);
+      FileUtils.closeQuietly(os);
+      FileUtils.closeQuietly(fis);
+      FileUtils.closeQuietly(reader);
+    }
+
+    result = new HttpRequestResult(200, "OK", response.toString());
     return result;
   }
 
@@ -179,6 +277,21 @@ public class HttpRequestHelper {
     catch (HttpStatusException e) {
       result = new HttpRequestResult(e.getStatusCode(), e.getMessage(), null);
     }
+    return result;
+  }
+
+  /**
+   * Creates a random boundary string.
+   *
+   * @return		the random boundary string
+   */
+  public static String createBoundary() {
+    String	result;
+    Random rand;
+
+    rand     = new Random();
+    result = Integer.toHexString(rand.nextInt()) + Integer.toHexString(rand.nextInt()) + Integer.toHexString(rand.nextInt());
+
     return result;
   }
 }

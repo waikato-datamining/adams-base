@@ -20,10 +20,11 @@
  */
 package adams.core.net;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.Writer;
-
+import adams.core.License;
+import adams.core.Utils;
+import adams.core.annotation.MixedCopyright;
+import adams.core.base.BasePassword;
+import adams.core.io.FileUtils;
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.smtp.AuthenticatingSMTPClient;
 import org.apache.commons.net.smtp.SMTPClient;
@@ -32,11 +33,9 @@ import org.apache.commons.net.smtp.SMTPSClient;
 import org.apache.commons.net.smtp.SimpleSMTPHeader;
 import org.apache.tika.mime.MediaType;
 
-import adams.core.License;
-import adams.core.Utils;
-import adams.core.annotation.MixedCopyright;
-import adams.core.base.BasePassword;
-import adams.core.io.FileUtils;
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 /**
  * Uses Apache commons-net {@link SMTPClient} or {@link SMTPSClient} for 
@@ -171,7 +170,7 @@ public class ApacheSendEmail
       header.addCC(email.getCC()[i].getValue());
 
     // create boundary string
-    boundary = EmailHelper.createBoundary();
+    boundary = HttpRequestHelper.createBoundary();
     header.addHeaderField("Content-Type", "multipart/mixed; boundary=" + boundary);
     
     // connect

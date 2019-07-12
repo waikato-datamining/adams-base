@@ -29,7 +29,6 @@ import adams.env.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * A helper class for emails.
@@ -275,22 +274,7 @@ public class EmailHelper {
     else
       return body + "\n" + SIGNATURE_SEPARATOR + "\n" + signature;
   }
-  
-  /**
-   * Creates a random boundary string.
-   * 
-   * @return		the random boundary string
-   */
-  public static String createBoundary() {
-    String	result;
-    Random	rand;
-    
-    rand     = new Random();
-    result = Integer.toHexString(rand.nextInt()) + Integer.toHexString(rand.nextInt()) + Integer.toHexString(rand.nextInt());
-    
-    return result;
-  }
-  
+
   /**
    * Breaks up the string into lines, using the specified hard line limit.
    * 

@@ -232,7 +232,7 @@ public class Email
     String[]		lines;
     byte[]		content;
     
-    boundary = EmailHelper.createBoundary();
+    boundary = HttpRequestHelper.createBoundary();
     list  = new ArrayList<String>();
     list.add("MIME-Version: 1.0");
     list.add("Sender: " + getFrom().strippedValue());
