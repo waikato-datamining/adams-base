@@ -262,7 +262,7 @@ public class Email
 	list.add("Content-Transfer-Encoding: base64");
 	list.add("");
 	content = FileUtils.loadFromBinaryFile(file);
-	lines   = EmailHelper.breakUp(InternetHelper.encodeBase64(content), 76);
+	lines   = HttpRequestHelper.breakUp(InternetHelper.encodeBase64(content), 76);
 	for (String line: lines)
 	  list.add(line);
       }

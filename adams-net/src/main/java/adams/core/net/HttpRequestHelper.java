@@ -43,6 +43,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -295,5 +297,41 @@ public class HttpRequestHelper {
     result = Integer.toHexString(rand.nextInt()) + Integer.toHexString(rand.nextInt()) + Integer.toHexString(rand.nextInt());
 
     return result;
+  }
+
+  /**
+   * Breaks up the string into lines, using the specified hard line limit.
+   *
+   * @param s		the string to break up
+   * @param columns	the hard line limt
+   * @return		the broken up string
+   */
+  public static String[] breakUp(String s, int columns) {
+    List<String> 	result;
+    int			i;
+    StringBuilder	current;
+    char		c;
+
+    result  = new ArrayList<>();
+    current = null;
+
+    if (columns < 1)
+      columns = 1;
+
+    for (i = 0; i < s.length(); i++) {
+      if (current == null)
+	current = new StringBuilder();
+      c = s.charAt(i);
+      current.append(c);
+      if (current.length() == columns) {
+	result.add(current.toString());
+	current = null;
+      }
+    }
+
+    if (current != null)
+      result.add(current.toString());
+
+    return result.toArray(new String[0]);
   }
 }

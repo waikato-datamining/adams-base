@@ -245,7 +245,7 @@ public class ApacheSendEmail
 	writer.write("Content-Transfer-Encoding: base64\n");
 	writer.write("\n");
 	content = FileUtils.loadFromBinaryFile(file);
-	lines   = EmailHelper.breakUp(InternetHelper.encodeBase64(content), 76);
+	lines   = HttpRequestHelper.breakUp(InternetHelper.encodeBase64(content), 76);
 	for (String line: lines)
 	  writer.write(line + "\n");
       }

@@ -27,9 +27,6 @@ import adams.core.option.OptionUtils;
 import adams.env.EmailDefinition;
 import adams.env.Environment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A helper class for emails.
  *
@@ -275,39 +272,4 @@ public class EmailHelper {
       return body + "\n" + SIGNATURE_SEPARATOR + "\n" + signature;
   }
 
-  /**
-   * Breaks up the string into lines, using the specified hard line limit.
-   * 
-   * @param s		the string to break up
-   * @param columns	the hard line limt
-   * @return		the broken up string
-   */
-  public static String[] breakUp(String s, int columns) {
-    List<String>	result;
-    int			i;
-    StringBuilder	current;
-    char		c;
-    
-    result  = new ArrayList<String>();
-    current = null;
-    
-    if (columns < 1)
-      columns = 1;
-    
-    for (i = 0; i < s.length(); i++) {
-      if (current == null)
-	current = new StringBuilder();
-      c = s.charAt(i);
-      current.append(c);
-      if (current.length() == columns) {
-	result.add(current.toString());
-	current = null;
-      }
-    }
-    
-    if (current != null)
-      result.add(current.toString());
-      
-    return result.toArray(new String[result.size()]);
-  }
 }
