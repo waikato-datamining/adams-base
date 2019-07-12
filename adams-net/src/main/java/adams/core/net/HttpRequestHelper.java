@@ -152,7 +152,7 @@ public class HttpRequestHelper {
 	writer.write("Content-Disposition: form-data; name=\"" + param.getPairKey() + "\"\n");
 	writer.write("\n");
 	writer.write(param.getPairValue());
-	writer.write("\n\n");
+	writer.write("\n");
       }
 
       // start part for file
