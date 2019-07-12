@@ -150,8 +150,7 @@ public class HttpRequestHelper {
 	writer.write("Content-Disposition: form-data; name=\"" + param.getPairKey() + "\"\n");
 	writer.write("\n");
 	writer.write(param.getPairValue());
-	writer.write("\n");
-	writer.write("\n");
+	writer.write("\n\n");
       }
 
       // start part for file
@@ -162,7 +161,7 @@ public class HttpRequestHelper {
       writer.flush();
 
       // file content
-      fis = new FileInputStream(file);
+      fis    = new FileInputStream(file.getAbsoluteFile());
       buffer = new byte[1024];
       while ((read = fis.read(buffer)) != -1)
 	os.write(buffer, 0, read);
@@ -176,8 +175,11 @@ public class HttpRequestHelper {
       writer.close();
 
       reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-      while ((line = reader.readLine()) != null)
-	response.append(line).append("\n");
+      while ((line = reader.readLine()) != null) {
+        if (response.length() > 0)
+          response.append("\n");
+	response.append(line);
+      }
     }
     finally {
       FileUtils.closeQuietly(writer);
