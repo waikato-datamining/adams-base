@@ -135,7 +135,7 @@ public class DefaultCrossValidationFoldGenerator
 
     m_OptionManager.add(
       "relation-name", "relationName",
-      PLACEHOLDER_ORIGINAL);
+      CrossValidationHelper.PLACEHOLDER_ORIGINAL);
 
     m_OptionManager.add(
       "randomize", "randomize",
@@ -294,10 +294,7 @@ public class DefaultCrossValidationFoldGenerator
    * 			displaying in the GUI or for listing the options.
    */
   public String relationNameTipText() {
-    return "The template for the relation name; available placeholders: "
-      + PLACEHOLDER_ORIGINAL + " for original, "
-      + PLACEHOLDER_TYPE + " for type (train/test), "
-      + PLACEHOLDER_CURRENTFOLD + " for current fold";
+    return CrossValidationHelper.relationNameTemplateTipText();
   }
 
   /**
@@ -320,47 +317,6 @@ public class DefaultCrossValidationFoldGenerator
   @Override
   protected boolean checkNext() {
     return (m_CurrentFold <= m_ActualNumFolds);
-  }
-
-  /**
-   * Generates a relation name for the current fold.
-   *
-   * @param train	whether train or test set
-   * @return		the relation name
-   */
-  protected String createRelationName(boolean train) {
-    StringBuilder	result;
-    String		name;
-    int			len;
-
-    result = new StringBuilder();
-    name   = m_RelationName;
-
-    while (name.length() > 0) {
-      if (name.startsWith(PLACEHOLDER_ORIGINAL)) {
-	len = 1;
-	result.append(m_Data.relationName());
-      }
-      else if (name.startsWith(PLACEHOLDER_TYPE)) {
-	len = 2;
-	if (train)
-	  result.append("train");
-	else
-	  result.append("test");
-      }
-      else if (name.startsWith(PLACEHOLDER_CURRENTFOLD)) {
-	len = 2;
-	result.append(Integer.toString(m_CurrentFold));
-      }
-      else {
-	len = 1;
-	result.append(name.charAt(0));
-      }
-
-      name = name.substring(len);
-    }
-
-    return result.toString();
   }
 
   /**
@@ -406,7 +362,7 @@ public class DefaultCrossValidationFoldGenerator
     }
 
     if ((m_RelationName == null) || m_RelationName.isEmpty())
-      m_RelationName = PLACEHOLDER_ORIGINAL;
+      m_RelationName = CrossValidationHelper.PLACEHOLDER_ORIGINAL;
   }
 
   /**
@@ -461,8 +417,8 @@ public class DefaultCrossValidationFoldGenerator
     }
 
     // rename datasets
-    train.setRelationName(createRelationName(true));
-    test.setRelationName(createRelationName(false));
+    train.setRelationName(CrossValidationHelper.createRelationName(m_Data.relationName(), m_RelationName, m_CurrentFold, true));
+    test.setRelationName(CrossValidationHelper.createRelationName(m_Data.relationName(), m_RelationName, m_CurrentFold, false));
 
     result = new WekaTrainTestSetContainer(
       train, test, m_Seed, m_CurrentFold, m_ActualNumFolds, trainRows, testRows);

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CrossValidationHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -36,6 +36,15 @@ import java.util.Random;
  * @version $Revision$
  */
 public class CrossValidationHelper {
+
+  /** the placeholder for the (original) relation name. */
+  public final static String PLACEHOLDER_ORIGINAL = "@";
+
+  /** the placeholder for "train" or "test" type. */
+  public final static String PLACEHOLDER_TYPE = "$T";
+
+  /** the placeholder for the current fold number. */
+  public final static String PLACEHOLDER_CURRENTFOLD = "$N";
 
   /**
    * Returns the indices from the original dataset for tracing the predictions
@@ -141,5 +150,62 @@ public class CrossValidationHelper {
       result.add(predictions.get(aligned[i]));
 
     return result;
+  }
+
+  /**
+   * Generates a relation name for the current fold.
+   *
+   * @param relation 	the original relation name
+   * @param template 	the template for the relation name
+   * @param fold 	the current fold
+   * @param train	whether train or test set
+   * @return		the relation name
+   */
+  public static String createRelationName(String relation, String template, int fold, boolean train) {
+    StringBuilder	result;
+    String		name;
+    int			len;
+
+    result = new StringBuilder();
+    name   = template;
+
+    while (name.length() > 0) {
+      if (name.startsWith(PLACEHOLDER_ORIGINAL)) {
+	len = 1;
+	result.append(relation);
+      }
+      else if (name.startsWith(PLACEHOLDER_TYPE)) {
+	len = 2;
+	if (train)
+	  result.append("train");
+	else
+	  result.append("test");
+      }
+      else if (name.startsWith(PLACEHOLDER_CURRENTFOLD)) {
+	len = 2;
+	result.append(Integer.toString(fold));
+      }
+      else {
+	len = 1;
+	result.append(name.charAt(0));
+      }
+
+      name = name.substring(len);
+    }
+
+    return result.toString();
+  }
+
+  /**
+   * Returns the tiptext for the relation name template.
+   *
+   * @return		the tiptext
+   * @see		#createRelationName(String, String, int, boolean)
+   */
+  public static String relationNameTemplateTipText() {
+    return "The template for the relation name; available placeholders: "
+      + CrossValidationHelper.PLACEHOLDER_ORIGINAL + " for original, "
+      + CrossValidationHelper.PLACEHOLDER_TYPE + " for type (train/test), "
+      + CrossValidationHelper.PLACEHOLDER_CURRENTFOLD + " for current fold";
   }
 }

@@ -36,15 +36,6 @@ public interface CrossValidationFoldGenerator
   adams.data.splitgenerator.CrossValidationFoldGenerator<Instances,WekaTrainTestSetContainer>,
   StratifiableSplitGenerator<Instances,WekaTrainTestSetContainer> {
 
-  /** the placeholder for the (original) relation name. */
-  public final static String PLACEHOLDER_ORIGINAL = "@";
-
-  /** the placeholder for "train" or "test" type. */
-  public final static String PLACEHOLDER_TYPE = "$T";
-
-  /** the placeholder for the current fold number. */
-  public final static String PLACEHOLDER_CURRENTFOLD = "$N";
-
   /**
    * Sets the number of folds to use.
    *
