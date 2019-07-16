@@ -30,7 +30,6 @@ import adams.data.splitgenerator.generic.splitter.DefaultSplitter;
 import adams.data.splitgenerator.generic.splitter.Splitter;
 import com.github.fracpete.javautils.struct.Struct2;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 
 import java.util.List;
 
@@ -131,16 +130,12 @@ public class RandomSplitGenerator
     split = m_Splitter.split(data);
     
     // train
-    trainIndices = new TIntArrayList();
-    for (Binnable<T> item: split.value1)
-      trainIndices.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
-    train = new Subset<>(split.value1, trainIndices);
+    trainIndices = Wrapping.getTmpIndices(split.value1);
+    train        = new Subset<>(split.value1, trainIndices);
     
     // test
-    testIndices = new TIntArrayList();
-    for (Binnable<T> item: split.value2)
-      testIndices.add((Integer) item.getMetaData(Wrapping.TMP_INDEX));
-    test = new Subset<>(split.value2, testIndices);
+    testIndices = Wrapping.getTmpIndices(split.value2);
+    test        = new Subset<>(split.value2, testIndices);
 
     // remove tmp index
     Wrapping.removeTmpIndex(data);

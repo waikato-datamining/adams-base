@@ -23,6 +23,8 @@ package adams.data.binning.operation;
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableGroup;
 import com.github.fracpete.javautils.enumerate.Enumerated;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -261,6 +263,23 @@ public class Wrapping {
       d.value.addMetaData(TMP_INDEX, d.index);
 
     return data;
+  }
+
+  /**
+   * Collects indices stored under {@link #TMP_INDEX}.
+   *
+   * @param data	the data to retrieve the indices from
+   * @return 		the indices
+   */
+  public static <T> TIntList getTmpIndices(List<Binnable<T>> data) {
+    TIntList  	result;
+    int 	i;
+
+    result = new TIntArrayList();
+    for (i = 0; i < data.size(); i++)
+      result.add((Integer) data.get(i).getMetaData(Wrapping.TMP_INDEX));
+
+    return result;
   }
 
   /**

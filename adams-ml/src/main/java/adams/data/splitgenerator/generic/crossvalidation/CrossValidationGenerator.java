@@ -29,7 +29,6 @@ import adams.data.splitgenerator.generic.randomization.Randomization;
 import adams.data.splitgenerator.generic.stratification.DefaultStratification;
 import adams.data.splitgenerator.generic.stratification.Stratification;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -270,18 +269,14 @@ public class CrossValidationGenerator
     // generate pairs
     for (i = 0; i < folds; i++) {
       // train
-      trainData = trainCV(data, folds, i, m_Randomization);
-      trainIndices = new TIntArrayList();
-      for (n = 0; n < trainData.size(); n++)
-	trainIndices.add((Integer) trainData.get(n).getMetaData(Wrapping.TMP_INDEX));
-      train = new Subset<>(trainData, trainIndices);
+      trainData    = trainCV(data, folds, i, m_Randomization);
+      trainIndices = Wrapping.getTmpIndices(trainData);
+      train        = new Subset<>(trainData, trainIndices);
 
       // test
-      testData = testCV(data, folds, i);
-      testIndices  = new TIntArrayList();
-      for (n = 0; n < testData.size(); n++)
-	testIndices.add((Integer) testData.get(n).getMetaData(Wrapping.TMP_INDEX));
-      test = new Subset<>(testData, testIndices);
+      testData    = testCV(data, folds, i);
+      testIndices = Wrapping.getTmpIndices(testData);
+      test        = new Subset<>(testData, testIndices);
 
       result.add(new FoldPair<>(i, train, test));
     }
