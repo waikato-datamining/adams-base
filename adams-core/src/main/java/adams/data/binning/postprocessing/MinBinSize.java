@@ -129,29 +129,31 @@ public class MinBinSize<T>
     if (!required)
       return bins;
 
+    // clone bins
     result = new ArrayList<>();
-    i      = 0;
-    while (i < bins.size()) {
-      if (bins.get(i).size() < m_MinSize) {
-        if (i == bins.size() - 1) {
-          if (result.size() > 0) {
-	    result.get(result.size() - 1).mergeWith(bins.get(i));
-	    i++;
-	  }
-          else {
-	    throw new IllegalStateException("Only single bin with too few objects, cannot merge!");
-	  }
-	}
-	else {
-          binNew = bins.get(i).getClone();
-          binNew.mergeWith(bins.get(i + 1));
-	  result.add(binNew);
-	  i += 2;
-	}
+    for (Bin<T> bin: bins)
+      result.add(bin.getClone());
+
+    i = 0;
+    while (i < result.size()) {
+      if (result.get(i).size() >= m_MinSize) {
+        i++;
+        continue;
+      }
+
+      if (i == result.size() - 1) {
+        if (result.size() > 1) {
+          result.get(i - 1).mergeWith(result.get(i));
+          result.remove(i);
+          i++;
+        }
+        else {
+          throw new IllegalStateException("Only single bin with too few objects, cannot merge!");
+        }
       }
       else {
-        result.add(bins.get(i).getClone());
-        i++;
+        result.get(i).mergeWith(result.get(i+1));
+        result.remove(i+1);
       }
     }
 
