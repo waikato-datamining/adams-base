@@ -90,7 +90,7 @@ public class GroupedCrossValidationFoldGenerator
   protected transient CrossValidationGenerator m_Generator;
 
   /** the collapsed data. */
-  protected transient List<Binnable<BinnableGroup<Instance>>> m_BinnedGroups;
+  protected transient List<Binnable<BinnableGroup<Instance>>> m_BinnableGroups;
 
   /** the temporary pairs. */
   protected transient List<FoldPair<Binnable<BinnableGroup<Instance>>>> m_FoldPairs;
@@ -183,7 +183,7 @@ public class GroupedCrossValidationFoldGenerator
     m_CurrentFold    = 1;
     m_ActualNumFolds = -1;
     m_FoldPairs      = null;
-    m_BinnedGroups   = null;
+    m_BinnableGroups = null;
   }
 
   /**
@@ -439,32 +439,32 @@ public class GroupedCrossValidationFoldGenerator
    */
   @Override
   protected void doInitializeIterator() {
-    List<Binnable<Instance>> 		binnedData;
-    List<BinnableGroup<Instance>> 	groupedData;
+    List<Binnable<Instance>> 		binnableInst;
+    List<BinnableGroup<Instance>> 	groupedInst;
 
     if (m_Data == null)
       throw new IllegalStateException("No data provided!");
 
     try {
       m_Index.setData(m_Data);
-      binnedData = BinnableInstances.toBinnableUsingIndex(m_Data);
-      binnedData = Wrapping.addTmpIndex(binnedData);  // adding the original index
-      groupedData = Grouping.groupAsList(binnedData, new StringAttributeGroupExtractor(m_Index.getIntIndex(), m_RegExp.getValue(), m_Group));
-      m_BinnedGroups = Wrapping.wrap(groupedData, new GroupedClassValueBinValueExtractor());  // wrap for CV generator
+      binnableInst     = BinnableInstances.toBinnableUsingIndex(m_Data);
+      binnableInst     = Wrapping.addTmpIndex(binnableInst);  // adding the original index
+      groupedInst      = Grouping.groupAsList(binnableInst, new StringAttributeGroupExtractor(m_Index.getIntIndex(), m_RegExp.getValue(), m_Group));
+      m_BinnableGroups = Wrapping.wrap(groupedInst, new GroupedClassValueBinValueExtractor());  // wrap for CV generator
     }
     catch (Exception e) {
       throw new IllegalStateException("Failed to create binnable Instances!", e);
     }
 
     if (m_NumFolds < 2)
-      m_ActualNumFolds = m_BinnedGroups.size();
+      m_ActualNumFolds = m_BinnableGroups.size();
     else
       m_ActualNumFolds = m_NumFolds;
 
-    if (m_BinnedGroups.size() < m_ActualNumFolds)
+    if (m_BinnableGroups.size() < m_ActualNumFolds)
       throw new IllegalArgumentException(
 	"Cannot have less data than (grouped) folds: "
-	  + "required=" + m_ActualNumFolds + ", provided=" + m_BinnedGroups.size());
+	  + "required=" + m_ActualNumFolds + ", provided=" + m_BinnableGroups.size());
 
     m_Generator = new CrossValidationGenerator();
     m_Generator.setNumFolds(m_NumFolds);
@@ -479,7 +479,7 @@ public class GroupedCrossValidationFoldGenerator
       rand.setLoggingLevel(m_LoggingLevel);
       m_Generator.setRandomization(rand);
     }
-    if (m_Stratify && m_Data.classAttribute().isNominal() && (m_ActualNumFolds < m_BinnedGroups.size())) {
+    if (m_Stratify && m_Data.classAttribute().isNominal() && (m_ActualNumFolds < m_BinnableGroups.size())) {
       DefaultStratification strat = new DefaultStratification();
       strat.setLoggingLevel(m_LoggingLevel);
       m_Generator.setStratification(strat);
@@ -515,7 +515,7 @@ public class GroupedCrossValidationFoldGenerator
       throw new NoSuchElementException("No more folds available!");
 
     if (m_FoldPairs == null) {
-      m_FoldPairs       = m_Generator.generate(m_BinnedGroups);
+      m_FoldPairs       = m_Generator.generate(m_BinnableGroups);
       m_OriginalIndices = new TIntArrayList();
       for (FoldPair<Binnable<BinnableGroup<Instance>>> pair : m_FoldPairs)
         m_OriginalIndices.addAll(Subset.extractIndicesAndBinnable(pair.getTest()).value1);

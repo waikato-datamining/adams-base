@@ -374,7 +374,7 @@ public class DefaultCrossValidationFoldGenerator
   @Override
   protected WekaTrainTestSetContainer createNext() {
     WekaTrainTestSetContainer		result;
-    List<Binnable<Instance>>  		binnedData;
+    List<Binnable<Instance>> 		binnableInst;
     FoldPair<Binnable<Instance>> 	foldPair;
     Instances 				train;
     Instances 				test;
@@ -388,13 +388,13 @@ public class DefaultCrossValidationFoldGenerator
     // generate pairs
     if (m_FoldPairs == null) {
       try {
-	binnedData = BinnableInstances.toBinnableUsingClass(m_Data);
+	binnableInst = BinnableInstances.toBinnableUsingClass(m_Data);
       }
       catch (Exception e) {
 	throw new IllegalStateException("Failed to create binnable Instances!", e);
       }
 
-      m_FoldPairs = m_Generator.generate(binnedData);
+      m_FoldPairs = m_Generator.generate(binnableInst);
 
       m_OriginalIndices = new TIntArrayList();
       for (FoldPair<Binnable<Instance>> pair : m_FoldPairs)
