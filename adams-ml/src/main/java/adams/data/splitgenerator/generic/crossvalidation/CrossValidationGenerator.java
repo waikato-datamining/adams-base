@@ -128,6 +128,61 @@ public class CrossValidationGenerator
   }
 
   /**
+   * Generates cross-validation fold pairs.
+   * Temporarily adds the original index to the Binnable meta-data, using {@link Wrapping#TMP_INDEX} as key.
+   *
+   * @param data	the data to generate the pairs from
+   * @param <T>		the payload type
+   * @return		the fold pairs
+   */
+  public <T> List<FoldPair<Binnable<T>>> generate(List<Binnable<T>> data) {
+    List<FoldPair<Binnable<T>>>	result;
+    List<Binnable<T>> 		trainData;
+    TIntList			trainIndices;
+    Subset<Binnable<T>> 	train;
+    List<Binnable<T>> 		testData;
+    TIntList			testIndices;
+    Subset<Binnable<T>> 	test;
+    int				i;
+    int				folds;
+
+    result = new ArrayList<>();
+
+    // actual number of folds
+    if (m_NumFolds < 2)
+      folds = data.size();
+    else
+      folds = m_NumFolds;
+
+    // add tmp index
+    data = Wrapping.addTmpIndex(data);
+
+    // randomize/stratify
+    data = m_Randomization.randomize(data);
+    data = m_Stratification.stratify(data, folds);
+
+    // generate pairs
+    for (i = 0; i < folds; i++) {
+      // train
+      trainData    = trainCV(data, folds, i, m_Randomization);
+      trainIndices = Wrapping.getTmpIndices(trainData);
+      train        = new Subset<>(trainData, trainIndices);
+
+      // test
+      testData    = testCV(data, folds, i);
+      testIndices = Wrapping.getTmpIndices(testData);
+      test        = new Subset<>(testData, testIndices);
+
+      result.add(new FoldPair<>(i, train, test));
+    }
+
+    // remove tmp index
+    Wrapping.removeTmpIndex(data);
+
+    return result;
+  }
+
+  /**
    * Creates the training set for one fold of a cross-validation on the dataset.
    *
    * @param numFolds the number of folds in the cross-validation. Must be
@@ -137,7 +192,7 @@ public class CrossValidationGenerator
    * @throws IllegalArgumentException if the number of folds is less than 2 or
    *           greater than the number of instances.
    */
-  protected <T> List<Binnable<T>> trainCV(List<Binnable<T>> data, int numFolds, int numFold) {
+  public static <T> List<Binnable<T>> trainCV(List<Binnable<T>> data, int numFolds, int numFold) {
     List<Binnable<T>> 	result;
     int 		numInstForFold;
     int 		first;
@@ -183,7 +238,7 @@ public class CrossValidationGenerator
    * @throws IllegalArgumentException if the number of folds is less than 2 or
    *           greater than the number of instances.
    */
-  protected <T> List<Binnable<T>> trainCV(List<Binnable<T>> data, int numFolds, int numFold, Randomization random) {
+  public static <T> List<Binnable<T>> trainCV(List<Binnable<T>> data, int numFolds, int numFold, Randomization random) {
     List<Binnable<T>> 	result;
 
     result = trainCV(data, numFolds, numFold);
@@ -201,7 +256,7 @@ public class CrossValidationGenerator
    * @throws IllegalArgumentException if the number of folds is less than 2 or
    *           greater than the number of instances.
    */
-  protected <T> List<Binnable<T>> testCV(List<Binnable<T>> data, int numFolds, int numFold) {
+  public static <T> List<Binnable<T>> testCV(List<Binnable<T>> data, int numFolds, int numFold) {
     List<Binnable<T>> 	result;
     int 		numInstForFold;
     int 		first;
@@ -227,62 +282,6 @@ public class CrossValidationGenerator
     // copyInstances(first, test, numInstForFold);
     for (i = 0; i < numInstForFold; i++)
       result.add(data.get(first + i));
-
-    return result;
-  }
-
-  /**
-   * Generates cross-validation fold pairs.
-   * Temporarily adds the original index to the Binnable meta-data, using {@link Wrapping#TMP_INDEX} as key.
-   *
-   * @param data	the data to generate the pairs from
-   * @param <T>		the payload type
-   * @return		the fold pairs
-   */
-  public <T> List<FoldPair<Binnable<T>>> generate(List<Binnable<T>> data) {
-    List<FoldPair<Binnable<T>>>	result;
-    List<Binnable<T>> 		trainData;
-    TIntList			trainIndices;
-    Subset<Binnable<T>> 	train;
-    List<Binnable<T>> 		testData;
-    TIntList			testIndices;
-    Subset<Binnable<T>> 	test;
-    int				i;
-    int				n;
-    int				folds;
-
-    result = new ArrayList<>();
-
-    // actual number of folds
-    if (m_NumFolds < 2)
-      folds = data.size();
-    else
-      folds = m_NumFolds;
-
-    // add tmp index
-    data = Wrapping.addTmpIndex(data);
-
-    // randomize/stratify
-    data = m_Randomization.randomize(data);
-    data = m_Stratification.stratify(data, folds);
-
-    // generate pairs
-    for (i = 0; i < folds; i++) {
-      // train
-      trainData    = trainCV(data, folds, i, m_Randomization);
-      trainIndices = Wrapping.getTmpIndices(trainData);
-      train        = new Subset<>(trainData, trainIndices);
-
-      // test
-      testData    = testCV(data, folds, i);
-      testIndices = Wrapping.getTmpIndices(testData);
-      test        = new Subset<>(testData, testIndices);
-
-      result.add(new FoldPair<>(i, train, test));
-    }
-
-    // remove tmp index
-    Wrapping.removeTmpIndex(data);
 
     return result;
   }
