@@ -77,8 +77,8 @@ public class DefaultHelpGenerator
     result = new StringBuilder();
 
     try {
-      obj = cls.newInstance();
       try {
+	obj  = cls.newInstance();
         meth = cls.getMethod("globalInfo");
         info = (String) meth.invoke(obj);
 	result.append("DESCRIPTION\n");
@@ -131,7 +131,7 @@ public class DefaultHelpGenerator
     }
     catch (Exception ex) {
       ConsolePanel.getSingleton().append(
-	Level.SEVERE, getClass().getName() + ": Failed to instantiate class: " + cls.getName(), ex);
+	Level.SEVERE, getClass().getName() + ": Failed to generate help: " + cls.getName(), ex);
       return null;
     }
 
