@@ -283,6 +283,18 @@ public class HelpFrame
   /**
    * Shows the help in the frame.
    *
+   * @param obj		the object to generate the help for
+   */
+  public static void showHelp(Object obj) {
+    HelpContainer	cont;
+
+    cont = AbstractHelpGenerator.generateHelp(obj);
+    showHelp(obj.getClass().getName(), cont.getHelp(), cont.isHtml());
+  }
+
+  /**
+   * Shows the help in the frame.
+   *
    * @param cls		the class identifying the help screen
    * @param help	the help to display
    * @param html	true if to display as HTML

@@ -593,7 +593,7 @@ public class PropertySheetPanel extends BasePanel
    */
   protected void openHelpDialog() {
     initHelp();
-    HelpFrame.showHelp(getTarget().getClass());
+    HelpFrame.showHelp(getTarget());
   }
 
   /**

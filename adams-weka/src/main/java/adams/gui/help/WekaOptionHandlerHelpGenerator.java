@@ -15,7 +15,7 @@
 
 /*
  * WekaOptionHandlerHelpGenerator.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
@@ -140,8 +140,30 @@ public class WekaOptionHandlerHelpGenerator
    */
   @Override
   public String generate(Class cls) {
-    StringBuilder 	result;
     Object		obj;
+
+    try {
+      obj = cls.newInstance();
+    }
+    catch (Exception ex) {
+      ConsolePanel.getSingleton().append(
+	Level.SEVERE, getClass().getName() + ": Failed to instantiate class: " + cls.getName(), ex);
+      return null;
+    }
+
+    return generate(obj);
+  }
+
+  /**
+   * Generates and returns the help for the specified object.
+   *
+   * @param obj		the object to generate the help for
+   * @return		the help, null if failed to produce
+   */
+  @Override
+  public String generate(Object obj) {
+    StringBuilder 	result;
+    Class		cls;
     BeanInfo 		bi;
     MethodDescriptor[] 	methods;
     Object[] 		args;
@@ -154,15 +176,7 @@ public class WekaOptionHandlerHelpGenerator
     String 		globalInfo;
 
     result = null;
-
-    try {
-      obj = cls.newInstance();
-    }
-    catch (Exception ex) {
-      ConsolePanel.getSingleton().append(
-	Level.SEVERE, getClass().getName() + ": Failed to instantiate class: " + cls.getName(), ex);
-      return null;
-    }
+    cls    = obj.getClass();
 
     // get methods
     try {

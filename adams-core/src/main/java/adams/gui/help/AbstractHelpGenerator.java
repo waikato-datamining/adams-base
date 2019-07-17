@@ -15,7 +15,7 @@
 
 /*
  * AbstractHelpGenerator.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
@@ -46,6 +46,16 @@ public abstract class AbstractHelpGenerator {
   public abstract boolean handles(Class cls);
 
   /**
+   * Returns whether this object is handled by this generator.
+   *
+   * @param obj		the object to check
+   * @return		true if handled
+   */
+  public boolean handles(Object obj) {
+    return (obj != null) && (handles(obj.getClass())) ;
+  }
+
+  /**
    * Returns whether the generated help is HTML or plain text.
    *
    * @param cls		the class to generate the help for
@@ -54,12 +64,30 @@ public abstract class AbstractHelpGenerator {
   public abstract boolean isHtml(Class cls);
 
   /**
+   * Returns whether the generated help is HTML or plain text.
+   *
+   * @param obj		the object to generate the help for
+   * @return		true if HTML
+   */
+  public boolean isHtml(Object obj) {
+    return (obj != null) && isHtml(obj.getClass());
+  }
+
+  /**
    * Generates and returns the help for the specified class.
    *
    * @param cls		the class to generate the help for
    * @return		the help, null if failed to produce
    */
   public abstract String generate(Class cls);
+
+  /**
+   * Generates and returns the help for the specified object.
+   *
+   * @param obj		the object to generate the help for
+   * @return		the help, null if failed to produce
+   */
+  public abstract String generate(Object obj);
 
   /**
    * For initializing the help generators, if necessary.
@@ -129,6 +157,31 @@ public abstract class AbstractHelpGenerator {
     }
     help = generator.generate(cls);
     html = generator.isHtml(cls);
+    return new HelpContainer(help, html);
+  }
+
+  /**
+   * Generates help for the specified object.
+   *
+   * @param obj		the object to generate the help for
+   * @return		the help container
+   */
+  public static synchronized HelpContainer generateHelp(Object obj) {
+    String 			help;
+    boolean 			html;
+    AbstractHelpGenerator	generator;
+
+    initialize();
+
+    generator = new DefaultHelpGenerator();
+    for (AbstractHelpGenerator gen: m_Generators) {
+      if (gen.handles(obj)) {
+	generator = gen;
+	break;
+      }
+    }
+    help = generator.generate(obj);
+    html = generator.isHtml(obj);
     return new HelpContainer(help, html);
   }
 }

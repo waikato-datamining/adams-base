@@ -15,7 +15,7 @@
 
 /*
  * DefaultHelpGenerator.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
@@ -136,5 +136,16 @@ public class DefaultHelpGenerator
     }
 
     return result.toString().trim();
+  }
+
+  /**
+   * Generates and returns the help for the specified object.
+   *
+   * @param obj		the object to generate the help for
+   * @return		the help, null if failed to produce
+   */
+  @Override
+  public String generate(Object obj) {
+    return generate(obj.getClass());
   }
 }

@@ -15,11 +15,12 @@
 
 /*
  * AdamsOptionHandlerHelpGenerator.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
 
+import adams.core.Utils;
 import adams.core.option.HtmlHelpProducer;
 import adams.core.option.OptionHandler;
 import adams.gui.core.ConsolePanel;
@@ -65,18 +66,35 @@ public class AdamsOptionHandlerHelpGenerator
    */
   @Override
   public String generate(Class cls) {
+    try {
+      return generate(cls.newInstance());
+    }
+    catch (Exception ex) {
+      ConsolePanel.getSingleton().append(
+	Level.SEVERE, getClass().getName() + ": Failed to instantiate class: " + cls.getName(), ex);
+    }
+
+    return null;
+  }
+
+  /**
+   * Generates and returns the help for the specified object.
+   *
+   * @param obj		the object to generate the help for
+   * @return		the help, null if failed to produce
+   */
+  @Override
+  public String generate(Object obj) {
     HtmlHelpProducer 	producer;
-    Object		obj;
 
     producer = new HtmlHelpProducer();
     try {
-      obj = cls.newInstance();
       producer.produce((OptionHandler) obj);
       return producer.toString();
     }
     catch (Exception ex) {
       ConsolePanel.getSingleton().append(
-	Level.SEVERE, getClass().getName() + ": Failed to instantiate class: " + cls.getName(), ex);
+	Level.SEVERE, getClass().getName() + ": Failed to generate help: " + Utils.classToString(obj), ex);
     }
 
     return null;
