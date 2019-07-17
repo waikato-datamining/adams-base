@@ -21,9 +21,26 @@ package adams.data.statistics;
 
 /**
  <!-- globalinfo-start -->
+ * Normalizes the array(s) to the specified lower and upper bound.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-lower &lt;double&gt; (property: lower)
+ * &nbsp;&nbsp;&nbsp;The lower bound to use.
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * </pre>
+ *
+ * <pre>-upper &lt;double&gt; (property: upper)
+ * &nbsp;&nbsp;&nbsp;The upper bound to use.
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
