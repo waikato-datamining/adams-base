@@ -15,7 +15,7 @@
 
 /*
  * HelpHistoryPanel.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.help;
 
@@ -43,7 +43,6 @@ import java.util.Hashtable;
  * A history panel that keeps track of named help containers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HelpHistoryPanel
   extends AbstractNamedHistoryPanel<HelpContainer>
@@ -56,7 +55,6 @@ public class HelpHistoryPanel
    * A specialized frame class for displaying a StringBuilder in a BaseTextArea.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class SingleHelpFrame
     extends AbstractHistoryEntryFrame<HelpContainer> {
@@ -119,6 +117,12 @@ public class HelpHistoryPanel
   /** whether to position the caret at beginning instead of end. */
   protected boolean m_CaretAtStart;
 
+  /** the text filter. */
+  protected ExtensionFileFilter m_FilterText;
+
+  /** the html filter. */
+  protected ExtensionFileFilter m_FilterHtml;
+
   /**
    * Initializes the members.
    */
@@ -129,6 +133,8 @@ public class HelpHistoryPanel
     m_Frames       = new Hashtable<>();
     m_Text         = null;
     m_CaretAtStart = false;
+    m_FilterHtml   = new ExtensionFileFilter("HTML file", "html");
+    m_FilterText   = new ExtensionFileFilter("Text file", "txt");
   }
 
   /**
@@ -137,8 +143,8 @@ public class HelpHistoryPanel
   protected BaseFileChooser getFileChooser() {
     if (m_FileChooser == null) {
       m_FileChooser = new BaseFileChooser();
-      m_FileChooser.addChoosableFileFilter(new ExtensionFileFilter("Text file", "txt"));
-      m_FileChooser.addChoosableFileFilter(new ExtensionFileFilter("HTML file", "html"));
+      m_FileChooser.addChoosableFileFilter(m_FilterHtml);
+      m_FileChooser.addChoosableFileFilter(m_FilterText);
       m_FileChooser.setAcceptAllFileFilterUsed(true);
       m_FileChooser.setAutoAppendExtension(true);
     }
@@ -305,11 +311,16 @@ public class HelpHistoryPanel
    */
   protected void saveEntry(String name) {
     int			retVal;
+    HelpContainer	cont;
     String		filename;
     String 		msg;
+    ExtensionFileFilter	filter;
 
-    filename = name;
+    cont     = getEntry(name);
+    filter   = cont.isHtml() ? m_FilterHtml : m_FilterText;
+    filename = name + "." + filter.getExtensions()[0];
     filename = FileUtils.createFilename(filename, "");
+    getFileChooser().setFileFilter(filter);
     getFileChooser().setSelectedFile(new File(filename));
     retVal   = getFileChooser().showSaveDialog(this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
