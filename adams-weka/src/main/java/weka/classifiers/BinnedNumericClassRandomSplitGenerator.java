@@ -232,6 +232,21 @@ public class BinnedNumericClassRandomSplitGenerator
   }
 
   /**
+   * Sets the original data.
+   *
+   * @param value	the data
+   */
+  public void setData(Instances value) {
+    super.setData(value);
+    if (m_Data != null) {
+      if (m_Data.classIndex() == -1)
+        throw new IllegalArgumentException("No class attribute set!");
+      if (!m_Data.classAttribute().isNumeric())
+        throw new IllegalArgumentException("Class attribute is not numeric!");
+    }
+  }
+
+  /**
    * Returns whether randomization is enabled.
    *
    * @return		true if to randomize
@@ -273,7 +288,7 @@ public class BinnedNumericClassRandomSplitGenerator
     WekaTrainTestSetContainer		result;
     List<Binnable<Instance>> 		binnableInst;
     List<Bin<Instance>> 		binInst;
-    MinBinSize<Instance>		minBinSize;
+    MinBinSize				minBinSize;
     Instances				trainSet;
     Instances				testSet;
     int[] 				trainRows;
@@ -307,7 +322,7 @@ public class BinnedNumericClassRandomSplitGenerator
       getLogger().info("Bins: " + Utils.arrayToString(Bin.binSizes(binInst)));
 
     // at least two instances in each bin
-    minBinSize = new MinBinSize<>();
+    minBinSize = new MinBinSize();
     minBinSize.setMinSize(2);
     binInst = minBinSize.postProcessBins(binInst);
     if (isLoggingEnabled())
