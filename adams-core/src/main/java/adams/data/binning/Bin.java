@@ -24,8 +24,6 @@ import adams.core.CloneHandler;
 import adams.core.Mergeable;
 import adams.core.Utils;
 import adams.core.base.BaseInterval;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -242,19 +240,4 @@ public class Bin<T>
       return m_Index + ": start=" + Utils.doubleToString(m_Start, decimals) + ", end=" + Utils.doubleToString(m_End, decimals) + ", interval=" + m_Interval + ", #objects=" + m_Objects.size();
   }
 
-  /**
-   * Returns the size of the bins.
-   *
-   * @param bins	the bins to obtain the size from
-   * @return		the sizes
-   */
-  public static <T> int[] binSizes(List<Bin<T>> bins) {
-    TIntList	result;
-
-    result = new TIntArrayList();
-    for (Bin<T> bin: bins)
-      result.add(bin.size());
-
-    return result.toArray();
-  }
 }
