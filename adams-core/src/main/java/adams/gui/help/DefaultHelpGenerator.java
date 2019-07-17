@@ -54,7 +54,7 @@ public class DefaultHelpGenerator
    */
   @Override
   public boolean isHtml(Class cls) {
-    return false;
+    return true;
   }
 
   /**
@@ -75,13 +75,15 @@ public class DefaultHelpGenerator
     Class<?>[]		classes;
 
     result = new StringBuilder();
+    result.append("<html>\n");
+    result.append("<body>\n");
 
     try {
       try {
 	obj  = cls.newInstance();
         meth = cls.getMethod("globalInfo");
         info = (String) meth.invoke(obj);
-	result.append("DESCRIPTION\n");
+	result.append("<h3>DESCRIPTION</h3>\n");
 	result.append(info);
 	result.append("\n");
       }
@@ -92,41 +94,53 @@ public class DefaultHelpGenerator
       constructors = cls.getConstructors();
       if (constructors.length > 0) {
 	result.append("\n");
-	result.append("CONSTRUCTORS\n");
+	result.append("<h3>CONSTRUCTORS</h3>\n");
+	result.append("<ul>\n");
 	for (Constructor cons : constructors) {
+	  result.append("<li>");
 	  result.append(cons.toGenericString());
-	  result.append("\n");
+	  result.append("</li>\n");
 	}
+	result.append("</ul>\n");
       }
 
       methods = cls.getDeclaredMethods();
       if (methods.length > 0) {
 	result.append("\n");
-	result.append("METHODS\n");
+	result.append("<h3>METHODS</h3>\n");
+	result.append("<ul>\n");
 	for (Method method : methods) {
+	  result.append("<li>");
 	  result.append(method.toGenericString());
-	  result.append("\n");
+	  result.append("</li>\n");
 	}
+	result.append("</ul>\n");
       }
 
       fields = cls.getDeclaredFields();
       if (fields.length > 0) {
 	result.append("\n");
-	result.append("FIELDS\n");
+	result.append("<h3>FIELDS</h3>\n");
+	result.append("<ul>\n");
 	for (Field field : fields) {
+	  result.append("<li>");
 	  result.append(field.toGenericString());
-	  result.append("\n");
+	  result.append("</li>\n");
 	}
+	result.append("</ul>\n");
       }
 
       classes = cls.getDeclaredClasses();
       if (classes.length > 0) {
 	result.append("\n");
-	result.append("CLASSES\n");
+	result.append("<h3>CLASSES</h3>\n");
+	result.append("<ul>\n");
 	for (Class c : classes) {
+	  result.append("<li>");
 	  result.append(c.toGenericString());
-	  result.append("\n");
+	  result.append("</li>\n");
 	}
+	result.append("</ul>\n");
       }
     }
     catch (Exception ex) {
@@ -134,6 +148,9 @@ public class DefaultHelpGenerator
 	Level.SEVERE, getClass().getName() + ": Failed to generate help: " + cls.getName(), ex);
       return null;
     }
+
+    result.append("</body>\n");
+    result.append("</html>\n");
 
     return result.toString().trim();
   }
