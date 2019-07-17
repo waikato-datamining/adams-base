@@ -25,6 +25,7 @@ import adams.data.binning.Binnable;
 import adams.data.binning.BinnableInstances;
 import adams.data.binning.algorithm.AbstractBinningAlgorithm;
 import adams.data.binning.algorithm.ManualBinning;
+import adams.data.binning.operation.Bins;
 import adams.data.binning.operation.Randomize;
 import adams.data.binning.operation.Wrapping;
 import adams.data.binning.postprocessing.MinBinSize;
@@ -319,14 +320,14 @@ public class BinnedNumericClassRandomSplitGenerator
 
     binInst = m_Algorithm.generateBins(binnableInst);
     if (isLoggingEnabled())
-      getLogger().info("Bins: " + Utils.arrayToString(Bin.binSizes(binInst)));
+      getLogger().info("Bins: " + Utils.arrayToString(Bins.binSizes(binInst)));
 
     // at least two instances in each bin
     minBinSize = new MinBinSize();
     minBinSize.setMinSize(2);
     binInst = minBinSize.postProcessBins(binInst);
     if (isLoggingEnabled())
-      getLogger().info("Bins after postprocessing: " + Utils.arrayToString(Bin.binSizes(binInst)));
+      getLogger().info("Bins after postprocessing: " + Utils.arrayToString(Bins.binSizes(binInst)));
 
     // calculate max instances to retrieve from each bin (for training data)
     maxTotal  = (int) Math.round(m_Data.size() * m_Percentage);
