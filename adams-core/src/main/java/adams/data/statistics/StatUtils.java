@@ -15,7 +15,7 @@
 
 /*
  * StatUtils.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
@@ -34,7 +34,6 @@ import java.util.Random;
  * A statistical helper class.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StatUtils {
 
@@ -51,9 +50,12 @@ public class StatUtils {
     Byte[]	result;
     int		i;
 
+    if (array == null)
+      return null;
+
     result = new Byte[array.length];
     for (i = 0; i < array.length; i++)
-      result[i] = new Byte(array[i]);
+      result[i] = array[i];
 
     return result;
   }
@@ -68,9 +70,12 @@ public class StatUtils {
     Short[]	result;
     int		i;
 
+    if (array == null)
+      return null;
+
     result = new Short[array.length];
     for (i = 0; i < array.length; i++)
-      result[i] = new Short(array[i]);
+      result[i] = array[i];
 
     return result;
   }
@@ -85,9 +90,12 @@ public class StatUtils {
     Integer[]	result;
     int		i;
 
+    if (array == null)
+      return null;
+
     result = new Integer[array.length];
     for (i = 0; i < array.length; i++)
-      result[i] = new Integer(array[i]);
+      result[i] = array[i];
 
     return result;
   }
@@ -102,9 +110,12 @@ public class StatUtils {
     Long[]	result;
     int		i;
 
+    if (array == null)
+      return null;
+
     result = new Long[array.length];
     for (i = 0; i < array.length; i++)
-      result[i] = new Long(array[i]);
+      result[i] = array[i];
 
     return result;
   }
@@ -119,9 +130,12 @@ public class StatUtils {
     Float[]	result;
     int		i;
 
+    if (array == null)
+      return null;
+
     result = new Float[array.length];
     for (i = 0; i < array.length; i++)
-      result[i] = new Float(array[i]);
+      result[i] = array[i];
 
     return result;
   }
@@ -136,9 +150,12 @@ public class StatUtils {
     Double[]	result;
     int		i;
 
+    if (array == null)
+      return null;
+
     result = new Double[array.length];
     for (i = 0; i < array.length; i++)
-      result[i] = new Double(array[i]);
+      result[i] = array[i];
 
     return result;
   }
@@ -152,6 +169,9 @@ public class StatUtils {
   public static byte[] toByteArray(Number[] array) {
     byte[]	result;
     int		i;
+
+    if (array == null)
+      return null;
 
     result = new byte[array.length];
     for (i = 0; i < array.length; i++)
@@ -170,6 +190,9 @@ public class StatUtils {
     short[]	result;
     int		i;
 
+    if (array == null)
+      return null;
+
     result = new short[array.length];
     for (i = 0; i < array.length; i++)
       result[i] = array[i].shortValue();
@@ -186,6 +209,9 @@ public class StatUtils {
   public static int[] toIntArray(Number[] array) {
     int[]	result;
     int		i;
+
+    if (array == null)
+      return null;
 
     result = new int[array.length];
     for (i = 0; i < array.length; i++)
@@ -204,6 +230,9 @@ public class StatUtils {
     long[]	result;
     int		i;
 
+    if (array == null)
+      return null;
+
     result = new long[array.length];
     for (i = 0; i < array.length; i++)
       result[i] = array[i].longValue();
@@ -221,6 +250,9 @@ public class StatUtils {
     float[]	result;
     int		i;
 
+    if (array == null)
+      return null;
+
     result = new float[array.length];
     for (i = 0; i < array.length; i++)
       result[i] = array[i].floatValue();
@@ -237,6 +269,9 @@ public class StatUtils {
   public static double[] toDoubleArray(Number[] array) {
     double[]	result;
     int		i;
+
+    if (array == null)
+      return null;
 
     result = new double[array.length];
     for (i = 0; i < array.length; i++)
@@ -736,6 +771,59 @@ public class StatUtils {
   }
 
   /**
+   * Normalizes the given array (returns a copy), to have its values range from lower to upper bound.
+   *
+   * @param array	the array to work on
+   * @param lower 	the lower bound
+   * @param upper 	the upper bound
+   * @return		the normalized array, null if failed to determine min/max or range is zero
+   */
+  public static Double[] normalizeRange(Number[] array, double lower, double upper) {
+    Double[]	result;
+    Number	min;
+    Number	max;
+    double	range;
+    int		i;
+
+    result = new Double[array.length];
+    min    = min(array);
+    max    = max(array);
+    if ((min == null) || (max == null))
+      return null;
+    range  = (max.doubleValue() - min.doubleValue());
+    if (range == 0.0)
+      return null;
+    for (i = 0; i < array.length; i++)
+      result[i] = (array[i].doubleValue() - min.doubleValue()) / range * (upper - lower) + lower;
+
+    return result;
+  }
+
+  /**
+   * Normalizes the given array (returns a copy), to have its values range from lower to upper bound.
+   *
+   * @param array	the array to work on
+   * @param lower 	the lower bound
+   * @param upper 	the upper bound
+   * @return		the normalized array, null if failed to determine min/max or range is zero
+   */
+  public static double[] normalizeRange(int[] array, double lower, double upper) {
+    return toDoubleArray(normalizeRange(toNumberArray(array), lower, upper));
+  }
+
+  /**
+   * Normalizes the given array (returns a copy), to have its values range from lower to upper bound.
+   *
+   * @param array	the array to work on
+   * @param lower 	the lower bound
+   * @param upper 	the upper bound
+   * @return		the normalized array, null if failed to determine min/max or range is zero
+   */
+  public static double[] normalizeRange(double[] array, double lower, double upper) {
+    return toDoubleArray(normalizeRange(toNumberArray(array), lower, upper));
+  }
+
+  /**
    * Standardizes the given array (returns a copy). Returns null if the
    * standard deviation is zero and data cannot be standardized.
    *
@@ -999,7 +1087,7 @@ public class StatUtils {
    * @return		the index
    */
   public static int findFirst(int[] array, int toFind) {
-    return findFirst(toNumberArray(array), new Integer(toFind));
+    return findFirst(toNumberArray(array), toFind);
   }
 
   /**
@@ -1011,7 +1099,7 @@ public class StatUtils {
    * @return		the index
    */
   public static int findFirst(double[] array, double toFind) {
-    return findFirst(toNumberArray(array), new Double(toFind));
+    return findFirst(toNumberArray(array), toFind);
   }
 
   /**
@@ -1051,7 +1139,7 @@ public class StatUtils {
    * @return		the index
    */
   public static int findClosest(int[] array, int toFind) {
-    return findClosest(toNumberArray(array), new Integer(toFind));
+    return findClosest(toNumberArray(array), toFind);
   }
 
   /**
@@ -1063,7 +1151,7 @@ public class StatUtils {
    * @return		the index
    */
   public static int findClosest(double[] array, double toFind) {
-    return findClosest(toNumberArray(array), new Double(toFind));
+    return findClosest(toNumberArray(array), toFind);
   }
 
   /**
@@ -1953,7 +2041,7 @@ public class StatUtils {
     for (i = 0; i < matrix.length; i++) {
       result[i] = new Byte[matrix[i].length];
       for (n = 0; n < matrix[i].length; n++)
-	result[i][n] = new Byte(matrix[i][n]);
+	result[i][n] = matrix[i][n];
     }
 
     return result;
@@ -1974,7 +2062,7 @@ public class StatUtils {
     for (i = 0; i < matrix.length; i++) {
       result[i] = new Short[matrix[i].length];
       for (n = 0; n < matrix[i].length; n++)
-	result[i][n] = new Short(matrix[i][n]);
+	result[i][n] = matrix[i][n];
     }
 
     return result;
@@ -1995,7 +2083,7 @@ public class StatUtils {
     for (i = 0; i < matrix.length; i++) {
       result[i] = new Integer[matrix[i].length];
       for (n = 0; n < matrix[i].length; n++)
-	result[i][n] = new Integer(matrix[i][n]);
+	result[i][n] = matrix[i][n];
     }
 
     return result;
@@ -2016,7 +2104,7 @@ public class StatUtils {
     for (i = 0; i < matrix.length; i++) {
       result[i] = new Long[matrix[i].length];
       for (n = 0; n < matrix[i].length; n++)
-	result[i][n] = new Long(matrix[i][n]);
+	result[i][n] = matrix[i][n];
     }
 
     return result;
@@ -2037,7 +2125,7 @@ public class StatUtils {
     for (i = 0; i < matrix.length; i++) {
       result[i] = new Float[matrix[i].length];
       for (n = 0; n < matrix[i].length; n++)
-	result[i][n] = new Float(matrix[i][n]);
+	result[i][n] = matrix[i][n];
     }
 
     return result;
@@ -2058,7 +2146,7 @@ public class StatUtils {
     for (i = 0; i < matrix.length; i++) {
       result[i] = new Double[matrix[i].length];
       for (n = 0; n < matrix[i].length; n++)
-	result[i][n] = new Double(matrix[i][n]);
+	result[i][n] = matrix[i][n];
     }
 
     return result;

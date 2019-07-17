@@ -15,7 +15,7 @@
 
 /*
  * StatUtilsTest.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
@@ -30,7 +30,6 @@ import junit.framework.TestSuite;
  * java adams.data.statistics.StatUtilsTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StatUtilsTest
   extends AdamsTestCase {
@@ -76,6 +75,18 @@ public class StatUtilsTest
     assertEqualsArrays(new float[]{1.1f, 2.2f, 3.3f, 4.4f, 5.5f, 6.6f}, StatUtils.flatten(new float[][]{{1.1f, 2.2f, 3.3f}, {4.4f, 5.5f, 6.6f}}));
     assertEqualsArrays(new double[]{1.1, 2.2, 3.3, 4.4, 5.5, 6.6}, StatUtils.flatten(new double[][]{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}}));
     assertEqualsArrays(new Double[]{1.1, 2.2, 3.3, 4.4, 5.5, 6.6}, StatUtils.flatten(new Double[][]{{1.1, 2.2, 3.3}, {4.4, 5.5, 6.6}}));
+  }
+
+  /**
+   * Tests the normalizeRange method.
+   */
+  public void testNormalizeRange() {
+    assertNull(StatUtils.normalizeRange(new double[]{}, 0.0, 1.0));
+    assertNull(StatUtils.normalizeRange(new double[]{1.0, 1.0}, 0.0, 1.0));
+    assertEqualsArrays(new double[]{0.0, 1.0}, StatUtils.normalizeRange(new double[]{0.0, 1.0}, 0.0, 1.0));
+    assertEqualsArrays(new double[]{0.0, 5.0}, StatUtils.normalizeRange(new double[]{0.0, 1.0}, 0.0, 5.0));
+    assertEqualsArrays(new double[]{0.0, 0.5, 1.0}, StatUtils.normalizeRange(new double[]{0.0, 1.0, 2.0}, 0.0, 1.0));
+    assertEqualsArrays(new double[]{0.0, 1.0}, StatUtils.normalizeRange(new double[]{-1.0, 1.0}, 0.0, 1.0));
   }
 
   /**
