@@ -30,10 +30,9 @@ import java.util.List;
  * Ensures that bins have the specified minimum number of objects stored.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @param <T> the type of payload
  */
-public class MinBinSize<T>
-  extends AbstractBinPostProcessing<T> {
+public class MinBinSize
+  extends AbstractBinPostProcessing {
 
   private static final long serialVersionUID = 5892185341343555075L;
 
@@ -112,11 +111,10 @@ public class MinBinSize<T>
    * @throws IllegalStateException	if post-processing failed
    */
   @Override
-  protected List<Bin<T>> doPostProcessBins(List<Bin<T>> bins) {
+  protected <T> List<Bin<T>> doPostProcessBins(List<Bin<T>> bins) {
     List<Bin<T>>	result;
     int			i;
     boolean		required;
-    Bin			binNew;
 
     // check
     required = false;

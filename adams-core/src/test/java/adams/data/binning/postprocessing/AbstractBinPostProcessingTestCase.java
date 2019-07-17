@@ -56,7 +56,7 @@ public abstract class AbstractBinPostProcessingTestCase<T>
    * @param errors 	for collecting errors
    * @return		the processed data
    */
-  protected List<Bin<T>> process(List<Bin<T>> objects, AbstractBinPostProcessing<T> scheme, MessageCollection errors) {
+  protected List<Bin<T>> process(List<Bin<T>> objects, AbstractBinPostProcessing scheme, MessageCollection errors) {
     try {
       return scheme.postProcessBins(objects);
     }
@@ -106,7 +106,7 @@ public abstract class AbstractBinPostProcessingTestCase<T>
    *
    * @return		the setups
    */
-  protected abstract AbstractBinPostProcessing<T>[] getRegressionSetups();
+  protected abstract AbstractBinPostProcessing[] getRegressionSetups();
 
   /**
    * Creates an output filename based on the input filename.
@@ -123,17 +123,17 @@ public abstract class AbstractBinPostProcessingTestCase<T>
    * Compares the processed data against previously saved output data.
    */
   public void testRegression() {
-    List<Bin<T>>[]			input;
-    List<Bin<T>>			processed;
-    boolean				ok;
-    String				regression;
-    int					i;
-    int					n;
-    AbstractBinPostProcessing<T>[]	setups;
-    AbstractBinPostProcessing<T>	current;
-    String[]				output;
-    TmpFile[]				outputFiles;
-    MessageCollection			errors;
+    List<Bin<T>>[]		input;
+    List<Bin<T>>		processed;
+    boolean			ok;
+    String			regression;
+    int				i;
+    int				n;
+    AbstractBinPostProcessing[]	setups;
+    AbstractBinPostProcessing	current;
+    String[]			output;
+    TmpFile[]			outputFiles;
+    MessageCollection		errors;
 
     if (m_NoRegressionTest)
       return;
@@ -145,7 +145,7 @@ public abstract class AbstractBinPostProcessingTestCase<T>
     // process data
     for (i = 0; i < setups.length; i++) {
       for (n = 0; n < input.length; n++) {
-	current = (AbstractBinPostProcessing<T>) Utils.deepCopy(setups[i]);
+	current = (AbstractBinPostProcessing) Utils.deepCopy(setups[i]);
 	assertNotNull("Failed to create copy of algorithm: " + OptionUtils.getCommandLine(setups[i]), current);
 
 	errors = new MessageCollection();

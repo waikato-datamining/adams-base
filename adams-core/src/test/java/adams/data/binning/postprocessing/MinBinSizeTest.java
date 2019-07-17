@@ -121,12 +121,12 @@ public class MinBinSizeTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinPostProcessing<Integer>[] getRegressionSetups() {
-    MinBinSize<Integer>[]	result;
+  protected AbstractBinPostProcessing[] getRegressionSetups() {
+    MinBinSize[]	result;
 
     result = new MinBinSize[2];
-    result[0] = new MinBinSize<>();
-    result[1] = new MinBinSize<>();
+    result[0] = new MinBinSize();
+    result[1] = new MinBinSize();
     result[1].setMinSize(2);
 
     return result;

@@ -28,10 +28,9 @@ import java.util.List;
  * Performs no post-processing.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @param <T> the type of payload
  */
-public class PassThrough<T>
-  extends AbstractBinPostProcessing<T> {
+public class PassThrough
+  extends AbstractBinPostProcessing {
 
   private static final long serialVersionUID = 5892185341343555075L;
 
@@ -53,7 +52,7 @@ public class PassThrough<T>
    * @throws IllegalStateException	if post-processing failed
    */
   @Override
-  protected List<Bin<T>> doPostProcessBins(List<Bin<T>> bins) {
+  protected <T> List<Bin<T>> doPostProcessBins(List<Bin<T>> bins) {
     return bins;
   }
 }

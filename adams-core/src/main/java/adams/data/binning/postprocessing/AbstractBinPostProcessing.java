@@ -30,9 +30,8 @@ import java.util.List;
  * Ancestor for schemes for post-processing bins.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @param <T> the type of payload
  */
-public abstract class AbstractBinPostProcessing<T>
+public abstract class AbstractBinPostProcessing
   extends AbstractOptionHandler
   implements QuickInfoSupporter {
 
@@ -55,7 +54,7 @@ public abstract class AbstractBinPostProcessing<T>
    * @param bins	the bins to check
    * @return		null if successful, otherwise error message
    */
-  protected String check(List<Bin<T>> bins) {
+  protected <T> String check(List<Bin<T>> bins) {
     if ((bins == null) || (bins.size() == 0))
       return "No bins provided!";
     return null;
@@ -68,7 +67,7 @@ public abstract class AbstractBinPostProcessing<T>
    * @return		the updated bins
    * @throws IllegalStateException	if post-processing failed
    */
-  protected abstract List<Bin<T>> doPostProcessBins(List<Bin<T>> bins);
+  protected abstract <T> List<Bin<T>> doPostProcessBins(List<Bin<T>> bins);
 
   /**
    * Post-processes the bins.
@@ -77,7 +76,7 @@ public abstract class AbstractBinPostProcessing<T>
    * @return		the updated bins
    * @throws IllegalStateException	if check or post-processing failed
    */
-  public List<Bin<T>> postProcessBins(List<Bin<T>> bins) {
+  public <T> List<Bin<T>> postProcessBins(List<Bin<T>> bins) {
     String	msg;
 
     msg = check(bins);
