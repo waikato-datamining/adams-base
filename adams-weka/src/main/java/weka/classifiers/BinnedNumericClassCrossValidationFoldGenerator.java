@@ -25,7 +25,6 @@ import adams.data.binning.BinnableInstances;
 import adams.data.binning.algorithm.AbstractBinningAlgorithm;
 import adams.data.binning.algorithm.ManualBinning;
 import adams.data.binning.operation.Bins;
-import adams.data.binning.operation.Flatten;
 import adams.data.binning.operation.Stratify;
 import adams.data.binning.operation.Wrapping;
 import adams.data.binning.postprocessing.MinBinSize;
@@ -434,7 +433,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
 
       // use bin index as new value of binnable
       binInst = Bins.useBinIndex(binInst);
-      binnableInst = Flatten.flatten(binInst);
+      binnableInst = Bins.flatten(binInst);
 
       if (getStratify())
 	binnableInst = Stratify.stratify(binnableInst, m_NumFolds);

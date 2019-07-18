@@ -26,6 +26,7 @@ import com.github.fracpete.javautils.enumerate.Enumerated;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.fracpete.javautils.Enumerate.enumerate;
@@ -54,6 +55,22 @@ public class Bins {
   }
 
   /**
+   * Returns the total size of all the bins.
+   *
+   * @param bins	the bins to calculate the size for
+   * @return		the size
+   */
+  public static <T> int totalSize(List<Bin<T>> bins) {
+    int result;
+
+    result = 0;
+    for (Bin<T> bin: bins)
+      result += bin.size();
+
+    return result;
+  }
+
+  /**
    * Pushes the bin index into the binnable as value to use.
    *
    * @param bins	the bins to update
@@ -66,5 +83,22 @@ public class Bins {
         b.setValue(bin.index);
     }
     return bins;
+  }
+
+  /**
+   * Flattens the bins back into a list of binnables in the order of the bins.
+   *
+   * @param bins	the bins to flatten
+   * @param <T>		the payload type
+   * @return		the flattened list
+   */
+  public static <T> List<Binnable<T>> flatten(List<Bin<T>> bins) {
+    List<Binnable<T>>	result;
+
+    result = new ArrayList<>();
+    for (Bin<T> bin: bins)
+      result.addAll(bin.get());
+
+    return result;
   }
 }

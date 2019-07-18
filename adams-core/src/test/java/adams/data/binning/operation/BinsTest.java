@@ -14,8 +14,8 @@
  */
 
 /*
- * FlattenTest.java
- * Flattenright (C) 2019 University of Waikato, Hamilton, NZ
+ * BinsTest.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.binning.operation;
@@ -32,11 +32,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tests Flatten.
+ * Tests Bins.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class FlattenTest
+public class BinsTest
   extends AbstractOperationTestCase<Integer> {
 
   /**
@@ -44,7 +44,7 @@ public class FlattenTest
    *
    * @param name the name of the test
    */
-  public FlattenTest(String name) {
+  public BinsTest(String name) {
     super(name);
   }
 
@@ -83,7 +83,7 @@ public class FlattenTest
     result.add(fname);
 
     fname = createOutputFilename(3);
-    saveData(Flatten.flatten(bins), fname);
+    saveData(Bins.flatten(bins), fname);
     result.add(fname);
 
     return result;
@@ -95,7 +95,7 @@ public class FlattenTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(FlattenTest.class);
+    return new TestSuite(BinsTest.class);
   }
 
   /**

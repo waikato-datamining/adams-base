@@ -15,7 +15,7 @@
 
 /*
  * GroupTest.java
- * Groupright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.binning.operation;
