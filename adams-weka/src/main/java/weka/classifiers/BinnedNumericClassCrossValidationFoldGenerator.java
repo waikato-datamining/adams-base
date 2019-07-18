@@ -125,7 +125,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    */
   @Override
   public String globalInfo() {
-    return "Generates cross-validation fold pairs. Leave-one-out is performed when specified folds <2.";
+    return "Generates cross-validation fold pairs. Uses binning algorithm to obtain similar class distributions.";
   }
 
   /**

@@ -120,7 +120,7 @@ public class BinnedNumericClassRandomSplitGenerator
    */
   @Override
   public String globalInfo() {
-    return "Generates random splits of datasets with numeric classes using a binning algorithm. Order can be preserved.";
+    return "Generates random splits of datasets with numeric classes. Uses a binning algorithm to obtain similar distribution in splits. Order can be preserved.";
   }
 
   /**
