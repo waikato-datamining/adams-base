@@ -37,9 +37,6 @@ import static com.github.fracpete.javautils.Enumerate.enumerate;
  */
 public class Bins {
 
-  /** the temporary bin index. */
-  public final static String TMP_BININDEX = "$$$tmpbinindex$$$";
-
   /**
    * Returns the size of the bins.
    *
@@ -57,33 +54,16 @@ public class Bins {
   }
 
   /**
-   * Pushes the bin index into the meta-data of the binnable items, using
-   * {@link #TMP_BININDEX} as key.
+   * Pushes the bin index into the binnable as value to use.
    *
    * @param bins	the bins to update
    * @param <T>		the payload type
    * @return		the updated bins
    */
-  public static <T> List<Bin<T>> addBinIndex(List<Bin<T>> bins) {
+  public static <T> List<Bin<T>> useBinIndex(List<Bin<T>> bins) {
     for (Enumerated<Bin<T>> bin: enumerate(bins)) {
       for (Binnable<T> b:  bin.value.get())
-        b.addMetaData(TMP_BININDEX, bin.index);
-    }
-    return bins;
-  }
-
-  /**
-   * Removes the bin index from the meta-data of the binnable items, using
-   * {@link #TMP_BININDEX} as key.
-   *
-   * @param bins	the bins to update
-   * @param <T>		the payload type
-   * @return		the updated bins
-   */
-  public static <T> List<Bin<T>> removeBinIndex(List<Bin<T>> bins) {
-    for (Enumerated<Bin<T>> bin: enumerate(bins)) {
-      for (Binnable<T> b:  bin.value.get())
-        b.removeMetaData(TMP_BININDEX);
+        b.setValue(bin.index);
     }
     return bins;
   }
