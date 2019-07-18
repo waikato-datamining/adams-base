@@ -498,28 +498,27 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    */
   @Override
   protected WekaTrainTestSetContainer createNext() {
-    WekaTrainTestSetContainer		result;
-    List<Binnable<Instance>> 		binnableInst;
-    List<Bin<Instance>>			binInst;
+    WekaTrainTestSetContainer			result;
+    List<Binnable<Instance>> 			binnableInst;
     List<BinnableGroup<Instance>> 		groupedInst;
     List<Binnable<BinnableGroup<Instance>>> 	binnableGroups;
     List<Bin<BinnableGroup<Instance>>> 		binGroups;
-    MinBinSize				minBinSize;
-    FoldPair<Binnable<Instance>> 	foldPair;
-    Instances 				train;
-    Instances 				test;
-    int[]				trainRows;
-    int[]				testRows;
-    int					i;
-    DefaultRandomization 		rand;
-    List<Binnable<BinnableGroup<Instance>>> trainGrouped;
-    List<Binnable<BinnableGroup<Instance>>> testGrouped;
-    List<Binnable<Instance>> 		trainBinnable;
-    List<Binnable<Instance>> 		testBinnable;
-    TIntList				trainIndices;
-    TIntList				testIndices;
-    Subset<Binnable<Instance>>		trainSub;
-    Subset<Binnable<Instance>>		testSub;
+    MinBinSize					minBinSize;
+    FoldPair<Binnable<Instance>> 		foldPair;
+    Instances 					train;
+    Instances 					test;
+    int[]					trainRows;
+    int[]					testRows;
+    int						i;
+    DefaultRandomization 			rand;
+    List<Binnable<BinnableGroup<Instance>>> 	trainGrouped;
+    List<Binnable<BinnableGroup<Instance>>> 	testGrouped;
+    List<Binnable<Instance>> 			trainBinnable;
+    List<Binnable<Instance>> 			testBinnable;
+    TIntList					trainIndices;
+    TIntList					testIndices;
+    Subset<Binnable<Instance>>			trainSub;
+    Subset<Binnable<Instance>>			testSub;
 
     if (m_CurrentFold > m_NumFolds)
       throw new NoSuchElementException("No more folds available!");
