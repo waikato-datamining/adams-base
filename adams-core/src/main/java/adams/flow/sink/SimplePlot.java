@@ -15,7 +15,7 @@
 
 /*
  * SimplePlot.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -78,6 +78,7 @@ import java.util.HashMap;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.SequencePlotterContainer[]<br>
  * <br><br>
  * Container information:<br>
  * - adams.flow.container.SequencePlotterContainer: PlotName, X, Y, Content type, Error X, Error Y, MetaData
@@ -89,131 +90,131 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SimplePlot
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
- * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
- * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
- * &nbsp;&nbsp;&nbsp;a separate frame.
- * &nbsp;&nbsp;&nbsp;default: false
+ *
+ * <pre>-display-type &lt;adams.flow.core.displaytype.AbstractDisplayType&gt; (property: displayType)
+ * &nbsp;&nbsp;&nbsp;Determines how to show the display, eg as standalone frame (default) or
+ * &nbsp;&nbsp;&nbsp;in the Flow editor window.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.core.displaytype.Default
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 350
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
  * </pre>
- * 
+ *
  * <pre>-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: paintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the data.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.CirclePaintlet -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy
  * </pre>
- * 
+ *
  * <pre>-overlay-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: overlayPaintlet)
  * &nbsp;&nbsp;&nbsp;The paintlet to use for painting the overlay data (if any).
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.NullPaintlet
  * </pre>
- * 
+ *
  * <pre>-mouse-click-action &lt;adams.flow.sink.sequenceplotter.MouseClickAction&gt; (property: mouseClickAction)
  * &nbsp;&nbsp;&nbsp;The action to use for mouse clicks on the canvas.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.sequenceplotter.NullClickAction
  * </pre>
- * 
+ *
  * <pre>-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: colorProvider)
  * &nbsp;&nbsp;&nbsp;The color provider in use for generating the colors for the various plots.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
  * </pre>
- * 
+ *
  * <pre>-title &lt;java.lang.String&gt; (property: title)
  * &nbsp;&nbsp;&nbsp;The title for the border around the plot.
  * &nbsp;&nbsp;&nbsp;default: Plot
  * </pre>
- * 
+ *
  * <pre>-axis-x &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisX)
  * &nbsp;&nbsp;&nbsp;The setup for the X axis.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 40 -custom-format 0.0
  * </pre>
- * 
+ *
  * <pre>-axis-y &lt;adams.gui.visualization.core.AxisPanelOptions&gt; (property: axisY)
  * &nbsp;&nbsp;&nbsp;The setup for the Y axis.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.AxisPanelOptions -label y -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0
  * </pre>
- * 
+ *
  * <pre>-show-side-panel &lt;boolean&gt; (property: showSidePanel)
  * &nbsp;&nbsp;&nbsp;If enabled, the side panel with the plot names is visible.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-no-tool-tips &lt;boolean&gt; (property: noToolTips)
  * &nbsp;&nbsp;&nbsp;If enabled, the tool tips of the plot get suppressed.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
- * &nbsp;&nbsp;&nbsp;The file to write the plot containers to (in CSV format); does not store 
- * &nbsp;&nbsp;&nbsp;the meta-data, as it can change from container to container; ignored if 
+ * &nbsp;&nbsp;&nbsp;The file to write the plot containers to (in CSV format); does not store
+ * &nbsp;&nbsp;&nbsp;the meta-data, as it can change from container to container; ignored if
  * &nbsp;&nbsp;&nbsp;pointing to a directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -265,7 +266,7 @@ public class SimplePlot
 
   /** the plot updater to use. */
   protected AbstractPlotUpdater m_PlotUpdater;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -771,11 +772,11 @@ public class SimplePlot
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->adams.flow.container.SequencePlotterContainer.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->adams.flow.container.SequencePlotterContainer.class, adams.flow.container.SequencePlotterContainer[].class<!-- flow-accepts-end -->
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{SequencePlotterContainer.class};
+    return new Class[]{SequencePlotterContainer.class, SequencePlotterContainer[].class};
   }
 
   /**
@@ -893,6 +894,7 @@ public class SimplePlot
     XYSequenceContainerManager	manager;
     XYSequence			seq;
     SequencePlotPoint		point;
+    SequencePlotterContainer[]	plotConts;
     SequencePlotterContainer	plotCont;
     String			plotName;
     Comparable			x;
@@ -903,68 +905,81 @@ public class SimplePlot
     Double[]			errorY;
     ContentType			type;
     HashMap<String,Object>	meta;
+    boolean			started;
+    int				i;
 
-
-    plotCont = (SequencePlotterContainer) token.getPayload();
-    plotName = (String) plotCont.getValue(SequencePlotterContainer.VALUE_PLOTNAME);
-    x        = (Comparable) plotCont.getValue(SequencePlotterContainer.VALUE_X);
-    y        = (Comparable) plotCont.getValue(SequencePlotterContainer.VALUE_Y);
-    errorX   = (Double[]) plotCont.getValue(SequencePlotterContainer.VALUE_ERROR_X);
-    errorY   = (Double[]) plotCont.getValue(SequencePlotterContainer.VALUE_ERROR_Y);
-    type     = (ContentType) plotCont.getValue(SequencePlotterContainer.VALUE_CONTENTTYPE);
-    meta     = plotCont.getMetaData();
-
-    switch (type) {
-      case PLOT:
-	manager = ((SequencePlotterPanel) m_Panel).getContainerManager();
-	break;
-      case MARKER:
-      case OVERLAY:
-	return;
-      case UPDATE:
-	m_PlotUpdater.update((SequencePlotterPanel) getPanel());
-	return;
-      default:
-	throw new IllegalStateException("Unhandled plot container content type: " + type);
-    }
-    manager.startUpdate();
-
-    // find or create new plot
-    if (manager.indexOf(plotName) == -1) {
-      seq  = new SequencePlotSequence();
-      seq.setComparison(Comparison.X_AND_Y);
-      seq.setID(plotName);
-      cont = manager.newContainer(seq);
-      manager.add(cont);
-    }
-    else {
-      cont = manager.get(manager.indexOf(plotName));
-      seq  = cont.getData();
-    }
-
-    // create and add new point
-    if (x == null)
-      x = new Double(m_Counter.next(plotName));
-    if (x instanceof Number)
-      dX = ((Number) x).doubleValue();
+    if (token.hasPayload(SequencePlotterContainer.class))
+      plotConts = new SequencePlotterContainer[]{token.getPayload(SequencePlotterContainer.class)};
     else
-      dX = seq.putMappingX(x.toString());
-    if (y instanceof Number)
-      dY = ((Number) y).doubleValue();
-    else
-      dY = seq.putMappingY(y.toString());
-    point = new SequencePlotPoint("" + seq.size(), dX, dY, errorX, errorY);
-    if (meta != null)
-      point.setMetaData(meta);
-    seq.add(point);
+      plotConts = token.getPayload(SequencePlotterContainer[].class);
+    started = false;
 
-    // save container?
-    if (m_UseOutputFile == null)
-      m_UseOutputFile = !m_OutputFile.isDirectory();
-    if (m_UseOutputFile)
-      writePlotContainer(plotName, type, x, y, dX, dY, errorX, errorY);
+    for (i = 0; i < plotConts.length; i++) {
+      plotCont = plotConts[i];
+      plotName = (String) plotCont.getValue(SequencePlotterContainer.VALUE_PLOTNAME);
+      x        = (Comparable) plotCont.getValue(SequencePlotterContainer.VALUE_X);
+      y        = (Comparable) plotCont.getValue(SequencePlotterContainer.VALUE_Y);
+      errorX   = (Double[]) plotCont.getValue(SequencePlotterContainer.VALUE_ERROR_X);
+      errorY   = (Double[]) plotCont.getValue(SequencePlotterContainer.VALUE_ERROR_Y);
+      type     = (ContentType) plotCont.getValue(SequencePlotterContainer.VALUE_CONTENTTYPE);
+      meta     = plotCont.getMetaData();
 
-    m_PlotUpdater.update((SequencePlotterPanel) getPanel(), plotCont);
+      switch (type) {
+	case PLOT:
+	  manager = ((SequencePlotterPanel) m_Panel).getContainerManager();
+	  break;
+	case MARKER:
+	case OVERLAY:
+	  continue;
+	case UPDATE:
+	  m_PlotUpdater.update((SequencePlotterPanel) getPanel());
+	  continue;
+	default:
+	  throw new IllegalStateException("Unhandled plot container content type: " + type);
+      }
+
+      if (!started) {
+	manager.startUpdate();
+	started = true;
+      }
+
+      // find or create new plot
+      if (manager.indexOf(plotName) == -1) {
+	seq = new SequencePlotSequence();
+	seq.setComparison(Comparison.X_AND_Y);
+	seq.setID(plotName);
+	cont = manager.newContainer(seq);
+	manager.add(cont);
+      }
+      else {
+	cont = manager.get(manager.indexOf(plotName));
+	seq = cont.getData();
+      }
+
+      // create and add new point
+      if (x == null)
+	x = m_Counter.next(plotName);
+      if (x instanceof Number)
+	dX = ((Number) x).doubleValue();
+      else
+	dX = seq.putMappingX(x.toString());
+      if (y instanceof Number)
+	dY = ((Number) y).doubleValue();
+      else
+	dY = seq.putMappingY(y.toString());
+      point = new SequencePlotPoint("" + seq.size(), dX, dY, errorX, errorY);
+      if (meta != null)
+	point.setMetaData(meta);
+      seq.add(point);
+
+      // save container?
+      if (m_UseOutputFile == null)
+	m_UseOutputFile = !m_OutputFile.isDirectory();
+      if (m_UseOutputFile)
+	writePlotContainer(plotName, type, x, y, dX, dY, errorX, errorY);
+
+      m_PlotUpdater.update((SequencePlotterPanel) getPanel(), plotCont);
+    }
   }
 
   /**
@@ -1064,6 +1079,7 @@ public class SimplePlot
 	XYSequence			seq;
 	XYSequencePoint			point;
 	SequencePlotterContainer	plotCont;
+	SequencePlotterContainer[]	plotConts;
 	String				plotName;
 	Comparable			x;
 	Comparable			y;
@@ -1073,61 +1089,75 @@ public class SimplePlot
 	Double[]			errorY;
 	ContentType			type;
 	HashMap<String,Object>		meta;
+	boolean			started;
+	int				i;
 
-	plotCont = (SequencePlotterContainer) token.getPayload();
-	plotName = (String) plotCont.getValue(SequencePlotterContainer.VALUE_PLOTNAME);
-	x        = (Comparable) plotCont.getValue(SequencePlotterContainer.VALUE_X);
-	y        = (Comparable) plotCont.getValue(SequencePlotterContainer.VALUE_Y);
-	errorX   = (Double[]) plotCont.getValue(SequencePlotterContainer.VALUE_ERROR_X);
-	errorY   = (Double[]) plotCont.getValue(SequencePlotterContainer.VALUE_ERROR_Y);
-	type     = (ContentType) plotCont.getValue(SequencePlotterContainer.VALUE_CONTENTTYPE);
-	meta     = plotCont.getMetaData();
-
-	switch (type) {
-	  case PLOT:
-	    manager = m_Panel.getContainerManager();
-	    break;
-	  case OVERLAY:
-	  case MARKER:
-	    return;
-	  case UPDATE:
-	    m_PlotUpdater.update(m_Panel);
-	    return;
-	  default:
-	    throw new IllegalStateException("Unhandled plot container content type: " + type);
-	}
-	manager.startUpdate();
-
-	// find or create new plot
-	if (manager.indexOf(plotName) == -1) {
-	  seq  = new XYSequence();
-	  seq.setComparison(Comparison.X_AND_Y);
-	  seq.setID(plotName);
-	  cont = manager.newContainer(seq);
-	  manager.add(cont);
-	}
-	else {
-	  cont = manager.get(manager.indexOf(plotName));
-	  seq  = cont.getData();
-	}
-
-	// create and add new point
-	if (x == null)
-	  x = new Double(m_Counter.next(plotName));
-	if (x instanceof Number)
-	  dX = ((Number) x).doubleValue();
+	if (token.hasPayload(SequencePlotterContainer.class))
+	  plotConts = new SequencePlotterContainer[]{token.getPayload(SequencePlotterContainer.class)};
 	else
-	  dX = seq.putMappingX(x.toString());
-	if (y instanceof Number)
-	  dY = ((Number) y).doubleValue();
-	else
-	  dY = seq.putMappingY(y.toString());
-	point = new SequencePlotPoint("" + seq.size(), dX, dY, errorX, errorY);
-	if (meta != null)
-	  point.setMetaData(meta);
-	seq.add(point);
+	  plotConts = token.getPayload(SequencePlotterContainer[].class);
+	started = false;
 
-	m_PlotUpdater.update(m_Panel, plotCont);
+	for (i = 0; i < plotConts.length; i++) {
+	  plotCont = plotConts[i];
+	  plotName = (String) plotCont.getValue(SequencePlotterContainer.VALUE_PLOTNAME);
+	  x        = (Comparable) plotCont.getValue(SequencePlotterContainer.VALUE_X);
+	  y        = (Comparable) plotCont.getValue(SequencePlotterContainer.VALUE_Y);
+	  errorX   = (Double[]) plotCont.getValue(SequencePlotterContainer.VALUE_ERROR_X);
+	  errorY   = (Double[]) plotCont.getValue(SequencePlotterContainer.VALUE_ERROR_Y);
+	  type     = (ContentType) plotCont.getValue(SequencePlotterContainer.VALUE_CONTENTTYPE);
+	  meta     = plotCont.getMetaData();
+
+	  switch (type) {
+	    case PLOT:
+	      manager = m_Panel.getContainerManager();
+	      break;
+	    case OVERLAY:
+	    case MARKER:
+	      return;
+	    case UPDATE:
+	      m_PlotUpdater.update(m_Panel);
+	      return;
+	    default:
+	      throw new IllegalStateException("Unhandled plot container content type: " + type);
+	  }
+
+	  if (!started) {
+	    started = true;
+	    manager.startUpdate();
+	  }
+
+	  // find or create new plot
+	  if (manager.indexOf(plotName) == -1) {
+	    seq = new XYSequence();
+	    seq.setComparison(Comparison.X_AND_Y);
+	    seq.setID(plotName);
+	    cont = manager.newContainer(seq);
+	    manager.add(cont);
+	  }
+	  else {
+	    cont = manager.get(manager.indexOf(plotName));
+	    seq = cont.getData();
+	  }
+
+	  // create and add new point
+	  if (x == null)
+	    x = m_Counter.next(plotName);
+	  if (x instanceof Number)
+	    dX = ((Number) x).doubleValue();
+	  else
+	    dX = seq.putMappingX(x.toString());
+	  if (y instanceof Number)
+	    dY = ((Number) y).doubleValue();
+	  else
+	    dY = seq.putMappingY(y.toString());
+	  point = new SequencePlotPoint("" + seq.size(), dX, dY, errorX, errorY);
+	  if (meta != null)
+	    point.setMetaData(meta);
+	  seq.add(point);
+
+	  m_PlotUpdater.update(m_Panel, plotCont);
+	}
       }
       @Override
       public void clearPanel() {
