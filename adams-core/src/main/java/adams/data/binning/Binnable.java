@@ -84,6 +84,15 @@ public class Binnable<T>
   }
 
   /**
+   * Sets the value to use for the binning calculation.
+   *
+   * @param value	the value
+   */
+  public void setValue(double value) {
+    m_Value = value;
+  }
+
+  /**
    * Returns the value to use for the binning calculation.
    *
    * @return		the value
