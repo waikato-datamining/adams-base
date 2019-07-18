@@ -15,7 +15,7 @@
 
 /*
  * WekaFileWriter.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -35,7 +35,7 @@ import java.io.File;
 /**
  <!-- globalinfo-start -->
  * Actor for saving a weka.core.Instances object as file.<br>
- * The relation name of the incoming dataset can be used to replace the current filename (path and extension are kept).
+ * The relation name of the incoming dataset can be used to replace the current filename (path and extension are kept). If the filename points to a directory, the relation name is simply appended.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -47,13 +47,9 @@ import java.io.File;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -61,46 +57,57 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: WekaFileWriter
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The filename of the dataset to write (the file extension determines the
  * &nbsp;&nbsp;&nbsp;file format).
- * &nbsp;&nbsp;&nbsp;default: .
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
- * <pre>-use-relation (property: useRelationNameAsFilename)
+ * <pre>-use-relation &lt;boolean&gt; (property: useRelationNameAsFilename)
  * &nbsp;&nbsp;&nbsp;If set to true, then the relation name replaces the name of the output file;
  * &nbsp;&nbsp;&nbsp; eg if the output file is '&#47;some&#47;where&#47;file.arff' and the relation is 'anneal'
- * &nbsp;&nbsp;&nbsp; then the resulting file name will be '&#47;some&#47;where&#47;anneal.arff'.
+ * &nbsp;&nbsp;&nbsp; then the resulting file name will be '&#47;some&#47;where&#47;anneal.arff'; if the
+ * &nbsp;&nbsp;&nbsp;file points to a directory, then the relation name is simple appended.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-use-custom (property: useCustomSaver)
+ * <pre>-use-custom &lt;boolean&gt; (property: useCustomSaver)
  * &nbsp;&nbsp;&nbsp;If set to true, then the custom saver will be used for saving the data.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-saver &lt;weka.core.converters.AbstractFileSaver [options]&gt; (property: customSaver)
+ * <pre>-saver &lt;weka.core.converters.AbstractFileSaver&gt; (property: customSaver)
  * &nbsp;&nbsp;&nbsp;The custom saver to use if enabled.
- * &nbsp;&nbsp;&nbsp;default: weka.core.converters.SimpleArffSaver
+ * &nbsp;&nbsp;&nbsp;default: weka.core.converters.SimpleArffSaver -decimal 6
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaFileWriter
   extends AbstractFileWriter {
@@ -127,7 +134,8 @@ public class WekaFileWriter
     return
         "Actor for saving a weka.core.Instances object as file.\n"
       + "The relation name of the incoming dataset can be used to replace the "
-      + "current filename (path and extension are kept).";
+      + "current filename (path and extension are kept). If the filename "
+      + "points to a directory, the relation name is simply appended.";
   }
 
   /**
@@ -191,7 +199,8 @@ public class WekaFileWriter
         "If set to true, then the relation name replaces the name of the output "
       + "file; eg if the output file is '/some/where/file.arff' and the "
       + "relation is 'anneal' then the resulting file name will be "
-      + "'/some/where/anneal.arff'.";
+      + "'/some/where/anneal.arff'; if the file points to a directory, then the "
+      + "relation name is simple appended.";
   }
 
   /**
@@ -328,11 +337,19 @@ public class WekaFileWriter
       // determine filename
       filename = m_OutputFile.getAbsolutePath();
       if (m_UseRelationNameAsFilename) {
-	file     = new File(filename);
-	filename =   file.getParent()
-	           + File.separator
-	           + FileUtils.createFilename(data.relationName(), "_")
-	           + file.getName().replaceAll(".*\\.", ".");
+	file = new File(filename);
+	if (file.isDirectory()) {
+	  filename = file.getAbsolutePath()
+            + File.separator
+            + FileUtils.createFilename(data.relationName(), "_")
+            + file.getName().replaceAll(".*\\.", ".");
+        }
+        else {
+          filename = file.getParentFile().getAbsolutePath()
+            + File.separator
+            + FileUtils.createFilename(data.relationName(), "_")
+            + file.getName().replaceAll(".*\\.", ".");
+        }
       }
 
       if (m_UseCustomSaver) {
