@@ -29,6 +29,8 @@ import adams.gui.core.MultiPagePane;
 import adams.gui.flow.multipageaction.AbstractMultiPageMenuItem;
 import adams.gui.flow.tab.RegisteredDisplaysTab;
 import adams.gui.flow.tree.Tree;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -44,6 +46,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Specialized tabbed pane for Flow panels.
@@ -99,6 +102,24 @@ public class FlowMultiPagePane
       }
       return result;
     }
+  }
+
+  /**
+   * For filtering panels.
+   */
+  public enum FlowPanelFilter {
+    /** flow is running. */
+    RUNNING,
+    /** flow is stopping. */
+    STOPPING,
+    /** whether a swingworker is running. */
+    SWINGWORKER,
+    /** flow is debug view. */
+    DEBUG,
+    /** outermost actor is a Flow actor. */
+    FLOW,
+    /** whether the last executed flow is available. */
+    HAS_LAST_FLOW,
   }
 
   /** the owning editor. */
@@ -237,6 +258,53 @@ public class FlowMultiPagePane
    */
   public int getPanelCount() {
     return getPageCount();
+  }
+
+  /**
+   * Returns the indices of the flow panels that match the filter.
+   *
+   * @param filters	the filters to apply
+   * @return		the indices of the panels that matched
+   */
+  public int[] getSelectedIndices(Map<FlowPanelFilter,Boolean> filters) {
+    TIntList	result;
+    FlowPanel	current;
+    boolean	match;
+
+    result = new TIntArrayList();
+
+    for (int index: getSelectedIndices()) {
+      current = getPanelAt(index);
+      for (FlowPanelFilter filter: filters.keySet()) {
+        switch (filter) {
+	  case RUNNING:
+	    match = (current.isRunning() == filters.get(filter));
+	    break;
+	  case STOPPING:
+	    match = (current.isStopping() == filters.get(filter));
+	    break;
+	  case DEBUG:
+	    match = (current.getTree().isDebug() == filters.get(filter));
+	    break;
+	  case FLOW:
+	    match = (current.getTree().isFlow() == filters.get(filter));
+	    break;
+	  case SWINGWORKER:
+	    match = (current.isSwingWorkerRunning() == filters.get(filter));
+	    break;
+	  case HAS_LAST_FLOW:
+	    match = ((current.getLastFlow() != null) && filters.get(filter))
+	      || ((current.getLastFlow() == null) && !filters.get(filter));
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled panel filter: " + filter);
+	}
+	if (match)
+	  result.add(index);
+      }
+    }
+
+    return result.toArray();
   }
 
   /**

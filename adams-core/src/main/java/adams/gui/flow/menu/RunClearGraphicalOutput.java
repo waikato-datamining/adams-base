@@ -19,7 +19,12 @@
  */
 package adams.gui.flow.menu;
 
+import adams.gui.flow.FlowMultiPagePane.FlowPanelFilter;
+import adams.gui.flow.FlowPanel;
+
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Removes all graphical output.
@@ -43,14 +48,37 @@ public class RunClearGraphicalOutput
   }
 
   /**
+   * Returns the filter to apply to the selected flow panels.
+   *
+   * @return		the filters
+   */
+  protected Map<FlowPanelFilter,Boolean> getPanelFilter() {
+    Map<FlowPanelFilter,Boolean>	result;
+
+    result = new HashMap<>();
+    result.put(FlowPanelFilter.RUNNING, false);
+    result.put(FlowPanelFilter.STOPPING, false);
+    result.put(FlowPanelFilter.SWINGWORKER, false);
+    result.put(FlowPanelFilter.HAS_LAST_FLOW, true);
+
+    return result;
+  }
+
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    if (m_State.getCurrentPanel().getDebugTargetPanel() != null)
-      m_State.getCurrentPanel().getDebugTargetPanel().close();
-    m_State.getCurrentPanel().cleanUp();
-    m_State.getCurrentPanel().clearNotification();
+    FlowPanel	current;
+
+    for (int index: m_State.getFlowPanels().getSelectedIndices(getPanelFilter())) {
+      current = m_State.getFlowPanels().getPanelAt(index);
+      if (current.getDebugTargetPanel() != null)
+        current.getDebugTargetPanel().close();
+      current.cleanUp();
+      current.clearNotification();
+    }
+
     m_State.update();
   }
 
@@ -59,9 +87,6 @@ public class RunClearGraphicalOutput
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& m_State.getCurrentPanel().isInputEnabled()
-	&& (m_State.getCurrentPanel().getLastFlow() != null));
+    setEnabled(m_State.getFlowPanels().getSelectedIndices(getPanelFilter()).length > 0);
   }
 }

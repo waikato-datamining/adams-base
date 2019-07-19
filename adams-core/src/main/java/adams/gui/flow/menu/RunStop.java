@@ -19,7 +19,11 @@
  */
 package adams.gui.flow.menu;
 
+import adams.gui.flow.FlowMultiPagePane.FlowPanelFilter;
+
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Stops the flow.
@@ -43,11 +47,26 @@ public class RunStop
   }
 
   /**
+   * Returns the filter to apply to the selected flow panels.
+   *
+   * @return		the filters
+   */
+  protected Map<FlowPanelFilter,Boolean> getPanelFilter() {
+    Map<FlowPanelFilter,Boolean>	result;
+
+    result = new HashMap<>();
+    result.put(FlowPanelFilter.RUNNING, true);
+
+    return result;
+  }
+
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getDebugOrCurrentPanel().stop();
+    for (int index: m_State.getFlowPanels().getSelectedIndices(getPanelFilter()))
+      m_State.getFlowPanels().getPanelAt(index).stop();
   }
 
   /**
@@ -55,8 +74,6 @@ public class RunStop
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-      m_State.hasDebugOrCurrentPanel()
-	&& m_State.getDebugOrCurrentPanel().isRunning());
+    setEnabled(m_State.getFlowPanels().getSelectedIndices(getPanelFilter()).length > 0);
   }
 }

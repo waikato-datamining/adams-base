@@ -13,19 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RunRun.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
+import adams.gui.flow.FlowMultiPagePane.FlowPanelFilter;
+
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Executes the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RunRun
   extends AbstractFlowEditorMenuItemAction {
@@ -44,11 +47,30 @@ public class RunRun
   }
 
   /**
+   * Returns the filter to apply to the selected flow panels.
+   *
+   * @return		the filters
+   */
+  protected Map<FlowPanelFilter,Boolean> getPanelFilter() {
+    Map<FlowPanelFilter,Boolean>	result;
+
+    result = new HashMap<>();
+    result.put(FlowPanelFilter.RUNNING, false);
+    result.put(FlowPanelFilter.STOPPING, false);
+    result.put(FlowPanelFilter.SWINGWORKER, false);
+    result.put(FlowPanelFilter.DEBUG, false);
+    result.put(FlowPanelFilter.FLOW, true);
+
+    return result;
+  }
+
+  /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().run(true, false);
+    for (int index: m_State.getFlowPanels().getSelectedIndices(getPanelFilter()))
+      m_State.getFlowPanels().getPanelAt(index).run(true, false);
   }
 
   /**
@@ -56,10 +78,6 @@ public class RunRun
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& m_State.getCurrentPanel().isInputEnabled()
-        && !m_State.getCurrentPanel().getTree().isDebug()
-	&& m_State.getCurrentPanel().getTree().isFlow());
+    setEnabled(m_State.getFlowPanels().getSelectedIndices(getPanelFilter()).length > 0);
   }
 }

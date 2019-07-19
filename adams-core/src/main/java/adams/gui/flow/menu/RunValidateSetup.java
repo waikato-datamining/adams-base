@@ -15,14 +15,18 @@
 
 /*
  * RunValidateSetup.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.gui.flow.FlowMultiPagePane.FlowPanelFilter;
+import adams.gui.flow.FlowPanel;
 
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Validates the current setup.
@@ -46,6 +50,25 @@ public class RunValidateSetup
   }
 
   /**
+   * Returns the filter to apply to the selected flow panels.
+   *
+   * @param swingworker	if true then no swingworker is allowed to be active
+   * @return		the filters
+   */
+  protected Map<FlowPanelFilter,Boolean> getPanelFilter(boolean swingworker) {
+    Map<FlowPanelFilter,Boolean>	result;
+
+    result = new HashMap<>();
+    result.put(FlowPanelFilter.RUNNING, false);
+    result.put(FlowPanelFilter.STOPPING, false);
+    if (swingworker)
+      result.put(FlowPanelFilter.SWINGWORKER, false);
+    result.put(FlowPanelFilter.DEBUG, false);
+
+    return result;
+  }
+
+  /**
    * Invoked when an action occurs.
    */
   @Override
@@ -53,38 +76,41 @@ public class RunValidateSetup
     Runnable	runnable;
 
     runnable = () -> {
-      String msg = null;
-      StringBuilder errors = new StringBuilder();
-      Actor actor = m_State.getCurrentFlow(errors);
-      if (errors.length() > 0)
-	msg = errors.toString();
+      for (int index: m_State.getFlowPanels().getSelectedIndices(getPanelFilter(false))) {
+	FlowPanel currentPanel = m_State.getFlowPanels().getPanelAt(index);
+	String msg = null;
+	StringBuilder errors = new StringBuilder();
+	Actor actor = currentPanel.getCurrentFlow(errors);
+	if (errors.length() > 0)
+	  msg = errors.toString();
 
-      if (msg == null) {
-	try {
-	  msg = actor.setUp();
-	  actor.wrapUp();
-	  actor.cleanUp();
+	if (msg == null) {
+	  try {
+	    msg = actor.setUp();
+	    actor.wrapUp();
+	    actor.cleanUp();
+	  }
+	  catch (Exception ex) {
+	    msg = "Actor generated exception: ";
+	    System.err.println(msg);
+	    ex.printStackTrace();
+	    msg += e;
+	  }
 	}
-	catch (Exception ex) {
-	  msg = "Actor generated exception: ";
-	  System.err.println(msg);
-	  ex.printStackTrace();
-	  msg += e;
+
+	// perform some checks
+	if (msg == null)
+	  msg = ActorUtils.checkFlow(actor, currentPanel.getCurrentFile());
+
+	if (msg == null) {
+	  msg = "The flow passed validation!";
+	  currentPanel.showStatus(msg);
+	  currentPanel.showNotification(msg, false);
 	}
-      }
-
-      // perform some checks
-      if (msg == null)
-	msg = ActorUtils.checkFlow(actor, m_State.getCurrentFile());
-
-      if (msg == null) {
-	msg = "The flow passed validation!";
-	m_State.getCurrentPanel().showStatus(msg);
-	m_State.getCurrentPanel().showNotification(msg, false);
-      }
-      else {
-	m_State.getCurrentPanel().showStatus("The flow didn't pass validation!");
-	m_State.getCurrentPanel().showNotification("The flow setup failed validation:\n" + msg, true);
+	else {
+	  currentPanel.showStatus("The flow didn't pass validation!");
+	  currentPanel.showNotification("The flow setup failed validation:\n" + msg, true);
+	}
       }
     };
     m_State.getCurrentPanel().startBackgroundTask(runnable, "Validating flow...", false);
@@ -95,9 +121,6 @@ public class RunValidateSetup
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-	   m_State.hasCurrentPanel() 
-        && !m_State.getCurrentPanel().getTree().isDebug()
-	&& m_State.getCurrentPanel().isInputEnabled());
+    setEnabled(m_State.getFlowPanels().getSelectedIndices(getPanelFilter(true)).length > 0);
   }
 }
