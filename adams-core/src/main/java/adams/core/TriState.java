@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TriState.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -25,7 +25,6 @@ import adams.core.option.AbstractOption;
  * Enum that enhances a boolean to have a third state: not set.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum TriState
   implements EnumWithCustomDisplay<TriState>{
@@ -82,13 +81,25 @@ public enum TriState
   }
 
   /**
+   * Checks whether the boolean state corresponds to {@link #TRUE} or {@link #FALSE}.
+   *
+   * @param state 	the state to compare with
+   * @return		true if "TRUE && true" or "FALSE && false" or "NOT_SET && null"
+   */
+  public boolean matches(Boolean state) {
+    return ((this == TriState.NOT_SET) && (state == null))
+      || ((this == TriState.TRUE) && state)
+      || ((this == TriState.FALSE) && !state);
+  }
+
+  /**
    * Parses the given string and returns the associated enum.
    *
    * @param s		the string to parse
    * @return		the enum or null if not found
    */
   public TriState parse(String s) {
-    return (TriState) valueOf((AbstractOption) null, s);
+    return valueOf((AbstractOption) null, s);
   }
 
   /**
