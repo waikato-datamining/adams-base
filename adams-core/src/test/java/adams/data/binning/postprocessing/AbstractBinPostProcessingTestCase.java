@@ -56,7 +56,7 @@ public abstract class AbstractBinPostProcessingTestCase<T>
    * @param errors 	for collecting errors
    * @return		the processed data
    */
-  protected List<Bin<T>> process(List<Bin<T>> objects, AbstractBinPostProcessing scheme, MessageCollection errors) {
+  protected List<Bin<T>> process(List<Bin<T>> objects, BinPostProcessing scheme, MessageCollection errors) {
     try {
       return scheme.postProcessBins(objects);
     }
@@ -106,7 +106,7 @@ public abstract class AbstractBinPostProcessingTestCase<T>
    *
    * @return		the setups
    */
-  protected abstract AbstractBinPostProcessing[] getRegressionSetups();
+  protected abstract BinPostProcessing[] getRegressionSetups();
 
   /**
    * Creates an output filename based on the input filename.
@@ -123,17 +123,17 @@ public abstract class AbstractBinPostProcessingTestCase<T>
    * Compares the processed data against previously saved output data.
    */
   public void testRegression() {
-    List<Bin<T>>[]		input;
-    List<Bin<T>>		processed;
-    boolean			ok;
-    String			regression;
-    int				i;
-    int				n;
-    AbstractBinPostProcessing[]	setups;
-    AbstractBinPostProcessing	current;
-    String[]			output;
-    TmpFile[]			outputFiles;
-    MessageCollection		errors;
+    List<Bin<T>>[]	input;
+    List<Bin<T>>	processed;
+    boolean		ok;
+    String		regression;
+    int			i;
+    int			n;
+    BinPostProcessing[]	setups;
+    BinPostProcessing	current;
+    String[]		output;
+    TmpFile[]		outputFiles;
+    MessageCollection	errors;
 
     if (m_NoRegressionTest)
       return;
@@ -145,7 +145,7 @@ public abstract class AbstractBinPostProcessingTestCase<T>
     // process data
     for (i = 0; i < setups.length; i++) {
       for (n = 0; n < input.length; n++) {
-	current = (AbstractBinPostProcessing) Utils.deepCopy(setups[i]);
+	current = (BinPostProcessing) Utils.deepCopy(setups[i]);
 	assertNotNull("Failed to create copy of algorithm: " + OptionUtils.getCommandLine(setups[i]), current);
 
 	errors = new MessageCollection();

@@ -26,6 +26,7 @@ import adams.data.binning.BinnableGroup;
 import adams.data.binning.BinnableInstances;
 import adams.data.binning.BinnableInstances.StringAttributeGroupExtractor;
 import adams.data.binning.algorithm.BinningAlgorithm;
+import adams.data.binning.algorithm.BinningAlgorithmUser;
 import adams.data.binning.algorithm.ManualBinning;
 import adams.data.binning.operation.Bins;
 import adams.data.binning.operation.Grouping;
@@ -59,7 +60,7 @@ import java.util.NoSuchElementException;
  */
 public class GroupedBinnedNumericClassCrossValidationFoldGenerator
   extends AbstractSplitGenerator
-  implements CrossValidationFoldGenerator {
+  implements CrossValidationFoldGenerator, BinningAlgorithmUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;
@@ -427,6 +428,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value 	the algorithm
    */
+  @Override
   public void setAlgorithm(BinningAlgorithm value) {
     m_Algorithm = value;
     reset();
@@ -437,6 +439,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @return 		the algorithm
    */
+  @Override
   public BinningAlgorithm getAlgorithm() {
     return m_Algorithm;
   }
@@ -447,6 +450,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String algorithmTipText() {
     return "The binning algorithm to apply to the data.";
   }

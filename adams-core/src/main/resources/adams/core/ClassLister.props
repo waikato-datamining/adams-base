@@ -111,7 +111,7 @@ adams.data.binning.algorithm.BinningAlgorithm=\
   adams.data.binning.algorithm
 
 # the schemes for post-processing bins
-adams.data.binning.postprocessing.AbstractBinPostProcessing=\
+adams.data.binning.postprocessing.BinPostProcessing=\
   adams.data.binning.postprocessing
 
 # data object compare schemes

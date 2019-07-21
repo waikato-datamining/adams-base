@@ -20,7 +20,6 @@
 
 package adams.data.binning.postprocessing;
 
-import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.binning.Bin;
 
@@ -33,7 +32,7 @@ import java.util.List;
  */
 public abstract class AbstractBinPostProcessing
   extends AbstractOptionHandler
-  implements QuickInfoSupporter {
+  implements BinPostProcessing {
 
   private static final long serialVersionUID = 4458109523375257552L;
 

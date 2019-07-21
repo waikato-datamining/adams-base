@@ -21,9 +21,11 @@ package adams.data.statistics;
 
 import adams.data.binning.Bin;
 import adams.data.binning.algorithm.BinningAlgorithm;
+import adams.data.binning.algorithm.BinningAlgorithmUser;
 import adams.data.binning.algorithm.ManualBinning;
 import adams.data.binning.operation.Wrapping;
-import adams.data.binning.postprocessing.AbstractBinPostProcessing;
+import adams.data.binning.postprocessing.BinPostProcessing;
+import adams.data.binning.postprocessing.BinPostProcessingUser;
 import adams.data.binning.postprocessing.PassThrough;
 
 import java.util.List;
@@ -68,7 +70,7 @@ import java.util.List;
  */
 public class ArrayBinning<T extends Number>
   extends AbstractArrayStatistic<T>
-  implements EqualLengthArrayStatistic {
+  implements EqualLengthArrayStatistic, BinningAlgorithmUser, BinPostProcessingUser {
 
   /** for serialization. */
   private static final long serialVersionUID = 3595293227007460735L;
@@ -80,7 +82,7 @@ public class ArrayBinning<T extends Number>
   protected BinningAlgorithm m_Algorithm;
 
   /** the post-processing scheme. */
-  protected AbstractBinPostProcessing m_PostProcessing;
+  protected BinPostProcessing m_PostProcessing;
 
   /** whether to use the ranges as bin description. */
   protected boolean m_DisplayRanges;
@@ -155,6 +157,7 @@ public class ArrayBinning<T extends Number>
    *
    * @param value 	the algorithm
    */
+  @Override
   public void setAlgorithm(BinningAlgorithm value) {
     m_Algorithm = value;
     reset();
@@ -165,6 +168,7 @@ public class ArrayBinning<T extends Number>
    *
    * @return 		the algorithm
    */
+  @Override
   public BinningAlgorithm getAlgorithm() {
     return m_Algorithm;
   }
@@ -175,6 +179,7 @@ public class ArrayBinning<T extends Number>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String algorithmTipText() {
     return "The binning algorithm to apply to the data.";
   }
@@ -184,7 +189,8 @@ public class ArrayBinning<T extends Number>
    *
    * @param value 	the post-processing
    */
-  public void setPostProcessing(AbstractBinPostProcessing value) {
+  @Override
+  public void setPostProcessing(BinPostProcessing value) {
     m_PostProcessing = value;
     reset();
   }
@@ -194,7 +200,8 @@ public class ArrayBinning<T extends Number>
    *
    * @return 		the post-processing
    */
-  public AbstractBinPostProcessing getPostProcessing() {
+  @Override
+  public BinPostProcessing getPostProcessing() {
     return m_PostProcessing;
   }
 
@@ -204,6 +211,7 @@ public class ArrayBinning<T extends Number>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String postProcessingTipText() {
     return "The post-processing to apply to the generated bins.";
   }

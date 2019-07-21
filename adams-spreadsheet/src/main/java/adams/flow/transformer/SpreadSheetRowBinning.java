@@ -25,9 +25,11 @@ import adams.core.QuickInfoHelper;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
 import adams.data.binning.algorithm.BinningAlgorithm;
+import adams.data.binning.algorithm.BinningAlgorithmUser;
 import adams.data.binning.algorithm.ManualBinning;
 import adams.data.binning.operation.Wrapping;
-import adams.data.binning.postprocessing.AbstractBinPostProcessing;
+import adams.data.binning.postprocessing.BinPostProcessing;
+import adams.data.binning.postprocessing.BinPostProcessingUser;
 import adams.data.binning.postprocessing.PassThrough;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -136,7 +138,8 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SpreadSheetRowBinning
-  extends AbstractInPlaceSpreadSheetTransformer {
+  extends AbstractInPlaceSpreadSheetTransformer
+  implements BinningAlgorithmUser, BinPostProcessingUser {
 
   private static final long serialVersionUID = -4140425415663734153L;
 
@@ -147,7 +150,7 @@ public class SpreadSheetRowBinning
   protected BinningAlgorithm m_Algorithm;
 
   /** for post-processing the bins. */
-  protected AbstractBinPostProcessing m_PostProcessing;
+  protected BinPostProcessing m_PostProcessing;
 
   /** the position where to insert the column. */
   protected SpreadSheetColumnIndex m_Position;
@@ -236,6 +239,7 @@ public class SpreadSheetRowBinning
    *
    * @param value	the algorithm
    */
+  @Override
   public void setAlgorithm(BinningAlgorithm value) {
     m_Algorithm = value;
     reset();
@@ -246,6 +250,7 @@ public class SpreadSheetRowBinning
    *
    * @return		the algorithm
    */
+  @Override
   public BinningAlgorithm getAlgorithm() {
     return m_Algorithm;
   }
@@ -256,6 +261,7 @@ public class SpreadSheetRowBinning
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String algorithmTipText() {
     return "The binning algorithm to apply.";
   }
@@ -265,7 +271,8 @@ public class SpreadSheetRowBinning
    *
    * @param value	the post-processing
    */
-  public void setPostProcessing(AbstractBinPostProcessing value) {
+  @Override
+  public void setPostProcessing(BinPostProcessing value) {
     m_PostProcessing = value;
     reset();
   }
@@ -275,7 +282,8 @@ public class SpreadSheetRowBinning
    *
    * @return		the post-processing
    */
-  public AbstractBinPostProcessing getPostProcessing() {
+  @Override
+  public BinPostProcessing getPostProcessing() {
     return m_PostProcessing;
   }
 
@@ -285,6 +293,7 @@ public class SpreadSheetRowBinning
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String postProcessingTipText() {
     return "The post-processing algorithm to apply to the bins.";
   }

@@ -68,7 +68,7 @@ public class PassThroughTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinPostProcessing[] getRegressionSetups() {
+  protected BinPostProcessing[] getRegressionSetups() {
     PassThrough[]	result;
 
     result = new PassThrough[1];
