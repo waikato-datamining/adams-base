@@ -70,12 +70,12 @@ public class FrequencyBinningTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinningAlgorithm<Integer>[] getRegressionSetups() {
-    FrequencyBinning<Integer>[]	result;
+  protected BinningAlgorithm[] getRegressionSetups() {
+    FrequencyBinning[]	result;
 
     result = new FrequencyBinning[2];
-    result[0] = new FrequencyBinning<>();
-    result[1] = new FrequencyBinning<>();
+    result[0] = new FrequencyBinning();
+    result[1] = new FrequencyBinning();
     result[1].setNumBins(20);
 
     return result;

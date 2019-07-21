@@ -107,7 +107,7 @@ adams.data.baseline.AbstractBaselineCorrection=\
   adams.data.baseline
 
 # the binning algorithms
-adams.data.binning.algorithm.AbstractBinningAlgorithm=\
+adams.data.binning.algorithm.BinningAlgorithm=\
   adams.data.binning.algorithm
 
 # the schemes for post-processing bins

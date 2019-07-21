@@ -35,8 +35,8 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SquareRootChoiceBinning<T>
-  extends AbstractEqualWidthBinningAlgorithm<T>
+public class SquareRootChoiceBinning
+  extends AbstractEqualWidthBinningAlgorithm
   implements TechnicalInformationHandler {
 
   private static final long serialVersionUID = -1486327441961729111L;
@@ -81,7 +81,7 @@ public class SquareRootChoiceBinning<T>
    * @throws IllegalStateException	if binning fails
    */
   @Override
-  protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
+  protected <T> List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
     return doGenerateBins(objects, (int) Math.ceil(Math.sqrt(objects.size())));
   }
 }

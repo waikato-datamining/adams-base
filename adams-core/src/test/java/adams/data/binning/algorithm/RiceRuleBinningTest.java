@@ -70,11 +70,11 @@ public class RiceRuleBinningTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinningAlgorithm<Integer>[] getRegressionSetups() {
-    RiceRuleBinning<Integer>[]	result;
+  protected BinningAlgorithm[] getRegressionSetups() {
+    RiceRuleBinning[]	result;
 
     result = new RiceRuleBinning[1];
-    result[0] = new RiceRuleBinning<>();
+    result[0] = new RiceRuleBinning();
 
     return result;
   }

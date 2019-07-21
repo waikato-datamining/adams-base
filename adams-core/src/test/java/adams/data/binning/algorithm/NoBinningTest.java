@@ -70,11 +70,11 @@ public class NoBinningTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinningAlgorithm<Integer>[] getRegressionSetups() {
-    NoBinning<Integer>[]	result;
+  protected BinningAlgorithm[] getRegressionSetups() {
+    NoBinning[]	result;
 
     result = new NoBinning[1];
-    result[0] = new NoBinning<>();
+    result[0] = new NoBinning();
 
     return result;
   }

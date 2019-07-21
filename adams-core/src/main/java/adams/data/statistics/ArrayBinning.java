@@ -20,7 +20,7 @@
 package adams.data.statistics;
 
 import adams.data.binning.Bin;
-import adams.data.binning.algorithm.AbstractBinningAlgorithm;
+import adams.data.binning.algorithm.BinningAlgorithm;
 import adams.data.binning.algorithm.ManualBinning;
 import adams.data.binning.operation.Wrapping;
 import adams.data.binning.postprocessing.AbstractBinPostProcessing;
@@ -45,7 +45,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-algorithm &lt;adams.data.binning.algorithm.AbstractBinningAlgorithm&gt; (property: algorithm)
+ * <pre>-algorithm &lt;adams.data.binning.algorithm.BinningAlgorithm&gt; (property: algorithm)
  * &nbsp;&nbsp;&nbsp;The binning algorithm to apply to the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.binning.algorithm.ManualBinning
  * </pre>
@@ -77,7 +77,7 @@ public class ArrayBinning<T extends Number>
   protected boolean m_Normalize;
 
   /** the binning algorithm. */
-  protected AbstractBinningAlgorithm m_Algorithm;
+  protected BinningAlgorithm m_Algorithm;
 
   /** the post-processing scheme. */
   protected AbstractBinPostProcessing m_PostProcessing;
@@ -155,7 +155,7 @@ public class ArrayBinning<T extends Number>
    *
    * @param value 	the algorithm
    */
-  public void setAlgorithm(AbstractBinningAlgorithm value) {
+  public void setAlgorithm(BinningAlgorithm value) {
     m_Algorithm = value;
     reset();
   }
@@ -165,7 +165,7 @@ public class ArrayBinning<T extends Number>
    *
    * @return 		the algorithm
    */
-  public AbstractBinningAlgorithm getAlgorithm() {
+  public BinningAlgorithm getAlgorithm() {
     return m_Algorithm;
   }
 

@@ -70,11 +70,11 @@ public class ScottsNormalReferenceRuleBinningTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinningAlgorithm<Integer>[] getRegressionSetups() {
-    ScottsNormalReferenceRuleBinning<Integer>[]	result;
+  protected BinningAlgorithm[] getRegressionSetups() {
+    ScottsNormalReferenceRuleBinning[]	result;
 
     result = new ScottsNormalReferenceRuleBinning[1];
-    result[0] = new ScottsNormalReferenceRuleBinning<>();
+    result[0] = new ScottsNormalReferenceRuleBinning();
 
     return result;
   }

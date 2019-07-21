@@ -70,11 +70,11 @@ public class FreedmanDiaconisChoiceBinningTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinningAlgorithm<Integer>[] getRegressionSetups() {
-    FreedmanDiaconisChoiceBinning<Integer>[]	result;
+  protected BinningAlgorithm[] getRegressionSetups() {
+    FreedmanDiaconisChoiceBinning[]	result;
 
     result = new FreedmanDiaconisChoiceBinning[1];
-    result[0] = new FreedmanDiaconisChoiceBinning<>();
+    result[0] = new FreedmanDiaconisChoiceBinning();
 
     return result;
   }

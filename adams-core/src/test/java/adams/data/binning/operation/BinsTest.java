@@ -60,7 +60,7 @@ public class BinsTest
     List<Binnable<Integer>> 	data;
     List<Binnable<Integer>> 	sorted;
     List<Bin<Integer>> 		bins;
-    ManualBinning<Integer>	manual;
+    ManualBinning		manual;
 
     result = new ArrayList<>();
 
@@ -76,7 +76,7 @@ public class BinsTest
     result.add(fname);
 
     fname = createOutputFilename(2);
-    manual = new ManualBinning<>();
+    manual = new ManualBinning();
     manual.setNumBins(5);
     bins = generateBins(data, manual);
     saveBins(bins, fname);

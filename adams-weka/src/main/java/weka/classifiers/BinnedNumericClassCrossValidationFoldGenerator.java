@@ -22,7 +22,7 @@ package weka.classifiers;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableInstances;
-import adams.data.binning.algorithm.AbstractBinningAlgorithm;
+import adams.data.binning.algorithm.BinningAlgorithm;
 import adams.data.binning.algorithm.ManualBinning;
 import adams.data.binning.operation.Bins;
 import adams.data.binning.operation.Stratify;
@@ -74,7 +74,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
   protected boolean m_Randomize;
 
   /** the binning algorithm. */
-  protected AbstractBinningAlgorithm m_Algorithm;
+  protected BinningAlgorithm m_Algorithm;
 
   /** the temporary pairs. */
   protected transient List<FoldPair<Binnable<Instance>>> m_FoldPairs;
@@ -313,7 +313,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value 	the algorithm
    */
-  public void setAlgorithm(AbstractBinningAlgorithm value) {
+  public void setAlgorithm(BinningAlgorithm value) {
     m_Algorithm = value;
     reset();
   }
@@ -323,7 +323,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @return 		the algorithm
    */
-  public AbstractBinningAlgorithm getAlgorithm() {
+  public BinningAlgorithm getAlgorithm() {
     return m_Algorithm;
   }
 

@@ -23,7 +23,7 @@ import adams.core.Utils;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableInstances;
-import adams.data.binning.algorithm.AbstractBinningAlgorithm;
+import adams.data.binning.algorithm.BinningAlgorithm;
 import adams.data.binning.algorithm.ManualBinning;
 import adams.data.binning.operation.Bins;
 import adams.data.binning.operation.Randomize;
@@ -56,7 +56,7 @@ public class BinnedNumericClassRandomSplitGenerator
   protected boolean m_PreserveOrder;
 
   /** the binning algorithm. */
-  protected AbstractBinningAlgorithm m_Algorithm;
+  protected BinningAlgorithm m_Algorithm;
 
   /** whether the split was generated. */
   protected boolean m_Generated;
@@ -208,7 +208,7 @@ public class BinnedNumericClassRandomSplitGenerator
    *
    * @param value 	the algorithm
    */
-  public void setAlgorithm(AbstractBinningAlgorithm value) {
+  public void setAlgorithm(BinningAlgorithm value) {
     m_Algorithm = value;
     reset();
   }
@@ -218,7 +218,7 @@ public class BinnedNumericClassRandomSplitGenerator
    *
    * @return 		the algorithm
    */
-  public AbstractBinningAlgorithm getAlgorithm() {
+  public BinningAlgorithm getAlgorithm() {
     return m_Algorithm;
   }
 

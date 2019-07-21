@@ -31,10 +31,10 @@ import java.util.List;
  * Generates a predefined number of equal sized bins.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @param <T> the type of payload
  */
-public class ManualBinning<T>
-  extends AbstractEqualWidthBinningAlgorithm<T> {
+public class ManualBinning
+  extends AbstractEqualWidthBinningAlgorithm
+  implements FixedNumBinsBinningAlgorithm {
 
   private static final long serialVersionUID = -3591626302229910556L;
 
@@ -89,6 +89,7 @@ public class ManualBinning<T>
    *
    * @param value 	the number of bins
    */
+  @Override
   public void setNumBins(int value) {
     if (getOptionManager().isValid("numBins", value)) {
       m_NumBins = value;
@@ -101,6 +102,7 @@ public class ManualBinning<T>
    *
    * @return 		the number of bins
    */
+  @Override
   public int getNumBins() {
     return m_NumBins;
   }
@@ -111,6 +113,7 @@ public class ManualBinning<T>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String numBinsTipText() {
     return "The number of bins to use.";
   }
@@ -234,7 +237,7 @@ public class ManualBinning<T>
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String check(List<Binnable<T>> objects) {
+  protected <T> String check(List<Binnable<T>> objects) {
     String	result;
 
     result = super.check(objects);
@@ -257,7 +260,7 @@ public class ManualBinning<T>
    * @throws IllegalStateException	if binning fails
    */
   @Override
-  protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
+  protected <T> List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
     Struct2<Double,Double> 	minMax;
 
     if (m_UseFixedMinMax) {

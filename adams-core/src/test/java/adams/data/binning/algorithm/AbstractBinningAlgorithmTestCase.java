@@ -14,7 +14,7 @@
  */
 
 /*
- * AbstractBinningAlgorithmTestCase.java
+ * BinningAlgorithmTestCase.java
  * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.binning.algorithm;
@@ -55,7 +55,7 @@ public abstract class AbstractBinningAlgorithmTestCase<T>
    * @param scheme	the scheme to process the data with
    * @return		the processed data
    */
-  protected List<Bin<T>> process(List<Binnable<T>> objects, AbstractBinningAlgorithm<T> scheme) {
+  protected List<Bin<T>> process(List<Binnable<T>> objects, BinningAlgorithm scheme) {
     return scheme.generateBins(objects);
   }
 
@@ -92,7 +92,7 @@ public abstract class AbstractBinningAlgorithmTestCase<T>
    *
    * @return		the setups
    */
-  protected abstract AbstractBinningAlgorithm<T>[] getRegressionSetups();
+  protected abstract BinningAlgorithm[] getRegressionSetups();
 
   /**
    * Creates an output filename based on the input filename.
@@ -108,15 +108,15 @@ public abstract class AbstractBinningAlgorithmTestCase<T>
    * Compares the processed data against previously saved output data.
    */
   public void testRegression() {
-    List<Binnable<T>>			input;
-    List<Bin<T>>			processed;
-    boolean				ok;
-    String				regression;
-    int					i;
-    AbstractBinningAlgorithm<T>[]	setups;
-    AbstractBinningAlgorithm<T>		current;
-    String[]				output;
-    TmpFile[]				outputFiles;
+    List<Binnable<T>>		input;
+    List<Bin<T>>		processed;
+    boolean			ok;
+    String			regression;
+    int				i;
+    BinningAlgorithm[]	setups;
+    BinningAlgorithm	current;
+    String[]			output;
+    TmpFile[]			outputFiles;
 
     if (m_NoRegressionTest)
       return;
@@ -127,7 +127,7 @@ public abstract class AbstractBinningAlgorithmTestCase<T>
 
     // process data
     for (i = 0; i < setups.length; i++) {
-      current = (AbstractBinningAlgorithm<T>) Utils.deepCopy(setups[i]);
+      current = (BinningAlgorithm) Utils.deepCopy(setups[i]);
       assertNotNull("Failed to create copy of algorithm: " + OptionUtils.getCommandLine(setups[i]), current);
 
       processed = process(input, current);

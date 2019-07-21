@@ -70,14 +70,14 @@ public class ManualBinningTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinningAlgorithm<Integer>[] getRegressionSetups() {
-    ManualBinning<Integer>[]	result;
+  protected BinningAlgorithm[] getRegressionSetups() {
+    ManualBinning[]	result;
 
     result = new ManualBinning[3];
-    result[0] = new ManualBinning<>();
-    result[1] = new ManualBinning<>();
+    result[0] = new ManualBinning();
+    result[1] = new ManualBinning();
     result[1].setNumBins(20);
-    result[2] = new ManualBinning<>();
+    result[2] = new ManualBinning();
     result[2].setUseFixedMinMax(true);
     result[2].setManualMin(0.0);
     result[2].setManualMax(2.0);

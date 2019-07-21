@@ -38,11 +38,10 @@ import java.util.List;
  * Performs frequency binning.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @param <T> the type of payload
  */
-public class FrequencyBinning<T>
-  extends AbstractBinningAlgorithm<T>
-  implements TechnicalInformationHandler {
+public class FrequencyBinning
+  extends AbstractBinningAlgorithm
+  implements TechnicalInformationHandler, FixedNumBinsBinningAlgorithm {
 
   private static final long serialVersionUID = -3591626302229910556L;
 
@@ -97,6 +96,7 @@ public class FrequencyBinning<T>
    *
    * @param value 	the number of bins
    */
+  @Override
   public void setNumBins(int value) {
     if (getOptionManager().isValid("numBins", value)) {
       m_NumBins = value;
@@ -109,6 +109,7 @@ public class FrequencyBinning<T>
    *
    * @return 		the number of bins
    */
+  @Override
   public int getNumBins() {
     return m_NumBins;
   }
@@ -119,6 +120,7 @@ public class FrequencyBinning<T>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String numBinsTipText() {
     return "The number of bins to use.";
   }
@@ -140,7 +142,7 @@ public class FrequencyBinning<T>
    * @throws IllegalStateException	if binning fails
    */
   @Override
-  protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
+  protected <T> List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
     List<Bin<T>>	result;
     Number[]		array;
     Number[]		sorted;

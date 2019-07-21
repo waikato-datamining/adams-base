@@ -70,14 +70,14 @@ public class DensityBinningTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinningAlgorithm<Integer>[] getRegressionSetups() {
-    DensityBinning<Integer>[]	result;
+  protected BinningAlgorithm[] getRegressionSetups() {
+    DensityBinning[]	result;
 
     result = new DensityBinning[3];
-    result[0] = new DensityBinning<>();
-    result[1] = new DensityBinning<>();
+    result[0] = new DensityBinning();
+    result[1] = new DensityBinning();
     result[1].setBinWidth(0.1);
-    result[2] = new DensityBinning<>();
+    result[2] = new DensityBinning();
     result[2].setBinWidth(0.25);
 
     return result;

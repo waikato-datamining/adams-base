@@ -24,7 +24,7 @@ import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
-import adams.data.binning.algorithm.AbstractBinningAlgorithm;
+import adams.data.binning.algorithm.BinningAlgorithm;
 import adams.data.binning.algorithm.ManualBinning;
 import adams.data.binning.operation.Wrapping;
 import adams.data.binning.postprocessing.AbstractBinPostProcessing;
@@ -100,7 +100,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  *
- * <pre>-algorithm &lt;adams.data.binning.algorithm.AbstractBinningAlgorithm&gt; (property: algorithm)
+ * <pre>-algorithm &lt;adams.data.binning.algorithm.BinningAlgorithm&gt; (property: algorithm)
  * &nbsp;&nbsp;&nbsp;The binning algorithm to apply.
  * &nbsp;&nbsp;&nbsp;default: adams.data.binning.algorithm.ManualBinning
  * </pre>
@@ -144,7 +144,7 @@ public class SpreadSheetRowBinning
   protected SpreadSheetColumnIndex m_BinningColumn;
 
   /** the binning algorithm to use. */
-  protected AbstractBinningAlgorithm m_Algorithm;
+  protected BinningAlgorithm m_Algorithm;
 
   /** for post-processing the bins. */
   protected AbstractBinPostProcessing m_PostProcessing;
@@ -236,7 +236,7 @@ public class SpreadSheetRowBinning
    *
    * @param value	the algorithm
    */
-  public void setAlgorithm(AbstractBinningAlgorithm value) {
+  public void setAlgorithm(BinningAlgorithm value) {
     m_Algorithm = value;
     reset();
   }
@@ -246,7 +246,7 @@ public class SpreadSheetRowBinning
    *
    * @return		the algorithm
    */
-  public AbstractBinningAlgorithm getAlgorithm() {
+  public BinningAlgorithm getAlgorithm() {
     return m_Algorithm;
   }
 

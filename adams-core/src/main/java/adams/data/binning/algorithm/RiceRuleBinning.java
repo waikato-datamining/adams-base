@@ -34,8 +34,8 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class RiceRuleBinning<T>
-  extends AbstractEqualWidthBinningAlgorithm<T>
+public class RiceRuleBinning
+  extends AbstractEqualWidthBinningAlgorithm
   implements TechnicalInformationHandler {
 
   private static final long serialVersionUID = -1486327441961729111L;
@@ -79,7 +79,7 @@ public class RiceRuleBinning<T>
    * @throws IllegalStateException	if binning fails
    */
   @Override
-  protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
+  protected <T> List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
     return doGenerateBins(objects, (int) Math.ceil(2 * Math.pow(objects.size(), 1./3.)));
   }
 }

@@ -34,8 +34,8 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class NoBinning<T>
-  extends AbstractBinningAlgorithm<T> {
+public class NoBinning
+  extends AbstractBinningAlgorithm {
 
   private static final long serialVersionUID = -1486327441961729111L;
 
@@ -57,7 +57,7 @@ public class NoBinning<T>
    * @throws IllegalStateException	if binning fails
    */
   @Override
-  protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
+  protected <T> List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
     List<Bin<T>>		result;
     Struct2<Double,Double> 	minMax;
     double			min;

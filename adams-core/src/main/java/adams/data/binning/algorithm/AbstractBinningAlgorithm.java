@@ -33,11 +33,10 @@ import java.util.List;
  * Ancestor for binning algorithms.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @param <T> the type of payload
  */
-public abstract class AbstractBinningAlgorithm<T>
+public abstract class AbstractBinningAlgorithm
   extends AbstractOptionHandler
-  implements QuickInfoSupporter {
+  implements BinningAlgorithm, QuickInfoSupporter {
 
   private static final long serialVersionUID = -7234721005632544790L;
 
@@ -102,7 +101,7 @@ public abstract class AbstractBinningAlgorithm<T>
    * @param objects	the objects to bin
    * @return		null if successful, otherwise error message
    */
-  protected String check(List<Binnable<T>> objects) {
+  protected <T> String check(List<Binnable<T>> objects) {
     if ((objects == null) || (objects.size() == 0))
       return "No objects provided!";
     return null;
@@ -114,7 +113,7 @@ public abstract class AbstractBinningAlgorithm<T>
    * @param objects 	the objects to determine the min/max from (using their associated value)
    * @return		the min/max
    */
-  protected Struct2<Double,Double> getMinMax(List<Binnable<T>> objects) {
+  protected <T> Struct2<Double,Double> getMinMax(List<Binnable<T>> objects) {
     return Statistics.minMax(objects);
   }
 
@@ -125,7 +124,7 @@ public abstract class AbstractBinningAlgorithm<T>
    * @return		the generated bins
    * @throws IllegalStateException	if binning fails
    */
-  protected abstract List<Bin<T>> doGenerateBins(List<Binnable<T>> objects);
+  protected abstract <T> List<Bin<T>> doGenerateBins(List<Binnable<T>> objects);
 
   /**
    * Places the binnable objects in the respective bins.
@@ -133,7 +132,7 @@ public abstract class AbstractBinningAlgorithm<T>
    * @param bins	the bins to fill
    * @param objects	the objects to distribute
    */
-  protected void fillBins(List<Bin<T>> bins, List<Binnable<T>> objects) {
+  protected <T> void fillBins(List<Bin<T>> bins, List<Binnable<T>> objects) {
     for (Binnable<T> object: objects) {
       for (Bin<T> bin: bins) {
         if (bin.fits(object)) {
@@ -151,7 +150,8 @@ public abstract class AbstractBinningAlgorithm<T>
    * @return		the generated bins
    * @throws IllegalStateException	if check or binning fails
    */
-  public List<Bin<T>> generateBins(List<Binnable<T>> objects) {
+  @Override
+  public <T> List<Bin<T>> generateBins(List<Binnable<T>> objects) {
     List<Bin<T>>	result;
     String		msg;
 

@@ -70,11 +70,11 @@ public class SquareRootChoiceBinningTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinningAlgorithm<Integer>[] getRegressionSetups() {
-    SquareRootChoiceBinning<Integer>[]	result;
+  protected BinningAlgorithm[] getRegressionSetups() {
+    SquareRootChoiceBinning[]	result;
 
     result = new SquareRootChoiceBinning[1];
-    result[0] = new SquareRootChoiceBinning<>();
+    result[0] = new SquareRootChoiceBinning();
 
     return result;
   }

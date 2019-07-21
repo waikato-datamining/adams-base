@@ -70,11 +70,11 @@ public class SturgesFormulaBinningTest
    * @return		the setups
    */
   @Override
-  protected AbstractBinningAlgorithm<Integer>[] getRegressionSetups() {
-    SturgesFormulaBinning<Integer>[]	result;
+  protected BinningAlgorithm[] getRegressionSetups() {
+    SturgesFormulaBinning[]	result;
 
     result = new SturgesFormulaBinning[1];
-    result[0] = new SturgesFormulaBinning<>();
+    result[0] = new SturgesFormulaBinning();
 
     return result;
   }

@@ -33,8 +33,8 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractEqualWidthBinningAlgorithm<T>
-  extends AbstractBinningAlgorithm<T> {
+public abstract class AbstractEqualWidthBinningAlgorithm
+  extends AbstractBinningAlgorithm {
 
   private static final long serialVersionUID = 6165394321339796917L;
 
@@ -44,7 +44,7 @@ public abstract class AbstractEqualWidthBinningAlgorithm<T>
    * @param numBins	the number of equal-width bins to generate
    * @return		the bins
    */
-  protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects, int numBins) {
+  protected <T> List<Bin<T>> doGenerateBins(List<Binnable<T>> objects, int numBins) {
     return doGenerateBins(getMinMax(objects), numBins);
   }
 
@@ -55,7 +55,7 @@ public abstract class AbstractEqualWidthBinningAlgorithm<T>
    * @param numBins	the number of equal-width bins to generate
    * @return		the bins
    */
-  protected List<Bin<T>> doGenerateBins(Struct2<Double,Double> minMax, int numBins) {
+  protected <T> List<Bin<T>> doGenerateBins(Struct2<Double,Double> minMax, int numBins) {
     return doGenerateBins(minMax.value1, minMax.value2, numBins);
   }
 
@@ -67,7 +67,7 @@ public abstract class AbstractEqualWidthBinningAlgorithm<T>
    * @param numBins	the number of equal-width bins to generate
    * @return		the bins
    */
-  protected List<Bin<T>> doGenerateBins(double min, double max, int numBins) {
+  protected <T> List<Bin<T>> doGenerateBins(double min, double max, int numBins) {
     List<Bin<T>>	result;
     double		binWidth;
     double[]		binStart;
@@ -109,7 +109,7 @@ public abstract class AbstractEqualWidthBinningAlgorithm<T>
    * @param binWidth	the bin width
    * @return		the bins
    */
-  protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects, double binWidth) {
+  protected <T> List<Bin<T>> doGenerateBins(List<Binnable<T>> objects, double binWidth) {
     return doGenerateBins(getMinMax(objects), binWidth);
   }
 
@@ -120,7 +120,7 @@ public abstract class AbstractEqualWidthBinningAlgorithm<T>
    * @param binWidth	the bin width
    * @return		the bins
    */
-  protected List<Bin<T>> doGenerateBins(Struct2<Double,Double> minMax, double binWidth) {
+  protected <T> List<Bin<T>> doGenerateBins(Struct2<Double,Double> minMax, double binWidth) {
     return doGenerateBins(minMax.value1, minMax.value2, binWidth);
   }
 
@@ -132,7 +132,7 @@ public abstract class AbstractEqualWidthBinningAlgorithm<T>
    * @param binWidth	the bin width
    * @return		the bins
    */
-  protected List<Bin<T>> doGenerateBins(double min, double max, double binWidth) {
+  protected <T> List<Bin<T>> doGenerateBins(double min, double max, double binWidth) {
     List<Bin<T>>	result;
     int 		numBins;
     double[]		binStart;

@@ -34,11 +34,10 @@ import java.util.List;
  * Performs density-based binning.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @param <T> the type of payload
  */
-public class DensityBinning<T>
-  extends AbstractEqualWidthBinningAlgorithm<T>
-  implements TechnicalInformationHandler {
+public class DensityBinning
+  extends AbstractEqualWidthBinningAlgorithm
+  implements TechnicalInformationHandler, FixedBinWidthBinningAlgorithm {
 
   private static final long serialVersionUID = -3591626302229910556L;
 
@@ -93,6 +92,7 @@ public class DensityBinning<T>
    *
    * @param value 	the bin width
    */
+  @Override
   public void setBinWidth(double value) {
     if (getOptionManager().isValid("binWidth", value)) {
       m_BinWidth = value;
@@ -105,6 +105,7 @@ public class DensityBinning<T>
    *
    * @return 		the bin width
    */
+  @Override
   public double getBinWidth() {
     return m_BinWidth;
   }
@@ -115,6 +116,7 @@ public class DensityBinning<T>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String binWidthTipText() {
     return "The bin width to use.";
   }
@@ -136,7 +138,7 @@ public class DensityBinning<T>
    * @throws IllegalStateException	if binning fails
    */
   @Override
-  protected List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
+  protected <T> List<Bin<T>> doGenerateBins(List<Binnable<T>> objects) {
     return doGenerateBins(objects, m_BinWidth);
   }
 }
