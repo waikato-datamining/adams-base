@@ -22,8 +22,11 @@ package adams.data.binning.operation;
 
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
+import adams.data.statistics.StatUtils;
 import com.github.fracpete.javautils.enumerate.Enumerated;
+import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
@@ -37,6 +40,14 @@ import static com.github.fracpete.javautils.Enumerate.enumerate;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class Bins {
+
+  /**
+   * Enumeration on how to summarize multiple binnable values.
+   */
+  public enum SummaryType {
+    MEAN,
+    MEDIAN,
+  }
 
   /**
    * Returns the size of the bins.
@@ -100,5 +111,64 @@ public class Bins {
       result.addAll(bin.get());
 
     return result;
+  }
+
+  /**
+   * Collects the binnable values from each bin and returns them as array per bin.
+   *
+   * @param bins	the bins to process
+   * @param <T>		the type of payload
+   * @return		the binnable values per bin
+   */
+  public static <T> List<double[]> binnableValues(List<Bin<T>> bins) {
+    List<double[]>  	result;
+    TDoubleList		values;
+
+    result = new ArrayList<>();
+    for (Bin<T> bin: bins) {
+      values = new TDoubleArrayList();
+      for (Binnable<T> b: bin.get())
+        values.add(b.getValue());
+      result.add(values.toArray());
+    }
+
+    return result;
+  }
+
+  /**
+   * Collects the binnable values from each bin, summarizes them and then returns
+   * that per bin.
+   *
+   * @param bins	the bins to process
+   * @param type	how to summarize the values
+   * @param emptyBinValue 	the value to use for empty bins
+   * @param <T>		the type of payload
+   * @return		the summarized values per bin
+   */
+  public static <T> double[] summarizeBinnableValues(List<Bin<T>> bins, SummaryType type, double emptyBinValue) {
+    TDoubleList		result;
+    List<double[]>	values;
+
+    result = new TDoubleArrayList();
+    values = binnableValues(bins);
+    for (double[] value: values) {
+      if (value.length == 0) {
+        result.add(emptyBinValue);
+      }
+      else {
+	switch (type) {
+	  case MEAN:
+	    result.add(StatUtils.mean(value));
+	    break;
+	  case MEDIAN:
+	    result.add(StatUtils.median(value));
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled summary type: " + type);
+	}
+      }
+    }
+
+    return result.toArray();
   }
 }
