@@ -311,7 +311,7 @@ public class BinnedNumericClassRandomSplitGenerator
     m_Generated = true;
 
     try {
-      binnableInst = BinnableInstances.toBinnableUsingIndex(m_Data);
+      binnableInst = BinnableInstances.toBinnableUsingClass(m_Data);
     }
     catch (Exception e) {
       throw new IllegalStateException("Failed to create binnable Instances!", e);
