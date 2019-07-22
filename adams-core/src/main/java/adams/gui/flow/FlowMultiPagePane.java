@@ -275,6 +275,7 @@ public class FlowMultiPagePane
 
     for (int index: getSelectedIndices()) {
       current = getPanelAt(index);
+      match   = true;
       for (FlowPanelFilter filter: filters.keySet()) {
         switch (filter) {
 	  case RUNNING:
@@ -299,9 +300,11 @@ public class FlowMultiPagePane
 	  default:
 	    throw new IllegalStateException("Unhandled panel filter: " + filter);
 	}
-	if (match)
-	  result.add(index);
+	if (!match)
+	  break;
       }
+      if (match)
+	result.add(index);
     }
 
     return result.toArray();
