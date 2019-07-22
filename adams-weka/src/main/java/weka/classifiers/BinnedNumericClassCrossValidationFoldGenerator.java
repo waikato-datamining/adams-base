@@ -19,6 +19,7 @@
  */
 package weka.classifiers;
 
+import adams.core.Utils;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableInstances;
@@ -427,13 +428,13 @@ public class BinnedNumericClassCrossValidationFoldGenerator
 
       binInst = m_Algorithm.generateBins(binnableInst);
       if (isLoggingEnabled())
-        getLogger().info("Bins: " + Bins.binSizes(binInst));
+        getLogger().info("Bins: " + Utils.arrayToString(Bins.binSizes(binInst)));
 
       minBinSize = new MinBinSize();
       minBinSize.setMinSize(2);
       binInst = minBinSize.postProcessBins(binInst);
       if (isLoggingEnabled())
-        getLogger().info("Bins after post-processing: " + Bins.binSizes(binInst));
+        getLogger().info("Bins after post-processing: " + Utils.arrayToString(Bins.binSizes(binInst)));
 
       // use bin index as new value of binnable
       binInst = Bins.useBinIndex(binInst);
