@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTable.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -43,7 +43,6 @@ import java.util.HashMap;
  * A specialized table for displaying a SpreadSheet table model.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetTable
   extends SortableAndSearchableTable {
@@ -240,13 +239,19 @@ public class SpreadSheetTable
     JMenuItem		menuitem;
     final boolean	asc;
     final int           row;
+    final int[]		rows;
     final int           actRow;
+    final int[]         actRows;
     final int           col;
     final int           actCol;
 
     menu   = new BasePopupMenu();
     row    = rowAtPoint(e.getPoint());
     actRow = getActualRow(row);
+    rows   = getSelectedRows();
+    actRows = new int[rows.length];
+    for (int i = 0; i < rows.length; i++)
+      actRows[i] = getActualRow(rows[i]);
     col    = columnAtPoint(e.getPoint());
     if (getShowRowColumn())
       actCol = col - 1;
@@ -399,7 +404,7 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> setColumnWidths());
     menu.add(menuitem);
 
-    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, row, actCol);
+    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, row, actRows, rows, actCol);
 
     if (m_HeaderPopupMenuCustomizer != null)
       m_HeaderPopupMenuCustomizer.customizePopupMenu(e, menu);
@@ -543,7 +548,7 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.VISIBLE));
     submenu.add(menuitem);
 
-    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, row, actCol);
+    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, row, actRows, rows, actCol);
 
     menu.addSeparator();
 
