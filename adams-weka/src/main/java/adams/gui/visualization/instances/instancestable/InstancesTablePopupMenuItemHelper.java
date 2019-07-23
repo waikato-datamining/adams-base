@@ -75,18 +75,22 @@ public class InstancesTablePopupMenuItemHelper {
    * @param isRow	whether this is for a row or a column
    * @param actRow	the current actual row
    * @param selRow 	the selected row in the table
+   * @param actRows	the current actual rows
+   * @param selRows 	the selected rows in the table
    * @param column	the current column
    * @param data	the instances to use
    * @param menuitem	the menuitem to add the action to
    * @param item	the menu item scheme
    */
-  protected static void addAction(final InstancesTable table, final Instances data, boolean isRow, final int actRow, final int selRow, final int column, final JMenuItem menuitem, final InstancesTablePopupMenuItem item) {
+  protected static void addAction(final InstancesTable table, final Instances data, boolean isRow, final int actRow, final int selRow, final int[] actRows, final int[] selRows, final int column, final JMenuItem menuitem, final InstancesTablePopupMenuItem item) {
     if (isRow) {
       if (item instanceof PlotRow) {
 	menuitem.addActionListener((ActionEvent e) -> ((PlotRow) item).plotRow(table, data, actRow, selRow));
+	menuitem.setEnabled(actRows.length <= 1);
       }
       else if (item instanceof ProcessRow) {
 	menuitem.addActionListener((ActionEvent e) -> ((ProcessRow) item).processRow(table, data, actRow, selRow));
+	menuitem.setEnabled(actRows.length <= 1);
       }
       else if (item instanceof ProcessCell) {
 	menuitem.addActionListener((ActionEvent e) -> ((ProcessCell) item).processCell(table, data, actRow, selRow, column));
@@ -109,11 +113,13 @@ public class InstancesTablePopupMenuItemHelper {
    * @param isRow	whether this is for a row or a column
    * @param actRow	the current actual row
    * @param selRow 	the selected row in the table
+   * @param actRows	the current actual rows
+   * @param selRows 	the selected rows in the table
    * @param column	the current column
    * @param menu	the menu to add the items to
    * @param items	the available schemes
    */
-  protected static void addToPopupMenu(InstancesTable table, boolean isRow, int actRow, int selRow, int column, JPopupMenu menu, List<InstancesTablePopupMenuItem> items) {
+  protected static void addToPopupMenu(InstancesTable table, boolean isRow, int actRow, int selRow, int[] actRows, int[] selRows, int column, JPopupMenu menu, List<InstancesTablePopupMenuItem> items) {
     JMenuItem		menuitem;
     Instances		data;
 
@@ -128,7 +134,7 @@ public class InstancesTablePopupMenuItemHelper {
       menuitem = new JMenuItem(item.getMenuItem());
       if (item.getIconName() != null)
         menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
-      addAction(table, data, isRow, actRow, selRow, column, menuitem, item);
+      addAction(table, data, isRow, actRow, selRow, actRows, selRows, column, menuitem, item);
       menu.add(menuitem);
     }
   }
@@ -141,18 +147,20 @@ public class InstancesTablePopupMenuItemHelper {
    * @param isRow	whether this is for a row or a column
    * @param actRow	the current actual row
    * @param selRow 	the selected row in the table
+   * @param actRows	the current actual rows
+   * @param selRows 	the selected rows in the table
    * @param column	the current column
    */
-  public static void addToPopupMenu(InstancesTable table, JPopupMenu menu, boolean isRow, int actRow, int selRow, int column) {
+  public static void addToPopupMenu(InstancesTable table, JPopupMenu menu, boolean isRow, int actRow, int selRow, int[] actRows, int[] selRows, int column) {
     menu.addSeparator();
     if (isRow) {
-      addToPopupMenu(table, true, actRow, selRow, column, menu, getItems(PlotRow.class));
-      addToPopupMenu(table, true, actRow, selRow, column, menu, getItems(ProcessRow.class));
-      addToPopupMenu(table, true, actRow, selRow, column, menu, getItems(ProcessCell.class));
+      addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(PlotRow.class));
+      addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(ProcessRow.class));
+      addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(ProcessCell.class));
     }
     else {
-      addToPopupMenu(table, false, actRow, selRow, column, menu, getItems(PlotColumn.class));
-      addToPopupMenu(table, false, actRow, selRow, column, menu, getItems(ProcessColumn.class));
+      addToPopupMenu(table, false, actRow, selRow, actRows, selRows, column, menu, getItems(PlotColumn.class));
+      addToPopupMenu(table, false, actRow, selRow, actRows, selRows, column, menu, getItems(ProcessColumn.class));
     }
   }
 }

@@ -280,7 +280,9 @@ public class InstancesTable
     BasePopupMenu		menu;
     JMenuItem			menuitem;
     final int			row;
-    final int			actRow;
+    final int[]			rows;
+    final int           	actRow;
+    final int[]         	actRows;
     final int			col;
     final int			actCol;
     final InstancesTableModel	instModel;
@@ -288,6 +290,10 @@ public class InstancesTable
     menu      = new BasePopupMenu();
     row       = rowAtPoint(e.getPoint());
     actRow    = getActualRow(row);
+    rows      = getSelectedRows();
+    actRows   = new int[rows.length];
+    for (int i = 0; i < rows.length; i++)
+      actRows[i] = getActualRow(rows[i]);
     col       = tableHeader.columnAtPoint(e.getPoint());
     actCol    = col - 1;
     instModel = (InstancesTableModel) getUnsortedModel();
@@ -372,7 +378,7 @@ public class InstancesTable
     menuitem.addActionListener((ActionEvent ae) -> removeAllColumnFilters());
     menu.add(menuitem);
 
-    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, row, actCol);
+    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, row, actRows, rows, actCol);
 
     if (m_HeaderPopupMenuCustomizer != null)
       m_HeaderPopupMenuCustomizer.customizePopupMenu(e, menu);
@@ -407,6 +413,7 @@ public class InstancesTable
     final int			col;
     final int			actCol;
     final int[]			selRows;
+    final int[]			actRows;
     final InstancesTableModel	instModel;
     final Range 		range;
 
@@ -416,6 +423,9 @@ public class InstancesTable
     row       = rowAtPoint(e.getPoint());
     actRow    = getActualRow(row);
     selRows   = getSelectedRows();
+    actRows   = new int[selRows.length];
+    for (int i = 0; i < selRows.length; i++)
+      actRows[i] = getActualRow(selRows[i]);
     instModel = (InstancesTableModel) getUnsortedModel();
     range = new Range();
     range.setMax(getRowCount());
@@ -467,9 +477,6 @@ public class InstancesTable
       int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, msg);
       if (retVal != ApprovalDialog.APPROVE_OPTION)
 	return;
-      int[] actRows = new int[selRows.length];
-      for (int i = 0; i < selRows.length; i++)
-	actRows[i] = getActualRow(selRows[i]);
       instModel.deleteInstances(actRows);
       notifyChangeListeners();
     });
@@ -493,7 +500,7 @@ public class InstancesTable
     menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.VISIBLE));
     submenu.add(menuitem);
 
-    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, row, actCol);
+    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, row, actRows, selRows, actCol);
 
     if (m_CellPopupMenuCustomizer != null)
       m_CellPopupMenuCustomizer.customizePopupMenu(e, menu);
