@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator;
 
 import adams.core.MessageCollection;
+import adams.core.UniqueIDs;
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
@@ -41,19 +42,6 @@ public class InvestigatorManagerPanel
   extends AbstractSerializableWorkspaceManagerPanel<InvestigatorPanel> {
 
   private static final long serialVersionUID = -5959114946146695938L;
-
-  /** the session counter. */
-  protected int m_Counter;
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Counter = 0;
-  }
 
   /**
    * The default name for a workspace.
@@ -78,8 +66,6 @@ public class InvestigatorManagerPanel
     result = new InvestigatorPanel();
     if (init)
       result.addDefaultTabs();
-
-    m_Counter++;
 
     return result;
   }
@@ -106,7 +92,7 @@ public class InvestigatorManagerPanel
     MessageCollection	errors;
 
     nameOld = getHistory().getSelectedEntry();
-    nameNew = GUIHelper.showInputDialog(this, "Please enter name for workspace", nameOld + " (" + (m_Counter+1) + ")");
+    nameNew = GUIHelper.showInputDialog(this, "Please enter name for workspace", nameOld + " (" + UniqueIDs.nextInt("WekaInvestigatorPanel") + ")");
     if (nameNew == null)
       return;
     if (nameNew.equals(nameOld)) {
@@ -124,7 +110,6 @@ public class InvestigatorManagerPanel
       panelNew = m_WorkspaceHelper.copy(this, panelOld, errors);
       m_History.addEntry(nameNew, panelNew);
       m_History.setSelectedEntry(nameNew);
-      m_Counter++;
       if (!errors.isEmpty())
 	GUIHelper.showErrorMessage(this, "Failed to copy workspace!\n" + errors);
     }

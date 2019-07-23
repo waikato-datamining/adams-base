@@ -23,6 +23,7 @@ package adams.gui.flow;
 import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
+import adams.core.UniqueIDs;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.FilenameProposer;
@@ -110,12 +111,6 @@ public class FlowPanel
 
   /** the prefix for the title of custom set flows. */
   public final static String PREFIX_FLOW = "Flow";
-
-  /** the counter for the tabs. */
-  protected static int m_Counter;
-  static {
-    m_Counter = 0;
-  }
 
   /** the properties. */
   protected static Properties m_Properties;
@@ -478,16 +473,6 @@ public class FlowPanel
   }
 
   /**
-   * Increments the flow counter and returns the new value.
-   *
-   * @return		the new counter value
-   */
-  protected synchronized int next() {
-    m_Counter++;
-    return m_Counter;
-  }
-
-  /**
    * Sets the title for this flow.
    *
    * @param value	the title
@@ -543,7 +528,7 @@ public class FlowPanel
     getTree().setModified(false);
     setCurrentFile(null);
 
-    setTitle(PREFIX_NEW + next());
+    setTitle(PREFIX_NEW +  + UniqueIDs.nextInt(PREFIX_NEW));
 
     update();
 
@@ -737,7 +722,7 @@ public class FlowPanel
     getTree().setModified(false);
 
     setCurrentFile(null);
-    setTitle(PREFIX_FLOW + next());
+    setTitle(PREFIX_FLOW + UniqueIDs.nextInt(PREFIX_FLOW));
   }
 
   /**
@@ -753,7 +738,7 @@ public class FlowPanel
     getTree().setModified(false);
 
     setCurrentFile(null);
-    setTitle(PREFIX_FLOW + next());
+    setTitle(PREFIX_FLOW + UniqueIDs.nextInt(PREFIX_FLOW));
   }
 
   /**

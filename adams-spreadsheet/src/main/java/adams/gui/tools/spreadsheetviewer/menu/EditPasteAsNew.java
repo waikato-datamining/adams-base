@@ -19,6 +19,7 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
+import adams.core.UniqueIDs;
 import adams.data.conversion.StringToSpreadSheet;
 import adams.data.io.input.SimpleCsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
@@ -41,6 +42,8 @@ public class EditPasteAsNew
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
+
+  public static final String CLIPBOARD = "clipboard";
 
   /** the last spreadsheet reader used. */
   protected SpreadSheetReader m_LastReader;
@@ -101,7 +104,7 @@ public class EditPasteAsNew
     conv.setInput(ClipboardHelper.pasteStringFromClipboard());
     msg = conv.convert();
     if (msg == null)
-      m_State.getMultiPagePane().addPage("clipboard", (SpreadSheet) conv.getOutput());
+      m_State.getMultiPagePane().addPage(CLIPBOARD + "-" + UniqueIDs.nextInt(CLIPBOARD), (SpreadSheet) conv.getOutput());
     else
       GUIHelper.showErrorMessage(m_State, "Failed to parse clipboard content!\n" + msg);
     conv.cleanUp();

@@ -15,7 +15,7 @@
 
 /*
  * UniqueIDs.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
@@ -33,6 +33,12 @@ public class UniqueIDs {
   protected static long m_Counter;
   static {
     m_Counter = 0;
+  }
+
+  /** the named counter. */
+  protected static NamedCounter m_NamedCounter;
+  static {
+    m_NamedCounter = new NamedCounter();
   }
 
   /**
@@ -55,5 +61,15 @@ public class UniqueIDs {
   public static synchronized long nextLong() {
     m_Counter++;
     return m_Counter;
+  }
+
+  /**
+   * Returns the next ID for the given name.
+   *
+   * @param name	the named ID counter
+   * @return		the next ID
+   */
+  public static synchronized int nextInt(String name) {
+    return m_NamedCounter.next(name);
   }
 }

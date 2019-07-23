@@ -20,6 +20,7 @@
 package adams.gui.sendto;
 
 import adams.core.ClassLister;
+import adams.core.UniqueIDs;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.gui.core.GUIHelper;
@@ -50,12 +51,6 @@ public class SendToActionUtils {
 
   /** the cache for sendto actions (accepted class - available actions). */
   protected static Hashtable<Class, ArrayList<Class>> m_AcceptedCache;
-
-  /** the counter for temporary files. */
-  protected static int m_Counter;
-  static {
-    m_Counter = 0;
-  }
 
   /**
    * Returns the cache of what sendto actions can accept what classes.
@@ -253,8 +248,7 @@ public class SendToActionUtils {
 
     tmp = TempUtils.getTempDirectory().getAbsolutePath();
     do {
-      m_Counter++;
-      file = new File(tmp + File.separator + prefix + m_Counter + "." + extension);
+      file = new File(tmp + File.separator + prefix + UniqueIDs.nextInt("SendToTmpFile") + "." + extension);
     }
     while (file.exists());
 
