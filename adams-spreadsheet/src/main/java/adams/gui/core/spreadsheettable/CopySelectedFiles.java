@@ -13,44 +13,42 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CopySelectedFiles.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
 
 import adams.core.MessageCollection;
+import adams.core.Properties;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
-import adams.gui.chooser.BaseDirectoryChooser;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.PropertiesParameterPanel;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.dialog.PropertiesParameterDialog;
 
+import java.awt.Dialog.ModalityType;
 import java.io.File;
 
 /**
  * Allows copying of the selected files to a target directory.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CopySelectedFiles
   extends AbstractProcessSelectedRows {
 
   private static final long serialVersionUID = 7786133414905315983L;
 
-  /** the column that contains the filename. */
-  protected SpreadSheetColumnIndex m_Column;
+  public static final String KEY_COLUMN = "column";
 
-  /** the target directory. */
-  protected PlaceholderDirectory m_TargetDir;
-
-  /** the directory chooser for the target dir. */
-  protected BaseDirectoryChooser m_TargetChooser;
+  public static final String KEY_TARGETDIR = "targetdir";
 
   /**
    * Returns a string describing the object.
@@ -60,79 +58,6 @@ public class CopySelectedFiles
   @Override
   public String globalInfo() {
     return "Allows the user to copy the selected files in the specified column.";
-  }
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "column", "column",
-      new SpreadSheetColumnIndex(SpreadSheetColumnIndex.FIRST));
-
-    m_OptionManager.add(
-      "target-dir", "targetDir",
-      new PlaceholderDirectory());
-  }
-
-  /**
-   * Sets the column with the file names.
-   *
-   * @param value 	the column
-   */
-  public void setColumn(SpreadSheetColumnIndex value) {
-    m_Column = value;
-    reset();
-  }
-
-  /**
-   * Returns the column with the file names.
-   *
-   * @return 		the column
-   */
-  public SpreadSheetColumnIndex getColumn() {
-    return m_Column;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String columnTipText() {
-    return "The column with the file names.";
-  }
-
-  /**
-   * Sets the initial target directory.
-   *
-   * @param value 	the directory
-   */
-  public void setTargetDir(PlaceholderDirectory value) {
-    m_TargetDir = value;
-    reset();
-  }
-
-  /**
-   * Returns the initial target directory.
-   *
-   * @return 		the directory
-   */
-  public PlaceholderDirectory getTargetDir() {
-    return m_TargetDir;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String targetDirTipText() {
-    return "The initial target directory for the copy operation.";
   }
 
   /**
@@ -175,6 +100,46 @@ public class CopySelectedFiles
   }
 
   /**
+   * Prompts the user to configure the parameters.
+   *
+   * @param table	the table to do this for
+   * @return		the parameters, null if cancelled
+   */
+  protected Properties promptParameters(SpreadSheetTable table) {
+    PropertiesParameterDialog 	dialogParams;
+    PropertiesParameterPanel 	propsPanel;
+    Properties			last;
+
+    if (GUIHelper.getParentDialog(table) != null)
+      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    else
+      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    propsPanel = dialogParams.getPropertiesParameterPanel();
+    propsPanel.addPropertyType(KEY_COLUMN, PropertyType.INDEX);
+    propsPanel.setLabel(KEY_COLUMN, "Column");
+    propsPanel.setHelp(KEY_COLUMN, "The column with the file names");
+    propsPanel.addPropertyType(KEY_TARGETDIR, PropertyType.DIRECTORY_ABSOLUTE);
+    propsPanel.setLabel(KEY_TARGETDIR, "Target dir");
+    propsPanel.setHelp(KEY_TARGETDIR, "The directory to copy the files to");
+    propsPanel.setPropertyOrder(new String[]{KEY_COLUMN, KEY_TARGETDIR});
+    last = new Properties();
+    last.setProperty(KEY_COLUMN, SpreadSheetColumnIndex.FIRST);
+    last.setPath(KEY_TARGETDIR, new PlaceholderDirectory().getAbsolutePath());
+    dialogParams.setProperties(last);
+    last = (Properties) table.getLastSetup(getClass(), false, true);
+    if (last != null)
+      dialogParams.setProperties(last);
+    dialogParams.setTitle(getMenuItem());
+    dialogParams.pack();
+    dialogParams.setLocationRelativeTo(table.getParent());
+    dialogParams.setVisible(true);
+    if (dialogParams.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      return null;
+
+    return dialogParams.getProperties();
+  }
+
+  /**
    * Processes the specified rows.
    *
    * @param table	the source table
@@ -185,31 +150,31 @@ public class CopySelectedFiles
    */
   @Override
   protected boolean doProcessSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
-    int			retVal;
-    int			col;
-    File		sourceFile;
-    File		targetDir;
-    MessageCollection	errors;
+    Properties 			last;
+    int				col;
+    File			sourceFile;
+    File			targetDir;
+    MessageCollection		errors;
+    SpreadSheetColumnIndex 	column;
+
+    last = promptParameters(table);
+    if (last == null)
+      return false;
 
     // determine column
-    m_Column.setData(sheet);
-    col = m_Column.getIntIndex();
+    column = new SpreadSheetColumnIndex(last.getProperty(KEY_COLUMN, SpreadSheetColumnIndex.FIRST));
+    column.setData(sheet);
+    col = column.getIntIndex();
     if (col == -1) {
-      GUIHelper.showErrorMessage(table.getParent(), "Failed to locate column:" + m_Column);
+      GUIHelper.showErrorMessage(table.getParent(), "Failed to locate column:" + column);
       return false;
     }
+    targetDir = new PlaceholderDirectory(last.getPath(KEY_TARGETDIR, new PlaceholderDirectory().getAbsolutePath()));
 
-    // select target dir
-    if (m_TargetChooser == null) {
-      m_TargetChooser = new BaseDirectoryChooser();
-      m_TargetChooser.setSelectedFile(m_TargetDir);
-      m_TargetChooser.setDialogTitle(getMenuItem());
-    }
-    retVal = m_TargetChooser.showOpenDialog(table.getParent());
-    if (retVal != BaseDirectoryChooser.APPROVE_OPTION)
-      return false;
-    targetDir = m_TargetChooser.getSelectedDirectory();
+    // store setup
+    table.addLastSetup(getClass(), false, false, last);
 
+    // copy
     errors = new MessageCollection();
     for (int row: actRows) {
       sourceFile = new PlaceholderFile(sheet.getCell(row, col).toString());
