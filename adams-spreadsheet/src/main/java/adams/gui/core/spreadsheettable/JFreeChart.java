@@ -20,6 +20,9 @@
 
 package adams.gui.core.spreadsheettable;
 
+import adams.core.ObjectCopyHelper;
+import adams.core.Properties;
+import adams.core.Range;
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.Cell;
@@ -34,8 +37,11 @@ import adams.flow.core.Actor;
 import adams.flow.source.StorageValue;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.PropertiesParameterPanel;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SpreadSheetTable;
-import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.dialog.PropertiesParameterDialog;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.jfreechart.chart.XYLineChart;
 import adams.gui.visualization.jfreechart.dataset.DefaultXY;
 
@@ -56,6 +62,10 @@ public class JFreeChart
   implements PlotColumn, PlotRow, PlotSelectedRows {
 
   private static final long serialVersionUID = -5624002368001818142L;
+
+  public static final String KEY_COLUMNS = "columns";
+
+  public static final String KEY_PLOT = "plot";
 
   /** the maximum of data points to plot. */
   public final static int MAX_POINTS = 1000;
@@ -102,6 +112,108 @@ public class JFreeChart
   }
 
   /**
+   * Prompts the user to configure the parameters.
+   *
+   * @param table	the table to do this for
+   * @param isColumn	whether column or row(s)
+   * @return		the parameters, null if cancelled
+   */
+  protected Properties promptParameters(SpreadSheetTable table, boolean isColumn) {
+    PropertiesParameterDialog 		dialogParams;
+    PropertiesParameterPanel 		propsPanel;
+    Properties				last;
+
+    if (GUIHelper.getParentDialog(table) != null)
+      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    else
+      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    propsPanel = dialogParams.getPropertiesParameterPanel();
+    if (!isColumn) {
+      propsPanel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
+      propsPanel.setLabel(KEY_COLUMNS, "Columns");
+      propsPanel.setHelp(KEY_COLUMNS, "The columns to use for the plot");
+    }
+    propsPanel.addPropertyType(KEY_PLOT, PropertyType.OBJECT_EDITOR);
+    propsPanel.setLabel(KEY_PLOT, "Plot");
+    propsPanel.setHelp(KEY_PLOT, "How to display the data");
+    propsPanel.setChooser(KEY_PLOT, new GenericObjectEditorPanel(Actor.class, new adams.flow.sink.JFreeChartPlot(), false));
+    if (!isColumn)
+      propsPanel.setPropertyOrder(new String[]{KEY_COLUMNS, KEY_PLOT});
+    last = new Properties();
+    if (!isColumn)
+      last.setProperty(KEY_COLUMNS, Range.ALL);
+    last.setObject(KEY_PLOT, new adams.flow.sink.JFreeChartPlot());
+    dialogParams.setProperties(last);
+    last = (Properties) table.getLastSetup(getClass(), true, !isColumn);
+    if (last != null)
+      dialogParams.setProperties(last);
+    dialogParams.setTitle(getMenuItem());
+    dialogParams.pack();
+    dialogParams.setLocationRelativeTo(table.getParent());
+    dialogParams.setVisible(true);
+    if (dialogParams.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      return null;
+
+    return dialogParams.getProperties();
+  }
+
+  /**
+   * Plots the data.
+   *
+   * @param table	the table this is for
+   * @param isColumn
+   * @param data
+   * @param title
+   * @param spRows
+   */
+  protected void createPlot(final SpreadSheetTable table, final boolean isColumn, final SpreadSheet data, final String title, final int[] spRows) {
+    SwingWorker		worker;
+
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	Flow flow = new Flow();
+	flow.setDefaultCloseOperation(BaseFrame.DISPOSE_ON_CLOSE);
+
+	StorageValue sv = new StorageValue();
+	sv.setStorageName(new StorageName("values"));
+	flow.add(sv);
+
+	Properties last = (Properties) table.getLastSetup(JFreeChart.this.getClass(), true, !isColumn);
+	adams.flow.sink.JFreeChartPlot plot = ObjectCopyHelper.copyObject(last.getObject(KEY_PLOT, adams.flow.sink.JFreeChartPlot.class, new adams.flow.sink.JFreeChartPlot()));
+	if (spRows != null) {
+	  DefaultXY dataset = new DefaultXY();
+	  dataset.setX(new SpreadSheetColumnIndex("1"));
+	  dataset.setY(new SpreadSheetColumnRange(Utils.arrayToString(spRows)));
+	  plot.setDataset(dataset);
+	  XYLineChart chart = new XYLineChart();
+	  chart.setLegend(true);
+	  chart.setTitle(title);
+	  plot.setChart(chart);
+	}
+	else {
+	  XYLineChart chart = new XYLineChart();
+	  chart.setLegend(false);
+	  chart.setTitle(title);
+	  plot.setChart(chart);
+	}
+	plot.setShortTitle(true);
+	plot.setName(title);
+        plot.setX(-2);
+        plot.setY(-2);
+	flow.add(plot);
+
+	flow.setUp();
+	flow.getStorage().put(new StorageName("values"), data);
+	flow.execute();
+	flow.wrapUp();
+	return null;
+      }
+    };
+    worker.execute();
+  }
+
+  /**
    * Allows the user to generate a plot from either a row or a column.
    *
    * @param sheet	the spreadsheet to use
@@ -114,12 +226,10 @@ public class JFreeChart
     List<Double>[] 		tmp;
     final SpreadSheet		data;
     Row				srow;
-    GenericObjectEditorDialog 	setup;
     int				i;
     int				n;
     final String		title;
-    SwingWorker 		worker;
-    adams.flow.sink.JFreeChartPlot	last;
+    Properties			last;
     int				numPoints;
     String			newPoints;
     int				col;
@@ -148,23 +258,10 @@ public class JFreeChart
       numPoints = -1;
     }
 
-    // let user customize plot
-    if (GUIHelper.getParentDialog(table) != null)
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
-    else
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(table), true);
-    setup.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
-    setup.getGOEEditor().setClassType(Actor.class);
-    setup.getGOEEditor().setCanChangeClassInDialog(false);
-    last = (adams.flow.sink.JFreeChartPlot) table.getLastSetup(getClass(), true, !isColumn);
+    // prompt user
+    last = promptParameters(table, isColumn);
     if (last == null)
-      last = new adams.flow.sink.JFreeChartPlot();
-    setup.setCurrent(last);
-    setup.setLocationRelativeTo(GUIHelper.getParentComponent(table));
-    setup.setVisible(true);
-    if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;
-    last = (adams.flow.sink.JFreeChartPlot) setup.getCurrent();
     table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from spreadsheet
@@ -247,13 +344,11 @@ public class JFreeChart
     // generate plot
     if (isColumn) {
       title   = "Column " + (index + 1) + "/" + sheet.getColumnName(index);
-      actRows = null;
       spRows  = null;
     }
     else {
       if (indices == null) {
         title   = "Row " + (index + 2);
-	actRows = null;
 	spRows  = null;
       }
       else {
@@ -264,53 +359,8 @@ public class JFreeChart
 	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Utils.arrayToString(actRows);
       }
     }
-    last.getChart().setTitle(title);
 
-    worker = new SwingWorker() {
-      @Override
-      protected Object doInBackground() throws Exception {
-	Flow flow = new Flow();
-	flow.setDefaultCloseOperation(BaseFrame.DISPOSE_ON_CLOSE);
-
-	StorageValue sv = new StorageValue();
-	sv.setStorageName(new StorageName("values"));
-	flow.add(sv);
-
-        Object last = table.getLastSetup(JFreeChart.this.getClass(), true, !isColumn);
-	adams.flow.sink.JFreeChartPlot plot = (adams.flow.sink.JFreeChartPlot) ((adams.flow.sink.JFreeChartPlot) last).shallowCopy();
-	if (spRows != null) {
-	  DefaultXY dataset = new DefaultXY();
-	  dataset.setX(new SpreadSheetColumnIndex("1"));
-	  if (actRows == null)
-	    dataset.setY(new SpreadSheetColumnRange("2"));
-	  else
-	    dataset.setY(new SpreadSheetColumnRange(Utils.arrayToString(spRows)));
-	  plot.setDataset(dataset);
-	  XYLineChart chart = new XYLineChart();
-	  chart.setLegend(true);
-	  chart.setTitle(title);
-	  plot.setChart(chart);
-	}
-	else {
-	  XYLineChart chart = new XYLineChart();
-	  chart.setLegend(false);
-	  chart.setTitle(title);
-	  plot.setChart(chart);
-	}
-	plot.setShortTitle(true);
-	plot.setName(title);
-        plot.setX(-2);
-        plot.setY(-2);
-	flow.add(plot);
-
-	flow.setUp();
-	flow.getStorage().put(new StorageName("values"), data);
-	flow.execute();
-	flow.wrapUp();
-	return null;
-      }
-    };
-    worker.execute();
+    createPlot(table, isColumn, data, title, spRows);
   }
 
   /**
