@@ -104,10 +104,10 @@ public class ArrayStatistic
   protected boolean doProcessSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
     Properties 			last;
     StatisticContainer 		stats;
-    SpreadSheetDialog		dialog;
+    SpreadSheetDialog 		dialogStats;
     int[] 			rows;
     int[]			cols;
-    PropertiesParameterDialog 	dialogSetup;
+    PropertiesParameterDialog 	dialogParams;
     PropertiesParameterPanel	propsPanel;
     AbstractArrayStatistic	array;
     SpreadSheetColumnRange	columns;
@@ -116,10 +116,10 @@ public class ArrayStatistic
 
     // let user customize plot
     if (GUIHelper.getParentDialog(table) != null)
-      dialogSetup = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
     else
-      dialogSetup = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
-    propsPanel = dialogSetup.getPropertiesParameterPanel();
+      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    propsPanel = dialogParams.getPropertiesParameterPanel();
     propsPanel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
     propsPanel.setLabel(KEY_COLUMNS, "Columns");
     propsPanel.setHelp(KEY_COLUMNS, "The columns to operate on");
@@ -131,18 +131,18 @@ public class ArrayStatistic
     last = new Properties();
     last.setProperty(KEY_COLUMNS, SpreadSheetColumnRange.ALL);
     last.setObject(KEY_STATISTIC, new ArrayMean());
-    dialogSetup.setProperties(last);
+    dialogParams.setProperties(last);
     last = (Properties) table.getLastSetup(getClass(), true, false);
     if (last != null)
-      dialogSetup.setProperties(last);
-    dialogSetup.setTitle(getMenuItem());
-    dialogSetup.pack();
-    dialogSetup.setLocationRelativeTo(table.getParent());
-    dialogSetup.setVisible(true);
-    if (dialogSetup.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      dialogParams.setProperties(last);
+    dialogParams.setTitle(getMenuItem());
+    dialogParams.pack();
+    dialogParams.setLocationRelativeTo(table.getParent());
+    dialogParams.setVisible(true);
+    if (dialogParams.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
       return false;
 
-    last = dialogSetup.getProperties();
+    last = dialogParams.getProperties();
     array = last.getObject(KEY_STATISTIC, AbstractArrayStatistic.class);
     if (array == null) {
       GUIHelper.showErrorMessage(
@@ -173,15 +173,15 @@ public class ArrayStatistic
     }
 
     if (GUIHelper.getParentDialog(table) != null)
-      dialog = new SpreadSheetDialog(GUIHelper.getParentDialog(table), ModalityType.MODELESS);
+      dialogStats = new SpreadSheetDialog(GUIHelper.getParentDialog(table), ModalityType.MODELESS);
     else
-      dialog = new SpreadSheetDialog(GUIHelper.getParentFrame(table), false);
-    dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
-    dialog.setTitle("Statistics for rows #" + Utils.arrayToString(rows));
-    dialog.setSpreadSheet(stats.toSpreadSheet());
-    dialog.pack();
-    dialog.setLocationRelativeTo(null);
-    dialog.setVisible(true);
+      dialogStats = new SpreadSheetDialog(GUIHelper.getParentFrame(table), false);
+    dialogStats.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
+    dialogStats.setTitle("Statistics for rows #" + Utils.arrayToString(rows));
+    dialogStats.setSpreadSheet(stats.toSpreadSheet());
+    dialogStats.pack();
+    dialogStats.setLocationRelativeTo(null);
+    dialogStats.setVisible(true);
 
     return true;
   }
