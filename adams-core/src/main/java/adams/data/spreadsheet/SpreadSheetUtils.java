@@ -21,6 +21,8 @@ package adams.data.spreadsheet;
 
 import adams.core.Utils;
 import gnu.trove.list.array.TDoubleArrayList;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -336,15 +338,33 @@ public class SpreadSheetUtils {
    * @return		the numeric data, elements are NaN if missing or not numeric
    */
   public static double[] getNumericRow(SpreadSheet sheet, int rowIndex) {
+    return getNumericRow(sheet, rowIndex, null);
+  }
+
+  /**
+   * Returns the content of a numeric row as double array.
+   *
+   * @param sheet	the sheet to use
+   * @param rowIndex	the index of the numeric row
+   * @param columns 	the columns to return, null for all
+   * @return		the numeric data, elements are NaN if missing or not numeric
+   */
+  public static double[] getNumericRow(SpreadSheet sheet, int rowIndex, int[] columns) {
     TDoubleArrayList result;
     int			i;
     Row			row;
     Cell		cell;
     double		val;
+    TIntSet		cols;
 
     result = new TDoubleArrayList(sheet.getColumnCount());
     row    = sheet.getRow(rowIndex);
+    cols   = null;
+    if (columns != null)
+      cols = new TIntHashSet(columns);
     for (i = 0; i < sheet.getColumnCount(); i++) {
+      if ((cols != null) && !cols.contains(i))
+        continue;
       val = Double.NaN;
       if (row.hasCell(i)) {
 	cell = row.getCell(i);
