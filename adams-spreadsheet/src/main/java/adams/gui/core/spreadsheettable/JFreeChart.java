@@ -26,6 +26,8 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.control.Flow;
 import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
@@ -34,6 +36,8 @@ import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.visualization.jfreechart.chart.XYLineChart;
+import adams.gui.visualization.jfreechart.dataset.DefaultXY;
 
 import javax.swing.SwingWorker;
 import java.awt.Dialog.ModalityType;
@@ -49,7 +53,7 @@ import java.util.Random;
  */
 public class JFreeChart
   extends AbstractOptionHandler
-  implements PlotColumn, PlotRow {
+  implements PlotColumn, PlotRow, PlotSelectedRows {
 
   private static final long serialVersionUID = -5624002368001818142L;
 
@@ -103,14 +107,16 @@ public class JFreeChart
    * @param sheet	the spreadsheet to use
    * @param isColumn	whether the to use column or row
    * @param index	the index of the row/column
+   * @param indices 	the row indices, ignored if null
    */
-  protected void plot(final SpreadSheetTable table, final SpreadSheet sheet, final boolean isColumn, int index) {
-    List<Double> 		list;
-    List<Double> 		tmp;
+  protected void plot(final SpreadSheetTable table, final SpreadSheet sheet, final boolean isColumn, int index, int[] indices) {
+    List<Double>[] 		list;
+    List<Double>[] 		tmp;
     final SpreadSheet		data;
     Row				srow;
     GenericObjectEditorDialog 	setup;
     int				i;
+    int				n;
     final String		title;
     SwingWorker 		worker;
     adams.flow.sink.JFreeChartPlot	last;
@@ -118,10 +124,13 @@ public class JFreeChart
     String			newPoints;
     int				col;
     int				row;
+    int[]			rows;
     Object			value;
     Cell			cell;
     boolean			sorted;
     boolean			asc;
+    int[]			actRows;
+    int[]			spRows;
 
     numPoints = isColumn ? sheet.getRowCount() : sheet.getColumnCount();
     if (numPoints > MAX_POINTS) {
@@ -159,7 +168,12 @@ public class JFreeChart
     table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from spreadsheet
-    tmp    = new ArrayList<>();
+    if (indices == null) {
+      tmp = new ArrayList[]{new ArrayList<>()};
+    }
+    else {
+      tmp = new ArrayList[indices.length];
+    }
     sorted = false;
     asc    = table.isAscending();
     if (isColumn) {
@@ -170,28 +184,38 @@ public class JFreeChart
       for (i = 0; i < table.getRowCount(); i++) {
 	value = table.getValueAt(i, col);
 	if ((value != null) && (Utils.isDouble(value.toString())))
-	  tmp.add(Utils.toDouble(value.toString()));
+	  tmp[0].add(Utils.toDouble(value.toString()));
       }
     }
     else {
-      row = index;
-      for (i = 0; i < sheet.getColumnCount(); i++) {
-	if (sheet.getRow(row).hasCell(i)) {
-	  cell = sheet.getRow(row).getCell(i);
-	  if (!cell.isMissing() && cell.isNumeric())
-	    tmp.add(cell.toDouble());
+      if (indices == null)
+        rows = new int[index];
+      else
+        rows = indices;
+      for (n = 0; n < rows.length; n++) {
+        tmp[n] = new ArrayList<>();
+	row    = rows[n];
+	for (i = 0; i < sheet.getColumnCount(); i++) {
+	  if (sheet.getRow(row).hasCell(i)) {
+	    cell = sheet.getRow(row).getCell(i);
+	    if (!cell.isMissing() && cell.isNumeric())
+	      tmp[n].add(cell.toDouble());
+	  }
 	}
       }
     }
 
     if (numPoints > -1) {
-      numPoints = Math.min(numPoints, tmp.size());
-      Collections.shuffle(tmp, new Random(1));
-      list = tmp.subList(0, numPoints);
-      if (sorted) {
-	Collections.sort(list);
-	if (!asc)
-	  Collections.reverse(list);
+      list = new ArrayList[tmp.length];
+      for (i = 0; i < tmp.length; i++) {
+	numPoints = Math.min(numPoints, tmp[i].size());
+	Collections.shuffle(tmp[i], new Random(1));
+	list[i] = tmp[i].subList(0, numPoints);
+	if (sorted) {
+	  Collections.sort(list[i]);
+	  if (!asc)
+	    Collections.reverse(list[i]);
+	}
       }
     }
     else {
@@ -201,19 +225,48 @@ public class JFreeChart
     // create new spreadsheet
     data = new DefaultSpreadSheet();
     data.getHeaderRow().addCell("x").setContentAsString(isColumn ? "Row" : "Column");
-    data.getHeaderRow().addCell("y").setContentAsString(isColumn ? sheet.getColumnName(index) : ("Row " + (index+2)));
-    for (i = 0; i < list.size(); i++) {
+    if (isColumn) {
+      data.getHeaderRow().addCell("y0").setContentAsString(sheet.getColumnName(index));
+    }
+    else {
+      if (indices == null) {
+	data.getHeaderRow().addCell("y0").setContentAsString("Row " + (index + 2));
+      }
+      else {
+        for (i = 0; i < indices.length; i++)
+	  data.getHeaderRow().addCell("y" + i).setContentAsString("Row " + (indices[i] + 2));
+      }
+    }
+    for (i = 0; i < list[0].size(); i++) {
       srow = data.addRow();
       srow.addCell("x").setContent((double) i+1.0);
-      srow.addCell("y").setContent(list.get(i));
+      for (n = 0; n < list.length; n++)
+	srow.addCell("y" + n).setContent(list[n].get(i));
     }
 
     // generate plot
-    if (isColumn)
-      title = "Column " + (index + 1) + "/" + sheet.getColumnName(index);
-    else
-      title = "Row " + (index + 2);
-    last.getChart().setTitle(data.getColumnName(1));
+    if (isColumn) {
+      title   = "Column " + (index + 1) + "/" + sheet.getColumnName(index);
+      actRows = null;
+      spRows  = null;
+    }
+    else {
+      if (indices == null) {
+        title   = "Row " + (index + 2);
+	actRows = null;
+	spRows  = null;
+      }
+      else {
+        actRows = new int[indices.length];
+        spRows  = new int[indices.length];
+        for (i = 0; i < indices.length; i++) {
+	  actRows[i] = indices[i] + 2;
+	  spRows[i]  = i + 2;
+	}
+	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Utils.arrayToString(actRows);
+      }
+    }
+    last.getChart().setTitle(title);
 
     worker = new SwingWorker() {
       @Override
@@ -227,6 +280,25 @@ public class JFreeChart
 
         Object last = table.getLastSetup(JFreeChart.this.getClass(), true, !isColumn);
 	adams.flow.sink.JFreeChartPlot plot = (adams.flow.sink.JFreeChartPlot) ((adams.flow.sink.JFreeChartPlot) last).shallowCopy();
+	if (spRows != null) {
+	  DefaultXY dataset = new DefaultXY();
+	  dataset.setX(new SpreadSheetColumnIndex("1"));
+	  if (actRows == null)
+	    dataset.setY(new SpreadSheetColumnRange("2"));
+	  else
+	    dataset.setY(new SpreadSheetColumnRange(Utils.arrayToString(spRows)));
+	  plot.setDataset(dataset);
+	  XYLineChart chart = new XYLineChart();
+	  chart.setLegend(true);
+	  chart.setTitle(title);
+	  plot.setChart(chart);
+	}
+	else {
+	  XYLineChart chart = new XYLineChart();
+	  chart.setLegend(false);
+	  chart.setTitle(title);
+	  plot.setChart(chart);
+	}
 	plot.setShortTitle(true);
 	plot.setName(title);
         plot.setX(-2);
@@ -253,7 +325,7 @@ public class JFreeChart
    */
   @Override
   public boolean plotColumn(SpreadSheetTable table, SpreadSheet sheet, int column) {
-    plot(table, sheet, true, column);
+    plot(table, sheet, true, column, null);
     return true;
   }
 
@@ -268,7 +340,39 @@ public class JFreeChart
    */
   @Override
   public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
-    plot(table, sheet, false, actRow);
+    plot(table, sheet, false, actRow, null);
+    return true;
+  }
+
+  /**
+   * Returns the minimum number of rows that the plugin requires.
+   *
+   * @return		the minimum
+   */
+  public int minNumRows() {
+    return 1;
+  }
+
+  /**
+   * Returns the maximum number of rows that the plugin requires.
+   *
+   * @return		the maximum, -1 for none
+   */
+  public int maxNumRows() {
+    return -1;
+  }
+
+  /**
+   * Plots the specified row.
+   *
+   * @param table	the source table
+   * @param sheet	the spreadsheet to use as basis
+   * @param actRows	the actual rows in the spreadsheet
+   * @param selRows	the selected rows in the table
+   * @return		true if successful
+   */
+  public boolean plotSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
+    plot(table, sheet, false, actRows[0], actRows);
     return true;
   }
 }

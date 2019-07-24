@@ -13,21 +13,29 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimplePlot.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
 
 import adams.core.Utils;
+import adams.core.VariableName;
+import adams.core.base.BaseText;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.control.Flow;
 import adams.flow.control.StorageName;
+import adams.flow.control.Trigger;
 import adams.flow.core.Actor;
 import adams.flow.sink.sequenceplotter.ViewDataClickAction;
 import adams.flow.source.StorageValue;
+import adams.flow.standalone.SetVariable;
 import adams.flow.transformer.ArrayToSequence;
+import adams.flow.transformer.CollectionToSequence;
+import adams.flow.transformer.GetArrayElement;
+import adams.flow.transformer.IncVariable;
+import adams.flow.transformer.IncVariable.IncrementType;
 import adams.flow.transformer.MakePlotContainer;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
@@ -49,7 +57,7 @@ import java.util.Random;
  */
 public class SimplePlot
   extends AbstractOptionHandler
-  implements PlotColumn, PlotRow {
+  implements PlotColumn, PlotRow, PlotSelectedRows {
 
   private static final long serialVersionUID = -5624002368001818142L;
 
@@ -103,22 +111,27 @@ public class SimplePlot
    * @param data	the instances to use
    * @param isColumn	whether the to use column or row
    * @param index	the index of the row/column
+   * @param indices 	the indices of the rows, ignored if null
    */
-  protected void plot(final InstancesTable table, final Instances data, final boolean isColumn, int index) {
-    final List<Double> 		list;
-    List<Double> 		tmp;
+  protected void plot(final InstancesTable table, final Instances data, final boolean isColumn, int index, int[] indices) {
+    final List<Double>[] 	list;
+    List<Double>[] 		tmp;
     GenericObjectEditorDialog 	setup;
     int				i;
+    int				n;
     final String		title;
+    final String[]		titles;
     SwingWorker 		worker;
     adams.flow.sink.SimplePlot	last;
     int				numPoints;
     String			newPoints;
     int				col;
     int				row;
+    int[]			rows;
     Object			value;
     boolean			sorted;
     boolean			asc;
+    int[]			actRows;
 
     numPoints = isColumn ? data.numInstances() : data.numAttributes();
     if (numPoints > MAX_POINTS) {
@@ -159,7 +172,12 @@ public class SimplePlot
     table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from instances
-    tmp    = new ArrayList<>();
+    if (indices == null) {
+      tmp = new ArrayList[]{new ArrayList<>()};
+    }
+    else {
+      tmp = new ArrayList[indices.length];
+    }
     sorted = false;
     asc    = table.isAscending();
     if (isColumn) {
@@ -168,25 +186,35 @@ public class SimplePlot
       for (i = 0; i < table.getRowCount(); i++) {
 	value = table.getValueAt(i, col);
 	if ((value != null) && (Utils.isDouble(value.toString())))
-	  tmp.add(Utils.toDouble(value.toString()));
+	  tmp[0].add(Utils.toDouble(value.toString()));
       }
     }
     else {
-      row = index;
-      for (i = 0; i < data.numAttributes(); i++) {
-	if (data.attribute(i).isNumeric() && !data.instance(row).isMissing(i))
-	  tmp.add(data.instance(row).value(i));
+      if (indices == null)
+        rows = new int[index];
+      else
+        rows = indices;
+      for (n = 0; n < rows.length; n++) {
+	tmp[n] = new ArrayList<>();
+	row = rows[n];
+	for (i = 0; i < data.numAttributes(); i++) {
+	  if (data.attribute(i).isNumeric() && !data.instance(row).isMissing(i))
+	    tmp[n].add(data.instance(row).value(i));
+	}
       }
     }
 
     if (numPoints > -1) {
-      numPoints = Math.min(numPoints, tmp.size());
-      Collections.shuffle(tmp, new Random(1));
-      list = tmp.subList(0, numPoints);
-      if (sorted) {
-	Collections.sort(list);
-	if (!asc)
-	  Collections.reverse(list);
+      list = new ArrayList[tmp.length];
+      for (i = 0; i < tmp.length; i++) {
+	numPoints = Math.min(numPoints, tmp[i].size());
+	Collections.shuffle(tmp[i], new Random(1));
+	list[i] = tmp[i].subList(0, numPoints);
+	if (sorted) {
+	  Collections.sort(list[i]);
+	  if (!asc)
+	    Collections.reverse(list[i]);
+	}
       }
     }
     else {
@@ -194,10 +222,25 @@ public class SimplePlot
     }
 
     // generate plot
-    if (isColumn)
-      title = "Column " + (index + 1) + "/" + data.attribute(index).name();
-    else
-      title = "Row " + (index + 1);
+    if (isColumn) {
+      title  = "Column " + (index + 1) + "/" + data.attribute(index).name();
+      titles = new String[]{title};
+    }
+    else {
+      if (indices == null) {
+        title  = "Row " + (index + 2);
+	titles = new String[]{title};
+      }
+      else {
+        titles  = new String[indices.length];
+        actRows = new int[indices.length];
+        for (i = 0; i < indices.length; i++) {
+	  titles[i]  = "Row " + (indices[i] + 2);
+	  actRows[i] = indices[i] + 2;
+	}
+	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Utils.arrayToString(actRows);
+      }
+    }
 
     worker = new SwingWorker() {
       @Override
@@ -205,28 +248,58 @@ public class SimplePlot
 	Flow flow = new Flow();
 	flow.setDefaultCloseOperation(BaseFrame.DISPOSE_ON_CLOSE);
 
+	SetVariable svInit = new SetVariable();
+	svInit.setVariableName(new VariableName("index"));
+	svInit.setVariableValue(new BaseText("0"));
+	flow.add(svInit);
+
 	StorageValue sv = new StorageValue();
 	sv.setStorageName(new StorageName("values"));
 	flow.add(sv);
 
-	ArrayToSequence a2s = new ArrayToSequence();
-	flow.add(a2s);
+	flow.add(new ArrayToSequence());
+
+	IncVariable inc = new IncVariable();
+        inc.setVariableName(new VariableName("index"));
+        inc.setIncrementType(IncrementType.INTEGER);
+        inc.setIntegerIncrement(1);
+        flow.add(inc);
+
+	Trigger trigTitle = new Trigger();
+	trigTitle.setName("get title");
+	flow.add(trigTitle);
+	{
+	  StorageValue svalue = new StorageValue();
+	  svalue.setStorageName(new StorageName("titles"));
+	  trigTitle.add(svalue);
+
+	  GetArrayElement get = new GetArrayElement();
+	  get.getOptionManager().setVariableForProperty("index", "index");
+	  trigTitle.add(get);
+
+	  adams.flow.transformer.SetVariable svTitle = new adams.flow.transformer.SetVariable();
+	  svTitle.setVariableName(new VariableName("title"));
+	  trigTitle.add(svTitle);
+	}
+
+	flow.add(new CollectionToSequence());
 
 	MakePlotContainer mpc = new MakePlotContainer();
-	mpc.setPlotName(title);
+	mpc.getOptionManager().setVariableForProperty("plotName", "title");
 	flow.add(mpc);
 
         Object last = table.getLastSetup(SimplePlot.this.getClass(), true, !isColumn);
 	adams.flow.sink.SimplePlot plot = (adams.flow.sink.SimplePlot) ((adams.flow.sink.SimplePlot) last).shallowCopy();
 	plot.setShortTitle(true);
-	plot.setShowSidePanel(false);
+	plot.setShowSidePanel((indices != null) && (indices.length > 1));
 	plot.setName(title);
         plot.setX(-2);
         plot.setY(-2);
 	flow.add(plot);
 
 	flow.setUp();
-	flow.getStorage().put(new StorageName("values"), list.toArray(new Double[list.size()]));
+	flow.getStorage().put(new StorageName("values"), list);
+	flow.getStorage().put(new StorageName("titles"), titles);
 	flow.execute();
 	flow.wrapUp();
 	return null;
@@ -245,7 +318,7 @@ public class SimplePlot
    */
   @Override
   public boolean plotColumn(InstancesTable table, Instances data, int column) {
-    plot(table, data, true, column);
+    plot(table, data, true, column, null);
     return true;
   }
 
@@ -260,7 +333,39 @@ public class SimplePlot
    */
   @Override
   public boolean plotRow(InstancesTable table, Instances data, int actRow, int selRow) {
-    plot(table, data, false, actRow);
+    plot(table, data, false, actRow, null);
+    return true;
+  }
+
+  /**
+   * Returns the minimum number of rows that the plugin requires.
+   *
+   * @return		the minimum
+   */
+  public int minNumRows() {
+    return 1;
+  }
+
+  /**
+   * Returns the maximum number of rows that the plugin requires.
+   *
+   * @return		the maximum, -1 for none
+   */
+  public int maxNumRows() {
+    return -1;
+  }
+
+  /**
+   * Plots the specified row.
+   *
+   * @param table	the source table
+   * @param data	the instances to use as basis
+   * @param actRows	the actual rows in the Instances
+   * @param selRows	the selected rows in the table
+   * @return		true if successful
+   */
+  public boolean plotSelectedRows(InstancesTable table, Instances data, int[] actRows, int[] selRows) {
+    plot(table, data, false, actRows[0], actRows);
     return true;
   }
 }

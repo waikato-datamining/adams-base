@@ -83,8 +83,25 @@ public class SpreadSheetTablePopupMenuItemHelper {
    * @param item	the menu item scheme
    */
   protected static void addAction(final SpreadSheetTable table, final SpreadSheet sheet, boolean isRow, final int actRow, final int selRow, final int[] actRows, final int[] selRows, final int column, final JMenuItem menuitem, final SpreadSheetTablePopupMenuItem item) {
+    PlotSelectedRows 	plotSelRows;
+    ProcessSelectedRows	procSelRows;
+    boolean		enabled;
+
     if (isRow) {
-      if (item instanceof PlotRow) {
+      if (item instanceof PlotSelectedRows) {
+        plotSelRows = (PlotSelectedRows) item;
+	menuitem.addActionListener(new ActionListener() {
+	  @Override
+	  public void actionPerformed(ActionEvent e) {
+	    ((PlotSelectedRows) item).plotSelectedRows(table, sheet, actRows, selRows);
+	  }
+	});
+	enabled = (actRows.length >= plotSelRows.minNumRows());
+	if (plotSelRows.maxNumRows() != -1)
+	  enabled = enabled && (actRows.length <= plotSelRows.maxNumRows());
+ 	menuitem.setEnabled(enabled);
+      }
+      else if (item instanceof PlotRow) {
 	menuitem.addActionListener(new ActionListener() {
 	  @Override
 	  public void actionPerformed(ActionEvent e) {
@@ -92,6 +109,19 @@ public class SpreadSheetTablePopupMenuItemHelper {
 	  }
 	});
 	menuitem.setEnabled(actRows.length <= 1);
+      }
+      else if (item instanceof ProcessSelectedRows) {
+        procSelRows = (ProcessSelectedRows) item;
+	menuitem.addActionListener(new ActionListener() {
+	  @Override
+	  public void actionPerformed(ActionEvent e) {
+	    ((ProcessSelectedRows) item).processSelectedRows(table, sheet, actRows, selRows);
+	  }
+	});
+	enabled = (actRows.length >= procSelRows.minNumRows());
+	if (procSelRows.maxNumRows() != -1)
+	  enabled = enabled && (actRows.length <= procSelRows.maxNumRows());
+ 	menuitem.setEnabled(enabled);
       }
       else if (item instanceof ProcessRow) {
 	menuitem.addActionListener(new ActionListener() {

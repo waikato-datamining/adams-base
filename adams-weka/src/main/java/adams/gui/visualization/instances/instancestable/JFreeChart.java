@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * SimplePlot.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+/*
+ * JFreeChart.java
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
@@ -25,6 +25,8 @@ import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.control.Flow;
 import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
@@ -33,6 +35,8 @@ import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.jfreechart.chart.XYLineChart;
+import adams.gui.visualization.jfreechart.dataset.DefaultXY;
 import weka.core.Instances;
 
 import javax.swing.SwingWorker;
@@ -49,7 +53,7 @@ import java.util.Random;
  */
 public class JFreeChart
   extends AbstractOptionHandler
-  implements PlotColumn, PlotRow {
+  implements PlotColumn, PlotRow, PlotSelectedRows {
 
   private static final long serialVersionUID = -5624002368001818142L;
 
@@ -103,12 +107,14 @@ public class JFreeChart
    * @param data	the instances to use
    * @param isColumn	whether the to use column or row
    * @param index	the index of the row/column
+   * @param indices 	the row indices, ignored if null
    */
-  protected void plot(final InstancesTable table, final Instances data, final boolean isColumn, int index) {
-    final List<Double> 		list;
-    List<Double> 		tmp;
+  protected void plot(final InstancesTable table, final Instances data, final boolean isColumn, int index, int[] indices) {
+    final List<Double>[]	list;
+    List<Double>[] 		tmp;
     GenericObjectEditorDialog 	setup;
     int				i;
+    int				n;
     final String		title;
     SwingWorker 		worker;
     adams.flow.sink.JFreeChartPlot	last;
@@ -116,11 +122,14 @@ public class JFreeChart
     String			newPoints;
     int				col;
     int				row;
+    int[]			rows;
     Object			value;
     final SpreadSheet		sheet;
     Row				srow;
     boolean			sorted;
     boolean			asc;
+    int[]			actRows;
+    int[]			spRows;
 
     numPoints = isColumn ? data.numInstances() : data.numAttributes();
     if (numPoints > MAX_POINTS) {
@@ -158,7 +167,12 @@ public class JFreeChart
     table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from instances
-    tmp    = new ArrayList<>();
+    if (indices == null) {
+      tmp = new ArrayList[]{new ArrayList<>()};
+    }
+    else {
+      tmp = new ArrayList[indices.length];
+    }
     sorted = false;
     asc    = table.isAscending();
     if (isColumn) {
@@ -167,25 +181,35 @@ public class JFreeChart
       for (i = 0; i < table.getRowCount(); i++) {
 	value = table.getValueAt(i, col);
 	if ((value != null) && (Utils.isDouble(value.toString())))
-	  tmp.add(Utils.toDouble(value.toString()));
+	  tmp[0].add(Utils.toDouble(value.toString()));
       }
     }
     else {
-      row = index;
-      for (i = 0; i < data.numAttributes(); i++) {
-	if (data.attribute(i).isNumeric() && !data.instance(row).isMissing(i))
-	  tmp.add(data.instance(row).value(i));
+      if (indices == null)
+        rows = new int[index];
+      else
+        rows = indices;
+      for (n = 0; n < rows.length; n++) {
+	tmp[n] = new ArrayList<>();
+	row = rows[n];
+	for (i = 0; i < data.numAttributes(); i++) {
+	  if (data.attribute(i).isNumeric() && !data.instance(row).isMissing(i))
+	    tmp[n].add(data.instance(row).value(i));
+	}
       }
     }
 
     if (numPoints > -1) {
-      numPoints = Math.min(numPoints, tmp.size());
-      Collections.shuffle(tmp, new Random(1));
-      list = tmp.subList(0, numPoints);
-      if (sorted) {
-	Collections.sort(list);
-	if (!asc)
-	  Collections.reverse(list);
+      list = new ArrayList[tmp.length];
+      for (i = 0; i < tmp.length; i++) {
+	numPoints = Math.min(numPoints, tmp[i].size());
+	Collections.shuffle(tmp[i], new Random(1));
+	list[i] = tmp[i].subList(0, numPoints);
+	if (sorted) {
+	  Collections.sort(list[i]);
+	  if (!asc)
+	    Collections.reverse(list[i]);
+	}
       }
     }
     else {
@@ -195,19 +219,48 @@ public class JFreeChart
     // create new spreadsheet
     sheet = new DefaultSpreadSheet();
     sheet.getHeaderRow().addCell("x").setContentAsString(isColumn ? "Row" : "Column");
-    sheet.getHeaderRow().addCell("y").setContentAsString(isColumn ? data.attribute(index).name() : ("Row " + (index+1)));
-    for (i = 0; i < list.size(); i++) {
+    if (isColumn) {
+      sheet.getHeaderRow().addCell("y0").setContentAsString(sheet.getColumnName(index));
+    }
+    else {
+      if (indices == null) {
+	sheet.getHeaderRow().addCell("y0").setContentAsString("Row " + (index + 2));
+      }
+      else {
+        for (i = 0; i < indices.length; i++)
+	  sheet.getHeaderRow().addCell("y" + i).setContentAsString("Row " + (indices[i] + 2));
+      }
+    }
+    for (i = 0; i < list[0].size(); i++) {
       srow = sheet.addRow();
       srow.addCell("x").setContent((double) i+1.0);
-      srow.addCell("y").setContent(list.get(i));
+      for (n = 0; n < list.length; n++)
+	srow.addCell("y" + n).setContent(list[n].get(i));
     }
 
     // generate plot
-    if (isColumn)
-      title = "Column " + (index + 1) + "/" + data.attribute(index).name();
-    else
-      title = "Row " + (index + 1);
-    last.getChart().setTitle(sheet.getColumnName(1));
+    if (isColumn) {
+      title   = "Column " + (index + 1) + "/" + sheet.getColumnName(index);
+      actRows = null;
+      spRows  = null;
+    }
+    else {
+      if (indices == null) {
+        title   = "Row " + (index + 2);
+	actRows = null;
+	spRows  = null;
+      }
+      else {
+        actRows = new int[indices.length];
+        spRows  = new int[indices.length];
+        for (i = 0; i < indices.length; i++) {
+	  actRows[i] = indices[i] + 2;
+	  spRows[i]  = i + 2;
+	}
+	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Utils.arrayToString(actRows);
+      }
+    }
+    last.getChart().setTitle(title);
 
     worker = new SwingWorker() {
       @Override
@@ -221,6 +274,25 @@ public class JFreeChart
 
         Object last = table.getLastSetup(JFreeChart.this.getClass(), true, !isColumn);
 	adams.flow.sink.JFreeChartPlot plot = (adams.flow.sink.JFreeChartPlot) ((adams.flow.sink.JFreeChartPlot) last).shallowCopy();
+	if (spRows != null) {
+	  DefaultXY dataset = new DefaultXY();
+	  dataset.setX(new SpreadSheetColumnIndex("1"));
+	  if (actRows == null)
+	    dataset.setY(new SpreadSheetColumnRange("2"));
+	  else
+	    dataset.setY(new SpreadSheetColumnRange(Utils.arrayToString(spRows)));
+	  plot.setDataset(dataset);
+	  XYLineChart chart = new XYLineChart();
+	  chart.setLegend(true);
+	  chart.setTitle(title);
+	  plot.setChart(chart);
+	}
+	else {
+	  XYLineChart chart = new XYLineChart();
+	  chart.setLegend(false);
+	  chart.setTitle(title);
+	  plot.setChart(chart);
+	}
 	plot.setShortTitle(true);
 	plot.setName(title);
         plot.setX(-2);
@@ -247,7 +319,7 @@ public class JFreeChart
    */
   @Override
   public boolean plotColumn(InstancesTable table, Instances data, int column) {
-    plot(table, data, true, column);
+    plot(table, data, true, column, null);
     return true;
   }
 
@@ -262,7 +334,39 @@ public class JFreeChart
    */
   @Override
   public boolean plotRow(InstancesTable table, Instances data, int actRow, int selRow) {
-    plot(table, data, false, actRow);
+    plot(table, data, false, actRow, null);
+    return true;
+  }
+
+  /**
+   * Returns the minimum number of rows that the plugin requires.
+   *
+   * @return		the minimum
+   */
+  public int minNumRows() {
+    return 1;
+  }
+
+  /**
+   * Returns the maximum number of rows that the plugin requires.
+   *
+   * @return		the maximum, -1 for none
+   */
+  public int maxNumRows() {
+    return -1;
+  }
+
+  /**
+   * Plots the specified row.
+   *
+   * @param table	the source table
+   * @param data	the instances to use as basis
+   * @param actRows	the actual rows in the Instances
+   * @param selRows	the selected rows in the table
+   * @return		true if successful
+   */
+  public boolean plotSelectedRows(InstancesTable table, Instances data, int[] actRows, int[] selRows) {
+    plot(table, data, false, actRows[0], actRows);
     return true;
   }
 }

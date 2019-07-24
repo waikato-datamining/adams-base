@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InstancesTablePopupMenuItemHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
@@ -83,10 +83,30 @@ public class InstancesTablePopupMenuItemHelper {
    * @param item	the menu item scheme
    */
   protected static void addAction(final InstancesTable table, final Instances data, boolean isRow, final int actRow, final int selRow, final int[] actRows, final int[] selRows, final int column, final JMenuItem menuitem, final InstancesTablePopupMenuItem item) {
+    PlotSelectedRows 	plotSelRows;
+    ProcessSelectedRows procSelRows;
+    boolean		enabled;
+
     if (isRow) {
-      if (item instanceof PlotRow) {
+      if (item instanceof PlotSelectedRows) {
+        plotSelRows = (PlotSelectedRows) item;
+	menuitem.addActionListener((ActionEvent e) -> ((PlotSelectedRows) item).plotSelectedRows(table, data, actRows, selRows));
+	enabled = (actRows.length >= plotSelRows.minNumRows());
+	if (plotSelRows.maxNumRows() != -1)
+	  enabled = enabled && (actRows.length <= plotSelRows.maxNumRows());
+ 	menuitem.setEnabled(enabled);
+      }
+      else if (item instanceof PlotRow) {
 	menuitem.addActionListener((ActionEvent e) -> ((PlotRow) item).plotRow(table, data, actRow, selRow));
 	menuitem.setEnabled(actRows.length <= 1);
+      }
+      else if (item instanceof ProcessSelectedRows) {
+        procSelRows = (ProcessSelectedRows) item;
+	menuitem.addActionListener((ActionEvent e) -> ((ProcessSelectedRows) item).processSelectedRows(table, data, actRows, selRows));
+	enabled = (actRows.length >= procSelRows.minNumRows());
+	if (procSelRows.maxNumRows() != -1)
+	  enabled = enabled && (actRows.length <= procSelRows.maxNumRows());
+ 	menuitem.setEnabled(enabled);
       }
       else if (item instanceof ProcessRow) {
 	menuitem.addActionListener((ActionEvent e) -> ((ProcessRow) item).processRow(table, data, actRow, selRow));
