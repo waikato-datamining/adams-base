@@ -213,6 +213,7 @@ public class SpreadSheetTablePopupMenuItemHelper {
     if (isRow) {
       addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(PlotRow.class));
       addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(ProcessRow.class));
+      addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(ProcessSelectedRows.class));
       addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(ProcessCell.class));
     }
     else {
