@@ -15,7 +15,7 @@
 
 /*
  * Properties.java
- * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -27,6 +27,7 @@ import adams.core.io.TempUtils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.management.OS;
+import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.Fonts;
@@ -98,7 +99,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public class Properties
   extends java.util.Properties
-  implements Comparable, Mergeable<Properties>, CloneHandler<Properties> {
+  implements Comparable<Properties>, Mergeable<Properties>, CloneHandler<Properties> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4908679921070087606L;
@@ -130,7 +131,7 @@ public class Properties
   /** the windows extension (incl dot). */
   public final static String EXT_WINDOWS = ".windows";
 
-  /** the debugging level. */
+  /** the logger. */
   private final static Logger LOGGER = LoggingHelper.getConsoleLogger(Properties.class);
 
   /**
@@ -273,7 +274,7 @@ public class Properties
       }
     }
     catch (Exception ex) {
-      System.err.println("Warning, unable to load properties file from system resource: " + path);
+      LOGGER.log(Level.SEVERE, "Warning, unable to load properties file from system resource: " + path, ex);
     }
 
     return parent;
@@ -877,14 +878,14 @@ public class Properties
       if (hasKey(key)) {
 	value = getProperty(key);
 	if (value != null)
-	  result = new Integer(value);
+	  result = Integer.parseInt(value);
       }
     }
     catch (Exception e) {
-      result = defValue;
-      System.err.println(
+      LOGGER.log(
+        Level.SEVERE,
 	  "Cannot parse integer value of property '" + key + " (" + getProperty(key) + ")'! "
-	  + "Using default: " + defValue);
+	  + "Using default: " + defValue, e);
     }
 
     return result;
@@ -930,14 +931,14 @@ public class Properties
       if (hasKey(key)) {
 	value = getProperty(key);
 	if (value != null)
-	  result = new Long(value);
+	  result = Long.parseLong(value);
       }
     }
     catch (Exception e) {
-      result = defValue;
-      System.err.println(
+      LOGGER.log(
+        Level.SEVERE,
 	  "Cannot parse long value of property '" + key + " (" + getProperty(key) + ")'! "
-	  + "Using default: " + defValue);
+	  + "Using default: " + defValue, e);
     }
 
     return result;
@@ -983,14 +984,14 @@ public class Properties
       if (hasKey(key)) {
 	value = "" + getProperty(key);
 	if (!value.equals("null"))
-	  result = new Double(value);
+	  result = Double.parseDouble(value);
       }
     }
     catch (Exception e) {
-      result = defValue;
-      System.err.println(
+      LOGGER.log(
+        Level.SEVERE,
 	  "Cannot parse double value of property '" + key + "'! "
-	  + "Using default: " + defValue);
+	  + "Using default: " + defValue, e);
     }
 
     return result;
@@ -1040,10 +1041,10 @@ public class Properties
       }
     }
     catch (Exception e) {
-      result = defValue;
-      System.err.println(
+      LOGGER.log(
+        Level.SEVERE,
 	  "Cannot parse boolean value of property '" + key + "'! "
-	  + "Using default: " + defValue);
+	  + "Using default: " + defValue, e);
     }
 
     return result;
@@ -1094,10 +1095,10 @@ public class Properties
       }
     }
     catch (Exception e) {
-      result = defValue;
-      System.err.println(
+      LOGGER.log(
+        Level.SEVERE,
 	  "Cannot parse time value of property '" + key + "'! "
-	  + "Using default: " + defValue);
+	  + "Using default: " + defValue, e);
     }
 
     return result;
@@ -1148,10 +1149,10 @@ public class Properties
       }
     }
     catch (Exception e) {
-      result = defValue;
-      System.err.println(
+      LOGGER.log(
+        Level.SEVERE,
 	  "Cannot parse date value of property '" + key + "'! "
-	  + "Using default: " + defValue);
+	  + "Using default: " + defValue, e);
     }
 
     return result;
@@ -1202,10 +1203,10 @@ public class Properties
       }
     }
     catch (Exception e) {
-      result = defValue;
-      System.err.println(
+      LOGGER.log(
+        Level.SEVERE,
 	  "Cannot parse date/time value of property '" + key + "'! "
-	  + "Using default: " + defValue);
+	  + "Using default: " + defValue, e);
     }
 
     return result;
@@ -1375,18 +1376,65 @@ public class Properties
   }
 
   /**
+   * Stores the object as commandline.
+   *
+   * @param key		the key to store the object under
+   * @param obj		the object to store
+   */
+  public void setObject(String key, Object obj) {
+    setProperty(key, OptionUtils.getCommandLine(obj));
+  }
+
+  /**
+   * Returns the object stored as commandline.
+   *
+   * @param key		the key with the commandline
+   * @param cls		the type of the object
+   * @param <T>		the type of the object
+   * @return		the object, null if failed to instantiate
+   */
+  public <T> T getObject(String key, Class<T> cls) {
+    return getObject(key, cls, null);
+  }
+
+  /**
+   * Returns the object stored as commandline.
+   *
+   * @param key		the key with the commandline
+   * @param cls		the type of the object
+   * @param defValue	the default value
+   * @param <T>		the type of the object
+   * @return		the object, null if failed to instantiate
+   */
+  public <T> T getObject(String key, Class<T> cls, T defValue) {
+    String	value;
+
+    value = getProperty(key);
+    if (value == null)
+      return defValue;
+
+    try {
+      return (T) OptionUtils.forAnyCommandLine(cls, value);
+    }
+    catch (Exception e) {
+      LOGGER.severe("Failed to instantiate object of type " + Utils.classToString(cls) + " from command-line: " + value);
+      return null;
+    }
+  }
+
+  /**
    * Merges its own data with the one provided by the specified object.
    *
    * @param other		the object to merge with
    */
   public void mergeWith(Properties other) {
-    HashSet<String>	keys;
+    Set<String>		keys;
     String		key;
     Iterator<String>	iter;
     String		thisValue;
     String		otherValue;
 
-    keys = new HashSet<String>();
+    keys = new HashSet<>();
     keys.addAll(stringPropertyNames());
     keys.addAll(other.stringPropertyNames());
 
@@ -1480,23 +1528,17 @@ public class Properties
    * @throws ClassCastException if the specified object's type prevents it
    *         from being compared to this object.
    */
-  public int compareTo(Object o) {
+  public int compareTo(Properties o) {
     int			result;
-    Properties		props;
     Enumeration<String>	enm;
     String		key;
 
     if (o == null)
       return 1;
 
-    if (!(o instanceof Properties))
-      return -1;
-
-    props = (Properties) o;
-
-    if (!keySetAll().containsAll(props.keySetAll()))
+    if (!keySetAll().containsAll(o.keySetAll()))
       result = -1;
-    else if (!props.keySetAll().containsAll(keySetAll()))
+    else if (!o.keySetAll().containsAll(keySetAll()))
       result = +1;
     else
       result = 0;
@@ -1505,7 +1547,7 @@ public class Properties
       enm = (Enumeration<String>) propertyNames();
       while (enm.hasMoreElements()) {
 	key    = enm.nextElement();
-	result = getProperty(key).compareTo(props.getProperty(key));
+	result = getProperty(key).compareTo(o.getProperty(key));
 	if (result != 0)
 	  break;
       }
@@ -1523,7 +1565,7 @@ public class Properties
    */
   @Override
   public boolean equals(Object obj) {
-    return (compareTo(obj) == 0);
+    return (obj instanceof Properties) && (compareTo((Properties) obj) == 0);
   }
 
   /**
@@ -1543,8 +1585,7 @@ public class Properties
       result.load(reader);
     }
     catch (Exception e) {
-      System.err.println("Error obtaining properties from comments:");
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Error obtaining properties from comments:", e);
       result = null;
     }
 
