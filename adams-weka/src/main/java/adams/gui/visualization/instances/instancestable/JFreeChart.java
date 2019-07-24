@@ -251,12 +251,10 @@ public class JFreeChart
 	spRows  = null;
       }
       else {
-        actRows = new int[indices.length];
+        actRows = Utils.adjustIndices(indices, 2);
         spRows  = new int[indices.length];
-        for (i = 0; i < indices.length; i++) {
-	  actRows[i] = indices[i] + 2;
+        for (i = 0; i < indices.length; i++)
 	  spRows[i]  = i + 2;
-	}
 	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Utils.arrayToString(actRows);
       }
     }

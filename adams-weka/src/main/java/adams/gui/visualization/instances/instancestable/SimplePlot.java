@@ -233,11 +233,9 @@ public class SimplePlot
       }
       else {
         titles  = new String[indices.length];
-        actRows = new int[indices.length];
-        for (i = 0; i < indices.length; i++) {
-	  titles[i]  = "Row " + (indices[i] + 2);
-	  actRows[i] = indices[i] + 2;
-	}
+        actRows = Utils.adjustIndices(indices, 2);
+        for (i = 0; i < indices.length; i++)
+	  titles[i]  = "Row " + actRows[i];
 	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Utils.arrayToString(actRows);
       }
     }

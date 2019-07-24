@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetUtils.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
@@ -319,6 +319,35 @@ public class SpreadSheetUtils {
       val = Double.NaN;
       if (row.hasCell(col)) {
 	cell = row.getCell(col);
+	if (cell.isNumeric())
+	  val = cell.toDouble();
+      }
+      result.add(val);
+    }
+
+    return result.toArray();
+  }
+
+  /**
+   * Returns the content of a numeric row as double array.
+   *
+   * @param sheet	the sheet to use
+   * @param rowIndex	the index of the numeric row
+   * @return		the numeric data, elements are NaN if missing or not numeric
+   */
+  public static double[] getNumericRow(SpreadSheet sheet, int rowIndex) {
+    TDoubleArrayList result;
+    int			i;
+    Row			row;
+    Cell		cell;
+    double		val;
+
+    result = new TDoubleArrayList(sheet.getColumnCount());
+    row    = sheet.getRow(rowIndex);
+    for (i = 0; i < sheet.getColumnCount(); i++) {
+      val = Double.NaN;
+      if (row.hasCell(i)) {
+	cell = row.getCell(i);
 	if (cell.isNumeric())
 	  val = cell.toDouble();
       }
