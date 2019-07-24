@@ -15,7 +15,7 @@
 
 /*
  * AbstractRowStatistic.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet.rowstatistic;
@@ -25,12 +25,12 @@ import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 
 /**
  * Ancestor for row statistic generators.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9765 $
  */
 public abstract class AbstractRowStatistic
   extends AbstractOptionHandler
@@ -39,8 +39,64 @@ public abstract class AbstractRowStatistic
   /** for serialization. */
   private static final long serialVersionUID = -7187115330070305271L;
 
+  /** the columns to operate on. */
+  protected SpreadSheetColumnRange m_Columns;
+
+  /** the column indices to operate on. */
+  protected transient int[] m_ColumnIndices;
+
   /** the last error that was generated. */
   protected String m_LastError;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "columns", "columns",
+      new SpreadSheetColumnRange(SpreadSheetColumnRange.ALL));
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_ColumnIndices = null;
+  }
+
+  /**
+   * Sets the columns to operate on.
+   *
+   * @param value 	the columns
+   */
+  public void setColumns(SpreadSheetColumnRange value) {
+    m_Columns = value;
+    reset();
+  }
+
+  /**
+   * Returns the columns to operate on.
+   *
+   * @return 		the columns
+   */
+  public SpreadSheetColumnRange getColumns() {
+    return m_Columns;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String columnsTipText() {
+    return "The columns to include.";
+  }
 
   /**
    * Checks whether there was an error with the last stats generation.
@@ -79,6 +135,13 @@ public abstract class AbstractRowStatistic
     if (result == null) {
       if (rowIndex >= sheet.getRowCount())
 	result = "Row index out of bounds: " + rowIndex;
+    }
+
+    if (result == null) {
+      m_Columns.setData(sheet);
+      m_ColumnIndices = m_Columns.getIntIndices();
+      if (m_ColumnIndices.length == 0)
+        result = "Failed to locate columns: " + m_Columns.getRange();
     }
 
     return result;
@@ -138,11 +201,11 @@ public abstract class AbstractRowStatistic
   protected SpreadSheet doGenerate(SpreadSheet sheet, int rowIndex) {
     int		i;
     Row		row;
-    
+
     preVisit(sheet, rowIndex);
     row = sheet.getRow(rowIndex);
-    for (i = 0; i < sheet.getColumnCount(); i++)
-      doVisit(row, i);
+    for (i = 0; i < m_ColumnIndices.length; i++)
+      doVisit(row, m_ColumnIndices[i]);
     return postVisit(sheet, rowIndex);
   }
 
