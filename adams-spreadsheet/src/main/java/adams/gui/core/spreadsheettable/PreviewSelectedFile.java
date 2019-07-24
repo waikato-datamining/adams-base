@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PreviewSelectedFile.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -31,10 +31,9 @@ import adams.gui.dialog.SimplePreviewBrowserDialog;
  * Allows preview of the selected file in separate dialog.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PreviewSelectedFile
-  extends AbstractProcessSelectedRows {
+  extends AbstractProcessRow {
 
   private static final long serialVersionUID = 7786133414905315983L;
 
@@ -92,26 +91,6 @@ public class PreviewSelectedFile
   }
 
   /**
-   * Returns the minimum number of rows that the plugin requires.
-   *
-   * @return		the minimum
-   */
-  @Override
-  public int minNumRows() {
-    return 1;
-  }
-
-  /**
-   * Returns the maximum number of rows that the plugin requires.
-   *
-   * @return		the maximum, -1 for none
-   */
-  @Override
-  public int maxNumRows() {
-    return 1;
-  }
-
-  /**
    * Returns the name of the icon.
    *
    * @return            the name, null if none available
@@ -126,7 +105,8 @@ public class PreviewSelectedFile
    *
    * @return            the name
    */
-  protected String getDefaultMenuItem() {
+  @Override
+  public String getMenuItem() {
     return "Preview selected file";
   }
 
@@ -135,12 +115,12 @@ public class PreviewSelectedFile
    *
    * @param table	the source table
    * @param sheet	the spreadsheet to use as basis
-   * @param actRows	the actual rows in the spreadsheet
-   * @param selRows	the selected rows in the table
+   * @param actRow	the actual rows in the spreadsheet
+   * @param selRow	the selected rows in the table
    * @return		true if successful
    */
   @Override
-  protected boolean doProcessSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
+  protected boolean doProcessRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
     int				col;
     SimplePreviewBrowserDialog	dialog;
 
@@ -153,7 +133,7 @@ public class PreviewSelectedFile
     }
 
     dialog = new SimplePreviewBrowserDialog();
-    dialog.open(new PlaceholderFile(sheet.getCell(actRows[0], col).toString()));
+    dialog.open(new PlaceholderFile(sheet.getCell(actRow, col).toString()));
     dialog.setLocationRelativeTo(table.getParent());
     dialog.setVisible(true);
     dialog.setDefaultCloseOperation(SimplePreviewBrowserDialog.DISPOSE_ON_CLOSE);
