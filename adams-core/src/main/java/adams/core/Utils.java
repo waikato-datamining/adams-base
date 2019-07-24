@@ -2345,4 +2345,41 @@ public class Utils {
 
     return result;
   }
+
+  /**
+   * Updates the indices with the supplied adjustment value.
+   *
+   * @param indices	the indices to adjust
+   * @return		the updated indices
+   */
+  public static int[] adjustIndices(int[] indices, int adjustment) {
+    int[]	result;
+    int		i;
+
+    result = new int[indices.length];
+    for (i = 0; i < indices.length; i++)
+      result[i] = indices[i] + adjustment;
+
+    return result;
+  }
+
+  /**
+   * Turns the 0-based indices into 1-based ones.
+   *
+   * @param indices	the 0-based indices to convert
+   * @return		the 1-based indices
+   */
+  public static int[] toOneBasedIndices(int[] indices) {
+    return adjustIndices(indices, 1);
+  }
+
+  /**
+   * Turns the 1-based indices into 0-based ones.
+   *
+   * @param indices	the 1-based indices to convert
+   * @return		the 0-based indices
+   */
+  public static int[] toZeroBasedIndices(int[] indices) {
+    return adjustIndices(indices, -1);
+  }
 }
