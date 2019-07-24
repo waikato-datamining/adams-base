@@ -106,37 +106,37 @@ public class CopySelectedFiles
    * @return		the parameters, null if cancelled
    */
   protected Properties promptParameters(SpreadSheetTable table) {
-    PropertiesParameterDialog 	dialogParams;
-    PropertiesParameterPanel 	propsPanel;
+    PropertiesParameterDialog 	dialog;
+    PropertiesParameterPanel 	panel;
     Properties			last;
 
     if (GUIHelper.getParentDialog(table) != null)
-      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
     else
-      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
-    propsPanel = dialogParams.getPropertiesParameterPanel();
-    propsPanel.addPropertyType(KEY_COLUMN, PropertyType.INDEX);
-    propsPanel.setLabel(KEY_COLUMN, "Column");
-    propsPanel.setHelp(KEY_COLUMN, "The column with the file names");
-    propsPanel.addPropertyType(KEY_TARGETDIR, PropertyType.DIRECTORY_ABSOLUTE);
-    propsPanel.setLabel(KEY_TARGETDIR, "Target dir");
-    propsPanel.setHelp(KEY_TARGETDIR, "The directory to copy the files to");
-    propsPanel.setPropertyOrder(new String[]{KEY_COLUMN, KEY_TARGETDIR});
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    panel = dialog.getPropertiesParameterPanel();
+    panel.addPropertyType(KEY_COLUMN, PropertyType.INDEX);
+    panel.setLabel(KEY_COLUMN, "Column");
+    panel.setHelp(KEY_COLUMN, "The column with the file names");
+    panel.addPropertyType(KEY_TARGETDIR, PropertyType.DIRECTORY_ABSOLUTE);
+    panel.setLabel(KEY_TARGETDIR, "Target dir");
+    panel.setHelp(KEY_TARGETDIR, "The directory to copy the files to");
+    panel.setPropertyOrder(new String[]{KEY_COLUMN, KEY_TARGETDIR});
     last = new Properties();
     last.setProperty(KEY_COLUMN, SpreadSheetColumnIndex.FIRST);
     last.setPath(KEY_TARGETDIR, new PlaceholderDirectory().getAbsolutePath());
-    dialogParams.setProperties(last);
+    dialog.setProperties(last);
     last = (Properties) table.getLastSetup(getClass(), false, true);
     if (last != null)
-      dialogParams.setProperties(last);
-    dialogParams.setTitle(getMenuItem());
-    dialogParams.pack();
-    dialogParams.setLocationRelativeTo(table.getParent());
-    dialogParams.setVisible(true);
-    if (dialogParams.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      dialog.setProperties(last);
+    dialog.setTitle(getMenuItem());
+    dialog.pack();
+    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setVisible(true);
+    if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
       return null;
 
-    return dialogParams.getProperties();
+    return dialog.getProperties();
   }
 
   /**

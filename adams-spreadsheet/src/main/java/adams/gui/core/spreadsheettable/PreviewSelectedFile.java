@@ -82,32 +82,32 @@ public class PreviewSelectedFile
    * @return		the parameters, null if cancelled
    */
   protected Properties promptParameters(SpreadSheetTable table) {
-    PropertiesParameterDialog 	dialogParams;
-    PropertiesParameterPanel 	propsPanel;
+    PropertiesParameterDialog 	dialog;
+    PropertiesParameterPanel 	panel;
     Properties			last;
 
     if (GUIHelper.getParentDialog(table) != null)
-      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
     else
-      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
-    propsPanel = dialogParams.getPropertiesParameterPanel();
-    propsPanel.addPropertyType(KEY_COLUMNS, PropertyType.INDEX);
-    propsPanel.setLabel(KEY_COLUMNS, "Column");
-    propsPanel.setHelp(KEY_COLUMNS, "The column containing the file name");
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    panel = dialog.getPropertiesParameterPanel();
+    panel.addPropertyType(KEY_COLUMNS, PropertyType.INDEX);
+    panel.setLabel(KEY_COLUMNS, "Column");
+    panel.setHelp(KEY_COLUMNS, "The column containing the file name");
     last = new Properties();
     last.setProperty(KEY_COLUMNS, SpreadSheetColumnIndex.FIRST);
-    dialogParams.setProperties(last);
+    dialog.setProperties(last);
     last = (Properties) table.getLastSetup(getClass(), true, true);
     if (last != null)
-      dialogParams.setProperties(last);
-    dialogParams.setTitle(getMenuItem());
-    dialogParams.pack();
-    dialogParams.setLocationRelativeTo(table.getParent());
-    dialogParams.setVisible(true);
-    if (dialogParams.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      dialog.setProperties(last);
+    dialog.setTitle(getMenuItem());
+    dialog.pack();
+    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setVisible(true);
+    if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
       return null;
 
-    return dialogParams.getProperties();
+    return dialog.getProperties();
   }
 
   /**

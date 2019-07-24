@@ -119,52 +119,52 @@ public class JFreeChart
    * @return		the parameters, null if cancelled
    */
   protected Properties promptParameters(SpreadSheetTable table, boolean isColumn) {
-    PropertiesParameterDialog 		dialogParams;
-    PropertiesParameterPanel 		propsPanel;
-    Properties				last;
+    PropertiesParameterDialog 	dialog;
+    PropertiesParameterPanel 	panel;
+    Properties			last;
 
     if (GUIHelper.getParentDialog(table) != null)
-      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
     else
-      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
-    propsPanel = dialogParams.getPropertiesParameterPanel();
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    panel = dialog.getPropertiesParameterPanel();
     if (!isColumn) {
-      propsPanel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
-      propsPanel.setLabel(KEY_COLUMNS, "Columns");
-      propsPanel.setHelp(KEY_COLUMNS, "The columns to use for the plot");
+      panel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
+      panel.setLabel(KEY_COLUMNS, "Columns");
+      panel.setHelp(KEY_COLUMNS, "The columns to use for the plot");
     }
-    propsPanel.addPropertyType(KEY_PLOT, PropertyType.OBJECT_EDITOR);
-    propsPanel.setLabel(KEY_PLOT, "Plot");
-    propsPanel.setHelp(KEY_PLOT, "How to display the data");
-    propsPanel.setChooser(KEY_PLOT, new GenericObjectEditorPanel(Actor.class, new adams.flow.sink.JFreeChartPlot(), false));
+    panel.addPropertyType(KEY_PLOT, PropertyType.OBJECT_EDITOR);
+    panel.setLabel(KEY_PLOT, "Plot");
+    panel.setHelp(KEY_PLOT, "How to display the data");
+    panel.setChooser(KEY_PLOT, new GenericObjectEditorPanel(Actor.class, new adams.flow.sink.JFreeChartPlot(), false));
     if (!isColumn)
-      propsPanel.setPropertyOrder(new String[]{KEY_COLUMNS, KEY_PLOT});
+      panel.setPropertyOrder(new String[]{KEY_COLUMNS, KEY_PLOT});
     last = new Properties();
     if (!isColumn)
       last.setProperty(KEY_COLUMNS, Range.ALL);
     last.setObject(KEY_PLOT, new adams.flow.sink.JFreeChartPlot());
-    dialogParams.setProperties(last);
+    dialog.setProperties(last);
     last = (Properties) table.getLastSetup(getClass(), true, !isColumn);
     if (last != null)
-      dialogParams.setProperties(last);
-    dialogParams.setTitle(getMenuItem());
-    dialogParams.pack();
-    dialogParams.setLocationRelativeTo(table.getParent());
-    dialogParams.setVisible(true);
-    if (dialogParams.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      dialog.setProperties(last);
+    dialog.setTitle(getMenuItem());
+    dialog.pack();
+    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setVisible(true);
+    if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
       return null;
 
-    return dialogParams.getProperties();
+    return dialog.getProperties();
   }
 
   /**
    * Plots the data.
    *
    * @param table	the table this is for
-   * @param isColumn
-   * @param data
-   * @param title
-   * @param spRows
+   * @param isColumn	whether this is for a column or for row(s)
+   * @param data	the data to plot
+   * @param title	the title of the plot
+   * @param spRows	the spreadsheet rows, can be null
    */
   protected void createPlot(final SpreadSheetTable table, final boolean isColumn, final SpreadSheet data, final String title, final int[] spRows) {
     SwingWorker		worker;

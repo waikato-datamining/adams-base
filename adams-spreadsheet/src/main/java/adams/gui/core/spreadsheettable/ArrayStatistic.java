@@ -98,38 +98,38 @@ public class ArrayStatistic
    * @return		the parameters, null if cancelled dialog
    */
   protected Properties promptParameters(SpreadSheetTable table) {
-    PropertiesParameterDialog 	dialogParams;
-    PropertiesParameterPanel	propsPanel;
+    PropertiesParameterDialog 	dialog;
+    PropertiesParameterPanel 	panel;
     Properties 			last;
 
     if (GUIHelper.getParentDialog(table) != null)
-      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
     else
-      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
-    propsPanel = dialogParams.getPropertiesParameterPanel();
-    propsPanel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
-    propsPanel.setLabel(KEY_COLUMNS, "Columns");
-    propsPanel.setHelp(KEY_COLUMNS, "The columns to operate on");
-    propsPanel.addPropertyType(KEY_STATISTIC, PropertyType.OBJECT_EDITOR);
-    propsPanel.setLabel(KEY_STATISTIC, "Array statistic");
-    propsPanel.setHelp(KEY_STATISTIC, "The array statistics to apply");
-    propsPanel.setChooser(KEY_STATISTIC, new GenericObjectEditorPanel(AbstractArrayStatistic.class, new ArrayMean(), true));
-    propsPanel.setPropertyOrder(new String[]{KEY_COLUMNS, KEY_STATISTIC});
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    panel = dialog.getPropertiesParameterPanel();
+    panel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
+    panel.setLabel(KEY_COLUMNS, "Columns");
+    panel.setHelp(KEY_COLUMNS, "The columns to operate on");
+    panel.addPropertyType(KEY_STATISTIC, PropertyType.OBJECT_EDITOR);
+    panel.setLabel(KEY_STATISTIC, "Array statistic");
+    panel.setHelp(KEY_STATISTIC, "The array statistics to apply");
+    panel.setChooser(KEY_STATISTIC, new GenericObjectEditorPanel(AbstractArrayStatistic.class, new ArrayMean(), true));
+    panel.setPropertyOrder(new String[]{KEY_COLUMNS, KEY_STATISTIC});
     last = new Properties();
     last.setProperty(KEY_COLUMNS, SpreadSheetColumnRange.ALL);
     last.setObject(KEY_STATISTIC, new ArrayMean());
-    dialogParams.setProperties(last);
+    dialog.setProperties(last);
     last = (Properties) table.getLastSetup(getClass(), true, false);
     if (last != null)
-      dialogParams.setProperties(last);
-    dialogParams.setTitle(getMenuItem());
-    dialogParams.pack();
-    dialogParams.setLocationRelativeTo(table.getParent());
-    dialogParams.setVisible(true);
-    if (dialogParams.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      dialog.setProperties(last);
+    dialog.setTitle(getMenuItem());
+    dialog.pack();
+    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setVisible(true);
+    if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
       return null;
 
-    return dialogParams.getProperties();
+    return dialog.getProperties();
   }
 
   /**
