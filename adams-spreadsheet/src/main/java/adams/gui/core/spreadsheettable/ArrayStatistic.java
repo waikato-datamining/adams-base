@@ -20,17 +20,22 @@
 
 package adams.gui.core.spreadsheettable;
 
+import adams.core.Properties;
 import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.AbstractArrayStatistic;
 import adams.data.statistics.AbstractArrayStatistic.StatisticContainer;
 import adams.data.statistics.ArrayMean;
 import adams.data.statistics.StatUtils;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.PropertiesParameterPanel;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.dialog.PropertiesParameterDialog;
 import adams.gui.dialog.SpreadSheetDialog;
-import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.goe.GenericObjectEditorPanel;
 
 import java.awt.Dialog.ModalityType;
 
@@ -44,6 +49,10 @@ public class ArrayStatistic
   implements ProcessRow {
 
   private static final long serialVersionUID = 3101728458818516005L;
+
+  public static final String KEY_COLUMNS = "columns";
+
+  public static final String KEY_STATISTIC = "statistic";
 
   /**
    * Returns a string describing the object.
@@ -93,44 +102,69 @@ public class ArrayStatistic
    */
   @Override
   protected boolean doProcessSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
-    GenericObjectEditorDialog 	setup;
-    AbstractArrayStatistic 	last;
+    Properties 			last;
     StatisticContainer 		stats;
     SpreadSheetDialog		dialog;
     int[] 			rows;
+    int[]			cols;
+    PropertiesParameterDialog 	dialogSetup;
+    PropertiesParameterPanel	propsPanel;
+    AbstractArrayStatistic	array;
+    SpreadSheetColumnRange	columns;
 
     rows = Utils.adjustIndices(actRows, 2);
 
     // let user customize plot
     if (GUIHelper.getParentDialog(table) != null)
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+      dialogSetup = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
     else
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(table), true);
-    setup.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
-    setup.getGOEEditor().setClassType(AbstractArrayStatistic.class);
-    setup.getGOEEditor().setCanChangeClassInDialog(true);
-    last = (AbstractArrayStatistic) table.getLastSetup(getClass(), true, false);
-    if (last == null)
-      last = new ArrayMean();
-    setup.setCurrent(last);
-    setup.setLocationRelativeTo(GUIHelper.getParentComponent(table));
-    setup.setVisible(true);
-    if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      dialogSetup = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    propsPanel = dialogSetup.getPropertiesParameterPanel();
+    propsPanel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
+    propsPanel.setLabel(KEY_COLUMNS, "Columns");
+    propsPanel.setHelp(KEY_COLUMNS, "The columns to operate on");
+    propsPanel.addPropertyType(KEY_STATISTIC, PropertyType.OBJECT_EDITOR);
+    propsPanel.setLabel(KEY_STATISTIC, "Array statistic");
+    propsPanel.setHelp(KEY_STATISTIC, "The array statistics to apply");
+    propsPanel.setChooser(KEY_STATISTIC, new GenericObjectEditorPanel(AbstractArrayStatistic.class, new ArrayMean(), true));
+    propsPanel.setPropertyOrder(new String[]{KEY_COLUMNS, KEY_STATISTIC});
+    last = new Properties();
+    last.setProperty(KEY_COLUMNS, SpreadSheetColumnRange.ALL);
+    last.setObject(KEY_STATISTIC, new ArrayMean());
+    dialogSetup.setProperties(last);
+    last = (Properties) table.getLastSetup(getClass(), true, false);
+    if (last != null)
+      dialogSetup.setProperties(last);
+    dialogSetup.setTitle(getMenuItem());
+    dialogSetup.pack();
+    dialogSetup.setLocationRelativeTo(table.getParent());
+    dialogSetup.setVisible(true);
+    if (dialogSetup.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
       return false;
-    last = (AbstractArrayStatistic) setup.getCurrent();
-    if ((last.getMin() != -1) && (last.getMin() > actRows.length)) {
+
+    last = dialogSetup.getProperties();
+    array = last.getObject(KEY_STATISTIC, AbstractArrayStatistic.class);
+    if (array == null) {
       GUIHelper.showErrorMessage(
-	GUIHelper.getParentComponent(table), "Statistic " + Utils.classToString(last) + " requires at least " + last.getMin() + " rows!");
+	GUIHelper.getParentComponent(table), "Failed to instantiate array statistic!");
+      return false;
     }
-    if ((last.getMax() != -1) && (last.getMax() < actRows.length)) {
+    if ((array.getMin() != -1) && (array.getMin() > actRows.length)) {
       GUIHelper.showErrorMessage(
-	GUIHelper.getParentComponent(table), "Statistic " + Utils.classToString(last) + " can only handle at most " + last.getMax() + " rows!");
+	GUIHelper.getParentComponent(table), "Statistic " + Utils.classToString(last) + " requires at least " + array.getMin() + " rows!");
+    }
+    if ((array.getMax() != -1) && (array.getMax() < actRows.length)) {
+      GUIHelper.showErrorMessage(
+	GUIHelper.getParentComponent(table), "Statistic " + Utils.classToString(last) + " can only handle at most " + array.getMax() + " rows!");
     }
     table.addLastSetup(getClass(), true, false, last);
+    columns = new SpreadSheetColumnRange(last.getProperty(KEY_COLUMNS, SpreadSheetColumnRange.ALL));
+    columns.setData(sheet);
+    cols = columns.getIntIndices();
     for (int row: actRows)
-      last.add(StatUtils.toNumberArray(SpreadSheetUtils.getNumericRow(sheet, row)));
+      array.add(StatUtils.toNumberArray(SpreadSheetUtils.getNumericRow(sheet, row, cols)));
     try {
-      stats = last.calculate();
+      stats = array.calculate();
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
