@@ -20,12 +20,18 @@
 
 package adams.gui.core.spreadsheettable;
 
+import adams.core.Properties;
 import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.PropertiesParameterPanel;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.dialog.PropertiesParameterDialog;
 import adams.gui.dialog.SimplePreviewBrowserDialog;
+
+import java.awt.Dialog.ModalityType;
 
 /**
  * Allows preview of the selected file in separate dialog.
@@ -37,8 +43,7 @@ public class PreviewSelectedFile
 
   private static final long serialVersionUID = 7786133414905315983L;
 
-  /** the column that contains the filename. */
-  protected SpreadSheetColumnIndex m_Column;
+  public static final String KEY_COLUMNS = "column";
 
   /**
    * Returns a string describing the object.
@@ -48,46 +53,6 @@ public class PreviewSelectedFile
   @Override
   public String globalInfo() {
     return "Allows the user to preview the selected file in the specified column.";
-  }
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "column", "column",
-      new SpreadSheetColumnIndex(SpreadSheetColumnIndex.FIRST));
-  }
-
-  /**
-   * Sets the column with the file names.
-   *
-   * @param value 	the column
-   */
-  public void setColumn(SpreadSheetColumnIndex value) {
-    m_Column = value;
-    reset();
-  }
-
-  /**
-   * Returns the column with the file names.
-   *
-   * @return 		the column
-   */
-  public SpreadSheetColumnIndex getColumn() {
-    return m_Column;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String columnTipText() {
-    return "The column with the file names.";
   }
 
   /**
@@ -111,6 +76,41 @@ public class PreviewSelectedFile
   }
 
   /**
+   * Prompts the user to configure the parameters.
+   *
+   * @param table	the table to do this for
+   * @return		the parameters, null if cancelled
+   */
+  protected Properties promptParameters(SpreadSheetTable table) {
+    PropertiesParameterDialog 	dialogParams;
+    PropertiesParameterPanel 	propsPanel;
+    Properties			last;
+
+    if (GUIHelper.getParentDialog(table) != null)
+      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    else
+      dialogParams = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    propsPanel = dialogParams.getPropertiesParameterPanel();
+    propsPanel.addPropertyType(KEY_COLUMNS, PropertyType.INDEX);
+    propsPanel.setLabel(KEY_COLUMNS, "Column");
+    propsPanel.setHelp(KEY_COLUMNS, "The column containing the file name");
+    last = new Properties();
+    last.setProperty(KEY_COLUMNS, SpreadSheetColumnIndex.FIRST);
+    dialogParams.setProperties(last);
+    last = (Properties) table.getLastSetup(getClass(), true, true);
+    if (last != null)
+      dialogParams.setProperties(last);
+    dialogParams.setTitle(getMenuItem());
+    dialogParams.pack();
+    dialogParams.setLocationRelativeTo(table.getParent());
+    dialogParams.setVisible(true);
+    if (dialogParams.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      return null;
+
+    return dialogParams.getProperties();
+  }
+
+  /**
    * Processes the specified rows.
    *
    * @param table	the source table
@@ -121,16 +121,25 @@ public class PreviewSelectedFile
    */
   @Override
   protected boolean doProcessRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
+    Properties			last;
     int				col;
     SimplePreviewBrowserDialog	dialog;
+    SpreadSheetColumnIndex 	column;
+
+    // prompt user for parameters
+    last = promptParameters(table);
+    if (last == null)
+      return false;
 
     // determine column
-    m_Column.setData(sheet);
-    col = m_Column.getIntIndex();
+    column = new SpreadSheetColumnIndex(last.getProperty(KEY_COLUMNS, SpreadSheetColumnIndex.FIRST));
+    column.setData(sheet);
+    col = column.getIntIndex();
     if (col == -1) {
-      GUIHelper.showErrorMessage(table.getParent(), "Failed to locate column:" + m_Column);
+      GUIHelper.showErrorMessage(table.getParent(), "Failed to locate column:" + column);
       return false;
     }
+    table.addLastSetup(getClass(), false, true, last);
 
     dialog = new SimplePreviewBrowserDialog();
     dialog.open(new PlaceholderFile(sheet.getCell(actRow, col).toString()));
