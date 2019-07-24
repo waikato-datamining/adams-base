@@ -92,29 +92,16 @@ public class ArrayStatistic
   }
 
   /**
-   * Processes the specified row.
+   * Prompts the user for parameters.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRows	the actual row in the spreadsheet
-   * @param selRows	the selected row in the table
-   * @return		true if successful
+   * @param table	the table this is for
+   * @return		the parameters, null if cancelled dialog
    */
-  @Override
-  protected boolean doProcessSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
-    Properties 			last;
-    StatisticContainer 		stats;
-    SpreadSheetDialog 		dialogStats;
-    int[] 			rows;
-    int[]			cols;
+  protected Properties promptParameters(SpreadSheetTable table) {
     PropertiesParameterDialog 	dialogParams;
     PropertiesParameterPanel	propsPanel;
-    AbstractArrayStatistic	array;
-    SpreadSheetColumnRange	columns;
+    Properties 			last;
 
-    rows = Utils.adjustIndices(actRows, 2);
-
-    // let user customize plot
     if (GUIHelper.getParentDialog(table) != null)
       dialogParams = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
     else
@@ -140,9 +127,37 @@ public class ArrayStatistic
     dialogParams.setLocationRelativeTo(table.getParent());
     dialogParams.setVisible(true);
     if (dialogParams.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      return null;
+
+    return dialogParams.getProperties();
+  }
+
+  /**
+   * Processes the specified row.
+   *
+   * @param table	the source table
+   * @param sheet	the spreadsheet to use as basis
+   * @param actRows	the actual row in the spreadsheet
+   * @param selRows	the selected row in the table
+   * @return		true if successful
+   */
+  @Override
+  protected boolean doProcessSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
+    Properties 			last;
+    StatisticContainer 		stats;
+    SpreadSheetDialog 		dialogStats;
+    int[] 			rows;
+    int[]			cols;
+    AbstractArrayStatistic	array;
+    SpreadSheetColumnRange	columns;
+
+    rows = Utils.adjustIndices(actRows, 2);
+
+    // prompt user
+    last = promptParameters(table);
+    if (last == null)
       return false;
 
-    last = dialogParams.getProperties();
     array = last.getObject(KEY_STATISTIC, AbstractArrayStatistic.class);
     if (array == null) {
       GUIHelper.showErrorMessage(
