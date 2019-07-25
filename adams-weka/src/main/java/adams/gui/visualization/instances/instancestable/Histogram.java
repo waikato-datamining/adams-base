@@ -49,7 +49,7 @@ public class Histogram
 
   private static final long serialVersionUID = -2452746814708360637L;
 
-  public static final String KEY_COLUMNS = "columns";
+  public static final String KEY_ATTRIBUTES = "attributes";
 
   public static final String KEY_HISTOGRAM = "histogram";
 
@@ -112,19 +112,19 @@ public class Histogram
       dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
     panel = dialog.getPropertiesParameterPanel();
     if (!isColumn) {
-      panel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
-      panel.setLabel(KEY_COLUMNS, "Columns");
-      panel.setHelp(KEY_COLUMNS, "The columns to use for the histogram");
+      panel.addPropertyType(KEY_ATTRIBUTES, PropertyType.RANGE);
+      panel.setLabel(KEY_ATTRIBUTES, "Attributes");
+      panel.setHelp(KEY_ATTRIBUTES, "The attributes to use for the histogram");
     }
     panel.addPropertyType(KEY_HISTOGRAM, PropertyType.OBJECT_EDITOR);
     panel.setLabel(KEY_HISTOGRAM, "Histogram");
     panel.setHelp(KEY_HISTOGRAM, "How to generate the histogram");
     panel.setChooser(KEY_HISTOGRAM, new GenericObjectEditorPanel(AbstractArrayStatistic.class, new ArrayHistogram(), false));
     if (!isColumn)
-      panel.setPropertyOrder(new String[]{KEY_COLUMNS, KEY_HISTOGRAM});
+      panel.setPropertyOrder(new String[]{KEY_ATTRIBUTES, KEY_HISTOGRAM});
     last = new Properties();
     if (!isColumn)
-      last.setProperty(KEY_COLUMNS, WekaAttributeRange.ALL);
+      last.setProperty(KEY_ATTRIBUTES, WekaAttributeRange.ALL);
     last.setObject(KEY_HISTOGRAM, new ArrayHistogram());
     dialog.setProperties(last);
     last = (Properties) table.getLastSetup(getClass(), true, !isColumn);
@@ -165,7 +165,7 @@ public class Histogram
       return;
 
     if (!isColumn) {
-      columns = new WekaAttributeRange(last.getProperty(KEY_COLUMNS, WekaAttributeRange.ALL));
+      columns = new WekaAttributeRange(last.getProperty(KEY_ATTRIBUTES, WekaAttributeRange.ALL));
       columns.setData(data);
       cols = columns.getIntIndices();
     }
