@@ -13,21 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Histogram.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
 
+import adams.core.Properties;
+import adams.core.Range;
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.statistics.AbstractArrayStatistic;
 import adams.data.statistics.ArrayHistogram;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.PropertiesParameterPanel;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SpreadSheetTable;
-import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.dialog.PropertiesParameterDialog;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.statistics.HistogramFactory;
 import gnu.trove.list.array.TDoubleArrayList;
 
@@ -37,13 +43,16 @@ import java.awt.Dialog.ModalityType;
  * Allows to generate a histogram from a column or row.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Histogram
   extends AbstractOptionHandler
   implements PlotColumn, PlotRow {
 
   private static final long serialVersionUID = -2452746814708360637L;
+
+  public static final String KEY_COLUMNS = "columns";
+
+  public static final String KEY_HISTOGRAM = "histogram";
 
   /**
    * Returns a string describing the object.
@@ -87,6 +96,52 @@ public class Histogram
   }
 
   /**
+   * Prompts the user to configure the parameters.
+   *
+   * @param table	the table to do this for
+   * @param isColumn	whether column or row(s)
+   * @return		the parameters, null if cancelled
+   */
+  protected Properties promptParameters(SpreadSheetTable table, boolean isColumn) {
+    PropertiesParameterDialog 	dialog;
+    PropertiesParameterPanel 	panel;
+    Properties			last;
+
+    if (GUIHelper.getParentDialog(table) != null)
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    panel = dialog.getPropertiesParameterPanel();
+    if (!isColumn) {
+      panel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
+      panel.setLabel(KEY_COLUMNS, "Columns");
+      panel.setHelp(KEY_COLUMNS, "The columns to use for the histogram");
+    }
+    panel.addPropertyType(KEY_HISTOGRAM, PropertyType.OBJECT_EDITOR);
+    panel.setLabel(KEY_HISTOGRAM, "Histogram");
+    panel.setHelp(KEY_HISTOGRAM, "How to generate the histogram");
+    panel.setChooser(KEY_HISTOGRAM, new GenericObjectEditorPanel(AbstractArrayStatistic.class, new ArrayHistogram(), false));
+    if (!isColumn)
+      panel.setPropertyOrder(new String[]{KEY_COLUMNS, KEY_HISTOGRAM});
+    last = new Properties();
+    if (!isColumn)
+      last.setProperty(KEY_COLUMNS, Range.ALL);
+    last.setObject(KEY_HISTOGRAM, new ArrayHistogram());
+    dialog.setProperties(last);
+    last = (Properties) table.getLastSetup(getClass(), true, !isColumn);
+    if (last != null)
+      dialog.setProperties(last);
+    dialog.setTitle(getMenuItem());
+    dialog.pack();
+    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setVisible(true);
+    if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      return null;
+
+    return dialog.getProperties();
+  }
+
+  /**
    * Allows the user to generate a plot from either a row or a column.
    *
    * @param sheet	the spreadsheet to use
@@ -95,31 +150,31 @@ public class Histogram
    */
   protected void plot(final SpreadSheetTable table, final SpreadSheet sheet, final boolean isColumn, int index) {
     TDoubleArrayList                    list;
-    HistogramFactory.SetupDialog	setup;
     HistogramFactory.Dialog		dialog;
     int					i;
-    ArrayHistogram                      last;
+    Properties				last;
+    ArrayHistogram			histo;
+    Range				columns;
     int					col;
+    int[]				cols;
     int					row;
     Object				value;
     Cell 				cell;
 
-    // let user customize histogram
-    if (GUIHelper.getParentDialog(table) != null)
-      setup = HistogramFactory.getSetupDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
-    else
-      setup = HistogramFactory.getSetupDialog(GUIHelper.getParentFrame(table), true);
-    setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
-    setup.setTitle("Histogram setup");
-    last = (ArrayHistogram) table.getLastSetup(getClass(), true, !isColumn);
+    // prompt user for parameters
+    last = promptParameters(table, isColumn);
     if (last == null)
-      last = new ArrayHistogram();
-    setup.setCurrent(last);
-    setup.setLocationRelativeTo(GUIHelper.getParentComponent(table));
-    setup.setVisible(true);
-    if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;
-    last = (ArrayHistogram) setup.getCurrent();
+
+    if (!isColumn) {
+      columns = new Range(last.getProperty(KEY_COLUMNS, Range.ALL));
+      columns.setMax(sheet.getColumnCount());
+      cols = columns.getIntIndices();
+    }
+    else {
+      cols = null;
+    }
+    histo = last.getObject(KEY_HISTOGRAM, ArrayHistogram.class, new ArrayHistogram());
     table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from spreadsheet
@@ -136,9 +191,9 @@ public class Histogram
     }
     else {
       row = index;
-      for (i = 0; i < sheet.getColumnCount(); i++) {
-	if (sheet.getRow(row).hasCell(i)) {
-	  cell = sheet.getRow(row).getCell(i);
+      for (i = 0; i < cols.length; i++) {
+	if (sheet.getRow(row).hasCell(cols[i])) {
+	  cell = sheet.getRow(row).getCell(cols[i]);
 	  if (!cell.isMissing() && cell.isNumeric())
 	    list.add(cell.toDouble());
 	}
@@ -146,7 +201,7 @@ public class Histogram
     }
 
     // calculate histogram
-    last.clear();
+    histo.clear();
 
     // display histogram
     if (GUIHelper.getParentDialog(table) != null)
@@ -155,9 +210,9 @@ public class Histogram
       dialog = HistogramFactory.getDialog(GUIHelper.getParentFrame(table), false);
     dialog.setDefaultCloseOperation(HistogramFactory.Dialog.DISPOSE_ON_CLOSE);
     if (isColumn)
-      dialog.add(last, list.toArray(), "Column " + (index + 1) + "/" + sheet.getColumnName(index));
+      dialog.add(histo, list.toArray(), "Column " + (index + 1) + "/" + sheet.getColumnName(index));
     else
-      dialog.add(last, list.toArray(), "Row " + (index + 2));
+      dialog.add(histo, list.toArray(), "Row " + (index + 2));
     dialog.setLocationRelativeTo(GUIHelper.getParentComponent(table));
     dialog.setVisible(true);
   }
