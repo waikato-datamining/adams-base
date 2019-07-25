@@ -60,7 +60,7 @@ public class Histogram
    */
   @Override
   public String globalInfo() {
-    return "Allows to plot either a row or a column from a instances";
+    return "Allows to generate a histogram from either a row or a column from a dataset.";
   }
 
   /**
