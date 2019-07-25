@@ -229,10 +229,12 @@ public class JFreeChart
     int				i;
     int				n;
     final String		title;
+    Range			columns;
     Properties			last;
     int				numPoints;
     String			newPoints;
     int				col;
+    int[]			cols;
     int				row;
     int[]			rows;
     Object			value;
@@ -262,6 +264,14 @@ public class JFreeChart
     last = promptParameters(table, isColumn);
     if (last == null)
       return;
+    if (!isColumn) {
+      columns = new Range(last.getProperty(KEY_COLUMNS, Range.ALL));
+      columns.setMax(sheet.getColumnCount());
+      cols = columns.getIntIndices();
+    }
+    else {
+      cols = null;
+    }
     table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from spreadsheet
@@ -292,9 +302,9 @@ public class JFreeChart
       for (n = 0; n < rows.length; n++) {
         tmp[n] = new ArrayList<>();
 	row    = rows[n];
-	for (i = 0; i < sheet.getColumnCount(); i++) {
-	  if (sheet.getRow(row).hasCell(i)) {
-	    cell = sheet.getRow(row).getCell(i);
+	for (i = 0; i < cols.length; i++) {
+	  if (sheet.getRow(row).hasCell(cols[i])) {
+	    cell = sheet.getRow(row).getCell(cols[i]);
 	    if (!cell.isMissing() && cell.isNumeric())
 	      tmp[n].add(cell.toDouble());
 	  }
