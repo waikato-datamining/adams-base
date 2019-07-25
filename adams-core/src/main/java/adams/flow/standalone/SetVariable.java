@@ -514,7 +514,7 @@ import java.util.List;
  * </pre>
  *
  * <pre>-override-with-env-var &lt;boolean&gt; (property: overrideWithEnvVar)
- * &nbsp;&nbsp;&nbsp;If enabled, the value gets overriden by the value obtained from the specified
+ * &nbsp;&nbsp;&nbsp;If enabled, the value gets overridden by the value obtained from the specified
  * &nbsp;&nbsp;&nbsp;environment variable.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -525,10 +525,16 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-env-var-optional &lt;boolean&gt; (property: envVarOptional)
+ * &nbsp;&nbsp;&nbsp;If enabled, the environment does not have to exist and the currently set
+ * &nbsp;&nbsp;&nbsp;value is used instead; if not optional, a missing environment variable will
+ * &nbsp;&nbsp;&nbsp;generate an error.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SetVariable
   extends AbstractStandalone
@@ -554,6 +560,9 @@ public class SetVariable
 
   /** the environment variable to use. */
   protected String m_EnvVariable;
+
+  /** whether to override using an environment variable. */
+  protected boolean m_EnvVarOptional;
 
   /**
    * Returns a string describing the object.
@@ -609,6 +618,10 @@ public class SetVariable
     m_OptionManager.add(
       "env-variable", "envVariable",
       "");
+
+    m_OptionManager.add(
+      "env-var-optional", "envVarOptional",
+      true);
   }
 
   /**
@@ -757,7 +770,7 @@ public class SetVariable
    * 			displaying in the GUI or for listing the options.
    */
   public String overrideWithEnvVarTipText() {
-    return "If enabled, the value gets overriden by the value obtained from the specified environment variable.";
+    return "If enabled, the value gets overridden by the value obtained from the specified environment variable.";
   }
 
   /**
@@ -787,6 +800,39 @@ public class SetVariable
    */
   public String envVariableTipText() {
     return "The name of the environment variable to use for overriding the variable value.";
+  }
+
+  /**
+   * Sets whether to the environment variable is optional.
+   * If not optional, a missing variable will generate an error.
+   *
+   * @param value	true if optional
+   */
+  public void setEnvVarOptional(boolean value) {
+    m_EnvVarOptional = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to the environment variable is optional.
+   * If not optional, a missing variable will generate an error.
+   *
+   * @return		true if optional
+   */
+  public boolean getEnvVarOptional() {
+    return m_EnvVarOptional;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String envVarOptionalTipText() {
+    return "If enabled, the environment does not have to exist and the "
+      + "currently set value is used instead; if not optional, a missing "
+      + "environment variable will generate an error.";
   }
 
   /**
@@ -849,74 +895,81 @@ public class SetVariable
     value = null;
     if (m_OverrideWithEnvVar) {
       if (m_EnvVariable.isEmpty()) {
-	getLogger().warning("No environment variable specified!");
+	result = "No environment variable specified!";
       }
       else {
 	value = System.getenv(m_EnvVariable);
-	if (value == null)
-	  getLogger().warning("Environment variable '" + m_EnvVariable + "' not set?");
-      }
-    }
-    if (value == null) {
-      value = m_VariableValue.getValue();
-      if (m_ExpandValue) {
-	value = getVariables().expand(value);
-	if (isLoggingEnabled())
-	  getLogger().info("Expanded value: " + value);
+	if (value == null) {
+	  if (!m_EnvVarOptional)
+	    result = "Environment variable '" + m_EnvVariable + "' not set!";
+	  else if (isLoggingEnabled())
+	    getLogger().info("Environment variable '" + m_EnvVariable + "' not set?");
+	}
       }
     }
 
-    switch (m_ValueType) {
-      case STRING:
-	// nothing to do
-	break;
-      case MATH_EXPRESSION:
-	try {
-	  value = "" + MathematicalExpression.evaluate(value, new HashMap());
+    if (result == null) {
+      if (value == null) {
+	value = m_VariableValue.getValue();
+	if (m_ExpandValue) {
+	  value = getVariables().expand(value);
+	  if (isLoggingEnabled())
+	    getLogger().info("Expanded value: " + value);
 	}
-	catch (Exception e) {
-	  result = handleException("Failed to parse mathematical expression: " + value, e);
-	}
-	break;
-      case MATH_EXPRESSION_ROUND:
-	try {
-	  value = "" + Math.round(MathematicalExpression.evaluate(value, new HashMap()));
-	}
-	catch (Exception e) {
-	  result = handleException("Failed to parse mathematical expression: " + value, e);
-	}
-	break;
-      case BOOL_EXPRESSION:
-	try {
-	  value = "" + BooleanExpression.evaluate(value, new HashMap());
-	}
-	catch (Exception e) {
-	  result = handleException("Failed to parse boolean expression: " + value, e);
-	}
-	break;
-      case STRING_EXPRESSION:
-	try {
-	  value = "" + StringExpression.evaluate(value, new HashMap());
-	}
-	catch (Exception e) {
-	  result = handleException("Failed to parse string expression: " + value, e);
-	}
-	break;
-      case FILE_FORWARD_SLASHES:
-	try {
-	  value = FileUtils.useForwardSlashes(new PlaceholderFile(value).getAbsolutePath());
-	}
-	catch (Exception e) {
-	  result = handleException("Failed to generate file using forward slashes: " + value, e);
-	}
-	break;
-      default:
-	throw new IllegalStateException("Unhandled value type: " + m_ValueType);
-    }
+      }
 
-    getVariables().set(m_VariableName.getValue(), value);
-    if (isLoggingEnabled())
-      getLogger().info("Setting variable '" + m_VariableName + "': " + value);
+      switch (m_ValueType) {
+	case STRING:
+	  // nothing to do
+	  break;
+	case MATH_EXPRESSION:
+	  try {
+	    value = "" + MathematicalExpression.evaluate(value, new HashMap());
+	  }
+	  catch (Exception e) {
+	    result = handleException("Failed to parse mathematical expression: " + value, e);
+	  }
+	  break;
+	case MATH_EXPRESSION_ROUND:
+	  try {
+	    value = "" + Math.round(MathematicalExpression.evaluate(value, new HashMap()));
+	  }
+	  catch (Exception e) {
+	    result = handleException("Failed to parse mathematical expression: " + value, e);
+	  }
+	  break;
+	case BOOL_EXPRESSION:
+	  try {
+	    value = "" + BooleanExpression.evaluate(value, new HashMap());
+	  }
+	  catch (Exception e) {
+	    result = handleException("Failed to parse boolean expression: " + value, e);
+	  }
+	  break;
+	case STRING_EXPRESSION:
+	  try {
+	    value = "" + StringExpression.evaluate(value, new HashMap());
+	  }
+	  catch (Exception e) {
+	    result = handleException("Failed to parse string expression: " + value, e);
+	  }
+	  break;
+	case FILE_FORWARD_SLASHES:
+	  try {
+	    value = FileUtils.useForwardSlashes(new PlaceholderFile(value).getAbsolutePath());
+	  }
+	  catch (Exception e) {
+	    result = handleException("Failed to generate file using forward slashes: " + value, e);
+	  }
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled value type: " + m_ValueType);
+      }
+
+      getVariables().set(m_VariableName.getValue(), value);
+      if (isLoggingEnabled())
+	getLogger().info("Setting variable '" + m_VariableName + "': " + value);
+    }
 
     return result;
   }
