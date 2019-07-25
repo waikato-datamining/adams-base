@@ -111,6 +111,47 @@ public class ArrayStatistic
   }
 
   /**
+   * Prompts the user for parameters.
+   *
+   * @param table	the table this is for
+   * @return		the parameters, null if cancelled dialog
+   */
+  protected Properties promptParameters(InstancesTable table) {
+    PropertiesParameterDialog 	dialog;
+    PropertiesParameterPanel 	panel;
+    Properties 			last;
+
+    if (GUIHelper.getParentDialog(table) != null)
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    panel = dialog.getPropertiesParameterPanel();
+    panel.addPropertyType(KEY_ATTRIBUTES, PropertyType.RANGE);
+    panel.setLabel(KEY_ATTRIBUTES, "Attributes");
+    panel.setHelp(KEY_ATTRIBUTES, "The attributes to operate on");
+    panel.addPropertyType(KEY_STATISTIC, PropertyType.OBJECT_EDITOR);
+    panel.setLabel(KEY_STATISTIC, "Array statistic");
+    panel.setHelp(KEY_STATISTIC, "The array statistics to apply");
+    panel.setChooser(KEY_STATISTIC, new GenericObjectEditorPanel(AbstractArrayStatistic.class, new ArrayMean(), true));
+    panel.setPropertyOrder(new String[]{KEY_ATTRIBUTES, KEY_STATISTIC});
+    last = new Properties();
+    last.setProperty(KEY_ATTRIBUTES, SpreadSheetColumnRange.ALL);
+    last.setObject(KEY_STATISTIC, new ArrayMean());
+    dialog.setProperties(last);
+    last = (Properties) table.getLastSetup(getClass(), true, false);
+    if (last != null)
+      dialog.setProperties(last);
+    dialog.setTitle(getMenuItem());
+    dialog.pack();
+    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setVisible(true);
+    if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      return null;
+
+    return dialog.getProperties();
+  }
+
+  /**
    * Processes the specified row.
    *
    * @param table	the source table
@@ -124,8 +165,6 @@ public class ArrayStatistic
     Properties 			last;
     SpreadSheetDialog		dialog;
     StatisticContainer 		stats;
-    PropertiesParameterDialog 	dialogSetup;
-    PropertiesParameterPanel 	propsPanel;
     AbstractArrayStatistic	array;
     int[] 			rows;
     WekaAttributeRange		range;
@@ -133,35 +172,10 @@ public class ArrayStatistic
 
     rows = Utils.adjustIndices(actRows, 2);
 
-    // let user customize plot
-    if (GUIHelper.getParentDialog(table) != null)
-      dialogSetup = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
-    else
-      dialogSetup = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
-    propsPanel = dialogSetup.getPropertiesParameterPanel();
-    propsPanel.addPropertyType(KEY_ATTRIBUTES, PropertyType.RANGE);
-    propsPanel.setLabel(KEY_ATTRIBUTES, "Attributes");
-    propsPanel.setHelp(KEY_ATTRIBUTES, "The attributes to operate on");
-    propsPanel.addPropertyType(KEY_STATISTIC, PropertyType.OBJECT_EDITOR);
-    propsPanel.setLabel(KEY_STATISTIC, "Array statistic");
-    propsPanel.setHelp(KEY_STATISTIC, "The array statistics to apply");
-    propsPanel.setChooser(KEY_STATISTIC, new GenericObjectEditorPanel(AbstractArrayStatistic.class, new ArrayMean(), true));
-    propsPanel.setPropertyOrder(new String[]{KEY_ATTRIBUTES, KEY_STATISTIC});
-    last = new Properties();
-    last.setProperty(KEY_ATTRIBUTES, SpreadSheetColumnRange.ALL);
-    last.setObject(KEY_STATISTIC, new ArrayMean());
-    dialogSetup.setProperties(last);
-    last = (Properties) table.getLastSetup(getClass(), true, false);
-    if (last != null)
-      dialogSetup.setProperties(last);
-    dialogSetup.setTitle(getMenuItem());
-    dialogSetup.pack();
-    dialogSetup.setLocationRelativeTo(table.getParent());
-    dialogSetup.setVisible(true);
-    if (dialogSetup.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+    last = promptParameters(table);
+    if (last == null)
       return false;
 
-    last  = dialogSetup.getProperties();
     array = last.getObject(KEY_STATISTIC, AbstractArrayStatistic.class);
     if (array == null) {
       GUIHelper.showErrorMessage(

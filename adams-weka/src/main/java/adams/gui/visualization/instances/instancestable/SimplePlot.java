@@ -20,10 +20,13 @@
 
 package adams.gui.visualization.instances.instancestable;
 
+import adams.core.ObjectCopyHelper;
+import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.base.BaseText;
 import adams.core.option.AbstractOptionHandler;
+import adams.data.weka.WekaAttributeRange;
 import adams.flow.control.Flow;
 import adams.flow.control.StorageName;
 import adams.flow.control.Trigger;
@@ -39,7 +42,10 @@ import adams.flow.transformer.IncVariable.IncrementType;
 import adams.flow.transformer.MakePlotContainer;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
-import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.core.PropertiesParameterPanel;
+import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import adams.gui.dialog.PropertiesParameterDialog;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.instances.InstancesTable;
 import weka.core.Instances;
 
@@ -60,6 +66,10 @@ public class SimplePlot
   implements PlotColumn, PlotRow, PlotSelectedRows {
 
   private static final long serialVersionUID = -5624002368001818142L;
+
+  public static final String KEY_COLUMNS = "columns";
+
+  public static final String KEY_PLOT = "plot";
 
   /** the maximum of data points to plot. */
   public final static int MAX_POINTS = 1000;
@@ -106,139 +116,66 @@ public class SimplePlot
   }
 
   /**
-   * Allows the user to generate a plot from either a row or a column.
+   * Prompts the user to configure the parameters.
    *
-   * @param data	the instances to use
-   * @param isColumn	whether the to use column or row
-   * @param index	the index of the row/column
-   * @param indices 	the indices of the rows, ignored if null
+   * @param table	the table to do this for
+   * @param isColumn	whether column or row(s)
+   * @return		the parameters, null if cancelled
    */
-  protected void plot(final InstancesTable table, final Instances data, final boolean isColumn, int index, int[] indices) {
-    final List<Double>[] 	list;
-    List<Double>[] 		tmp;
-    GenericObjectEditorDialog 	setup;
-    int				i;
-    int				n;
-    final String		title;
-    final String[]		titles;
-    SwingWorker 		worker;
-    adams.flow.sink.SimplePlot	last;
-    int				numPoints;
-    String			newPoints;
-    int				col;
-    int				row;
-    int[]			rows;
-    Object			value;
-    boolean			sorted;
-    boolean			asc;
-    int[]			actRows;
+  protected Properties promptParameters(InstancesTable table, boolean isColumn) {
+    PropertiesParameterDialog 	dialog;
+    PropertiesParameterPanel 	panel;
+    adams.flow.sink.SimplePlot 	defPlot;
+    Properties			last;
 
-    numPoints = isColumn ? data.numInstances() : data.numAttributes();
-    if (numPoints > MAX_POINTS) {
-      newPoints = GUIHelper.showInputDialog(null, "More than " + MAX_POINTS + " data points to plot - enter sample size:", "" + numPoints);
-      if (newPoints == null)
-	return;
-      if (!Utils.isInteger(newPoints))
-	return;
-      if (Integer.parseInt(newPoints) != numPoints)
-        numPoints = Integer.parseInt(newPoints);
-      else
-        numPoints = -1;
-    }
-    else {
-      numPoints = -1;
-    }
-
-    // let user customize plot
     if (GUIHelper.getParentDialog(table) != null)
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
     else
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(table), true);
-    setup.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
-    setup.getGOEEditor().setClassType(Actor.class);
-    setup.getGOEEditor().setCanChangeClassInDialog(false);
-    last = (adams.flow.sink.SimplePlot) table.getLastSetup(getClass(), true, !isColumn);
-    if (last == null) {
-      last = new adams.flow.sink.SimplePlot();
-      last.setNoToolTips(true);
-      last.setMouseClickAction(new ViewDataClickAction());
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+    panel = dialog.getPropertiesParameterPanel();
+    if (!isColumn) {
+      panel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
+      panel.setLabel(KEY_COLUMNS, "Columns");
+      panel.setHelp(KEY_COLUMNS, "The columns to use for the plot");
     }
-    setup.setCurrent(last);
-    setup.setLocationRelativeTo(GUIHelper.getParentComponent(table));
-    setup.setVisible(true);
-    if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
-    last = (adams.flow.sink.SimplePlot) setup.getCurrent();
-    table.addLastSetup(getClass(), true, !isColumn, last);
+    panel.addPropertyType(KEY_PLOT, PropertyType.OBJECT_EDITOR);
+    panel.setLabel(KEY_PLOT, "Plot");
+    panel.setHelp(KEY_PLOT, "How to display the data");
+    panel.setChooser(KEY_PLOT, new GenericObjectEditorPanel(Actor.class, new adams.flow.sink.SimplePlot(), false));
+    if (!isColumn)
+      panel.setPropertyOrder(new String[]{KEY_COLUMNS, KEY_PLOT});
+    defPlot = new adams.flow.sink.SimplePlot();
+    defPlot.setNoToolTips(true);
+    defPlot.setMouseClickAction(new ViewDataClickAction());
+    last = new Properties();
+    if (!isColumn)
+      last.setProperty(KEY_COLUMNS, WekaAttributeRange.ALL);
+    last.setObject(KEY_PLOT, defPlot);
+    dialog.setProperties(last);
+    last = (Properties) table.getLastSetup(getClass(), true, !isColumn);
+    if (last != null)
+      dialog.setProperties(last);
+    dialog.setTitle(getMenuItem());
+    dialog.pack();
+    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setVisible(true);
+    if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
+      return null;
 
-    // get data from instances
-    if (indices == null) {
-      tmp = new ArrayList[]{new ArrayList<>()};
-    }
-    else {
-      tmp = new ArrayList[indices.length];
-    }
-    sorted = false;
-    asc    = table.isAscending();
-    if (isColumn) {
-      col    = index + 1;
-      sorted = (table.getSortColumn() == col);
-      for (i = 0; i < table.getRowCount(); i++) {
-	value = table.getValueAt(i, col);
-	if ((value != null) && (Utils.isDouble(value.toString())))
-	  tmp[0].add(Utils.toDouble(value.toString()));
-      }
-    }
-    else {
-      if (indices == null)
-        rows = new int[index];
-      else
-        rows = indices;
-      for (n = 0; n < rows.length; n++) {
-	tmp[n] = new ArrayList<>();
-	row = rows[n];
-	for (i = 0; i < data.numAttributes(); i++) {
-	  if (data.attribute(i).isNumeric() && !data.instance(row).isMissing(i))
-	    tmp[n].add(data.instance(row).value(i));
-	}
-      }
-    }
+    return dialog.getProperties();
+  }
 
-    if (numPoints > -1) {
-      list = new ArrayList[tmp.length];
-      for (i = 0; i < tmp.length; i++) {
-	numPoints = Math.min(numPoints, tmp[i].size());
-	Collections.shuffle(tmp[i], new Random(1));
-	list[i] = tmp[i].subList(0, numPoints);
-	if (sorted) {
-	  Collections.sort(list[i]);
-	  if (!asc)
-	    Collections.reverse(list[i]);
-	}
-      }
-    }
-    else {
-      list = tmp;
-    }
-
-    // generate plot
-    if (isColumn) {
-      title  = "Column " + (index + 1) + "/" + data.attribute(index).name();
-      titles = new String[]{title};
-    }
-    else {
-      if (indices == null) {
-        title  = "Row " + (index + 2);
-	titles = new String[]{title};
-      }
-      else {
-        titles  = new String[indices.length];
-        actRows = Utils.adjustIndices(indices, 2);
-        for (i = 0; i < indices.length; i++)
-	  titles[i]  = "Row " + actRows[i];
-	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Utils.arrayToString(actRows);
-      }
-    }
+  /**
+   * Generates the plot.
+   *
+   * @param table	the table this is for
+   * @param isColumn	whether column or row(s)
+   * @param list	the data to plot
+   * @param title	the title of the plot
+   * @param titles	the titles array
+   */
+  protected void createPlot(final InstancesTable table, final boolean isColumn, final List<Double>[] list, final String title, final String[] titles) {
+    SwingWorker 		worker;
 
     worker = new SwingWorker() {
       @Override
@@ -286,10 +223,11 @@ public class SimplePlot
 	mpc.getOptionManager().setVariableForProperty("plotName", "title");
 	flow.add(mpc);
 
-        Object last = table.getLastSetup(SimplePlot.this.getClass(), true, !isColumn);
-	adams.flow.sink.SimplePlot plot = (adams.flow.sink.SimplePlot) ((adams.flow.sink.SimplePlot) last).shallowCopy();
+        Properties props = (Properties) table.getLastSetup(SimplePlot.this.getClass(), true, !isColumn);
+        adams.flow.sink.SimplePlot lastPlot = props.getObject(KEY_PLOT, adams.flow.sink.SimplePlot.class);
+	adams.flow.sink.SimplePlot plot = ObjectCopyHelper.copyObject(lastPlot);
 	plot.setShortTitle(true);
-	plot.setShowSidePanel((indices != null) && (indices.length > 1));
+	plot.setShowSidePanel(titles.length > 1);
 	plot.setName(title);
         plot.setX(-2);
         plot.setY(-2);
@@ -304,6 +242,136 @@ public class SimplePlot
       }
     };
     worker.execute();
+  }
+
+  /**
+   * Allows the user to generate a plot from either a row or a column.
+   *
+   * @param data	the instances to use
+   * @param isColumn	whether the to use column or row
+   * @param index	the index of the row/column
+   * @param indices 	the indices of the rows, ignored if null
+   */
+  protected void plot(final InstancesTable table, final Instances data, final boolean isColumn, int index, int[] indices) {
+    Properties			last;
+    final List<Double>[] 	list;
+    List<Double>[] 		tmp;
+    int				i;
+    int				n;
+    final String		title;
+    final String[]		titles;
+    WekaAttributeRange		columns;
+    int				numPoints;
+    String			newPoints;
+    int				col;
+    int[]			cols;
+    int				row;
+    int[]			rows;
+    Object			value;
+    boolean			sorted;
+    boolean			asc;
+    int[]			actRows;
+
+    numPoints = isColumn ? data.numInstances() : data.numAttributes();
+    if (numPoints > MAX_POINTS) {
+      newPoints = GUIHelper.showInputDialog(null, "More than " + MAX_POINTS + " data points to plot - enter sample size:", "" + numPoints);
+      if (newPoints == null)
+	return;
+      if (!Utils.isInteger(newPoints))
+	return;
+      if (Integer.parseInt(newPoints) != numPoints)
+        numPoints = Integer.parseInt(newPoints);
+      else
+        numPoints = -1;
+    }
+    else {
+      numPoints = -1;
+    }
+
+    // prompt user for parameters
+    last = promptParameters(table, isColumn);
+    if (last == null)
+      return;
+
+    if (!isColumn) {
+      columns = new WekaAttributeRange(last.getProperty(KEY_COLUMNS, WekaAttributeRange.ALL));
+      columns.setData(data);
+      cols = columns.getIntIndices();
+    }
+    else {
+      cols = null;
+    }
+    table.addLastSetup(getClass(), true, !isColumn, last);
+
+    // get data from instances
+    if (indices == null) {
+      tmp = new ArrayList[]{new ArrayList<>()};
+    }
+    else {
+      tmp = new ArrayList[indices.length];
+    }
+    sorted = false;
+    asc    = table.isAscending();
+    if (isColumn) {
+      col    = index + 1;
+      sorted = (table.getSortColumn() == col);
+      for (i = 0; i < table.getRowCount(); i++) {
+	value = table.getValueAt(i, col);
+	if ((value != null) && (Utils.isDouble(value.toString())))
+	  tmp[0].add(Utils.toDouble(value.toString()));
+      }
+    }
+    else {
+      if (indices == null)
+        rows = new int[index];
+      else
+        rows = indices;
+      for (n = 0; n < rows.length; n++) {
+	tmp[n] = new ArrayList<>();
+	row = rows[n];
+	for (i = 0; i < cols.length; i++) {
+	  if (data.attribute(cols[i]).isNumeric() && !data.instance(row).isMissing(cols[i]))
+	    tmp[n].add(data.instance(row).value(cols[i]));
+	}
+      }
+    }
+
+    if (numPoints > -1) {
+      list = new ArrayList[tmp.length];
+      for (i = 0; i < tmp.length; i++) {
+	numPoints = Math.min(numPoints, tmp[i].size());
+	Collections.shuffle(tmp[i], new Random(1));
+	list[i] = tmp[i].subList(0, numPoints);
+	if (sorted) {
+	  Collections.sort(list[i]);
+	  if (!asc)
+	    Collections.reverse(list[i]);
+	}
+      }
+    }
+    else {
+      list = tmp;
+    }
+
+    // generate plot
+    if (isColumn) {
+      title  = "Column " + (index + 1) + "/" + data.attribute(index).name();
+      titles = new String[]{title};
+    }
+    else {
+      if (indices == null) {
+        title  = "Row " + (index + 2);
+	titles = new String[]{title};
+      }
+      else {
+        titles  = new String[indices.length];
+        actRows = Utils.adjustIndices(indices, 2);
+        for (i = 0; i < indices.length; i++)
+	  titles[i]  = "Row " + actRows[i];
+	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Utils.arrayToString(actRows);
+      }
+    }
+    createPlot(table, isColumn, list, title, titles);
   }
 
   /**
