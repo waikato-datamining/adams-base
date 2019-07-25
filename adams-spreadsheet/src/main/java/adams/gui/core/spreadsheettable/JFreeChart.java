@@ -23,6 +23,7 @@ package adams.gui.core.spreadsheettable;
 import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.Range;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.Cell;
@@ -366,7 +367,7 @@ public class JFreeChart
         spRows  = new int[indices.length];
         for (i = 0; i < indices.length; i++)
 	  spRows[i]  = i + 2;
-	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Utils.arrayToString(actRows);
+	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Shortening.shortenMiddle(Utils.arrayToString(actRows), 40);
       }
     }
 

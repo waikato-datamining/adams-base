@@ -22,6 +22,7 @@ package adams.gui.visualization.instances.instancestable;
 
 import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
+import adams.core.Shortening;
 import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.base.BaseText;
@@ -368,7 +369,7 @@ public class SimplePlot
         actRows = Utils.adjustIndices(indices, 2);
         for (i = 0; i < indices.length; i++)
 	  titles[i]  = "Row " + actRows[i];
-	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Utils.arrayToString(actRows);
+	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Shortening.shortenMiddle(Utils.arrayToString(actRows), 40);
       }
     }
     createPlot(table, isColumn, list, title, titles);
