@@ -13,20 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CrossHairTracker.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core;
 
 import adams.core.option.OptionHandler;
 import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.ContentPanel;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
 
 /**
  <!-- globalinfo-start -->
@@ -58,7 +62,6 @@ import java.awt.event.MouseEvent;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CrossHairTracker
   extends AbstractStrokePaintlet
@@ -69,7 +72,10 @@ public class CrossHairTracker
   
   /** the color of the cross-hair. */
   protected Color m_Color;
-  
+
+  /** whether to draw the coordinates as well. */
+  protected boolean m_TextCoordinates;
+
   /**
    * Returns a string describing the object.
    *
@@ -86,8 +92,12 @@ public class CrossHairTracker
     super.defineOptions();
 
     m_OptionManager.add(
-	    "color", "color",
-	    Color.BLACK);
+      "color", "color",
+      Color.BLACK);
+
+    m_OptionManager.add(
+      "text-coordinates", "textCoordinates",
+      false);
   }
 
   /**
@@ -120,6 +130,35 @@ public class CrossHairTracker
   }
 
   /**
+   * Sets whether to display the coordinates as text as well.
+   *
+   * @param value	true if to display
+   */
+  public void setTextCoordinates(boolean value) {
+    m_TextCoordinates = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to display the coordinates as text as well.
+   *
+   * @return		true if to display
+   */
+  public boolean getTextCoordinates() {
+    return m_TextCoordinates;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String textCoordinatesTipText() {
+    return "If enabled, the coordinate values get displayed as text as well.";
+  }
+
+  /**
    * Returns when this paintlet is to be executed.
    *
    * @return		when this paintlet is to be executed
@@ -138,7 +177,13 @@ public class CrossHairTracker
     Point		point;
     int			x;
     int			y;
-    
+    Graphics2D		g2d;
+    AxisPanel		left;
+    AxisPanel		bottom;
+    String		label;
+    TextLayout		textLayoutValue;
+    Rectangle2D 	textBoundsValue;
+
     panel = getPlot().getContent();
     point = panel.getMousePosition();
     if (point == null)
@@ -152,6 +197,21 @@ public class CrossHairTracker
     g.drawLine(0, y, panel.getWidth(), y);
     // vertical
     g.drawLine(x, 0, x, panel.getHeight());
+
+    if (m_TextCoordinates) {
+      left   = getPlot().getAxis(Axis.LEFT);
+      bottom = getPlot().getAxis(Axis.BOTTOM);
+
+      // x coordinate
+      g.drawString(bottom.valueToDisplay(bottom.posToValue(x)), x + 10, 10);
+
+      // y coordinate
+      g2d             = (Graphics2D) g;
+      label           = left.valueToDisplay(left.posToValue(y));
+      textLayoutValue = new TextLayout(label, g.getFont(), g2d.getFontRenderContext());
+      textBoundsValue = textLayoutValue.getBounds();
+      g.drawString(label, (int) (panel.getWidth() - textBoundsValue.getWidth() - 10), y - 10);
+    }
   }
 
   /**
