@@ -15,11 +15,12 @@
 
 /*
  * ContentPanel.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.plot;
 
+import adams.core.base.BaseInterval;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.OptionHandler;
@@ -641,6 +642,20 @@ public class ContentPanel
     if (result == null)
       result = new BasePopupMenu();
 
+    submenu = new BaseMenu("Ranges");
+    submenu.setIcon(GUIHelper.getIcon("axes.gif"));
+    result.add(submenu);
+    {
+      item = new JMenuItem("Copy");
+      item.addActionListener((ActionEvent ae) -> copyRanges());
+      submenu.add(item);
+
+      item = new JMenuItem("Paste");
+      item.addActionListener((ActionEvent ae) -> pasteRanges());
+      item.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
+      submenu.add(item);
+    }
+
     item = new JMenuItem("Copy plot", GUIHelper.getIcon("copy.gif"));
     item.addActionListener((ActionEvent ae) -> copyPlot());
     result.add(item);
@@ -1043,6 +1058,59 @@ public class ContentPanel
    */
   public void stateChanged(ChangeEvent e) {
     repaint();
+  }
+
+  /**
+   * Copies the ranges to the clipboard.
+   */
+  public void copyRanges() {
+    StringBuilder	ranges;
+    AxisPanel		panel;
+
+    ranges = new StringBuilder();
+    for (Axis axis: Axis.values()) {
+      if (getOwner().getAxisVisibility(axis) == Visibility.VISIBLE) {
+	panel = getOwner().getAxis(axis);
+        if (ranges.length() > 0)
+          ranges.append("\n");
+        ranges.append(axis);
+        ranges.append(":");
+        ranges.append(panel.getRange().getValue());
+      }
+    }
+    ClipboardHelper.copyToClipboard(ranges.toString());
+  }
+
+  /**
+   * Pastes the ranges from the clipboard.
+   */
+  public void pasteRanges() {
+    String[]		lines;
+    String[]		parts;
+    Axis		axis;
+    BaseInterval	range;
+
+    if (!ClipboardHelper.canPasteStringFromClipboard())
+      return;
+
+    lines = ClipboardHelper.pasteStringFromClipboard().split("\n");
+    if ((lines.length >= 2) && (lines.length <= 4)) {
+      for (String line: lines) {
+        if (line.contains(":")) {
+	  parts = line.split(":");
+	  if (parts.length == 2) {
+	    try {
+	      axis  = Axis.parse(parts[0]);
+	      range = new BaseInterval(parts[1]);
+	      getOwner().getAxis(axis).setRange(range);
+	    }
+	    catch (Exception e) {
+	      // ignored
+	    }
+	  }
+	}
+      }
+    }
   }
 
   /**
