@@ -201,7 +201,8 @@ public class BaseSplitPane
       if ((m_HiddenTopComponent == null) && (m_HiddenBottomComponent == null)) {
 	m_DividerLocationBeforeHiding = getDividerLocation();
 	m_HiddenTopComponent          = getTopComponent();
-	remove(m_HiddenTopComponent);
+	if (m_HiddenBottomComponent != null)
+          remove(m_HiddenTopComponent);
 	setDividerSize(0);
       }
     }
@@ -259,7 +260,8 @@ public class BaseSplitPane
       if ((m_HiddenTopComponent == null) && (m_HiddenBottomComponent == null)) {
 	m_DividerLocationBeforeHiding = getDividerLocation();
 	m_HiddenBottomComponent       = getBottomComponent();
-	remove(m_HiddenBottomComponent);
+	if (m_HiddenBottomComponent != null)
+          remove(m_HiddenBottomComponent);
 	setDividerSize(0);
       }
     }
