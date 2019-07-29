@@ -20,6 +20,7 @@
 
 package adams.gui.flow;
 
+import adams.core.ClassLister;
 import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
@@ -45,7 +46,6 @@ import adams.data.io.output.NestedFlowWriter;
 import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
 import adams.flow.control.Flow;
-import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.processor.ActorProcessor;
@@ -67,7 +67,7 @@ import adams.gui.core.UndoPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.UndoEvent;
-import adams.gui.flow.tab.RegisteredDisplaysTab;
+import adams.gui.flow.tabhandler.AbstractTabHandler;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
 import adams.gui.flow.tree.Tree.TreeState;
@@ -88,8 +88,8 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -175,8 +175,8 @@ public class FlowPanel
   /** whether to check large flows before saving. */
   protected Boolean m_CheckLargeFlowsOnSave;
 
-  /** the registered panels: class of panel - (name of panel - AbstractDisplay instance). */
-  protected HashMap<Class,HashMap<String,AbstractDisplay>> m_RegisteredDisplays;
+  /** the tab handlers. */
+  protected List<AbstractTabHandler> m_TabHandlers;
 
   /** the panel for showing notifications. */
   protected FlowPanelNotificationArea m_PanelNotification;
@@ -223,6 +223,8 @@ public class FlowPanel
    */
   @Override
   protected void initialize() {
+    Constructor 	constr;
+
     super.initialize();
 
     m_LastFlow              = null;
@@ -234,7 +236,6 @@ public class FlowPanel
     m_FilenameProposer      = new FilenameProposer(PREFIX_NEW, Actor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
     m_Title                 = "";
     m_Status                = "";
-    m_RegisteredDisplays    = new HashMap<>();
     m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);
     m_CheckLargeFlowsOnSave = null;
     m_LastReader            = null;
@@ -246,6 +247,17 @@ public class FlowPanel
       new LastModified(),
       new FlowFileDigest(),
     });
+    m_TabHandlers = new ArrayList<>();
+    for (Class cls: ClassLister.getSingleton().getClasses(AbstractTabHandler.class)) {
+      try {
+        constr = cls.getConstructor(FlowPanel.class);
+        constr.newInstance(this);
+        m_TabHandlers.add((AbstractTabHandler) constr.newInstance(this));
+      }
+      catch (Exception e) {
+        ConsolePanel.getSingleton().append("Failed to instantiate tab handler: " + Utils.classToString(cls), e);
+      }
+    }
   }
 
   /**
@@ -1198,7 +1210,8 @@ public class FlowPanel
     if (m_LastFlow != null) {
       showStatus("Cleaning up");
       try {
-	clearRegisteredDisplays();
+        for (AbstractTabHandler handler: getTabHandlers())
+          handler.cleanUp();
 	m_LastFlow.destroy();
 	m_LastFlow = null;
 	showStatus("");
@@ -1629,109 +1642,34 @@ public class FlowPanel
   public void redraw() {
     SwingUtilities.invokeLater(() -> m_Tree.redraw());
   }
-  
+
   /**
-   * Notifies the {@link RegisteredDisplaysTab} instance of a change. 
-   * 
-   * @param show	whether to show the tab or leave as is
+   * Returns the tab handlers.
+   *
+   * @return		the handlers
    */
-  protected void updateRegisteredDisplays(boolean show) {
-    Runnable	run;
-
-    run = () -> {
-      if (!getEditor().getTabs().isVisible(RegisteredDisplaysTab.class) && show)
-	getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, true, false);
-      RegisteredDisplaysTab registered = (RegisteredDisplaysTab) getEditor().getTabs().getTab(RegisteredDisplaysTab.class);
-      if (registered != null)
-	registered.update();
-    };
-    SwingUtilities.invokeLater(run);
-
-    // close displays?
-    run = () -> {
-      if (!hasRegisteredDisplays())
-	getEditor().getTabs().setVisible(RegisteredDisplaysTab.class, false, false);
-    };
-    SwingUtilities.invokeLater(run);
+  public List<AbstractTabHandler> getTabHandlers() {
+    return m_TabHandlers;
   }
 
   /**
-   * Registers a display.
-   * 
-   * @param cls		the class to register the display for
-   * @param name	the name of the display
-   * @param panel	the AbstractDisplay instance
-   * @return		the previously registered display, if any
+   * Returns the tab handlers.
+   *
+   * @return		the handlers
    */
-  public AbstractDisplay registerDisplay(Class cls, String name, AbstractDisplay panel) {
-    AbstractDisplay			result;
-    HashMap<String,AbstractDisplay>	panels;
-    
-    if (!m_RegisteredDisplays.containsKey(cls))
-      m_RegisteredDisplays.put(cls, new HashMap<>());
-    
-    panels = m_RegisteredDisplays.get(cls);
-    result = panels.put(name, panel);
-    
-    // notify panel
-    updateRegisteredDisplays(true);
-    
+  public <T> T getTabHandler(Class<T> cls) {
+    T	result;
+
+    result = null;
+
+    for (AbstractTabHandler handler: m_TabHandlers) {
+      if (handler.getClass().equals(cls)) {
+        result = (T) handler;
+        break;
+      }
+    }
+
     return result;
-  }
-
-  /**
-   * Deregisters a display.
-   * 
-   * @param cls		the class to register the display for
-   * @param name	the name of the display
-   * @return		the deregistered display, if any
-   */
-  public AbstractDisplay deregisterDisplay(Class cls, String name) {
-    AbstractDisplay	result;
-    
-    if (m_RegisteredDisplays.containsKey(cls))
-      result = m_RegisteredDisplays.get(cls).remove(name);
-    else
-      result = null;
-    
-    // notify panel
-    if (result != null)
-      updateRegisteredDisplays(false);
-    
-    return result;
-  }
-  
-  /**
-   * Removes all registered displays.
-   */
-  public void clearRegisteredDisplays() {
-    m_RegisteredDisplays.clear();
-    // notify panel
-    updateRegisteredDisplays(false);
-  }
-  
-  /**
-   * Returns all currently registered displays.
-   * 
-   * @return		the displays
-   */
-  public HashMap<Class,HashMap<String,AbstractDisplay>> getRegisteredDisplays() {
-    return m_RegisteredDisplays;
-  }
-  
-  /**
-   * Returns whether there are any registered displays open.
-   * 
-   * @return		true if at least one open
-   */
-  public boolean hasRegisteredDisplays() {
-    int		count;
-    
-    count = 0;
-    for (Class cls: m_RegisteredDisplays.keySet())
-      count += m_RegisteredDisplays.get(cls).size();
-
-    return (count > 0);
   }
 
   /**

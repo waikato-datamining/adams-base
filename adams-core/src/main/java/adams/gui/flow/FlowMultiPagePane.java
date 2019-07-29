@@ -27,7 +27,7 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MultiPagePane;
 import adams.gui.flow.multipageaction.AbstractMultiPageMenuItem;
-import adams.gui.flow.tab.RegisteredDisplaysTab;
+import adams.gui.flow.tabhandler.AbstractTabHandler;
 import adams.gui.flow.tree.Tree;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -458,7 +458,8 @@ public class FlowMultiPagePane
 
     // ensure that tabs are visible
     if (hasCurrentPanel()) {
-      getOwner().getTabs().setVisible(RegisteredDisplaysTab.class, getCurrentPanel().hasRegisteredDisplays(), false);
+      for (AbstractTabHandler handler: getCurrentPanel().getTabHandlers())
+	handler.display();
     }
     
     // current directory

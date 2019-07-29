@@ -31,6 +31,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.flow.FlowPanel;
+import adams.gui.flow.tabhandler.RegisteredDisplaysHandler;
 
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -647,16 +648,26 @@ public abstract class AbstractDisplay
    * Registers the actor with the flow editor, if possible.
    */
   public void registerWithEditor() {
-    if (getParentComponent() instanceof FlowPanel)
-      ((FlowPanel) getParentComponent()).registerDisplay(getClass(), getName(), this);
+    RegisteredDisplaysHandler 	handler;
+
+    if (getParentComponent() instanceof FlowPanel) {
+      handler = ((FlowPanel) getParentComponent()).getTabHandler(RegisteredDisplaysHandler.class);
+      if (handler != null)
+	handler.register(getClass(), getName(), this);
+    }
   }
   
   /**
    * Deregisters the actor from the flow editor, if possible.
    */
   public void deregisterWithEditor() {
-    if (getParentComponent() instanceof FlowPanel)
-      ((FlowPanel) getParentComponent()).deregisterDisplay(getClass(), getName());
+    RegisteredDisplaysHandler 	handler;
+
+    if (getParentComponent() instanceof FlowPanel) {
+      handler = ((FlowPanel) getParentComponent()).getTabHandler(RegisteredDisplaysHandler.class);
+      if (handler != null)
+	handler.deregister(getClass(), getName());
+    }
   }
   
   /**

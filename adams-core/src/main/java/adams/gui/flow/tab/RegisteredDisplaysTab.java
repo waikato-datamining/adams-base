@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RegisteredDisplaysTab.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -23,16 +23,17 @@ import adams.flow.core.AbstractDisplay;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.flow.FlowPanel;
+import adams.gui.flow.tabhandler.RegisteredDisplaysHandler;
 
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Displays the registered displays for a particular class.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RegisteredDisplaysTab
   extends AbstractTabChangeAwareEditorTab
@@ -79,7 +80,10 @@ public class RegisteredDisplaysTab
       if (panel == null)
 	return;
 
-      HashMap<Class,HashMap<String,AbstractDisplay>> registered = panel.getRegisteredDisplays();
+      RegisteredDisplaysHandler handler = panel.getTabHandler(RegisteredDisplaysHandler.class);
+      if (handler == null)
+        return;
+      Map<Class,HashMap<String,AbstractDisplay>> registered = handler.getDisplays();
       if (registered.size() == 0)
 	return;
 

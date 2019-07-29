@@ -573,6 +573,10 @@ adams.gui.flow.tree.enclose.AbstractEncloseActor=\
 adams.gui.flow.multipageaction.AbstractMultiPageMenuItem=\
   adams.gui.flow.multipageaction
 
+# the tab handlers
+adams.gui.flow.tabhandler.AbstractTabHandler=\
+  adams.gui.flow.tabhandler
+
 # the startup initialization applets
 adams.gui.application.Initialization=\
   adams.gui.application
