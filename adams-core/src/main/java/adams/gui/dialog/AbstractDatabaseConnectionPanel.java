@@ -89,6 +89,12 @@ public abstract class AbstractDatabaseConnectionPanel
   /** the checkbox for auto-commit. */
   protected BaseCheckBox m_CheckBoxAutoCommit;
 
+  /** the button for creating a new connection. */
+  protected BaseButton m_ButtonNew;
+
+  /** the button removing the database connection. */
+  protected BaseButton m_ButtonRemove;
+
   /** the button for making a connection the default one. */
   protected BaseButton m_ButtonMakeDefault;
 
@@ -188,6 +194,24 @@ public abstract class AbstractDatabaseConnectionPanel
     // buttons
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
+    m_ButtonNew = new BaseButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonNew.setToolTipText("Create new connection");
+    panel.add(m_ButtonNew);
+    m_ButtonNew.addActionListener((ActionEvent e) -> {
+      m_ButtonNew.setEnabled(false);
+      newConnection();
+      m_ButtonNew.setEnabled(true);
+    });
+
+    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove.setToolTipText("Delete current connection");
+    panel.add(m_ButtonRemove);
+    m_ButtonRemove.addActionListener((ActionEvent e) -> {
+      m_ButtonRemove.setEnabled(false);
+      removeConnection();
+      m_ButtonRemove.setEnabled(true);
+    });
+
     m_ButtonMakeDefault = new BaseButton("Make default");
     panel.add(m_ButtonMakeDefault);
     m_ButtonMakeDefault.setMnemonic('m');
@@ -284,6 +308,7 @@ public abstract class AbstractDatabaseConnectionPanel
     m_CheckBoxConnectOnStartUp.setEnabled(!connected);
     m_CheckBoxAutoCommit.setEnabled(!connected);
 
+    m_ButtonRemove.setEnabled(!connected);
     m_ButtonMakeDefault.setEnabled((conn != null) && !params.equals(conn.getDefaultConnectionParameters()));
 
     if (connected)
@@ -311,7 +336,13 @@ public abstract class AbstractDatabaseConnectionPanel
 
     connected = conn.isConnected();
     m_ComboBoxConnections.setModel(new DefaultComboBoxModel<>(connections.toArray(new ConnectionParameters[0])));
-    m_ComboBoxConnections.setSelectedIndex(index);
+    if ((index == -1) && (connections.size() > 0)) {
+      displayConnection(connections.get(0));
+      return;
+    }
+    else {
+      m_ComboBoxConnections.setSelectedIndex(index);
+    }
 
     m_TextURL.setEditable(!connected);
     m_TextUser.setEditable(!connected);
@@ -321,6 +352,7 @@ public abstract class AbstractDatabaseConnectionPanel
     m_CheckBoxConnectOnStartUp.setEnabled(!connected);
     m_CheckBoxAutoCommit.setEnabled(!connected);
 
+    m_ButtonRemove.setEnabled(!connected);
     m_ButtonMakeDefault.setEnabled(!current.equals(conn.getDefaultConnectionParameters()));
 
     if (connected)
@@ -338,6 +370,28 @@ public abstract class AbstractDatabaseConnectionPanel
    * Performs the disconnect.
    */
   protected abstract void performDisconnect();
+
+  /**
+   * Allows adding a new connection.
+   */
+  protected void newConnection() {
+    displayConnection(getDatabaseConnection().newConnectionParameters());
+  }
+
+  /**
+   * Removes the current parameters as available connection.
+   */
+  protected void removeConnection() {
+    if (!getDatabaseConnection().removeConnectionParameters(getCurrentParameters())) {
+      GUIHelper.showErrorMessage(m_Self, "Failed to remove connection!");
+    }
+    else {
+      if (m_ComboBoxConnections.getModel().getSize() > 0)
+	update();
+      else
+	newConnection();
+    }
+  }
 
   /**
    * Makes the current parameters the default.
