@@ -15,7 +15,7 @@
 
 /*
  * Axis.java
- * Copyright (C) 2008-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.plot;
@@ -36,6 +36,9 @@ public enum Axis {
   /** below of the content panel. */
   BOTTOM("Bottom", "B");
 
+  /** the raw display. */
+  private String m_Raw;
+
   /** the display string of the axis. */
   private String m_Display;
 
@@ -49,8 +52,18 @@ public enum Axis {
    * @param displayShort	the short display string
    */
   private Axis(String display, String displayShort) {
+    m_Raw          = super.toString();
     m_Display      = display;
     m_DisplayShort = displayShort;
+  }
+
+  /**
+   * Returns the raw string, used in super.toString().
+   *
+   * @return		the raw string
+   */
+  public String getRaw() {
+    return m_Raw;
   }
 
   /**
@@ -79,5 +92,41 @@ public enum Axis {
    */
   public String toString() {
     return m_Display;
+  }
+
+  /**
+   * Returns an enum generated from the string.
+   *
+   * @param str		the string to convert to an enum
+   * @return		the generated enum or null in case of error
+   */
+  public static Axis parse(String str) {
+    Axis	result;
+
+    result = null;
+
+    // default parsing
+    try {
+      result = valueOf(str);
+    }
+    catch (Exception e) {
+      // ignored
+    }
+
+    // try display
+    if (result == null) {
+      for (Axis axis : values()) {
+	if (axis.getDisplay().equals(str)) {
+	  result = axis;
+	  break;
+	}
+	if (axis.getDisplayShort().equals(str)) {
+	  result = axis;
+	  break;
+	}
+      }
+    }
+
+    return result;
   }
 }
