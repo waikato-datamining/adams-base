@@ -41,6 +41,7 @@ import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
+import adams.gui.core.SqlConnectionPanel;
 import adams.gui.dialog.SQLStatementPanel;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SqlQueryPanelEvent;

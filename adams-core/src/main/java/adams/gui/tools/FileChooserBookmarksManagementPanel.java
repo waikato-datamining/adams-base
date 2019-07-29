@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileChooserBookmarksManagementPanel.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -38,7 +38,6 @@ import java.util.List;
  * Panel for managing email addresses.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileChooserBookmarksManagementPanel
   extends AbstractManagementPanelWithProperties<Bookmark> {
@@ -50,7 +49,6 @@ public class FileChooserBookmarksManagementPanel
    * A simple table model for displaying the contacts.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class TableModel
     extends AbstractManagementTableModel<Bookmark> {
@@ -420,12 +418,11 @@ public class FileChooserBookmarksManagementPanel
   }
   
   /**
-   * Updates the enabled state of the widgets.
+   * Updates the enabled state of the buttons.
    */
   @Override
-  protected void update() {
-    super.update();
-    
+  protected void updateButtons() {
+    super.updateButtons();
     m_ButtonUp.setEnabled((m_TableValues.getSelectedRowCount() == 1) && (m_TableValues.getSelectedRow() > 0));
     m_ButtonDown.setEnabled((m_TableValues.getSelectedRowCount() == 1) && (m_TableValues.getSelectedRow() < m_TableValues.getRowCount() - 1));
   }

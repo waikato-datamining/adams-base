@@ -29,6 +29,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.BaseTextPaneWithWordWrap;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MenuBarProvider;
 import adams.gui.core.ParameterPanelWithButtons;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -40,6 +41,9 @@ import adams.gui.event.SearchEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -63,7 +67,7 @@ import java.util.List;
  */
 public abstract class AbstractManagementPanel<T extends Comparable>
   extends BasePanel
-  implements CleanUpHandler {
+  implements CleanUpHandler, MenuBarProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 3181901882660335578L;
@@ -103,7 +107,22 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
   /** the file chooser for saving the spreadsheet. */
   protected SpreadSheetFileChooser m_FileChooser;
-  
+
+  /** the menu bar. */
+  protected JMenuBar m_MenuBar;
+
+  /** the menu item for clearing. */
+  protected JMenuItem m_MenuItemEditClear;
+
+  /** the menu item for adding. */
+  protected JMenuItem m_MenuItemEditAdd;
+
+  /** the menu item for updating. */
+  protected JMenuItem m_MenuItemEditUpdate;
+
+  /** the menu item for removing. */
+  protected JMenuItem m_MenuItemEditRemove;
+
   /**
    * Initializes the widgets.
    */
@@ -167,12 +186,14 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     m_TableValues.addToButtonsPanel(m_ButtonLoad);
     m_TableValues.setDoubleClickButton(m_ButtonLoad);
 
-    m_TableValues.addToButtonsPanel(new JLabel(" "));  // separator
+    if (!isReadOnly()) {
+      m_TableValues.addToButtonsPanel(new JLabel(" "));  // separator
 
-    m_ButtonRemove = new BaseButton("Remove");
-    m_ButtonRemove.setMnemonic('m');
-    m_ButtonRemove.addActionListener((ActionEvent e) -> removeObjects());
-    m_TableValues.addToButtonsPanel(m_ButtonRemove);
+      m_ButtonRemove = new BaseButton("Remove");
+      m_ButtonRemove.setMnemonic('m');
+      m_ButtonRemove.addActionListener((ActionEvent e) -> removeObjects());
+      m_TableValues.addToButtonsPanel(m_ButtonRemove);
+    }
 
     // search panel
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
@@ -190,6 +211,120 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     
     clear();
     refresh();
+  }
+
+  /**
+   * Hook method for adding items to the "File" menu.
+   *
+   * @param menu	the menu to update
+   * @return 		true if an item was added
+   */
+  protected boolean addToFileMenu(JMenu menu) {
+    return false;
+  }
+
+  /**
+   * Hook method for adding items to the "Edit" menu.
+   *
+   * @param menu	the menu to update
+   * @return 		true if an item was added
+   */
+  protected boolean addToEditMenu(JMenu menu) {
+    return false;
+  }
+
+  /**
+   * Creates a menu bar (singleton per panel object). Can be used in frames.
+   *
+   * @return		the menu bar
+   */
+  public JMenuBar getMenuBar() {
+    JMenuBar	result;
+    JMenu	menu;
+    JMenuItem	menuitem;
+
+    if (m_MenuBar == null) {
+      result = new JMenuBar();
+
+      // File
+      menu = new JMenu("File");
+      result.add(menu);
+      menu.setMnemonic('F');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+
+      if (addToFileMenu(menu))
+	menu.addSeparator();
+
+      // File/Close
+      menuitem = new JMenuItem("Close");
+      menu.add(menuitem);
+      menuitem.setMnemonic('C');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
+      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.addActionListener((ActionEvent e) -> closeParent());
+
+      // Edit
+      menu = new JMenu("Edit");
+      result.add(menu);
+      menu.setMnemonic('E');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+
+      // Edit/Clear
+      menuitem = new JMenuItem("Clear");
+      menu.add(menuitem);
+      menuitem.setMnemonic('l');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
+      menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+      menuitem.addActionListener((ActionEvent e) -> clear());
+      m_MenuItemEditClear = menuitem;
+
+      if (!isReadOnly()) {
+	// Edit/Add
+	menuitem = new JMenuItem("Add");
+	menu.add(menuitem);
+	menuitem.setMnemonic('A');
+	menuitem.setIcon(GUIHelper.getIcon("add.gif"));
+	menuitem.addActionListener((ActionEvent e) -> addObject());
+	m_MenuItemEditAdd = menuitem;
+
+	// Edit/Update
+	menuitem = new JMenuItem("Update");
+	menu.add(menuitem);
+	menuitem.setMnemonic('U');
+	menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+	menuitem.addActionListener((ActionEvent e) -> updateObject());
+	m_MenuItemEditUpdate = menuitem;
+
+	// Edit/Remove
+	menuitem = new JMenuItem("Remove");
+	menu.add(menuitem);
+	menuitem.setMnemonic('R');
+	menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
+	menuitem.addActionListener((ActionEvent e) -> removeObjects());
+	m_MenuItemEditRemove = menuitem;
+      }
+
+      addToEditMenu(menu);
+
+      m_MenuBar = result;
+    }
+
+    return m_MenuBar;
+  }
+
+  /**
+   * updates the enabled state of the menu items.
+   */
+  protected void updateMenu() {
+    if (m_MenuBar == null)
+      return;
+
+    m_MenuItemEditClear.setEnabled(canClearFields());
+    if (!isReadOnly()) {
+      m_MenuItemEditAdd.setEnabled(canAddObject());
+      m_MenuItemEditUpdate.setEnabled(canAddObject());
+      m_MenuItemEditRemove.setEnabled(m_TableValues.getSelectedRowCount() > 0);
+    }
   }
 
   /**
@@ -508,18 +643,26 @@ public abstract class AbstractManagementPanel<T extends Comparable>
    * @return		true if required fields are filled in
    */
   protected abstract boolean canAddObject();
-  
+
   /**
    * Updates the enabled state of the widgets.
    */
   protected void update() {
+    updateMenu();
+    updateButtons();
+  }
+
+  /**
+   * Updates the enabled state of the widgets.
+   */
+  protected void updateButtons() {
     m_ButtonClear.setEnabled(canClearFields());
     if (!isReadOnly()) {
       m_ButtonAdd.setEnabled(canAddObject());
       m_ButtonUpdate.setEnabled(m_ButtonAdd.isEnabled());
+      m_ButtonRemove.setEnabled(m_TableValues.getSelectedRowCount() > 0);
     }
     m_ButtonLoad.setEnabled(m_TableValues.getSelectedRowCount() == 1);
-    m_ButtonRemove.setEnabled(m_TableValues.getSelectedRowCount() > 0);
   }
 
   /**

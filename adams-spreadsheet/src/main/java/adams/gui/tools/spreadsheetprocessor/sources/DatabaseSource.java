@@ -38,11 +38,11 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
+import adams.gui.core.SqlConnectionPanel;
 import adams.gui.dialog.SQLStatementPanel;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.spreadsheetprocessor.AbstractWidget;
-import adams.gui.tools.sqlworkbench.SqlConnectionPanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;

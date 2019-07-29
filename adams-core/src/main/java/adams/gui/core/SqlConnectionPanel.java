@@ -18,7 +18,7 @@
  * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.sqlworkbench;
+package adams.gui.core;
 
 import adams.core.Constants;
 import adams.core.Utils;
@@ -29,26 +29,22 @@ import adams.db.ConnectionParameters;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
 import adams.db.JdbcUrl;
-import adams.gui.core.BaseButton;
-import adams.gui.core.BaseCheckBox;
-import adams.gui.core.BaseComboBox;
-import adams.gui.core.BasePanel;
-import adams.gui.core.BasePopupMenu;
-import adams.gui.core.BaseTextField;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Panel for database connection.
@@ -73,6 +69,9 @@ public class SqlConnectionPanel
   /** the current connection. */
   protected AbstractDatabaseConnection m_DatabaseConnection;
 
+  /** the change listeners for database connection changes. */
+  protected Set<ChangeListener> m_ConnectionChangeListeners;
+
   /**
    * Initializes the members.
    */
@@ -80,7 +79,8 @@ public class SqlConnectionPanel
   protected void initialize() {
     super.initialize();
 
-    m_DatabaseConnection = adams.db.DatabaseConnection.getSingleton();
+    m_DatabaseConnection        = adams.db.DatabaseConnection.getSingleton();
+    m_ConnectionChangeListeners = new HashSet<>();
   }
 
   /**
@@ -294,5 +294,34 @@ public class SqlConnectionPanel
   public void setEnabled(boolean value) {
     super.setEnabled(value);
     m_ButtonConnection.setEnabled(value);
+  }
+
+  /**
+   * Adds the listener for connection changes.
+   *
+   * @param l 		the listener to add
+   */
+  public void addConnectionChangeListener(ChangeListener l) {
+    m_ConnectionChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for connection changes.
+   *
+   * @param l 		the listener to remove
+   */
+  public void removeConnectionChangeListener(ChangeListener l) {
+    m_ConnectionChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all connection change listeners.
+   */
+  protected void notifyConnectionChangeListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_ConnectionChangeListeners)
+      l.stateChanged(e);
   }
 }
