@@ -1171,32 +1171,23 @@ public abstract class AbstractDatabaseConnection
   }
 
   /**
-   * Adds the given connection to the props file.
+   * Replaces the current connections with the provided ones and updates the .props file.
    *
-   * @param conn	the connection to add
-   * @return		true if successfully added
+   * @param connections	the connections to store
+   * @return		true if successfully updated
    */
-  public boolean addConnectionParameters(ConnectionParameters conn) {
-    boolean			result;
-    List<ConnectionParameters>	connections;
+  protected boolean connectionsToProperties(List<ConnectionParameters> connections) {
     Properties			props;
     int				i;
     Enumeration<String>		params;
     String			param;
     String 			value;
 
-    // insert connection as most recent
-    connections = getAllConnectionParameters();
-    if (connections.contains(conn))
-      connections.remove(conn);
-    connections.add(0, conn);
-
-    // update properties file
     props = getProperties();
     props.removeWithPrefix(PREFIX_CONNECTION);
     props.setInteger(PREFIX_CONNECTION + "." + SUFFIX_COUNT, connections.size());
     for (i = 0; i < connections.size(); i++) {
-      props.setProperty(PREFIX_CONNECTION  + "." + i + "." + ConnectionParameters.PARAM_CLASS, conn.getClass().getName());
+      props.setProperty(PREFIX_CONNECTION  + "." + i + "." + ConnectionParameters.PARAM_CLASS, connections.get(i).getClass().getName());
       params = connections.get(i).parameters();
       while (params.hasMoreElements()) {
 	param = params.nextElement();
@@ -1205,7 +1196,26 @@ public abstract class AbstractDatabaseConnection
       }
     }
 
-    result = updateConnectionParameters();
+    return updateConnectionParameters();
+  }
+
+  /**
+   * Adds the given connection to the props file.
+   *
+   * @param conn	the connection to add
+   * @return		true if successfully added
+   */
+  public boolean addConnectionParameters(ConnectionParameters conn) {
+    boolean			result;
+    List<ConnectionParameters>	connections;
+
+    // insert connection as most recent
+    connections = getAllConnectionParameters();
+    if (connections.contains(conn))
+      connections.remove(conn);
+    connections.add(0, conn);
+
+    result = connectionsToProperties(connections);
     if (!result)
       System.err.println("Error adding connection: " + conn);
 
@@ -1221,7 +1231,6 @@ public abstract class AbstractDatabaseConnection
   public boolean removeConnectionParameters(ConnectionParameters conn) {
     boolean			result;
     List<ConnectionParameters>	connections;
-    Properties			props;
 
     // insert connection as most recent
     connections = getAllConnectionParameters();
@@ -1230,12 +1239,7 @@ public abstract class AbstractDatabaseConnection
     else
       return false;
 
-    // update properties file
-    props = getProperties();
-    props.removeWithPrefix(PREFIX_CONNECTION);
-    props.setInteger(PREFIX_CONNECTION + "." + SUFFIX_COUNT, connections.size());
-
-    result = updateConnectionParameters();
+    result = connectionsToProperties(connections);
     if (!result)
       System.err.println("Error removing connection: " + conn);
 
