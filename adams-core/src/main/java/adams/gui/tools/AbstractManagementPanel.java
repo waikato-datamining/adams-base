@@ -15,7 +15,7 @@
 
 /*
  * AbstractManagementPanel.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -555,26 +555,26 @@ public abstract class AbstractManagementPanel<T extends Comparable>
    * Removes the selected objects and refreshes the table.
    */
   protected void removeObjects() {
-    int[]	indices;
-    String	ids;
-    int		i;
-    int		retVal;
-    T[]		values;
+    int[]		indices;
+    StringBuilder	ids;
+    int			i;
+    int			retVal;
+    T[]			values;
 
     indices = m_TableValues.getSelectedRows();
     values  = (T[]) Array.newInstance(getManagedClass(), indices.length);
-    ids     = "";
+    ids     = new StringBuilder();
     for (i = 0; i < indices.length; i++) {
       values[i] = m_ModelValues.getItemAt(m_TableValues.getActualRow(indices[i]));
       if (i > 0)
-	ids += ", ";
-      ids += getID(values[i]);
+	ids.append(", ");
+      ids.append(getID(values[i]));
     }
 
     retVal = GUIHelper.showConfirmMessage(
 	  this,
 	  "Do you really want to remove the following " + getItemName(indices.length != 1) + "?", 
-	  ids,
+	  ids.toString(),
 	  "Confirm removal");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
