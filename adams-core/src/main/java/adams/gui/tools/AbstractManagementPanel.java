@@ -111,6 +111,9 @@ public abstract class AbstractManagementPanel<T extends Comparable>
   /** the menu bar. */
   protected JMenuBar m_MenuBar;
 
+  /** the menu item for refreshing. */
+  protected JMenuItem m_MenuItemFileRefresh;
+
   /** the menu item for clearing. */
   protected JMenuItem m_MenuItemEditClear;
 
@@ -234,6 +237,14 @@ public abstract class AbstractManagementPanel<T extends Comparable>
   }
 
   /**
+   * For adding additional menus.
+   *
+   * @param menubar	the menubar to extend
+   */
+  protected void addOtherMenus(JMenuBar menubar) {
+  }
+
+  /**
    * Creates a menu bar (singleton per panel object). Can be used in frames.
    *
    * @return		the menu bar
@@ -252,8 +263,18 @@ public abstract class AbstractManagementPanel<T extends Comparable>
       menu.setMnemonic('F');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
-      if (addToFileMenu(menu))
-	menu.addSeparator();
+      // File/Refresh
+      menuitem = new JMenuItem("Refresh");
+      menu.add(menuitem);
+      menuitem.setMnemonic('R');
+      menuitem.setAccelerator(GUIHelper.getKeyStroke("F5"));
+      menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
+      menuitem.addActionListener((ActionEvent e) -> refresh());
+      m_MenuItemFileRefresh = menuitem;
+
+      addToFileMenu(menu);
+
+      menu.addSeparator();
 
       // File/Close
       menuitem = new JMenuItem("Close");
@@ -305,6 +326,9 @@ public abstract class AbstractManagementPanel<T extends Comparable>
       }
 
       addToEditMenu(menu);
+
+      // additional menus
+      addOtherMenus(result);
 
       m_MenuBar = result;
     }
