@@ -15,7 +15,7 @@
 
 /*
  * AxisPanel.java
- * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
@@ -882,15 +882,45 @@ public class AxisPanel
   }
 
   /**
+   * Sets the current range of the axis.
+   *
+   * @param value	the new range
+   */
+  public void setRange(BaseInterval value) {
+    double		min;
+    double		max;
+
+    min = value.getLower();
+    max = value.getUpper();
+    if (!getAxisModel().canHandle(min, max)) {
+      GUIHelper.showErrorMessage(
+	getParent(),
+	"Failed to parse/set range parameters:\n" + value);
+    }
+    else {
+      setManualMinimum(min);
+      setManualMaximum(max);
+      clearZoom();
+      clearPanning();
+    }
+  }
+
+  /**
+   * Returns the current range of the axis.
+   *
+   * @return		the current range
+   */
+  public BaseInterval getRange() {
+    return new BaseInterval(
+      getActualMinimumNoMargin(),
+      getActualMaximumNoMargin());
+  }
+
+  /**
    * Copies the range to the clipboard.
    */
   protected void copyRange() {
-    BaseInterval 	range;
-
-    range = new BaseInterval(
-      getActualMinimumNoMargin(),
-      getActualMaximumNoMargin());
-    ClipboardHelper.copyToClipboard(range.getValue());
+    ClipboardHelper.copyToClipboard(getRange().getValue());
   }
 
   /**
@@ -898,8 +928,6 @@ public class AxisPanel
    */
   protected void pasteRange() {
     BaseInterval 	range;
-    double		min;
-    double		max;
 
     if (!ClipboardHelper.canPasteStringFromClipboard())
       return;
@@ -907,19 +935,7 @@ public class AxisPanel
     range = new BaseInterval();
     if (range.isValid(ClipboardHelper.pasteStringFromClipboard())) {
       range.setValue(ClipboardHelper.pasteStringFromClipboard());
-      min = range.getLower();
-      max = range.getUpper();
-      if (!getAxisModel().canHandle(min, max)) {
-	GUIHelper.showErrorMessage(
-	  getParent(),
-	  "Failed to parse/set range parameters:\n" + range);
-      }
-      else {
-	setManualMinimum(min);
-	setManualMaximum(max);
-	clearZoom();
-	clearPanning();
-      }
+      setRange(range);
     }
   }
 
