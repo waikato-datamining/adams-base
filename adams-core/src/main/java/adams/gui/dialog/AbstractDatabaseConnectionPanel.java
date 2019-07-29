@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnectionPanel.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -26,6 +26,7 @@ import adams.core.logging.LoggingLevel;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.ConnectionParameters;
 import adams.db.DatabaseConnectionProvider;
+import adams.db.DatabaseManager;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
@@ -44,7 +45,6 @@ import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.List;
 
@@ -66,7 +66,7 @@ public abstract class AbstractDatabaseConnectionPanel
   protected AbstractDatabaseConnectionPanel m_Self;
 
   /** the combobox with the available connections. */
-  protected BaseComboBox m_ComboBoxConnections;
+  protected BaseComboBox<ConnectionParameters> m_ComboBoxConnections;
 
   /** the edit field for the database URL. */
   protected BaseTextField m_TextURL;
@@ -81,7 +81,7 @@ public abstract class AbstractDatabaseConnectionPanel
   protected BaseCheckBox m_CheckBoxShowPassword;
 
   /** the combobox for the logging level. */
-  protected BaseComboBox m_ComboBoxLoggingLevel;
+  protected BaseComboBox<LoggingLevel> m_ComboBoxLoggingLevel;
 
   /** the checkbox for connecting on startup. */
   protected BaseCheckBox m_CheckBoxConnectOnStartUp;
@@ -137,13 +137,11 @@ public abstract class AbstractDatabaseConnectionPanel
     m_PanelParameters = new ParameterPanel();
     add(m_PanelParameters, BorderLayout.NORTH);
 
-    m_ComboBoxConnections = new BaseComboBox(getDatabaseConnection().getConnections().toArray());
-    m_ComboBoxConnections.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_ComboBoxConnections.getSelectedIndex() == -1)
-	  return;
-	displayParameters((ConnectionParameters) m_ComboBoxConnections.getSelectedItem());
-      }
+    m_ComboBoxConnections = new BaseComboBox<>(getDatabaseConnection().getAllConnectionParameters().toArray(new ConnectionParameters[0]));
+    m_ComboBoxConnections.addActionListener((ActionEvent e) -> {
+      if (m_ComboBoxConnections.getSelectedIndex() == -1)
+        return;
+      displayConnection(m_ComboBoxConnections.getSelectedItem());
     });
     m_PanelParameters.addParameter("_Connections", m_ComboBoxConnections);
 
@@ -159,17 +157,15 @@ public abstract class AbstractDatabaseConnectionPanel
 
     m_CheckBoxShowPassword = new BaseCheckBox();
     m_CheckBoxShowPassword.setSelected(false);
-    m_CheckBoxShowPassword.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_CheckBoxShowPassword.isSelected())
-	  m_TextPassword.setEchoChar((char) 0);
-	else
-	  m_TextPassword.setEchoChar(Constants.PASSWORD_CHAR);
-      }
+    m_CheckBoxShowPassword.addActionListener((ActionEvent e) -> {
+      if (m_CheckBoxShowPassword.isSelected())
+        m_TextPassword.setEchoChar((char) 0);
+      else
+        m_TextPassword.setEchoChar(Constants.PASSWORD_CHAR);
     });
     m_PanelParameters.addParameter("Sho_w password", m_CheckBoxShowPassword);
 
-    m_ComboBoxLoggingLevel = new BaseComboBox(LoggingLevel.values());
+    m_ComboBoxLoggingLevel = new BaseComboBox<>(LoggingLevel.values());
     m_PanelParameters.addParameter("_Logging level", m_ComboBoxLoggingLevel);
 
     m_CheckBoxConnectOnStartUp = new BaseCheckBox();
@@ -195,22 +191,22 @@ public abstract class AbstractDatabaseConnectionPanel
     m_ButtonMakeDefault = new BaseButton("Make default");
     panel.add(m_ButtonMakeDefault);
     m_ButtonMakeDefault.setMnemonic('m');
-    m_ButtonMakeDefault.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	m_ButtonMakeDefault.setEnabled(false);
-	makeDefault();
-	m_ButtonMakeDefault.setEnabled(true);
-	update();
-      }
+    m_ButtonMakeDefault.addActionListener((ActionEvent e) -> {
+      m_ButtonMakeDefault.setEnabled(false);
+      makeDefault();
+      m_ButtonMakeDefault.setEnabled(true);
+      update();
     });
 
     m_ButtonConnect = new BaseButton("Connect");
     panel.add(m_ButtonConnect);
     m_ButtonConnect.setMnemonic('C');
-    m_ButtonConnect.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	doReconnect();
-      }
+    m_ButtonConnect.addActionListener((ActionEvent e) -> {
+      AbstractDatabaseConnection conn = getActiveConnectionFor(getCurrentParameters());
+      if ((conn != null) && conn.isConnected())
+	performDisconnect();
+      else
+        performConnect();
     });
     panel2.add(panel, BorderLayout.EAST);
   }
@@ -233,11 +229,11 @@ public abstract class AbstractDatabaseConnectionPanel
   protected abstract String getTitle();
 
   /**
-   * Displays the parameters.
+   * Updates the fields with the parameters.
    *
    * @param conn	the parameters to display
    */
-  protected void displayParameters(ConnectionParameters conn) {
+  protected void connectionParametersToFields(ConnectionParameters conn) {
     m_TextURL.setText(conn.getURL());
     m_TextUser.setText(conn.getUser());
     m_TextPassword.setText(conn.getPassword().getValue());
@@ -247,26 +243,39 @@ public abstract class AbstractDatabaseConnectionPanel
   }
 
   /**
-   * Displays the parameters.
+   * Returns the connection that is represented by the connection parameters.
    *
-   * @param conn	the database connection to display
+   * @param params	the parameters to get the connection for (if any)
+   * @return		the connection, null if none active
    */
-  protected void displayParameters(AbstractDatabaseConnection conn) {
+  protected AbstractDatabaseConnection getActiveConnectionFor(ConnectionParameters params) {
+    AbstractDatabaseConnection result;
+
+    result = null;
+    for (AbstractDatabaseConnection c: DatabaseManager.getActiveConnectionObjects()) {
+      if (c.getCurrentConnectionParameters().equals(params)) {
+        result = c;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Displays the connection parameters.
+   *
+   * @param params	the database connection to display
+   */
+  protected void displayConnection(ConnectionParameters params) {
+    AbstractDatabaseConnection	conn;
     boolean 			connected;
-    List<ConnectionParameters> 	connections;
-    ConnectionParameters 	current;
-    int 			index;
 
-    displayParameters(conn.getCurrentConnection());
+    connectionParametersToFields(params);
 
-    connected   = conn.isConnected();
-    connections = conn.getConnections();
-    current     = conn.getCurrentConnection();
-    index       = connections.indexOf(current);
-    m_ComboBoxConnections.setModel(new DefaultComboBoxModel(connections.toArray()));
-    m_ComboBoxConnections.setSelectedIndex(index);
+    conn      = getActiveConnectionFor(params);
+    connected = (conn != null) && conn.isConnected();
 
-    m_ComboBoxConnections.setEnabled(!connected);
     m_TextURL.setEditable(!connected);
     m_TextUser.setEditable(!connected);
     m_TextPassword.setEditable(!connected);
@@ -275,7 +284,7 @@ public abstract class AbstractDatabaseConnectionPanel
     m_CheckBoxConnectOnStartUp.setEnabled(!connected);
     m_CheckBoxAutoCommit.setEnabled(!connected);
 
-    m_ButtonMakeDefault.setEnabled(!getCurrentParameters().equals(conn.getDefaultConnection()));
+    m_ButtonMakeDefault.setEnabled((conn != null) && !params.equals(conn.getDefaultConnectionParameters()));
 
     if (connected)
       m_ButtonConnect.setText("Disconnect");
@@ -284,9 +293,51 @@ public abstract class AbstractDatabaseConnectionPanel
   }
 
   /**
-   * Performs the reconnection.
+   * Displays the connection.
+   *
+   * @param conn	the database connection to display
    */
-  protected abstract void doReconnect();
+  protected void displayConnection(AbstractDatabaseConnection conn) {
+    boolean 			connected;
+    List<ConnectionParameters> 	connections;
+    ConnectionParameters 	current;
+    int 			index;
+
+    current     = conn.getCurrentConnectionParameters();
+    connections = conn.getAllConnectionParameters();
+    index       = connections.indexOf(current);
+
+    connectionParametersToFields(current);
+
+    connected = conn.isConnected();
+    m_ComboBoxConnections.setModel(new DefaultComboBoxModel<>(connections.toArray(new ConnectionParameters[0])));
+    m_ComboBoxConnections.setSelectedIndex(index);
+
+    m_TextURL.setEditable(!connected);
+    m_TextUser.setEditable(!connected);
+    m_TextPassword.setEditable(!connected);
+    m_CheckBoxShowPassword.setEnabled(!connected);
+    m_ComboBoxLoggingLevel.setEnabled(!connected);
+    m_CheckBoxConnectOnStartUp.setEnabled(!connected);
+    m_CheckBoxAutoCommit.setEnabled(!connected);
+
+    m_ButtonMakeDefault.setEnabled(!current.equals(conn.getDefaultConnectionParameters()));
+
+    if (connected)
+      m_ButtonConnect.setText("Disconnect");
+    else
+      m_ButtonConnect.setText("Connect");
+  }
+
+  /**
+   * Performs the connect.
+   */
+  protected abstract void performConnect();
+
+  /**
+   * Performs the disconnect.
+   */
+  protected abstract void performDisconnect();
 
   /**
    * Makes the current parameters the default.
@@ -336,41 +387,7 @@ public abstract class AbstractDatabaseConnectionPanel
    * the DatabaseConnection object of the scripting engine.
    */
   public void update() {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-	displayParameters(getDatabaseConnection());
-      }
-    });
-  }
-
-  /**
-   * Sets the enabled state of the parameters.
-   *
-   * @param b		if true then the parameters will be enabled
-   */
-  protected void setEnabledState(boolean b) {
-    m_ComboBoxConnections.setEnabled(b);
-    m_TextURL.setEnabled(b);
-    m_TextUser.setEnabled(b);
-    m_TextPassword.setEnabled(b);
-    m_CheckBoxShowPassword.setEnabled(b);
-    m_ComboBoxLoggingLevel.setEnabled(b);
-    m_CheckBoxConnectOnStartUp.setEnabled(b);
-    m_CheckBoxAutoCommit.setEnabled(b);
-    m_ButtonMakeDefault.setEnabled(b);
-    m_ButtonConnect.setEnabled(b);
-  }
-
-  /**
-   * Sets the enabled state of the panel.
-   *
-   * @param b		if true then the panel will be enabled
-   */
-  @Override
-  public void setEnabled(boolean b) {
-    super.setEnabled(b);
-    setEnabledState(b);
-    update();
+    SwingUtilities.invokeLater(() -> displayConnection(getDatabaseConnection()));
   }
 
   /**
@@ -379,14 +396,7 @@ public abstract class AbstractDatabaseConnectionPanel
    * @param msg		the message to display
    */
   public void showStatus(final String msg) {
-    Runnable	run;
-
-    run = new Runnable() {
-      public void run() {
-	m_LabelStatus.setText(msg);
-      }
-    };
-    SwingUtilities.invokeLater(run);
+    SwingUtilities.invokeLater(() -> m_LabelStatus.setText(msg));
   }
 
   /**

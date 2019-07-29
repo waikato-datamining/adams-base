@@ -15,7 +15,7 @@
 
 /*
  * DatabaseManager.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -27,12 +27,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Manages the database URL/connection object relations.
  *
  * @author  fracpete (fracpete at waikato dot ac dot 
- * @version $Revision$
  * @param <T> the type of database this manager is for
  */
 public class DatabaseManager<T extends AbstractDatabaseConnection>
@@ -45,13 +45,13 @@ public class DatabaseManager<T extends AbstractDatabaseConnection>
   protected String m_DatabaseName;
 
   /** for storing the database connection objects. */
-  protected HashMap<String,T> m_Connections;
+  protected Map<String,T> m_Connections;
 
   /** the default database connection. */
   protected T m_DefaultDatabaseConnection;
 
   /** for storing all database connection objects. */
-  protected static HashMap<String,AbstractDatabaseConnection> m_AllConnections;
+  protected static Map<String,AbstractDatabaseConnection> m_AllConnections;
   static {
     m_AllConnections = new HashMap<>();
   }

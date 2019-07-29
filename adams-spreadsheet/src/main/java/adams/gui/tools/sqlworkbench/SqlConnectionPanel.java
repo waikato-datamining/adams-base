@@ -129,7 +129,7 @@ public class SqlConnectionPanel
     List<JMenuItem> 	menuitems;
 
     menuitems = new ArrayList<>();
-    for (ConnectionParameters params: DatabaseConnection.getSingleton().getConnections()) {
+    for (ConnectionParameters params: DatabaseConnection.getSingleton().getAllConnectionParameters()) {
       final ConnectionParameters fParams = params;
       menuitem = new JMenuItem(params.toString());
       menuitem.addActionListener((ActionEvent e) -> connect(fParams));
@@ -159,7 +159,7 @@ public class SqlConnectionPanel
 	}
 	else {
 	  params = m_DatabaseConnection.toConnectionParameters(m_DatabaseConnection);
-	  m_DatabaseConnection.addConnection(params);
+	  m_DatabaseConnection.addConnectionParameters(params);
 	}
       }
       catch (Exception e) {
@@ -241,7 +241,7 @@ public class SqlConnectionPanel
 	}
 	else {
 	  params = m_DatabaseConnection.toConnectionParameters(m_DatabaseConnection);
-	  m_DatabaseConnection.addConnection(params);
+	  m_DatabaseConnection.addConnectionParameters(params);
 	}
       }
       catch (Exception e) {
@@ -250,7 +250,7 @@ public class SqlConnectionPanel
     }
     else {
       params = m_DatabaseConnection.toConnectionParameters(m_DatabaseConnection);
-      m_DatabaseConnection.addConnection(params);
+      m_DatabaseConnection.addConnectionParameters(params);
     }
     if (error != null)
       GUIHelper.showErrorMessage(this, error);
@@ -282,7 +282,7 @@ public class SqlConnectionPanel
    * @param connection  the connection
    */
   public void setDatabaseConnection(AbstractDatabaseConnection connection) {
-    m_DatabaseConnection.addConnection(m_DatabaseConnection.toConnectionParameters(connection));
+    m_DatabaseConnection.addConnectionParameters(m_DatabaseConnection.toConnectionParameters(connection));
     m_DatabaseConnection = connection;
   }
 

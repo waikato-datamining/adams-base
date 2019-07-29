@@ -247,7 +247,7 @@ public class JdbcUrlEditor
     List<JMenuItem> 	menuitems;
 
     menuitems = new ArrayList<>();
-    for (ConnectionParameters params: DatabaseConnection.getSingleton().getConnections()) {
+    for (ConnectionParameters params: DatabaseConnection.getSingleton().getAllConnectionParameters()) {
       final ConnectionParameters fParams = params;
       menuitem = new JMenuItem(params.toString());
       menuitem.addActionListener((ActionEvent e) -> connect(fParams));
@@ -278,7 +278,7 @@ public class JdbcUrlEditor
 	}
 	else {
 	  params = conn.toConnectionParameters(conn);
-	  conn.addConnection(params);
+	  conn.addConnectionParameters(params);
 	}
       }
       catch (Exception e) {

@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -212,9 +213,9 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		the change listeners
    */
-  protected HashSet<DatabaseConnectionChangeListener> getChangeListeners() {
+  public Set<DatabaseConnectionChangeListener> getChangeListeners() {
     if (m_ChangeListeners == null)
-      m_ChangeListeners = new HashSet<DatabaseConnectionChangeListener>();
+      m_ChangeListeners = new HashSet<>();
     return m_ChangeListeners;
   }
 
@@ -771,7 +772,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		the parameters
    */
-  public ConnectionParameters getCurrentConnection() {
+  public ConnectionParameters getCurrentConnectionParameters() {
     ConnectionParameters	result;
 
     result = newConnectionParameters();
@@ -1115,7 +1116,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		the default
    */
-  public ConnectionParameters getDefaultConnection() {
+  public ConnectionParameters getDefaultConnectionParameters() {
     ConnectionParameters	result;
 
     result = newConnectionParameters();
@@ -1134,7 +1135,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		the connections
    */
-  public List<ConnectionParameters> getConnections() {
+  public List<ConnectionParameters> getAllConnectionParameters() {
     List<ConnectionParameters>		result;
     ConnectionParameters		conn;
     Properties				props;
@@ -1147,7 +1148,7 @@ public abstract class AbstractDatabaseConnection
     result = new ArrayList<>();
 
     // default one
-    result.add(getDefaultConnection());
+    result.add(getDefaultConnectionParameters());
 
     // others
     props = getProperties();
@@ -1175,7 +1176,7 @@ public abstract class AbstractDatabaseConnection
    * @param conn	the connection to add
    * @return		true if successfully added
    */
-  public boolean addConnection(ConnectionParameters conn) {
+  public boolean addConnectionParameters(ConnectionParameters conn) {
     boolean			result;
     List<ConnectionParameters>	connections;
     Properties			props;
@@ -1185,7 +1186,7 @@ public abstract class AbstractDatabaseConnection
     String 			value;
 
     // insert connection as most recent
-    connections = getConnections();
+    connections = getAllConnectionParameters();
     if (connections.contains(conn))
       connections.remove(conn);
     connections.add(0, conn);
@@ -1204,7 +1205,7 @@ public abstract class AbstractDatabaseConnection
       }
     }
 
-    result = updateConnections();
+    result = updateConnectionParameters();
     if (!result)
       System.err.println("Error adding connection: " + conn);
 
@@ -1217,13 +1218,13 @@ public abstract class AbstractDatabaseConnection
    * @param conn	the connection to remove
    * @return		true if successfully removed
    */
-  public boolean removeConnection(ConnectionParameters conn) {
+  public boolean removeConnectionParameters(ConnectionParameters conn) {
     boolean			result;
     List<ConnectionParameters>	connections;
     Properties			props;
 
     // insert connection as most recent
-    connections = getConnections();
+    connections = getAllConnectionParameters();
     if (connections.contains(conn))
       connections.remove(conn);
     else
@@ -1234,7 +1235,7 @@ public abstract class AbstractDatabaseConnection
     props.removeWithPrefix(PREFIX_CONNECTION);
     props.setInteger(PREFIX_CONNECTION + "." + SUFFIX_COUNT, connections.size());
 
-    result = updateConnections();
+    result = updateConnectionParameters();
     if (!result)
       System.err.println("Error removing connection: " + conn);
 
@@ -1257,13 +1258,13 @@ public abstract class AbstractDatabaseConnection
     setDefaultConnectOnStartUp(conn.getConnectOnStartUp());
     setDefaultAutoCommit(conn.getAutoCommit());
 
-    result = updateConnections();
+    result = updateConnectionParameters();
     if (!result) {
       System.err.println("Error setting default connection: " + conn);
     }
     else {
       if (getOwner() != null)
-	getOwner().setDefault(getDefaultConnection().toDatabaseConnection(getClass()));
+	getOwner().setDefault(getDefaultConnectionParameters().toDatabaseConnection(getClass()));
     }
 
     return result;
@@ -1274,7 +1275,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		true if sucessfully updated
    */
-  public boolean updateConnections() {
+  public boolean updateConnectionParameters() {
     return getEnvironment().write(getDefinitionKey(), getProperties());
   }
 
@@ -1362,6 +1363,27 @@ public abstract class AbstractDatabaseConnection
       result = CompareUtils.compare(getUser(), o.getUser());
 
     return result;
+  }
+
+  /**
+   * Compares this object with the specified object for order.  Returns a
+   * negative integer, zero, or a positive integer as this object is less
+   * than, equal to, or greater than the specified object.
+   *
+   * Uses the database URL and user for comparison.
+   *
+   * @param o 	the object to be compared.
+   * @return	a negative integer, zero, or a positive integer as this object
+   *		is less than, equal to, or greater than the specified object.
+   *
+   * @throws ClassCastException 	if the specified object's type prevents it
+   *         				from being compared to this object.
+   */
+  public int compareTo(ConnectionParameters o) {
+    if (o == null)
+      return 1;
+    else
+      return getCurrentConnectionParameters().compareTo(o);
   }
 
   /**

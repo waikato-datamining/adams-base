@@ -15,7 +15,7 @@
 
 /*
  * AbstractConfigDatabaseConnectionPanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -29,7 +29,6 @@ import adams.gui.core.GUIHelper;
  * A panel for connecting to a (config) database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractConfigDatabaseConnectionPanel
   extends AbstractDatabaseConnectionPanel {
@@ -52,30 +51,39 @@ public abstract class AbstractConfigDatabaseConnectionPanel
   /**
    * Performs the reconnection.
    */
-  protected void doReconnect() {
+  protected void performConnect() {
     m_ButtonConnect.setEnabled(false);
 
-    if (getDatabaseConnection().isConnected()) {
-      showStatus("Disconnecting...");
-      getDatabaseConnection().disconnect();
+    showStatus("Connecting...");
+    if (!((ReconnectableDatabaseConnection) getDatabaseConnection()).reconnect(
+      m_TextURL.getText(),
+      m_TextUser.getText(),
+      new BasePassword(m_TextPassword.getText()))) {
+      GUIHelper.showErrorMessage(m_Self, "Failed to connect to " + m_TextURL.getText());
     }
     else {
-      showStatus("Connecting...");
-      if (!((ReconnectableDatabaseConnection) getDatabaseConnection()).reconnect(
-	  m_TextURL.getText(),
-	  m_TextUser.getText(),
-	  new BasePassword(m_TextPassword.getText()))) {
-	GUIHelper.showErrorMessage(m_Self, "Failed to connect to " + m_TextURL.getText());
-      }
-      else {
-	// add connection
-	getDatabaseConnection().addConnection(
-	    getDatabaseConnection().getCurrentConnection());
-	// set as default (for session)
-	if (getDatabaseConnection().getOwner() != null)
-	  getDatabaseConnection().getOwner().setDefault(getDatabaseConnection());
-      }
+      // add connection
+      getDatabaseConnection().addConnectionParameters(
+	getDatabaseConnection().getCurrentConnectionParameters());
+      // set as default (for session)
+      if (getDatabaseConnection().getOwner() != null)
+	getDatabaseConnection().getOwner().setDefault(getDatabaseConnection());
     }
+
+    m_ButtonConnect.setEnabled(true);
+    notifyChangeListeners();
+    showStatus("");
+    update();
+  }
+
+  /**
+   * Performs the disconnect.
+   */
+  protected void performDisconnect() {
+    m_ButtonConnect.setEnabled(false);
+
+    showStatus("Disconnecting...");
+    getDatabaseConnection().disconnect();
 
     m_ButtonConnect.setEnabled(true);
     notifyChangeListeners();

@@ -15,7 +15,7 @@
 
 /*
  * DatabaseConnectionPanel.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -27,7 +27,6 @@ import adams.env.Project;
 import adams.gui.core.GUIHelper;
 import adams.gui.scripting.AbstractScriptingEngine;
 import adams.gui.scripting.Connect;
-import adams.gui.scripting.Disconnect;
 import adams.gui.scripting.ScriptingCommandCode;
 import adams.gui.scripting.ScriptingEngine;
 
@@ -35,7 +34,6 @@ import adams.gui.scripting.ScriptingEngine;
  * A panel for connecting to a database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatabaseConnectionPanel
   extends AbstractDatabaseConnectionPanel {
@@ -89,56 +87,66 @@ public class DatabaseConnectionPanel
    * Performs the reconnection.
    */
   @Override
-  protected void doReconnect() {
+  protected void performConnect() {
     String 	cmd;
 
-    m_ButtonConnect.setEnabled(false);
-
-    if (getDatabaseConnection().isConnected()) {
-      cmd = Disconnect.ACTION;
-      showStatus("Disconnecting...");
-    }
-    else {
-      cmd = Connect.ACTION + " "
+    cmd = Connect.ACTION + " "
       + m_TextURL.getText() + " "
       + m_TextUser.getText() + " "
       + new BasePassword(m_TextPassword.getText()).stringValue() + " "
       + m_ComboBoxLoggingLevel.getSelectedItem() + " "
       + m_CheckBoxConnectOnStartUp.isSelected() + " "
       + m_CheckBoxAutoCommit.isSelected();
-      showStatus("Connecting...");
-    }
+
+    m_ButtonConnect.setEnabled(false);
+    showStatus("Connecting...");
 
     m_ScriptingEngine.add(
-	DatabaseConnectionPanel.this,
-	cmd,
-	new ScriptingCommandCode() {
-	  @Override
-	  public void execute() {
-	    m_ButtonConnect.setEnabled(true);
+      DatabaseConnectionPanel.this,
+      cmd,
+      new ScriptingCommandCode() {
+	@Override
+	public void execute() {
+	  m_ButtonConnect.setEnabled(true);
 
-	    try {
-	      if (hasError()) {
-		GUIHelper.showErrorMessage(m_Self, getError());
-	      }
-	      else {
-		// add connection
-		getDatabaseConnection().addConnection(
-		    getDatabaseConnection().getCurrentConnection());
-		// set as default (for session)
-		if (getDatabaseConnection().getOwner() != null)
-		  getDatabaseConnection().getOwner().setDefault(getDatabaseConnection());
-	      }
+	  try {
+	    if (hasError()) {
+	      GUIHelper.showErrorMessage(m_Self, getError());
 	    }
-	    catch (Exception ex) {
-	      ex.printStackTrace();
+	    else {
+	      // add connection
+	      getDatabaseConnection().addConnectionParameters(
+		getDatabaseConnection().getCurrentConnectionParameters());
+	      // set as default (for session)
+	      if (getDatabaseConnection().getOwner() != null)
+		getDatabaseConnection().getOwner().setDefault(getDatabaseConnection());
 	    }
-
-	    notifyChangeListeners();
-	    showStatus("");
-	    update();
 	  }
-	});
+	  catch (Exception ex) {
+	    ex.printStackTrace();
+	  }
+
+	  notifyChangeListeners();
+	  showStatus("");
+	  update();
+	}
+      });
+  }
+
+  /**
+   * Performs the disconnect.
+   */
+  protected void performDisconnect() {
+    AbstractDatabaseConnection		conn;
+
+    conn = getActiveConnectionFor(getCurrentParameters());
+    if (conn != null) {
+      showStatus("Disconnecting...");
+      conn.disconnect();
+      notifyChangeListeners();
+      showStatus("");
+      update();
+    }
   }
 
   /**

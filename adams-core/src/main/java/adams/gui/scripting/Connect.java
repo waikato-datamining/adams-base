@@ -13,16 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Connect.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
 import adams.core.base.BasePassword;
 import adams.core.logging.LoggingLevel;
+import adams.core.option.OptionUtils;
 import adams.db.AbstractDatabaseConnection;
+import adams.db.DatabaseManager;
 import adams.db.GlobalSingletonDatabaseConnection;
+import adams.event.DatabaseConnectionChangeListener;
 
 /**
  <!-- scriptlet-parameters-start -->
@@ -38,7 +41,6 @@ import adams.db.GlobalSingletonDatabaseConnection;
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Connect
   extends AbstractDatabaseScriptlet {
@@ -91,43 +93,59 @@ public class Connect
     String[]			params;
     boolean			connect;
     AbstractDatabaseConnection	conn;
+    AbstractDatabaseConnection	connNew;
+    DatabaseManager		manager;
 
     params = options.split(" ");
     if ((params.length < 2) || (params.length > 6))
-      return "Wrong connection parameters!";
+      return "Wrong number of connection parameters!";
 
     conn    = getDatabaseConnection();
+    manager = conn.getOwner();
     connect = !conn.isConnected();
 
     // are we already connected to the correct database?
     if (conn.isConnected()) {
       if (    !conn.getURL().equals(params[0])
 	   || !conn.getUser().equals(params[1]) ) {
-	conn.disconnect();
 	connect = true;
       }
     }
 
-    if (connect) {
-      if (!(conn instanceof GlobalSingletonDatabaseConnection)) {
-	conn = conn.getClone();
-	getOwner().getOwner().setDatabaseConnection(conn);
-      }
-      conn.setURL(params[0]);
-      conn.setUser(params[1]);
-      if (params.length >= 3)
-	conn.setPassword(new BasePassword(params[2]));
-      if (params.length >= 4)
-	conn.setLoggingLevel(LoggingLevel.valueOf(params[3]));
-      if (params.length >= 5)
-	conn.setConnectOnStartUp(Boolean.parseBoolean(params[4]));
-      if (params.length >= 6)
-	conn.setAutoCommit(Boolean.parseBoolean(params[5]));
-      conn.connect();
+    if (!connect)
+      return null;
+
+    if (conn instanceof GlobalSingletonDatabaseConnection) {
+      if (conn.isConnected())
+        conn.disconnect();
     }
+    else {
+      connNew = (AbstractDatabaseConnection) OptionUtils.shallowCopy(getDatabaseConnection());
+      for (DatabaseConnectionChangeListener l: conn.getChangeListeners())
+        connNew.addChangeListener(l);
+      conn = connNew;
+    }
+
+    conn.setURL(params[0]);
+    conn.setUser(params[1]);
+    if (params.length >= 3)
+      conn.setPassword(new BasePassword(params[2]));
+    if (params.length >= 4)
+      conn.setLoggingLevel(LoggingLevel.valueOf(params[3]));
+    if (params.length >= 5)
+      conn.setConnectOnStartUp(Boolean.parseBoolean(params[4]));
+    if (params.length >= 6)
+      conn.setAutoCommit(Boolean.parseBoolean(params[5]));
+
+    conn.connect();
 
     if (!conn.isConnected())
       return "Failed to connect to database!";
+
+    if (manager != null)
+      manager.add(conn);
+    if (!(conn instanceof GlobalSingletonDatabaseConnection))
+      getOwner().getOwner().setDatabaseConnection(conn);
 
     return null;
   }
