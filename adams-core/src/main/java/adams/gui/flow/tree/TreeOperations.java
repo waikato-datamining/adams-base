@@ -80,12 +80,10 @@ import adams.flow.transformer.ExternalTransformer;
 import adams.flow.transformer.MapToVariables;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ErrorMessagePanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SearchPanel;
@@ -98,6 +96,7 @@ import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.event.SearchEvent;
 import adams.gui.flow.FlowEditorDialog;
+import adams.gui.flow.tabhandler.GraphicalActorProcessorHandler;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
 import adams.gui.goe.Favorites;
 import adams.gui.goe.Favorites.Favorite;
@@ -113,7 +112,6 @@ import sizeof.agent.Statistics;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -1455,44 +1453,14 @@ public class TreeOperations
       if (fProcessor instanceof GraphicalOutputProducingProcessor) {
 	GraphicalOutputProducingProcessor graphical = (GraphicalOutputProducingProcessor) fProcessor;
 	if (graphical.hasGraphicalOutput()) {
-	  BaseDialog dialog;
-	  if (getOwner().getParentDialog() != null)
-	    dialog = new BaseDialog(getOwner().getParentDialog());
-	  else
-	    dialog = new BaseDialog(getOwner().getParentFrame());
-	  dialog.setTitle(graphical.getTitle());
-	  dialog.getContentPane().setLayout(new BorderLayout());
-	  final Component comp = graphical.getGraphicalOutput();
-	  if (errorPanel == null) {
-	    dialog.getContentPane().add(comp, BorderLayout.CENTER);
-	    if (comp instanceof MenuBarProvider)
-	      dialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
+	  GraphicalActorProcessorHandler handler = getOwner().getOwner().getTabHandler(GraphicalActorProcessorHandler.class);
+	  if (handler != null) {
+	    handler.add(
+	      graphical.getTitle(),
+	      graphical.getGraphicalOutput(),
+	      fProcessor.hasErrors() ? Utils.flatten(fProcessor.getErrors(), "\n") : null);
+	    errorPanel = null;
 	  }
-	  else {
-	    final BaseDialog fDialog = dialog;
-	    final ErrorMessagePanel fErrorPanel = errorPanel;
-	    final BaseTabbedPane fTabbedPane = new BaseTabbedPane();
-	    fTabbedPane.addChangeListener((ChangeEvent e) -> {
-	      if (fTabbedPane.getSelectedIndex() == 0) {
-		if (comp instanceof MenuBarProvider)
-		  fDialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
-		else
-		  fDialog.setJMenuBar(null);
-	      }
-	      else {
-		fDialog.setJMenuBar(fErrorPanel.getMenuBar());
-	      }
-	    });
-	    dialog.getContentPane().add(fTabbedPane, BorderLayout.CENTER);
-	    fTabbedPane.addTab("Output", comp);
-	    fTabbedPane.addTab("Errors", errorPanel);
-	  }
-	  if (comp instanceof MenuBarProvider)
-	    dialog.setJMenuBar(((MenuBarProvider) comp).getMenuBar());
-	  dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
-	  dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
-	  dialog.setVisible(true);
-	  errorPanel = null;
 	}
       }
 
