@@ -20,14 +20,14 @@
 
 package adams.gui.tools;
 
-import javax.swing.SwingWorker;
-
 import adams.core.CleanUpHandler;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
+
+import javax.swing.SwingWorker;
 
 /**
  * A panel for managing the objects stored in a database.
@@ -81,6 +81,7 @@ public abstract class AbstractManagementPanelWithDatabase<T extends Comparable>
     m_DatabaseConnection.removeChangeListener(this);
     m_DatabaseConnection = value;
     m_DatabaseConnection.addChangeListener(this);
+    refresh();
   }
 
   /**
