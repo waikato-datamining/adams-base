@@ -15,7 +15,7 @@
 
 /*
  * TitleGenerator.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -29,7 +29,6 @@ import java.io.Serializable;
  * A simple helper class for generating titles for frames and dialogs.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TitleGenerator
   implements Serializable {
@@ -177,6 +176,37 @@ public class TitleGenerator
       else
 	result += " [" + file.getAbsolutePath() + "]";
     }
+
+    if (modified)
+      result = "*" + result;
+
+    return result;
+  }
+
+  /**
+   * Generates a title for the given sub-title. Does not apply a split.
+   *
+   * @param subtitle	the sub-title to generate the title for, can be null
+   * @return		the generated title
+   */
+  public String generateAny(String subtitle) {
+    return generateAny(subtitle, false);
+  }
+
+  /**
+   * Generates a title for the given sub-title. Does not apply a split.
+   *
+   * @param subtitle	the sub-title to generate the title for, can be null
+   * @param modified	whether the user interface is modified
+   * @return		the generated title
+   */
+  public String generateAny(String subtitle, boolean modified) {
+    String	result;
+
+    result = AbstractApplicationFrame.insertHostnamePrefix(m_Title);
+
+    if (subtitle != null)
+      result += " [" + subtitle + "]";
 
     if (modified)
       result = "*" + result;
