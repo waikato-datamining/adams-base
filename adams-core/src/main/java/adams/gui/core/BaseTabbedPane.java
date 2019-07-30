@@ -26,12 +26,16 @@ import adams.gui.dialog.ApprovalDialog;
 import javax.swing.Icon;
 import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Enhanced JTabbedPane. Offers closing of tabs with middle mouse button.
@@ -112,6 +116,9 @@ public class BaseTabbedPane
   /** whether to skip tab undo. */
   protected boolean m_SkipTabUndo;
 
+  /** the listeners for tab changes. */
+  protected Set<ChangeListener> m_TabChangeListeners;
+
   /**
    * Creates an empty <code>TabbedPane</code> with a default
    * tab placement of <code>JTabbedPane.TOP</code>.
@@ -165,6 +172,7 @@ public class BaseTabbedPane
     m_MaxTitleLength                 = 30;
     m_MaxTabCloseUndo                = 0;
     m_TabUndoList                    = null;
+    m_TabChangeListeners             = new HashSet<>();
   }
 
   /**
@@ -370,6 +378,7 @@ public class BaseTabbedPane
     super.insertTab(title, icon, component, tip, index);
     if (m_ShowCloseTabButton)
       setTabComponentAt(index, new ButtonTabComponent(this));
+    notifyTabChangeListeners();
   }
 
   /**
@@ -535,6 +544,7 @@ public class BaseTabbedPane
   public void removeTabAt(int index) {
     addTabUndo(index);
     super.removeTabAt(index);
+    notifyTabChangeListeners();
   }
 
   /**
@@ -547,6 +557,7 @@ public class BaseTabbedPane
     super.removeAll();
     m_SkipTabUndo = false;
     getTabUndoList().clear();
+    notifyTabChangeListeners();
   }
 
   /**
@@ -702,5 +713,41 @@ public class BaseTabbedPane
     result.add(menuitem);
 
     return result;
+  }
+
+  /**
+   * Adds the listener for changes in tabs.
+   *
+   * @param l		the listener to add
+   */
+  public void addTabChangeListener(ChangeListener l) {
+    m_TabChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for changes in tabs.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeTabChangeListener(ChangeListener l) {
+    m_TabChangeListeners.remove(l);
+  }
+
+  /**
+   * Removes all tab change listeners.
+   */
+  public void clearTabChangeListeners() {
+    m_TabChangeListeners.clear();
+  }
+
+  /**
+   * Notifies all the tab change listeners
+   */
+  protected void notifyTabChangeListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_TabChangeListeners)
+      l.stateChanged(e);
   }
 }
