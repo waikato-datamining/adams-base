@@ -516,15 +516,17 @@ public class MultiPagePane
     m_ButtonRemoveAll.addActionListener((ActionEvent e) -> checkedRemoveAllPages());
     m_PanelListButtons.add(m_ButtonRemoveAll);
 
-    m_ButtonAction = new BaseSplitButton();
+    m_ButtonUndo = new BaseFlatButton(GUIHelper.getIcon("undo.gif"));
+    m_ButtonUndo.setToolTipText("Undo removal");
+    m_ButtonUndo.addActionListener((ActionEvent e) -> undoPageClose());
+    m_ButtonUndo.setVisible(false);
+    m_PanelListButtons.add(m_ButtonUndo);
+
+    m_ButtonAction = new BaseSplitButton("...");
     m_ButtonAction.setAlwaysDropdown(false);
     m_ButtonAction.setToolTipText("Additional actions");
     m_ButtonAction.setVisible(false);
     m_PanelListButtons.add(m_ButtonAction);
-
-    m_ButtonUndo = new BaseFlatButton(GUIHelper.getIcon("undo.gif"));
-    m_ButtonUndo.setToolTipText("Undo removal");
-    m_ButtonUndo.addActionListener((ActionEvent e) -> undoPageClose());
 
     m_PanelContent = new BasePanel(new BorderLayout());
     m_SplitPane.setRightComponent(m_PanelContent);
@@ -904,6 +906,9 @@ public class MultiPagePane
   protected boolean isPageClosingApproved(int[] indices) {
     boolean	result;
 
+    if (m_PageCloseApprover == null)
+        return true;
+
     result = true;
     for (int index: indices) {
       result = m_PageCloseApprover.approvePageClosing(this, index);
@@ -1220,7 +1225,7 @@ public class MultiPagePane
    *
    * @param action	the action to add
    */
-  protected void addAction(Action action) {
+  public void addAction(Action action) {
     if (m_ButtonAction.getAction() == null)
       m_ButtonAction.setAction(action);
     else
@@ -1233,7 +1238,7 @@ public class MultiPagePane
    *
    * @param action	the item to add
    */
-  protected void addAction(JMenuItem action) {
+  public void addAction(JMenuItem action) {
     m_ButtonAction.add(action);
     m_ButtonAction.setVisible(true);
   }
@@ -1426,9 +1431,7 @@ public class MultiPagePane
    */
   public void setMaxPageCloseUndo(int value) {
     m_MaxPageCloseUndo = value;
-    m_PanelListButtons.remove(m_ButtonUndo);
-    if (m_MaxPageCloseUndo > 0)
-      m_PanelListButtons.add(m_ButtonUndo);
+    m_ButtonUndo.setVisible(m_MaxPageCloseUndo > 0);
   }
 
   /**
