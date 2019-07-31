@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DetachablePanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -35,9 +35,8 @@ import java.awt.event.WindowEvent;
  * Ancestor for panels that can be detached in a frame and also reattached again.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public abstract class DetachablePanel
+public class DetachablePanel
   extends BasePanel
   implements PopupMenuProvider, CleanUpHandler {
 
@@ -115,7 +114,7 @@ public abstract class DetachablePanel
   /**
    * Detaches the content into a separate frame.
    */
-  protected void detach() {
+  public void detach() {
     if (isDetached())
       return;
 
@@ -145,7 +144,7 @@ public abstract class DetachablePanel
   /**
    * Reattaches the content from a separate frame.
    */
-  protected void reattach() {
+  public void reattach() {
     if (!isDetached())
       return;
     remove(m_PanelReattach);
