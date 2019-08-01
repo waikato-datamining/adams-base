@@ -1,0 +1,32 @@
+# Project: adams
+# Date: 2019-08-01 12:12:05
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-compress,adams-core
+#
+adams.flow.control.Flow -annotation "Demonstrates how to compress/decompress byte arrays:\\n- turns string into byte array\\n- compresses byte array (gzip)\\n- decompresses byte array (gunzip)\\n- turns byte array into string" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.source.StringConstants -string "The quick brown fox jumps over the lazy dog" -conversion adams.data.conversion.StringToString
+ adams.flow.control.Tee -name original
+  adams.flow.transformer.StringInsert -position first -value "original: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.transformer.Convert -conversion adams.data.conversion.StringToByteArray
+ adams.flow.control.Tee -name "original bytes"
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "original bytes: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.transformer.GZIP
+ adams.flow.control.Tee -name "compressed bytes"
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "compressed bytes: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.transformer.GUNZIP
+ adams.flow.control.Tee -name "decompressed bytes"
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "decompressed bytes: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.ByteArrayToString
+ adams.flow.control.Tee -name back
+  adams.flow.transformer.StringInsert -position first -value "decompressed: "
+  adams.flow.sink.CallableSink -callable Display

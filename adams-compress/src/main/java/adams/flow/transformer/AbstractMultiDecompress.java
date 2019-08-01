@@ -15,26 +15,26 @@
 
 /*
  * AbstractMultiDecompress.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-import java.util.List;
-
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 
+import java.io.File;
+import java.util.List;
+
 /**
  * Ancestor for compression schemes that manage archives with multiple files
  * (incl directory structure) like zip archives.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMultiDecompress
   extends AbstractTransformer {
@@ -65,24 +65,24 @@ public abstract class AbstractMultiDecompress
     super.defineOptions();
 
     m_OptionManager.add(
-	    "out-dir", "outputDir",
-	    new PlaceholderDirectory("."));
+      "out-dir", "outputDir",
+      new PlaceholderDirectory("."));
 
     m_OptionManager.add(
-	    "reg-exp", "regExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "reg-exp", "regExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "invert", "invertMatching",
-	    false);
+      "invert", "invertMatching",
+      false);
 
     m_OptionManager.add(
-	    "create-dirs", "createDirectories",
-	    false);
+      "create-dirs", "createDirectories",
+      false);
 
     m_OptionManager.add(
-	    "buffer", "bufferSize",
-	    1024);
+      "buffer", "bufferSize",
+      1024, 1, null);
   }
 
   /**
@@ -212,8 +212,10 @@ public abstract class AbstractMultiDecompress
    * @param value	the size in bytes
    */
   public void setBufferSize(int value) {
-    m_BufferSize = value;
-    reset();
+    if (getOptionManager().isValid("bufferSize", value)) {
+      m_BufferSize = value;
+      reset();
+    }
   }
 
   /**
@@ -275,10 +277,10 @@ public abstract class AbstractMultiDecompress
    * Decompresses the archive.
    *
    * @param inFile	the archive to decompress
-   * @param result	for storing any error output
+   * @param errors	for storing any error output
    * @return		the decompressed files (full paths)
    */
-  protected abstract List<File> decompress(File inFile, StringBuilder result);
+  protected abstract List<File> decompress(File inFile, MessageCollection errors);
 
   /**
    * Performs the actual transformation.
@@ -287,13 +289,11 @@ public abstract class AbstractMultiDecompress
    */
   @Override
   protected String doExecute() {
-    StringBuilder	result;
+    MessageCollection	errors;
     File		inFile;
     List<File>		output;
     String[]		files;
     int			i;
-
-    result = new StringBuilder();
 
     // get zip file
     inFile = null;
@@ -303,7 +303,8 @@ public abstract class AbstractMultiDecompress
       inFile = new PlaceholderFile((String) m_InputToken.getPayload());
 
     // unzip
-    output = decompress(inFile, result);
+    errors = new MessageCollection();
+    output = decompress(inFile, errors);
 
     if (output.size() > 0) {
       files = new String[output.size()];
@@ -312,9 +313,9 @@ public abstract class AbstractMultiDecompress
       m_OutputToken = new Token(files);
     }
 
-    if (result.length() == 0)
+    if (errors.isEmpty())
       return null;
     else
-      return result.toString();
+      return errors.toString();
   }
 }

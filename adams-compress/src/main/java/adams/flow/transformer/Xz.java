@@ -15,12 +15,14 @@
 
 /*
  * Xz.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import adams.core.io.XzUtils;
+import gnu.trove.list.TByteList;
 
 import java.io.File;
 
@@ -141,5 +143,27 @@ public class Xz
    */
   protected String compress(File inFile, File outFile) {
     return XzUtils.compress(inFile, m_BufferSize, outFile, m_RemoveInputFile);
+  }
+
+  /**
+   * Compresses the bytes.
+   *
+   * @param inBytes	the uncompressed bytes
+   * @param outBytes	the compressed bytes
+   * @return		null if successfully compressed, otherwise error message
+   */
+  protected String compress(byte[] inBytes, TByteList outBytes) {
+    byte[]	compressed;
+    MessageCollection errors;
+
+    errors     = new MessageCollection();
+    compressed = XzUtils.compress(inBytes);
+    if (compressed == null) {
+      return "Failed to compress!";
+    }
+    else {
+      outBytes.addAll(compressed);
+      return null;
+    }
   }
 }

@@ -15,23 +15,24 @@
 
 /*
  * AbstractSingleCompress.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
+import gnu.trove.list.TByteList;
+import gnu.trove.list.array.TByteArrayList;
+
+import java.io.File;
 
 /**
  * Ancestor for compression algorithms that only take a single file, like
  * gzip.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSingleCompress
   extends AbstractTransformer {
@@ -56,16 +57,16 @@ public abstract class AbstractSingleCompress
     super.defineOptions();
 
     m_OptionManager.add(
-	    "remove", "removeInputFile",
-	    false);
+      "remove", "removeInputFile",
+      false);
 
     m_OptionManager.add(
-	    "output", "output",
-	    new PlaceholderFile("."));
+      "output", "output",
+      new PlaceholderFile("."));
 
     m_OptionManager.add(
-	    "buffer", "bufferSize",
-	    1024);
+      "buffer", "bufferSize",
+      1024, 1, null);
   }
 
   /**
@@ -142,8 +143,10 @@ public abstract class AbstractSingleCompress
    * @param value	the size in bytes
    */
   public void setBufferSize(int value) {
-    m_BufferSize = value;
-    reset();
+    if (getOptionManager().isValid("bufferSize", value)) {
+      m_BufferSize = value;
+      reset();
+    }
   }
 
   /**
@@ -187,7 +190,7 @@ public abstract class AbstractSingleCompress
    * @return		the accepted input
    */
   public Class[] accepts() {
-    return new Class[]{String.class, File.class};
+    return new Class[]{String.class, File.class, byte[].class};
   }
 
   /**
@@ -196,7 +199,7 @@ public abstract class AbstractSingleCompress
    * @return		the generated output
    */
   public Class[] generates() {
-    return new Class[]{String.class};
+    return new Class[]{String.class, byte[].class};
   }
 
   /**
@@ -209,6 +212,15 @@ public abstract class AbstractSingleCompress
   protected abstract String compress(File inFile, File outFile);
 
   /**
+   * Compresses the bytes.
+   *
+   * @param inBytes	the uncompressed bytes
+   * @param outBytes	the compressed bytes
+   * @return		null if successfully compressed, otherwise error message
+   */
+  protected abstract String compress(byte[] inBytes, TByteList outBytes);
+
+  /**
    * Performs the actual transformation.
    *
    * @return		null if everything is fine, otherwise error message
@@ -217,28 +229,51 @@ public abstract class AbstractSingleCompress
   protected String doExecute() {
     String	result;
     File	inFile;
+    byte[]	inBytes;
     String	output;
     File	outFile;
+    TByteList	outBytes;
 
-    inFile = null;
-    if (m_InputToken.getPayload() instanceof File) {
-      inFile = (File) m_InputToken.getPayload();
+    result  = null;
+    inFile  = null;
+    inBytes = null;
+    if (m_InputToken.hasPayload(File.class)) {
+      inFile = m_InputToken.getPayload(File.class);
     }
-    else if (m_InputToken.getPayload() instanceof String) {
-      inFile = new PlaceholderFile((String) m_InputToken.getPayload());
+    else if (m_InputToken.hasPayload(String.class)) {
+      inFile = new PlaceholderFile(m_InputToken.getPayload(String.class));
+    }
+    else if (m_InputToken.hasPayload(byte[].class)) {
+      inBytes = m_InputToken.getPayload(byte[].class);
+    }
+    else {
+      result = m_InputToken.unhandledData();
     }
 
-    // determine output filename
-    if (m_Output.isDirectory())
-      output = inFile.getAbsolutePath() + getDefaultExtension();
-    else
-      output = m_Output.getAbsolutePath();
-    outFile = new File(output);
+    if (result == null) {
+      if (inFile != null) {
+	// determine output filename
+	if (m_Output.isDirectory())
+	  output = inFile.getAbsolutePath() + getDefaultExtension();
+	else
+	  output = m_Output.getAbsolutePath();
+	outFile = new File(output);
 
-    result = compress(inFile, outFile);
+	result = compress(inFile, outFile);
 
-    if (result == null)
-      m_OutputToken = new Token(output);
+	if (result == null)
+	  m_OutputToken = new Token(output);
+      }
+      else if (inBytes != null) {
+        outBytes = new TByteArrayList();
+        result   = compress(inBytes, outBytes);
+        if (result == null)
+          m_OutputToken = new Token(outBytes.toArray());
+      }
+      else {
+        result = "Neither file nor bytes for input?";
+      }
+    }
 
     return result;
   }

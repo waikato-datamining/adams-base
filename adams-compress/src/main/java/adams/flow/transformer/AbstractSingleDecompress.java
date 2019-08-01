@@ -15,7 +15,7 @@
 
 /*
  * AbstractSingleDecompress.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -25,6 +25,8 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
+import gnu.trove.list.TByteList;
+import gnu.trove.list.array.TByteArrayList;
 
 import java.io.File;
 
@@ -33,7 +35,6 @@ import java.io.File;
  * that consists of a single file, like gunzip.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSingleDecompress
   extends AbstractTransformer
@@ -65,20 +66,20 @@ public abstract class AbstractSingleDecompress
     super.defineOptions();
 
     m_OptionManager.add(
-	    "use-out-dir", "useAlternativeOutputDir",
-	    false);
+      "use-out-dir", "useAlternativeOutputDir",
+      false);
 
     m_OptionManager.add(
-	    "out-dir", "alternativeOutputDir",
-	    new PlaceholderDirectory("."));
+      "out-dir", "alternativeOutputDir",
+      new PlaceholderDirectory("."));
 
     m_OptionManager.add(
-	    "alt-filename", "alternativeFilename",
-	    "");
+      "alt-filename", "alternativeFilename",
+      "");
 
     m_OptionManager.add(
-	    "buffer", "bufferSize",
-	    1024);
+      "buffer", "bufferSize",
+      1024, 1, null);
   }
 
   /**
@@ -233,7 +234,7 @@ public abstract class AbstractSingleDecompress
    * @return		the accepted input
    */
   public Class[] accepts() {
-    return new Class[]{String.class, File.class};
+    return new Class[]{String.class, File.class, byte[].class};
   }
 
   /**
@@ -242,7 +243,7 @@ public abstract class AbstractSingleDecompress
    * @return		the generated output
    */
   public Class[] generates() {
-    return new Class[]{String.class};
+    return new Class[]{String.class, byte[].class};
   }
 
   /**
@@ -255,6 +256,15 @@ public abstract class AbstractSingleDecompress
   protected abstract String decompress(File inFile, File outFile);
 
   /**
+   * Decompresses the bytes.
+   *
+   * @param inBytes	the compressed bytes
+   * @param outBytes	the decompressed bytes
+   * @return		null if successful, otherwise error message
+   */
+  protected abstract String decompress(byte[] inBytes, TByteList outBytes);
+
+  /**
    * Performs the actual transformation.
    *
    * @return		null if everything is fine, otherwise error message
@@ -263,36 +273,57 @@ public abstract class AbstractSingleDecompress
   protected String doExecute() {
     String	result;
     File	inFile;
+    byte[]	inBytes;
     String	output;
     File	outFile;
+    TByteList	outBytes;
 
-    inFile = null;
-    if (m_InputToken.getPayload() instanceof File)
-      inFile = (File) m_InputToken.getPayload();
-    else if (m_InputToken.getPayload() instanceof String)
-      inFile = new PlaceholderFile((String) m_InputToken.getPayload());
-
-    // determine output filename
-    if (m_UseAlternativeOutputDir)
-      output = m_AlternativeOutputDir.getAbsolutePath();
+    result  = null;
+    inFile  = null;
+    inBytes = null;
+    if (m_InputToken.hasPayload(File.class))
+      inFile = m_InputToken.getPayload(File.class);
+    else if (m_InputToken.hasPayload(String.class))
+      inFile = new PlaceholderFile(m_InputToken.getPayload(String.class));
+    else if (m_InputToken.hasPayload(byte[].class))
+      inBytes = m_InputToken.getPayload(byte[].class);
     else
-      output = inFile.getParentFile().getAbsolutePath();
-    output += File.separator;
-    if (m_AlternativeFilename.length() > 0) {
-      output += m_AlternativeFilename;
-    }
-    else {
-      if (inFile.getName().endsWith(getDefaultExtension()))
-	output += inFile.getName().replaceAll("\\" + getDefaultExtension() + "$", "");
-      else
-	output += inFile.getName() + DUMMY_EXTENSION;
-    }
-    outFile = new File(output);
+      result = m_InputToken.unhandledData();
 
-    result = decompress(inFile, outFile);
+    if (result == null) {
+      if (inFile != null) {
+	// determine output filename
+	if (m_UseAlternativeOutputDir)
+	  output = m_AlternativeOutputDir.getAbsolutePath();
+	else
+	  output = inFile.getParentFile().getAbsolutePath();
+	output += File.separator;
+	if (m_AlternativeFilename.length() > 0) {
+	  output += m_AlternativeFilename;
+	}
+	else {
+	  if (inFile.getName().endsWith(getDefaultExtension()))
+	    output += inFile.getName().replaceAll("\\" + getDefaultExtension() + "$", "");
+	  else
+	    output += inFile.getName() + DUMMY_EXTENSION;
+	}
+	outFile = new File(output);
 
-    if (result == null)
-      m_OutputToken = new Token(output);
+	result = decompress(inFile, outFile);
+
+	if (result == null)
+	  m_OutputToken = new Token(output);
+      }
+      else if (inBytes != null) {
+        outBytes = new TByteArrayList();
+        result   = decompress(inBytes, outBytes);
+        if (result == null)
+          m_OutputToken = new Token(outBytes.toArray());
+      }
+      else {
+        result = "Neither file nor bytes for input?";
+      }
+    }
 
     return result;
   }

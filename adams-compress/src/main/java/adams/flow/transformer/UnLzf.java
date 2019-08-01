@@ -15,14 +15,16 @@
 
 /*
  * UnLzf.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
+import adams.core.MessageCollection;
 import adams.core.io.LzfUtils;
+import gnu.trove.list.TByteList;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -99,7 +101,6 @@ import adams.core.io.LzfUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class UnLzf
   extends AbstractSingleDecompress {
@@ -167,5 +168,27 @@ public class UnLzf
    */
   protected String decompress(File inFile, File outFile) {
     return LzfUtils.decompress(inFile, m_BufferSize, outFile);
+  }
+
+  /**
+   * Decompresses the bytes.
+   *
+   * @param inBytes	the compressed bytes
+   * @param outBytes	the decompressed bytes
+   * @return		null if successful, otherwise error message
+   */
+  protected String decompress(byte[] inBytes, TByteList outBytes) {
+    byte[]	decompressed;
+    MessageCollection errors;
+
+    errors       = new MessageCollection();
+    decompressed = LzfUtils.decompress(inBytes, m_BufferSize, errors);
+    if (decompressed == null) {
+      return (errors.isEmpty() ? "Failed to compress!" : errors.toString());
+    }
+    else {
+      outBytes.addAll(decompressed);
+      return null;
+    }
   }
 }

@@ -15,14 +15,16 @@
 
 /*
  * GUNZIP.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
+import adams.core.MessageCollection;
 import adams.core.io.GzipUtils;
+import gnu.trove.list.TByteList;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -88,7 +90,6 @@ import adams.core.io.GzipUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GUNZIP
   extends AbstractSingleDecompress {
@@ -154,5 +155,27 @@ public class GUNZIP
    */
   protected String decompress(File inFile, File outFile) {
     return GzipUtils.decompress(inFile, m_BufferSize, outFile);
+  }
+
+  /**
+   * Decompresses the bytes.
+   *
+   * @param inBytes	the compressed bytes
+   * @param outBytes	the decompressed bytes
+   * @return		null if successful, otherwise error message
+   */
+  protected String decompress(byte[] inBytes, TByteList outBytes) {
+    byte[]	decompressed;
+    MessageCollection errors;
+
+    errors       = new MessageCollection();
+    decompressed = GzipUtils.decompress(inBytes, m_BufferSize, errors);
+    if (decompressed == null) {
+      return (errors.isEmpty() ? "Failed to compress!" : errors.toString());
+    }
+    else {
+      outBytes.addAll(decompressed);
+      return null;
+    }
   }
 }

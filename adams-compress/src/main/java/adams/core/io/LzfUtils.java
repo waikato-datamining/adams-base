@@ -13,33 +13,41 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LzfUtils.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
+import adams.core.MessageCollection;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import com.ning.compress.lzf.LZFInputStream;
 import com.ning.compress.lzf.LZFOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
 
 /**
  * Helper class for LZF related operations.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LzfUtils {
 
   /** the default extension. */
   public final static String EXTENSION = ".lzf";
+
+  /** for logging errors. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(LzfUtils.class);
 
   /**
    * Decompresses the specified lzma archive to a file without the ".lzf"
@@ -89,8 +97,7 @@ public class LzfUtils {
     }
     catch (Exception e) {
       msg = "Failed to decompress '" + archiveFile + "': ";
-      System.err.println(msg);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, msg, e);
       result = msg + e;
     }
     finally {
@@ -178,8 +185,7 @@ public class LzfUtils {
     }
     catch (Exception e) {
       msg = "Failed to compress '" + inputFile + "': ";
-      System.err.println(msg);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, msg, e);
       result = msg + e;
     }
     finally {
@@ -191,4 +197,94 @@ public class LzfUtils {
 
     return result;
   }
+
+  /**
+   * Compresses the specified bytes using lzf.
+   *
+   * @param input	the bytes to compress
+   * @return		the compressed bytes, null in case of error
+   */
+  public static byte[] compress(byte[] input) {
+    return compress(input, new MessageCollection());
+  }
+
+  /**
+   * Compresses the specified bytes using lzf.
+   *
+   * @param input	the bytes to compress
+   * @return		the compressed bytes, null in case of error
+   */
+  public static byte[] compress(byte[] input, MessageCollection errors) {
+    ByteArrayInputStream 	bis;
+    ByteArrayOutputStream 	bos;
+    LZFOutputStream 		cos;
+    String			msg;
+
+    bis = null;
+    bos = null;
+    cos = null;
+    try {
+      bis = new ByteArrayInputStream(input);
+      bos = new ByteArrayOutputStream();
+      cos = new LZFOutputStream(bos);
+      IOUtils.copy(bis, cos);
+      FileUtils.closeQuietly(cos);
+      return bos.toByteArray();
+    }
+    catch (Exception e) {
+      msg = "Failed to compress bytes!";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
+      return null;
+    }
+    finally {
+      FileUtils.closeQuietly(cos);
+      FileUtils.closeQuietly(bos);
+      FileUtils.closeQuietly(bis);
+    }
+  }
+
+  /**
+   * Decompresses the specified lzf compressed bytes.
+   *
+   * @param input	the compressed bytes
+   * @param buffer	the buffer size to use
+   * @return		the decompressed bytes, null in case of error
+   */
+  public static byte[] decompress(byte[] input, int buffer) {
+    return decompress(input, buffer, new MessageCollection());
+  }
+
+  /**
+   * Decompresses the specified lzf compressed bytes.
+   *
+   * @param input	the compressed bytes
+   * @param buffer	the buffer size to use
+   * @param errors 	for collecting errors
+   * @return		the decompressed bytes, null in case of error
+   */
+  public static byte[] decompress(byte[] input, int buffer, MessageCollection errors) {
+    LZFInputStream 		cis;
+    ByteArrayOutputStream	bos;
+    String			msg;
+
+    cis = null;
+    bos = null;
+    try {
+      cis = new LZFInputStream(new ByteArrayInputStream(input));
+      bos = new ByteArrayOutputStream();
+      IOUtils.copy(cis, bos, buffer);
+      return bos.toByteArray();
+    }
+    catch (Exception e) {
+      msg = "Failed to decompress bytes!";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
+      return null;
+    }
+     finally {
+      FileUtils.closeQuietly(cis);
+      FileUtils.closeQuietly(bos);
+    }
+ }
 }

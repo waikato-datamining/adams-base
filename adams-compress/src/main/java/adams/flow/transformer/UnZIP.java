@@ -15,15 +15,16 @@
 
 /*
  * UnZIP.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
+import adams.core.io.ZipUtils;
+
 import java.io.File;
 import java.util.List;
-
-import adams.core.io.ZipUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -90,7 +91,6 @@ import adams.core.io.ZipUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class UnZIP
   extends AbstractMultiDecompress {
@@ -116,13 +116,13 @@ public class UnZIP
    * Decompresses the archive.
    *
    * @param inFile	the archive to decompress
-   * @param result	for storing any error output
+   * @param errors	for storing any error output
    * @return		the decompressed files (full paths)
    */
   @Override
-  protected List<File> decompress(File inFile, StringBuilder result) {
+  protected List<File> decompress(File inFile, MessageCollection errors) {
     return ZipUtils.decompress(
 	inFile, m_OutputDir, m_CreateDirectories,
-	m_RegExp, m_InvertMatching, m_BufferSize, result);
+	m_RegExp, m_InvertMatching, m_BufferSize, errors);
   }
 }

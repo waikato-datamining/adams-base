@@ -42,7 +42,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2018} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2019} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -68,6 +68,8 @@ In general, there are two different kinds of actors:
 \end{tight_itemize}
 The latter only work on a single file, like for instance gzip. ZIP, on the
 other hand, works with multiple files.
+The single-file algorithms can compress/decompress byte arrays in addition
+to files.
 
 The following chapters cover the actors for compression and decompression in 
 more detail.
@@ -76,7 +78,7 @@ more detail.
 \chapter{Compression}
 In order to compress one or more files, you can use the following transformers:
 \begin{tight_itemize}
-	\item \textbf{single files}
+	\item \textbf{single files/byte arrays}
 	\begin{tight_itemize}
 		\item Bzip2 (see \cite{bzip2})
 		\item GZIP (see \cite{gzip})
@@ -101,6 +103,10 @@ you can also remove the original file. This is useful if you simply want
 to save disk-space and compress all files in a directory, but don't need
 the original files anymore.
 
+\heading{Byte array}
+Byte arrays can be compressed using these transformers as
+well, generating a compressed byte array.\footnote{adams-compress-byte\_array\_handling.flow}
+
 \heading{Multiple files}
 Transformers that manage archives instead of only compressing single files,
 you need to supply them with an array of file names that should get added
@@ -116,7 +122,7 @@ archive. In order to strip the complete path from the names, simply use
 In order to decompress a compressed file or extract one more files from a
 multi-file archive, you have the following transformers available:
 \begin{tight_itemize}
-	\item \textbf{single file archives}
+	\item \textbf{single file archives/compressed byte arrays}
 	\begin{tight_itemize}
 		\item UnBzip2 (see \cite{bzip2})
 		\item UnGZIP (see \cite{gzip})
@@ -138,6 +144,10 @@ When using transformers for decompressing the content of a single file archive,
 you can choose whether you would like to extract the content to a different 
 directory and even whether to use a different file name (by default, the file name
 is the one with the compression's suffix).\footnote{adams-compress-decompress\_gzipped\_file.flow}
+
+\heading{Compressed byte array}
+Compressed byte arrays can be decompressed using these transformers as
+well, restoring the original byte array.\footnote{adams-compress-byte\_array\_handling.flow}
 
 \heading{Multi-file archives}
 By default, all files from a multi-file archive get extracted. If you only 

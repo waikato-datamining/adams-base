@@ -15,15 +15,16 @@
 
 /*
  * UnTar.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
+import adams.core.io.TarUtils;
+
 import java.io.File;
 import java.util.List;
-
-import adams.core.io.TarUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -125,13 +126,13 @@ public class UnTar
    * Decompresses the archive.
    *
    * @param inFile	the archive to decompress
-   * @param result	for storing any error output
+   * @param errors	for storing any error output
    * @return		the decompressed files (full paths)
    */
   @Override
-  protected List<File> decompress(File inFile, StringBuilder result) {
+  protected List<File> decompress(File inFile, MessageCollection errors) {
     return TarUtils.decompress(
 	inFile, m_OutputDir, m_CreateDirectories,
-	m_RegExp, m_InvertMatching, m_BufferSize, result);
+	m_RegExp, m_InvertMatching, m_BufferSize, errors);
   }
 }

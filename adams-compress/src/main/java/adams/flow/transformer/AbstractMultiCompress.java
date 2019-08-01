@@ -15,24 +15,23 @@
 
 /*
  * AbstractMultiCompress.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.io.File;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 
+import java.io.File;
+
 /**
  * Abstract ancestor for compression algorithms that allow the compression
  * of multiple files (incl directory structure).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMultiCompress
   extends AbstractTransformer {
@@ -57,16 +56,16 @@ public abstract class AbstractMultiCompress
     super.defineOptions();
 
     m_OptionManager.add(
-	    "output", "output",
-	    new PlaceholderFile("."));
+      "output", "output",
+      new PlaceholderFile("."));
 
     m_OptionManager.add(
-	    "strip-path", "stripPath",
-	    "");
+      "strip-path", "stripPath",
+      "");
 
     m_OptionManager.add(
-	    "buffer", "bufferSize",
-	    1024);
+      "buffer", "bufferSize",
+      1024, 1, null);
   }
 
   /**
@@ -131,8 +130,10 @@ public abstract class AbstractMultiCompress
    * @param value	the size in bytes
    */
   public void setBufferSize(int value) {
-    m_BufferSize = value;
-    reset();
+    if (getOptionManager().isValid("bufferSize", value)) {
+      m_BufferSize = value;
+      reset();
+    }
   }
 
   /**

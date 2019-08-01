@@ -21,8 +21,11 @@
 package adams.core.io;
 
 import adams.core.License;
+import adams.core.MessageCollection;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BaseRegExp;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -38,6 +41,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * A helper class for Tar-file related tasks.
@@ -45,6 +49,9 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class TarUtils {
+
+  /** for logging errors. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(TarUtils.class);
 
   /**
    * The type of compression to use.
@@ -242,8 +249,7 @@ public class TarUtils {
     }
     catch (Exception e) {
       msg = "Failed to generate archive '" + output + "': ";
-      System.err.println(msg);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, msg, e);
       result = msg + e;
     }
     finally {
@@ -311,7 +317,7 @@ public class TarUtils {
    * @return		the successfully extracted files
    */
   public static List<File> decompress(File input, File outputDir, boolean createDirs, BaseRegExp match, boolean invertMatch, int bufferSize) {
-    return decompress(input, outputDir, createDirs, match, invertMatch, bufferSize, new StringBuilder());
+    return decompress(input, outputDir, createDirs, match, invertMatch, bufferSize, new MessageCollection());
   }
 
   /**
@@ -328,7 +334,7 @@ public class TarUtils {
    * @param errors	for storing potential errors
    * @return		the successfully extracted files
    */
-  public static List<File> decompress(File input, File outputDir, boolean createDirs, BaseRegExp match, boolean invertMatch, int bufferSize, StringBuilder errors) {
+  public static List<File> decompress(File input, File outputDir, boolean createDirs, BaseRegExp match, boolean invertMatch, int bufferSize, MessageCollection errors) {
     List<File>			result;
     FileInputStream		fis;
     TarArchiveInputStream	archive;
@@ -339,7 +345,7 @@ public class TarUtils {
     BufferedOutputStream	out;
     FileOutputStream		fos;
     int				len;
-    String			error;
+    String			msg;
     long			size;
     long			read;
 
@@ -368,9 +374,9 @@ public class TarUtils {
 	if (entry.isDirectory() && createDirs) {
 	  outFile = new File(outputDir.getAbsolutePath() + File.separator + entry.getName());
 	  if (!outFile.mkdirs()) {
-	    error = "Failed to create directory '" + outFile.getAbsolutePath() + "'!";
-	    System.err.println(error);
-	    errors.append(error + "\n");
+	    msg = "Failed to create directory '" + outFile.getAbsolutePath() + "'!";
+	    LOGGER.log(Level.SEVERE, msg);
+	    errors.add(msg);
 	  }
 	}
 	else {
@@ -388,11 +394,11 @@ public class TarUtils {
 	    outFile = new File(outName).getParentFile();
 	    if (!outFile.exists()) {
 	      if (!outFile.mkdirs()) {
-		error =
+		msg =
 		    "Failed to create directory '" + outFile.getAbsolutePath() + "', "
 		    + "skipping extraction of '" + outName + "'!";
-		System.err.println(error);
-		errors.append(error + "\n");
+		LOGGER.log(Level.SEVERE, msg);
+		errors.add(msg);
 		continue;
 	      }
 	    }
@@ -410,9 +416,9 @@ public class TarUtils {
 	    result.add(new File(outName));
 	  }
 	  catch (Exception e) {
-	    error = "Error extracting '" + entry.getName() + "' to '" + outName + "': " + e;
-	    System.err.println(error);
-	    errors.append(error + "\n");
+	    msg = "Error extracting '" + entry.getName() + "' to '" + outName + "': ";
+	    LOGGER.log(Level.SEVERE, msg, e);
+	    errors.add(msg, e);
 	  }
 	  finally {
 	    FileUtils.closeQuietly(out);
@@ -422,8 +428,9 @@ public class TarUtils {
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
-      errors.append("Error occurred: " + e + "\n");
+      msg = "Error occurred: ";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
     }
     finally {
       FileUtils.closeQuietly(fis);
@@ -464,7 +471,7 @@ public class TarUtils {
    * @return		whether file was successfully extracted
    */
   public static boolean decompress(File input, String archiveFile, File output, boolean createDirs) {
-    return decompress(input, archiveFile, output, createDirs, 1024, new StringBuilder());
+    return decompress(input, archiveFile, output, createDirs, 1024, new MessageCollection());
   }
 
   /**
@@ -479,7 +486,7 @@ public class TarUtils {
    * @param errors	for storing potential errors
    * @return		whether file was successfully extracted
    */
-  public static boolean decompress(File input, String archiveFile, File output, boolean createDirs, int bufferSize, StringBuilder errors) {
+  public static boolean decompress(File input, String archiveFile, File output, boolean createDirs, int bufferSize, MessageCollection errors) {
     boolean			result;
     FileInputStream		fis;
     TarArchiveInputStream	archive;
@@ -490,7 +497,7 @@ public class TarUtils {
     FileOutputStream		fos;
     BufferedOutputStream	out;
     int				len;
-    String			error;
+    String			msg;
     long			size;
     long			read;
 
@@ -519,20 +526,20 @@ public class TarUtils {
 	  outFile = new File(outName).getParentFile();
 	  if (!outFile.exists()) {
 	    if (!createDirs) {
-		error =
-		  "Output directory '" + outFile.getAbsolutePath() + " does not exist', "
+	      msg =
+		"Output directory '" + outFile.getAbsolutePath() + " does not exist', "
 		  + "skipping extraction of '" + outName + "'!";
-		System.err.println(error);
-		errors.append(error + "\n");
-		break;
+	      LOGGER.log(Level.SEVERE, msg);
+	      errors.add(msg);
+	      break;
 	    }
 	    else {
 	      if (!outFile.mkdirs()) {
-		error =
+		msg =
 		  "Failed to create directory '" + outFile.getAbsolutePath() + "', "
 		  + "skipping extraction of '" + outName + "'!";
-		System.err.println(error);
-		errors.append(error + "\n");
+		LOGGER.log(Level.SEVERE, msg);
+		errors.add(msg);
 		break;
 	      }
 	    }
@@ -554,9 +561,9 @@ public class TarUtils {
 	}
 	catch (Exception e) {
 	  result = false;
-	  error  = "Error extracting '" + entry.getName() + "' to '" + outName + "': " + e;
-	  System.err.println(error);
-	  errors.append(error + "\n");
+	  msg = "Error extracting '" + entry.getName() + "' to '" + outName + "': ";
+	  LOGGER.log(Level.SEVERE, msg, e);
+	  errors.add(msg, e);
 	}
 	finally {
 	  FileUtils.closeQuietly(out);
@@ -566,8 +573,9 @@ public class TarUtils {
     }
     catch (Exception e) {
       result = false;
-      e.printStackTrace();
-      errors.append("Error occurred: " + e + "\n");
+      msg = "Error occurred: ";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
     }
     finally {
       FileUtils.closeQuietly(fis);
@@ -624,7 +632,7 @@ public class TarUtils {
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Error occurred: ", e);
     }
     finally {
       FileUtils.closeQuietly(fis);

@@ -15,19 +15,26 @@
 
 /*
  * XzUtils.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
+import adams.core.MessageCollection;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
+import org.apache.commons.compress.utils.IOUtils;
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZInputStream;
 import org.tukaani.xz.XZOutputStream;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.logging.Level;
 
 /**
  * Helper class for xz related operations.
@@ -38,6 +45,9 @@ public class XzUtils {
 
   /** the default extension. */
   public final static String EXTENSION = ".xz";
+
+  /** for logging errors. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(XzUtils.class);
 
   /**
    * Decompresses the specified archive to a file without the ".xz"
@@ -89,8 +99,7 @@ public class XzUtils {
     }
     catch (Exception e) {
       msg = "Failed to decompress '" + archiveFile + "': ";
-      System.err.println(msg);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, msg, e);
       result = msg + e;
     }
     finally {
@@ -183,8 +192,7 @@ public class XzUtils {
     }
     catch (Exception e) {
       msg = "Failed to compress '" + inputFile + "': ";
-      System.err.println(msg);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, msg, e);
       result = msg + e;
     }
     finally {
@@ -195,5 +203,95 @@ public class XzUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Compresses the specified bytes using xz.
+   *
+   * @param input	the bytes to compress
+   * @return		the compressed bytes, null in case of error
+   */
+  public static byte[] compress(byte[] input) {
+    return compress(input, new MessageCollection());
+  }
+
+  /**
+   * Compresses the specified bytes using xz.
+   *
+   * @param input	the bytes to compress
+   * @return		the compressed bytes, null in case of error
+   */
+  public static byte[] compress(byte[] input, MessageCollection errors) {
+    ByteArrayInputStream 	bis;
+    ByteArrayOutputStream 	bos;
+    XZOutputStream 		cos;
+    String			msg;
+
+    bis = null;
+    bos = null;
+    cos = null;
+    try {
+      bis = new ByteArrayInputStream(input);
+      bos = new ByteArrayOutputStream();
+      cos = new XZOutputStream(bos, new LZMA2Options());
+      IOUtils.copy(bis, cos);
+      FileUtils.closeQuietly(cos);
+      return bos.toByteArray();
+    }
+    catch (Exception e) {
+      msg = "Failed to compress bytes!";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
+      return null;
+    }
+    finally {
+      FileUtils.closeQuietly(cos);
+      FileUtils.closeQuietly(bos);
+      FileUtils.closeQuietly(bis);
+    }
+  }
+
+  /**
+   * Decompresses the specified xz compressed bytes.
+   *
+   * @param input	the compressed bytes
+   * @param buffer	the buffer size to use
+   * @return		the decompressed bytes, null in case of error
+   */
+  public static byte[] decompress(byte[] input, int buffer) {
+    return decompress(input, buffer, new MessageCollection());
+  }
+
+  /**
+   * Decompresses the specified xz compressed bytes.
+   *
+   * @param input	the compressed bytes
+   * @param buffer	the buffer size to use
+   * @param errors 	for collecting errors
+   * @return		the decompressed bytes, null in case of error
+   */
+  public static byte[] decompress(byte[] input, int buffer, MessageCollection errors) {
+    XZInputStream 		cis;
+    ByteArrayOutputStream	bos;
+    String			msg;
+
+    cis = null;
+    bos = null;
+    try {
+      cis = new XZInputStream(new ByteArrayInputStream(input));
+      bos = new ByteArrayOutputStream();
+      IOUtils.copy(cis, bos, buffer);
+      return bos.toByteArray();
+    }
+    catch (Exception e) {
+      msg = "Failed to decompress bytes!";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
+      return null;
+    }
+    finally {
+      FileUtils.closeQuietly(cis);
+      FileUtils.closeQuietly(bos);
+    }
   }
 }

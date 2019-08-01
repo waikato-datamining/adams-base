@@ -15,14 +15,17 @@
 
 /**
  * ZipUtils.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache compress commons
  */
 package adams.core.io;
 
 import adams.core.License;
+import adams.core.MessageCollection;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BaseRegExp;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
@@ -35,14 +38,17 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * A helper class for ZIP-file related tasks.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ZipUtils {
+
+  /** for logging errors. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(ZipUtils.class);
 
   /**
    * Creates a zip file from the specified files.
@@ -143,8 +149,7 @@ public class ZipUtils {
     }
     catch (Exception e) {
       msg = "Failed to generate archive '" + output + "': ";
-      System.err.println(msg);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, msg, e);
       result = msg + e;
     }
     finally {
@@ -212,7 +217,7 @@ public class ZipUtils {
    * @return		the successfully extracted files
    */
   public static List<File> decompress(File input, File outputDir, boolean createDirs, BaseRegExp match, boolean invertMatch, int bufferSize) {
-    return decompress(input, outputDir, createDirs, match, invertMatch, bufferSize, new StringBuilder());
+    return decompress(input, outputDir, createDirs, match, invertMatch, bufferSize, new MessageCollection());
   }
 
   /**
@@ -234,7 +239,7 @@ public class ZipUtils {
       license = License.APACHE2,
       url = "http://commons.apache.org/compress/examples.html"
   )
-  public static List<File> decompress(File input, File outputDir, boolean createDirs, BaseRegExp match, boolean invertMatch, int bufferSize, StringBuilder errors) {
+  public static List<File> decompress(File input, File outputDir, boolean createDirs, BaseRegExp match, boolean invertMatch, int bufferSize, MessageCollection errors) {
     List<File>			result;
     ZipFile				archive;
     Enumeration<ZipArchiveEntry>	enm;
@@ -246,7 +251,7 @@ public class ZipUtils {
     BufferedOutputStream		out;
     FileOutputStream			fos;
     int					len;
-    String				error;
+    String				msg;
     long				read;
 
     result  = new ArrayList<>();
@@ -274,9 +279,9 @@ public class ZipUtils {
 	if (entry.isDirectory() && createDirs) {
 	  outFile = new File(outputDir.getAbsolutePath() + File.separator + entry.getName());
 	  if (!outFile.mkdirs()) {
-	    error = "Failed to create directory '" + outFile.getAbsolutePath() + "'!";
-	    System.err.println(error);
-	    errors.append(error + "\n");
+	    msg = "Failed to create directory '" + outFile.getAbsolutePath() + "'!";
+	    LOGGER.log(Level.SEVERE, msg);
+	    errors.add(msg);
 	  }
 	}
 	else {
@@ -296,11 +301,11 @@ public class ZipUtils {
 	    outFile = new File(outName).getParentFile();
 	    if (!outFile.exists()) {
 	      if (!outFile.mkdirs()) {
-		error =
+		msg =
 		    "Failed to create directory '" + outFile.getAbsolutePath() + "', "
 		    + "skipping extraction of '" + outName + "'!";
-		System.err.println(error);
-		errors.append(error + "\n");
+		LOGGER.log(Level.SEVERE, msg);
+		errors.add(msg);
 		continue;
 	      }
 	    }
@@ -318,9 +323,9 @@ public class ZipUtils {
 	    result.add(new File(outName));
 	  }
 	  catch (Exception e) {
-	    error = "Error extracting '" + entry.getName() + "' to '" + outName + "': " + e;
-	    System.err.println(error);
-	    errors.append(error + "\n");
+	    msg = "Error extracting '" + entry.getName() + "' to '" + outName + "': ";
+	    LOGGER.log(Level.SEVERE, msg, e);
+	    errors.add(msg, e);
 	  }
 	  finally {
 	    FileUtils.closeQuietly(in);
@@ -331,8 +336,9 @@ public class ZipUtils {
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
-      errors.append("Error occurred: " + e + "\n");
+      msg = "Error occurred: ";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
     }
     finally {
       if (archive != null) {
@@ -372,7 +378,7 @@ public class ZipUtils {
    * @return		whether file was successfully extracted
    */
   public static boolean decompress(File input, String archiveFile, File output, boolean createDirs) {
-    return decompress(input, archiveFile, output, createDirs, 1024, new StringBuilder());
+    return decompress(input, archiveFile, output, createDirs, 1024, new MessageCollection());
   }
 
   /**
@@ -387,7 +393,7 @@ public class ZipUtils {
    * @param errors	for storing potential errors
    * @return		whether file was successfully extracted
    */
-  public static boolean decompress(File input, String archiveFile, File output, boolean createDirs, int bufferSize, StringBuilder errors) {
+  public static boolean decompress(File input, String archiveFile, File output, boolean createDirs, int bufferSize, MessageCollection errors) {
     boolean				result;
     ZipFile				zipfile;
     Enumeration<ZipArchiveEntry>	enm;
@@ -399,7 +405,7 @@ public class ZipUtils {
     BufferedOutputStream		out;
     FileOutputStream			fos;
     int					len;
-    String				error;
+    String				msg;
     long				read;
 
     result  = false;
@@ -429,20 +435,20 @@ public class ZipUtils {
 	  outFile = new File(outName).getParentFile();
 	  if (!outFile.exists()) {
 	    if (!createDirs) {
-		error =
-		  "Output directory '" + outFile.getAbsolutePath() + " does not exist', "
+	      msg =
+		"Output directory '" + outFile.getAbsolutePath() + " does not exist', "
 		  + "skipping extraction of '" + outName + "'!";
-		System.err.println(error);
-		errors.append(error + "\n");
-		break;
+	      LOGGER.log(Level.SEVERE, msg);
+	      errors.add(msg);
+	      break;
 	    }
 	    else {
 	      if (!outFile.mkdirs()) {
-		error =
+		msg =
 		  "Failed to create directory '" + outFile.getAbsolutePath() + "', "
 		  + "skipping extraction of '" + outName + "'!";
-		System.err.println(error);
-		errors.append(error + "\n");
+		LOGGER.log(Level.SEVERE, msg);
+		errors.add(msg);
 		break;
 	      }
 	    }
@@ -464,9 +470,9 @@ public class ZipUtils {
 	}
 	catch (Exception e) {
 	  result = false;
-	  error  = "Error extracting '" + entry.getName() + "' to '" + outName + "': " + e;
-	  System.err.println(error);
-	  errors.append(error + "\n");
+	  msg = "Error extracting '" + entry.getName() + "' to '" + outName + "': ";
+	  LOGGER.log(Level.SEVERE, msg, e);
+	  errors.add(msg, e);
 	}
 	finally {
 	  FileUtils.closeQuietly(in);
@@ -477,8 +483,9 @@ public class ZipUtils {
     }
     catch (Exception e) {
       result = false;
-      e.printStackTrace();
-      errors.append("Error occurred: " + e + "\n");
+      msg = "Error occurred: ";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
     }
     finally {
       if (zipfile != null) {
@@ -512,7 +519,7 @@ public class ZipUtils {
    * @return		the stored files
    */
   public static List<File> listFiles(File input, boolean listDirs) {
-    List<File>			result;
+    List<File>				result;
     ZipFile				zipfile;
     Enumeration<ZipArchiveEntry>	enm;
     ZipArchiveEntry			entry;
@@ -536,7 +543,7 @@ public class ZipUtils {
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Error occurred: ", e);
     }
     finally {
       if (zipfile != null) {

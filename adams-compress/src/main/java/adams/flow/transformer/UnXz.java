@@ -15,12 +15,14 @@
 
 /*
  * UnXz.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import adams.core.io.XzUtils;
+import gnu.trove.list.TByteList;
 
 import java.io.File;
 
@@ -161,5 +163,27 @@ public class UnXz
    */
   protected String decompress(File inFile, File outFile) {
     return XzUtils.decompress(inFile, m_BufferSize, outFile);
+  }
+
+  /**
+   * Decompresses the bytes.
+   *
+   * @param inBytes	the compressed bytes
+   * @param outBytes	the decompressed bytes
+   * @return		null if successful, otherwise error message
+   */
+  protected String decompress(byte[] inBytes, TByteList outBytes) {
+    byte[]	decompressed;
+    MessageCollection errors;
+
+    errors       = new MessageCollection();
+    decompressed = XzUtils.decompress(inBytes, m_BufferSize, errors);
+    if (decompressed == null) {
+      return (errors.isEmpty() ? "Failed to compress!" : errors.toString());
+    }
+    else {
+      outBytes.addAll(decompressed);
+      return null;
+    }
   }
 }

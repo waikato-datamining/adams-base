@@ -15,14 +15,16 @@
 
 /*
  * Lzma.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
+import adams.core.MessageCollection;
 import adams.core.io.LzmaUtils;
+import gnu.trove.list.TByteList;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -90,7 +92,6 @@ import adams.core.io.LzmaUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Lzma
   extends AbstractSingleCompress {
@@ -142,5 +143,27 @@ public class Lzma
    */
   protected String compress(File inFile, File outFile) {
     return LzmaUtils.compress(inFile, m_BufferSize, outFile, m_RemoveInputFile);
+  }
+
+  /**
+   * Compresses the bytes.
+   *
+   * @param inBytes	the uncompressed bytes
+   * @param outBytes	the compressed bytes
+   * @return		null if successfully compressed, otherwise error message
+   */
+  protected String compress(byte[] inBytes, TByteList outBytes) {
+    byte[]	compressed;
+    MessageCollection errors;
+
+    errors     = new MessageCollection();
+    compressed = LzmaUtils.compress(inBytes, errors);
+    if (compressed == null) {
+      return (errors.isEmpty() ? "Failed to compress!" : errors.toString());
+    }
+    else {
+      outBytes.addAll(compressed);
+      return null;
+    }
   }
 }

@@ -15,18 +15,25 @@
 
 /*
  * ZstdUtils.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
+import adams.core.MessageCollection;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import com.github.luben.zstd.ZstdInputStream;
 import com.github.luben.zstd.ZstdOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.logging.Level;
 
 /**
  * Helper class for zstd related operations.
@@ -37,6 +44,9 @@ public class ZstdUtils {
 
   /** the default extension. */
   public final static String EXTENSION = ".zst";
+
+  /** for logging errors. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(ZstdUtils.class);
 
   /**
    * Decompresses the specified archive to a file without the ".zst"
@@ -88,8 +98,7 @@ public class ZstdUtils {
     }
     catch (Exception e) {
       msg = "Failed to decompress '" + archiveFile + "': ";
-      System.err.println(msg);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, msg, e);
       result = msg + e;
     }
     finally {
@@ -154,7 +163,7 @@ public class ZstdUtils {
       if (outputFile.exists())
 	System.err.println("WARNING: overwriting '" + outputFile + "'!");
 
-      // create GZIP file
+      // create zstd file
       buf = new byte[buffer];
       fos = new FileOutputStream(outputFile);
       out = new ZstdOutputStream(fos);
@@ -182,8 +191,7 @@ public class ZstdUtils {
     }
     catch (Exception e) {
       msg = "Failed to compress '" + inputFile + "': ";
-      System.err.println(msg);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, msg, e);
       result = msg + e;
     }
     finally {
@@ -194,5 +202,95 @@ public class ZstdUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Compresses the specified bytes using zstd.
+   *
+   * @param input	the bytes to compress
+   * @return		the compressed bytes, null in case of error
+   */
+  public static byte[] compress(byte[] input) {
+    return compress(input, new MessageCollection());
+  }
+
+  /**
+   * Compresses the specified bytes using zstd.
+   *
+   * @param input	the bytes to compress
+   * @return		the compressed bytes, null in case of error
+   */
+  public static byte[] compress(byte[] input, MessageCollection errors) {
+    ByteArrayInputStream 	bis;
+    ByteArrayOutputStream 	bos;
+    ZstdOutputStream 		cos;
+    String			msg;
+
+    bis = null;
+    bos = null;
+    cos = null;
+    try {
+      bis = new ByteArrayInputStream(input);
+      bos = new ByteArrayOutputStream();
+      cos = new ZstdOutputStream(bos);
+      IOUtils.copy(bis, cos);
+      FileUtils.closeQuietly(cos);
+      return bos.toByteArray();
+    }
+    catch (Exception e) {
+      msg = "Failed to compress bytes!";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
+      return null;
+    }
+    finally {
+      FileUtils.closeQuietly(cos);
+      FileUtils.closeQuietly(bos);
+      FileUtils.closeQuietly(bis);
+    }
+  }
+
+  /**
+   * Decompresses the specified zstd compressed bytes.
+   *
+   * @param input	the compressed bytes
+   * @param buffer	the buffer size to use
+   * @return		the decompressed bytes, null in case of error
+   */
+  public static byte[] decompress(byte[] input, int buffer) {
+    return decompress(input, buffer, new MessageCollection());
+  }
+
+  /**
+   * Decompresses the specified zstd compressed bytes.
+   *
+   * @param input	the compressed bytes
+   * @param buffer	the buffer size to use
+   * @param errors 	for collecting errors
+   * @return		the decompressed bytes, null in case of error
+   */
+  public static byte[] decompress(byte[] input, int buffer, MessageCollection errors) {
+    ZstdInputStream 		cis;
+    ByteArrayOutputStream	bos;
+    String			msg;
+
+    cis = null;
+    bos = null;
+    try {
+      cis = new ZstdInputStream(new ByteArrayInputStream(input));
+      bos = new ByteArrayOutputStream();
+      IOUtils.copy(cis, bos, buffer);
+      return bos.toByteArray();
+    }
+    catch (Exception e) {
+      msg = "Failed to decompress bytes!";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
+      return null;
+    }
+    finally {
+      FileUtils.closeQuietly(cis);
+      FileUtils.closeQuietly(bos);
+    }
   }
 }
