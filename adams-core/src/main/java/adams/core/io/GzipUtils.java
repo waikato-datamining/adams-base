@@ -13,15 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GzipUtils.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache compress commons
  */
 package adams.core.io;
 
 import adams.core.License;
+import adams.core.MessageCollection;
 import adams.core.annotation.MixedCopyright;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
@@ -34,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -41,12 +45,14 @@ import java.util.zip.GZIPOutputStream;
  * Helper class for gzip related operations.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GzipUtils {
 
   /** the default extension. */
   public final static String EXTENSION = ".gz";
+
+  /** for logging errors. */
+  protected static Logger LOGGER = LoggingHelper.getLogger(GzipUtils.class);
 
   /**
    * Decompresses the specified gzip archive to a file without the ".gz"
@@ -97,8 +103,7 @@ public class GzipUtils {
     }
     catch (Exception e) {
       msg = "Failed to decompress '" + archiveFile + "': ";
-      System.err.println(msg);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, msg, e);
       result = msg + e;
     }
     finally {
@@ -108,35 +113,6 @@ public class GzipUtils {
     }
 
     return result;
-  }
-
-  /**
-   * Decompresses the specified gzipped bytes.
-   *
-   * @param input	the gzip compressed bytes
-   * @param buffer	the buffer size to use
-   * @return		the decompressed bytes, null in case of error
-   */
-  @MixedCopyright(
-      copyright = "Apache compress commons",
-      license = License.APACHE2,
-      url = "http://commons.apache.org/compress/apidocs/org/apache/commons/compress/compressors/CompressorStreamFactory.html"
-  )
-  public static byte[] decompress(byte[] input, int buffer) {
-    GZIPInputStream	 	bis;
-    ByteArrayOutputStream	bos;
-
-    try {
-      bis = new GZIPInputStream(new ByteArrayInputStream(input));
-      bos = new ByteArrayOutputStream();
-      IOUtils.copy(bis, bos, buffer);
-      return bos.toByteArray();
-    }
-    catch (Exception e) {
-      System.err.println("Failed to decompress bytes!");
-      e.printStackTrace();
-      return null;
-    }
   }
 
   /**
@@ -213,8 +189,7 @@ public class GzipUtils {
     }
     catch (Exception e) {
       msg = "Failed to compress '" + inputFile + "': ";
-      System.err.println(msg);
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, msg, e);
       result = msg + e;
     }
     finally {
@@ -233,24 +208,91 @@ public class GzipUtils {
    * @return		the compressed bytes, null in case of error
    */
   public static byte[] compress(byte[] input) {
+    return compress(input, new MessageCollection());
+  }
+
+  /**
+   * Compresses the specified bytes using gzip.
+   *
+   * @param input	the bytes to compress
+   * @return		the compressed bytes, null in case of error
+   */
+  public static byte[] compress(byte[] input, MessageCollection errors) {
     ByteArrayInputStream	bis;
     ByteArrayOutputStream	bos;
-    GZIPOutputStream 		gos;
-    int				i;
+    GZIPOutputStream 		cos;
+    String			msg;
 
+    bis = null;
+    bos = null;
+    cos = null;
     try {
       bis = new ByteArrayInputStream(input);
       bos = new ByteArrayOutputStream();
-      gos = new GZIPOutputStream(bos);
-      while ((i = bis.read()) != -1)
-	gos.write(i);
-      gos.finish();
+      cos = new GZIPOutputStream(bos);
+      IOUtils.copy(bis, cos);
+      FileUtils.closeQuietly(cos);
       return bos.toByteArray();
     }
     catch (Exception e) {
-      System.err.println("Failed to compress bytes!");
-      e.printStackTrace();
+      msg = "Failed to compress bytes!";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
       return null;
+    }
+    finally {
+      FileUtils.closeQuietly(cos);
+      FileUtils.closeQuietly(bos);
+      FileUtils.closeQuietly(bis);
+    }
+  }
+
+  /**
+   * Decompresses the specified gzip compressed bytes.
+   *
+   * @param input	the compressed bytes
+   * @param buffer	the buffer size to use
+   * @return		the decompressed bytes, null in case of error
+   */
+  public static byte[] decompress(byte[] input, int buffer) {
+    return decompress(input, buffer, new MessageCollection());
+  }
+
+  /**
+   * Decompresses the specified gzip compressed bytes.
+   *
+   * @param input	the compressed bytes
+   * @param buffer	the buffer size to use
+   * @param errors 	for collecting errors
+   * @return		the decompressed bytes, null in case of error
+   */
+  @MixedCopyright(
+      copyright = "Apache compress commons",
+      license = License.APACHE2,
+      url = "http://commons.apache.org/compress/apidocs/org/apache/commons/compress/compressors/CompressorStreamFactory.html"
+  )
+  public static byte[] decompress(byte[] input, int buffer, MessageCollection errors) {
+    GZIPInputStream 		cis;
+    ByteArrayOutputStream	bos;
+    String			msg;
+
+    cis = null;
+    bos = null;
+    try {
+      cis = new GZIPInputStream(new ByteArrayInputStream(input));
+      bos = new ByteArrayOutputStream();
+      IOUtils.copy(cis, bos, buffer);
+      return bos.toByteArray();
+    }
+    catch (Exception e) {
+      msg = "Failed to decompress bytes!";
+      LOGGER.log(Level.SEVERE, msg, e);
+      errors.add(msg, e);
+      return null;
+    }
+    finally {
+      FileUtils.closeQuietly(cis);
+      FileUtils.closeQuietly(bos);
     }
   }
 }
