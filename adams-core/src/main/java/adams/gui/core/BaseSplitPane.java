@@ -201,7 +201,7 @@ public class BaseSplitPane
       if ((m_HiddenTopComponent == null) && (m_HiddenBottomComponent == null)) {
 	m_DividerLocationBeforeHiding = getDividerLocation();
 	m_HiddenTopComponent          = getTopComponent();
-	if (m_HiddenBottomComponent != null)
+	if (m_HiddenTopComponent != null)
           remove(m_HiddenTopComponent);
 	setDividerSize(0);
       }
