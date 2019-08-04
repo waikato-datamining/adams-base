@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CsvSpreadSheetReader.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -632,10 +632,9 @@ public class CsvSpreadSheetReader
             else {
               // custom header?
               if (m_Owner.getCustomColumnHeaders().trim().length() > 0)
-                m_HeaderCells = SpreadSheetUtils.createHeader(cells.size(), m_Owner.getCustomColumnHeaders());
-              else
-                m_HeaderCells = cells;
-              row = result.getHeaderRow();
+		cells = SpreadSheetUtils.createHeader(cells.size(), m_Owner.getCustomColumnHeaders());
+	      m_HeaderCells = cells;
+	      row           = result.getHeaderRow();
             }
 
             m_Owner.getTextColumns().setMax(m_HeaderCells.size());
