@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SideBySideDiffPanel.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -307,6 +307,39 @@ public class SideBySideDiffPanel
   }
 
   /**
+   * Checks whether the two files are the same.
+   *
+   * @param file1	the left file
+   * @param file2	the right file
+   * @return 		true if the same
+   */
+  public boolean anyDifference(File file1, File file2) {
+    return DiffUtils.isDifferent(file1, file2);
+  }
+
+  /**
+   * Checks whether the two array are the same.
+   *
+   * @param list1	the left array
+   * @param list2	the right array
+   * @return 		true if the same
+   */
+  public boolean anyDifference(String[] list1, String[] list2) {
+    return DiffUtils.isDifferent(list1, list2);
+  }
+
+  /**
+   * Checks whether the two lists are the same.
+   *
+   * @param list1	the left list
+   * @param list2	the right list
+   * @return 		true if the same
+   */
+  public boolean anyDifference(List<String> list1, List<String> list2) {
+    return DiffUtils.isDifferent(list1, list2);
+  }
+
+  /**
    * Displays the diff of the two files.
    * 
    * @param file1	the left file
@@ -319,10 +352,10 @@ public class SideBySideDiffPanel
   }
   
   /**
-   * Displays the diff of the two lists.
+   * Displays the diff of the two arrays.
    * 
-   * @param list1	the left list
-   * @param list2	the right list
+   * @param list1	the left array
+   * @param list2	the right array
    */
   public void compare(String[] list1, String[] list2) {
     resetLastFiles();
