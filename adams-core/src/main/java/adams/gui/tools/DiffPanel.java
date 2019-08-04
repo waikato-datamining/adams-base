@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DiffPanel.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -563,7 +563,7 @@ public class DiffPanel
 
 	if (m_ClipboardLeft != null) {
 	  left = m_ClipboardLeft;
-	  m_PanelDiff.setLabelText(true,  "Clipboard");
+	  m_PanelDiff.setLabelText(true, "Clipboard");
 	}
 	else {
 	  if (m_FileLeft.isDirectory())
@@ -575,7 +575,7 @@ public class DiffPanel
 
 	if (m_ClipboardRight != null) {
 	  right = m_ClipboardRight;
-	  m_PanelDiff.setLabelText(false,  "Clipboard");
+	  m_PanelDiff.setLabelText(false, "Clipboard");
 	}
 	else {
 	  if (m_FileRight.isDirectory())
@@ -588,6 +588,10 @@ public class DiffPanel
 	m_PanelDiff.compare(left, right);
 	m_PanelDiff.setLastFileLeft(m_FileLeft);
 	m_PanelDiff.setLastFileRight(m_FileRight);
+
+	if (!m_PanelDiff.anyDifference(left, right))
+	  GUIHelper.showInformationMessage(getParent(), "No difference detected!");
+
 	return null;
       }
 
