@@ -15,7 +15,7 @@
 
 /*
  * SortableAndSearchableWrapperTableModel.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -961,7 +961,7 @@ public class SortableAndSearchableWrapperTableModel
    * @return		true if at least one filter is active
    */
   public boolean isAnyColumnFiltered() {
-    return !(m_ColumnFilters.isEmpty() && m_ColumnFilters.isEmpty());
+    return !(m_ColumnFilters.isEmpty() && m_ColumnFiltersRegExp.isEmpty());
   }
 
   /**
