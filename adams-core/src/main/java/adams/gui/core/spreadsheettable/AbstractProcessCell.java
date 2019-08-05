@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractProcessCell.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -24,13 +24,12 @@ import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 
 /**
  * Ancestor for plugins that process a cell.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractProcessCell
   extends AbstractOptionHandler
@@ -62,60 +61,50 @@ public abstract class AbstractProcessCell
   /**
    * Hook method for checks before attempting processing.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRow      the actual row in the spreadsheet
-   * @param selRow 	the selected row in the table
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		null if passed, otherwise error message
    */
-  protected String check(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow, int column) {
-    if (table == null)
+  protected String check(TableState state) {
+    SpreadSheet		sheet;
+
+    sheet = state.table.toSpreadSheet();
+    if (state.table == null)
       return "No source table available!";
-    if (sheet == null)
-      return "No spreadsheet available!";
-    if (actRow < 0)
+    if (state.actRow < 0)
       return "Negative row index!";
-    if (actRow >= sheet.getRowCount())
-      return "Row index too large: " + (actRow + 1) + " > " + sheet.getRowCount();
-    if (column < 0)
+    if (state.actRow >= sheet.getRowCount())
+      return "Row index too large: " + (state.actRow + 1) + " > " + sheet.getRowCount();
+    if (state.actCol < 0)
       return "Negative column index!";
-    if (column >= sheet.getColumnCount())
-      return "Column index too large: " + (column + 1) + " > " + sheet.getColumnCount();
+    if (state.actCol >= sheet.getColumnCount())
+      return "Column index too large: " + (state.actCol + 1) + " > " + sheet.getColumnCount();
     return null;
   }
 
   /**
    * Processes the specified cell.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRow      the actual row in the spreadsheet
-   * @param selRow 	the selected row in the table
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		true if successful
    */
-  protected abstract boolean doProcessCell(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow, int column);
+  protected abstract boolean doProcessCell(TableState state);
 
   /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRow         the row in the spreadsheet
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processCell(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow, int column) {
+  public boolean processCell(TableState state) {
     boolean	result;
     String	error;
 
-    error = check(table, sheet, actRow, selRow, column);
+    error = check(state);
     result = (error == null);
     if (result)
-      result = doProcessCell(table, sheet, actRow, selRow, column);
+      result = doProcessCell(state);
     else
-      GUIHelper.showErrorMessage(table, "Failed to process cell " + SpreadSheetUtils.getCellPosition(actRow, column) + "\n" + error);
+      GUIHelper.showErrorMessage(state.table, "Failed to process cell " + SpreadSheetUtils.getCellPosition(state.actRow, state.actCol) + "\n" + error);
 
     return result;
   }

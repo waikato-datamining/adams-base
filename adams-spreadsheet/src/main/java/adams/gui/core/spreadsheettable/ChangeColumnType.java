@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ChangeColumnType.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -25,8 +25,9 @@ import adams.data.conversion.SpreadSheetAnyColumnToString;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
+import adams.gui.core.TableRowRange;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.statistics.HistogramFactory;
 
@@ -36,7 +37,6 @@ import java.awt.Dialog.ModalityType;
  * Allows the conversion of a column to a different type.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ChangeColumnType
   extends AbstractProcessColumn {
@@ -64,50 +64,57 @@ public class ChangeColumnType
   }
 
   /**
+   * Checks whether the row range can be handled.
+   *
+   * @param range	the range to check
+   * @return		true if handled
+   */
+  public boolean handlesRowRange(TableRowRange range) {
+    return (range == TableRowRange.ALL);
+  }
+
+  /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  protected boolean doProcessColumn(SpreadSheetTable table, SpreadSheet sheet, int column) {
+  public boolean doProcessColumn(TableState state) {
     GenericObjectEditorDialog 		setup;
     AbstractSpreadSheetColumnConverter	last;
     String				msg;
 
     // let user customize plot
-    if (GUIHelper.getParentDialog(table) != null)
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(state.table), ModalityType.DOCUMENT_MODAL);
     else
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(table), true);
+      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(state.table), true);
     setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
     setup.getGOEEditor().setClassType(AbstractSpreadSheetColumnConverter.class);
     setup.getGOEEditor().setCanChangeClassInDialog(true);
-    last = (AbstractSpreadSheetColumnConverter) table.getLastSetup(getClass(), true, false);
+    last = (AbstractSpreadSheetColumnConverter) state.table.getLastSetup(getClass(), true, false);
     if (last == null)
       last = new SpreadSheetAnyColumnToString();
     last.setNoCopy(true);
-    last.setColumn(new SpreadSheetColumnIndex("" + (column + 1)));
+    last.setColumn(new SpreadSheetColumnIndex("" + (state.actCol + 1)));
     setup.setCurrent(last);
-    setup.setLocationRelativeTo(GUIHelper.getParentComponent(table));
+    setup.setLocationRelativeTo(GUIHelper.getParentComponent(state.table));
     setup.setVisible(true);
     if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return false;
     last = (AbstractSpreadSheetColumnConverter) setup.getCurrent();
     last.setNoCopy(true);
-    last.setColumn(new SpreadSheetColumnIndex("" + (column + 1)));
-    table.addLastSetup(getClass(), true, false, last);
-    last.setInput(sheet);
+    last.setColumn(new SpreadSheetColumnIndex("" + (state.actCol + 1)));
+    state.table.addLastSetup(getClass(), true, false, last);
+    last.setInput(state.table.toSpreadSheet());
     msg = last.convert();
     if (msg != null) {
       GUIHelper.showErrorMessage(
-	GUIHelper.getParentComponent(table), "Failed to convert column: " + msg);
+	GUIHelper.getParentComponent(state.table), "Failed to convert column: " + msg);
     }
     else {
-      sheet = (SpreadSheet) last.getOutput();
-      table.setModel(new SpreadSheetTableModel(sheet));
+      state.table.setModel(new SpreadSheetTableModel((SpreadSheet) last.getOutput()));
     }
     last.cleanUp();
 

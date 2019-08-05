@@ -28,6 +28,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.dialog.PropertiesParameterDialog;
 import adams.gui.dialog.SimplePreviewBrowserDialog;
 
@@ -113,37 +114,36 @@ public class PreviewSelectedFile
   /**
    * Processes the specified rows.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRow	the actual rows in the spreadsheet
-   * @param selRow	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  protected boolean doProcessRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
+  protected boolean doProcessRow(TableState state) {
     Properties			last;
     int				col;
     SimplePreviewBrowserDialog	dialog;
     SpreadSheetColumnIndex 	column;
+    SpreadSheet			sheet;
 
     // prompt user for parameters
-    last = promptParameters(table);
+    last = promptParameters(state.table);
     if (last == null)
       return false;
 
     // determine column
+    sheet  = state.table.toSpreadSheet(state.range, true);
     column = new SpreadSheetColumnIndex(last.getProperty(KEY_COLUMNS, SpreadSheetColumnIndex.FIRST));
     column.setData(sheet);
     col = column.getIntIndex();
     if (col == -1) {
-      GUIHelper.showErrorMessage(table.getParent(), "Failed to locate column:" + column);
+      GUIHelper.showErrorMessage(state.table.getParent(), "Failed to locate column:" + column);
       return false;
     }
-    table.addLastSetup(getClass(), false, true, last);
+    state.table.addLastSetup(getClass(), false, true, last);
 
     dialog = new SimplePreviewBrowserDialog();
-    dialog.open(new PlaceholderFile(sheet.getCell(actRow, col).toString()));
-    dialog.setLocationRelativeTo(table.getParent());
+    dialog.open(new PlaceholderFile(sheet.getCell(state.actRow, col).toString()));
+    dialog.setLocationRelativeTo(state.table.getParent());
     dialog.setVisible(true);
     dialog.setDefaultCloseOperation(SimplePreviewBrowserDialog.DISPOSE_ON_CLOSE);
 

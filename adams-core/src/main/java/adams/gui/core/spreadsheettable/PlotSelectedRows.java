@@ -20,8 +20,7 @@
 
 package adams.gui.core.spreadsheettable;
 
-import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 
 /**
  * Interface for plugins that plot selected rows.
@@ -48,11 +47,8 @@ public interface PlotSelectedRows
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRows	the actual rows in the spreadsheet
-   * @param selRows	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean plotSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows);
+  public boolean plotSelectedRows(TableState state);
 }

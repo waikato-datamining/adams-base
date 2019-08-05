@@ -24,6 +24,7 @@ import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.event.PopupMenuListener;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
@@ -238,59 +239,51 @@ public class SpreadSheetTable
     BasePopupMenu	menu;
     JMenuItem		menuitem;
     final boolean	asc;
-    final int           row;
-    final int[]		rows;
-    final int           actRow;
-    final int[]         actRows;
-    final int           col;
-    final int           actCol;
+    final TableState	state;
+    TableRowRange	range;
 
     menu   = new BasePopupMenu();
-    row    = rowAtPoint(e.getPoint());
-    actRow = getActualRow(row);
-    rows   = getSelectedRows();
-    actRows = new int[rows.length];
-    for (int i = 0; i < rows.length; i++)
-      actRows[i] = getActualRow(rows[i]);
-    col    = columnAtPoint(e.getPoint());
-    if (getShowRowColumn())
-      actCol = col - 1;
+    if (getSelectedRows().length > 0)
+      range = TableRowRange.SELECTED;
+    else if (isAnyColumnFiltered() || ((getSeachString() != null) && !getSeachString().isEmpty()))
+      range = TableRowRange.VISIBLE;
     else
-      actCol = col;
-    
+      range = TableRowRange.ALL;
+    state  = SpreadSheetTablePopupMenuItemHelper.getState(this, e, range);
+
     menuitem = new JMenuItem("Copy column name", GUIHelper.getIcon("copy.gif"));
-    menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
-    menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet().getColumnName(actCol)));
+    menuitem.setEnabled((getShowRowColumn() && (state.selCol > 0) || !getShowRowColumn()));
+    menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet().getColumnName(state.actCol)));
     menu.add(menuitem);
     
     menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy_column.gif"));
-    menuitem.setEnabled((getShowRowColumn() && (col > 0) || !getShowRowColumn()));
+    menuitem.setEnabled((getShowRowColumn() && (state.selCol > 0) || !getShowRowColumn()));
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet(TableRowRange.VISIBLE);
       StringBuilder content = new StringBuilder();
       String sep = System.getProperty("line.separator");
-      content.append(sheet.getColumnName(actCol) + sep);
+      content.append(sheet.getColumnName(state.actCol) + sep);
       for (int i = 0; i < sheet.getRowCount(); i++) {
-	if (!sheet.hasCell(i, actCol) || sheet.getCell(i, actCol).isMissing())
+	if (!sheet.hasCell(i, state.actCol) || sheet.getCell(i, state.actCol).isMissing())
 	  content.append(sep);
 	else
-	  content.append(sheet.getCell(i, actCol).getContent() + sep);
+	  content.append(sheet.getCell(i, state.actCol).getContent() + sep);
       }
       ClipboardHelper.copyToClipboard(content.toString());
     });
     menu.add(menuitem);
     
     menuitem = new JMenuItem("Rename column", GUIHelper.getEmptyIcon());
-    menuitem.setEnabled(!isReadOnly() && (getShowRowColumn() && (col > 0) || !getShowRowColumn()));
+    menuitem.setEnabled(!isReadOnly() && (getShowRowColumn() && (state.selCol > 0) || !getShowRowColumn()));
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
       boolean readOnly = isReadOnly();
-      String newName = sheet.getColumnName(actCol);
+      String newName = sheet.getColumnName(state.actCol);
       newName = GUIHelper.showInputDialog(getParent(), "Please enter new column name", newName);
       if (newName == null)
 	return;
       sheet = sheet.getClone();
-      sheet.getHeaderRow().getCell(actCol).setContent(newName);
+      sheet.getHeaderRow().getCell(state.actCol).setContent(newName);
       setModel(new SpreadSheetTableModel(sheet));
       setReadOnly(readOnly);
       setModified(true);
@@ -303,11 +296,11 @@ public class SpreadSheetTable
       menuitem = new JMenuItem("Sort (asc)", GUIHelper.getIcon("sort-ascending.png"));
     else
       menuitem = new JMenuItem("Sort (desc)", GUIHelper.getIcon("sort-descending.png"));
-    menuitem.setEnabled(!isReadOnly() && (getShowRowColumn() && (col > 0)) || !getShowRowColumn());
+    menuitem.setEnabled(!isReadOnly() && (getShowRowColumn() && (state.selCol > 0)) || !getShowRowColumn());
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet();
       boolean readOnly = isReadOnly();
-      sheet.sort(actCol, asc);
+      sheet.sort(state.actCol, asc);
       setModel(new SpreadSheetTableModel(sheet));
       setReadOnly(readOnly);
       setModified(true);
@@ -318,34 +311,34 @@ public class SpreadSheetTable
     menu.addSeparator();
 
     menuitem = new JMenuItem("Filter", GUIHelper.getIcon("filter.png"));
-    menuitem.setEnabled(col > 0);
+    menuitem.setEnabled(state.selCol > 0);
     menuitem.addActionListener((ActionEvent ae) -> {
       String filter = "";
-      if (getColumnFilter(col) != null)
-        filter = getColumnFilter(col);
+      if (getColumnFilter(state.selCol) != null)
+        filter = getColumnFilter(state.selCol);
       filter = GUIHelper.showInputDialog(getParent(), "Please enter filter string", filter);
       if ((filter == null) || filter.isEmpty())
         return;
-      setColumnFilter(col, filter, false);
+      setColumnFilter(state.selCol, filter, false);
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Filter (RegExp)", GUIHelper.getEmptyIcon());
-    menuitem.setEnabled(col > 0);
+    menuitem.setEnabled(state.selCol > 0);
     menuitem.addActionListener((ActionEvent ae) -> {
       String filter = "";
-      if (getColumnFilter(col) != null)
-        filter = getColumnFilter(col);
+      if (getColumnFilter(state.selCol) != null)
+        filter = getColumnFilter(state.selCol);
       filter = GUIHelper.showInputDialog(getParent(), "Please enter regular expression filter", filter);
       if ((filter == null) || filter.isEmpty())
         return;
-      setColumnFilter(col, filter, true);
+      setColumnFilter(state.selCol, filter, true);
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Remove filter", GUIHelper.getIcon("delete.gif"));
-    menuitem.setEnabled(isColumnFiltered(col));
-    menuitem.addActionListener((ActionEvent ae) -> removeColumnFilter(col));
+    menuitem.setEnabled(isColumnFiltered(state.selCol));
+    menuitem.addActionListener((ActionEvent ae) -> removeColumnFilter(state.selCol));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Remove all filters", GUIHelper.getIcon("delete_all.gif"));
@@ -365,7 +358,7 @@ public class SpreadSheetTable
 	return;
       SpreadSheet sheet = toSpreadSheet();
       boolean readOnly = isReadOnly();
-      sheet.insertColumn(actCol, colName, SpreadSheet.MISSING_VALUE);
+      sheet.insertColumn(state.actCol, colName, SpreadSheet.MISSING_VALUE);
       setModel(new SpreadSheetTableModel(sheet));
       setReadOnly(readOnly);
       setModified(true);
@@ -378,7 +371,7 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet();
       boolean readOnly = isReadOnly();
-      sheet.removeColumn(actCol);
+      sheet.removeColumn(state.actCol);
       setModel(new SpreadSheetTableModel(sheet));
       setReadOnly(readOnly);
       setModified(true);
@@ -389,7 +382,7 @@ public class SpreadSheetTable
     menu.addSeparator();
 
     menuitem = new JMenuItem("Optimal column width", GUIHelper.getEmptyIcon());
-    menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth(col));
+    menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth(state.selCol));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Optimal column widths", GUIHelper.getEmptyIcon());
@@ -397,14 +390,14 @@ public class SpreadSheetTable
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Set column width...", GUIHelper.getEmptyIcon());
-    menuitem.addActionListener((ActionEvent ae) -> setColumnWidth(col));
+    menuitem.addActionListener((ActionEvent ae) -> setColumnWidth(state.selCol));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Set column widths...", GUIHelper.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> setColumnWidths());
     menu.add(menuitem);
 
-    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, row, actRows, rows, actCol);
+    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(state, menu, false);
 
     if (m_HeaderPopupMenuCustomizer != null)
       m_HeaderPopupMenuCustomizer.customizePopupMenu(e, menu);
@@ -434,28 +427,17 @@ public class SpreadSheetTable
     BasePopupMenu	menu;
     JMenuItem		menuitem;
     JMenu		submenu;
-    final int   	row;
-    final int   	actRow;
-    final int[]		rows;
-    final int[]		actRows;
-    final int   	col;
-    final int   	actCol;
+    final TableRowRange	range;
+    final TableState	state;
 
-    menu = new BasePopupMenu();
-    col  = columnAtPoint(e.getPoint());
-    if (getShowRowColumn())
-      actCol = col - 1;
+    menu  = new BasePopupMenu();
+    if (getSelectedRows().length > 0)
+      range = TableRowRange.SELECTED;
+    else if (isAnyColumnFiltered() || ((getSeachString() != null) && !getSeachString().isEmpty()))
+      range = TableRowRange.VISIBLE;
     else
-      actCol = col;
-    row    = rowAtPoint(e.getPoint());
-    actRow = getActualRow(row);
-    if (getSelectedRows().length == 0)
-      rows = new int[]{row};
-    else
-      rows = getSelectedRows();
-    actRows = new int[rows.length];
-    for (int i = 0; i < rows.length; i++)
-      actRows[i] = getActualRow(rows[i]);
+      range = TableRowRange.ALL;
+    state = SpreadSheetTablePopupMenuItemHelper.getState(this, e, range);
 
     if (getSelectedRowCount() > 1)
       menuitem = new JMenuItem("Copy rows");
@@ -470,11 +452,11 @@ public class SpreadSheetTable
     menuitem.setIcon(GUIHelper.getIcon("copy_cell.gif"));
     menuitem.setEnabled(getSelectedRowCount() == 1);
     menuitem.addActionListener((ActionEvent ae) -> {
-      if (row == -1)
+      if (state.selRow == -1)
 	return;
-      if (col == -1)
+      if (state.selCol == -1)
 	return;
-      ClipboardHelper.copyToClipboard("" + getValueAt(row, col));
+      ClipboardHelper.copyToClipboard("" + getValueAt(state.selRow, state.selCol));
     });
     menu.add(menuitem);
 
@@ -485,7 +467,7 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet();
       boolean readOnly = isReadOnly();
-      sheet.insertRow(actRow);
+      sheet.insertRow(state.actRow);
       setModel(new SpreadSheetTableModel(sheet));
       setReadOnly(readOnly);
       setModified(true);
@@ -498,8 +480,8 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet();
       boolean readOnly = isReadOnly();
-      for (int i = actRows.length - 1; i >= 0; i--)
-	sheet.removeRow(actRows[i]);
+      for (int i = state.actRows.length - 1; i >= 0; i--)
+	sheet.removeRow(state.actRows[i]);
       setModel(new SpreadSheetTableModel(sheet));
       setReadOnly(readOnly);
       setModified(true);
@@ -532,23 +514,17 @@ public class SpreadSheetTable
 
     menu.addSeparator();
 
-    submenu = new JMenu("Save");
-    submenu.setIcon(GUIHelper.getIcon("save.gif"));
-    menu.add(submenu);
-    
-    menuitem = new JMenuItem("Save all...");
-    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.ALL));
-    submenu.add(menuitem);
-    
-    menuitem = new JMenuItem("Save selected...");
-    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.SELECTED));
-    submenu.add(menuitem);
-    
-    menuitem = new JMenuItem("Save visible...");
-    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.VISIBLE));
-    submenu.add(menuitem);
+    if (range == TableRowRange.ALL)
+      menuitem = new JMenuItem("Save...");
+    else if (range == TableRowRange.SELECTED)
+      menuitem = new JMenuItem("Save selected...");
+    else
+      menuitem = new JMenuItem("Save visible...");
+    menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+    menuitem.addActionListener((ActionEvent ae) -> saveAs(range));
+    menu.add(menuitem);
 
-    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, row, actRows, rows, actCol);
+    SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(state, menu, true);
 
     menu.addSeparator();
 

@@ -22,9 +22,8 @@ package adams.gui.core.spreadsheettable;
 
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
-import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 
 /**
  * Ancestor for plugins that plot rows.
@@ -124,18 +123,13 @@ public abstract class AbstractPlotSelectedRows
   /**
    * Hook method for checks before attempting processing.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRows	the rows in the spreadsheet
-   * @param selRows 	the selected rows in the table
+   * @param state	the table state
    * @return		null if passed, otherwise error message
    */
-  protected String check(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
-    if (table == null)
+  protected String check(TableState state) {
+    if (state.table == null)
       return "No source table available!";
-    if (sheet == null)
-      return "No spreadsheet available!";
-    if (actRows.length == 0)
+    if (state.actRows.length == 0)
       return "No rows selected!";
     return null;
   }
@@ -143,33 +137,27 @@ public abstract class AbstractPlotSelectedRows
   /**
    * Plots the specified rows.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRows	the actual rows in the spreadsheet
-   * @param selRows	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  protected abstract boolean doPlotSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows);
+  protected abstract boolean doPlotSelectedRows(TableState state);
 
   /**
    * Plots the specified rows.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRows	the actual rows in the spreadsheet
-   * @param selRows	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
+  public boolean processSelectedRows(TableState state) {
     boolean	result;
     String	error;
 
-    error = check(table, sheet, actRows, selRows);
+    error = check(state);
     result = (error == null);
     if (result)
-      result = doPlotSelectedRows(table, sheet, actRows, selRows);
+      result = doPlotSelectedRows(state);
     else
-      GUIHelper.showErrorMessage(table, "Failed to plot rows (0-based indices): " + Utils.arrayToString(actRows) + "\n" + error);
+      GUIHelper.showErrorMessage(state.table, "Failed to plot rows (0-based indices): " + Utils.arrayToString(state.actRows) + "\n" + error);
 
     return result;
   }

@@ -48,6 +48,8 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.TableRowRange;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.dialog.PropertiesParameterDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
 
@@ -115,6 +117,16 @@ public class SimplePlot
   @Override
   public int compareTo(SpreadSheetTablePopupMenuItem o) {
     return getMenuItem().compareTo(o.getMenuItem());
+  }
+
+  /**
+   * Checks whether the row range can be handled.
+   *
+   * @param range	the range to check
+   * @return		true if handled
+   */
+  public boolean handlesRowRange(TableRowRange range) {
+    return true;
   }
 
   /**
@@ -249,12 +261,12 @@ public class SimplePlot
   /**
    * Allows the user to generate a plot from either a row or a column.
    *
-   * @param sheet	the spreadsheet to use
+   * @param state	the table state
    * @param isColumn	whether the to use column or row
    * @param index	the index of the row/column
    * @param indices	the indices of the selected rows, ignored if null
    */
-  protected void plot(final SpreadSheetTable table, final SpreadSheet sheet, final boolean isColumn, int index, int[] indices) {
+  protected void plot(final TableState state, final boolean isColumn, int index, int[] indices) {
     Properties			last;
     final List<Double>[] 	list;
     List<Double>[] 		tmp;
@@ -265,16 +277,19 @@ public class SimplePlot
     Range			columns;
     int				numPoints;
     String			newPoints;
-    int				col;
     int[]			cols;
     int				row;
     int[]			rows;
-    Object			value;
     Cell			cell;
     boolean			sorted;
     boolean			asc;
     int[]			actRows;
+    SpreadSheet			sheet;
 
+    if (isColumn)
+      sheet = state.table.toSpreadSheet(state.range, true);
+    else
+      sheet = state.table.toSpreadSheet();
     numPoints = isColumn ? sheet.getRowCount() : sheet.getColumnCount();
     if (numPoints > MAX_POINTS) {
       newPoints = GUIHelper.showInputDialog(null, "More than " + MAX_POINTS + " data points to plot - enter sample size:", "" + numPoints);
@@ -292,7 +307,7 @@ public class SimplePlot
     }
 
     // prompt user for parameters
-    last = promptParameters(table, isColumn);
+    last = promptParameters(state.table, isColumn);
     if (last == null)
       return;
 
@@ -304,26 +319,21 @@ public class SimplePlot
     else {
       cols = null;
     }
-    table.addLastSetup(getClass(), true, !isColumn, last);
+    state.table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from spreadsheet
-    if (indices == null) {
+    if (indices == null)
       tmp = new ArrayList[]{new ArrayList<>()};
-    }
-    else {
+    else
       tmp = new ArrayList[indices.length];
-    }
     sorted = false;
-    asc    = table.isAscending();
+    asc    = state.table.isAscending();
     if (isColumn) {
-      col = index;
-      if (table.getShowRowColumn())
-	col++;
-      sorted = (table.getSortColumn() == col);
-      for (i = 0; i < table.getRowCount(); i++) {
-	value = table.getValueAt(i, col);
-	if ((value != null) && (Utils.isDouble(value.toString())))
-	  tmp[0].add(Utils.toDouble(value.toString()));
+      sorted = (state.table.getSortColumn() == state.selCol);
+      for (i = 0; i < sheet.getRowCount(); i++) {
+        cell = sheet.getCell(i, state.actCol);
+	if (!cell.isMissing() && cell.isNumeric())
+	  tmp[0].add(cell.toDouble());
       }
     }
     else {
@@ -350,15 +360,19 @@ public class SimplePlot
 	numPoints = Math.min(numPoints, tmp[i].size());
 	Collections.shuffle(tmp[i], new Random(1));
 	list[i] = tmp[i].subList(0, numPoints);
-	if (sorted) {
-	  Collections.sort(list[i]);
-	  if (!asc)
-	    Collections.reverse(list[i]);
-	}
       }
     }
     else {
       list = tmp;
+    }
+
+    // sort data
+    if (sorted) {
+      for (i = 0; i < list.length; i++) {
+	Collections.sort(list[i]);
+	if (!asc)
+	  Collections.reverse(list[i]);
+      }
     }
 
     // generate plot
@@ -379,35 +393,30 @@ public class SimplePlot
 	title = "Row" + (actRows.length != 1 ? "s" : "") + " " + Shortening.shortenMiddle(Utils.arrayToString(actRows), 40);
       }
     }
-    createPlot(table, isColumn, list, title, titles);
+    createPlot(state.table, isColumn, list, title, titles);
   }
 
   /**
    * Plots the specified column.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param column	the column in the spreadsheet
+   * @param state	the source table
    * @return		true if successful
    */
   @Override
-  public boolean plotColumn(SpreadSheetTable table, SpreadSheet sheet, int column) {
-    plot(table, sheet, true, column, null);
+  public boolean plotColumn(TableState state) {
+    plot(state, true, state.actCol, null);
     return true;
   }
 
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRow	the actual row in the spreadsheet
-   * @param selRow	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
-    plot(table, sheet, false, actRow, null);
+  public boolean plotRow(TableState state) {
+    plot(state, false, state.actRow, null);
     return true;
   }
 
@@ -432,14 +441,11 @@ public class SimplePlot
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRows	the actual rows in the spreadsheet
-   * @param selRows	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean plotSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
-    plot(table, sheet, false, actRows[0], actRows);
+  public boolean plotSelectedRows(TableState state) {
+    plot(state, false, state.actRows[0], state.actRows);
     return true;
   }
 }

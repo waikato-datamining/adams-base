@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * UniqueValues.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -24,14 +24,13 @@ import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.TableRowRange;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 
 /**
  * Displays all the unique values in the column.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class UniqueValues
   extends AbstractProcessColumn {
@@ -59,22 +58,32 @@ public class UniqueValues
   }
 
   /**
+   * Checks whether the row range can be handled.
+   *
+   * @param range	the range to check
+   * @return		true if handled
+   */
+  public boolean handlesRowRange(TableRowRange range) {
+    return true;
+  }
+
+  /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  protected boolean doProcessColumn(SpreadSheetTable table, SpreadSheet sheet, int column) {
+  public boolean doProcessColumn(TableState state) {
     String[]	values;
+    SpreadSheet sheet;
 
-    values = SpreadSheetUtils.getColumn(table.toSpreadSheet(TableRowRange.VISIBLE, true), column, true, true);
+    sheet  = state.table.toSpreadSheet(state.range, true);
+    values = SpreadSheetUtils.getColumn(sheet, state.actCol, true, true);
     GUIHelper.showInformationMessage(
-      GUIHelper.getParentComponent(table),
+      GUIHelper.getParentComponent(state.table),
       Utils.flatten(values, "\n"),
-      "Unique values of column #" + (column+1) + "/" + sheet.getColumnName(column));
+      "Unique values of column #" + (state.actCol+1) + "/" + sheet.getColumnName(state.actCol) + " (rows: " + state.range + ")");
 
     return true;
   }

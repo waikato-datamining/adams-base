@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractProcessRow.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -23,7 +23,8 @@ package adams.gui.core.spreadsheettable;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.TableRowRange;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 
 /**
  * Ancestor for plugins that process a row.
@@ -61,54 +62,46 @@ public abstract class AbstractProcessRow
   /**
    * Hook method for checks before attempting processing.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRow	the row in the spreadsheet
-   * @param selRow 	the selected row in the table
+   * @param state	the table state
    * @return		null if passed, otherwise error message
    */
-  protected String check(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
-    if (table == null)
+  protected String check(TableState state) {
+    SpreadSheet 	sheet;
+
+    if (state.table == null)
       return "No source table available!";
-    if (sheet == null)
-      return "No spreadsheet available!";
-    if (actRow < 0)
+    if (state.actRow < 0)
       return "Negative row index!";
-    if (actRow >= sheet.getRowCount())
-      return "Row index too large: " + (actRow + 1) + " > " + sheet.getRowCount();
+    sheet = state.table.toSpreadSheet(TableRowRange.ALL, true);
+    if (state.actRow >= sheet.getRowCount())
+      return "Row index too large: " + (state.actRow + 1) + " > " + sheet.getRowCount();
     return null;
   }
 
   /**
    * Processes the specified row.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRow	the actual row in the spreadsheet
-   * @param selRow	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  protected abstract boolean doProcessRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow);
+  protected abstract boolean doProcessRow(TableState state);
 
   /**
    * Processes the specified row.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRow	the actual row in the spreadsheet
-   * @param selRow	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
+  public boolean processRow(TableState state) {
     boolean	result;
     String	error;
 
-    error = check(table, sheet, actRow, selRow);
+    error = check(state);
     result = (error == null);
     if (result)
-      result = doProcessRow(table, sheet, actRow, selRow);
+      result = doProcessRow(state);
     else
-      GUIHelper.showErrorMessage(table, "Failed to process row #" + (actRow +1) + "\n" + error);
+      GUIHelper.showErrorMessage(state.table, "Failed to process row #" + (state.actRow +1) + "\n" + error);
 
     return result;
   }

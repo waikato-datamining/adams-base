@@ -33,6 +33,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.dialog.PropertiesParameterDialog;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -135,14 +136,11 @@ public class ArrayStatistic
   /**
    * Processes the specified row.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRows	the actual row in the spreadsheet
-   * @param selRows	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  protected boolean doProcessSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
+  protected boolean doProcessSelectedRows(TableState state) {
     Properties 			last;
     StatisticContainer 		stats;
     SpreadSheetDialog 		dialogStats;
@@ -150,47 +148,49 @@ public class ArrayStatistic
     int[]			cols;
     AbstractArrayStatistic	array;
     SpreadSheetColumnRange	columns;
+    SpreadSheet			sheet;
 
-    rows = Utils.adjustIndices(actRows, 2);
+    rows = Utils.adjustIndices(state.actRows, 2);
 
     // prompt user
-    last = promptParameters(table);
+    last = promptParameters(state.table);
     if (last == null)
       return false;
 
     array = last.getObject(KEY_STATISTIC, AbstractArrayStatistic.class);
     if (array == null) {
       GUIHelper.showErrorMessage(
-	GUIHelper.getParentComponent(table), "Failed to instantiate array statistic!");
+	GUIHelper.getParentComponent(state.table), "Failed to instantiate array statistic!");
       return false;
     }
-    if ((array.getMin() != -1) && (array.getMin() > actRows.length)) {
+    if ((array.getMin() != -1) && (array.getMin() > state.actRows.length)) {
       GUIHelper.showErrorMessage(
-	GUIHelper.getParentComponent(table), "Statistic " + Utils.classToString(last) + " requires at least " + array.getMin() + " rows!");
+	GUIHelper.getParentComponent(state.table), "Statistic " + Utils.classToString(last) + " requires at least " + array.getMin() + " rows!");
     }
-    if ((array.getMax() != -1) && (array.getMax() < actRows.length)) {
+    if ((array.getMax() != -1) && (array.getMax() < state.actRows.length)) {
       GUIHelper.showErrorMessage(
-	GUIHelper.getParentComponent(table), "Statistic " + Utils.classToString(last) + " can only handle at most " + array.getMax() + " rows!");
+	GUIHelper.getParentComponent(state.table), "Statistic " + Utils.classToString(last) + " can only handle at most " + array.getMax() + " rows!");
     }
-    table.addLastSetup(getClass(), true, false, last);
+    state.table.addLastSetup(getClass(), true, false, last);
+    sheet = state.table.toSpreadSheet(state.range, true);
     columns = new SpreadSheetColumnRange(last.getProperty(KEY_COLUMNS, SpreadSheetColumnRange.ALL));
     columns.setData(sheet);
     cols = columns.getIntIndices();
-    for (int row: actRows)
+    for (int row: state.actRows)
       array.add(StatUtils.toNumberArray(SpreadSheetUtils.getNumericRow(sheet, row, cols)));
     try {
       stats = array.calculate();
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	GUIHelper.getParentComponent(table), "Failed to calculate statistics for rows #" + Utils.arrayToString(rows) + "!", e);
+	GUIHelper.getParentComponent(state.table), "Failed to calculate statistics for rows #" + Utils.arrayToString(rows) + "!", e);
       return false;
     }
 
-    if (GUIHelper.getParentDialog(table) != null)
-      dialogStats = new SpreadSheetDialog(GUIHelper.getParentDialog(table), ModalityType.MODELESS);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      dialogStats = new SpreadSheetDialog(GUIHelper.getParentDialog(state.table), ModalityType.MODELESS);
     else
-      dialogStats = new SpreadSheetDialog(GUIHelper.getParentFrame(table), false);
+      dialogStats = new SpreadSheetDialog(GUIHelper.getParentFrame(state.table), false);
     dialogStats.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
     dialogStats.setTitle("Statistics for rows #" + Utils.arrayToString(rows));
     dialogStats.setSpreadSheet(stats.toSpreadSheet());
@@ -204,13 +204,10 @@ public class ArrayStatistic
   /**
    * Processes the specified row.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRow	the actual row in the spreadsheet
-   * @param selRow	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
-    return processSelectedRows(table, sheet, new int[]{actRow}, new int[]{selRow});
+  public boolean processRow(TableState state) {
+    return processSelectedRows(state);
   }
 }

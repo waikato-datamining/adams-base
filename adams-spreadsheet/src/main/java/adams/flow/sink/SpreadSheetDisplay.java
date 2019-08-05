@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetDisplay.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -42,6 +42,7 @@ import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.ProcessSelectedRows;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import adams.gui.sendto.SendToActionUtils;
@@ -258,16 +259,8 @@ public class SpreadSheetDisplay
 	PopupMenuCustomizer customizer = new PopupMenuCustomizer() {
 	  @Override
 	  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-	    int[] rows;
-	    int[] actRows;
-	    if (m_Table.getSelectedRows().length == 0)
-	      rows = new int[]{m_Table.rowAtPoint(e.getPoint())};
-	    else
-	      rows = m_Table.getSelectedRows();
-	    actRows = new int[rows.length];
-	    for (int i = 0; i < rows.length; i++)
-	      actRows[i] = m_Table.getActualRow(rows[i]);
-	    SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsToPopupMenu(m_Table, menu, actRows, rows, Arrays.asList(m_Owner.getSelectedRowsProcessors()));
+	    TableState state = SpreadSheetTablePopupMenuItemHelper.getState(m_Table, e, TableRowRange.SELECTED);
+	    SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsToPopupMenu(state, menu, Arrays.asList(m_Owner.getSelectedRowsProcessors()));
 	  }
 	};
 	m_Table.setCellPopupMenuCustomizer(customizer);
@@ -728,16 +721,8 @@ public class SpreadSheetDisplay
       customizer = new PopupMenuCustomizer() {
 	@Override
 	public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-	  int[] rows;
-	  int[] actRows;
-	  if (m_Table.getSelectedRows().length == 0)
-	    rows = new int[]{m_Table.rowAtPoint(e.getPoint())};
-	  else
-	    rows = m_Table.getSelectedRows();
-	  actRows = new int[rows.length];
-	  for (int i = 0; i < rows.length; i++)
-	    actRows[i] = m_Table.getActualRow(rows[i]);
-	  SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsToPopupMenu(m_Table, menu, actRows, rows, Arrays.asList(m_SelectedRowsProcessors));
+	  TableState state = SpreadSheetTablePopupMenuItemHelper.getState(m_Table, e, TableRowRange.SELECTED);
+	  SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsToPopupMenu(state, menu, Arrays.asList(m_SelectedRowsProcessors));
 	}
       };
       m_Table.setCellPopupMenuCustomizer(customizer);

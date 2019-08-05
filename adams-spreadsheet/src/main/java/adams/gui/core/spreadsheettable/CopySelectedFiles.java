@@ -31,6 +31,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.dialog.PropertiesParameterDialog;
 
 import java.awt.Dialog.ModalityType;
@@ -142,41 +143,40 @@ public class CopySelectedFiles
   /**
    * Processes the specified rows.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRows	the actual rows in the spreadsheet
-   * @param selRows	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  protected boolean doProcessSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows) {
+  protected boolean doProcessSelectedRows(TableState state) {
     Properties 			last;
     int				col;
     File			sourceFile;
     File			targetDir;
     MessageCollection		errors;
     SpreadSheetColumnIndex 	column;
+    SpreadSheet			sheet;
 
-    last = promptParameters(table);
+    last = promptParameters(state.table);
     if (last == null)
       return false;
 
     // determine column
+    sheet = state.table.toSpreadSheet(state.range, true);
     column = new SpreadSheetColumnIndex(last.getProperty(KEY_COLUMN, SpreadSheetColumnIndex.FIRST));
     column.setData(sheet);
     col = column.getIntIndex();
     if (col == -1) {
-      GUIHelper.showErrorMessage(table.getParent(), "Failed to locate column:" + column);
+      GUIHelper.showErrorMessage(state.table.getParent(), "Failed to locate column:" + column);
       return false;
     }
     targetDir = new PlaceholderDirectory(last.getPath(KEY_TARGETDIR, new PlaceholderDirectory().getAbsolutePath()));
 
     // store setup
-    table.addLastSetup(getClass(), false, false, last);
+    state.table.addLastSetup(getClass(), false, false, last);
 
     // copy
     errors = new MessageCollection();
-    for (int row: actRows) {
+    for (int row: state.actRows) {
       sourceFile = new PlaceholderFile(sheet.getCell(row, col).toString());
       try {
 	if (!FileUtils.copy(sourceFile, targetDir))
@@ -188,7 +188,7 @@ public class CopySelectedFiles
     }
 
     if (!errors.isEmpty())
-      GUIHelper.showErrorMessage(table.getParent(), "Failed to copy files:\n" + errors);
+      GUIHelper.showErrorMessage(state.table.getParent(), "Failed to copy files:\n" + errors);
 
     return errors.isEmpty();
   }

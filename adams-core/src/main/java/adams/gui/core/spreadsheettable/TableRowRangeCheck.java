@@ -14,27 +14,27 @@
  */
 
 /*
- * PlotColumn.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * TableRowRangeCheck.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
 
-import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
+import adams.gui.core.TableRowRange;
 
 /**
- * Interface for plugins that plot a column.
+ * Interface for classes that check whether they can handle the row range
+ * of the table state.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface PlotColumn
-  extends SpreadSheetTablePopupMenuItem, TableRowRangeCheck {
+public interface TableRowRangeCheck {
 
   /**
-   * Plots the specified column.
+   * Checks whether the row range can be handled.
    *
-   * @param state	the table state
-   * @return		true if successful
+   * @param range	the range to check
+   * @return		true if handled
    */
-  public boolean plotColumn(TableState state);
+  public boolean handlesRowRange(TableRowRange range);
 }

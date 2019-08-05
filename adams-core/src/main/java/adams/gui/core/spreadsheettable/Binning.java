@@ -22,7 +22,6 @@ package adams.gui.core.spreadsheettable;
 
 import adams.core.Properties;
 import adams.core.Range;
-import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
@@ -40,6 +39,8 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.TableRowRange;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.PropertiesParameterDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -110,6 +111,16 @@ public class Binning
   @Override
   public int compareTo(SpreadSheetTablePopupMenuItem o) {
     return getMenuItem().compareTo(o.getMenuItem());
+  }
+
+  /**
+   * Checks whether the row range can be handled.
+   *
+   * @param range	the range to check
+   * @return		true if handled
+   */
+  public boolean handlesRowRange(TableRowRange range) {
+    return true;
   }
 
   /**
@@ -237,11 +248,10 @@ public class Binning
   /**
    * Allows the user to generate a plot from either a row or a column.
    *
-   * @param sheet	the spreadsheet to use
+   * @param state	the table state
    * @param isColumn	whether the to use column or row
-   * @param index	the index of the row/column
    */
-  protected void plot(final SpreadSheetTable table, final SpreadSheet sheet, final boolean isColumn, int index) {
+  protected void plot(final TableState state, final boolean isColumn) {
     TDoubleArrayList                    list;
     int					i;
     Properties				last;
@@ -249,39 +259,42 @@ public class Binning
     int					col;
     int[]				cols;
     int					row;
-    Object				value;
-    Cell 				cell;
+    Cell				cell;
     String				title;
+    SpreadSheet				sheet;
+    int					index;
 
     // prompt user for parameters
-    last = promptParameters(table, isColumn);
+    last = promptParameters(state.table, isColumn);
     if (last == null)
       return;
 
-    if (!isColumn) {
-      columns = new Range(last.getProperty(KEY_COLUMNS, Range.ALL));
-      columns.setMax(sheet.getColumnCount());
-      cols = columns.getIntIndices();
-    }
-    else {
-      cols = null;
-    }
-    table.addLastSetup(getClass(), true, !isColumn, last);
+    state.table.addLastSetup(getClass(), true, !isColumn, last);
+
+    if (isColumn)
+      index = state.actCol;
+    else
+      index = state.actRow;
 
     // get data from spreadsheet
     list = new TDoubleArrayList();
     if (isColumn) {
-      col = index;
-      if (table.getShowRowColumn())
-	col++;
-      for (i = 0; i < table.getRowCount(); i++) {
-	value = table.getValueAt(i, col);
-	if ((value != null) && (Utils.isDouble(value.toString())))
-	  list.add(Utils.toDouble(value.toString()));
+      sheet = state.table.toSpreadSheet(state.range, true);
+      col   = index;
+      for (i = 0; i < sheet.getRowCount(); i++) {
+        if (sheet.hasCell(i, col)) {
+	  cell = sheet.getCell(i, col);
+	  if (!cell.isMissing() && cell.isNumeric())
+	    list.add(cell.toDouble());
+	}
       }
     }
     else {
-      row = index;
+      sheet   = state.table.toSpreadSheet();
+      columns = new Range(last.getProperty(KEY_COLUMNS, Range.ALL));
+      columns.setMax(sheet.getColumnCount());
+      cols = columns.getIntIndices();
+      row  = index;
       for (i = 0; i < cols.length; i++) {
 	if (sheet.getRow(row).hasCell(cols[i])) {
 	  cell = sheet.getRow(row).getCell(cols[i]);
@@ -296,35 +309,30 @@ public class Binning
       title = "Column " + (index + 1) + "/" + sheet.getColumnName(index);
     else
       title = "Row " + (index + 2);
-    createPlot(table, isColumn, list, title);
+    createPlot(state.table, isColumn, list, title);
   }
 
   /**
    * Plots the specified column.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  public boolean plotColumn(SpreadSheetTable table, SpreadSheet sheet, int column) {
-    plot(table, sheet, true, column);
+  public boolean plotColumn(TableState state) {
+    plot(state, true);
     return true;
   }
 
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRow	the actual row in the spreadsheet
-   * @param selRow	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  public boolean plotRow(SpreadSheetTable table, SpreadSheet sheet, int actRow, int selRow) {
-    plot(table, sheet, false, actRow);
+  public boolean plotRow(TableState state) {
+    plot(state, false);
     return true;
   }
 }

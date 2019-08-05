@@ -20,14 +20,12 @@
 
 package adams.gui.core.spreadsheettable;
 
-import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 
 /**
  * Interface for plugins that processes selected rows.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface ProcessSelectedRows
   extends SpreadSheetTablePopupMenuItem {
@@ -49,11 +47,8 @@ public interface ProcessSelectedRows
   /**
    * Processes the specified row.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param actRows	the actual rows in the spreadsheet
-   * @param selRows	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processSelectedRows(SpreadSheetTable table, SpreadSheet sheet, int[] actRows, int[] selRows);
+  public boolean processSelectedRows(TableState state);
 }

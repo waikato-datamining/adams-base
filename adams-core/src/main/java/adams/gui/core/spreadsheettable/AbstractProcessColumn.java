@@ -13,23 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractProcessColumn.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
 
 import adams.core.option.AbstractOptionHandler;
-import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 
 /**
  * Ancestor for plugins that process a column.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractProcessColumn
   extends AbstractOptionHandler
@@ -61,51 +59,43 @@ public abstract class AbstractProcessColumn
   /**
    * Hook method for checks before attempting processing.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		null if passed, otherwise error message
    */
-  protected String check(SpreadSheetTable table, SpreadSheet sheet, int column) {
-    if (table == null)
+  protected String check(TableState state) {
+    if (state.table == null)
       return "No source table available!";
-    if (sheet == null)
-      return "No spreadsheet available!";
-    if (column < 0)
+    if (state.actCol < 0)
       return "Negative column index!";
-    if (column >= sheet.getColumnCount())
-      return "Column index too large: " + (column + 1) + " > " + sheet.getColumnCount();
+    if (state.actCol >= state.table.toSpreadSheet().getColumnCount())
+      return "Column index too large: " + (state.actCol + 1) + " > " + state.table.toSpreadSheet().getColumnCount();
     return null;
   }
 
   /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		true if successful
    */
-  protected abstract boolean doProcessColumn(SpreadSheetTable table, SpreadSheet sheet, int column);
+  public abstract boolean doProcessColumn(TableState state);
 
   /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param sheet	the spreadsheet to use as basis
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processColumn(SpreadSheetTable table, SpreadSheet sheet, int column) {
+  public boolean processColumn(TableState state) {
     boolean	result;
     String	error;
 
-    error = check(table, sheet, column);
+    error = check(state);
     result = (error == null);
     if (result)
-      result = doProcessColumn(table, sheet, column);
+      result = doProcessColumn(state);
     else
-      GUIHelper.showErrorMessage(table, "Failed to process column #" + (column+1) + "\n" + error);
+      GUIHelper.showErrorMessage(state.table, "Failed to process column #" + (state.actCol+1) + "\n" + error);
 
     return result;
   }
