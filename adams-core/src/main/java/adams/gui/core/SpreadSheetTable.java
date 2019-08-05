@@ -30,7 +30,6 @@ import adams.gui.visualization.core.PopupMenuCustomizer;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -426,7 +425,6 @@ public class SpreadSheetTable
   protected BasePopupMenu createCellPopupMenu(final MouseEvent e) {
     BasePopupMenu	menu;
     JMenuItem		menuitem;
-    JMenu		submenu;
     final TableRowRange	range;
     final TableState	state;
 
