@@ -15,7 +15,7 @@
 
 /*
  * BaseTable.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -890,26 +890,28 @@ public class BaseTable
 	break;
       case SELECTED:
 	indices = getSelectedRows();
+        for (i = 0; i < indices.length; i++)
+          indices[i] = selectionRowToModelRow(indices[i]);
 	if (view) {
 	  result = new SpreadSheetView(full, indices, null);
 	}
 	else {
 	  result = full.getHeader();
-	  for (i = 0; i < indices.length; i++)
-	    result.addRow().assign(full.getRow(selectionRowToModelRow(indices[i])));
+	  for (int index: indices)
+	    result.addRow().assign(full.getRow(index));
 	}
 	break;
       case VISIBLE:
+        indices = new int[getRowCount()];
+        for (i = 0; i < getRowCount(); i++)
+          indices[i] = selectionRowToModelRow(i);
 	if (view) {
-	  indices = new int[getRowCount()];
-	  for (i = 0; i < getRowCount(); i++)
-	    indices[i] = selectionRowToModelRow(i);
 	  result = new SpreadSheetView(full, indices, null);
 	}
 	else {
 	  result = full.getHeader();
-	  for (i = 0; i < getRowCount(); i++)
-	    result.addRow().assign(full.getRow(selectionRowToModelRow(i)));
+	  for (int index: indices)
+	    result.addRow().assign(full.getRow(index));
 	}
 	break;
       default:
