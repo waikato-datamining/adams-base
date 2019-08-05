@@ -29,7 +29,6 @@ import adams.gui.core.TableRowRange;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -144,77 +143,42 @@ public class SpreadSheetTablePopupMenuItemHelper {
     if (isRow) {
       if (item instanceof PlotSelectedRows) {
         plotSelRows = (PlotSelectedRows) item;
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    ((PlotSelectedRows) item).plotSelectedRows(state);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent e) -> ((PlotSelectedRows) item).plotSelectedRows(state));
 	enabled = (state.actRows.length >= plotSelRows.minNumRows());
 	if (plotSelRows.maxNumRows() != -1)
 	  enabled = enabled && (state.actRows.length <= plotSelRows.maxNumRows());
  	menuitem.setEnabled(enabled);
       }
       else if (item instanceof PlotRow) {
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    ((PlotRow) item).plotRow(state);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent e) -> ((PlotRow) item).plotRow(state));
 	menuitem.setEnabled(state.actRows.length <= 1);
       }
       else if (item instanceof ProcessSelectedRows) {
         procSelRows = (ProcessSelectedRows) item;
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    ((ProcessSelectedRows) item).processSelectedRows(state);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent e) -> ((ProcessSelectedRows) item).processSelectedRows(state));
 	enabled = (state.actRows.length >= procSelRows.minNumRows());
 	if (procSelRows.maxNumRows() != -1)
 	  enabled = enabled && (state.actRows.length <= procSelRows.maxNumRows());
  	menuitem.setEnabled(enabled);
       }
       else if (item instanceof ProcessRow) {
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    ((ProcessRow) item).processRow(state);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent e) -> ((ProcessRow) item).processRow(state));
 	menuitem.setEnabled(state.actRows.length <= 1);
       }
       else if (item instanceof ProcessCell) {
         if (state.actRows.length <= 1) {
-	  menuitem.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-	      ((ProcessCell) item).processCell(state);
-	    }
-	  });
+	  menuitem.addActionListener((ActionEvent e) -> ((ProcessCell) item).processCell(state));
 	}
       }
     }
     else {
       if (item instanceof PlotColumn) {
         menuitem.setEnabled(((PlotColumn) item).handlesRowRange(state.range));
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    ((PlotColumn) item).plotColumn(state);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent e) -> ((PlotColumn) item).plotColumn(state));
       }
       else if (item instanceof ProcessColumn) {
         menuitem.setEnabled(((ProcessColumn) item).handlesRowRange(state.range));
-	menuitem.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    ((ProcessColumn) item).processColumn(state);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent e) -> ((ProcessColumn) item).processColumn(state));
       }
     }
   }
