@@ -15,7 +15,7 @@
 
 /*
  * VariableManagementPanel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -25,9 +25,11 @@ import adams.core.Variables;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.event.VariableChangeListener;
+import adams.flow.core.ActorUtils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTable;
@@ -38,7 +40,6 @@ import adams.gui.core.SortableAndSearchableTableWithButtons;
 import adams.gui.dialog.TextDialog;
 import adams.gui.event.PopupMenuListener;
 import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JFrame;
@@ -46,22 +47,24 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Panel for managing the variables (at runtime).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class VariableManagementPanel
   extends BasePanel
@@ -74,7 +77,6 @@ public class VariableManagementPanel
    * Specialized table model for the variables.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class VariableTableModel
     extends AbstractBaseTableModel
@@ -83,14 +85,23 @@ public class VariableManagementPanel
     /** for serialization. */
     private static final long serialVersionUID = 1842691685087532235L;
 
-    /** the name - actual value relation. */
-    protected Hashtable<String,String> m_Values;
+    /** programmatic variables. */
+    protected Set<String> m_ProgrammaticVars;
 
-    /** the sorted list of names. */
-    protected Vector<String> m_Names;
+    /** the name - actual value relation. */
+    protected Map<String,String> m_Values;
+
+    /** the sorted list of var names. */
+    protected List<String> m_Names;
+
+    /** the sorted list of user-only var names. */
+    protected List<String> m_NamesUserOnly;
 
     /** the underlying variables instance. */
     protected Variables m_Variables;
+
+    /** whether to display user-only vars. */
+    protected boolean m_DisplayUserOnly;
 
     /**
      * Initializes the model with the global variables.
@@ -109,15 +120,24 @@ public class VariableManagementPanel
      * Initializes the model.
      */
     protected void initialize() {
-      m_Names  = new Vector<String>();
-      m_Values = new Hashtable<String,String>();
-      Enumeration<String> enm = m_Variables.names();
+      Enumeration<String> 	enm;
+      String 			name;
+
+      m_DisplayUserOnly  = false;
+      m_ProgrammaticVars = new HashSet<>(Arrays.asList(ActorUtils.PROGRAMMATIC_VARIABLES));
+      m_Names            = new ArrayList<>();
+      m_NamesUserOnly    = new ArrayList<>();
+      m_Values           = new HashMap<>();
+      enm                = m_Variables.names();
       while (enm.hasMoreElements()) {
-	String name = enm.nextElement();
+	name = enm.nextElement();
 	m_Names.add(name);
+	if (!m_ProgrammaticVars.contains(name))
+	  m_NamesUserOnly.add(name);
 	m_Values.put(name, m_Variables.get(name));
       }
       Collections.sort(m_Names);
+      Collections.sort(m_NamesUserOnly);
     }
 
     /**
@@ -127,6 +147,25 @@ public class VariableManagementPanel
      */
     public Variables getVariables() {
       return m_Variables;
+    }
+
+    /**
+     * Sets whether only user variables are displayed without the programmatic ones.
+     *
+     * @param value	true if user-only
+     */
+    public void setDisplayUserOnly(boolean value) {
+      m_DisplayUserOnly = value;
+      fireTableDataChanged();
+    }
+
+    /**
+     * Returns whether only user variables are displayed without the programmatic ones.
+     *
+     * @return		true if user-only
+     */
+    public boolean getDisplayUserOnly() {
+      return m_DisplayUserOnly;
     }
 
     /**
@@ -144,7 +183,10 @@ public class VariableManagementPanel
      * @return		the number of variables
      */
     public int getRowCount() {
-      return m_Names.size();
+      if (m_DisplayUserOnly)
+        return m_NamesUserOnly.size();
+      else
+	return m_Names.size();
     }
 
     /**
@@ -180,6 +222,23 @@ public class VariableManagementPanel
     }
 
     /**
+     * Returns the name at the specified row.
+     *
+     * @param rowIndex	the row to get the variable name for
+     * @return		the name
+     */
+    protected String getVariableNameAt(int rowIndex) {
+      List<String>	names;
+
+      if (m_DisplayUserOnly)
+        names = m_NamesUserOnly;
+      else
+        names = m_Names;
+
+      return names.get(rowIndex);
+    }
+
+    /**
      * Returns the cell value.
      *
      * @param rowIndex		the row of the cell
@@ -188,9 +247,9 @@ public class VariableManagementPanel
      */
     public Object getValueAt(int rowIndex, int columnIndex) {
       if (columnIndex == 0)
-	return m_Names.get(rowIndex);
+	return getVariableNameAt(rowIndex);
       else if (columnIndex == 1)
-	return m_Values.get(m_Names.get(rowIndex));
+	return m_Values.get(getVariableNameAt(rowIndex));
       else
 	throw new IllegalArgumentException("Illegal column: " + columnIndex);
     }
@@ -219,6 +278,8 @@ public class VariableManagementPanel
       String	newName;
       String	oldName;
       String	oldValue;
+      String	name;
+      int	index;
 
       if (columnIndex == 0) {
 	newName = ((String) value);
@@ -229,17 +290,22 @@ public class VariableManagementPanel
 	      + "Allowed characters:\n" + Variables.CHARS);
 	  return;
 	}
-	oldName  = m_Names.get(rowIndex);
+	oldName  = getVariableNameAt(rowIndex);
 	oldValue = m_Values.get(oldName);
+	index    = m_Names.indexOf(oldName);
+	m_Names.set(index, newName);
+	index    = m_NamesUserOnly.indexOf(oldName);
+	if (index != -1)
+	  m_NamesUserOnly.set(index, newName);
 	m_Values.remove(oldName);
-	m_Names.set(rowIndex, newName);
 	m_Values.put(newName, oldValue);
 	m_Variables.remove(oldName);
 	m_Variables.set(newName, oldValue);
       }
       else if (columnIndex == 1) {
-	m_Values.put(m_Names.get(rowIndex), (String) value);
-	m_Variables.set(m_Names.get(rowIndex), (String) value);
+        name = getVariableNameAt(rowIndex);
+	m_Values.put(name, (String) value);
+	m_Variables.set(name, (String) value);
       }
       else {
 	throw new IllegalArgumentException("Illegal column: " + columnIndex);
@@ -252,7 +318,7 @@ public class VariableManagementPanel
      * @param rowIndex	the row to remove
      */
     public void remove(int rowIndex) {
-      m_Variables.remove(m_Names.get(rowIndex));
+      m_Variables.remove(getVariableNameAt(rowIndex));  // triggers event
     }
 
     /**
@@ -272,7 +338,7 @@ public class VariableManagementPanel
       if (m_Names.contains(name))
 	return;
 
-      m_Variables.set(name, value);
+      m_Variables.set(name, value);  // triggers event
     }
 
     /**
@@ -285,7 +351,9 @@ public class VariableManagementPanel
 
       if (e.getType() == Type.ADDED) {
 	m_Names.add(e.getName());
+	m_NamesUserOnly.add(e.getName());
 	Collections.sort(m_Names);
+	Collections.sort(m_NamesUserOnly);
 	m_Values.put(e.getName(), m_Variables.get(e.getName()));
 	// notify
 	rowIndex = m_Names.indexOf(e.getName());
@@ -294,6 +362,7 @@ public class VariableManagementPanel
       else if (e.getType() == Type.REMOVED) {
 	rowIndex = m_Names.indexOf(e.getName());
 	m_Names.remove(e.getName());
+	m_NamesUserOnly.remove(e.getName());
 	m_Values.remove(e.getName());
 	// notify
 	fireTableRowsDeleted(rowIndex, rowIndex);
@@ -317,6 +386,9 @@ public class VariableManagementPanel
 
   /** for searching the variables. */
   protected SearchPanel m_PanelSearch;
+
+  /** whether to show only user variables. */
+  protected BaseCheckBox m_CheckBoxUserOnlyVars;
 
   /** the button for copying the variable name. */
   protected BaseButton m_ButtonCopyName;
@@ -354,11 +426,7 @@ public class VariableManagementPanel
     m_Table = new SortableAndSearchableTableWithButtons(m_Model);
     m_Table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
-    m_Table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-	update();
-      }
-    });
+    m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> update());
     m_Table.addCellPopupMenuListener(new PopupMenuListener() {
       public void showPopupMenu(MouseEvent e) {
 	BasePopupMenu menu = new BasePopupMenu();
@@ -368,29 +436,17 @@ public class VariableManagementPanel
 	// variable name
 	menuitem = new JMenuItem("Copy name");
 	menuitem.setEnabled(enabled);
-	menuitem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    copyName(row);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent ae) -> copyName(row));
 	menu.add(menuitem);
 	// variable value
 	menuitem = new JMenuItem("Copy value");
 	menuitem.setEnabled(enabled);
-	menuitem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    copyValue(row);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent ae) -> copyValue(row));
 	menu.add(menuitem);
 	// show value
 	menuitem = new JMenuItem("Show value");
 	menuitem.setEnabled(enabled);
-	menuitem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    showValue(row);
-	  }
-	});
+	menuitem.addActionListener((ActionEvent ae) -> showValue(row));
 	menu.addSeparator();
 	menu.add(menuitem);
 	
@@ -400,40 +456,31 @@ public class VariableManagementPanel
     add(m_Table, BorderLayout.CENTER);
 
     m_ButtonCopyName = new BaseButton("Copy name");
-    m_ButtonCopyName.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	copyName(m_Table.getSelectedRow());
-      }
-    });
+    m_ButtonCopyName.addActionListener((ActionEvent e) -> copyName(m_Table.getSelectedRow()));
     m_Table.addToButtonsPanel(m_ButtonCopyName);
 
     m_ButtonCopyValue = new BaseButton("Copy value");
-    m_ButtonCopyValue.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	copyValue(m_Table.getSelectedRow());
-      }
-    });
+    m_ButtonCopyValue.addActionListener((ActionEvent e) -> copyValue(m_Table.getSelectedRow()));
     m_Table.addToButtonsPanel(m_ButtonCopyValue);
 
     m_ButtonShowValue = new BaseButton("Show value");
-    m_ButtonShowValue.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	showValue(m_Table.getSelectedRow());
-      }
-    });
+    m_ButtonShowValue.addActionListener((ActionEvent e) -> showValue(m_Table.getSelectedRow()));
     m_Table.addToButtonsPanel(m_ButtonShowValue);
     
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
-    m_PanelSearch.addSearchListener(new SearchListener() {
-      public void searchInitiated(SearchEvent e) {
-	m_Table.getComponent().search(
-	    e.getParameters().getSearchString(),
-	    e.getParameters().isRegExp());
-      }
-    });
+    m_PanelSearch.addSearchListener((SearchEvent e) ->
+      m_Table.getComponent().search(
+	e.getParameters().getSearchString(),
+	e.getParameters().isRegExp()));
+
+    m_CheckBoxUserOnlyVars = new BaseCheckBox("Show user-only vars");
+    m_CheckBoxUserOnlyVars.setSelected(false);
+    m_CheckBoxUserOnlyVars.addActionListener((ActionEvent e) -> updateUserOnlyVariables());
+
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(panel, BorderLayout.SOUTH);
     panel.add(m_PanelSearch);
+    panel.add(m_CheckBoxUserOnlyVars);
 
     update();
   }
@@ -506,7 +553,14 @@ public class VariableManagementPanel
     dlg.setLocationRelativeTo(VariableManagementPanel.this);
     dlg.setVisible(true);
   }
-  
+
+  /**
+   * Updates whether programmatic variables are displayed or not.
+   */
+  protected void updateUserOnlyVariables() {
+    m_Model.setDisplayUserOnly(m_CheckBoxUserOnlyVars.isSelected());
+  }
+
   /**
    * Closes the dialog or frame.
    */
@@ -523,8 +577,12 @@ public class VariableManagementPanel
    * @param value	the instance to use
    */
   public void setVariables(Variables value) {
+    boolean	userOnly;
+
+    userOnly = m_Model.getDisplayUserOnly();
     m_Model.getVariables().removeVariableChangeListener(this);
     m_Model = new VariableTableModel(value);
+    m_Model.setDisplayUserOnly(userOnly);
     m_Model.getVariables().addVariableChangeListener(this);
     m_Table.setModel(m_Model);
     m_Table.setOptimalColumnWidth();
