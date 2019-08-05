@@ -26,7 +26,6 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.TableRowRange;
 
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
@@ -263,52 +262,6 @@ public class SpreadSheetTablePopupMenuItemHelper {
     else {
       addToPopupMenu(state, false, menu, getItems(PlotColumn.class));
       addToPopupMenu(state, false, menu, getItems(ProcessColumn.class));
-    }
-  }
-
-  /**
-   * Adds the available menu items to the menu.
-   *
-   * @param state	the table state
-   * @param isRow	whether this is for a row or a column
-   * @param menu	the menu to add the items to
-   * @param items	the available schemes
-   */
-  protected static void addToMenu(TableState state, boolean isRow, JMenu menu, List<SpreadSheetTablePopupMenuItem> items) {
-    JMenuItem		menuitem;
-
-    if (items.size() == 0)
-      return;
-
-    if ((menu.getComponentCount() > 0) && (menu.getComponent(menu.getComponentCount() - 1) instanceof JMenuItem))
-      menu.addSeparator();
-    for (SpreadSheetTablePopupMenuItem item: items) {
-      menuitem = new JMenuItem(item.getMenuItem());
-      if (item.getIconName() != null)
-        menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
-      addAction(state, isRow, menuitem, item);
-      menu.add(menuitem);
-    }
-  }
-
-  /**
-   * Adds the available menu items to the menu.
-   *
-   * @param state	the table state this menu is for
-   * @param menu	the menu to add the items to
-   * @param isRow	whether this is for a row or a column
-   */
-  public static void addToMenu(TableState state, JMenu menu, boolean isRow) {
-    menu.addSeparator();
-    if (isRow) {
-      addToMenu(state, true, menu, getItems(PlotRow.class));
-      addToMenu(state, true, menu, getItems(ProcessRow.class));
-      addToMenu(state, true, menu, getItems(ProcessSelectedRows.class));
-      addToMenu(state, true, menu, getItems(ProcessCell.class));
-    }
-    else {
-      addToMenu(state, false, menu, getItems(PlotColumn.class));
-      addToMenu(state, false, menu, getItems(ProcessColumn.class));
     }
   }
 
