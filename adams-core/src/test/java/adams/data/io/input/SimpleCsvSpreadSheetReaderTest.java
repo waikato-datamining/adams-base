@@ -15,7 +15,7 @@
 
 /*
  * SimpleCsvSpreadSheetReaderTest.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
@@ -29,7 +29,6 @@ import junit.framework.TestSuite;
  * java adams.data.io.input.SimpleCsvSpreadSheetReader
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleCsvSpreadSheetReaderTest
   extends AbstractSpreadSheetReaderTestCase {
@@ -69,7 +68,7 @@ public class SimpleCsvSpreadSheetReaderTest
     result    = new SimpleCsvSpreadSheetReader[2];
     
     result[0] = new SimpleCsvSpreadSheetReader();
-    result[0].setCustomColumnHeaders("ID,SEPALLENGTH,SEPALWIDTH,PETALLENGTH,PETALWIDTH,CLASS");
+    result[0].setCustomColumnHeaders("F,T,V");
 
     result[1] = new SimpleCsvSpreadSheetReader();
     result[1].setCustomColumnHeaders("ID,SEPALLENGTH,SEPALWIDTH,PETALLENGTH,PETALWIDTH,CLASS");
