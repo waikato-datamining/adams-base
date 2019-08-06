@@ -21,11 +21,11 @@
 package adams.gui.visualization.instances.instancestable;
 
 import adams.gui.core.GUIHelper;
+import adams.gui.core.TableRowRange;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.InstancesSortSetupEvent;
 import adams.gui.event.InstancesSortSetupListener;
-import adams.gui.visualization.instances.InstancesTable;
-import weka.core.Instances;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
@@ -73,21 +73,29 @@ public class DataSort
   }
 
   /**
+   * Checks whether the row range can be handled.
+   *
+   * @param range	the range to check
+   * @return		true if handled
+   */
+  public boolean handlesRowRange(TableRowRange range) {
+    return (range == TableRowRange.ALL);
+  }
+
+  /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  protected boolean doProcessColumn(InstancesTable table, Instances data, int column) {
+  protected boolean doProcessColumn(TableState state) {
     final ApprovalDialog dialog;
 
-    if (GUIHelper.getParentDialog(table) != null)
-      dialog = new ApprovalDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      dialog = new ApprovalDialog(GUIHelper.getParentDialog(state.table), ModalityType.DOCUMENT_MODAL);
     else
-      dialog = new ApprovalDialog(GUIHelper.getParentFrame(table), true);
+      dialog = new ApprovalDialog(GUIHelper.getParentFrame(state.table), true);
     dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
     dialog.setTitle("Sort");
     dialog.getApproveButton().setEnabled(false);
@@ -100,7 +108,7 @@ public class DataSort
 	}
       });
     }
-    if (m_InstancesSortPanel.setInstances(data))
+    if (m_InstancesSortPanel.setInstances(state.table.getInstances()))
       m_InstancesSortPanel.addDefinition();
     dialog.getApproveButton().setEnabled(m_InstancesSortPanel.isValidSetup());
     dialog.getContentPane().add(m_InstancesSortPanel, BorderLayout.CENTER);
@@ -109,7 +117,7 @@ public class DataSort
     dialog.setVisible(true);
     if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
       return false;
-    table.sort(m_InstancesSortPanel.getComparator());
+    state.table.sort(m_InstancesSortPanel.getComparator());
     return true;
   }
 }

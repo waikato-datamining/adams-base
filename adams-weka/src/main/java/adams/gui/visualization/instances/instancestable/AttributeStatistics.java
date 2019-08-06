@@ -13,16 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AttributeStatistics.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
 
 import adams.gui.core.GUIHelper;
+import adams.gui.core.TableRowRange;
 import adams.gui.dialog.TextDialog;
-import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import weka.core.AttributeStats;
 import weka.core.Instances;
 
@@ -32,7 +33,6 @@ import java.awt.Dialog.ModalityType;
  * Displays statistics for the selected attribute.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AttributeStatistics
   extends AbstractProcessColumn {
@@ -60,25 +60,35 @@ public class AttributeStatistics
   }
 
   /**
+   * Checks whether the row range can be handled.
+   *
+   * @param range	the range to check
+   * @return		true if handled
+   */
+  public boolean handlesRowRange(TableRowRange range) {
+    return true;
+  }
+
+  /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  protected boolean doProcessColumn(InstancesTable table, Instances data, int column) {
+  protected boolean doProcessColumn(TableState state) {
     AttributeStats 	stats;
     TextDialog		dialog;
+    Instances		data;
 
-    stats = data.attributeStats(column);
-    if (GUIHelper.getParentDialog(table) != null)
-      dialog = new TextDialog(GUIHelper.getParentDialog(table), ModalityType.MODELESS);
+    data = state.table.toInstances(state.range, true);
+    stats = data.attributeStats(state.actCol);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      dialog = new TextDialog(GUIHelper.getParentDialog(state.table), ModalityType.MODELESS);
     else
-      dialog = new TextDialog(GUIHelper.getParentFrame(table), false);
+      dialog = new TextDialog(GUIHelper.getParentFrame(state.table), false);
     dialog.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-    dialog.setTitle("Attribute statistics for column #" + (column+1) + "/" + data.attribute(column).name());
+    dialog.setTitle("Attribute statistics for column #" + (state.actCol+1) + "/" + data.attribute(state.actCol).name());
     dialog.setUpdateParentTitle(false);
     dialog.setContent(stats.toString());
     dialog.pack();

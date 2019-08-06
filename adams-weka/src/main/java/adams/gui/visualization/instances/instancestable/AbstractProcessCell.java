@@ -22,7 +22,7 @@ package adams.gui.visualization.instances.instancestable;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.gui.core.GUIHelper;
-import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import weka.core.Instances;
 
 /**
@@ -61,61 +61,50 @@ public abstract class AbstractProcessCell
   /**
    * Hook method for checks before attempting processing.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow      the row in the instances
-   * @param selRow 	the selected row in the table
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		null if passed, otherwise error message
    */
-  protected String check(InstancesTable table, Instances data, int actRow, int selRow, int column) {
-    if (table == null)
+  protected String check(TableState state) {
+    Instances 	data;
+
+    if (state.table == null)
       return "No source table available!";
-    if (data == null)
-      return "No instances available!";
-    if (actRow < 0)
+    if (state.actRow < 0)
       return "Negative row index!";
-    if (actRow >= data.numInstances())
-      return "Row index too large: " + (actRow + 1) + " > " + data.numInstances();
-    if (column < 0)
+    data = state.table.getInstances();
+    if (state.actRow >= data.numInstances())
+      return "Row index too large: " + (state.actRow + 1) + " > " + data.numInstances();
+    if (state.actCol < 0)
       return "Negative column index!";
-    if (column >= data.numAttributes())
-      return "Column index too large: " + (column + 1) + " > " + data.numAttributes();
+    if (state.actCol >= data.numAttributes())
+      return "Column index too large: " + (state.actCol + 1) + " > " + data.numAttributes();
     return null;
   }
 
   /**
    * Processes the specified cell.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow      the actual row in the instances
-   * @param selRow 	the selected row in the table
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		true if successful
    */
-  protected abstract boolean doProcessCell(InstancesTable table, Instances data, int actRow, int selRow, int column);
+  protected abstract boolean doProcessCell(TableState state);
 
   /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow      the row in the instances
-   * @param selRow 	the selected row in the table
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processCell(InstancesTable table, Instances data, int actRow, int selRow, int column) {
+  public boolean processCell(TableState state) {
     boolean	result;
     String	error;
 
-    error = check(table, data, actRow, selRow, column);
+    error = check(state);
     result = (error == null);
     if (result)
-      result = doProcessCell(table, data, actRow, selRow, column);
+      result = doProcessCell(state);
     else
-      GUIHelper.showErrorMessage(table, "Failed to process cell " + (actRow +1) + "/" + (column+1) + "\n" + error);
+      GUIHelper.showErrorMessage(state.table, "Failed to process cell " + (state.actRow +1) + "/" + (state.actCol+1) + "\n" + error);
 
     return result;
   }

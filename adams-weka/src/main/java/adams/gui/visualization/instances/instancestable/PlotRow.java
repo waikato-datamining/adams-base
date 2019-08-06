@@ -13,21 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PlotRow.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
 
-import adams.gui.visualization.instances.InstancesTable;
-import weka.core.Instances;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 
 /**
  * Interface for plugins that plot a row.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface PlotRow
   extends InstancesTablePopupMenuItem {
@@ -35,11 +33,8 @@ public interface PlotRow
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	the actual row in the instances
-   * @param selRow 	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean plotRow(InstancesTable table, Instances data, int actRow, int selRow);
+  public boolean plotRow(TableState state);
 }

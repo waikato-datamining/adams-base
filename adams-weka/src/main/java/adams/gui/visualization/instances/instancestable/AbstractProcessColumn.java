@@ -13,23 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractProcessColumn.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.gui.core.GUIHelper;
-import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import weka.core.Instances;
 
 /**
  * Ancestor for plugins that process a column.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractProcessColumn
   extends AbstractOptionHandler
@@ -61,51 +60,46 @@ public abstract class AbstractProcessColumn
   /**
    * Hook method for checks before attempting processing.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		null if passed, otherwise error message
    */
-  protected String check(InstancesTable table, Instances data, int column) {
-    if (table == null)
+  protected String check(TableState state) {
+    Instances data;
+
+    if (state.table == null)
       return "No source table available!";
-    if (data == null)
-      return "No instances available!";
-    if (column < 0)
+    if (state.actCol < 0)
       return "Negative column index!";
-    if (column >= data.numAttributes())
-      return "Column index too large: " + (column + 1) + " > " + data.numAttributes();
+    data = state.table.getInstances();
+    if (state.actCol >= data.numAttributes())
+      return "Column index too large: " + (state.actCol + 1) + " > " + data.numAttributes();
     return null;
   }
 
   /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		true if successful
    */
-  protected abstract boolean doProcessColumn(InstancesTable table, Instances data, int column);
+  protected abstract boolean doProcessColumn(TableState state);
 
   /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processColumn(InstancesTable table, Instances data, int column) {
+  public boolean processColumn(TableState state) {
     boolean	result;
     String	error;
 
-    error = check(table, data, column);
+    error = check(state);
     result = (error == null);
     if (result)
-      result = doProcessColumn(table, data, column);
+      result = doProcessColumn(state);
     else
-      GUIHelper.showErrorMessage(table, "Failed to process column #" + (column+1) + "\n" + error);
+      GUIHelper.showErrorMessage(state.table, "Failed to process column #" + (state.actCol+1) + "\n" + error);
 
     return result;
   }

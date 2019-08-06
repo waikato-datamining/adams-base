@@ -23,8 +23,7 @@ package adams.gui.visualization.instances.instancestable;
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.gui.core.GUIHelper;
-import adams.gui.visualization.instances.InstancesTable;
-import weka.core.Instances;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 
 /**
  * Ancestor for plugins that plot rows.
@@ -124,18 +123,13 @@ public abstract class AbstractPlotSelectedRows
   /**
    * Hook method for checks before attempting processing.
    *
-   * @param table	the source table
-   * @param data	the spreadsheet to use as basis
-   * @param actRows	the rows in the spreadsheet
-   * @param selRows 	the selected rows in the table
+   * @param state	the table state
    * @return		null if passed, otherwise error message
    */
-  protected String check(InstancesTable table, Instances data, int[] actRows, int[] selRows) {
-    if (table == null)
+  protected String check(TableState state) {
+    if (state.table == null)
       return "No source table available!";
-    if (data == null)
-      return "No Instances available!";
-    if (actRows.length == 0)
+    if (state.actRows.length == 0)
       return "No rows selected!";
     return null;
   }
@@ -143,33 +137,27 @@ public abstract class AbstractPlotSelectedRows
   /**
    * Plots the specified rows.
    *
-   * @param table	the source table
-   * @param data	the Instances to use as basis
-   * @param actRows	the actual rows in the Instances
-   * @param selRows	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  protected abstract boolean doPlotSelectedRows(InstancesTable table, Instances data, int[] actRows, int[] selRows);
+  protected abstract boolean doPlotSelectedRows(TableState state);
 
   /**
    * Plots the specified rows.
    *
-   * @param table	the source table
-   * @param data	the Instances to use as basis
-   * @param actRows	the actual rows in the Instances
-   * @param selRows	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processSelectedRows(InstancesTable table, Instances data, int[] actRows, int[] selRows) {
+  public boolean processSelectedRows(TableState state) {
     boolean	result;
     String	error;
 
-    error = check(table, data, actRows, selRows);
+    error = check(state);
     result = (error == null);
     if (result)
-      result = doPlotSelectedRows(table, data, actRows, selRows);
+      result = doPlotSelectedRows(state);
     else
-      GUIHelper.showErrorMessage(table, "Failed to plot rows (0-based indices): " + Utils.arrayToString(actRows) + "\n" + error);
+      GUIHelper.showErrorMessage(state.table, "Failed to plot rows (0-based indices): " + Utils.arrayToString(state.actRows) + "\n" + error);
 
     return result;
   }

@@ -22,7 +22,6 @@ package adams.gui.visualization.instances.instancestable;
 
 import adams.core.Properties;
 import adams.core.Range;
-import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
@@ -38,6 +37,7 @@ import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import adams.gui.core.TableRowRange;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.PropertiesParameterDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -45,7 +45,7 @@ import adams.gui.visualization.core.TranslucentColorProvider;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.SimpleFixedLabelTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
-import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import adams.gui.visualization.sequence.BarPaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
@@ -113,21 +113,31 @@ public class Binning
   }
 
   /**
+   * Checks whether the row range can be handled.
+   *
+   * @param range	the range to check
+   * @return		true if handled
+   */
+  public boolean handlesRowRange(TableRowRange range) {
+    return true;
+  }
+
+  /**
    * Prompts the user to configure the parameters.
    *
-   * @param table	the table to do this for
+   * @param state	the table state
    * @param isColumn	whether column or row(s)
    * @return		the parameters, null if cancelled
    */
-  protected Properties promptParameters(InstancesTable table, boolean isColumn) {
+  protected Properties promptParameters(TableState state, boolean isColumn) {
     PropertiesParameterDialog 	dialog;
     PropertiesParameterPanel 	panel;
     Properties			last;
 
-    if (GUIHelper.getParentDialog(table) != null)
-      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(state.table), ModalityType.DOCUMENT_MODAL);
     else
-      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(state.table), true);
     panel = dialog.getPropertiesParameterPanel();
     if (!isColumn) {
       panel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
@@ -145,12 +155,12 @@ public class Binning
       last.setProperty(KEY_COLUMNS, Range.ALL);
     last.setObject(KEY_BINNING, new ManualBinning());
     dialog.setProperties(last);
-    last = (Properties) table.getLastSetup(getClass(), true, !isColumn);
+    last = (Properties) state.table.getLastSetup(getClass(), true, !isColumn);
     if (last != null)
       dialog.setProperties(last);
     dialog.setTitle(getMenuItem());
     dialog.pack();
-    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setLocationRelativeTo(state.table.getParent());
     dialog.setVisible(true);
     if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
       return null;
@@ -161,12 +171,12 @@ public class Binning
   /**
    * Generates the plot.
    *
-   * @param table	the table this is for
+   * @param state	the table state
    * @param isColumn	whether column or row
    * @param list	the data to use
    * @param title	the title for the plot
    */
-  protected void createPlot(InstancesTable table, boolean isColumn, TDoubleArrayList list, String title) {
+  protected void createPlot(TableState state, boolean isColumn, TDoubleArrayList list, String title) {
     Properties 				last;
     BinningAlgorithm 			binning;
     List<Binnable<Integer>> 		binnable;
@@ -182,24 +192,24 @@ public class Binning
     int					i;
 
     // generate bins
-    last    = (Properties) table.getLastSetup(getClass(), true, !isColumn);
+    last    = (Properties) state.table.getLastSetup(getClass(), true, !isColumn);
     binning = last.getObject(KEY_BINNING, BinningAlgorithm.class, new ManualBinning());
     try {
       binnable = Wrapping.wrap(list.toArray());
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-        table.getParent(),
+        state.table.getParent(),
 	"Failed to wrap " + (isColumn ? "column" : "row") + " values!", e);
       return;
     }
     bins = binning.generateBins(binnable);
 
     // display bins
-    if (GUIHelper.getParentDialog(table) != null)
-      dialog = new ApprovalDialog(GUIHelper.getParentDialog(table), ModalityType.MODELESS);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      dialog = new ApprovalDialog(GUIHelper.getParentDialog(state.table), ModalityType.MODELESS);
     else
-      dialog = new ApprovalDialog(GUIHelper.getParentFrame(table), false);
+      dialog = new ApprovalDialog(GUIHelper.getParentFrame(state.table), false);
     dialog.setTitle(title);
 
     paintlet = new BarPaintlet();
@@ -230,53 +240,53 @@ public class Binning
 
     dialog.getContentPane().add(plotPanel, BorderLayout.CENTER);
     dialog.setSize(GUIHelper.getDefaultDialogDimension());
-    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(table));
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(state.table));
     dialog.setVisible(true);
   }
 
   /**
    * Allows the user to generate a plot from either a row or a column.
    *
-   * @param data	the instances to use
+   * @param state	the table state
    * @param isColumn	whether the to use column or row
-   * @param index	the index of the row/column
    */
-  protected void plot(final InstancesTable table, final Instances data, final boolean isColumn, int index) {
+  protected void plot(final TableState state, final boolean isColumn) {
     TDoubleArrayList            list;
     int				i;
     Properties			last;
     WekaAttributeRange 		columns;
     int				col;
     int[]			cols;
-    Object			value;
     String			title;
+    Instances			data;
+    int				index;
 
     // prompt user for parameters
-    last = promptParameters(table, isColumn);
+    last = promptParameters(state, isColumn);
     if (last == null)
       return;
 
-    if (!isColumn) {
-      columns = new WekaAttributeRange(last.getProperty(KEY_COLUMNS, Range.ALL));
-      columns.setData(data);
-      cols = columns.getIntIndices();
-    }
-    else {
-      cols = null;
-    }
-    table.addLastSetup(getClass(), true, !isColumn, last);
+    state.table.addLastSetup(getClass(), true, !isColumn, last);
+
+    if (isColumn)
+      index = state.actCol;
+    else
+      index = state.actRow;
 
     // get data from spreadsheet
     list = new TDoubleArrayList();
     if (isColumn) {
-      col = index + 1;
-      for (i = 0; i < table.getRowCount(); i++) {
-	value = table.getValueAt(i, col);
-	if ((value != null) && (Utils.isDouble(value.toString())))
-	  list.add(Utils.toDouble(value.toString()));
+      data = state.table.toInstances(state.range, true);
+      for (i = 0; i < data.numInstances(); i++) {
+	if (data.attribute(index).isNumeric() && !data.instance(i).isMissing(index))
+	  list.add(data.instance(i).value(index));
       }
     }
     else {
+      data    = state.table.getInstances();
+      columns = new WekaAttributeRange(last.getProperty(KEY_COLUMNS, Range.ALL));
+      columns.setData(data);
+      cols = columns.getIntIndices();
       for (i = 0; i < cols.length; i++) {
 	if (data.attribute(cols[i]).isNumeric() && !data.instance(index).isMissing(cols[i]))
 	  list.add(data.instance(index).value(cols[i]));
@@ -287,36 +297,31 @@ public class Binning
     if (isColumn)
       title = "Column " + (index + 1) + "/" + data.attribute(index).name();
     else
-      title = "Row " + (index + 2);
-    createPlot(table, isColumn, list, title);
+      title = "Row " + (index + 1);
+    createPlot(state, isColumn, list, title);
   }
 
   /**
    * Plots the specified column.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  public boolean plotColumn(InstancesTable table, Instances data, int column) {
-    plot(table, data, true, column);
+  public boolean plotColumn(TableState state) {
+    plot(state, true);
     return true;
   }
 
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	the actual row in the instances
-   * @param selRow	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  public boolean plotRow(InstancesTable table, Instances data, int actRow, int selRow) {
-    plot(table, data, false, actRow);
+  public boolean plotRow(TableState state) {
+    plot(state, false);
     return true;
   }
 }

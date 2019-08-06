@@ -21,7 +21,6 @@
 package adams.gui.visualization.instances.instancestable;
 
 import adams.core.Properties;
-import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.statistics.AbstractArrayStatistic;
 import adams.data.statistics.ArrayHistogram;
@@ -29,9 +28,10 @@ import adams.data.weka.WekaAttributeRange;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import adams.gui.core.TableRowRange;
 import adams.gui.dialog.PropertiesParameterDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
-import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import adams.gui.visualization.statistics.HistogramFactory;
 import gnu.trove.list.array.TDoubleArrayList;
 import weka.core.Instances;
@@ -95,21 +95,31 @@ public class Histogram
   }
 
   /**
+   * Checks whether the row range can be handled.
+   *
+   * @param range	the range to check
+   * @return		true if handled
+   */
+  public boolean handlesRowRange(TableRowRange range) {
+    return true;
+  }
+
+  /**
    * Prompts the user to configure the parameters.
    *
-   * @param table	the table to do this for
+   * @param state	the table state
    * @param isColumn	whether column or row(s)
    * @return		the parameters, null if cancelled
    */
-  protected Properties promptParameters(InstancesTable table, boolean isColumn) {
+  protected Properties promptParameters(TableState state, boolean isColumn) {
     PropertiesParameterDialog dialog;
     PropertiesParameterPanel panel;
     Properties			last;
 
-    if (GUIHelper.getParentDialog(table) != null)
-      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(state.table), ModalityType.DOCUMENT_MODAL);
     else
-      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(state.table), true);
     panel = dialog.getPropertiesParameterPanel();
     if (!isColumn) {
       panel.addPropertyType(KEY_ATTRIBUTES, PropertyType.RANGE);
@@ -127,12 +137,12 @@ public class Histogram
       last.setProperty(KEY_ATTRIBUTES, WekaAttributeRange.ALL);
     last.setObject(KEY_HISTOGRAM, new ArrayHistogram());
     dialog.setProperties(last);
-    last = (Properties) table.getLastSetup(getClass(), true, !isColumn);
+    last = (Properties) state.table.getLastSetup(getClass(), true, !isColumn);
     if (last != null)
       dialog.setProperties(last);
     dialog.setTitle(getMenuItem());
     dialog.pack();
-    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setLocationRelativeTo(state.table.getParent());
     dialog.setVisible(true);
     if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
       return null;
@@ -143,11 +153,10 @@ public class Histogram
   /**
    * Allows the user to generate a plot from either a row or a column.
    *
-   * @param data	the instances to use
+   * @param state	the table state
    * @param isColumn	whether to use column or row
-   * @param index	the index of the row/column
    */
-  protected void plot(final InstancesTable table, final Instances data, final boolean isColumn, int index) {
+  protected void plot(final TableState state, final boolean isColumn) {
     TDoubleArrayList                    list;
     HistogramFactory.Dialog		dialog;
     int					i;
@@ -157,39 +166,39 @@ public class Histogram
     int					col;
     int[]				cols;
     int					row;
-    Object				value;
+    Instances				data;
+    int					index;
 
     // prompt user for parameters
-    last = promptParameters(table, isColumn);
+    last = promptParameters(state, isColumn);
     if (last == null)
       return;
 
-    if (!isColumn) {
-      columns = new WekaAttributeRange(last.getProperty(KEY_ATTRIBUTES, WekaAttributeRange.ALL));
-      columns.setData(data);
-      cols = columns.getIntIndices();
-    }
-    else {
-      cols = null;
-    }
     histo = last.getObject(KEY_HISTOGRAM, ArrayHistogram.class, new ArrayHistogram());
-    table.addLastSetup(getClass(), true, !isColumn, last);
+    state.table.addLastSetup(getClass(), true, !isColumn, last);
+
+    if (isColumn)
+      index = state.actCol;
+    else
+      index = state.actRow;
 
     // get data from instances
     list = new TDoubleArrayList();
     if (isColumn) {
-      col = index + 1;
-      for (i = 0; i < table.getRowCount(); i++) {
-	value = table.getValueAt(i, col);
-	if ((value != null) && (Utils.isDouble(value.toString())))
-	  list.add(Utils.toDouble(value.toString()));
+      data = state.table.toInstances(state.range, true);
+      for (i = 0; i < data.numInstances(); i++) {
+	if (data.attribute(index).isNumeric() && !data.instance(i).isMissing(index))
+	  list.add(data.instance(i).value(index));
       }
     }
     else {
-      row = index;
+      data    = state.table.getInstances();
+      columns = new WekaAttributeRange(last.getProperty(KEY_ATTRIBUTES, WekaAttributeRange.ALL));
+      columns.setData(data);
+      cols = columns.getIntIndices();
       for (i = 0; i < cols.length; i++) {
-	if (data.attribute(cols[i]).isNumeric() && !data.instance(row).isMissing(cols[i]))
-	  list.add(data.instance(row).value(cols[i]));
+	if (data.attribute(cols[i]).isNumeric() && !data.instance(index).isMissing(cols[i]))
+	  list.add(data.instance(index).value(cols[i]));
       }
     }
 
@@ -197,45 +206,40 @@ public class Histogram
     histo.clear();
 
     // display histogram
-    if (GUIHelper.getParentDialog(table) != null)
-      dialog = HistogramFactory.getDialog(GUIHelper.getParentDialog(table), ModalityType.MODELESS);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      dialog = HistogramFactory.getDialog(GUIHelper.getParentDialog(state.table), ModalityType.MODELESS);
     else
-      dialog = HistogramFactory.getDialog(GUIHelper.getParentFrame(table), false);
+      dialog = HistogramFactory.getDialog(GUIHelper.getParentFrame(state.table), false);
     dialog.setDefaultCloseOperation(HistogramFactory.Dialog.DISPOSE_ON_CLOSE);
     if (isColumn)
       dialog.add(histo, list.toArray(), "Column " + (index + 1) + "/" + data.attribute(index).name());
     else
       dialog.add(histo, list.toArray(), "Row " + (index + 1));
-    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(table));
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(state.table));
     dialog.setVisible(true);
   }
 
   /**
    * Plots the specified column.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  public boolean plotColumn(InstancesTable table, Instances data, int column) {
-    plot(table, data, true, column);
+  public boolean plotColumn(TableState state) {
+    plot(state, true);
     return true;
   }
 
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	the actual row in the instances
-   * @param selRow 	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  public boolean plotRow(InstancesTable table, Instances data, int actRow, int selRow) {
-    plot(table, data, false, actRow);
+  public boolean plotRow(TableState state) {
+    plot(state, false);
     return true;
   }
 }

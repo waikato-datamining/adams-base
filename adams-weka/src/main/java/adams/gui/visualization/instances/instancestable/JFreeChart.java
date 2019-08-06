@@ -40,9 +40,11 @@ import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import adams.gui.core.TableRowRange;
 import adams.gui.dialog.PropertiesParameterDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import adams.gui.visualization.jfreechart.chart.XYLineChart;
 import adams.gui.visualization.jfreechart.dataset.DefaultXY;
 import weka.core.Instances;
@@ -114,21 +116,31 @@ public class JFreeChart
   }
 
   /**
+   * Checks whether the row range can be handled.
+   *
+   * @param range	the range to check
+   * @return		true if handled
+   */
+  public boolean handlesRowRange(TableRowRange range) {
+    return true;
+  }
+
+  /**
    * Prompts the user to configure the parameters.
    *
-   * @param table	the table to do this for
+   * @param state	the table state
    * @param isColumn	whether column or row(s)
    * @return		the parameters, null if cancelled
    */
-  protected Properties promptParameters(InstancesTable table, boolean isColumn) {
+  protected Properties promptParameters(TableState state, boolean isColumn) {
     PropertiesParameterDialog dialog;
     PropertiesParameterPanel panel;
     Properties			last;
 
-    if (GUIHelper.getParentDialog(table) != null)
-      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentDialog(state.table), ModalityType.DOCUMENT_MODAL);
     else
-      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(table), true);
+      dialog = new PropertiesParameterDialog(GUIHelper.getParentFrame(state.table), true);
     panel = dialog.getPropertiesParameterPanel();
     if (!isColumn) {
       panel.addPropertyType(KEY_COLUMNS, PropertyType.RANGE);
@@ -146,12 +158,12 @@ public class JFreeChart
       last.setProperty(KEY_COLUMNS, Range.ALL);
     last.setObject(KEY_PLOT, new adams.flow.sink.JFreeChartPlot());
     dialog.setProperties(last);
-    last = (Properties) table.getLastSetup(getClass(), true, !isColumn);
+    last = (Properties) state.table.getLastSetup(getClass(), true, !isColumn);
     if (last != null)
       dialog.setProperties(last);
     dialog.setTitle(getMenuItem());
     dialog.pack();
-    dialog.setLocationRelativeTo(table.getParent());
+    dialog.setLocationRelativeTo(state.table.getParent());
     dialog.setVisible(true);
     if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
       return null;
@@ -218,12 +230,12 @@ public class JFreeChart
   /**
    * Allows the user to generate a plot from either a row or a column.
    *
-   * @param data	the instances to use
+   * @param state	the table state
    * @param isColumn	whether the to use column or row
    * @param index	the index of the row/column
    * @param indices 	the row indices, ignored if null
    */
-  protected void plot(final InstancesTable table, final Instances data, final boolean isColumn, int index, int[] indices) {
+  protected void plot(final TableState state, final boolean isColumn, final int index, final int[] indices) {
     Properties			last;
     final List<Double>[]	list;
     List<Double>[] 		tmp;
@@ -233,18 +245,21 @@ public class JFreeChart
     WekaAttributeRange		columns;
     int				numPoints;
     String			newPoints;
-    int				col;
     int[]			cols;
     int				row;
     int[]			rows;
-    Object			value;
     final SpreadSheet		sheet;
     Row				srow;
     boolean			sorted;
     boolean			asc;
     int[]			actRows;
     int[]			spRows;
+    Instances			data;
 
+    if (isColumn)
+      data = state.table.toInstances(state.range, true);
+    else
+      data = state.table.getInstances();
     numPoints = isColumn ? data.numInstances() : data.numAttributes();
     if (numPoints > MAX_POINTS) {
       newPoints = GUIHelper.showInputDialog(null, "More than " + MAX_POINTS + " data points to plot - enter sample size:", "" + numPoints);
@@ -262,19 +277,11 @@ public class JFreeChart
     }
 
     // prompt user
-    last = promptParameters(table, isColumn);
+    last = promptParameters(state, isColumn);
     if (last == null)
       return;
 
-    if (!isColumn) {
-      columns = new WekaAttributeRange(last.getProperty(KEY_COLUMNS, WekaAttributeRange.ALL));
-      columns.setData(data);
-      cols = columns.getIntIndices();
-    }
-    else {
-      cols = null;
-    }
-    table.addLastSetup(getClass(), true, !isColumn, last);
+    state.table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from instances
     if (indices == null) {
@@ -284,14 +291,12 @@ public class JFreeChart
       tmp = new ArrayList[indices.length];
     }
     sorted = false;
-    asc    = table.isAscending();
+    asc    = state.table.isAscending();
     if (isColumn) {
-      col    = index + 1;
-      sorted = (table.getSortColumn() == col);
-      for (i = 0; i < table.getRowCount(); i++) {
-	value = table.getValueAt(i, col);
-	if ((value != null) && (Utils.isDouble(value.toString())))
-	  tmp[0].add(Utils.toDouble(value.toString()));
+      sorted = (state.table.getSortColumn() == state.selCol);
+      for (i = 0; i < data.numInstances(); i++) {
+	if (data.attribute(state.actCol).isNumeric() && !data.instance(i).isMissing(state.actCol))
+	  tmp[0].add(data.instance(i).value(state.actCol));
       }
     }
     else {
@@ -299,6 +304,9 @@ public class JFreeChart
         rows = new int[index];
       else
         rows = indices;
+      columns = new WekaAttributeRange(last.getProperty(KEY_COLUMNS, WekaAttributeRange.ALL));
+      columns.setData(data);
+      cols = columns.getIntIndices();
       for (n = 0; n < rows.length; n++) {
 	tmp[n] = new ArrayList<>();
 	row = rows[n];
@@ -315,30 +323,34 @@ public class JFreeChart
 	numPoints = Math.min(numPoints, tmp[i].size());
 	Collections.shuffle(tmp[i], new Random(1));
 	list[i] = tmp[i].subList(0, numPoints);
-	if (sorted) {
-	  Collections.sort(list[i]);
-	  if (!asc)
-	    Collections.reverse(list[i]);
-	}
       }
     }
     else {
       list = tmp;
     }
 
+    // sort data
+    if (sorted) {
+      for (i = 0; i < list.length; i++) {
+	Collections.sort(list[i]);
+	if (!asc)
+	  Collections.reverse(list[i]);
+      }
+    }
+
     // create new spreadsheet
     sheet = new DefaultSpreadSheet();
-    sheet.getHeaderRow().addCell("x").setContentAsString(isColumn ? "Row" : "Column");
+    sheet.getHeaderRow().addCell("x").setContentAsString(isColumn ? "Column" : "Row");
     if (isColumn) {
-      sheet.getHeaderRow().addCell("y0").setContentAsString(sheet.getColumnName(index));
+      sheet.getHeaderRow().addCell("y0").setContentAsString(data.attribute(index).name());
     }
     else {
       if (indices == null) {
-	sheet.getHeaderRow().addCell("y0").setContentAsString("Row " + (index + 2));
+	sheet.getHeaderRow().addCell("y0").setContentAsString("Row " + (index + 1));
       }
       else {
         for (i = 0; i < indices.length; i++)
-	  sheet.getHeaderRow().addCell("y" + i).setContentAsString("Row " + (indices[i] + 2));
+	  sheet.getHeaderRow().addCell("y" + i).setContentAsString("Row " + (indices[i] + 1));
       }
     }
     for (i = 0; i < list[0].size(); i++) {
@@ -350,18 +362,16 @@ public class JFreeChart
 
     // generate plot
     if (isColumn) {
-      title   = "Column " + (index + 1) + "/" + sheet.getColumnName(index);
-      actRows = null;
+      title   = "Column " + (index + 1) + "/" + data.attribute(index).name();
       spRows  = null;
     }
     else {
       if (indices == null) {
-        title   = "Row " + (index + 2);
-	actRows = null;
+        title   = "Row " + (index + 1);
 	spRows  = null;
       }
       else {
-        actRows = Utils.adjustIndices(indices, 2);
+        actRows = Utils.adjustIndices(indices, 1);
         spRows  = new int[indices.length];
         for (i = 0; i < indices.length; i++)
 	  spRows[i]  = i + 2;
@@ -369,35 +379,30 @@ public class JFreeChart
       }
     }
 
-    createPlot(table, isColumn, sheet, title, spRows);
+    createPlot(state.table, isColumn, sheet, title, spRows);
   }
 
   /**
    * Plots the specified column.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  public boolean plotColumn(InstancesTable table, Instances data, int column) {
-    plot(table, data, true, column, null);
+  public boolean plotColumn(TableState state) {
+    plot(state, true, state.actCol, null);
     return true;
   }
 
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	the row in the instances
-   * @param selRow 	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  public boolean plotRow(InstancesTable table, Instances data, int actRow, int selRow) {
-    plot(table, data, false, actRow, null);
+  public boolean plotRow(TableState state) {
+    plot(state, false, state.actRow, null);
     return true;
   }
 
@@ -422,14 +427,11 @@ public class JFreeChart
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRows	the actual rows in the Instances
-   * @param selRows	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean plotSelectedRows(InstancesTable table, Instances data, int[] actRows, int[] selRows) {
-    plot(table, data, false, actRows[0], actRows);
+  public boolean plotSelectedRows(TableState state) {
+    plot(state, false, state.actRow, state.actRows);
     return true;
   }
 }

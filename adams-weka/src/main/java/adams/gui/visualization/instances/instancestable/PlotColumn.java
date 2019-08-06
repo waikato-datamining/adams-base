@@ -13,32 +13,29 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PlotColumn.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
 
-import adams.gui.visualization.instances.InstancesTable;
-import weka.core.Instances;
+import adams.gui.core.spreadsheettable.TableRowRangeCheck;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 
 /**
  * Interface for plugins that plot a column.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface PlotColumn
-  extends InstancesTablePopupMenuItem {
+  extends InstancesTablePopupMenuItem, TableRowRangeCheck {
 
   /**
    * Plots the specified column.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param column	the column in the instances
+   * @param state 	the table state
    * @return		true if successful
    */
-  public boolean plotColumn(InstancesTable table, Instances data, int column);
+  public boolean plotColumn(TableState state);
 }

@@ -13,23 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractProcessRow.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.gui.core.GUIHelper;
-import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import weka.core.Instances;
 
 /**
  * Ancestor for plugins that process a row.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractProcessRow
   extends AbstractOptionHandler
@@ -61,54 +60,46 @@ public abstract class AbstractProcessRow
   /**
    * Hook method for checks before attempting processing.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	the actual row in the instances
-   * @param selRow 	the selected row in the table
+   * @param state	the table state
    * @return		null if passed, otherwise error message
    */
-  protected String check(InstancesTable table, Instances data, int actRow, int selRow) {
-    if (table == null)
+  protected String check(TableState state) {
+    Instances	data;
+
+    if (state.table == null)
       return "No source table available!";
-    if (data == null)
-      return "No instances available!";
-    if (actRow < 0)
+    if (state.actRow < 0)
       return "Negative row index!";
-    if (actRow >= data.numInstances())
-      return "Row index too large: " + (actRow + 1) + " > " + data.numInstances();
+    data = state.table.getInstances();
+    if (state.actRow >= data.numInstances())
+      return "Row index too large: " + (state.actRow + 1) + " > " + data.numInstances();
     return null;
   }
 
   /**
    * Processes the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	the actual row in the instances
-   * @param selRow 	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  protected abstract boolean doProcessRow(InstancesTable table, Instances data, int actRow, int selRow);
+  protected abstract boolean doProcessRow(TableState state);
 
   /**
    * Processes the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	the actual row in the instances
-   * @param selRow 	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processRow(InstancesTable table, Instances data, int actRow, int selRow) {
+  public boolean processRow(TableState state) {
     boolean	result;
     String	error;
 
-    error = check(table, data, actRow, selRow);
+    error = check(state);
     result = (error == null);
     if (result)
-      result = doProcessRow(table, data, actRow, selRow);
+      result = doProcessRow(state);
     else
-      GUIHelper.showErrorMessage(table, "Failed to process row #" + (actRow +1) + "\n" + error);
+      GUIHelper.showErrorMessage(state.table, "Failed to process row #" + (state.actRow +1) + "\n" + error);
 
     return result;
   }

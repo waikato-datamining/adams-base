@@ -23,12 +23,13 @@ package adams.gui.visualization.instances.instancestable;
 import adams.core.ClassLister;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.TableRowRange;
 import adams.gui.visualization.instances.InstancesTable;
-import weka.core.Instances;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,9 +38,65 @@ import java.util.List;
  * Helper class for constructing popup menus for the InstancesTable.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InstancesTablePopupMenuItemHelper {
+
+  /**
+   * Container object for the table state used by the popup menu items.
+   */
+  public static class TableState {
+
+    /** the table. */
+    public InstancesTable table = null;
+
+    /** the row range. */
+    public TableRowRange range = TableRowRange.ALL;
+
+    /** the selected row. */
+    public int selRow = -1;
+
+    /** the actual row. */
+    public int actRow = -1;
+
+    /** the selected rows. */
+    public int[] selRows = new int[0];
+
+    /** the actual rows. */
+    public int[] actRows = new int[0];
+
+    /** the selected column. */
+    public int selCol = -1;
+
+    /** the actual column. */
+    public int actCol = -1;
+  }
+
+  /**
+   * Determines the state of the table.
+   *
+   * @param table	the table to get the state for
+   * @param range	the range to use
+   * @return		the state
+   */
+  public static InstancesTablePopupMenuItemHelper.TableState getState(InstancesTable table, MouseEvent e, TableRowRange range) {
+    InstancesTablePopupMenuItemHelper.TableState result;
+    int		i;
+
+    result = new InstancesTablePopupMenuItemHelper.TableState();
+    result.table = table;
+    result.range = range;
+    result.selRow = table.getSelectedRow();
+    if (result.selRow != -1)
+      result.actRow = table.getActualRow(result.selRow);
+    result.selRows = table.getSelectedRows();
+    result.actRows = new int[result.selRows.length];
+    for (i = 0; i < result.selRows.length; i++)
+      result.actRows[i] = table.getActualRow(result.selRows[i]);
+    result.selCol = table.columnAtPoint(e.getPoint());
+    result.actCol = result.selCol - 1;
+
+    return result;
+  }
 
   /**
    * Returns a sorted list of popup menu items for the specified superclass.
@@ -71,18 +128,12 @@ public class InstancesTablePopupMenuItemHelper {
   /**
    * Adds the appropriate action to the menuitem.
    *
-   * @param table	the table this menu is for
+   * @param state	the table state
    * @param isRow	whether this is for a row or a column
-   * @param actRow	the current actual row
-   * @param selRow 	the selected row in the table
-   * @param actRows	the current actual rows
-   * @param selRows 	the selected rows in the table
-   * @param column	the current column
-   * @param data	the instances to use
    * @param menuitem	the menuitem to add the action to
    * @param item	the menu item scheme
    */
-  protected static void addAction(final InstancesTable table, final Instances data, boolean isRow, final int actRow, final int selRow, final int[] actRows, final int[] selRows, final int column, final JMenuItem menuitem, final InstancesTablePopupMenuItem item) {
+  protected static void addAction(final TableState state, boolean isRow, final JMenuItem menuitem, final InstancesTablePopupMenuItem item) {
     PlotSelectedRows 	plotSelRows;
     ProcessSelectedRows procSelRows;
     boolean		enabled;
@@ -90,38 +141,40 @@ public class InstancesTablePopupMenuItemHelper {
     if (isRow) {
       if (item instanceof PlotSelectedRows) {
         plotSelRows = (PlotSelectedRows) item;
-	menuitem.addActionListener((ActionEvent e) -> ((PlotSelectedRows) item).plotSelectedRows(table, data, actRows, selRows));
-	enabled = (actRows.length >= plotSelRows.minNumRows());
+	menuitem.addActionListener((ActionEvent e) -> ((PlotSelectedRows) item).plotSelectedRows(state));
+	enabled = (state.actRows.length >= plotSelRows.minNumRows());
 	if (plotSelRows.maxNumRows() != -1)
-	  enabled = enabled && (actRows.length <= plotSelRows.maxNumRows());
+	  enabled = enabled && (state.actRows.length <= plotSelRows.maxNumRows());
  	menuitem.setEnabled(enabled);
       }
       else if (item instanceof PlotRow) {
-	menuitem.addActionListener((ActionEvent e) -> ((PlotRow) item).plotRow(table, data, actRow, selRow));
-	menuitem.setEnabled(actRows.length <= 1);
+	menuitem.addActionListener((ActionEvent e) -> ((PlotRow) item).plotRow(state));
+	menuitem.setEnabled(state.actRows.length <= 1);
       }
       else if (item instanceof ProcessSelectedRows) {
         procSelRows = (ProcessSelectedRows) item;
-	menuitem.addActionListener((ActionEvent e) -> ((ProcessSelectedRows) item).processSelectedRows(table, data, actRows, selRows));
-	enabled = (actRows.length >= procSelRows.minNumRows());
+	menuitem.addActionListener((ActionEvent e) -> ((ProcessSelectedRows) item).processSelectedRows(state));
+	enabled = (state.actRows.length >= procSelRows.minNumRows());
 	if (procSelRows.maxNumRows() != -1)
-	  enabled = enabled && (actRows.length <= procSelRows.maxNumRows());
+	  enabled = enabled && (state.actRows.length <= procSelRows.maxNumRows());
  	menuitem.setEnabled(enabled);
       }
       else if (item instanceof ProcessRow) {
-	menuitem.addActionListener((ActionEvent e) -> ((ProcessRow) item).processRow(table, data, actRow, selRow));
-	menuitem.setEnabled(actRows.length <= 1);
+	menuitem.addActionListener((ActionEvent e) -> ((ProcessRow) item).processRow(state));
+	menuitem.setEnabled(state.actRows.length <= 1);
       }
       else if (item instanceof ProcessCell) {
-	menuitem.addActionListener((ActionEvent e) -> ((ProcessCell) item).processCell(table, data, actRow, selRow, column));
+	menuitem.addActionListener((ActionEvent e) -> ((ProcessCell) item).processCell(state));
       }
     }
     else {
       if (item instanceof PlotColumn) {
-	menuitem.addActionListener((ActionEvent e) -> ((PlotColumn) item).plotColumn(table, data, column));
+        menuitem.setEnabled(((PlotColumn) item).handlesRowRange(state.range));
+	menuitem.addActionListener((ActionEvent e) -> ((PlotColumn) item).plotColumn(state));
       }
       else if (item instanceof ProcessColumn) {
-	menuitem.addActionListener((ActionEvent e) -> ((ProcessColumn) item).processColumn(table, data, column));
+        menuitem.setEnabled(((ProcessColumn) item).handlesRowRange(state.range));
+	menuitem.addActionListener((ActionEvent e) -> ((ProcessColumn) item).processColumn(state));
       }
     }
   }
@@ -129,24 +182,16 @@ public class InstancesTablePopupMenuItemHelper {
   /**
    * Adds the available menu items to the menu.
    *
-   * @param table	the table this menu is for
+   * @param state	the table state
    * @param isRow	whether this is for a row or a column
-   * @param actRow	the current actual row
-   * @param selRow 	the selected row in the table
-   * @param actRows	the current actual rows
-   * @param selRows 	the selected rows in the table
-   * @param column	the current column
    * @param menu	the menu to add the items to
    * @param items	the available schemes
    */
-  protected static void addToPopupMenu(InstancesTable table, boolean isRow, int actRow, int selRow, int[] actRows, int[] selRows, int column, JPopupMenu menu, List<InstancesTablePopupMenuItem> items) {
+  protected static void addToPopupMenu(TableState state, boolean isRow, JPopupMenu menu, List<InstancesTablePopupMenuItem> items) {
     JMenuItem		menuitem;
-    Instances		data;
 
     if (items.size() == 0)
       return;
-
-    data = table.getInstances();
 
     if (menu.getComponent(menu.getComponentCount() - 1) instanceof JMenuItem)
       menu.addSeparator();
@@ -154,7 +199,7 @@ public class InstancesTablePopupMenuItemHelper {
       menuitem = new JMenuItem(item.getMenuItem());
       if (item.getIconName() != null)
         menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
-      addAction(table, data, isRow, actRow, selRow, actRows, selRows, column, menuitem, item);
+      addAction(state, isRow, menuitem, item);
       menu.add(menuitem);
     }
   }
@@ -162,26 +207,21 @@ public class InstancesTablePopupMenuItemHelper {
   /**
    * Adds the available menu items to the menu.
    *
-   * @param table	the table this menu is for
+   * @param state	the table state
    * @param menu	the menu to add the items to
    * @param isRow	whether this is for a row or a column
-   * @param actRow	the current actual row
-   * @param selRow 	the selected row in the table
-   * @param actRows	the current actual rows
-   * @param selRows 	the selected rows in the table
-   * @param column	the current column
    */
-  public static void addToPopupMenu(InstancesTable table, JPopupMenu menu, boolean isRow, int actRow, int selRow, int[] actRows, int[] selRows, int column) {
+  public static void addToPopupMenu(TableState state, JPopupMenu menu, boolean isRow) {
     menu.addSeparator();
     if (isRow) {
-      addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(PlotRow.class));
-      addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(ProcessRow.class));
-      addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(ProcessSelectedRows.class));
-      addToPopupMenu(table, true, actRow, selRow, actRows, selRows, column, menu, getItems(ProcessCell.class));
+      addToPopupMenu(state, true, menu, getItems(PlotRow.class));
+      addToPopupMenu(state, true, menu, getItems(ProcessRow.class));
+      addToPopupMenu(state, true, menu, getItems(ProcessSelectedRows.class));
+      addToPopupMenu(state, true, menu, getItems(ProcessCell.class));
     }
     else {
-      addToPopupMenu(table, false, actRow, selRow, actRows, selRows, column, menu, getItems(PlotColumn.class));
-      addToPopupMenu(table, false, actRow, selRow, actRows, selRows, column, menu, getItems(ProcessColumn.class));
+      addToPopupMenu(state, false, menu, getItems(PlotColumn.class));
+      addToPopupMenu(state, false, menu, getItems(ProcessColumn.class));
     }
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * InstancesTable.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances;
@@ -33,13 +33,14 @@ import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.InstancesView;
 import weka.core.Undoable;
 import weka.core.converters.AbstractFileSaver;
 
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -247,6 +248,77 @@ public class InstancesTable
   }
 
   /**
+   * Determines the actual row index.
+   *
+   * @param index	the selected row
+   * @return		the actual model row
+   */
+  protected int selectionRowToModelRow(int index) {
+    return getActualRow(index);
+  }
+
+  /**
+   * Returns the data.
+   *
+   * @param range 	the range of rows to return
+   * @return 		the data
+   */
+  public Instances toInstances(TableRowRange range) {
+    return toInstances(range, false);
+  }
+
+  /**
+   * Returns the data.
+   *
+   * @param range 	the range of rows to return
+   * @param view 	whether to return a view
+   * @return 		the data
+   */
+  public Instances toInstances(TableRowRange range, boolean view) {
+    Instances	result;
+    Instances	full;
+    int[] 	indices;
+    int		i;
+
+    full = getInstances();
+    switch (range) {
+      case ALL:
+	result = full;
+	break;
+      case SELECTED:
+	indices = getSelectedRows();
+        for (i = 0; i < indices.length; i++)
+          indices[i] = selectionRowToModelRow(indices[i]);
+	if (view) {
+	  result = new InstancesView(full, indices);
+	}
+	else {
+	  result = new Instances(full, indices.length);
+	  for (int index: indices)
+	    result.add((Instance) full.instance(index).copy());
+	}
+	break;
+      case VISIBLE:
+        indices = new int[getRowCount()];
+        for (i = 0; i < getRowCount(); i++)
+          indices[i] = selectionRowToModelRow(i);
+	if (view) {
+	  result = new InstancesView(full, indices);
+	}
+	else {
+	  result = new Instances(full, indices.length);
+	  for (int index: indices)
+	    result.add((Instance) full.instance(index).copy());
+	}
+	break;
+      default:
+	throw new IllegalStateException("Unhandled row range: " + range);
+    }
+
+    return result;
+  }
+
+  /**
    * Returns the renderer for this cell.
    *
    * @param row		the row
@@ -279,23 +351,18 @@ public class InstancesTable
   protected BasePopupMenu createHeaderPopup(MouseEvent e) {
     BasePopupMenu		menu;
     JMenuItem			menuitem;
-    final int			row;
-    final int[]			rows;
-    final int           	actRow;
-    final int[]         	actRows;
-    final int			col;
-    final int			actCol;
+    final TableState 		state;
+    TableRowRange		range;
     final InstancesTableModel	instModel;
 
     menu      = new BasePopupMenu();
-    row       = rowAtPoint(e.getPoint());
-    actRow    = getActualRow(row);
-    rows      = getSelectedRows();
-    actRows   = new int[rows.length];
-    for (int i = 0; i < rows.length; i++)
-      actRows[i] = getActualRow(rows[i]);
-    col       = tableHeader.columnAtPoint(e.getPoint());
-    actCol    = col - 1;
+    if (getSelectedRows().length > 0)
+      range = TableRowRange.SELECTED;
+    else if (isAnyColumnFiltered() || ((getSeachString() != null) && !getSeachString().isEmpty()))
+      range = TableRowRange.VISIBLE;
+    else
+      range = TableRowRange.ALL;
+    state  = InstancesTablePopupMenuItemHelper.getState(this, e, range);
     instModel = (InstancesTableModel) getUnsortedModel();
 
     if (instModel.isUndoEnabled()) {
@@ -309,9 +376,9 @@ public class InstancesTable
     menuitem = new JMenuItem("Rename...", GUIHelper.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       String newName = GUIHelper.showInputDialog(
-	InstancesTable.this, "Please enter new name", getInstances().attribute(col - 1).name());
+	InstancesTable.this, "Please enter new name", getInstances().attribute(state.selCol).name());
       if (newName != null) {
-	instModel.renameAttributeAt(col, newName);
+	instModel.renameAttributeAt(state.actCol, newName);
 	setOptimalColumnWidth();
 	notifyChangeListeners();
       }
@@ -320,9 +387,9 @@ public class InstancesTable
 
     menuitem = new JMenuItem("Delete", GUIHelper.getIcon("delete.gif"));
     menuitem.addActionListener((ActionEvent ae) -> {
-      int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, "Delete attribute '" + getInstances().attribute(col - 1).name() + "'?");
+      int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, "Delete attribute '" + getInstances().attribute(state.actCol).name() + "'?");
       if (retVal == ApprovalDialog.APPROVE_OPTION) {
-	instModel.deleteAttributeAt(col);
+	instModel.deleteAttributeAt(state.actCol);
 	setOptimalColumnWidth();
 	notifyChangeListeners();
       }
@@ -343,34 +410,34 @@ public class InstancesTable
     }
 
     menuitem = new JMenuItem("Filter", GUIHelper.getIcon("filter.png"));
-    menuitem.setEnabled(col > 0);
+    menuitem.setEnabled(state.actCol > -1);
     menuitem.addActionListener((ActionEvent ae) -> {
       String filter = "";
-      if (getColumnFilter(col) != null)
-        filter = getColumnFilter(col);
+      if (getColumnFilter(state.actCol) != null)
+        filter = getColumnFilter(state.actCol);
       filter = GUIHelper.showInputDialog(getParent(), "Please enter filter string", filter);
       if ((filter == null) || filter.isEmpty())
         return;
-      setColumnFilter(col, filter, false);
+      setColumnFilter(state.actCol, filter, false);
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Filter (RegExp)", GUIHelper.getEmptyIcon());
-    menuitem.setEnabled(col > 0);
+    menuitem.setEnabled(state.actCol > -1);
     menuitem.addActionListener((ActionEvent ae) -> {
       String filter = "";
-      if (getColumnFilter(col) != null)
-        filter = getColumnFilter(col);
+      if (getColumnFilter(state.actCol) != null)
+        filter = getColumnFilter(state.actCol);
       filter = GUIHelper.showInputDialog(getParent(), "Please enter regular expression filter", filter);
       if ((filter == null) || filter.isEmpty())
         return;
-      setColumnFilter(col, filter, true);
+      setColumnFilter(state.actCol, filter, true);
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Remove filter", GUIHelper.getIcon("delete.gif"));
-    menuitem.setEnabled(isColumnFiltered(col));
-    menuitem.addActionListener((ActionEvent ae) -> removeColumnFilter(col));
+    menuitem.setEnabled(isColumnFiltered(state.actCol));
+    menuitem.addActionListener((ActionEvent ae) -> removeColumnFilter(state.actCol));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Remove all filters", GUIHelper.getIcon("delete_all.gif"));
@@ -378,7 +445,7 @@ public class InstancesTable
     menuitem.addActionListener((ActionEvent ae) -> removeAllColumnFilters());
     menu.add(menuitem);
 
-    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, false, actRow, row, actRows, rows, actCol);
+    InstancesTablePopupMenuItemHelper.addToPopupMenu(state, menu, false);
 
     if (m_HeaderPopupMenuCustomizer != null)
       m_HeaderPopupMenuCustomizer.customizePopupMenu(e, menu);
@@ -407,29 +474,23 @@ public class InstancesTable
   protected BasePopupMenu createCellPopup(MouseEvent e) {
     BasePopupMenu 		menu;
     JMenuItem			menuitem;
-    JMenu			submenu;
-    final int			row;
-    final int			actRow;
-    final int			col;
-    final int			actCol;
-    final int[]			selRows;
-    final int[]			actRows;
-    final InstancesTableModel	instModel;
-    final Range 		range;
+    final TableRowRange		rowrange;
+    final TableState 		state;
+    final Range			range;
+    InstancesTableModel		instModel;
 
     menu      = new BasePopupMenu();
-    col       = columnAtPoint(e.getPoint());
-    actCol    = col - 1;
-    row       = rowAtPoint(e.getPoint());
-    actRow    = getActualRow(row);
-    selRows   = getSelectedRows();
-    actRows   = new int[selRows.length];
-    for (int i = 0; i < selRows.length; i++)
-      actRows[i] = getActualRow(selRows[i]);
+    if (getSelectedRows().length > 0)
+      rowrange = TableRowRange.SELECTED;
+    else if (isAnyColumnFiltered() || ((getSeachString() != null) && !getSeachString().isEmpty()))
+      rowrange = TableRowRange.VISIBLE;
+    else
+      rowrange = TableRowRange.ALL;
+    state = InstancesTablePopupMenuItemHelper.getState(this, e, rowrange);
     instModel = (InstancesTableModel) getUnsortedModel();
     range = new Range();
     range.setMax(getRowCount());
-    range.setIndices(selRows);
+    range.setIndices(state.selRows);
 
     if (instModel.isUndoEnabled()) {
       menuitem = new JMenuItem("Undo", GUIHelper.getIcon("undo.gif"));
@@ -457,50 +518,44 @@ public class InstancesTable
     menuitem.setIcon(GUIHelper.getIcon("copy_cell.gif"));
     menuitem.setEnabled(getSelectedRowCount() == 1);
     menuitem.addActionListener((ActionEvent ae) -> {
-      if (row == -1)
+      if (state.actRow == -1)
 	return;
-      if (col == -1)
+      if (state.actCol == -1)
 	return;
-      ClipboardHelper.copyToClipboard("" + getValueAt(row, col));
+      ClipboardHelper.copyToClipboard("" + getValueAt(state.actRow, state.actCol));
     });
     menu.add(menuitem);
 
     menu.addSeparator();
 
     menuitem = new JMenuItem("Delete", GUIHelper.getIcon("delete.gif"));
-    menuitem.setEnabled(selRows.length > 0);
+    menuitem.setEnabled(state.selRows.length > 0);
     menuitem.addActionListener((ActionEvent ae) -> {
       String msg = "Delete row";
-      if (selRows.length > 1)
+      if (state.selRows.length > 1)
 	msg += "s";
       msg += " " + range.getRange() + "?";
       int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, msg);
       if (retVal != ApprovalDialog.APPROVE_OPTION)
 	return;
-      instModel.deleteInstances(actRows);
+      instModel.deleteInstances(state.actRows);
       notifyChangeListeners();
     });
     menu.add(menuitem);
 
     menu.addSeparator();
 
-    submenu = new JMenu("Save");
-    submenu.setIcon(GUIHelper.getIcon("save.gif"));
-    menu.add(submenu);
+    if (rowrange == TableRowRange.ALL)
+      menuitem = new JMenuItem("Save...");
+    else if (rowrange == TableRowRange.SELECTED)
+      menuitem = new JMenuItem("Save selected...");
+    else
+      menuitem = new JMenuItem("Save visible...");
+    menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+    menuitem.addActionListener((ActionEvent ae) -> saveAs(rowrange));
+    menu.add(menuitem);
 
-    menuitem = new JMenuItem("Save all...");
-    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.ALL));
-    submenu.add(menuitem);
-
-    menuitem = new JMenuItem("Save selected...");
-    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.SELECTED));
-    submenu.add(menuitem);
-
-    menuitem = new JMenuItem("Save visible...");
-    menuitem.addActionListener((ActionEvent ae) -> saveAs(TableRowRange.VISIBLE));
-    submenu.add(menuitem);
-
-    InstancesTablePopupMenuItemHelper.addToPopupMenu(this, menu, true, actRow, row, actRows, selRows, actCol);
+    InstancesTablePopupMenuItemHelper.addToPopupMenu(state, menu, true);
 
     if (m_CellPopupMenuCustomizer != null)
       m_CellPopupMenuCustomizer.customizePopupMenu(e, menu);

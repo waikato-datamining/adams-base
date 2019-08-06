@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RowStatistic.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
@@ -26,10 +26,9 @@ import adams.data.spreadsheet.rowstatistic.Mean;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import adams.gui.visualization.statistics.HistogramFactory;
 import adams.ml.data.InstancesView;
-import weka.core.Instances;
 
 import java.awt.Dialog.ModalityType;
 
@@ -37,7 +36,6 @@ import java.awt.Dialog.ModalityType;
  * Allows the calculation of row statistics.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RowStatistic
   extends AbstractProcessRow {
@@ -67,52 +65,49 @@ public class RowStatistic
   /**
    * Processes the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	the actual row in the instances
-   * @param selRow 	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  protected boolean doProcessRow(InstancesTable table, Instances data, int actRow, int selRow) {
+  protected boolean doProcessRow(TableState state) {
     GenericObjectEditorDialog 	setup;
-    AbstractRowStatistic last;
+    AbstractRowStatistic 	last;
     SpreadSheet			stats;
     SpreadSheetDialog		dialog;
 
     // let user customize plot
-    if (GUIHelper.getParentDialog(table) != null)
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(state.table), ModalityType.DOCUMENT_MODAL);
     else
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(table), true);
+      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(state.table), true);
     setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
     setup.getGOEEditor().setClassType(AbstractRowStatistic.class);
     setup.getGOEEditor().setCanChangeClassInDialog(true);
-    last = (AbstractRowStatistic) table.getLastSetup(getClass(), true, false);
+    last = (AbstractRowStatistic) state.table.getLastSetup(getClass(), true, false);
     if (last == null)
       last = new Mean();
     setup.setCurrent(last);
-    setup.setLocationRelativeTo(GUIHelper.getParentComponent(table));
+    setup.setLocationRelativeTo(GUIHelper.getParentComponent(state.table));
     setup.setVisible(true);
     if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return false;
     last = (AbstractRowStatistic) setup.getCurrent();
-    table.addLastSetup(getClass(), true, false, last);
-    stats = last.generate(new InstancesView(data), actRow);
+    state.table.addLastSetup(getClass(), true, false, last);
+    stats = last.generate(new InstancesView(state.table.getInstances()), state.actRow);
     if (stats == null) {
       if (last.hasLastError())
 	GUIHelper.showErrorMessage(
-	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for row #" + (actRow +1) + ": " + last.getLastError());
+	  GUIHelper.getParentComponent(state.table), "Failed to calculate statistics for row #" + (state.actRow +1) + ": " + last.getLastError());
       else
 	GUIHelper.showErrorMessage(
-	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for row #" + (actRow +1) + "!");
+	  GUIHelper.getParentComponent(state.table), "Failed to calculate statistics for row #" + (state.actRow +1) + "!");
     }
     else {
-      if (GUIHelper.getParentDialog(table) != null)
-	dialog = new SpreadSheetDialog(GUIHelper.getParentDialog(table), ModalityType.MODELESS);
+      if (GUIHelper.getParentDialog(state.table) != null)
+	dialog = new SpreadSheetDialog(GUIHelper.getParentDialog(state.table), ModalityType.MODELESS);
       else
-	dialog = new SpreadSheetDialog(GUIHelper.getParentFrame(table), false);
+	dialog = new SpreadSheetDialog(GUIHelper.getParentFrame(state.table), false);
       dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
-      dialog.setTitle("Statistics for row #" + (actRow +1));
+      dialog.setTitle("Statistics for row #" + (state.actRow +1));
       dialog.setSpreadSheet(stats);
       dialog.pack();
       dialog.setLocationRelativeTo(null);

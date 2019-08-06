@@ -13,23 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractPlotRow.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.gui.core.GUIHelper;
-import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import weka.core.Instances;
 
 /**
  * Ancestor for plugins that plot a row.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractPlotRow
   extends AbstractOptionHandler
@@ -61,53 +60,46 @@ public abstract class AbstractPlotRow
   /**
    * Hook method for checks before attempting the plot.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	the actual row in the instances
-   * @param selRow 	the selected row in the table
+   * @param state	the table state
    * @return		null if passed, otherwise error message
    */
-  protected String check(InstancesTable table, Instances data, int actRow, int selRow) {
-    if (table == null)
+  protected String check(TableState state) {
+    Instances	data;
+
+    if (state.table == null)
       return "No source table available!";
-    if (data == null)
-      return "No instances available!";
-    if (actRow < 0)
+    if (state.actRow < 0)
       return "Negative row index!";
-    if (actRow >= data.numInstances())
-      return "Row index too large: " + (actRow + 1) + " > " + data.numInstances();
+    data = state.table.getInstances();
+    if (state.actRow >= data.numInstances())
+      return "Row index too large: " + (state.actRow + 1) + " > " + data.numInstances();
     return null;
   }
 
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	        the row in the instances
+   * @param state	the table state
    * @return		true if successful
    */
-  protected abstract boolean doPlotRow(InstancesTable table, Instances data, int actRow);
+  protected abstract boolean doPlotRow(TableState state);
 
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow	the actual row in the instances
-   * @param selRow 	the selected row in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean plotRow(InstancesTable table, Instances data, int actRow, int selRow) {
+  public boolean plotRow(TableState state) {
     boolean	result;
     String	error;
 
-    error = check(table, data, actRow, selRow);
+    error = check(state);
     result = (error == null);
     if (result)
-      result = doPlotRow(table, data, actRow);
+      result = doPlotRow(state);
     else
-      GUIHelper.showErrorMessage(table, "Failed to plot row #" + (actRow +1) + "\n" + error);
+      GUIHelper.showErrorMessage(state.table, "Failed to plot row #" + (state.actRow +1) + "\n" + error);
 
     return result;
   }

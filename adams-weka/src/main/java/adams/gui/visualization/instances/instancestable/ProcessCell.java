@@ -13,21 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ProcessCell.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
 
-import adams.gui.visualization.instances.InstancesTable;
-import weka.core.Instances;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 
 /**
  * Interface for plugins that process a cell.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface ProcessCell
   extends InstancesTablePopupMenuItem {
@@ -35,12 +33,8 @@ public interface ProcessCell
   /**
    * Processes the specified cell.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRow 	the row in the instances
-   * @param selRow 	the selected row in the table
-   * @param column	the column in the instances
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean processCell(InstancesTable table, Instances data, int actRow, int selRow, int column);
+  public boolean processCell(TableState state);
 }

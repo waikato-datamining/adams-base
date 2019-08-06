@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ColumnStatistic.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
@@ -24,9 +24,10 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.colstatistic.AbstractColumnStatistic;
 import adams.data.spreadsheet.colstatistic.Mean;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.TableRowRange;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.visualization.instances.InstancesTable;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import adams.gui.visualization.statistics.HistogramFactory;
 import adams.ml.data.InstancesView;
 import weka.core.Instances;
@@ -37,7 +38,6 @@ import java.awt.Dialog.ModalityType;
  * Allows the calculation of column statistics.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ColumnStatistic
   extends AbstractProcessColumn {
@@ -65,54 +65,64 @@ public class ColumnStatistic
   }
 
   /**
+   * Checks whether the row range can be handled.
+   *
+   * @param range	the range to check
+   * @return		true if handled
+   */
+  public boolean handlesRowRange(TableRowRange range) {
+    return true;
+  }
+
+  /**
    * Processes the specified column.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param column	the column in the spreadsheet
+   * @param state	the table state
    * @return		true if successful
    */
   @Override
-  protected boolean doProcessColumn(InstancesTable table, Instances data, int column) {
+  protected boolean doProcessColumn(TableState state) {
     GenericObjectEditorDialog 	setup;
     AbstractColumnStatistic 	last;
     SpreadSheet			stats;
     SpreadSheetDialog		dialog;
+    Instances			data;
 
     // let user customize plot
-    if (GUIHelper.getParentDialog(table) != null)
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(table), ModalityType.DOCUMENT_MODAL);
+    if (GUIHelper.getParentDialog(state.table) != null)
+      setup = new GenericObjectEditorDialog(GUIHelper.getParentDialog(state.table), ModalityType.DOCUMENT_MODAL);
     else
-      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(table), true);
+      setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(state.table), true);
     setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
     setup.getGOEEditor().setClassType(AbstractColumnStatistic.class);
     setup.getGOEEditor().setCanChangeClassInDialog(true);
-    last = (AbstractColumnStatistic) table.getLastSetup(getClass(), true, false);
+    last = (AbstractColumnStatistic) state.table.getLastSetup(getClass(), true, false);
     if (last == null)
       last = new Mean();
     setup.setCurrent(last);
-    setup.setLocationRelativeTo(GUIHelper.getParentComponent(table));
+    setup.setLocationRelativeTo(GUIHelper.getParentComponent(state.table));
     setup.setVisible(true);
     if (setup.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return false;
     last = (AbstractColumnStatistic) setup.getCurrent();
-    table.addLastSetup(getClass(), true, false, last);
-    stats = last.generate(new InstancesView(data), column);
+    state.table.addLastSetup(getClass(), true, false, last);
+    data = state.table.toInstances(state.range, true);
+    stats = last.generate(new InstancesView(data), state.actCol);
     if (stats == null) {
       if (last.hasLastError())
 	GUIHelper.showErrorMessage(
-	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for column #" + (column+1) + ": " + last.getLastError());
+	  GUIHelper.getParentComponent(state.table), "Failed to calculate statistics for column #" + (state.actCol+1) + ": " + last.getLastError());
       else
 	GUIHelper.showErrorMessage(
-	  GUIHelper.getParentComponent(table), "Failed to calculate statistics for column #" + (column+1) + "!");
+	  GUIHelper.getParentComponent(state.table), "Failed to calculate statistics for column #" + (state.actCol+1) + "!");
     }
     else {
-      if (GUIHelper.getParentDialog(table) != null)
-	dialog = new SpreadSheetDialog(GUIHelper.getParentDialog(table), ModalityType.MODELESS);
+      if (GUIHelper.getParentDialog(state.table) != null)
+	dialog = new SpreadSheetDialog(GUIHelper.getParentDialog(state.table), ModalityType.MODELESS);
       else
-	dialog = new SpreadSheetDialog(GUIHelper.getParentFrame(table), false);
+	dialog = new SpreadSheetDialog(GUIHelper.getParentFrame(state.table), false);
       dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
-      dialog.setTitle("Statistics for column #" + (column+1) + "/" + data.attribute(column).name());
+      dialog.setTitle("Statistics for column #" + (state.actCol+1) + "/" + data.attribute(state.actCol).name());
       dialog.setSpreadSheet(stats);
       dialog.pack();
       dialog.setLocationRelativeTo(null);

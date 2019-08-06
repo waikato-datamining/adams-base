@@ -20,8 +20,7 @@
 
 package adams.gui.visualization.instances.instancestable;
 
-import adams.gui.visualization.instances.InstancesTable;
-import weka.core.Instances;
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 
 /**
  * Interface for plugins that plot selected rows.
@@ -48,11 +47,8 @@ public interface PlotSelectedRows
   /**
    * Plots the specified row.
    *
-   * @param table	the source table
-   * @param data	the instances to use as basis
-   * @param actRows	the actual rows in the Instances
-   * @param selRows	the selected rows in the table
+   * @param state	the table state
    * @return		true if successful
    */
-  public boolean plotSelectedRows(InstancesTable table, Instances data, int[] actRows, int[] selRows);
+  public boolean plotSelectedRows(TableState state);
 }
