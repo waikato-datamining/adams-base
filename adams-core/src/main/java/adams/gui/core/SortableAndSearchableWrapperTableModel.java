@@ -807,6 +807,8 @@ public class SortableAndSearchableWrapperTableModel
   public synchronized void search(String searchString, boolean regexp) {
     m_RegExpSearch = regexp;
     m_SearchString = searchString;
+    if ((m_SearchString != null) && m_SearchString.isEmpty())
+      m_SearchString = null;
     doSearchAndFilter();
   }
 
