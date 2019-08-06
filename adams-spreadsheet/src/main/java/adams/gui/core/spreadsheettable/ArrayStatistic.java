@@ -149,6 +149,7 @@ public class ArrayStatistic
     AbstractArrayStatistic	array;
     SpreadSheetColumnRange	columns;
     SpreadSheet			sheet;
+    int				row;
 
     rows = Utils.adjustIndices(state.actRows, 2);
 
@@ -176,7 +177,7 @@ public class ArrayStatistic
     columns = new SpreadSheetColumnRange(last.getProperty(KEY_COLUMNS, SpreadSheetColumnRange.ALL));
     columns.setData(sheet);
     cols = columns.getIntIndices();
-    for (int row: state.actRows)
+    for (row = 0; row < sheet.getRowCount(); row++)
       array.add(StatUtils.toNumberArray(SpreadSheetUtils.getNumericRow(sheet, row, cols)));
     try {
       stats = array.calculate();

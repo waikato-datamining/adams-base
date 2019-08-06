@@ -92,7 +92,7 @@ public class RowStatistic
       return false;
     last = (AbstractRowStatistic) setup.getCurrent();
     state.table.addLastSetup(getClass(), true, false, last);
-    stats = last.generate(state.table.toSpreadSheet(state.range, true), state.actRow);
+    stats = last.generate(state.table.toSpreadSheet(), state.actRow);
     if (stats == null) {
       if (last.hasLastError())
 	GUIHelper.showErrorMessage(
