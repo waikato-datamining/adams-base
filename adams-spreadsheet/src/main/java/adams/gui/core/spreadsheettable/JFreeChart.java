@@ -278,14 +278,7 @@ public class JFreeChart
     last = promptParameters(state.table, isColumn);
     if (last == null)
       return;
-    if (!isColumn) {
-      columns = new Range(last.getProperty(KEY_COLUMNS, Range.ALL));
-      columns.setMax(sheet.getColumnCount());
-      cols = columns.getIntIndices();
-    }
-    else {
-      cols = null;
-    }
+
     state.table.addLastSetup(getClass(), true, !isColumn, last);
 
     // get data from spreadsheet
@@ -310,6 +303,9 @@ public class JFreeChart
         rows = new int[index];
       else
         rows = indices;
+      columns = new Range(last.getProperty(KEY_COLUMNS, Range.ALL));
+      columns.setMax(sheet.getColumnCount());
+      cols = columns.getIntIndices();
       for (n = 0; n < rows.length; n++) {
         tmp[n] = new ArrayList<>();
 	row    = rows[n];
