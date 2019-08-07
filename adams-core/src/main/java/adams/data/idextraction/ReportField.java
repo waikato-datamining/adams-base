@@ -21,6 +21,7 @@
 package adams.data.idextraction;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.data.id.IDHandler;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -29,6 +30,7 @@ import adams.data.report.ReportHandler;
 
 /**
  * Returns the value of the specified field.
+ * If neither Report nor ReportHandler but an IDHandler, then that ID is returned.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
@@ -47,7 +49,11 @@ public class ReportField
    */
   @Override
   public String globalInfo() {
-    return "Returns the value of the specified field.";
+    return "Returns the value of the specified field.\n"
+      + "If the object is neither a " + Utils.classToString(Report.class)
+      + " or " + Utils.classToString(ReportHandler.class) + ", but still "
+      + "implements " + Utils.classToString(IDHandler.class) + " then that "
+      + "ID is extracted instead.";
   }
 
   /**
