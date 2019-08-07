@@ -15,7 +15,7 @@
 
 /*
  * ReportFieldRegExp.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.idextraction;
@@ -25,6 +25,8 @@ import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
+
+import java.util.regex.Pattern;
 
 /**
  * Returns the value of the specified field after passing it through the find/replace pair.
@@ -42,6 +44,12 @@ public class ReportFieldRegExp
   /** the replacement string. */
   protected String m_Replace;
 
+  /** whether to remove any file extension before applying the regexp. */
+  protected boolean m_RemoveFileExt;
+
+  /** the pattern to find. */
+  protected transient Pattern m_FindPattern;
+
   /**
    * Returns a string describing the object.
    *
@@ -49,7 +57,8 @@ public class ReportFieldRegExp
    */
   @Override
   public String globalInfo() {
-    return "Returns the value of the specified field after passing it through the find/replace pair.";
+    return "Returns the value of the specified field after passing it through the find/replace pair.\n"
+      + "By default, automatically removes any file extension before applying the regular expression (can be turned off).";
   }
 
   /**
@@ -66,6 +75,20 @@ public class ReportFieldRegExp
     m_OptionManager.add(
       "replace", "replace",
       "$0");
+
+    m_OptionManager.add(
+      "remove-file-ext", "removeFileExt",
+      true);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_FindPattern = null;
   }
 
   /**
@@ -127,6 +150,35 @@ public class ReportFieldRegExp
   }
 
   /**
+   * Sets whether to remove any file extension before applying the regular expression.
+   *
+   * @param value	true if to remove
+   */
+  public void setRemoveFileExt(boolean value) {
+    m_RemoveFileExt = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to remove any file extension before applying the regular expression.
+   *
+   * @return		true if to remove
+   */
+  public boolean getRemoveFileExt() {
+    return m_RemoveFileExt;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String removeFileExtTipText() {
+    return "If enabled, any file extension gets removed from the string before applying the regular expression.";
+  }
+
+  /**
    * Checks whether the data type is handled.
    *
    * @param obj		the object to check
@@ -161,9 +213,15 @@ public class ReportFieldRegExp
       result = "Unhandled object: " + Utils.classToString(obj);
 
     if (result == null) {
+      if (m_FindPattern == null)
+        m_FindPattern = Pattern.compile(m_Find.getValue());
+
       if (report.hasValue(m_Field)) {
 	str = "" + report.getValue(m_Field);
-	str = FileUtils.replaceExtension(str, "");
+	if (m_RemoveFileExt)
+	  str = FileUtils.replaceExtension(str, "");
+	if (!m_FindPattern.matcher(str).matches())
+	  getLogger().warning("String '" + str + "' does not match pattern '" + m_Find + "'!");
         result = str.replaceAll(m_Find.getValue(), m_Replace);
       }
       else {
