@@ -218,6 +218,18 @@ adams.data.io.output.AbstractObjectWriter=\
 adams.data.idextraction.IDExtractor=\
   adams.data.idextraction
 
+# the schemes for extracting the group from spectra/sample data
+adams.data.groupextraction.GroupExtractor=\
+  adams.data.groupextraction
+
+# the schemes for extracting the group from spreadsheet rows
+adams.data.groupextraction.SpreadSheetRowGroupExtractor=\
+  adams.data.groupextraction
+
+# the schemes for updating the group of spectra/sample data
+adams.data.groupupdate.GroupUpdater=\
+  adams.data.groupupdate
+
 # the schemes for updating the ID of spectra/sample data
 adams.data.idupdate.IDUpdater=\
   adams.data.idupdate
