@@ -15,7 +15,7 @@
 
 /*
  * Manual.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.idextraction;
@@ -109,7 +109,7 @@ public class Manual
    * Extracts the ID from the object.
    *
    * @param obj		the object to process
-   * @return		the extracted group
+   * @return		the extracted ID
    */
   @Override
   protected String doExtractID(Object obj) {
