@@ -15,7 +15,7 @@
 
 /*
  * PropertiesUpdaterHelper.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.core;
@@ -55,7 +55,7 @@ public class PropertiesUpdaterHelper {
       }
       else {
 	cls = result[i].getReadMethod().getReturnType();
-	if (cls.isArray())
+	if (cls.isArray() && !props[i].getValue().endsWith("]"))
 	  errors.add("Property '" + props[i] + "' is an array!");
       }
       if (!errors.isEmpty())
