@@ -25,6 +25,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.core.SpreadSheetTableModel;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
 
 import java.awt.BorderLayout;
@@ -72,10 +73,10 @@ public class Information
    * Notifies the tab of the currently sheet.
    *
    * @param panel	the selected sheet panel
-   * @param rows	the selected rows
+   * @param state	the table state
    */
   @Override
-  public void sheetSelectionChanged(SpreadSheetPanel panel, int[] rows) {
+  public void sheetSelectionChanged(SpreadSheetPanel panel, TableState state) {
     SpreadSheet			sheet;
     SpreadSheet			info;
     Row				row;
@@ -107,7 +108,7 @@ public class Information
 
     row = info.addRow();
     row.addCell("K").setContent("Selected rows");
-    row.addCell("V").setContent(rows.length);
+    row.addCell("V").setContent(state.selRows.length);
     
     model = new SpreadSheetTableModel(info);
     model.setUseSimpleHeader(true);

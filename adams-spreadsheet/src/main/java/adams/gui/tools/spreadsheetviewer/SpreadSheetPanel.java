@@ -133,7 +133,7 @@ public class SpreadSheetPanel
       @Override
       public void valueChanged(ListSelectionEvent e) {
 	if (getViewer() != null)
-	  getViewer().getViewerTabs().notifyTabs(SpreadSheetPanel.this, m_Table.getSelectedRows());
+	  getViewer().getViewerTabs().notifyTabs(SpreadSheetPanel.this);
       }
     });
     add(new BaseScrollPane(m_Table), BorderLayout.CENTER);

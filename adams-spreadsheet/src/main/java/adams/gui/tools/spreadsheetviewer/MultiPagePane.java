@@ -543,16 +543,10 @@ public class MultiPagePane
    */
   protected void pageSelected(ChangeEvent e) {
     // actor tabs
-    if ((getPanelCount() == 0) || (getSelectedIndex() == -1)) {
-      m_Owner.getViewerTabs().notifyTabs(
-	null,
-	new int[0]);
-    }
-    else {
-      m_Owner.getViewerTabs().notifyTabs(
-	m_Owner.getCurrentPanel(),
-	m_Owner.getCurrentPanel().getTable().getSelectedRows());
-    }
+    if ((getPanelCount() == 0) || (getSelectedIndex() == -1))
+      m_Owner.getViewerTabs().notifyTabs(null);
+    else
+      m_Owner.getViewerTabs().notifyTabs(m_Owner.getCurrentPanel());
 
     m_Owner.updateMenu();
     m_Owner.updateActions();

@@ -75,6 +75,34 @@ public class SpreadSheetTablePopupMenuItemHelper {
    * Determines the state of the table.
    *
    * @param table	the table to get the state for
+   * @return		the state
+   */
+  public static TableState getState(SpreadSheetTable table) {
+    TableState result;
+    int		i;
+
+    result = new TableState();
+    result.table = table;
+    result.range = TableRowRange.ALL;
+    result.selRow = table.getSelectedRow();
+    if (result.selRow != -1)
+      result.actRow = table.getActualRow(result.selRow);
+    result.selRows = table.getSelectedRows();
+    result.actRows = new int[result.selRows.length];
+    for (i = 0; i < result.selRows.length; i++)
+      result.actRows[i] = table.getActualRow(result.selRows[i]);
+    result.selCol = table.getSelectedColumn();
+    result.actCol = result.selCol;
+    if (table.getShowRowColumn())
+      result.actCol--;
+
+    return result;
+  }
+
+  /**
+   * Determines the state of the table.
+   *
+   * @param table	the table to get the state for
    * @param range	the range to use
    * @return		the state
    */

@@ -13,36 +13,34 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ViewerTabManager.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.tab;
 
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import adams.core.Properties;
+import adams.env.Environment;
+import adams.gui.core.BaseTabbedPaneWithTabHiding;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
+import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
+import adams.gui.tools.SpreadSheetViewerPanel;
+import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import adams.core.Properties;
-import adams.env.Environment;
-import adams.gui.core.BaseTabbedPaneWithTabHiding;
-import adams.gui.tools.SpreadSheetViewerPanel;
-import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Specialized JTabbedPane for managing tabs in the flow editor.
+ * Specialized JTabbedPane for managing tabs in the spreadsheet file viewer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ViewerTabManager
   extends BaseTabbedPaneWithTabHiding {
@@ -100,8 +98,7 @@ public class ViewerTabManager
     m_TabList = new ArrayList<AbstractViewerTab>();
     props     = getProperties();
     update    = false;
-    for (String tabName: tabs) {
-      tab = AbstractViewerTab.forName(tabName);
+    for (String tabName: tabs) {      tab = AbstractViewerTab.forName(tabName);
       if (tab != null) {
 	tab.setOwner(this);
 	m_TabList.add(tab);
@@ -144,20 +141,29 @@ public class ViewerTabManager
   public SpreadSheetViewerPanel getOwner() {
     return m_Owner;
   }
-  
+
   /**
    * Notifies all the selection aware tabs that the selection of sheet/rows has
    * changed.
    *
    * @param panel	the panel that triggered the notification
-   * @param rows	the currently selected rows
    */
-  public void notifyTabs(SpreadSheetPanel panel, int[] rows) {
-    int		i;
+  public void notifyTabs(SpreadSheetPanel panel) {
+    notifyTabs(panel, (panel == null) ? new TableState() : SpreadSheetTablePopupMenuItemHelper.getState(panel.getTable()));
+  }
 
+  /**
+   * Notifies all the selection aware tabs that the selection of sheet/rows has
+   * changed.
+   *
+   * @param panel	the panel that triggered the notification
+   * @param state	the table state
+   */
+  public void notifyTabs(SpreadSheetPanel panel, TableState state) {
+    int		i;
     for (i = 0; i < getTabCount(); i++) {
       if (getComponentAt(i) instanceof SelectionAwareViewerTab)
-	((SelectionAwareViewerTab) getComponentAt(i)).sheetSelectionChanged(panel, rows);
+	((SelectionAwareViewerTab) getComponentAt(i)).sheetSelectionChanged(panel, state);
     }
   }
 
@@ -167,20 +173,16 @@ public class ViewerTabManager
    * @param panel	the panel
    */
   public void refresh(SpreadSheetPanel panel) {
-    int[]	rows;
-
     if (panel == null)
       return;
 
-    rows = panel.getTable().getSelectedRows();
-    notifyTabs(panel, rows);
+    notifyTabs(panel, SpreadSheetTablePopupMenuItemHelper.getState(panel.getTable()));
   }
 
   /**
    * Adds all the available tabs.
    *
    * @param menu	the menu to add the "Send to" submenu to if available
-   * @param cls		the class that the "Send to" actions must support
    */
   public void addTabsSubmenu(JMenu menu) {
     final JMenu	submenu;
@@ -188,30 +190,15 @@ public class ViewerTabManager
     boolean	first;
 
     submenu = new JMenu(MENUITEM_TABS);
-    submenu.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-	updateMenu(submenu);
-      }
-    });
+    submenu.addChangeListener((ChangeEvent e) -> updateMenu(submenu));
     menu.add(submenu);
 
     menuitem = new JMenuItem("Enable all");
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setAllVisible(true);
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> setAllVisible(true));
     submenu.add(menuitem);
 
     menuitem = new JMenuItem("Disable all");
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setAllVisible(false);
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> setAllVisible(false));
     submenu.add(menuitem);
 
     first = true;
@@ -222,15 +209,12 @@ public class ViewerTabManager
       }
       menuitem = new JCheckBoxMenuItem(tab.getTitle());
       menuitem.setSelected(isVisible(tab.getClass()));
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-	public void actionPerformed(ActionEvent e) {
-          setVisible(tab.getClass(), !isVisible(tab.getClass()));
-          if (isVisible(tab.getClass()))
-            displayTab(tab);
-          else
-            hideTab(tab);
-        }
+      menuitem.addActionListener((ActionEvent e) -> {
+	setVisible(tab.getClass(), !isVisible(tab.getClass()));
+	if (isVisible(tab.getClass()))
+	  displayTab(tab);
+	else
+	  hideTab(tab);
       });
       submenu.add(menuitem);
     }
