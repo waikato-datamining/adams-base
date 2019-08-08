@@ -719,15 +719,22 @@ public class WekaFilter
 
     if (result == null) {
       try {
-	// initialize filter?
-	if (!m_Initialized || !m_InitializeOnce) {
-	  if (data == null) {
-	    data = new weka.core.Instances(inst.dataset(), 0);
-	    data.add(inst);
-	  }
-	  initActualFilter(data);
-	}
+        // initialize filter?
+        if (!m_Initialized || !m_InitializeOnce) {
+          if (data == null) {
+            data = new weka.core.Instances(inst.dataset(), 0);
+            data.add(inst);
+          }
+          result = initActualFilter(data);
+        }
+      }
+      catch (Exception e) {
+        result = handleException("Failed to initialize filter!", e);
+      }
+    }
 
+    if (result == null) {
+      try {
 	synchronized(m_ActualFilter) {
           if (!m_FlowContextUpdated) {
             m_FlowContextUpdated = true;
