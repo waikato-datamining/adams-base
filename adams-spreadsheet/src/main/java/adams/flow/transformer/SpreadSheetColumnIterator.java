@@ -15,46 +15,38 @@
 
 /*
  * SpreadSheetColumnIterator.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.core.base.BaseRegExp;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
-import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
  * Iterates through all columns of a spreadsheet and outputs the names.<br>
- * The columns can be limited with the range parameter and furthermore with the regular expression applied to the names.
+ * The columns can be limited with the range parameter and furthermore with the regular expression applied to the names.<br>
+ * Instead of outputting the names, it is also possible to output the 1-based indices.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;adams.core.io.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -62,47 +54,67 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetColumnIterator
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-range &lt;java.lang.String&gt; (property: range)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;If enabled, outputs the names as an array rather than one-by-one.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-range &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: range)
  * &nbsp;&nbsp;&nbsp;The range of columns to iterate over; A range is a comma-separated list
  * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; the following placeholders can be used as well:
- * &nbsp;&nbsp;&nbsp; first, second, third, last_2, last_1, last.
+ * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; column names (case-sensitive) as well as the
+ * &nbsp;&nbsp;&nbsp;following placeholders can be used: first, second, third, last_2, last_1,
+ * &nbsp;&nbsp;&nbsp; last; numeric indices can be enforced by preceding them with '#' (eg '#12'
+ * &nbsp;&nbsp;&nbsp;); column names can be surrounded by double quotes..
  * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  *
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
  * &nbsp;&nbsp;&nbsp;The regular expression used to further limit the column set.
  * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
+ * </pre>
+ *
+ * <pre>-output-indices &lt;boolean&gt; (property: outputIndices)
+ * &nbsp;&nbsp;&nbsp;If set to true, 1-based indices of matches are output instead of names.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetColumnIterator
-  extends AbstractTransformer {
+  extends AbstractArrayProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 7689330704841468990L;
-
-  /** the key for storing the names in the backup. */
-  public final static String BACKUP_NAMES = "names";
 
   /** the range of columns to work on. */
   protected SpreadSheetColumnRange m_Range;
@@ -110,8 +122,8 @@ public class SpreadSheetColumnIterator
   /** the regular expression applied to the column names. */
   protected BaseRegExp m_RegExp;
 
-  /** the names of the columns to output. */
-  protected List<String> m_Names;
+  /** whether to output indices instead of the strings. */
+  protected boolean m_OutputIndices;
 
   /**
    * Returns a string describing the object.
@@ -121,9 +133,11 @@ public class SpreadSheetColumnIterator
   @Override
   public String globalInfo() {
     return
-        "Iterates through all columns of a spreadsheet and outputs the names.\n"
-      + "The columns can be limited with the range parameter and "
-      + "furthermore with the regular expression applied to the names.";
+      "Iterates through all columns of a spreadsheet and outputs the names.\n"
+        + "The columns can be limited with the range parameter and "
+        + "furthermore with the regular expression applied to the names.\n"
+        + "Instead of outputting the names, it is also possible to output the "
+        + "1-based indices.";
   }
 
   /**
@@ -134,32 +148,16 @@ public class SpreadSheetColumnIterator
     super.defineOptions();
 
     m_OptionManager.add(
-	    "range", "range",
-	    new SpreadSheetColumnRange(Range.ALL));
+      "range", "range",
+      new SpreadSheetColumnRange(Range.ALL));
 
     m_OptionManager.add(
-	    "regexp", "regExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
-  }
+      "regexp", "regExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Range = new SpreadSheetColumnRange(Range.ALL);
-  }
-
-  /**
-   * Resets the object.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_Names = new ArrayList<String>();
+    m_OptionManager.add(
+      "output-indices", "outputIndices",
+      false);
   }
 
   /**
@@ -173,8 +171,20 @@ public class SpreadSheetColumnIterator
 
     result  = QuickInfoHelper.toString(this, "range", m_Range, "cols: ");
     result += QuickInfoHelper.toString(this, "regExp", m_RegExp, ", regex: ");
+    result += QuickInfoHelper.toString(this, "outputIndices", m_OutputIndices, "output indices", ", ");
 
     return result;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String outputArrayTipText() {
+    return "If enabled, outputs the names/indices as an array rather than one-by-one.";
   }
 
   /**
@@ -236,53 +246,51 @@ public class SpreadSheetColumnIterator
   }
 
   /**
+   * Sets whether to output 1-based indices of matches instead of the names.
+   *
+   * @param value	true if to output indices
+   */
+  public void setOutputIndices(boolean value) {
+    m_OutputIndices = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output 1-based indices of matches instead of the names.
+   *
+   * @return		true if to output indices
+   */
+  public boolean getOutputIndices() {
+    return m_OutputIndices;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputIndicesTipText() {
+    return "If set to true, 1-based indices of matches are output instead of names.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->adams.core.io.SpreadSheet.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->adams.data.spreadsheet.SpreadSheet.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{SpreadSheet.class};
   }
 
   /**
-   * Returns the class of objects that it generates.
+   * Returns the base class of the items.
    *
-   * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
-   */
-  public Class[] generates() {
-    return new Class[]{String.class};
-  }
-
-  /**
-   * Backs up the current state of the actor before update the variables.
-   *
-   * @return		the backup
+   * @return		the class
    */
   @Override
-  protected Hashtable<String,Object> backupState() {
-    Hashtable<String,Object>	result;
-
-    result = super.backupState();
-
-    if (m_Names != null)
-      result.put(BACKUP_NAMES, m_Names);
-
-    return result;
-  }
-
-  /**
-   * Restores the state of the actor before the variables got updated.
-   *
-   * @param state	the backup of the state to restore from
-   */
-  @Override
-  protected void restoreState(Hashtable<String,Object> state) {
-    if (state.containsKey(BACKUP_NAMES)) {
-      m_Names = (List<String>) state.get(BACKUP_NAMES);
-      state.remove(BACKUP_NAMES);
-    }
-
-    super.restoreState(state);
+  protected Class getItemClass() {
+    return String.class;
   }
 
   /**
@@ -304,53 +312,18 @@ public class SpreadSheetColumnIterator
     m_Range.setSpreadSheet(sheet);
     indices   = m_Range.getIntIndices();
     useRegExp = !m_RegExp.isEmpty() && !m_RegExp.isMatchAll();
-    m_Names.clear();
+    m_Queue.clear();
     for (int index: indices) {
       name = sheet.getHeaderRow().getCell(index).getContent();
       if (useRegExp)
 	if (!m_RegExp.isMatch(name))
 	  continue;
-      m_Names.add(name);
+      if (m_OutputIndices)
+        m_Queue.add("" + (index + 1));
+      else
+        m_Queue.add(name);
     }
 
     return result;
-  }
-
-  /**
-   * Checks whether there is pending output to be collected after
-   * executing the flow item.
-   *
-   * @return		true if there is pending output
-   */
-  @Override
-  public boolean hasPendingOutput() {
-    return (m_Names != null) && (m_Names.size() > 0);
-  }
-
-  /**
-   * Returns the generated token.
-   *
-   * @return		the generated token
-   */
-  @Override
-  public Token output() {
-    Token	result;
-
-    result = new Token(m_Names.get(0));
-    m_Names.remove(0);
-
-    m_InputToken = null;
-
-    return result;
-  }
-
-  /**
-   * Cleans up after the execution has finished.
-   */
-  @Override
-  public void wrapUp() {
-    super.wrapUp();
-
-    m_Names = null;
   }
 }
