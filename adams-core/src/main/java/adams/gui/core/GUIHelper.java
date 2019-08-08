@@ -2521,6 +2521,104 @@ public class GUIHelper {
   }
 
   /**
+   * Makes the window at least the specified size.
+   *
+   * @param window	the window to potentially resize
+   * @param min		the minimum dimensions
+   * @return 		true if updated
+   */
+  public static boolean makeAtLeast(Component window, Dimension min) {
+    Dimension 	current;
+    boolean	update;
+    int		width;
+    int		height;
+
+    current = window.getSize();
+    width   = current.width;
+    height  = current.height;
+    update  = false;
+
+    if (width < min.width) {
+      update = true;
+      width = min.width;
+    }
+
+    if (height < min.height) {
+      update = true;
+      height = min.height;
+    }
+
+    if (update)
+      window.setSize(new Dimension(width, height));
+
+    return update;
+  }
+
+  /**
+   * Makes the window at most the specified size.
+   *
+   * @param window	the window to potentially resize
+   * @param max		the maximum dimensions
+   * @return 		true if updated
+   */
+  public static boolean makeAtMost(Component window, Dimension max) {
+    Dimension 	current;
+    boolean	update;
+    int		width;
+    int		height;
+
+    current = window.getSize();
+    width   = current.width;
+    height  = current.height;
+    update  = false;
+
+    if (width > max.width) {
+      update = true;
+      width = max.width;
+    }
+
+    if (height > max.height) {
+      update = true;
+      height = max.height;
+    }
+
+    if (update)
+      window.setSize(new Dimension(width, height));
+
+    return update;
+  }
+
+  /**
+   * Packs the window, but ensures that it fits between min/max.
+   *
+   * @param window	the window to adjust
+   * @param min		the minimum size, ignored if null
+   * @param max		the maximum size, ignored if null
+   * @return 		true if updated
+   */
+  public static boolean pack(Window window, Dimension min, Dimension max) {
+    boolean	updated;
+
+    // ensure that min < max
+    if ((min != null) && (max != null)) {
+      if (min.width > max.width)
+	return false;
+      if (min.height > max.height)
+	return false;
+    }
+
+    window.pack();
+
+    updated = false;
+    if (min != null)
+      updated = makeAtLeast(window, min);
+    if (max != null)
+      updated = makeAtMost(window, max);
+
+    return updated;
+  }
+
+  /**
    * Rotates the rectangle by 90 degrees.
    *
    * @param rect  	the rectangle
