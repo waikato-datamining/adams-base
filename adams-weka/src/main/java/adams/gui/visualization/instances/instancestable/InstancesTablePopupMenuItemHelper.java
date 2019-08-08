@@ -164,6 +164,7 @@ public class InstancesTablePopupMenuItemHelper {
 	menuitem.setEnabled(state.actRows.length <= 1);
       }
       else if (item instanceof ProcessCell) {
+        menuitem.setEnabled((state.selRow >= 0) && (state.selCol >= 0));
 	menuitem.addActionListener((ActionEvent e) -> ((ProcessCell) item).processCell(state));
       }
     }

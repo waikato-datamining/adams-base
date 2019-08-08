@@ -166,9 +166,8 @@ public class SpreadSheetTablePopupMenuItemHelper {
 	menuitem.setEnabled(state.actRows.length <= 1);
       }
       else if (item instanceof ProcessCell) {
-        if (state.actRows.length <= 1) {
-	  menuitem.addActionListener((ActionEvent e) -> ((ProcessCell) item).processCell(state));
-	}
+        menuitem.setEnabled((state.selRow >= 0) && (state.selCol >= 0));
+	menuitem.addActionListener((ActionEvent e) -> ((ProcessCell) item).processCell(state));
       }
     }
     else {
