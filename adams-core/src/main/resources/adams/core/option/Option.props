@@ -305,6 +305,16 @@ adams.data.DecimalFormatString=true
 adams.data.DecimalFormatString#toString=adams.core.option.parsing.BaseObjectParsing#toString
 adams.data.DecimalFormatString#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
 
+# SecondFormatString objects
+adams.core.SecondFormatString=true
+adams.core.SecondFormatString#toString=adams.core.option.parsing.BaseObjectParsing#toString
+adams.core.SecondFormatString#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
+
+# MicroSecondFormatString objects
+adams.core.MicroSecondFormatString=true
+adams.core.MicroSecondFormatString#toString=adams.core.option.parsing.BaseObjectParsing#toString
+adams.core.MicroSecondFormatString#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
+
 # JdbcUrl objects
 adams.db.JdbcUrl=true
 adams.db.JdbcUrl#toString=adams.core.option.parsing.JdbcUrlParsing#toString
