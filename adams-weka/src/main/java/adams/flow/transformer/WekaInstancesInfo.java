@@ -15,7 +15,7 @@
 
 /*
  * WekaInstancesInfo.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -52,6 +52,7 @@ import java.util.HashSet;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;weka.core.Instances<br>
+ * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * <br><br>
@@ -62,61 +63,71 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaInstancesInfo
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-type &lt;FULL|FULL_ATTRIBUTE|FULL_CLASS|HEADER|RELATION_NAME|NUM_ATTRIBUTES|NUM_INSTANCES|NUM_CLASS_LABELS|ATTRIBUTE_NAME|LABELS|CLASS_LABELS|NUM_LABELS|NUM_MISSING_VALUES|NUM_DISTINCT_VALUES|NUM_UNIQUE_VALUES|LABEL_COUNT|CLASS_LABEL_COUNT|LABEL_COUNTS|CLASS_LABEL_COUNTS|LABEL_DISTRIBUTION|CLASS_LABEL_DISTRIBUTION|MIN|MAX|MEAN|STDEV|ATTRIBUTE_TYPE|CLASS_TYPE&gt; (property: type)
- * &nbsp;&nbsp;&nbsp;The type of information to generate; NB some of the types are only available 
+ *
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;Whether to output the values one-by-one or as array (counts or distributions
+ * &nbsp;&nbsp;&nbsp;are always output as array).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-type &lt;FULL|FULL_ATTRIBUTE|FULL_CLASS|HEADER|RELATION_NAME|NUM_ATTRIBUTES|NUM_INSTANCES|NUM_CLASS_LABELS|ATTRIBUTE_NAME|ATTRIBUTE_NAMES|CLASS_ATTRIBUTE_NAME|LABELS|CLASS_LABELS|NUM_LABELS|NUM_MISSING_VALUES|NUM_DISTINCT_VALUES|NUM_UNIQUE_VALUES|LABEL_COUNT|CLASS_LABEL_COUNT|LABEL_COUNTS|CLASS_LABEL_COUNTS|LABEL_DISTRIBUTION|CLASS_LABEL_DISTRIBUTION|MIN|MAX|MEAN|STDEV|ATTRIBUTE_TYPE|CLASS_TYPE&gt; (property: type)
+ * &nbsp;&nbsp;&nbsp;The type of information to generate; NB some of the types are only available
  * &nbsp;&nbsp;&nbsp;for numeric or nominal attributes.
  * &nbsp;&nbsp;&nbsp;default: FULL
  * </pre>
- * 
+ *
  * <pre>-attribute-index &lt;adams.data.weka.WekaAttributeIndex&gt; (property: attributeIndex)
  * &nbsp;&nbsp;&nbsp;The attribute index to use for generating attribute-specific information;
  * &nbsp;&nbsp;&nbsp; An index is a number starting with 1; apart from attribute names (case-sensitive
- * &nbsp;&nbsp;&nbsp;), the following placeholders can be used as well: first, second, third, 
- * &nbsp;&nbsp;&nbsp;last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;), the following placeholders can be used as well: first, second, third,
+ * &nbsp;&nbsp;&nbsp;last_2, last_1, last; numeric indices can be enforced by preceding them
+ * &nbsp;&nbsp;&nbsp;with '#' (eg '#12'); attribute names can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: last
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from attribute names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from attribute names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); attribute names can be surrounded by double quotes.
  * </pre>
- * 
- * <pre>-label-index &lt;adams.core.Index&gt; (property: labelIndex)
- * &nbsp;&nbsp;&nbsp;The index of the label to use; An index is a number starting with 1; the 
- * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
- * &nbsp;&nbsp;&nbsp; last_1, last
+ *
+ * <pre>-label-index &lt;adams.data.weka.WekaLabelIndex&gt; (property: labelIndex)
+ * &nbsp;&nbsp;&nbsp;The index of the label to use; An index is a number starting with 1; apart
+ * &nbsp;&nbsp;&nbsp;from label names (case-sensitive), the following placeholders can be used
+ * &nbsp;&nbsp;&nbsp;as well: first, second, third, last_2, last_1, last; numeric indices can
+ * &nbsp;&nbsp;&nbsp;be enforced by preceding them with '#' (eg '#12'); label names can be surrounded
+ * &nbsp;&nbsp;&nbsp;by double quotes.
  * &nbsp;&nbsp;&nbsp;default: first
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from label names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); label names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaInstancesInfo
   extends AbstractArrayProvider
@@ -152,6 +163,8 @@ public class WekaInstancesInfo
     ATTRIBUTE_NAME,
     /** the names of all attributes. */
     ATTRIBUTE_NAMES,
+    /** the name of the class attribute. */
+    CLASS_ATTRIBUTE_NAME,
     /** the labels (selected attribute, only nominal). */
     LABELS,
     /** the class labels (only nominal class attribute). */
@@ -249,7 +262,7 @@ public class WekaInstancesInfo
 
     result = QuickInfoHelper.toString(this, "type", m_Type);
 
-    types = new HashSet<InfoType>(
+    types = new HashSet<>(
 	Arrays.asList(
 	    new InfoType[]{
 		InfoType.FULL,
@@ -260,6 +273,7 @@ public class WekaInstancesInfo
 		InfoType.NUM_INSTANCES,
 		InfoType.NUM_CLASS_LABELS,
 		InfoType.ATTRIBUTE_NAMES,
+		InfoType.CLASS_ATTRIBUTE_NAME,
 		InfoType.CLASS_TYPE,
 		InfoType.CLASS_LABELS,
 		InfoType.CLASS_LABEL_COUNT,
@@ -269,7 +283,7 @@ public class WekaInstancesInfo
     if (QuickInfoHelper.hasVariable(this, "type") || !types.contains(m_Type))
       result += QuickInfoHelper.toString(this, "attributeIndex", m_AttributeIndex, ", index: ");
 
-    types = new HashSet<InfoType>(
+    types = new HashSet<>(
 	Arrays.asList(
 	    new InfoType[]{
 		InfoType.LABEL_COUNT,
@@ -382,7 +396,7 @@ public class WekaInstancesInfo
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->weka.core.Instances.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->weka.core.Instances.class, weka.core.Instance.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{Instances.class, Instance.class};
@@ -401,6 +415,7 @@ public class WekaInstancesInfo
       case RELATION_NAME:
       case ATTRIBUTE_NAME:
       case ATTRIBUTE_NAMES:
+      case CLASS_ATTRIBUTE_NAME:
       case LABELS:
       case CLASS_LABELS:
       case ATTRIBUTE_TYPE:
@@ -589,6 +604,11 @@ public class WekaInstancesInfo
       case ATTRIBUTE_NAMES:
         for (i = 0; i < inst.numAttributes(); i++)
 	  m_Queue.add(inst.attribute(i).name());
+	break;
+
+      case CLASS_ATTRIBUTE_NAME:
+        if (inst.classIndex() > -1)
+	  m_Queue.add(inst.classAttribute().name());
 	break;
 
       case LABELS:
