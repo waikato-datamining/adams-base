@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ByteFormatString.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -25,7 +25,6 @@ import adams.core.base.AbstractBaseString;
  * Wrapper for byte format strings.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see adams.core.ByteFormat
  */
 public class ByteFormatString
@@ -86,7 +85,12 @@ public class ByteFormatString
    */
   @Override
   public String getTipText() {
-    return "Format string for bytes, format: {b|B}[.N]{k|K|m|M|g|G|t|T|p|P|e|E|z|Z|y|Y[i]}";
+    return "Format string for bytes, format: {b|B}[.N]{k|K|m|M|g|G|t|T|p|P|e|E|z|Z|y|Y[i]}\n"
+      + "'b' outputs the amount without thousand separators, 'B' includes them.\n"
+      + ".N prints 'N' decimal places\n"
+      + "Units: k|K=kilobytes, m|M=megabytes, g|G=gigabytes, t|T=terabytes, p|P=petabytes, e|E=exabytes, z|Z=zettabytes, y|Y=yottabytes\n"
+      + "Lower case does not add a specifier like 'KB', upper case does.\n"
+      + "Adding 'i' at the end uses 1024 as base instead of 1000.";
   }
   
   /**
