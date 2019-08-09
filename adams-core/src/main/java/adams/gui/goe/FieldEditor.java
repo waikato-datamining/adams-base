@@ -56,7 +56,7 @@ import java.util.List;
  */
 public class FieldEditor
   extends AbstractPropertyEditorSupport
-  implements CustomStringRepresentationHandler, MultiSelectionEditor {
+  implements CustomStringRepresentationHandler, MultiSelectionEditor, InlineEditorSupport {
 
   /** The panel used for selecting fields. */
   protected SelectFieldPanel m_SelectFieldPanel;
@@ -185,6 +185,49 @@ public class FieldEditor
     if (!(curr instanceof PrefixOnlyField))
       val += "[" + curr.getDataType().toDisplay() + "]";
     gfx.drawString(val, 2, fm.getHeight() + vpad);
+  }
+
+  /**
+   * Checks whether inline editing is available.
+   *
+   * @return		true if editing available
+   */
+  public boolean isInlineEditingAvailable() {
+    return true;
+  }
+
+  /**
+   * Sets the value to use.
+   *
+   * @param value	the value to use
+   */
+  public void setInlineValue(String value) {
+    if (isInlineValueValid(value))
+      setValue(Field.parseField(value));
+  }
+
+  /**
+   * Returns the current value.
+   *
+   * @return		the current value
+   */
+  public String getInlineValue() {
+    return ((Field) getValue()).toParseableString();
+  }
+
+  /**
+   * Checks whether the value id valid.
+   *
+   * @param value	the value to check
+   * @return		true if valid
+   */
+  public boolean isInlineValueValid(String value) {
+    try {
+      return Field.isValid(value);
+    }
+    catch (Exception e) {
+      return false;
+    }
   }
 
   /**
