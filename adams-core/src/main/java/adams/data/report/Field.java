@@ -15,7 +15,7 @@
 
 /*
  * Field.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.report;
@@ -24,7 +24,6 @@ package adams.data.report;
  * A single report field identifier.
  *
  * @author  dale (dale at cs dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Field
   extends AbstractField
@@ -109,6 +108,34 @@ public class Field
       return getClone();
     else
       return new Field(getPrefix(), suffix, dt);
+  }
+
+  /**
+   * Checks whether the field is valid.
+   *
+   * @param s		the string to check
+   * @return		true if valid format
+   * @see		#toParseableString()
+   */
+  public static boolean isValid(String s) {
+    boolean	result;
+    String	typeStr;
+
+    result = false;
+    if ((s.length() > 3) && s.endsWith("]")) {
+      typeStr = s.substring(s.length() - 3);
+      if (typeStr.startsWith("[") && (typeStr.length() == 3)) {
+	typeStr = typeStr.substring(1, 2);
+	for (DataType t: DataType.values()) {
+	  if (t.toDisplay().equals(typeStr)) {
+	    result = true;
+	    break;
+	  }
+	}
+      }
+    }
+
+    return result;
   }
 
   /**
