@@ -15,7 +15,7 @@
 
 /*
  * AbstractFilterScriptlet.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -118,7 +118,7 @@ public abstract class AbstractFilterScriptlet
       for (DataContainer cont: runInput)
         runOutput.add(actualScheme.filter(cont));
       // transfer color
-      if (overlay || (runOutput.size() != runInput.size()))
+      if (runOutput.size() != runInput.size())
 	colors.clear();
     }
     for (i = 0; i < runOutput.size(); i++)
