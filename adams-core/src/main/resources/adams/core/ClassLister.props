@@ -635,7 +635,7 @@ adams.gui.core.spreadsheettable.CellRenderingCustomizer=\
 
 # the menu actions in the flow editor
 adams.gui.flow.menu.FlowEditorAction=\
-  adams.gui.flow.tree.menu
+  adams.gui.flow.menu
 
 # additional menu items for the flow editor
 adams.gui.flow.menu.AbstractFlowEditorMenuItem=\
