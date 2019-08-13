@@ -127,7 +127,8 @@ Tree.KeyboardActions=\
    "adams.gui.flow.tree.keyboardaction.FavoriteActorAfter" \
    "adams.gui.flow.tree.keyboardaction.FavoriteActorBeneath" \
    "adams.gui.flow.tree.keyboardaction.EncloseActor" \
-   "adams.gui.flow.tree.keyboardaction.PullUpActor"
+   "adams.gui.flow.tree.keyboardaction.PullUpActor" \
+   "adams.gui.flow.tree.keyboardaction.ActionQuickSearch"
 
 # Whether to show the global info in the class tree as child node of the
 # actor class (true|false)
