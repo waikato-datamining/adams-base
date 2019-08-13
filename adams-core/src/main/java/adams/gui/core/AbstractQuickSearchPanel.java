@@ -61,6 +61,9 @@ public class AbstractQuickSearchPanel
   /** the selection listeners (double click or enter). */
   protected Set<ListSelectionListener> m_SelectionListeners;
 
+  /** the cancel listeners (hitting ESC). */
+  protected Set<ChangeListener> m_CancelListeners;
+
   /** for updating the search etc. */
   protected DelayedActionRunnable m_DelayedAction;
 
@@ -73,6 +76,7 @@ public class AbstractQuickSearchPanel
 
     m_ChangeListeners    = new HashSet<>();
     m_SelectionListeners = new HashSet<>();
+    m_CancelListeners    = new HashSet<>();
     m_DelayedAction      = new DelayedActionRunnable(500, 50);
   }
 
@@ -151,6 +155,10 @@ public class AbstractQuickSearchPanel
 	        notifySelectionListeners();
 	        e.consume();
 	      }
+	      break;
+	    case KeyEvent.VK_ESCAPE:
+	      notifyCancelListeners();
+	      break;
 	  }
 	  if (update) {
             e.consume();
@@ -239,5 +247,34 @@ public class AbstractQuickSearchPanel
     e = new ListSelectionEvent(m_ListItems, m_ListItems.getSelectedIndex(), m_ListItems.getSelectedIndex(), m_ListItems.getValueIsAdjusting());
     for (ListSelectionListener l: m_SelectionListeners)
       l.valueChanged(e);
+  }
+
+  /**
+   * Adds the cancel listener to notify when the user hits ESC.
+   *
+   * @param l 		the listener to add
+   */
+  public void addCancelListener(ChangeListener l) {
+    m_CancelListeners.add(l);
+  }
+
+  /**
+   * Removes the cancel listener from notifications when the user hits ESC.
+   *
+   * @param l 		the listener to remove
+   */
+  public void removeCancelListener(ChangeListener l) {
+    m_CancelListeners.remove(l);
+  }
+
+  /**
+   * Notifies all cancel listeners.
+   */
+  protected void notifyCancelListeners() {
+    ChangeEvent e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_CancelListeners)
+      l.stateChanged(e);
   }
 }
