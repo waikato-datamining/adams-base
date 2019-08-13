@@ -207,7 +207,7 @@ public class TarUtils {
     try {
       // does file already exist?
       if (output.exists())
-	System.err.println("WARNING: overwriting '" + output + "'!");
+	LOGGER.warning("overwriting '" + output + "'!");
 
       // create tar file
       buf = new byte[bufferSize];

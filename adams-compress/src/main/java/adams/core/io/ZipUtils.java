@@ -108,7 +108,7 @@ public class ZipUtils {
     try {
       // does file already exist?
       if (output.exists())
-	System.err.println("WARNING: overwriting '" + output + "'!");
+	LOGGER.warning("overwriting '" + output + "'!");
 
       // create ZIP file
       buf = new byte[bufferSize];
