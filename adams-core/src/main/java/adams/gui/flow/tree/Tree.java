@@ -338,7 +338,14 @@ public class Tree
 	  // keyboard actions
 	  if (!e.isConsumed()) {
 	    for (AbstractKeyboardAction action: m_KeyboardActions) {
-	      if (action.getShortcut().keystrokeValue().equals(ks)) {
+	      KeyStroke ksAction = action.getShortcut().keystrokeValue();
+	      if (ksAction == null) {
+		ConsolePanel.getSingleton().append(
+		  LoggingLevel.WARNING,
+		  "Flow tree keyboard action has no valid keystroke: " + OptionUtils.getCommandLine(action));
+		continue;
+	      }
+	      if (ksAction.equals(ks)) {
 		e.consume();
 		String msg = action.execute(state);
 		if (msg != null)
