@@ -13,31 +13,31 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractScriplet.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
-import java.util.Hashtable;
-
 import adams.core.ClassLister;
+import adams.core.StoppableWithFeedback;
 import adams.core.logging.LoggingObject;
 import adams.core.option.OptionUtils;
 import adams.db.DataProvider;
 import adams.gui.core.BasePanel;
+
+import java.util.Hashtable;
 
 /**
  * Abstract superclass for action scriplets. An action scriplet processes
  * a single command in the command processor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see AbstractCommandProcessor
  */
 public abstract class AbstractScriptlet
   extends LoggingObject
-  implements Comparable {
+  implements Comparable, StoppableWithFeedback {
 
   /** for serialization. */
   private static final long serialVersionUID = 8460215813832005436L;
@@ -50,6 +50,9 @@ public abstract class AbstractScriptlet
 
   /** additional parameters. */
   protected Hashtable<String,Object> m_Parameters;
+
+  /** whether the scriptlet has been stopped. */
+  protected boolean m_Stopped;
 
   /**
    * Initializes the action.
@@ -234,7 +237,35 @@ public abstract class AbstractScriptlet
    * @return		null if no error, otherwise error message
    * @throws Exception 	if something goes wrong
    */
-  public abstract String process(String options) throws Exception;
+  protected abstract String doProcess(String options) throws Exception;
+
+  /**
+   * Processes the options.
+   *
+   * @param options	additional/optional options for the action
+   * @return		null if no error, otherwise error message
+   * @throws Exception 	if something goes wrong
+   */
+  public String process(String options) throws Exception {
+    m_Stopped = false;
+    return doProcess(options);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Stopped = true;
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  public boolean isStopped() {
+    return m_Stopped;
+  }
 
   /**
    * Compares this object with the specified object for order.  Returns a

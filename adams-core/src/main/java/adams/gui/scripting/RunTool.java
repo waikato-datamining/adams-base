@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RunTool.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -37,7 +37,6 @@ import adams.tools.AbstractTool;
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RunTool
   extends AbstractScriptlet {
@@ -47,6 +46,8 @@ public class RunTool
 
   /** the action to execute. */
   public final static String ACTION = "run-tool";
+
+  protected transient AbstractTool m_RunScheme;
 
   /**
    * Returns the action string used in the command processor.
@@ -82,24 +83,37 @@ public class RunTool
    * @return		null if no error, otherwise error message
    * @throws Exception 	if something goes wrong
    */
-  public String process(String options) throws Exception {
+  @Override
+  protected String doProcess(String options) throws Exception {
     String[]		schemeOptions;
     String		schemeClassname;
-    AbstractTool	runScheme;
 
     // setup tool
     schemeOptions    = OptionUtils.splitOptions(options);
     schemeClassname  = schemeOptions[0];
     schemeOptions[0] = "";
-    runScheme        = AbstractTool.forName(schemeClassname, schemeOptions);
-    if (runScheme instanceof DatabaseConnectionHandler)
-      ((DatabaseConnectionHandler) runScheme).setDatabaseConnection(getOwner().getDatabaseConnection());
+    m_RunScheme = AbstractTool.forName(schemeClassname, schemeOptions);
+    if (m_RunScheme instanceof DatabaseConnectionHandler)
+      ((DatabaseConnectionHandler) m_RunScheme).setDatabaseConnection(getOwner().getDatabaseConnection());
 
     // run matcher
     showStatus("Running...");
-    runScheme.run();
-    showStatus("");
+    m_RunScheme.run();
+    if (isStopped())
+      showStatus("Interrupted!");
+    else
+      showStatus("");
 
     return null;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_RunScheme != null)
+      m_RunScheme.stopExecution();
+    super.stopExecution();
   }
 }

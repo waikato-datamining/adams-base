@@ -15,7 +15,7 @@
 
 /*
  * AbstractScriptingEngine.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.scripting;
@@ -51,7 +51,6 @@ import java.util.logging.Level;
  * Processes scripting commands.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see CommandProcessor
  */
 public abstract class AbstractScriptingEngine
@@ -235,9 +234,10 @@ public abstract class AbstractScriptingEngine
   }
 
   /**
-   * Stops the execution of the script (but will still finish the current step).
+   * Stops the execution of the script (will also attempt to stop the currently running step).
    */
   public void stop() {
+    getProcessingThread().stopExecution();
     getProcessingThread().clear();
   }
 

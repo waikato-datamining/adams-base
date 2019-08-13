@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AddDataFile.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -45,7 +45,6 @@ import java.util.List;
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AddDataFile
   extends AbstractFileReaderScriptlet {
@@ -96,7 +95,7 @@ public class AddDataFile
    * @throws Exception 	if something goes wrong
    */
   @Override
-  public String process(String options) throws Exception {
+  protected String doProcess(String options) throws Exception {
     String			result;
     List<DataContainer> 	data;
     AbstractDataContainerReader	reader;
@@ -127,8 +126,11 @@ public class AddDataFile
     if (result == null) {
       manager = getDataContainerPanel().getContainerManager();
       cont = new ArrayList<>();
-      for (i = 0; i < data.size(); i++)
+      for (i = 0; i < data.size(); i++) {
+        if (isStopped())
+          break;
         cont.add(manager.newContainer(data.get(i)));
+      }
 
       if (getDataContainerPanel() instanceof AntiAliasingSupporter) {
         supporter = (AntiAliasingSupporter) getDataContainerPanel();
@@ -139,9 +141,14 @@ public class AddDataFile
         }
       }
 
-      manager.addAll(cont);
+      if (!isStopped())
+        manager.addAll(cont);
     }
-    showStatus("");
+
+    if (isStopped())
+      showStatus("Interrupted!");
+    else
+      showStatus("");
 
     return result;
   }

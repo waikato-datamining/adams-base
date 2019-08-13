@@ -15,7 +15,7 @@
 
 /*
  * DeleteData.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -82,20 +82,25 @@ public class DeleteData
    * @throws Exception 	if something goes wrong
    */
   @Override
-  public String process(String options) throws Exception {
+  protected String doProcess(String options) throws Exception {
     String[]		ids;
     int			i;
     boolean		result;
 
     ids = options.replaceAll(" ", "").split(",");
     for (i = 0; i < ids.length; i++) {
+      if (isStopped())
+        break;
       showStatus("Deleting record " + (i+1) + "/" + ids.length + ": " + ids[i]);
-      result = m_DataProvider.remove(new Integer(ids[i]), false);
+      result = m_DataProvider.remove(Integer.parseInt(ids[i]), false);
       if (!result)
 	getLogger().severe("Error deleting record #" + ids[i]);
     }
 
-    showStatus("");
+    if (isStopped())
+      showStatus("Interrupted!");
+    else
+      showStatus("");
 
     return null;
   }

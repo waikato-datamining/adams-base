@@ -89,7 +89,7 @@ public class Connect
    * @throws Exception 	if something goes wrong
    */
   @Override
-  public String process(String options) throws Exception {
+  protected String doProcess(String options) throws Exception {
     String[]			params;
     boolean			connect;
     AbstractDatabaseConnection	conn;

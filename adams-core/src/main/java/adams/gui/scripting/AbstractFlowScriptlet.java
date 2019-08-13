@@ -123,6 +123,9 @@ public abstract class AbstractFlowScriptlet
     // process data
     runOutput = new ArrayList<>();
     for (i = 0; i < runInput.size(); i++) {
+      if (isStopped())
+        break;
+
       showStatus("Passing data through flow " + (i+1) + "/" + ((VisibilityContainerManager) manager).countVisible());
 
       runActor = (SubProcess) actor.shallowCopy(true);
@@ -151,10 +154,17 @@ public abstract class AbstractFlowScriptlet
     }
 
     // undo
-    addUndoPoint("Saving undo data...", "Flow: " + list[0]);
+    if (!isStopped())
+      addUndoPoint("Saving undo data...", "Flow: " + list[0]);
 
     // update data
-    updateDataContainers(runOutput, overlay);
+    if (!isStopped())
+      updateDataContainers(runOutput, overlay);
+
+    if (isStopped())
+      showStatus("Interrupted!");
+    else
+      showStatus("");
 
     return null;
   }

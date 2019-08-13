@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoveData.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -38,7 +38,6 @@ import adams.gui.visualization.container.AbstractContainerManager;
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RemoveData
   extends AbstractDataContainerPanelScriptlet {
@@ -86,7 +85,7 @@ public class RemoveData
    * @return		null if no error, otherwise error message
    * @throws Exception 	if something goes wrong
    */
-  public String process(String options) throws Exception {
+  protected String doProcess(String options) throws Exception {
     int[]		indices;
     int			i;
     AbstractContainerManager	manager;
@@ -99,8 +98,11 @@ public class RemoveData
     range.setMax(manager.count());
     indices = range.getIntIndices();
     manager.startUpdate();
-    for (i = indices.length - 1; i >= 0; i--)
+    for (i = indices.length - 1; i >= 0; i--) {
+      if (isStopped())
+        break;
       manager.remove(indices[i]);
+    }
     manager.finishUpdate();
 
     return null;

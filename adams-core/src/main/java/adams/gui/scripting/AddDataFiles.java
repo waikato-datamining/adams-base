@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AddDataFiles.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -45,7 +45,6 @@ import java.util.List;
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AddDataFiles
   extends AbstractFileReaderScriptlet {
@@ -96,7 +95,7 @@ public class AddDataFiles
    * @throws Exception 	if something goes wrong
    */
   @Override
-  public String process(String options) throws Exception {
+  protected String doProcess(String options) throws Exception {
     String			result;
     List<DataContainer> 	data;
     AbstractDataContainerReader	reader;
@@ -124,6 +123,9 @@ public class AddDataFiles
     manager.startUpdate();
 
     for (n = 1; n < opts.length; n++) {
+      if (isStopped())
+        break;
+
       msg = null;
 
       showStatus("Loading (" + n + "/" + opts.length + "): " + opts[n]);
@@ -162,7 +164,11 @@ public class AddDataFiles
       }
     }
 
-    showStatus("");
+    if (isStopped())
+      showStatus("Interrupted!");
+    else
+      showStatus("");
+
     manager.finishUpdate();
 
     return result;

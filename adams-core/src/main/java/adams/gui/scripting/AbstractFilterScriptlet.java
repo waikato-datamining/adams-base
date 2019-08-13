@@ -115,8 +115,11 @@ public abstract class AbstractFilterScriptlet
     }
     else {
       runOutput = new ArrayList<>();
-      for (DataContainer cont: runInput)
+      for (DataContainer cont: runInput) {
+        if (isStopped())
+          break;
         runOutput.add(actualScheme.filter(cont));
+      }
       // transfer color
       if (runOutput.size() != runInput.size())
 	colors.clear();
@@ -125,12 +128,16 @@ public abstract class AbstractFilterScriptlet
       runOutputC.add(runOutput.get(i));
 
     // update containers
-    updateDataContainers(runOutputC, overlay, (colors.size() > 0) ? colors : null);
+    if (!isStopped())
+      updateDataContainers(runOutputC, overlay, (colors.size() > 0) ? colors : null);
 
     runScheme.destroy();
     actualScheme.destroy();
 
-    showStatus("");
+    if (isStopped())
+      showStatus("Interrupted!");
+    else
+      showStatus("");
 
     return null;
   }

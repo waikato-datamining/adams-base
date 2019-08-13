@@ -15,17 +15,13 @@
 
 /*
  * AbstractCommandProcessor.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.scripting;
 
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-
 import adams.core.StatusMessageHandler;
+import adams.core.Stoppable;
 import adams.core.Utils;
 import adams.core.logging.LoggingObject;
 import adams.data.container.DataContainer;
@@ -35,15 +31,20 @@ import adams.gui.core.Undo;
 import adams.gui.core.UndoHandler;
 import adams.gui.visualization.container.DataContainerPanel;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+
 /**
  * Abstract command processor for the scripting engine.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractCommandProcessor
   extends LoggingObject
-  implements UndoHandler {
+  implements UndoHandler, Stoppable {
 
   /** for serialization. */
   private static final long serialVersionUID = 5363881783406430165L;
@@ -56,6 +57,9 @@ public abstract class AbstractCommandProcessor
 
   /** the action &lt;-&gt; scriptlet relation. */
   protected Hashtable<String,AbstractScriptlet> m_Actions;
+
+  /** the scriptlet currently being executed. */
+  protected transient AbstractScriptlet m_CurrentScriptlet;
 
   /**
    * Initializes the processor. Still needs to set the owner.
@@ -87,7 +91,7 @@ public abstract class AbstractCommandProcessor
     AbstractScriptlet	scriptlet;
     int			i;
 
-    m_Actions = new Hashtable<String,AbstractScriptlet>();
+    m_Actions = new Hashtable<>();
     scriptlets = AbstractScriptlet.getScriptlets();
     for (i = 0; i < scriptlets.length; i++) {
       scriptlet = AbstractScriptlet.forName(scriptlets[i]);
@@ -109,23 +113,23 @@ public abstract class AbstractCommandProcessor
    */
   public String globalInfo() {
     StringBuilder				result;
-    Hashtable<String,Vector<AbstractScriptlet>>	sorted;
+    Hashtable<String,List<AbstractScriptlet>>	sorted;
     int						i;
     int						n;
     int						m;
     AbstractScriptlet				scriptlet;
     Enumeration<AbstractScriptlet>		enm;
     String[]					required;
-    Vector<AbstractScriptlet>			scriptlets;
-    Vector<String>				types;
+    List<AbstractScriptlet>			scriptlets;
+    List<String>				types;
     String[]					desc;
     Class[]					requiredClasses;
 
     result = new StringBuilder();
 
     // sort scriptlets according to required class
-    sorted = new Hashtable<String,Vector<AbstractScriptlet>>();
-    enm    = (Enumeration<AbstractScriptlet>) m_Actions.elements();
+    sorted = new Hashtable<>();
+    enm    = m_Actions.elements();
     while (enm.hasMoreElements()) {
       scriptlet = enm.nextElement();
 
@@ -141,7 +145,7 @@ public abstract class AbstractCommandProcessor
 
       for (i = 0; i < required.length; i++) {
 	if (!sorted.containsKey(required[i])) {
-	  scriptlets = new Vector<AbstractScriptlet>();
+	  scriptlets = new ArrayList<>();
 	  sorted.put(required[i], scriptlets);
 	}
 	else {
@@ -152,7 +156,7 @@ public abstract class AbstractCommandProcessor
     }
 
     // assemble information
-    types = new Vector<String>(sorted.keySet());
+    types = new ArrayList<>(sorted.keySet());
     Collections.sort(types);
     for (i = 0; i < types.size(); i++) {
       scriptlets = sorted.get(types.get(i));
@@ -446,7 +450,6 @@ public abstract class AbstractCommandProcessor
     String		options;
     String		result;
     String		reqResult;
-    AbstractScriptlet	scriptlet;
 
     result = null;
 
@@ -455,19 +458,19 @@ public abstract class AbstractCommandProcessor
     // obtain action
     action    = command.getCommand().trim().replaceAll(" .*", "");
     options   = command.getCommand().trim().replaceAll("^" + action + " ", "").trim();
-    scriptlet = findScriptlet(action);
+    m_CurrentScriptlet = findScriptlet(action);
 
     // action registered?
-    if (scriptlet == null)
+    if (m_CurrentScriptlet == null)
       result = getClass().getName() + ": Unknown action '" + action + "'!";
 
     // all requirements met?
     if (result == null) {
-      reqResult = checkRequirements(scriptlet);
-      setupScriptlet(scriptlet);
+      reqResult = checkRequirements(m_CurrentScriptlet);
+      setupScriptlet(m_CurrentScriptlet);
       if (reqResult == null)
 	getLogger().severe(
-	    "WARNING: Action '" + action + "'/" + scriptlet.getClass().getName()
+	    "WARNING: Action '" + action + "'/" + m_CurrentScriptlet.getClass().getName()
 	    + " has unmet requirement(s)!");
       else if (reqResult.length() > 0)
 	result = reqResult;
@@ -475,10 +478,21 @@ public abstract class AbstractCommandProcessor
 
     // execute action
     if (result == null)
-      result = scriptlet.process(options);
+      result = m_CurrentScriptlet.process(options);
 
     setBasePanel(null);
 
+    m_CurrentScriptlet = null;
+
     return result;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_CurrentScriptlet != null)
+      m_CurrentScriptlet.stopExecution();
   }
 }

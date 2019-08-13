@@ -67,6 +67,8 @@ public abstract class AbstractVisibilityScriplet
     if (indices.length > 1) {
       manager.startUpdate();
       for (i = 0; i < indices.length; i++) {
+        if (isStopped())
+          break;
 	cont  = manager.get(indices[i]);
 	if (cont instanceof VisibilityContainer)
 	  ((VisibilityContainer) cont).setVisible(visible);
@@ -78,6 +80,11 @@ public abstract class AbstractVisibilityScriplet
       if (cont instanceof VisibilityContainer)
 	((VisibilityContainer) cont).setVisible(visible);
     }
+
+    if (isStopped())
+      showStatus("Interrupted!");
+    else
+      showStatus("");
 
     return null;
   }

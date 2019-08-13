@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SetData.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -47,7 +47,6 @@ import java.util.List;
  *
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SetData
   extends AbstractFileReaderScriptlet {
@@ -94,7 +93,8 @@ public class SetData
    * @return		null if no error, otherwise error message
    * @throws Exception 	if something goes wrong
    */
-  public String process(String options) throws Exception {
+  @Override
+  protected String doProcess(String options) throws Exception {
     String[]			list;
     int				index;
     int 			id;
@@ -109,7 +109,7 @@ public class SetData
 
     list    = OptionUtils.splitOptions(options);
     index   = Integer.parseInt(list[0]) - 1;
-    id      = new Integer(list[1]);
+    id      = Integer.parseInt(list[1]);
     manager = getDataContainerPanel().getContainerManager();
     cont    = manager.get(index);
     reader  = null;

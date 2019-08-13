@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AddData.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -43,7 +43,6 @@ import java.util.List;
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AddData
   extends AbstractDataContainerPanelScriptlet {
@@ -92,7 +91,7 @@ public class AddData
    * @throws Exception 	if something goes wrong
    */
   @Override
-  public String process(String options) throws Exception {
+  protected String doProcess(String options) throws Exception {
     String[]			list;
     String[]			list2;
     int[]			ids;
@@ -111,14 +110,17 @@ public class AddData
     list2 = list[0].split(",");
     ids   = new int[list2.length];
     for (i = 0; i < list2.length; i++)
-      ids[i] = new Integer(list2[i]);
+      ids[i] = Integer.parseInt(list2[i]);
 
     // undo
     addUndoPoint("Saving undo data...", "Load data: " + Utils.arrayToString(ids));
 
     // load data
-    data = new ArrayList<DataContainer>();
+    data = new ArrayList<>();
     for (i = 0; i < ids.length; i++) {
+      if (isStopped())
+        break;
+
       if (ids.length > 1)
 	showStatus("Loading the data... " + (i+1) + "/" + ids.length);
       else
@@ -128,9 +130,12 @@ public class AddData
 	data.add(c);
     }
 
-    cont = new ArrayList<AbstractContainer>();
-    for (i = 0; i < data.size(); i++)
+    cont = new ArrayList<>();
+    for (i = 0; i < data.size(); i++) {
+      if (isStopped())
+        break;
       cont.add(manager.newContainer(data.get(i)));
+    }
 
     if (getDataContainerPanel() instanceof AntiAliasingSupporter) {
       supporter = (AntiAliasingSupporter) getDataContainerPanel();
@@ -141,8 +146,13 @@ public class AddData
       }
     }
 
-    manager.addAll(cont);
-    showStatus("");
+    if (!isStopped())
+      manager.addAll(cont);
+
+    if (isStopped())
+      showStatus("Interrupted!");
+    else
+      showStatus("");
 
     return null;
   }

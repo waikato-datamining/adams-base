@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EnableUndo.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -33,7 +33,6 @@ package adams.gui.scripting;
  <!-- scriptlet-description-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EnableUndo
   extends AbstractUndoScriptlet {
@@ -69,7 +68,7 @@ public class EnableUndo
    * @return		null if no error, otherwise error message
    * @throws Exception 	if something goes wrong
    */
-  public String process(String options) throws Exception {
+  protected String doProcess(String options) throws Exception {
     if (isUndoSupported())
       getUndo().setEnabled(true);
 

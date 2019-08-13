@@ -15,26 +15,27 @@
 
 /*
  * ScriptingEngineThread.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.scripting;
+
+import adams.core.Stoppable;
+import adams.core.Utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import adams.core.Utils;
-
 /**
  * A class for processing the scripting commands.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ScriptingEngineThread
-  extends Thread {
+  extends Thread
+  implements Stoppable {
 
   /** the owning engine. */
   protected AbstractScriptingEngine m_Owner;
@@ -57,7 +58,7 @@ public class ScriptingEngineThread
     super();
 
     m_Owner      = owner;
-    m_Commands   = new LinkedBlockingQueue<ScriptingCommand>();
+    m_Commands   = new LinkedBlockingQueue<>();
     m_Running    = true;
     m_Processing = false;
   }
@@ -92,6 +93,7 @@ public class ScriptingEngineThread
    */
   public void stopExecution() {
     m_Running = false;
+    getOwner().getProcessor().stopExecution();
   }
 
   /**
