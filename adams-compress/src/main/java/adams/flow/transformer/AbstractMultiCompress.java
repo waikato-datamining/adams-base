@@ -121,7 +121,9 @@ public abstract class AbstractMultiCompress
    *             displaying in the GUI or for listing the options.
    */
   public String stripPathTipText() {
-    return "The regular expression for stripping the path (use '.*' to remove the path completely).";
+    return "The regular expression for stripping the path; use '.*' to remove "
+      + "the path completely; NB: uses platform-dependent slashes of the "
+      + "absolute path when applying the expression.";
   }
 
   /**
