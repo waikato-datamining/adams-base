@@ -277,4 +277,13 @@ public class AbstractQuickSearchPanel
     for (ChangeListener l: m_CancelListeners)
       l.stateChanged(e);
   }
+
+  /**
+   * Returns the index of the user-selected item in the original list of items.
+   *
+   * @return		the index
+   */
+  public int getSelectedItemIndex() {
+    return m_ListItems.getActualIndex(m_ListItems.getSelectedIndex());
+  }
 }
