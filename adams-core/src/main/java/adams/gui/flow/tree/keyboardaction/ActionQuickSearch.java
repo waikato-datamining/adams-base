@@ -26,11 +26,13 @@ import adams.gui.action.AbstractBaseAction;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseShortcut;
 import adams.gui.core.ClassQuickSearchPanel;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.menu.AbstractFlowEditorMenuItem;
 import adams.gui.flow.menu.FlowEditorAction;
 import adams.gui.flow.tree.StateContainer;
 import adams.gui.flow.tree.menu.TreePopupAction;
+import com.github.fracpete.javautils.enumerate.Enumerated;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.event.ChangeEvent;
@@ -43,6 +45,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.github.fracpete.javautils.Enumerate.enumerate;
+
 /**
  * Allows the user to search for actions in menu items for editor and tree popup.
  *
@@ -52,6 +56,9 @@ public class ActionQuickSearch
   extends AbstractKeyboardAction {
 
   private static final long serialVersionUID = 8171584749198453214L;
+
+  /** all instantiated classes. */
+  protected transient List<Object> m_AllActions;
 
   /**
    * Returns a string describing the object.
@@ -74,6 +81,110 @@ public class ActionQuickSearch
   }
 
   /**
+   * Updates the state of the action.
+   *
+   * @param state	the state to use
+   * @param obj		the action to update
+   * @return		true if successfully updated
+   */
+  protected boolean updateAction(StateContainer state, Object obj) {
+    if (ClassLocator.matches(TreePopupAction.class, obj.getClass())) {
+      TreePopupAction action = (TreePopupAction) obj;
+      action.update(state);
+      return true;
+    }
+
+    if (ClassLocator.matches(FlowEditorAction.class, obj.getClass())) {
+      FlowEditorAction action = (FlowEditorAction) obj;
+      action.update(state.tree.getEditor());
+      return true;
+    }
+
+    if (ClassLocator.matches(AbstractFlowEditorMenuItem.class, obj.getClass())) {
+      AbstractFlowEditorMenuItem menuitem = (AbstractFlowEditorMenuItem) obj;
+      menuitem.setOwner(state.tree.getOwner().getEditor());
+      menuitem.updateAction();
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Checks whether the action is enabled.
+   *
+   * @param obj		the action to check
+   * @return		true if enabled
+   */
+  protected boolean isActionEnabled(Object obj) {
+    if (ClassLocator.matches(TreePopupAction.class, obj.getClass())) {
+      TreePopupAction action = (TreePopupAction) obj;
+      return action.isEnabled();
+    }
+
+    if (ClassLocator.matches(FlowEditorAction.class, obj.getClass())) {
+      FlowEditorAction action = (FlowEditorAction) obj;
+      return action.isEnabled();
+    }
+
+    if (ClassLocator.matches(AbstractFlowEditorMenuItem.class, obj.getClass())) {
+      AbstractFlowEditorMenuItem menuitem = (AbstractFlowEditorMenuItem) obj;
+      return menuitem.getAction().isEnabled();
+    }
+
+    return false;
+  }
+
+  /**
+   * Determines the action objects that can be used within this context.
+   *
+   * @return		the objects
+   */
+  protected Object[] determineActions(StateContainer state) {
+    List<Class> 	allClasses;
+    List<Object>	result;
+
+    result = new ArrayList<>();
+
+    // instantiate actions once
+    if (m_AllActions == null) {
+      allClasses = new ArrayList<>();
+      allClasses.addAll(Arrays.asList(ClassLister.getSingleton().getClasses(TreePopupAction.class)));
+      allClasses.addAll(Arrays.asList(ClassLister.getSingleton().getClasses(FlowEditorAction.class)));
+      allClasses.addAll(Arrays.asList(ClassLister.getSingleton().getClasses(AbstractFlowEditorMenuItem.class)));
+
+      m_AllActions = new ArrayList<>();
+      for (Class cls: allClasses) {
+	try {
+	  m_AllActions.add(cls.newInstance());
+	}
+	catch (Exception e) {
+	  ConsolePanel.getSingleton().append("Failed to instantiate action class " + Utils.classToString(cls), e);
+	}
+      }
+    }
+
+    // update state
+    for (Object obj: m_AllActions)
+      updateAction(state, obj);
+
+    // collect only actions that are enabled
+    for (Object obj: m_AllActions) {
+      if (isActionEnabled(obj))
+        result.add(obj);
+    }
+
+    Collections.sort(result, new Comparator<Object>() {
+      @Override
+      public int compare(Object o1, Object o2) {
+	return o1.getClass().getName().compareTo(o2.getClass().getName());
+      }
+    });
+
+    return result.toArray(new Object[0]);
+  }
+
+  /**
    * Performs the actual execution of the action.
    *
    * @param state	the current state
@@ -83,101 +194,47 @@ public class ActionQuickSearch
   protected String doExecute(StateContainer state) {
     final BaseDialog		dialog;
     final ClassQuickSearchPanel	panel;
-    List<Class> 		classes;
+    final Object[]		actions;
+    final Class[]		classes;
 
     if (state.tree.getParentDialog() != null)
       dialog = new BaseDialog(state.tree.getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
       dialog = new BaseDialog(state.tree.getParentFrame(), true);
 
-    classes = new ArrayList<>();
-    classes.addAll(Arrays.asList(ClassLister.getSingleton().getClasses(TreePopupAction.class)));
-    classes.addAll(Arrays.asList(ClassLister.getSingleton().getClasses(FlowEditorAction.class)));
-    classes.addAll(Arrays.asList(ClassLister.getSingleton().getClasses(AbstractFlowEditorMenuItem.class)));
-    Collections.sort(classes, new Comparator<Class>() {
-      @Override
-      public int compare(Class o1, Class o2) {
-	return o1.getName().compareTo(o2.getName());
-      }
-    });
+    actions = determineActions(state);
+    classes = new Class[actions.length];
+    for (Enumerated<Object> action: enumerate(actions))
+      classes[action.index] = action.value.getClass();
     panel = new ClassQuickSearchPanel();
-    panel.setClasses(classes.toArray(new Class[0]));
+    panel.setClasses(classes);
     panel.addCancelListener((ChangeEvent e) -> dialog.setVisible(false));
     panel.addSelectionListener((ListSelectionEvent e) -> {
-      Class cls = panel.getSelectedClass();
-      if (cls == null)
+      int index = panel.getSelectedItemIndex();
+      if (index == -1)
         return;
 
-      // tree popup
-      if (ClassLocator.matches(TreePopupAction.class, cls)) {
-        try {
-	  TreePopupAction action = (TreePopupAction) cls.newInstance();
-	  action.update(state);
-	  if (action.isEnabled()) {
-	    dialog.setVisible(false);
-	    action.actionPerformed(null);
-	  }
-	  else {
-	    GUIHelper.showErrorMessage(
-	      state.tree.getParent(),
-	      "TreePopup action is not enabled for current state: " + Utils.classToString(cls));
-	  }
-	}
-	catch (Exception ex) {
-	  GUIHelper.showErrorMessage(
-	    state.tree.getParent(),
-	    "Failed to instantiate/execute TreePopup action class: " + Utils.classToString(cls));
-	}
+      Object obj = actions[index];
+      if (ClassLocator.matches(TreePopupAction.class, obj.getClass())) {
+	TreePopupAction action = (TreePopupAction) obj;
+	dialog.setVisible(false);
+	action.actionPerformed(null);
       }
-      // floweditor action
-      else if (ClassLocator.matches(FlowEditorAction.class, cls)) {
-        try {
-	  FlowEditorAction action = (FlowEditorAction) cls.newInstance();
-	  action.update(state.tree.getEditor());
-	  if (action.isEnabled()) {
-	    dialog.setVisible(false);
-	    action.actionPerformed(null);
-	  }
-	  else {
-	    GUIHelper.showErrorMessage(
-	      state.tree.getParent(),
-	      "Flow editor action is not enabled for current state: " + Utils.classToString(cls));
-	  }
-	}
-	catch (Exception ex) {
-	  GUIHelper.showErrorMessage(
-	    state.tree.getParent(),
-	    "Failed to instantiate/execute menu item class: " + Utils.classToString(cls));
-	}
+      else if (ClassLocator.matches(FlowEditorAction.class, obj.getClass())) {
+	FlowEditorAction action = (FlowEditorAction) obj;
+	dialog.setVisible(false);
+	action.actionPerformed(null);
       }
-      // floweditor action
-      else if (ClassLocator.matches(AbstractFlowEditorMenuItem.class, cls)) {
-        try {
-	  AbstractFlowEditorMenuItem menuitem = (AbstractFlowEditorMenuItem) cls.newInstance();
-	  menuitem.setOwner(state.tree.getOwner().getEditor());
-	  menuitem.updateAction();
-	  AbstractBaseAction action = menuitem.getAction();
-	  if (action.isEnabled()) {
-	    dialog.setVisible(false);
-	    action.actionPerformed(null);
-	  }
-	  else {
-	    GUIHelper.showErrorMessage(
-	      state.tree.getParent(),
-	      "Menu item is not enabled for current state: " + Utils.classToString(cls));
-	  }
-	}
-	catch (Exception ex) {
-	  GUIHelper.showErrorMessage(
-	    state.tree.getParent(),
-	    "Failed to instantiate/execute menu item class: " + Utils.classToString(cls));
-	}
+      else if (ClassLocator.matches(AbstractFlowEditorMenuItem.class, obj.getClass())) {
+	AbstractFlowEditorMenuItem menuitem = (AbstractFlowEditorMenuItem) obj;
+	AbstractBaseAction action = menuitem.getAction();
+	dialog.setVisible(false);
+	action.actionPerformed(null);
       }
-      // unknown
       else {
-        GUIHelper.showErrorMessage(
-          state.tree.getParent(),
-	  "Unhandled quick action class: " + Utils.classToString(cls));
+	GUIHelper.showErrorMessage(
+	  state.tree.getParent(),
+	  "Unhandled quick action class: " + Utils.classToString(obj));
       }
     });
 
