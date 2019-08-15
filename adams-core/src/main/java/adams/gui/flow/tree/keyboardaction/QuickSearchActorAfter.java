@@ -20,7 +20,6 @@
 
 package adams.gui.flow.tree.keyboardaction;
 
-import adams.flow.core.Actor;
 import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
 import adams.gui.flow.tree.TreeOperations;
@@ -83,13 +82,7 @@ public class QuickSearchActorAfter
    */
   @Override
   protected String doExecute(StateContainer state) {
-    Actor	actor;
-
-    actor = search(state, TreeOperations.InsertPosition.AFTER);
-    if (actor == null)
-      return null;
-
-    state.tree.getOperations().addActor(state.selPath, actor, TreeOperations.InsertPosition.AFTER, true);
+    search(state, TreeOperations.InsertPosition.AFTER);
     return null;
   }
 }

@@ -143,15 +143,12 @@ public abstract class AbstractQuickSearchActor
    *
    * @param state	the current state
    * @param position	the insert position
-   * @return		the chosen actor, null if cancelled
    */
-  protected Actor search(final StateContainer state, final InsertPosition position) {
-    Actor			result;
+  protected void search(final StateContainer state, final InsertPosition position) {
     AbstractItemFilter  	filter;
     final BaseDialog		dialog;
     Class[]			classes;
 
-    result  = null;
     filter  = state.tree.getOperations().configureFilter(state.selPath, position);
     classes = ClassLister.getSingleton().getClasses(Actor.class);
 
@@ -186,7 +183,5 @@ public abstract class AbstractQuickSearchActor
     dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
     dialog.setLocationRelativeTo(state.tree.getParent());
     dialog.setVisible(true);
-
-    return result;
   }
 }
