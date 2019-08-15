@@ -162,7 +162,9 @@ public class TreeOperations
    */
   public enum ActorDialog {
     GOE,
+    GOE_NO_TREE,
     GOE_FORCED,
+    GOE_FORCED_NO_TREE,
     TREE,
   }
 
@@ -398,7 +400,7 @@ public class TreeOperations
    * @param record	whether to record the addition
    * @param dialogType	the dialog type to use
    */
-  protected void addActor(TreePath path, Actor actor, InsertPosition position, boolean record, ActorDialog dialogType) {
+  public void addActor(TreePath path, Actor actor, InsertPosition position, boolean record, ActorDialog dialogType) {
     GenericObjectEditorDialog 	dialog;
     final Node			node;
     final Node			parent;
@@ -411,7 +413,7 @@ public class TreeOperations
     final GenericObjectEditorClassTreePopupMenu goePopup;
     Component 			comp;
 
-    if ((actor == null) || (dialogType == ActorDialog.GOE_FORCED)) {
+    if ((actor == null) || (dialogType == ActorDialog.GOE_FORCED) || (dialogType == ActorDialog.GOE_FORCED_NO_TREE)) {
       node = TreeHelper.pathToNode(path);
       if (position == InsertPosition.BENEATH)
 	getOwner().updateCurrentEditing(node, null);
@@ -420,7 +422,9 @@ public class TreeOperations
 
       switch (dialogType) {
 	case GOE:
+	case GOE_NO_TREE:
 	case GOE_FORCED:
+	case GOE_FORCED_NO_TREE:
 	  dialog = GenericObjectEditorDialog.createDialog(getOwner());
 	  if (position == InsertPosition.HERE)
 	    dialog.setTitle("Add here...");
@@ -429,7 +433,7 @@ public class TreeOperations
 	  else if (position == InsertPosition.BENEATH)
 	    dialog.setTitle("Add beneath...");
 	  actors = suggestActors(path, position);
-	  dialog.getGOEEditor().setCanChangeClassInDialog(true);
+	  dialog.getGOEEditor().setCanChangeClassInDialog((dialogType == ActorDialog.GOE) || (dialogType == ActorDialog.GOE_FORCED));
 	  dialog.getGOEEditor().setClassType(Actor.class);
 	  dialog.getGOEEditor().setFilter(configureFilter(path, position));
 	  dialog.setProposedClasses(actors);
@@ -479,7 +483,7 @@ public class TreeOperations
 		if (classname == null)
 		  return;
 		goePopup.setVisible(false);
-		addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record, ActorDialog.GOE_FORCED);
+		addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record, ActorDialog.GOE_FORCED_NO_TREE);
 	      }
 	      else {
 		super.keyPressed(e);
@@ -494,7 +498,7 @@ public class TreeOperations
 		if (classname == null)
 		  return;
 		goePopup.setVisible(false);
-		addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record, ActorDialog.GOE_FORCED);
+		addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record, ActorDialog.GOE_FORCED_NO_TREE);
 	      }
 	      else {
 		super.mouseClicked(e);

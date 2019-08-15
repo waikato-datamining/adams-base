@@ -123,6 +123,9 @@ Tree.KeyboardActions=\
    "adams.gui.flow.tree.keyboardaction.SearchActorHere" \
    "adams.gui.flow.tree.keyboardaction.SearchActorAfter" \
    "adams.gui.flow.tree.keyboardaction.SearchActorBeneath" \
+   "adams.gui.flow.tree.keyboardaction.QuickSearchActorHere" \
+   "adams.gui.flow.tree.keyboardaction.QuickSearchActorAfter" \
+   "adams.gui.flow.tree.keyboardaction.QuickSearchActorBeneath" \
    "adams.gui.flow.tree.keyboardaction.FavoriteActorHere" \
    "adams.gui.flow.tree.keyboardaction.FavoriteActorAfter" \
    "adams.gui.flow.tree.keyboardaction.FavoriteActorBeneath" \
