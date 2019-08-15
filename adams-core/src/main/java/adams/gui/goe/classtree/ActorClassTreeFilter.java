@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorClassTreeFilter.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe.classtree;
 
@@ -28,14 +28,14 @@ import adams.flow.core.OutputProducer;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Filter for actors. Takes the generates/accepts of each actor into account
  * and compares it against the
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorClassTreeFilter
   extends AbstractItemFilter
@@ -59,10 +59,16 @@ public class ActorClassTreeFilter
   /** whether we are restricted to classes/interfaces. */
   protected Class[] m_Restrictions;
 
-  /** for caching class/instance relationship. */
-  protected static Hashtable<Class,Actor> m_Cache;
+  /** for caching item/class relationship. */
+  protected static Map<String,Class> m_ItemClassCache;
   static {
-    m_Cache = new Hashtable<Class,Actor>();
+    m_ItemClassCache = new HashMap<>();
+  }
+
+  /** for caching class/instance relationship. */
+  protected static Map<Class,Actor> m_ClassActorCache;
+  static {
+    m_ClassActorCache = new HashMap<>();
   }
 
   /**
@@ -205,18 +211,24 @@ public class ActorClassTreeFilter
     if ((m_Accepts == null) && (m_Generates == null) && m_StandalonesAllowed && m_SourcesAllowed && (m_Restrictions == null))
       return result;
 
-    try {
-      cls = Class.forName(item);
+    if (!m_ItemClassCache.containsKey(item)) {
+      try {
+        cls = Class.forName(item);
+        m_ItemClassCache.put(item, cls);
+      }
+      catch (Exception e) {
+        return result;
+      }
     }
-    catch (Exception e) {
-      return result;
+    else {
+      cls = m_ItemClassCache.get(item);
     }
 
-    synchronized(m_Cache) {
-      if (!m_Cache.containsKey(cls)) {
+    synchronized(m_ClassActorCache) {
+      if (!m_ClassActorCache.containsKey(cls)) {
 	try {
 	  actor = (Actor) cls.newInstance();
-	  m_Cache.put(cls, actor);
+	  m_ClassActorCache.put(cls, actor);
 	}
 	catch (Exception e) {
 	  // ignored
@@ -224,7 +236,7 @@ public class ActorClassTreeFilter
 	}
       }
       else {
-	actor = m_Cache.get(cls);
+	actor = m_ClassActorCache.get(cls);
       }
     }
 
