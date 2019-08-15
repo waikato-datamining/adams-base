@@ -47,11 +47,55 @@ public abstract class AbstractQuickSearchActor
 
   private static final long serialVersionUID = 9158512844896786075L;
 
+  /** whether to display the GOE with the actor. */
+  protected boolean m_DisplayActorOptions;
+
   /** the panel to use for searching. */
   protected transient ClassQuickSearchPanel m_SearchPanel;
 
   /** the selection listener. */
   protected transient ListSelectionListener m_SelectionListener;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "display-actor-options", "displayActorOptions",
+      true);
+  }
+
+  /**
+   * Sets whether to display the actor options in GOE.
+   *
+   * @param value 	true if to display
+   */
+  public void setDisplayActorOptions(boolean value) {
+    m_DisplayActorOptions = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to display the actor options in GOE.
+   *
+   * @return 		true if to display
+   */
+  public boolean getDisplayActorOptions() {
+    return m_DisplayActorOptions;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String displayActorOptionsTipText() {
+    return "If enabled, the actor options are displayed in GenericObjectEditor; otherwise the actor is simply added.";
+  }
 
   /**
    * Checks whether the current state is suitable.
@@ -83,9 +127,15 @@ public abstract class AbstractQuickSearchActor
    * @param position	the position to insert the actor at
    */
   protected void addActor(StateContainer state, Actor actor, InsertPosition position) {
+    ActorDialog		dialog;
     if (actor == null)
       return;
-    state.tree.getOperations().addActor(state.selPath, actor, position, true, ActorDialog.GOE_FORCED_NO_TREE);
+
+    if (m_DisplayActorOptions)
+      dialog = ActorDialog.GOE_FORCED_NO_TREE;
+    else
+      dialog = ActorDialog.GOE_NO_TREE;
+    state.tree.getOperations().addActor(state.selPath, actor, position, true, dialog);
   }
 
   /**

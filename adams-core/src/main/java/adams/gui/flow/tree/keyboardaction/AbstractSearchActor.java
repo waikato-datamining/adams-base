@@ -32,6 +32,50 @@ public abstract class AbstractSearchActor
 
   private static final long serialVersionUID = 9158512844896786075L;
 
+  /** whether to display the GOE with the actor. */
+  protected boolean m_DisplayActorOptions;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "display-actor-options", "displayActorOptions",
+      true);
+  }
+
+  /**
+   * Sets whether to display the actor options in GOE.
+   *
+   * @param value 	true if to display
+   */
+  public void setDisplayActorOptions(boolean value) {
+    m_DisplayActorOptions = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to display the actor options in GOE.
+   *
+   * @return 		true if to display
+   */
+  public boolean getDisplayActorOptions() {
+    return m_DisplayActorOptions;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String displayActorOptionsTipText() {
+    return "If enabled, the actor options are displayed in GenericObjectEditor; otherwise the actor is simply added.";
+  }
+
   /**
    * Checks whether the current state is suitable.
    *

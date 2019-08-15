@@ -22,7 +22,8 @@ package adams.gui.flow.tree.keyboardaction;
 
 import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
-import adams.gui.flow.tree.TreeOperations;
+import adams.gui.flow.tree.TreeOperations.ActorDialog;
+import adams.gui.flow.tree.TreeOperations.InsertPosition;
 
 /**
  * Allows the user to search for an actor to be inserted beneath the current location.
@@ -82,7 +83,12 @@ public class SearchActorBeneath
    */
   @Override
   protected String doExecute(StateContainer state) {
-    state.tree.getOperations().searchActor(state.selPath, TreeOperations.InsertPosition.BENEATH, true);
+    state.tree.getOperations().addActor(
+      state.selPath,
+      null,
+      InsertPosition.BENEATH,
+      true,
+      (m_DisplayActorOptions ? ActorDialog.TREE : ActorDialog.TREE_NO_GOE));
     return null;
   }
 }

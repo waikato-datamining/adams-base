@@ -166,6 +166,7 @@ public class TreeOperations
     GOE_FORCED,
     GOE_FORCED_NO_TREE,
     TREE,
+    TREE_NO_GOE,
   }
 
   /** the tree to operate on. */
@@ -377,19 +378,6 @@ public class TreeOperations
   }
 
   /**
-   * Brings up the GOE actor tree for adding an actor if no actor supplied,
-   * otherwise just adds the given actor at the position specified
-   * by the path.
-   *
-   * @param path	the path to the actor to add the new actor sibling
-   * @param position	where to insert the actor
-   * @param record	whether to record the addition
-   */
-  public void searchActor(TreePath path, InsertPosition position, boolean record) {
-    addActor(path, null, position, record, ActorDialog.TREE);
-  }
-
-  /**
    * Brings up the GOE dialog for adding an actor if no actor supplied,
    * otherwise just adds the given actor at the position specified
    * by the path.
@@ -454,6 +442,7 @@ public class TreeOperations
 	  break;
 
 	case TREE:
+	case TREE_NO_GOE:
 	  tree = new ClassTree();
 	  tree.setFilter(configureFilter(path, position));
 	  tree.setItems(new ArrayList<>(Arrays.asList(ClassLister.getSingleton().getClassnames(Actor.class))));
@@ -483,7 +472,12 @@ public class TreeOperations
 		if (classname == null)
 		  return;
 		goePopup.setVisible(false);
-		addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record, ActorDialog.GOE_FORCED_NO_TREE);
+		addActor(
+		  path,
+		  (Actor) NewInstance.getSingleton().newObject(classname),
+		  position,
+		  record,
+		  (dialogType == ActorDialog.TREE ? ActorDialog.GOE_FORCED_NO_TREE : ActorDialog.GOE_NO_TREE));
 	      }
 	      else {
 		super.keyPressed(e);
@@ -498,7 +492,12 @@ public class TreeOperations
 		if (classname == null)
 		  return;
 		goePopup.setVisible(false);
-		addActor(path, (Actor) NewInstance.getSingleton().newObject(classname), position, record, ActorDialog.GOE_FORCED_NO_TREE);
+		addActor(
+		  path,
+		  (Actor) NewInstance.getSingleton().newObject(classname),
+		  position,
+		  record,
+		  (dialogType == ActorDialog.TREE ? ActorDialog.GOE_FORCED_NO_TREE : ActorDialog.GOE_NO_TREE));
 	      }
 	      else {
 		super.mouseClicked(e);

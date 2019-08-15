@@ -23,6 +23,7 @@ package adams.gui.flow.tree.keyboardaction;
 import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
 import adams.gui.flow.tree.TreeOperations;
+import adams.gui.flow.tree.TreeOperations.ActorDialog;
 
 /**
  * Allows the user to search for an actor to be inserted at the current location.
@@ -82,7 +83,12 @@ public class SearchActorHere
    */
   @Override
   protected String doExecute(StateContainer state) {
-    state.tree.getOperations().searchActor(state.selPath, TreeOperations.InsertPosition.HERE, true);
+    state.tree.getOperations().addActor(
+      state.selPath,
+      null,
+      TreeOperations.InsertPosition.HERE,
+      true,
+      (m_DisplayActorOptions ? ActorDialog.TREE : ActorDialog.TREE_NO_GOE));
     return null;
   }
 }
