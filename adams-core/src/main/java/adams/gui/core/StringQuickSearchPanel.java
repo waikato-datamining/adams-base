@@ -20,8 +20,6 @@
 
 package adams.gui.core;
 
-import javax.swing.DefaultListModel;
-
 /**
  * Allows user to search/select strings.
  *
@@ -38,12 +36,7 @@ public class StringQuickSearchPanel
    * @param value	the items
    */
   public void setItems(String[] value) {
-    DefaultListModel<String>	model;
-
-    model = new DefaultListModel<>();
-    for (String item : value)
-      model.addElement(item);
-    m_ListItems.setModel(model);
+    updateModel(value);
   }
 
   /**

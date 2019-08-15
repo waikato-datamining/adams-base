@@ -21,8 +21,11 @@
 package adams.gui.core;
 
 import adams.gui.core.DelayedActionRunnable.AbstractAction;
+import adams.gui.core.dotnotationtree.AbstractItemFilter;
+import adams.gui.core.dotnotationtree.AcceptAllItemFilter;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -67,6 +70,9 @@ public class AbstractQuickSearchPanel
   /** for updating the search etc. */
   protected DelayedActionRunnable m_DelayedAction;
 
+  /** the filter to use. */
+  protected AbstractItemFilter m_ItemFilter;
+
   /**
    * Initializes the listeners.
    */
@@ -78,6 +84,7 @@ public class AbstractQuickSearchPanel
     m_SelectionListeners = new HashSet<>();
     m_CancelListeners    = new HashSet<>();
     m_DelayedAction      = new DelayedActionRunnable(500, 50);
+    m_ItemFilter         = new AcceptAllItemFilter();
   }
 
   /**
@@ -276,6 +283,50 @@ public class AbstractQuickSearchPanel
     e = new ChangeEvent(this);
     for (ChangeListener l: m_CancelListeners)
       l.stateChanged(e);
+  }
+
+  /**
+   * Sets the item filter to use for filtering the items.
+   *
+   * @param value	the filter to use
+   */
+  public void setItemFilter(AbstractItemFilter value) {
+    m_ItemFilter = value;
+  }
+
+  /**
+   * Returns the current item filter in use.
+   *
+   * @return		the filter in use
+   */
+  public AbstractItemFilter getItemFilter() {
+    return m_ItemFilter;
+  }
+
+  /**
+   * Checks whether the item should be used.
+   *
+   * @param item	the item to check
+   * @return		true if to use
+   */
+  protected boolean acceptItem(String item) {
+    return m_ItemFilter.filter(item);
+  }
+
+  /**
+   * Updates the model, applies the item filter to the items.
+   *
+   * @param items	the items to filter and then use
+   */
+  protected void updateModel(String[] items) {
+    DefaultListModel<String>	model;
+
+    model = new DefaultListModel<>();
+    for (String item : items) {
+      if (acceptItem(item))
+        model.addElement(item);
+    }
+    m_ListItems.setModel(model);
   }
 
   /**

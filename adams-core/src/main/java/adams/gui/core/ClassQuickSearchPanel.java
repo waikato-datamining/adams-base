@@ -20,7 +20,9 @@
 
 package adams.gui.core;
 
-import javax.swing.DefaultListModel;
+import com.github.fracpete.javautils.enumerate.Enumerated;
+
+import static com.github.fracpete.javautils.Enumerate.enumerate;
 
 /**
  * Allows user to search/select class from a class hierarchy.
@@ -38,12 +40,13 @@ public class ClassQuickSearchPanel
    * @param value	the classes
    */
   public void setClasses(Class[] value) {
-    DefaultListModel<String>	model;
+    String[]	items;
 
-    model = new DefaultListModel<>();
-    for (Class cls: value)
-      model.addElement(cls.getName());
-    m_ListItems.setModel(model);
+    items = new String[value.length];
+    for (Enumerated<Class> c: enumerate(value))
+      items[c.index] = c.value.getName();
+
+    updateModel(items);
   }
 
   /**
