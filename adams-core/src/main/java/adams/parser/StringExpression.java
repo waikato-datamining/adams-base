@@ -15,7 +15,7 @@
 
 /*
  * StringExpression.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -324,7 +324,9 @@ public class StringExpression
       + "              | trim ( expr )\n"
       + "              | len[gth] ( str )\n"
       + "              | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)\n"
+      + "              | contains ( str , find ) (checks whether 'str' string contains 'find' string)\n"
       + "              | replace ( str , pos , len , newstr )\n"
+      + "              | replaceall ( str , regexp , replace ) (applies regular expression to 'str' and replaces all matches with 'replace')\n"
       + "              | substitute ( str , find , replace [, occurrences] )\n"
       + "              | str ( expr )\n"
       + "              | str ( expr  , numdecimals )\n"

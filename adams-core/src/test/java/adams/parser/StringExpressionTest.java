@@ -15,7 +15,7 @@
 
 /*
  * StringExpressionTest.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -29,7 +29,6 @@ import junit.framework.TestSuite;
  * java adams.parser.StringExpressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringExpressionTest
   extends AbstractSymbolEvaluatorTestCase<String, StringExpression> {
@@ -80,6 +79,10 @@ public class StringExpressionTest
 	  {new BaseString("hello world=1")},		// 26
 	  {new BaseString("hello world=1")},		// 27
 	  {new BaseString("Ab_c0=1")},			// 28
+	  {/** no symbols necessary */},		// 29
+	  {/** no symbols necessary */},		// 30
+	  {/** no symbols necessary */},		// 31
+	  {/** no symbols necessary */},		// 32
 	}
     };
   }
@@ -121,6 +124,10 @@ public class StringExpressionTest
 	  "str([hello world] = 1)",					// 26
 	  "str('hello world' = 1)",					// 27
 	  "str(Ab_c0 = 1)",						// 28
+	  "str(contains(\"998877665544\"; \"76\"))",			// 29
+	  "str(contains(\"998877665544\"; \"777\"))",			// 30
+	  "replaceall(\"hello_world.txt\", \"l\", \"L\")", 		// 31
+	  "replaceall(\"hello_world.txt\", \".*l\", \"\")", 		// 32
 	}
     };
   }

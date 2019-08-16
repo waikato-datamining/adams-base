@@ -15,7 +15,7 @@
 
 /*
  * BooleanExpressionTest.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -164,6 +164,10 @@ public class BooleanExpressionTest
 	  {new BaseString("hello world=1")},		// 111
 	  {new BaseString("hello world=1")},		// 112
 	  {new BaseString("Ab_c0=1")},			// 113
+	  {/** no symbols necessary */},		// 114
+	  {/** no symbols necessary */},		// 115
+	  {/** no symbols necessary */},		// 116
+	  {/** no symbols necessary */},		// 117
 	}
     };
   }
@@ -290,6 +294,10 @@ public class BooleanExpressionTest
 	  "[hello world] = 1",			// 111
 	  "'hello world' = 1",			// 112
 	  "Ab_c0 = 1",				// 113
+	  "contains(\"998877665544\"; \"76\") = true",				// 114
+	  "contains(\"998877665544\"; \"7776\") = false",				// 115
+	  "replaceall(\"hello_world.txt\", \"l\", \"L\") = \"heLLo_worLd.txt\"", 	// 116
+	  "replaceall(\"hello_world.txt\", \".*l\", \"\") = \"d.txt\"", 	// 117
 	}
     };
   }

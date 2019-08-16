@@ -171,7 +171,7 @@ terminal ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX;
 terminal CBRT, LOG10, COSH, SINH, TANH, ATAN, ATAN2, HYPOT, SIGNUM;
 terminal IFELSE, HAS, IFMISSING, ISNAN, LENGTH, TRIM;
 terminal SUBSTR, LOWERCASE, UPPERCASE, MATCHES;
-terminal LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, STR, REPLACEEXT, EXT;
+terminal LEFT, RIGHT, MID, REPLACE, REPLACEALL, SUBSTITUTE, FIND, CONTAINS, CONCATENATE, REPEAT, STR, REPLACEEXT, EXT;
 terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
 terminal PI, E;
 terminal NOW, TODAY, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, WEEKNUM, WEEKDAY;
@@ -192,7 +192,7 @@ precedence left PLUS, MINUS;
 precedence left TIMES, DIVISION, MODULO;
 precedence left EXPONENT;
 precedence left LPAREN, RPAREN;
-precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, IFELSE, HAS, HAS, IFMISSING, ISNAN, LENGTH, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONCATENATE, REPEAT, STR, REPLACEEXT, EXT, FUNCTION, PROCEDURE;
+precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, IFELSE, HAS, HAS, IFMISSING, ISNAN, LENGTH, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LEFT, RIGHT, MID, REPLACE, REPLACEALL, SUBSTITUTE, FIND, CONTAINS, CONCATENATE, REPEAT, STR, REPLACEEXT, EXT, FUNCTION, PROCEDURE;
 precedence left NOT, UMINUS;
 
 expr_list ::= expr_list expr_part | expr_part;
@@ -427,8 +427,12 @@ expr      ::=
                 {: RESULT = new Double(parser.getHelper().toString(s).toLowerCase().indexOf(parser.getHelper().toString(f).toLowerCase()) + 1); :}
               | FIND LPAREN expr:f semi_or_comma expr:s semi_or_comma expr:p RPAREN
                 {: RESULT = new Double(parser.getHelper().toString(s).toLowerCase().indexOf(parser.getHelper().toString(f).toLowerCase(), parser.getHelper().toInteger(p) - 1) + 1); :}
+              | CONTAINS LPAREN expr:s semi_or_comma expr:f RPAREN
+                {: RESULT = new Boolean(parser.getHelper().toString(s).contains(parser.getHelper().toString(f))); :}
               | REPLACE LPAREN expr:s semi_or_comma expr:p semi_or_comma expr:l semi_or_comma expr:n RPAREN
                 {: RESULT = parser.getHelper().replace(parser.getHelper().toString(s), parser.getHelper().toInteger(p) - 1, parser.getHelper().toInteger(l), parser.getHelper().toString(n)); :}
+              | REPLACEALL LPAREN expr:s semi_or_comma expr:f semi_or_comma expr:r RPAREN
+                {: RESULT = parser.getHelper().toString(s).replaceAll(parser.getHelper().toString(f), parser.getHelper().toString(r)); :}
               | SUBSTITUTE LPAREN expr:s semi_or_comma expr:f semi_or_comma expr:r RPAREN
                 {: RESULT = parser.getHelper().substitute(parser.getHelper().toString(s), parser.getHelper().toString(f), parser.getHelper().toString(r)); :}
               | SUBSTITUTE LPAREN expr:s semi_or_comma expr:f semi_or_comma expr:r semi_or_comma expr:o RPAREN

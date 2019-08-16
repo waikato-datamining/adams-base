@@ -112,4 +112,8 @@
 '[hello world] = 1' using hello world=1: true
 ''hello world' = 1' using hello world=1: true
 'Ab_c0 = 1' using Ab_c0=1: true
+'contains("998877665544"; "76") = true: true
+'contains("998877665544"; "7776") = false: true
+'replaceall("hello_world.txt", "l", "L") = "heLLo_worLd.txt": true
+'replaceall("hello_world.txt", ".*l", "") = "d.txt": true
 

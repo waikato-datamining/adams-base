@@ -119,12 +119,14 @@ import java.io.*;
   "right" { return sf.newSymbol("Right", sym.RIGHT); }
   "mid" { return sf.newSymbol("Mid", sym.MID); }
   "replace" { return sf.newSymbol("Replace", sym.REPLACE); }
+  "replaceall" { return sf.newSymbol("ReplaceAll", sym.REPLACEALL); }
   "substitute" { return sf.newSymbol("Substitute", sym.SUBSTITUTE); }
   "lowercase" { return sf.newSymbol("LowerCase", sym.LOWERCASE); }
   "lower" { return sf.newSymbol("LowerCase", sym.LOWERCASE); }
   "uppercase" { return sf.newSymbol("UpperCase", sym.UPPERCASE); }
   "upper" { return sf.newSymbol("UpperCase", sym.UPPERCASE); }
   "matches" { return sf.newSymbol("Matches", sym.MATCHES); }
+  "contains" { return sf.newSymbol("Contains", sym.CONTAINS); }
   "find" { return sf.newSymbol("Find", sym.FIND); }
   "concatenate" { return sf.newSymbol("Concantenate", sym.CONCATENATE); }
   "rept" { return sf.newSymbol("repeat", sym.REPEAT); }

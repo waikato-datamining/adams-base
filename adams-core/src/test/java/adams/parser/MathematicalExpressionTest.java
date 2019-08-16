@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MathematicalExpressionTest.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -141,6 +141,10 @@ public class MathematicalExpressionTest
 	  {new BaseString("hello world=1")},		// 87
 	  {new BaseString("hello world=1")},		// 88
 	  {new BaseString("Ab_c0=1")},			// 89
+	  {/** no symbols necessary */},		// 90
+	  {/** no symbols necessary */},		// 91
+	  {/** no symbols necessary */},		// 92
+	  {/** no symbols necessary */},		// 93
 	}
     };
   }
@@ -243,6 +247,10 @@ public class MathematicalExpressionTest
 	  "if([hello world] = 1, 1, 0)",	// 87
 	  "if('hello world' = 1, 1, 0)",	// 88
 	  "if(Ab_c0 = 1, 1, 0)",		// 89
+	  "if(contains(\"998877665544\"; \"76\"), 1, 0)",	// 90
+	  "if(contains(\"998877665544\"; \"777\"), 1, 0)",	// 91
+	  "len(replaceall(\"1122332211\"; \"2\"; \"\"))",		// 92
+	  "len(replaceall(\"1122332211\"; \".*23\", \"\"))",		// 93
 	}
     };
   }
