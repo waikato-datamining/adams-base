@@ -120,6 +120,22 @@ public abstract class AbstractQuickSearchActor
   }
 
   /**
+   * Returns the type of dialog to use.
+   *
+   * @return		the type
+   */
+  protected ActorDialog getActorDialogType() {
+    ActorDialog 	result;
+
+    if (m_DisplayActorOptions)
+      result = ActorDialog.GOE_FORCED_NO_TREE;
+    else
+      result = ActorDialog.GOE_NO_TREE;
+
+    return result;
+  }
+
+  /**
    * Inserts the actor
    *
    * @param state	the current state
@@ -127,15 +143,8 @@ public abstract class AbstractQuickSearchActor
    * @param position	the position to insert the actor at
    */
   protected void addActor(StateContainer state, Actor actor, InsertPosition position) {
-    ActorDialog		dialog;
-    if (actor == null)
-      return;
-
-    if (m_DisplayActorOptions)
-      dialog = ActorDialog.GOE_FORCED_NO_TREE;
-    else
-      dialog = ActorDialog.GOE_NO_TREE;
-    state.tree.getOperations().addActor(state.selPath, actor, position, true, dialog);
+    if (actor != null)
+      state.tree.getOperations().addActor(state.selPath, actor, position, true, getActorDialogType());
   }
 
   /**

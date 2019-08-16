@@ -23,7 +23,6 @@ package adams.gui.flow.tree.keyboardaction;
 import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
 import adams.gui.flow.tree.TreeOperations;
-import adams.gui.flow.tree.TreeOperations.ActorDialog;
 
 /**
  * Allows the user to search for an actor to be inserted after the current location.
@@ -88,7 +87,7 @@ public class SearchActorAfter
       null,
       TreeOperations.InsertPosition.AFTER,
       true,
-      (m_DisplayActorOptions ? ActorDialog.TREE : ActorDialog.TREE_NO_GOE));
+      getActorDialogType());
     return null;
   }
 }

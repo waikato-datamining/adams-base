@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AddActorHere.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.keyboardaction;
@@ -30,7 +30,6 @@ import adams.gui.flow.tree.TreeOperations;
  * Adds an actor at the current location.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AddActorHere
   extends AbstractAddActor {
@@ -95,7 +94,12 @@ public class AddActorHere
    */
   @Override
   protected String doExecute(StateContainer state) {
-    state.tree.getOperations().addActor(state.selPath, getActor(), TreeOperations.InsertPosition.HERE, true);
+    state.tree.getOperations().addActor(
+      state.selPath,
+      getActor(),
+      TreeOperations.InsertPosition.HERE,
+      true,
+      getActorDialogType());
     return null;
   }
 }

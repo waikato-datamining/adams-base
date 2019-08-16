@@ -22,7 +22,6 @@ package adams.gui.flow.tree.keyboardaction;
 
 import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
-import adams.gui.flow.tree.TreeOperations.ActorDialog;
 import adams.gui.flow.tree.TreeOperations.InsertPosition;
 
 /**
@@ -88,7 +87,7 @@ public class SearchActorBeneath
       null,
       InsertPosition.BENEATH,
       true,
-      (m_DisplayActorOptions ? ActorDialog.TREE : ActorDialog.TREE_NO_GOE));
+      getActorDialogType());
     return null;
   }
 }

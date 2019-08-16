@@ -21,6 +21,7 @@
 package adams.gui.flow.tree.keyboardaction;
 
 import adams.gui.flow.tree.StateContainer;
+import adams.gui.flow.tree.TreeOperations.ActorDialog;
 
 /**
  * Ancestor for actions that add an actor.
@@ -74,6 +75,22 @@ public abstract class AbstractSearchActor
    */
   public String displayActorOptionsTipText() {
     return "If enabled, the actor options are displayed in GenericObjectEditor; otherwise the actor is simply added.";
+  }
+
+  /**
+   * Returns the type of dialog to use.
+   *
+   * @return		the type
+   */
+  protected ActorDialog getActorDialogType() {
+    ActorDialog 	result;
+
+    if (m_DisplayActorOptions)
+      result = ActorDialog.TREE;
+    else
+      result = ActorDialog.TREE_NO_GOE;
+
+    return result;
   }
 
   /**
