@@ -36,6 +36,9 @@ public abstract class AbstractAddActor
   /** whether to display the GOE with the actor. */
   protected boolean m_DisplayActorOptions;
 
+  /** whether to show the class tree in the GOE. */
+  protected boolean m_ShowClassTree;
+  
   /**
    * Adds options to the internal list of options.
    */
@@ -45,6 +48,10 @@ public abstract class AbstractAddActor
 
     m_OptionManager.add(
       "display-actor-options", "displayActorOptions",
+      true);
+
+    m_OptionManager.add(
+      "show-class-tree", "showClassTree",
       true);
   }
 
@@ -88,6 +95,35 @@ public abstract class AbstractAddActor
   }
 
   /**
+   * Sets whether to show the class tree in the GenericObjectEditor window.
+   *
+   * @param value 	true if to display
+   */
+  public void setShowClassTree(boolean value) {
+    m_ShowClassTree = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the class tree in the GenericObjectEditor window.
+   *
+   * @return 		true if to display
+   */
+  public boolean getShowClassTree() {
+    return m_ShowClassTree;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showClassTreeTipText() {
+    return "If enabled, the class tree is displayed in the GenericObjectEditor window.";
+  }
+
+  /**
    * Returns the type of dialog to use.
    *
    * @return		the type
@@ -95,10 +131,18 @@ public abstract class AbstractAddActor
   protected ActorDialog getActorDialogType() {
     ActorDialog 	result;
 
-    if (m_DisplayActorOptions)
-      result = ActorDialog.GOE_FORCED_NO_TREE;
-    else
-      result = ActorDialog.GOE_NO_TREE;
+    if (m_DisplayActorOptions) {
+      if (m_ShowClassTree)
+        result = ActorDialog.GOE_FORCED;
+      else
+	result = ActorDialog.GOE_FORCED_NO_TREE;
+    }
+    else {
+      if (m_ShowClassTree)
+        result = ActorDialog.GOE;
+      else
+	result = ActorDialog.GOE_NO_TREE;
+    }
 
     return result;
   }
