@@ -231,6 +231,7 @@ public abstract class AbstractQuickSearchActor
     m_SearchPanel.setItemFilter(filter);
     m_SearchPanel.setClasses(classes);
     m_SearchPanel.addSelectionListener(m_SelectionListener);
+    m_SearchPanel.requestFocus();
 
     dialog.getContentPane().add(m_SearchPanel, BorderLayout.CENTER);
     dialog.setSize(GUIHelper.getDefaultSmallDialogDimension());
