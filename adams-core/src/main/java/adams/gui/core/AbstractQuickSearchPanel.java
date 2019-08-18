@@ -137,6 +137,12 @@ public class AbstractQuickSearchPanel
           int selIndex = m_ListItems.getSelectedIndex();
           boolean update = false;
           switch (e.getKeyCode()) {
+	    case KeyEvent.VK_HOME:
+	      if ((selIndex == -1) || (selIndex > 0)) {
+	        selIndex = 0;
+	        update = true;
+	      }
+	      break;
 	    case KeyEvent.VK_UP:
 	      if (selIndex == -1) {
 	        selIndex = 0;
@@ -144,6 +150,12 @@ public class AbstractQuickSearchPanel
 	      }
 	      else if (selIndex > 0) {
 	        selIndex--;
+	        update = true;
+	      }
+	      break;
+	    case KeyEvent.VK_END:
+	      if ((selIndex == -1) || (selIndex < m_ListItems.getModel().getSize() - 1)) {
+	        selIndex = m_ListItems.getModel().getSize() - 1;
 	        update = true;
 	      }
 	      break;
@@ -336,5 +348,24 @@ public class AbstractQuickSearchPanel
    */
   public int getSelectedItemIndex() {
     return m_ListItems.getActualIndex(m_ListItems.getSelectedIndex());
+  }
+
+  /**
+   * Clears the search box.
+   */
+  public void clearSearch() {
+    m_TextSearch.setText("");
+  }
+
+  /**
+   * Requests the search box to get the focus.
+   */
+  @Override
+  public void requestFocus() {
+    if (m_TextSearch.getText().length() > 0) {
+      m_TextSearch.setSelectionStart(0);
+      m_TextSearch.setSelectionEnd(m_TextSearch.getText().length());
+    }
+    m_TextSearch.requestFocus();
   }
 }
