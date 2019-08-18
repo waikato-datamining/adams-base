@@ -1543,7 +1543,23 @@ public class FlowPanel
    */
   @Override
   public void grabFocus() {
-    SwingUtilities.invokeLater(() -> getTree().grabFocus());
+    SwingUtilities.invokeLater(() -> {
+      if (m_Tree.getSelectionCount() == 0)
+	m_Tree.setSelectionRow(0);
+      getTree().grabFocus();
+    });
+  }
+
+  /**
+   * The tree requests the focus.
+   */
+  @Override
+  public void requestFocus() {
+    SwingUtilities.invokeLater(() -> {
+      if (m_Tree.getSelectionCount() == 0)
+	m_Tree.setSelectionRow(0);
+      m_Tree.requestFocus();
+    });
   }
 
   /**
