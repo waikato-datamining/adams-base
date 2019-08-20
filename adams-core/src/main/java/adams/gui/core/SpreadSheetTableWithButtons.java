@@ -23,6 +23,7 @@ package adams.gui.core;
 import adams.core.Utils;
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 
@@ -328,21 +329,21 @@ public class SpreadSheetTableWithButtons
   }
 
   /**
-   * Sets whether to automatically set optimal column widths.
+   * Sets the strategy for setting optimal column widths.
    *
-   * @param value	if true then optimal column widths are used
+   * @param value	the strategy
    */
-  public void setUseOptimalColumnWidths(boolean value) {
-    ((SpreadSheetTable) m_Component).setUseOptimalColumnWidths(value);
+  public void setColumnWidthApproach(ColumnWidthApproach value) {
+    ((SpreadSheetTable) m_Component).setColumnWidthApproach(value);
   }
 
   /**
-   * Returns whether to automatically set optimal column widths.
-   * Default implementation is initialized with "false".
+   * Returns the strategy for setting optimal column widths.
+   * Default implementation is initialized with "NONE".
    *
-   * @return		true if optimal column widths are to be used
+   * @return		the strategy
    */
-  public boolean getUseOptimalColumnWidths() {
-    return ((SpreadSheetTable) m_Component).getUseOptimalColumnWidths();
+  public ColumnWidthApproach getColumnWidthApproach() {
+    return ((SpreadSheetTable) m_Component).getColumnWidthApproach();
   }
 }

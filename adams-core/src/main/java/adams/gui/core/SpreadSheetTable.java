@@ -146,11 +146,11 @@ public class SpreadSheetTable
   /**
    * Returns the initial setting of whether to set optimal column widths.
    *
-   * @return		true
+   * @return		adaptive
    */
   @Override
-  protected boolean initialUseOptimalColumnWidths() {
-    return true;
+  protected ColumnWidthApproach initialUseOptimalColumnWidths() {
+    return ColumnWidthApproach.ADAPTIVE;
   }
 
   /**

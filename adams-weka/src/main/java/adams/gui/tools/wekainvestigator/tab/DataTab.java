@@ -201,6 +201,7 @@ public class DataTab
 	m_CurrentPanel.getTable().setCellPopupMenuCustomizer(this);
 	m_CurrentPanel.getTable().setUndoEnabled(true);
 	m_CurrentPanel.getTable().addChangeListener(this);
+	m_CurrentPanel.getTable().setTooManyColumnsDefaultWidth(m_MaxColWidth);
 	m_TableCache.put(cont, m_CurrentPanel);
 	m_TimestampCache.put(cont, new Date(cont.lastUpdated().getTime()));
 	setOptimal = true;
@@ -212,7 +213,7 @@ public class DataTab
 	m_SplitPane.setBottomComponentHidden(false);
       }
       if (setOptimal)
-	m_CurrentPanel.getTable().setOptimalColumnWidthBounded(m_MaxColWidth);
+        m_CurrentPanel.getTable().adaptiveOptimalColumnWidth();
     }
     else {
       m_PanelData.removeAll();

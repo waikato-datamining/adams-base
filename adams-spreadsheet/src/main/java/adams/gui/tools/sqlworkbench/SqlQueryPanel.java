@@ -34,6 +34,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
@@ -158,7 +159,7 @@ public class SqlQueryPanel
     m_TableResults = new SpreadSheetTable(new SpreadSheetTableModel());
     m_TableResults.setShowSimpleCellPopupMenu(true);
     m_TableResults.setShowSimpleHeaderPopupMenu(true);
-    m_TableResults.setUseOptimalColumnWidths(false);
+    m_TableResults.setColumnWidthApproach(ColumnWidthApproach.NONE);
     m_PanelTable = new JPanel(new BorderLayout());
     m_PanelTable.add(new BaseScrollPane(m_TableResults), BorderLayout.CENTER);
 

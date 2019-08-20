@@ -23,6 +23,7 @@ import adams.core.base.BaseKeyValuePair;
 import adams.core.tags.TagProcessorHelper;
 import adams.flow.core.Actor;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.KeyValuePairTableModel;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.flow.tree.TreeHelper;
@@ -64,7 +65,7 @@ public class EffectiveTagsTab
     m_Model = new KeyValuePairTableModel(new Object[0][], COLUMN_NAMES);
     m_Table = new SortableAndSearchableTable(m_Model);
     m_Table.setShowSimplePopupMenus(true);
-    m_Table.setUseOptimalColumnWidths(true);
+    m_Table.setColumnWidthApproach(ColumnWidthApproach.ADAPTIVE);
 
     add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
   }

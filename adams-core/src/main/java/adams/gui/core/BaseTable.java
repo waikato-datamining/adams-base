@@ -68,6 +68,15 @@ public class BaseTable
   /** for serialization. */
   private static final long serialVersionUID = -2360462659067336490L;
 
+  /**
+   * Enumeration of possible ways to calculate column width approach.
+   */
+  public enum ColumnWidthApproach {
+    NONE,
+    OPTIMAL,
+    ADAPTIVE,
+  }
+
   /** for setting the optimal column width. */
   protected JTableHelper m_TableHelper;
 
@@ -95,6 +104,18 @@ public class BaseTable
   /** the file chooser for saving the spreadsheet. */
   protected SpreadSheetFileChooser m_FileChooser;
 
+  /** the maximum number of columns for optimal column width calculation. */
+  protected int m_MaxColumnOptimalColumnWidthCalc;
+
+  /** the maximum number of columns for optimal header width calculation. */
+  protected int m_MaxColumnOptimalHeaderWidthCalc;
+
+  /** the column width to use when too many columns present. */
+  protected int m_TooManyColumnsDefaultWidth;
+
+  /** whether to automatically set optimal column widths. */
+  protected ColumnWidthApproach m_ColumnWidthApproach;
+
   /**
    * Constructs a default <code>BaseTable</code> that is initialized with a default
    * data model, a default column model, and a default selection
@@ -103,6 +124,7 @@ public class BaseTable
   public BaseTable() {
     super();
     initGUI();
+    finishInit();
   }
 
   /**
@@ -117,6 +139,7 @@ public class BaseTable
   public BaseTable(int numRows, int numColumns) {
     super(numRows, numColumns);
     initGUI();
+    finishInit();
   }
 
   /**
@@ -135,6 +158,7 @@ public class BaseTable
   public BaseTable(final Object[][] rowData, final Object[] columnNames) {
     super(rowData, columnNames);
     initGUI();
+    finishInit();
   }
 
   /**
@@ -154,6 +178,7 @@ public class BaseTable
   public BaseTable(Vector rowData, Vector columnNames) {
     super(rowData, columnNames);
     initGUI();
+    finishInit();
   }
 
   /**
@@ -166,6 +191,7 @@ public class BaseTable
   public BaseTable(TableModel dm) {
     super(dm);
     initGUI();
+    finishInit();
   }
 
   /**
@@ -179,6 +205,7 @@ public class BaseTable
   public BaseTable(TableModel dm, TableColumnModel cm) {
     super(dm, cm);
     initGUI();
+    finishInit();
   }
 
   /**
@@ -199,6 +226,7 @@ public class BaseTable
   public BaseTable(TableModel dm, TableColumnModel cm, ListSelectionModel sm) {
     super(dm, cm, sm);
     initGUI();
+    finishInit();
   }
 
   /**
@@ -217,11 +245,15 @@ public class BaseTable
    * Initializes some GUI-related things.
    */
   protected void initGUI() {
-    m_RemoveItemsListeners      = new HashSet<>();
-    m_HeaderPopupMenuListeners  = new HashSet<>();
-    m_CellPopupMenuListeners    = new HashSet<>();
-    m_ShowSimpleHeaderPopupMenu = false;
-    m_ShowSimpleCellPopupMenu   = false;
+    m_RemoveItemsListeners            = new HashSet<>();
+    m_HeaderPopupMenuListeners        = new HashSet<>();
+    m_CellPopupMenuListeners          = new HashSet<>();
+    m_ShowSimpleHeaderPopupMenu       = false;
+    m_ShowSimpleCellPopupMenu         = false;
+    m_MaxColumnOptimalColumnWidthCalc = 100;
+    m_MaxColumnOptimalHeaderWidthCalc = 1000;
+    m_TooManyColumnsDefaultWidth      = 100;
+    m_ColumnWidthApproach             = initialUseOptimalColumnWidths();
 
     m_SimpleHeaderPopupMenuListener = (MouseEvent e) -> {
       if (m_ShowSimpleHeaderPopupMenu) {
@@ -290,6 +322,56 @@ public class BaseTable
   }
 
   /**
+   * Finishes the initialization.
+   */
+  protected void finishInit() {
+    setColumnWidthApproach(m_ColumnWidthApproach);
+  }
+
+  /**
+   * Returns the initial setting of whether to set optimal column widths.
+   * Default implementation returns "false", since large tables might take too
+   * long to be displayed otherwise.
+   *
+   * @return		true if optimal column widths are used by default
+   */
+  protected ColumnWidthApproach initialUseOptimalColumnWidths() {
+    return ColumnWidthApproach.NONE;
+  }
+
+  /**
+   * Sets whether to automatically set optimal column widths.
+   *
+   * @param value	if true then optimal column widths are used
+   */
+  public void setColumnWidthApproach(ColumnWidthApproach value) {
+    m_ColumnWidthApproach = value;
+    switch (m_ColumnWidthApproach) {
+      case NONE:
+        // do nothing
+	break;
+      case OPTIMAL:
+	setAutoResizeMode(AUTO_RESIZE_OFF);
+	setOptimalColumnWidth();
+        break;
+      case ADAPTIVE:
+	setAutoResizeMode(AUTO_RESIZE_OFF);
+	adaptiveOptimalColumnWidth();
+        break;
+    }
+  }
+
+  /**
+   * Returns how to set the optimal column widths.
+   * Default implementation is initialized with "NONE".
+   *
+   * @return		the optimal column widths strategy
+   */
+  public ColumnWidthApproach getColumnWidthApproach() {
+    return m_ColumnWidthApproach;
+  }
+
+  /**
    * Sets the selected row (clears all others).
    *
    * @param row		the row to select
@@ -314,6 +396,89 @@ public class BaseTable
     getSelectionModel().clearSelection();
     for (int[] seg: segs)
       getSelectionModel().addSelectionInterval(seg[0], seg[1]);
+  }
+
+  /**
+   * Sets the maximum number of columns before no longer attempting to calculate
+   * the optimal column width.
+   *
+   * @param value	the maximum number of columns (incl)
+   */
+  public void setMaxColumnOptimalColumnWidthCalc(int value) {
+    m_MaxColumnOptimalColumnWidthCalc = value;
+  }
+
+  /**
+   * Returns the maximum number of columns before no longer attempting to calculate
+   * the optimal column width.
+   *
+   * @return		the maximum number of columns (incl)
+   * @see		#adaptiveOptimalColumnWidth()
+   */
+  public int getMaxColumnOptimalColumnWidthCalc() {
+    return m_MaxColumnOptimalColumnWidthCalc;
+  }
+
+  /**
+   * Sets the maximum number of columns before no longer attempting to calculate
+   * the optimal header width.
+   *
+   * @param value	the maximum number of columns (incl)
+   * @see		#adaptiveOptimalColumnWidth()
+   */
+  public void setMaxColumnOptimalHeaderWidthCalc(int value) {
+    m_MaxColumnOptimalHeaderWidthCalc = value;
+  }
+
+  /**
+   * Returns the maximum number of columns before no longer attempting to calculate
+   * the optimal header width.
+   *
+   * @return		the maximum number of columns (incl)
+   * @see		#adaptiveOptimalColumnWidth()
+   */
+  public int getMaxColumnOptimalHeaderWidthCalc() {
+    return m_MaxColumnOptimalHeaderWidthCalc;
+  }
+
+  /**
+   * Sets the default width to use if there are too many column to neither
+   * calculate the optimal column or header width.
+   *
+   * @param value	the default width
+   * @see		#adaptiveOptimalColumnWidth()
+   */
+  public void setTooManyColumnsDefaultWidth(int value) {
+    m_TooManyColumnsDefaultWidth = value;
+  }
+
+  /**
+   * Returns the default width to use if there are too many column to neither
+   * calculate the optimal column or header width.
+   *
+   * @return		the default width
+   * @see		#adaptiveOptimalColumnWidth()
+   */
+  public int getTooManyColumnsDefaultWidth() {
+    return m_TooManyColumnsDefaultWidth;
+  }
+
+  /**
+   * Adaptive way of setting the optimal column width for all columns. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * Approach:
+   * If less or equal to {@link #m_MaxColumnOptimalColumnWidthCalc}, then calculate optimal column width.
+   * If less or equal to {@link #m_MaxColumnOptimalHeaderWidthCalc}, then calculate optimal header width.
+   * Otherwise set the width of all columns to {@link #m_TooManyColumnsDefaultWidth}.
+   */
+  public void adaptiveOptimalColumnWidth() {
+    if (getColumnCount() <= m_MaxColumnOptimalColumnWidthCalc)
+      setOptimalColumnWidth();
+    else if (getColumnCount() <= m_MaxColumnOptimalHeaderWidthCalc)
+      setOptimalHeaderWidth();
+    else
+      setColumnWidths(m_TooManyColumnsDefaultWidth);
   }
 
   /**
@@ -357,6 +522,26 @@ public class BaseTable
   public void setOptimalColumnWidthBounded(final int column, final int max) {
     if (isVisible())
       SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidthBounded(column, max));
+  }
+
+  /**
+   * Sets the optimal header width for all columns. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   */
+  public void setOptimalHeaderWidth() {
+    if (isVisible())
+      SwingUtilities.invokeLater(() -> getTableHelper().setOptimalHeaderWidth());
+  }
+
+  /**
+   * Sets the optimal header width for the specified column. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param column	the column to resize
+   */
+  public void setOptimalHeaderWidth(final int column) {
+    if (isVisible())
+      SwingUtilities.invokeLater(() -> getTableHelper().setOptimalHeaderWidth(column));
   }
 
   /**

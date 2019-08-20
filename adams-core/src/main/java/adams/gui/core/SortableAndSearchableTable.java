@@ -15,7 +15,7 @@
 
 /*
  * SortableAndSearchableTable.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -39,6 +39,9 @@ public class SortableAndSearchableTable
   /** for serialization. */
   private static final long serialVersionUID = -3176811618121454828L;
 
+  /** the key for the column width. */
+  public static final String KEY_COLWIDTH = "col width";
+
   /** the key for the sort column setting. */
   public static final String KEY_SORTCOL = "sort col";
 
@@ -56,9 +59,6 @@ public class SortableAndSearchableTable
 
   /** the sortable/searchable model. */
   protected SortableAndSearchableWrapperTableModel m_Model;
-
-  /** whether to automatically set optimal column widths. */
-  protected boolean m_UseOptimalColumnWidths;
 
   /** whether to automatically sort table models that get set via setModel. */
   protected boolean m_SortNewTableModel;
@@ -163,40 +163,6 @@ public class SortableAndSearchableTable
   }
 
   /**
-   * Returns the initial setting of whether to set optimal column widths.
-   * Default implementation returns "false", since large tables might take too
-   * long to be displayed otherwise.
-   *
-   * @return		true if optimal column widths are used by default
-   */
-  protected boolean initialUseOptimalColumnWidths() {
-    return false;
-  }
-
-  /**
-   * Sets whether to automatically set optimal column widths.
-   *
-   * @param value	if true then optimal column widths are used
-   */
-  public void setUseOptimalColumnWidths(boolean value) {
-    m_UseOptimalColumnWidths = value;
-    if (m_UseOptimalColumnWidths) {
-      setAutoResizeMode(AUTO_RESIZE_OFF);
-      setOptimalColumnWidth();
-    }
-  }
-
-  /**
-   * Returns whether to automatically set optimal column widths.
-   * Default implementation is initialized with "false".
-   *
-   * @return		true if optimal column widths are to be used
-   */
-  public boolean getUseOptimalColumnWidths() {
-    return m_UseOptimalColumnWidths;
-  }
-
-  /**
    * Returns the initial setting of whether to sort new models.
    * Default implementation returns "false".
    *
@@ -246,14 +212,16 @@ public class SortableAndSearchableTable
     m_SortNewTableModel = initialSortNewTableModel();
     setCaseSensitive(initialSortCaseSensitive());
     m_Model.addMouseListenerToHeader(this);
+  }
+
+  /**
+   * Finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
     if (getSortNewTableModel())
       sort(0);
-
-    m_UseOptimalColumnWidths = initialUseOptimalColumnWidths();
-    if (getUseOptimalColumnWidths()) {
-      setAutoResizeMode(AUTO_RESIZE_OFF);
-      setOptimalColumnWidth();
-    }
+    super.finishInit();
   }
 
   /**
@@ -277,6 +245,7 @@ public class SortableAndSearchableTable
 
     result = new Hashtable<>();
 
+    result.put(KEY_COLWIDTH, getColumnWidthApproach());
     result.put(KEY_SORTCOL, m_Model.getSortColumn());
     result.put(KEY_SORTORDER, m_Model.isAscending());
     result.put(KEY_SORTCASESENSITIVE, m_Model.isCaseSensitive());
@@ -297,11 +266,12 @@ public class SortableAndSearchableTable
    * @param settings	the old settings, null if no settings were available
    */
   protected void restoreModelSettings(TableModel model, Hashtable<String,Object> settings) {
-    int		sortCol;
-    boolean	asc;
-    boolean	caseSensitive;
-    String	search;
-    boolean	regexp;
+    int			sortCol;
+    boolean		asc;
+    boolean		caseSensitive;
+    String		search;
+    boolean		regexp;
+    ColumnWidthApproach	colWidth;
 
     // default values
     sortCol       = 0;
@@ -309,9 +279,11 @@ public class SortableAndSearchableTable
     caseSensitive = true;
     search        = null;
     regexp        = false;
+    colWidth      = initialUseOptimalColumnWidths();
 
     // get stored values
     if (settings != null) {
+      colWidth      = (ColumnWidthApproach) settings.get(KEY_COLWIDTH);
       sortCol       = (Integer) settings.get(KEY_SORTCOL);
       asc           = (Boolean) settings.get(KEY_SORTORDER);
       caseSensitive = (Boolean) settings.get(KEY_SORTCASESENSITIVE);
@@ -332,8 +304,7 @@ public class SortableAndSearchableTable
       ((SearchableTableModel) model).search(search, regexp);
 
     // set optimal column widths
-    if (getUseOptimalColumnWidths())
-      setOptimalColumnWidth();
+    setColumnWidthApproach(colWidth);
   }
 
   /**

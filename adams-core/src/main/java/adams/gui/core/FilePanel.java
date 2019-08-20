@@ -27,6 +27,7 @@ import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.lister.RecursiveDirectoryLister;
 import adams.env.Environment;
+import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
@@ -285,7 +286,7 @@ public class FilePanel
 
     if (m_ShowDetails) {
       m_Table = new SortableAndSearchableTable(new FileWrapperTableModel(new ArrayList<>(), false));
-      m_Table.setUseOptimalColumnWidths(true);
+      m_Table.setColumnWidthApproach(ColumnWidthApproach.OPTIMAL);
       m_Table.getSelectionModel().addListSelectionListener(this);
       m_Table.addFocusListener(m_FocusAdapter);
       m_Table.addKeyListener(m_KeyAdapter);

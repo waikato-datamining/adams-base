@@ -31,6 +31,7 @@ import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -236,7 +237,7 @@ public class SpreadSheetDisplay
       m_TableModel = new SpreadSheetTableModel(new DefaultSpreadSheet());
       m_TableModel.setReadOnly(m_Owner.getReadOnly());
       m_Table      = new SpreadSheetTable(m_TableModel);
-      m_Table.setUseOptimalColumnWidths(m_Owner.getOptimalColumnWidth());
+      m_Table.setColumnWidthApproach(m_Owner.getOptimalColumnWidth() ? ColumnWidthApproach.ADAPTIVE : ColumnWidthApproach.NONE);
       m_Table.setFont(m_Owner.getFont());
       add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -289,7 +290,7 @@ public class SpreadSheetDisplay
       m_Table.setNumDecimals(m_Owner.getNumDecimals());
       m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_Owner.getCellRenderingCustomizer()));
       m_Table.setShowFormulas(m_Owner.getShowFormulas());
-      m_Table.setUseOptimalColumnWidths(m_Owner.getOptimalColumnWidth());
+      m_Table.setColumnWidthApproach(m_Owner.getOptimalColumnWidth() ? ColumnWidthApproach.ADAPTIVE : ColumnWidthApproach.NONE);
     }
 
     /**
@@ -697,7 +698,7 @@ public class SpreadSheetDisplay
     m_TableModel.setReadOnly(m_ReadOnly);
     m_Table      = new SpreadSheetTable(m_TableModel);
     m_Table.setFont(m_Font);
-    m_Table.setUseOptimalColumnWidths(m_OptimalColumnWidth);
+    m_Table.setColumnWidthApproach(m_OptimalColumnWidth ? ColumnWidthApproach.ADAPTIVE : ColumnWidthApproach.NONE);
     result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
 
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -763,7 +764,7 @@ public class SpreadSheetDisplay
     m_Table.setNumDecimals(m_NumDecimals);
     m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_CellRenderingCustomizer));
     m_Table.setShowFormulas(m_ShowFormulas);
-    m_Table.setUseOptimalColumnWidths(m_OptimalColumnWidth);
+    m_Table.setColumnWidthApproach(m_OptimalColumnWidth ? ColumnWidthApproach.ADAPTIVE : ColumnWidthApproach.NONE);
   }
 
   /**
@@ -906,7 +907,7 @@ public class SpreadSheetDisplay
   @Override
   public void wrapUp() {
     if ((m_Table != null) && !m_OptimalColumnWidth)
-      m_Table.setUseOptimalColumnWidths(true);
+      m_Table.setColumnWidthApproach(ColumnWidthApproach.ADAPTIVE);
 
     super.wrapUp();
   }

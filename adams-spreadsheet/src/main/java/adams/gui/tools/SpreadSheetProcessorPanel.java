@@ -36,6 +36,7 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
+import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
@@ -342,13 +343,13 @@ public class SpreadSheetProcessorPanel
     m_TableModelSource = new SpreadSheetTableModel(new DefaultSpreadSheet());
     m_TableModelSource.setReadOnly(true);
     m_TableSource      = new SpreadSheetTableWithSearch(m_TableModelSource);
-    m_TableSource.setUseOptimalColumnWidths(true);
+    m_TableSource.setColumnWidthApproach(ColumnWidthApproach.ADAPTIVE);
     m_TableSource.setColumnsDropdownVisible(true);
 
     m_TableModelProcessor = new SpreadSheetTableModel(new DefaultSpreadSheet());
     m_TableModelProcessor.setReadOnly(true);
     m_TableProcessor      = new SpreadSheetTableWithSearch(m_TableModelProcessor);
-    m_TableProcessor.setUseOptimalColumnWidths(true);
+    m_TableProcessor.setColumnWidthApproach(ColumnWidthApproach.ADAPTIVE);
     m_TableProcessor.setColumnsDropdownVisible(true);
 
     m_SplitPanelLeft = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
