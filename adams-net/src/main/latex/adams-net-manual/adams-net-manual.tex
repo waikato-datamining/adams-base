@@ -197,7 +197,8 @@ The following actors are available:
 \begin{tight_itemize}
 	\item \textit{FTPConnection} -- standalone actor that defines the server
 	connection.
-	\item \textit{FTPDisconnect} -- transformer that closes an existing 
+	\item \textit{FTPDelete} -- for deleting a remote file via FTP.
+	\item \textit{FTPDisconnect} -- transformer that closes an existing
 	connection, to avoid too many open connections (simply passes through any 
 	token it receives).
 	\item \textit{FTPGet} -- for obtaining a remote file via FTP.
@@ -235,6 +236,7 @@ The following actors are available:
 	secure copy.
 	\item \textit{ScpTo} -- for copying a file \textit{to} a remote host using
 	secure copy.
+	\item \textit{SFTPDelete} -- for delete a remote file via secure FTP.
 	\item \textit{SFTPGet} -- for obtaining a remote file via secure FTP.
 	\item \textit{SFTPSend} -- for sending a file via secure FTP to a remote host.
 \end{tight_itemize}
