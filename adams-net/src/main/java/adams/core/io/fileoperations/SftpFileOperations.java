@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SftpFileOperations.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileoperations;
@@ -30,7 +30,6 @@ import com.jcraft.jsch.ChannelSftp;
  * SFTP file operations.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SftpFileOperations
   extends AbstractRemoteFileOperations {
@@ -210,6 +209,7 @@ public class SftpFileOperations
     channel = null;
     try {
       channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
+      channel.connect();
       if (isLoggingEnabled())
 	getLogger().info("Deleting " + file);
       channel.rm(file);
@@ -239,6 +239,7 @@ public class SftpFileOperations
     channel = null;
     try {
       channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
+      channel.connect();
       if (isLoggingEnabled())
 	getLogger().info("Creating directory " + dir);
       channel.mkdir(dir);
