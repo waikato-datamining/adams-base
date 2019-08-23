@@ -19,15 +19,17 @@
  */
 package adams.core.management;
 
+import adams.core.Properties;
+import adams.env.Environment;
+import adams.env.LocaleDefinition;
+
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
-
-import adams.core.Properties;
-import adams.env.Environment;
-import adams.env.LocaleDefinition;
+import java.util.Map;
 
 /**
  * Helper class for locale setup (see <a href="http://en.wikipedia.org/wiki/ISO_639" target="_blank">ISO 639</a>).
@@ -60,9 +62,15 @@ public class LocaleHelper {
   
   /** the character for the decimal point. */
   protected char m_DecimalSeparator;
-  
+
+  /** the character for the decimal point. */
+  protected Map<Locale,Character> m_DecimalSeparators;
+
   /** the character for the grouping. */
   protected char m_GroupingSeparator;
+
+  /** the cached separators (locale -> sep). */
+  protected Map<Locale,Character> m_GroupingSeparators;
 
   /** en_US locale instance. */
   protected Locale m_LocaleEnUS;
@@ -80,7 +88,9 @@ public class LocaleHelper {
    * Initializes the helper.
    */
   protected void initialize() {
-    m_LocaleEnUS = new Locale(LOCALE_EN_US);
+    m_LocaleEnUS         = new Locale(LOCALE_EN_US);
+    m_DecimalSeparators  = new HashMap<>();
+    m_GroupingSeparators = new HashMap<>();
   }
 
   /**
@@ -177,7 +187,9 @@ public class LocaleHelper {
    * @return		the character
    */
   public char getDecimalSeparator(Locale locale) {
-    return DecimalFormatSymbols.getInstance(locale).getDecimalSeparator();
+    if (!m_DecimalSeparators.containsKey(locale))
+      m_DecimalSeparators.put(locale, DecimalFormatSymbols.getInstance(locale).getDecimalSeparator());
+    return m_DecimalSeparators.get(locale);
   }
   
   /**
@@ -198,7 +210,9 @@ public class LocaleHelper {
    * @return		the character
    */
   public char getGroupingSeparator(Locale locale) {
-    return DecimalFormatSymbols.getInstance(locale).getGroupingSeparator();
+    if (!m_GroupingSeparators.containsKey(locale))
+      m_GroupingSeparators.put(locale, DecimalFormatSymbols.getInstance(locale).getGroupingSeparator());
+    return m_GroupingSeparators.get(locale);
   }
 
   /**
