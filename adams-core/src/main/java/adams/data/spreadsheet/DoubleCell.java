@@ -15,7 +15,7 @@
 
 /*
  * DoubleCell.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -38,7 +38,6 @@ import java.util.HashMap;
  * into a Double.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DoubleCell
   implements Cell {
@@ -251,7 +250,7 @@ public class DoubleCell
       setMissing();
     }
     else {
-      m_Content     = value.floatValue();
+      m_Content     = value;
       m_ContentType = ContentType.DOUBLE;
     }
     return this;
@@ -489,7 +488,7 @@ public class DoubleCell
       setContent(getSpreadSheet().getDateFormat().parse(value));
     }
     else if (checkLong(value)) {
-      setContent(new Long(value));
+      setContent(Long.parseLong(value));
     }
     else if (checkDouble(value)) {
       try {
@@ -562,12 +561,12 @@ public class DoubleCell
 	  return SpreadSheet.MISSING_VALUE;
       case LONG:
 	if (checkLong(value))
-	  return new Long(value);
+	  return Long.parseLong(value);
 	else
 	  return SpreadSheet.MISSING_VALUE;
       case DOUBLE:
 	if (checkDouble(value))
-	  return new Double(value);
+	  return Utils.toDouble(value, getSpreadSheet().getLocale());
 	else
 	  return SpreadSheet.MISSING_VALUE;
       case STRING:
@@ -879,7 +878,7 @@ public class DoubleCell
   public Boolean toBoolean() {
     calculateIfRequired();
     if (m_ContentType == ContentType.BOOLEAN)
-      return new Boolean(m_Content == 1.0);
+      return (m_Content == 1.0);
     else
       return null;
   }
