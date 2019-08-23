@@ -361,20 +361,28 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     boolean	modified;
 
     modified = false;
-    iter     = points.iterator();
-    while (iter.hasNext()) {
-      point = (T) iter.next();
-      point.setParent(this);
 
-      // insert/replace
-      index = Collections.binarySearch(m_Points, point, getComparator());
-      if (index < 0) {
-        m_Points.add(-index-1, point);
-        modified = true;
-      }
-      else {
-        m_Points.set(index, point);
-        modified = true;
+    if (m_Points.size() == 0) {
+      m_Points.addAll(points);
+      Collections.sort(m_Points, getComparator());
+      modified = true;
+    }
+    else {
+      iter = points.iterator();
+      while (iter.hasNext()) {
+        point = (T) iter.next();
+        point.setParent(this);
+
+        // insert/replace
+        index = Collections.binarySearch(m_Points, point, getComparator());
+        if (index < 0) {
+          m_Points.add(-index - 1, point);
+          modified = true;
+        }
+        else {
+          m_Points.set(index, point);
+          modified = true;
+        }
       }
     }
 
