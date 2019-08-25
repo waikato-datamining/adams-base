@@ -15,7 +15,7 @@
 
 /*
  * FloatCell.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -38,6 +38,7 @@ import java.util.HashMap;
  * into a Float.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @version $Revision$
  */
 public class FloatCell
   implements Cell {
@@ -250,7 +251,7 @@ public class FloatCell
       setMissing();
     }
     else {
-      m_Content     = value;
+      m_Content     = value.floatValue();
       m_ContentType = ContentType.DOUBLE;
     }
     return this;
@@ -488,7 +489,7 @@ public class FloatCell
       setContent(getSpreadSheet().getDateFormat().parse(value));
     }
     else if (checkLong(value)) {
-      setContent(Long.parseLong(value));
+      setContent(new Long(value));
     }
     else if (checkFloat(value)) {
       try {
@@ -561,12 +562,12 @@ public class FloatCell
 	  return SpreadSheet.MISSING_VALUE;
       case LONG:
 	if (checkLong(value))
-	  return Long.parseLong(value);
+	  return new Long(value);
 	else
 	  return SpreadSheet.MISSING_VALUE;
       case DOUBLE:
 	if (checkFloat(value))
-	  return Utils.toFloat(value, getSpreadSheet().getLocale());
+	  return new Float(value);
 	else
 	  return SpreadSheet.MISSING_VALUE;
       case STRING:
@@ -878,7 +879,7 @@ public class FloatCell
   public Boolean toBoolean() {
     calculateIfRequired();
     if (m_ContentType == ContentType.BOOLEAN)
-      return (m_Content == 1.0);
+      return new Boolean(m_Content == 1.0);
     else
       return null;
   }
