@@ -678,8 +678,9 @@ public class FlowPanel
 
       @Override
       protected void done() {
-        boolean   canExecute;
-        String    msg;
+        boolean   	canExecute;
+        String    	msg;
+        StringBuilder 	notifications;
 
 	m_RunningSwingWorker = false;
         canExecute           = execute && m_Errors.isEmpty();
@@ -692,19 +693,22 @@ public class FlowPanel
 	}
 	if (m_RecentFilesHandler != null)
 	  m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
+	notifications = new StringBuilder();
 	if (!m_Errors.isEmpty()) {
-	  GUIHelper.showErrorMessage(
-	      m_Owner, 
-	      "Failed to load flow '" + file + "':\n" + m_Errors
-	      + (m_Warnings.isEmpty() ? "" : "\nWarning(s):\n" + m_Warnings));
+	  notifications.append("Error(s):\n" + m_Errors);
 	}
 	if (!m_Warnings.isEmpty()) {
-          msg = "Warning(s) encountered while loading flow '" + file + "':\n" + m_Warnings;
+          msg = "Warning(s):\n" + m_Warnings;
           if (canExecute)
             ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
           else
-            GUIHelper.showErrorMessage(m_Owner, msg);
+            notifications.append("\n\n").append(msg);
         }
+        if (notifications.length() > 0) {
+	  showNotification(
+	    "Problem(s) encountered loading flow '" + file + "':\n\n"
+	      + notifications.toString().trim(), !m_Errors.isEmpty());
+	}
 
 	update();
 
