@@ -63,16 +63,16 @@ public abstract class TimeIt
   protected String m_Prefix;
 
   /**
-   * Initializes with no prefix for output.
+   * Initializes with no output on commandline.
    */
   public TimeIt() {
-    this("");
+    this(null);
   }
 
   /**
    * Initializes with the specified prefix for output.
    *
-   * @param prefix	the prefix to use
+   * @param prefix	the prefix to use, use null to suppress output on commandline
    */
   public TimeIt(String prefix) {
     m_Prefix = prefix;
@@ -84,10 +84,12 @@ public abstract class TimeIt
    * @param msg		the message to output
    */
   protected void output(String msg) {
-    if (m_Prefix.isEmpty())
-      System.out.println(msg);
-    else
-      System.out.println(m_Prefix + msg);
+    if (m_Prefix != null) {
+      if (m_Prefix.isEmpty())
+	System.out.println(msg);
+      else
+	System.out.println(m_Prefix + msg);
+    }
   }
 
   /**
@@ -97,9 +99,14 @@ public abstract class TimeIt
 
   /**
    * Times the execution and outputs the elapsed time.
+   *
+   * @return		the duration in msec
    */
-  public void run() {
-    long start = System.currentTimeMillis();
+  public long run() {
+    long 	result;
+    long  	start;
+
+    start = System.currentTimeMillis();
     try {
       doRun();
     }
@@ -108,26 +115,30 @@ public abstract class TimeIt
 	System.err.println(m_Prefix);
       t.printStackTrace();
     }
-    output(DateUtils.msecToString(System.currentTimeMillis() - start));
+    result = System.currentTimeMillis() - start;
+    output(DateUtils.msecToString(result));
+    return result;
+  }
+
+  /**
+   * Executes the runnable. Does not output anything on commandline.
+   *
+   * @param r		the runnable
+   * @return		the duration in msec
+   */
+  public static long timeIt(Runnable r) {
+    return timeIt(null, r);
   }
 
   /**
    * Executes the runnable.
    *
+   * @param prefix	the prefix to use for output, use null to suppress output on commandline
    * @param r		the runnable
+   * @return		the duration in msec
    */
-  public static void timeIt(Runnable r) {
-    timeIt("", r);
-  }
-
-  /**
-   * Executes the runnable.
-   *
-   * @param prefix	the prefix to use for output
-   * @param r		the runnable
-   */
-  public static void timeIt(String prefix, Runnable r) {
-    new TimeIt(prefix) {
+  public static long timeIt(String prefix, Runnable r) {
+    return new TimeIt(prefix) {
       @Override
       protected void doRun() {
 	r.run();
