@@ -33,6 +33,9 @@ import gnu.trove.set.hash.TIntHashSet;
 
 import java.io.BufferedReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -41,7 +44,8 @@ import java.util.regex.Pattern;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class FastCsvSpreadSheetReader
-  extends AbstractSpreadSheetReaderWithMissingValueSupport {
+  extends AbstractSpreadSheetReaderWithMissingValueSupport
+  implements WindowedSpreadSheetReader, NoHeaderSpreadSheetReader {
 
   private static final long serialVersionUID = -3348397672538189709L;
 
@@ -57,6 +61,18 @@ public class FastCsvSpreadSheetReader
   /** whether to trim the cell content. */
   protected boolean m_Trim;
 
+  /** whether the file has a header or not. */
+  protected boolean m_NoHeader;
+
+  /** the comma-separated list of column header names. */
+  protected String m_CustomColumnHeaders;
+
+  /** the first row to retrieve (1-based). */
+  protected int m_FirstRow;
+
+  /** the number of rows to retrieve (less than 1 = unlimited). */
+  protected int m_NumRows;
+
   /**
    * Returns a string describing the object.
    *
@@ -65,6 +81,7 @@ public class FastCsvSpreadSheetReader
   @Override
   public String globalInfo() {
     return "Simplified CSV spreadsheet reader for loading large files.\n"
+      + "By default assumes that cells are text, numeric columns have to be explicitly specified.\n"
       + "Assumes English locale for numbers, ie decimal point.";
   }
 
@@ -90,6 +107,22 @@ public class FastCsvSpreadSheetReader
     m_OptionManager.add(
       "numeric-columns", "numericColumns",
       new Range());
+
+    m_OptionManager.add(
+      "no-header", "noHeader",
+      false);
+
+    m_OptionManager.add(
+      "custom-column-headers", "customColumnHeaders",
+      "");
+
+    m_OptionManager.add(
+      "first-row", "firstRow",
+      1, 1, null);
+
+    m_OptionManager.add(
+      "num-rows", "numRows",
+      -1, -1, null);
   }
 
   /**
@@ -219,6 +252,127 @@ public class FastCsvSpreadSheetReader
   }
 
   /**
+   * Sets the first row to return.
+   *
+   * @param value	the first row (1-based), greater than 0
+   */
+  public void setFirstRow(int value) {
+    if (getOptionManager().isValid("firstRow", value)) {
+      m_FirstRow = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the first row to return.
+   *
+   * @return		the first row (1-based), greater than 0
+   */
+  public int getFirstRow() {
+    return m_FirstRow;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String firstRowTipText() {
+    return "The index of the first row to retrieve (1-based).";
+  }
+
+  /**
+   * Sets the number of data rows to return.
+   *
+   * @param value	the number of rows, -1 for unlimited
+   */
+  public void setNumRows(int value) {
+    if (value < 0)
+      m_NumRows = -1;
+    else
+      m_NumRows = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of data rows to return.
+   *
+   * @return		the number of rows, -1 for unlimited
+   */
+  public int getNumRows() {
+    return m_NumRows;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numRowsTipText() {
+    return "The number of data rows to retrieve; use -1 for unlimited.";
+  }
+
+  /**
+   * Sets whether the file contains a header row or not.
+   *
+   * @param value	true if no header row available
+   */
+  public void setNoHeader(boolean value) {
+    m_NoHeader = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the file contains a header row or not.
+   *
+   * @return		true if no header row available
+   */
+  public boolean getNoHeader() {
+    return m_NoHeader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String noHeaderTipText() {
+    return "If enabled, all rows get added as data rows and a dummy header will get inserted.";
+  }
+
+  /**
+   * Sets the custom headers to use.
+   *
+   * @param value	the comma-separated list
+   */
+  public void setCustomColumnHeaders(String value) {
+    m_CustomColumnHeaders = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the file contains a header row or not.
+   *
+   * @return		the comma-separated list
+   */
+  public String getCustomColumnHeaders() {
+    return m_CustomColumnHeaders;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String customColumnHeadersTipText() {
+    return "The custom headers to use for the columns instead (comma-separated list); ignored if empty.";
+  }
+
+  /**
    * Returns a string describing the format (used in the file chooser).
    *
    * @return 			a description suitable for displaying in the
@@ -281,13 +435,15 @@ public class FastCsvSpreadSheetReader
     Row			row;
     BufferedReader	reader;
     int			lineNo;
+    int			lineRead;
     char		sep;
     char		quote;
     String		line;
     String[]		cells;
+    List<String> 	hcells;
     String		cell;
     boolean		header;
-    TIntSet numeric;
+    TIntSet 		numeric;
     int			i;
     int			numCells;
     Pattern 		missing;
@@ -305,27 +461,48 @@ public class FastCsvSpreadSheetReader
     numeric  = new TIntHashSet();
     missing  = m_MissingValue.patternValue();
     lineNo   = 1;
+    lineRead = 0;
     try {
       while ((line = reader.readLine()) != null) {
         if (m_Stopped) {
           result = null;
 	  break;
 	}
+
+	// skip row?
+	if (lineNo < m_FirstRow) {
+          lineNo++;
+          continue;
+        }
+
+        // parse cells
         cells = SpreadSheetUtils.split(line, sep, true, quote, false);
         if (header) {
           header   = false;
           row      = result.getHeaderRow();
           numCells = cells.length;
-          for (i = 0; i < cells.length; i++) {
-            cell = cells[i];
-            if (m_Trim && cell.length() > 0)
-              cell = cell.trim();
+          if (m_NoHeader) {
+            hcells = SpreadSheetUtils.createHeader(numCells, m_CustomColumnHeaders);
+          }
+          else {
+            if (m_CustomColumnHeaders.isEmpty())
+	      hcells = new ArrayList<>(Arrays.asList(cells));
+            else
+	      hcells = SpreadSheetUtils.createHeader(numCells, m_CustomColumnHeaders);
+            cells = null;
+          }
+	  for (i = 0; i < hcells.size(); i++) {
+	    cell = hcells.get(i);
+	    if (m_Trim && cell.length() > 0)
+	      cell = cell.trim();
 	    row.addCell("" + i).setContentAsString(cell);
 	  }
 	  m_NumericColumns.setMax(numCells);
 	  numeric.addAll(m_NumericColumns.getIntIndices());
 	}
-	else {
+
+	// add data row
+        if (cells != null) {
           row = result.addRow();
           for (i = 0; i < cells.length && i < numCells; i++) {
             cell = cells[i];
@@ -334,18 +511,25 @@ public class FastCsvSpreadSheetReader
             if (missing.matcher(cell).matches()) {
               if (row.hasCell(i))
                 row.getCell(i).setMissing();
-	    }
-	    else {
-	      if ((numeric.size() > 0) && (numeric.contains(i)))
-		row.addCell(i).setContentAs(cell, ContentType.DOUBLE);
-	      else
-		row.addCell(i).setContentAsString(cell);
-	    }
-	  }
-	}
+            }
+            else {
+              if ((numeric.size() > 0) && (numeric.contains(i)))
+                row.addCell(i).setContentAs(cell, ContentType.DOUBLE);
+              else
+                row.addCell(i).setContentAsString(cell);
+            }
+          }
+        }
+
 	if (isLoggingEnabled() && (lineNo % 100 == 0))
 	  getLogger().info("Parsed #" + lineNo + " lines...");
+
+        // all lines read?
+        if ((m_NumRows >= 0) && (lineRead >= m_NumRows))
+          break;
+
 	lineNo++;
+	lineRead++;
       }
     }
     catch (Exception e) {
