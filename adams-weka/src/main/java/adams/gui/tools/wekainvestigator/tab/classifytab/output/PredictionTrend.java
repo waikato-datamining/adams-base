@@ -15,7 +15,7 @@
 
 /*
  * PredictionTrend.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -35,8 +35,8 @@ import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.CustomColorProvider;
 import adams.gui.visualization.sequence.LinePaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
+import weka.classifiers.Evaluation;
 
-import javax.swing.JComponent;
 import java.awt.Color;
 import java.util.HashMap;
 
@@ -47,7 +47,7 @@ import java.util.HashMap;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class PredictionTrend
-  extends AbstractOutputGenerator {
+  extends AbstractOutputGeneratorWithSeparateFoldsSupport<ComponentContentPanel> {
 
   private static final long serialVersionUID = -6829245659118360739L;
 
@@ -192,13 +192,13 @@ public class PredictionTrend
   }
 
   /**
-   * Generates output from the item.
+   * Generates the output for the evaluation.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param eval	the evaluation to use
+   * @param errors	for collecting errors
+   * @return		the generated output
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  protected ComponentContentPanel createOutput(Evaluation eval, MessageCollection errors) {
     SpreadSheet			sheet;
     SimplePlot			plot;
     AbstractDisplayPanel	panel;
@@ -208,7 +208,7 @@ public class PredictionTrend
     int				n;
 
     sheet = PredictionHelper.toSpreadSheet(
-      this, errors, item, true, false, false, false, false, false);
+      this, errors, eval, null, null, false, false, false, false, false);
     if (sheet == null) {
       if (errors.isEmpty())
 	errors.add("Failed to generate predictions!");

@@ -103,6 +103,7 @@ public class WekaInvestigatorPreferencesPanel
       new adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.CrossValidation(), true));
     addPropertyType("Classify.LeftPanelWidth", PropertyType.INTEGER);
     addPropertyType("Classify.NumFolds", PropertyType.INTEGER);
+    addPropertyType("Classify.PerFoldOutput", PropertyType.BOOLEAN);
     addPropertyType("Classify.CrossValidationFoldGenerator", PropertyType.OBJECT_EDITOR);
     setChooser("Classify.CrossValidationFoldGenerator", new GenericObjectEditorPanel(
       weka.classifiers.CrossValidationFoldGenerator.class, new weka.classifiers.DefaultCrossValidationFoldGenerator(), true));

@@ -114,6 +114,10 @@ Classify.LeftPanelWidth=275
 # (integer; 2-n)
 Classify.NumFolds=10
 
+# whether to enable output per cross-validation fold
+# (true|false)
+Classify.PerFoldOutput=false
+
 # the JobRunner defining how to execute the jobs (locally or remotely)
 # (classname with options)
 Classify.JobRunner=adams.multiprocess.LocalJobRunner

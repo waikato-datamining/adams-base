@@ -27,9 +27,9 @@ import adams.flow.sink.AbstractDisplayPanel;
 import adams.flow.sink.SimplePlot;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.Prediction;
 
-import javax.swing.JComponent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +39,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ResidualsVsPredictor
- extends AbstractOutputGenerator {
+ extends AbstractOutputGeneratorWithSeparateFoldsSupport<ComponentContentPanel> {
 
   private static final long serialVersionUID = -8530631855400627283L;
 
@@ -78,14 +78,13 @@ public class ResidualsVsPredictor
   }
 
   /**
-   * Generates output from the item.
+   * Generates the output from the evaluation.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param eval	the evaluation to use
+   * @param errors	for collecting errors
+   * @return		the generated output
    */
-  @Override
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  protected ComponentContentPanel createOutput(Evaluation eval, MessageCollection errors) {
     SimplePlot				plot;
     List<SequencePlotterContainer> 	points;
     SequencePlotterContainer		point;
@@ -93,8 +92,8 @@ public class ResidualsVsPredictor
     AbstractDisplayPanel		panel;
 
     points = new ArrayList<>();
-    name   = item.getEvaluation().getHeader().relationName();
-    for (Prediction pred: item.getEvaluation().predictions()) {
+    name   = eval.getHeader().relationName();
+    for (Prediction pred: eval.predictions()) {
       point = new SequencePlotterContainer(name, pred.actual(), pred.actual() - pred.predicted());
       points.add(point);
     }

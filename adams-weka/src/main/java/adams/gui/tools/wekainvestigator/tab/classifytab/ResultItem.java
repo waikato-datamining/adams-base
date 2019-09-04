@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ResultItem.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
@@ -34,7 +34,6 @@ import weka.core.Instances;
  * result history.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ResultItem
   extends AbstractNestableResultItem {
@@ -43,6 +42,9 @@ public class ResultItem
 
   /** the evaluation object. */
   protected Evaluation m_Evaluation;
+
+  /** the evaluation objects from the folds. */
+  protected Evaluation[] m_FoldEvaluations;
 
   /** the template. */
   protected Classifier m_Template;
@@ -126,7 +128,22 @@ public class ResultItem
    * @param additional 	the additional attributes, can be null
    */
   public void update(Evaluation evaluation, Classifier model, MetaData runInfo, int[] original, SpreadSheet additional) {
+    update(evaluation, null, model, runInfo, original, additional);
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param evaluation	the evaluation, can be null
+   * @param foldEvaluations the evaluations per fold, can be null
+   * @param model	the model, can be null
+   * @param runInfo	the meta-data for the run
+   * @param original	the original indices, can be null
+   * @param additional 	the additional attributes, can be null
+   */
+  public void update(Evaluation evaluation, Evaluation[] foldEvaluations, Classifier model, MetaData runInfo, int[] original, SpreadSheet additional) {
     m_Evaluation           = evaluation;
+    m_FoldEvaluations      = foldEvaluations;
     m_Model                = model;
     m_RunInformation       = runInfo;
     m_OriginalIndices      = original;
@@ -149,6 +166,24 @@ public class ResultItem
    */
   public Evaluation getEvaluation() {
     return m_Evaluation;
+  }
+
+  /**
+   * Returns whether Evaluation objects per fold are present.
+   *
+   * @return		true if available
+   */
+  public boolean hasFoldEvaluations() {
+    return (m_FoldEvaluations != null);
+  }
+
+  /**
+   * Returns the stored Evaluation objects per fold.
+   *
+   * @return		the evaluations per fold, null if not present
+   */
+  public Evaluation[] getFoldEvaluations() {
+    return m_FoldEvaluations;
   }
 
   /**

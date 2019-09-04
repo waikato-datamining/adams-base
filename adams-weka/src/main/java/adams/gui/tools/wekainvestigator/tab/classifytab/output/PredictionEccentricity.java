@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PredictionEccentricity.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -39,17 +39,15 @@ import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.visualization.image.ImagePanel;
-
-import javax.swing.JComponent;
+import weka.classifiers.Evaluation;
 
 /**
  * Generates classifier prediction eccentricity.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PredictionEccentricity
-  extends AbstractOutputGenerator {
+  extends AbstractOutputGeneratorWithSeparateFoldsSupport<ComponentContentPanel> {
 
   private static final long serialVersionUID = -6829245659118360739L;
 
@@ -205,13 +203,13 @@ public class PredictionEccentricity
   }
 
   /**
-   * Generates output from the item.
+   * Generates the output from the evaluation.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param eval	the evaluation to use
+   * @param errors	for collecting errors
+   * @return		the generated output, null if failed
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  protected ComponentContentPanel createOutput(Evaluation eval, MessageCollection errors) {
     adams.flow.transformer.PredictionEccentricity 	trans;
     WekaPredictionsToSpreadSheet			p2s;
     WekaEvaluationContainer				cont;
@@ -227,7 +225,7 @@ public class PredictionEccentricity
     SpreadSheet						runInfo;
     Row							row;
 
-    cont = new WekaEvaluationContainer(item.getEvaluation());
+    cont = new WekaEvaluationContainer(eval);
     p2s  = new WekaPredictionsToSpreadSheet();
     p2s.input(new Token(cont));
     try {

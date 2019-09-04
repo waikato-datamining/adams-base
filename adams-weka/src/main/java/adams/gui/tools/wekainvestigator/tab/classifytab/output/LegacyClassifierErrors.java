@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LegacyClassifierErrors.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -25,18 +25,17 @@ import adams.flow.core.Token;
 import adams.flow.sink.WekaClassifierErrors;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import weka.classifiers.Evaluation;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 /**
  * Generates classifier errors plot (legacy Weka output).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LegacyClassifierErrors
-  extends AbstractOutputGenerator {
+  extends AbstractOutputGeneratorWithSeparateFoldsSupport<ComponentContentPanel> {
 
   private static final long serialVersionUID = -6829245659118360739L;
 
@@ -70,18 +69,18 @@ public class LegacyClassifierErrors
   }
 
   /**
-   * Generates output from the item.
+   * Generates output from the evaluation.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param eval	the evaluation to use
+   * @param errors	for collecting errors
+   * @return		the generated output
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  protected ComponentContentPanel createOutput(Evaluation eval, MessageCollection errors) {
     WekaClassifierErrors 	sink;
     JPanel 			panel;
 
     sink  = new WekaClassifierErrors();
-    panel = sink.createDisplayPanel(new Token(item.getEvaluation()));
+    panel = sink.createDisplayPanel(new Token(eval));
 
     return new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane());
   }

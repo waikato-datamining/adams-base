@@ -454,9 +454,9 @@ public class WekaCrossValidationExecution
   }
 
   /**
-   * Returns the generated evaluations (if multi-threaded).
+   * Returns the generated evaluations (if multi-threaded or separated).
    *
-   * @return		the evaluations, null if not multi-threaded
+   * @return		the evaluations, null if not multi-threaded or not separated
    */
   public Evaluation[] getEvaluations() {
     return m_Evaluations;

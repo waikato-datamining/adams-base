@@ -15,7 +15,7 @@
 
 /*
  * PredictionHelper.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
@@ -28,12 +28,12 @@ import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
 import adams.flow.transformer.SpreadSheetMerge;
 import adams.flow.transformer.WekaPredictionsToSpreadSheet;
+import weka.classifiers.Evaluation;
 
 /**
  * Helper class for dealing with predictions from result items.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PredictionHelper {
 
@@ -56,6 +56,21 @@ public class PredictionHelper {
    *
    * @param logger 	the object used for logging, can be null
    * @param errors 	for collecting errors
+   * @param eval	the evaluation to use
+   * @param originalIndices 	the original indices to use, can be null
+   * @param additionalAttributes 	the additional attributes to add, can be null
+   * @param showError 	whether to add the error in a separate column
+   * @return		the generated spreadsheet
+   */
+  public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, boolean showError) {
+    return toSpreadSheet(logger, errors, eval, originalIndices, additionalAttributes, false, false, false, showError, false);
+  }
+
+  /**
+   * Turns the result item into a spreadsheet with the predictions.
+   *
+   * @param logger 	the object used for logging, can be null
+   * @param errors 	for collecting errors
    * @param item	the result item to use
    * @param addAdditionalAttributes 	whether to add additional attributes
    * @param addLabelIndex 	whether to add the label index in a separate column
@@ -66,6 +81,25 @@ public class PredictionHelper {
    * @return		the generated spreadsheet, null if failed
    */
   public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, ResultItem item, boolean addAdditionalAttributes, boolean addLabelIndex, boolean showDistribution, boolean showProbability, boolean showError, boolean showWeight) {
+    return toSpreadSheet(logger, errors, item.getEvaluation(), item.getOriginalIndices(), addAdditionalAttributes ? item.getAdditionalAttributes() : null, addLabelIndex, showDistribution, showProbability, showError, showWeight);
+  }
+
+  /**
+   * Turns the result item into a spreadsheet with the predictions.
+   *
+   * @param logger 	the object used for logging, can be null
+   * @param errors 	for collecting errors
+   * @param eval	the evaluation to use
+   * @param originalIndices     the original indices to use, can be null
+   * @param additionalAttributes 	the additional attributes to use, can be null
+   * @param addLabelIndex 	whether to add the label index in a separate column
+   * @param showDistribution 	whether to add the distribution in a separate column
+   * @param showProbability 	whether to add the probability in a separate column
+   * @param showError 	whether to add the error in a separate column
+   * @param showWeight 	whether to add the weight in a separate column
+   * @return		the generated spreadsheet, null if failed
+   */
+  public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, boolean addLabelIndex, boolean showDistribution, boolean showProbability, boolean showError, boolean showWeight) {
     WekaPredictionsToSpreadSheet 	p2s;
     WekaEvaluationContainer 		cont;
     Token 				token;
@@ -73,9 +107,9 @@ public class PredictionHelper {
     SpreadSheetMerge 			merge;
     String				msg;
 
-    cont = new WekaEvaluationContainer(item.getEvaluation());
-    if (item.hasOriginalIndices())
-      cont.setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, item.getOriginalIndices());
+    cont = new WekaEvaluationContainer(eval);
+    if (originalIndices != null)
+      cont.setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, originalIndices);
     p2s = new WekaPredictionsToSpreadSheet();
     p2s.setAddLabelIndex(addLabelIndex);
     p2s.setShowDistribution(showDistribution);
@@ -97,10 +131,10 @@ public class PredictionHelper {
     token = p2s.output();
 
     // add additional attributes
-    if (addAdditionalAttributes && item.hasAdditionalAttributes()) {
+    if (additionalAttributes != null) {
       sheet = (SpreadSheet) token.getPayload();
       merge = new SpreadSheetMerge();
-      token = new Token(new SpreadSheet[]{sheet, item.getAdditionalAttributes()});
+      token = new Token(new SpreadSheet[]{sheet, additionalAttributes});
       merge.input(token);
       msg = merge.execute();
       if (msg != null) {

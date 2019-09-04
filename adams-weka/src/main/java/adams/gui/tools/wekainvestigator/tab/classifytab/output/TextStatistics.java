@@ -13,28 +13,33 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TextStatistics.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.MessageCollection;
 import adams.core.Utils;
+import adams.data.spreadsheet.MetaData;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
+import adams.gui.core.MultiPagePane;
 import adams.gui.tools.wekainvestigator.output.RunInformationHelper;
 import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import com.github.fracpete.javautils.enumerate.Enumerated;
+import weka.classifiers.Evaluation;
 
 import javax.swing.JComponent;
+
+import static com.github.fracpete.javautils.Enumerate.enumerate;
 
 /**
  * Generates basic text statistic.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TextStatistics
   extends AbstractOutputGenerator {
@@ -223,31 +228,31 @@ public class TextStatistics
   }
 
   /**
-   * Generates output from the item.
+   * Generates a panel from the results of the evaluation.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param eval	the evaluation to append
+   * @param runInfo 	the run information to add
+   * @return 		the generated panel
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
-    StringBuilder	buffer;
+  protected TextualContentPanel createOutput(Evaluation eval, MetaData runInfo) {
+    StringBuilder 	buffer;
     BaseTextArea 	text;
 
     buffer = new StringBuilder();
 
     // summary
     try {
-      buffer.append(item.getEvaluation().toSummaryString(m_ComplexityStatistics));
+      buffer.append(eval.toSummaryString(m_ComplexityStatistics));
     }
     catch (Exception e) {
-      buffer.append(item.getEvaluation().toSummaryString(false));
+      buffer.append(eval.toSummaryString(false));
       Utils.handleException(this, "Failed to generate summary statistics: ", e);
     }
 
     // confusion matrix
     if (m_ConfusionMatrix) {
       try {
-	buffer.append("\n\n" + item.getEvaluation().toMatrixString());
+	buffer.append("\n\n" + eval.toMatrixString());
       }
       catch (Exception e) {
 	Utils.handleException(this, "Failed to generate confusion matrix: ", e);
@@ -257,25 +262,48 @@ public class TextStatistics
     // class details
     if (m_ClassDetails) {
       try {
-	buffer.append("\n\n" + item.getEvaluation().toClassDetailsString());
+	buffer.append("\n\n" + eval.toClassDetailsString());
       }
       catch (Exception e) {
 	Utils.handleException(this, "Failed to generate class details: ", e);
       }
     }
 
-    // run information
-    if (m_RunInformation && item.hasRunInformation()) {
+    if (runInfo != null) {
       buffer.append("\n\n" + "=== Run information ===\n\n");
-      buffer.append(RunInformationHelper.toString(item.getRunInformation().toSpreadSheet()));
+      buffer.append(RunInformationHelper.toString(runInfo.toSpreadSheet()));
     }
 
     text = new BaseTextArea();
     text.setEditable(false);
     text.setTextFont(Fonts.getMonospacedFont());
-    text.setText(buffer.toString());
+    text.setText(buffer.toString().trim());
     text.setCaretPosition(0);
 
     return new TextualContentPanel(text, true);
+  }
+
+  /**
+   * Generates output from the item.
+   *
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
+   */
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+    MultiPagePane	multiPage;
+
+    if (item.hasFoldEvaluations()) {
+      multiPage = newMultiPagePane();
+      addPage(multiPage, "Full", createOutput(item.getEvaluation(), (m_RunInformation ? item.getRunInformation() : null)));
+      for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], null));
+      if (multiPage.getPageCount() > 0)
+	multiPage.setSelectedIndex(0);
+      return multiPage;
+    }
+    else {
+      return createOutput(item.getEvaluation(), m_RunInformation ? item.getRunInformation() : null);
+    }
   }
 }

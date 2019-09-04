@@ -31,16 +31,21 @@ import adams.flow.core.Token;
 import adams.flow.sink.ActualVsPredictedPlot;
 import adams.flow.sink.ActualVsPredictedPlot.LimitType;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MultiPagePane;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
 import adams.gui.visualization.sequence.metadatacolor.Dummy;
+import com.github.fracpete.javautils.enumerate.Enumerated;
+import weka.classifiers.Evaluation;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.github.fracpete.javautils.Enumerate.enumerate;
 
 /**
  * Generates classifier errors plot.
@@ -427,23 +432,25 @@ public class ClassifierErrors
   }
 
   /**
-   * Generates output from the item.
+   * Generates a plot actor from the evaluation.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param eval		the evaluation to use
+   * @param originalIndices 	the original indices, can be null
+   * @param additionalAttributes 	the additional attribute to use, can be null
+   * @param errors 		for collecting errors
+   * @return			the generated panel, null if failed to generate
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  protected ComponentContentPanel createOutput(Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
     ActualVsPredictedPlot 		sink;
-    JPanel 				panel;
     boolean				showError;
     Token				token;
     SpreadSheet				sheet;
     List<String>			additional;
     int					i;
+    JPanel 				panel;
 
-    showError = m_UseError && item.getEvaluation().getHeader().classAttribute().isNumeric();
-    sheet     = PredictionHelper.toSpreadSheet(this, errors, item, true, showError);
+    showError = m_UseError && eval.getHeader().classAttribute().isNumeric();
+    sheet     = PredictionHelper.toSpreadSheet(this, errors, eval, originalIndices, additionalAttributes, showError);
     if (sheet == null) {
       if (errors.isEmpty())
 	errors.add("Failed to generate prediction!");
@@ -476,15 +483,40 @@ public class ClassifierErrors
     if (showError)
       sink.setError(new SpreadSheetColumnIndex("Error"));
     additional = null;
-    if (item.hasAdditionalAttributes()) {
+    if (additionalAttributes != null) {
       additional = new ArrayList<>();
-      for (i = 0; i < item.getAdditionalAttributes().getColumnCount(); i++)
-	additional.add(SpreadSheetColumnRange.escapeName(item.getAdditionalAttributes().getColumnName(i)));
+      for (i = 0; i < additionalAttributes.getColumnCount(); i++)
+	additional.add(SpreadSheetColumnRange.escapeName(additionalAttributes.getColumnName(i)));
     }
     if ((additional != null) && (additional.size() > 0))
       sink.setAdditional(new SpreadSheetColumnRange(Utils.flatten(additional, ",")));
+
     panel = sink.createDisplayPanel(token);
 
     return new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane());
+  }
+
+  /**
+   * Generates output from the item.
+   *
+   * @param item	the item to generate output for
+   * @param errors	for collecting error messages
+   * @return		the output component, null if failed to generate
+   */
+  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+    MultiPagePane		multiPage;
+
+    if (item.hasFoldEvaluations()) {
+      multiPage = newMultiPagePane();
+      addPage(multiPage, "Full", createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors));
+      for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], null, null, errors));
+      if (multiPage.getPageCount() > 0)
+	multiPage.setSelectedIndex(0);
+      return multiPage;
+    }
+    else {
+      return createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors);
+    }
   }
 }

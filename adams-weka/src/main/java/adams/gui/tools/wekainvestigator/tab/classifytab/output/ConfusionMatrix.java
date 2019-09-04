@@ -32,8 +32,7 @@ import adams.gui.core.spreadsheettable.ConfusionMatrixCellRenderingCustomizer;
 import adams.gui.tools.wekainvestigator.output.TableContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
-
-import javax.swing.JComponent;
+import weka.classifiers.Evaluation;
 
 /**
  * Displays the confusion matrix.
@@ -41,7 +40,7 @@ import javax.swing.JComponent;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ConfusionMatrix
-  extends AbstractOutputGenerator {
+  extends AbstractOutputGeneratorWithSeparateFoldsSupport<TableContentPanel> {
 
   private static final long serialVersionUID = -6829245659118360739L;
 
@@ -230,23 +229,23 @@ public class ConfusionMatrix
   }
 
   /**
-   * Generates output from the item.
+   * Generates the table with the confusion matrix.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param eval		the evaluation to use as basis
+   * @param errors 		for collecting errors
+   * @return			the generated table, null if failed to generate
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  protected TableContentPanel createOutput(Evaluation eval, MessageCollection errors) {
     SpreadSheet					sheet;
     SpreadSheetTable				table;
     adams.flow.transformer.ConfusionMatrix	matrix;
     String					msg;
 
-    if (!item.getEvaluation().getHeader().classAttribute().isNominal())
+    if (!eval.getHeader().classAttribute().isNominal())
       return null;
 
     sheet = PredictionHelper.toSpreadSheet(
-      this, errors, item, true, false, false, true, false, false);
+      this, errors, eval, null, null, false, false, true, false, false);
     if (sheet == null) {
       if (errors.isEmpty())
 	errors.add("Failed to generate predictions!");

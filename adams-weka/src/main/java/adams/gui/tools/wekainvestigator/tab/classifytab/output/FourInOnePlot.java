@@ -35,8 +35,7 @@ import adams.gui.visualization.stats.histogram.Histogram;
 import adams.gui.visualization.stats.histogram.HistogramOptions;
 import adams.gui.visualization.stats.probabilityplot.NormalPlot;
 import adams.gui.visualization.stats.probabilityplot.NormalPlotOptions;
-
-import javax.swing.JComponent;
+import weka.classifiers.Evaluation;
 
 /**
  * Generates the 4-in-1 plot: normal plot, histogram, residuals vs fit and vs order.
@@ -44,7 +43,7 @@ import javax.swing.JComponent;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class FourInOnePlot
-  extends AbstractOutputGenerator {
+  extends AbstractOutputGeneratorWithSeparateFoldsSupport<ComponentContentPanel> {
 
   private static final long serialVersionUID = -6829245659118360739L;
 
@@ -265,13 +264,13 @@ public class FourInOnePlot
   }
 
   /**
-   * Generates output from the item.
+   * Creates the 4-in-1 plot for the evaluation.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param eval	the evaluation to use
+   * @param errors	for collecting errors
+   * @return		the generated plot
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  protected ComponentContentPanel createOutput(Evaluation eval, MessageCollection errors) {
     BaseTabbedPane			tabbedPane;
     WekaPredictionsToSpreadSheet	p2s;
     Token				token;
@@ -286,7 +285,7 @@ public class FourInOnePlot
     p2s = new WekaPredictionsToSpreadSheet();
     p2s.setShowError(true);
     p2s.setUseAbsoluteError(m_UseAbsoluteError);
-    p2s.input(new Token(item.getEvaluation()));
+    p2s.input(new Token(eval));
     try {
       p2s.execute();
     }

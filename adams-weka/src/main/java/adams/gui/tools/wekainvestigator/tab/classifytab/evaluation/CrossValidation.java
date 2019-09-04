@@ -73,6 +73,8 @@ public class CrossValidation
 
   public static final String KEY_FOLDS = "folds";
 
+  public static final String KEY_PERFOLDOUTPUT = "perfoldoutput";
+
   public static final String KEY_SEED = "seed";
 
   public static final String KEY_JOBRUNNER = "jobrunner";
@@ -98,6 +100,9 @@ public class CrossValidation
 
   /** the number of folds. */
   protected JSpinner m_SpinnerFolds;
+
+  /** whether to use separate evaluations per fold. */
+  protected BaseCheckBox m_CheckBoxPerFoldOutput;
 
   /** the seed value. */
   protected NumberTextField m_TextSeed;
@@ -172,6 +177,13 @@ public class CrossValidation
     m_SpinnerFolds.setToolTipText("The number of folds to use (< 2 for LOO-CV)");
     m_SpinnerFolds.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Folds", m_SpinnerFolds);
+
+    // per fold output?
+    m_CheckBoxPerFoldOutput = new BaseCheckBox();
+    m_CheckBoxPerFoldOutput.setSelected(props.getBoolean("Classify.PerFoldOutput", false));
+    m_CheckBoxPerFoldOutput.setToolTipText("Keep separate evaluations per fold to inspect per fold performance");
+    m_CheckBoxPerFoldOutput.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Per fold output", m_CheckBoxPerFoldOutput);
 
     // seed
     m_TextSeed = new NumberTextField(Type.INTEGER, "" + props.getInteger("Classify.Seed", 1));
@@ -329,6 +341,7 @@ public class CrossValidation
     Classifier				model;
     int					seed;
     int					folds;
+    boolean				sepFolds;
     JobRunner 				jobrunner;
     CrossValidationFoldGenerator	generator;
     MetaData 				runInfo;
@@ -343,12 +356,14 @@ public class CrossValidation
     discard    = m_CheckBoxDiscardPredictions.isSelected();
     seed       = m_TextSeed.getValue().intValue();
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
+    sepFolds   = m_CheckBoxPerFoldOutput.isSelected();
     jobrunner  = (JobRunner) m_GOEJobRunner.getCurrent();
     generator  = (CrossValidationFoldGenerator) m_GOEGenerator.getCurrent();
     runInfo    = new MetaData();
     runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Seed", seed);
     runInfo.add("Folds", folds);
+    runInfo.add("Separate folds", sepFolds);
     runInfo.add("JobRunner", jobrunner.toCommandLine());
     runInfo.add("Dataset ID", dataCont.getID());
     runInfo.add("Relation", data.relationName());
@@ -364,6 +379,7 @@ public class CrossValidation
     m_CrossValidation.setClassifier(classifier);
     m_CrossValidation.setData(data);
     m_CrossValidation.setFolds(folds);
+    m_CrossValidation.setSeparateFolds(sepFolds);
     m_CrossValidation.setSeed(seed);
     m_CrossValidation.setJobRunner(jobrunner);
     m_CrossValidation.setUseViews(views);
@@ -384,7 +400,9 @@ public class CrossValidation
     }
 
     item.update(
-      m_CrossValidation.getEvaluation(), model, runInfo,
+      m_CrossValidation.getEvaluation(),
+      sepFolds ? m_CrossValidation.getEvaluations() : null,
+      model, runInfo,
       m_CrossValidation.getOriginalIndices(),
       transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
 
@@ -462,6 +480,7 @@ public class CrossValidation
       result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
     if (options.contains(SerializationOption.PARAMETERS)) {
       result.put(KEY_FOLDS, m_SpinnerFolds.getValue());
+      result.put(KEY_PERFOLDOUTPUT, m_CheckBoxPerFoldOutput.isSelected());
       result.put(KEY_SEED, m_TextSeed.getValue().intValue());
       result.put(KEY_JOBRUNNER, OptionUtils.getCommandLine(m_GOEJobRunner.getCurrent()));
       result.put(KEY_ADDITIONAL, m_SelectAdditionalAttributes.getCurrent());
@@ -486,6 +505,8 @@ public class CrossValidation
       m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
     if (data.containsKey(KEY_FOLDS))
       m_SpinnerFolds.setValue(data.get(KEY_FOLDS));
+    if (data.containsKey(KEY_PERFOLDOUTPUT))
+      m_CheckBoxPerFoldOutput.setSelected((Boolean) data.get(KEY_PERFOLDOUTPUT));
     if (data.containsKey(KEY_SEED))
       m_TextSeed.setValue((int) data.get(KEY_SEED));
     if (data.containsKey(KEY_JOBRUNNER)) {
