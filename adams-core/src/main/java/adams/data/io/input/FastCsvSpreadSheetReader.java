@@ -469,6 +469,9 @@ public class FastCsvSpreadSheetReader
 	  break;
 	}
 
+        if (line.isEmpty())
+          continue;
+
 	// skip row?
 	if (lineNo < m_FirstRow) {
           lineNo++;
