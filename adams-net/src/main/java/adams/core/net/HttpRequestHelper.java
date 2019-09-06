@@ -15,7 +15,7 @@
 
 /*
  * HttpRequestHelper.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.net;
@@ -148,18 +148,18 @@ public class HttpRequestHelper {
 
       // form parameters
       for (BaseKeyValuePair param : form) {
-	writer.write("--" + boundary + "\n");
-	writer.write("Content-Disposition: form-data; name=\"" + param.getPairKey() + "\"\n");
-	writer.write("\n");
+	writer.write("--" + boundary + "\r\n");
+	writer.write("Content-Disposition: form-data; name=\"" + param.getPairKey() + "\"\r\n");
+	writer.write("\r\n");
 	writer.write(param.getPairValue());
-	writer.write("\n");
+	writer.write("\r\n");
       }
 
       // start part for file
-      writer.write("--" + boundary + "\n");
-      writer.write("Content-Disposition: form-data; name=\"" + fileFormName + "\"; filename=\"" + file + "\"\n");
-      writer.write("Content-Type: " + mimeType.toString() + "\n");
-      writer.write("\n");
+      writer.write("--" + boundary + "\r\n");
+      writer.write("Content-Disposition: form-data; name=\"" + fileFormName + "\"; filename=\"" + file + "\"\r\n");
+      writer.write("Content-Type: " + mimeType.toString() + "\r\n");
+      writer.write("\r\n");
       writer.flush();
 
       // file content
@@ -170,7 +170,7 @@ public class HttpRequestHelper {
       os.flush();
 
       // finish
-      writer.write("\n--" + boundary + "--\n");
+      writer.write("\r\n--" + boundary + "--\r\n");
       writer.flush();
 
       os.close();
