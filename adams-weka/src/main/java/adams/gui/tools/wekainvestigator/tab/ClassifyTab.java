@@ -1105,7 +1105,7 @@ public class ClassifyTab
       m_History.deserialize(data.get(KEY_HISTORY), errors);
     if (data.containsKey(KEY_OUTPUTGENERATORS)) {
       try {
-	m_OutputGenerators = (AbstractOutputGenerator[]) OptionUtils.forCommandLines(AbstractOutputGenerator.class, ((List<String>) data.get(KEY_OUTPUTGENERATORS)).toArray(new String[0]));
+	m_OutputGenerators = (AbstractOutputGenerator[]) OptionUtils.forCommandLines(AbstractOutputGenerator.class, (String[]) data.get(KEY_OUTPUTGENERATORS));
       }
       catch (Exception e) {
         errors.add("Failed to restore output generators!", e);
