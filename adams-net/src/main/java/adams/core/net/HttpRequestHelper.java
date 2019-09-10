@@ -100,6 +100,9 @@ public class HttpRequestHelper {
     catch (IOException e) {
       result = new HttpRequestResult(conn.getResponseCode(), conn.getResponseMessage(), null);
     }
+
+    conn.disconnect();
+
     return result;
   }
 
@@ -115,13 +118,54 @@ public class HttpRequestHelper {
    */
   public static HttpRequestResult post(BaseURL url, BaseKeyValuePair[] form, String fileFormName, File file) throws Exception {
     HttpRequestResult	result;
+    MediaType 		mimeType;
+    FileInputStream 	fis;
+
+    mimeType = MimeTypeHelper.getMimeType(file);
+
+    fis = null;
+    try {
+      fis    = new FileInputStream(file.getAbsoluteFile());
+      result = post(url, form, fileFormName, file.getAbsolutePath(), mimeType, fis);
+    }
+    finally {
+      FileUtils.closeQuietly(fis);
+    }
+
+    return result;
+  }
+
+  /**
+   * Uploads an HTML form via POST (multipart/form-data).
+   *
+   * @param url		the URL to connect to
+   * @param form	the form data
+   * @return		the result from the request
+   * @throws Exception	if request failed
+   */
+  public static HttpRequestResult post(BaseURL url, BaseKeyValuePair[] form) throws Exception {
+    return post(url, form, null, null, null, null);
+  }
+
+  /**
+   * Uploads data from a stream (ie file) as part of an HTML form via POST (multipart/form-data).
+   *
+   * @param url		the URL to connect to
+   * @param form	the form data
+   * @param fileFormName the form name for the file, ignored if null
+   * @param fileName	the name of the file that is being uploaded, ignored if null
+   * @param mimeType 	the mimetype to use for the file, ignored if null
+   * @param fileStream 	the stream of the file to be uploaded, the caller has to close the stream, ignored if null
+   * @return		the result from the request
+   * @throws Exception	if request failed
+   */
+  public static HttpRequestResult post(BaseURL url, BaseKeyValuePair[] form, String fileFormName, String fileName, MediaType mimeType, InputStream fileStream) throws Exception {
+    HttpRequestResult	result;
     URL 		remote;
     HttpURLConnection 	conn;
     String 		boundary;
     OutputStream 	os;
     BufferedWriter 	writer;
-    MediaType 		mimeType;
-    FileInputStream 	fis;
     int 		read;
     byte[] 		buffer;
     BufferedReader 	reader;
@@ -130,7 +174,6 @@ public class HttpRequestHelper {
 
     remote   = url.urlValue();
     boundary = createBoundary();
-    mimeType = MimeTypeHelper.getMimeType(file);
     response = new StringBuilder();
     conn     = (HttpURLConnection) remote.openConnection();
     conn.setDoOutput(true);
@@ -139,7 +182,6 @@ public class HttpRequestHelper {
 
     os     = null;
     writer = null;
-    fis    = null;
     reader = null;
     try {
       os     = conn.getOutputStream();
@@ -155,19 +197,20 @@ public class HttpRequestHelper {
 	writer.write("\r\n");
       }
 
-      // start part for file
-      writer.write("--" + boundary + "\r\n");
-      writer.write("Content-Disposition: form-data; name=\"" + fileFormName + "\"; filename=\"" + file + "\"\r\n");
-      writer.write("Content-Type: " + mimeType.toString() + "\r\n");
-      writer.write("\r\n");
-      writer.flush();
+      if ((fileStream != null) && (fileFormName != null) && (fileName != null)) {
+	// start part for file
+	writer.write("--" + boundary + "\r\n");
+	writer.write("Content-Disposition: form-data; name=\"" + fileFormName + "\"; filename=\"" + fileName + "\"\r\n");
+	writer.write("Content-Type: " + mimeType.toString() + "\r\n");
+	writer.write("\r\n");
+	writer.flush();
 
-      // file content
-      fis    = new FileInputStream(file.getAbsoluteFile());
-      buffer = new byte[1024];
-      while ((read = fis.read(buffer)) != -1)
-	os.write(buffer, 0, read);
-      os.flush();
+	// file content
+	buffer = new byte[1024];
+	while ((read = fileStream.read(buffer)) != -1)
+	  os.write(buffer, 0, read);
+	os.flush();
+      }
 
       // finish
       writer.write("\r\n--" + boundary + "--\r\n");
@@ -186,9 +229,10 @@ public class HttpRequestHelper {
     finally {
       FileUtils.closeQuietly(writer);
       FileUtils.closeQuietly(os);
-      FileUtils.closeQuietly(fis);
       FileUtils.closeQuietly(reader);
     }
+
+    conn.disconnect();
 
     result = new HttpRequestResult(200, "OK", response.toString());
     return result;
@@ -248,6 +292,9 @@ public class HttpRequestHelper {
     catch (IOException e) {
       result = new HttpRequestResult(conn.getResponseCode(), conn.getResponseMessage(), null);
     }
+
+    conn.disconnect();
+
     return result;
   }
 
@@ -268,9 +315,12 @@ public class HttpRequestHelper {
     Response 		res;
 
     conn = Jsoup.connect(url.getValue());
-    for (BaseKeyValuePair header: headers)
-      conn.header(header.getPairKey(), header.getPairValue());
-    conn.data(BaseKeyValuePair.toMap(parameters));
+    if (headers != null) {
+      for (BaseKeyValuePair header : headers)
+	conn.header(header.getPairKey(), header.getPairValue());
+    }
+    if (parameters != null)
+      conn.data(BaseKeyValuePair.toMap(parameters));
     conn.method(method);
     if (cookies != null)
       conn.cookies(BaseKeyValuePair.toMap(cookies));
