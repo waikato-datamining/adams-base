@@ -23,6 +23,7 @@ package adams.db;
 
 import adams.core.CloneHandler;
 import adams.core.CompareUtils;
+import adams.core.PasswordSupporter;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
@@ -54,12 +55,12 @@ import java.util.logging.Level;
  * Currently set up for MYSQL.
  *
  *  @author  dale (dale at waikato dot ac dot nz)
- *  @version $Revision$
  */
 public abstract class AbstractDatabaseConnection
   extends LoggingObject
   implements OptionHandler, DatabaseConnectionParameterHandler,
-             Comparable<AbstractDatabaseConnection>, CloneHandler<AbstractDatabaseConnection> {
+             Comparable<AbstractDatabaseConnection>,
+             CloneHandler<AbstractDatabaseConnection>, PasswordSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3625820307854172417L;

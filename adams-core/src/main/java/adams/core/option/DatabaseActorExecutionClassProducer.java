@@ -13,17 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DatabaseActorExecutionClassProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import adams.core.PasswordSupporter;
 import adams.core.base.BasePassword;
 import adams.db.DatabaseConnection;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generates a wrapper for an actor that works in conjunction with a database.
@@ -32,7 +33,8 @@ import adams.db.DatabaseConnection;
  * @version $Revision$
  */
 public class DatabaseActorExecutionClassProducer
-  extends ActorExecutionClassProducer {
+  extends ActorExecutionClassProducer
+  implements PasswordSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -8854002881512935904L;

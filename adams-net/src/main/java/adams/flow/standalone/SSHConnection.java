@@ -15,13 +15,14 @@
 
 /*
  * SSHConnection.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JSch
  */
 
 package adams.flow.standalone;
 
 import adams.core.License;
+import adams.core.PasswordSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
@@ -185,7 +186,8 @@ import java.util.List;
 )
 public class SSHConnection
   extends AbstractStandalone
-  implements TechnicalInformationHandler, OptionalPasswordPrompt, SSHSessionProvider {
+  implements TechnicalInformationHandler, OptionalPasswordPrompt,
+             SSHSessionProvider, PasswordSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;

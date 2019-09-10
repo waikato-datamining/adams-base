@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SmbRemoteDirectory.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.chooser;
 
+import adams.core.PasswordSupporter;
 import adams.core.base.BasePassword;
 import adams.core.net.SMBAuthenticationProvider;
 import adams.core.option.AbstractOptionHandler;
@@ -29,11 +30,10 @@ import jcifs.smb.NtlmPasswordAuthentication;
  * For configuring an SMB connection and remote directory.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 14538 $
  */
 public class SmbRemoteDirectorySetup
   extends AbstractOptionHandler
-  implements SMBAuthenticationProvider, RemoteDirectorySetup {
+  implements SMBAuthenticationProvider, RemoteDirectorySetup, PasswordSupporter {
 
   private static final long serialVersionUID = -8429471751146663032L;
 

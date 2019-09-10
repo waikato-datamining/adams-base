@@ -15,20 +15,21 @@
 
 /*
  * WekaDatabaseWriter.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.util.Hashtable;
-
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.converters.DatabaseSaver;
+import adams.core.PasswordSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderFile;
 import adams.db.DatabaseConnection;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.DatabaseSaver;
+
+import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
@@ -109,10 +110,10 @@ import adams.db.DatabaseConnection;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaDatabaseWriter
-  extends AbstractSink {
+  extends AbstractSink
+  implements PasswordSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 7509908838736709270L;

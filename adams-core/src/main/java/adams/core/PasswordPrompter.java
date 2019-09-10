@@ -14,19 +14,18 @@
  */
 
 /*
- * OptionalPasswordPrompt.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * PasswordPrompter.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  */
-package adams.flow.core;
+package adams.core;
 
 /**
- * Interface for actors that prompt the user to enter a password in case
- * no password currently provided.
+ * Interface for classes that prompt the user to enter a password.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public interface OptionalPasswordPrompt
-  extends InteractiveActor {
+public interface PasswordPrompter
+  extends PasswordSupporter {
 
   /**
    * Sets whether to prompt for a password if none currently provided.

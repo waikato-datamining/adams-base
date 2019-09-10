@@ -15,11 +15,12 @@
 
 /*
  * DatabaseConnectionParameterHandler.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.db;
 
+import adams.core.PasswordSupporter;
 import adams.core.base.BasePassword;
 
 /**
@@ -27,9 +28,9 @@ import adams.core.base.BasePassword;
  * like URL, user and password.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface DatabaseConnectionParameterHandler {
+public interface DatabaseConnectionParameterHandler
+  extends PasswordSupporter {
 
   /**
    * Sets the database URL to use (only if not connected).

@@ -15,11 +15,12 @@
 
 /*
  * FtpDirectoryLister.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.lister;
 
+import adams.core.PasswordSupporter;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.FileObject;
@@ -41,11 +42,10 @@ import java.util.List;
  * The provided client provider takes precedence of the parameters.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FtpDirectoryLister
   extends AbstractRecursiveDirectoryLister
-  implements ProtocolCommandListener {
+  implements ProtocolCommandListener, PasswordSupporter {
 
   private static final long serialVersionUID = 2687222234652386893L;
 

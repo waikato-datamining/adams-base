@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SmbDirectoryLister.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.lister;
 
+import adams.core.PasswordSupporter;
 import adams.core.base.BasePassword;
 import adams.core.io.FileObject;
 import adams.core.io.SmbFileObject;
@@ -38,10 +39,10 @@ import java.util.logging.Level;
  * The authentication object takes precedence over domain/user/password.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SmbDirectoryLister
-  extends AbstractRecursiveDirectoryLister {
+  extends AbstractRecursiveDirectoryLister
+  implements PasswordSupporter {
 
   private static final long serialVersionUID = 2687222234652386893L;
 

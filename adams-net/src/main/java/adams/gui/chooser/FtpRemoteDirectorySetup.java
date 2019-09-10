@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FtpRemoteDirectory.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.chooser;
 
+import adams.core.PasswordSupporter;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.option.AbstractOptionHandler;
@@ -34,11 +35,10 @@ import java.util.logging.Level;
  * For configuring an SSH connection and remote directory.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 14538 $
  */
 public class FtpRemoteDirectorySetup
   extends AbstractOptionHandler
-  implements RemoteDirectorySetup, ProtocolCommandListener {
+  implements RemoteDirectorySetup, ProtocolCommandListener, PasswordSupporter {
 
   private static final long serialVersionUID = -8429471751146663032L;
 

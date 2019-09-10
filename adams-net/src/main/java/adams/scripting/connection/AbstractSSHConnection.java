@@ -15,11 +15,12 @@
 
 /*
  * AbstractSSHConnection.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
 
+import adams.core.PasswordSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
@@ -41,11 +42,10 @@ import java.io.File;
  * Inspired by: <a href="http://www.beanizer.org/site/index.php/en/Articles/Java-ssh-tunneling-with-jsch.html">www.beanizer.org</a>
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSSHConnection
   extends AbstractConnection
-  implements SSHSessionProvider {
+  implements SSHSessionProvider, PasswordSupporter {
 
   private static final long serialVersionUID = 7719866884762680511L;
 

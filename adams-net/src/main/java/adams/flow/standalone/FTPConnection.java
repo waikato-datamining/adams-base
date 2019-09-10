@@ -15,11 +15,12 @@
 
 /*
  * FTPConnection.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
 
+import adams.core.PasswordSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
@@ -121,7 +122,7 @@ import java.util.logging.Level;
  */
 public class FTPConnection
   extends AbstractStandalone
-  implements ProtocolCommandListener, OptionalPasswordPrompt {
+  implements ProtocolCommandListener, OptionalPasswordPrompt, PasswordSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;
@@ -465,7 +466,7 @@ public class FTPConnection
   /**
    * Sets the custom message to use when stopping the flow.
    *
-   * @param 		the stop message
+   * @param value	the stop message
    */
   public void setCustomStopMessage(String value) {
     m_CustomStopMessage = value;

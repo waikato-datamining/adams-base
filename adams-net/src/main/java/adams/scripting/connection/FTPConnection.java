@@ -21,6 +21,7 @@
 package adams.scripting.connection;
 
 import adams.core.MessageCollection;
+import adams.core.PasswordSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
@@ -46,7 +47,7 @@ import java.util.logging.Level;
  */
 public class FTPConnection
   extends AbstractConnection
-  implements ProtocolCommandListener {
+  implements ProtocolCommandListener, PasswordSupporter {
 
   private static final long serialVersionUID = 7719866884762680511L;
 

@@ -15,11 +15,12 @@
 
 /*
  * SMTPConnection.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
 
+import adams.core.PasswordSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
@@ -137,7 +138,7 @@ import java.util.List;
  */
 public class SMTPConnection
   extends AbstractStandalone
-  implements OptionalPasswordPrompt {
+  implements OptionalPasswordPrompt, PasswordSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 9145039564243937635L;
