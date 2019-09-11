@@ -15,10 +15,11 @@
 
 /*
  * FlowJUnitTestProducer.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.core.base.BaseClassname;
 import adams.core.base.BaseString;
 import adams.env.Environment;
 
@@ -39,7 +40,7 @@ public class FlowJUnitTestProducer
   private static final long serialVersionUID = -422414504795720518L;
 
   /** the class for which the test is generated. */
-  protected Class m_ActorClass;
+  protected BaseClassname m_ActorClass;
 
   /** whether to create a regression test. */
   protected boolean m_HasRegressionTest;
@@ -83,8 +84,8 @@ public class FlowJUnitTestProducer
    * 
    * @return		the default class
    */
-  protected String getDefaultActorClass() {
-    return adams.flow.sink.Display.class.getName();
+  protected BaseClassname getDefaultActorClass() {
+    return new BaseClassname(adams.flow.sink.Display.class);
   }
   
   /**
@@ -92,17 +93,13 @@ public class FlowJUnitTestProducer
    *
    * @param value	the class to generate the test for
    */
-  public void setActorClass(String value) {
-    try {
-      m_ActorClass = Class.forName(value);
-      setSimpleName(m_ActorClass.getSimpleName());
-      setPackage(m_ActorClass.getPackage().getName());
+  public void setActorClass(BaseClassname value) {
+      m_ActorClass = value;
+      if ((m_ActorClass != null) && !m_ActorClass.isEmpty()) {
+        setSimpleName(m_ActorClass.classValue().getSimpleName());
+        setPackage(m_ActorClass.classValue().getPackage().getName());
+      }
       reset();
-    }
-    catch (Exception e) {
-      m_ActorClass = adams.flow.sink.Display.class;
-      getLogger().severe("Error instantiating class: " + e);
-    }
   }
 
   /**
@@ -110,8 +107,8 @@ public class FlowJUnitTestProducer
    *
    * @return		the class
    */
-  public String getActorClass() {
-    return m_ActorClass.getName();
+  public BaseClassname getActorClass() {
+    return m_ActorClass;
   }
 
   /**
@@ -397,8 +394,8 @@ public class FlowJUnitTestProducer
    */
   @Override
   protected void preProduce() {
-    m_SimpleName = m_ActorClass.getSimpleName();
-    m_Package    = m_ActorClass.getPackage().getName();
+    m_SimpleName = m_ActorClass.classValue().getSimpleName();
+    m_Package    = m_ActorClass.classValue().getPackage().getName();
 
     super.preProduce();
   }
