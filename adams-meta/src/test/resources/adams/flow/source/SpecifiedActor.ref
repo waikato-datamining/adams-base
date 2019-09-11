@@ -1,0 +1,3 @@
+--> dumpfile.txt
+adams.flow.transformer.SetStorageValue -storage-name world
+
