@@ -27,8 +27,6 @@ import adams.core.io.filechanged.AbstractFileChangeMonitor;
 import adams.core.io.filechanged.LastModified;
 import adams.core.net.HtmlUtils;
 import adams.core.option.ArrayProducer;
-import adams.core.option.NestedConsumer;
-import adams.core.option.NestedProducer;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
@@ -210,7 +208,7 @@ public class Node
     Actor	parent;
     Actor	stripped;
 
-    stripped = strip(value);
+    stripped = ActorUtils.strip(value);
     oldActor = getActor();
     if (oldActor != null) {
       parent = oldActor.getParent();
@@ -736,40 +734,6 @@ public class Node
     }
 
     return m_RenderString;
-  }
-
-  /**
-   * Returns a stripped down version of the actor, i.e., for ActorHandlers,
-   * a copy of the actor without any sub-actors gets returned.
-   *
-   * @param actor	the actor to strip down
-   * @return		the stripped down actor
-   * @see		ActorHandler
-   */
-  public static Actor strip(Actor actor) {
-    Actor		result;
-    NestedProducer	producer;
-    NestedConsumer	consumer;
-
-    // create actor with only default sub-actors
-    if (actor instanceof ActorHandler) {
-      producer = new NestedProducer();
-      producer.setBlacklisted(new Class[]{AbstractActor[].class, AbstractActor.class, Actor[].class, Actor.class});
-      producer.produce(actor);
-      consumer = new NestedConsumer();
-      consumer.setInput(producer.getOutput());
-      result = (Actor) consumer.consume();
-      producer.cleanUp();
-      consumer.cleanUp();
-    }
-    // create a shallow copy of actor
-    else {
-      result = actor.shallowCopy();
-    }
-
-    result.setParent(actor.getParent());
-
-    return result;
   }
 
   /**
