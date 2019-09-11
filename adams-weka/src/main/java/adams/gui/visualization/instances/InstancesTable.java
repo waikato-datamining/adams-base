@@ -195,7 +195,7 @@ public class InstancesTable
    */
   @Override
   public void undo() {
-    ((InstancesTableModel) getModel()).undo();
+    ((InstancesTableModel) getUnsortedModel()).undo();
     setOptimalColumnWidth();
     notifyChangeListeners();
   }
@@ -208,7 +208,7 @@ public class InstancesTable
    */
   @Override
   public void addUndoPoint() {
-    ((InstancesTableModel) getModel()).addUndoPoint();
+    ((InstancesTableModel) getUnsortedModel()).addUndoPoint();
   }
 
   /**
