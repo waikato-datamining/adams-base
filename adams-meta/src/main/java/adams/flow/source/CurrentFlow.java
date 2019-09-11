@@ -112,7 +112,7 @@ public class CurrentFlow
   }
 
   /**
-   * Sets the whether to expand variables using their current values.
+   * Sets whether to expand variables using their current values.
    *
    * @param value 	true if to expand
    */
