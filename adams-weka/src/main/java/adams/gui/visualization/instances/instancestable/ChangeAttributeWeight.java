@@ -98,6 +98,8 @@ public class ChangeAttributeWeight
       state.table.getParent(),
       "Please enter new weight for '" + att.name() + "': ",
       "" + weight);
+    if (newWeightStr == null)
+      return false;
     if (!Utils.isDouble(newWeightStr)) {
       GUIHelper.showErrorMessage(state.table.getParent(), "Weight has to be a valid numnber, provided: " + newWeightStr);
       return false;
