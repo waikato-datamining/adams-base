@@ -15,19 +15,20 @@
 
 /*
  * ActorPath.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Breaks up a string denoting a full name of an actor into the individual
  * path elements.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorPath
   implements Comparable<ActorPath>, Serializable {
@@ -93,6 +94,15 @@ public class ActorPath
   }
 
   /**
+   * Returns whether the path is empty or not.
+   *
+   * @return		true if empty
+   */
+  public boolean isEmpty() {
+    return (m_Parts.length == 0);
+  }
+
+  /**
    * Returns a clone of the path elements.
    *
    * @return		the elements of the path
@@ -153,7 +163,7 @@ public class ActorPath
     if (m_Parts.length >= 1) {
       parts = new String[m_Parts.length - 1];
       for (i = 1; i < m_Parts.length; i++)
-	parts[i - 1] = new String(m_Parts[i]);
+	parts[i - 1] = m_Parts[i];
     }
     else {
       parts = new String[0];
@@ -169,7 +179,7 @@ public class ActorPath
    */
   public String getLastPathComponent() {
     if (m_Parts.length > 0)
-      return new String(m_Parts[m_Parts.length - 1]);
+      return m_Parts[m_Parts.length - 1];
     else
       return null;
   }
@@ -181,7 +191,7 @@ public class ActorPath
    */
   public String getFirstPathComponent() {
     if (m_Parts.length > 0)
-      return new String(m_Parts[0]);
+      return m_Parts[0];
     else
       return null;
   }
@@ -219,19 +229,19 @@ public class ActorPath
    * @return		the common ancestor (can have length 0!)
    */
   public ActorPath getCommonAncestor(ActorPath actorPath) {
-    ArrayList<String>	parts;
+    List<String> 	parts;
     int			i;
 
-    parts = new ArrayList<String>();
+    parts = new ArrayList<>();
 
     for (i = 0; (i < getPathCount()) && (i < actorPath.getPathCount()); i++) {
       if (getPathComponent(i).equals(actorPath.getPathComponent(i)))
-	parts.add(new String(getPathComponent(i)));
+	parts.add(getPathComponent(i));
       else
 	break;
     }
 
-    return new ActorPath(parts.toArray(new String[parts.size()]));
+    return new ActorPath(parts.toArray(new String[0]));
   }
   /**
    * Compares this object with the specified object for order.  Returns a
@@ -251,13 +261,13 @@ public class ActorPath
 
     // special case if one of the paths has no elements
     if ((getPathCount() == 0) || (o.getPathCount() == 0))
-      return new Integer(getPathCount()).compareTo(o.getPathCount());
+      return Integer.compare(getPathCount(), o.getPathCount());
 
     result = 0;
     for (i = 0; (i < getPathCount()) && (i < o.getPathCount()); i++) {
       result = getPathComponent(i).compareTo(o.getPathComponent(i));
       if ((result == 0) && ((i == getPathCount() - 1) || (i == o.getPathCount() - 1)))
-	result = new Integer(getPathCount()).compareTo(o.getPathCount());
+	result = Integer.compare(getPathCount(), o.getPathCount());
       if (result != 0)
 	break;
     }
@@ -284,7 +294,7 @@ public class ActorPath
    * @return		the hashcode
    */
   public int hashCode() {
-    return m_Parts.hashCode();
+    return Arrays.hashCode(m_Parts);
   }
 
   /**
