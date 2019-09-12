@@ -862,9 +862,6 @@ public abstract class AbstractApplicationFrame
       Collections.sort(connsList);
       newTitle += " " + connsList;
     }
-    else {
-      newTitle += " [-not connected-]";
-    }
 
     if (title.length() != 0) {
       if (title.contains(name + ":"))
