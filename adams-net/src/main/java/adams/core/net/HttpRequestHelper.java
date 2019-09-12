@@ -250,50 +250,20 @@ public class HttpRequestHelper {
    * @throws Exception	if request failed
    */
   public static HttpRequestResult send(BaseURL url, Method method, BaseKeyValuePair[] headers, String payload, String encoding) throws Exception {
-    HttpRequestResult result;
-    HttpURLConnection	conn;
-    OutputStream 	out;
-    OutputStreamWriter  writer;
-    InputStream 	in;
-    int			read;
-    TByteArrayList	response;
+    HttpRequestResult 	result;
+    Connection		conn;
+    Response		response;
 
-    conn = (HttpURLConnection) url.urlValue().openConnection();
-    conn.setDoOutput(payload != null);
-    conn.setDoInput(true);
-    conn.setRequestMethod(method.toString());
+    conn = Jsoup.connect(url.getValue());
+    conn.method(method);
     if (headers != null) {
-      for (BaseKeyValuePair header : headers)
-	conn.setRequestProperty(header.getPairKey(), header.getPairValue());
+      for (BaseKeyValuePair header: headers)
+        conn.header(header.getPairKey(), header.getPairValue());
     }
-
-    // write payload
-    if (payload != null) {
-      out = conn.getOutputStream();
-      if (encoding == null)
-        writer = new OutputStreamWriter(out);
-      else
-        writer = new OutputStreamWriter(out, "UTF-8");
-      writer.write(payload);
-      writer.flush();
-      writer.close();
-      out.flush();
-      out.close();
-    }
-
-    // read response
-    try {
-      response = new TByteArrayList();
-      in = conn.getInputStream();
-      while ((read = in.read()) != -1)
-	response.add((byte) read);
-      result = new HttpRequestResult(conn.getResponseCode(), conn.getResponseMessage(), new String(response.toArray()));
-    }
-    catch (IOException e) {
-      result = new HttpRequestResult(conn.getResponseCode(), conn.getResponseMessage(), null);
-    }
-
-    conn.disconnect();
+    if (payload != null)
+      conn.requestBody(payload);
+    response = conn.execute();
+    result = new HttpRequestResult(response.statusCode(), response.statusMessage(), response.body());
 
     return result;
   }
