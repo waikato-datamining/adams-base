@@ -111,6 +111,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.github.fracpete</groupId>
+      <artifactId>requests4j</artifactId>
+      <version>${requests4j.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.pusher</groupId>
       <artifactId>java-websocket</artifactId>
       <version>1.4.1</version>
