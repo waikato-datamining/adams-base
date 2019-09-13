@@ -265,6 +265,19 @@
 
     <dependency>
       <groupId>com.github.fracpete</groupId>
+      <artifactId>data-dumper-weka-package</artifactId>
+      <version>2019.9.13</version>
+      <type>jar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>nz.ac.waikato.cms.weka</groupId>
+          <artifactId>weka-dev</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.fracpete</groupId>
       <artifactId>jgrapht-treevisualize-weka-package</artifactId>
       <version>2019.4.11</version>
       <type>jar</type>
