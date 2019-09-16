@@ -23,12 +23,15 @@ package adams.flow.source;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
-import adams.core.net.HttpRequestHelper;
 import adams.flow.container.HttpRequestResult;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
-import org.jsoup.Connection.Method;
+import com.github.fracpete.requests4j.core.Method;
+import com.github.fracpete.requests4j.core.Request;
+import com.github.fracpete.requests4j.core.Response;
+import com.github.fracpete.requests4j.form.FormData;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -349,17 +352,25 @@ public class HttpRequest
   @Override
   protected String doExecute() {
     String		result;
-    HttpRequestResult cont;
+    HttpRequestResult 	cont;
     Map<String,String>  cookies;
+    Response 		r;
 
     result = null;
 
-    cookies = null;
     if (getStorageHandler().getStorage().has(m_Cookies))
       cookies = (Map<String,String>) getStorageHandler().getStorage().get(m_Cookies);
+    else
+      cookies = new HashMap<>();
 
     try {
-      cont = HttpRequestHelper.send(m_URL, m_Method, m_Headers, m_Parameters, (cookies == null) ? null : BaseKeyValuePair.fromMap(cookies));
+      r = new Request(m_Method)
+        .url(m_URL.urlValue())
+        .headers(BaseKeyValuePair.toMap(m_Headers))
+	.formData(new FormData().add(BaseKeyValuePair.toMap(m_Parameters)))
+	.cookies(cookies)
+	.execute();
+      cont = new HttpRequestResult(r.statusCode(), r.statusMessage(), r.text());
       m_OutputToken = new Token(cont);
     }
     catch (Exception e) {

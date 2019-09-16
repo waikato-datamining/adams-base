@@ -24,9 +24,11 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
 import adams.core.io.PlaceholderFile;
-import adams.core.net.HttpRequestHelper;
 import adams.flow.container.HttpRequestResult;
 import adams.flow.core.Token;
+import com.github.fracpete.requests4j.Requests;
+import com.github.fracpete.requests4j.core.Response;
+import com.github.fracpete.requests4j.form.FormData;
 
 import java.io.File;
 
@@ -276,6 +278,7 @@ public class HttpPostFile
     String		result;
     PlaceholderFile	file;
     HttpRequestResult	response;
+    Response		r;
 
     result = null;
     if (m_InputToken.hasPayload(File.class))
@@ -284,7 +287,14 @@ public class HttpPostFile
       file = new PlaceholderFile(m_InputToken.getPayload(String.class));
 
     try {
-      response      = HttpRequestHelper.post(m_URL, m_FormFields, m_FormFieldFile, file);
+      r = Requests.post(m_URL.urlValue())
+	.formData(
+	  new FormData()
+	    .add(BaseKeyValuePair.toMap(m_FormFields))
+	    .addFile(m_FormFieldFile, file.getAbsolutePath())
+	)
+	.execute();
+      response = new HttpRequestResult(r.statusCode(), r.statusMessage(), r.text());
       m_OutputToken = new Token(response);
     }
     catch (Exception e) {

@@ -15,7 +15,7 @@
 
 /*
  * HttpRequest.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -25,10 +25,11 @@ import adams.core.base.BaseCharset;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
 import adams.core.io.EncodingSupporter;
-import adams.core.net.HttpRequestHelper;
 import adams.flow.container.HttpRequestResult;
 import adams.flow.core.Token;
-import org.jsoup.Connection.Method;
+import com.github.fracpete.requests4j.core.Method;
+import com.github.fracpete.requests4j.core.Request;
+import com.github.fracpete.requests4j.core.Response;
 
 /**
  <!-- globalinfo-start -->
@@ -320,19 +321,24 @@ public class HttpRequest
    */
   @Override
   protected String doExecute() {
-    String		result;
-    HttpRequestResult cont;
+    String	result;
+    Request 	req;
+    Response 	res;
 
     result = null;
 
     try {
+      req = new Request(m_Method)
+      	.url(m_URL.urlValue())
+	.headers(BaseKeyValuePair.toMap(m_Headers));
+      if (!m_Method.hasBody())
+        throw new IllegalStateException("Method " + m_Method + " does not support a body in the request!");
       if (m_InputToken.hasPayload(String.class))
-        cont = HttpRequestHelper.send(
-          m_URL, m_Method, m_Headers, (String) m_InputToken.getPayload(), m_Encoding.stringValue());
+        req.body(((String) m_InputToken.getPayload()).getBytes(m_Encoding.charsetValue()));
       else
-        cont = HttpRequestHelper.send(
-          m_URL, m_Method, m_Headers, (byte[]) m_InputToken.getPayload());
-      m_OutputToken = new Token(cont);
+        req.body((byte[]) m_InputToken.getPayload());
+      res = req.execute();
+      m_OutputToken = new Token(new HttpRequestResult(res.statusCode(), res.statusMessage(), res.text()));
     }
     catch (Exception e) {
       result = handleException("Failed to execute request: " + m_URL, e);
