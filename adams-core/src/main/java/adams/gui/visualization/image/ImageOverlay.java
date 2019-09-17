@@ -13,25 +13,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageOverlay.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
-import java.awt.Graphics;
-
 import adams.core.CleanUpHandler;
+import adams.core.option.OptionHandler;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
+
+import java.awt.Graphics;
 
 /**
  * Interface for classes that put overlays over an image.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface ImageOverlay
-  extends CleanUpHandler {
+  extends OptionHandler, CleanUpHandler {
 
   /**
    * Notifies the overlay that the image has changed.

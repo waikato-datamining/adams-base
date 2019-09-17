@@ -15,11 +15,12 @@
 
 /*
  * SelectionShapePainter.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.image.selectionshape;
 
+import adams.core.option.OptionHandler;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import java.awt.Graphics;
@@ -31,7 +32,8 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface SelectionShapePainter {
+public interface SelectionShapePainter
+  extends OptionHandler {
 
   /**
    * Returns whether the current point is at leats the specified distance
