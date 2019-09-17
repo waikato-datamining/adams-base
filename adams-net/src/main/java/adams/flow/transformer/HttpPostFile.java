@@ -27,6 +27,7 @@ import adams.core.io.PlaceholderFile;
 import adams.flow.container.HttpRequestResult;
 import adams.flow.core.Token;
 import com.github.fracpete.requests4j.Requests;
+import com.github.fracpete.requests4j.core.Request;
 import com.github.fracpete.requests4j.core.Response;
 import com.github.fracpete.requests4j.form.FormData;
 
@@ -102,6 +103,11 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-disable-hostname-verification &lt;boolean&gt; (property: disableHostnameVerification)
+ * &nbsp;&nbsp;&nbsp;If checked, the hostname verification for SSL connections is turned off.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -119,6 +125,9 @@ public class HttpPostFile
 
   /** the name of the form field for the file to upload. */
   protected String m_FormFieldFile;
+
+  /** whether to disable hostname verification. */
+  protected boolean m_DisableHostnameVerification;
 
   /**
    * Returns a string describing the object.
@@ -149,6 +158,10 @@ public class HttpPostFile
     m_OptionManager.add(
       "form-field-file", "formFieldFile",
       "");
+
+    m_OptionManager.add(
+      "disable-hostname-verification", "disableHostnameVerification",
+      false);
   }
 
   /**
@@ -249,6 +262,35 @@ public class HttpPostFile
   }
 
   /**
+   * Sets whether to disable the hostname verification for SSL connections.
+   *
+   * @param value	true if to disable
+   */
+  public void setDisableHostnameVerification(boolean value) {
+    m_DisableHostnameVerification = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to disable the hostname verification for SSL connections.
+   *
+   * @return		true if disabled
+   */
+  public boolean getDisableHostnameVerification() {
+    return m_DisableHostnameVerification;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String disableHostnameVerificationTipText() {
+    return "If checked, the hostname verification for SSL connections is turned off.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -278,7 +320,8 @@ public class HttpPostFile
     String		result;
     PlaceholderFile	file;
     HttpRequestResult	response;
-    Response		r;
+    Request 		req;
+    Response 		res;
 
     result = null;
     if (m_InputToken.hasPayload(File.class))
@@ -287,14 +330,16 @@ public class HttpPostFile
       file = new PlaceholderFile(m_InputToken.getPayload(String.class));
 
     try {
-      r = Requests.post(m_URL.urlValue())
+      req = Requests.post(m_URL.urlValue())
 	.formData(
 	  new FormData()
 	    .add(BaseKeyValuePair.toMap(m_FormFields))
 	    .addFile(m_FormFieldFile, file.getAbsolutePath())
-	)
-	.execute();
-      response = new HttpRequestResult(r.statusCode(), r.statusMessage(), r.text());
+	);
+      if (m_DisableHostnameVerification)
+        req.disableHostnameVerification();
+      res = req.execute();
+      response = new HttpRequestResult(res.statusCode(), res.statusMessage(), res.text());
       m_OutputToken = new Token(response);
     }
     catch (Exception e) {
