@@ -15,7 +15,7 @@
 
 /*
  * ImageAnnotator.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -346,10 +346,10 @@ public class ImageAnnotator
       m_PanelImage.setShowProperties(true);
       m_PanelImage.setScale(m_Zoom);
       m_PanelImage.addLeftClickListener(this);
-      m_PanelImage.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(m_Overlay));
-      m_ActualSelectionProcessor = m_SelectionProcessor.shallowCopy();
+      m_PanelImage.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(m_Overlay, false, true));
+      m_ActualSelectionProcessor = (SelectionProcessor) OptionUtils.shallowCopy(m_SelectionProcessor, false, true);
       m_PanelImage.addSelectionListener(m_ActualSelectionProcessor);
-      m_PanelImage.setSelectionShapePainter((SelectionShapePainter) OptionUtils.shallowCopy(m_SelectionShapePainter));
+      m_PanelImage.setSelectionShapePainter((SelectionShapePainter) OptionUtils.shallowCopy(m_SelectionShapePainter, false, true));
       m_PanelImage.setSelectionEnabled(true);
       add(m_PanelImage, BorderLayout.CENTER);
     }
