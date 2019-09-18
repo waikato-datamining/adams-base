@@ -107,9 +107,9 @@ public class Console
   }
 
   /**
-   * Sets the class label index (1-based index).
+   * Sets the prefix to output before the actual data; you can use \n for a line feed and \t for a tab.
    *
-   * @param value 	the index
+   * @param value 	the prefix
    */
   public void setPrefix(String value) {
     m_Prefix = Utils.unbackQuoteChars(value);
@@ -117,9 +117,9 @@ public class Console
   }
 
   /**
-   * Returns the class label index (1-based index).
+   * Returns the prefix to output before the actual data; you can use \n for a line feed and \t for a tab.
    *
-   * @return 		the index
+   * @return 		the prefix
    */
   public String getPrefix() {
     return Utils.backQuoteChars(m_Prefix);
