@@ -115,6 +115,8 @@ public class PropertiesParameterPanel
     STRING,
     /** password. */
     PASSWORD,
+    /** password (plain text). */
+    PASSWORD_PLAIN,
     /** SQL query. */
     SQL,
     /** time. */
@@ -1054,6 +1056,7 @@ public class PropertiesParameterPanel
             addProperty(key, label, textfield);
             break;
           case PASSWORD:
+          case PASSWORD_PLAIN:
             final JPasswordField pwfield = new JPasswordField(20);
             pwfield.setText(value.getPassword(key).getValue());
             if (help != null)
@@ -1342,6 +1345,10 @@ public class PropertiesParameterPanel
         case PASSWORD:
           pwfield = (JPasswordField) comp;
           result.setPassword(key, new BasePassword(pwfield.getText()));
+          break;
+        case PASSWORD_PLAIN:
+          pwfield = (JPasswordField) comp;
+          result.setProperty(key, pwfield.getText());
           break;
         case SQL:
           query = (SQLSyntaxEditorPanel) comp;
