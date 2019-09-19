@@ -249,6 +249,7 @@ public class SimpleArffLoader
     String 			current;
     String			lower;
     String			format;
+    String			values;
 
     result  = new HashMap<>();
     current = line.replace("\t", " ");
@@ -282,35 +283,53 @@ public class SimpleArffLoader
     else
       throw new IllegalStateException("Unsupported attribute: " + current);
 
+    // numeric
+    if (result.get("type").equals("" + Attribute.NUMERIC)) {
+      current = current.substring(7).trim();   // remove "numeric"
+    }
+
+    // string
+    if (result.get("type").equals("" + Attribute.STRING)) {
+      current = current.substring(6).trim();   // remove "string"
+    }
+
     // date format
     if (result.get("type").equals("" + Attribute.DATE)) {
       current = current.substring(5).trim();   // remove "date "
-      if (current.startsWith("'"))
-	format = Utils.unquote(current);
-      else if (current.startsWith("\""))
-	format = Utils.unDoubleQuote(current);
-      else
-	format = current;
+      format = current;
+      if (format.endsWith("}"))
+        format = format.substring(0, format.indexOf('{')).trim();
+      if (format.startsWith("'"))
+	format = Utils.unquote(format);
+      else if (format.startsWith("\""))
+	format = Utils.unDoubleQuote(format);
+      // remove weight
       if (new DateFormatString().isValid(format))
 	result.put("format", format);
       else
 	throw new IllegalStateException("Invalid date format: " + format);
+      if (current.endsWith("}"))
+        current = current.substring(current.indexOf('{')).trim();
     }
 
     // nominal values
     if (result.get("type").equals("" + Attribute.NOMINAL)) {
-      current = current.substring(current.indexOf('{') + 1);
-      current = current.substring(0, current.indexOf('}'));
-      result.put("values", current.trim());
+      values = current;
+      values = values.substring(values.indexOf('{') + 1);
+      values = values.substring(0, values.indexOf('}'));
+      result.put("values", values.trim());
+      current = current.substring(current.indexOf('}') + 1);
     }
 
-    // TODO weight
+    // weight
+    if (current.matches("[ ]*\\{-?\\d*\\.?\\d*\\}$"))
+      result.put("weight", current.substring(current.indexOf('{') + 1, current.lastIndexOf('}')));
 
     return result;
   }
 
   /**
-   * Creates an attribute from the specficiation line.
+   * Creates an attribute from the specification line.
    *
    * @param line	the line to use
    * @return		the attribute
@@ -348,6 +367,13 @@ public class SimpleArffLoader
 	break;
       default:
 	throw new IllegalStateException("Unsupported attribute type " + Attribute.typeToString(type) + ": " + line);
+    }
+
+    if (data.containsKey("weight")) {
+      if (Utils.isDouble(data.get("weight")))
+        result.setWeight(Utils.toDouble(data.get("weight")));
+      else
+	throw new IllegalStateException("Invalid weight for attribute " + result.name() + ": " + data.get("weight"));
     }
 
     return result;
@@ -408,7 +434,7 @@ public class SimpleArffLoader
 	}
 	else {
 	  weight = 1.0;
-	  if (line.endsWith("}")) {
+	  if (line.endsWith("}") && line.matches(".*,[ ]*\\{-?\\d*\\.?\\d*\\}$")) {
 	    weightStr = line.substring(line.lastIndexOf('{') + 1, line.length() - 1);
 	    line      = line.substring(0, line.lastIndexOf('{') - 1);
 	    try {
@@ -420,7 +446,7 @@ public class SimpleArffLoader
 	  }
 	  cells = SpreadSheetUtils.split(line, ',', false, '\'', true);
 	  values = new double[result.numAttributes()];
-	  for (i = 0; i < cells.length; i++) {
+	  for (i = 0; (i < cells.length) && (i < values.length); i++) {
 	    values[i] = weka.core.Utils.missingValue();
             cells[i] = cells[i].trim();
 	    if (cells[i].equals("?"))
