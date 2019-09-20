@@ -15,7 +15,7 @@
 
 /*
  * RectanglePainter.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.image.selectionshape;
@@ -33,7 +33,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class RectanglePainter
-  extends AbstractSelectionShapePainter
+  extends AbstractStrokeSelectionShapePainter
   implements ColorSelectionShapePainter {
 
   private static final long serialVersionUID = 2794117849848652523L;
@@ -130,7 +130,7 @@ public class RectanglePainter
    * @param trace	the mouse movement trace
    */
   @Override
-  protected void doPaintSelectionShape(PaintPanel owner, Graphics g, Point topLeft, Point bottomRight, List<Point> trace) {
+  protected void doPaintSelectionShapeWithStroke(PaintPanel owner, Graphics g, Point topLeft, Point bottomRight, List<Point> trace) {
     int	topX;
     int	bottomX;
     int	topY;
