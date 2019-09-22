@@ -238,6 +238,16 @@ public class SimpleArffLoader
   }
 
   /**
+   * Removes the attribute type.
+   *
+   * @param current	the remainder of the attribute type string
+   * @return		the remainder without type string
+   */
+  protected String removeAttributeType(String current) {
+    return current.substring(current.indexOf(" ") + 1).trim();
+  }
+
+  /**
    * Extracts the attribute name, type and date format from the line.
    *
    * @param line	the line to parse
@@ -285,17 +295,17 @@ public class SimpleArffLoader
 
     // numeric
     if (result.get("type").equals("" + Attribute.NUMERIC)) {
-      current = current.substring(7).trim();   // remove "numeric"
+      current = removeAttributeType(current);   // remove "numeric"
     }
 
     // string
     if (result.get("type").equals("" + Attribute.STRING)) {
-      current = current.substring(6).trim();   // remove "string"
+      current = removeAttributeType(current);   // remove "string"
     }
 
     // date format
     if (result.get("type").equals("" + Attribute.DATE)) {
-      current = current.substring(5).trim();   // remove "date "
+      current = removeAttributeType(current);   // remove "date "
       format = current;
       if (format.endsWith("}"))
         format = format.substring(0, format.indexOf('{')).trim();
