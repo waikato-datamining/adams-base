@@ -1144,7 +1144,7 @@ public class PropertiesParameterPanel
               combo = new BaseComboBox(SpreadSheetUtils.split(value.getProperty(key), ',', true));
             else
               combo = new BaseComboBox(getList(key));
-            if (hasListDefault(key))
+            if (hasListDefault(key) && !value.hasKey(key))
 	      combo.setSelectedItem(getListDefault(key));
             else
 	      combo.setSelectedItem(value.getProperty(key));
