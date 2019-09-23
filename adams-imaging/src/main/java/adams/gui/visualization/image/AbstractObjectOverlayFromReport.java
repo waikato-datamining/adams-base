@@ -15,7 +15,7 @@
 
 /*
  * ObjectCentersOverlayFromReport.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -30,12 +30,16 @@ import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Ancestor for overlays that use object locations from a report.
@@ -44,7 +48,7 @@ import java.util.List;
  */
 public abstract class AbstractObjectOverlayFromReport
   extends AbstractImageOverlay
-  implements PopupMenuCustomizer<PaintPanel> {
+  implements PopupMenuCustomizer<PaintPanel>, TypeColorProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 6356419097401574024L;
@@ -54,6 +58,9 @@ public abstract class AbstractObjectOverlayFromReport
 
   /** the overlay handler. */
   protected ReportObjectOverlay m_Overlays;
+
+  /** the listeners for locations updates. */
+  protected Set<ChangeListener> m_LocationsUpdatedListeners;
 
   /**
    * Adds options to the internal list of options.
@@ -114,7 +121,8 @@ public abstract class AbstractObjectOverlayFromReport
   protected void initialize() {
     super.initialize();
 
-    m_Overlays = new ReportObjectOverlay();
+    m_Overlays                  = new ReportObjectOverlay();
+    m_LocationsUpdatedListeners = new HashSet<>();
   }
 
   /**
@@ -439,6 +447,57 @@ public abstract class AbstractObjectOverlayFromReport
   }
 
   /**
+   * Checks whether a color has been stored for the given object type.
+   *
+   * @param type	the type to check
+   * @return		true if custom color available
+   */
+  @Override
+  public boolean hasTypeColor(String type) {
+    return m_Overlays.hasTypeColor(type);
+  }
+
+  /**
+   * Returns the color for the object type.
+   *
+   * @param type	the type to get the color for
+   * @return		the color, null if none available
+   */
+  @Override
+  public Color getTypeColor(String type) {
+    return m_Overlays.getTypeColor(type);
+  }
+
+  /**
+   * Adds the listener for location updates.
+   *
+   * @param l		the listener to add
+   */
+  public void addLocationsUpdatedListeners(ChangeListener l) {
+    m_LocationsUpdatedListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for location updates.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeLocationsUpdatedListeners(ChangeListener l) {
+    m_LocationsUpdatedListeners.remove(l);
+  }
+
+  /**
+   * Notifies all the listeners that the notifications have been updated.
+   */
+  protected void notifyLocationsUpdatedListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_LocationsUpdatedListeners)
+      l.stateChanged(e);
+  }
+
+  /**
    * Notifies the overlay that the image has changed.
    *
    * @param panel	the panel this overlay belongs to
@@ -465,9 +524,13 @@ public abstract class AbstractObjectOverlayFromReport
    */
   @Override
   protected synchronized void doPaintOverlay(PaintPanel panel, Graphics g) {
-    m_Overlays.determineLocations(panel.getOwner().getAdditionalProperties());
+    boolean	updated;
+
+    updated = m_Overlays.determineLocations(panel.getOwner().getAdditionalProperties());
     if (m_Overlays.hasLocations())
       doPaintObjects(panel, g, m_Overlays.getLocations());
+    if (updated)
+      notifyLocationsUpdatedListeners();
   }
 
   /**
@@ -494,5 +557,15 @@ public abstract class AbstractObjectOverlayFromReport
       });
       menu.add(menuitem);
     }
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  @Override
+  public void cleanUp() {
+    if (m_LocationsUpdatedListeners != null)
+      m_LocationsUpdatedListeners.clear();
+    super.cleanUp();
   }
 }

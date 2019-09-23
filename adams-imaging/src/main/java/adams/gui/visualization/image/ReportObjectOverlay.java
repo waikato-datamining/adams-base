@@ -497,8 +497,9 @@ public class ReportObjectOverlay
    * Determines the locations of the objects.
    * 
    * @param report	the report to inspect
+   * @return 		true if locations were updated
    */
-  public void determineLocations(Report report) {
+  public boolean determineLocations(Report report) {
     LocatedObjects	located;
     HashSet<String>	types;
     String		suffix;
@@ -510,9 +511,9 @@ public class ReportObjectOverlay
     int[]		poly_y;
 
     if (m_Locations != null)
-      return;
+      return false;
     if (report == null)
-      return;
+      return false;
 
     // initialize colors
     if (m_UseColorsPerType) {
@@ -586,6 +587,8 @@ public class ReportObjectOverlay
       m_Colors.put(poly, color);
       m_Locations.add(poly);
     }
+
+    return true;
   }
 
   /**
@@ -615,7 +618,7 @@ public class ReportObjectOverlay
    * @return		true if custom color available
    */
   public boolean hasTypeColor(String type) {
-    return m_UseColorsPerType && m_Colors.containsKey(type);
+    return m_UseColorsPerType && m_TypeColors.containsKey(type);
   }
 
   /**

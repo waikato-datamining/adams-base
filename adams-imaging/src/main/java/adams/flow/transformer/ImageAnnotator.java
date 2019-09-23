@@ -34,12 +34,14 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.ColorHelper;
 import adams.gui.event.ImagePanelLeftClickEvent;
 import adams.gui.event.ImagePanelLeftClickListener;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 import adams.gui.visualization.image.NullOverlay;
+import adams.gui.visualization.image.TypeColorProvider;
 import adams.gui.visualization.image.selection.NullProcessor;
 import adams.gui.visualization.image.selection.SelectionProcessor;
 import adams.gui.visualization.image.selection.SelectionProcessorWithLabelSupport;
@@ -49,6 +51,7 @@ import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -248,6 +251,9 @@ public class ImageAnnotator
     /** the actual selection processor. */
     protected SelectionProcessor m_ActualSelectionProcessor;
 
+    /** the actual overlay to use for highlighting the objects. */
+    protected ImageOverlay m_ActualOverlay;
+
     /**
      * Initializes the members.
      */
@@ -263,6 +269,7 @@ public class ImageAnnotator
       m_Objects      = new LocatedObjects();
       m_CurrentScale = null;
       m_ActualSelectionProcessor = null;
+      m_ActualOverlay            = null;
     }
 
     /**
@@ -346,7 +353,10 @@ public class ImageAnnotator
       m_PanelImage.setShowProperties(true);
       m_PanelImage.setScale(m_Zoom);
       m_PanelImage.addLeftClickListener(this);
-      m_PanelImage.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(m_Overlay, false, true));
+      m_ActualOverlay = (ImageOverlay) OptionUtils.shallowCopy(m_Overlay, false, true);
+      if (m_ActualOverlay instanceof TypeColorProvider)
+	((TypeColorProvider) m_ActualOverlay).addLocationsUpdatedListeners((ChangeEvent e) -> updateLabelButtons());
+      m_PanelImage.addImageOverlay(m_ActualOverlay);
       m_ActualSelectionProcessor = (SelectionProcessor) OptionUtils.shallowCopy(m_SelectionProcessor, false, true);
       m_PanelImage.addSelectionListener(m_ActualSelectionProcessor);
       m_PanelImage.setSelectionShapePainter((SelectionShapePainter) OptionUtils.shallowCopy(m_SelectionShapePainter, false, true));
@@ -362,6 +372,26 @@ public class ImageAnnotator
       super.finishInit();
       if (m_ButtonLabels.length > 0)
 	m_ButtonLabels[0].doClick();
+    }
+
+    /**
+     * Updates the colors of the label button.
+     */
+    protected void updateLabelButtons() {
+      int			i;
+      TypeColorProvider		provider;
+      String			label;
+
+      if (m_ActualOverlay instanceof TypeColorProvider) {
+        provider = (TypeColorProvider) m_ActualOverlay;
+	for (i = 0; i < m_Labels.length; i++) {
+	  label = m_Labels[i].getValue();
+	  if (provider.hasTypeColor(label))
+	    m_ButtonLabels[i].setText("<html><font color=\"" + ColorHelper.toHex(provider.getTypeColor(label)) + "\">&#x2588;</font> " + label + "</html>");
+	  else
+	    m_ButtonLabels[i].setText(label);
+	}
+      }
     }
 
     /**
