@@ -22,6 +22,7 @@ package adams.flow.source;
 
 import adams.core.Properties;
 import adams.core.QuickInfoHelper;
+import adams.core.UniqueIDs;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -711,7 +712,7 @@ public class EnterManyValues
     PropertiesParameterPanel	panel;
     JPanel			panelMsg;
     List<String>		order;
-    Boolean                     sync;
+    Long                        sync;
     String			msg;
 
     m_Queue.clear();
@@ -764,7 +765,7 @@ public class EnterManyValues
     dialog.setLocationRelativeTo(getActualParentComponent());
     dialog.setVisible(true);
 
-    sync = new Boolean(true);
+    sync = UniqueIDs.nextLong();
     // wait till dialog visible
     while (!dialog.isVisible()) {
       try {
