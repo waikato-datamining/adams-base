@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractOptionProducer.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -40,7 +40,6 @@ import java.util.zip.GZIPOutputStream;
  * Generates output from visiting the options.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <O> the type of output data that gets generated
  * @param <I> the internal type used while nesting
  */
@@ -499,7 +498,7 @@ public abstract class AbstractOptionProducer<O,I>
     result = null;
 
     try {
-      producer = (OptionProducer) cls.newInstance();
+      producer = cls.newInstance();
       producer.produce(handler);
       result   = producer.toString();
       producer.cleanUp();
@@ -526,7 +525,7 @@ public abstract class AbstractOptionProducer<O,I>
     result = null;
 
     try {
-      producer = (OptionProducer) cls.newInstance();
+      producer = cls.newInstance();
       producer.produce(handler);
       result = producer.getOutput();
       producer.cleanUp();
@@ -546,15 +545,19 @@ public abstract class AbstractOptionProducer<O,I>
    */
   public static void runProducer(Class producer, String[] args) {
     OptionProducer	producerInst;
+    OptionConsumer	consumerInst;
     OptionHandler	handler;
     String		input;
+    String		format;
     String		output;
+    String		msg;
 
     try {
       if (OptionUtils.helpRequested(args)) {
 	System.out.println("Help requested...\n");
 	System.out.println("\n");
 	System.out.println("-env <environment class>\n");
+	System.out.println("-format <option consumer + options>\n");
 	System.out.println("-input <file in nested format>\n");
 	System.out.println("-output <for storing generated output>\n");
 	System.out.println(" if no output file provided, output gets printed on stdout\n");
@@ -566,8 +569,12 @@ public abstract class AbstractOptionProducer<O,I>
 	if (input == null)
 	  throw new IllegalArgumentException("No input file specified!");
 	output = OptionUtils.removeOption(args, "-output");
+	format = OptionUtils.removeOption(args, "-format");
+	if (format == null)
+	  format = NestedConsumer.class.getName();
+	consumerInst = (OptionConsumer) OptionUtils.forAnyCommandLine(OptionConsumer.class, format);
 	producerInst = (OptionProducer) OptionUtils.forName(OptionProducer.class, producer.getName(), args);
-	handler      = AbstractOptionConsumer.fromFile(NestedConsumer.class, new File(input));
+	handler      = consumerInst.fromFile(new File(input));
 	if (handler == null)
 	  throw new IllegalStateException("Failed to read input file: " + input);
 	producerInst.produce(handler);
@@ -575,10 +582,10 @@ public abstract class AbstractOptionProducer<O,I>
 	  System.out.println(producerInst.toString());
 	}
 	else {
-	  if (FileUtils.writeToFile(new File(output).getAbsolutePath(), producerInst.toString(), false))
-	    System.out.println("Output written to: " + output);
+	  if ((msg = FileUtils.writeToFileMsg(new File(output).getAbsolutePath(), producerInst.toString(), false, null)) != null)
+	    System.err.println("Failed:\n" + msg);
 	  else
-	    System.err.println("Failed!");
+	    System.out.println("Output written to: " + output);
 	}
       }
     }
