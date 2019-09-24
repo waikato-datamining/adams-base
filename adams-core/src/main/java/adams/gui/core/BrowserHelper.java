@@ -15,16 +15,16 @@
 
 /*
  * BrowserHelper.java
- * Copyright (C) 2006-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
 import adams.core.Properties;
+import adams.core.io.FileUtils;
 import adams.core.management.OS;
 import adams.env.BrowserDefinition;
 import adams.env.Environment;
-import org.codehaus.plexus.util.FileUtils;
 
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
