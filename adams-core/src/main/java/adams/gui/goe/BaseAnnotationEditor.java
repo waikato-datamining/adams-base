@@ -31,7 +31,6 @@ import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.MarkdownTextAreaWithPreview;
 import adams.gui.core.TextAreaComponent;
 import adams.gui.help.HelpFrame;
 
@@ -133,14 +132,7 @@ public class BaseAnnotationEditor
     final BaseCheckBox	checkLineWrap;
 
     panelAll    = new JPanel(new BorderLayout());
-    switch (GUIHelper.getString("AnnotationsRenderer", "plain")) {
-      case "markdown":
-        m_TextValue = new MarkdownTextAreaWithPreview();
-        break;
-      default:
-        m_TextValue = new BaseTextArea();
-        break;
-    }
+    m_TextValue = new BaseTextArea();
     m_TextValue.setRows(30);
     m_TextValue.setColumns(80);
     panelAll.add(new BaseScrollPane((JComponent) m_TextValue), BorderLayout.CENTER);
