@@ -196,12 +196,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.fracpete</groupId>
-      <artifactId>jshell-scripting</artifactId>
-      <version>0.1.0</version>
-    </dependency>
-
-    <dependency>
       <groupId>nz.ac.waikato.cms.weka.thirdparty</groupId>
       <artifactId>java-cup-11b</artifactId>
     </dependency>
