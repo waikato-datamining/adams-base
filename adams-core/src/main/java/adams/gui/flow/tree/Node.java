@@ -22,11 +22,11 @@ package adams.gui.flow.tree;
 
 import adams.core.Destroyable;
 import adams.core.Utils;
-import adams.core.base.BaseAnnotation.Tag;
 import adams.core.io.filechanged.AbstractFileChangeMonitor;
 import adams.core.io.filechanged.LastModified;
 import adams.core.net.HtmlUtils;
 import adams.core.option.ArrayProducer;
+import adams.core.option.OptionUtils;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
@@ -38,8 +38,9 @@ import adams.flow.core.OutputProducer;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.LazyExpansionTreeNode;
 import adams.gui.core.MouseUtils;
+import adams.gui.flow.tree.annotations.AnnotationProcessor;
+import adams.gui.flow.tree.annotations.PlainText;
 import com.github.fracpete.jclipboardhelper.TransferableString;
-import org.markdownj.MarkdownProcessor;
 
 import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
@@ -74,11 +75,11 @@ public class Node
   /** whether the node is currently bookmarked. */
   protected boolean m_Bookmarked;
 
-  /** the markdown processor. */
-  protected static MarkdownProcessor m_MarkdownProcessor;
+  /** the annotation processor. */
+  protected static AnnotationProcessor m_AnnotationProcessor;
 
   /** whether the processor has been initialized. */
-  protected static Boolean m_MarkdownProcessorInitialized;
+  protected static Boolean m_AnnotationProcessorInitialized;
 
   /** the commandline (cache for undo/redo). */
   protected String m_CommandLine;
@@ -101,10 +102,17 @@ public class Node
     m_Variables           = null;
     m_CommandLine         = null;
     m_ExternalFlowMonitor = null;
-    if (m_MarkdownProcessorInitialized == null) {
-      m_MarkdownProcessorInitialized = true;
-      if (GUIHelper.getString("AnnotationsRenderer", "plain").equals("markdown"))
-	m_MarkdownProcessor = new MarkdownProcessor();
+    if (m_AnnotationProcessorInitialized == null) {
+      m_AnnotationProcessorInitialized = true;
+      try {
+        m_AnnotationProcessor = (AnnotationProcessor) OptionUtils.forAnyCommandLine(
+          AnnotationProcessor.class, GUIHelper.getString("AnnotationsRenderer", PlainText.class.getName()));
+      }
+      catch (Exception e) {
+        System.err.println("Failed to instantiate annotation processor!");
+        e.printStackTrace();
+        m_AnnotationProcessor = new PlainText();
+      }
     }
   }
 
@@ -455,107 +463,6 @@ public class Node
   }
 
   /**
-   * Inserts line breaks.
-   *
-   * @param s		the string to process
-   * @return		the updated string
-   */
-  protected String insertLineBreaks(String s) {
-    StringBuilder	result;
-    String[]		lines;
-    int			i;
-    int			n;
-    String		line;
-    boolean		trailingLF;
-
-    result     = new StringBuilder();
-    trailingLF = s.endsWith("\n");
-    lines  = s.split("\n");
-    result = new StringBuilder();
-    for (i = 0; i < lines.length; i++) {
-      if (lines[i].startsWith(" ")) {
-	line = lines[i].trim();
-	for (n = 0; n < lines[i].length() - line.length(); n++)
-	  line = "&nbsp;" + HtmlUtils.toHTML(line);
-      }
-      else {
-	line = HtmlUtils.toHTML(lines[i]);
-      }
-      if (i > 0)
-	result.append("<br>");
-      result.append(line);
-    }
-
-    if (trailingLF)
-      result.append("<br>");
-
-    return result.toString();
-  }
-
-  /**
-   * Assembles the annotation HTML string.
-   *
-   * @param actor	the actor to obtain the annotation from
-   * @return		the generated string
-   */
-  protected String assembleAnnotation(Actor actor) {
-    StringBuilder	result;
-    String		colorDef;
-    String		sizeDef;
-    String		color;
-    String		size;
-    boolean		font;
-    List		parts;
-    Tag			tag;
-
-    result   = new StringBuilder();
-    colorDef = hasOwner() ? getOwner().getAnnotationsColor() : "blue";
-    sizeDef  = hasOwner() ? getOwner().getAnnotationsSize() : "-2";
-
-    if (m_MarkdownProcessor != null) {
-      result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
-      result.append(m_MarkdownProcessor.markdown(actor.getAnnotations().getValue()));
-      result.append("</font>");
-    }
-    else {
-      if (actor.getAnnotations().hasTag()) {
-	font = false;
-	parts = actor.getAnnotations().getParts();
-	for (Object part : parts) {
-	  if (part instanceof Tag) {
-	    tag = (Tag) part;
-	    color = colorDef;
-	    size = sizeDef;
-	    if (tag.getOptions().containsKey("color"))
-	      color = tag.getOptions().get("color");
-	    if (tag.getOptions().containsKey("size"))
-	      size = tag.getOptions().get("size");
-	    if (font)
-	      result.append("</font>");
-	    result.append("<font " + generateSizeAttribute(size) + " color='" + color + "'>");
-	    result.append(tag.getName());
-	    font = true;
-	  }
-	  else {
-	    if (!font)
-	      result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
-	    result.append(insertLineBreaks(part.toString()));
-	    font = true;
-	  }
-	}
-	result.append("</font>");
-      }
-      else {
-	result.append("<font " + generateSizeAttribute(sizeDef) + " color='" + colorDef + "'>");
-	result.append(insertLineBreaks(actor.getAnnotations().getValue()));
-	result.append("</font>");
-      }
-    }
-    
-    return result.toString();
-  }
-
-  /**
    * Generates the size attribute HTML string. Gets skipped if the scale
    * factor differs from 1.0, as the rendering doesn't take this properly
    * into account.
@@ -564,7 +471,7 @@ public class Node
    * @return		the HTML code, can be empty string
    * @see		#scaleFontSize(String)
    */
-  protected String generateSizeAttribute(String size) {
+  public String generateSizeAttribute(String size) {
     if (hasOwner() && getOwner().getScaleFactor() != 1.0)
       return "";
     else
@@ -630,7 +537,7 @@ public class Node
 	// annotations?
 	if (hasOwner() && getOwner().getShowAnnotations()) {
 	  if (actor.getAnnotations().getValue().length() > 0)
-	    html.append("<br>" + assembleAnnotation(actor));
+	    html.append("<br>" + m_AnnotationProcessor.toHTML(this));
 	}
 
 	// show output?

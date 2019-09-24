@@ -589,6 +589,10 @@ adams.gui.flow.multipageaction.AbstractMultiPageMenuItem=\
 adams.gui.flow.tabhandler.AbstractTabHandler=\
   adams.gui.flow.tabhandler
 
+# the annotation processors
+adams.gui.flow.tree.annotations.AnnotationProcessor=\
+  adams.gui.flow.tree.annotations
+
 # the startup initialization applets
 adams.gui.application.Initialization=\
   adams.gui.application

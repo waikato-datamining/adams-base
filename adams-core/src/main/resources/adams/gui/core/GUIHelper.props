@@ -168,8 +168,8 @@ adams.gui.visualization.debug.DiffTextPane.Added.Color=#CCFFFF
 # The color for modified content
 adams.gui.visualization.debug.DiffTextPane.Modified.Color=#FFCCCC
 
-# Annotations renderer (plain|markdown)
-AnnotationsRenderer=plain
+# Annotations renderer (classname + options)
+AnnotationsRenderer=adams.gui.flow.tree.annotations.PlainText
 
 # Mappings for replacing keystrokes
 # Format: old\tnew
