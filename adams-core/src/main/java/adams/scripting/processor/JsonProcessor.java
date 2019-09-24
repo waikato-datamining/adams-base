@@ -15,7 +15,7 @@
 
 /*
  * JsonProcessor.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.processor;
@@ -34,9 +34,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
-import org.apache.commons.codec.binary.Base64;
 
 import java.io.File;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -132,7 +132,7 @@ public class JsonProcessor
 
     payload = new byte[0];
     if (json.containsKey("payload"))
-      payload = Base64.decodeBase64(json.getAsString("payload").getBytes());
+      payload = Base64.getDecoder().decode(json.getAsString("payload"));
     if (payload.length > 0) {
       payload = GzipUtils.decompress(payload, 1024);
       if (payload == null) {
@@ -196,7 +196,7 @@ public class JsonProcessor
     if (payload.length == 0)
       data = "";
     else
-      data = Base64.encodeBase64String(payload);
+      data = Base64.getEncoder().encodeToString(payload);
 
     objHeader  = new JsonObject();
     for (String key: header.keySetAll())

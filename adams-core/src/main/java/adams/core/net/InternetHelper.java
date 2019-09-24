@@ -13,18 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InetAddressHelper.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
-
-import org.apache.commons.codec.binary.Base64;
 
 import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -32,7 +31,6 @@ import java.util.List;
  * Helper class for internet related stuff.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InternetHelper {
 
@@ -229,7 +227,7 @@ public class InternetHelper {
     String	result;
 
     try {
-      result = new String(Base64.decodeBase64(base64.getBytes()));
+      result = new String(Base64.getDecoder().decode(base64));
     }
     catch (Exception e) {
       System.err.println("Failed to decode base64 string: " + base64);
@@ -247,7 +245,7 @@ public class InternetHelper {
    * @return		the encoded string
    */
   public static String encodeBase64(String raw) {
-    return Base64.encodeBase64String(raw.getBytes());
+    return Base64.getEncoder().encodeToString(raw.getBytes());
   }
 
   /**
@@ -257,7 +255,7 @@ public class InternetHelper {
    * @return		the encoded string
    */
   public static String encodeBase64(byte[] raw) {
-    return Base64.encodeBase64String(raw);
+    return Base64.getEncoder().encodeToString(raw);
   }
   
   /**

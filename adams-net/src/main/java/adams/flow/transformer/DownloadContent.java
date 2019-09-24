@@ -15,7 +15,7 @@
 
 /*
  * DownloadContent.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -26,11 +26,11 @@ import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BaseURL;
 import adams.flow.core.Token;
-import org.apache.commons.codec.binary.Base64;
 
 import java.io.BufferedInputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Base64;
 
 /**
  <!-- globalinfo-start -->
@@ -92,7 +92,6 @@ import java.net.URLConnection;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DownloadContent
   extends AbstractTransformer
@@ -224,7 +223,7 @@ public class DownloadContent
 
       conn = url.openConnection();
       if (url.getUserInfo() != null) {
-	basicAuth = "Basic " + new String(new Base64().encode(url.getUserInfo().getBytes()));
+	basicAuth = "Basic " + new String(Base64.getEncoder().encode(url.getUserInfo().getBytes()));
 	conn.setRequestProperty("Authorization", basicAuth);
       }
       input  = new BufferedInputStream(conn.getInputStream());

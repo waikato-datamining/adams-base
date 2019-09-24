@@ -15,7 +15,7 @@
 
 /*
  * DefaultProcessor.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.processor;
@@ -28,10 +28,10 @@ import adams.core.io.GzipUtils;
 import adams.core.option.OptionUtils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
-import org.apache.commons.codec.binary.Base64;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -93,7 +93,7 @@ public class DefaultProcessor
 
     header = Properties.fromComment(Utils.flatten(headerLines, "\n"));
     // compression needs to be handle by individual commands
-    payload = Base64.decodeBase64((Utils.flatten(payloadLines, "").getBytes()));
+    payload = Base64.getDecoder().decode((Utils.flatten(payloadLines, "").getBytes()));
     if (payload.length > 0) {
       payload = GzipUtils.decompress(payload, 1024);
       if (payload == null) {
@@ -147,7 +147,7 @@ public class DefaultProcessor
     if (payload.length == 0)
       data = "";
     else
-      data = Base64.encodeBase64String(payload);
+      data = Base64.getEncoder().encodeToString(payload);
 
     // command string
     result = new StringBuilder();

@@ -15,7 +15,7 @@
 
 /*
  * DownloadFile.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -25,13 +25,13 @@ import adams.core.License;
 import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
 import adams.core.io.FileUtils;
-import org.apache.commons.codec.binary.Base64;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Base64;
 
 /**
  <!-- globalinfo-start -->
@@ -96,7 +96,6 @@ import java.net.URLConnection;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DownloadFile
   extends AbstractFileWriter
@@ -234,7 +233,7 @@ public class DownloadFile
 
       conn = url.openConnection();
       if (url.getUserInfo() != null) {
-	basicAuth = "Basic " + new String(new Base64().encode(url.getUserInfo().getBytes()));
+	basicAuth = "Basic " + new String(Base64.getEncoder().encode(url.getUserInfo().getBytes()));
 	conn.setRequestProperty("Authorization", basicAuth);
       }
       input  = new BufferedInputStream(conn.getInputStream());
