@@ -32,7 +32,7 @@ import adams.scripting.command.RemoteCommand;
 import adams.scripting.processor.RemoteCommandProcessor;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import org.apache.commons.vfs2.provider.sftp.TrustEveryoneUserInfo;
+import com.jcraft.jsch.UserInfo;
 
 import java.io.File;
 
@@ -48,6 +48,43 @@ public abstract class AbstractSSHConnection
   implements SSHSessionProvider, PasswordSupporter {
 
   private static final long serialVersionUID = 7719866884762680511L;
+
+  /**
+   * Dummy implementation that trusts all.
+   */
+  public static class TrustAll
+    implements UserInfo {
+
+    @Override
+    public String getPassphrase() {
+      return null;
+    }
+
+    @Override
+    public String getPassword() {
+      return null;
+    }
+
+    @Override
+    public boolean promptPassword(String message) {
+      return false;
+    }
+
+    @Override
+    public boolean promptPassphrase(String message) {
+      return false;
+    }
+
+    @Override
+    public boolean promptYesNo(String message) {
+      return true;
+    }
+
+    @Override
+    public void showMessage(String message) {
+
+    }
+  }
 
   /** the SSH host. */
   protected String m_Host;
@@ -455,7 +492,7 @@ public abstract class AbstractSSHConnection
 	throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
     }
     JSchUtils.configureStrictHostKeyChecking(result, m_StrictHostKeyChecking);
-    result.setUserInfo(new TrustEveryoneUserInfo());
+    result.setUserInfo(new TrustAll());
 
     return result;
   }
