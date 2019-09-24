@@ -13,19 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MimeType.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
-import java.io.File;
-
-import org.apache.tika.mime.MediaType;
-import org.codehaus.plexus.util.FileUtils;
-
+import adams.core.io.FileUtils;
 import adams.core.net.MimeTypeHelper;
 import adams.flow.core.Token;
+import org.apache.tika.mime.MediaType;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -76,7 +75,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MimeType
   extends AbstractTransformer {
