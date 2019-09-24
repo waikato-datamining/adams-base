@@ -15,10 +15,11 @@
 
 /*
  * AccessSpreadSheetWriter.java
- * Copyright (C) 2015-2017University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
+import adams.core.io.FileUtils;
 import adams.data.io.input.AccessSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.Cell;
@@ -34,7 +35,6 @@ import com.healthmarketscience.jackcess.Database.FileFormat;
 import com.healthmarketscience.jackcess.DatabaseBuilder;
 import com.healthmarketscience.jackcess.Table;
 import com.healthmarketscience.jackcess.TableBuilder;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -77,7 +77,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AccessSpreadSheetWriter
   extends AbstractSpreadSheetWriter
