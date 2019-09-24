@@ -268,12 +268,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.googlecode.lanterna</groupId>
-      <artifactId>lanterna</artifactId>
-      <version>3.0.1</version>
-    </dependency>
-
-    <dependency>
       <groupId>com.github.fracpete</groupId>
       <artifactId>romannumerals4j</artifactId>
       <version>0.0.1</version>

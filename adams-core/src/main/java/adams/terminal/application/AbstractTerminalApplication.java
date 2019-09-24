@@ -20,8 +20,6 @@
 
 package adams.terminal.application;
 
-import adams.core.Utils;
-import adams.core.io.ConsoleHelper;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.management.ProcessUtils;
@@ -37,34 +35,21 @@ import adams.env.Environment;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
-import adams.gui.application.AbstractInitialization;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.scripting.ScriptingEngine;
 import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.engine.MultiScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
-import adams.terminal.core.LogTextBox;
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.gui2.DefaultWindowManager;
-import com.googlecode.lanterna.gui2.EmptySpace;
-import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Handler;
-import java.util.logging.Level;
 
 /**
  * Ancestor for terminal-based applications.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractTerminalApplication
   extends AbstractOptionHandler
@@ -78,18 +63,6 @@ public abstract class AbstractTerminalApplication
 
   /** the title of the application. */
   protected String m_ApplicationTitle;
-
-  /** the terminal in use. */
-  protected Terminal m_Terminal;
-
-  /** the screen in use. */
-  protected Screen m_Screen;
-
-  /** the GUI. */
-  protected MultiWindowTextGUI m_GUI;
-
-  /** the main window. */
-  protected Window m_MainWindow;
 
   /** the commandline of the remote scripting engine to use at startup time. */
   protected String m_RemoteScriptingEngineCmdLine;
@@ -113,7 +86,6 @@ public abstract class AbstractTerminalApplication
    * Initializes the members.
    */
   protected void initialize() {
-    m_MainWindow            = null;
     m_DbConn                = getDefaultDatabaseConnection();
     m_DbConn.addChangeListener(this);
 
@@ -124,56 +96,21 @@ public abstract class AbstractTerminalApplication
   /**
    * Initializes the terminal.
    */
-  protected void initTerminal() {
-    DefaultTerminalFactory  factory;
-
-    try {
-      factory    = new DefaultTerminalFactory();
-      factory.setTerminalEmulatorTitle(getDefaultApplicationTitle());
-      m_Terminal = factory.createTerminal();
-      m_Screen   = new TerminalScreen(m_Terminal);
-      m_Screen.startScreen();
-      m_GUI      = new MultiWindowTextGUI(m_Screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
-    }
-    catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
-  /**
-   * Returns the textbox to be used for logging.
-   * <br>
-   * Default implementation just returns null.
-   *
-   * @return		the textbox, null if not available
-   */
-  public LogTextBox getLogTextBox() {
-    return null;
-  }
+  protected abstract void initTerminal();
 
   /**
    * Logs the message.
    *
    * @param msg		the message to log
    */
-  public void logMessage(String msg) {
-    if (getLogTextBox() != null)
-      getLogTextBox().addLine(msg);
-    else
-      System.out.println(msg);
-  }
+  public abstract void logMessage(String msg);
 
   /**
    * Logs the error.
    *
    * @param msg		the error message to log
    */
-  public void logError(String msg) {
-    if (getLogTextBox() != null)
-      getLogTextBox().addLine(msg);
-    else
-      System.err.println(msg);
-  }
+  public abstract void logError(String msg);
 
   /**
    * Logs the error.
@@ -181,12 +118,7 @@ public abstract class AbstractTerminalApplication
    * @param msg		the error message to log
    * @param t 		the exception
    */
-  public void logError(String msg, Throwable t) {
-    if (getLogTextBox() != null)
-      getLogTextBox().addLine(msg + "\n" + Utils.throwableToString(t));
-    else
-      System.err.println(msg + "\n" + Utils.throwableToString(t));
-  }
+  public abstract void logError(String msg, Throwable t);
 
   /**
    * Returns the log handler to use.
@@ -198,54 +130,17 @@ public abstract class AbstractTerminalApplication
   /**
    * Finishes the initialization.
    */
-  protected void finishTerminal() {
-    RemoteScriptingEngine 	engine;
-
-    AbstractInitialization.initAll();
-
-    ConsoleHelper.useLanterna(m_GUI, getLogTextBox());
-    LoggingHelper.setDefaultHandler(createLogHandler());
-
-    if (!m_RemoteScriptingEngineCmdLine.isEmpty()) {
-      try {
-	engine = (RemoteScriptingEngine) OptionUtils.forAnyCommandLine(RemoteScriptingEngine.class, m_RemoteScriptingEngineCmdLine);
-      }
-      catch (Exception e) {
-	engine = null;
-	getLogger().log(
-	  Level.SEVERE,
-	  "Failed to instantiate remote scripting engine from commandline: '"
-	    + m_RemoteScriptingEngineCmdLine + "'",
-	  e);
-      }
-      if (engine != null)
-	setRemoteScriptingEngine(engine);
-    }
-  }
+  protected abstract void finishTerminal();
 
   /**
    * Starts the application.
    */
-  public void start() {
-    if (m_MainWindow != null) {
-      createTitle("");
-      m_GUI.addWindowAndWait(m_MainWindow);
-    }
-  }
+  public abstract void start();
 
   /**
    * Stops the application.
    */
-  public void stop() {
-    try {
-      if (m_MainWindow != null)
-	m_MainWindow.close();
-      m_Screen.stopScreen();
-    }
-    catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to stop screen!", e);
-    }
-  }
+  public abstract void stop();
 
   /**
    * Returns the default title of the application.

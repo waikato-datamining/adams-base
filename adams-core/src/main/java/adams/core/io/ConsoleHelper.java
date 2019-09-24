@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ConsoleHelper.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
@@ -23,15 +23,10 @@ package adams.core.io;
 import adams.core.base.BasePassword;
 import adams.core.io.console.Basic;
 import adams.core.io.console.Console;
-import adams.core.io.console.Lanterna;
-import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
-import com.googlecode.lanterna.gui2.TextBox;
 
 /**
  * Helper for input in a terminal.
- * By default, it uses System.out and System.in for interaction. By providing
- * a lanterna context via {@link #useLanterna(MultiWindowTextGUI)}, it is
- * possible to make use of lanterna.
+ * By default, it uses System.out and System.in for interaction.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -54,14 +49,12 @@ public class ConsoleHelper {
   }
 
   /**
-   * Switches to the lanterna helper.
+   * Switches to another helper.
    *
-   * @param context	the lanterna context
-   * @param textBoxLog	the textbox to use for logging output, can be null
-   * @see		Lanterna
+   * @param other   the other helper
    */
-  public static void useLanterna(MultiWindowTextGUI context, TextBox textBoxLog) {
-    m_Helper = new Lanterna(context, textBoxLog);
+  public static void useOther(Console other) {
+    m_Helper = other;
   }
 
   /**
