@@ -90,10 +90,6 @@ adams.core.shutdown.AbstractShutdownHook=\
 adams.core.discovery.AbstractDiscoveryHandler=\
   adams.core.discovery
 
-# the cat swarm optimization (cso) object discovery handlers
-adams.core.discovery.cso.AbstractCatSwarmOptimizationDiscoveryHandler=\
-  adams.core.discovery.cso
-
 # the genetic object discovery handlers
 adams.core.discovery.genetic.AbstractGeneticDiscoveryHandler=\
   adams.core.discovery.genetic
@@ -893,14 +889,6 @@ adams.scripting.requesthandler.RequestHandler=\
 # for handling remote scripting responses
 adams.scripting.responsehandler.ResponseHandler=\
   adams.scripting.responsehandler
-
-# the CSO optimization algorithms
-adams.opt.cso.CatSwarmOptimization=\
-  adams.opt.cso
-
-# the CSO optimization algorithms
-adams.opt.cso.stopping.AbstractStoppingCriterion=\
-  adams.opt.cso.stopping
 
 # the menu items for terminal applications
 adams.terminal.menu.AbstractMenuItemDefinition=\
