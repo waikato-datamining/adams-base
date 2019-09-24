@@ -207,6 +207,7 @@ Tree.PopupMenu=\
   -,\
   adams.gui.flow.tree.menu.AnnotateActor,\
   adams.gui.flow.tree.menu.CompareActors,\
+  adams.gui.flow.tree.menu.ExportActor,\
   adams.gui.flow.tree.menu.InspectMemory,\
   adams.gui.flow.tree.menu.Help
 
