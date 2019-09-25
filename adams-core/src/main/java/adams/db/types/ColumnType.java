@@ -137,6 +137,6 @@ public class ColumnType {
    * @return 		string representation
    */
   public String toString() {
-    return m_Type + ": " + JDBC.TYPES_MYSQL.toTypeString(m_Type, m_Size, false);
+    return m_Type + ": " + JDBC.getTypes("jdbc:mysql:dummy").toTypeString(m_Type, m_Size, false);
   }
 }

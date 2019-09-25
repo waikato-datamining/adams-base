@@ -302,16 +302,12 @@ adams.db.AbstractConditions=\
 # all tables
 adams.db.AbstractTable=\
   adams.db,\
-  adams.db.mysql,\
-  adams.db.postgresql,\
-  adams.db.sqlite
+  adams.db.mysql
 
 # the indexed tables
 adams.db.AbstractIndexedTable=\
   adams.db,\
-  adams.db.mysql,\
-  adams.db.postgresql,\
-  adams.db.sqlite
+  adams.db.mysql
 
 # helper classes for upgrading tables
 adams.db.upgrade.AbstractTableUpgrade=\
@@ -320,7 +316,11 @@ adams.db.upgrade.AbstractTableUpgrade=\
 # the table cleaners
 adams.db.AbstractTableCleanUp=\
   adams.db
-  
+
+# the SQL types classes
+adams.db.types.AbstractTypes=\
+  adams.db.types
+
 # the database data type setup classes
 adams.db.datatype.AbstractDataTypeSetup=\
   adams.db.datatype
@@ -329,9 +329,7 @@ adams.db.datatype.AbstractDataTypeSetup=\
 adams.db.DbBackend=\
   adams.db,\
   adams.db.mirrored,\
-  adams.db.mysql,\
-  adams.db.postgresql,\
-  adams.db.sqlite
+  adams.db.mysql
 
 # the Javadoc generators
 adams.doc.javadoc.Javadoc=\

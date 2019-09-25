@@ -20,6 +20,8 @@
 
 package adams.db.types;
 
+import adams.db.JDBC;
+
 import java.sql.Types;
 
 /**
@@ -115,5 +117,24 @@ public class TypesMySQL
       default:
 	throw new IllegalStateException("No TYPE for " + type);
     }
+  }
+
+  /**
+   * Returns the keyword for regular expression matching in queries.
+   *
+   * @return		the keyword
+   */
+  public String regexpKeyword() {
+    return "REGEXP";
+  }
+
+  /**
+   * Checks whether this URL is handled.
+   *
+   * @param url		the URL to check
+   * @return		true if handled by this type class
+   */
+  public boolean handles(String url) {
+    return url.matches(JDBC.URL_MYSQL);
   }
 }

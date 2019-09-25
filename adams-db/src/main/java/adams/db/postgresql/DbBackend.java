@@ -18,17 +18,18 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.db.autodetect;
+package adams.db.postgresql;
 
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractDbBackend;
-import adams.db.JDBC;
 import adams.db.LogIntf;
 import adams.db.SQLIntf;
+import adams.db.generic.SQL;
+import adams.db.types.AbstractTypes;
+import adams.db.types.TypesPostgreSQL;
 
 /**
- * Auto-detection database backend. Detects: MySQL, SQLite, PostgreSQL.
- * Otherwise uses the generic SQL/LogT instances.
+ * PostgreSQL database backend.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
@@ -37,6 +38,9 @@ public class DbBackend
 
   private static final long serialVersionUID = -6206414041321415520L;
 
+  /** the types. */
+  protected AbstractTypes m_Types;
+
   /**
    * Returns a string describing the object.
    *
@@ -44,9 +48,27 @@ public class DbBackend
    */
   @Override
   public String globalInfo() {
-    return "Auto-detect Spectral backend.\n"
-      + "Detects: MySQL, PostgreSQL, SQLite.\n"
-      + "Otherwise uses generic SQL/LogT.";
+    return "PostgreSQL database backend.";
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Types = new TypesPostgreSQL();
+  }
+
+  /**
+   * Returns whether this connection is supported.
+   *
+   * @param conn	the database connection
+   * @return		true if supported
+   */
+  public boolean isSupported(AbstractDatabaseConnection conn) {
+    return m_Types.handles(conn.getURL());
   }
 
   /**
@@ -56,7 +78,9 @@ public class DbBackend
    * @return		the handler
    */
   public SQLIntf getSQL(AbstractDatabaseConnection conn) {
-    return adams.db.generic.SQL.singleton(conn);
+    if (!isSupported(conn))
+      throw new IllegalStateException("Not a PostgreSQL JDBC URL: " + conn.getURL());
+    return SQL.singleton(conn);
   }
 
   /**
@@ -67,13 +91,8 @@ public class DbBackend
    */
   @Override
   public LogIntf getLog(AbstractDatabaseConnection conn) {
-    if (JDBC.isMySQL(conn))
-      return adams.db.mysql.LogT.getSingleton(conn);
-    else if (JDBC.isPostgreSQL(conn))
-      return adams.db.postgresql.LogT.getSingleton(conn);
-    else if (JDBC.isSQLite(conn))
-      return adams.db.sqlite.LogT.getSingleton(conn);
-    else
-      return adams.db.generic.LogT.singleton(conn);
+    if (!isSupported(conn))
+      throw new IllegalStateException("Not a PostgreSQL JDBC URL: " + conn.getURL());
+    return LogT.getSingleton(conn);
   }
 }

@@ -18,17 +18,17 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.db.sqlite;
+package adams.db.autodetect;
 
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractDbBackend;
 import adams.db.JDBC;
 import adams.db.LogIntf;
 import adams.db.SQLIntf;
-import adams.db.generic.SQL;
 
 /**
- * SQLite database backend.
+ * Auto-detection database backend. Detects: MySQL, SQLite, PostgreSQL.
+ * Otherwise uses the generic SQL/LogT instances.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
@@ -44,7 +44,20 @@ public class DbBackend
    */
   @Override
   public String globalInfo() {
-    return "SQLite database backend.";
+    return "Auto-detect Spectral backend.\n"
+      + "Detects: MySQL, PostgreSQL, SQLite.\n"
+      + "Otherwise uses generic SQL/LogT.";
+  }
+
+  /**
+   * Returns whether this connection is supported.
+   *
+   * @param conn	the database connection
+   * @return		always true
+   */
+  @Override
+  public boolean isSupported(AbstractDatabaseConnection conn) {
+    return true;
   }
 
   /**
@@ -54,9 +67,7 @@ public class DbBackend
    * @return		the handler
    */
   public SQLIntf getSQL(AbstractDatabaseConnection conn) {
-    if (!JDBC.isSQLite(conn))
-      throw new IllegalStateException("Not a SQLite JDBC URL: " + conn.getURL());
-    return SQL.singleton(conn);
+    return adams.db.generic.SQL.singleton(conn);
   }
 
   /**
@@ -67,8 +78,13 @@ public class DbBackend
    */
   @Override
   public LogIntf getLog(AbstractDatabaseConnection conn) {
-    if (!JDBC.isSQLite(conn))
-      throw new IllegalStateException("Not a SQLite JDBC URL: " + conn.getURL());
-    return LogT.getSingleton(conn);
+    if (JDBC.isMySQL(conn))
+      return adams.db.mysql.LogT.getSingleton(conn);
+    else if (JDBC.isPostgreSQL(conn))
+      return adams.db.postgresql.LogT.getSingleton(conn);
+    else if (JDBC.isSQLite(conn))
+      return adams.db.sqlite.LogT.getSingleton(conn);
+    else
+      return adams.db.generic.LogT.singleton(conn);
   }
 }

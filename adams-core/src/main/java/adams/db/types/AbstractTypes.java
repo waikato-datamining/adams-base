@@ -14,14 +14,21 @@
  */
 
 /*
- * ColumnTypeMySQL.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * AbstractTypes.java
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.types;
 
+import adams.core.ClassLister;
+import adams.core.Utils;
+
 import java.io.Serializable;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Ancestor for SQL types classes.
@@ -41,6 +48,12 @@ public abstract class AbstractTypes
 
   /** max size of MEDIUMTEXT. */
   static public final int MAX_MEDIUMTEXT = 16777215;
+
+  /** for caching types on URLs. */
+  protected static Map<String,AbstractTypes> m_Cache;
+
+  /** the available types. */
+  protected static List<AbstractTypes> m_Types;
 
   /**
    * Get a string representation of this type for comparison or create purposes.
@@ -102,5 +115,56 @@ public abstract class AbstractTypes
       default:
         return -1;
     }
+  }
+
+  /**
+   * Returns the keyword for regular expression matching in queries.
+   *
+   * @return		the keyword
+   */
+  public abstract String regexpKeyword();
+
+  /**
+   * Checks whether this URL is handled.
+   *
+   * @param url		the URL to check
+   * @return		true if handled by this type class
+   */
+  public abstract boolean handles(String url);
+
+  /**
+   * Returns the handler for the JDBC url.
+   *
+   * @param url		the URL
+   * @return		the handler
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static synchronized AbstractTypes getHandler(String url) {
+    if (m_Cache == null) {
+      m_Cache = new HashMap<>();
+      m_Types = new ArrayList<>();
+      for (Class cls: ClassLister.getSingleton().getClasses(AbstractTypes.class)) {
+        try {
+          m_Types.add((AbstractTypes) cls.newInstance());
+	}
+	catch (Exception e) {
+          System.err.println("Failed to instantiate types class: " + Utils.classToString(cls));
+	}
+      }
+    }
+
+    if (!m_Cache.containsKey(url)) {
+      for (AbstractTypes types: m_Types) {
+        if (types.handles(url)) {
+	  m_Cache.put(url, types);
+	  break;
+	}
+      }
+    }
+
+    if (!m_Cache.containsKey(url))
+      throw new IllegalStateException("Unsupported JDBC connection: " + url);
+
+    return m_Cache.get(url);
   }
 }

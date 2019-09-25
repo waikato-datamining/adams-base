@@ -14,23 +14,25 @@
  */
 
 /*
- * TypesSQLite.java
+ * TypesPostgreSQL.java
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.types;
 
+import adams.db.JDBC;
+
 import java.sql.Types;
 
 /**
- * Column types for SQLite.
+ * Column types for PostgreSQL.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class TypesSQLite
+public class TypesPostgreSQL
   extends AbstractTypes {
 
-  private static final long serialVersionUID = 7842428772313177661L;
+  private static final long serialVersionUID = -4264141965314359770L;
 
   /**
    * Get a string representation of this type for comparison or create purposes.
@@ -42,35 +44,89 @@ public class TypesSQLite
    * @return 		string representation of this type
    */
   public String toTypeString(int type, int size, boolean compare) {
+    // clean up size
+    switch (type) {
+      case Types.TIME:
+      case Types.TIMESTAMP:
+        if (compare)
+          size = -1;
+        else if ((size != 3) && (size != 6) && (size != 0))
+          size = -1;
+    }
+
+    size = actualSize(type, size);
+
     switch (type) {
       case Types.BIT:
+      case Types.BOOLEAN:
       case Types.TINYINT:
-      case Types.SMALLINT:
-      case Types.INTEGER:
+	return "BOOLEAN";
+
       case Types.BIGINT:
+	return "BIGINT";
+
+      case Types.SMALLINT:
+	return "SMALLINT";
+
+      case Types.INTEGER:
 	return "INTEGER";
 
-      case Types.BOOLEAN:
-      case Types.TIMESTAMP:
-      case Types.DATE:
-      case Types.TIME:
-	return "NUMERIC";
-
-      case Types.DOUBLE:
       case Types.FLOAT:
       case Types.REAL:
 	return "REAL";
 
+      case Types.DOUBLE:
+	return "DOUBLE PRECISION";
+
       case Types.LONGVARCHAR:
       case Types.VARCHAR:
-	return "TEXT";
+	if (size <= MAX_VARCHAR) {
+	  return "VARCHAR(" + size + ")";
+	}
+	else{
+	  return "TEXT";
+	}
 
-      case Types.LONGVARBINARY:
+      case Types.TIMESTAMP:
+        if (!compare)
+	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '0000-00-00 00:00:00'";
+	else
+	  return "TIMESTAMP";
+
+      case Types.DATE:
+	return "DATE";
+
+      case Types.TIME:
+	if (size == -1)
+	  return "TIME";
+	else
+	  return "TIME(" + size + ")";
+
       case Types.BLOB:
-	return "BLOB";
+      case Types.LONGVARBINARY:
+	return "BYTEA";
 
       default:
 	throw new IllegalStateException("No TYPE for " + type);
     }
+  }
+
+  /**
+   * Returns the keyword for regular expression matching in queries.
+   *
+   * @return		the keyword
+   */
+  public String regexpKeyword() {
+    return "~";
+  }
+
+  /**
+   * Checks whether this URL is handled.
+   *
+   * @param url		the URL to check
+   * @return		true if handled by this type class
+   */
+  public boolean handles(String url) {
+    return url.matches(JDBC.URL_POSTGRESQL);
   }
 }

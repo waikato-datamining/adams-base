@@ -84,6 +84,17 @@ public class DbBackend
   }
 
   /**
+   * Returns whether this connection is supported.
+   *
+   * @param conn	the database connection
+   * @return		always true
+   */
+  @Override
+  public boolean isSupported(AbstractDatabaseConnection conn) {
+    return true;
+  }
+
+  /**
    * Sets the mirror connections to use.
    *
    * @param value	the connections

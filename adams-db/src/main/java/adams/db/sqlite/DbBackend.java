@@ -18,17 +18,18 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.db.postgresql;
+package adams.db.sqlite;
 
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractDbBackend;
-import adams.db.JDBC;
 import adams.db.LogIntf;
 import adams.db.SQLIntf;
 import adams.db.generic.SQL;
+import adams.db.types.AbstractTypes;
+import adams.db.types.TypesSQLite;
 
 /**
- * PostgreSQL database backend.
+ * SQLite database backend.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
@@ -37,6 +38,9 @@ public class DbBackend
 
   private static final long serialVersionUID = -6206414041321415520L;
 
+  /** the types. */
+  protected AbstractTypes m_Types;
+
   /**
    * Returns a string describing the object.
    *
@@ -44,7 +48,27 @@ public class DbBackend
    */
   @Override
   public String globalInfo() {
-    return "PostgreSQL database backend.";
+    return "SQLite database backend.";
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Types = new TypesSQLite();
+  }
+
+  /**
+   * Returns whether this connection is supported.
+   *
+   * @param conn	the database connection
+   * @return		true if supported
+   */
+  public boolean isSupported(AbstractDatabaseConnection conn) {
+    return m_Types.handles(conn.getURL());
   }
 
   /**
@@ -54,8 +78,8 @@ public class DbBackend
    * @return		the handler
    */
   public SQLIntf getSQL(AbstractDatabaseConnection conn) {
-    if (!JDBC.isPostgreSQL(conn))
-      throw new IllegalStateException("Not a PostgreSQL JDBC URL: " + conn.getURL());
+    if (!isSupported(conn))
+      throw new IllegalStateException("Not a SQLite JDBC URL: " + conn.getURL());
     return SQL.singleton(conn);
   }
 
@@ -67,8 +91,8 @@ public class DbBackend
    */
   @Override
   public LogIntf getLog(AbstractDatabaseConnection conn) {
-    if (!JDBC.isPostgreSQL(conn))
-      throw new IllegalStateException("Not a PostgreSQL JDBC URL: " + conn.getURL());
+    if (!isSupported(conn))
+      throw new IllegalStateException("Not a SQLite JDBC URL: " + conn.getURL());
     return LogT.getSingleton(conn);
   }
 }

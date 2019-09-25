@@ -1292,7 +1292,8 @@ The following conversion are available:
 \newpage
 \section{Databases}
 Any database that has a JDBC driver can be used within ADAMS. By default,
-ADAMS comes with support for MySQL, PostgreSQL, HSQLDB, SQLite and MS SQL Server.
+ADAMS comes with support for MySQL (and PostgreSQL, HSQLDB, SQLite and MS SQL
+Server via the \textit{adams-db} module).
 See section \ref{databaseaccess} for how to add more databases. The following
 actors allow you to perform some basic operations:
 \begin{tight_itemize}
@@ -3163,10 +3164,6 @@ are required:
 \begin{verbatim}
 Drivers=\
   com.mysql.jdbc.Driver,\
-  org.sqlite.JDBC,\
-  org.hsqldb.jdbcDriver,\
-  org.postgresql.Driver,\
-  net.sourceforge.jtds.jdbc.Driver,\
   oracle.jdbc.OracleDriver
 \end{verbatim}
 	This is a comma-separated list, so just append your JDBC driver(s). \\

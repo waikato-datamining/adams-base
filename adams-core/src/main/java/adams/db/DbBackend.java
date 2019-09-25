@@ -33,6 +33,14 @@ public interface DbBackend
   public final static String FILENAME = "DbBackend.props";
 
   /**
+   * Returns whether this connection is supported.
+   *
+   * @param conn	the database connection
+   * @return		true if supported
+   */
+  public boolean isSupported(AbstractDatabaseConnection conn);
+
+  /**
    * Returns the generic SQL handler.
    *
    * @param conn	the database connection
