@@ -15,11 +15,10 @@
 
 /*
  * AbstractOptionConsumer.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
-import JSci.maths.wavelet.IllegalScalingException;
 import adams.core.Utils;
 import adams.core.annotation.DeprecatedClass;
 import adams.core.io.EncodingSupporter;
@@ -425,7 +424,7 @@ public abstract class AbstractOptionConsumer<C,V>
       processOption((AbstractArgumentOption) option, values);
     }
     else {
-      throw new IllegalScalingException("Unhandled type of option: " + option.getClass().getName());
+      throw new IllegalStateException("Unhandled type of option: " + option.getClass().getName());
     }
   }
 
