@@ -19,7 +19,6 @@
  */
 package adams.core.option;
 
-import JSci.maths.wavelet.IllegalScalingException;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
@@ -318,7 +317,7 @@ public abstract class AbstractOptionProducer<O,I>
       return processOption((AbstractArgumentOption) option);
     }
     else {
-      throw new IllegalScalingException("Unhandled type of option: " + option.getClass().getName());
+      throw new IllegalStateException("Unhandled type of option: " + option.getClass().getName());
     }
   }
 
