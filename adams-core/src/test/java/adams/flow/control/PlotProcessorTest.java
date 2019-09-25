@@ -20,13 +20,13 @@
 
 package adams.flow.control;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseText;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.core.Actor;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for PlotProcessor actor.
@@ -111,8 +111,8 @@ public class PlotProcessorTest
       // Flow.PlotProcessor
       adams.flow.control.PlotProcessor plotprocessor14 = new adams.flow.control.PlotProcessor();
       argOption = (AbstractArgumentOption) plotprocessor14.getOptionManager().findByProperty("processor");
-      adams.flow.control.plotprocessor.LOWESS lowess16 = new adams.flow.control.plotprocessor.LOWESS();
-      plotprocessor14.setProcessor(lowess16);
+      adams.flow.control.plotprocessor.Expression expression16 = new adams.flow.control.plotprocessor.Expression();
+      plotprocessor14.setProcessor(expression16);
 
       actors1[5] = plotprocessor14;
 

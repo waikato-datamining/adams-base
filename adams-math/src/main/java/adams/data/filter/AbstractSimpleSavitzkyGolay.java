@@ -20,14 +20,14 @@
 
 package adams.data.filter;
 
-import java.util.List;
-
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
+
+import java.util.List;
 
 /**
  * Abstract ancestor for simple Savitzky-Golay filters.

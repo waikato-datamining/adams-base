@@ -9,11 +9,11 @@
     <version>19.9.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>adams-visualstats</artifactId>
+  <artifactId>adams-math</artifactId>
   <packaging>jar</packaging>
 
-  <name>adams-visualstats</name>
-  <description>Module containing some standard statistical visualizations like box plots.</description>
+  <name>adams-math</name>
+  <description>Module with generic mathematical libraries and functions.</description>
   <url>https://adams.cms.waikato.ac.nz/</url>
   <organization>
     <name>University of Waikato, Hamilton, NZ</name>
@@ -40,17 +40,6 @@
       </roles>
       <timezone>+12</timezone>
     </developer>
-    <developer>
-      <id>msf8</id>
-      <name>Michael Fowke</name>
-      <email>msf8@waikato.ac.nz</email>
-      <organization>University of Waikato, CS department</organization>
-      <organizationUrl>http://www.cs.waikato.ac.nz/</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>+12</timezone>
-    </developer>
   </developers>
 
   <dependencies>
@@ -64,39 +53,36 @@
       <groupId>nz.ac.waikato.cms.adams</groupId>
       <artifactId>adams-core</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
     </dependency>
 
     <dependency>
       <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-math</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-math</artifactId>
+      <artifactId>adams-core</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
 
     <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-spreadsheet</artifactId>
-      <version>${project.version}</version>
+      <groupId>net.sf.jsci</groupId>
+      <artifactId>jsci</artifactId>
+      <version>1.2</version>
+      <type>jar</type>
     </dependency>
 
     <dependency>
-      <groupId>nz.ac.waikato.cms.adams</groupId>
-      <artifactId>adams-spreadsheet</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
+      <groupId>gov.nist.math</groupId>
+      <artifactId>jama</artifactId>
+      <version>1.0.3</version>
     </dependency>
 
-  	<dependency>
+    <dependency>
+      <groupId>com.github.wendykierp</groupId>
+      <artifactId>JTransforms</artifactId>
+      <version>3.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-math</artifactId>
       <version>2.2</version>
@@ -133,8 +119,8 @@
           <descriptors>
             <descriptor>src/main/assembly/sources.xml</descriptor>
             <descriptor>src/main/assembly/test-sources.xml</descriptor>
-            <descriptor>src/main/assembly/doc.xml</descriptor>
-            <descriptor>src/main/assembly/flows.xml</descriptor>
+            <!--descriptor>src/main/assembly/doc.xml</descriptor-->
+            <!--descriptor>src/main/assembly/flows.xml</descriptor-->
           </descriptors>
         </configuration>
         <executions>

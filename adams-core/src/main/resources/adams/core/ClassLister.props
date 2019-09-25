@@ -94,10 +94,6 @@ adams.core.discovery.AbstractDiscoveryHandler=\
 adams.core.discovery.genetic.AbstractGeneticDiscoveryHandler=\
   adams.core.discovery.genetic
 
-# the autocorrelation algorithms
-adams.data.autocorrelation.AbstractAutoCorrelation=\
-  adams.data.autocorrelation
-
 # baseline correction schemes
 adams.data.baseline.AbstractBaselineCorrection=\
   adams.data.baseline

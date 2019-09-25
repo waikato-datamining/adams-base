@@ -20,8 +20,6 @@
 
 package adams.data.filter;
 
-import java.util.List;
-
 import JSci.maths.wavelet.FWT;
 import JSci.maths.wavelet.cdf2_4.FastCDF2_4;
 import JSci.maths.wavelet.daubechies2.FastDaubechies2;
@@ -37,6 +35,8 @@ import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
 import adams.data.padding.PaddingHelper;
 import adams.data.padding.PaddingType;
+
+import java.util.List;
 
 /**
  * Abstract ancestor for Wavelet filters based on the <a href="http://jsci.sourceforge.net/">JSci library</a>.

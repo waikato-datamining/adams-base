@@ -35,6 +35,7 @@
     <module>adams-imaging-imagemagick</module>
     <module>adams-imaging-openimaj</module>
     <module>adams-jython</module>
+    <module>adams-math</module>
     <module>adams-meta</module>
     <module>adams-ml</module>
     <module>adams-net</module>

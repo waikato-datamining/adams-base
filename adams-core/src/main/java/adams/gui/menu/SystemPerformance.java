@@ -15,7 +15,7 @@
 
 /*
  * SystemPerformance.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -91,12 +91,10 @@ import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.sequence.CirclePaintlet;
-import adams.gui.visualization.sequence.LOWESSOverlayPaintlet;
 import adams.gui.visualization.sequence.metadatacolor.Dummy;
 import adams.parser.BooleanExpressionText;
 import adams.parser.MathematicalExpressionText;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -253,13 +251,6 @@ public class SystemPerformance
 
       sequenceplotter.setPaintlet(circlepaintlet);
 
-      LOWESSOverlayPaintlet lowessoverlaypaintlet = new LOWESSOverlayPaintlet();
-      argOption = (AbstractArgumentOption) lowessoverlaypaintlet.getOptionManager().findByProperty("color");
-      lowessoverlaypaintlet.setColor((Color) argOption.valueOf("#ff0000"));
-      argOption = (AbstractArgumentOption) lowessoverlaypaintlet.getOptionManager().findByProperty("window");
-      lowessoverlaypaintlet.setWindow((Integer) argOption.valueOf("50"));
-      sequenceplotter.setOverlayPaintlet(lowessoverlaypaintlet);
-
       NoMarkers nomarkers = new NoMarkers();
       sequenceplotter.setMarkerPaintlet(nomarkers);
 
@@ -331,13 +322,6 @@ public class SystemPerformance
       circlepaintlet2.setMetaDataColor(dummy2);
 
       sequenceplotter2.setPaintlet(circlepaintlet2);
-
-      LOWESSOverlayPaintlet lowessoverlaypaintlet2 = new LOWESSOverlayPaintlet();
-      argOption = (AbstractArgumentOption) lowessoverlaypaintlet2.getOptionManager().findByProperty("color");
-      lowessoverlaypaintlet2.setColor((Color) argOption.valueOf("#ff0000"));
-      argOption = (AbstractArgumentOption) lowessoverlaypaintlet2.getOptionManager().findByProperty("window");
-      lowessoverlaypaintlet2.setWindow((Integer) argOption.valueOf("50"));
-      sequenceplotter2.setOverlayPaintlet(lowessoverlaypaintlet2);
 
       NoMarkers nomarkers2 = new NoMarkers();
       sequenceplotter2.setMarkerPaintlet(nomarkers2);

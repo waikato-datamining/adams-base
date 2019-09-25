@@ -22,12 +22,11 @@ package adams.data.utils;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
+import adams.core.Utils;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.LUDecomposition;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.RealMatrix;
-
-import adams.core.Utils;
 
 /**
  * A helper class for Savitzky-Golay.

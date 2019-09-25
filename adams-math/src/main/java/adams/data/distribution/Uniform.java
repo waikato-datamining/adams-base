@@ -20,10 +20,9 @@
 
 package adams.data.distribution;
 
+import JSci.maths.statistics.UniformDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
-
-import JSci.maths.statistics.UniformDistribution;
 
 /**
  * Uniform distribution.

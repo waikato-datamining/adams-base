@@ -20,8 +20,6 @@
 
 package adams.data.filter;
 
-import java.util.List;
-
 import JSci.maths.Complex;
 import JSci.maths.FourierMath;
 import adams.core.TechnicalInformation;
@@ -32,6 +30,8 @@ import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
 import adams.data.padding.PaddingHelper;
 import adams.data.padding.PaddingType;
+
+import java.util.List;
 
 /**
  * Abstract ancestor for Fast Fourier Transform filters based on the <a href="http://jsci.sourceforge.net/">JSci library</a>.

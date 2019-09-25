@@ -20,8 +20,6 @@
 
 package adams.data.filter;
 
-import java.util.List;
-
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
@@ -29,6 +27,8 @@ import adams.core.TechnicalInformationHandler;
 import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
 import adams.data.utils.SAXUtils;
+
+import java.util.List;
 
 /**
  * Ancestor for SAX filters.

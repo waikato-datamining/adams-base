@@ -19,10 +19,10 @@
  */
 package adams.data.utils;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the adams.data.utils.SavitzkyGolayTest class. Run from commandline with: <br><br>
