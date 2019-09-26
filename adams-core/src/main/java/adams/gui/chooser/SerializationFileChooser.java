@@ -13,18 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SerializationFileChooser.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.input.SerializedObjectReader;
-import adams.data.io.input.XStreamReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.data.io.output.SerializedObjectWriter;
-import adams.data.io.output.XStreamWriter;
 import adams.gui.core.GUIHelper;
 
 import java.io.File;
@@ -35,7 +33,6 @@ import java.util.List;
  * A file chooser for serializable objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SerializationFileChooser
   extends AbstractConfigurableExtensionFileFilterFileChooser<AbstractObjectReader,AbstractObjectWriter> {
@@ -217,7 +214,6 @@ public class SerializationFileChooser
       m_ReaderFileFilters = new ArrayList<>();
       readers = new AbstractObjectReader[]{
 	new SerializedObjectReader(),
-	new XStreamReader(),
       };
       for (AbstractObjectReader reader: readers) {
 	filter = new ExtensionFileFilterWithClass(reader.getClass().getName(), reader.getFormatDescription(), reader.getFormatExtensions());
@@ -229,7 +225,6 @@ public class SerializationFileChooser
       m_WriterFileFilters = new ArrayList<>();
       writers = new AbstractObjectWriter[]{
 	new SerializedObjectWriter(),
-	new XStreamWriter(),
       };
       for (AbstractObjectWriter writer: writers) {
 	filter = new ExtensionFileFilterWithClass(writer.getClass().getName(), writer.getFormatDescription(), writer.getFormatExtensions());
