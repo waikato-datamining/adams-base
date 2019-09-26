@@ -1208,43 +1208,6 @@ The following conversion are available:
 	\item \textit{StringToProperties} -- parses the string and generates a properties object.
 \end{tight_itemize}
 
-\newpage
-\section{XML}
-\label{xml}
-ADAMS offers some basic processing for XML.
-The following sources are available:
-\begin{tight_itemize}
-	\item \textit{NewDOMDocument} -- creates an empty DOM document.
-\end{tight_itemize}
-The following transformers are available:
-\begin{tight_itemize}
-	\item \textit{AddDOMAttribute} -- adds an attribute and its value to the 
-	node passing through.
-	\item \textit{AddDOMNode} -- appends a child new to the node passing through.
-	\item \textit{XMLFileReader} -- reads the specific XML file and forwards
-	a DOM document\footnote{\url{http://www.w3.org/TR/xml/}{}}.
-	\item \textit{XPath} -- applies an XPath expression to the incoming DOM
-	document\footnote{\url{http://www.w3.org/TR/xpath}{}}.
-	\item \textit{XSLT} -- applies an XSLT stylesheet to the incoming DOM
-	document\footnote{\url{http://www.w3.org/TR/xslt}{}}.
-\end{tight_itemize}
-The following sinks are available:
-\begin{tight_itemize}
-	\item \textit{DOMDisplay} -- simple tree view of a DOM node.
-	\item \textit{XMLFileWriter} -- writes the DOM document to disk.
-\end{tight_itemize}
-The following conversions are available:
-\begin{tight_itemize}
-	\item \textit{DOMToString} -- turns the DOM object into an XML string.
-	\item \textit{DOMToProperties} -- flattens the DOM object into a Java 
-	Properties object (key-value pairs).
-	\item \textit{DOMNodeToString} -- turns the DOM node into an XML string.
-	\item \textit{DOMNodeListToArray} -- turns the list of DOM nodes into an array.
-	\item \textit{PrettyPrintXML} -- turns an XML string into a pretty-printed XML string.
-	\item \textit{XMLToDOM} -- parses the XML string and generates a DOM
-	object.
-\end{tight_itemize}
-
 
 \newpage
 \section{YAML and Maps}

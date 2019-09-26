@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BufferedImageHelper.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
@@ -23,8 +23,8 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.Notes;
-import adams.data.conversion.DOMToProperties;
 import adams.data.report.Report;
+import adams.data.xml.DOMUtils;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -46,7 +46,6 @@ import java.util.LinkedList;
  * Helper class for BufferedImage objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BufferedImageHelper {
 
@@ -448,7 +447,6 @@ public class BufferedImageHelper {
     IIOMetadata 		meta;
     BufferedImage 		image;
     String[]			formats;
-    DOMToProperties		convert;
     Properties			props;
 
     iis = null;
@@ -467,18 +465,11 @@ public class BufferedImageHelper {
       
       // meta
       if (addMetaData) {
-        meta = reader.getImageMetadata(0);
-        convert = new DOMToProperties();
-        convert.setStoreAttributes(true);
-        convert.setSkipRoot(true);
+        meta    = reader.getImageMetadata(0);
         formats = meta.getMetadataFormatNames();
-        props = new Properties();
-        for (String format : formats) {
-          convert.setInput(meta.getAsTree(format));
-          if (convert.convert() == null)
-            props.add((Properties) convert.getOutput());
-        }
-        convert.cleanUp();
+        props   = new Properties();
+        for (String format : formats)
+          props.add(DOMUtils.toProperties(".", false, true, true, meta.getAsTree(format)));
         result.setReport(Report.parseProperties(props));
       }
 

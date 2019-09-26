@@ -235,16 +235,6 @@ adams.core.base.ArrayDimensions=true
 adams.core.base.ArrayDimensions#toString=adams.core.option.parsing.BaseObjectParsing#toString
 adams.core.base.ArrayDimensions#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
 
-# XPathExpression objects
-adams.core.base.XPathExpression=true
-adams.core.base.XPathExpression#toString=adams.core.option.parsing.BaseObjectParsing#toString
-adams.core.base.XPathExpression#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
-
-# XSLTStyleSheet objects
-adams.core.base.XSLTStyleSheet=true
-adams.core.base.XSLTStyleSheet#valueOf=adams.core.option.parsing.AdvancedScriptParsing#valueOf
-adams.core.base.XSLTStyleSheet#toString=adams.core.option.parsing.AdvancedScriptParsing#toString
-
 # JsonPathExpression objects
 adams.core.base.JsonPathExpression=true
 adams.core.base.JsonPathExpression#toString=adams.core.option.parsing.BaseObjectParsing#toString

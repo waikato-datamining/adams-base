@@ -49,6 +49,7 @@
     <module>adams-timeseries</module>
     <module>adams-visualstats</module>
     <module>adams-weka</module>
+    <module>adams-xml</module>
   </modules>
 
   <properties>

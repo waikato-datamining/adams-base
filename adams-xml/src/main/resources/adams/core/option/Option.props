@@ -1,0 +1,31 @@
+# Configuration file for registering custom hooks for objects that special
+# constructors and string representations.
+#
+# Format:
+# An Option needs three entries:
+# 1. whether the hook is enabled ("classname=true|false"), e.g.:
+#    java.io.File=true
+# 2. the "hook" for turning the object into a string ("classname#method"), e.g.:
+#    java.io.File#toString=adams.core.option.parsing.FileParsing#toString
+# 3. the "hook" for creating an object from the string ("classname#method"), e.g.:
+#    java.io.File#valueOf=adams.core.option.parsing.FileParsing#valueOf
+#
+# Other options are stored in here as well, but they must be prefixed with
+# "option.".
+#
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+
+#########
+# hooks #
+#########
+
+# XPathExpression objects
+adams.core.base.XPathExpression=true
+adams.core.base.XPathExpression#toString=adams.core.option.parsing.BaseObjectParsing#toString
+adams.core.base.XPathExpression#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
+
+# XSLTStyleSheet objects
+adams.core.base.XSLTStyleSheet=true
+adams.core.base.XSLTStyleSheet#valueOf=adams.core.option.parsing.AdvancedScriptParsing#valueOf
+adams.core.base.XSLTStyleSheet#toString=adams.core.option.parsing.AdvancedScriptParsing#toString

@@ -99,6 +99,20 @@
     </dependency>
 
     <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-xml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-xml</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.sanselan</groupId>
       <artifactId>sanselan</artifactId>
       <version>0.97-incubator</version>
