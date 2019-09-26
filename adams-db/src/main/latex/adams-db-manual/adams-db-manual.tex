@@ -55,7 +55,22 @@
 %\listoftables
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Introduction}
+\chapter{Databases}
+Adds support for the following databases (via JDBC):
+\begin{tight_itemize}
+  \item SQLite\cite{sqlite}
+  \item HSQLDB\cite{hsqldb}
+  \item PostgreSQL\cite{postgresql}
+  \item MS SQL Server\cite{mssql}
+\end{tight_itemize}
+The following JDBC drivers are used (see \texttt{adams/db/Drivers.props}):
+\begin{tight_itemize}
+  \item org.sqlite.JDBC
+  \item org.hsqldb.jdbcDriver
+  \item org.postgresql.Driver
+  \item net.sourceforge.jtds.jdbc.Driver
+\end{tight_itemize}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
