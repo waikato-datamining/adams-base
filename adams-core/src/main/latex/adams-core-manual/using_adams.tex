@@ -1210,10 +1210,8 @@ The following conversion are available:
 
 
 \newpage
-\section{YAML and Maps}
-\label{yaml}
-Flows can process YAML\cite{yaml} files and strings as long as they are in map notation,
-which is commonly used for configuration files. \\
+\section{Maps}
+Flows can process objects that implement the \textit{java.util.Map} interface.
 The following transformers are available:
 \begin{tight_itemize}
 	\item \textit{GetMapKeys} -- returns all keys from the key.
@@ -1223,19 +1221,9 @@ The following transformers are available:
 	\textit{java.util.Map} into variables with their associated values.
 	\item \textit{SetMapValue} -- sets the value of a \textit{java.util.Map}
 	object (either specified value or obtained from a callable actor or storage item).
-	\item \textit{YamlFileReader} -- reads the specific YAML file and forwards
-	a Map object.
-\end{tight_itemize}
-The following sinks are available:
-\begin{tight_itemize}
-	\item \textit{YamlFileWriter} -- writes the \textit{java.util.Map}
-	object to disk.
 \end{tight_itemize}
 The following conversion are available:
 \begin{tight_itemize}
-	\item \textit{ArrayToYamlString} -- turns an object array into a YAML string.
-	\item \textit{ListToYamlString} -- turns a \textit{java.util.List} object
-	into a YAML string.
 	\item \textit{PropertiesToMap} -- turns a \textit{java.util.Properties}
 	object into a \textit{java.util.Map} object.
 	\item \textit{ReportToMap} -- turns a \textit{Report} object into a
@@ -1244,11 +1232,6 @@ The following conversion are available:
 	\textit{Report} object.
 	\item \textit{MapToKeyValuePairs} -- turns the map into actual
 	key-value pair objects.
-	\item \textit{MapToYamlString} -- turns a \textit{java.util.Map} object
-	into a YAML string.
-	\item \textit{YamlStringToMap} -- generates a \textit{java.util.Map}
-	object from the YAML string.
-	object/array.
 \end{tight_itemize}
 
 

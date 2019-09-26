@@ -50,6 +50,7 @@
     <module>adams-visualstats</module>
     <module>adams-weka</module>
     <module>adams-xml</module>
+    <module>adams-yaml</module>
   </modules>
 
   <properties>

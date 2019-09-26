@@ -1,0 +1,101 @@
+% This work is made available under the terms of the
+% Creative Commons Attribution-ShareAlike 4.0 license,
+% http://creativecommons.org/licenses/by-sa/4.0/.
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+%\usepackage[firstpage]{draftwatermark}
+%\SetWatermarkLightness{0.9}
+%\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-yaml} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/yaml-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2019} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Flow}
+Flows can process YAML\cite{yaml} files and strings as long as they are in map notation,
+which is commonly used for configuration files. \\
+The following transformers are available:
+\begin{tight_itemize}
+	\item \textit{GetMapKeys} -- returns all keys from the key.
+	\item \textit{GetMapValue} -- extracts a value associated with the
+	specified key from a \textit{java.util.Map} object.
+	\item \textit{MapToVariables} -- turns the key-value pairs of a
+	\textit{java.util.Map} into variables with their associated values.
+	\item \textit{SetMapValue} -- sets the value of a \textit{java.util.Map}
+	object (either specified value or obtained from a callable actor or storage item).
+	\item \textit{YamlFileReader} -- reads the specific YAML file and forwards
+	a Map object.
+\end{tight_itemize}
+The following sinks are available:
+\begin{tight_itemize}
+	\item \textit{YamlFileWriter} -- writes the \textit{java.util.Map}
+	object to disk.
+\end{tight_itemize}
+The following conversion are available:
+\begin{tight_itemize}
+	\item \textit{ArrayToYamlString} -- turns an object array into a YAML string.
+	\item \textit{ListToYamlString} -- turns a \textit{java.util.List} object
+	into a YAML string.
+	\item \textit{PropertiesToMap} -- turns a \textit{java.util.Properties}
+	object into a \textit{java.util.Map} object.
+	\item \textit{ReportToMap} -- turns a \textit{Report} object into a
+	\textit{java.util.Map} object.
+	\item \textit{MapToReport} -- turns a \textit{java.util.Map} object into a
+	\textit{Report} object.
+	\item \textit{MapToKeyValuePairs} -- turns the map into actual
+	key-value pair objects.
+	\item \textit{MapToYamlString} -- turns a \textit{java.util.Map} object
+	into a YAML string.
+	\item \textit{YamlStringToMap} -- generates a \textit{java.util.Map}
+	object from the YAML string.
+\end{tight_itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}
