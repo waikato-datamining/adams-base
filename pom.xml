@@ -34,6 +34,7 @@
     <module>adams-imaging-boofcv</module>
     <module>adams-imaging-imagemagick</module>
     <module>adams-imaging-openimaj</module>
+    <module>adams-json</module>
     <module>adams-jython</module>
     <module>adams-math</module>
     <module>adams-meta</module>
@@ -91,6 +92,9 @@
     <jackson.version>2.5.1</jackson.version>
     <requests4j.version>0.0.5</requests4j.version>
     <matrix-algorithms.version>0.0.15</matrix-algorithms.version>
+    <snakeyaml.version>1.19</snakeyaml.version>
+    <jsonpath.version>2.2.0</jsonpath.version>
+    <gson.version>2.7</gson.version>
   </properties>
 
   <scm>

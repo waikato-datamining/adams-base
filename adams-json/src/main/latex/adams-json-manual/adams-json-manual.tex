@@ -1,0 +1,99 @@
+% This work is made available under the terms of the
+% Creative Commons Attribution-ShareAlike 4.0 license,
+% http://creativecommons.org/licenses/by-sa/4.0/.
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+%\usepackage[firstpage]{draftwatermark}
+%\SetWatermarkLightness{0.9}
+%\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-json} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/json-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2019} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Flow}
+Flows cannot only be saved as JSON\cite{json} files (and read in again), but flows
+themselves can process JSON data structures as well. \\
+The following transformers are available:
+\begin{tight_itemize}
+	\item \textit{GetJsonKeys} -- outputs all named elements
+	of a JSON object.
+	\item \textit{GetJsonValue} -- outputs the named value
+	from a JSON object, can use simple key or a JSON
+	path\footnote{\url{http://code.google.com/p/json-path/}{}}.
+	\item \textit{JsonFileReader} -- reads the specific JSON file and forwards
+	a JSON object/array.
+\end{tight_itemize}
+The following sinks are available:
+\begin{tight_itemize}
+	\item \textit{JsonDisplay} -- displays a JSON object in a browseable
+	tree structure.
+	\item \textit{JsonFileWriter} -- writes the JSON object/array to disk.
+\end{tight_itemize}
+The following conversion are available:
+\begin{tight_itemize}
+	\item \textit{ArrayToJsonArray} -- generates a JSON array from any object
+	array.
+	\item \textit{JsonArrayToArray} -- turns a JSON array into a regular Java
+	object array.
+	\item \textit{JsonObjectToMap} -- turns the JSON object into a simple Map.
+	\item \textit{JsonToSpreadSheet} -- turns the JSON object into a spreadsheet (i.e., flattening it).
+	\item \textit{JsonToString} -- turns the JSON object/array into a string.
+	\item \textit{ListToJson} -- turns a \textit{java.util.List} object
+	into a JSON object.
+	\item \textit{MapToJson} -- turns a \textit{java.util.Map} object
+	into a JSON object.
+	\item \textit{SpreadSheetToJson} -- turns a spreadsheet into a JSON array object.
+	\item \textit{StringToJson} -- parses the string and generates a JSON
+	object/array.
+\end{tight_itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

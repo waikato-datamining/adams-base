@@ -235,11 +235,6 @@ adams.core.base.ArrayDimensions=true
 adams.core.base.ArrayDimensions#toString=adams.core.option.parsing.BaseObjectParsing#toString
 adams.core.base.ArrayDimensions#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
 
-# JsonPathExpression objects
-adams.core.base.JsonPathExpression=true
-adams.core.base.JsonPathExpression#toString=adams.core.option.parsing.BaseObjectParsing#toString
-adams.core.base.JsonPathExpression#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
-
 # MatrixSubset objects
 adams.core.base.MatrixSubset=true
 adams.core.base.MatrixSubset#toString=adams.core.option.parsing.BaseObjectParsing#toString
