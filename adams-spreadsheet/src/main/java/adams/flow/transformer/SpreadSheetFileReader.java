@@ -31,6 +31,8 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.List;
 
 /**
@@ -201,7 +203,26 @@ public class SpreadSheetFileReader
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{String.class, File.class};
+    return new Class[]{String.class, File.class, Reader.class, InputStream.class};
+  }
+
+  /**
+   * Updates the name of the sheet if no name present and a filename available.
+   *
+   * @param sheet	the sheet to update
+   * @param file	the (optional) file name
+   * @param suffix	the (optional) suffix to append
+   */
+  protected void updateName(SpreadSheet sheet, File file, String suffix) {
+    String	name;
+
+    if (!sheet.hasName()) {
+      if (file != null)
+	name = FileUtils.replaceExtension(file, "").getName();
+      else
+	name = "input";
+      sheet.setName(name + (suffix == null ? "" : suffix));
+    }
   }
 
   /**
@@ -212,8 +233,9 @@ public class SpreadSheetFileReader
   @Override
   protected String doExecute() {
     String		result;
-    Object		fileObj;
     File		file;
+    Reader		reader;
+    InputStream		stream;
     SpreadSheet		sheet;
     List<SpreadSheet>	sheets;
     boolean		added;
@@ -221,31 +243,47 @@ public class SpreadSheetFileReader
 
     result = null;
 
-    fileObj = m_InputToken.getPayload();
-    if (fileObj instanceof File)
-      file = (File) fileObj;
-    else
-      file = new PlaceholderFile((String) fileObj);
+    file   = null;
+    reader = null;
+    stream = null;
+    if (m_InputToken.hasPayload(File.class))
+      file = m_InputToken.getPayload(File.class);
+    else if (m_InputToken.hasPayload(String.class))
+      file = new PlaceholderFile(m_InputToken.getPayload(String.class));
+    else if (m_InputToken.hasPayload(Reader.class))
+      reader = m_InputToken.getPayload(Reader.class);
+    else if (m_InputToken.hasPayload(InputStream.class))
+      stream = m_InputToken.getPayload(InputStream.class);
 
-    added = false;
+    added  = false;
+    sheets = null;
+    sheet  = null;
     if (m_Reader instanceof MultiSheetSpreadSheetReader) {
-      sheets = ((MultiSheetSpreadSheetReader) m_Reader).readRange(file);
+      if (file != null)
+	sheets = ((MultiSheetSpreadSheetReader) m_Reader).readRange(file);
+      else if (reader != null)
+	sheets = ((MultiSheetSpreadSheetReader) m_Reader).readRange(reader);
+      else if (stream != null)
+	sheets = ((MultiSheetSpreadSheetReader) m_Reader).readRange(stream);
       if (sheets != null) {
         i = 0;
         for (SpreadSheet sh: sheets) {
           i++;
-          if (!sh.hasName())
-            sh.setName(FileUtils.replaceExtension(file, "").getName() + "-" + i);
+          updateName(sh, file, "-" + i);
         }
 	m_Queue.addAll(sheets);
 	added = true;
       }
     }
     else if (m_Reader instanceof ChunkedSpreadSheetReader) {
-      sheet = m_Reader.read(file);
+      if (file != null)
+	sheet = m_Reader.read(file);
+      else if (reader != null)
+	sheet = m_Reader.read(reader);
+      else if (stream != null)
+	sheet = m_Reader.read(stream);
       if (sheet != null) {
-        if (!sheet.hasName())
-          sheet.setName(FileUtils.replaceExtension(file, "").getName());
+	updateName(sheet, file, null);
 	if (m_OutputArray)
 	  m_OutputToken = new Token(new SpreadSheet[]{sheet});
 	else
@@ -254,8 +292,14 @@ public class SpreadSheetFileReader
       }
     }
     else {
-      sheet = m_Reader.read(file);
+      if (file != null)
+	sheet = m_Reader.read(file);
+      else if (reader != null)
+	sheet = m_Reader.read(reader);
+      else if (stream != null)
+	sheet = m_Reader.read(stream);
       if (sheet != null) {
+	updateName(sheet, file, null);
 	m_Queue.add(sheet);
 	added = true;
       }

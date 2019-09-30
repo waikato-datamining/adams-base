@@ -15,7 +15,7 @@
 
 /*
  * TextFileReader.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -30,6 +30,7 @@ import adams.flow.core.Unknown;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -101,7 +102,7 @@ public class TextFileReader
   protected AbstractTextReader m_Reader;
 
   /** the file input stream in use. */
-  protected transient FileInputStream m_Stream;
+  protected transient InputStream m_Stream;
 
   /**
    * Returns a string describing the object.
@@ -184,7 +185,7 @@ public class TextFileReader
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{String.class, File.class};
+    return new Class[]{String.class, File.class, InputStream.class};
   }
 
   /**
@@ -208,26 +209,39 @@ public class TextFileReader
   @Override
   protected String doExecute() {
     String		result;
-    Object		fileObj;
     File		file;
 
     result = null;
 
-    fileObj = m_InputToken.getPayload();
-    if (fileObj instanceof File)
-      file = (File) fileObj;
-    else
-      file = new PlaceholderFile((String) fileObj);
     FileUtils.closeQuietly(m_Stream);
-
     m_Stream = null;
-    try {
-      m_Stream = new FileInputStream(file.getAbsolutePath());
-      m_Reader.initialize(m_Stream);
+
+    file = null;
+    if (m_InputToken.hasPayload(File.class))
+      file = m_InputToken.getPayload(File.class);
+    else if (m_InputToken.hasPayload(String.class))
+      file = new PlaceholderFile(m_InputToken.getPayload(String.class));
+    else if (m_InputToken.hasPayload(InputStream.class))
+      m_Stream = m_InputToken.getPayload(InputStream.class);
+
+    if (file != null) {
+      try {
+        m_Stream = new FileInputStream(file.getAbsolutePath());
+      }
+      catch (Exception e) {
+        result = handleException("Failed to read text from: " + file, e);
+        m_Reader.reset();
+      }
     }
-    catch (Exception e) {
-      result = handleException("Failed to read text from: " + file, e);
-      m_Reader.reset();
+
+    if (m_Stream != null) {
+      try {
+        m_Reader.initialize(m_Stream);
+      }
+      catch (Exception e) {
+        result = handleException("Failed to read text from stream!", e);
+        m_Reader.reset();
+      }
     }
 
     return result;

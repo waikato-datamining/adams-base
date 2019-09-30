@@ -1,0 +1,14 @@
+# Project: adams
+# Date: 2019-09-30 14:45:17
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-meta
+#
+adams.flow.control.Flow -annotation "Reads a flow from the classpath and displays it." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.FlowDisplay -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter
+ adams.flow.source.ReaderGenerator -generator "adams.flow.source.readersource.FromResource -resource adams/gui/flow/example/template.flow"
+ adams.flow.control.Tee -name read/display
+  adams.flow.transformer.FlowFileReader -use-custom-reader true -custom-reader adams.data.io.input.DefaultFlowReader
+  adams.flow.sink.CallableSink -callable FlowDisplay
+ adams.flow.sink.CloseReader

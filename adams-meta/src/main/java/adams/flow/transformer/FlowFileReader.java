@@ -15,7 +15,7 @@
 
 /*
  * FlowFileReader.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -31,11 +31,13 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
 
 /**
  <!-- globalinfo-start -->
  * Reads the flow file and outputs the actor(s).<br>
- * A custom reader can be specified.
+ * A custom reader can be specified in case of reading from files, but must be specified when reading from java.io.Reader or java.io.InputStream objects.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -118,7 +120,9 @@ public class FlowFileReader
   public String globalInfo() {
     return
       "Reads the flow file and outputs the actor(s).\n"
-	+ "A custom reader can be specified.";
+	+ "A custom reader can be specified in case of reading from files, "
+	+ "but must be specified when reading from " + Utils.classToString(Reader.class) + " or "
+	+ Utils.classToString(InputStream.class) + " objects.";
   }
 
   /**
@@ -237,16 +241,24 @@ public class FlowFileReader
   protected String doExecute() {
     String		result;
     PlaceholderFile	file;
+    Reader		reader;
+    InputStream		stream;
     MessageCollection	errors;
     Actor		actor;
 
     result = null;
 
-    file = null;
-    if (m_InputToken.getPayload() instanceof String)
-      file = new PlaceholderFile((String) m_InputToken.getPayload());
-    else if (m_InputToken.getPayload() instanceof File)
-      file = new PlaceholderFile((File) m_InputToken.getPayload());
+    file   = null;
+    reader = null;
+    stream = null;
+    if (m_InputToken.hasPayload(String.class))
+      file = new PlaceholderFile(m_InputToken.getPayload(String.class));
+    else if (m_InputToken.hasPayload(File.class))
+      file = new PlaceholderFile(m_InputToken.getPayload(File.class));
+    else if (m_InputToken.hasPayload(Reader.class))
+      reader = m_InputToken.getPayload(Reader.class);
+    else if (m_InputToken.hasPayload(InputStream.class))
+      stream = m_InputToken.getPayload(InputStream.class);
     else
       result = "Unhandled input: " + Utils.classToString(m_InputToken.getPayload());
 
@@ -254,11 +266,21 @@ public class FlowFileReader
     if (result == null) {
       errors = new MessageCollection();
       if (m_UseCustomReader) {
-	actor = m_CustomReader.readActor(file);
+        if (file != null)
+	  actor = m_CustomReader.readActor(file);
+        else if (reader != null)
+	  actor = m_CustomReader.readActor(reader);
+        else if (stream != null)
+	  actor = m_CustomReader.readActor(stream);
 	errors.addAll(m_CustomReader.getErrors());
       }
       else {
-	actor = ActorUtils.read(file.getAbsolutePath(), errors);
+        if (file != null)
+	  actor = ActorUtils.read(file.getAbsolutePath(), errors);
+        else
+          result = "Custom reader specification required for "
+	    + Utils.classToString(Reader.class) + " or "
+	    + Utils.classToString(InputStream.class) + " objects.";
       }
       if (!errors.isEmpty()) {
 	result = "Failed to load actor from: " + file + "\n" + errors;

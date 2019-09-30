@@ -5,7 +5,6 @@
 # class.name=package1,package2,...
 #
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # custom GUI editors
 java.beans.PropertyEditorSupport=\
@@ -462,6 +461,14 @@ adams.flow.source.newlist.AbstractListGenerator=\
 # the value definitions
 adams.flow.source.valuedefinition.AbstractValueDefinition=\
   adams.flow.source.valuedefinition
+
+# the input stream generators
+adams.flow.source.inputstreamsource.AbstractInputStreamGenerator=\
+  adams.flow.source.inputstreamsource
+
+# the reader generators
+adams.flow.source.readersource.AbstractReaderGenerator=\
+  adams.flow.source.readersource
 
 # flow conditions
 adams.flow.condition.test.TestCondition=\
