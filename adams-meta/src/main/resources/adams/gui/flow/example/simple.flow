@@ -1,0 +1,9 @@
+# Project: adams
+# Date: 2019-09-30 15:32:21
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-meta
+#
+adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.ForLoop
+ adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
