@@ -15,7 +15,7 @@
 
 /*
  * DefaultSpreadSheet.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -49,7 +49,6 @@ import java.util.TimeZone;
  * Represents a generic spreadsheet object.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DefaultSpreadSheet
   implements SpreadSheet {
@@ -105,6 +104,10 @@ public class DefaultSpreadSheet
   /** the default data row class to use. */
   protected Class m_DataRowClass;
 
+  /** the constructor for the datarow. */
+  protected transient Constructor m_DataRowConstructor;
+
+
   /**
    * default constructor.
    */
@@ -117,10 +120,10 @@ public class DefaultSpreadSheet
    * Initializes the members.
    */
   protected void initialize() {
-    m_RowKeys            = new ArrayList<String>();
-    m_Rows               = new HashMap<String, DataRow>();
+    m_RowKeys            = new ArrayList<>();
+    m_Rows               = new HashMap<>();
     m_HeaderRow          = new HeaderRow(this);
-    m_Comments           = new ArrayList<String>();
+    m_Comments           = new ArrayList<>();
     m_Name               = null;
     m_DateFormat         = DateUtils.getDateFormatter();
     m_DateTimeFormat     = DateUtils.getTimestampFormatter();
@@ -131,6 +134,7 @@ public class DefaultSpreadSheet
     m_DataRowClass       = DenseDataRow.class;
     m_Locale             = LocaleHelper.getSingleton().getDefault();
     m_NumberFormat       = LocaleHelper.getSingleton().getNumberFormat(m_Locale);
+    m_DataRowConstructor = null;
   }
   
   /**
@@ -175,7 +179,8 @@ public class DefaultSpreadSheet
     if (!ClassLocator.hasInterface(DataRow.class, cls))
       throw new IllegalArgumentException(
 	  "Data row class " + cls.getName() + " does not implement " + DataRow.class.getName() + "!");
-    m_DataRowClass = cls;
+    m_DataRowClass       = cls;
+    m_DataRowConstructor = null;
   }
 
   /**
@@ -196,7 +201,7 @@ public class DefaultSpreadSheet
     SpreadSheet	result;
     
     try {
-      result = (SpreadSheet) getClass().newInstance();
+      result = getClass().newInstance();
       result.setDataRowClass(getDataRowClass());
     }
     catch (Exception e) {
@@ -438,7 +443,7 @@ public class DefaultSpreadSheet
     ArrayList<String>	result;
     int			i;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     for (i = 0; i < getColumnCount(); i++)
       result.add(getHeaderRow().getCell(i).getContent());
@@ -473,11 +478,11 @@ public class DefaultSpreadSheet
    */
   protected synchronized DataRow newRow() {
     DataRow	result;
-    Constructor	constr;
 
     try {
-      constr = m_DataRowClass.getConstructor(new Class[]{SpreadSheet.class});
-      result = (DataRow) constr.newInstance(new Object[]{this});
+      if (m_DataRowConstructor == null)
+        m_DataRowConstructor = m_DataRowClass.getConstructor(new Class[]{SpreadSheet.class});
+      result = (DataRow) m_DataRowConstructor.newInstance(new Object[]{this});
     }
     catch (Exception e) {
       System.err.println("Failed to instantiate data row class: " + m_DataRowClass.getName());
