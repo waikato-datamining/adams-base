@@ -191,8 +191,9 @@ public class InputStreamGenerator
 
     result = null;
     try {
-      stream        = m_Generator.generate();
-      m_OutputToken = new Token(stream);
+      stream = m_Generator.generate();
+      if (stream != null)
+        m_OutputToken = new Token(stream);
     }
     catch (Exception e) {
       result = handleException("Failed to instantiate input stream!", e);

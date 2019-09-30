@@ -193,7 +193,8 @@ public class ReaderGenerator
     result = null;
     try {
       reader = m_Generator.generate();
-      m_OutputToken = new Token(reader);
+      if (reader != null)
+	m_OutputToken = new Token(reader);
     }
     catch (Exception e) {
       result = handleException("Failed to instantiate reader!", e);
