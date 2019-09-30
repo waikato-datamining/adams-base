@@ -95,6 +95,7 @@
     <snakeyaml.version>1.19</snakeyaml.version>
     <jsonpath.version>2.2.0</jsonpath.version>
     <gson.version>2.7</gson.version>
+    <debianmavenplugin.version>1.0.17</debianmavenplugin.version>
   </properties>
 
   <scm>
