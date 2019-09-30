@@ -408,6 +408,9 @@ public class ExecuteActor
       result = m_InputToken.unhandledData();
     }
 
+    if (m_Actor == null)
+      result = "No actor available!";
+
     if (result == null) {
       // attach listener?
       if (m_FlowExecutionListeningEnabled && (m_Actor instanceof FlowExecutionListeningSupporter)) {
