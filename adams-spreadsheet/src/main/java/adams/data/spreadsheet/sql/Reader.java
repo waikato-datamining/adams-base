@@ -97,8 +97,8 @@ public class Reader
    */
   public void initHeader(ResultSet rs) throws SQLException {
     SpreadSheet	result;
-    Row row;
-    String[]		names;
+    Row 	row;
+    String[]	names;
     int		i;
 
     result = new DefaultSpreadSheet();
@@ -167,7 +167,6 @@ public class Reader
     Row		row;
     int		i;
     ContentType type;
-    Object	tmp;
 
     m_Stopped = false;
     m_Finished  = false;
