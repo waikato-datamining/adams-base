@@ -22,6 +22,7 @@ package adams.flow.source.readersource;
 
 import adams.core.QuickInfoHelper;
 
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
@@ -125,6 +126,11 @@ public class FromResource
    */
   @Override
   protected Reader doGenerate() throws Exception {
-    return new InputStreamReader(ClassLoader.getSystemResourceAsStream(m_Resource));
+    InputStream 	stream;
+
+    stream = ClassLoader.getSystemResourceAsStream(m_Resource);
+    if (stream == null)
+      throw new IllegalStateException("Failed to load resource: " + m_Resource);
+    return new InputStreamReader(stream);
   }
 }

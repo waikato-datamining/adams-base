@@ -124,6 +124,12 @@ public class FromResource
    */
   @Override
   protected InputStream doGenerate() throws Exception {
-    return ClassLoader.getSystemResourceAsStream(m_Resource);
+    InputStream 	result;
+
+    result = ClassLoader.getSystemResourceAsStream(m_Resource);
+    if (result == null)
+      throw new IllegalStateException("Failed to load resource: " + m_Resource);
+
+    return result;
   }
 }
