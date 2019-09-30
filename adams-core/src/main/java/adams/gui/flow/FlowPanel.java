@@ -92,6 +92,8 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.fracpete.javautils.Reflection.newInstance;
+
 /**
  * A panel for setting up, modifying, saving and loading "simple" flows.
  *
@@ -250,9 +252,7 @@ public class FlowPanel
     m_TabHandlers = new ArrayList<>();
     for (Class cls: ClassLister.getSingleton().getClasses(AbstractTabHandler.class)) {
       try {
-        constr = cls.getConstructor(FlowPanel.class);
-        constr.newInstance(this);
-        m_TabHandlers.add((AbstractTabHandler) constr.newInstance(this));
+        m_TabHandlers.add(newInstance(AbstractTabHandler.class, new Class[]{FlowPanel.class}, new Object[]{this}));
       }
       catch (Exception e) {
         ConsolePanel.getSingleton().append("Failed to instantiate tab handler: " + Utils.classToString(cls), e);

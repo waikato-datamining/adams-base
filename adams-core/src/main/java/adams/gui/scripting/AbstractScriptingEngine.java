@@ -38,7 +38,6 @@ import adams.gui.event.ScriptingInfoEvent;
 import adams.gui.event.ScriptingInfoListener;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -46,6 +45,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+
+import static com.github.fracpete.javautils.Reflection.newInstance;
 
 /**
  * Processes scripting commands.
@@ -151,17 +152,13 @@ public abstract class AbstractScriptingEngine
    */
   public synchronized AbstractCommandProcessor getProcessor() {
     String	classname;
-    Class	cls;
-    Constructor	constr;
 
     if (m_Processor == null) {
       try {
 	classname = getProperties().getPath(ALTERNATIVE_COMMAND_PROCESSOR, "").trim();
 	if (classname.length() == 0)
 	  classname = getProperties().getPath(COMMAND_PROCESSOR, "noCommandProcessorClassDefined");
-	cls         = Class.forName(classname);
-	constr      = cls.getConstructor(new Class[]{AbstractScriptingEngine.class});
-	m_Processor = (AbstractCommandProcessor) constr.newInstance(new Object[]{this});
+	m_Processor = newInstance(classname, new Class[]{AbstractScriptingEngine.class}, new Object[]{this});
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to instantiate processor", e);

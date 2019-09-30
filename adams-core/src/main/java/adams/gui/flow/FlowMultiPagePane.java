@@ -42,11 +42,12 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static com.github.fracpete.javautils.Reflection.newInstance;
 
 /**
  * Specialized tabbed pane for Flow panels.
@@ -221,7 +222,6 @@ public class FlowMultiPagePane
     FlowPanel	result;
     Properties	props;
     String	clsname;
-    Constructor	constr;
 
     if (m_FlowPanelClass == null) {
       props   = FlowEditorPanel.getPropertiesEditor();
@@ -236,8 +236,7 @@ public class FlowMultiPagePane
     }
 
     try {
-      constr = m_FlowPanelClass.getConstructor(FlowMultiPagePane.class);
-      result = (FlowPanel) constr.newInstance(this);
+      result = (FlowPanel) newInstance(m_FlowPanelClass, new Class[]{FlowMultiPagePane.class}, new Object[]{this});
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append("Failed to instantiate flow panel class: " + m_FlowPanelClass.getClass().getName(), e);

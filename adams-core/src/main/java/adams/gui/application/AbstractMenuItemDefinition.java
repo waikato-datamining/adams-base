@@ -31,7 +31,8 @@ import javax.swing.JMenuItem;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
+
+import static com.github.fracpete.javautils.Reflection.newInstance;
 
 /**
  * Abstract ancestor for definining menu items in the ApplicationFrame menu.
@@ -325,13 +326,9 @@ public abstract class AbstractMenuItemDefinition
    */
   public static AbstractMenuItemDefinition forName(AbstractApplicationFrame owner, String classname, String[] params) {
     AbstractMenuItemDefinition result;
-    Class			cls;
-    Constructor			constr;
 
     try {
-      cls    = Class.forName(classname);
-      constr = cls.getConstructor(new Class[]{AbstractApplicationFrame.class});
-      result = (AbstractMenuItemDefinition) constr.newInstance(new Object[]{owner});
+      result = newInstance(classname, new Class[]{AbstractApplicationFrame.class}, new Object[]{owner});
       if (result instanceof AdditionalParameterHandler) {
 	if (params == null)
 	  params = new String[0];

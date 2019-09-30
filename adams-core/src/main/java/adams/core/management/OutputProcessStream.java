@@ -19,7 +19,7 @@
  */
 package adams.core.management;
 
-import java.lang.reflect.Constructor;
+import static com.github.fracpete.javautils.Reflection.newInstance;
 
 /**
  * For capturing the output of stdout or stderr of a running Process and
@@ -48,8 +48,7 @@ public class OutputProcessStream
     super();
 
     try {
-      Constructor constr = cls.getConstructor(new Class[]{Boolean.TYPE, Process.class});
-      m_Printer = (AbstractOutputPrinter) constr.newInstance(new Object[]{stdout, process});
+      m_Printer = (AbstractOutputPrinter) newInstance(cls, new Class[]{Boolean.TYPE, Process.class}, new Object[]{stdout, process});
     }
     catch (Exception e) {
       System.err.println("Failed to determine constructor/create instance: " + cls.getName());

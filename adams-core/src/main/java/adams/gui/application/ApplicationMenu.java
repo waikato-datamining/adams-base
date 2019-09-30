@@ -37,6 +37,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 
+import static com.github.fracpete.javautils.Reflection.newInstance;
+
 /**
  * Generates the menu for the application frame.
  *
@@ -312,8 +314,7 @@ public class ApplicationMenu
 	      setUnavailable(classname);
 	      continue;
 	    }
-	    constr     = cls.getConstructor(AbstractApplicationFrame.class);
-	    definition = (AbstractMenuItemDefinition) constr.newInstance(getOwner());
+	    definition = (AbstractMenuItemDefinition) newInstance(cls, new Class[]{AbstractApplicationFrame.class}, new Object[]{getOwner()});
 	    if (m_UserMode.compareTo(definition.getUserMode()) < 0)
 	      continue;
 	    if (definition.requiresRestartableApplication() && !m_Owner.getEnableRestart())
@@ -377,9 +378,7 @@ public class ApplicationMenu
       additionalDefs = new ArrayList<>();
       for (String add: additionalList) {
 	try {
-	  cls = Class.forName(add);
-	  constr = cls.getConstructor(AbstractApplicationFrame.class);
-	  definition = (AbstractMenuItemDefinition) constr.newInstance(getOwner());
+	  definition = newInstance(add, new Class[]{AbstractApplicationFrame.class}, new Object[]{getOwner()});
 	  if (m_UserMode.compareTo(definition.getUserMode()) < 0)
 	    continue;
 	  additionalDefs.add(definition);
