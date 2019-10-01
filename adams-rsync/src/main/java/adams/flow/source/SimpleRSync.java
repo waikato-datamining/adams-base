@@ -15,7 +15,7 @@
 
 /*
  * SimpleRSync.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source;
@@ -25,8 +25,9 @@ import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
-import adams.flow.core.Token;
-import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
+import com.github.fracpete.processoutput4j.core.StreamingProcessOutputType;
+import com.github.fracpete.processoutput4j.core.StreamingProcessOwner;
+import com.github.fracpete.processoutput4j.output.StreamingProcessOutput;
 import com.github.fracpete.rsync4j.core.Binaries;
 
 /**
@@ -87,108 +88,130 @@ import com.github.fracpete.rsync4j.core.Binaries;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-outputCommandline &lt;boolean&gt; (property: outputCommandline)
+ * &nbsp;&nbsp;&nbsp;output the command-line generated for the rsync binary
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-verbose &lt;boolean&gt; (property: verbose)
  * &nbsp;&nbsp;&nbsp;increase verbosity
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-quiet &lt;boolean&gt; (property: quiet)
  * &nbsp;&nbsp;&nbsp;suppress non-error messages
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-checksum &lt;boolean&gt; (property: checksum)
  * &nbsp;&nbsp;&nbsp;skip based on checksum, not mod-time &amp; size
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-archive &lt;boolean&gt; (property: archive)
  * &nbsp;&nbsp;&nbsp;archive mode; equals -rlptgoD (no -H,-A,-X)
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-recursive &lt;boolean&gt; (property: recursive)
  * &nbsp;&nbsp;&nbsp;recurse into directories
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-relative &lt;boolean&gt; (property: relative)
  * &nbsp;&nbsp;&nbsp;use relative path names
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-perms &lt;boolean&gt; (property: perms)
  * &nbsp;&nbsp;&nbsp;preserve permissions
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-executability &lt;boolean&gt; (property: executability)
  * &nbsp;&nbsp;&nbsp;preserve the file's executability
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-times &lt;boolean&gt; (property: times)
  * &nbsp;&nbsp;&nbsp;preserve modification times
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-dry_run &lt;boolean&gt; (property: dryRun)
  * &nbsp;&nbsp;&nbsp;perform a trial run with no changes made
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-rsh &lt;java.lang.String&gt; (property: rsh)
  * &nbsp;&nbsp;&nbsp;specify the remote shell to use
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-rsync_path &lt;java.lang.String&gt; (property: rsyncPath)
  * &nbsp;&nbsp;&nbsp;specify the rsync to run on the remote machine
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-delete &lt;boolean&gt; (property: delete)
  * &nbsp;&nbsp;&nbsp;delete extraneous files from destination dirs
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-exclude &lt;adams.core.base.BaseString&gt; [-exclude ...] (property: exclude)
  * &nbsp;&nbsp;&nbsp;exclude files matching PATTERN
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-exclude_from &lt;adams.core.io.PlaceholderFile&gt; (property: excludeFrom)
  * &nbsp;&nbsp;&nbsp;read exclude patterns from FILE
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-include &lt;adams.core.base.BaseString&gt; [-include ...] (property: include)
  * &nbsp;&nbsp;&nbsp;include files matching PATTERN
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-include_from &lt;adams.core.io.PlaceholderFile&gt; (property: includeFrom)
  * &nbsp;&nbsp;&nbsp;read include patterns from FILE
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-files_from &lt;adams.core.io.PlaceholderFile&gt; (property: filesFrom)
  * &nbsp;&nbsp;&nbsp;read list of source-file names from FILE
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-filter &lt;adams.core.base.BaseString&gt; [-filter ...] (property: filter)
  * &nbsp;&nbsp;&nbsp;add a file-filtering RULE
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-max_time &lt;int&gt; (property: maxTime)
+ * &nbsp;&nbsp;&nbsp;time out in seconds, stopping rsync process once exceeded, ignored if less
+ * &nbsp;&nbsp;&nbsp;than 1
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-prefix-stdout &lt;java.lang.String&gt; (property: prefixStdOut)
+ * &nbsp;&nbsp;&nbsp;The (optional) prefix to use for output from stdout.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-prefix-stderr &lt;java.lang.String&gt; (property: prefixStdErr)
+ * &nbsp;&nbsp;&nbsp;The (optional) prefix to use for output from stderr.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleRSync
-  extends AbstractSimpleSource {
+  extends AbstractBufferingSource
+  implements StreamingProcessOwner {
 
   private static final long serialVersionUID = -2922477251211046117L;
 
@@ -240,6 +263,12 @@ public class SimpleRSync
   protected BaseString[] m_Filter;
 
   protected int m_MaxTime;
+
+  /** the stdout prefix. */
+  protected String m_PrefixStdOut;
+
+  /** the stderr prefix. */
+  protected String m_PrefixStdErr;
 
   /**
    * Returns a string describing the object.
@@ -349,6 +378,14 @@ public class SimpleRSync
     m_OptionManager.add(
       "max_time", "maxTime",
       -1, -1, null);
+
+    m_OptionManager.add(
+      "prefix-stdout", "prefixStdOut",
+      "");
+
+    m_OptionManager.add(
+      "prefix-stderr", "prefixStdErr",
+      "");
   }
 
   /**
@@ -683,6 +720,64 @@ public class SimpleRSync
   }
 
   /**
+   * Sets the (optional) prefix to use for output from stdout.
+   *
+   * @param value	the prefix
+   */
+  public void setPrefixStdOut(String value) {
+    m_PrefixStdOut = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) prefix to use for output from stdout.
+   *
+   * @return 		the prefix
+   */
+  public String getPrefixStdOut() {
+    return m_PrefixStdOut;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String prefixStdOutTipText() {
+    return "The (optional) prefix to use for output from stdout.";
+  }
+
+  /**
+   * Sets the (optional) prefix to use for output from stderr.
+   *
+   * @param value	the prefix
+   */
+  public void setPrefixStdErr(String value) {
+    m_PrefixStdErr = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) prefix to use for output from stderr.
+   *
+   * @return 		the prefix
+   */
+  public String getPrefixStdErr() {
+    return m_PrefixStdErr;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String prefixStdErrTipText() {
+    return "The (optional) prefix to use for output from stderr.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -710,6 +805,28 @@ public class SimpleRSync
   }
 
   /**
+   * Returns what output from the process to forward.
+   *
+   * @return 		the output type
+   */
+  @Override
+  public StreamingProcessOutputType getOutputType() {
+    return StreamingProcessOutputType.BOTH;
+  }
+
+  /**
+   * Processes the incoming line.
+   *
+   * @param line	the line to process
+   * @param stdout	whether stdout or stderr
+   */
+  @Override
+  public void processOutput(String line, boolean stdout) {
+    if (!isStopped() && (m_Queue != null))
+      m_Queue.add((stdout ? m_PrefixStdOut : m_PrefixStdErr) + line);
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -718,9 +835,10 @@ public class SimpleRSync
   protected String doExecute() {
     String				result;
     com.github.fracpete.rsync4j.RSync	rsync;
-    CollectingProcessOutput output;
+    StreamingProcessOutput 		output;
 
     result = null;
+    m_Queue.clear();
 
     try {
       rsync = new com.github.fracpete.rsync4j.RSync();
@@ -755,11 +873,10 @@ public class SimpleRSync
       if (isLoggingEnabled())
 	getLogger().info("Rsync:\n" + Utils.flatten(rsync.commandLineArgs(), " "));
 
-      output = rsync.execute();
+      output = new StreamingProcessOutput(this);
+      output.monitor(rsync.builder());
       if (output.getExitCode() > 0)
-	m_OutputToken = new Token(output.getStdErr());
-      else
-	m_OutputToken = new Token(output.getStdOut());
+        result = "Exit code: " + output.getExitCode();
     }
     catch (Exception e) {
       result = handleException("Failed to execute rsync!", e);
