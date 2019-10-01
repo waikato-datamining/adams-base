@@ -38,7 +38,6 @@ import com.github.fracpete.processoutput4j.core.StreamingProcessOwner;
 import com.github.fracpete.processoutput4j.output.StreamingProcessOutput;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -584,9 +583,8 @@ public class Command
    */
   @Override
   protected String doExecute() {
-    String			cmd;
-    final String		fCmd;
-    HashMap<String, String> 	env;
+    String		cmd;
+    final String	fCmd;
 
     m_Output.clear();
 
