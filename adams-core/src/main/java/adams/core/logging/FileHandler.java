@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileHandler.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -30,12 +30,19 @@ import java.util.logging.LogRecord;
 
 /**
  * Sends all logging output to the specified log file.
+ * <br>
+ * Makes use of the ADAMS_LOGFILE_PREFIX environment variable.
+ * E.g., with "ADAMS_LOGFILE_PREFIX=testing-",
+ * the default log file "$HOME/.adams/log/console.log"
+ * will become "$HOME/.adams/log/testing-console.log".
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7676 $
  */
 public class FileHandler
   extends AbstractLogHandler {
+
+  /** the environment variable to inject a prefix into the log file. */
+  public final static String ADAMS_LOGFILE_PREFIX = "ADAMS_LOGFILE_PREFIX";
 
   /** the log file to use. */
   protected File m_LogFile;
@@ -49,11 +56,16 @@ public class FileHandler
   @Override
   protected void initialize() {
     PlaceholderDirectory	logDir;
+    String			env;
 
     super.initialize();
 
+    env = System.getenv(ADAMS_LOGFILE_PREFIX);
+    if (env == null)
+      env = "";
+
     logDir = new PlaceholderDirectory(Environment.getInstance().getHome() + File.separator + "log");
-    setLogFile(new PlaceholderFile(logDir.getAbsolutePath() + File.separator + "console.log"));
+    setLogFile(new PlaceholderFile(logDir.getAbsolutePath() + File.separator + env + "console.log"));
   }
 
   /**
