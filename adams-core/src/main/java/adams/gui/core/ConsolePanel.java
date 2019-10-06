@@ -442,6 +442,9 @@ public class ConsolePanel
 
   /**
    * Initializes the logging.
+   * <br>
+   * See {@link RotatingFileHandler#ADAMS_LOGFILE_PREFIX} for injecting
+   * prefix to log file via environment variable.
    */
   protected void initializeLogging() {
     LoggingHelper.addToDefaultHandler(new RotatingFileHandler());
