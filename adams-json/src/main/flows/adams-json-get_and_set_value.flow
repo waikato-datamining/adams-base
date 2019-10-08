@@ -1,0 +1,25 @@
+# Project: adams
+# Date: 2019-10-08 15:53:21
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-json
+#
+adams.flow.control.Flow -annotation "Gets and sets a value specified by a path." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name Values -short-title true -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.data.io.output.NullWriter
+  adams.flow.sink.JsonDisplay -name Input -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -preview true -expand true -sort-keys true
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/webapp.json
+ adams.flow.transformer.JsonFileReader -type OBJECT
+ adams.flow.control.Tee
+  adams.flow.sink.CallableSink -callable Input
+ adams.flow.control.Tee -name before
+  adams.flow.transformer.GetJsonValue -path $.web-app.servlet[0].init-param.useJSP -data-type BOOLEAN
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "before: "
+  adams.flow.sink.CallableSink -callable Values
+ adams.flow.transformer.SetJsonValue -path $.web-app.servlet[0].init-param.useJSP -value true -conversion adams.data.conversion.StringToBoolean
+ adams.flow.control.Tee -name after
+  adams.flow.transformer.GetJsonValue -path $.web-app.servlet[0].init-param.useJSP -data-type BOOLEAN
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "after: "
+  adams.flow.sink.CallableSink -callable Values
