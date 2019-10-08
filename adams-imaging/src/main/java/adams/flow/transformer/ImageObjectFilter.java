@@ -124,7 +124,7 @@ public class ImageObjectFilter
    */
   @Override
   public String globalInfo() {
-    return "Uses the specified object finder to locate objects and then applies the object filter to the located objects.";
+    return "Uses the specified object finder to locate objects and then applies the object filter to the located objects (modifies the report).";
   }
 
   /**
