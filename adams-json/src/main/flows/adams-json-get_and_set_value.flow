@@ -1,10 +1,10 @@
 # Project: adams
-# Date: 2019-10-08 15:53:21
+# Date: 2019-10-08 16:29:22
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-json
 #
-adams.flow.control.Flow -annotation "Gets and sets a value specified by a path." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+adams.flow.control.Flow -annotation "Gets and sets a value specified by a path.\\nFor more information on JsonPath:\\nhttps://github.com/json-path/JsonPath" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.standalone.CallableActors
   adams.flow.sink.Display -name Values -short-title true -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.data.io.output.NullWriter
   adams.flow.sink.JsonDisplay -name Input -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -preview true -expand true -sort-keys true
