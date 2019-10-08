@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonPathExpression.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.base;
 
@@ -26,7 +26,6 @@ import com.jayway.jsonpath.JsonPath;
  * Encapsulates a JSON Path expression.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonPathExpression
   extends AbstractBaseString
@@ -82,6 +81,22 @@ public class JsonPathExpression
    */
   public boolean isSimpleKey() {
     return !getValue().startsWith("$");
+  }
+
+  /**
+   * Returns whether the path expression is an indefinite one, i.e., it will
+   * return a list rather than a single item.
+   * Indefinite if:
+   * <ul>
+   *   <li>.. - a deep scan operator</li>
+   *   <li>?(expression) - an expression</li>
+   *   <li>[number, number (, number)] - multiple array indexes</li>
+   * <ul>
+   *
+   * @return		true if indefinite
+   */
+  public boolean isIndefinite() {
+    return getValue().matches(".*(\\.\\.|\\?\\(|\\[[0-9]+,[0-9]+).*");
   }
   
   /**
