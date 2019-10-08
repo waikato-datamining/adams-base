@@ -129,7 +129,7 @@ public class JsonPathExpression
    * @return		the URL, null if not available
    */
   public String getHelpURL() {
-    return "http://code.google.com/p/json-path/";
+    return "https://github.com/json-path/JsonPath";
   }
   
   /**
