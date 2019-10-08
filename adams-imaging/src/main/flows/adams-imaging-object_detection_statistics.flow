@@ -1,0 +1,364 @@
+# Project: adams
+# Date: 2019-10-09 09:14:50
+# User: habdelqa
+# Charset: UTF-8
+# Modules: adams-cntk,adams-compress,adams-core,adams-event,adams-imaging,adams-imaging-boofcv,adams-json,adams-latex,adams-math,adams-meta,adams-ml,adams-net,adams-pdf,adams-python,adams-random,adams-rats-core,adams-rats-net,adams-rats-rest,adams-rats-webservice,adams-rest,adams-security,adams-spreadsheet,adams-tensorflow,adams-terminal,adams-visualstats,adams-webservice,adams-webservice-core,adams-xml
+#
+adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.control.Trigger -name "parse locations"
+   adams.flow.source.StorageValue -storage-name @{csv_storage_name} -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.transformer.SpreadSheetVariableRowIterator -lenient true
+   adams.flow.control.Trigger -name "Get x"
+    adams.flow.source.Variable -var-name x0 -conversion adams.data.conversion.StringToDouble
+    adams.flow.transformer.MathExpression -round-output true
+    adams.flow.transformer.SetVariable -var-name x
+   adams.flow.control.Trigger -name "Get y"
+    adams.flow.source.Variable -var-name y0 -conversion adams.data.conversion.StringToDouble
+    adams.flow.transformer.MathExpression -round-output true
+    adams.flow.transformer.SetVariable -var-name y
+   adams.flow.control.Trigger -name "Get w"
+    adams.flow.source.Variable -var-name x1 -conversion adams.data.conversion.StringToDouble
+    adams.flow.transformer.MathExpression -round-output true
+    adams.flow.transformer.MathExpression -name "MathExpression (2)" -expression X-@{x}
+    adams.flow.transformer.SetVariable -var-name w
+   adams.flow.control.Trigger -name "Get h"
+    adams.flow.source.Variable -var-name y1 -conversion adams.data.conversion.StringToDouble
+    adams.flow.transformer.MathExpression -round-output true
+    adams.flow.transformer.MathExpression -name "MathExpression (2)" -expression X-@{y}
+    adams.flow.transformer.SetVariable -var-name h
+   adams.flow.control.Trigger -name "Get label"
+    adams.flow.source.Variable -var-name label_str -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.SetVariable -var-name label
+   adams.flow.transformer.IncVariable -var-name count
+   adams.flow.transformer.SetVariable -name x -var-name field_x -var-value Object.@{count}.x[N] -expand-value true
+   adams.flow.transformer.SetVariable -name y -var-name field_y -var-value Object.@{count}.y[N] -expand-value true
+   adams.flow.transformer.SetVariable -name w -var-name field_w -var-value Object.@{count}.width[N] -expand-value true
+   adams.flow.transformer.SetVariable -name h -var-name field_h -var-value Object.@{count}.height[N] -expand-value true
+   adams.flow.transformer.SetVariable -name label -var-name field_type -var-value Object.@{count}.type[S] -expand-value true
+   adams.flow.control.Trigger -name "append report"
+    adams.flow.source.StorageValue -storage-name @{report_storage_name} -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.SetReportValue -name x -field @{field_x} -value @{x}
+    adams.flow.transformer.SetReportValue -name y -field @{field_y} -value @{y}
+    adams.flow.transformer.SetReportValue -name w -field @{field_w} -value @{w}
+    adams.flow.transformer.SetReportValue -name h -field @{field_h} -value @{h}
+    adams.flow.transformer.SetReportValue -name type -field @{field_type} -value @{label}
+    adams.flow.transformer.SetStorageValue -storage-name @{report_storage_name}
+  adams.flow.control.Sequence -name "save and display stats"
+   adams.flow.transformer.SetVariable -var-name stats_output_file -var-value @{output_dir}/stats_@{min_score}.csv -expand-value true
+   adams.flow.control.Tee -name save
+    adams.flow.sink.SpreadSheetFileWriter -output @{stats_output_file} -writer adams.data.io.output.CsvSpreadSheetWriter
+   adams.flow.sink.SpreadSheetDisplay -name stats -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter
+  adams.flow.control.Sequence -name "save and display confmatrix"
+   adams.flow.control.Trigger -name "output file"
+    adams.flow.source.Variable -var-name entry -conversion adams.data.conversion.StringToValidFileName
+    adams.flow.transformer.StringInsert -after true -value _@{min_score}.csv -variable true
+    adams.flow.transformer.PrependDir -prefix @{output_dir}
+    adams.flow.transformer.SetVariable -var-name output_file
+   adams.flow.control.Tee -name save
+    adams.flow.sink.SpreadSheetFileWriter -output @{output_file} -writer adams.data.io.output.CsvSpreadSheetWriter
+   adams.flow.sink.DisplayPanelManager -display-type adams.flow.core.displaytype.Default -width 740 -x -3 -provider "adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer \"adams.gui.core.spreadsheettable.ConfusionMatrixCellRenderingCustomizer -value-based-background true -background-color-generator \\\"adams.gui.visualization.core.BiColorGenerator -first-color #ffffff -second-color #ff0000 -alpha 128\\\"\" -writer adams.data.io.output.NullWriter" -entry-name-variable entry -allow-search true
+ adams.flow.standalone.SetVariable -var-name restore_file -var-value @{flow_filename_long}.props -expand-value true
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name framework -display \"Framework used\" -help \"framework used for train/test\" -type COMMA_SEPARATED_LIST_FIXED -default-value TensorFlow,Detectron" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name annotations_dir -display \"Directory with Annotations Report Files\" -help \"top level directory of annotations report files\" -type DIRECTORY_ABSOLUTE -default-value ." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name test_dir -display \"Test Directory with Results CSV Files\" -type DIRECTORY_ABSOLUTE -default-value ." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name output_dir -display \"Output Directory \" -help \"directroy to store output statistics\" -type DIRECTORY_ABSOLUTE -default-value ." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labels -display \"Comma seperated labels to include\" -default-value ." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name min_score -display \"Min Score\" -help \"value for min score to consider for predicted objects\" -type DOUBLE -default-value 0" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name min_overlap_removal -display \"Min Overlap Removal\" -help \"minimum perc of overlapping objects to remove (0-1)\" -type DOUBLE -default-value 0.9" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name min_overlap -display \"Min Overlap of Objects\" -help \"minimum perc of overlapping objects to consider same (0-1)\" -type DOUBLE -default-value 0.9" -output-type MAP -restoration-enabled true -restoration-file @{restore_file}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name "create output dir"
+  adams.flow.source.Variable -var-name output_dir -conversion adams.data.conversion.StringToString
+  adams.flow.transformer.MakeDir
+ adams.flow.control.Trigger -name "load labels"
+  adams.flow.source.Variable -var-name labels -conversion adams.data.conversion.StringToString
+  adams.flow.transformer.StringSplit -expression ,
+  adams.flow.transformer.SetStorageValue -storage-name classes
+  adams.flow.transformer.SetVariable -name "init stats cols" -var-name stats_columns -var-value image,actual_num,predicted_num,overlap_num,fp_num,fn_num,overlap_perc,matching_num,matching_perc,accuracy(%) -expand-value true
+  adams.flow.control.Tee -name "iterate classes"
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.transformer.SetVariable -var-name class
+   adams.flow.transformer.SetVariable -name "append stats cols" -var-name stats_columns -var-value ,@{class}_overlap_num,@{class}_matching_num,@{class}_matching_perc -update-type APPEND -expand-value true
+ adams.flow.control.Trigger -name "Iterate Annotations report files"
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{annotations_dir} -regexp .*.report -sorting SORT_BY_NAME"
+  adams.flow.control.Tee -name "Image name"
+   adams.flow.transformer.BaseName -remove-extensions true
+   adams.flow.transformer.StringReplace -find "\\\\b \\\\b" -replace _ -type ALL
+   adams.flow.transformer.SetVariable -var-name image
+  adams.flow.control.Tee -name "Unfiltered report"
+   adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
+   adams.flow.transformer.SetStorageValue -storage-name temp_report
+  adams.flow.control.Trigger -name "Init filtered report"
+   adams.flow.source.NewReport
+   adams.flow.transformer.SetStorageValue -storage-name @{image}
+  adams.flow.control.Trigger -name "Load annotations"
+   adams.flow.source.StorageValue -storage-name classes -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.transformer.SetVariable -var-name class
+   adams.flow.control.Trigger -name "Filter report"
+    adams.flow.source.StorageValue -storage-name temp_report -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.Copy
+    adams.flow.transformer.ImageObjectFilter -finder "adams.data.objectfinder.ByMetaDataStringValue -key type -regexp @{class}" -filter adams.data.objectfilter.PassThrough
+    adams.flow.transformer.SetStorageValue -storage-name filtered_report
+   adams.flow.control.Trigger -name "Append report"
+    adams.flow.source.StorageValue -storage-name @{image} -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.ImageObjectIndexOffset -offset 300
+    adams.flow.transformer.MergeReport -type STORAGE -storage filtered_report -merge MERGE_OTHER_WITH_CURRENT
+    adams.flow.transformer.SetStorageValue -storage-name @{image}
+ adams.flow.control.Trigger -name "Iterate test csv files"
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{test_dir} -regexp .*rois.csv -sorting SORT_BY_NAME"
+  adams.flow.control.Tee -name "Load predictions"
+   adams.flow.transformer.SetVariable -var-name count -var-value 0
+   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+   adams.flow.control.Tee -name "Image name"
+    adams.flow.transformer.SpreadSheetGetCell -row 2
+    adams.flow.transformer.BaseName -remove-extensions true
+    adams.flow.transformer.StringReplace -find "\\\\b \\\\b" -replace _ -type ALL
+    adams.flow.transformer.StringInsert -name "StringInsert (2)" -after true -value _csv
+    adams.flow.transformer.SetVariable -var-name csv_storage_name
+    adams.flow.transformer.StringInsert -after true -value _report
+    adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name report_storage_name
+   adams.flow.control.Trigger -name "Init report"
+    adams.flow.source.NewReport
+    adams.flow.transformer.SetStorageValue -storage-name @{report_storage_name}
+   adams.flow.control.Tee -name "Generate report"
+    adams.flow.transformer.SpreadSheetSubset -col 2-5,7-8
+    adams.flow.transformer.SpreadSheetRowFilter -finder "adams.data.spreadsheet.rowfinder.ByNumericValue -att-index score -minimum @{min_score} -minimum-included true -maximum 1.0 -maximum-included true"
+    adams.flow.transformer.SetStorageValue -storage-name @{csv_storage_name}
+    adams.flow.transformer.CallableTransformer -callable "parse locations"
+ adams.flow.control.Trigger -name "init stats sheet"
+  adams.flow.source.NewSpreadSheet -columns @{stats_columns} -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
+  adams.flow.transformer.SetStorageValue -storage-name stats
+ adams.flow.control.Trigger -name "init confusion matrix sheet"
+  adams.flow.source.NewSpreadSheet -columns File,Actual,Predicted,Probability -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
+  adams.flow.transformer.SetStorageValue -storage-name confmatrix
+ adams.flow.control.Trigger -name "Compare actual and predict"
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{test_dir} -regexp .*rois.csv -sorting SORT_BY_NAME"
+  adams.flow.control.Tee -name "Image name"
+   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+   adams.flow.transformer.SpreadSheetGetCell -row 2
+   adams.flow.transformer.BaseName -remove-extensions true
+   adams.flow.transformer.StringReplace -find "\\\\b \\\\b" -replace _ -type ALL
+   adams.flow.transformer.SetVariable -var-name image
+   adams.flow.transformer.StringInsert -after true -value _csv_report
+   adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name report_storage_name
+  adams.flow.control.Trigger -name "remove overlaps"
+   adams.flow.source.StorageValue -storage-name @{report_storage_name} -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.transformer.DeleteOverlappingImageObjects -finder adams.data.objectfinder.AllFinder -min-overlap-ratio @{min_overlap_removal}
+   adams.flow.transformer.SetStorageValue -storage-name @{report_storage_name}
+  adams.flow.control.Tee -name analyze
+   adams.flow.control.Trigger -name "add row in stats"
+    adams.flow.source.StorageValue -storage-name stats -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.SpreadSheetInsertRow -no-copy true -after true
+    adams.flow.transformer.SpreadSheetSetCell -name image -no-copy true -row last -col image -finder adams.data.spreadsheet.cellfinder.CellRange -value @{image} -force-string true
+    adams.flow.transformer.SetStorageValue -storage-name stats
+   adams.flow.control.Trigger -name actual_num
+    adams.flow.source.StorageValue -storage-name @{image} -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.GetImageObjects -output-array true -finder adams.data.objectfinder.AllFinder
+    adams.flow.transformer.ArrayLength
+    adams.flow.transformer.SetVariable -var-name actual_num
+   adams.flow.control.Trigger -name predicted_num
+    adams.flow.source.StorageValue -storage-name @{report_storage_name} -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.GetImageObjects -output-array true -finder adams.data.objectfinder.AllFinder
+    adams.flow.transformer.ArrayLength
+    adams.flow.transformer.SetVariable -name set -var-name predicted_num
+   adams.flow.control.Trigger -name "add actual and predicted num to stats"
+    adams.flow.source.StorageValue -storage-name stats -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.SpreadSheetSetCell -name actual_num -no-copy true -row last -col actual_num -finder adams.data.spreadsheet.cellfinder.CellRange -value @{actual_num}
+    adams.flow.transformer.SpreadSheetSetCell -name predicted_num -no-copy true -row last -col predicted_num -finder adams.data.spreadsheet.cellfinder.CellRange -value @{predicted_num}
+    adams.flow.transformer.SetStorageValue -storage-name stats
+   adams.flow.control.Trigger -name overlap
+    adams.flow.standalone.SetVariable -name "reset overlap_num" -var-name overlap_num -var-value 0
+    adams.flow.source.StorageValue -storage-name @{report_storage_name} -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.ImageObjectOverlap -storage-name @{image} -finder adams.data.objectfinder.AllFinder -min-overlap-ratio @{min_overlap} -label-key type
+    adams.flow.transformer.Convert -conversion adams.data.conversion.ReportToSpreadSheet
+    adams.flow.transformer.SpreadSheetRowFilter -finder "adams.data.spreadsheet.rowfinder.ByValue -att-index 1 -reg-exp .*overlap_count"
+    adams.flow.transformer.Convert -name "Convert (2)" -conversion "adams.data.conversion.SpreadSheetStringColumnToDouble -no-copy true -column last"
+    adams.flow.control.ConditionalSubProcess -name "any rows?" -condition adams.flow.condition.bool.HasRows
+     adams.flow.transformer.SpreadSheetRowFilter -name "SpreadSheetRowFilter (2)" -finder "adams.data.spreadsheet.rowfinder.ByNumericValue -minimum 1.0 -minimum-included true -maximum NaN"
+    adams.flow.control.Tee -name num
+     adams.flow.transformer.SpreadSheetInfo
+     adams.flow.transformer.SetVariable -var-name overlap_num
+   adams.flow.control.Trigger -name "FP num"
+    adams.flow.standalone.SetVariable -name "reset fp_num" -var-name fp_num -var-value 0
+    adams.flow.source.MathExpression -expression @{predicted_num}-@{overlap_num}
+    adams.flow.transformer.Convert -conversion adams.data.conversion.DoubleToInt
+    adams.flow.transformer.SetVariable -var-name fp_num
+   adams.flow.control.ConditionalTrigger -name "overlap perc" -condition "adams.flow.condition.bool.Expression -expression \"@{overlap_num} > 0\""
+    adams.flow.standalone.SetVariable -name "reset overlap_perc" -var-name overlap_perc -var-value 0
+    adams.flow.source.MathExpression -expression "@{overlap_num} / (@{actual_num}+@{fp_num})"
+    adams.flow.transformer.SetVariable -var-name overlap_perc
+   adams.flow.control.Trigger -name "add stats"
+    adams.flow.source.StorageValue -storage-name stats -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.SpreadSheetSetCell -name overlap_num -no-copy true -row last -col overlap_num -finder adams.data.spreadsheet.cellfinder.CellRange -value @{overlap_num}
+    adams.flow.transformer.SpreadSheetSetCell -name fp_num -no-copy true -row last -col fp_num -finder adams.data.spreadsheet.cellfinder.CellRange -value @{fp_num}
+    adams.flow.transformer.SpreadSheetSetCell -name overlap_perc -no-copy true -row last -col overlap_perc -finder adams.data.spreadsheet.cellfinder.CellRange -value @{overlap_perc}
+    adams.flow.transformer.SetStorageValue -storage-name stats
+   adams.flow.control.Trigger -name matching
+    adams.flow.standalone.SetVariable -name matching_num -var-name matching_num -var-value 0
+    adams.flow.source.StorageValue -storage-name @{report_storage_name} -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.ImageObjectOverlap -storage-name @{image} -finder adams.data.objectfinder.AllFinder -min-overlap-ratio @{min_overlap} -label-key type
+    adams.flow.control.Tee -name "count matches"
+     adams.flow.transformer.GetImageObjects -finder adams.data.objectfinder.AllFinder
+     adams.flow.transformer.GetImageObjectMetaData
+     adams.flow.control.Tee -name overlap_count
+      adams.flow.transformer.GetMapValue -key overlap_count
+      adams.flow.transformer.SetVariable -var-name overlap_count
+     adams.flow.transformer.SetVariable -name "reset match" -var-name overlap_label_highest_match -var-value false
+     adams.flow.control.Tee -name overlap_label_highest_match
+      adams.flow.transformer.GetMapValue -key overlap_label_highest_match
+      adams.flow.transformer.SetVariable -var-name overlap_label_highest_match
+     adams.flow.control.ConditionalTee -name "inc matching_num" -condition "adams.flow.condition.bool.Expression -expression \"(@{overlap_count} > 0) and (@{overlap_label_highest_match} = true)\""
+      adams.flow.transformer.IncVariable -var-name matching_num
+   adams.flow.control.Trigger -name "false neg"
+    adams.flow.source.MathExpression -expression @{actual_num}-@{matching_num}
+    adams.flow.transformer.Convert -conversion adams.data.conversion.DoubleToInt
+    adams.flow.transformer.SetVariable -var-name fn_num
+   adams.flow.control.ConditionalTrigger -name percentage -condition "adams.flow.condition.bool.Expression -expression \"@{overlap_num} > 0\""
+    adams.flow.standalone.SetVariable -name matching_perc -var-name matching_perc -var-value 0
+    adams.flow.source.MathExpression -expression "@{matching_num} / @{overlap_num}"
+    adams.flow.transformer.SetVariable -var-name matching_perc
+   adams.flow.control.ConditionalTrigger -name accuracy -condition "adams.flow.condition.bool.Expression -expression \"@{overlap_num} > 0\""
+    adams.flow.standalone.SetVariable -name accuracy -var-name accuracy -var-value 0
+    adams.flow.source.MathExpression -expression "(@{matching_num} / (@{matching_num}+@{fp_num}+@{fn_num}))*100"
+    adams.flow.transformer.SetVariable -var-name accuracy
+   adams.flow.control.Trigger -name "add stats (2)"
+    adams.flow.source.StorageValue -storage-name stats -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.SpreadSheetSetCell -name fn_num -no-copy true -row last -col fn_num -finder adams.data.spreadsheet.cellfinder.CellRange -value @{fn_num}
+    adams.flow.transformer.SpreadSheetSetCell -name matching_num -no-copy true -row last -col matching_num -finder adams.data.spreadsheet.cellfinder.CellRange -value @{matching_num}
+    adams.flow.transformer.SpreadSheetSetCell -name matching_perc -no-copy true -row last -col matching_perc -finder adams.data.spreadsheet.cellfinder.CellRange -value @{matching_perc}
+    adams.flow.transformer.SpreadSheetSetCell -name accuracy -no-copy true -row last -col accuracy(%) -finder adams.data.spreadsheet.cellfinder.CellRange -value @{accuracy}
+    adams.flow.transformer.SetStorageValue -storage-name stats
+   adams.flow.control.Trigger -name "matching per label"
+    adams.flow.source.StorageValue -storage-name classes -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.ArrayToSequence
+    adams.flow.transformer.SetVariable -var-name class
+    adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name class_regexp -var-value ^@{class}$ -expand-value true
+    adams.flow.control.Trigger -name matching
+     adams.flow.standalone.SetVariable -name matching_num -var-name matching_num -var-value 0
+     adams.flow.standalone.SetVariable -name "actual num col" -var-name act_num_col -var-value @{class}_overlap_num -expand-value true
+     adams.flow.standalone.SetVariable -name "matching num col" -var-name num_col -var-value @{class}_matching_num -expand-value true
+     adams.flow.standalone.SetVariable -name "perc col" -var-name perc_col -var-value @{class}_matching_perc -expand-value true
+     adams.flow.source.StorageValue -storage-name @{report_storage_name} -conversion adams.data.conversion.UnknownToUnknown
+     adams.flow.transformer.ImageObjectOverlap -storage-name @{image} -finder "adams.data.objectfinder.ByMetaDataStringValue -key type -regexp @{class_regexp}" -min-overlap-ratio @{min_overlap} -label-key type
+     adams.flow.control.Tee -name "count matches"
+      adams.flow.transformer.GetImageObjects -output-array true -finder adams.data.objectfinder.AllFinder
+      adams.flow.control.Tee -name "# objects"
+       adams.flow.transformer.ArrayLength
+       adams.flow.transformer.SetVariable -var-name num_objects
+      adams.flow.transformer.ArrayToSequence
+      adams.flow.transformer.GetImageObjectMetaData
+      adams.flow.control.Tee -name overlap_count
+       adams.flow.transformer.GetMapValue -key overlap_count
+       adams.flow.transformer.SetVariable -var-name overlap_count
+      adams.flow.transformer.SetVariable -name "reset match" -var-name overlap_label_highest_match -var-value false
+      adams.flow.control.Tee -name overlap_label_highest_match
+       adams.flow.transformer.GetMapValue -key overlap_label_highest_match
+       adams.flow.transformer.SetVariable -var-name overlap_label_highest_match
+      adams.flow.control.ConditionalTee -name "inc matching_num" -condition "adams.flow.condition.bool.Expression -expression \"(@{overlap_count} > 0) and (@{overlap_label_highest_match} = true)\""
+       adams.flow.transformer.IncVariable -var-name matching_num
+   adams.flow.control.ConditionalTrigger -name "percentage (2)" -condition "adams.flow.condition.bool.Expression -expression \"@{num_objects} > 0\""
+    adams.flow.standalone.SetVariable -name matching_perc -var-name matching_perc -var-value 0
+    adams.flow.source.MathExpression -expression "@{matching_num} / @{num_objects}"
+    adams.flow.transformer.SetVariable -var-name matching_perc
+   adams.flow.control.Trigger -name "add stats (3)"
+    adams.flow.source.StorageValue -storage-name stats -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.SpreadSheetSetCell -name actual_num -no-copy true -row last -col @{act_num_col} -finder adams.data.spreadsheet.cellfinder.CellRange -value @{num_objects}
+    adams.flow.transformer.SpreadSheetSetCell -name matching_num -no-copy true -row last -col @{num_col} -finder adams.data.spreadsheet.cellfinder.CellRange -value @{matching_num}
+    adams.flow.transformer.SpreadSheetSetCell -name matching_perc -no-copy true -row last -col @{perc_col} -finder adams.data.spreadsheet.cellfinder.CellRange -value @{matching_perc}
+    adams.flow.transformer.SetStorageValue -storage-name stats
+   adams.flow.control.Trigger -name "confusion matrix"
+    adams.flow.source.StorageValue -storage-name @{report_storage_name} -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.ImageObjectOverlap -storage-name @{image} -finder adams.data.objectfinder.AllFinder -min-overlap-ratio @{min_overlap} -label-key type -additional-object true
+    adams.flow.transformer.GetImageObjects -finder adams.data.objectfinder.AllFinder
+    adams.flow.transformer.GetImageObjectMetaData
+    adams.flow.transformer.SetVariable -name "reset actual" -var-name actual -var-value ???
+    adams.flow.control.Tee -name "additional object?"
+     adams.flow.transformer.GetMapValue -key additional_object
+     adams.flow.transformer.SetVariable -var-name additional
+    adams.flow.control.ConditionalTee -name actual -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.Expression -expression (@{additional})\""
+     adams.flow.transformer.GetMapValue -key type
+     adams.flow.transformer.SetVariable -var-name actual
+    adams.flow.transformer.SetVariable -name "reset predicted" -var-name predicted -var-value ???
+    adams.flow.control.ConditionalTee -name predicted -condition "adams.flow.condition.bool.Expression -expression (@{additional})"
+     adams.flow.transformer.GetMapValue -key type
+     adams.flow.transformer.SetVariable -var-name predicted
+    adams.flow.control.ConditionalTee -name "predicted (2)" -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.Expression -expression (@{additional})\""
+     adams.flow.transformer.GetMapValue -key overlap_label_highest
+     adams.flow.transformer.SetVariable -var-name predicted
+    adams.flow.transformer.SetVariable -name "reset overlap" -var-name overlap -var-value 0
+    adams.flow.control.Tee -name overlap
+     adams.flow.transformer.GetMapValue -key overlap_highest
+     adams.flow.transformer.SetVariable -var-name overlap
+    adams.flow.control.Trigger -name "add prediction to confusion matrix"
+     adams.flow.source.StorageValue -storage-name confmatrix -conversion adams.data.conversion.UnknownToUnknown
+     adams.flow.transformer.SpreadSheetInsertRow -no-copy true -after true
+     adams.flow.transformer.SpreadSheetSetCell -name file -no-copy true -row last -col File -finder adams.data.spreadsheet.cellfinder.CellRange -value @{name} -force-string true
+     adams.flow.transformer.SpreadSheetSetCell -name actual -no-copy true -row last -col Actual -finder adams.data.spreadsheet.cellfinder.CellRange -value @{actual} -force-string true
+     adams.flow.transformer.SpreadSheetSetCell -name predicted -no-copy true -row last -col Predicted -finder adams.data.spreadsheet.cellfinder.CellRange -value @{predicted} -force-string true
+     adams.flow.transformer.SpreadSheetSetCell -name probability -no-copy true -row last -col Probability -finder adams.data.spreadsheet.cellfinder.CellRange -value @{overlap}
+     adams.flow.transformer.SetStorageValue -storage-name confmatrix
+    adams.flow.transformer.DeleteStorageValue -storage-name @{report_storage_name}
+ adams.flow.control.Trigger -name Total
+  adams.flow.source.StorageValue -storage-name stats -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.control.Tee -name "fp num total"
+   adams.flow.transformer.SpreadSheetColumnStatistic -column fp_num -statistic adams.data.spreadsheet.colstatistic.Sum
+   adams.flow.transformer.SpreadSheetGetCell -row last -col last
+   adams.flow.transformer.Convert -conversion adams.data.conversion.StringToDouble
+   adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.DoubleToInt
+   adams.flow.transformer.SetVariable -var-name fp_num_total
+  adams.flow.control.Tee -name "fn num total"
+   adams.flow.transformer.SpreadSheetColumnStatistic -column fn_num -statistic adams.data.spreadsheet.colstatistic.Sum
+   adams.flow.transformer.SpreadSheetGetCell -row last -col last
+   adams.flow.transformer.Convert -conversion adams.data.conversion.StringToDouble
+   adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.DoubleToInt
+   adams.flow.transformer.SetVariable -var-name fn_num_total
+  adams.flow.control.Tee -name "matching num total"
+   adams.flow.transformer.SpreadSheetColumnStatistic -column matching_num -statistic adams.data.spreadsheet.colstatistic.Sum
+   adams.flow.transformer.SpreadSheetGetCell -row last -col last
+   adams.flow.transformer.Convert -conversion adams.data.conversion.StringToDouble
+   adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.DoubleToInt
+   adams.flow.transformer.SetVariable -var-name matching_num_total
+  adams.flow.control.Trigger -name "Total accuracy"
+   adams.flow.source.MathExpression -expression "(@{matching_num_total} / (@{matching_num_total}+@{fp_num_total}+@{fn_num_total}))*100"
+   adams.flow.transformer.SetVariable -var-name accuracy_total
+  adams.flow.transformer.SpreadSheetInsertRow -name "SpreadSheetInsertRow (2)" -after true
+  adams.flow.transformer.SpreadSheetInsertRow -after true
+  adams.flow.transformer.SpreadSheetSetCell -name image -no-copy true -row last -col image -finder adams.data.spreadsheet.cellfinder.SingleCell -value TOTAL
+  adams.flow.transformer.SpreadSheetSetCell -name matching_num_total -no-copy true -row last -col matching_num -finder adams.data.spreadsheet.cellfinder.CellRange -value @{matching_num_total}
+  adams.flow.transformer.SpreadSheetSetCell -name fp_num_total -no-copy true -row last -col fp_num -finder adams.data.spreadsheet.cellfinder.CellRange -value @{fp_num_total}
+  adams.flow.transformer.SpreadSheetSetCell -name fn_num_total -no-copy true -row last -col fn_num -finder adams.data.spreadsheet.cellfinder.CellRange -value @{fn_num_total}
+  adams.flow.transformer.SpreadSheetSetCell -name accuracy_total -no-copy true -row last -col accuracy(%) -finder adams.data.spreadsheet.cellfinder.CellRange -value @{accuracy_total}
+  adams.flow.transformer.SetStorageValue -storage-name stats
+ adams.flow.control.Trigger -name "display stats"
+  adams.flow.source.StorageValue -storage-name stats -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.sink.CallableSink -callable "save and display stats"
+ adams.flow.control.Trigger -name "confusion matrix"
+  adams.flow.source.StorageValue -storage-name confmatrix -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.control.Tee -name overall
+   adams.flow.transformer.SetVariable -var-name entry -var-value overall
+   adams.flow.transformer.ConfusionMatrix -actual-column Actual -predicted-column Predicted
+   adams.flow.sink.CallableSink -callable "save and display confmatrix"
+  adams.flow.control.Tee -name "overall (row perc)"
+   adams.flow.transformer.SetVariable -var-name entry -var-value "overall percentage"
+   adams.flow.transformer.ConfusionMatrix -actual-column Actual -predicted-column Predicted -matrix-values PERCENTAGES
+   adams.flow.control.ConditionalTee -name "better accuracy?" -condition "adams.flow.condition.bool.Expression -expression \"@{accuracy_total} > @{best_accuracy}\""
+    adams.flow.transformer.SetVariable -var-name best_accuracy -var-value @{accuracy_total}
+    adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name best_min_score -var-value @{min_score}
+   adams.flow.sink.CallableSink -callable "save and display confmatrix"
+  adams.flow.control.Tee -name "per file"
+   adams.flow.transformer.SpreadSheetSubsetByValue
+   adams.flow.control.Tee -name file
+    adams.flow.transformer.SpreadSheetGetCell
+    adams.flow.transformer.SetVariable -var-name entry
+   adams.flow.transformer.ConfusionMatrix -actual-column Actual -predicted-column Predicted
+   adams.flow.sink.CallableSink -callable "save and display confmatrix"
+ adams.flow.control.Trigger -name "Clean up storage"
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{annotations_dir} -regexp .*.report -sorting SORT_BY_NAME"
+  adams.flow.control.Tee -name "Image name"
+   adams.flow.transformer.BaseName -remove-extensions true
+   adams.flow.transformer.StringReplace -find "\\\\b \\\\b" -replace _ -type ALL
+   adams.flow.transformer.SetVariable -var-name image
+   adams.flow.transformer.StringInsert -after true -value _csv
+   adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name csv_storage_name
+   adams.flow.transformer.StringInsert -name "StringInsert (2)" -after true -value _report
+   adams.flow.transformer.SetVariable -name "SetVariable (3)" -var-name report_storage_name
+  adams.flow.transformer.DeleteStorageValue -storage-name @{image}
+  adams.flow.transformer.DeleteStorageValue -name "DeleteStorageValue (2)" -storage-name @{csv_storage_name}
+  adams.flow.transformer.DeleteStorageValue -name "DeleteStorageValue (3)" -storage-name @{report_storage_name}
