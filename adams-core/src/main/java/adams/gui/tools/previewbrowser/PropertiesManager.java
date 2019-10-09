@@ -15,11 +15,12 @@
 
 /*
  * PropertiesManager.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
@@ -29,6 +30,8 @@ import adams.env.PreviewBrowserPanelDefinition;
 import adams.gui.core.ConsolePanel;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Manages the properties.
@@ -52,6 +55,9 @@ public class PropertiesManager {
   /** the properties. */
   protected static Properties m_Properties;
 
+  /** the blacklisted handlers. */
+  protected static Set<String> m_Blacklisted = new HashSet<>();
+
   /**
    * Returns the preferred content handler.
    *
@@ -63,6 +69,7 @@ public class PropertiesManager {
     Properties			props;
     String			ext;
     String			handler;
+    MessageCollection		errors;
 
     result = null;
 
@@ -74,10 +81,16 @@ public class PropertiesManager {
     props = getProperties();
     if (props.hasKey(PREFIX_PREFERRED_CONTENT_HANDLER + ext)) {
       handler = props.getProperty(PREFIX_PREFERRED_CONTENT_HANDLER + ext);
+      if (m_Blacklisted.contains(handler))
+        return null;
       try {
-	result = (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, handler);
+        errors = new MessageCollection();
+	result = (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, handler, null, errors, true);
+        if (!errors.isEmpty())
+	  m_Blacklisted.add(handler);
       }
       catch (Exception e) {
+        m_Blacklisted.add(handler);
 	ConsolePanel.getSingleton().append(
 	  LoggingLevel.SEVERE,
 	  "Failed to instantiate handler: " + handler,
@@ -133,10 +146,13 @@ public class PropertiesManager {
     props = getProperties();
     if (props.hasKey(PREFIX_PREFERRED_ARCHIVE_HANDLER + ext)) {
       handler = props.getProperty(PREFIX_PREFERRED_ARCHIVE_HANDLER + ext);
+      if (m_Blacklisted.contains(handler))
+        return null;
       try {
 	result = (AbstractArchiveHandler) Class.forName(handler).newInstance();
       }
       catch (Exception e) {
+        m_Blacklisted.add(handler);
 	ConsolePanel.getSingleton().append(
 	  LoggingLevel.SEVERE,
 	  "Failed to instantiate handler: " + handler,
@@ -197,14 +213,21 @@ public class PropertiesManager {
   public static AbstractContentHandler getCustomContentHandler(AbstractContentHandler handler) {
     AbstractContentHandler	result;
     String 			custom;
+    MessageCollection		errors;
 
     result = handler;
     custom = getProperties().getProperty(PREFIX_CUSTOM_CONTENT_HANDLER + handler.getClass().getName());
     if (custom != null) {
+      if (m_Blacklisted.contains(custom))
+        return result;
       try {
-        result = (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, custom);
+        errors = new MessageCollection();
+        result = (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, custom, null, errors, true);
+        if (!errors.isEmpty())
+	  m_Blacklisted.add(custom);
       }
       catch (Exception e) {
+        m_Blacklisted.add(custom);
 	ConsolePanel.getSingleton().append(
 	  LoggingLevel.SEVERE,
 	  "Failed to instantiate custom setup of content handler " + handler.getClass().getName() + ": " + custom, e);
