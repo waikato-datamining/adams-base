@@ -15,16 +15,15 @@
 
 /*
  * AbstractSpreadSheetHandler.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
-import adams.gui.core.SpreadSheetTable;
+import adams.gui.dialog.SpreadSheetPanel;
 
 import java.awt.BorderLayout;
 import java.io.File;
@@ -71,7 +70,7 @@ public abstract class AbstractSpreadSheetHandler
   protected PreviewPanel createPreview(File file) {
     BasePanel		result;
     BaseTabbedPane	tabbedPane;
-    SpreadSheetTable	table;
+    SpreadSheetPanel 	panel;
     SpreadSheet[]	sheets;
     int			i;
 
@@ -85,23 +84,27 @@ public abstract class AbstractSpreadSheetHandler
       for (i = 0; i < sheets.length; i++) {
 	if (!sheets[i].hasName())
 	  sheets[i].setName(UNNAMED_SHEET_PREFIX + (i+1));
-	table = new SpreadSheetTable(sheets[i]);
-	tabbedPane.addTab(sheets[i].getName(), new BaseScrollPane(table));
+	panel = new SpreadSheetPanel();
+	panel.setSpreadSheet(sheets[i]);
+	panel.setShowSearch(true);
+	tabbedPane.addTab(sheets[i].getName(), panel);
       }
-      table = null;
+      panel = null;
     }
     else if (sheets.length == 1) {
       result = new BasePanel(new BorderLayout());
-      table  = new SpreadSheetTable(sheets[0]);
-      result.add(new BaseScrollPane(table), BorderLayout.CENTER);
+      panel = new SpreadSheetPanel();
+      panel.setSpreadSheet(sheets[0]);
+      panel.setShowSearch(true);
+      result.add(panel, BorderLayout.CENTER);
     }
     else {
       result = new NoDataToPreviewPanel();
-      table  = null;
+      panel = null;
     }
 
-    if (table != null)
-      return new PreviewPanel(result, table);
+    if (panel != null)
+      return new PreviewPanel(result, panel);
     else
       return new PreviewPanel(result);
   }
