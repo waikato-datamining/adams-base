@@ -13,22 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BinaryCrop.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.crop;
+
+import adams.core.Utils;
+import adams.data.image.BufferedImageHelper;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import adams.data.image.BufferedImageHelper;
-import adams.data.statistics.StatUtils;
-
 /**
  <!-- globalinfo-start -->
- * Turns image into binary (ie black and white) image and determines largest (white) rectangle in the middle to crop to.<br>
- * When looking for a black rectangle, check the 'invert' option.
+ * Turns image into binary (ie black and white) image and determines the largest rectangle encompassing a (white) object in the middle to crop to.<br>
+ * When looking for a black object, check the 'invert' option.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -77,8 +77,8 @@ public class BinaryCrop
   public String globalInfo() {
     return 
 	"Turns image into binary (ie black and white) image and determines "
-	+ "largest (white) rectangle in the middle to crop to.\n"
-	+ "When looking for a black rectangle, check the 'invert' option.";
+	+ "the largest rectangle encompassing a (white) object in the middle to crop to.\n"
+	+ "When looking for a black object, check the 'invert' option.";
   }
 
   /**
@@ -167,6 +167,58 @@ public class BinaryCrop
   }
 
   /**
+   * Finds the smallest value that is greater than the specified lower bound.
+   *
+   * @param values	the values to search
+   * @param lowerBound	the lower bound to use
+   * @return		the value, lower bound if failed to locate a value of at greater than lowerBound
+   */
+  protected int min(int[] values, int lowerBound) {
+    int		result;
+    int		i;
+
+    result = -1;
+
+    for (i = 0; i < values.length; i++) {
+      if (values[i] > lowerBound) {
+        if ((result == -1) ||(values[i] < result))
+	  result = values[i];
+      }
+    }
+
+    if (result == -1)
+      result = lowerBound;
+
+    return result;
+  }
+
+  /**
+   * Finds the largest value that is smaller than the specified upper bound.
+   *
+   * @param values	the values to search
+   * @param upperBound	the upper bound to use
+   * @return		the value, defValue if failed to locate a value of smaller than upperBound
+   */
+  protected int max(int[] values, int upperBound) {
+    int		result;
+    int		i;
+
+    result = -1;
+
+    for (i = 0; i < values.length; i++) {
+      if (values[i] < upperBound) {
+        if ((result == -1) || (values[i] > result))
+	  result = values[i];
+      }
+    }
+
+    if (result == -1)
+      result = upperBound;
+
+    return result;
+  }
+
+  /**
    * Performs the actual cropping.
    * 
    * @param img		the image to crop
@@ -217,8 +269,6 @@ public class BinaryCrop
 	  break;
 	}
       }
-      if (isLoggingEnabled())
-	getLogger().fine("top[" + n + "]: " + top[n]);
 
       // from bottom
       bottom[n] = height - 1;
@@ -229,8 +279,6 @@ public class BinaryCrop
 	  break;
 	}
       }
-      if (isLoggingEnabled())
-	getLogger().fine("bottom[" + n + "]: " + bottom[n]);
 
       // from left
       left[n] = 0;
@@ -241,8 +289,6 @@ public class BinaryCrop
 	  break;
 	}
       }
-      if (isLoggingEnabled())
-	getLogger().fine("left[" + n + "]: " + left[n]);
 
       // from right
       right[n] = width - 1;
@@ -253,15 +299,27 @@ public class BinaryCrop
 	  break;
 	}
       }
-      if (isLoggingEnabled())
-	getLogger().fine("right[" + n + "]: " + right[n]);
     }
-    
+
+    if (isLoggingEnabled()) {
+      getLogger().fine("top...: " + Utils.arrayToString(top));
+      getLogger().fine("left..: " + Utils.arrayToString(left));
+      getLogger().fine("bottom: " + Utils.arrayToString(bottom));
+      getLogger().fine("right.: " + Utils.arrayToString(right));
+    }
+
     // determine actual top/left/bottom/right
-    aleft   = StatUtils.max(left);
-    aright  = StatUtils.min(right);
-    atop    = StatUtils.max(top);
-    abottom = StatUtils.min(bottom);
+    aleft   = min(left, 0);
+    aright  = max(right, width - 1);
+    atop    = min(top, 0);
+    abottom = max(bottom, height - 1);
+
+    if (isLoggingEnabled()) {
+      getLogger().fine("-> top...: " + atop);
+      getLogger().fine("-> left..: " + aleft);
+      getLogger().fine("-> bottom: " + abottom);
+      getLogger().fine("-> right.: " + aright);
+    }
 
     m_TopLeft     = new Point(aleft,  atop);
     m_BottomRight = new Point(aright, abottom);
