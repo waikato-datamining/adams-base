@@ -15,7 +15,7 @@
 
 /*
  * AbstractInteractiveTransformerDialog.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -37,13 +37,13 @@ import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
+import java.awt.Point;
 import java.awt.Window;
 
 /**
  * Ancestor for graphical actors that are interactive.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractInteractiveTransformerDialog
   extends AbstractTransformer
@@ -81,6 +81,12 @@ public abstract class AbstractInteractiveTransformerDialog
 
   /** how to perform the stop. */
   protected StopMode m_StopMode;
+
+  /** the last position. */
+  protected transient Point m_LastPosition;
+
+  /** the last dimension. */
+  protected transient Dimension m_LastSize;
 
   /**
    * Adds options to the internal list of options.
@@ -539,6 +545,12 @@ public abstract class AbstractInteractiveTransformerDialog
       result.setJMenuBar(((MenuBarProvider) this).getMenuBar());
     result.setLocation(ActorUtils.determineLocation(gc, new Dimension(width, height), m_X, m_Y));
 
+    // previous location/size?
+    if (m_LastSize != null)
+      result.setSize(m_LastSize);
+    if (m_LastPosition != null)
+      result.setLocation(m_LastPosition);
+
     return result;
   }
 
@@ -657,6 +669,10 @@ public abstract class AbstractInteractiveTransformerDialog
         else {
           result = "User cancelled dialog!";
         }
+      }
+      if (m_Dialog != null) {
+	m_LastPosition = m_Dialog.getLocation();
+	m_LastSize     = m_Dialog.getSize();
       }
     }
     else if (supportsHeadlessInteraction()) {
