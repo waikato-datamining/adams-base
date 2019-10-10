@@ -406,12 +406,41 @@ public class ImageAnnotator
     }
 
     /**
+     * Returns the currently used label.
+     *
+     * @return		the label
+     */
+    public String getCurrentLabel() {
+      return m_CurrentLabel;
+    }
+
+    /**
      * Resets all the labels.
      */
     protected void resetLabels() {
       m_CurrentImage.setReport(m_ReportBackup.getClone());
       m_PanelImage.setCurrentImage(m_CurrentImage, m_PanelImage.getScale());
       updateObjects();
+    }
+
+    /**
+     * Pre-selects the label.
+     *
+     * @param label	the label to use, ignored if null
+     */
+    public void preselectLabel(String label) {
+      int		i;
+
+      if (label == null)
+        return;
+
+      for (i = 0; i < m_Labels.length; i++) {
+        if (m_Labels[i].getValue().equals(label)) {
+          m_ButtonLabels[i].setSelected(true);
+          m_CurrentLabel = label;
+          break;
+	}
+      }
     }
 
     /**
@@ -544,6 +573,9 @@ public class ImageAnnotator
 
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
+
+  /** the last selected label. */
+  protected transient String m_LastLabel;
 
   /**
    * Returns a string describing the object.
@@ -900,8 +932,10 @@ public class ImageAnnotator
     // annotate
     registerWindow(m_Dialog, m_Dialog.getTitle());
     ((AnnotatorPanel) m_Panel).setCurrentImage(cont);
+    ((AnnotatorPanel) m_Panel).preselectLabel(m_LastLabel);
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
+    m_LastLabel = ((AnnotatorPanel) m_Panel).getCurrentLabel();
 
     if (m_Accepted) {
       cont = ((AnnotatorPanel) m_Panel).getCurrentImage();
