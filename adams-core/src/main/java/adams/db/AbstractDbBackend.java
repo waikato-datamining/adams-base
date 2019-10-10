@@ -21,6 +21,7 @@
 package adams.db;
 
 import adams.core.ClassLister;
+import adams.core.NewInstance;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.logging.LoggingLevel;
@@ -41,6 +42,10 @@ public abstract class AbstractDbBackend
   private static final long serialVersionUID = 3589560540375200811L;
 
   public static final String KEY_BACKEND = "Backend";
+
+  public static final String BACKEND_AUTODETECT = "adams.db.autodetect.DbBackend";
+
+  public static final String BACKEND_MYSQL = "adams.db.mysql.DbBackend";
 
   /** the properties with the defaults. */
   protected static Properties m_Properties;
@@ -76,10 +81,16 @@ public abstract class AbstractDbBackend
         available = ClassLister.getSingleton().getClasses(DbBackend.class);
 	m_Initialized = true;
 	cmdline = getProperties().getProperty(KEY_BACKEND, "").trim();
-	if (cmdline.isEmpty())
-	  throw new IllegalStateException(
-	    "No DB backend defined in " + DbBackend.FILENAME + "!\n"
-	      + "Available: " + Utils.classesToString(available));
+	if (cmdline.isEmpty()) {
+	  if (NewInstance.getSingleton().newObject(BACKEND_AUTODETECT) != null)
+	    cmdline = BACKEND_AUTODETECT;
+	  else if (NewInstance.getSingleton().newObject(BACKEND_MYSQL) != null)
+	    cmdline = BACKEND_MYSQL;
+	  else
+	    throw new IllegalStateException(
+	      "No DB backend defined in " + DbBackend.FILENAME + "!\n"
+		+ "Available: " + Utils.classesToString(available));
+	}
 	try {
 	  m_Singleton = (DbBackend) OptionUtils.forCommandLine(DbBackend.class, cmdline);
 	  m_Singleton.setLoggingLevel(LoggingLevel.INFO);
