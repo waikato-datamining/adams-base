@@ -20,7 +20,10 @@
 package adams.data.image.transformer.crop;
 
 import adams.core.Utils;
+import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.image.transformer.AbstractBufferedImageTransformer;
+import adams.data.image.transformer.PassThrough;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -38,6 +41,12 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-image-transformer &lt;adams.data.image.transformer.AbstractBufferedImageTransformer&gt; (property: imageTransformer)
+ * &nbsp;&nbsp;&nbsp;The image transformer to apply to the image copy before further binarizing
+ * &nbsp;&nbsp;&nbsp;and determining the crop.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.image.transformer.PassThrough
+ * </pre>
+ *
  * <pre>-num-check-points &lt;int&gt; (property: numCheckPoints)
  * &nbsp;&nbsp;&nbsp;The number of check points (evenly distributed across width&#47;height) to use 
  * &nbsp;&nbsp;&nbsp;for locating the smallest rectangle in the middle.
@@ -54,13 +63,15 @@ import java.awt.image.BufferedImage;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8487 $
  */
 public class BinaryCrop
   extends AbstractCropAlgorithm {
 
   /** for serialization. */
   private static final long serialVersionUID = -696539737461589970L;
+
+  /** the image transformer to apply to the image before cropping. */
+  protected AbstractBufferedImageTransformer m_ImageTransformer;
 
   /** the number of checkpoints to use for determining minimum rectangle. */
   protected int m_NumCheckPoints;
@@ -89,6 +100,10 @@ public class BinaryCrop
     super.defineOptions();
 
     m_OptionManager.add(
+	"image-transformer", "imageTransformer",
+	new PassThrough());
+
+    m_OptionManager.add(
 	"num-check-points", "numCheckPoints",
 	1, 1, null);
 
@@ -98,18 +113,44 @@ public class BinaryCrop
   }
 
   /**
+   * Sets the image transformer to apply to the image copy before further binarizing and determining the crop.
+   *
+   * @param value	the transformer
+   */
+  public void setImageTransformer(AbstractBufferedImageTransformer value) {
+    m_ImageTransformer = value;
+    reset();
+  }
+
+  /**
+   * Returns the image transformer to apply to the image copy before further binarizing and determining the crop.
+   *
+   * @return		the transformer
+   */
+  public AbstractBufferedImageTransformer getImageTransformer() {
+    return m_ImageTransformer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String imageTransformerTipText() {
+    return "The image transformer to apply to the image copy before further binarizing and determining the crop.";
+  }
+
+  /**
    * Sets the number of check points to use for determining smallest rectangle
    * in the middle.
    *
    * @param value	the number
    */
   public void setNumCheckPoints(int value) {
-    if (value > 0) {
+    if (getOptionManager().isValid("numCheckPoints", value)) {
       m_NumCheckPoints = value;
       reset();
-    }
-    else {
-      getLogger().severe("Number of check points has to be >0, provided: " + value);
     }
   }
 
@@ -130,7 +171,7 @@ public class BinaryCrop
    * 			displaying in the gui
    */
   public String numCheckPointsTipText() {
-    return 
+    return
 	"The number of check points (evenly distributed across width/height) "
 	+ "to use for locating the smallest rectangle in the middle.";
   }
@@ -226,25 +267,29 @@ public class BinaryCrop
    */
   @Override
   protected BufferedImage doCrop(BufferedImage img) {
-    BufferedImage	image;
-    BufferedImage	binary;
-    int			width;
-    int			height;
-    int			i;
-    int			n;
-    int[]		xCheck;
-    int[]		yCheck;
-    int[]		top;
-    int[]		bottom;
-    int[]		left;
-    int[]		right;
-    int			atop;
-    int			abottom;
-    int			aleft;
-    int			aright;
-    int			value;
+    BufferedImage		image;
+    BufferedImageContainer	cont;
+    BufferedImage		binary;
+    int				width;
+    int				height;
+    int				i;
+    int				n;
+    int[]			xCheck;
+    int[]			yCheck;
+    int[]			top;
+    int[]			bottom;
+    int[]			left;
+    int[]			right;
+    int				atop;
+    int				abottom;
+    int				aleft;
+    int				aright;
+    int				value;
 
-    binary = BufferedImageHelper.convert(img, BufferedImage.TYPE_BYTE_BINARY);
+    cont = new BufferedImageContainer();
+    cont.setContent(img);
+    binary = m_ImageTransformer.transform(cont)[0].getContent();
+    binary = BufferedImageHelper.convert(binary, BufferedImage.TYPE_BYTE_BINARY);
     width  = img.getWidth();
     height = img.getHeight();
     xCheck = new int[m_NumCheckPoints];
