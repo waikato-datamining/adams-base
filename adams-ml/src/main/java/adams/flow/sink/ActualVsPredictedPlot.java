@@ -20,6 +20,7 @@
 
 package adams.flow.sink;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.option.OptionUtils;
 import adams.data.DecimalFormatString;
@@ -48,6 +49,7 @@ import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.CrossPaintlet;
 import adams.gui.visualization.sequence.MetaDataColorPaintlet;
+import adams.gui.visualization.sequence.MultiPaintlet;
 import adams.gui.visualization.sequence.PaintletWithFixedXYRange;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
@@ -197,41 +199,46 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;The (optional) title of the plot.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-plot-name &lt;java.lang.String&gt; (property: plotName)
  * &nbsp;&nbsp;&nbsp;The (optional) name for the plot.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-limit &lt;NONE|ACTUAL|SPECIFIED&gt; (property: limit)
- * &nbsp;&nbsp;&nbsp;The type of limit to impose on the axes; NONE just uses the range determined 
+ * &nbsp;&nbsp;&nbsp;The type of limit to impose on the axes; NONE just uses the range determined
  * &nbsp;&nbsp;&nbsp;from the data; ACTUAL uses the min&#47;max from the actual column for both axes;
- * &nbsp;&nbsp;&nbsp; SPECIFIED uses the specified limits or, if a value is 'infinity' then the 
+ * &nbsp;&nbsp;&nbsp; SPECIFIED uses the specified limits or, if a value is 'infinity' then the
  * &nbsp;&nbsp;&nbsp;corresponding value from the determine range.
  * &nbsp;&nbsp;&nbsp;default: NONE
  * </pre>
- * 
+ *
  * <pre>-show-side-panel &lt;boolean&gt; (property: showSidePanel)
- * &nbsp;&nbsp;&nbsp;If enabled, the side panel gets displayed which allows access to the underlying 
+ * &nbsp;&nbsp;&nbsp;If enabled, the side panel gets displayed which allows access to the underlying
  * &nbsp;&nbsp;&nbsp;data for the plot.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-diameter &lt;int&gt; (property: diameter)
  * &nbsp;&nbsp;&nbsp;The diameter of the cross in pixels (if no error data supplied).
  * &nbsp;&nbsp;&nbsp;default: 7
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-anti-aliasing-enabled &lt;boolean&gt; (property: antiAliasingEnabled)
  * &nbsp;&nbsp;&nbsp;If enabled, uses anti-aliasing for drawing.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-meta-data-color &lt;adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor&gt; (property: metaDataColor)
- * &nbsp;&nbsp;&nbsp;The scheme to use for extracting the color from the meta-data; ignored if 
+ * &nbsp;&nbsp;&nbsp;The scheme to use for extracting the color from the meta-data; ignored if
  * &nbsp;&nbsp;&nbsp;adams.gui.visualization.sequence.metadatacolor.Dummy.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.metadatacolor.Dummy
+ * </pre>
+ *
+ * <pre>-overlay &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; [-overlay ...] (property: overlays)
+ * &nbsp;&nbsp;&nbsp;The overlays to use in the plot.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.StraightLineOverlayPaintlet
  * </pre>
  * 
  <!-- options-end -->
@@ -301,6 +308,9 @@ public class ActualVsPredictedPlot
 
   /** for obtaining the color from the meta-data. */
   protected AbstractMetaDataColor m_MetaDataColor;
+
+  /** the overlays to use. */
+  protected XYSequencePaintlet[] m_Overlays;
 
   /**
    * Returns a string describing the object.
@@ -378,6 +388,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "meta-data-color", "metaDataColor",
       new Dummy());
+
+    m_OptionManager.add(
+      "overlay", "overlays",
+      new XYSequencePaintlet[]{new StraightLineOverlayPaintlet()});
   }
 
   /**
@@ -843,6 +857,35 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Sets the overlays to use in the plot.
+   *
+   * @param value	the overlays
+   */
+  public void setOverlays(XYSequencePaintlet[] value) {
+    m_Overlays = value;
+    reset();
+  }
+
+  /**
+   * Returns the overlays to use in the plot.
+   *
+   * @return		the overlays
+   */
+  public XYSequencePaintlet[] getOverlays() {
+    return m_Overlays;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlaysTipText() {
+    return "The overlays to use in the plot.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -936,6 +979,7 @@ public class ActualVsPredictedPlot
     SequencePlotterPanel 	result;
     XYSequencePaintlet 		paintlet;
     PaintletWithFixedXYRange 	fixedPaintlet;
+    MultiPaintlet 		overlays;
 
     result = new SequencePlotterPanel("act vs pred");
     if (m_Error.isEmpty()) {
@@ -954,7 +998,9 @@ public class ActualVsPredictedPlot
     fixedPaintlet.setPaintlet(paintlet);
     result.setDataPaintlet(fixedPaintlet);
     ActorUtils.updateFlowAwarePaintlet(result.getDataPaintlet(), this);
-    result.setOverlayPaintlet(new StraightLineOverlayPaintlet());
+    overlays = new MultiPaintlet();
+    overlays.setSubPaintlets((XYSequencePaintlet[]) OptionUtils.shallowCopy(m_Overlays));
+    result.setOverlayPaintlet(overlays);
     ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
     getDefaultAxisX().configure(result.getPlot(), Axis.BOTTOM);
     getDefaultAxisY().configure(result.getPlot(), Axis.LEFT);
@@ -1148,12 +1194,14 @@ public class ActualVsPredictedPlot
 	if (paintlet instanceof AntiAliasingSupporter)
 	  ((AntiAliasingSupporter) paintlet).setAntiAliasingEnabled(m_AntiAliasingEnabled);
         if (paintlet instanceof MetaDataColorPaintlet)
-          ((MetaDataColorPaintlet) paintlet).setMetaDataColor((AbstractMetaDataColor) OptionUtils.shallowCopy(m_MetaDataColor));
+          ((MetaDataColorPaintlet) paintlet).setMetaDataColor(ObjectCopyHelper.copyObject(m_MetaDataColor));
 	fixedPaintlet = new PaintletWithFixedXYRange();
 	fixedPaintlet.setPaintlet(paintlet);
 	m_Panel.setDataPaintlet(fixedPaintlet);
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getDataPaintlet(), ActualVsPredictedPlot.this);
-	m_Panel.setOverlayPaintlet(new StraightLineOverlayPaintlet());
+        MultiPaintlet overlays = new MultiPaintlet();
+	overlays.setSubPaintlets(ObjectCopyHelper.copyObjects(m_Overlays));
+        m_Panel.setOverlayPaintlet(overlays);
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), ActualVsPredictedPlot.this);
 	getDefaultAxisX().configure(m_Panel.getPlot(), Axis.BOTTOM);
 	getDefaultAxisY().configure(m_Panel.getPlot(), Axis.LEFT);
