@@ -20,6 +20,8 @@
 
 package adams.db;
 
+import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.TLongList;
@@ -65,6 +67,8 @@ public class SQLF
    */
   @Override
   public boolean tableExists(String table) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": table=" + table);
     return m_DB.tableExists(table);
   }
 
@@ -77,6 +81,8 @@ public class SQLF
    */
   @Override
   public boolean columnExists(String table, String column) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": table=" + table + ", column=" + column);
     return m_DB.columnExists(table, column);
   }
 
@@ -89,6 +95,8 @@ public class SQLF
    */
   @Override
   public SimpleResultSet getSimpleResultSet(String query) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": query=" + query);
     return m_DB.getSimpleResultSet(query);
   }
 
@@ -101,6 +109,8 @@ public class SQLF
    */
   @Override
   public PreparedStatement prepareStatement(String query) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": query=" + query);
     return m_DB.prepareStatement(query);
   }
 
@@ -115,6 +125,8 @@ public class SQLF
    */
   @Override
   public PreparedStatement prepareStatement(String query, boolean returnKeys) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": query=" + query + ", returnKeys=" + returnKeys);
     return m_DB.prepareStatement(query, returnKeys);
   }
 
@@ -129,6 +141,8 @@ public class SQLF
    */
   @Override
   public int update(String updateString, String table, String where) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": updateString=" + updateString + ", table=" + table + ", where=" + where);
     return m_DB.update(updateString, table, where);
   }
 
@@ -142,6 +156,8 @@ public class SQLF
    */
   @Override
   public ResultSet executeGeneratedKeys(String query) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": query=" + query);
     return m_DB.executeGeneratedKeys(query);
   }
 
@@ -154,6 +170,8 @@ public class SQLF
    */
   @Override
   public Boolean execute(String query) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": query=" + query);
     return m_DB.execute(query);
   }
 
@@ -165,6 +183,8 @@ public class SQLF
    */
   @Override
   public boolean truncate(String table) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": table=" + table);
     return m_DB.truncate(table);
   }
 
@@ -176,6 +196,8 @@ public class SQLF
    */
   @Override
   public boolean drop(String table) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": table=" + table);
     return m_DB.drop(table);
   }
 
@@ -190,6 +212,8 @@ public class SQLF
    */
   @Override
   public ResultSet select(String columns, String tables, String where) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": columns=" + columns + ", tables=" + tables + ", where=" + where);
     return m_DB.select(columns, tables, where);
   }
 
@@ -205,6 +229,8 @@ public class SQLF
    */
   @Override
   public ResultSet selectDistinct(String columns, String tables, String where) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": columns=" + columns + ", tables=" + tables + ", where=" + where);
     return m_DB.selectDistinct(columns, tables, where);
   }
 
@@ -220,6 +246,8 @@ public class SQLF
    */
   @Override
   public List<String> selectString(boolean distinct, String column, String tables, String where) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": distinct=" + distinct + ", column=" + column + ", tables=" + tables + ", where=" + where);
     return m_DB.selectString(distinct, column, tables, where);
   }
 
@@ -236,6 +264,8 @@ public class SQLF
    */
   @Override
   public List<String[]> selectStrings(boolean distinct, String[] columns, String tables, String where) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": distinct=" + distinct + ", columns=" + Utils.arrayToString(columns) + ", tables=" + tables + ", where=" + where);
     return m_DB.selectStrings(distinct, columns, tables, where);
   }
 
@@ -251,6 +281,8 @@ public class SQLF
    */
   @Override
   public TIntList selectInt(boolean distinct, String column, String tables, String where) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": distinct=" + distinct + ", column=" + column + ", tables=" + tables + ", where=" + where);
     return m_DB.selectInt(distinct, column, tables, where);
   }
 
@@ -266,6 +298,8 @@ public class SQLF
    */
   @Override
   public TLongList selectLong(boolean distinct, String column, String tables, String where) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": distinct=" + distinct + ", column=" + column + ", tables=" + tables + ", where=" + where);
     return m_DB.selectLong(distinct, column, tables, where);
   }
 
@@ -281,6 +315,8 @@ public class SQLF
    */
   @Override
   public TDoubleList selectDouble(boolean distinct, String column, String tables, String where) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": distinct=" + distinct + ", column=" + column + ", tables=" + tables + ", where=" + where);
     return m_DB.selectDouble(distinct, column, tables, where);
   }
 
@@ -293,6 +329,8 @@ public class SQLF
    */
   @Override
   public ResultSet getResultSet(String query) throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": query=" + query);
     return m_DB.getResultSet(query);
   }
 
@@ -305,6 +343,8 @@ public class SQLF
    */
   @Override
   public int getMaxColumnNameLength() throws SQLException {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName());
     return m_DB.getMaxColumnNameLength();
   }
 

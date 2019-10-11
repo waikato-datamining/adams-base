@@ -20,6 +20,8 @@
 
 package adams.db;
 
+import adams.core.logging.LoggingHelper;
+
 import java.util.List;
 
 /**
@@ -58,6 +60,8 @@ public class LogF
    * @return		the log entry, null if not found
    */
   public LogEntry load(long auto_id) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": auto_id=" + auto_id);
     return m_DB.load(auto_id);
   }
 
@@ -68,6 +72,8 @@ public class LogF
    * @return		the log entries
    */
   public List<LogEntry> load(LogEntryConditions cond) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": cond=" + cond);
     return m_DB.load(cond);
   }
 
@@ -78,6 +84,8 @@ public class LogF
    * @return		true if a log entry already exists
    */
   public boolean exists(LogEntry log) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": log=" + log);
     return m_DB.exists(log);
   }
 
@@ -88,6 +96,8 @@ public class LogF
    * @return  		true if insert successful or already present
    */
   public boolean add(LogEntry log) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": log=" + log);
     return m_DB.add(log);
   }
 
@@ -98,6 +108,8 @@ public class LogF
    * @return  		true if update successful or false if not present
    */
   public boolean update(LogEntry log) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": log=" + log);
     return m_DB.update(log);
   }
 
@@ -108,6 +120,8 @@ public class LogF
    * @return		true if successful
    */
   public boolean remove(LogEntry log) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": log=" + log);
     return m_DB.remove(log);
   }
 
