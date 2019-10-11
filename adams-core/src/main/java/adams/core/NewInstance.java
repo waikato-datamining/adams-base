@@ -15,7 +15,7 @@
 
 /*
  * NewInstance.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
@@ -138,11 +138,23 @@ public class NewInstance
    * @return		the instance, null if failed to instantiate
    */
   public Object newObject(String classname) {
+    return newObject(classname, false);
+  }
+
+  /**
+   * Returns a new object instance.
+   *
+   * @param classname	the class to instantiate
+   * @param quiet 	whether to suppress error messages
+   * @return		the instance, null if failed to instantiate
+   */
+  public Object newObject(String classname, boolean quiet) {
     try {
-      return newObject(Class.forName(classname));
+      return newObject(Class.forName(classname), quiet);
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to instantiate class: " + classname, e);
+      if (!quiet)
+	getLogger().log(Level.SEVERE, "Failed to instantiate class: " + classname, e);
       return null;
     }
   }
@@ -274,16 +286,29 @@ public class NewInstance
    * @return		the instance, null if failed to instantiate
    */
   public Object newObject(Class cls) {
+    return newObject(cls, false);
+  }
+
+  /**
+   * Returns a new object instance.
+   *
+   * @param cls		the class to instantiate
+   * @param quiet 	whether to suppress error messages
+   * @return		the instance, null if failed to instantiate
+   */
+  public Object newObject(Class cls, boolean quiet) {
     if (hasCustomInstantiation(cls)) {
       try {
 	if (!configure(cls)) {
-	  getLogger().severe("Cannot instantiate class: " + Utils.classToString(cls));
+	  if (!quiet)
+	    getLogger().severe("Cannot instantiate class: " + Utils.classToString(cls));
 	  return null;
 	}
 	return m_Constructors.get(cls).newInstance(m_DefaultValues.get(cls));
       }
       catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to instantiate class with custom constructor: " + Utils.classToString(cls), e);
+	if (!quiet)
+	  getLogger().log(Level.SEVERE, "Failed to instantiate class with custom constructor: " + Utils.classToString(cls), e);
 	return null;
       }
     }
@@ -292,7 +317,8 @@ public class NewInstance
 	return cls.newInstance();
       }
       catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to create instance of class: " + Utils.classToString(cls), e);
+	if (!quiet)
+	  getLogger().log(Level.SEVERE, "Failed to create instance of class: " + Utils.classToString(cls), e);
 	return null;
       }
     }
@@ -323,10 +349,32 @@ public class NewInstance
   /**
    * Returns a new object instance.
    *
+   * @param classname	the class to instantiate
+   * @param quiet 	whether to suppress error messages
+   * @return		the instance, null if failed to instantiate
+   */
+  public static Object newInstance(String classname, boolean quiet) {
+    return getSingleton().newObject(classname, quiet);
+  }
+
+  /**
+   * Returns a new object instance.
+   *
    * @param cls		the class to instantiate
    * @return		the instance, null if failed to instantiate
    */
   public static Object newInstance(Class cls) {
     return getSingleton().newObject(cls);
+  }
+
+  /**
+   * Returns a new object instance.
+   *
+   * @param cls		the class to instantiate
+   * @param quiet 	whether to suppress error messages
+   * @return		the instance, null if failed to instantiate
+   */
+  public static Object newInstance(Class cls, boolean quiet) {
+    return getSingleton().newObject(cls, quiet);
   }
 }

@@ -475,7 +475,7 @@ public class TreeOperations
 		goePopup.setVisible(false);
 		addActor(
 		  path,
-		  (Actor) NewInstance.getSingleton().newObject(classname),
+		  (Actor) NewInstance.newInstance(classname),
 		  position,
 		  record,
 		  (dialogType == ActorDialog.TREE ? ActorDialog.GOE_FORCED_NO_TREE : ActorDialog.GOE_NO_TREE));
@@ -495,7 +495,7 @@ public class TreeOperations
 		goePopup.setVisible(false);
 		addActor(
 		  path,
-		  (Actor) NewInstance.getSingleton().newObject(classname),
+		  (Actor) NewInstance.newInstance(classname),
 		  position,
 		  record,
 		  (dialogType == ActorDialog.TREE ? ActorDialog.GOE_FORCED_NO_TREE : ActorDialog.GOE_NO_TREE));

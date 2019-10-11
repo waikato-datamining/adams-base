@@ -133,7 +133,7 @@ public class ConfigureOptionHandlerPanel
       String clsName = (String) m_ListClasses.getSelectedValue();
       if (clsName != null) {
         try {
-          m_PanelObject.setCurrent(NewInstance.getSingleton().newObject(clsName));
+          m_PanelObject.setCurrent(NewInstance.newInstance(clsName));
 	}
 	catch (Exception ex) {
           // ignored

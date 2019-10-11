@@ -82,9 +82,9 @@ public abstract class AbstractDbBackend
 	m_Initialized = true;
 	cmdline = getProperties().getProperty(KEY_BACKEND, "").trim();
 	if (cmdline.isEmpty()) {
-	  if (NewInstance.getSingleton().newObject(BACKEND_AUTODETECT) != null)
+	  if (NewInstance.newInstance(BACKEND_AUTODETECT, true) != null)
 	    cmdline = BACKEND_AUTODETECT;
-	  else if (NewInstance.getSingleton().newObject(BACKEND_MYSQL) != null)
+	  else if (NewInstance.newInstance(BACKEND_MYSQL, true) != null)
 	    cmdline = BACKEND_MYSQL;
 	  else
 	    throw new IllegalStateException(
