@@ -592,11 +592,50 @@ public class LoggingHelper {
   /**
    * Returns the name of the method calling this method.
    *
+   * @return		the generated string
+   */
+  public static String getMethodName() {
+    StringBuilder	result;
+    StackTraceElement[]	trace;
+    StackTraceElement	element;
+
+    result  = new StringBuilder();
+    trace   = Thread.currentThread().getStackTrace();
+    if (trace.length >= 2) {
+      element = trace[2];
+      result.append(element.getMethodName());
+    }
+    else {
+      result.append("<unknown>");
+    }
+
+    return result.toString();
+  }
+
+  /**
+   * Returns the name of the method calling this method.
+   *
    * @param cls		whether to include the class name
    * @return		the generated string
    */
   public static String getMethodName(boolean cls) {
-    return getMethodName(cls, false);
+    StringBuilder	result;
+    StackTraceElement[]	trace;
+    StackTraceElement	element;
+
+    result  = new StringBuilder();
+    trace   = Thread.currentThread().getStackTrace();
+    if (trace.length >= 2) {
+      element = trace[2];
+      if (cls)
+	result.append(element.getClassName()).append(".");
+      result.append(element.getMethodName());
+    }
+    else {
+      result.append("<unknown>");
+    }
+
+    return result.toString();
   }
 
   /**
