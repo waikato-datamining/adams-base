@@ -15,7 +15,7 @@
 
 /*
  * ObjectCopyHelper.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
@@ -139,7 +139,7 @@ public class ObjectCopyHelper {
     if (type == null)
       type = copyType(source[0]);
 
-    result = (T[]) Array.newInstance(source[0].getClass(), source.length);
+    result = (T[]) Array.newInstance(source.getClass().getComponentType(), source.length);
     for (i = 0; i < source.length; i++)
       result[i] = createCopy(type, source[i]);
 
