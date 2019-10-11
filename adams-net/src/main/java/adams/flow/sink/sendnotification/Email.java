@@ -23,6 +23,7 @@ package adams.flow.sink.sendnotification;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseText;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.AbstractSendEmail;
 import adams.core.net.EmailAddress;
 import adams.core.net.EmailHelper;
@@ -427,7 +428,7 @@ public class Email
 	getLogger().info(email.toString());
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed to generate email!", e);
+      result = LoggingHelper.handleException(this, "Failed to generate email!", e);
     }
 
     // send email
@@ -438,7 +439,7 @@ public class Email
 	  result = "Failed to send email, check console output!";
       }
       catch (Exception e) {
-	result = Utils.handleException(this, "Failed to send email: ", e);
+	result = LoggingHelper.handleException(this, "Failed to send email: ", e);
       }
     }
 

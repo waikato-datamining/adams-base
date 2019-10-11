@@ -19,12 +19,11 @@
  */
 package adams.data.imagemagick.ufraw;
 
-import org.im4java.core.UFRawCmd;
-import org.im4java.core.UFRawOperation;
-
-import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
+import org.im4java.core.UFRawCmd;
+import org.im4java.core.UFRawOperation;
 
 /**
  * Ancestor for simple ufraw operations.
@@ -97,7 +96,7 @@ public abstract class AbstractUfrawSimpleOperation
 	cmd.run(op);
       }
       catch (Exception e) {
-	result = Utils.handleException(this, "Failed to apply operation!", e);
+	result = LoggingHelper.handleException(this, "Failed to apply operation!", e);
       }
     }
     

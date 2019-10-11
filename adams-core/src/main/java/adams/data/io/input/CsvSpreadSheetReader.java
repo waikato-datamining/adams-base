@@ -30,6 +30,7 @@ import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.management.LocaleHelper;
 import adams.core.management.OptionHandlingLocaleSupporter;
 import adams.data.DateFormatString;
@@ -745,7 +746,7 @@ public class CsvSpreadSheetReader
       catch (Exception e) {
         result = null;
         m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
-        m_Owner.setLastError("Failed to read data!\n" + Utils.throwableToString(e));
+        m_Owner.setLastError("Failed to read data!\n" + LoggingHelper.throwableToString(e));
       }
 
       return result;
@@ -761,7 +762,7 @@ public class CsvSpreadSheetReader
       }
       catch (Exception e) {
         m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
-        m_Owner.setLastError("Failed to read data!\n" + Utils.throwableToString(e));
+        m_Owner.setLastError("Failed to read data!\n" + LoggingHelper.throwableToString(e));
       }
     }
 

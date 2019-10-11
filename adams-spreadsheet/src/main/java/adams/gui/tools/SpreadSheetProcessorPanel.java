@@ -23,8 +23,8 @@ package adams.gui.tools;
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -505,7 +505,7 @@ public class SpreadSheetProcessorPanel
       data = reader.read(file);
     }
     catch (Exception e) {
-      msg  = "Failed to load configuration from: " + file + "\n" + Utils.throwableToString(e);
+      msg  = "Failed to load configuration from: " + file + "\n" + LoggingHelper.throwableToString(e);
       data = null;
     }
     if (data != null) {
@@ -564,7 +564,7 @@ public class SpreadSheetProcessorPanel
       msg = writer.write(file, map);
     }
     catch (Exception e) {
-      msg = "Failed to save configuration to: " + file + "\n" + Utils.throwableToString(e);
+      msg = "Failed to save configuration to: " + file + "\n" + LoggingHelper.throwableToString(e);
     }
     if (msg != null)
       GUIHelper.showErrorMessage(this, msg);

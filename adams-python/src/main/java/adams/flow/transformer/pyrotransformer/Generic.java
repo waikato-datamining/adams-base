@@ -20,7 +20,7 @@
 
 package adams.flow.transformer.pyrotransformer;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.flow.core.Unknown;
 
 /**
@@ -78,7 +78,7 @@ public class Generic
       m_Output = m_RemoteObject.call(m_MethodName, m_Input);
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
         this, "Failed to call remote method '" + m_MethodName + "' on remote object '" + m_RemoteObjectName + "'!", e);
     }
 

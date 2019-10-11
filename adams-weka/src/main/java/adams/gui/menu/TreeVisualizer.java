@@ -21,8 +21,8 @@
 
 package adams.gui.menu;
 
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
@@ -120,7 +120,7 @@ public class TreeVisualizer
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-        getOwner(), "Error loading file '" + filename + "':\n" + Utils.throwableToString(e));
+        getOwner(), "Error loading file '" + filename + "':\n" + LoggingHelper.throwableToString(e));
       return;
     }
     finally {

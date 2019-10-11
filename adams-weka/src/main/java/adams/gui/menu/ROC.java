@@ -22,6 +22,7 @@
 package adams.gui.menu;
 
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
@@ -103,7 +104,7 @@ public class ROC
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	  getOwner(), "Error loading file '" + file + "':\n" + adams.core.Utils.throwableToString(e));
+	  getOwner(), "Error loading file '" + file + "':\n" + LoggingHelper.throwableToString(e));
       return;
     }
     result.setClassIndex(result.numAttributes() - 1);
@@ -124,7 +125,7 @@ public class ROC
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-        getOwner(), "Error adding plot:\n" + adams.core.Utils.throwableToString(e));
+        getOwner(), "Error adding plot:\n" + LoggingHelper.throwableToString(e));
       return;
     }
 

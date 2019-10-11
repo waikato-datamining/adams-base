@@ -22,13 +22,13 @@
 package adams.gui.menu;
 
 import adams.core.Properties;
-import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.base.ArrayDimensions;
 import adams.core.base.BaseString;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
 import adams.data.conversion.SpreadSheetToWekaInstances;
@@ -266,7 +266,7 @@ public class MakeCompatibleDatasets
     }
     catch (Exception ex) {
       GUIHelper.showErrorMessage(
-	getOwner(), "Failed to get setup from wizard!\n" + Utils.throwableToString(ex));
+	getOwner(), "Failed to get setup from wizard!\n" + LoggingHelper.throwableToString(ex));
       return;
     }
 
@@ -291,7 +291,7 @@ public class MakeCompatibleDatasets
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	getOwner(), "Failed to setup/execute flow!\n" + Utils.throwableToString(e));
+	getOwner(), "Failed to setup/execute flow!\n" + LoggingHelper.throwableToString(e));
       return;
     }
 

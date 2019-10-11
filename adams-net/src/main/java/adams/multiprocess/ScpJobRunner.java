@@ -29,6 +29,7 @@ import adams.core.base.HostnameUpdateSupporter;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.InternetHelper;
 import adams.core.net.Scp;
 import adams.event.JobCompleteListener;
@@ -293,7 +294,7 @@ public class ScpJobRunner
       catch (Exception e) {
         if (tmpFile.exists())
           tmpFile.delete();
-        return Utils.handleException(this, "Failed to serialize jobrunner to: " + m_RemoteFile, e);
+        return LoggingHelper.handleException(this, "Failed to serialize jobrunner to: " + m_RemoteFile, e);
       }
 
       // scp to remote host
@@ -307,7 +308,7 @@ public class ScpJobRunner
       }
       catch (Exception e) {
         tmpFile.delete();
-        return Utils.handleException(this, "Failed to copy serialized jobrunner to original host " + m_Host, e);
+        return LoggingHelper.handleException(this, "Failed to copy serialized jobrunner to original host " + m_Host, e);
       }
 
       return null;
@@ -770,7 +771,7 @@ public class ScpJobRunner
     catch (Exception e) {
       if (tmpFile.exists())
         tmpFile.delete();
-      return Utils.handleException(this, "Failed to serialize jobrunner to: " + m_RemoteFile, e);
+      return LoggingHelper.handleException(this, "Failed to serialize jobrunner to: " + m_RemoteFile, e);
     }
 
     m_StartTime = System.currentTimeMillis();
@@ -789,11 +790,11 @@ public class ScpJobRunner
     catch (Exception e) {
       tmpFile.delete();
       if (!m_AllowLocalExecution) {
-	return Utils.handleException(this, "Failed to copy serialized jobrunner to remote host "
+	return LoggingHelper.handleException(this, "Failed to copy serialized jobrunner to remote host "
 	  + actualHost + ":" + actualPort, e);
       }
       else {
-	Utils.handleException(this, "Failed to copy serialized jobrunner to remote host "
+	LoggingHelper.handleException(this, "Failed to copy serialized jobrunner to remote host "
 	  + actualHost + ":" + actualPort, e);
 	m_RunLocally = true;
       }
@@ -868,7 +869,7 @@ public class ScpJobRunner
 	}
 	catch (Exception e) {
 	  m_ActualJobRunner = null;
-	  return Utils.handleException(this, "Failed to deserialize jobrunner form: " + m_LocalFile, e);
+	  return LoggingHelper.handleException(this, "Failed to deserialize jobrunner form: " + m_LocalFile, e);
 	}
       }
     }

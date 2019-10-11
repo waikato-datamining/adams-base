@@ -21,6 +21,7 @@ package adams.gui.tools.previewbrowser;
 
 import adams.core.SerializationHelper;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.gui.core.BaseTabbedPane;
 
 import java.io.File;
@@ -93,7 +94,7 @@ public class SerializedFileHandler
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to read '" + file + "':", e);
-      objects = new Object[]{Utils.throwableToString(e)};
+      objects = new Object[]{LoggingHelper.throwableToString(e)};
     }
     
     for (Object obj: objects) {

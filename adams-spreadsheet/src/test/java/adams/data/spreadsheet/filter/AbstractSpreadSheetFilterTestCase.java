@@ -21,8 +21,8 @@ package adams.data.spreadsheet.filter;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
-import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
@@ -178,7 +178,7 @@ public abstract class AbstractSpreadSheetFilterTestCase
       }
       catch (Exception e) {
 	processed = null;
-	fail(Utils.throwableToString(e));
+	fail(LoggingHelper.throwableToString(e));
       }
 
       output[i] = createOutputFilename(input[i], i);

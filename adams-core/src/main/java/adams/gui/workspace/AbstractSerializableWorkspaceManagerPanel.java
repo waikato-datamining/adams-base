@@ -20,7 +20,7 @@
 package adams.gui.workspace;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.BaseFileChooser;
@@ -143,7 +143,7 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
     catch (Exception e) {
       GUIHelper.showErrorMessage(
 	  this, 
-	  "Failed to open workspace '" + file + "'!\n" + Utils.throwableToString(e));
+	  "Failed to open workspace '" + file + "'!\n" + LoggingHelper.throwableToString(e));
     }
   }
   
@@ -167,7 +167,7 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
     catch (Exception e) {
       GUIHelper.showErrorMessage(
 	  this, 
-	  "Failed to save workspace to '" + file + "'!\n" + Utils.throwableToString(e));
+	  "Failed to save workspace to '" + file + "'!\n" + LoggingHelper.throwableToString(e));
     }
   }
 

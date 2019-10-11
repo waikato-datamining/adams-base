@@ -22,7 +22,7 @@
 package adams.gui.menu;
 
 import adams.core.Properties;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
@@ -143,7 +143,7 @@ public class AppendDatasets
       }
       catch (Exception ex) {
         GUIHelper.showErrorMessage(
-          getOwner(), "Failed to get setup from wizard!\n" + Utils.throwableToString(ex));
+          getOwner(), "Failed to get setup from wizard!\n" + LoggingHelper.throwableToString(ex));
         return;
       }
       doAppend(frame, input, output);
@@ -200,7 +200,7 @@ public class AppendDatasets
       }
       catch (Exception e) {
         GUIHelper.showErrorMessage(
-          getOwner(), "Failed to read '" + input[i] + "'!\n" + Utils.throwableToString(e));
+          getOwner(), "Failed to read '" + input[i] + "'!\n" + LoggingHelper.throwableToString(e));
         return;
       }
     }
@@ -232,7 +232,7 @@ public class AppendDatasets
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-        getOwner(), "Failed to save data to '" + output + "'!\n" + Utils.throwableToString(e));
+        getOwner(), "Failed to save data to '" + output + "'!\n" + LoggingHelper.throwableToString(e));
       return;
     }
 

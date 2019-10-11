@@ -21,8 +21,8 @@ package weka.classifiers;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
-import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
@@ -142,7 +142,7 @@ public abstract class AbstractSplitGeneratorTestCase
 	  assertNotNull("Failed to generate data (" + (i + 1) + "/" + (count + 1) + ")?", cont);
 	}
 	catch (Exception e) {
-	  fail("Failed to generate data (" + (i + 1) + "/" + (count + 1) + "): " + Utils.throwableToString(e));
+	  fail("Failed to generate data (" + (i + 1) + "/" + (count + 1) + "): " + LoggingHelper.throwableToString(e));
 	  continue;
 	}
 

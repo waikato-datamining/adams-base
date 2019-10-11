@@ -22,8 +22,8 @@
 package adams.gui.menu;
 
 import adams.core.Properties;
-import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.data.DecimalFormatString;
@@ -392,7 +392,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
 	}
 	catch (Exception ex) {
 	  GUIHelper.showErrorMessage(
-	    null, "Failed to obtain genetic algorithm setup from wizard!\n" + Utils.throwableToString(ex));
+	    null, "Failed to obtain genetic algorithm setup from wizard!\n" + LoggingHelper.throwableToString(ex));
 	  return;
 	}
 	doOptimize(frame, genetic, files);

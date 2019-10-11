@@ -23,6 +23,7 @@ package adams.core.io;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.MessageCollection;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOption;
 
 import java.io.BufferedInputStream;
@@ -209,7 +210,7 @@ public enum MessageDigestType
       }
     }
     catch (Exception e) {
-      msg = "Failed to generate digest:\n" + Utils.throwableToString(e);
+      msg = "Failed to generate digest:\n" + LoggingHelper.throwableToString(e);
     }
     finally {
       FileUtils.closeQuietly(stream);

@@ -20,9 +20,9 @@
 package adams.data.imagemagick.dcraw;
 
 import adams.core.AtomicMoveSupporter;
-import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.imagemagick.AbstractImageOperation;
 import adams.data.imagemagick.DCRawHelper;
 
@@ -122,7 +122,7 @@ public abstract class AbstractDcrawOperation
 	result = "Failed to move file '" + tmp + "' to '" + output + "'!";
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
 	  this, "Failed to move file '" + tmp + "' to '" + output + "'!", e);
     }
     

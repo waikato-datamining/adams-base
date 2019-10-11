@@ -576,7 +576,7 @@ public abstract class AbstractActor
    * @return		the full error message (message + stacktrace)
    */
   protected String handleException(String msg, Throwable t) {
-    return Utils.handleException(this, msg, t, m_Silent);
+    return LoggingHelper.handleException(this, msg, t, m_Silent);
   }
   
   /**

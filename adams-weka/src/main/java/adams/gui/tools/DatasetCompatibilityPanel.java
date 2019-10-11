@@ -20,6 +20,7 @@
 package adams.gui.tools;
 
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -253,7 +254,7 @@ public class DatasetCompatibilityPanel
 	loader.reset();
       }
       catch (Exception e) {
-	return "Failed to load dataset from " + files[i] + ":\n" + Utils.throwableToString(e);
+	return "Failed to load dataset from " + files[i] + ":\n" + LoggingHelper.throwableToString(e);
       }
     }
     

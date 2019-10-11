@@ -19,7 +19,7 @@
  */
 package adams.gui.visualization.image.plugins;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.metadata.AbstractMetaDataExtractor;
 import adams.flow.transformer.metadata.Sanselan;
@@ -144,7 +144,7 @@ public class ImageFileMetaData
     }
     catch (Exception e) {
       result = "Failed to read meta-data from file '" + m_CurrentPanel.getCurrentFile() + "': " 
-	  + Utils.throwableToString(e);
+	  + LoggingHelper.throwableToString(e);
     }
     
     return result;

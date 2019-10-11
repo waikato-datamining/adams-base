@@ -21,8 +21,8 @@
 package adams.gui.tools.spreadsheetprocessor.sources;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
 import adams.core.base.BasePassword;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DenseDataRow;
@@ -182,7 +182,7 @@ public class DatabaseSource
 	    notifyOwner(EventType.DATA_IS_AVAILABLE, "Query executed: " + query);
 	}
 	catch (Exception e) {
-	  error  = Utils.handleException(DatabaseSource.this, "Failed to execute query: " + query, e);
+	  error  = LoggingHelper.handleException(DatabaseSource.this, "Failed to execute query: " + query, e);
 	  m_Data = null;
 	}
 	return null;

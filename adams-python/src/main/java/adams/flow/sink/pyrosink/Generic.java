@@ -20,7 +20,7 @@
 
 package adams.flow.sink.pyrosink;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.flow.core.Unknown;
 
 /**
@@ -68,7 +68,7 @@ public class Generic
       m_RemoteObject.call_oneway(m_MethodName, m_Input);
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
         this, "Failed to call remote method '" + m_MethodName + "' on remote object '" + m_RemoteObjectName + "'!", e);
     }
 

@@ -19,7 +19,7 @@
  */
 package adams.gui.tools.wekamultiexperimenter;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.env.Environment;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
@@ -177,7 +177,7 @@ public class MultiExperimenter
       memMonitor.start();
     } 
     catch (Exception ex) {
-      Logger.log(Level.SEVERE, Utils.throwableToString(ex));
+      Logger.log(Level.SEVERE, LoggingHelper.throwableToString(ex));
       System.err.println("An Exception occurred: ");
       ex.printStackTrace();
     }

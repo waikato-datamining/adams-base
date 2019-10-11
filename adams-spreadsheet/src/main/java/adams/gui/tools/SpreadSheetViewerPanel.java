@@ -21,8 +21,8 @@ package adams.gui.tools;
 
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.MultiSheetSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
@@ -1090,7 +1090,7 @@ public class SpreadSheetViewerPanel
 	  }
 	}
 	catch (Exception e) {
-	  GUIHelper.showErrorMessage(SpreadSheetViewerPanel.this, "Failed to filter data:\n" + Utils.throwableToString(e));
+	  GUIHelper.showErrorMessage(SpreadSheetViewerPanel.this, "Failed to filter data:\n" + LoggingHelper.throwableToString(e));
 	}
 	return null;
       }

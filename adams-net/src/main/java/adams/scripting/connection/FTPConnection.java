@@ -23,11 +23,11 @@ package adams.scripting.connection;
 import adams.core.MessageCollection;
 import adams.core.PasswordSupporter;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.TempUtils;
+import adams.core.logging.LoggingHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.processor.RemoteCommandProcessor;
 import org.apache.commons.net.ProtocolCommandEvent;
@@ -334,7 +334,7 @@ public class FTPConnection
       }
     }
     catch (Exception e) {
-      result   = Utils.handleException(this, "Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
+      result   = LoggingHelper.handleException(this, "Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
       m_Client = null;
     }
 
@@ -410,7 +410,7 @@ public class FTPConnection
 	  result = "Failed to upload file, check console for error message!";
       }
       catch (Exception e) {
-	result = Utils.handleException(this, "Failed to upload file '" + tmpfile + "' to '" + remotefile + "': ", e);
+	result = LoggingHelper.handleException(this, "Failed to upload file '" + tmpfile + "' to '" + remotefile + "': ", e);
       }
       finally {
 	FileUtils.closeQuietly(stream);

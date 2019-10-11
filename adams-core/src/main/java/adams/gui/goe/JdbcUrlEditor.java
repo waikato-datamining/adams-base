@@ -23,6 +23,7 @@ package adams.gui.goe;
 
 import adams.core.HelpProvider;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.parsing.JdbcUrlParsing;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.ConnectionParameters;
@@ -282,7 +283,7 @@ public class JdbcUrlEditor
 	}
       }
       catch (Exception e) {
-        error = Utils.handleException(conn, "Failed to connect to: " + params.getURL(), e);
+        error = LoggingHelper.handleException(conn, "Failed to connect to: " + params.getURL(), e);
       }
     }
     if (error != null)

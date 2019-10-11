@@ -19,7 +19,7 @@
  */
 package adams.gui.visualization.image.plugins;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.barcode.decode.AbstractBarcodeDecoder;
 import adams.data.barcode.decode.ZXing;
@@ -158,7 +158,7 @@ public class Barcode
       }
     }
     catch (Exception e) {
-      result = "Failed to extract barcode: " + Utils.throwableToString(e);
+      result = "Failed to extract barcode: " + LoggingHelper.throwableToString(e);
     }
     
     return result;

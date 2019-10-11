@@ -20,7 +20,7 @@
 
 package adams.flow.standalone.pyrostandalone;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 
 /**
  * Generic call, just forwards any data to the remote object.
@@ -57,7 +57,7 @@ public class Generic
       m_RemoteObject.call(m_MethodName);
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
         this, "Failed to call remote method '" + m_MethodName + "' on remote object '" + m_RemoteObjectName + "'!", e);
     }
 

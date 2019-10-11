@@ -20,10 +20,10 @@
 
 package adams.scripting.command.basic;
 
-import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.processor.RemoteCommandProcessor;
@@ -153,7 +153,7 @@ public class SendFile
       m_Content = FileUtils.loadFromBinaryFile(m_File.getAbsoluteFile());
     }
     catch (Exception e) {
-      Utils.handleException(this, "Failed to read data from file: " + m_File, e);
+      LoggingHelper.handleException(this, "Failed to read data from file: " + m_File, e);
     }
   }
 
@@ -195,7 +195,7 @@ public class SendFile
       FileUtils.writeToBinaryFile(file.getAbsolutePath(), m_Content);
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed to write content to: " + file, e);
+      result = LoggingHelper.handleException(this, "Failed to write content to: " + file, e);
     }
 
     return result;

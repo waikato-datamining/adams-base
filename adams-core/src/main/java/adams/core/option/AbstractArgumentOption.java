@@ -23,6 +23,7 @@ package adams.core.option;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeListener;
 
@@ -321,7 +322,7 @@ public abstract class AbstractArgumentOption
 	if (!m_Owner.isQuiet() && !silent) {
 	  msg = "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value;
 	  if (log == null)
-	    System.err.println(msg + "\n" + Utils.throwableToString(e));
+	    System.err.println(msg + "\n" + LoggingHelper.throwableToString(e));
 	  else
 	    log.log(Level.SEVERE, msg, e);
 	  msg = "Wrong class? Attempting to set value using string representation instead!";
@@ -357,7 +358,7 @@ public abstract class AbstractArgumentOption
 	else
 	  msg = "Failed to set value for variable '" + m_Variable + "' (" + value.getClass().getName() + "): " + value;
 	if (log == null)
-	  System.err.println(msg + "\n" + Utils.throwableToString(e));
+	  System.err.println(msg + "\n" + LoggingHelper.throwableToString(e));
 	else
 	  log.log(Level.SEVERE, msg, e);
       }

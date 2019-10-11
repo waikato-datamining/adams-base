@@ -20,8 +20,8 @@
 
 package adams.core.net;
 
-import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
@@ -74,7 +74,7 @@ public class SMB {
         sos.write(buffer, 0, read);
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
         owner, "Failed to upload file '" + localFile + "' to '" + remoteFile + "': ", e);
     }
     finally {
@@ -118,7 +118,7 @@ public class SMB {
 	bos.write(buffer, 0, read);
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
         owner,
         "Failed to download file '" + remoteFile + "' to '" + localFile + "': ", e);
     }

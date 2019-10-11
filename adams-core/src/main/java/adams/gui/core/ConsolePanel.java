@@ -20,7 +20,6 @@
 package adams.gui.core;
 
 import adams.core.Properties;
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
@@ -684,7 +683,7 @@ public class ConsolePanel
    * @param t           the exception (stacktrace will be output)
    */
   public void append(String msg, Throwable t) {
-    append(LoggingLevel.SEVERE, msg + "\n" + Utils.throwableToString(t));
+    append(LoggingLevel.SEVERE, msg + "\n" + LoggingHelper.throwableToString(t));
   }
 
   /**
@@ -695,7 +694,7 @@ public class ConsolePanel
    * @param t           the exception (stacktrace will be output)
    */
   public void append(Object source, String msg, Throwable t) {
-    append(LoggingLevel.SEVERE, source.getClass().getName() + ": " + msg + "\n" + Utils.throwableToString(t));
+    append(LoggingLevel.SEVERE, source.getClass().getName() + ": " + msg + "\n" + LoggingHelper.throwableToString(t));
   }
 
   /**

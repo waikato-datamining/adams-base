@@ -23,7 +23,6 @@ package adams.flow.control;
 
 import adams.core.CleanUpHandler;
 import adams.core.StoppableWithFeedback;
-import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
@@ -119,7 +118,7 @@ public abstract class AbstractDirector
    * @return		the full error message (message + stacktrace)
    */
   protected String handleException(String msg, Throwable t) {
-    return Utils.handleException(this, msg, t, !hasControlActor() || m_ControlActor.getSilent());
+    return LoggingHelper.handleException(this, msg, t, !hasControlActor() || m_ControlActor.getSilent());
   }
 
   /**

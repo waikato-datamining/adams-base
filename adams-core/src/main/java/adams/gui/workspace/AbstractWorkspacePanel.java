@@ -20,7 +20,7 @@
 package adams.gui.workspace;
 
 import adams.core.CleanUpHandler;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuBarProvider;
@@ -141,7 +141,7 @@ public abstract class AbstractWorkspacePanel
    * @param t		the exception
    */
   public void logMessage(Throwable t) {
-    logMessage(Utils.throwableToString(t));
+    logMessage(LoggingHelper.throwableToString(t));
   }
   
   /**
@@ -159,7 +159,7 @@ public abstract class AbstractWorkspacePanel
    * @param title	the title for the dialog
    */
   public void logError(String msg, Throwable t, String title) {
-    logError(msg + "\n" + Utils.throwableToString(t), title);
+    logError(msg + "\n" + LoggingHelper.throwableToString(t), title);
   }
 
   /**
@@ -169,7 +169,7 @@ public abstract class AbstractWorkspacePanel
    * @param title	the title for the dialog
    */
   public void logError(Throwable t, String title) {
-    logError(Utils.throwableToString(t), title);
+    logError(LoggingHelper.throwableToString(t), title);
   }
   
   /**

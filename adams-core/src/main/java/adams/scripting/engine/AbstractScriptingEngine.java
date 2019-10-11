@@ -20,7 +20,6 @@
 
 package adams.scripting.engine;
 
-import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.core.management.ProcessUtils;
@@ -346,7 +345,7 @@ public abstract class AbstractScriptingEngine
       msg = job.call();
     }
     catch (Exception e) {
-      msg = Utils.handleException(this, "Failed to execute job!", e);
+      msg = LoggingHelper.handleException(this, "Failed to execute job!", e);
     }
 
     if (msg != null)

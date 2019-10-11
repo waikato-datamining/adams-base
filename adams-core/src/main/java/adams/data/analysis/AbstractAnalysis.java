@@ -20,7 +20,7 @@
 
 package adams.data.analysis;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 
 /**
@@ -65,7 +65,7 @@ public abstract class AbstractAnalysis<T>
       return doAnalyze(data);
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to perform analysis!", e);
+      return LoggingHelper.handleException(this, "Failed to perform analysis!", e);
     }
   }
 }

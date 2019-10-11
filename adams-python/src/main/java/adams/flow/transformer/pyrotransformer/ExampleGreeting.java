@@ -20,7 +20,7 @@
 
 package adams.flow.transformer.pyrotransformer;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 
 /**
  * Uses the call described here:
@@ -99,7 +99,7 @@ public class ExampleGreeting
       m_Output = (String) m_RemoteObject.call(m_MethodName, (String) m_Input);
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
         this, "Failed to call remote method '" + m_MethodName + "' on remote object '" + m_RemoteObjectName + "'!", e);
     }
 

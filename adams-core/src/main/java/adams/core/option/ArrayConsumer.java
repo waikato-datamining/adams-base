@@ -21,6 +21,7 @@ package adams.core.option;
 
 import adams.core.Utils;
 import adams.core.Variables;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 
 import java.lang.reflect.Array;
@@ -355,7 +356,7 @@ public class ArrayConsumer
 	  }
 	  catch (Exception e) {
 	    msg = "Failed to process option '" + getOptionIdentifier(option) + "/" + manager.getOwner().getClass().getName() + "':";
-	    logError(msg + " " + Utils.throwableToString(e));
+	    logError(msg + " " + LoggingHelper.throwableToString(e));
 	    getLogger().log(Level.SEVERE, msg, e);
 	  }
 	}

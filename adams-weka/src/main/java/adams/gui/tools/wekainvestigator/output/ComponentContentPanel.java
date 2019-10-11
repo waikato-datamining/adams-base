@@ -20,8 +20,8 @@
 
 package adams.gui.tools.wekainvestigator.output;
 
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.image.BufferedImageSupporter;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.JComponentWriterFileChooser;
@@ -105,7 +105,7 @@ public class ComponentContentPanel
       writer.toOutput();
     }
     catch (Exception e) {
-      result = Utils.handleException(null, "Failed to save content to: " + file, e);
+      result = LoggingHelper.handleException(null, "Failed to save content to: " + file, e);
     }
 
     return result;

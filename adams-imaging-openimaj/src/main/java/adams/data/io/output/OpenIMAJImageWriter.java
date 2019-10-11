@@ -22,6 +22,7 @@ package adams.data.io.output;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.OpenIMAJImageReader;
 import adams.data.openimaj.OpenIMAJImageContainer;
@@ -110,7 +111,7 @@ public class OpenIMAJImageWriter
       return null;
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to write OpenIMAJ image to: " + file, e);
+      return LoggingHelper.handleException(this, "Failed to write OpenIMAJ image to: " + file, e);
     }
   }
 }

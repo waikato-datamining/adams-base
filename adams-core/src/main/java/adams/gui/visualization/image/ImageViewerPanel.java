@@ -20,8 +20,8 @@
 package adams.gui.visualization.image;
 
 import adams.core.Properties;
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
@@ -927,7 +927,7 @@ public class ImageViewerPanel
       }
     }
     catch (Exception e) {
-      msg = "Failed to " + operation + ":\n" + Utils.throwableToString(e);
+      msg = "Failed to " + operation + ":\n" + LoggingHelper.throwableToString(e);
       GUIHelper.showErrorMessage(this, msg);
       ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg + "\n");
     }

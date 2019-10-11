@@ -24,8 +24,8 @@ import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.Range;
 import adams.core.StatusMessageHandler;
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.instance.Instance;
 import adams.data.weka.ArffUtils;
 import adams.env.Environment;
@@ -499,7 +499,7 @@ public class InstanceExplorer
     catch (Exception e) {
       GUIHelper.showErrorMessage(
         this,
-        "Failed to load data from database:\n" + Utils.throwableToString(e),
+        "Failed to load data from database:\n" + LoggingHelper.throwableToString(e),
         "Database error");
     }
 

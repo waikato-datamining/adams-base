@@ -19,9 +19,9 @@
  */
 package adams.core.option;
 
-import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.io.FileFormatHandler;
+import adams.core.logging.LoggingHelper;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -351,7 +351,7 @@ public class JsonConsumer
 	}
 	catch (Exception e) {
 	  msg = "Failed to process option '" + getOptionIdentifier(option) + "/" + manager.getOwner().getClass().getName() + "':";
-	  logError(msg + " " + Utils.throwableToString(e));
+	  logError(msg + " " + LoggingHelper.throwableToString(e));
 	  getLogger().log(Level.SEVERE, msg, e);
 	}
       }

@@ -20,7 +20,7 @@
 
 package adams.core.management;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import com.sun.management.HotSpotDiagnosticMXBean;
 
 import javax.management.MBeanServer;
@@ -68,7 +68,7 @@ public class HeapDump {
     }
     catch (Exception e) {
       return "Failed to initialize diagnostic bean '" + DIAGNOSTIC_NAME + "':\n"
-	+ Utils.throwableToString(e);
+	+ LoggingHelper.throwableToString(e);
     }
   }
 
@@ -89,7 +89,7 @@ public class HeapDump {
       }
       catch (Exception e) {
         result = "Failed to generate heapdump file (live=" + live + "): " + output + "\n"
-	  + Utils.throwableToString(e);
+	  + LoggingHelper.throwableToString(e);
       }
     }
 

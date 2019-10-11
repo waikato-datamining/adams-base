@@ -21,9 +21,9 @@
 package adams.gui.tools.spreadsheetprocessor.targets;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
 import adams.core.base.BaseInteger;
 import adams.core.base.BasePassword;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.ColumnNameConversion;
 import adams.data.spreadsheet.SpreadSheet;
@@ -461,7 +461,7 @@ public class DatabaseTarget
 	}
 	catch (Exception e) {
 	  writer = null;
-	  error  = Utils.handleException(DatabaseTarget.this, "Failed to store data!" + conn.toCommandLine() + "/" + table, e);
+	  error  = LoggingHelper.handleException(DatabaseTarget.this, "Failed to store data!" + conn.toCommandLine() + "/" + table, e);
 	}
 	// write data
 	if (writer != null) {

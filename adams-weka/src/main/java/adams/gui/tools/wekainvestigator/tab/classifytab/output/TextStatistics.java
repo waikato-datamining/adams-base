@@ -21,7 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
@@ -246,7 +246,7 @@ public class TextStatistics
     }
     catch (Exception e) {
       buffer.append(eval.toSummaryString(false));
-      Utils.handleException(this, "Failed to generate summary statistics: ", e);
+      LoggingHelper.handleException(this, "Failed to generate summary statistics: ", e);
     }
 
     // confusion matrix
@@ -255,7 +255,7 @@ public class TextStatistics
 	buffer.append("\n\n" + eval.toMatrixString());
       }
       catch (Exception e) {
-	Utils.handleException(this, "Failed to generate confusion matrix: ", e);
+	LoggingHelper.handleException(this, "Failed to generate confusion matrix: ", e);
       }
     }
 
@@ -265,7 +265,7 @@ public class TextStatistics
 	buffer.append("\n\n" + eval.toClassDetailsString());
       }
       catch (Exception e) {
-	Utils.handleException(this, "Failed to generate class details: ", e);
+	LoggingHelper.handleException(this, "Failed to generate class details: ", e);
       }
     }
 

@@ -25,7 +25,6 @@ import adams.core.CloneHandler;
 import adams.core.CompareUtils;
 import adams.core.PasswordSupporter;
 import adams.core.Properties;
-import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
@@ -930,7 +929,7 @@ public abstract class AbstractDatabaseConnection
    */
   protected boolean tryConnection() {
     if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
-      getLogger().log(Level.FINE, "tryConnection request originated from:\n" + Utils.getStackTrace(-1));
+      getLogger().log(Level.FINE, "tryConnection request originated from:\n" + LoggingHelper.getStackTrace(-1));
     while (!m_ConnectionOK) {
       if (m_LastConnectionError.indexOf("CommunicationsException") > -1) {
 	return false;
@@ -1023,7 +1022,7 @@ public abstract class AbstractDatabaseConnection
     m_LastConnectionError = "";
     getLogger().info("connecting: " + m_URL);
     if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
-      getLogger().log(Level.FINE, "Connection request originated from:\n" + Utils.getStackTrace(-1));
+      getLogger().log(Level.FINE, "Connection request originated from:\n" + LoggingHelper.getStackTrace(-1));
     if (!isConnected()) {
       // have we already exceeded the number of attempts?
       if (getFailedConnectAttempt(m_URL, m_User, m_Password) >= getMaxConnectAttempts()) {
@@ -1082,7 +1081,7 @@ public abstract class AbstractDatabaseConnection
    */
   public synchronized boolean disconnect() {
     if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
-      getLogger().log(Level.FINE, "Disconnect request originated from:", Utils.getStackTrace(-1));
+      getLogger().log(Level.FINE, "Disconnect request originated from:", LoggingHelper.getStackTrace(-1));
     if (m_Connection != null) {
       getLogger().info("disconnecting: " + m_URL);
       try {

@@ -19,7 +19,7 @@
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.spreadsheetviewer.SpreadSheetPanel;
@@ -101,7 +101,7 @@ public class DataChart
       panel.generateChart(generator);
     }
     catch (Exception ex) {
-      msg = "Failed to generate chart:\n" + Utils.throwableToString(ex);
+      msg = "Failed to generate chart:\n" + LoggingHelper.throwableToString(ex);
       if (getParentDialog() != null)
 	GUIHelper.showErrorMessage(getParentDialog(), msg);
       else

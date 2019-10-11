@@ -21,8 +21,8 @@
 package adams.gui.core;
 
 import adams.core.Constants;
-import adams.core.Utils;
 import adams.core.base.BasePassword;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.ConnectionParameters;
@@ -163,7 +163,7 @@ public class SqlConnectionPanel
 	}
       }
       catch (Exception e) {
-        error = Utils.handleException(m_DatabaseConnection, "Failed to connect to: " + params.getURL(), e);
+        error = LoggingHelper.handleException(m_DatabaseConnection, "Failed to connect to: " + params.getURL(), e);
       }
     }
     if (error != null)
@@ -245,7 +245,7 @@ public class SqlConnectionPanel
 	}
       }
       catch (Exception e) {
-        error = Utils.handleException(m_DatabaseConnection, "Failed to connect to: " + textURL.getText(), e);
+        error = LoggingHelper.handleException(m_DatabaseConnection, "Failed to connect to: " + textURL.getText(), e);
       }
     }
     else {

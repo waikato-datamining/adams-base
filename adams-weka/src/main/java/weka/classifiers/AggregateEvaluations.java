@@ -22,6 +22,7 @@ package weka.classifiers;
 
 import adams.core.ErrorProvider;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
@@ -314,7 +315,7 @@ public class AggregateEvaluations
     }
     catch (Exception e) {
       result      = null;
-      m_LastError = Utils.handleException(this, "Failed to create 'fake' Evaluation object!", e);
+      m_LastError = LoggingHelper.handleException(this, "Failed to create 'fake' Evaluation object!", e);
     }
 
     return result;

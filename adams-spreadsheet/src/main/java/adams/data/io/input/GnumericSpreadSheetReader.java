@@ -19,7 +19,7 @@
  */
 package adams.data.io.input;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.output.GnumericSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Row;
@@ -531,7 +531,7 @@ public class GnumericSpreadSheetReader
     catch (Exception e) {
       result = null;
       getLogger().log(Level.SEVERE, "Failed to read data!", e);
-      m_LastError = "Failed to read range '" + m_SheetRange + "' from stream!\n" + Utils.throwableToString(e);
+      m_LastError = "Failed to read range '" + m_SheetRange + "' from stream!\n" + LoggingHelper.throwableToString(e);
     }
     
     return result;

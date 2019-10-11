@@ -19,7 +19,7 @@
  */
 package adams.gui.tools.wekamultiexperimenter.setup;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseListWithButtons;
@@ -233,7 +233,7 @@ public class ClassifierPanel
       }
       catch (Exception ex) {
 	GUIHelper.showErrorMessage(
-	  ClassifierPanel.this, "Not a valid classifier setup!\n" + Utils.throwableToString(ex));
+	  ClassifierPanel.this, "Not a valid classifier setup!\n" + LoggingHelper.throwableToString(ex));
       }
     });
     menu.add(menuitem);

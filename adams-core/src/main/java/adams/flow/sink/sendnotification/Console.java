@@ -21,9 +21,9 @@
 package adams.flow.sink.sendnotification;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.core.io.ConsoleHelper;
+import adams.core.logging.LoggingHelper;
 
 /**
  * Outputs the message in the console (with optional prefix).
@@ -120,7 +120,7 @@ public class Console
       ConsoleHelper.printlnOut(str.toString());
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed output message!", e);
+      result = LoggingHelper.handleException(this, "Failed output message!", e);
     }
 
     return result;

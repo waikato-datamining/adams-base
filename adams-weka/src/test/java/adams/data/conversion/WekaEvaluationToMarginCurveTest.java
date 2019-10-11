@@ -20,20 +20,20 @@
 
 package adams.data.conversion;
 
-import java.io.StringWriter;
-import java.util.Random;
-
+import adams.core.logging.LoggingHelper;
+import adams.data.io.output.CsvSpreadSheetWriter;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.env.Environment;
+import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
-import adams.core.Utils;
-import adams.data.io.output.CsvSpreadSheetWriter;
-import adams.data.spreadsheet.SpreadSheet;
-import adams.env.Environment;
-import adams.test.TmpFile;
+
+import java.io.StringWriter;
+import java.util.Random;
 
 /**
  * Tests the WekaEvaluationToMarginCurve conversion.
@@ -133,7 +133,7 @@ public class WekaEvaluationToMarginCurveTest
     }
     catch (Exception e) {
       result = null;
-      fail(Utils.throwableToString(e));
+      fail(LoggingHelper.throwableToString(e));
     }
 
     return result;

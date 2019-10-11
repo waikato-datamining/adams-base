@@ -20,7 +20,7 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
@@ -91,7 +91,7 @@ public class TrainTestSplitExperiment
 	m_Owner.appendResults(results);
       }
       catch (Exception e) {
-	Utils.handleException(m_Owner, "Failed to evaluate classifier on train/test split!", e);
+	LoggingHelper.handleException(m_Owner, "Failed to evaluate classifier on train/test split!", e);
       }
 
       m_Owner.log("Run " + m_Run + " [end]: " + m_Data.relationName() + " on " + shortenCommandLine(m_Classifier));

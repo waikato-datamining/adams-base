@@ -20,7 +20,7 @@
 
 package adams.scripting.connection;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.PortManager;
 import com.jcraft.jsch.Session;
 
@@ -148,7 +148,7 @@ public abstract class AbstractSSHConnectionWithPortForwarding
           getLogger().info("Assigned port: " + m_AssignedPort);
       }
       catch (Exception e) {
-        Utils.handleException(this, "Failed to establish connection to '" + m_Host + "' (using " + m_AuthenticationType + "): ", e);
+        LoggingHelper.handleException(this, "Failed to establish connection to '" + m_Host + "' (using " + m_AuthenticationType + "): ", e);
         result = null;
       }
     }

@@ -21,12 +21,12 @@
 package adams.core.io.lister;
 
 import adams.core.PasswordSupporter;
-import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.FileObject;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.SftpFileObject;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.JSchUtils;
 import adams.core.net.SSHAuthenticationType;
 import adams.core.net.SSHSessionProvider;
@@ -315,7 +315,7 @@ public class SftpDirectoryLister
       result.connect();
     }
     catch (Exception e) {
-      Utils.handleException(this, "Failed to establish connection to '" + host + "' (using " + m_AuthenticationType + "): ", e);
+      LoggingHelper.handleException(this, "Failed to establish connection to '" + host + "' (using " + m_AuthenticationType + "): ", e);
       result = null;
     }
 
@@ -332,7 +332,7 @@ public class SftpDirectoryLister
 	  m_Session.disconnect();
 	}
 	catch (Exception e) {
-	  Utils.handleException(this, "Failed to disconnect from '" + m_Host + "':", e);
+	  LoggingHelper.handleException(this, "Failed to disconnect from '" + m_Host + "':", e);
 	}
       }
     }
@@ -562,7 +562,7 @@ public class SftpDirectoryLister
 	result = search(channel);
       }
       catch (Exception e) {
-	Utils.handleException(this, "Failed to list remote directory!", e);
+	LoggingHelper.handleException(this, "Failed to list remote directory!", e);
 	result = new ArrayList<>();
       }
       finally {

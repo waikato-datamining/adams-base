@@ -597,7 +597,7 @@ public class ActorUtils {
       list = new ArrayList<>();
       for (ActorHandler h: result)
 	list.add(h.getClass().getName() + "/" + h.getFullName());
-      LOGGER.fine("Actor handlers: " + list + "\n" + Utils.getStackTrace(20));
+      LOGGER.fine("Actor handlers: " + list + "\n" + LoggingHelper.getStackTrace(20));
     }
 
     return result;
@@ -1095,20 +1095,20 @@ public class ActorUtils {
     if (closest != null) {
       if (closest instanceof adams.flow.standalone.AbstractDatabaseConnection) {
 	result = ((adams.flow.standalone.AbstractDatabaseConnection) closest).getConnection();
-	LOGGER.fine("Database connection found: " + result + "\n" + Utils.getStackTrace(20));
+	LOGGER.fine("Database connection found: " + result + "\n" + LoggingHelper.getStackTrace(20));
       }
       else  if (closest instanceof adams.flow.standalone.AbstractDatabaseConnectionProvider) {
 	result = ((adams.flow.standalone.AbstractDatabaseConnectionProvider) closest).getConnection();
-	LOGGER.fine("Database connection found: " + result + "\n" + Utils.getStackTrace(20));
+	LOGGER.fine("Database connection found: " + result + "\n" + LoggingHelper.getStackTrace(20));
       }
       else {
 	result = defCon;
-	LOGGER.warning("Unhandled actor type '" + closest.getClass().getName() + "', using default connection: " + defCon + "\n" + Utils.getStackTrace(20));
+	LOGGER.warning("Unhandled actor type '" + closest.getClass().getName() + "', using default connection: " + defCon + "\n" + LoggingHelper.getStackTrace(20));
       }
     }
     else {
       result = defCon;
-      LOGGER.info("No database connection found, using default: " + defCon + "\n" + Utils.getStackTrace(20));
+      LOGGER.info("No database connection found, using default: " + defCon + "\n" + LoggingHelper.getStackTrace(20));
     }
     if (!result.isConnected() && result.getConnectOnStartUp()) {
       try {

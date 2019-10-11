@@ -21,7 +21,7 @@
 package adams.scripting.connection;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
 import adams.scripting.processor.RemoteCommandProcessor;
@@ -172,7 +172,7 @@ public class DefaultConnection
       socket.close();
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
 	cmd, "Failed to send " + (request ? "request" : "response") + " to " + host + ":" + port, e);
     }
 

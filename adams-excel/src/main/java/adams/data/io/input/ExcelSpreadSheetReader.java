@@ -22,7 +22,7 @@ package adams.data.io.input;
 import adams.core.DateFormat;
 import adams.core.DateTime;
 import adams.core.DateUtils;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.output.ExcelSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
@@ -354,7 +354,7 @@ public class ExcelSpreadSheetReader
     catch (Exception ioe) {
       getLogger().log(Level.SEVERE, "Failed to read range '" + m_SheetRange + "':", ioe);
       result = null;
-      m_LastError = "Failed to read range '" + m_SheetRange + "' from stream!\n" + Utils.throwableToString(ioe);
+      m_LastError = "Failed to read range '" + m_SheetRange + "' from stream!\n" + LoggingHelper.throwableToString(ioe);
     }
 
     return result;

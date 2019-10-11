@@ -22,6 +22,7 @@ package adams.data.io.output;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.SanselanImageReader;
@@ -141,7 +142,7 @@ public class SanselanImageWriter
 	Sanselan.writeImage(cont.toBufferedImage(), file.getAbsoluteFile(), format, new HashMap());
       }
       catch (Exception e) {
-	result = Utils.handleException(this, "Failed to write image to: " + file, e);
+	result = LoggingHelper.handleException(this, "Failed to write image to: " + file, e);
       }
     }
     

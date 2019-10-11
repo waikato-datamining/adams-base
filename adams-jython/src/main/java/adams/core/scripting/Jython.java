@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 import adams.env.Environment;
 import adams.flow.core.AdditionalOptionsHandler;
@@ -370,7 +371,7 @@ public class Jython
 	  }
 	}
 	catch (Exception e) {
-	  result[0] = "Failed to save inline script to temporary file: " + Utils.throwableToString(e);
+	  result[0] = "Failed to save inline script to temporary file: " + LoggingHelper.throwableToString(e);
 	  getLogger().log(Level.SEVERE, "Failed to save inline script to temporary file!", e);
 	}
       }

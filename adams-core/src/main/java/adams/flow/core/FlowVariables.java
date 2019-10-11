@@ -19,8 +19,8 @@
  */
 package adams.flow.core;
 
-import adams.core.Utils;
 import adams.core.Variables;
+import adams.core.logging.LoggingHelper;
 import adams.flow.control.StorageName;
 
 /**
@@ -158,7 +158,7 @@ public class FlowVariables
 	  }
 	}
 	catch (Exception e) {
-	  msg = Utils.throwableToString(e);
+	  msg = LoggingHelper.throwableToString(e);
 	}
       }
       else {

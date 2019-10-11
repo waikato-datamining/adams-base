@@ -21,6 +21,7 @@
 package adams.scripting.engine;
 
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
 import adams.scripting.command.RemoteCommand;
 
@@ -160,7 +161,7 @@ public class ManualFeedScriptingEngine
 	// ignored
       }
       catch (Exception e) {
-	Utils.handleException(this, "Failed to poll next command!", e);
+	LoggingHelper.handleException(this, "Failed to poll next command!", e);
       }
     }
 

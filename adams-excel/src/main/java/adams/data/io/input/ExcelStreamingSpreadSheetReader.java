@@ -933,7 +933,7 @@ public class ExcelStreamingSpreadSheetReader
     catch (ParseStopException e) {
       getLogger().severe("Parsing stopped!");
       result = null;
-      m_LastError = "Failed to read range '" + m_SheetRange + "' from file '" + file + "'!\n" + Utils.throwableToString(e);
+      m_LastError = "Failed to read range '" + m_SheetRange + "' from file '" + file + "'!\n" + LoggingHelper.throwableToString(e);
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to read spreadsheet:", e);

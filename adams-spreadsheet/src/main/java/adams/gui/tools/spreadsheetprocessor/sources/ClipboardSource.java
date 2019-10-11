@@ -21,7 +21,7 @@
 package adams.gui.tools.spreadsheetprocessor.sources;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
@@ -131,7 +131,7 @@ public class ClipboardSource
 	    notifyOwner(EventType.DATA_IS_AVAILABLE, "Data pasted from clipboard!");
 	}
 	catch (Exception e) {
-	  error  = Utils.handleException(ClipboardSource.this, "Failed to paste data from clipboard!", e);
+	  error  = LoggingHelper.handleException(ClipboardSource.this, "Failed to paste data from clipboard!", e);
 	  m_Data = null;
 	}
 	return null;

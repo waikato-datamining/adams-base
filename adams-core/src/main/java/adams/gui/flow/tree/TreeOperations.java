@@ -27,6 +27,7 @@ import adams.core.NewInstance;
 import adams.core.SizeOf;
 import adams.core.Utils;
 import adams.core.io.FlowFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.core.optiontransfer.AbstractOptionTransfer;
@@ -1552,7 +1553,7 @@ public class TreeOperations
 	GUIHelper.showErrorMessage(
 	  getOwner(),
 	  "Failed to instantiate callable actor handler: " + handler.getName() + "\n"
-	    + Utils.throwableToString(e));
+	    + LoggingHelper.throwableToString(e));
 	return;
       }
       callableNode = new Node(getOwner(), callableActors);
@@ -1682,7 +1683,7 @@ public class TreeOperations
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	  getOwner(), "Failed to externalize actor(s):\n" + Utils.throwableToString(e));
+	  getOwner(), "Failed to externalize actor(s):\n" + LoggingHelper.throwableToString(e));
       return;
     }
 

@@ -22,7 +22,7 @@
 package adams.gui.menu;
 
 import adams.core.Properties;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
@@ -185,7 +185,7 @@ public class BatchFilterDatasets
         }
         catch (Exception ex) {
           GUIHelper.showErrorMessage(
-            getOwner(), "Failed to get setup from wizard!\n" + Utils.throwableToString(ex));
+            getOwner(), "Failed to get setup from wizard!\n" + LoggingHelper.throwableToString(ex));
           return;
         }
         batchFilter(frame, files, filter, classIndex, keep, outdir);
@@ -228,7 +228,7 @@ public class BatchFilterDatasets
       catch (Exception e) {
         GUIHelper.showErrorMessage(
           getOwner(),
-	  "Failed to read '" + input[i] + "'!\n" + Utils.throwableToString(e));
+	  "Failed to read '" + input[i] + "'!\n" + LoggingHelper.throwableToString(e));
         return;
       }
     }
@@ -250,7 +250,7 @@ public class BatchFilterDatasets
 	GUIHelper.showErrorMessage(
 	  getOwner(),
 	  "Failed to parse class attribute index: " + classIndex + "\n"
-	    + Utils.throwableToString(e));
+	    + LoggingHelper.throwableToString(e));
 	return;
       }
     }
@@ -275,7 +275,7 @@ public class BatchFilterDatasets
 	GUIHelper.showErrorMessage(
 	  getOwner(),
 	  "Failed to filter dataset #" + (i+1) + " ('" + input[i] + "')!\n"
-	    + Utils.throwableToString(e));
+	    + LoggingHelper.throwableToString(e));
 	return;
       }
     }

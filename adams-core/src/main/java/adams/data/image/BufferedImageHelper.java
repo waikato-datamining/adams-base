@@ -20,8 +20,8 @@
 package adams.data.image;
 
 import adams.core.Properties;
-import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.data.Notes;
 import adams.data.report.Report;
 import adams.data.xml.DOMUtils;
@@ -511,7 +511,7 @@ public class BufferedImageHelper {
       ImageIO.write(img, FileUtils.getExtension(file), file.getAbsoluteFile());
     }
     catch (Exception e) {
-      return "Failed to write image to '" + file + "': " + Utils.throwableToString(e);
+      return "Failed to write image to '" + file + "': " + LoggingHelper.throwableToString(e);
     }
     
     return null;

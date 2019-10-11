@@ -26,6 +26,7 @@ import adams.core.SerializationHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -289,7 +290,7 @@ public class SerializingJobRunner
       SerializationHelper.write(m_Export.getAbsolutePath(), m_ActualJobRunner);
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to serialize jobrunner to: " + m_Export, e);
+      return LoggingHelper.handleException(this, "Failed to serialize jobrunner to: " + m_Export, e);
     }
 
     return null;
@@ -341,7 +342,7 @@ public class SerializingJobRunner
       }
       catch (Exception e) {
 	m_ActualJobRunner = null;
-	return Utils.handleException(this, "Failed to deserialize jobrunner form: " + m_Import, e);
+	return LoggingHelper.handleException(this, "Failed to deserialize jobrunner form: " + m_Import, e);
       }
     }
 

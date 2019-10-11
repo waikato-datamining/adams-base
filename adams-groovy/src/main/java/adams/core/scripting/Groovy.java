@@ -25,6 +25,7 @@ import adams.core.Variables;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 import adams.env.Environment;
 import adams.flow.core.AdditionalOptionsHandler;
@@ -226,7 +227,7 @@ public class Groovy
 	  FileUtils.saveToFile(inlineScript.getValue().split("\n"), file);
 	}
 	catch (Exception e) {
-	  result[0] = "Failed to save inline script to temporary file: " + Utils.throwableToString(e);
+	  result[0] = "Failed to save inline script to temporary file: " + LoggingHelper.throwableToString(e);
 	  getLogger().log(Level.SEVERE, "Failed to save inline script to temporary file!", e);
 	}
       }

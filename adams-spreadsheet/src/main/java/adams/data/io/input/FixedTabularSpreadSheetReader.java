@@ -23,10 +23,10 @@ package adams.data.io.input;
 import adams.core.BasicDateTimeType;
 import adams.core.Constants;
 import adams.core.Range;
-import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.base.BaseInteger;
 import adams.core.base.BaseRegExp;
+import adams.core.logging.LoggingHelper;
 import adams.core.management.OptionHandlingLocaleSupporter;
 import adams.data.DateFormatString;
 import adams.data.io.output.FixedTabularSpreadSheetWriter;
@@ -867,7 +867,7 @@ public class FixedTabularSpreadSheetReader
       }
     }
     catch (Exception e) {
-      m_LastError = Utils.handleException(this, "Failed to read data!", e);
+      m_LastError = LoggingHelper.handleException(this, "Failed to read data!", e);
       return null;
     }
 

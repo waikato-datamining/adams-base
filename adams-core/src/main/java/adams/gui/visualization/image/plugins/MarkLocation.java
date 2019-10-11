@@ -21,7 +21,7 @@
 package adams.gui.visualization.image.plugins;
 
 import adams.core.Properties;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.GUIHelper;
@@ -141,7 +141,7 @@ public class MarkLocation
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	null, "Failed to process locations/overlay setup:\n" + props + "\n" + Utils.throwableToString(e));
+	null, "Failed to process locations/overlay setup:\n" + props + "\n" + LoggingHelper.throwableToString(e));
     }
   }
 

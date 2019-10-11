@@ -21,7 +21,7 @@ package adams.data.weka;
 
 import adams.core.Index;
 import adams.core.IndexTest;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.env.Environment;
 import adams.test.AbstractTestHelper;
 import adams.test.TestHelper;
@@ -164,7 +164,7 @@ public class WekaAttributeIndexTest
       data = loadDataset("simple.arff");
     }
     catch (Exception e) {
-      fail("Failed loading simple.arff: " + Utils.throwableToString(e));
+      fail("Failed loading simple.arff: " + LoggingHelper.throwableToString(e));
     }
 
     WekaAttributeIndex index;

@@ -21,7 +21,7 @@
 package adams.gui.tools.wekainvestigator.output;
 
 import adams.core.CleanUpHandler;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
 import adams.gui.core.SimpleLogPanel;
@@ -156,7 +156,7 @@ public abstract class AbstractResultItem
   public void logError(String msg, Throwable t) {
     String	exc;
 
-    exc = Utils.throwableToString(t);
+    exc = LoggingHelper.throwableToString(t);
 
     m_Log.append(msg);
     m_Log.append("\n");

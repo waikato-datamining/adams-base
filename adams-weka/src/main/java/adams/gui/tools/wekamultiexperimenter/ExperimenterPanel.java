@@ -21,6 +21,7 @@ package adams.gui.tools.wekamultiexperimenter;
 
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.WekaFileChooser;
@@ -310,7 +311,7 @@ public class ExperimenterPanel
       logMessage("Saved experiment to " + file);
     }
     catch (Exception e) {
-      logError("Failed to save experiment to " + file + "!\n" + Utils.throwableToString(e), "Save experiment");
+      logError("Failed to save experiment to " + file + "!\n" + LoggingHelper.throwableToString(e), "Save experiment");
     }
   }
 
@@ -346,7 +347,7 @@ public class ExperimenterPanel
       m_Runner = m_PanelSetup.getExperimentIO().createRunner(this);
     }
     catch (Exception e) {
-      logError("Failed to run experiment: " + Utils.throwableToString(e), "Execution error");
+      logError("Failed to run experiment: " + LoggingHelper.throwableToString(e), "Execution error");
       return;
     }
     m_Runner.start();
@@ -426,7 +427,7 @@ public class ExperimenterPanel
       }
     }
     catch (Exception e) {
-      msg = "Failed to load results from " + file + "\n" + Utils.throwableToString(e);
+      msg = "Failed to load results from " + file + "\n" + LoggingHelper.throwableToString(e);
       logError("Cannot handle results from " + file + "\n" + msg, "Loading results");
     }
   }
@@ -481,7 +482,7 @@ public class ExperimenterPanel
       logMessage("Results saved to " + file);
     }
     catch (Exception e) {
-      logError("Failed to save results to " + file + "\n" + Utils.throwableToString(e), "Saving results");
+      logError("Failed to save results to " + file + "\n" + LoggingHelper.throwableToString(e), "Saving results");
     }
   }
 
@@ -525,7 +526,7 @@ public class ExperimenterPanel
 	  submenu.add(menuitem);
 	}
 	catch (Exception e) {
-	  logError("Failed to instantiate experiment: " + cls + "\n" + Utils.throwableToString(e), "New experiment");
+	  logError("Failed to instantiate experiment: " + cls + "\n" + LoggingHelper.throwableToString(e), "New experiment");
 	}
       }
 
@@ -846,7 +847,7 @@ public class ExperimenterPanel
    * @param title	the title for the dialog
    */
   public void logError(String msg, Throwable t, String title) {
-    logError(msg + "\n" + Utils.throwableToString(t), title);
+    logError(msg + "\n" + LoggingHelper.throwableToString(t), title);
   }
 
   /**

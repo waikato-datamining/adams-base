@@ -20,8 +20,8 @@
 package weka.gui.explorer;
 
 import adams.core.Range;
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
@@ -1071,7 +1071,7 @@ public class ExplorerExt
       memMonitor.start();
     } 
     catch (Exception ex) {
-      Logger.log(Level.SEVERE, Utils.throwableToString(ex));
+      Logger.log(Level.SEVERE, LoggingHelper.throwableToString(ex));
       System.err.println("An Exception occurred: ");
       ex.printStackTrace();
     }

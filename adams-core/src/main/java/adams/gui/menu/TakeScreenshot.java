@@ -21,16 +21,8 @@
 
 package adams.gui.menu;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.Date;
-
 import adams.core.DateFormat;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.output.AbstractImageWriter;
 import adams.gui.application.AbstractApplicationFrame;
@@ -39,6 +31,14 @@ import adams.gui.application.UserMode;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.GUIHelper;
 import adams.gui.print.JComponentWriterFileChooser;
+
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Date;
 
 /**
  * Takes a screenshot of the desktop.
@@ -117,7 +117,7 @@ public class TakeScreenshot
     catch (Exception e) {
       GUIHelper.showErrorMessage(
 	  getOwner(), 
-	  "Failed to take screenshot:\n" + Utils.throwableToString(e));
+	  "Failed to take screenshot:\n" + LoggingHelper.throwableToString(e));
     }
   }
     

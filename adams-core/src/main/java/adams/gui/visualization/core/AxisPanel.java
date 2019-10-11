@@ -22,6 +22,7 @@ package adams.gui.visualization.core;
 
 import adams.core.Utils;
 import adams.core.base.BaseInterval;
+import adams.core.logging.LoggingHelper;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTextField;
@@ -877,7 +878,7 @@ public class AxisPanel
 	"Failed to parse/set range parameters:\n"
 	  + textMin.getText() + "\n"
 	  + textMax.getText() + "\n"
-	  + Utils.throwableToString(e));
+	  + LoggingHelper.throwableToString(e));
     }
   }
 
@@ -998,7 +999,7 @@ public class AxisPanel
 	"Failed to parse/set margins:\n"
 	  + textTop.getText() + "\n"
 	  + textBottom.getText() + "\n"
-	  + Utils.throwableToString(e));
+	  + LoggingHelper.throwableToString(e));
     }
   }
 

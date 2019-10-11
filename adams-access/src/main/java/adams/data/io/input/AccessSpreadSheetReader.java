@@ -21,7 +21,7 @@
 package adams.data.io.input;
 
 import adams.core.DateTime;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
@@ -253,7 +253,7 @@ public class AccessSpreadSheetReader
       catch (Exception e) {
         result = null;
 	m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
-	m_Owner.setLastError("Failed to read data!\n" + Utils.throwableToString(e));
+	m_Owner.setLastError("Failed to read data!\n" + LoggingHelper.throwableToString(e));
       }
 
       return result;
@@ -269,7 +269,7 @@ public class AccessSpreadSheetReader
       }
       catch (Exception e) {
 	m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
-	m_Owner.setLastError("Failed to read data!\n" + Utils.throwableToString(e));
+	m_Owner.setLastError("Failed to read data!\n" + LoggingHelper.throwableToString(e));
       }
     }
 

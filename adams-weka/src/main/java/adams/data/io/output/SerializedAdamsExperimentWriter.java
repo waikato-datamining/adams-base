@@ -21,8 +21,8 @@
 package adams.data.io.output;
 
 import adams.core.SerializationHelper;
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.input.AbstractAdamsExperimentReader;
 import adams.data.io.input.SerializedAdamsExperimentReader;
 import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
@@ -93,7 +93,7 @@ public class SerializedAdamsExperimentWriter
       return null;
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to write experiment to: " + file, e);
+      return LoggingHelper.handleException(this, "Failed to write experiment to: " + file, e);
     }
   }
 }

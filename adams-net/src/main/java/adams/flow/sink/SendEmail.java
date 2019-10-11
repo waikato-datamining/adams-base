@@ -21,7 +21,7 @@
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.AbstractSendEmail;
 import adams.core.net.EmailHelper;
 import adams.flow.core.ActorUtils;
@@ -330,7 +330,7 @@ public class SendEmail
 	      m_Self.handleError(m_Self, "email", "Failed to send email, check console output!");
 	  }
 	  catch (Exception e) {
-	    Utils.handleException(m_Self, "Failed to send email: ", e);
+	    LoggingHelper.handleException(m_Self, "Failed to send email: ", e);
 	  }
 	  return null;
 	}

@@ -20,8 +20,8 @@
 
 package adams.data.io.input;
 
-import adams.core.Utils;
 import adams.core.base.BaseCharset;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.output.SimpleStreamSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
@@ -431,7 +431,7 @@ public class SimpleStreamSpreadSheetReader
       }
     }
     catch (Exception e) {
-      m_LastError = "Failed to read data!\n" + Utils.throwableToString(e);
+      m_LastError = "Failed to read data!\n" + LoggingHelper.throwableToString(e);
     }
 
     return result;

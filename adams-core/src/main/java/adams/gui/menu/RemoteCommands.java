@@ -22,7 +22,7 @@
 package adams.gui.menu;
 
 import adams.core.Properties;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractSubMenuDefinition;
@@ -238,7 +238,7 @@ public class RemoteCommands
       GUIHelper.showErrorMessage(
 	null,
 	"Failed to instantiate command: '" + props.getProperty(KEY_COMMAND) + "'\n"
-	  + Utils.throwableToString(e));
+	  + LoggingHelper.throwableToString(e));
       return;
     }
     try {
@@ -249,7 +249,7 @@ public class RemoteCommands
       GUIHelper.showErrorMessage(
 	null,
 	"Failed to instantiate connection: '" + props.getProperty(KEY_CONNECTION) + "'\n"
-	  + Utils.throwableToString(e));
+	  + LoggingHelper.throwableToString(e));
       return;
     }
     try {
@@ -260,7 +260,7 @@ public class RemoteCommands
       GUIHelper.showErrorMessage(
 	null,
 	"Failed to instantiate command processor: '" + props.getProperty(KEY_COMMANDPROCESSOR) + "'\n"
-	  + Utils.throwableToString(e));
+	  + LoggingHelper.throwableToString(e));
       return;
     }
 

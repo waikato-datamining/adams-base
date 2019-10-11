@@ -22,7 +22,7 @@ package adams.multiprocess;
 
 import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
 import adams.flow.core.FlowContextHandler;
@@ -214,7 +214,7 @@ public class WekaCrossValidationJob
 	m_StatusMessageHandler.showStatus(
 	  "Fold " + m_Fold + " - error: '" + m_Train.relationName() + "' using "
 	    + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100) + "\n"
-	    + Utils.throwableToString(e));
+	    + LoggingHelper.throwableToString(e));
       throw(e);
     }
     if (m_StatusMessageHandler != null)

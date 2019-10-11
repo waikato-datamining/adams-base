@@ -22,6 +22,7 @@ package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.db.AbstractConditions;
 import adams.db.AbstractLimitedConditions;
 import nz.ac.waikato.cms.locator.ClassLocator;
@@ -137,7 +138,7 @@ public abstract class AbstractConditionalIdSupplier
 	classesStr += classes[i].getName();
       }
       getLogger().severe(
-	  "Provided " + Utils.classToString(value) + ", but only the following container(s) are allowed: " + classesStr + "\n" + Utils.getStackTrace(20));
+	  "Provided " + Utils.classToString(value) + ", but only the following container(s) are allowed: " + classesStr + "\n" + LoggingHelper.getStackTrace(20));
     }
   }
 

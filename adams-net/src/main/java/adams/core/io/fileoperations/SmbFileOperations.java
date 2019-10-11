@@ -20,9 +20,9 @@
 
 package adams.core.io.fileoperations;
 
-import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.SMB;
 import adams.core.net.SMBAuthenticationProvider;
 import jcifs.smb.SmbFile;
@@ -150,7 +150,7 @@ public class SmbFileOperations
       file.renameTo(new SmbFile(target, m_Provider.getAuthentication()));
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to rename file: " + source + " -> " + target, e);
+      return LoggingHelper.handleException(this, "Failed to rename file: " + source + " -> " + target, e);
     }
 
     return null;
@@ -170,7 +170,7 @@ public class SmbFileOperations
       smbfile.delete();
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to delete file: " + file, e);
+      return LoggingHelper.handleException(this, "Failed to delete file: " + file, e);
     }
 
     return null;
@@ -190,7 +190,7 @@ public class SmbFileOperations
       smbfile.mkdirs();
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to create directory: " + dir, e);
+      return LoggingHelper.handleException(this, "Failed to create directory: " + dir, e);
     }
 
     return null;

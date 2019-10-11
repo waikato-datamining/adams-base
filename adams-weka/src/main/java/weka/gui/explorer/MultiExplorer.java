@@ -19,7 +19,7 @@
  */
 package weka.gui.explorer;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.env.Environment;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionEvent;
@@ -347,7 +347,7 @@ public class MultiExplorer
     catch (Exception e) {
       GUIHelper.showErrorMessage(
 	this,
-	"Failed to open workspace '" + file + "'!\n" + Utils.throwableToString(e));
+	"Failed to open workspace '" + file + "'!\n" + LoggingHelper.throwableToString(e));
     }
   }
 
@@ -369,7 +369,7 @@ public class MultiExplorer
     catch (Exception e) {
       GUIHelper.showErrorMessage(
 	this,
-	"Failed to save workspace to '" + file + "'!\n" + Utils.throwableToString(e));
+	"Failed to save workspace to '" + file + "'!\n" + LoggingHelper.throwableToString(e));
     }
   }
 
@@ -476,7 +476,7 @@ public class MultiExplorer
       memMonitor.start();
     }
     catch (Exception ex) {
-      Logger.log(Level.SEVERE, Utils.throwableToString(ex));
+      Logger.log(Level.SEVERE, LoggingHelper.throwableToString(ex));
       System.err.println("An Exception occurred: ");
       ex.printStackTrace();
     }

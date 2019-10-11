@@ -21,7 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaEvaluationContainer;
@@ -124,7 +124,7 @@ public class PredictionHelper {
     catch (Exception e) {
       msg = "Failed to assemble predictions!";
       if (logger != null)
-	Utils.handleException(logger, msg, e);
+	LoggingHelper.handleException(logger, msg, e);
       errors.add(msg, e);
       return null;
     }

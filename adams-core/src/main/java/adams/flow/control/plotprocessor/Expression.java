@@ -20,7 +20,7 @@
 package adams.flow.control.plotprocessor;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.flow.container.SequencePlotterContainer;
 import adams.parser.MathematicalExpression;
 import adams.parser.MathematicalExpressionText;
@@ -283,7 +283,7 @@ public class Expression
 	  x = MathematicalExpression.evaluate(m_XExpression.getValue(), symbols);
 	}
 	catch (Exception e) {
-	  m_LastError = Utils.handleException(this, "Failed to evaluate x expression: " + m_XExpression + "\nusing: " + symbols, e);
+	  m_LastError = LoggingHelper.handleException(this, "Failed to evaluate x expression: " + m_XExpression + "\nusing: " + symbols, e);
 	  return null;
 	}
 	// Y
@@ -295,7 +295,7 @@ public class Expression
 	  y = MathematicalExpression.evaluate(m_YExpression.getValue(), symbols);
 	}
 	catch (Exception e) {
-	  m_LastError = Utils.handleException(this, "Failed to evaluate y expression: " + m_YExpression + "\nusing: " + symbols, e);
+	  m_LastError = LoggingHelper.handleException(this, "Failed to evaluate y expression: " + m_YExpression + "\nusing: " + symbols, e);
 	  return null;
 	}
 	result = new ArrayList<>();

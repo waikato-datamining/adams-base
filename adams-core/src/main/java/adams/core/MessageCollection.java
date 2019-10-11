@@ -20,6 +20,8 @@
 
 package adams.core;
 
+import adams.core.logging.LoggingHelper;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,7 +90,7 @@ public class MessageCollection
    * @param t 		the associated exception
    */
   public void add(String msg, Throwable t) {
-    m_Messages.add(msg + "\n" + Utils.throwableToString(t));
+    m_Messages.add(msg + "\n" + LoggingHelper.throwableToString(t));
   }
 
   /**
@@ -109,7 +111,7 @@ public class MessageCollection
    * @param t 		the associated execption
    */
   public void add(int index, String msg, Throwable t) {
-    m_Messages.add(index, msg + "\n" + Utils.throwableToString(t));
+    m_Messages.add(index, msg + "\n" + LoggingHelper.throwableToString(t));
   }
 
   /**

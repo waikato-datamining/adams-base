@@ -1232,7 +1232,7 @@ public abstract class AbstractGeneticAlgorithm
       preRun();
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Error on preRun", e);
+      result = LoggingHelper.handleException(this, "Error on preRun", e);
     }
 
     if (result == null) {
@@ -1285,7 +1285,7 @@ public abstract class AbstractGeneticAlgorithm
 	while (!getStoppingCriterion().checkStopping(this));
       }
       catch (Exception e) {
-	result = Utils.handleException(this, "Error in iteration", e);
+	result = LoggingHelper.handleException(this, "Error in iteration", e);
       }
     }
 
@@ -1293,7 +1293,7 @@ public abstract class AbstractGeneticAlgorithm
       postRun(result);
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Error in postRun", e);
+      result = LoggingHelper.handleException(this, "Error in postRun", e);
     }
 
     return result;

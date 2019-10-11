@@ -24,6 +24,7 @@ import adams.core.SerializableObject;
 import adams.core.SerializationHelper;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.input.SerializableObjectReader;
 
@@ -116,7 +117,7 @@ public class SerializableObjectWriter
       SerializationHelper.write(file.getAbsolutePath(), new Object[]{sobj.getClass().getName(), data});
     }
     catch (Exception e) {
-      result = "Failed to write object to: " + file + "\n" + Utils.throwableToString(e);
+      result = "Failed to write object to: " + file + "\n" + LoggingHelper.throwableToString(e);
       getLogger().log(Level.SEVERE, "Failed to write object to: " + file, e);
     }
 

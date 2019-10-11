@@ -1074,7 +1074,7 @@ public class GenericArrayEditor
 	result = false;
 	GUIHelper.showErrorMessage(
 	    GenericArrayEditor.this, 
-	    "Could not create an object copy/add object #" + (i+1) + ":\n" + Utils.throwableToString(ex));
+	    "Could not create an object copy/add object #" + (i+1) + ":\n" + LoggingHelper.throwableToString(ex));
       }
     }
     m_ListModel = updated;

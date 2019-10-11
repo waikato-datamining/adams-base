@@ -20,7 +20,7 @@
 
 package adams.flow.processor;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
@@ -83,7 +83,7 @@ public abstract class AbstractActorProcessor
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to process actor: " + actor, e);
-      m_Errors.add("Failed to process actor: " + Utils.throwableToString(e));
+      m_Errors.add("Failed to process actor: " + LoggingHelper.throwableToString(e));
     }
   }
 

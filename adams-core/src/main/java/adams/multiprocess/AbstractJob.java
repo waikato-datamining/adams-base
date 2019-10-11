@@ -21,7 +21,7 @@
 
 package adams.multiprocess;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
@@ -186,7 +186,7 @@ public abstract class AbstractJob
 	process();
       }
       catch (Throwable t) {
-	m_ExecutionError = "'process' failed with exception: " + Utils.throwableToString(t);
+	m_ExecutionError = "'process' failed with exception: " + LoggingHelper.throwableToString(t);
 	success          = false;
       }
     }

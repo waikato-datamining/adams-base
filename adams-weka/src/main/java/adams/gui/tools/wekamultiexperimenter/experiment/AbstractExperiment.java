@@ -29,6 +29,7 @@ import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.core.option.WekaCommandLineHandler;
@@ -782,7 +783,7 @@ public abstract class AbstractExperiment
    */
   protected void log(String msg, Throwable t) {
     if (m_StatusMessageHandler != null)
-      m_StatusMessageHandler.showStatus(msg + "\n" + Utils.throwableToString(t));
+      m_StatusMessageHandler.showStatus(msg + "\n" + LoggingHelper.throwableToString(t));
     else
       getLogger().log(Level.SEVERE, msg, t);
   }

@@ -21,12 +21,12 @@
 package adams.doc.listing;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.HtmlHelpProducer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionProducer;
@@ -267,7 +267,7 @@ public class OptionOutput
 	      break;
 	  }
 	  catch (Exception e) {
-            result = Utils.handleException(this, "Failed to generate output for class '" + classname + "'!", e);
+            result = LoggingHelper.handleException(this, "Failed to generate output for class '" + classname + "'!", e);
 	  }
 	}
 	if (result != null)

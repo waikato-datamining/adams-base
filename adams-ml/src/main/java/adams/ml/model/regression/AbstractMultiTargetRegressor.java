@@ -21,7 +21,7 @@
 package adams.ml.model.regression;
 
 import adams.core.DateUtils;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import adams.ml.capabilities.Capabilities;
 import adams.ml.capabilities.CapabilitiesHelper;
@@ -122,7 +122,7 @@ public abstract class AbstractMultiTargetRegressor
 	result   = CapabilitiesHelper.handles(getCapabilities(), adjusted);
       }
       catch (Exception e) {
-	result += "\nAdjusting of dataset failed with: " + Utils.throwableToString(e);
+	result += "\nAdjusting of dataset failed with: " + LoggingHelper.throwableToString(e);
       }
     }
 

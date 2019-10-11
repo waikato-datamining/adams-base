@@ -21,6 +21,7 @@
 package adams.scripting.connection;
 
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.JSchUtils;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
@@ -251,7 +252,7 @@ public class SSHConnection
       socket.close();
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
 	cmd, "Failed to send " + (request ? "request" : "response"), e);
     }
 

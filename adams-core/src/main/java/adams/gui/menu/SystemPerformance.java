@@ -22,11 +22,11 @@
 package adams.gui.menu;
 
 import adams.core.Index;
-import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.base.BaseAnnotation;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
 import adams.data.DecimalFormatString;
 import adams.data.conversion.Conversion;
@@ -175,7 +175,7 @@ public class SystemPerformance
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	getOwner(), "Failed to test system performance:\n" + Utils.throwableToString(e));
+	getOwner(), "Failed to test system performance:\n" + LoggingHelper.throwableToString(e));
     }
   }
 

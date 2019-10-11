@@ -21,10 +21,10 @@
 package adams.core.io.lister;
 
 import adams.core.PasswordSupporter;
-import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.FileObject;
 import adams.core.io.FtpFileObject;
+import adams.core.logging.LoggingHelper;
 import org.apache.commons.net.ProtocolCommandEvent;
 import org.apache.commons.net.ProtocolCommandListener;
 import org.apache.commons.net.ftp.FTPClient;
@@ -205,7 +205,7 @@ public class FtpDirectoryLister
       }
     }
     catch (Exception e) {
-      Utils.handleException(this, "Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
+      LoggingHelper.handleException(this, "Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
       result = null;
     }
 
@@ -224,7 +224,7 @@ public class FtpDirectoryLister
 	  client.disconnect();
 	}
 	catch (Exception e) {
-	  Utils.handleException(this, "Failed to disconnect!", e);
+	  LoggingHelper.handleException(this, "Failed to disconnect!", e);
 	}
       }
     }
@@ -451,7 +451,7 @@ public class FtpDirectoryLister
       result = search(client);
     }
     catch (Exception e) {
-      Utils.handleException(this, "Failed to list remote directory!", e);
+      LoggingHelper.handleException(this, "Failed to list remote directory!", e);
       result = new ArrayList<>();
     }
     finally {

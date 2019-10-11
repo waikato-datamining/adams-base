@@ -26,8 +26,8 @@ import adams.core.Performance;
 import adams.core.StatusMessageHandler;
 import adams.core.Stoppable;
 import adams.core.ThreadLimiter;
-import adams.core.Utils;
 import adams.core.logging.CustomLoggingLevelObject;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaTrainTestSetContainer;
@@ -619,7 +619,7 @@ public class WekaCrossValidationExecution
 	indices = generator.crossValidationIndices();
     }
     catch (Exception e) {
-      result.add(Utils.handleException(this, "Failed to cross-validate classifier: ", e));
+      result.add(LoggingHelper.handleException(this, "Failed to cross-validate classifier: ", e));
     }
 
     m_OriginalIndices = indices;

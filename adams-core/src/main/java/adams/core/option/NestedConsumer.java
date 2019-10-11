@@ -23,6 +23,7 @@ import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.NestedFormatHelper.Line;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -303,7 +304,7 @@ public class NestedConsumer
     }
     catch (Exception e) {
       msg = "Failed to process class option '" + getOptionIdentifier(option) + "/" + option.getOptionHandler().getClass().getName() + "'" + (lines == null ? ": " : " (lines: " + lines + "):");
-      logError(msg + "\n" + Utils.throwableToString(e));
+      logError(msg + "\n" + LoggingHelper.throwableToString(e));
       getLogger().log(Level.SEVERE, msg, e);
     }
   }
@@ -366,7 +367,7 @@ public class NestedConsumer
     }
     catch (Exception e) {
       msg = "Failed to process argument option '" + getOptionIdentifier(option) + "/" + option.getOptionHandler().getClass().getName() + "'" + (lines == null ? ": " : " (lines: " + lines + "):");
-      logError(msg + "\n" + Utils.throwableToString(e));
+      logError(msg + "\n" + LoggingHelper.throwableToString(e));
       getLogger().log(Level.SEVERE, msg, e);
     }
   }
@@ -499,7 +500,7 @@ public class NestedConsumer
 	  }
 	  catch (Exception e) {
 	    msg = "Failed to process option '" + getOptionIdentifier(option) + "/" + manager.getOwner().getClass().getName() + "':";
-	    logError(msg + " " + Utils.throwableToString(e));
+	    logError(msg + " " + LoggingHelper.throwableToString(e));
 	    getLogger().log(Level.SEVERE, msg, e);
 	  }
 	}

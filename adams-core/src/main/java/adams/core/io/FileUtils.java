@@ -25,6 +25,7 @@ import adams.core.Placeholders;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.annotation.MixedCopyright;
+import adams.core.logging.LoggingHelper;
 import adams.core.management.OS;
 
 import java.io.BufferedInputStream;
@@ -403,7 +404,7 @@ public class FileUtils {
 	Files.write(file.toPath(), content, Charset.forName(encoding));
     }
     catch (Exception e) {
-      result = "Failed to save to '" + file + "':\n" + Utils.throwableToString(e);
+      result = "Failed to save to '" + file + "':\n" + LoggingHelper.throwableToString(e);
     }
 
     return result;
@@ -525,7 +526,7 @@ public class FileUtils {
 	Files.write(new File(filename).toPath(), lines, Charset.forName(encoding), options);
     }
     catch (Exception e) {
-      result = "Failed to write to '" + filename + "'\n" + Utils.throwableToString(e);
+      result = "Failed to write to '" + filename + "'\n" + LoggingHelper.throwableToString(e);
     }
 
     return result;

@@ -22,6 +22,7 @@
 package weka.gui.explorer;
 
 import adams.core.io.TempUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
@@ -791,7 +792,7 @@ public class ExperimentPanel
 	    m_Log.logMessage(ex.getMessage());
 	    GUIHelper.showErrorMessage(
               ExperimentPanel.this,
-              "Problem running experiment:\n" + adams.core.Utils.throwableToString(ex),
+              "Problem running experiment:\n" + LoggingHelper.throwableToString(ex),
               "Running experiment");
 	    m_Log.statusMessage("Problem running experiment");
 	  }

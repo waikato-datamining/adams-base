@@ -23,6 +23,7 @@ package adams.gui.menu;
 
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaInstancesMerge;
@@ -160,7 +161,7 @@ public class MergeDatasets
         }
         catch (Exception ex) {
           GUIHelper.showErrorMessage(
-            getOwner(), "Failed to get setup from wizard!\n" + Utils.throwableToString(ex));
+            getOwner(), "Failed to get setup from wizard!\n" + LoggingHelper.throwableToString(ex));
           return;
         }
         doMerge(frame, input, merge, output);
@@ -200,7 +201,7 @@ public class MergeDatasets
       }
       catch (Exception e) {
         GUIHelper.showErrorMessage(
-          getOwner(), "Failed to read '" + input[i] + "'!\n" + Utils.throwableToString(e));
+          getOwner(), "Failed to read '" + input[i] + "'!\n" + LoggingHelper.throwableToString(e));
         return;
       }
     }
@@ -230,7 +231,7 @@ public class MergeDatasets
     }
     catch (Exception e) {
         GUIHelper.showErrorMessage(
-          getOwner(), "Failed to save data to '" + output + "'!\n" + Utils.throwableToString(e));
+          getOwner(), "Failed to save data to '" + output + "'!\n" + LoggingHelper.throwableToString(e));
         return;
     }
 

@@ -23,6 +23,7 @@ package adams.flow.core;
 import adams.core.QuickInfoHelper;
 import adams.core.QuickInfoSupporter;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.standalone.PyroNameServer;
 import net.razorvine.pyro.PyroProxy;
@@ -225,7 +226,7 @@ public abstract class AbstractPyroCall
 	m_RemoteObject = new PyroProxy(m_NameServer.getNameServer().lookup(m_RemoteObjectName));
       }
       catch (Exception e) {
-	result = Utils.handleException(this, "Failed to obtain remote object: " + m_RemoteObjectName, e);
+	result = LoggingHelper.handleException(this, "Failed to obtain remote object: " + m_RemoteObjectName, e);
       }
     }
 

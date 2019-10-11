@@ -21,7 +21,7 @@
 package adams.gui.visualization.debug.objectexport;
 
 import adams.core.SerializationHelper;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 
 import java.io.File;
 
@@ -80,7 +80,7 @@ public class SerializableObjectExporter
       return null;
     }
     catch (Exception e) {
-      return "Failed to write serializable object to '" + file + "'!\n" + Utils.throwableToString(e);
+      return "Failed to write serializable object to '" + file + "'!\n" + LoggingHelper.throwableToString(e);
     }
   }
 }

@@ -22,6 +22,7 @@ package adams.ml.model.regression;
 
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.ChunkedSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
@@ -92,7 +93,7 @@ public abstract class AbstractRegressorTestCase
       algorithm.buildModel(data);
     }
     catch (Exception e) {
-      fail("Failed to build model: " + Utils.throwableToString(e));
+      fail("Failed to build model: " + LoggingHelper.throwableToString(e));
       return;
     }
 
@@ -116,7 +117,7 @@ public abstract class AbstractRegressorTestCase
       pred1 = predict(algorithm, data);
     }
     catch (Exception e) {
-      fail("Failed to build model (1): " + Utils.throwableToString(e));
+      fail("Failed to build model (1): " + LoggingHelper.throwableToString(e));
       return;
     }
     try {
@@ -124,7 +125,7 @@ public abstract class AbstractRegressorTestCase
       pred2 = predict(algorithm, data);
     }
     catch (Exception e) {
-      fail("Failed to build model (1): " + Utils.throwableToString(e));
+      fail("Failed to build model (1): " + LoggingHelper.throwableToString(e));
       return;
     }
 

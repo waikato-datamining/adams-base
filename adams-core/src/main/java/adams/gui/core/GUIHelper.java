@@ -1307,7 +1307,7 @@ public class GUIHelper {
    * @param t 		the exception to append to the message
    */
   public static void showErrorMessage(Component parent, String msg, Throwable t) {
-    showErrorMessage(parent, msg + "\n" + Utils.throwableToString(t), "Error");
+    showErrorMessage(parent, msg + "\n" + LoggingHelper.throwableToString(t), "Error");
   }
 
   /**
@@ -1329,7 +1329,7 @@ public class GUIHelper {
    * @param t 		the exception to append to the message
    */
   public static void showErrorMessage(Component parent, final String msg, Throwable t, String title) {
-    showErrorMessage(parent, msg + "\n" + Utils.throwableToString(t), title);
+    showErrorMessage(parent, msg + "\n" + LoggingHelper.throwableToString(t), title);
   }
 
   /**

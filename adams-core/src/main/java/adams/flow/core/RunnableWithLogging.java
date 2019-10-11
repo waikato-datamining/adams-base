@@ -20,7 +20,7 @@
 package adams.flow.core;
 
 import adams.core.StoppableWithFeedback;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingLevelHandler;
 import adams.core.logging.LoggingObject;
@@ -93,7 +93,7 @@ public abstract class RunnableWithLogging
       doRun();
     }
     catch (Throwable t) {
-      Utils.handleException(this, "Exception occurred on run!", t);
+      LoggingHelper.handleException(this, "Exception occurred on run!", t);
     }
     
     if (isLoggingEnabled())

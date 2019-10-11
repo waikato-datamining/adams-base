@@ -20,9 +20,9 @@
 package adams.data.io.input;
 
 import adams.core.Range;
-import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import org.apache.commons.io.input.ReaderInputStream;
 
@@ -144,7 +144,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
     }
     catch (Exception e) {
       result = null;
-      m_LastError = "Failed to read range '" + m_SheetRange + "' from '" + filename + "'!\n" + Utils.throwableToString(e);
+      m_LastError = "Failed to read range '" + m_SheetRange + "' from '" + filename + "'!\n" + LoggingHelper.throwableToString(e);
       getLogger().severe(m_LastError);
     }
     finally {
@@ -190,7 +190,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
     }
     catch (Exception e) {
       result = null;
-      m_LastError = "Failed to read range '" + m_SheetRange + "' from stream!\n" + Utils.throwableToString(e);
+      m_LastError = "Failed to read range '" + m_SheetRange + "' from stream!\n" + LoggingHelper.throwableToString(e);
       getLogger().severe(m_LastError);
     }
     
@@ -232,7 +232,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
     }
     catch (Exception e) {
       result = null;
-      m_LastError = "Failed to read range '" + m_SheetRange + "' from stream!\n" + Utils.throwableToString(e);
+      m_LastError = "Failed to read range '" + m_SheetRange + "' from stream!\n" + LoggingHelper.throwableToString(e);
       getLogger().severe(m_LastError);
     }
     

@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.debug.objectexport;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import nz.ac.waikato.cms.locator.ClassLocator;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -102,7 +102,7 @@ public class WekaInstancesExporter
       }
     }
     catch (Exception e) {
-      return "Failed to write Instances to '" + file + "'!\n" + Utils.throwableToString(e);
+      return "Failed to write Instances to '" + file + "'!\n" + LoggingHelper.throwableToString(e);
     }
   }
 }

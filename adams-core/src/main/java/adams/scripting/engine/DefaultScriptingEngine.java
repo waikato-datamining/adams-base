@@ -22,6 +22,7 @@ package adams.scripting.engine;
 
 import adams.core.MessageCollection;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.PortManager;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
 import adams.scripting.command.RemoteCommand;
@@ -154,7 +155,7 @@ public class DefaultScriptingEngine
 	m_Server.close();
       }
       catch (Exception e) {
-	Utils.handleException(this, "Failed to close server socket!", e);
+	LoggingHelper.handleException(this, "Failed to close server socket!", e);
       }
       m_Server = null;
     }
@@ -238,7 +239,7 @@ public class DefaultScriptingEngine
       PortManager.getSingleton().bind(this, m_Port);
     }
     catch (Exception e) {
-      result   = Utils.handleException(this, "Failed to set up server socket, using port " + m_Port + "!", e);
+      result   = LoggingHelper.handleException(this, "Failed to set up server socket, using port " + m_Port + "!", e);
       m_Server = null;
     }
 
@@ -263,7 +264,7 @@ public class DefaultScriptingEngine
 	}
 	catch (Exception e) {
           if ((m_Server != null) && !m_Server.isClosed())
-            Utils.handleException(this, "Failed to accept connection!", e);
+            LoggingHelper.handleException(this, "Failed to accept connection!", e);
 	}
       }
     }

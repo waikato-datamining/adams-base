@@ -20,8 +20,8 @@
 
 package adams.core.net;
 
-import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.Session;
@@ -139,7 +139,7 @@ public class Scp {
       FileUtils.closeQuietly(out);
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
         owner, "Failed to upload file '" + localFile + "' to '" + host + ":" + port + remoteFile + "': ", e);
     }
     finally {
@@ -154,7 +154,7 @@ public class Scp {
 	  session.disconnect();
 	}
 	catch (Exception e) {
-	  Utils.handleException(owner, "Failed to disconnect from '" + host + "':", e);
+	  LoggingHelper.handleException(owner, "Failed to disconnect from '" + host + "':", e);
 	}
       }
     }
@@ -290,7 +290,7 @@ public class Scp {
       }
     }
     catch (Exception e) {
-      result = Utils.handleException(
+      result = LoggingHelper.handleException(
         owner,
         "Failed to download file '" + host + ":" + port + remoteFile
           + "' to '" + localFile + "': ", e);
@@ -308,7 +308,7 @@ public class Scp {
           session.disconnect();
         }
         catch (Exception e) {
-          Utils.handleException(owner, "Failed to disconnect from '" + host + "':", e);
+          LoggingHelper.handleException(owner, "Failed to disconnect from '" + host + "':", e);
         }
       }
     }

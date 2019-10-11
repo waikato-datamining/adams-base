@@ -28,6 +28,7 @@ import adams.core.Properties;
 import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import adams.data.weka.classattribute.LastAttribute;
@@ -933,7 +934,7 @@ public class InvestigatorPanel
 	  });
 	}
 	catch (Exception ex) {
-	  logError("Failed to load file:\n" + e.getItem() + "\n" + Utils.throwableToString(ex), "Error reloading data");
+	  logError("Failed to load file:\n" + e.getItem() + "\n" + LoggingHelper.throwableToString(ex), "Error reloading data");
 	}
       }
     };

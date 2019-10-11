@@ -21,7 +21,7 @@
 package adams.data.instancesanalysis;
 
 import adams.core.Range;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
@@ -459,7 +459,7 @@ public class PCA
 	pca.setInputFormat(data);
     }
     catch(Exception e) {
-      result = Utils.handleException(this, "Failed to set data format", e);
+      result = LoggingHelper.handleException(this, "Failed to set data format", e);
     }
 
     transformed = null;
@@ -471,7 +471,7 @@ public class PCA
 	  filtered = weka.filters.Filter.useFilter(data, pca);
       }
       catch (Exception e) {
-	result   = Utils.handleException(this, "Failed to apply filter", e);
+	result   = LoggingHelper.handleException(this, "Failed to apply filter", e);
 	filtered = null;
       }
       if (filtered != null) {

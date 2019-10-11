@@ -21,7 +21,7 @@
 
 package adams.gui.menu;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.OptionUtils;
 import adams.flow.control.Flow;
@@ -387,7 +387,7 @@ public class PlotAttributeVsAttribute
       GUIHelper.showErrorMessage(
 	null,
 	"Failed to instantiate/run the flow for plotting the attributes!\n"
-	  + Utils.throwableToString(e));
+	  + LoggingHelper.throwableToString(e));
     }
   }
 

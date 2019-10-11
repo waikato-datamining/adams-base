@@ -27,6 +27,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.WatchEventKind;
+import adams.core.logging.LoggingHelper;
 import adams.flow.core.Actor;
 import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
@@ -503,7 +504,7 @@ public class DirWatch
 	    result.set(i, m_Target.getAbsolutePath() + File.separator + file.getName());
 	}
 	catch (Exception e) {
-	  msg = "Failed to move '" + file + "' to '" + m_Target + "': " + Utils.throwableToString(e);
+	  msg = "Failed to move '" + file + "' to '" + m_Target + "': " + LoggingHelper.throwableToString(e);
 	}
 	if (msg != null) {
 	  getLogger().severe(msg);

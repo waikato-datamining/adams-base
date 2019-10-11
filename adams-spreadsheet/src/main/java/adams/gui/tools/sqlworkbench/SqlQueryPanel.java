@@ -20,7 +20,7 @@
 
 package adams.gui.tools.sqlworkbench;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
@@ -245,7 +245,7 @@ public class SqlQueryPanel
 	  m_Error = "Failed to execute query:\n\n"
 	    + query
 	    + "\n\nException:\n\n"
-	    + Utils.throwableToString(e);
+	    + LoggingHelper.throwableToString(e);
 	}
 	return null;
       }

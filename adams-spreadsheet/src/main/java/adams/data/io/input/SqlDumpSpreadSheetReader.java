@@ -19,6 +19,13 @@
  */
 package adams.data.io.input;
 
+import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
+import adams.data.io.output.SpreadSheetWriter;
+import adams.data.io.output.SqlDumpSpreadSheetWriter;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -28,12 +35,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.logging.Level;
-
-import adams.core.Utils;
-import adams.data.io.output.SpreadSheetWriter;
-import adams.data.io.output.SqlDumpSpreadSheetWriter;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
 
 /**
  <!-- globalinfo-start -->
@@ -305,7 +306,7 @@ public class SqlDumpSpreadSheetReader
       catch (Exception e) {
         result = null;
 	m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
-	m_Owner.setLastError("Failed to read data!\n" + Utils.throwableToString(e));
+	m_Owner.setLastError("Failed to read data!\n" + LoggingHelper.throwableToString(e));
       }
 
       return result;

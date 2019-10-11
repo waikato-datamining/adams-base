@@ -19,12 +19,12 @@
  */
 package adams.data.spreadsheet.rowscore;
 
-import java.util.HashMap;
-
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.parser.MathematicalExpression;
 import adams.parser.MathematicalExpressionText;
+
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -177,7 +177,7 @@ public class MathExpression
       result = new Double[]{MathematicalExpression.evaluate(m_Expression.getValue(), symbols)};
     }
     catch (Exception e) {
-      m_LastError = Utils.handleException(
+      m_LastError = LoggingHelper.handleException(
 	  this, 
 	  "Failed to process expression '" + m_Expression + "' using symbols '" + symbols + "':", 
 	  e);

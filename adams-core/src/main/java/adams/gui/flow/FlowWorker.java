@@ -25,6 +25,7 @@ import adams.core.StatusMessageHandler;
 import adams.core.Stoppable;
 import adams.core.Utils;
 import adams.core.VariablesHandler;
+import adams.core.logging.LoggingHelper;
 import adams.db.LogEntryHandler;
 import adams.flow.control.Flow;
 import adams.flow.control.flowrestart.NullManager;
@@ -163,7 +164,7 @@ public class FlowWorker
       if (m_Flow instanceof Flow)
         ((Flow) m_Flow).setParentComponent(null);
       e.printStackTrace();
-      m_Output = Utils.throwableToString(e);
+      m_Output = LoggingHelper.throwableToString(e);
     }
 
     if ((m_Owner.getVariablesPanel() != null) && (m_Owner.getVariablesPanel().getParentDialog() != null))
@@ -235,7 +236,7 @@ public class FlowWorker
       doInBackground();
     }
     catch (Throwable t) {
-      m_Output = Utils.throwableToString(t);
+      m_Output = LoggingHelper.throwableToString(t);
     }
     finally {
       done();

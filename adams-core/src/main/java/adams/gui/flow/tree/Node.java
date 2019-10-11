@@ -21,9 +21,9 @@
 package adams.gui.flow.tree;
 
 import adams.core.Destroyable;
-import adams.core.Utils;
 import adams.core.io.filechanged.AbstractFileChangeMonitor;
 import adams.core.io.filechanged.LastModified;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.HtmlUtils;
 import adams.core.option.ArrayProducer;
 import adams.core.option.OptionUtils;
@@ -310,7 +310,7 @@ public class Node
 	catch (Exception e) {
 	  msg = "Failed to add '" + child.getActor().getName() + "' to '" + handler.getName() + "':";
 	  if (errors != null)
-	    errors.append(msg + "\n" + Utils.throwableToString(e) + "\n");
+	    errors.append(msg + "\n" + LoggingHelper.throwableToString(e) + "\n");
 	  System.err.println(msg);
 	  e.printStackTrace();
 	}

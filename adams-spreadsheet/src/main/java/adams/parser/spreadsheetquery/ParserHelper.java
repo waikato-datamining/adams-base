@@ -24,6 +24,7 @@ import adams.core.DateUtils;
 import adams.core.Range;
 import adams.core.Utils;
 import adams.core.base.BaseBoolean;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.DateFormatString;
 import adams.data.conversion.Conversion;
@@ -670,7 +671,7 @@ public class ParserHelper
             + OptionUtils.getCommandLine(sub);
       }
       catch (Exception e) {
-        msg = "Failed to execute flow:\n" + Utils.throwableToString(e) + "\n\n"
+        msg = "Failed to execute flow:\n" + LoggingHelper.throwableToString(e) + "\n\n"
           + OptionUtils.getCommandLine(sub);
       }
     }

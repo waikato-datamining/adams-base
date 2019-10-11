@@ -20,7 +20,7 @@
 
 package adams.flow.control;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
@@ -122,7 +122,7 @@ public class SequentialDirector
    * @return		the combined error string
    */
   protected String handleException(Actor actor, String msg, Throwable t) {
-    return Utils.handleException(actor, msg, t, !hasControlActor() || m_ControlActor.getSilent());
+    return LoggingHelper.handleException(actor, msg, t, !hasControlActor() || m_ControlActor.getSilent());
   }
 
   /**

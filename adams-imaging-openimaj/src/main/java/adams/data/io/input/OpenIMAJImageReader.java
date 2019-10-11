@@ -22,6 +22,7 @@ package adams.data.io.input;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.OpenIMAJImageWriter;
 import adams.data.openimaj.OpenIMAJImageContainer;
@@ -221,7 +222,7 @@ public class OpenIMAJImageReader
       }
     }
     catch (Exception e) {
-      Utils.handleException(this, "Failed to read image as " + m_ImageType + ": " + file, e);
+      LoggingHelper.handleException(this, "Failed to read image as " + m_ImageType + ": " + file, e);
       result = null;
     }
 

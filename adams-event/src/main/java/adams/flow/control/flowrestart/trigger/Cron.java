@@ -21,8 +21,8 @@
 package adams.flow.control.flowrestart.trigger;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.base.CronSchedule;
+import adams.core.logging.LoggingHelper;
 import adams.flow.control.Flow;
 import adams.flow.core.EventHelper;
 import org.quartz.CronTrigger;
@@ -179,7 +179,7 @@ public class Cron
       m_Scheduler.start();
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed to set up cron job: ", e);
+      result = LoggingHelper.handleException(this, "Failed to set up cron job: ", e);
     }
 
     return result;
@@ -201,7 +201,7 @@ public class Cron
 	m_Scheduler.shutdown(true);
       }
       catch (Exception e) {
-	result = Utils.handleException(this, "Error shutting down scheduler:", e);
+	result = LoggingHelper.handleException(this, "Error shutting down scheduler:", e);
       }
     }
 

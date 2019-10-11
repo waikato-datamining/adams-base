@@ -19,9 +19,8 @@
 
 package weka.filters.unsupervised.attribute;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
+import adams.core.base.BaseString;
+import adams.core.logging.LoggingHelper;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -31,8 +30,9 @@ import weka.core.SelectedTag;
 import weka.filters.AbstractAdamsFilterTest;
 import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
-import adams.core.Utils;
-import adams.core.base.BaseString;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
  * Tests MergeManyAttributes. Run from the command line with: <br><br>
@@ -103,7 +103,7 @@ public class MergeManyAttributesTest
       data.setClassIndex(data.numAttributes() - 1);
     }
     catch (Exception e) {
-      fail("Failed to load dataset '" + filename + "':\n" + Utils.throwableToString(e));
+      fail("Failed to load dataset '" + filename + "':\n" + LoggingHelper.throwableToString(e));
     }
 
     filter.setAttributeNames(new BaseString[]{
@@ -116,7 +116,7 @@ public class MergeManyAttributesTest
       filter.setInputFormat(data);
     }
     catch (Exception e) {
-      fail("Failed to call setInputFormat:\n" + Utils.throwableToString(e));
+      fail("Failed to call setInputFormat:\n" + LoggingHelper.throwableToString(e));
     }
     
     Instances output = null;
@@ -124,7 +124,7 @@ public class MergeManyAttributesTest
       output = Filter.useFilter(data, filter);
     }
     catch (Exception e) {
-      fail("Failed to generate output:\n" + Utils.throwableToString(e));
+      fail("Failed to generate output:\n" + LoggingHelper.throwableToString(e));
     }
     
     assertEquals("# attribute", 2, output.numAttributes());

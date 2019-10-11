@@ -22,9 +22,9 @@ package adams.scripting.connection;
 
 import adams.core.PasswordSupporter;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.JSchUtils;
 import adams.core.net.SSHAuthenticationType;
 import adams.core.net.SSHSessionProvider;
@@ -521,7 +521,7 @@ public abstract class AbstractSSHConnection
       result.connect();
     }
     catch (Exception e) {
-      Utils.handleException(this, "Failed to establish connection to '" + m_Host + "' (using " + m_AuthenticationType + "): ", e);
+      LoggingHelper.handleException(this, "Failed to establish connection to '" + m_Host + "' (using " + m_AuthenticationType + "): ", e);
       result = null;
     }
 

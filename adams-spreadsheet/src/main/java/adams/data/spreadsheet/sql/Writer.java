@@ -21,7 +21,7 @@
 package adams.data.spreadsheet.sql;
 
 import adams.core.Stoppable;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
 import adams.data.spreadsheet.Cell;
@@ -363,7 +363,7 @@ public class Writer
       }
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed to create table '" + m_Table + "' using: " + query, e);
+      result = LoggingHelper.handleException(this, "Failed to create table '" + m_Table + "' using: " + query, e);
     }
 
     return result;
@@ -406,7 +406,7 @@ public class Writer
       stmt = sql.prepareStatement(query.toString());
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed to prepare statement: " + query, e);
+      result = LoggingHelper.handleException(this, "Failed to prepare statement: " + query, e);
       stmt   = null;
     }
 
@@ -469,15 +469,15 @@ public class Writer
 	  }
 	}
         catch (BatchUpdateException e) {
-          result = Utils.handleException(this, "Failed to insert batch (last successful batch insert at row " + lastInsert + ")!", e)
-            + Utils.handleException(this, "Next exception:", e.getNextException());
+          result = LoggingHelper.handleException(this, "Failed to insert batch (last successful batch insert at row " + lastInsert + ")!", e)
+            + LoggingHelper.handleException(this, "Next exception:", e.getNextException());
           break;
         }
 	catch (Exception e) {
 	  if (m_BatchSize == 1)
-	    result = Utils.handleException(this, "Failed to insert data: " + row + "\nusing: " + stmt, e);
+	    result = LoggingHelper.handleException(this, "Failed to insert data: " + row + "\nusing: " + stmt, e);
 	  else
-	    result = Utils.handleException(this, "Failed to insert batch (last successful batch insert at row " + lastInsert + ")!", e);
+	    result = LoggingHelper.handleException(this, "Failed to insert batch (last successful batch insert at row " + lastInsert + ")!", e);
 	  break;
 	}
 	if (count % 1000 == 0) {

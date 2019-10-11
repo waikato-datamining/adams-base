@@ -19,11 +19,10 @@
  */
 package adams.data.imagemagick.dcraw;
 
+import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import org.im4java.core.DCRAWOperation;
 import org.im4java.core.DcrawCmd;
-
-import adams.core.Utils;
-import adams.core.io.PlaceholderFile;
 
 /**
  * Ancestor for simple DCRAW operations.
@@ -70,7 +69,7 @@ public abstract class AbstractDcrawSimpleOperation
       result = move(input, output);
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed to apply operation!", e);
+      result = LoggingHelper.handleException(this, "Failed to apply operation!", e);
     }
     
     return result;

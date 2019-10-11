@@ -20,8 +20,8 @@
 
 package adams.core.io.fileoperations;
 
-import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.BufferedInputStream;
@@ -113,7 +113,7 @@ public class FtpFileOperations
 	  m_Client.storeFile(remoteFile, istream);
 	}
 	catch (Exception e) {
-	  result = Utils.handleException(this, "Failed to upload file '" + inFile + "' to '" + remoteFile + "': ", e);
+	  result = LoggingHelper.handleException(this, "Failed to upload file '" + inFile + "' to '" + remoteFile + "': ", e);
 	}
 	finally {
 	  FileUtils.closeQuietly(istream);
@@ -136,7 +136,7 @@ public class FtpFileOperations
 	  ostream.close();
 	}
 	catch (Exception e) {
-	  result = Utils.handleException(this, "Failed to download file '" + remoteFile + "' to '" + outFile + "': ", e);
+	  result = LoggingHelper.handleException(this, "Failed to download file '" + remoteFile + "' to '" + outFile + "': ", e);
 	}
 	finally {
 	  FileUtils.closeQuietly(ostream);
@@ -194,7 +194,7 @@ public class FtpFileOperations
       m_Client.rename(source, target);
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to rename file: " + source + " -> " + target, e);
+      return LoggingHelper.handleException(this, "Failed to rename file: " + source + " -> " + target, e);
     }
     return null;
   }
@@ -210,7 +210,7 @@ public class FtpFileOperations
       m_Client.deleteFile(file);
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to delete file: " + file, e);
+      return LoggingHelper.handleException(this, "Failed to delete file: " + file, e);
     }
     return null;
   }
@@ -226,7 +226,7 @@ public class FtpFileOperations
       m_Client.makeDirectory(dir);
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to create diretory: " + dir, e);
+      return LoggingHelper.handleException(this, "Failed to create diretory: " + dir, e);
     }
     return null;
   }

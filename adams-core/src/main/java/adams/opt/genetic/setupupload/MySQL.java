@@ -22,7 +22,7 @@ package adams.opt.genetic.setupupload;
 
 import adams.core.MessageCollection;
 import adams.core.Shortening;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.JDBC;
@@ -190,7 +190,7 @@ public class MySQL
 	return "Failed to create table: " + create;
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed execute statement: " + create, e);
+      return LoggingHelper.handleException(this, "Failed execute statement: " + create, e);
     }
 
     return null;
@@ -224,7 +224,7 @@ public class MySQL
 	stmt = m_DatabaseConnection.getConnection(true).prepareStatement(sql);
       }
       catch (Exception e) {
-	result = Utils.handleException(this, "Failed to prepare statement: " + sql, e);
+	result = LoggingHelper.handleException(this, "Failed to prepare statement: " + sql, e);
       }
     }
 
@@ -249,7 +249,7 @@ public class MySQL
 	  stmt.execute();
 	}
 	catch (Exception e) {
-	  errors.add(Utils.handleException(this, "Failed to insert setup key/value:\n- key: " + key + "\n- value: " + value, e));
+	  errors.add(LoggingHelper.handleException(this, "Failed to insert setup key/value:\n- key: " + key + "\n- value: " + value, e));
 	}
       }
     }

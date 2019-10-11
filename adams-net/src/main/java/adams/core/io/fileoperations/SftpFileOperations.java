@@ -20,9 +20,9 @@
 
 package adams.core.io.fileoperations;
 
-import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.net.SSHSessionProvider;
 import com.jcraft.jsch.ChannelSftp;
 
@@ -100,7 +100,7 @@ public class SftpFileOperations
 	  channel.put(new PlaceholderFile(source).getAbsolutePath(), target);
 	}
 	catch (Exception e) {
-	  result = Utils.handleException(this, "Failed to upload file '" + source + "' to '" + target + "': ", e);
+	  result = LoggingHelper.handleException(this, "Failed to upload file '" + source + "' to '" + target + "': ", e);
 	}
 	finally {
 	  if (channel != null) {
@@ -119,7 +119,7 @@ public class SftpFileOperations
 	  channel.disconnect();
 	}
 	catch (Exception e) {
-	  result = Utils.handleException(this, "Failed to download file '" + source + "' to '" + target + "': ", e);
+	  result = LoggingHelper.handleException(this, "Failed to download file '" + source + "' to '" + target + "': ", e);
 	}
 	finally {
 	  if (channel != null) {
@@ -186,7 +186,7 @@ public class SftpFileOperations
       channel.disconnect();
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to rename file: " + source + " -> " + target, e);
+      return LoggingHelper.handleException(this, "Failed to rename file: " + source + " -> " + target, e);
     }
     finally {
       if (channel != null) {
@@ -216,7 +216,7 @@ public class SftpFileOperations
       channel.disconnect();
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to delete file: " + file, e);
+      return LoggingHelper.handleException(this, "Failed to delete file: " + file, e);
     }
     finally {
       if (channel != null) {
@@ -246,7 +246,7 @@ public class SftpFileOperations
       channel.disconnect();
     }
     catch (Exception e) {
-      return Utils.handleException(this, "Failed to create directory: " + dir, e);
+      return LoggingHelper.handleException(this, "Failed to create directory: " + dir, e);
     }
     finally {
       if (channel != null) {

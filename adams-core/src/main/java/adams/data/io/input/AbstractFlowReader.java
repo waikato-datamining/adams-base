@@ -21,9 +21,9 @@ package adams.data.io.input;
 
 import adams.core.ClassLister;
 import adams.core.MessageCollection;
-import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.core.Actor;
 import org.apache.commons.io.input.ReaderInputStream;
@@ -331,7 +331,7 @@ public abstract class AbstractFlowReader
 	getLogger().warning(msg);
     }
     else {
-      m_Warnings.add(msg + "\n" + Utils.throwableToString(t));
+      m_Warnings.add(msg + "\n" + LoggingHelper.throwableToString(t));
       if (!m_Quiet)
 	getLogger().log(Level.WARNING, msg, t);
     }

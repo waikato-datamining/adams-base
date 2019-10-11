@@ -24,6 +24,7 @@ import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.data.PageOrientation;
 import adams.flow.core.Token;
 import adams.flow.transformer.PDFCreate;
@@ -262,7 +263,7 @@ public class Proclets
       create.cleanUp();
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed to generate PDF: " + outputFile, e);
+      result = LoggingHelper.handleException(this, "Failed to generate PDF: " + outputFile, e);
     }
 
     return result;

@@ -20,9 +20,10 @@
 package adams.core.logging;
 
 import adams.core.DateFormat;
-import adams.core.Utils;
 import adams.core.option.OptionUtils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -552,7 +553,7 @@ public class LoggingHelper {
 	msg = msg.replace("{}", obj.toString());
     }
     if (record.getThrown() != null)
-      msg += Utils.throwableToString(record.getThrown()) + "\n";
+      msg += throwableToString(record.getThrown()) + "\n";
 
     result = new StringBuilder();
     lines  = msg.split("\n");
@@ -627,6 +628,116 @@ public class LoggingHelper {
     trace = Thread.currentThread().getStackTrace();
     if (trace.length >= 2)
       result = Thread.currentThread().getStackTrace()[2].getLineNumber();
+
+    return result;
+  }
+
+  /**
+   * Returns the stacktrace of the throwable as string.
+   *
+   * @param t		the throwable to get the stacktrace for
+   * @return		the stacktrace
+   */
+  public static String throwableToString(Throwable t) {
+    return throwableToString(t, -1);
+  }
+
+  /**
+   * Returns the stacktrace of the throwable as string.
+   *
+   * @param t		the throwable to get the stacktrace for
+   * @param maxLines	the maximum number of lines to print, <= 0 for all
+   * @return		the stacktrace
+   */
+  public static String throwableToString(Throwable t, int maxLines) {
+    StringWriter writer;
+    StringBuilder	result;
+    String[]		lines;
+    int			i;
+
+    writer = new StringWriter();
+    t.printStackTrace(new PrintWriter(writer));
+
+    if (maxLines > 0) {
+      result = new StringBuilder();
+      lines  = writer.toString().split("\n");
+      for (i = 0; i < maxLines; i++) {
+	if (i > 0)
+	  result.append("\n");
+	result.append(lines[i]);
+      }
+    }
+    else {
+      result = new StringBuilder(writer.toString());
+    }
+
+    return result.toString();
+  }
+
+  /**
+   * Returns the current stack trace.
+   *
+   * @param maxDepth	the maximum depth of the stack trace, <= 0 for full trace
+   * @return		the stack trace as string (multiple lines)
+   */
+  public static String getStackTrace(int maxDepth) {
+    StringBuilder	result;
+    Throwable		th;
+    StackTraceElement[]	trace;
+    int			i;
+
+    result = new StringBuilder();
+    th     = new Throwable();
+    th.fillInStackTrace();
+    trace  = th.getStackTrace();
+    if (maxDepth <= 0)
+      maxDepth = trace.length - 1;
+    maxDepth++;  // we're starting at 1 not 0
+    maxDepth = Math.min(maxDepth, trace.length);
+    for (i = 1; i < maxDepth; i++) {
+      if (i > 1)
+	result.append("\n");
+      result.append(trace[i]);
+    }
+
+    return result.toString();
+  }
+
+  /**
+   * Outputs the stacktrace along with the message on stderr and returns a
+   * combination of both of them as string.
+   *
+   * @param source	the object that generated the exception, can be null
+   * @param msg		the message for the exception
+   * @param t		the exception
+   * @return		the full error message (message + stacktrace)
+   */
+  public static String handleException(LoggingSupporter source, String msg, Throwable t) {
+    return handleException(source, msg, t, false);
+  }
+
+  /**
+   * Generates a string from the stacktrace along with the message and returns
+   * that. Depending on the silent flag, this string is also forwarded to the
+   * source's logger.
+   *
+   * @param source	the object that generated the exception, can be null
+   * @param msg		the message for the exception
+   * @param t		the exception
+   * @param silent	if true then the generated message is not forwarded
+   * 			to the source's logger
+   * @return		the full error message (message + stacktrace)
+   */
+  public static String handleException(LoggingSupporter source, String msg, Throwable t, boolean silent) {
+    String	result;
+
+    result = msg.trim() + "\n" + throwableToString(t);
+    if (!silent) {
+      if (source != null)
+        source.getLogger().log(Level.SEVERE, msg, t);
+      else
+        System.err.println(result);
+    }
 
     return result;
   }

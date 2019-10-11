@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.lister.LocalDirectoryLister;
+import adams.core.logging.LoggingHelper;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
 import adams.scripting.command.RemoteCommand;
 
@@ -267,7 +268,7 @@ public class FileBasedScriptingEngine
       result = dest;
     }
     catch (Exception e) {
-      Utils.handleException(this, "Error moving '" + source + "' to '" + dest + "': ", e);
+      LoggingHelper.handleException(this, "Error moving '" + source + "' to '" + dest + "': ", e);
     }
 
     return result;
@@ -343,7 +344,7 @@ public class FileBasedScriptingEngine
     }
     catch (Exception e) {
       result = false;
-      Utils.handleException(this, "Error moving '" + source + "' to '" + destFile + "': ", e);
+      LoggingHelper.handleException(this, "Error moving '" + source + "' to '" + destFile + "': ", e);
     }
 
     return result;
@@ -408,7 +409,7 @@ public class FileBasedScriptingEngine
 	  }
 	}
 	catch (Exception e) {
-	  Utils.handleException(this, "Failed to process command file: " + file, e);
+	  LoggingHelper.handleException(this, "Failed to process command file: " + file, e);
 	}
       }
     }

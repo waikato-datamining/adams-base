@@ -21,8 +21,8 @@
 
 package adams.gui.menu;
 
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
@@ -113,7 +113,7 @@ public class InstancesPlot
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to load: " + file, e);
       GUIHelper.showErrorMessage(
-        getOwner(), "Error loading file '" + file + "':\n" + Utils.throwableToString(e));
+        getOwner(), "Error loading file '" + file + "':\n" + LoggingHelper.throwableToString(e));
       return;
     }
 

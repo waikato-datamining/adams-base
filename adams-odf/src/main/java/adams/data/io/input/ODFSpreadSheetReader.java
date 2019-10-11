@@ -21,6 +21,7 @@ package adams.data.io.input;
 
 import adams.core.Range;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.output.ODFSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
@@ -540,7 +541,7 @@ public class ODFSpreadSheetReader
     catch (Exception ioe) {
       getLogger().log(Level.SEVERE, "Failed to read range '" + m_SheetRange + "':", ioe);
       result = null;
-      m_LastError = "Failed to read range '" + m_SheetRange + "' from stream!\n" + Utils.throwableToString(ioe);
+      m_LastError = "Failed to read range '" + m_SheetRange + "' from stream!\n" + LoggingHelper.throwableToString(ioe);
     }
 
     return result;

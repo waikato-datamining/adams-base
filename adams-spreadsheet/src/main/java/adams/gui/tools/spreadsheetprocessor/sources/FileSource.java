@@ -21,8 +21,8 @@
 package adams.gui.tools.spreadsheetprocessor.sources;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
@@ -132,7 +132,7 @@ public class FileSource
 	    notifyOwner(EventType.DATA_IS_AVAILABLE, "Data loaded from: " + input);
 	}
 	catch (Exception e) {
-	  error  = Utils.handleException(FileSource.this, "Failed to load data from: " + input, e);
+	  error  = LoggingHelper.handleException(FileSource.this, "Failed to load data from: " + input, e);
 	  m_Data = null;
 	}
 	return null;

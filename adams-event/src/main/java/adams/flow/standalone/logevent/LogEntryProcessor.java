@@ -20,7 +20,7 @@
 package adams.flow.standalone.logevent;
 
 import adams.core.Properties;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.db.LogEntry;
 
@@ -77,7 +77,7 @@ public class LogEntryProcessor
     result = new LogEntry();
     msg    = record.getMessage() + "\n";
     if (record.getThrown() != null)
-      msg += Utils.throwableToString(record.getThrown()) + "\n";
+      msg += LoggingHelper.throwableToString(record.getThrown()) + "\n";
     props  = new Properties();
     props.setProperty("Message", msg);
     result.setGeneration(new Date());

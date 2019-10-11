@@ -20,7 +20,7 @@
 
 package adams.flow.transformer;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -135,7 +135,7 @@ public class JsonFileReaderTest
 
     }
     catch (Exception e) {
-      fail("Failed to set up actor:\n" + Utils.throwableToString(e));
+      fail("Failed to set up actor:\n" + LoggingHelper.throwableToString(e));
     }
     
     return flow;

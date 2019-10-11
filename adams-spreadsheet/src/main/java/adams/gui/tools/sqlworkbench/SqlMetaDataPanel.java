@@ -21,7 +21,7 @@
 package adams.gui.tools.sqlworkbench;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.sql.AbstractTypeMapper;
 import adams.data.spreadsheet.sql.DefaultTypeMapper;
@@ -214,7 +214,7 @@ public class SqlMetaDataPanel
 	  m_Error = "Failed to execute meta-data query for:\n\n"
 	    + m_ComboBoxMetaDataType.getSelectedItem()
 	    + "\n\nException:\n\n"
-	    + Utils.throwableToString(e);
+	    + LoggingHelper.throwableToString(e);
 	}
 	return null;
       }

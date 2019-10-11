@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.CompactFlowConsumer;
 import adams.core.option.CompactFlowProducer;
 import adams.core.option.NestedConsumer;
@@ -315,7 +316,7 @@ public class DefaultFlowReader
 	lines.add(line);
     }
     catch (Exception e) {
-      m_Errors.add("Failed to read node data from reader:\n" + Utils.throwableToString(e));
+      m_Errors.add("Failed to read node data from reader:\n" + LoggingHelper.throwableToString(e));
       return null;
     }
 
@@ -400,7 +401,7 @@ public class DefaultFlowReader
 	lines.add(line);
     }
     catch (Exception e) {
-      m_Errors.add("Failed to read data from reader:\n" + Utils.throwableToString(e));
+      m_Errors.add("Failed to read data from reader:\n" + LoggingHelper.throwableToString(e));
       return null;
     }
 

@@ -19,11 +19,10 @@
  */
 package adams.data.imagemagick.im;
 
+import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IMOperation;
-
-import adams.core.Utils;
-import adams.core.io.PlaceholderFile;
 
 /**
  * Ancestor for simple ImageMagic operations.
@@ -69,7 +68,7 @@ public abstract class AbstractIMSimpleOperation
       cmd.run(op);
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed to apply operation!", e);
+      result = LoggingHelper.handleException(this, "Failed to apply operation!", e);
     }
     
     return result;

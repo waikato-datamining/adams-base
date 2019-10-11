@@ -22,9 +22,9 @@
 package adams.gui.goe;
 
 import adams.core.ExampleProvider;
-import adams.core.Utils;
 import adams.core.discovery.IntrospectionHelper;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractNumericOption;
 import adams.core.option.AbstractOption;
@@ -656,7 +656,7 @@ public class PropertySheetPanel extends BasePanel
                 ex.getTargetException().getClass().getName() +
                   " while updating " + property.getName() +
                   ":\n" +
-                  Utils.throwableToString(ex),
+                  LoggingHelper.throwableToString(ex),
 		  "Error");
 	      if (jf instanceof JFrame)
 		((JFrame)jf).dispose();

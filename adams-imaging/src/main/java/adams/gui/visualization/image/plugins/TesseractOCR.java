@@ -23,6 +23,7 @@ import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.management.ProcessUtils;
 import adams.core.option.OptionUtils;
 import adams.data.tesseract.TesseractHelper;
@@ -127,7 +128,7 @@ public class TesseractOCR
 	result = "Failed to save current image as temp file: " + tmp;
     }
     catch (Exception e) {
-      result = Utils.handleException(this, "Failed to save current image as temp file!", e);
+      result = LoggingHelper.handleException(this, "Failed to save current image as temp file!", e);
     }
     
     // create tesseract command
@@ -148,7 +149,7 @@ public class TesseractOCR
 	  result = "OCR failed with exit code: " + proc.getExitCode() + "\n" + proc.getStdErr();
       }
       catch (Exception e) {
-	result = Utils.handleException(this, "Failed to apply OCR: " + m_LastCommand, e);
+	result = LoggingHelper.handleException(this, "Failed to apply OCR: " + m_LastCommand, e);
       }
     }
     

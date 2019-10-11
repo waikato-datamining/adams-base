@@ -20,10 +20,10 @@
 
 package adams.flow.source.valuedefinition;
 
-import adams.core.Utils;
 import adams.core.base.BaseClassname;
 import adams.core.base.BaseCommandLine;
 import adams.core.io.ConsoleHelper;
+import adams.core.logging.LoggingHelper;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
@@ -185,7 +185,7 @@ public abstract class AbstractGOEValueDefinition
       panel.setChooser(getName(), newChooserPanel());
     }
     catch (Exception e) {
-      Utils.handleException(this, "Failed to instantiate GOE chooser panel using " + m_SuperClass + "/" + m_DefaultClass, e);
+      LoggingHelper.handleException(this, "Failed to instantiate GOE chooser panel using " + m_SuperClass + "/" + m_DefaultClass, e);
       return false;
     }
     if (!getHelp().trim().isEmpty())

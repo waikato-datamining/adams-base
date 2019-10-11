@@ -22,6 +22,7 @@ package adams.data.io.input;
 
 import adams.core.Range;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
@@ -536,7 +537,7 @@ public class FastCsvSpreadSheetReader
       }
     }
     catch (Exception e) {
-      m_LastError = Utils.handleException(this, "Failed to read CSV data!", e);
+      m_LastError = LoggingHelper.handleException(this, "Failed to read CSV data!", e);
     }
 
     return result;

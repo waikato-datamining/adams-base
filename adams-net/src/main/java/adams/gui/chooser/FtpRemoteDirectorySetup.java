@@ -21,8 +21,8 @@
 package adams.gui.chooser;
 
 import adams.core.PasswordSupporter;
-import adams.core.Utils;
 import adams.core.base.BasePassword;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import org.apache.commons.net.ProtocolCommandEvent;
 import org.apache.commons.net.ProtocolCommandListener;
@@ -320,7 +320,7 @@ public class FtpRemoteDirectorySetup
       }
     }
     catch (Exception e) {
-      Utils.handleException(this, "Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
+      LoggingHelper.handleException(this, "Failed to connect to '" + m_Host + "' as user '" + m_User + "': ", e);
       result = null;
     }
 

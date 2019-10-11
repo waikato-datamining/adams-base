@@ -20,8 +20,8 @@
 
 package adams.ml.preprocessing;
 
-import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.ChunkedSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
@@ -91,7 +91,7 @@ public abstract class AbstractFilterTestCase<T extends BatchFilter>
       algorithm.filter(data);
     }
     catch (Exception e) {
-      fail("Failed to build model: " + Utils.throwableToString(e));
+      fail("Failed to build model: " + LoggingHelper.throwableToString(e));
       return;
     }
 
@@ -148,7 +148,7 @@ public abstract class AbstractFilterTestCase<T extends BatchFilter>
       filtered1 = filter(filter, data);
     }
     catch (Exception e) {
-      fail("Failed to filter (1): " + Utils.throwableToString(e));
+      fail("Failed to filter (1): " + LoggingHelper.throwableToString(e));
       return;
     }
     try {
@@ -156,7 +156,7 @@ public abstract class AbstractFilterTestCase<T extends BatchFilter>
       filtered2 = filter(filter, data);
     }
     catch (Exception e) {
-      fail("Failed to filter (1): " + Utils.throwableToString(e));
+      fail("Failed to filter (1): " + LoggingHelper.throwableToString(e));
       return;
     }
 

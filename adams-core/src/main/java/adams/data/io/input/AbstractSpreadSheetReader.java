@@ -27,6 +27,7 @@ import adams.core.io.EncodingSupporter;
 import adams.core.io.FileFormatHandler;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -358,7 +359,7 @@ public abstract class AbstractSpreadSheetReader
     }
     catch (Throwable e) {
       result = null;
-      m_LastError = "Failed to read '" + filename + "'!\n" + Utils.throwableToString(e);
+      m_LastError = "Failed to read '" + filename + "'!\n" + LoggingHelper.throwableToString(e);
       getLogger().severe(m_LastError);
     }
     finally {
@@ -405,7 +406,7 @@ public abstract class AbstractSpreadSheetReader
     }
     catch (Exception e) {
       result = null;
-      m_LastError = "Failed to read from stream!\n" + Utils.throwableToString(e);
+      m_LastError = "Failed to read from stream!\n" + LoggingHelper.throwableToString(e);
       getLogger().severe(m_LastError);
     }
     
@@ -446,7 +447,7 @@ public abstract class AbstractSpreadSheetReader
     }
     catch (Exception e) {
       result = null;
-      m_LastError = "Failed to read from reader!\n" + Utils.throwableToString(e);
+      m_LastError = "Failed to read from reader!\n" + LoggingHelper.throwableToString(e);
       getLogger().severe(m_LastError);
     }
     

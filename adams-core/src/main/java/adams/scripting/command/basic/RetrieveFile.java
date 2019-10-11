@@ -20,9 +20,9 @@
 
 package adams.scripting.command.basic;
 
-import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.scripting.command.AbstractCommandWithResponse;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.processor.RemoteCommandProcessor;
@@ -178,7 +178,7 @@ public class RetrieveFile
       m_Content = FileUtils.loadFromBinaryFile(m_RemoteFile.getAbsoluteFile());
     }
     catch (Exception e) {
-      result         = Utils.handleException(this, "Failed to read content from: " + m_RemoteFile, e);
+      result         = LoggingHelper.handleException(this, "Failed to read content from: " + m_RemoteFile, e);
       m_ErrorMessage = result;
     }
 

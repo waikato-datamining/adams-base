@@ -19,7 +19,7 @@
  */
 package adams.gui.scripting;
 
-import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
 import adams.data.io.input.AbstractDataContainerReader;
@@ -119,7 +119,7 @@ public class AddDataFile
     }
     catch (Exception e) {
       data   = new ArrayList<>();
-      result = "Error reading data: " + Utils.throwableToString(e);
+      result = "Error reading data: " + LoggingHelper.throwableToString(e);
       getLogger().severe(result);
     }
 
