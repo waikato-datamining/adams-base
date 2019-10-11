@@ -26,7 +26,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -40,6 +42,9 @@ public class LoggingHelper {
 
   /** the environment variable suffix of the log level to look for. */
   public final static String LOGLEVEL_SUFFIX = ".LOGLEVEL";
+
+  /** the cache for the loglevels. */
+  protected static Map<Class,Level> m_LogLevelCache = new HashMap<>();
 
   /** for comparing levels. */
   protected final static LevelComparator m_LevelComparator = new LevelComparator();
@@ -66,16 +71,24 @@ public class LoggingHelper {
    */
   public static Level getLevel(Class cls) {
     Level	result;
+    String	level;
 
     result = Level.WARNING;
 
-    if (System.getenv(cls.getName() + LOGLEVEL_SUFFIX) != null) {
-      try {
-	result = LoggingLevel.valueOf(System.getenv(cls.getName() + LOGLEVEL_SUFFIX)).getLevel();
+    if (m_LogLevelCache.containsKey(cls)) {
+      result = m_LogLevelCache.get(cls);
+    }
+    else {
+      level = System.getenv(cls.getName() + LOGLEVEL_SUFFIX);
+      if (level != null) {
+	try {
+	  result = LoggingLevel.valueOf(level).getLevel();
+	}
+	catch (Exception e) {
+	  result = Level.WARNING;
+	}
       }
-      catch (Exception e) {
-	result = Level.WARNING;
-      }
+      m_LogLevelCache.put(cls, result);
     }
 
     return result;
