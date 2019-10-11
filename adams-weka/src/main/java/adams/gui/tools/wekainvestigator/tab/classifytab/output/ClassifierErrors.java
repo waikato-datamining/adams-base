@@ -22,8 +22,8 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.AutoOnOff;
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
-import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
@@ -35,6 +35,8 @@ import adams.gui.core.MultiPagePane;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
+import adams.gui.visualization.sequence.XYSequencePaintlet;
 import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
 import adams.gui.visualization.sequence.metadatacolor.Dummy;
 import com.github.fracpete.javautils.enumerate.Enumerated;
@@ -86,6 +88,9 @@ public class ClassifierErrors
 
   /** for obtaining the color from the meta-data. */
   protected AbstractMetaDataColor m_MetaDataColor;
+
+  /** the overlays to use. */
+  protected XYSequencePaintlet[] m_Overlays;
 
   /**
    * Returns a string describing the object.
@@ -139,6 +144,10 @@ public class ClassifierErrors
     m_OptionManager.add(
       "meta-data-color", "metaDataColor",
       new Dummy());
+
+    m_OptionManager.add(
+      "overlay", "overlays",
+      new XYSequencePaintlet[]{new StraightLineOverlayPaintlet()});
   }
 
   /**
@@ -419,6 +428,35 @@ public class ClassifierErrors
   }
 
   /**
+   * Sets the overlays to use in the plot.
+   *
+   * @param value	the overlays
+   */
+  public void setOverlays(XYSequencePaintlet[] value) {
+    m_Overlays = value;
+    reset();
+  }
+
+  /**
+   * Returns the overlays to use in the plot.
+   *
+   * @return		the overlays
+   */
+  public XYSequencePaintlet[] getOverlays() {
+    return m_Overlays;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlaysTipText() {
+    return "The overlays to use in the plot.";
+  }
+
+  /**
    * Checks whether output can be generated from this item.
    *
    * @param item	the item to check
@@ -466,7 +504,8 @@ public class ClassifierErrors
     sink.setLimit(m_Limit);
     sink.setDiameter(m_Diameter);
     sink.setShowSidePanel(false);
-    sink.setMetaDataColor((AbstractMetaDataColor) OptionUtils.shallowCopy(m_MetaDataColor));
+    sink.setMetaDataColor(ObjectCopyHelper.copyObject(m_MetaDataColor));
+    sink.setOverlays(ObjectCopyHelper.copyObjects(m_Overlays));
     switch (m_AntiAliasingEnabled) {
       case AUTO:
 	sink.setAntiAliasingEnabled(
