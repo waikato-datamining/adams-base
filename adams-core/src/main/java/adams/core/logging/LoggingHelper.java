@@ -34,7 +34,6 @@ import java.util.logging.LogRecord;
  * Helper class for logging related stuff.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LoggingHelper {
 
@@ -572,6 +571,62 @@ public class LoggingHelper {
       result.append(actualPrefix);
       result.append(lines[i]);
     }
+
+    return result;
+  }
+
+  /**
+   * Returns the name of the method calling this method.
+   *
+   * @param cls		whether to include the class name
+   * @return		the generated string
+   */
+  public static String getMethodName(boolean cls) {
+    return getMethodName(cls, false);
+  }
+
+  /**
+   * Returns the name of the method calling this method.
+   *
+   * @param cls		whether to include the class name
+   * @param line	whether to include the line number
+   * @return		the generated string
+   */
+  public static String getMethodName(boolean cls, boolean line) {
+    StringBuilder	result;
+    StackTraceElement[]	trace;
+    StackTraceElement	element;
+
+    result  = new StringBuilder();
+    trace   = Thread.currentThread().getStackTrace();
+    if (trace.length >= 2) {
+      element = trace[2];
+      if (cls)
+	result.append(element.getClassName()).append(".");
+      result.append(element.getMethodName());
+      if (line)
+	result.append("[").append(element.getLineNumber()).append("]");
+    }
+    else {
+      result.append("<unknown>");
+    }
+
+    return result.toString();
+  }
+
+  /**
+   * Returns the line number this method was called in.
+   *
+   * @return		the line number
+   */
+  public static int getLineNumber() {
+    int			result;
+    StackTraceElement[]	trace;
+
+    result = -1;
+    trace = Thread.currentThread().getStackTrace();
+    if (trace.length >= 2)
+      result = Thread.currentThread().getStackTrace()[2].getLineNumber();
 
     return result;
   }
