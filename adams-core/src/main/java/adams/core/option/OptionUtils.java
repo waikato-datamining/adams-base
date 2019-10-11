@@ -873,7 +873,7 @@ public class OptionUtils {
     Object	result;
     int		i;
 
-    result = Array.newInstance(o.getClass().getComponentType());
+    result = Array.newInstance(o.getClass().getComponentType(), o.length);
     for (i = 0; i < o.length; i++)
       Array.set(result, i, shallowCopy(o[i]));
 
