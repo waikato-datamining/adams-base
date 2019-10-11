@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CustomLoggingLevelObject.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -23,7 +23,6 @@ package adams.core.logging;
  * Allows setting of logging level, in contrast to {@link adams.core.logging.LoggingObject}.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7676 $
  */
 public class CustomLoggingLevelObject
   extends LoggingObject
@@ -37,7 +36,8 @@ public class CustomLoggingLevelObject
    * @param value 	the level
    */
   public synchronized void setLoggingLevel(LoggingLevel value) {
-    m_LoggingLevel = value;
-    m_Logger       = null;
+    m_LoggingLevel     = value;
+    m_Logger           = null;
+    m_LoggingIsEnabled = null;
   }
 }

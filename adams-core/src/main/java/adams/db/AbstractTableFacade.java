@@ -68,7 +68,7 @@ public abstract class AbstractTableFacade
 
     prefix   = getClass().getName() + "(" + getDatabaseConnection().toStringShort() + "/" + getDatabaseConnection().hashCode() + ")";
     m_Logger = LoggingHelper.getLogger(prefix);
-    m_Logger.setLevel(getDebug() ? Level.INFO : Level.OFF);
+    m_Logger.setLevel(getDebug() || LoggingHelper.isAtLeast(LoggingHelper.getLevel(getClass()), Level.INFO) ? Level.INFO : Level.OFF);
   }
 
   /**

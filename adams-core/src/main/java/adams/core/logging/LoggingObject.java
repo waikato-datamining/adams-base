@@ -15,7 +15,7 @@
 
 /*
  * ConsoleObject.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.logging;
@@ -30,7 +30,6 @@ import java.util.logging.Level;
  * A basic object with logging support.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LoggingObject
   implements Serializable, SizeOfHandler, LoggingSupporter {
@@ -43,7 +42,10 @@ public class LoggingObject
 
   /** the logger in use. */
   protected transient Logger m_Logger;
-  
+
+  /** whether logging is enabled. */
+  protected transient Boolean m_LoggingIsEnabled;
+
   /**
    * Initializes the object.
    */
@@ -55,7 +57,7 @@ public class LoggingObject
    * Pre-configures the logging.
    */
   protected void initializeLogging() {
-    m_LoggingLevel = LoggingLevel.WARNING;
+    m_LoggingLevel = LoggingHelper.getLoggingLevel(getClass());
   }
   
   /**
@@ -94,7 +96,9 @@ public class LoggingObject
    * @return		true if at least {@link Level#INFO}
    */
   public boolean isLoggingEnabled() {
-    return LoggingHelper.isAtLeast(m_LoggingLevel.getLevel(), Level.INFO);
+    if (m_LoggingIsEnabled == null)
+      m_LoggingIsEnabled = LoggingHelper.isAtLeast(m_LoggingLevel.getLevel(), Level.INFO);
+    return m_LoggingIsEnabled;
   }
 
   /**

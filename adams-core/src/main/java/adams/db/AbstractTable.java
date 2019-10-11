@@ -21,11 +21,14 @@ package adams.db;
 
 import adams.core.ClassLister;
 import adams.core.Properties;
+import adams.core.logging.LoggingHelper;
 import adams.db.generic.SQL;
 import adams.env.Environment;
 import adams.env.TableDefinition;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeListener;
+
+import java.util.logging.Level;
 
 /**
  * Ancestor for all table classes.
@@ -57,7 +60,10 @@ public abstract class AbstractTable
     m_TableName = tableName;
     m_DatabaseConnection.addChangeListener(this);
     
-    setDebug(getProperties().getBoolean(this.getClass().getName() + ".Debug", false));
+    setDebug(
+      getProperties().getBoolean(this.getClass().getName() + ".Debug", false)
+        || LoggingHelper.isAtLeast(LoggingHelper.getLevel(getClass()), Level.INFO));
+
     if (getDebug())
       getLogger().info(m_DatabaseConnection.toString());
   }
