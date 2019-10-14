@@ -20,10 +20,7 @@
 
 package adams.core;
 
-import adams.core.io.FileUtils;
 import adams.core.option.AbstractOptionHandler;
-import adams.env.ClassListerDefinition;
-import adams.env.Environment;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -455,17 +452,5 @@ public class PropertiesToCode
     addClassEnd(result);
 
     return result.toString();
-  }
-
-  public static void main(String[] args) throws Exception {
-    Environment.setEnvironmentClass(Environment.class);
-    Properties props = Environment.getInstance().read(ClassListerDefinition.KEY);
-    PropertiesToCode propsToCode = new PropertiesToCode();
-    String code = propsToCode.generate(props);
-    String filename = "/home/fracpete/development/projects/adamsfamily/adams/adams-core/src/main/java/adams/Blah.java";
-    if (!FileUtils.writeToFile(filename, code, false))
-      System.err.println("Failed to write Java class to: " + filename);
-    else
-      System.out.println("Java class written to: " + filename);
   }
 }
