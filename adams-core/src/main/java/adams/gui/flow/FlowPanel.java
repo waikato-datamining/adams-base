@@ -252,7 +252,7 @@ public class FlowPanel
     m_TabHandlers = new ArrayList<>();
     for (Class cls: ClassLister.getSingleton().getClasses(AbstractTabHandler.class)) {
       try {
-        m_TabHandlers.add(newInstance(AbstractTabHandler.class, new Class[]{FlowPanel.class}, new Object[]{this}));
+        m_TabHandlers.add((AbstractTabHandler) newInstance(cls, new Class[]{FlowPanel.class}, new Object[]{this}));
       }
       catch (Exception e) {
         ConsolePanel.getSingleton().append("Failed to instantiate tab handler: " + Utils.classToString(cls), e);
