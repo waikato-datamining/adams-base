@@ -62,8 +62,8 @@ public class LoggingHelper {
 
   /**
    * Returns the log level for the specified class. E.g., for the class
-   * "hello.world.App" the environment variable "hello.world.App.LOGLEVEL"
-   * is inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}" 
+   * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
+   * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
    * returned. Default is WARNING.
    *
    * @param cls		the class to return the debug level for
@@ -88,6 +88,17 @@ public class LoggingHelper {
 	  result = Level.WARNING;
 	}
       }
+      else {
+	level = System.getenv(cls.getSimpleName() + LOGLEVEL_SUFFIX);
+	if (level != null) {
+	  try {
+	    result = LoggingLevel.valueOf(level).getLevel();
+	  }
+	  catch (Exception e) {
+	    result = Level.WARNING;
+	  }
+	}
+      }
       m_LogLevelCache.put(cls, result);
     }
 
@@ -96,8 +107,8 @@ public class LoggingHelper {
 
   /**
    * Returns the logging level for the specified class. E.g., for the class
-   * "hello.world.App" the environment variable "hello.world.App.LOGLEVEL"
-   * is inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}" 
+   * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
+   * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
    * returned. Default is WARNING.
    *
    * @param cls		the class to return the debug level for
@@ -121,8 +132,8 @@ public class LoggingHelper {
 
   /**
    * Returns the a logger with the log level for the specified class. 
-   * E.g., for the class "hello.world.App" the environment variable "hello.world.App.LOGLEVEL"
-   * is inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}" 
+   * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
+   * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
    * returned.
    *
    * @param cls		the class to return the logger for
@@ -141,10 +152,8 @@ public class LoggingHelper {
   }
 
   /**
-   * Returns the a logger with the log level for the specified class. 
-   * E.g., for the class "hello.world.App" the environment variable "hello.world.App.LOGLEVEL"
-   * is inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}" 
-   * returned.
+   * Returns the a logger with the specified name.
+   * Default level is WARNING.
    *
    * @param name	the name of the class to return the logger for
    * @return		the logger
@@ -163,8 +172,8 @@ public class LoggingHelper {
 
   /**
    * Returns a console logger with the log level for the specified class. 
-   * E.g., for the class "hello.world.App" the environment variable "hello.world.App.LOGLEVEL"
-   * is inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}" 
+   * E.g., for the class "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
+   * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
    * returned.
    *
    * @param cls		the class to return the logger for
@@ -182,10 +191,8 @@ public class LoggingHelper {
   }
 
   /**
-   * Returns a console logger with the log level for the specified class. 
-   * E.g., for the class "hello.world.App" the environment variable "hello.world.App.LOGLEVEL"
-   * is inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}" 
-   * returned.
+   * Returns a console logger with the log level for the specified class.
+   * Default level is WARNING.
    *
    * @param name	the name of the class to return the logger for
    * @return		the logger
