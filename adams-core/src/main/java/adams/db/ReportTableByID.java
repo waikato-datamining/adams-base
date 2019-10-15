@@ -20,6 +20,7 @@
 package adams.db;
 
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.id.IDHandler;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
@@ -101,6 +102,8 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
    * @return		the list of fields
    */
   public List<F> getFields() {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName());
     return getFields(null);
   }
 
@@ -111,6 +114,8 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
    * @return		true if successfully removed
    */
   public boolean remove(R report) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": report");
     return remove(report.getID());
   }
 
@@ -124,6 +129,9 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
     boolean	result;
     String	sql;
 
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": id=" + id);
+
     // build SQL statement
     sql =   "DELETE "
       + "FROM " + getTableName() + " "
@@ -136,7 +144,7 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
     }
     catch (Exception e) {
       result = false;
-      getLogger().log(Level.SEVERE, "Failed to remove: " + sql, e);
+      getLogger().log(Level.SEVERE, LoggingHelper.getMethodName() + ": Failed to remove: " + sql, e);
     }
 
     return result;
@@ -152,6 +160,9 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
   public boolean remove(String id, AbstractField field) {
     boolean	result;
     String	sql;
+
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": id=" + id + ", field=" + field);
 
     // build SQL statement
     sql =   "DELETE "
@@ -181,6 +192,8 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
    * @return		true if successfully inserted
    */
   public boolean store(String id, R report) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": id=" + id + ", report");
     return store(id, report, true, false, new Field[]{});
   }
 
@@ -204,19 +217,25 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
     boolean	canSave;
     int		i;
 
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": id=" + id + ", report, removeExisting=" + removeExisting + ", merge=" + merge + ", overwrite=" + Utils.arrayToString(overwrite));
+
     result  = false;
     exists  = exists(id);
     canSave = !exists;
 
     if (exists) {
-      getLogger().info("Report already exists for: " + id);
+      if (isLoggingEnabled())
+        getLogger().info(LoggingHelper.getMethodName() + ": Report already exists for: " + id);
       if (removeExisting) {
-	getLogger().info("Removing old report for: " + id);
+        if (isLoggingEnabled())
+          getLogger().info(LoggingHelper.getMethodName() + ": Removing old report for: " + id);
 	remove(id);
 	canSave = true;
       }
       else if (merge) {
-	getLogger().info("Merging with old report: " + id);
+        if (isLoggingEnabled())
+          getLogger().info(LoggingHelper.getMethodName() + ": Merging with old report: " + id);
 	reportOld = load(id);
 	reportOld.mergeWith(report);
 	reportOld.setValue(new Field(Report.FIELD_DUMMYREPORT, DataType.BOOLEAN), false);
@@ -228,7 +247,7 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
 		reportOld.setValue(overwrite[i], report.getValue(overwrite[i]));
 	    }
 	    catch (Exception e) {
-	      getLogger().log(Level.SEVERE, "Error overwriting field '" + overwrite[i] + "' in report '" + report.getDatabaseID() + "':", e);
+	      getLogger().log(Level.SEVERE, LoggingHelper.getMethodName() + ": Error overwriting field '" + overwrite[i] + "' in report '" + report.getDatabaseID() + "':", e);
 	    }
 	  }
 	}
@@ -236,13 +255,15 @@ public abstract class ReportTableByID<R extends Report & IDHandler, F extends Ab
 	canSave = true;
       }
       else {
-	getLogger().info("Not saving report for: " + id);
+        if (isLoggingEnabled())
+          getLogger().info("Not saving report for: " + id);
 	id = null;
       }
     }
 
     if (canSave) {
-      getLogger().info("Storing in DB: " + id);
+      if (isLoggingEnabled())
+        getLogger().info("Storing in DB: " + id);
       result = doStore(id, report);
     }
 
