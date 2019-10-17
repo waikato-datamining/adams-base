@@ -15,7 +15,7 @@
 
 /*
  * AbstractActor.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -59,7 +59,6 @@ import java.util.logging.Level;
  * Abstract base class for actors.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractActor
   extends AbstractOptionHandler
@@ -79,7 +78,7 @@ public abstract class AbstractActor
 
   /** the logging prefix. */
   protected String m_LoggingPrefix;
-  
+
   /** the parent actor this actor is part of, e.g., a sequence. */
   protected transient Actor m_Parent;
 
@@ -103,7 +102,7 @@ public abstract class AbstractActor
 
   /** whether to stop the flow in case of an error. */
   protected boolean m_StopFlowOnError;
-  
+
   /** whether to suppress output in the console. */
   protected boolean m_Silent;
 
@@ -121,16 +120,16 @@ public abstract class AbstractActor
 
   /** the storage handler. */
   protected StorageHandler m_StorageHandler;
-  
+
   /** the scope handler. */
   protected ScopeHandler m_ScopeHandler;
-  
+
   /** the error handler to use. */
   protected ErrorHandler m_ErrorHandler;
 
   /** the flow execution handler. */
   protected FlowExecutionListeningSupporter m_ExecutionListeningSupporter;
-  
+
   /**
    * Returns the additional information.
    *
@@ -202,7 +201,7 @@ public abstract class AbstractActor
 	}
       }
     }
-    
+
     if (this instanceof ActorHandler) {
       info = ((ActorHandler) this).getActorHandlerInfo();
       result.append("\nActor handler information:");
@@ -257,7 +256,7 @@ public abstract class AbstractActor
     m_Logger = LoggingHelper.getLogger(m_LoggingPrefix);
     m_Logger.setLevel(m_LoggingLevel.getLevel());
   }
-  
+
   /**
    * Updates the prefix of the logger.
    */
@@ -563,14 +562,14 @@ public abstract class AbstractActor
         source.getLogger().warning(msg);
       }
     }
-    
+
     return msg;
   }
 
   /**
-   * Outputs the stacktrace along with the message on stderr and returns a 
+   * Outputs the stacktrace along with the message on stderr and returns a
    * combination of both of them as string.
-   * 
+   *
    * @param msg		the message for the exception
    * @param t		the exception
    * @return		the full error message (message + stacktrace)
@@ -578,7 +577,7 @@ public abstract class AbstractActor
   protected String handleException(String msg, Throwable t) {
     return LoggingHelper.handleException(this, msg, t, m_Silent);
   }
-  
+
   /**
    * Sets the parent of this actor, e.g., the group it belongs to.
    *
@@ -604,10 +603,10 @@ public abstract class AbstractActor
   public Actor getParent() {
     return m_Parent;
   }
-  
+
   /**
    * Returns the current parent component for interactive actors.
-   * 
+   *
    * @return		the parent, null if not set
    */
   public Component getParentComponent() {
@@ -663,7 +662,7 @@ public abstract class AbstractActor
     if (m_DetectedVariables.size() > 0)
       getVariables().addVariableChangeListener(this);
   }
-  
+
   /**
    * Updates the Variables instance in use.
    * <br><br>
@@ -674,8 +673,6 @@ public abstract class AbstractActor
   protected void forceVariables(Variables value) {
     getOptionManager().getVariables().removeVariableChangeListener(this);
     getOptionManager().deregisterVariables();
-    if (getOptionManager().getVariables() != value)
-      getOptionManager().getVariables().cleanUp();
     getOptionManager().setVariables(value);
     getOptionManager().getVariables().addVariableChangeListener(this);
     getOptionManager().updateVariablesInstance(value);
