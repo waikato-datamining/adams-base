@@ -9,3 +9,4 @@ build/
 venv/
 *.pyc
 __pycache__/
+*.props_
