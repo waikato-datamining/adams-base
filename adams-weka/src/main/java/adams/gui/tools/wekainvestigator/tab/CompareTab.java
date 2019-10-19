@@ -915,9 +915,9 @@ public class CompareTab
   protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
     super.doDeserialize(data, errors);
     if (data.containsKey(KEY_FIRST_DATASET))
-      m_ComboBoxFirstDataset.setSelectedIndex((int) data.get(KEY_FIRST_DATASET));
+      m_ComboBoxFirstDataset.setSelectedIndex(((Number) data.get(KEY_FIRST_DATASET)).intValue());
     if (data.containsKey(KEY_SECOND_DATASET))
-      m_ComboBoxSecondDataset.setSelectedIndex((int) data.get(KEY_SECOND_DATASET));
+      m_ComboBoxSecondDataset.setSelectedIndex(((Number) data.get(KEY_SECOND_DATASET)).intValue());
     if (data.containsKey(KEY_FIRST_ATTRANGE))
       m_TextFirstRange.setText((String) data.get(KEY_FIRST_ATTRANGE));
     if (data.containsKey(KEY_SECOND_ATTRANGE))

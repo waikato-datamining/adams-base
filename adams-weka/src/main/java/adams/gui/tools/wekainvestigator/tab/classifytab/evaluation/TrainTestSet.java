@@ -358,9 +358,9 @@ public class TrainTestSet
   public void deserialize(Map<String,Object> data, MessageCollection errors) {
     super.deserialize(data, errors);
     if (data.containsKey(KEY_TRAIN))
-      m_ComboBoxTrain.setSelectedIndex((int) data.get(KEY_TRAIN));
+      m_ComboBoxTrain.setSelectedIndex(((Number) data.get(KEY_TRAIN)).intValue());
     if (data.containsKey(KEY_TEST))
-      m_ComboBoxTest.setSelectedIndex((int) data.get(KEY_TEST));
+      m_ComboBoxTest.setSelectedIndex(((Number) data.get(KEY_TEST)).intValue());
     if (data.containsKey(KEY_ADDITIONAL))
       m_SelectAdditionalAttributes.setCurrent(listOrArray(data.get(KEY_ADDITIONAL)));
     if (data.containsKey(KEY_DISCARDPREDICTIONS))

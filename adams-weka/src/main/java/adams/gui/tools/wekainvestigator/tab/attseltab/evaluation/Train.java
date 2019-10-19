@@ -251,6 +251,6 @@ public class Train
   public void deserialize(Map<String,Object> data, MessageCollection errors) {
     super.deserialize(data, errors);
     if (data.containsKey(KEY_DATASET))
-      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+      m_ComboBoxDatasets.setSelectedIndex(((Number) data.get(KEY_DATASET)).intValue());
   }
 }

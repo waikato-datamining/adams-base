@@ -634,13 +634,13 @@ public class InstanceTab
   protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
     super.doDeserialize(data, errors);
     if (data.containsKey(KEY_LEFTPANELWIDTH))
-      m_SplitPane.setDividerLocation((int) data.get(KEY_LEFTPANELWIDTH));
+      m_SplitPane.setDividerLocation(((Number) data.get(KEY_LEFTPANELWIDTH)).intValue());
     if (data.containsKey(KEY_DATASET))
-      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+      m_ComboBoxDatasets.setSelectedIndex(((Number) data.get(KEY_DATASET)).intValue());
     if (data.containsKey(KEY_ID))
-      m_ComboBoxID.setSelectedIndex((int) data.get(KEY_ID));
+      m_ComboBoxID.setSelectedIndex(((Number) data.get(KEY_ID)).intValue());
     if (data.containsKey(KEY_COLOR))
-      m_ComboBoxColor.setSelectedIndex((int) data.get(KEY_COLOR));
+      m_ComboBoxColor.setSelectedIndex(((Number) data.get(KEY_COLOR)).intValue());
     if (data.containsKey(KEY_COLORPROVIDER)) {
       try {
 	m_PanelColorProvider.setCurrent(OptionUtils.forAnyCommandLine(ColorProvider.class, (String) data.get(KEY_COLORPROVIDER)));

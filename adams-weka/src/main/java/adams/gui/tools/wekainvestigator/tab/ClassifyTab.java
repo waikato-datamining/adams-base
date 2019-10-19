@@ -1082,7 +1082,7 @@ public class ClassifyTab
 
     super.doDeserialize(data, errors);
     if (data.containsKey(KEY_LEFTPANELWIDTH))
-      m_SplitPane.setDividerLocation((int) data.get(KEY_LEFTPANELWIDTH));
+      m_SplitPane.setDividerLocation(((Number) data.get(KEY_LEFTPANELWIDTH)).intValue());
     if (data.containsKey(KEY_CLASSIFIER)) {
       try {
         m_CurrentClassifier = (Classifier) OptionUtils.forAnyCommandLine(Classifier.class, (String) data.get(KEY_CLASSIFIER));
@@ -1093,7 +1093,7 @@ public class ClassifyTab
       }
     }
     if (data.containsKey(KEY_EVALUATION))
-      m_ComboBoxEvaluations.setSelectedIndex((int) data.get(KEY_EVALUATION));
+      m_ComboBoxEvaluations.setSelectedIndex(((Number) data.get(KEY_EVALUATION)).intValue());
     for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
       eval = m_ModelEvaluations.getElementAt(i);
       if (data.containsKey(KEY_EVALUATION_PREFIX + eval.getName())) {
