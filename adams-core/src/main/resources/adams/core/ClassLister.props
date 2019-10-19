@@ -165,6 +165,10 @@ adams.data.io.input.SpreadSheetReader=\
 adams.data.io.input.FlowReader=\
   adams.data.io.input
 
+# the parameter map readers
+adams.data.io.input.AbstractParameterMapReader=\
+  adams.data.io.input
+
 # the text readers
 adams.data.io.input.AbstractTextReader=\
   adams.data.io.input
@@ -191,6 +195,10 @@ adams.data.io.output.SpreadSheetWriter=\
 
 # the flow writers
 adams.data.io.output.FlowWriter=\
+  adams.data.io.output
+
+# the parameter map writers
+adams.data.io.output.AbstractParameterMapWriter=\
   adams.data.io.output
 
 # the text writers
