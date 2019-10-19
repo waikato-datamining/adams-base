@@ -1104,7 +1104,7 @@ public class AttributeSelectionTab
       m_History.deserialize(data.get(KEY_HISTORY), errors);
     if (data.containsKey(KEY_OUTPUTGENERATORS)) {
       try {
-	m_OutputGenerators = (AbstractOutputGenerator[]) OptionUtils.forCommandLines(AbstractOutputGenerator.class, (String[]) data.get(KEY_OUTPUTGENERATORS));
+	m_OutputGenerators = (AbstractOutputGenerator[]) OptionUtils.forCommandLines(AbstractOutputGenerator.class, toParamsArray(data.get(KEY_OUTPUTGENERATORS)));
       }
       catch (Exception e) {
         errors.add("Failed to restore output generators!", e);
