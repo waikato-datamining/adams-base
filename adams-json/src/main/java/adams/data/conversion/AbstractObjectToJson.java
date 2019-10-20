@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * MapToJson.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+/*
+ * AbstractObjectToJson.java
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -42,7 +42,6 @@ import java.util.Map;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10824 $
  */
 public abstract class AbstractObjectToJson
   extends AbstractConversion {
@@ -72,7 +71,10 @@ public abstract class AbstractObjectToJson
     JSONArray 	array;
     int		i;
 
-    if (value instanceof Map) {
+    if (value == null) {
+      return null;
+    }
+    else if (value instanceof Map) {
       map  = (Map) value;
       json = new JSONObject();
       for (Object key : map.keySet())
