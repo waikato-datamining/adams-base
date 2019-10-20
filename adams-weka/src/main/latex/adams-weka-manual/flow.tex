@@ -19,6 +19,8 @@ This module offers additional schemes for the \textit{Convert} transformer:
 	\item \textit{MatchWekaInstanceAgainstFileHeader} -- uses a dataset header
 	stored in a file to convert the string attributes of the instance passing 
 	through into nominal ones (and vice versa).
+	\item \textit{MapToWekaInstance} -- turns a java.util.Map object into
+	an Instance object using a dataset in storage as template.
 	\item \textit{MatchWekaInstanceAgainstStorageHeader} -- uses a dataset
 	header obtained from storage to convert the string attributes of the 
 	instance passing through into nominal ones (and vice versa).
@@ -41,6 +43,8 @@ This module offers additional schemes for the \textit{Convert} transformer:
 	with the  capabilities retrieved from a \texttt{CapabilitiesHandler}.
 	\item \textit{WekaCommandToCode} -- turns a WEKA command-line into
 	code snippets.
+	\item \textit{WekaInstanceToMap} -- turns an Instance object into a
+	java.util.Map object.
 	\item \textit{WekaInstancesToSpreadSheet} -- turns a WEKA dataset into
 	a spreadsheet object.
 	\item \textit{WekaInstanceToAdamsInstance} -- turns a WEKA instance into
