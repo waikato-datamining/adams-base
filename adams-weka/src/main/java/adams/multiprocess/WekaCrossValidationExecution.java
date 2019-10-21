@@ -104,6 +104,9 @@ public class WekaCrossValidationExecution
   /** the separate evaluations. */
   protected Evaluation[] m_Evaluations;
 
+  /** the separate classifiers. */
+  protected Classifier[] m_Classifiers;
+
   /** the original indices. */
   protected int[] m_OriginalIndices;
 
@@ -506,6 +509,7 @@ public class WekaCrossValidationExecution
     indices       = null;
     m_Evaluation  = null;
     m_Evaluations = null;
+    m_Classifiers = null;
 
     try {
       // evaluate classifier
@@ -592,6 +596,7 @@ public class WekaCrossValidationExecution
 	if (!isStopped()) {
 	  evalAgg = new AggregateEvaluations();
 	  m_Evaluations = new Evaluation[m_ActualJobRunner.getJobs().size()];
+	  m_Classifiers = new Classifier[m_ActualJobRunner.getJobs().size()];
 	  for (i = 0; i < m_ActualJobRunner.getJobs().size(); i++) {
 	    job = (WekaCrossValidationJob) m_ActualJobRunner.getJobs().get(i);
 	    if (job.getEvaluation() == null) {
@@ -600,6 +605,7 @@ public class WekaCrossValidationExecution
 	    }
 	    evalAgg.add(job.getEvaluation());
 	    m_Evaluations[i] = job.getEvaluation();
+	    m_Classifiers[i] = job.getClassifier();
 	    job.cleanUp();
 	  }
 	  m_Evaluation = evalAgg.aggregated();
