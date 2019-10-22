@@ -27,6 +27,8 @@ import adams.env.WekaInvestigatorDefinition;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.goe.GenericArrayEditorPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
+import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.finalmodel.AbstractFinalModelGenerator;
+import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.finalmodel.Simple;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
 
@@ -111,7 +113,9 @@ public class WekaInvestigatorPreferencesPanel
     setChooser("Classify.JobRunner", new GenericObjectEditorPanel(
       JobRunner.class, new LocalJobRunner(), true));
     addPropertyType("Classify.UseViews", PropertyType.BOOLEAN);
-    addPropertyType("Classify.CrossValidationFinalModel", PropertyType.BOOLEAN);
+    addPropertyType("Classify.CrossValidationFinalModel", PropertyType.OBJECT_EDITOR);
+    setChooser("Classify.CrossValidationFinalModel", new GenericObjectEditorPanel(
+      AbstractFinalModelGenerator.class, new Simple(), true));
     addPropertyType("Classify.Seed", PropertyType.INTEGER);
     addPropertyType("Classify.TrainPercentage", PropertyType.DOUBLE);
     addPropertyType("Classify.TrainTestSplitGenerator", PropertyType.OBJECT_EDITOR);
