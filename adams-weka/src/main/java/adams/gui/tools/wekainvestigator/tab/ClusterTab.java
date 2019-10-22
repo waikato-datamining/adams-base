@@ -1030,7 +1030,7 @@ public class ClusterTab
 
     super.doDeserialize(data, errors);
     if (data.containsKey(KEY_LEFTPANELWIDTH))
-      m_SplitPane.setDividerLocation((int) data.get(KEY_LEFTPANELWIDTH));
+      m_SplitPane.setDividerLocation(((Number) data.get(KEY_LEFTPANELWIDTH)).intValue());
     if (data.containsKey(KEY_CLUSTERER)) {
       try {
         m_CurrentClusterer = (Clusterer) OptionUtils.forAnyCommandLine(Clusterer.class, (String) data.get(KEY_CLUSTERER));
@@ -1041,7 +1041,7 @@ public class ClusterTab
       }
     }
     if (data.containsKey(KEY_EVALUATION))
-      m_ComboBoxEvaluations.setSelectedIndex((int) data.get(KEY_EVALUATION));
+      m_ComboBoxEvaluations.setSelectedIndex(((Number) data.get(KEY_EVALUATION)).intValue());
     for (i = 0; i < m_ModelEvaluations.getSize(); i++) {
       eval = m_ModelEvaluations.getElementAt(i);
       if (data.containsKey(KEY_EVALUATION_PREFIX + eval.getName())) {
@@ -1053,7 +1053,7 @@ public class ClusterTab
       m_History.deserialize(data.get(KEY_HISTORY), errors);
     if (data.containsKey(KEY_OUTPUTGENERATORS)) {
       try {
-	m_OutputGenerators = (AbstractOutputGenerator[]) OptionUtils.forCommandLines(AbstractOutputGenerator.class, (String[]) data.get(KEY_OUTPUTGENERATORS));
+	m_OutputGenerators = (AbstractOutputGenerator[]) OptionUtils.forCommandLines(AbstractOutputGenerator.class, toParamsArray(data.get(KEY_OUTPUTGENERATORS)));
       }
       catch (Exception e) {
         errors.add("Failed to restore output generators!", e);

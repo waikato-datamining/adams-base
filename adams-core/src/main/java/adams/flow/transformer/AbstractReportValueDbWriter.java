@@ -15,7 +15,7 @@
 
 /*
  * AbstractReportDbWriter.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -107,6 +107,17 @@ public abstract class AbstractReportValueDbWriter<T extends Report>
   protected abstract String extractID(T report);
 
   /**
+   * Method for assembling the fields to overwrite.
+   * <br>
+   * Default implementation just returns the supplied fields
+   *
+   * @return		the fields
+   */
+  protected Field[] assembleFields() {
+    return m_Fields;
+  }
+
+  /**
    * Generates a subset of the report, which only contains the specified fields.
    *
    * @param report	the report to process
@@ -146,7 +157,7 @@ public abstract class AbstractReportValueDbWriter<T extends Report>
       subset = extractSubset(report);
       if (isLoggingEnabled())
         getLogger().info("Subset:\n" + subset);
-      stored = provider.store(id, subset, false, true, m_Fields);
+      stored = provider.store(id, subset, false, true, assembleFields());
       if (isLoggingEnabled())
         getLogger().info("stored: " + stored);
 

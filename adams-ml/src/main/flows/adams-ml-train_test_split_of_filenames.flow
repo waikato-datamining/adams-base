@@ -1,0 +1,19 @@
+# Project: adams
+# Date: 2019-10-18 10:09:19
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-math,adams-ml,adams-spreadsheet,adams-visualstats
+#
+adams.flow.control.Flow -annotation "Generates a randomized train/test split of all the files currently in the user\\\'s tmp directory and displays them." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.HistoryDisplay -display-type adams.flow.core.displaytype.Default -entry-name-variable entry
+ adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory ${TMP} -sorting SORT_BY_NAME" -use-forward-slashes true
+ adams.flow.transformer.PrepareFileBasedDataset -preparation adams.flow.transformer.preparefilebaseddataset.TrainTestSplit
+ adams.flow.control.ContainerValuePicker -value Train
+  adams.flow.transformer.SetVariable -var-name entry -var-value train
+  adams.flow.transformer.StringJoin -glue \n
+  adams.flow.sink.CallableSink -callable HistoryDisplay
+ adams.flow.control.ContainerValuePicker -name "ContainerValuePicker (2)" -value Test
+  adams.flow.transformer.SetVariable -var-name entry -var-value test
+  adams.flow.transformer.StringJoin -glue \n
+  adams.flow.sink.CallableSink -callable HistoryDisplay

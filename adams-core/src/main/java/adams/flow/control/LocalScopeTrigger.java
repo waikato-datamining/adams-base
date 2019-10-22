@@ -147,7 +147,6 @@ import adams.flow.core.StopRestrictor;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LocalScopeTrigger
   extends Trigger 
@@ -739,11 +738,22 @@ public class LocalScopeTrigger
   @Override
   public void cleanUp() {
     if (m_LocalVariables != null) {
-      m_LocalVariables.cleanUp();
+      switch (m_ScopeHandlingVariables) {
+        case EMPTY:
+        case COPY:
+          m_LocalVariables.cleanUp();
+          break;
+      }
       m_LocalVariables = null;
     }
+
     if (m_LocalStorage != null) {
-      m_LocalStorage.clear();
+      switch (m_ScopeHandlingStorage) {
+        case EMPTY:
+        case COPY:
+          m_LocalStorage.clear();
+          break;
+      }
       m_LocalStorage = null;
     }
 

@@ -27,7 +27,6 @@ import adams.core.StatusMessageHandler;
 import adams.core.UniqueIDs;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
-import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.filechanged.FileChangeMonitor;
 import adams.core.io.filechanged.FlowFileDigest;
@@ -88,7 +87,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,9 +141,6 @@ public class FlowPanel
 
   /** the recent files handler. */
   protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
-
-  /** for proposing filenames for new flows. */
-  protected FilenameProposer m_FilenameProposer;
 
   /** the last variable search performed. */
   protected String m_LastVariableSearch;
@@ -225,8 +220,6 @@ public class FlowPanel
    */
   @Override
   protected void initialize() {
-    Constructor 	constr;
-
     super.initialize();
 
     m_LastFlow              = null;
@@ -235,7 +228,6 @@ public class FlowPanel
     m_CurrentWorker         = null;
     m_LastVariableSearch    = "";
     m_TitleGenerator        = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true);
-    m_FilenameProposer      = new FilenameProposer(PREFIX_NEW, Actor.FILE_EXTENSION, getProperties().getPath("InitialDir", "%h"));
     m_Title                 = "";
     m_Status                = "";
     m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);
@@ -252,7 +244,7 @@ public class FlowPanel
     m_TabHandlers = new ArrayList<>();
     for (Class cls: ClassLister.getSingleton().getClasses(AbstractTabHandler.class)) {
       try {
-        m_TabHandlers.add(newInstance(AbstractTabHandler.class, new Class[]{FlowPanel.class}, new Object[]{this}));
+        m_TabHandlers.add((AbstractTabHandler) newInstance(cls, new Class[]{FlowPanel.class}, new Object[]{this}));
       }
       catch (Exception e) {
         ConsolePanel.getSingleton().append("Failed to instantiate tab handler: " + Utils.classToString(cls), e);
@@ -540,7 +532,7 @@ public class FlowPanel
     getTree().setModified(false);
     setCurrentFile(null);
 
-    setTitle(PREFIX_NEW +  + UniqueIDs.nextInt(PREFIX_NEW));
+    setTitle(PREFIX_NEW + UniqueIDs.nextInt(PREFIX_NEW));
 
     update();
 
@@ -691,6 +683,12 @@ public class FlowPanel
 	  setCurrentFile(file);
 	  m_FlowFileMonitor.initialize(file);
 	}
+	else {
+	  setCurrentFile(new PlaceholderFile(
+	    FileUtils.replaceExtension(file.getAbsolutePath(), " (incomplete).")
+	      + FileUtils.getExtension(file)));
+	  setModified(true);
+        }
 	if (m_RecentFilesHandler != null)
 	  m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
 	notifications = new StringBuilder();

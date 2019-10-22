@@ -179,6 +179,15 @@ public class WekaCrossValidationJob
     return m_Evaluation;
   }
 
+  /**
+   * Returns the classifier (should be built after the job finished).
+   *
+   * @return		the classifier
+   */
+  public Classifier getClassifier() {
+    return m_Classifier;
+  }
+
   @Override
   protected String preProcessCheck() {
     if (m_Classifier == null)

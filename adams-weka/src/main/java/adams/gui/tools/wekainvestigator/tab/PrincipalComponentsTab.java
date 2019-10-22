@@ -549,17 +549,17 @@ public class PrincipalComponentsTab
   protected void doDeserialize(Map<String,Object> data, MessageCollection errors) {
     super.doDeserialize(data, errors);
     if (data.containsKey(KEY_LEFTPANELWIDTH))
-      m_SplitPane.setDividerLocation((int) data.get(KEY_LEFTPANELWIDTH));
+      m_SplitPane.setDividerLocation(((Number) data.get(KEY_LEFTPANELWIDTH)).intValue());
     if (data.containsKey(KEY_DATASET))
-      m_ComboBoxDatasets.setSelectedIndex((int) data.get(KEY_DATASET));
+      m_ComboBoxDatasets.setSelectedIndex(((Number) data.get(KEY_DATASET)).intValue());
     if (data.containsKey(KEY_RANGE))
       m_TextAttributeRange.setText((String) data.get(KEY_RANGE));
     if (data.containsKey(KEY_VARIANCE))
-      m_TextVariance.setValue((double) data.get(KEY_VARIANCE));
+      m_TextVariance.setValue(((Number) data.get(KEY_VARIANCE)).doubleValue());
     if (data.containsKey(KEY_MAXATTRIBUTES))
-      m_TextMaxAttributes.setValue((int) data.get(KEY_MAXATTRIBUTES));
+      m_TextMaxAttributes.setValue(((Number) data.get(KEY_MAXATTRIBUTES)).intValue());
     if (data.containsKey(KEY_MAXATTRIBUTENAMES))
-      m_TextMaxAttributeNames.setValue((int) data.get(KEY_MAXATTRIBUTENAMES));
+      m_TextMaxAttributeNames.setValue(((Number) data.get(KEY_MAXATTRIBUTENAMES)).intValue());
     if (data.containsKey(KEY_SKIPNOMINAL))
       m_CheckBoxSkipNominal.setSelected((boolean) data.get(KEY_MAXATTRIBUTENAMES));
     if (data.containsKey(KEY_ADDITIONALATTRIBUTES))

@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * ReportTable.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+/*
+ * ReportTableByDBID.java
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
 import adams.core.Constants;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.report.AbstractField;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -34,7 +35,6 @@ import java.util.logging.Level;
  * tables.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <R> the type of reports to handle
  * @param <F> the type of fields to handle
  */
@@ -100,6 +100,8 @@ public abstract class ReportTableByDBID<R extends Report, F extends AbstractFiel
    * @return		the list of fields
    */
   public List<F> getFields() {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName());
     return getFields(null);
   }
 
@@ -110,6 +112,8 @@ public abstract class ReportTableByDBID<R extends Report, F extends AbstractFiel
    * @return		true if successfully removed
    */
   public boolean remove(Report report) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": report");
     return remove(report.getDatabaseID());
   }
 
@@ -123,6 +127,9 @@ public abstract class ReportTableByDBID<R extends Report, F extends AbstractFiel
     boolean	result;
     String	sql;
 
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": id=" + id);
+
     // build SQL statement
     sql =   "DELETE "
       + "FROM " + getTableName() + " "
@@ -135,7 +142,7 @@ public abstract class ReportTableByDBID<R extends Report, F extends AbstractFiel
     }
     catch (Exception e) {
       result = false;
-      getLogger().log(Level.SEVERE, "Failed to remove: " + sql, e);
+      getLogger().log(Level.SEVERE, LoggingHelper.getMethodName() + ": Failed to remove: " + sql, e);
     }
 
     return result;
@@ -150,6 +157,8 @@ public abstract class ReportTableByDBID<R extends Report, F extends AbstractFiel
    * @return		true if successfully inserted
    */
   public boolean store(Integer parent_id, R report) {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": parent_id=" + parent_id + ", report");
     return store(parent_id, report, true, false, new Field[]{});
   }
 
@@ -173,19 +182,25 @@ public abstract class ReportTableByDBID<R extends Report, F extends AbstractFiel
     boolean	canSave;
     int		i;
 
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName() + ": parent_id=" + parent_id + ", report, removeExisting=" + removeExisting + ", merge=" + merge + ", overwrite=" + Utils.arrayToString(overwrite));
+
     result  = false;
     exists  = exists(parent_id);
     canSave = !exists;
 
     if (exists) {
-      getLogger().info("Report already exists for: " + parent_id);
+      if (isLoggingEnabled())
+	getLogger().info(LoggingHelper.getMethodName() + ": Report already exists for: " + parent_id);
       if (removeExisting) {
-	getLogger().info("Removing old report for: " + parent_id);
+        if (isLoggingEnabled())
+	  getLogger().info(LoggingHelper.getMethodName() + ": Removing old report for: " + parent_id);
 	remove(parent_id);
 	canSave = true;
       }
       else if (merge) {
-	getLogger().info("Merging with old report: " + parent_id);
+        if (isLoggingEnabled())
+	  getLogger().info(LoggingHelper.getMethodName() + ": Merging with old report: " + parent_id);
 	reportOld = load(parent_id);
 	reportOld.mergeWith(report);
 	reportOld.setValue(new Field(Report.FIELD_DUMMYREPORT, DataType.BOOLEAN), false);
@@ -197,7 +212,7 @@ public abstract class ReportTableByDBID<R extends Report, F extends AbstractFiel
 		reportOld.setValue(overwrite[i], report.getValue(overwrite[i]));
 	    }
 	    catch (Exception e) {
-	      getLogger().log(Level.SEVERE, "Error overwriting field '" + overwrite[i] + "' in report '" + report.getDatabaseID() + "':", e);
+	      getLogger().log(Level.SEVERE, LoggingHelper.getMethodName() + ": Error overwriting field '" + overwrite[i] + "' in report '" + report.getDatabaseID() + "':", e);
 	    }
 	  }
 	}
@@ -205,13 +220,15 @@ public abstract class ReportTableByDBID<R extends Report, F extends AbstractFiel
 	canSave = true;
       }
       else {
-	getLogger().info("Not saving report for: " + parent_id);
+        if (isLoggingEnabled())
+	  getLogger().info(LoggingHelper.getMethodName() + ": Not saving report for: " + parent_id);
 	parent_id = Constants.NO_ID;
       }
     }
 
     if (canSave) {
-      getLogger().info("Storing in DB: " + parent_id);
+      if (isLoggingEnabled())
+	getLogger().info(LoggingHelper.getMethodName() + ": Storing in DB: " + parent_id);
       result = doStore(parent_id, report);
     }
 

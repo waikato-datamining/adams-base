@@ -24,17 +24,18 @@ import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
-import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.data.io.input.AbstractParameterMapReader;
+import adams.data.io.output.AbstractParameterMapWriter;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.ParameterMapFileChooser;
 import adams.gui.core.DetachablePanel;
-import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.event.WekaInvestigatorDataListener;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
-import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -73,7 +74,7 @@ public abstract class AbstractInvestigatorTab
   protected Thread m_Worker;
 
   /** the file chooser. */
-  protected BaseFileChooser m_FileChooserParameters;
+  protected ParameterMapFileChooser m_FileChooserParameters;
 
   /**
    * Initializes the members.
@@ -127,16 +128,10 @@ public abstract class AbstractInvestigatorTab
    *
    * @return		the chooser
    */
-  protected BaseFileChooser getFileChooserParameters() {
-    ExtensionFileFilter		filter;
+  protected ParameterMapFileChooser getFileChooserParameters() {
+    if (m_FileChooserParameters == null)
+      m_FileChooserParameters = new ParameterMapFileChooser();
 
-    if (m_FileChooserParameters == null) {
-      m_FileChooserParameters = new BaseFileChooser();
-      m_FileChooserParameters.setAutoAppendExtension(true);
-      filter = new ExtensionFileFilter("YAML file", "yaml");
-      m_FileChooserParameters.addChoosableFileFilter(filter);
-      m_FileChooserParameters.setFileFilter(filter);
-    }
     return m_FileChooserParameters;
   }
 
@@ -285,56 +280,90 @@ public abstract class AbstractInvestigatorTab
   }
 
   /**
+   * Turns a parameter object into a string array.
+   *
+   * @param params	the parameters to convert
+   * @return		the string array
+   */
+  protected String[] toParamsArray(Object params) {
+    String[]	array;
+    int		i;
+
+    if (params == null)
+      return new String[0];
+
+    if (params instanceof String[])
+      return (String[]) params;
+
+    if (params instanceof List) {
+      array = new String[((List) params).size()];
+      for (i = 0; i < array.length; i++)
+        array[i] = "" + ((List) params).get(i);
+      return array;
+    }
+
+    logMessage("Failed to turn into string array: " + Utils.classToString(params));
+    return new String[0];
+  }
+
+  /**
    * Prompts the user to select a yaml file to store the parameters of the tab under.
    */
   public void saveParameters() {
-    int 		retVal;
-    File 		paramFile;
-    Map<String,Object> 	params;
-    Yaml 		yaml;
+    int 			retVal;
+    File 			paramFile;
+    Map<String,Object> 		params;
+    AbstractParameterMapWriter  writer;
 
     retVal = getFileChooserParameters().showSaveDialog(getOwner());
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
     paramFile = getFileChooserParameters().getSelectedFile();
+    writer    = getFileChooserParameters().getWriter();
     params    = (Map<String,Object>) serialize(new HashSet<>(Arrays.asList(SerializationOption.PARAMETERS)));
-    yaml      = new Yaml();
-    if (!FileUtils.writeToFile(paramFile.getAbsolutePath(), yaml.dump(params), false))
-      GUIHelper.showErrorMessage(getOwner(), "Failed to write parameters to: " + paramFile);
+    try {
+      writer.write(params, new PlaceholderFile(paramFile));
+    }
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(getOwner(), "Failed to write parameters to: " + paramFile, e);
+    }
   }
 
   /**
    * Prompts the user to select a yaml file to load the parameters for this tab from.
    */
   public void loadParameters() {
-    int 		retVal;
-    File 		paramFile;
-    Yaml 		yaml;
-    Map<String,Object> 	params;
-    MessageCollection 	errors;
+    int 			retVal;
+    File 			paramFile;
+    AbstractParameterMapReader	reader;
+    Map<String,Object> 		params;
+    MessageCollection 		errors;
 
     retVal = getFileChooserParameters().showOpenDialog(getOwner());
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
     paramFile = getFileChooserParameters().getSelectedFile();
-    yaml      = new Yaml();
-    params    = yaml.load(Utils.flatten(FileUtils.loadFromFile(paramFile), "\n"));
-    if (params == null) {
-      GUIHelper.showErrorMessage(getOwner(), "Failed to load parameters from: " + paramFile);
+    reader    = getFileChooserParameters().getReader();
+    try {
+      params = reader.read(new PlaceholderFile(paramFile));
     }
-    else {
-      errors = new MessageCollection();
-      deserialize(params, errors);
-      if (!errors.isEmpty())
-	GUIHelper.showErrorMessage(getOwner(), "Error(s) encountered when loading parameters from: " + paramFile + "\n" + errors);
+    catch (Exception e) {
+      GUIHelper.showErrorMessage(getOwner(), "Failed to read parameters from: " + paramFile, e);
+      return;
     }
+    errors = new MessageCollection();
+    deserialize(params, errors);
+    if (!errors.isEmpty())
+      GUIHelper.showErrorMessage(getOwner(), "Error(s) encountered when loading parameters from: " + paramFile + "\n" + errors);
   }
 
   /**
    * Returns the objects for serialization.
-   * <br>
+   * <br> {
+   *
+   * }
    * Default implementation returns an empty map.
    *
    * @param options 	what to serialize
