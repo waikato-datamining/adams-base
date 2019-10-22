@@ -176,6 +176,9 @@ public class ImageObjectOverlap
   /** whether to check for additional predicted objects not present in actual. */
   protected boolean m_AdditionalObject;
 
+  /** whether to use average overlap ratio instead of just this->other. */
+  protected boolean m_AverageRatio;
+
   /**
    * Returns a string describing the object.
    *
@@ -221,6 +224,10 @@ public class ImageObjectOverlap
 
     m_OptionManager.add(
       "additional-object", "additionalObject",
+      false);
+
+    m_OptionManager.add(
+      "average-ratio", "averageRatio",
       false);
   }
 
@@ -410,6 +417,35 @@ public class ImageObjectOverlap
   }
 
   /**
+   * Sets whether to use average overlap ratio instead.
+   *
+   * @param value	true if to use average overlap ratio instead
+   */
+  public void setAverageRatio(boolean value) {
+    m_AverageRatio = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use average overlap ratio instead.
+   *
+   * @return		true if to use average overlap ratio instead
+   */
+  public boolean getAverageRatio() {
+    return m_AverageRatio;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String averageRatioTipText() {
+    return "If enabled, the average overlap ratio will be used instead of just using ratio this->other.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -424,6 +460,7 @@ public class ImageObjectOverlap
     result += QuickInfoHelper.toString(this, "labelKey", (m_LabelKey.isEmpty() ? "-none-" : m_LabelKey), ", label key: ");
     result += QuickInfoHelper.toString(this, "useOtherObject", m_UseOtherObject, "use other obj", ", ");
     result += QuickInfoHelper.toString(this, "additionalObject", m_AdditionalObject, "additional obj", ", ");
+    result += QuickInfoHelper.toString(this, "averageRatio", m_AverageRatio, "average ratio", ", ");
 
     return result;
   }
@@ -469,6 +506,7 @@ public class ImageObjectOverlap
     String			thisLabel;
     String			labelHighest;
     double			ratio;
+    double			ratio2;
     Object			output;
     boolean                     additionalObj;
 
@@ -522,6 +560,10 @@ public class ImageObjectOverlap
           actObj = thisObj;
           for (LocatedObject otherObj : otherObjs) {
             ratio = thisObj.overlapRatio(otherObj);
+            if (m_AverageRatio) {
+              ratio2 = otherObj.overlapRatio(thisObj);
+              ratio = (ratio + ratio2) / 2;
+            }
             if (ratio >= m_MinOverlapRatio) {
               count++;
               if (ratio > overlapHighest) {
