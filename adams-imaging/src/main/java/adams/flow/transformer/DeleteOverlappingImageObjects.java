@@ -29,6 +29,7 @@ import adams.data.report.AbstractField;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
+import adams.flow.condition.bool.False;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -136,6 +137,9 @@ public class DeleteOverlappingImageObjects
   /** the removal strategy. */
   protected RemovalStrategy m_RemovalStrategy;
 
+  /** whether to check for duplicate object indices or not. */
+  protected boolean m_DuplicateIndices;
+
   /**
    * Returns a string describing the object.
    *
@@ -164,6 +168,10 @@ public class DeleteOverlappingImageObjects
     m_OptionManager.add(
       "removal-strategy", "removalStrategy",
       RemovalStrategy.REMOVE_SMALLER_OBJECT);
+
+    m_OptionManager.add(
+      "duplicate-indices", "duplicateIndices",
+      false);
   }
 
   /**
@@ -256,6 +264,35 @@ public class DeleteOverlappingImageObjects
   }
 
   /**
+   * Sets the boolean duplicate indices.
+   *
+   * @param value 	duplicate indices
+   */
+  public void setDuplicateIndices(boolean value) {
+    m_DuplicateIndices = value;
+    reset();
+  }
+
+  /**
+   * Returns the boolean duplicate indices.
+   *
+   * @return 		duplicate indices
+   */
+  public boolean getDuplicateIndices() {
+    return m_DuplicateIndices;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String duplicateIndicesTipText() {
+    return "Whether to check for duplicate indices among objects to be deleted (same object).";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -267,6 +304,7 @@ public class DeleteOverlappingImageObjects
     result  = QuickInfoHelper.toString(this, "finder", m_Finder, "finder: ");
     result += QuickInfoHelper.toString(this, "minOverlapRatio", m_MinOverlapRatio, ", overlap ratio: ");
     result += QuickInfoHelper.toString(this, "removalStrategy", m_RemovalStrategy, ", strategy: ");
+    result += QuickInfoHelper.toString(this, "duplicateIndices", m_DuplicateIndices, ", duplicate indices: ");
 
     return result;
   }
@@ -305,12 +343,16 @@ public class DeleteOverlappingImageObjects
     LocatedObjects  	objects;
     int			i;
     int			n;
+    int			r;
     LocatedObject	obj1;
     LocatedObject	obj2;
     TIntSet		delete;
     int			area1;
     int			area2;
     int[]		deleteIndices;
+    TIntSet		allIndices;
+    int			o;
+    String		newIndex;
 
     result = null;
 
@@ -328,6 +370,34 @@ public class DeleteOverlappingImageObjects
     if (report != null) {
       objects = m_Finder.findObjects(LocatedObjects.fromReport(report,  m_Finder.getPrefix()));
       delete  = new TIntHashSet();
+
+      // find duplicate object indices and offset if found
+      if (m_DuplicateIndices) {
+        allIndices = new TIntHashSet();
+        for (i = 0; i < objects.size(); i++) {
+          obj1 = objects.get(i);
+          allIndices.add(obj1.getIndex());
+	}
+        for (r = 0; r < 2; r++) {
+	  for (i = 0; i < objects.size() - 1; i++) {
+	    obj1 = objects.get(i);
+	    for (n = i + 1; n < objects.size(); n++) {
+	      obj2 = objects.get(n);
+	      if (obj1.getIndex() == obj2.getIndex()) {
+		o = obj2.getIndex();
+		while (true) {
+		  o++;
+		  if (!allIndices.contains(o))
+		    break;
+		}
+		allIndices.add(o);
+		newIndex = "" + o;
+		obj2.getMetaData().put("index", newIndex);
+	      }
+	    }
+	  }
+	}
+      }
 
       // find overlapping objects
       for (i = 0; i < objects.size() - 2; i++) {
@@ -348,7 +418,7 @@ public class DeleteOverlappingImageObjects
 	        if (area1 < area2)
 	          delete.add(obj1.getIndex());
 	        else
-	          delete.add(obj2.getIndex());
+		  delete.add(obj2.getIndex());
 	        break;
 	      case REMOVE_BOTH:
 	        delete.add(obj1.getIndex());
