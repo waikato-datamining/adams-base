@@ -52,6 +52,9 @@ public class ResultItem
   /** the model. */
   protected Classifier m_Model;
 
+  /** the fold models. */
+  protected Classifier[] m_FoldModels;
+
   /** the run information. */
   protected MetaData m_RunInformation;
 
@@ -128,7 +131,7 @@ public class ResultItem
    * @param additional 	the additional attributes, can be null
    */
   public void update(Evaluation evaluation, Classifier model, MetaData runInfo, int[] original, SpreadSheet additional) {
-    update(evaluation, null, model, runInfo, original, additional);
+    update(evaluation, null, model, null, runInfo, original, additional);
   }
 
   /**
@@ -137,13 +140,15 @@ public class ResultItem
    * @param evaluation	the evaluation, can be null
    * @param foldEvaluations the evaluations per fold, can be null
    * @param model	the model, can be null
+   * @param foldModels 	the models per fold, can be null
    * @param runInfo	the meta-data for the run
    * @param original	the original indices, can be null
    * @param additional 	the additional attributes, can be null
    */
-  public void update(Evaluation evaluation, Evaluation[] foldEvaluations, Classifier model, MetaData runInfo, int[] original, SpreadSheet additional) {
+  public void update(Evaluation evaluation, Evaluation[] foldEvaluations, Classifier model, Classifier[] foldModels, MetaData runInfo, int[] original, SpreadSheet additional) {
     m_Evaluation           = evaluation;
     m_FoldEvaluations      = foldEvaluations;
+    m_FoldModels           = foldModels;
     m_Model                = model;
     m_RunInformation       = runInfo;
     m_OriginalIndices      = original;
@@ -205,12 +210,39 @@ public class ResultItem
   }
 
   /**
+   * Sets the model to make available.
+   *
+   * @param value	the model
+   */
+  public void setModel(Classifier value) {
+    m_Model = value;
+  }
+
+  /**
    * Returns the stored model object.
    * 
    * @return		the model, null if not present
    */
   public Classifier getModel() {
     return m_Model;
+  }
+
+  /**
+   * Returns whether Classifier objects per fold are present.
+   *
+   * @return		true if available
+   */
+  public boolean hasFoldModels() {
+    return (m_FoldModels != null);
+  }
+
+  /**
+   * Returns the stored Classifier objects per fold.
+   *
+   * @return		the classifiers per fold, null if not present
+   */
+  public Classifier[] getFoldModels() {
+    return m_FoldModels;
   }
 
   /**

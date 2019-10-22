@@ -37,6 +37,8 @@ import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.finalmodel.AbstractFinalModelGenerator;
+import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.finalmodel.Simple;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
 import adams.multiprocess.WekaCrossValidationExecution;
@@ -122,8 +124,8 @@ public class CrossValidation
   /** whether to discard the predictions. */
   protected BaseCheckBox m_CheckBoxDiscardPredictions;
   
-  /** whether to produce a final model. */
-  protected BaseCheckBox m_CheckBoxFinalModel;
+  /** how to produce the final model. */
+  protected GenericObjectEditorPanel m_GOEFinalModel;
 
   /** performs the actual evaluation. */
   protected WekaCrossValidationExecution m_CrossValidation;
@@ -155,6 +157,7 @@ public class CrossValidation
     Properties 				props;
     CrossValidationFoldGenerator	generator;
     JobRunner				jobrunner;
+    AbstractFinalModelGenerator		finalmodel;
 
     super.initGUI();
 
@@ -256,11 +259,18 @@ public class CrossValidation
     m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
 
     // final model?
-    m_CheckBoxFinalModel = new BaseCheckBox();
-    m_CheckBoxFinalModel.setSelected(props.getBoolean("Classify.CrossValidationFinalModel", true));
-    m_CheckBoxFinalModel.setToolTipText("Produce a final model using the full training data?");
-    m_CheckBoxFinalModel.addActionListener((ActionEvent e) -> update());
-    m_PanelParameters.addParameter("Final model", m_CheckBoxFinalModel);
+    try {
+      finalmodel = (AbstractFinalModelGenerator) OptionUtils.forCommandLine(
+        AbstractFinalModelGenerator.class,
+	props.getProperty("Classify.CrossValidationFinalModel", new Simple().toCommandLine()));
+    }
+    catch (Exception e) {
+      finalmodel = new Simple();
+    }
+    m_GOEFinalModel = new GenericObjectEditorPanel(AbstractFinalModelGenerator.class, finalmodel, true);
+    m_GOEFinalModel.setToolTipText("How to produce a final model");
+    m_GOEFinalModel.addChangeListener((ChangeEvent e) -> update());
+    m_PanelParameters.addParameter("Final model", m_GOEFinalModel);
   }
 
   /**
@@ -335,10 +345,9 @@ public class CrossValidation
     String				msg;
     DataContainer			dataCont;
     Instances				data;
-    boolean				finalModel;
+    AbstractFinalModelGenerator		finalModel;
     boolean				views;
     boolean				discard;
-    Classifier				model;
     int					seed;
     int					folds;
     boolean				sepFolds;
@@ -351,7 +360,7 @@ public class CrossValidation
 
     dataCont   = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
     data       = dataCont.getData();
-    finalModel = m_CheckBoxFinalModel.isSelected();
+    finalModel = (AbstractFinalModelGenerator) m_GOEFinalModel.getCurrent();
     views      = m_CheckBoxUseViews.isSelected();
     discard    = m_CheckBoxDiscardPredictions.isSelected();
     seed       = m_TextSeed.getValue().intValue();
@@ -390,21 +399,17 @@ public class CrossValidation
     if (msg != null)
       throw new Exception("Failed to cross-validate:\n" + msg);
 
-    // final model?
-    model = null;
-    if (finalModel) {
-      getOwner().logMessage("Building final model on '" + dataCont.getID() + "/" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
-      model = (Classifier) OptionUtils.shallowCopy(classifier);
-      model.buildClassifier(data);
-      addObjectSize(runInfo, "Final model size", model);
-    }
-
     item.update(
       m_CrossValidation.getEvaluation(),
       sepFolds ? m_CrossValidation.getEvaluations() : null,
-      model, runInfo,
+      null,
+      sepFolds ? m_CrossValidation.getClassifiers() : null,
+      runInfo,
       m_CrossValidation.getOriginalIndices(),
       transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
+
+    getOwner().logMessage("Building final model on '" + dataCont.getID() + "/" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
+    finalModel.generate(this, data, item);
 
     m_CrossValidation = null;
   }
@@ -487,7 +492,7 @@ public class CrossValidation
       result.put(KEY_USEVIEWS, m_CheckBoxUseViews.isSelected());
       result.put(KEY_GENERATOR, OptionUtils.getCommandLine(m_GOEGenerator.getCurrent()));
       result.put(KEY_DISCARDPREDICTIONS, m_CheckBoxDiscardPredictions.isSelected());
-      result.put(KEY_FINALMODEL, m_CheckBoxFinalModel.isSelected());
+      result.put(KEY_FINALMODEL, OptionUtils.getCommandLine(m_GOEFinalModel.getCurrent()));
     }
 
     return result;
@@ -531,7 +536,13 @@ public class CrossValidation
     }
     if (data.containsKey(KEY_DISCARDPREDICTIONS))
       m_CheckBoxDiscardPredictions.setSelected((Boolean) data.get(KEY_DISCARDPREDICTIONS));
-    if (data.containsKey(KEY_FINALMODEL))
-      m_CheckBoxFinalModel.setSelected((Boolean) data.get(KEY_FINALMODEL));
+    if (data.containsKey(KEY_FINALMODEL)) {
+      try {
+	m_GOEFinalModel.setCurrent(OptionUtils.forCommandLine(AbstractFinalModelGenerator.class, (String) data.get(KEY_FINALMODEL)));
+      }
+      catch (Exception e) {
+        errors.add("Failed to parse final model generator commandline: " + data.get(KEY_FINALMODEL), e);
+      }
+    }
   }
 }

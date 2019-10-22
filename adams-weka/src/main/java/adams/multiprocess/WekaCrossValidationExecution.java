@@ -231,6 +231,15 @@ public class WekaCrossValidationExecution
   }
 
   /**
+   * Returns the classifiers per fold.
+   *
+   * @return		the classifiers, null if not stored
+   */
+  public Classifier[] getClassifiers() {
+    return m_Classifiers;
+  }
+
+  /**
    * Sets the data to use.
    *
    * @param value	the data
