@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.core.VariableName;
 import adams.core.VariableUpdater;
 import adams.core.base.BaseText;
@@ -795,7 +796,7 @@ public class SetVariable
       result = variable;
     else
       result = m_VariableName.paddedValue();
-    value = QuickInfoHelper.toString(this, "variableValue", m_VariableValue.getValue(), " = ");
+    value = QuickInfoHelper.toString(this, "variableValue", Shortening.shortenEnd(m_VariableValue.getValue(), QuickInfoHelper.MAX_ARRAY_STRING_LENGTH), " = ");
     if (value != null)
       result += value;
 
