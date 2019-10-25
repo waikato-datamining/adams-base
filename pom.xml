@@ -96,6 +96,7 @@
     <jsonpath.version>2.4.0</jsonpath.version>
     <gson.version>2.7</gson.version>
     <debianmavenplugin.version>1.0.18</debianmavenplugin.version>
+    <rpmmavenplugin.version>1.4.0</rpmmavenplugin.version>
   </properties>
 
   <scm>
@@ -408,6 +409,20 @@
               <configuration>
                 <outputType>graphml</outputType>
                 <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-all.graphml</outputFile>
+              </configuration>
+            </execution>
+            <!-- get all binary jars -->
+            <execution>
+              <id>jars</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>copy-dependencies</goal>
+              </goals>
+              <configuration>
+                <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+                <outputDirectory>${project.build.directory}/jars</outputDirectory>
+                <includeScope>compile</includeScope>
+                <excludeClassifiers>scripts</excludeClassifiers>
               </configuration>
             </execution>
             <!-- get all doc jars -->
