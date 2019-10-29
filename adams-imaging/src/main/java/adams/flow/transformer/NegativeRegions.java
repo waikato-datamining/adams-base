@@ -15,7 +15,7 @@
 
 /*
  * NegativeRegions.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -26,6 +26,7 @@ import adams.data.InPlaceProcessing;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.AbstractField;
 import adams.flow.core.Token;
+import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.flow.transformer.negativeregions.AbstractNegativeRegionsGenerator;
 import adams.flow.transformer.negativeregions.Null;
@@ -442,6 +443,10 @@ public class NegativeRegions
       regions = m_ActualAlgorithm.generateRegions(cont);
       if (isLoggingEnabled())
         getLogger().info("# negative regions generated: " + regions.size());
+      if (!m_ObjectType.isEmpty()) {
+        for (LocatedObject obj: regions)
+          obj.getMetaData().put("type", m_ObjectType);
+      }
     }
     catch (Exception e) {
       result = handleException("Failed to generate negative regions!", e);
