@@ -147,7 +147,7 @@ public class MinDimensions
 	if (m_MinWidth > 0) {
 	  if (result.get(i).getWidth() < m_MinWidth) {
 	    if (isLoggingEnabled())
-	      getLogger().info("Removed, width too small: " + result.remove(i) + " < " + m_MinWidth);
+	      getLogger().info("Removed, width too small: " + result.get(i) + " < " + m_MinWidth);
 	    result.remove(i);
 	    continue;
 	  }
@@ -155,7 +155,7 @@ public class MinDimensions
 	if (m_MinHeight > 0) {
 	  if (result.get(i).getHeight() < m_MinHeight) {
 	    if (isLoggingEnabled())
-	      getLogger().info("Removed, height too small: " + result.remove(i) + " < " + m_MinHeight);
+	      getLogger().info("Removed, height too small: " + result.get(i) + " < " + m_MinHeight);
 	    result.remove(i);
 	    continue;
 	  }
