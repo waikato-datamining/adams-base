@@ -412,17 +412,19 @@
               </configuration>
             </execution>
             <!-- get all binary jars -->
+            <!-- used for .rpm generation -->
             <execution>
-              <id>jars</id>
+              <id>linux-jars</id>
               <phase>prepare-package</phase>
               <goals>
                 <goal>copy-dependencies</goal>
               </goals>
               <configuration>
                 <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-                <outputDirectory>${project.build.directory}/jars</outputDirectory>
+                <outputDirectory>${project.build.directory}/linux-jars</outputDirectory>
                 <includeScope>compile</includeScope>
-                <excludeClassifiers>scripts</excludeClassifiers>
+                <excludeClassifiers>scripts,android-arm,android-arm64,android-x86,android-x86_64,ios-arm64,ios-x86_64,linux-armhf,linux-ppc64le,linux-x86,macosx-x86_64,windows-x86_64,windows-x86,native</excludeClassifiers>
+                <excludeArtifactIds>netlib-native_ref-osx-x86_64,netlib-native_ref-win-x86_64,netlib-native_system-osx-x86_64,netlib-native_system-win-x86_64</excludeArtifactIds>
               </configuration>
             </execution>
             <!-- get all doc jars -->
