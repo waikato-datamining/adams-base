@@ -121,6 +121,35 @@ public class Base64ToString
    * @throws Exception	if something goes wrong with the conversion
    */
   protected Object doConvert() throws Exception {
-    return new String(Base64.getDecoder().decode((String) m_Input));
+    switch (m_Type) {
+      case AUTO:
+        try {
+	  return new String(Base64.getDecoder().decode((String) m_Input));
+	}
+	catch (Exception e) {
+          // ignored
+	}
+        try {
+	  return new String(Base64.getUrlDecoder().decode((String) m_Input));
+	}
+	catch (Exception e) {
+          // ignored
+	}
+        try {
+	  return new String(Base64.getMimeDecoder().decode((String) m_Input));
+	}
+	catch (Exception e) {
+          // ignored
+	}
+        throw new IllegalStateException("Failed to decode!");
+      case BASIC:
+	return new String(Base64.getDecoder().decode((String) m_Input));
+      case URL_FILENAME_SAFE:
+	return new String(Base64.getUrlDecoder().decode((String) m_Input));
+      case MIME:
+        return new String(Base64.getMimeDecoder().decode((String) m_Input));
+      default:
+        throw new IllegalStateException("Unhandled type: " + m_Type);
+    }
   }
 }
