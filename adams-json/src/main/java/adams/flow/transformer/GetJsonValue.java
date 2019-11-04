@@ -363,7 +363,9 @@ public class GetJsonValue
       }
       else {
 	val  = m_ActualPath.read(json);
-	if (val instanceof List)
+	if (val instanceof JSONArray)
+	  m_Queue.add(val);
+	else if (val instanceof List)
 	  m_Queue.addAll((List) val);
 	else
 	  m_Queue.add(val);
