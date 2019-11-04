@@ -15,26 +15,26 @@
 
 /*
  * AbstractArrayProvider.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Hashtable;
 
 import adams.core.Utils;
 import adams.data.report.AbstractField;
 import adams.flow.core.ArrayProvider;
 import adams.flow.core.Token;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.logging.Level;
+
 /**
  * Ancestor for transformer actors that can output items one by one or as a single
  * array.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractArrayProvider
   extends AbstractTransformer
@@ -210,11 +210,28 @@ public abstract class AbstractArrayProvider
     Token	result;
     Object	array;
     int		i;
+    boolean	error;
+
+    result = null;
+    error  = false;
 
     if (m_OutputArray) {
       array = Array.newInstance(getItemClass(), m_Queue.size());
-      for (i = 0; i < m_Queue.size(); i++)
-	Array.set(array, i, m_Queue.get(i));
+      for (i = 0; i < m_Queue.size(); i++) {
+        try {
+          Array.set(array, i, m_Queue.get(i));
+        }
+        catch (Exception e) {
+          error = true;
+          getLogger().log(
+            Level.SEVERE,
+            "Failed to set array element #" + (i+1) + " '" + m_Queue.get(i) + "' "
+	      + "(" + Utils.classToString(m_Queue.get(i)) + ") "
+	      + "as " + Utils.classToString(getItemClass()), e);
+        }
+        if (isStopped() || error)
+          break;
+      }
       result = new Token(array);
       m_Queue.clear();
     }
@@ -226,12 +243,17 @@ public abstract class AbstractArrayProvider
 	m_Index = 0;
       }
     }
-    
-    if (isLoggingEnabled()) {
-      if (m_OutputArray)
-	getLogger().info("Array: " + Utils.arrayToString(result.getPayload()));
-      else
-	getLogger().info("Element: " + result.getPayload());
+
+    if (error || isStopped())
+      result = null;
+
+    if (result != null) {
+      if (isLoggingEnabled()) {
+	if (m_OutputArray)
+	  getLogger().info("Array: " + Utils.arrayToString(result.getPayload()));
+	else
+	  getLogger().info("Element: " + result.getPayload());
+      }
     }
 
     return result;
