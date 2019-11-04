@@ -285,7 +285,24 @@ public class SimpleBlockFill
   protected void fillInArea(IntArrayMatrixView matrix, LocatedObject obj, int color) {
     int		x;
     int		y;
-
+    
+    if ((obj.getX() < 0) || (obj.getX() >= matrix.getWidth())) {
+      getLogger().warning("X outside: " + obj.getX() + " - [0; " + (matrix.getWidth() - 1) + "]");
+      return;
+    }
+    if ((obj.getY() < 0) || (obj.getY() >= matrix.getHeight())) {
+      getLogger().warning("Y outside: " + obj.getY() + " - [0; " + (matrix.getHeight() - 1) + "]");
+      return;
+    }
+    if ((obj.getWidth() < 0) || ((obj.getX() + obj.getWidth()) >= matrix.getWidth())) {
+      getLogger().warning("X+Width outside: " + (obj.getX() + obj.getWidth()) + " - [0; " + (matrix.getWidth() - 1) + "]");
+      return;
+    }
+    if ((obj.getHeight() < 0) || ((obj.getY() + obj.getHeight()) >= matrix.getHeight())) {
+      getLogger().warning("Y+Height outside: " + (obj.getY() + obj.getHeight()) + " - [0; " + (matrix.getHeight() - 1) + "]");
+      return;
+    }
+    
     for (y = obj.getY(); y < obj.getY() + obj.getHeight(); y++) {
       for (x = obj.getX(); x < obj.getX() + obj.getWidth(); x++) {
 	matrix.set(x, y, color);
