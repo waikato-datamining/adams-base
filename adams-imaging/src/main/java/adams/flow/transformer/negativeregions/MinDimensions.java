@@ -144,6 +144,8 @@ public class MinDimensions
     if ((result != null) && ((m_MinHeight > 0) || (m_MinWidth > 0))) {
       i = 0;
       while (i < result.size()) {
+        if (isStopped())
+          break;
 	if (m_MinWidth > 0) {
 	  if (result.get(i).getWidth() < m_MinWidth) {
 	    if (isLoggingEnabled())
@@ -163,6 +165,9 @@ public class MinDimensions
 	i++;
       }
     }
+
+    if (isStopped())
+      result.clear();
 
     return result;
   }

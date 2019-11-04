@@ -15,12 +15,13 @@
 
 /*
  * AbstractNegativeRegionsGenerator.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.negativeregions;
 
 import adams.core.QuickInfoSupporter;
+import adams.core.StoppableWithFeedback;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.image.AbstractImageContainer;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -32,9 +33,12 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  */
 public abstract class AbstractNegativeRegionsGenerator
   extends AbstractOptionHandler
-  implements QuickInfoSupporter {
+  implements QuickInfoSupporter, StoppableWithFeedback {
 
   private static final long serialVersionUID = 3551924872679626711L;
+
+  /** whether the generator was stopped. */
+  protected boolean m_Stopped;
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
@@ -76,9 +80,26 @@ public abstract class AbstractNegativeRegionsGenerator
   public LocatedObjects generateRegions(AbstractImageContainer cont) {
     String	msg;
 
+    m_Stopped = false;
     msg = check(cont);
     if (msg != null)
       throw new IllegalStateException(msg);
     return doGenerateRegions(cont);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  public void stopExecution() {
+    m_Stopped = true;
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  public boolean isStopped() {
+    return m_Stopped;
   }
 }

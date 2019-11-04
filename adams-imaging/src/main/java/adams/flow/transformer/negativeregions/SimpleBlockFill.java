@@ -294,17 +294,17 @@ public class SimpleBlockFill
       getLogger().warning("Y outside: " + obj.getY() + " - [0; " + (matrix.getHeight() - 1) + "]");
       return;
     }
-    if ((obj.getWidth() < 0) || ((obj.getX() + obj.getWidth()) >= matrix.getWidth())) {
+    if ((obj.getWidth() < 0) || ((obj.getX() + obj.getWidth()) > matrix.getWidth())) {
       getLogger().warning("X+Width outside: " + (obj.getX() + obj.getWidth()) + " - [0; " + (matrix.getWidth() - 1) + "]");
       return;
     }
-    if ((obj.getHeight() < 0) || ((obj.getY() + obj.getHeight()) >= matrix.getHeight())) {
+    if ((obj.getHeight() < 0) || ((obj.getY() + obj.getHeight()) > matrix.getHeight())) {
       getLogger().warning("Y+Height outside: " + (obj.getY() + obj.getHeight()) + " - [0; " + (matrix.getHeight() - 1) + "]");
       return;
     }
     
-    for (y = obj.getY(); y < obj.getY() + obj.getHeight(); y++) {
-      for (x = obj.getX(); x < obj.getX() + obj.getWidth(); x++) {
+    for (y = obj.getY(); y < obj.getY() + obj.getHeight() && y < matrix.getHeight(); y++) {
+      for (x = obj.getX(); x < obj.getX() + obj.getWidth() && x < matrix.getWidth(); x++) {
 	matrix.set(x, y, color);
       }
     }
@@ -381,7 +381,11 @@ public class SimpleBlockFill
     newX       = new int[2];
     newY       = new int[2];
     for (y = 0; y < m_NumRows; y++) {
+      if (isStopped())
+        break;
       for (x = 0; x < m_NumCols; x++) {
+	if (isStopped())
+	  break;
         s = x * tileWidth + offsetX;
         t = y * tileHeight + offsetY;
         if (matrix.get(s, t) != 0)
@@ -448,14 +452,19 @@ public class SimpleBlockFill
     }
 
     // scale regions back into original space
-    if (m_ScaleFactor != 1.0) {
-      if (isLoggingEnabled())
-        getLogger().info("Reverse scaling of negative regions: " + m_ScaleFactor);
-      scale = new Scale();
-      scale.setScaleX(1.0 / m_ScaleFactor);
-      scale.setScaleY(1.0 / m_ScaleFactor);
-      scale.setRoundingType(RoundingType.ROUND);
-      result = scale.filter(result);
+    if (!isStopped()) {
+      if (m_ScaleFactor != 1.0) {
+	if (isLoggingEnabled())
+	  getLogger().info("Reverse scaling of negative regions: " + m_ScaleFactor);
+	scale = new Scale();
+	scale.setScaleX(1.0 / m_ScaleFactor);
+	scale.setScaleY(1.0 / m_ScaleFactor);
+	scale.setRoundingType(RoundingType.ROUND);
+	result = scale.filter(result);
+      }
+    }
+    else {
+      result.clear();
     }
 
     return result;

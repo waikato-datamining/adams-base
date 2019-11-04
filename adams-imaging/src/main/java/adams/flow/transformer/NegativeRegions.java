@@ -473,9 +473,20 @@ public class NegativeRegions
       current.addAll(regions);
       cont.getReport().mergeWith(current.toReport(m_ObjectPrefix, 0, true));
 
-      m_OutputToken = new Token(cont);
+      if (!isStopped())
+        m_OutputToken = new Token(cont);
     }
 
     return result;
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_ActualAlgorithm != null)
+      m_ActualAlgorithm.stopExecution();
+    super.stopExecution();
   }
 }

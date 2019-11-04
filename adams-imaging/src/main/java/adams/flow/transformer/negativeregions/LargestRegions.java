@@ -15,7 +15,7 @@
 
 /*
  * LargestRegions.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.negativeregions;
@@ -114,8 +114,14 @@ public class LargestRegions
 	return -Double.compare(o1.getWidth()* o1.getHeight(), o2.getWidth()*o2.getHeight());
       }
     });
-    while (result.size() > m_MaxRegions)
+    while (result.size() > m_MaxRegions) {
+      if (isStopped())
+        break;
       result.remove(m_MaxRegions);
+    }
+
+    if (isStopped())
+      result.clear();
 
     return result;
   }
