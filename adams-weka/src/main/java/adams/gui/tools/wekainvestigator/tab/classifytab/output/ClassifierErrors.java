@@ -546,10 +546,10 @@ public class ClassifierErrors
     MultiPagePane		multiPage;
 
     if (item.hasFoldEvaluations()) {
-      multiPage = newMultiPagePane();
-      addPage(multiPage, "Full", createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors));
+      multiPage = newMultiPagePane(item);
+      addPage(multiPage, "Full", createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors), 0);
       for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
-	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], null, null, errors));
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], null, null, errors), eval.index + 1);
       if (multiPage.getPageCount() > 0)
 	multiPage.setSelectedIndex(0);
       return multiPage;

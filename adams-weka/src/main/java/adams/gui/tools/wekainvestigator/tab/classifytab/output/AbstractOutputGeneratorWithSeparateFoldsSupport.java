@@ -64,10 +64,10 @@ public abstract class AbstractOutputGeneratorWithSeparateFoldsSupport<T extends 
       return null;
 
     if (item.hasFoldEvaluations()) {
-      multiPage = newMultiPagePane();
-      addPage(multiPage, "Full", createOutput(item.getEvaluation(), errors));
+      multiPage = newMultiPagePane(item);
+      addPage(multiPage, "Full", createOutput(item.getEvaluation(), errors), 0);
       for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
-	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], errors));
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], errors), eval.index + 1);
       if (multiPage.getPageCount() > 0)
 	multiPage.setSelectedIndex(0);
       return multiPage;
