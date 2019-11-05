@@ -5,7 +5,6 @@
 # class.name=package1,package2,...
 #
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # the genetic algorithms for classifiers
 adams.opt.genetic.AbstractClassifierBasedGeneticAlgorithm=\
@@ -126,6 +125,10 @@ adams.gui.tools.wekainvestigator.tab.classifytab.history.AbstractHistoryPopupMen
 # the output generators
 adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator=\
   adams.gui.tools.wekainvestigator.tab.classifytab.output
+
+# the popup menu items for the per-fold pane
+adams.gui.tools.wekainvestigator.tab.classifytab.output.perfold.AbstractPerFoldPopupMenuItem=\
+  adams.gui.tools.wekainvestigator.tab.classifytab.output.perfold
 
 # the clusterer evaluations
 adams.gui.tools.wekainvestigator.tab.clustertab.evaluation.AbstractClustererEvaluation=\

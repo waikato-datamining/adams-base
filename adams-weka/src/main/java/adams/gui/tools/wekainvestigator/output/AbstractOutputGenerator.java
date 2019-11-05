@@ -22,7 +22,6 @@ package adams.gui.tools.wekainvestigator.output;
 
 import adams.core.MessageCollection;
 import adams.core.option.AbstractOptionHandler;
-import adams.gui.core.MultiPagePane;
 
 import javax.swing.JComponent;
 
@@ -62,34 +61,6 @@ public abstract class AbstractOutputGenerator<T extends AbstractResultItem>
    * @return		true if output can be generated
    */
   public abstract boolean canGenerateOutput(T item);
-
-  /**
-   * Generates a new MultiPagePane instance.
-   *
-   * @return		the instance
-   */
-  protected MultiPagePane newMultiPagePane() {
-    MultiPagePane 	result;
-
-    result = new MultiPagePane();
-    result.setReadOnly(true);
-    result.setDividerLocation(100);
-    result.setUISettingsParameters(getClass(), "DividerLocation");
-
-    return result;
-  }
-
-  /**
-   * Adds a page for the confusion matrix.
-   *
-   * @param multiPage	the multi-page to add to
-   * @param title	the title to use
-   * @param comp	the component to add as page
-   */
-  protected void addPage(MultiPagePane multiPage, String title, JComponent comp) {
-    if (comp != null)
-      multiPage.addPage(title, comp);
-  }
 
   /**
    * Generates output from the item.

@@ -294,10 +294,10 @@ public class TextStatistics
     MultiPagePane	multiPage;
 
     if (item.hasFoldEvaluations()) {
-      multiPage = newMultiPagePane();
-      addPage(multiPage, "Full", createOutput(item.getEvaluation(), (m_RunInformation ? item.getRunInformation() : null)));
+      multiPage = newMultiPagePane(item);
+      addPage(multiPage, "Full", createOutput(item.getEvaluation(), (m_RunInformation ? item.getRunInformation() : null)), 0);
       for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
-	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], null));
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], null), eval.index + 1);
       if (multiPage.getPageCount() > 0)
 	multiPage.setSelectedIndex(0);
       return multiPage;
