@@ -36,10 +36,8 @@ import adams.core.VariableName;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderFile;
 import adams.data.conversion.StringToString;
-import adams.data.conversion.UnknownToUnknown;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.objectfinder.AllFinder;
-import adams.data.report.Field;
 import adams.flow.control.StorageName;
 import adams.flow.control.Trigger;
 import adams.flow.control.flowrestart.NullManager;
@@ -47,11 +45,9 @@ import adams.flow.core.Actor;
 import adams.flow.execution.NullListener;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.Start;
-import adams.flow.source.StorageValue;
 import adams.flow.source.Variable;
 import adams.flow.standalone.DeleteStorageValue;
 import adams.flow.standalone.SetVariable;
-import adams.flow.transformer.GetReportValue;
 import adams.flow.transformer.IntersectOverUnion;
 import adams.flow.transformer.ReportFileReader;
 import adams.flow.transformer.SetStorageValue;
@@ -84,7 +80,7 @@ public class IntersectOverUnionTest
     
     m_TestHelper.copyResourceToTmp("image_object_overlap_iou_gt.report");
     m_TestHelper.copyResourceToTmp("image_object_overlap_iou_pred.report");
-    //m_TestHelper.copyResourceToTmp("dumpfile.txt");
+    m_TestHelper.deleteFileFromTmp("dumpfile.txt");
   }
 
   /**
@@ -221,67 +217,29 @@ public class IntersectOverUnionTest
 
       actors3.add(intersectoverunion);
 
-      // Flow.Compare.SetStorageValue
-      SetStorageValue setstoragevalue2 = new SetStorageValue();
-      argOption = (AbstractArgumentOption) setstoragevalue2.getOptionManager().findByProperty("storageName");
-      setstoragevalue2.setStorageName((StorageName) argOption.valueOf("result"));
-      actors3.add(setstoragevalue2);
+      // Flow.Compare.DumpFile
+      DumpFile dumpfile = new DumpFile();
+      argOption = (AbstractArgumentOption) dumpfile.getOptionManager().findByProperty("outputFile");
+      dumpfile.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
+      actors3.add(dumpfile);
       trigger2.setActors(actors3.toArray(new Actor[0]));
 
       actors.add(trigger2);
 
-      // Flow.Save to file
+      // Flow.Clean
       Trigger trigger3 = new Trigger();
       argOption = (AbstractArgumentOption) trigger3.getOptionManager().findByProperty("name");
-      trigger3.setName((String) argOption.valueOf("Save to file"));
+      trigger3.setName((String) argOption.valueOf("Clean"));
       List<Actor> actors4 = new ArrayList<>();
-
-      // Flow.Save to file.StorageValue
-      StorageValue storagevalue = new StorageValue();
-      argOption = (AbstractArgumentOption) storagevalue.getOptionManager().findByProperty("storageName");
-      storagevalue.setStorageName((StorageName) argOption.valueOf("result"));
-      UnknownToUnknown unknowntounknown = new UnknownToUnknown();
-      storagevalue.setConversion(unknowntounknown);
-
-      actors4.add(storagevalue);
-
-      // Flow.Save to file.GetReportValue
-      GetReportValue getreportvalue = new GetReportValue();
-      argOption = (AbstractArgumentOption) getreportvalue.getOptionManager().findByProperty("field");
-      getreportvalue.setField((Field) argOption.valueOf("Object.1.iou_highest[N]"));
-      actors4.add(getreportvalue);
-
-      // Flow.Save to file.DumpFile
-      DumpFile dumpfile = new DumpFile();
-      argOption = (AbstractArgumentOption) dumpfile.getOptionManager().findByProperty("outputFile");
-      dumpfile.setOutputFile((PlaceholderFile) argOption.valueOf("${TMP}/dumpfile.txt"));
-      actors4.add(dumpfile);
-      trigger3.setActors(actors4.toArray(new Actor[0]));
-
-      actors.add(trigger3);
-
-      // Flow.Clean
-      Trigger trigger4 = new Trigger();
-      argOption = (AbstractArgumentOption) trigger4.getOptionManager().findByProperty("name");
-      trigger4.setName((String) argOption.valueOf("Clean"));
-      List<Actor> actors5 = new ArrayList<>();
 
       // Flow.Clean.DeleteStorageValue
       DeleteStorageValue deletestoragevalue = new DeleteStorageValue();
       argOption = (AbstractArgumentOption) deletestoragevalue.getOptionManager().findByProperty("storageName");
       deletestoragevalue.setStorageName((StorageName) argOption.valueOf("pred"));
-      actors5.add(deletestoragevalue);
+      actors4.add(deletestoragevalue);
+      trigger3.setActors(actors4.toArray(new Actor[0]));
 
-      // Flow.Clean.DeleteStorageValue (2)
-      DeleteStorageValue deletestoragevalue2 = new DeleteStorageValue();
-      argOption = (AbstractArgumentOption) deletestoragevalue2.getOptionManager().findByProperty("name");
-      deletestoragevalue2.setName((String) argOption.valueOf("DeleteStorageValue (2)"));
-      argOption = (AbstractArgumentOption) deletestoragevalue2.getOptionManager().findByProperty("storageName");
-      deletestoragevalue2.setStorageName((StorageName) argOption.valueOf("result"));
-      actors5.add(deletestoragevalue2);
-      trigger4.setActors(actors5.toArray(new Actor[0]));
-
-      actors.add(trigger4);
+      actors.add(trigger3);
       flow.setActors(actors.toArray(new Actor[0]));
 
       NullListener nulllistener = new NullListener();
