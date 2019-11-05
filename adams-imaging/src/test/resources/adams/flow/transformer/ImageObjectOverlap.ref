@@ -1,0 +1,17 @@
+--> dumpfile.txt
+Filename[S]: /home/habdelqa/pc_backup/zespri/obj_det_fruit/animal-collar-dog-8700.jpg
+Name[S]: animal-collar-dog-8700.jpg
+Object.1.height[N]: 1655.0
+Object.1.index[S]: 0001
+Object.1.location[S]: 1509.0 1237.0 2602.0 1237.0 2602.0 2891.0 1509.0 2891.0
+Object.1.overlap_count[U]: 1.0
+Object.1.overlap_highest[N]: 0.898490965026149
+Object.1.type[S]: dog
+Object.1.width[N]: 1094.0
+Object.1.x[N]: 1509.0
+Object.1.y[N]: 1237.0
+Object.count[N]: 1.0
+Parent ID[U]: -1
+Path[S]: /home/habdelqa/pc_backup/zespri/obj_det_fruit
+
+
