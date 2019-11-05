@@ -50,8 +50,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Manages multiple pages, like JTabbedPane manages multiple tabs.
@@ -114,6 +116,12 @@ public class MultiPagePane
     /** the current icon (can be null). */
     protected ImageIcon m_Icon;
 
+    /** for storing meta-data. */
+    protected Map<String,Object> m_MetaData;
+
+    /** whether this page can be removed, even if readonly. */
+    protected boolean m_RemovalAllowed;
+
     /**
      * Initializes the container with no icon.
      *
@@ -133,10 +141,12 @@ public class MultiPagePane
      */
     public PageContainer(String title, Component page, ImageIcon icon) {
       super();
-      m_Title = title;
-      m_Page  = page;
-      m_Icon  = icon;
+      m_Title          = title;
+      m_Page           = page;
+      m_Icon           = icon;
       m_DetachablePage = new DetachablePage(page);
+      m_MetaData       = new HashMap<>();
+      m_RemovalAllowed = false;
     }
 
     /**
@@ -178,6 +188,33 @@ public class MultiPagePane
       m_DetachablePage.getContentPanel().invalidate();
       m_DetachablePage.getContentPanel().revalidate();
       m_DetachablePage.getContentPanel().repaint();
+    }
+
+    /**
+     * Returns the meta-data associated with the page.
+     *
+     * @return		the meta-data
+     */
+    public Map<String,Object> getMetaData() {
+      return m_MetaData;
+    }
+
+    /**
+     * Sets whether removal allowed despite read-only pane.
+     *
+     * @param value	true if allowed
+     */
+    public void setRemovalAllowed(boolean value) {
+      m_RemovalAllowed = value;
+    }
+
+    /**
+     * Returns whether removal is allowed despite read-only pane.
+     *
+     * @return		true if allowed
+     */
+    public boolean isRemovalAllowed() {
+      return m_RemovalAllowed;
     }
 
     /**
@@ -558,7 +595,6 @@ public class MultiPagePane
    */
   public void setReadOnly(boolean value) {
     m_ReadOnly = value;
-    m_PanelListButtons.setVisible(!m_ReadOnly);
   }
 
   /**
@@ -946,6 +982,29 @@ public class MultiPagePane
   }
 
   /**
+   * Checks whether the selected pages can be removed.
+   *
+   * @return		true if not read-only or read-only and all selected
+   * 			pages allowing removal
+   * @see		#canRemovePageAt(int)
+   */
+  public boolean canRemoveSelectedPages() {
+    boolean	result;
+
+    if (!isReadOnly())
+      return true;
+
+    result = true;
+    for (int index: getSelectedIndices()) {
+      result = canRemovePageAt(index);
+      if (!result)
+        break;
+    }
+
+    return result;
+  }
+
+  /**
    * Removes the currently selected page containers, if approved.
    */
   public void checkedRemoveSelectedPages() {
@@ -979,6 +1038,16 @@ public class MultiPagePane
       return removePageAt(index);
     else
       return null;
+  }
+
+  /**
+   * Checks whether the page can be removed.
+   *
+   * @param index	the index of the page
+   * @return		true if not read-only or read-only and the page allows removal explicitly
+   */
+  public boolean canRemovePageAt(int index) {
+    return !isReadOnly() || getPageContainerAt(index).isRemovalAllowed();
   }
 
   /**
@@ -1213,10 +1282,10 @@ public class MultiPagePane
 
     numSelected = m_PageList.getSelectedIndices().length;
 
-    m_ButtonUp.setEnabled((numSelected > 0) && canMoveUp());
-    m_ButtonDown.setEnabled((numSelected > 0) && canMoveDown());
-    m_ButtonRemove.setEnabled(numSelected > 0);
-    m_ButtonRemoveAll.setEnabled(getPageCount() > 0);
+    m_ButtonUp.setEnabled(!isReadOnly() && (numSelected > 0) && canMoveUp());
+    m_ButtonDown.setEnabled(!isReadOnly() && (numSelected > 0) && canMoveDown());
+    m_ButtonRemove.setEnabled((numSelected > 0) && canRemoveSelectedPages());
+    m_ButtonRemoveAll.setEnabled(!isReadOnly() && (getPageCount() > 0));
     m_ButtonUndo.setEnabled(canUndoPageClose());
   }
 
@@ -1251,7 +1320,7 @@ public class MultiPagePane
    */
   protected boolean processListKey(KeyEvent e) {
     if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-      if (getSelectedIndex() > -1) {
+      if ((getSelectedIndex() > -1) && canRemoveSelectedPages()) {
 	checkedRemoveSelectedPages();
 	return true;
       }
@@ -1303,14 +1372,14 @@ public class MultiPagePane
     menuitem = new JMenuItem("Remove");
     menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
     menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-    menuitem.setEnabled(index > -1);
+    menuitem.setEnabled((index > -1) && canRemoveSelectedPages());
     menuitem.addActionListener((ActionEvent ae) -> checkedRemoveSelectedPages());
     result.add(menuitem);
 
     // remove all
     menuitem = new JMenuItem("Remove all");
     menuitem.setIcon(GUIHelper.getIcon("delete_all.gif"));
-    menuitem.setEnabled(m_PageListModel.getSize() > 0);
+    menuitem.setEnabled(!isReadOnly() && (m_PageListModel.getSize() > 0));
     menuitem.addActionListener((ActionEvent ae) -> checkedRemoveAllPages());
     result.add(menuitem);
 
