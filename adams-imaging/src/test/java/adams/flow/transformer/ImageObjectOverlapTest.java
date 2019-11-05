@@ -213,7 +213,10 @@ public class ImageObjectOverlapTest
 
       argOption = (AbstractArgumentOption) imageobjectoverlap.getOptionManager().findByProperty("minOverlapRatio");
       imageobjectoverlap.setMinOverlapRatio((Double) argOption.valueOf("0.5"));
+      argOption = (AbstractArgumentOption) imageobjectoverlap.getOptionManager().findByProperty("labelKey");
+      imageobjectoverlap.setLabelKey((String) argOption.valueOf("type"));
       imageobjectoverlap.setUseOtherObject(true);
+      imageobjectoverlap.setAdditionalObject(true);
 
       imageobjectoverlap.setAverageRatio(true);
 

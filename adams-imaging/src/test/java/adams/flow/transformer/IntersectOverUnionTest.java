@@ -213,7 +213,10 @@ public class IntersectOverUnionTest
 
       argOption = (AbstractArgumentOption) intersectoverunion.getOptionManager().findByProperty("minIntersectOverUnionRatio");
       intersectoverunion.setMinIntersectOverUnionRatio((Double) argOption.valueOf("0.5"));
+      argOption = (AbstractArgumentOption) intersectoverunion.getOptionManager().findByProperty("labelKey");
+      intersectoverunion.setLabelKey((String) argOption.valueOf("type"));
       intersectoverunion.setUseOtherObject(true);
+      intersectoverunion.setAdditionalObject(true);
 
       actors3.add(intersectoverunion);
 
