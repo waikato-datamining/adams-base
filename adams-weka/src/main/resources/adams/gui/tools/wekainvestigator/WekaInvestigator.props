@@ -135,8 +135,8 @@ Classify.DiscardPredictions=false
 Classify.CrossValidationFoldGenerator=weka.classifiers.DefaultCrossValidationFoldGenerator
 
 # whether to produce a final model for cross-validation
-# (true|false)
-Classify.CrossValidationFinalModel=true
+# (classname, classes located in package: adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.finalmodel)
+Classify.CrossValidationFinalModel=adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.finalmodel.Simple
 
 # the random seed
 # (integer)
@@ -153,6 +153,14 @@ Classify.PreserveOrder=false
 # the split generator to use for train/test splits
 # (classname and options)
 Classify.TrainTestSplitGenerator=weka.classifiers.DefaultRandomSplitGenerator
+
+# whether to preserve order (for building the model)
+# (true|false)
+Classify.BuildModelPreserveOrder=true
+
+# the random seed for building the model
+# (integer)
+Classify.BuildModelSeed=1
 
 # The default output directory for models
 # (directory; %c=current, %h=user home, %t=temp directory)
@@ -199,6 +207,14 @@ Cluster.TrainPercentage=66
 # whether to preserve order (for random split)
 # (true|false)
 Cluster.PreserveOrder=false
+
+# whether to preserve order (for build model)
+# (true|false)
+Cluster.BuildModelPreserveOrder=true
+
+# the random seed (for build model)
+# (integer)
+Cluster.BuildModelSeed=1
 
 # The default output directory for models
 # (directory; %c=current, %h=user home, %t=temp directory)

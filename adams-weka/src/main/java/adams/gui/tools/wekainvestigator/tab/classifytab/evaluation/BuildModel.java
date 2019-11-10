@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BuildModel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -23,12 +23,16 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.FileChooserPanel;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.NumberTextField;
+import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
@@ -40,18 +44,20 @@ import weka.core.Instances;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 /**
  * Builds a model and serializes it to a file.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BuildModel
   extends AbstractClassifierEvaluation {
@@ -60,6 +66,10 @@ public class BuildModel
 
   public static final String KEY_DATASET = "dataset";
 
+  public static final String KEY_PRESERVEORDER = "preserveorder";
+
+  public static final String KEY_SEED = "seed";
+
   public static final String KEY_MODEL = "model";
 
   /** the panel with the parameters. */
@@ -67,6 +77,12 @@ public class BuildModel
 
   /** the datasets. */
   protected BaseComboBox<String> m_ComboBoxDatasets;
+
+  /** whether to preserve the order. */
+  protected BaseCheckBox m_CheckBoxPreserveOrder;
+
+  /** the seed value. */
+  protected NumberTextField m_TextSeed;
 
   /** the datasets model. */
   protected DefaultComboBoxModel<String> m_ModelDatasets;
@@ -104,6 +120,32 @@ public class BuildModel
     m_ComboBoxDatasets.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
+    // preserve order?
+    m_CheckBoxPreserveOrder = new BaseCheckBox();
+    m_CheckBoxPreserveOrder.setSelected(props.getBoolean("Classify.BuildModelPreserveOrder", false));
+    m_CheckBoxPreserveOrder.setToolTipText("No randomization is performed if checked");
+    m_CheckBoxPreserveOrder.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Preserve order", m_CheckBoxPreserveOrder);
+
+    // seed
+    m_TextSeed = new NumberTextField(Type.INTEGER, "" + props.getInteger("Classify.BuildModelSeed", 1));
+    m_TextSeed.setToolTipText("The seed value for randomizing the data");
+    m_TextSeed.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	update();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	update();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	update();
+      }
+    });
+    m_PanelParameters.addParameter("Seed", m_TextSeed);
+
     // model file
     m_PanelModel = new FileChooserPanel();
     m_PanelModel.setCurrentDirectory(new PlaceholderFile(props.getPath("Classify.ModelDirectory", "%c")));
@@ -137,6 +179,9 @@ public class BuildModel
 
     if (!isValidDataIndex(m_ComboBoxDatasets))
       return "No data available!";
+
+    if (!Utils.isInteger(m_TextSeed.getText()))
+      return "Seed value is not an integer!";
 
     file = m_PanelModel.getCurrent();
     if (file.isDirectory())
@@ -189,6 +234,8 @@ public class BuildModel
     Classifier		model;
     DataContainer 	dataCont;
     Instances		data;
+    boolean		order;
+    int			seed;
     Instances		header;
     String		msg;
     MetaData 		runInfo;
@@ -201,8 +248,12 @@ public class BuildModel
     dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
     data     = dataCont.getData();
     header   = new Instances(data, 0);
+    order    = m_CheckBoxPreserveOrder.isSelected();
+    seed     = m_TextSeed.getValue().intValue();
 
     getOwner().logMessage("Using '" + dataCont.getID() + "/" + data.relationName() + "' to build " + OptionUtils.getCommandLine(classifier));
+    if (!order)
+      data.randomize(new Random(seed));
     model.buildClassifier(data);
     getOwner().logMessage("Built model on '" + dataCont.getID() + "/" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
     SerializationHelper.writeAll(m_PanelModel.getCurrent().getAbsolutePath(), new Object[]{model, header});
@@ -215,6 +266,9 @@ public class BuildModel
     runInfo.add("# Attributes", data.numAttributes());
     runInfo.add("# Instances", data.numInstances());
     runInfo.add("Class attribute", data.classAttribute().name());
+    runInfo.add("Preserve order", order);
+    if (!order)
+      runInfo.add("Seed", seed);
     runInfo.add("Model file", m_PanelModel.getCurrent().getAbsolutePath());
     addObjectSize(runInfo, "Model size", model);
 
@@ -235,7 +289,7 @@ public class BuildModel
       return;
 
     datasets = DatasetHelper.generateDatasetList(getOwner().getData());
-    index    = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    index    = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
       m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
@@ -269,8 +323,11 @@ public class BuildModel
     result = super.serialize(options);
     if (options.contains(SerializationOption.GUI))
       result.put(KEY_DATASET, m_ComboBoxDatasets.getSelectedIndex());
-    if (options.contains(SerializationOption.PARAMETERS))
+    if (options.contains(SerializationOption.PARAMETERS)) {
+      result.put(KEY_PRESERVEORDER, m_CheckBoxPreserveOrder.isSelected());
+      result.put(KEY_SEED, m_TextSeed.getValue().intValue());
       result.put(KEY_MODEL, m_PanelModel.getCurrent().getAbsolutePath());
+    }
 
     return result;
   }
@@ -285,6 +342,10 @@ public class BuildModel
     super.deserialize(data, errors);
     if (data.containsKey(KEY_DATASET))
       m_ComboBoxDatasets.setSelectedIndex(((Number) data.get(KEY_DATASET)).intValue());
+    if (data.containsKey(KEY_PRESERVEORDER))
+      m_CheckBoxPreserveOrder.setSelected((boolean) data.get(KEY_PRESERVEORDER));
+    if (data.containsKey(KEY_SEED))
+      m_TextSeed.setValue(((Number) data.get(KEY_SEED)).intValue());
     if (data.containsKey(KEY_MODEL))
       m_PanelModel.setCurrent(new PlaceholderFile((String) data.get(KEY_MODEL)));
   }

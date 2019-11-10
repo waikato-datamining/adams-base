@@ -123,6 +123,8 @@ public class WekaInvestigatorPreferencesPanel
       weka.classifiers.RandomSplitGenerator.class, new weka.classifiers.DefaultRandomSplitGenerator(), true));
     addPropertyType("Classify.PreserveOrder", PropertyType.BOOLEAN);
     addPropertyType("Classify.DiscardPredictions", PropertyType.BOOLEAN);
+    addPropertyType("Classify.BuildModelPreserveOrder", PropertyType.BOOLEAN);
+    addPropertyType("Classify.BuildModelSeed", PropertyType.INTEGER);
     addPropertyType("Classify.ModelDirectory", PropertyType.DIRECTORY_ABSOLUTE);
     addPropertyType("Classify.OutputGenerators", PropertyType.ARRAY_EDITOR);
     setChooser("Classify.OutputGenerators", new GenericArrayEditorPanel(
@@ -146,6 +148,8 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Cluster.UseViews", PropertyType.BOOLEAN);
     addPropertyType("Cluster.TrainPercentage", PropertyType.DOUBLE);
     addPropertyType("Cluster.PreserveOrder", PropertyType.BOOLEAN);
+    addPropertyType("Cluster.BuildModelPreserveOrder", PropertyType.BOOLEAN);
+    addPropertyType("Cluster.BuildModelSeed", PropertyType.INTEGER);
     addPropertyType("Cluster.ModelDirectory", PropertyType.DIRECTORY_ABSOLUTE);
     addPropertyType("Cluster.OutputGenerators", PropertyType.ARRAY_EDITOR);
     setChooser("Cluster.OutputGenerators", new GenericArrayEditorPanel(
