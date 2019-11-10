@@ -84,7 +84,6 @@ import java.util.Set;
  * sorted if no custom order for properties provided).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see #setPropertyOrder(List)
  */
 public class PropertiesParameterPanel
@@ -1176,8 +1175,7 @@ public class PropertiesParameterPanel
                 chooserPanel.setCurrent(OptionUtils.forAnyCommandLine(Object.class, value.getProperty(key)));
             }
             catch (Exception e) {
-              System.err.println("Failed to instantiate: " + value.getProperty(key));
-              e.printStackTrace();
+	      ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate (" + key + "): " + value.getProperty(key), e);
             }
             addProperty(key, label, chooserPanel);
             break;
@@ -1206,8 +1204,7 @@ public class PropertiesParameterPanel
 	      chooserPanel.setCurrent(array);
             }
             catch (Exception e) {
-              System.err.println("Failed to create array: " + value.getProperty(key));
-              e.printStackTrace();
+	      ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to create array (" + key + "): " + value.getProperty(key), e);
             }
             addProperty(key, label, chooserPanel);
             break;
