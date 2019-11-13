@@ -15,7 +15,7 @@
 
 /*
  * DatasetFileChooserPanel.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -34,7 +34,6 @@ import java.io.File;
  * button for bringing up a ConverterFileChooser.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see ConverterFileChooser
  */
 public class DatasetFileChooserPanel
@@ -124,6 +123,7 @@ public class DatasetFileChooserPanel
     m_FileChooser.setSelectedFile(getCurrent().getAbsoluteFile());
     if (!m_UseSaveDialog) {
       if (m_FileChooser.showOpenDialog(m_Self) == JFileChooser.APPROVE_OPTION) {
+	m_History.get(getClass()).add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
         m_Loader = m_FileChooser.getReader();
         m_Saver  = null;
         return new PlaceholderFile(m_FileChooser.getSelectedFile());
@@ -134,6 +134,7 @@ public class DatasetFileChooserPanel
     }
     else {
       if (m_FileChooser.showSaveDialog(m_Self) == JFileChooser.APPROVE_OPTION) {
+	m_History.get(getClass()).add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
         m_Loader = null;
         m_Saver  = m_FileChooser.getWriter();
         return new PlaceholderFile(m_FileChooser.getSelectedFile());
