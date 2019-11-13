@@ -15,31 +15,25 @@
 
 /*
  * CostCurve.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
 import adams.core.io.PlaceholderFile;
-import adams.core.logging.LoggingHelper;
 import adams.gui.application.AbstractApplicationFrame;
-import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
-import weka.core.Instances;
+import adams.gui.tools.weka.CostCurvePanel;
 import weka.gui.ConverterFileChooser;
-import weka.gui.visualize.PlotData2D;
-import weka.gui.visualize.ThresholdVisualizePanel;
 
-import javax.swing.JFileChooser;
 import java.io.File;
 
 /**
  * Displays Cost curve data.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CostCurve
   extends AbstractParameterHandlingWekaMenuItemDefinition {
@@ -81,49 +75,11 @@ public class CostCurve
    */
   @Override
   public void launch() {
-    File file;
-    if (m_Parameters.length == 0) {
-      // choose file
-      int retVal = m_FileChooser.showOpenDialog(null);
-      if (retVal != JFileChooser.APPROVE_OPTION)
-        return;
-      file = m_FileChooser.getSelectedFile();
-    }
-    else {
-      file = new PlaceholderFile(m_Parameters[0]).getAbsoluteFile();
-      m_FileChooser.setSelectedFile(file);
-    }
+    CostCurvePanel panel = new CostCurvePanel();
+    if (m_Parameters.length > 0)
+      panel.setCurrent(new PlaceholderFile(m_Parameters[0]).getAbsoluteFile());
 
-    // create plot
-    Instances result;
-    try {
-      result = m_FileChooser.getLoader().getDataSet();
-    }
-    catch (Exception e) {
-      GUIHelper.showErrorMessage(
-        getOwner(), "Error loading file '" + file + "':\n" + LoggingHelper.throwableToString(e));
-      return;
-    }
-    result.setClassIndex(result.numAttributes() - 1);
-    ThresholdVisualizePanel vmc = new ThresholdVisualizePanel();
-    PlotData2D plot = new PlotData2D(result);
-    plot.setPlotName(result.relationName());
-    plot.m_displayAllPoints = true;
-    boolean[] connectPoints = new boolean[result.numInstances()];
-    for (int cp = 1; cp < connectPoints.length; cp++)
-      connectPoints[cp] = true;
-    try {
-      plot.setConnectPoints(connectPoints);
-      vmc.addPlot(plot);
-    }
-    catch (Exception e) {
-      GUIHelper.showErrorMessage(
-        getOwner(), "Error adding plot:\n" + LoggingHelper.throwableToString(e));
-      return;
-    }
-
-    ChildFrame frame = createChildFrame(vmc, GUIHelper.getDefaultDialogDimension());
-    frame.setTitle(frame.getTitle()  + " - " + file);
+    createChildFrame(panel, GUIHelper.getDefaultDialogDimension());
   }
 
   /**
