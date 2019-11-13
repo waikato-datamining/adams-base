@@ -42,6 +42,8 @@ import weka.classifiers.Classifier;
 import weka.classifiers.DefaultRandomSplitGenerator;
 import weka.classifiers.Evaluation;
 import weka.classifiers.RandomSplitGenerator;
+import weka.classifiers.TestingHelper;
+import weka.classifiers.TestingHelper.TestingUpdateListener;
 import weka.core.Capabilities;
 import weka.core.Instances;
 
@@ -316,8 +318,6 @@ public class TrainTestSplit
     WekaTrainTestSetContainer	cont;
     String			msg;
     MetaData 			runInfo;
-    int				i;
-    int				interval;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
@@ -364,13 +364,12 @@ public class TrainTestSplit
 
     eval = new Evaluation(train);
     eval.setDiscardPredictions(discard);
-    interval = getTestingUpdateInterval();
-    for (i = 0; i < test.numInstances(); i++) {
-      eval.evaluateModelOnceAndRecordPrediction(model, test.instance(i));
-      if ((i+1) % interval == 0)
-	getOwner().logMessage("Used " + (i+1) + "/" + test.numInstances() + " of '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
-    }
-    getOwner().logMessage("Used " + test.numInstances() + " of '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+    TestingHelper.evaluateModel(model, test, eval, getTestingUpdateInterval(), new TestingUpdateListener() {
+      @Override
+      public void testingUpdateRequested(Instances data, int numTested, int numTotal) {
+        getOwner().logMessage("Used " + numTested + "/" + numTotal + " of '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+      }
+    });
 
     item.update(
       eval, model, runInfo,

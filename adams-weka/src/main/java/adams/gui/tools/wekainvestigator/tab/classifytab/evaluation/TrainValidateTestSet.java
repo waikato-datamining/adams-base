@@ -35,6 +35,8 @@ import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.Serializatio
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.TestingHelper;
+import weka.classifiers.TestingHelper.TestingUpdateListener;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instances;
@@ -265,8 +267,6 @@ public class TrainValidateTestSet
     boolean		discard;
     String		msg;
     MetaData 		runInfo;
-    int			i;
-    int			interval;
     ResultItem		nested;
 
     if ((msg = canEvaluate(classifier)) != null)
@@ -303,13 +303,12 @@ public class TrainValidateTestSet
     // validate
     eval = new Evaluation(train);
     eval.setDiscardPredictions(discard);
-    interval = getTestingUpdateInterval();
-    for (i = 0; i < validate.numInstances(); i++) {
-      eval.evaluateModelOnceAndRecordPrediction(model, validate.instance(i));
-      if ((i+1) % interval == 0)
-	getOwner().logMessage("Used " + (i+1) + "/" + validate.numInstances() + " of '" + validateCont.getID() + "/" + validate.relationName() + "' to validate " + OptionUtils.getCommandLine(classifier));
-    }
-    getOwner().logMessage("Used " + validate.numInstances() + " of '" + validateCont.getID() + "/" + validate.relationName() + "' to validate " + OptionUtils.getCommandLine(classifier));
+    TestingHelper.evaluateModel(model, validate, eval, getTestingUpdateInterval(), new TestingUpdateListener() {
+      @Override
+      public void testingUpdateRequested(Instances data, int numTested, int numTotal) {
+        getOwner().logMessage("Used " + numTested + "/" + numTotal + " of '" + validateCont.getID() + "/" + validate.relationName() + "' to validate " + OptionUtils.getCommandLine(classifier));
+      }
+    });
 
     item.update(
       eval, model, runInfo,
@@ -318,13 +317,12 @@ public class TrainValidateTestSet
     // test
     eval = new Evaluation(train);
     eval.setDiscardPredictions(discard);
-    interval = getTestingUpdateInterval();
-    for (i = 0; i < test.numInstances(); i++) {
-      eval.evaluateModelOnceAndRecordPrediction(model, test.instance(i));
-      if ((i+1) % interval == 0)
-	getOwner().logMessage("Used " + (i+1) + "/" + test.numInstances() + " of '" + testCont.getID() + "/" + test.relationName() + "' to test " + OptionUtils.getCommandLine(classifier));
-    }
-    getOwner().logMessage("Used " + test.numInstances() + " of '" + testCont.getID() + "/" + test.relationName() + "' to test " + OptionUtils.getCommandLine(classifier));
+    TestingHelper.evaluateModel(model, test, eval, getTestingUpdateInterval(), new TestingUpdateListener() {
+      @Override
+      public void testingUpdateRequested(Instances data, int numTested, int numTotal) {
+        getOwner().logMessage("Used " + numTested + "/" + numTotal + " of '" + validateCont.getID() + "/" + validate.relationName() + "' to test " + OptionUtils.getCommandLine(classifier));
+      }
+    });
 
     nested = new ResultItem(item.getTemplate(), item.getHeader());
     nested.setNameSuffix("Validation");

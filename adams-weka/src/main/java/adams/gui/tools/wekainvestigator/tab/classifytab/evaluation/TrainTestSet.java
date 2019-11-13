@@ -35,6 +35,8 @@ import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.Serializatio
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.TestingHelper;
+import weka.classifiers.TestingHelper.TestingUpdateListener;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instances;
@@ -233,8 +235,6 @@ public class TrainTestSet
     boolean		discard;
     String		msg;
     MetaData 		runInfo;
-    int			i;
-    int			interval;
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
@@ -265,13 +265,12 @@ public class TrainTestSet
 
     eval = new Evaluation(train);
     eval.setDiscardPredictions(discard);
-    interval = getTestingUpdateInterval();
-    for (i = 0; i < test.numInstances(); i++) {
-      eval.evaluateModelOnceAndRecordPrediction(model, test.instance(i));
-      if ((i+1) % interval == 0)
-	getOwner().logMessage("Used " + (i+1) + "/" + test.numInstances() + " of '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
-    }
-    getOwner().logMessage("Used " + test.numInstances() + " of '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+    TestingHelper.evaluateModel(model, test, eval, getTestingUpdateInterval(), new TestingUpdateListener() {
+      @Override
+      public void testingUpdateRequested(Instances data, int numTested, int numTotal) {
+        getOwner().logMessage("Used " + numTested + "/" + numTotal + " of '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+      }
+    });
 
     item.update(
       eval, model, runInfo,

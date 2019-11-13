@@ -41,6 +41,8 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.TestingHelper;
+import weka.classifiers.TestingHelper.TestingUpdateListener;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.Instances;
@@ -298,7 +300,6 @@ public class ReevaluateModel
     MetaData 		runInfo;
     TIntList 		original;
     int			i;
-    int			interval;
 
     classifier = (Classifier) OptionUtils.shallowCopy(m_Model);
 
@@ -322,13 +323,12 @@ public class ReevaluateModel
 
     eval = new Evaluation(data);
     eval.setDiscardPredictions(discard);
-    interval = getTestingUpdateInterval();
-    for (i = 0; i < data.numInstances(); i++) {
-      eval.evaluateModelOnceAndRecordPrediction(m_Model, data.instance(i));
-      if ((i+1) % interval == 0)
-	getOwner().logMessage("Used " + (i+1) + "/" + data.numInstances() + " of '" + dataCont.getID() + "/" + data.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
-    }
-    getOwner().logMessage("Used " + data.numInstances() + " of '" + dataCont.getID() + "/" + data.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+    TestingHelper.evaluateModel(m_Model, data, eval, getTestingUpdateInterval(), new TestingUpdateListener() {
+      @Override
+      public void testingUpdateRequested(Instances data, int numTested, int numTotal) {
+        getOwner().logMessage("Used " + numTested + "/" + numTotal + " of '" + dataCont.getID() + "/" + data.relationName() + "' to evaluate " + OptionUtils.getCommandLine(m_Model));
+      }
+    });
 
     original = new TIntArrayList();
     for (i = 0; i < data.numInstances(); i++)
