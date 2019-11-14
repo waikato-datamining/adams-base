@@ -15,12 +15,13 @@
 
 /*
  * AbstractOutlierDetector.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.outlier;
 
 import adams.core.ClassLister;
+import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -41,12 +42,11 @@ import java.util.List;
  * the previously generated data.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to process
  */
 public abstract class AbstractOutlierDetector<T extends DataContainer>
   extends AbstractOptionHandler
-  implements OutlierDetector<T> {
+  implements OutlierDetector<T>, QuickInfoSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1238310227471192973L;
@@ -224,6 +224,17 @@ public abstract class AbstractOutlierDetector<T extends DataContainer>
   public void destroy() {
     cleanUp();
     super.destroy();
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   * <br>
+   * Default implementation returns null.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  public String getQuickInfo() {
+    return null;
   }
 
   /**
