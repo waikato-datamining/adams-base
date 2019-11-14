@@ -34,6 +34,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseToggleButton;
 import adams.gui.core.ColorHelper;
 import adams.gui.event.ImagePanelLeftClickEvent;
 import adams.gui.event.ImagePanelLeftClickListener;
@@ -50,7 +51,6 @@ import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -219,10 +219,10 @@ public class ImageAnnotator
     private static final long serialVersionUID = 301202246788374114L;
 
     /** the label buttons. */
-    protected JToggleButton[] m_ButtonLabels;
+    protected BaseToggleButton[] m_ButtonLabels;
 
     /** the unset button. */
-    protected JToggleButton m_ButtonUnset;
+    protected BaseToggleButton m_ButtonUnset;
 
     /** the reset button. */
     protected BaseButton m_ButtonReset;
@@ -303,10 +303,10 @@ public class ImageAnnotator
 
       m_ButtonGroup = new ButtonGroup();
       comps         = new ArrayList<>();
-      m_ButtonLabels = new JToggleButton[m_Labels.length];
+      m_ButtonLabels = new BaseToggleButton[m_Labels.length];
       for (i = 0; i < m_Labels.length; i++) {
         final String label = m_Labels[i].getValue();
-        m_ButtonLabels[i] = new JToggleButton(label);
+        m_ButtonLabels[i] = new BaseToggleButton(label);
         m_ButtonLabels[i].addActionListener((ActionEvent e) -> setCurrentLabel(label));
         if (i == 0)
           m_ButtonLabels[i].setSelected(true);
@@ -314,7 +314,7 @@ public class ImageAnnotator
 	comps.add(m_ButtonLabels[i]);
       }
 
-      m_ButtonUnset = new JToggleButton("Unset");
+      m_ButtonUnset = new BaseToggleButton("Unset");
       m_ButtonUnset.addActionListener((ActionEvent e) -> setCurrentLabel(null));
       comps.add(m_ButtonUnset);
       m_ButtonGroup.add(m_ButtonUnset);

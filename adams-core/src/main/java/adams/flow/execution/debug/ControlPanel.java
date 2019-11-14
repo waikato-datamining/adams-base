@@ -35,6 +35,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextField;
+import adams.gui.core.BaseToggleButton;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TextEditorPanel;
@@ -54,7 +55,6 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
@@ -70,7 +70,6 @@ import java.util.HashSet;
  * A little dialog for controlling the breakpoint. Cannot be static class!
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10983 $
  */
 public class ControlPanel
   extends BasePanel
@@ -95,7 +94,7 @@ public class ControlPanel
   protected BaseButton m_ButtonStep;
 
   /** the button for displaying dialog with watch expressions. */
-  protected JToggleButton m_ButtonExpressions;
+  protected BaseToggleButton m_ButtonExpressions;
 
   /** the panel with the conditon. */
   protected JPanel m_PanelCondition;
@@ -104,19 +103,19 @@ public class ControlPanel
   protected GenericObjectEditorPanel m_GOEPanelCondition;
 
   /** the button to show the source code of the current flow. */
-  protected JToggleButton m_ButtonSource;
+  protected BaseToggleButton m_ButtonSource;
 
   /** the button to show the variable management dialog. */
-  protected JToggleButton m_ButtonVariables;
+  protected BaseToggleButton m_ButtonVariables;
 
   /** the button to show the storage. */
-  protected JToggleButton m_ButtonStorage;
+  protected BaseToggleButton m_ButtonStorage;
 
   /** the button to show inspection panel for the current token. */
-  protected JToggleButton m_ButtonInspectToken;
+  protected BaseToggleButton m_ButtonInspectToken;
 
   /** the button to show the breakpoints management panel. */
-  protected JToggleButton m_ButtonBreakpoints;
+  protected BaseToggleButton m_ButtonBreakpoints;
 
   /** the panel with the watch expressions. */
   protected ExpressionWatchPanel m_PanelExpressions;
@@ -258,7 +257,7 @@ public class ControlPanel
     panel.add(panelButtons, BorderLayout.NORTH);
     panelAllButtons.add(panel, BorderLayout.CENTER);
 
-    m_ButtonExpressions = new JToggleButton("Expressions", GUIHelper.getIcon("glasses.gif"));
+    m_ButtonExpressions = new BaseToggleButton("Expressions", GUIHelper.getIcon("glasses.gif"));
     m_ButtonExpressions.setMnemonic('x');
     m_ButtonExpressions.setToolTipText("Display dialog for watch expressions");
     m_ButtonExpressions.addActionListener((ActionEvent e) -> {
@@ -267,7 +266,7 @@ public class ControlPanel
     });
     panelButtons.add(m_ButtonExpressions);
 
-    m_ButtonVariables = new JToggleButton("Variables", GUIHelper.getIcon("variable.gif"));
+    m_ButtonVariables = new BaseToggleButton("Variables", GUIHelper.getIcon("variable.gif"));
     m_ButtonVariables.setMnemonic('V');
     m_ButtonVariables.setToolTipText("Display dialog with currently active variables");
     m_ButtonVariables.addActionListener((ActionEvent e) -> {
@@ -276,7 +275,7 @@ public class ControlPanel
     });
     panelButtons.add(m_ButtonVariables);
 
-    m_ButtonStorage = new JToggleButton("Storage", GUIHelper.getIcon("disk.png"));
+    m_ButtonStorage = new BaseToggleButton("Storage", GUIHelper.getIcon("disk.png"));
     m_ButtonStorage.setMnemonic('t');
     m_ButtonStorage.setToolTipText("Display dialog with items currently stored in temporary storage");
     m_ButtonStorage.addActionListener((ActionEvent e) -> {
@@ -285,7 +284,7 @@ public class ControlPanel
     });
     panelButtons.add(m_ButtonStorage);
 
-    m_ButtonInspectToken = new JToggleButton("Inspect token", GUIHelper.getIcon("properties.gif"));
+    m_ButtonInspectToken = new BaseToggleButton("Inspect token", GUIHelper.getIcon("properties.gif"));
     m_ButtonInspectToken.setMnemonic('I');
     m_ButtonInspectToken.setToolTipText("Display dialog for inspecting the current token");
     m_ButtonInspectToken.addActionListener((ActionEvent e) -> {
@@ -294,7 +293,7 @@ public class ControlPanel
     });
     panelButtons.add(m_ButtonInspectToken);
 
-    m_ButtonBreakpoints = new JToggleButton("Breakpoints", GUIHelper.getIcon("flow.gif"));
+    m_ButtonBreakpoints = new BaseToggleButton("Breakpoints", GUIHelper.getIcon("flow.gif"));
     m_ButtonBreakpoints.setMnemonic('n');
     m_ButtonBreakpoints.setToolTipText("Display dialog for inspecting the current flow");
     m_ButtonBreakpoints.addActionListener((ActionEvent e) -> {
@@ -303,7 +302,7 @@ public class ControlPanel
     });
     panelButtons.add(m_ButtonBreakpoints);
 
-    m_ButtonSource = new JToggleButton("Source", GUIHelper.getIcon("source.png"));
+    m_ButtonSource = new BaseToggleButton("Source", GUIHelper.getIcon("source.png"));
     m_ButtonSource.setMnemonic('o');
     m_ButtonSource.setToolTipText("Display current flow state as source (nested format)");
     m_ButtonSource.addActionListener((ActionEvent e) -> {
