@@ -15,7 +15,7 @@
 
 /*
  * RemoveTestInstances.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.filters.unsupervised.instance;
@@ -42,28 +42,32 @@ import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
- * Removes all instances of the provided test set from the data passing through.<br/>
+ * Removes all instances of the provided test set from the data passing through.<br>
  * Requires an attribute in the data that uniquely identifies instances across datasets.
- * <p/>
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <p/>
- * 
+ * Valid options are: <p>
+ *
  * <pre> -test-set &lt;file&gt;
  *  The test set to load.
  * </pre>
- * 
+ *
  * <pre> -use-custom-loader
  *  Whether to use a custom loader.
  * </pre>
- * 
+ *
  * <pre> -custom-loader &lt;classname + options&gt;
  *  The custom loader to use.
  * </pre>
- * 
+ *
  * <pre> -id &lt;1-based index or name&gt;
  *  The index/name of ID attribute to use for identifying rows.
+ * </pre>
+ *
+ * <pre> -id-test &lt;1-based index or name&gt;
+ *  The index/name of ID attribute to use for identifying rows in the test set (if different from '-id').
  * </pre>
  * 
  * <pre> -invert
@@ -81,7 +85,6 @@ import java.util.Vector;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RemoveTestInstances
   extends SimpleBatchFilter
@@ -101,6 +104,9 @@ public class RemoveTestInstances
 
   /** the attribute to use for identifying instances. */
   protected WekaAttributeIndex m_ID = new WekaAttributeIndex(WekaAttributeIndex.FIRST);
+
+  /** the attribute to use for identifying instances in the test set. */
+  protected WekaAttributeIndex m_IDTest = new WekaAttributeIndex();
 
   /** whether to invert the matching. */
   protected boolean m_Invert = false;
@@ -143,6 +149,10 @@ public class RemoveTestInstances
     result.addElement(new Option(
 	"\tThe index/name of ID attribute to use for identifying rows.\n",
 	"id", 1, "-id <1-based index or name>"));
+
+    result.addElement(new Option(
+	"\tThe index/name of ID attribute to use for identifying rows in the test set (if different from '-id').\n",
+	"id-test", 1, "-id-test <1-based index or name>"));
 
     result.addElement(new Option(
 	"\tWhether to invert the matching (ie keep rather than remove).\n",
@@ -190,6 +200,12 @@ public class RemoveTestInstances
     else
       setID(new WekaAttributeIndex(tmpStr));
 
+    tmpStr = Utils.getOption("id-test", options);
+    if (tmpStr.isEmpty())
+      setIDTest(new WekaAttributeIndex());
+    else
+      setIDTest(new WekaAttributeIndex(tmpStr));
+
     setInvert(Utils.getFlag("invert", options));
 
     super.setOptions(options);
@@ -216,6 +232,11 @@ public class RemoveTestInstances
 
     result.add("-id");
     result.add(getID().getIndex());
+
+    if (!getIDTest().isEmpty()) {
+      result.add("-id-test");
+      result.add(getIDTest().getIndex());
+    }
 
     if (getInvert())
       result.add("-invert");
@@ -342,6 +363,34 @@ public class RemoveTestInstances
   }
 
   /**
+   * Sets the attribute name/index to use for identifying rows in the test set.
+   *
+   * @param value     the attribute name/index
+   */
+  public void setIDTest(WekaAttributeIndex value) {
+    m_IDTest = value;
+  }
+
+  /**
+   * Returns the attribute name/index to use for identifying rows in the test set.
+   *
+   * @return		the attribute name/index
+   */
+  public WekaAttributeIndex getIDTest() {
+    return m_IDTest;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return    tip text for this property suitable for
+   *            displaying in the explorer/experimenter gui
+   */
+  public String IDTestTipText() {
+    return "The attribute name or index to use for identifying rows in the test set (if different from '-id'); " + m_IDTest.getExample();
+  }
+
+  /**
    * Sets whether to invert the matching sense (ie keep rather than remove).
    *
    * @param value     true if to invert
@@ -457,15 +506,24 @@ public class RemoveTestInstances
     if (m_FirstBatchDone)
       return new Instances(instances);
 
-    test  = loadTestSet();
-    m_ID.setData(test);
-    index = m_ID.getIntIndex();
-    if (index == -1)
-      throw new IllegalStateException(
-        "ID attribute not found in test set: " + m_ID.getIndex() + "\n" + new Instances(test, 0));
+    test = loadTestSet();
+    if (m_IDTest.isEmpty()) {
+      m_ID.setData(test);
+      index = m_ID.getIntIndex();
+      if (index == -1)
+	throw new IllegalStateException(
+	  "ID attribute not found in test set: " + m_ID.getIndex() + "\n" + new Instances(test, 0));
+    }
+    else {
+      m_IDTest.setData(test);
+      index = m_IDTest.getIntIndex();
+      if (index == -1)
+	throw new IllegalStateException(
+	  "ID attribute not found in test set: " + m_IDTest.getIndex() + "\n" + new Instances(test, 0));
+    }
     numeric = test.attribute(index).isNumeric();
-    ids     = new HashSet<String>();
-    for (Instance inst: test) {
+    ids = new HashSet<>();
+    for (Instance inst : test) {
       if (numeric)
 	ids.add("" + inst.value(index));
       else
