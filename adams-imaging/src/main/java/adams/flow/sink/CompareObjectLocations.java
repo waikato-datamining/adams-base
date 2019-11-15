@@ -55,12 +55,152 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
+ * Visualizes object locations (annotations and predicted) for the incoming image side-by-side.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: CompareObjectLocations
+ * </pre>
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full
+ * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-display-type &lt;adams.flow.core.displaytype.AbstractDisplayType&gt; (property: displayType)
+ * &nbsp;&nbsp;&nbsp;Determines how to show the display, eg as standalone frame (default) or
+ * &nbsp;&nbsp;&nbsp;in the Flow editor window.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.core.displaytype.Default
+ * </pre>
+ *
+ * <pre>-width &lt;int&gt; (property: width)
+ * &nbsp;&nbsp;&nbsp;The width of the dialog.
+ * &nbsp;&nbsp;&nbsp;default: 800
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-height &lt;int&gt; (property: height)
+ * &nbsp;&nbsp;&nbsp;The height of the dialog.
+ * &nbsp;&nbsp;&nbsp;default: 600
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-x &lt;int&gt; (property: x)
+ * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
+ * &nbsp;&nbsp;&nbsp;).
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -3
+ * </pre>
+ *
+ * <pre>-y &lt;int&gt; (property: y)
+ * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
+ * &nbsp;&nbsp;&nbsp;).
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -3
+ * </pre>
+ *
+ * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
+ * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
+ * </pre>
+ *
+ * <pre>-annotations-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: annotationsReader)
+ * &nbsp;&nbsp;&nbsp;The reader to use for loading the annotations (ground truth).
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.DefaultSimpleReportReader
+ * </pre>
+ *
+ * <pre>-annotations-file &lt;adams.core.io.PlaceholderFile&gt; (property: annotationsFile)
+ * &nbsp;&nbsp;&nbsp;The file containing the annotations.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
+ * <pre>-annotations-overlay &lt;adams.gui.visualization.image.ImageOverlay&gt; (property: annotationsOverlay)
+ * &nbsp;&nbsp;&nbsp;The overlay to apply to the annotations.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider
+ * </pre>
+ *
+ * <pre>-annotations-prefix &lt;java.lang.String&gt; (property: annotationsPrefix)
+ * &nbsp;&nbsp;&nbsp;The object prefix that the annotations use.
+ * &nbsp;&nbsp;&nbsp;default: Object.
+ * </pre>
+ *
+ * <pre>-annotations-label-suffix &lt;java.lang.String&gt; (property: annotationsLabelSuffix)
+ * &nbsp;&nbsp;&nbsp;The report suffix that the annotations use for storing the label.
+ * &nbsp;&nbsp;&nbsp;default: type
+ * </pre>
+ *
+ * <pre>-predictions-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: predictionsReader)
+ * &nbsp;&nbsp;&nbsp;The reader to use for loading the predictions.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.DefaultSimpleReportReader
+ * </pre>
+ *
+ * <pre>-predictions-file &lt;adams.core.io.PlaceholderFile&gt; (property: predictionsFile)
+ * &nbsp;&nbsp;&nbsp;The file containing the predictions.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
+ * <pre>-predictions-overlay &lt;adams.gui.visualization.image.ImageOverlay&gt; (property: predictionsOverlay)
+ * &nbsp;&nbsp;&nbsp;The overlay to apply to the predictions.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider
+ * </pre>
+ *
+ * <pre>-predictions-prefix &lt;java.lang.String&gt; (property: predictionsPrefix)
+ * &nbsp;&nbsp;&nbsp;The object prefix that the predictions use.
+ * &nbsp;&nbsp;&nbsp;default: Object.
+ * </pre>
+ *
+ * <pre>-predictions-label-suffix &lt;java.lang.String&gt; (property: predictionsLabelSuffix)
+ * &nbsp;&nbsp;&nbsp;The report suffix that the predictions use for storing the label.
+ * &nbsp;&nbsp;&nbsp;default: type
+ * </pre>
+ *
+ * <pre>-zoom &lt;double&gt; (property: zoom)
+ * &nbsp;&nbsp;&nbsp;The zoom level in percent.
+ * &nbsp;&nbsp;&nbsp;default: 100.0
+ * &nbsp;&nbsp;&nbsp;minimum: -1.0
+ * &nbsp;&nbsp;&nbsp;maximum: 1600.0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
