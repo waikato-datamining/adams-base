@@ -31,16 +31,20 @@ import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseToggleButton;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,10 +128,10 @@ public class CompareObjectLocations
   protected JPanel m_PanelLabels;
 
   /** the toggle buttons. */
-  protected List<BaseToggleButton> m_LabelButtons;
+  protected List<BaseToggleButton> m_ButtonLabels;
 
   /** the button group. */
-  protected ButtonGroup m_ButtonGroupLabels;
+  protected ButtonGroup m_ButtonGroup;
 
   /** the last selected label. */
   protected String m_LastLabel;
@@ -205,7 +209,7 @@ public class CompareObjectLocations
     m_AnnotationsLocatedObjects = new LocatedObjects();
     m_PredictionsReport         = new Report();
     m_PredictionsLocatedObjects = new LocatedObjects();
-    m_LabelButtons              = new ArrayList<>();
+    m_ButtonLabels = new ArrayList<>();
   }
 
   /**
@@ -589,19 +593,21 @@ public class CompareObjectLocations
     result.add(m_SplitPane, BorderLayout.CENTER);
 
     m_PanelImageAnnotations = new ImagePanel();
+    m_PanelImageAnnotations.setBorder(BorderFactory.createTitledBorder("Annotations"));
     m_PanelImageAnnotations.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(m_AnnotationsOverlay));
     m_SplitPane.setLeftComponent(m_PanelImageAnnotations);
 
     m_PanelImagePredictions = new ImagePanel();
+    m_PanelImagePredictions.setBorder(BorderFactory.createTitledBorder("Predictions"));
     m_PanelImagePredictions.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(m_PredictionsOverlay));
     m_SplitPane.setRightComponent(m_PanelImagePredictions);
 
     panel = new JPanel(new BorderLayout());
     result.add(panel, BorderLayout.WEST);
-    m_PanelLabels = new JPanel(new GridLayout(0, 1));
-    panel.add(m_PanelLabels, BorderLayout.NORTH);
+    m_PanelLabels = new JPanel(new GridBagLayout());
+    panel.add(new BaseScrollPane(m_PanelLabels), BorderLayout.CENTER);
 
-    m_ButtonGroupLabels = new ButtonGroup();
+    m_ButtonGroup = new ButtonGroup();
 
     return result;
   }
@@ -663,6 +669,12 @@ public class CompareObjectLocations
     Set<String>			labels;
     List<String>		labelsSorted;
     BaseToggleButton		button;
+    GridBagLayout 		layout;
+    GridBagConstraints 		con;
+    int 			gapVertical;
+    int 			gapHorizontal;
+    int				i;
+    JPanel			panel;
 
     if (m_Zoom == -1)
       zoom = m_Zoom;
@@ -723,31 +735,59 @@ public class CompareObjectLocations
     m_PanelImagePredictions.setAdditionalProperties(m_PredictionsReport);
     m_PanelImagePredictions.setScale(zoom);
 
-    for (BaseToggleButton b: m_LabelButtons)
-      m_ButtonGroupLabels.remove(b);
-    m_LabelButtons.clear();
+    gapHorizontal = 5;
+    gapVertical   = 2;
+    layout = new GridBagLayout();
+    m_PanelLabels.setLayout(layout);
+
+    for (BaseToggleButton b: m_ButtonLabels)
+      m_ButtonGroup.remove(b);
+    m_ButtonLabels.clear();
     m_PanelLabels.removeAll();
     button = new BaseToggleButton("All");
     button.addActionListener((ActionEvent e) -> filterObjects(""));
     button.setToolTipText(button.getText());
-    m_PanelLabels.add(button);
-    m_ButtonGroupLabels.add(button);
-    m_LabelButtons.add(button);
+    m_ButtonGroup.add(button);
+    m_ButtonLabels.add(button);
     for (final String label: labelsSorted) {
       button = new BaseToggleButton(label);
       button.addActionListener((ActionEvent e) -> filterObjects(label));
       button.setToolTipText(button.getText());
-      m_PanelLabels.add(button);
-      m_ButtonGroupLabels.add(button);
-      m_LabelButtons.add(button);
+      m_ButtonGroup.add(button);
+      m_ButtonLabels.add(button);
     }
+
+    for (i = 0; i < m_ButtonLabels.size(); i++) {
+      con = new GridBagConstraints();
+      con.anchor  = GridBagConstraints.WEST;
+      con.fill    = GridBagConstraints.HORIZONTAL;
+      con.gridy   = i;
+      con.gridx   = 0;
+      con.weightx = 100;
+      con.ipadx   = 20;
+      con.insets  = new Insets(gapVertical, gapHorizontal, gapVertical, gapHorizontal);
+      layout.setConstraints(m_ButtonLabels.get(i), con);
+      m_PanelLabels.add(m_ButtonLabels.get(i));
+    }
+
+    // filler at bottom
+    panel         = new JPanel();
+    con           = new GridBagConstraints();
+    con.anchor    = GridBagConstraints.WEST;
+    con.fill      = GridBagConstraints.BOTH;
+    con.gridy     = m_ButtonLabels.size();
+    con.gridx     = 0;
+    con.weighty   = 100;
+    con.gridwidth = GridBagConstraints.REMAINDER;
+    layout.setConstraints(panel, con);
+    m_PanelLabels.add(panel);
 
     // use last label again, if possible
     if (!labels.contains(m_LastLabel))
       m_LastLabel = "";
     if (m_LastLabel.isEmpty())
-      m_LabelButtons.get(0).doClick();
+      m_ButtonLabels.get(0).doClick();
     else if (labelsSorted.contains(m_LastLabel))
-      m_LabelButtons.get(labelsSorted.indexOf(m_LastLabel) + 1).doClick();
+      m_ButtonLabels.get(labelsSorted.indexOf(m_LastLabel) + 1).doClick();
   }
 }
