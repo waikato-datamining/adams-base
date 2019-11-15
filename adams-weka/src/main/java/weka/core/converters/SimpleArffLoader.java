@@ -248,6 +248,56 @@ public class SimpleArffLoader
   }
 
   /**
+   * Finds the index of an unescaped (ie not preceded by backslash) character
+   * starting with the provided starting position.
+   *
+   * @param s		the string to analyze
+   * @param chr		the character to look for
+   * @param start	the 0-based index of the starting position
+   * @return		the index, -1 if not found
+   */
+  protected int indexOfUnescaped(String s, char chr, int start) {
+    int		result;
+    int		i;
+    char 	curr;
+    char	last;
+
+    result = -1;
+
+    curr = '\0';
+    for (i = start; i < s.length(); i++) {
+      last = curr;
+      curr = s.charAt(i);
+      if ((curr == chr) && (last != '\\')) {
+        result = i;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Unquotes the attribute name.
+   *
+   * @param name	the name to unquote, if necessary
+   * @return		the unquoted name
+   */
+  protected String unquoteAttribute(String name) {
+    if (name.startsWith("'") && name.endsWith("'")) {
+      name = Utils.unquote(name);
+      if (name.startsWith("'") && name.endsWith("'"))
+	name = Utils.unquote(name);
+    }
+    else if (name.startsWith("\"") && name.endsWith("\"")) {
+      name = Utils.unDoubleQuote(name);
+      if (name.startsWith("\"") && name.endsWith("\""))
+	name = Utils.unDoubleQuote(name);
+    }
+    return name;
+  }
+
+  /**
    * Extracts the attribute name, type and date format from the line.
    *
    * @param line	the line to parse
@@ -268,17 +318,19 @@ public class SimpleArffLoader
     // name
     if (current.startsWith("'")) {
       quoted = true;
-      result.put("name", current.substring(1, current.indexOf('\'', 1)).trim());
+      result.put("name", current.substring(0, indexOfUnescaped(current, '\'', 1) + 1).trim());
     }
     else if (current.startsWith("\"")) {
       quoted = true;
-      result.put("name", current.substring(1, current.indexOf('"', 1)).trim());
+      result.put("name", current.substring(0, indexOfUnescaped(current, '"', 1) + 1).trim());
     }
     else {
       quoted = false;
       result.put("name", current.substring(0, current.indexOf(' ', 1)).trim());
     }
-    current = current.substring(result.get("name").length() + (quoted ? 2 : 0)).trim();
+    current = current.substring(result.get("name").length()).trim();
+    if (quoted)
+      result.put("name", unquoteAttribute(result.get("name")));
 
     // type
     lower = current.toLowerCase();
