@@ -18,7 +18,7 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.sink;
+package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
@@ -30,6 +30,8 @@ import adams.data.report.Report;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.gui.core.BaseButton;
+import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
@@ -42,6 +44,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -56,6 +59,8 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Visualizes object locations (annotations and predicted) for the incoming image side-by-side.
+ * <br><br>
+ * Only forwards the image container when accepted.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -206,7 +211,7 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class CompareObjectLocations
-  extends AbstractGraphicalDisplay {
+  extends AbstractInteractiveTransformerDialog {
 
   private static final long serialVersionUID = 2191236912048968711L;
 
@@ -276,6 +281,9 @@ public class CompareObjectLocations
   /** the last selected label. */
   protected String m_LastLabel;
 
+  /** whether the dialog got accepted. */
+  protected boolean m_Accepted;
+
   /**
    * Returns a string describing the object.
    *
@@ -283,7 +291,8 @@ public class CompareObjectLocations
    */
   @Override
   public String globalInfo() {
-    return "Visualizes object locations (annotations and predicted) for the incoming image side-by-side.";
+    return "Visualizes object locations (annotations and predicted) for the incoming image side-by-side.\n"
+      + "Only forwards the image container when accepted.";
   }
 
   /**
@@ -707,6 +716,16 @@ public class CompareObjectLocations
   }
 
   /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		the Class of the generated tokens
+   */
+  @Override
+  public Class[] generates() {
+    return new Class[]{AbstractImageContainer.class};
+  }
+
+  /**
    * Clears the content of the panel.
    */
   @Override
@@ -750,6 +769,35 @@ public class CompareObjectLocations
     m_ButtonGroup = new ButtonGroup();
 
     return result;
+  }
+
+  /**
+   * Hook method after the dialog got created.
+   *
+   * @param dialog	the dialog that got just created
+   * @param panel	the panel displayed in the frame
+   */
+  protected void postCreateDialog(final BaseDialog dialog, BasePanel panel) {
+    BaseButton buttonOK;
+    BaseButton	buttonCancel;
+    JPanel	panelButtons;
+
+    panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    dialog.getContentPane().add(panelButtons, BorderLayout.SOUTH);
+
+    buttonOK = new BaseButton("OK");
+    buttonOK.addActionListener((ActionEvent e) -> {
+      m_Accepted = true;
+      dialog.setVisible(false);
+    });
+    panelButtons.add(buttonOK);
+
+    buttonCancel = new BaseButton("Cancel");
+    buttonCancel.addActionListener((ActionEvent e) -> {
+      m_Accepted = false;
+      dialog.setVisible(false);
+    });
+    panelButtons.add(buttonCancel);
   }
 
   /**
@@ -801,7 +849,6 @@ public class CompareObjectLocations
    *
    * @param token	the token to display
    */
-  @Override
   protected void display(Token token) {
     AbstractImageContainer	cont;
     double			zoom;
@@ -929,5 +976,27 @@ public class CompareObjectLocations
       m_ButtonLabels.get(0).doClick();
     else if (labelsSorted.contains(m_LastLabel))
       m_ButtonLabels.get(labelsSorted.indexOf(m_LastLabel) + 1).doClick();
+  }
+
+  /**
+   * Performs the interaction with the user.
+   * <br><br>
+   * Default implementation simply displays the dialog and returns always true.
+   *
+   * @return		true if successfully interacted
+   */
+  @Override
+  public boolean doInteract() {
+    m_Accepted = false;
+
+    registerWindow(m_Dialog, m_Dialog.getTitle());
+    display(m_InputToken);
+    m_Dialog.setVisible(true);
+    deregisterWindow(m_Dialog);
+
+    if (m_Accepted)
+      m_OutputToken = new Token(m_InputToken.getPayload());
+
+    return m_Accepted;
   }
 }
