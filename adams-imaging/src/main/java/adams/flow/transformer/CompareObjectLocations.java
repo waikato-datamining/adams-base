@@ -22,32 +22,23 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
-import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.report.Report;
 import adams.flow.core.Token;
+import adams.flow.transformer.compareobjectlocations.AbstractComparison;
+import adams.flow.transformer.compareobjectlocations.AbstractComparisonPanel;
+import adams.flow.transformer.compareobjectlocations.SideBySide;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseSplitPane;
-import adams.gui.core.BaseToggleButton;
-import adams.gui.visualization.image.ImageOverlay;
-import adams.gui.visualization.image.ImagePanel;
-import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,8 +49,7 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Visualizes object locations (annotations and predicted) for the incoming image side-by-side.
- * <br><br>
+ * Visualizes object locations (annotations and predicted) for the incoming image side-by-side.<br>
  * Only forwards the image container when accepted.
  * <br><br>
  <!-- globalinfo-end -->
@@ -67,6 +57,8 @@ import java.util.logging.Level;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
  * <br><br>
  <!-- flow-summary-end -->
@@ -112,22 +104,16 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-display-type &lt;adams.flow.core.displaytype.AbstractDisplayType&gt; (property: displayType)
- * &nbsp;&nbsp;&nbsp;Determines how to show the display, eg as standalone frame (default) or
- * &nbsp;&nbsp;&nbsp;in the Flow editor window.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.core.displaytype.Default
- * </pre>
- *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
- * &nbsp;&nbsp;&nbsp;minimum: -1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 600
- * &nbsp;&nbsp;&nbsp;minimum: -1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  *
  * <pre>-x &lt;int&gt; (property: x)
@@ -144,9 +130,20 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
  *
- * <pre>-writer &lt;adams.gui.print.JComponentWriter&gt; (property: writer)
- * &nbsp;&nbsp;&nbsp;The writer to use for generating the graphics output.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.print.NullWriter
+ * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
+ * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
+ * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow
+ * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
  * </pre>
  *
  * <pre>-annotations-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: annotationsReader)
@@ -157,11 +154,6 @@ import java.util.logging.Level;
  * <pre>-annotations-file &lt;adams.core.io.PlaceholderFile&gt; (property: annotationsFile)
  * &nbsp;&nbsp;&nbsp;The file containing the annotations.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
- * </pre>
- *
- * <pre>-annotations-overlay &lt;adams.gui.visualization.image.ImageOverlay&gt; (property: annotationsOverlay)
- * &nbsp;&nbsp;&nbsp;The overlay to apply to the annotations.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider
  * </pre>
  *
  * <pre>-annotations-prefix &lt;java.lang.String&gt; (property: annotationsPrefix)
@@ -184,11 +176,6 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
- * <pre>-predictions-overlay &lt;adams.gui.visualization.image.ImageOverlay&gt; (property: predictionsOverlay)
- * &nbsp;&nbsp;&nbsp;The overlay to apply to the predictions.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider
- * </pre>
- *
  * <pre>-predictions-prefix &lt;java.lang.String&gt; (property: predictionsPrefix)
  * &nbsp;&nbsp;&nbsp;The object prefix that the predictions use.
  * &nbsp;&nbsp;&nbsp;default: Object.
@@ -199,11 +186,9 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: type
  * </pre>
  *
- * <pre>-zoom &lt;double&gt; (property: zoom)
- * &nbsp;&nbsp;&nbsp;The zoom level in percent.
- * &nbsp;&nbsp;&nbsp;default: 100.0
- * &nbsp;&nbsp;&nbsp;minimum: -1.0
- * &nbsp;&nbsp;&nbsp;maximum: 1600.0
+ * <pre>-comparison &lt;adams.flow.transformer.compareobjectlocations.AbstractComparison&gt; (property: comparison)
+ * &nbsp;&nbsp;&nbsp;The comparison view to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.compareobjectlocations.SideBySide -annotations-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\" -predictions-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\"
  * </pre>
  *
  <!-- options-end -->
@@ -221,9 +206,6 @@ public class CompareObjectLocations
   /** the annotations file to read. */
   protected PlaceholderFile m_AnnotationsFile;
 
-  /** the image overlays for the annotations. */
-  protected ImageOverlay m_AnnotationsOverlay;
-
   /** the annotations object prefix. */
   protected String m_AnnotationsPrefix;
 
@@ -236,50 +218,17 @@ public class CompareObjectLocations
   /** the predictions file to read. */
   protected PlaceholderFile m_PredictionsFile;
 
-  /** the image overlays for the predictions. */
-  protected ImageOverlay m_PredictionsOverlay;
-
   /** the predictions object prefix. */
   protected String m_PredictionsPrefix;
   
   /** the predictions label suffix. */
   protected String m_PredictionsLabelSuffix;
 
-  /** the zoom level. */
-  protected double m_Zoom;
+  /** the comparison view to use. */
+  protected AbstractComparison m_Comparison;
 
-  /** the split pane. */
-  protected BaseSplitPane m_SplitPane;
-
-  /** the image panel with the annotations. */
-  protected ImagePanel m_PanelImageAnnotations;
-
-  /** the image panel with the predictions. */
-  protected ImagePanel m_PanelImagePredictions;
-
-  /** the annotations report. */
-  protected Report m_AnnotationsReport;
-
-  /** the located objects / annotations. */
-  protected LocatedObjects m_AnnotationsLocatedObjects;
-
-  /** the predictions report. */
-  protected Report m_PredictionsReport;
-
-  /** the located objects / predictions. */
-  protected LocatedObjects m_PredictionsLocatedObjects;
-
-  /** the panel with the labels. */
-  protected JPanel m_PanelLabels;
-
-  /** the toggle buttons. */
-  protected List<BaseToggleButton> m_ButtonLabels;
-
-  /** the button group. */
-  protected ButtonGroup m_ButtonGroup;
-
-  /** the last selected label. */
-  protected String m_LastLabel;
+  /** the generated panel. */
+  protected AbstractComparisonPanel m_ComparisonPanel;
 
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
@@ -311,10 +260,6 @@ public class CompareObjectLocations
       new PlaceholderFile());
 
     m_OptionManager.add(
-      "annotations-overlay", "annotationsOverlay",
-      new ObjectLocationsOverlayFromReport());
-
-    m_OptionManager.add(
       "annotations-prefix", "annotationsPrefix",
       "Object.");
 
@@ -331,10 +276,6 @@ public class CompareObjectLocations
       new PlaceholderFile());
 
     m_OptionManager.add(
-      "predictions-overlay", "predictionsOverlay",
-      new ObjectLocationsOverlayFromReport());
-
-    m_OptionManager.add(
       "predictions-prefix", "predictionsPrefix",
       "Object.");
 
@@ -343,22 +284,8 @@ public class CompareObjectLocations
       "type");
 
     m_OptionManager.add(
-      "zoom", "zoom",
-      100.0, -1.0, 1600.0);
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_AnnotationsReport         = new Report();
-    m_AnnotationsLocatedObjects = new LocatedObjects();
-    m_PredictionsReport         = new Report();
-    m_PredictionsLocatedObjects = new LocatedObjects();
-    m_ButtonLabels = new ArrayList<>();
+      "comparison", "comparison",
+      new SideBySide());
   }
 
   /**
@@ -373,10 +300,9 @@ public class CompareObjectLocations
     result  = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "annotationsReader", m_AnnotationsReader, ", ann/reader: ");
     result += QuickInfoHelper.toString(this, "annotationsFile", m_AnnotationsFile, ", ann/file: ");
-    result += QuickInfoHelper.toString(this, "annotationsOverlay", m_AnnotationsOverlay, ", ann/overlay: ");
     result += QuickInfoHelper.toString(this, "predictionsReader", m_PredictionsReader, ", pred/reader: ");
     result += QuickInfoHelper.toString(this, "predictionsFile", m_PredictionsFile, ", pred/file: ");
-    result += QuickInfoHelper.toString(this, "predictionsOverlay", m_PredictionsOverlay, ", pred/overlay: ");
+    result += QuickInfoHelper.toString(this, "comparison", m_Comparison, ", comparison: ");
 
     return result;
   }
@@ -437,35 +363,6 @@ public class CompareObjectLocations
    */
   public String annotationsFileTipText() {
     return "The file containing the annotations.";
-  }
-
-  /**
-   * Sets the overlay to use for the annotations.
-   *
-   * @param value 	the overlay
-   */
-  public void setAnnotationsOverlay(ImageOverlay value) {
-    m_AnnotationsOverlay = value;
-    reset();
-  }
-
-  /**
-   * Returns the overlay to use for the annotations.
-   *
-   * @return 		the overlay
-   */
-  public ImageOverlay getAnnotationsOverlay() {
-    return m_AnnotationsOverlay;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String annotationsOverlayTipText() {
-    return "The overlay to apply to the annotations.";
   }
 
   /**
@@ -585,35 +482,6 @@ public class CompareObjectLocations
   }
 
   /**
-   * Sets the overlay to use for the predictions.
-   *
-   * @param value 	the overlay
-   */
-  public void setPredictionsOverlay(ImageOverlay value) {
-    m_PredictionsOverlay = value;
-    reset();
-  }
-
-  /**
-   * Returns the overlay to use for the predictions.
-   *
-   * @return 		the overlay
-   */
-  public ImageOverlay getPredictionsOverlay() {
-    return m_PredictionsOverlay;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String predictionsOverlayTipText() {
-    return "The overlay to apply to the predictions.";
-  }
-
-  /**
    * Sets the object prefix to use for the predictions.
    *
    * @param value 	the object prefix
@@ -672,27 +540,22 @@ public class CompareObjectLocations
   }
 
   /**
-   * Sets the zoom level in percent (0-1600).
+   * Sets the comparison view to use.
    *
-   * @param value 	the zoom, -1 to fit window, or 0-1600
+   * @param value 	the comparison
    */
-  public void setZoom(double value) {
-    if ((value == -1) || ((value > 0) && (value <= 1600))) {
-      m_Zoom = value;
-      reset();
-    }
-    else {
-      getLogger().warning("Zoom must -1 to fit window or 0 < x < 1600, provided: " + value);
-    }
+  public void setComparison(AbstractComparison value) {
+    m_Comparison = value;
+    reset();
   }
 
   /**
-   * Returns the zoom level in percent.
+   * Returns the comparison view to use.
    *
-   * @return 		the zoom
+   * @return 		the comparison
    */
-  public double getZoom() {
-    return m_Zoom;
+  public AbstractComparison getComparison() {
+    return m_Comparison;
   }
 
   /**
@@ -701,8 +564,8 @@ public class CompareObjectLocations
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String zoomTipText() {
-    return "The zoom level in percent.";
+  public String comparisonTipText() {
+    return "The comparison view to use.";
   }
 
   /**
@@ -730,8 +593,8 @@ public class CompareObjectLocations
    */
   @Override
   public void clearPanel() {
-    m_PanelImageAnnotations.clear();
-    m_PanelImagePredictions.clear();
+    if (m_ComparisonPanel != null)
+      m_ComparisonPanel.clearPanel();
   }
 
   /**
@@ -741,34 +604,8 @@ public class CompareObjectLocations
    */
   @Override
   protected BasePanel newPanel() {
-    BasePanel 		result;
-    JPanel		panel;
-
-    result = new BasePanel();
-    result.setLayout(new BorderLayout());
-
-    m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-    m_SplitPane.setResizeWeight(0.5);
-    result.add(m_SplitPane, BorderLayout.CENTER);
-
-    m_PanelImageAnnotations = new ImagePanel();
-    m_PanelImageAnnotations.setBorder(BorderFactory.createTitledBorder("Annotations"));
-    m_PanelImageAnnotations.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(m_AnnotationsOverlay));
-    m_SplitPane.setLeftComponent(m_PanelImageAnnotations);
-
-    m_PanelImagePredictions = new ImagePanel();
-    m_PanelImagePredictions.setBorder(BorderFactory.createTitledBorder("Predictions"));
-    m_PanelImagePredictions.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(m_PredictionsOverlay));
-    m_SplitPane.setRightComponent(m_PanelImagePredictions);
-
-    panel = new JPanel(new BorderLayout());
-    result.add(panel, BorderLayout.WEST);
-    m_PanelLabels = new JPanel(new GridBagLayout());
-    panel.add(new BaseScrollPane(m_PanelLabels), BorderLayout.CENTER);
-
-    m_ButtonGroup = new ButtonGroup();
-
-    return result;
+    m_ComparisonPanel = m_Comparison.generate(this);
+    return m_ComparisonPanel;
   }
 
   /**
@@ -801,72 +638,19 @@ public class CompareObjectLocations
   }
 
   /**
-   * Filters the objects using the specified label and updates the GUI.
-   *
-   * @param label	the label to restrict display to, empty/null for all
-   */
-  protected void filterObjects(String label) {
-    LocatedObjects	annotations;
-    LocatedObjects	predictions;
-
-    if (label == null)
-      label = "";
-
-    // annotations
-    if (label.isEmpty()) {
-      m_PanelImageAnnotations.setAdditionalProperties(m_AnnotationsReport);
-    }
-    else {
-      annotations = new LocatedObjects();
-      for (LocatedObject obj : m_AnnotationsLocatedObjects) {
-	if (obj.getMetaData().containsKey(m_AnnotationsLabelSuffix)) {
-	  if (obj.getMetaData().get(m_AnnotationsLabelSuffix).toString().equals(label))
-	    annotations.add(obj.getClone());
-	}
-      }
-      m_PanelImageAnnotations.setAdditionalProperties(annotations.toReport(m_AnnotationsPrefix));
-    }
-
-    // predictions
-    if (label.isEmpty()) {
-      m_PanelImagePredictions.setAdditionalProperties(m_PredictionsReport);
-    }
-    else {
-      predictions = new LocatedObjects();
-      for (LocatedObject obj : m_PredictionsLocatedObjects) {
-	if (obj.getMetaData().containsKey(m_PredictionsLabelSuffix)) {
-	  if (obj.getMetaData().get(m_PredictionsLabelSuffix).toString().equals(label))
-	    predictions.add(obj.getClone());
-	}
-      }
-      m_PanelImagePredictions.setAdditionalProperties(predictions.toReport(m_PredictionsPrefix));
-    }
-  }
-
-  /**
    * Displays the token (the panel and dialog have already been created at
    * this stage).
    *
    * @param token	the token to display
    */
   protected void display(Token token) {
-    AbstractImageContainer	cont;
-    double			zoom;
+    Report 			annRep;
+    LocatedObjects 		annObj;
+    Report 			predRep;
+    LocatedObjects 		predObj;
     List<Report> 		reports;
     Set<String>			labels;
     List<String>		labelsSorted;
-    BaseToggleButton		button;
-    GridBagLayout 		layout;
-    GridBagConstraints 		con;
-    int 			gapVertical;
-    int 			gapHorizontal;
-    int				i;
-    JPanel			panel;
-
-    if (m_Zoom == -1)
-      zoom = m_Zoom;
-    else
-      zoom = m_Zoom / 100.0;
 
     // read annotations
     try {
@@ -875,14 +659,15 @@ public class CompareObjectLocations
       if (reports.size() != 1)
         getLogger().warning("Expected to find one annotations report, but found: " + reports.size());
       if (reports.size() > 0)
-	m_AnnotationsReport = reports.get(0);
+	annRep = reports.get(0);
       else
-        m_AnnotationsReport = new Report();
+        annRep = new Report();
     }
     catch (Exception e) {
+      annRep = new Report();
       getLogger().log(Level.SEVERE, "Failed to read annotations report '" + m_AnnotationsFile + "'!", e);
     }
-    m_AnnotationsLocatedObjects = LocatedObjects.fromReport(m_AnnotationsReport, m_AnnotationsPrefix);
+    annObj = LocatedObjects.fromReport(annRep, m_AnnotationsPrefix);
 
     // read predictions
     try {
@@ -891,22 +676,23 @@ public class CompareObjectLocations
       if (reports.size() != 1)
         getLogger().warning("Expected to find one predictions report, but found: " + reports.size());
       if (reports.size() > 0)
-	m_PredictionsReport = reports.get(0);
+	predRep = reports.get(0);
       else
-        m_PredictionsReport = new Report();
+        predRep = new Report();
     }
     catch (Exception e) {
+      predRep = new Report();
       getLogger().log(Level.SEVERE, "Failed to read predictions report '" + m_PredictionsFile + "'!", e);
     }
-    m_PredictionsLocatedObjects = LocatedObjects.fromReport(m_PredictionsReport, m_PredictionsPrefix);
+    predObj = LocatedObjects.fromReport(predRep, m_PredictionsPrefix);
 
     // determine labels
     labels = new HashSet<>();
-    for (LocatedObject obj: m_AnnotationsLocatedObjects) {
+    for (LocatedObject obj: annObj) {
       if (obj.getMetaData().containsKey(m_AnnotationsLabelSuffix))
 	labels.add("" + obj.getMetaData().get(m_AnnotationsLabelSuffix));
     }
-    for (LocatedObject obj: m_PredictionsLocatedObjects) {
+    for (LocatedObject obj: predObj) {
       if (obj.getMetaData().containsKey(m_PredictionsLabelSuffix))
 	labels.add("" + obj.getMetaData().get(m_PredictionsLabelSuffix));
     }
@@ -914,68 +700,7 @@ public class CompareObjectLocations
     Collections.sort(labelsSorted);
 
     // update GUI
-    cont = token.getPayload(AbstractImageContainer.class);
-    m_PanelImageAnnotations.setCurrentImage(cont);
-    m_PanelImageAnnotations.setAdditionalProperties(m_AnnotationsReport);
-    m_PanelImageAnnotations.setScale(zoom);
-    m_PanelImagePredictions.setCurrentImage(cont);
-    m_PanelImagePredictions.setAdditionalProperties(m_PredictionsReport);
-    m_PanelImagePredictions.setScale(zoom);
-
-    gapHorizontal = 5;
-    gapVertical   = 2;
-    layout = new GridBagLayout();
-    m_PanelLabels.setLayout(layout);
-
-    for (BaseToggleButton b: m_ButtonLabels)
-      m_ButtonGroup.remove(b);
-    m_ButtonLabels.clear();
-    m_PanelLabels.removeAll();
-    button = new BaseToggleButton("All");
-    button.addActionListener((ActionEvent e) -> filterObjects(""));
-    button.setToolTipText(button.getText());
-    m_ButtonGroup.add(button);
-    m_ButtonLabels.add(button);
-    for (final String label: labelsSorted) {
-      button = new BaseToggleButton(label);
-      button.addActionListener((ActionEvent e) -> filterObjects(label));
-      button.setToolTipText(button.getText());
-      m_ButtonGroup.add(button);
-      m_ButtonLabels.add(button);
-    }
-
-    for (i = 0; i < m_ButtonLabels.size(); i++) {
-      con = new GridBagConstraints();
-      con.anchor  = GridBagConstraints.WEST;
-      con.fill    = GridBagConstraints.HORIZONTAL;
-      con.gridy   = i;
-      con.gridx   = 0;
-      con.weightx = 100;
-      con.ipadx   = 20;
-      con.insets  = new Insets(gapVertical, gapHorizontal, gapVertical, gapHorizontal);
-      layout.setConstraints(m_ButtonLabels.get(i), con);
-      m_PanelLabels.add(m_ButtonLabels.get(i));
-    }
-
-    // filler at bottom
-    panel         = new JPanel();
-    con           = new GridBagConstraints();
-    con.anchor    = GridBagConstraints.WEST;
-    con.fill      = GridBagConstraints.BOTH;
-    con.gridy     = m_ButtonLabels.size();
-    con.gridx     = 0;
-    con.weighty   = 100;
-    con.gridwidth = GridBagConstraints.REMAINDER;
-    layout.setConstraints(panel, con);
-    m_PanelLabels.add(panel);
-
-    // use last label again, if possible
-    if (!labels.contains(m_LastLabel))
-      m_LastLabel = "";
-    if (m_LastLabel.isEmpty())
-      m_ButtonLabels.get(0).doClick();
-    else if (labelsSorted.contains(m_LastLabel))
-      m_ButtonLabels.get(labelsSorted.indexOf(m_LastLabel) + 1).doClick();
+    m_ComparisonPanel.display(token.getPayload(AbstractImageContainer.class), labelsSorted, annRep, annObj, predRep, predObj);
   }
 
   /**

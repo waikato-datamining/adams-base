@@ -47,6 +47,10 @@ adams.data.image.transformer.whitebalance.AbstractWhiteBalanceAlgorithm=\
 adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation=\
   adams.data.image.multiimageoperation
 
+# the different comparison views of object locations
+adams.flow.transformer.compareobjectlocations.AbstractComparison=\
+  adams.flow.transformer.compareobjectlocations
+
 # the draw operations
 adams.flow.transformer.draw.AbstractDrawOperation=\
   adams.flow.transformer.draw
