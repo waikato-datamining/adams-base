@@ -14,7 +14,7 @@
  */
 
 /*
- * SideBySide.java
+ * Combined.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
@@ -24,42 +24,43 @@ import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
 import adams.flow.transformer.CompareObjectLocations;
+import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
-import adams.gui.core.BaseSplitPane;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
+import adams.gui.visualization.image.MultiImageOverlay;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 
-import javax.swing.BorderFactory;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.List;
 
 /**
- * Generates a side-by-side comparison.
+ * Displays the annotations and predictions with different colors.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SideBySide
+public class Combined
   extends AbstractComparison {
 
-  private static final long serialVersionUID = 1595413312168655696L;
+  private static final long serialVersionUID = -6214679316931952392L;
 
   /**
-   * Panel for displaying the annotations/predictions side-by-side.
+   * Displays the annotations/predictions in a single .
    */
-  public static class SideBySidePanel
+  public static class CombinedPanel
     extends AbstractComparisonPanel {
 
-    private static final long serialVersionUID = -4668850944632082746L;
+    private static final long serialVersionUID = 385817392712324238L;
 
-    /** the split pane. */
-    protected BaseSplitPane m_SplitPane;
+    public final static String SUFFIX_TYPE = "type";
 
-    /** the image panel with the annotations. */
-    protected ImagePanel m_PanelImageAnnotations;
+    public static final String PREFIX_ANNOTATION = "Annotation.";
 
-    /** the image panel with the predictions. */
-    protected ImagePanel m_PanelImagePredictions;
+    public static final String PREFIX_PREDICTION = "Prediction.";
+
+    /** the image panel. */
+    protected ImagePanel m_PanelImage;
 
     /** the annotations report. */
     protected Report m_AnnotationsReport;
@@ -82,6 +83,9 @@ public class SideBySide
     /** the zoom level. */
     protected double m_Zoom;
 
+    /** the combined report. */
+    protected Report m_CombinedReport;
+
     /**
      * Initializes the members.
      */
@@ -89,10 +93,7 @@ public class SideBySide
     protected void initialize() {
       super.initialize();
 
-      m_AnnotationsReport         = new Report();
-      m_AnnotationsLocatedObjects = new LocatedObjects();
-      m_PredictionsReport         = new Report();
-      m_PredictionsLocatedObjects = new LocatedObjects();
+      m_CombinedReport = new Report();
     }
 
     /**
@@ -102,17 +103,8 @@ public class SideBySide
     protected void initGUI() {
       super.initGUI();
 
-      m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-      m_SplitPane.setResizeWeight(0.5);
-      add(m_SplitPane, BorderLayout.CENTER);
-
-      m_PanelImageAnnotations = new ImagePanel();
-      m_PanelImageAnnotations.setBorder(BorderFactory.createTitledBorder("Annotations"));
-      m_SplitPane.setLeftComponent(m_PanelImageAnnotations);
-
-      m_PanelImagePredictions = new ImagePanel();
-      m_PanelImagePredictions.setBorder(BorderFactory.createTitledBorder("Predictions"));
-      m_SplitPane.setRightComponent(m_PanelImagePredictions);
+      m_PanelImage = new ImagePanel();
+      add(m_PanelImage, BorderLayout.CENTER);
     }
 
     /**
@@ -125,39 +117,21 @@ public class SideBySide
     }
 
     /**
-     * Sets the overlay to use for the annotations.
+     * Sets the overlay to use for the objects.
      *
      * @param value 	the overlay
      */
-    public void setAnnotationsOverlay(ImageOverlay value) {
-      m_PanelImageAnnotations.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(value));
+    public void setOverlay(ImageOverlay value) {
+      m_PanelImage.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(value));
     }
 
     /**
-     * Sets the report suffix that the annotations use for storing the label.
-     *
-     * @param value 	the suffix
+     * Clears the content of the panel.
      */
-    public void setAnnotationsLabelSuffix(String value) {
-      m_AnnotationsLabelSuffix = value;
-    }
-
-    /**
-     * Sets the overlay to use for the predictions.
-     *
-     * @param value 	the overlay
-     */
-    public void setPredictionsOverlay(ImageOverlay value) {
-      m_PanelImagePredictions.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(value));
-    }
-
-    /**
-     * Sets the report suffix that the predictions use for storing the label.
-     *
-     * @param value 	the suffix
-     */
-    public void setPredictionsLabelSuffix(String value) {
-      m_PredictionsLabelSuffix = value;
+    @Override
+    public void clearPanel() {
+      if (m_PanelImage != null)
+	m_PanelImage.clear();
     }
 
     /**
@@ -167,17 +141,30 @@ public class SideBySide
      */
     @Override
     protected void filterObjects(String label) {
-      m_PanelImageAnnotations.setAdditionalProperties(filterObjects(label, m_AnnotationsLocatedObjects, m_AnnotationsLabelSuffix, m_AnnotationsPrefix));
-      m_PanelImagePredictions.setAdditionalProperties(filterObjects(label, m_PredictionsLocatedObjects, m_PredictionsLabelSuffix, m_PredictionsPrefix));
+      Report		combined;
+
+      combined = new Report();
+      combined.mergeWith(filterObjects(label, m_AnnotationsLocatedObjects, SUFFIX_TYPE, PREFIX_ANNOTATION));
+      combined.mergeWith(filterObjects(label, m_PredictionsLocatedObjects, SUFFIX_TYPE, PREFIX_PREDICTION));
+      m_PanelImage.setAdditionalProperties(combined);
     }
 
     /**
-     * Clears the content of the panel.
+     * Updates the label type.
+     *
+     * @param objects	the objects to update
+     * @param suffix	the label suffix used
+     * @return		the new objects using {@link #SUFFIX_TYPE} for the label
      */
-    @Override
-    public void clearPanel() {
-      m_PanelImageAnnotations.clear();
-      m_PanelImagePredictions.clear();
+    protected LocatedObjects updateLabelType(LocatedObjects objects, String suffix) {
+      LocatedObjects 	result;
+
+      result = new LocatedObjects();
+      for (LocatedObject obj: objects)
+	result.add(obj.getClone());
+      result.renameMetaDataKey(suffix, SUFFIX_TYPE);
+
+      return result;
     }
 
     /**
@@ -200,26 +187,28 @@ public class SideBySide
 	zoom = m_Zoom / 100.0;
 
       m_AnnotationsReport         = repAnn;
-      m_AnnotationsLocatedObjects = objAnn;
-      m_PanelImageAnnotations.setCurrentImage(cont);
-      m_PanelImageAnnotations.setAdditionalProperties(m_AnnotationsReport);
-      m_PanelImageAnnotations.setScale(zoom);
+      m_AnnotationsLocatedObjects = updateLabelType(objAnn, m_AnnotationsLabelSuffix);
 
       m_PredictionsReport         = repPred;
-      m_PredictionsLocatedObjects = objPred;
-      m_PanelImagePredictions.setCurrentImage(cont);
-      m_PanelImagePredictions.setAdditionalProperties(m_PredictionsReport);
-      m_PanelImagePredictions.setScale(zoom);
+      m_PredictionsLocatedObjects = updateLabelType(objPred, m_PredictionsLabelSuffix);
+
+      m_CombinedReport = new Report();
+      m_CombinedReport.mergeWith(m_AnnotationsLocatedObjects.toReport(PREFIX_ANNOTATION));
+      m_CombinedReport.mergeWith(m_PredictionsLocatedObjects.toReport(PREFIX_PREDICTION));
+
+      m_PanelImage.setCurrentImage(cont);
+      m_PanelImage.setAdditionalProperties(m_CombinedReport);
+      m_PanelImage.setScale(zoom);
 
       updateButtons(labels);
     }
   }
 
-  /** the image overlays for the annotations. */
-  protected ImageOverlay m_AnnotationsOverlay;
+  /** the color for the annotations. */
+  protected Color m_AnnotationsColor;
 
-  /** the image overlays for the predictions. */
-  protected ImageOverlay m_PredictionsOverlay;
+  /** the color for the predictions. */
+  protected Color m_PredictionsColor;
 
   /** the zoom level. */
   protected double m_Zoom;
@@ -231,7 +220,7 @@ public class SideBySide
    */
   @Override
   public String globalInfo() {
-    return "Generates a side-by-side comparison.";
+    return "Displays the annotations and predictions with different colors.";
   }
 
   /**
@@ -242,12 +231,12 @@ public class SideBySide
     super.defineOptions();
 
     m_OptionManager.add(
-      "annotations-overlay", "annotationsOverlay",
-      new ObjectLocationsOverlayFromReport());
+      "annotations-color", "annotationsColor",
+      Color.BLUE);
 
     m_OptionManager.add(
-      "predictions-overlay", "predictionsOverlay",
-      new ObjectLocationsOverlayFromReport());
+      "predictions-color", "predictionsColor",
+      Color.RED);
 
     m_OptionManager.add(
       "zoom", "zoom",
@@ -255,22 +244,22 @@ public class SideBySide
   }
 
   /**
-   * Sets the overlay to use for the annotations.
+   * Sets the color to use for the annotations.
    *
-   * @param value 	the overlay
+   * @param value 	the color
    */
-  public void setAnnotationsOverlay(ImageOverlay value) {
-    m_AnnotationsOverlay = value;
+  public void setAnnotationsColor(Color value) {
+    m_AnnotationsColor = value;
     reset();
   }
 
   /**
-   * Returns the overlay to use for the annotations.
+   * Returns the color to use for the annotations.
    *
-   * @return 		the overlay
+   * @return 		the color
    */
-  public ImageOverlay getAnnotationsOverlay() {
-    return m_AnnotationsOverlay;
+  public Color getAnnotationsColor() {
+    return m_AnnotationsColor;
   }
 
   /**
@@ -279,27 +268,27 @@ public class SideBySide
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String annotationsOverlayTipText() {
-    return "The overlay to apply to the annotations.";
+  public String annotationsColorTipText() {
+    return "The color to use for the annotations.";
   }
 
   /**
-   * Sets the overlay to use for the predictions.
+   * Sets the color to use for the predictions.
    *
-   * @param value 	the overlay
+   * @param value 	the color
    */
-  public void setPredictionsOverlay(ImageOverlay value) {
-    m_PredictionsOverlay = value;
+  public void setPredictionsColor(Color value) {
+    m_PredictionsColor = value;
     reset();
   }
 
   /**
-   * Returns the overlay to use for the predictions.
+   * Returns the color to use for the predictions.
    *
-   * @return 		the overlay
+   * @return 		the color
    */
-  public ImageOverlay getPredictionsOverlay() {
-    return m_PredictionsOverlay;
+  public Color getPredictionsColor() {
+    return m_PredictionsColor;
   }
 
   /**
@@ -308,8 +297,8 @@ public class SideBySide
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String predictionsOverlayTipText() {
-    return "The overlay to apply to the predictions.";
+  public String predictionsColorTipText() {
+    return "The color to use for the predictions.";
   }
 
   /**
@@ -354,18 +343,25 @@ public class SideBySide
    */
   @Override
   public AbstractComparisonPanel generate(CompareObjectLocations owner) {
-    SideBySidePanel	result;
+    CombinedPanel			result;
+    ObjectLocationsOverlayFromReport	annotations;
+    ObjectLocationsOverlayFromReport	predictions;
+    MultiImageOverlay			multi;
 
-    result = new SideBySidePanel();
+    annotations = new ObjectLocationsOverlayFromReport();
+    annotations.setColor(m_AnnotationsColor);
+    annotations.setPrefix(CombinedPanel.PREFIX_ANNOTATION);
+
+    predictions = new ObjectLocationsOverlayFromReport();
+    predictions.setColor(m_PredictionsColor);
+    predictions.setPrefix(CombinedPanel.PREFIX_PREDICTION);
+
+    multi = new MultiImageOverlay();
+    multi.setOverlays(new ImageOverlay[]{annotations, predictions});
+
+    result = new CombinedPanel();
     result.setZoom(m_Zoom);
-
-    result.setAnnotationsOverlay(m_AnnotationsOverlay);
-    result.setAnnotationsPrefix(owner.getAnnotationsPrefix());
-    result.setAnnotationsLabelSuffix(owner.getAnnotationsLabelSuffix());
-
-    result.setPredictionsOverlay(m_PredictionsOverlay);
-    result.setPredictionsPrefix(owner.getPredictionsPrefix());
-    result.setPredictionsLabelSuffix(owner.getPredictionsLabelSuffix());
+    result.setOverlay(multi);
 
     return result;
   }

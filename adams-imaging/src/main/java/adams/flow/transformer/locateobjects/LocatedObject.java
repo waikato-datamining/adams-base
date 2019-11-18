@@ -605,6 +605,28 @@ public class LocatedObject
   }
 
   /**
+   * Renames the meta-data key.
+   *
+   * @param oldKey	the old key
+   * @param newKey	the new key
+   * @return		if key got updated
+   */
+  public boolean renameMetaDataKey(String oldKey, String newKey) {
+    boolean	result;
+    Object	value;
+
+    result = false;
+
+    if (getMetaData().containsKey(oldKey)) {
+      value = getMetaData().remove(oldKey);
+      getMetaData().put(newKey, value);
+      result = true;
+    }
+
+    return result;
+  }
+
+  /**
    * Compares this object with the provided one. Bounding box, then polygon (if present).
    *
    * @param o		the object to compare with

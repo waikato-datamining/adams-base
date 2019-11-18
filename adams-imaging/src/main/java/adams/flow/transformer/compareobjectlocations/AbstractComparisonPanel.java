@@ -230,10 +230,10 @@ public abstract class AbstractComparisonPanel
    *
    * @param cont	the image to display
    * @param labels 	the object labels
-   * @param reportAnn	the report with the annotations (ground truth)
+   * @param repAnn	the report with the annotations (ground truth)
    * @param objAnn	the object locations (ground truth from report)
-   * @param reportPred	the report with the predictions
+   * @param repPred	the report with the predictions
    * @param objPred	the object locations (predictions)
    */
-  public abstract void display(AbstractImageContainer cont, List<String> labels, Report reportAnn, LocatedObjects objAnn, Report reportPred, LocatedObjects objPred);
+  public abstract void display(AbstractImageContainer cont, List<String> labels, Report repAnn, LocatedObjects objAnn, Report repPred, LocatedObjects objPred);
 }

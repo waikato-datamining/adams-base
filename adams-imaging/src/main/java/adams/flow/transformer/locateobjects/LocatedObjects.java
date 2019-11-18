@@ -15,7 +15,7 @@
 
 /*
  * LocatedObjects.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -39,7 +39,6 @@ import java.util.Map;
  * Container for located objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LocatedObjects
   extends ArrayList<LocatedObject> {
@@ -215,6 +214,27 @@ public class LocatedObjects
 
     for (i = 0; i < size(); i++)
       get(i).scale(scale);
+  }
+
+  /**
+   * Renames the meta-data key in all objects.
+   *
+   * @param oldKey	the old key
+   * @param newKey	the new key
+   * @return		how many keys were updated
+   */
+  public int renameMetaDataKey(String oldKey, String newKey) {
+    int		result;
+    int		i;
+
+    result = 0;
+
+    for (i = 0; i < size(); i++) {
+      if (get(i).renameMetaDataKey(oldKey, newKey))
+        result++;
+    }
+
+    return result;
   }
 
   /**
