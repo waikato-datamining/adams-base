@@ -93,9 +93,9 @@ public class KeepRange
 
     tmpStr = Utils.getOption("R", options);
     if (!tmpStr.isEmpty())
-      setRowRange(new UnorderedRange(tmpStr));
+      setRowRange(tmpStr);
     else
-      setRowRange(new UnorderedRange(UnorderedRange.ALL));
+      setRowRange(UnorderedRange.ALL);
 
     super.setOptions(options);
   }
@@ -112,7 +112,7 @@ public class KeepRange
     result = new ArrayList<>(Arrays.asList(super.getOptions()));
 
     result.add("-R");
-    result.add(getRowRange().getRange());
+    result.add(getRowRange());
 
     return result.toArray(new String[result.size()]);
   }
@@ -122,9 +122,11 @@ public class KeepRange
    *
    * @param value 	the index (1-based)
    */
-  public void setRowRange(UnorderedRange value) {
-    m_RowRange = value;
-    reset();
+  public void setRowRange(String value) {
+    if (UnorderedRange.isValid(value, -1)) {
+      m_RowRange.setRange(value);
+      reset();
+    }
   }
 
   /**
@@ -132,8 +134,8 @@ public class KeepRange
    *
    * @return 		the range (1-based)
    */
-  public UnorderedRange getRowRange() {
-    return m_RowRange;
+  public String getRowRange() {
+    return m_RowRange.getRange();
   }
 
   /**
