@@ -31,8 +31,11 @@ import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.MultiImageOverlay;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.util.List;
 
 /**
@@ -61,6 +64,15 @@ public class Combined
 
     /** the image panel. */
     protected ImagePanel m_PanelImage;
+
+    /** the panel with the colors. */
+    protected JPanel m_PanelColors;
+
+    /** the label for the annotation color. */
+    protected JLabel m_LabelAnnotationsColor;
+
+    /** the label for the prediction color. */
+    protected JLabel m_LabelPredictionsColor;
 
     /** the annotations report. */
     protected Report m_AnnotationsReport;
@@ -105,6 +117,19 @@ public class Combined
 
       m_PanelImage = new ImagePanel();
       add(m_PanelImage, BorderLayout.CENTER);
+
+      m_PanelColors = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      add(m_PanelColors, BorderLayout.SOUTH);
+
+      m_LabelAnnotationsColor = new JLabel("         ");
+      m_LabelAnnotationsColor.setOpaque(true);
+      m_LabelPredictionsColor = new JLabel("         ");
+      m_LabelPredictionsColor.setOpaque(true);
+
+      m_PanelColors.add(new JLabel("Annotations"));
+      m_PanelColors.add(m_LabelAnnotationsColor);
+      m_PanelColors.add(new JLabel("Predictions"));
+      m_PanelColors.add(m_LabelPredictionsColor);
     }
 
     /**
@@ -123,6 +148,24 @@ public class Combined
      */
     public void setOverlay(ImageOverlay value) {
       m_PanelImage.addImageOverlay((ImageOverlay) OptionUtils.shallowCopy(value));
+    }
+
+    /**
+     * Sets the color to use for the annotations.
+     *
+     * @param value 	the color
+     */
+    public void setAnnotationsColor(Color value) {
+      m_LabelAnnotationsColor.setBackground(value);
+    }
+
+    /**
+     * Sets the color to use for the predictions.
+     *
+     * @param value 	the color
+     */
+    public void setPredictionsColor(Color value) {
+      m_LabelPredictionsColor.setBackground(value);
     }
 
     /**
@@ -362,6 +405,8 @@ public class Combined
     result = new CombinedPanel();
     result.setZoom(m_Zoom);
     result.setOverlay(multi);
+    result.setAnnotationsColor(m_AnnotationsColor);
+    result.setPredictionsColor(m_PredictionsColor);
 
     return result;
   }
