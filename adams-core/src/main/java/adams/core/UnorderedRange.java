@@ -434,7 +434,7 @@ public class UnorderedRange
    * Returns whether the range string is valid.
    *
    * @param s		the range to check
-   * @param max		the maximum
+   * @param max		the maximum (-1 for uninitialized)
    * @return		true if a valid range string
    */
   public static boolean isValid(String s, int max) {
