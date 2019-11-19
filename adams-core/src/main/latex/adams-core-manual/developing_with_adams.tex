@@ -608,8 +608,17 @@ pattern:
     org\.funky\.conversion\..*Experimental.*
 \end{verbatim}
 
-\subsection{Static class discovery}
-TODO
+\subsection{Applications without dynamic class discovery}
+In order to speed up start up time, applications tend to get built with
+dynamic class discovery turned off. Instead, they use class/package
+hierarchies that were determined at build time. When starting up ADAMS, you
+will see the following in the terminal:
+\begin{verbatim}
+adams.core.ClassLister: Using statically defined classes/packages
+\end{verbatim}
+For these applications to use dynamic class discovery again, simply place
+an empty \textit{ClassLister.classes} file in the classpath. E.g., in the
+directory containing the \textit{bin} sub-directory with the scripts.
 
 \section{Creating a new actor}
 Being a workflow-centric application, it is most likely the case that a new
