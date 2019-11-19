@@ -15,11 +15,12 @@
 
 /*
  * SequenceToArray.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseClassname;
@@ -108,7 +109,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SequenceToArray
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = 8411367398473311627L;
@@ -140,6 +142,15 @@ public class SequenceToArray
 	+ "In case of unspecified length (ie -1), an array containing all "
 	+ "elements collected so far is output each time a token arrives, "
 	+ "i.e., the internal buffer never gets reset.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{ArrayToSequence.class};
   }
 
   /**

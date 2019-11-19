@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseClassname;
 import adams.flow.core.Token;
@@ -89,7 +90,8 @@ import java.util.Collection;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ArrayToCollection
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ClassCrossReference {
 
   private static final long serialVersionUID = 558755282327118795L;
 
@@ -104,6 +106,15 @@ public class ArrayToCollection
   @Override
   public String globalInfo() {
     return "Turns an array into a collection.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{CollectionToArray.class};
   }
 
   /**

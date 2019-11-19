@@ -15,11 +15,12 @@
 
 /*
  * ObjectArrayToPrimitiveArray.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.ClassCrossReference;
 import adams.core.Utils;
 import adams.flow.core.Token;
 
@@ -79,10 +80,10 @@ import java.lang.reflect.Array;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ObjectArrayToPrimitiveArray
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = 2028596035749723219L;
@@ -95,6 +96,15 @@ public class ObjectArrayToPrimitiveArray
   @Override
   public String globalInfo() {
     return "Turns an object array into an primitive one. Depending on the input type, either an int or double array.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{PrimitiveArrayToObjectArray.class};
   }
 
   /**
