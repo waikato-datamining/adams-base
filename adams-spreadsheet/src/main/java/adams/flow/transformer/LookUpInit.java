@@ -13,13 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LookUpInit.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.util.HashMap;
 
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.LookUpHelper;
@@ -27,6 +25,8 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUpdater;
+
+import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -95,7 +95,6 @@ import adams.flow.control.StorageUpdater;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LookUpInit
   extends AbstractSpreadSheetTransformer
@@ -309,16 +308,18 @@ public class LookUpInit
     SpreadSheet			sheet;
     HashMap<String,Object>	lookup;
     StringBuilder		error;
-    
-    result = null;
-    
-    sheet  = (SpreadSheet) m_InputToken.getPayload();
-    error  = new StringBuilder();
-    lookup = LookUpHelper.load(sheet, m_KeyColumn.getIndex(), m_ValueColumn.getIndex(), m_UseNative, error);
-    if (lookup == null)
-      result = error.toString();
-    else
-      getStorageHandler().getStorage().put(m_StorageName, lookup);
+
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
+
+    if (result == null) {
+      sheet = (SpreadSheet) m_InputToken.getPayload();
+      error = new StringBuilder();
+      lookup = LookUpHelper.load(sheet, m_KeyColumn.getIndex(), m_ValueColumn.getIndex(), m_UseNative, error);
+      if (lookup == null)
+        result = error.toString();
+      else
+        getStorageHandler().getStorage().put(m_StorageName, lookup);
+    }
     
     if (result == null)
       m_OutputToken = m_InputToken;

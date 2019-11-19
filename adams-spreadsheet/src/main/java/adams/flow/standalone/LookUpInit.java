@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LookUpInit.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -82,7 +82,6 @@ import adams.flow.transformer.LookUpAdd;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LookUpInit
   extends AbstractStandalone
@@ -179,7 +178,13 @@ public class LookUpInit
    */
   @Override
   protected String doExecute() {
-    getStorageHandler().getStorage().put(m_StorageName, LookUpHelper.newTable());
-    return null;
+    String 	result;
+
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
+
+    if (result == null)
+      getStorageHandler().getStorage().put(m_StorageName, LookUpHelper.newTable());
+
+    return result;
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * Publish.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -186,18 +186,21 @@ public class Publish
     Storage 			storage;
     PublishSubscribeHandler	handler;
 
-    result  = null;
-    handler = null;
-    storage = getStorageHandler().getStorage();
-    if (!storage.has(m_StorageName))
-      result = "Storage item does not exist: " + m_StorageName;
-    else if (!(storage.get(m_StorageName) instanceof PublishSubscribeHandler))
-      result = "Storage item '" + m_StorageName + "' is not a " + Utils.classToString(PublishSubscribeHandler.class) + "!";
-    else
-      handler = (PublishSubscribeHandler) storage.get(m_StorageName);
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
-    if (handler != null)
-      handler.publish(this, m_InputToken.getPayload());
+    if (result == null) {
+      handler = null;
+      storage = getStorageHandler().getStorage();
+      if (!storage.has(m_StorageName))
+        result = "Storage item does not exist: " + m_StorageName;
+      else if (!(storage.get(m_StorageName) instanceof PublishSubscribeHandler))
+        result = "Storage item '" + m_StorageName + "' is not a " + Utils.classToString(PublishSubscribeHandler.class) + "!";
+      else
+        handler = (PublishSubscribeHandler) storage.get(m_StorageName);
+
+      if (handler != null)
+        handler.publish(this, m_InputToken.getPayload());
+    }
 
     return result;
   }

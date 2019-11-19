@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CounterInit.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -94,7 +94,6 @@ import java.lang.reflect.Array;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CounterInit
   extends AbstractTransformer
@@ -254,53 +253,55 @@ public class CounterInit
     Object		array;
     int			i;
     
-    result = null;
-    
-    if (m_InputToken.getPayload() instanceof SpreadSheet) {
-      sheet  = (SpreadSheet) m_InputToken.getPayload();
-      valCol = -1;
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
-      if (sheet.getColumnCount() < 1)
-	result = "Spreadsheet must have at least 1 column, available: " + sheet.getColumnCount();
+    if (result == null) {
+      if (m_InputToken.getPayload() instanceof SpreadSheet) {
+	sheet = (SpreadSheet) m_InputToken.getPayload();
+	valCol = -1;
 
-      // value
-      if (result == null) {
-	m_Column.setMax(sheet.getColumnCount());
-	valCol = m_Column.getIntIndex();
-	if (valCol == -1)
-	  result = "Failed to locate column: " + m_Column.getIndex();
-      }
+	if (sheet.getColumnCount() < 1)
+	  result = "Spreadsheet must have at least 1 column, available: " + sheet.getColumnCount();
 
-      // create counter
-      if (result == null) {
-	counter = new NamedCounter();
-	for (Row row: sheet.rows()) {
-	  if (!row.hasCell(valCol))
-	    continue;
-	  val = row.getCell(valCol).getContent();
-	  if (val != null) {
-	    counter.next(val);
-	    if (isLoggingEnabled())
-	      getLogger().info("Counting: '" + val + "' -> " + counter.current(val));
-	  }
+	// value
+	if (result == null) {
+	  m_Column.setMax(sheet.getColumnCount());
+	  valCol = m_Column.getIntIndex();
+	  if (valCol == -1)
+	    result = "Failed to locate column: " + m_Column.getIndex();
 	}
-	getStorageHandler().getStorage().put(m_StorageName, counter);
+
+	// create counter
+	if (result == null) {
+	  counter = new NamedCounter();
+	  for (Row row : sheet.rows()) {
+	    if (!row.hasCell(valCol))
+	      continue;
+	    val = row.getCell(valCol).getContent();
+	    if (val != null) {
+	      counter.next(val);
+	      if (isLoggingEnabled())
+		getLogger().info("Counting: '" + val + "' -> " + counter.current(val));
+	    }
+	  }
+	  getStorageHandler().getStorage().put(m_StorageName, counter);
+	}
       }
-    }
-    else {
-      array   = m_InputToken.getPayload();
-      counter = new NamedCounter();
-      for (i = 0; i < Array.getLength(array); i++) {
-	val = "" + Array.get(array, i);
-	counter.next(val);
-	if (isLoggingEnabled())
-	  getLogger().info("Counting: '" + val + "' -> " + counter.current(val));
+      else {
+	array = m_InputToken.getPayload();
+	counter = new NamedCounter();
+	for (i = 0; i < Array.getLength(array); i++) {
+	  val = "" + Array.get(array, i);
+	  counter.next(val);
+	  if (isLoggingEnabled())
+	    getLogger().info("Counting: '" + val + "' -> " + counter.current(val));
+	}
       }
     }
     
     if (result == null)
       m_OutputToken = m_InputToken;
-    
+
     return result;
   }
 }

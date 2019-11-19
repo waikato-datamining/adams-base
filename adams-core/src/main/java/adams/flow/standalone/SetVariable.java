@@ -891,20 +891,24 @@ public class SetVariable
     String	result;
     String	value;
 
-    result = null;
+    result = getOptionManager().ensureVariableForPropertyExists("variableName");
+    if (result == null)
+      result = getOptionManager().ensureVariableForPropertyExists("variableValue");
 
     value = null;
-    if (m_OverrideWithEnvVar) {
-      if (m_EnvVariable.isEmpty()) {
-	result = "No environment variable specified!";
-      }
-      else {
-	value = System.getenv(m_EnvVariable);
-	if (value == null) {
-	  if (!m_EnvVarOptional)
-	    result = "Environment variable '" + m_EnvVariable + "' not set!";
-	  else if (isLoggingEnabled())
-	    getLogger().info("Environment variable '" + m_EnvVariable + "' not set?");
+    if (result == null) {
+      if (m_OverrideWithEnvVar) {
+	if (m_EnvVariable.isEmpty()) {
+	  result = "No environment variable specified!";
+	}
+	else {
+	  value = System.getenv(m_EnvVariable);
+	  if (value == null) {
+	    if (!m_EnvVarOptional)
+	      result = "Environment variable '" + m_EnvVariable + "' not set!";
+	    else if (isLoggingEnabled())
+	      getLogger().info("Environment variable '" + m_EnvVariable + "' not set?");
+	  }
 	}
       }
     }

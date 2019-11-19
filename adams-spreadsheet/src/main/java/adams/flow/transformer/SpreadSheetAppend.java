@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetAppend.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -89,7 +89,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetAppend
   extends AbstractInPlaceSpreadSheetTransformer
@@ -200,44 +199,46 @@ public class SpreadSheetAppend
     Row			newRow;
     String		key;
 
-    result = null;
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
-    synchronized(getStorageHandler().getStorage()) {
-      stored = null;
-      if (getStorageHandler().getStorage().has(m_StorageName))
-	stored = (SpreadSheet) getStorageHandler().getStorage().get(m_StorageName);
-      if (isLoggingEnabled())
-	getLogger().info("Spreadsheet '" + m_StorageName + "' available from storage: " + (stored != null));
+    if (result == null) {
+      synchronized (getStorageHandler().getStorage()) {
+	stored = null;
+	if (getStorageHandler().getStorage().has(m_StorageName))
+	  stored = (SpreadSheet) getStorageHandler().getStorage().get(m_StorageName);
+	if (isLoggingEnabled())
+	  getLogger().info("Spreadsheet '" + m_StorageName + "' available from storage: " + (stored != null));
 
-      sheet = (SpreadSheet) m_InputToken.getPayload();
-      if (stored == null) {
-	stored       = sheet.newInstance();
-	headerStored = stored.getHeaderRow();
-	headerSheet  = sheet.getHeaderRow();
-	// header
-	for (i = 0; i < headerSheet.getCellCount(); i++)
-	  headerStored.addCell("" + headerStored.getCellCount()).assign(headerSheet.getCell(i));
-	// data
-	for (n = 0; n < sheet.getRowCount(); n++) {
-	  row    = sheet.getRow(n);
-	  newRow = stored.addRow();
-	  for (i = 0; i < headerSheet.getCellCount(); i++) {
-	    key = headerSheet.getCellKey(i);
-	    if (row.getCell(key) != null)
-	      newRow.addCell(headerStored.getCellKey(i)).assign(row.getCell(key));
+	sheet = (SpreadSheet) m_InputToken.getPayload();
+	if (stored == null) {
+	  stored = sheet.newInstance();
+	  headerStored = stored.getHeaderRow();
+	  headerSheet = sheet.getHeaderRow();
+	  // header
+	  for (i = 0; i < headerSheet.getCellCount(); i++)
+	    headerStored.addCell("" + headerStored.getCellCount()).assign(headerSheet.getCell(i));
+	  // data
+	  for (n = 0; n < sheet.getRowCount(); n++) {
+	    row = sheet.getRow(n);
+	    newRow = stored.addRow();
+	    for (i = 0; i < headerSheet.getCellCount(); i++) {
+	      key = headerSheet.getCellKey(i);
+	      if (row.getCell(key) != null)
+		newRow.addCell(headerStored.getCellKey(i)).assign(row.getCell(key));
+	    }
 	  }
+	  getStorageHandler().getStorage().put(m_StorageName, stored);
+	  m_OutputToken = new Token(sheet);
+	  if (isLoggingEnabled())
+	    getLogger().info("Spreadsheet added to storage: " + m_StorageName);
 	}
-	getStorageHandler().getStorage().put(m_StorageName, stored);
-	m_OutputToken = new Token(sheet);
-	if (isLoggingEnabled())
-	  getLogger().info("Spreadsheet added to storage: " + m_StorageName);
-      }
-      else {
-	stored = SpreadSheetHelper.append(stored, sheet, m_NoCopy);
-	getStorageHandler().getStorage().put(m_StorageName, stored);
-	m_OutputToken = new Token(stored);
-	if (isLoggingEnabled())
-	  getLogger().info("Appended #" + sheet.getRowCount() + " rows to stored one: " + m_StorageName);
+	else {
+	  stored = SpreadSheetHelper.append(stored, sheet, m_NoCopy);
+	  getStorageHandler().getStorage().put(m_StorageName, stored);
+	  m_OutputToken = new Token(stored);
+	  if (isLoggingEnabled())
+	    getLogger().info("Appended #" + sheet.getRowCount() + " rows to stored one: " + m_StorageName);
+	}
       }
     }
 

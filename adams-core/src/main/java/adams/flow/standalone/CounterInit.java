@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CounterInit.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -74,7 +74,6 @@ import adams.flow.control.StorageUpdater;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CounterInit
   extends AbstractStandalone
@@ -168,7 +167,13 @@ public class CounterInit
    */
   @Override
   protected String doExecute() {
-    getStorageHandler().getStorage().put(m_StorageName, new NamedCounter());
-    return null;
+    String 	result;
+
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
+
+    if (result == null)
+      getStorageHandler().getStorage().put(m_StorageName, new NamedCounter());
+
+    return result;
   }
 }

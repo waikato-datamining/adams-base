@@ -15,7 +15,7 @@
 
 /*
  * DeQueue.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -84,7 +84,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7171 $
  */
 public class DeQueue
   extends AbstractSource
@@ -228,12 +227,14 @@ public class DeQueue
    */
   @Override
   protected String doExecute() {
-    String	result;
-    
-    result = null;
-    
-    if (!QueueHelper.hasQueue(this, m_StorageName))
-      result = "Queue '" + m_StorageName + "' not available from internal storage!";
+    String 	result;
+
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
+
+    if (result == null) {
+      if (!QueueHelper.hasQueue(this, m_StorageName))
+	result = "Queue '" + m_StorageName + "' not available from internal storage!";
+    }
     
     return result;
   }

@@ -528,7 +528,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SetVariable
   extends AbstractTransformer
@@ -541,7 +540,6 @@ public class SetVariable
    * How to update the variable value.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum UpdateType {
     /** replaces the current value. */
@@ -832,102 +830,106 @@ public class SetVariable
     String	msg;
     String	current;
 
-    result = null;
+    result = getOptionManager().ensureVariableForPropertyExists("variableName");
+    if (result == null)
+      result = getOptionManager().ensureVariableForPropertyExists("variableValue");
 
-    try {
-      value = null;
-      if (!m_VariableValue.isEmpty() || getOptionManager().hasVariableForProperty("variableValue")) {
-	value = m_VariableValue.getValue();
-      }
-      else {
-	if (m_InputToken.getPayload() != null)
-	  value = m_InputToken.getPayload().toString();
-      }
-      
-      if (value != null) {
-	if (m_ExpandValue)
-	  value = getVariables().expand(value);
-	
-	if (getVariables().has(m_VariableName.getValue()))
-	  current = getVariables().get(m_VariableName.getValue());
-	else
-	  current = "";
-	
-	switch (m_UpdateType) {
-	  case REPLACE:
-	    newValue = value;
-	    msg      = "Replacing";
-	    break;
-	  case APPEND:
-	    newValue = current + value;
-	    msg      = "Appending";
-	    break;
-	  case PREPEND:
-	    newValue = value + current;
-	    msg      = "Prepending";
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled update type: " + m_UpdateType);
+    if (result == null) {
+      try {
+	value = null;
+	if (!m_VariableValue.isEmpty() || getOptionManager().hasVariableForProperty("variableValue")) {
+	  value = m_VariableValue.getValue();
+	}
+	else {
+	  if (m_InputToken.getPayload() != null)
+	    value = m_InputToken.getPayload().toString();
 	}
 
-	switch (m_ValueType) {
-	  case STRING:
-	    // nothing to do
-	    break;
-	  case MATH_EXPRESSION:
-	    try {
-	      newValue = "" + MathematicalExpression.evaluate(newValue, new HashMap());
-	    }
-	    catch (Exception e) {
-	      result = handleException("Failed to parse mathematical expression: " + newValue, e);
-	    }
-	    break;
-          case MATH_EXPRESSION_ROUND:
-	    try {
-	      newValue = "" + Math.round(MathematicalExpression.evaluate(newValue, new HashMap()));
-	    }
-	    catch (Exception e) {
-	      result = handleException("Failed to parse mathematical expression: " + newValue, e);
-	    }
-	    break;
-	  case BOOL_EXPRESSION:
-	    try {
-	      newValue = "" + BooleanExpression.evaluate(newValue, new HashMap());
-	    }
-	    catch (Exception e) {
-	      result = handleException("Failed to parse boolean expression: " + newValue, e);
-	    }
-	    break;
-	  case STRING_EXPRESSION:
-	    try {
-	      newValue = "" + adams.parser.StringExpression.evaluate(newValue, new HashMap());
-	    }
-	    catch (Exception e) {
-	      result = handleException("Failed to parse string expression: " + newValue, e);
-	    }
-	    break;
-          case FILE_FORWARD_SLASHES:
-            try {
-              value = FileUtils.useForwardSlashes(new PlaceholderFile(value).getAbsolutePath());
-            }
-            catch (Exception e) {
-              result = handleException("Failed to generate file using forward slashes: " + value, e);
-            }
-            break;
-	  default:
-	    throw new IllegalStateException("Unhandled value type: " + m_ValueType);
+	if (value != null) {
+	  if (m_ExpandValue)
+	    value = getVariables().expand(value);
+
+	  if (getVariables().has(m_VariableName.getValue()))
+	    current = getVariables().get(m_VariableName.getValue());
+	  else
+	    current = "";
+
+	  switch (m_UpdateType) {
+	    case REPLACE:
+	      newValue = value;
+	      msg = "Replacing";
+	      break;
+	    case APPEND:
+	      newValue = current + value;
+	      msg = "Appending";
+	      break;
+	    case PREPEND:
+	      newValue = value + current;
+	      msg = "Prepending";
+	      break;
+	    default:
+	      throw new IllegalStateException("Unhandled update type: " + m_UpdateType);
+	  }
+
+	  switch (m_ValueType) {
+	    case STRING:
+	      // nothing to do
+	      break;
+	    case MATH_EXPRESSION:
+	      try {
+		newValue = "" + MathematicalExpression.evaluate(newValue, new HashMap());
+	      }
+	      catch (Exception e) {
+		result = handleException("Failed to parse mathematical expression: " + newValue, e);
+	      }
+	      break;
+	    case MATH_EXPRESSION_ROUND:
+	      try {
+		newValue = "" + Math.round(MathematicalExpression.evaluate(newValue, new HashMap()));
+	      }
+	      catch (Exception e) {
+		result = handleException("Failed to parse mathematical expression: " + newValue, e);
+	      }
+	      break;
+	    case BOOL_EXPRESSION:
+	      try {
+		newValue = "" + BooleanExpression.evaluate(newValue, new HashMap());
+	      }
+	      catch (Exception e) {
+		result = handleException("Failed to parse boolean expression: " + newValue, e);
+	      }
+	      break;
+	    case STRING_EXPRESSION:
+	      try {
+		newValue = "" + adams.parser.StringExpression.evaluate(newValue, new HashMap());
+	      }
+	      catch (Exception e) {
+		result = handleException("Failed to parse string expression: " + newValue, e);
+	      }
+	      break;
+	    case FILE_FORWARD_SLASHES:
+	      try {
+		value = FileUtils.useForwardSlashes(new PlaceholderFile(value).getAbsolutePath());
+	      }
+	      catch (Exception e) {
+		result = handleException("Failed to generate file using forward slashes: " + value, e);
+	      }
+	      break;
+	    default:
+	      throw new IllegalStateException("Unhandled value type: " + m_ValueType);
+	  }
+
+	  getVariables().set(m_VariableName.getValue(), newValue);
+	  if (isLoggingEnabled())
+	    getLogger().info(msg + " variable '" + m_VariableName + "' (" + getVariables().hashCode() + "): " + newValue);
 	}
-
-	getVariables().set(m_VariableName.getValue(), newValue);
-	if (isLoggingEnabled())
-	  getLogger().info(msg + " variable '" + m_VariableName + "' (" + getVariables().hashCode() + "): " + newValue);
       }
-    }
-    catch (Exception e) {
-      result = handleException("Failed to update variable: " + m_VariableName, e);
-    }
+      catch (Exception e) {
+	result = handleException("Failed to update variable: " + m_VariableName, e);
+      }
 
-    m_OutputToken = m_InputToken;
+      m_OutputToken = m_InputToken;
+    }
 
     return result;
   }

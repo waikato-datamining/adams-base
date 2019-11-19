@@ -15,7 +15,7 @@
 
 /*
  * EnQueue.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -76,7 +76,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 4584 $
  */
 public class EnQueue
   extends AbstractSink
@@ -183,12 +182,12 @@ public class EnQueue
   }
 
   /**
-   * Does nothing.
+   * Executes the flow item.
    *
-   * @return		always null
+   * @return		null if everything is fine, otherwise error message
    */
   @Override
   protected String doExecute() {
-    return null;
+    return getOptionManager().ensureVariableForPropertyExists("storageName");
   }
 }

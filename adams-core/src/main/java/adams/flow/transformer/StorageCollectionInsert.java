@@ -15,7 +15,7 @@
 
 /*
  * StorageCollectionInsert.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -318,45 +318,47 @@ public class StorageCollectionInsert
     Object		obj;
     int			pos;
 
-    result = null;
-
-    obj  = m_InputToken.getPayload();
-    coll = null;
-    if (!getStorageHandler().getStorage().has(m_StorageName))
-      result = "Collection not available from storage: " + m_StorageName;
-    else
-      coll = (Collection) getStorageHandler().getStorage().get(m_StorageName);
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
     if (result == null) {
-      // determine position
-      if (coll.size() == 0) {
-	pos = 0;
-      }
-      else {
-	m_Position.setMax(coll.size());
-	pos = m_Position.getIntIndex();
-	if (pos == -1)
-	  return null;
-	if (m_After)
-	  pos++;
-      }
+      obj = m_InputToken.getPayload();
+      coll = null;
+      if (!getStorageHandler().getStorage().has(m_StorageName))
+        result = "Collection not available from storage: " + m_StorageName;
+      else
+        coll = (Collection) getStorageHandler().getStorage().get(m_StorageName);
 
-      // insert
-      if (pos == coll.size()) {
-	coll.add(obj);
-      }
-      else {
-        if (coll instanceof List) {
-	  ((List) coll).add(pos, obj);
-	}
-	else {
-	  result = "Collection does not implement the " + Utils.classToString(List.class) + " interface, "
-	    + "can only append at the end: " + Utils.classToString(coll);
-	}
-      }
+      if (result == null) {
+        // determine position
+        if (coll.size() == 0) {
+          pos = 0;
+        }
+        else {
+          m_Position.setMax(coll.size());
+          pos = m_Position.getIntIndex();
+          if (pos == -1)
+            return null;
+          if (m_After)
+            pos++;
+        }
 
-      if (result == null)
-	m_OutputToken = new Token(obj);
+        // insert
+        if (pos == coll.size()) {
+          coll.add(obj);
+        }
+        else {
+          if (coll instanceof List) {
+            ((List) coll).add(pos, obj);
+          }
+          else {
+            result = "Collection does not implement the " + Utils.classToString(List.class) + " interface, "
+              + "can only append at the end: " + Utils.classToString(coll);
+          }
+        }
+
+        if (result == null)
+          m_OutputToken = new Token(obj);
+      }
     }
 
     return result;

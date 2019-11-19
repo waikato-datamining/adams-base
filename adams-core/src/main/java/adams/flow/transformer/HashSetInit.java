@@ -15,7 +15,7 @@
 
 /*
  * HashSetInit.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -344,51 +344,53 @@ public class HashSetInit
     Object		array;
     int			i;
     
-    result = null;
-    
-    if (m_InputToken.getPayload() instanceof SpreadSheet) {
-      sheet  = (SpreadSheet) m_InputToken.getPayload();
-      valCol = -1;
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
-      if (sheet.getColumnCount() < 1)
-	result = "Spreadsheet must have at least 1 column, available: " + sheet.getColumnCount();
+    if (result == null) {
+      if (m_InputToken.getPayload() instanceof SpreadSheet) {
+        sheet = (SpreadSheet) m_InputToken.getPayload();
+        valCol = -1;
 
-      // value
-      if (result == null) {
-	m_Column.setMax(sheet.getColumnCount());
-	valCol = m_Column.getIntIndex();
-	if (valCol == -1)
-	  result = "Failed to locate column: " + m_Column.getIndex();
-      }
+        if (sheet.getColumnCount() < 1)
+          result = "Spreadsheet must have at least 1 column, available: " + sheet.getColumnCount();
 
-      // create hashset
-      if (result == null) {
-	hashset = new HashSet();
-	for (Row row: sheet.rows()) {
-	  if (!row.hasCell(valCol))
-	    continue;
-	  val = row.getCell(valCol).getNative();
-	  if (val != null) {
-	    result = addValue(hashset, val);
-	    if (result != null)
-	      break;
-	  }
-	}
-	if (result == null)
-	  getStorageHandler().getStorage().put(m_StorageName, hashset);
+        // value
+        if (result == null) {
+          m_Column.setMax(sheet.getColumnCount());
+          valCol = m_Column.getIntIndex();
+          if (valCol == -1)
+            result = "Failed to locate column: " + m_Column.getIndex();
+        }
+
+        // create hashset
+        if (result == null) {
+          hashset = new HashSet();
+          for (Row row : sheet.rows()) {
+            if (!row.hasCell(valCol))
+              continue;
+            val = row.getCell(valCol).getNative();
+            if (val != null) {
+              result = addValue(hashset, val);
+              if (result != null)
+                break;
+            }
+          }
+          if (result == null)
+            getStorageHandler().getStorage().put(m_StorageName, hashset);
+        }
       }
-    }
-    else {
-      array   = m_InputToken.getPayload();
-      hashset = new HashSet();
-      for (i = 0; i < Array.getLength(array); i++) {
-	val    = Array.get(array, i);
-	result = addValue(hashset, val);
-	if (result != null)
-	  break;
+      else {
+        array = m_InputToken.getPayload();
+        hashset = new HashSet();
+        for (i = 0; i < Array.getLength(array); i++) {
+          val = Array.get(array, i);
+          result = addValue(hashset, val);
+          if (result != null)
+            break;
+        }
+        if (result == null)
+          getStorageHandler().getStorage().put(m_StorageName, hashset);
       }
-      if (result == null)
-	getStorageHandler().getStorage().put(m_StorageName, hashset);
     }
     
     if (result == null)

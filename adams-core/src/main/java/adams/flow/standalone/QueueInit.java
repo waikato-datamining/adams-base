@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * QueueInit.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -105,7 +105,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8036 $
  */
 public class QueueInit
   extends AbstractStandalone
@@ -476,16 +475,21 @@ public class QueueInit
    */
   @Override
   protected String doExecute() {
+    String 		result;
     StorageQueueHandler	handler;
 
-    for (StorageName name: m_StorageName) {
-      if ((m_KeepExisting && !getStorageHandler().getStorage().has(name)) || !m_KeepExisting) {
-        handler = new StorageQueueHandler(name.getValue(), m_Limit, m_LogActor, m_MonitorActor);
-        handler.setLoggingLevel(getLoggingLevel());
-        getStorageHandler().getStorage().put(name, handler);
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
+
+    if (result == null) {
+      for (StorageName name : m_StorageName) {
+	if ((m_KeepExisting && !getStorageHandler().getStorage().has(name)) || !m_KeepExisting) {
+	  handler = new StorageQueueHandler(name.getValue(), m_Limit, m_LogActor, m_MonitorActor);
+	  handler.setLoggingLevel(getLoggingLevel());
+	  getStorageHandler().getStorage().put(name, handler);
+	}
       }
     }
     
-    return null;
+    return result;
   }
 }

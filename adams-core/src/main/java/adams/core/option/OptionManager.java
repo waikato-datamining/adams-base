@@ -689,6 +689,29 @@ public class OptionManager
   }
 
   /**
+   * If a variable is attached to the variable, it checks whether the variable
+   * really exists in the context. If that shouldn't be the case, an error
+   * message gets returned, otherwise null. If no variable is attached, then
+   * null is being returned as well.
+   *
+   * @param property	the property to check for a variable
+   * @return		null if no variable attached or variable exists, otherwise error message
+   */
+  public String ensureVariableForPropertyExists(String property) {
+    String	result;
+    String	var;
+
+    result = null;
+    var    = getVariableForProperty(property);
+    if (var != null) {
+      if (!getVariables().has(var))
+        result = "Variable " + Variables.padName(var) + " attached to property '" + property + "' does not exist!";
+    }
+
+    return result;
+  }
+
+  /**
    * Checks whether the current value associated with the flag is the
    * default value.
    *

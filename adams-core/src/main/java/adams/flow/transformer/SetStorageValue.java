@@ -15,7 +15,7 @@
 
 /*
  * SetStorageValue.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -84,7 +84,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SetStorageValue
   extends AbstractTransformer
@@ -250,16 +249,22 @@ public class SetStorageValue
    */
   @Override
   protected String doExecute() {
-    if (m_InputToken.getPayload() != null) {
-      if (m_Cache.length() == 0)
-	getStorageHandler().getStorage().put(m_StorageName, m_InputToken.getPayload());
-      else
-	getStorageHandler().getStorage().put(m_Cache, m_StorageName, m_InputToken.getPayload());
+    String 	result;
+
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
+
+    if (result == null) {
+      if (m_InputToken.getPayload() != null) {
+	if (m_Cache.length() == 0)
+	  getStorageHandler().getStorage().put(m_StorageName, m_InputToken.getPayload());
+	else
+	  getStorageHandler().getStorage().put(m_Cache, m_StorageName, m_InputToken.getPayload());
+      }
+
+      m_OutputToken = m_InputToken;
     }
 
-    m_OutputToken = m_InputToken;
-
-    return null;
+    return result;
   }
 
   /**

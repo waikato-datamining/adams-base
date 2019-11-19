@@ -258,25 +258,27 @@ public class StorageJFreeChartAddSeries
     SpreadSheet 	sheet;
     Dataset 		dataset;
 
-    result = null;
-
-    sheet   = m_InputToken.getPayload(SpreadSheet.class);
-    dataset = null;
-    if (!getStorageHandler().getStorage().has(m_StorageName))
-      result = "Dataset not available from storage: " + m_StorageName;
-    else
-      dataset = (Dataset) getStorageHandler().getStorage().get(m_StorageName);
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
     if (result == null) {
-      if (!dataset.getClass().equals(m_Dataset.generates())) {
-	result = "Dataset in storage (" + m_StorageName + ") is of type "
-	  + Utils.classToString(dataset) + ", but dataset generator produces "
-	  + Utils.classToString(m_Dataset.generates()) + "!";
-      }
-      else {
-        dataset = m_Dataset.addSeries(dataset, sheet);
-        getStorageHandler().getStorage().put(m_StorageName, dataset);
-	m_OutputToken = new Token(sheet);
+      sheet = m_InputToken.getPayload(SpreadSheet.class);
+      dataset = null;
+      if (!getStorageHandler().getStorage().has(m_StorageName))
+        result = "Dataset not available from storage: " + m_StorageName;
+      else
+        dataset = (Dataset) getStorageHandler().getStorage().get(m_StorageName);
+
+      if (result == null) {
+        if (!dataset.getClass().equals(m_Dataset.generates())) {
+          result = "Dataset in storage (" + m_StorageName + ") is of type "
+            + Utils.classToString(dataset) + ", but dataset generator produces "
+            + Utils.classToString(m_Dataset.generates()) + "!";
+        }
+        else {
+          dataset = m_Dataset.addSeries(dataset, sheet);
+          getStorageHandler().getStorage().put(m_StorageName, dataset);
+          m_OutputToken = new Token(sheet);
+        }
       }
     }
 

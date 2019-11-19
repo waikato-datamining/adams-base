@@ -444,58 +444,60 @@ public class DeserializeToStorage
     int			i;
     BaseKeyValuePair	pair;
 
-    result = null;
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
-    if (!m_ModelFile.isDirectory()) {
-      result = read(m_ModelFile, m_StorageName);
-    }
-
-    if ((result == null) && (m_StorageFilePairs.size() > 0)) {
-      errors = new MessageCollection();
-      for (i = 0; i < m_StorageFilePairs.size(); i++) {
-	if (isStopped())
-	  break;
-
-	pair = m_StorageFilePairs.get(i);
-
-	// name
-	if (pair.getPairKey().startsWith(Variables.START))
-	  nameStr = getVariables().get(pair.getPairKey());
-	else
-	  nameStr = pair.getPairKey();
-	if ((nameStr == null) || nameStr.isEmpty() || !Storage.isValidName(nameStr)) {
-	  errors.add("Failed to obtain valid storage name from pair #" + (i+1) + " (" + pair + "): " + nameStr);
-	  continue;
-	}
-	name = new StorageName(nameStr);
-
-	// file
-	if (pair.getPairValue().startsWith(Variables.START))
-	  fileStr = getVariables().get(pair.getPairValue());
-	else
-	  fileStr = pair.getPairValue();
-	if ((fileStr == null) || fileStr.isEmpty()) {
-	  errors.add("Failed to obtain valid file name from pair #" + (i+1) + " (" + pair + "): " + fileStr);
-	  continue;
-	}
-	file = new PlaceholderFile(fileStr);
-
-	if (file.exists()) {
-	  if (!file.isDirectory()) {
-	    msg = read(file, name);
-	    if (msg != null)
-	      errors.add(msg);
-	  }
-	  else {
-	    errors.add("File from pair " + (i+1) + " (" + pair + ") points to a directory: " + file);
-	  }
-	}
-	else {
-	  errors.add("File from pair " + (i+1) + " (" + pair + ") does not exist: " + file);
-	}
+    if (result == null) {
+      if (!m_ModelFile.isDirectory()) {
+        result = read(m_ModelFile, m_StorageName);
       }
-      if (!errors.isEmpty())
-        result = errors.toString();
+
+      if ((result == null) && (m_StorageFilePairs.size() > 0)) {
+        errors = new MessageCollection();
+        for (i = 0; i < m_StorageFilePairs.size(); i++) {
+          if (isStopped())
+            break;
+
+          pair = m_StorageFilePairs.get(i);
+
+          // name
+          if (pair.getPairKey().startsWith(Variables.START))
+            nameStr = getVariables().get(pair.getPairKey());
+          else
+            nameStr = pair.getPairKey();
+          if ((nameStr == null) || nameStr.isEmpty() || !Storage.isValidName(nameStr)) {
+            errors.add("Failed to obtain valid storage name from pair #" + (i + 1) + " (" + pair + "): " + nameStr);
+            continue;
+          }
+          name = new StorageName(nameStr);
+
+          // file
+          if (pair.getPairValue().startsWith(Variables.START))
+            fileStr = getVariables().get(pair.getPairValue());
+          else
+            fileStr = pair.getPairValue();
+          if ((fileStr == null) || fileStr.isEmpty()) {
+            errors.add("Failed to obtain valid file name from pair #" + (i + 1) + " (" + pair + "): " + fileStr);
+            continue;
+          }
+          file = new PlaceholderFile(fileStr);
+
+          if (file.exists()) {
+            if (!file.isDirectory()) {
+              msg = read(file, name);
+              if (msg != null)
+                errors.add(msg);
+            }
+            else {
+              errors.add("File from pair " + (i + 1) + " (" + pair + ") points to a directory: " + file);
+            }
+          }
+          else {
+            errors.add("File from pair " + (i + 1) + " (" + pair + ") does not exist: " + file);
+          }
+        }
+        if (!errors.isEmpty())
+          result = errors.toString();
+      }
     }
 
     return result;

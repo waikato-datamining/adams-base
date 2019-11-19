@@ -15,7 +15,7 @@
 
 /*
  * HashSetInit.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -281,19 +281,24 @@ public class HashSetInit
     String	result;
     HashSet	hashset;
 
-    hashset = new HashSet();
-    for (BaseString value: m_Initial) {
-      m_Conversion.setInput(value.stringValue());
-      result = m_Conversion.convert();
-      if (result != null)
-	result = getFullName() + ": " + result;
-      if ((result == null) && (m_Conversion.getOutput() != null))
-	hashset.add(m_Conversion.getOutput());
-      m_Conversion.cleanUp();
-      if (result != null)
-        break;
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
+
+    if (result == null) {
+      hashset = new HashSet();
+      for (BaseString value : m_Initial) {
+        m_Conversion.setInput(value.stringValue());
+        result = m_Conversion.convert();
+        if (result != null)
+          result = getFullName() + ": " + result;
+        if ((result == null) && (m_Conversion.getOutput() != null))
+          hashset.add(m_Conversion.getOutput());
+        m_Conversion.cleanUp();
+        if (result != null)
+          break;
+      }
+      getStorageHandler().getStorage().put(m_StorageName, hashset);
     }
-    getStorageHandler().getStorage().put(m_StorageName, hashset);
-    return null;
+
+    return result;
   }
 }

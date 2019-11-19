@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerAppend.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -32,7 +32,6 @@ import adams.flow.core.Token;
  * storage) and forward the combined data container.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data container to process
  */
 public abstract class AbstractDataContainerAppend<T extends DataContainer>
@@ -156,28 +155,30 @@ public abstract class AbstractDataContainerAppend<T extends DataContainer>
     T		stored;
     boolean	appended;
 
-    result = null;
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
-    synchronized(getStorageHandler().getStorage()) {
-      stored = null;
-      if (getStorageHandler().getStorage().has(m_StorageName))
-	stored = (T) getStorageHandler().getStorage().get(m_StorageName);
-      if (isLoggingEnabled())
-	getLogger().info("Data container '" + m_StorageName + "' available from storage: " + (stored != null));
+    if (result == null) {
+      synchronized (getStorageHandler().getStorage()) {
+        stored = null;
+        if (getStorageHandler().getStorage().has(m_StorageName))
+          stored = (T) getStorageHandler().getStorage().get(m_StorageName);
+        if (isLoggingEnabled())
+          getLogger().info("Data container '" + m_StorageName + "' available from storage: " + (stored != null));
 
-      current = (T) m_InputToken.getPayload();
-      if (stored != null) {
-	append(stored, current);
-	appended = false;
+        current = (T) m_InputToken.getPayload();
+        if (stored != null) {
+          append(stored, current);
+          appended = false;
+        }
+        else {
+          stored = current;
+          appended = false;
+        }
+        getStorageHandler().getStorage().put(m_StorageName, stored);
+        m_OutputToken = new Token(stored);
+        if (isLoggingEnabled())
+          getLogger().info("Data container " + (appended ? "appended" : "added") + " to storage: " + m_StorageName);
       }
-      else {
-	stored   = current;
-	appended = false;
-      }
-      getStorageHandler().getStorage().put(m_StorageName, stored);
-      m_OutputToken = new Token(stored);
-      if (isLoggingEnabled())
-	getLogger().info("Data container " + (appended ? "appended" : "added") + " to storage: " + m_StorageName);
     }
 
     return result;

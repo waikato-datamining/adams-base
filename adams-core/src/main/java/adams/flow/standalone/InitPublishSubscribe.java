@@ -15,7 +15,7 @@
 
 /*
  * InitPublishSubscribe.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -165,15 +165,20 @@ public class InitPublishSubscribe
    */
   @Override
   protected String doExecute() {
+    String 	result;
     Storage	storage;
 
-    storage = getStorageHandler().getStorage();
-    for (StorageName name: m_StorageNames) {
-      if (storage.has(name))
-	getLogger().warning("Storage item already exists, replacing: " + name);
-      storage.put(name, new PublishSubscribeHandler());
+    result = getOptionManager().ensureVariableForPropertyExists("storageNames");
+
+    if (result == null) {
+      storage = getStorageHandler().getStorage();
+      for (StorageName name : m_StorageNames) {
+        if (storage.has(name))
+          getLogger().warning("Storage item already exists, replacing: " + name);
+        storage.put(name, new PublishSubscribeHandler());
+      }
     }
 
-    return null;
+    return result;
   }
 }

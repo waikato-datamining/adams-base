@@ -348,25 +348,31 @@ public class DeleteStorageValue
    */
   @Override
   protected String doExecute() {
-    switch (m_Type) {
-      case NAME:
-	if (m_Cache.isEmpty())
-	  getStorageHandler().getStorage().remove(m_StorageName);
-	else
-	  getStorageHandler().getStorage().remove(m_Cache, m_StorageName);
-	break;
+    String 	result;
 
-      case REGEXP:
-	if (m_Cache.isEmpty())
-	  getStorageHandler().getStorage().remove(m_RegExp);
-	else
-	  getStorageHandler().getStorage().remove(m_Cache, m_RegExp);
-	break;
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
-      default:
-	throw new IllegalStateException("Unhandled matching type: " + m_Type);
+    if (result == null) {
+      switch (m_Type) {
+        case NAME:
+          if (m_Cache.isEmpty())
+            getStorageHandler().getStorage().remove(m_StorageName);
+          else
+            getStorageHandler().getStorage().remove(m_Cache, m_StorageName);
+          break;
+
+        case REGEXP:
+          if (m_Cache.isEmpty())
+            getStorageHandler().getStorage().remove(m_RegExp);
+          else
+            getStorageHandler().getStorage().remove(m_Cache, m_RegExp);
+          break;
+
+        default:
+          throw new IllegalStateException("Unhandled matching type: " + m_Type);
+      }
     }
 
-    return null;
+    return result;
   }
 }

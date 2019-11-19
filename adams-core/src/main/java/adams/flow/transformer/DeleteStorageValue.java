@@ -15,7 +15,7 @@
 
 /*
  * DeleteStorageValue.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -330,6 +330,15 @@ public class DeleteStorageValue
   }
 
   /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		<!-- flow-generates-start -->adams.flow.core.Unknown.class<!-- flow-generates-end -->
+   */
+  public Class[] generates() {
+    return new Class[]{Unknown.class};
+  }
+
+  /**
    * Hook for performing setup checks -- used in setUp() and preExecute().
    *
    * @param fromSetUp	whether the method has been called from within setUp()
@@ -358,36 +367,33 @@ public class DeleteStorageValue
    */
   @Override
   protected String doExecute() {
-    switch (m_Type) {
-      case NAME:
-	if (m_Cache.isEmpty())
-	  getStorageHandler().getStorage().remove(m_StorageName);
-	else
-	  getStorageHandler().getStorage().remove(m_Cache, m_StorageName);
-	break;
+    String 	result;
 
-      case REGEXP:
-	if (m_Cache.isEmpty())
-	  getStorageHandler().getStorage().remove(m_RegExp);
-	else
-	  getStorageHandler().getStorage().remove(m_Cache, m_RegExp);
-	break;
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
-      default:
-	throw new IllegalStateException("Unhandled matching type: " + m_Type);
+    if (result == null) {
+      switch (m_Type) {
+        case NAME:
+          if (m_Cache.isEmpty())
+            getStorageHandler().getStorage().remove(m_StorageName);
+          else
+            getStorageHandler().getStorage().remove(m_Cache, m_StorageName);
+          break;
+
+        case REGEXP:
+          if (m_Cache.isEmpty())
+            getStorageHandler().getStorage().remove(m_RegExp);
+          else
+            getStorageHandler().getStorage().remove(m_Cache, m_RegExp);
+          break;
+
+        default:
+          throw new IllegalStateException("Unhandled matching type: " + m_Type);
+      }
+
+      m_OutputToken = m_InputToken;
     }
 
-    m_OutputToken = m_InputToken;
-
-    return null;
-  }
-
-  /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		<!-- flow-generates-start -->adams.flow.core.Unknown.class<!-- flow-generates-end -->
-   */
-  public Class[] generates() {
-    return new Class[]{Unknown.class};
+    return result;
   }
 }

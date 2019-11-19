@@ -204,29 +204,31 @@ public class CollectionAppend
     Collection 		coll;
     Collection		stored;
 
-    result = null;
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
-    synchronized(getStorageHandler().getStorage()) {
-      stored = null;
-      if (getStorageHandler().getStorage().has(m_StorageName))
-	stored = (Collection) getStorageHandler().getStorage().get(m_StorageName);
-      if (isLoggingEnabled())
-	getLogger().info("Collection '" + m_StorageName + "' available from storage: " + (stored != null));
+    if (result == null) {
+      synchronized (getStorageHandler().getStorage()) {
+	stored = null;
+	if (getStorageHandler().getStorage().has(m_StorageName))
+	  stored = (Collection) getStorageHandler().getStorage().get(m_StorageName);
+	if (isLoggingEnabled())
+	  getLogger().info("Collection '" + m_StorageName + "' available from storage: " + (stored != null));
 
-      coll = (Collection) m_InputToken.getPayload();
-      if (stored == null) {
-	stored = ObjectCopyHelper.copyObject(coll);
-	getStorageHandler().getStorage().put(m_StorageName, stored);
-	m_OutputToken = new Token(coll);
-	if (isLoggingEnabled())
-	  getLogger().info("Collection added to storage: " + m_StorageName);
-      }
-      else {
-        stored.addAll(coll);
-	getStorageHandler().getStorage().put(m_StorageName, stored);
-	m_OutputToken = new Token(stored);
-	if (isLoggingEnabled())
-	  getLogger().info("Appended #" + coll.size() + " elements to stored collection: " + m_StorageName);
+	coll = (Collection) m_InputToken.getPayload();
+	if (stored == null) {
+	  stored = ObjectCopyHelper.copyObject(coll);
+	  getStorageHandler().getStorage().put(m_StorageName, stored);
+	  m_OutputToken = new Token(coll);
+	  if (isLoggingEnabled())
+	    getLogger().info("Collection added to storage: " + m_StorageName);
+	}
+	else {
+	  stored.addAll(coll);
+	  getStorageHandler().getStorage().put(m_StorageName, stored);
+	  m_OutputToken = new Token(stored);
+	  if (isLoggingEnabled())
+	    getLogger().info("Appended #" + coll.size() + " elements to stored collection: " + m_StorageName);
+	}
       }
     }
 

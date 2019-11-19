@@ -15,7 +15,7 @@
 
 /*
  * IncStorageValue.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -397,66 +397,68 @@ public class IncStorageValue
     String	result;
     Number	value;
 
-    result = null;
+    result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
-    try {
-      if (getStorageHandler().getStorage().has(m_StorageName)) {
+    if (result == null) {
+      try {
+	if (getStorageHandler().getStorage().has(m_StorageName)) {
+	  switch (m_IncrementType) {
+	    case INTEGER:
+	      value = (Integer) getStorageHandler().getStorage().get(m_StorageName);
+	      break;
+	    case LONG:
+	      value = (Long) getStorageHandler().getStorage().get(m_StorageName);
+	      break;
+	    case DOUBLE:
+	      value = (Double) getStorageHandler().getStorage().get(m_StorageName);
+	      break;
+	    default:
+	      throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
+	  }
+	}
+	else {
+	  switch (m_IncrementType) {
+	    case INTEGER:
+	      value = new Integer(0);
+	      break;
+	    case LONG:
+	      value = new Long(0L);
+	      break;
+	    case DOUBLE:
+	      value = new Double(0.0);
+	      break;
+	    default:
+	      throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
+	  }
+	}
+      }
+      catch (Exception e) {
+	value = null;
+      }
+
+      if (value != null) {
 	switch (m_IncrementType) {
 	  case INTEGER:
-	    value = (Integer) getStorageHandler().getStorage().get(m_StorageName);
+	    value = new Integer(value.intValue() + m_IntegerIncrement);
 	    break;
 	  case LONG:
-	    value = (Long) getStorageHandler().getStorage().get(m_StorageName);
+	    value = new Long(value.longValue() + m_IntegerIncrement);
 	    break;
 	  case DOUBLE:
-	    value = (Double) getStorageHandler().getStorage().get(m_StorageName);
+	    value = new Double(value.doubleValue() + m_DoubleIncrement);
 	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
 	}
+	getStorageHandler().getStorage().put(m_StorageName, value);
+	if (isLoggingEnabled())
+	  getLogger().info("Incremented storage '" + m_StorageName + "': " + value);
+	m_OutputToken = new Token(value);
       }
-      else {
-	switch (m_IncrementType) {
-	  case INTEGER:
-	    value = new Integer(0);
-	    break;
-	  case LONG:
-	    value = new Long(0L);
-	    break;
-	  case DOUBLE:
-	    value = new Double(0.0);
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
-	}
-      }
-    }
-    catch (Exception e) {
-      value = null;
-    }
 
-    if (value != null) {
-      switch (m_IncrementType) {
-	case INTEGER:
-	  value = new Integer(value.intValue() + m_IntegerIncrement);
-	  break;
-	case LONG:
-	  value = new Long(value.longValue() + m_IntegerIncrement);
-	  break;
-	case DOUBLE:
-	  value = new Double(value.doubleValue() + m_DoubleIncrement);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
-      }
-      getStorageHandler().getStorage().put(m_StorageName, value);
-      if (isLoggingEnabled())
-	getLogger().info("Incremented storage '" + m_StorageName + "': " + value);
-      m_OutputToken = new Token(value);
+      if (!m_OutputStorageValue)
+	m_OutputToken = m_InputToken;
     }
-
-    if (!m_OutputStorageValue)
-      m_OutputToken = m_InputToken;
 
     return result;
   }
