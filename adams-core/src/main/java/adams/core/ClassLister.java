@@ -21,13 +21,16 @@
 package adams.core;
 
 import adams.core.base.BaseRegExp;
+import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import adams.env.ClassListerBlacklistDefinition;
 import adams.env.ClassListerDefinition;
 import adams.env.Environment;
 import adams.flow.core.Compatibility;
 import nz.ac.waikato.cms.locator.ClassLocator;
+import nz.ac.waikato.cms.locator.PropertiesBasedClassListTraversal;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,6 +80,12 @@ public class ClassLister
   /** the name of the props file. */
   public final static String BLACKLIST = "ClassLister.blacklist";
 
+  /** for statically listed classes (superclass -> comma-separated classnames). */
+  public static final String CLASSLISTER_CLASSES = "ClassLister.classes";
+
+  /** for statically listed packages (superclass -> comma-separated packages). */
+  public static final String CLASSLISTER_PACKAGES = "ClassLister.packages";
+
   /** the singleton. */
   protected static ClassLister m_Singleton;
 
@@ -85,9 +94,48 @@ public class ClassLister
    */
   protected ClassLister() {
     super();
-    setPackages(Environment.getInstance().read(ClassListerDefinition.KEY));
-    setBlacklist(Environment.getInstance().read(ClassListerBlacklistDefinition.KEY));
+
+    long start = System.currentTimeMillis();
+
+    // static?
+    boolean isStatic = false;
+    InputStream classes = null;
+    InputStream packages = null;
+    try {
+      classes = getClass().getClassLoader().getResourceAsStream(CLASSLISTER_CLASSES);
+      packages = getClass().getClassLoader().getResourceAsStream(CLASSLISTER_PACKAGES);
+      if ((classes != null) && (packages != null)) {
+        Properties propsClasses = new Properties();
+        propsClasses.load(classes);
+        Properties propsPackages = new Properties();
+        propsPackages.load(packages);
+        if ((propsClasses.size() > 0) && (propsPackages.size() > 0)) {
+	  m_ClassTraversal = new PropertiesBasedClassListTraversal(propsClasses);
+	  setPackages(propsPackages);
+	  setBlacklist(new Properties());
+	  System.out.println(getClass().getName() + ": Using statically defined classes/packages");
+	  isStatic = true;
+	}
+      }
+    }
+    catch (Exception e) {
+      // ignored
+    }
+    finally {
+      FileUtils.closeQuietly(classes);
+      FileUtils.closeQuietly(packages);
+    }
+
+    if (!isStatic) {
+      System.out.println(getClass().getName() + ": Using dynamic class discovery");
+      setPackages(Environment.getInstance().read(ClassListerDefinition.KEY));
+      setBlacklist(Environment.getInstance().read(ClassListerBlacklistDefinition.KEY));
+    }
+
     initialize();
+
+    long end = System.currentTimeMillis();
+    System.out.println(getClass().getName() + ": Time taken to initialize classes " + (end - start) + " msec");
   }
 
   /**
@@ -248,30 +296,6 @@ public class ClassLister
   }
 
   /**
-   * Returns the class hierarchies as properties object, with the superclasses
-   * as keys.
-   *
-   * @return		the generated properties
-   */
-  public Properties toProperties() {
-    Properties		result;
-    StringBuilder	classes;
-
-    result = new Properties();
-    for (String superclass: getSuperclasses()) {
-      classes = new StringBuilder();
-      for (Class cls: getClasses(superclass)) {
-        if (classes.length() > 0)
-          classes.append(",");
-        classes.append(cls.getName());
-      }
-      result.setProperty(superclass, classes.toString());
-    }
-
-    return result;
-  }
-
-  /**
    * Returns the singleton instance of the class lister.
    *
    * @return		the singleton
@@ -292,7 +316,21 @@ public class ClassLister
   public static void main(String[] args) throws Exception {
     if (OptionUtils.helpRequested(args)) {
       System.out.println();
-      System.out.println("Usage: " + ClassLister.class.getName() + " [-env <classname>] [-super <classname>] [-match <regexp>] [-allow-empty] [-filter-by-module <module>]");
+      System.out.println("Usage: " + ClassLister.class.getName() + " [-env <classname>] [-action <search|classes|packages>]");
+      System.out.println();
+      System.out.println("'search' action (default):");
+      System.out.println("allows searching for classes");
+      System.out.println("[-super <classname>] [-match <regexp>] [-allow-empty] [-filter-by-module <module>]");
+      System.out.println();
+      System.out.println("'classes' action:");
+      System.out.println("for outputting the class hierarchies as properties file");
+      System.out.println("each key is a superclass, the corresponding value a comma-separated list of class names");
+      System.out.println("-output <props_file>");
+      System.out.println();
+      System.out.println("'packages' action:");
+      System.out.println("for outputting the packages of the class hierarchies as properties file");
+      System.out.println("each key is a superclass, the corresponding value a comma-separated list of package names");
+      System.out.println("-output <props_file>");
       System.out.println();
       return;
     }
@@ -304,40 +342,69 @@ public class ClassLister
     Class cls = Class.forName(env);
     Environment.setEnvironmentClass(cls);
 
-    // match
-    String match = OptionUtils.getOption(args, "-match");
-    if (match == null)
-      match = BaseRegExp.MATCH_ALL;
-    BaseRegExp regexp = new BaseRegExp(match);
+    // action
+    String action = OptionUtils.getOption(args, "-action");
+    if (action == null)
+      action = "search";
+    switch (action) {
+      case "search":
+        // match
+        String match = OptionUtils.getOption(args, "-match");
+        if (match == null)
+          match = BaseRegExp.MATCH_ALL;
+        BaseRegExp regexp = new BaseRegExp(match);
 
-    // allow empty class hierarchies?
-    boolean allowEmpty = OptionUtils.hasFlag(args, "-allow-empty");
+        // allow empty class hierarchies?
+        boolean allowEmpty = OptionUtils.hasFlag(args, "-allow-empty");
 
-    // superclass
-    String[] superclasses;
-    String sclass = OptionUtils.getOption(args, "-super");
-    if (sclass == null)
-      superclasses = getSingleton().getSuperclasses();
-    else
-      superclasses = new String[]{sclass};
+        // superclass
+        String[] superclasses;
+        String sclass = OptionUtils.getOption(args, "-super");
+        if (sclass == null)
+          superclasses = getSingleton().getSuperclasses();
+        else
+          superclasses = new String[]{sclass};
 
-    // filter-by-module
-    String module = OptionUtils.getOption(args, "-filter-by-module");
+        // filter-by-module
+        String module = OptionUtils.getOption(args, "-filter-by-module");
 
-    // list them
-    for (String superclass: superclasses) {
-      cls = Class.forName(superclass);
-      Class[] classes = getSingleton().getClasses(cls);
-      if (module != null)
-        classes = getSingleton().filterByModule(classes, module);
-      if ((classes.length > 0) || allowEmpty) {
-        System.out.println("--> " + superclass);
-        for (Class c: classes) {
-          if (regexp.isMatch(c.getName()))
-            System.out.println(c.getName());
+        // list them
+        for (String superclass : superclasses) {
+          cls = Class.forName(superclass);
+          Class[] classes = getSingleton().getClasses(cls);
+          if (module != null)
+            classes = getSingleton().filterByModule(classes, module);
+          if ((classes.length > 0) || allowEmpty) {
+            System.out.println("--> " + superclass);
+            for (Class c : classes) {
+              if (regexp.isMatch(c.getName()))
+                System.out.println(c.getName());
+            }
+            System.out.println();
+          }
         }
-        System.out.println();
-      }
+        break;
+
+      case "classes":
+        String class_props_file = OptionUtils.getOption(args, "-output");
+        Properties class_props = new Properties(getSingleton().toProperties());
+        if (!class_props.save(class_props_file)) {
+	  System.err.println("Failed to write properties with classes to: " + class_props_file);
+	  System.exit(1);
+	}
+        break;
+
+      case "packages":
+        String pkgs_props_file = OptionUtils.getOption(args, "-output");
+        Properties pkgs_props = new Properties(getSingleton().toPackages());
+        if (!pkgs_props.save(pkgs_props_file)) {
+	  System.err.println("Failed to write properties with packages to: " + pkgs_props_file);
+	  System.exit(1);
+	}
+        break;
+
+      default:
+        throw new IllegalArgumentException("Unknown action: " + action);
     }
   }
 }
