@@ -22,10 +22,11 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.annotation.DeprecatedClass;
 import adams.data.image.AbstractImageContainer;
-import adams.data.image.AnnotationHelper;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
+import adams.data.objectoverlap.IntersectOverUnionRatio;
 import adams.data.report.AbstractField;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
@@ -132,28 +133,13 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  *
  * @author Hisham (habdelqa at waikato dot ac dot nz)
  */
+@DeprecatedClass(
+  useInstead={DetermineOverlappingObjects.class, IntersectOverUnionRatio.class}
+)
 public class IntersectOverUnion
   extends AbstractTransformer {
 
   private static final long serialVersionUID = 8175397929496972306L;
-
-  /** the highest iou percentage. */
-  public final static String IOU_PERCENTAGE_HIGHEST = AnnotationHelper.IOU_PERCENTAGE_HIGHEST;
-
-  /** the label of the highest iou. */
-  public final static String IOU_LABEL_HIGHEST = AnnotationHelper.IOU_LABEL_HIGHEST;
-
-  /** whether the labels of the highest iou match. */
-  public final static String IOU_LABEL_HIGHEST_MATCH = AnnotationHelper.IOU_LABEL_HIGHEST_MATCH;
-
-  /** the iou count. */
-  public final static String IOU_COUNT = AnnotationHelper.IOU_COUNT;
-
-  /** the additional objects boolean. */
-  public final static String ADDITIONAL_OBJ = AnnotationHelper.ADDITIONAL_OBJ;
-
-  /** the placeholder for unknown label. */
-  public static final String UNKNOWN_LABEL = AnnotationHelper.UNKNOWN_LABEL;
 
   /** the storage item. */
   protected StorageName m_StorageName;
@@ -182,11 +168,11 @@ public class IntersectOverUnion
   public String globalInfo() {
     return
       "Computes the Intersect Over Union (IOU) of objects with the specified report from storage.\n"
-        + "It stores the iou percentage of the highest iou found (" + IOU_PERCENTAGE_HIGHEST + ") and the "
-        + "total number of iou greater than the specified minimum (" + IOU_COUNT + ").\n"
+        + "It stores the iou percentage of the highest iou found (" + IntersectOverUnionRatio.IOU_PERCENTAGE_HIGHEST + ") and the "
+        + "total number of iou greater than the specified minimum (" + IntersectOverUnionRatio.IOU_COUNT + ").\n"
         + "If a label key (located object meta-data) has been supplied, then the label of the object with "
-        + "the highest iou gets stored as well (" + IOU_LABEL_HIGHEST + ") and whether the "
-        + "labels match (" + IOU_LABEL_HIGHEST_MATCH + ")";
+        + "the highest iou gets stored as well (" + IntersectOverUnionRatio.IOU_LABEL_HIGHEST + ") and whether the "
+        + "labels match (" + IntersectOverUnionRatio.IOU_LABEL_HIGHEST_MATCH + ")";
   }
 
   /**
@@ -313,7 +299,7 @@ public class IntersectOverUnion
   /**
    * Sets the (optional) key for a string label in the meta-data; if supplied
    * the value of the object with the highest overlap gets stored in the
-   * report using {@link #IOU_LABEL_HIGHEST}, {@link #IOU_LABEL_HIGHEST_MATCH}
+   * report using {@link IntersectOverUnionRatio#IOU_LABEL_HIGHEST}, {@link IntersectOverUnionRatio#IOU_LABEL_HIGHEST_MATCH}
    * stores whether the labels match.
    *
    * @param value	the key, ignored if empty
@@ -326,7 +312,7 @@ public class IntersectOverUnion
   /**
    * Returns the (optional) key for a string label in the meta-data; if supplied
    * the value of the object with the highest overlap gets stored in the
-   * report using {@link #IOU_LABEL_HIGHEST}, {@link #IOU_LABEL_HIGHEST_MATCH}
+   * report using {@link IntersectOverUnionRatio#IOU_LABEL_HIGHEST}, {@link IntersectOverUnionRatio#IOU_LABEL_HIGHEST_MATCH}
    * stores whether the labels match.
    *
    * @return		the key, ignored if empty
@@ -344,8 +330,8 @@ public class IntersectOverUnion
   public String labelKeyTipText() {
     return "The (optional) key for a string label in the meta-data; if supplied "
       + "the value of the object with the highest iou gets stored in the "
-      + "report using " + IOU_LABEL_HIGHEST + ", "
-      + IOU_LABEL_HIGHEST_MATCH + " stores whether the labels match.";
+      + "report using " + IntersectOverUnionRatio.IOU_LABEL_HIGHEST + ", "
+      + IntersectOverUnionRatio.IOU_LABEL_HIGHEST_MATCH + " stores whether the labels match.";
   }
 
   /**
@@ -461,6 +447,7 @@ public class IntersectOverUnion
     LocatedObjects		otherObjs;
     LocatedObjects 		newObjs;
     Object			output;
+    IntersectOverUnionRatio	iouRatio;
 
     result = null;
 
@@ -494,7 +481,12 @@ public class IntersectOverUnion
     if (otherReport != null) {
       thisObjs  = m_Finder.findObjects(LocatedObjects.fromReport(thisReport,  m_Finder.getPrefix()));
       otherObjs = m_Finder.findObjects(LocatedObjects.fromReport(otherReport, m_Finder.getPrefix()));
-      newObjs   = AnnotationHelper.intersectOverUnion(thisObjs, otherObjs, m_MinIntersectOverUnionRatio, m_LabelKey, m_UseOtherObject, m_AdditionalObject);
+      iouRatio = new IntersectOverUnionRatio();
+      iouRatio.setMinIntersectOverUnionRatio(m_MinIntersectOverUnionRatio);
+      iouRatio.setLabelKey(m_LabelKey);
+      iouRatio.setUseOtherObject(m_UseOtherObject);
+      iouRatio.setAdditionalObject(m_AdditionalObject);
+      newObjs = iouRatio.calculate(thisObjs, otherObjs);
 
       // assemble new report
       try {

@@ -1,0 +1,72 @@
+--> dumpfile.txt
+Object.1.additional_object[B]: false
+Object.1.height[N]: 1702.0
+Object.1.index[S]: 0001
+Object.1.iou_count[U]: 2.0
+Object.1.iou_highest[N]: 0.826746647072697
+Object.1.iou_label_highest[S]: dog
+Object.1.iou_label_highest_match[B]: true
+Object.1.location[S]: 1352.0 1190.0 2457.0 1190.0 2457.0 2891.0 1352.0 2891.0
+Object.1.type[S]: dog
+Object.1.width[N]: 1106.0
+Object.1.x[N]: 1352.0
+Object.1.y[N]: 1190.0
+Object.2.additional_object[B]: false
+Object.2.height[N]: 626.0
+Object.2.index[S]: 0002
+Object.2.iou_count[U]: 1.0
+Object.2.iou_highest[N]: 0.7771853085466055
+Object.2.iou_label_highest[S]: dog
+Object.2.iou_label_highest_match[B]: false
+Object.2.location[S]: 1131.0 289.0 2615.0 289.0 2615.0 914.0 1131.0 914.0
+Object.2.type[S]: dog
+Object.2.width[N]: 1485.0
+Object.2.x[N]: 1131.0
+Object.2.y[N]: 289.0
+Object.3.additional_object[B]: true
+Object.3.height[N]: 592.0
+Object.3.index[S]: 0003
+Object.3.location[S]: 204.0 1539.0 952.0 1539.0 952.0 2130.0 204.0 2130.0
+Object.3.type[S]: dog
+Object.3.width[N]: 749.0
+Object.3.x[N]: 204.0
+Object.3.y[N]: 1539.0
+Object.count[N]: 3.0
+Parent ID[U]: -1
+
+Object.1.additional_object[B]: false
+Object.1.height[N]: 1702.0
+Object.1.index[S]: 0001
+Object.1.location[S]: 1352.0 1190.0 2457.0 1190.0 2457.0 2891.0 1352.0 2891.0
+Object.1.overlap_count[U]: 2.0
+Object.1.overlap_highest[N]: 0.9133733235363485
+Object.1.overlap_label_highest[S]: dog
+Object.1.overlap_label_highest_match[B]: true
+Object.1.type[S]: dog
+Object.1.width[N]: 1106.0
+Object.1.x[N]: 1352.0
+Object.1.y[N]: 1190.0
+Object.2.additional_object[B]: false
+Object.2.height[N]: 626.0
+Object.2.index[S]: 0002
+Object.2.location[S]: 1131.0 289.0 2615.0 289.0 2615.0 914.0 1131.0 914.0
+Object.2.overlap_count[U]: 1.0
+Object.2.overlap_highest[N]: 0.8885926542733027
+Object.2.overlap_label_highest[S]: dog
+Object.2.overlap_label_highest_match[B]: false
+Object.2.type[S]: dog
+Object.2.width[N]: 1485.0
+Object.2.x[N]: 1131.0
+Object.2.y[N]: 289.0
+Object.3.additional_object[B]: true
+Object.3.height[N]: 592.0
+Object.3.index[S]: 0003
+Object.3.location[S]: 204.0 1539.0 952.0 1539.0 952.0 2130.0 204.0 2130.0
+Object.3.type[S]: dog
+Object.3.width[N]: 749.0
+Object.3.x[N]: 204.0
+Object.3.y[N]: 1539.0
+Object.count[N]: 3.0
+Parent ID[U]: -1
+
+

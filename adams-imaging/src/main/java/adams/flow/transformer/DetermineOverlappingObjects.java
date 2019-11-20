@@ -14,18 +14,18 @@
  */
 
 /*
- * ImageObjectOverlap.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * DetermineOverlappingObjects.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
-import adams.core.annotation.DeprecatedClass;
 import adams.data.image.AbstractImageContainer;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
+import adams.data.objectoverlap.AbstractObjectOverlap;
 import adams.data.objectoverlap.AreaRatio;
 import adams.data.report.AbstractField;
 import adams.data.report.MutableReportHandler;
@@ -37,9 +37,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
  <!-- globalinfo-start -->
- * Computes the overlap of objects with the specified report from storage.<br>
- * It stores the overlap percentage of the highest overlap found (overlap_highest) and the total number of overlaps greater than the specified minimum (overlap_count).<br>
- * If a label key (located object meta-data) has been supplied, then the label of the object with the highest overlap gets stored as well (overlap_label_highest) and whether the labels match (overlap_label_highest_match)
+ * Computes the overlap of objects with the specified report from storage using the specified algorithm.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -64,7 +62,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: ImageObjectOverlap
+ * &nbsp;&nbsp;&nbsp;default: DetermineOverlappingObjects
  * </pre>
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -101,42 +99,16 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
  * </pre>
  *
- * <pre>-min-overlap-ratio &lt;double&gt; (property: minOverlapRatio)
- * &nbsp;&nbsp;&nbsp;The minimum ratio that an overlap must have before being considered an actual
- * &nbsp;&nbsp;&nbsp;overlap.
- * &nbsp;&nbsp;&nbsp;default: 0.0
- * &nbsp;&nbsp;&nbsp;minimum: 0.0
- * &nbsp;&nbsp;&nbsp;maximum: 1.0
- * </pre>
- *
- * <pre>-label-key &lt;java.lang.String&gt; (property: labelKey)
- * &nbsp;&nbsp;&nbsp;The (optional) key for a string label in the meta-data; if supplied the
- * &nbsp;&nbsp;&nbsp;value of the object with the highest overlap gets stored in the report using
- * &nbsp;&nbsp;&nbsp;overlap_label_highest, overlap_label_highest_match stores whether the labels
- * &nbsp;&nbsp;&nbsp;match.
- * &nbsp;&nbsp;&nbsp;default:
- * </pre>
- *
- * <pre>-use-other-object &lt;boolean&gt; (property: useOtherObject)
- * &nbsp;&nbsp;&nbsp;If enabled, the object data from the other report is used&#47;forwarded in case
- * &nbsp;&nbsp;&nbsp;of an overlap.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- *
- * <pre>-additional-object &lt;boolean&gt; (property: additionalObject)
- * &nbsp;&nbsp;&nbsp;If enabled, the additional predicted objects not present in actual objects
- * &nbsp;&nbsp;&nbsp;will be checked.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-algorithm &lt;adams.data.objectoverlap.AbstractObjectOverlap&gt; (property: algorithm)
+ * &nbsp;&nbsp;&nbsp;The algorithm to use for determining the overlapping objects.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.objectoverlap.AreaRatio
  * </pre>
  *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-@DeprecatedClass(
-  useInstead={DetermineOverlappingObjects.class, AreaRatio.class}
-)
-public class ImageObjectOverlap
+public class DetermineOverlappingObjects
   extends AbstractTransformer {
 
   private static final long serialVersionUID = 8175397929496972306L;
@@ -147,20 +119,8 @@ public class ImageObjectOverlap
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
 
-  /** the minimum overlap ratio to use. */
-  protected double m_MinOverlapRatio;
-
-  /** the label meta-data key - ignored if empty. */
-  protected String m_LabelKey;
-
-  /** whether to use the other object in the output in case of an overlap. */
-  protected boolean m_UseOtherObject;
-
-  /** whether to check for additional predicted objects not present in actual. */
-  protected boolean m_AdditionalObject;
-
-  /** whether to use average overlap ratio instead of just this->other. */
-  protected boolean m_AverageRatio;
+  /** the image overlap calculation to use. */
+  protected AbstractObjectOverlap m_Algorithm;
 
   /**
    * Returns a string describing the object.
@@ -169,13 +129,7 @@ public class ImageObjectOverlap
    */
   @Override
   public String globalInfo() {
-    return
-      "Computes the overlap of objects with the specified report from storage.\n"
-        + "It stores the overlap percentage of the highest overlap found (" + AreaRatio.OVERLAP_PERCENTAGE_HIGHEST + ") and the "
-        + "total number of overlaps greater than the specified minimum (" + AreaRatio.OVERLAP_COUNT + ").\n"
-        + "If a label key (located object meta-data) has been supplied, then the label of the object with "
-        + "the highest overlap gets stored as well (" + AreaRatio.OVERLAP_LABEL_HIGHEST + ") and whether the "
-        + "labels match (" + AreaRatio.OVERLAP_LABEL_HIGHEST_MATCH + ")";
+    return "Computes the overlap of objects with the specified report from storage using the specified algorithm.";
   }
 
   /**
@@ -194,24 +148,8 @@ public class ImageObjectOverlap
       new AllFinder());
 
     m_OptionManager.add(
-      "min-overlap-ratio", "minOverlapRatio",
-      0.0, 0.0, 1.0);
-
-    m_OptionManager.add(
-      "label-key", "labelKey",
-      "");
-
-    m_OptionManager.add(
-      "use-other-object", "useOtherObject",
-      false);
-
-    m_OptionManager.add(
-      "additional-object", "additionalObject",
-      false);
-
-    m_OptionManager.add(
-      "average-ratio", "averageRatio",
-      false);
+      "algorithm", "algorithm",
+      new AreaRatio());
   }
 
   /**
@@ -273,59 +211,22 @@ public class ImageObjectOverlap
   }
 
   /**
-   * Sets the minimum overlap ratio to use.
+   * Sets the algorithm for determining the overlapping objects
    *
-   * @param value 	the minimum ratio
+   * @param value 	the algorithm
    */
-  public void setMinOverlapRatio(double value) {
-    if (getOptionManager().isValid("minOverlapRatio", value)) {
-      m_MinOverlapRatio = value;
-      reset();
-    }
-  }
-
-  /**
-   * Returns the minimum overlap ratio to use.
-   *
-   * @return 		the minimum ratio
-   */
-  public double getMinOverlapRatio() {
-    return m_MinOverlapRatio;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String minOverlapRatioTipText() {
-    return "The minimum ratio that an overlap must have before being considered an actual overlap.";
-  }
-
-  /**
-   * Sets the (optional) key for a string label in the meta-data; if supplied
-   * the value of the object with the highest overlap gets stored in the
-   * report using {@link AreaRatio#OVERLAP_LABEL_HIGHEST}, {@link AreaRatio#OVERLAP_LABEL_HIGHEST_MATCH}
-   * stores whether the labels match.
-   *
-   * @param value	the key, ignored if empty
-   */
-  public void setLabelKey(String value) {
-    m_LabelKey = value;
+  public void setAlgorithm(AbstractObjectOverlap value) {
+    m_Algorithm = value;
     reset();
   }
 
   /**
-   * Returns the (optional) key for a string label in the meta-data; if supplied
-   * the value of the object with the highest overlap gets stored in the
-   * report using {@link AreaRatio#OVERLAP_LABEL_HIGHEST}, {@link AreaRatio#OVERLAP_LABEL_HIGHEST_MATCH}
-   * stores whether the labels match.
+   * Returns the algorithm for determining the overlapping objects.
    *
-   * @return		the key, ignored if empty
+   * @return 		the algorithm
    */
-  public String getLabelKey() {
-    return m_LabelKey;
+  public AbstractObjectOverlap getAlgorithm() {
+    return m_Algorithm;
   }
 
   /**
@@ -334,98 +235,8 @@ public class ImageObjectOverlap
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String labelKeyTipText() {
-    return "The (optional) key for a string label in the meta-data; if supplied "
-      + "the value of the object with the highest overlap gets stored in the "
-      + "report using " + AreaRatio.OVERLAP_LABEL_HIGHEST + ", "
-      + AreaRatio.OVERLAP_LABEL_HIGHEST_MATCH + " stores whether the labels match.";
-  }
-
-  /**
-   * Sets whether to use/forward other object data.
-   *
-   * @param value	true if to use other object
-   */
-  public void setUseOtherObject(boolean value) {
-    m_UseOtherObject = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to use/forward other object data.
-   *
-   * @return		true if to use other object
-   */
-  public boolean getUseOtherObject() {
-    return m_UseOtherObject;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String useOtherObjectTipText() {
-    return "If enabled, the object data from the other report is used/forwarded in case of an overlap.";
-  }
-
-  /**
-   * Sets whether to count additional predicted objects.
-   *
-   * @param value	true if to count additional predicted objects
-   */
-  public void setAdditionalObject(boolean value) {
-    m_AdditionalObject = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to count additional predicted objects.
-   *
-   * @return		true if to count additional predicted objects
-   */
-  public boolean getAdditionalObject() {
-    return m_AdditionalObject;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String additionalObjectTipText() {
-    return "If enabled, the additional predicted objects not present in actual objects will be checked.";
-  }
-
-  /**
-   * Sets whether to use average overlap ratio instead.
-   *
-   * @param value	true if to use average overlap ratio instead
-   */
-  public void setAverageRatio(boolean value) {
-    m_AverageRatio = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to use average overlap ratio instead.
-   *
-   * @return		true if to use average overlap ratio instead
-   */
-  public boolean getAverageRatio() {
-    return m_AverageRatio;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String averageRatioTipText() {
-    return "If enabled, the average overlap ratio will be used instead of just using ratio this->other.";
+  public String algorithmTipText() {
+    return "The algorithm to use for determining the overlapping objects.";
   }
 
   /**
@@ -439,11 +250,7 @@ public class ImageObjectOverlap
 
     result  = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
     result += QuickInfoHelper.toString(this, "finder", m_Finder, ", finder: ");
-    result += QuickInfoHelper.toString(this, "minOverlapRatio", m_MinOverlapRatio, ", overlap ratio: ");
-    result += QuickInfoHelper.toString(this, "labelKey", (m_LabelKey.isEmpty() ? "-none-" : m_LabelKey), ", label key: ");
-    result += QuickInfoHelper.toString(this, "useOtherObject", m_UseOtherObject, "use other obj", ", ");
-    result += QuickInfoHelper.toString(this, "additionalObject", m_AdditionalObject, "additional obj", ", ");
-    result += QuickInfoHelper.toString(this, "averageRatio", m_AverageRatio, "average ratio", ", ");
+    result += QuickInfoHelper.toString(this, "algorithm", m_Algorithm, ", algorithm: ");
 
     return result;
   }
@@ -484,7 +291,6 @@ public class ImageObjectOverlap
     LocatedObjects		otherObjs;
     LocatedObjects 		newObjs;
     Object			output;
-    AreaRatio			areaRatio;
 
     result = null;
 
@@ -518,13 +324,7 @@ public class ImageObjectOverlap
     if (otherReport != null) {
       thisObjs  = m_Finder.findObjects(LocatedObjects.fromReport(thisReport,  m_Finder.getPrefix()));
       otherObjs = m_Finder.findObjects(LocatedObjects.fromReport(otherReport, m_Finder.getPrefix()));
-      areaRatio = new AreaRatio();
-      areaRatio.setMinOverlapRatio(m_MinOverlapRatio);
-      areaRatio.setLabelKey(m_LabelKey);
-      areaRatio.setUseOtherObject(m_UseOtherObject);
-      areaRatio.setAverageRatio(m_AverageRatio);
-      areaRatio.setAdditionalObject(m_AdditionalObject);
-      newObjs = areaRatio.calculate(thisObjs, otherObjs);
+      newObjs = m_Algorithm.calculate(thisObjs, otherObjs);
 
       // assemble new report
       try {

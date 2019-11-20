@@ -318,6 +318,8 @@ The imaging module offers some more actors that have not been introduced yet.
   \item \textit{DeleteOverlappingImageObjects} -- for cleaning up
   overlapping objects, e.g., as post-processing from predicting bounding
   boxes.
+  \item \texttt{DetermineOverlappingObjects} -- computes overlapping image objects
+  between two reports (annotations and predictions).
   \item \textit{Draw} -- Performs draw operations on images, like setting
   pixels, drawing lines, rectangles, ovals, text, images\footnote{adams-imaging-draw.flow}
   and even barcodes (e.g., EAN and QRCode)\footnote{adams-imaging-barcode.flow}.
@@ -343,11 +345,9 @@ The imaging module offers some more actors that have not been introduced yet.
   stored in a report.
   \item \texttt{ImageObjectIndexOffset} -- changes the index of the objects in the
   report by the specified offset.
-  \item \texttt{ImageObjectOverlap} -- computes the number of overlaps
-  and highest overlap percentage between objects from two reports.
+  \item \texttt{ImageObjectOverlap} -- superceded by \textit{DetermineOverlappingObjects}.
   \item \textit{ImageSharpness} -- determines whether image is in focus or not.
-  \item \texttt{IntersectOverUnion} -- computes the number of IoU overlaps
-    and highest IoU percentage between objects from two reports.
+  \item \texttt{IntersectOverUnion} -- superceded by \textit{DetermineOverlappingObjects}.
   \item \textit{LocateObjects} -- provides a framework for algorithms that
   locate objects in images.
   \item \texttt{MergeObjectLocations} -- merges objects locations
