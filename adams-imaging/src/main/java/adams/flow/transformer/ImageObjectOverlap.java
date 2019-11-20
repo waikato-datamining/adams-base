@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.image.AbstractImageContainer;
+import adams.data.image.AnnotationHelper;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
 import adams.data.report.AbstractField;
@@ -31,11 +32,7 @@ import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
-import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -141,22 +138,22 @@ public class ImageObjectOverlap
   private static final long serialVersionUID = 8175397929496972306L;
 
   /** the highest overlap percentage. */
-  public final static String OVERLAP_PERCENTAGE_HIGHEST = "overlap_highest";
+  public final static String OVERLAP_PERCENTAGE_HIGHEST = AnnotationHelper.OVERLAP_PERCENTAGE_HIGHEST;
 
   /** the label of the highest overlap. */
-  public final static String OVERLAP_LABEL_HIGHEST = "overlap_label_highest";
+  public final static String OVERLAP_LABEL_HIGHEST = AnnotationHelper.OVERLAP_LABEL_HIGHEST;
 
   /** whether the labels of the highest overlap match. */
-  public final static String OVERLAP_LABEL_HIGHEST_MATCH = "overlap_label_highest_match";
+  public final static String OVERLAP_LABEL_HIGHEST_MATCH = AnnotationHelper.OVERLAP_LABEL_HIGHEST_MATCH;
 
   /** the overlap count. */
-  public final static String OVERLAP_COUNT = "overlap_count";
+  public final static String OVERLAP_COUNT = AnnotationHelper.OVERLAP_COUNT;
 
   /** the additional objects boolean. */
-  public final static String ADDITIONAL_OBJ = "additional_object";
+  public final static String ADDITIONAL_OBJ = AnnotationHelper.ADDITIONAL_OBJ;
 
   /** the placeholder for unknown label. */
-  public static final String UNKNOWN_LABEL = "???";
+  public static final String UNKNOWN_LABEL = AnnotationHelper.UNKNOWN_LABEL;
 
   /** the storage item. */
   protected StorageName m_StorageName;
@@ -497,26 +494,16 @@ public class ImageObjectOverlap
     Report			newReport;
     Report			thisReport;
     Report 			otherReport;
-    LocatedObject		actObj;
     LocatedObjects		thisObjs;
     LocatedObjects		otherObjs;
     LocatedObjects 		newObjs;
-    int 			count;
-    double 			overlapHighest;
-    String			thisLabel;
-    String			labelHighest;
-    double			ratio;
-    double			ratio2;
     Object			output;
-    boolean                     additionalObj;
 
     result = null;
 
     output      = null;
     thisReport  = null;
     otherReport = null;
-
-    additionalObj = false;
 
     if (m_InputToken.getPayload() instanceof AbstractImageContainer)
       thisReport = ((AbstractImageContainer) m_InputToken.getPayload()).getReport();
@@ -544,68 +531,7 @@ public class ImageObjectOverlap
     if (otherReport != null) {
       thisObjs  = m_Finder.findObjects(LocatedObjects.fromReport(thisReport,  m_Finder.getPrefix()));
       otherObjs = m_Finder.findObjects(LocatedObjects.fromReport(otherReport, m_Finder.getPrefix()));
-      newObjs   = new LocatedObjects();
-      if (thisObjs.size() == 0) {
-        newObjs = otherObjs;
-      }
-      else {
-        Set<LocatedObject> matchingObjects = new HashSet<>();
-        for (LocatedObject thisObj : thisObjs) {
-          count          = 0;
-          overlapHighest = 0.0;
-          labelHighest   = UNKNOWN_LABEL;
-          thisLabel      = UNKNOWN_LABEL;
-          if (!m_LabelKey.isEmpty() && thisObj.getMetaData().containsKey(m_LabelKey))
-            thisLabel = "" + thisObj.getMetaData().get(m_LabelKey);
-          actObj = thisObj;
-          for (LocatedObject otherObj : otherObjs) {
-            ratio = thisObj.overlapRatio(otherObj);
-            if (m_AverageRatio) {
-              ratio2 = otherObj.overlapRatio(thisObj);
-              ratio = (ratio + ratio2) / 2;
-            }
-            if (ratio >= m_MinOverlapRatio) {
-              count++;
-              if (ratio > overlapHighest) {
-                if (m_UseOtherObject)
-                  actObj = otherObj;
-                overlapHighest = ratio;
-                if (!m_LabelKey.isEmpty()) {
-                  if (otherObj.getMetaData().containsKey(m_LabelKey)) {
-                    labelHighest = "" + otherObj.getMetaData().get(m_LabelKey);
-                    matchingObjects.add(otherObj);
-                  }
-                  else
-                    labelHighest = UNKNOWN_LABEL;
-                }
-                else {
-		  matchingObjects.add(otherObj);
-		}
-              }
-            }
-          }
-          actObj = actObj.getClone();
-          actObj.getMetaData().put(OVERLAP_COUNT, count);
-          actObj.getMetaData().put(OVERLAP_PERCENTAGE_HIGHEST, overlapHighest);
-          if (!m_LabelKey.isEmpty()) {
-            actObj.getMetaData().put(OVERLAP_LABEL_HIGHEST, labelHighest);
-            actObj.getMetaData().put(OVERLAP_LABEL_HIGHEST_MATCH, thisLabel.equals(labelHighest));
-          }
-          if (m_AdditionalObject)
-            actObj.getMetaData().put(ADDITIONAL_OBJ, additionalObj);
-          newObjs.add(actObj);
-        }
-        if (m_AdditionalObject) {
-          additionalObj = true;
-          for (LocatedObject otherObj : otherObjs) {
-            if (!matchingObjects.contains(otherObj)) {
-              otherObj = otherObj.getClone();
-              otherObj.getMetaData().put(ADDITIONAL_OBJ, additionalObj);
-              newObjs.add(otherObj);
-            }
-          }
-        }
-      }
+      newObjs   = AnnotationHelper.imageOverlap(thisObjs, otherObjs, m_MinOverlapRatio, m_LabelKey, m_UseOtherObject, m_AdditionalObject, m_AverageRatio);
 
       // assemble new report
       try {

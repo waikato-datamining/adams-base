@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.image.AbstractImageContainer;
+import adams.data.image.AnnotationHelper;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
 import adams.data.report.AbstractField;
@@ -31,11 +32,7 @@ import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
-import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -141,22 +138,22 @@ public class IntersectOverUnion
   private static final long serialVersionUID = 8175397929496972306L;
 
   /** the highest iou percentage. */
-  public final static String IOU_PERCENTAGE_HIGHEST = "iou_highest";
+  public final static String IOU_PERCENTAGE_HIGHEST = AnnotationHelper.IOU_PERCENTAGE_HIGHEST;
 
   /** the label of the highest iou. */
-  public final static String IOU_LABEL_HIGHEST = "iou_label_highest";
+  public final static String IOU_LABEL_HIGHEST = AnnotationHelper.IOU_LABEL_HIGHEST;
 
   /** whether the labels of the highest iou match. */
-  public final static String IOU_LABEL_HIGHEST_MATCH = "iou_label_highest_match";
+  public final static String IOU_LABEL_HIGHEST_MATCH = AnnotationHelper.IOU_LABEL_HIGHEST_MATCH;
 
   /** the iou count. */
-  public final static String IOU_COUNT = "iou_count";
+  public final static String IOU_COUNT = AnnotationHelper.IOU_COUNT;
 
   /** the additional objects boolean. */
-  public final static String ADDITIONAL_OBJ = "additional_object";
+  public final static String ADDITIONAL_OBJ = AnnotationHelper.ADDITIONAL_OBJ;
 
   /** the placeholder for unknown label. */
-  public static final String UNKNOWN_LABEL = "???";
+  public static final String UNKNOWN_LABEL = AnnotationHelper.UNKNOWN_LABEL;
 
   /** the storage item. */
   protected StorageName m_StorageName;
@@ -460,29 +457,16 @@ public class IntersectOverUnion
     Report			newReport;
     Report			thisReport;
     Report 			otherReport;
-    LocatedObject		actObj;
     LocatedObjects		thisObjs;
     LocatedObjects		otherObjs;
     LocatedObjects 		newObjs;
-    int 			count;
-    double 			iouHighest;
-    String			thisLabel;
-    String			labelHighest;
-    double			ratio;
-    double			intersectArea;
-    int 			thisObjArea;
-    int 			otherObjArea;
-    double			iou;
     Object			output;
-    boolean                     additionalObj;
 
     result = null;
 
     output      = null;
     thisReport  = null;
     otherReport = null;
-
-    additionalObj = false;
 
     if (m_InputToken.getPayload() instanceof AbstractImageContainer)
       thisReport = ((AbstractImageContainer) m_InputToken.getPayload()).getReport();
@@ -510,68 +494,7 @@ public class IntersectOverUnion
     if (otherReport != null) {
       thisObjs  = m_Finder.findObjects(LocatedObjects.fromReport(thisReport,  m_Finder.getPrefix()));
       otherObjs = m_Finder.findObjects(LocatedObjects.fromReport(otherReport, m_Finder.getPrefix()));
-      newObjs   = new LocatedObjects();
-      if (thisObjs.size() == 0) {
-        newObjs = otherObjs;
-      }
-      else {
-        Set<LocatedObject> matchingObjects = new HashSet<>();
-        for (LocatedObject thisObj : thisObjs) {
-          count          = 0;
-          iouHighest     = 0.0;
-          labelHighest   = UNKNOWN_LABEL;
-          thisLabel      = UNKNOWN_LABEL;
-          if (!m_LabelKey.isEmpty() && thisObj.getMetaData().containsKey(m_LabelKey))
-            thisLabel = "" + thisObj.getMetaData().get(m_LabelKey);
-          actObj = thisObj;
-          for (LocatedObject otherObj : otherObjs) {
-            ratio = thisObj.overlapRatio(otherObj);
-            thisObjArea = thisObj.getHeight() * thisObj.getWidth();
-            intersectArea = thisObjArea * ratio;
-            otherObjArea = otherObj.getHeight() * otherObj.getWidth();
-            iou = intersectArea / (thisObjArea + otherObjArea - intersectArea);
-            if (iou >= m_MinIntersectOverUnionRatio) {
-              count++;
-              if (iou > iouHighest) {
-                if (m_UseOtherObject)
-                  actObj = otherObj;
-                iouHighest = iou;
-                if (!m_LabelKey.isEmpty()) {
-                  if (otherObj.getMetaData().containsKey(m_LabelKey)) {
-                    labelHighest = "" + otherObj.getMetaData().get(m_LabelKey);
-                    matchingObjects.add(otherObj);
-                  }
-                  else
-                    labelHighest = UNKNOWN_LABEL;
-                }
-                else {
-		  matchingObjects.add(otherObj);
-		}
-              }
-            }
-          }
-          actObj = actObj.getClone();
-          actObj.getMetaData().put(IOU_COUNT, count);
-          actObj.getMetaData().put(IOU_PERCENTAGE_HIGHEST, iouHighest);
-          if (!m_LabelKey.isEmpty()) {
-            actObj.getMetaData().put(IOU_LABEL_HIGHEST, labelHighest);
-            actObj.getMetaData().put(IOU_LABEL_HIGHEST_MATCH, thisLabel.equals(labelHighest));
-          }
-          if (m_AdditionalObject)
-            actObj.getMetaData().put(ADDITIONAL_OBJ, additionalObj);
-          newObjs.add(actObj);
-        }
-        if (m_AdditionalObject) {
-          additionalObj = true;
-          for (LocatedObject otherObj : otherObjs) {
-            if (!matchingObjects.contains(otherObj)) {
-              otherObj = otherObj.getClone();
-              otherObj.getMetaData().put(ADDITIONAL_OBJ, additionalObj);
-              newObjs.add(otherObj);
-            }
-          }
-        }
-      }
+      newObjs   = AnnotationHelper.intersectOverUnion(thisObjs, otherObjs, m_MinIntersectOverUnionRatio, m_LabelKey, m_UseOtherObject, m_AdditionalObject);
 
       // assemble new report
       try {
