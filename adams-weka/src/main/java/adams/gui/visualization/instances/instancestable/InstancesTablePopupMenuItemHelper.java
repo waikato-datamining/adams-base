@@ -197,6 +197,8 @@ public class InstancesTablePopupMenuItemHelper {
     if (menu.getComponent(menu.getComponentCount() - 1) instanceof JMenuItem)
       menu.addSeparator();
     for (InstancesTablePopupMenuItem item: items) {
+      if (!item.isAvailable(state))
+        continue;
       menuitem = new JMenuItem(item.getMenuItem());
       if (item.getIconName() != null)
         menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));

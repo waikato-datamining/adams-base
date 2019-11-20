@@ -107,6 +107,16 @@ public class SimplePlot
   }
 
   /**
+   * Returns whether the menu item is available.
+   *
+   * @param state 	the state to use
+   * @return            true if available
+   */
+  public boolean isAvailable(TableState state) {
+    return true;
+  }
+
+  /**
    * For sorting the menu items.
    *
    * @param o       the other item

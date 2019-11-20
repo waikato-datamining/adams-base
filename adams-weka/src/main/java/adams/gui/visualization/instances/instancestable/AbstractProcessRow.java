@@ -58,6 +58,16 @@ public abstract class AbstractProcessRow
   }
 
   /**
+   * Returns whether the menu item is available.
+   *
+   * @param state 	the state to use
+   * @return            true if available
+   */
+  public boolean isAvailable(TableState state) {
+    return true;
+  }
+
+  /**
    * Hook method for checks before attempting processing.
    *
    * @param state	the table state

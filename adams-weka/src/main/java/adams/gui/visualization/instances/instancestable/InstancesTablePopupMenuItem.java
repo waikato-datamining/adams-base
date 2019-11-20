@@ -13,18 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InstancesTablePopupMenuItem.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
 
+import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
+
 /**
- * Ancestor for menu items of popups for the SpreadSheetTable.
+ * Ancestor for menu items of popups for the InstancesTable.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface InstancesTablePopupMenuItem
   extends Comparable<InstancesTablePopupMenuItem> {
@@ -42,4 +43,12 @@ public interface InstancesTablePopupMenuItem
    * @return            the name, null if none available
    */
   public String getIconName();
+
+  /**
+   * Returns whether the menu item is available.
+   *
+   * @param state 	the state to use
+   * @return            true if available
+   */
+  public boolean isAvailable(TableState state);
 }
