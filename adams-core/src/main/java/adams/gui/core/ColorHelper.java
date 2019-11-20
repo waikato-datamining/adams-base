@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ColorHelper.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.awt.Color;
-
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+
+import java.awt.Color;
 
 /**
  * Helper class for converting Colors to-and-from strings.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ColorHelper {
 
@@ -304,5 +303,16 @@ public class ColorHelper {
   public static Color getContrastColor(Color color) {
     double y = (299 * color.getRed() + 587 * color.getGreen() + 114 * color.getBlue()) / 1000;
     return y >= 128 ? Color.black : Color.white;
+  }
+
+  /**
+   * Creates a new color with the specified alpha value (255: opaque, 0: fully translucent).
+   *
+   * @param color	the color to use as base
+   * @param alpha	the alpha value (0-255)
+   * @return		the new color
+   */
+  public static Color addAlpha(Color color, int alpha) {
+    return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
   }
 }
