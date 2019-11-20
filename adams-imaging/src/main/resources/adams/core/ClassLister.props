@@ -5,7 +5,6 @@
 # class.name=package1,package2,...
 #
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # converting from BufferedImage to other format
 adams.data.conversion.BufferedImageToOtherFormatConversion=\
@@ -46,6 +45,10 @@ adams.data.image.transformer.whitebalance.AbstractWhiteBalanceAlgorithm=\
 # the buffered image multi-image operations
 adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation=\
   adams.data.image.multiimageoperation
+
+# the algorithms for calculating object overlaps
+adams.data.objectoverlap.AbstractObjectOverlap=\
+  adams.data.objectoverlap
 
 # the different comparison views of object locations
 adams.flow.transformer.compareobjectlocations.AbstractComparison=\
