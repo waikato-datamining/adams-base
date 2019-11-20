@@ -22,10 +22,13 @@ package adams.flow.transformer.compareobjectlocations;
 
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
+import adams.data.objectoverlap.AbstractObjectOverlap;
+import adams.data.objectoverlap.Null;
 import adams.data.report.Report;
 import adams.flow.transformer.CompareObjectLocations;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.gui.core.ColorHelper;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.MultiImageOverlay;
@@ -62,6 +65,8 @@ public class Combined
 
     public static final String PREFIX_PREDICTION = "Prediction.";
 
+    public static final String PREFIX_OVERLAP = "Overlap.";
+
     /** the image panel. */
     protected ImagePanel m_PanelImage;
 
@@ -73,6 +78,12 @@ public class Combined
 
     /** the label for the prediction color. */
     protected JLabel m_LabelPredictionsColor;
+
+    /** the label for the overlap color text. */
+    protected JLabel m_LabelOverlapColorText;
+
+    /** the label for the overlap color. */
+    protected JLabel m_LabelOverlapColor;
 
     /** the annotations report. */
     protected Report m_AnnotationsReport;
@@ -91,6 +102,12 @@ public class Combined
 
     /** the predictions label suffix. */
     protected String m_PredictionsLabelSuffix;
+
+    /** the algorithm for calculating the overlapping objects. */
+    protected AbstractObjectOverlap m_ObjectOverlap;
+
+    /** the located objects / overlaps. */
+    protected LocatedObjects m_OverlapLocatedObjects;
 
     /** the zoom level. */
     protected double m_Zoom;
@@ -125,11 +142,16 @@ public class Combined
       m_LabelAnnotationsColor.setOpaque(true);
       m_LabelPredictionsColor = new JLabel("         ");
       m_LabelPredictionsColor.setOpaque(true);
+      m_LabelOverlapColorText = new JLabel("Overlaps");
+      m_LabelOverlapColor = new JLabel("         ");
+      m_LabelOverlapColor.setOpaque(true);
 
       m_PanelColors.add(new JLabel("Annotations"));
       m_PanelColors.add(m_LabelAnnotationsColor);
       m_PanelColors.add(new JLabel("Predictions"));
       m_PanelColors.add(m_LabelPredictionsColor);
+      m_PanelColors.add(m_LabelOverlapColorText);
+      m_PanelColors.add(m_LabelOverlapColor);
     }
 
     /**
@@ -169,6 +191,28 @@ public class Combined
     }
 
     /**
+     * Sets the algorithm to use for determining the overlapping object.
+     *
+     * @param value 	the algorithm
+     */
+    public void setObjectOverlap(AbstractObjectOverlap value) {
+      m_ObjectOverlap = value;
+      if (m_ObjectOverlap instanceof Null) {
+        m_LabelOverlapColorText.setVisible(false);
+        m_LabelOverlapColor.setVisible(false);
+      }
+    }
+
+    /**
+     * Sets the color to use for the overlaps.
+     *
+     * @param value 	the color
+     */
+    public void setOverlapColor(Color value) {
+      m_LabelOverlapColor.setBackground(value);
+    }
+
+    /**
      * Clears the content of the panel.
      */
     @Override
@@ -189,6 +233,7 @@ public class Combined
       combined = new Report();
       combined.mergeWith(filterObjects(label, m_AnnotationsLocatedObjects, SUFFIX_TYPE, PREFIX_ANNOTATION));
       combined.mergeWith(filterObjects(label, m_PredictionsLocatedObjects, SUFFIX_TYPE, PREFIX_PREDICTION));
+      combined.mergeWith(filterObjects(label, m_PredictionsLocatedObjects, SUFFIX_TYPE, PREFIX_OVERLAP));
       m_PanelImage.setAdditionalProperties(combined);
     }
 
@@ -235,9 +280,15 @@ public class Combined
       m_PredictionsReport         = repPred;
       m_PredictionsLocatedObjects = updateLabelType(objPred, m_PredictionsLabelSuffix);
 
+      if (m_ObjectOverlap instanceof Null)
+        m_OverlapLocatedObjects = new LocatedObjects();
+      else
+	m_OverlapLocatedObjects = m_ObjectOverlap.calculate(m_AnnotationsLocatedObjects, m_PredictionsLocatedObjects);
+
       m_CombinedReport = new Report();
       m_CombinedReport.mergeWith(m_AnnotationsLocatedObjects.toReport(PREFIX_ANNOTATION));
       m_CombinedReport.mergeWith(m_PredictionsLocatedObjects.toReport(PREFIX_PREDICTION));
+      m_CombinedReport.mergeWith(m_OverlapLocatedObjects.toReport(PREFIX_OVERLAP));
 
       m_PanelImage.setCurrentImage(cont);
       m_PanelImage.setAdditionalProperties(m_CombinedReport);
@@ -252,6 +303,12 @@ public class Combined
 
   /** the color for the predictions. */
   protected Color m_PredictionsColor;
+
+  /** the algorithm for calculating the overlapping objects. */
+  protected AbstractObjectOverlap m_ObjectOverlap;
+
+  /** the color for the overlaps. */
+  protected Color m_OverlapColor;
 
   /** the zoom level. */
   protected double m_Zoom;
@@ -280,6 +337,14 @@ public class Combined
     m_OptionManager.add(
       "predictions-color", "predictionsColor",
       Color.RED);
+
+    m_OptionManager.add(
+      "object-overlap", "objectOverlap",
+      new Null());
+
+    m_OptionManager.add(
+      "overlap-color", "overlapColor",
+      ColorHelper.addAlpha(Color.YELLOW, 64));
 
     m_OptionManager.add(
       "zoom", "zoom",
@@ -345,6 +410,64 @@ public class Combined
   }
 
   /**
+   * Sets the algorithm to use for determining overlapping objects.
+   *
+   * @param value 	the algorithm
+   */
+  public void setObjectOverlap(AbstractObjectOverlap value) {
+    m_ObjectOverlap = value;
+    reset();
+  }
+
+  /**
+   * Returns the algorithm to use for determining overlapping objects.
+   *
+   * @return 		the algorithm
+   */
+  public AbstractObjectOverlap getObjectOverlap() {
+    return m_ObjectOverlap;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String objectOverlapTipText() {
+    return "The algorithm to use for determining overlapping objects.";
+  }
+
+  /**
+   * Sets the color to use for the overlapping objects.
+   *
+   * @param value 	the color
+   */
+  public void setOverlapColor(Color value) {
+    m_OverlapColor = value;
+    reset();
+  }
+
+  /**
+   * Returns the color to use for the overlapping objects.
+   *
+   * @return 		the color
+   */
+  public Color getOverlapColor() {
+    return m_OverlapColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlapColorTipText() {
+    return "The color to use for the overlapping objects.";
+  }
+
+  /**
    * Sets the zoom level in percent (0-1600).
    *
    * @param value 	the zoom, -1 to fit window, or 0-1600
@@ -389,6 +512,7 @@ public class Combined
     CombinedPanel			result;
     ObjectLocationsOverlayFromReport	annotations;
     ObjectLocationsOverlayFromReport	predictions;
+    ObjectLocationsOverlayFromReport	overlaps;
     MultiImageOverlay			multi;
 
     annotations = new ObjectLocationsOverlayFromReport();
@@ -399,14 +523,21 @@ public class Combined
     predictions.setColor(m_PredictionsColor);
     predictions.setPrefix(CombinedPanel.PREFIX_PREDICTION);
 
+    overlaps = new ObjectLocationsOverlayFromReport();
+    overlaps.setColor(m_OverlapColor);
+    overlaps.setFilled(true);
+    overlaps.setPrefix(CombinedPanel.PREFIX_OVERLAP);
+
     multi = new MultiImageOverlay();
-    multi.setOverlays(new ImageOverlay[]{annotations, predictions});
+    multi.setOverlays(new ImageOverlay[]{annotations, predictions, overlaps});
 
     result = new CombinedPanel();
-    result.setZoom(m_Zoom);
     result.setOverlay(multi);
     result.setAnnotationsColor(m_AnnotationsColor);
     result.setPredictionsColor(m_PredictionsColor);
+    result.setObjectOverlap((AbstractObjectOverlap) OptionUtils.shallowCopy(m_ObjectOverlap, true));
+    result.setOverlapColor(m_OverlapColor);
+    result.setZoom(m_Zoom);
 
     return result;
   }
