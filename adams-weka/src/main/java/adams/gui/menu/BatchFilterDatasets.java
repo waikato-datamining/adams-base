@@ -15,48 +15,23 @@
 
 /*
  * BatchFilterDatasets.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import adams.core.Properties;
-import adams.core.logging.LoggingHelper;
-import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
-import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.PropertiesParameterPanel.PropertyType;
-import adams.gui.goe.GenericObjectEditorPanel;
-import adams.gui.wizard.AbstractWizardPage;
-import adams.gui.wizard.FinalPage;
-import adams.gui.wizard.PageCheck;
-import adams.gui.wizard.ParameterPanelPage;
-import adams.gui.wizard.WekaSelectDatasetPage;
-import adams.gui.wizard.WekaSelectMultipleDatasetsPage;
-import adams.gui.wizard.WizardPane;
-import weka.core.Instances;
-import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.ConverterUtils;
-import weka.core.converters.ConverterUtils.DataSink;
-import weka.core.converters.ConverterUtils.DataSource;
-import weka.filters.AllFilter;
-import weka.filters.Filter;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.logging.Level;
+import adams.gui.tools.weka.BatchFilterDatasetsPanel;
 
 /**
  * For batch filtering datasets using a single filter setup (files get output
  * into a different directory).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BatchFilterDatasets
   extends AbstractBasicMenuItemDefinition {
@@ -95,193 +70,7 @@ public class BatchFilterDatasets
    */
   @Override
   public void launch() {
-    final WizardPane			wizard;
-    WekaSelectMultipleDatasetsPage	infiles;
-    ParameterPanelPage 			paramsFilter;
-    ParameterPanelPage 			paramsOutput;
-    Properties				props;
-    WekaSelectDatasetPage		outfile;
-    FinalPage				finalpage;
-    Filter 				filter;
-    final ChildFrame			frame;
-
-    // configuration
-    filter = new AllFilter();
-
-    // wizard
-    wizard = new WizardPane();
-    wizard.setCustomFinishText("Filter");
-
-    infiles = new WekaSelectMultipleDatasetsPage("Input");
-    infiles.setDescription(
-      "Select the Weka datasets to batch-filter.\n"
-	+ "You have to choose at least two.\n"
-	+ "The first dataset is used to set up the filter, all subsequent files get filtered with this set up.");
-    infiles.setPageCheck(new PageCheck() {
-      @Override
-      public boolean checkPage(AbstractWizardPage page) {
-	Properties props = page.getProperties();
-	try {
-	  String[] files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
-	  return (files.length >= 2);
-	}
-	catch (Exception e) {
-          getLogger().log(Level.SEVERE, "Failed to obtain files:", e);
-	}
-	return false;
-      }
-    });
-    wizard.addPage(infiles);
-
-    paramsFilter = new ParameterPanelPage("Filter");
-    paramsFilter.setDescription(
-      "Set up the filter that is used to filter the datasets.\n"
-	+ "If no class attribute is to be set, simply empty the 'Class' property. "
-	+ "You can use 'first' and 'last' as well as 1-based indices.");
-    paramsFilter.getParameterPanel().addPropertyType("Filter", PropertyType.OBJECT_EDITOR);
-    paramsFilter.getParameterPanel().setChooser("Filter", new GenericObjectEditorPanel(weka.filters.Filter.class, filter, true));
-    paramsFilter.getParameterPanel().addPropertyType("Class", PropertyType.STRING);
-    paramsFilter.getParameterPanel().addPropertyType("Keep relation name", PropertyType.BOOLEAN);
-    paramsFilter.getParameterPanel().setPropertyOrder(new String[]{"Filter", "Class", "Keep relation name"});
-    props = new Properties();
-    props.setProperty("Filter", OptionUtils.getCommandLine(filter));
-    props.setProperty("Class", "last");
-    props.setBoolean("Keep relation name", false);
-    paramsFilter.getParameterPanel().setProperties(props);
-    wizard.addPage(paramsFilter);
-
-    paramsOutput = new ParameterPanelPage("Output");
-    paramsOutput.setDescription("Select the directory where to place the generated datasets in ARFF format (the input file names get reused for the output).");
-    paramsOutput.getParameterPanel().addPropertyType("Output", PropertyType.DIRECTORY_ABSOLUTE);
-    props = new Properties();
-    props.setPath("Output", ".");
-    paramsOutput.getParameterPanel().setProperties(props);
-    wizard.addPage(paramsOutput);
-
-    finalpage = new FinalPage();
-    finalpage.setLogo(null);
-    finalpage.setDescription("<html><h2>Ready</h2>Please click on <b>Filter</b> to start the process.</html>");
-    wizard.addPage(finalpage);
-    frame = createChildFrame(wizard, GUIHelper.getDefaultDialogDimension());
-    wizard.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (!e.getActionCommand().equals(WizardPane.ACTION_FINISH)) {
-          frame.dispose();
-          return;
-        }
-        Properties props = wizard.getProperties(false);
-	String[] files = null;
-	Filter filter = null;
-	String classIndex = null;
-	File outdir = null;
-	boolean keep = false;
-        try {
-          files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
-	  filter = (Filter) OptionUtils.forAnyCommandLine(Filter.class, props.getProperty("Filter"));
-	  classIndex = props.getProperty("Class");
-	  outdir = new File(props.getPath("Output"));
-	  keep = props.getBoolean("Keep relation name");
-        }
-        catch (Exception ex) {
-          GUIHelper.showErrorMessage(
-            getOwner(), "Failed to get setup from wizard!\n" + LoggingHelper.throwableToString(ex));
-          return;
-        }
-        batchFilter(frame, files, filter, classIndex, keep, outdir);
-      }
-    });
-  }
-
-  /**
-   * Performs the batch filtering.
-   *
-   * @param frame       the frame to close
-   * @param input       the files to filter
-   * @param filter      the filter setup
-   * @param classIndex	the class index, empty for no class
-   * @param keep	whether to keep the relation name
-   * @param outdir      the output directory
-   */
-  protected void batchFilter(ChildFrame frame, String[] input, Filter filter, String classIndex, boolean keep, File outdir) {
-    Instances[]                 data;
-    int                         i;
-    AbstractFileLoader          loader;
-    Instances			filtered;
-    int				clsIndex;
-    String			outfile;
-    StringBuilder		outfiles;
-
-    if (input.length < 2) {
-      GUIHelper.showErrorMessage(getOwner(), "At least two files are required!");
-      return;
-    }
-
-    // load and check compatibility
-    loader = ConverterUtils.getLoaderForFile(input[0]);
-    data   = new Instances[input.length];
-    for (i = 0; i < input.length; i++) {
-      try {
-        loader.setFile(new File(input[i]));
-        data[i] = DataSource.read(loader);
-      }
-      catch (Exception e) {
-        GUIHelper.showErrorMessage(
-          getOwner(),
-	  "Failed to read '" + input[i] + "'!\n" + LoggingHelper.throwableToString(e));
-        return;
-      }
-    }
-
-    // class index
-    if (classIndex.isEmpty()) {
-      clsIndex = -1;
-    }
-    else {
-      try {
-	if (classIndex.equalsIgnoreCase("first"))
-	  clsIndex = 0;
-	else if (classIndex.equalsIgnoreCase("last"))
-	  clsIndex = data[0].numAttributes() - 1;
-	else
-	  clsIndex = Integer.parseInt(classIndex) - 1;
-      }
-      catch (Exception e) {
-	GUIHelper.showErrorMessage(
-	  getOwner(),
-	  "Failed to parse class attribute index: " + classIndex + "\n"
-	    + LoggingHelper.throwableToString(e));
-	return;
-      }
-    }
-
-    // filter
-    outfiles = new StringBuilder();
-    for (i = 0; i < input.length; i++) {
-      try {
-	outfile = outdir.getAbsolutePath() + File.separator + new File(input[i]).getName();
-	data[i].setClassIndex(clsIndex);
-	if (i == 0)
-	  filter.setInputFormat(data[i]);
-	filtered = Filter.useFilter(data[i], filter);
-	if (keep)
-	  filtered.setRelationName(data[i].relationName());
-	DataSink.write(outfile, filtered);
-	if (outfiles.length() > 0)
-	  outfiles.append("\n");
-	outfiles.append(outfile);
-      }
-      catch (Exception e) {
-	GUIHelper.showErrorMessage(
-	  getOwner(),
-	  "Failed to filter dataset #" + (i+1) + " ('" + input[i] + "')!\n"
-	    + LoggingHelper.throwableToString(e));
-	return;
-      }
-    }
-
-    GUIHelper.showInformationMessage(null, "Successfully filtered!\n" + outfiles);
-    frame.dispose();
+    createChildFrame(new BatchFilterDatasetsPanel(true), GUIHelper.getDefaultDialogDimension());
   }
 
   /**
