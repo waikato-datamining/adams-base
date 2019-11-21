@@ -1,0 +1,29 @@
+# Project: adams
+# Date: 2019-11-21 16:22:58
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
+adams.flow.control.Flow -annotation "Generates a Vote ensemble from pre-built classifiers rather than training the Vote meta-classifier itself." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "load data"
+  adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat.arff
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.SimpleArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.SetStorageValue -storage-name data
+ adams.flow.control.Trigger -name "build models invidually"
+  adams.flow.standalone.CallableActors
+   adams.flow.source.WekaClassifierSetup -classifier @{classifier}
+  adams.flow.source.StringConstants -string weka.classifiers.functions.LinearRegression -string weka.classifiers.functions.SMOreg -string weka.classifiers.trees.RandomForest -conversion adams.data.conversion.StringToString
+  adams.flow.transformer.SetVariable -var-name classifier
+  adams.flow.control.Trigger -name "build model"
+   adams.flow.source.StorageValue -storage-name data -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.transformer.WekaTrainClassifier
+   adams.flow.control.ContainerValuePicker -value Model -switch-outputs true
+   adams.flow.transformer.SequenceToCollection
+   adams.flow.transformer.CollectionAppend -storage-name models
+ adams.flow.control.Trigger -name "build ensemble"
+  adams.flow.source.StorageValue -storage-name models -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.CollectionToArray -array-class weka.classifiers.Classifier
+  adams.flow.transformer.WekaEnsembleGenerator -generator "adams.flow.transformer.wekaensemblegenerator.VotedModels -template \"weka.classifiers.meta.Vote -S 1 -B \\\"weka.classifiers.rules.ZeroR \\\" -R AVG\""
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter

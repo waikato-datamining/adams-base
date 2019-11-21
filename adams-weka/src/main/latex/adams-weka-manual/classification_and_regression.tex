@@ -589,3 +589,11 @@ PLS matrices from a \textit{PLSFilterWithLoadings} filter or a
 if this container should have a \textit{PLSClassifierWeightedWithLoadings} classifier 
 stored).\footnote{adams-weka-extract\_pls\_matrix.flow}
 You can also use the \textit{WekaGenericPLSMatrixAccess} transformer.
+
+\subsection{Ensembles}
+With the \textit{WekaEnsembleGenerator} it is possible to create ensembles from
+input data (like pre-built classifiers) rather than training the ensemble itself.
+With the \textit{VotedModels} generator, you can create a \textit{Vote}
+meta-classifier from the incoming classifier array, using the supplied Vote
+template.\footnote{adams-weka-lts-create\_vote\_ensemble.flow}
+

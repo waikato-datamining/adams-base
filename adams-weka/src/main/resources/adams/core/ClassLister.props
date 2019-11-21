@@ -62,6 +62,10 @@ adams.flow.transformer.wekaevaluationpostprocessor.AbstractWekaEvaluationPostPro
 adams.flow.transformer.wekadatasetsmerge.AbstractMerge=\
   adams.flow.transformer.wekadatasetsmerge
 
+# the ensemble generators
+adams.flow.transformer.wekaensemblegenerator.AbstractWekaEnsembleGenerator=\
+  adams.flow.transformer.wekaensemblegenerator
+
 # the dataset splitters
 adams.data.weka.datasetsplitter.AbstractSplitter=\
   adams.data.weka.datasetsplitter
