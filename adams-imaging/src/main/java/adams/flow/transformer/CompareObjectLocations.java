@@ -21,11 +21,10 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
-import adams.data.io.input.AbstractReportReader;
-import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.report.Report;
+import adams.flow.control.StorageName;
+import adams.flow.control.StorageUser;
 import adams.flow.core.Token;
 import adams.flow.transformer.compareobjectlocations.AbstractComparison;
 import adams.flow.transformer.compareobjectlocations.AbstractComparisonPanel;
@@ -45,7 +44,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -146,14 +144,9 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: GLOBAL
  * </pre>
  *
- * <pre>-annotations-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: annotationsReader)
- * &nbsp;&nbsp;&nbsp;The reader to use for loading the annotations (ground truth).
- * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.DefaultSimpleReportReader
- * </pre>
- *
- * <pre>-annotations-file &lt;adams.core.io.PlaceholderFile&gt; (property: annotationsFile)
- * &nbsp;&nbsp;&nbsp;The file containing the annotations.
- * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * <pre>-annotations-storage-name &lt;adams.flow.control.StorageName&gt; (property: annotationsStorageName)
+ * &nbsp;&nbsp;&nbsp;The name of the storage item containing the annotations (ground truth).
+ * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
  *
  * <pre>-annotations-prefix &lt;java.lang.String&gt; (property: annotationsPrefix)
@@ -166,14 +159,9 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: type
  * </pre>
  *
- * <pre>-predictions-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: predictionsReader)
- * &nbsp;&nbsp;&nbsp;The reader to use for loading the predictions.
- * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.DefaultSimpleReportReader
- * </pre>
- *
- * <pre>-predictions-file &lt;adams.core.io.PlaceholderFile&gt; (property: predictionsFile)
- * &nbsp;&nbsp;&nbsp;The file containing the predictions.
- * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * <pre>-predictions-storage-name &lt;adams.flow.control.StorageName&gt; (property: predictionsStorageName)
+ * &nbsp;&nbsp;&nbsp;The name of the storage item containing the predictions.
+ * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
  *
  * <pre>-predictions-prefix &lt;java.lang.String&gt; (property: predictionsPrefix)
@@ -196,15 +184,13 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class CompareObjectLocations
-  extends AbstractInteractiveTransformerDialog {
+  extends AbstractInteractiveTransformerDialog
+  implements StorageUser {
 
   private static final long serialVersionUID = 2191236912048968711L;
 
-  /** the report reader for the annotations. */
-  protected AbstractReportReader m_AnnotationsReader;
-
-  /** the annotations file to read. */
-  protected PlaceholderFile m_AnnotationsFile;
+  /** the storage item with the annotations. */
+  protected StorageName m_AnnotationsStorageName;
 
   /** the annotations object prefix. */
   protected String m_AnnotationsPrefix;
@@ -212,11 +198,8 @@ public class CompareObjectLocations
   /** the annotations label suffix. */
   protected String m_AnnotationsLabelSuffix;
 
-  /** the report reader for the predictions. */
-  protected AbstractReportReader m_PredictionsReader;
-
-  /** the predictions file to read. */
-  protected PlaceholderFile m_PredictionsFile;
+  /** the storage item with the predictions. */
+  protected StorageName m_PredictionsStorageName;
 
   /** the predictions object prefix. */
   protected String m_PredictionsPrefix;
@@ -252,12 +235,8 @@ public class CompareObjectLocations
     super.defineOptions();
 
     m_OptionManager.add(
-      "annotations-reader", "annotationsReader",
-      new DefaultSimpleReportReader());
-
-    m_OptionManager.add(
-      "annotations-file", "annotationsFile",
-      new PlaceholderFile());
+      "annotations-storage-name", "annotationsStorageName",
+      new StorageName());
 
     m_OptionManager.add(
       "annotations-prefix", "annotationsPrefix",
@@ -268,12 +247,8 @@ public class CompareObjectLocations
       "type");
 
     m_OptionManager.add(
-      "predictions-reader", "predictionsReader",
-      new DefaultSimpleReportReader());
-
-    m_OptionManager.add(
-      "predictions-file", "predictionsFile",
-      new PlaceholderFile());
+      "predictions-storage-name", "predictionsStorageName",
+      new StorageName());
 
     m_OptionManager.add(
       "predictions-prefix", "predictionsPrefix",
@@ -298,32 +273,30 @@ public class CompareObjectLocations
     String	result;
 
     result  = super.getQuickInfo();
-    result += QuickInfoHelper.toString(this, "annotationsReader", m_AnnotationsReader, ", ann/reader: ");
-    result += QuickInfoHelper.toString(this, "annotationsFile", m_AnnotationsFile, ", ann/file: ");
-    result += QuickInfoHelper.toString(this, "predictionsReader", m_PredictionsReader, ", pred/reader: ");
-    result += QuickInfoHelper.toString(this, "predictionsFile", m_PredictionsFile, ", pred/file: ");
+    result += QuickInfoHelper.toString(this, "annotationsStoragName", m_AnnotationsStorageName, ", annotations: ");
+    result += QuickInfoHelper.toString(this, "predictionsStorageName", m_PredictionsStorageName, ", predictions: ");
     result += QuickInfoHelper.toString(this, "comparison", m_Comparison, ", comparison: ");
 
     return result;
   }
 
   /**
-   * Sets the reader to use for the annotations.
+   * Sets the storage item containing the annotations.
    *
-   * @param value 	the reader
+   * @param value 	the name
    */
-  public void setAnnotationsReader(AbstractReportReader value) {
-    m_AnnotationsReader = value;
+  public void setAnnotationsStorageName(StorageName value) {
+    m_AnnotationsStorageName = value;
     reset();
   }
 
   /**
-   * Returns the reader to use for the annotations.
+   * Returns the storage item containing the annotations.
    *
-   * @return 		the reader
+   * @return 		the name
    */
-  public AbstractReportReader getAnnotationsReader() {
-    return m_AnnotationsReader;
+  public StorageName getAnnotationsStorageName() {
+    return m_AnnotationsStorageName;
   }
 
   /**
@@ -332,37 +305,8 @@ public class CompareObjectLocations
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String annotationsReaderTipText() {
-    return "The reader to use for loading the annotations (ground truth).";
-  }
-
-  /**
-   * Sets the annotations file to read.
-   *
-   * @param value 	the file
-   */
-  public void setAnnotationsFile(PlaceholderFile value) {
-    m_AnnotationsFile = value;
-    reset();
-  }
-
-  /**
-   * Returns the annotations file to read.
-   *
-   * @return 		the file
-   */
-  public PlaceholderFile getAnnotationsFile() {
-    return m_AnnotationsFile;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String annotationsFileTipText() {
-    return "The file containing the annotations.";
+  public String annotationsStorageNameTipText() {
+    return "The name of the storage item containing the annotations (ground truth).";
   }
 
   /**
@@ -424,22 +368,22 @@ public class CompareObjectLocations
   }
 
   /**
-   * Sets the reader to use for the predictions.
+   * Sets the storage item containing the predictions.
    *
-   * @param value 	the reader
+   * @param value 	the name
    */
-  public void setPredictionsReader(AbstractReportReader value) {
-    m_PredictionsReader = value;
+  public void setPredictionsStorageName(StorageName value) {
+    m_PredictionsStorageName = value;
     reset();
   }
 
   /**
-   * Returns the reader to use for the predictions.
+   * Returns the storage item containing the predictions.
    *
-   * @return 		the reader
+   * @return 		the name
    */
-  public AbstractReportReader getPredictionsReader() {
-    return m_PredictionsReader;
+  public StorageName getPredictionsStorageName() {
+    return m_PredictionsStorageName;
   }
 
   /**
@@ -448,37 +392,8 @@ public class CompareObjectLocations
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String predictionsReaderTipText() {
-    return "The reader to use for loading the predictions.";
-  }
-
-  /**
-   * Sets the predictions file to read.
-   *
-   * @param value 	the file
-   */
-  public void setPredictionsFile(PlaceholderFile value) {
-    m_PredictionsFile = value;
-    reset();
-  }
-
-  /**
-   * Returns the predictions file to read.
-   *
-   * @return 		the file
-   */
-  public PlaceholderFile getPredictionsFile() {
-    return m_PredictionsFile;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String predictionsFileTipText() {
-    return "The file containing the predictions.";
+  public String predictionsStorageNameTipText() {
+    return "The name of the storage item containing the predictions.";
   }
 
   /**
@@ -569,6 +484,15 @@ public class CompareObjectLocations
   }
 
   /**
+   * Returns whether storage items are being used.
+   *
+   * @return		true if storage items are used
+   */
+  public boolean isUsingStorage() {
+    return !getSkip();
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -642,48 +566,30 @@ public class CompareObjectLocations
    * this stage).
    *
    * @param token	the token to display
+   * @return		true if successfully displayed
    */
-  protected void display(Token token) {
+  protected boolean display(Token token) {
     Report 			annRep;
     LocatedObjects 		annObj;
     Report 			predRep;
     LocatedObjects 		predObj;
-    List<Report> 		reports;
     Set<String>			labels;
     List<String>		labelsSorted;
 
-    // read annotations
-    try {
-      m_AnnotationsReader.setInput(m_AnnotationsFile);
-      reports = m_AnnotationsReader.read();
-      if (reports.size() != 1)
-        getLogger().warning("Expected to find one annotations report, but found: " + reports.size());
-      if (reports.size() > 0)
-	annRep = reports.get(0);
-      else
-        annRep = new Report();
+    // annotations
+    if (!getStorageHandler().getStorage().has(m_AnnotationsStorageName)) {
+      getLogger().severe("Annotations not available from storage: " + m_AnnotationsStorageName);
+      return false;
     }
-    catch (Exception e) {
-      annRep = new Report();
-      getLogger().log(Level.SEVERE, "Failed to read annotations report '" + m_AnnotationsFile + "'!", e);
-    }
+    annRep = (Report) getStorageHandler().getStorage().get(m_AnnotationsStorageName);
     annObj = LocatedObjects.fromReport(annRep, m_AnnotationsPrefix);
 
-    // read predictions
-    try {
-      m_PredictionsReader.setInput(m_PredictionsFile);
-      reports = m_PredictionsReader.read();
-      if (reports.size() != 1)
-        getLogger().warning("Expected to find one predictions report, but found: " + reports.size());
-      if (reports.size() > 0)
-	predRep = reports.get(0);
-      else
-        predRep = new Report();
+    // predictions
+    if (!getStorageHandler().getStorage().has(m_PredictionsStorageName)) {
+      getLogger().severe("Predictions not available from storage: " + m_PredictionsStorageName);
+      return false;
     }
-    catch (Exception e) {
-      predRep = new Report();
-      getLogger().log(Level.SEVERE, "Failed to read predictions report '" + m_PredictionsFile + "'!", e);
-    }
+    predRep = (Report) getStorageHandler().getStorage().get(m_PredictionsStorageName);
     predObj = LocatedObjects.fromReport(predRep, m_PredictionsPrefix);
 
     // determine labels
@@ -701,6 +607,8 @@ public class CompareObjectLocations
 
     // update GUI
     m_ComparisonPanel.display(token.getPayload(AbstractImageContainer.class), labelsSorted, annRep, annObj, predRep, predObj);
+
+    return true;
   }
 
   /**
@@ -715,9 +623,10 @@ public class CompareObjectLocations
     m_Accepted = false;
 
     registerWindow(m_Dialog, m_Dialog.getTitle());
-    display(m_InputToken);
-    m_Dialog.setVisible(true);
-    deregisterWindow(m_Dialog);
+    if (display(m_InputToken)) {
+      m_Dialog.setVisible(true);
+      deregisterWindow(m_Dialog);
+    }
 
     if (m_Accepted)
       m_OutputToken = new Token(m_InputToken.getPayload());
