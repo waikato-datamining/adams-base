@@ -15,7 +15,7 @@
 
 /*
  * CollectionToArray.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -202,6 +202,7 @@ public class CollectionToArray
   protected String doExecute() {
     String	result;
     Collection	coll;
+    Object 	element;
     Object	array;
     Iterator	iter;
     int		i;
@@ -228,10 +229,19 @@ public class CollectionToArray
 	i = 0;
 	iter = coll.iterator();
 	while (iter.hasNext()) {
-	  Array.set(array, i, iter.next());
+	  element = iter.next();
+	  try {
+            Array.set(array, i, element);
+          }
+          catch (Exception e) {
+	    result = handleException("Failed to set element #" + (i+1) + " (" + Utils.classToString(element) + ") in array (" + Utils.classToString(array) + ")!", e);
+          }
 	  i++;
+	  if (result != null)
+	    break;
 	}
-	m_OutputToken = new Token(array);
+	if (result == null)
+          m_OutputToken = new Token(array);
       }
     }
     catch (Exception e) {
