@@ -33,6 +33,7 @@ import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.data.splitgenerator.generic.randomization.PassThrough;
 import adams.data.splitgenerator.generic.randomsplit.RandomSplitGenerator;
 import adams.data.splitgenerator.generic.randomsplit.SplitPair;
+import adams.data.splitgenerator.generic.splitter.DefaultSplitter;
 import adams.flow.container.FileBasedDatasetContainer;
 import com.github.fracpete.javautils.struct.Struct2;
 import gnu.trove.list.TIntList;
@@ -274,6 +275,7 @@ public class GroupedTrainTestSplit
     FileBasedDatasetContainer   		cont;
     String[]					train;
     String[]					test;
+    DefaultSplitter				splitter;
     RandomSplitGenerator 			generator;
     DefaultRandomization			defRand;
     List<Binnable<String>> 			binnableFiles;
@@ -284,6 +286,9 @@ public class GroupedTrainTestSplit
     Struct2<TIntList,List<Binnable<String>>>	subsetTest;
 
     generator = new RandomSplitGenerator();
+    splitter  = new DefaultSplitter();
+    splitter.setPercentage(m_Percentage);
+    generator.setSplitter(splitter);
     if (!m_PreserveOrder) {
       defRand = new DefaultRandomization();
       defRand.setSeed(m_Seed);

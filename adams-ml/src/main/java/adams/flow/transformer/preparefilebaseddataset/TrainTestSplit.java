@@ -28,6 +28,7 @@ import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.data.splitgenerator.generic.randomization.PassThrough;
 import adams.data.splitgenerator.generic.randomsplit.RandomSplitGenerator;
 import adams.data.splitgenerator.generic.randomsplit.SplitPair;
+import adams.data.splitgenerator.generic.splitter.DefaultSplitter;
 import adams.flow.container.FileBasedDatasetContainer;
 
 import java.util.ArrayList;
@@ -192,12 +193,16 @@ public class TrainTestSplit
     FileBasedDatasetContainer   	cont;
     String[]				train;
     String[]				test;
+    DefaultSplitter			splitter;
     RandomSplitGenerator 		generator;
     DefaultRandomization		defRand;
     List<Binnable<String>>		binnable;
     SplitPair<Binnable<String>>		pair;
 
     generator = new RandomSplitGenerator();
+    splitter  = new DefaultSplitter();
+    splitter.setPercentage(m_Percentage);
+    generator.setSplitter(splitter);
     if (!m_PreserveOrder) {
       defRand = new DefaultRandomization();
       defRand.setSeed(m_Seed);
