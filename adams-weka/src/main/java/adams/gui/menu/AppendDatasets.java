@@ -15,44 +15,22 @@
 
 /*
  * AppendDatasets.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
-import adams.core.Properties;
-import adams.core.logging.LoggingHelper;
-import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
-import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
-import adams.gui.wizard.AbstractWizardPage;
-import adams.gui.wizard.FinalPage;
-import adams.gui.wizard.PageCheck;
-import adams.gui.wizard.WekaSelectDatasetPage;
-import adams.gui.wizard.WekaSelectMultipleDatasetsPage;
-import adams.gui.wizard.WizardPane;
-import gnu.trove.list.array.TIntArrayList;
-import weka.core.Attribute;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.ConverterUtils;
-import weka.core.converters.ConverterUtils.DataSink;
-import weka.core.converters.ConverterUtils.DataSource;
-
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.logging.Level;
+import adams.gui.tools.weka.AppendDatasetsPanel;
 
 /**
  * For appending datasets into single dataset.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AppendDatasets
   extends AbstractBasicMenuItemDefinition {
@@ -91,153 +69,7 @@ public class AppendDatasets
    */
   @Override
   public void launch() {
-    final WizardPane                wizard;
-    WekaSelectMultipleDatasetsPage  infiles;
-    WekaSelectDatasetPage           outfile;
-    FinalPage                       finalpage;
-    final ChildFrame                frame;
-
-    // wizard
-    wizard = new WizardPane();
-    wizard.setCustomFinishText("Append");
-    infiles = new WekaSelectMultipleDatasetsPage("Input");
-    infiles.setDescription("Select the Weka datasets to append (one-after-the-other).\nYou have to choose at least two.");
-    infiles.setPageCheck(new PageCheck() {
-      @Override
-      public boolean checkPage(AbstractWizardPage page) {
-        Properties props = page.getProperties();
-        try {
-          String[] files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
-          return (files.length >= 2);
-        }
-        catch (Exception e) {
-          getLogger().log(Level.SEVERE, "Failed to obtain files:", e);
-        }
-        return false;
-      }
-    });
-    wizard.addPage(infiles);
-    outfile = new WekaSelectDatasetPage("Output");
-    outfile.setDescription("Select the file to save the combined data to.");
-    outfile.setUseSaveDialog(true);
-    wizard.addPage(outfile);
-    finalpage = new FinalPage();
-    finalpage.setLogo(null);
-    finalpage.setDescription("<html><h2>Ready</h2>Please click on <b>Append</b> to start the process.</html>");
-    wizard.addPage(finalpage);
-    frame = createChildFrame(wizard, GUIHelper.getDefaultDialogDimension());
-    wizard.addActionListener((ActionEvent e) -> {
-      if (!e.getActionCommand().equals(WizardPane.ACTION_FINISH)) {
-        frame.dispose();
-        return;
-      }
-      Properties props = wizard.getProperties(false);
-      File[] input = null;
-      File output = null;
-      try {
-        String[] files = OptionUtils.splitOptions(props.getProperty(WekaSelectMultipleDatasetsPage.KEY_FILES));
-        input = new File[files.length];
-        for (int i = 0; i < files.length; i++)
-          input[i] = new File(files[i]);
-        output = new File(props.getProperty(WekaSelectDatasetPage.KEY_FILE));
-      }
-      catch (Exception ex) {
-        GUIHelper.showErrorMessage(
-          getOwner(), "Failed to get setup from wizard!\n" + LoggingHelper.throwableToString(ex));
-        return;
-      }
-      doAppend(frame, input, output);
-    });
-  }
-
-  /**
-   * Performs the append.
-   *
-   * @param frame       the frame to close
-   * @param input       the files to merge
-   * @param output      the output file
-   */
-  protected void doAppend(ChildFrame frame, File[] input, File output) {
-    Instances[]		data;
-    Instances		full;
-    int			i;
-    int			n;
-    AbstractFileLoader	loader;
-    DataSink		sink;
-    int			count;
-    TIntArrayList 	transferAtt;
-    int			index;
-
-    if (input.length < 2) {
-      GUIHelper.showErrorMessage(getOwner(), "At least two files are required!");
-      return;
-    }
-
-    // load and check compatibility
-    loader      = ConverterUtils.getLoaderForFile(input[0]);
-    data        = new Instances[input.length];
-    count       = 0;
-    transferAtt = new TIntArrayList();
-    for (i = 0; i < input.length; i++) {
-      try {
-        loader.setFile(input[i]);
-        data[i] = DataSource.read(loader);
-        if (i > 0) {
-          if (!data[0].equalHeaders(data[i])) {
-            GUIHelper.showErrorMessage(
-              getOwner(), "Datasets '" + input[0] + "' and '" + input[i] + "' are not compatible!\n"
-                + data[0].equalHeadersMsg(data[i]));
-            return;
-          }
-        }
-        else {
-          for (n = 0; n < data[0].numAttributes(); n++) {
-            if (data[0].attribute(n).isString() || data[0].attribute(n).isRelationValued())
-              transferAtt.add(n);
-          }
-        }
-        count += data[i].numInstances();
-      }
-      catch (Exception e) {
-        GUIHelper.showErrorMessage(
-          getOwner(), "Failed to read '" + input[i] + "'!\n" + LoggingHelper.throwableToString(e));
-        return;
-      }
-    }
-
-    // combine
-    full = new Instances(data[0], count);
-    for (i = 0; i < data.length; i++) {
-      for (Instance inst: data[i]) {
-        if (transferAtt.size() > 0) {
-          for (n = 0; n < transferAtt.size(); n++) {
-            index = transferAtt.get(n);
-            if (inst.attribute(index).isString())
-              full.attribute(index).addStringValue(inst.stringValue(index));
-            else if (inst.attribute(n).isRelationValued())
-              full.attribute(index).addRelation(inst.relationalValue(index));
-            else
-              throw new IllegalStateException(
-                "Unhandled attribute type: " + Attribute.typeToString(inst.attribute(index)));
-          }
-        }
-        full.add(inst);
-      }
-    }
-
-    // save
-    try {
-      sink = new DataSink(output.getAbsolutePath());
-      sink.write(full);
-    }
-    catch (Exception e) {
-      GUIHelper.showErrorMessage(
-        getOwner(), "Failed to save data to '" + output + "'!\n" + LoggingHelper.throwableToString(e));
-      return;
-    }
-
-    GUIHelper.showInformationMessage(null, "Successfully appended!\n" + output);
-    frame.dispose();
+    createChildFrame(new AppendDatasetsPanel(true), GUIHelper.getDefaultDialogDimension());
   }
 
   /**
