@@ -42,7 +42,6 @@ import weka.core.converters.ConverterUtils.DataSink;
 import weka.core.converters.ConverterUtils.DataSource;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.logging.Level;
@@ -115,7 +114,8 @@ public class AppendDatasetsPanel
     m_Wizard.addPage(finalpage);
     m_Wizard.addActionListener((ActionEvent e) -> {
       if (!e.getActionCommand().equals(WizardPane.ACTION_FINISH)) {
-        GUIHelper.closeParent(m_Wizard);
+        if (m_CloseParent)
+	  closeParent();
         return;
       }
       Properties props = m_Wizard.getProperties(false);
@@ -133,26 +133,25 @@ public class AppendDatasetsPanel
           getParent(), "Failed to get setup from wizard!\n" + LoggingHelper.throwableToString(ex));
         return;
       }
-      doAppend(getParent(), input, output);
+      doAppend(input, output);
     });
   }
 
   /**
    * Performs the append.
    *
-   * @param container   the container to close
    * @param input       the files to merge
    * @param output      the output file
    */
-  protected void doAppend(Container container, File[] input, File output) {
+  protected void doAppend(File[] input, File output) {
     Instances[]		data;
     Instances		full;
     int			i;
     int			n;
-    AbstractFileLoader loader;
-    DataSink sink;
+    AbstractFileLoader 	loader;
+    DataSink 		sink;
     int			count;
-    TIntArrayList transferAtt;
+    TIntArrayList 	transferAtt;
     int			index;
 
     if (input.length < 2) {
@@ -225,6 +224,6 @@ public class AppendDatasetsPanel
 
     GUIHelper.showInformationMessage(null, "Successfully appended!\n" + output);
     if (m_CloseParent)
-      GUIHelper.closeParent(container);
+      closeParent();
   }
 }
