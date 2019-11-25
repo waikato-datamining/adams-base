@@ -15,26 +15,25 @@
 
 /*
  * BinaryFileWriterTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for BinaryFileWriter actor.
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision$
  */
 public class BinaryFileWriterTest
   extends AbstractFlowTest {
@@ -127,8 +126,6 @@ public class BinaryFileWriterTest
       adams.flow.transformer.Convert convert5 = new adams.flow.transformer.Convert();
       argOption = (AbstractArgumentOption) convert5.getOptionManager().findByProperty("conversion");
       adams.data.conversion.ByteArrayToBlobContainer bytearraytoblobcontainer7 = new adams.data.conversion.ByteArrayToBlobContainer();
-      argOption = (AbstractArgumentOption) bytearraytoblobcontainer7.getOptionManager().findByProperty("ID");
-      argOption.setVariable("@{file}");
       convert5.setConversion(bytearraytoblobcontainer7);
 
       actors1[2] = convert5;
