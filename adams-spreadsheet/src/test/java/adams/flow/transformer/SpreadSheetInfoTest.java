@@ -20,14 +20,14 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for SpreadSheetInfo actor.
@@ -168,7 +168,7 @@ public class SpreadSheetInfoTest
       tmp23[0] = tmp24;
       adams.flow.transformer.SetVariable tmp26 = new adams.flow.transformer.SetVariable();
       argOption = (AbstractArgumentOption) tmp26.getOptionManager().findByProperty("variableName");
-      tmp26.setVariableName((adams.core.VariableName) argOption.valueOf("num_values"));
+      tmp26.setVariableName((adams.core.VariableName) argOption.valueOf("num_cols"));
 
       tmp23[1] = tmp26;
       adams.flow.sink.CallableSink tmp28 = new adams.flow.sink.CallableSink();
