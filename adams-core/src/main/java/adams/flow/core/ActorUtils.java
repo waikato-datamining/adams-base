@@ -178,9 +178,24 @@ public class ActorUtils {
 
   /** procedural type: sink. */
   public final static String PROCEDURAL_SINK = "sink";
-  
+
+  /** the environment variable to enable lenient checking for invalid variables. */
+  public final static String ENV_INVALID_VARIABLES_LENIENT = "INVALID_VARIABLES_LENIENT";
+
+  /** whether to be lenient with invalid variables. */
+  protected static Boolean m_InvalidVariablesLenient;
+
   /** the debugging level. */
   private final static Logger LOGGER = LoggingHelper.getConsoleLogger(ActorUtils.class);
+
+  /**
+   * Returns whether logging is enabled.
+   *
+   * @return		true if enabled
+   */
+  protected static boolean isLoggingEnabled() {
+    return LoggingHelper.isAtLeast(LOGGER.getLevel(), Level.INFO);
+  }
 
   /**
    * Enumerates all children of the given actor (depth-first search).
@@ -594,7 +609,7 @@ public class ActorUtils {
       }
     }
 
-    if (LOGGER.getLevel() != Level.OFF) {
+    if (isLoggingEnabled()) {
       list = new ArrayList<>();
       for (ActorHandler h: result)
 	list.add(h.getClass().getName() + "/" + h.getFullName());
@@ -1096,11 +1111,13 @@ public class ActorUtils {
     if (closest != null) {
       if (closest instanceof adams.flow.standalone.AbstractDatabaseConnection) {
 	result = ((adams.flow.standalone.AbstractDatabaseConnection) closest).getConnection();
-	LOGGER.fine("Database connection found: " + result + "\n" + LoggingHelper.getStackTrace(20));
+	if (isLoggingEnabled())
+	  LOGGER.fine("Database connection found: " + result + "\n" + LoggingHelper.getStackTrace(20));
       }
       else  if (closest instanceof adams.flow.standalone.AbstractDatabaseConnectionProvider) {
 	result = ((adams.flow.standalone.AbstractDatabaseConnectionProvider) closest).getConnection();
-	LOGGER.fine("Database connection found: " + result + "\n" + LoggingHelper.getStackTrace(20));
+	if (isLoggingEnabled())
+	  LOGGER.fine("Database connection found: " + result + "\n" + LoggingHelper.getStackTrace(20));
       }
       else {
 	result = defCon;
@@ -1109,7 +1126,8 @@ public class ActorUtils {
     }
     else {
       result = defCon;
-      LOGGER.info("No database connection found, using default: " + defCon + "\n" + LoggingHelper.getStackTrace(20));
+      if (isLoggingEnabled())
+	LOGGER.info("No database connection found, using default: " + defCon + "\n" + LoggingHelper.getStackTrace(20));
     }
     if (!result.isConnected() && result.getConnectOnStartUp()) {
       try {
@@ -2014,5 +2032,20 @@ public class ActorUtils {
       return null;
     else
       return result.toString();
+  }
+
+  /**
+   * Returns whether invalid variables are to be treated lenient (ie no error, just warning).
+   *
+   * @return		true if to treat lenient
+   * @see		#ENV_INVALID_VARIABLES_LENIENT
+   */
+  protected static synchronized boolean checkInvalidVariablesLennient() {
+    if (m_InvalidVariablesLenient == null) {
+      m_InvalidVariablesLenient = (System.getenv(ENV_INVALID_VARIABLES_LENIENT) != null)
+	&& System.getenv(ENV_INVALID_VARIABLES_LENIENT).equalsIgnoreCase("true");
+      System.out.println(ActorUtils.class.getName() + ": lenient handling of invalid variables is " + (m_InvalidVariablesLenient ? "ON" : "OFF"));
+    }
+    return m_InvalidVariablesLenient;
   }
 }

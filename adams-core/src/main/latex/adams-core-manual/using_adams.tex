@@ -1662,6 +1662,19 @@ make this easier, there are two special variables available at runtime:
 	\item \textit{flow\_filename\_short} -- stores only the file name of the flow
 \end{tight_itemize}
 
+\heading{Invalid variables}
+The first time an actor is being executed (to be precise when the \textit{isExecuted()}
+method returns \textit{false}), it checks whether all its variables are valid, i.e.,
+available. This check is done to avoid unexpected behavior due to wrong parameters,
+like deleting the wrong directory. However, older production flows may still
+have some obsolete or unused variables lying around that will trigger this check.
+As a temporary measure, you can switch this check from throwing an error to
+only outputting a warning by setting the following environment variable to
+\textit{true}:
+\begin{verbatim}
+INVALID_VARIABLES_LENIENT=true
+\end{verbatim}
+
 \newpage
 \section{Temporary storage}
 \label{temporary_storage}

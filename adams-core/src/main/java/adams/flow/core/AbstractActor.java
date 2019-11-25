@@ -1084,8 +1084,13 @@ public abstract class AbstractActor
       result = performSetUpChecks(false);
     }
 
-    if (!isExecuted() && (result == null))
+    if (!isExecuted() && (result == null)) {
       result = ActorUtils.ensureValidVariables(this);
+      if ((result != null) && ActorUtils.checkInvalidVariablesLennient()) {
+        getLogger().warning(result);
+        result = null;
+      }
+    }
 
     return result;
   }
