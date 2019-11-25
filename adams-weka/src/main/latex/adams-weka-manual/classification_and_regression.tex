@@ -595,5 +595,7 @@ With the \textit{WekaEnsembleGenerator} it is possible to create ensembles from
 input data (like pre-built classifiers) rather than training the ensemble itself.
 With the \textit{VotedModels} generator, you can create a \textit{Vote}
 meta-classifier from the incoming classifier array, using the supplied Vote
-template.\footnote{adams-weka-lts-create\_vote\_ensemble.flow}
-
+template.\footnote{adams-weka-create\_vote\_ensemble.flow}
+The \textit{MultipleClassifiersCombinerModels} generator allows you to use
+any classifier that is derived from \textit{MultipleClassifiersCombiner} as
+template for the model (though it cannot be guaranteed that it will work).\footnote{adams-weka-create\_any\_ensemble.flow}
