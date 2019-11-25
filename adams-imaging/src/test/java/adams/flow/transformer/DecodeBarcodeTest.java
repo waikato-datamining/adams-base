@@ -15,7 +15,7 @@
 
 /*
  * DecodeBarcodeTest.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -35,7 +35,6 @@ import junit.framework.TestSuite;
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision$
  */
 public class DecodeBarcodeTest
   extends AbstractFlowTest {
@@ -127,8 +126,6 @@ public class DecodeBarcodeTest
       qrcode11.setWidth((Integer) argOption.valueOf("500"));
       argOption = (AbstractArgumentOption) qrcode11.getOptionManager().findByProperty("height");
       qrcode11.setHeight((Integer) argOption.valueOf("500"));
-      argOption = (AbstractArgumentOption) qrcode11.getOptionManager().findByProperty("text");
-      argOption.setVariable("@{content}");
       barcode9.setEncoder(qrcode11);
 
       draw7.setOperation(barcode9);
