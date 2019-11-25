@@ -14,8 +14,8 @@
  */
 
 /*
- * TrainTestSplit.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * TrainValidateTestSplit.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.preparefilebaseddataset;
