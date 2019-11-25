@@ -38,6 +38,7 @@ import adams.core.option.NestedProducer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
+import adams.core.option.OptionTraverserWithResult;
 import adams.data.io.input.DefaultFlowReader;
 import adams.data.io.input.FlowReader;
 import adams.data.io.output.DefaultFlowWriter;
@@ -1957,5 +1958,61 @@ public class ActorUtils {
     result.setParent(actor.getParent());
 
     return result;
+  }
+
+  /**
+   * Ensures that the variables within this actor are valid.
+   *
+   * @param actor 	the actor to check
+   * @return		null if all variables are valid
+   */
+  public static String ensureValidVariables(Actor actor) {
+    OptionTraverserWithResult<StringBuilder> traverser;
+    StringBuilder				result;
+
+    traverser = new OptionTraverserWithResult<StringBuilder>() {
+      protected StringBuilder m_Result;
+      public void resetResult() {
+	m_Result = new StringBuilder();
+      }
+      public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
+	handleArgumentOption(option, path);
+      }
+      public void handleClassOption(ClassOption option, OptionTraversalPath path) {
+	handleArgumentOption(option, path);
+      }
+      public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
+	if (option.isVariableAttached()) {
+	  String error = null;
+	  if (!option.getOwner().getVariables().has(option.getVariableName()))
+	    error = "Invalid variable '" + option.getVariableName() + "'!";
+	  if (error != null) {
+	    if (m_Result.length() > 0)
+	      m_Result.append("\n");
+	    m_Result.append(error);
+	  }
+	}
+      }
+      public boolean canHandle(AbstractOption option) {
+        return true;
+      }
+      public boolean canRecurse(Class cls) {
+        return !ClassLocator.hasInterface(Actor.class, cls);
+      }
+      public boolean canRecurse(Object obj) {
+	return canRecurse(obj.getClass());
+      }
+      public StringBuilder getResult() {
+        return m_Result;
+      }
+    };
+    traverser.resetResult();
+    actor.getOptionManager().traverse(traverser, true);
+
+    result = traverser.getResult();
+    if (result.length() == 0)
+      return null;
+    else
+      return result.toString();
   }
 }

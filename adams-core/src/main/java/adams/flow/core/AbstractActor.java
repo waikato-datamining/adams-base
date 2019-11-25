@@ -738,7 +738,7 @@ public abstract class AbstractActor
 
   /**
    * Returns the flow execution handler in use.
-   * 
+   *
    * @return		the execution handler
    */
   public FlowExecutionListeningSupporter getFlowExecutionListeningSupporter() {
@@ -793,7 +793,7 @@ public abstract class AbstractActor
 
   /**
    * Checks if an error handler is set.
-   * 
+   *
    * @return		true if an error handler is set
    */
   public boolean hasErrorHandler() {
@@ -802,7 +802,7 @@ public abstract class AbstractActor
 
   /**
    * Sets the error handler to use for handling errors in the flow.
-   * 
+   *
    * @param value	the error handler
    */
   public void setErrorHandler(ErrorHandler value) {
@@ -811,13 +811,13 @@ public abstract class AbstractActor
 
   /**
    * Returns the current error handler for handling errors in the flow.
-   * 
+   *
    * @return		the error handler
    */
   public ErrorHandler getErrorHandler() {
     return m_ErrorHandler;
   }
-  
+
   /**
    * Checks whether the class' options can be inspected.
    * <br><br>
@@ -910,7 +910,7 @@ public abstract class AbstractActor
     updatePrefix();
 
     updateDetectedVariables();
-    
+
     m_Stopped     = false;
     m_StopMessage = null;
     m_Executed    = false;
@@ -991,7 +991,7 @@ public abstract class AbstractActor
 
     if (isLoggingEnabled()) {
       getLogger().info(
-	  "Attempting updating variables (" + getOptionManager().getVariables().hashCode() + "): " 
+	  "Attempting updating variables (" + getOptionManager().getVariables().hashCode() + "): "
 	      + m_VariablesUpdated + "/" + m_DetectedObjectVariables);
     }
 
@@ -1006,7 +1006,7 @@ public abstract class AbstractActor
 
     if (isLoggingEnabled()) {
       getLogger().info(
-	  "Finished updating variables " + m_VariablesUpdated + "/" + m_DetectedObjectVariables + ": " 
+	  "Finished updating variables " + m_VariablesUpdated + "/" + m_DetectedObjectVariables + ": "
 	      + ((result == null) ? "successful" : result));
     }
 
@@ -1078,11 +1078,14 @@ public abstract class AbstractActor
       getLogger().finest("Size before execute: " + sizeOf());
 
     // do we need to re-setup the actor, due to changes in variables?
-    if (    (m_VariablesUpdated.size() > 0) 
-         || ((m_DetectedVariables != null) && (m_DetectedObjectVariables.size() > 0))) {
+    if ((m_VariablesUpdated.size() > 0)
+      || ((m_DetectedVariables != null) && (m_DetectedObjectVariables.size() > 0))) {
       updateVariables();
       result = performSetUpChecks(false);
     }
+
+    if (!isExecuted() && (result == null))
+      result = ActorUtils.ensureValidVariables(this);
 
     return result;
   }
@@ -1156,7 +1159,7 @@ public abstract class AbstractActor
   protected void finalUpdateVariables() {
     if (isLoggingEnabled()) {
       getLogger().info(
-	  "Attempting final update of variables (" + getOptionManager().getVariables().hashCode() + "): " 
+	  "Attempting final update of variables (" + getOptionManager().getVariables().hashCode() + "): "
 	      + m_VariablesUpdated + "/" + m_DetectedObjectVariables);
     }
 
@@ -1171,7 +1174,7 @@ public abstract class AbstractActor
    * untouched.
    */
   public void wrapUp() {
-    if (    (m_VariablesUpdated.size() > 0) 
+    if (    (m_VariablesUpdated.size() > 0)
 	|| ((m_DetectedVariables != null) && (m_DetectedObjectVariables.size() > 0))) {
       finalUpdateVariables();
     }
@@ -1260,11 +1263,11 @@ public abstract class AbstractActor
   public boolean isExecuted() {
     return m_Executed;
   }
-  
+
   /**
    * Returns whether the actor is currently being executed, i.e., processing
    * some data or similar.
-   * 
+   *
    * @return		true if currently active
    */
   public boolean isExecuting() {
