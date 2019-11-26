@@ -315,4 +315,14 @@ public class ColorHelper {
   public static Color addAlpha(Color color, int alpha) {
     return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
   }
+
+  /**
+   * Inverts the color, ie. 255-VALUE for RGB. Maintains the alpha value.
+   *
+   * @param color	the color to use as base
+   * @return		the new color
+   */
+  public static Color invert(Color color) {
+    return new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue(), color.getAlpha());
+  }
 }
