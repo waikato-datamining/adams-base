@@ -15,7 +15,7 @@
 
 /*
  * SelectObjects.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
@@ -24,6 +24,8 @@ import adams.data.report.Report;
 import adams.data.statistics.StatUtils;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.SelectionRectangle;
+import adams.gui.visualization.image.interactionlogger.InteractionEvent;
+import adams.gui.visualization.image.interactionlogger.InteractionLoggingSupporter;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -31,7 +33,10 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -72,11 +77,10 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 364 $
  */
 public class SelectObjects
   extends AbstractSelectionRectangleBasedSelectionProcessor
-  implements SelectionProcessorWithLabelSupport {
+  implements SelectionProcessorWithLabelSupport, InteractionLoggingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -5879410661391670242L;
@@ -204,6 +208,60 @@ public class SelectObjects
   }
 
   /**
+   * Logs the adding of an object.
+   *
+   * @param panel	the panel to use for logging
+   * @param x		the x coordinate
+   * @param y		the y coordinate
+   * @param w		the width
+   * @param h		the height
+   * @param poly_x	the x coordinates of the polygon, can be null
+   * @param poly_y	the y coordinates of the polygon, can be null
+   */
+  protected void logAdd(ImagePanel panel, int x, int y, int w, int h, int[] poly_x, int[] poly_y) {
+    InteractionEvent	e;
+    Map<String,Object> data;
+
+    data = new HashMap<>();
+    data.put("x", x);
+    data.put("y", y);
+    data.put("width", w);
+    data.put("height", h);
+    if (poly_x != null)
+      data.put("poly_x", poly_x);
+    if (poly_y != null)
+      data.put("poly_y", poly_y);
+    if (!m_Label.isEmpty())
+      data.put("label", m_Label);
+    e = new InteractionEvent(panel, new Date(), "Add", data);
+    panel.addInteractionLog(e);
+  }
+
+  /**
+   * Logs the removal of the of objects.
+   *
+   * @param panel	the panel to use for logging
+   * @param x		the x of the removal rectangle
+   * @param y		the y of the removal rectangle
+   * @param w		the width of the removal rectangle
+   * @param h		the height of the removal rectangle
+   * @param removed	the removed objects
+   */
+  protected void logRemove(ImagePanel panel, int x, int y, int w, int h, List<Map<String,Object>> removed) {
+    InteractionEvent	e;
+    Map<String,Object> data;
+
+    data = new HashMap<>();
+    data.put("x", x);
+    data.put("y", y);
+    data.put("width", w);
+    data.put("height", h);
+    data.put("removed", removed);
+    e = new InteractionEvent(panel, new Date(), "Remove", data);
+    panel.addInteractionLog(e);
+  }
+
+  /**
    * Process the selection that occurred in the image panel.
    * 
    * @param panel	the origin
@@ -227,6 +285,7 @@ public class SelectObjects
     int				i;
     SelectionRectangle 		rect;
     boolean			modified;
+    List<Map<String,Object>>	objects;
     List<SelectionRectangle>	queue;
     Rectangle			bounds;
 
@@ -235,7 +294,9 @@ public class SelectObjects
       m_Locations = getLocations(report);
 
     // polygon overrides rectangle corners
-    poly = null;
+    poly   = null;
+    poly_x = null;
+    poly_y = null;
     if (trace.size() > 0) {
       poly   = panel.traceToPolygon(trace);
       bounds = poly.getBounds();
@@ -253,10 +314,12 @@ public class SelectObjects
     rect = new SelectionRectangle(x, y, w, h, -1);
 
     queue    = new ArrayList<>();
+    objects  = new ArrayList<>();
     modified = false;
     if ((modifiersEx & MouseEvent.CTRL_DOWN_MASK) != 0) {
       for (SelectionRectangle r: m_Locations) {
 	if (rect.contains(r)) {
+	  objects.add(valuesForIndex(report, r.getIndex()));
 	  if (removeIndex(report, r.getIndex())) {
 	    modified = true;
 	    queue.add(r);
@@ -264,6 +327,7 @@ public class SelectObjects
 	}
       }
       m_Locations.removeAll(queue);
+      logRemove(panel, x, y, w, h, objects);
     }
     else {
       if (!m_Locations.contains(rect)) {
@@ -288,10 +352,20 @@ public class SelectObjects
 	if (!m_Label.isEmpty())
 	  report.setStringValue(current + m_LabelSuffix, m_Label);
 	m_Locations.add(rect);
+	logAdd(panel, x, y, w, h, poly_x, poly_y);
       }
     }
     
     if (modified)
       panel.setAdditionalProperties(report);
+  }
+
+  /**
+   * Returns whether interaction logging is supported.
+   *
+   * @return		true if supported
+   */
+  public boolean supportsInteractionLogging() {
+    return true;
   }
 }

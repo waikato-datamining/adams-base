@@ -801,6 +801,10 @@ adams.gui.visualization.image.paintlet.Paintlet=\
 adams.gui.visualization.image.plugins.AbstractImageViewerPlugin=\
   adams.gui.visualization.image.plugins
 
+# the loggers for interactions in the ImagePanel
+adams.gui.visualization.image.interactionlogger.InteractionLogger=\
+  adams.gui.visualization.image.interactionlogger
+
 # the left-click processors for the image viewer
 adams.gui.visualization.image.leftclick.AbstractLeftClickProcessor=\
   adams.gui.visualization.image.leftclick

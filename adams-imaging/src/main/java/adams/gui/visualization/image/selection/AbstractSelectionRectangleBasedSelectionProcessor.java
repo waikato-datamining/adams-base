@@ -27,7 +27,9 @@ import adams.gui.visualization.image.ImagePanel.PaintPanel;
 import adams.gui.visualization.image.SelectionRectangle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ancestor for selection processors that make use of the {@link SelectionRectangle}
@@ -169,6 +171,27 @@ public abstract class AbstractSelectionRectangleBasedSelectionProcessor
    */
   public String numDigitsTipText() {
     return "The number of digits to use for left-padding the index with zeroes.";
+  }
+
+  /**
+   * Returns all the values stored in the report under this index.
+   *
+   * @param report	the report to look up the index in
+   * @param index	the index to retrieve the values for
+   * @return		the values
+   */
+  protected Map<String,Object> valuesForIndex(Report report, int index) {
+    Map<String,Object>  result;
+    BaseRegExp		regexp;
+
+    result = new HashMap<>();
+    regexp = new BaseRegExp(m_Prefix + "[0]*" + index + "\\..*");
+    for (AbstractField field: report.getFields()) {
+      if (regexp.isMatch(field.getName()))
+        result.put(field.getName().replaceAll(regexp.getValue(), ""), report.getValue(field));
+    }
+
+    return result;
   }
 
   /**

@@ -64,6 +64,9 @@ import adams.gui.event.UndoEvent;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.image.RectangleUtils.RectangleCorner;
+import adams.gui.visualization.image.interactionlogger.InteractionEvent;
+import adams.gui.visualization.image.interactionlogger.InteractionLogger;
+import adams.gui.visualization.image.interactionlogger.Null;
 import adams.gui.visualization.image.paintlet.Paintlet;
 import adams.gui.visualization.image.selectionshape.RectanglePainter;
 import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
@@ -99,9 +102,12 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -191,6 +197,9 @@ public class ImagePanel
     /** the GOE for adding an image overlay. */
     protected GenericObjectEditorDialog m_GOEImageOverlay;
 
+    /** the interaction logger in use. */
+    protected InteractionLogger m_InteractionLogger;
+
     /**
      * Initializes the panel.
      *
@@ -221,6 +230,7 @@ public class ImagePanel
       m_LeftClickListeners        = new HashSet<>();
       m_SelectionTrace            = new ArrayList<>();
       m_Paintlets                 = new HashSet<>();
+      m_InteractionLogger         = new Null();
     }
 
     /**
@@ -323,15 +333,18 @@ public class ImagePanel
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	  if (MouseUtils.isLeftClick(e)) {
+	    logMouseClick(e);
 	    notifyLeftClickListeners(e.getPoint(), e.getModifiersEx());
 	    e.consume();
 	  }
 	  if (MouseUtils.isMiddleClick(e)) {
+	    logMouseClick(e);
 	    setScale(1.0);
 	    updateStatus();
 	    e.consume();
 	  }
 	  else if (MouseUtils.isRightClick(e)) {
+	    logMouseClick(e);
 	    showPopup(e);
 	    e.consume();
 	  }
@@ -351,12 +364,13 @@ public class ImagePanel
 
 	  // update scale
 	  int rotation = e.getWheelRotation();
-	  double scale = getScale();
+	  double oldScale = getScale();
+	  double newScale;
 	  if (rotation < 0)
-	    scale = scale * Math.pow(1.2, -rotation);
+	    newScale = oldScale * Math.pow(1.2, -rotation);
 	  else
-	    scale = scale / Math.pow(1.2, rotation);
-	  getOwner().setScale(scale);
+	    newScale = oldScale / Math.pow(1.2, rotation);
+	  getOwner().setScale(newScale);
 
 	  // set new relative positions of scrollbars
 	  SwingUtilities.invokeLater(() -> {
@@ -364,11 +378,78 @@ public class ImagePanel
 	    sbVer.setValue((int) (sbVer.getMaximum() * relVer) - (sbVer.getHeight() / 2));
 	  });
 
+	  logMouseWheel(e, oldScale, newScale);
 	  updateStatus();
 	}
       });
 
       m_PrintMouseListener = new PrintMouseListener(this);
+    }
+
+    /**
+     * Logs a mouse click.
+     *
+     * @param e		the mouse event to record
+     */
+    protected void logMouseClick(MouseEvent e) {
+      Map<String,Object> 	data;
+
+      if (getOwner() == null)
+        return;
+
+      data = new HashMap<>();
+      data.put("x", e.getX());
+      data.put("y", e.getY());
+      data.put("modifiers", e.getModifiersEx());
+
+      if (MouseUtils.isLeftClick(e)) {
+	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-click", data));
+      }
+      else if (MouseUtils.isMiddleClick(e)) {
+        data.put("scale", 1.0);
+	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-click", data));
+      }
+      else if (MouseUtils.isRightClick(e)) {
+	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-click", data));
+      }
+    }
+
+    /**
+     * Logs a mouse click.
+     *
+     * @param e		the mouse wheel event to record
+     * @param oldScale 	the old scale
+     * @param newScale 	the new scale
+     */
+    protected void logMouseWheel(MouseWheelEvent e, double oldScale, double newScale) {
+      Map<String,Object> 	data;
+
+      if (getOwner() == null)
+        return;
+
+      data = new HashMap<>();
+      data.put("x", e.getX());
+      data.put("y", e.getY());
+      data.put("rotation", e.getWheelRotation());
+      data.put("oldScale", oldScale);
+      data.put("newScale", newScale);
+      getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "mouse-wheel", data));
+    }
+
+    /**
+     * Logs a scale change from the menu.
+     *
+     * @param newScale 	the new scale
+     */
+    protected void logScale(double newScale) {
+      Map<String,Object> 	data;
+
+      if (getOwner() == null)
+        return;
+
+      data = new HashMap<>();
+      data.put("newScale", newScale);
+      getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "zoom", data));
     }
 
     /**
@@ -402,6 +483,24 @@ public class ImagePanel
       synchronized(m_Paintlets) {
 	return m_Paintlets.iterator();
       }
+    }
+
+    /**
+     * Sets the interaction logger to use.
+     *
+     * @param value	the logger
+     */
+    public void setInteractionLogger(InteractionLogger value) {
+      m_InteractionLogger = value;
+    }
+
+    /**
+     * Returns the interaction logger in use.
+     *
+     * @return		the logger
+     */
+    public InteractionLogger getInteractionLogger() {
+      return m_InteractionLogger;
     }
 
     /**
@@ -587,10 +686,12 @@ public class ImagePanel
 	    menuitem = new JMenuItem(zooms[i] + "%");
 	  submenu.add(menuitem);
 	  menuitem.addActionListener((ActionEvent ae) -> {
+	    double newScale = (double) fZoom / 100;
 	    if (getOwner() != null)
-	      getOwner().setScale((double) fZoom / 100);
+	      getOwner().setScale(newScale);
 	    else
-	      setScale((double) fZoom / 100);
+	      setScale(newScale);
+	    logScale(newScale);
 	  });
 	}
       }
@@ -1110,6 +1211,9 @@ public class ImagePanel
   /** for determining readers and writers. */
   protected ImageFileChooser m_FileChooser;
 
+  /** the interaction log. */
+  protected List<InteractionEvent> m_InteractionLog;
+
   /**
    * Initializes the panel.
    */
@@ -1128,10 +1232,11 @@ public class ImagePanel
     m_Modified             = false;
     m_ImageProperties      = new Report();
     m_AdditionalProperties = null;
-    m_DependentDialogs     = new ArrayList<Dialog>();
-    m_DependentFlows       = new ArrayList<Flow>();
+    m_DependentDialogs     = new ArrayList<>();
+    m_DependentFlows       = new ArrayList<>();
     m_Scale                = -1;
     m_FileChooser          = new ImageFileChooser();
+    m_InteractionLog       = null;
   }
 
   /**
@@ -2141,6 +2246,60 @@ public class ImagePanel
    */
   public Iterator<Paintlet> paintlets() {
     return m_PaintPanel.paintlets();
+  }
+
+  /**
+   * Sets the interaction logger to use.
+   *
+   * @param value	the logger
+   */
+  public void setInteractionLogger(InteractionLogger value) {
+    m_PaintPanel.setInteractionLogger(value);
+  }
+
+  /**
+   * Returns the interaction logger in use.
+   *
+   * @return		the logger
+   */
+  public InteractionLogger getInteractionLogger() {
+    return m_PaintPanel.getInteractionLogger();
+  }
+
+  /**
+   * Clears the interaction log.
+   */
+  public void clearInteractionLog() {
+    m_InteractionLog = null;
+  }
+
+  /**
+   * Adds the interaction event to the log.
+   *
+   * @param e		the event to add
+   */
+  public void addInteractionLog(InteractionEvent e) {
+    if (m_InteractionLog == null)
+      m_InteractionLog = new ArrayList<>();
+    m_InteractionLog.add(e);
+  }
+
+  /**
+   * Checks whether there have been any interactions recorded.
+   *
+   * @return		true if interactions are available
+   */
+  public boolean hasInteractionLog() {
+    return (m_InteractionLog != null);
+  }
+
+  /**
+   * Returns the interaction log.
+   *
+   * @return		the log, null if nothing recorded
+   */
+  public List<InteractionEvent> getInteractionLog() {
+    return m_InteractionLog;
   }
 
   /**

@@ -20,9 +20,12 @@
 
 package adams.flow.transformer;
 
+import adams.core.DateFormat;
+import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseString;
 import adams.core.option.OptionUtils;
+import adams.data.conversion.MapToJson;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -43,11 +46,16 @@ import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 import adams.gui.visualization.image.NullOverlay;
 import adams.gui.visualization.image.TypeColorProvider;
+import adams.gui.visualization.image.interactionlogger.InteractionEvent;
+import adams.gui.visualization.image.interactionlogger.InteractionLogger;
+import adams.gui.visualization.image.interactionlogger.Null;
 import adams.gui.visualization.image.selection.NullProcessor;
 import adams.gui.visualization.image.selection.SelectionProcessor;
 import adams.gui.visualization.image.selection.SelectionProcessorWithLabelSupport;
 import adams.gui.visualization.image.selectionshape.RectanglePainter;
 import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
@@ -60,7 +68,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -210,7 +221,6 @@ public class ImageAnnotator
    * Panel for annotating an image.
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public class AnnotatorPanel
     extends BasePanel
@@ -361,6 +371,7 @@ public class ImageAnnotator
       m_PanelImage.addSelectionListener(m_ActualSelectionProcessor);
       m_PanelImage.setSelectionShapePainter((SelectionShapePainter) OptionUtils.shallowCopy(m_SelectionShapePainter, false, true));
       m_PanelImage.setSelectionEnabled(true);
+      m_PanelImage.setInteractionLogger((InteractionLogger) OptionUtils.shallowCopy(m_InteractionLogger));
       add(m_PanelImage, BorderLayout.CENTER);
     }
 
@@ -400,6 +411,13 @@ public class ImageAnnotator
      * @param label	the label, null if to unset
      */
     protected void setCurrentLabel(String label) {
+      Map<String,Object> 	data;
+
+      data = new HashMap<>();
+      data.put("oldLabel", (m_CurrentLabel == null ? UNSET : m_CurrentLabel));
+      data.put("newLabel", (label == null ? UNSET : label));
+      m_PanelImage.addInteractionLog(new InteractionEvent(m_PanelImage, new Date(), "change label", data));
+
       m_CurrentLabel = label;
       if (m_ActualSelectionProcessor instanceof SelectionProcessorWithLabelSupport)
 	((SelectionProcessorWithLabelSupport) m_ActualSelectionProcessor).setLabel(label == null ? "" : label);
@@ -418,6 +436,7 @@ public class ImageAnnotator
      * Resets all the labels.
      */
     protected void resetLabels() {
+      m_PanelImage.addInteractionLog(new InteractionEvent(m_PanelImage, new Date(), "reset labels"));
       m_CurrentImage.setReport(m_ReportBackup.getClone());
       m_PanelImage.setCurrentImage(m_CurrentImage, m_PanelImage.getScale());
       updateObjects();
@@ -506,6 +525,39 @@ public class ImageAnnotator
     }
 
     /**
+     * Logs the addition/removal of an object.
+     *
+     * @param add	true if added, false if removed
+     * @param object	the affected object
+     * @param label 	the label, can be null
+     */
+    protected void logLeftClick(boolean add, LocatedObject object, String label) {
+      Map<String,Object>	data;
+
+      data = new HashMap<>();
+      data.putAll(object.getMetaData());
+      data.put("x", object.getX());
+      data.put("y", object.getY());
+      data.put("width", object.getWidth());
+      data.put("height", object.getWidth());
+      if (object.hasPolygon()) {
+	data.put("poly_x", object.getPolygonX());
+	data.put("poly_y", object.getPolygonY());
+      }
+      if (label == null)
+        data.put("label", UNSET);
+      else
+        data.put("label", label);
+
+      m_PanelImage.addInteractionLog(
+        new InteractionEvent(
+          m_PanelImage,
+	  new Date(),
+	  (add ? "left-click-set-label" : "left-click-remove-label"),
+	  data));
+    }
+
+    /**
      * Invoked when a left-click happened in a {@link ImagePanel}.
      *
      * @param e		the event
@@ -534,10 +586,14 @@ public class ImageAnnotator
 	if (contained) {
 	  hit   = true;
 	  field = new Field(m_Prefix + obj.getIndexString() + m_Suffix, DataType.STRING);
-	  if (m_CurrentLabel == null)
+	  if (m_CurrentLabel == null) {
+	    logLeftClick(false, obj, m_CurrentLabel);
 	    report.removeValue(field);
-	  else
+	  }
+	  else {
+	    logLeftClick(true, obj, m_CurrentLabel);
 	    report.setValue(field, m_CurrentLabel);
+	  }
 	  break;
 	}
       }
@@ -548,8 +604,37 @@ public class ImageAnnotator
 	updateObjects();
       }
     }
+
+    /**
+     * Clears the interaction log.
+     */
+    public void clearInteractionLog() {
+      m_PanelImage.clearInteractionLog();
+    }
+
+    /**
+     * Checks whether there have been any interactions recorded.
+     *
+     * @return		true if interactions are available
+     */
+    public boolean hasInteractionLog() {
+      return m_PanelImage.hasInteractionLog();
+    }
+
+    /**
+     * Returns the interaction log.
+     *
+     * @return		the log, null if nothing recorded
+     */
+    public List<InteractionEvent> getInteractionLog() {
+      return m_PanelImage.getInteractionLog();
+    }
   }
 
+  public static final String FIELD_INTERACTIONLOG = "interaction-log";
+
+  public final static String UNSET = "[unset]";
+  
   /** the prefix to use in the report. */
   protected String m_Prefix;
 
@@ -571,6 +656,9 @@ public class ImageAnnotator
   /** the zoom level. */
   protected double m_Zoom;
 
+  /** the interaction logger to use. */
+  protected InteractionLogger m_InteractionLogger;
+
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
 
@@ -586,7 +674,9 @@ public class ImageAnnotator
   public String globalInfo() {
     return
       "Allows the user to label objects located on the image and pass on "
-        + "this enriched meta-data.";
+	+ "this enriched meta-data.\n"
+	+ "Any logged interaction will get added as JSON under "
+	+ FIELD_INTERACTIONLOG + " in the report.";
   }
 
   /**
@@ -623,6 +713,10 @@ public class ImageAnnotator
     m_OptionManager.add(
       "zoom", "zoom",
       100.0, -1.0, 1600.0);
+
+    m_OptionManager.add(
+      "interaction-logger", "interactionLogger",
+      new Null());
   }
 
   /**
@@ -834,6 +928,35 @@ public class ImageAnnotator
   }
 
   /**
+   * Sets the interaction logger to use.
+   *
+   * @param value 	the logger
+   */
+  public void setInteractionLogger(InteractionLogger value) {
+    m_InteractionLogger = value;
+    reset();
+  }
+
+  /**
+   * Returns the interaction logger in use.
+   *
+   * @return 		the logger
+   */
+  public InteractionLogger getInteractionLogger() {
+    return m_InteractionLogger;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String interactionLoggerTipText() {
+    return "The interaction logger to use.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -917,6 +1040,48 @@ public class ImageAnnotator
   }
 
   /**
+   * Adds the interactions to the report.
+   *
+   * @param report	the report to add to
+   * @param events	the events to add, ignored if null
+   */
+  protected void addInterationsToReport(Report report, List<InteractionEvent> events) {
+    Field	field;
+    MapToJson	m2j;
+    DateFormat	formatter;
+    JSONArray 	array;
+    JSONObject	interaction;
+    String	msg;
+
+    if (events == null)
+      return;
+
+    array     = new JSONArray();
+    m2j       = new MapToJson();
+    formatter = DateUtils.getTimestampFormatterMsecs();
+    for (InteractionEvent event: events) {
+      interaction = new JSONObject();
+      interaction.put("timestamp", formatter.format(event.getTimestamp()));
+      interaction.put("id", event.getID());
+      if (event.getData() != null) {
+	m2j.setInput(event.getData());
+	msg = m2j.convert();
+	if (msg == null) {
+	  interaction.put("data", m2j.getOutput());
+	}
+	else {
+	  getLogger().warning("Failed to convert interaction data to JSON: " + event.getData());
+	}
+      }
+      array.add(interaction);
+    }
+
+    field = new Field(FIELD_INTERACTIONLOG, DataType.STRING);
+    report.addField(field);
+    report.setValue(field, array.toString());
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		true if successfully interacted
@@ -931,6 +1096,7 @@ public class ImageAnnotator
 
     // annotate
     registerWindow(m_Dialog, m_Dialog.getTitle());
+    ((AnnotatorPanel) m_Panel).clearInteractionLog();
     ((AnnotatorPanel) m_Panel).setCurrentImage(cont);
     ((AnnotatorPanel) m_Panel).preselectLabel(m_LastLabel);
     m_Dialog.setVisible(true);
@@ -940,6 +1106,7 @@ public class ImageAnnotator
     if (m_Accepted) {
       cont = ((AnnotatorPanel) m_Panel).getCurrentImage();
       cont.setReport(((AnnotatorPanel) m_Panel).getCurrentReport());
+      addInterationsToReport(cont.getReport(), ((AnnotatorPanel) m_Panel).getInteractionLog());
       m_OutputToken = new Token(cont);
     }
 
