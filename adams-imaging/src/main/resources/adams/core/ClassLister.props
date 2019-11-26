@@ -47,7 +47,7 @@ adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation=\
   adams.data.image.multiimageoperation
 
 # the algorithms for calculating object overlaps
-adams.data.objectoverlap.AbstractObjectOverlap=\
+adams.data.objectoverlap.ObjectOverlap=\
   adams.data.objectoverlap
 
 # the different comparison views of object locations

@@ -23,6 +23,7 @@ package adams.data.objectoverlap;
 import adams.core.QuickInfoHelper;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import com.github.fracpete.javautils.struct.Struct2;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +34,8 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class AreaRatio
-  extends AbstractObjectOverlap {
+  extends AbstractObjectOverlap
+  implements LabelAwareObjectOverlap {
 
   private static final long serialVersionUID = 7334086790079005242L;
 
@@ -363,5 +365,27 @@ public class AreaRatio
     }
 
     return result;
+  }
+
+  /**
+   * Splits the overlapping objects into subsets of matching labels and mismatching ones.
+   *
+   * @param overlaps	all overlaps, to split
+   * @return		split into matching/mismatching subsets
+   */
+  public Struct2<LocatedObjects,LocatedObjects> splitOverlaps(LocatedObjects overlaps) {
+    LocatedObjects	match;
+    LocatedObjects	mismatch;
+
+    match    = new LocatedObjects();
+    mismatch = new LocatedObjects();
+    for (LocatedObject overlap: overlaps) {
+      if (overlap.getMetaData().getOrDefault(OVERLAP_LABEL_HIGHEST_MATCH, false).toString().equalsIgnoreCase("true"))
+        match.add(overlap.getClone());
+      else
+        mismatch.add(overlap.getClone());
+    }
+
+    return new Struct2<>(match, mismatch);
   }
 }

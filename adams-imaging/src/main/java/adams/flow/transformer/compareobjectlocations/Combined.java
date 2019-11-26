@@ -22,8 +22,9 @@ package adams.flow.transformer.compareobjectlocations;
 
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
-import adams.data.objectoverlap.AbstractObjectOverlap;
+import adams.data.objectoverlap.LabelAwareObjectOverlap;
 import adams.data.objectoverlap.Null;
+import adams.data.objectoverlap.ObjectOverlap;
 import adams.data.report.Report;
 import adams.flow.transformer.CompareObjectLocations;
 import adams.flow.transformer.locateobjects.LocatedObject;
@@ -33,6 +34,7 @@ import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.MultiImageOverlay;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+import com.github.fracpete.javautils.struct.Struct2;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -65,7 +67,9 @@ public class Combined
 
     public static final String PREFIX_PREDICTION = "Prediction.";
 
-    public static final String PREFIX_OVERLAP = "Overlap.";
+    public static final String PREFIX_OVERLAP_CORRECT = "OverlapCorrect.";
+
+    public static final String PREFIX_OVERLAP_INCORRECT = "OverlapIncorrect.";
 
     /** the image panel. */
     protected ImagePanel m_PanelImage;
@@ -74,16 +78,22 @@ public class Combined
     protected JPanel m_PanelColors;
 
     /** the label for the annotation color. */
-    protected JLabel m_LabelAnnotationsColor;
+    protected JLabel m_LabelAnnotationsColorBox;
 
     /** the label for the prediction color. */
-    protected JLabel m_LabelPredictionsColor;
+    protected JLabel m_LabelPredictionsColorBox;
 
-    /** the label for the overlap color text. */
-    protected JLabel m_LabelOverlapColorText;
+    /** the label for the overlap color text (matching labels). */
+    protected JLabel m_LabelOverlapColorCorrectText;
 
-    /** the label for the overlap color. */
-    protected JLabel m_LabelOverlapColor;
+    /** the label for the overlap color (matching labels). */
+    protected JLabel m_LabelOverlapColorCorrectBox;
+
+    /** the label for the overlap color text (mismatching labels). */
+    protected JLabel m_LabelOverlapColorIncorrectText;
+
+    /** the label for the overlap color (mismatching labels). */
+    protected JLabel m_LabelOverlapColorIncorrectBox;
 
     /** the annotations report. */
     protected Report m_AnnotationsReport;
@@ -104,10 +114,13 @@ public class Combined
     protected String m_PredictionsLabelSuffix;
 
     /** the algorithm for calculating the overlapping objects. */
-    protected AbstractObjectOverlap m_ObjectOverlap;
+    protected ObjectOverlap m_ObjectOverlap;
 
-    /** the located objects / overlaps. */
-    protected LocatedObjects m_OverlapLocatedObjects;
+    /** the located objects / overlaps (matching labels). */
+    protected LocatedObjects m_OverlapLocatedObjectsCorrect;
+
+    /** the located objects / overlaps (mismatching labels). */
+    protected LocatedObjects m_OverlapLocatedObjectsIncorrect;
 
     /** the zoom level. */
     protected double m_Zoom;
@@ -138,20 +151,25 @@ public class Combined
       m_PanelColors = new JPanel(new FlowLayout(FlowLayout.LEFT));
       add(m_PanelColors, BorderLayout.SOUTH);
 
-      m_LabelAnnotationsColor = new JLabel("         ");
-      m_LabelAnnotationsColor.setOpaque(true);
-      m_LabelPredictionsColor = new JLabel("         ");
-      m_LabelPredictionsColor.setOpaque(true);
-      m_LabelOverlapColorText = new JLabel("Overlaps");
-      m_LabelOverlapColor = new JLabel("         ");
-      m_LabelOverlapColor.setOpaque(true);
+      m_LabelAnnotationsColorBox = new JLabel("         ");
+      m_LabelAnnotationsColorBox.setOpaque(true);
+      m_LabelPredictionsColorBox = new JLabel("         ");
+      m_LabelPredictionsColorBox.setOpaque(true);
+      m_LabelOverlapColorCorrectText = new JLabel("Overlaps (match)");
+      m_LabelOverlapColorCorrectBox = new JLabel("         ");
+      m_LabelOverlapColorCorrectBox.setOpaque(true);
+      m_LabelOverlapColorIncorrectText = new JLabel("Overlaps (mismatch)");
+      m_LabelOverlapColorIncorrectBox = new JLabel("         ");
+      m_LabelOverlapColorIncorrectBox.setOpaque(true);
 
       m_PanelColors.add(new JLabel("Annotations"));
-      m_PanelColors.add(m_LabelAnnotationsColor);
+      m_PanelColors.add(m_LabelAnnotationsColorBox);
       m_PanelColors.add(new JLabel("Predictions"));
-      m_PanelColors.add(m_LabelPredictionsColor);
-      m_PanelColors.add(m_LabelOverlapColorText);
-      m_PanelColors.add(m_LabelOverlapColor);
+      m_PanelColors.add(m_LabelPredictionsColorBox);
+      m_PanelColors.add(m_LabelOverlapColorCorrectText);
+      m_PanelColors.add(m_LabelOverlapColorCorrectBox);
+      m_PanelColors.add(m_LabelOverlapColorIncorrectText);
+      m_PanelColors.add(m_LabelOverlapColorIncorrectBox);
     }
 
     /**
@@ -178,7 +196,7 @@ public class Combined
      * @param value 	the color
      */
     public void setAnnotationsColor(Color value) {
-      m_LabelAnnotationsColor.setBackground(value);
+      m_LabelAnnotationsColorBox.setBackground(value);
     }
 
     /**
@@ -187,7 +205,7 @@ public class Combined
      * @param value 	the color
      */
     public void setPredictionsColor(Color value) {
-      m_LabelPredictionsColor.setBackground(value);
+      m_LabelPredictionsColorBox.setBackground(value);
     }
 
     /**
@@ -195,21 +213,30 @@ public class Combined
      *
      * @param value 	the algorithm
      */
-    public void setObjectOverlap(AbstractObjectOverlap value) {
+    public void setObjectOverlap(ObjectOverlap value) {
       m_ObjectOverlap = value;
       if (m_ObjectOverlap instanceof Null) {
-        m_LabelOverlapColorText.setVisible(false);
-        m_LabelOverlapColor.setVisible(false);
+        m_LabelOverlapColorCorrectText.setVisible(false);
+        m_LabelOverlapColorCorrectBox.setVisible(false);
       }
     }
 
     /**
-     * Sets the color to use for the overlaps.
+     * Sets the color to use for the overlaps (matching labels).
      *
      * @param value 	the color
      */
-    public void setOverlapColor(Color value) {
-      m_LabelOverlapColor.setBackground(value);
+    public void setOverlapColorCorrect(Color value) {
+      m_LabelOverlapColorCorrectBox.setBackground(value);
+    }
+
+    /**
+     * Sets the color to use for the overlaps (mismatching labels).
+     *
+     * @param value 	the color
+     */
+    public void setOverlapColorIncorrect(Color value) {
+      m_LabelOverlapColorIncorrectBox.setBackground(value);
     }
 
     /**
@@ -231,9 +258,10 @@ public class Combined
       Report		combined;
 
       combined = new Report();
-      combined.mergeWith(filterObjects(label, m_AnnotationsLocatedObjects, SUFFIX_TYPE, PREFIX_ANNOTATION));
-      combined.mergeWith(filterObjects(label, m_PredictionsLocatedObjects, SUFFIX_TYPE, PREFIX_PREDICTION));
-      combined.mergeWith(filterObjects(label, m_PredictionsLocatedObjects, SUFFIX_TYPE, PREFIX_OVERLAP));
+      combined.mergeWith(filterObjects(label, m_AnnotationsLocatedObjects,      SUFFIX_TYPE, PREFIX_ANNOTATION));
+      combined.mergeWith(filterObjects(label, m_PredictionsLocatedObjects,      SUFFIX_TYPE, PREFIX_PREDICTION));
+      combined.mergeWith(filterObjects(label, m_OverlapLocatedObjectsCorrect,   SUFFIX_TYPE, PREFIX_OVERLAP_CORRECT));
+      combined.mergeWith(filterObjects(label, m_OverlapLocatedObjectsIncorrect, SUFFIX_TYPE, PREFIX_OVERLAP_INCORRECT));
       m_PanelImage.setAdditionalProperties(combined);
     }
 
@@ -267,7 +295,9 @@ public class Combined
      */
     @Override
     public void display(AbstractImageContainer cont, List<String> labels, Report repAnn, LocatedObjects objAnn, Report repPred, LocatedObjects objPred) {
-      double		zoom;
+      double					zoom;
+      LocatedObjects				overlaps;
+      Struct2<LocatedObjects,LocatedObjects>	split;
 
       if (m_Zoom == -1)
 	zoom = m_Zoom;
@@ -280,15 +310,28 @@ public class Combined
       m_PredictionsReport         = repPred;
       m_PredictionsLocatedObjects = updateLabelType(objPred, m_PredictionsLabelSuffix);
 
-      if (m_ObjectOverlap instanceof Null)
-        m_OverlapLocatedObjects = new LocatedObjects();
-      else
-	m_OverlapLocatedObjects = m_ObjectOverlap.calculate(m_AnnotationsLocatedObjects, m_PredictionsLocatedObjects);
+      if (m_ObjectOverlap instanceof Null) {
+	m_OverlapLocatedObjectsCorrect   = new LocatedObjects();
+	m_OverlapLocatedObjectsIncorrect = new LocatedObjects();
+      }
+      else {
+        overlaps = m_ObjectOverlap.calculate(m_AnnotationsLocatedObjects, m_PredictionsLocatedObjects);
+	if (m_ObjectOverlap instanceof LabelAwareObjectOverlap) {
+	  split = ((LabelAwareObjectOverlap) m_ObjectOverlap).splitOverlaps(overlaps);
+	  m_OverlapLocatedObjectsCorrect   = split.value1;
+	  m_OverlapLocatedObjectsIncorrect = split.value2;
+	}
+	else {
+	  m_OverlapLocatedObjectsCorrect   = overlaps;
+	  m_OverlapLocatedObjectsIncorrect = new LocatedObjects();
+	}
+      }
 
       m_CombinedReport = new Report();
       m_CombinedReport.mergeWith(m_AnnotationsLocatedObjects.toReport(PREFIX_ANNOTATION));
       m_CombinedReport.mergeWith(m_PredictionsLocatedObjects.toReport(PREFIX_PREDICTION));
-      m_CombinedReport.mergeWith(m_OverlapLocatedObjects.toReport(PREFIX_OVERLAP));
+      m_CombinedReport.mergeWith(m_OverlapLocatedObjectsCorrect.toReport(PREFIX_OVERLAP_CORRECT));
+      m_CombinedReport.mergeWith(m_OverlapLocatedObjectsIncorrect.toReport(PREFIX_OVERLAP_INCORRECT));
 
       m_PanelImage.setCurrentImage(cont);
       m_PanelImage.setAdditionalProperties(m_CombinedReport);
@@ -305,10 +348,13 @@ public class Combined
   protected Color m_PredictionsColor;
 
   /** the algorithm for calculating the overlapping objects. */
-  protected AbstractObjectOverlap m_ObjectOverlap;
+  protected ObjectOverlap m_ObjectOverlap;
 
-  /** the color for the overlaps. */
-  protected Color m_OverlapColor;
+  /** the color for the correct overlaps. */
+  protected Color m_OverlapColorCorrect;
+
+  /** the color for the incorrect overlaps. */
+  protected Color m_OverlapColorIncorrect;
 
   /** the zoom level. */
   protected double m_Zoom;
@@ -343,8 +389,12 @@ public class Combined
       new Null());
 
     m_OptionManager.add(
-      "overlap-color", "overlapColor",
-      ColorHelper.addAlpha(Color.YELLOW, 64));
+      "overlap-color-correct", "overlapColorCorrect",
+      ColorHelper.addAlpha(Color.GREEN, 64));
+
+    m_OptionManager.add(
+      "overlap-color-incorrect", "overlapColorIncorrect",
+      ColorHelper.addAlpha(Color.ORANGE, 64));
 
     m_OptionManager.add(
       "zoom", "zoom",
@@ -414,7 +464,7 @@ public class Combined
    *
    * @param value 	the algorithm
    */
-  public void setObjectOverlap(AbstractObjectOverlap value) {
+  public void setObjectOverlap(ObjectOverlap value) {
     m_ObjectOverlap = value;
     reset();
   }
@@ -424,7 +474,7 @@ public class Combined
    *
    * @return 		the algorithm
    */
-  public AbstractObjectOverlap getObjectOverlap() {
+  public ObjectOverlap getObjectOverlap() {
     return m_ObjectOverlap;
   }
 
@@ -439,22 +489,22 @@ public class Combined
   }
 
   /**
-   * Sets the color to use for the overlapping objects.
+   * Sets the color to use for the overlapping objects with matching labels.
    *
    * @param value 	the color
    */
-  public void setOverlapColor(Color value) {
-    m_OverlapColor = value;
+  public void setOverlapColorCorrect(Color value) {
+    m_OverlapColorCorrect = value;
     reset();
   }
 
   /**
-   * Returns the color to use for the overlapping objects.
+   * Returns the color to use for the overlapping objects with matching labels.
    *
    * @return 		the color
    */
-  public Color getOverlapColor() {
-    return m_OverlapColor;
+  public Color getOverlapColorCorrect() {
+    return m_OverlapColorCorrect;
   }
 
   /**
@@ -463,8 +513,37 @@ public class Combined
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String overlapColorTipText() {
-    return "The color to use for the overlapping objects.";
+  public String overlapColorCorrectTipText() {
+    return "The color to use for the overlapping objects with matching labels.";
+  }
+
+  /**
+   * Sets the color to use for the overlapping objects with matching labels.
+   *
+   * @param value 	the color
+   */
+  public void setOverlapColorIncorrect(Color value) {
+    m_OverlapColorIncorrect = value;
+    reset();
+  }
+
+  /**
+   * Returns the color to use for the overlapping objects with matching labels.
+   *
+   * @return 		the color
+   */
+  public Color getOverlapColorIncorrect() {
+    return m_OverlapColorIncorrect;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlapColorIncorrectTipText() {
+    return "The color to use for the overlapping objects with matching labels.";
   }
 
   /**
@@ -512,7 +591,8 @@ public class Combined
     CombinedPanel			result;
     ObjectLocationsOverlayFromReport	annotations;
     ObjectLocationsOverlayFromReport	predictions;
-    ObjectLocationsOverlayFromReport	overlaps;
+    ObjectLocationsOverlayFromReport 	overlapsCorrect;
+    ObjectLocationsOverlayFromReport 	overlapsIncorrect;
     MultiImageOverlay			multi;
 
     annotations = new ObjectLocationsOverlayFromReport();
@@ -523,20 +603,26 @@ public class Combined
     predictions.setColor(m_PredictionsColor);
     predictions.setPrefix(CombinedPanel.PREFIX_PREDICTION);
 
-    overlaps = new ObjectLocationsOverlayFromReport();
-    overlaps.setColor(m_OverlapColor);
-    overlaps.setFilled(true);
-    overlaps.setPrefix(CombinedPanel.PREFIX_OVERLAP);
+    overlapsCorrect = new ObjectLocationsOverlayFromReport();
+    overlapsCorrect.setColor(m_OverlapColorCorrect);
+    overlapsCorrect.setFilled(true);
+    overlapsCorrect.setPrefix(CombinedPanel.PREFIX_OVERLAP_CORRECT);
+
+    overlapsIncorrect = new ObjectLocationsOverlayFromReport();
+    overlapsIncorrect.setColor(m_OverlapColorIncorrect);
+    overlapsIncorrect.setFilled(true);
+    overlapsIncorrect.setPrefix(CombinedPanel.PREFIX_OVERLAP_INCORRECT);
 
     multi = new MultiImageOverlay();
-    multi.setOverlays(new ImageOverlay[]{annotations, predictions, overlaps});
+    multi.setOverlays(new ImageOverlay[]{annotations, predictions, overlapsCorrect, overlapsIncorrect});
 
     result = new CombinedPanel();
     result.setOverlay(multi);
     result.setAnnotationsColor(m_AnnotationsColor);
     result.setPredictionsColor(m_PredictionsColor);
-    result.setObjectOverlap((AbstractObjectOverlap) OptionUtils.shallowCopy(m_ObjectOverlap, true));
-    result.setOverlapColor(m_OverlapColor);
+    result.setObjectOverlap((ObjectOverlap) OptionUtils.shallowCopy(m_ObjectOverlap, true));
+    result.setOverlapColorCorrect(m_OverlapColorCorrect);
+    result.setOverlapColorIncorrect(m_OverlapColorIncorrect);
     result.setZoom(m_Zoom);
 
     return result;

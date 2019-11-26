@@ -20,7 +20,6 @@
 
 package adams.data.objectoverlap;
 
-import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
@@ -31,15 +30,9 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  */
 public abstract class AbstractObjectOverlap
   extends AbstractOptionHandler
-  implements QuickInfoSupporter {
+  implements ObjectOverlap {
 
   private static final long serialVersionUID = -6700493470621873334L;
-
-  /** the additional objects boolean. */
-  public final static String ADDITIONAL_OBJ = "additional_object";
-
-  /** the placeholder for unknown label. */
-  public static final String UNKNOWN_LABEL = "???";
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
@@ -48,6 +41,7 @@ public abstract class AbstractObjectOverlap
    *
    * @return		null if no info available, otherwise short string
    */
+  @Override
   public String getQuickInfo() {
     return null;
   }
@@ -83,6 +77,7 @@ public abstract class AbstractObjectOverlap
    * @param predictions the predictions to compare with
    * @return		the overlapping objects
    */
+  @Override
   public LocatedObjects calculate(LocatedObjects annotations, LocatedObjects predictions) {
     String	msg;
 

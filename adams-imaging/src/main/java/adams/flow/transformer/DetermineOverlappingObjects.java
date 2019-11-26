@@ -25,8 +25,8 @@ import adams.core.Utils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
-import adams.data.objectoverlap.AbstractObjectOverlap;
 import adams.data.objectoverlap.AreaRatio;
+import adams.data.objectoverlap.ObjectOverlap;
 import adams.data.report.AbstractField;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
@@ -99,7 +99,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
  * </pre>
  *
- * <pre>-algorithm &lt;adams.data.objectoverlap.AbstractObjectOverlap&gt; (property: algorithm)
+ * <pre>-algorithm &lt;adams.data.objectoverlap.ObjectOverlap&gt; (property: algorithm)
  * &nbsp;&nbsp;&nbsp;The algorithm to use for determining the overlapping objects.
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectoverlap.AreaRatio
  * </pre>
@@ -120,7 +120,7 @@ public class DetermineOverlappingObjects
   protected ObjectFinder m_Finder;
 
   /** the image overlap calculation to use. */
-  protected AbstractObjectOverlap m_Algorithm;
+  protected ObjectOverlap m_Algorithm;
 
   /**
    * Returns a string describing the object.
@@ -215,7 +215,7 @@ public class DetermineOverlappingObjects
    *
    * @param value 	the algorithm
    */
-  public void setAlgorithm(AbstractObjectOverlap value) {
+  public void setAlgorithm(ObjectOverlap value) {
     m_Algorithm = value;
     reset();
   }
@@ -225,7 +225,7 @@ public class DetermineOverlappingObjects
    *
    * @return 		the algorithm
    */
-  public AbstractObjectOverlap getAlgorithm() {
+  public ObjectOverlap getAlgorithm() {
     return m_Algorithm;
   }
 
