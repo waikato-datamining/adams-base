@@ -394,7 +394,7 @@ public class Combined
 
     m_OptionManager.add(
       "overlap-color-incorrect", "overlapColorIncorrect",
-      ColorHelper.addAlpha(Color.ORANGE, 64));
+      ColorHelper.addAlpha(ColorHelper.invert(Color.GREEN), 64));
 
     m_OptionManager.add(
       "zoom", "zoom",
