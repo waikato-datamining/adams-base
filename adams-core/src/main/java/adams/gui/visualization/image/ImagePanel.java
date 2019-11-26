@@ -400,7 +400,7 @@ public class ImagePanel
       data = new HashMap<>();
       data.put("x", e.getX());
       data.put("y", e.getY());
-      data.put("modifiers", e.getModifiersEx());
+      data.put("modifiers", MouseUtils.modifiersToStr(e));
 
       if (MouseUtils.isLeftClick(e)) {
 	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-click", data));
