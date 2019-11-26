@@ -288,6 +288,8 @@ public class IntersectOverUnionRatio
 	  intersectArea = thisObjArea * ratio;
 	  otherObjArea = otherObj.getHeight() * otherObj.getWidth();
 	  iou = intersectArea / (thisObjArea + otherObjArea - intersectArea);
+	  if (isLoggingEnabled())
+	    getLogger().info(thisObj + " : " + otherObj + " -> IOU = " + iou);
 	  if (iou >= m_MinIntersectOverUnionRatio) {
 	    count++;
 	    if (iou > iouHighest) {

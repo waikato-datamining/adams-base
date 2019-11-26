@@ -321,6 +321,8 @@ public class AreaRatio
 	    ratio2 = otherObj.overlapRatio(thisObj);
 	    ratio = (ratio + ratio2) / 2;
 	  }
+	  if (isLoggingEnabled())
+	    getLogger().info(thisObj + " : " + otherObj + " -> ratio = " + ratio);
 	  if (ratio >= m_MinOverlapRatio) {
 	    count++;
 	    if (ratio > overlapHighest) {
