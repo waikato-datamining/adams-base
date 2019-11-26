@@ -15,7 +15,7 @@
 
 /*
  * MouseUtils.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -23,14 +23,25 @@ package adams.gui.core;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Helper class for mouse events.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MouseUtils {
+
+  public static final String MODIFIER_SHIFT = "SHIFT";
+
+  public static final String MODIFIER_CTRL = "CTRL";
+
+  public static final String MODIFIER_META = "META";
+
+  public static final String MODIFIER_ALT = "ALT";
+
+  public static final String MODIFIER_ALT_GRAPH = "ALT_GRAPH";
 
   /**
    * Checks whether the mouse event is a left-click event.
@@ -123,5 +134,49 @@ public class MouseUtils {
    */
   public static void setDefaultCursor(Component comp) {
     comp.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+  }
+
+  /**
+   * Turns the extended modifiers associated with this mouse event to a list of strings.
+   *
+   * @param e		the event to process
+   * @return		the generated list of human-readable modifiers
+   * @see		#MODIFIER_SHIFT
+   * @see		#MODIFIER_CTRL
+   * @see		#MODIFIER_META
+   * @see		#MODIFIER_ALT
+   * @see		#MODIFIER_ALT_GRAPH
+   */
+  public static List<String> modifiersToStr(MouseEvent e) {
+    return modifiersToStr(e.getModifiersEx());
+  }
+
+  /**
+   * Turns the extended modifiers associated with a mouse event to a list of strings.
+   *
+   * @param modifiers	the modifiers to process
+   * @return		the generated list of human-readable modifiers
+   * @see		#MODIFIER_SHIFT
+   * @see		#MODIFIER_CTRL
+   * @see		#MODIFIER_META
+   * @see		#MODIFIER_ALT
+   * @see		#MODIFIER_ALT_GRAPH
+   */
+  public static List<String> modifiersToStr(int modifiers) {
+    List<String>  result;
+
+    result = new ArrayList<>();
+    if ((modifiers & MouseEvent.SHIFT_DOWN_MASK) != 0)
+      result.add(MODIFIER_SHIFT);
+    if ((modifiers & MouseEvent.CTRL_DOWN_MASK) != 0)
+      result.add(MODIFIER_CTRL);
+    if ((modifiers & MouseEvent.META_DOWN_MASK) != 0)
+      result.add(MODIFIER_META);
+    if ((modifiers & MouseEvent.ALT_DOWN_MASK) != 0)
+      result.add(MODIFIER_ALT);
+    if ((modifiers & MouseEvent.ALT_GRAPH_DOWN_MASK) != 0)
+      result.add(MODIFIER_ALT_GRAPH);
+
+    return result;
   }
 }
