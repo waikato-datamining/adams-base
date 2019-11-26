@@ -30,6 +30,8 @@ import adams.data.spreadsheet.rowfinder.AllFinder;
 import adams.data.spreadsheet.rowfinder.RowFinder;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -653,7 +655,7 @@ public class ObjectLocationsSpreadSheetReader
    * 			displaying in the GUI or for listing the options.
    */
   public String rangeMetaDataTipText() {
-    return "The columns to store as meta-data.";
+    return "The columns to store as meta-data; all other columns get automatically excluded from the meta-data.";
   }
 
   /**
@@ -773,6 +775,7 @@ public class ObjectLocationsSpreadSheetReader
     int			height;
     int			type;
     int[]		meta;
+    TIntSet		metaSet;
     LocatedObjects	objects;
     LocatedObject	object;
 
@@ -835,6 +838,16 @@ public class ObjectLocationsSpreadSheetReader
 
     m_RangeMetaData.setData(sheet);
     meta = m_RangeMetaData.getIntIndices();
+    // ensure that other columns aren't included in meta-data
+    metaSet = new TIntHashSet(meta);
+    metaSet.remove(left);
+    metaSet.remove(top);
+    metaSet.remove(right);
+    metaSet.remove(bottom);
+    metaSet.remove(width);
+    metaSet.remove(height);
+    metaSet.remove(type);
+    meta = metaSet.toArray();
 
     objects = new LocatedObjects();
     for (Row row: sheet.rows()) {
