@@ -15,7 +15,7 @@
 
 /*
  * SimpleArffSpreadSheetWriter.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -71,7 +71,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleArffSpreadSheetWriter
   extends AbstractSpreadSheetWriter {
@@ -369,7 +368,7 @@ public class SimpleArffSpreadSheetWriter
 	else if (cellTypes.size() == 1)
 	  types[i] = cellTypes.iterator().next();
 	else
-	  throw new IllegalStateException("Failed to determine single cell type for column #" + (i+1) + "!");
+	  types[i] = ContentType.STRING;  // fall back to string
 	// nominal or string?
 	if (types[i] == ContentType.STRING) {
 	  values[i] = content.getCellValues(i);
@@ -394,7 +393,7 @@ public class SimpleArffSpreadSheetWriter
 	  case DOUBLE:
 	    bwriter.write("numeric");
 	    break;
-	  case DATE:
+	  case DATETIMEMSEC:
 	    bwriter.write("date " + Utils.quote(m_DateFormat.getValue()));
 	    break;
 	  default:
@@ -428,7 +427,7 @@ public class SimpleArffSpreadSheetWriter
 	      case DOUBLE:
 		bwriter.write(Utils.doubleToString(cell.toDouble(), m_MaxDecimals));
 		break;
-	      case DATE:
+	      case DATETIMEMSEC:
 		bwriter.write(Utils.quote(getFormatter().format(cell.toAnyDateType())));
 		break;
 	      default:
