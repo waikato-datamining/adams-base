@@ -15,7 +15,7 @@
 
 /*
  * SelectArraySubset.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -338,6 +338,10 @@ public class SelectArraySubset
   protected BasePanel newPanel() {
     BasePanel		result;
     JPanel		panel;
+    JPanel		panelButtons;
+    final BaseButton 	buttonAll;
+    final BaseButton 	buttonNone;
+    final BaseButton 	buttonInvert;
     final BaseButton 	buttonOK;
     final BaseButton	buttonCancel;
 
@@ -353,8 +357,31 @@ public class SelectArraySubset
     panel.add(m_LabelMessage);
     result.add(panel, BorderLayout.NORTH);
 
+    panelButtons = new JPanel(new BorderLayout());
+    result.add(panelButtons, BorderLayout.SOUTH);
+
+    // buttons left
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelButtons.add(panel, BorderLayout.WEST);
+
+    buttonAll = new BaseButton("All");
+    buttonAll.setMnemonic('l');
+    buttonAll.addActionListener((ActionEvent e) -> m_List.selectAll());
+    panel.add(buttonAll);
+
+    buttonNone = new BaseButton("None");
+    buttonNone.setMnemonic('N');
+    buttonNone.addActionListener((ActionEvent e) -> m_List.selectNone());
+    panel.add(buttonNone);
+
+    buttonInvert = new BaseButton("Invert");
+    buttonInvert.setMnemonic('I');
+    buttonInvert.addActionListener((ActionEvent e) -> m_List.invertSelection());
+    panel.add(buttonInvert);
+
+    // buttons right
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    result.add(panel, BorderLayout.SOUTH);
+    panelButtons.add(panel, BorderLayout.EAST);
 
     buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
