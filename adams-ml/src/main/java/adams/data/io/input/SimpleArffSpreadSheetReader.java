@@ -321,7 +321,10 @@ public class SimpleArffSpreadSheetReader
 	      cells[i] = Utils.unquote(cells[i]);
 	    switch (types.get(i)) {
 	      case NUMERIC:
-		cell.setContent(Double.parseDouble(cells[i]));
+	        if (Utils.isLong(cells[i]))
+	          cell.setContent(Long.parseLong(cells[i]));
+	        else
+		  cell.setContent(Double.parseDouble(cells[i]));
 		break;
 	      case NOMINAL:
 	      case STRING:

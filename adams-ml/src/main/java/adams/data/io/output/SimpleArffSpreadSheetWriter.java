@@ -425,7 +425,10 @@ public class SimpleArffSpreadSheetWriter
                   bwriter.write(Utils.quote(cell.getContent()));
 		break;
 	      case DOUBLE:
-		bwriter.write(Utils.doubleToString(cell.toDouble(), m_MaxDecimals));
+	        if (cell.isLong())
+		  bwriter.write(cell.toLong().toString());
+	        else
+		  bwriter.write(Utils.doubleToString(cell.toDouble(), m_MaxDecimals));
 		break;
 	      case DATETIMEMSEC:
 		bwriter.write(Utils.quote(getFormatter().format(cell.toAnyDateType())));
