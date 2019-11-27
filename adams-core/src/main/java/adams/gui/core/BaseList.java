@@ -15,28 +15,31 @@
 
 /*
  * BaseList.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.core.Range;
+import adams.gui.event.RemoveItemsEvent;
+import adams.gui.event.RemoveItemsListener;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
+
+import javax.swing.JList;
+import javax.swing.ListModel;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
 import java.util.Vector;
-
-import javax.swing.JList;
-import javax.swing.ListModel;
-
-import adams.gui.event.RemoveItemsEvent;
-import adams.gui.event.RemoveItemsListener;
 
 /**
  * Enhanced javax.swing.JList. Incorporates functionality from the
  * JListHelper class.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see JListHelper
  */
 public class BaseList
@@ -211,5 +214,53 @@ public class BaseList
     event = new RemoveItemsEvent(this, indices);
     for (RemoveItemsListener l: m_RemoveItemsListeners)
       l.removeItems(event);
+  }
+
+  /**
+   * Selects all items.
+   */
+  public void selectAll() {
+    clearSelection();
+    getSelectionModel().addSelectionInterval(0, getModel().getSize() - 1);
+  }
+
+  /**
+   * Select no items.
+   */
+  public void selectNone() {
+    clearSelection();
+  }
+
+  /**
+   * Inverts the current selection.
+   */
+  public void invertSelection() {
+    int[] 	selected;
+    TIntSet	selectedSet;
+    TIntList	inverted;
+    int		i;
+    Range 	range;
+    int[][]	segments;
+
+    selected = getSelectedIndices();
+    if (selected.length == 0) {
+      selectAll();
+      return;
+    }
+
+    selectedSet = new TIntHashSet(selected);
+    inverted    = new TIntArrayList();
+    for (i = 0; i < getModel().getSize(); i++) {
+      if (!selectedSet.contains(i))
+        inverted.add(i);
+    }
+
+    range = new Range();
+    range.setMax(getModel().getSize());
+    range.setIndices(inverted.toArray());
+    segments = range.getIntSegments();
+    clearSelection();
+    for (int[] segment: segments)
+      getSelectionModel().addSelectionInterval(segment[0], segment[1]);
   }
 }

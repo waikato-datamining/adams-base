@@ -15,7 +15,7 @@
 
 /*
  * BaseListWithButtons.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -35,7 +35,6 @@ import java.awt.event.MouseEvent;
  * right-hand side.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseListWithButtons
   extends AbstractDoubleClickableComponentWithButtons<BaseList> {
@@ -435,5 +434,26 @@ public class BaseListWithButtons
     updateInfo(
 	"Total: " + m_Component.getModel().getSize()
 	+ ", Selected: " + m_Component.getSelectedIndices().length);
+  }
+
+  /**
+   * Selects all items.
+   */
+  public void selectAll() {
+    m_Component.selectAll();
+  }
+
+  /**
+   * Select no items.
+   */
+  public void selectNone() {
+    m_Component.selectNone();
+  }
+
+  /**
+   * Inverts the current selection.
+   */
+  public void invertSelection() {
+    m_Component.invertSelection();
   }
 }
