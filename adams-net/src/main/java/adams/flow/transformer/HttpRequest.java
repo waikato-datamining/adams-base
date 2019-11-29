@@ -27,9 +27,9 @@ import adams.core.base.BaseURL;
 import adams.core.io.EncodingSupporter;
 import adams.flow.container.HttpRequestResult;
 import adams.flow.core.Token;
-import com.github.fracpete.requests4j.core.Method;
-import com.github.fracpete.requests4j.core.Request;
-import com.github.fracpete.requests4j.core.Response;
+import com.github.fracpete.requests4j.request.Method;
+import com.github.fracpete.requests4j.request.Request;
+import com.github.fracpete.requests4j.response.BasicResponse;
 
 /**
  <!-- globalinfo-start -->
@@ -321,9 +321,9 @@ public class HttpRequest
    */
   @Override
   protected String doExecute() {
-    String	result;
-    Request 	req;
-    Response 	res;
+    String		result;
+    Request 		req;
+    BasicResponse 	res;
 
     result = null;
 

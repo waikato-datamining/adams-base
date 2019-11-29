@@ -26,10 +26,10 @@ import adams.core.base.BaseURL;
 import adams.flow.container.HttpRequestResult;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
-import com.github.fracpete.requests4j.core.Method;
-import com.github.fracpete.requests4j.core.Request;
-import com.github.fracpete.requests4j.core.Response;
 import com.github.fracpete.requests4j.form.FormData;
+import com.github.fracpete.requests4j.request.Method;
+import com.github.fracpete.requests4j.request.Request;
+import com.github.fracpete.requests4j.response.BasicResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -354,7 +354,7 @@ public class HttpRequest
     String		result;
     HttpRequestResult 	cont;
     Map<String,String>  cookies;
-    Response 		r;
+    BasicResponse 	r;
 
     result = null;
 
