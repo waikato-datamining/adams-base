@@ -56,6 +56,7 @@ import adams.gui.visualization.image.selectionshape.RectanglePainter;
 import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
@@ -72,6 +73,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -414,8 +416,8 @@ public class ImageAnnotator
       Map<String,Object> 	data;
 
       data = new HashMap<>();
-      data.put("oldLabel", (m_CurrentLabel == null ? UNSET : m_CurrentLabel));
-      data.put("newLabel", (label == null ? UNSET : label));
+      data.put("old-label", (m_CurrentLabel == null ? UNSET : m_CurrentLabel));
+      data.put("new-label", (label == null ? UNSET : label));
       m_PanelImage.addInteractionLog(new InteractionEvent(m_PanelImage, new Date(), "change label", data));
 
       m_CurrentLabel = label;
@@ -664,6 +666,9 @@ public class ImageAnnotator
 
   /** the last selected label. */
   protected transient String m_LastLabel;
+
+  /** the start timestamp. */
+  protected transient Date m_StartTimestamp;
 
   /**
    * Returns a string describing the object.
@@ -1051,6 +1056,8 @@ public class ImageAnnotator
     DateFormat	formatter;
     JSONArray 	array;
     JSONObject	interaction;
+    String 	value;
+    JSONParser	parser;
     String	msg;
 
     if (events == null)
@@ -1059,6 +1066,30 @@ public class ImageAnnotator
     array     = new JSONArray();
     m2j       = new MapToJson();
     formatter = DateUtils.getTimestampFormatterMsecs();
+    field     = new Field(FIELD_INTERACTIONLOG, DataType.STRING);
+
+    // any old interactions?
+    if (report.hasValue(field)) {
+      value = "" + report.getValue(field);
+      try {
+        parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+        array  = (JSONArray) parser.parse(value);
+      }
+      catch (Exception e) {
+        getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
+      }
+    }
+
+
+    // separator
+    if (array.size() > 0) {
+      interaction = new JSONObject();
+      interaction.put("timestamp", formatter.format(m_StartTimestamp));
+      interaction.put("id", "---");
+      array.add(interaction);
+    }
+
+    // new interactions
     for (InteractionEvent event: events) {
       interaction = new JSONObject();
       interaction.put("timestamp", formatter.format(event.getTimestamp()));
@@ -1076,7 +1107,6 @@ public class ImageAnnotator
       array.add(interaction);
     }
 
-    field = new Field(FIELD_INTERACTIONLOG, DataType.STRING);
     report.addField(field);
     report.setValue(field, array.toString());
   }
@@ -1093,6 +1123,8 @@ public class ImageAnnotator
     m_Accepted = false;
 
     cont = (AbstractImageContainer) m_InputToken.getPayload();
+
+    m_StartTimestamp = new Date();
 
     // annotate
     registerWindow(m_Dialog, m_Dialog.getTitle());

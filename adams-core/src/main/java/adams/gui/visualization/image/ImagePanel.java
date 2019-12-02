@@ -248,7 +248,7 @@ public class ImagePanel
 
 	  // update zoom box
 	  if (m_Selecting && !e.isShiftDown()) {
-	    m_Dragged              = true;
+	    m_Dragged     = true;
 	    m_SelectionTo = e.getPoint();
 	    if (m_SelectionShapePainter.canAddTracePoint(PaintPanel.this, m_SelectionTrace, e.getPoint()))
 	      m_SelectionTrace.add(e.getPoint());
@@ -263,8 +263,8 @@ public class ImagePanel
 	    // get top/left coordinates for zoom
 	    if (!e.isShiftDown()) {
 	      if (m_SelectionEnabled) {
-		m_Selecting        = true;
-		m_Dragged          = false;
+		m_Selecting     = true;
+		m_Dragged       = false;
 		m_SelectionFrom = e.getPoint();
 	      }
 	    }
@@ -279,12 +279,14 @@ public class ImagePanel
 	public void mousePressed(MouseEvent e) {
 	  super.mousePressed(e);
 
+	  logMouseButtonPressed(e);
+
 	  if (e.getButton() == MouseEvent.BUTTON1) {
 	    // get top/left coordinates for selection
 	    if (!e.isShiftDown()) {
 	      if (m_SelectionEnabled) {
-		m_Selecting        = true;
-		m_Dragged          = false;
+		m_Selecting     = true;
+		m_Dragged       = false;
 		m_SelectionFrom = e.getPoint();
 	        m_SelectionTrace.clear();
 		if (m_SelectionShapePainter.canAddTracePoint(PaintPanel.this, m_SelectionTrace, e.getPoint()))
@@ -301,8 +303,8 @@ public class ImagePanel
 	    // get top/left coordinates for selection
 	    if (!e.isShiftDown()) {
 	      if (m_SelectionEnabled) {
-		m_Selecting        = true;
-		m_Dragged          = false;
+		m_Selecting     = true;
+		m_Dragged       = false;
 		m_SelectionFrom = e.getPoint();
 	      }
 	    }
@@ -314,6 +316,8 @@ public class ImagePanel
 	@Override
 	public void mouseReleased(MouseEvent e) {
 	  super.mouseReleased(e);
+
+	  logMouseButtonReleased(e);
 
 	  if (e.getButton() == MouseEvent.BUTTON1) {
 	    // get bottom/right coordinates for selection
@@ -333,18 +337,18 @@ public class ImagePanel
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	  if (MouseUtils.isLeftClick(e)) {
-	    logMouseClick(e);
+	    logMouseButtonClick(e);
 	    notifyLeftClickListeners(e.getPoint(), e.getModifiersEx());
 	    e.consume();
 	  }
 	  if (MouseUtils.isMiddleClick(e)) {
-	    logMouseClick(e);
+	    logMouseButtonClick(e);
 	    setScale(1.0);
 	    updateStatus();
 	    e.consume();
 	  }
 	  else if (MouseUtils.isRightClick(e)) {
-	    logMouseClick(e);
+	    logMouseButtonClick(e);
 	    showPopup(e);
 	    e.consume();
 	  }
@@ -387,11 +391,39 @@ public class ImagePanel
     }
 
     /**
+     * Logs a mouse button pressed.
+     *
+     * @param e		the mouse event to record
+     */
+    protected void logMouseButtonPressed(MouseEvent e) {
+      Map<String,Object> 	data;
+
+      if (getOwner() == null)
+        return;
+
+      data = new HashMap<>();
+      data.put("x", e.getX());
+      data.put("y", e.getY());
+      data.put("modifiers", MouseUtils.modifiersToStr(e));
+
+      if (MouseUtils.isLeftClick(e)) {
+	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-pressed", data));
+      }
+      else if (MouseUtils.isMiddleClick(e)) {
+        data.put("scale", 1.0);
+	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-pressed", data));
+      }
+      else if (MouseUtils.isRightClick(e)) {
+	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-pressed", data));
+      }
+    }
+
+    /**
      * Logs a mouse click.
      *
      * @param e		the mouse event to record
      */
-    protected void logMouseClick(MouseEvent e) {
+    protected void logMouseButtonClick(MouseEvent e) {
       Map<String,Object> 	data;
 
       if (getOwner() == null)
@@ -411,6 +443,34 @@ public class ImagePanel
       }
       else if (MouseUtils.isRightClick(e)) {
 	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-click", data));
+      }
+    }
+
+    /**
+     * Logs a mouse button released.
+     *
+     * @param e		the mouse event to record
+     */
+    protected void logMouseButtonReleased(MouseEvent e) {
+      Map<String,Object> 	data;
+
+      if (getOwner() == null)
+        return;
+
+      data = new HashMap<>();
+      data.put("x", e.getX());
+      data.put("y", e.getY());
+      data.put("modifiers", MouseUtils.modifiersToStr(e));
+
+      if (MouseUtils.isLeftClick(e)) {
+	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-released", data));
+      }
+      else if (MouseUtils.isMiddleClick(e)) {
+        data.put("scale", 1.0);
+	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-released", data));
+      }
+      else if (MouseUtils.isRightClick(e)) {
+	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-released", data));
       }
     }
 

@@ -233,7 +233,7 @@ public class SelectObjects
       data.put("poly_y", poly_y);
     if (!m_Label.isEmpty())
       data.put("label", m_Label);
-    e = new InteractionEvent(panel, new Date(), "Add", data);
+    e = new InteractionEvent(panel, new Date(), "add", data);
     panel.addInteractionLog(e);
   }
 
@@ -257,7 +257,7 @@ public class SelectObjects
     data.put("width", w);
     data.put("height", h);
     data.put("removed", removed);
-    e = new InteractionEvent(panel, new Date(), "Remove", data);
+    e = new InteractionEvent(panel, new Date(), "remove", data);
     panel.addInteractionLog(e);
   }
 
