@@ -22,6 +22,7 @@ package adams.core;
 
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.env.ClassListerBlacklistDefinition;
 import adams.env.ClassListerDefinition;
@@ -30,6 +31,7 @@ import adams.flow.core.Compatibility;
 import nz.ac.waikato.cms.locator.ClassLocator;
 import nz.ac.waikato.cms.locator.PropertiesBasedClassListTraversal;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -386,18 +388,32 @@ public class ClassLister
         break;
 
       case "classes":
-        String class_props_file = OptionUtils.getOption(args, "-output");
+        PlaceholderFile class_props_file = new PlaceholderFile(OptionUtils.getOption(args, "-output"));
+        File class_props_dir = class_props_file.getParentFile();
+        if (!class_props_dir.exists()) {
+          if (!class_props_dir.mkdirs()) {
+            System.err.println("Failed to create directory for classes file: " + class_props_dir);
+            System.exit(2);
+          }
+        }
         Properties class_props = new Properties(getSingleton().toProperties());
-        if (!class_props.save(class_props_file)) {
+        if (!class_props.save(class_props_file.getAbsolutePath())) {
 	  System.err.println("Failed to write properties with classes to: " + class_props_file);
 	  System.exit(1);
 	}
         break;
 
       case "packages":
-        String pkgs_props_file = OptionUtils.getOption(args, "-output");
+        PlaceholderFile pkgs_props_file = new PlaceholderFile(OptionUtils.getOption(args, "-output"));
+        File pkgs_props_dir = pkgs_props_file.getParentFile();
+        if (!pkgs_props_dir.exists()) {
+          if (!pkgs_props_dir.mkdirs()) {
+            System.err.println("Failed to create directory for packages file: " + pkgs_props_dir);
+            System.exit(2);
+          }
+        }
         Properties pkgs_props = new Properties(getSingleton().toPackages());
-        if (!pkgs_props.save(pkgs_props_file)) {
+        if (!pkgs_props.save(pkgs_props_file.getAbsolutePath())) {
 	  System.err.println("Failed to write properties with packages to: " + pkgs_props_file);
 	  System.exit(1);
 	}
