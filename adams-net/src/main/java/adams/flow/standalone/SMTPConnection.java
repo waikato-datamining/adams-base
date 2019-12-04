@@ -591,7 +591,7 @@ public class SMTPConnection
   /**
    * Sets the custom message to use when stopping the flow.
    *
-   * @param 		the stop message
+   * @param value	the stop message
    */
   public void setCustomStopMessage(String value) {
     m_CustomStopMessage = value;
