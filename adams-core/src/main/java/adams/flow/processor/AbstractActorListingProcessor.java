@@ -24,16 +24,9 @@ import adams.core.option.OptionHandler;
 import adams.core.option.OptionTraversalPath;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
-import adams.gui.core.BaseButton;
-import adams.gui.core.BaseListWithButtons;
 import adams.gui.flow.FlowPanel;
-import adams.gui.flow.tree.Tree;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
-import javax.swing.DefaultListModel;
-import javax.swing.event.ListSelectionEvent;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 
 /**
  * Ancestor for processors that list full actor names and allow jumping to them.
@@ -168,13 +161,9 @@ public abstract class AbstractActorListingProcessor
    */
   @Override
   public Component getGraphicalOutput() {
-    final BaseListWithButtons	result;
-    DefaultListModel<String>	model;
-    final BaseButton		buttonCopy;
-    final BaseButton		buttonJumpTo;
     final Flow			flow;
     Component			parentComp;
-    final Component		fParentComp;
+    ActorLocationsPanel		locationsPanel;
 
     if (m_Current instanceof Flow)
       flow = (Flow) m_Current;
@@ -189,56 +178,8 @@ public abstract class AbstractActorListingProcessor
       parentComp = flow.getParentComponent();
     if ((parentComp == null) && (m_Context != null))
       parentComp = m_Context;
-    fParentComp = parentComp;
 
-    result = new BaseListWithButtons();
-    model = new DefaultListModel<>();
-    for (String item: m_List)
-      model.addElement(item);
-    result.setModel(model);
-
-    buttonCopy = new BaseButton("Copy");
-    buttonCopy.setEnabled(false);
-    buttonCopy.addActionListener((ActionEvent e) -> {
-      Object[] values = result.getSelectedValues();
-      StringBuilder content = new StringBuilder();
-      for (Object value: values) {
-        if (content.length() > 0)
-          content.append("\n");
-        content.append("" + value);
-      }
-      ClipboardHelper.copyToClipboard(content.toString());
-    });
-    result.addToButtonsPanel(buttonCopy);
-
-    if (fParentComp != null) {
-      buttonJumpTo = new BaseButton("Jump to");
-      buttonJumpTo.setEnabled(false);
-      buttonJumpTo.addActionListener((ActionEvent e) -> {
-        if (result.getSelectedIndex() > -1) {
-          if (fParentComp instanceof FlowPanel) {
-            ((FlowPanel) fParentComp).getTree().locateAndDisplay(
-              "" + result.getSelectedValue(), true);
-          }
-          else if (fParentComp instanceof Tree) {
-            ((Tree) fParentComp).locateAndDisplay(
-              "" + result.getSelectedValue(), true);
-          }
-        }
-      });
-      result.addToButtonsPanel(buttonJumpTo);
-      result.setDoubleClickButton(buttonJumpTo);
-    }
-    else {
-      buttonJumpTo = null;
-    }
-
-    result.addListSelectionListener((ListSelectionEvent e) -> {
-      buttonCopy.setEnabled(result.getSelectedIndices().length > 0);
-      if (buttonJumpTo != null)
-        buttonJumpTo.setEnabled(result.getSelectedIndices().length == 1);
-    });
-
-    return result;
+    locationsPanel = new ActorLocationsPanel(parentComp, m_List);
+    return locationsPanel;
   }
 }

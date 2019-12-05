@@ -21,6 +21,7 @@ package adams.gui.flow.tree.menu;
 
 import adams.flow.core.Actor;
 import adams.flow.core.ActorReferenceHandler;
+import adams.flow.processor.ActorLocationsPanel;
 import adams.flow.processor.ListActorReferenceUsage;
 import adams.flow.processor.ListAllStorageNames;
 import adams.flow.processor.ListAllVariables;
@@ -28,11 +29,16 @@ import adams.flow.processor.ListStorageUsage;
 import adams.flow.processor.ListVariableUsage;
 import adams.gui.action.AbstractPropertiesAction;
 import adams.gui.core.GUIHelper;
+import adams.gui.flow.tabhandler.GraphicalActorProcessorHandler;
+import adams.gui.flow.tree.Node;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.tree.TreeNode;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -111,6 +117,29 @@ public class FindUsages
   }
 
   /**
+   * Locates all the occurrences of this actor.
+   *
+   * @param actor	the actor to look for
+   * @return		the actor paths
+   */
+  protected List<String> findActorLocations(Actor actor) {
+    List<String>		result;
+    Enumeration<TreeNode> 	nodes;
+    Node 			node;
+
+    result = new ArrayList<>();
+    nodes  = m_State.tree.getRootNode().depthFirstEnumeration();
+    while (nodes.hasMoreElements()) {
+      node = (Node) nodes.nextElement();
+      if (node.getActor().getClass().equals(actor.getClass())) {
+        result.add(node.getFullName());
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Ignored.
    *
    * @return		always null
@@ -178,6 +207,27 @@ public class FindUsages
   }
 
   /**
+   * Creates a menu item for a jumping to an actor location.
+   *
+   * @param locations	the locations of the actor
+   * @return		the menu item
+   */
+  protected JMenuItem createActorLocationMenuItem(List<String> locations) {
+    JMenuItem 				result;
+
+    result  = new JMenuItem("Actor locations");
+    result.addActionListener((ActionEvent e) -> {
+      GraphicalActorProcessorHandler handler = m_State.tree.getOwner().getTabHandler(GraphicalActorProcessorHandler.class);
+      if (handler != null) {
+	ActorLocationsPanel panel = new ActorLocationsPanel(m_State.tree, locations);
+	handler.add("Actor locations", panel, null);
+      }
+    });
+
+    return result;
+  }
+
+  /**
    * Creates a new menu.
    */
   @Override
@@ -189,6 +239,7 @@ public class FindUsages
     String 		reference;
     List<String>	vars;
     List<String>	items;
+    List<String>	locations;
     int			count;
 
     if (m_State.selNode == null)
@@ -205,6 +256,7 @@ public class FindUsages
     reference = getActorReference(actor, parent);
     vars      = findVariableNames(actor);
     items     = findStorageNames(actor);
+    locations = findActorLocations(actor);
 
     // do we need a submenu?
     count = 0;
@@ -214,6 +266,8 @@ public class FindUsages
       count++;
     if (items.size() > 0)
       count++;
+    if (locations.size() > 0)
+      count++;
 
     if (count > 1) {
       if (reference != null) {
@@ -221,6 +275,8 @@ public class FindUsages
 	result.add(submenu);
 	submenu.add(createActorReferenceMenuItem(reference));
       }
+      if (locations.size() > 0)
+	result.add(createActorLocationMenuItem(locations));
       if (items.size() > 0) {
 	submenu = new JMenu("Storage item");
 	result.add(submenu);
@@ -238,6 +294,8 @@ public class FindUsages
       if (reference != null) {
 	result.add(createActorReferenceMenuItem(reference));
       }
+      if (locations.size() > 0)
+	result.add(createActorLocationMenuItem(locations));
       if (items.size() > 0) {
 	for (String item: items)
 	  result.add(createStorageMenuItem(item));
