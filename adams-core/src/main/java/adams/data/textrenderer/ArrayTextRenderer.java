@@ -122,7 +122,7 @@ public class ArrayTextRenderer
     result = new StringBuilder();
     len    = Array.getLength(obj);
     for (i = 0; i < len; i++) {
-      if (i > m_Limit)
+      if (i > getActualLimit())
         break;
       subObj = Array.get(obj, i);
       renderer = AbstractTextRenderer.getRenderer(subObj);
@@ -131,7 +131,7 @@ public class ArrayTextRenderer
       result.append(renderer.render(subObj));
       result.append("\n");
     }
-    if (len > m_Limit)
+    if (len > getActualLimit())
       result.append(DOTS);
 
     return result.toString();

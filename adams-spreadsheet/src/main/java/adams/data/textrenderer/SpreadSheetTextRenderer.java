@@ -121,20 +121,17 @@ public class SpreadSheetTextRenderer
     SpreadSheet		sheet;
     int			i;
     TIntList		rows;
-    boolean		dots;
 
     sheet = (SpreadSheet) obj;
-    dots  = false;
-    if (sheet.getRowCount() > m_Limit) {
+    if (sheet.getRowCount() > getActualLimit()) {
       rows = new TIntArrayList();
       for (i = 0; i < m_Limit; i++)
         rows.add(i);
       sheet = new SpreadSheetView(sheet, rows.toArray(), null);
-      dots  = true;
     }
 
     result = new StringBuilder(sheet.toString());
-    if (dots)
+    if (sheet.getRowCount() > getActualLimit())
       result.append(DOTS);
 
     return result.toString();

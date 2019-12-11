@@ -125,14 +125,14 @@ public class ListTextRenderer
     list = (List) obj;
 
     for (i = 0; i < list.size(); i++) {
-      if (i > m_Limit)
+      if (i > getActualLimit())
         break;
       result.append((i+1));
       result.append(": ");
       result.append("" + list.get(i));
       result.append("\n");
     }
-    if (list.size() > m_Limit)
+    if (list.size() > getActualLimit())
       result.append(DOTS);
 
     return result.toString();

@@ -14,7 +14,7 @@
  */
 
 /*
- * SpreadSheetTextRenderer.java
+ * AbstractLimitedTextRenderer.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
@@ -26,7 +26,8 @@ package adams.data.textrenderer;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractLimitedTextRenderer
-  extends AbstractTextRenderer {
+  extends AbstractTextRenderer
+  implements LimitedTextRenderer {
 
   private static final long serialVersionUID = 2413293721997389467L;
 
@@ -34,6 +35,9 @@ public abstract class AbstractLimitedTextRenderer
 
   /** the maximum to render. */
   protected int m_Limit;
+
+  /** the actual limit. */
+  protected int m_ActualLimit;
 
   /**
    * Adds options to the internal list of options.
@@ -94,4 +98,35 @@ public abstract class AbstractLimitedTextRenderer
    *         		displaying in the explorer/experimenter gui
    */
   public abstract String limitTipText();
+
+  /**
+   * Returns the actual limit to use.
+   *
+   * @return		the actual limit
+   */
+  protected int getActualLimit() {
+    return m_ActualLimit;
+  }
+
+  /**
+   * Renders the object as text.
+   *
+   * @param obj		the object to render
+   * @return		the generated string or null if failed to render
+   */
+  public String render(Object obj) {
+    m_ActualLimit = m_Limit;
+    return super.render(obj);
+  }
+
+  /**
+   * Renders the object as text with no limits.
+   *
+   * @param obj		the object to render
+   * @return		the generated string or null if failed to render
+   */
+  public String renderUnlimited(Object obj) {
+    m_ActualLimit = Integer.MAX_VALUE;
+    return super.render(obj);
+  }
 }

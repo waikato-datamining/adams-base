@@ -126,14 +126,14 @@ public class SetTextRenderer
 
     for (Object o: set) {
       count++;
-      if (count > m_Limit)
+      if (count > getActualLimit())
         break;
-      result.append((count +1));
+      result.append((count+1));
       result.append(": ");
       result.append("" + o);
       result.append("\n");
     }
-    if (set.size() > m_Limit)
+    if (set.size() > getActualLimit())
       result.append(DOTS);
 
     return result.toString();

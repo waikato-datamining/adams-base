@@ -14,7 +14,7 @@
  */
 
 /*
- * MapTextRenderer.java
+ * ListTextRenderer.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
@@ -23,14 +23,18 @@ package adams.data.textrenderer;
 import adams.core.Utils;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * Renders Map objects.
+ * Just uses the object's toString() method. Also handles null objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class MapTextRenderer
+public class CollectionTextRenderer
   extends AbstractLimitedTextRenderer {
 
   private static final long serialVersionUID = -3112399546457037505L;
@@ -42,7 +46,7 @@ public class MapTextRenderer
    */
   @Override
   public String globalInfo() {
-    return "Renders " + Utils.classToString(Map.class) + " objects.";
+    return "Renders " + Utils.classToString(Collection.class) + " objects.";
   }
 
   /**
@@ -62,7 +66,7 @@ public class MapTextRenderer
    */
   @Override
   protected Integer getMinLimit() {
-    return 1;
+    return 0;
   }
 
   /**
@@ -83,7 +87,7 @@ public class MapTextRenderer
    */
   @Override
   public String limitTipText() {
-    return "The maximum number of map entries to render.";
+    return "The maximum number of list elements to render.";
   }
 
   /**
@@ -94,7 +98,7 @@ public class MapTextRenderer
    */
   @Override
   public boolean handles(Object obj) {
-    return (obj instanceof Map);
+    return (obj != null) && handles(obj.getClass());
   }
 
   /**
@@ -105,7 +109,10 @@ public class MapTextRenderer
    */
   @Override
   public boolean handles(Class cls) {
-    return ClassLocator.matches(Map.class, cls);
+    return ClassLocator.matches(Collection.class, cls)
+      && !ClassLocator.matches(List.class, cls)
+      && !ClassLocator.matches(Set.class, cls)
+      && !ClassLocator.matches(Map.class, cls);
   }
 
   /**
@@ -117,23 +124,24 @@ public class MapTextRenderer
   @Override
   protected String doRender(Object obj) {
     StringBuilder	result;
-    Map			map;
-    int			count;
+    Collection 		coll;
+    Iterator		iter;
+    int 		count;
 
     result = new StringBuilder();
-    map    = (Map) obj;
+    coll   = (List) obj;
     count  = 0;
 
-    for (Object key: map.keySet()) {
-      count++;
+    iter = coll.iterator();
+    while (iter.hasNext()) {
       if (count > getActualLimit())
         break;
-      result.append("" + key);
+      result.append((count + 1));
       result.append(": ");
-      result.append("" + map.get(key));
+      result.append("" + iter.next());
       result.append("\n");
     }
-    if (map.size() > getActualLimit())
+    if (coll.size() > getActualLimit())
       result.append(DOTS);
 
     return result.toString();
