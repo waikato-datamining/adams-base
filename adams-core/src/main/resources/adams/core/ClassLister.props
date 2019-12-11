@@ -777,10 +777,6 @@ adams.gui.visualization.core.plot.HitDetector=\
 adams.gui.visualization.debug.inspectionhandler.AbstractInspectionHandler=\
   adams.gui.visualization.debug.inspectionhandler
 
-# plaintext renderers
-adams.gui.visualization.debug.objecttree.AbstractObjectPlainTextRenderer=\
-  adams.gui.visualization.debug.objecttree
-
 # property extractors
 adams.gui.visualization.debug.propertyextractor.AbstractPropertyExtractor=\
   adams.gui.visualization.debug.propertyextractor

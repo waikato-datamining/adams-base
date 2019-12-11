@@ -13,24 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RenderedPlainTextExporter.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectexport;
 
 import adams.core.io.FileUtils;
-import adams.gui.visualization.debug.objecttree.AbstractObjectPlainTextRenderer;
+import adams.data.textrenderer.AbstractTextRenderer;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Uses an AbstractObjectPlainTextRenderer to generated the string to export.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RenderedPlainTextExporter
   extends AbstractObjectExporter {
@@ -64,7 +62,7 @@ public class RenderedPlainTextExporter
    */
   @Override
   public boolean handles(Class cls) {
-    return (AbstractObjectPlainTextRenderer.getRenderer(cls).size() > 0);
+    return true;
   }
 
   /**
@@ -76,12 +74,6 @@ public class RenderedPlainTextExporter
    */
   @Override
   protected String doExport(Object obj, File file) {
-    List<AbstractObjectPlainTextRenderer>	list;
-    String					rendered;
-
-    list     = AbstractObjectPlainTextRenderer.getRenderer(obj.getClass());
-    rendered = list.get(0).render(obj);
-
-    return FileUtils.writeToFileMsg(file.getAbsolutePath(), rendered, false, null);
+    return FileUtils.writeToFileMsg(file.getAbsolutePath(), AbstractTextRenderer.renderObject(obj), false, null);
   }
 }

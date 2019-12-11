@@ -26,7 +26,6 @@ import adams.core.option.AbstractOptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Ancestor for text renderer classes.
@@ -38,9 +37,6 @@ public abstract class AbstractTextRenderer
   implements TextRenderer {
 
   private static final long serialVersionUID = -9153271896361695400L;
-
-  /** the cache for class / renderer relation. */
-  protected static Map<Class,TextRenderer> m_Cache;
 
   /** all available renderers. */
   protected static List<TextRenderer> m_Renderers;
@@ -55,8 +51,6 @@ public abstract class AbstractTextRenderer
    * @return		the generated string or null if failed to render
    */
   protected String check(Object obj) {
-    if (obj == null)
-      return "No object provided!";
     return null;
   }
 
@@ -76,6 +70,9 @@ public abstract class AbstractTextRenderer
    */
   public String render(Object obj) {
     String	msg;
+
+    if (obj == null)
+      return "null";
 
     msg = check(obj);
     if (msg != null) {
@@ -152,12 +149,73 @@ public abstract class AbstractTextRenderer
   }
 
   /**
+   * Returns the renderers for the specified object.
+   *
+   * @param obj		the object to get the renderer for
+   * @return		the renderers
+   */
+  public static synchronized List<TextRenderer> getRenderers(Object obj) {
+    List<TextRenderer>	result;
+
+    if (obj == null) {
+      result = new ArrayList<>();
+      result.add(getDefaultRenderer());
+      return result;
+    }
+
+    return getRenderers(obj.getClass());
+  }
+
+  /**
+   * Returns the renderers for the specified class.
+   *
+   * @param cls		the class to get the renderer for
+   * @return		the renderers
+   */
+  public static synchronized List<TextRenderer> getRenderers(Class cls) {
+    List<TextRenderer>	result;
+    Class[]		renderers;
+
+    result = new ArrayList<>();
+    result.add(getDefaultRenderer());
+
+    // initialize list of renderers
+    if (m_Renderers == null) {
+      m_Renderers = new ArrayList<>();
+      renderers   = ClassLister.getSingleton().getClasses(TextRenderer.class);
+      for (Class renderer: renderers) {
+        // skip default one
+        if (renderer.equals(getDefaultRenderer().getClass()))
+          continue;
+        try {
+          m_Renderers.add((TextRenderer) renderer.newInstance());
+	}
+	catch (Exception e) {
+          System.err.println("Failed to instantiate text renderer: " + Utils.classToString(renderer));
+          e.printStackTrace();
+	}
+      }
+    }
+
+    // find renderer
+    for (TextRenderer renderer: m_Renderers) {
+      if (renderer.handles(cls))
+        result.add(renderer);
+    }
+
+    return result;
+  }
+
+  /**
    * Renders the object.
    *
    * @param obj		the object to render
    * @return		the generated string, null if failed to render
    */
   public static synchronized String renderObject(Object obj) {
-    return getRenderer(obj).render(obj);
+    if (obj == null)
+      return "null";
+    else
+      return getRenderer(obj).render(obj);
   }
 }

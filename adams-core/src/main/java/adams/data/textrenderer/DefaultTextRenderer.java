@@ -37,7 +37,7 @@ public class DefaultTextRenderer
    */
   @Override
   public String globalInfo() {
-    return "Just uses the object's toString() method. Also handles null objects.";
+    return "Just uses the object's toString() method.";
   }
 
   /**
@@ -69,21 +69,7 @@ public class DefaultTextRenderer
    * @return		the generated string or null if failed to render
    */
   @Override
-  protected String check(Object obj) {
-    return null;
-  }
-
-  /**
-   * Renders the object as text.
-   *
-   * @param obj		the object to render
-   * @return		the generated string or null if failed to render
-   */
-  @Override
   protected String doRender(Object obj) {
-    if (obj == null)
-      return "null";
-    else
-      return obj.toString();
+    return obj.toString();
   }
 }

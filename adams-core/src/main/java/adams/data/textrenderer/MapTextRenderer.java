@@ -130,7 +130,7 @@ public class MapTextRenderer
         break;
       result.append("" + key);
       result.append(": ");
-      result.append("" + map.get(key));
+      result.append(AbstractTextRenderer.renderObject(map.get(key)));
       result.append("\n");
     }
     if (map.size() > getActualLimit())

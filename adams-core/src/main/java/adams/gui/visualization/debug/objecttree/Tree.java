@@ -15,12 +15,13 @@
 
 /*
  * Tree.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
 import adams.core.Utils;
 import adams.core.option.OptionHandler;
+import adams.data.textrenderer.AbstractTextRenderer;
 import adams.gui.chooser.ObjectExporterFileChooser;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTree;
@@ -497,9 +498,6 @@ public class Tree
       @Override
       public void actionPerformed(ActionEvent e) {
         copyToClipboard(obj);
-	List<AbstractObjectPlainTextRenderer> list = AbstractObjectPlainTextRenderer.getRenderer(obj.getClass());
-	String rendered = list.get(0).render(obj);
-	ClipboardHelper.copyToClipboard(rendered);
       }
     });
     menu.add(menuitem);
@@ -533,12 +531,7 @@ public class Tree
    * @param obj		the object to copy
    */
   protected void copyToClipboard(Object obj) {
-    List<AbstractObjectPlainTextRenderer> 	list;
-    String 					rendered;
-
-    list     = AbstractObjectPlainTextRenderer.getRenderer(obj.getClass());
-    rendered = list.get(0).render(obj);
-    ClipboardHelper.copyToClipboard(rendered);
+    ClipboardHelper.copyToClipboard(AbstractTextRenderer.renderObject(obj));
   }
 
   /**

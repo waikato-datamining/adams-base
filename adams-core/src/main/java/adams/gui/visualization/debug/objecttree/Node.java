@@ -19,10 +19,11 @@
  */
 package adams.gui.visualization.debug.objecttree;
 
+import adams.data.textrenderer.AbstractTextRenderer;
+import adams.gui.core.BaseTreeNode;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.gui.core.BaseTreeNode;
 
 /**
  * Specialized tree node.
@@ -114,13 +115,7 @@ public class Node
    * @return		the string representation
    */
   public String toRepresentation() {
-    AbstractObjectPlainTextRenderer	renderer;
-    
-    if (getUserObject() == null)
-      return "null";
-    
-    renderer = AbstractObjectPlainTextRenderer.getRenderer(getUserObject()).get(0);
-    return renderer.render(getUserObject());
+    return AbstractTextRenderer.renderObject(getUserObject());
   }
 
   /**

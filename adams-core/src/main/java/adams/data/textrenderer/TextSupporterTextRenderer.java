@@ -14,27 +14,25 @@
  */
 
 /*
- * ListTextRenderer.java
+ * TextSupporterTextRenderer.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.textrenderer;
 
+import adams.core.TextSupporter;
 import adams.core.Utils;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
-import java.util.List;
-import java.util.Map;
-
 /**
- * Just uses the object's toString() method. Also handles null objects.
+ * Outputs the text representation returned from TextSupporter classes.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class ListTextRenderer
-  extends AbstractLineNumberedLimitedTextRenderer {
+public class TextSupporterTextRenderer
+  extends AbstractTextRenderer {
 
-  private static final long serialVersionUID = -3112399546457037505L;
+  private static final long serialVersionUID = -4566406956008755488L;
 
   /**
    * Returns a string describing the object.
@@ -43,48 +41,7 @@ public class ListTextRenderer
    */
   @Override
   public String globalInfo() {
-    return "Renders " + Utils.classToString(Map.class) + " objects.";
-  }
-
-  /**
-   * Returns the default limit.
-   *
-   * @return		the default
-   */
-  @Override
-  protected int getDefaultLimit() {
-    return 100;
-  }
-
-  /**
-   * Returns the minimum limit.
-   *
-   * @return		the minimum
-   */
-  @Override
-  protected Integer getMinLimit() {
-    return 0;
-  }
-
-  /**
-   * Returns the maximum limit.
-   *
-   * @return		the maximum
-   */
-  @Override
-  protected Integer getMaxLimit() {
-    return null;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   *         		displaying in the explorer/experimenter gui
-   */
-  @Override
-  public String limitTipText() {
-    return "The maximum number of list elements to render.";
+    return "Outputs the text representation returned from " + Utils.classToString(TextSupporter.class) + " objects.";
   }
 
   /**
@@ -95,7 +52,7 @@ public class ListTextRenderer
    */
   @Override
   public boolean handles(Object obj) {
-    return (obj instanceof List);
+    return (obj != null) && handles(obj.getClass());
   }
 
   /**
@@ -106,7 +63,7 @@ public class ListTextRenderer
    */
   @Override
   public boolean handles(Class cls) {
-    return ClassLocator.matches(List.class, cls);
+    return ClassLocator.matches(TextSupporter.class, cls);
   }
 
   /**
@@ -117,26 +74,6 @@ public class ListTextRenderer
    */
   @Override
   protected String doRender(Object obj) {
-    StringBuilder	result;
-    List 		list;
-    int 		i;
-
-    result = new StringBuilder();
-    list = (List) obj;
-
-    for (i = 0; i < list.size(); i++) {
-      if (i > getActualLimit())
-        break;
-      if (m_OutputLineNumbers) {
-	result.append((i + 1));
-	result.append(": ");
-      }
-      result.append(AbstractTextRenderer.renderObject(list.get(i)));
-      result.append("\n");
-    }
-    if (list.size() > getActualLimit())
-      result.append(DOTS);
-
-    return result.toString();
+    return ((TextSupporter) obj).supplyText();
   }
 }

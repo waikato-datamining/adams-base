@@ -31,7 +31,7 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SetTextRenderer
-  extends AbstractLimitedTextRenderer {
+  extends AbstractLineNumberedLimitedTextRenderer {
 
   private static final long serialVersionUID = -3112399546457037505L;
 
@@ -128,9 +128,11 @@ public class SetTextRenderer
       count++;
       if (count > getActualLimit())
         break;
-      result.append((count+1));
-      result.append(": ");
-      result.append("" + o);
+      if (m_OutputLineNumbers) {
+	result.append((count + 1));
+	result.append(": ");
+      }
+      result.append(AbstractTextRenderer.renderObject(o));
       result.append("\n");
     }
     if (set.size() > getActualLimit())

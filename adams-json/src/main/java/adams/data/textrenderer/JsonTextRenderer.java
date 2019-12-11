@@ -14,23 +14,28 @@
  */
 
 /*
- * ArrayTextRenderer.java
+ * JsonTextRenderer.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.textrenderer;
 
-import java.lang.reflect.Array;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import net.minidev.json.JSONAware;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
- * Renders arrays to the specified limit of elements.
+ * Renders JSON objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class ArrayTextRenderer
-  extends AbstractLineNumberedLimitedTextRenderer {
+public class JsonTextRenderer
+  extends AbstractTextRenderer {
 
-  private static final long serialVersionUID = 4240264364517086325L;
+  private static final long serialVersionUID = 4610900500263644291L;
 
   /**
    * Returns a string describing the object.
@@ -39,48 +44,7 @@ public class ArrayTextRenderer
    */
   @Override
   public String globalInfo() {
-    return "Renders arrays to the specified limit of elements.";
-  }
-
-  /**
-   * Returns the default limit.
-   *
-   * @return		the default
-   */
-  @Override
-  protected int getDefaultLimit() {
-    return 100;
-  }
-
-  /**
-   * Returns the minimum limit.
-   *
-   * @return		the minimum
-   */
-  @Override
-  protected Integer getMinLimit() {
-    return 1;
-  }
-
-  /**
-   * Returns the maximum limit.
-   *
-   * @return		the maximum
-   */
-  @Override
-  protected Integer getMaxLimit() {
-    return null;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   *         		displaying in the explorer/experimenter gui
-   */
-  @Override
-  public String limitTipText() {
-    return "The maximum number of array limits to render.";
+    return "Renders JSON objects.";
   }
 
   /**
@@ -102,7 +66,7 @@ public class ArrayTextRenderer
    */
   @Override
   public boolean handles(Class cls) {
-    return cls.isArray();
+    return ClassLocator.matches(JSONAware.class, cls) || ClassLocator.matches(JsonElement.class, cls);
   }
 
   /**
@@ -113,27 +77,16 @@ public class ArrayTextRenderer
    */
   @Override
   protected String doRender(Object obj) {
-    StringBuilder	result;
-    int			i;
-    int			len;
-    Object		subObj;
+    String	result;
+    Gson 	gson;
+    JsonParser 	jp;
+    JsonElement	je;
 
-    result = new StringBuilder();
-    len    = Array.getLength(obj);
-    for (i = 0; i < len; i++) {
-      if (i > getActualLimit())
-        break;
-      subObj = Array.get(obj, i);
-      if (m_OutputLineNumbers) {
-        result.append((i + 1));
-        result.append(": ");
-      }
-      result.append(AbstractTextRenderer.renderObject(subObj));
-      result.append("\n");
-    }
-    if (len > getActualLimit())
-      result.append(DOTS);
+    gson   = new GsonBuilder().setPrettyPrinting().create();
+    jp     = new JsonParser();
+    je     = jp.parse(obj.toString());
+    result =  gson.toJson(je);
 
-    return result.toString();
+    return result;
   }
 }

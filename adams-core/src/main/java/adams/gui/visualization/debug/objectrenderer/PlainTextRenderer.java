@@ -13,16 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PlainTextRenderer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
 
+import adams.data.textrenderer.AbstractTextRenderer;
 import adams.gui.core.Fonts;
 import adams.gui.dialog.TextPanel;
-import adams.gui.visualization.debug.objecttree.AbstractObjectPlainTextRenderer;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -31,7 +31,6 @@ import java.awt.BorderLayout;
  * Renders objects as plain text.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PlainTextRenderer
   extends AbstractObjectRenderer {
@@ -58,22 +57,14 @@ public class PlainTextRenderer
    */
   @Override
   protected String doRender(Object obj, JPanel panel) {
-    TextPanel 				textPanel;
-    AbstractObjectPlainTextRenderer 	renderer;
+    TextPanel 			textPanel;
 
     textPanel = new TextPanel();
     textPanel.setTextFont(Fonts.getMonospacedFont());
     textPanel.setCanOpenFiles(false);
     textPanel.setUpdateParentTitle(false);
+    textPanel.setContent(AbstractTextRenderer.renderObject(obj));
     panel.add(textPanel, BorderLayout.CENTER);
-
-    if (obj == null) {
-      textPanel.setContent("null");
-    }
-    else {
-      renderer = AbstractObjectPlainTextRenderer.getRenderer(obj).get(0);
-      textPanel.setContent(renderer.render(obj));
-    }
 
     return null;
   }
