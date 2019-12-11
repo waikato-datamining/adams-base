@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.textrenderer.AbstractTextRenderer;
+import adams.data.textrenderer.LimitedTextRenderer;
 import adams.flow.core.Token;
 
 /**
@@ -85,6 +86,12 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: adams.data.textrenderer.DefaultTextRenderer
  * </pre>
  *
+ * <pre>-unlimited-rendering &lt;boolean&gt; (property: unlimitedRendering)
+ * &nbsp;&nbsp;&nbsp;If enabled (and the renderer implements adams.data.textrenderer.LimitedTextRenderer
+ * &nbsp;&nbsp;&nbsp;), unlimited rendering is performed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -99,6 +106,9 @@ public class TextRenderer
 
   /** the custom renderer to use. */
   protected adams.data.textrenderer.TextRenderer m_CustomRenderer;
+
+  /** whether to perform unlimited rendering. */
+  protected boolean m_UnlimitedRendering;
 
   /**
    * Returns a string describing the object.
@@ -126,6 +136,10 @@ public class TextRenderer
     m_OptionManager.add(
       "custom-renderer", "customRenderer",
       AbstractTextRenderer.getDefaultRenderer());
+
+    m_OptionManager.add(
+      "unlimited-rendering", "unlimitedRendering",
+      false);
   }
 
   /**
@@ -187,6 +201,35 @@ public class TextRenderer
   }
 
   /**
+   * Sets whether to use unlimited rendering (if possible).
+   *
+   * @param value	true if unlimited
+   */
+  public void setUnlimitedRendering(boolean value) {
+    m_UnlimitedRendering = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use unlimited rendering if possible.
+   *
+   * @return		true if unlimited
+   */
+  public boolean getUnlimitedRendering() {
+    return m_UnlimitedRendering;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String unlimitedRenderingTipText() {
+    return "If enabled (and the renderer implements " + Utils.classToString(LimitedTextRenderer.class) + "), unlimited rendering is performed.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -229,9 +272,10 @@ public class TextRenderer
    */
   @Override
   protected String doExecute() {
-    String	result;
-    Object	obj;
-    String	text;
+    String					result;
+    Object					obj;
+    String					text;
+    adams.data.textrenderer.TextRenderer	renderer;
 
     result = null;
     obj    = m_InputToken.getPayload();
@@ -240,7 +284,10 @@ public class TextRenderer
     try {
       if (m_UseCustomRenderer) {
         if (m_CustomRenderer.handles(obj)) {
-	  text = m_CustomRenderer.render(obj);
+	  if (m_UnlimitedRendering && (m_CustomRenderer instanceof LimitedTextRenderer))
+	    text = ((LimitedTextRenderer) m_CustomRenderer).renderUnlimited(obj);
+	  else
+	    text = m_CustomRenderer.render(obj);
 	  if (text == null)
 	    result = "Renderer " + Utils.classToString(m_CustomRenderer) + " failed to render: " + Utils.classToString(obj);
 	}
@@ -249,7 +296,11 @@ public class TextRenderer
 	}
       }
       else {
-        text = AbstractTextRenderer.renderObject(obj);
+        renderer = AbstractTextRenderer.getRenderer(obj);
+        if (m_UnlimitedRendering && (renderer instanceof LimitedTextRenderer))
+	  text = ((LimitedTextRenderer) renderer).renderUnlimited(obj);
+	else
+	  text = renderer.render(obj);
 	if (text == null)
 	  result = "Failed to automatically render: " + Utils.classToString(obj);
       }
