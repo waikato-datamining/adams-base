@@ -132,6 +132,8 @@ public class ListTextRenderer
       result.append("" + list.get(i));
       result.append("\n");
     }
+    if (list.size() > m_Limit)
+      result.append(DOTS);
 
     return result.toString();
   }

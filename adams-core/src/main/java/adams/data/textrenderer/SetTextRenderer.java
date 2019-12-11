@@ -62,7 +62,7 @@ public class SetTextRenderer
    */
   @Override
   protected Integer getMinLimit() {
-    return 0;
+    return 1;
   }
 
   /**
@@ -133,6 +133,8 @@ public class SetTextRenderer
       result.append("" + o);
       result.append("\n");
     }
+    if (set.size() > m_Limit)
+      result.append(DOTS);
 
     return result.toString();
   }

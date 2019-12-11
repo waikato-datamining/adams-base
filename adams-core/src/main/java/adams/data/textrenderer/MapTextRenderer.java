@@ -62,7 +62,7 @@ public class MapTextRenderer
    */
   @Override
   protected Integer getMinLimit() {
-    return 0;
+    return 1;
   }
 
   /**
@@ -133,6 +133,8 @@ public class MapTextRenderer
       result.append("" + map.get(key));
       result.append("\n");
     }
+    if (map.size() > m_Limit)
+      result.append(DOTS);
 
     return result.toString();
   }
