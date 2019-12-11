@@ -24,6 +24,7 @@ package adams.flow.core;
 import adams.core.CloneHandler;
 import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
+import adams.data.textrenderer.AbstractTextRenderer;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.Serializable;
@@ -156,6 +157,12 @@ public class Token
    */
   @Override
   public String toString() {
-    return "Token #" + hashCode() + ": " + (isNull() ? "null" : m_Payload.toString());
+    StringBuilder result;
+
+    result = new StringBuilder();
+    result.append("Token #" + hashCode() + ":\n");
+    result.append(AbstractTextRenderer.renderObject(m_Payload));
+
+    return result.toString();
   }
 }

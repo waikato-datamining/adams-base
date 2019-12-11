@@ -293,6 +293,10 @@ adams.data.statistics.AbstractArrayStatistic=\
 adams.data.statistics.AbstractDataStatistic=\
   adams.data.statistics
 
+# text renderers
+adams.data.textrenderer.TextRenderer=\
+  adams.data.textrenderer
+
 # the connection objects
 adams.db.AbstractDatabaseConnection=\
   adams.db
