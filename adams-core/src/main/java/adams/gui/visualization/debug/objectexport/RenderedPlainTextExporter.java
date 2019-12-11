@@ -20,8 +20,12 @@
 
 package adams.gui.visualization.debug.objectexport;
 
+import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.data.textrenderer.AbstractTextRenderer;
+import adams.data.textrenderer.LimitedTextRenderer;
+import adams.data.textrenderer.TextRenderer;
 
 import java.io.File;
 
@@ -35,6 +39,15 @@ public class RenderedPlainTextExporter
 
   private static final long serialVersionUID = 4899389310274830738L;
 
+  /** whether to use a custom renderer. */
+  protected boolean m_UseCustomRenderer;
+
+  /** the custom renderer to use. */
+  protected adams.data.textrenderer.TextRenderer m_CustomRenderer;
+
+  /** whether to perform unlimited rendering. */
+  protected boolean m_UnlimitedRendering;
+
   /**
    * Returns a string describing the format (used in the file chooser).
    *
@@ -43,6 +56,113 @@ public class RenderedPlainTextExporter
    */
   public String getFormatDescription() {
     return "Plain text (rendered)";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "use-custom-renderer", "useCustomRenderer",
+      false);
+
+    m_OptionManager.add(
+      "custom-renderer", "customRenderer",
+      AbstractTextRenderer.getDefaultRenderer());
+
+    m_OptionManager.add(
+      "unlimited-rendering", "unlimitedRendering",
+      false);
+  }
+
+  /**
+   * Sets whether to use a custom renderer.
+   *
+   * @param value	true if custom
+   */
+  public void setUseCustomRenderer(boolean value) {
+    m_UseCustomRenderer = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use a custom renderer.
+   *
+   * @return		true if custom
+   */
+  public boolean getUseCustomRenderer() {
+    return m_UseCustomRenderer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useCustomRendererTipText() {
+    return "If enabled, uses the specified custom renderer.";
+  }
+
+  /**
+   * Sets the custom renderer to use.
+   *
+   * @param value	the renderer
+   */
+  public void setCustomRenderer(adams.data.textrenderer.TextRenderer value) {
+    m_CustomRenderer = value;
+    reset();
+  }
+
+  /**
+   * Returns the custom renderer to use.
+   *
+   * @return		the renderer
+   */
+  public adams.data.textrenderer.TextRenderer getCustomRenderer() {
+    return m_CustomRenderer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String customRendererTipText() {
+    return "The custom renderer to use (if enabled).";
+  }
+
+  /**
+   * Sets whether to use unlimited rendering (if possible).
+   *
+   * @param value	true if unlimited
+   */
+  public void setUnlimitedRendering(boolean value) {
+    m_UnlimitedRendering = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use unlimited rendering if possible.
+   *
+   * @return		true if unlimited
+   */
+  public boolean getUnlimitedRendering() {
+    return m_UnlimitedRendering;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String unlimitedRenderingTipText() {
+    return "If enabled (and the renderer implements " + Utils.classToString(LimitedTextRenderer.class) + "), unlimited rendering is performed.";
   }
 
   /**
@@ -74,6 +194,43 @@ public class RenderedPlainTextExporter
    */
   @Override
   protected String doExport(Object obj, File file) {
-    return FileUtils.writeToFileMsg(file.getAbsolutePath(), AbstractTextRenderer.renderObject(obj), false, null);
+    String 		result;
+    String 		msg;
+    TextRenderer	renderer;
+
+    result = null;
+    msg    = null;
+    try {
+      if (m_UseCustomRenderer) {
+        if (m_CustomRenderer.handles(obj)) {
+	  if (m_UnlimitedRendering && (m_CustomRenderer instanceof LimitedTextRenderer))
+	    result = ((LimitedTextRenderer) m_CustomRenderer).renderUnlimited(obj);
+	  else
+	    result = m_CustomRenderer.render(obj);
+	  if (result == null)
+	    msg = "Renderer " + Utils.classToString(m_CustomRenderer) + " failed to render: " + Utils.classToString(obj);
+	}
+        else {
+	  msg = "Renderer " + Utils.classToString(m_CustomRenderer) + " does not handle: " + Utils.classToString(obj);
+	}
+      }
+      else {
+        renderer = AbstractTextRenderer.getRenderer(obj);
+        if (m_UnlimitedRendering && (renderer instanceof LimitedTextRenderer))
+	  result = ((LimitedTextRenderer) renderer).renderUnlimited(obj);
+	else
+	  result = renderer.render(obj);
+	if (result == null)
+	  msg = "Failed to automatically render: " + Utils.classToString(obj);
+      }
+    }
+    catch (Exception e) {
+      msg = LoggingHelper.handleException(this, "Failed to render object!", e);
+    }
+
+    if (msg != null)
+      return msg;
+
+    return FileUtils.writeToFileMsg(file.getAbsolutePath(), result, false, null);
   }
 }
