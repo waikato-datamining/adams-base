@@ -196,15 +196,15 @@ public class SpreadSheetReorderColumns
       rowOld = input.getHeaderRow();
       rowNew = output.getHeaderRow();
       for (i = 0; i < indices.length; i++)
-	rowNew.addCell("" + i).setContent(rowOld.getContent(indices[i]));
-      
+	rowNew.addCell("" + i).setContentAsString(rowOld.getContent(indices[i]));
+
       // data
       for (n = 0; n < input.getRowCount(); n++) {
 	rowOld = input.getRow(n);
 	rowNew = output.addRow();
 	for (i = 0; i < indices.length; i++) {
 	  if (rowOld.hasCell(indices[i]))
-	    rowNew.addCell("" + i).setContent(rowOld.getContent(indices[i]));
+	    rowNew.addCell("" + i).assign(rowOld.getCell(indices[i]));
 	}
       }
 
