@@ -28,6 +28,7 @@ import adams.env.ClassListerBlacklistDefinition;
 import adams.env.ClassListerDefinition;
 import adams.env.Environment;
 import adams.flow.core.Compatibility;
+import adams.gui.goe.AbstractEditorRegistration;
 import nz.ac.waikato.cms.locator.ClassLocator;
 import nz.ac.waikato.cms.locator.PropertiesBasedClassListTraversal;
 
@@ -343,6 +344,9 @@ public class ClassLister
       env = Environment.class.getName();
     Class cls = Class.forName(env);
     Environment.setEnvironmentClass(cls);
+
+    // register editors
+    AbstractEditorRegistration.registerEditors();
 
     // action
     String action = OptionUtils.getOption(args, "-action");
