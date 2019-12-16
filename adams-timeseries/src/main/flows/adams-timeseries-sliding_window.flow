@@ -1,7 +1,9 @@
 # Project: adams
-# Date: 2016-02-15 15:03:46
+# Date: 2019-12-17 10:55:18
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-timeseries,adams-visualstats,adams-weka
+#
 adams.flow.control.Flow -annotation "This flow shows how to do timeseries analysis using a sliding\\nwindow approach on multiple timeseries loaded from the\\n\\\"wine\\\" ARFF dataset.\\nThe model gets built using data from start of 1980 to end of 1984." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.TabView -width 1300
   adams.flow.sink.DisplayPanelManager -name train -provider "adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter" -entry-name-variable entry
@@ -49,7 +51,7 @@ adams.flow.control.Flow -annotation "This flow shows how to do timeseries analys
    adams.flow.transformer.SetVariable -var-name wine
   adams.flow.control.Trigger -name train
    adams.flow.source.StorageValue -storage-name @{subset_storage}
-   adams.flow.transformer.TimeseriesFilter -filter "adams.data.filter.TimeseriesWindow -start \"1980-01-01 00:00:00\" -end @{end}"
+   adams.flow.transformer.TimeseriesFilter -filter "adams.data.filter.TimeseriesWindow -start \"1980-01-01 00:00:00\""
    adams.flow.transformer.SetVariable -var-name entry -var-value @{wine}
    adams.flow.control.Tee
     adams.flow.transformer.Convert -conversion "adams.data.conversion.TimeseriesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
