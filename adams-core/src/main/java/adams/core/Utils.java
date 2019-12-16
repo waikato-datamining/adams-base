@@ -35,7 +35,9 @@ import adams.core.base.BaseShort;
 import adams.core.base.BaseString;
 import adams.core.logging.LoggingSupporter;
 import adams.core.management.LocaleHelper;
+import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TByteArrayList;
+import gnu.trove.list.array.TIntArrayList;
 import nz.ac.waikato.cms.jenericcmdline.core.OptionUtils;
 
 import java.io.Serializable;
@@ -2268,5 +2270,23 @@ public class Utils {
    */
   public static int[] toZeroBasedIndices(int[] indices) {
     return adjustIndices(indices, -1);
+  }
+
+  /**
+   * Creates an int array with the specified indices.
+   *
+   * @param from	the first index
+   * @param to		the last index (excluded)
+   * @return		the int array
+   */
+  public static int[] fillIndices(int from, int to) {
+    TIntList	result;
+    int 	i;
+
+    result = new TIntArrayList();
+    for (i = from; i < to; i++)
+      result.add(i);
+
+    return result.toArray();
   }
 }
