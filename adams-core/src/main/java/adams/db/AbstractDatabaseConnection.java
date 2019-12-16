@@ -1286,7 +1286,7 @@ public abstract class AbstractDatabaseConnection
   /**
    * Outputs the change listeners if debugging is on.
    */
-  protected void outputChangeListeners() {
+  protected synchronized void outputChangeListeners() {
     getLogger().fine("DB change listeners: #" + getChangeListeners().size());
     for (DatabaseConnectionChangeListener list: getChangeListeners())
       getLogger().fine("  " + list.getClass().getName());
@@ -1297,7 +1297,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @param l		the listener to add
    */
-  public void addChangeListener(DatabaseConnectionChangeListener l) {
+  public synchronized void addChangeListener(DatabaseConnectionChangeListener l) {
     getChangeListeners().add(l);
     if (isLoggingEnabled())
       outputChangeListeners();
@@ -1308,7 +1308,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @param l		the listener to remove
    */
-  public void removeChangeListener(DatabaseConnectionChangeListener l) {
+  public synchronized void removeChangeListener(DatabaseConnectionChangeListener l) {
     getChangeListeners().remove(l);
     if (isLoggingEnabled())
       outputChangeListeners();
