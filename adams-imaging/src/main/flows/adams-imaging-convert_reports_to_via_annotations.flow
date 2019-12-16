@@ -1,8 +1,8 @@
 # Project: adams
-# Date: 2018-09-03 13:02:06
+# Date: 2019-12-17 09:52:44
 # User: fracpete
 # Charset: UTF-8
-# Modules: adams-core,adams-imaging,adams-spreadsheet
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
 #
 adams.flow.control.Flow -annotation "Converts annotations from .report files to VIA .json ones." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.standalone.CallableActors
@@ -10,7 +10,7 @@ adams.flow.control.Flow -annotation "Converts annotations from .report files to 
  adams.flow.standalone.SetVariable -name "restore file" -var-name restore_file -var-value @{flow_filename_long}.props -expand-value true
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
-  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory (.report files)\" -type DIRECTORY_ABSOLUTE -default-value ." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labelkey -display \"Key in meta-data with label\" -help \"optional, ignored if empty\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name output_dir -display \"Output directory (.json files)\" -type DIRECTORY_ABSOLUTE -default-value ." -output-type MAP -restoration-enabled true -restoration-file @{restore_file}
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory (.report files)\" -type DIRECTORY_ABSOLUTE -default-value ${FLOWS}/data" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labelkey -display \"Key in meta-data with label\" -help \"optional, ignored if empty\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name output_dir -display \"Output directory (.json files)\" -type DIRECTORY_ABSOLUTE -default-value ${FLOWS}/output" -output-type MAP -restoration-enabled true -restoration-file @{restore_file}
   adams.flow.transformer.MapToVariables
  adams.flow.control.Trigger -name "process files"
   adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.report -sorting SORT_BY_NAME"
