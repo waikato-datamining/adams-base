@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InspectionPanel.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
 import adams.core.ByteFormat;
+import adams.core.CleanUpHandler;
 import adams.core.SizeOf;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
@@ -38,16 +39,18 @@ import javax.swing.event.TreeSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Panel for inspecting an object and its values (accessible through bean
  * properties).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InspectionPanel
-  extends BasePanel {
+  extends BasePanel
+  implements CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3626608063857468806L;
@@ -79,6 +82,9 @@ public class InspectionPanel
   /** the last property path in use. */
   protected String[] m_LastPath;
 
+  /** the cache for the renderers. */
+  protected Map<Class,AbstractObjectRenderer> m_RendererCache;
+
   /**
    * Initializes the members.
    */
@@ -86,7 +92,8 @@ public class InspectionPanel
   protected void initialize() {
     super.initialize();
     
-    m_LastPath = new String[0];
+    m_LastPath      = new String[0];
+    m_RendererCache = new HashMap<>();
   }
   
   /**
@@ -114,8 +121,14 @@ public class InspectionPanel
         return;
       Node node = (Node) m_Tree.getSelectionPath().getLastPathComponent();
       m_PanelContent.removeAll();
-      AbstractObjectRenderer.getRenderer(node.getUserObject()).get(0).render(
-        node.getUserObject(), m_PanelContent);
+      AbstractObjectRenderer renderer = null;
+      if ((node.getUserObject() != null) && m_RendererCache.containsKey(node.getUserObject().getClass()))
+        renderer = m_RendererCache.get(node.getUserObject().getClass());
+      if (renderer == null)
+	renderer = AbstractObjectRenderer.getRenderer(node.getUserObject()).get(0);
+      renderer.renderCached(node.getUserObject(), m_PanelContent);
+      if ((node.getUserObject() != null) && !m_RendererCache.containsKey(node.getUserObject().getClass()))
+	m_RendererCache.put(node.getUserObject().getClass(), renderer);
       m_LastPath = node.getPropertyPath();
       updateSize(node.getUserObject());
     });
@@ -208,5 +221,12 @@ public class InspectionPanel
     else {
       m_TextSize.setText("");
     }
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    m_RendererCache.clear();
   }
 }

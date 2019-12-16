@@ -37,6 +37,9 @@ public class PlainTextRenderer
 
   private static final long serialVersionUID = -3528006886476495175L;
 
+  /** the last setup. */
+  protected TextPanel m_LastTextPanel;
+
   /**
    * Checks whether the renderer can handle the specified class.
    *
@@ -46,6 +49,32 @@ public class PlainTextRenderer
   @Override
   public boolean handles(Class cls) {
     return true;
+  }
+
+  /**
+   * Checks whether the renderer can use a cached setup to render an object.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		true if possible
+   */
+  @Override
+  public boolean canRenderCached(Object obj, JPanel panel) {
+    return (m_LastTextPanel != null);
+  }
+
+  /**
+   * Performs the actual rendering.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		null if successful, otherwise error message
+   */
+  @Override
+  protected String doRenderCached(Object obj, JPanel panel) {
+    m_LastTextPanel.setContent(AbstractTextRenderer.renderObject(obj));
+    panel.add(m_LastTextPanel, BorderLayout.CENTER);
+    return null;
   }
 
   /**
@@ -65,6 +94,8 @@ public class PlainTextRenderer
     textPanel.setUpdateParentTitle(false);
     textPanel.setContent(AbstractTextRenderer.renderObject(obj));
     panel.add(textPanel, BorderLayout.CENTER);
+
+    m_LastTextPanel = textPanel;
 
     return null;
   }

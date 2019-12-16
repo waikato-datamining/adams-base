@@ -15,7 +15,7 @@
 
 /*
  * StoragePanel.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -681,6 +681,7 @@ public class StoragePanel
     if (m_Handler != null)
       m_Handler.getStorage().removeChangeListener(this);
     if (m_PanelInspect != null) {
+      m_PanelInspect.cleanUp();
       m_PanelInspect.closeParent();
       m_PanelInspect = null;
     }

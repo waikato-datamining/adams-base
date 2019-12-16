@@ -24,8 +24,6 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetView;
 import adams.gui.core.BaseButton;
 import adams.gui.dialog.SpreadSheetPanel;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JPanel;
@@ -45,6 +43,9 @@ public class SpreadSheetRenderer
 
   public static final int MAX_ROWS = 100;
 
+  /** the last setup. */
+  protected SpreadSheetPanel m_LastPanel;
+
   /**
    * Checks whether the renderer can handle the specified class.
    *
@@ -54,6 +55,33 @@ public class SpreadSheetRenderer
   @Override
   public boolean handles(Class cls) {
     return ClassLocator.hasInterface(SpreadSheet.class, cls);
+  }
+
+  /**
+   * Checks whether the renderer can use a cached setup to render an object.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		true if possible
+   */
+  @Override
+  public boolean canRenderCached(Object obj, JPanel panel) {
+    return (m_LastPanel != null);
+  }
+
+  /**
+   * Performs the actual rendering.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		null if successful, otherwise error message
+   */
+  @Override
+  protected String doRenderCached(Object obj, JPanel panel) {
+    m_LastPanel.setSpreadSheet((SpreadSheet) obj);
+    m_LastPanel.setShowSearch(true);
+    panel.add(m_LastPanel, BorderLayout.CENTER);
+    return null;
   }
 
   /**
@@ -67,19 +95,14 @@ public class SpreadSheetRenderer
   protected String doRender(Object obj, JPanel panel) {
     final SpreadSheet		sheet;
     SpreadSheet			view;
-    TIntList			rows;
-    int				i;
     final SpreadSheetPanel 	sheetPanel;
     final JPanel		panelButton;
     BaseButton			buttonAll;
 
     sheet = (SpreadSheet) obj;
     if (sheet.getRowCount() >= MAX_ROWS) {
-      rows = new TIntArrayList();
-      for (i = 0; i < MAX_ROWS; i++)
-        rows.add(i);
       sheetPanel = new SpreadSheetPanel();
-      view       = new SpreadSheetView(sheet, rows.toArray(), null);
+      view       = new SpreadSheetView(sheet, 0, MAX_ROWS);
       sheetPanel.setSpreadSheet(view);
       sheetPanel.setShowSearch(true);
       panel.add(sheetPanel, BorderLayout.CENTER);
@@ -89,6 +112,7 @@ public class SpreadSheetRenderer
       buttonAll.addActionListener((ActionEvent e) -> {
 	sheetPanel.setSpreadSheet(sheet);
 	panelButton.setVisible(false);
+	m_LastPanel = sheetPanel;
       });
       panelButton.add(buttonAll);
     }
@@ -97,6 +121,7 @@ public class SpreadSheetRenderer
       sheetPanel.setSpreadSheet(sheet);
       sheetPanel.setShowSearch(true);
       panel.add(sheetPanel, BorderLayout.CENTER);
+      m_LastPanel = sheetPanel;
     }
 
     return null;

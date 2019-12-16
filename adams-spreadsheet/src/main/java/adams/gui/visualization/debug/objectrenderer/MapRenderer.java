@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MapRenderer.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
@@ -34,12 +34,14 @@ import java.util.Map;
  * Renders {@link Map} as tables.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MapRenderer
   extends AbstractObjectRenderer {
 
   private static final long serialVersionUID = -3528006886476495175L;
+
+  /** the last setup. */
+  protected SpreadSheetPanel m_LastSheetPanel;
 
   /**
    * Checks whether the renderer can handle the specified class.
@@ -53,6 +55,55 @@ public class MapRenderer
   }
 
   /**
+   * Checks whether the renderer can use a cached setup to render an object.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		true if possible
+   */
+  @Override
+  public boolean canRenderCached(Object obj, JPanel panel) {
+    return (m_LastSheetPanel != null);
+  }
+
+  /**
+   * Turns the map into a spreadsheet.
+   *
+   * @param map		the map to convert
+   * @return		the generated spreadsheet
+   */
+  protected SpreadSheet mapToSheet(Map map) {
+    SpreadSheet 	result;
+    Row			row;
+
+    result = new DefaultSpreadSheet();
+    row   = result.getHeaderRow();
+    row.addCell("K").setContentAsString("Key");
+    row.addCell("V").setContentAsString("Value");
+    for (Object key: map.keySet()) {
+      row = result.addRow();
+      row.addCell("K").setNative(key);
+      row.addCell("V").setNative(map.get(key));
+    }
+
+    return result;
+  }
+
+  /**
+   * Performs the actual rendering.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		null if successful, otherwise error message
+   */
+  @Override
+  protected String doRenderCached(Object obj, JPanel panel) {
+    m_LastSheetPanel.setSpreadSheet(mapToSheet((Map) obj));
+    panel.add(m_LastSheetPanel, BorderLayout.CENTER);
+    return null;
+  }
+
+  /**
    * Performs the actual rendering.
    *
    * @param obj		the object to render
@@ -61,25 +112,16 @@ public class MapRenderer
    */
   @Override
   protected String doRender(Object obj, JPanel panel) {
-    Map			map;
     SpreadSheet		sheet;
-    Row			row;
     SpreadSheetPanel    sheetPanel;
 
-    map   = (Map) obj;
-    sheet = new DefaultSpreadSheet();
-    row   = sheet.getHeaderRow();
-    row.addCell("K").setContentAsString("Key");
-    row.addCell("V").setContentAsString("Value");
-    for (Object key: map.keySet()) {
-      row = sheet.addRow();
-      row.addCell("K").setNative(key);
-      row.addCell("V").setNative(map.get(key));
-    }
+    sheet      = mapToSheet((Map) obj);
     sheetPanel = new SpreadSheetPanel();
     sheetPanel.setSpreadSheet(sheet);
     sheetPanel.setShowSearch(true);
     panel.add(sheetPanel, BorderLayout.CENTER);
+
+    m_LastSheetPanel = sheetPanel;
 
     return null;
   }

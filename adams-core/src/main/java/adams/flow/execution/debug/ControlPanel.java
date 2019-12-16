@@ -987,8 +987,10 @@ public class ControlPanel
       m_PanelExpressions = null;
     if (m_PanelVariables != null)
       m_PanelVariables = null;
-    if (m_PanelInspectionToken != null)
+    if (m_PanelInspectionToken != null) {
+      m_PanelInspectionToken.cleanUp();
       m_PanelInspectionToken = null;
+    }
     if (m_PanelStorage != null) {
       m_PanelStorage.cleanUp();
       m_PanelStorage = null;

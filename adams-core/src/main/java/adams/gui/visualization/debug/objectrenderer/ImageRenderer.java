@@ -15,7 +15,7 @@
 
 /*
  * ImageRenderer.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
@@ -33,12 +33,14 @@ import java.awt.image.BufferedImage;
  * Renders image objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageRenderer
   extends AbstractObjectRenderer {
 
   private static final long serialVersionUID = -3528006886476495175L;
+
+  /** the cached setup. */
+  protected ImagePanel m_LastImagePanel;
 
   /**
    * Checks whether the renderer can handle the specified class.
@@ -51,6 +53,38 @@ public class ImageRenderer
     return
          ClassLocator.hasInterface(BufferedImageSupporter.class, cls)
       || ClassLocator.isSubclass(BufferedImage.class, cls);
+  }
+
+  /**
+   * Checks whether the renderer can use a cached setup to render an object.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		true if possible
+   */
+  @Override
+  public boolean canRenderCached(Object obj, JPanel panel) {
+    return (m_LastImagePanel != null);
+  }
+
+  /**
+   * Performs the actual rendering.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		null if successful, otherwise error message
+   */
+  @Override
+  protected String doRenderCached(Object obj, JPanel panel) {
+    if (obj instanceof BufferedImageSupporter)
+      m_LastImagePanel.setCurrentImage(((BufferedImageSupporter) obj).toBufferedImage());
+    else
+      m_LastImagePanel.setCurrentImage((BufferedImage) obj);
+    if (obj instanceof ReportHandler)
+      m_LastImagePanel.setAdditionalProperties(((ReportHandler) obj).getReport());
+    panel.add(m_LastImagePanel, BorderLayout.CENTER);
+
+    return null;
   }
 
   /**
@@ -74,6 +108,8 @@ public class ImageRenderer
     if (obj instanceof ReportHandler)
       imagePanel.setAdditionalProperties(((ReportHandler) obj).getReport());
     panel.add(imagePanel, BorderLayout.CENTER);
+
+    m_LastImagePanel = imagePanel;
 
     return null;
   }

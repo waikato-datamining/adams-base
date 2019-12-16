@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TimeseriesRenderer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
@@ -32,12 +32,14 @@ import java.awt.BorderLayout;
  * Renders Timeseries objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TimeseriesRenderer
   extends AbstractObjectRenderer {
 
   private static final long serialVersionUID = -3528006886476495175L;
+
+  /** the last setup. */
+  protected TimeseriesPanel m_LastPanel;
 
   /**
    * Checks whether the renderer can handle the specified class.
@@ -48,6 +50,36 @@ public class TimeseriesRenderer
   @Override
   public boolean handles(Class cls) {
     return ClassLocator.isSubclass(Timeseries.class, cls);
+  }
+
+  /**
+   * Checks whether the renderer can use a cached setup to render an object.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		true if possible
+   */
+  @Override
+  public boolean canRenderCached(Object obj, JPanel panel) {
+    return (m_LastPanel != null);
+  }
+
+  /**
+   * Performs the actual rendering.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		null if successful, otherwise error message
+   */
+  @Override
+  protected String doRenderCached(Object obj, JPanel panel) {
+    TimeseriesContainer	cont;
+
+    m_LastPanel.getContainerManager().clear();
+    cont = (TimeseriesContainer) m_LastPanel.getContainerManager().newContainer((Timeseries) obj);
+    m_LastPanel.getContainerManager().add(cont);
+    panel.add(m_LastPanel, BorderLayout.CENTER);
+    return null;
   }
 
   /**
@@ -68,6 +100,8 @@ public class TimeseriesRenderer
     cont    = (TimeseriesContainer) tsPanel.getContainerManager().newContainer(data);
     tsPanel.getContainerManager().add(cont);
     panel.add(tsPanel, BorderLayout.CENTER);
+
+    m_LastPanel = tsPanel;
 
     return null;
   }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PropertiesRenderer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
@@ -36,12 +36,17 @@ import java.util.Properties;
  * Renders Properties objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PropertiesRenderer
   extends AbstractObjectRenderer {
 
   private static final long serialVersionUID = -3528006886476495175L;
+
+  /** the last setup. */
+  protected SortableAndSearchableTable m_LastTable;
+
+  /** the last setup. */
+  protected SearchPanel	m_LastSearchPanel;
 
   /**
    * Checks whether the renderer can handle the specified class.
@@ -52,6 +57,41 @@ public class PropertiesRenderer
   @Override
   public boolean handles(Class cls) {
     return ClassLocator.isSubclass(Properties.class, cls);
+  }
+
+  /**
+   * Checks whether the renderer can use a cached setup to render an object.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		true if possible
+   */
+  @Override
+  public boolean canRenderCached(Object obj, JPanel panel) {
+    return (m_LastTable != null);
+  }
+
+  /**
+   * Performs the actual rendering.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		null if successful, otherwise error message
+   */
+  @Override
+  protected String doRenderCached(Object obj, JPanel panel) {
+    Properties 				props;
+    PropertiesTableModel		model;
+    BaseScrollPane			scrollPane;
+
+    props      = (Properties) obj;
+    model      = new PropertiesTableModel(props);
+    m_LastTable.setModel(model);
+    scrollPane = new BaseScrollPane(m_LastTable);
+    panel.add(scrollPane, BorderLayout.CENTER);
+    panel.add(m_LastSearchPanel, BorderLayout.SOUTH);
+
+    return null;
   }
 
   /**
@@ -82,6 +122,9 @@ public class PropertiesRenderer
     scrollPane = new BaseScrollPane(table);
     panel.add(scrollPane, BorderLayout.CENTER);
     panel.add(panelSearch, BorderLayout.SOUTH);
+
+    m_LastTable       = table;
+    m_LastSearchPanel = panelSearch;
 
     return null;
   }

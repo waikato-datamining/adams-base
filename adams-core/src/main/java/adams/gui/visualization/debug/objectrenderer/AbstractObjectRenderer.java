@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractObjectRenderer.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objectrenderer;
 
@@ -31,7 +31,6 @@ import java.util.List;
  * Ancestor for classes that render objects visually.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractObjectRenderer
   extends LoggingObject {
@@ -48,7 +47,7 @@ public abstract class AbstractObjectRenderer
   protected static Class[] m_RendererClasses;
 
   static {
-    m_Cache          = new Hashtable<Class,List<Class>>();
+    m_Cache          = new Hashtable<>();
     m_Renderers       = null;
     m_RendererClasses = null;
   }
@@ -98,7 +97,7 @@ public abstract class AbstractObjectRenderer
     List<AbstractObjectRenderer>	result;
     int					i;
     
-    result = new ArrayList<AbstractObjectRenderer>();
+    result = new ArrayList<>();
     for (i = 0; i < renderers.size(); i++) {
       try {
 	result.add((AbstractObjectRenderer) renderers.get(i).newInstance());
@@ -130,7 +129,7 @@ public abstract class AbstractObjectRenderer
       return instantiate(m_Cache.get(cls));
 
     // find suitable renderer
-    renderers = new ArrayList<Class>();
+    renderers = new ArrayList<>();
     for (i = 0; i < m_RendererClasses.length; i++) {
       if (m_RendererClasses[i] == PlainTextRenderer.class)
 	continue;
@@ -165,7 +164,7 @@ public abstract class AbstractObjectRenderer
   public abstract boolean handles(Class cls);
 
   /**
-   * Performs the actual rendering.
+   * Performs the actual rendering with a new renderer setup.
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
@@ -174,7 +173,7 @@ public abstract class AbstractObjectRenderer
   protected abstract String doRender(Object obj, JPanel panel);
 
   /**
-   * Exports the object.
+   * Renders the object with a new renderer setup.
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
@@ -188,6 +187,58 @@ public abstract class AbstractObjectRenderer
     }
     else {
       result = doRender(obj, panel);
+      if (result == null) {
+	panel.invalidate();
+	panel.validate();
+	panel.repaint();
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether the renderer can use a cached setup to render an object.
+   * <br>
+   * Default implementation returns false.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		true if possible
+   */
+  public boolean canRenderCached(Object obj, JPanel panel) {
+    return false;
+  }
+
+  /**
+   * Performs the actual rendering using a cached setup.
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		null if successful, otherwise error message
+   */
+  protected String doRenderCached(Object obj, JPanel panel) {
+    return null;
+  }
+
+  /**
+   * Renders the object using a cached setup (if available).
+   *
+   * @param obj		the object to render
+   * @param panel	the panel to render into
+   * @return		null if successful, otherwise error message
+   */
+  public String renderCached(Object obj, JPanel panel) {
+    String	result;
+
+    if (!canRenderCached(obj, panel))
+      return render(obj, panel);
+
+    if (obj == null) {
+      result = "No object provided!";
+    }
+    else {
+      result = doRenderCached(obj, panel);
       if (result == null) {
 	panel.invalidate();
 	panel.validate();
