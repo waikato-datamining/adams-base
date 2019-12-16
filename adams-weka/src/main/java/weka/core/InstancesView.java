@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InstancesView.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package weka.core;
@@ -34,7 +34,6 @@ import java.util.Map.Entry;
  * Presents a view of an Instances object. Rows can be limited.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InstancesView
   extends Instances {
@@ -57,6 +56,17 @@ public class InstancesView
     super(new Instances(dataset, 0));
     m_Dataset = dataset;
     m_Rows    = (rows == null) ? null : new TIntArrayList(rows);
+  }
+
+  /**
+   * Initializes the dataset.
+   *
+   * @param dataset	the underlying dataset
+   * @param fromRow	the first row
+   * @param toRow 	the last row (excluded)
+   */
+  public InstancesView(Instances dataset, int fromRow, int toRow) {
+    this(dataset, adams.core.Utils.fillIndices(fromRow, toRow));
   }
 
   /**
