@@ -121,7 +121,7 @@ public class ArrayTextRenderer
     result = new StringBuilder();
     len    = Array.getLength(obj);
     for (i = 0; i < len; i++) {
-      if (i > getActualLimit())
+      if (i >= getActualLimit())
         break;
       subObj = Array.get(obj, i);
       if (m_OutputLineNumbers) {

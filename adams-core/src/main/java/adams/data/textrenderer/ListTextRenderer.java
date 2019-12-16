@@ -125,7 +125,7 @@ public class ListTextRenderer
     list = (List) obj;
 
     for (i = 0; i < list.size(); i++) {
-      if (i > getActualLimit())
+      if (i >= getActualLimit())
         break;
       if (m_OutputLineNumbers) {
 	result.append((i + 1));
