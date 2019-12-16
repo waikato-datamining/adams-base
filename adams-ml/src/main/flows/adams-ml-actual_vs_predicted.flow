@@ -1,14 +1,14 @@
 # Project: adams
-# Date: 2019-01-09 13:16:41
+# Date: 2019-12-17 10:22:28
 # User: fracpete
 # Charset: UTF-8
-# Modules: adams-core,adams-ml,adams-spreadsheet,adams-visualstats
+# Modules: adams-core,adams-math,adams-ml,adams-spreadsheet,adams-visualstats
 #
 adams.flow.control.Flow -annotation "Plots actual vs predicted" -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.GridView -width 1200 -num-cols 3 -writer adams.gui.print.NullWriter
   adams.flow.sink.SpreadSheetDisplay -name Predictions -writer adams.data.io.output.NullWriter
   adams.flow.sink.ActualVsPredictedPlot -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -title fat -show-side-panel false -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy
- adams.flow.source.FileSupplier -file ${HOME}/development/projects/adamsfamily/adams/adams-ml/src/main/flows/data/bodyfat_predictions.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat_predictions.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
  adams.flow.control.Tee -name predictions
   adams.flow.sink.CallableSink -callable Predictions
