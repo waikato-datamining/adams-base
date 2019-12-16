@@ -129,15 +129,16 @@ public class CollectionTextRenderer
     int 		count;
 
     result = new StringBuilder();
-    coll   = (List) obj;
+    coll   = (Collection) obj;
     count  = 0;
 
     iter = coll.iterator();
     while (iter.hasNext()) {
+      count++;
       if (count > getActualLimit())
         break;
       if (m_OutputLineNumbers) {
-	result.append((count + 1));
+	result.append(count);
 	result.append(": ");
       }
       result.append(AbstractTextRenderer.renderObject(iter.next()));
