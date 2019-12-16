@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetView.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.spreadsheet;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
+import adams.core.Utils;
 import adams.core.exception.NotImplementedException;
 import adams.data.SharedStringsTable;
 import adams.data.io.output.CsvSpreadSheetWriter;
@@ -42,7 +43,6 @@ import java.util.TimeZone;
  * Provides a view of another spreadsheet.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetView
   implements SpreadSheet {
@@ -72,6 +72,17 @@ public class SpreadSheetView
    */
   public SpreadSheetView() {
     this(new DefaultSpreadSheet(), null, null);
+  }
+
+  /**
+   * Initializes the view.
+   *
+   * @param sheet	the underlying spreadsheet
+   * @param fromRow	the first row
+   * @param toRow 	the last row (excluded)
+   */
+  public SpreadSheetView(SpreadSheet sheet, int fromRow, int toRow) {
+    this(sheet, Utils.fillIndices(fromRow, toRow), null);
   }
 
   /**
