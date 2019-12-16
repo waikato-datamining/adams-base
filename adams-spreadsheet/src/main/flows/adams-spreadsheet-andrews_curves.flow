@@ -1,9 +1,11 @@
 # Project: adams
-# Date: 2016-02-15 14:56:32
+# Date: 2019-12-17 10:33:18
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-spreadsheet
+#
 adams.flow.control.Flow -annotation "Generates Andrews Curves for the UCI dataset \\\"iris\\\"." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.source.FileSupplier -file ${HOME}/development/projects/adamsfamily/adams/adams-spreadsheet/src/main/flows/data/iris.csv
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/iris.csv
  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
  adams.flow.transformer.SpreadSheetRemoveRow -position 2-50,52-100,102-150
  adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.AndrewsCurvesGenerator -prefix \"row: \" -columns first-last_2 -meta-data-columns last"
