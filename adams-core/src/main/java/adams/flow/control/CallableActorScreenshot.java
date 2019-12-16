@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CallableActorScreenshot.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -122,7 +122,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CallableActorScreenshot
   extends AbstractActor
@@ -515,17 +514,15 @@ public class CallableActorScreenshot
    */
   @Override
   protected String doExecute() {
-    String			result;
-    final PlaceholderFile	filename;
-    Runnable			run;
+    String		result;
+    Runnable		run;
 
-    if (m_Writer instanceof NullWriter) {
+    if ((m_Writer instanceof NullWriter) && (m_OutputType == OutputType.FILE)) {
       m_OutputToken = m_InputToken;
-      return null;
+      return "No writer defined, cannot generate screenshot!";
     }
     
     m_ScreenshotResult = null;
-    filename           = generateFilename();
 
     if (!isHeadless()) {
       run = () -> {
@@ -537,6 +534,7 @@ public class CallableActorScreenshot
 	  if ((comp != null) && (comp.getWidth() > 0) && (comp.getHeight() > 0)) {
 	    switch (m_OutputType) {
 	      case FILE:
+		PlaceholderFile filename = generateFilename();
 		getLogger().info("Saving to: " + filename);
 		m_Writer.setComponent(comp);
 		m_Writer.setFile(filename);
