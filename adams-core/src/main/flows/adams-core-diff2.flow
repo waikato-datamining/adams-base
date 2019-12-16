@@ -1,7 +1,9 @@
 # Project: adams
-# Date: 2017-07-17 17:22:02
+# Date: 2019-12-17 09:11:03
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core
+#
 adams.flow.control.Flow -annotation "Compares two files (order irrelevant) and outputs the common elements and the ones that differ.\\nUses hashset data structures to achieve this." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.TabView
   adams.flow.sink.Display -name Files -writer adams.data.io.output.NullWriter
@@ -12,7 +14,7 @@ adams.flow.control.Flow -annotation "Compares two files (order irrelevant) and o
   adams.flow.sink.Display -name "Additional in 2nd" -writer adams.data.io.output.NullWriter
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
-  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name first_file -display \"First text file\" -type FILE_ABSOLUTE -default-value ${CWD}" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name second_file -display \"Second text file\" -type FILE_ABSOLUTE -default-value ${CWD}" -output-type MAP
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name first_file -display \"First text file\" -type FILE_ABSOLUTE -default-value ${FLOWS}/data/diff1.txt" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name second_file -display \"Second text file\" -type FILE_ABSOLUTE -default-value ${FLOWS}/data/diff2.txt" -output-type MAP
   adams.flow.transformer.MapToVariables
  adams.flow.control.Trigger -name "file names"
   adams.flow.source.CombineVariables -expression "1st file:\\n  @{first_file}\\n2nd file:\\n  @{second_file}" -conversion adams.data.conversion.StringToString

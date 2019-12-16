@@ -1,7 +1,9 @@
 # Project: adams
-# Date: 2017-07-11 22:07:37
+# Date: 2019-12-17 09:08:04
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core
+#
 adams.flow.control.Flow -annotation "Analyzes a log file with multiple JMap outputs." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.GridView -width 1400 -num-cols 2 -add-headers true -writer adams.gui.print.NullWriter
   adams.flow.sink.SequencePlotter -name instances -width 700 -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title jmap -axis-x "adams.gui.visualization.core.AxisPanelOptions -label index -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 40\" -nth-value 2 -width 40 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label instances -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 60 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 1000" -post-processor adams.flow.sink.sequenceplotter.PassThrough
@@ -11,7 +13,7 @@ adams.flow.control.Flow -annotation "Analyzes a log file with multiple JMap outp
  adams.flow.standalone.SetVariable -var-name count -var-value 0
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
-  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name logfile -display \"Log file\" -type FILE_ABSOLUTE -default-value ${CWD}" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name min_instances -display \"Minimum number of object instances\" -type INTEGER -default-value 100" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name min_bytes -display \"Minimum size of objects\" -type INTEGER -default-value 10000" -output-type MAP
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name logfile -display \"Log file\" -type FILE_ABSOLUTE -default-value ${FLOWS}/data/jmap.log" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name min_instances -display \"Minimum number of object instances\" -type INTEGER -default-value 100" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name min_bytes -display \"Minimum size of objects\" -type INTEGER -default-value 10000" -output-type MAP
   adams.flow.transformer.MapToVariables
  adams.flow.control.Trigger -name process
   adams.flow.source.Variable -var-name logfile -conversion adams.data.conversion.StringToString

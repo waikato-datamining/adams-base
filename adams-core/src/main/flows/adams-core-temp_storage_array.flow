@@ -1,12 +1,14 @@
 # Project: adams
-# Date: 2016-02-15 11:35:20
+# Date: 2019-12-17 09:28:52
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core
+#
 adams.flow.control.Flow -annotation "This flows shows how to load data sequentially into storage and then output it as single array.\\nThe data that is added to storage is simply file names from the temp directory." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.SetVariable -var-name items -var-value ""
  adams.flow.source.Start
  adams.flow.control.Trigger -name "load into storage"
-  adams.flow.source.DirectoryLister -dir ${TMP} -list-files true -sorting SORT_BY_NAME
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory ${TMP} -sorting SORT_BY_NAME"
   adams.flow.control.Count -condition adams.flow.condition.bool.Counting
    adams.flow.transformer.SetVariable -var-name name
    adams.flow.control.Trigger -name "append list"
