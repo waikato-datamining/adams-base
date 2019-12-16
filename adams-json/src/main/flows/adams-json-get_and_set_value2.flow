@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2019-10-08 16:30:17
+# Date: 2019-12-17 10:16:49
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-json
@@ -13,13 +13,13 @@ adams.flow.control.Flow -annotation "Gets and sets values specified for matching
  adams.flow.control.Tee
   adams.flow.sink.CallableSink -callable Input
  adams.flow.control.Tee -name before
-  adams.flow.transformer.GetJsonValue -annotation "retrieves all books that cost more than 10.00" -output-array true -path "$.book[?(@.price > 10)]"
+  adams.flow.transformer.GetJsonValue -annotation "retrieves all books that cost more than 10.00" -path "$.book[?(@.price > 10)]" -data-type ARRAY
   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
   adams.flow.transformer.StringInsert -position first -value before:\\n
   adams.flow.sink.CallableSink -callable Values
  adams.flow.transformer.SetJsonValue -annotation "sets all prices that are more than 10.00 to 5.00" -path "$.book[?(@.price > 10)].price" -value 5.00 -conversion adams.data.conversion.StringToDouble
  adams.flow.control.Tee -name after
-  adams.flow.transformer.GetJsonValue -annotation "retrieves all books that cost 5.00" -output-array true -path "$.book[?(@.price == 5.00)]"
+  adams.flow.transformer.GetJsonValue -annotation "retrieves all books that cost 5.00" -path "$.book[?(@.price == 5.00)]" -data-type ARRAY
   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
   adams.flow.transformer.StringInsert -position first -value \\nafter:\\n
   adams.flow.sink.CallableSink -callable Values
