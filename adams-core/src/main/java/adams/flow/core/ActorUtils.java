@@ -2040,7 +2040,7 @@ public class ActorUtils {
    * @return		true if to treat lenient
    * @see		#ENV_INVALID_VARIABLES_LENIENT
    */
-  protected static synchronized boolean checkInvalidVariablesLennient() {
+  protected static synchronized boolean checkInvalidVariablesLenient() {
     if (m_InvalidVariablesLenient == null) {
       m_InvalidVariablesLenient = (System.getenv(ENV_INVALID_VARIABLES_LENIENT) != null)
 	&& System.getenv(ENV_INVALID_VARIABLES_LENIENT).equalsIgnoreCase("true");

@@ -1062,6 +1062,24 @@ public abstract class AbstractActor
   }
 
   /**
+   * For performing variable checks.
+   *
+   * @return		null if checks passed, otherwise error messages
+   * @see		#preExecute()
+   */
+  protected String performVariableChecks() {
+    String  result;
+
+    result = ActorUtils.ensureValidVariables(this);
+    if ((result != null) && ActorUtils.checkInvalidVariablesLenient()) {
+      getLogger().warning(result);
+      result = null;
+    }
+
+    return result;
+  }
+
+  /**
    * Pre-execute hook.
    * <br><br>
    * Default implementation checks only whether the actor needs to be setup
@@ -1084,13 +1102,8 @@ public abstract class AbstractActor
       result = performSetUpChecks(false);
     }
 
-    if (!isExecuted() && (result == null)) {
-      result = ActorUtils.ensureValidVariables(this);
-      if ((result != null) && ActorUtils.checkInvalidVariablesLennient()) {
-        getLogger().warning(result);
-        result = null;
-      }
-    }
+    if (!isExecuted() && (result == null))
+      result = performVariableChecks();
 
     return result;
   }
