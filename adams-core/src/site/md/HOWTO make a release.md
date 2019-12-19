@@ -99,12 +99,13 @@ Uploads/updates
 
 * create a new directory on sf.net and upload the -bin.zip files via SFTP:
 
-  * adams-base-all
   * adams-addons-all
-  * adams-basic-app
   * adams-annotator
-  * adams-ml-app
+  * adams-base-all
+  * adams-basic-app
   * adams-deeplearning-spectral-app
+  * adams-dex-app
+  * adams-ml-app
   * adams-spectral-app
 
 * create a README.md (markdown style) and upload this to the sf.net directory
