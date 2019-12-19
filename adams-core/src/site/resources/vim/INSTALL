@@ -16,6 +16,3 @@ Syntax highlighting support for Adams flow files
     " Adams flow files
     au! BufRead,BufNewFile *.flow     setfiletype adamsflow
   augroup END
-
-
-FracPete, $Revision: 1682 $

@@ -1,9 +1,9 @@
 " Vim syntax file
-" Language:	Adams flow file
-" Maintainer:	fracpete (fracpete at waikato dot ac dot nz)
-" Last Change:	2012 Feb 20
+" Language:	ADAMS flow file
+" Maintainer:	fracpete
+" Last Change:	2019 Dec 19
 
-" Syntax highlighting for Adams flow files
+" Syntax highlighting for ADAMS flow files
 
 " For version 5.x: Clear all syntax items
 " For version 6.x: Quit when a syntax file was already loaded
@@ -16,10 +16,9 @@ endif
 syn case ignore
 
 " keywords
-syn match adamsOption	"^[\t]*-.*$"
-syn match adamsClassname	"^[\t]*adams\..*$"
-syn match wekaClassname "^[\t]*weka\..*$"
-syn match moaClassname	"^[\t]*weka\..*$"
+syn match adamsClassname "^[\t ]*\([a-zA-Z_$][a-zA-Z0-9_$]*\.\)*[a-zA-Z_$][a-zA-Z0-9_$]*"
+syn match adamsClassname2 " \([a-zA-Z_$][a-zA-Z0-9_$]*\.\)*[a-zA-Z_$][a-zA-Z0-9_$]*"
+syn match adamsOption	" -[^ ][^ ]*"
 
 " numbers
 syn match  adamsNumber	"-\=\<\d\+\>"
@@ -31,6 +30,7 @@ syn match  adamsDate	"\d\d\d\d-\d\d-\d\d"
 syn match  adamsTime	"\d\d:\d\d:\d\d"
 
 " symbols
+syn match  adamsSymbol	"="
 syn match  adamsSymbol	"/"
 syn match  adamsSymbol	"\\t"
 syn match  adamsSymbol	"\\n"
@@ -40,14 +40,15 @@ syn match  adamsSymbol	"\$"
 syn match  adamsSymbol	"@"
 syn match  adamsSymbol	"\.\*"
 syn match  adamsSymbol   "{[^\}]*}"
+syn region  adamsString        start=+"+  skip=+\\\\\|\\$"+  end=+"+
 
 " comments
-syn match  gcmsComment	"#.*"
+syn match  adamsComment	"#.*"
 
 " Define the default highlighting.
 " For version 5.7 and earlier: only when not done already
 " For version 5.8 and later: only when an item doesn't have highlighting yet
-if version >= 508 || !exists("did_adams_syn_inits")
+if version >= 508 || !exists("did_flows_syn_inits")
   if version < 508
     let did_adams_syn_inits = 1
     command -nargs=+ HiLink hi link <args>
@@ -56,19 +57,19 @@ if version >= 508 || !exists("did_adams_syn_inits")
   endif
 
   HiLink adamsComment	Comment
-  HiLink adamsOption	Statement
   HiLink adamsClassname	Type
-  HiLink wekaClassname	Type
-  HiLink moaClassname	Type
+  HiLink adamsClassname2	Type
+  HiLink adamsOption	Statement
   HiLink adamsSymbol	Special
   HiLink adamsFloat	Float
   HiLink adamsNumber	Number
   HiLink adamsDate	String
   HiLink adamsTime	String
+  HiLink adamsString     String
 
   delcommand HiLink
 endif
 
-let b:current_syntax = "adamsflow"
+let b:current_syntax = "flows"
 
 " vim: ts=8
