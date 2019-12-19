@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Split.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
 
+import adams.core.ObjectCopyHelper;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.GUIHelper;
@@ -28,9 +29,11 @@ import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.WekaInvestigatorDataEvent;
+import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import weka.classifiers.DefaultRandomSplitGenerator;
+import weka.classifiers.RandomSplitGenerator;
 import weka.core.Instances;
 
 import java.awt.BorderLayout;
@@ -42,12 +45,20 @@ import java.awt.event.ActionEvent;
  * as new datasets.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Split
   extends AbstractEditableDataTableAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
+
+  /** the last percentage. */
+  protected double m_LastPercentage;
+
+  /** the last seed. */
+  protected int m_LastSeed;
+
+  /** the last splitter. */
+  protected RandomSplitGenerator m_LastSplitter;
 
   /**
    * Instantiates the action.
@@ -57,6 +68,9 @@ public class Split
     setName("Split");
     setIcon("percentage.gif");
     setAsynchronous(true);
+    m_LastPercentage = 66.0;
+    m_LastSeed       = 1;
+    m_LastSplitter   = new DefaultRandomSplitGenerator();
   }
 
   /**
@@ -67,13 +81,14 @@ public class Split
   @Override
   protected void doActionPerformed(ActionEvent e) {
     ParameterPanel		params;
-    BaseCheckBox			checkboxPreserveOrder;
+    BaseCheckBox		checkboxPreserveOrder;
     NumberTextField		textSeed;
     NumberTextField		textPercentage;
+    GenericObjectEditorPanel    goeSplitter;
     ApprovalDialog		dialog;
     int				seed;
     double			percentage;
-    DefaultRandomSplitGenerator generator;
+    RandomSplitGenerator	splitter;
     WekaTrainTestSetContainer	ttcont;
     DataContainer 		cont;
     MemoryContainer 		trainCont;
@@ -84,13 +99,16 @@ public class Split
     checkboxPreserveOrder.setToolTipText("Whether to preserve the order or randomize the data");
     params.addParameter("Preserve order", checkboxPreserveOrder);
     textSeed = new NumberTextField(Type.INTEGER);
-    textSeed.setValue(1);
+    textSeed.setValue(m_LastSeed);
     textSeed.setToolTipText("The seed value to use when randomizing the data");
     params.addParameter("Seed", textSeed);
     textPercentage = new NumberTextField(Type.DOUBLE);
-    textPercentage.setValue(66.0);
+    textPercentage.setValue(m_LastPercentage);
     textPercentage.setToolTipText("The percentage to use for the training set (0;100)");
     params.addParameter("Train percentage", textPercentage);
+    goeSplitter = new GenericObjectEditorPanel(RandomSplitGenerator.class, new DefaultRandomSplitGenerator(), true);
+    goeSplitter.setCurrent(m_LastSplitter);
+    params.addParameter("Splitter", goeSplitter);
     if (GUIHelper.getParentDialog(getOwner()) != null)
       dialog = new ApprovalDialog(GUIHelper.getParentDialog(getOwner()), ModalityType.DOCUMENT_MODAL);
     else
@@ -105,18 +123,23 @@ public class Split
 
     seed       = textSeed.getValue().intValue();
     percentage = textPercentage.getValue().doubleValue();
+    splitter   = (RandomSplitGenerator) goeSplitter.getCurrent();
     if ((percentage <= 0) || (percentage >= 100)) {
       GUIHelper.showErrorMessage(getOwner(), "Percentage must satisfy 0 < x < 100, provided: " + percentage);
       return;
     }
 
+    m_LastSeed       = seed;
+    m_LastPercentage = percentage;
+    m_LastSplitter   = ObjectCopyHelper.copyObject(splitter);
+
     cont = getSelectedData()[0];
     logMessage("Splitting dataset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
-    if (checkboxPreserveOrder.isSelected())
-      generator = new DefaultRandomSplitGenerator(cont.getData(), percentage / 100.0);
-    else
-      generator = new DefaultRandomSplitGenerator(cont.getData(), seed, percentage / 100.0);
-    ttcont = generator.next();
+    splitter.setPreserveOrder(checkboxPreserveOrder.isSelected());
+    splitter.setSeed(seed);
+    splitter.setPercentage(percentage / 100.0);
+    splitter.setData(cont.getData());
+    ttcont = splitter.next();
     trainCont = new MemoryContainer((Instances) ttcont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN));
     trainCont.getData().setRelationName(cont.getData().relationName() + "-train");
     testCont = new MemoryContainer((Instances) ttcont.getValue(WekaTrainTestSetContainer.VALUE_TEST));
