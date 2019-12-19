@@ -116,12 +116,6 @@ Uploads/updates
   adams.cms.waikato.ac.nz:/var/www/html/releases/adams
   ```
 
-* (TODO) deploy artifacts on Maven Central
-
-  ```
-  adams-core/src/main/scripts/central.sh  
-  ```
-
 * update adams webpage
 
   ```
