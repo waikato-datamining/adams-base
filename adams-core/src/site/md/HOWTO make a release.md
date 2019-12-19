@@ -13,6 +13,11 @@ Requirements
 
 * use same Java version as on build server (1.8.0_191)
 
+* disable all local Weka packages, renaming or deleting following directories:
+
+  * $HOME/wekafiles
+  * $HOME/.adams/wekafiles
+
 
 Commands
 --------
