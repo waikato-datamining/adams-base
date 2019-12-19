@@ -15,7 +15,7 @@
 
 /*
  * WekaRandomSplit.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -25,15 +25,15 @@ import adams.core.Randomizable;
 import adams.core.option.OptionUtils;
 import adams.data.weka.InstancesViewCreator;
 import adams.flow.container.WekaTrainTestSetContainer;
-import adams.flow.core.Token;
 import weka.classifiers.DefaultRandomSplitGenerator;
 import weka.classifiers.RandomSplitGenerator;
 import weka.core.Instances;
 
 /**
  <!-- globalinfo-start -->
- * Splits a dataset into a training and test set according to a specified split percentage. Randomization can be suppressed using with 'preserve order'.<br>
- * The training set can be accessed in the container with 'Train' and the test set with 'Test'.
+ * Splits a dataset into a training and test set according to a specified split percentage. Randomization can be suppressed using the 'preserve order' option.<br>
+ * The training set can be accessed in the container with 'Train' and the test set with 'Test'.<br>
+ * Depending on the split generator in use, more than one container may be output.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -54,58 +54,67 @@ import weka.core.Instances;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaRandomSplit
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-preserve-order &lt;boolean&gt; (property: preserveOrder)
- * &nbsp;&nbsp;&nbsp;If set to true, then the order is preserved by suppressing randomization.
+ *
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;If enabled, the splits are output as array rather than one-by-one.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-preserve-order &lt;boolean&gt; (property: preserveOrder)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the order is preserved by suppressing randomization;
+ * &nbsp;&nbsp;&nbsp; overrides the value defined by the split generator scheme.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-seed &lt;long&gt; (property: seed)
- * &nbsp;&nbsp;&nbsp;The seed value for the randomization.
+ * &nbsp;&nbsp;&nbsp;The seed value for the randomization; overrides the value defined by the
+ * &nbsp;&nbsp;&nbsp;split generator scheme.
  * &nbsp;&nbsp;&nbsp;default: 1
  * </pre>
- * 
+ *
  * <pre>-percentage &lt;double&gt; (property: percentage)
- * &nbsp;&nbsp;&nbsp;The percentage for the split (between 0 and 1).
+ * &nbsp;&nbsp;&nbsp;The percentage for the split (between 0 and 1); overrides the value defined
+ * &nbsp;&nbsp;&nbsp;by the split generator scheme.
  * &nbsp;&nbsp;&nbsp;default: 0.66
  * &nbsp;&nbsp;&nbsp;minimum: 1.0E-4
  * &nbsp;&nbsp;&nbsp;maximum: 0.9999
  * </pre>
- * 
+ *
  * <pre>-create-view &lt;boolean&gt; (property: createView)
- * &nbsp;&nbsp;&nbsp;If enabled, views of the dataset are created instead of actual copies.
+ * &nbsp;&nbsp;&nbsp;If enabled, views of the dataset are created instead of actual copies; overrides
+ * &nbsp;&nbsp;&nbsp;the value defined by the split generator scheme.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-generator &lt;weka.classifiers.RandomSplitGenerator&gt; (property: generator)
  * &nbsp;&nbsp;&nbsp;The scheme to use for generating the split; the actor options take precedence
  * &nbsp;&nbsp;&nbsp;over the scheme's ones.
@@ -117,7 +126,7 @@ import weka.core.Instances;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class WekaRandomSplit
-  extends AbstractTransformer
+  extends AbstractArrayProvider
   implements Randomizable, InstancesViewCreator {
 
   /** for serialization. */
@@ -148,9 +157,10 @@ public class WekaRandomSplit
     return
       "Splits a dataset into a training and test set according to a "
         + "specified split percentage. Randomization can be suppressed using "
-        + "with 'preserve order'.\n"
+        + "the 'preserve order' option.\n"
         + "The training set can be accessed in the container with '" + WekaTrainTestSetContainer.VALUE_TRAIN + "' "
-        + "and the test set with '" + WekaTrainTestSetContainer.VALUE_TEST + "'.";
+        + "and the test set with '" + WekaTrainTestSetContainer.VALUE_TEST + "'.\n"
+	+ "Depending on the split generator in use, more than one container may be output.";
   }
 
   /**
@@ -197,6 +207,9 @@ public class WekaRandomSplit
     value  = QuickInfoHelper.toString(this, "createView", m_CreateView, ", view only");
     if (value != null)
       result += value;
+    value  = QuickInfoHelper.toString(this, "outputArray", m_OutputArray, ", as array");
+    if (value != null)
+      result += value;
 
     return result;
   }
@@ -211,12 +224,24 @@ public class WekaRandomSplit
   }
 
   /**
-   * Returns the class of objects that it generates.
+   * Returns the base class of the items.
    *
-   * @return		<!-- flow-generates-start -->adams.flow.container.WekaTrainTestSetContainer.class<!-- flow-generates-end -->
+   * @return		the class
    */
-  public Class[] generates() {
-    return new Class[]{WekaTrainTestSetContainer.class};
+  @Override
+  protected Class getItemClass() {
+    return WekaTrainTestSetContainer.class;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String outputArrayTipText() {
+    return "If enabled, the splits are output as array rather than one-by-one.";
   }
 
   /**
@@ -383,6 +408,7 @@ public class WekaRandomSplit
 
     result = null;
     inst   = new Instances((Instances) m_InputToken.getPayload());
+    m_Queue.clear();
 
     try {
       generator = (RandomSplitGenerator) OptionUtils.shallowCopy(m_Generator);
@@ -397,8 +423,10 @@ public class WekaRandomSplit
       result    = handleException("Failed to generate split!", e);
     }
 
-    if (result == null)
-      m_OutputToken = new Token(generator.next());
+    if (result == null) {
+      while (generator.hasNext())
+        m_Queue.add(generator.next());
+    }
 
     return result;
   }
