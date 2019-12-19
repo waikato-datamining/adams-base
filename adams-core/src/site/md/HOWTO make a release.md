@@ -4,8 +4,8 @@ HOWTO make a release
 Requirements
 ------------
   
-* has the java-cup dependency changed? If so, change launcher.sh and
-  launcher.bat files
+* has the java-cup dependency changed? If so, change env.sh and
+  *.bat files (search for "java-cup-")
 
 * execute/check all flows
 
@@ -16,22 +16,6 @@ Requirements
 
 Commands
 --------
-
-```
-mvn --batch-mode release:prepare release:perform
-```
-
-Note: use the following option to avoid tests being run, though this is not encouraged:
-
-```
- -Darguments="-DskipTests=true"
-```
-
-See next section for detailed command sequences.
-
-
-Order
------
 
 * adams-applications
 
