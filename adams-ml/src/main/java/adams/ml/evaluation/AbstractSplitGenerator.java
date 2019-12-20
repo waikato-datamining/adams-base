@@ -47,9 +47,6 @@ public abstract class AbstractSplitGenerator
   /** whether to use views. */
   protected boolean m_UseViews;
 
-  /** the random number generator. */
-  protected Random m_Random;
-
   /** the original dataset. */
   protected Dataset m_Data;
 
@@ -76,6 +73,10 @@ public abstract class AbstractSplitGenerator
     m_OptionManager.add(
       "seed", "seed",
       1L);
+
+    m_OptionManager.add(
+      "use-views", "useViews",
+      false);
   }
 
   /**

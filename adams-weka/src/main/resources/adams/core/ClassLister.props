@@ -257,6 +257,10 @@ weka.gui.explorer.panels.AdditionalExplorerPanel=\
 weka.core.code.Converter=\
   weka.core.code
 
+# the split generators
+weka.classifiers.SplitGenerator=\
+  weka.classifiers
+
 # the random split generators
 weka.classifiers.RandomSplitGenerator=\
   weka.classifiers

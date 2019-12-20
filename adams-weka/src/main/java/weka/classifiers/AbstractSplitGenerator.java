@@ -15,7 +15,7 @@
 
 /*
  * AbstractSplitGenerator.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
@@ -46,9 +46,6 @@ public abstract class AbstractSplitGenerator
   /** whether to use views. */
   protected boolean m_UseViews;
 
-  /** the random number generator. */
-  protected Random m_Random;
-
   /** the original dataset. */
   protected Instances m_Data;
 
@@ -75,6 +72,10 @@ public abstract class AbstractSplitGenerator
     m_OptionManager.add(
       "seed", "seed",
       1L);
+
+    m_OptionManager.add(
+      "use-views", "useViews",
+      false);
   }
 
   /**
