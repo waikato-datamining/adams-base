@@ -518,11 +518,11 @@ public class InstancesTable
     menuitem.setIcon(GUIHelper.getIcon("copy_cell.gif"));
     menuitem.setEnabled(getSelectedRowCount() == 1);
     menuitem.addActionListener((ActionEvent ae) -> {
-      if (state.actRow == -1)
+      if (state.selRow == -1)
 	return;
-      if (state.actCol == -1)
+      if (state.selCol == -1)
 	return;
-      ClipboardHelper.copyToClipboard("" + getValueAt(state.actRow, state.actCol));
+      ClipboardHelper.copyToClipboard("" + getValueAt(state.selRow, state.selCol));
     });
     menu.add(menuitem);
 
