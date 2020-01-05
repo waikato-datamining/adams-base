@@ -15,13 +15,14 @@
 
 /*
  * WekaCrossValidationSplit.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
+import adams.core.Stoppable;
 import adams.core.option.OptionUtils;
 import adams.data.weka.InstancesViewCreator;
 import adams.flow.container.WekaTrainTestSetContainer;
@@ -145,7 +146,7 @@ public class WekaCrossValidationSplit
   protected CrossValidationFoldGenerator m_Generator;
 
   /** the actual fold generator. */
-  protected CrossValidationFoldGenerator m_ActualGenerator;
+  protected transient CrossValidationFoldGenerator m_ActualGenerator;
 
   /**
    * Returns a string describing the object.
@@ -494,5 +495,17 @@ public class WekaCrossValidationSplit
     m_ActualGenerator = null;
 
     super.wrapUp();
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_ActualGenerator != null) {
+      if (m_ActualGenerator instanceof Stoppable)
+        ((Stoppable) m_ActualGenerator).stopExecution();
+    }
+    super.stopExecution();
   }
 }

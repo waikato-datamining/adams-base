@@ -15,13 +15,14 @@
 
 /*
  * WekaRandomSplit.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
+import adams.core.Stoppable;
 import adams.core.option.OptionUtils;
 import adams.data.weka.InstancesViewCreator;
 import adams.flow.container.WekaTrainTestSetContainer;
@@ -146,7 +147,10 @@ public class WekaRandomSplit
 
   /** the split generator to use. */
   protected RandomSplitGenerator m_Generator;
-  
+
+  /** the currently active generator. */
+  protected transient RandomSplitGenerator m_ActualGenerator;
+
   /**
    * Returns a string describing the object.
    *
@@ -189,6 +193,16 @@ public class WekaRandomSplit
     m_OptionManager.add(
       "generator", "generator",
       new DefaultRandomSplitGenerator());
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_ActualGenerator = null;
   }
 
   /**
@@ -404,30 +418,43 @@ public class WekaRandomSplit
   protected String doExecute() {
     String			result;
     Instances			inst;
-    RandomSplitGenerator 	generator;
 
     result = null;
     inst   = new Instances((Instances) m_InputToken.getPayload());
     m_Queue.clear();
 
     try {
-      generator = (RandomSplitGenerator) OptionUtils.shallowCopy(m_Generator);
-      generator.setData(inst);
-      generator.setSeed(m_Seed);
-      generator.setPercentage(m_Percentage);
-      generator.setPreserveOrder(m_PreserveOrder);
-      generator.setUseViews(m_CreateView);
+      m_ActualGenerator = (RandomSplitGenerator) OptionUtils.shallowCopy(m_Generator);
+      m_ActualGenerator.setData(inst);
+      m_ActualGenerator.setSeed(m_Seed);
+      m_ActualGenerator.setPercentage(m_Percentage);
+      m_ActualGenerator.setPreserveOrder(m_PreserveOrder);
+      m_ActualGenerator.setUseViews(m_CreateView);
     }
     catch (Exception e) {
-      generator = null;
+      m_ActualGenerator = null;
       result    = handleException("Failed to generate split!", e);
     }
 
     if (result == null) {
-      while (generator.hasNext())
-        m_Queue.add(generator.next());
+      while (m_ActualGenerator.hasNext())
+        m_Queue.add(m_ActualGenerator.next());
     }
 
+    m_ActualGenerator = null;
+
     return result;
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_ActualGenerator != null) {
+      if (m_ActualGenerator instanceof Stoppable)
+        ((Stoppable) m_ActualGenerator).stopExecution();
+    }
+    super.stopExecution();
   }
 }

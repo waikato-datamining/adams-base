@@ -15,12 +15,13 @@
 
 /*
  * WekaSplitGenerator.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Stoppable;
 import adams.core.option.OptionUtils;
 import adams.flow.container.WekaTrainTestSetContainer;
 import weka.classifiers.DefaultRandomSplitGenerator;
@@ -47,7 +48,10 @@ public class WekaSplitGenerator
 
   /** the split generator to use. */
   protected SplitGenerator m_Generator;
-  
+
+  /** the currently active generator. */
+  protected transient SplitGenerator m_ActualGenerator;
+
   /**
    * Returns a string describing the object.
    *
@@ -72,6 +76,16 @@ public class WekaSplitGenerator
     m_OptionManager.add(
       "generator", "generator",
       new DefaultRandomSplitGenerator());
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_ActualGenerator = null;
   }
 
   /**
@@ -152,26 +166,39 @@ public class WekaSplitGenerator
   protected String doExecute() {
     String		result;
     Instances		inst;
-    SplitGenerator 	generator;
 
     result = null;
     inst   = new Instances((Instances) m_InputToken.getPayload());
     m_Queue.clear();
 
     try {
-      generator = (SplitGenerator) OptionUtils.shallowCopy(m_Generator);
-      generator.setData(inst);
+      m_ActualGenerator = (SplitGenerator) OptionUtils.shallowCopy(m_Generator);
+      m_ActualGenerator.setData(inst);
     }
     catch (Exception e) {
-      generator = null;
+      m_ActualGenerator = null;
       result    = handleException("Failed to generate split!", e);
     }
 
     if (result == null) {
-      while (generator.hasNext())
-        m_Queue.add(generator.next());
+      while (m_ActualGenerator.hasNext())
+        m_Queue.add(m_ActualGenerator.next());
     }
 
+    m_ActualGenerator = null;
+
     return result;
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_ActualGenerator != null) {
+      if (m_ActualGenerator instanceof Stoppable)
+        ((Stoppable) m_ActualGenerator).stopExecution();
+    }
+    super.stopExecution();
   }
 }
