@@ -15,10 +15,11 @@
 
 /*
  * MultiLevelSplitGenerator.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
+import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
@@ -46,7 +47,7 @@ import java.util.List;
  */
 public class MultiLevelSplitGenerator
   extends AbstractSplitGenerator
-  implements weka.classifiers.SplitGenerator {
+  implements SplitGenerator, StoppableWithFeedback {
 
   /** for serialization. */
   private static final long serialVersionUID = -4813006743965500489L;
@@ -60,8 +61,14 @@ public class MultiLevelSplitGenerator
   /** the groups to generate. */
   protected BaseString[] m_Groups;
 
+  /** whether to suppress error output. */
+  protected boolean m_Silent;
+
   /** the list of generated containers. */
   protected List<WekaTrainTestSetContainer> m_Containers;
+
+  /** whether the generation got stopped. */
+  protected boolean m_Stopped;
 
   /**
    * Returns a string describing the object.
@@ -96,6 +103,10 @@ public class MultiLevelSplitGenerator
     m_OptionManager.add(
       "group", "groups",
       new BaseString[]{new BaseString("$0")});
+
+    m_OptionManager.add(
+      "silent", "silent",
+      false);
   }
 
   /**
@@ -212,6 +223,35 @@ public class MultiLevelSplitGenerator
   }
 
   /**
+   * Sets whether to suppress error messages.
+   *
+   * @param value	true if to suppress
+   */
+  public void setSilent(boolean value) {
+    m_Silent  = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to suppress error messages.
+   *
+   * @return		true if to suppress
+   */
+  public boolean getSilent() {
+    return m_Silent;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String silentTipText() {
+    return "If enabled, error messages are suppressed.";
+  }
+
+  /**
    * Returns whether randomization is enabled.
    *
    * @return		true if to randomize
@@ -308,6 +348,9 @@ public class MultiLevelSplitGenerator
     result  = new ArrayList<>();
     grouped = generateGroups(data, index, regexp, group);
     for (i = 0; i < grouped.size(); i++) {
+      if (isStopped())
+        return new ArrayList<>();
+
       result.add(new Struct2<>(
         subset(grouped, i, true),
         subset(grouped, i, false)
@@ -346,7 +389,7 @@ public class MultiLevelSplitGenerator
       testIndex = testIDs.indexOf(trainIDs.get(trainIndex));
       if (testIndex > -1)
 	result.add(new Struct2<>(testSplits.get(testIndex).value1, trainSplits.get(trainIndex).value2));
-      else
+      else if (!m_Silent)
         getLogger().warning("No matching test data found for '" + trainIDs.get(trainIndex) + "' (att index #" + (index+1) + ")!");
 
     }
@@ -371,6 +414,9 @@ public class MultiLevelSplitGenerator
     collected = new ArrayList<>();
     splits    = generateSplits(m_Data, m_Indices[0].getIntIndex(), m_RegExps[0].getValue(), m_Groups[0].getValue());
     for (i = 1; i < m_Indices.length; i++) {
+      if (isStopped())
+        break;
+
       collected.clear();
       for (Struct2<Instances, Instances> split : splits) {
         // subsequent splits
@@ -382,14 +428,18 @@ public class MultiLevelSplitGenerator
       splits = collected;
     }
 
-    for (Struct2<Instances, Instances> split: splits)
-      m_Containers.add(new WekaTrainTestSetContainer(split.value1, split.value2));
+    if (!isStopped()) {
+      for (Struct2<Instances, Instances> split : splits)
+	m_Containers.add(new WekaTrainTestSetContainer(split.value1, split.value2));
+    }
   }
 
   /**
    * Initializes the iterator.
    */
   protected void doInitializeIterator() {
+    m_Stopped = false;
+
     if (m_Data == null)
       throw new IllegalStateException("No data available!");
 
@@ -411,7 +461,7 @@ public class MultiLevelSplitGenerator
    */
   @Override
   protected boolean checkNext() {
-    return m_Containers.size() > 0;
+    return !isStopped() && (m_Containers.size() > 0);
   }
 
   /**
@@ -422,6 +472,24 @@ public class MultiLevelSplitGenerator
   @Override
   protected WekaTrainTestSetContainer createNext() {
     return m_Containers.remove(0);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Stopped = true;
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**
