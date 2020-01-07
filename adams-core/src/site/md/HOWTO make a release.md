@@ -91,6 +91,26 @@ Commands
   * adams-spectral-app
 
 
+Deployment failures
+-------------------
+
+* rollback via Maven
+
+  ```
+  mvn release:rollback
+  ```
+  
+* delete tags
+
+  ```
+  git push --delete origin adams-pom-X.Y.Z
+  git tag --delete adams-pom-X.Y.Z
+  git push
+  ```
+  
+* delete adams-pom artifact (X.Y.Z) from Nexus
+
+
 Uploads/updates
 ---------------
   
