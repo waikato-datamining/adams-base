@@ -117,10 +117,6 @@
       <name>ADAMS Release Repository</name>
       <url>https://adams.cms.waikato.ac.nz/nexus/content/repositories/adams-releases</url>
     </repository>
-    <site>
-      <id>adams.cms.waikato.ac.nz</id>
-      <url>scp://adams.cms.waikato.ac.nz/var/www/html/dummy/</url>
-    </site>
   </distributionManagement>
 
   <dependencyManagement>
