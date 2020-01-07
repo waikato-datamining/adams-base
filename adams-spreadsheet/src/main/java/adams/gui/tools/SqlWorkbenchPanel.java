@@ -144,7 +144,7 @@ public class SqlWorkbenchPanel
       menu.addSeparator();
 
       // Queries/Close query
-      menuitem = new JMenuItem("Close query", GUIHelper.getIcon("close_tab_focused.gif"));
+      menuitem = new JMenuItem("Close query", GUIHelper.getIcon("delete.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
       menuitem.addActionListener((ActionEvent e) -> closeQuery());
       menu.add(menuitem);

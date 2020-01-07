@@ -395,7 +395,7 @@ public class ImageProcessorPanel
       menuitem = new JMenuItem("Close page");
       menu.add(menuitem);
       menuitem.setMnemonic('t');
-      menuitem.setIcon(GUIHelper.getIcon("close_tab_focused.gif"));
+      menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
       menuitem.addActionListener((ActionEvent e) -> close());
       m_MenuItemFileClose = menuitem;
