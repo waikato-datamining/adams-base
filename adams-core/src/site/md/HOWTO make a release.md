@@ -36,7 +36,7 @@ Commands
   
   * change parent pom version to just released adams-pom one (remove -SNAPSHOT)
   * change `adams.version` property to just released adams-pom one (remove -SNAPSHOT)
-  * change parent pom version and version of `adams-core` dependency in `adams-maven-plugin` 
+  * change parent pom version, version and adams-version of `adams-core` dependency in `adams-maven-plugin` 
     pom.xml to just released one (remove -SNAPSHOT)
   * commit/push changes
   * `mvn --batch-mode release:prepare release:perform`
