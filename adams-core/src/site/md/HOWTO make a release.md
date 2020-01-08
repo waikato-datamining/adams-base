@@ -160,6 +160,12 @@ Uploads/updates
   adams.cms.waikato.ac.nz:/var/www/html/releases/adams
   ```
 
+* create new release page (copy an old one and update links)
+
+  ```
+  pages/download/X.Y.Z.rst
+  ``` 
+
 * update adams webpage
 
   ```
