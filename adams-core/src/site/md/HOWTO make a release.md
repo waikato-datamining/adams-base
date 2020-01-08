@@ -89,6 +89,9 @@ Commands
   * change `adams.version` property to just released adams-pom one (remove -SNAPSHOT)
   * commit/push changes
   * `mvn --batch-mode release:prepare release:perform`
+  * change all -SNAPSHOT versions in the pom.xml files to the just released version 
+  * `mvn deb:package`
+  * revert the changes
   * increment version of parent pom and add -SNAPSHOT
   * increment version of `adams.version` property and add -SNAPSHOT
   * commit/push changes
