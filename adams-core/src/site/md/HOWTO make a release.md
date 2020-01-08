@@ -166,7 +166,7 @@ Uploads/updates
   pages/download/X.Y.Z.rst
   ``` 
 
-* update adams webpage
+* update web pages
 
   ```
   pages/root/index.rst
