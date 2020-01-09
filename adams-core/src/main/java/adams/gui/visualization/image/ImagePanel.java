@@ -15,7 +15,7 @@
 
 /*
  * ImagePanel.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -29,6 +29,7 @@ import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.AbstractReportReader;
 import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.AbstractReportWriter;
 import adams.data.report.AbstractField;
@@ -200,6 +201,9 @@ public class ImagePanel
     /** the interaction logger in use. */
     protected InteractionLogger m_InteractionLogger;
 
+    /** the filechooser for reports. */
+    protected DefaultReportFileChooser m_ReportFileChooser;
+
     /**
      * Initializes the panel.
      *
@@ -231,6 +235,7 @@ public class ImagePanel
       m_SelectionTrace            = new ArrayList<>();
       m_Paintlets                 = new HashSet<>();
       m_InteractionLogger         = new Null();
+      m_ReportFileChooser         = null;
     }
 
     /**
@@ -693,6 +698,12 @@ public class ImagePanel
 	menu.addSeparator();
 	menu.add(menuitem);
 
+	// load report
+	menuitem = new JMenuItem("Load report...", GUIHelper.getEmptyIcon());
+	menuitem.setEnabled(getCurrentImage() != null);
+	menuitem.addActionListener((ActionEvent ae) -> loadReport());
+	menu.add(menuitem);
+
 	// save report
 	menuitem = new JMenuItem("Save report...", GUIHelper.getEmptyIcon());
 	menuitem.setEnabled(getCurrentImage() != null);
@@ -899,22 +910,65 @@ public class ImagePanel
     }
 
     /**
+     * Returns the report filechooser to use.
+     *
+     * @return		the file chooser
+     */
+    protected DefaultReportFileChooser getReportFileChooser() {
+      if (m_ReportFileChooser == null)
+        m_ReportFileChooser = new DefaultReportFileChooser();
+      return m_ReportFileChooser;
+    }
+
+    /**
+     * Loads a report from a file.
+     */
+    public void loadReport() {
+      int			retVal;
+      AbstractReportReader 	reader;
+      List<Report>		reports;
+      Report			report;
+
+      retVal = getReportFileChooser().showOpenDialog(this);
+      if (retVal != DefaultReportFileChooser.APPROVE_OPTION)
+	return;
+
+      reader = getReportFileChooser().getReader();
+      reader.setInput(getReportFileChooser().getSelectedPlaceholderFile());
+      reports = reader.read();
+      if (reports.size() == 0) {
+	GUIHelper.showErrorMessage(
+	  this, "No reports loaded from:\n" + getReportFileChooser().getSelectedPlaceholderFile());
+	return;
+      }
+
+      report = null;
+      for (Report r: reports) {
+        if (report == null)
+          report = r;
+        else
+          report.mergeWith(r);
+      }
+      if (report != null)
+	getOwner().setAdditionalProperties(report);
+    }
+
+    /**
      * Saves the report to a file.
      */
     public void saveReport() {
-      DefaultReportFileChooser	filechooser;
-      int				retVal;
+      int			retVal;
       AbstractReportWriter	writer;
 
-      filechooser = new DefaultReportFileChooser();
-      retVal = filechooser.showSaveDialog(this);
+      retVal = getReportFileChooser().showSaveDialog(this);
       if (retVal != DefaultReportFileChooser.APPROVE_OPTION)
 	return;
-      writer = filechooser.getWriter();
-      writer.setOutput(filechooser.getSelectedPlaceholderFile());
+
+      writer = getReportFileChooser().getWriter();
+      writer.setOutput(getReportFileChooser().getSelectedPlaceholderFile());
       if (!writer.write(getOwner().getAllProperties()))
 	GUIHelper.showErrorMessage(
-	  this, "Failed to save report to:\n" + filechooser.getSelectedPlaceholderFile());
+	  this, "Failed to save report to:\n" + getReportFileChooser().getSelectedPlaceholderFile());
     }
 
     /**
@@ -1823,6 +1877,13 @@ public class ImagePanel
    */
   public void export() {
     m_PaintPanel.export();
+  }
+
+    /**
+     * Loads a report from a file.
+     */
+  public void loadReport() {
+    m_PaintPanel.loadReport();
   }
 
   /**
