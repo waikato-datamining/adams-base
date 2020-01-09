@@ -15,7 +15,7 @@
 
 /*
  * CannyEdgeDetection.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
@@ -69,6 +69,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
+ * <pre>-blur-radius &lt;int&gt; (property: blurRadius)
+ * &nbsp;&nbsp;&nbsp;The radius to use for the gaussian blur.
+ * &nbsp;&nbsp;&nbsp;default: 2
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
  * <pre>-type &lt;BINARY_EDGES|TRACE_GRAPH|CONTOUR&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of output to generate.
  * &nbsp;&nbsp;&nbsp;default: BINARY_EDGES
@@ -92,7 +98,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
     author = "Peter Abeles",
@@ -111,14 +116,16 @@ public class CannyEdgeDetection
    * The type of output to generate.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum OutputType {
     BINARY_EDGES,
     TRACE_GRAPH,
     CONTOUR
   }
-  
+
+  /** the blur radius. */
+  protected int m_BlurRadius;
+
   /** the low threshold to use. */
   protected float m_LowThreshold;
   
@@ -170,6 +177,10 @@ public class CannyEdgeDetection
     super.defineOptions();
 
     m_OptionManager.add(
+      "blur-radius", "blurRadius",
+      2, 1, null);
+
+    m_OptionManager.add(
       "type", "type",
       OutputType.BINARY_EDGES);
 
@@ -184,6 +195,37 @@ public class CannyEdgeDetection
     m_OptionManager.add(
       "high-threshold", "highThreshold",
       0.3f);
+  }
+
+  /**
+   * Sets the radius to use for the gaussian blur.
+   *
+   * @param value	the radius
+   */
+  public void setBlurRadius(int value) {
+    if (getOptionManager().isValid("blurRadius", value)) {
+      m_BlurRadius = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the radius to use for the gaussian blur.
+   *
+   * @return		the radius
+   */
+  public int getBlurRadius() {
+    return m_BlurRadius;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String blurRadiusTipText() {
+    return "The radius to use for the gaussian blur.";
   }
 
   /**
@@ -324,7 +366,7 @@ public class CannyEdgeDetection
     // Create a canny edge detector which will dynamically compute the threshold based on maximum edge intensity
     // It has also been configured to save the trace as a graph.  This is the graph created while performing
     // hysteresis thresholding.
-    canny = FactoryEdgeDetectors.canny(2, true, true, ImageUInt8.class, ImageSInt16.class);
+    canny = FactoryEdgeDetectors.canny(m_BlurRadius, true, true, ImageUInt8.class, ImageSInt16.class);
 
     // The edge image is actually an optional parameter.  If you don't need it just pass in null
     canny.process(gray, m_LowThreshold, m_HighThreshold, edgeImage);
