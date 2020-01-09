@@ -19,11 +19,17 @@
  */
 package adams.gui.tools;
 
+import adams.core.management.FileBrowser;
 import adams.data.io.input.AbstractImageReader;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MultiPagePane;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.JMenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
 /**
@@ -59,6 +65,15 @@ public class ImageProcessorMultiPagePane
    */
   public ImageProcessorPanel getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Returns whether a panel has been selected.
+   *
+   * @return		true if panel selected
+   */
+  public boolean hasCurrentPanel() {
+    return (getSelectedIndex() != -1);
   }
 
   /**
@@ -157,5 +172,46 @@ public class ImageProcessorMultiPagePane
       setSelectedPage(panel);
       return true;
     }
+  }
+
+  /**
+   * Generates the right-click menu for the JList.
+   *
+   * @param e		the event that triggered the popup
+   * @return		the generated menu
+   * @see		#showPopup(MouseEvent)
+   */
+  @Override
+  protected BasePopupMenu createPopup(MouseEvent e) {
+    BasePopupMenu 	result;
+    JMenuItem 		menuitem;
+
+    result = super.createPopup(e);
+
+    menuitem = new JMenuItem("Open containing folder");
+    menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
+    menuitem.setEnabled(
+      (getSelectedIndices().length == 1)
+        && hasCurrentPanel()
+        && (getCurrentPanel().getCurrentFile() != null));
+    if (menuitem.isEnabled()) {
+      menuitem.addActionListener((ActionEvent ae) ->
+	FileBrowser.launch(getCurrentPanel().getCurrentFile()));
+    }
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Copy filename");
+    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setEnabled(
+      (getSelectedIndices().length == 1)
+        && hasCurrentPanel()
+        && (getCurrentPanel().getCurrentFile() != null));
+    if (menuitem.isEnabled()) {
+      menuitem.addActionListener((ActionEvent ae) ->
+	ClipboardHelper.copyToClipboard(getCurrentPanel().getCurrentFile().getAbsolutePath()));
+    }
+    result.add(menuitem);
+
+    return result;
   }
 }
