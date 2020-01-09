@@ -15,7 +15,7 @@
 
 /*
  * ImageProcessorSubPanel.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -38,6 +38,7 @@ import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
@@ -129,15 +130,27 @@ public class ImageProcessorSubPanel
       menuitem.addActionListener((ActionEvent ae) -> getPanel().export());
       menu.add(menuitem);
 
+      menuitem = new JMenuItem("Load report...", GUIHelper.getEmptyIcon());
+      menuitem.setEnabled(getPanel().getCurrentImage() != null);
+      menuitem.addActionListener((ActionEvent ae) -> getPanel().loadReport());
+      menu.add(menuitem);
+
       menuitem = new JMenuItem("Save report...", GUIHelper.getEmptyIcon());
       menuitem.setEnabled(getPanel().getCurrentImage() != null);
-      menuitem.addActionListener((ActionEvent ae) ->getPanel().saveReport());
+      menuitem.addActionListener((ActionEvent ae) -> getPanel().saveReport());
       menu.add(menuitem);
 
       // separator
       menu.addSeparator();
 
-      // View/Zoom
+      // show side pane
+      menuitem = new JCheckBoxMenuItem("Show side pane", GUIHelper.getIcon("properties.gif"));
+      menuitem.setSelected(getPanel().getShowProperties());
+      menuitem.addActionListener((ActionEvent ae) ->
+        getPanel().setShowProperties(!getPanel().getShowProperties()));
+      menu.add(menuitem);
+
+      // Zoom
       submenu = new JMenu("Zoom");
       menu.add(submenu);
       submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
