@@ -15,7 +15,7 @@
 
 /*
  * ImageProcessorPanel.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -317,6 +317,7 @@ public class ImageProcessorPanel
     // File
     m_MenuItemFileLoadRecent.setEnabled(m_RecentFilesHandler.size() > 0);
     m_MenuItemFileClose.setEnabled(hasPanel);
+    m_MenuItemFileCloseAll.setEnabled(getPanelCount() > 0);
 
     // Edit
     if (getUndo().canUndo()) {
@@ -661,6 +662,15 @@ public class ImageProcessorPanel
   }
 
   /**
+   * Returns the number of panels in the multi-page pane.
+   *
+   * @return		the number of panels
+   */
+  public int getPanelCount() {
+    return m_MultiPagePane.getPageCount();
+  }
+
+  /**
    * Opens an image.
    */
   protected void open() {
@@ -709,7 +719,7 @@ public class ImageProcessorPanel
     index = m_MultiPagePane.getSelectedIndex();
     panel = getPanelAt(index);
     panel.cleanUp();
-    m_MultiPagePane.remove(index);
+    m_MultiPagePane.removePageAt(index);
     update();
   }
 
