@@ -15,7 +15,7 @@
 
 /*
  * AbstractOutputGeneratorWithSeparateFoldsSupport.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -59,9 +59,6 @@ public abstract class AbstractOutputGeneratorWithSeparateFoldsSupport<T extends 
    */
   public JComponent createOutput(ResultItem item, MessageCollection errors) {
     MultiPagePane multiPage;
-
-    if (!item.getEvaluation().getHeader().classAttribute().isNominal())
-      return null;
 
     if (item.hasFoldEvaluations()) {
       multiPage = newMultiPagePane(item);
