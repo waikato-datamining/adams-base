@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsFromReport.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -26,7 +26,10 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.JAIImageReader;
+import adams.data.objectfinder.AllFinder;
+import adams.data.objectfinder.ObjectFinder;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.Fonts;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -84,6 +87,9 @@ public class ObjectLocationsFromReport
   /** the label font. */
   protected Font m_LabelFont;
 
+  /** the object finder to use. */
+  protected ObjectFinder m_Finder;
+
   /**
    * Returns a string describing the object.
    *
@@ -135,6 +141,10 @@ public class ObjectLocationsFromReport
     m_OptionManager.add(
       "label-font", "labelFont",
       Fonts.getSansFont(14));
+
+    m_OptionManager.add(
+      "finder", "finder",
+      new AllFinder());
   }
 
   /**
@@ -372,6 +382,35 @@ public class ObjectLocationsFromReport
   }
 
   /**
+   * Sets the finder to use for locating the objects.
+   *
+   * @param value	the finder
+   */
+  public void setFinder(ObjectFinder value) {
+    m_Finder = value;
+    reset();
+  }
+
+  /**
+   * Returns the finder to use for locating the objects.
+   *
+   * @return		the finder
+   */
+  public ObjectFinder getFinder() {
+    return m_Finder;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String finderTipText() {
+    return "The object finder to use.";
+  }
+
+  /**
    * Returns the list of extensions (without dot) that this handler can
    * take care of.
    *
@@ -380,6 +419,27 @@ public class ObjectLocationsFromReport
   @Override
   public String[] getExtensions() {
     return new JAIImageReader().getFormatExtensions();
+  }
+
+  /**
+   * Filters the objects in the report, if necessary.
+   *
+   * @param report	the report to filter
+   * @return		the filtered report (copy, in case filtering occurred)
+   */
+  protected Report filterReport(Report report) {
+    Report		result;
+    LocatedObjects	objs;
+
+    if (m_Finder instanceof AllFinder)
+      return report;
+
+    objs   = m_Finder.findObjects(report);
+    result = report.getClone();
+    result.removeValuesStartingWith(m_Finder.getPrefix());
+    result.mergeWith(objs.toReport(m_Finder.getPrefix()));
+
+    return result;
   }
 
   /**
@@ -406,7 +466,7 @@ public class ObjectLocationsFromReport
       reportReader.setInput(new PlaceholderFile(reportFile));
       reports = reportReader.read();
       if (reports.size() > 0) {
-        report  = reports.get(0);
+        report  = filterReport(reports.get(0));
 	overlay = new ObjectLocationsOverlayFromReport();
 	overlay.setPrefix(m_Prefix);
 	overlay.setColor(m_Color);
