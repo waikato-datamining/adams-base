@@ -15,7 +15,7 @@
 
 /*
  * Report.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,6 +26,7 @@ import adams.core.Constants;
 import adams.core.Mergeable;
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.base.BaseRegExp;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
 import adams.core.option.AbstractOption;
@@ -585,6 +586,48 @@ public class Report
    */
   public Object removeValue(AbstractField key) {
     return m_Params.remove(key);
+  }
+
+  /**
+   * Removes all fields that match the regular expression.
+   *
+   * @param regExp 	the regular expression to match the field names against
+   * @return		true if report got modified (ie at least one field removed)
+   */
+  public boolean removeValues(BaseRegExp regExp) {
+    List<AbstractField>		remove;
+
+    remove = new ArrayList<>();
+    for (AbstractField key: m_Params.keySet()) {
+      if (regExp.isMatch(key.getName()))
+        remove.add(key);
+    }
+
+    for (AbstractField key: remove)
+      m_Params.remove(key);
+
+    return (remove.size() > 0);
+  }
+
+  /**
+   * Removes all fields that start with the provided string.
+   *
+   * @param prefix 	the prefix of fields to remove
+   * @return		true if report got modified (ie at least one field removed)
+   */
+  public boolean removeValuesStartingWith(String prefix) {
+    List<AbstractField>		remove;
+
+    remove = new ArrayList<>();
+    for (AbstractField key: m_Params.keySet()) {
+      if (key.getName().startsWith(prefix))
+        remove.add(key);
+    }
+
+    for (AbstractField key: remove)
+      m_Params.remove(key);
+
+    return (remove.size() > 0);
   }
 
   /**
