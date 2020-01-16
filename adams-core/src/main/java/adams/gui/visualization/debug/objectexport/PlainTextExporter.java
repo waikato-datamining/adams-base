@@ -29,7 +29,7 @@ import adams.data.textrenderer.TextRenderer;
 import java.io.File;
 
 /**
- * Just uses the string representation of the object.
+ * Uses text renderers (auto or custom) to turn the object into text.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
