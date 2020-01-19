@@ -252,11 +252,41 @@ public class ClassifyTab
     }
 
     /**
+     * Checks whether any predictions are available from the selected items.
+     *
+     * @param indices	the indices of the result items to check
+     * @return		true if if at least one Evaluation object still has predictions
+     */
+    protected boolean hasPredictionsAvailable(int[] indices) {
+      boolean		result;
+      ResultItem	item;
+
+      result = false;
+      for (int index: indices) {
+        item = getEntry(index);
+        if (item.hasEvaluation()) {
+	  result = (item.getEvaluation().predictions() != null);
+	}
+        else if (item.hasFoldEvaluations()) {
+          for (Evaluation eval: item.getFoldEvaluations()) {
+	    result = (eval.predictions() != null);
+	    if (result)
+	      break;
+	  }
+	}
+	if (result)
+	  break;
+      }
+
+      return result;
+    }
+
+    /**
      * Discards the predictions in the results to save memory.
      *
      * @param indices		the selected results to clean up
      */
-    protected void discardPredictions(final int[] indices) {
+    protected void discardPredictions(int[] indices) {
       ResultItem	item;
 
       for (int index: indices) {
@@ -487,7 +517,7 @@ public class ClassifyTab
       result.add(menuitem);
 
       menuitem = new JMenuItem("Discard predictions");
-      menuitem.setEnabled(indices.length >= 1);
+      menuitem.setEnabled(hasPredictionsAvailable(indices));
       menuitem.addActionListener((ActionEvent ae) -> discardPredictions(indices));
       result.add(menuitem);
 
