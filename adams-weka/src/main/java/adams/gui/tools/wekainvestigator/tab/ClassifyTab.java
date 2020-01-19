@@ -15,7 +15,7 @@
 
 /*
  * ClassifyTab.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -57,6 +57,7 @@ import adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGen
 import adams.gui.tools.wekainvestigator.tab.classifytab.output.TextStatistics;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.classifiers.rules.ZeroR;
 
 import javax.swing.BorderFactory;
@@ -247,6 +248,26 @@ public class ClassifyTab
       catch (Exception e) {
         GUIHelper.showErrorMessage(
           this, "Failed to save model to: " + m_ModelFileChooser.getSelectedFile(), e);
+      }
+    }
+
+    /**
+     * Discards the predictions in the results to save memory.
+     *
+     * @param indices		the selected results to clean up
+     */
+    protected void discardPredictions(final int[] indices) {
+      ResultItem	item;
+
+      for (int index: indices) {
+        item = getEntry(index);
+        if (item.hasEvaluation())
+	  item.getEvaluation().setDiscardPredictions(true);
+        if (item.hasFoldEvaluations()) {
+          for (Evaluation eval: item.getFoldEvaluations()) {
+            eval.setDiscardPredictions(true);
+	  }
+	}
       }
     }
 
@@ -463,6 +484,11 @@ public class ClassifyTab
       menuitem = new JMenuItem("Save model...");
       menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasModel());
       menuitem.addActionListener((ActionEvent ae) -> saveModel(getEntry(indices[0])));
+      result.add(menuitem);
+
+      menuitem = new JMenuItem("Discard predictions");
+      menuitem.setEnabled(indices.length >= 1);
+      menuitem.addActionListener((ActionEvent ae) -> discardPredictions(indices));
       result.add(menuitem);
 
       menuitem = new JMenuItem("Regenerate output" + (m_Owner.getOutputGenerators().length > 1 ? "s" : ""));
