@@ -30,6 +30,7 @@ import adams.core.option.AbstractNumericOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
@@ -87,6 +88,9 @@ public class PropertySheetPanel extends BasePanel
   /** the maximum characters per line for a tool tip. */
   public final static int MAX_TOOLTIP_WIDTH = 40;
 
+  /** whether to show an extra button for variable popup menu. */
+  protected static Boolean SHOW_VARIABLE_POPUP_BUTTON;
+
   /** The target object being edited. */
   protected Object m_Target;
 
@@ -110,6 +114,9 @@ public class PropertySheetPanel extends BasePanel
 
   /** Stores GUI components containing each editing component. */
   protected JComponent[] m_Views;
+
+  /** the buttons for the variable popup menu. */
+  protected BaseFlatButton[] m_VarButtons;
 
   /** The tool tip text for each property. */
   protected String[] m_TipTexts;
@@ -261,10 +268,11 @@ public class PropertySheetPanel extends BasePanel
       printException("Couldn't introspect!", ex);
     }
 
-    m_Editors  = new PropertyEditor[m_Properties.length];
-    m_Values   = new Object[m_Properties.length];
-    m_Views    = new JComponent[m_Properties.length];
-    m_TipTexts = new String[m_Properties.length];
+    m_Editors    = new PropertyEditor[m_Properties.length];
+    m_Values     = new Object[m_Properties.length];
+    m_Views      = new JComponent[m_Properties.length];
+    m_TipTexts   = new String[m_Properties.length];
+    m_VarButtons = new BaseFlatButton[m_Properties.length];
   }
 
   /**
@@ -487,15 +495,35 @@ public class PropertySheetPanel extends BasePanel
 	scrollablePanel.add(m_ParameterPanel, BorderLayout.CENTER);
       }
 
-      m_ParameterPanel.addParameter(name, m_Views[i]);
-      m_ParameterPanel.getLabel(m_ParameterPanel.getParameterCount() - 1);
-      final JLabel label = m_ParameterPanel.getLabel(m_ParameterPanel.getParameterCount() - 1);
       final PropertyEditor editor = m_Editors[i];
       final AbstractOption option;
       if (m_Options != null)
 	option = m_Options.get(i);
       else
 	option = null;
+
+      if ((m_Options != null) && getShowVariablePopupButton()) {
+	final BaseFlatButton buttonVars;
+	if ((option instanceof AbstractArgumentOption) && ((AbstractArgumentOption) option).isVariableAttached())
+	  buttonVars = new BaseFlatButton(GUIHelper.getIcon("variable_present.gif"));
+	else
+	  buttonVars = new BaseFlatButton(GUIHelper.getIcon("variable_notpresent.gif"));
+	buttonVars.addActionListener((ActionEvent e) -> {
+	  BasePopupMenu menu = new BasePopupMenu();
+	  VariableSupport.updatePopup(PropertySheetPanel.this, editor, menu);
+	  menu.show(buttonVars, 0, buttonVars.getHeight());
+	});
+	JPanel panelView = new JPanel(new BorderLayout(0, 0));
+	panelView.add(buttonVars, BorderLayout.WEST);
+	panelView.add(m_Views[i], BorderLayout.CENTER);
+	m_ParameterPanel.addParameter(name, m_Views[i], panelView);
+	m_VarButtons[i] = buttonVars;
+      }
+      else {
+	m_ParameterPanel.addParameter(name, m_Views[i]);
+      }
+
+      final JLabel label = m_ParameterPanel.getLabel(m_ParameterPanel.getParameterCount() - 1);
       label.addMouseListener(new MouseAdapter() {
 	@Override
 	public void mouseClicked(MouseEvent evt) {
@@ -791,6 +819,39 @@ public class PropertySheetPanel extends BasePanel
     index = findEditor(editor);
     if (index > -1)
       result = m_ParameterPanel.getLabel(index);
+    else
+      result = null;
+
+    return result;
+  }
+
+  /**
+   * Returns whether variable popup button should be displayed.
+   *
+   * @return		true if button displayed
+   */
+  public static synchronized boolean getShowVariablePopupButton() {
+    if (SHOW_VARIABLE_POPUP_BUTTON == null)
+      SHOW_VARIABLE_POPUP_BUTTON = GUIHelper.getBoolean("GenericObjectEditorShowVariablePopupMenuButton", false);
+    return SHOW_VARIABLE_POPUP_BUTTON;
+  }
+
+  /**
+   * Tries to find the variable button for the specified editor.
+   *
+   * @param editor	the editor to find the option for
+   * @return		the button, or null if none found
+   */
+  public BaseFlatButton findVarButton(PropertyEditor editor) {
+    BaseFlatButton	result;
+    int			index;
+
+    if (!getShowVariablePopupButton())
+      return null;
+
+    index = findEditor(editor);
+    if (index > -1)
+      result = m_VarButtons[index];
     else
       result = null;
 

@@ -176,3 +176,7 @@ AnnotationsRenderer=adams.gui.flow.tree.annotations.PlainText
 # Note: "new" can be empty if to disable the keystroke
 # Example for Mac: control Q\tmeta W
 ReplaceKeystrokes=
+
+# Whether to use show a button for quickly accessing the variable popupmenu
+# in the GOE (true|false)
+GenericObjectEditorShowVariablePopupMenuButton=true

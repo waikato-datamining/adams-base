@@ -15,7 +15,7 @@
 
 /*
  * VariableSupport.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -28,6 +28,7 @@ import adams.flow.source.StorageValue;
 import adams.flow.standalone.CallableActors;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextField;
@@ -61,7 +62,6 @@ import java.util.List;
  * Helper class for managing variables in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class VariableSupport {
 
@@ -71,6 +71,9 @@ public class VariableSupport {
   /** the indicator to be displayed in a JLabel's tiptext when the option has a variable. */
   public final static String HINT_INDICATOR = ", variable: ";
 
+  /** the prefix for the buttons's tiptext when the option has a variable. */
+  public final static String BUTTON_HINT_PREFIX = "variable: ";
+
   /**
    * Returns the PropertySheetPanel parent of this container.
    *
@@ -79,20 +82,6 @@ public class VariableSupport {
    */
   public static PropertySheetPanel findParent(Container c) {
     return (PropertySheetPanel) GUIHelper.getParent(c, PropertySheetPanel.class);
-  }
-
-  /**
-   * Checks whether the editor's option has a variable defined.
-   *
-   * @param parent	the parent sheet panel of the editor
-   * @param editor	the property editor this menu is generated for
-   * @return		the popup menu
-   */
-  public static boolean hasVariable(PropertySheetPanel parent, PropertyEditor editor) {
-    if (parent != null)
-      return (parent.findOption(editor) != null);
-    else
-      return false;
   }
 
   /**
@@ -315,6 +304,7 @@ public class VariableSupport {
     JMenuItem 			item;
     AbstractOption 		option;
     JLabel 			label;
+    BaseFlatButton		button;
     AbstractArgumentOption 	argoption;
     boolean			allowsVars;
 
@@ -323,7 +313,8 @@ public class VariableSupport {
       return result;
 
     option = parent.findOption(editor);
-    label = parent.findLabel(editor);
+    label  = parent.findLabel(editor);
+    button = parent.findVarButton(editor);
 
     if (option instanceof AbstractArgumentOption) {
       argoption = (AbstractArgumentOption) option;
@@ -335,6 +326,8 @@ public class VariableSupport {
       allowsVars = argoption.getOwner().allowsVariables(argoption.getProperty());
       if (result.getComponentCount() > 0)
 	result.addSeparator();
+
+      updateButton(button, fArgOption.getVariableName());
 
       if (!argoption.isVariableAttached()) {
 	// regular variable
@@ -354,6 +347,7 @@ public class VariableSupport {
 	    }
 	    fArgOption.setVariable(name);
 	    updateLabel(fLabel, fArgOption.getVariableName());
+	    updateButton(button, fArgOption.getVariableName());
 	    parent.getPropertyChangeSupport().firePropertyChange("", null, null);
 	  }
 	});
@@ -370,6 +364,7 @@ public class VariableSupport {
 	      return;
 	    fArgOption.setVariable(FlowVariables.PREFIX_CALLABLEACTOR + name);
 	    updateLabel(fLabel, fArgOption.getVariableName());
+	    updateButton(button, fArgOption.getVariableName());
 	    parent.getPropertyChangeSupport().firePropertyChange("", null, null);
 	  }
 	});
@@ -392,6 +387,7 @@ public class VariableSupport {
 	    }
 	    fArgOption.setVariable(FlowVariables.PREFIX_STORAGE + name);
 	    updateLabel(fLabel, fArgOption.getVariableName());
+	    updateButton(button, fArgOption.getVariableName());
 	    parent.getPropertyChangeSupport().firePropertyChange("", null, null);
 	  }
 	});
@@ -409,6 +405,7 @@ public class VariableSupport {
 		return;
 	      fArgOption.setVariable(FlowVariables.PREFIX_CALLABLEACTOR + name);
 	      updateLabel(fLabel, fArgOption.getVariableName());
+	      updateButton(button, fArgOption.getVariableName());
 	      parent.getPropertyChangeSupport().firePropertyChange("", null, null);
 	    }
 	  });
@@ -432,6 +429,7 @@ public class VariableSupport {
 	      }
 	      fArgOption.setVariable(FlowVariables.PREFIX_STORAGE + name);
 	      updateLabel(fLabel, fArgOption.getVariableName());
+	      updateButton(button, fArgOption.getVariableName());
 	      parent.getPropertyChangeSupport().firePropertyChange("", null, null);
 	    }
 	  });
@@ -455,6 +453,7 @@ public class VariableSupport {
 	      }
 	      fArgOption.setVariable(name);
 	      updateLabel(fLabel, fArgOption.getVariableName());
+	      updateButton(button, fArgOption.getVariableName());
 	      parent.getPropertyChangeSupport().firePropertyChange("", null, null);
 	    }
 	  });
@@ -472,6 +471,7 @@ public class VariableSupport {
 	  public void actionPerformed(ActionEvent e) {
 	    fArgOption.setVariable(null);
 	    updateLabel(fLabel, null);
+	    updateButton(button, null);
 	    parent.getPropertyChangeSupport().firePropertyChange("", null, null);
 	  }
 	});
@@ -501,7 +501,7 @@ public class VariableSupport {
     hintPresent = text.endsWith(CAPTION_INDICATOR);
     if (hintPresent)
       text = text.substring(0, text.length() - CAPTION_INDICATOR.length());
-    if (hasVariable)
+    if (hasVariable && !PropertySheetPanel.getShowVariablePopupButton())
       text = text + CAPTION_INDICATOR;
     label.setText(text);
 
@@ -513,5 +513,24 @@ public class VariableSupport {
     if (hasVariable)
       text = text + HINT_INDICATOR + variable;
     label.setToolTipText(text);
+  }
+
+  /**
+   * Updates the icon of the variables button.
+   *
+   * @param button	the button to change
+   * @param variable	the name of the attached variable, null if none attached
+   */
+  public static void updateButton(BaseFlatButton button, String variable) {
+    if (button != null) {
+      if (variable != null) {
+	button.setIcon(GUIHelper.getIcon("variable_present.gif"));
+	button.setToolTipText(BUTTON_HINT_PREFIX + variable);
+      }
+      else {
+	button.setIcon(GUIHelper.getIcon("variable_notpresent.gif"));
+	button.setToolTipText(null);
+      }
+    }
   }
 }

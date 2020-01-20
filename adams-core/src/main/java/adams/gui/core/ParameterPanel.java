@@ -323,7 +323,7 @@ public class ParameterPanel
    * @see		#useCheckBoxes()
    */
   public int addParameter(boolean checked, AbstractChooserPanel chooser) {
-    return addParameter(-1, false, chooser);
+    return addParameter(-1, checked, chooser);
   }
 
   /**
@@ -429,6 +429,125 @@ public class ParameterPanel
 	m_CheckBoxes.add(index, check);
       m_Labels.add(index, lbl);
       m_Parameters.add(index, comp);
+      m_ActualParameters.add(index, actual);
+    }
+
+    addChangeListenerTo(actual);
+
+    update();
+
+    return index;
+  }
+
+  /**
+   * Inserts the label and component as new row at the end.
+   *
+   * @param label	the label to add, the mnemonic to use is preceded by "_"
+   * @param actual	the actual, non-wrapped component to add
+   * @param wrapper 	the wrapped component
+   * @return		the index of the parameter
+   */
+  public int addParameter(String label, Component actual, JPanel wrapper) {
+    return addParameter(-1, label, actual, wrapper);
+  }
+
+  /**
+   * Inserts the label and component as new row at the specified row.
+   *
+   * @param index	the row index to insert the label/editfield at, -1 will
+   * 			add the component at the end
+   * @param label	the label to add, the mnemonic to use is preceded by "_"
+   * @param actual	the actual, non-wrapped component to add
+   * @param wrapper 	the wrapped component
+   * @return		the index of the parameter
+   */
+  public int addParameter(int index, String label, Component actual, JPanel wrapper) {
+    return addParameter(index, false, label, actual, wrapper);
+  }
+
+  /**
+   * Inserts the label and component as new row at the specified row.
+   *
+   * @param index	the row index to insert the label/editfield at, -1 will
+   * 			add the component at the end
+   * @param checked	whether the checkbox is checked
+   * @param label	the label to add, the mnemonic to use is preceded by "_"
+   * @param actual	the actual, non-wrapped component to add
+   * @param wrapper 	the wrapped component
+   * @return		the index of the parameter
+   */
+  public int addParameter(int index, boolean checked, String label, Component actual, JPanel wrapper) {
+    JLabel		lbl;
+    BaseCheckBox	check;
+    JPanel		panel;
+    GridBagConstraints	con;
+    GridBagLayout	layout;
+
+    if (m_UseMnemonicIndicators) {
+      lbl = new JLabel(label.replace("" + GUIHelper.MNEMONIC_INDICATOR, ""));
+      lbl.setDisplayedMnemonic(GUIHelper.getMnemonic(label));
+      lbl.setLabelFor(actual);
+    }
+    else {
+      lbl = new JLabel(label);
+      lbl.setLabelFor(actual);
+    }
+
+    if (m_UseCheckBoxes)
+      check = new BaseCheckBox("", checked);
+    else
+      check = null;
+
+    layout = new GridBagLayout();
+    panel  = new JPanel(layout);
+
+    if (m_UseCheckBoxes) {
+      con        = new GridBagConstraints();
+      con.anchor = GridBagConstraints.WEST;
+      con.gridy  = 0;
+      con.gridx  = 0;
+      con.insets = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
+      layout.setConstraints(check, con);
+      panel.add(check);
+    }
+
+    con        = new GridBagConstraints();
+    con.anchor = GridBagConstraints.WEST;
+    con.gridy  = 0;
+    con.gridx  = 0;
+    if (m_UseCheckBoxes)
+      con.gridx++;
+    con.ipadx  = 20;
+    con.insets = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
+    layout.setConstraints(lbl, con);
+    panel.add(lbl);
+
+    con = new GridBagConstraints();
+    con.anchor = GridBagConstraints.WEST;
+    con.fill   = GridBagConstraints.HORIZONTAL;
+    con.gridy  = 0;
+    con.gridx  = 1;
+    if (m_UseCheckBoxes)
+      con.gridx++;
+    con.weightx = 100;
+    con.ipadx   = 20;
+    con.insets  = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
+    layout.setConstraints(wrapper, con);
+    panel.add(wrapper);
+
+    if (index == -1) {
+      if (m_UseCheckBoxes)
+	m_CheckBoxes.add(check);
+      m_Labels.add(lbl);
+      index = m_Parameters.size();
+      m_Parameters.add(wrapper);
+      m_ActualParameters.add(actual);
+    }
+    else {
+      if (m_UseCheckBoxes)
+	m_CheckBoxes.add(index, check);
+      m_Labels.add(index, lbl);
+      m_Parameters.add(index, wrapper);
       m_ActualParameters.add(index, actual);
     }
 
