@@ -15,7 +15,7 @@
 
 /*
  * ParameterPanel.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -57,7 +57,6 @@ import java.util.Set;
  * adjusted. Optionally, a checkbox can be displayed per parameter.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ParameterPanel
   extends BasePanel
@@ -74,6 +73,9 @@ public class ParameterPanel
 
   /** the parameters. */
   protected List<Component> m_Parameters;
+
+  /** the actual parameters. */
+  protected List<Component> m_ActualParameters;
 
   /** the horizontal gap. */
   protected int m_GapHorizontal;
@@ -158,6 +160,7 @@ public class ParameterPanel
     m_CheckBoxes                 = new ArrayList<>();
     m_Labels                     = new ArrayList<>();
     m_Parameters                 = new ArrayList<>();
+    m_ActualParameters           = new ArrayList<>();
     m_PreferredDimensionJSpinner = new Dimension(100, GUIHelper.getInteger("GOESpinnerHeight", 20));
     m_MinDimensionJComboBox      = new Dimension(50, GUIHelper.getInteger("GOEComboBoxHeight", 20));
     m_ChangeListeners            = new HashSet<>();
@@ -206,6 +209,7 @@ public class ParameterPanel
     m_CheckBoxes.clear();
     m_Labels.clear();
     m_Parameters.clear();
+    m_ActualParameters.clear();
     update();
   }
 
@@ -347,10 +351,13 @@ public class ParameterPanel
    */
   public int addParameter(int index, boolean checked, String label, Component comp) {
     JLabel		lbl;
-    BaseCheckBox		check;
+    BaseCheckBox	check;
     JPanel		panel;
     GridBagConstraints	con;
     GridBagLayout	layout;
+    Component 		actual;
+
+    actual = comp;
 
     if (m_UseMnemonicIndicators) {
       lbl = new JLabel(label.replace("" + GUIHelper.MNEMONIC_INDICATOR, ""));
@@ -415,15 +422,17 @@ public class ParameterPanel
       m_Labels.add(lbl);
       index = m_Parameters.size();
       m_Parameters.add(comp);
+      m_ActualParameters.add(actual);
     }
     else {
       if (m_UseCheckBoxes)
 	m_CheckBoxes.add(index, check);
       m_Labels.add(index, lbl);
       m_Parameters.add(index, comp);
+      m_ActualParameters.add(index, actual);
     }
 
-    addChangeListenerTo(comp);
+    addChangeListenerTo(actual);
 
     update();
 
@@ -494,12 +503,14 @@ public class ParameterPanel
       m_Labels.add(chooser.getPrefixLabel());
       index = m_Parameters.size();
       m_Parameters.add(chooser);
+      m_ActualParameters.add(chooser);
     }
     else {
       if (m_UseCheckBoxes)
 	m_CheckBoxes.add(index, check);
       m_Labels.add(index, chooser.getPrefixLabel());
       m_Parameters.add(index, chooser);
+      m_ActualParameters.add(index, chooser);
     }
 
     addChangeListenerTo(chooser);
@@ -515,11 +526,12 @@ public class ParameterPanel
    * @param index	the row index
    */
   public void removeParameter(int index) {
-    Component	comp;
+    Component	actual;
 
     m_Labels.remove(index);
-    comp = m_Parameters.remove(index);
-    removeChangeListenerFrom(comp);
+    m_Parameters.remove(index);
+    actual = m_ActualParameters.remove(index);
+    removeChangeListenerFrom(actual);
     update();
   }
 
@@ -531,6 +543,17 @@ public class ParameterPanel
    */
   public Component getParameter(int index) {
     return m_Parameters.get(index);
+  }
+
+  /**
+   * Returns the actual parameter component (without wrapping scroll pane etc)
+   * at the specified location.
+   *
+   * @param index	the row index
+   * @return		the requested component
+   */
+  public Component getActualParameter(int index) {
+    return m_ActualParameters.get(index);
   }
 
   /**
@@ -602,8 +625,8 @@ public class ParameterPanel
       getCheckBox(index).setToolTipText(text);
     if (label)
       getLabel(index).setToolTipText(text);
-    if (comp && (getParameter(index) instanceof JComponent))
-      ((JComponent) getParameter(index)).setToolTipText(text);
+    if (comp && (getActualParameter(index) instanceof JComponent))
+      ((JComponent) getActualParameter(index)).setToolTipText(text);
   }
 
   /**
@@ -615,11 +638,11 @@ public class ParameterPanel
   protected void fixDimensions() {
     int			i;
 
-    for (i = 0; i < m_Parameters.size(); i++) {
-      if (m_Parameters.get(i) instanceof JSpinner)
-	m_Parameters.get(i).setPreferredSize((Dimension) m_PreferredDimensionJSpinner.clone());
-      if (m_Parameters.get(i) instanceof JComboBox)
-	m_Parameters.get(i).setMinimumSize((Dimension) m_MinDimensionJComboBox.clone());
+    for (i = 0; i < m_ActualParameters.size(); i++) {
+      if (m_ActualParameters.get(i) instanceof JSpinner)
+	m_ActualParameters.get(i).setPreferredSize((Dimension) m_PreferredDimensionJSpinner.clone());
+      if (m_ActualParameters.get(i) instanceof JComboBox)
+	m_ActualParameters.get(i).setMinimumSize((Dimension) m_MinDimensionJComboBox.clone());
     }
   }
 
@@ -703,6 +726,7 @@ public class ParameterPanel
       if (m_UseCheckBoxes)
 	m_CheckBoxes.get(i).setEnabled(enabled);
       m_Parameters.get(i).setEnabled(enabled);
+      m_ActualParameters.get(i).setEnabled(enabled);
     }
 
     super.setEnabled(enabled);
