@@ -508,6 +508,7 @@ public class PropertySheetPanel extends BasePanel
 	  buttonVars = new BaseFlatButton(GUIHelper.getIcon("variable_present.gif"));
 	else
 	  buttonVars = new BaseFlatButton(GUIHelper.getIcon("variable_notpresent.gif"));
+	buttonVars.setFocusable(false);
 	buttonVars.addActionListener((ActionEvent e) -> {
 	  BasePopupMenu menu = new BasePopupMenu();
 	  VariableSupport.updatePopup(PropertySheetPanel.this, editor, menu);
