@@ -15,33 +15,30 @@
 
 /*
  *    EnumEditor.java
- *    Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
 import adams.core.EnumHelper;
+import adams.core.Utils;
 import adams.core.option.EnumOption;
-import adams.gui.core.BaseList;
-import adams.gui.core.BaseScrollPane;
+import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.ListSelectionModel;
-import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
 import java.beans.PropertyEditorSupport;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * A PropertyEditor that displays Enums. Based on Weka's SelectedTagEditor.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
- * @version $Revision$
  * @see weka.gui.SelectedTagEditor
  */
 public class EnumEditor
@@ -51,7 +48,7 @@ public class EnumEditor
   /** whether the editor has been registered for the enum class. */
   protected static HashSet<Class> m_Registered;
   static {
-    m_Registered = new HashSet<Class>();
+    m_Registered = new HashSet<>();
   }
 
   /**
@@ -110,6 +107,24 @@ public class EnumEditor
   }
 
   /**
+   * Creates a new array of field objects from the strings.
+   *
+   * @param values	the field names to use
+   * @param type	the type of the fields
+   * @return		the field array
+   */
+  protected Object[] newArray(List<String> values, Class type) {
+    Object	result;
+    int		i;
+
+    result = Array.newInstance(type, 0);
+    for (i = 0; i < values.size(); i++)
+      Array.set(result, i, EnumHelper.parse(type, values.get(i)));
+
+    return (Object[]) result;
+  }
+
+  /**
    * Returns the selected objects.
    *
    * @param parent	the parent container
@@ -118,26 +133,31 @@ public class EnumEditor
   @Override
   public Object[] getSelectedObjects(Container parent) {
     Object[]			result;
-    ApprovalDialog		dialog;
-    BaseList			list;
+    MultiLineValueDialog	dialog;
+    List<String> 		lines;
     Class			cls;
 
     cls  = EnumHelper.determineClass(getValue());
-    list = new BaseList(EnumHelper.getValues(cls));
-    list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-    dialog = new ApprovalDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
-    dialog.getContentPane().add(new BaseScrollPane(list), BorderLayout.CENTER);
-    dialog.pack();
-    dialog.setTitle(cls.getSimpleName());
+
+    if (GUIHelper.getParentDialog(parent) != null)
+      dialog = new MultiLineValueDialog(GUIHelper.getParentDialog(parent));
+    else
+      dialog = new MultiLineValueDialog(GUIHelper.getParentFrame(parent));
+    dialog.setPrefixCount("Count: ");
+    dialog.setInfoText("<html>Enter the enum values, one per line. Available options:<br>" + Utils.flatten(EnumHelper.getValues(cls), ", ") + "</html>");
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
 
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
-      result = list.getSelectedValuesList().toArray();
-    else
-      result = (Object[]) Array.newInstance(cls, 0);
+    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
+      lines = dialog.getValues();
+      result = newArray(lines, cls);
+    }
+    else {
+      result = newArray(new ArrayList<>(), cls);
+    }
 
     return result;
+
   }
 
   /**
