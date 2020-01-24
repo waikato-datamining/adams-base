@@ -15,7 +15,7 @@
 
 /*
  * SelectObjects.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
@@ -312,6 +312,10 @@ public class SelectObjects
       h = panel.mouseToPixelLocation(bottomRight).y - panel.mouseToPixelLocation(topLeft).y + 1;
     }
     rect = new SelectionRectangle(x, y, w, h, -1);
+
+    // ignore empty rectangles (which can occur with a stylus)
+    if ((w == 0) || (h == 0))
+      return;
 
     queue    = new ArrayList<>();
     objects  = new ArrayList<>();
