@@ -13,24 +13,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ClassifierHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.explorer;
+
+import weka.classifiers.evaluation.output.prediction.Null;
+import weka.gui.explorer.Explorer.ExplorerPanel;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import weka.classifiers.evaluation.output.prediction.Null;
-import weka.gui.explorer.Explorer.ExplorerPanel;
-
 /**
  * Manages the {@link ClassifierPanel}.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClassifierHandler
   extends AbstractExplorerPanelHandler {
@@ -45,7 +44,8 @@ public class ClassifierHandler
   public static final String KEY_COST_SENSITIVE_EVALUATION = "cost sensitive evaluation";
   public static final String KEY_OUTPUT_PREDICTIONS = "output predictions";
   public static final String KEY_ERROR_PLOT_POINT_SIZE = "error plot point size";
-  public static final String KEY_STORE_PREDICTIONS = "store predictions";
+  public static final String KEY_STORE_TESTDATA_PREDICTIONS = "store testdata and predictions";
+  public static final String KEY_COLLECT_PREDICTIONS_FOR_EVALUATION = "collect predictions for evaluation";
   public static final String KEY_OUTPUT_CONFUSION_MATRIX = "output confusion matrix";
   public static final String KEY_OUTPUT_ENTROPY = "output entropy";
   public static final String KEY_OUTPUT_PER_CLASS = "output per class";
@@ -104,7 +104,8 @@ public class ClassifierHandler
     options.put(KEY_OUTPUT_PER_CLASS, pnl.m_OutputPerClassBut.isSelected());
     options.put(KEY_OUTPUT_ENTROPY, pnl.m_OutputEntropyBut.isSelected());
     options.put(KEY_OUTPUT_CONFUSION_MATRIX, pnl.m_OutputConfusionBut.isSelected());
-    options.put(KEY_STORE_PREDICTIONS, pnl.m_StorePredictionsBut.isSelected());
+    options.put(KEY_STORE_TESTDATA_PREDICTIONS, pnl.m_StoreTestDataAndPredictionsBut.isSelected());
+    options.put(KEY_COLLECT_PREDICTIONS_FOR_EVALUATION, pnl.m_CollectPredictionsForEvaluationBut.isSelected());
     options.put(KEY_ERROR_PLOT_POINT_SIZE, pnl.m_errorPlotPointSizeProportionalToMargin.isSelected());
     options.put(KEY_OUTPUT_PREDICTIONS, pnl.m_ClassificationOutputEditor.getValue());
     if (pnl.m_EvalWRTCostsBut.isSelected())
@@ -159,7 +160,8 @@ public class ClassifierHandler
     restoreSelectedState(options, KEY_OUTPUT_PER_CLASS, true, pnl.m_OutputPerClassBut);
     restoreSelectedState(options, KEY_OUTPUT_ENTROPY, false, pnl.m_OutputEntropyBut);
     restoreSelectedState(options, KEY_OUTPUT_CONFUSION_MATRIX, true, pnl.m_OutputConfusionBut);
-    restoreSelectedState(options, KEY_STORE_PREDICTIONS, true, pnl.m_StorePredictionsBut);
+    restoreSelectedState(options, KEY_STORE_TESTDATA_PREDICTIONS, true, pnl.m_StoreTestDataAndPredictionsBut);
+    restoreSelectedState(options, KEY_COLLECT_PREDICTIONS_FOR_EVALUATION, true, pnl.m_CollectPredictionsForEvaluationBut);
     restoreGOE(options, KEY_OUTPUT_PREDICTIONS, new Null(), pnl.m_ClassificationOutputEditor);
     restoreSelectedState(options, KEY_COST_SENSITIVE_EVALUATION, false, pnl.m_EvalWRTCostsBut);
     if (pnl.m_EvalWRTCostsBut.isSelected())
