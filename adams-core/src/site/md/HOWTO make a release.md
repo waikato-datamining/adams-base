@@ -103,7 +103,8 @@ Commands
 
 * increment adams version in all other dependent modules
 
-* copy target/*-bin.zip files and test them
+* copy from "target" all -bin.zip/.deb/.rpm files into the release folder and 
+  test them 
 
   * adams-addons-all
   * adams-annotator
