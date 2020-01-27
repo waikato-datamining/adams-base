@@ -15,17 +15,20 @@
 
 /*
  * PackageManager.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
+import adams.core.ClassLister;
 import adams.core.logging.LoggingLevel;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.ConsolePanel.ConsolePanelOutputStream;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.GUIPrompt;
+import adams.gui.dialog.ApprovalDialog;
 import weka.core.WekaPackageManager;
 
 import java.io.PrintStream;
@@ -34,13 +37,14 @@ import java.io.PrintStream;
  * Opens the WEKA PackageManager.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PackageManager
   extends AbstractWekaMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = 3941702242700593202L;
+
+  public static final String PROMPT = "StaticClassDiscoveryPackageManagerPrompted";
 
   /**
    * Initializes the menu item with no owner.
@@ -63,6 +67,19 @@ public class PackageManager
    */
   @Override
   public void launch() {
+    int		retVal;
+
+    retVal = ApprovalDialog.APPROVE_OPTION;
+    if (ClassLister.getSingleton().isStatic() && !GUIPrompt.getSingleton().getBoolean(PROMPT, false)) {
+      retVal = GUIHelper.showConfirmMessage(
+        null,
+        "Class discovery is set to static use. If you want to use additional "
+	  + "Weka packages, you need to enable dynamic discovery again.\n"
+	  + "See adams-core-manual.pdf, chapter 'Applications without dynamic class discovery'.");
+      GUIPrompt.getSingleton().setBoolean(PROMPT, (retVal == ApprovalDialog.APPROVE_OPTION));
+    }
+    if (retVal != ApprovalDialog.APPROVE_OPTION)
+      return;
     WekaPackageManager.establishCacheIfNeeded(new PrintStream(new ConsolePanelOutputStream(LoggingLevel.INFO)));
     createChildFrame(new weka.gui.PackageManager(), GUIHelper.getDefaultDialogDimension());
   }
