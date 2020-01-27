@@ -15,7 +15,7 @@
 
 /*
  * ClassLister.java
- * Copyright (C) 2007-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -92,6 +92,9 @@ public class ClassLister
   /** the singleton. */
   protected static ClassLister m_Singleton;
 
+  /** whether static or dynamic discovery is used. */
+  protected boolean m_Static = false;
+
   /**
    * Initializes the classlister.
    */
@@ -101,7 +104,6 @@ public class ClassLister
     long start = System.currentTimeMillis();
 
     // static?
-    boolean isStatic = false;
     InputStream classes = null;
     InputStream packages = null;
     try {
@@ -117,7 +119,7 @@ public class ClassLister
 	  setPackages(propsPackages);
 	  setBlacklist(new Properties());
 	  System.out.println(getClass().getName() + ": Using statically defined classes/packages");
-	  isStatic = true;
+	  m_Static = true;
 	}
       }
     }
@@ -129,7 +131,7 @@ public class ClassLister
       FileUtils.closeQuietly(packages);
     }
 
-    if (!isStatic) {
+    if (!m_Static) {
       System.out.println(getClass().getName() + ": Using dynamic class discovery");
       setPackages(Environment.getInstance().read(ClassListerDefinition.KEY));
       setBlacklist(Environment.getInstance().read(ClassListerBlacklistDefinition.KEY));
@@ -139,6 +141,15 @@ public class ClassLister
 
     long end = System.currentTimeMillis();
     System.out.println(getClass().getName() + ": Time taken to initialize classes " + (end - start) + " msec");
+  }
+
+  /**
+   * Returns whether static or dynamic discivery is being used.
+   *
+   * @return		true if static
+   */
+  public boolean isStatic() {
+    return m_Static;
   }
 
   /**
