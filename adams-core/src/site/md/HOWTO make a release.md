@@ -28,6 +28,11 @@ Commands
   * fix all missing licenses in `src/license/THIRD-PARTY.properties`
   * commit/push changes
 
+* for skipping unit tests, e.g., for a follow-up release, use the `MAVEN_OPTS`
+  environment variable:
+  
+  `export MAVEN_OPTS="$MAVEN_OPTS -DskipTests=true"` 
+
 * adams-base
 
   * `mvn --batch-mode release:prepare release:perform`
