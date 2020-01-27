@@ -146,16 +146,16 @@ Uploads/updates
   bin/launcher.sh -main adams.core.ClassLister -super adams.data.conversion.Conversion > conversions.txt
   ```
 
-* create a new directory on sf.net and upload the -bin.zip files via SFTP:
+* create a new directory on sf.net and upload the -bin.zip/.deb/.rpm files via SFTP:
 
   * adams-addons-all
-  * adams-annotator
   * adams-base-all
   * adams-basic-app
-  * adams-deeplearning-spectral-app
   * adams-dex-app
   * adams-ml-app
   * adams-spectral-app
+  * multiway-algorithms-cuda-8.0
+  * multiway-algorithms-cuda-9.2
 
 * create a README.md (markdown style) and upload this to the sf.net directory
   as well
