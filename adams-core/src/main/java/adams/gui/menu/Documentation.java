@@ -15,7 +15,7 @@
 
 /*
  * Documentation.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -30,6 +30,7 @@ import adams.core.io.lister.LocalDirectoryLister;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
+import adams.gui.core.BaseMenu;
 import adams.gui.core.ConsolePanel;
 
 import javax.swing.JMenu;
@@ -46,7 +47,6 @@ import java.util.logging.Level;
  * Displays all available PDF documents in the documentation directories.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see AbstractApplicationFrame#setDocumentationDirectories(PlaceholderDirectory[])
  */
 public class Documentation
@@ -106,11 +106,12 @@ public class Documentation
    */
   @Override
   public JMenuItem getMenuItem() {
-    JMenu		result;
-    List<File>		files;
-    String[]		docs;
-    JMenuItem		menuitem;
-    LocalDirectoryLister lister;
+    JMenu			result;
+    List<File>			files;
+    String[]			docs;
+    JMenuItem			menuitem;
+    List<JMenuItem>		menuitems;
+    LocalDirectoryLister 	lister;
 
     files = new ArrayList<>();
     for (PlaceholderDirectory dir: m_Owner.getDocumentationDirectories()) {
@@ -133,10 +134,8 @@ public class Documentation
 
     Collections.sort(files, new FileComparator(false, true));
     
-    result = new JMenu();
-    result.setIcon(getIcon());
-    result.setText(getTitle());
 
+    menuitems = new ArrayList<>();
     for (final File file: files) {
       menuitem = new JMenuItem(FileUtils.replaceExtension(file, "").getName());
       menuitem.addActionListener((ActionEvent e) -> {
@@ -147,9 +146,13 @@ public class Documentation
           ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to open documentation: " + file, ex);
         }
       });
-      result.add(menuitem);
+      menuitems.add(menuitem);
     }
-    
+
+    result = BaseMenu.createCascadingMenu(menuitems, -1, "More...");
+    result.setIcon(getIcon());
+    result.setText(getTitle());
+
     return result;
   }
   
