@@ -15,13 +15,14 @@
 
 /*
  * AbstractContentHandler.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import adams.core.ClassLister;
 import adams.core.io.FileUtils;
 import adams.core.option.AbstractOptionHandler;
+import com.googlecode.jfilechooserbookmarks.core.Utils;
 import nz.ac.waikato.cms.locator.ClassCompare;
 
 import javax.swing.JPanel;
@@ -93,12 +94,14 @@ public abstract class AbstractContentHandler
 
     msg = checkFile(file);
     if (msg == null) {
-      return createPreview(file);
+      try {
+        return createPreview(file);
+      }
+      catch (Exception e) {
+        msg = "Failed to create preview with " + getClass().getName() + ":\n\n" + Utils.throwableToString(e);
+      }
     }
-    else {
-      getLogger().severe(msg);
-      return new NoPreviewAvailablePanel();
-    }
+    return new NoPreviewAvailablePanel(msg);
   }
 
   /**
