@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsSpreadSheetReader.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -30,17 +30,21 @@ import adams.data.spreadsheet.rowfinder.AllFinder;
 import adams.data.spreadsheet.rowfinder.RowFinder;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import gnu.trove.list.TDoubleList;
+import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
  * Reads object locations from a spreadsheet into a report.<br>
  * Top&#47;left column is required.<br>
  * Either right&#47;bottom or width&#47;height need to be supplied.<br>
+ * In addition, polygon coordinates (X and Y coordinates as comma-separated lists in two separate columns) can be read as well.<br>
  * If the coordinates&#47;dimensions represent normalized ones (ie 0-1), then specify the width&#47;height of the image to relate them back to actual pixel-based sizes.
  * <br><br>
  <!-- globalinfo-end -->
@@ -102,6 +106,20 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  *
+ * <pre>-col-polygon-x &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: colPolygonX)
+ * &nbsp;&nbsp;&nbsp;The column containing the X coordinates of the polygon (comma-separated
+ * &nbsp;&nbsp;&nbsp;list of coordinates); cannot be used without bounding box.
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ *
+ * <pre>-col-polygon-y &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: colPolygonY)
+ * &nbsp;&nbsp;&nbsp;The column containing the Y coordinates of the polygon (comma-separated
+ * &nbsp;&nbsp;&nbsp;list of coordinates); cannot be used without bounding box.
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ *
  * <pre>-col-type &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: colType)
  * &nbsp;&nbsp;&nbsp;The column containing the object label.
  * &nbsp;&nbsp;&nbsp;default:
@@ -109,7 +127,8 @@ import java.util.List;
  * </pre>
  *
  * <pre>-range-meta-data &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: rangeMetaData)
- * &nbsp;&nbsp;&nbsp;The columns to store as meta-data.
+ * &nbsp;&nbsp;&nbsp;The columns to store as meta-data; all other columns get automatically excluded
+ * &nbsp;&nbsp;&nbsp;from the meta-data.
  * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
@@ -175,6 +194,12 @@ public class ObjectLocationsSpreadSheetReader
   /** the column with the height. */
   protected SpreadSheetColumnIndex m_ColHeight;
 
+  /** the column with the polygon X coordinates. */
+  protected SpreadSheetColumnIndex m_ColPolygonX;
+
+  /** the column with the polygon Y coordinates. */
+  protected SpreadSheetColumnIndex m_ColPolygonY;
+
   /** the column with the label. */
   protected SpreadSheetColumnIndex m_ColType;
 
@@ -206,6 +231,8 @@ public class ObjectLocationsSpreadSheetReader
     return "Reads object locations from a spreadsheet into a report.\n"
       + "Top/left column is required.\n"
       + "Either right/bottom or width/height need to be supplied.\n"
+      + "In addition, polygon coordinates (X and Y coordinates as comma-separated "
+      + "lists in two separate columns) can be read as well.\n"
       + "If the coordinates/dimensions represent normalized ones (ie 0-1), "
       + "then specify the width/height of the image to relate them back to "
       + "actual pixel-based sizes.";
@@ -248,6 +275,14 @@ public class ObjectLocationsSpreadSheetReader
 
     m_OptionManager.add(
       "col-height", "colHeight",
+      new SpreadSheetColumnIndex());
+
+    m_OptionManager.add(
+      "col-polygon-x", "colPolygonX",
+      new SpreadSheetColumnIndex());
+
+    m_OptionManager.add(
+      "col-polygon-y", "colPolygonY",
       new SpreadSheetColumnIndex());
 
     m_OptionManager.add(
@@ -494,6 +529,7 @@ public class ObjectLocationsSpreadSheetReader
 
   /**
    * Returns the column containing the height coordinate.
+   * Cannot be used without bounding box.
    *
    * @return		the column
    */
@@ -509,6 +545,67 @@ public class ObjectLocationsSpreadSheetReader
    */
   public String colHeightTipText() {
     return "The column containing the height coordinate.";
+  }
+
+  /**
+   * Sets the column containing the X coordinates of the polygon (comma-separated list of coordinates).
+   * Cannot be used without bounding box.
+   *
+   * @param value	the column
+   */
+  public void setColPolygonX(SpreadSheetColumnIndex value) {
+    m_ColPolygonX = value;
+    reset();
+  }
+
+  /**
+   * Returns the column containing the X coordinates of the polygon (comma-separated list of coordinates).
+   *
+   * @return		the column
+   */
+  public SpreadSheetColumnIndex getColPolygonX() {
+    return m_ColPolygonX;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String colPolygonXTipText() {
+    return "The column containing the X coordinates of the polygon (comma-separated list of coordinates); cannot be used without bounding box.";
+  }
+
+  /**
+   * Sets the column containing the Y coordinates of the polygon (comma-separated list of coordinates).
+   * Cannot be used without bounding box.
+   *
+   * @param value	the column
+   */
+  public void setColPolygonY(SpreadSheetColumnIndex value) {
+    m_ColPolygonY = value;
+    reset();
+  }
+
+  /**
+   * Returns the column containing the Y coordinates of the polygon (comma-separated list of coordinates).
+   * Cannot be used without bounding box.
+   *
+   * @return		the column
+   */
+  public SpreadSheetColumnIndex getColPolygonY() {
+    return m_ColPolygonY;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String colPolygonYTipText() {
+    return "The column containing the Y coordinates of the polygon (comma-separated list of coordinates); cannot be used without bounding box.";
   }
 
   /**
@@ -759,6 +856,64 @@ public class ObjectLocationsSpreadSheetReader
   }
 
   /**
+   * Parses comma-separated list of coordinates and returns a double array.
+   *
+   * @param coords	the coordinates to parse
+   * @return		the parsed values, empty array if failed to parse
+   */
+  protected double[] parseCoords(String coords) {
+    TDoubleList		result;
+
+    result = new TDoubleArrayList();
+    try {
+      for (String coord: coords.split(","))
+        result.add(Double.parseDouble(coord));
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to parse coordinates '" + coords + "'!", e);
+      result = new TDoubleArrayList();
+    }
+
+    return result.toArray();
+  }
+
+  /**
+   * Multiplies the coordinates by the specified factor (in-place).
+   *
+   * @param coords	the coordinates to update
+   * @param factor	the factor to use
+   * @return		the updated coordinates
+   */
+  protected double[] multipleCoords(double[] coords, double factor) {
+    int		i;
+
+    for (i = 0; i < coords.length; i++)
+      coords[i] = coords[i] * factor;
+
+    return coords;
+  }
+
+  /**
+   * Turns the coordinates into a comma-separated list.
+   *
+   * @param coords	the coordinates to convert
+   * @return		the comma-separated list
+   */
+  protected String coordsToList(double[] coords) {
+    StringBuilder	result;
+    int			i;
+
+    result = new StringBuilder();
+    for (i = 0; i < coords.length; i++) {
+      if (i > 0)
+        result.append(",");
+      result.append("" + coords[i]);
+    }
+
+    return result.toString();
+  }
+
+  /**
    * Performs the actual reading.
    *
    * @return		the reports that were read
@@ -773,6 +928,8 @@ public class ObjectLocationsSpreadSheetReader
     int			bottom;
     int			width;
     int			height;
+    int			polyX;
+    int			polyY;
     int			type;
     int[]		meta;
     TIntSet		metaSet;
@@ -808,6 +965,10 @@ public class ObjectLocationsSpreadSheetReader
     width = m_ColWidth.getIntIndex();
     m_ColHeight.setData(sheet);
     height = m_ColHeight.getIntIndex();
+    m_ColPolygonX.setData(sheet);
+    polyX = m_ColPolygonX.getIntIndex();
+    m_ColPolygonY.setData(sheet);
+    polyY = m_ColPolygonY.getIntIndex();
     m_ColType.setData(sheet);
     type = m_ColType.getIntIndex();
 
@@ -846,6 +1007,8 @@ public class ObjectLocationsSpreadSheetReader
     metaSet.remove(bottom);
     metaSet.remove(width);
     metaSet.remove(height);
+    metaSet.remove(polyX);
+    metaSet.remove(polyY);
     metaSet.remove(type);
     meta = metaSet.toArray();
 
@@ -866,6 +1029,14 @@ public class ObjectLocationsSpreadSheetReader
 	    (int) (row.getCell(right).toDouble() * m_Width - row.getCell(left).toDouble() * m_Width),
 	    (int) (row.getCell(bottom).toDouble() * m_Height - row.getCell(top).toDouble() * m_Height));
 	}
+	if (polyX != -1)
+	  object.getMetaData().put(
+	    LocatedObject.KEY_POLY_X,
+	    coordsToList(multipleCoords(parseCoords(row.getCell(polyX).getContent()), m_Width)));
+	if (polyY != -1)
+	  object.getMetaData().put(
+	    LocatedObject.KEY_POLY_Y,
+	    coordsToList(multipleCoords(parseCoords(row.getCell(polyY).getContent()), m_Height)));
       }
       else {
 	if (width != -1) {
@@ -882,6 +1053,14 @@ public class ObjectLocationsSpreadSheetReader
 	    row.getCell(right).toDouble().intValue() - row.getCell(left).toDouble().intValue() + 1,
 	    row.getCell(bottom).toDouble().intValue() - row.getCell(top).toDouble().intValue() + 1);
 	}
+	if (polyX != -1)
+	  object.getMetaData().put(
+	    LocatedObject.KEY_POLY_X,
+	    coordsToList(parseCoords(row.getCell(polyX).getContent())));
+	if (polyY != -1)
+	  object.getMetaData().put(
+	    LocatedObject.KEY_POLY_Y,
+	    coordsToList(parseCoords(row.getCell(polyY).getContent())));
       }
       for (int m: meta)
         object.getMetaData().put(sheet.getColumnName(m), row.getCell(m).getNative());
