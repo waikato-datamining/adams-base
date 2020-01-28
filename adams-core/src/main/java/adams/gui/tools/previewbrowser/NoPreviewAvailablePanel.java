@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NoPreviewAvailablePanel.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -23,7 +23,6 @@ package adams.gui.tools.previewbrowser;
  * Dummy preview if no preview is available.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NoPreviewAvailablePanel
   extends PreviewPanel {
@@ -37,5 +36,15 @@ public class NoPreviewAvailablePanel
   public NoPreviewAvailablePanel() {
     super(new MessagePanel());
     ((MessagePanel) getContent()).setMessage("No preview available");
+  }
+
+  /**
+   * Initializes the panel with a message.
+   *
+   * @param msg 	the message
+   */
+  public NoPreviewAvailablePanel(String msg) {
+    super(new MessagePanel());
+    ((MessagePanel) getContent()).setMessage("No preview available:\n\n" + msg);
   }
 }
