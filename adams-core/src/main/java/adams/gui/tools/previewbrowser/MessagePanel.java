@@ -13,23 +13,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMessagePanel.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JLabel;
-
+import adams.core.net.HtmlUtils;
 import adams.gui.core.BasePanel;
 
+import javax.swing.JLabel;
+import java.awt.BorderLayout;
+
 /**
- * Allows the display of a message.
+ * Allows the display of a message. Automatically converts text with multiple
+ * lines into HTML to properly display it.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MessagePanel
   extends BasePanel {
@@ -57,6 +57,11 @@ public class MessagePanel
    * @param value	the message
    */
   public void setMessage(String value) {
+    if (value.contains("\n") && !value.toLowerCase().startsWith("<html>")) {
+      value = HtmlUtils.toHTML(value);
+      value = HtmlUtils.convertLines(value, true);
+      value = "<html>" + value + "</html>";
+    }
     m_LabelMessage.setText(value);
   }
 
