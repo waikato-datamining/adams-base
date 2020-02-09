@@ -15,7 +15,7 @@
 
 /*
  * AggregateEvaluations.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -180,7 +180,9 @@ public class AggregateEvaluations
    * @return		null if successfully added, otherwise error message
    */
   public String add(SpreadSheet sheet, int colAct, int colPred, int colWeight, int[] colsDist, boolean useColNamesAsLabels) {
+    String[]			actualLabels;
     double[]			actual;
+    String[]			predictedLabels;
     double[]			predicted;
     double[][]			dist;
     double[]			weight;
@@ -189,18 +191,10 @@ public class AggregateEvaluations
     List<String>		labels;
     String			name;
     double[]			clsDist;
+    boolean			classification;
 
-    actual    = SpreadSheetUtils.getNumericColumn(sheet, colAct);
-    predicted = SpreadSheetUtils.getNumericColumn(sheet, colPred);
-    if (actual.length != predicted.length)
-      return "Number of actual and predicted values differ: " + actual.length + " != " + predicted.length;
-
-    weight = null;
-    if (colWeight > -1) {
-      weight = SpreadSheetUtils.getNumericColumn(sheet, colWeight);
-      if (actual.length != weight.length)
-	return "Number of actual and weight values differ: " + actual.length + " != " + weight.length;
-    }
+    labels = null;
+    classification = false;
 
     dist = null;
     if ((colsDist != null) && (colsDist.length == 0))
@@ -209,13 +203,12 @@ public class AggregateEvaluations
       dist = new double[colsDist.length][];
       for (i = 0; i < colsDist.length; i++) {
 	dist[i] = SpreadSheetUtils.getNumericColumn(sheet, colsDist[i]);
-	if (actual.length != dist[i].length)
-	  return "Number of actual and class distribution (col #" + (colsDist[i] + 1) + ") values differ: " + actual.length + " != " + dist[i].length;
       }
     }
 
     // class labels
     if ((colsDist != null)) {
+      classification = true;
       labels = new ArrayList<>();
       for (i = 0; i < dist.length; i++) {
 	if (useColNamesAsLabels) {
@@ -231,16 +224,78 @@ public class AggregateEvaluations
       setClassLabels(labels);
     }
 
+    if (!sheet.isNumeric(colAct)) {
+      // do we need to determine class labels ourselves?
+      if (labels == null) {
+	classification = true;
+	labels = new ArrayList<>();
+	actualLabels = SpreadSheetUtils.getColumn(sheet, colAct, true, true, "?");
+	for (String label: actualLabels) {
+	  if (label.equals("?"))
+	    continue;
+	  labels.add(label);
+	}
+	setClassLabels(labels);
+      }
+
+      actualLabels = SpreadSheetUtils.getColumn(sheet, colAct, false, false, "?");
+      actual = new double[actualLabels.length];
+      for (i = 0; i < actualLabels.length; i++) {
+        if (actualLabels[i].equals("?"))
+          actual[i] = weka.core.Utils.missingValue();
+        else
+          actual[i] = labels.indexOf(actualLabels[i]);
+      }
+      predictedLabels = SpreadSheetUtils.getColumn(sheet, colPred, false, false, "?");
+      predicted = new double[predictedLabels.length];
+      for (i = 0; i < predictedLabels.length; i++) {
+        if (predictedLabels[i].equals("?"))
+          predicted[i] = weka.core.Utils.missingValue();
+        else
+          predicted[i] = labels.indexOf(predictedLabels[i]);
+      }
+    }
+    else {
+      actual = SpreadSheetUtils.getNumericColumn(sheet, colAct);
+      predicted = SpreadSheetUtils.getNumericColumn(sheet, colPred);
+    }
+    if (actual.length != predicted.length)
+      return "Number of actual and predicted values differ: " + actual.length + " != " + predicted.length;
+
+    if (colsDist != null) {
+      for (i = 0; i < colsDist.length; i++) {
+	if (actual.length != dist[i].length)
+	  return "Number of actual and class distribution (col #" + (colsDist[i] + 1) + ") values differ: " + actual.length + " != " + dist[i].length;
+      }
+    }
+
+    weight = null;
+    if (colWeight > -1) {
+      weight = SpreadSheetUtils.getNumericColumn(sheet, colWeight);
+      if (actual.length != weight.length)
+	return "Number of actual and weight values differ: " + actual.length + " != " + weight.length;
+    }
+
     // add predictions
     for (i = 0; i < actual.length; i++) {
-      if (dist != null) {
-	clsDist = new double[dist.length];
-	for (n = 0; n < clsDist.length; n++)
-	  clsDist[n] = dist[n][i];
-	if (weight != null)
-	  add(new NominalPrediction(actual[i], clsDist, weight[i]));
-	else
-	  add(new NominalPrediction(actual[i], clsDist));
+      if (classification) {
+	if (dist != null) {
+	  clsDist = new double[dist.length];
+	  for (n = 0; n < clsDist.length; n++)
+	    clsDist[n] = dist[n][i];
+	  if (weight != null)
+	    add(new NominalPrediction(actual[i], clsDist, weight[i]));
+	  else
+	    add(new NominalPrediction(actual[i], clsDist));
+	}
+	else {
+	  clsDist = new double[labels.size()];
+	  clsDist[(int) predicted[i]] = 1.0;
+	  if (weight != null)
+	    add(new NominalPrediction(actual[i], clsDist, weight[i]));
+	  else
+	    add(new NominalPrediction(actual[i], clsDist));
+	}
       }
       else {
         if (weight != null)
