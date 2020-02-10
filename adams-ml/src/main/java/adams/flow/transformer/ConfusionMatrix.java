@@ -15,18 +15,22 @@
 
 /*
  * ConfusionMatrix.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseObject;
+import adams.core.base.BaseString;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.core.Token;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -117,10 +121,14 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: COUNTS
  * </pre>
  *
+ * <pre>-class-labels &lt;adams.core.base.BaseString&gt; [-class-labels ...] (property: classLabels)
+ * &nbsp;&nbsp;&nbsp;The class labels to use for enforcing order other than alphabetical.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ConfusionMatrix
   extends AbstractSpreadSheetTransformer {
@@ -153,6 +161,9 @@ public class ConfusionMatrix
 
   /** what values to generate. */
   protected MatrixValues m_MatrixValues;
+
+  /** the class labels to use (to enforce ordering other than sorted). */
+  protected BaseString[] m_ClassLabels;
 
   /**
    * Returns a string describing the object.
@@ -198,6 +209,10 @@ public class ConfusionMatrix
     m_OptionManager.add(
       "matrix-values", "matrixValues",
       MatrixValues.COUNTS);
+
+    m_OptionManager.add(
+      "class-labels", "classLabels",
+      new BaseString[0]);
   }
 
   /**
@@ -392,6 +407,35 @@ public class ConfusionMatrix
   }
 
   /**
+   * Sets the class labels to use for enforcing order other than alphabetical.
+   *
+   * @param value	the labels
+   */
+  public void setClassLabels(BaseString[] value) {
+    m_ClassLabels = value;
+    reset();
+  }
+
+  /**
+   * Returns the class labels to use for enforcing order other than alphabetical.
+   *
+   * @return		the labels
+   */
+  public BaseString[] getClassLabels() {
+    return m_ClassLabels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classLabelsTipText() {
+    return "The class labels to use for enforcing order other than alphabetical.";
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -405,6 +449,7 @@ public class ConfusionMatrix
     int			probCol;
     SpreadSheet		matrix;
     Row			row;
+    List<String> 	labels;
     List<String> 	actLabels;
     List<String> 	predLabels;
     Map<String,Integer> actIndices;
@@ -416,7 +461,6 @@ public class ConfusionMatrix
     int			i;
     int			n;
     int			sum;
-    double		val;
 
     result = null;
     sheet  = (SpreadSheet) m_InputToken.getPayload();
@@ -431,22 +475,45 @@ public class ConfusionMatrix
     else if (predCol == -1)
       result = "Predicted column not found: " + m_PredictedColumn;
 
+    // determine class labels
     if (result == null) {
-      // set up matrix
-      actIndices = new HashMap<>();
+      actIndices  = new HashMap<>();
       predIndices = new HashMap<>();
-      actLabels = sheet.getCellValues(actCol);
-      predLabels = sheet.getCellValues(predCol);
-      for (String label: actLabels) {
-	if (!predLabels.contains(label))
-	  predLabels.add(label);
+
+      // set up matrix
+      if (m_ClassLabels.length > 0) {
+	actLabels = new ArrayList<>(Arrays.asList(BaseObject.toStringArray(m_ClassLabels)));
+	predLabels = new ArrayList<>(Arrays.asList(BaseObject.toStringArray(m_ClassLabels)));
+	// add missing labels
+	labels = sheet.getCellValues(actCol);
+	for (String label: labels) {
+	  if (actLabels.indexOf(label) == -1)
+	    actLabels.add(label);
+	  if (predLabels.indexOf(label) == -1)
+	    predLabels.add(label);
+	}
+	labels = sheet.getCellValues(predCol);
+	for (String label: labels) {
+	  if (actLabels.indexOf(label) == -1)
+	    actLabels.add(label);
+	  if (predLabels.indexOf(label) == -1)
+	    predLabels.add(label);
+	}
       }
-      for (String label: predLabels) {
-	if (!actLabels.contains(label))
-	  actLabels.add(label);
+      else {
+	actLabels = sheet.getCellValues(actCol);
+	predLabels = sheet.getCellValues(predCol);
+	for (String label : actLabels) {
+	  if (!predLabels.contains(label))
+	    predLabels.add(label);
+	}
+	for (String label : predLabels) {
+	  if (!actLabels.contains(label))
+	    actLabels.add(label);
+	}
+	Collections.sort(predLabels);
+	Collections.sort(actLabels);
       }
-      Collections.sort(predLabels);
-      Collections.sort(actLabels);
       // missing?
       for (Row r: sheet.rows()) {
         if ((r.hasCell(actCol) && r.getCell(actCol).isMissing())
