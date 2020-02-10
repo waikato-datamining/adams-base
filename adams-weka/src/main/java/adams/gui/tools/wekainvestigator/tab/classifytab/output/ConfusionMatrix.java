@@ -15,12 +15,13 @@
 
 /*
  * ConfusionMatrix.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.MessageCollection;
+import adams.core.base.BaseString;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
@@ -33,6 +34,9 @@ import adams.gui.tools.wekainvestigator.output.TableContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Evaluation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Displays the confusion matrix.
@@ -240,10 +244,15 @@ public class ConfusionMatrix
     SpreadSheetTable				table;
     adams.flow.transformer.ConfusionMatrix	matrix;
     String					msg;
+    List<BaseString> 				labels;
+    int						i;
 
     if (!eval.getHeader().classAttribute().isNominal())
       return null;
 
+    labels = new ArrayList<>();
+    for (i = 0; i < eval.getHeader().classAttribute().numValues(); i++)
+      labels.add(new BaseString(eval.getHeader().classAttribute().value(i)));
     sheet = PredictionHelper.toSpreadSheet(
       this, errors, eval, null, null, false, false, true, false, false);
     if (sheet == null) {
@@ -255,6 +264,7 @@ public class ConfusionMatrix
     matrix.setMatrixValues(m_MatrixValues);
     matrix.setActualColumn(new SpreadSheetColumnIndex("Actual"));
     matrix.setPredictedColumn(new SpreadSheetColumnIndex("Predicted"));
+    matrix.setClassLabels(labels.toArray(new BaseString[0]));
     if (m_UseProbabilities)
       matrix.setProbabilityColumn(new SpreadSheetColumnIndex("Probability"));
     msg = matrix.setUp();
