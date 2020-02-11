@@ -15,7 +15,7 @@
 
 /*
  * WekaSpreadSheetToPredictions.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -24,7 +24,7 @@ import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
-import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 import adams.flow.core.Token;
 import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Evaluation;
@@ -95,10 +95,10 @@ import weka.classifiers.Evaluation;
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  * 
- * <pre>-class-distribution &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: classDistribution)
+ * <pre>-class-distribution &lt;adams.data.spreadsheet.SpreadSheetUnorderedColumnRange&gt; (property: classDistribution)
  * &nbsp;&nbsp;&nbsp;The columns containing the class distribution (nominal class).
- * &nbsp;&nbsp;&nbsp;default: 
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  * 
  * <pre>-column-names-as-class-labels &lt;boolean&gt; (property: useColumnNamesAsClassLabels)
@@ -132,7 +132,7 @@ public class WekaSpreadSheetToPredictions
   protected SpreadSheetColumnIndex m_Predicted;
 
   /** the columns with the class distributions. */
-  protected SpreadSheetColumnRange m_ClassDistribution;
+  protected SpreadSheetUnorderedColumnRange m_ClassDistribution;
 
   /** whether to use the column name as class labels. */
   protected boolean m_UseColumnNamesAsClassLabels;
@@ -180,7 +180,7 @@ public class WekaSpreadSheetToPredictions
 
     m_OptionManager.add(
       "class-distribution", "classDistribution",
-      new SpreadSheetColumnRange(""));
+      new SpreadSheetUnorderedColumnRange(""));
 
     m_OptionManager.add(
       "column-names-as-class-labels", "useColumnNamesAsClassLabels",
@@ -254,7 +254,7 @@ public class WekaSpreadSheetToPredictions
    *
    * @param value	the range
    */
-  public void setClassDistribution(SpreadSheetColumnRange value) {
+  public void setClassDistribution(SpreadSheetUnorderedColumnRange value) {
     m_ClassDistribution = value;
     reset();
   }
@@ -264,7 +264,7 @@ public class WekaSpreadSheetToPredictions
    *
    * @return		the range
    */
-  public SpreadSheetColumnRange getClassDistribution() {
+  public SpreadSheetUnorderedColumnRange getClassDistribution() {
     return m_ClassDistribution;
   }
 
