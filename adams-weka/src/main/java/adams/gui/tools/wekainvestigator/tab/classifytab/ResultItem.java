@@ -153,6 +153,8 @@ public class ResultItem
     m_RunInformation       = runInfo;
     m_OriginalIndices      = original;
     m_AdditionalAttributes = additional;
+
+    invalidateName();
   }
 
   /**
@@ -189,6 +191,15 @@ public class ResultItem
    */
   public Evaluation[] getFoldEvaluations() {
     return m_FoldEvaluations;
+  }
+
+  /**
+   * Sets the stored template object.
+   *
+   * @param value	the template
+   */
+  public void setTemplate(Classifier value) {
+    m_Template = value;
   }
 
   /**

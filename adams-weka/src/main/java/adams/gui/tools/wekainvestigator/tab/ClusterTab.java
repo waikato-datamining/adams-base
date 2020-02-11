@@ -15,7 +15,7 @@
 
 /*
  * ClusterTab.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -843,7 +843,10 @@ public class ClusterTab
         try {
           item = m_CurrentEvaluation.init(m_CurrentClusterer);
           m_CurrentEvaluation.addToHistory(m_History, item);
+          String entry = item.getName();
           m_CurrentEvaluation.evaluate(m_CurrentClusterer, item);
+          if (!entry.equals(item.getName()))
+            m_History.renameEntry(entry, item.getName());
           logMessage("Finished evaluation '" + m_CurrentEvaluation.getName() + "' using: " + OptionUtils.getCommandLine(m_CurrentClusterer));
         }
         catch (Exception e) {

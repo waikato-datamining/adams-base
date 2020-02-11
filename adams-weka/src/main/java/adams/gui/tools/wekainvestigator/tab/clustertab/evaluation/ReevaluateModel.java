@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ReevaluateModel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
@@ -51,7 +51,6 @@ import java.util.Set;
  * Re-evaluates a serialized model.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReevaluateModel
   extends AbstractClustererEvaluation {
@@ -263,6 +262,7 @@ public class ReevaluateModel
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);
 
+    item.setTemplate(clusterer);
     dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
     data     = dataCont.getData();
     runInfo  = new MetaData();
@@ -278,6 +278,7 @@ public class ReevaluateModel
     eval.evaluateClusterer(data);
 
     item.update(eval, m_Model, runInfo);
+    item.invalidateName();
   }
 
   /**

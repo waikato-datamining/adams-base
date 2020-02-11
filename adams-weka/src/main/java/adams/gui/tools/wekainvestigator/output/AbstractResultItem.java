@@ -94,6 +94,13 @@ public abstract class AbstractResultItem
   }
 
   /**
+   * Invalidates the name.
+   */
+  public void invalidateName() {
+    m_Name = null;
+  }
+
+  /**
    * Returns whether an training set header is present.
    * 
    * @return		true if available

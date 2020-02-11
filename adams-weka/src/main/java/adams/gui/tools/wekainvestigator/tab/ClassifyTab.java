@@ -911,7 +911,10 @@ public class ClassifyTab
 	try {
           item = m_CurrentEvaluation.init(m_CurrentClassifier);
           m_CurrentEvaluation.addToHistory(m_History, item);
+          String entry = item.getName();
 	  m_CurrentEvaluation.evaluate(m_CurrentClassifier, item);
+	  if (!entry.equals(item.getName()))
+	    m_History.renameEntry(entry, item.getName());
 	}
 	catch (Exception e) {
 	  logError("Failed to evaluate classifier", e, "Classifier evaluation");

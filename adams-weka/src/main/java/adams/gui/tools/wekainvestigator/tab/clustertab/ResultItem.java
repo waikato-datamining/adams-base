@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ResultItem.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.clustertab;
@@ -35,7 +35,6 @@ import java.io.Serializable;
  * result history.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ResultItem
   extends AbstractResultItem {
@@ -149,6 +148,15 @@ public class ResultItem
    */
   public ClusterEvaluation getEvaluation() {
     return m_Evaluation;
+  }
+
+  /**
+   * Sets the stored template object.
+   *
+   * @param value	the template
+   */
+  public void setTemplate(Clusterer value) {
+    m_Template = value;
   }
 
   /**

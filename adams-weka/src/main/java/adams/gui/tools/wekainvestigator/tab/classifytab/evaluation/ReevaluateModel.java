@@ -15,7 +15,7 @@
 
 /*
  * ReevaluateModel.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -60,7 +60,6 @@ import java.util.Set;
  * Re-evaluates a serialized model.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReevaluateModel
   extends AbstractClassifierEvaluation {
@@ -306,6 +305,7 @@ public class ReevaluateModel
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
+    item.setTemplate(classifier);
     dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
     data     = dataCont.getData();
     discard  = m_CheckBoxDiscardPredictions.isSelected();
