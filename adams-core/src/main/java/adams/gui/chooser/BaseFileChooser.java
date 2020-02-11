@@ -15,7 +15,7 @@
 
 /*
  * BaseFileChooser.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -45,7 +45,6 @@ import java.io.File;
  * <a href="http://vfsjfilechooser.sourceforge.net/" target="_blank">VFSJFileChooser project</a>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseFileChooser
   extends JFileChooser {
@@ -634,7 +633,7 @@ public class BaseFileChooser
 
     filter = m_PanelFilter.getFilter().toLowerCase();
     if (!filter.isEmpty())
-      return f.getName().toLowerCase().contains(filter);
+      return f.getName().toLowerCase().contains(filter) && super.accept(f);
     else
       return super.accept(f);
   }
