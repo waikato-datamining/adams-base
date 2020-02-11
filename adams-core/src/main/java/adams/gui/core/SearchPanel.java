@@ -15,7 +15,7 @@
 
 /*
  * SearchPanel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -25,6 +25,7 @@ import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -36,6 +37,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,7 +50,6 @@ import java.util.regex.Pattern;
  * regular expression checkbox.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SearchPanel
   extends BasePanel {
@@ -204,6 +206,17 @@ public class SearchPanel
           super.keyPressed(e);
       }
     });
+    m_TextSearch.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isRightClick(e)) {
+          BasePopupMenu menu = createPopup(e);
+          menu.show(m_TextSearch, e.getX(), e.getY());
+	}
+	if (!e.isConsumed())
+	  super.mouseClicked(e);
+      }
+    });
     m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
       public void removeUpdate(DocumentEvent e) {
         search();
@@ -246,6 +259,18 @@ public class SearchPanel
     m_PanelWidgets = new JPanel();
     add(m_PanelWidgets, BorderLayout.CENTER);
 
+    updateLayout();
+  }
+
+  /**
+   * Updates the layout.
+   */
+  protected void updateLayout() {
+    removeFromWidgetsPanel(m_LabelPrefix);
+    removeFromWidgetsPanel(m_TextSearch);
+    removeFromWidgetsPanel(m_CheckboxRegExp);
+    removeFromWidgetsPanel(m_ButtonSearch);
+
     if (hasPrefix())
       addToWidgetsPanel(m_LabelPrefix);
     addToWidgetsPanel(m_TextSearch);
@@ -253,6 +278,40 @@ public class SearchPanel
       addToWidgetsPanel(m_CheckboxRegExp);
     if (m_ButtonSearch != null)
       addToWidgetsPanel(m_ButtonSearch);
+  }
+
+  /**
+   * Generates a popup for the search field.
+   *
+   * @param e		the mouse event
+   */
+  protected BasePopupMenu createPopup(MouseEvent e) {
+    BasePopupMenu	menu;
+    JMenuItem		menuitem;
+
+    menu = new BasePopupMenu();
+
+    menuitem = new JMenuItem("Cut", GUIHelper.getIcon("cut.gif"));
+    menuitem.addActionListener((ActionEvent ex) -> m_TextSearch.cut());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem.addActionListener((ActionEvent ex) -> m_TextSearch.copy());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
+    menuitem.addActionListener((ActionEvent ex) -> m_TextSearch.paste());
+    menu.add(menuitem);
+
+    menu.addSeparator();
+    if (isRegularExpressionEnabled())
+      menuitem = new JMenuItem("Disable regexp search", GUIHelper.getEmptyIcon());
+    else
+      menuitem = new JMenuItem("Enable regexp search", GUIHelper.getEmptyIcon());
+    menuitem.addActionListener((ActionEvent ex) -> setRegularExpressionEnabled(!isRegularExpressionEnabled()));
+    menu.add(menuitem);
+
+    return menu;
   }
 
   /**
@@ -294,6 +353,16 @@ public class SearchPanel
    */
   protected boolean hasPrefix() {
     return (m_Prefix != null);
+  }
+
+  /**
+   * Sets whether to use regexp search or plain substring matching.
+   *
+   * @param value	true if regular expression search is to be used
+   */
+  public void setRegularExpressionEnabled(boolean value) {
+    m_RegExpEnabled = value;
+    updateLayout();
   }
 
   /**
@@ -461,8 +530,10 @@ public class SearchPanel
    * @param comp	the component to remove
    */
   public void removeFromWidgetsPanel(Component comp) {
-    m_Widgets.remove(comp);
-    updateWidgets();
+    if (comp != null) {
+      m_Widgets.remove(comp);
+      updateWidgets();
+    }
   }
 
   /**
@@ -505,6 +576,10 @@ public class SearchPanel
       layout.setConstraints(m_Widgets.get(i), c);
       m_PanelWidgets.add(m_Widgets.get(i));
     }
+
+    invalidate();
+    revalidate();
+    doLayout();
   }
 
   /**
