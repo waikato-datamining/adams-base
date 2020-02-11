@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.ClassCrossReference;
+import adams.core.DefaultCompare;
 import adams.core.QuickInfoHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
@@ -28,6 +29,9 @@ import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 import adams.flow.core.Token;
 import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Evaluation;
+
+import java.io.Serializable;
+import java.util.Comparator;
 
 /**
  <!-- globalinfo-start -->
@@ -100,19 +104,34 @@ import weka.classifiers.Evaluation;
  * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-column-names-as-class-labels &lt;boolean&gt; (property: useColumnNamesAsClassLabels)
- * &nbsp;&nbsp;&nbsp;If enabled, the names of the class distribution columns are used as labels 
- * &nbsp;&nbsp;&nbsp;in the fake evaluation; automatically removes the surrounding 'Distribution 
+ * &nbsp;&nbsp;&nbsp;If enabled, the names of the class distribution columns are used as labels
+ * &nbsp;&nbsp;&nbsp;in the fake evaluation; automatically removes the surrounding 'Distribution
  * &nbsp;&nbsp;&nbsp;(...)'.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-weight &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: weight)
- * &nbsp;&nbsp;&nbsp;The (optional) column with the weights of the instances; 1.0 is assumed 
+ * &nbsp;&nbsp;&nbsp;The (optional) column with the weights of the instances; 1.0 is assumed
  * &nbsp;&nbsp;&nbsp;by default.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
+ * </pre>
+ *
+ * <pre>-sort-labels &lt;boolean&gt; (property: sortLabels)
+ * &nbsp;&nbsp;&nbsp;If enabled, the labels get sorted with the specified comparator.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-comparator &lt;java.util.Comparator&gt; (property: comparator)
+ * &nbsp;&nbsp;&nbsp;The comparator to use; must implement java.util.Comparator and java.io.Serializable
+ * &nbsp;&nbsp;&nbsp;default: adams.core.DefaultCompare
+ * </pre>
+ *
+ * <pre>-reverse &lt;boolean&gt; (property: reverse)
+ * &nbsp;&nbsp;&nbsp;If enabled, the sorting order gets reversed.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -139,6 +158,15 @@ public class WekaSpreadSheetToPredictions
 
   /** the (optional) column with the instance weights. */
   protected SpreadSheetColumnIndex m_Weight;
+
+  /** whether to sort the labels. */
+  protected boolean m_SortLabels;
+
+  /** the comparator to use. */
+  protected Comparator m_Comparator;
+
+  /** whether to reverse the sorting. */
+  protected boolean m_Reverse;
 
   /**
    * Returns a string describing the object.
@@ -189,6 +217,18 @@ public class WekaSpreadSheetToPredictions
     m_OptionManager.add(
       "weight", "weight",
       new SpreadSheetColumnIndex(""));
+
+    m_OptionManager.add(
+      "sort-labels", "sortLabels",
+      false);
+
+    m_OptionManager.add(
+      "comparator", "comparator",
+      new DefaultCompare());
+
+    m_OptionManager.add(
+      "reverse", "reverse",
+      false);
   }
 
   /**
@@ -342,6 +382,93 @@ public class WekaSpreadSheetToPredictions
   }
 
   /**
+   * Sets whether to sort the labels with the specified comparator.
+   *
+   * @param value	true if to sort
+   */
+  public void setSortLabels(boolean value) {
+    m_SortLabels = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to store the labels with the specified comparator.
+   *
+   * @return		true if to sort
+   */
+  public boolean getSortLabels() {
+    return m_SortLabels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String sortLabelsTipText() {
+    return "If enabled, the labels get sorted with the specified comparator.";
+  }
+
+  /**
+   * Sets the comparator to use.
+   *
+   * @param value	the comparator
+   */
+  public void setComparator(Comparator value) {
+    m_Comparator = value;
+    reset();
+  }
+
+  /**
+   * Returns the comparator to use.
+   *
+   * @return		the comparator
+   */
+  public Comparator getComparator() {
+    return m_Comparator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String comparatorTipText() {
+    return "The comparator to use; must implement " + Comparator.class.getName() + " and " + Serializable.class.getName();
+  }
+
+  /**
+   * Sets whether to reverse the sorting.
+   *
+   * @param value	true if to reverse
+   */
+  public void setReverse(boolean value) {
+    m_Reverse = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to reverse the sorting.
+   *
+   * @return		true if to reverse
+   */
+  public boolean getReverse() {
+    return m_Reverse;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String reverseTipText() {
+    return "If enabled, the sorting order gets reversed.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -354,6 +481,10 @@ public class WekaSpreadSheetToPredictions
     result += QuickInfoHelper.toString(this, "predicted", m_Predicted, ", predicted: ");
     result += QuickInfoHelper.toString(this, "classDistribution", (m_ClassDistribution.isEmpty() ? "-none-" : m_ClassDistribution.getRange()), ", class: ");
     result += QuickInfoHelper.toString(this, "weight", (m_Weight.isEmpty() ? "-none-" : m_Weight.getIndex()), ", weight: ");
+    if (m_SortLabels) {
+      result += QuickInfoHelper.toString(this, "comparator", m_Comparator, ", sort: ");
+      result += QuickInfoHelper.toString(this, "reverse", m_Reverse, "reverse", ", ");
+    }
 
     return result;
   }
@@ -403,6 +534,9 @@ public class WekaSpreadSheetToPredictions
 
     if (result == null) {
       aggregate = new AggregateEvaluations();
+      aggregate.setSortLabels(m_SortLabels);
+      aggregate.setComparator(m_Comparator);
+      aggregate.setReverse(m_Reverse);
       result    = aggregate.add(
 	sheet,
 	m_Actual.getIntIndex(),

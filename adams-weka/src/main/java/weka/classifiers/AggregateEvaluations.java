@@ -20,6 +20,7 @@
 
 package weka.classifiers;
 
+import adams.core.DefaultCompare;
 import adams.core.ErrorProvider;
 import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
@@ -36,6 +37,8 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -61,6 +64,15 @@ public class AggregateEvaluations
   /** the optional class labels. */
   protected List<String> m_ClassLabels;
 
+  /** whether to sort the labels. */
+  protected boolean m_SortLabels;
+
+  /** the comparator to use. */
+  protected Comparator m_Comparator;
+
+  /** whether to reverse the sorting. */
+  protected boolean m_Reverse;
+
   /** the last error. */
   protected String m_LastError;
 
@@ -80,6 +92,9 @@ public class AggregateEvaluations
     m_Predictions  = new ArrayList<>();
     m_Aggregated   = null;
     m_ClassLabels  = null;
+    m_SortLabels   = false;
+    m_Comparator   = new DefaultCompare();
+    m_Reverse      = false;
   }
 
   /**
@@ -97,7 +112,12 @@ public class AggregateEvaluations
    * @param value	the labels
    */
   public void setClassLabels(List<String> value) {
-    m_ClassLabels = value;
+    m_ClassLabels = new ArrayList<>(value);
+    if (m_SortLabels) {
+      m_ClassLabels.sort(m_Comparator);
+      if (m_Reverse)
+        Collections.reverse(m_ClassLabels);
+    }
   }
 
   /**
@@ -107,6 +127,60 @@ public class AggregateEvaluations
    */
   public List<String> getClassLabels() {
     return m_ClassLabels;
+  }
+
+  /**
+   * Sets whether to sort the labels with the specified comparator.
+   *
+   * @param value	true if to sort
+   */
+  public void setSortLabels(boolean value) {
+    m_SortLabels = value;
+  }
+
+  /**
+   * Returns whether to store the labels with the specified comparator.
+   *
+   * @return		true if to sort
+   */
+  public boolean getSortLabels() {
+    return m_SortLabels;
+  }
+
+  /**
+   * Sets the comparator to use.
+   *
+   * @param value	the comparator
+   */
+  public void setComparator(Comparator value) {
+    m_Comparator = value;
+  }
+
+  /**
+   * Returns the comparator to use.
+   *
+   * @return		the comparator
+   */
+  public Comparator getComparator() {
+    return m_Comparator;
+  }
+
+  /**
+   * Sets whether to reverse the sorting.
+   *
+   * @param value	true if to reverse
+   */
+  public void setReverse(boolean value) {
+    m_Reverse = value;
+  }
+
+  /**
+   * Returns whether to reverse the sorting.
+   *
+   * @return		true if to reverse
+   */
+  public boolean getReverse() {
+    return m_Reverse;
   }
 
   /**
