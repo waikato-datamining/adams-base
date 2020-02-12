@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BreakpointPanel.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
@@ -31,12 +31,10 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +43,6 @@ import java.util.List;
  * Panel for managing the breakpoints.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10983 $
  */
 public class BreakpointPanel
   extends BasePanel
@@ -107,60 +104,32 @@ public class BreakpointPanel
     add(m_TableBreakpoints, BorderLayout.CENTER);
 
     m_ButtonBreakpointsToggle = new BaseButton("Toggle");
-    m_ButtonBreakpointsToggle.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	toggleBreakpoints();
-      }
-    });
+    m_ButtonBreakpointsToggle.addActionListener((ActionEvent e) -> toggleBreakpoints());
     m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsToggle);
 
     m_ButtonBreakpointsAdd = new BaseButton("Add...");
-    m_ButtonBreakpointsAdd.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	addBreakpoint();
-      }
-    });
+    m_ButtonBreakpointsAdd.addActionListener((ActionEvent e) -> addBreakpoint());
     m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsAdd);
 
     m_ButtonBreakpointsEdit = new BaseButton("Edit...");
-    m_ButtonBreakpointsEdit.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	editBreakpoint(m_TableBreakpoints.getSelectedRow());
-      }
-    });
+    m_ButtonBreakpointsEdit.addActionListener((ActionEvent e) -> editBreakpoint(m_TableBreakpoints.getSelectedRow()));
     m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsEdit);
 
     m_TableBreakpoints.addToButtonsPanel(new JLabel(""));
 
     m_ButtonBreakpointsRemove = new BaseButton("Remove");
-    m_ButtonBreakpointsRemove.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	removeBreakpoints(m_TableBreakpoints.getSelectedRows());
-      }
-    });
+    m_ButtonBreakpointsRemove.addActionListener((ActionEvent e) -> removeBreakpoints(m_TableBreakpoints.getSelectedRows()));
     m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsRemove);
 
     m_ButtonBreakpointsRemoveAll = new BaseButton("Remove all");
-    m_ButtonBreakpointsRemoveAll.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	removeBreakpoints(null);
-      }
-    });
+    m_ButtonBreakpointsRemoveAll.addActionListener((ActionEvent e) -> removeAllBreakpoints());
     m_TableBreakpoints.addToButtonsPanel(m_ButtonBreakpointsRemoveAll);
 
-    m_TableBreakpoints.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-	m_ButtonBreakpointsToggle.setEnabled(m_TableBreakpoints.getSelectedRowCount() > 0);
-	m_ButtonBreakpointsAdd.setEnabled(true);
-	m_ButtonBreakpointsRemove.setEnabled(m_TableBreakpoints.getSelectedRowCount() > 0);
-	m_ButtonBreakpointsRemoveAll.setEnabled(m_TableBreakpoints.getModel().getRowCount() > 0);
-      }
+    m_TableBreakpoints.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+      m_ButtonBreakpointsToggle.setEnabled(m_TableBreakpoints.getSelectedRowCount() > 0);
+      m_ButtonBreakpointsAdd.setEnabled(true);
+      m_ButtonBreakpointsRemove.setEnabled(m_TableBreakpoints.getSelectedRowCount() > 0);
+      m_ButtonBreakpointsRemoveAll.setEnabled(m_TableBreakpoints.getModel().getRowCount() > 0);
     });
   }
 
@@ -281,6 +250,13 @@ public class BreakpointPanel
   }
 
   /**
+   * Removes all breakpoints.
+   */
+  public void removeAllBreakpoints() {
+    removeBreakpoints(null);
+  }
+
+  /**
    * Removes breakpoints.
    *
    * @param indices	the indices of the breakpoints to remove, all if null
@@ -357,7 +333,7 @@ public class BreakpointPanel
       breakpoint.setOnPreExecute(true);
       breakpoints = new ArrayList<>(Arrays.asList(getOwner().getOwner().getBreakpoints()));
       breakpoints.add(breakpoint);
-      getOwner().getOwner().setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
+      getOwner().getOwner().setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[0]));
     }
 
     breakpoint.setDisabled(!enabled);
@@ -389,10 +365,20 @@ public class BreakpointPanel
     return result;
   }
 
+  /**
+   * Sets whether to ignore updates, ie not queue an update.
+   *
+   * @param value	true if to ignore
+   */
   public void setIgnoreUpdates(boolean value) {
     m_IgnoreUpdates = value;
   }
 
+  /**
+   * Returns whether updates are currently ignored.
+   *
+   * @return		true if ignored
+   */
   public boolean getIgnoreUpdates() {
     return m_IgnoreUpdates;
   }

@@ -15,7 +15,7 @@
 
 /*
  * Debug.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -100,7 +100,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Debug
   extends AbstractGraphicalFlowExecutionListener
@@ -565,7 +564,8 @@ public class Debug
 	  }
 	}
       }
-      panel.update();
+      if (panel != null)
+	panel.updateWidgets();
     }
 
     return m_ControlPanel;
@@ -657,7 +657,7 @@ public class Debug
       if (add)
 	list.add(m_Breakpoints[i]);
     }
-    m_Breakpoints = list.toArray(new AbstractBreakpoint[list.size()]);
+    m_Breakpoints = list.toArray(new AbstractBreakpoint[0]);
     refreshGUI();
   }
 
@@ -674,12 +674,15 @@ public class Debug
    * @return		true if either already present or successfully displayed
    */
   protected boolean displayControlPanelIfNecessary() {
-    if (m_ControlPanel != null)
+    if (m_ControlPanel != null) {
+      ((Flow) getOwner().getRoot()).showGraphicalFlowExecutionListeners();
       return true;
+    }
     if (getOwner() == null)
       return false;
     if (getOwner().getRoot() instanceof Flow) {
-      ((Flow) getOwner().getRoot()).displayExecutionListenerFrameIfNecessary();
+      newListenerPanel();
+      ((Flow) getOwner().getRoot()).showGraphicalFlowExecutionListeners();
       return true;
     }
     return false;
@@ -713,7 +716,6 @@ public class Debug
       m_ControlPanel.setCurrentCondition(((BooleanConditionSupporter) point).getCondition());
     else
       m_ControlPanel.setCurrentCondition(null);
-    m_ControlPanel.showFrame();
     m_ControlPanel.breakpointReached(blocked);
 
     if (point != null)
@@ -752,7 +754,6 @@ public class Debug
       m_ControlPanel.setCurrentCondition(((BooleanConditionSupporter) point).getCondition());
     else
       m_ControlPanel.setCurrentCondition(null);
-    m_ControlPanel.showFrame();
     m_ControlPanel.breakpointReached(blocked);
 
     if (point != null) {

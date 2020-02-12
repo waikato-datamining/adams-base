@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GraphicalFlowExecutionListener.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -27,7 +27,6 @@ import java.awt.Dimension;
  * Interface for listeners that supply graphical output in from of a panel.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface GraphicalFlowExecutionListener
   extends FlowExecutionListener {
@@ -45,7 +44,14 @@ public interface GraphicalFlowExecutionListener
    * @return		the panel, null if none available
    */
   public BasePanel newListenerPanel();
-  
+
+  /**
+   * Returns the panel to use, creates it only if necessary.
+   *
+   * @return		the panel, null if none available
+   */
+  public BasePanel newListenerPanelIfNecessary();
+
   /**
    * Returns the default size for the frame.
    * 

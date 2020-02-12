@@ -15,19 +15,19 @@
 
 /*
  * MultiListener.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.execution;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.HashSet;
 
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.HashSet;
 
 /**
  <!-- globalinfo-start -->
@@ -53,7 +53,6 @@ import adams.gui.core.BaseTabbedPane;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MultiListener
   extends AbstractFlowExecutionListener
@@ -64,6 +63,9 @@ public class MultiListener
   
   /** the listeners. */
   protected FlowExecutionListener[] m_Listeners;
+
+  /** the listener panel. */
+  protected BasePanel m_ListenerPanel;
 
   /**
    * Returns a string describing the object.
@@ -150,7 +152,6 @@ public class MultiListener
    * Gets called after the actor received the token.
    * 
    * @param actor	the actor that received the token
-   * @param token	the token that the actor received
    */
   @Override
   public void postInput(Actor actor) {
@@ -235,7 +236,24 @@ public class MultiListener
     
     return result;
   }
-  
+
+  /**
+   * Returns a new panel if necessary.
+   *
+   * @return		the control panel
+   */
+  @Override
+  public BasePanel newListenerPanelIfNecessary() {
+    BasePanel 	result;
+
+    if (m_ListenerPanel == null)
+      result = newListenerPanel();
+    else
+      result = m_ListenerPanel;
+
+    return result;
+  }
+
   /**
    * Returns the panel to use.
    * 
@@ -253,7 +271,7 @@ public class MultiListener
     tabbed = new BaseTabbedPane();
     result.add(tabbed, BorderLayout.CENTER);
     
-    titles = new HashSet<String>();
+    titles = new HashSet<>();
     found  = false;
     for (FlowExecutionListener l: m_Listeners) {
       if (l instanceof GraphicalFlowExecutionListener) {

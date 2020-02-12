@@ -46,6 +46,7 @@ import adams.gui.goe.EditorHelper;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 
+import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
@@ -371,12 +372,13 @@ public class StoragePanel
     m_Table.addToButtonsPanel(m_CheckBoxPreview);
 
     // search
-    m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
+    m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
     m_PanelSearch.addSearchListener((SearchEvent e) -> {
       m_Table.getComponent().search(
 	e.getParameters().getSearchString(),
 	e.getParameters().isRegExp());
     });
+    m_PanelSearch.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
     panelTable.add(m_PanelSearch, BorderLayout.SOUTH);
 
     updateButtons();

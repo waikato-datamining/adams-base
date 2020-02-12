@@ -15,7 +15,7 @@
 
 /*
  * VariableManagementPanel.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -42,13 +42,13 @@ import adams.gui.event.PopupMenuListener;
 import adams.gui.event.SearchEvent;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -467,20 +467,21 @@ public class VariableManagementPanel
     m_ButtonShowValue.addActionListener((ActionEvent e) -> showValue(m_Table.getSelectedRow()));
     m_Table.addToButtonsPanel(m_ButtonShowValue);
     
-    m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
+    m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
     m_PanelSearch.addSearchListener((SearchEvent e) ->
       m_Table.getComponent().search(
 	e.getParameters().getSearchString(),
 	e.getParameters().isRegExp()));
+    m_PanelSearch.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
     m_CheckBoxUserOnlyVars = new BaseCheckBox("Show user-only vars");
     m_CheckBoxUserOnlyVars.setSelected(false);
     m_CheckBoxUserOnlyVars.addActionListener((ActionEvent e) -> updateUserOnlyVariables());
 
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel = new JPanel(new BorderLayout());
     add(panel, BorderLayout.SOUTH);
-    panel.add(m_PanelSearch);
-    panel.add(m_CheckBoxUserOnlyVars);
+    panel.add(m_PanelSearch, BorderLayout.CENTER);
+    panel.add(m_CheckBoxUserOnlyVars, BorderLayout.EAST);
 
     update();
   }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractGraphicalFlowExecutionListener.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -28,7 +28,6 @@ import java.awt.Dimension;
  * Ancestor for graphical listeners.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractGraphicalFlowExecutionListener
   extends AbstractFlowExecutionListener
@@ -36,6 +35,22 @@ public abstract class AbstractGraphicalFlowExecutionListener
   
   /** for serialization. */
   private static final long serialVersionUID = -1461579886264001305L;
+
+  /** the listener panel. */
+  protected BasePanel m_ListenerPanel;
+
+  /**
+   * Returns a new panel if necessary.
+   *
+   * @return		the control panel
+   */
+  @Override
+  public synchronized BasePanel newListenerPanelIfNecessary() {
+    if (m_ListenerPanel == null)
+      m_ListenerPanel = newListenerPanel();
+
+    return m_ListenerPanel;
+  }
 
   /**
    * Returns the panel to use.

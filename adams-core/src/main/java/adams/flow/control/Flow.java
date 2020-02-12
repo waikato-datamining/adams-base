@@ -15,7 +15,7 @@
 
 /*
  * Flow.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -50,7 +50,6 @@ import adams.flow.execution.Debug;
 import adams.flow.execution.FlowExecutionListener;
 import adams.flow.execution.FlowExecutionListeningSupporter;
 import adams.flow.execution.GraphicalFlowExecutionListener;
-import adams.flow.execution.ListenerUtils;
 import adams.flow.execution.MultiListener;
 import adams.flow.execution.NullListener;
 import adams.flow.execution.debug.AbstractBreakpoint;
@@ -61,6 +60,8 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.Child;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
+import adams.gui.flow.FlowPanel;
+import adams.gui.flow.tabhandler.GraphicalFlowExecutionListenersHandler;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -159,7 +160,6 @@ import java.util.Map;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Flow
   extends MutableConnectedControlActor
@@ -174,7 +174,6 @@ public class Flow
    * Enum for the error handling within the flow.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum ErrorHandling {
     /** actors always stop on an error. */
@@ -222,11 +221,11 @@ public class Flow
   /** whether flow execution listening is enabled. */
   protected boolean m_FlowExecutionListeningEnabled;
 
+  /** whether flow execution listening has started. */
+  protected boolean m_FlowExecutionListeningStarted;
+
   /** the execution listener to use. */
   protected FlowExecutionListener m_FlowExecutionListener;
-
-  /** the frame for graphical flow execution listeners. */
-  protected transient BaseFrame m_FlowExecutionListenerFrame;
 
   /** the manager for restarting the flow. */
   protected AbstractFlowRestartManager m_FlowRestartManager;
@@ -608,9 +607,9 @@ public class Flow
    * @return		true if listening could be started successfully
    */
   public boolean startListeningAtRuntime(FlowExecutionListener l) {
-    boolean			result;
-    MultiListener		multi;
-    List<FlowExecutionListener>	listeners;
+    boolean					result;
+    MultiListener				multi;
+    List<FlowExecutionListener>			listeners;
 
     result = true;
 
@@ -619,10 +618,7 @@ public class Flow
       if (m_FlowExecutionListeningEnabled) {
 	m_FlowExecutionListener.finishListening();
 	m_FlowExecutionListeningEnabled = false;
-	if (m_FlowExecutionListenerFrame != null) {
-          deregisterWindow(m_FlowExecutionListenerFrame);
-          m_FlowExecutionListenerFrame.dispose();
-        }
+	deregisterGraphicalFlowExecutionListener(m_FlowExecutionListener);
       }
       m_FlowExecutionListener = l;
       m_FlowExecutionListener.setOwner(this);
@@ -638,11 +634,13 @@ public class Flow
       m_FlowExecutionListener = l;
       m_FlowExecutionListener.setOwner(this);
       m_FlowExecutionListener.startListening();
+      registerGraphicalFlowExecutionListener(m_FlowExecutionListener);
     }
     else {
       if (m_FlowExecutionListener instanceof MultiListener) {
 	multi     = (MultiListener) m_FlowExecutionListener;
 	listeners = new ArrayList<>(Arrays.asList(multi.getSubListeners()));
+	deregisterGraphicalFlowExecutionListener(multi);
       }
       else {
 	multi     = new MultiListener();
@@ -655,16 +653,10 @@ public class Flow
       m_FlowExecutionListener = multi;
       m_FlowExecutionListener.setOwner(this);
       l.startListening();
+      registerGraphicalFlowExecutionListener(multi);
     }
 
-    if (m_FlowExecutionListenerFrame != null) {
-      deregisterWindow(m_FlowExecutionListenerFrame);
-      m_FlowExecutionListenerFrame.dispose();
-    }
-    if (!isHeadless())
-      m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
-
-    registerWindow(m_FlowExecutionListenerFrame, m_FlowExecutionListenerFrame.getTitle());
+    m_FlowExecutionListeningStarted = true;
 
     return result;
   }
@@ -705,13 +697,13 @@ public class Flow
    * @param showFrame		whether to show the debug frame
    */
   public void addBreakpoint(AbstractBreakpoint breakpoint, AbstractScopeRestriction restriction, boolean showFrame) {
-    Debug				debug;
-    MultiListener 			multiListen;
-    MultiScopeRestriction		multiScope;
-    FlowExecutionListener		listener;
-    List<FlowExecutionListener>		listeners;
-    List<AbstractBreakpoint> 		breakpoints;
-    boolean				present;
+    Debug debug;
+    MultiListener multiListen;
+    MultiScopeRestriction multiScope;
+    FlowExecutionListener listener;
+    List<FlowExecutionListener> listeners;
+    List<AbstractBreakpoint> breakpoints;
+    boolean present;
 
     if (isHeadless() || GUIHelper.isHeadless())
       return;
@@ -728,9 +720,9 @@ public class Flow
       setFlowExecutionListener(debug);
     }
     else if (listener instanceof Debug) {
-      debug   = (Debug) listener;
+      debug = (Debug) listener;
       present = false;
-      for (AbstractBreakpoint bp: debug.getBreakpoints()) {
+      for (AbstractBreakpoint bp : debug.getBreakpoints()) {
 	if (bp.toCommandLine().equals(breakpoint.toCommandLine())) {
 	  present = true;
 	  break;
@@ -753,7 +745,7 @@ public class Flow
     else if (listener instanceof MultiListener) {
       multiListen = (MultiListener) listener;
       debug = null;
-      for (FlowExecutionListener l: multiListen.getSubListeners()) {
+      for (FlowExecutionListener l : multiListen.getSubListeners()) {
 	if (l instanceof Debug) {
 	  debug = (Debug) l;
 	  break;
@@ -771,7 +763,7 @@ public class Flow
       else {
 	// breakpoint already present?
 	present = false;
-	for (AbstractBreakpoint bp: debug.getBreakpoints()) {
+	for (AbstractBreakpoint bp : debug.getBreakpoints()) {
 	  if (bp.toCommandLine().equals(breakpoint.toCommandLine())) {
 	    present = true;
 	    break;
@@ -802,18 +794,69 @@ public class Flow
       setFlowExecutionListener(multiListen);
     }
 
+    registerGraphicalFlowExecutionListener(debug);
+
     if (showFrame)
-      displayExecutionListenerFrameIfNecessary();
+      showGraphicalFlowExecutionListeners();
   }
 
   /**
-   * Displays the execution listener frame (eg for debugging), if necessary.
+   * Retrieves the handler for GraphicalFlowExecutionListener objects.
+   *
+   * @return		the handler, null if not available
    */
-  public void displayExecutionListenerFrameIfNecessary() {
-    if (!isHeadless() && (m_FlowExecutionListenerFrame == null)) {
-      m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
-      registerWindow(m_FlowExecutionListenerFrame, m_FlowExecutionListenerFrame.getTitle());
+  protected GraphicalFlowExecutionListenersHandler getGraphicalFlowExecutionListenersHandler() {
+    FlowPanel 					panel;
+    GraphicalFlowExecutionListenersHandler 	result;
+
+    result = null;
+    if ((getParentComponent() != null) && (getParentComponent() instanceof Container)) {
+      panel = (FlowPanel) GUIHelper.getParent((Container) getParentComponent(), FlowPanel.class);
+      result = panel.getTabHandler(GraphicalFlowExecutionListenersHandler.class);
     }
+
+    return result;
+  }
+
+  /**
+   * Registers the graphical flow execution listener.
+   *
+   * @param l		the listener to register
+   */
+  protected void registerGraphicalFlowExecutionListener(FlowExecutionListener l) {
+    GraphicalFlowExecutionListenersHandler 	handler;
+
+    if (l instanceof GraphicalFlowExecutionListener) {
+      handler = getGraphicalFlowExecutionListenersHandler();
+      if (handler != null)
+        handler.register((GraphicalFlowExecutionListener) l);
+    }
+  }
+
+  /**
+   * Deregisters the graphical flow execution listener.
+   *
+   * @param l		the listener to register
+   */
+  protected void deregisterGraphicalFlowExecutionListener(FlowExecutionListener l) {
+    GraphicalFlowExecutionListenersHandler 	handler;
+
+    if (l instanceof GraphicalFlowExecutionListener) {
+      handler = getGraphicalFlowExecutionListenersHandler();
+      if (handler != null)
+        handler.deregister((GraphicalFlowExecutionListener) l);
+    }
+  }
+
+  /**
+   * Displays the graphical flow executions listeners tab.
+   */
+  public void showGraphicalFlowExecutionListeners() {
+    GraphicalFlowExecutionListenersHandler 	handler;
+
+    handler = getGraphicalFlowExecutionListenersHandler();
+    if (handler != null)
+      handler.display();
   }
 
   /**
@@ -1221,15 +1264,11 @@ public class Flow
     if (m_Register || props.getBoolean("AutoRegister", false))
       RunningFlowsRegistry.getSingleton().addFlow(this);
 
-    if (m_FlowExecutionListenerFrame == null) {
+    if (!m_FlowExecutionListeningStarted) {
       if (m_FlowExecutionListeningEnabled) {
 	m_FlowExecutionListener.setOwner(this);
 	m_FlowExecutionListener.startListening();
-	if (!isHeadless()) {
-          m_FlowExecutionListenerFrame = ListenerUtils.createFrame(this);
-          if (m_FlowExecutionListenerFrame != null)
-            registerWindow(m_FlowExecutionListenerFrame, m_FlowExecutionListenerFrame.getTitle());
-        }
+	m_FlowExecutionListeningStarted = true;
       }
     }
 
@@ -1296,17 +1335,9 @@ public class Flow
    */
   @Override
   public void wrapUp() {
-    if (m_FlowExecutionListenerFrame != null) {
-      if (m_FlowExecutionListener instanceof GraphicalFlowExecutionListener) {
-	if (((GraphicalFlowExecutionListener) m_FlowExecutionListener).getDisposeOnFinish()) {
-	  deregisterWindow(m_FlowExecutionListenerFrame);
-	  m_FlowExecutionListenerFrame.dispose();
-	  m_FlowExecutionListenerFrame = null;
-	}
-      }
-    }
-
     m_FlowRestartManager.stop(this);
+
+    deregisterGraphicalFlowExecutionListener(m_FlowExecutionListener);
 
     RunningFlowsRegistry.getSingleton().removeFlow(this);
 
@@ -1331,12 +1362,6 @@ public class Flow
     if (m_AfterExecuteActor != null) {
       m_AfterExecuteActor.destroy();
       m_AfterExecuteActor = null;
-    }
-
-    if (m_FlowExecutionListenerFrame != null) {
-      deregisterWindow(m_FlowExecutionListenerFrame);
-      m_FlowExecutionListenerFrame.dispose();
-      m_FlowExecutionListenerFrame = null;
     }
 
     m_Variables.cleanUp();

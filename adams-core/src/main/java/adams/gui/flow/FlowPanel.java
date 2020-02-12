@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -458,7 +458,7 @@ public class FlowPanel
   /**
    * Updates the enabled state of the widgets.
    */
-  protected void updateWidgets() {
+  public void updateWidgets() {
     boolean	inputEnabled;
 
     inputEnabled = !isRunning() && !isStopping();

@@ -15,7 +15,7 @@
 
 /*
  * InspectionPanel.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -113,7 +113,8 @@ public class InspectionPanel
 
     panel = new JPanel(new BorderLayout());
     m_SplitPane.setLeftComponent(panel);
-    m_SplitPane.setDividerLocation(450);
+    m_SplitPane.setDividerLocation(250);
+    m_SplitPane.setUISettingsParameters(getClass(), "DividerLocation");
     
     m_Tree = new Tree();
     m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
@@ -134,7 +135,7 @@ public class InspectionPanel
     });
     panel.add(new BaseScrollPane(m_Tree), BorderLayout.CENTER);
 
-    m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
+    m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
     m_PanelSearch.addSearchListener((SearchEvent e) -> m_Tree.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
     panel.add(m_PanelSearch, BorderLayout.SOUTH);
     
