@@ -658,6 +658,8 @@ public class Flow
 
     m_FlowExecutionListeningStarted = true;
 
+    showGraphicalFlowExecutionListeners();
+
     return result;
   }
 
@@ -694,9 +696,9 @@ public class Flow
    *
    * @param breakpoint		the breakpoint to add
    * @param restriction		the scope restriction to use
-   * @param showFrame		whether to show the debug frame
+   * @param showView		whether to show the debug view
    */
-  public void addBreakpoint(AbstractBreakpoint breakpoint, AbstractScopeRestriction restriction, boolean showFrame) {
+  public void addBreakpoint(AbstractBreakpoint breakpoint, AbstractScopeRestriction restriction, boolean showView) {
     Debug debug;
     MultiListener multiListen;
     MultiScopeRestriction multiScope;
@@ -796,7 +798,7 @@ public class Flow
 
     registerGraphicalFlowExecutionListener(debug);
 
-    if (showFrame)
+    if (showView)
       showGraphicalFlowExecutionListeners();
   }
 
@@ -1269,6 +1271,8 @@ public class Flow
 	m_FlowExecutionListener.setOwner(this);
 	m_FlowExecutionListener.startListening();
 	m_FlowExecutionListeningStarted = true;
+	registerGraphicalFlowExecutionListener(m_FlowExecutionListener);
+	showGraphicalFlowExecutionListeners();
       }
     }
 
