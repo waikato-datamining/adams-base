@@ -15,7 +15,7 @@
 
 /*
  * ExecutionCounter.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -106,7 +106,7 @@ public class ExecutionCounter
    * @return		the model with the current data
    */
   @Override
-  protected TableModel createTableModel() {
+  protected synchronized TableModel createTableModel() {
     return new MapTableModel(new HashMap<>(m_Counts), new String[]{"Actor", "Count"});
   }
   
@@ -114,7 +114,7 @@ public class ExecutionCounter
    * Gets called when the flow execution starts.
    */
   @Override
-  public void startListening() {
+  public synchronized void startListening() {
     super.startListening();
     
     m_Counts.clear();
@@ -126,7 +126,7 @@ public class ExecutionCounter
    * @param actor	the actor that was executed
    */
   @Override
-  public void postExecute(Actor actor) {
+  public synchronized void postExecute(Actor actor) {
     String	key;
     int		count;
     
@@ -160,7 +160,7 @@ public class ExecutionCounter
    * Cleans up data structures, frees up memory.
    */
   @Override
-  public void cleanUp() {
+  public synchronized void cleanUp() {
     super.cleanUp();
 
     if (m_Counts != null) {
