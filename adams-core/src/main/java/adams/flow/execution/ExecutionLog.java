@@ -111,7 +111,7 @@ public class ExecutionLog
   }
 
   /**
-   * Returns the current condition.
+   * Returns the log file.
    *
    * @return		the condition
    */
