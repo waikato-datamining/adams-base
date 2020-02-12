@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowTabManager.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -39,11 +39,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreePath;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,7 +51,6 @@ import java.util.List;
  * Specialized JTabbedPane for managing tabs in the flow editor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowTabManager
   extends BaseTabbedPaneWithTabHiding
@@ -101,14 +98,8 @@ public class FlowTabManager
     super();
     
     m_Owner = owner;
-    if (m_Owner != null) {
-      m_Owner.getFlowPanels().addChangeListener(new ChangeListener() {
-	@Override
-	public void stateChanged(ChangeEvent e) {
-	  notifyTabs(getOwner().getCurrentPanel());
-	}
-      });
-    }
+    if (m_Owner != null)
+      m_Owner.getFlowPanels().addChangeListener((ChangeEvent e) -> notifyTabs(getOwner().getCurrentPanel()));
   }
   
   /**
@@ -158,11 +149,11 @@ public class FlowTabManager
     if (update)
       updateProperties();
 
-    m_NotifyingSelectionAwareTabsRunnable = new DelayedActionRunnable(500, 50);
+    m_NotifyingSelectionAwareTabsRunnable = new DelayedActionRunnable(250, 50);
     m_NotifyingSelectionAwareTabsThread   = new Thread(m_NotifyingSelectionAwareTabsRunnable);
     m_NotifyingSelectionAwareTabsThread.start();
 
-    m_NotifyingTabChangeListenersRunnable = new DelayedActionRunnable(500, 50);
+    m_NotifyingTabChangeListenersRunnable = new DelayedActionRunnable(250, 50);
     m_NotifyingTabChangeListenersThread   = new Thread(m_NotifyingTabChangeListenersRunnable);
     m_NotifyingTabChangeListenersThread.start();
   }
@@ -310,30 +301,15 @@ public class FlowTabManager
     boolean	first;
 
     submenu = new JMenu(MENUITEM_TABS);
-    submenu.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-	updateMenu(submenu);
-      }
-    });
+    submenu.addChangeListener((ChangeEvent e) -> updateMenu(submenu));
     menu.add(submenu);
 
     menuitem = new JMenuItem("Enable all");
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setAllVisible(true);
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> setAllVisible(true));
     submenu.add(menuitem);
 
     menuitem = new JMenuItem("Disable all");
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setAllVisible(false);
-      }
-    });
+    menuitem.addActionListener((ActionEvent e) -> setAllVisible(false));
     submenu.add(menuitem);
 
     first = true;
@@ -346,12 +322,7 @@ public class FlowTabManager
       }
       menuitem = new JCheckBoxMenuItem(tab.getTitle());
       menuitem.setSelected(isVisible(tab.getClass()));
-      menuitem.addActionListener(new ActionListener() {
-        @Override
-	public void actionPerformed(ActionEvent e) {
-          setVisible(tab.getClass(), !isVisible(tab.getClass()));
-        }
-      });
+      menuitem.addActionListener((ActionEvent e) -> setVisible(tab.getClass(), !isVisible(tab.getClass())));
       submenu.add(menuitem);
     }
   }
