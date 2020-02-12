@@ -19,6 +19,9 @@
  */
 package adams.flow.execution;
 
+import adams.core.io.PlaceholderFile;
+import adams.data.io.output.CsvSpreadSheetWriter;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Actor;
 import adams.gui.core.MapTableModel;
 
@@ -28,18 +31,26 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
- * Counts how often an actor was executed.
+ * Counts how often an actor was executed.<br>
+ * The final counts can be written to a log file in CSV format.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-update-interval &lt;int&gt; (property: updateInterval)
+ * &nbsp;&nbsp;&nbsp;The update interval after which the GUI gets refreshed.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-log-file &lt;adams.core.io.PlaceholderFile&gt; (property: logFile)
+ * &nbsp;&nbsp;&nbsp;The CSV log file to write to; writing is disabled if pointing to a directory.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  * 
  <!-- options-end -->
@@ -51,7 +62,10 @@ public class ExecutionCounter
 
   /** for serialization. */
   private static final long serialVersionUID = -4978449149708112013L;
-  
+
+  /** the file to write to. */
+  protected PlaceholderFile m_LogFile;
+
   /** keeps track of the execution count (actor name - count). */
   protected Map<String,Integer> m_Counts;
   
@@ -62,9 +76,22 @@ public class ExecutionCounter
    */
   @Override
   public String globalInfo() {
-    return "Counts how often an actor was executed.";
+    return "Counts how often an actor was executed.\n"
+      + "The final counts can be written to a log file in CSV format.";
   }
-  
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "log-file", "logFile",
+      new PlaceholderFile("."));
+  }
+
   /**
    * Initializes the members.
    */
@@ -89,6 +116,35 @@ public class ExecutionCounter
   @Override
   public String updateIntervalTipText() {
     return "The update interval after which the GUI gets refreshed.";
+  }
+
+  /**
+   * Sets the log file.
+   *
+   * @param value	the file
+   */
+  public void setLogFile(PlaceholderFile value) {
+    m_LogFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the log file.
+   *
+   * @return		the condition
+   */
+  public PlaceholderFile getLogFile() {
+    return m_LogFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String logFileTipText() {
+    return "The CSV log file to write to; writing is disabled if pointing to a directory.";
   }
 
   /**
@@ -150,6 +206,16 @@ public class ExecutionCounter
    */
   @Override
   public void finishListening() {
+    SpreadSheet			sheet;
+    CsvSpreadSheetWriter 	writer;
+
+    if (!m_LogFile.isDirectory()) {
+      sheet  = m_Table.toSpreadSheet();
+      writer = new CsvSpreadSheetWriter();
+      if (!writer.write(sheet, m_LogFile))
+        getLogger().severe("Failed to write counts to: " + m_LogFile);
+    }
+
     super.finishListening();
     
     if (isLoggingEnabled())
