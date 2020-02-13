@@ -1029,11 +1029,11 @@ public class ObjectLocationsSpreadSheetReader
 	    (int) (row.getCell(right).toDouble() * m_Width - row.getCell(left).toDouble() * m_Width),
 	    (int) (row.getCell(bottom).toDouble() * m_Height - row.getCell(top).toDouble() * m_Height));
 	}
-	if (polyX != -1)
+	if ((polyX != -1) && row.hasCell(polyX) && !row.getCell(polyX).isMissing())
 	  object.getMetaData().put(
 	    LocatedObject.KEY_POLY_X,
 	    coordsToList(multipleCoords(parseCoords(row.getCell(polyX).getContent()), m_Width)));
-	if (polyY != -1)
+	if ((polyY != -1) && row.hasCell(polyY) && !row.getCell(polyY).isMissing())
 	  object.getMetaData().put(
 	    LocatedObject.KEY_POLY_Y,
 	    coordsToList(multipleCoords(parseCoords(row.getCell(polyY).getContent()), m_Height)));
@@ -1053,11 +1053,11 @@ public class ObjectLocationsSpreadSheetReader
 	    row.getCell(right).toDouble().intValue() - row.getCell(left).toDouble().intValue() + 1,
 	    row.getCell(bottom).toDouble().intValue() - row.getCell(top).toDouble().intValue() + 1);
 	}
-	if (polyX != -1)
+	if ((polyX != -1) && row.hasCell(polyX) && !row.getCell(polyX).isMissing())
 	  object.getMetaData().put(
 	    LocatedObject.KEY_POLY_X,
 	    coordsToList(parseCoords(row.getCell(polyX).getContent())));
-	if (polyY != -1)
+	if ((polyY != -1) && row.hasCell(polyY) && !row.getCell(polyY).isMissing())
 	  object.getMetaData().put(
 	    LocatedObject.KEY_POLY_Y,
 	    coordsToList(parseCoords(row.getCell(polyY).getContent())));
