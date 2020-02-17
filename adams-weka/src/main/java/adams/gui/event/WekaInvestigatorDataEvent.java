@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaInvestigatorDataEvent.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.event;
@@ -28,7 +28,6 @@ import java.util.EventObject;
  * Event that gets sent when the data in an {@link InvestigatorPanel} changes.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaInvestigatorDataEvent
   extends EventObject {
@@ -49,6 +48,9 @@ public class WekaInvestigatorDataEvent
 
   /** row got activated. */
   public final static int ROW_ACTIVATED = 5;
+
+  /** the data got deserialized. */
+  public final static int DESERIALIZED = 51;
 
   /** undo enabled. */
   public final static int UNDO_ENABLED = 101;

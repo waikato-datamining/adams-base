@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractInvestigatorTabWithDataTable.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -57,7 +57,6 @@ import java.util.Set;
  * Ancestor for tabs that have the data table on top.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractInvestigatorTabWithDataTable
   extends AbstractInvestigatorTab
@@ -241,6 +240,9 @@ public abstract class AbstractInvestigatorTabWithDataTable
       case WekaInvestigatorDataEvent.ATTRIBUTE_NAMES_SORTED:
       case WekaInvestigatorDataEvent.ATTRIBUTES_NAMES_UNSORTED:
         m_Table.setSortAttributes(e.getType() == WekaInvestigatorDataEvent.ATTRIBUTE_NAMES_SORTED);
+	break;
+      case WekaInvestigatorDataEvent.DESERIALIZED:
+	m_Table.setOptimalColumnWidthBounded(DataTable.MAX_COLUMN_WIDTH);
 	break;
       default:
 	m_Model.removeTableModelListener(this);

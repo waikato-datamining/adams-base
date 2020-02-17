@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InvestigatorWorkspaceHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator;
@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator;
 import adams.core.MessageCollection;
 import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import adams.data.weka.relationname.AbstractRelationNameHeuristic;
+import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
@@ -40,7 +41,6 @@ import java.util.Map;
  * Helper class for Weka Investigator workspaces.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InvestigatorWorkspaceHelper
   extends AbstractWorkspaceHelper<InvestigatorPanel, AbstractSerializableWorkspaceManagerPanel<InvestigatorPanel>> {
@@ -137,5 +137,7 @@ public class InvestigatorWorkspaceHelper
       }
       i += 2;
     }
+
+    panel.fireDataChange(new WekaInvestigatorDataEvent(panel, WekaInvestigatorDataEvent.DESERIALIZED));
   }
 }
