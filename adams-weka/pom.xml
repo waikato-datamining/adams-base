@@ -215,7 +215,7 @@
     <dependency>
       <groupId>com.github.fracpete</groupId>
       <artifactId>multisearch-weka-package</artifactId>
-      <version>2019.10.4</version>
+      <version>2020.2.17</version>
       <type>jar</type>
       <exclusions>
         <exclusion>
