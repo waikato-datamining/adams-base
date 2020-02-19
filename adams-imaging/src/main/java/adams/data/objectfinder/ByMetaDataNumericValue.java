@@ -62,7 +62,7 @@ public class ByMetaDataNumericValue
    */
   @Override
   public String globalInfo() {
-    return "Returns the indices of rows of columns which values fall inside the minimum and maximum.";
+    return "Returns the indices of objects which numeric meta-data value match the min/max";
   }
 
   /**
