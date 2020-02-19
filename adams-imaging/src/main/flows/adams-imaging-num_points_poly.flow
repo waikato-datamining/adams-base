@@ -1,0 +1,44 @@
+# Project: adams
+# Date: 2020-02-20 09:57:44
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Displays the number of points of the annotation polygons in report files." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name Info -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter
+ adams.flow.source.SelectDirectory -stop-if-canceled true
+ adams.flow.transformer.SetVariable -var-name dir
+ adams.flow.control.Trigger -name "init sheet"
+  adams.flow.source.NewSpreadSheet -columns File,Index,#PolyPoints -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
+  adams.flow.transformer.SetStorageValue -storage-name sheet
+ adams.flow.control.Trigger -name process
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{dir} -regexp .*\\\\.report -sorting SORT_BY_NAME"
+  adams.flow.control.Tee -name info
+   adams.flow.transformer.BaseName -remove-extensions true
+   adams.flow.transformer.SetVariable -var-name file
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineArrayTextReader
+  adams.flow.transformer.StringMatcher -regexp .*poly_x=.*
+  adams.flow.control.ArrayProcess
+   adams.flow.control.Tee -name index
+    adams.flow.transformer.SimpleStringReplace -find Object.
+    adams.flow.transformer.StringReplace -find \\.poly_x=.*
+    adams.flow.transformer.SetVariable -var-name index
+   adams.flow.transformer.StringReplace -find .*=
+   adams.flow.transformer.StringSplit -expression ,
+   adams.flow.control.Tee -name count
+    adams.flow.transformer.ArrayLength
+    adams.flow.transformer.SetVariable -var-name count
+   adams.flow.control.Trigger -name "add row"
+    adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.SpreadSheetInsertRow -no-copy true -after true
+    adams.flow.transformer.SpreadSheetSetCell -name file -no-copy true -row last -finder adams.data.spreadsheet.cellfinder.CellRange -value @{file} -force-string true
+    adams.flow.transformer.SpreadSheetSetCell -name index -no-copy true -row last -col 2 -finder adams.data.spreadsheet.cellfinder.CellRange -value @{index} -force-string true
+    adams.flow.transformer.SpreadSheetSetCell -name count -no-copy true -row last -col 3 -finder adams.data.spreadsheet.cellfinder.CellRange -value @{count}
+    adams.flow.transformer.SetStorageValue -storage-name sheet
+ adams.flow.control.CloseCallableDisplay -callable Info
+ adams.flow.control.Trigger -name display
+  adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.sink.CallableSink -callable SpreadSheetDisplay
