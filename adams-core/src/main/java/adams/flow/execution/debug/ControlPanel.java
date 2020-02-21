@@ -273,7 +273,7 @@ public class ControlPanel
     });
     panelButtons2.add(m_ButtonVariables);
 
-    m_ButtonStorage = new BaseToggleButton(GUIHelper.getIcon("disk.png"));
+    m_ButtonStorage = new BaseToggleButton(GUIHelper.getIcon("storage.gif"));
     m_ButtonStorage.setMnemonic('t');
     m_ButtonStorage.setToolTipText("Display dialog with items currently stored in temporary storage");
     m_ButtonStorage.addActionListener((ActionEvent e) -> {
