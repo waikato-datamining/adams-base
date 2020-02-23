@@ -15,7 +15,7 @@
 
 /*
  * ByMetaDataNumericValue.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.objectfinder;
 
@@ -62,7 +62,8 @@ public class ByMetaDataNumericValue
    */
   @Override
   public String globalInfo() {
-    return "Returns the indices of objects which numeric meta-data value match the min/max";
+    return "Returns the indices of objects which numeric meta-data value match the min/max."
+      + "x/y/width/height can also be used as key.";
   }
 
   /**
@@ -277,9 +278,30 @@ public class ByMetaDataNumericValue
     result = new TIntArrayList();
     for (LocatedObject obj: objects) {
       if (obj.getMetaData() != null) {
+        add      = false;
+        valueStr = "";
         if (obj.getMetaData().containsKey(m_Key)) {
           valueStr = "" + obj.getMetaData().get(m_Key);
-          add   = true;
+          add = true;
+        }
+        else if (m_Key.equalsIgnoreCase("width")) {
+          valueStr = "" + obj.getWidth();
+          add      = true;
+        }
+        else if (m_Key.equalsIgnoreCase("height")) {
+          valueStr = "" + obj.getHeight();
+          add      = true;
+        }
+        else if (m_Key.equalsIgnoreCase("x")) {
+          valueStr = "" + obj.getX();
+          add      = true;
+        }
+        else if (m_Key.equals("y")) {
+          valueStr = "" + obj.getY();
+          add      = true;
+        }
+
+        if (add) {
           if (!Utils.isDouble(valueStr)) {
             add = false;
           }
