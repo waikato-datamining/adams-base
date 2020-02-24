@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2020-02-24 12:15:23
+# Date: 2020-02-24 16:41:30
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
@@ -8,6 +8,7 @@ adams.flow.control.Flow -annotation "Generates statistics from annotated objects
  adams.flow.standalone.TabView -display-type adams.flow.core.displaytype.Default -width 1200
   adams.flow.sink.SpreadSheetDisplay -name All -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter
   adams.flow.sink.SpreadSheetDisplay -name Statistics -display-type adams.flow.core.displaytype.Default -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name "Annotations per image" -display-type adams.flow.core.displaytype.Default -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter
   adams.flow.sink.SimplePlot -name "Sorted plots" -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.CirclePaintlet -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy -anti-aliasing-enabled false" -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 40 -custom-format 0.0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label value -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0"
  adams.flow.standalone.CallableActors
   adams.flow.sink.ProgressBar -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -max @{max}
@@ -68,6 +69,11 @@ adams.flow.control.Flow -annotation "Generates statistics from annotated objects
   adams.flow.transformer.SpreadSheetAggregate -aggregate-columns 3-last -aggregate MIN -aggregate MAX -aggregate AVERAGE -aggregate STDEV
   adams.flow.transformer.Convert -conversion "adams.data.conversion.TransposeSpreadSheet -use-header-as-first-column true"
   adams.flow.sink.CallableSink -callable Statistics
+ adams.flow.control.Trigger -name "annotations per image"
+  adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.SpreadSheetAggregate -key-columns 1 -aggregate-columns 3 -aggregate COUNT
+  adams.flow.transformer.SpreadSheetSetHeaderCell -no-copy true -col 2 -value Count
+  adams.flow.sink.CallableSink -callable "Annotations per image"
  adams.flow.control.Trigger -name plots
   adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
   adams.flow.control.Tee -name x
