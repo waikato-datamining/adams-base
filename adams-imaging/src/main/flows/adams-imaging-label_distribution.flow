@@ -1,0 +1,35 @@
+# Project: adams
+# Date: 2020-02-24 16:18:54
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Loads all .report files and counts the occurrences of labels and displays these after processing all files." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.ProgressBar -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -max @{max}
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory\" -help \"Directory with .report files\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name recursive -display Recursive? -help \"Go through sub-directories?\" -type BOOLEAN -default-value false" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name key -display \"Label key in .report files\" -help \"The suffix in the .report files containing the label, usually \\\"type\\\"\" -default-value type" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name process
+  adams.flow.standalone.SetVariable -name reset -var-name count -var-value 0
+  adams.flow.standalone.CounterInit -storage-name labels
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.report -sorting SORT_BY_NAME -recursive @{recursive}" -use-forward-slashes true
+  adams.flow.control.Tee -name "# reports"
+   adams.flow.transformer.ArrayLength
+   adams.flow.transformer.SetVariable -var-name max
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.control.Tee -name progress
+   adams.flow.transformer.IncVariable -var-name count -output-variable-value true
+   adams.flow.sink.CallableSink -callable ProgressBar
+  adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
+  adams.flow.transformer.GetImageObjects -finder adams.data.objectfinder.AllFinder
+  adams.flow.transformer.GetImageObjectMetaData
+  adams.flow.transformer.GetMapValue -key @{key}
+  adams.flow.transformer.CounterAdd -storage-name labels
+ adams.flow.control.CloseCallableDisplay -callable ProgressBar
+ adams.flow.control.Trigger -name display
+  adams.flow.source.Counter -storage-name labels
+  adams.flow.transformer.SpreadSheetSetHeaderCell -no-copy true -value Label
+  adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter
