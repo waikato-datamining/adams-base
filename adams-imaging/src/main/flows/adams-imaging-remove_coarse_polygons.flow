@@ -1,0 +1,33 @@
+# Project: adams
+# Date: 2020-02-24 14:24:39
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Removes polygons with very few points" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name Info -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name min_num_points -display \"Minimum # points per polygon (incl)\" -help \"Polygons that match have at least this many points are kept\" -type INTEGER -default-value 9 -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name output_dir -display \"Output directory\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name "copy images"
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.(jpg|JPG|png|PNG) -sorting SORT_BY_NAME" -use-forward-slashes true
+  adams.flow.control.Tee -name info
+   adams.flow.transformer.BaseName
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.transformer.CopyFile -target-dir @{output_dir}
+ adams.flow.control.Trigger -name "filter reports"
+  adams.flow.source.FileSystemSearch -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.report -sorting SORT_BY_NAME" -use-forward-slashes true
+  adams.flow.control.Tee -name info
+   adams.flow.transformer.BaseName
+   adams.flow.sink.CallableSink -callable Info
+  adams.flow.control.Tee -name "output file"
+   adams.flow.transformer.BaseName
+   adams.flow.transformer.PrependDir -prefix @{output_dir} -use-forward-slashes true
+   adams.flow.transformer.SetVariable -var-name out_file
+  adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
+  adams.flow.transformer.ImageObjectFilter -name "remove duplicate points" -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.RemoveDuplicatePolygonPoints -logging-level INFO"
+  adams.flow.transformer.ImageObjectFilter -name "remove small polygons" -finder "adams.data.objectfinder.PolygonPoints -logging-level INFO -minimum @{min_num_points}" -filter adams.data.objectfilter.PassThrough
+  adams.flow.transformer.ReportFileWriter -writer adams.data.io.output.DefaultSimpleReportWriter -dir @{output_dir} -generator "adams.core.io.SimpleFixedFilenameGenerator -name @{out_file}"
