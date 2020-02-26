@@ -1,48 +1,5 @@
 --> dumpfile.txt
-Header=@relation anneal
-
-@attribute family {'?',GB,GK,GS,TN,ZA,ZF,ZH,ZM,ZS}
-@attribute product-type {C,H,G}
-@attribute steel {'?',R,A,U,K,M,S,W,V}
-@attribute carbon numeric
-@attribute hardness numeric
-@attribute temper_rolling {'?',T}
-@attribute condition {'?',S,A,X}
-@attribute formability {'?',1,2,3,4,5}
-@attribute strength numeric
-@attribute non-ageing {'?',N}
-@attribute surface-finish {'?',P,M}
-@attribute surface-quality {'?',D,E,F,G}
-@attribute enamelability {'?',1,2,3,4,5}
-@attribute bc {'?',Y}
-@attribute bf {'?',Y}
-@attribute bt {'?',Y}
-@attribute bw/me {'?',B,M}
-@attribute bl {'?',Y}
-@attribute m {'?',Y}
-@attribute chrom {'?',C}
-@attribute phos {'?',P}
-@attribute cbond {'?',Y}
-@attribute marvi {'?',Y}
-@attribute exptl {'?',Y}
-@attribute ferro {'?',Y}
-@attribute corr {'?',Y}
-@attribute blue/bright/varn/clean {'?',B,R,V,C}
-@attribute lustre {'?',Y}
-@attribute jurofm {'?',Y}
-@attribute s {'?',Y}
-@attribute p {'?',Y}
-@attribute shape {COIL,SHEET}
-@attribute thick numeric
-@attribute width numeric
-@attribute len numeric
-@attribute oil {'?',Y,N}
-@attribute bore {0,500,600,760}
-@attribute packing {'?',1,2,3}
-@attribute class {1,2,3,4,5,U}
-
-@data
-, Model=
+Header=, Model=
 REPTree
 ============
 

@@ -1,481 +1,105 @@
 --> dumpfile.txt
-Dataset=@relation vote
-
-@attribute handicapped-infants {n,y}
-@attribute water-project-cost-sharing {n,y}
-@attribute adoption-of-the-budget-resolution {n,y}
-@attribute physician-fee-freeze {n,y}
-@attribute el-salvador-aid {n,y}
-@attribute religious-groups-in-schools {n,y}
-@attribute anti-satellite-test-ban {n,y}
-@attribute aid-to-nicaraguan-contras {n,y}
-@attribute mx-missile {n,y}
-@attribute immigration {n,y}
-@attribute synfuels-corporation-cutback {n,y}
-@attribute education-spending {n,y}
-@attribute superfund-right-to-sue {n,y}
-@attribute crime {n,y}
-@attribute duty-free-exports {n,y}
-@attribute export-administration-act-south-africa {n,y}
-@attribute Class {democrat,republican}
-
-@data
-n,y,n,y,y,y,n,n,n,y,?,y,y,y,n,y,republican
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,?,republican
-?,y,y,?,y,y,n,n,n,n,y,n,y,y,n,n,democrat
-n,y,y,n,?,y,n,n,n,n,y,n,y,n,n,y,democrat
-y,y,y,n,y,y,n,n,n,n,y,?,y,y,y,y,democrat
-n,y,y,n,y,y,n,n,n,n,n,n,y,y,y,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,n,?,y,y,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,n,y,y,?,y,republican
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,?,?,democrat
-n,y,n,y,y,n,n,n,n,n,?,?,y,y,n,n,republican
-n,y,n,y,y,y,n,n,n,n,y,?,y,y,?,?,republican
-n,y,y,n,n,n,y,y,y,n,n,n,y,n,?,?,democrat
-y,y,y,n,n,y,y,y,?,y,y,?,n,n,y,?,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,?,?,n,?,republican
-n,y,n,y,y,y,n,n,n,y,n,y,y,?,n,?,republican
-y,n,y,n,n,y,n,y,?,y,y,y,?,n,n,y,democrat
-y,?,y,n,n,n,y,y,y,n,n,n,y,n,y,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,?,y,y,n,n,republican
-y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
-y,y,y,n,n,?,y,y,n,n,y,n,n,n,y,y,democrat
-y,y,y,n,n,n,y,y,y,n,n,n,?,?,y,y,democrat
-y,?,y,n,n,n,y,y,y,n,n,?,n,n,y,y,democrat
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-y,n,y,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
-y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
-y,n,n,y,y,n,y,y,y,n,n,y,y,y,n,y,republican
-y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,?,democrat
-y,y,y,n,n,n,y,y,y,y,n,n,y,n,y,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-y,?,n,y,y,y,n,n,n,y,n,y,?,y,n,y,republican
-y,y,n,y,y,y,n,n,n,n,n,n,y,y,n,y,republican
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-y,n,y,n,n,n,y,y,y,y,y,n,y,n,y,y,democrat
-y,y,y,n,n,n,y,y,y,n,?,n,n,n,n,?,democrat
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,n,y,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-y,y,y,n,n,n,y,y,y,n,y,n,n,n,n,?,democrat
-y,y,y,n,n,n,y,y,?,n,y,n,n,n,y,?,democrat
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,n,y,democrat
-y,n,y,n,n,n,y,y,?,n,n,n,n,n,n,?,democrat
-y,y,y,n,n,n,y,y,n,n,n,n,n,y,n,y,democrat
-n,?,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
-n,y,n,y,y,y,n,?,n,n,n,y,y,y,n,y,republican
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,?,?,democrat
-y,y,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-y,y,y,n,n,y,?,y,n,n,y,y,n,y,n,?,democrat
-n,y,n,y,y,y,n,n,n,y,y,y,y,y,n,n,republican
-n,y,n,y,y,y,n,n,n,y,y,y,y,y,n,y,republican
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,?,republican
-y,y,y,n,n,?,y,y,y,y,n,n,n,n,y,?,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,n,?,democrat
-y,y,y,n,n,n,y,y,y,n,y,n,n,n,n,y,democrat
-y,y,y,n,n,n,y,y,y,n,y,?,n,n,n,y,democrat
-y,y,n,y,y,y,y,n,n,n,n,y,y,y,n,y,republican
-n,y,n,y,y,y,y,n,n,n,y,y,y,y,n,y,republican
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-y,?,y,n,n,n,y,y,y,n,n,n,y,n,y,y,democrat
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,y,n,y,?,democrat
-y,y,y,y,n,n,y,y,y,y,y,n,n,y,n,y,republican
-y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,?,democrat
-y,n,y,y,y,n,y,n,y,y,n,n,y,y,n,y,republican
-y,n,y,n,n,y,y,y,y,y,y,n,n,y,y,y,democrat
-n,y,y,y,y,y,n,n,n,y,y,n,y,y,n,n,democrat
-n,y,y,n,y,y,n,n,n,y,y,y,y,y,n,?,democrat
-n,y,y,y,y,y,n,y,y,y,y,y,y,y,n,y,democrat
-y,y,y,n,y,y,n,n,n,y,y,n,y,y,n,y,democrat
-n,n,n,y,y,n,n,n,n,y,n,y,y,y,n,n,republican
-y,n,y,n,n,y,y,y,y,y,n,y,n,y,n,?,democrat
-y,n,y,n,n,n,y,y,?,y,y,y,n,y,n,y,democrat
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-n,?,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-n,n,y,n,y,y,n,n,n,y,y,y,y,y,n,y,democrat
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-n,y,y,n,y,y,y,n,y,y,y,n,y,y,n,y,democrat
-n,n,n,y,y,y,n,n,n,y,n,?,y,y,n,?,republican
-y,n,y,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,y,y,n,n,n,y,y,democrat
-y,y,y,n,n,n,y,y,n,y,y,n,n,?,y,y,democrat
-y,n,y,n,n,n,y,n,y,y,y,n,n,n,y,y,democrat
-y,n,y,n,y,y,n,n,n,n,n,n,n,n,n,y,democrat
-y,n,y,n,y,y,n,?,?,n,y,?,?,?,y,y,democrat
-n,n,?,n,y,y,n,n,n,n,y,y,y,y,n,y,democrat
-y,n,n,n,y,y,y,n,n,y,y,n,n,y,n,y,democrat
-y,y,y,n,n,y,y,y,y,y,n,n,n,n,n,y,democrat
-n,n,n,y,y,y,n,n,n,y,?,y,y,y,n,n,republican
-y,n,n,n,y,y,n,n,n,n,y,y,n,y,n,y,democrat
-y,n,y,n,y,y,y,n,n,n,y,n,n,y,n,y,democrat
-y,n,y,n,y,y,y,n,?,n,y,n,y,y,y,?,democrat
-y,n,n,n,y,y,?,n,?,n,n,n,n,y,?,n,democrat
-?,?,?,?,n,y,y,y,y,y,?,n,y,y,n,?,democrat
-y,y,y,n,n,n,n,y,y,n,y,n,n,n,y,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-n,?,?,?,?,?,?,?,?,?,?,?,?,y,?,?,republican
-y,?,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-y,?,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-n,n,y,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
-n,?,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,?,y,n,n,y,y,y,n,y,n,n,n,n,y,?,democrat
-n,?,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-y,?,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-n,?,y,n,?,?,y,y,y,y,?,?,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
-y,y,y,y,y,n,y,n,n,n,n,y,y,y,n,y,republican
-n,y,y,n,n,n,n,y,y,y,y,n,n,n,y,y,democrat
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-n,?,?,y,y,y,n,n,n,y,n,y,y,y,?,y,republican
-n,?,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,n,n,y,y,y,n,n,n,y,n,y,n,y,n,y,republican
-y,?,n,y,y,y,n,y,n,n,n,y,y,y,n,y,republican
-n,?,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-n,?,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,?,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-n,?,y,n,n,n,y,y,y,y,y,n,n,y,y,y,democrat
-n,?,y,n,n,y,n,y,n,y,y,n,n,n,y,y,democrat
-?,?,y,n,n,n,y,y,?,n,?,?,?,?,?,?,democrat
-y,?,y,n,?,?,y,y,y,n,n,n,n,n,y,?,democrat
-n,n,y,n,n,y,n,y,y,y,n,n,n,y,n,y,democrat
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,?,republican
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,?,republican
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-n,y,n,y,y,y,n,n,n,y,y,y,y,n,n,y,republican
-n,?,y,n,n,y,y,y,y,y,n,n,n,y,y,y,democrat
-n,n,y,n,n,y,y,y,y,y,n,n,n,y,n,y,democrat
-y,n,y,n,n,y,y,y,y,n,n,n,n,n,y,y,democrat
-n,n,n,y,n,n,y,y,y,y,n,n,y,y,n,y,republican
-n,n,n,y,y,y,y,y,y,y,n,y,y,y,?,y,republican
-n,n,n,y,y,y,y,y,y,y,n,y,y,y,n,y,republican
-?,y,n,n,n,n,y,y,y,y,y,n,n,y,y,y,democrat
-n,?,n,n,n,y,y,y,y,y,n,n,n,y,n,?,democrat
-n,n,y,n,n,y,y,y,y,y,n,n,n,y,?,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-n,n,n,n,n,n,y,y,y,y,n,y,y,y,y,y,democrat
-n,y,n,y,y,y,n,n,n,y,y,y,y,y,n,y,republican
-n,n,y,n,n,n,y,y,y,y,n,n,y,n,y,y,democrat
-y,y,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-y,y,?,y,y,y,n,n,y,n,y,?,y,y,n,n,democrat
-n,y,y,n,n,y,n,y,y,y,y,n,y,n,y,y,democrat
-n,n,y,n,n,y,y,y,y,y,y,n,y,y,n,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-y,y,n,y,y,y,n,?,n,n,y,y,y,y,n,n,republican
-y,y,n,y,y,y,y,n,n,n,n,y,y,y,n,n,republican
-n,y,y,n,n,y,n,y,y,n,y,n,?,?,?,?,democrat
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-n,y,y,n,?,y,y,y,y,y,y,n,n,?,n,?,democrat
-n,y,n,n,y,y,n,n,n,n,n,y,y,y,y,y,democrat
-n,n,n,n,y,y,y,n,n,n,n,y,y,y,n,y,democrat
-n,y,y,n,y,y,y,n,n,n,y,y,y,y,n,y,democrat
-n,y,n,y,y,y,y,n,n,n,n,y,y,y,n,y,republican
-y,y,n,n,y,y,n,n,n,y,y,y,y,y,n,?,democrat
-n,y,y,n,n,y,y,y,y,y,y,n,y,n,y,?,democrat
-y,n,y,y,y,y,y,y,n,y,n,y,n,y,y,y,republican
-y,n,y,y,y,y,y,y,n,y,y,y,n,y,y,y,republican
-n,n,y,y,y,y,n,n,y,n,n,n,y,y,y,?,democrat
-y,n,y,n,n,n,y,y,y,y,y,n,n,y,n,y,democrat
-y,n,y,n,n,n,?,y,y,?,n,n,n,n,y,?,democrat
-n,?,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,y,y,n,n,n,y,y,y,y,n,n,?,n,y,y,democrat
-n,n,n,n,y,y,n,n,n,y,y,y,y,y,n,y,democrat
-y,?,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-n,y,y,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
-n,n,y,y,n,n,y,y,y,y,n,n,n,y,y,y,republican
-n,n,y,n,n,n,y,y,y,y,y,?,n,n,y,y,democrat
-?,n,y,n,n,n,y,y,y,y,y,?,n,n,y,?,democrat
-y,n,y,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
-?,?,y,n,n,n,y,y,y,?,?,n,n,n,?,?,democrat
-n,n,y,n,n,n,y,y,y,y,y,n,n,n,y,y,democrat
-y,?,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-?,?,?,?,?,?,?,?,y,?,?,?,?,?,?,?,democrat
-n,n,y,n,n,n,y,y,y,y,y,n,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,y,n,?,n,n,y,y,democrat
-n,y,y,n,n,n,y,y,y,y,y,n,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-y,?,n,y,y,y,y,y,n,n,n,y,?,y,?,?,republican
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-n,?,n,y,y,y,n,n,n,n,n,y,y,y,n,?,republican
-n,y,n,y,y,y,n,?,n,y,n,y,y,y,n,?,republican
-n,n,n,n,n,y,y,y,y,n,y,n,n,y,y,y,democrat
-n,n,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-n,n,y,n,n,y,y,?,y,y,y,n,n,n,y,y,democrat
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,?,republican
-n,n,y,n,n,y,y,y,y,n,y,y,n,y,y,?,democrat
-n,?,y,y,y,y,n,n,n,y,n,n,n,y,n,y,republican
-n,n,y,n,n,n,y,y,y,y,y,n,?,n,y,?,democrat
-y,y,n,n,n,n,y,y,?,n,y,n,n,n,y,?,democrat
-n,n,y,n,n,n,y,y,y,n,n,n,n,y,y,y,democrat
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-y,n,y,n,n,y,y,y,y,y,y,n,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
-n,n,y,y,y,y,y,n,n,n,n,y,y,y,n,y,republican
-n,n,y,n,n,y,y,y,y,y,n,y,n,n,n,y,democrat
-n,n,n,y,y,y,n,n,n,y,n,y,n,y,n,y,republican
-y,?,n,y,y,y,y,n,n,y,n,y,y,y,n,y,republican
-n,n,y,n,n,n,y,y,y,n,n,?,n,n,y,y,democrat
-y,y,y,n,n,n,y,y,y,y,y,n,n,n,n,y,democrat
-n,n,y,n,n,y,y,y,y,n,n,n,n,n,y,y,democrat
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,n,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
-n,y,y,n,n,y,n,y,y,n,y,n,y,n,y,y,democrat
-y,y,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,y,y,y,y,y,n,n,n,y,y,y,y,y,y,?,democrat
-y,y,y,n,y,y,n,n,?,y,n,n,n,y,y,?,democrat
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-y,?,y,n,n,n,y,y,y,n,?,n,n,n,y,?,democrat
-n,y,y,n,n,n,n,y,y,n,y,n,n,y,y,y,democrat
-n,n,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-n,y,y,n,y,y,n,n,n,n,y,n,n,n,y,?,democrat
-y,n,y,n,n,n,y,y,y,n,y,n,n,n,y,?,democrat
-n,n,n,y,y,n,n,n,n,n,n,y,y,y,n,y,republican
-n,y,n,y,y,y,n,n,n,y,n,?,y,y,n,n,republican
-n,?,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-n,n,y,n,n,y,y,y,y,n,y,n,n,y,y,y,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,?,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,?,n,y,republican
-n,y,y,y,y,y,y,n,y,y,n,y,y,y,n,y,republican
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-n,y,n,y,y,y,n,n,y,y,n,y,y,y,n,y,republican
-n,y,y,n,n,n,y,y,n,n,y,n,n,n,y,?,democrat
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,n,y,n,n,y,y,y,y,y,n,y,n,y,y,?,democrat
-n,n,n,y,y,y,n,n,n,y,n,y,n,y,n,y,republican
-n,n,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-y,n,y,n,n,y,y,y,n,n,n,y,y,n,n,y,democrat
-y,y,y,n,n,n,y,y,?,y,n,n,n,n,y,?,democrat
-n,n,n,y,y,y,y,n,n,y,n,n,n,y,y,y,republican
-n,n,n,y,n,y,y,?,y,n,n,y,y,y,n,y,republican
-y,n,y,n,n,n,y,y,y,y,y,n,n,y,y,y,democrat
-n,n,n,n,y,y,y,n,n,n,n,?,n,y,y,y,republican
-n,y,y,n,n,n,y,y,?,y,n,n,y,n,y,y,democrat
-y,n,y,n,n,n,n,y,y,y,n,n,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,y,y,n,n,n,y,y,democrat
-n,n,y,n,y,n,y,y,y,n,n,n,n,y,?,y,democrat
-n,y,n,y,y,y,?,n,n,n,n,?,y,y,n,n,republican
-?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,republican
-y,n,y,n,n,n,y,y,?,n,y,n,n,n,y,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-y,y,y,n,n,y,y,y,y,n,n,n,n,n,y,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-y,n,y,n,n,n,y,y,y,y,n,n,n,n,n,y,democrat
-y,n,y,n,n,n,y,y,y,y,n,n,n,y,y,y,democrat
-n,n,n,y,y,n,n,n,n,n,n,y,n,y,n,n,republican
-n,n,n,y,y,n,n,n,n,n,n,y,n,y,?,y,republican
-n,n,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,n,y,democrat
-y,n,y,n,n,n,y,y,y,y,n,n,n,n,n,y,democrat
-y,n,y,n,n,?,y,y,y,n,?,?,n,?,?,?,democrat
-y,n,y,n,n,n,y,y,y,y,n,n,?,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-y,n,y,n,n,n,y,y,y,y,n,n,n,n,n,y,democrat
-n,n,n,y,y,y,n,n,n,y,n,y,n,y,n,y,republican
-y,n,n,n,n,n,y,y,y,y,n,n,n,y,n,y,republican
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,n,y,democrat
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-n,y,y,n,n,y,y,y,y,n,?,n,n,n,n,y,democrat
-y,n,y,n,n,n,y,y,y,y,n,n,n,n,y,?,democrat
-n,n,n,y,y,n,y,y,n,y,n,y,y,y,?,y,republican
-y,n,n,y,y,n,y,n,n,y,n,n,n,y,y,y,republican
-n,n,y,n,y,y,n,n,n,n,?,n,y,y,n,n,democrat
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,y,n,republican
-n,n,y,y,y,y,y,y,n,y,n,n,n,y,n,y,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-n,n,y,n,n,n,y,y,y,y,n,n,n,y,n,y,democrat
-y,n,y,y,y,y,y,y,n,n,n,n,n,y,n,?,republican
-y,n,n,y,y,y,n,n,n,y,n,?,y,y,n,n,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-n,n,y,n,n,y,y,y,y,y,y,n,n,n,?,y,democrat
-n,n,y,n,n,y,y,y,y,y,y,n,n,n,y,y,democrat
-n,n,y,n,n,y,?,y,?,y,y,y,n,y,y,?,democrat
-y,y,y,?,n,y,y,y,y,n,y,n,y,n,?,y,democrat
-y,y,y,n,y,y,n,y,n,y,y,n,y,y,y,y,democrat
-y,y,y,n,y,y,n,y,n,y,y,n,y,y,n,?,democrat
-y,n,y,n,?,y,?,y,y,y,n,n,y,y,n,y,democrat
-y,n,y,n,n,y,y,y,y,y,n,?,n,y,n,y,democrat
-y,n,y,n,n,y,y,y,n,y,y,n,y,y,y,y,democrat
-y,y,y,n,n,y,y,y,y,y,y,n,y,y,y,y,democrat
-n,y,y,n,n,y,y,y,n,y,y,n,y,y,n,?,democrat
-n,y,n,y,y,y,?,?,n,y,n,y,?,?,?,?,republican
-n,n,y,y,y,y,n,n,n,y,n,y,y,y,y,y,republican
-y,y,y,n,n,y,y,y,y,y,n,n,?,n,y,?,democrat
-n,y,n,n,n,n,y,y,y,y,y,n,n,n,y,y,democrat
-n,y,y,n,n,y,y,y,y,y,n,n,y,y,y,y,democrat
-n,n,n,y,y,n,y,y,y,y,n,y,y,y,n,y,republican
-n,n,?,n,n,y,y,y,y,n,n,n,n,n,y,y,democrat
-n,n,n,y,y,y,y,n,n,y,n,y,y,y,n,y,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,?,republican
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-y,n,y,n,n,y,y,y,y,n,n,n,n,y,n,?,democrat
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-y,n,n,n,n,y,y,y,y,y,n,n,n,y,y,y,democrat
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,y,n,republican
-n,n,y,n,n,y,y,y,y,y,n,n,y,n,n,y,democrat
-y,y,y,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
-n,y,y,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,y,n,y,y,y,y,y,n,n,y,y,y,y,y,y,republican
-n,y,y,y,y,y,y,?,n,n,n,n,?,?,y,?,republican
-n,n,n,n,n,y,n,y,y,n,y,y,y,y,y,n,democrat
-y,n,n,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
-n,n,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-n,y,y,n,n,y,n,y,y,y,n,n,y,y,n,y,democrat
-y,y,y,n,n,n,y,y,y,y,n,n,y,n,n,y,democrat
-y,y,y,n,?,y,n,?,n,n,y,n,y,y,n,?,democrat
-y,y,y,n,y,y,n,y,?,y,n,n,y,y,n,?,democrat
-n,y,n,y,y,y,n,n,n,n,y,y,y,y,n,n,republican
-n,y,n,n,y,y,n,n,?,n,n,y,y,y,n,y,democrat
-y,y,n,y,n,n,y,y,y,n,y,n,n,y,n,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-y,y,y,n,n,n,y,y,y,n,y,n,n,n,n,y,democrat
-y,?,y,n,n,y,y,y,y,y,n,n,n,n,y,?,democrat
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-y,?,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
-y,n,y,n,n,n,y,y,y,n,y,n,n,n,y,?,democrat
-n,n,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-n,y,y,n,n,y,y,y,?,n,y,y,n,n,y,y,democrat
-n,n,n,y,y,y,n,n,n,y,y,y,y,y,n,?,republican
-n,n,y,n,n,y,y,y,n,n,y,n,n,y,?,y,democrat
-y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
-y,n,y,n,n,n,y,y,y,y,n,n,n,y,y,y,democrat
-y,n,n,y,y,y,n,n,n,n,y,y,y,y,n,n,republican
-n,n,n,y,y,y,n,n,n,y,y,y,n,y,n,y,republican
-n,?,y,?,n,y,y,y,y,y,y,n,?,?,y,y,democrat
-n,y,y,n,y,?,y,n,n,y,y,n,y,n,y,y,democrat
-n,n,n,y,y,n,y,n,y,y,n,n,n,y,n,y,republican
-n,n,y,n,n,n,y,y,y,y,y,n,n,n,y,y,democrat
-n,n,n,y,y,y,y,n,n,y,n,y,n,y,y,y,republican
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-y,n,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
-y,n,y,n,n,n,y,y,y,y,n,y,n,n,y,?,democrat
-n,y,y,y,y,y,y,y,y,n,n,y,y,y,n,y,republican
-n,y,n,n,n,y,y,n,y,n,y,n,n,n,y,y,democrat
-n,n,y,y,y,y,y,y,y,y,n,y,y,y,y,y,republican
-n,y,n,y,n,y,y,y,y,n,y,n,y,n,y,?,democrat
-n,n,y,y,y,y,y,n,n,y,y,y,y,y,n,y,republican
-n,y,y,n,n,y,y,y,y,y,n,?,n,n,y,y,democrat
-y,n,y,y,n,n,n,y,y,y,n,n,n,y,y,y,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-y,y,y,n,n,y,y,y,y,y,y,y,y,y,n,?,democrat
-n,n,n,y,y,y,n,n,n,y,?,y,y,y,n,y,republican
-y,n,y,n,n,y,y,y,y,y,n,n,y,n,n,y,democrat
-y,n,y,n,y,y,y,n,y,y,n,n,y,y,n,?,democrat
-y,y,y,n,n,y,y,y,y,y,y,y,y,n,n,y,democrat
-y,y,n,y,y,y,n,n,n,y,y,n,y,n,n,n,republican
-y,y,n,y,y,y,n,n,n,n,y,n,y,y,n,y,republican
-n,y,n,n,y,y,n,n,n,y,y,n,y,y,n,n,democrat
-y,n,y,n,n,n,y,y,n,y,y,n,n,n,n,?,democrat
-y,y,y,n,y,y,y,y,n,y,y,n,n,n,y,?,democrat
-n,y,y,n,n,y,y,y,n,y,n,n,n,n,y,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,n,y,y,n,y,republican
-y,y,y,n,?,y,y,y,n,y,?,?,n,n,y,y,democrat
-y,y,y,n,?,n,y,y,y,y,n,n,n,n,y,?,democrat
-n,y,y,y,y,y,n,n,n,n,y,y,?,y,n,n,democrat
-n,y,y,?,y,y,n,y,n,y,?,n,y,y,?,y,democrat
-n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-n,y,n,y,y,y,n,n,n,n,y,y,n,y,n,n,democrat
-y,?,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
-n,y,n,y,y,y,?,?,n,n,?,?,y,?,?,?,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-y,y,y,n,n,y,?,y,y,n,y,n,y,n,y,y,democrat
-y,y,y,n,y,y,y,y,y,y,y,n,y,y,n,?,democrat
-y,y,n,y,y,y,n,n,n,n,y,n,y,y,n,?,democrat
-y,y,y,n,y,y,n,y,y,y,y,n,n,n,n,y,democrat
-y,y,y,y,y,y,n,n,n,n,y,y,y,y,n,y,democrat
-y,y,n,n,y,y,n,n,n,n,y,y,y,y,y,n,democrat
-n,?,y,n,y,y,n,y,n,n,y,n,n,n,n,?,democrat
-y,y,y,n,y,y,n,y,y,n,y,n,n,y,n,?,democrat
-n,y,y,y,y,y,n,n,n,n,n,y,y,y,n,?,democrat
-y,n,y,n,n,n,y,y,y,?,y,n,n,n,y,?,democrat
-?,?,n,n,?,y,?,n,n,n,y,y,n,y,n,?,democrat
-y,y,n,n,n,n,n,y,y,n,y,n,n,n,y,n,democrat
-y,y,n,y,y,y,n,n,n,n,y,y,y,y,n,y,republican
-?,?,?,?,n,y,n,y,y,n,n,y,y,n,n,?,republican
-y,y,?,?,?,y,n,n,n,n,y,n,y,n,n,y,democrat
-y,y,y,?,n,n,n,y,n,n,y,?,n,n,y,y,democrat
-y,y,y,n,y,y,n,y,n,n,y,n,y,n,y,y,democrat
-y,y,n,n,y,?,n,n,n,n,y,n,y,y,n,y,democrat
-n,y,y,n,y,y,n,y,n,n,n,n,n,n,n,y,democrat
-n,y,n,y,?,y,n,n,n,y,n,y,y,y,n,n,republican
-n,y,n,y,y,y,n,?,n,n,?,?,?,y,n,?,republican
-n,y,n,y,y,y,n,n,n,y,y,y,y,y,n,n,republican
-?,n,y,y,n,y,y,y,y,y,n,y,n,y,n,y,republican
-n,y,n,y,y,y,n,n,n,y,n,y,?,y,n,n,republican
-y,y,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
-y,n,y,n,y,y,n,n,y,y,n,n,y,y,n,y,democrat
-n,n,n,y,y,y,n,n,n,n,y,y,y,y,n,n,democrat
-y,n,y,n,n,y,y,y,y,n,n,y,?,y,y,y,democrat
-n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
-n,n,n,y,y,y,n,n,n,n,y,y,y,y,n,y,republican
-y,n,y,n,n,y,y,y,y,y,y,n,n,n,n,y,democrat
-n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
-y,y,y,y,y,y,y,y,n,y,?,?,?,y,n,y,republican
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,n,y,democrat
-n,y,y,n,n,y,y,y,?,y,n,n,n,n,n,y,democrat
-y,y,n,y,y,y,n,n,n,y,n,n,y,y,n,y,republican
-y,y,y,n,n,n,y,y,y,y,y,n,y,n,n,y,democrat
-y,y,y,n,n,n,y,y,n,y,n,n,n,n,n,y,democrat
-y,y,y,n,n,n,y,y,y,n,n,n,n,n,n,y,democrat
-y,y,y,y,y,y,y,y,n,y,n,n,y,y,n,y,republican
-n,y,y,n,y,y,y,y,n,n,y,n,y,n,y,y,democrat
-n,n,y,n,n,y,y,y,y,n,y,n,n,n,y,y,democrat
-n,y,y,n,n,y,y,y,y,n,y,n,n,y,y,y,democrat
-n,y,y,n,n,?,y,y,y,y,y,n,?,y,y,y,democrat
-n,n,y,n,n,n,y,y,n,y,y,n,n,n,y,?,democrat
-y,n,y,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
-n,n,n,y,y,y,y,y,n,y,n,y,y,y,n,y,republican
-?,?,?,n,n,n,y,y,y,y,n,n,y,n,y,y,democrat
-y,n,y,n,?,n,y,y,y,y,n,y,n,?,y,y,democrat
-n,n,y,y,y,y,n,n,y,y,n,y,y,y,n,y,republican
-n,n,y,n,n,n,y,y,y,y,n,n,n,n,n,y,democrat
-n,?,n,y,y,y,n,n,n,n,y,y,y,y,n,y,republican
-n,n,n,y,y,y,?,?,?,?,n,y,y,y,n,y,republican
-n,y,n,y,y,y,n,n,n,y,n,y,y,y,?,n,republican, Header=@relation vote
-
-@attribute handicapped-infants {n,y}
-@attribute water-project-cost-sharing {n,y}
-@attribute adoption-of-the-budget-resolution {n,y}
-@attribute physician-fee-freeze {n,y}
-@attribute el-salvador-aid {n,y}
-@attribute religious-groups-in-schools {n,y}
-@attribute anti-satellite-test-ban {n,y}
-@attribute aid-to-nicaraguan-contras {n,y}
-@attribute mx-missile {n,y}
-@attribute immigration {n,y}
-@attribute synfuels-corporation-cutback {n,y}
-@attribute education-spending {n,y}
-@attribute superfund-right-to-sue {n,y}
-@attribute crime {n,y}
-@attribute duty-free-exports {n,y}
-@attribute export-administration-act-south-africa {n,y}
-@attribute Class {democrat,republican}
-
-@data
-, Model=J48 pruned tree
+Dataset=1: n,y,n,y,y,y,n,n,n,y,?,y,y,y,n,y,republican
+2: n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,?,republican
+3: ?,y,y,?,y,y,n,n,n,n,y,n,y,y,n,n,democrat
+4: n,y,y,n,?,y,n,n,n,n,y,n,y,n,n,y,democrat
+5: y,y,y,n,y,y,n,n,n,n,y,?,y,y,y,y,democrat
+6: n,y,y,n,y,y,n,n,n,n,n,n,y,y,y,y,democrat
+7: n,y,n,y,y,y,n,n,n,n,n,n,?,y,y,y,democrat
+8: n,y,n,y,y,y,n,n,n,n,n,n,y,y,?,y,republican
+9: n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
+10: y,y,y,n,n,n,y,y,y,n,n,n,n,n,?,?,democrat
+11: n,y,n,y,y,n,n,n,n,n,?,?,y,y,n,n,republican
+12: n,y,n,y,y,y,n,n,n,n,y,?,y,y,?,?,republican
+13: n,y,y,n,n,n,y,y,y,n,n,n,y,n,?,?,democrat
+14: y,y,y,n,n,y,y,y,?,y,y,?,n,n,y,?,democrat
+15: n,y,n,y,y,y,n,n,n,n,n,y,?,?,n,?,republican
+16: n,y,n,y,y,y,n,n,n,y,n,y,y,?,n,?,republican
+17: y,n,y,n,n,y,n,y,?,y,y,y,?,n,n,y,democrat
+18: y,?,y,n,n,n,y,y,y,n,n,n,y,n,y,y,democrat
+19: n,y,n,y,y,y,n,n,n,n,n,?,y,y,n,n,republican
+20: y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
+21: y,y,y,n,n,?,y,y,n,n,y,n,n,n,y,y,democrat
+22: y,y,y,n,n,n,y,y,y,n,n,n,?,?,y,y,democrat
+23: y,?,y,n,n,n,y,y,y,n,n,?,n,n,y,y,democrat
+24: y,y,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
+25: y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
+26: y,n,y,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
+27: y,n,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
+28: y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
+29: y,n,n,y,y,n,y,y,y,n,n,y,y,y,n,y,republican
+30: y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
+31: n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
+32: y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,?,democrat
+33: y,y,y,n,n,n,y,y,y,y,n,n,y,n,y,y,democrat
+34: n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,y,republican
+35: y,y,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
+36: n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
+37: y,?,n,y,y,y,n,n,n,y,n,y,?,y,n,y,republican
+38: y,y,n,y,y,y,n,n,n,n,n,n,y,y,n,y,republican
+39: n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
+40: y,n,y,n,n,n,y,y,y,y,y,n,y,n,y,y,democrat
+41: y,y,y,n,n,n,y,y,y,n,?,n,n,n,n,?,democrat
+42: y,y,y,n,n,n,y,y,y,n,n,n,n,n,y,?,democrat
+43: y,n,y,n,n,n,y,y,y,n,n,n,n,n,n,y,democrat
+44: y,n,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
+45: y,y,y,n,n,n,y,y,y,n,y,n,n,n,n,?,democrat
+46: y,y,y,n,n,n,y,y,?,n,y,n,n,n,y,?,democrat
+47: y,y,y,n,n,n,y,y,y,n,n,n,n,n,n,y,democrat
+48: y,n,y,n,n,n,y,y,?,n,n,n,n,n,n,?,democrat
+49: y,y,y,n,n,n,y,y,n,n,n,n,n,y,n,y,democrat
+50: n,?,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
+51: y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,y,democrat
+52: n,y,n,y,y,y,n,?,n,n,n,y,y,y,n,y,republican
+53: y,y,y,n,n,n,y,y,y,n,n,n,n,n,?,?,democrat
+54: y,y,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
+55: y,y,y,n,n,y,?,y,n,n,y,y,n,y,n,?,democrat
+56: n,y,n,y,y,y,n,n,n,y,y,y,y,y,n,n,republican
+57: n,y,n,y,y,y,n,n,n,y,y,y,y,y,n,y,republican
+58: n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
+59: n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
+60: n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,?,republican
+61: y,y,y,n,n,?,y,y,y,y,n,n,n,n,y,?,democrat
+62: n,y,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
+63: y,y,y,n,n,n,y,y,y,n,n,n,n,n,n,?,democrat
+64: y,y,y,n,n,n,y,y,y,n,y,n,n,n,n,y,democrat
+65: y,y,y,n,n,n,y,y,y,n,y,?,n,n,n,y,democrat
+66: y,y,n,y,y,y,y,n,n,n,n,y,y,y,n,y,republican
+67: n,y,n,y,y,y,y,n,n,n,y,y,y,y,n,y,republican
+68: n,y,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
+69: y,?,y,n,n,n,y,y,y,n,n,n,y,n,y,y,democrat
+70: y,y,y,n,n,n,y,y,y,n,n,n,n,n,y,y,democrat
+71: y,n,y,n,n,n,y,y,y,n,n,n,y,n,y,?,democrat
+72: y,y,y,y,n,n,y,y,y,y,y,n,n,y,n,y,republican
+73: y,y,y,n,n,n,y,y,y,n,y,n,n,n,y,?,democrat
+74: y,n,y,y,y,n,y,n,y,y,n,n,y,y,n,y,republican
+75: y,n,y,n,n,y,y,y,y,y,y,n,n,y,y,y,democrat
+76: n,y,y,y,y,y,n,n,n,y,y,n,y,y,n,n,democrat
+77: n,y,y,n,y,y,n,n,n,y,y,y,y,y,n,?,democrat
+78: n,y,y,y,y,y,n,y,y,y,y,y,y,y,n,y,democrat
+79: y,y,y,n,y,y,n,n,n,y,y,n,y,y,n,y,democrat
+80: n,n,n,y,y,n,n,n,n,y,n,y,y,y,n,n,republican
+81: y,n,y,n,n,y,y,y,y,y,n,y,n,y,n,?,democrat
+82: y,n,y,n,n,n,y,y,?,y,y,y,n,y,n,y,democrat
+83: n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,y,republican
+84: n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
+85: n,?,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
+86: n,n,y,n,y,y,n,n,n,y,y,y,y,y,n,y,democrat
+87: n,n,n,y,y,y,n,n,n,y,n,y,y,y,n,n,republican
+88: n,n,n,y,y,y,n,n,n,n,n,y,y,y,n,n,republican
+89: n,y,y,n,y,y,y,n,y,y,y,n,y,y,n,y,democrat
+90: n,n,n,y,y,y,n,n,n,y,n,?,y,y,n,?,republican
+91: y,n,y,n,n,n,y,y,y,y,n,n,n,n,y,y,democrat
+92: y,n,y,n,n,n,y,y,y,y,y,n,n,n,y,y,democrat
+93: y,y,y,n,n,n,y,y,n,y,y,n,n,?,y,y,democrat
+94: y,n,y,n,n,n,y,n,y,y,y,n,n,n,y,y,democrat
+95: y,n,y,n,y,y,n,n,n,n,n,n,n,n,n,y,democrat
+96: y,n,y,n,y,y,n,?,?,n,y,?,?,?,y,y,democrat
+97: n,n,?,n,y,y,n,n,n,n,y,y,y,y,n,y,democrat
+98: y,n,n,n,y,y,y,n,n,y,y,n,n,y,n,y,democrat
+99: y,y,y,n,n,y,y,y,y,y,n,n,n,n,n,y,democrat
+100: n,n,n,y,y,y,n,n,n,y,?,y,y,y,n,n,republican
+..., Header=, Model=J48 pruned tree
 ------------------
 
 physician-fee-freeze = n: democrat (253.41/3.75)
