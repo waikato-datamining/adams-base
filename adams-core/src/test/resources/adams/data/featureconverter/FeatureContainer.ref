@@ -1,6 +1,15 @@
 --> out-0.txt
 Header=Dataset|string:S,boolean:B,number:N
-Header=Dataset|string:S,boolean:B,number:N, Row=[hello world, true, 3.1415]
-Header=Dataset|string:S,boolean:B,number:N, Row=[bye bye, false, 2.7]
-Header=Dataset|string:S,boolean:B,number:N, Row=[null, null, null]
+Header=Dataset|string:S,boolean:B,number:N, Row=1: hello world
+2: true
+3: 3.1415
+
+Header=Dataset|string:S,boolean:B,number:N, Row=1: bye bye
+2: false
+3: 2.7
+
+Header=Dataset|string:S,boolean:B,number:N, Row=1: null
+2: null
+3: null
+
 
