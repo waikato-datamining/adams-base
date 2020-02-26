@@ -20,7 +20,9 @@
 package adams.gui.flow.tab;
 
 import adams.flow.execution.GraphicalFlowExecutionListener;
+import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.DetachablePanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tabhandler.GraphicalFlowExecutionListenersHandler;
 
@@ -86,11 +88,16 @@ public class GraphicalFlowExecutionListenersTab
 	return;
 
 	BaseTabbedPane tabbedDisplays = new BaseTabbedPane(BaseTabbedPane.TOP);
+	tabbedDisplays.setDetachableTabs(true);
 	for (GraphicalFlowExecutionListener listener: registered) {
 	  String title = listener.getListenerTitle();
 	  if (listener.getOwner().getParentComponent() instanceof FlowPanel)
 	    title = ((FlowPanel) listener.getOwner().getParentComponent()).getTitle() + ":" + title;
-	  tabbedDisplays.addTab(title, listener.newListenerPanelIfNecessary());
+	  BasePanel listenerPanel = listener.newListenerPanelIfNecessary();
+	  DetachablePanel detachable = new DetachablePanel();
+	  detachable.setFrameTitle(title);
+	  detachable.getContentPanel().add(listenerPanel, BorderLayout.CENTER);
+	  tabbedDisplays.addTab(title, detachable);
 	}
 	add(tabbedDisplays, BorderLayout.CENTER);
 

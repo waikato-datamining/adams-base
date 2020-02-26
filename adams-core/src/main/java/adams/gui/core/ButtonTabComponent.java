@@ -30,7 +30,7 @@
  */
 
 /*
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ.
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ.
  */
 
 package adams.gui.core;
@@ -74,7 +74,14 @@ public class ButtonTabComponent
 
   protected BaseButton m_Button;
 
+  /** whether to show the icon. */
+  protected boolean m_ShowIcon;
+
   public ButtonTabComponent(final JTabbedPane pane) {
+    this(pane, true);
+  }
+
+  public ButtonTabComponent(final JTabbedPane pane, boolean showIcon) {
     //unset default FlowLayout' gaps
     super(new FlowLayout(FlowLayout.LEFT, 0, 0));
     if (pane == null) {
@@ -82,6 +89,7 @@ public class ButtonTabComponent
     }
     this.pane = pane;
     setOpaque(false);
+    m_ShowIcon = showIcon;
 
     //make JLabel read titles from JTabbedPane
     m_Label = new JLabel() {
@@ -99,7 +107,7 @@ public class ButtonTabComponent
     //add more space between the label and the button
     m_Label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
     //tab button
-    m_Button = new TabButton();
+    m_Button = new TabButton(m_ShowIcon);
     add(m_Button);
     //add more space to the top of the component
     setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
@@ -147,8 +155,12 @@ public class ButtonTabComponent
     /** icon when not focused. */
     protected ImageIcon m_CloseIconUnfocused;
 
-    public TabButton() {
+    /** whether to show the icon. */
+    protected boolean m_ShowIcon;
+
+    public TabButton(boolean showIcon) {
       int size = 16;
+      m_ShowIcon = showIcon;
       m_CloseIconFocused = GUIHelper.getIcon("close_tab_focused.gif");
       m_CloseIconUnfocused = GUIHelper.getIcon("close_tab_unfocused.gif");
       setPreferredSize(new Dimension(size, size));
@@ -167,15 +179,17 @@ public class ButtonTabComponent
     }
 
     public void actionPerformed(ActionEvent e) {
-      int index = pane.indexOfTabComponent(ButtonTabComponent.this);
-      if (index == -1)
-        return;
-      // make sure we can close the tab
-      if (pane instanceof BaseTabbedPane) {
-        if (!((BaseTabbedPane) pane).canCloseTab(index))
-          return;
+      if (m_ShowIcon) {
+	int index = pane.indexOfTabComponent(ButtonTabComponent.this);
+	if (index == -1)
+	  return;
+	// make sure we can close the tab
+	if (pane instanceof BaseTabbedPane) {
+	  if (!((BaseTabbedPane) pane).canCloseTab(index))
+	    return;
+	}
+	pane.removeTabAt(index);
       }
-      pane.removeTabAt(index);
     }
 
     //we don't want to update UI for this button
@@ -185,15 +199,17 @@ public class ButtonTabComponent
     //paint the cross
     protected void paintComponent(Graphics g) {
       super.paintComponent(g);
-      Graphics2D g2 = (Graphics2D) g.create();
-      //shift the image for pressed buttons
-      if (getModel().isPressed())
-	g2.translate(1, 1);
-      if (getModel().isRollover())
-	g2.drawImage(m_CloseIconFocused.getImage(), null, null);
-      else
-	g2.drawImage(m_CloseIconUnfocused.getImage(), null, null);
-      g2.dispose();
+      if (m_ShowIcon) {
+	Graphics2D g2 = (Graphics2D) g.create();
+	//shift the image for pressed buttons
+	if (getModel().isPressed())
+	  g2.translate(1, 1);
+	if (getModel().isRollover())
+	  g2.drawImage(m_CloseIconFocused.getImage(), null, null);
+	else
+	  g2.drawImage(m_CloseIconUnfocused.getImage(), null, null);
+	g2.dispose();
+      }
     }
   }
 }

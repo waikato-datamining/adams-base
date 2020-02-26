@@ -15,7 +15,7 @@
 
 /*
  * BaseTabbedPane.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -25,6 +25,7 @@ import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.Icon;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -104,6 +105,9 @@ public class BaseTabbedPane
   /** whether to prompt user when closing a tab. */
   protected boolean m_PromptUserWhenClosingTab;
 
+  /** whether to make tabs detachable. */
+  protected boolean m_DetachableTabs;
+
   /** the maximum length in chars for titles before getting shortened. */
   protected int m_MaxTitleLength;
 
@@ -168,6 +172,7 @@ public class BaseTabbedPane
   protected void initialize() {
     m_CloseTabsWithMiddleMouseButton = false;
     m_ShowCloseTabButton             = false;
+    m_DetachableTabs                 = false;
     m_PromptUserWhenClosingTab       = false;
     m_MaxTitleLength                 = 30;
     m_MaxTabCloseUndo                = 0;
@@ -307,16 +312,8 @@ public class BaseTabbedPane
    * @param value	true if to show buttons
    */
   public void setShowCloseTabButton(boolean value) {
-    int		i;
-
     m_ShowCloseTabButton = value;
-
-    for (i = 0; i < getTabCount(); i++) {
-      if (m_ShowCloseTabButton)
-	setTabComponentAt(i, new ButtonTabComponent(this));
-      else
-	setTabComponentAt(i, null);
-    }
+    updateTabComponents();
   }
 
   /**
@@ -326,6 +323,39 @@ public class BaseTabbedPane
    */
   public boolean getShowCloseTabButton() {
     return m_ShowCloseTabButton;
+  }
+
+  /**
+   * Sets whether to allow tabs to be detached.
+   *
+   * @param value	true if detachable
+   */
+  public void setDetachableTabs(boolean value) {
+    m_DetachableTabs = value;
+    updateTabComponents();
+  }
+
+  /**
+   * Returns whether to allow tabs to be detached.
+   *
+   * @return		true if detachable
+   */
+  public boolean getDetachableTabs() {
+    return m_DetachableTabs;
+  }
+
+  /**
+   * Updates the tab components.
+   */
+  protected void updateTabComponents() {
+    int		i;
+
+    for (i = 0; i < getTabCount(); i++) {
+      if (m_ShowCloseTabButton || m_DetachableTabs)
+	setTabComponentAt(i, new ButtonTabComponent(this, !m_DetachableTabs));
+      else
+	setTabComponentAt(i, null);
+    }
   }
 
   /**
@@ -375,9 +405,35 @@ public class BaseTabbedPane
    *         ({@code < 0 or > getTabCount()})
    */
   public void insertTab(String title, Icon icon, Component component, String tip, int index) {
+    ButtonTabComponent 		tabComp;
+
     super.insertTab(title, icon, component, tip, index);
-    if (m_ShowCloseTabButton)
-      setTabComponentAt(index, new ButtonTabComponent(this));
+
+    if (m_ShowCloseTabButton || m_DetachableTabs) {
+      setTabComponentAt(index, new ButtonTabComponent(this, !m_DetachableTabs));
+
+      if (component instanceof PopupMenuProvider) {
+	tabComp = (ButtonTabComponent) getTabComponentAt(index);
+	tabComp.addMouseListener(new MouseAdapter() {
+	  @Override
+	  public void mouseClicked(MouseEvent e) {
+	    if (MouseUtils.isRightClick(e)) {
+	      JPopupMenu menu = ((PopupMenuProvider) component).getPopupMenu();
+	      menu.show(tabComp, e.getX(), e.getY());
+	    }
+	    // for some reason, adding a mouse listener stops left/middle
+	    // mouse button clicks from working??
+	    else if (MouseUtils.isLeftClick(e)) {
+	      setSelectedComponent(component);
+	    }
+	    else if (MouseUtils.isMiddleClick(e)) {
+	      tabClicked(e);
+	    }
+	  }
+	});
+      }
+    }
+
     notifyTabChangeListeners();
   }
 
@@ -390,7 +446,7 @@ public class BaseTabbedPane
   @Override
   public void setTitleAt(int index, String title) {
     super.setTitleAt(index, title);
-    if ((getTabComponentAt(index) != null) && m_ShowCloseTabButton) {
+    if ((getTabComponentAt(index) != null) && (m_ShowCloseTabButton || m_DetachableTabs)) {
       getTabComponentAt(index).invalidate();
       getTabComponentAt(index).validate();
       getTabComponentAt(index).repaint();
