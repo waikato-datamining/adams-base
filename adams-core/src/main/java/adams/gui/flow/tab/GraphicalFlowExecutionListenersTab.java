@@ -41,7 +41,10 @@ public class GraphicalFlowExecutionListenersTab
 
   /** for serialization. */
   private static final long serialVersionUID = 3636125950515045125L;
-  
+
+  /** the tabbed pane. */
+  protected BaseTabbedPane m_TabbedDisplays;
+
   /**
    * Returns the title of the tab.
    *
@@ -87,8 +90,8 @@ public class GraphicalFlowExecutionListenersTab
       if (registered.size() == 0)
 	return;
 
-	BaseTabbedPane tabbedDisplays = new BaseTabbedPane(BaseTabbedPane.TOP);
-	tabbedDisplays.setDetachableTabs(true);
+	m_TabbedDisplays = new BaseTabbedPane(BaseTabbedPane.TOP);
+	m_TabbedDisplays.setDetachableTabs(true);
 	for (GraphicalFlowExecutionListener listener: registered) {
 	  String title = listener.getListenerTitle();
 	  if (listener.getOwner().getParentComponent() instanceof FlowPanel)
@@ -97,9 +100,9 @@ public class GraphicalFlowExecutionListenersTab
 	  DetachablePanel detachable = new DetachablePanel();
 	  detachable.setFrameTitle(title);
 	  detachable.getContentPanel().add(listenerPanel, BorderLayout.CENTER);
-	  tabbedDisplays.addTab(title, detachable);
+	  m_TabbedDisplays.addTab(title, detachable);
 	}
-	add(tabbedDisplays, BorderLayout.CENTER);
+	add(m_TabbedDisplays, BorderLayout.CENTER);
 
       if (getParent() != null) {
 	getParent().invalidate();
@@ -108,5 +111,14 @@ public class GraphicalFlowExecutionListenersTab
       }
     };
     SwingUtilities.invokeLater(run);
+  }
+
+  /**
+   * Returns the tabbed displays.
+   *
+   * @return		the pane, null if not available
+   */
+  public BaseTabbedPane getTabbedDisplays() {
+    return m_TabbedDisplays;
   }
 }

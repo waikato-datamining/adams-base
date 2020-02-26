@@ -107,6 +107,13 @@ public class GraphicalFlowExecutionListenersHandler
    * Removes all registered displays.
    */
   public void clear() {
+    GraphicalFlowExecutionListenersTab registered;
+
+    registered = (GraphicalFlowExecutionListenersTab) getEditor().getTabs().getTab(GraphicalFlowExecutionListenersTab.class);
+    if (registered != null) {
+      registered.getTabbedDisplays().removeAll();
+    }
+
     m_Displays.clear();
     // notify panel
     update(false);

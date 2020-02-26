@@ -599,6 +599,8 @@ public class BaseTabbedPane
   @Override
   public void removeTabAt(int index) {
     addTabUndo(index);
+    if (getComponentAt(index) instanceof DetachablePanel)
+      ((DetachablePanel) getComponentAt(index)).reattach();
     super.removeTabAt(index);
     notifyTabChangeListeners();
   }
