@@ -1,12 +1,112 @@
 --> out0.txt
-Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt
+Train=1: 00.txt
+2: 01.txt
+3: 02.txt
+4: 03.txt
+5: 04.txt
+6: 05.txt
+7: 06.txt
+8: 07.txt
+9: 08.txt
+10: 09.txt
+
 
 --> out1.txt
-Test=10.txt,11.txt,12.txt,13.txt,14.txt,15.txt,16.txt,17.txt,18.txt,19.txt, Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt
+Test=1: 10.txt
+2: 11.txt
+3: 12.txt
+4: 13.txt
+5: 14.txt
+6: 15.txt
+7: 16.txt
+8: 17.txt
+9: 18.txt
+10: 19.txt
+, Train=1: 00.txt
+2: 01.txt
+3: 02.txt
+4: 03.txt
+5: 04.txt
+6: 05.txt
+7: 06.txt
+8: 07.txt
+9: 08.txt
+10: 09.txt
+
 
 --> out2.txt
-Test=10.txt,11.txt,12.txt,13.txt,14.txt,15.txt,16.txt,17.txt,18.txt,19.txt, Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt, Validation=20.txt,21.txt,22.txt,23.txt,24.txt,25.txt,26.txt,27.txt,28.txt,29.txt
+Test=1: 10.txt
+2: 11.txt
+3: 12.txt
+4: 13.txt
+5: 14.txt
+6: 15.txt
+7: 16.txt
+8: 17.txt
+9: 18.txt
+10: 19.txt
+, Train=1: 00.txt
+2: 01.txt
+3: 02.txt
+4: 03.txt
+5: 04.txt
+6: 05.txt
+7: 06.txt
+8: 07.txt
+9: 08.txt
+10: 09.txt
+, Validation=1: 20.txt
+2: 21.txt
+3: 22.txt
+4: 23.txt
+5: 24.txt
+6: 25.txt
+7: 26.txt
+8: 27.txt
+9: 28.txt
+10: 29.txt
+
 
 --> out3.txt
-Negative=30.txt,31.txt,32.txt,33.txt,34.txt,35.txt,36.txt,37.txt,38.txt,39.txt, Test=10.txt,11.txt,12.txt,13.txt,14.txt,15.txt,16.txt,17.txt,18.txt,19.txt, Train=00.txt,01.txt,02.txt,03.txt,04.txt,05.txt,06.txt,07.txt,08.txt,09.txt, Validation=20.txt,21.txt,22.txt,23.txt,24.txt,25.txt,26.txt,27.txt,28.txt,29.txt
+Negative=1: 30.txt
+2: 31.txt
+3: 32.txt
+4: 33.txt
+5: 34.txt
+6: 35.txt
+7: 36.txt
+8: 37.txt
+9: 38.txt
+10: 39.txt
+, Test=1: 10.txt
+2: 11.txt
+3: 12.txt
+4: 13.txt
+5: 14.txt
+6: 15.txt
+7: 16.txt
+8: 17.txt
+9: 18.txt
+10: 19.txt
+, Train=1: 00.txt
+2: 01.txt
+3: 02.txt
+4: 03.txt
+5: 04.txt
+6: 05.txt
+7: 06.txt
+8: 07.txt
+9: 08.txt
+10: 09.txt
+, Validation=1: 20.txt
+2: 21.txt
+3: 22.txt
+4: 23.txt
+5: 24.txt
+6: 25.txt
+7: 26.txt
+8: 27.txt
+9: 28.txt
+10: 29.txt
+
 
