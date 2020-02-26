@@ -15,7 +15,7 @@
 
 /*
  * AbstractContainer.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.textrenderer.AbstractTextRenderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -322,22 +323,7 @@ public abstract class AbstractContainer
   public boolean removeAdditionalName(String name) {
     return m_AdditionalNames.remove(name);
   }
-  
-  /**
-   * Turns the object into a string.
-   * 
-   * @param obj		the object to turn into a string
-   * @return		the generated string
-   */
-  protected String toString(Object obj) {
-    if (obj == null)
-      return "null";
-    if (obj.getClass().isArray())
-      return Utils.arrayToString(obj);
-    else
-      return obj.toString();
-  }
-  
+
   /**
    * Returns a short description of the stored data.
    *
@@ -355,7 +341,7 @@ public abstract class AbstractContainer
       name = names.next();
       if (result.length() > 0)
 	result.append(", ");
-      result.append(name).append("=").append(toString(getValue(name)));
+      result.append(name).append("=").append(AbstractTextRenderer.renderObject(getValue(name)));
     }
 
     return result.toString();
