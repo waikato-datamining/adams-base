@@ -15,7 +15,7 @@
 
 /*
  * InstancesTable.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances;
@@ -413,12 +413,12 @@ public class InstancesTable
     menuitem.setEnabled(state.actCol > -1);
     menuitem.addActionListener((ActionEvent ae) -> {
       String filter = "";
-      if (getColumnFilter(state.actCol) != null)
-        filter = getColumnFilter(state.actCol);
+      if (getColumnFilter(state.selCol) != null)
+        filter = getColumnFilter(state.selCol);
       filter = GUIHelper.showInputDialog(getParent(), "Please enter filter string", filter);
       if ((filter == null) || filter.isEmpty())
         return;
-      setColumnFilter(state.actCol, filter, false);
+      setColumnFilter(state.selCol, filter, false);
     });
     menu.add(menuitem);
 
@@ -426,18 +426,18 @@ public class InstancesTable
     menuitem.setEnabled(state.actCol > -1);
     menuitem.addActionListener((ActionEvent ae) -> {
       String filter = "";
-      if (getColumnFilter(state.actCol) != null)
-        filter = getColumnFilter(state.actCol);
+      if (getColumnFilter(state.selCol) != null)
+        filter = getColumnFilter(state.selCol);
       filter = GUIHelper.showInputDialog(getParent(), "Please enter regular expression filter", filter);
       if ((filter == null) || filter.isEmpty())
         return;
-      setColumnFilter(state.actCol, filter, true);
+      setColumnFilter(state.selCol, filter, true);
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Remove filter", GUIHelper.getIcon("delete.gif"));
-    menuitem.setEnabled(isColumnFiltered(state.actCol));
-    menuitem.addActionListener((ActionEvent ae) -> removeColumnFilter(state.actCol));
+    menuitem.setEnabled(isColumnFiltered(state.selCol));
+    menuitem.addActionListener((ActionEvent ae) -> removeColumnFilter(state.selCol));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Remove all filters", GUIHelper.getIcon("delete_all.gif"));
