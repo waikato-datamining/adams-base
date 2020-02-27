@@ -111,7 +111,8 @@ public class GraphicalFlowExecutionListenersHandler
 
     registered = (GraphicalFlowExecutionListenersTab) getEditor().getTabs().getTab(GraphicalFlowExecutionListenersTab.class);
     if (registered != null) {
-      registered.getTabbedDisplays().removeAll();
+      if (registered.getTabbedDisplays() != null)
+        registered.getTabbedDisplays().removeAll();
     }
 
     m_Displays.clear();
