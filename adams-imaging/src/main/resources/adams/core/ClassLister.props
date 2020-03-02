@@ -50,6 +50,10 @@ adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation=\
 adams.data.objectoverlap.ObjectOverlap=\
   adams.data.objectoverlap
 
+# the image object removal schemes
+adams.data.overlappingobjectremoval.OverlappingObjectRemoval=\
+  adams.data.overlappingobjectremoval
+
 # the different comparison views of object locations
 adams.flow.transformer.compareobjectlocations.AbstractComparison=\
   adams.flow.transformer.compareobjectlocations

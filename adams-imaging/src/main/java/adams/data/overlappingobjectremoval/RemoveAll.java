@@ -14,11 +14,11 @@
  */
 
 /*
- * Null.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * RemoveAll.java
+ * Copyright (C) 2020 University of Waikato, Hamilton, NZ
  */
 
-package adams.data.objectoverlap;
+package adams.data.overlappingobjectremoval;
 
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -27,14 +27,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Dummy, does not calculate any overlaps.
+ * Removes all objects that have overlaps.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class Null
-  extends AbstractObjectOverlap {
+public class RemoveAll
+  extends AbstractOverlappingObjectRemoval {
 
-  private static final long serialVersionUID = -1581099697448143889L;
+  private static final long serialVersionUID = -895136411948961806L;
 
   /**
    * Returns a string describing the object.
@@ -43,18 +43,28 @@ public class Null
    */
   @Override
   public String globalInfo() {
-    return "Dummy, does not calculate any overlaps.";
+    return "Removes all objects that have overlaps.";
   }
 
   /**
-   * Computes the overlapping objects between the annotations and the predictions.
+   * Removes overlapping image objects.
    *
-   * @param annotations the annotations (ground truth)
-   * @param predictions the predictions to compare with
-   * @return		the overlapping objects
+   * @param objects	the objects to clean up
+   * @param matches	the matches that were determined by an algorithm, used as basis for removal
+   * @return		the updated objects
    */
   @Override
-  protected LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions, Map<LocatedObject, Set<LocatedObject>> matches) {
-    return new LocatedObjects();
+  public LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Set<LocatedObject>> matches) {
+    LocatedObjects	result;
+    Set<LocatedObject> 	others;
+
+    result = new LocatedObjects();
+    for (LocatedObject thisObj : objects) {
+      others = matches.get(thisObj);
+      if ((others == null) || (others.size() == 0))
+        result.add(thisObj.getClone());
+    }
+
+    return result;
   }
 }

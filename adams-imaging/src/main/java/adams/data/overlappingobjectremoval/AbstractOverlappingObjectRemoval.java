@@ -14,12 +14,13 @@
  */
 
 /*
- * Null.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * AbstractOverlappingObjectRemoval.java
+ * Copyright (C) 2020 University of Waikato, Hamilton, NZ
  */
 
-package adams.data.objectoverlap;
+package adams.data.overlappingobjectremoval;
 
+import adams.core.option.AbstractOptionHandler;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
@@ -27,34 +28,23 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Dummy, does not calculate any overlaps.
+ * Ancestor for schemes that remove overlapping images objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class Null
-  extends AbstractObjectOverlap {
+public abstract class AbstractOverlappingObjectRemoval
+  extends AbstractOptionHandler
+  implements OverlappingObjectRemoval {
 
-  private static final long serialVersionUID = -1581099697448143889L;
-
-  /**
-   * Returns a string describing the object.
-   *
-   * @return 			a description suitable for displaying in the gui
-   */
-  @Override
-  public String globalInfo() {
-    return "Dummy, does not calculate any overlaps.";
-  }
+  private static final long serialVersionUID = 6991707947586230873L;
 
   /**
-   * Computes the overlapping objects between the annotations and the predictions.
+   * Removes overlapping image objects.
    *
-   * @param annotations the annotations (ground truth)
-   * @param predictions the predictions to compare with
-   * @return		the overlapping objects
+   * @param objects	the objects to clean up
+   * @param matches	the matches that were determined by an algorithm, used as basis for removal
+   * @return		the updated objects
    */
   @Override
-  protected LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions, Map<LocatedObject, Set<LocatedObject>> matches) {
-    return new LocatedObjects();
-  }
+  public abstract LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Set<LocatedObject>> matches);
 }

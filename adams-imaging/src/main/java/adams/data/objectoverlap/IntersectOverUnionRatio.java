@@ -15,7 +15,7 @@
 
 /*
  * IntersectOverUnionRatio.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectoverlap;
@@ -26,6 +26,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 import com.github.fracpete.javautils.struct.Struct2;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -255,7 +256,7 @@ public class IntersectOverUnionRatio
    * @return		the overlapping objects
    */
   @Override
-  protected LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions) {
+  protected LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions, Map<LocatedObject, Set<LocatedObject>> matches) {
     LocatedObjects 	result;
     int			count;
     double		iouHighest;
@@ -283,6 +284,9 @@ public class IntersectOverUnionRatio
 	  thisLabel = "" + thisObj.getMetaData().get(m_LabelKey);
 	actObj = thisObj;
 	for (LocatedObject otherObj : predictions) {
+	  initMatch(matches, thisObj);
+	  if (m_ExcludeIdentical && thisObj.equals(otherObj))
+	    continue;
 	  ratio = thisObj.overlapRatio(otherObj);
 	  thisObjArea = thisObj.getHeight() * thisObj.getWidth();
 	  intersectArea = thisObjArea * ratio;
@@ -293,6 +297,7 @@ public class IntersectOverUnionRatio
 	  if (iou >= m_MinIntersectOverUnionRatio) {
 	    count++;
 	    if (iou > iouHighest) {
+	      addMatch(matches, thisObj, otherObj);
 	      if (m_UseOtherObject)
 		actObj = otherObj;
 	      iouHighest = iou;

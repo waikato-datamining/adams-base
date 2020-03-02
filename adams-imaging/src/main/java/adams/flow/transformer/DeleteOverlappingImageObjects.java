@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.annotation.DeprecatedClass;
 import adams.data.image.AbstractImageContainer;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
@@ -29,7 +30,6 @@ import adams.data.report.AbstractField;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
-import adams.flow.condition.bool.False;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -114,6 +114,9 @@ import java.util.Arrays;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
+@DeprecatedClass(
+  useInstead = RemoveOverlappingImageObjects.class
+)
 public class DeleteOverlappingImageObjects
   extends AbstractTransformer {
 

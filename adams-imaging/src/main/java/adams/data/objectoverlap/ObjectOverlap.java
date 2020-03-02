@@ -15,14 +15,18 @@
 
 /*
  * ObjectOverlap.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectoverlap;
 
 import adams.core.QuickInfoSupporter;
 import adams.core.option.OptionHandler;
+import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Interface for schemes that calculate image overlaps.
@@ -46,4 +50,13 @@ public interface ObjectOverlap
    * @return		the overlapping objects
    */
   public LocatedObjects calculate(LocatedObjects annotations, LocatedObjects predictions);
+  /**
+   * Computes the overlapping objects between the annotations and the predictions
+   * and returns the matches.
+   *
+   * @param annotations the annotations (ground truth)
+   * @param predictions the predictions to compare with
+   * @return		the matches
+   */
+  public Map<LocatedObject, Set<LocatedObject>> matches(LocatedObjects annotations, LocatedObjects predictions);
 }

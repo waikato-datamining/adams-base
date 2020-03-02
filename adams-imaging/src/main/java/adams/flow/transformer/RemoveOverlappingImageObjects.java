@@ -14,8 +14,8 @@
  */
 
 /*
- * DetermineOverlappingObjects.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * RemoveOverlappingImageObjects.java
+ * Copyright (C) 2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -27,17 +27,23 @@ import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
 import adams.data.objectoverlap.AreaRatio;
 import adams.data.objectoverlap.ObjectOverlap;
+import adams.data.overlappingobjectremoval.OverlappingObjectRemoval;
+import adams.data.overlappingobjectremoval.PassThrough;
 import adams.data.report.AbstractField;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
+import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
- * Computes the overlap of objects with the specified report from storage (or itself) using the specified algorithm.
+ * Cleans up overlapping objects, e.g., multiple predicted bounding boxes per object.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -62,7 +68,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: DetermineOverlappingObjects
+ * &nbsp;&nbsp;&nbsp;default: RemoveOverlappingImageObjects
  * </pre>
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -105,19 +111,24 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
  * </pre>
  *
- * <pre>-algorithm &lt;adams.data.objectoverlap.ObjectOverlap&gt; (property: algorithm)
+ * <pre>-overlap-detection &lt;adams.data.objectoverlap.ObjectOverlap&gt; (property: overlapDetection)
  * &nbsp;&nbsp;&nbsp;The algorithm to use for determining the overlapping objects.
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectoverlap.AreaRatio
+ * </pre>
+ *
+ * <pre>-overlap-removal &lt;adams.data.overlappingobjectremoval.OverlappingObjectRemoval&gt; (property: overlapRemoval)
+ * &nbsp;&nbsp;&nbsp;The algorithm to use for removing the overlapping objects.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.overlappingobjectremoval.PassThrough
  * </pre>
  *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class DetermineOverlappingObjects
+public class RemoveOverlappingImageObjects
   extends AbstractTransformer {
 
-  private static final long serialVersionUID = 8175397929496972306L;
+  private static final long serialVersionUID = 3254930183559428182L;
 
   /** the storage item. */
   protected StorageName m_StorageName;
@@ -128,8 +139,11 @@ public class DetermineOverlappingObjects
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
 
-  /** the image overlap calculation to use. */
-  protected ObjectOverlap m_Algorithm;
+  /** the object overlap calculation to use. */
+  protected ObjectOverlap m_OverlapDetection;
+
+  /** the object removal algorithm. */
+  protected OverlappingObjectRemoval m_OverlapRemoval;
 
   /**
    * Returns a string describing the object.
@@ -138,8 +152,7 @@ public class DetermineOverlappingObjects
    */
   @Override
   public String globalInfo() {
-    return "Computes the overlap of objects with the specified report from "
-      + "storage (or itself) using the specified algorithm.";
+    return "Cleans up overlapping objects, e.g., multiple predicted bounding boxes per object.";
   }
 
   /**
@@ -162,8 +175,12 @@ public class DetermineOverlappingObjects
       new AllFinder());
 
     m_OptionManager.add(
-      "algorithm", "algorithm",
+      "overlap-detection", "overlapDetection",
       new AreaRatio());
+
+    m_OptionManager.add(
+      "overlap-removal", "overlapRemoval",
+      new PassThrough());
   }
 
   /**
@@ -260,8 +277,8 @@ public class DetermineOverlappingObjects
    *
    * @param value 	the algorithm
    */
-  public void setAlgorithm(ObjectOverlap value) {
-    m_Algorithm = value;
+  public void setOverlapDetection(ObjectOverlap value) {
+    m_OverlapDetection = value;
     reset();
   }
 
@@ -270,8 +287,8 @@ public class DetermineOverlappingObjects
    *
    * @return 		the algorithm
    */
-  public ObjectOverlap getAlgorithm() {
-    return m_Algorithm;
+  public ObjectOverlap getOverlapDetection() {
+    return m_OverlapDetection;
   }
 
   /**
@@ -280,8 +297,37 @@ public class DetermineOverlappingObjects
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String algorithmTipText() {
+  public String overlapDetectionTipText() {
     return "The algorithm to use for determining the overlapping objects.";
+  }
+
+  /**
+   * Sets the algorithm for determining the overlapping objects
+   *
+   * @param value 	the algorithm
+   */
+  public void setOverlapRemoval(OverlappingObjectRemoval value) {
+    m_OverlapRemoval = value;
+    reset();
+  }
+
+  /**
+   * Returns the algorithm for determining the overlapping objects.
+   *
+   * @return 		the algorithm
+   */
+  public OverlappingObjectRemoval getOverlapRemoval() {
+    return m_OverlapRemoval;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlapRemovalTipText() {
+    return "The algorithm to use for removing the overlapping objects.";
   }
 
   /**
@@ -294,11 +340,12 @@ public class DetermineOverlappingObjects
     String    result;
 
     result = QuickInfoHelper.toString(this, "finder", m_Finder, "finder: ");
-    result += QuickInfoHelper.toString(this, "algorithm", m_Algorithm, ", algorithm: ");
+    result += QuickInfoHelper.toString(this, "overlapDetection", m_OverlapDetection, ", detection: ");
     if (m_CompareWithItself)
       result += ", with itself";
     else
       result += QuickInfoHelper.toString(this, "storageName", m_StorageName, ", storage: ");
+    result += QuickInfoHelper.toString(this, "overlapRemoval", m_OverlapRemoval, ", removal: ");
 
     return result;
   }
@@ -330,15 +377,16 @@ public class DetermineOverlappingObjects
    */
   @Override
   protected String doExecute() {
-    String			result;
-    Object			obj;
-    Report			newReport;
-    Report			thisReport;
-    Report 			otherReport;
-    LocatedObjects		thisObjs;
-    LocatedObjects		otherObjs;
-    LocatedObjects 		newObjs;
-    Object			output;
+    String					result;
+    Object					obj;
+    Report					newReport;
+    Report					thisReport;
+    Report 					otherReport;
+    LocatedObjects				thisObjs;
+    LocatedObjects				otherObjs;
+    LocatedObjects 				newObjs;
+    Object					output;
+    Map<LocatedObject, Set<LocatedObject>> 	matches;
 
     result = null;
 
@@ -377,7 +425,8 @@ public class DetermineOverlappingObjects
     if (otherReport != null) {
       thisObjs  = m_Finder.findObjects(LocatedObjects.fromReport(thisReport,  m_Finder.getPrefix()));
       otherObjs = m_Finder.findObjects(LocatedObjects.fromReport(otherReport, m_Finder.getPrefix()));
-      newObjs = m_Algorithm.calculate(thisObjs, otherObjs);
+      matches   = m_OverlapDetection.matches(thisObjs, otherObjs);
+      newObjs   = m_OverlapRemoval.removeOverlaps(thisObjs, matches);
 
       // assemble new report
       try {

@@ -46,7 +46,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2009-2019} &
+		\parbox[c][2cm]{2cm}{\copyright 2009-2020} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -315,9 +315,6 @@ The imaging module offers some more actors that have not been introduced yet.
   within the defined region (partial counts possible, too).
   \item \textit{DecodeBarcode} -- allows extracting of barcodes like
   EAN and QRCode from images\footnote{adams-imaging-barcode.flow}.
-  \item \textit{DeleteOverlappingImageObjects} -- for cleaning up
-  overlapping objects, e.g., as post-processing from predicting bounding
-  boxes.
   \item \texttt{DetermineOverlappingObjects} -- computes overlapping image objects
   between two reports (annotations and predictions).
   \item \textit{Draw} -- Performs draw operations on images, like setting
@@ -357,6 +354,9 @@ The imaging module offers some more actors that have not been introduced yet.
   for images passing through.
   \item \texttt{RemoveImageObject} -- removes the specified image object
   from the report.
+  \item \textit{RemoveOverlappingImageObjects} -- for cleaning up
+  overlapping objects, e.g., as post-processing from predicting bounding
+  boxes.
   \item \texttt{ScaleReportObjects} -- scales the x/y and width/height
   of the objects stored in reports.
   \item \texttt{ViaAnnotations} -- turns reports into JSON annotations that

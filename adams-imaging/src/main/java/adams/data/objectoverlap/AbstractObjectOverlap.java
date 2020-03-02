@@ -15,13 +15,19 @@
 
 /*
  * AbstractObjectOverlap.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectoverlap;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Ancestor for schemes that calculate image overlaps.
@@ -33,6 +39,52 @@ public abstract class AbstractObjectOverlap
   implements ObjectOverlap {
 
   private static final long serialVersionUID = -6700493470621873334L;
+
+  /** whether to skip identical objects, i.e., not count them as overlaps. */
+  protected boolean m_ExcludeIdentical;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "exclude-identical", "excludeIdentical",
+      false);
+  }
+
+  /**
+   * Sets whether to exclude identical objects from the comparison.
+   *
+   * @param value	true if to exclude
+   */
+  public void setExcludeIdentical(boolean value) {
+    m_ExcludeIdentical = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to exclude identical objects from the comparison.
+   *
+   * @return		true if to exclude
+   */
+  public boolean getExcludeIdentical() {
+    return m_ExcludeIdentical;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String excludeIdenticalTipText() {
+    return "If enabled, identical objects are not compared with each other; "
+      + "e.g., when looking for overlaps within the same set of objects rather "
+      + "than a different set.";
+  }
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
@@ -62,13 +114,37 @@ public abstract class AbstractObjectOverlap
   }
 
   /**
+   * Initializes the matches for the object.
+   *
+   * @param matches	for storing the matches
+   * @param thisObj	the object to initialize the matches for
+   */
+  protected void initMatch(Map<LocatedObject, Set<LocatedObject>> matches, LocatedObject thisObj) {
+    if (!matches.containsKey(thisObj))
+      matches.put(thisObj, new HashSet<>());
+  }
+
+  /**
+   * Records the match for the object.
+   *
+   * @param matches	for storing the matches
+   * @param thisObj	the object that a match was found for
+   * @param otherObj	the match that was found
+   */
+  protected void addMatch(Map<LocatedObject, Set<LocatedObject>> matches, LocatedObject thisObj, LocatedObject otherObj) {
+    initMatch(matches, thisObj);
+    matches.get(thisObj).add(otherObj);
+  }
+
+  /**
    * Computes the overlapping objects between the annotations and the predictions.
    *
    * @param annotations the annotations (ground truth)
    * @param predictions the predictions to compare with
+   * @param matches 	for collecting the matches
    * @return		the overlapping objects
    */
-  protected abstract LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions);
+  protected abstract LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions, Map<LocatedObject, Set<LocatedObject>> matches);
 
   /**
    * Computes the overlapping objects between the annotations and the predictions.
@@ -84,6 +160,27 @@ public abstract class AbstractObjectOverlap
     msg = check(annotations, predictions);
     if (msg != null)
       throw new IllegalStateException(msg);
-    return doCalculate(annotations, predictions);
+    return doCalculate(annotations, predictions, new HashMap<>());
+  }
+
+  /**
+   * Computes the overlapping objects between the annotations and the predictions
+   * and returns the matches.
+   *
+   * @param annotations the annotations (ground truth)
+   * @param predictions the predictions to compare with
+   * @return		the matches
+   */
+  @Override
+  public Map<LocatedObject, Set<LocatedObject>> matches(LocatedObjects annotations, LocatedObjects predictions) {
+    Map<LocatedObject, Set<LocatedObject>>	result;
+    String					msg;
+
+    msg = check(annotations, predictions);
+    if (msg != null)
+      throw new IllegalStateException(msg);
+    result = new HashMap<>();
+    doCalculate(annotations, predictions, result);
+    return result;
   }
 }
