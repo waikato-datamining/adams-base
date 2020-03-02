@@ -15,7 +15,7 @@
 
 /*
  * RegisteredDisplaysHandler.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tabhandler;
@@ -131,6 +131,14 @@ public class RegisteredDisplaysHandler
    * Removes all registered displays.
    */
   public void clear() {
+    RegisteredDisplaysTab registered;
+
+    registered = (RegisteredDisplaysTab) getEditor().getTabs().getTab(RegisteredDisplaysTab.class);
+    if (registered != null) {
+      if (registered.getTabbedDisplays() != null)
+        registered.getTabbedDisplays().removeAll();
+    }
+
     m_Displays.clear();
     // notify panel
     update(false);

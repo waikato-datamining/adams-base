@@ -15,13 +15,14 @@
 
 /*
  * RegisteredDisplaysTab.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
 import adams.flow.core.AbstractDisplay;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.DetachablePanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tabhandler.RegisteredDisplaysHandler;
 
@@ -41,7 +42,10 @@ public class RegisteredDisplaysTab
 
   /** for serialization. */
   private static final long serialVersionUID = 3636125950515045125L;
-  
+
+  /** the tabbed pane. */
+  protected BaseTabbedPane m_TabbedDisplays;
+
   /**
    * Returns the title of the tab.
    *
@@ -87,8 +91,9 @@ public class RegisteredDisplaysTab
       if (registered.size() == 0)
 	return;
 
-      BaseTabbedPane tabbedCls = new BaseTabbedPane(BaseTabbedPane.BOTTOM);
-      add(tabbedCls, BorderLayout.CENTER);
+      m_TabbedDisplays = new BaseTabbedPane(BaseTabbedPane.BOTTOM);
+      m_TabbedDisplays.setDetachableTabs(true);
+      add(m_TabbedDisplays, BorderLayout.CENTER);
       for (Class regCls: registered.keySet()) {
 	HashMap<String,AbstractDisplay> displays = registered.get(regCls);
 	if (displays.size() == 0)
@@ -101,9 +106,13 @@ public class RegisteredDisplaysTab
 	    title = ((FlowPanel) display.getParentComponent()).getTitle() + ":" + title;
 	  tabbedDisplays.addTab(title, display.getPanel());
 	}
+	String title = "Type:" + regCls.getSimpleName();
 	BasePanel bpanel = new BasePanel(new BorderLayout());
 	bpanel.add(tabbedDisplays, BorderLayout.CENTER);
-	tabbedCls.addTab("Type:" + regCls.getSimpleName(), bpanel);
+	DetachablePanel detachable = new DetachablePanel();
+	detachable.setFrameTitle(title);
+	detachable.getContentPanel().add(bpanel, BorderLayout.CENTER);
+	m_TabbedDisplays.addTab(title, detachable);
       }
 
       if (getParent() != null) {
@@ -113,5 +122,14 @@ public class RegisteredDisplaysTab
       }
     };
     SwingUtilities.invokeLater(run);
+  }
+
+  /**
+   * Returns the tabbed displays.
+   *
+   * @return		the pane, null if not available
+   */
+  public BaseTabbedPane getTabbedDisplays() {
+    return m_TabbedDisplays;
   }
 }
