@@ -15,7 +15,7 @@
 
 /*
  * DetachablePanel.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -26,7 +26,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -60,6 +62,12 @@ public class DetachablePanel
   /** the frame title to use. */
   protected String m_FrameTitle;
 
+  /** the last size of the frame. */
+  protected Dimension m_LastFrameSize;
+
+  /** the last position of the frame. */
+  protected Point m_LastFramePosition;
+
   /**
    * Initializes the members.
    */
@@ -68,7 +76,9 @@ public class DetachablePanel
     super.initialize();
 
     m_PopupMenuCustomizer = null;
-    m_DetachedFrame      = null;
+    m_DetachedFrame       = null;
+    m_LastFrameSize       = null;
+    m_LastFramePosition   = null;
   }
 
   /**
@@ -123,6 +133,8 @@ public class DetachablePanel
     m_DetachedFrame.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosed(WindowEvent e) {
+        m_LastFrameSize     = m_DetachedFrame.getSize();
+        m_LastFramePosition = m_DetachedFrame.getLocation();
 	super.windowClosed(e);
 	reattach();
       }
@@ -130,8 +142,11 @@ public class DetachablePanel
     m_DetachedFrame.getContentPane().setLayout(new BorderLayout());
     m_DetachedFrame.getContentPane().add(m_ContentPanel, BorderLayout.CENTER);
     m_DetachedFrame.pack();
-    m_DetachedFrame.setSize(GUIHelper.getDefaultDialogDimension());
-    m_DetachedFrame.setLocationRelativeTo(this);
+    m_DetachedFrame.setSize(m_LastFrameSize == null ? GUIHelper.getDefaultDialogDimension() : m_LastFrameSize);
+    if (m_LastFramePosition == null)
+      m_DetachedFrame.setLocationRelativeTo(this);
+    else
+      m_DetachedFrame.setLocation(m_LastFramePosition);
     m_DetachedFrame.setVisible(true);
 
     add(m_PanelReattach, BorderLayout.CENTER);
