@@ -15,7 +15,7 @@
 
 /*
  * BufferedImageHelper.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
@@ -498,17 +498,40 @@ public class BufferedImageHelper {
       FileUtils.closeQuietly(fis);
     }
   }
-  
+
+  /**
+   * Removes the alpha channel if present and turns it into RGB image.
+   *
+   * @param img		the image to convert
+   * @return		the (potentially) converted image
+   */
+  public static BufferedImage removeAlphaChannel(BufferedImage img) {
+    if (img.getColorModel().hasAlpha())
+      return convert(img, BufferedImage.TYPE_INT_RGB);
+    else
+      return img;
+  }
+
   /**
    * Writes the image to the specified file.
+   * If the output file points to a JPG file (.jpg or .jpeg), then images
+   * with alpha channel automatically get converted to RGB.
    * 
    * @param img		the image to save
    * @param file	the file to write to
    * @return		null if successful, otherwise error message
    */
   public static String write(BufferedImage img, File file) {
+    String	name;
+
+    // remove alpha channel?
+    name = file.getName().toLowerCase();
+    if ((name.endsWith(".jpg") || name.endsWith("jpeg")))
+      img = removeAlphaChannel(img);
+
     try {
-      ImageIO.write(img, FileUtils.getExtension(file), file.getAbsoluteFile());
+      if (!ImageIO.write(img, FileUtils.getExtension(file), file.getAbsoluteFile()))
+        return "Failed to write image to: " + file;
     }
     catch (Exception e) {
       return "Failed to write image to '" + file + "': " + LoggingHelper.throwableToString(e);
