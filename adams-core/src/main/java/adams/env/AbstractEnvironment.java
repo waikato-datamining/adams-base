@@ -15,7 +15,7 @@
 
 /*
  * AbstractEnvironment.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.env;
@@ -45,7 +45,6 @@ import java.util.logging.Level;
  * Manages properties files and returns merged versions.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractEnvironment
   extends LoggingObject
@@ -59,6 +58,9 @@ public abstract class AbstractEnvironment
 
   /** the constant for the key in the properties definition props file. */
   public final static String KEY_DEFINITIONS = "Definitions";
+
+  /** environment variable for setting the home directory. */
+  public static final String ADAMS_HOME = "ADAMS_HOME";
 
   /** The class to use. This class needs to be set correctly in projects
    * implementing their own Environment class. */
@@ -114,10 +116,12 @@ public abstract class AbstractEnvironment
   protected void finishInit() {
     File	file;
 
-    if (m_HomeDirectory == null)
-      file = new File(getDefaultHome());
-    else
+    if (m_HomeDirectory != null)
       file = m_HomeDirectory.getAbsoluteFile();
+    else if (System.getenv(ADAMS_HOME) != null)
+      file = new File(System.getenv(ADAMS_HOME));
+    else
+      file = new File(getDefaultHome());
 
     if (!file.exists()) {
       if (!file.mkdir()) {
