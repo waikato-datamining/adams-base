@@ -508,7 +508,7 @@ public abstract class AbstractEnvironment
    * @return		the full path
    */
   public String createPropertiesFilename(String file) {
-    return getInstance().getDefaultHome() + File.separator + file;
+    return getInstance().getHome() + File.separator + file;
   }
 
   /**
