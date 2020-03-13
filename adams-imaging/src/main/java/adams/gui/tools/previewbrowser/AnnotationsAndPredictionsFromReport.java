@@ -15,7 +15,7 @@
 
 /*
  * AnnotationsAndPredictionsFromReport.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -34,6 +34,7 @@ import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.MultiImageOverlay;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 import adams.gui.visualization.image.ReportObjectOverlay;
+import adams.gui.visualization.image.leftclick.ViewObjects;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -356,6 +357,7 @@ public class AnnotationsAndPredictionsFromReport
       panel.setAdditionalProperties(report);
     }
     panel.load(file, new JAIImageReader(), -1.0);
+    panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
   }

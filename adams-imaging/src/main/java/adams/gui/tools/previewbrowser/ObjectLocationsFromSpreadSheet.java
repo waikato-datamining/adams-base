@@ -36,6 +36,7 @@ import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+import adams.gui.visualization.image.leftclick.ViewObjects;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -550,6 +551,7 @@ public class ObjectLocationsFromSpreadSheet
       panel.setAdditionalProperties(report);
     }
     panel.load(file, new JAIImageReader(), -1.0);
+    panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
   }

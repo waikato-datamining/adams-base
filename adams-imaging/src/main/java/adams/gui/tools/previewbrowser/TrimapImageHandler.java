@@ -15,7 +15,7 @@
 
 /*
  * TrimapImageHandler.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -29,6 +29,7 @@ import adams.data.io.input.VggXmlAnnotationReportReader;
 import adams.data.report.Report;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+import adams.gui.visualization.image.leftclick.ViewObjects;
 
 import java.awt.Color;
 import java.io.File;
@@ -125,6 +126,7 @@ public class TrimapImageHandler
       panel.addImageOverlay(overlay);
       panel.setAdditionalProperties(report);
     }
+    panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
   }

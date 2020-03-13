@@ -15,7 +15,7 @@
 
 /*
  * ViaAnnotationsHandler.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -31,6 +31,7 @@ import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+import adams.gui.visualization.image.leftclick.ViewObjects;
 
 import java.io.File;
 import java.util.List;
@@ -123,6 +124,7 @@ public class ViaAnnotationsHandler
       panel.setAdditionalProperties(report);
     }
     panel.load(file, new JAIImageReader(), -1.0);
+    panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
   }

@@ -15,7 +15,7 @@
 
 /*
  * DetectronAnnotationsHandler.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -33,8 +33,10 @@ import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+import adams.gui.visualization.image.leftclick.ViewObjects;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.util.List;
 
@@ -439,6 +441,7 @@ public class DetectronAnnotationsHandler
       panel.setAdditionalProperties(report);
     }
     panel.load(file, new JAIImageReader(), -1.0);
+    panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
   }
