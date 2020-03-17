@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Ancestor for all content handlers.
@@ -110,6 +111,7 @@ public abstract class AbstractContentHandler
       }
       catch (Exception e) {
         msg = "Failed to create preview with " + getClass().getName() + ":\n\n" + Utils.throwableToString(e);
+        getLogger().log(Level.SEVERE, msg);
       }
     }
     return new NoPreviewAvailablePanel(msg);
