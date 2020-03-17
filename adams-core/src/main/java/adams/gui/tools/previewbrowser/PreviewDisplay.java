@@ -271,9 +271,6 @@ public class PreviewDisplay
     m_CurrentFiles      = localFiles;
     m_DisplayInProgress = true;
 
-    // notify user
-    displayCreatingView();
-
     if (!wait) {
       worker = new SwingWorker() {
 	JPanel contentPanel;

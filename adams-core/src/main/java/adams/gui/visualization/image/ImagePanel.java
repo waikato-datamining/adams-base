@@ -138,7 +138,6 @@ public class ImagePanel
    * The panel used for painting.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class PaintPanel
     extends BasePanel
@@ -571,7 +570,7 @@ public class ImagePanel
     /**
      * Updates the status bar.
      */
-    protected void updateStatus() {
+    public void updateStatus() {
       Point	pos;
 
       pos = getMousePosition();
@@ -631,7 +630,7 @@ public class ImagePanel
      *
      * @param pos	the mouse position
      */
-    protected void updateStatus(Point pos) {
+    public void updateStatus(Point pos) {
       Point	loc;
 
       if (getOwner() == null)
@@ -653,7 +652,7 @@ public class ImagePanel
      * @param e		the event that triggered the popup
      * @see		#m_CustomPopupMenuProvider
      */
-    protected void showPopup(MouseEvent e) {
+    public void showPopup(MouseEvent e) {
       BasePopupMenu 	menu;
       JMenuItem		menuitem;
       JMenu		submenu;
@@ -856,15 +855,13 @@ public class ImagePanel
       sbVer.setUnitIncrement(height / 25);
       sbVer.setBlockIncrement(height / 10);
 
-      SwingUtilities.invokeLater(() -> update());
+      update();
     }
 
     /**
      * Updates the image.
      */
     public void update() {
-      getOwner().invalidate();
-      getOwner().validate();
       repaint();
 
       synchronized(m_ImageOverlays) {
@@ -1633,7 +1630,7 @@ public class ImagePanel
    *
    * @return		the BaseScrollPane
    */
-  protected BaseScrollPane getScrollPane() {
+  public BaseScrollPane getScrollPane() {
     return m_ScrollPane;
   }
 
@@ -2014,7 +2011,6 @@ public class ImagePanel
       m_TableProperties.setOptimalColumnWidth();
       m_TableProperties.sort(0);
       m_TableProperties.getModel().addTableModelListener(this);
-      m_PaintPanel.update();
     });
   }
 
@@ -2025,10 +2021,8 @@ public class ImagePanel
   @Override
   public void tableChanged(TableModelEvent e) {
     // did the report got modified?
-    if (updateProperties(m_ModelProperties.getReport(), m_AdditionalProperties)) {
+    if (updateProperties(m_ModelProperties.getReport(), m_AdditionalProperties))
       displayProperties();
-      m_PaintPanel.update();
-    }
   }
 
   /**

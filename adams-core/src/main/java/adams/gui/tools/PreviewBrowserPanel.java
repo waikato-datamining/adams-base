@@ -557,7 +557,6 @@ public class PreviewBrowserPanel
 
     m_ModelArchiveFiles.clear();
     m_PaneBrowsing.setBottomComponentHidden(m_ArchiveHandler == null);
-    m_PanelContent.clear();
     if (m_ArchiveHandler == null) {
       m_PanelContent.display(localFiles, false);
       m_CurrentFiles = localFiles;
