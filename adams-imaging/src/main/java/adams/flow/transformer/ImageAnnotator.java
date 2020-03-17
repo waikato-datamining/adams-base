@@ -224,11 +224,35 @@ public class ImageAnnotator
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
    */
-  public class AnnotatorPanel
+  public static class AnnotatorPanel
     extends BasePanel
     implements ImagePanelLeftClickListener {
 
     private static final long serialVersionUID = 301202246788374114L;
+
+    /** the prefix to use in the report. */
+    protected String m_Prefix;
+
+    /** the suffix to use for the labels. */
+    protected String m_Suffix;
+
+    /** the labels. */
+    protected BaseString[] m_Labels;
+
+    /** the selection processor to apply. */
+    protected SelectionProcessor m_SelectionProcessor;
+
+    /** the painter for the selection shape. */
+    protected SelectionShapePainter m_SelectionShapePainter;
+
+    /** the overlay to use for highlighting the objects. */
+    protected ImageOverlay m_Overlay;
+
+    /** the zoom level. */
+    protected double m_Zoom;
+
+    /** the interaction logger to use. */
+    protected InteractionLogger m_InteractionLogger;
 
     /** the label buttons. */
     protected BaseToggleButton[] m_ButtonLabels;
@@ -267,10 +291,42 @@ public class ImageAnnotator
     protected ImageOverlay m_ActualOverlay;
 
     /**
+     * Initializes the panel.
+     *
+     * @param prefix 			the prefix in the report
+     * @param suffix 			the suffix in the report
+     * @param labels 			the labels
+     * @param selectionProcessor 	the selection process
+     * @param selectionShapePainter 	the painter
+     * @param overlay 			the overlay
+     * @param zoom 			the zoom
+     * @param interactionLogger 	the interaction logger
+     */
+    public AnnotatorPanel(String prefix, String suffix, BaseString[] labels, SelectionProcessor selectionProcessor, SelectionShapePainter selectionShapePainter, ImageOverlay overlay, double zoom, InteractionLogger interactionLogger) {
+      super();
+
+      m_Prefix                = prefix;
+      m_Suffix                = suffix;
+      m_Labels                = labels;
+      m_SelectionProcessor    = selectionProcessor;
+      m_SelectionShapePainter = selectionShapePainter;
+      m_Overlay               = overlay;
+      m_Zoom                  = zoom;
+      m_InteractionLogger     = interactionLogger;
+
+      initialize();
+      initGUI();
+      finishInit();
+    }
+
+    /**
      * Initializes the members.
      */
     @Override
     protected void initialize() {
+      if(m_Labels == null)
+        return;
+
       super.initialize();
 
       m_CurrentLabel = null;
@@ -298,6 +354,9 @@ public class ImageAnnotator
       int 			gapHorizontal;
       List<Component> 		comps;
       JPanel			panel;
+
+      if(m_Labels == null)
+        return;
 
       super.initGUI();
 
@@ -382,9 +441,22 @@ public class ImageAnnotator
      */
     @Override
     protected void finishInit() {
+      if (m_Labels == null)
+        return;
+
       super.finishInit();
+
       if (m_ButtonLabels.length > 0)
 	m_ButtonLabels[0].doClick();
+    }
+
+    /**
+     * Returns the underlying image panel.
+     *
+     * @return		the panel
+     */
+    public ImagePanel getImagePanel() {
+      return m_PanelImage;
     }
 
     /**
@@ -521,8 +593,6 @@ public class ImageAnnotator
      * @param panel	the panel this overlay belongs to
      */
     public void imageChanged(PaintPanel panel) {
-      if (isLoggingEnabled())
-	getLogger().info("Updating objects");
       updateObjects();
     }
 
@@ -1012,7 +1082,15 @@ public class ImageAnnotator
    */
   @Override
   protected BasePanel newPanel() {
-    return new AnnotatorPanel();
+    return new AnnotatorPanel(
+      m_Prefix,
+      m_Suffix,
+      m_Labels,
+      m_SelectionProcessor,
+      m_SelectionShapePainter,
+      m_Overlay,
+      m_Zoom,
+      m_InteractionLogger);
   }
 
   /**
