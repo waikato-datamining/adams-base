@@ -2025,6 +2025,7 @@ public class ImagePanel
       m_TableProperties.setOptimalColumnWidth();
       m_TableProperties.sort(0);
       m_TableProperties.getModel().addTableModelListener(this);
+      m_PaintPanel.update();
     });
   }
 
