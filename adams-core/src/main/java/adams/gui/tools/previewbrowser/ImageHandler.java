@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageHandler.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -44,7 +44,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageHandler
   extends AbstractContentHandler {
@@ -87,5 +86,21 @@ public class ImageHandler
     panel.load(file, new JAIImageReader(), -1.0);
 
     return new PreviewPanel(panel, panel.getPaintPanel());
+  }
+
+  /**
+   * Reuses the last preview, if possible.
+   *
+   * @param file	the file to create the view for
+   * @return		the view
+   */
+  @Override
+  public PreviewPanel reusePreview(File file, PreviewPanel previewPanel) {
+    ImagePanel 	panel;
+
+    panel  = (ImagePanel) previewPanel.getComponent();
+    panel.load(file, new JAIImageReader(), panel.getScale());
+
+    return previewPanel;
   }
 }

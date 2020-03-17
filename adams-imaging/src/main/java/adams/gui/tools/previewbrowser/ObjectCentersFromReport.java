@@ -485,6 +485,31 @@ public class ObjectCentersFromReport
   }
 
   /**
+   * Loads the report associated with the image file.
+   *
+   * @param file	the image file
+   * @return		the report, null if not present or failed to load
+   */
+  protected Report loadReport(File file) {
+    Report 				result;
+    File				reportFile;
+    DefaultSimpleReportReader		reportReader;
+    List<Report> 			reports;
+
+    result = null;
+    reportFile = FileUtils.replaceExtension(file, ".report");
+    if (reportFile.exists() && reportFile.isFile()) {
+      reportReader = new DefaultSimpleReportReader();
+      reportReader.setInput(new PlaceholderFile(reportFile));
+      reports = reportReader.read();
+      if (reports.size() > 0)
+        result = filterReport(reports.get(0));
+    }
+
+    return result;
+  }
+
+  /**
    * Creates the actual view.
    *
    * @param file	the file to create the view for
@@ -494,34 +519,21 @@ public class ObjectCentersFromReport
   protected PreviewPanel createPreview(File file) {
     ImagePanel 				panel;
     ObjectCentersOverlayFromReport 	overlay;
-    File				reportFile;
-    DefaultSimpleReportReader		reportReader;
-    List<Report> 			reports;
     Report				report;
 
-    panel      = new ImagePanel();
-    overlay    = null;
-    report     = null;
-    reportFile = FileUtils.replaceExtension(file, ".report");
-    if (reportFile.exists() && reportFile.isFile()) {
-      reportReader = new DefaultSimpleReportReader();
-      reportReader.setInput(new PlaceholderFile(reportFile));
-      reports = reportReader.read();
-      if (reports.size() > 0) {
-        report  = filterReport(reports.get(0));
-	overlay = new ObjectCentersOverlayFromReport();
-	overlay.setDiameter(m_Diameter);
-	overlay.setPrefix(m_Prefix);
-	overlay.setColor(m_Color);
-	overlay.setUseColorsPerType(m_UseColorsPerType);
-	overlay.setTypeColorProvider(m_TypeColorProvider.shallowCopy());
-	overlay.setTypeSuffix(m_TypeSuffix);
-	overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
-	overlay.setLabelFormat(m_LabelFormat);
-	overlay.setLabelFont(m_LabelFont);
-      }
-    }
-    if (overlay != null) {
+    panel  = new ImagePanel();
+    report = loadReport(file);
+    if (report != null) {
+      overlay = new ObjectCentersOverlayFromReport();
+      overlay.setDiameter(m_Diameter);
+      overlay.setPrefix(m_Prefix);
+      overlay.setColor(m_Color);
+      overlay.setUseColorsPerType(m_UseColorsPerType);
+      overlay.setTypeColorProvider(m_TypeColorProvider.shallowCopy());
+      overlay.setTypeSuffix(m_TypeSuffix);
+      overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
+      overlay.setLabelFormat(m_LabelFormat);
+      overlay.setLabelFont(m_LabelFont);
       panel.addImageOverlay(overlay);
       panel.setAdditionalProperties(report);
     }
@@ -529,5 +541,24 @@ public class ObjectCentersFromReport
     panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
+  }
+
+  /**
+   * Reuses the last preview, if possible.
+   *
+   * @param file	the file to create the view for
+   * @return		the view
+   */
+  @Override
+  public PreviewPanel reusePreview(File file, PreviewPanel previewPanel) {
+    ImagePanel 	panel;
+    Report	report;
+
+    panel  = (ImagePanel) previewPanel.getComponent();
+    report = loadReport(file);
+    panel.setAdditionalProperties(report);
+    panel.load(file, new JAIImageReader(), panel.getScale());
+
+    return previewPanel;
   }
 }

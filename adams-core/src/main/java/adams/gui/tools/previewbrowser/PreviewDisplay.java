@@ -15,7 +15,7 @@
 
 /*
  * PreviewDisplay.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -41,16 +41,18 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Displays a {@link PreviewPanel} and a combobox to switch views.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PreviewDisplay
-  extends BasePanel {
+  extends BasePanel
+  implements CleanUpHandler {
 
   private static final long serialVersionUID = -6515079548026850756L;
 
@@ -68,6 +70,9 @@ public class PreviewDisplay
 
   /** the list of content handler objects (aligned with combobox). */
   protected List<AbstractContentHandler> m_ListContentHandlers;
+
+  /** the cached previews (content handler -> preview). */
+  protected Map<Class,PreviewPanel> m_PreviewCache;
 
   /** the button for displaying the options for the content handler. */
   protected BaseButton m_ButtonContentHandler;
@@ -95,6 +100,7 @@ public class PreviewDisplay
     m_IgnoreContentHandlerChanges = false;
     m_DisplayInProgress           = false;
     m_ListContentHandlers         = new ArrayList<>();
+    m_PreviewCache                = new HashMap<>();
   }
 
   /**
@@ -181,13 +187,16 @@ public class PreviewDisplay
       SwingUtilities.invokeLater(() -> currentSearch.search());
     }
 
-    if (m_PanelView.getComponentCount() > 0) {
-      if (m_PanelView.getComponent(0) instanceof CleanUpHandler)
-	((CleanUpHandler) m_PanelView.getComponent(0)).cleanUp();
+    if ((m_PanelView.getComponentCount() > 0) && (m_PanelView.getComponent(0) != panel))
+      m_PanelView.removeAll();
+
+    if (m_PanelView.getComponentCount() == 0) {
+      m_PanelView.add(panel, BorderLayout.CENTER);
+      getParent().invalidate();
+      getParent().validate();
+      getParent().doLayout();
+      getParent().repaint();
     }
-    m_PanelView.removeAll();
-    m_PanelView.add(panel, BorderLayout.CENTER);
-    getParent().validate();
 
     if (currentSearch != null)
       m_LastSearch = currentSearch;
@@ -207,7 +216,7 @@ public class PreviewDisplay
    * @return		the preview
    */
   protected JPanel createPreview(final File[] localFiles) {
-    JPanel 			result;
+    PreviewPanel 		result;
     List<Class> 		handlers;
     AbstractContentHandler 	preferred;
     int				i;
@@ -243,10 +252,22 @@ public class PreviewDisplay
 	m_ComboBoxContentHandlers.setSelectedIndex(prefIndex);
 	// get preferred handler
 	contentHandler = m_ListContentHandlers.get(prefIndex);
-	if (contentHandler instanceof MultipleFileContentHandler)
-	  result = ((MultipleFileContentHandler) contentHandler).getPreview(localFiles);
-	else
-	  result = contentHandler.getPreview(localFiles[0]);
+	// cached?
+	if (m_PreviewCache.containsKey(contentHandler.getClass())) {
+	  result = m_PreviewCache.get(contentHandler.getClass());
+	  if (contentHandler instanceof MultipleFileContentHandler)
+	    result = ((MultipleFileContentHandler) contentHandler).reusePreview(localFiles, result);
+	  else
+	    result = contentHandler.reusePreview(localFiles[0], result);
+	}
+	else {
+	  if (contentHandler instanceof MultipleFileContentHandler)
+	    result = ((MultipleFileContentHandler) contentHandler).getPreview(localFiles);
+	  else
+	    result = contentHandler.getPreview(localFiles[0]);
+	}
+	// cache preview
+	m_PreviewCache.put(contentHandler.getClass(), result);
       }
       SwingUtilities.invokeLater(() -> m_IgnoreContentHandlerChanges = false);
     }
@@ -344,5 +365,14 @@ public class PreviewDisplay
    */
   public void clear() {
     m_PanelView.removeAll();
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    for (PreviewPanel panel: m_PreviewCache.values())
+      panel.cleanUp();
+    m_PreviewCache.clear();
   }
 }

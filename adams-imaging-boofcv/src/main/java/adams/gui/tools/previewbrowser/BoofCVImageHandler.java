@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BoofCVImageHandler.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -40,7 +40,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10619 $
  */
 public class BoofCVImageHandler
   extends AbstractContentHandler {
@@ -83,5 +82,21 @@ public class BoofCVImageHandler
     panel.load(file, new BoofCVImageReader());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
+  }
+
+  /**
+   * Reuses the last preview, if possible.
+   *
+   * @param file	the file to create the view for
+   * @return		the view
+   */
+  @Override
+  public PreviewPanel reusePreview(File file, PreviewPanel previewPanel) {
+    ImagePanel 	panel;
+
+    panel  = (ImagePanel) previewPanel.getComponent();
+    panel.load(file, new BoofCVImageReader(), panel.getScale());
+
+    return previewPanel;
   }
 }

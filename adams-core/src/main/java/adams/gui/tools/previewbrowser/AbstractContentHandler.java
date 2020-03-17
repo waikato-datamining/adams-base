@@ -25,7 +25,6 @@ import adams.core.option.AbstractOptionHandler;
 import com.googlecode.jfilechooserbookmarks.core.Utils;
 import nz.ac.waikato.cms.locator.ClassCompare;
 
-import javax.swing.JPanel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,6 +74,18 @@ public abstract class AbstractContentHandler
   }
 
   /**
+   * Reuses the last preview, if possible.
+   * <br>
+   * Default implementation just creates a new preview.
+   *
+   * @param file	the file to create the view for
+   * @return		the preview
+   */
+  public PreviewPanel reusePreview(File file, PreviewPanel lastPreview) {
+    return createPreview(file);
+  }
+
+  /**
    * Creates the actual preview.
    *
    * @param file	the file to create the view for
@@ -89,7 +100,7 @@ public abstract class AbstractContentHandler
    * @return		the preview, NoPreviewAvailablePanel in case of an error
    * @see		NoPreviewAvailablePanel
    */
-  public JPanel getPreview(File file) {
+  public PreviewPanel getPreview(File file) {
     String	msg;
 
     msg = checkFile(file);

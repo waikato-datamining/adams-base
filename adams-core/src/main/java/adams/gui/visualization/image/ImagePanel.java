@@ -862,6 +862,20 @@ public class ImagePanel
      * Updates the image.
      */
     public void update() {
+      update(false);
+    }
+
+    /**
+     * Updates the image.
+     *
+     * @param doLayout 	whether to update the layout
+     */
+    public void update(boolean doLayout) {
+      if (doLayout) {
+	invalidate();
+	revalidate();
+	doLayout();
+      }
       repaint();
 
       synchronized(m_ImageOverlays) {
@@ -1791,7 +1805,7 @@ public class ImagePanel
 	m_CurrentFile = new PlaceholderFile(file);
 	result        = true;
 	updateImageProperties(cont.getReport());
-	repaint();
+	m_PaintPanel.update(true);
 	log("load: " + file);
       }
       else {

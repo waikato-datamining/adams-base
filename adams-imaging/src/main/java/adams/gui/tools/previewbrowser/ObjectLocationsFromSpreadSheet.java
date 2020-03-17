@@ -509,6 +509,33 @@ public class ObjectLocationsFromSpreadSheet
   }
 
   /**
+   * Loads the report associated with the image.
+   *
+   * @param file	the image file
+   * @return		the report, null if failed to load report data or none available
+   */
+  protected Report loadReport(File file) {
+    Report 		result;
+    File 		locFile;
+    File 		locFile2;
+    List<Report> 	reports;
+
+    result   = null;
+    locFile  = FileUtils.replaceExtension(file, "." + m_Reader.getReader().getDefaultFormatExtension());
+    locFile2 = FileUtils.replaceExtension(file, "-rois." + m_Reader.getReader().getDefaultFormatExtension());
+    if (locFile2.exists() && locFile2.isFile())
+      locFile = locFile2;
+    if (locFile.exists() && locFile.isFile()) {
+      m_Reader.setInput(new PlaceholderFile(locFile));
+      reports = m_Reader.read();
+      if (reports.size() > 0)
+        result = filterReport(reports.get(0));
+    }
+
+    return result;
+  }
+
+  /**
    * Creates the actual view.
    *
    * @param file	the file to create the view for
@@ -518,35 +545,20 @@ public class ObjectLocationsFromSpreadSheet
   protected PreviewPanel createPreview(File file) {
     ImagePanel 				panel;
     ObjectLocationsOverlayFromReport	overlay;
-    File 				locFile;
-    File 				locFile2;
-    List<Report> 			reports;
     Report				report;
 
     panel    = new ImagePanel();
-    overlay  = null;
-    report   = null;
-    locFile  = FileUtils.replaceExtension(file, "." + m_Reader.getReader().getDefaultFormatExtension());
-    locFile2 = FileUtils.replaceExtension(file, "-rois." + m_Reader.getReader().getDefaultFormatExtension());
-    if (locFile2.exists() && locFile2.isFile())
-      locFile = locFile2;
-    if (locFile.exists() && locFile.isFile()) {
-      m_Reader.setInput(new PlaceholderFile(locFile));
-      reports = m_Reader.read();
-      if (reports.size() > 0) {
-        report  = filterReport(reports.get(0));
-	overlay = new ObjectLocationsOverlayFromReport();
-	overlay.setPrefix(m_Reader.getPrefix());
-	overlay.setColor(m_Color);
-	overlay.setUseColorsPerType(m_UseColorsPerType);
-	overlay.setTypeColorProvider(m_TypeColorProvider.shallowCopy());
-	overlay.setTypeSuffix(m_TypeSuffix);
-	overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
-	overlay.setLabelFormat(m_LabelFormat);
-	overlay.setLabelFont(m_LabelFont);
-      }
-    }
-    if (overlay != null) {
+    report   = loadReport(file);
+    if (report != null) {
+      overlay = new ObjectLocationsOverlayFromReport();
+      overlay.setPrefix(m_Reader.getPrefix());
+      overlay.setColor(m_Color);
+      overlay.setUseColorsPerType(m_UseColorsPerType);
+      overlay.setTypeColorProvider(m_TypeColorProvider.shallowCopy());
+      overlay.setTypeSuffix(m_TypeSuffix);
+      overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
+      overlay.setLabelFormat(m_LabelFormat);
+      overlay.setLabelFont(m_LabelFont);
       panel.addImageOverlay(overlay);
       panel.setAdditionalProperties(report);
     }
@@ -554,5 +566,24 @@ public class ObjectLocationsFromSpreadSheet
     panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
+  }
+
+  /**
+   * Reuses the last preview, if possible.
+   *
+   * @param file	the file to create the view for
+   * @return		the view
+   */
+  @Override
+  public PreviewPanel reusePreview(File file, PreviewPanel previewPanel) {
+    ImagePanel 	panel;
+    Report	report;
+
+    panel  = (ImagePanel) previewPanel.getComponent();
+    report = loadReport(file);
+    panel.setAdditionalProperties(report);
+    panel.load(file, new JAIImageReader(), panel.getScale());
+
+    return previewPanel;
   }
 }

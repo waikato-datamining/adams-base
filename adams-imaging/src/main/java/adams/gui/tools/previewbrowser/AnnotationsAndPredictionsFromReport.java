@@ -303,6 +303,31 @@ public class AnnotationsAndPredictionsFromReport
   }
 
   /**
+   * Loads the report associated with the image.
+   *
+   * @param file	the image file
+   * @return		the report, null if none available or failed to load
+   */
+  protected Report loadReport(File file) {
+    Report 			result;
+    File			reportFile;
+    DefaultSimpleReportReader	reportReader;
+    List<Report> 		reports;
+
+    result = null;
+    reportFile = FileUtils.replaceExtension(file, ".report");
+    if (reportFile.exists() && reportFile.isFile()) {
+      reportReader = new DefaultSimpleReportReader();
+      reportReader.setInput(new PlaceholderFile(reportFile));
+      reports = reportReader.read();
+      if (reports.size() > 0) {
+	result = reports.get(0);
+      }
+    }
+    return result;
+  }
+
+  /**
    * Creates the actual view.
    *
    * @param file	the file to create the view for
@@ -314,45 +339,32 @@ public class AnnotationsAndPredictionsFromReport
     MultiImageOverlay			multi;
     ObjectLocationsOverlayFromReport 	annotations;
     ObjectLocationsOverlayFromReport 	predictions;
-    File				reportFile;
-    DefaultSimpleReportReader		reportReader;
-    List<Report> 			reports;
     Report				report;
 
     panel  = new ImagePanel();
-    multi  = null;
-    report = null;
-    reportFile = FileUtils.replaceExtension(file, ".report");
-    if (reportFile.exists() && reportFile.isFile()) {
-      reportReader = new DefaultSimpleReportReader();
-      reportReader.setInput(new PlaceholderFile(reportFile));
-      reports = reportReader.read();
-      if (reports.size() > 0) {
-	report  = reports.get(0);
-	annotations = new ObjectLocationsOverlayFromReport();
-	annotations.setPrefix(m_Prefix);
-	annotations.setTypeSuffix(m_TypeSuffix);
-	annotations.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
-	annotations.setLabelFormat(m_LabelFormat);
-	annotations.setLabelFont(m_LabelFont);
-	annotations.setPrefix(PREFIX_ANNOTATIONS);
-	annotations.setColor(COLOR_ANNOTATIONS);
-	predictions = new ObjectLocationsOverlayFromReport();
-	predictions.setPrefix(m_Prefix);
-	predictions.setTypeSuffix(m_TypeSuffix);
-	predictions.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
-	predictions.setLabelFormat(m_LabelFormat);
-	predictions.setLabelFont(m_LabelFont);
-	predictions.setPrefix(PREFIX_PREDICTIONS);
-	predictions.setColor(COLOR_PREDICTIONS);
-	multi = new MultiImageOverlay();
-	multi.setOverlays(new ImageOverlay[]{
-	  annotations,
-	  predictions
-	});
-      }
-    }
-    if (multi != null) {
+    report = loadReport(file);
+    if (report != null) {
+      annotations = new ObjectLocationsOverlayFromReport();
+      annotations.setPrefix(m_Prefix);
+      annotations.setTypeSuffix(m_TypeSuffix);
+      annotations.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
+      annotations.setLabelFormat(m_LabelFormat);
+      annotations.setLabelFont(m_LabelFont);
+      annotations.setPrefix(PREFIX_ANNOTATIONS);
+      annotations.setColor(COLOR_ANNOTATIONS);
+      predictions = new ObjectLocationsOverlayFromReport();
+      predictions.setPrefix(m_Prefix);
+      predictions.setTypeSuffix(m_TypeSuffix);
+      predictions.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
+      predictions.setLabelFormat(m_LabelFormat);
+      predictions.setLabelFont(m_LabelFont);
+      predictions.setPrefix(PREFIX_PREDICTIONS);
+      predictions.setColor(COLOR_PREDICTIONS);
+      multi = new MultiImageOverlay();
+      multi.setOverlays(new ImageOverlay[]{
+	annotations,
+	predictions
+      });
       panel.addImageOverlay(multi);
       panel.setAdditionalProperties(report);
     }
@@ -360,5 +372,24 @@ public class AnnotationsAndPredictionsFromReport
     panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
+  }
+
+  /**
+   * Reuses the last preview, if possible.
+   *
+   * @param file	the file to create the view for
+   * @return		the view
+   */
+  @Override
+  public PreviewPanel reusePreview(File file, PreviewPanel previewPanel) {
+    ImagePanel 	panel;
+    Report	report;
+
+    panel  = (ImagePanel) previewPanel.getComponent();
+    report = loadReport(file);
+    panel.setAdditionalProperties(report);
+    panel.load(file, new JAIImageReader(), panel.getScale());
+
+    return previewPanel;
   }
 }

@@ -13,23 +13,30 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultipleFileContentHandler.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import java.io.File;
 
-import javax.swing.JPanel;
-
 /**
  * Interface for content handlers that can handle more than one file at a time.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface MultipleFileContentHandler {
+
+  /**
+   * Returns the preview for the specified files.
+   *
+   * @param files	the files to create the view for
+   * @param previewPanel the preview panel to resuse
+   * @return		the preview, NoPreviewAvailablePanel in case of an error
+   * @see		NoPreviewAvailablePanel
+   */
+  public PreviewPanel reusePreview(File[] files, PreviewPanel previewPanel);
 
   /**
    * Returns the preview for the specified files.
@@ -38,5 +45,5 @@ public interface MultipleFileContentHandler {
    * @return		the preview, NoPreviewAvailablePanel in case of an error
    * @see		NoPreviewAvailablePanel
    */
-  public JPanel getPreview(File[] files);
+  public PreviewPanel getPreview(File[] files);
 }

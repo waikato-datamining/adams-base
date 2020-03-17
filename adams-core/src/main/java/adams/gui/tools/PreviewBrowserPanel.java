@@ -15,10 +15,11 @@
 
 /*
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
+import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
@@ -94,11 +95,10 @@ import java.util.List;
  * Also works for archives.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PreviewBrowserPanel
   extends BasePanel
-  implements MenuBarProvider, SendToActionSupporter {
+  implements MenuBarProvider, SendToActionSupporter, CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 5284765971012530865L;
@@ -1135,5 +1135,12 @@ public class PreviewBrowserPanel
       m_Notes.toString(), false, null);
     if (msg != null)
       GUIHelper.showErrorMessage(this, "Failed to save notes to: " + m_FileChooserNotes.getSelectedFile() + "\n" + msg);
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    m_PanelContent.cleanUp();
   }
 }

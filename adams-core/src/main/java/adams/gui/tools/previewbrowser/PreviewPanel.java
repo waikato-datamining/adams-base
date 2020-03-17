@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PreviewPanel.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -30,7 +30,6 @@ import java.awt.BorderLayout;
  * The ancestor for all preview panels.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PreviewPanel
   extends BasePanel
@@ -38,6 +37,9 @@ public class PreviewPanel
 
   /** for serialization. */
   private static final long serialVersionUID = 3358752718380986817L;
+
+  /** the component. */
+  protected JComponent m_Component;
 
   /** the actual content. */
   protected JComponent m_Content;
@@ -58,6 +60,7 @@ public class PreviewPanel
   public PreviewPanel(JComponent component, JComponent content) {
     super(new BorderLayout());
     setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    m_Component = component;
     setContent(content);
     add(component, BorderLayout.CENTER);
   }
@@ -71,7 +74,16 @@ public class PreviewPanel
    
    setContent(this);
   }
-  
+
+  /**
+   * Returns the component.
+   *
+   * @return	the component
+   */
+  public JComponent getComponent() {
+    return m_Component;
+  }
+
   /**
    * Sets the actual content.
    * 
