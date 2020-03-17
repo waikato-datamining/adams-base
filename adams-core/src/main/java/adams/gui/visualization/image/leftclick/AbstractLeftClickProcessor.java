@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSelectionProcessor.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.leftclick;
 
@@ -33,7 +33,6 @@ import java.awt.Point;
  * Ancestor for classes that react to selection in an image.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractLeftClickProcessor
   extends AbstractOptionHandler
@@ -75,10 +74,12 @@ public abstract class AbstractLeftClickProcessor
    * @param panel	the origin
    * @param position	the position of the click
    * @param modifiersEx	the associated modifiers
+   * @param repaint 	whether to repaint the panel
    */
-  public void processClick(ImagePanel panel, Point position, int modifiersEx) {
+  public void processClick(ImagePanel panel, Point position, int modifiersEx, boolean repaint) {
     doProcessClick(panel, position, modifiersEx);
-    panel.repaint();
+    if (repaint)
+      panel.repaint();
   }
   
   /**
@@ -106,7 +107,7 @@ public abstract class AbstractLeftClickProcessor
     
     msg = check(e);
     if (msg == null)
-      processClick(e.getImagePanel(), e.getPosition(), e.getModifiersEx());
+      processClick(e.getImagePanel(), e.getPosition(), e.getModifiersEx(), true);
     else
       getLogger().severe(msg);
   }
