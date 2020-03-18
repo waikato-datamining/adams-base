@@ -374,7 +374,11 @@ public class ReportObjectOverlay
    * 			displaying in the GUI or for listing the options.
    */
   public String labelFormatTipText() {
-    return "The label format string to use for the rectangles; '#' for index, '@' for type and '$' for short type (type suffix must be defined for '@' and '$'); for instance: '# @'.";
+    return "The label format string to use for the rectangles; "
+      + "'#' for index, '@' for type and '$' for short type (type suffix "
+      + "must be defined for '@' and '$'), '{BLAH}' gets replaced with the "
+      + "value associated with the meta-data key 'BLAH'; "
+      + "for instance: '# @' or '# {BLAH}'.";
   }
 
   /**
@@ -494,6 +498,47 @@ public class ReportObjectOverlay
   }
 
   /**
+   * Returns the type suffix without the leading dot.
+   *
+   * @return		the sufix
+   */
+  protected String determineTypeSuffix() {
+    return m_TypeSuffix.isEmpty() ? "" : m_TypeSuffix.substring(1);
+  }
+
+  /**
+   * Applies the label format to the object to generate a display string.
+   *
+   * @param object 	the object to use as basis
+   * @param type 	the meta-data key for the type
+   * @return		the generated label
+   */
+  protected String applyLabelFormat(LocatedObject object, String type) {
+    String 	result;
+    String	key;
+    String	value;
+    int		start;
+    int		end;
+
+    result = m_LabelFormat
+      .replace("#", "" + object.getMetaData().get(LocatedObjects.KEY_INDEX))
+      .replace("@", type)
+      .replace("$", type.replaceAll(".*\\.", ""));
+
+    // other meta-data keys?
+    while (((start = result.indexOf("{")) > -1) && ((end = result.indexOf("}", start)) > -1)) {
+      key = result.substring(start + 1, end);
+      if (object.getMetaData().containsKey(key))
+        value = "" + object.getMetaData().get(key);
+      else
+        value = "";
+      result = result.replace("{" + key + "}", value);
+    }
+
+    return result;
+  }
+
+  /**
    * Determines the locations of the objects.
    * 
    * @param report	the report to inspect
@@ -535,7 +580,7 @@ public class ReportObjectOverlay
     m_Locations = new ArrayList<>();
     m_Colors = new HashMap<>();
     m_Labels    = new HashMap<>();
-    suffix      = m_TypeSuffix.isEmpty() ? "" : m_TypeSuffix.substring(1);
+    suffix      = determineTypeSuffix();
     located     = LocatedObjects.fromReport(report, m_Prefix);
     for (LocatedObject object: located) {
       if (object.hasPolygon()) {
@@ -566,20 +611,14 @@ public class ReportObjectOverlay
 
 	// label?
 	if (!m_LabelFormat.isEmpty()) {
-	  label = m_LabelFormat
-	    .replace("#", "" + object.getMetaData().get(LocatedObjects.KEY_INDEX))
-	    .replace("@", type)
-	    .replace("$", type.replaceAll(".*\\.", ""));
+	  label = applyLabelFormat(object, type);
 	  m_Labels.put(poly, label);
 	}
       }
       else {
 	// label?
 	if (!m_LabelFormat.isEmpty()) {
-	  label = m_LabelFormat
-	    .replace("#", "" + object.getMetaData().get(LocatedObjects.KEY_INDEX))
-	    .replace("@", "")
-	    .replace("$", "");
+	  label = applyLabelFormat(object, "");
 	  m_Labels.put(poly, label);
 	}
       }
