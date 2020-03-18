@@ -22,6 +22,7 @@ package adams.gui.visualization.image.leftclick;
 import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
+import adams.gui.core.KeyUtils;
 import adams.gui.event.ImagePanelLeftClickEvent;
 import adams.gui.event.ImagePanelLeftClickListener;
 import adams.gui.visualization.image.ImagePanel;
@@ -40,6 +41,158 @@ public abstract class AbstractLeftClickProcessor
 
   /** for serialization. */
   private static final long serialVersionUID = 3515366296579391750L;
+
+  /** whether shift needs to be down. */
+  protected boolean m_ShiftDown;
+
+  /** whether alt needs to be down. */
+  protected boolean m_AltDown;
+
+  /** whether ctrl needs to be down. */
+  protected boolean m_CtrlDown;
+
+  /** whether meta needs to be down. */
+  protected boolean m_MetaDown;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "shift-down", "shiftDown",
+      false);
+
+    m_OptionManager.add(
+      "alt-down", "altDown",
+      false);
+
+    m_OptionManager.add(
+      "ctrl-down", "ctrlDown",
+      false);
+
+    m_OptionManager.add(
+      "meta-down", "metaDown",
+      false);
+  }
+
+  /**
+   * Sets whether the shift key needs to be down.
+   *
+   * @param value 	true if needs to be down
+   */
+  public void setShiftDown(boolean value) {
+    m_ShiftDown = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the shift key needs to be down.
+   *
+   * @return 		true if needs to be down
+   */
+  public boolean getShiftDown() {
+    return m_ShiftDown;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shiftDownTipText() {
+    return "If enabled, the SHIFT key must be down to trigger.";
+  }
+
+  /**
+   * Sets whether the alt key needs to be down.
+   *
+   * @param value 	true if needs to be down
+   */
+  public void setAltDown(boolean value) {
+    m_AltDown = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the alt key needs to be down.
+   *
+   * @return 		true if needs to be down
+   */
+  public boolean getAltDown() {
+    return m_AltDown;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String altDownTipText() {
+    return "If enabled, the ALT key must be down to trigger.";
+  }
+
+  /**
+   * Sets whether the ctrl key needs to be down.
+   *
+   * @param value 	true if needs to be down
+   */
+  public void setCtrlDown(boolean value) {
+    m_CtrlDown = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the ctrl key needs to be down.
+   *
+   * @return 		true if needs to be down
+   */
+  public boolean getCtrlDown() {
+    return m_CtrlDown;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String ctrlDownTipText() {
+    return "If enabled, the CTRL key must be down to trigger.";
+  }
+
+  /**
+   * Sets whether the meta key needs to be down.
+   *
+   * @param value 	true if needs to be down
+   */
+  public void setMetaDown(boolean value) {
+    m_MetaDown = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the meta key needs to be down.
+   *
+   * @return 		true if needs to be down
+   */
+  public boolean getMetaDown() {
+    return m_MetaDown;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String metaDownTipText() {
+    return "If enabled, the META key must be down to trigger.";
+  }
 
   /**
    * Notifies the overlay that the image has changed.
@@ -77,6 +230,16 @@ public abstract class AbstractLeftClickProcessor
    * @param repaint 	whether to repaint the panel
    */
   public void processClick(ImagePanel panel, Point position, int modifiersEx, boolean repaint) {
+    // ensure that correct keys are pressed
+    if ((m_ShiftDown && !KeyUtils.isShiftDown(modifiersEx)) || (!m_ShiftDown && KeyUtils.isShiftDown(modifiersEx)))
+      return;
+    if ((m_AltDown && !KeyUtils.isAltDown(modifiersEx)) || (!m_AltDown && KeyUtils.isAltDown(modifiersEx)))
+      return;
+    if ((m_CtrlDown && !KeyUtils.isCtrlDown(modifiersEx)) || (!m_CtrlDown && KeyUtils.isCtrlDown(modifiersEx)))
+      return;
+    if ((m_MetaDown && !KeyUtils.isMetaDown(modifiersEx)) || (!m_MetaDown && KeyUtils.isMetaDown(modifiersEx)))
+      return;
+
     doProcessClick(panel, position, modifiersEx);
     if (repaint)
       panel.repaint();
