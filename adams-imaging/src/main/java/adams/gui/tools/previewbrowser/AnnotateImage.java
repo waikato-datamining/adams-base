@@ -24,12 +24,12 @@ import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
+import adams.data.io.input.AbstractReportReader;
+import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.JAIImageReader;
-import adams.data.io.input.ObjectLocationsSpreadSheetReader;
 import adams.data.io.output.AbstractReportWriter;
 import adams.data.io.output.DefaultSimpleReportWriter;
 import adams.data.report.Report;
-import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.transformer.ImageAnnotator.AnnotatorPanel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
@@ -62,7 +62,7 @@ public class AnnotateImage
   private static final long serialVersionUID = -3962259305718630395L;
 
   /** the reader to use. */
-  protected ObjectLocationsSpreadSheetReader m_Reader;
+  protected AbstractReportReader m_Reader;
 
   /** the report writer for updating the file. */
   protected AbstractReportWriter m_Writer;
@@ -107,7 +107,7 @@ public class AnnotateImage
 
     m_OptionManager.add(
       "reader", "reader",
-      getDefaultReader());
+      new DefaultSimpleReportReader());
 
     m_OptionManager.add(
       "writer", "writer",
@@ -143,29 +143,11 @@ public class AnnotateImage
   }
 
   /**
-   * Returns the default reader.
-   *
-   * @return		the reader
-   */
-  protected ObjectLocationsSpreadSheetReader getDefaultReader() {
-    ObjectLocationsSpreadSheetReader  result;
-
-    result = new ObjectLocationsSpreadSheetReader();
-    result.setColLeft(new SpreadSheetColumnIndex("x0"));
-    result.setColTop(new SpreadSheetColumnIndex("y0"));
-    result.setColRight(new SpreadSheetColumnIndex("x1"));
-    result.setColBottom(new SpreadSheetColumnIndex("y1"));
-    result.setColType(new SpreadSheetColumnIndex("label_str"));
-
-    return result;
-  }
-
-  /**
    * Sets the reader setup to use for reading the object locations from the spreadsheet.
    *
    * @param value 	the reader
    */
-  public void setReader(ObjectLocationsSpreadSheetReader value) {
+  public void setReader(AbstractReportReader value) {
     m_Reader = value;
     reset();
   }
@@ -175,7 +157,7 @@ public class AnnotateImage
    *
    * @return 		the reader
    */
-  public ObjectLocationsSpreadSheetReader getReader() {
+  public AbstractReportReader getReader() {
     return m_Reader;
   }
 
@@ -444,12 +426,17 @@ public class AnnotateImage
    * @param mustExist 	whether the report must exist
    * @return		the report file, null if not available
    */
-  protected File determineReportFile(File file, boolean mustExist) {
+  protected File determineReportFile(File file, boolean mustExist, boolean reader) {
+    String	ext;
     File 	reportFile1;
     File 	reportFile2;
 
-    reportFile1 = FileUtils.replaceExtension(file, "." + m_Reader.getReader().getDefaultFormatExtension());
-    reportFile2 = FileUtils.replaceExtension(file, "-rois." + m_Reader.getReader().getDefaultFormatExtension());
+    if (reader)
+      ext = m_Reader.getDefaultFormatExtension();
+    else
+      ext = m_Writer.getDefaultFormatExtension();
+    reportFile1 = FileUtils.replaceExtension(file, "." + ext);
+    reportFile2 = FileUtils.replaceExtension(file, "-rois." + ext);
     if (reportFile2.exists() && reportFile2.isFile())
       reportFile1 = reportFile2;
     if (mustExist && reportFile1.exists() && reportFile1.isFile())
@@ -472,7 +459,7 @@ public class AnnotateImage
     List<Report> 	reports;
 
     result   = null;
-    reportFile = determineReportFile(file, true);
+    reportFile = determineReportFile(file, true, true);
     if (reportFile != null) {
       m_Reader.setInput(new PlaceholderFile(reportFile));
       reports = m_Reader.read();
@@ -513,7 +500,7 @@ public class AnnotateImage
   protected void saveReport(AnnotatorPanel panel, File file) {
     File	reportFile;
 
-    reportFile = determineReportFile(file, false);
+    reportFile = determineReportFile(file, false, false);
     if (reportFile != null) {
       m_Writer.setOutput(new PlaceholderFile(reportFile));
       if (!m_Writer.write(panel.getCurrentReport()))
@@ -542,7 +529,7 @@ public class AnnotateImage
     panel.getImagePanel().addLeftClickListener(new AddMetaData());
     cont  = loadContainer(file);
     if (cont != null)
-      panel.setCurrentImage(cont);
+      panel.setCurrentImage(cont, m_Zoom);
 
     panelAll = new JPanel(new BorderLayout());
     panelAll.add(panel, BorderLayout.CENTER);

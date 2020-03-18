@@ -544,7 +544,22 @@ public class ImageAnnotator
     public void setCurrentImage(AbstractImageContainer value) {
       m_ReportBackup = value.getReport().getClone();
       m_CurrentImage = value;
-      m_PanelImage.setCurrentImage(value);
+      if (m_PanelImage.getCurrentImage() == null)
+	m_PanelImage.setCurrentImage(value, m_Zoom);
+      else
+        m_PanelImage.setCurrentImage(value, m_PanelImage.getScale());
+    }
+
+    /**
+     * Sets the current image.
+     *
+     * @param value	the image
+     * @param zoom 	the zoom to use
+     */
+    public void setCurrentImage(AbstractImageContainer value, double zoom) {
+      m_ReportBackup = value.getReport().getClone();
+      m_CurrentImage = value;
+      m_PanelImage.setCurrentImage(value, zoom);
     }
 
     /**
