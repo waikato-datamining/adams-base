@@ -855,7 +855,7 @@ public class ImagePanel
       sbVer.setUnitIncrement(height / 25);
       sbVer.setBlockIncrement(height / 10);
 
-      update();
+      update(true);
     }
 
     /**
