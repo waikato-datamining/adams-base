@@ -95,7 +95,8 @@ public class AnnotateImage
    */
   @Override
   public String globalInfo() {
-    return "Allows annotating images and/or modifying their meta-data.";
+    return "Allows annotating images and/or modifying their meta-data.\n"
+      + "Hold down CTRL key when clicking on an annotation to add meta-data.";
   }
 
   /**
@@ -524,9 +525,12 @@ public class AnnotateImage
     JPanel			panelButtons;
     JButton			buttonSave;
     BufferedImageContainer	cont;
+    AddMetaData			addMetaData;
 
+    addMetaData = new AddMetaData();
+    addMetaData.setCtrlDown(true);
     panel = new AnnotatorPanel(m_Prefix, m_Suffix, m_Labels, m_SelectionProcessor, m_SelectionShapePainter, m_Overlay, m_Zoom, new Null());
-    panel.getImagePanel().addLeftClickListener(new AddMetaData());
+    panel.getImagePanel().addLeftClickListener(addMetaData);
     cont  = loadContainer(file);
     if (cont != null)
       panel.setCurrentImage(cont, m_Zoom);
