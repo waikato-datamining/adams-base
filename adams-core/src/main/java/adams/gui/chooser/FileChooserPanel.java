@@ -15,7 +15,7 @@
 
 /*
  * FileChooserPanel.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -159,7 +159,7 @@ public class FileChooserPanel
    */
   @Override
   protected File fromString(String value) {
-    return new PlaceholderFile(value);
+    return new PlaceholderFile(value.trim());
   }
 
   /**
@@ -170,7 +170,7 @@ public class FileChooserPanel
    */
   @Override
   protected boolean isValid(String value) {
-    return PlaceholderFile.isValid(value);
+    return PlaceholderFile.isValid(value.trim());
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * DirectoryChooserPanel.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -143,7 +143,7 @@ public class DirectoryChooserPanel
    */
   protected File fromString(String value) {
     try {
-      return new PlaceholderFile(value).getCanonicalFile();
+      return new PlaceholderFile(value.trim()).getCanonicalFile();
     }
     catch (Exception e) {
       return new PlaceholderFile(value);
@@ -158,7 +158,7 @@ public class DirectoryChooserPanel
    */
   @Override
   protected boolean isValid(String value) {
-    return PlaceholderFile.isValid(value);
+    return PlaceholderFile.isValid(value.trim());
   }
 
   /**
