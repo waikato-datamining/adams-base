@@ -156,4 +156,43 @@ public class KeyUtils {
       && !isMetaDown(modifiersEx)
       && !isShiftDown(modifiersEx);
   }
+
+  /**
+   * Checks whether only ATL is not, not CTRL/META/SHIFT.
+   *
+   * @param modifiersEx		the extended modifiers bitmask
+   * @return			true if only ALT is down
+   */
+  public static boolean isOnlyAltDown(int modifiersEx) {
+    return !isCtrlDown(modifiersEx)
+      && isAltDown(modifiersEx)
+      && !isMetaDown(modifiersEx)
+      && !isShiftDown(modifiersEx);
+  }
+
+  /**
+   * Checks whether only SHIFT is not, not ALT/META/CTRL.
+   *
+   * @param modifiersEx		the extended modifiers bitmask
+   * @return			true if only SHIFT is down
+   */
+  public static boolean isOnlyShiftDown(int modifiersEx) {
+    return !isCtrlDown(modifiersEx)
+      && !isAltDown(modifiersEx)
+      && !isMetaDown(modifiersEx)
+      && isShiftDown(modifiersEx);
+  }
+
+  /**
+   * Checks whether only META is not, not ALT/CTRL/SHIFT.
+   *
+   * @param modifiersEx		the extended modifiers bitmask
+   * @return			true if only META is down
+   */
+  public static boolean isOnlyMetaDown(int modifiersEx) {
+    return !isCtrlDown(modifiersEx)
+      && !isAltDown(modifiersEx)
+      && isMetaDown(modifiersEx)
+      && !isShiftDown(modifiersEx);
+  }
 }
