@@ -20,6 +20,7 @@
 
 package adams.gui.core;
 
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 /**
@@ -88,5 +89,71 @@ public class KeyUtils {
       result = true;
     
     return result;
+  }
+
+  /**
+   * Returns whether the CTRL key is down.
+   *
+   * @param modifiersEx		the extended modifiers bitmask
+   * @return			true if CTRL is down
+   */
+  public static boolean isCtrlDown(int modifiersEx) {
+    return ((modifiersEx & InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK);
+  }
+
+  /**
+   * Returns whether the ALT key is down.
+   *
+   * @param modifiersEx		the extended modifiers bitmask
+   * @return			true if ALT is down
+   */
+  public static boolean isAltDown(int modifiersEx) {
+    return ((modifiersEx & InputEvent.ALT_DOWN_MASK) == InputEvent.ALT_DOWN_MASK);
+  }
+
+  /**
+   * Returns whether the META key is down.
+   *
+   * @param modifiersEx		the extended modifiers bitmask
+   * @return			true if META is down
+   */
+  public static boolean isMetaDown(int modifiersEx) {
+    return ((modifiersEx & InputEvent.META_DOWN_MASK) == InputEvent.META_DOWN_MASK);
+  }
+
+  /**
+   * Returns whether the SHIFT key is down.
+   *
+   * @param modifiersEx		the extended modifiers bitmask
+   * @return			true if SHIFT is down
+   */
+  public static boolean isShiftDown(int modifiersEx) {
+    return ((modifiersEx & InputEvent.SHIFT_DOWN_MASK) == InputEvent.SHIFT_DOWN_MASK);
+  }
+
+  /**
+   * Checks whether neither CTRL/ALT/META/SHIFT is down.
+   *
+   * @param modifiersEx		the extended modifiers bitmask
+   * @return			true if none is down
+   */
+  public static boolean isNoneDown(int modifiersEx) {
+    return !isCtrlDown(modifiersEx)
+      && !isAltDown(modifiersEx)
+      && !isMetaDown(modifiersEx)
+      && !isShiftDown(modifiersEx);
+  }
+
+  /**
+   * Checks whether only CTRL is not, not ALT/META/SHIFT.
+   *
+   * @param modifiersEx		the extended modifiers bitmask
+   * @return			true if only CTRL is down
+   */
+  public static boolean isOnlyCtrlDown(int modifiersEx) {
+    return isCtrlDown(modifiersEx)
+      && !isAltDown(modifiersEx)
+      && !isMetaDown(modifiersEx)
+      && !isShiftDown(modifiersEx);
   }
 }
