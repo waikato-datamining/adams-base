@@ -39,6 +39,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseToggleButton;
 import adams.gui.core.ColorHelper;
+import adams.gui.core.KeyUtils;
 import adams.gui.event.ImagePanelLeftClickEvent;
 import adams.gui.event.ImagePanelLeftClickListener;
 import adams.gui.visualization.image.ImageOverlay;
@@ -645,7 +646,7 @@ public class ImageAnnotator
     }
 
     /**
-     * Invoked when a left-click happened in a {@link ImagePanel}.
+     * Invoked when a left-click happened in an {@link ImagePanel}.
      *
      * @param e		the event
      */
@@ -655,6 +656,9 @@ public class ImageAnnotator
       Report	report;
       double	actual;
       boolean   contained;
+
+      if (!KeyUtils.isNoneDown(e.getModifiersEx()))
+        return;
 
       // resized?
       actual = m_PanelImage.calcActualScale(m_PanelImage.getScale());
