@@ -166,6 +166,7 @@ public class PreviewDisplay
     handler = (AbstractContentHandler) dialog.getCurrent();
     PropertiesManager.setCustomContentHandler(handler);
     m_ListContentHandlers.set(index, handler);
+    m_PreviewCache.remove(handler.getClass());
 
     if (m_CurrentFiles != null)
       display(m_CurrentFiles, false);
