@@ -613,13 +613,13 @@ public class ImageAnnotator
     }
 
     /**
-     * Logs the addition/removal of an object.
+     * Logs the addition/removal of a label.
      *
-     * @param add	true if added, false if removed
+     * @param add	true if label added, false if removed
      * @param object	the affected object
      * @param label 	the label, can be null
      */
-    protected void logLeftClick(boolean add, LocatedObject object, String label) {
+    protected void logLabelClick(boolean add, LocatedObject object, String label) {
       Map<String,Object>	data;
 
       data = new HashMap<>();
@@ -646,53 +646,105 @@ public class ImageAnnotator
     }
 
     /**
+     * Logs the removal of an object.
+     *
+     * @param object	the removed object
+     */
+    protected void logObjectRemoval(LocatedObject object) {
+      Map<String,Object>	data;
+
+      data = new HashMap<>();
+      data.putAll(object.getMetaData());
+      data.put("x", object.getX());
+      data.put("y", object.getY());
+      data.put("width", object.getWidth());
+      data.put("height", object.getWidth());
+      if (object.hasPolygon()) {
+	data.put("poly_x", object.getPolygonX());
+	data.put("poly_y", object.getPolygonY());
+      }
+
+      m_PanelImage.addInteractionLog(
+        new InteractionEvent(
+          m_PanelImage,
+	  new Date(),
+	  "remove",
+	  data));
+    }
+
+    /**
      * Invoked when a left-click happened in an {@link ImagePanel}.
      *
      * @param e		the event
      */
     public void clicked(ImagePanelLeftClickEvent e) {
-      Field	field;
-      boolean	hit;
-      Report	report;
-      double	actual;
-      boolean   contained;
+      boolean			hit;
+      Report			report;
+      Report			reportNew;
+      double			actual;
+      boolean   		contained;
+      List<LocatedObject>	hits;
 
-      if (!KeyUtils.isNoneDown(e.getModifiersEx()))
-        return;
+      if (KeyUtils.isNoneDown(e.getModifiersEx())) {
+	// resized?
+	actual = m_PanelImage.calcActualScale(m_PanelImage.getScale());
+	if ((m_CurrentScale == null) || (m_CurrentScale != actual)) {
+	  updateObjects();
+	  m_CurrentScale = actual;
+	}
 
-      // resized?
-      actual = m_PanelImage.calcActualScale(m_PanelImage.getScale());
-      if ((m_CurrentScale == null) || (m_CurrentScale != actual)) {
-	updateObjects();
-	m_CurrentScale = actual;
-      }
-
-      hit    = false;
-      report = m_PanelImage.getAdditionalProperties();
-      for (LocatedObject obj: m_Objects) {
-        if (obj.hasPolygon())
-          contained = obj.getActualPolygon().contains(e.getPosition());
-        else
-          contained = obj.getActualRectangle().contains(e.getPosition());
-	if (contained) {
-	  hit   = true;
-	  field = new Field(m_Prefix + obj.getIndexString() + m_Suffix, DataType.STRING);
-	  if (m_CurrentLabel == null) {
-	    logLeftClick(false, obj, m_CurrentLabel);
-	    report.removeValue(field);
+	hit = false;
+	report = m_PanelImage.getAdditionalProperties();
+	for (LocatedObject obj : m_Objects) {
+	  if (obj.hasPolygon())
+	    contained = obj.getActualPolygon().contains(e.getPosition());
+	  else
+	    contained = obj.getActualRectangle().contains(e.getPosition());
+	  if (contained) {
+	    hit = true;
+	    if (m_CurrentLabel == null) {
+	      obj.getMetaData().remove(m_Suffix.substring(1));
+	      logLabelClick(false, obj, m_CurrentLabel);
+	    }
+	    else {
+	      logLabelClick(true, obj, m_CurrentLabel);
+	      obj.getMetaData().put(m_Suffix.substring(1), m_CurrentLabel);
+	    }
+	    break;
 	  }
-	  else {
-	    logLeftClick(true, obj, m_CurrentLabel);
-	    report.setValue(field, m_CurrentLabel);
-	  }
-	  break;
+	}
+
+	if (hit) {
+	  report    = m_PanelImage.getAdditionalProperties().getClone();
+	  report.removeValuesStartingWith(m_Prefix);
+	  reportNew = m_Objects.toReport(m_Prefix);
+	  reportNew.mergeWith(report);
+	  m_PanelImage.setAdditionalProperties(reportNew);
+	  updateObjects();
 	}
       }
-
-      if (hit) {
-        m_PanelImage.setAdditionalProperties(report);
-	m_PanelImage.displayProperties();
-	updateObjects();
+      else if (KeyUtils.isOnlyShiftDown(e.getModifiersEx())) {
+        hits = new ArrayList<>();
+	for (LocatedObject obj : m_Objects) {
+	  if (obj.hasPolygon())
+	    contained = obj.getActualPolygon().contains(e.getPosition());
+	  else
+	    contained = obj.getActualRectangle().contains(e.getPosition());
+	  if (contained) {
+	    hits.add(obj);
+	  }
+	}
+	if (hits.size() > 0) {
+	  m_Objects.removeAll(hits);
+	  report    = m_PanelImage.getAdditionalProperties().getClone();
+	  report.removeValuesStartingWith(m_Prefix);
+	  reportNew = m_Objects.toReport(m_Prefix);
+	  reportNew.mergeWith(report);
+	  for (LocatedObject obj: hits)
+	    logObjectRemoval(obj);
+	  m_PanelImage.setAdditionalProperties(reportNew);
+	  updateObjects();
+	}
       }
     }
 
@@ -770,7 +822,8 @@ public class ImageAnnotator
       "Allows the user to label objects located on the image and pass on "
 	+ "this enriched meta-data.\n"
 	+ "Any logged interaction will get added as JSON under "
-	+ FIELD_INTERACTIONLOG + " in the report.";
+	+ FIELD_INTERACTIONLOG + " in the report.\n"
+	+ "Clicking on objects while holding down the SHIFT key removes them.";
   }
 
   /**
