@@ -554,4 +554,13 @@ public class SpreadSheetPanel
   public boolean getShowColumnComboBox() {
     return m_PanelColumnComboBox.isVisible();
   }
+
+  /**
+   * Returns the underlying table.
+   *
+   * @return		the table
+   */
+  public SpreadSheetTable getTable() {
+    return m_Table;
+  }
 }

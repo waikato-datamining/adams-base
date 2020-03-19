@@ -21,6 +21,7 @@ package adams.gui.dialog;
 
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 
@@ -279,5 +280,14 @@ public class SpreadSheetDialog
    */
   public boolean getShowColumnComboBox() {
     return m_Panel.getShowColumnComboBox();
+  }
+
+  /**
+   * Returns the underlying table.
+   *
+   * @return		the table
+   */
+  public SpreadSheetTable getTable() {
+    return m_Panel.getTable();
   }
 }
