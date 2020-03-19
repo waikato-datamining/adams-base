@@ -146,10 +146,6 @@ adams-core.Trigger4=\
   IF PARENT LIKE adams.flow.control.AbstractTee \
   THEN adams.flow.control.Trigger
 
-adams-core.Branch=\
-  IF AFTER TRANSFORMER AND ISLAST \
-  THEN adams.flow.control.Branch
-
 adams-core.SequencePlotter1=\
   IF PRECEDING GENERATES adams.flow.container.SequencePlotterContainer \
   THEN adams.flow.sink.SequencePlotter
