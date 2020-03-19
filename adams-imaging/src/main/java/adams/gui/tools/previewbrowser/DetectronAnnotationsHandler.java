@@ -402,7 +402,6 @@ public class DetectronAnnotationsHandler
     boolean                             found;
 
     panel      = new ImagePanel();
-    overlay    = null;
     report     = null;
     reportFile = new File(file.getParent() + "/annotations.json");
     found = false;
@@ -434,13 +433,11 @@ public class DetectronAnnotationsHandler
         overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
         overlay.setLabelFormat(m_LabelFormat);
         overlay.setLabelFont(m_LabelFont);
+        panel.addImageOverlay(overlay);
       }
     }
-    if (overlay != null) {
-      panel.addImageOverlay(overlay);
-      panel.setAdditionalProperties(report);
-    }
     panel.load(file, new JAIImageReader(), -1.0);
+    panel.setAdditionalProperties(report);
     panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());

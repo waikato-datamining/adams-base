@@ -366,9 +366,9 @@ public class AnnotationsAndPredictionsFromReport
 	predictions
       });
       panel.addImageOverlay(multi);
-      panel.setAdditionalProperties(report);
     }
     panel.load(file, new JAIImageReader(), -1.0);
+    panel.setAdditionalProperties(report);
     panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
@@ -387,8 +387,8 @@ public class AnnotationsAndPredictionsFromReport
 
     panel  = (ImagePanel) previewPanel.getComponent();
     report = loadReport(file);
-    panel.setAdditionalProperties(report);
     panel.load(file, new JAIImageReader(), panel.getScale());
+    panel.setAdditionalProperties(report);
 
     return previewPanel;
   }

@@ -108,7 +108,6 @@ public class TrimapImageHandler
 
     panel = new ImagePanel();
     panel.setCurrentImage(cont);
-    overlay    = null;
     report     = null;
     reportFile = FileUtils.replaceExtension(file, ".xml");
     if (reportFile.exists() && reportFile.isFile()) {
@@ -120,12 +119,10 @@ public class TrimapImageHandler
 	overlay = new ObjectLocationsOverlayFromReport();
 	overlay.setPrefix(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
 	overlay.setColor(Color.GREEN);
+        panel.addImageOverlay(overlay);
       }
     }
-    if (overlay != null) {
-      panel.addImageOverlay(overlay);
-      panel.setAdditionalProperties(report);
-    }
+    panel.setAdditionalProperties(report);
     panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());

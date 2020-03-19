@@ -99,7 +99,6 @@ public class ViaAnnotationsHandler
     LocatedObjects			lobjs;
 
     panel      = new ImagePanel();
-    overlay    = null;
     report     = null;
     reportFile = FileUtils.replaceExtension(file, ".json");
     if (reportFile.exists() && reportFile.isFile()) {
@@ -117,13 +116,11 @@ public class ViaAnnotationsHandler
 	  report = lobjs.toReport(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
 	overlay = new ObjectLocationsOverlayFromReport();
 	overlay.setPrefix(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
+	panel.addImageOverlay(overlay);
       }
     }
-    if (overlay != null) {
-      panel.addImageOverlay(overlay);
-      panel.setAdditionalProperties(report);
-    }
     panel.load(file, new JAIImageReader(), -1.0);
+    panel.setAdditionalProperties(report);
     panel.addLeftClickListener(new ViewObjects());
 
     return new PreviewPanel(panel, panel.getPaintPanel());
