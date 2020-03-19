@@ -23,6 +23,7 @@ package adams.gui.tools.previewbrowser;
 import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
@@ -32,6 +33,7 @@ import adams.data.io.output.DefaultSimpleReportWriter;
 import adams.data.report.Report;
 import adams.flow.transformer.ImageAnnotator.AnnotatorPanel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.NullOverlay;
@@ -60,6 +62,108 @@ public class AnnotateImage
 
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;
+
+  /**
+   * Panel to combine the other panels and allow setting of current file name.
+   */
+  public class CombinedPanel
+    extends BasePanel {
+
+    private static final long serialVersionUID = -5987843428926585139L;
+
+    /** for annotating the image. */
+    protected AnnotatorPanel m_PanelAnnotator;
+
+    /** the panel for the buttons. */
+    protected JPanel m_PanelButtons;
+
+    /** the save button. */
+    protected JButton m_ButtonSave;
+
+    /** the current file. */
+    protected File m_CurrentFile;
+
+    /**
+     * Initializes the members.
+     */
+    @Override
+    protected void initialize() {
+      super.initialize();
+
+      m_CurrentFile = null;
+    }
+
+    /**
+     * Initializes the widgets.
+     */
+    @Override
+    protected void initGUI() {
+      AddMetaData	addMetaData;
+
+      super.initGUI();
+
+      setLayout(new BorderLayout());
+
+      addMetaData = new AddMetaData();
+      addMetaData.setCtrlDown(true);
+      m_PanelAnnotator = new AnnotatorPanel(m_Prefix, m_Suffix, m_Labels, m_SelectionProcessor, m_SelectionShapePainter, m_Overlay, m_Zoom, new Null());
+      m_PanelAnnotator.getImagePanel().addLeftClickListener(addMetaData);
+      add(m_PanelAnnotator, BorderLayout.CENTER);
+
+      m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+      add(m_PanelButtons, BorderLayout.SOUTH);
+
+      m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+      m_ButtonSave.addActionListener((ActionEvent e) -> saveReport(m_PanelAnnotator, m_CurrentFile));
+      m_PanelButtons.add(m_ButtonSave);
+    }
+
+    /**
+     * Sets the current file.
+     *
+     * @param value	the file
+     */
+    public void setCurrentFile(File value) {
+      m_CurrentFile = value;
+    }
+
+    /**
+     * Returns the current file.
+     *
+     * @return		the file
+     */
+    public File getCurrentFile() {
+      return m_CurrentFile;
+    }
+
+    /**
+     * Sets the current image.
+     *
+     * @param value	the image
+     */
+    public void setCurrentImage(AbstractImageContainer value) {
+      m_PanelAnnotator.setCurrentImage(value);
+    }
+
+    /**
+     * Sets the current image.
+     *
+     * @param value	the image
+     * @param zoom 	the zoom to use
+     */
+    public void setCurrentImage(AbstractImageContainer value, double zoom) {
+      m_PanelAnnotator.setCurrentImage(value, zoom);
+    }
+
+    /**
+     * Returns the annotator panel.
+     *
+     * @return		the panel
+     */
+    public AnnotatorPanel getAnnotatorPanel() {
+      return m_PanelAnnotator;
+    }
+  }
 
   /** the reader to use. */
   protected AbstractReportReader m_Reader;
@@ -520,32 +624,15 @@ public class AnnotateImage
    */
   @Override
   protected PreviewPanel createPreview(final File file) {
-    final AnnotatorPanel 	panel;
-    JPanel			panelAll;
-    JPanel			panelButtons;
-    JButton			buttonSave;
     BufferedImageContainer	cont;
-    AddMetaData			addMetaData;
+    CombinedPanel		combined;
 
-    addMetaData = new AddMetaData();
-    addMetaData.setCtrlDown(true);
-    panel = new AnnotatorPanel(m_Prefix, m_Suffix, m_Labels, m_SelectionProcessor, m_SelectionShapePainter, m_Overlay, m_Zoom, new Null());
-    panel.getImagePanel().addLeftClickListener(addMetaData);
+    combined = new CombinedPanel();
     cont  = loadContainer(file);
     if (cont != null)
-      panel.setCurrentImage(cont, m_Zoom);
+      combined.setCurrentImage(cont, m_Zoom);
 
-    panelAll = new JPanel(new BorderLayout());
-    panelAll.add(panel, BorderLayout.CENTER);
-
-    panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    panelAll.add(panelButtons, BorderLayout.SOUTH);
-
-    buttonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
-    buttonSave.addActionListener((ActionEvent e) -> saveReport(panel, file));
-    panelButtons.add(buttonSave);
-
-    return new PreviewPanel(panelAll, panel);
+    return new PreviewPanel(combined, combined.getAnnotatorPanel());
   }
 
   /**
@@ -556,14 +643,16 @@ public class AnnotateImage
    */
   @Override
   public PreviewPanel reusePreview(File file, PreviewPanel previewPanel) {
-    AnnotatorPanel 		panel;
+    CombinedPanel 		panel;
     BufferedImageContainer	cont;
 
-    panel  = (AnnotatorPanel) GUIHelper.findFirstComponent(previewPanel, AnnotatorPanel.class, true, true);
+    panel  = (CombinedPanel) previewPanel.getComponent();
     if (panel != null) {
       cont = loadContainer(file);
-      if (cont != null)
+      if (cont != null) {
+	panel.setCurrentFile(file);
 	panel.setCurrentImage(cont);
+      }
     }
     else {
       previewPanel = createPreview(file);
