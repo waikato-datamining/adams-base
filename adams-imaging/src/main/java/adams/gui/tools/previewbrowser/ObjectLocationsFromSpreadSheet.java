@@ -23,6 +23,7 @@ package adams.gui.tools.previewbrowser;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.ObjectLocationsSpreadSheetReader;
@@ -31,6 +32,9 @@ import adams.data.objectfinder.ObjectFinder;
 import adams.data.report.Report;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.gui.chooser.DirectoryChooserPanel;
+import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BasePanel;
 import adams.gui.core.Fonts;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -38,8 +42,13 @@ import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 import adams.gui.visualization.image.leftclick.ViewObjects;
 
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.List;
 
@@ -110,6 +119,128 @@ public class ObjectLocationsFromSpreadSheet
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;
 
+  /**
+   * The panel for displaying the image.
+   */
+  public class CombinedPanel
+    extends BasePanel {
+
+    private static final long serialVersionUID = 236378741683380463L;
+
+    /** the image panel. */
+    protected ImagePanel m_PanelImage;
+
+    /** whether to use an alternative location for reports. */
+    protected BaseCheckBox m_CheckBoxAlternative;
+
+    /** the alternative location. */
+    protected DirectoryChooserPanel m_ChooserAlternative;
+
+    /**
+     * Initializes the widgets.
+     */
+    @Override
+    protected void initGUI() {
+      ObjectLocationsOverlayFromReport	overlay;
+      JPanel panelBottom;
+
+      super.initGUI();
+
+      setLayout(new BorderLayout());
+
+      m_PanelImage = new ImagePanel();
+      overlay = new ObjectLocationsOverlayFromReport();
+      overlay.setPrefix(m_Reader.getPrefix());
+      overlay.setColor(m_Color);
+      overlay.setUseColorsPerType(m_UseColorsPerType);
+      overlay.setTypeColorProvider(m_TypeColorProvider.shallowCopy());
+      overlay.setTypeSuffix(m_TypeSuffix);
+      overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
+      overlay.setLabelFormat(m_LabelFormat);
+      overlay.setLabelFont(m_LabelFont);
+      m_PanelImage.addImageOverlay(overlay);
+      m_PanelImage.addLeftClickListener(new ViewObjects());
+
+      add(m_PanelImage, BorderLayout.CENTER);
+
+      panelBottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      add(panelBottom, BorderLayout.SOUTH);
+
+      m_CheckBoxAlternative = new BaseCheckBox("Alternative spreadsheet location");
+      m_CheckBoxAlternative.addActionListener((ActionEvent e) -> toggleAlternative());
+      panelBottom.add(m_CheckBoxAlternative);
+
+      m_ChooserAlternative = new DirectoryChooserPanel();
+      m_ChooserAlternative.setEnabled(false);
+      m_ChooserAlternative.addChangeListener((ChangeEvent e) -> updateReport());
+      panelBottom.add(m_ChooserAlternative);
+    }
+
+    /**
+     * Updates the report display if possible.
+     */
+    protected void updateReport() {
+      if (getImagePanel().getCurrentFile() != null)
+        getImagePanel().setAdditionalProperties(loadReport(this, getImagePanel().getCurrentFile()));
+    }
+
+    /**
+     * Toggles whether to use an alternative location.
+     */
+    protected void toggleAlternative() {
+      m_ChooserAlternative.setEnabled(m_CheckBoxAlternative.isSelected());
+      updateReport();
+    }
+
+    /**
+     * Sets whether the alternative location should be used.
+     *
+     * @param value	true if to use
+     */
+    public void setUseAlternativeLocation(boolean value) {
+      m_CheckBoxAlternative.setSelected(value);
+      m_ChooserAlternative.setEnabled(value);
+      updateReport();
+    }
+
+    /**
+     * Returns whether the alternative location should be used.
+     *
+     * @return		true if to use
+     */
+    public boolean getUseAlternativeLocation() {
+      return m_CheckBoxAlternative.isSelected();
+    }
+
+    /**
+     * Sets the alternative location.
+     *
+     * @param value	the location
+     */
+    public void setAlternativeLocation(File value) {
+      m_ChooserAlternative.setCurrent(value);
+      updateReport();
+    }
+
+    /**
+     * Returns the alternative location.
+     *
+     * @return		the location
+     */
+    public File getAlternativeLocation() {
+      return m_ChooserAlternative.getCurrent();
+    }
+
+    /**
+     * Returns the underlying image panel.
+     *
+     * @return		the panel
+     */
+    public ImagePanel getImagePanel() {
+      return m_PanelImage;
+    }
+  }
+
   /** the reader to use. */
   protected ObjectLocationsSpreadSheetReader m_Reader;
 
@@ -136,6 +267,12 @@ public class ObjectLocationsFromSpreadSheet
 
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
+
+  /** whether to use an alternative location for the reports. */
+  protected boolean m_UseAlternativeLocation;
+
+  /** the alternative location. */
+  protected PlaceholderDirectory m_AlternativeLocation;
 
   /**
    * Returns a string describing the object.
@@ -193,6 +330,14 @@ public class ObjectLocationsFromSpreadSheet
     m_OptionManager.add(
       "finder", "finder",
       new AllFinder());
+
+    m_OptionManager.add(
+      "use-alternative-location", "useAlternativeLocation",
+      false);
+
+    m_OptionManager.add(
+      "alternative-location", "alternativeLocation",
+      new PlaceholderDirectory());
   }
 
   /**
@@ -477,6 +622,64 @@ public class ObjectLocationsFromSpreadSheet
   }
 
   /**
+   * Sets whether to use an alternative location for the reports.
+   *
+   * @param value 	true if to use
+   */
+  public void setUseAlternativeLocation(boolean value) {
+    m_UseAlternativeLocation = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use an alternative location for the reports.
+   *
+   * @return 		true if to use
+   */
+  public boolean getUseAlternativeLocation() {
+    return m_UseAlternativeLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAlternativeLocationTipText() {
+    return "If enabled, the alternative location is used to locate the associated report rather than the directory with the image.";
+  }
+
+  /**
+   * Sets the alternative location to use for the reports.
+   *
+   * @param value 	the location
+   */
+  public void setAlternativeLocation(PlaceholderDirectory value) {
+    m_AlternativeLocation = value;
+    reset();
+  }
+
+  /**
+   * Returns the alternative location to use for the reports.
+   *
+   * @return 		the location
+   */
+  public PlaceholderDirectory getAlternativeLocation() {
+    return m_AlternativeLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alternativeLocationTipText() {
+    return "The alternative location to use look for associated reports.";
+  }
+
+  /**
    * Returns the list of extensions (without dot) that this handler can
    * take care of.
    *
@@ -511,18 +714,24 @@ public class ObjectLocationsFromSpreadSheet
   /**
    * Loads the report associated with the image.
    *
+   * @param panel 	the context panel
    * @param file	the image file
    * @return		the report, null if failed to load report data or none available
    */
-  protected Report loadReport(File file) {
+  protected Report loadReport(CombinedPanel panel, File file) {
     Report 		result;
+    File		baseFile;
     File 		locFile;
     File 		locFile2;
     List<Report> 	reports;
 
     result   = null;
-    locFile  = FileUtils.replaceExtension(file, "." + m_Reader.getReader().getDefaultFormatExtension());
-    locFile2 = FileUtils.replaceExtension(file, "-rois." + m_Reader.getReader().getDefaultFormatExtension());
+    if (panel.getUseAlternativeLocation())
+      baseFile = new PlaceholderFile(panel.getAlternativeLocation().getAbsolutePath() + File.separator + file.getName());
+    else
+      baseFile = file;
+    locFile = FileUtils.replaceExtension(baseFile, "." + m_Reader.getReader().getDefaultFormatExtension());
+    locFile2 = FileUtils.replaceExtension(baseFile, "-rois." + m_Reader.getReader().getDefaultFormatExtension());
     if (locFile2.exists() && locFile2.isFile())
       locFile = locFile2;
     if (locFile.exists() && locFile.isFile()) {
@@ -543,29 +752,17 @@ public class ObjectLocationsFromSpreadSheet
    */
   @Override
   protected PreviewPanel createPreview(File file) {
-    ImagePanel 				panel;
-    ObjectLocationsOverlayFromReport	overlay;
-    Report				report;
+    CombinedPanel 	panel;
+    Report		report;
 
-    panel    = new ImagePanel();
-    report   = loadReport(file);
-    if (report != null) {
-      overlay = new ObjectLocationsOverlayFromReport();
-      overlay.setPrefix(m_Reader.getPrefix());
-      overlay.setColor(m_Color);
-      overlay.setUseColorsPerType(m_UseColorsPerType);
-      overlay.setTypeColorProvider(m_TypeColorProvider.shallowCopy());
-      overlay.setTypeSuffix(m_TypeSuffix);
-      overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
-      overlay.setLabelFormat(m_LabelFormat);
-      overlay.setLabelFont(m_LabelFont);
-      panel.addImageOverlay(overlay);
-    }
-    panel.load(file, new JAIImageReader(), -1.0);
-    panel.setAdditionalProperties(report);
-    panel.addLeftClickListener(new ViewObjects());
+    panel  = new CombinedPanel();
+    panel.setAlternativeLocation(m_AlternativeLocation);
+    panel.setUseAlternativeLocation(m_UseAlternativeLocation);
+    report = loadReport(panel, file);
+    panel.getImagePanel().load(file, new JAIImageReader(), -1.0);
+    panel.getImagePanel().setAdditionalProperties(report);
 
-    return new PreviewPanel(panel, panel.getPaintPanel());
+    return new PreviewPanel(panel, panel.getImagePanel().getPaintPanel());
   }
 
   /**
@@ -576,13 +773,13 @@ public class ObjectLocationsFromSpreadSheet
    */
   @Override
   public PreviewPanel reusePreview(File file, PreviewPanel previewPanel) {
-    ImagePanel 	panel;
-    Report	report;
+    CombinedPanel 	panel;
+    Report		report;
 
-    panel  = (ImagePanel) previewPanel.getComponent();
-    report = loadReport(file);
-    panel.load(file, new JAIImageReader(), panel.getScale());
-    panel.setAdditionalProperties(report);
+    panel  = (CombinedPanel) previewPanel.getComponent();
+    report = loadReport(panel, file);
+    panel.getImagePanel().load(file, new JAIImageReader(), panel.getImagePanel().getScale());
+    panel.getImagePanel().setAdditionalProperties(report);
 
     return previewPanel;
   }
