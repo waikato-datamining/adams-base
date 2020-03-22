@@ -20,6 +20,7 @@
 
 package adams.data.objectoverlap;
 
+import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -43,6 +44,12 @@ public abstract class AbstractObjectOverlap
   /** whether to skip identical objects, i.e., not count them as overlaps. */
   protected boolean m_ExcludeIdentical;
 
+  /** whether to copy meta-data. */
+  protected boolean m_CopyMetaData;
+
+  /** the meta-data keys to copy. */
+  protected BaseString[] m_MetaDataKeys;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -53,6 +60,14 @@ public abstract class AbstractObjectOverlap
     m_OptionManager.add(
       "exclude-identical", "excludeIdentical",
       false);
+
+    m_OptionManager.add(
+      "copy-meta-data", "copyMetaData",
+      false);
+
+    m_OptionManager.add(
+      "meta-data-key", "metaDataKeys",
+      new BaseString[0]);
   }
 
   /**
@@ -84,6 +99,65 @@ public abstract class AbstractObjectOverlap
     return "If enabled, identical objects are not compared with each other; "
       + "e.g., when looking for overlaps within the same set of objects rather "
       + "than a different set.";
+  }
+
+  /**
+   * Sets whether to copy meta-data values across.
+   *
+   * @param value	true if to copy
+   */
+  public void setCopyMetaData(boolean value) {
+    m_CopyMetaData = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to copy meta-data values across.
+   *
+   * @return		true if to copy
+   */
+  public boolean getCopyMetaData() {
+    return m_CopyMetaData;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String copyMetaDataTipText() {
+    return "If enabled, the specified meta-data values get copied across to the "
+      + "object that gets returned.";
+  }
+
+  /**
+   * Sets the keys of the meta-data values to copy across.
+   *
+   * @param value	the keys
+   */
+  public void setMetaDataKeys(BaseString[] value) {
+    m_MetaDataKeys = value;
+    reset();
+  }
+
+  /**
+   * Returns the keys of the meta-data values to copy across.
+   *
+   * @return		the keys
+   */
+  public BaseString[] getMetaDataKeys() {
+    return m_MetaDataKeys;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String metaDataKeysTipText() {
+    return "The keys of the meta-data values to copy across.";
   }
 
   /**
@@ -182,5 +256,18 @@ public abstract class AbstractObjectOverlap
     result = new HashMap<>();
     doCalculate(annotations, predictions, result);
     return result;
+  }
+
+  /**
+   * Copies the specified meta-data values (if available) from source to target.
+   *
+   * @param source	the source object with the values
+   * @param target	the target object to receive the values
+   */
+  protected void copyMetaData(LocatedObject source, LocatedObject target) {
+    for (BaseString key: m_MetaDataKeys) {
+      if (source.getMetaData().containsKey(key.getValue()))
+        target.getMetaData().put(key.getValue(), source.getMetaData().get(key.getValue()));
+    }
   }
 }

@@ -299,6 +299,8 @@ public class AreaRatio
     String		labelHighest;
     String		thisLabel;
     LocatedObject 	actObj;
+    LocatedObject	tmpObj;
+    LocatedObject	otherObjectHighest;
     double		ratio;
     double		ratio2;
 
@@ -316,6 +318,7 @@ public class AreaRatio
 	if (!m_LabelKey.isEmpty() && thisObj.getMetaData().containsKey(m_LabelKey))
 	  thisLabel = "" + thisObj.getMetaData().get(m_LabelKey);
 	actObj = thisObj;
+	otherObjectHighest = null;
 	for (LocatedObject otherObj : predictions) {
 	  initMatch(matches, thisObj);
 	  if (m_ExcludeIdentical && thisObj.equals(otherObj))
@@ -331,9 +334,13 @@ public class AreaRatio
 	    count++;
 	    if (ratio > overlapHighest) {
 	      addMatch(matches, thisObj, otherObj);
-	      if (m_UseOtherObject)
-		actObj = otherObj;
+	      if (m_UseOtherObject) {
+	        tmpObj   = actObj;
+		actObj   = otherObj;
+		otherObj = tmpObj;
+	      }
 	      overlapHighest = ratio;
+	      otherObjectHighest = otherObj;
 	      if (!m_LabelKey.isEmpty()) {
 		if (otherObj.getMetaData().containsKey(m_LabelKey)) {
 		  labelHighest = "" + otherObj.getMetaData().get(m_LabelKey);
@@ -357,6 +364,8 @@ public class AreaRatio
 	}
 	if (m_AdditionalObject)
 	  actObj.getMetaData().put(ADDITIONAL_OBJ, false);
+	if (m_CopyMetaData && (otherObjectHighest != null))
+	  copyMetaData(otherObjectHighest, actObj);
 	result.add(actObj);
       }
 
