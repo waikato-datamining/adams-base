@@ -301,10 +301,10 @@ public class IntersectOverUnionRatio
 	    count++;
 	    if (iou > iouHighest) {
 	      addMatch(matches, thisObj, otherObj);
+	      tmpObj = null;
 	      if (m_UseOtherObject) {
-	        tmpObj   = actObj;
-		actObj   = otherObj;
-		otherObj = tmpObj;
+	        tmpObj = actObj;
+		actObj = otherObj;
 	      }
 	      iouHighest = iou;
 	      otherObjectHighest = otherObj;
@@ -319,6 +319,8 @@ public class IntersectOverUnionRatio
 	      else {
 		matchingObjects.add(otherObj);
 	      }
+	      if (m_UseOtherObject)
+		otherObj = tmpObj;
 	    }
 	  }
 	}

@@ -334,10 +334,10 @@ public class AreaRatio
 	    count++;
 	    if (ratio > overlapHighest) {
 	      addMatch(matches, thisObj, otherObj);
+	      tmpObj = null;
 	      if (m_UseOtherObject) {
-	        tmpObj   = actObj;
-		actObj   = otherObj;
-		otherObj = tmpObj;
+	        tmpObj = actObj;
+		actObj = otherObj;
 	      }
 	      overlapHighest = ratio;
 	      otherObjectHighest = otherObj;
@@ -352,6 +352,8 @@ public class AreaRatio
 	      else {
 		matchingObjects.add(otherObj);
 	      }
+	      if (m_UseOtherObject)
+		otherObj = tmpObj;
 	    }
 	  }
 	}

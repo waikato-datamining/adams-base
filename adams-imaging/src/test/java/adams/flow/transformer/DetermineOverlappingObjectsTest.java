@@ -15,7 +15,7 @@
 
 /*
  * IntersectOverUnionTest.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -293,8 +293,6 @@ public class DetermineOverlappingObjectsTest
 
       NullManager nullmanager = new NullManager();
       flow.setFlowRestartManager(nullmanager);
-
-      System.out.println(flow.toCommandLine());
     }
     catch (Exception e) {
       fail("Failed to set up actor: " + e);
