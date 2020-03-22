@@ -5,7 +5,4 @@ Tabs=\
   weka.gui.explorer.ClustererPanel,\
   weka.gui.explorer.AssociationsPanel,\
   weka.gui.explorer.AttributeSelectionPanel,\
-  weka.gui.explorer.VisualizePanel,\
-  weka.gui.explorer.BoxPlotTab,\
-  weka.gui.explorer.ScatterPanel,\
-  weka.gui.explorer.ZScoreTab
+  weka.gui.explorer.VisualizePanel
