@@ -147,7 +147,7 @@ public class AddMetaData
     Report			reportNew;
     Object			value;
 
-    objects  = LocatedObjects.fromReport(panel.getAllProperties(), m_Prefix);
+    objects  = LocatedObjects.fromReport(panel.getAdditionalProperties(), m_Prefix);
     hits     = new LocatedObjects();
     location = panel.mouseToPixelLocation(position);
     for (LocatedObject object: objects) {
@@ -198,7 +198,10 @@ public class AddMetaData
       props = new Properties();
       props.setProperty("name", m_LastField == null ? "field" : m_LastField);
       props.setProperty("type", m_LastType == null ? "N" : m_LastType);
-      props.setProperty("value", m_LastValue == null ? "0.0" : m_LastValue);
+      if ((hits.size() == 1) && hits.get(0).getMetaData().containsKey(m_LastField))
+        props.setProperty("value", "" + hits.get(0).getMetaData().get(m_LastField));
+      else
+        props.setProperty("value", m_LastValue == null ? "0.0" : m_LastValue);
 
       propsPanel.setPropertyOrder(order);
       propsPanel.setProperties(props);
