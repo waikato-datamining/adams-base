@@ -26,6 +26,7 @@ import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.SelectionRectangle;
 import adams.gui.visualization.image.interactionlogger.InteractionEvent;
 import adams.gui.visualization.image.interactionlogger.InteractionLoggingSupporter;
+import adams.gui.visualization.image.leftclick.AddMetaData;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -74,6 +75,21 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
+ * <pre>-label &lt;java.lang.String&gt; (property: label)
+ * &nbsp;&nbsp;&nbsp;The label to use for the objects, not set if empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-label-suffix &lt;java.lang.String&gt; (property: labelSuffix)
+ * &nbsp;&nbsp;&nbsp;The suffix to use for storing the label in the report.
+ * &nbsp;&nbsp;&nbsp;default: .type
+ * </pre>
+ *
+ * <pre>-add-meta-data &lt;boolean&gt; (property: addMetaData)
+ * &nbsp;&nbsp;&nbsp;If enabled, a dialog gets shown to add meta-data to the object.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -90,6 +106,12 @@ public class SelectObjects
 
   /** the label suffix to use. */
   protected String m_LabelSuffix;
+
+  /** whether to add meta-data. */
+  protected boolean m_AddMetaData;
+
+  /** the AddMetaData instance. */
+  protected transient AddMetaData m_AddMetaDataInstance;
 
   /**
    * Returns a string describing the object.
@@ -119,6 +141,10 @@ public class SelectObjects
     m_OptionManager.add(
       "label-suffix", "labelSuffix",
       getDefaultLabelSuffix());
+
+    m_OptionManager.add(
+      "add-meta-data", "addMetaData",
+      false);
   }
 
   /**
@@ -195,6 +221,35 @@ public class SelectObjects
    */
   public String labelSuffixTipText() {
     return "The suffix to use for storing the label in the report.";
+  }
+
+  /**
+   * Sets whether to allow adding meta-data to the object.
+   *
+   * @param value 	true if to add
+   */
+  public void setAddMetaData(boolean value) {
+    m_AddMetaData = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to allow adding meta-data to the object.
+   *
+   * @return 		true if to add
+   */
+  public boolean getAddMetaData() {
+    return m_AddMetaData;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String addMetaDataTipText() {
+    return "If enabled, a dialog gets shown to add meta-data to the object.";
   }
 
   /**
@@ -288,6 +343,7 @@ public class SelectObjects
     List<Map<String,Object>>	objects;
     List<SelectionRectangle>	queue;
     Rectangle			bounds;
+    Point			center;
 
     report = panel.getAdditionalProperties().getClone();
     if (m_Locations == null)
@@ -362,6 +418,15 @@ public class SelectObjects
     
     if (modified)
       panel.setAdditionalProperties(report);
+
+    if (m_AddMetaData) {
+      if (m_AddMetaDataInstance == null) {
+	m_AddMetaDataInstance = new AddMetaData();
+	m_AddMetaDataInstance.setPrefix(m_Prefix);
+      }
+      center = panel.pixelToMouseLocation(new Point(x + w/2, y + h/2));
+      m_AddMetaDataInstance.processClick(panel, center, 0, true);
+    }
   }
 
   /**
