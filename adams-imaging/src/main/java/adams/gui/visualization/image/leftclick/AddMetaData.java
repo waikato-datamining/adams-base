@@ -178,7 +178,7 @@ public class AddMetaData
       order = new ArrayList<>();
 
       propsPanel.addPropertyType("name", PropertyType.STRING);
-      propsPanel.setLabel("name", "Name");
+      propsPanel.setLabel("name", "_Name");
       propsPanel.setHelp("name", "The name of the field");
       order.add("name");
 
@@ -191,7 +191,7 @@ public class AddMetaData
       order.add("type");
 
       propsPanel.addPropertyType("value", PropertyType.STRING);
-      propsPanel.setLabel("value", "Value");
+      propsPanel.setLabel("value", "_Value");
       propsPanel.setHelp("value", "The value for the field");
       order.add("value");
 
