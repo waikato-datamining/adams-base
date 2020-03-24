@@ -608,6 +608,22 @@ public class ImagePanel
     }
 
     /**
+     * Converts the pixel position (at 100% scale) to a mouse location.
+     *
+     * @param pixelPos	the pixel position
+     * @return		the mouse position
+     */
+    public Point pixelToMouseLocation(Point pixelPos) {
+      int	x;
+      int	y;
+
+      x = (int) (pixelPos.x * m_Scale);
+      y = (int) (pixelPos.y * m_Scale);
+
+      return new Point(x, y);
+    }
+
+    /**
      * Whether selection is currently active.
      *
      * @return		true if active
@@ -2234,6 +2250,16 @@ public class ImagePanel
    */
   public Point mouseToPixelLocation(Point mousePos) {
     return m_PaintPanel.mouseToPixelLocation(mousePos);
+  }
+
+  /**
+   * Converts the pixel position (at 100% scale) to a mouse location.
+   *
+   * @param pixelPos	the pixel position
+   * @return		the mouse position
+   */
+  public Point pixelToMouseLocation(Point pixelPos) {
+    return m_PaintPanel.pixelToMouseLocation(pixelPos);
   }
 
   /**
