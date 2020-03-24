@@ -15,7 +15,7 @@
 
 /*
  * AbstractSelectorPanel.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -408,6 +408,7 @@ public abstract class AbstractChooserPanel<T>
 
     m_TextSelection.setText(str);
     m_TextSelection.setCaretPosition(0);
+    m_TextSelection.setToolTipText(str);
 
     afterSetCurrent(value, result);
 
