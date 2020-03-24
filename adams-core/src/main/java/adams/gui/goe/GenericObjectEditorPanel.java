@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorPanel.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -136,6 +136,8 @@ public class GenericObjectEditorPanel
    * Invalidates the GOE editor.
    */
   protected void invalidatedEditor() {
+    if (m_Editor == null)
+      return;
     m_Editor.removePropertyChangeListener(this);
     if (m_OkListener != null)
       ((GOEPanel) m_Editor.getCustomEditor()).removeOkListener(m_OkListener);
