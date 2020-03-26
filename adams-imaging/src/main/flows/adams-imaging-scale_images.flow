@@ -1,0 +1,39 @@
+# Project: adams
+# Date: 2020-03-09 15:25:41
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.ProgressBar -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -max @{max}
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Directory with images\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name scale -display \"Scale factor (1=100%)\" -type DOUBLE -default-value 1.0" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name scale_annotations -display \"Scale annotations as well?\" -type BOOLEAN -default-value false" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name output_dir -display \"Output directory\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name process
+  adams.flow.standalone.SetVariable -name reset -var-name count -var-value 0
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.(jpg|JPG|png|PNG) -sorting SORT_BY_NAME" -use-forward-slashes true
+  adams.flow.control.Tee -name "# images"
+   adams.flow.transformer.ArrayLength
+   adams.flow.transformer.SetVariable -var-name max
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.control.Tee -name progress
+   adams.flow.transformer.IncVariable -var-name count -output-variable-value true
+   adams.flow.sink.CallableSink -callable ProgressBar
+  adams.flow.control.Tee -name "output files"
+   adams.flow.transformer.BaseName
+   adams.flow.transformer.PrependDir -prefix @{output_dir} -use-forward-slashes true
+   adams.flow.transformer.SetVariable -name image -var-name out_image
+   adams.flow.transformer.Convert -conversion "adams.data.conversion.ReplaceFileExtension -extension .report -use-forward-slashes true"
+   adams.flow.transformer.SetVariable -name report -var-name out_report
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -load-meta-data @{scale_annotations} -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.jai.transformer.Resize -width @{scale} -height @{scale}"
+  adams.flow.control.ConditionalSubProcess -condition "adams.flow.condition.bool.VariableFlagSet -variable-name scale_annotations"
+   adams.flow.transformer.ImageObjectFilter -finder adams.data.objectfinder.AllFinder -filter "adams.data.objectfilter.Scale -scale-x @{scale} -scale-y @{scale} -round true"
+  adams.flow.control.Tee -name "write file"
+   adams.flow.sink.ImageFileWriter -output @{out_image} -writer adams.data.io.output.JAIImageWriter
+  adams.flow.control.ConditionalTee -name "write report" -condition "adams.flow.condition.bool.VariableFlagSet -variable-name scale_annotations"
+   adams.flow.transformer.ReportFileWriter -writer adams.data.io.output.DefaultSimpleReportWriter -dir @{output_dir} -generator "adams.core.io.SimpleFixedFilenameGenerator -name @{out_report}"
+ adams.flow.control.CloseCallableDisplay -callable ProgressBar
