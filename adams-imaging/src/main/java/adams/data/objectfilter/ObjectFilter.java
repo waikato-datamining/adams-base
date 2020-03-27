@@ -15,13 +15,14 @@
 
 /*
  * AbstractObjectFilter.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectfilter;
 
 import adams.core.QuickInfoSupporter;
 import adams.core.option.OptionHandler;
+import adams.flow.core.FlowContextHandler;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
@@ -30,7 +31,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public interface ObjectFilter
-  extends OptionHandler, QuickInfoSupporter {
+  extends OptionHandler, QuickInfoSupporter, FlowContextHandler {
 
   /**
    * Filters the image objects.

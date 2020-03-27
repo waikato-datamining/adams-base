@@ -21,6 +21,7 @@
 package adams.data.objectfilter;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.flow.core.Actor;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
@@ -34,6 +35,35 @@ public abstract class AbstractObjectFilter
 
   private static final long serialVersionUID = -5536282098947025494L;
 
+  /** the flow context. */
+  protected Actor m_FlowContext;
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value the actor
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return the actor, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
+  }
+
+  /**
+   * Returns whether flow context is actually required.
+   *
+   * @return		true if required
+   */
+  protected boolean requiresFlowContext() {
+    return false;
+  }
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
@@ -54,6 +84,8 @@ public abstract class AbstractObjectFilter
    * @return		null if successful, otherwise error message
    */
   protected String check(LocatedObjects objects) {
+    if (requiresFlowContext() && (m_FlowContext == null))
+      return "No flow context provided!";
     if (objects == null)
       return "No objects provided!";
     return null;

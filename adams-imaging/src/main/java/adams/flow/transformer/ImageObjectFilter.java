@@ -322,6 +322,7 @@ public class ImageObjectFilter
 	newObjs = objs.subset(indices);
 
 	// filter objects
+	m_Filter.setFlowContext(this);
 	newObjs = m_Filter.filter(newObjs);
 
 	// add objects to report
