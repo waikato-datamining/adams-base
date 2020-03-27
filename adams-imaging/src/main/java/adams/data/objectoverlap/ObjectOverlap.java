@@ -50,6 +50,7 @@ public interface ObjectOverlap
    * @return		the overlapping objects
    */
   public LocatedObjects calculate(LocatedObjects annotations, LocatedObjects predictions);
+
   /**
    * Computes the overlapping objects between the annotations and the predictions
    * and returns the matches.
