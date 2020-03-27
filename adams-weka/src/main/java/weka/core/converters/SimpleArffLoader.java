@@ -15,7 +15,7 @@
 
 /*
  * SimpleArffLoader.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package weka.core.converters;
@@ -32,6 +32,7 @@ import weka.core.Instances;
 import weka.core.Option;
 import weka.core.OptionHandler;
 import weka.core.RevisionUtils;
+import weka.core.SparseInstance;
 import weka.core.WeightedInstancesHandler;
 
 import java.io.BufferedReader;
@@ -442,6 +443,115 @@ public class SimpleArffLoader
   }
 
   /**
+   * Parses a data row in sparse format.
+   *
+   * @param header	the dataset format
+   * @param line	the line to parse
+   * @return		the sparse instance
+   * @throws Exception	if parsing fails
+   */
+  protected Instance parseSparse(Instances header, String line) throws Exception {
+    String	weightStr;
+    double	weight;
+    String[]	cells;
+    int		i;
+    double[] 	values;
+    int[]	indices;
+    String	value;
+
+    weight = 1.0;
+
+    if (line.matches(".*}[ ]*\\{-?\\d*\\.?\\d*\\}$")) {
+      weightStr = line.substring(line.lastIndexOf('{') + 1, line.length() - 1);
+      line      = line.substring(0, line.lastIndexOf('{'));
+      try {
+	weight = Double.parseDouble(weightStr);
+      }
+      catch (Exception e) {
+	System.err.println("Failed to parse weight string: " + line);
+      }
+    }
+    line    = line.substring(1, line.length() - 1);  // remove {...}
+    cells   = SpreadSheetUtils.split(line, ',', false, '\'', true);
+    values  = new double[cells.length];
+    indices = new int[cells.length];
+    Arrays.fill(values, 0);
+    for (i = 0; i < cells.length; i++) {
+      indices[i] = Integer.parseInt(cells[i].substring(0, cells[i].indexOf(' ')));
+      value      = cells[i].substring(cells[i].indexOf(' ') + 1);
+      switch (header.attribute(indices[i]).type()) {
+	case Attribute.NUMERIC:
+	  values[i] = Double.parseDouble(value);
+	  break;
+	case Attribute.NOMINAL:
+	  values[i] = header.attribute(indices[i]).indexOfValue(value);
+	  break;
+	case Attribute.STRING:
+	  values[i] = header.attribute(indices[i]).addStringValue(value);
+	  break;
+	case Attribute.DATE:
+	  values[i] = header.attribute(indices[i]).parseDate(value);
+	  break;
+      }
+    }
+
+    return new SparseInstance(weight, values, indices, header.numAttributes());
+  }
+
+  /**
+   * Parses a dense instance.
+   *
+   * @param header	the dataset header
+   * @param line	the line to parse
+   * @return		the parsed instance
+   * @throws Exception	if parsing fails
+   */
+  protected Instance parseDense(Instances header, String line) throws Exception {
+    String	weightStr;
+    double	weight;
+    String[]	cells;
+    int		i;
+    double[]	values;
+
+    weight = 1.0;
+    if (line.endsWith("}") && line.matches(".*,[ ]*\\{-?\\d*\\.?\\d*\\}$")) {
+      weightStr = line.substring(line.lastIndexOf('{') + 1, line.length() - 1);
+      line      = line.substring(0, line.lastIndexOf('{') - 1);
+      try {
+	weight = Double.parseDouble(weightStr);
+      }
+      catch (Exception e) {
+	System.err.println("Failed to parse weight string: " + line);
+      }
+    }
+    cells = SpreadSheetUtils.split(line, ',', false, '\'', true);
+    values = new double[header.numAttributes()];
+    for (i = 0; (i < cells.length) && (i < values.length); i++) {
+      values[i] = weka.core.Utils.missingValue();
+      cells[i] = cells[i].trim();
+      if (cells[i].equals("?"))
+	continue;
+      cells[i] = Utils.unquote(cells[i]);
+      switch (header.attribute(i).type()) {
+	case Attribute.NUMERIC:
+	  values[i] = Double.parseDouble(cells[i]);
+	  break;
+	case Attribute.NOMINAL:
+	  values[i] = header.attribute(i).indexOfValue(cells[i]);
+	  break;
+	case Attribute.STRING:
+	  values[i] = header.attribute(i).addStringValue(cells[i]);
+	  break;
+	case Attribute.DATE:
+	  values[i] = header.attribute(i).parseDate(cells[i]);
+	  break;
+      }
+    }
+
+    return new DenseInstance(weight, values);
+  }
+
+  /**
    * Performs the actual reading.
    *
    * @param reader	the reader to read from
@@ -451,16 +561,11 @@ public class SimpleArffLoader
     Instances 			result;
     String			line;
     String			lower;
-    String			weightStr;
-    double			weight;
     boolean			header;
     int 			lineIndex;
-    String[]			cells;
-    int				i;
     ArrayList<Attribute>	atts;
     String			relName;
     Attribute			att;
-    double[]			values;
     Instance			inst;
 
     result = null;
@@ -494,42 +599,12 @@ public class SimpleArffLoader
 	    result = new Instances(relName, atts, 0);
 	  }
 	}
+	else if (line.startsWith("{")) {
+	  inst = parseSparse(result, line);
+	  result.add(inst);
+	}
 	else {
-	  weight = 1.0;
-	  if (line.endsWith("}") && line.matches(".*,[ ]*\\{-?\\d*\\.?\\d*\\}$")) {
-	    weightStr = line.substring(line.lastIndexOf('{') + 1, line.length() - 1);
-	    line      = line.substring(0, line.lastIndexOf('{') - 1);
-	    try {
-	      weight = Double.parseDouble(weightStr);
-	    }
-	    catch (Exception e) {
-	      System.err.println("Failed to parse weight string: " + line);
-	    }
-	  }
-	  cells = SpreadSheetUtils.split(line, ',', false, '\'', true);
-	  values = new double[result.numAttributes()];
-	  for (i = 0; (i < cells.length) && (i < values.length); i++) {
-	    values[i] = weka.core.Utils.missingValue();
-            cells[i] = cells[i].trim();
-	    if (cells[i].equals("?"))
-	      continue;
-            cells[i] = Utils.unquote(cells[i]);
-	    switch (result.attribute(i).type()) {
-	      case Attribute.NUMERIC:
-		values[i] = Double.parseDouble(cells[i]);
-		break;
-	      case Attribute.NOMINAL:
-		values[i] = result.attribute(i).indexOfValue(cells[i]);
-		break;
-	      case Attribute.STRING:
-		values[i] = result.attribute(i).addStringValue(cells[i]);
-		break;
-	      case Attribute.DATE:
-		values[i] = result.attribute(i).parseDate(cells[i]);
-		break;
-	    }
-	  }
-	  inst = new DenseInstance(weight, values);
+	  inst = parseDense(result, line);
 	  result.add(inst);
 	}
       }
