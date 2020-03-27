@@ -852,6 +852,7 @@ public class ObjectLocationsSpreadSheetWriter
     int			colPolygonYN;
     int[]		metaData;
     int			i;
+    Object		value;
 
     objects = m_Finder.findObjects(data);
     sheet   = new DefaultSpreadSheet();
@@ -971,15 +972,20 @@ public class ObjectLocationsSpreadSheetWriter
         row.addCell("H").setContent(object.getHeight());
       if (object.hasPolygon()) {
         if (colPolygonX > -1)
-	  row.addCell("PX").setContent(Utils.flatten(StatUtils.toNumberArray(object.getPolygonX()), ","));
+	  row.addCell("PX").setContentAsString(Utils.flatten(StatUtils.toNumberArray(object.getPolygonX()), ","));
         if (colPolygonY > -1)
-	  row.addCell("PY").setContent(Utils.flatten(StatUtils.toNumberArray(object.getPolygonY()), ","));
+	  row.addCell("PY").setContentAsString(Utils.flatten(StatUtils.toNumberArray(object.getPolygonY()), ","));
       }
       if ((colType > -1) && object.getMetaData().containsKey(m_MetaDataKeyType))
-        row.addCell("TYPE").setContent("" + object.getMetaData().get(m_MetaDataKeyType));
+        row.addCell("TYPE").setContentAsString("" + object.getMetaData().get(m_MetaDataKeyType));
       for (i = 0; i < metaData.length; i++) {
-        if (object.getMetaData().containsKey(m_MetaDataKeys[i].getValue()))
-          row.addCell("MD-" + i).setContent("" + object.getMetaData().get(m_MetaDataKeys[i].getValue()));
+        if (object.getMetaData().containsKey(m_MetaDataKeys[i].getValue())) {
+          value = object.getMetaData().get(m_MetaDataKeys[i].getValue());
+          if (value instanceof String)
+	    row.addCell("MD-" + i).setContentAsString((String) value);
+          else
+	    row.addCell("MD-" + i).setContent("" + value);
+        }
       }
 
       if (m_OutputNormalized) {
@@ -997,9 +1003,9 @@ public class ObjectLocationsSpreadSheetWriter
 	  row.addCell("HN").setContent(normalizeY(object.getHeight()));
 	if (object.hasPolygon()) {
 	  if (colPolygonXN > -1)
-	    row.addCell("PXN").setContent(Utils.flatten(StatUtils.toNumberArray(normalizeX(object.getPolygonX())), ","));
+	    row.addCell("PXN").setContentAsString(Utils.flatten(StatUtils.toNumberArray(normalizeX(object.getPolygonX())), ","));
 	  if (colPolygonYN > -1)
-	    row.addCell("PYN").setContent(Utils.flatten(StatUtils.toNumberArray(normalizeY(object.getPolygonY())), ","));
+	    row.addCell("PYN").setContentAsString(Utils.flatten(StatUtils.toNumberArray(normalizeY(object.getPolygonY())), ","));
 	}
       }
     }
