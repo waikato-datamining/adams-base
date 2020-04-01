@@ -1,24 +1,57 @@
 # Project: adams
-# Date: 2020-02-24 16:41:30
+# Date: 2020-04-01 14:24:15
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
 #
 adams.flow.control.Flow -annotation "Generates statistics from annotated objects stored in Report files." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.standalone.TabView -display-type adams.flow.core.displaytype.Default -width 1200
-  adams.flow.sink.SpreadSheetDisplay -name All -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter
-  adams.flow.sink.SpreadSheetDisplay -name Statistics -display-type adams.flow.core.displaytype.Default -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter
-  adams.flow.sink.SpreadSheetDisplay -name "Annotations per image" -display-type adams.flow.core.displaytype.Default -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter
+  adams.flow.sink.DisplayPanelManager -name Annotations -display-type adams.flow.core.displaytype.Default -width 740 -provider "adams.flow.sink.SpreadSheetDisplay -name Annotations -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter" -entry-name-variable label
+  adams.flow.sink.DisplayPanelManager -name Statistics -display-type adams.flow.core.displaytype.Default -width 740 -x -3 -provider "adams.flow.sink.SpreadSheetDisplay -name Statistics -display-type adams.flow.core.displaytype.Default -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter" -entry-name-variable label
+  adams.flow.sink.DisplayPanelManager -name "Annotations per image" -display-type adams.flow.core.displaytype.Default -width 740 -x -3 -provider "adams.flow.sink.SpreadSheetDisplay -name \"Annotations per image\" -display-type adams.flow.core.displaytype.Default -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter" -entry-name-variable label
   adams.flow.sink.SimplePlot -name "Sorted plots" -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.CirclePaintlet -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy -anti-aliasing-enabled false" -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -axis-x "adams.gui.visualization.core.AxisPanelOptions -label x -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 40 -custom-format 0.0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label value -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.0"
  adams.flow.standalone.CallableActors
   adams.flow.sink.ProgressBar -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -max @{max}
+  adams.flow.control.Tee -name "calculate stats"
+   adams.flow.transformer.SpreadSheetAggregate -aggregate-columns 3-last -aggregate MIN -aggregate MAX -aggregate AVERAGE -aggregate STDEV
+   adams.flow.transformer.Convert -conversion "adams.data.conversion.TransposeSpreadSheet -use-header-as-first-column true"
+   adams.flow.sink.CallableSink -callable Statistics
+  adams.flow.control.Tee -name "count annotations"
+   adams.flow.transformer.SpreadSheetAggregate -key-columns 1 -aggregate-columns 3 -aggregate COUNT
+   adams.flow.transformer.SpreadSheetSetHeaderCell -no-copy true -col 2 -value Count
+   adams.flow.sink.CallableSink -callable "Annotations per image"
+  adams.flow.control.Tee -name "generate plot"
+   adams.flow.control.Tee -name x
+    adams.flow.transformer.SpreadSheetSort -sort-column X
+    adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.SimplePlotGenerator -columns X -meta-data-columns 1,2"
+    adams.flow.control.PlotContainerUpdater -container-value PLOT_NAME
+     adams.flow.transformer.StringReplace -find .* -replace @{label}-X -variable true
+    adams.flow.sink.CallableSink -callable "Sorted plots"
+   adams.flow.control.Tee -name y
+    adams.flow.transformer.SpreadSheetSort -sort-column Y
+    adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.SimplePlotGenerator -columns Y -meta-data-columns 1,2"
+    adams.flow.control.PlotContainerUpdater -container-value PLOT_NAME
+     adams.flow.transformer.StringReplace -find .* -replace @{label}-Y -variable true
+    adams.flow.sink.CallableSink -callable "Sorted plots"
+   adams.flow.control.Tee -name width
+    adams.flow.transformer.SpreadSheetSort -sort-column Width
+    adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.SimplePlotGenerator -columns Width -meta-data-columns 1,2"
+    adams.flow.control.PlotContainerUpdater -container-value PLOT_NAME
+     adams.flow.transformer.StringReplace -find .* -replace @{label}-Width -variable true
+    adams.flow.sink.CallableSink -callable "Sorted plots"
+   adams.flow.control.Tee -name height
+    adams.flow.transformer.SpreadSheetSort -sort-column Height
+    adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.SimplePlotGenerator -columns Height -meta-data-columns 1,2"
+    adams.flow.control.PlotContainerUpdater -container-value PLOT_NAME
+     adams.flow.transformer.StringReplace -find .* -replace @{label}-Height -variable true
+    adams.flow.sink.CallableSink -callable "Sorted plots"
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
   adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
-  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory\" -help \"The directory with the images\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name object_prefix -display \"Object prefix\" -default-value Object." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name label_regexp -display \"Objects to include (regexp)\" -type REGEXP -default-value .*" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory\" -help \"The directory with the images\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name object_prefix -display \"Object prefix\" -default-value Object." -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name label_key -display \"Key for label\" -default-value type" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name label_regexp -display \"Objects to include (regexp)\" -type REGEXP -default-value .*" -output-type MAP -restoration-enabled true -restoration-file @{restore}
   adams.flow.transformer.MapToVariables
  adams.flow.control.Trigger -name "init sheet"
-  adams.flow.source.NewSpreadSheet -columns File,Index,X,Y,Width,Height -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
+  adams.flow.source.NewSpreadSheet -columns File,Index,X,Y,Width,Height,Label -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
   adams.flow.transformer.SetStorageValue -storage-name sheet
  adams.flow.control.Trigger -name process
   adams.flow.standalone.SetVariable -var-name count -var-value 0
@@ -50,6 +83,11 @@ adams.flow.control.Flow -annotation "Generates statistics from annotated objects
   adams.flow.control.Tee -name height
    adams.flow.transformer.ImageObjectInfo -type HEIGHT
    adams.flow.transformer.SetVariable -var-name height
+  adams.flow.control.Tee -name label
+   adams.flow.transformer.SetVariable -name unset -var-name label -var-value -nolabel-
+   adams.flow.transformer.ImageObjectInfo -type META_DATA
+   adams.flow.transformer.GetMapValue -key @{label_key}
+   adams.flow.transformer.SetVariable -var-name label
   adams.flow.control.Trigger -name "add row"
    adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
    adams.flow.transformer.SpreadSheetInsertRow -no-copy true -after true
@@ -59,44 +97,55 @@ adams.flow.control.Flow -annotation "Generates statistics from annotated objects
    adams.flow.transformer.SpreadSheetSetCell -name y -no-copy true -row last -col Y -finder adams.data.spreadsheet.cellfinder.CellRange -value @{y}
    adams.flow.transformer.SpreadSheetSetCell -name width -no-copy true -row last -col Width -finder adams.data.spreadsheet.cellfinder.CellRange -value @{width}
    adams.flow.transformer.SpreadSheetSetCell -name height -no-copy true -row last -col Height -finder adams.data.spreadsheet.cellfinder.CellRange -value @{height}
+   adams.flow.transformer.SpreadSheetSetCell -name label -no-copy true -row last -col Label -finder adams.data.spreadsheet.cellfinder.CellRange -value @{label} -force-string true
    adams.flow.transformer.SetStorageValue -storage-name sheet
  adams.flow.control.CloseCallableDisplay -callable ProgressBar
+ adams.flow.control.Trigger -name "# labels"
+  adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.SpreadSheetInfo -output-array true -type CELL_VALUES -column-index Label
+  adams.flow.transformer.ArrayLength
+  adams.flow.transformer.SetVariable -var-name num_labels
  adams.flow.control.Trigger -name all
   adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
-  adams.flow.sink.CallableSink -callable All
+  adams.flow.control.Tee -name all
+   adams.flow.transformer.SetVariable -var-name label -var-value all
+   adams.flow.sink.CallableSink -callable Annotations
+  adams.flow.control.ConditionalTee -name "per label" -condition "adams.flow.condition.bool.Expression -expression \"@{num_labels} > 1\""
+   adams.flow.transformer.SpreadSheetSubsetByValue -col Label
+   adams.flow.control.Tee -name "get label"
+    adams.flow.transformer.SpreadSheetGetCell -col Label
+    adams.flow.transformer.SetVariable -var-name label
+   adams.flow.sink.CallableSink -callable Annotations
  adams.flow.control.Trigger -name stats
   adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
-  adams.flow.transformer.SpreadSheetAggregate -aggregate-columns 3-last -aggregate MIN -aggregate MAX -aggregate AVERAGE -aggregate STDEV
-  adams.flow.transformer.Convert -conversion "adams.data.conversion.TransposeSpreadSheet -use-header-as-first-column true"
-  adams.flow.sink.CallableSink -callable Statistics
+  adams.flow.control.Tee -name all
+   adams.flow.transformer.SetVariable -var-name label -var-value all
+   adams.flow.transformer.CallableTransformer -callable "calculate stats"
+  adams.flow.control.ConditionalTee -name "per label" -condition "adams.flow.condition.bool.Expression -expression \"@{num_labels} > 1\""
+   adams.flow.transformer.SpreadSheetSubsetByValue -col Label
+   adams.flow.control.Tee -name "get label"
+    adams.flow.transformer.SpreadSheetGetCell -col Label
+    adams.flow.transformer.SetVariable -var-name label
+   adams.flow.transformer.CallableTransformer -callable "calculate stats"
  adams.flow.control.Trigger -name "annotations per image"
   adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
-  adams.flow.transformer.SpreadSheetAggregate -key-columns 1 -aggregate-columns 3 -aggregate COUNT
-  adams.flow.transformer.SpreadSheetSetHeaderCell -no-copy true -col 2 -value Count
-  adams.flow.sink.CallableSink -callable "Annotations per image"
+  adams.flow.control.Tee -name all
+   adams.flow.transformer.SetVariable -var-name label -var-value all
+   adams.flow.transformer.CallableTransformer -callable "count annotations"
+  adams.flow.control.ConditionalTee -name "per label" -condition "adams.flow.condition.bool.Expression -expression \"@{num_labels} > 1\""
+   adams.flow.transformer.SpreadSheetSubsetByValue -col Label
+   adams.flow.control.Tee -name "get label"
+    adams.flow.transformer.SpreadSheetGetCell -col Label
+    adams.flow.transformer.SetVariable -var-name label
+   adams.flow.transformer.CallableTransformer -callable "count annotations"
  adams.flow.control.Trigger -name plots
   adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
-  adams.flow.control.Tee -name x
-   adams.flow.transformer.SpreadSheetSort -sort-column X
-   adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.SimplePlotGenerator -columns X -meta-data-columns 1,2"
-   adams.flow.control.PlotContainerUpdater -container-value PLOT_NAME
-    adams.flow.transformer.StringReplace -find .* -replace X
-   adams.flow.sink.CallableSink -callable "Sorted plots"
-  adams.flow.control.Tee -name y
-   adams.flow.transformer.SpreadSheetSort -sort-column Y
-   adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.SimplePlotGenerator -columns Y -meta-data-columns 1,2"
-   adams.flow.control.PlotContainerUpdater -container-value PLOT_NAME
-    adams.flow.transformer.StringReplace -find .* -replace Y
-   adams.flow.sink.CallableSink -callable "Sorted plots"
-  adams.flow.control.Tee -name width
-   adams.flow.transformer.SpreadSheetSort -sort-column Width
-   adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.SimplePlotGenerator -columns Width -meta-data-columns 1,2"
-   adams.flow.control.PlotContainerUpdater -container-value PLOT_NAME
-    adams.flow.transformer.StringReplace -find .* -replace Width
-   adams.flow.sink.CallableSink -callable "Sorted plots"
-  adams.flow.control.Tee -name height
-   adams.flow.transformer.SpreadSheetSort -sort-column Height
-   adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.SimplePlotGenerator -columns Height -meta-data-columns 1,2"
-   adams.flow.control.PlotContainerUpdater -container-value PLOT_NAME
-    adams.flow.transformer.StringReplace -find .* -replace Height
-   adams.flow.sink.CallableSink -callable "Sorted plots"
+  adams.flow.control.Tee -name all
+   adams.flow.transformer.SetVariable -var-name label -var-value all
+   adams.flow.transformer.CallableTransformer -callable "generate plot"
+  adams.flow.control.ConditionalTee -name "per label" -condition "adams.flow.condition.bool.Expression -expression \"@{num_labels} > 1\""
+   adams.flow.transformer.SpreadSheetSubsetByValue -col Label
+   adams.flow.control.Tee -name "get label"
+    adams.flow.transformer.SpreadSheetGetCell -col Label
+    adams.flow.transformer.SetVariable -var-name label
+   adams.flow.transformer.CallableTransformer -callable "generate plot"
