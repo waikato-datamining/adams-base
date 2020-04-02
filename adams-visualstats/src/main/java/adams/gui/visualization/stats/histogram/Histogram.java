@@ -289,7 +289,7 @@ public class Histogram
       max = (double) cont.getMetaData(ArrayHistogram.METADATA_MAXIMUM);
     }
     //y axis shows number in bin/ width of bin
-    axisLeft.setMaximum(max/m_BinWidth);
+    axisLeft.setMaximum(max);
     if (m_HistOptions.getAxisY().getLabel().isEmpty())
       axisLeft.setAxisName("Frequency");
     else

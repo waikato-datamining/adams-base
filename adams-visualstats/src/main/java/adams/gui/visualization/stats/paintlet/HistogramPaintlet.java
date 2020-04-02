@@ -163,7 +163,7 @@ extends AbstractColorPaintlet{
       AxisPanel axisBottom = getPlot().getAxis(Axis.BOTTOM);
       AxisPanel axisLeft = getPlot().getAxis(Axis.LEFT);
       for(int i = 0; i< data.length; i++) {
-	double val = data[i][1]/binWidth;
+	double val = data[i][1];
 	//If bin is filled with color
 	if(m_Fill) {
 	  g.setColor(m_FillColor);
