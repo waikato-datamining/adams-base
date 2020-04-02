@@ -103,7 +103,7 @@ import java.awt.BorderLayout;
  * </pre>
  *
  * <pre>-index &lt;adams.core.Index&gt; (property: index)
- * &nbsp;&nbsp;&nbsp;The attribute index in case of Instances being displayed.
+ * &nbsp;&nbsp;&nbsp;The attribute index in case of spreadsheet being displayed.
  * &nbsp;&nbsp;&nbsp;default: first
  * </pre>
  *
@@ -187,7 +187,7 @@ public class Histogram
    * @return		tip text for this property
    */
   public String indexTipText() {
-    return "The attribute index in case of Instances being displayed.";
+    return "The attribute index in case of spreadsheet being displayed.";
   }
 
   /**
