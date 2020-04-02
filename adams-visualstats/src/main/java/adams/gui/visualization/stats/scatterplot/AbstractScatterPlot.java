@@ -15,12 +15,15 @@
 
 /*
  * AbstractScatterPlot.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.scatterplot;
 
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
+import adams.flow.sink.TextSupplier;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.plot.HitDetector;
@@ -37,11 +40,10 @@ import java.util.Date;
  * Abstract class for displaying a single scatterplotpanel on a paintable panel.
  *
  * @author msf8
- * @version $Revision$
  */
 public abstract class AbstractScatterPlot
   extends PaintablePanel
-  implements TipTextCustomizer {
+  implements TipTextCustomizer, SpreadSheetSupporter, TextSupplier {
 
   /** for serialization */
   private static final long serialVersionUID = -3526702766287841051L;
@@ -198,5 +200,42 @@ public abstract class AbstractScatterPlot
     }
 
     return result;
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  @Override
+  public SpreadSheet toSpreadSheet() {
+    return m_Data;
+  }
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return "Save plot as...";
+  }
+
+  /**
+   * Returns a custom file filter for the file chooser.
+   *
+   * @return		the file filter, null if to use default one
+   */
+  public ExtensionFileFilter getCustomTextFileFilter() {
+    return new ExtensionFileFilter("CSV files", "csv");
+  }
+
+  /**
+   * Supplies the text. May get called even if actor hasn't been executed yet.
+   *
+   * @return		the text, null if none available
+   */
+  public String supplyText() {
+    return toSpreadSheet().toString();
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * ScatterDisplay.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -25,8 +25,10 @@ import adams.core.base.BaseRegExp;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
 import adams.gui.visualization.stats.paintlet.ScatterPaintletCircle;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
@@ -176,11 +178,10 @@ import java.awt.BorderLayout;
  *
  * @author msf8
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ScatterDisplay
   extends AbstractGraphicalDisplay
-  implements DisplayPanelProvider {
+  implements DisplayPanelProvider, TextSupplier, SpreadSheetSupporter {
 
   /** for serialization */
   private static final long serialVersionUID = -1985415728904099274L;
@@ -590,7 +591,7 @@ public class ScatterDisplay
   public DisplayPanel createDisplayPanel(Token token) {
     AbstractDisplayPanel	result;
 
-    result = new AbstractComponentDisplayPanel("Histogram") {
+    result = new AbstractTextAndComponentDisplayPanel("ScatterDisplay") {
       private static final long serialVersionUID = 4360182045245637304L;
       protected ScatterPlot m_ScatterPlot;
       @Override
@@ -620,7 +621,19 @@ public class ScatterDisplay
       }
       @Override
       public JComponent supplyComponent() {
-	return m_ScatterPlot;
+        return m_ScatterPlot;
+      }
+      @Override
+      public String getCustomSupplyTextMenuItemCaption() {
+        return ((ScatterPlot) m_Panel).getCustomSupplyTextMenuItemCaption();
+      }
+      @Override
+      public ExtensionFileFilter getCustomTextFileFilter() {
+        return ((ScatterPlot) m_Panel).getCustomTextFileFilter();
+      }
+      @Override
+      public String supplyText() {
+        return ((ScatterPlot) m_Panel).supplyText();
       }
       @Override
       public void cleanUp() {
@@ -641,5 +654,53 @@ public class ScatterDisplay
   @Override
   public boolean displayPanelRequiresScrollPane() {
     return false;
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  public SpreadSheet toSpreadSheet() {
+    if (m_Panel == null)
+      return null;
+    else
+      return ((ScatterPlot) m_Panel).toSpreadSheet();
+  }
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    if (m_Panel == null)
+      return "Save plot as...";
+    else
+      return ((ScatterPlot) m_Panel).getCustomSupplyTextMenuItemCaption();
+  }
+
+  /**
+   * Returns a custom file filter for the file chooser.
+   *
+   * @return		the file filter, null if to use default one
+   */
+  public ExtensionFileFilter getCustomTextFileFilter() {
+    if (m_Panel == null)
+      return new ExtensionFileFilter("CSV files", "csv");
+    else
+      return ((ScatterPlot) m_Panel).getCustomTextFileFilter();
+  }
+
+  /**
+   * Supplies the text. May get called even if actor hasn't been executed yet.
+   *
+   * @return		the text, null if none available
+   */
+  public String supplyText() {
+    if (m_Panel == null)
+      return null;
+    else
+      return ((ScatterPlot) m_Panel).supplyText();
   }
 }

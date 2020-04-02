@@ -15,19 +15,24 @@
 
 /*
  * Histogram.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.histogram;
 
 import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.AbstractArrayStatistic.StatisticContainer;
 import adams.data.statistics.ArrayHistogram;
 import adams.data.statistics.ArrayHistogram.BinCalculation;
 import adams.data.statistics.StatUtils;
+import adams.flow.sink.TextSupplier;
 import adams.gui.chooser.SpreadSheetFileChooser;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
@@ -48,11 +53,10 @@ import java.awt.event.MouseEvent;
  * Class that displays a histogram displaying the data provided.
  *
  * @author msf8
- * @version $Revision$
  */
 public class Histogram
   extends PaintablePanel
-  implements PopupMenuCustomizer {
+  implements PopupMenuCustomizer, TextSupplier, SpreadSheetSupporter {
 
   /** for serialization */
   private static final long serialVersionUID = -4366437103496819542L;
@@ -62,7 +66,7 @@ public class Histogram
 
   /** double array to plot. */
   protected Double[] m_Array;
-  
+
   /** Panel for displaying the histogram */
   protected HistogramPanel m_Plot;
 
@@ -74,13 +78,13 @@ public class Histogram
 
   /** Position of the residuals attribute within the data */
   protected int m_Index;
-  
+
   /** the name to use for the x-axis. */
   protected String m_DataName;
 
   /** the data to plot. */
   protected double[][] m_Plotdata;
-  
+
   /** the bin width. */
   protected double m_BinWidth;
 
@@ -96,7 +100,7 @@ public class Histogram
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_HistOptions = new HistogramOptions();
     m_Data = null;
     m_Array       = null;
@@ -123,7 +127,7 @@ public class Histogram
     m_Val = new HistogramPaintlet();
     m_Val.setPanel(this);
   }
-  
+
   /**
    * Set the options for this histogram
    * @param val			Histogramoptions object containing all the options
@@ -136,10 +140,10 @@ public class Histogram
     m_Val = (HistogramPaintlet) m_HistOptions.getPaintlet().shallowCopy(true);
     m_Val.setPanel(this);
   }
-  
+
   /**
    * Returns the option for this histogram.
-   * 
+   *
    * @return		the options
    */
   public HistogramOptions getOptions() {
@@ -155,19 +159,19 @@ public class Histogram
     m_Array = null;
     update();
   }
-  
+
   /**
    * Returns the instanecs for the histogram.
-   * 
+   *
    * @return		the data, null if not set
    */
   public SpreadSheet getData() {
     return m_Data;
   }
-  
+
   /**
    * Sets the array for this histogram.
-   * 
+   *
    * @param value	the array
    */
   public void setArray(Double[] value) {
@@ -175,10 +179,10 @@ public class Histogram
     m_Data  = null;
     update();
   }
-  
+
   /**
    * Returns the current array.
-   * 
+   *
    * @return		the array, null if not set
    */
   public Double[] getArray() {
@@ -187,22 +191,22 @@ public class Histogram
 
   /**
    * Sets the name for the x-axis.
-   * 
+   *
    * @param value	the name
    */
   public void setDataName(String value) {
     m_DataName = value;
   }
-  
+
   /**
    * Returns the name for the x-axis.
-   * 
+   *
    * @return		the name
    */
   public String getDataName() {
     return m_DataName;
   }
-  
+
   /**
    * Returns the plot panel of the panel, null if no panel present.
    *
@@ -228,7 +232,10 @@ public class Histogram
     }
     else {
       numData = m_Array;
-      m_Name  = "Data";
+      if (m_HistOptions.getAxisY().getLabel().isEmpty())
+	m_Name  = "Data";
+      else
+	m_Name  = m_HistOptions.getAxisX().getLabel();
     }
     if (m_DataName.length() > 0)
       m_Name = m_DataName;
@@ -260,22 +267,22 @@ public class Histogram
       m_Plotdata[i][1] = (Double) cont.getCell(0, i);
       m_Plotdata[i][0] = binX[i];
     }
-    
+
     AxisPanel axisBottom = getPlot().getAxis(Axis.BOTTOM);
     AxisPanel axisLeft = getPlot().getAxis(Axis.LEFT);
     axisBottom.setMinimum(m_Plotdata[0][0]);
     axisBottom.setMaximum(m_Plotdata[m_Plotdata.length-1][0] + m_BinWidth);
     axisBottom.setAxisName(m_Name);
     axisLeft.setMinimum(0);
-    
+
     //find the maximum frequency for a bin
     double max;
     if (numBins > 1) {
       max = m_Plotdata[1][0];
       for (int i = 1; i < m_Plotdata.length; i++) {
-        if (m_Plotdata[i][1] > max) {
-          max = m_Plotdata[i][1];
-        }
+	if (m_Plotdata[i][1] > max) {
+	  max = m_Plotdata[i][1];
+	}
       }
     }
     else {
@@ -283,7 +290,10 @@ public class Histogram
     }
     //y axis shows number in bin/ width of bin
     axisLeft.setMaximum(max/m_BinWidth);
-    axisLeft.setAxisName("Frequency");
+    if (m_HistOptions.getAxisY().getLabel().isEmpty())
+      axisLeft.setAxisName("Frequency");
+    else
+      axisLeft.setAxisName(m_HistOptions.getAxisY().getLabel());
   }
 
   /**
@@ -305,40 +315,41 @@ public class Histogram
     m_Index = val;
     update();
   }
-  
+
   /**
    * Returns the currently set index.
-   * 
+   *
    * @return		the index
    */
   public int getIndex() {
     return m_Index;
   }
-  
+
   /**
    * Returns the plot data.
-   * 
+   *
    * @return		the data
    */
   public double[][] getPlotdata() {
     return m_Plotdata;
   }
-  
+
   /**
    * Returns the bin width.
-   * 
+   *
    * @return		the width
    */
   public double getBinWidth() {
     return m_BinWidth;
   }
 
+
   /**
    * Saves the data as spreadsheet.
    */
   protected void save() {
     int			retVal;
-    SpreadSheetWriter writer;
+    SpreadSheetWriter 	writer;
 
     if (m_FileChooser == null)
       m_FileChooser = new SpreadSheetFileChooser();
@@ -348,7 +359,7 @@ public class Histogram
       return;
 
     writer = m_FileChooser.getWriter();
-    if (!writer.write(m_Data, m_FileChooser.getSelectedFile()))
+    if (!writer.write(toSpreadSheet(), m_FileChooser.getSelectedFile()))
       GUIHelper.showErrorMessage(
 	this, "Failed to save data to file:\n" + m_FileChooser.getSelectedFile());
   }
@@ -365,5 +376,55 @@ public class Histogram
     menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> save());
     menu.add(menuitem);
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  public SpreadSheet toSpreadSheet() {
+    SpreadSheet 	result;
+    Row			row;
+    int			i;
+
+    result = new DefaultSpreadSheet();
+    row   = result.getHeaderRow();
+    row.addCell("B").setContentAsString(getPlot().getAxis(Axis.LEFT).getAxisName());
+    row.addCell("V").setContentAsString(getPlot().getAxis(Axis.BOTTOM).getAxisName());
+    for (i = 0; i < m_Plotdata.length; i++) {
+      row = result.addRow();
+      row.addCell("B").setContent(m_Plotdata[i][0]);
+      row.addCell("V").setContent(m_Plotdata[i][1]);
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return "Save histogram as...";
+  }
+
+  /**
+   * Returns a custom file filter for the file chooser.
+   *
+   * @return		the file filter, null if to use default one
+   */
+  public ExtensionFileFilter getCustomTextFileFilter() {
+    return new ExtensionFileFilter("CSV files", "csv");
+  }
+
+  /**
+   * Supplies the text. May get called even if actor hasn't been executed yet.
+   *
+   * @return		the text, null if none available
+   */
+  public String supplyText() {
+    return toSpreadSheet().toString();
   }
 }
