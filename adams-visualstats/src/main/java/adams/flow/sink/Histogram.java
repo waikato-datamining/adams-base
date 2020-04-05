@@ -272,8 +272,8 @@ public class Histogram
     if (token.getPayload() instanceof SpreadSheet) {
       data = (SpreadSheet) token.getPayload();
       m_Index.setMax(data.getColumnCount());
-      hist.setData(data);
       hist.setIndex(m_Index.getIntIndex());
+      hist.setData(data);
     }
     else {
       hist.setArray((Double[]) token.getPayload());
