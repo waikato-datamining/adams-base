@@ -1,1 +1,1 @@
-storage: lookup, key: 1, value: 2
+storage: lookup, key: 1, value: 2, conversion: ObjectToObject

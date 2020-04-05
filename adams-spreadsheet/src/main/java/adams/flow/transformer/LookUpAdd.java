@@ -13,13 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LookUpAdd.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.ObjectToObject;
 import adams.data.spreadsheet.LookUpHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
@@ -69,46 +72,56 @@ import java.util.HashMap;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name for the lookup table in the internal storage.
  * &nbsp;&nbsp;&nbsp;default: lookup
  * </pre>
- * 
+ *
  * <pre>-key-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: keyColumn)
- * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as key; An index is a 
- * &nbsp;&nbsp;&nbsp;number starting with 1; column names (case-sensitive) as well as the following 
- * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as key; An index is a
+ * &nbsp;&nbsp;&nbsp;number starting with 1; column names (case-sensitive) as well as the following
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last; numeric
+ * &nbsp;&nbsp;&nbsp;indices can be enforced by preceding them with '#' (eg '#12'); column names
+ * &nbsp;&nbsp;&nbsp;can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: 1
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-value-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: valueColumn)
- * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as value; An index is 
- * &nbsp;&nbsp;&nbsp;a number starting with 1; column names (case-sensitive) as well as the following 
- * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as value; An index is
+ * &nbsp;&nbsp;&nbsp;a number starting with 1; column names (case-sensitive) as well as the following
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last; numeric
+ * &nbsp;&nbsp;&nbsp;indices can be enforced by preceding them with '#' (eg '#12'); column names
+ * &nbsp;&nbsp;&nbsp;can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: 2
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-use-native &lt;boolean&gt; (property: useNative)
  * &nbsp;&nbsp;&nbsp;If enabled, native objects are used as value rather than strings.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-value-conversion &lt;adams.data.conversion.Conversion&gt; (property: valueConversion)
+ * &nbsp;&nbsp;&nbsp;The conversion to apply to the value before storing it.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.ObjectToObject
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LookUpAdd
   extends AbstractTransformer {
@@ -127,6 +140,9 @@ public class LookUpAdd
 
   /** whether to output native objects rather than strings. */
   protected boolean m_UseNative;
+
+  /** the conversion to apply to the value. */
+  protected Conversion m_ValueConversion;
 
   /**
    * Returns a string describing the object.
@@ -165,6 +181,10 @@ public class LookUpAdd
     m_OptionManager.add(
 	    "use-native", "useNative",
 	    false);
+
+    m_OptionManager.add(
+	    "value-conversion", "valueConversion",
+	    new ObjectToObject());
   }
 
   /**
@@ -183,7 +203,8 @@ public class LookUpAdd
     value   = QuickInfoHelper.toString(this, "useNative", m_UseNative, ", native");
     if (value != null)
       result += value;
-    
+    result += QuickInfoHelper.toString(this, "valueConversion", m_ValueConversion, ", conversion: ");
+
     return result;
   }
 
@@ -304,6 +325,35 @@ public class LookUpAdd
   }
 
   /**
+   * Sets the conversion to apply to the value before storing it.
+   *
+   * @param value	the conversion
+   */
+  public void setValueConversion(Conversion value) {
+    m_ValueConversion = value;
+    reset();
+  }
+
+  /**
+   * Returns the conversion to apply to the value before storing it.
+   *
+   * @return		the conversion
+   */
+  public Conversion getValueConversion() {
+    return m_ValueConversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String valueConversionTipText() {
+    return "The conversion to apply to the value before storing it.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    * 
    * @return		the Class of objects that can be processed
@@ -330,6 +380,30 @@ public class LookUpAdd
   }
 
   /**
+   * Applies the conversion to the value, if necessary.
+   *
+   * @param conv	the conversion to use, no conversion if null
+   * @param input	the input to convert
+   * @return		the converted value, or input if no conversion of failed to convert
+   */
+  protected Object convertValue(Conversion conv, Object input) {
+    String	msg;
+
+    if (conv == null)
+      return input;
+
+    conv.setInput(input);
+    msg = conv.convert();
+    if (msg == null) {
+      return conv.getOutput();
+    }
+    else {
+      getLogger().warning("Failed to convert input '" + input + "': " + msg);
+      return input;
+    }
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -344,18 +418,27 @@ public class LookUpAdd
     Object			value;
     SpreadSheet			sheet;
     StringBuilder		error;
+    Conversion			conv;
 
     result = null;
-    
+
     if (!getStorageHandler().getStorage().has(m_StorageName)) {
       result = "Lookup table '" + m_StorageName + "' not available! Not initialized with " + LookUpInit.class.getName() + "?";
     }
     else {
+      conv = null;
+      if (!(m_ValueConversion instanceof ObjectToObject))
+	conv = ObjectCopyHelper.copyObject(m_ValueConversion);
+
       lookup = LookUpHelper.getTable(this, m_StorageName);
       if (m_InputToken.getPayload() instanceof SpreadSheet) {
 	sheet     = (SpreadSheet) m_InputToken.getPayload();
 	error     = new StringBuilder();
 	lookupAdd = LookUpHelper.load(sheet, m_KeyColumn.getIndex(), m_ValueColumn.getIndex(), m_UseNative, error);
+	if (conv != null) {
+	  for (String k: lookupAdd.keySet())
+	    lookupAdd.put(k, convertValue(conv, lookupAdd.get(k)));
+	}
 	if (lookupAdd == null) {
 	  result = error.toString();
 	}
@@ -378,7 +461,7 @@ public class LookUpAdd
 	    else
 	      getLogger().info("Adding: '" + key + "' -> '" + value + "'");
 	  }
-	  lookup.put(key, value);
+	  lookup.put(key, convertValue(conv, value));
 	}
       }
     }
