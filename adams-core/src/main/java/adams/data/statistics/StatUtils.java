@@ -15,7 +15,7 @@
 
 /*
  * StatUtils.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
@@ -1220,6 +1220,58 @@ public class StatUtils {
     }
 
     return c;
+  }
+
+  /**
+   * Computes the R^2 between the two data vectors and returns it.
+   *
+   * @param x		the first data array
+   * @param y		the second data array
+   * @return		the computed correlation
+   */
+  public static double rSquared(double[] x, double[] y) {
+    return rSquared(toNumberArray(x), toNumberArray(y));
+  }
+
+  /**
+   * Computes the R^2 between the two data vectors and returns it.
+   * See method get_r2_python in:
+   * https://exceptionshub.com/how-do-i-calculate-r-squared-using-python-and-numpy.html
+   *
+   * @param x		the first data array
+   * @param y		the second data array
+   * @return		the computed correlation
+   */
+  public static double rSquared(Number[] x, Number[] y) {
+    double	result;
+    int 	n;
+    double 	x_bar;
+    double 	y_bar;
+    double 	x_std;
+    double 	y_std;
+    double[]	zx;
+    double[]	zy;
+    int		i;
+
+    if (x.length != y.length)
+      throw new IllegalArgumentException(
+	  "Arrays differ in length: " + x.length + " != " + y.length);
+
+    n     = x.length;
+    x_bar = mean(x);
+    y_bar = mean(y);
+    x_std = stddev(x, true);
+    y_std = stddev(y, true);
+    zx    = new double[x.length];
+    zy    = new double[x.length];
+    result = 0.0;
+    for (i = 0; i < x.length; i++) {
+      zx[i] = (x[i].doubleValue() - x_bar) / x_std;
+      zy[i] = (y[i].doubleValue() - y_bar) / y_std;
+      result += (zx[i] * zy[i]) / (n - 1);
+    }
+
+    return Math.pow(result, 2);
   }
 
   /**

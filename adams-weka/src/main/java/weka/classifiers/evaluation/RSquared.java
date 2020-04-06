@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RSquared.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers.evaluation;
@@ -30,7 +30,6 @@ import java.util.List;
  * Computes the R^2 for regression models.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RSquared
   extends AbstractSimpleRegressionMeasure {
@@ -80,27 +79,12 @@ public class RSquared
    */
   @Override
   public double getStatistic(String statName) {
-    double 	meanY;
-    double 	sumSqRes;
-    double 	sumSqTot;
-    int		i;
-
     if (statName.equals(NAME)) {
       if (m_Actual.size() == 0) {
 	return Utils.missingValue();
       }
       else {
-	meanY    = StatUtils.mean(m_Actual.toArray());
-	sumSqRes = 0.0;
-	sumSqTot = 0.0;
-	for (i = 0; i < m_Actual.size(); i++) {
-	  sumSqTot += Math.pow(m_Actual.get(i) - meanY, 2);
-	  sumSqRes += Math.pow(m_Actual.get(i) - m_Predicted.get(i), 2);
-	}
-	if (sumSqTot != 0)
-	  return 1 - sumSqRes / sumSqTot;
-	else
-	  return Utils.missingValue();
+        return StatUtils.rSquared(m_Actual.toArray(), m_Predicted.toArray());
       }
     }
     else {
