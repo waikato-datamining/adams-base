@@ -92,23 +92,24 @@ import java.util.Map;
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -118,13 +119,26 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-stopping-timeout &lt;int&gt; (property: stoppingTimeout)
+ * &nbsp;&nbsp;&nbsp;The timeout in milliseconds when waiting for actors to finish (&lt;= 0 for
+ * &nbsp;&nbsp;&nbsp;infinity; see 'finishBeforeStopping').
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
  * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;All the actors that define this flow.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-read-only &lt;boolean&gt; (property: readOnly)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow is marked as read-only and the user gets prompted
+ * &nbsp;&nbsp;&nbsp;whether to succeed before allowing it to be edited.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-error-handling &lt;ACTORS_ALWAYS_STOP_ON_ERROR|ACTORS_DECIDE_TO_STOP_ON_ERROR&gt; (property: errorHandling)
- * &nbsp;&nbsp;&nbsp;Defines how errors are handled that occur during execution of the flow; 
+ * &nbsp;&nbsp;&nbsp;Defines how errors are handled that occur during execution of the flow;
  * &nbsp;&nbsp;&nbsp;ACTORS_DECIDE_TO_STOP_ON_ERROR stops the flow only if the actor has the '
  * &nbsp;&nbsp;&nbsp;stopFlowOnError' flag set.
  * &nbsp;&nbsp;&nbsp;default: ACTORS_ALWAYS_STOP_ON_ERROR
@@ -136,13 +150,13 @@ import java.util.Map;
  * </pre>
  *
  * <pre>-execute-on-error &lt;adams.core.io.FlowFile&gt; (property: executeOnError)
- * &nbsp;&nbsp;&nbsp;The external flow to execute in case the flow finishes with an error; allows 
+ * &nbsp;&nbsp;&nbsp;The external flow to execute in case the flow finishes with an error; allows
  * &nbsp;&nbsp;&nbsp;the user to call a clean-up flow.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
  * <pre>-execute-on-finish &lt;adams.core.io.FlowFile&gt; (property: executeOnFinish)
- * &nbsp;&nbsp;&nbsp;The external flow to execute in case the flow finishes normal, without any 
+ * &nbsp;&nbsp;&nbsp;The external flow to execute in case the flow finishes normal, without any
  * &nbsp;&nbsp;&nbsp;errors.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
@@ -155,6 +169,11 @@ import java.util.Map;
  * <pre>-flow-execution-listener &lt;adams.flow.execution.FlowExecutionListener&gt; (property: flowExecutionListener)
  * &nbsp;&nbsp;&nbsp;The listener for the flow execution; must be enabled explicitly.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.execution.NullListener
+ * </pre>
+ *
+ * <pre>-flow-restart-manager &lt;adams.flow.control.flowrestart.AbstractFlowRestartManager&gt; (property: flowRestartManager)
+ * &nbsp;&nbsp;&nbsp;The manager for restarting the flow.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.control.flowrestart.NullManager
  * </pre>
  *
  <!-- options-end -->
@@ -184,6 +203,9 @@ public class Flow
 
   /** the filename for flow settings. */
   public final static String FILENAME = "Flow.props";
+
+  /** whether to mark this flow as read-only (user gets prompted). */
+  protected boolean m_ReadOnly;
 
   /** the error handling. */
   protected ErrorHandling m_ErrorHandling;
@@ -270,6 +292,10 @@ public class Flow
   @Override
   public void defineOptions() {
     super.defineOptions();
+
+    m_OptionManager.add(
+      "read-only", "readOnly",
+      false);
 
     m_OptionManager.add(
       "error-handling", "errorHandling",
@@ -364,6 +390,12 @@ public class Flow
     if (super.getQuickInfo() != null)
       result += ", " + super.getQuickInfo();
 
+    if (m_ReadOnly) {
+      if (!result.isEmpty())
+        result += ", ";
+      result += "read-only";
+    }
+
     return result;
   }
 
@@ -376,6 +408,37 @@ public class Flow
   @Override
   public String actorsTipText() {
     return "All the actors that define this flow.";
+  }
+
+  /**
+   * Sets whether the flow is marked as read-only and the user gets prompted
+   * whether to succeed before allowing it to be edited.
+   *
+   * @param value 	true if read only
+   */
+  public void setReadOnly(boolean value) {
+    m_ReadOnly = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the flow is marked as read-only and the user gets prompted
+   * whether to succeed before allowing it to be edited.
+   *
+   * @return 		true if read only
+   */
+  public boolean getReadOnly() {
+    return m_ReadOnly;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String readOnlyTipText() {
+    return "If set to true, the flow is marked as read-only and the user gets prompted whether to succeed before allowing it to be edited.";
   }
 
   /**

@@ -831,6 +831,7 @@ public class TreeOperations
     boolean			editable;
     boolean[]			expanded;
     boolean			keepChildren;
+    int				retVal;
 
     if (path == null)
       return;
@@ -840,6 +841,12 @@ public class TreeOperations
     actorOld = currNode.getActor().shallowCopy();
     dialog   = GenericObjectEditorDialog.createDialog(getOwner());
     editable = getOwner().isEditable() && !getOwner().isDebug() && currNode.isEditable();
+    if ((getOwner().getRootActor() instanceof Flow) && ((Flow) getOwner().getRootActor()).getReadOnly()) {
+      retVal   = GUIHelper.showConfirmMessage(getOwner().getParent(), "Flow is marked read-only - proceed with editing (Yes) or only viewing (No)?");
+      editable = (retVal == ApprovalDialog.APPROVE_OPTION);
+      if (retVal == ApprovalDialog.CANCEL_OPTION)
+        return;
+    }
     if (editable)
       dialog.setTitle("Edit...");
     else
