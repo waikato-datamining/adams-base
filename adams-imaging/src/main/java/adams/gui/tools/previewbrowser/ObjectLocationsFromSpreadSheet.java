@@ -54,7 +54,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Displays the following image types with an overlay for the objects stored in the spreadsheet with the same name (using the spreadsheet reader's default extension) or with a '-rois' suffix to the name: tif,jpg,tiff,bmp,gif,png,wbmp,jpeg
+ * Displays the following image types with an overlay for the objects stored in the spreadsheet with the same name (using the spreadsheet reader's default extension) or with the specified alternative file suffix to the name (eg '-rois'): tif,jpg,tiff,bmp,gif,png,wbmp,jpeg
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -67,6 +67,12 @@ import java.util.List;
  * <pre>-reader &lt;adams.data.io.input.ObjectLocationsSpreadSheetReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The reader setup to use for reading the object locations from the spreadsheet.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.ObjectLocationsSpreadSheetReader -reader \"adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\" -row-finder adams.data.spreadsheet.rowfinder.AllFinder -col-left x0 -col-top y0 -col-right x1 -col-bottom y1 -col-type label_str
+ * </pre>
+ *
+ * <pre>-alternative-file-suffix &lt;java.lang.String&gt; (property: alternativeFileSuffix)
+ * &nbsp;&nbsp;&nbsp;The alternative file suffix to use for locating the associated spreadsheet
+ * &nbsp;&nbsp;&nbsp;(eg '-rois').
+ * &nbsp;&nbsp;&nbsp;default: -rois
  * </pre>
  *
  * <pre>-color &lt;java.awt.Color&gt; (property: color)
@@ -107,6 +113,22 @@ import java.util.List;
  * <pre>-label-font &lt;java.awt.Font&gt; (property: labelFont)
  * &nbsp;&nbsp;&nbsp;The font to use for the labels.
  * &nbsp;&nbsp;&nbsp;default: Display-PLAIN-14
+ * </pre>
+ *
+ * <pre>-finder &lt;adams.data.objectfinder.ObjectFinder&gt; (property: finder)
+ * &nbsp;&nbsp;&nbsp;The object finder to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
+ * </pre>
+ *
+ * <pre>-use-alternative-location &lt;boolean&gt; (property: useAlternativeLocation)
+ * &nbsp;&nbsp;&nbsp;If enabled, the alternative location is used to locate the associated report
+ * &nbsp;&nbsp;&nbsp;rather than the directory with the image.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-alternative-location &lt;adams.core.io.PlaceholderDirectory&gt; (property: alternativeLocation)
+ * &nbsp;&nbsp;&nbsp;The alternative location to use look for associated reports.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
  <!-- options-end -->
@@ -244,6 +266,9 @@ public class ObjectLocationsFromSpreadSheet
   /** the reader to use. */
   protected ObjectLocationsSpreadSheetReader m_Reader;
 
+  /** the alternative file suffix to use. */
+  protected String m_AlternativeFileSuffix;
+
   /** the color for the objects. */
   protected Color m_Color;
 
@@ -284,7 +309,8 @@ public class ObjectLocationsFromSpreadSheet
     return
       "Displays the following image types with an overlay for the objects "
 	+ "stored in the spreadsheet with the same name (using the spreadsheet "
-	+ "reader's default extension) or with a '-rois' suffix to the name: "
+	+ "reader's default extension) or with the specified alternative file "
+        + "suffix to the name (eg '-rois'): "
 	+ Utils.arrayToString(getExtensions());
   }
 
@@ -298,6 +324,10 @@ public class ObjectLocationsFromSpreadSheet
     m_OptionManager.add(
       "reader", "reader",
       getDefaultReader());
+
+    m_OptionManager.add(
+      "alternative-file-suffix", "alternativeFileSuffix",
+      "-rois");
 
     m_OptionManager.add(
       "color", "color",
@@ -385,6 +415,35 @@ public class ObjectLocationsFromSpreadSheet
    */
   public String readerTipText() {
     return "The reader setup to use for reading the object locations from the spreadsheet.";
+  }
+
+  /**
+   * Sets the alternative file suffix to use for locating the associated spreadsheet (eg '-rois').
+   *
+   * @param value 	the suffix
+   */
+  public void setAlternativeFileSuffix(String value) {
+    m_AlternativeFileSuffix = value;
+    reset();
+  }
+
+  /**
+   * Returns the alternative file suffix to use for locating the associated spreadsheet (eg '-rois').
+   *
+   * @return 		the suffix
+   */
+  public String getAlternativeFileSuffix() {
+    return m_AlternativeFileSuffix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alternativeFileSuffixTipText() {
+    return "The alternative file suffix to use for locating the associated spreadsheet (eg '-rois').";
   }
 
   /**
@@ -731,7 +790,7 @@ public class ObjectLocationsFromSpreadSheet
     else
       baseFile = file;
     locFile = FileUtils.replaceExtension(baseFile, "." + m_Reader.getReader().getDefaultFormatExtension());
-    locFile2 = FileUtils.replaceExtension(baseFile, "-rois." + m_Reader.getReader().getDefaultFormatExtension());
+    locFile2 = FileUtils.replaceExtension(baseFile, m_AlternativeFileSuffix + "." + m_Reader.getReader().getDefaultFormatExtension());
     if (locFile2.exists() && locFile2.isFile())
       locFile = locFile2;
     if (locFile.exists() && locFile.isFile()) {

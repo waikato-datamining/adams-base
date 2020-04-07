@@ -168,6 +168,9 @@ public class AnnotateImage
   /** the reader to use. */
   protected AbstractReportReader m_Reader;
 
+  /** the alternative file suffix to use. */
+  protected String m_AlternativeFileSuffix;
+
   /** the report writer for updating the file. */
   protected AbstractReportWriter m_Writer;
 
@@ -213,6 +216,10 @@ public class AnnotateImage
     m_OptionManager.add(
       "reader", "reader",
       new DefaultSimpleReportReader());
+
+    m_OptionManager.add(
+      "alternative-file-suffix", "alternativeFileSuffix",
+      "-rois");
 
     m_OptionManager.add(
       "writer", "writer",
@@ -274,6 +281,35 @@ public class AnnotateImage
    */
   public String readerTipText() {
     return "The reader setup to use for reading the object locations from the spreadsheet.";
+  }
+
+  /**
+   * Sets the alternative file suffix to use for locating the associated spreadsheet (eg '-rois').
+   *
+   * @param value 	the suffix
+   */
+  public void setAlternativeFileSuffix(String value) {
+    m_AlternativeFileSuffix = value;
+    reset();
+  }
+
+  /**
+   * Returns the alternative file suffix to use for locating the associated spreadsheet (eg '-rois').
+   *
+   * @return 		the suffix
+   */
+  public String getAlternativeFileSuffix() {
+    return m_AlternativeFileSuffix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alternativeFileSuffixTipText() {
+    return "The alternative file suffix to use for locating the associated spreadsheet (eg '-rois').";
   }
 
   /**
@@ -541,7 +577,7 @@ public class AnnotateImage
     else
       ext = m_Writer.getDefaultFormatExtension();
     reportFile1 = FileUtils.replaceExtension(file, "." + ext);
-    reportFile2 = FileUtils.replaceExtension(file, "-rois." + ext);
+    reportFile2 = FileUtils.replaceExtension(file, m_AlternativeFileSuffix + "." + ext);
     if (reportFile2.exists() && reportFile2.isFile())
       reportFile1 = reportFile2;
     if (mustExist && reportFile1.exists() && reportFile1.isFile())
