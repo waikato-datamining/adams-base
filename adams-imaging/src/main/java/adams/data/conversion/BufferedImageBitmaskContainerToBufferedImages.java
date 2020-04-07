@@ -23,10 +23,12 @@ package adams.data.conversion;
 import adams.data.image.BufferedImageBitmaskContainer;
 import adams.data.image.BufferedImageContainer;
 
+import java.awt.image.BufferedImage;
+
 /**
  <!-- globalinfo-start -->
- * Turns the bitmask container back into an array of two containers for BufferedImage objects, with the image being the first and the bitmask the second element.<br>
- * The incoming report gets cloned into both of the outgoing containers.
+ * Turns the bitmask container back into an array of containers for BufferedImage objects, with the image being the first and the bitmasks the other elements.<br>
+ * The incoming report gets cloned into all of the outgoing containers.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -52,10 +54,10 @@ public class BufferedImageBitmaskContainerToBufferedImages
    */
   @Override
   public String globalInfo() {
-    return "Turns the bitmask container back into an array of two containers "
+    return "Turns the bitmask container back into an array of containers "
       + "for BufferedImage objects, with the image being the first and the "
-      + "bitmask the second element.\n"
-      + "The incoming report gets cloned into both of the outgoing containers.";
+      + "bitmasks the other elements.\n"
+      + "The incoming report gets cloned into all of the outgoing containers.";
   }
 
   /**
@@ -88,15 +90,20 @@ public class BufferedImageBitmaskContainerToBufferedImages
   protected Object doConvert() throws Exception {
     BufferedImageContainer[]		result;
     BufferedImageBitmaskContainer 	input;
+    BufferedImage[]			bitmasks;
+    int					i;
 
     input     = (BufferedImageBitmaskContainer) m_Input;
-    result    = new BufferedImageContainer[2];
+    bitmasks  = input.getBitmasks();
+    result    = new BufferedImageContainer[1 + input.getNumBitmasks()];
     result[0] = new BufferedImageContainer();
     result[0].setImage(input.getImage());
     result[0].setReport(input.getReport().getClone());
-    result[1] = new BufferedImageContainer();
-    result[1].setImage(input.getBitmask());
-    result[1].setReport(input.getReport().getClone());
+    for (i = 0; i < input.getNumBitmasks(); i++) {
+      result[i + 1] = new BufferedImageContainer();
+      result[i + 1].setImage(bitmasks[i]);
+      result[i + 1].setReport(input.getReport().getClone());
+    }
 
     return result;
   }

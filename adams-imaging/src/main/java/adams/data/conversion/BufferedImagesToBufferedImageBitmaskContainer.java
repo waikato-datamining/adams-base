@@ -24,9 +24,11 @@ import adams.core.Utils;
 import adams.data.image.BufferedImageBitmaskContainer;
 import adams.data.image.BufferedImageContainer;
 
+import java.awt.image.BufferedImage;
+
 /**
  <!-- globalinfo-start -->
- * Turns the two BufferedImage containers into a container with image (index=0) and bitmask (index=1).<br>
+ * Turns the BufferedImage containers into a container with image (index=0) and bitmasks (index&gt;=1).<br>
  * Only the report from the first container is transferred.
  * <br><br>
  <!-- globalinfo-end -->
@@ -53,8 +55,8 @@ public class BufferedImagesToBufferedImageBitmaskContainer
    */
   @Override
   public String globalInfo() {
-    return "Turns the two BufferedImage containers into a container with "
-      + "image (index=0) and bitmask (index=1).\n"
+    return "Turns the BufferedImage containers into a container with "
+      + "image (index=0) and bitmasks (index>=1).\n"
       + "Only the report from the first container is transferred.";
   }
 
@@ -88,15 +90,20 @@ public class BufferedImagesToBufferedImageBitmaskContainer
   protected Object doConvert() throws Exception {
     BufferedImageBitmaskContainer	result;
     BufferedImageContainer[]		conts;
+    BufferedImage[]			bitmasks;
+    int					i;
 
     conts = (BufferedImageContainer[]) m_Input;
-    if (conts.length != 2)
-      throw new IllegalStateException("Expected array of length 2 of " + Utils.classToString(BufferedImageContainer.class) + " objects, but received: " + conts.length);
+    if (conts.length < 2)
+      throw new IllegalStateException("Expected array of length >=2 of " + Utils.classToString(BufferedImageContainer.class) + " objects, but received: " + conts.length);
 
     result = new BufferedImageBitmaskContainer();
     result.setContent(conts[0].getContent());
     result.setReport(conts[0].getReport().getClone());
-    result.setBitmask(conts[1].getContent());
+    bitmasks = new BufferedImage[conts.length - 1];
+    for (i = 1; i < conts.length; i++)
+      bitmasks[i - 1] = conts[i].getImage();
+    result.setBitmasks(bitmasks);
 
     return result;
   }

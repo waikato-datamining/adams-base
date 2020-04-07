@@ -33,8 +33,8 @@ public class BufferedImageBitmaskContainer
 
   private static final long serialVersionUID = -3729935584834380099L;
 
-  /** the bitmask. */
-  protected BufferedImage m_Bitmask;
+  /** the bitmasks. */
+  protected BufferedImage[] m_Bitmasks;
 
   /**
    * Initializes the members.
@@ -42,7 +42,7 @@ public class BufferedImageBitmaskContainer
   protected void initialize() {
     super.initialize();
 
-    m_Bitmask = null;
+    m_Bitmasks = null;
   }
 
   /**
@@ -51,38 +51,39 @@ public class BufferedImageBitmaskContainer
    * @return		true if present
    */
   @Override
-  public boolean hasBitmask() {
-    return (m_Bitmask != null);
+  public boolean hasBitmasks() {
+    return (m_Bitmasks != null);
   }
 
   /**
-   * Stores the bitmask.
+   * Returns the number of bitmasks stored.
    *
-   * @param value 	the bitmask to store, null to remove
+   * @return		the number of masks
    */
-  @Override
-  public void setBitmask(BufferedImage value) {
-    m_Bitmask = value;
+  public int getNumBitmasks() {
+    if (m_Bitmasks == null)
+      return 0;
+    else
+      return m_Bitmasks.length;
   }
 
   /**
-   * Returns the stored bitmask.
+   * Stores the bitmasks.
    *
-   * @return		the bitmask, null if none store
+   * @param value 	the bitmasks to store, null to remove
    */
-  @Override
-  public BufferedImage getBitmask() {
-    return m_Bitmask;
+  public void setBitmasks(BufferedImage[] value) {
+    m_Bitmasks = value;
   }
 
   /**
-   * Returns the bitmask as BufferedImage object.
+   * Returns the stored bitmasks.
    *
-   * @return		the buffered image, null if not bitmask stored
+   * @return		the bitmasks, null if none store
    */
   @Override
-  public BufferedImage bitmaskToBufferedImage() {
-    return m_Bitmask;
+  public BufferedImage[] getBitmasks() {
+    return m_Bitmasks;
   }
 
   /**
@@ -92,6 +93,6 @@ public class BufferedImageBitmaskContainer
    */
   @Override
   public String toString() {
-    return super.toString() + ", bitmask=" + m_Bitmask;
+    return super.toString() + ", bitmask=" + (m_Bitmasks == null ? "-none-" : m_Bitmasks.length);
   }
 }

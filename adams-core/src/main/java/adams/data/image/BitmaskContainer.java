@@ -20,8 +20,6 @@
 
 package adams.data.image;
 
-import java.awt.image.BufferedImage;
-
 /**
  * Interface for containers that store bitmasks.
  *
@@ -31,30 +29,30 @@ import java.awt.image.BufferedImage;
 public interface BitmaskContainer<T> {
 
   /**
-   * Checks whether a bitmask is present.
+   * Checks whether bitmasks are present.
    *
    * @return		true if present
    */
-  public boolean hasBitmask();
+  public boolean hasBitmasks();
 
   /**
-   * Stores the bitmask.
+   * Returns the number of bitmasks stored.
    *
-   * @param value 	the bitmask to store, null to remove
+   * @return		the number of masks
    */
-  public void setBitmask(T value);
+  public int getNumBitmasks();
 
   /**
-   * Returns the stored bitmask.
+   * Stores the bitmasks.
    *
-   * @return		the bitmask, null if none store
+   * @param value 	the bitmasks to store, null to remove
    */
-  public T getBitmask();
+  public void setBitmasks(T[] value);
 
   /**
-   * Returns the bitmask as BufferedImage object.
+   * Returns the stored bitmasks.
    *
-   * @return		the buffered image, null if not bitmask stored
+   * @return		the bitmasks, null if none stored
    */
-  public BufferedImage bitmaskToBufferedImage();
+  public T[] getBitmasks();
 }
