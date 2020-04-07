@@ -494,6 +494,15 @@ public class ImageAnnotator
       m_PanelImage.addInteractionLog(new InteractionEvent(m_PanelImage, new Date(), "change label", data));
 
       m_CurrentLabel = label;
+      notifyLabelChange(label);
+    }
+
+    /**
+     * Sends notifications that the label has changed.
+     *
+     * @param label	the new label
+     */
+    protected void notifyLabelChange(String label) {
       if (m_ActualSelectionProcessor instanceof SelectionProcessorWithLabelSupport)
 	((SelectionProcessorWithLabelSupport) m_ActualSelectionProcessor).setLabel(label == null ? "" : label);
     }
@@ -535,6 +544,8 @@ public class ImageAnnotator
           break;
 	}
       }
+
+      notifyLabelChange(label);
     }
 
     /**
