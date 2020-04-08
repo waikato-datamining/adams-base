@@ -549,6 +549,24 @@ public class ImageAnnotator
     }
 
     /**
+     * Returns the divider location between image and properties.
+     *
+     * @return		the position
+     */
+    public int getMainDividerLocation() {
+      return m_PanelImage.getMainDividerLocation();
+    }
+
+    /**
+     * Sets the divider location between image and properties.
+     *
+     * @param value	the position
+     */
+    public void setMainDividerLocation(int value) {
+      m_PanelImage.setMainDividerLocation(value);
+    }
+
+    /**
      * Sets the current image.
      *
      * @param value	the image
@@ -818,6 +836,9 @@ public class ImageAnnotator
 
   /** the last selected label. */
   protected transient String m_LastLabel;
+
+  /** the last main divider location. */
+  protected transient Integer m_LastMainDividerLocation;
 
   /** the start timestamp. */
   protected transient Date m_StartTimestamp;
@@ -1292,9 +1313,12 @@ public class ImageAnnotator
     ((AnnotatorPanel) m_Panel).clearInteractionLog();
     ((AnnotatorPanel) m_Panel).setCurrentImage(cont);
     ((AnnotatorPanel) m_Panel).preselectLabel(m_LastLabel);
+    if (m_LastMainDividerLocation != null)
+      ((AnnotatorPanel) m_Panel).setMainDividerLocation(m_LastMainDividerLocation);
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
-    m_LastLabel = ((AnnotatorPanel) m_Panel).getCurrentLabel();
+    m_LastLabel               = ((AnnotatorPanel) m_Panel).getCurrentLabel();
+    m_LastMainDividerLocation = ((AnnotatorPanel) m_Panel).getMainDividerLocation();
 
     if (m_Accepted) {
       cont = ((AnnotatorPanel) m_Panel).getCurrentImage();
