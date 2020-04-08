@@ -1974,6 +1974,24 @@ public class ImagePanel
   }
 
   /**
+   * Returns the divider location between image and properties.
+   *
+   * @return		the position
+   */
+  public int getMainDividerLocation() {
+    return m_MainSplitPane.getDividerLocation();
+  }
+
+  /**
+   * Sets the divider location between image and properties.
+   *
+   * @param value	the position
+   */
+  public void setMainDividerLocation(int value) {
+    m_MainSplitPane.setDividerLocation(value);
+  }
+
+  /**
    * Sets the modified state.
    *
    * @param value	if true then the image gets flagged as modified
