@@ -33,7 +33,11 @@ import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
+import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -338,6 +342,9 @@ public class DetermineOverlappingObjects
     LocatedObjects		thisObjs;
     LocatedObjects		otherObjs;
     LocatedObjects 		newObjs;
+    Set<LocatedObject> 		overlaps;
+    LocatedObjects		allObjs;
+    int				i;
     Object			output;
 
     result = null;
@@ -345,6 +352,7 @@ public class DetermineOverlappingObjects
     output      = null;
     thisReport  = null;
     otherReport = null;
+    newObjs     = null;
 
     if (m_InputToken.getPayload() instanceof AbstractImageContainer)
       thisReport = ((AbstractImageContainer) m_InputToken.getPayload()).getReport();
@@ -357,7 +365,15 @@ public class DetermineOverlappingObjects
 
     if (thisReport != null) {
       if (m_CompareWithItself) {
-        otherReport = thisReport;
+        allObjs  = m_Finder.findObjects(LocatedObjects.fromReport(thisReport, m_Finder.getPrefix()));
+        newObjs  = new LocatedObjects();
+        overlaps = new HashSet<>();
+        for (i = 0; i < allObjs.size() - 1; i++) {
+          thisObjs  = new LocatedObjects(allObjs.get(i));
+          otherObjs = new LocatedObjects(allObjs.subList(i + 1, i + 2));
+          overlaps.addAll(m_Algorithm.calculate(thisObjs, otherObjs));
+	}
+	newObjs.addAll(overlaps);
       }
       else {
 	obj = getStorageHandler().getStorage().get(m_StorageName);
@@ -371,14 +387,15 @@ public class DetermineOverlappingObjects
 	  else
 	    result = "Unhandled type of storage item '" + m_StorageName + "': " + Utils.classToString(obj);
 	}
+        if (otherReport != null) {
+          thisObjs = m_Finder.findObjects(LocatedObjects.fromReport(thisReport, m_Finder.getPrefix()));
+          otherObjs = m_Finder.findObjects(LocatedObjects.fromReport(otherReport, m_Finder.getPrefix()));
+          newObjs = m_Algorithm.calculate(thisObjs, otherObjs);
+        }
       }
     }
 
-    if (otherReport != null) {
-      thisObjs  = m_Finder.findObjects(LocatedObjects.fromReport(thisReport,  m_Finder.getPrefix()));
-      otherObjs = m_Finder.findObjects(LocatedObjects.fromReport(otherReport, m_Finder.getPrefix()));
-      newObjs = m_Algorithm.calculate(thisObjs, otherObjs);
-
+    if (newObjs != null) {
       // assemble new report
       try {
         newReport = thisReport.getClass().newInstance();
