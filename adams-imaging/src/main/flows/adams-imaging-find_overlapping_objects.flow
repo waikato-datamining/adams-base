@@ -1,0 +1,37 @@
+# Project: adams
+# Date: 2020-04-10 09:34:20
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.ProgressBar -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -max @{max}
+  adams.flow.sink.Display -name Overlaps -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory\" -help \"Directory with .report files to check\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name recursive -display Recursive? -help \"Traverse directory recursively?\" -type BOOLEAN -default-value false" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name label_regexp -display \"Labels to check (regexp)\" -help \"Regular expression that is matched against the values of the \\\"type\\\" key\" -type REGEXP -default-value .*" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name min_overlap -display \"Minimum overlap ratio (0-1)\" -type DOUBLE -default-value 0.01" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name process
+  adams.flow.standalone.SetVariable -name reset -var-name count -var-value 0
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.report -sorting SORT_BY_NAME -recursive @{recursive}" -use-forward-slashes true
+  adams.flow.control.Tee -name "# files"
+   adams.flow.transformer.ArrayLength
+   adams.flow.transformer.SetVariable -var-name max
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.control.Tee -name progress
+   adams.flow.transformer.IncVariable -var-name count -output-variable-value true
+   adams.flow.sink.CallableSink -callable ProgressBar
+  adams.flow.transformer.SetVariable -name "file name" -var-name file
+  adams.flow.transformer.SetVariable -name "reset overlaps" -var-name overlaps -var-value 0
+  adams.flow.control.Tee -name "count overlaps"
+   adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
+   adams.flow.transformer.DetermineOverlappingObjects -compare-with-itself true -finder "adams.data.objectfinder.ByMetaDataStringValue -key type -regexp @{label_regexp}" -algorithm "adams.data.objectoverlap.AreaRatio -min-overlap-ratio @{min_overlap} -average-ratio true"
+   adams.flow.transformer.GetImageObjects -output-array true -finder "adams.data.objectfinder.ByMetaDataNumericValue -key overlap_count -minimum 1.0 -minimum-included true -maximum NaN"
+   adams.flow.transformer.ArrayLength
+   adams.flow.transformer.SetVariable -name "set overlaps" -var-name overlaps
+  adams.flow.control.ConditionalTrigger -name "output overlaps" -condition "adams.flow.condition.bool.Expression -expression \"@{overlaps} > 0\""
+   adams.flow.source.CombineVariables -expression @{file},@{overlaps} -conversion adams.data.conversion.StringToString
+   adams.flow.sink.CallableSink -callable Overlaps
+ adams.flow.control.CloseCallableDisplay -callable ProgressBar
