@@ -31,6 +31,7 @@ import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +94,34 @@ public class LocatedObjects
   }
 
   /**
+   * Initializes the list.
+   *
+   * @param objects	the list to initialize with
+   */
+  public LocatedObjects(List<LocatedObject> objects) {
+    super(objects);
+  }
+
+  /**
+   * Initializes the list.
+   *
+   * @param objects	the array to initialize with
+   */
+  public LocatedObjects(LocatedObject[] objects) {
+    super(Arrays.asList(objects));
+  }
+
+  /**
+   * Initializes the list.
+   *
+   * @param object	the object to initialize with
+   */
+  public LocatedObjects(LocatedObject object) {
+    super();
+    add(object);
+  }
+
+  /**
    * Returns the logger instance.
    *
    * @return		the logger
@@ -141,6 +170,44 @@ public class LocatedObjects
       }
       else {
 	getLogger().warning("Object has no meta-data: " + obj);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns a new instance using the specified list indices.
+   *
+   * @param indices	the list indices for the subset
+   * @return		the subset
+   */
+  public LocatedObjects subList(int[] indices) {
+    return subList(indices, false);
+  }
+
+  /**
+   * Returns a new instance using the specified list indices.
+   *
+   * @param indices	the list indices for the subset
+   * @param invert 	whether to invert the matching of the indices
+   * @return		the subset
+   */
+  public LocatedObjects subList(int[] indices, boolean invert) {
+    LocatedObjects	result;
+    TIntSet		set;
+    int			i;
+
+    result = new LocatedObjects();
+    set    = new TIntHashSet(indices);
+    for (i = 0; i < size(); i++) {
+      if (invert) {
+        if (!set.contains(i))
+          result.add(get(i));
+      }
+      else {
+        if (set.contains(i))
+          result.add(get(i));
       }
     }
 
