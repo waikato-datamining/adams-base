@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectFilter.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -288,6 +288,8 @@ public class ImageObjectFilter
     Report			newReport;
     LocatedObjects		objs;
     LocatedObjects		newObjs;
+    LocatedObjects		otherObjs;
+    int				i;
 
     result  = null;
     report  = null;
@@ -310,13 +312,11 @@ public class ImageObjectFilter
 	// find objects of interest
 	indices = m_Finder.find(objs);
 
-	// remove all old objects?
-	if (!m_KeepAllObjects) {
-	  for (AbstractField field : report.getFields()) {
-	    if (field.getName().startsWith(m_Finder.getPrefix()))
-	      report.removeValue(field);
-	  }
-	}
+	// remove all old objects
+        for (AbstractField field : report.getFields()) {
+          if (field.getName().startsWith(m_Finder.getPrefix()))
+            report.removeValue(field);
+        }
 
 	// compile new objects
 	newObjs = objs.subset(indices);
@@ -326,6 +326,10 @@ public class ImageObjectFilter
 	newObjs = m_Filter.filter(newObjs);
 
 	// add objects to report
+        if (m_KeepAllObjects) {
+          otherObjs = objs.subset(indices, true);
+          newObjs.addAll(otherObjs);
+        }
 	newReport = newObjs.toReport(m_Finder.getPrefix());
 	for (AbstractField field : newReport.getFields()) {
 	  report.addField(field);
