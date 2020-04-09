@@ -15,7 +15,7 @@
 
 /*
  * LocatedObjects.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -110,6 +110,17 @@ public class LocatedObjects
    * @return		the subset
    */
   public LocatedObjects subset(int[] indices) {
+    return subset(indices, false);
+  }
+
+  /**
+   * Returns a new instance using the specified object indices.
+   *
+   * @param indices	the indices for the subset
+   * @param invert 	whether to invert the matching of the indices
+   * @return		the subset
+   */
+  public LocatedObjects subset(int[] indices, boolean invert) {
     LocatedObjects 	result;
     int			index;
     TIntSet 		hash;
@@ -119,8 +130,14 @@ public class LocatedObjects
     for (LocatedObject obj: this) {
       if (obj.getMetaData() != null) {
 	index = obj.getIndex();
-	if (hash.contains(index))
-	  result.add(obj);
+	if (invert) {
+	  if (!hash.contains(index))
+	    result.add(obj);
+	}
+	else {
+	  if (hash.contains(index))
+	    result.add(obj);
+	}
       }
       else {
 	getLogger().warning("Object has no meta-data: " + obj);
