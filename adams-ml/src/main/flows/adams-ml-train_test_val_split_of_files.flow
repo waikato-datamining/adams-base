@@ -1,31 +1,54 @@
 # Project: adams
-# Date: 2020-02-24 14:06:15
+# Date: 2020-04-10 10:46:24
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-math,adams-ml,adams-spreadsheet,adams-visualstats
 #
-adams.flow.control.Flow -annotation "Splits files into train/test and (optionally) validation sets.\\nAutomatically groups files by their filename, excluding path and extension.\\nThis allows images and reports to be copied alongside." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+adams.flow.control.Flow -annotation "Splits files into train/test and (optionally) validation sets.\\nAutomatically groups files by their filename, excluding path and extension.\\nThis allows images and reports to be copied alongside.\\nOptionally, it can traverse the sub-directories in the input directory and\\nperform a split for each of the sub-directories (eg each sub-dir represents\\na batch of files)." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.standalone.CallableActors
   adams.flow.sink.Display -name Info -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
   adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
-  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name train_perc -display \"Train percentage (0-1)\" -help \"The percentage of the data to use for training\" -type DOUBLE -default-value 0.7" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name train_dir -display \"Output directory (train)\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name test_dir -display \"Output directory (test)\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name generate_val -display \"Generate validation set?\" -help \"Whether to generate a validation set on top of train and test sets.\" -type BOOLEAN -default-value false" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name val_perc -display \"Validation percentage (0-1)\" -help \"The percentage of the data to use for validation\" -type DOUBLE -default-value 0.15" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name val_dir -display \"Output directory (val)\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Input directory\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name iterate_over_subdirs -display \"Iterate over sub-dirs in input dir?\" -type BOOLEAN -default-value false" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name train_perc -display \"Train percentage (0-1)\" -help \"The percentage of the data to use for training\" -type DOUBLE -default-value 0.7" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name train_dir -display \"Output directory (train)\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name test_dir -display \"Output directory (test)\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name generate_val -display \"Generate validation set?\" -help \"Whether to generate a validation set on top of train and test sets.\" -type BOOLEAN -default-value false" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name val_perc -display \"Validation percentage (0-1)\" -help \"The percentage of the data to use for validation\" -type DOUBLE -default-value 0.15" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name val_dir -display \"Output directory (val)\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
   adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name "determine directories to traverse"
+  adams.flow.source.Start
+  adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.Expression -expression \"@{iterate_over_subdirs} = true\""
+   adams.flow.control.Trigger -name then
+    adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalDirectorySearch -directory @{input_dir} -sorting SORT_BY_NAME" -use-forward-slashes true
+    adams.flow.transformer.SetStorageValue -storage-name dirs
+   adams.flow.control.Trigger -name else
+    adams.flow.source.Variable -var-name input_dir -conversion adams.data.conversion.StringToString
+    adams.flow.transformer.SequenceToArray
+    adams.flow.transformer.SetStorageValue -storage-name dirs
  adams.flow.control.Trigger -name process
-  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -sorting SORT_BY_NAME" -use-forward-slashes true
-  adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"@{generate_val} = true\"" -condition adams.flow.condition.bool.True
-   adams.flow.transformer.PrepareFileBasedDataset -name "PrepareFileBasedDataset - (train/test/val)" -preparation "adams.flow.transformer.preparefilebaseddataset.GroupedTrainValidateTestSplit -train-percentage @{train_perc} -validate-percentage @{val_perc} -remove-extension true"
-   adams.flow.transformer.PrepareFileBasedDataset -name "PrepareFileBasedDataset - (train/test)" -preparation "adams.flow.transformer.preparefilebaseddataset.GroupedTrainTestSplit -percentage @{train_perc} -remove-extension true"
-  adams.flow.control.ContainerValuePicker -value Train
-   adams.flow.transformer.ArrayToSequence
-   adams.flow.transformer.CopyFile -target-dir @{train_dir}
-   adams.flow.sink.CallableSink -callable Info
-  adams.flow.control.ContainerValuePicker -name "ContainerValuePicker (2)" -value Test
-   adams.flow.transformer.ArrayToSequence
-   adams.flow.transformer.CopyFile -target-dir @{test_dir}
-   adams.flow.sink.CallableSink -callable Info
-  adams.flow.control.ContainerValuePicker -name "ContainerValuePicker (3)" -value Validation
-   adams.flow.transformer.ArrayToSequence
-   adams.flow.transformer.CopyFile -target-dir @{val_dir}
-   adams.flow.sink.CallableSink -callable Info
+  adams.flow.source.StorageValue -storage-name dirs -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.transformer.SetVariable -var-name dir
+  adams.flow.control.Trigger -name "process dir"
+   adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{dir} -sorting SORT_BY_NAME" -use-forward-slashes true
+   adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"@{generate_val} = true\"" -condition adams.flow.condition.bool.True
+    adams.flow.transformer.PrepareFileBasedDataset -name "PrepareFileBasedDataset - (train/test/val)" -preparation "adams.flow.transformer.preparefilebaseddataset.GroupedTrainValidateTestSplit -train-percentage @{train_perc} -validate-percentage @{val_perc} -remove-extension true"
+    adams.flow.transformer.PrepareFileBasedDataset -name "PrepareFileBasedDataset - (train/test)" -preparation "adams.flow.transformer.preparefilebaseddataset.GroupedTrainTestSplit -percentage @{train_perc} -remove-extension true"
+   adams.flow.control.ContainerValuePicker -value Train
+    adams.flow.control.Trigger -name "create dir"
+     adams.flow.source.Variable -var-name train_dir -conversion adams.data.conversion.StringToString
+     adams.flow.transformer.MakeDir
+    adams.flow.transformer.ArrayToSequence
+    adams.flow.transformer.CopyFile -target-dir @{train_dir}
+    adams.flow.sink.CallableSink -callable Info
+   adams.flow.control.ContainerValuePicker -name "ContainerValuePicker (2)" -value Test
+    adams.flow.control.Trigger -name "create dir"
+     adams.flow.source.Variable -var-name test_dir -conversion adams.data.conversion.StringToString
+     adams.flow.transformer.MakeDir
+    adams.flow.transformer.ArrayToSequence
+    adams.flow.transformer.CopyFile -target-dir @{test_dir}
+    adams.flow.sink.CallableSink -callable Info
+   adams.flow.control.ContainerValuePicker -name "ContainerValuePicker (3)" -value Validation
+    adams.flow.control.Trigger -name "create dir"
+     adams.flow.source.Variable -var-name val_dir -conversion adams.data.conversion.StringToString
+     adams.flow.transformer.MakeDir
+    adams.flow.transformer.ArrayToSequence
+    adams.flow.transformer.CopyFile -target-dir @{val_dir}
+    adams.flow.sink.CallableSink -callable Info
