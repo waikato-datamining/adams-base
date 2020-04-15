@@ -15,7 +15,7 @@
 
 /*
  * AbstractClassifierBasedGeneticAlgorithm.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.opt.genetic;
@@ -26,6 +26,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.weka.WekaAttributeIndex;
+import adams.data.weka.WekaLabelIndex;
 import adams.event.GeneticFitnessChangeNotifier;
 import adams.flow.core.Actor;
 import adams.flow.standalone.JobRunnerSetup;
@@ -79,6 +80,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     /** the measure to use for evaluating the fitness. */
     protected Measure m_Measure;
 
+    /** the class label index. */
+    protected int m_ClassLabelIndex;
+
     /** the data to use. */
     protected Instances m_Data;
 
@@ -108,6 +112,10 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       m_TestData = testData;
       m_Seed     = g.getCrossValidationSeed();
       m_Folds    = g.getFolds();
+
+      WekaLabelIndex idx = g.getClassLabelIndex().getClone();
+      idx.setData(data.classAttribute());
+      m_ClassLabelIndex = idx.getIntIndex();
     }
 
     /**
@@ -220,7 +228,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
         throw new IllegalStateException(msg);
       eval = postProcess(evalExec.getEvaluation());
 
-      return getMeasure().extract(eval, true);
+      return getMeasure().extract(eval, true, m_ClassLabelIndex);
     }
 
     /**
@@ -240,7 +248,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       eval.evaluateModel(cls, test);
       eval = postProcess(eval);
 
-      return getMeasure().extract(eval, true);
+      return getMeasure().extract(eval, true, m_ClassLabelIndex);
     }
 
     /**
@@ -415,6 +423,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
   /** the measure to use for evaluating the fitness. */
   protected Measure m_Measure;
 
+  /** the label index. */
+  protected WekaLabelIndex m_ClassLabelIndex;
+
   /** the postprocessor for the evaluation. */
   protected AbstractWekaEvaluationPostProcessor m_EvaluationPostProcessor;
 
@@ -479,6 +490,10 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
     m_OptionManager.add(
       "measure", "measure",
       Measure.RMSE);
+
+    m_OptionManager.add(
+      "class-label-index", "classLabelIndex",
+      new WekaLabelIndex(WekaLabelIndex.FIRST));
 
     m_OptionManager.add(
       "evaluation-post-processor", "evaluationPostProcessor",
@@ -751,6 +766,35 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    */
   public String measureTipText() {
     return "The measure used for evaluating the fitness.";
+  }
+
+  /**
+   * Sets the index of the class label to use for statistics that work on a per-label-basis.
+   *
+   * @param value	the index
+   */
+  public void setClassLabelIndex(WekaLabelIndex value) {
+    m_ClassLabelIndex = value;
+    reset();
+  }
+
+  /**
+   * Returns the index of the class label to use for statistics that work on a per-label-basis.
+   *
+   * @return		the index
+   */
+  public WekaLabelIndex getClassLabelIndex() {
+    return m_ClassLabelIndex;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classLabelIndexTipText() {
+    return "The index of the class label to use for statistics that work on a per-label-basis.";
   }
 
   /**
@@ -1124,6 +1168,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
    */
   @Override
   protected void preRun() {
+    String	msg;
+
     super.preRun();
 
     // class index?
@@ -1135,10 +1181,11 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       m_BestRange.setMax(m_Instances.numAttributes());
 
     // does the measure handle the data?
-    if (!m_Measure.isValid(m_Instances))
+    m_ClassLabelIndex.setData(m_Instances.classAttribute());
+    msg = m_Measure.isValid(m_Instances, m_ClassLabelIndex.getIndex());
+    if (msg != null)
       throw new IllegalArgumentException(
-        "Measure '" + m_Measure + "' cannot process class of type '"
-          + m_Instances.classAttribute().type() + "'!");
+        "Measure '" + m_Measure + "' cannot be used: " + msg);
 
     m_SetupUpload.setFlowContext(getFlowContext());
     m_SetupUpload.start(this);
