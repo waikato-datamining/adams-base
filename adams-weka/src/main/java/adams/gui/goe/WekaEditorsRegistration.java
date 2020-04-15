@@ -15,16 +15,18 @@
 
 /*
  * WekaEditorsRegistration.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
 
 import adams.core.ClassLister;
+import weka.core.PluginManager;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
@@ -33,7 +35,6 @@ import java.util.logging.Level;
  * Registers first the WEKA GenericObjectEditor editors and the ADAMS ones.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaEditorsRegistration
   extends AbstractEditorRegistration {
@@ -70,6 +71,45 @@ public class WekaEditorsRegistration
     }
   }
 
+  protected static Set<Class> m_AlreadRegistered;
+  static {
+    m_AlreadRegistered = new HashSet<>();
+  }
+
+  /**
+   * For getting access to protected members in the package manager.
+   */
+  public static class AccessiblePluginManager
+    extends PluginManager {
+
+    /**
+     * Returns the plugins.
+     *
+     * @return		the plugins
+     */
+    public static Map<String, Map<String, String>> getPlugins() {
+      return PLUGINS;
+    }
+
+    /**
+     * Returns the resources.
+     *
+     * @return		the resources
+     */
+    public static Map<String, Map<String, String>> getResources() {
+      return RESOURCES;
+    }
+
+    /**
+     * Returns the disabled plugins.
+     *
+     * @return		the disabled plugins
+     */
+    public static Set<String> getDisabled() {
+      return DISABLED;
+    }
+  }
+
   /**
    * Returns whether registration already occurred.
    *
@@ -95,7 +135,10 @@ public class WekaEditorsRegistration
 	if (key.toString().endsWith("[]"))
 	  continue;
 
-	cls       = Class.forName("" + key);
+	cls = Class.forName("" + key);
+	if (m_AlreadRegistered.contains(cls))
+	  continue;
+
 	editor    = PropertyEditorManager.findEditor(cls);
 	newEditor = null;
 
@@ -114,6 +157,8 @@ public class WekaEditorsRegistration
 	    "Registering " + cls.getName() + ": "
 	      + editor.getClass().getName() + " -> " + newEditor.getName());
 	}
+
+	m_AlreadRegistered.add(cls);
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to register editors: " + key, e);
@@ -163,6 +208,88 @@ public class WekaEditorsRegistration
   }
 
   /**
+   * Reregisters class hierarchies with ADAMS object editors.
+   *
+   * @param hierarchies	the Weka class hierarchies
+   */
+  protected void registerEditors(Map<String, Map<String, String>> hierarchies) {
+    Class		cls;
+    PropertyEditor	editor;
+    Class		newEditor;
+
+    for (String superclass: hierarchies.keySet().toArray(new String[0])) {
+      try {
+	cls = Class.forName(superclass);
+	if (m_AlreadRegistered.contains(cls))
+	  continue;
+
+	editor    = PropertyEditorManager.findEditor(cls);
+	newEditor = null;
+
+	// find replacement
+	if (editor instanceof weka.gui.GenericObjectEditor)
+	  newEditor = GenericObjectEditor.class;
+	else if (editor instanceof weka.gui.FileEditor)
+	  newEditor = FileEditor.class;
+	else if (editor instanceof weka.gui.ColorEditor)
+	  newEditor = ColorEditor.class;
+
+	// register new editor
+	if (newEditor != null) {
+	  Editors.registerCustomEditor(cls, newEditor);
+	  getLogger().info(
+	    "Registering " + cls.getName() + ": "
+	      + editor.getClass().getName() + " -> " + newEditor.getName());
+	}
+
+	m_AlreadRegistered.add(cls);
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to register editors: " + superclass, e);
+      }
+    }
+  }
+
+  /**
+   * Registers the class hierarchies with ADAMS.
+   *
+   * @param hierarchies	the Weka class hierarchies
+   */
+  protected void registerHierarchies(Map<String, Map<String, String>> hierarchies) {
+    Set<String>	classes;
+    Class	cls;
+    Set<String> packages;
+
+    for (String superclass: hierarchies.keySet().toArray(new String[0])) {
+      classes    = hierarchies.get(superclass).keySet();
+      packages   = new HashSet<>();
+      for (String clsname: classes) {
+	if (clsname.trim().isEmpty())
+	  continue;
+	try {
+	  cls = Class.forName(clsname);
+	  packages.add(cls.getPackage().getName());
+	}
+	catch (ClassNotFoundException e) {
+	  getLogger().warning("Class not found: " + clsname);
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to register class hierarchy: " + superclass, e);
+	}
+      }
+      if (packages.size() > 0) {
+        try {
+	  ClassLister.getSingleton().addHierarchy(superclass, packages.toArray(new String[packages.size()]));
+	  getLogger().info("Registering class hierarchy: " + superclass);
+	}
+	catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to register class hierarchy: " + superclass, e);
+	}
+      }
+    }
+  }
+
+  /**
    * Returns whether Weka editors should be used.
    *
    * @return		true if to use Weka editors
@@ -179,9 +306,12 @@ public class WekaEditorsRegistration
   protected boolean doRegister() {
     weka.gui.GenericObjectEditor.determineClasses();
     weka.gui.GenericObjectEditor.registerEditors();
-    if (!useWekaEditors())
+    if (!useWekaEditors()) {
       registerEditors(AccessibleGenericObjectEditor.getProperties());
+      registerEditors(AccessiblePluginManager.getPlugins());
+    }
     registerHierarchies(AccessibleGenericObjectEditor.getProperties());
+    registerHierarchies(AccessiblePluginManager.getPlugins());
     m_Registered = true;
     return true;
   }
