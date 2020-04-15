@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GeneticHelper.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery.genetic;
@@ -24,7 +24,6 @@ package adams.core.discovery.genetic;
  * Helper class for bit-string related operations.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GeneticHelper {
 
@@ -115,7 +114,6 @@ public class GeneticHelper {
     return buff.toString();
   }
 
-
   /**
    * Turns a bit string (0s and 1s) into a double.
    *
@@ -137,6 +135,26 @@ public class GeneticHelper {
   }
 
   /**
+   * Turns a bit string (0s and 1s) into a double.
+   *
+   * @param bits	the bit string
+   * @param min		the minimum
+   * @param max		the maximum
+   * @param splits	the number of splits
+   * @return		the reconstructed double value
+   */
+  public static float bitsToFloat(String bits, double min, double max, int splits){
+    float j = 0;
+    for (int i = 0; i < bits.length(); i++) {
+      if (bits.charAt(i) == '1') {
+	j = j + (float) Math.pow(2, bits.length() - i - 1);
+      }
+    }
+    j = Math.min(j, splits);
+    return (float) ((min + j*((max - min)/(float)(splits - 1))));
+  }
+
+  /**
    * Turns a double into a bit string (0s and 1s).
    *
    * @param in		the double value
@@ -147,22 +165,45 @@ public class GeneticHelper {
    * @return		the generated bit string
    */
   public static String doubleToBits(double in, double min, double max, int numBits, int splits){
-
-    if (in > max){
-      in=max;
-    }
-    if (in < min){
-      in=min;
-    }
+    if (in > max)
+      in = max;
+    if (in < min)
+      in = min;
     double sdist = (max - min) / ((double) splits - 1);
     double dist = in - min;
     double rat = dist / sdist;
     int split = (int) Math.round(rat);
 
+    String bits = Integer.toBinaryString(split);
+    while (bits.length() < numBits)
+      bits = "0" + bits;
+
+    return bits;
+  }
+
+  /**
+   * Turns a double into a bit string (0s and 1s).
+   *
+   * @param in		the double value
+   * @param min		the minimum
+   * @param max		the maximum
+   * @param numBits	the number of bits
+   * @param splits	the number of splits
+   * @return		the generated bit string
+   */
+  public static String floatToBits(float in, float min, float max, int numBits, int splits){
+    if (in > max)
+      in = max;
+    if (in < min)
+      in = min;
+    float sdist = ((max - min) / ((float) splits - 1));
+    float dist = in - min;
+    float rat = dist / sdist;
+    int split = Math.round(rat);
 
     String bits = Integer.toBinaryString(split);
     while (bits.length() < numBits)
-      bits="0"+bits;
+      bits = "0" + bits;
 
     return bits;
   }
