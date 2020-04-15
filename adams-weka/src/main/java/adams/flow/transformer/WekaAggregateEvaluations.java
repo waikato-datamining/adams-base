@@ -15,26 +15,22 @@
 
 /*
  * WekaAggregateEvaluations.java
- * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
-import adams.core.QuickInfoHelper;
-import adams.core.base.BaseObject;
-import adams.core.base.BaseString;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
 import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Evaluation;
 
-import java.util.Arrays;
 import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
- * Aggregates incoming weka.classifiers.Evaluation objects and forwards the current aggregated state.<br>
- * Only works with the predictions stored in the evaluation object.<br>
- * NB: Relative absolute error and Root relative squared error will differ a bit, due to change in priors.
+ * Aggregates incoming weka.classifiers.Evaluation objects and forwards the current aggregated state.
+ * Only works with the predictions stored in the evaluation object.
+ * NB: Relative absolute error and Root relative squared error will differ a bit.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -42,19 +38,19 @@ import java.util.Hashtable;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;weka.classifiers.Evaluation<br>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
- * <br><br>
- * Container information:<br>
- * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output, Original indices, Test data
+ * &nbsp;&nbsp;&nbsp;weka.classifiers.Evaluation<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
- * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
- * &nbsp;&nbsp;&nbsp;default: WARNING
+ * Valid options are: <br><br>
+ *
+ * <pre>-D &lt;int&gt; (property: debugLevel)
+ * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
+ * &nbsp;&nbsp;&nbsp;the console (0 = off).
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -62,34 +58,19 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: WekaAggregateEvaluations
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip &lt;boolean&gt; (property: skip)
+ * <pre>-skip (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
- * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
- * &nbsp;&nbsp;&nbsp;actors.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- *
- * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
- * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- *
- * <pre>-class-label &lt;adams.core.base.BaseString&gt; [-class-label ...] (property: classLabels)
- * &nbsp;&nbsp;&nbsp;The class labels to use, if none provided the labels from the first Evaluation
- * &nbsp;&nbsp;&nbsp;object's header will get used.
- * &nbsp;&nbsp;&nbsp;default:
+ * <pre>-stop-flow-on-error (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
+ * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
  *
  <!-- options-end -->
@@ -105,9 +86,6 @@ public class WekaAggregateEvaluations
   /** the key for storing the current accumulated error in the backup. */
   public final static String BACKUP_EVALUATION = "evaluation";
 
-  /** the class labels to use. */
-  protected BaseString[] m_ClassLabels;
-
   /** the current evaluation state. */
   protected AggregateEvaluations m_Evaluation;
 
@@ -122,19 +100,7 @@ public class WekaAggregateEvaluations
       "Aggregates incoming " + Evaluation.class.getName() + " objects "
 	+ "and forwards the current aggregated state.\n"
 	+ "Only works with the predictions stored in the evaluation object.\n"
-	+ "NB: Relative absolute error and Root relative squared error will differ a bit, due to change in priors.";
-  }
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "class-label", "classLabels",
-      new BaseString[0]);
+	+ "NB: Relative absolute error and Root relative squared error will differ a bit.";
   }
 
   /**
@@ -189,35 +155,6 @@ public class WekaAggregateEvaluations
   }
 
   /**
-   * Sets the class labels to use to override the ones from the incoming Evaluation objects.
-   *
-   * @param value	the labels
-   */
-  public void setClassLabels(BaseString[] value) {
-    m_ClassLabels = value;
-    reset();
-  }
-
-  /**
-   * Returns the currently set class labels to override the ones from the incoming Evaluation objects.
-   *
-   * @return		the labels
-   */
-  public BaseString[] getClassLabels() {
-    return m_ClassLabels;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String classLabelsTipText() {
-    return "The class labels to use, if none provided the labels from the first Evaluation object's header will get used.";
-  }
-
-  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -238,16 +175,6 @@ public class WekaAggregateEvaluations
   }
 
   /**
-   * Returns a quick info about the actor, which will be displayed in the GUI.
-   *
-   * @return		null if no info available, otherwise short string
-   */
-  @Override
-  public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "classLabels", m_ClassLabels, "labels override: ");
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -265,11 +192,8 @@ public class WekaAggregateEvaluations
       input = (Evaluation) m_InputToken.getPayload();
 
     try {
-      if (m_Evaluation == null) {
-        m_Evaluation = new AggregateEvaluations();
-        if (m_ClassLabels.length > 0)
-          m_Evaluation.setClassLabels(Arrays.asList(BaseObject.toStringArray(m_ClassLabels)));
-      }
+      if (m_Evaluation == null)
+	m_Evaluation = new AggregateEvaluations();
       m_Evaluation.add(input);
       agg = m_Evaluation.aggregated();
       if (agg == null) {
