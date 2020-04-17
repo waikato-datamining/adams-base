@@ -15,11 +15,12 @@
 
 /*
  * DetectronAnnotationsReportReader.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
 
+import adams.core.annotation.DeprecatedClass;
 import adams.core.io.FileUtils;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
@@ -66,6 +67,9 @@ import java.util.logging.Level;
  *
  * @author Hisham (habdelqa at waikato dot ac dot nz)
  */
+@DeprecatedClass(
+  useInstead = {CocoAnnotationsReportReader.class}
+)
 public class DetectronAnnotationsReportReader
   extends AbstractReportReader<Report> {
 
