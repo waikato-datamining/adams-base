@@ -21,6 +21,7 @@
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
+import adams.core.annotation.DeprecatedClass;
 import adams.core.base.BaseRegExp;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.DetectronAnnotationsReportReader;
@@ -56,6 +57,9 @@ import java.util.List;
  *
  * @author Hisham (habdelqa at waikato dot ac dot nz)
  */
+@DeprecatedClass(
+  useInstead = {CocoAnnotationsHandler.class}
+)
 public class DetectronAnnotationsHandler
   extends AbstractContentHandler {
 
