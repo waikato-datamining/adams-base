@@ -1,0 +1,18 @@
+--> annotations-out0.json
+#1:
+Date captured[S]: 2019-04-03T10:26:22.708477
+Filename[S]: 1950168-dog-beautiful-white-red-animal-black-funny-observe-cute-photocase-stock-photo-large-0-0.png
+Height[N]: 583.0
+Object.1.height[N]: 369.0
+Object.1.location[S]: 271.0 164.0 614.0 164.0 614.0 532.0 271.0 532.0
+Object.1.poly_x[S]: 271,614,614,271
+Object.1.poly_y[S]: 164,164,532,532
+Object.1.type[S]: dog
+Object.1.width[N]: 344.0
+Object.1.x[N]: 271.0
+Object.1.y[N]: 164.0
+Object.count[N]: 1.0
+Width[N]: 800.0
+
+
+
