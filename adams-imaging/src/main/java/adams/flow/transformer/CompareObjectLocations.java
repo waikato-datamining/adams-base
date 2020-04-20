@@ -22,9 +22,11 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
+import adams.data.image.BufferedImageContainer;
 import adams.data.report.Report;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUser;
+import adams.flow.core.QueueHelper;
 import adams.flow.core.Token;
 import adams.flow.transformer.compareobjectlocations.AbstractComparison;
 import adams.flow.transformer.compareobjectlocations.AbstractComparisonPanel;
@@ -34,11 +36,13 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -179,6 +183,17 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.compareobjectlocations.SideBySide -annotations-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\" -predictions-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\"
  * </pre>
  *
+ * <pre>-forward-screenshot &lt;boolean&gt; (property: forwardScreenshot)
+ * &nbsp;&nbsp;&nbsp;If enabled, a screenshot is forwarded to the specified actor when accepting
+ * &nbsp;&nbsp;&nbsp;the dialog.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-screenshot-queue &lt;adams.flow.control.StorageName&gt; (property: screenshotQueue)
+ * &nbsp;&nbsp;&nbsp;The storage name of the queue to receive the screenshot.
+ * &nbsp;&nbsp;&nbsp;default: storage
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -213,8 +228,17 @@ public class CompareObjectLocations
   /** the generated panel. */
   protected AbstractComparisonPanel m_ComparisonPanel;
 
+  /** whether to forward a screenshot to the callable actor. */
+  protected boolean m_ForwardScreenshot;
+
+  /** the queue to send the screenshot to. */
+  protected StorageName m_ScreenshotQueue;
+
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
+
+  /** the current image. */
+  protected transient AbstractImageContainer m_CurrentImage;
 
   /**
    * Returns a string describing the object.
@@ -261,6 +285,14 @@ public class CompareObjectLocations
     m_OptionManager.add(
       "comparison", "comparison",
       new SideBySide());
+
+    m_OptionManager.add(
+      "forward-screenshot", "forwardScreenshot",
+      false);
+
+    m_OptionManager.add(
+      "screenshot-queue", "screenshotQueue",
+      new StorageName());
   }
 
   /**
@@ -276,6 +308,8 @@ public class CompareObjectLocations
     result += QuickInfoHelper.toString(this, "annotationsStoragName", m_AnnotationsStorageName, ", annotations: ");
     result += QuickInfoHelper.toString(this, "predictionsStorageName", m_PredictionsStorageName, ", predictions: ");
     result += QuickInfoHelper.toString(this, "comparison", m_Comparison, ", comparison: ");
+    if (m_ForwardScreenshot)
+      result += QuickInfoHelper.toString(this, "screenshotQueue", m_ScreenshotQueue, ", screenshot: ");
 
     return result;
   }
@@ -484,6 +518,64 @@ public class CompareObjectLocations
   }
 
   /**
+   * Sets whether to forward a screenshot (if accepted).
+   *
+   * @param value 	true if to forward
+   */
+  public void setForwardScreenshot(boolean value) {
+    m_ForwardScreenshot = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to forward a screenshot (if accepted).
+   *
+   * @return 		true if to forward
+   */
+  public boolean getForwardScreenshot() {
+    return m_ForwardScreenshot;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String forwardScreenshotTipText() {
+    return "If enabled, a screenshot is forwarded to the specified actor when accepting the dialog.";
+  }
+
+  /**
+   * Sets the queue to receive the screenshot.
+   *
+   * @param value 	the storage name
+   */
+  public void setScreenshotQueue(StorageName value) {
+    m_ScreenshotQueue = value;
+    reset();
+  }
+
+  /**
+   * Returns the queue to receive the screenshot.
+   *
+   * @return 		the storage name
+   */
+  public StorageName getScreenshotQueue() {
+    return m_ScreenshotQueue;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String screenshotQueueTipText() {
+    return "The storage name of the queue to receive the screenshot.";
+  }
+
+  /**
    * Returns whether storage items are being used.
    *
    * @return		true if storage items are used
@@ -549,6 +641,8 @@ public class CompareObjectLocations
     buttonOK = new BaseButton("OK");
     buttonOK.addActionListener((ActionEvent e) -> {
       m_Accepted = true;
+      if (m_ForwardScreenshot)
+        sendScreenshot(m_ComparisonPanel, m_ScreenshotQueue);
       dialog.setVisible(false);
     });
     panelButtons.add(buttonOK);
@@ -559,6 +653,30 @@ public class CompareObjectLocations
       dialog.setVisible(false);
     });
     panelButtons.add(buttonCancel);
+  }
+
+  /**
+   * Sends the screenshot to the callable actor.
+   *
+   * @param panel	the panel to take a screenshot of
+   * @param storageName	the queue to send the screenshot to
+   */
+  protected void sendScreenshot(AbstractComparisonPanel panel, StorageName storageName) {
+    BufferedImage 		img;
+    BufferedImageContainer 	cont;
+
+    if (!QueueHelper.hasQueue(this, storageName)) {
+      getLogger().warning("Queue does not exist: " + m_ScreenshotQueue);
+      return;
+    }
+
+    img  = GUIHelper.screenshot(panel);
+    cont = new BufferedImageContainer();
+    cont.setContent(img);
+    cont.getReport().mergeWith(m_CurrentImage.getReport());
+    cont.getReport().setNumericValue("Width", panel.getWidth());
+    cont.getReport().setNumericValue("Height", panel.getHeight());
+    QueueHelper.enqueue(this, storageName, cont);
   }
 
   /**
@@ -606,7 +724,8 @@ public class CompareObjectLocations
     Collections.sort(labelsSorted);
 
     // update GUI
-    m_ComparisonPanel.display(token.getPayload(AbstractImageContainer.class), labelsSorted, annRep, annObj, predRep, predObj);
+    m_CurrentImage = token.getPayload(AbstractImageContainer.class);
+    m_ComparisonPanel.display(m_CurrentImage, labelsSorted, annRep, annObj, predRep, predObj);
 
     return true;
   }
