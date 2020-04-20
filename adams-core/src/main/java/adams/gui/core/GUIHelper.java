@@ -15,7 +15,7 @@
 
 /*
  * GUIHelper.java
- * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -38,6 +38,7 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -74,6 +75,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
@@ -2751,6 +2753,26 @@ public class GUIHelper {
       }
     };
     result.execute();
+
+    return result;
+  }
+
+  /**
+   * Takes a screenshot of the component.
+   *
+   * @param comp	the component to take a screenshot of
+   * @return		the screenshot
+   */
+  public static BufferedImage screenshot(JComponent comp) {
+    BufferedImage 	result;
+    Graphics  		g;
+
+    result = new BufferedImage(comp.getWidth(), comp.getHeight(), BufferedImage.TYPE_INT_RGB);
+    g = result.getGraphics();
+    g.setPaintMode();
+    g.setColor(Color.WHITE);
+    g.fillRect(0, 0, comp.getWidth(), comp.getHeight());
+    comp.printAll(g);
 
     return result;
   }

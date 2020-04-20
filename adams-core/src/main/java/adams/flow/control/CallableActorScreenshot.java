@@ -15,7 +15,7 @@
 
 /*
  * CallableActorScreenshot.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -36,13 +36,12 @@ import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.flow.sink.ComponentSupplier;
+import adams.gui.core.GUIHelper;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.NullWriter;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Date;
 import java.util.HashSet;
@@ -549,12 +548,7 @@ public class CallableActorScreenshot
 
 	      case BUFFEREDIMAGE_CONTAINER:
 		// take screenshot
-		BufferedImage img = new BufferedImage(comp.getWidth(), comp.getHeight(), BufferedImage.TYPE_INT_RGB);
-		Graphics g = img.getGraphics();
-		g.setPaintMode();
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, comp.getWidth(), comp.getHeight());
-		comp.printAll(g);
+		BufferedImage img = GUIHelper.screenshot(comp);
 		// create token
 		BufferedImageContainer cont = new BufferedImageContainer();
 		cont.setContent(img);
