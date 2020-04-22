@@ -21,6 +21,7 @@
 package adams.gui.core;
 
 import adams.core.Properties;
+import adams.core.UniqueIDs;
 import adams.core.Utils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
@@ -1495,30 +1496,61 @@ public class GUIHelper {
    * @see		ApprovalDialog#CANCEL_OPTION
    */
   public static int showConfirmMessage(Component parent, String header, String msg, String title, String labelYes, String labelNo, String labelCancel) {
+    return showConfirmMessage(parent, header, msg, title, labelYes, labelNo, labelCancel, null);
+  }
+
+  /**
+   * Displays a confirmation dialog (yes/no/cancel).
+   *
+   * @param parent	the parent, to make the dialog modal; can be null
+   * @param header	the text explaining the message, null to ignore
+   * @param msg		the error message to display
+   * @param title	the title of the error message
+   * @param labelYes	the label for the "Yes" button, null to use default
+   * @param labelNo	the label for the "No" button, null to use default
+   * @param labelCancel	the label for the "Cancel" button, null to use default
+   * @param comm        for communicating with the dialog, can be null
+   * @return		the selected option
+   * @see		ApprovalDialog#APPROVE_OPTION
+   * @see		ApprovalDialog#DISCARD_OPTION
+   * @see		ApprovalDialog#CANCEL_OPTION
+   */
+  public static int showConfirmMessage(Component parent, String header, String msg, String title, String labelYes, String labelNo, String labelCancel, DialogCommunication comm) {
     final ApprovalDialog	dlg;
+    Component			pparent;
     String[]			lines;
     int				height;
     TextPanel			editor;
+    Long			sync;
     
-    parent = GUIHelper.getParentComponent(parent);
-    
+    pparent = GUIHelper.getParentComponent(parent);
+
     lines  = msg.split("\n");
     height = Math.min(350, (lines.length + 1) * 20);
-    if (parent instanceof Frame)
-      dlg = ApprovalDialog.getConfirmationDialog((Frame) parent, true);
-    else if (parent instanceof Dialog)
-      dlg = ApprovalDialog.getConfirmationDialog((Dialog) parent, ModalityType.APPLICATION_MODAL);
-    else
-      dlg = ApprovalDialog.getConfirmationDialog((Dialog) null, ModalityType.APPLICATION_MODAL);
+    if (comm == null) {
+      if (pparent instanceof Dialog)
+        dlg = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+      else
+        dlg = ApprovalDialog.getDialog((Frame) pparent, true);
+    }
+    else {
+      if (pparent instanceof Dialog)
+        dlg = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.MODELESS);
+      else
+        dlg = ApprovalDialog.getDialog((Frame) pparent, false);
+    }
     dlg.setTitle(title);
     dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
     dlg.setIconImage(GUIHelper.getIcon("question.png").getImage());
     if (labelYes != null)
       dlg.setApproveCaption(labelYes);
+    dlg.setApproveVisible(true);
     if (labelNo != null)
       dlg.setDiscardCaption(labelNo);
+    dlg.setDiscardVisible(true);
     if (labelCancel != null)
       dlg.setCancelCaption(labelCancel);
+    dlg.setCancelVisible(true);
     editor = new TextPanel();
     editor.setTitle(title);
     editor.setEditable(false);
@@ -1530,11 +1562,40 @@ public class GUIHelper {
     dlg.setSize(
       getInteger("DefaultSmallDialog.Width", 600),
       Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
-    dlg.setLocationRelativeTo(parent);
+    dlg.setLocationRelativeTo(pparent);
     editor.setContent(msg);
     dlg.getCancelButton().requestFocusInWindow();
     dlg.setVisible(true);
-    
+
+    if (comm != null) {
+      sync = UniqueIDs.nextLong();
+      // wait till dialog visible
+      while (!dlg.isVisible()) {
+        try {
+          synchronized (sync) {
+            sync.wait(10);
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
+      }
+      // wait till dialog closed
+      while (dlg.isVisible() && !comm.isCloseRequested()) {
+        try {
+          synchronized (sync) {
+            sync.wait(100);
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
+      }
+
+      if (comm.isCloseRequested())
+        dlg.setVisible(false);
+    }
+
     return dlg.getOption();
   }
 
@@ -1593,7 +1654,7 @@ public class GUIHelper {
     final BaseTextArea		textValue;
     final ApprovalDialog	dialog;
     Component			pparent;
-    Boolean                     sync;
+    Long                        sync;
     int				rows;
     int				cols;
     String[]			lines;
@@ -1650,11 +1711,11 @@ public class GUIHelper {
       @Override
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-          if (e.getModifiers() == 0) {
+          if (KeyUtils.isNoneDown(e.getModifiersEx())) {
             e.consume();
             dialog.getApproveButton().doClick();
           }
-          else if ((e.getModifiers() & KeyEvent.CTRL_MASK) == KeyEvent.CTRL_MASK) {
+          else if (KeyUtils.isCtrlDown(e.getModifiersEx())) {
             e.consume();
             textValue.append("\n");
           }
@@ -1684,7 +1745,7 @@ public class GUIHelper {
     dialog.setVisible(true);
 
     if (comm != null) {
-      sync = new Boolean(true);
+      sync = UniqueIDs.nextLong();
       // wait till dialog visible
       while (!dialog.isVisible()) {
         try {

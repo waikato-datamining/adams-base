@@ -15,7 +15,7 @@
 
 /*
  * ConfirmationDialog.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -49,13 +49,9 @@ import java.util.List;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -63,23 +59,33 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: ConfirmationDialog
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-if-canceled (property: stopFlowIfCanceled)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
@@ -88,15 +94,38 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
+ * <pre>-parent-component-actor &lt;adams.flow.core.CallableActorReference&gt; (property: parentComponentActor)
+ * &nbsp;&nbsp;&nbsp;The (optional) callable actor to use as parent component instead of the
+ * &nbsp;&nbsp;&nbsp;flow panel.
+ * &nbsp;&nbsp;&nbsp;default: unknown
+ * </pre>
+ *
+ * <pre>-use-outer-window &lt;boolean&gt; (property: useOuterWindow)
+ * &nbsp;&nbsp;&nbsp;If enabled, the outer window (dialog&#47;frame) is used instead of the component
+ * &nbsp;&nbsp;&nbsp;of the callable actor.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-title &lt;java.lang.String&gt; (property: title)
+ * &nbsp;&nbsp;&nbsp;The title to prompt the user with (variables get expanded).
+ * &nbsp;&nbsp;&nbsp;default: Confirm
+ * </pre>
+ *
  * <pre>-message &lt;java.lang.String&gt; (property: message)
- * &nbsp;&nbsp;&nbsp;The message to prompt the user with.
+ * &nbsp;&nbsp;&nbsp;The message to prompt the user with (variables get expanded).
  * &nbsp;&nbsp;&nbsp;default: Continue with processing of token?
  * </pre>
  *
- * <pre>-custom-tokens (property: useCustomTokens)
+ * <pre>-custom-tokens &lt;boolean&gt; (property: useCustomTokens)
  * &nbsp;&nbsp;&nbsp;If enabled, custom string tokens are forwarded based on the selection the
  * &nbsp;&nbsp;&nbsp;user makes; otherwise the current token gets forwarded when the user selects
  * &nbsp;&nbsp;&nbsp;'yes' and nothing for 'no'.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-yes-token &lt;java.lang.String&gt; (property: yesToken)
@@ -114,7 +143,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ConfirmationDialog
   extends AbstractInteractiveTransformer {
@@ -128,6 +156,9 @@ public class ConfirmationDialog
 
   public static final String CANCEL_OPTION = "Cancel";
 
+  /** the dialog title. */
+  protected String m_Title;
+
   /** the message for the user. */
   protected String m_Message;
 
@@ -140,6 +171,9 @@ public class ConfirmationDialog
 
   /** the "no" token. */
   protected String m_NoToken;
+
+  /** for communicating with the input dialog. */
+  protected GUIHelper.DialogCommunication m_Comm;
 
   /**
    * Returns a string describing the object.
@@ -165,6 +199,10 @@ public class ConfirmationDialog
   @Override
   public void defineOptions() {
     super.defineOptions();
+
+    m_OptionManager.add(
+	    "title", "title",
+	    "Confirm");
 
     m_OptionManager.add(
 	    "message", "message",
@@ -204,6 +242,35 @@ public class ConfirmationDialog
   }
 
   /**
+   * Sets the title to prompt the user with.
+   *
+   * @param value	the title
+   */
+  public void setTitle(String value) {
+    m_Title = value;
+    reset();
+  }
+
+  /**
+   * Returns the title the user is prompted with.
+   *
+   * @return 		the title
+   */
+  public String getTitle() {
+    return m_Title;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String titleTipText() {
+    return "The title to prompt the user with (variables get expanded).";
+  }
+
+  /**
    * Sets the message to prompt the user with.
    *
    * @param value	the message
@@ -229,7 +296,7 @@ public class ConfirmationDialog
    *             	displaying in the GUI or for listing the options.
    */
   public String messageTipText() {
-    return "The message to prompt the user with.";
+    return "The message to prompt the user with (variables get expanded).";
   }
 
   /**
@@ -364,10 +431,17 @@ public class ConfirmationDialog
   public boolean doInteract() {
     int		retVal;
     boolean	canceled;
+    String	title;
+    String	message;
 
     m_OutputToken = null;
 
-    retVal = GUIHelper.showConfirmMessage(getActualParentComponent(), m_Message);
+    title    = getVariables().expand(m_Title);
+    message  = getVariables().expand(m_Message);
+    m_Comm   = new GUIHelper.DialogCommunication();
+    retVal   = GUIHelper.showConfirmMessage(
+      getActualParentComponent(), null, message, title,
+      YES_OPTION, NO_OPTION, CANCEL_OPTION, m_Comm);
     canceled = (retVal == ApprovalDialog.CANCEL_OPTION);
 
     if (!canceled) {
@@ -382,6 +456,8 @@ public class ConfirmationDialog
 	  m_OutputToken = m_InputToken;
       }
     }
+
+    m_Comm = null;
 
     return !canceled;
   }
@@ -423,5 +499,18 @@ public class ConfirmationDialog
     }
 
     return !canceled;
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_Comm != null) {
+      synchronized(m_Comm) {
+        m_Comm.requestClose();
+      }
+    }
+    super.stopExecution();
   }
 }
