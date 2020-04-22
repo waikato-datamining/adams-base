@@ -34,7 +34,7 @@ import java.util.List;
  <!-- globalinfo-start -->
  * Pops up a confirmation dialog, prompting the user to select 'yes', 'no' or 'cancel'.<br>
  * If no custom tokens are used, the current token is only forwarded when the user selects 'yes'. Otherwise the token simply gets dropped.<br>
- * In case of custom tokens, depending on the user's selection, either the user-defined 'yes' string or the 'no' string get forwarded as string tokens.<br>
+ * In case of custom tokens, depending on the user's selection, either the user-defined 'yes', 'no' or 'cancel' string get forwarded as string tokens.<br>
  * Closing the dialog gets interpreted as selecting the 'cancel' button.
  * <br><br>
  <!-- globalinfo-end -->
@@ -140,6 +140,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-cancel-token &lt;java.lang.String&gt; (property: cancelToken)
+ * &nbsp;&nbsp;&nbsp;The string to forward as token if the user chooses 'cancel' (or closes the
+ * &nbsp;&nbsp;&nbsp;dialog) in case custom tokens are enabled.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -172,6 +178,9 @@ public class ConfirmationDialog
   /** the "no" token. */
   protected String m_NoToken;
 
+  /** the "cancel" token. */
+  protected String m_CancelToken;
+
   /** for communicating with the input dialog. */
   protected GUIHelper.DialogCommunication m_Comm;
 
@@ -188,7 +197,7 @@ public class ConfirmationDialog
       + "If no custom tokens are used, the current token is only forwarded "
       + "when the user selects 'yes'. Otherwise the token simply gets dropped.\n"
       + "In case of custom tokens, depending on the user's selection, either "
-      + "the user-defined 'yes' string or the 'no' string get forwarded as "
+      + "the user-defined 'yes', 'no' or 'cancel' string get forwarded as "
       + "string tokens.\n"
       + "Closing the dialog gets interpreted as selecting the 'cancel' button.";
   }
@@ -218,6 +227,10 @@ public class ConfirmationDialog
 
     m_OptionManager.add(
 	    "no-token", "noToken",
+	    "");
+
+    m_OptionManager.add(
+	    "cancel-token", "cancelToken",
 	    "");
   }
 
@@ -402,6 +415,41 @@ public class ConfirmationDialog
   }
 
   /**
+   * Sets the string to forward as string token in case the user chooses 'cancel'
+   * (or closes the dialog), in case custom tokens are enabled.
+   *
+   * @param value	the cancel token
+   * @see		#getUseCustomTokens()
+   */
+  public void setCancelToken(String value) {
+    m_CancelToken = value;
+    reset();
+  }
+
+  /**
+   * Returns the string that gets forwarded as token in case the user chooses
+   * 'cancel' as option (or closes the dialog), in case custom tokens are enabled.
+   *
+   * @return 		the cancel token
+   * @see		#getUseCustomTokens()
+   */
+  public String getCancelToken() {
+    return m_CancelToken;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String cancelTokenTipText() {
+    return
+        "The string to forward as token if the user chooses 'cancel' (or closes the dialog) in case "
+      + "custom tokens are enabled.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->adams.flow.core.Unknown.class<!-- flow-accepts-end -->
@@ -456,6 +504,10 @@ public class ConfirmationDialog
 	  m_OutputToken = m_InputToken;
       }
     }
+    else {
+      if (m_UseCustomTokens)
+        m_OutputToken = new Token(m_CancelToken);
+    }
 
     m_Comm = null;
 
@@ -496,6 +548,10 @@ public class ConfirmationDialog
 	if (value.equals(YES_OPTION))
 	  m_OutputToken = m_InputToken;
       }
+    }
+    else {
+      if (m_UseCustomTokens)
+        m_OutputToken = new Token(m_CancelToken);
     }
 
     return !canceled;
