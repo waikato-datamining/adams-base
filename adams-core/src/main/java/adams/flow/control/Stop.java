@@ -15,7 +15,7 @@
 
 /*
  * Stop.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -84,7 +84,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Stop
   extends AbstractActor
@@ -135,7 +134,7 @@ public class Stop
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "stopMessage", (m_StopMessage.length() > 0 ? m_StopMessage : null));
+    result  = QuickInfoHelper.toString(this, "stopMessage", (m_StopMessage.isEmpty() ? "-no message-" : m_StopMessage));
     result += QuickInfoHelper.toString(this, "stopMode", m_StopMode, ", mode: ");
 
     return result;
