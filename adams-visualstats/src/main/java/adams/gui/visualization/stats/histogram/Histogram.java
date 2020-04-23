@@ -286,17 +286,11 @@ public class Histogram
     axisLeft.setMinimum(0);
 
     //find the maximum frequency for a bin
-    double max;
-    if (numBins > 1) {
-      max = m_Plotdata[1][0];
-      for (int i = 1; i < m_Plotdata.length; i++) {
-	if (m_Plotdata[i][1] > max) {
-	  max = m_Plotdata[i][1];
-	}
+    double max = m_Plotdata[1][1];
+    for (int i = 1; i < m_Plotdata.length; i++) {
+      if (m_Plotdata[i][1] > max) {
+	max = m_Plotdata[i][1];
       }
-    }
-    else {
-      max = (double) cont.getMetaData(ArrayHistogram.METADATA_MAXIMUM);
     }
     //y axis shows number in bin/ width of bin
     axisLeft.setMaximum(max);
