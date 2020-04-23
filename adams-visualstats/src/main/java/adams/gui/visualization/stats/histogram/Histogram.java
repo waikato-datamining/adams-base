@@ -34,6 +34,7 @@ import adams.flow.sink.TextSupplier;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
@@ -45,6 +46,7 @@ import adams.gui.visualization.stats.paintlet.HistogramPaintlet;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -85,6 +87,9 @@ public class Histogram
   /** the data to plot. */
   protected double[][] m_Plotdata;
 
+  /** the ranges. */
+  protected String[] m_Ranges;
+
   /** the bin width. */
   protected double m_BinWidth;
 
@@ -107,6 +112,7 @@ public class Histogram
     m_DataName    = "";
     m_Index       = 0;
     m_Plotdata    = new double[0][2];
+    m_Ranges      = new String[0];
     m_FileChooser = null;
   }
 
@@ -242,6 +248,7 @@ public class Histogram
     // no data to plot?
     if (numData == null) {
       m_Plotdata = new double[0][2];
+      m_Ranges   = new String[0];
       return;
     }
     aHist.add(numData);
@@ -249,11 +256,12 @@ public class Histogram
     aHist.setNumBins(m_HistOptions.m_NumBins);
     BinCalculation bc;
     //Set the bincalculation type
-    if(m_HistOptions.m_BoxType == BoxType.DENSITY)
+    if (m_HistOptions.m_BoxType == BoxType.DENSITY)
       bc = BinCalculation.DENSITY;
     else
       bc = BinCalculation.MANUAL;
     aHist.setBinCalculation(bc);
+    aHist.setDisplayRanges(true);
     //calculates depending on bin calculation type, will use
     //binwidth or numbins depending on type
     cont = aHist.calculate();
@@ -262,10 +270,12 @@ public class Histogram
     double[] binX = (double[])cont.getMetaData(ArrayHistogram.METADATA_BINX);
     m_BinWidth = (Double) cont.getMetaData(ArrayHistogram.METADATA_BINWIDTH);
     m_Plotdata = new double[numBins][2];
+    m_Ranges   = new String[numBins];
     //fill 2d array with positions of bins and count for each
     for (int i = 0; i < m_Plotdata.length; i++) {
       m_Plotdata[i][1] = (Double) cont.getCell(0, i);
       m_Plotdata[i][0] = binX[i];
+      m_Ranges[i] = cont.getHeader(i);
     }
 
     AxisPanel axisBottom = getPlot().getAxis(Axis.BOTTOM);
@@ -335,6 +345,15 @@ public class Histogram
   }
 
   /**
+   * Returns the ranges.
+   *
+   * @return		the ranges
+   */
+  public String[] getRanges() {
+    return m_Ranges;
+  }
+
+  /**
    * Returns the bin width.
    *
    * @return		the width
@@ -342,7 +361,6 @@ public class Histogram
   public double getBinWidth() {
     return m_BinWidth;
   }
-
 
   /**
    * Saves the data as spreadsheet.
@@ -365,6 +383,24 @@ public class Histogram
   }
 
   /**
+   * Displays the data as spreadsheet.
+   */
+  protected void showData() {
+    SpreadSheetDialog	dialog;
+
+    if (getParentDialog() != null)
+      dialog = new SpreadSheetDialog(getParentDialog(), ModalityType.MODELESS);
+    else
+      dialog = new SpreadSheetDialog(getParentFrame(), false);
+    dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
+    dialog.setTitle("Histogram" + (m_DataName.isEmpty() ? "" : " - " + m_DataName));
+    dialog.setSpreadSheet(toSpreadSheet());
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+  }
+
+  /**
    * Optional customizing of the menu that is about to be popped up.
    *
    * @param e		The mouse event
@@ -373,8 +409,14 @@ public class Histogram
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
     JMenuItem menuitem;
 
-    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Save data...", GUIHelper.getIcon("save.gif"));
     menuitem.addActionListener((ActionEvent ae) -> save());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Show data...", GUIHelper.getIcon("spreadsheet.png"));
+    menuitem.addActionListener((ActionEvent ae) -> showData());
     menu.add(menuitem);
   }
 
@@ -391,10 +433,12 @@ public class Histogram
     result = new DefaultSpreadSheet();
     row   = result.getHeaderRow();
     row.addCell("B").setContentAsString(getPlot().getAxis(Axis.LEFT).getAxisName());
+    row.addCell("R").setContentAsString("Range");
     row.addCell("V").setContentAsString(getPlot().getAxis(Axis.BOTTOM).getAxisName());
     for (i = 0; i < m_Plotdata.length; i++) {
       row = result.addRow();
       row.addCell("B").setContent(m_Plotdata[i][0]);
+      row.addCell("R").setContentAsString(m_Ranges[i]);
       row.addCell("V").setContent(m_Plotdata[i][1]);
     }
 

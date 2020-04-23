@@ -29,6 +29,7 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
+import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.goe.GenericArrayEditorPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.container.DataHelper;
@@ -48,6 +49,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -584,6 +586,24 @@ public class ScatterPlot
   }
 
   /**
+   * Displays the data as spreadsheet.
+   */
+  protected void showData() {
+    SpreadSheetDialog dialog;
+
+    if (getParentDialog() != null)
+      dialog = new SpreadSheetDialog(getParentDialog(), ModalityType.MODELESS);
+    else
+      dialog = new SpreadSheetDialog(getParentFrame(), false);
+    dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
+    dialog.setTitle("Scatterplot");
+    dialog.setSpreadSheet(toSpreadSheet());
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+  }
+
+  /**
    * Saves the data as spreadsheet.
    *
    * @param xRange	the optional limits for X
@@ -648,12 +668,18 @@ public class ScatterPlot
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
     JMenuItem	menuitem;
 
-    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Save data...", GUIHelper.getIcon("save.gif"));
     menuitem.addActionListener((ActionEvent ae) -> save());
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Save visible data...", GUIHelper.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> saveVisible());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Show data...", GUIHelper.getIcon("spreadsheet.png"));
+    menuitem.addActionListener((ActionEvent ae) -> showData());
     menu.add(menuitem);
   }
 }
