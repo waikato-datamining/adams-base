@@ -570,7 +570,7 @@ public class ZScore
     else
       dialog = new SpreadSheetDialog(getParentFrame(), false);
     dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
-    dialog.setTitle("Scatterplot");
+    dialog.setTitle("ZScore");
     dialog.setSpreadSheet(m_Data);
     dialog.pack();
     dialog.setLocationRelativeTo(this);
