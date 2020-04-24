@@ -15,7 +15,7 @@
 
 /*
  * ImageAnnotator.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -1323,7 +1323,8 @@ public class ImageAnnotator
     if (m_Accepted) {
       cont = ((AnnotatorPanel) m_Panel).getCurrentImage();
       cont.setReport(((AnnotatorPanel) m_Panel).getCurrentReport());
-      addInterationsToReport(cont.getReport(), ((AnnotatorPanel) m_Panel).getInteractionLog());
+      if (!(m_InteractionLogger instanceof Null))
+        addInterationsToReport(cont.getReport(), ((AnnotatorPanel) m_Panel).getInteractionLog());
       m_OutputToken = new Token(cont);
     }
 
