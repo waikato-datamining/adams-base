@@ -89,6 +89,9 @@ public class PreviewDisplay
   /** whether a display is currently in progress. */
   protected boolean m_DisplayInProgress;
 
+  /** whether to reuse previews. */
+  protected boolean m_ReusePreviews;
+
   /**
    * Initializes the members.
    */
@@ -101,6 +104,7 @@ public class PreviewDisplay
     m_DisplayInProgress           = false;
     m_ListContentHandlers         = new ArrayList<>();
     m_PreviewCache                = new HashMap<>();
+    m_ReusePreviews               = true;
   }
 
   /**
@@ -254,7 +258,7 @@ public class PreviewDisplay
 	// get preferred handler
 	contentHandler = m_ListContentHandlers.get(prefIndex);
 	// cached?
-	if (m_PreviewCache.containsKey(contentHandler.getClass())) {
+	if (m_ReusePreviews && m_PreviewCache.containsKey(contentHandler.getClass())) {
 	  result = m_PreviewCache.get(contentHandler.getClass());
 	  if (contentHandler instanceof MultipleFileContentHandler)
 	    result = ((MultipleFileContentHandler) contentHandler).reusePreview(localFiles, result);
@@ -268,7 +272,8 @@ public class PreviewDisplay
 	    result = contentHandler.getPreview(localFiles[0]);
 	}
 	// cache preview
-	m_PreviewCache.put(contentHandler.getClass(), result);
+	if (m_ReusePreviews)
+	  m_PreviewCache.put(contentHandler.getClass(), result);
       }
       SwingUtilities.invokeLater(() -> m_IgnoreContentHandlerChanges = false);
     }
@@ -359,6 +364,26 @@ public class PreviewDisplay
       return ((PreviewPanel) m_PanelView.getComponent(0)).getContent();
     else
       return m_PanelView;
+  }
+
+  /**
+   * Sets whether to reuse previews.
+   *
+   * @param value	true if to reuse
+   */
+  public void setReusePreviews(boolean value) {
+    m_ReusePreviews = value;
+    if (!m_ReusePreviews)
+      m_PreviewCache.clear();
+  }
+
+  /**
+   * Returns whether to reuse previews.
+   *
+   * @return		true if to reuse
+   */
+  public boolean getReusePreviews() {
+    return m_ReusePreviews;
   }
 
   /**

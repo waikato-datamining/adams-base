@@ -207,6 +207,9 @@ public class PreviewBrowserPanel
   /** the "load recent" submenu. */
   protected JMenu m_MenuFileLoadRecent;
 
+  /** the "cache views" menu item. */
+  protected JMenuItem m_MenuItemCacheViews;
+
   /** the "show hidden files" menu item. */
   protected JMenuItem m_MenuItemShowHiddenFiles;
 
@@ -468,6 +471,31 @@ public class PreviewBrowserPanel
     }
 
     return result.toArray(new File[result.size()]);
+  }
+
+  /**
+   * Sets whether to reuse previews.
+   *
+   * @param value	true if to reuse
+   */
+  public void setReusePreviews(boolean value) {
+    m_PanelContent.setReusePreviews(value);
+  }
+
+  /**
+   * Returns whether to reuse previews.
+   *
+   * @return		true if to reuse
+   */
+  public boolean getReusePreviews() {
+    return m_PanelContent.getReusePreviews();
+  }
+
+  /**
+   * Based on check state of menu item, sets whether to reuse the views.
+   */
+  protected void updateCacheViews() {
+    setReusePreviews(m_MenuItemCacheViews.isSelected());
   }
 
   /**
@@ -760,6 +788,14 @@ public class PreviewBrowserPanel
       result.add(menu);
       menu.setMnemonic('V');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
+
+      // View/Cache views
+      menuitem = new JCheckBoxMenuItem("Cache views");
+      menuitem.setSelected(PropertiesManager.getProperties().getBoolean("CacheViews", true));
+      menu.add(menuitem);
+      menuitem.setMnemonic('v');
+      menuitem.addActionListener((ActionEvent e) -> updateCacheViews());
+      m_MenuItemCacheViews = menuitem;
 
       // View/Show hidden files
       menuitem = new JCheckBoxMenuItem("Show hidden files");

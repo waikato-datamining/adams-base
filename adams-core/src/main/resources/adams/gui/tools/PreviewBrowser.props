@@ -18,6 +18,9 @@ InitialDir=%h
 # The number of directories to remember
 MaxRecentDirs=5
 
+# Whether to cache the preview panels
+CacheViews=True
+
 # Whether to show hidden files by default (true|false)
 ShowHiddenFiles=false
 
