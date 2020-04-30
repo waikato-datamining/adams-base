@@ -18,18 +18,18 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.visualization.image.interactionlogger;
+package adams.gui.visualization.image.interactionlogging;
 
 import adams.core.option.AbstractOptionHandler;
 
 /**
- * Ancestor for interaction loggers.
+ * Ancestor for interaction logging filters.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractInteractionLogger
+public abstract class AbstractInteractionLoggingFilter
   extends AbstractOptionHandler
-  implements InteractionLogger {
+  implements InteractionLoggingFilter {
 
   private static final long serialVersionUID = -7569705964600776466L;
 
@@ -49,7 +49,7 @@ public abstract class AbstractInteractionLogger
   }
 
   /**
-   * Sets whether to enable the logger.
+   * Sets whether to enable the filter.
    *
    * @param value 	true if enable
    */
@@ -59,7 +59,7 @@ public abstract class AbstractInteractionLogger
   }
 
   /**
-   * Returns whether to enable the logger.
+   * Returns whether to enable the filter.
    *
    * @return 		true if to enable
    */
@@ -74,7 +74,7 @@ public abstract class AbstractInteractionLogger
    * 			displaying in the GUI or for listing the options.
    */
   public String enabledTipText() {
-    return "Determines whether logging is enabled.";
+    return "Determines whether filtering is enabled.";
   }
 
   /**
@@ -90,18 +90,18 @@ public abstract class AbstractInteractionLogger
   }
 
   /**
-   * Logs the interaction.
+   * Filters the interaction logging.
    *
    * @param e		the interaction event
    */
-  protected abstract void doLogInteraction(InteractionEvent e);
+  protected abstract void doFilterInteractionLog(InteractionEvent e);
 
   /**
-   * Logs the interaction.
+   * Filters the interaction logging.
    *
    * @param e		the interaction event
    */
-  public void logInteraction(InteractionEvent e) {
+  public void filterInteractionLog(InteractionEvent e) {
     String	msg;
 
     if (!getEnabled())
@@ -110,6 +110,6 @@ public abstract class AbstractInteractionLogger
     msg = check(e);
     if (msg != null)
       throw new IllegalStateException(msg);
-    doLogInteraction(e);
+    doFilterInteractionLog(e);
   }
 }

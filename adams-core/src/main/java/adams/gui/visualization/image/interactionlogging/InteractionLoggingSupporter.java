@@ -14,39 +14,23 @@
  */
 
 /*
- * All.java
+ * InteractionLoggingSupporter.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.visualization.image.interactionlogger;
+package adams.gui.visualization.image.interactionlogging;
 
 /**
- * Logs all events.
+ * Interface for classes that support logging of interactions in the ImagePanel.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class All
-  extends AbstractInteractionLogger {
-
-  private static final long serialVersionUID = -7834618782093662555L;
+public interface InteractionLoggingSupporter {
 
   /**
-   * Returns a string describing the object.
+   * Returns whether interaction logging is supported.
    *
-   * @return 			a description suitable for displaying in the gui
+   * @return		true if supported
    */
-  @Override
-  public String globalInfo() {
-    return "Logs all events.";
-  }
-
-  /**
-   * Logs the interaction.
-   *
-   * @param e		the interaction event
-   */
-  @Override
-  protected void doLogInteraction(InteractionEvent e) {
-    e.getImagePanel().addInteractionLog(e);
-  }
+  public boolean supportsInteractionLogging();
 }

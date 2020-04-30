@@ -47,9 +47,9 @@ import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 import adams.gui.visualization.image.NullOverlay;
 import adams.gui.visualization.image.TypeColorProvider;
-import adams.gui.visualization.image.interactionlogger.InteractionEvent;
-import adams.gui.visualization.image.interactionlogger.InteractionLogger;
-import adams.gui.visualization.image.interactionlogger.Null;
+import adams.gui.visualization.image.interactionlogging.InteractionEvent;
+import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
+import adams.gui.visualization.image.interactionlogging.Null;
 import adams.gui.visualization.image.selection.NullProcessor;
 import adams.gui.visualization.image.selection.SelectionProcessor;
 import adams.gui.visualization.image.selection.SelectionProcessorWithLabelSupport;
@@ -253,7 +253,7 @@ public class ImageAnnotator
     protected double m_Zoom;
 
     /** the interaction logger to use. */
-    protected InteractionLogger m_InteractionLogger;
+    protected InteractionLoggingFilter m_InteractionLoggingFilter;
 
     /** the label buttons. */
     protected BaseToggleButton[] m_ButtonLabels;
@@ -301,9 +301,9 @@ public class ImageAnnotator
      * @param selectionShapePainter 	the painter
      * @param overlay 			the overlay
      * @param zoom 			the zoom
-     * @param interactionLogger 	the interaction logger
+     * @param interactionLoggingFilter 	the interaction logger
      */
-    public AnnotatorPanel(String prefix, String suffix, BaseString[] labels, SelectionProcessor selectionProcessor, SelectionShapePainter selectionShapePainter, ImageOverlay overlay, double zoom, InteractionLogger interactionLogger) {
+    public AnnotatorPanel(String prefix, String suffix, BaseString[] labels, SelectionProcessor selectionProcessor, SelectionShapePainter selectionShapePainter, ImageOverlay overlay, double zoom, InteractionLoggingFilter interactionLoggingFilter) {
       super();
 
       m_Prefix                = prefix;
@@ -313,7 +313,7 @@ public class ImageAnnotator
       m_SelectionShapePainter = selectionShapePainter;
       m_Overlay               = overlay;
       m_Zoom                  = zoom;
-      m_InteractionLogger     = interactionLogger;
+      m_InteractionLoggingFilter = interactionLoggingFilter;
 
       initialize();
       initGUI();
@@ -433,7 +433,7 @@ public class ImageAnnotator
       m_PanelImage.addSelectionListener(m_ActualSelectionProcessor);
       m_PanelImage.setSelectionShapePainter((SelectionShapePainter) OptionUtils.shallowCopy(m_SelectionShapePainter, false, true));
       m_PanelImage.setSelectionEnabled(true);
-      m_PanelImage.setInteractionLogger((InteractionLogger) OptionUtils.shallowCopy(m_InteractionLogger));
+      m_PanelImage.setInteractionLoggingFilter((InteractionLoggingFilter) OptionUtils.shallowCopy(m_InteractionLoggingFilter, false, true));
       add(m_PanelImage, BorderLayout.CENTER);
     }
 
@@ -491,7 +491,7 @@ public class ImageAnnotator
       data = new HashMap<>();
       data.put("old-label", (m_CurrentLabel == null ? UNSET : m_CurrentLabel));
       data.put("new-label", (label == null ? UNSET : label));
-      m_PanelImage.addInteractionLog(new InteractionEvent(m_PanelImage, new Date(), "change label", data));
+      m_PanelImage.getInteractionLoggingFilter().filterInteractionLog(new InteractionEvent(m_PanelImage, new Date(), "change label", data));
 
       m_CurrentLabel = label;
       notifyLabelChange(label);
@@ -520,7 +520,7 @@ public class ImageAnnotator
      * Resets all the labels.
      */
     protected void resetLabels() {
-      m_PanelImage.addInteractionLog(new InteractionEvent(m_PanelImage, new Date(), "reset labels"));
+      m_PanelImage.getInteractionLoggingFilter().filterInteractionLog(new InteractionEvent(m_PanelImage, new Date(), "reset labels"));
       m_CurrentImage.setReport(m_ReportBackup.getClone());
       m_PanelImage.setCurrentImage(m_CurrentImage, m_PanelImage.getScale());
       updateObjects();
@@ -666,7 +666,7 @@ public class ImageAnnotator
       else
         data.put("label", label);
 
-      m_PanelImage.addInteractionLog(
+      m_PanelImage.getInteractionLoggingFilter().filterInteractionLog(
         new InteractionEvent(
           m_PanelImage,
 	  new Date(),
@@ -693,7 +693,7 @@ public class ImageAnnotator
 	data.put("poly_y", object.getPolygonY());
       }
 
-      m_PanelImage.addInteractionLog(
+      m_PanelImage.getInteractionLoggingFilter().filterInteractionLog(
         new InteractionEvent(
           m_PanelImage,
 	  new Date(),
@@ -829,7 +829,7 @@ public class ImageAnnotator
   protected double m_Zoom;
 
   /** the interaction logger to use. */
-  protected InteractionLogger m_InteractionLogger;
+  protected InteractionLoggingFilter m_InteractionLoggingFilter;
 
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
@@ -894,7 +894,7 @@ public class ImageAnnotator
       100.0, -1.0, 1600.0);
 
     m_OptionManager.add(
-      "interaction-logger", "interactionLogger",
+      "interaction-logging-filter", "interactionLoggingFilter",
       new Null());
   }
 
@@ -1111,8 +1111,8 @@ public class ImageAnnotator
    *
    * @param value 	the logger
    */
-  public void setInteractionLogger(InteractionLogger value) {
-    m_InteractionLogger = value;
+  public void setInteractionLoggingFilter(InteractionLoggingFilter value) {
+    m_InteractionLoggingFilter = value;
     reset();
   }
 
@@ -1121,8 +1121,8 @@ public class ImageAnnotator
    *
    * @return 		the logger
    */
-  public InteractionLogger getInteractionLogger() {
-    return m_InteractionLogger;
+  public InteractionLoggingFilter getInteractionLoggingFilter() {
+    return m_InteractionLoggingFilter;
   }
 
   /**
@@ -1131,7 +1131,7 @@ public class ImageAnnotator
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String interactionLoggerTipText() {
+  public String interactionLoggingFilterTipText() {
     return "The interaction logger to use.";
   }
 
@@ -1194,7 +1194,7 @@ public class ImageAnnotator
       m_SelectionShapePainter,
       m_Overlay,
       m_Zoom,
-      m_InteractionLogger);
+      m_InteractionLoggingFilter);
   }
 
   /**
@@ -1323,7 +1323,7 @@ public class ImageAnnotator
     if (m_Accepted) {
       cont = ((AnnotatorPanel) m_Panel).getCurrentImage();
       cont.setReport(((AnnotatorPanel) m_Panel).getCurrentReport());
-      if (!(m_InteractionLogger instanceof Null))
+      if (!(m_InteractionLoggingFilter instanceof Null))
         addInterationsToReport(cont.getReport(), ((AnnotatorPanel) m_Panel).getInteractionLog());
       m_OutputToken = new Token(cont);
     }

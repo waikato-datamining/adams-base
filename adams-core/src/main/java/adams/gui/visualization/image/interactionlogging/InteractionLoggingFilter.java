@@ -14,23 +14,26 @@
  */
 
 /*
- * InteractionLogger.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * InteractionLoggingFilter.java
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.visualization.image.interactionlogger;
+package adams.gui.visualization.image.interactionlogging;
+
+import adams.core.option.OptionHandler;
 
 /**
- * Interface for classes that log interactions in the ImagePanel.
+ * Interface for classes that filter interaction logging in the ImagePanel.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface InteractionLogger {
+public interface InteractionLoggingFilter
+  extends OptionHandler {
 
   /**
-   * Logs the interaction.
+   * Filters the interaction logging.
    *
    * @param e		the interaction event
    */
-  public void logInteraction(InteractionEvent e);
+  public void filterInteractionLog(InteractionEvent e);
 }

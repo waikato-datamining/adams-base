@@ -65,9 +65,9 @@ import adams.gui.event.UndoEvent;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.image.RectangleUtils.RectangleCorner;
-import adams.gui.visualization.image.interactionlogger.InteractionEvent;
-import adams.gui.visualization.image.interactionlogger.InteractionLogger;
-import adams.gui.visualization.image.interactionlogger.Null;
+import adams.gui.visualization.image.interactionlogging.InteractionEvent;
+import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
+import adams.gui.visualization.image.interactionlogging.Null;
 import adams.gui.visualization.image.paintlet.Paintlet;
 import adams.gui.visualization.image.selectionshape.RectanglePainter;
 import adams.gui.visualization.image.selectionshape.SelectionShapePainter;
@@ -198,7 +198,7 @@ public class ImagePanel
     protected GenericObjectEditorDialog m_GOEImageOverlay;
 
     /** the interaction logger in use. */
-    protected InteractionLogger m_InteractionLogger;
+    protected InteractionLoggingFilter m_InteractionLoggingFilter;
 
     /** the filechooser for reports. */
     protected DefaultReportFileChooser m_ReportFileChooser;
@@ -233,7 +233,7 @@ public class ImagePanel
       m_LeftClickListeners        = new HashSet<>();
       m_SelectionTrace            = new ArrayList<>();
       m_Paintlets                 = new HashSet<>();
-      m_InteractionLogger         = new Null();
+      m_InteractionLoggingFilter = new Null();
       m_ReportFileChooser         = null;
     }
 
@@ -411,14 +411,14 @@ public class ImagePanel
       data.put("modifiers", MouseUtils.modifiersToStr(e));
 
       if (MouseUtils.isLeftClick(e)) {
-	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-pressed", data));
+	m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-pressed", data));
       }
       else if (MouseUtils.isMiddleClick(e)) {
         data.put("scale", 1.0);
-	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-pressed", data));
+	m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-pressed", data));
       }
       else if (MouseUtils.isRightClick(e)) {
-	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-pressed", data));
+	m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-pressed", data));
       }
     }
 
@@ -439,14 +439,14 @@ public class ImagePanel
       data.put("modifiers", MouseUtils.modifiersToStr(e));
 
       if (MouseUtils.isLeftClick(e)) {
-	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-click", data));
+	m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-click", data));
       }
       else if (MouseUtils.isMiddleClick(e)) {
         data.put("scale", 1.0);
-	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-click", data));
+	m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-click", data));
       }
       else if (MouseUtils.isRightClick(e)) {
-	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-click", data));
+	m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-click", data));
       }
     }
 
@@ -467,14 +467,14 @@ public class ImagePanel
       data.put("modifiers", MouseUtils.modifiersToStr(e));
 
       if (MouseUtils.isLeftClick(e)) {
-	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-released", data));
+	m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-released", data));
       }
       else if (MouseUtils.isMiddleClick(e)) {
         data.put("scale", 1.0);
-	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-released", data));
+	m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-released", data));
       }
       else if (MouseUtils.isRightClick(e)) {
-	getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-released", data));
+	m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-released", data));
       }
     }
 
@@ -497,7 +497,7 @@ public class ImagePanel
       data.put("rotation", e.getWheelRotation());
       data.put("oldScale", oldScale);
       data.put("newScale", newScale);
-      getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "mouse-wheel", data));
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "mouse-wheel", data));
     }
 
     /**
@@ -513,7 +513,7 @@ public class ImagePanel
 
       data = new HashMap<>();
       data.put("newScale", newScale);
-      getOwner().addInteractionLog(new InteractionEvent(getOwner(), new Date(), "zoom", data));
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "zoom", data));
     }
 
     /**
@@ -550,21 +550,21 @@ public class ImagePanel
     }
 
     /**
-     * Sets the interaction logger to use.
+     * Sets the interaction log filter to use.
      *
-     * @param value	the logger
+     * @param value	the filter
      */
-    public void setInteractionLogger(InteractionLogger value) {
-      m_InteractionLogger = value;
+    public void setInteractionLoggingFilter(InteractionLoggingFilter value) {
+      m_InteractionLoggingFilter = value;
     }
 
     /**
-     * Returns the interaction logger in use.
+     * Returns the interaction log filter in use.
      *
-     * @return		the logger
+     * @return		the filter
      */
-    public InteractionLogger getInteractionLogger() {
-      return m_InteractionLogger;
+    public InteractionLoggingFilter getInteractionLoggingFilter() {
+      return m_InteractionLoggingFilter;
     }
 
     /**
@@ -2423,21 +2423,21 @@ public class ImagePanel
   }
 
   /**
-   * Sets the interaction logger to use.
+   * Sets the interaction log filter to use.
    *
-   * @param value	the logger
+   * @param value	the filter
    */
-  public void setInteractionLogger(InteractionLogger value) {
-    m_PaintPanel.setInteractionLogger(value);
+  public void setInteractionLoggingFilter(InteractionLoggingFilter value) {
+    m_PaintPanel.setInteractionLoggingFilter(value);
   }
 
   /**
-   * Returns the interaction logger in use.
+   * Returns the interaction log filter in use.
    *
-   * @return		the logger
+   * @return		the filter
    */
-  public InteractionLogger getInteractionLogger() {
-    return m_PaintPanel.getInteractionLogger();
+  public InteractionLoggingFilter getInteractionLoggingFilter() {
+    return m_PaintPanel.getInteractionLoggingFilter();
   }
 
   /**

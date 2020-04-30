@@ -18,7 +18,7 @@
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.visualization.image.interactionlogger;
+package adams.gui.visualization.image.interactionlogging;
 
 import adams.core.base.BaseRegExp;
 
@@ -28,7 +28,7 @@ import adams.core.base.BaseRegExp;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class IDFilter
-  extends AbstractInteractionLogger {
+  extends AbstractInteractionLoggingFilter {
 
   private static final long serialVersionUID = -7834618782093662555L;
 
@@ -128,7 +128,7 @@ public class IDFilter
    * @param e		the interaction event
    */
   @Override
-  protected void doLogInteraction(InteractionEvent e) {
+  protected void doFilterInteractionLog(InteractionEvent e) {
     boolean	match;
 
     match = m_RegExp.isMatch(e.getID());

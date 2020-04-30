@@ -14,19 +14,19 @@
  */
 
 /*
- * Null.java
+ * All.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.visualization.image.interactionlogger;
+package adams.gui.visualization.image.interactionlogging;
 
 /**
- * Suppresses all events.
+ * Logs all events.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class Null
-  extends AbstractInteractionLogger {
+public class All
+  extends AbstractInteractionLoggingFilter {
 
   private static final long serialVersionUID = -7834618782093662555L;
 
@@ -37,15 +37,16 @@ public class Null
    */
   @Override
   public String globalInfo() {
-    return "Suppresses all events.";
+    return "Logs all events.";
   }
 
   /**
-   * Does nothing.
+   * Logs the interaction.
    *
    * @param e		the interaction event
    */
   @Override
-  protected void doLogInteraction(InteractionEvent e) {
+  protected void doFilterInteractionLog(InteractionEvent e) {
+    e.getImagePanel().addInteractionLog(e);
   }
 }

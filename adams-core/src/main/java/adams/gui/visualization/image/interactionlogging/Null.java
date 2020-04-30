@@ -14,23 +14,38 @@
  */
 
 /*
- * InteractionLoggingSupporter.java
+ * Null.java
  * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.visualization.image.interactionlogger;
+package adams.gui.visualization.image.interactionlogging;
 
 /**
- * Interface for classes that support logging of interactions in the ImagePanel.
+ * Suppresses all events.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface InteractionLoggingSupporter {
+public class Null
+  extends AbstractInteractionLoggingFilter {
+
+  private static final long serialVersionUID = -7834618782093662555L;
 
   /**
-   * Returns whether interaction logging is supported.
+   * Returns a string describing the object.
    *
-   * @return		true if supported
+   * @return 			a description suitable for displaying in the gui
    */
-  public boolean supportsInteractionLogging();
+  @Override
+  public String globalInfo() {
+    return "Suppresses all events.";
+  }
+
+  /**
+   * Does nothing.
+   *
+   * @param e		the interaction event
+   */
+  @Override
+  protected void doFilterInteractionLog(InteractionEvent e) {
+  }
 }

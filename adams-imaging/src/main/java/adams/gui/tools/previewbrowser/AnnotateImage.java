@@ -37,7 +37,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.NullOverlay;
-import adams.gui.visualization.image.interactionlogger.Null;
+import adams.gui.visualization.image.interactionlogging.Null;
 import adams.gui.visualization.image.leftclick.AddMetaData;
 import adams.gui.visualization.image.selection.NullProcessor;
 import adams.gui.visualization.image.selection.SelectionProcessor;

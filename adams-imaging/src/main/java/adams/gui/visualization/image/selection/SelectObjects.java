@@ -24,8 +24,8 @@ import adams.data.report.Report;
 import adams.data.statistics.StatUtils;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.SelectionRectangle;
-import adams.gui.visualization.image.interactionlogger.InteractionEvent;
-import adams.gui.visualization.image.interactionlogger.InteractionLoggingSupporter;
+import adams.gui.visualization.image.interactionlogging.InteractionEvent;
+import adams.gui.visualization.image.interactionlogging.InteractionLoggingSupporter;
 import adams.gui.visualization.image.leftclick.AddMetaData;
 
 import java.awt.Color;
@@ -289,7 +289,7 @@ public class SelectObjects
     if (!m_Label.isEmpty())
       data.put("label", m_Label);
     e = new InteractionEvent(panel, new Date(), "add", data);
-    panel.addInteractionLog(e);
+    panel.getInteractionLoggingFilter().filterInteractionLog(e);
   }
 
   /**
@@ -313,7 +313,7 @@ public class SelectObjects
     data.put("height", h);
     data.put("removed", removed);
     e = new InteractionEvent(panel, new Date(), "remove", data);
-    panel.addInteractionLog(e);
+    panel.getInteractionLoggingFilter().filterInteractionLog(e);
   }
 
   /**
