@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ContainerToVariables.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -23,8 +23,6 @@ package adams.flow.transformer;
 import adams.flow.container.AbstractContainer;
 
 import java.util.Iterator;
-
-import static java_cup.emit.prefix;
 
 /**
  <!-- globalinfo-start -->
@@ -141,7 +139,7 @@ public class ContainerToVariables
       name = names.next();
       if (m_RegExp.isMatch(name) && cont.hasValue(name)) {
 	value = cont.getValue(name);
-	getVariables().set(prefix + name, "" + value);
+	getVariables().set(m_Prefix + name, "" + value);
       }
     }
 
