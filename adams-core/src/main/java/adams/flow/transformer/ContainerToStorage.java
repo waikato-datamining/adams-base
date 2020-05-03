@@ -26,8 +26,6 @@ import adams.flow.control.StorageName;
 
 import java.util.Iterator;
 
-import static java_cup.emit.prefix;
-
 /**
  <!-- globalinfo-start -->
  * Extracts the specified values from the container passing through and makes them available as storage items. A prefix for the storage names can be supplied.
@@ -144,7 +142,7 @@ public class ContainerToStorage
       name = names.next();
       if (m_RegExp.isMatch(name) && cont.hasValue(name)) {
 	value = cont.getValue(name);
-	sname = new StorageName(Storage.toValidName(prefix + name));
+	sname = new StorageName(Storage.toValidName(m_Prefix + name));
         getStorageHandler().getStorage().put(sname, value);
       }
     }
