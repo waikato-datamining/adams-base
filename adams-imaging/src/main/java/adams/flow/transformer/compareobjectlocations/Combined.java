@@ -15,11 +15,12 @@
 
 /*
  * Combined.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.compareobjectlocations;
 
+import adams.core.base.BaseString;
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.objectoverlap.LabelAwareObjectOverlap;
@@ -30,10 +31,13 @@ import adams.flow.transformer.CompareObjectLocations;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.ColorHelper;
+import adams.gui.core.Fonts;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.MultiImageOverlay;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
+import adams.gui.visualization.image.ReportObjectOverlay;
+import adams.gui.visualization.image.leftclick.ViewObjects;
 import com.github.fracpete.javautils.struct.Struct2;
 
 import javax.swing.JLabel;
@@ -41,6 +45,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.util.List;
 
 /**
@@ -143,6 +148,8 @@ public class Combined
      */
     @Override
     protected void initGUI() {
+      ViewObjects	viewObjects;
+
       super.initGUI();
 
       m_PanelImage = new ImagePanel();
@@ -170,6 +177,13 @@ public class Combined
       m_PanelColors.add(m_LabelOverlapColorCorrectBox);
       m_PanelColors.add(m_LabelOverlapColorIncorrectText);
       m_PanelColors.add(m_LabelOverlapColorIncorrectBox);
+
+      viewObjects = new ViewObjects();
+      viewObjects.setPrefixes(new BaseString[]{
+        new BaseString(PREFIX_ANNOTATION),
+        new BaseString(PREFIX_PREDICTION),
+      });
+      m_PanelImage.addLeftClickListener(viewObjects);
     }
 
     /**
@@ -356,6 +370,12 @@ public class Combined
   /** the color for the incorrect overlaps. */
   protected Color m_OverlapColorIncorrect;
 
+  /** the label format. */
+  protected String m_LabelFormat;
+
+  /** the label font. */
+  protected Font m_LabelFont;
+
   /** the zoom level. */
   protected double m_Zoom;
 
@@ -395,6 +415,14 @@ public class Combined
     m_OptionManager.add(
       "overlap-color-incorrect", "overlapColorIncorrect",
       ColorHelper.addAlpha(ColorHelper.invert(Color.GREEN), 64));
+
+    m_OptionManager.add(
+      "label-format", "labelFormat",
+      "#");
+
+    m_OptionManager.add(
+      "label-font", "labelFont",
+      Fonts.getSansFont(14));
 
     m_OptionManager.add(
       "zoom", "zoom",
@@ -547,6 +575,64 @@ public class Combined
   }
 
   /**
+   * Sets the label format.
+   *
+   * @param value 	the label format
+   */
+  public void setLabelFormat(String value) {
+    m_LabelFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the label format.
+   *
+   * @return 		the label format
+   */
+  public String getLabelFormat() {
+    return m_LabelFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelFormatTipText() {
+    return new ReportObjectOverlay().labelFormatTipText();
+  }
+
+  /**
+   * Sets the label font.
+   *
+   * @param value 	the label font
+   */
+  public void setLabelFont(Font value) {
+    m_LabelFont = value;
+    reset();
+  }
+
+  /**
+   * Returns the label font.
+   *
+   * @return 		the label font
+   */
+  public Font getLabelFont() {
+    return m_LabelFont;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelFontTipText() {
+    return new ReportObjectOverlay().labelFontTipText();
+  }
+
+  /**
    * Sets the zoom level in percent (0-1600).
    *
    * @param value 	the zoom, -1 to fit window, or 0-1600
@@ -598,20 +684,28 @@ public class Combined
     annotations = new ObjectLocationsOverlayFromReport();
     annotations.setColor(m_AnnotationsColor);
     annotations.setPrefix(CombinedPanel.PREFIX_ANNOTATION);
+    annotations.setLabelFont(m_LabelFont);
+    annotations.setLabelFormat(m_LabelFormat);
 
     predictions = new ObjectLocationsOverlayFromReport();
     predictions.setColor(m_PredictionsColor);
     predictions.setPrefix(CombinedPanel.PREFIX_PREDICTION);
+    predictions.setLabelFont(m_LabelFont);
+    predictions.setLabelFormat(m_LabelFormat);
 
     overlapsCorrect = new ObjectLocationsOverlayFromReport();
     overlapsCorrect.setColor(m_OverlapColorCorrect);
     overlapsCorrect.setFilled(true);
     overlapsCorrect.setPrefix(CombinedPanel.PREFIX_OVERLAP_CORRECT);
+    overlapsCorrect.setLabelFont(m_LabelFont);
+    overlapsCorrect.setLabelFormat(m_LabelFormat);
 
     overlapsIncorrect = new ObjectLocationsOverlayFromReport();
     overlapsIncorrect.setColor(m_OverlapColorIncorrect);
     overlapsIncorrect.setFilled(true);
     overlapsIncorrect.setPrefix(CombinedPanel.PREFIX_OVERLAP_INCORRECT);
+    overlapsIncorrect.setLabelFont(m_LabelFont);
+    overlapsIncorrect.setLabelFormat(m_LabelFormat);
 
     multi = new MultiImageOverlay();
     multi.setOverlays(new ImageOverlay[]{annotations, predictions, overlapsCorrect, overlapsIncorrect});
