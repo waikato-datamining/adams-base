@@ -22,7 +22,7 @@
 
 APPNAME=${packageName}
 REPO=/usr/lib/$APPNAME
-PRIORITY=$REPO/java-cup-11b-2015.03.26.jar
+PRIORITY=$REPO/java-cup-11b-java-cup-11b-20160615.jar
 CLASSPATH="$PRIORITY":"$REPO/*"
 
 JCMD=java
