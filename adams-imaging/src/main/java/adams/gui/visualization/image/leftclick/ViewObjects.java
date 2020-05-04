@@ -20,6 +20,8 @@
 
 package adams.gui.visualization.image.leftclick;
 
+import adams.core.base.BaseObject;
+import adams.core.base.BaseString;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -40,8 +42,8 @@ public class ViewObjects
 
   private static final long serialVersionUID = -5747047661002140048L;
 
-  /** the prefix for the objects. */
-  protected String m_Prefix;
+  /** the prefixes for the objects. */
+  protected BaseString[] m_Prefixes;
 
   /**
    * Returns a string describing the object.
@@ -61,8 +63,8 @@ public class ViewObjects
     super.defineOptions();
 
     m_OptionManager.add(
-      "prefix", "prefix",
-      getDefaultPrefix());
+      "prefix", "prefixes",
+      getDefaultPrefixes());
   }
 
   /**
@@ -70,8 +72,8 @@ public class ViewObjects
    *
    * @return		the default
    */
-  protected String getDefaultPrefix() {
-    return "Object.";
+  protected BaseString[] getDefaultPrefixes() {
+    return new BaseString[]{new BaseString("Object.")};
   }
 
   /**
@@ -79,8 +81,8 @@ public class ViewObjects
    *
    * @param value 	the prefix
    */
-  public void setPrefix(String value) {
-    m_Prefix = value;
+  public void setPrefixes(BaseString[] value) {
+    m_Prefixes = value;
     reset();
   }
 
@@ -89,8 +91,8 @@ public class ViewObjects
    *
    * @return 		the prefix
    */
-  public String getPrefix() {
-    return m_Prefix;
+  public BaseString[] getPrefixes() {
+    return m_Prefixes;
   }
 
   /**
@@ -99,8 +101,8 @@ public class ViewObjects
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String prefixTipText() {
-    return "The prefix to use for the fields in the report of the image.";
+  public String prefixesTipText() {
+    return "The prefix(es) to use for the fields in the report of the image.";
   }
 
   /**
@@ -120,7 +122,7 @@ public class ViewObjects
     SpreadSheet		sheetHit;
     SpreadSheetDialog 	dialog;
 
-    objects  = LocatedObjects.fromReport(panel.getAllProperties(), m_Prefix);
+    objects  = LocatedObjects.fromReport(panel.getAllProperties(), BaseObject.toStringArray(m_Prefixes));
     hits     = new LocatedObjects();
     location = panel.mouseToPixelLocation(position);
     for (LocatedObject object: objects) {
