@@ -115,24 +115,15 @@
         <artifactId>maven-dependency-list-plugin</artifactId>
       </plugin>
 
-      <!-- for generating the parsers: mvn exec:java -->
+      <!-- for generating the parsers: mvn parsergen:build -->
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
+        <groupId>com.github.fracpete</groupId>
+        <artifactId>parsergen-maven-plugin</artifactId>
         <configuration>
-          <mainClass>adams.parser.GenerateParser</mainClass>
-          <workingDirectory>.</workingDirectory>
-          <arguments>
-            <argument>${project.basedir}/src/main/resources/adams/parser/lookupupdate</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/spreadsheetquery</argument>
-          </arguments>
+          <directories>
+            <directory>${project.basedir}/src/main/resources/adams/parser/lookupupdate</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/spreadsheetquery</directory>
+          </directories>
         </configuration>
       </plugin>
     </plugins>

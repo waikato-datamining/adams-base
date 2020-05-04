@@ -71,7 +71,7 @@ if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
 set BASEDIR=%~dp0\..
 set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
-set CLASSPATH="%RESOURCES%";"%REPO%\java-cup-11b-2015.03.26.jar";"%REPO%\*"
+set CLASSPATH="%RESOURCES%";"%REPO%\java-cup-11b-20160615.jar";"%REPO%\*"
 goto endInit
 
 @REM Reaching here means variables are defined and arguments have been captured

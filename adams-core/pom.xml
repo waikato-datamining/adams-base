@@ -134,19 +134,6 @@
     </dependency>
 
     <dependency>
-      <groupId>nz.ac.waikato.cms.weka.thirdparty</groupId>
-      <artifactId>java-cup-11b</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>de.jflex</groupId>
-      <artifactId>jflex</artifactId>
-      <version>1.4.3</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
       <groupId>com.googlecode.java-diff-utils</groupId>
       <artifactId>diffutils</artifactId>
     </dependency>
@@ -198,6 +185,11 @@
       <artifactId>processoutput4j</artifactId>
       <version>0.0.10</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.github.vbmacher</groupId>
+      <artifactId>java-cup-runtime</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -245,34 +237,25 @@
         <artifactId>maven-dependency-list-plugin</artifactId>
       </plugin>
 
-      <!-- for generating the parsers: mvn exec:java -->
+      <!-- for generating the parsers: mvn parsergen:build -->
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
+        <groupId>com.github.fracpete</groupId>
+        <artifactId>parsergen-maven-plugin</artifactId>
         <configuration>
-          <mainClass>adams.parser.GenerateParser</mainClass>
-          <workingDirectory>.</workingDirectory>
-          <arguments>
-            <argument>${project.basedir}/src/main/resources/adams/parser/actorsuggestion</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/basedate</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/basedatetime</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/basedatetimemsec</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/basetime</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/basetimemsec</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/booleanexpression</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/externalactorsuggestion</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/mathematicalexpression</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/spreadsheetformula</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/stringexpression</argument>
-            <argument>${project.basedir}/src/main/resources/adams/parser/templatesuggestion</argument>
-          </arguments>
+          <directories>
+            <directory>${project.basedir}/src/main/resources/adams/parser/actorsuggestion</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/basedate</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/basedatetime</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/basedatetimemsec</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/basetime</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/basetimemsec</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/booleanexpression</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/externalactorsuggestion</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/mathematicalexpression</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/spreadsheetformula</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/stringexpression</directory>
+            <directory>${project.basedir}/src/main/resources/adams/parser/templatesuggestion</directory>
+          </directories>
         </configuration>
       </plugin>
     </plugins>

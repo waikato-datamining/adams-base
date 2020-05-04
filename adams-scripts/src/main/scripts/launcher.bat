@@ -32,7 +32,7 @@ set JVM=
 set CPA=
 set OPTION=
 set ENVVARS=
-set PRIORITY="-priority %REPO%\java-cup-11b-2015.03.26.jar"
+set PRIORITY="-priority %REPO%\java-cup-11b-20160615.jar"
 set COLLAPSE=-collapse
 set BASEDIR=%~dp0\..
 :Loop

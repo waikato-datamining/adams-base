@@ -76,7 +76,7 @@ fi
 
 REPO="$BASEDIR"/lib
 RESOURCES="$BASEDIR"/resources
-PRIORITY="$REPO/java-cup-11b-2015.03.26.jar"
+PRIORITY="$REPO/java-cup-11b-20160615.jar"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then

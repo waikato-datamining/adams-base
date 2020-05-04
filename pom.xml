@@ -141,9 +141,21 @@
       </dependency>
 
       <dependency>
-        <groupId>nz.ac.waikato.cms.weka.thirdparty</groupId>
-        <artifactId>java-cup-11b</artifactId>
-        <version>2015.03.26</version>
+        <groupId>com.github.vbmacher</groupId>
+        <artifactId>java-cup</artifactId>
+        <version>11b-20160615</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.github.vbmacher</groupId>
+        <artifactId>java-cup-runtime</artifactId>
+        <version>11b-20160615</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.github.fracpete</groupId>
+        <artifactId>parsergen-maven-plugin</artifactId>
+        <version>0.0.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -310,12 +322,6 @@
             </execution>
           </executions>
         </plugin>         
-      
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>1.2.1</version>
-        </plugin>
 
         <!--
         example usage: mvn test, mvn test -Dtest=testclassname
