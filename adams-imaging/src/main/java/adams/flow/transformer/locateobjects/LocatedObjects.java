@@ -463,6 +463,17 @@ public class LocatedObjects
    * @return		the objects found
    */
   public static LocatedObjects fromReport(Report report, String prefix) {
+    return fromReport(report, new String[]{prefix});
+  }
+
+  /**
+   * Retrieves all objects from the report.
+   *
+   * @param report	the report to process
+   * @param prefixes	the prefixes to look for
+   * @return		the objects found
+   */
+  public static LocatedObjects fromReport(Report report, String[] prefixes) {
     LocatedObjects  			result;
     LocatedObject			obj;
     String				current;
@@ -473,6 +484,8 @@ public class LocatedObjects
     int					y;
     int					width;
     int					height;
+    boolean				match;
+    String				actPrefix;
 
     result = new LocatedObjects();
     fields = report.getFields();
@@ -480,7 +493,14 @@ public class LocatedObjects
     // group fields
     groups = new HashMap<>();
     for (AbstractField field: fields) {
-      if (field.getName().startsWith(prefix)) {
+      match = false;
+      for (String prefix: prefixes) {
+        if (field.getName().startsWith(prefix)) {
+          match = true;
+          break;
+	}
+      }
+      if (match) {
 	current = field.getName().substring(0, field.getName().lastIndexOf('.'));
 	if (!groups.containsKey(current))
 	  groups.put(current, new ArrayList<>());
@@ -490,11 +510,20 @@ public class LocatedObjects
 
     // process grouped fields
     for (String group: groups.keySet()) {
+      actPrefix = null;
+      for (String prefix: prefixes) {
+        if (group.startsWith(prefix)) {
+          actPrefix = prefix;
+          break;
+	}
+      }
+      if (actPrefix == null)
+        continue;
       // meta-data
       meta = new HashMap<>();
-      if (group.length() <= prefix.length())
+      if (group.length() <= actPrefix.length())
 	continue;
-      meta.put(KEY_INDEX, group.substring(prefix.length()));
+      meta.put(KEY_INDEX, group.substring(actPrefix.length()));
       for (AbstractField field: groups.get(group)) {
 	if (field.getName().endsWith(KEY_X))
 	  continue;
