@@ -15,12 +15,12 @@
 
 /*
  * AbstractOptionConsumer.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.Utils;
-import adams.core.annotation.DeprecatedClass;
+import adams.core.annotation.AnnotationHelper;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
@@ -219,13 +219,11 @@ public abstract class AbstractOptionConsumer<C,V>
    * @param cls		the class to check
    */
   protected void checkDeprecation(Class cls) {
-    if (cls.isAnnotationPresent(DeprecatedClass.class)) {
-      DeprecatedClass dep = (DeprecatedClass) cls.getAnnotation(DeprecatedClass.class);
-      logWarning(cls.getName() + " is deprecated!\n" + "Use instead: " + Utils.classesToString(dep.useInstead()));
-    }
-    else if (cls.isAnnotationPresent(Deprecated.class)) {
-      logWarning(cls.getName() + " is deprecated!");
-    }
+    String	msg;
+
+    msg = AnnotationHelper.getDeprecationWarning(cls);
+    if (msg != null)
+      logWarning(msg);
   }
 
   /**

@@ -20,13 +20,13 @@
 
 package adams.gui.goe.classtree;
 
+import adams.core.annotation.AnnotationHelper;
 import adams.gui.core.dotnotationtree.DotNotationNode;
 
 /**
  * Specialized tree node.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClassNode
   extends DotNotationNode {
@@ -83,7 +83,7 @@ public class ClassNode
       if (isItemLeaf()) {
 	try {
 	  cls          = Class.forName(getItem());
-	  m_Deprecated = (cls.getAnnotation(Deprecated.class) != null);
+	  m_Deprecated = AnnotationHelper.isDeprecated(cls);
 	}
 	catch (Exception e) {
 	  m_Deprecated = false;

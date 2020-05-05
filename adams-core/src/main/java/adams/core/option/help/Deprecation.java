@@ -15,12 +15,12 @@
 
 /*
  * Deprecation.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.option.help;
 
-import adams.core.Utils;
+import adams.core.annotation.AnnotationHelper;
 import adams.core.annotation.DeprecatedClass;
 
 /**
@@ -64,8 +64,7 @@ public class Deprecation
    */
   @Override
   public boolean handles(Class cls) {
-    return cls.isAnnotationPresent(DeprecatedClass.class)
-      || cls.isAnnotationPresent(Deprecated.class);
+    return AnnotationHelper.isDeprecated(cls);
   }
 
   /**
@@ -78,37 +77,22 @@ public class Deprecation
   @Override
   public String generate(Object obj, HelpFormat format) {
     StringBuilder	result;
-    DeprecatedClass	dep;
+    String		warning;
 
     result = new StringBuilder();
 
+    warning = AnnotationHelper.getDeprecationWarning(obj.getClass());
     switch (format) {
       case PLAIN_TEXT:
-	if (obj.getClass().isAnnotationPresent(DeprecatedClass.class)) {
-	  dep = obj.getClass().getAnnotation(DeprecatedClass.class);
-	  result.append(Utils.classToString(obj) + " is deprecated!<br>" + "Use instead: " + Utils.classesToString(dep.useInstead()));
-	  result.append("\n\n");
-	}
-	else if (obj.getClass().isAnnotationPresent(Deprecated.class)) {
-	  result.append(Utils.classToString(obj) + " is deprecated!");
-	  result.append("\n\n");
-	}
+        result.append(warning);
+	result.append("\n\n");
 	break;
 
       case HTML:
-	if (obj.getClass().isAnnotationPresent(DeprecatedClass.class)) {
-	  dep = obj.getClass().getAnnotation(DeprecatedClass.class);
-	  result.append("<b>");
-	  result.append(Utils.classToString(obj) + " is deprecated!<br>" + "Use instead: " + Utils.classesToString(dep.useInstead()));
-	  result.append("<b><br>\n");
-	  result.append("\n");
-	}
-	else if (obj.getClass().isAnnotationPresent(Deprecated.class)) {
-	  result.append("<b>");
-	  result.append(Utils.classToString(obj) + " is deprecated!");
-	  result.append("<b><br>\n");
-	  result.append("\n");
-	}
+	result.append("<b>");
+	result.append(toHTML(warning));
+	result.append("<b><br>\n");
+	result.append("\n");
 	break;
 
       default:

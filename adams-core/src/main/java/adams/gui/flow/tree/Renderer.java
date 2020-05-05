@@ -15,12 +15,12 @@
 
 /*
  * Renderer.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
 
-import adams.core.annotation.DeprecatedClass;
+import adams.core.annotation.AnnotationHelper;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -47,7 +47,6 @@ import java.util.Hashtable;
  * A specialized renderer for the tree elements.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Renderer
   extends DefaultTreeCellRenderer {
@@ -502,7 +501,7 @@ public class Renderer
 	ActorUtils.isSource(actor) || ActorUtils.isTransformer(actor),
 	ActorUtils.isActorHandler(actor),
 	ActorUtils.isActorHandler(actor) && ((ActorHandler) actor).getActorHandlerInfo().getForwardsInput(),
-	(actor.getClass().getAnnotation(Deprecated.class) != null) || (actor.getClass().getAnnotation(DeprecatedClass.class) != null));
+	AnnotationHelper.isDeprecated(actor.getClass()));
     }
 
     return result;
