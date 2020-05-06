@@ -26,6 +26,7 @@ import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
+import adams.flow.transformer.BaseName;
 import adams.test.Platform;
 import adams.test.TmpDirectory;
 import adams.test.TmpFile;
@@ -103,8 +104,10 @@ public class DirectorySupplierTest
     df.setAppend(true);
     df.setOutputFile(new TmpFile("dumpfile.txt"));
 
+    BaseName bn = new BaseName();
+
     Flow flow = new Flow();
-    flow.setActors(new Actor[]{ds, df});
+    flow.setActors(new Actor[]{ds, bn, df});
 
     return flow;
   }
