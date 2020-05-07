@@ -15,7 +15,7 @@
 
 /*
  * MapToVariables.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -82,17 +82,23 @@ import java.util.Map;
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
  * &nbsp;&nbsp;&nbsp;The regular expression to match the map keys against.
  * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
- * 
+ *
  * <pre>-variable-prefix &lt;java.lang.String&gt; (property: variablePrefix)
  * &nbsp;&nbsp;&nbsp;The prefix to prepend the map keys with to make up the variable name.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-skip-non-primitive &lt;boolean&gt; (property: skipNonPrimitive)
+ * &nbsp;&nbsp;&nbsp;If enabled, all values get skipped that are not primitive objects.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MapToVariables
   extends AbstractTransformer {
@@ -105,6 +111,9 @@ public class MapToVariables
 
   /** the prefix for the variables. */
   protected String m_VariablePrefix;
+
+  /** whether to skip non-primitive values. */
+  protected boolean m_SkipNonPrimitive;
 
   /**
    * Returns a string describing the object.
@@ -133,6 +142,10 @@ public class MapToVariables
     m_OptionManager.add(
       "variable-prefix", "variablePrefix",
       "");
+
+    m_OptionManager.add(
+      "skip-non-primitive", "skipNonPrimitive",
+      false);
   }
 
   /**
@@ -149,6 +162,7 @@ public class MapToVariables
     value = QuickInfoHelper.toString(this, "variablePrefix", (m_VariablePrefix.length() > 0 ? m_VariablePrefix : null), ", prefix: ");
     if (value != null)
       result += value;
+    result += QuickInfoHelper.toString(this, "skipNonPrimitive", m_SkipNonPrimitive, "skip non-primitives");
 
     return result;
   }
@@ -212,6 +226,35 @@ public class MapToVariables
   }
 
   /**
+   * Sets whether to skip non-primitive values.
+   *
+   * @param value	true if to skip
+   */
+  public void setSkipNonPrimitive(boolean value) {
+    m_SkipNonPrimitive = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to skip non-primitive values.
+   *
+   * @return		true if to skip
+   */
+  public boolean getSkipNonPrimitive() {
+    return m_SkipNonPrimitive;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String skipNonPrimitiveTipText() {
+    return "If enabled, all values get skipped that are not primitive objects.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.util.Map.class<!-- flow-accepts-end -->
@@ -243,6 +286,7 @@ public class MapToVariables
     String	key;
     String	name;
     boolean	exists;
+    Object	value;
 
     result = null;
 
@@ -254,13 +298,16 @@ public class MapToVariables
 
     if (result == null) {
       for (Object obj : map.keySet()) {
+        value = map.get(obj);
+        if (m_SkipNonPrimitive && !Utils.isPrimitive(value))
+          continue;
 	key = "" + obj;
 	if (m_RegExp.isMatch(key)) {
 	  name   = Variables.toValidName(m_VariablePrefix + key);
 	  exists = getVariables().has(name);
-	  getVariables().set(name, "" + map.get(key));
+	  getVariables().set(name, "" + value);
 	  if (isLoggingEnabled())
-	    getLogger().info((exists ? "Overwriting" : "Setting") + " variable '" + name + "' to '" + map.get(key) + "'");
+	    getLogger().info((exists ? "Overwriting" : "Setting") + " variable '" + name + "' to '" + value + "'");
 	}
       }
     }
