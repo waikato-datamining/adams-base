@@ -15,7 +15,7 @@
 
 /*
  * ActorUtils.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -700,8 +700,8 @@ public class ActorUtils {
 
     if (!actor.getSkip()) {
       // interactive actors
-      if (actor instanceof AutomatableInteractiveActor) {
-	result = !((AutomatableInteractiveActor) actor).isNonInteractive();
+      if (actor instanceof AutomatableInteraction) {
+	result = !((AutomatableInteraction) actor).isNonInteractive();
       }
       else if (actor instanceof OptionalPasswordPrompt) {
 	result = ((OptionalPasswordPrompt) actor).getPromptForPassword();

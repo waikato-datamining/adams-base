@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ManageInteractiveActors.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.processor;
 
@@ -26,13 +26,13 @@ import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.Actor;
-import adams.flow.core.AutomatableInteractiveActor;
+import adams.flow.core.AutomatableInteraction;
 
 import java.lang.reflect.Method;
 
 /**
  <!-- globalinfo-start -->
- * Enables&#47;disables the interactive behaviour of adams.flow.core.AutomatableInteractiveActor actors.
+ * Enables&#47;disables the interactive behaviour of actors implementing adams.flow.core.AutomatableInteraction.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -53,7 +53,6 @@ import java.lang.reflect.Method;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ManageInteractiveActors
   extends AbstractModifyingProcessor {
@@ -72,8 +71,8 @@ public class ManageInteractiveActors
   @Override
   public String globalInfo() {
     return
-        "Enables/disables the interactive behaviour of " 
-	+ AutomatableInteractiveActor.class.getName() + " actors.";
+        "Enables/disables the interactive behaviour of actors implementing "
+	+ AutomatableInteraction.class.getName() + ".";
   }
 
   /**
@@ -129,7 +128,7 @@ public class ManageInteractiveActors
 	// ignored
       }
       public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
-	if (option.getOptionHandler() instanceof AutomatableInteractiveActor) {
+	if ((option.getOptionHandler() instanceof AutomatableInteraction) && (option.getOptionHandler() instanceof Actor)) {
 	  if (option.getProperty().equals("nonInteractive")) {
 	    Method method = option.getDescriptor().getWriteMethod();
 	    try {
