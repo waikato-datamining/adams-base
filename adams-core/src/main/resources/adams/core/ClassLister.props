@@ -554,6 +554,10 @@ adams.flow.transformer.report.AbstractReportPreProcessor=\
 adams.flow.transformer.splitfile.AbstractFileSplitter=\
   adams.flow.transformer.splitfile
 
+# the map filters
+adams.flow.transformer.mapfilter.AbstractMapFilter=\
+  adams.flow.transformer.mapfilter
+
 # the genetic algorithms
 adams.opt.genetic.AbstractGeneticAlgorithm=\
   adams.opt.genetic
