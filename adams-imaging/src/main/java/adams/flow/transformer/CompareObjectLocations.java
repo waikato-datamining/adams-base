@@ -26,6 +26,7 @@ import adams.data.image.BufferedImageContainer;
 import adams.data.report.Report;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUser;
+import adams.flow.core.AutomatableInteraction;
 import adams.flow.core.QueueHelper;
 import adams.flow.core.Token;
 import adams.flow.transformer.compareobjectlocations.AbstractComparison;
@@ -42,6 +43,8 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -194,13 +197,18 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
  *
+ * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
+ * &nbsp;&nbsp;&nbsp;If enabled, the 'OK' button gets clicked automatically.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class CompareObjectLocations
   extends AbstractInteractiveTransformerDialog
-  implements StorageUser {
+  implements StorageUser, AutomatableInteraction {
 
   private static final long serialVersionUID = 2191236912048968711L;
 
@@ -234,11 +242,17 @@ public class CompareObjectLocations
   /** the queue to send the screenshot to. */
   protected StorageName m_ScreenshotQueue;
 
+  /** whether the prompt is non-interactive. */
+  protected boolean m_NonInteractive;
+
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
 
   /** the current image. */
   protected transient AbstractImageContainer m_CurrentImage;
+
+  /** the OK button. */
+  protected transient BaseButton m_ButtonOK;
 
   /**
    * Returns a string describing the object.
@@ -293,6 +307,10 @@ public class CompareObjectLocations
     m_OptionManager.add(
       "screenshot-queue", "screenshotQueue",
       new StorageName());
+
+    m_OptionManager.add(
+      "non-interactive", "nonInteractive",
+      false);
   }
 
   /**
@@ -576,6 +594,35 @@ public class CompareObjectLocations
   }
 
   /**
+   * Sets whether to enable/disable interactiveness.
+   *
+   * @param value	if true actor is not interactive, but automated
+   */
+  public void setNonInteractive(boolean value) {
+    m_NonInteractive = value;
+    reset();
+  }
+
+  /**
+   * Returns whether interactiveness is enabled/disabled.
+   *
+   * @return 		true if actor is not interactive i.e., automated
+   */
+  public boolean isNonInteractive() {
+    return m_NonInteractive;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String nonInteractiveTipText() {
+    return "If enabled, the 'OK' button gets clicked automatically.";
+  }
+
+  /**
    * Returns whether storage items are being used.
    *
    * @return		true if storage items are used
@@ -631,21 +678,20 @@ public class CompareObjectLocations
    * @param panel	the panel displayed in the frame
    */
   protected void postCreateDialog(final BaseDialog dialog, BasePanel panel) {
-    BaseButton buttonOK;
     BaseButton	buttonCancel;
     JPanel	panelButtons;
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     dialog.getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new BaseButton("OK");
-    buttonOK.addActionListener((ActionEvent e) -> {
+    m_ButtonOK = new BaseButton("OK");
+    m_ButtonOK.addActionListener((ActionEvent e) -> {
       m_Accepted = true;
       if (m_ForwardScreenshot)
         sendScreenshot(m_ComparisonPanel, m_ScreenshotQueue);
       dialog.setVisible(false);
     });
-    panelButtons.add(buttonOK);
+    panelButtons.add(m_ButtonOK);
 
     buttonCancel = new BaseButton("Cancel");
     buttonCancel.addActionListener((ActionEvent e) -> {
@@ -653,6 +699,17 @@ public class CompareObjectLocations
       dialog.setVisible(false);
     });
     panelButtons.add(buttonCancel);
+
+    // if not interactive, click on OK
+    if (m_NonInteractive) {
+      dialog.addWindowListener(new WindowAdapter() {
+	@Override
+	public void windowActivated(WindowEvent e) {
+	  m_ButtonOK.doClick();
+	  super.windowActivated(e);
+	}
+      });
+    }
   }
 
   /**
