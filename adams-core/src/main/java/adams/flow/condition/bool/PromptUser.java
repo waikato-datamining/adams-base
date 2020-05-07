@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PromptUser.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -72,7 +72,6 @@ import adams.gui.core.GUIHelper.DialogCommunication;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PromptUser
   extends AbstractBooleanCondition
@@ -236,16 +235,6 @@ public class PromptUser
   }
 
   /**
-   * Sets whether to enable/disable interactiveness.
-   *
-   * @param value	if true actor is not interactive, but automated
-   */
-  public void setNonInteractive(boolean value) {
-    m_NonInteractive = value;
-    reset();
-  }
-
-  /**
    * Sets the initial selection to prompt the user with.
    *
    * @param value	the initial selection
@@ -272,6 +261,16 @@ public class PromptUser
    */
   public String initialSelectionTipText() {
     return "The initial selection to prompt the user with.";
+  }
+
+  /**
+   * Sets whether to enable/disable interactiveness.
+   *
+   * @param value	if true actor is not interactive, but automated
+   */
+  public void setNonInteractive(boolean value) {
+    m_NonInteractive = value;
+    reset();
   }
 
   /**
