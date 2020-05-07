@@ -15,7 +15,7 @@
 
 /*
  * Tree.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
@@ -207,34 +207,6 @@ public class Tree
   }
 
   /**
-   * Checks whether object represents a primitive class.
-   *
-   * @param obj		the object to check
-   */
-  protected boolean isPrimitive(Object obj)  {
-    if (obj instanceof Boolean)
-      return true;
-    else if (obj instanceof Byte)
-      return true;
-    else if (obj instanceof Short)
-      return true;
-    else if (obj instanceof Integer)
-      return true;
-    else if (obj instanceof Long)
-      return true;
-    else if (obj instanceof Float)
-      return true;
-    else if (obj instanceof Double)
-      return true;
-    else if (obj instanceof Character)
-      return true;
-    else if (obj instanceof String)
-      return true;
-    else
-      return false;
-  }
-
-  /**
    * Checks the label against the current search setup.
    *
    * @param label	the label to check
@@ -289,7 +261,7 @@ public class Tree
       parent.add(result);
 
     // Object's hashcode
-    if (!isPrimitive(obj) && matches(LABEL_HASHCODE))
+    if (!Utils.isPrimitive(obj) && matches(LABEL_HASHCODE))
       result.add(new Node(LABEL_HASHCODE, obj.hashCode(), NodeType.HASHCODE));
 
     // array?
