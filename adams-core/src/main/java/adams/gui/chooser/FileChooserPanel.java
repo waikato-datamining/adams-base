@@ -26,6 +26,7 @@ import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.event.HistorySelectionEvent;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JFileChooser;
 import javax.swing.event.ChangeEvent;
@@ -129,6 +130,23 @@ public class FileChooserPanel
         return null;
       }
     }
+  }
+
+  /**
+   * Copies the current file to the clipboard.
+   */
+  protected void copyToClipboard() {
+    String  	allText;
+    String  	selText;
+    boolean	copyAll;
+
+    selText = m_TextSelection.getSelectedText();
+    allText = m_TextSelection.getText();
+    copyAll = (selText == null) || (selText.equals(allText));
+    if (copyAll)
+      ClipboardHelper.copyToClipboard(fromString(allText).getAbsolutePath());
+    else
+      ClipboardHelper.copyToClipboard(selText);
   }
 
   /**
