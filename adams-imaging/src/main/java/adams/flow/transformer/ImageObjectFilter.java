@@ -29,11 +29,12 @@ import adams.data.report.AbstractField;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.flow.core.Token;
+import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
  <!-- globalinfo-start -->
- * Uses the specified object finder to locate objects and then applies the object filter to the located objects.
+ * Uses the specified object finder to locate objects and then applies the object filter to the located objects (modifies the report).
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -99,6 +100,11 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-clean-indices &lt;boolean&gt; (property: cleanIndices)
+ * &nbsp;&nbsp;&nbsp;If enabled, all potential index entries get removed from the meta-data.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -116,6 +122,9 @@ public class ImageObjectFilter
 
   /** whether to keep all objects. */
   protected boolean m_KeepAllObjects;
+
+  /** whether to clean the object indices. */
+  protected boolean m_CleanIndices;
 
   /**
    * Returns a string describing the object.
@@ -144,6 +153,10 @@ public class ImageObjectFilter
 
     m_OptionManager.add(
       "keep-all-objects", "keepAllObjects",
+      false);
+
+    m_OptionManager.add(
+      "clean-indices", "cleanIndices",
       false);
   }
 
@@ -239,6 +252,36 @@ public class ImageObjectFilter
   }
 
   /**
+   * Sets whether to remove index entries from the meta-data.
+   *
+   * @param value	true if to clean
+   */
+  public void setCleanIndices(boolean value) {
+    m_CleanIndices = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to remove index entries from the meta-data.
+   *
+   * @return		true if to clean
+   */
+  public boolean getCleanIndices() {
+    return m_CleanIndices;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String cleanIndicesTipText() {
+    return
+      "If enabled, all potential index entries get removed from the meta-data.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -270,6 +313,7 @@ public class ImageObjectFilter
     result  = QuickInfoHelper.toString(this, "finder", m_Finder, "finder: ");
     result += QuickInfoHelper.toString(this, "filter", m_Filter, ", filter: ");
     result += QuickInfoHelper.toString(this, "keepAllObjects", m_KeepAllObjects, "keep all", ", ");
+    result += QuickInfoHelper.toString(this, "cleanIndices", m_CleanIndices, "clean indices", ", ");
 
     return result;
   }
@@ -289,7 +333,7 @@ public class ImageObjectFilter
     LocatedObjects		objs;
     LocatedObjects		newObjs;
     LocatedObjects		otherObjs;
-    int				i;
+    boolean			cleaned;
 
     result  = null;
     report  = null;
@@ -308,6 +352,18 @@ public class ImageObjectFilter
     if (result == null) {
       try {
 	objs = LocatedObjects.fromReport(report, m_Finder.getPrefix());
+
+	if (m_CleanIndices) {
+	  cleaned = false;
+	  for (LocatedObject obj: objs) {
+	    if (obj.getMetaData().containsKey(LocatedObjects.KEY_INDEX)) {
+	      cleaned = true;
+	      obj.getMetaData().remove(LocatedObjects.KEY_INDEX);
+	    }
+	  }
+	  if (isLoggingEnabled())
+	    getLogger().info("Cleaned any indices? " + cleaned);
+        }
 
 	// find objects of interest
 	indices = m_Finder.find(objs);
