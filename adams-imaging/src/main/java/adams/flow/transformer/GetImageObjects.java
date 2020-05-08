@@ -15,7 +15,7 @@
 
 /*
  * GetImageObjects.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -89,6 +89,11 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
  * </pre>
  *
+ * <pre>-clean-indices &lt;boolean&gt; (property: cleanIndices)
+ * &nbsp;&nbsp;&nbsp;If enabled, all potential index entries get removed from the meta-data.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -100,6 +105,9 @@ public class GetImageObjects
 
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
+
+  /** whether to clean the object indices. */
+  protected boolean m_CleanIndices;
 
   /**
    * Returns a string describing the object.
@@ -121,6 +129,10 @@ public class GetImageObjects
     m_OptionManager.add(
       "finder", "finder",
       new AllFinder());
+
+    m_OptionManager.add(
+      "clean-indices", "cleanIndices",
+      false);
   }
 
   /**
@@ -174,6 +186,36 @@ public class GetImageObjects
   }
 
   /**
+   * Sets whether to remove index entries from the meta-data.
+   *
+   * @param value	true if to clean
+   */
+  public void setCleanIndices(boolean value) {
+    m_CleanIndices = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to remove index entries from the meta-data.
+   *
+   * @return		true if to clean
+   */
+  public boolean getCleanIndices() {
+    return m_CleanIndices;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String cleanIndicesTipText() {
+    return
+      "If enabled, all potential index entries get removed from the meta-data.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -190,7 +232,12 @@ public class GetImageObjects
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "finder", m_Finder, "finder: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "finder", m_Finder, "finder: ");
+    result += QuickInfoHelper.toString(this, "cleanIndices", m_CleanIndices, "clean indices", ", ");
+
+    return result;
   }
 
   /**
@@ -203,6 +250,7 @@ public class GetImageObjects
     String		result;
     Report		report;
     LocatedObjects	objects;
+    boolean		cleaned;
 
     result = null;
 
@@ -217,6 +265,17 @@ public class GetImageObjects
     m_Queue.clear();
     if (result == null) {
       objects = LocatedObjects.fromReport(report, m_Finder.getPrefix());
+      if (m_CleanIndices) {
+        cleaned = false;
+        for (LocatedObject object : objects) {
+          if (object.getMetaData().containsKey(LocatedObjects.KEY_INDEX)) {
+            cleaned = true;
+            object.getMetaData().remove(LocatedObjects.KEY_INDEX);
+          }
+        }
+        if (isLoggingEnabled())
+          getLogger().info("Cleaned any indices? " + cleaned);
+      }
       m_Queue.addAll(objects.subset(m_Finder.find(report)));
     }
 
