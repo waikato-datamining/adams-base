@@ -15,7 +15,7 @@
 
 /*
  * Placeholders.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -25,13 +25,17 @@ import adams.env.Environment;
 import adams.env.PlaceholdersDefinition;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A class for accessing the system-wide defined placeholders.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Placeholders {
 
@@ -59,11 +63,19 @@ public class Placeholders {
   /** the separator for key-value pairs. */
   public final static String SEPARATOR = "=";
 
+  public static final String NO_COLLAPSE = "no_collapse";
+
   /** the singleton. */
   protected static Placeholders m_Singleton;
 
+  /** the properties. */
+  protected Properties m_Properties;
+
   /** the placeholders. */
-  protected Properties m_Placeholders;
+  protected Map<String,String> m_Placeholders;
+
+  /** the placeholders that are not to be collapsed. */
+  protected Set<String> m_NoCollapse;
 
   /**
    * Initializes the classlister.
@@ -78,12 +90,28 @@ public class Placeholders {
    * loads the props file and interpretes it.
    */
   protected void initialize() {
-    if (m_Placeholders == null) {
+    Enumeration<String>	enm;
+    String		key;
+
+    if (m_Properties == null) {
       try {
-	m_Placeholders = Environment.getInstance().read(PlaceholdersDefinition.KEY);
+	m_Properties = Environment.getInstance().read(PlaceholdersDefinition.KEY);
       }
       catch (Exception e) {
-	m_Placeholders = new Properties();
+	m_Properties = new Properties();
+      }
+
+      m_NoCollapse   = new HashSet<>();
+      if (m_Properties.hasKey(NO_COLLAPSE) && !m_Properties.getProperty(NO_COLLAPSE).trim().isEmpty())
+	m_NoCollapse.addAll(Arrays.asList(m_Properties.getProperty(NO_COLLAPSE).replace(" ", "").split(",")));
+
+      m_Placeholders = new HashMap<>();
+      enm            = (Enumeration<String>) m_Properties.propertyNames();
+      while (enm.hasMoreElements()) {
+        key = enm.nextElement();
+        if (key.equals(NO_COLLAPSE))
+          continue;
+        m_Placeholders.put(key, m_Properties.getPath(key));
       }
     }
   }
@@ -93,8 +121,17 @@ public class Placeholders {
    *
    * @return		the placeholder keys (local + global)
    */
-  public Enumeration<String> placeholders() {
-    return (Enumeration<String>) m_Placeholders.propertyNames();
+  public Set<String> placeholders() {
+    return m_Placeholders.keySet();
+  }
+
+  /**
+   * Returns the placeholders that are excluded from collapsing.
+   *
+   * @return		the placeholder keys
+   */
+  public Set<String> noCollapse() {
+    return m_NoCollapse;
   }
 
   /**
@@ -104,7 +141,7 @@ public class Placeholders {
    * @return		true if available
    */
   public boolean has(String key) {
-    return m_Placeholders.hasKey(key);
+    return m_Placeholders.containsKey(key);
   }
 
   /**
@@ -117,7 +154,7 @@ public class Placeholders {
   public String get(String key) {
     String	result;
 
-    result = m_Placeholders.getPath(key);
+    result = m_Placeholders.get(key);
     if ((result != null) && result.endsWith(File.separator))
       result = result.substring(0, result.length() - 1);
 
@@ -133,7 +170,8 @@ public class Placeholders {
    * 			if none previously stored
    */
   public synchronized String set(String key, String value) {
-    return (String) m_Placeholders.setProperty(key, value);
+    m_Placeholders.put(key, value);
+    return (String) m_Properties.setProperty(key, value);
   }
 
   /**
@@ -144,7 +182,8 @@ public class Placeholders {
    * 			if none previously stored
    */
   public synchronized String remove(String key) {
-    return (String) m_Placeholders.remove(key);
+    m_Placeholders.remove(key);
+    return (String) m_Properties.remove(key);
   }
 
   /**
@@ -167,10 +206,10 @@ public class Placeholders {
   public String expand(String s) {
     String	result;
 
-    if (s.equals("${CWD}/${CWD}"))  // not sure where this gets generated...
-      result = "./.";
-    else
-      result = doExpand(s);
+    if (s.startsWith("${CWD}/${CWD}"))  // the GUI seems to generate these sometimes...
+      s = s.substring("${CWD}/".length());
+
+    result = doExpand(s);
     if (result.contains(PLACEHOLDER_START))
       System.err.println("Failed to fully expand '" + s + "': " + result);
     
@@ -220,7 +259,7 @@ public class Placeholders {
 	    result.append(value);
 	  }
 	  else {
-	    result.append(PLACEHOLDER_START + key + PLACEHOLDER_END);
+	    result.append(PLACEHOLDER_START).append(key).append(PLACEHOLDER_END);
 	    System.err.println("Unknown placeholder: " + key);
 	  }
 	  prevKey = key;
@@ -261,8 +300,6 @@ public class Placeholders {
    */
   public String collapse(String s) {
     String		result;
-    Enumeration<String>	pholders;
-    String		key;
     String		value;
     String		bestKey;
     int			bestLeft;
@@ -272,22 +309,22 @@ public class Placeholders {
     boolean		valid;
 
     if (s == null)
-      return s;
+      return null;
     
     result  = s;
     bestKey = null;
     if ((result.length() > 0) && !result.equals(".")) {
       bestLeft   = result.length();
       bestKeyLen = result.length();
-      pholders   = placeholders();
-      while (pholders.hasMoreElements()) {
-	key   = pholders.nextElement();
+      for (String key: placeholders()) {
+        if (noCollapse().contains(key))
+          continue;
 	value = get(key);
 	if ((value != null) && (result.indexOf(value) == 0)) {
 	  valid = false;
           if (result.length() == value.length())
 	    valid = true;
-	  if ((result.length() > value.length()) && ((result.charAt(value.length()) == '/') || (result.charAt(value.length()) == '\\')))
+	  else if ((result.length() > value.length()) && ((result.charAt(value.length()) == '/') || (result.charAt(value.length()) == '\\')))
 	    valid = true;
 	  if (valid) {
 	    currLeft   = result.replace(value, "").length();
@@ -325,7 +362,7 @@ public class Placeholders {
    */
   @Override
   public String toString() {
-    return m_Placeholders.toStringSimple();
+    return m_Properties.toStringSimple();
   }
 
   /**
@@ -335,16 +372,11 @@ public class Placeholders {
    */
   public Properties toProperties() {
     Properties		result;
-    Enumeration<String>	enm;
-    String		key;
 
     result = new Properties();
 
-    enm = placeholders();
-    while (enm.hasMoreElements()) {
-      key = enm.nextElement();
+    for (String key: placeholders())
       result.setProperty(key, get(key));
-    }
 
     return result;
   }
@@ -411,9 +443,8 @@ public class Placeholders {
     Environment.setEnvironmentClass(envClass);
 
     // output placeholders
-    Enumeration<String> enm = getSingleton().placeholders();
-    while (enm.hasMoreElements()) {
-      String placeholder = PLACEHOLDER_START + enm.nextElement() + PLACEHOLDER_END;
+    for (String key: getSingleton().placeholders()) {
+      String placeholder = PLACEHOLDER_START + key + PLACEHOLDER_END;
       System.out.println(placeholder + " -> " + getSingleton().expand(placeholder));
     }
 

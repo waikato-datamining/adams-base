@@ -15,7 +15,7 @@
 
 /*
  * PlaceholdersTest.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -28,14 +28,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
-import java.util.Enumeration;
 
 /**
  * Tests the adams.core.Placeholders class. Run from commandline with: <br><br>
  * java adams.core.PlaceholdersTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PlaceholdersTest
   extends AdamsTestCase {
@@ -53,16 +51,12 @@ public class PlaceholdersTest
    * Tests all placeholders.
    */
   public void testGeneric() {
-    Enumeration<String>	keys;
-    String		key;
     String		expanded;
     String		collapsed;
     Placeholders	ph;
 
     ph   = Placeholders.getSingleton();
-    keys = ph.placeholders();
-    while (keys.hasMoreElements()) {
-      key       = keys.nextElement();
+    for (String key: ph.placeholders()) {
       collapsed = ph.get(key) + File.separator + "hello.world";
       expanded  = ph.expand(ph.get(key)) + File.separator + "hello.world";
       assertEquals(expanded, ph.expand(collapsed));

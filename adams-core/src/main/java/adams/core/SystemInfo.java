@@ -15,7 +15,7 @@
 
 /*
  * SystemInfo.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -118,11 +118,8 @@ public class SystemInfo
     }
 
     // placeholders
-    enm = Placeholders.getSingleton().placeholders();
-    while (enm.hasMoreElements()) {
-      name = enm.nextElement();
-      m_Info.put(PLACEHOLDER_PREFIX + name, Placeholders.getSingleton().get(name));
-    }
+    for (String key: Placeholders.getSingleton().placeholders())
+      m_Info.put(PLACEHOLDER_PREFIX + key, Placeholders.getSingleton().get(key));
 
     // project
     m_Info.put(PROJECT_PREFIX + "name", Environment.getInstance().getProject());

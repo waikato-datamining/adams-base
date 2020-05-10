@@ -17,7 +17,9 @@
 #
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
+
+# the list of placeholders only to expand, but not collapse
+no_collapse=
 
 # the system's temp directory
 TMP=%t
