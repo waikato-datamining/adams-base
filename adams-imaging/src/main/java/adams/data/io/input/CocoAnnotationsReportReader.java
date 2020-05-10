@@ -226,11 +226,13 @@ public class CocoAnnotationsReportReader
     JSONObject		category;
 
     result = new HashMap<>();
-    for (i = 0; i < categories.size(); i++) {
-      category = (JSONObject) categories.get(i);
-      result.put(
-        category.getAsNumber("id").intValue(),
-	category.getAsString("name"));
+    if (categories != null) {
+      for (i = 0; i < categories.size(); i++) {
+        category = (JSONObject) categories.get(i);
+        result.put(
+          category.getAsNumber("id").intValue(),
+          category.getAsString("name"));
+      }
     }
 
     return result;
@@ -278,14 +280,16 @@ public class CocoAnnotationsReportReader
     Report		report;
 
     result = new HashMap<>();
-    for (i = 0; i < images.size(); i++) {
-      image  = (JSONObject) images.get(i);
-      report = new Report();
-      addValue(report, "Width", image.getAsNumber("width").intValue());
-      addValue(report, "Height", image.getAsNumber("height").intValue());
-      addValue(report, "Filename", image.getAsString("file_name"));
-      addValue(report, "Date captured", image.getAsString("date_captured"));
-      result.put(image.getAsNumber("id").intValue(), report);
+    if (images != null) {
+      for (i = 0; i < images.size(); i++) {
+        image = (JSONObject) images.get(i);
+        report = new Report();
+        addValue(report, "Width", image.getAsNumber("width").intValue());
+        addValue(report, "Height", image.getAsNumber("height").intValue());
+        addValue(report, "Filename", image.getAsString("file_name"));
+        addValue(report, "Date captured", image.getAsString("date_captured"));
+        result.put(image.getAsNumber("id").intValue(), report);
+      }
     }
 
     return result;
@@ -335,43 +339,45 @@ public class CocoAnnotationsReportReader
       images           = loadImages((JSONArray) obj.get("images"));
       annotationsArray = (JSONArray) obj.get("annotations");
       annotations      = new HashMap<>();
-      for (i = 0; i < annotationsArray.size(); i++) {
-	region  = (JSONObject) annotationsArray.get(i);
-	imageID = region.getAsNumber("image_id").intValue();
-	labelID = region.getAsNumber("category_id").intValue();
+      if (annotationsArray != null) {
+        for (i = 0; i < annotationsArray.size(); i++) {
+          region = (JSONObject) annotationsArray.get(i);
+          imageID = region.getAsNumber("image_id").intValue();
+          labelID = region.getAsNumber("category_id").intValue();
 
-	// bounding box
-	bbox   = (JSONArray) region.get("bbox");
-	x      = (double) bbox.get(0);
-	y      = (double) bbox.get(1);
-	width  = (double) bbox.get(2);
-	height = (double) bbox.get(3);
+          // bounding box
+          bbox = (JSONArray) region.get("bbox");
+          x = (double) bbox.get(0);
+          y = (double) bbox.get(1);
+          width = (double) bbox.get(2);
+          height = (double) bbox.get(3);
 
-	// create object
-	object = new LocatedObject((int) x, (int) y, (int) width, (int) height);
-	if (!annotations.containsKey(imageID))
-	  annotations.put(imageID, new LocatedObjects());
-	annotations.get(imageID).add(object);
+          // create object
+          object = new LocatedObject((int) x, (int) y, (int) width, (int) height);
+          if (!annotations.containsKey(imageID))
+            annotations.put(imageID, new LocatedObjects());
+          annotations.get(imageID).add(object);
 
-	// label
-	if (categories.containsKey(labelID))
-	  object.getMetaData().put(m_LabelKey, categories.get(labelID));
+          // label
+          if (categories.containsKey(labelID))
+            object.getMetaData().put(m_LabelKey, categories.get(labelID));
 
-	// polygon (iscrowd=0)
-	if (region.containsKey("segmentation") && region.containsKey("iscrowd") && (region.getAsNumber("iscrowd").intValue() == 0)) {
-	  poly = (JSONArray) region.get("segmentation");
-	  // we can only handle one polygon per annotation
-	  if (poly.size() >= 1) {
-	    poly  = (JSONArray) poly.get(0);
-	    polyX = new TIntArrayList();
-	    polyY = new TIntArrayList();
-	    for (n = 0; n < poly.size(); n += 2) {
-	      polyX.add(((Double) poly.get(n)).intValue());
-	      polyY.add(((Double) poly.get(n+1)).intValue());
-	    }
-	    object.setPolygon(new Polygon(polyX.toArray(), polyY.toArray(), polyX.size()));
-	  }
-	}
+          // polygon (iscrowd=0)
+          if (region.containsKey("segmentation") && region.containsKey("iscrowd") && (region.getAsNumber("iscrowd").intValue() == 0)) {
+            poly = (JSONArray) region.get("segmentation");
+            // we can only handle one polygon per annotation
+            if (poly.size() >= 1) {
+              poly = (JSONArray) poly.get(0);
+              polyX = new TIntArrayList();
+              polyY = new TIntArrayList();
+              for (n = 0; n < poly.size(); n += 2) {
+                polyX.add(((Double) poly.get(n)).intValue());
+                polyY.add(((Double) poly.get(n + 1)).intValue());
+              }
+              object.setPolygon(new Polygon(polyX.toArray(), polyY.toArray(), polyX.size()));
+            }
+          }
+        }
       }
 
       // add annotations to reports
