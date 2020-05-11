@@ -15,14 +15,16 @@
 
 /*
  * ObjectLocationsFromReport.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
 import adams.data.image.BufferedImageContainer;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.List;
@@ -35,7 +37,8 @@ import java.util.List;
  * .y<br>
  * .width<br>
  * .height<br>
- * Optionally, if type information is available per object, the locations can be displayed in distinct colors per type. The type itself can be displayed as well.
+ * Optionally, if type information is available per object, the locations can be displayed in distinct colors per type. The type itself can be displayed as well.<br>
+ * If polygon data should be available (.poly_x and .poly_y), then this takes precedence over the rectangle coordinates.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -43,11 +46,6 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
- * </pre>
- *
- * <pre>-enabled &lt;boolean&gt; (property: enabled)
- * &nbsp;&nbsp;&nbsp;If enabled, this overlay is painted over the image.
- * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
@@ -76,16 +74,57 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: .type
  * </pre>
  *
+ * <pre>-type-regexp &lt;adams.core.base.BaseRegExp&gt; (property: typeRegExp)
+ * &nbsp;&nbsp;&nbsp;The regular expression that the types must match in order to get drawn (
+ * &nbsp;&nbsp;&nbsp;eg only plotting a subset).
+ * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
+ * </pre>
+ *
  * <pre>-label-format &lt;java.lang.String&gt; (property: labelFormat)
  * &nbsp;&nbsp;&nbsp;The label format string to use for the rectangles; '#' for index, '&#64;' for
  * &nbsp;&nbsp;&nbsp;type and '$' for short type (type suffix must be defined for '&#64;' and '$'
- * &nbsp;&nbsp;&nbsp;); for instance: '# &#64;'.
+ * &nbsp;&nbsp;&nbsp;), '{BLAH}' gets replaced with the value associated with the meta-data key
+ * &nbsp;&nbsp;&nbsp;'BLAH'; for instance: '# &#64;' or '# {BLAH}'.
  * &nbsp;&nbsp;&nbsp;default: #
  * </pre>
  *
  * <pre>-label-font &lt;java.awt.Font&gt; (property: labelFont)
  * &nbsp;&nbsp;&nbsp;The font to use for the labels.
  * &nbsp;&nbsp;&nbsp;default: Display-PLAIN-14
+ * </pre>
+ *
+ * <pre>-label-offset-x &lt;int&gt; (property: labelOffsetX)
+ * &nbsp;&nbsp;&nbsp;The X offset for the label.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * </pre>
+ *
+ * <pre>-label-offset-y &lt;int&gt; (property: labelOffsetY)
+ * &nbsp;&nbsp;&nbsp;The Y offset for the label.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * </pre>
+ *
+ * <pre>-predefined-labels &lt;adams.core.base.BaseString&gt; [-predefined-labels ...] (property: predefinedLabels)
+ * &nbsp;&nbsp;&nbsp;The predefined labels to use for setting up the colors; avoids constants
+ * &nbsp;&nbsp;&nbsp;changing in color pallet.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-stroke-thickness &lt;float&gt; (property: strokeThickness)
+ * &nbsp;&nbsp;&nbsp;The thickness of the stroke.
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.01
+ * </pre>
+ *
+ * <pre>-filled &lt;boolean&gt; (property: filled)
+ * &nbsp;&nbsp;&nbsp;If enabled, the shape is drawn filled.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-polygon-bounds &lt;boolean&gt; (property: polygonBounds)
+ * &nbsp;&nbsp;&nbsp;If enabled, the polygon bounds are drawn as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  <!-- options-end -->
@@ -97,6 +136,9 @@ public class ObjectLocationsFromReport
 
   /** for serialization. */
   private static final long serialVersionUID = 6356419097401574024L;
+
+  /** the thickness of the stroke. */
+  protected float m_StrokeThickness;
 
   /** whether to draw the shape filled. */
   protected boolean m_Filled;
@@ -135,12 +177,45 @@ public class ObjectLocationsFromReport
     super.defineOptions();
 
     m_OptionManager.add(
+      "stroke-thickness", "strokeThickness",
+      1.0f, 0.01f, null);
+
+    m_OptionManager.add(
       "filled", "filled",
       false);
 
     m_OptionManager.add(
       "polygon-bounds", "polygonBounds",
       false);
+  }
+
+  /**
+   * Sets the stroke thickness to use.
+   *
+   * @param value	the thickness
+   */
+  public void setStrokeThickness(float value) {
+    m_StrokeThickness = value;
+    reset();
+  }
+
+  /**
+   * Returns the current stroke thickness.
+   *
+   * @return		the thickness
+   */
+  public float getStrokeThickness() {
+    return m_StrokeThickness;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String strokeThicknessTipText() {
+    return "The thickness of the stroke.";
   }
 
   /**
@@ -202,6 +277,39 @@ public class ObjectLocationsFromReport
   }
 
   /**
+   * Returns the thickness of the stroke.
+   *
+   * @param g		graphics context to get the thickness from
+   * @param defValue	the default value to return in case of failure
+   * @return		the stroke, default value if failed to extract
+   */
+  protected float getStrokeWidth(Graphics g, float defValue) {
+    Graphics2D g2d;
+
+    if (g instanceof Graphics2D) {
+      g2d = (Graphics2D) g;
+      if (g2d.getStroke() instanceof BasicStroke)
+	return ((BasicStroke) g2d.getStroke()).getLineWidth();
+    }
+
+    return defValue;
+  }
+
+  /**
+   * Applies the stroke thickness.
+   *
+   * @param stroke	the thickness to apply
+   */
+  protected void applyStroke(Graphics g, float stroke) {
+    Graphics2D 	g2d;
+
+    if (g instanceof Graphics2D) {
+      g2d = (Graphics2D) g;
+      g2d.setStroke(new BasicStroke(stroke));
+    }
+  }
+
+  /**
    * Performs the actual drawing of the objects.
    *
    * @param image	the image
@@ -212,8 +320,13 @@ public class ObjectLocationsFromReport
     Graphics 	g;
     String	label;
     Rectangle	rect;
+    float	width;
 
     g = image.getImage().getGraphics();
+
+    width = getStrokeWidth(g, 1.0f);
+    applyStroke(g, m_StrokeThickness);
+
     g.setColor(getColor());
     g.setFont(getLabelFont());
     for (Polygon poly : locations) {
@@ -239,6 +352,8 @@ public class ObjectLocationsFromReport
 	}
       }
     }
+
+    applyStroke(g, width);
 
     return null;
   }
