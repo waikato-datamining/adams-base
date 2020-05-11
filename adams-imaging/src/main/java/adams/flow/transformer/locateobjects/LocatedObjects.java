@@ -322,6 +322,27 @@ public class LocatedObjects
   }
 
   /**
+   * Resets the index value of all the objects (starts at 1) in the meta-data
+   * using the current order in the list.
+   */
+  public void resetIndex() {
+    resetIndex(0);
+  }
+
+  /**
+   * Resets the index value of all the objects (starts at 1) in the meta-data
+   * using the current order in the list.
+   *
+   * @param offset 	the offset to add to the index
+   */
+  public void resetIndex(int offset) {
+    int		i;
+
+    for (i = 0; i < size(); i++)
+      get(i).getMetaData().put(LocatedObjects.KEY_INDEX, (i+1+offset));
+  }
+
+  /**
    * Turns the located objects into a report.
    * Using a prefix like "Object." will result in the following report entries
    * for a single object:
