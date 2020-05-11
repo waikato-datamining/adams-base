@@ -124,7 +124,7 @@ public class GrayOrIndexedColorizer
    * 			displaying in the gui
    */
   public String colorProviderTipText() {
-    return "The color provider to use for coloring in the grayscale image.";
+    return "The color provider to use for coloring in the grayscale/indexed image.";
   }
 
   /**
