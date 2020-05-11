@@ -265,17 +265,8 @@ public class GetImageObjects
     m_Queue.clear();
     if (result == null) {
       objects = LocatedObjects.fromReport(report, m_Finder.getPrefix());
-      if (m_CleanIndices) {
-        cleaned = false;
-        for (LocatedObject object : objects) {
-          if (object.getMetaData().containsKey(LocatedObjects.KEY_INDEX)) {
-            cleaned = true;
-            object.getMetaData().remove(LocatedObjects.KEY_INDEX);
-          }
-        }
-        if (isLoggingEnabled())
-          getLogger().info("Cleaned any indices? " + cleaned);
-      }
+      if (m_CleanIndices)
+        objects.resetIndex();
       m_Queue.addAll(objects.subset(m_Finder.find(report)));
     }
 

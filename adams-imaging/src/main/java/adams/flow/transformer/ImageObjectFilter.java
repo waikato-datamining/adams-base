@@ -29,7 +29,6 @@ import adams.data.report.AbstractField;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.flow.core.Token;
-import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
@@ -353,17 +352,8 @@ public class ImageObjectFilter
       try {
 	objs = LocatedObjects.fromReport(report, m_Finder.getPrefix());
 
-	if (m_CleanIndices) {
-	  cleaned = false;
-	  for (LocatedObject obj: objs) {
-	    if (obj.getMetaData().containsKey(LocatedObjects.KEY_INDEX)) {
-	      cleaned = true;
-	      obj.getMetaData().remove(LocatedObjects.KEY_INDEX);
-	    }
-	  }
-	  if (isLoggingEnabled())
-	    getLogger().info("Cleaned any indices? " + cleaned);
-        }
+	if (m_CleanIndices)
+	  objs.resetIndex();
 
 	// find objects of interest
 	indices = m_Finder.find(objs);
