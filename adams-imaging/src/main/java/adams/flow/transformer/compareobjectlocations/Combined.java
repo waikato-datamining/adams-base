@@ -171,10 +171,13 @@ public class Combined
 
       m_PanelColors.add(new JLabel("Annotations"));
       m_PanelColors.add(m_LabelAnnotationsColorBox);
+      m_PanelColors.add(new JLabel(" - "));
       m_PanelColors.add(new JLabel("Predictions"));
       m_PanelColors.add(m_LabelPredictionsColorBox);
+      m_PanelColors.add(new JLabel(" - "));
       m_PanelColors.add(m_LabelOverlapColorCorrectText);
       m_PanelColors.add(m_LabelOverlapColorCorrectBox);
+      m_PanelColors.add(new JLabel(" - "));
       m_PanelColors.add(m_LabelOverlapColorIncorrectText);
       m_PanelColors.add(m_LabelOverlapColorIncorrectBox);
 
