@@ -15,7 +15,7 @@
 
 /*
  * EnterManyValues.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -328,7 +328,7 @@ public class EnterManyValues
    *             	displaying in the GUI or for listing the options.
    */
   public String messageTipText() {
-    return "The message to prompt the user with.";
+    return "The message to prompt the user with; variables get automatically expanded.";
   }
 
   /**
