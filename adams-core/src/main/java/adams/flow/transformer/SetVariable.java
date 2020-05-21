@@ -15,7 +15,7 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -27,6 +27,7 @@ import adams.core.VariableUpdater;
 import adams.core.base.BaseText;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.flow.core.VariableValueType;
 import adams.parser.BooleanExpression;
@@ -138,7 +139,9 @@ import java.util.List;
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
  *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
+ *               | contains ( str , find ) (checks whether 'str' string contains 'find' string)<br>
  *               | replace ( str , pos , len , newstr )<br>
+ *               | replaceall ( str , regexp , replace ) (applies regular expression to 'str' and replaces all matches with 'replace')<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
  *               | str ( expr )<br>
  *               | str ( expr  , numdecimals )<br>
@@ -272,7 +275,9 @@ import java.util.List;
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
  *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
+ *               | contains ( str , find ) (checks whether 'str' string contains 'find' string)<br>
  *               | replace ( str , pos , len , newstr )<br>
+ *               | replaceall ( str , regexp , replace ) (applies regular expression to 'str' and replaces all matches with 'replace')<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
  *               | str ( expr )<br>
  *               | str ( expr  , numdecimals )<br>
@@ -411,7 +416,9 @@ import java.util.List;
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
  *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
+ *               | contains ( str , find ) (checks whether 'str' string contains 'find' string)<br>
  *               | replace ( str , pos , len , newstr )<br>
+ *               | replaceall ( str , regexp , replace ) (applies regular expression to 'str' and replaces all matches with 'replace')<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
  *               | str ( expr )<br>
  *               | str ( expr  , numdecimals )<br>
@@ -513,15 +520,21 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;How to interpret the 'value' string.
  * &nbsp;&nbsp;&nbsp;default: STRING
  * </pre>
- * 
+ *
  * <pre>-update-type &lt;REPLACE|APPEND|PREPEND&gt; (property: updateType)
  * &nbsp;&nbsp;&nbsp;Determines how to update the variable.
  * &nbsp;&nbsp;&nbsp;default: REPLACE
  * </pre>
- * 
+ *
  * <pre>-expand-value &lt;boolean&gt; (property: expandValue)
- * &nbsp;&nbsp;&nbsp;If enabled, the value (either parameter value or incoming token) gets expanded 
+ * &nbsp;&nbsp;&nbsp;If enabled, the value (either parameter value or incoming token) gets expanded
  * &nbsp;&nbsp;&nbsp;first in case it is made up of variables itself.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-output-value &lt;boolean&gt; (property: outputValue)
+ * &nbsp;&nbsp;&nbsp;If enabled, the variable values is forwarded instead of the token passing
+ * &nbsp;&nbsp;&nbsp;through.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -564,7 +577,10 @@ public class SetVariable
   
   /** whether to expand the value. */
   protected boolean m_ExpandValue;
-  
+
+  /** whether to output the value. */
+  protected boolean m_OutputValue;
+
   /**
    * Returns a string describing the object.
    *
@@ -616,6 +632,10 @@ public class SetVariable
 
     m_OptionManager.add(
 	    "expand-value", "expandValue",
+	    false);
+
+    m_OptionManager.add(
+	    "output-value", "outputValue",
 	    false);
   }
 
@@ -769,6 +789,36 @@ public class SetVariable
   }
 
   /**
+   * Sets whether to output the variable value instead of the token passing through.
+   *
+   * @param value	true if to expand
+   */
+  public void setOutputValue(boolean value) {
+    m_OutputValue = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output the variable value instead of the token passing through.
+   *
+   * @return		true if expanded
+   */
+  public boolean getOutputValue() {
+    return m_OutputValue;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputValueTipText() {
+    return
+	"If enabled, the variable values is forwarded instead of the token passing through.";
+  }
+
+  /**
    * Returns whether variables are being updated.
    * 
    * @return		true if variables are updated
@@ -803,6 +853,7 @@ public class SetVariable
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "valueType", m_ValueType));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "updateType", m_UpdateType));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "expandValue", m_ExpandValue, "expand"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "outputValue", m_OutputValue, "output value"));
     result += QuickInfoHelper.flatten(options);
 
     return result;
@@ -928,7 +979,10 @@ public class SetVariable
 	result = handleException("Failed to update variable: " + m_VariableName, e);
       }
 
-      m_OutputToken = m_InputToken;
+      if (m_OutputValue)
+	m_OutputToken = new Token(getVariables().get(m_VariableName.getValue()));
+      else
+	m_OutputToken = m_InputToken;
     }
 
     return result;
@@ -940,6 +994,9 @@ public class SetVariable
    * @return		<!-- flow-generates-start -->adams.flow.core.Unknown.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{Unknown.class};
+    if (m_OutputValue)
+      return new Class[]{String.class};
+    else
+      return new Class[]{Unknown.class};
   }
 }
