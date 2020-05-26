@@ -609,8 +609,8 @@ pattern:
 \end{verbatim}
 
 \subsection{Applications without dynamic class discovery}
-In order to speed up start up time, applications tend to get built with
-dynamic class discovery turned off. Instead, they use class/package
+In order to speed up start up time, applications can get built with
+dynamic class discovery turned off. These applications use class/package
 hierarchies that were determined at build time. When starting up ADAMS, you
 will see the following in the terminal:
 \begin{verbatim}
@@ -619,6 +619,34 @@ adams.core.ClassLister: Using statically defined classes/packages
 For these applications to use dynamic class discovery again, simply place
 an empty \textit{ClassLister.classes} file in the classpath. E.g., in the
 directory containing the \textit{bin} sub-directory with the scripts.
+
+If you want to turn off dynamic class discovery in your Maven build, then
+add the following to your \texttt{build} plugins in your \texttt{pom.xml}
+(and set the \verb|${adams.version}| accordingly):
+\begin{verbatim}
+      <plugin>
+        <groupId>nz.ac.waikato.cms.adams</groupId>
+        <artifactId>adams-maven-plugin</artifactId>
+        <version>${adams.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>classlister</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+\end{verbatim}
+The above Maven plugin generates two files, \texttt{ClassLister.classes}
+and \texttt{ClassLister.packages}. You can generate these files also manually
+by calling the \texttt{adams.core.ClassLister} class as follows:
+\begin{verbatim}
+adams.core.ClassLister -action classes -output /some/where/ClassLister.classes
+adams.core.ClassLister -action packages -output /some/where/ClassLister.packages
+\end{verbatim}
+These two files need to be in the root of the classpath used by ADAMS. If you
+are using a regular build of ADAMS, then this would in the directory that
+contains the \texttt{bin} and \texttt{lib} directories.
 
 \section{Creating a new actor}
 Being a workflow-centric application, it is most likely the case that a new
