@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * IsSubClass.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
 import adams.core.QuickInfoHelper;
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -47,7 +48,6 @@ import nz.ac.waikato.cms.locator.ClassLocator;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IsSubClass
   extends AbstractBooleanCondition {
@@ -161,7 +161,7 @@ public class IsSubClass
       }
       else {
 	try {
-	  m_Class = Class.forName(m_SuperClass);
+	  m_Class = ClassManager.getSingleton().forName(m_SuperClass);
 	}
 	catch (Exception e) {
 	  result = "Failed to load super class: " + e;

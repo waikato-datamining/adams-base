@@ -15,12 +15,13 @@
 
 /*
  * SpreadSheetViewerPanel.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -510,7 +511,7 @@ public class SpreadSheetViewerPanel
 	m_DataPlugins         = new ArrayList<>();
 	for (String cls: classes) {
 	  try {
-	    final AbstractDataPlugin data = (AbstractDataPlugin) Class.forName(cls).newInstance();
+	    final AbstractDataPlugin data = (AbstractDataPlugin) ClassManager.getSingleton().forName(cls).newInstance();
 	    m_DataPlugins.add(data);
 	    if (data.getMenuIcon() == null)
 	      menuitem = new JMenuItem(data.getMenuText(), GUIHelper.getEmptyIcon());
@@ -550,7 +551,7 @@ public class SpreadSheetViewerPanel
 	m_ViewPlugins         = new ArrayList<>();
 	for (String cls: classes) {
 	  try {
-	    final AbstractViewPlugin view = (AbstractViewPlugin) Class.forName(cls).newInstance();
+	    final AbstractViewPlugin view = (AbstractViewPlugin) ClassManager.getSingleton().forName(cls).newInstance();
 	    m_ViewPlugins.add(view);
 	    if (view.getMenuIcon() == null)
 	      menuitem = new JMenuItem(view.getMenuText(), GUIHelper.getEmptyIcon());

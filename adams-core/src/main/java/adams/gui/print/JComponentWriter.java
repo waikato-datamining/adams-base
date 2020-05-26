@@ -15,25 +15,25 @@
 
  /*
   *    JComponentWriter.java
-  *    Copyright (C) 2005-2014 University of Waikato, Hamilton, New Zealand
+  *    Copyright (C) 2005-2020 University of Waikato, Hamilton, New Zealand
   *
   */
 
 package adams.gui.print;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
+
+import javax.swing.JComponent;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Vector;
 
 /**
  * This class takes any JComponent and outputs it to a file. Scaling is by
@@ -49,7 +49,6 @@ import adams.env.Environment;
  * Based on weka.gui.visualize.JComponentWriter
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class JComponentWriter
   extends AbstractOptionHandler {
@@ -394,7 +393,7 @@ public abstract class JComponentWriter
     Arrays.sort(writerNames);
     for (i = 0; i < writerNames.length; i++) {
       try {
-        cls    = Class.forName(writerNames[i]);
+        cls    = ClassManager.getSingleton().forName(writerNames[i]);
         writer = (JComponentWriter) cls.newInstance();
         if (writer.getExtensions().length > 0) {
           filter = new JComponentWriterFileFilter(

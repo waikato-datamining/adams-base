@@ -15,13 +15,14 @@
 
 /*
  * AdamsTestSuite.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.test;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.TempUtils;
 import adams.core.management.ProcessUtils;
 import adams.env.Environment;
@@ -40,7 +41,6 @@ import java.util.List;
  * automatic generation of a series of tests.
  *
  * @author  FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AdamsTestSuite
   extends TestSuite {
@@ -154,7 +154,7 @@ public class AdamsTestSuite
     result = null;
 
     try {
-      result = Class.forName(getTestClassname(classname));
+      result = ClassManager.getSingleton().forName(getTestClassname(classname));
     }
     catch (Exception e) {
       // ignore it

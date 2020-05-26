@@ -13,18 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringToCustomStringRepresentation.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
-
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
+import adams.core.classmanager.ClassManager;
 import adams.gui.goe.CustomStringRepresentationHandler;
+
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
 
 /**
  <!-- globalinfo-start -->
@@ -50,7 +51,6 @@ import adams.gui.goe.CustomStringRepresentationHandler;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringToCustomStringRepresentation
   extends AbstractConversionFromString {
@@ -91,7 +91,7 @@ public class StringToCustomStringRepresentation
    */
   public void setClassname(String value) {
     try {
-      Class.forName(value);
+      ClassManager.getSingleton().forName(value);
     }
     catch (Exception e) {
       return;
@@ -140,7 +140,7 @@ public class StringToCustomStringRepresentation
     Class		cls;
     PropertyEditor	editor;
     
-    cls    = Class.forName(m_Classname);
+    cls    = ClassManager.getSingleton().forName(m_Classname);
     editor = PropertyEditorManager.findEditor(cls);
     if (editor instanceof CustomStringRepresentationHandler) {
       editor.setValue(cls.newInstance());

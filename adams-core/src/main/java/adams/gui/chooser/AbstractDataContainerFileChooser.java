@@ -15,22 +15,23 @@
 
 /*
  * DataContainerFileChooser.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
+
+import adams.core.classmanager.ClassManager;
+import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
+import adams.data.container.DataContainer;
+import adams.data.io.input.AbstractDataContainerReader;
+import adams.data.io.output.AbstractDataContainerWriter;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
-
-import adams.core.io.PlaceholderFile;
-import adams.core.option.OptionUtils;
-import adams.data.container.DataContainer;
-import adams.data.io.input.AbstractDataContainerReader;
-import adams.data.io.output.AbstractDataContainerWriter;
 
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
@@ -106,7 +107,7 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
 
       // get data from converter
       try {
-	cls       = Class.forName(classname);
+	cls       = ClassManager.getSingleton().forName(classname);
 	converter = cls.newInstance();
 	if (reader) {
 	  desc = ((AbstractDataContainerReader) converter).getFormatDescription();
@@ -177,7 +178,7 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
     try {
       // determine current converter
       classname  = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
-      newHandler = Class.forName(classname).newInstance();
+      newHandler = ClassManager.getSingleton().forName(classname).newInstance();
 
       if (m_CurrentHandler == null) {
 	m_CurrentHandler = newHandler;
@@ -220,7 +221,7 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
     if (m_CurrentHandler == null) {
       classname = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
       try {
-	m_CurrentHandler = Class.forName(classname).newInstance();
+	m_CurrentHandler = ClassManager.getSingleton().forName(classname).newInstance();
       }
       catch (Exception e) {
         m_CurrentHandler = null;

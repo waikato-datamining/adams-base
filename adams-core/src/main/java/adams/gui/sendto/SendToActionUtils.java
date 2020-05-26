@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SendToActionUtils.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.sendto;
 
 import adams.core.ClassLister;
 import adams.core.UniqueIDs;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.gui.core.GUIHelper;
@@ -42,7 +43,6 @@ import java.util.Hashtable;
  * Helper class for SendTo actions.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SendToActionUtils {
 
@@ -67,7 +67,7 @@ public class SendToActionUtils {
       classes = ClassLister.getSingleton().getClassnames(AbstractSendToAction.class);
       for (String cls: classes) {
 	try {
-	  sendto   = (AbstractSendToAction) Class.forName(cls).newInstance();
+	  sendto   = (AbstractSendToAction) ClassManager.getSingleton().forName(cls).newInstance();
 	  accepted = sendto.accepts();
 	  for (Class accept: accepted) {
 	    if (!m_AcceptedCache.containsKey(accept))

@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetExporter.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectexport;
 
+import adams.core.classmanager.ClassManager;
 import adams.data.io.output.AbstractSpreadSheetWriter;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
@@ -37,7 +38,6 @@ import java.util.logging.Level;
  * Exports spreadsheet objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetExporter
   extends AbstractObjectExporter {
@@ -113,7 +113,7 @@ public class SpreadSheetExporter
     classnames = AbstractSpreadSheetWriter.getWriters();
     for (String classname: classnames) {
       try {
-	writer     = (SpreadSheetWriter) Class.forName(classname).newInstance();
+	writer     = (SpreadSheetWriter) ClassManager.getSingleton().forName(classname).newInstance();
 	extensions = writer.getFormatExtensions();
 	for (String extension: extensions) {
 	  if (!result.contains(extension))

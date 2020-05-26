@@ -15,13 +15,14 @@
 
 /*
  * Javadoc.java
- * Copyright (C) 2006-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.doc.javadoc;
 
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingObject;
 import adams.core.net.HtmlUtils;
 import adams.core.option.AbstractOptionConsumer;
@@ -338,7 +339,7 @@ public abstract class Javadoc
     cls    = null;
 
     try {
-      cls = Class.forName(getClassname());
+      cls = ClassManager.getSingleton().forName(getClassname());
     }
     catch (Exception e) {
       result = false;
@@ -370,7 +371,7 @@ public abstract class Javadoc
     result = null;
 
     try {
-      cls    = Class.forName(getClassname());
+      cls    = ClassManager.getSingleton().forName(getClassname());
       result = cls.newInstance();
     }
     catch (Exception e) {

@@ -15,12 +15,12 @@
 
 /*
  * AbstractBinPostProcessingTestCase.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.binning.postprocessing;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import adams.data.binning.Bin;
@@ -145,7 +145,7 @@ public abstract class AbstractBinPostProcessingTestCase<T>
     // process data
     for (i = 0; i < setups.length; i++) {
       for (n = 0; n < input.length; n++) {
-	current = (BinPostProcessing) Utils.deepCopy(setups[i]);
+	current = (BinPostProcessing) ClassManager.getSingleton().deepCopy(setups[i]);
 	assertNotNull("Failed to create copy of algorithm: " + OptionUtils.getCommandLine(setups[i]), current);
 
 	errors = new MessageCollection();

@@ -13,28 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractAnonymizerTestCase.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
-import java.io.File;
-import java.lang.reflect.Array;
-
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import adams.test.AdamsTestCase;
 import adams.test.TmpFile;
 
+import java.io.File;
+import java.lang.reflect.Array;
+
 /**
  * Ancestor for test cases tailored for anonymizers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to process
  */
 public abstract class AbstractAnonymizerTestCase<T>
@@ -137,7 +136,7 @@ public abstract class AbstractAnonymizerTestCase<T>
 
     // process data
     for (i = 0; i < setups.length; i++) {
-      current = (AbstractAnonymizer<T>) Utils.deepCopy(setups[i]);
+      current = (AbstractAnonymizer<T>) ClassManager.getSingleton().deepCopy(setups[i]);
       assertNotNull("Failed to create copy of algorithm: " + OptionUtils.getCommandLine(setups[i]), current);
 
       processed = process(input, current);

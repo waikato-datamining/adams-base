@@ -15,7 +15,7 @@
 
 /*
  * ParserHelper.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -24,6 +24,7 @@ import adams.core.DateUtils;
 import adams.core.base.BaseDate;
 import adams.core.base.BaseDateTime;
 import adams.core.base.BaseTime;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingObject;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
@@ -573,7 +574,7 @@ public class ParserHelper
       cnames = AbstractParserFunction.getFunctions();
       for (String cname: cnames) {
 	try {
-	  function = (ParserFunction) Class.forName(cname).newInstance();
+	  function = (ParserFunction) ClassManager.getSingleton().forName(cname).newInstance();
 	  map.put(function.getFunctionName(), function);
 	}
 	catch (Exception e) {
@@ -648,7 +649,7 @@ public class ParserHelper
       cnames = AbstractParserProcedure.getProcedures();
       for (String cname: cnames) {
 	try {
-	  procedure = (ParserProcedure) Class.forName(cname).newInstance();
+	  procedure = (ParserProcedure) ClassManager.getSingleton().forName(cname).newInstance();
 	  map.put(procedure.getProcedureName(), procedure);
 	}
 	catch (Exception e) {

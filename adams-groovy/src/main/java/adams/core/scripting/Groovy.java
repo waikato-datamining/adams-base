@@ -15,13 +15,14 @@
 
 /*
  * Groovy.java
- * Copyright (C) 2009-20135University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.scripting;
 
 import adams.core.Utils;
 import adams.core.Variables;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
@@ -40,7 +41,6 @@ import java.util.logging.Level;
  * A helper class for <a href="http://groovy.codehaus.org/" target="_blank">Groovy</a>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Groovy
   extends LoggingObject {
@@ -65,7 +65,7 @@ public class Groovy
    */
   protected Groovy() {
     try {
-      Class.forName(CLASS_GROOVYCLASSLOADER);
+      ClassManager.getSingleton().forName(CLASS_GROOVYCLASSLOADER);
       m_Present = true;
     }
     catch (Exception e) {
@@ -126,7 +126,7 @@ public class Groovy
 
     if (isPresent()) {
       try {
-	cls    = Class.forName(CLASS_GROOVYCLASSLOADER);
+	cls    = ClassManager.getSingleton().forName(CLASS_GROOVYCLASSLOADER);
 	constr = cls.getConstructor(new Class[]{ClassLoader.class});
 	result = constr.newInstance(Groovy.class.getClassLoader());
       }

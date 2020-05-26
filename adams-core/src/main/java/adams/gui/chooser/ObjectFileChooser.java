@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ObjectFileChooser.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
+import adams.core.classmanager.ClassManager;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.input.SerializedObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
@@ -34,7 +35,6 @@ import java.util.List;
  * A file chooser for objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ObjectFileChooser
   extends AbstractConfigurableExtensionFileFilterFileChooser<AbstractObjectReader,AbstractObjectWriter> {
@@ -235,7 +235,7 @@ public class ObjectFileChooser
 
       // get data from converter
       try {
-	cls       = Class.forName(classname);
+	cls       = ClassManager.getSingleton().forName(classname);
 	converter = cls.newInstance();
 	if (reader) {
 	  if (!((AbstractObjectReader) converter).isAvailable())
@@ -354,7 +354,7 @@ public class ObjectFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractObjectReader) Class.forName(filter.getClassname()).newInstance();
+	  result = (AbstractObjectReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -381,7 +381,7 @@ public class ObjectFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractObjectWriter) Class.forName(filter.getClassname()).newInstance();
+	  result = (AbstractObjectWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

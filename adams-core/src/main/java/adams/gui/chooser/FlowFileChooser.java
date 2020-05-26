@@ -15,11 +15,12 @@
 
 /*
  * FlowFileChooser.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
+import adams.core.classmanager.ClassManager;
 import adams.data.io.input.AbstractFlowReader;
 import adams.data.io.input.DefaultFlowReader;
 import adams.data.io.input.FlowReader;
@@ -37,7 +38,6 @@ import java.util.List;
  * for flows.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowFileChooser
   extends AbstractConfigurableExtensionFileFilterFileChooser<FlowReader,FlowWriter>
@@ -126,7 +126,7 @@ public class FlowFileChooser
 
       // get data from converter
       try {
-	cls       = Class.forName(classname);
+	cls       = ClassManager.getSingleton().forName(classname);
 	converter = cls.newInstance();
 	if (reader) {
 	  desc = ((FlowReader) converter).getFormatDescription();
@@ -261,7 +261,7 @@ public class FlowFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (FlowReader) Class.forName(filter.getClassname()).newInstance();
+	  result = (FlowReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -288,7 +288,7 @@ public class FlowFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (FlowWriter) Class.forName(filter.getClassname()).newInstance();
+	  result = (FlowWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

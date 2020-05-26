@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator;
 
 import adams.core.MessageCollection;
+import adams.core.classmanager.ClassManager;
 import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import adams.data.weka.relationname.AbstractRelationNameHeuristic;
 import adams.gui.event.WekaInvestigatorDataEvent;
@@ -127,7 +128,7 @@ public class InvestigatorWorkspaceHelper
     i = 0;
     while (i < list.size()) {
       try {
-	cls = Class.forName((String) list.get(i));
+	cls = ClassManager.getSingleton().forName((String) list.get(i));
 	tab = (AbstractInvestigatorTab) cls.newInstance();
 	panel.getTabbedPane().addTab(tab, false);
 	tab.deserialize(list.get(i + 1), errors);

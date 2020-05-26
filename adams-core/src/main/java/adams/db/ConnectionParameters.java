@@ -15,7 +15,7 @@
 
 /*
  * ConnectionParameters.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,6 +23,7 @@ package adams.db;
 
 import adams.core.CloneHandler;
 import adams.core.base.BasePassword;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingLevel;
 
 import java.io.Serializable;
@@ -366,7 +367,7 @@ public class ConnectionParameters
     ConnectionParameters	result;
 
     try {
-      result = (ConnectionParameters) Class.forName(classname).newInstance();
+      result = (ConnectionParameters) ClassManager.getSingleton().forName(classname).newInstance();
     }
     catch (Exception e) {
       result = new ConnectionParameters();

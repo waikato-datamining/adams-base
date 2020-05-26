@@ -15,11 +15,12 @@
 
 /*
  * PropertyHelper.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
 import adams.core.MessageCollection;
+import adams.core.classmanager.ClassManager;
 import adams.core.discovery.PropertyPath.PropertyContainer;
 import adams.core.option.OptionUtils;
 
@@ -58,7 +59,7 @@ public class PropertyHelper {
 	if (classname.equals(m_DefaultConverter.getClass().getName()))
 	  continue;
 	try {
-	  converter = (AbstractPropertyValueConverter) Class.forName(classname).newInstance();
+	  converter = (AbstractPropertyValueConverter) ClassManager.getSingleton().forName(classname).newInstance();
 	  converters.add(converter);
 	}
 	catch (Exception e) {

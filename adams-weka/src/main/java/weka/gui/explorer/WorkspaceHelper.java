@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WorkspaceHelper.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.explorer;
 
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
@@ -42,7 +43,6 @@ import java.util.Hashtable;
  * Helper class for loading/saving workspaces.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WorkspaceHelper {
 
@@ -109,7 +109,7 @@ public class WorkspaceHelper {
     for (i = 0; i < cnames.length; i++) {
       if (cnames[i].equals(DefaultHandler.class.getName()))
 	def = i;
-      handlers.add((AbstractExplorerPanelHandler) Class.forName(cnames[i]).newInstance());
+      handlers.add((AbstractExplorerPanelHandler) ClassManager.getSingleton().forName(cnames[i]).newInstance());
     }
 
     if ((def != -1) && (handlers.size() > 1)) {
@@ -245,8 +245,8 @@ public class WorkspaceHelper {
     panels.add(expext.getPreprocessPanel());
     panels.addAll(expext.getPanels());
     for (n = 0; n < panelCount; n++) {
-      cpanel = Class.forName((String) ois.readObject());
-      handler = (AbstractExplorerPanelHandler) Class.forName((String) ois.readObject()).newInstance();
+      cpanel = ClassManager.getSingleton().forName((String) ois.readObject());
+      handler = (AbstractExplorerPanelHandler) ClassManager.getSingleton().forName((String) ois.readObject()).newInstance();
       for (ExplorerPanel panel : panels) {
 	if (panel.getClass().equals(cpanel)) {
 	  handler.deserialize(panel, ois.readObject());

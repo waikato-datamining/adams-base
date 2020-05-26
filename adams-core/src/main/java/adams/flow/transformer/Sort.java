@@ -15,10 +15,17 @@
 
 /*
  * Sort.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
+
+import adams.core.DefaultCompare;
+import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
+import adams.flow.core.Token;
+import adams.flow.core.Unknown;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -27,12 +34,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-
-import adams.core.DefaultCompare;
-import adams.core.QuickInfoHelper;
-import adams.core.Utils;
-import adams.flow.core.Token;
-import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
@@ -100,7 +101,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Sort
   extends AbstractTransformer {
@@ -330,7 +330,7 @@ public class Sort
       m_OutputToken = new Token(m_InputToken.getPayload());
     }
     else {
-      obj = (Object[]) Utils.deepCopy(m_InputToken.getPayload());
+      obj = (Object[]) ClassManager.getSingleton().deepCopy(m_InputToken.getPayload());
       if (isLoggingEnabled())
 	getLogger().info("unsorted: " + Utils.arrayToString(obj));
 

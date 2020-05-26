@@ -15,11 +15,12 @@
 
 /*
  * ClassQuickSearchPanel.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
+import adams.core.classmanager.ClassManager;
 import com.github.fracpete.javautils.enumerate.Enumerated;
 
 import static com.github.fracpete.javautils.Enumerate.enumerate;
@@ -59,7 +60,7 @@ public class ClassQuickSearchPanel
       return null;
 
     try {
-      return Class.forName("" + m_ListItems.getSelectedValue());
+      return ClassManager.getSingleton().forName("" + m_ListItems.getSelectedValue());
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append("Failed to instantiate class: " + m_ListItems.getSelectedValue(), e);

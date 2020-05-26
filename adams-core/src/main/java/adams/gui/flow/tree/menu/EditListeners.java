@@ -13,27 +13,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EditListeners.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
+
+import adams.core.Pausable;
+import adams.core.ShallowCopySupporter;
+import adams.core.classmanager.ClassManager;
+import adams.flow.execution.FlowExecutionListener;
+import adams.gui.goe.GenericObjectEditorDialog;
 
 import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 
-import adams.core.Pausable;
-import adams.core.ShallowCopySupporter;
-import adams.core.Utils;
-import adams.flow.execution.FlowExecutionListener;
-import adams.gui.goe.GenericObjectEditorDialog;
-
 /**
  * For editing currently attached listeners.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class EditListeners
   extends AbstractTreePopupMenuItemAction {
@@ -80,7 +79,7 @@ public class EditListeners
     if (m_State.runningFlow.getFlowExecutionListener() instanceof ShallowCopySupporter)
       dialog.setCurrent(((ShallowCopySupporter) m_State.runningFlow.getFlowExecutionListener()).shallowCopy());
     else
-      dialog.setCurrent(Utils.deepCopy(m_State.runningFlow.getFlowExecutionListener()));
+      dialog.setCurrent(ClassManager.getSingleton().deepCopy(m_State.runningFlow.getFlowExecutionListener()));
     dialog.setLocationRelativeTo(m_State.tree);
     dialog.setVisible(true);
     if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)

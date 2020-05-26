@@ -15,13 +15,13 @@
 
 /*
  * ArrayReverse.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.data.InPlaceProcessing;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -205,7 +205,7 @@ public class ArrayReverse
     else {
       arrayNew = Array.newInstance(arrayOld.getClass().getComponentType(), len);
       for (i = 0; i < len; i++)
-	Array.set(arrayNew, i, Utils.deepCopy(Array.get(arrayOld, len - i - 1)));
+	Array.set(arrayNew, i, ClassManager.getSingleton().deepCopy(Array.get(arrayOld, len - i - 1)));
     }
 
     m_OutputToken = new Token(arrayNew);

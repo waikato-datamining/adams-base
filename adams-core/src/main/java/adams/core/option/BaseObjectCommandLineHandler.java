@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseObjectCommandLineHandler.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.base.BaseObject;
+import adams.core.classmanager.ClassManager;
 import nz.ac.waikato.cms.jenericcmdline.core.OptionUtils;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -31,7 +32,6 @@ import java.util.logging.Level;
  * For BaseObject derived classes (mainly for favorites management).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseObjectCommandLineHandler
   extends AbstractCommandLineHandler {
@@ -64,7 +64,7 @@ public class BaseObjectCommandLineHandler
 
     if (args.length == 2) {
       try {
-	result  = Class.forName(Conversion.getSingleton().rename(args[0])).newInstance();
+	result  = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).newInstance();
 	setOptions(result, new String[]{args[1]});
       }
       catch (Exception e) {
@@ -73,7 +73,7 @@ public class BaseObjectCommandLineHandler
     }
     else if (args.length == 1) {
       try {
-	result = Class.forName(Conversion.getSingleton().rename(args[0])).newInstance();
+	result = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).newInstance();
       }
       catch (Exception e) {
         getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray):", e);

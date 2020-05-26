@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JenericCmdline.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingObject;
 import adams.env.Environment;
 import adams.env.JenericCmdlineDefinition;
@@ -35,7 +36,6 @@ import java.util.logging.Level;
  * Manages what classes should be enhanced with with a generic commandline.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JenericCmdline
   extends LoggingObject {
@@ -78,7 +78,7 @@ public class JenericCmdline
 	continue;
       }
       try {
-	cls = Class.forName(key);
+	cls = ClassManager.getSingleton().forName(key);
 	m_Managed.add(cls);
 	m_Cache.put(cls, true);
       }

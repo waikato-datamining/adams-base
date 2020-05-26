@@ -13,25 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractGenericObjectEditorHandler.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
+import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
+
+import javax.swing.JPanel;
 import java.beans.PropertyEditor;
 import java.io.Serializable;
 import java.util.Hashtable;
-
-import javax.swing.JPanel;
-
-import adams.core.ClassLister;
 
 /**
  * Ancestor for classes that handle commandline options for various frameworks.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractGenericObjectEditorHandler
   implements Serializable {
@@ -152,7 +151,7 @@ public abstract class AbstractGenericObjectEditorHandler
     m_HandlerClasses = new Class[m_Handlers.length];
     for (i = 0; i < m_Handlers.length; i++) {
       try {
-	m_HandlerClasses[i] = Class.forName(m_Handlers[i]);
+	m_HandlerClasses[i] = ClassManager.getSingleton().forName(m_Handlers[i]);
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate GOE handler '" + m_Handlers[i] + "': ");

@@ -15,12 +15,13 @@
 
 /*
  * BrowserHelper.java
- * Copyright (C) 2006-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.management.OS;
 import adams.env.BrowserDefinition;
@@ -160,7 +161,7 @@ public class BrowserHelper {
 
 	  // Mac OS
 	  if (OS.isMac()) {
-	    Class fileMgr = Class.forName("com.apple.eio.FileManager");
+	    Class fileMgr = ClassManager.getSingleton().forName("com.apple.eio.FileManager");
 	    Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[] {String.class});
 	    openURL.invoke(null, new Object[] {url});
 	  }

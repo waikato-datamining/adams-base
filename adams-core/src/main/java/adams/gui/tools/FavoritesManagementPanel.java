@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FavoritesManagementPanel.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseDialog;
@@ -55,7 +56,6 @@ import java.util.List;
  * A panel for managing one's GOE favorites.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FavoritesManagementPanel
   extends BasePanel
@@ -68,7 +68,6 @@ public class FavoritesManagementPanel
    * Abstract List model class for displaying favorites.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static abstract class AbstractFavoritesListModel
     extends DefaultListModel {
@@ -126,7 +125,6 @@ public class FavoritesManagementPanel
    * Table model class for displaying the superclasses.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class SuperclassListModel
     extends AbstractFavoritesListModel {
@@ -180,7 +178,6 @@ public class FavoritesManagementPanel
    * A list model for displaying the favorites of a specific superclass.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class FavoritesListModel
     extends AbstractFavoritesListModel {
@@ -228,7 +225,7 @@ public class FavoritesManagementPanel
      */
     public void setSuperclass(String value) {
       try {
-	setSuperclass(Class.forName(value));
+	setSuperclass(ClassManager.getSingleton().forName(value));
       }
       catch (Exception e) {
 	e.printStackTrace();
@@ -534,7 +531,7 @@ public class FavoritesManagementPanel
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener((ActionEvent e) -> {
       try {
-	Class cls = Class.forName((String) combobox.getSelectedItem());
+	Class cls = ClassManager.getSingleton().forName((String) combobox.getSelectedItem());
 	m_ListModelFavorites.setSuperclass(cls);
 	dialogF.setVisible(false);
 	addFavorite(cls);
@@ -581,7 +578,7 @@ public class FavoritesManagementPanel
     // try to instantiate 1st class
     obj = null;
     try {
-      subcls = Class.forName(classes[0]);
+      subcls = ClassManager.getSingleton().forName(classes[0]);
       obj    = subcls.newInstance();
     }
     catch (Exception e) {

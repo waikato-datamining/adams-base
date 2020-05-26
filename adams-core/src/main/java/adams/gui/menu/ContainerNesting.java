@@ -15,12 +15,13 @@
 
 /*
  * ContainerNesting.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
+import adams.core.classmanager.ClassManager;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
@@ -37,7 +38,6 @@ import java.awt.Container;
  * Displays the ContainerNesting dialog.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ContainerNesting
   extends AbstractBasicMenuItemDefinition {
@@ -75,7 +75,7 @@ public class ContainerNesting
       return;
     
     try {
-      tree = adams.gui.tools.ContainerNesting.analyze((Container) Class.forName(classname).newInstance());
+      tree = adams.gui.tools.ContainerNesting.analyze((Container) ClassManager.getSingleton().forName(classname).newInstance());
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(null, "Failed to generate tree:\n" + e);

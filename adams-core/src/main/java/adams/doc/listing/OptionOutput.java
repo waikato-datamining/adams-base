@@ -15,13 +15,14 @@
 
 /*
  * OptionOutput.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.doc.listing;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseCharset;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
@@ -260,7 +261,7 @@ public class OptionOutput
 	for (String classname: listing.get(module)) {
           outfile = new PlaceholderFile(subdir.getAbsolutePath() + File.separator + classname + m_Extension);
           try {
-            handler = (OptionHandler) Class.forName(classname).newInstance();
+            handler = (OptionHandler) ClassManager.getSingleton().forName(classname).newInstance();
 	    m_Producer.produce(handler);
 	    result = FileUtils.writeToFileMsg(outfile.getAbsolutePath(), m_Producer.toString(), false, m_Encoding.getValue());
 	    if (result != null)

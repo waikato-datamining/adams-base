@@ -15,12 +15,12 @@
 
 /*
  * Copy.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.binning.operation;
 
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.data.binning.Bin;
 import adams.data.binning.Binnable;
 
@@ -71,7 +71,7 @@ public class Copy {
       case DEEP:
         result = new ArrayList<>();
         for (Binnable<T> b: data)
-          result.add(new Binnable<>((T) Utils.deepCopy(b.getPayload()), b.getValue(), b.getMetaData()));
+          result.add(new Binnable<>((T) ClassManager.getSingleton().deepCopy(b.getPayload()), b.getValue(), b.getMetaData()));
         break;
 
       default:

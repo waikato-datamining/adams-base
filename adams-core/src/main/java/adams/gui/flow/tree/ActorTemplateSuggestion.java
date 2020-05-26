@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorTemplateSuggestion.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.env.ActorTemplateSuggestionDefinition;
@@ -39,7 +40,6 @@ import java.util.logging.Level;
  * the context.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorTemplateSuggestion {
 
@@ -92,7 +92,7 @@ public class ActorTemplateSuggestion {
     templates = new ArrayList<>();
     for (i = 0; i < parts.length; i++)  {
       try {
-	templates.add((AbstractActorTemplate) Class.forName(parts[i]).newInstance());
+	templates.add((AbstractActorTemplate) ClassManager.getSingleton().forName(parts[i]).newInstance());
       }
       catch (Exception e) {
 	LOGGER.log(Level.SEVERE,

@@ -15,13 +15,13 @@
 
 /*
  * ArrayToChunks.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -242,7 +242,7 @@ public class ArrayToChunks
     size  = Math.min(m_ChunkSize, (Array.getLength(m_CurrentArray) - m_CurrentIndex));
     chunk = Array.newInstance(m_CurrentArray.getClass().getComponentType(), size);
     for (i = 0; i < size; i++)
-      Array.set(chunk, i, Utils.deepCopy(Array.get(m_CurrentArray, m_CurrentIndex + i)));
+      Array.set(chunk, i, ClassManager.getSingleton().deepCopy(Array.get(m_CurrentArray, m_CurrentIndex + i)));
     m_CurrentIndex += size;
     result = new Token(chunk);
 

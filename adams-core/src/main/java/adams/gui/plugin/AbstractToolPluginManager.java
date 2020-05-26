@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractToolPluginManager.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.plugin;
 
+import adams.core.classmanager.ClassManager;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.GUIHelper;
 
@@ -39,7 +40,6 @@ import java.util.List;
  * Ancestor for classes that manage tool plugins.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the owning tool
  * @param <P> the type of plugin
  */
@@ -117,7 +117,7 @@ public abstract class AbstractToolPluginManager<T extends ToolPluginSupporter, P
     menuNames = new ArrayList<>();
     for (i = 0; i < plugins.length; i++) {
       try {
-	P plugin = (P) Class.forName(plugins[i]).newInstance();
+	P plugin = (P) ClassManager.getSingleton().forName(plugins[i]).newInstance();
 	m_Plugins.add(plugin);
 	if (!menuNames.contains(plugin.getMenu()))
 	  menuNames.add(plugin.getMenu());

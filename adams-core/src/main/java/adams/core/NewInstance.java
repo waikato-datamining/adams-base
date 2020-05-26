@@ -15,11 +15,12 @@
 
 /*
  * NewInstance.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
 
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingObject;
 import adams.env.Environment;
 import adams.env.NewInstanceDefinition;
@@ -101,7 +102,7 @@ public class NewInstance
       if (key.endsWith(SUFFIX_TYPE) || key.endsWith(SUFFIX_VALUE))
 	continue;
       try {
-	cls = Class.forName(key);
+	cls = ClassManager.getSingleton().forName(key);
 	m_Classnames.add(key);
 	m_Classes.add(cls);
       }
@@ -150,7 +151,7 @@ public class NewInstance
    */
   public Object newObject(String classname, boolean quiet) {
     try {
-      return newObject(Class.forName(classname), quiet);
+      return newObject(ClassManager.getSingleton().forName(classname), quiet);
     }
     catch (Exception e) {
       if (!quiet)
@@ -267,7 +268,7 @@ public class NewInstance
 	  values[i] = Double.parseDouble(value);
 	  break;
 	default:
-	  params[i] = Class.forName(type);
+	  params[i] = ClassManager.getSingleton().forName(type);
 	  values[i] = newObject(value);
 	  break;
       }

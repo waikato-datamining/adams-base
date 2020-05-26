@@ -21,6 +21,7 @@
 package adams.flow.container;
 
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -89,7 +90,7 @@ public abstract class AbstractContainer
    * @return		the clone
    */
   public AbstractContainer getClone() {
-    return (AbstractContainer) Utils.deepCopy(this);
+    return (AbstractContainer) ClassManager.getSingleton().deepCopy(this);
   }
 
   /**

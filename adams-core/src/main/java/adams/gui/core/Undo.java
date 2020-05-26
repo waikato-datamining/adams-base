@@ -15,7 +15,7 @@
 
 /*
  * Undo.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -24,7 +24,7 @@ import adams.core.CleanUpHandler;
 import adams.core.CloneHandler;
 import adams.core.Shortening;
 import adams.core.ShorteningType;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.io.TempUtils;
 import adams.gui.event.UndoEvent;
@@ -48,7 +48,6 @@ import java.util.List;
  * The objects have to be serializable.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Undo
   implements CleanUpHandler {
@@ -90,7 +89,7 @@ public class Undo
      * @return		the copy
      */
     public UndoPoint getClone() {
-      return new UndoPoint(Utils.deepCopy(m_Data), m_Comment);
+      return new UndoPoint(ClassManager.getSingleton().deepCopy(m_Data), m_Comment);
     }
 
     /**

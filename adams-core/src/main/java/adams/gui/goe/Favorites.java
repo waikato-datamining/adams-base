@@ -15,13 +15,14 @@
 
 /*
  * Favorites.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
 import adams.core.CloneHandler;
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingObject;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
@@ -44,7 +45,6 @@ import java.util.logging.Level;
  * A helper class for managing the GOE favorites.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Favorites
   implements Comparable, CloneHandler<Favorites> {
@@ -385,7 +385,7 @@ public class Favorites
    */
   public List<Favorite> getFavorites(String classname) {
     try {
-      return getFavorites(Class.forName(classname));
+      return getFavorites(ClassManager.getSingleton().forName(classname));
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -497,7 +497,7 @@ public class Favorites
    */
   public void removeFavorites(String classname) {
     try {
-      removeFavorites(Class.forName(classname));
+      removeFavorites(ClassManager.getSingleton().forName(classname));
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -531,7 +531,7 @@ public class Favorites
    */
   public void removeFavorite(String classname, String name) {
     try {
-      removeFavorite(Class.forName(classname), fixName(name));
+      removeFavorite(ClassManager.getSingleton().forName(classname), fixName(name));
     }
     catch (Exception e) {
       e.printStackTrace();

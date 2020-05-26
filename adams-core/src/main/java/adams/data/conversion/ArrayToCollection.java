@@ -15,11 +15,12 @@
 
 /*
  * ArrayToCollection.java
- * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -149,7 +150,7 @@ public class ArrayToCollection
     int		i;
     int		len;
     
-    result = (Collection) Class.forName(m_CollectionClass).newInstance();
+    result = (Collection) ClassManager.getSingleton().forName(m_CollectionClass).newInstance();
     len    = Array.getLength(m_Input);
     for (i = 0; i < len; i++)
       result.add(Array.get(m_Input, i));

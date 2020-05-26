@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ObjectExporterFileChooser.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.chooser;
 
+import adams.core.classmanager.ClassManager;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objectexport.PlainTextExporter;
 
@@ -31,7 +32,6 @@ import java.util.List;
  * File chooser for object exporters..
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ObjectExporterFileChooser
   extends AbstractConfigurableExtensionFileFilterFileChooser<Object, AbstractObjectExporter>{
@@ -89,7 +89,7 @@ public class ObjectExporterFileChooser
     for (String classname: classnames) {
       // get data from converter
       try {
-	cls       = Class.forName(classname);
+	cls       = ClassManager.getSingleton().forName(classname);
 	converter = cls.newInstance();
 	desc      = ((AbstractObjectExporter) converter).getFormatDescription();
 	ext       = ((AbstractObjectExporter) converter).getFormatExtensions();
@@ -139,7 +139,7 @@ public class ObjectExporterFileChooser
     result = new ArrayList<>();
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       try {
-	cls      = Class.forName(filter.getClassname());
+	cls      = ClassManager.getSingleton().forName(filter.getClassname());
 	exporter = (AbstractObjectExporter) cls.newInstance();
 	if (exporter.handles(m_CurrentClass))
 	  result.add(filter);

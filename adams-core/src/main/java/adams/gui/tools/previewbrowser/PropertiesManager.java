@@ -15,13 +15,14 @@
 
 /*
  * PropertiesManager.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
 
 import adams.core.MessageCollection;
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
@@ -149,7 +150,7 @@ public class PropertiesManager {
       if (m_Blacklisted.contains(handler))
         return null;
       try {
-	result = (AbstractArchiveHandler) Class.forName(handler).newInstance();
+	result = (AbstractArchiveHandler) ClassManager.getSingleton().forName(handler).newInstance();
       }
       catch (Exception e) {
         m_Blacklisted.add(handler);

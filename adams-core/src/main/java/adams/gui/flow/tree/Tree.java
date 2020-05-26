@@ -15,13 +15,14 @@
 
 /*
  * Tree.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.flow.control.Breakpoint;
@@ -1099,7 +1100,7 @@ public class Tree
 	}
 	else {
 	  try {
-	    m_NodePopupClasses.add(Class.forName(item));
+	    m_NodePopupClasses.add(ClassManager.getSingleton().forName(item));
 	  }
 	  catch (Exception ex) {
 	    ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu item class '" + item + "':", ex);
@@ -1116,7 +1117,7 @@ public class Tree
           inserted = false;
           parts    = item.split(":");
           if (parts.length == 3) {
-            ext = Class.forName(parts[2]);
+            ext = ClassManager.getSingleton().forName(parts[2]);
             for (i = 0; i < m_NodePopupClasses.size(); i++) {
               if (m_NodePopupClasses.get(i).getName().equals(parts[1])) {
                 switch (parts[0]) {

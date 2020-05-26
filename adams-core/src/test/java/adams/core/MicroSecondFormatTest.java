@@ -15,11 +15,12 @@
 
 /*
  * MicroSecondFormatTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
+import adams.core.classmanager.ClassManager;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
 import junit.framework.Test;
@@ -49,7 +50,7 @@ public class MicroSecondFormatTest
    * @param cls		ignored
    */
   protected void performSerializableTest(Class cls) {
-    assertNotNull("Serialization failed", Utils.deepCopy(new MicroSecondFormat("BK")));
+    assertNotNull("Serialization failed", ClassManager.getSingleton().deepCopy(new MicroSecondFormat("BK")));
   }
 
   /**

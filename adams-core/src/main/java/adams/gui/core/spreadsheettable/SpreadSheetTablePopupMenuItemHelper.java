@@ -15,12 +15,13 @@
 
 /*
  * SpreadSheetTablePopupMenuItemHelper.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.SpreadSheetTable;
@@ -142,7 +143,7 @@ public class SpreadSheetTablePopupMenuItemHelper {
     classes = ClassLister.getSingleton().getClassnames(cls);
     for (String c : classes) {
       try {
-	result.add((SpreadSheetTablePopupMenuItem) Class.forName(c).newInstance());
+	result.add((SpreadSheetTablePopupMenuItem) ClassManager.getSingleton().forName(c).newInstance());
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append("Failed to instantiate SpreadSheetTable menu item: " + c, e);

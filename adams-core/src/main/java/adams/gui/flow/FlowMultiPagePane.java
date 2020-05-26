@@ -15,12 +15,13 @@
 
 /*
  * FlowTabbedPane.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
 import adams.core.ClassLister;
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.Actor;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
@@ -227,7 +228,7 @@ public class FlowMultiPagePane
       props   = FlowEditorPanel.getPropertiesEditor();
       clsname = props.getProperty("FlowPanelClass", FlowPanel.class.getName());
       try {
-        m_FlowPanelClass = Class.forName(clsname);
+        m_FlowPanelClass = ClassManager.getSingleton().forName(clsname);
       }
       catch (Exception e) {
 	m_FlowPanelClass = FlowPanel.class;

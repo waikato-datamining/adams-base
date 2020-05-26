@@ -15,14 +15,14 @@
 
 /*
  * Storage.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.CloneHandler;
 import adams.core.LRUCache;
-import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import adams.core.classmanager.ClassManager;
 import adams.event.StorageChangeEvent;
 import adams.event.StorageChangeEvent.Type;
 import adams.event.StorageChangeListener;
@@ -375,12 +375,12 @@ public class Storage
 
     result = new Storage();
     for (String key: m_Caches.keySet()) {
-      cache = (LRUCache<String,Object>) Utils.deepCopy(m_Caches.get(key));
+      cache = (LRUCache<String,Object>) ClassManager.getSingleton().deepCopy(m_Caches.get(key));
       result.m_Caches.put(key, cache);
     }
     for (String name: m_Data.keySet()) {
       if ((filter == null) || ((filter != null) && filter.isMatch(name)))
-	result.m_Data.put(name, Utils.deepCopy(m_Data.get(name)));
+	result.m_Data.put(name, ClassManager.getSingleton().deepCopy(m_Data.get(name)));
     }
 
     return result;

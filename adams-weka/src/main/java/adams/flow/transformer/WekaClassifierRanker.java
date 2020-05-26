@@ -15,7 +15,7 @@
 
 /*
  * WekaClassifierRanker.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -25,7 +25,7 @@ import adams.core.Pausable;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
 import adams.core.ThreadLimiter;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionUtils;
@@ -238,7 +238,7 @@ public class WekaClassifierRanker
       m_ClassLabel      = classLabel;
       m_Performance     = null;
       m_EvaluationError = "";
-      m_BestClassifier  = (weka.classifiers.Classifier) Utils.deepCopy(cls);
+      m_BestClassifier  = (weka.classifiers.Classifier) ClassManager.getSingleton().deepCopy(cls);
       m_OutputBestSetup = best;
     }
 

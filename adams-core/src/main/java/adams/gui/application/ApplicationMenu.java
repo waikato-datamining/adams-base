@@ -15,12 +15,13 @@
 
 /*
  * ApplicationMenu.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
 import adams.core.ClassLister;
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingObject;
 import adams.gui.core.GUIHelper;
 
@@ -307,7 +308,7 @@ public class ApplicationMenu
 	    if (props.hasKey(LAYOUT_SHORTCUT_PREFIX + items[n]))
 	      shortcut = props.getProperty(LAYOUT_SHORTCUT_PREFIX + items[n]);
 	    try {
-	      cls = Class.forName(classname);
+	      cls = ClassManager.getSingleton().forName(classname);
 	    }
 	    catch (ClassNotFoundException e) {
 	      getLogger().severe("Menu item not found, skipping: " + classname);

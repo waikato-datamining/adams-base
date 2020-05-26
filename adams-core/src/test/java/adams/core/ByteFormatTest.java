@@ -15,11 +15,12 @@
 
 /*
  * ByteFormatTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
+import adams.core.classmanager.ClassManager;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
 import junit.framework.Test;
@@ -30,7 +31,6 @@ import junit.framework.TestSuite;
  * java adams.core.ByteFormatTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ByteFormatTest
   extends AdamsTestCase {
@@ -50,7 +50,7 @@ public class ByteFormatTest
    * @param cls		ignored
    */
   protected void performSerializableTest(Class cls) {
-    assertNotNull("Serialization failed", Utils.deepCopy(new ByteFormat("BK")));
+    assertNotNull("Serialization failed", ClassManager.getSingleton().deepCopy(new ByteFormat("BK")));
   }
 
   /**

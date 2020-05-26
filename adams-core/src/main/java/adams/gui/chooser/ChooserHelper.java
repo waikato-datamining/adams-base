@@ -13,27 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ChooserHelper.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.data.io.input.AbstractDataContainerReader;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.output.AbstractDataContainerWriter;
 import adams.data.io.output.AbstractReportWriter;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Helper class for file choosers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ChooserHelper {
 
@@ -50,7 +50,7 @@ public class ChooserHelper {
     Object	result;
 
     try {
-      result = Class.forName(subclass).newInstance();
+      result = ClassManager.getSingleton().forName(subclass).newInstance();
       result.getClass().asSubclass(superclass);
     }
     catch (Exception e) {

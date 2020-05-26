@@ -15,11 +15,12 @@
 
 /*
  * AbstractFlowTest.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow;
 
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.option.CompactFlowProducer;
 import adams.core.option.OptionProducer;
@@ -220,7 +221,7 @@ public abstract class AbstractFlowTest
     producer = null;
     if ((format != null) && (format.length() >= 0)) {
       try {
-	producer = (OptionProducer) Class.forName(format).newInstance();
+	producer = (OptionProducer) ClassManager.getSingleton().forName(format).newInstance();
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate option producer '" + format + "': " + e);

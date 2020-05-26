@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * OutputPanel.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.setup.weka;
 
+import adams.core.classmanager.ClassManager;
 import adams.gui.core.BaseComboBox;
 import adams.gui.tools.wekamultiexperimenter.setup.AbstractSetupOptionPanel;
 import adams.gui.tools.wekamultiexperimenter.setup.AbstractSetupPanel;
@@ -36,7 +37,6 @@ import java.util.HashMap;
  * Allows the user to select the output type, e.g., ARFF file or JDBC database.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class OutputPanel
   extends AbstractSetupOptionPanel {
@@ -70,7 +70,7 @@ public class OutputPanel
     panels   = AbstractOutputPanel.getPanels();
     for (String cls: panels) {
       try {
-	panel = (AbstractOutputPanel) Class.forName(cls).newInstance();
+	panel = (AbstractOutputPanel) ClassManager.getSingleton().forName(cls).newInstance();
 	m_Panels.put(panel.getOutputName(), panel);
       }
       catch (Exception e) {

@@ -15,10 +15,11 @@
 
 /*
  * PreferencesManagerPanel.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingLevel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
@@ -88,7 +89,7 @@ public class PreferencesManagerPanel
     classes = AbstractPreferencesPanel.getPanels();
     for (String cls: classes) {
       try {
-	m_Panels.add((PreferencesPanel) Class.forName(cls).newInstance());
+	m_Panels.add((PreferencesPanel) ClassManager.getSingleton().forName(cls).newInstance());
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate preferences panel: " + cls, e);

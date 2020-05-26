@@ -15,12 +15,13 @@
 
 /*
  * AdamsExperimentFileChooser.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.data.io.input.AbstractAdamsExperimentReader;
 import adams.data.io.input.NestedAdamsExperimentReader;
 import adams.data.io.output.AbstractAdamsExperimentWriter;
@@ -36,7 +37,6 @@ import java.util.List;
  * for ADAMS Experiments.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AdamsExperimentFileChooser
   extends AbstractConfigurableExtensionFileFilterFileChooser<AbstractAdamsExperimentReader,AbstractAdamsExperimentWriter>
@@ -268,7 +268,7 @@ public class AdamsExperimentFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractAdamsExperimentReader) Class.forName(filter.getClassname()).newInstance();
+	  result = (AbstractAdamsExperimentReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
 	  handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -300,7 +300,7 @@ public class AdamsExperimentFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractAdamsExperimentWriter) Class.forName(filter.getClassname()).newInstance();
+	  result = (AbstractAdamsExperimentWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
 	  handleException("Failed to instantiate writer: " + filter.getClassname(), e);

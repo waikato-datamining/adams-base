@@ -13,11 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GlobalInfoCache.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
+
+import adams.core.classmanager.ClassManager;
 
 import java.lang.reflect.Method;
 import java.util.Hashtable;
@@ -26,7 +28,6 @@ import java.util.Hashtable;
  * For caching the global info of classes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GlobalInfoCache {
 
@@ -76,7 +77,7 @@ public class GlobalInfoCache {
 
     if (!m_Available.containsKey(clsname)) {
       try {
-	cls    = Class.forName(clsname);
+	cls    = ClassManager.getSingleton().forName(clsname);
 	method = cls.getMethod(METHOD_GLOBALINFO, new Class[0]);
 	obj    = cls.newInstance();
 	info   = (String) method.invoke(obj, new Object[0]);

@@ -20,6 +20,7 @@
 package adams.gui.tools.previewbrowser;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.option.AbstractOptionHandler;
 import com.googlecode.jfilechooserbookmarks.core.Utils;
@@ -145,7 +146,7 @@ public abstract class AbstractContentHandler
       handlers   = getHandlers();
       for (i = 0; i < handlers.length; i++) {
 	try {
-	  handler    = (AbstractContentHandler) Class.forName(handlers[i]).newInstance();
+	  handler    = (AbstractContentHandler) ClassManager.getSingleton().forName(handlers[i]).newInstance();
 	  extensions = handler.getExtensions();
 	  for (n = 0; n < extensions.length; n++) {
 	    ext = extensions[n];

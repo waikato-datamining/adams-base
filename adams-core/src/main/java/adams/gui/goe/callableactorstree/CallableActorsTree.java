@@ -15,11 +15,12 @@
 
 /*
  * CallableActorsTree.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe.callableactorstree;
 
+import adams.core.classmanager.ClassManager;
 import adams.flow.standalone.CallableActors;
 import adams.gui.goe.actorpathtree.ActorPathNode;
 import adams.gui.goe.actorpathtree.ActorPathTree;
@@ -28,7 +29,6 @@ import adams.gui.goe.actorpathtree.ActorPathTree;
  * Displays classes in a tree structure.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CallableActorsTree
   extends ActorPathTree<ActorPathNode> {
@@ -58,7 +58,7 @@ public class CallableActorsTree
     
     result = classname;
     try {
-      obj = Class.forName(result).newInstance();
+      obj = ClassManager.getSingleton().forName(result).newInstance();
       if (obj instanceof CallableActors)
 	result = null;
       if (node.getParent() == null)

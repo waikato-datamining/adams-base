@@ -15,7 +15,7 @@
 
 /*
  * InvestigatorPanel.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator;
@@ -28,6 +28,7 @@ import adams.core.Properties;
 import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
@@ -260,7 +261,7 @@ public class InvestigatorPanel
     classes = getProperties().getProperty("General.DefaultTabs", LogTab.class.getName()).split(",");
     for (String cls: classes) {
       try {
-	tab = (AbstractInvestigatorTab) Class.forName(cls).newInstance();
+	tab = (AbstractInvestigatorTab) ClassManager.getSingleton().forName(cls).newInstance();
 	m_TabbedPane.addTab(tab);
       }
       catch (Exception e) {

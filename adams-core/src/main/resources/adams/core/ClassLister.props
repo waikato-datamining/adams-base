@@ -20,6 +20,10 @@ java.util.Comparator=\
 java.util.logging.Handler=\
   adams.core.logging
 
+# the custom class managers
+adams.core.classmanager.CustomClassManager=\
+  adams.core.classmanager
+
 # the filename generators
 adams.core.io.AbstractFilenameGenerator=\
   adams.core.io

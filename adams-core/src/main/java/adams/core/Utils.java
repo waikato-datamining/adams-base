@@ -15,7 +15,7 @@
 
 /*
  * Utils.java
- * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2006 Dr. Herong Yang, http://www.herongyang.com/
  * Copyright (C) 2008 Dave L., stackoverflow
  */
@@ -33,6 +33,7 @@ import adams.core.base.BaseLong;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseShort;
 import adams.core.base.BaseString;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingSupporter;
 import adams.core.management.LocaleHelper;
 import gnu.trove.list.TIntList;
@@ -683,78 +684,6 @@ public class Utils {
   }
 
   /**
-   * Creates a deep copy of the given object (must be serializable!). Returns
-   * null in case of an error.
-   *
-   * @param o		the object to copy
-   * @return		the deep copy
-   */
-  public static Object deepCopy(Object o) {
-    return deepCopy(o, false);
-  }
-
-  /**
-   * Creates a deep copy of the given object (must be serializable!). Returns
-   * null in case of an error.
-   *
-   * @param o		the object to copy
-   * @param silent	whether to suppress error output
-   * @return		the deep copy
-   */
-  public static Object deepCopy(Object o, boolean silent) {
-    Object		result;
-    SerializedObject	so;
-
-    try {
-      so     = new SerializedObject((Serializable) o);
-      result = so.getObject();
-    }
-    catch (Exception e) {
-      if (!silent) {
-        System.err.println("Failed to serialize " + o.getClass().getName() + ":");
-        e.printStackTrace();
-      }
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
-   * Creates a new instance of the class represented by this object.
-   *
-   * @param o		the object to create a new instance for
-   * @return		the new instance, or null in case of an error
-   */
-  public static Object newInstance(Object o) {
-    if (o != null)
-      return newInstance(o.getClass());
-    else
-      return null;
-  }
-
-  /**
-   * Creates a new instance of the class.
-   *
-   * @param cls		the class to create a new instance for
-   * @return		the new instance, or null in case of an error
-   */
-  public static Object newInstance(Class cls) {
-    Object	result;
-
-    try {
-      result = cls.newInstance();
-    }
-    catch (Exception e) {
-      System.err.println("Error creating new instance for " + cls.getName() + ":");
-      e.printStackTrace();
-      result = null;
-    }
-
-    return result;
-  }
-
-  /**
    * Breaks up the string, if wider than "columns" characters.
    *
    * @param s		the string to process
@@ -1028,7 +957,7 @@ public class Utils {
     result       = Array.newInstance((array != null ? array.getClass().getComponentType() : defValue.getClass()), newLen);
     for (i = 0; i < Array.getLength(result); i++) {
       if (serializable)
-	Array.set(result, i, deepCopy(defValue));
+	Array.set(result, i, ClassManager.getSingleton().deepCopy(defValue));
       else
 	Array.set(result, i, defValue);
     }
@@ -1065,7 +994,7 @@ public class Utils {
     }
 
     try {
-      result = Class.forName(classname);
+      result = ClassManager.getSingleton().forName(classname);
       for (i = 0; i < arrayDim; i++)
 	result = Array.newInstance(result, 0).getClass();
     }

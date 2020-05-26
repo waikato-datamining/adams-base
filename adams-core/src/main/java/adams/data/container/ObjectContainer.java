@@ -13,13 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ObjectContainer.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.container;
 
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.data.id.MutableIDHandler;
 
 /**
@@ -27,7 +27,6 @@ import adams.data.id.MutableIDHandler;
  * for storing meta-data.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ObjectContainer
   extends AbstractSimpleContainer<Object>
@@ -62,7 +61,7 @@ public class ObjectContainer
    */
   @Override
   protected Object cloneContent() {
-    return Utils.deepCopy(m_Content);
+    return ClassManager.getSingleton().deepCopy(m_Content);
   }
 
   /**

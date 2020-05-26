@@ -15,12 +15,13 @@
 
 /*
  * ClassNode.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe.classtree;
 
 import adams.core.annotation.AnnotationHelper;
+import adams.core.classmanager.ClassManager;
 import adams.gui.core.dotnotationtree.DotNotationNode;
 
 /**
@@ -82,7 +83,7 @@ public class ClassNode
     if (m_Deprecated == null) {
       if (isItemLeaf()) {
 	try {
-	  cls          = Class.forName(getItem());
+	  cls          = ClassManager.getSingleton().forName(getItem());
 	  m_Deprecated = AnnotationHelper.isDeprecated(cls);
 	}
 	catch (Exception e) {

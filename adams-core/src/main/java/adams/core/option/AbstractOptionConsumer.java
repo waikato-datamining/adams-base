@@ -21,6 +21,7 @@ package adams.core.option;
 
 import adams.core.Utils;
 import adams.core.annotation.AnnotationHelper;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
@@ -335,7 +336,7 @@ public abstract class AbstractOptionConsumer<C,V>
       result = m_ClassnameCache.get(classname);
     }
     else {
-      result = Class.forName(Conversion.getSingleton().rename(classname)).getConstructor();
+      result = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(classname)).getConstructor();
       m_ClassnameCache.put(classname, result);
     }
 

@@ -15,12 +15,13 @@
 
 /*
  * ExperimenterPanel.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter;
 
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
@@ -164,7 +165,7 @@ public class ExperimenterPanel
 
     try {
       cname        = props.getProperty("Setups.InitialPanel", BasicWekaSetupPanel.class.getName());
-      m_PanelSetup = (AbstractSetupPanel) Class.forName(cname).newInstance();
+      m_PanelSetup = (AbstractSetupPanel) ClassManager.getSingleton().forName(cname).newInstance();
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate setups panel: " + props.getProperty("SetupsInitialPanel"), e);

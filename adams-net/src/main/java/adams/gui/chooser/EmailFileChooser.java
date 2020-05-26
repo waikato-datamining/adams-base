@@ -15,12 +15,13 @@
 
 /*
  * EmailFileChooser.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.data.io.input.EmailFileReader;
 import adams.data.io.input.PropertiesEmailFileReader;
 import adams.data.io.output.EmailFileWriter;
@@ -38,7 +39,6 @@ import java.util.List;
  * for emails.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EmailFileChooser
   extends AbstractConfigurableExtensionFileFilterFileChooser<EmailFileReader,EmailFileWriter>
@@ -127,7 +127,7 @@ public class EmailFileChooser
 
       // get data from converter
       try {
-	cls       = Class.forName(classname);
+	cls       = ClassManager.getSingleton().forName(classname);
 	converter = cls.newInstance();
 	if (reader) {
 	  desc = ((EmailFileReader) converter).getFormatDescription();
@@ -310,7 +310,7 @@ public class EmailFileChooser
     try {
       // determine current converter
       classname  = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
-      newHandler = Class.forName(classname).newInstance();
+      newHandler = ClassManager.getSingleton().forName(classname).newInstance();
 
       if (m_CurrentHandler == null) {
 	m_CurrentHandler = newHandler;
@@ -339,7 +339,7 @@ public class EmailFileChooser
     if (m_CurrentHandler == null) {
       classname = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
       try {
-	m_CurrentHandler = Class.forName(classname).newInstance();
+	m_CurrentHandler = ClassManager.getSingleton().forName(classname).newInstance();
       }
       catch (Exception e) {
         m_CurrentHandler = null;
@@ -388,7 +388,7 @@ public class EmailFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (EmailFileReader) Class.forName(filter.getClassname()).newInstance();
+	  result = (EmailFileReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -415,7 +415,7 @@ public class EmailFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (EmailFileWriter) Class.forName(filter.getClassname()).newInstance();
+	  result = (EmailFileWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

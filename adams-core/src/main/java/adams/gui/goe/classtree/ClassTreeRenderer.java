@@ -15,11 +15,12 @@
 
 /*
  * ClassTreeRenderer.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe.classtree;
 
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.Actor;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.dotnotationtree.DotNotationRenderer;
@@ -32,7 +33,6 @@ import java.util.Hashtable;
  * A specialized renderer for the class tree elements.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClassTreeRenderer
   extends DotNotationRenderer<ClassNode> {
@@ -76,7 +76,7 @@ public class ClassTreeRenderer
       }
       else {
         try {
-	  cls    = Class.forName(classname);
+	  cls    = ClassManager.getSingleton().forName(classname);
           result = GUIHelper.getIcon(cls);
 	  if (result != null)
 	    m_Icons.put(classname, result);

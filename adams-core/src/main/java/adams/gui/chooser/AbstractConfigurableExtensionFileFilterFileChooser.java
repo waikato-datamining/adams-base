@@ -15,12 +15,13 @@
 
 /*
  * AbstractConfigurableExtensionFileFilterFileChooser.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.ObjectCopyHelper;
+import adams.core.classmanager.ClassManager;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.goe.GenericObjectEditor;
@@ -235,7 +236,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
       }
       if ((filter != null) && (m_LastOpenHandler == null)) {
 	try {
-	  m_LastOpenHandler = Class.forName(filter.getClassname()).newInstance();
+	  m_LastOpenHandler = ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate last open handler: " + filter.getClassname(), e);
@@ -252,7 +253,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
       }
       if ((filter != null) && (m_LastSaveHandler == null)) {
 	try {
-	  m_LastSaveHandler = Class.forName(filter.getClassname()).newInstance();
+	  m_LastSaveHandler = ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate last save handler: " + filter.getClassname(), e);
@@ -433,7 +434,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
     try {
       // determine current converter
       classname  = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
-      newHandler = Class.forName(classname).newInstance();
+      newHandler = ClassManager.getSingleton().forName(classname).newInstance();
 
       if (m_CurrentHandler == null) {
 	m_CurrentHandler = newHandler;
@@ -462,7 +463,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
     if (m_CurrentHandler == null) {
       classname = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
       try {
-	m_CurrentHandler = Class.forName(classname).newInstance();
+	m_CurrentHandler = ClassManager.getSingleton().forName(classname).newInstance();
       }
       catch (Exception e) {
 	m_CurrentHandler = null;

@@ -15,11 +15,12 @@
 
 /*
  * HelpPanel.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
 
+import adams.core.classmanager.ClassManager;
 import adams.core.net.HtmlUtils;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BaseScrollPane;
@@ -90,7 +91,7 @@ public class HelpFrame
       else if (e.getEventType() == EventType.ACTIVATED) {
         if (classname != null) {
           try {
-            showHelp(Class.forName(classname));
+            showHelp(ClassManager.getSingleton().forName(classname));
 	  }
 	  catch (Exception ex) {
 	    System.err.println("Failed to generate help for class: " + classname);

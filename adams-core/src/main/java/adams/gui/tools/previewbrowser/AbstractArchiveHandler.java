@@ -13,26 +13,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractArchiveHandler.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
+
+import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.core.option.AbstractOptionHandler;
 
 import java.io.File;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import adams.core.ClassLister;
-import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderFile;
-import adams.core.option.AbstractOptionHandler;
-
 /**
  * Ancestor of all archive handlers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractArchiveHandler
   extends AbstractOptionHandler {
@@ -172,7 +172,7 @@ public abstract class AbstractArchiveHandler
       handlers   = getHandlers();
       for (i = 0; i < handlers.length; i++) {
 	try {
-	  handler    = (AbstractArchiveHandler) Class.forName(handlers[i]).newInstance();
+	  handler    = (AbstractArchiveHandler) ClassManager.getSingleton().forName(handlers[i]).newInstance();
 	  extensions = handler.getExtensions();
 	  for (n = 0; n < extensions.length; n++) {
 	    if (!m_Relation.containsKey(extensions[n]))

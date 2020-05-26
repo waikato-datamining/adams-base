@@ -15,11 +15,12 @@
 
 /*
  * ObjectCopyHelper.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
 
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionHandler;
@@ -64,7 +65,7 @@ public class ObjectCopyHelper {
     else if (source instanceof CloneHandler)
       return CopyType.CLONEHANDLER;
     else if (source instanceof Serializable) {
-      if (Utils.deepCopy(source, true) != null)
+      if (ClassManager.getSingleton().deepCopy(source, true) != null)
         return CopyType.SERIALIZABLE;
       else
         return CopyType.NEWINSTANCE;
@@ -124,7 +125,7 @@ public class ObjectCopyHelper {
    * @return 		a copy of the source objects
    * @see		OptionUtils#shallowCopy
    * @see		CloneHandler#getClone()
-   * @see		Utils#deepCopy(Object)
+   * @see		ClassManager#deepCopy(Object)
    * @see		CopyType
    */
   public static <T> T[] copyObjects(CopyType type, T[] source) {
@@ -154,7 +155,7 @@ public class ObjectCopyHelper {
    * @return 		a copy of the source object
    * @see		OptionUtils#shallowCopy
    * @see		CloneHandler#getClone()
-   * @see		Utils#deepCopy(Object)
+   * @see		ClassManager#deepCopy(Object)
    * @see		CopyType
    */
   protected static <T> T createCopy(CopyType type, T source) {
@@ -170,7 +171,7 @@ public class ObjectCopyHelper {
       case CLONEHANDLER:
         return (T) ((CloneHandler) source).getClone();
       case SERIALIZABLE:
-	return (T) Utils.deepCopy(source);
+	return (T) ClassManager.getSingleton().deepCopy(source);
       case NEWINSTANCE:
         return (T) newInstance(source.getClass());
       default:
@@ -186,7 +187,7 @@ public class ObjectCopyHelper {
    * @throws Exception	if instantiation fails
    */
   public static Object newInstance(String cls) throws Exception {
-    return newInstance(Class.forName(cls));
+    return newInstance(ClassManager.getSingleton().forName(cls));
   }
 
   /**

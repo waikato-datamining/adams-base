@@ -15,12 +15,13 @@
 
 /*
  * AbstractHelpGenerator.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.gui.core.ConsolePanel;
 
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ public abstract class AbstractHelpGenerator {
   public static synchronized HelpContainer generateHelp(String clsName) {
     Class 			cls;
     try {
-      cls = Class.forName(clsName);
+      cls = ClassManager.getSingleton().forName(clsName);
       return generateHelp(cls);
     }
     catch (Exception e) {

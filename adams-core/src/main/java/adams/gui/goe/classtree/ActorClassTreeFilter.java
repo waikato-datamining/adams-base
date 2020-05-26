@@ -15,11 +15,12 @@
 
 /*
  * ActorClassTreeFilter.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe.classtree;
 
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Compatibility;
@@ -213,7 +214,7 @@ public class ActorClassTreeFilter
 
     if (!m_ItemClassCache.containsKey(item)) {
       try {
-        cls = Class.forName(item);
+        cls = ClassManager.getSingleton().forName(item);
         m_ItemClassCache.put(item, cls);
       }
       catch (Exception e) {

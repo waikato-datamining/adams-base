@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CreateCallableActor.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.ActorReferenceHandler;
 import adams.gui.action.AbstractPropertiesAction;
 import adams.gui.core.GUIHelper;
@@ -34,7 +35,6 @@ import java.util.List;
  * callable actor handler.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class CreateCallableActor
   extends AbstractTreePopupSubMenuAction {
@@ -68,7 +68,7 @@ public class CreateCallableActor
     clsnames = ClassLister.getSingleton().getClassnames(ActorReferenceHandler.class);
     for (String clsname: clsnames) {
       try {
-	final Class cls = Class.forName(clsname);
+	final Class cls = ClassManager.getSingleton().forName(clsname);
 	action = new AbstractTreePopupMenuItemAction() {
 	  private static final long serialVersionUID = -8553715825229272758L;
 	  @Override

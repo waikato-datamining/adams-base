@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractExpressionEvaluator.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
+import adams.core.classmanager.ClassManager;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -29,7 +30,6 @@ import adams.env.Environment;
  * Abstract ancestor for classes that evaluate expressions.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the return type of the parser
  */
 public abstract class AbstractExpressionEvaluator<T>
@@ -178,7 +178,7 @@ public abstract class AbstractExpressionEvaluator<T>
     if ((env == null) || (env.length() == 0))
       env = Environment.class.getName();
     try {
-      Environment.setEnvironmentClass(Class.forName(env));
+      Environment.setEnvironmentClass(ClassManager.getSingleton().forName(env));
     }
     catch (Exception e) {
       e.printStackTrace();

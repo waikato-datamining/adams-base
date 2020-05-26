@@ -13,25 +13,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractObjectHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.Cell.ContentType;
+
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Ancestor for handlers that manage the {@link ContentType#OBJECT} type of
  * cells.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of object to handle
  */
 public abstract class AbstractObjectHandler<T>
@@ -127,7 +127,7 @@ public abstract class AbstractObjectHandler<T>
       handlers = getHandlers();
       for (String h: handlers) {
 	try {
-	  handler = (AbstractObjectHandler) Class.forName(h).newInstance();
+	  handler = (AbstractObjectHandler) ClassManager.getSingleton().forName(h).newInstance();
 	  if (handler.handles(cls)) {
 	    m_Handlers.put(cls, handler.getClass());
 	    result = handler;

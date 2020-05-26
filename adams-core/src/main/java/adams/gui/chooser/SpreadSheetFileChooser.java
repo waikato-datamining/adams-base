@@ -15,11 +15,12 @@
 
 /*
  * SpreadSheetFileChooser.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
+import adams.core.classmanager.ClassManager;
 import adams.data.io.input.AbstractSpreadSheetReader;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
@@ -37,7 +38,6 @@ import java.util.List;
  * for spreadsheets.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetFileChooser
   extends AbstractConfigurableExtensionFileFilterFileChooser<SpreadSheetReader,SpreadSheetWriter>
@@ -126,7 +126,7 @@ public class SpreadSheetFileChooser
 
       // get data from converter
       try {
-	cls       = Class.forName(classname);
+	cls       = ClassManager.getSingleton().forName(classname);
 	converter = cls.newInstance();
 	if (reader) {
 	  desc = ((SpreadSheetReader) converter).getFormatDescription();
@@ -261,7 +261,7 @@ public class SpreadSheetFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (SpreadSheetReader) Class.forName(filter.getClassname()).newInstance();
+	  result = (SpreadSheetReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -288,7 +288,7 @@ public class SpreadSheetFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (SpreadSheetWriter) Class.forName(filter.getClassname()).newInstance();
+	  result = (SpreadSheetWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

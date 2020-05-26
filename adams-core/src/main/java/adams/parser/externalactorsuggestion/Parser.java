@@ -5,6 +5,7 @@
 
 package adams.parser.externalactorsuggestion;
 
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
@@ -659,7 +660,7 @@ public class Parser extends java_cup.runtime.lr_parser {
       return false;
 
     try {
-      cls = Class.forName(classname);
+      cls = ClassManager.getSingleton().forName(classname);
     }
     catch (Exception e) {
       getHelper().getLogger().log(Level.SEVERE, "ActorSuggestion (preceding generates): Failed to instantiate class '" + classname + "'!", e);
@@ -685,7 +686,7 @@ public class Parser extends java_cup.runtime.lr_parser {
       return false;
 
     try {
-      cls = Class.forName(classname);
+      cls = ClassManager.getSingleton().forName(classname);
     }
     catch (Exception e) {
       getHelper().getLogger().log(Level.SEVERE, "ActorSuggestion (following accepts): Failed to instantiate class '" + classname + "'!", e);

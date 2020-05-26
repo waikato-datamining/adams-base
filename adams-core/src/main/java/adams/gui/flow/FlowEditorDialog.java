@@ -13,23 +13,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FlowEditorDialog.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
+
+import adams.core.classmanager.ClassManager;
+import adams.gui.core.BaseDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
 
-import adams.gui.core.BaseDialog;
-
 /**
  * Dialog that displays a flow editor panel.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowEditorDialog
   extends BaseDialog {
@@ -74,7 +74,7 @@ public class FlowEditorDialog
     classname = FlowEditorPanel.getPropertiesEditor().getPath(
 	"FlowEditorClass", FlowEditorPanel.class.getName());
     try {
-      m_FlowEditorPanel = (FlowEditorPanel) Class.forName(classname).newInstance();
+      m_FlowEditorPanel = (FlowEditorPanel) ClassManager.getSingleton().forName(classname).newInstance();
     }
     catch (Exception ex) {
       m_FlowEditorPanel = new FlowEditorPanel();

@@ -14,14 +14,15 @@
  */
 
 /*
- * Table.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * AbstractIndexedTable.java
+ * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.db;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.db.indices.Index;
@@ -429,7 +430,7 @@ public abstract class AbstractIndexedTable
       try {
 	if (debug)
 	  System.out.println("Initializing table: " + tables[i]);
-	cls = Class.forName(tables[i]);
+	cls = ClassManager.getSingleton().forName(tables[i]);
 	try {
 	  method  = cls.getMethod("isEnabled", Class.class);
 	  enabled = (Boolean) method.invoke(null, cls);

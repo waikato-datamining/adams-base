@@ -15,14 +15,14 @@
 
 /*
  * InvestigatorTabbedPane.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
 
 import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
@@ -164,7 +164,7 @@ public class InvestigatorTabbedPane
     try {
       tabNew = tab.getClass().newInstance();
       addTab(tabNew);
-      tabNew.deserialize(Utils.deepCopy(tab.serialize(new HashSet<>(Arrays.asList(SerializationOption.values())))), errors);
+      tabNew.deserialize(ClassManager.getSingleton().deepCopy(tab.serialize(new HashSet<>(Arrays.asList(SerializationOption.values())))), errors);
     }
     catch (Exception ex) {
       errors.add("Failed to copy tab!", ex);

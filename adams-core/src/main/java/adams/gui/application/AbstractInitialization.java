@@ -13,20 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractInitialization.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.core.option.OptionUtils;
 
 /**
  * Ancestor for initialization applets.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractInitialization 
   implements Initialization {
@@ -73,7 +73,7 @@ public abstract class AbstractInitialization
     classes = AbstractInitialization.getInitializations();
     for (String cls: classes) {
       try {
-	init   = (Initialization) Class.forName(cls).newInstance();
+	init   = (Initialization) ClassManager.getSingleton().forName(cls).newInstance();
 	result = init.initialize(parent) || result;
       }
       catch (Exception e) {

@@ -15,12 +15,12 @@
 
 /*
  * GenericArrayEditorPanel.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
@@ -36,7 +36,6 @@ import java.lang.reflect.Array;
  * and a button for bringing up the GenericArrayEditor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GenericArrayEditorPanel
   extends AbstractChooserPanel {
@@ -164,9 +163,9 @@ public class GenericArrayEditorPanel
   @Override
   public boolean setCurrent(Object value) {
     if (value == null)
-      m_Current = Utils.deepCopy(m_Default);
+      m_Current = ClassManager.getSingleton().deepCopy(m_Default);
     else
-      m_Current = Utils.deepCopy(value);
+      m_Current = ClassManager.getSingleton().deepCopy(value);
 
     updateDisplay();
 

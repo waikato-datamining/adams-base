@@ -13,14 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetViewTest.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.spreadsheet;
 
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.exception.NotImplementedException;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.output.CsvSpreadSheetWriter;
@@ -40,7 +40,6 @@ import java.util.List;
  * java adams.data.spreadsheet.SpreadSheetViewTest
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetViewTest
   extends AdamsTestCase {
@@ -279,7 +278,7 @@ public class SpreadSheetViewTest
     CsvSpreadSheetReader reader = new CsvSpreadSheetReader();
     SpreadSheet data = reader.read(new TmpFile("sample3.csv").getAbsolutePath());
     SpreadSheetView view = new SpreadSheetView(data, null, null);
-    assertNotNull("Failed to serialize!", Utils.deepCopy(view));
+    assertNotNull("Failed to serialize!", ClassManager.getSingleton().deepCopy(view));
   }
 
   /**

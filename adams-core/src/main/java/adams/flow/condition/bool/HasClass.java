@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HasClass.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
 import adams.core.QuickInfoHelper;
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -44,7 +45,6 @@ Missing tooltip: adams.flow.condition.bool.HasClass.classNameTipText
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 15570 $
  */
 public class HasClass
   extends AbstractBooleanCondition {
@@ -157,7 +157,7 @@ public class HasClass
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
     try {
-      Class.forName(m_ClassName);
+      ClassManager.getSingleton().forName(m_ClassName);
       return true;
     }
     catch (Exception e) {

@@ -13,26 +13,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Drivers.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
+
+import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
+import adams.core.logging.LoggingObject;
+import adams.env.DriversDefinition;
+import adams.env.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import adams.core.Properties;
-import adams.core.logging.LoggingObject;
-import adams.env.DriversDefinition;
-import adams.env.Environment;
-
 /**
  * Helper class for loading JDBC driver classes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Drivers
   extends LoggingObject {
@@ -86,7 +86,7 @@ public class Drivers
       list = m_Properties.getProperty(KEY_DRIVERS, "").replace(" ", "").split(",");
       for (String driver: list) {
 	try {
-	  m_Drivers.add(Class.forName(driver).newInstance());
+	  m_Drivers.add(ClassManager.getSingleton().forName(driver).newInstance());
 	}
 	catch(Exception e) {
 	  getLogger().log(Level.SEVERE, "Failed to load driver '" + driver + "': ", e);

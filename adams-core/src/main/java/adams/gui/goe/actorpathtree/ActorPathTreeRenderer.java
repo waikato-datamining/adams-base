@@ -15,11 +15,12 @@
 
 /*
  * ActorPathTreeRenderer.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe.actorpathtree;
 
+import adams.core.classmanager.ClassManager;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.dotnotationtree.DotNotationRenderer;
 
@@ -30,7 +31,6 @@ import java.util.Hashtable;
  * A specialized renderer for actor path trees.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorPathTreeRenderer
   extends DotNotationRenderer<ActorPathNode> {
@@ -77,7 +77,7 @@ public class ActorPathTreeRenderer
       }
       else {
 	try {
-	  result = GUIHelper.getIcon(Class.forName(classname));
+	  result = GUIHelper.getIcon(ClassManager.getSingleton().forName(classname));
           if (result != null)
             m_Icons.put(classname, result);
 	  else

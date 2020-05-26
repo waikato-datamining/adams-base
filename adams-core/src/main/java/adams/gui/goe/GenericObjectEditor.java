@@ -15,7 +15,7 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2019 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,6 +24,7 @@ package adams.gui.goe;
 import adams.core.ClassLister;
 import adams.core.CustomDisplayStringProvider;
 import adams.core.ObjectCopyHelper;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
@@ -251,7 +252,7 @@ public class GenericObjectEditor
 	  return;
 	String clsname = m_Tree.getSelectedItem();
 	try {
-	  Class cls = Class.forName(clsname);
+	  Class cls = ClassManager.getSingleton().forName(clsname);
 	  setValue(cls.newInstance());
 	}
 	catch (Exception ex) {
@@ -907,7 +908,7 @@ public class GenericObjectEditor
       LOGGER.log(Level.SEVERE, "No class type set up for GenericObjectEditor and more than one superclass found, defaulting to: " + superclasses[0]);
     
     try {
-      m_ClassType              = Class.forName(superclasses[0]);
+      m_ClassType              = ClassManager.getSingleton().forName(superclasses[0]);
       m_canChangeClassInDialog = true;
     }
     catch (Exception e) {

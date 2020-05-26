@@ -15,7 +15,7 @@
 
 /*
  * SerializableObjectReader.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -23,6 +23,7 @@ package adams.data.io.input;
 import adams.core.SerializableObject;
 import adams.core.SerializationHelper;
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.data.io.output.SerializableObjectWriter;
@@ -33,7 +34,6 @@ import java.util.logging.Level;
  * Loads a {@link adams.core.SerializableObject}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SerializableObjectReader
   extends AbstractObjectReader {
@@ -102,7 +102,7 @@ public class SerializableObjectReader
 	if (all.length == 2) {
 	  cname = (String) all[0];
 	  data  = (Object[]) all[1];
-	  result = (SerializableObject) Class.forName(cname).newInstance();
+	  result = (SerializableObject) ClassManager.getSingleton().forName(cname).newInstance();
 	  result.setSerializationSetup(data);
 	  result.setSetupLoadedOrGenerated(true);
 	  return result;

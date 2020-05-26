@@ -159,7 +159,7 @@
     <dependency>
       <groupId>com.github.waikato</groupId>
       <artifactId>jclasslocator</artifactId>
-      <version>0.0.15</version>
+      <version>0.0.16</version>
     </dependency>
 
     <dependency>

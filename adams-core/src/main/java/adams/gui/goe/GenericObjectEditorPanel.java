@@ -20,7 +20,7 @@
 
 package adams.gui.goe;
 
-import adams.core.Utils;
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.BasePopupMenu;
@@ -245,7 +245,7 @@ public class GenericObjectEditorPanel
    */
   @Override
   public Object getCurrent() {
-    return Utils.deepCopy(m_Current);
+    return ObjectCopyHelper.copyObject(m_Current);
   }
 
   /**

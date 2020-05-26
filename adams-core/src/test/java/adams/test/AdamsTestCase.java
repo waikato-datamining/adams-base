@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AdamsTestCase.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.test;
 
 import adams.core.DateUtils;
 import adams.core.QuickInfoSupporter;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.management.CharsetHelper;
 import adams.core.management.LocaleHelper;
 import adams.core.management.OS;
@@ -60,7 +60,6 @@ import java.util.TimeZone;
  *   <code>-Dadams.test.skip=adams.some.where.Class1Test,adams.some.where.else.Class2Test</code>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AdamsTestCase
   extends TestCase {
@@ -123,7 +122,7 @@ public class AdamsTestCase
 
     if (getClass().getName().endsWith("Test")) {
       try {
-	result = Class.forName(getClass().getName().replaceAll("Test$", ""));
+	result = ClassManager.getSingleton().forName(getClass().getName().replaceAll("Test$", ""));
       }
       catch (Exception e) {
 	result = null;
@@ -172,7 +171,7 @@ public class AdamsTestCase
     // set up the correct environment
     clsname = System.getProperty(PROPERTY_ENV_CLASS);
     if (clsname != null)
-      adams.env.Environment.setEnvironmentClass(Class.forName(clsname));
+      adams.env.Environment.setEnvironmentClass(ClassManager.getSingleton().forName(clsname));
     if (adams.env.Environment.getEnvironmentClass() == null)
       throw new IllegalStateException("No environment class set!");
 
@@ -471,7 +470,7 @@ public class AdamsTestCase
     if (obj == null)
       return;
     
-    assertNotNull("Serialization failed", Utils.deepCopy(obj));
+    assertNotNull("Serialization failed", ClassManager.getSingleton().deepCopy(obj));
   }
 
   /**

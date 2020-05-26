@@ -13,24 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractInspectionHandler.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.inspectionhandler;
+
+import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-
-import adams.core.ClassLister;
 
 /**
  * Ancestor for handlers that provide further insight into certain types of
  * objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractInspectionHandler {
 
@@ -62,7 +62,7 @@ public abstract class AbstractInspectionHandler {
     m_HandlerClasses = new Class[m_Handlers.length];
     for (i = 0; i < m_Handlers.length; i++) {
       try {
-	m_HandlerClasses[i] = Class.forName(m_Handlers[i]);
+	m_HandlerClasses[i] = ClassManager.getSingleton().forName(m_Handlers[i]);
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate inspection handler '" + m_Handlers[i] + "': ");

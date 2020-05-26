@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractTableAction.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
 
 import adams.core.Shortening;
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.db.ReportProvider;
@@ -37,7 +38,6 @@ import javax.swing.Icon;
  * {@link ReportFactory}.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractTableAction
   extends AbstractBaseAction {
@@ -320,7 +320,7 @@ public abstract class AbstractTableAction
       }
       else {
 	try {
-	  taction    = (AbstractTableAction) Class.forName(action).newInstance();
+	  taction    = (AbstractTableAction) ClassManager.getSingleton().forName(action).newInstance();
 	  singleAppl = 
 	      (rows.length == 1) 
 	      && (taction.isApplicable(table, rows[0], fields[0], valuesStr[0]));

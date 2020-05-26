@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractConversionTestCase.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
@@ -34,7 +35,6 @@ import adams.test.TmpFile;
  * Ancestor for conversion test cases.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractConversionTestCase
   extends AbstractDatabaseTestCase {
@@ -173,7 +173,7 @@ public abstract class AbstractConversionTestCase
       if (setups[n] instanceof OptionHandler)
 	current = (Conversion) OptionUtils.shallowCopy((OptionHandler) setups[n], false);
       else
-	current = (Conversion) Utils.deepCopy(setups[n]);
+	current = (Conversion) ClassManager.getSingleton().deepCopy(setups[n]);
       assertNotNull("Failed to create copy of conversion algorithm: " + OptionUtils.getCommandLine(setups[n]), current);
 
       for (i = 0; i < input.length; i++) {

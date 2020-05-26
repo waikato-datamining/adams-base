@@ -15,11 +15,12 @@
 
 /*
  * AbstractReportFileChooser.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
+import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.AbstractReportReader;
@@ -40,7 +41,6 @@ import java.util.List;
  * Based on <code>weka.gui.ConverterFileChooser</code>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see	    weka.gui.ConverterFileChooser
  * @param <T> the type of report
  */
@@ -107,7 +107,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
 
       // get data from converter
       try {
-	cls       = Class.forName(classname);
+	cls       = ClassManager.getSingleton().forName(classname);
 	converter = cls.newInstance();
 	if (reader) {
 	  desc = ((AbstractReportReader) converter).getFormatDescription();
@@ -259,7 +259,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
     try {
       // determine current converter
       classname  = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
-      newHandler = Class.forName(classname).newInstance();
+      newHandler = ClassManager.getSingleton().forName(classname).newInstance();
 
       if (m_CurrentHandler == null) {
 	m_CurrentHandler = newHandler;
@@ -293,7 +293,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
     if (m_CurrentHandler == null) {
       classname = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
       try {
-	m_CurrentHandler = Class.forName(classname).newInstance();
+	m_CurrentHandler = ClassManager.getSingleton().forName(classname).newInstance();
       }
       catch (Exception e) {
 	m_CurrentHandler = null;

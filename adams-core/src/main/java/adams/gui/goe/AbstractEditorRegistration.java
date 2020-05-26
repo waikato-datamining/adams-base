@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractEditorRegistration.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 
@@ -30,7 +31,6 @@ import java.util.logging.Level;
  * Ancestor for classes that register GenericObjectEditor editors.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractEditorRegistration
   implements Serializable {
@@ -100,7 +100,7 @@ public abstract class AbstractEditorRegistration
     registrations = getRegistrations();
     for (String classname: registrations) {
       try {
-	registration = (AbstractEditorRegistration) Class.forName(classname).newInstance();
+	registration = (AbstractEditorRegistration) ClassManager.getSingleton().forName(classname).newInstance();
 	if (registration instanceof AdamsEditorsRegistration)
 	  continue;
 	if (!registration.register())

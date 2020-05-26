@@ -13,18 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NewArray.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
-import java.lang.reflect.Array;
-
 import adams.core.QuickInfoHelper;
 import adams.core.base.ArrayDimensions;
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.lang.reflect.Array;
 
 /**
  <!-- globalinfo-start -->
@@ -83,7 +84,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NewArray
   extends AbstractSimpleSource {
@@ -229,7 +229,7 @@ public class NewArray
     Class	cls;
     
     try {
-      cls = Class.forName(m_ArrayClass);
+      cls = ClassManager.getSingleton().forName(m_ArrayClass);
       if (parseDimensions(m_Dimensions.getValue()) == null)
 	return new Class[]{Unknown.class};
       else
@@ -258,7 +258,7 @@ public class NewArray
     
     if (result == null) {
       try {
-	cls           = Class.forName(m_ArrayClass);
+	cls           = ClassManager.getSingleton().forName(m_ArrayClass);
 	array         = Array.newInstance(cls, parseDimensions(m_Dimensions.getValue()));
 	m_OutputToken = new Token(array);
       }

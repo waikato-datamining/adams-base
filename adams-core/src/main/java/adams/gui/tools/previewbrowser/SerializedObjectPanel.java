@@ -15,11 +15,12 @@
 
 /*
  * SerializedObjectPanel.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.BaseComboBox;
@@ -39,7 +40,6 @@ import java.util.ArrayList;
  * Panel for displaying a serialized object.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SerializedObjectPanel
   extends BasePanel 
@@ -191,7 +191,7 @@ public class SerializedObjectPanel
       viewers    = new ArrayList<SerializedObjectViewer>();
       for (String classname: classnames) {
 	try {
-	  cls = Class.forName(classname);
+	  cls = ClassManager.getSingleton().forName(classname);
 	  viewers.add((SerializedObjectViewer) cls.newInstance());
 	}
 	catch (Exception e) {

@@ -15,11 +15,12 @@
 
 /*
  * AbstractObjectRenderer.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objectrenderer;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingObject;
 
 import javax.swing.JPanel;
@@ -65,7 +66,7 @@ public abstract class AbstractObjectRenderer
     m_RendererClasses = new Class[m_Renderers.length];
     for (i = 0; i < m_Renderers.length; i++) {
       try {
-	m_RendererClasses[i] = Class.forName(m_Renderers[i]);
+	m_RendererClasses[i] = ClassManager.getSingleton().forName(m_Renderers[i]);
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate object renderer '" + m_Renderers[i] + "': ");

@@ -15,7 +15,7 @@
 
 /*
  * DefaultAnalysisPanel.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.analysis;
 
@@ -23,6 +23,7 @@ import adams.core.ClassLister;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.BaseButton;
@@ -257,7 +258,7 @@ public class DefaultAnalysisPanel
 
     // tester
     try {
-      tester = (Tester) Class.forName(props.getProperty("Results.Tester", PairedCorrectedTTester.class.getName())).newInstance();
+      tester = (Tester) ClassManager.getSingleton().forName(props.getProperty("Results.Tester", PairedCorrectedTTester.class.getName())).newInstance();
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate tester: " + props.getProperty("Results.Tester"), e);
@@ -268,7 +269,7 @@ public class DefaultAnalysisPanel
 
     // matrix
     try {
-      matrix = (ResultMatrix) Class.forName(props.getProperty("Results.ResultMatrix", ResultMatrixPlainText.class.getName())).newInstance();
+      matrix = (ResultMatrix) ClassManager.getSingleton().forName(props.getProperty("Results.ResultMatrix", ResultMatrixPlainText.class.getName())).newInstance();
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate matrix: " + props.getProperty("Results.ResultMatrix"), e);

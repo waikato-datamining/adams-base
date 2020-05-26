@@ -15,12 +15,13 @@
 
 /*
  * AbstractJavaCodeProducer.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.NamedCounter;
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.env.Environment;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
@@ -40,7 +41,6 @@ import java.util.Map;
  * Ancestor for producers that generate Java code.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractJavaCodeProducer
   extends AbstractRecursiveOptionProducerWithOptionHandling<String,String> {
@@ -536,7 +536,7 @@ public abstract class AbstractJavaCodeProducer
     boolean	result;
 
     try {
-      Class.forName(s);
+      ClassManager.getSingleton().forName(s);
       result = true;
     }
     catch (Exception e) {

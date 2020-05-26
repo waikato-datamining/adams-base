@@ -15,11 +15,12 @@
 
 /*
  * SerializationHelper.java
- * Copyright (C) 2007-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -69,7 +70,7 @@ public class SerializationHelper {
     boolean	result;
 
     try {
-      result = isSerializable(Class.forName(classname));
+      result = isSerializable(ClassManager.getSingleton().forName(classname));
     }
     catch (Exception e) {
       result = false;
@@ -101,7 +102,7 @@ public class SerializationHelper {
     boolean	result;
 
     try {
-      result = hasUID(Class.forName(classname));
+      result = hasUID(ClassManager.getSingleton().forName(classname));
     }
     catch (Exception e) {
       result = false;
@@ -149,7 +150,7 @@ public class SerializationHelper {
     boolean	result;
 
     try {
-      result = needsUID(Class.forName(classname));
+      result = needsUID(ClassManager.getSingleton().forName(classname));
     }
     catch (Exception e) {
       result = false;
@@ -188,7 +189,7 @@ public class SerializationHelper {
     long	result;
 
     try {
-      result = getUID(Class.forName(classname));
+      result = getUID(ClassManager.getSingleton().forName(classname));
     }
     catch (Exception e) {
       result = 0L;

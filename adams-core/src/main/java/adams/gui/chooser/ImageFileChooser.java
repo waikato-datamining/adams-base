@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageFileChooser.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
+import adams.core.classmanager.ClassManager;
 import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.output.AbstractImageWriter;
@@ -42,7 +43,6 @@ import java.util.List;
  * A file chooser for images.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageFileChooser
   extends AbstractConfigurableExtensionFileFilterFileChooser<AbstractImageReader,AbstractImageWriter> {
@@ -294,7 +294,7 @@ public class ImageFileChooser
 
       // get data from converter
       try {
-	cls       = Class.forName(classname);
+	cls       = ClassManager.getSingleton().forName(classname);
 	converter = cls.newInstance();
 	if (reader) {
 	  if (!((AbstractImageReader) converter).isAvailable())
@@ -413,7 +413,7 @@ public class ImageFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractImageReader) Class.forName(filter.getClassname()).newInstance();
+	  result = (AbstractImageReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -440,7 +440,7 @@ public class ImageFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractImageWriter) Class.forName(filter.getClassname()).newInstance();
+	  result = (AbstractImageWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

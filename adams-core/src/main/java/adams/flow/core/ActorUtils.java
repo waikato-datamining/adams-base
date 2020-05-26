@@ -26,6 +26,7 @@ import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
@@ -380,7 +381,7 @@ public class ActorUtils {
       if (argoption.isMultiple()) {
 	for (n = 0; n < Array.getLength(value); n++) {
 	  if (Array.get(value, n).equals(find)) {
-	    Array.set(value, n, Utils.deepCopy(replace));
+	    Array.set(value, n, ClassManager.getSingleton().deepCopy(replace));
 	    updated = true;
 	    result++;
 	  }
@@ -388,7 +389,7 @@ public class ActorUtils {
       }
       else {
 	if (value.equals(find)) {
-	  value   = Utils.deepCopy(replace);
+	  value   = ClassManager.getSingleton().deepCopy(replace);
 	  updated = true;
 	  result++;
 	}
@@ -1492,7 +1493,7 @@ public class ActorUtils {
     procs     = new ActorProcessor[names.length];
     for (i = 0; i < names.length; i++) {
       try {
-	procs[i] = (ActorProcessor) Class.forName(names[i]).newInstance();
+	procs[i] = (ActorProcessor) ClassManager.getSingleton().forName(names[i]).newInstance();
       }
       catch (Exception e) {
 	LOGGER.log(Level.SEVERE,
@@ -1551,7 +1552,7 @@ public class ActorUtils {
       procs     = new ArrayList<>();
       for (i = 0; i < names.length; i++) {
 	try {
-	  proc = (ActorProcessor) Class.forName(names[i]).newInstance();
+	  proc = (ActorProcessor) ClassManager.getSingleton().forName(names[i]).newInstance();
 	  if (!variables && (proc instanceof CheckVariableUsage))
 	    continue;
 	  if (!storage && (proc instanceof CheckStorageUsage))

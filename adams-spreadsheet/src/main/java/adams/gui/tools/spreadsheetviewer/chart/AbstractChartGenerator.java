@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractChartGenerator.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
 import adams.core.NamedCounter;
 import adams.core.QuickInfoSupporter;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOption;
 import adams.core.option.AbstractOptionHandler;
@@ -43,7 +44,6 @@ import java.util.logging.Level;
  * Ancestor for classes that generate/display charts using a flow as backend.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractChartGenerator
   extends AbstractOptionHandler
@@ -294,7 +294,7 @@ public abstract class AbstractChartGenerator
     types = counter.names(false);
     if (types.hasNext()) {
       try {
-	result = (TickGenerator) Class.forName(types.next()).newInstance();
+	result = (TickGenerator) ClassManager.getSingleton().forName(types.next()).newInstance();
       }
       catch (Exception e) {
 	// ignored

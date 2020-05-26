@@ -15,13 +15,14 @@
 
 /*
  * FlowControlCenterPanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
 
 import adams.core.Properties;
 import adams.core.StatusMessageHandler;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FilenameProposer;
 import adams.env.Environment;
 import adams.env.FlowControlCenterPanelDefinition;
@@ -80,7 +81,6 @@ import java.io.File;
  * A panel that functions as control center for flows.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowControlCenterPanel
   extends BasePanel
@@ -495,7 +495,7 @@ public class FlowControlCenterPanel
     classname = FlowEditorPanel.getPropertiesEditor().getPath(
 	"FlowEditorClass", FlowEditorPanel.class.getName());
     try {
-      panel = (FlowEditorPanel) Class.forName(classname).newInstance();
+      panel = (FlowEditorPanel) ClassManager.getSingleton().forName(classname).newInstance();
     }
     catch (Exception ex) {
       panel = new FlowEditorPanel();

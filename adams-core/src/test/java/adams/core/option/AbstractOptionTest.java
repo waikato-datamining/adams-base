@@ -15,12 +15,12 @@
 
 /*
  * AbstractOptionTest.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
 
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.test.AdamsTestCase;
 
 import java.io.Serializable;
@@ -30,7 +30,6 @@ import java.util.List;
  * Ancestor for option tests.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractOptionTest
   extends AdamsTestCase {
@@ -189,7 +188,7 @@ public abstract class AbstractOptionTest
   public void testSerializable() {
     List<AbstractOption> options = m_OptionHandler.getOptionManager().getOptionsList();
     for (AbstractOption option: options) {
-      assertNotNull("Not serializable: " + option, Utils.deepCopy(option));
+      assertNotNull("Not serializable: " + option, ClassManager.getSingleton().deepCopy(option));
     }
   }
 }

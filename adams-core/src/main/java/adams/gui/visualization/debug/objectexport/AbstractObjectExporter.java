@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractObjectExporter.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objectexport;
 
 import adams.core.ClassLister;
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileFormatHandler;
 import adams.core.option.AbstractOptionHandler;
 
@@ -35,7 +36,6 @@ import java.util.Set;
  * Ancestor for classes that can export certain objects to files.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractObjectExporter
   extends AbstractOptionHandler
@@ -67,7 +67,7 @@ public abstract class AbstractObjectExporter
     m_ExporterClasses = new Class[m_Exporters.length];
     for (i = 0; i < m_Exporters.length; i++) {
       try {
-	m_ExporterClasses[i] = Class.forName(m_Exporters[i]);
+	m_ExporterClasses[i] = ClassManager.getSingleton().forName(m_Exporters[i]);
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate object exporter '" + m_Exporters[i] + "': ");

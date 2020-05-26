@@ -15,11 +15,11 @@
 
 /*
  * BinningAlgorithmTestCase.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.binning.algorithm;
 
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import adams.data.binning.Bin;
@@ -127,7 +127,7 @@ public abstract class AbstractBinningAlgorithmTestCase<T>
 
     // process data
     for (i = 0; i < setups.length; i++) {
-      current = (BinningAlgorithm) Utils.deepCopy(setups[i]);
+      current = (BinningAlgorithm) ClassManager.getSingleton().deepCopy(setups[i]);
       assertNotNull("Failed to create copy of algorithm: " + OptionUtils.getCommandLine(setups[i]), current);
 
       processed = process(input, current);

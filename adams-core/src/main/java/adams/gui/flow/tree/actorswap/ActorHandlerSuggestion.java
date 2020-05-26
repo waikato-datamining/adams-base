@@ -15,14 +15,15 @@
 
 /*
  * ActorHandlerSuggestion.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.actorswap;
 
 import adams.core.ClassLister;
+import adams.core.NewInstance;
 import adams.core.Properties;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
@@ -116,7 +117,7 @@ public class ActorHandlerSuggestion
       if (blacklisted)
 	continue;
 
-      final ActorHandler actor = (ActorHandler) Utils.newInstance(actors[i]);
+      final ActorHandler actor = (ActorHandler) NewInstance.newInstance(actors[i]);
       if (!(actor instanceof MutableActorHandler))
         continue;
       if (actor instanceof Flow)
@@ -171,7 +172,7 @@ public class ActorHandlerSuggestion
     for (String key: props.keySetAll()) {
       if (props.getBoolean(key, false)) {
         try {
-          cls = Class.forName(key);
+          cls = ClassManager.getSingleton().forName(key);
           if (!m_Blacklisted.contains(cls))
 	    m_Blacklisted.add(cls);
 	}

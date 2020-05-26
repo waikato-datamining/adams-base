@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractPropertyExtractor.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.propertyextractor;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
+import adams.core.classmanager.ClassManager;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -30,7 +31,6 @@ import java.util.List;
  * Ancestor for property extractors, used for populating the object tree.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractPropertyExtractor
   implements CleanUpHandler {
@@ -66,7 +66,7 @@ public abstract class AbstractPropertyExtractor
     m_ExtractorClasses = new Class[m_Extractors.length];
     for (i = 0; i < m_Extractors.length; i++) {
       try {
-	m_ExtractorClasses[i] = Class.forName(m_Extractors[i]);
+	m_ExtractorClasses[i] = ClassManager.getSingleton().forName(m_Extractors[i]);
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate inspection extractor '" + m_Extractors[i] + "': ");

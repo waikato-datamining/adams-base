@@ -13,14 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractWorkspaceHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.workspace;
 
 import adams.core.MessageCollection;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
@@ -32,7 +32,6 @@ import java.io.File;
  * Helper class for loading/saving workspaces.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, M extends AbstractWorkspaceManagerPanel<P>> {
 
@@ -121,7 +120,7 @@ public abstract class AbstractWorkspaceHelper<P extends AbstractWorkspacePanel, 
     P		result;
     Object	data;
 
-    data = Utils.deepCopy(serialize(panel), true);
+    data = ClassManager.getSingleton().deepCopy(serialize(panel), true);
     if (data == null)
       throw new IllegalStateException("Failed to copy workspace!");
     result = manager.newWorkspace(false);

@@ -15,12 +15,12 @@
 
 /*
  * WekaGenericObjectEditorPanel.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.BasePopupMenu;
@@ -38,7 +38,6 @@ import java.awt.event.ActionEvent;
  * and a button for bringing up the GenericObjectEditor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaGenericObjectEditorPanel
   extends AbstractChooserPanel {
@@ -149,7 +148,7 @@ public class WekaGenericObjectEditorPanel
    */
   @Override
   public Object getCurrent() {
-    return Utils.deepCopy(m_Current);
+    return ClassManager.getSingleton().deepCopy(m_Current);
   }
 
   /**

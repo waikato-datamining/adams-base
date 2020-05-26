@@ -13,14 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FilteredIQR.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka.rowfinder;
 
-import java.util.ArrayList;
-
+import adams.core.Range;
+import adams.core.classmanager.ClassManager;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Utils;
@@ -28,7 +28,8 @@ import weka.filters.AllFilter;
 import weka.filters.Filter;
 import weka.filters.MultiFilter;
 import weka.filters.unsupervised.attribute.InterquartileRange;
-import adams.core.Range;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -70,7 +71,6 @@ import adams.core.Range;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FilteredIQR
   extends AbstractTrainableRowFinder {
@@ -284,7 +284,7 @@ public class FilteredIQR
   protected boolean doTrainRowFinder(Instances data) {
     Instances		labeled;
     
-    m_ActualFilter = (InterquartileRange) adams.core.Utils.deepCopy(m_Filter);
+    m_ActualFilter = (InterquartileRange) ClassManager.getSingleton().deepCopy(m_Filter);
     m_ActualFilter.setOutlierFactor(m_IQR);
     m_ActualFilter.setExtremeValuesFactor(m_IQR + 1.0);
     m_ActualFilter.setExtremeValuesAsOutliers(true);

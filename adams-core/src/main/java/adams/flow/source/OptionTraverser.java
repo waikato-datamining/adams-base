@@ -15,13 +15,13 @@
 
 /*
  * OptionTraverser.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionTraverserWithResult;
 import adams.core.option.OptionUtils;
@@ -86,7 +86,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class OptionTraverser
   extends AbstractSimpleSource {
@@ -238,7 +237,7 @@ public class OptionTraverser
     if (m_Traverser instanceof OptionHandler)
       traverser = (adams.core.option.OptionTraverser) OptionUtils.shallowCopy((OptionHandler) m_Traverser, true);
     else
-      traverser = (adams.core.option.OptionTraverser) Utils.deepCopy(m_Traverser);
+      traverser = (adams.core.option.OptionTraverser) ClassManager.getSingleton().deepCopy(m_Traverser);
     m_OutputToken = null;
 
     if (traverser instanceof OptionTraverserWithResult)

@@ -15,12 +15,13 @@
 
 /*
  * SequenceToCollection.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -101,7 +102,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SequenceToCollection
   extends AbstractTransformer {
@@ -342,7 +342,7 @@ public class SequenceToCollection
    */
   public Class[] generates() {
     try {
-      return new Class[]{Class.forName(m_CollectionClass)};
+      return new Class[]{ClassManager.getSingleton().forName(m_CollectionClass)};
     }
     catch (Exception e) {
       return new Class[]{Collection.class};
@@ -375,7 +375,7 @@ public class SequenceToCollection
 	if (isLoggingEnabled())
 	  getLogger().info("Buffered elements: " + m_Elements.size());
 	if ((m_CollectionSize == -1) || (m_Elements.size() == m_CollectionSize)) {
-	  coll = (Collection) Class.forName(m_CollectionClass).newInstance();
+	  coll = (Collection) ClassManager.getSingleton().forName(m_CollectionClass).newInstance();
 	  if (isLoggingEnabled())
 	    getLogger().info("Collection type: " + coll.getClass().getComponentType());
 	  coll.addAll(m_Elements);

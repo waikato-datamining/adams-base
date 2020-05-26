@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractCommandLineHandler.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.ClassLister;
 import adams.core.StaticClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingObject;
 
 import java.util.Hashtable;
@@ -29,7 +30,6 @@ import java.util.Hashtable;
  * Ancestor for classes that handle commandline options for various frameworks.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractCommandLineHandler
   extends LoggingObject {
@@ -184,7 +184,7 @@ public abstract class AbstractCommandLineHandler
       m_HandlerClasses = new Class[handlers.length];
       for (i = 0; i < handlers.length; i++) {
 	try {
-	  m_HandlerClasses[i] = Class.forName(handlers[i]);
+	  m_HandlerClasses[i] = ClassManager.getSingleton().forName(handlers[i]);
 	}
 	catch (Exception e) {
 	  System.err.println("Failed to instantiate commandline handler '" + handlers[i] + "': ");

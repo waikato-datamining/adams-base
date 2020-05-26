@@ -15,13 +15,14 @@
 
 /*
  * Jython.java
- * Copyright (C) 2007-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.scripting;
 
 import adams.core.Utils;
 import adams.core.Variables;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
@@ -42,7 +43,6 @@ import java.util.logging.Level;
  * A helper class for <a href="http://www.jython.org/" target="_blank">Jython</a>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Jython
   extends LoggingObject {
@@ -76,7 +76,7 @@ public class Jython
    */
   protected Jython() {
     try {
-      Class.forName(CLASS_PYTHONINERPRETER);
+      ClassManager.getSingleton().forName(CLASS_PYTHONINERPRETER);
       checkRegistry();
       m_Present = true;
     }
@@ -172,7 +172,7 @@ public class Jython
 
     if (isPresent()) {
       try {
-	result = Class.forName(CLASS_PYTHONINERPRETER).newInstance();
+	result = ClassManager.getSingleton().forName(CLASS_PYTHONINERPRETER).newInstance();
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to instantiate new interpreter!", e);
@@ -315,7 +315,7 @@ public class Jython
     result = null;
 
     try {
-      cls        = Class.forName(CLASS_PYTHONOBJECTINPUTSTREAM);
+      cls        = ClassManager.getSingleton().forName(CLASS_PYTHONOBJECTINPUTSTREAM);
       paramTypes = new Class[]{InputStream.class};
       constr     = cls.getConstructor(paramTypes);
       arglist    = new Object[]{in};

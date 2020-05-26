@@ -21,11 +21,14 @@ package adams.gui.goe;
 
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import weka.core.PluginManager;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -135,7 +138,7 @@ public class WekaEditorsRegistration
 	if (key.toString().endsWith("[]"))
 	  continue;
 
-	cls = Class.forName("" + key);
+	cls = ClassManager.getSingleton().forName("" + key);
 	if (m_AlreadRegistered.contains(cls))
 	  continue;
 
@@ -175,18 +178,18 @@ public class WekaEditorsRegistration
     String	superclass;
     String[]	classes;
     Class	cls;
-    Set<String> packages;
+    List<Class> classList;
 
     for (Object key: props.keySet()) {
       superclass = "" + key;
       classes    = props.getProperty(superclass).replaceAll(" ", "").split(",");
-      packages   = new HashSet<>();
+      classList  = new ArrayList<>();
       for (String clsname: classes) {
 	if (clsname.trim().isEmpty())
 	  continue;
 	try {
-	  cls = Class.forName(clsname);
-	  packages.add(cls.getPackage().getName());
+	  cls = ClassManager.getSingleton().forName(clsname);
+	  classList.add(cls);
 	}
 	catch (ClassNotFoundException e) {
 	  getLogger().warning("Class not found: " + clsname);
@@ -195,9 +198,9 @@ public class WekaEditorsRegistration
 	  getLogger().log(Level.SEVERE, "Failed to register class hierarchy: " + key, e);
 	}
       }
-      if (packages.size() > 0) {
+      if (classList.size() > 0) {
         try {
-	  ClassLister.getSingleton().addHierarchy(superclass, packages.toArray(new String[packages.size()]));
+	  ClassLister.getSingleton().addHierarchy(ClassManager.getSingleton().forName(superclass), classList.toArray(new Class[0]));
 	  getLogger().info("Registering class hierarchy: " + key);
 	}
 	catch (Exception e) {
@@ -219,7 +222,7 @@ public class WekaEditorsRegistration
 
     for (String superclass: hierarchies.keySet().toArray(new String[0])) {
       try {
-	cls = Class.forName(superclass);
+	cls = ClassManager.getSingleton().forName(superclass);
 	if (m_AlreadRegistered.contains(cls))
 	  continue;
 
@@ -258,17 +261,17 @@ public class WekaEditorsRegistration
   protected void registerHierarchies(Map<String, Map<String, String>> hierarchies) {
     Set<String>	classes;
     Class	cls;
-    Set<String> packages;
+    List<Class>	classList;
 
     for (String superclass: hierarchies.keySet().toArray(new String[0])) {
-      classes    = hierarchies.get(superclass).keySet();
-      packages   = new HashSet<>();
+      classes   = hierarchies.get(superclass).keySet();
+      classList = new ArrayList<>();
       for (String clsname: classes) {
 	if (clsname.trim().isEmpty())
 	  continue;
 	try {
-	  cls = Class.forName(clsname);
-	  packages.add(cls.getPackage().getName());
+	  cls = ClassManager.getSingleton().forName(clsname);
+	  classList.add(cls);
 	}
 	catch (ClassNotFoundException e) {
 	  getLogger().warning("Class not found: " + clsname);
@@ -277,9 +280,9 @@ public class WekaEditorsRegistration
 	  getLogger().log(Level.SEVERE, "Failed to register class hierarchy: " + superclass, e);
 	}
       }
-      if (packages.size() > 0) {
+      if (classList.size() > 0) {
         try {
-	  ClassLister.getSingleton().addHierarchy(superclass, packages.toArray(new String[packages.size()]));
+	  ClassLister.getSingleton().addHierarchy(ClassManager.getSingleton().forName(superclass), classList.toArray(new Class[0]));
 	  getLogger().info("Registering class hierarchy: " + superclass);
 	}
 	catch (Exception e) {

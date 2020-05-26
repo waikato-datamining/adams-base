@@ -15,10 +15,12 @@
 
 /*
  * AllJavadoc.java
- * Copyright (C) 2006-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.doc.javadoc;
+
+import adams.core.classmanager.ClassManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AllJavadoc
   extends Javadoc {
@@ -85,7 +86,7 @@ public class AllJavadoc
       if (list[i].equals(AllJavadoc.class.getName()))
 	continue;
       try {
-	cls = Class.forName(list[i]);
+	cls = ClassManager.getSingleton().forName(list[i]);
 	m_Javadocs.add(cls.newInstance());
       }
       catch (Exception e) {

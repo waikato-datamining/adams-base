@@ -15,12 +15,13 @@
 
 /*
  * ParameterMapFileChooser.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.data.io.input.AbstractParameterMapReader;
 import adams.data.io.input.SerializedParameterMapReader;
 import adams.data.io.output.AbstractParameterMapWriter;
@@ -257,7 +258,7 @@ public class ParameterMapFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractParameterMapReader) Class.forName(filter.getClassname()).newInstance();
+	  result = (AbstractParameterMapReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -284,7 +285,7 @@ public class ParameterMapFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractParameterMapWriter) Class.forName(filter.getClassname()).newInstance();
+	  result = (AbstractParameterMapWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

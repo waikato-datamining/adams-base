@@ -15,12 +15,13 @@
 
 /*
  * InstancesTablePopupMenuItemHelper.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TableRowRange;
@@ -112,7 +113,7 @@ public class InstancesTablePopupMenuItemHelper {
     classes = ClassLister.getSingleton().getClassnames(cls);
     for (String c : classes) {
       try {
-	result.add((InstancesTablePopupMenuItem) Class.forName(c).newInstance());
+	result.add((InstancesTablePopupMenuItem) ClassManager.getSingleton().forName(c).newInstance());
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append("Failed to instantiate InstancesTable menu item: " + c, e);

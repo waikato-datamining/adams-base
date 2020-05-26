@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Editors.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
 import adams.core.ClassLister;
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.env.Environment;
 import adams.env.GOEBlacklistDefinition;
 import adams.env.GOEEditorsDefinition;
@@ -37,7 +38,6 @@ import java.util.List;
  * Registers all the editors for the GenericObjectEditor/GenericArrayEditor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Editors {
 
@@ -137,14 +137,14 @@ public class Editors {
       try {
         // array class?
         if (name.endsWith("[]")) {
-          baseCls = Class.forName(name.substring(0, name.indexOf("[]")));
+          baseCls = ClassManager.getSingleton().forName(name.substring(0, name.indexOf("[]")));
           cls = Array.newInstance(baseCls, 1).getClass();
         }
         else {
-          cls = Class.forName(name);
+          cls = ClassManager.getSingleton().forName(name);
         }
         // register
-        PropertyEditorManager.registerEditor(cls, Class.forName(value));
+        PropertyEditorManager.registerEditor(cls, ClassManager.getSingleton().forName(value));
       }
       catch (Exception e) {
         System.err.println("Problem registering " + name + "/" + value + ": " + e);
@@ -287,11 +287,11 @@ public class Editors {
       cls = null;
       try {
         if (classname.endsWith("[]")) {
-          cls = Class.forName(classname.substring(0, classname.length() - 2));
+          cls = ClassManager.getSingleton().forName(classname.substring(0, classname.length() - 2));
           cls = Array.newInstance(cls, 0).getClass();
         }
         else {
-          cls = Class.forName(classname);
+          cls = ClassManager.getSingleton().forName(classname);
         }
       }
       catch (Exception e) {
@@ -302,7 +302,7 @@ public class Editors {
 
       clsEditor = null;
       try {
-        clsEditor = Class.forName(classnameEditor);
+        clsEditor = ClassManager.getSingleton().forName(classnameEditor);
       }
       catch (Exception e) {
         e.printStackTrace();

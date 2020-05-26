@@ -13,19 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractColumnFinderTestCase.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.columnfinder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.ShallowCopySupporter;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.CsvSpreadSheetReader;
@@ -35,11 +32,13 @@ import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Ancestor for column finder test cases.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractColumnFinderTestCase
   extends AdamsTestCase {
@@ -184,7 +183,7 @@ public abstract class AbstractColumnFinderTestCase
       if (setups[i] instanceof ShallowCopySupporter)
 	current = (ColumnFinder) ((ShallowCopySupporter) setups[i]).shallowCopy();
       else
-	current = (ColumnFinder) Utils.deepCopy(setups[i]);
+	current = (ColumnFinder) ClassManager.getSingleton().deepCopy(setups[i]);
       assertNotNull("Failed to create copy of algorithm: " + OptionUtils.getCommandLine(setups[i]), current);
 
       processed = process(data, current);

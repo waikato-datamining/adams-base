@@ -15,11 +15,12 @@
 
 /*
  * AbstractActorProcessorTest.java
- * Copyright (C) 2011-2018 University of Waikato
+ * Copyright (C) 2011-2020 University of Waikato
  */
 
 package adams.flow.processor;
 
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.option.ArrayProducer;
 import adams.core.option.NestedProducer;
@@ -257,7 +258,7 @@ public abstract class AbstractActorProcessorTestCase
     producer = null;
     if ((format != null) && (format.length() >= 0)) {
       try {
-	producer = (OptionProducer) Class.forName(format).newInstance();
+	producer = (OptionProducer) ClassManager.getSingleton().forName(format).newInstance();
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate option producer '" + format + "': " + e);

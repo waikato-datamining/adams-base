@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JenericCommandLineHandler.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.core.classmanager.ClassManager;
 import nz.ac.waikato.cms.jenericcmdline.AbstractProcessor;
 import nz.ac.waikato.cms.jenericcmdline.DefaultProcessor;
 import nz.ac.waikato.cms.jenericcmdline.core.OptionUtils;
@@ -34,7 +35,6 @@ import java.util.logging.Level;
  * jeneric-cmdline library.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JenericCommandLineHandler
   extends AbstractCommandLineHandler {
@@ -88,7 +88,7 @@ public class JenericCommandLineHandler
 
     if (args.length > 0) {
       try {
-	result  = Class.forName(Conversion.getSingleton().rename(args[0])).newInstance();
+	result  = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).newInstance();
 	args[0] = "";
 	setOptions(result, args);
       }

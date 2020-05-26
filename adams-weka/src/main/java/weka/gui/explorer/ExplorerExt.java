@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExplorerExt.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.explorer;
 
 import adams.core.Range;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
@@ -74,7 +75,6 @@ import java.io.File;
  * as remembering recent files.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExplorerExt
   extends Explorer
@@ -186,7 +186,7 @@ public class ExplorerExt
     classnames = AbstractAdditionalExplorerPanel.getPanels();
     for (String classname: classnames) {
       try {
-	additional = (AdditionalExplorerPanel) Class.forName(classname).newInstance();
+	additional = (AdditionalExplorerPanel) ClassManager.getSingleton().forName(classname).newInstance();
 	panel      = additional.getExplorerPanel();
 	handler    = additional.getExplorerPanelHandler();
 	m_Panels.add(panel);

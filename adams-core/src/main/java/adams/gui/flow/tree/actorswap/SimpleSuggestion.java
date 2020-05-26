@@ -15,12 +15,13 @@
 
 /*
  * SimpleSuggestion.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.actorswap;
 
 import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.Actor;
 import adams.flow.sink.Display;
 import adams.flow.sink.DumpFile;
@@ -78,7 +79,7 @@ public class SimpleSuggestion
       try {
         classes = props.getProperty(name).replace(" ", "").split(",");
         for (String cls: classes)
-	  result.add((Actor) Class.forName(cls).newInstance());
+	  result.add((Actor) ClassManager.getSingleton().forName(cls).newInstance());
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to instantiate suggestion for '" + name + "': " + props.getProperty(name), e);

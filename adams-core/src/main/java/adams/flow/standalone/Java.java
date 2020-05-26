@@ -15,7 +15,7 @@
 
 /*
  * Java.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -23,6 +23,7 @@ package adams.flow.standalone;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.SystemInfo;
+import adams.core.classmanager.ClassManager;
 import adams.core.option.OptionUtils;
 
 import java.lang.reflect.Method;
@@ -261,7 +262,7 @@ public class Java
     
     try {
       cmdArray = OptionUtils.splitOptions(cmd);
-      cls      = Class.forName(cmdArray[0]);
+      cls      = ClassManager.getSingleton().forName(cmdArray[0]);
       cmdArray[0] = "";
       if (cmdArray.length == 1)
 	cmdArray = new String[0];

@@ -15,12 +15,13 @@
 
 /*
  * WekaFileChooser.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.ClassLister;
+import adams.core.classmanager.ClassManager;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.AbstractFileSaver;
 import weka.core.converters.SimpleArffLoader;
@@ -267,7 +268,7 @@ public class WekaFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractFileLoader) Class.forName(filter.getClassname()).newInstance();
+	  result = (AbstractFileLoader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
 	  handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -299,7 +300,7 @@ public class WekaFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractFileSaver) Class.forName(filter.getClassname()).newInstance();
+	  result = (AbstractFileSaver) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
 	}
 	catch (Exception e) {
 	  handleException("Failed to instantiate writer: " + filter.getClassname(), e);

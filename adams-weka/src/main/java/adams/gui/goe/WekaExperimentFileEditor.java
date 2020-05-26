@@ -15,13 +15,13 @@
 
 /*
  * WekaExperimentFileEditor.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.parsing.WekaExperimentFileParsing;
 import adams.data.WekaExperimentFile;
@@ -195,7 +195,7 @@ public class WekaExperimentFileEditor
     public void setExperiment(Experiment value) {
       if (value == null)
 	value = newExperiment();
-      m_Experiment = (Experiment) Utils.deepCopy(value);
+      m_Experiment = (Experiment) ClassManager.getSingleton().deepCopy(value);
       m_Panel.setExperiment(value);
     }
 
@@ -205,7 +205,7 @@ public class WekaExperimentFileEditor
      * @return		the experiment
      */
     public Experiment getExperiment() {
-      return (Experiment) Utils.deepCopy(m_Experiment);
+      return (Experiment) ClassManager.getSingleton().deepCopy(m_Experiment);
     }
   }
 

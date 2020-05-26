@@ -13,14 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExtExperiment.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package weka.experiment;
 
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import adams.gui.tools.wekamultiexperimenter.experiment.ExperimentWithCustomizableRelationNames;
@@ -35,7 +35,6 @@ import java.io.File;
  * Extended version of the Weka {@link Experiment} class.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExtExperiment
   extends Experiment
@@ -84,10 +83,10 @@ public class ExtExperiment
     m_UsePropertyIterator = exp.getUsePropertyIterator();
     m_PropertyPath = null;
     if (exp.getPropertyPath() != null)
-      m_PropertyPath = (PropertyNode[]) Utils.deepCopy(exp.getPropertyPath());
+      m_PropertyPath = (PropertyNode[]) ClassManager.getSingleton().deepCopy(exp.getPropertyPath());
     m_PropertyArray = null;
     if (exp.getPropertyArray() != null)
-      m_PropertyArray = Utils.deepCopy(exp.getPropertyArray());
+      m_PropertyArray = ClassManager.getSingleton().deepCopy(exp.getPropertyArray());
     m_Notes = exp.getNotes();
     m_AdditionalMeasures = null;
     m_ClassFirst = exp.m_ClassFirst;

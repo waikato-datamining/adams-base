@@ -23,6 +23,7 @@ import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
@@ -568,7 +569,7 @@ public class PreviewBrowserPanel
       }
       m_IgnoreArchiveHandlerChanges = false;
       try {
-	Class cls = Class.forName((String) m_ComboBoxArchiveHandlers.getSelectedItem());
+	Class cls = ClassManager.getSingleton().forName((String) m_ComboBoxArchiveHandlers.getSelectedItem());
 	m_ArchiveHandler = (AbstractArchiveHandler) cls.newInstance();
       }
       catch (Exception e) {

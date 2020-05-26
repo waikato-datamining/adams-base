@@ -13,18 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ContainerNesting.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
-import java.awt.Component;
-import java.awt.Container;
-
+import adams.core.classmanager.ClassManager;
 import adams.env.Environment;
 import adams.gui.core.BaseTree;
 import adams.gui.core.BaseTreeNode;
+
+import java.awt.Component;
+import java.awt.Container;
 
 /**
  * Generates a tree structure from a Swing container.
@@ -33,7 +34,6 @@ import adams.gui.core.BaseTreeNode;
  * requires a default constructor in order to be analyzed.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ContainerNesting {
 
@@ -119,7 +119,7 @@ public class ContainerNesting {
     
     // analyzing
     System.err.println("Analyzing container...");
-    Container cont = (Container) Class.forName(args[1]).newInstance();
+    Container cont = (Container) ClassManager.getSingleton().forName(args[1]).newInstance();
     BaseTree tree = analyze(cont);
     System.out.println(tree);
     

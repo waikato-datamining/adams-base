@@ -15,14 +15,14 @@
 
 /*
  * WekaExperimentEvaluation.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.core.base.BaseString;
+import adams.core.classmanager.ClassManager;
 import adams.flow.core.ExperimentStatistic;
 import adams.flow.core.Token;
 import weka.core.Instances;
@@ -143,7 +143,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaExperimentEvaluation
   extends AbstractTransformer {
@@ -632,8 +631,8 @@ public class WekaExperimentEvaluation
     String 			name;
     Range 			generatorRange;
 
-    ttester = (Tester) Utils.deepCopy(m_Tester);
-    matrix  = (ResultMatrix) Utils.deepCopy(m_OutputFormat);
+    ttester = (Tester) ClassManager.getSingleton().deepCopy(m_Tester);
+    matrix  = (ResultMatrix) ClassManager.getSingleton().deepCopy(m_OutputFormat);
     ttester.setInstances(data);
     ttester.setSignificanceLevel(m_Significance);
     ttester.setShowStdDevs(matrix.getShowStdDev());

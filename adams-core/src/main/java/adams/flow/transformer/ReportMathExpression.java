@@ -15,14 +15,14 @@
 
 /*
  * ReportMathExpression.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.CloneHandler;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.MutableReportHandler;
@@ -226,7 +226,6 @@ import adams.parser.MathematicalExpressionText;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see adams.parser.MathematicalExpression
  */
 public class ReportMathExpression
@@ -480,7 +479,7 @@ public class ReportMathExpression
 	    if (handler instanceof CloneHandler)
 	      handler = (ReportHandler) ((CloneHandler) handler).getClone();
 	    else
-	      handler = (ReportHandler) Utils.deepCopy(handler);
+	      handler = (ReportHandler) ClassManager.getSingleton().deepCopy(handler);
 	    ((MutableReportHandler) handler).setReport(report);
 	    m_OutputToken = new Token(handler);
 	  }
