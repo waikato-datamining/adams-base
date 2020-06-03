@@ -85,4 +85,48 @@ public abstract class AbstractNumericOutlierDetector
 
     return result;
   }
+
+  /**
+   * Computes the difference between the two columns.
+   *
+   * @param actual	the column with the actual values
+   * @param predicted	the column with the predicted values
+   * @param useRelative whether to divide the difference by the actual value (NaN if 0)
+   * @return		the difference, uses NaN if either column has non-numeric or missing value
+   */
+  protected double[] diff(Double[] actual, Double[] predicted, boolean useRelative) {
+    double[] 		result;
+    int			i;
+
+    result = new double[actual.length];
+    for (i = 0; i < actual.length; i++) {
+      if ((actual[i] != null) && (predicted[i] != null)) {
+	result[i] = actual[i] - predicted[i];
+	if (useRelative) {
+	  if (actual[i] != 0)
+	    result[i] /= actual[i];
+	  else
+	    result[i] = Double.NaN;
+	}
+      }
+      else {
+	result[i] = Double.NaN;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Computes the difference between the two columns.
+   *
+   * @param sheet	the sheet to get the data from
+   * @param actual	the column with the actual values
+   * @param predicted	the column with the predicted values
+   * @param useRelative whether to divide the difference by the actual value (NaN if 0)
+   * @return		the difference, uses NaN if either column has non-numeric or missing value
+   */
+  protected double[] diff(SpreadSheet sheet, SpreadSheetColumnIndex actual, SpreadSheetColumnIndex predicted, boolean useRelative) {
+    return diff(extractColumn(sheet, actual), extractColumn(sheet, predicted), useRelative);
+  }
 }

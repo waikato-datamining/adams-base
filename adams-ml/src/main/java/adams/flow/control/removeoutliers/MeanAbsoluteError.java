@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * IQR.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+/*
+ * MeanAbsoluteError.java
+ * Copyright (C) 2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.removeoutliers;
@@ -30,8 +30,8 @@ import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
- * Interquartile range based detector.<br>
- * If difference between actual&#47;predicted is more than the factor of standard deviations away from the quartial 0.25&#47;0.75, then the point gets flagged as outlier.
+ * Mean absolute error (MAE) based detector.<br>
+ * If difference between actual&#47;predicted is more than MAE * FACTOR, then the point gets flagged as outlier.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -40,34 +40,24 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-factor &lt;double&gt; (property: factor)
  * &nbsp;&nbsp;&nbsp;The factor which determines whether a value is an outlier.
- * &nbsp;&nbsp;&nbsp;default: 3.0
+ * &nbsp;&nbsp;&nbsp;default: 2.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- * 
- * <pre>-use-relative &lt;boolean&gt; (property: useRelative)
- * &nbsp;&nbsp;&nbsp;If enabled, relative values (divided by actual) are used instead of absolute 
- * &nbsp;&nbsp;&nbsp;ones.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class IQR
+public class MeanAbsoluteError
   extends AbstractNumericOutlierDetector {
 
   private static final long serialVersionUID = 6451004929042775852L;
 
-  /** the outlier factor. */
+  /** the stdev factor. */
   protected double m_Factor;
-
-  /** whether to use relative values instead of absolute ones. */
-  protected boolean m_UseRelative;
 
   /**
    * Returns a string describing the object.
@@ -77,10 +67,9 @@ public class IQR
   @Override
   public String globalInfo() {
     return
-      "Interquartile range based detector.\n"
-	+ "If difference between actual/predicted is more than the factor of "
-	+ "standard deviations away from the quartial 0.25/0.75, then the point "
-	+ "gets flagged as outlier.";
+      "Mean absolute error (MAE) based detector.\n"
+	+ "If difference between actual/predicted is more than MAE * FACTOR, "
+        + "then the point gets flagged as outlier.";
   }
 
   /**
@@ -92,11 +81,7 @@ public class IQR
 
     m_OptionManager.add(
       "factor", "factor",
-      3.0, 0.0, null);
-
-    m_OptionManager.add(
-      "use-relative", "useRelative",
-      false);
+      2.0, 0.0, null);
   }
 
   /**
@@ -106,15 +91,7 @@ public class IQR
    */
   @Override
   public String getQuickInfo() {
-    String	result;
-    String	value;
-
-    result = QuickInfoHelper.toString(this, "factor", m_Factor, "factor: ");
-    value  = QuickInfoHelper.toString(this, "useRelative", m_UseRelative, "relative", ", ");
-    if (value != null)
-      result += value;
-
-    return result;
+    return QuickInfoHelper.toString(this, "factor", m_Factor, "factor: ");
   }
 
   /**
@@ -147,37 +124,6 @@ public class IQR
   }
 
   /**
-   * Sets whether to use relative values (divided by actual) rather than
-   * absolute ones.
-   *
-   * @param value	true if relative
-   */
-  public void setUseRelative(boolean value) {
-    m_UseRelative = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to use relative values (divided by actual) rather than
-   * absolute ones.
-   *
-   * @return		true if relative
-   */
-  public boolean getUseRelative() {
-    return m_UseRelative;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String useRelativeTipText() {
-    return "If enabled, relative values (divided by actual) are used instead of absolute ones.";
-  }
-
-  /**
    * Performs the actual detection of the outliers.
    *
    * @param sheet	the spreadsheet to analyze
@@ -191,9 +137,7 @@ public class IQR
     Double[]		act;
     Double[]		pred;
     double[] 		diff;
-    double		iqr1;
-    double		iqr3;
-    double		iqr;
+    double 		mae;
     int			i;
 
     result = new HashSet<>();
@@ -201,20 +145,16 @@ public class IQR
     // calc differences
     act  = extractColumn(sheet, actual);
     pred = extractColumn(sheet, predicted);
-    diff = diff(act, pred, m_UseRelative);
+    diff = diff(act, pred, false);
 
     // stats
-    iqr1 = StatUtils.quartile(diff, 0.25);
-    iqr3 = StatUtils.quartile(diff, 0.75);
-    iqr  = iqr3 - iqr1;
+    mae = StatUtils.mae(act, pred);
     if (isLoggingEnabled())
-      getLogger().info("iqr1=" + iqr1 + ", iqr3=" + iqr3 + ", iqr=" + iqr);
+      getLogger().info("mae=" + mae);
 
     // flag outliers
     for (i = 0; i < diff.length; i++) {
-      if (diff[i] > iqr3 + iqr * m_Factor)
-	result.add(i);
-      else if (diff[i] < iqr1 - iqr * m_Factor)
+      if (Math.abs(diff[i]) > mae * m_Factor)
 	result.add(i);
     }
 

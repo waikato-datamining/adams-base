@@ -198,23 +198,9 @@ public class StdDev
     result = new HashSet<>();
 
     // calc differences
-    diff = new double[sheet.getRowCount()];
     act  = extractColumn(sheet, actual);
     pred = extractColumn(sheet, predicted);
-    for (i = 0; i < sheet.getRowCount(); i++) {
-      if ((act[i] != null) && (pred[i] != null)) {
-	diff[i] = act[i] - pred[i];
-	if (m_UseRelative) {
-	  if (act[i] != 0)
-	    diff[i] /= act[i];
-	  else
-	    diff[i] = Double.NaN;
-	}
-      }
-      else {
-	diff[i] = Double.NaN;
-      }
-    }
+    diff = diff(act, pred, m_UseRelative);
 
     // stats
     mean  = StatUtils.mean(diff);

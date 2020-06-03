@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiOutlierDetector.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.removeoutliers;
@@ -52,7 +52,6 @@ import java.util.Set;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MultiOutlierDetector
   extends AbstractOutlierDetector {
@@ -63,7 +62,6 @@ public class MultiOutlierDetector
    * Enumeration of how to combine the outliers.
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum Combination {
     UNION,
@@ -212,7 +210,7 @@ public class MultiOutlierDetector
     Set<Integer>	current;
     int			i;
 
-    result = new HashSet<Integer>();
+    result = new HashSet<>();
     for (i = 0; i < m_Detectors.length; i++) {
       current = m_Detectors[i].detect(sheet, actual, predicted);
       if (i == 0)
@@ -220,7 +218,7 @@ public class MultiOutlierDetector
       else {
 	switch (m_Combination) {
 	  case INTERSECT:
-	    result.containsAll(current);
+	    result.retainAll(current);
 	    break;
 	  case UNION:
 	    result.addAll(current);
