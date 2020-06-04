@@ -521,6 +521,43 @@ extending it very easy. The built-in dynamic class discovery is at the heart of
 it. The following sections cover various aspects of extending ADAMS, from merely
 adding a subclass to creating a new project built on top of ADAMS.
 
+\section{Instantiating classes and copying objects}
+\label{instantiating_classes_and_copying_objects}
+\subsection{Instantiating classes}
+ADAMS is, more or less, a plain old Java application, i.e., you could instantiate
+classes in your code simply by using:
+\begin{verbatim}
+Class cls = Class.forName("my.pkg.MyClass");
+\end{verbatim}
+However, ADAMS also incorporates other frameworks like Weka, which come with
+their own class-loading mechanism. In order to handle situations like this,
+you have to use the following class for instantiating other classes from their
+respective class name:
+\begin{verbatim}
+adams.core.classmanager.ClassManager
+\end{verbatim}
+Under the hood, implementations of the \verb|CustomClassManager|
+interface (package \verb|adams.core.classmanager|) take care of the actual
+instantiation of classes. \textit{ClassManager} records the underlying manager
+responsible for instantiating particular classes, speeding up the process
+the second time a class is being instantiated.
+
+As an example, you would correctly instantiate the above class as follows:
+\begin{verbatim}
+Class cls = ClassManager.getSingleton().forName("my.pkg.MyClass");
+\end{verbatim}
+
+\subsection{Copying objects}
+Generating deep copies of objects via serialization also has to go through the
+\textit{ClassManager} singleton, as not all classes may be accessible to the
+default class loader. The following two methods are available:
+\begin{tight_itemize}
+  \item \texttt{deepCopy(Object o)} -- prints any errors in the console
+  \item \texttt{deepCopy(Object o, boolean silent)} -- suppresses errors when
+  \textit{silent}
+\end{tight_itemize}
+
+
 \section{Dynamic class discovery}
 \label{dynamic_class_discovery}
 ADAMS is a flexible plug-in framework thanks to the dynamic class discovery that
