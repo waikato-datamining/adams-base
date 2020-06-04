@@ -94,8 +94,10 @@ public class GraphicalFlowExecutionListenersTab
 	m_TabbedDisplays.setDetachableTabs(true);
 	for (GraphicalFlowExecutionListener listener: registered) {
 	  String title = listener.getListenerTitle();
-	  if (listener.getOwner().getParentComponent() instanceof FlowPanel)
-	    title = ((FlowPanel) listener.getOwner().getParentComponent()).getTitle() + ":" + title;
+	  if (listener.getOwner() != null) {
+	    if (listener.getOwner().getParentComponent() instanceof FlowPanel)
+	      title = ((FlowPanel) listener.getOwner().getParentComponent()).getTitle() + ":" + title;
+	  }
 	  BasePanel listenerPanel = listener.newListenerPanelIfNecessary();
 	  DetachablePanel detachable = new DetachablePanel();
 	  detachable.setFrameTitle(title);
