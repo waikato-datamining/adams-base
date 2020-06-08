@@ -1,0 +1,14 @@
+# Project: adams
+# Date: 2020-06-08 18:59:14
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Reads an indexed PNG as spreadsheet and displays it as table and text." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/indexed.png
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.PNGSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.control.Branch
+  adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
+  adams.flow.control.Sequence
+   adams.flow.transformer.Convert -conversion "adams.data.conversion.SpreadSheetToString -writer \"adams.data.io.output.CsvSpreadSheetWriter -no-header true\""
+   adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -x -3 -font Monospaced-PLAIN-8 -writer adams.data.io.output.NullWriter
