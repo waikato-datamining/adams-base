@@ -20,6 +20,7 @@
 
 package adams.data.image.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 import adams.gui.visualization.core.ColorProvider;
@@ -46,8 +47,14 @@ import java.util.Arrays;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
+ * <pre>-force-gray-scale &lt;boolean&gt; (property: forceGrayScale)
+ * &nbsp;&nbsp;&nbsp;If enabled, the image is forced into grayscale first (if not binary&#47;indexed
+ * &nbsp;&nbsp;&nbsp;&#47;grayscale), otherwise it is used as is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: colorProvider)
- * &nbsp;&nbsp;&nbsp;The color provider to use for coloring in the grayscale image.
+ * &nbsp;&nbsp;&nbsp;The color provider to use for coloring in the grayscale&#47;indexed image.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.CustomColorProvider -color #ffff00 -color #0000ff -color #ff0000
  * </pre>
  *
@@ -59,6 +66,9 @@ public class GrayOrIndexedColorizer
   extends AbstractBufferedImageTransformer {
 
   private static final long serialVersionUID = 4183676541160281269L;
+
+  /** whether to force gray scale or use the image as is. */
+  protected boolean m_ForceGrayScale;
 
   /** the color provider for generating the colors. */
   protected ColorProvider m_ColorProvider;
@@ -82,8 +92,41 @@ public class GrayOrIndexedColorizer
     super.defineOptions();
 
     m_OptionManager.add(
+      "force-gray-scale", "forceGrayScale",
+      false);
+
+    m_OptionManager.add(
       "color-provider", "colorProvider",
       getDefaultColorProvider());
+  }
+
+  /**
+   * Sets whether to force gray scale (if not binary/indexed/grayscale) or use image as is.
+   *
+   * @param value	true if to force
+   */
+  public void setForceGrayScale(boolean value) {
+    m_ForceGrayScale = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to force gray scale (if not binary/indexed/grayscale) or use image as is.
+   *
+   * @return		true if to force
+   */
+  public boolean getForceGrayScale() {
+    return m_ForceGrayScale;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String forceGrayScaleTipText() {
+    return "If enabled, the image is forced into grayscale first (if not binary/indexed/grayscale), otherwise it is used as is.";
   }
 
   /**
@@ -128,6 +171,16 @@ public class GrayOrIndexedColorizer
   }
 
   /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "forceGrayScale", m_ForceGrayScale, "gray-scale");
+  }
+
+  /**
    * Performs the actual transforming of the image.
    *
    * @param img		the image to transform (can be modified, since it is a copy)
@@ -150,15 +203,20 @@ public class GrayOrIndexedColorizer
     result[0] = (BufferedImageContainer) img.getHeader();
 
     // get correct image
-    type = img.getContent().getType();
-    switch (type) {
-      case BufferedImage.TYPE_BYTE_BINARY:
-      case BufferedImage.TYPE_BYTE_GRAY:
-      case BufferedImage.TYPE_BYTE_INDEXED:
-        oldImg = img.getContent();
-        break;
-      default:
-        oldImg = BufferedImageHelper.convert(img.getContent(), BufferedImage.TYPE_BYTE_GRAY);
+    if (m_ForceGrayScale) {
+      type = img.getContent().getType();
+      switch (type) {
+	case BufferedImage.TYPE_BYTE_BINARY:
+	case BufferedImage.TYPE_BYTE_GRAY:
+	case BufferedImage.TYPE_BYTE_INDEXED:
+	  oldImg = img.getContent();
+	  break;
+	default:
+	  oldImg = BufferedImageHelper.convert(img.getContent(), BufferedImage.TYPE_BYTE_GRAY);
+      }
+    }
+    else {
+      oldImg = img.getContent();
     }
 
     // determine unique colors
