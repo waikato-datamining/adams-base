@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetInfo.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -61,40 +61,48 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetInfo
  * </pre>
  * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-output-array &lt;boolean&gt; (property: outputArray)
  * &nbsp;&nbsp;&nbsp;If enabled, the info items get output as array rather than one-by-one.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-type &lt;NAME|COMMENTS|TIMEZONE|LOCALE|NUM_COLUMNS|NUM_ROWS|COLUMN_NAME|COLUMN_NAMES|COLUMN_TYPE|CELL_TYPES|CELL_VALUES&gt; (property: type)
+ *
+ * <pre>-type &lt;NAME|COMMENTS|TIMEZONE|LOCALE|NUM_COLUMNS|NUM_ROWS|COLUMN_NAME|COLUMN_NAMES|COLUMN_TYPE|CELL_TYPES|CELL_VALUES|SHEET_VALUES&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate.
  * &nbsp;&nbsp;&nbsp;default: NUM_ROWS
  * </pre>
- * 
+ *
  * <pre>-column-index &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: columnIndex)
- * &nbsp;&nbsp;&nbsp;The column index to use for generating column-specific information. An index 
- * &nbsp;&nbsp;&nbsp;is a number starting with 1; apart from column names (case-sensitive), the 
- * &nbsp;&nbsp;&nbsp;following placeholders can be used as well: first, second, third, last_2,
- * &nbsp;&nbsp;&nbsp; last_1, last
+ * &nbsp;&nbsp;&nbsp;The column index to use for generating column-specific information. An index
+ * &nbsp;&nbsp;&nbsp;is a number starting with 1; column names (case-sensitive) as well as the
+ * &nbsp;&nbsp;&nbsp;following placeholders can be used: first, second, third, last_2, last_1,
+ * &nbsp;&nbsp;&nbsp; last; numeric indices can be enforced by preceding them with '#' (eg '#12'
+ * &nbsp;&nbsp;&nbsp;); column names can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: last
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from column names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  * 
  * <pre>-sort &lt;boolean&gt; (property: sort)
@@ -105,7 +113,6 @@ import java.util.HashSet;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetInfo
   extends AbstractArrayProvider
@@ -142,7 +149,9 @@ public class SpreadSheetInfo
     /** all cell types (at specified index). */
     CELL_TYPES,
     /** all (unique) cell values (at specified index). */
-    CELL_VALUES
+    CELL_VALUES,
+    /** all (unique) cell values. */
+    SHEET_VALUES,
   }
 
   /** the type of information to generate. */
@@ -226,6 +235,7 @@ public class SpreadSheetInfo
 	    new InfoType[]{
 		InfoType.COLUMN_NAMES,
 		InfoType.CELL_VALUES,
+		InfoType.SHEET_VALUES,
 	    }));
     if (types.contains(m_Type) || QuickInfoHelper.hasVariable(this, "type"))
       result += QuickInfoHelper.toString(this, "sort", m_Sort, (m_Sort ? "sorted" : "unsorted"), ", ");
@@ -348,6 +358,7 @@ public class SpreadSheetInfo
       case COLUMN_TYPE:
       case CELL_TYPES:
       case CELL_VALUES:
+      case SHEET_VALUES:
 	return String.class;
 
       case NUM_COLUMNS:
@@ -381,6 +392,7 @@ public class SpreadSheetInfo
     ContentType			type;
     Collection<ContentType>	types;
     HashSet<String>		unique;
+    int				i;
 
     result = null;
 
@@ -450,6 +462,14 @@ public class SpreadSheetInfo
 	if (index != -1)
           m_Queue.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, index, true, m_Sort)));
 	break;
+
+      case SHEET_VALUES:
+        unique = new HashSet<>();
+        for (i = 0; i < sheet.getColumnCount(); i++)
+          unique.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, i, true, false)));
+        m_Queue.addAll(unique);
+        Collections.sort(m_Queue);
+        break;
 
       default:
 	result = "Unhandled info type: " + m_Type;
