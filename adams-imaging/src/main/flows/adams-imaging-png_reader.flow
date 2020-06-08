@@ -1,14 +1,23 @@
 # Project: adams
-# Date: 2020-06-08 18:59:14
+# Date: 2020-06-08 21:08:18
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
 #
 adams.flow.control.Flow -annotation "Reads an indexed PNG as spreadsheet and displays it as table and text." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.TabView -display-type adams.flow.core.displaytype.Default
+  adams.flow.sink.SpreadSheetDisplay -name Table -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name Text -display-type adams.flow.core.displaytype.Default -x -3 -font Monospaced-PLAIN-8 -writer adams.data.io.output.NullWriter
+  adams.flow.sink.ImageViewer -name Image -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay
  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/indexed.png
- adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.PNGSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
- adams.flow.control.Branch
-  adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
-  adams.flow.control.Sequence
-   adams.flow.transformer.Convert -conversion "adams.data.conversion.SpreadSheetToString -writer \"adams.data.io.output.CsvSpreadSheetWriter -no-header true\""
-   adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -x -3 -font Monospaced-PLAIN-8 -writer adams.data.io.output.NullWriter
+ adams.flow.control.Tee -name spreadsheet
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.PNGSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+  adams.flow.control.Branch
+   adams.flow.sink.CallableSink -callable Table
+   adams.flow.control.Sequence -skip true
+    adams.flow.transformer.Convert -conversion "adams.data.conversion.SpreadSheetToString -writer \"adams.data.io.output.CsvSpreadSheetWriter -no-header true\""
+    adams.flow.sink.CallableSink -callable Text
+ adams.flow.control.Tee -name image
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.ApacheCommonsImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+  adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.GrayOrIndexedColorizer -logging-level INFO -color-provider \"adams.gui.visualization.core.CustomColorProvider -color #ffff00 -color #0000ff -color #ff0000\""
+  adams.flow.sink.CallableSink -callable Image
