@@ -15,9 +15,14 @@
 
 /*
  * IntArrayMatrixView.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
+
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetSupporter;
 
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
@@ -28,7 +33,7 @@ import java.io.Serializable;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class IntArrayMatrixView
-  implements Serializable, BufferedImageSupporter {
+  implements Serializable, BufferedImageSupporter, SpreadSheetSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -5901549787330341842L;
@@ -180,5 +185,34 @@ public class IntArrayMatrixView
    */
   public BufferedImage toBufferedImage() {
     return toBufferedImage(BufferedImage.TYPE_INT_RGB);
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @return		the content
+   */
+  @Override
+  public SpreadSheet toSpreadSheet() {
+    SpreadSheet		result;
+    Row			row;
+    int			i;
+    int			n;
+
+    result = new DefaultSpreadSheet();
+
+    // header
+    row = result.getHeaderRow();
+    for (i = 0; i < getWidth(); i++)
+      row.addCell("" + i).setContentAsString("" + (i+1));
+
+    // data
+    for (n = 0; n < getHeight(); n++) {
+      row = result.addRow();
+      for (i = 0; i < getWidth(); i++)
+	row.addCell("" + i).setContent(get(i, n));
+    }
+
+    return result;
   }
 }
