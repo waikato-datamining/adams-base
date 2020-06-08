@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2020-06-08 21:08:18
+# Date: 2020-06-09 08:27:22
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
@@ -8,15 +8,20 @@ adams.flow.control.Flow -annotation "Reads an indexed PNG as spreadsheet and dis
  adams.flow.standalone.TabView -display-type adams.flow.core.displaytype.Default
   adams.flow.sink.SpreadSheetDisplay -name Table -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter
   adams.flow.sink.Display -name Text -display-type adams.flow.core.displaytype.Default -x -3 -font Monospaced-PLAIN-8 -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name Values -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
   adams.flow.sink.ImageViewer -name Image -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay
  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/indexed.png
  adams.flow.control.Tee -name spreadsheet
   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.PNGSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
   adams.flow.control.Branch
    adams.flow.sink.CallableSink -callable Table
-   adams.flow.control.Sequence -skip true
+   adams.flow.control.Sequence -name text
     adams.flow.transformer.Convert -conversion "adams.data.conversion.SpreadSheetToString -writer \"adams.data.io.output.CsvSpreadSheetWriter -no-header true\""
     adams.flow.sink.CallableSink -callable Text
+   adams.flow.control.Sequence -name values
+    adams.flow.transformer.SpreadSheetInfo -output-array true -type SHEET_VALUES
+    adams.flow.transformer.StringJoin -glue \n
+    adams.flow.sink.CallableSink -callable Values
  adams.flow.control.Tee -name image
   adams.flow.transformer.ImageFileReader -reader adams.data.io.input.ApacheCommonsImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
   adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.GrayOrIndexedColorizer -logging-level INFO -color-provider \"adams.gui.visualization.core.CustomColorProvider -color #ffff00 -color #0000ff -color #ff0000\""
