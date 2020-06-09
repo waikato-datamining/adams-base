@@ -1639,7 +1639,7 @@ public class GUIHelper {
    * A simple dialog for entering a string.
    * If "comm" is null simple modal dialogs are used, otherwise modeless ones
    * with blocking till dialog closed (or closing requested via communication object).
-   * 
+   *
    * @param parent	the parent for this dialog
    * @param msg		the message to display, can be null (uses "Enter value" in that case)
    * @param initial	the initial selection, can be null
@@ -1648,6 +1648,24 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String title, DialogCommunication comm) {
+    return showInputDialog(parent, msg, initial, title, comm, 20, 1);
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * If "comm" is null simple modal dialogs are used, otherwise modeless ones
+   * with blocking till dialog closed (or closing requested via communication object).
+   * 
+   * @param parent	the parent for this dialog
+   * @param msg		the message to display, can be null (uses "Enter value" in that case)
+   * @param initial	the initial selection, can be null
+   * @param title	the title of the input dialog, can be null (uses "Enter value" in that case)
+   * @param comm        for communicating with the dialog, can be null
+   * @param minCols 	the minimum number of columns in the text box
+   * @param minRows 	the minimum number of rows in the text box
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial, String title, DialogCommunication comm, int minCols, int minRows) {
     JPanel			panelAll;
     JPanel			panel;
     JLabel			label;
@@ -1699,6 +1717,10 @@ public class GUIHelper {
       if (cols > 40)
         cols = 40;
     }
+    if (cols < minCols)
+      cols = minCols;
+    if (rows < minRows)
+      rows = minRows;
     textValue = new BaseTextArea(rows, cols);
     textValue.setToolTipText("Use <Ctrl-Enter> for adding a new line");
     textValue.setText(initial);

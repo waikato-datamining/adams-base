@@ -15,7 +15,7 @@
 
 /*
  * EnterValue.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -94,21 +94,50 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
+ * <pre>-parent-component-actor &lt;adams.flow.core.CallableActorReference&gt; (property: parentComponentActor)
+ * &nbsp;&nbsp;&nbsp;The (optional) callable actor to use as parent component instead of the
+ * &nbsp;&nbsp;&nbsp;flow panel.
+ * &nbsp;&nbsp;&nbsp;default: unknown
+ * </pre>
+ *
+ * <pre>-use-outer-window &lt;boolean&gt; (property: useOuterWindow)
+ * &nbsp;&nbsp;&nbsp;If enabled, the outer window (dialog&#47;frame) is used instead of the component
+ * &nbsp;&nbsp;&nbsp;of the callable actor.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-message &lt;adams.core.base.BaseString&gt; (property: message)
- * &nbsp;&nbsp;&nbsp;The message to prompt the user with; variables get expanded prior to prompting 
+ * &nbsp;&nbsp;&nbsp;The message to prompt the user with; variables get expanded prior to prompting
  * &nbsp;&nbsp;&nbsp;user.
  * &nbsp;&nbsp;&nbsp;default: Please enter a value
  * </pre>
- * 
+ *
  * <pre>-initial-value &lt;adams.core.base.BaseString&gt; (property: initialValue)
- * &nbsp;&nbsp;&nbsp;The initial value to prompt the user with; variables get expanded prior 
+ * &nbsp;&nbsp;&nbsp;The initial value to prompt the user with; variables get expanded prior
  * &nbsp;&nbsp;&nbsp;to prompting user.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-selection-values &lt;adams.core.base.BaseString&gt; [-selection-values ...] (property: selectionValues)
  * &nbsp;&nbsp;&nbsp;The options to let the user choose from.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-num-cols &lt;int&gt; (property: numCols)
+ * &nbsp;&nbsp;&nbsp;The number of columns to use for the text box.
+ * &nbsp;&nbsp;&nbsp;default: 20
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-num-rows &lt;int&gt; (property: numRows)
+ * &nbsp;&nbsp;&nbsp;The number of rows to use for the text box.
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  * 
  * <pre>-use-buttons &lt;boolean&gt; (property: useButtons)
@@ -158,6 +187,12 @@ public class EnterValue
   /** whether to automate the actor. */
   protected boolean m_NonInteractive;
 
+  /** the number of columns for the text box. */
+  protected int m_NumCols;
+
+  /** the number of rows for the text box. */
+  protected int m_NumRows;
+
   /** whether to use buttons instead of a dropdown list. */
   protected boolean m_UseButtons;
 
@@ -192,32 +227,40 @@ public class EnterValue
     super.defineOptions();
 
     m_OptionManager.add(
-	    "message", "message",
-	    new BaseString("Please enter a value"));
+      "message", "message",
+      new BaseString("Please enter a value"));
 
     m_OptionManager.add(
-	    "initial-value", "initialValue",
-	    new BaseString(""));
+      "initial-value", "initialValue",
+      new BaseString(""));
 
     m_OptionManager.add(
-	    "selection-values", "selectionValues",
-	    new BaseString[0]);
+      "selection-values", "selectionValues",
+      new BaseString[0]);
 
     m_OptionManager.add(
-	    "use-buttons", "useButtons",
-	    false);
+      "num-cols", "numCols",
+      20, 1, null);
 
     m_OptionManager.add(
-	    "non-interactive", "nonInteractive",
-	    false);
+      "num-rows", "numRows",
+      1, 1, null);
 
     m_OptionManager.add(
-	    "restoration-enabled", "restorationEnabled",
-	    false);
+      "use-buttons", "useButtons",
+      false);
 
     m_OptionManager.add(
-	    "restoration-file", "restorationFile",
-	    new PlaceholderFile());
+      "non-interactive", "nonInteractive",
+      false);
+
+    m_OptionManager.add(
+      "restoration-enabled", "restorationEnabled",
+      false);
+
+    m_OptionManager.add(
+      "restoration-file", "restorationFile",
+      new PlaceholderFile());
   }
 
   /**
@@ -336,6 +379,64 @@ public class EnterValue
    */
   public String selectionValuesTipText() {
     return "The options to let the user choose from.";
+  }
+
+  /**
+   * Sets the number of columns to use for the text box.
+   *
+   * @param value	the number of columns
+   */
+  public void setNumCols(int value) {
+    m_NumCols = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of columns to use for the text box.
+   *
+   * @return 		the number of columns
+   */
+  public int getNumCols() {
+    return m_NumCols;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String numColsTipText() {
+    return "The number of columns to use for the text box.";
+  }
+
+  /**
+   * Sets the number of rows to use for the text box.
+   *
+   * @param value	the number of rows
+   */
+  public void setNumRows(int value) {
+    m_NumRows = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of rows to use for the text box.
+   *
+   * @return 		the number of rows
+   */
+  public int getNumRows() {
+    return m_NumRows;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String numRowsTipText() {
+    return "The number of rows to use for the text box.";
   }
 
   /**
@@ -512,7 +613,7 @@ public class EnterValue
     else
       value = GUIHelper.showInputDialog(
         getActualParentComponent(),
-        msg, initial, getName(), m_Comm);
+        msg, initial, getName(), m_Comm, m_NumCols, m_NumRows);
 
     if ((value != null) && (value.length() > 0)) {
       m_OutputToken = new Token(value);
