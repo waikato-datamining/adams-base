@@ -15,7 +15,7 @@
 
 /*
  * CallableActorHelper.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -25,6 +25,7 @@ import adams.core.logging.LoggingObject;
 import adams.flow.control.AbstractDirectedControlActor;
 import adams.flow.sink.CallableSink;
 import adams.flow.source.CallableSource;
+import adams.flow.standalone.AbstractMultiView;
 import adams.flow.standalone.CallableActors;
 import adams.flow.transformer.CallableTransformer;
 
@@ -211,6 +212,75 @@ public class CallableActorHelper
     handlers = ActorUtils.findActorHandlers(actor, true);
     for (i = 0; i < handlers.size(); i++)
       findCallableActors(handlers.get(i), result);
+
+    return result;
+  }
+
+  /**
+   * Checks a control actor's children whether they contain the multi-view actor
+   * that we're looking for.
+   *
+   * @param handler	the handler to check
+   * @param name	the name of the callable actor
+   * @return		the callable actor or null if not found
+   */
+  public Actor findMultiView(ActorHandler handler, CallableActorReference name) {
+    Actor			result;
+    int				i;
+    Actor			extActor;
+    ExternalActorHandler 	extHandler;
+
+    result = null;
+
+    for (i = 0; i < handler.size(); i++) {
+      if (handler.get(i) instanceof AbstractMultiView) {
+        if (handler.get(i).getName().equals(name.getValue()))
+          result = handler.get(i);
+        if (result != null)
+	  break;
+      }
+      else if (handler.get(i) instanceof ExternalActorHandler) {
+	extHandler = (ExternalActorHandler) handler.get(i);
+	if (extHandler.getExternalActor() instanceof ActorHandler) {
+	  extActor = extHandler.getExternalActor();
+	  if (extActor instanceof AbstractMultiView) {
+            if (handler.get(i).getName().equals(name.getValue()))
+              result = handler.get(i);
+          }
+	  else {
+            result = findMultiView((ActorHandler) extActor, name);
+          }
+	  if (result != null)
+	    break;
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Tries to find the referenced multi-view actor. First all possible actor
+   * handlers are located recursively (up to the root) that allow also
+   * singletons. This list of actors is then searched for the multi-view actor.
+   *
+   * @param actor	the actor to start from
+   * @param name	the name of the callable actor
+   * @return		the callable actor or null if not found
+   * @see		ActorUtils#findActorHandlers(Actor, boolean)
+   */
+  public Actor findMultiViewRecursive(Actor actor, CallableActorReference name) {
+    Actor		result;
+    List<ActorHandler>	handlers;
+    int			i;
+
+    result   = null;
+    handlers = ActorUtils.findActorHandlers(actor, true);
+    for (i = 0; i < handlers.size(); i++) {
+      result = findMultiView(handlers.get(i), name);
+      if (result != null)
+	break;
+    }
 
     return result;
   }

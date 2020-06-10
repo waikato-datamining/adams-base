@@ -419,7 +419,13 @@ public class CallableActorScreenshot
    * @return		the callable actor or null if not found
    */
   protected Actor findCallableActor() {
-    return m_Helper.findCallableActorRecursive(this, getCallableName());
+    Actor	result;
+
+    result = m_Helper.findMultiViewRecursive(this, getCallableName());
+    if (result == null)
+      result = m_Helper.findCallableActorRecursive(this, getCallableName());
+
+    return result;
   }
 
   /**

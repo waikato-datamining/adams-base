@@ -15,12 +15,13 @@
 
 /*
  * CloseCallableDisplay.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.AbstractDisplay;
+import adams.flow.core.Actor;
 import adams.flow.core.ControlActor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
@@ -29,16 +30,68 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
+ * Closes the referenced callable graphical actor whenever a token passes through.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: CloseCallableDisplay
+ * </pre>
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-callable &lt;adams.flow.core.CallableActorReference&gt; (property: callableName)
+ * &nbsp;&nbsp;&nbsp;The name of the callable actor to use.
+ * &nbsp;&nbsp;&nbsp;default: unknown
+ * </pre>
+ *
+ * <pre>-optional &lt;boolean&gt; (property: optional)
+ * &nbsp;&nbsp;&nbsp;If enabled, then the callable actor is optional, ie no error is raised if
+ * &nbsp;&nbsp;&nbsp;not found, merely ignored.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CloseCallableDisplay
   extends AbstractCallableActor
@@ -61,6 +114,22 @@ public class CloseCallableDisplay
   @Override
   public String globalInfo() {
     return "Closes the referenced callable graphical actor whenever a token passes through.";
+  }
+
+  /**
+   * Tries to find the callable actor referenced by its callable name.
+   *
+   * @return		the callable actor or null if not found
+   */
+  protected Actor findCallableActor() {
+    Actor	result;
+
+    result = m_Helper.findMultiViewRecursive(this, getCallableName());
+
+    if (result == null)
+      result = super.findCallableActor();
+
+    return result;
   }
 
   /**
