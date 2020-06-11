@@ -125,7 +125,7 @@ public class BaseClassnameEditor
 
     panelAll    = new JPanel(new BorderLayout());
     m_PanelHelp = new ClassHelpPanel();
-    m_PanelHelp.listAllClassNames(true);
+    m_PanelHelp.listAllClassNames(false);
     m_PanelHelp.setPreferredSize(GUIHelper.getDefaultDialogDimension());
     panelAll.add(m_PanelHelp, BorderLayout.CENTER);
     panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
