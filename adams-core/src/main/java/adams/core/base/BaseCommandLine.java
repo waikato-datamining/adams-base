@@ -15,7 +15,7 @@
 
 /*
  * BaseCommandLine.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -27,7 +27,6 @@ import adams.core.option.OptionUtils;
  * as BaseString, but used for class names and their associated options.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseCommandLine
   extends AbstractBaseString {
@@ -94,6 +93,38 @@ public class BaseCommandLine
   @Override
   public String getTipText() {
     return "Command-line (classname + options).";
+  }
+
+  /**
+   * Returns the classname part of the command-line.
+   *
+   * @return		the classname
+   */
+  public String classnamePart() {
+    String	result;
+
+    result = getValue();
+    if (result.contains(" "))
+      result = result.substring(0, result.indexOf(' '));
+
+    return result;
+  }
+
+  /**
+   * Returns the options part of the command-line.
+   *
+   * @return		the options
+   */
+  public String optionsPart() {
+    String	result;
+
+    result = getValue();
+    if (result.contains(" "))
+      result = result.substring(result.indexOf(" ") + 1);
+    else
+      result = "";
+
+    return result;
   }
 
   /**
