@@ -15,7 +15,7 @@
 
 /*
  * BaseClassnameEditor.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -48,7 +48,7 @@ import java.awt.event.ActionListener;
  */
 public class BaseClassnameEditor
   extends AbstractPropertyEditorSupport
-  implements CustomStringRepresentationHandler, InlineEditorSupport {
+  implements CustomStringRepresentationHandler {
 
   /** The class panel. */
   protected ClassHelpPanel m_PanelHelp;
@@ -125,7 +125,7 @@ public class BaseClassnameEditor
 
     panelAll    = new JPanel(new BorderLayout());
     m_PanelHelp = new ClassHelpPanel();
-    m_PanelHelp.listAllClassNames(false);
+    m_PanelHelp.listAllClassNames(true);
     m_PanelHelp.setPreferredSize(GUIHelper.getDefaultDialogDimension());
     panelAll.add(m_PanelHelp, BorderLayout.CENTER);
     panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
