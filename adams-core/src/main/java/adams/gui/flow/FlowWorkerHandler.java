@@ -15,7 +15,7 @@
 
 /*
  * FlowWorkerHandler.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow;
@@ -24,6 +24,7 @@ import adams.core.CleanUpHandler;
 import adams.core.StatusMessageHandler;
 import adams.flow.core.Actor;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 import adams.gui.tools.VariableManagementPanel;
 import adams.gui.visualization.debug.StoragePanel;
 
@@ -90,9 +91,9 @@ public interface FlowWorkerHandler
    * Displays the notification text.
    *
    * @param msg		the text to display
-   * @param error	true if error message
+   * @param type	the type of notification (info/warning/error)
    */
-  public void showNotification(String msg, boolean error);
+  public void showNotification(String msg, NotificationType type);
 
   /**
    * Returns the split pane.

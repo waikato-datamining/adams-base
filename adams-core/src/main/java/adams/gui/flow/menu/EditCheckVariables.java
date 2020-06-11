@@ -15,7 +15,7 @@
 
 /*
  * EditCheckVariables.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -23,6 +23,7 @@ import adams.flow.processor.CheckVariableUsage;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.GUIHelper;
+import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -81,7 +82,7 @@ public class EditCheckVariables
 	dialog.setVisible(true);
       }
       else {
-	m_State.getCurrentPanel().showNotification("Basic check passed!\nAll variables get at least set once in the flow.", false);
+	m_State.getCurrentPanel().showNotification("Basic check passed!\nAll variables get at least set once in the flow.", NotificationType.NONE);
       }
     };
     m_State.getCurrentPanel().startBackgroundTask(runnable, "Checking variables...", false);

@@ -15,7 +15,7 @@
 
 /*
  * FlowRunnerPanel.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -56,6 +56,7 @@ import adams.gui.core.TitleGenerator;
 import adams.gui.core.ToolBarPanel;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
+import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.TreeHelper;
 import adams.gui.tools.LogEntryViewerPanel;
@@ -1227,15 +1228,17 @@ public class FlowRunnerPanel
    * Displays the notification text.
    *
    * @param msg		the text to display
-   * @param error	true if error message
+   * @param type	the type of notification (info/warning/error)
    */
-  public void showNotification(String msg, boolean error) {
-    m_PanelNotification.showNotification(msg, error);
+  @Override
+  public void showNotification(String msg, NotificationType type) {
+    m_PanelNotification.showNotification(msg, type);
   }
 
   /**
    * Removes the notification.
    */
+  @Override
   public void clearNotification() {
     m_PanelNotification.clearNotification();
   }

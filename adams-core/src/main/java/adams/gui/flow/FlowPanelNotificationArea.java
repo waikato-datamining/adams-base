@@ -15,7 +15,7 @@
 
 /*
  * FlowPanelNotificationArea.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -56,7 +56,6 @@ import java.util.List;
  * Shows textual notifications. 
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowPanelNotificationArea
   extends BasePanel
@@ -64,6 +63,16 @@ public class FlowPanelNotificationArea
 
   /** for serialization. */
   private static final long serialVersionUID = -6807606526180616742L;
+
+  /**
+   * The type of notification.
+   */
+  public enum NotificationType {
+    NONE,
+    INFO,
+    WARNING,
+    ERROR,
+  }
 
   /** the owner. */
   protected FlowWorkerHandler m_Owner;
@@ -89,8 +98,8 @@ public class FlowPanelNotificationArea
   /** the notification string. */
   protected String m_Notification;
   
-  /** whether it was an error. */
-  protected boolean m_IsError;
+  /** the type of notification. */
+  protected NotificationType m_Type;
 
   /** the available actions. */
   protected List<AbstractNotificationAreaAction> m_Actions;
@@ -108,7 +117,7 @@ public class FlowPanelNotificationArea
     m_Owner          = null;
     m_CloseListeners = new HashSet<>();
     m_Notification   = null;
-    m_IsError        = false;
+    m_Type           = NotificationType.NONE;
     m_Actions        = new ArrayList<>();
     classes          = AbstractNotificationAreaAction.getActions();
     for (Class cls: classes) {
@@ -244,20 +253,25 @@ public class FlowPanelNotificationArea
       }
 
       if (getOwner() != null) {
-        if (m_Notification == null) {
-          if (getOwner() instanceof MultiPageIconSupporter)
-	    ((MultiPageIconSupporter) getOwner()).setPageIcon(null);
-          if (getOwner() instanceof TabIconSupporter)
-	    ((TabIconSupporter) getOwner()).setTabIcon(null);
-          getOwner().getSplitPane().setBottomComponentHidden(true);
-        }
-        else {
-          if (getOwner() instanceof TabIconSupporter)
-            ((TabIconSupporter) getOwner()).setTabIcon(m_IsError ? "stop_blue.gif" : "validate_blue.png");
-          if (getOwner() instanceof MultiPageIconSupporter)
-            ((MultiPageIconSupporter) getOwner()).setPageIcon(m_IsError ? "stop_blue.gif" : "validate_blue.png");
-          getOwner().getSplitPane().setBottomComponentHidden(false);
-        }
+        String icon;
+	switch (m_Type) {
+	  case INFO:
+	    icon = "validate_blue.png";
+	    break;
+	  case WARNING:
+	    icon = "stop_blue.gif";
+	    break;
+	  case ERROR:
+	    icon = "stop_red.gif";
+	    break;
+	  default:
+	    icon = null;
+	}
+        if (getOwner() instanceof MultiPageIconSupporter)
+          ((MultiPageIconSupporter) getOwner()).setPageIcon(icon);
+        if (getOwner() instanceof TabIconSupporter)
+          ((TabIconSupporter) getOwner()).setTabIcon(icon);
+        getOwner().getSplitPane().setBottomComponentHidden(m_Notification == null);
       }
 
       for (AbstractNotificationAreaAction action: m_Actions)
@@ -270,11 +284,11 @@ public class FlowPanelNotificationArea
    * Displays the notification text.
    * 
    * @param msg		the text to display
-   * @param error	true if an error message
+   * @param type	the type of notification (info/warning/error)
    */
-  public void showNotification(String msg, boolean error) {
+  public void showNotification(String msg, NotificationType type) {
     m_Notification = msg;
-    m_IsError      = error;
+    m_Type         = type;
     update();
   }
   
@@ -283,7 +297,7 @@ public class FlowPanelNotificationArea
    */
   public void clearNotification() {
     m_Notification = null;
-    m_IsError      = false;
+    m_Type         = NotificationType.NONE;
     update();
   }
 

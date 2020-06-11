@@ -15,7 +15,7 @@
 
 /*
  * FlowWorker.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow;
@@ -35,6 +35,7 @@ import adams.flow.execution.debug.AnyActorBreakpoint;
 import adams.flow.execution.debug.NoScopeRestriction;
 import adams.gui.core.MultiPageIconSupporter;
 import adams.gui.core.TabIconSupporter;
+import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 
 import javax.swing.SwingUtilities;
 import java.awt.Component;
@@ -44,7 +45,6 @@ import java.io.File;
  * Specialized worker class for executing a flow.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 12532 $
  */
 public class FlowWorker
   implements Runnable, Pausable, Stoppable, StatusMessageHandler {
@@ -206,7 +206,7 @@ public class FlowWorker
 	msg += "(" + errors + ")";
       showStatus(msg);
       if (m_ShowNotification)
-	showNotification(m_Output, true);
+	showNotification(m_Output, NotificationType.ERROR);
     }
     else {
       if (m_Running)
@@ -217,7 +217,7 @@ public class FlowWorker
 	msg += " " + errors + ".";
       showStatus(msg);
       if (m_ShowNotification)
-	m_Owner.showNotification(msg, !m_Running);
+        m_Owner.showNotification(msg, m_Running ? NotificationType.INFO : NotificationType.WARNING);
     }
 
     m_Running  = false;
@@ -320,11 +320,11 @@ public class FlowWorker
   /**
    * Displays the given message in a separate dialog.
    *
-   * @param msg	the message to display
-   * @param isError	whether it is an error message
+   * @param msg		the message to display
+   * @param type	the type of notification (info/warning/error)
    */
-  public void showNotification(String msg, boolean isError) {
-    m_Owner.showNotification(msg, isError);
+  public void showNotification(String msg, NotificationType type) {
+    m_Owner.showNotification(msg, type);
   }
 
   /**

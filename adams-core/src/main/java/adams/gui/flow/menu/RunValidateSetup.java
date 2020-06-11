@@ -15,7 +15,7 @@
 
 /*
  * RunValidateSetup.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -23,6 +23,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.flow.FlowMultiPagePane.FlowPanelFilter;
 import adams.gui.flow.FlowPanel;
+import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
@@ -105,11 +106,11 @@ public class RunValidateSetup
 	if (msg == null) {
 	  msg = "The flow passed validation!";
 	  currentPanel.showStatus(msg);
-	  currentPanel.showNotification(msg, false);
+	  currentPanel.showNotification(msg, NotificationType.INFO);
 	}
 	else {
 	  currentPanel.showStatus("The flow didn't pass validation!");
-	  currentPanel.showNotification("The flow setup failed validation:\n" + msg, true);
+	  currentPanel.showNotification("The flow setup failed validation:\n" + msg, NotificationType.ERROR);
 	}
       }
     };

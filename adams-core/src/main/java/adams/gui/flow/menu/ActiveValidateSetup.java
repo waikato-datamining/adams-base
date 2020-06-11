@@ -15,12 +15,13 @@
 
 /*
  * ActiveValidateSetup.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 
 import java.awt.event.ActionEvent;
 
@@ -80,11 +81,11 @@ public class ActiveValidateSetup
       if (msg == null) {
 	msg = "The flow passed validation!";
 	m_State.getActivePanel().showStatus(msg);
-	m_State.getActivePanel().showNotification(msg, false);
+	m_State.getActivePanel().showNotification(msg, NotificationType.INFO);
       }
       else {
 	m_State.getActivePanel().showStatus("The flow didn't pass validation!");
-	m_State.getActivePanel().showNotification("The flow setup failed validation:\n" + msg, true);
+	m_State.getActivePanel().showNotification("The flow setup failed validation:\n" + msg, NotificationType.ERROR);
       }
     };
     m_State.getActivePanel().startBackgroundTask(runnable, "Validating flow...", false);

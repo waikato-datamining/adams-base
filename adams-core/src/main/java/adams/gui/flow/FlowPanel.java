@@ -66,6 +66,7 @@ import adams.gui.core.UndoPanel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.UndoEvent;
+import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 import adams.gui.flow.tabhandler.AbstractTabHandler;
 import adams.gui.flow.tree.Node;
 import adams.gui.flow.tree.Tree;
@@ -670,9 +671,10 @@ public class FlowPanel
 
       @Override
       protected void done() {
-        boolean   	canExecute;
-        String    	msg;
-        StringBuilder 	notifications;
+        boolean   		canExecute;
+        String    		msg;
+        StringBuilder 		notifications;
+        NotificationType	type;
 
 	m_RunningSwingWorker = false;
         canExecute           = execute && m_Errors.isEmpty();
@@ -703,9 +705,14 @@ public class FlowPanel
             notifications.append("\n\n").append(msg);
         }
         if (notifications.length() > 0) {
+	  type = NotificationType.INFO;
+	  if (!m_Warnings.isEmpty())
+	    type = NotificationType.WARNING;
+	  if (!m_Errors.isEmpty())
+	    type = NotificationType.ERROR;
 	  showNotification(
 	    "Problem(s) encountered loading flow '" + file + "':\n\n"
-	      + notifications.toString().trim(), !m_Errors.isEmpty());
+	      + notifications.toString().trim(), type);
 	}
 
 	update();
@@ -969,7 +976,7 @@ public class FlowPanel
 	    check = ActorUtils.checkFlow(full, false, false, file);
 	  if (check != null) {
 	    String msg = "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check;
-            showNotification(msg, true);
+            showNotification(msg, NotificationType.ERROR);
 	    int retVal = GUIHelper.showConfirmMessage(
 	      m_Owner, msg);
 	    if (retVal != ApprovalDialog.APPROVE_OPTION) {
@@ -1037,15 +1044,15 @@ public class FlowPanel
 
     actor = (Actor) consumer.fromFile(file);
     if (actor == null) {
-      showNotification("Failed to load flow from:\n" + file, true);
+      showNotification("Failed to load flow from:\n" + file, NotificationType.ERROR);
     }
     else {
       getTree().setActor(actor);
       setCurrentFile(new PlaceholderFile(file.getAbsolutePath() + "." + Actor.FILE_EXTENSION));
       if (!consumer.hasErrors())
-	showNotification("Flow successfully imported from:\n" + file, false);
+	showNotification("Flow successfully imported from:\n" + file, NotificationType.NONE);
       else
-	showNotification("Flow import of:\n" + file + "\nResulted in errors:\n" + Utils.flatten(consumer.getErrors(), "\n"), true);
+	showNotification("Flow import of:\n" + file + "\nResulted in errors:\n" + Utils.flatten(consumer.getErrors(), "\n"), NotificationType.ERROR);
     }
   }
 
@@ -1058,10 +1065,10 @@ public class FlowPanel
   public void exportFlow(OptionProducer producer, File file) {
     producer.produce(getCurrentFlow());
     if (!FileUtils.writeToFile(file.getAbsolutePath(), producer.toString(), false)) {
-      showNotification("Failed to export flow to:\n" + file, true);
+      showNotification("Failed to export flow to:\n" + file, NotificationType.ERROR);
     }
     else {
-      showNotification("Flow successfully exported to:\n" + file, false);
+      showNotification("Flow successfully exported to:\n" + file, NotificationType.NONE);
     }
   }
 
@@ -1386,7 +1393,7 @@ public class FlowPanel
    * @param processor	the processor to use, null if to prompt user
    */
   public void processActors(ActorProcessor processor) {
-    getTree().getOperations().processActor(null, processor, () -> showNotification("Actors processed!", false));
+    getTree().getOperations().processActor(null, processor, () -> showNotification("Actors processed!", NotificationType.NONE));
   }
 
   /**
@@ -1403,7 +1410,7 @@ public class FlowPanel
       return;
     path = getTree().getSelectionPath();
     node = (Node) path.getLastPathComponent();
-    getTree().getOperations().processActor(path, processor, () -> showNotification("Actor " + node.getActor().getName() + " processed!", false));
+    getTree().getOperations().processActor(path, processor, () -> showNotification("Actor " + node.getActor().getName() + " processed!", NotificationType.NONE));
   }
 
   /**
@@ -1694,15 +1701,17 @@ public class FlowPanel
    * Displays the notification text.
    * 
    * @param msg		the text to display
-   * @param error	true if error message
+   * @param type	the type of notification (info/warning/error)
    */
-  public void showNotification(String msg, boolean error) {
-    m_PanelNotification.showNotification(msg, error);
+  @Override
+  public void showNotification(String msg, NotificationType type) {
+    m_PanelNotification.showNotification(msg, type);
   }
   
   /**
    * Removes the notification.
    */
+  @Override
   public void clearNotification() {
     m_PanelNotification.clearNotification();
   }
