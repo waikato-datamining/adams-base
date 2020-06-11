@@ -1050,7 +1050,7 @@ public class FlowPanel
       getTree().setActor(actor);
       setCurrentFile(new PlaceholderFile(file.getAbsolutePath() + "." + Actor.FILE_EXTENSION));
       if (!consumer.hasErrors())
-	showNotification("Flow successfully imported from:\n" + file, NotificationType.NONE);
+	showNotification("Flow successfully imported from:\n" + file, NotificationType.PLAIN);
       else
 	showNotification("Flow import of:\n" + file + "\nResulted in errors:\n" + Utils.flatten(consumer.getErrors(), "\n"), NotificationType.ERROR);
     }
@@ -1068,7 +1068,7 @@ public class FlowPanel
       showNotification("Failed to export flow to:\n" + file, NotificationType.ERROR);
     }
     else {
-      showNotification("Flow successfully exported to:\n" + file, NotificationType.NONE);
+      showNotification("Flow successfully exported to:\n" + file, NotificationType.PLAIN);
     }
   }
 
@@ -1393,7 +1393,7 @@ public class FlowPanel
    * @param processor	the processor to use, null if to prompt user
    */
   public void processActors(ActorProcessor processor) {
-    getTree().getOperations().processActor(null, processor, () -> showNotification("Actors processed!", NotificationType.NONE));
+    getTree().getOperations().processActor(null, processor, () -> showNotification("Actors processed!", NotificationType.PLAIN));
   }
 
   /**
@@ -1410,7 +1410,7 @@ public class FlowPanel
       return;
     path = getTree().getSelectionPath();
     node = (Node) path.getLastPathComponent();
-    getTree().getOperations().processActor(path, processor, () -> showNotification("Actor " + node.getActor().getName() + " processed!", NotificationType.NONE));
+    getTree().getOperations().processActor(path, processor, () -> showNotification("Actor " + node.getActor().getName() + " processed!", NotificationType.PLAIN));
   }
 
   /**

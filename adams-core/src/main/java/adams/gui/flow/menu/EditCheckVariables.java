@@ -82,7 +82,7 @@ public class EditCheckVariables
 	dialog.setVisible(true);
       }
       else {
-	m_State.getCurrentPanel().showNotification("Basic check passed!\nAll variables get at least set once in the flow.", NotificationType.NONE);
+	m_State.getCurrentPanel().showNotification("Basic check passed!\nAll variables get at least set once in the flow.", NotificationType.PLAIN);
       }
     };
     m_State.getCurrentPanel().startBackgroundTask(runnable, "Checking variables...", false);

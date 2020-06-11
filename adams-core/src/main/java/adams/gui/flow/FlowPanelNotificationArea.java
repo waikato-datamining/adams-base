@@ -68,7 +68,7 @@ public class FlowPanelNotificationArea
    * The type of notification.
    */
   public enum NotificationType {
-    NONE,
+    PLAIN,
     INFO,
     WARNING,
     ERROR,
@@ -117,7 +117,7 @@ public class FlowPanelNotificationArea
     m_Owner          = null;
     m_CloseListeners = new HashSet<>();
     m_Notification   = null;
-    m_Type           = NotificationType.NONE;
+    m_Type           = NotificationType.PLAIN;
     m_Actions        = new ArrayList<>();
     classes          = AbstractNotificationAreaAction.getActions();
     for (Class cls: classes) {
@@ -297,7 +297,7 @@ public class FlowPanelNotificationArea
    */
   public void clearNotification() {
     m_Notification = null;
-    m_Type         = NotificationType.NONE;
+    m_Type         = NotificationType.PLAIN;
     update();
   }
 
