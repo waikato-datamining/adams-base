@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RegExpConstrainedStringDefinition.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source.valuedefinition;
@@ -29,7 +29,6 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  * Definition for a string that is constrained by a regular expression.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RegExpConstrainedStringDefinition
   extends AbstractValueDefinition {
@@ -158,6 +157,15 @@ public class RegExpConstrainedStringDefinition
   }
 
   /**
+   * Returns whether flow context is required.
+   *
+   * @return		true if required
+   */
+  protected boolean requiresFlowContext() {
+    return false;
+  }
+
+  /**
    * Adds the value to the panel.
    *
    * @param panel	the panel to add to
@@ -165,6 +173,9 @@ public class RegExpConstrainedStringDefinition
    */
   @Override
   public boolean addToPanel(PropertiesParameterPanel panel) {
+    if (!check())
+      return false;
+
     panel.addPropertyType(m_Name, getType());
     panel.setRegExp(m_Name, m_RegExp);
     if (!getDisplay().trim().isEmpty())
@@ -182,6 +193,9 @@ public class RegExpConstrainedStringDefinition
   public String headlessInteraction() {
     String	result;
     String	msg;
+
+    if (!check())
+      return null;
 
     msg = "Please enter " + (getDisplay().trim().isEmpty() ? getName() : getDisplay())
       + " (type: " + getType() + "): ";

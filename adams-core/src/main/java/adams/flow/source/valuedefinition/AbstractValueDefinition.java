@@ -15,12 +15,14 @@
 
 /*
  * AbstractValueDefinition.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source.valuedefinition;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.flow.core.Actor;
+import adams.flow.core.FlowContextHandler;
 import adams.flow.source.EnterManyValues;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
@@ -32,7 +34,8 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  * @see EnterManyValues
  */
 public abstract class AbstractValueDefinition
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements FlowContextHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 1003051563895321458L;
@@ -48,6 +51,9 @@ public abstract class AbstractValueDefinition
 
   /** the help text. */
   protected String m_Help;
+
+  /** the flow context. */
+  protected Actor m_FlowContext;
 
   /**
    * Adds options to the internal list of options.
@@ -72,6 +78,31 @@ public abstract class AbstractValueDefinition
 	    "help", "help",
 	    "");
   }
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value the actor
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return the actor, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
+  }
+
+  /**
+   * Returns whether flow context is required.
+   *
+   * @return		true if required
+   */
+  protected abstract boolean requiresFlowContext();
 
   /**
    * Sets whether the definition is to be used.
@@ -187,6 +218,20 @@ public abstract class AbstractValueDefinition
    */
   public String helpTipText() {
     return "The help text to use for the value.";
+  }
+
+  /**
+   * Method for checking setup state.
+   *
+   * @return		true if checks successful
+   */
+  protected boolean check() {
+    if (requiresFlowContext() && (m_FlowContext == null)) {
+      getLogger().severe("No flow context set!");
+      return false;
+    }
+
+    return true;
   }
 
   /**

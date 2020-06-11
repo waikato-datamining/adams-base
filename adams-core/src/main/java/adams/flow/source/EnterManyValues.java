@@ -283,6 +283,7 @@ public class EnterManyValues
     String		result;
     List<String>	options;
     List<String>	names;
+    String		namesStr;
 
     result = QuickInfoHelper.toString(this, "message", m_Message);
 
@@ -291,7 +292,9 @@ public class EnterManyValues
       if (def.getEnabled())
 	names.add(def.getName());
     }
-    result += QuickInfoHelper.toString(this, "values", (names.size() > 0 ? Utils.flatten(names, "|") : "-none-"), ", ");
+    namesStr = QuickInfoHelper.toString(this, "values", (names.size() > 0 ? Utils.flatten(names, "|") : "-none-"), ", ");
+    if (namesStr != null)
+      result += namesStr;
 
     options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
@@ -733,6 +736,9 @@ public class EnterManyValues
       m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
       return true;
     }
+
+    for (AbstractValueDefinition value: m_Values)
+      value.setFlowContext(this);
 
     // show dialog
     panel = new PropertiesParameterPanel();

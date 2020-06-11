@@ -15,7 +15,7 @@
 
 /*
  * DefaultValueDefinition.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source.valuedefinition;
@@ -187,12 +187,24 @@ public class DefaultValueDefinition
   }
 
   /**
+   * Returns whether flow context is required.
+   *
+   * @return		true if required
+   */
+  protected boolean requiresFlowContext() {
+    return false;
+  }
+
+  /**
    * Adds the value to the panel.
    *
    * @param panel	the panel to add to
    * @return		true if successfully added
    */
   public boolean addToPanel(PropertiesParameterPanel panel) {
+    if (!check())
+      return false;
+
     panel.addPropertyType(getName(), getType());
     if (!getDisplay().trim().isEmpty())
       panel.setLabel(getName(), getDisplay());
@@ -210,6 +222,9 @@ public class DefaultValueDefinition
    */
   public String headlessInteraction() {
     String	msg;
+
+    if (!check())
+      return null;
 
     msg = "Please enter " + (getDisplay().trim().isEmpty() ? getName() : getDisplay())
       + " (type: " + getType() + "): ";

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractGOEValueDefinition.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source.valuedefinition;
@@ -32,7 +32,6 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  * Ancestor for GOE-based value definitions.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractGOEValueDefinition
   extends AbstractValueDefinition {
@@ -171,6 +170,15 @@ public abstract class AbstractGOEValueDefinition
   protected abstract AbstractChooserPanel newChooserPanel() throws Exception;
 
   /**
+   * Returns whether flow context is required.
+   *
+   * @return		true if required
+   */
+  protected boolean requiresFlowContext() {
+    return false;
+  }
+
+  /**
    * Adds the value to the panel.
    *
    * @param panel	the panel to add to
@@ -178,6 +186,9 @@ public abstract class AbstractGOEValueDefinition
    */
   @Override
   public boolean addToPanel(PropertiesParameterPanel panel) {
+    if (!check())
+      return false;
+
     panel.addPropertyType(getName(), getType());
     if (!getDisplay().trim().isEmpty())
       panel.setLabel(getName(), getDisplay());
@@ -201,6 +212,9 @@ public abstract class AbstractGOEValueDefinition
    */
   public String headlessInteraction() {
     String	msg;
+
+    if (!check())
+      return null;
 
     msg = "Please enter " + (getDisplay().trim().isEmpty() ? getName() : getDisplay())
       + " (superclass: " + getSuperClass().getValue() + "): ";

@@ -15,7 +15,7 @@
 
 /*
  * ListSelectionValueDefinition.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source.valuedefinition;
@@ -160,6 +160,15 @@ public class ListSelectionValueDefinition
   }
 
   /**
+   * Returns whether flow context is required.
+   *
+   * @return		true if required
+   */
+  protected boolean requiresFlowContext() {
+    return false;
+  }
+
+  /**
    * Adds the value to the panel.
    *
    * @param panel	the panel to add to
@@ -168,6 +177,9 @@ public class ListSelectionValueDefinition
   @Override
   public boolean addToPanel(PropertiesParameterPanel panel) {
     boolean	found;
+
+    if (!check())
+      return false;
 
     // no items to choose from?
     if (m_Values.length == 0) {
@@ -210,6 +222,9 @@ public class ListSelectionValueDefinition
     String result;
 
     result = null;
+
+    if (!check())
+      return null;
 
     do {
       msg = "Please select " + (getDisplay().trim().isEmpty() ? getName() : getDisplay())
