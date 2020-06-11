@@ -29,6 +29,7 @@ import adams.env.ClassListerDefinition;
 import adams.env.Environment;
 import adams.flow.core.Compatibility;
 import adams.gui.goe.AbstractEditorRegistration;
+import nz.ac.waikato.cms.locator.ClassCache;
 import nz.ac.waikato.cms.locator.ClassLocator;
 import nz.ac.waikato.cms.locator.PropertiesBasedClassListTraversal;
 
@@ -243,16 +244,22 @@ public class ClassLister
     List<String> 	result;
     int			i;
     String		name;
+    String		pkg;
     Iterator<String> 	iter;
+    ClassCache		cache;
 
     result = new ArrayList<>();
     if (!managed) {
       // all classes
-      iter = ClassLocator.getSingleton().getCache().packages();
+      cache = ClassLocator.getSingleton().getCache();
+      iter  = cache.packages();
       while (iter.hasNext()) {
-	for (String cls: ClassLocator.getSingleton().getCache().getClassnames(iter.next())) {
-	  if (cls.contains("$"))
+        pkg = iter.next();
+	for (String cls: cache.getClassnames(pkg)) {
+	  if (cache.isAnonymous(cls))
 	    continue;
+	  if (cls.contains("$"))
+	    cls = cls.replace("$", ".");
 	  if (matches(cls, filters))
 	    result.add(cls);
 	}
