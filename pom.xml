@@ -518,33 +518,6 @@
             </execution>
           </executions>
         </plugin>
-
-        <!-- generates dependency list -->
-        <plugin>
-          <groupId>com.github.fracpete</groupId>
-          <artifactId>maven-dependency-list-plugin</artifactId>
-          <version>0.0.2</version>
-          <executions>
-            <execution>
-              <id>list</id>
-              <phase>package</phase>
-              <goals>
-                <goal>list</goal>
-              </goals>
-              <configuration>
-                <includeGroupIds>nz.ac.waikato.cms.adams</includeGroupIds>
-                <outputFile>${project.build.directory}/${project.artifactId}-${project.version}.dep</outputFile>
-                <sort>true</sort>
-                <type>jar</type>
-                <includeScope>compile</includeScope>
-                <outputGroupId>false</outputGroupId>
-                <outputClassifier>false</outputClassifier>
-                <outputVersion>true</outputVersion>
-                <outputScope>false</outputScope>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
       </plugins>
     </pluginManagement>
 
