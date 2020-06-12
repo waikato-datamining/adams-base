@@ -19,6 +19,7 @@
  */
 package adams.gui.flow.menu;
 
+import adams.core.VariablesHandler;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.flow.FlowMultiPagePane.FlowPanelFilter;
@@ -26,8 +27,10 @@ import adams.gui.flow.FlowPanel;
 import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Validates the current setup.
@@ -86,6 +89,12 @@ public class RunValidateSetup
 	  msg = errors.toString();
 
 	if (msg == null) {
+	  if (actor instanceof VariablesHandler) {
+	    File currentFile = currentPanel.getCurrentFile();
+	    ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) actor, currentFile);
+	    if ((currentFile != null) && currentPanel.isModified())
+	      currentPanel.getLogger().warning("Flow '" + currentFile + "' not saved, flow variables like '" + ActorUtils.FLOW_DIR + "' might not be accurate!");
+	  }
 	  try {
 	    msg = actor.setUp();
 	    actor.wrapUp();
@@ -93,8 +102,7 @@ public class RunValidateSetup
 	  }
 	  catch (Exception ex) {
 	    msg = "Actor generated exception: ";
-	    System.err.println(msg);
-	    ex.printStackTrace();
+	    currentPanel.getLogger().log(Level.SEVERE, msg, e);
 	    msg += e;
 	  }
 	}
