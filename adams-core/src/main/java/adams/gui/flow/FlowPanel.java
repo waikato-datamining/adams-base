@@ -33,7 +33,10 @@ import adams.core.io.filechanged.FlowFileDigest;
 import adams.core.io.filechanged.LastModified;
 import adams.core.io.filechanged.MultiMonitor;
 import adams.core.io.filechanged.MultiMonitor.CombinationType;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
+import adams.core.logging.LoggingSupporter;
 import adams.core.option.OptionConsumer;
 import adams.core.option.OptionProducer;
 import adams.core.option.OptionUtils;
@@ -90,6 +93,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import static com.github.fracpete.javautils.Reflection.newInstance;
 
@@ -102,7 +106,7 @@ public class FlowPanel
   extends UndoPanel
   implements StatusMessageHandler, SendToActionSupporter, FlowTreeHandler,
   MultiPageIconSupporter, FlowWorkerHandler, UndoHandlerWithQuickAccess,
-  KnownParentSupporter {
+  KnownParentSupporter, LoggingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3579084888256133873L;
@@ -193,6 +197,9 @@ public class FlowPanel
 
   /** for monitoring file changes. */
   protected MultiMonitor m_FlowFileMonitor;
+
+  /** the logger instance. */
+  protected Logger m_Logger;
 
   /**
    * Initializes the panel with no owner.
@@ -356,6 +363,26 @@ public class FlowPanel
    */
   public FlowMultiPagePane getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Returns the logger in use.
+   *
+   * @return		the logger
+   */
+  public synchronized Logger getLogger() {
+    if (m_Logger == null)
+      m_Logger = LoggingHelper.getLogger(getClass());
+    return m_Logger;
+  }
+
+  /**
+   * Returns whether logging is enabled.
+   *
+   * @return		true if at least {@link Level#INFO}
+   */
+  public boolean isLoggingEnabled() {
+    return LoggingHelper.isAtLeast(getLogger(), Level.INFO);
   }
 
   /**
