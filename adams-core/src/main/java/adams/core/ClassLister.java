@@ -258,8 +258,6 @@ public class ClassLister
 	for (String cls: cache.getClassnames(pkg)) {
 	  if (cache.isAnonymous(cls))
 	    continue;
-	  if (cls.contains("$"))
-	    cls = cls.replace("$", ".");
 	  if (matches(cls, filters))
 	    result.add(cls);
 	}
