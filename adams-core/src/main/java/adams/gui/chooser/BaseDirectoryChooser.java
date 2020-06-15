@@ -15,7 +15,7 @@
 
 /*
  * BaseDirectoryChooser.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -71,7 +71,7 @@ public class BaseDirectoryChooser
    * @param currentDirectory	the directory to start in
    */
   public BaseDirectoryChooser(File currentDirectory) {
-    super(currentDirectory.getAbsoluteFile());
+    super(findExistingDir(currentDirectory.getAbsoluteFile()));
     initialize();
   }
 
@@ -83,7 +83,7 @@ public class BaseDirectoryChooser
    * @param fsv			the view to use
    */
   public BaseDirectoryChooser(File currentDirectory, FileSystemView fsv) {
-    super(currentDirectory.getAbsoluteFile(), fsv);
+    super(findExistingDir(currentDirectory.getAbsoluteFile()), fsv);
     initialize();
   }
 
@@ -103,7 +103,7 @@ public class BaseDirectoryChooser
    * @param currentDirectoryPath	the directory to start in
    */
   public BaseDirectoryChooser(String currentDirectoryPath) {
-    super(new PlaceholderFile(currentDirectoryPath).getAbsolutePath());
+    super(findExistingDir(new PlaceholderFile(currentDirectoryPath)).getAbsolutePath());
     initialize();
   }
 
@@ -114,7 +114,7 @@ public class BaseDirectoryChooser
    * @param fsv				the view to use
    */
   public BaseDirectoryChooser(String currentDirectoryPath, FileSystemView fsv) {
-    super(new PlaceholderFile(currentDirectoryPath).getAbsolutePath(), fsv);
+    super(findExistingDir(new PlaceholderFile(currentDirectoryPath)).getAbsolutePath(), fsv);
     initialize();
   }
 
@@ -171,6 +171,18 @@ public class BaseDirectoryChooser
   }
 
   /**
+   * Returns a directory that exists, starting with the provided one.
+   * If path cannot be used at all, they current working directory ("user.dir")
+   * is returned.
+   *
+   * @param dir		the starting dir
+   * @return		the existing dir
+   */
+  protected static File findExistingDir(File dir) {
+    return BaseFileChooser.findExistingDir(dir);
+  }
+
+  /**
    * Does nothing.
    *
    * @param filter	ignored
@@ -199,7 +211,7 @@ public class BaseDirectoryChooser
     selFile = null;
 
     if (file != null)
-      selFile = new File(file.getAbsolutePath());
+      selFile = findExistingDir(new File(file.getAbsolutePath()));
 
     super.setSelectedFile(selFile);
   }
@@ -357,7 +369,7 @@ public class BaseDirectoryChooser
     if (dir == null)
       super.setCurrentDirectory(null);
     else
-      super.setCurrentDirectory(new PlaceholderFile(dir).getAbsoluteFile());
+      super.setCurrentDirectory(findExistingDir(new PlaceholderFile(dir)).getAbsoluteFile());
   }
 
   /**

@@ -97,7 +97,7 @@ public class BaseFileChooser
    *				to a file or directory
    */
   public BaseFileChooser(String currentDirectoryPath) {
-    super(currentDirectoryPath);
+    super(findExistingDir(new File(currentDirectoryPath)).getAbsolutePath());
 
     initialize();
   }
@@ -114,7 +114,7 @@ public class BaseFileChooser
    *				the path to a file or directory
    */
   public BaseFileChooser(File currentDirectory) {
-    super(currentDirectory);
+    super(findExistingDir(currentDirectory));
 
     initialize();
   }
@@ -603,15 +603,34 @@ public class BaseFileChooser
       if (dir == null)
 	super.setCurrentDirectory(null);
       else
-	super.setCurrentDirectory(dir.getAbsoluteFile());
+	super.setCurrentDirectory(findExistingDir(dir.getAbsoluteFile()));
     }
     catch (Exception e) {
       // sometimes property change events result in exceptions
       if (dir == null)
 	super.setCurrentDirectory(null);
       else
-	super.setCurrentDirectory(dir.getAbsoluteFile());
+	super.setCurrentDirectory(findExistingDir(dir.getAbsoluteFile()));
     }
+  }
+
+  /**
+   * Returns a directory that exists, starting with the provided one.
+   * If path cannot be used at all, they current working directory ("user.dir")
+   * is returned.
+   *
+   * @param dir		the starting dir
+   * @return		the existing dir
+   */
+  public static File findExistingDir(File dir) {
+    if (dir.exists() && dir.isDirectory())
+      return dir;
+    while (dir.getParentFile() != null) {
+      dir = dir.getParentFile();
+      if (dir.exists() && dir.isDirectory())
+	return dir;
+    }
+    return new File(System.getProperty("user.dir"));
   }
 
   /**
