@@ -15,7 +15,7 @@
 
 /*
  * ApacheCommonsImageReader.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -79,7 +79,7 @@ public class ApacheCommonsImageReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"bmp", "gif", "ico", "jpg", "pbm", "pgm", "png", "pnm", "ppm", "psd", "tif", "tiff"};
+    return new String[]{"bmp", "dcx", "gif", "hdr", "icns", "ico", "jpg", "pcx", "png", "pnm", "psd", "tif", "tiff", "wbmp", "xbm", "xpm"};
   }
 
   /**

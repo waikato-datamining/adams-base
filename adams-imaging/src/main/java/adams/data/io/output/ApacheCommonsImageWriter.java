@@ -15,7 +15,7 @@
 
 /*
  * ApacheCommonsImageWriter.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -26,8 +26,9 @@ import adams.core.logging.LoggingHelper;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.ApacheCommonsImageReader;
-import org.apache.sanselan.ImageFormat;
-import org.apache.sanselan.Sanselan;
+import org.apache.commons.imaging.ImageFormat;
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.Imaging;
 
 import java.util.HashMap;
 
@@ -81,7 +82,7 @@ public class ApacheCommonsImageWriter
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"bmp", "gif", "ico", "jpg", "pbm", "pgm", "png", "pnm", "ppm", "tif", "tiff"};
+    return new String[]{"bmp", "dcx", "gif", "hdr", "icns", "ico", "jpg", "pcx", "png", "pnm", "psd", "tif", "tiff", "wbmp", "xbm", "xpm"};
   }
 
   /**
@@ -105,40 +106,66 @@ public class ApacheCommonsImageWriter
   protected String doWrite(PlaceholderFile file, BufferedImageContainer cont) {
     String	result;
     String	ext;
-    ImageFormat	format;
+    ImageFormat format;
 
     result = null;
     
     // determine file format
     ext = FileUtils.getExtension(file);
-    if (ext.equals("bmp"))
-      format = ImageFormat.IMAGE_FORMAT_BMP;
-    else if (ext.equals("gif"))
-      format = ImageFormat.IMAGE_FORMAT_GIF;
-    else if (ext.equals("ico"))
-      format = ImageFormat.IMAGE_FORMAT_ICO;
-    else if (ext.equals("jpg") || ext.equals("jpeg"))
-      format = ImageFormat.IMAGE_FORMAT_JPEG;
-    else if (ext.equals("pbm"))
-      format = ImageFormat.IMAGE_FORMAT_PBM;
-    else if (ext.equals("pgm"))
-      format = ImageFormat.IMAGE_FORMAT_PGM;
-    else if (ext.equals("png"))
-      format = ImageFormat.IMAGE_FORMAT_PNG;
-    else if (ext.equals("pnm"))
-      format = ImageFormat.IMAGE_FORMAT_PNM;
-    else if (ext.equals("ppm"))
-      format = ImageFormat.IMAGE_FORMAT_PPM;
-    else if (ext.equals("tif") || ext.equals("tiff"))
-      format = ImageFormat.IMAGE_FORMAT_TIFF;
-    else
-      format = null;
+    switch (ext) {
+      case "bmp":
+        format = ImageFormats.BMP;
+        break;
+      case "gif":
+        format = ImageFormats.GIF;
+        break;
+      case "hdr":
+        format = ImageFormats.RGBE;
+        break;
+      case "ico":
+        format = ImageFormats.ICO;
+        break;
+      case "icns":
+        format = ImageFormats.ICNS;
+        break;
+      case "jpg":
+      case "jpeg":
+        format = ImageFormats.JPEG;
+        break;
+      case "pcx":
+        format = ImageFormats.PCX;
+        break;
+      case "png":
+        format = ImageFormats.PNG;
+        break;
+      case "pnm":
+        format = ImageFormats.PNM;
+        break;
+      case "psd":
+        format = ImageFormats.PSD;
+        break;
+      case "tif":
+      case "tiff":
+        format = ImageFormats.TIFF;
+        break;
+      case "wbmp":
+        format = ImageFormats.WBMP;
+        break;
+      case "xbm":
+        format = ImageFormats.XBM;
+        break;
+      case "xpm":
+        format = ImageFormats.XPM;
+        break;
+      default:
+        format = null;
+    }
     if (format == null)
       result = "Unhandled file extension: " + ext;
 
     if (result == null) {
       try {
-	Sanselan.writeImage(cont.toBufferedImage(), file.getAbsoluteFile(), format, new HashMap());
+	Imaging.writeImage(cont.toBufferedImage(), file.getAbsoluteFile(), format, new HashMap<>());
       }
       catch (Exception e) {
 	result = LoggingHelper.handleException(this, "Failed to write image to: " + file, e);

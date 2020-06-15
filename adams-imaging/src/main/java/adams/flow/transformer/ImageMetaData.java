@@ -13,20 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageMetaData.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
-
-import java.io.File;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.flow.transformer.metadata.AbstractMetaDataExtractor;
-import adams.flow.transformer.metadata.Sanselan;
+import adams.flow.transformer.metadata.ApacheCommons;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -80,7 +80,6 @@ import adams.flow.transformer.metadata.Sanselan;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageMetaData
   extends AbstractTransformer {
@@ -110,7 +109,7 @@ public class ImageMetaData
 
     m_OptionManager.add(
 	    "extractor", "extractor",
-	    new Sanselan());
+	    new ApacheCommons());
   }
 
   /**

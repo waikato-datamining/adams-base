@@ -13,16 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageFileMetaData.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
 import adams.core.logging.LoggingHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.metadata.AbstractMetaDataExtractor;
-import adams.flow.transformer.metadata.Sanselan;
+import adams.flow.transformer.metadata.ApacheCommons;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.visualization.image.ImagePanel;
@@ -108,7 +108,7 @@ public class ImageFileMetaData
    */
   @Override
   protected Object getDefaultValue() {
-    return new Sanselan();
+    return new ApacheCommons();
   }
 
   /**

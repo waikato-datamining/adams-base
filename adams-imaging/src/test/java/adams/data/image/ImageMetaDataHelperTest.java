@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageMetaDataHelperTest.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.image;
@@ -40,7 +40,6 @@ import java.io.File;
  * class.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageMetaDataHelperTest
   extends AdamsTestCase {
@@ -116,7 +115,7 @@ public class ImageMetaDataHelperTest
   }
 
   /**
-   * Tests the {@link ImageMetaDataHelper#sanselan(File)} method.
+   * Tests the {@link ImageMetaDataHelper#commons(File)} method.
    */
   public void testGetMetaData() {
     Regression	reg;
@@ -128,7 +127,7 @@ public class ImageMetaDataHelperTest
     String	diff;
 
     reg = new Regression(ImageMetaDataHelper.class);
-    reg.setReferenceFile(Regression.createReferenceFile(ImageMetaDataHelper.class, "-Sanselan"));
+    reg.setReferenceFile(Regression.createReferenceFile(ImageMetaDataHelper.class, "-Commons"));
 
     input    = getRegressionInput();
     output   = new String[input.length];
@@ -139,7 +138,7 @@ public class ImageMetaDataHelperTest
       m_TestHelper.deleteFileFromTmp(output[i]);
       regFiles[i] = new TmpFile(output[i]);
       try {
-	meta = ImageMetaDataHelper.sanselan(new TmpFile(input[i]));
+	meta = ImageMetaDataHelper.commons(new TmpFile(input[i]));
 	removeKey(meta, "File Modified Date");
 	save(meta, output[i]);
       }

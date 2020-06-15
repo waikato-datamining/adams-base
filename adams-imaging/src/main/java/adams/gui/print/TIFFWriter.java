@@ -21,13 +21,14 @@
 
 package adams.gui.print;
 
+import org.apache.commons.imaging.ImageFormat;
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingConstants;
+import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.sanselan.ImageFormat;
-import org.apache.sanselan.Sanselan;
-import org.apache.sanselan.SanselanConstants;
-import org.apache.sanselan.formats.tiff.constants.TiffConstants;
 
 /**
  <!-- globalinfo-start -->
@@ -182,14 +183,14 @@ public class TIFFWriter
     ImageFormat format;
     Map 	params;
     
-    format = ImageFormat.IMAGE_FORMAT_TIFF;
+    format = ImageFormats.TIFF;
 
     params = new HashMap();
     if (m_Compress)
-      params.put(SanselanConstants.PARAM_KEY_COMPRESSION, new Integer(TiffConstants.TIFF_COMPRESSION_UNCOMPRESSED));
+      params.put(ImagingConstants.PARAM_KEY_COMPRESSION, TiffConstants.TIFF_COMPRESSION_UNCOMPRESSED);
     else
-      params.put(SanselanConstants.PARAM_KEY_COMPRESSION, new Integer(TiffConstants.TIFF_COMPRESSION_LZW));
+      params.put(ImagingConstants.PARAM_KEY_COMPRESSION, TiffConstants.TIFF_COMPRESSION_LZW);
     
-    Sanselan.writeImage(createBufferedImage(), getFile().getAbsoluteFile(), format, params);
+    Imaging.writeImage(createBufferedImage(), getFile().getAbsoluteFile(), format, params);
   }
 }
