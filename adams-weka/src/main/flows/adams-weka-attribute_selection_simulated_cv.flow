@@ -1,0 +1,64 @@
+# Project: adams
+# Date: 2020-06-18 09:38:00
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
+adams.flow.control.Flow -annotation "This flow simulates repeated cross-validation, using the iteration count as seed.\\nIn each cross-validation, train-test folds are generated and attribute selection\\nperformed, feeding the reduced data into a classifier for training and evaluation.\\nThe selected attributes get recorded in a spreadsheet." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.control.SubProcess -name "dataset structure"
+   adams.flow.transformer.Convert -conversion "adams.data.conversion.WekaInstancesToSpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+   adams.flow.transformer.SpreadSheetRemoveRow
+  adams.flow.control.SubProcess -name "add rep/fold"
+   adams.flow.transformer.SpreadSheetInsertColumn -name fold -no-copy true -position first -header fold
+   adams.flow.transformer.SpreadSheetInsertColumn -name repetition -no-copy true -position first -header repetition
+  adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter
+  adams.flow.sink.HistoryDisplay -display-type adams.flow.core.displaytype.Default -x -3 -entry-name-variable entry -allow-search true
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name dataset -display Dataset -help \"the dataset to load\" -type FILE_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name repetitions -display \"# repetitions\" -help \"how often to repeat cross-validation\" -type INTEGER -default-value 10" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name folds -display \"# folds\" -help \"the number of CV folds\" -type INTEGER -default-value 10" -value "adams.flow.source.valuedefinition.GOEValueDefinition -name classifier -display Classifier -super-class weka.classifiers.Classifier -default-class weka.classifiers.trees.J48" -value "adams.flow.source.valuedefinition.GOEValueDefinition -name search -display \"Search algorithm\" -super-class weka.attributeSelection.ASSearch -default-class weka.attributeSelection.BestFirst" -value "adams.flow.source.valuedefinition.GOEValueDefinition -name evaluator -display Evaluator -super-class weka.attributeSelection.ASEvaluation -default-class weka.attributeSelection.CfsSubsetEval" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name "load data"
+  adams.flow.source.Variable -var-name dataset -conversion adams.data.conversion.StringToString
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.SimpleArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.SetStorageValue -storage-name data
+ adams.flow.control.Trigger -name "init attribute sheet"
+  adams.flow.source.StorageValue -storage-name data -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.CallableTransformer -callable "dataset structure"
+  adams.flow.transformer.SetStorageValue -storage-name attributes
+  adams.flow.transformer.CallableTransformer -name "CallableTransformer (2)" -callable "add rep/fold"
+ adams.flow.control.Trigger -name process
+  adams.flow.source.ForLoop -upper @{repetitions}
+  adams.flow.transformer.SetVariable -var-name repetition
+  adams.flow.control.Trigger -name cross-validation
+   adams.flow.standalone.SetVariable -name reset -var-name fold -var-value 0
+   adams.flow.source.StorageValue -storage-name data -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.transformer.WekaCrossValidationSplit -seed @{repetition} -folds @{folds} -generator weka.classifiers.DefaultCrossValidationFoldGenerator
+   adams.flow.transformer.IncVariable -var-name fold
+   adams.flow.transformer.WekaAttributeSelection -evaluator @{evaluator} -search @{search} -folds 1
+   adams.flow.control.ContainerValuePicker -name "reduced train" -value Reduced
+    adams.flow.transformer.SetStorageValue -storage-name reduced_train
+   adams.flow.control.ContainerValuePicker -name "reduced test" -value "Test reduced"
+    adams.flow.transformer.SetStorageValue -storage-name reduced_test
+   adams.flow.control.Trigger -name "append selected attributes"
+    adams.flow.source.StorageValue -storage-name reduced_train -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.CallableTransformer -callable "dataset structure"
+    adams.flow.transformer.SpreadSheetInsertRow -no-copy true -after true -value 1
+    adams.flow.transformer.CallableTransformer -name "CallableTransformer (2)" -callable "add rep/fold"
+    adams.flow.transformer.SpreadSheetSetCell -name repetition -no-copy true -row last -finder adams.data.spreadsheet.cellfinder.CellRange -value @{repetition}
+    adams.flow.transformer.SpreadSheetSetCell -name fold -no-copy true -row last -col 2 -finder adams.data.spreadsheet.cellfinder.CellRange -value @{fold}
+    adams.flow.transformer.SpreadSheetAppend -storage-name attributes
+   adams.flow.control.Trigger -name "evaluate classifier"
+    adams.flow.standalone.CallableActors
+     adams.flow.source.WekaClassifierSetup -classifier @{classifier}
+    adams.flow.standalone.SetVariable -var-name entry -var-value @{repetition}-@{fold} -expand-value true
+    adams.flow.source.MakeContainer -callable-actor unknown -callable-actor unknown -storage-name reduced_train -storage-name reduced_test -use-storage true -value-name Train -value-name Test -container-class adams.flow.container.WekaTrainTestSetContainer
+    adams.flow.transformer.WekaTrainTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null
+    adams.flow.transformer.WekaEvaluationSummary
+    adams.flow.sink.CallableSink -callable HistoryDisplay
+ adams.flow.control.Trigger -name "display attributes"
+  adams.flow.source.StorageValue -storage-name attributes -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.Convert -name "add sum row" -conversion "adams.data.conversion.SpreadSheetAddFormulaRow -columns 3-last"
+  adams.flow.sink.CallableSink -callable SpreadSheetDisplay
