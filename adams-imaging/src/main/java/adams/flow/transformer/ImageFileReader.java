@@ -15,7 +15,7 @@
 
 /*
  * ImageFileReader.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -35,7 +35,11 @@ import adams.flow.core.Token;
 import adams.flow.source.filesystemsearch.LocalFileSearch;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -355,40 +359,44 @@ public class ImageFileReader
    * @return		the files
    */
   protected PlaceholderFile[] listMetaDataFiles(PlaceholderFile imageFile) {
-    PlaceholderFile[]	result;
-    PlaceholderFile	file;
-    LocalFileSearch	search;
-    List<String>	matches;
-    int			i;
+    List<PlaceholderFile>	result;
+    PlaceholderFile		file;
+    LocalFileSearch		search;
+    List<String>		matches;
+    int				i;
+    Set<String>			extensions;
 
-    result = new PlaceholderFile[0];
+    result = new ArrayList<>();
 
     switch (m_MetaDataLocation) {
       case SAME_NAME:
         file = FileUtils.replaceExtension(imageFile, "." + m_MetaDataReader.getDefaultFormatExtension());
         if (file.exists())
-          result = new PlaceholderFile[]{file};
+          result.add(file);
 	break;
       case STARTING_WITH:
         search = new LocalFileSearch();
         search.setDirectory(new PlaceholderDirectory(imageFile.getParentFile()));
         search.setRecursive(false);
         search.setRegExp(new BaseRegExp(FileUtils.replaceExtension(imageFile.getName(), "") + ".*\\." + m_MetaDataReader.getDefaultFormatExtension()));
+        extensions = new HashSet<>(Arrays.asList(m_Reader.getFormatExtensions()));
         try {
 	  matches = search.search();
-	  result  = new PlaceholderFile[matches.size()];
-	  for (i = 0; i < matches.size(); i++)
-	    result[i] = new PlaceholderFile(matches.get(i));
+	  for (i = 0; i < matches.size(); i++) {
+	    if (!extensions.contains(FileUtils.getExtension(matches.get(i))))
+	      result.add(new PlaceholderFile(matches.get(i)));
+	  }
 	}
 	catch (Exception e) {
           getLogger().log(Level.SEVERE, "Failed to locate meta-data files using: " + search.toCommandLine(), e);
-          result = new PlaceholderFile[0];
+          result = new ArrayList<>();
 	}
 	break;
       default:
 	throw new IllegalStateException("Unhandled meta-data location: " + m_MetaDataLocation);
     }
-    return result;
+
+    return result.toArray(new PlaceholderFile[0]);
   }
 
   /**
