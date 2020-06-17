@@ -21,6 +21,7 @@
 package adams.data.objectoverlap;
 
 import adams.core.QuickInfoHelper;
+import adams.core.logging.LoggingHelper;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import com.github.fracpete.javautils.struct.Struct2;
@@ -28,6 +29,7 @@ import com.github.fracpete.javautils.struct.Struct2;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Computes the Intersect Over Union (IOU) between annotations and predictions.
@@ -278,6 +280,12 @@ public class IntersectOverUnionRatio
     else {
       Set<LocatedObject> matchingObjects = new HashSet<>();
       for (LocatedObject thisObj : annotations) {
+        if (isLoggingEnabled()) {
+          if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
+	    getLogger().info("this: " + thisObj + " (" + thisObj.getMetaData() + ")");
+          else
+	    getLogger().info("this: " + thisObj);
+	}
 	count          = 0;
 	iouHighest     = 0.0;
 	labelHighest   = UNKNOWN_LABEL;
@@ -295,8 +303,12 @@ public class IntersectOverUnionRatio
 	  intersectArea = thisObjArea * ratio;
 	  otherObjArea = otherObj.getHeight() * otherObj.getWidth();
 	  iou = intersectArea / (thisObjArea + otherObjArea - intersectArea);
-	  if (isLoggingEnabled())
-	    getLogger().info(thisObj + " : " + otherObj + " -> IOU = " + iou);
+	  if (isLoggingEnabled()) {
+	    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
+	      getLogger().info(" + other: " + otherObj + " (" + otherObj.getMetaData() + ")" + " -> IOU = " + iou);
+	    else
+	      getLogger().info(" + other: " + otherObj + " -> IOU = " + iou);
+	  }
 	  if (iou >= m_MinIntersectOverUnionRatio) {
 	    count++;
 	    if (iou > iouHighest) {

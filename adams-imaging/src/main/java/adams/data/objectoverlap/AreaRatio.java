@@ -21,6 +21,7 @@
 package adams.data.objectoverlap;
 
 import adams.core.QuickInfoHelper;
+import adams.core.logging.LoggingHelper;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import com.github.fracpete.javautils.struct.Struct2;
@@ -28,6 +29,7 @@ import com.github.fracpete.javautils.struct.Struct2;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Uses the area ratio between the annotated and predicted objects.
@@ -311,6 +313,12 @@ public class AreaRatio
     else {
       Set<LocatedObject> matchingObjects = new HashSet<>();
       for (LocatedObject thisObj : annotations) {
+        if (isLoggingEnabled()) {
+          if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
+	    getLogger().info("this: " + thisObj + " (" + thisObj.getMetaData() + ")");
+          else
+	    getLogger().info("this: " + thisObj);
+	}
 	count          = 0;
 	overlapHighest = 0.0;
 	labelHighest   = UNKNOWN_LABEL;
@@ -328,8 +336,12 @@ public class AreaRatio
 	    ratio2 = otherObj.overlapRatio(thisObj);
 	    ratio = (ratio + ratio2) / 2;
 	  }
-	  if (isLoggingEnabled())
-	    getLogger().info(thisObj + " : " + otherObj + " -> ratio = " + ratio);
+	  if (isLoggingEnabled()) {
+	    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
+	      getLogger().info(" + other: " + otherObj + " (" + otherObj.getMetaData() + ")" + " -> ratio = " + ratio);
+	    else
+	      getLogger().info(" + other: " + otherObj + " -> ratio = " + ratio);
+	  }
 	  if (ratio >= m_MinOverlapRatio) {
 	    count++;
 	    if (ratio > overlapHighest) {
