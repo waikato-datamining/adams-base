@@ -27,19 +27,14 @@ import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
 import adams.data.objectoverlap.AreaRatio;
 import adams.data.objectoverlap.ObjectOverlap;
+import adams.data.overlappingobjectremoval.AbstractOverlappingObjectRemoval;
 import adams.data.overlappingobjectremoval.OverlappingObjectRemoval;
 import adams.data.overlappingobjectremoval.PassThrough;
-import adams.data.report.AbstractField;
 import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.control.StorageName;
 import adams.flow.core.Token;
-import adams.flow.transformer.locateobjects.LocatedObject;
-import adams.flow.transformer.locateobjects.LocatedObjects;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -377,16 +372,12 @@ public class RemoveOverlappingImageObjects
    */
   @Override
   protected String doExecute() {
-    String					result;
-    Object					obj;
-    Report					newReport;
-    Report					thisReport;
-    Report 					otherReport;
-    LocatedObjects				thisObjs;
-    LocatedObjects				otherObjs;
-    LocatedObjects 				newObjs;
-    Object					output;
-    Map<LocatedObject, Set<LocatedObject>> 	matches;
+    String	result;
+    Object	obj;
+    Report	newReport;
+    Report	thisReport;
+    Report 	otherReport;
+    Object	output;
 
     result = null;
 
@@ -423,23 +414,9 @@ public class RemoveOverlappingImageObjects
     }
 
     if (otherReport != null) {
-      thisObjs  = m_Finder.findObjects(LocatedObjects.fromReport(thisReport,  m_Finder.getPrefix()));
-      otherObjs = m_Finder.findObjects(LocatedObjects.fromReport(otherReport, m_Finder.getPrefix()));
-      matches   = m_OverlapDetection.matches(thisObjs, otherObjs);
-      newObjs   = m_OverlapRemoval.removeOverlaps(thisObjs, matches);
-
-      // assemble new report
+      // remove objects and assemble new report
       try {
-        newReport = thisReport.getClass().newInstance();
-        // transfer non-object fields
-        for (AbstractField field: thisReport.getFields()) {
-          if (!field.getName().startsWith(m_Finder.getPrefix())) {
-            newReport.addField(field);
-            newReport.setValue(field, thisReport.getValue(field));
-          }
-        }
-        // store objects
-        newReport.mergeWith(newObjs.toReport(m_Finder.getPrefix()));
+        newReport = AbstractOverlappingObjectRemoval.remove(thisReport, otherReport, m_Finder, m_OverlapDetection, m_OverlapRemoval);
         // update report
         if (m_InputToken.getPayload() instanceof AbstractImageContainer) {
           output = m_InputToken.getPayload();

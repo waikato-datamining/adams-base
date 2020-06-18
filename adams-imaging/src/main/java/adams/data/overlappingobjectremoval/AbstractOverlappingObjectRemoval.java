@@ -21,6 +21,10 @@
 package adams.data.overlappingobjectremoval;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.data.objectfinder.ObjectFinder;
+import adams.data.objectoverlap.ObjectOverlap;
+import adams.data.report.AbstractField;
+import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
@@ -47,4 +51,44 @@ public abstract class AbstractOverlappingObjectRemoval
    */
   @Override
   public abstract LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Set<LocatedObject>> matches);
+
+  /**
+   * Removes overlapping objects between the two reports.
+   *
+   * @param thisReport	the first report
+   * @param otherReport	the second report
+   * @param finder	the finder for locating the objects
+   * @param detection	detects the overlaps
+   * @param removal	applies the removal technique
+   * @return		the new report (thisReport-non-object fields plus left-over objects)
+   * @throws Exception	if instantiation of report fails
+   */
+  public static Report remove(Report thisReport, Report otherReport, ObjectFinder finder, ObjectOverlap detection, OverlappingObjectRemoval removal) throws Exception {
+    Report 					result;
+    LocatedObjects				thisObjs;
+    LocatedObjects				otherObjs;
+    LocatedObjects 				newObjs;
+    Map<LocatedObject, Set<LocatedObject>> 	matches;
+
+    thisObjs  = finder.findObjects(LocatedObjects.fromReport(thisReport,  finder.getPrefix()));
+    otherObjs = finder.findObjects(LocatedObjects.fromReport(otherReport, finder.getPrefix()));
+    matches   = detection.matches(thisObjs, otherObjs);
+    newObjs   = removal.removeOverlaps(thisObjs, matches);
+
+    // assemble new report
+    result = thisReport.getClass().newInstance();
+
+    // transfer non-object fields
+    for (AbstractField field: thisReport.getFields()) {
+      if (!field.getName().startsWith(finder.getPrefix())) {
+        result.addField(field);
+        result.setValue(field, thisReport.getValue(field));
+      }
+    }
+
+    // store objects
+    result.mergeWith(newObjs.toReport(finder.getPrefix()));
+
+    return result;
+  }
 }
