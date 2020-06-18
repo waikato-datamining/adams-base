@@ -29,6 +29,11 @@ import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.ObjectLocationsSpreadSheetReader;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
+import adams.data.objectoverlap.AreaRatio;
+import adams.data.objectoverlap.ObjectOverlap;
+import adams.data.overlappingobjectremoval.AbstractOverlappingObjectRemoval;
+import adams.data.overlappingobjectremoval.OverlappingObjectRemoval;
+import adams.data.overlappingobjectremoval.PassThrough;
 import adams.data.report.Report;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -51,6 +56,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -293,6 +299,12 @@ public class ObjectLocationsFromSpreadSheet
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
 
+  /** the object overlap calculation to use. */
+  protected ObjectOverlap m_OverlapDetection;
+
+  /** the object removal algorithm. */
+  protected OverlappingObjectRemoval m_OverlapRemoval;
+
   /** whether to use an alternative location for the reports. */
   protected boolean m_UseAlternativeLocation;
 
@@ -360,6 +372,14 @@ public class ObjectLocationsFromSpreadSheet
     m_OptionManager.add(
       "finder", "finder",
       new AllFinder());
+
+    m_OptionManager.add(
+      "overlap-detection", "overlapDetection",
+      new AreaRatio());
+
+    m_OptionManager.add(
+      "overlap-removal", "overlapRemoval",
+      new PassThrough());
 
     m_OptionManager.add(
       "use-alternative-location", "useAlternativeLocation",
@@ -681,6 +701,64 @@ public class ObjectLocationsFromSpreadSheet
   }
 
   /**
+   * Sets the algorithm for determining the overlapping objects
+   *
+   * @param value 	the algorithm
+   */
+  public void setOverlapDetection(ObjectOverlap value) {
+    m_OverlapDetection = value;
+    reset();
+  }
+
+  /**
+   * Returns the algorithm for determining the overlapping objects.
+   *
+   * @return 		the algorithm
+   */
+  public ObjectOverlap getOverlapDetection() {
+    return m_OverlapDetection;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlapDetectionTipText() {
+    return "The algorithm to use for determining the overlapping objects.";
+  }
+
+  /**
+   * Sets the algorithm for determining the overlapping objects
+   *
+   * @param value 	the algorithm
+   */
+  public void setOverlapRemoval(OverlappingObjectRemoval value) {
+    m_OverlapRemoval = value;
+    reset();
+  }
+
+  /**
+   * Returns the algorithm for determining the overlapping objects.
+   *
+   * @return 		the algorithm
+   */
+  public OverlappingObjectRemoval getOverlapRemoval() {
+    return m_OverlapRemoval;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String overlapRemovalTipText() {
+    return "The algorithm to use for removing the overlapping objects.";
+  }
+
+  /**
    * Sets whether to use an alternative location for the reports.
    *
    * @param value 	true if to use
@@ -757,15 +835,26 @@ public class ObjectLocationsFromSpreadSheet
    */
   protected Report filterReport(Report report) {
     Report		result;
-    LocatedObjects objs;
+    LocatedObjects	objs;
 
-    if (m_Finder instanceof AllFinder)
+    if ((m_Finder instanceof AllFinder) && (m_OverlapRemoval instanceof PassThrough))
       return report;
 
-    objs   = m_Finder.findObjects(report);
-    result = report.getClone();
-    result.removeValuesStartingWith(m_Finder.getPrefix());
-    result.mergeWith(objs.toReport(m_Finder.getPrefix()));
+    if (m_OverlapRemoval instanceof PassThrough) {
+      objs   = m_Finder.findObjects(report);
+      result = report.getClone();
+      result.removeValuesStartingWith(m_Finder.getPrefix());
+      result.mergeWith(objs.toReport(m_Finder.getPrefix()));
+    }
+    else {
+      try {
+        result = AbstractOverlappingObjectRemoval.remove(report, report, m_Finder, m_OverlapDetection, m_OverlapRemoval);
+      }
+      catch (Exception e) {
+        getLogger().log(Level.SEVERE, "Failed to remove objects!", e);
+        result = report;
+      }
+    }
 
     return result;
   }
