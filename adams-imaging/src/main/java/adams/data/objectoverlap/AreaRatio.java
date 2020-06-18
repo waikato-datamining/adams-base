@@ -344,8 +344,8 @@ public class AreaRatio
 	  }
 	  if (ratio >= m_MinOverlapRatio) {
 	    count++;
+	    addMatch(matches, thisObj, otherObj);
 	    if (ratio > overlapHighest) {
-	      addMatch(matches, thisObj, otherObj);
 	      tmpObj = null;
 	      if (m_UseOtherObject) {
 	        tmpObj = actObj;

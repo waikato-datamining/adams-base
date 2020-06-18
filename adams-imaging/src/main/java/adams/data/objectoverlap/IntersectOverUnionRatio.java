@@ -311,8 +311,8 @@ public class IntersectOverUnionRatio
 	  }
 	  if (iou >= m_MinIntersectOverUnionRatio) {
 	    count++;
+	    addMatch(matches, thisObj, otherObj);
 	    if (iou > iouHighest) {
-	      addMatch(matches, thisObj, otherObj);
 	      tmpObj = null;
 	      if (m_UseOtherObject) {
 	        tmpObj = actObj;
