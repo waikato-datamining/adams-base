@@ -26,6 +26,7 @@ import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.GUIHelper.DialogCommunication;
+import adams.gui.core.GUIHelper.InputDialogMultiValueSelection;
 
 /**
  <!-- globalinfo-start -->
@@ -341,7 +342,7 @@ public class PromptUser
         message,
         initial,
         new String[]{m_CaptionPositive, m_CaptionNegative},
-        false,
+        InputDialogMultiValueSelection.BUTTONS_HORIZONTAL,
         "Please choose",
         m_Communication);
       m_Communication = null;

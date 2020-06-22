@@ -66,6 +66,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -131,6 +132,15 @@ public class GUIHelper {
 
   /** whether we are running in headless mode. */
   public static Boolean HeadlessMode = null;
+
+  /**
+   * How showInputDialog should display the multiple values to choose from.
+   */
+  public enum InputDialogMultiValueSelection {
+    COMBOBOX,
+    BUTTONS_HORIZONTAL,
+    BUTTONS_VERTICAL,
+  }
 
   /**
    * Helper class that allows external callers to communicate with input
@@ -1825,7 +1835,7 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String[] options, String title) {
-    return showInputDialog(parent, msg, initial, options, true, title);
+    return showInputDialog(parent, msg, initial, options, InputDialogMultiValueSelection.COMBOBOX, title);
   }
 
   /**
@@ -1846,10 +1856,10 @@ public class GUIHelper {
     JPanel			panelCombo;
     JPanel			panel;
     JLabel			label;
-    BaseComboBox			combobox;
+    BaseComboBox<String>	combobox;
     final ApprovalDialog	dialog;
     Component			pparent;
-    Boolean                     sync;
+    Long                        sync;
 
     if (initial == null)
       initial = "";
@@ -1873,7 +1883,7 @@ public class GUIHelper {
     }
     dialog.setTitle(title);
     
-    combobox = new BaseComboBox(options);
+    combobox = new BaseComboBox<>(options);
     if (!initial.isEmpty())
       combobox.setSelectedItem(initial);
     else
@@ -1916,7 +1926,7 @@ public class GUIHelper {
     dialog.setVisible(true);
 
     if (comm != null) {
-      sync = new Boolean(true);
+      sync = UniqueIDs.nextLong();
       // wait till dialog visible
       while (!dialog.isVisible()) {
         try {
@@ -1960,10 +1970,11 @@ public class GUIHelper {
    * @param msg		the message to display, can be null (uses "Select value" in that case)
    * @param initial	the initial selection, can be null
    * @param options	the available options
+   * @param horizontal 	whether the buttons are horizontal or vertical
    * @param comm        for communicating with the caller, can be null
    * @return		the value entered, null if cancelled
    */
-  protected static String showInputDialogButtons(Component parent, String msg, String initial, String[] options, String title, DialogCommunication comm) {
+  protected static String showInputDialogButtons(Component parent, String msg, String initial, String[] options, String title, boolean horizontal, DialogCommunication comm) {
     Component		pparent;
     final BaseDialog	dialog;
     JPanel		panelButtons;
@@ -1971,8 +1982,8 @@ public class GUIHelper {
     JPanel		panelAll;
     JLabel		label;
     final StringBuilder	result;
-    Boolean             sync;
-    BaseButton             initialFocus;
+    Long                sync;
+    BaseButton          initialFocus;
 
     if (initial == null)
       initial = "";
@@ -2006,7 +2017,10 @@ public class GUIHelper {
     
     result = new StringBuilder();
 
-    panelButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    if (horizontal)
+      panelButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    else
+      panelButtons = new JPanel(new GridLayout(options.length, 1, 0, 5));
     initialFocus = null;
     for (String option: options) {
       final BaseButton button = new BaseButton(option);
@@ -2029,7 +2043,7 @@ public class GUIHelper {
     dialog.setVisible(true);
 
     if (comm != null) {
-      sync = new Boolean(true);
+      sync = UniqueIDs.nextLong();
       // wait till dialog visible
       while (!dialog.isVisible()) {
         try {
@@ -2071,11 +2085,11 @@ public class GUIHelper {
    * @param msg		the message to display
    * @param initial	the initial selection, can be null
    * @param options	the available options
-   * @param useComboBox	whether to use a combobox or buttons
+   * @param view	how to display the values
    * @return		the value entered, null if cancelled
    */
-  public static String showInputDialog(Component parent, String msg, String initial, String[] options, boolean useComboBox, String title) {
-    return showInputDialog(parent, msg, initial, options, useComboBox, title, null);
+  public static String showInputDialog(Component parent, String msg, String initial, String[] options, InputDialogMultiValueSelection view, String title) {
+    return showInputDialog(parent, msg, initial, options, view, title, null);
   }
 
   /**
@@ -2088,15 +2102,21 @@ public class GUIHelper {
    * @param msg		the message to display
    * @param initial	the initial selection, can be null
    * @param options	the available options
-   * @param useComboBox	whether to use a combobox or buttons
+   * @param view	how to display the values
    * @param comm        for communicating with the dialog, can be null
    * @return		the value entered, null if cancelled
    */
-  public static String showInputDialog(Component parent, String msg, String initial, String[] options, boolean useComboBox, String title, DialogCommunication comm) {
-    if (useComboBox)
-      return showInputDialogComboBox(parent, msg, initial, options, title, comm);
-    else
-      return showInputDialogButtons(parent, msg, initial, options, title, comm);
+  public static String showInputDialog(Component parent, String msg, String initial, String[] options, InputDialogMultiValueSelection view, String title, DialogCommunication comm) {
+    switch (view) {
+      case COMBOBOX:
+        return showInputDialogComboBox(parent, msg, initial, options, title, comm);
+      case BUTTONS_HORIZONTAL:
+        return showInputDialogButtons(parent, msg, initial, options, title, true, comm);
+      case BUTTONS_VERTICAL:
+        return showInputDialogButtons(parent, msg, initial, options, title, false, comm);
+      default:
+        throw new IllegalStateException("Unhandled view type: " + view);
+    }
   }
 
   /**

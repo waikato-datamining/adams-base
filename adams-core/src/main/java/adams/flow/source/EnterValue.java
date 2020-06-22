@@ -31,6 +31,7 @@ import adams.flow.core.RestorableActor;
 import adams.flow.core.RestorableActorHelper;
 import adams.flow.core.Token;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.GUIHelper.InputDialogMultiValueSelection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,6 +197,9 @@ public class EnterValue
   /** whether to use buttons instead of a dropdown list. */
   protected boolean m_UseButtons;
 
+  /** whether to use vertical buttons instead of a horizontal ones. */
+  protected boolean m_VerticalButtons;
+
   /** whether restoration is enabled. */
   protected boolean m_RestorationEnabled;
 
@@ -251,6 +255,10 @@ public class EnterValue
       false);
 
     m_OptionManager.add(
+      "vertical-buttons", "verticalButtons",
+      false);
+
+    m_OptionManager.add(
       "non-interactive", "nonInteractive",
       false);
 
@@ -289,6 +297,7 @@ public class EnterValue
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "nonInteractive", m_NonInteractive, "non-interactive"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useButtons", m_UseButtons, "buttons"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "verticalButtons", m_VerticalButtons, "vertical"));
     result += QuickInfoHelper.flatten(options);
 
     return result;
@@ -471,6 +480,36 @@ public class EnterValue
   }
 
   /**
+   * Sets whether to use vertical buttons instead of horizontal ones.
+   *
+   * @param value	true if to use buttons
+   */
+  public void setVerticalButtons(boolean value) {
+    m_VerticalButtons = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use vertical buttons instead of horizontal ones.
+   *
+   * @return 		true if to use buttons
+   */
+  public boolean getVerticalButtons() {
+    return m_VerticalButtons;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String verticalButtonsTipText() {
+    return
+	"If enabled and buttons are used, they get displayed vertically rather than horizontally.";
+  }
+
+  /**
    * Sets whether to enable/disable interactiveness.
    *
    * @param value	if true actor is not interactive, but automated
@@ -579,16 +618,24 @@ public class EnterValue
    */
   @Override
   public boolean doInteract() {
-    String	value;
-    String	msg;
-    String	initial;
-    Properties	props;
+    String				value;
+    String				msg;
+    String				initial;
+    Properties				props;
+    InputDialogMultiValueSelection 	view;
 
     msg     = m_Message.getValue();
     msg     = getVariables().expand(msg);
     initial = m_InitialValue.getValue();
     initial = getVariables().expand(initial);
     m_Comm  = new GUIHelper.DialogCommunication();
+    view    = InputDialogMultiValueSelection.COMBOBOX;
+    if (m_UseButtons) {
+      if (m_VerticalButtons)
+        view = InputDialogMultiValueSelection.BUTTONS_VERTICAL;
+      else
+        view = InputDialogMultiValueSelection.BUTTONS_HORIZONTAL;
+    }
 
     if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
       props = new Properties();
@@ -609,7 +656,7 @@ public class EnterValue
       value = GUIHelper.showInputDialog(
         getActualParentComponent(),
         msg, initial, BaseObject.toStringArray(m_SelectionValues),
-        !m_UseButtons, getName(), m_Comm);
+        view, getName(), m_Comm);
     else
       value = GUIHelper.showInputDialog(
         getActualParentComponent(),
