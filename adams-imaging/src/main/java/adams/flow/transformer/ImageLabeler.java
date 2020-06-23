@@ -65,12 +65,131 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
+ * Allows the user to label images, setting a report field in the meta-data.<br>
+ * Any logged interaction will get added as JSON under interaction-log in the report.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: ImageLabeler
+ * </pre>
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full
+ * &nbsp;&nbsp;&nbsp;name.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-width &lt;int&gt; (property: width)
+ * &nbsp;&nbsp;&nbsp;The width of the dialog.
+ * &nbsp;&nbsp;&nbsp;default: 800
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-height &lt;int&gt; (property: height)
+ * &nbsp;&nbsp;&nbsp;The height of the dialog.
+ * &nbsp;&nbsp;&nbsp;default: 600
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-x &lt;int&gt; (property: x)
+ * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
+ * &nbsp;&nbsp;&nbsp;).
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -3
+ * </pre>
+ *
+ * <pre>-y &lt;int&gt; (property: y)
+ * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
+ * &nbsp;&nbsp;&nbsp;).
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -3
+ * </pre>
+ *
+ * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
+ * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
+ * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow
+ * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
+ * <pre>-field &lt;adams.data.report.Field&gt; (property: field)
+ * &nbsp;&nbsp;&nbsp;The field to use for the chosen label.
+ * &nbsp;&nbsp;&nbsp;default: Classification[S]
+ * </pre>
+ *
+ * <pre>-label &lt;adams.core.base.BaseString&gt; [-label ...] (property: labels)
+ * &nbsp;&nbsp;&nbsp;The labels to use.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-use-buttons &lt;boolean&gt; (property: useButtons)
+ * &nbsp;&nbsp;&nbsp;If enabled, buttons are used for selecting the label rather than a drop-down
+ * &nbsp;&nbsp;&nbsp;list.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
+ * <pre>-zoom &lt;double&gt; (property: zoom)
+ * &nbsp;&nbsp;&nbsp;The zoom level in percent.
+ * &nbsp;&nbsp;&nbsp;default: 100.0
+ * &nbsp;&nbsp;&nbsp;minimum: -1.0
+ * &nbsp;&nbsp;&nbsp;maximum: 1600.0
+ * </pre>
+ *
+ * <pre>-interaction-logging-filter &lt;adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter&gt; (property: interactionLoggingFilter)
+ * &nbsp;&nbsp;&nbsp;The interaction logger to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.image.interactionlogging.Null
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -291,13 +410,12 @@ public class ImageLabeler
 
       super.finishInit();
 
-      if (m_UseButtons) {
-	if (m_ButtonLabels.length > 0)
-	  m_ButtonLabels[0].doClick();
-      }
-      else {
+      if (!m_UseButtons) {
 	if (m_ComboBoxLabels.getItemCount() > 0)
 	  m_ComboBoxLabels.setSelectedItem(m_Labels[0].getValue());
+      }
+      else {
+	m_ButtonGroup.clearSelection();
       }
     }
 
@@ -376,16 +494,15 @@ public class ImageLabeler
 
       for (i = 0; i < m_Labels.length; i++) {
 	if (m_Labels[i].getValue().equals(label)) {
-	  if (m_UseButtons)
-	    m_ButtonLabels[i].setSelected(true);
-	  else
+	  if (!m_UseButtons)
 	    m_ComboBoxLabels.setSelectedIndex(i);
 	  m_CurrentLabel = label;
 	  break;
 	}
       }
 
-      notifyLabelChange(label);
+      if (m_UseButtons)
+        m_ButtonGroup.clearSelection();
     }
 
     /**
