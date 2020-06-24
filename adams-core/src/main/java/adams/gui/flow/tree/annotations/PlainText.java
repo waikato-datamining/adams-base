@@ -69,6 +69,8 @@ public class PlainText
 
     colorDef = node.hasOwner() ? node.getOwner().getAnnotationsColor() : "blue";
     sizeDef  = node.hasOwner() ? node.getOwner().getAnnotationsSize() : "-2";
+    if (actor.getAnnotations().getValue().contains("TODO"))
+      colorDef = "red";
 
     if (actor.getAnnotations().hasTag()) {
       font = false;
