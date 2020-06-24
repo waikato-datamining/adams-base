@@ -25,11 +25,15 @@ import adams.core.base.BaseString;
 import adams.core.base.BaseText;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.Expression;
+import adams.flow.condition.bool.VariableFlagSet;
 import adams.flow.control.Stop;
 import adams.flow.control.Switch;
 import adams.flow.control.Trigger;
+import adams.flow.control.WhileLoop;
 import adams.flow.core.Actor;
+import adams.flow.core.MutableActorHandler;
 import adams.flow.source.EnterValue;
+import adams.flow.source.Start;
 import adams.flow.transformer.SetVariable;
 import adams.parser.BooleanExpressionText;
 
@@ -80,6 +84,17 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: choice
  * </pre>
  *
+ * <pre>-loop-menu &lt;boolean&gt; (property: loopMenu)
+ * &nbsp;&nbsp;&nbsp;If enabled, the menu gets wrapped in a while loop.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-loop-variable &lt;adams.core.VariableName&gt; (property: loopVariable)
+ * &nbsp;&nbsp;&nbsp;The name of the variable for storing the loop state; this variable needs
+ * &nbsp;&nbsp;&nbsp;to get initialized with 'true' before the while loop.
+ * &nbsp;&nbsp;&nbsp;default: loop_state
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -104,6 +119,12 @@ public class SimpleMenu
 
   /** the variable to store the choice in. */
   protected VariableName m_ChoiceVariable;
+
+  /** whether to loop the menu. */
+  protected boolean m_LoopMenu;
+
+  /** the variable for storing the loop state. */
+  protected VariableName m_LoopVariable;
 
   /**
    * Returns a string describing the object.
@@ -143,6 +164,14 @@ public class SimpleMenu
     m_OptionManager.add(
       "choice-variable", "choiceVariable",
       new VariableName("choice"));
+
+    m_OptionManager.add(
+      "loop-menu", "loopMenu",
+      false);
+
+    m_OptionManager.add(
+      "loop-variable", "loopVariable",
+      new VariableName("loop_state"));
   }
 
   /**
@@ -293,6 +322,64 @@ public class SimpleMenu
   }
 
   /**
+   * Sets whether to wrap the menu in a while loop.
+   *
+   * @param value	true if to loop
+   */
+  public void setLoopMenu(boolean value) {
+    m_LoopMenu = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to wrap the menu in a while loop.
+   *
+   * @return 		true if to loop
+   */
+  public boolean getLoopMenu() {
+    return m_LoopMenu;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String loopMenuTipText() {
+    return "If enabled, the menu gets wrapped in a while loop.";
+  }
+
+  /**
+   * Sets the variable name to use for storing the cancelled state.
+   *
+   * @param value	the variable name
+   */
+  public void setLoopVariable(VariableName value) {
+    m_LoopVariable = value;
+    reset();
+  }
+
+  /**
+   * Returns the variable name to use for storing the cancelled state.
+   *
+   * @return 		the variable name
+   */
+  public VariableName getLoopVariable() {
+    return m_LoopVariable;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String loopVariableTipText() {
+    return "The name of the variable for storing the loop state; this variable needs to get initialized with 'true' before the while loop.";
+  }
+
+  /**
    * Whether the flow generated is an interactive one.
    *
    * @return		true if interactive
@@ -309,7 +396,9 @@ public class SimpleMenu
    */
   @Override
   protected Actor doGenerate() {
-    Trigger			result;
+    MutableActorHandler 	result;
+    Trigger			prompt;
+    Switch			actions;
     EnterValue			enter;
     SetVariable			setvar;
     Switch			swtch;
@@ -317,45 +406,87 @@ public class SimpleMenu
     Stop			stop;
     List<BooleanCondition> 	conditions;
     Expression			expr;
+    Trigger			action;
 
-    result = new Trigger();
-    result.setName(m_Name.isEmpty() ? "menu prompt" : m_Name);
-
-    enter = new EnterValue();
-    enter.setMessage(new BaseString(m_Message));
-    enter.setSelectionValues(m_Choices);
-    enter.setUseButtons(true);
-    enter.setVerticalButtons(true);
-    enter.setStopFlowIfCanceled(true);
-    result.add(enter);
-
-    setvar = new SetVariable();
-    setvar.setVariableName((VariableName) m_ChoiceVariable.getClone());
-    result.add(setvar);
-
-    if (m_UseCustomValues) {
-      swtch = new Switch();
-      swtch.removeAll();
-      conditions = new ArrayList<>();
-      for (i = 0; i < m_Choices.length; i++) {
-        expr = new Expression();
-        expr.setExpression(new BooleanExpressionText("\"" + m_ChoiceVariable.paddedValue() + "\" = \"" + m_Choices[i].getValue() + "\""));
-        conditions.add(expr);
-	setvar = new SetVariable();
-	setvar.setName(m_Values[i].getValue());
-	setvar.setVariableName((VariableName) m_ChoiceVariable.getClone());
-	setvar.setVariableValue(new BaseText(m_Values[i].getValue()));
-        swtch.add(setvar);
-      }
-
-      stop = new Stop();
-      stop.setName("Unhandled choice");
-      stop.setStopMessage("Unhandled choice!");
-      swtch.add(stop);
-      swtch.setConditions(conditions.toArray(new BooleanCondition[0]));
-
-      result.add(swtch);
+    if (m_LoopMenu) {
+      VariableFlagSet flagSet = new VariableFlagSet();
+      flagSet.setVariableName((VariableName) m_LoopVariable.getClone());
+      result = new WhileLoop();
+      ((WhileLoop) result).setCondition(flagSet);
     }
+    else {
+      result = new Trigger();
+    }
+    result.setName(m_Name.isEmpty() ? "menu" : m_Name);
+
+    result.add(new Start());
+
+    // prompt
+    prompt = new Trigger();
+    prompt.setName("menu prompt");
+    result.add(prompt);
+    {
+      enter = new EnterValue();
+      enter.setMessage(new BaseString(m_Message));
+      enter.setSelectionValues(m_Choices);
+      enter.setUseButtons(true);
+      enter.setVerticalButtons(true);
+      enter.setStopFlowIfCanceled(false);
+      prompt.add(enter);
+
+      setvar = new SetVariable();
+      setvar.setVariableName((VariableName) m_ChoiceVariable.getClone());
+      prompt.add(setvar);
+
+      if (m_UseCustomValues) {
+	swtch = new Switch();
+	swtch.removeAll();
+	conditions = new ArrayList<>();
+	for (i = 0; i < m_Choices.length; i++) {
+	  expr = new Expression();
+	  expr.setExpression(new BooleanExpressionText("\"" + m_ChoiceVariable.paddedValue() + "\" = \"" + m_Choices[i].getValue() + "\""));
+	  conditions.add(expr);
+	  setvar = new SetVariable();
+	  setvar.setName(m_Values[i].getValue());
+	  setvar.setVariableName((VariableName) m_ChoiceVariable.getClone());
+	  setvar.setVariableValue(new BaseText(m_Values[i].getValue()));
+	  swtch.add(setvar);
+	}
+
+	stop = new Stop();
+	stop.setName("Unhandled choice");
+	stop.setStopMessage("Unhandled choice!");
+	swtch.add(stop);
+	swtch.setConditions(conditions.toArray(new BooleanCondition[0]));
+
+	prompt.add(swtch);
+      }
+    }
+
+    // actions
+    actions = new Switch();
+    actions.setLenient(true);
+    actions.removeAll();
+    result.add(actions);
+    conditions = new ArrayList<>();
+    for (i = 0; i < m_Choices.length; i++) {
+      // condition
+      expr = new Expression();
+      if (m_UseCustomValues)
+	expr.setExpression(new BooleanExpressionText("\"" + m_ChoiceVariable.paddedValue() + "\" = \"" + m_Values[i].getValue() + "\""));
+      else
+	expr.setExpression(new BooleanExpressionText("\"" + m_ChoiceVariable.paddedValue() + "\" = \"" + m_Choices[i].getValue() + "\""));
+      conditions.add(expr);
+      // action
+      action = new Trigger();
+      if (m_UseCustomValues)
+	action.setName(m_Values[i].getValue());
+      else
+	action.setName(m_Choices[i].getValue());
+      action.add(new Start());
+      actions.add(action);
+    }
+    actions.setConditions(conditions.toArray(new BooleanCondition[0]));
 
     return result;
   }
