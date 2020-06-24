@@ -15,7 +15,7 @@
 
 /*
  * PlainText.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.annotations;
@@ -27,7 +27,7 @@ import adams.gui.flow.tree.Node;
 import java.util.List;
 
 /**
- * TODO: What class does.
+ * Default processor, turns plain text into HTML.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
