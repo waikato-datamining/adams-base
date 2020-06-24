@@ -1,0 +1,9 @@
+# Project: adams
+# Date: 2020-06-25 09:59:11
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core
+#
+adams.flow.control.Flow -annotation "Shows how to launch the system\\\'s file browser with a file (or directory)." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg
+ adams.flow.sink.FileBrowser
