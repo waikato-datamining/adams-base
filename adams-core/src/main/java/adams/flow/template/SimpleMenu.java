@@ -22,10 +22,10 @@ package adams.flow.template;
 import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.base.BaseString;
-import adams.core.base.BaseText;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.Expression;
 import adams.flow.condition.bool.VariableFlagSet;
+import adams.flow.control.Block;
 import adams.flow.control.Stop;
 import adams.flow.control.Switch;
 import adams.flow.control.Trigger;
@@ -35,7 +35,6 @@ import adams.flow.core.MutableActorHandler;
 import adams.flow.source.EnterValue;
 import adams.flow.source.Start;
 import adams.flow.transformer.SetVariable;
-import adams.parser.BooleanExpressionText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,8 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Generates a sub-flow that displays a dialog with the choice strings as buttons.<br>
- * If custom values are used, then these strings get stored in the variable rather than the choice strings.
+ * If custom values are used, then these strings get stored in the variable rather than the choice strings.<br>
+ * When enabling looping, ensure you have an exit option in the menu that sets the loop_state variable to 'false' to avoid an endless loop menu.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -84,6 +84,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: choice
  * </pre>
  *
+ * <pre>-cancelled-variable &lt;adams.core.VariableName&gt; (property: cancelledVariable)
+ * &nbsp;&nbsp;&nbsp;The name of the variable to use for storing the cancelled state.
+ * &nbsp;&nbsp;&nbsp;default: cancelled
+ * </pre>
+ *
  * <pre>-loop-menu &lt;boolean&gt; (property: loopMenu)
  * &nbsp;&nbsp;&nbsp;If enabled, the menu gets wrapped in a while loop.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -120,6 +125,9 @@ public class SimpleMenu
   /** the variable to store the choice in. */
   protected VariableName m_ChoiceVariable;
 
+  /** the variable to store the cancelled state in. */
+  protected VariableName m_CancelledVariable;
+
   /** whether to loop the menu. */
   protected boolean m_LoopMenu;
 
@@ -135,7 +143,9 @@ public class SimpleMenu
   public String globalInfo() {
     return
       "Generates a sub-flow that displays a dialog with the choice strings as buttons.\n"
-      + "If custom values are used, then these strings get stored in the variable rather than the choice strings.";
+      + "If custom values are used, then these strings get stored in the variable rather than the choice strings.\n"
+      + "When enabling looping, ensure you have an exit option in the menu that sets the loop_state variable to 'false' "
+      + "to avoid an endless loop menu.";
   }
 
   /**
@@ -164,6 +174,10 @@ public class SimpleMenu
     m_OptionManager.add(
       "choice-variable", "choiceVariable",
       new VariableName("choice"));
+
+    m_OptionManager.add(
+      "cancelled-variable", "cancelledVariable",
+      new VariableName("cancelled"));
 
     m_OptionManager.add(
       "loop-menu", "loopMenu",
@@ -322,6 +336,35 @@ public class SimpleMenu
   }
 
   /**
+   * Sets the variable name to use for storing the cancelled state.
+   *
+   * @param value	the variable name
+   */
+  public void setCancelledVariable(VariableName value) {
+    m_CancelledVariable = value;
+    reset();
+  }
+
+  /**
+   * Returns the variable name to use for storing the cancelled state.
+   *
+   * @return 		the variable name
+   */
+  public VariableName getCancelledVariable() {
+    return m_CancelledVariable;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String cancelledVariableTipText() {
+    return "The name of the variable to use for storing the cancelled state.";
+  }
+
+  /**
    * Sets whether to wrap the menu in a while loop.
    *
    * @param value	true if to loop
@@ -392,7 +435,7 @@ public class SimpleMenu
   /**
    * Generates the actor.
    *
-   * @return 		the generated acto
+   * @return 		the generated actor
    */
   @Override
   protected Actor doGenerate() {
@@ -419,6 +462,12 @@ public class SimpleMenu
     }
     result.setName(m_Name.isEmpty() ? "menu" : m_Name);
 
+    adams.flow.standalone.SetVariable reset = new adams.flow.standalone.SetVariable();
+    reset.setName("reset");
+    reset.setVariableName(m_CancelledVariable.getValue());
+    reset.setVariableValue("true");
+    result.add(reset);
+
     result.add(new Start());
 
     // prompt
@@ -435,8 +484,14 @@ public class SimpleMenu
       prompt.add(enter);
 
       setvar = new SetVariable();
-      setvar.setVariableName((VariableName) m_ChoiceVariable.getClone());
+      setvar.setVariableName(m_ChoiceVariable.getValue());
       prompt.add(setvar);
+
+      SetVariable set = new SetVariable();
+      set.setName("set");
+      set.setVariableName(m_CancelledVariable.getValue());
+      set.setVariableValue("false");
+      prompt.add(set);
 
       if (m_UseCustomValues) {
 	swtch = new Switch();
@@ -444,12 +499,12 @@ public class SimpleMenu
 	conditions = new ArrayList<>();
 	for (i = 0; i < m_Choices.length; i++) {
 	  expr = new Expression();
-	  expr.setExpression(new BooleanExpressionText("\"" + m_ChoiceVariable.paddedValue() + "\" = \"" + m_Choices[i].getValue() + "\""));
+	  expr.setExpression("\"" + m_ChoiceVariable.paddedValue() + "\" = \"" + m_Choices[i].getValue() + "\"");
 	  conditions.add(expr);
 	  setvar = new SetVariable();
 	  setvar.setName(m_Values[i].getValue());
-	  setvar.setVariableName((VariableName) m_ChoiceVariable.getClone());
-	  setvar.setVariableValue(new BaseText(m_Values[i].getValue()));
+	  setvar.setVariableName(m_ChoiceVariable.getValue());
+	  setvar.setVariableValue(m_Values[i].getValue());
 	  swtch.add(setvar);
 	}
 
@@ -463,6 +518,14 @@ public class SimpleMenu
       }
     }
 
+    // block if cancelled
+    VariableFlagSet cancelledFlag = new VariableFlagSet();
+    cancelledFlag.setVariableName((VariableName) m_CancelledVariable.getClone());
+    Block block = new Block();
+    block.setName("block if cancelled");
+    block.setCondition(cancelledFlag);
+    result.add(block);
+
     // actions
     actions = new Switch();
     actions.setLenient(true);
@@ -473,9 +536,9 @@ public class SimpleMenu
       // condition
       expr = new Expression();
       if (m_UseCustomValues)
-	expr.setExpression(new BooleanExpressionText("\"" + m_ChoiceVariable.paddedValue() + "\" = \"" + m_Values[i].getValue() + "\""));
+	expr.setExpression("\"" + m_ChoiceVariable.paddedValue() + "\" = \"" + m_Values[i].getValue() + "\"");
       else
-	expr.setExpression(new BooleanExpressionText("\"" + m_ChoiceVariable.paddedValue() + "\" = \"" + m_Choices[i].getValue() + "\""));
+	expr.setExpression("\"" + m_ChoiceVariable.paddedValue() + "\" = \"" + m_Choices[i].getValue() + "\"");
       conditions.add(expr);
       // action
       action = new Trigger();

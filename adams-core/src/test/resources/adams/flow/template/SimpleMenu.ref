@@ -1,53 +1,55 @@
 --> adams.flow.template.SimpleMenu-out0.txt
 adams.flow.control.Trigger
 	-name
-	menu prompt
+	menu
 	-tee
-		adams.flow.source.EnterValue
-			-stop-if-canceled
-			true
-			-message
-			Please select
-			-selection-values
-			A
-			-selection-values
-			B
-			-selection-values
-			C
-			-use-buttons
-			true
-			-vertical-buttons
-			true
-	-tee
-		adams.flow.transformer.SetVariable
+		adams.flow.standalone.SetVariable
+			-name
+			reset
 			-var-name
-			choice
-
-
---> adams.flow.template.SimpleMenu-out1.txt
-adams.flow.control.Trigger
-	-name
-	menu prompt
-	-tee
-		adams.flow.source.EnterValue
-			-stop-if-canceled
-			true
-			-message
-			Please select
-			-selection-values
-			A
-			-selection-values
-			B
-			-selection-values
-			C
-			-use-buttons
-			true
-			-vertical-buttons
+			cancelled
+			-var-value
 			true
 	-tee
-		adams.flow.transformer.SetVariable
-			-var-name
-			choice
+		adams.flow.source.Start
+	-tee
+		adams.flow.control.Trigger
+			-name
+			menu prompt
+			-tee
+				adams.flow.source.EnterValue
+					-message
+					Please select
+					-selection-values
+					A
+					-selection-values
+					B
+					-selection-values
+					C
+					-use-buttons
+					true
+					-vertical-buttons
+					true
+			-tee
+				adams.flow.transformer.SetVariable
+					-var-name
+					choice
+			-tee
+				adams.flow.transformer.SetVariable
+					-name
+					set
+					-var-name
+					cancelled
+					-var-value
+					false
+	-tee
+		adams.flow.control.Block
+			-name
+			block if cancelled
+			-condition
+				adams.flow.condition.bool.VariableFlagSet
+					-variable-name
+					cancelled
 	-tee
 		adams.flow.control.Switch
 			-condition
@@ -63,34 +65,156 @@ adams.flow.control.Trigger
 					-expression
 					\"@{choice}\" = \"C\"
 			-case
+				adams.flow.control.Trigger
+					-name
+					A
+					-tee
+						adams.flow.source.Start
+			-case
+				adams.flow.control.Trigger
+					-name
+					B
+					-tee
+						adams.flow.source.Start
+			-case
+				adams.flow.control.Trigger
+					-name
+					C
+					-tee
+						adams.flow.source.Start
+			-lenient
+			true
+
+
+--> adams.flow.template.SimpleMenu-out1.txt
+adams.flow.control.Trigger
+	-name
+	menu
+	-tee
+		adams.flow.standalone.SetVariable
+			-name
+			reset
+			-var-name
+			cancelled
+			-var-value
+			true
+	-tee
+		adams.flow.source.Start
+	-tee
+		adams.flow.control.Trigger
+			-name
+			menu prompt
+			-tee
+				adams.flow.source.EnterValue
+					-message
+					Please select
+					-selection-values
+					A
+					-selection-values
+					B
+					-selection-values
+					C
+					-use-buttons
+					true
+					-vertical-buttons
+					true
+			-tee
 				adams.flow.transformer.SetVariable
+					-var-name
+					choice
+			-tee
+				adams.flow.transformer.SetVariable
+					-name
+					set
+					-var-name
+					cancelled
+					-var-value
+					false
+			-tee
+				adams.flow.control.Switch
+					-condition
+						adams.flow.condition.bool.Expression
+							-expression
+							\"@{choice}\" = \"A\"
+					-condition
+						adams.flow.condition.bool.Expression
+							-expression
+							\"@{choice}\" = \"B\"
+					-condition
+						adams.flow.condition.bool.Expression
+							-expression
+							\"@{choice}\" = \"C\"
+					-case
+						adams.flow.transformer.SetVariable
+							-name
+							a
+							-var-name
+							choice
+							-var-value
+							a
+					-case
+						adams.flow.transformer.SetVariable
+							-name
+							b
+							-var-name
+							choice
+							-var-value
+							b
+					-case
+						adams.flow.transformer.SetVariable
+							-name
+							c
+							-var-name
+							choice
+							-var-value
+							c
+					-case
+						adams.flow.control.Stop
+							-name
+							Unhandled choice
+							-stop-msg
+							Unhandled choice!
+	-tee
+		adams.flow.control.Block
+			-name
+			block if cancelled
+			-condition
+				adams.flow.condition.bool.VariableFlagSet
+					-variable-name
+					cancelled
+	-tee
+		adams.flow.control.Switch
+			-condition
+				adams.flow.condition.bool.Expression
+					-expression
+					\"@{choice}\" = \"a\"
+			-condition
+				adams.flow.condition.bool.Expression
+					-expression
+					\"@{choice}\" = \"b\"
+			-condition
+				adams.flow.condition.bool.Expression
+					-expression
+					\"@{choice}\" = \"c\"
+			-case
+				adams.flow.control.Trigger
 					-name
 					a
-					-var-name
-					choice
-					-var-value
-					a
+					-tee
+						adams.flow.source.Start
 			-case
-				adams.flow.transformer.SetVariable
+				adams.flow.control.Trigger
 					-name
 					b
-					-var-name
-					choice
-					-var-value
-					b
+					-tee
+						adams.flow.source.Start
 			-case
-				adams.flow.transformer.SetVariable
+				adams.flow.control.Trigger
 					-name
 					c
-					-var-name
-					choice
-					-var-value
-					c
-			-case
-				adams.flow.control.Stop
-					-name
-					Unhandled choice
-					-stop-msg
-					Unhandled choice!
+					-tee
+						adams.flow.source.Start
+			-lenient
+			true
 
 
