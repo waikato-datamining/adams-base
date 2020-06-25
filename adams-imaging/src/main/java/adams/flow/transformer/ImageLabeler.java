@@ -447,20 +447,6 @@ public class ImageLabeler
       }
 
       m_CurrentLabel = label;
-      notifyLabelChange(label);
-    }
-
-    /**
-     * Sends notifications that the label has changed.
-     *
-     * @param label	the new label
-     */
-    protected void notifyLabelChange(String label) {
-      Map<String,Object> 	data;
-
-      data = new HashMap<>();
-      data.put("new-label", (label == null ? UNSET : label));
-      m_PanelImage.getInteractionLoggingFilter().filterInteractionLog(new InteractionEvent(m_PanelImage, new Date(), "change label", data));
     }
 
     /**
