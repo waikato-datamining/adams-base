@@ -464,6 +464,8 @@ public class Branch
    */
   @Override
   public String add(int index, Actor actor) {
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
     m_Branches.add(index, actor);
     m_Branches.get(index).setParent(null);
     m_Branches.get(index).setParent(this);

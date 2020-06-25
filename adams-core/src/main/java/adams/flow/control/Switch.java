@@ -591,6 +591,8 @@ public class Switch
    * @return		null if successful, otherwise error message
    */
   public String add(int index, Actor actor) {
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
     m_Cases.add(index, actor);
     m_Cases.get(index).setParent(null);
     m_Cases.get(index).setParent(this);

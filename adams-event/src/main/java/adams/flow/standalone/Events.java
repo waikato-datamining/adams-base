@@ -269,6 +269,8 @@ public class Events
    */
   @Override
   public String add(int index, Actor actor) {
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
     m_Actors.add(index, checkActor(actor));
     reset();
     updateParent();

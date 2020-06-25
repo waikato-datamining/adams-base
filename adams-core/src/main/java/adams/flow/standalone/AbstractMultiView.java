@@ -453,6 +453,9 @@ public abstract class AbstractMultiView
   public String add(Actor actor) {
     String 	result;
 
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
+
     result = check(actor);
     if (result == null)
       m_Actors.add(actor);
@@ -470,6 +473,9 @@ public abstract class AbstractMultiView
   @Override
   public String add(int index, Actor actor) {
     String 	result;
+
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
 
     result = check(actor);
     if (result == null)

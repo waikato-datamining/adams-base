@@ -295,6 +295,9 @@ public abstract class AbstractMutableStandaloneGroupItem<T extends Actor>
   public String add(int index, Actor actor) {
     String 	result;
 
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
+
     result = checkSubActor(index, actor);
     if (result == null) {
       m_Actors.add(index, actor);

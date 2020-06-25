@@ -297,6 +297,8 @@ public class SwitchedSource
    * @return		null if successful, otherwise error message
    */
   public String add(int index, Actor actor) {
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
     m_Cases.add(index, actor);
     reset();
     updateParent();

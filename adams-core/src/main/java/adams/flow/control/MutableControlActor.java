@@ -168,6 +168,8 @@ public abstract class MutableControlActor
    */
   @Override
   public String add(int index, Actor actor) {
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
     ActorUtils.uniqueName(actor, this, index);
     m_Actors.add(index, actor);
     reset();

@@ -167,6 +167,8 @@ public abstract class MutableConnectedControlActor
    * @return		null if successful, otherwise error message
    */
   public String add(int index, Actor actor) {
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
     m_Actors.add(index, actor);
     m_Actors.get(index).setParent(null);
     m_Actors.get(index).setParent(this);

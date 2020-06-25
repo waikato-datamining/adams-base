@@ -430,6 +430,9 @@ public class QueueEvent
   public String add(int index, Actor actor) {
     String	result;
 
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
+
     result = m_Actors.add(index, actor);
     reset();
     updateParent();

@@ -43,7 +43,10 @@ public abstract class AbstractStandaloneMutableGroup<T extends Actor>
   @Override
   public String add(Actor actor) {
     String 	result;
-    
+
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
+
     result = checkActor(actor);
     if (result == null) {
       m_Actors.add((T) actor);
@@ -68,7 +71,10 @@ public abstract class AbstractStandaloneMutableGroup<T extends Actor>
   @Override
   public String add(int index, Actor actor) {
     String 	result;
-    
+
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
+
     result = checkActor(actor, index);
     if (result == null) {
       m_Actors.add(index, (T) actor);

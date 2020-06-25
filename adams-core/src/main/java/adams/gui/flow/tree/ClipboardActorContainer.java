@@ -218,6 +218,8 @@ public class ClipboardActorContainer
    */
   @Override
   public String add(int index, Actor actor) {
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
     m_Actors.add(index, actor);
     reset();
     return null;
