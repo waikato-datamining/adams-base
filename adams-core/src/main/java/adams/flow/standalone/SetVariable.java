@@ -15,7 +15,7 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -630,6 +630,15 @@ public class SetVariable
    *
    * @param value	the name
    */
+  public void setVariableName(String value) {
+    setVariableName(new VariableName(value));
+  }
+
+  /**
+   * Sets the name of the variable to update.
+   *
+   * @param value	the name
+   */
   public void setVariableName(VariableName value) {
     m_VariableName = value;
     reset();
@@ -652,6 +661,15 @@ public class SetVariable
    */
   public String variableNameTipText() {
     return "The name of the variable to update.";
+  }
+
+  /**
+   * Sets the value of the variable to update.
+   *
+   * @param value	the value
+   */
+  public void setVariableValue(String value) {
+    setVariableValue(new BaseText(value));
   }
 
   /**
