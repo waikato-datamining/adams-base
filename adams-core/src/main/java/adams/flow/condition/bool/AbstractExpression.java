@@ -13,14 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Expression.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+/*
+ * AbstractExpression.java
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
-
-import java.util.HashMap;
-import java.util.logging.Level;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
@@ -30,11 +27,13 @@ import adams.parser.BooleanExpression;
 import adams.parser.BooleanExpressionText;
 import adams.parser.GrammarSupplier;
 
+import java.util.HashMap;
+import java.util.logging.Level;
+
 /**
  * Ancestor for conditions that use a boolean expression.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractExpression
   extends AbstractBooleanCondition
@@ -73,7 +72,18 @@ public abstract class AbstractExpression
    * @return		the default
    */
   protected abstract BooleanExpressionText getDefaultExpression();
-  
+
+  /**
+   * Sets the expression to evaluate. Automatically wraps expressions in
+   * parentheses that consists only of a variable. Otherwise, the expresssion
+   * would get interpreted as attached variable for the expression option.
+   *
+   * @param value	the expression
+   */
+  public void setExpression(String value) {
+    setExpression(new BooleanExpressionText(value));
+  }
+
   /**
    * Sets the expression to evaluate. Automatically wraps expressions in
    * parentheses that consists only of a variable. Otherwise, the expresssion
