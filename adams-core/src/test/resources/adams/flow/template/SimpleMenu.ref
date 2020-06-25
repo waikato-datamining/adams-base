@@ -18,6 +18,8 @@ adams.flow.control.Trigger
 			menu prompt
 			-tee
 				adams.flow.source.EnterValue
+					-name
+					Menu
 					-message
 					Please select
 					-selection-values
@@ -106,6 +108,8 @@ adams.flow.control.Trigger
 			menu prompt
 			-tee
 				adams.flow.source.EnterValue
+					-name
+					Menu
 					-message
 					Please select
 					-selection-values

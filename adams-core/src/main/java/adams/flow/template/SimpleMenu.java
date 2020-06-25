@@ -476,6 +476,7 @@ public class SimpleMenu
     result.add(prompt);
     {
       enter = new EnterValue();
+      enter.setName(m_Name.isEmpty() ? "Menu" : m_Name);
       enter.setMessage(new BaseString(m_Message));
       enter.setSelectionValues(m_Choices);
       enter.setUseButtons(true);
