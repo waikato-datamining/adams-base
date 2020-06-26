@@ -912,6 +912,9 @@ public class PropertiesParameterPanel
     if (comp instanceof JTextComponent) {
       ((JTextComponent) comp).setText(text);
     }
+    else if (comp instanceof AbstractChooserPanel) {
+      ((AbstractChooserPanel) comp).setCurrentAsString(text);
+    }
     else {
       try {
 	method = comp.getClass().getMethod("setText", String.class);
@@ -934,6 +937,9 @@ public class PropertiesParameterPanel
 
     if (comp instanceof JTextComponent) {
       return ((JTextComponent) comp).getText();
+    }
+    else if (comp instanceof AbstractChooserPanel) {
+      return ((AbstractChooserPanel) comp).getCurrentAsString();
     }
     else {
       try {
