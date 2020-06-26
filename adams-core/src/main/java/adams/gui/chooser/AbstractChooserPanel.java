@@ -383,6 +383,19 @@ public abstract class AbstractChooserPanel<T>
   }
 
   /**
+   * Sets the current value as string.
+   *
+   * @param value	the value to use
+   * @return		if successfully set
+   */
+  public boolean setCurrentAsString(String value) {
+    if (!isValid(value))
+      return false;
+    else
+      return setCurrent(fromString(value));
+  }
+
+  /**
    * Sets the current value.
    *
    * @param value	the value to use, can be null
@@ -463,6 +476,15 @@ public abstract class AbstractChooserPanel<T>
       return fromString(m_TextSelection.getText());
     else
       return fromString(getDefaultString());
+  }
+
+  /**
+   * Returns the current value as string.
+   *
+   * @return		the string
+   */
+  public String getCurrentAsString() {
+    return toString(getCurrent());
   }
 
   /**
