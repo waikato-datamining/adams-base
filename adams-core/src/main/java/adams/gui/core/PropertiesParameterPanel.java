@@ -379,6 +379,7 @@ public class PropertiesParameterPanel
       throw new IllegalArgumentException("Identifier '" + identifier + "' already present!");
     m_Identifiers.add(identifier);
     m_PanelProperties.addParameter(label, chooser);
+    setLabel(identifier, label);
   }
 
   /**
