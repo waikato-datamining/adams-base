@@ -54,6 +54,8 @@ adams.flow.control.Trigger
 					cancelled
 	-tee
 		adams.flow.control.Switch
+			-name
+			menu actions
 			-condition
 				adams.flow.condition.bool.Expression
 					-expression
@@ -136,6 +138,8 @@ adams.flow.control.Trigger
 					false
 			-tee
 				adams.flow.control.Switch
+					-name
+					replace choice with custom value
 					-condition
 						adams.flow.condition.bool.Expression
 							-expression
@@ -188,6 +192,8 @@ adams.flow.control.Trigger
 					cancelled
 	-tee
 		adams.flow.control.Switch
+			-name
+			menu actions
 			-condition
 				adams.flow.condition.bool.Expression
 					-expression

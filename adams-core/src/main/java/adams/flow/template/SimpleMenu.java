@@ -496,6 +496,7 @@ public class SimpleMenu
 
       if (m_UseCustomValues) {
 	swtch = new Switch();
+	swtch.setName("replace choice with custom value");
 	swtch.removeAll();
 	conditions = new ArrayList<>();
 	for (i = 0; i < m_Choices.length; i++) {
@@ -529,6 +530,7 @@ public class SimpleMenu
 
     // actions
     actions = new Switch();
+    actions.setName("menu actions");
     actions.setLenient(true);
     actions.removeAll();
     result.add(actions);
