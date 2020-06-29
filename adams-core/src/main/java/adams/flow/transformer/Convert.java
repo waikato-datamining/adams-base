@@ -15,11 +15,12 @@
 
 /*
  * Convert.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.AdditionalInformationHandler;
 import adams.core.QuickInfoHelper;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.ConversionWithInitialization;
@@ -80,7 +81,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Convert
   extends AbstractTransformer {
@@ -109,8 +109,8 @@ public class Convert
     super.defineOptions();
 
     m_OptionManager.add(
-	    "conversion", "conversion",
-	    new UnknownToUnknown());
+      "conversion", "conversion",
+      new UnknownToUnknown());
   }
 
   /**
@@ -154,6 +154,28 @@ public class Convert
   }
 
   /**
+   * Returns the additional information.
+   *
+   * @return		the additional information
+   */
+  @Override
+  public String getAdditionalInformation() {
+    StringBuilder 	result;
+
+    if (m_Conversion instanceof AdditionalInformationHandler) {
+      result = new StringBuilder(super.getAdditionalInformation());
+
+      result.append("\n\n");
+      result.append(((AdditionalInformationHandler) m_Conversion).getAdditionalInformation());
+
+      return result.toString();
+    }
+    else {
+      return super.getAdditionalInformation();
+    }
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the accepted input
@@ -185,17 +207,17 @@ public class Convert
   @Override
   public String setUp() {
     String	result;
-    
+
     result = super.setUp();
-    
+
     if (result == null) {
       if (m_Conversion instanceof ConversionWithInitialization)
 	result = ((ConversionWithInitialization) m_Conversion).setUp();
     }
-    
+
     return result;
   }
-  
+
   /**
    * Executes the flow item.
    *
@@ -215,10 +237,10 @@ public class Convert
 
     if (isLoggingEnabled())
       getLogger().info(m_InputToken.getPayload() + " -> " + m_OutputToken.getPayload());
-    
+
     return result;
   }
-  
+
   /**
    * Stops the execution. No message set.
    */
