@@ -246,7 +246,8 @@ public class SelectObjects
       obj = commandlineToObject(initial.getValue());
       if (obj == null)
 	getLogger().warning("Failed to convert: " + initial);
-      current.add(obj);
+      else
+	current.add(obj);
     }
     array = Array.newInstance(cls, current.size());
     for (i = 0; i < current.size(); i++)
