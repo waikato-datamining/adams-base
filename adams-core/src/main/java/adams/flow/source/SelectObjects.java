@@ -15,10 +15,12 @@
 
 /*
  * SelectObjects.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
+import adams.core.EnumHelper;
+import adams.core.Utils;
 import adams.core.base.BaseString;
 import adams.core.option.OptionUtils;
 import adams.gui.goe.GenericArrayEditorDialog;
@@ -35,7 +37,7 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Allows the user to select an arbitrary number of objects from the specified class hierarchy using the GenericObjectArray.<br>
- * It is possible to use this dialog for other objects as well that don't belong to a class hierarchy, e.g., adams.core.base.BaseString. This works as long as the class has a constructor which takes a String object.
+ * It is possible to use this dialog for other objects as well that don't belong to a class hierarchy, e.g., adams.core.base.BaseString. This works as long as the class has a constructor which takes a String object. Enums are supported as well.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -141,7 +143,8 @@ public class SelectObjects
 	+ "specified class hierarchy using the GenericObjectArray.\n"
 	+ "It is possible to use this dialog for other objects as well that "
 	+ "don't belong to a class hierarchy, e.g., " + BaseString.class.getName() + ". "
-	+ "This works as long as the class has a constructor which takes a String object.";
+	+ "This works as long as the class has a constructor which takes a String object. "
+	+ "Enums are supported as well.";
   }
 
   /**
@@ -174,6 +177,7 @@ public class SelectObjects
    * Turns a commandline into an object. Tries String constructor of defined
    * class first before {@link OptionUtils#forAnyCommandLine(Class, String)}.
    * Of course, the defined superclass has to be non-abstract.
+   * Also handles enums.
    * 
    * @param cmdline	the commandline to convert
    * @return		the generated object, null if failed to convert
@@ -182,6 +186,18 @@ public class SelectObjects
   protected Object commandlineToObject(String cmdline) {
     Constructor constr;
 
+    // enum?
+    if (getItemClass().isEnum()) {
+      try {
+	return EnumHelper.parse(getItemClass(), cmdline);
+      }
+      catch (Exception e) {
+        getLogger().log(Level.SEVERE, "Failed to parse string '" + cmdline + "' as enum " + Utils.classToString(getItemClass()), e);
+        return null;
+      }
+    }
+
+    // string constructor?
     if (!Modifier.isAbstract(getItemClass().getModifiers())) {
       try {
 	constr = getItemClass().getConstructor(String.class);
@@ -193,6 +209,7 @@ public class SelectObjects
       }
     }
 
+    // using commandline
     try {
       return OptionUtils.forAnyCommandLine(getItemClass(), cmdline);
     }
@@ -211,7 +228,8 @@ public class SelectObjects
     Object	obj;
     Object	array;
     int		i;
-    
+    Class	cls;
+
     if (m_Dialog == null) {
       m_Dialog = new GenericArrayEditorDialog(null, ModalityType.DOCUMENT_MODAL);
       if (m_ShortTitle)
@@ -222,6 +240,7 @@ public class SelectObjects
       m_Dialog.setOkAlwaysEnabled(true);
     }
 
+    cls     = getItemClass();
     current = new ArrayList();
     for (BaseString initial: m_InitialObjects) {
       obj = commandlineToObject(initial.getValue());
@@ -229,7 +248,7 @@ public class SelectObjects
 	getLogger().warning("Failed to convert: " + initial);
       current.add(obj);
     }
-    array = Array.newInstance(getItemClass(), current.size());
+    array = Array.newInstance(cls, current.size());
     for (i = 0; i < current.size(); i++)
       Array.set(array, i, current.get(i));
     m_Dialog.setCurrent(array);
