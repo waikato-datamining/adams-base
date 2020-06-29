@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EditLocateActor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
  * Opens dialog for locating actor.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EditLocateActor
   extends AbstractFlowEditorMenuItemAction {
@@ -52,7 +51,9 @@ public class EditLocateActor
   protected void doActionPerformed(ActionEvent e) {
     String	path;
 
-    path = GUIHelper.showInputDialog(m_State, "Please enter the full name of the actor (e.g., 'Flow.Sequence.Display'):");
+    path = GUIHelper.showInputDialog(
+      m_State, "Please enter the full name of the actor (e.g., 'Flow.Sequence.Display'):",
+      null, "Enter actor path", null, 40, 4);
     if (path == null)
       return;
 
