@@ -451,10 +451,17 @@ public class FlowMultiPagePane
     updateOwnerTitle();
 
     // statusbar
-    if (hasCurrentPanel() && getCurrentPanel().isRunning())
-      getOwner().showStatus("Running");
-    else
+    if (!hasCurrentPanel()) {
       getOwner().showStatus(hasCurrentPanel() ? getCurrentPanel().getStatus() : "");
+    }
+    else {
+      if (getCurrentPanel().isRunning())
+        getOwner().showStatus("Running");
+      if (getCurrentPanel().getTree().getSelectedFullName() != null)
+        getCurrentPanel().showStatus(false, getCurrentPanel().getTree().getSelectedFullName());
+      else
+        getCurrentPanel().showStatus(false, "");
+    }
 
     // ensure that tabs are visible
     if (hasCurrentPanel()) {
@@ -550,6 +557,10 @@ public class FlowMultiPagePane
     result = super.removePageAt(index);
 
     updateOwnerTitle();
+
+    // remove actor path
+    if (getPanelCount() == 0)
+      getOwner().showStatus(false, "");
 
     return result;
   }
