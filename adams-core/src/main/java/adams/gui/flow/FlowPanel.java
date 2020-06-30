@@ -23,7 +23,7 @@ package adams.gui.flow;
 import adams.core.ClassLister;
 import adams.core.MessageCollection;
 import adams.core.Properties;
-import adams.core.StatusMessageHandler;
+import adams.core.StatusMessageHandlerExt;
 import adams.core.UniqueIDs;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -104,7 +104,7 @@ import static com.github.fracpete.javautils.Reflection.newInstance;
  */
 public class FlowPanel
   extends UndoPanel
-  implements StatusMessageHandler, SendToActionSupporter, FlowTreeHandler,
+  implements StatusMessageHandlerExt, SendToActionSupporter, FlowTreeHandler,
   MultiPageIconSupporter, FlowWorkerHandler, UndoHandlerWithQuickAccess,
   KnownParentSupporter, LoggingSupporter {
 
@@ -328,7 +328,7 @@ public class FlowPanel
     m_Tree.addActorChangeListener((ActorChangeEvent e) -> update());
     m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
       if (m_Tree.getSelectionPath() != null)
-	showStatus(m_Tree.getSelectedFullName());
+	showStatus(false, m_Tree.getSelectedFullName());
     });
 
     m_SplitPane.setTopComponent(new BaseScrollPane(m_Tree));
@@ -1556,9 +1556,22 @@ public class FlowPanel
    */
   @Override
   public void showStatus(String msg) {
-    m_Status = msg;
+    showStatus(true, msg);
+  }
+
+  /**
+   * Displays a message.
+   *
+   * @param left	whether to show the message on the left or right
+   * @param msg		the message to display
+   */
+  @Override
+  public void showStatus(boolean left, String msg) {
+    if (left)
+      m_Status = msg;
+
     if (getEditor() != null)
-      getEditor().showStatus(msg);
+      getEditor().showStatus(left, msg);
   }
 
   /**
@@ -1710,7 +1723,7 @@ public class FlowPanel
    * @return		the handlers
    */
   public <T> T getTabHandler(Class<T> cls) {
-    T	result;
+    T result;
 
     result = null;
 

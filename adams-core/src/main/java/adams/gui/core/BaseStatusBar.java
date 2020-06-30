@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseStatusBar.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -46,7 +46,6 @@ import java.util.TimerTask;
  * A bar for displaying status messages (left and right).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseStatusBar
   extends BasePanel
@@ -60,7 +59,6 @@ public class BaseStatusBar
    * a displayable format.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static interface StatusProcessor {
 
@@ -77,18 +75,17 @@ public class BaseStatusBar
    * Interface for classes that modify the statusbar's popup menu.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
-  public static interface PopupMenuCustomizer
-    extends adams.gui.core.PopupMenuCustomizer<BaseStatusBar> {
+  public static interface PopupMenuCustomizer {
     
     /**
      * For customizing the popup menu.
      *
      * @param source	the source statusbar
+     * @param left 	whether left or right status
      * @param menu	the menu to customize
      */
-    public void customizePopupMenu(BaseStatusBar source, JPopupMenu menu);
+    public void customizePopupMenu(BaseStatusBar source, boolean left, JPopupMenu menu);
   }
 
 
@@ -392,6 +389,7 @@ public class BaseStatusBar
   @Override
   public void addMouseListener(MouseListener l) {
     m_LabelStatusLeft.addMouseListener(l);
+    m_LabelStatusRight.addMouseListener(l);
   }
 
   /**
@@ -402,6 +400,7 @@ public class BaseStatusBar
   @Override
   public void removeMouseListener(MouseListener l) {
     m_LabelStatusLeft.removeMouseListener(l);
+    m_LabelStatusRight.removeMouseListener(l);
   }
 
   /**
@@ -415,18 +414,37 @@ public class BaseStatusBar
 	m_MouseListener = new MouseAdapter() {
 	  @Override
 	  public void mouseClicked(MouseEvent e) {
-	    if (MouseUtils.isDoubleClick(e) && (m_StatusLeft.length() > 0)) {
-	      e.consume();
-	      displayStatus(true);
-	    }
-	    else if (MouseUtils.isRightClick(e)) {
-	      e.consume();
-	      BasePopupMenu menu = getPopup();
-	      menu.showAbsolute(m_LabelStatusLeft, e);
-	    }
-	    else {
-	      super.mouseClicked(e);
-	    }
+	    if (e.getComponent() == m_LabelStatusLeft) {
+              if (MouseUtils.isDoubleClick(e) && (m_StatusLeft.length() > 0)) {
+                e.consume();
+                displayStatus(true);
+              }
+              else if (MouseUtils.isRightClick(e)) {
+                e.consume();
+                BasePopupMenu menu = getPopup(true);
+                menu.showAbsolute(m_LabelStatusLeft, e);
+              }
+              else {
+                super.mouseClicked(e);
+              }
+            }
+            else if (e.getComponent() == m_LabelStatusRight) {
+              if (MouseUtils.isDoubleClick(e) && (m_StatusRight.length() > 0)) {
+                e.consume();
+                displayStatus(false);
+              }
+              else if (MouseUtils.isRightClick(e)) {
+                e.consume();
+                BasePopupMenu menu = getPopup(false);
+                menu.showAbsolute(m_LabelStatusRight, e);
+              }
+              else {
+                super.mouseClicked(e);
+              }
+            }
+            else {
+              super.mouseClicked(e);
+            }
 	  }
 	};
 	addMouseListener(m_MouseListener);
@@ -449,9 +467,10 @@ public class BaseStatusBar
   /**
    * Returns the popup menu for the status (left only).
    *
+   * @param left	whether for left or right label
    * @return		the popup menu
    */
-  protected BasePopupMenu getPopup() {
+  protected BasePopupMenu getPopup(final boolean left) {
     BasePopupMenu	result;
     JMenuItem		menuitem;
 
@@ -459,18 +478,18 @@ public class BaseStatusBar
 
     menuitem = new JMenuItem("Show status", GUIHelper.getIcon("editor.gif"));
     menuitem.setEnabled(m_StatusLeft.length() > 0);
-    menuitem.addActionListener((ActionEvent e) -> displayStatus(true));
+    menuitem.addActionListener((ActionEvent e) -> displayStatus(left));
     result.add(menuitem);
 
     result.addSeparator();
 
     menuitem = new JMenuItem("Clear status", GUIHelper.getIcon("new.gif"));
     menuitem.setEnabled(m_StatusLeft.length() > 0);
-    menuitem.addActionListener((ActionEvent e) -> clearStatus());
+    menuitem.addActionListener((ActionEvent e) -> clearStatus(left));
     result.add(menuitem);
     
     if (m_PopupMenuCustomizer != null)
-      m_PopupMenuCustomizer.customizePopupMenu(this, result);
+      m_PopupMenuCustomizer.customizePopupMenu(this, left, result);
 
     return result;
   }

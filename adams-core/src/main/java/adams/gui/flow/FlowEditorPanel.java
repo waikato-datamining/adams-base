@@ -15,13 +15,13 @@
 
 /*
  * FlowEditorPanel.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
 
 import adams.core.Properties;
-import adams.core.StatusMessageHandler;
+import adams.core.StatusMessageHandlerExt;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
@@ -161,7 +161,7 @@ import java.util.List;
  */
 public class FlowEditorPanel
   extends ToolBarPanel
-  implements MenuBarProvider, StatusMessageHandler, SendToActionSupporter,
+  implements MenuBarProvider, StatusMessageHandlerExt, SendToActionSupporter,
              PopupMenuCustomizer {
 
   /** for serialization. */
@@ -2098,7 +2098,18 @@ public class FlowEditorPanel
    */
   @Override
   public void showStatus(String msg) {
-    m_StatusBar.showStatus(msg);
+    showStatus(true, msg);
+  }
+
+  /**
+   * Displays a message.
+   *
+   * @param left	whether to show the message on the left or right
+   * @param msg		the message to display
+   */
+  @Override
+  public void showStatus(boolean left, String msg) {
+    m_StatusBar.showStatus(left, msg);
   }
 
   /**
@@ -2206,15 +2217,16 @@ public class FlowEditorPanel
    * For customizing the popup menu.
    *
    * @param source	the source statusbar
+   * @param left 	whether left or right status
    * @param menu	the menu to customize
    */
   @Override
-  public void customizePopupMenu(final BaseStatusBar source, JPopupMenu menu) {
+  public void customizePopupMenu(final BaseStatusBar source, final boolean left, JPopupMenu menu) {
     JMenuItem	menuitem;
-    
-    if ((source.getStatus() != null) && (source.getStatus().length() > 0)) {
+
+    if ((source.getStatus(left) != null) && (source.getStatus(left).length() > 0)) {
       menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
-      menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(source.getStatus()));
+      menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(source.getStatus(left)));
       menu.add(menuitem);
     }
   }
