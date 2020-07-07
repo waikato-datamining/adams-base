@@ -93,9 +93,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.jidesoft</groupId>
+      <groupId>com.github.fracpete</groupId>
       <artifactId>jide-oss</artifactId>
-      <version>3.6.18</version>
+      <version>3.6.18.1</version>
     </dependency>
 
     <dependency>
