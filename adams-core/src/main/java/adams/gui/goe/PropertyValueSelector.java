@@ -15,7 +15,7 @@
 
 /*
  *    PropertyValueSelector.java
- *    Copyright (C) 1999 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -31,7 +31,6 @@ import java.beans.PropertyEditor;
  * Support for any PropertyEditor that uses tags.
  *
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
- * @version $Revision$
  * @see weka.gui.PropertyValueSelector
  */
 public class PropertyValueSelector
@@ -49,14 +48,14 @@ public class PropertyValueSelector
    * @param pe 		the PropertyEditor
    */
   public PropertyValueSelector(PropertyEditor pe) {
-    Object 		value;
-    String[] 		tags;
-    ComboBoxModel 	model;
+    Object 			value;
+    String[] 			tags;
+    ComboBoxModel<String> 	model;
       
     m_Editor = pe;
     value    = m_Editor.getAsText();
     tags     = m_Editor.getTags();
-    model    = new DefaultComboBoxModel(tags) {
+    model    = new DefaultComboBoxModel<String>(tags) {
       private static final long serialVersionUID = 7942587653040180213L;
       
       public Object getSelectedItem() {
@@ -64,7 +63,8 @@ public class PropertyValueSelector
       }
       
       public void setSelectedItem(Object o) {
-	m_Editor.setAsText((String)o);
+        if (value != null)
+          m_Editor.setAsText((String) o);
       }
     };
     setModel(model);
