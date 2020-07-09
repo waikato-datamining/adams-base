@@ -177,6 +177,7 @@ public class ListSelectionValueDefinition
   @Override
   public boolean addToPanel(PropertiesParameterPanel panel) {
     boolean	found;
+    String	defValue;
 
     if (!check())
       return false;
@@ -195,14 +196,23 @@ public class ListSelectionValueDefinition
         break;
       }
     }
+
     if (!found) {
-      getLogger().severe("Failed to located default value '" + m_DefaultValue + "' in list values '" + Utils.arrayToString(m_Values) + "'!");
-      return false;
+      if (!m_DefaultValue.isEmpty()) {
+        getLogger().severe("Failed to located default value '" + m_DefaultValue + "' in list values '" + Utils.arrayToString(m_Values) + "'!");
+        return false;
+      }
+      else {
+        defValue = m_Values[0].getValue();
+      }
+    }
+    else {
+      defValue = m_DefaultValue;
     }
 
     panel.addPropertyType(getName(), getType());
     panel.setList(getName(), BaseObject.toStringArray(m_Values));
-    panel.setListDefault(getName(), m_DefaultValue);
+    panel.setListDefault(getName(), defValue);
     if (!getDisplay().trim().isEmpty())
       panel.setLabel(getName(), getDisplay());
     if (!getHelp().isEmpty())
