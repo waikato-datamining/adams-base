@@ -25,6 +25,7 @@ import adams.core.QuickInfoHelper;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.ConversionWithInitialization;
 import adams.data.conversion.UnknownToUnknown;
+import adams.flow.core.FlowContextHandler;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -226,6 +227,9 @@ public class Convert
   @Override
   protected String doExecute() {
     String	result;
+
+    if (m_Conversion instanceof FlowContextHandler)
+      ((FlowContextHandler) m_Conversion).setFlowContext(this);
 
     m_Conversion.setInput(m_InputToken.getPayload());
     result = m_Conversion.convert();
