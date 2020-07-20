@@ -15,7 +15,7 @@
 
 /*
  * TriState.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -90,6 +90,24 @@ public enum TriState
     return ((this == TriState.NOT_SET) && (state == null))
       || ((this == TriState.TRUE) && state)
       || ((this == TriState.FALSE) && !state);
+  }
+
+  /**
+   * Turns the state into a boolean object with not-set corresponding to null.
+   *
+   * @return		the boolean object
+   */
+  public Boolean toBoolean() {
+    switch (this) {
+      case NOT_SET:
+        return null;
+      case TRUE:
+        return true;
+      case FALSE:
+        return false;
+      default:
+        throw new IllegalStateException("Unhandled state: " + this);
+    }
   }
 
   /**
