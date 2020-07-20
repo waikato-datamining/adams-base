@@ -39,7 +39,7 @@ public class RetrieveFile
 
   private static final long serialVersionUID = -1657908444959620122L;
 
-  /** the file to retriev. */
+  /** the file to retrieve. */
   protected PlaceholderFile m_RemoteFile;
 
   /** the local file to save to. */

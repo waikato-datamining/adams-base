@@ -284,7 +284,7 @@ public class PDFAppendDocument
   }
 
   /**
-   * Sets the name of the storage item to retriev.
+   * Sets the name of the storage item to retrieve.
    *
    * @param value	the storage item
    */
