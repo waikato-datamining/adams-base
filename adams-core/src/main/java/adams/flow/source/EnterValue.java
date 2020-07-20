@@ -292,6 +292,7 @@ public class EnterValue
     List<String>	options;
 
     result = QuickInfoHelper.toString(this, "message", m_Message);
+    result += QuickInfoHelper.toString(this, "selectionValues", m_SelectionValues, ", values: ");
 
     options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
