@@ -167,7 +167,7 @@ public class ObjectCopyHelper {
 
     switch (type) {
       case OPTIONHANDLER:
-        return (T) OptionUtils.shallowCopy(source);
+        return (T) OptionUtils.shallowCopy((OptionHandler) source, false);
       case CLONEHANDLER:
         return (T) ((CloneHandler) source).getClone();
       case SERIALIZABLE:
