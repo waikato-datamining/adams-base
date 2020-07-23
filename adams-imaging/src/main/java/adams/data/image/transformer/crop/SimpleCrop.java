@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleCrop.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.crop;
 
@@ -106,8 +106,8 @@ public class SimpleCrop
    */
   @Override
   public String globalInfo() {
-    return 
-	"Simple cropping algorithm that uses a fixed window. The user either "
+    return
+      "Simple cropping algorithm that uses a fixed window. The user either "
 	+ "specifies a window height/width (if both non-zero) or the bottom-right corner "
 	+ "coordinates apart from the coordinates of the top-left corner.";
   }
@@ -365,33 +365,33 @@ public class SimpleCrop
     int			y;
     
     if ((m_Width > 0) && (m_Height > 0)) {
-      if (m_Width == -1)
-	width = img.getWidth();
-      else
-	width = m_Width;
-      if (m_Height == -1)
-	height = img.getHeight();
-      else
-	height = m_Height;
+      width  = m_Width;
+      height = m_Height;
     }
     else {
       if (m_Right == -1)
-	right = img.getWidth();
+	right = img.getWidth() - 1;
       else
 	right = m_Right;
       if (m_Bottom == -1)
-	bottom = img.getHeight();
+	bottom = img.getHeight() - 1;
       else
 	bottom = m_Bottom;
       width  = right  - m_Left;
       height = bottom - m_Top;
     }
 
+    // ensure within bounds
+    if (m_Left + width >= img.getWidth())
+      width -= (m_Left + width) - img.getWidth() + 1;
+    if (m_Top + height >= img.getHeight())
+      height -= (m_Top + height) - img.getHeight() + 1;
+
     m_TopLeft     = new Point(m_Left, m_Top);
-    m_BottomRight = new Point(m_Left + width - 1, m_Top + height - 1);
+    m_BottomRight = new Point(m_Left + width, m_Top + height);
 
     if (isLoggingEnabled())
-      getLogger().info("left=" + m_Left + ", top=" + m_Top + ", width=" + width + ", height=" + height);
+      getLogger().info("left=" + m_Left + ", top=" + m_Top + ", width=" + width + ", height=" + height + ", imgWidth=" + img.getWidth() + ", imgHeight=" + img.getHeight());
 
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
