@@ -250,7 +250,6 @@ public class GetImageObjects
     String		result;
     Report		report;
     LocatedObjects	objects;
-    boolean		cleaned;
 
     result = null;
 
@@ -267,7 +266,7 @@ public class GetImageObjects
       objects = LocatedObjects.fromReport(report, m_Finder.getPrefix());
       if (m_CleanIndices)
         objects.resetIndex();
-      m_Queue.addAll(objects.subset(m_Finder.find(report)));
+      m_Queue.addAll(objects.subset(m_Finder.find(objects)));
     }
 
     return result;
