@@ -25,6 +25,7 @@ import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.objectfinder.AllFinder;
@@ -201,6 +202,9 @@ public class ObjectLocationsFromReport
     }
   }
 
+  /** the report reader to use. */
+  protected AbstractReportReader m_Reader;
+  
   /** the prefix for the objects in the report. */
   protected String m_Prefix;
 
@@ -261,6 +265,10 @@ public class ObjectLocationsFromReport
     super.defineOptions();
 
     m_OptionManager.add(
+      "reader", "reader",
+      new DefaultSimpleReportReader());
+
+    m_OptionManager.add(
       "prefix", "prefix",
       ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
 
@@ -311,6 +319,35 @@ public class ObjectLocationsFromReport
     m_OptionManager.add(
       "alternative-location", "alternativeLocation",
       new PlaceholderDirectory());
+  }
+
+  /**
+   * Sets the reader to use for reading the report.
+   *
+   * @param value 	the reader
+   */
+  public void setReader(AbstractReportReader value) {
+    m_Reader = value;
+    reset();
+  }
+
+  /**
+   * Returns the reader to use for reading the report.
+   *
+   * @return 		the reader
+   */
+  public AbstractReportReader getReader() {
+    return m_Reader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String readerTipText() {
+    return "The reader to use for reading the report.";
   }
 
   /**
@@ -743,22 +780,20 @@ public class ObjectLocationsFromReport
    * @return		the report, null if not present or failed to load
    */
   protected Report loadReport(CombinedPanel panel, File file) {
-    Report 				result;
-    File				baseFile;
-    File				reportFile;
-    DefaultSimpleReportReader		reportReader;
-    List<Report> 			reports;
+    Report 		result;
+    File		baseFile;
+    File		reportFile;
+    List<Report> 	reports;
 
     result = null;
     if (panel.getUseAlternativeLocation())
       baseFile = new PlaceholderFile(panel.getAlternativeLocation().getAbsolutePath() + File.separator + file.getName());
     else
       baseFile = file;
-    reportFile = FileUtils.replaceExtension(baseFile, ".report");
+    reportFile = FileUtils.replaceExtension(baseFile, "." + m_Reader.getDefaultFormatExtension());
     if (reportFile.exists() && reportFile.isFile()) {
-      reportReader = new DefaultSimpleReportReader();
-      reportReader.setInput(new PlaceholderFile(reportFile));
-      reports = reportReader.read();
+      m_Reader.setInput(new PlaceholderFile(reportFile));
+      reports = m_Reader.read();
       if (reports.size() > 0)
         result = filterReport(reports.get(0));
     }
