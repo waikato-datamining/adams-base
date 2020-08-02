@@ -7,4 +7,5 @@ Drivers=\
   org.sqlite.JDBC,\
   org.hsqldb.jdbcDriver,\
   org.postgresql.Driver,\
-  net.sourceforge.jtds.jdbc.Driver
+  net.sourceforge.jtds.jdbc.Driver,\
+  com.microsoft.sqlserver.jdbc.SQLServerDriver

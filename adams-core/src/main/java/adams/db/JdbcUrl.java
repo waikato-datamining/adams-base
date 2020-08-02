@@ -98,7 +98,8 @@ public class JdbcUrl
       + "- PostgreSQL: jdbc:postgresql://HOST:5432/DATABASE\n"
       + "- SQLite: jdbc:sqlite:PATH_TO_FILE\n"
       + "- HSQLDB: jdbc:hsqldb:{mem|file|res|hsql|http|hsqls|https}:...\n"
-      + "- MS SQL Server: jdbc:jtds:sqlserver://HOST:1433/DATABASE";
+      + "- MS SQL Server (jTDS): jdbc:jtds:sqlserver://HOST:1433/DATABASE\n"
+      + "- MS SQL Server (MS): jdbc:sqlserver://HOST:1433;databaseName=DATABASE";
   }
 
   /**

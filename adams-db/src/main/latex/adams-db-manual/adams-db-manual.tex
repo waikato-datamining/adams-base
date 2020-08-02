@@ -63,12 +63,21 @@ Adds support for the following databases (via JDBC):
   \item PostgreSQL\cite{postgresql}
   \item MS SQL Server\cite{mssql}
 \end{tight_itemize}
-The following JDBC drivers are used (see \texttt{adams/db/Drivers.props}):
+The following JDBC drivers are available (see \texttt{adams/db/Drivers.props}):
 \begin{tight_itemize}
-  \item org.sqlite.JDBC
-  \item org.hsqldb.jdbcDriver
-  \item org.postgresql.Driver
-  \item net.sourceforge.jtds.jdbc.Driver
+  \item SQLite: \verb|org.sqlite.JDBC|
+  \item HSQLDB: \verb|org.hsqldb.jdbcDriver|
+  \item PostgreSQL: \verb|org.postgresql.Driver|
+  \item MS SQL Server (jTDS)\cite{jtds}: \verb|net.sourceforge.jtds.jdbc.Driver|
+  \item MS SQL Server (MS)\cite{mssqljdbc}: \verb|com.microsoft.sqlserver.jdbc.SQLServerDriver|
+\end{tight_itemize}
+These JDBC drivers use the following JDBC URLs:
+\begin{tight_itemize}
+  \item SQLite\cite{sqlitexerial}: \verb|jdbc:sqlite:PATH_TO_FILE|
+  \item HSQLDB: \verb|jdbc:hsqldb:{mem/file/res/hsql/http/hsqls/https}:...|
+  \item PostgreSQL: \verb|jdbc:postgresql://HOST:5432/DATABASE|
+  \item MS SQL Server (jTDS): \verb|jdbc:jtds:sqlserver://HOST:1433/DATABASE|
+  \item MS SQL Server (MS): \verb|jdbc:sqlserver://HOST:1433;databaseName=DATABASE;...|
 \end{tight_itemize}
 
 
