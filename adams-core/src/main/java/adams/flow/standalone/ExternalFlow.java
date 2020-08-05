@@ -15,13 +15,14 @@
 
 /*
  * ExternalFlow.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
+import adams.core.VariablesHandler;
 import adams.core.io.FlowFile;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
@@ -83,7 +84,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExternalFlow
   extends AbstractActor {
@@ -160,7 +160,7 @@ public class ExternalFlow
   protected void initialize() {
     super.initialize();
     
-    m_Asynchronous = new ArrayList<RunnableWithLogging>();
+    m_Asynchronous = new ArrayList<>();
   }
   
   /**
@@ -281,7 +281,9 @@ public class ExternalFlow
       }
       else {
 	m_ExternalFlow = ActorUtils.removeDisabledActors(m_ExternalFlow);
+	ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_ExternalFlow, m_FlowFile);
 	result = m_ExternalFlow.setUp();
+	ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_ExternalFlow, m_FlowFile);
       }
     }
 
