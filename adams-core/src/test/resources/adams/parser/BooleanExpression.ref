@@ -116,4 +116,8 @@
 'contains("998877665544"; "7776") = false: true
 'replaceall("hello_world.txt", "l", "L") = "heLLo_worLd.txt": true
 'replaceall("hello_world.txt", ".*l", "") = "d.txt": true
+'rand(1) > 0.73: true
+'rand(42) > 0.73: false
+'randint(1, 10) > 0: true
+'randint(42, 10) > 0: false
 

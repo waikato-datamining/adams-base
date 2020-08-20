@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.mathematicalexpression;
@@ -106,6 +106,8 @@ import java.io.*;
   "ceil" { return sf.newSymbol("Ceil", sym.CEIL); }
   "min" { return sf.newSymbol("Min", sym.MIN); }
   "max" { return sf.newSymbol("Max", sym.MAX); }
+  "rand" { return sf.newSymbol("Rand", sym.RAND); }
+  "randint" { return sf.newSymbol("Randint", sym.RANDINT); }
   "has" { return sf.newSymbol("Has", sym.HAS); }
   "ifelse" { return sf.newSymbol("IfElse", sym.IFELSE); }
   "if" { return sf.newSymbol("IfElse", sym.IFELSE); }

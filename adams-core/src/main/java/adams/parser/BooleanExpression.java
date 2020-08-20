@@ -15,7 +15,7 @@
 
 /*
  * BooleanExpression.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -108,6 +108,10 @@ import java.util.logging.Level;
  *               | ceil ( expr )<br>
  *               | min ( expr1 , expr2 )<br>
  *               | max ( expr1 , expr2 )<br>
+ *               | rand () (unseeded double, 0-1)<br>
+ *               | rand ( seed ) (seeded double, 0-1)<br>
+ *               | randint ( bound ) (unseeded int from 0 to bound-1)<br>
+ *               | randint ( seed, bound ) (seeded int from 0 to bound-1)<br>
  *               | year ( expr )<br>
  *               | month ( expr )<br>
  *               | day ( expr )<br>
@@ -131,7 +135,9 @@ import java.util.logging.Level;
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
  *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
+ *               | contains ( str , find ) (checks whether 'str' string contains 'find' string)<br>
  *               | replace ( str , pos , len , newstr )<br>
+ *               | replaceall ( str , regexp , replace ) (applies regular expression to 'str' and replaces all matches with 'replace')<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
  *               | str ( expr )<br>
  *               | str ( expr  , numdecimals )<br>
@@ -297,6 +303,10 @@ public class BooleanExpression
       + "              | ceil ( expr )\n"
       + "              | min ( expr1 , expr2 )\n"
       + "              | max ( expr1 , expr2 )\n"
+      + "              | rand () (unseeded double, 0-1)\n"
+      + "              | rand ( seed ) (seeded double, 0-1)\n"
+      + "              | randint ( bound ) (unseeded int from 0 to bound-1)\n"
+      + "              | randint ( seed, bound ) (seeded int from 0 to bound-1)\n"
       + "              | year ( expr )\n"
       + "              | month ( expr )\n"
       + "              | day ( expr )\n"

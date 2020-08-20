@@ -52,10 +52,10 @@ public class MathematicalExpressionTest
   protected BaseString[][][] getRegressionSymbols() {
     return new BaseString[][][]{
 	{
-	  {/** no symbols. */},		//  1
-	  {/** no symbols. */},		//  2
-	  {/** no symbols. */},		//  3
-	  {/** no symbols. */},		//  4
+	  {/* no symbols. */},		//  1
+	  {/* no symbols. */},		//  2
+	  {/* no symbols. */},		//  3
+	  {/* no symbols. */},		//  4
 	  {new BaseString("X=2.0")},	//  5
 	  {new BaseString("X=2.0")},	//  6
 	  {new BaseString("X=2.0")},	//  7
@@ -75,76 +75,80 @@ public class MathematicalExpressionTest
 	  {new BaseString("X=-1.0")},	// 21
 	  {new BaseString("X=2.0")},	// 22
 	  {new BaseString("X=2.0")},	// 23
-	  {/** no symbols. */},		// 24
-	  {/** no symbols. */},		// 25
-	  {/** no symbols. */},		// 26
-	  {/** no symbols. */},		// 27
+	  {/* no symbols. */},		// 24
+	  {/* no symbols. */},		// 25
+	  {/* no symbols. */},		// 26
+	  {/* no symbols. */},		// 27
 	  {new BaseString("X=2.0")},	// 28
-	  {/** no symbols. */},		// 29
-	  {/** no symbols. */},		// 30
-	  {/** no symbols. */},		// 31
-	  {/** no symbols. */},		// 32
-	  {/** no symbols. */},		// 33
-	  {/** no symbols. */},		// 34
-	  {/** no symbols. */},		// 35
-	  {/** no symbols. */},		// 36
-	  {/** no symbols. */},		// 37
-	  {/** no symbols necessary */},		// 38
-	  {/** no symbols necessary */},		// 39
-	  {/** no symbols necessary */},		// 40
-	  {/** no symbols necessary */},		// 41
-	  {/** no symbols necessary */},		// 42
-	  {/** no symbols necessary */},		// 43
-	  {/** no symbols necessary */},		// 44
-	  {/** no symbols necessary */},		// 45
-	  {/** no symbols necessary */},		// 46
-	  {/** no symbols necessary */},		// 47
-	  {/** no symbols necessary */},		// 48
-	  {/** no symbols necessary */},		// 49
-	  {/** no symbols necessary */},		// 50
-	  {/** no symbols necessary */},		// 51
-	  {/** no symbols necessary */},		// 52
-	  {/** no symbols necessary */},		// 53
-	  {/** no symbols necessary */},		// 54
-	  {/** no symbols necessary */},		// 55
-	  {/** no symbols necessary */},		// 56
-	  {/** no symbols necessary */},		// 57
-	  {/** no symbols necessary */},		// 58
-	  {/** no symbols necessary */},		// 59
-	  {/** no symbols necessary */},		// 60
-	  {/** no symbols necessary */},		// 61
-	  {/** no symbols necessary */},		// 62
-	  {/** no symbols necessary */},		// 63
-	  {/** no symbols necessary */},		// 64
-	  {/** no symbols necessary */},		// 65
-	  {/** no symbols necessary */},		// 66
-	  {/** no symbols necessary */},		// 67
-	  {/** no symbols necessary */},		// 68
-	  {/** no symbols necessary */},		// 69
-	  {/** no symbols necessary */},		// 70
-	  {/** no symbols necessary */},		// 71
-	  {/** no symbols necessary */},		// 72
-	  {/** no symbols necessary */},		// 73
-	  {/** no symbols necessary */},		// 74
-	  {/** no symbols necessary */},		// 75
-	  {/** no symbols necessary */},		// 76
-	  {/** no symbols necessary */},		// 77
-	  {/** no symbols necessary */},		// 78
-	  {/** no symbols necessary */},		// 79
-	  {/** no symbols necessary */},		// 80
-	  {/** no symbols necessary */},		// 81
-	  {/** no symbols necessary */},		// 82
-	  {/** no symbols necessary */},		// 83
-	  {/** no symbols necessary */},		// 84
+	  {/* no symbols. */},		// 29
+	  {/* no symbols. */},		// 30
+	  {/* no symbols. */},		// 31
+	  {/* no symbols. */},		// 32
+	  {/* no symbols. */},		// 33
+	  {/* no symbols. */},		// 34
+	  {/* no symbols. */},		// 35
+	  {/* no symbols. */},		// 36
+	  {/* no symbols. */},		// 37
+	  {/* no symbols necessary */},		// 38
+	  {/* no symbols necessary */},		// 39
+	  {/* no symbols necessary */},		// 40
+	  {/* no symbols necessary */},		// 41
+	  {/* no symbols necessary */},		// 42
+	  {/* no symbols necessary */},		// 43
+	  {/* no symbols necessary */},		// 44
+	  {/* no symbols necessary */},		// 45
+	  {/* no symbols necessary */},		// 46
+	  {/* no symbols necessary */},		// 47
+	  {/* no symbols necessary */},		// 48
+	  {/* no symbols necessary */},		// 49
+	  {/* no symbols necessary */},		// 50
+	  {/* no symbols necessary */},		// 51
+	  {/* no symbols necessary */},		// 52
+	  {/* no symbols necessary */},		// 53
+	  {/* no symbols necessary */},		// 54
+	  {/* no symbols necessary */},		// 55
+	  {/* no symbols necessary */},		// 56
+	  {/* no symbols necessary */},		// 57
+	  {/* no symbols necessary */},		// 58
+	  {/* no symbols necessary */},		// 59
+	  {/* no symbols necessary */},		// 60
+	  {/* no symbols necessary */},		// 61
+	  {/* no symbols necessary */},		// 62
+	  {/* no symbols necessary */},		// 63
+	  {/* no symbols necessary */},		// 64
+	  {/* no symbols necessary */},		// 65
+	  {/* no symbols necessary */},		// 66
+	  {/* no symbols necessary */},		// 67
+	  {/* no symbols necessary */},		// 68
+	  {/* no symbols necessary */},		// 69
+	  {/* no symbols necessary */},		// 70
+	  {/* no symbols necessary */},		// 71
+	  {/* no symbols necessary */},		// 72
+	  {/* no symbols necessary */},		// 73
+	  {/* no symbols necessary */},		// 74
+	  {/* no symbols necessary */},		// 75
+	  {/* no symbols necessary */},		// 76
+	  {/* no symbols necessary */},		// 77
+	  {/* no symbols necessary */},		// 78
+	  {/* no symbols necessary */},		// 79
+	  {/* no symbols necessary */},		// 80
+	  {/* no symbols necessary */},		// 81
+	  {/* no symbols necessary */},		// 82
+	  {/* no symbols necessary */},		// 83
+	  {/* no symbols necessary */},		// 84
 	  {new BaseString("X=9.0")},			// 85
 	  {new BaseString("X=9.0")},			// 86
 	  {new BaseString("hello world=1")},		// 87
 	  {new BaseString("hello world=1")},		// 88
 	  {new BaseString("Ab_c0=1")},			// 89
-	  {/** no symbols necessary */},		// 90
-	  {/** no symbols necessary */},		// 91
-	  {/** no symbols necessary */},		// 92
-	  {/** no symbols necessary */},		// 93
+	  {/* no symbols necessary */},		// 90
+	  {/* no symbols necessary */},		// 91
+	  {/* no symbols necessary */},		// 92
+	  {/* no symbols necessary */},		// 93
+	  {/* no symbols necessary */},		// 94
+	  {/* no symbols necessary */},		// 95
+	  {/* no symbols necessary */},		// 96
+	  {/* no symbols necessary */},		// 97
 	}
     };
   }
@@ -251,6 +255,10 @@ public class MathematicalExpressionTest
 	  "if(contains(\"998877665544\"; \"777\"), 1, 0)",	// 91
 	  "len(replaceall(\"1122332211\"; \"2\"; \"\"))",		// 92
 	  "len(replaceall(\"1122332211\"; \".*23\", \"\"))",		// 93
+	  "rand(1)", 	// 94
+	  "rand(42)", 	// 95
+	  "randint(1, 10)", 	// 96
+	  "randint(42, 10)", 	// 97
 	}
     };
   }
