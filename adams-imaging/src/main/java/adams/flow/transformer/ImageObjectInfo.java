@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectInfo.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseRectangle;
+import adams.data.image.BufferedImageContainer;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.core.DataInfoActor;
@@ -95,7 +96,7 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-type &lt;X|Y|WIDTH|HEIGHT|META_DATA|RECTANGLE|BASE_RECTANGLE|INDEX_STRING|INDEX_INT&gt; (property: type)
+ * <pre>-type &lt;X|Y|WIDTH|HEIGHT|META_DATA|RECTANGLE|BASE_RECTANGLE|INDEX_STRING|INDEX_INT|BITMAP&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate.
  * &nbsp;&nbsp;&nbsp;default: X
  * </pre>
@@ -123,6 +124,7 @@ public class ImageObjectInfo
     BASE_RECTANGLE,
     INDEX_STRING,
     INDEX_INT,
+    BITMAP,
   }
 
   /** the prefix to use when generating a report. */
@@ -293,6 +295,9 @@ public class ImageObjectInfo
       case INDEX_INT:
         return new Class[]{Integer.class};
 
+      case BITMAP:
+        return new Class[]{BufferedImageContainer.class};
+
       default:
 	throw new IllegalStateException("Unhandled type: " + m_Type);
     }
@@ -321,10 +326,12 @@ public class ImageObjectInfo
    */
   @Override
   protected String doExecute() {
-    String		result;
-    Report		report;
-    LocatedObjects	objs;
-    LocatedObject 	obj;
+    String			result;
+    Report			report;
+    LocatedObjects		objs;
+    LocatedObject 		obj;
+    BufferedImageContainer	cont;
+    LocatedObjects		newObjs;
 
     result = null;
 
@@ -373,6 +380,15 @@ public class ImageObjectInfo
 	  case INDEX_INT:
 	    m_OutputToken = new Token(obj.getIndex());
 	    break;
+	  case BITMAP:
+	    if (obj.getImage() != null) {
+	      newObjs = new LocatedObjects();
+	      newObjs.add(obj);
+	      cont = new BufferedImageContainer();
+	      cont.setImage(obj.getImage());
+	      cont.getReport().mergeWith(newObjs.toReport(m_Prefix));
+	      m_OutputToken = new Token(cont);
+	    }
 	  default:
 	    throw new IllegalStateException("Unhandled type: " + m_Type);
 	}
