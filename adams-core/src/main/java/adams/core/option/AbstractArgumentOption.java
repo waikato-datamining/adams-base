@@ -15,7 +15,7 @@
 
 /*
  * AbstractArgumentOption.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -413,6 +413,11 @@ public abstract class AbstractArgumentOption
     boolean	result;
     int		len;
     int		i;
+
+    if (value == null) {
+      System.err.println("Received null value for option: " + getOptionHandler().getClass().getName() + "." + getProperty());
+      return false;
+    }
 
     // should default values be suppressed?
     if (!OptionUtils.getSuppressDefaultValues()) {
