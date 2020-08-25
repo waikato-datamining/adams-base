@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetSelectSubset.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -25,6 +25,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.MouseUtils;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SpreadSheetTable;
@@ -38,6 +39,8 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  <!-- globalinfo-start -->
@@ -390,6 +393,18 @@ public class SpreadSheetSelectSubset
       m_Dialog.setVisible(false);
     });
     panelButtons.add(buttonCancel);
+
+    m_Table.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isDoubleClick(e)) {
+          if (m_Table.getSelectedRowCount() > 0)
+            buttonOK.doClick();
+        }
+        if (!e.isConsumed())
+          super.mouseClicked(e);
+      }
+    });
 
     return result;
   }
