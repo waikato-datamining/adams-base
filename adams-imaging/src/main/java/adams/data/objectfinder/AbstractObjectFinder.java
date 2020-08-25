@@ -15,7 +15,7 @@
 
 /*
  * AbstractObjectFinder.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.objectfinder;
 
@@ -29,7 +29,6 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * Ancestor for finders that locate objects in the report of an image.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractObjectFinder
   extends AbstractOptionHandler
@@ -41,6 +40,9 @@ public abstract class AbstractObjectFinder
   /** the prefix of the objects in the report. */
   protected String m_Prefix;
 
+  /** boolean lenient. */
+  protected boolean m_Lenient;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -51,6 +53,10 @@ public abstract class AbstractObjectFinder
     m_OptionManager.add(
       "prefix", "prefix",
       "Object.");
+
+    m_OptionManager.add(
+      "lenient", "lenient",
+      false);
   }
 
   /**
@@ -83,13 +89,47 @@ public abstract class AbstractObjectFinder
   }
 
   /**
+   * Sets whether to suppress error if -1 indices found.
+   *
+   * @param value	true if to suppress
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to suppress error if -1 indices found.
+   *
+   * @return		true if to suppress
+   */
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return "If enabled, then no error is generated if -1 indices are returned.";
+  }
+
+  /**
    * Returns a quick info about the object, which can be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "prefix", m_Prefix, "prefix: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "prefix", m_Prefix, "prefix: ");
+    result += QuickInfoHelper.toString(this, "lenient", m_Lenient, "lenient", ", ");
+
+    return result;
   }
 
   /**
@@ -119,13 +159,29 @@ public abstract class AbstractObjectFinder
    * @return		the indices
    */
   public int[] find(LocatedObjects objects) {
+    int[]	result;
     String	msg;
+    int		count;
 
     msg = check(objects);
     if (msg != null)
       throw new IllegalStateException(msg);
 
-    return doFind(objects);
+    result = doFind(objects);
+    // check if -1 indices presnet
+    count = 0;
+    for (int index: result) {
+      if (index == -1)
+        count++;
+    }
+    if (count > 0) {
+      if (m_Lenient)
+	getLogger().warning("Number of indices returned as -1: " + count);
+      else
+        throw new IllegalStateException("Number of indices returned as -1: " + count);
+    }
+
+    return result;
   }
 
   /**
