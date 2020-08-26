@@ -55,6 +55,9 @@ public class SimpleText
     /** the column range to display. */
     protected SpreadSheetColumnRange m_Columns;
 
+    /** the string to use for missing values. */
+    protected String m_MissingValue;
+
     /**
      * Initializes the widgets.
      */
@@ -105,6 +108,24 @@ public class SimpleText
       return m_TextArea.getTextFont();
     }
 
+  /**
+   * Sets the string to use for missing values.
+   *
+   * @param value 	the string
+   */
+  public void setMissingValue(String value) {
+    m_MissingValue = value;
+  }
+
+  /**
+   * Returns the string to use for missing values.
+   *
+   * @return 		the string
+   */
+  public String getMissingValue() {
+    return m_MissingValue;
+  }
+
     /**
      * Previews the spreadsheet.
      *
@@ -136,7 +157,7 @@ public class SimpleText
           if (row.hasCell(cols[n]) && !row.getCell(cols[n]).isMissing())
 	    cell = row.getCell(cols[n]).getContent();
 	  else
-	    cell = "?";
+	    cell = m_MissingValue;
 	  text.append(Utils.indent(cell, 2)).append("\n");
 	}
       }
@@ -153,6 +174,9 @@ public class SimpleText
 
   /** the font to use. */
   protected Font m_Font;
+
+  /** the string to use for missing values. */
+  protected String m_MissingValue;
 
   /**
    * Returns a string describing the object.
@@ -178,6 +202,10 @@ public class SimpleText
     m_OptionManager.add(
       "font", "font",
       getDefaultFont());
+
+    m_OptionManager.add(
+      "missing-value", "missingValue",
+      "?");
   }
 
   /**
@@ -248,6 +276,35 @@ public class SimpleText
   }
 
   /**
+   * Sets the string to use for missing values.
+   *
+   * @param value 	the string
+   */
+  public void setMissingValue(String value) {
+    m_MissingValue = value;
+    reset();
+  }
+
+  /**
+   * Returns the string to use for missing values.
+   *
+   * @return 		the string
+   */
+  public String getMissingValue() {
+    return m_MissingValue;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String missingValueTipText() {
+    return "The string to use for missing values.";
+  }
+
+  /**
    * Generates the preview panel.
    *
    * @return		the preview panel, null if none generated
@@ -259,6 +316,7 @@ public class SimpleText
     result = new SimpleTextPanel();
     result.setTextFont(m_Font);
     result.setColumns(m_Columns.getClone());
+    result.setMissingValue(m_MissingValue);
 
     return result;
   }
